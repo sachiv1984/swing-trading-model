@@ -41,7 +41,7 @@ This document describes the data structures used in the **Position Manager Web A
 ```
 ## 2. Position Object
 
-| ### Field         | ### Type   | ### Description                               |
+| Field         | Type   | Description                               |
 | ------------- | ------ | ----------------------------------------- |
 | entry_date    | string | Date the position was opened (YYYY-MM-DD) |
 | entry_price   | float  | Price at which the position was entered   |
