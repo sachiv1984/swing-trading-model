@@ -39,3 +39,4 @@ This document describes the data structures used in the **Position Manager Web A
   "last_updated": "2026-01-23 12:00:00"
 }
 ```
+## 2. Position Object
