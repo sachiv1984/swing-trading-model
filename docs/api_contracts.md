@@ -152,10 +152,11 @@ Response
 
 ### GET /positions/{ticker}
 
-Purpose
-	•	Explain why a position is being held or exited
+### Purpose
+- Explain why a position is being held or exited
 
-Response
+### Response
+```json
 {
   "ticker": "PLTR",
   "market": "US",
@@ -174,7 +175,7 @@ Response
   "pnl_pct": 17.9,
   "risk_status": "RISK_ON"
 }
-
+```
 ## 5. Daily Analysis (Core Engine)
 
 ### GET /positions/analyze
