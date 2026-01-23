@@ -83,11 +83,12 @@ Response
 
 ### GET /portfolio
 
-Purpose
-	•	Primary working screen
-	•	Replaces CLI portfolio view
+### Purpose
+- Primary working screen
+- Replaces CLI portfolio view
 
-Response 
+### Response
+```json
 {
   "cash": 8200.00,
   "last_updated": "2026-01-22 18:42:10",
@@ -108,7 +109,7 @@ Response
     }
   ]
 }
-
+```
 Allowed status values
 	•	GRACE
 	•	PROFITABLE
