@@ -67,3 +67,8 @@ This document describes the data structures used in the **Position Manager Web A
 | pnl_pct      | float  | Profit/loss in percentage                     |
 | holding_days | int    | Number of days the position was held          |
 | exit_reason  | string | Reason for exit (stop-loss, risk-off, manual) |
+
+## 4. Notes
+- positions and trade_history are stored in JSON for simplicity.
+- last_updated is automatically set by the app on each run.
+- All prices are in GBP (£) for UK-listed tickers, USD ($) for US tickers.
