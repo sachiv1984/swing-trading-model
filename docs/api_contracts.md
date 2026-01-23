@@ -121,10 +121,11 @@ Response
 
 ### POST /portfolio/position
 
-Purpose
-	•	Manual sync with broker executions
+### Purpose
+- Manual sync with broker executions
 
-Response
+### Response
+```json
 {
   "ticker": "FRES.L",
   "entry_date": "2026-01-10",
@@ -135,8 +136,9 @@ Response
   "atr": 0.12,
   "custom_stop": null
 }
-
-Response
+```
+### Response
+```json
 {
   "ticker": "FRES.L",
   "total_cost": 2340.96,
@@ -145,7 +147,7 @@ Response
   "initial_stop": 5.25,
   "remaining_cash": 5859.04
 }
-
+```
 ## 4. Position Detail
 
 ### GET /positions/{ticker}
