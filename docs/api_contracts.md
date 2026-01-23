@@ -77,6 +77,7 @@ Response
   }
 }
 
+
 ## 2. Portfolio Overview
 
 ### GET /portfolio
