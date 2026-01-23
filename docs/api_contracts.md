@@ -49,7 +49,7 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
 
 ### GET /dashboard
 
-Purpose
+### Purpose
 	•	Daily snapshot
 	•	First screen after login
 
