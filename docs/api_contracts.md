@@ -180,11 +180,12 @@ Response
 
 ### GET /positions/analyze
 
-Purpose
-	•	Runs full daily monitoring logic
-	•	Idempotent (safe to refresh)
+### Purpose
+- Runs full daily monitoring logic
+- Idempotent (safe to refresh)
 
-Response
+### Response
+```json
 {
   "analysis_date": "2026-01-22",
   "summary": {
@@ -213,7 +214,7 @@ Response
     }
   ]
 }
-
+```
 ## 6. Confirm Exit Execution
 
 ### POST /positions/exit-confirm
