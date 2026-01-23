@@ -243,11 +243,12 @@ Response
 
 ### GET /trades
 
-Purpose
-	•	Performance review
-	•	Not required for daily use
+### Purpose
+- Performance review
+- Not required for daily use
 
-Response
+### Response
+```json
 {
   "total_trades": 18,
   "win_rate": 61.1,
@@ -263,21 +264,21 @@ Response
     }
   ]
 }
+```
+### Explicit Non-Requirements (MVP)
+- No PATCH endpoints
+- No partial updates
+- No strategy configuration APIs
+- No charting APIs
+- No broker integrations
+- No multi-user identifiers
 
-Explicit Non-Requirements (MVP)
-	•	No PATCH endpoints
-	•	No partial updates
-	•	No strategy configuration APIs
-	•	No charting APIs
-	•	No broker integrations
-	•	No multi-user identifiers
 
+## Versioning
+- All endpoints are implicitly v1
+- Strategy rules are versioned internally only
 
-Versioning
-	•	All endpoints are implicitly v1
-	•	Strategy rules are versioned internally only
-
-Final Guidance
+### Final Guidance
 
 Do not optimise, generalise, or parameterise the strategy.
 If something feels like it should be configurable, flag it for v2 — do not build it.
