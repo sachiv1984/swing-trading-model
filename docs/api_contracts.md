@@ -219,24 +219,26 @@ Response
 
 ### POST /positions/exit-confirm
 
-Purpose
-	•	Manual confirmation after broker execution
+### Purpose
+- Manual confirmation after broker execution
 
-Request
+### Request
+```json
 {
   "ticker": "AAPL",
   "exit_price": 174.05,
   "exit_date": "2026-01-22"
 }
-
-Response
+```
+### Response
+```json
 {
   "ticker": "AAPL",
   "net_proceeds": 8702.50,
   "realized_pnl": -412.50,
   "new_cash_balance": 12890.25
 }
-
+```
 ## 7. Trade History
 
 ### GET /trades
