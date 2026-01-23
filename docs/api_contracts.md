@@ -34,11 +34,12 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
 ## Response Conventions
 
 ### Success
+```json
 {
   "status": "ok",
   "data": { }
 }
-
+```
 ### Error
 {
   "status": "error",
