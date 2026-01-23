@@ -56,7 +56,7 @@ This document describes the data structures used in the **Position Manager Web A
 ## 3. Trade History Object
 
 | Field        | Type   | Description                                   |
-| ------------ | ------ | --------------------------------------------- |
+| :----------- | :----- | :-------------------------------------------- |
 | ticker       | string | Ticker symbol of the traded position          |
 | entry_date   | string | Position entry date                           |
 | exit_date    | string | Position exit date                            |
