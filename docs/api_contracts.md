@@ -45,7 +45,7 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
   "message": "Human-readable explanation"
 }
 
-1. Dashboard
+# 1. Dashboard
 
 GET /dashboard
 
