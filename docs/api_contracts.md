@@ -45,9 +45,9 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
   "message": "Human-readable explanation"
 }
 
-# 1. Dashboard
+## 1. Dashboard
 
-GET /dashboard
+### GET /dashboard
 
 Purpose
 	•	Daily snapshot
@@ -76,9 +76,9 @@ Response
   }
 }
 
-2. Portfolio Overview
+## 2. Portfolio Overview
 
-GET /portfolio
+### GET /portfolio
 
 Purpose
 	•	Primary working screen
@@ -113,9 +113,9 @@ Allowed status values
 	•	EXIT
 
 
-3. Add Position (Manual Entry)
+## 3. Add Position (Manual Entry)
 
-POST /portfolio/position
+### POST /portfolio/position
 
 Purpose
 	•	Manual sync with broker executions
@@ -142,9 +142,9 @@ Response
   "remaining_cash": 5859.04
 }
 
-4. Position Detail
+## 4. Position Detail
 
-GET /positions/{ticker}
+### GET /positions/{ticker}
 
 Purpose
 	•	Explain why a position is being held or exited
@@ -169,9 +169,9 @@ Response
   "risk_status": "RISK_ON"
 }
 
-5. Daily Analysis (Core Engine)
+## 5. Daily Analysis (Core Engine)
 
-GET /positions/analyze
+### GET /positions/analyze
 
 Purpose
 	•	Runs full daily monitoring logic
@@ -207,9 +207,9 @@ Response
   ]
 }
 
-6. Confirm Exit Execution
+## 6. Confirm Exit Execution
 
-POST /positions/exit-confirm
+### POST /positions/exit-confirm
 
 Purpose
 	•	Manual confirmation after broker execution
@@ -229,9 +229,9 @@ Response
   "new_cash_balance": 12890.25
 }
 
-7. Trade History
+## 7. Trade History
 
-GET /trades
+### GET /trades
 
 Purpose
 	•	Performance review
