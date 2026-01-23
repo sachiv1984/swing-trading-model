@@ -52,3 +52,5 @@ This document describes the data structures used in the **Position Manager Web A
 | holding_days  | int    | Days since entry                          |
 | pnl           | float  | Current profit/loss in absolute terms     |
 | pnl_pct       | float  | Current profit/loss in percentage         |
+
+## 3. Trade History Object
