@@ -54,6 +54,7 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
 	•	First screen after login
 
 Response
+```json
 {
   "portfolio_value": 24500.75,
   "cash": 8200.00,
