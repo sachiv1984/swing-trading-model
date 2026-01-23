@@ -41,33 +41,14 @@ This document describes the data structures used in the **Position Manager Web A
 ```
 ## 2. Position Object
 
-Field
-Type
-Description
-entry_date
-string
-Date the position was opened (YYYY-MM-DD)
-entry_price
-float
-Price at which the position was entered
-shares
-int
-Number of shares held
-initial_stop
-float
-Initial stop-loss value
-current_stop
-float
-Current trailing stop-loss value
-current_price
-float
-Latest market price
-holding_days
-int
-Days since entry
-pnl
-float
-Current profit/loss in absolute terms
-pnl_pct
-float
-Current profit/loss in percentage
+| ### Field         | ### Type   | ### Description                               |
+| ------------- | ------ | ----------------------------------------- |
+| entry_date    | string | Date the position was opened (YYYY-MM-DD) |
+| entry_price   | float  | Price at which the position was entered   |
+| shares        | int    | Number of shares held                     |
+| initial_stop  | float  | Initial stop-loss value                   |
+| current_stop  | float  | Current trailing stop-loss value          |
+| current_price | float  | Latest market price                       |
+| holding_days  | int    | Days since entry                          |
+| pnl           | float  | Current profit/loss in absolute terms     |
+| pnl_pct       | float  | Current profit/loss in percentage         |
