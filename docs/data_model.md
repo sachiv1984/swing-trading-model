@@ -54,3 +54,16 @@ This document describes the data structures used in the **Position Manager Web A
 | pnl_pct       | float  | Current profit/loss in percentage         |
 
 ## 3. Trade History Object
+
+| Field        | Type   | Description                                   |
+| ------------ | ------ | --------------------------------------------- |
+| ticker       | string | Ticker symbol of the traded position          |
+| entry_date   | string | Position entry date                           |
+| exit_date    | string | Position exit date                            |
+| entry_price  | float  | Entry price                                   |
+| exit_price   | float  | Exit price                                    |
+| shares       | int    | Number of shares sold                         |
+| pnl          | float  | Profit/loss in absolute terms                 |
+| pnl_pct      | float  | Profit/loss in percentage                     |
+| holding_days | int    | Number of days the position was held          |
+| exit_reason  | string | Reason for exit (stop-loss, risk-off, manual) |
