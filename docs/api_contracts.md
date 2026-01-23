@@ -110,11 +110,11 @@ Response
   ]
 }
 ```
-Allowed status values
-	•	GRACE
-	•	PROFITABLE
-	•	LOSING
-	•	EXIT
+### Allowed status values
+- GRACE
+- PROFITABLE
+- LOSING
+- EXIT
 
 
 ## 3. Add Position (Manual Entry)
