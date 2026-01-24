@@ -1,0 +1,401 @@
+openapi: 3.0.3
+info:
+  title: Momentum Trading Assistant API
+  description: |
+    API for the Momentum Trading Assistant web application.
+    Decision-support tool only (not a trading bot).  
+    Strategy logic is deterministic and server-side.
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com
+    description: Production server (placeholder)
+
+paths:
+  /dashboard:
+    get:
+      summary: Get daily portfolio dashboard snapshot
+      responses:
+        "200":
+          description: Dashboard snapshot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  portfolio_value:
+                    type: number
+                    format: float
+                  cash:
+                    type: number
+                    format: float
+                  cash_pct:
+                    type: number
+                    format: float
+                  positions_value:
+                    type: number
+                    format: float
+                  open_positions:
+                    type: integer
+                  exit_alerts:
+                    type: integer
+                  market_status:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                        format: date
+                      spy:
+                        type: object
+                        properties:
+                          risk_on:
+                            type: boolean
+                          price:
+                            type: number
+                            format: float
+                          ma200:
+                            type: number
+                            format: float
+                      ftse:
+                        type: object
+                        properties:
+                          risk_on:
+                            type: boolean
+                          price:
+                            type: number
+                            format: float
+                          ma200:
+                            type: number
+                            format: float
+
+  /portfolio:
+    get:
+      summary: Get portfolio overview
+      responses:
+        "200":
+          description: Portfolio overview
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cash:
+                    type: number
+                    format: float
+                  last_updated:
+                    type: string
+                    format: date-time
+                  positions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker:
+                          type: string
+                        market:
+                          type: string
+                        entry_date:
+                          type: string
+                          format: date
+                        entry_price:
+                          type: number
+                          format: float
+                        shares:
+                          type: number
+                        current_price:
+                          type: number
+                          format: float
+                        current_value:
+                          type: number
+                          format: float
+                        pnl:
+                          type: number
+                          format: float
+                        pnl_pct:
+                          type: number
+                          format: float
+                        current_stop:
+                          type: number
+                          format: float
+                        holding_days:
+                          type: integer
+                        status:
+                          type: string
+                          enum: [GRACE, PROFITABLE, LOSING, EXIT]
+
+  /portfolio/position:
+    post:
+      summary: Add a position (manual entry)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticker:
+                  type: string
+                entry_date:
+                  type: string
+                  format: date
+                shares:
+                  type: integer
+                fill_price:
+                  type: number
+                  format: float
+                fill_currency:
+                  type: string
+                fx_rate:
+                  type: number
+                  format: float
+                  nullable: true
+                atr:
+                  type: number
+                  format: float
+                custom_stop:
+                  type: number
+                  format: float
+                  nullable: true
+              required:
+                - ticker
+                - entry_date
+                - shares
+                - fill_price
+                - fill_currency
+      responses:
+        "200":
+          description: Position created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticker:
+                    type: string
+                  total_cost:
+                    type: number
+                    format: float
+                  fees_paid:
+                    type: number
+                    format: float
+                  entry_price:
+                    type: number
+                    format: float
+                  initial_stop:
+                    type: number
+                    format: float
+                  remaining_cash:
+                    type: number
+                    format: float
+
+  /positions/{ticker}:
+    get:
+      summary: Get detailed position information
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Position details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticker:
+                    type: string
+                  market:
+                    type: string
+                  entry_date:
+                    type: string
+                    format: date
+                  entry_price:
+                    type: number
+                    format: float
+                  shares:
+                    type: integer
+                  holding_days:
+                    type: integer
+                  current_price:
+                    type: number
+                    format: float
+                  atr:
+                    type: number
+                    format: float
+                  current_stop:
+                    type: number
+                    format: float
+                  stop_logic:
+                    type: object
+                    properties:
+                      atr_multiplier:
+                        type: number
+                      reason:
+                        type: string
+                  pnl:
+                    type: number
+                    format: float
+                  pnl_pct:
+                    type: number
+                    format: float
+                  risk_status:
+                    type: string
+                    enum: [RISK_ON, RISK_OFF]
+
+  /positions/analyze:
+    get:
+      summary: Run daily analysis
+      responses:
+        "200":
+          description: Analysis results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  analysis_date:
+                    type: string
+                    format: date
+                  summary:
+                    type: object
+                    properties:
+                      total_value:
+                        type: number
+                        format: float
+                      total_pnl:
+                        type: number
+                        format: float
+                      exit_count:
+                        type: integer
+                  actions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker:
+                          type: string
+                        action:
+                          type: string
+                          enum: [HOLD, EXIT]
+                        exit_reason:
+                          type: string
+                          nullable: true
+                        entry_price:
+                          type: number
+                          format: float
+                        current_price:
+                          type: number
+                          format: float
+                        shares:
+                          type: integer
+                        pnl:
+                          type: number
+                          format: float
+                        pnl_pct:
+                          type: number
+                          format: float
+                        current_stop:
+                          type: number
+                          format: float
+                        holding_days:
+                          type: integer
+                        stop_reason:
+                          type: string
+                          nullable: true
+
+  /positions/exit-confirm:
+    post:
+      summary: Confirm exit execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticker:
+                  type: string
+                exit_price:
+                  type: number
+                  format: float
+                exit_date:
+                  type: string
+                  format: date
+              required:
+                - ticker
+                - exit_price
+                - exit_date
+      responses:
+        "200":
+          description: Exit confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticker:
+                    type: string
+                  net_proceeds:
+                    type: number
+                    format: float
+                  realized_pnl:
+                    type: number
+                    format: float
+                  new_cash_balance:
+                    type: number
+                    format: float
+
+  /trades:
+    get:
+      summary: Get trade history
+      responses:
+        "200":
+          description: Trade history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_trades:
+                    type: integer
+                  win_rate:
+                    type: number
+                    format: float
+                  total_pnl:
+                    type: number
+                    format: float
+                  trades:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker:
+                          type: string
+                        entry_date:
+                          type: string
+                          format: date
+                        exit_date:
+                          type: string
+                          format: date
+                        pnl:
+                          type: number
+                          format: float
+                        pnl_pct:
+                          type: number
+                          format: float
+                        exit_reason:
+                          type: string
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        message:
+          type: string
