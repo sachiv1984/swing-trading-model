@@ -13,14 +13,14 @@ import {
   FileSpreadsheet,
   FileDown
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import PageHeader from "@/components/ui/PageHeader";
-import StatsCard from "@/components/ui/StatsCard";
-import PerformanceSummary from "@/components/reports/PerformanceSummary";
-import PortfolioGrowthChart from "@/components/reports/PortfolioGrowthChart";
-import TradeBreakdown from "@/components/reports/TradeBreakdown";
-import ExportModal from "@/components/reports/ExportModal";
+import { Button } from "../components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import PageHeader from "../components/ui/PageHeader";
+import StatsCard from "../components/ui/StatsCard";
+import PerformanceSummary from "../components/reports/PerformanceSummary";
+import PortfolioGrowthChart from "../components/reports/PortfolioGrowthChart";
+import TradeBreakdown from "../components/reports/TradeBreakdown";
+import ExportModal from "../components/reports/ExportModal";
 import { motion } from "framer-motion";
 
 export default function Reports() {
