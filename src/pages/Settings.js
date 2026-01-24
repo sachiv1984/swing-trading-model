@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import PageHeader from "../components/ui/PageHeader";
 import { Settings as SettingsIcon, Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 
 export default function Settings() {
   const queryClient = useQueryClient();
