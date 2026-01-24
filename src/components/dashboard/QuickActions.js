@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Plus, BarChart3, Play, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "../../utils";
 import { cn } from "../../lib/utils";
 
 export default function QuickActions({ onRunMonitor }) {
