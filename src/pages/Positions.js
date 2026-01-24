@@ -11,7 +11,7 @@ import { DataTable, TableHeader, TableHead, TableBody, TableRow, TableCell } fro
 import { cn } from "../lib/utils";
 import { differenceInDays } from "date-fns";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "../utils";
 
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
