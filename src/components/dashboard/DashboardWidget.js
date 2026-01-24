@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { GripVertical, X, Maximize2, Minimize2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function DashboardWidget({ 
