@@ -1,4 +1,8 @@
 {
+  "name": "swing-trading-model",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "https://sachiv1984.github.io/swing-trading-model",
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -28,7 +32,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
