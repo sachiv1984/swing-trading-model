@@ -1,4 +1,4 @@
-import { cn } from "../../lib";
+import { cn } from "../../lib/utils";
 
 export default function StatusBadge({ status, className }) {
   const statusConfig = {
