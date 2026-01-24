@@ -1,4 +1,4 @@
-import StatsCard from "../components/ui/StatsCard";
+import StatsCard from "../ui/StatsCard";
 import { Wallet, TrendingUp, Briefcase, PieChart, Award, Clock } from "lucide-react";
 
 export function PortfolioValueWidget({ portfolio, totalPositionsValue }) {
