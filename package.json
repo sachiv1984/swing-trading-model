@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
+    "@radix-ui/react-slot": "^1.2.4",
     "@tanstack/react-query": "^5.90.20",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.29.0",
@@ -17,7 +19,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19"
   },
-   "scripts": {
+  "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
