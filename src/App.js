@@ -15,12 +15,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout currentPageName="Dashboard"><Dashboard /></Layout>} />
-          <Route path="/positions" element={<Layout currentPageName="Positions"><Positions /></Layout>} />
-          <Route path="/trade-entry" element={<Layout currentPageName="TradeEntry"><TradeEntry /></Layout>} />
-          <Route path="/trade-history" element={<Layout currentPageName="TradeHistory"><TradeHistory /></Layout>} />
-          <Route path="/reports" element={<Layout currentPageName="Reports"><Reports /></Layout>} />
-          <Route path="/settings" element={<Layout currentPageName="Settings"><Settings /></Layout>} />
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="positions" element={<Positions />} />
+            <Route path="trade-entry" element={<TradeEntry />} />
+            <Route path="trade-history" element={<TradeHistory />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
