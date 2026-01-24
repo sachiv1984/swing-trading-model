@@ -183,4 +183,53 @@ export default function Reports() {
               subtitle={periodLabels[period]}
               icon={metrics.totalPnL >= 0 ? TrendingUp : TrendingDown}
               gradient={metrics.totalPnL >= 0 ? "emerald" : "rose"}
- 
+            />
+            <StatsCard
+              title="Win Rate"
+              value={`${metrics.winRate.toFixed(1)}%`}
+              subtitle={`${metrics.winningTrades}W / ${metrics.losingTrades}L`}
+              icon={PieChart}
+              gradient="cyan"
+            />
+            <StatsCard
+              title="Profit Factor"
+              value={metrics.profitFactor === Infinity ? "∞" : metrics.profitFactor.toFixed(2)}
+              subtitle="Risk/Reward"
+              icon={BarChart3}
+              gradient="violet"
+            />
+            <StatsCard
+              title="Total Trades"
+              value={metrics.totalTrades.toString()}
+              subtitle={`${metrics.openPositions} still open`}
+              icon={FileText}
+              gradient="fuchsia"
+            />
+          </div>
+
+          {/* Portfolio Growth Chart */}
+          <PortfolioGrowthChart 
+            positions={filteredPositions} 
+            period={period}
+            periodDates={periodDates}
+          />
+
+          {/* Performance Summary & Trade Breakdown */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <PerformanceSummary metrics={metrics} period={periodLabels[period]} />
+            <TradeBreakdown positions={filteredPositions} />
+          </div>
+        </>
+      )}
+
+      <ExportModal
+        open={exportModalOpen}
+        onClose={() => setExportModalOpen(false)}
+        positions={filteredPositions}
+        metrics={metrics}
+        period={periodLabels[period]}
+        portfolio={portfolio}
+      />
+    </div>
+  );
+}
