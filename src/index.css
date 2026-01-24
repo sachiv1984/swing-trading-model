@@ -2,14 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom scrollbar styles for dark theme */
+/* Base styles */
 @layer base {
-  * {
-    @apply border-border;
-  }
-  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-slate-950 text-white;
   }
 
   /* Custom scrollbar */
