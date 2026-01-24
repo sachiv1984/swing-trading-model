@@ -8,7 +8,7 @@ import PositionCard from "../components/positions/PositionCard";
 import PositionModal from "../components/positions/PositionModal";
 import ExitModal from "../components/positions/ExitModal";
 import { DataTable, TableHeader, TableHead, TableBody, TableRow, TableCell } from "../components/ui/DataTable";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 import { differenceInDays } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
