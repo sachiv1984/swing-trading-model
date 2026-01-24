@@ -183,4 +183,81 @@ export default function Settings() {
       >
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
- 
+            <div className="space-y-2">
+              <Label className="text-slate-400">UK Commission (£)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={formData.uk_commission}
+                onChange={(e) => handleChange("uk_commission", parseFloat(e.target.value))}
+                className="bg-slate-800/50 border-slate-700 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-400">US Commission ($)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={formData.us_commission}
+                onChange={(e) => handleChange("us_commission", parseFloat(e.target.value))}
+                className="bg-slate-800/50 border-slate-700 text-white"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-slate-400">UK Stamp Duty Rate</Label>
+            <Input
+              type="number"
+              step="0.001"
+              value={formData.stamp_duty_rate}
+              onChange={(e) => handleChange("stamp_duty_rate", parseFloat(e.target.value))}
+              className="bg-slate-800/50 border-slate-700 text-white"
+            />
+            <p className="text-xs text-slate-500">Default: 0.005 (0.5%)</p>
+          </div>
+        </div>
+      </SectionCard>
+
+      {/* Preferences */}
+      <SectionCard 
+        icon={Palette} 
+        title="Preferences" 
+        iconColor="bg-fuchsia-500/20 text-fuchsia-400"
+      >
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-slate-400">Default Currency</Label>
+            <Select
+              value={formData.default_currency}
+              onValueChange={(value) => handleChange("default_currency", value)}
+            >
+              <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectItem value="GBP">GBP (£)</SelectItem>
+                <SelectItem value="USD">USD ($)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label className="text-slate-400">Theme</Label>
+            <Select
+              value={formData.theme}
+              onValueChange={(value) => handleChange("theme", value)}
+            >
+              <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="light">Light</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </SectionCard>
+    </div>
+  );
+}
