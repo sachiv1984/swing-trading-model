@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Edit2, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
 
 export default function PositionCard({ position, onEdit, onExit }) {
