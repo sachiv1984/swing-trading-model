@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../api/base44Client";
 import { Loader2, Filter, TrendingUp, TrendingDown, Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import PageHeader from "@/components/ui/PageHeader";
-import StatsCard from "@/components/ui/StatsCard";
-import TradeHistoryTable from "@/components/trades/TradeHistoryTable";
-import PnLBarChart from "@/components/charts/PnLBarChart";
-import WinRateChart from "@/components/charts/WinRateChart";
+import { Button } from "../components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Input } from "../components/ui/input";
+import PageHeader from "../components/ui/PageHeader";
+import StatsCard from "../components/ui/StatsCard";
+import TradeHistoryTable from "../components/trades/TradeHistoryTable";
+import PnLBarChart from "../components/charts/PnLBarChart";
+import WinRateChart from "../components/charts/WinRateChart";
 import { motion } from "framer-motion";
 
 export default function TradeHistory() {
