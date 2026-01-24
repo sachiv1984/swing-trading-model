@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import { DataTable, TableHeader, TableHead, TableBody, TableRow, TableCell } from "@/components/ui/DataTable";
-import { cn } from "@/lib/utils";
+import { DataTable, TableHeader, TableHead, TableBody, TableRow, TableCell } from "../ui/DataTable";
+import { cn } from "../../lib/utils";
 
 export default function TradeHistoryTable({ trades }) {
   if (!trades || trades.length === 0) {
