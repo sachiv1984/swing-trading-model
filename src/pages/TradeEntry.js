@@ -216,4 +216,115 @@ export default function TradeEntry() {
             <div className="space-y-2">
               <Label className="text-slate-400">FX Rate (USD/GBP)</Label>
               <Input
- 
+                type="number"
+                step="0.0001"
+                value={formData.fx_rate}
+                onChange={(e) => handleChange("fx_rate", e.target.value)}
+                className="bg-slate-800/50 border-slate-700 text-white"
+              />
+            </div>
+          )}
+
+          {/* ATR */}
+          <div className="space-y-2">
+            <Label className="text-slate-400">ATR Value (Optional)</Label>
+            <Input
+              type="number"
+              step="0.01"
+              value={formData.atr_value}
+              onChange={(e) => handleChange("atr_value", e.target.value)}
+              placeholder="For stop calculation"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+            />
+            {formData.atr_value && costs.initialStop > 0 && (
+              <p className="text-xs text-slate-500">
+                Initial stop: <span className="text-rose-400">{costs.currencySymbol}{costs.initialStop.toFixed(2)}</span>
+                {" "}({currentSettings.atr_multiplier_initial}x ATR below entry)
+              </p>
+            )}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Cost Summary */}
+      {isFormValid && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-2 rounded-lg bg-cyan-500/20">
+              <Calculator className="w-5 h-5 text-cyan-400" />
+            </div>
+            <h3 className="font-semibold text-white">Cost Breakdown</h3>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">Gross Value</span>
+              <span className="text-white">
+                {costs.currencySymbol}{costs.grossValue.toFixed(2)}
+                {formData.market === "US" && (
+                  <span className="text-slate-500 ml-1">(£{costs.grossValueGBP.toFixed(2)})</span>
+                )}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">Commission</span>
+              <span className="text-white">£{costs.commission.toFixed(2)}</span>
+            </div>
+            {costs.stampDuty > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-400">Stamp Duty (0.5%)</span>
+                <span className="text-white">£{costs.stampDuty.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="pt-3 border-t border-slate-700">
+              <div className="flex justify-between">
+                <span className="font-medium text-white">Total Cost</span>
+                <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400">
+                  £{costs.totalCost.toFixed(2)}
+                </span>
+              </div>
+            </div>
+            {costs.initialStop > 0 && (
+              <div className="pt-3 border-t border-slate-700">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">Risk (to initial stop)</span>
+                  <span className="text-rose-400 font-medium">£{costs.totalRisk.toFixed(2)}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Submit Button */}
+      <div className="flex justify-end gap-3">
+        <Link to={createPageUrl("Positions")}>
+          <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-slate-800">
+            Cancel
+          </Button>
+        </Link>
+        <Button
+          onClick={handleSubmit}
+          disabled={!isFormValid || createMutation.isPending}
+          className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25 disabled:opacity-50"
+        >
+          {createMutation.isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Creating...
+            </>
+          ) : (
+            <>
+              <CheckCircle2 className="w-4 h-4 mr-2" />
+              Create Position
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
