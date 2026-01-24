@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../components/ui/dialog";
+import { Button } from "../components/ui/button";
 import { CheckCircle2, XCircle, Loader2, AlertTriangle } from "lucide-react";
-import StatusBadge from "@/components/ui/StatusBadge";
-import { cn } from "@/lib/utils";
+import StatusBadge from "../components/ui/StatusBadge";
+import { cn } from "../../lib/utils";
 
 export default function MonitorModal({ 
   open, 
