@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Activity, TrendingUp, TrendingDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 export default function RecentTradesWidget({ positions }) {
   const recentTrades = positions
