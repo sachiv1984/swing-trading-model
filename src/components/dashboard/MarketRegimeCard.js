@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Globe } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 export default function MarketRegimeCard({ market, status, index }) {
   const isRiskOn = status === "risk_on";
