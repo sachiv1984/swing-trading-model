@@ -3,15 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../api/base44Client";
 import { Loader2, Settings2, Plus, RotateCcw, Check } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-import PageHeader from "@/components/ui/PageHeader";
-import DashboardWidget from "@/components/dashboard/DashboardWidget";
-import WidgetLibrary from "@/components/dashboard/WidgetLibrary";
-import MonitorModal from "@/components/monitor/MonitorModal";
-import { useDashboardLayout } from "@/components/dashboard/useDashboardLayout";
+import PageHeader from "../components/ui/PageHeader";
+import DashboardWidget from "../components/dashboard/DashboardWidget";
+import WidgetLibrary from "../components/dashboard/WidgetLibrary";
+import MonitorModal from "../components/monitor/MonitorModal";
+import { useDashboardLayout } from "../components/dashboard/useDashboardLayout";
 
 // Widget components
 import { 
@@ -21,14 +21,14 @@ import {
   TotalPnLWidget,
   WinRateWidget,
   AvgHoldTimeWidget
-} from "@/components/dashboard/widgets/StatsWidgets";
-import PortfolioChart from "@/components/charts/PortfolioChart";
-import AllocationChart from "@/components/charts/AllocationChart";
-import PnLBarChart from "@/components/charts/PnLBarChart";
-import WinRateChart from "@/components/charts/WinRateChart";
-import MarketRegimeCard from "@/components/dashboard/MarketRegimeCard";
-import QuickActions from "@/components/dashboard/QuickActions";
-import RecentTradesWidget from "@/components/dashboard/widgets/RecentTradesWidget";
+} from "../components/dashboard/widgets/StatsWidgets";
+import PortfolioChart from "../components/charts/PortfolioChart";
+import AllocationChart from "../components/charts/AllocationChart";
+import PnLBarChart from "../components/charts/PnLBarChart";
+import WinRateChart from "../components/charts/WinRateChart";
+import MarketRegimeCard from "../components/dashboard/MarketRegimeCard";
+import QuickActions from "../components/dashboard/QuickActions";
+import RecentTradesWidget from "../components/dashboard/widgets/RecentTradesWidget";
 
 export default function Dashboard() {
   const [monitorOpen, setMonitorOpen] = useState(false);
