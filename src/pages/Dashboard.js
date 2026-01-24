@@ -5,7 +5,7 @@ import { Loader2, Settings2, Plus, RotateCcw, Check } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "../components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 
 import PageHeader from "../components/ui/PageHeader";
 import DashboardWidget from "../components/dashboard/DashboardWidget";
