@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { cn } from "../../lib";
+import { cn } from "../../lib/utils";
 
 export default function StatsCard({ 
   title, 
