@@ -13,7 +13,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename="/swing-trading-model">
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
