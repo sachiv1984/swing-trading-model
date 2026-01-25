@@ -1,52 +1,76 @@
-// Mock API client to replace Base44
-const createMockEntity = (entityName) => {
-  const storageKey = `${entityName.toLowerCase()}_data`;
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
+const handleResponse = async (response) => {
+  const data = await response.json();
   
-  return {
-    list: async (sortField) => {
-      const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      return data;
-    },
-    
-    filter: async (conditions, sortField) => {
-      const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      return data.filter(item => {
-        return Object.entries(conditions).every(([key, value]) => item[key] === value);
-      });
-    },
-    
-    create: async (newData) => {
-      const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      const item = { ...newData, id: Date.now().toString() };
-      data.push(item);
-      localStorage.setItem(storageKey, JSON.stringify(data));
-      return item;
-    },
-    
-    update: async (id, updates) => {
-      const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      const index = data.findIndex(item => item.id === id);
-      if (index !== -1) {
-        data[index] = { ...data[index], ...updates };
-        localStorage.setItem(storageKey, JSON.stringify(data));
-      }
-      return data[index];
-    },
-    
-    delete: async (id) => {
-      const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      const filtered = data.filter(item => item.id !== id);
-      localStorage.setItem(storageKey, JSON.stringify(filtered));
-      return { success: true };
-    }
-  };
+  if (data.status === 'error') {
+    throw new Error(data.message);
+  }
+  
+  return data.data;
 };
 
+export const api = {
+  dashboard: {
+    get: async () => {
+      const response = await fetch(`${API_BASE_URL}/dashboard`);
+      return handleResponse(response);
+    }
+  },
+  
+  portfolio: {
+    get: async () => {
+      const response = await fetch(`${API_BASE_URL}/portfolio`);
+      return handleResponse(response);
+    },
+    
+    addPosition: async (positionData) => {
+      const response = await fetch(`${API_BASE_URL}/portfolio/position`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(positionData)
+      });
+      return handleResponse(response);
+    }
+  },
+  
+  positions: {
+    analyze: async () => {
+      const response = await fetch(`${API_BASE_URL}/positions/analyze`);
+      return handleResponse(response);
+    }
+  },
+  
+  trades: {
+    list: async () => {
+      const response = await fetch(`${API_BASE_URL}/trades`);
+      return handleResponse(response);
+    }
+  }
+};
+
+// Keep compatibility with old base44 structure
 export const base44 = {
   entities: {
-    Position: createMockEntity('Position'),
-    Portfolio: createMockEntity('Portfolio'),
-    Settings: createMockEntity('Settings'),
-    MarketRegime: createMockEntity('MarketRegime'),
+    Portfolio: {
+      list: () => api.portfolio.get().then(data => [{ ...data }])
+    },
+    Position: {
+      list: () => api.portfolio.get().then(data => data.positions),
+      filter: (conditions) => api.portfolio.get().then(data => 
+        data.positions.filter(p => 
+          Object.entries(conditions).every(([key, value]) => p[key] === value)
+        )
+      )
+    },
+    Settings: {
+      list: () => Promise.resolve([])
+    },
+    MarketRegime: {
+      list: () => api.dashboard.get().then(data => [
+        { market: 'US', status: data.market_status.spy.risk_on ? 'risk_on' : 'risk_off' },
+        { market: 'UK', status: data.market_status.ftse.risk_on ? 'risk_on' : 'risk_off' }
+      ])
+    }
   }
 };
