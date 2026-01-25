@@ -1,0 +1,4 @@
+Strategy,CAGR %,Volatility %,Sharpe,Sortino,Calmar,Max DD %,Final Value (£)
+Full Period (2018-2026),26.38,20.5,1.29,2.22,1.04,-25.38,137365.0
+In-Sample (2018-2022),9.89,14.46,0.68,1.09,0.69,-14.43,32393.0
+Out-of-Sample (2023-2026),50.86,25.17,2.02,3.58,2.0,-25.38,72111.0
