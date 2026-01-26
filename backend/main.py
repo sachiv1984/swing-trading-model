@@ -135,25 +135,18 @@ def add_position_endpoint(request: AddPositionRequest):
 
         portfolio_id = str(portfolio['id'])
 
-        # Use market directly (UK vs US)
+        # Market is sent from frontend
         is_uk = request.market == "UK"
 
-        # -------------------------------
-        # Calculate fees and total cost
-        # -------------------------------
-        # fees are already provided by frontend
+        # Fees are sent from frontend
         fees_paid = round(request.fees or 0, 2)
 
+        # Total cost based on entry price + fees
         total_cost = round((request.entry_price * request.shares) + fees_paid, 2)
 
-        # -------------------------------
-        # Initial stop (manual stop_price)
-        # -------------------------------
+        # Stop price from frontend
         initial_stop = request.stop_price if request.stop_price else None
 
-        # -------------------------------
-        # Build position data
-        # -------------------------------
         position_data = {
             "ticker": request.ticker,
             "market": request.market,
