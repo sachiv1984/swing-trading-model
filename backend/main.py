@@ -189,7 +189,8 @@ def get_positions_endpoint():
                 "pnl": round(pnl, 2),
                 "pnl_percent": round(pnl_pct, 2),  # Changed from pnl_pct
                 "holding_days": holding_days,
-                "status": display_status,
+                "status": "open",  # Frontend expects "open" for all open positions
+                "display_status": display_status,  # Keep GRACE/PROFITABLE/LOSING as separate field
                 "atr_value": pos.get('atr', 0),
                 "fx_rate": pos.get('fx_rate', 1.0)
             })
