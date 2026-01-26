@@ -93,20 +93,26 @@ def get_portfolio_endpoint():
                 status = "LOSING"
             
             positions_list.append({
-                "id": str(pos['id']),
-                "ticker": pos['ticker'],
-                "market": pos['market'],
-                "entry_date": str(pos['entry_date']),
-                "entry_price": round(pos.get('entry_price') or 0, 2),
-                "shares": pos.get('shares') or 0,
-                "current_price": round(current_price or 0, 2),
-                "current_value": round(current_value or 0, 2),
-                "pnl": round(pnl or 0, 2),
-                "pnl_pct": round(pnl_pct or 0, 2),
-                "current_stop": round(pos.get('current_stop') or 0, 2),
-                "holding_days": holding_days or 0,
-                "status": status
-        })
+    "id": str(pos['id']),
+    "ticker": pos['ticker'],
+    "market": pos['market'],
+    "entry_date": str(pos['entry_date']),
+    "entry_price": round(pos['entry_price'], 2),
+    "shares": pos['shares'],
+    "current_price": round(current_price, 2),
+    "current_value": round(current_value, 2),
+
+    "pnl": round(pnl, 2),
+    "pnl_pct": round(pnl_pct, 2),
+
+    # 👇 NEW fields for frontend compatibility
+    "stop_price": round(pos.get('current_stop', 0), 2),
+    "pnl_percent": round(pnl_pct, 2),
+
+    "current_stop": round(pos.get('current_stop', 0), 2),
+    "holding_days": holding_days,
+    "status": status
+})
         
         cash = float(portfolio['cash'])
         total_value = cash + total_positions_value
