@@ -62,12 +62,26 @@ export const base44 = {
         // Now uses the new /positions endpoint
         return api.positions.list();
       },
-      filter: async (conditions) => {
+      filter: async (conditions, orderBy) => {
         // Now uses the new /positions endpoint
         const positions = await api.positions.list();
-        return positions.filter(p => 
+        let filtered = positions.filter(p => 
           Object.entries(conditions).every(([key, value]) => p[key] === value)
         );
+        
+        // Handle sorting if orderBy is provided
+        if (orderBy) {
+          const isDescending = orderBy.startsWith('-');
+          const field = isDescending ? orderBy.slice(1) : orderBy;
+          filtered.sort((a, b) => {
+            const aVal = a[field];
+            const bVal = b[field];
+            const comparison = aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+            return isDescending ? -comparison : comparison;
+          });
+        }
+        
+        return filtered;
       },
       create: async (positionData) => {
         return api.portfolio.addPosition(positionData);
