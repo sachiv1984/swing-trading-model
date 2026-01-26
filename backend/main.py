@@ -98,17 +98,12 @@ def get_portfolio_endpoint():
                 "status": status
             })
         
-        cash_balance = float(portfolio['cash'])
-        total_positions_value = sum(p.get("current_value", 0) for p in positions_list)
-        total_value = cash_balance + total_positions_value
-        
         return {
             "status": "ok",
             "data": {
-                "cash_balance": cash_balance,
+                "cash": float(portfolio['cash']),
                 "last_updated": str(portfolio['last_updated']),
-                "positions": positions_list,
-                "total_value": round(total_value, 2)
+                "positions": positions_list
             }
         }
     except Exception as e:
