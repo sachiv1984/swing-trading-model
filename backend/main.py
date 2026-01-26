@@ -34,13 +34,19 @@ app.add_middleware(
 # Request models
 class AddPositionRequest(BaseModel):
     ticker: str
+    market: str
     entry_date: str
-    shares: int
-    fill_price: float
-    fill_currency: str
+    shares: float
+    entry_price: float
+
+    current_price: Optional[float] = None
     fx_rate: Optional[float] = None
-    atr: float
-    custom_stop: Optional[float] = None
+    atr_value: Optional[float] = None
+
+    stop_price: Optional[float] = None
+    fees: Optional[float] = None
+
+    status: Optional[str] = "open"
 
 # Helper to convert Decimal to float
 def decimal_to_float(obj):
