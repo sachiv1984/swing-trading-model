@@ -148,27 +148,31 @@ def add_position_endpoint(request: AddPositionRequest):
         initial_stop = request.stop_price if request.stop_price else None
 
         position_data = {
-            "ticker": request.ticker,
-            "market": request.market,
-            "entry_date": request.entry_date,
-            "entry_price": round(request.entry_price, 4),
+    "ticker": request.ticker,
+    "market": request.market,
+    "entry_date": request.entry_date,
+    "entry_price": round(request.entry_price, 4),
 
-            "shares": request.shares,
-            "current_price": round(request.current_price or request.entry_price, 4),
+    "shares": request.shares,
+    "current_price": round(request.current_price or request.entry_price, 4),
 
-            "fx_rate": request.fx_rate,
-            "atr_value": request.atr_value,
-            "stop_price": request.stop_price,
+    "fx_rate": request.fx_rate,
+    "atr_value": request.atr_value,
 
-            "fees_paid": fees_paid,
-            "total_cost": total_cost,
-            "fee_type": "manual",
+    "stop_price": request.stop_price,
+    "current_stop": request.stop_price,   # <-- Correctly set current stop
 
-            "status": request.status or "open",
-            "holding_days": 0,
-            "pnl": 0,
-            "pnl_pct": 0
-        }
+    "fees_paid": round(request.fees or 0, 2),
+
+    # BONUS FIX: total_cost should be based on entry_price already provided by frontend
+    "total_cost": round((request.fees or 0) + (request.entry_price * request.shares), 2),
+
+    "fee_type": "manual",
+    "status": request.status or "open",
+    "holding_days": 0,
+    "pnl": 0,
+    "pnl_pct": 0
+}
 
         new_position = create_position(portfolio_id, position_data)
 
