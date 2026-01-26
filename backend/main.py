@@ -6,6 +6,7 @@ from datetime import datetime
 from decimal import Decimal
 import yfinance as yf
 from datetime import timedelta
+import time
 
 from database import (
     get_portfolio,
@@ -57,14 +58,40 @@ def decimal_to_float(obj):
 
 
 def get_current_price(ticker: str) -> float:
-    """Fetch current price from yfinance"""
+    """Fetch current price from yfinance with improved error handling"""
     try:
+        # Add a small delay to avoid rate limiting
+        time.sleep(0.1)
+        
         stock = yf.Ticker(ticker)
-        hist = stock.history(period="1d")
-        if not hist.empty:
-            return float(hist['Close'].iloc[-1])
+        
+        # Method 1: Recent history (most reliable)
+        hist = stock.history(period="5d")
+        if not hist.empty and 'Close' in hist.columns:
+            price = float(hist['Close'].iloc[-1])
+            print(f"✓ {ticker}: ${price:.2f} (from history)")
+            return price
+        
+        # Method 2: Info dict
+        try:
+            info = stock.info
+            if 'currentPrice' in info and info['currentPrice']:
+                price = float(info['currentPrice'])
+                print(f"✓ {ticker}: ${price:.2f} (from currentPrice)")
+                return price
+            
+            if 'regularMarketPrice' in info and info['regularMarketPrice']:
+                price = float(info['regularMarketPrice'])
+                print(f"✓ {ticker}: ${price:.2f} (from regularMarketPrice)")
+                return price
+        except:
+            pass
+        
+        print(f"⚠️  {ticker}: No price found")
         return None
-    except:
+        
+    except Exception as e:
+        print(f"❌ {ticker}: Error - {str(e)}")
         return None
 
 
@@ -101,7 +128,8 @@ def check_market_regime():
             'ftse_price': ftse_current,
             'ftse_ma200': ftse_ma200
         }
-    except:
+    except Exception as e:
+        print(f"❌ Market regime check failed: {e}")
         return {
             'spy_risk_on': True,
             'ftse_risk_on': True,
@@ -194,6 +222,12 @@ def add_position_endpoint(request: AddPositionRequest):
         # Calculate fees and costs
         is_uk = request.fill_currency == "GBP"
         
+        # Auto-append .L for UK stocks
+        ticker = request.ticker.upper().strip()
+        if is_uk and not ticker.endswith('.L'):
+            ticker = f"{ticker}.L"
+            print(f"✓ Auto-appended .L to UK ticker: {ticker}")
+        
         if is_uk:
             stamp_duty_rate = 0.005
             gross_cost = request.shares * request.fill_price
@@ -214,9 +248,9 @@ def add_position_endpoint(request: AddPositionRequest):
         # Calculate initial stop
         initial_stop = request.custom_stop if request.custom_stop else (entry_price - (5 * request.atr))
         
-        # Create position
+        # Create position with the modified ticker
         position_data = {
-            'ticker': request.ticker,
+            'ticker': ticker,  # This now has .L for UK stocks
             'market': market,
             'entry_date': request.entry_date,
             'entry_price': round(entry_price, 4),
@@ -245,7 +279,7 @@ def add_position_endpoint(request: AddPositionRequest):
         return {
             "status": "ok",
             "data": {
-                "ticker": request.ticker,
+                "ticker": ticker,
                 "total_cost": round(total_cost, 2),
                 "fees_paid": round(fees_paid, 2),
                 "entry_price": round(entry_price, 4),
@@ -261,6 +295,10 @@ def add_position_endpoint(request: AddPositionRequest):
 def analyze_positions_endpoint():
     """Run daily position analysis with live prices and market regime"""
     try:
+        print("\n" + "="*70)
+        print("🔍 STARTING POSITION ANALYSIS")
+        print("="*70)
+        
         portfolio = get_portfolio()
         if not portfolio:
             raise HTTPException(status_code=404, detail="Portfolio not found")
@@ -269,6 +307,7 @@ def analyze_positions_endpoint():
         positions = get_positions(portfolio_id, status='open')
         
         if not positions:
+            print("✓ No open positions to analyze")
             return {
                 "status": "ok",
                 "data": {
@@ -283,21 +322,41 @@ def analyze_positions_endpoint():
             }
         
         # Get market regime
+        print("\n📊 Checking market regime...")
         market_regime = check_market_regime()
+        print(f"   SPY: {'🟢 Risk On' if market_regime['spy_risk_on'] else '🔴 Risk Off'}")
+        print(f"   FTSE: {'🟢 Risk On' if market_regime['ftse_risk_on'] else '🔴 Risk Off'}")
         
         actions = []
         total_value = 0
         total_pnl = 0
         
+        print(f"\n💼 Analyzing {len(positions)} position(s)...")
+        
         for pos in positions:
             pos = decimal_to_float(pos)
             
-            # Get live price
+            print(f"\n{'='*70}")
+            print(f"📈 Analyzing: {pos['ticker']} ({pos['market']})")
+            print(f"{'='*70}")
+            
+            # Get live price with detailed logging
+            print(f"   🔍 Fetching live price from yfinance...")
             live_price = get_current_price(pos['ticker'])
-            current_price = live_price if live_price else pos.get('current_price', pos['entry_price'])
+            
+            entry_price = pos['entry_price']
+            
+            if live_price:
+                print(f"   ✓ Live price: ${live_price:.2f}")
+                print(f"   Entry price: ${entry_price:.2f}")
+                print(f"   Change: {((live_price - entry_price) / entry_price * 100):+.2f}%")
+                current_price = live_price
+            else:
+                print(f"   ⚠️  Failed to fetch live price")
+                print(f"   Using stored price: ${pos.get('current_price', entry_price):.2f}")
+                current_price = pos.get('current_price', entry_price)
             
             # Calculate metrics
-            entry_price = pos['entry_price']
             shares = pos['shares']
             current_value = current_price * shares
             pnl = (current_price - entry_price) * shares
@@ -310,6 +369,10 @@ def analyze_positions_endpoint():
             entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
             holding_days = (datetime.now() - entry_date).days
             
+            print(f"   Holdings: {shares} shares = ${current_value:.2f}")
+            print(f"   P&L: ${pnl:+.2f} ({pnl_pct:+.2f}%)")
+            print(f"   Days held: {holding_days}")
+            
             # Determine action
             action = "HOLD"
             exit_reason = None
@@ -321,6 +384,7 @@ def analyze_positions_endpoint():
             
             if grace_period:
                 stop_reason = f"Grace period ({holding_days}/10 days)"
+                print(f"   🆕 Grace period active - no stop loss")
             else:
                 # Check market regime
                 is_uk = pos['market'] == 'UK'
@@ -330,17 +394,22 @@ def analyze_positions_endpoint():
                     action = "EXIT"
                     exit_reason = "Risk-Off Signal"
                     stop_reason = "Market risk-off"
+                    print(f"   🔴 EXIT: Market risk-off")
                 elif current_price <= current_stop:
                     action = "EXIT"
                     exit_reason = "Stop Loss Hit"
                     stop_reason = "Stop triggered"
+                    print(f"   🔴 EXIT: Stop loss hit (${current_stop:.2f})")
                 elif pnl > 0:
                     stop_reason = "Profitable (tight 2x ATR)"
+                    print(f"   ✅ HOLD: Profitable, tight stop")
                 else:
                     stop_reason = "At loss (wide 5x ATR)"
+                    print(f"   ✅ HOLD: At loss, wide stop")
             
             # Update position in database if we have new price
             if live_price and live_price != pos.get('current_price'):
+                print(f"   💾 Updating position with new price...")
                 update_position(str(pos['id']), {
                     'current_price': round(current_price, 4),
                     'holding_days': holding_days,
@@ -350,6 +419,7 @@ def analyze_positions_endpoint():
             
             actions.append({
                 "ticker": pos['ticker'],
+                "market": pos['market'],
                 "action": action,
                 "exit_reason": exit_reason,
                 "entry_price": round(entry_price, 2),
@@ -365,6 +435,14 @@ def analyze_positions_endpoint():
         
         exit_count = len([a for a in actions if a['action'] == 'EXIT'])
         
+        print(f"\n{'='*70}")
+        print(f"📊 ANALYSIS COMPLETE")
+        print(f"{'='*70}")
+        print(f"Total Value: ${total_value:.2f}")
+        print(f"Total P&L: ${total_pnl:+.2f}")
+        print(f"Exit Signals: {exit_count}")
+        print("="*70 + "\n")
+        
         return {
             "status": "ok",
             "data": {
@@ -379,6 +457,9 @@ def analyze_positions_endpoint():
             }
         }
     except Exception as e:
+        print(f"\n❌ ANALYSIS FAILED: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return {"status": "error", "message": str(e)}
 
 
