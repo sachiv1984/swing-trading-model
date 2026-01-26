@@ -23,6 +23,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://sachiv1984.github.io",
+        "https://trading-assistant-api-c0f9.onrender.com"
         "http://localhost:3000"
     ],
     allow_credentials=True,
