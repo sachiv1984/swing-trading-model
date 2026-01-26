@@ -3,67 +3,77 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-import json
-import os
+from decimal import Decimal
 
-# Set up paths
-BASE_DIR = os.path.dirname(__file__)
-PORTFOLIO_FILE = os.path.join(BASE_DIR, "current_portfolio.json")
+from database import (
+    get_portfolio,
+    update_portfolio_cash,
+    get_positions,
+    create_position,
+    update_position,
+    delete_position,
+    get_trade_history,
+    create_trade_history
+)
 
 app = FastAPI(title="Trading Assistant API")
 
-# CORS - allow your GitHub Pages site
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://sachiv1984.github.io",
-        "http://localhost:3000"  # for local testing
+        "http://localhost:3000"
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Helper functions
-def load_portfolio():
-    if not os.path.exists(PORTFOLIO_FILE):
-        # Create default portfolio
-        default = {
-            "cash": 20000.0,
-            "positions": {},
-            "trade_history": [],
-            "created_date": datetime.now().strftime("%Y-%m-%d"),
-            "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }
-        save_portfolio(default)
-        return default
-    
-    with open(PORTFOLIO_FILE, 'r') as f:
-        return json.load(f)
+# Request models
+class AddPositionRequest(BaseModel):
+    ticker: str
+    entry_date: str
+    shares: int
+    fill_price: float
+    fill_currency: str
+    fx_rate: Optional[float] = None
+    atr: float
+    custom_stop: Optional[float] = None
 
-def save_portfolio(portfolio):
-    with open(PORTFOLIO_FILE, 'w') as f:
-        json.dump(portfolio, f, indent=2)
+# Helper to convert Decimal to float
+def decimal_to_float(obj):
+    if isinstance(obj, dict):
+        return {k: decimal_to_float(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [decimal_to_float(item) for item in obj]
+    elif isinstance(obj, Decimal):
+        return float(obj)
+    return obj
 
-# Endpoints
 @app.get("/")
 def root():
     return {"status": "ok", "message": "Trading Assistant API v1.0"}
 
 @app.get("/portfolio")
-def get_portfolio():
+def get_portfolio_endpoint():
     try:
-        portfolio = load_portfolio()
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        positions = get_positions(portfolio_id, status='open')
         
         positions_list = []
-        for ticker, pos in portfolio['positions'].items():
+        for pos in positions:
+            pos = decimal_to_float(pos)
             current_price = pos.get('current_price', pos['entry_price'])
             current_value = current_price * pos['shares']
             pnl = pos.get('pnl', 0)
             pnl_pct = pos.get('pnl_pct', 0)
             holding_days = pos.get('holding_days', 0)
             
-            # Determine status
             if holding_days < 10:
                 status = "GRACE"
             elif pnl > 0:
@@ -72,9 +82,10 @@ def get_portfolio():
                 status = "LOSING"
             
             positions_list.append({
-                "ticker": ticker,
-                "market": pos.get('market', 'UK' if ticker.endswith('.L') else 'US'),
-                "entry_date": pos['entry_date'],
+                "id": str(pos['id']),
+                "ticker": pos['ticker'],
+                "market": pos['market'],
+                "entry_date": str(pos['entry_date']),
                 "entry_price": round(pos['entry_price'], 2),
                 "shares": pos['shares'],
                 "current_price": round(current_price, 2),
@@ -89,19 +100,98 @@ def get_portfolio():
         return {
             "status": "ok",
             "data": {
-                "cash": round(portfolio['cash'], 2),
-                "last_updated": portfolio.get('last_updated', ''),
+                "cash": float(portfolio['cash']),
+                "last_updated": str(portfolio['last_updated']),
                 "positions": positions_list
             }
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-@app.get("/trades")
-def get_trades():
+@app.post("/portfolio/position")
+def add_position_endpoint(request: AddPositionRequest):
     try:
-        portfolio = load_portfolio()
-        trades = portfolio.get('trade_history', [])
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        
+        # Calculate fees and costs
+        is_uk = request.fill_currency == "GBP"
+        
+        if is_uk:
+            stamp_duty_rate = 0.005
+            gross_cost = request.shares * request.fill_price
+            fees_paid = gross_cost * stamp_duty_rate
+            total_cost = gross_cost + fees_paid
+            entry_price = total_cost / request.shares
+            market = "UK"
+        else:
+            trading_fee_rate = 0.0015
+            fx_rate = request.fx_rate or 1.28
+            fill_price_gbp = request.fill_price / fx_rate
+            gross_cost = request.shares * fill_price_gbp
+            fees_paid = gross_cost * trading_fee_rate
+            total_cost = gross_cost + fees_paid
+            entry_price = total_cost / request.shares
+            market = "US"
+        
+        # Calculate initial stop
+        initial_stop = request.custom_stop if request.custom_stop else (entry_price - (5 * request.atr))
+        
+        # Create position
+        position_data = {
+            'ticker': request.ticker,
+            'market': market,
+            'entry_date': request.entry_date,
+            'entry_price': round(entry_price, 4),
+            'fill_price': request.fill_price,
+            'fill_currency': request.fill_currency,
+            'fx_rate': request.fx_rate,
+            'shares': request.shares,
+            'total_cost': round(total_cost, 2),
+            'fees_paid': round(fees_paid, 2),
+            'fee_type': 'stamp_duty' if is_uk else 'trading_fee',
+            'initial_stop': round(initial_stop, 2),
+            'current_stop': round(initial_stop, 2),
+            'current_price': round(entry_price, 4),
+            'holding_days': 0,
+            'pnl': 0.0,
+            'pnl_pct': 0.0,
+            'status': 'open'
+        }
+        
+        new_position = create_position(portfolio_id, position_data)
+        
+        # Update cash
+        new_cash = float(portfolio['cash']) - total_cost
+        update_portfolio_cash(portfolio_id, new_cash)
+        
+        return {
+            "status": "ok",
+            "data": {
+                "ticker": request.ticker,
+                "total_cost": round(total_cost, 2),
+                "fees_paid": round(fees_paid, 2),
+                "entry_price": round(entry_price, 4),
+                "initial_stop": round(initial_stop, 2),
+                "remaining_cash": round(new_cash, 2)
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/trades")
+def get_trades_endpoint():
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        trades = get_trade_history(portfolio_id)
+        trades = [decimal_to_float(t) for t in trades]
         
         if not trades:
             return {
@@ -118,13 +208,25 @@ def get_trades():
         wins = len([t for t in trades if t.get('pnl', 0) > 0])
         win_rate = (wins / len(trades)) * 100
         
+        # Format trades for response
+        formatted_trades = []
+        for t in trades:
+            formatted_trades.append({
+                "ticker": t['ticker'],
+                "entry_date": str(t['entry_date']),
+                "exit_date": str(t['exit_date']),
+                "pnl": round(t.get('pnl', 0), 2),
+                "pnl_pct": round(t.get('pnl_pct', 0), 2),
+                "exit_reason": t.get('exit_reason', 'Unknown')
+            })
+        
         return {
             "status": "ok",
             "data": {
                 "total_trades": len(trades),
                 "win_rate": round(win_rate, 1),
                 "total_pnl": round(total_pnl, 2),
-                "trades": trades
+                "trades": formatted_trades
             }
         }
     except Exception as e:
