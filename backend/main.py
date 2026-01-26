@@ -160,25 +160,27 @@ def add_position_endpoint(request: AddPositionRequest):
         
         # Create position
         position_data = {
-            'ticker': request.ticker,
-            'market': market,
-            'entry_date': request.entry_date,
-            'entry_price': round(entry_price, 4),
-            'fill_price': request.fill_price,
-            'fill_currency': request.fill_currency,
-            'fx_rate': request.fx_rate,
-            'shares': request.shares,
-            'total_cost': round(total_cost, 2),
-            'fees_paid': round(fees_paid, 2),
-            'fee_type': 'stamp_duty' if is_uk else 'trading_fee',
-            'initial_stop': round(initial_stop, 2),
-            'current_stop': round(initial_stop, 2),
-            'current_price': round(entry_price, 4),
-            'holding_days': 0,
-            'pnl': 0.0,
-            'pnl_pct': 0.0,
-            'status': 'open'
-        }
+        'ticker': request.ticker,
+        'market': request.market,
+        'entry_date': request.entry_date,
+        'entry_price': round(request.entry_price, 4),
+
+        'shares': request.shares,
+        'current_price': round(request.current_price or request.entry_price, 4),
+
+        'fx_rate': request.fx_rate,
+        'atr_value': request.atr_value,
+        'stop_price': request.stop_price,
+
+        'fees_paid': round(request.fees or 0, 2),
+        'total_cost': round((request.fees or 0) + (request.entry_price * request.shares), 2),
+        'fee_type': 'manual',
+
+        'status': request.status or 'open',
+        'holding_days': 0,
+        'pnl': 0,
+        'pnl_pct': 0
+    }
         
         new_position = create_position(portfolio_id, position_data)
         
