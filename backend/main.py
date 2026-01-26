@@ -132,76 +132,72 @@ def add_position_endpoint(request: AddPositionRequest):
         portfolio = get_portfolio()
         if not portfolio:
             raise HTTPException(status_code=404, detail="Portfolio not found")
-        
+
         portfolio_id = str(portfolio['id'])
-        
-        # Calculate fees and costs
-        is_uk = request.fill_currency == "GBP"
-        
-        if is_uk:
-            stamp_duty_rate = 0.005
-            gross_cost = request.shares * request.fill_price
-            fees_paid = gross_cost * stamp_duty_rate
-            total_cost = gross_cost + fees_paid
-            entry_price = total_cost / request.shares
-            market = "UK"
-        else:
-            trading_fee_rate = 0.0015
-            fx_rate = request.fx_rate or 1.28
-            fill_price_gbp = request.fill_price / fx_rate
-            gross_cost = request.shares * fill_price_gbp
-            fees_paid = gross_cost * trading_fee_rate
-            total_cost = gross_cost + fees_paid
-            entry_price = total_cost / request.shares
-            market = "US"
-        
-        # Calculate initial stop
-        initial_stop = request.custom_stop if request.custom_stop else (entry_price - (5 * request.atr))
-        
-        # Create position
+
+        # Use market directly (UK vs US)
+        is_uk = request.market == "UK"
+
+        # -------------------------------
+        # Calculate fees and total cost
+        # -------------------------------
+        # fees are already provided by frontend
+        fees_paid = round(request.fees or 0, 2)
+
+        total_cost = round((request.entry_price * request.shares) + fees_paid, 2)
+
+        # -------------------------------
+        # Initial stop (manual stop_price)
+        # -------------------------------
+        initial_stop = request.stop_price if request.stop_price else None
+
+        # -------------------------------
+        # Build position data
+        # -------------------------------
         position_data = {
-        'ticker': request.ticker,
-        'market': request.market,
-        'entry_date': request.entry_date,
-        'entry_price': round(request.entry_price, 4),
+            "ticker": request.ticker,
+            "market": request.market,
+            "entry_date": request.entry_date,
+            "entry_price": round(request.entry_price, 4),
 
-        'shares': request.shares,
-        'current_price': round(request.current_price or request.entry_price, 4),
+            "shares": request.shares,
+            "current_price": round(request.current_price or request.entry_price, 4),
 
-        'fx_rate': request.fx_rate,
-        'atr_value': request.atr_value,
-        'stop_price': request.stop_price,
+            "fx_rate": request.fx_rate,
+            "atr_value": request.atr_value,
+            "stop_price": request.stop_price,
 
-        'fees_paid': round(request.fees or 0, 2),
-        'total_cost': round((request.fees or 0) + (request.entry_price * request.shares), 2),
-        'fee_type': 'manual',
+            "fees_paid": fees_paid,
+            "total_cost": total_cost,
+            "fee_type": "manual",
 
-        'status': request.status or 'open',
-        'holding_days': 0,
-        'pnl': 0,
-        'pnl_pct': 0
-    }
-        
+            "status": request.status or "open",
+            "holding_days": 0,
+            "pnl": 0,
+            "pnl_pct": 0
+        }
+
         new_position = create_position(portfolio_id, position_data)
-        
+
         # Update cash
-        new_cash = float(portfolio['cash']) - total_cost
+        new_cash = float(portfolio["cash"]) - total_cost
         update_portfolio_cash(portfolio_id, new_cash)
-        
+
         return {
             "status": "ok",
             "data": {
                 "ticker": request.ticker,
-                "total_cost": round(total_cost, 2),
-                "fees_paid": round(fees_paid, 2),
-                "entry_price": round(entry_price, 4),
-                "initial_stop": round(initial_stop, 2),
-                "remaining_cash": round(new_cash, 2)
-            }
+                "total_cost": total_cost,
+                "fees_paid": fees_paid,
+                "entry_price": round(request.entry_price, 4),
+                "initial_stop": initial_stop,
+                "remaining_cash": round(new_cash, 2),
+            },
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
+        
 @app.get("/trades")
 def get_trades_endpoint():
     try:
