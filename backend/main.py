@@ -145,6 +145,58 @@ def root():
     return {"status": "ok", "message": "Trading Assistant API v1.0"}
 
 
+@app.get("/positions")
+def get_positions_endpoint():
+    """Get open positions in the format the frontend expects"""
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        positions = get_positions(portfolio_id, status='open')
+        
+        positions_list = []
+        
+        for pos in positions:
+            pos = decimal_to_float(pos)
+            current_price = pos.get('current_price', pos['entry_price'])
+            current_value = current_price * pos['shares']
+            pnl = pos.get('pnl', 0)
+            pnl_pct = pos.get('pnl_pct', 0)
+            holding_days = pos.get('holding_days', 0)
+            
+            if holding_days < 10:
+                display_status = "GRACE"
+            elif pnl > 0:
+                display_status = "PROFITABLE"
+            else:
+                display_status = "LOSING"
+            
+            # Map backend fields to frontend field names
+            positions_list.append({
+                "id": str(pos['id']),
+                "ticker": pos['ticker'],
+                "market": pos['market'],
+                "entry_date": str(pos['entry_date']),
+                "entry_price": round(pos['entry_price'], 2),
+                "shares": pos['shares'],
+                "current_price": round(current_price, 2),
+                "stop_price": round(pos.get('current_stop', 0), 2),  # Changed from current_stop
+                "pnl": round(pnl, 2),
+                "pnl_percent": round(pnl_pct, 2),  # Changed from pnl_pct
+                "holding_days": holding_days,
+                "status": display_status,
+                "atr_value": pos.get('atr', 0),
+                "fx_rate": pos.get('fx_rate', 1.0)
+            })
+        
+        return positions_list
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/portfolio")
 def get_portfolio_endpoint():
     try:
