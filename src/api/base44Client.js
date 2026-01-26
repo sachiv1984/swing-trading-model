@@ -28,6 +28,12 @@ export const api = {
   },
   
   positions: {
+    list: async () => {
+      const response = await fetch(`${API_BASE_URL}/positions`);
+      // This endpoint returns array directly, not wrapped in {status, data}
+      return response.json();
+    },
+    
     analyze: async () => {
       const response = await fetch(`${API_BASE_URL}/positions/analyze`);
       return handleResponse(response);
@@ -53,18 +59,26 @@ export const base44 = {
     },
     Position: {
       list: async () => {
-        const data = await api.portfolio.get();
-        return data.positions || [];
+        // Now uses the new /positions endpoint
+        return api.positions.list();
       },
       filter: async (conditions) => {
-        const data = await api.portfolio.get();
-        const positions = data.positions || [];
+        // Now uses the new /positions endpoint
+        const positions = await api.positions.list();
         return positions.filter(p => 
           Object.entries(conditions).every(([key, value]) => p[key] === value)
         );
       },
       create: async (positionData) => {
         return api.portfolio.addPosition(positionData);
+      },
+      update: async (id, data) => {
+        const response = await fetch(`${API_BASE_URL}/positions/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        return response.json();
       }
     },
     Settings: {
