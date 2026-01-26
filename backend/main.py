@@ -48,6 +48,7 @@ class AddPositionRequest(BaseModel):
 
     status: Optional[str] = "open"
 
+
 # Helper to convert Decimal to float
 def decimal_to_float(obj):
     if isinstance(obj, dict):
@@ -85,34 +86,31 @@ def get_portfolio_endpoint():
             
             total_positions_value += current_value
             
-            if holding_days < 10:
-                status = "GRACE"
-            elif pnl > 0:
-                status = "PROFITABLE"
-            else:
-                status = "LOSING"
+            # 👇 IMPORTANT FIX:
+            # Do NOT change the DB status.
+            # Use display_status only for UI display.
+            display_status = "GRACE" if holding_days < 10 else ("PROFITABLE" if pnl > 0 else "LOSING")
             
             positions_list.append({
-    "id": str(pos['id']),
-    "ticker": pos['ticker'],
-    "market": pos['market'],
-    "entry_date": str(pos['entry_date']),
-    "entry_price": round(pos['entry_price'], 2),
-    "shares": pos['shares'],
-    "current_price": round(current_price, 2),
-    "current_value": round(current_value, 2),
+                "id": str(pos['id']),
+                "ticker": pos['ticker'],
+                "market": pos['market'],
+                "entry_date": str(pos['entry_date']),
+                "entry_price": round(pos['entry_price'], 2),
+                "shares": pos['shares'],
+                "current_price": round(current_price, 2),
+                "current_value": round(current_value, 2),
+                "pnl": round(pnl, 2),
+                "pnl_pct": round(pnl_pct, 2),
+                "current_stop": round(pos.get('current_stop', 0), 2),
+                "holding_days": holding_days,
 
-    "pnl": round(pnl, 2),
-    "pnl_pct": round(pnl_pct, 2),
+                # Keep DB status
+                "status": pos.get("status", "open"),
 
-    # 👇 NEW fields for frontend compatibility
-    "stop_price": round(pos.get('current_stop', 0), 2),
-    "pnl_percent": round(pnl_pct, 2),
-
-    "current_stop": round(pos.get('current_stop', 0), 2),
-    "holding_days": holding_days,
-    "status": status
-})
+                # UI status only
+                "display_status": display_status
+            })
         
         cash = float(portfolio['cash'])
         total_value = cash + total_positions_value
@@ -121,10 +119,10 @@ def get_portfolio_endpoint():
             "status": "ok",
             "data": {
                 "cash": cash,
-                "cash_balance": cash,  # Add for compatibility
-                "total_value": total_value,  # Add this
-                "open_positions_value": total_positions_value,  # Add this
-                "total_pnl": sum(p['pnl'] for p in positions_list),  # Add this
+                "cash_balance": cash,
+                "total_value": total_value,
+                "open_positions_value": total_positions_value,
+                "total_pnl": sum(p['pnl'] for p in positions_list),
                 "last_updated": str(portfolio['last_updated']),
                 "positions": positions_list
             }
@@ -138,69 +136,74 @@ def add_position_endpoint(request: AddPositionRequest):
         portfolio = get_portfolio()
         if not portfolio:
             raise HTTPException(status_code=404, detail="Portfolio not found")
-
+        
         portfolio_id = str(portfolio['id'])
-
-        # Market is sent from frontend
+        
+        # Calculate fees and costs
         is_uk = request.market == "UK"
-
-        # Fees are sent from frontend
-        fees_paid = round(request.fees or 0, 2)
-
-        # Total cost based on entry price + fees
-        total_cost = round((request.entry_price * request.shares) + fees_paid, 2)
-
-        # Stop price from frontend
-        initial_stop = request.stop_price if request.stop_price else None
-
+        
+        if is_uk:
+            stamp_duty_rate = 0.005
+            gross_cost = request.shares * request.entry_price
+            fees_paid = gross_cost * stamp_duty_rate
+            total_cost = gross_cost + fees_paid
+            entry_price = total_cost / request.shares
+        else:
+            trading_fee_rate = 0.0015
+            fx_rate = request.fx_rate or 1.28
+            fill_price_gbp = request.entry_price / fx_rate
+            gross_cost = request.shares * fill_price_gbp
+            fees_paid = gross_cost * trading_fee_rate
+            total_cost = gross_cost + fees_paid
+            entry_price = total_cost / request.shares
+        
+        # Calculate initial stop
+        initial_stop = request.stop_price if request.stop_price else entry_price - (5 * (request.atr_value or 0))
+        
+        # Create position
         position_data = {
-    "ticker": request.ticker,
-    "market": request.market,
-    "entry_date": request.entry_date,
-    "entry_price": round(request.entry_price, 4),
+            'ticker': request.ticker,
+            'market': request.market,
+            'entry_date': request.entry_date,
+            'entry_price': round(entry_price, 4),
 
-    "shares": request.shares,
-    "current_price": round(request.current_price or request.entry_price, 4),
+            'shares': request.shares,
+            'current_price': round(request.current_price or entry_price, 4),
 
-    "fx_rate": request.fx_rate,
-    "atr_value": request.atr_value,
+            'fx_rate': request.fx_rate,
+            'atr_value': request.atr_value,
+            'stop_price': request.stop_price,
 
-    "stop_price": request.stop_price,
-    "current_stop": request.stop_price,   # <-- Correctly set current stop
+            'fees_paid': round(fees_paid or 0, 2),
+            'total_cost': round(total_cost, 2),
+            'fee_type': 'manual',
 
-    "fees_paid": round(request.fees or 0, 2),
-
-    # BONUS FIX: total_cost should be based on entry_price already provided by frontend
-    "total_cost": round((request.fees or 0) + (request.entry_price * request.shares), 2),
-
-    "fee_type": "manual",
-    "status": request.status or "open",
-    "holding_days": 0,
-    "pnl": 0,
-    "pnl_pct": 0
-}
-
+            'status': request.status or 'open',
+            'holding_days': 0,
+            'pnl': 0,
+            'pnl_pct': 0
+        }
+        
         new_position = create_position(portfolio_id, position_data)
-
+        
         # Update cash
-        new_cash = float(portfolio["cash"]) - total_cost
+        new_cash = float(portfolio['cash']) - total_cost
         update_portfolio_cash(portfolio_id, new_cash)
-
+        
         return {
             "status": "ok",
             "data": {
                 "ticker": request.ticker,
-                "total_cost": total_cost,
-                "fees_paid": fees_paid,
-                "entry_price": round(request.entry_price, 4),
-                "initial_stop": initial_stop,
-                "remaining_cash": round(new_cash, 2),
-            },
+                "total_cost": round(total_cost, 2),
+                "fees_paid": round(fees_paid, 2),
+                "entry_price": round(entry_price, 4),
+                "initial_stop": round(initial_stop, 2),
+                "remaining_cash": round(new_cash, 2)
+            }
         }
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        
+
 @app.get("/trades")
 def get_trades_endpoint():
     try:
@@ -227,7 +230,6 @@ def get_trades_endpoint():
         wins = len([t for t in trades if t.get('pnl', 0) > 0])
         win_rate = (wins / len(trades)) * 100
         
-        # Format trades for response
         formatted_trades = []
         for t in trades:
             formatted_trades.append({
