@@ -27,6 +27,13 @@ export const api = {
     }
   },
   
+  positions: {
+    analyze: async () => {
+      const response = await fetch(`${API_BASE_URL}/positions/analyze`);
+      return handleResponse(response);
+    }
+  },
+  
   trades: {
     list: async () => {
       const response = await fetch(`${API_BASE_URL}/trades`);
@@ -64,10 +71,25 @@ export const base44 = {
       list: async () => Promise.resolve([])
     },
     MarketRegime: {
-      list: async () => Promise.resolve([
-        { market: 'US', status: 'risk_on' },
-        { market: 'UK', status: 'risk_on' }
-      ])
+      list: async () => {
+        // Try to get from analysis endpoint
+        try {
+          const analysis = await api.positions.analyze();
+          if (analysis && analysis.market_regime) {
+            return [
+              { market: 'US', status: analysis.market_regime.spy_risk_on ? 'risk_on' : 'risk_off' },
+              { market: 'UK', status: analysis.market_regime.ftse_risk_on ? 'risk_on' : 'risk_off' }
+            ];
+          }
+        } catch (error) {
+          console.error('Failed to get market regime:', error);
+        }
+        // Fallback
+        return [
+          { market: 'US', status: 'risk_on' },
+          { market: 'UK', status: 'risk_on' }
+        ];
+      }
     }
   }
 };
