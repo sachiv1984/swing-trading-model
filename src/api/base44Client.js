@@ -11,13 +11,6 @@ const handleResponse = async (response) => {
 };
 
 export const api = {
-  dashboard: {
-    get: async () => {
-      const response = await fetch(`${API_BASE_URL}/dashboard`);
-      return handleResponse(response);
-    }
-  },
-  
   portfolio: {
     get: async () => {
       const response = await fetch(`${API_BASE_URL}/portfolio`);
@@ -34,13 +27,6 @@ export const api = {
     }
   },
   
-  positions: {
-    analyze: async () => {
-      const response = await fetch(`${API_BASE_URL}/positions/analyze`);
-      return handleResponse(response);
-    }
-  },
-  
   trades: {
     list: async () => {
       const response = await fetch(`${API_BASE_URL}/trades`);
@@ -49,27 +35,38 @@ export const api = {
   }
 };
 
-// Keep compatibility with old base44 structure
+// Backwards compatibility with base44 structure
 export const base44 = {
   entities: {
     Portfolio: {
-      list: () => api.portfolio.get().then(data => [{ ...data }])
+      list: async () => {
+        const data = await api.portfolio.get();
+        return [{ cash: data.cash, ...data }];
+      }
     },
     Position: {
-      list: () => api.portfolio.get().then(data => data.positions),
-      filter: (conditions) => api.portfolio.get().then(data => 
-        data.positions.filter(p => 
+      list: async () => {
+        const data = await api.portfolio.get();
+        return data.positions || [];
+      },
+      filter: async (conditions) => {
+        const data = await api.portfolio.get();
+        const positions = data.positions || [];
+        return positions.filter(p => 
           Object.entries(conditions).every(([key, value]) => p[key] === value)
-        )
-      )
+        );
+      },
+      create: async (positionData) => {
+        return api.portfolio.addPosition(positionData);
+      }
     },
     Settings: {
-      list: () => Promise.resolve([])
+      list: async () => Promise.resolve([])
     },
     MarketRegime: {
-      list: () => api.dashboard.get().then(data => [
-        { market: 'US', status: data.market_status.spy.risk_on ? 'risk_on' : 'risk_off' },
-        { market: 'UK', status: data.market_status.ftse.risk_on ? 'risk_on' : 'risk_off' }
+      list: async () => Promise.resolve([
+        { market: 'US', status: 'risk_on' },
+        { market: 'UK', status: 'risk_on' }
       ])
     }
   }
