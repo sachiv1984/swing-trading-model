@@ -164,7 +164,10 @@ def get_positions_endpoint():
             current_value = current_price * pos['shares']
             pnl = pos.get('pnl', 0)
             pnl_pct = pos.get('pnl_pct', 0)
-            holding_days = pos.get('holding_days', 0)
+            
+            # Calculate holding days correctly
+            entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
+            holding_days = (datetime.now() - entry_date).days
             
             if holding_days < 10:
                 display_status = "GRACE"
