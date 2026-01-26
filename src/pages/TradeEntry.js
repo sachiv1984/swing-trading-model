@@ -34,7 +34,7 @@ export default function TradeEntry() {
 
   const currentSettings = settings?.[0] || {
     atr_multiplier_initial: 2,
-    uk_commission: 9.95,
+    uk_commission: 0,
     us_commission: 0,
     stamp_duty_rate: 0.005,
   };
