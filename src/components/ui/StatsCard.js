@@ -39,7 +39,7 @@ export default function StatsCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "relative overflow-hidden rounded-2xl border p-6",
+        "relative overflow-hidden rounded-2xl border p-6 h-full min-h-[140px]",
         "bg-gradient-to-br",
         gradients[selectedGradient],
         "backdrop-blur-sm",
