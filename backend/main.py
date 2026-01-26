@@ -176,10 +176,13 @@ def get_positions_endpoint():
             else:
                 display_status = "LOSING"
             
+            # Display ticker without .L suffix for UK stocks
+            display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
+            
             # Map backend fields to frontend field names
             positions_list.append({
                 "id": str(pos['id']),
-                "ticker": pos['ticker'],
+                "ticker": display_ticker,
                 "market": pos['market'],
                 "entry_date": str(pos['entry_date']),
                 "entry_price": round(pos['entry_price'], 2),
