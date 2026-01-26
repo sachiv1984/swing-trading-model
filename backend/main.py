@@ -67,6 +67,8 @@ def get_portfolio_endpoint():
         positions = get_positions(portfolio_id, status='open')
         
         positions_list = []
+        total_positions_value = 0
+        
         for pos in positions:
             pos = decimal_to_float(pos)
             current_price = pos.get('current_price', pos['entry_price'])
@@ -74,6 +76,8 @@ def get_portfolio_endpoint():
             pnl = pos.get('pnl', 0)
             pnl_pct = pos.get('pnl_pct', 0)
             holding_days = pos.get('holding_days', 0)
+            
+            total_positions_value += current_value
             
             if holding_days < 10:
                 status = "GRACE"
@@ -98,10 +102,17 @@ def get_portfolio_endpoint():
                 "status": status
             })
         
+        cash = float(portfolio['cash'])
+        total_value = cash + total_positions_value
+        
         return {
             "status": "ok",
             "data": {
-                "cash": float(portfolio['cash']),
+                "cash": cash,
+                "cash_balance": cash,  # Add for compatibility
+                "total_value": total_value,  # Add this
+                "open_positions_value": total_positions_value,  # Add this
+                "total_pnl": sum(p['pnl'] for p in positions_list),  # Add this
                 "last_updated": str(portfolio['last_updated']),
                 "positions": positions_list
             }
