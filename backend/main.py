@@ -65,14 +65,28 @@ def get_current_price(ticker: str) -> float:
         
         stock = yf.Ticker(ticker)
         
-        # Method 1: Recent history (most reliable)
-        hist = stock.history(period="5d")
-        if not hist.empty and 'Close' in hist.columns:
-            price = float(hist['Close'].iloc[-1])
-            print(f"✓ {ticker}: ${price:.2f} (from history)")
-            return price
+        # Method 1: Try different period lengths (UK stocks sometimes need longer periods)
+        for period in ["1d", "5d", "1mo"]:
+            try:
+                hist = stock.history(period=period)
+                if not hist.empty and 'Close' in hist.columns:
+                    price = float(hist['Close'].iloc[-1])
+                    print(f"✓ {ticker}: ${price:.2f} (from history, period={period})")
+                    return price
+            except:
+                continue
         
-        # Method 2: Info dict
+        # Method 2: Try fast_info (more reliable for some stocks)
+        try:
+            fast_info = stock.fast_info
+            if hasattr(fast_info, 'last_price') and fast_info.last_price:
+                price = float(fast_info.last_price)
+                print(f"✓ {ticker}: ${price:.2f} (from fast_info)")
+                return price
+        except:
+            pass
+        
+        # Method 3: Info dict
         try:
             info = stock.info
             if 'currentPrice' in info and info['currentPrice']:
