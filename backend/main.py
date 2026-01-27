@@ -304,17 +304,24 @@ def add_position_endpoint(request: AddPositionRequest):
         if is_uk:
             stamp_duty_rate = 0.005
             gross_cost = request.shares * request.fill_price
-            fees_paid = gross_cost * stamp_duty_rate
-            total_cost = gross_cost + fees_paid
+            stamp_duty = gross_cost * stamp_duty_rate
+            commission = 9.95  # UK commission
+            total_fees = stamp_duty + commission
+            total_cost = gross_cost + total_fees
             entry_price = total_cost / request.shares
             market = "UK"
         else:
-            trading_fee_rate = 0.0015
+            # US position - include FX fee
             fx_rate = request.fx_rate or 1.28
             fill_price_gbp = request.fill_price / fx_rate
             gross_cost = request.shares * fill_price_gbp
-            fees_paid = gross_cost * trading_fee_rate
-            total_cost = gross_cost + fees_paid
+            
+            fx_fee_rate = 0.0015  # 0.15% FX fee
+            fx_fee = gross_cost * fx_fee_rate
+            commission = 0  # US commission
+            
+            total_fees = fx_fee + commission
+            total_cost = gross_cost + total_fees
             entry_price = total_cost / request.shares
             market = "US"
         
@@ -323,7 +330,7 @@ def add_position_endpoint(request: AddPositionRequest):
         
         # Create position with the modified ticker
         position_data = {
-            'ticker': ticker,  # This now has .L for UK stocks
+            'ticker': ticker,
             'market': market,
             'entry_date': request.entry_date,
             'entry_price': round(entry_price, 4),
@@ -332,8 +339,9 @@ def add_position_endpoint(request: AddPositionRequest):
             'fx_rate': request.fx_rate,
             'shares': request.shares,
             'total_cost': round(total_cost, 2),
-            'fees_paid': round(fees_paid, 2),
-            'fee_type': 'stamp_duty' if is_uk else 'trading_fee',
+            'fees_paid': round(total_fees, 2),  # Total fees (stamp duty OR fx fee)
+            'fees': round(total_fees, 2),  # Use 'fees' column as well
+            'fee_type': 'stamp_duty' if is_uk else 'fx_fee',
             'initial_stop': round(initial_stop, 2),
             'current_stop': round(initial_stop, 2),
             'current_price': round(entry_price, 4),
@@ -354,7 +362,7 @@ def add_position_endpoint(request: AddPositionRequest):
             "data": {
                 "ticker": ticker,
                 "total_cost": round(total_cost, 2),
-                "fees_paid": round(fees_paid, 2),
+                "fees_paid": round(total_fees, 2),
                 "entry_price": round(entry_price, 4),
                 "initial_stop": round(initial_stop, 2),
                 "remaining_cash": round(new_cash, 2)
