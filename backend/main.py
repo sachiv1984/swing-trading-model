@@ -243,12 +243,27 @@ def get_positions_endpoint():
         
         # Get analysis data (live prices, stops, signals)
         try:
+            print(f"\n📊 Running live analysis for {len(positions)} positions...")
             analysis_response = analyze_positions_endpoint()
-            analysis_data = analysis_response.get('data', {}) if isinstance(analysis_response, dict) else {}
+            
+            # Handle response format
+            if isinstance(analysis_response, dict):
+                if 'status' in analysis_response and analysis_response['status'] == 'ok':
+                    analysis_data = analysis_response.get('data', {})
+                else:
+                    analysis_data = analysis_response
+            else:
+                analysis_data = {}
+            
             actions = analysis_data.get('actions', [])
             market_regime = analysis_data.get('market_regime', {})
+            
+            print(f"✓ Analysis complete: {len(actions)} position(s) analyzed")
+            
         except Exception as e:
-            print(f"⚠️  Analysis failed, using stored data: {e}")
+            print(f"⚠️  Analysis failed: {e}")
+            import traceback
+            traceback.print_exc()
             actions = []
             market_regime = {}
         
@@ -257,7 +272,7 @@ def get_positions_endpoint():
         for pos in positions:
             pos = decimal_to_float(pos)
             
-            # Find analysis data for this position
+            # Find analysis data for this position (match with full ticker including .L)
             analysis = next((a for a in actions if a['ticker'] == pos['ticker']), None)
             
             if analysis:
@@ -285,6 +300,7 @@ def get_positions_endpoint():
                     exit_reason = None
             else:
                 # Fallback to stored data
+                print(f"⚠️  No analysis found for {pos['ticker']}, using stored data")
                 current_price = pos.get('current_price', pos['entry_price'])
                 current_stop = pos.get('current_stop', 0)
                 pnl = pos.get('pnl', 0)
@@ -444,9 +460,10 @@ def add_position_endpoint(request: AddPositionRequest):
             commission = uk_commission
             total_fees = stamp_duty + commission
             total_cost = gross_cost + total_fees
-            entry_price = total_cost / shares
+            # Entry price for display is the actual fill price, not adjusted for fees
+            entry_price_for_display = fill_price
         else:
-            # US position - include FX fee
+            # US position - costs calculated in GBP for portfolio tracking
             fill_price_gbp = fill_price / fx_rate
             gross_cost = shares * fill_price_gbp
             
@@ -455,23 +472,24 @@ def add_position_endpoint(request: AddPositionRequest):
             
             total_fees = fx_fee + commission
             total_cost = gross_cost + total_fees
-            entry_price = total_cost / shares
+            # Entry price for display is the actual USD fill price
+            entry_price_for_display = fill_price
         
-        # Calculate initial stop if ATR provided
+        # Calculate initial stop based on the fill price, not fee-adjusted price
         atr = request.atr_value or 0
         atr_multiplier = float(settings.get('atr_multiplier_initial', 2)) if settings else 2
         
         if atr > 0 and request.stop_price is None:
-            initial_stop = entry_price - (atr_multiplier * atr)
+            initial_stop = entry_price_for_display - (atr_multiplier * atr)
         else:
-            initial_stop = request.stop_price or entry_price
+            initial_stop = request.stop_price or entry_price_for_display
         
         # Create position with the modified ticker
         position_data = {
             'ticker': ticker,
             'market': request.market,
             'entry_date': request.entry_date,
-            'entry_price': round(entry_price, 4),
+            'entry_price': round(entry_price_for_display, 4),  # Store actual fill price for display
             'fill_price': fill_price,
             'fill_currency': 'GBP' if is_uk else 'USD',
             'fx_rate': fx_rate,
@@ -482,7 +500,7 @@ def add_position_endpoint(request: AddPositionRequest):
             'fee_type': 'stamp_duty' if is_uk else 'fx_fee',
             'initial_stop': round(initial_stop, 2),
             'current_stop': round(initial_stop, 2),
-            'current_price': round(entry_price, 4),
+            'current_price': round(entry_price_for_display, 4),  # Initialize with fill price
             'holding_days': 0,
             'pnl': 0.0,
             'pnl_pct': 0.0,
@@ -501,7 +519,7 @@ def add_position_endpoint(request: AddPositionRequest):
                 "ticker": ticker,
                 "total_cost": round(total_cost, 2),
                 "fees_paid": round(total_fees, 2),
-                "entry_price": round(entry_price, 4),
+                "entry_price": round(entry_price_for_display, 4),  # Return actual fill price
                 "initial_stop": round(initial_stop, 2),
                 "remaining_cash": round(new_cash, 2)
             }
