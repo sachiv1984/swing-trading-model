@@ -229,7 +229,7 @@ def update_settings_endpoint(settings_id: str, request: SettingsRequest):
 
 @app.get("/positions")
 def get_positions_endpoint():
-    """Get open positions in the format the frontend expects"""
+    """Get open positions with live prices and calculated stops"""
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -238,25 +238,73 @@ def get_positions_endpoint():
         portfolio_id = str(portfolio['id'])
         positions = get_positions(portfolio_id, status='open')
         
+        if not positions:
+            return []
+        
+        # Get analysis data (live prices, stops, signals)
+        try:
+            analysis_response = analyze_positions_endpoint()
+            analysis_data = analysis_response.get('data', {}) if isinstance(analysis_response, dict) else {}
+            actions = analysis_data.get('actions', [])
+            market_regime = analysis_data.get('market_regime', {})
+        except Exception as e:
+            print(f"⚠️  Analysis failed, using stored data: {e}")
+            actions = []
+            market_regime = {}
+        
         positions_list = []
         
         for pos in positions:
             pos = decimal_to_float(pos)
-            current_price = pos.get('current_price', pos['entry_price'])
-            current_value = current_price * pos['shares']
-            pnl = pos.get('pnl', 0)
-            pnl_pct = pos.get('pnl_pct', 0)
             
-            # Calculate holding days correctly
-            entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
-            holding_days = (datetime.now() - entry_date).days
+            # Find analysis data for this position
+            analysis = next((a for a in actions if a['ticker'] == pos['ticker']), None)
             
-            if holding_days < 10:
-                display_status = "GRACE"
-            elif pnl > 0:
-                display_status = "PROFITABLE"
+            if analysis:
+                # Use live analyzed data
+                current_price = analysis['current_price']
+                current_stop = analysis['current_stop']
+                pnl = analysis['pnl']
+                pnl_pct = analysis['pnl_pct']
+                holding_days = analysis['holding_days']
+                grace_period = analysis['grace_period']
+                stop_reason = analysis['stop_reason']
+                
+                # Determine display status
+                if analysis['action'] == 'EXIT':
+                    display_status = "EXIT"
+                    exit_reason = analysis['exit_reason']
+                elif grace_period:
+                    display_status = "GRACE"
+                    exit_reason = None
+                elif pnl > 0:
+                    display_status = "PROFITABLE"
+                    exit_reason = None
+                else:
+                    display_status = "LOSING"
+                    exit_reason = None
             else:
-                display_status = "LOSING"
+                # Fallback to stored data
+                current_price = pos.get('current_price', pos['entry_price'])
+                current_stop = pos.get('current_stop', 0)
+                pnl = pos.get('pnl', 0)
+                pnl_pct = pos.get('pnl_pct', 0)
+                
+                entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
+                holding_days = (datetime.now() - entry_date).days
+                
+                grace_period = holding_days < 10
+                stop_reason = f"Grace period ({holding_days}/10 days)" if grace_period else "No live data"
+                
+                if grace_period:
+                    display_status = "GRACE"
+                elif pnl > 0:
+                    display_status = "PROFITABLE"
+                else:
+                    display_status = "LOSING"
+                exit_reason = None
+            
+            current_value = current_price * pos['shares']
             
             # Display ticker without .L suffix for UK stocks
             display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
@@ -270,12 +318,15 @@ def get_positions_endpoint():
                 "entry_price": round(pos['entry_price'], 2),
                 "shares": pos['shares'],
                 "current_price": round(current_price, 2),
-                "stop_price": round(pos.get('current_stop', 0), 2),
+                "stop_price": round(current_stop, 2),
                 "pnl": round(pnl, 2),
                 "pnl_percent": round(pnl_pct, 2),
                 "holding_days": holding_days,
                 "status": "open",
                 "display_status": display_status,
+                "exit_reason": exit_reason,
+                "grace_period": grace_period,
+                "stop_reason": stop_reason,
                 "atr_value": pos.get('atr', 0),
                 "fx_rate": pos.get('fx_rate', 1.0)
             })
@@ -283,6 +334,8 @@ def get_positions_endpoint():
         return positions_list
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
