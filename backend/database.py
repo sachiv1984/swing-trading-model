@@ -204,4 +204,8 @@ def update_settings(settings_id, data):
             
             cur.execute(query, list(data.values()) + [settings_id])
             result = cur.fetchone()
+<<<<<<< HEAD:backend/backend/database.py
             return dict(result)
+=======
+            return dict(result)
+>>>>>>> 29b9b92932682ccab6163a77ac06ccf3f0be1f44:backend/database.py

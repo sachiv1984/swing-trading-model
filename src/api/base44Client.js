@@ -11,13 +11,6 @@ const handleResponse = async (response) => {
 };
 
 export const api = {
-  dashboard: {
-    get: async () => {
-      const response = await fetch(`${API_BASE_URL}/dashboard`);
-      return handleResponse(response);
-    }
-  },
-  
   portfolio: {
     get: async () => {
       const response = await fetch(`${API_BASE_URL}/portfolio`);
@@ -35,6 +28,11 @@ export const api = {
   },
   
   positions: {
+    list: async () => {
+      const response = await fetch(`${API_BASE_URL}/positions`);
+      return response.json();
+    },
+    
     analyze: async () => {
       const response = await fetch(`${API_BASE_URL}/positions/analyze`);
       return handleResponse(response);
@@ -46,31 +44,107 @@ export const api = {
       const response = await fetch(`${API_BASE_URL}/trades`);
       return handleResponse(response);
     }
+  },
+  
+  settings: {
+    list: async () => {
+      const response = await fetch(`${API_BASE_URL}/settings`);
+      return handleResponse(response);
+    },
+    
+    create: async (settingsData) => {
+      const response = await fetch(`${API_BASE_URL}/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsData)
+      });
+      return handleResponse(response);
+    },
+    
+    update: async (id, settingsData) => {
+      const response = await fetch(`${API_BASE_URL}/settings/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsData)
+      });
+      return handleResponse(response);
+    }
   }
 };
 
-// Keep compatibility with old base44 structure
+// Backwards compatibility with base44 structure
 export const base44 = {
   entities: {
     Portfolio: {
-      list: () => api.portfolio.get().then(data => [{ ...data }])
+      list: async () => {
+        const data = await api.portfolio.get();
+        return [{ cash: data.cash, ...data }];
+      }
     },
     Position: {
-      list: () => api.portfolio.get().then(data => data.positions),
-      filter: (conditions) => api.portfolio.get().then(data => 
-        data.positions.filter(p => 
+      list: async () => {
+        return api.positions.list();
+      },
+      filter: async (conditions, orderBy) => {
+        const positions = await api.positions.list();
+        let filtered = positions.filter(p => 
           Object.entries(conditions).every(([key, value]) => p[key] === value)
-        )
-      )
+        );
+        
+        if (orderBy) {
+          const isDescending = orderBy.startsWith('-');
+          const field = isDescending ? orderBy.slice(1) : orderBy;
+          filtered.sort((a, b) => {
+            const aVal = a[field];
+            const bVal = b[field];
+            const comparison = aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+            return isDescending ? -comparison : comparison;
+          });
+        }
+        
+        return filtered;
+      },
+      create: async (positionData) => {
+        return api.portfolio.addPosition(positionData);
+      },
+      update: async (id, data) => {
+        const response = await fetch(`${API_BASE_URL}/positions/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        return response.json();
+      }
     },
     Settings: {
-      list: () => Promise.resolve([])
+      list: async () => {
+        return api.settings.list();
+      },
+      create: async (data) => {
+        return api.settings.create(data);
+      },
+      update: async (id, data) => {
+        return api.settings.update(id, data);
+      }
     },
     MarketRegime: {
-      list: () => api.dashboard.get().then(data => [
-        { market: 'US', status: data.market_status.spy.risk_on ? 'risk_on' : 'risk_off' },
-        { market: 'UK', status: data.market_status.ftse.risk_on ? 'risk_on' : 'risk_off' }
-      ])
+      list: async () => {
+        try {
+          const analysis = await api.positions.analyze();
+          if (analysis && analysis.market_regime) {
+            return [
+              { market: 'US', status: analysis.market_regime.spy_risk_on ? 'risk_on' : 'risk_off' },
+              { market: 'UK', status: analysis.market_regime.ftse_risk_on ? 'risk_on' : 'risk_off' }
+            ];
+          }
+        } catch (error) {
+          console.error('Failed to get market regime:', error);
+        }
+        return [
+          { market: 'US', status: 'risk_on' },
+          { market: 'UK', status: 'risk_on' }
+        ];
+      }
     }
   }
 };

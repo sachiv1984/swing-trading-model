@@ -22,20 +22,25 @@ export default function Settings() {
   });
 
   useEffect(() => {
+    if (formData) return; // Don't reset if we already have form data
+    
+    const defaults = {
+      min_hold_days: 5,
+      atr_multiplier_initial: 2,
+      atr_multiplier_trailing: 3,
+      atr_period: 14,
+      default_currency: "GBP",
+      theme: "dark",
+      uk_commission: 9.95,
+      us_commission: 0,
+      stamp_duty_rate: 0.005,
+      fx_fee_rate: 0.0015,
+    };
+    
     if (settings?.[0]) {
-      setFormData(settings[0]);
+      setFormData({ ...defaults, ...settings[0] });
     } else if (settings && settings.length === 0) {
-      setFormData({
-        min_hold_days: 5,
-        atr_multiplier_initial: 2,
-        atr_multiplier_trailing: 3,
-        atr_period: 14,
-        default_currency: "GBP",
-        theme: "dark",
-        uk_commission: 9.95,
-        us_commission: 0,
-        stamp_duty_rate: 0.005,
-      });
+      setFormData(defaults);
     }
   }, [settings]);
 
@@ -205,16 +210,29 @@ export default function Settings() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-slate-400">UK Stamp Duty Rate</Label>
-            <Input
-              type="number"
-              step="0.001"
-              value={formData.stamp_duty_rate}
-              onChange={(e) => handleChange("stamp_duty_rate", parseFloat(e.target.value))}
-              className="bg-slate-800/50 border-slate-700 text-white"
-            />
-            <p className="text-xs text-slate-500">Default: 0.005 (0.5%)</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-slate-400">UK Stamp Duty Rate</Label>
+              <Input
+                type="number"
+                step="0.001"
+                value={formData.stamp_duty_rate}
+                onChange={(e) => handleChange("stamp_duty_rate", parseFloat(e.target.value))}
+                className="bg-slate-800/50 border-slate-700 text-white"
+              />
+              <p className="text-xs text-slate-500">Default: 0.005 (0.5%)</p>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-400">US FX Fee Rate</Label>
+              <Input
+                type="number"
+                step="0.0001"
+                value={formData.fx_fee_rate}
+                onChange={(e) => handleChange("fx_fee_rate", parseFloat(e.target.value))}
+                className="bg-slate-800/50 border-slate-700 text-white"
+              />
+              <p className="text-xs text-slate-500">Default: 0.0015 (0.15%)</p>
+            </div>
           </div>
         </div>
       </SectionCard>
