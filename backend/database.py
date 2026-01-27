@@ -168,3 +168,72 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                 trade_data.get('exit_fx_rate')
             ))
             return cur.fetchone()
+
+def get_settings():
+    """Get all settings"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT * FROM settings ORDER BY created_at DESC LIMIT 1")
+        result = cursor.fetchone()
+        if result:
+            return [dict(result)]
+        return []
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def create_settings(data):
+    """Create new settings record"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        columns = ', '.join(data.keys())
+        placeholders = ', '.join(['%s'] * len(data))
+        query = f"INSERT INTO settings ({columns}) VALUES ({placeholders}) RETURNING *"
+        
+        cursor.execute(query, list(data.values()))
+        result = cursor.fetchone()
+        conn.commit()
+        return dict(result)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_settings(settings_id, data):
+    """Update existing settings"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # Build SET clause
+        set_clause = ', '.join([f"{k} = %s" for k in data.keys()])
+        query = f"UPDATE settings SET {set_clause}, updated_at = NOW() WHERE id = %s RETURNING *"
+        
+        cursor.execute(query, list(data.values()) + [settings_id])
+        result = cursor.fetchone()
+        conn.commit()
+        return dict(result)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
