@@ -37,16 +37,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Request models
+# Request models - FIXED to match frontend
 class AddPositionRequest(BaseModel):
     ticker: str
+    market: str
     entry_date: str
-    shares: int
-    fill_price: float
-    fill_currency: str
+    shares: float  # Changed from int to allow fractional shares
+    entry_price: float  # Frontend sends this instead of fill_price
+    current_price: Optional[float] = None
     fx_rate: Optional[float] = None
-    atr: float
-    custom_stop: Optional[float] = None
+    atr_value: Optional[float] = None  # Frontend sends this
+    stop_price: Optional[float] = None
+    fees: Optional[float] = None
+    status: Optional[str] = "open"
 
 
 class SettingsRequest(BaseModel):
@@ -350,6 +353,7 @@ def get_portfolio_endpoint():
 
 @app.post("/portfolio/position")
 def add_position_endpoint(request: AddPositionRequest):
+    """FIXED: Now accepts frontend format with fractional shares"""
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -368,7 +372,7 @@ def add_position_endpoint(request: AddPositionRequest):
         fx_fee_rate = float(settings.get('fx_fee_rate', 0.0015)) if settings else 0.0015
         
         # Calculate fees and costs
-        is_uk = request.fill_currency == "GBP"
+        is_uk = request.market == "UK"
         
         # Auto-append .L for UK stocks
         ticker = request.ticker.upper().strip()
@@ -376,42 +380,49 @@ def add_position_endpoint(request: AddPositionRequest):
             ticker = f"{ticker}.L"
             print(f"✓ Auto-appended .L to UK ticker: {ticker}")
         
+        # Use entry_price from frontend as fill_price
+        fill_price = request.entry_price
+        shares = request.shares
+        fx_rate = request.fx_rate or (1.0 if is_uk else 1.27)
+        
         if is_uk:
-            gross_cost = request.shares * request.fill_price
+            gross_cost = shares * fill_price
             stamp_duty = gross_cost * stamp_duty_rate
             commission = uk_commission
             total_fees = stamp_duty + commission
             total_cost = gross_cost + total_fees
-            entry_price = total_cost / request.shares
-            market = "UK"
+            entry_price = total_cost / shares
         else:
             # US position - include FX fee
-            fx_rate = request.fx_rate or 1.28
-            fill_price_gbp = request.fill_price / fx_rate
-            gross_cost = request.shares * fill_price_gbp
+            fill_price_gbp = fill_price / fx_rate
+            gross_cost = shares * fill_price_gbp
             
             fx_fee = gross_cost * fx_fee_rate
             commission = us_commission
             
             total_fees = fx_fee + commission
             total_cost = gross_cost + total_fees
-            entry_price = total_cost / request.shares
-            market = "US"
+            entry_price = total_cost / shares
         
-        # Calculate initial stop
+        # Calculate initial stop if ATR provided
+        atr = request.atr_value or 0
         atr_multiplier = float(settings.get('atr_multiplier_initial', 2)) if settings else 2
-        initial_stop = request.custom_stop if request.custom_stop else (entry_price - (atr_multiplier * request.atr))
+        
+        if atr > 0 and request.stop_price is None:
+            initial_stop = entry_price - (atr_multiplier * atr)
+        else:
+            initial_stop = request.stop_price or entry_price
         
         # Create position with the modified ticker
         position_data = {
             'ticker': ticker,
-            'market': market,
+            'market': request.market,
             'entry_date': request.entry_date,
             'entry_price': round(entry_price, 4),
-            'fill_price': request.fill_price,
-            'fill_currency': request.fill_currency,
-            'fx_rate': request.fx_rate,
-            'shares': request.shares,
+            'fill_price': fill_price,
+            'fill_currency': 'GBP' if is_uk else 'USD',
+            'fx_rate': fx_rate,
+            'shares': shares,
             'total_cost': round(total_cost, 2),
             'fees_paid': round(total_fees, 2),
             'fees': round(total_fees, 2),
@@ -443,6 +454,8 @@ def add_position_endpoint(request: AddPositionRequest):
             }
         }
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
