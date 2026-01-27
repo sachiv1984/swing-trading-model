@@ -4,25 +4,9 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 from decimal import Decimal
-import yfinance as yf
 from datetime import timedelta
 import time
-
-# Configure yfinance to avoid rate limiting
-import requests_cache
-from requests import Session
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
-
-# Create session with retries and proper headers
-session = Session()
-retry = Retry(total=3, backoff_factor=0.3)
-adapter = HTTPAdapter(max_retries=retry)
-session.mount('http://', adapter)
-session.mount('https://', adapter)
-session.headers.update({
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-})
+import requests
 
 from database import (
     get_portfolio,
@@ -93,102 +77,143 @@ def decimal_to_float(obj):
 
 
 def get_current_price(ticker: str) -> float:
-    """Fetch current price from yfinance with improved error handling"""
+    """Fetch current price directly from Yahoo Finance API (bypassing yfinance library)"""
     try:
-        # Add a small delay to avoid rate limiting
+        # Add delay to avoid rate limiting
         time.sleep(0.3)
         
-        # Create ticker with custom session
-        stock = yf.Ticker(ticker, session=session)
+        # Direct Yahoo Finance API call
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+        params = {
+            "interval": "1d",
+            "range": "1d"
+        }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.9',
+        }
         
-        # Method 1: Try fast_info first (most reliable and fastest)
-        try:
-            if hasattr(stock, 'fast_info'):
-                fast_info = stock.fast_info
-                if hasattr(fast_info, 'last_price') and fast_info.last_price:
-                    price = float(fast_info.last_price)
-                    if price > 0:
-                        print(f"✓ {ticker}: ${price:.2f} (from fast_info)")
-                        return price
-        except Exception as e:
-            pass
+        response = requests.get(url, params=params, headers=headers, timeout=10)
         
-        # Method 2: Try info dict
-        try:
-            info = stock.info
-            for price_key in ['currentPrice', 'regularMarketPrice', 'previousClose']:
-                if price_key in info and info[price_key]:
-                    price = float(info[price_key])
-                    if price > 0:
-                        print(f"✓ {ticker}: ${price:.2f} (from info.{price_key})")
-                        return price
-        except Exception as e:
-            pass
+        if response.status_code != 200:
+            print(f"⚠️  {ticker}: HTTP {response.status_code}")
+            return None
         
-        # Method 3: Try history with different periods
-        for period in ["1d", "5d"]:
-            try:
-                hist = stock.history(period=period)
-                if not hist.empty and 'Close' in hist.columns and len(hist) > 0:
-                    price = float(hist['Close'].iloc[-1])
-                    if price > 0:
-                        print(f"✓ {ticker}: ${price:.2f} (from history, period={period})")
-                        return price
-            except:
-                continue
+        data = response.json()
         
-        print(f"⚠️  {ticker}: No price found after trying all methods")
+        # Extract price from response
+        if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
+            result = data["chart"]["result"][0]
+            
+            # Try meta.regularMarketPrice first
+            if "meta" in result and "regularMarketPrice" in result["meta"]:
+                price = float(result["meta"]["regularMarketPrice"])
+                if price > 0:
+                    print(f"✓ {ticker}: ${price:.2f} (Yahoo API)")
+                    return price
+            
+            # Try latest close price from indicators
+            if "indicators" in result and "quote" in result["indicators"]:
+                quotes = result["indicators"]["quote"]
+                if len(quotes) > 0 and "close" in quotes[0]:
+                    closes = [c for c in quotes[0]["close"] if c is not None]
+                    if closes:
+                        price = float(closes[-1])
+                        if price > 0:
+                            print(f"✓ {ticker}: ${price:.2f} (Yahoo API - close)")
+                            return price
+        
+        print(f"⚠️  {ticker}: No price in API response")
         return None
         
+    except requests.exceptions.RequestException as e:
+        print(f"❌ {ticker}: Network error - {str(e)}")
+        return None
     except Exception as e:
         print(f"❌ {ticker}: Error - {str(e)}")
         return None
 
 
 def check_market_regime():
-    """Check SPY and FTSE for risk on/off"""
+    """Check SPY and FTSE for risk on/off using direct Yahoo Finance API"""
     try:
-        time.sleep(0.3)  # Rate limiting
+        time.sleep(0.3)
         
-        spy = yf.Ticker("SPY", session=session)
-        ftse = yf.Ticker("^FTSE", session=session)
+        def get_ma200(ticker: str):
+            """Get current price and 200-day MA"""
+            try:
+                url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+                params = {
+                    "interval": "1d",
+                    "range": "1y"
+                }
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    'Accept': 'application/json',
+                }
+                
+                response = requests.get(url, params=params, headers=headers, timeout=15)
+                data = response.json()
+                
+                if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
+                    result = data["chart"]["result"][0]
+                    
+                    # Get current price
+                    current = None
+                    if "meta" in result and "regularMarketPrice" in result["meta"]:
+                        current = float(result["meta"]["regularMarketPrice"])
+                    
+                    # Get historical closes for MA200
+                    ma200 = None
+                    if "indicators" in result and "quote" in result["indicators"]:
+                        quotes = result["indicators"]["quote"]
+                        if len(quotes) > 0 and "close" in quotes[0]:
+                            closes = [c for c in quotes[0]["close"] if c is not None]
+                            if len(closes) >= 200:
+                                # Calculate 200-day moving average
+                                ma200 = sum(closes[-200:]) / 200
+                            elif len(closes) > 0:
+                                # Use available data if less than 200 days
+                                ma200 = sum(closes) / len(closes)
+                    
+                    return current, ma200
+                
+                return None, None
+            except Exception as e:
+                print(f"Error getting MA200 for {ticker}: {e}")
+                return None, None
         
-        # Try to get history with error handling
-        try:
-            spy_hist = spy.history(period="1y")
-        except:
-            spy_hist = None
-            
-        try:
-            ftse_hist = ftse.history(period="1y")
-        except:
-            ftse_hist = None
+        # Get SPY data
+        spy_price, spy_ma200 = get_ma200("SPY")
+        
+        # Get FTSE data
+        ftse_price, ftse_ma200 = get_ma200("^FTSE")
         
         # Default to risk-on if we can't fetch data
-        if spy_hist is None or spy_hist.empty or ftse_hist is None or ftse_hist.empty:
-            print("⚠️  Could not fetch market regime data, defaulting to risk-on")
-            return {
-                'spy_risk_on': True,
-                'ftse_risk_on': True,
-                'spy_price': 0,
-                'spy_ma200': 0,
-                'ftse_price': 0,
-                'ftse_ma200': 0
-            }
+        if spy_price is None or spy_ma200 is None:
+            print("⚠️  Could not fetch SPY data, defaulting to risk-on")
+            spy_risk_on = True
+            spy_price = 0
+            spy_ma200 = 0
+        else:
+            spy_risk_on = spy_price > spy_ma200
         
-        spy_current = float(spy_hist['Close'].iloc[-1])
-        spy_ma200 = float(spy_hist['Close'].rolling(200).mean().iloc[-1])
-        
-        ftse_current = float(ftse_hist['Close'].iloc[-1])
-        ftse_ma200 = float(ftse_hist['Close'].rolling(200).mean().iloc[-1])
+        if ftse_price is None or ftse_ma200 is None:
+            print("⚠️  Could not fetch FTSE data, defaulting to risk-on")
+            ftse_risk_on = True
+            ftse_price = 0
+            ftse_ma200 = 0
+        else:
+            ftse_risk_on = ftse_price > ftse_ma200
         
         return {
-            'spy_risk_on': spy_current > spy_ma200,
-            'ftse_risk_on': ftse_current > ftse_ma200,
-            'spy_price': spy_current,
-            'spy_ma200': spy_ma200,
-            'ftse_price': ftse_current,
-            'ftse_ma200': ftse_ma200
+            'spy_risk_on': spy_risk_on,
+            'ftse_risk_on': ftse_risk_on,
+            'spy_price': spy_price or 0,
+            'spy_ma200': spy_ma200 or 0,
+            'ftse_price': ftse_price or 0,
+            'ftse_ma200': ftse_ma200 or 0
         }
     except Exception as e:
         print(f"❌ Market regime check failed: {e}")
