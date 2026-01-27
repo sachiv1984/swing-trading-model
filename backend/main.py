@@ -7,7 +7,6 @@ from decimal import Decimal
 import yfinance as yf
 from datetime import timedelta
 import time
-<<<<<<< HEAD
 
 # Configure yfinance to avoid rate limiting
 import requests_cache
@@ -24,8 +23,6 @@ session.mount('https://', adapter)
 session.headers.update({
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 })
-=======
->>>>>>> 29b9b92932682ccab6163a77ac06ccf3f0be1f44
 
 from database import (
     get_portfolio,
@@ -99,7 +96,6 @@ def get_current_price(ticker: str) -> float:
     """Fetch current price from yfinance with improved error handling"""
     try:
         # Add a small delay to avoid rate limiting
-<<<<<<< HEAD
         time.sleep(0.3)
         
         # Create ticker with custom session
@@ -142,49 +138,6 @@ def get_current_price(ticker: str) -> float:
                 continue
         
         print(f"⚠️  {ticker}: No price found after trying all methods")
-=======
-        time.sleep(0.1)
-        
-        stock = yf.Ticker(ticker)
-        
-        # Method 1: Try different period lengths (UK stocks sometimes need longer periods)
-        for period in ["1d", "5d", "1mo"]:
-            try:
-                hist = stock.history(period=period)
-                if not hist.empty and 'Close' in hist.columns:
-                    price = float(hist['Close'].iloc[-1])
-                    print(f"✓ {ticker}: ${price:.2f} (from history, period={period})")
-                    return price
-            except:
-                continue
-        
-        # Method 2: Try fast_info (more reliable for some stocks)
-        try:
-            fast_info = stock.fast_info
-            if hasattr(fast_info, 'last_price') and fast_info.last_price:
-                price = float(fast_info.last_price)
-                print(f"✓ {ticker}: ${price:.2f} (from fast_info)")
-                return price
-        except:
-            pass
-        
-        # Method 3: Info dict
-        try:
-            info = stock.info
-            if 'currentPrice' in info and info['currentPrice']:
-                price = float(info['currentPrice'])
-                print(f"✓ {ticker}: ${price:.2f} (from currentPrice)")
-                return price
-            
-            if 'regularMarketPrice' in info and info['regularMarketPrice']:
-                price = float(info['regularMarketPrice'])
-                print(f"✓ {ticker}: ${price:.2f} (from regularMarketPrice)")
-                return price
-        except:
-            pass
-        
-        print(f"⚠️  {ticker}: No price found")
->>>>>>> 29b9b92932682ccab6163a77ac06ccf3f0be1f44
         return None
         
     except Exception as e:
@@ -195,7 +148,6 @@ def get_current_price(ticker: str) -> float:
 def check_market_regime():
     """Check SPY and FTSE for risk on/off"""
     try:
-<<<<<<< HEAD
         time.sleep(0.3)  # Rate limiting
         
         spy = yf.Ticker("SPY", session=session)
@@ -215,15 +167,6 @@ def check_market_regime():
         # Default to risk-on if we can't fetch data
         if spy_hist is None or spy_hist.empty or ftse_hist is None or ftse_hist.empty:
             print("⚠️  Could not fetch market regime data, defaulting to risk-on")
-=======
-        spy = yf.Ticker("SPY")
-        ftse = yf.Ticker("^FTSE")
-        
-        spy_hist = spy.history(period="1y")
-        ftse_hist = ftse.history(period="1y")
-        
-        if spy_hist.empty or ftse_hist.empty:
->>>>>>> 29b9b92932682ccab6163a77ac06ccf3f0be1f44
             return {
                 'spy_risk_on': True,
                 'ftse_risk_on': True,
