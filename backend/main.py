@@ -332,6 +332,12 @@ def get_positions_endpoint():
             if analysis:
                 # Use live analyzed data
                 current_price = analysis['current_price']
+                
+                # Fix UK stocks: Yahoo returns pence, we need pounds
+                if pos['market'] == 'UK' and current_price > 1000:
+                    current_price = current_price / 100
+                    print(f"✓ Converted {pos['ticker']} from pence to pounds: {current_price}")
+                
                 current_stop = analysis['current_stop']
                 pnl = analysis['pnl']
                 pnl_pct = analysis['pnl_pct']
@@ -379,13 +385,16 @@ def get_positions_endpoint():
             # Display ticker without .L suffix for UK stocks
             display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
             
+            # For display: US stocks should show USD fill_price, UK stocks show GBP entry_price
+            display_entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+            
             # Map backend fields to frontend field names
             positions_list.append({
                 "id": str(pos['id']),
                 "ticker": display_ticker,
                 "market": pos['market'],
                 "entry_date": str(pos['entry_date']),
-                "entry_price": round(pos['entry_price'], 2),
+                "entry_price": round(display_entry_price, 2),
                 "shares": pos['shares'],
                 "current_price": round(current_price, 2),
                 "stop_price": round(current_stop, 2),
@@ -634,12 +643,18 @@ def analyze_positions_endpoint():
             print(f"{'='*70}")
             
             # Get live price with detailed logging
-            print(f"   🔍 Fetching live price from yfinance...")
+            print(f"   🔍 Fetching live price from Yahoo Finance...")
             live_price = get_current_price(pos['ticker'])
             
-            entry_price = pos['entry_price']
+            # For US stocks, use fill_price (USD). For UK stocks, use entry_price (GBP)
+            entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
             
             if live_price:
+                # Fix UK stocks: Yahoo returns pence, convert to pounds
+                if pos['market'] == 'UK' and live_price > 1000:
+                    live_price = live_price / 100
+                    print(f"   ✓ Converted from pence to pounds")
+                
                 print(f"   ✓ Live price: ${live_price:.2f}")
                 print(f"   Entry price: ${entry_price:.2f}")
                 print(f"   Change: {((live_price - entry_price) / entry_price * 100):+.2f}%")
