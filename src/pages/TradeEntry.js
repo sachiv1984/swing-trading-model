@@ -34,9 +34,10 @@ export default function TradeEntry() {
 
   const currentSettings = settings?.[0] || {
     atr_multiplier_initial: 2,
-    uk_commission: 0,
+    uk_commission: 9.95,
     us_commission: 0,
     stamp_duty_rate: 0.005,
+    fx_fee_rate: 0.0015,
   };
 
   const createMutation = useMutation({
@@ -85,7 +86,11 @@ export default function TradeEntry() {
       ? grossValueGBP * currentSettings.stamp_duty_rate 
       : 0;
 
-    const totalCost = grossValueGBP + commission + stampDuty;
+    const fxFee = formData.market === "US" 
+      ? grossValueGBP * (currentSettings.fx_fee_rate || 0.0015)
+      : 0;
+
+    const totalCost = grossValueGBP + commission + stampDuty + fxFee;
 
     const initialStop = price - (atr * currentSettings.atr_multiplier_initial);
     const riskPerShare = price - initialStop;
@@ -97,6 +102,7 @@ export default function TradeEntry() {
       grossValueGBP,
       commission,
       stampDuty,
+      fxFee,
       totalCost,
       initialStop,
       riskPerShare,
@@ -121,7 +127,7 @@ export default function TradeEntry() {
       fx_rate: parseFloat(formData.fx_rate),
       atr_value: parseFloat(formData.atr_value) || null,
       stop_price: costs.initialStop > 0 ? costs.initialStop : null,
-      fees: costs.commission + costs.stampDuty,
+      fees: costs.commission + costs.stampDuty + costs.fxFee,
       status: "open",
     });
   };
@@ -278,6 +284,12 @@ export default function TradeEntry() {
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400">Stamp Duty (0.5%)</span>
                 <span className="text-white">£{costs.stampDuty.toFixed(2)}</span>
+              </div>
+            )}
+            {costs.fxFee > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-400">FX Fee (0.15%)</span>
+                <span className="text-white">£{costs.fxFee.toFixed(2)}</span>
               </div>
             )}
             <div className="pt-3 border-t border-slate-700">
