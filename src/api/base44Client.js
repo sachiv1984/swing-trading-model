@@ -30,7 +30,6 @@ export const api = {
   positions: {
     list: async () => {
       const response = await fetch(`${API_BASE_URL}/positions`);
-      // This endpoint returns array directly, not wrapped in {status, data}
       return response.json();
     },
     
@@ -43,6 +42,31 @@ export const api = {
   trades: {
     list: async () => {
       const response = await fetch(`${API_BASE_URL}/trades`);
+      return handleResponse(response);
+    }
+  },
+  
+  settings: {
+    list: async () => {
+      const response = await fetch(`${API_BASE_URL}/settings`);
+      return handleResponse(response);
+    },
+    
+    create: async (settingsData) => {
+      const response = await fetch(`${API_BASE_URL}/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsData)
+      });
+      return handleResponse(response);
+    },
+    
+    update: async (id, settingsData) => {
+      const response = await fetch(`${API_BASE_URL}/settings/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsData)
+      });
       return handleResponse(response);
     }
   }
@@ -59,17 +83,14 @@ export const base44 = {
     },
     Position: {
       list: async () => {
-        // Now uses the new /positions endpoint
         return api.positions.list();
       },
       filter: async (conditions, orderBy) => {
-        // Now uses the new /positions endpoint
         const positions = await api.positions.list();
         let filtered = positions.filter(p => 
           Object.entries(conditions).every(([key, value]) => p[key] === value)
         );
         
-        // Handle sorting if orderBy is provided
         if (orderBy) {
           const isDescending = orderBy.startsWith('-');
           const field = isDescending ? orderBy.slice(1) : orderBy;
@@ -96,11 +117,18 @@ export const base44 = {
       }
     },
     Settings: {
-      list: async () => Promise.resolve([])
+      list: async () => {
+        return api.settings.list();
+      },
+      create: async (data) => {
+        return api.settings.create(data);
+      },
+      update: async (id, data) => {
+        return api.settings.update(id, data);
+      }
     },
     MarketRegime: {
       list: async () => {
-        // Try to get from analysis endpoint
         try {
           const analysis = await api.positions.analyze();
           if (analysis && analysis.market_regime) {
@@ -112,7 +140,6 @@ export const base44 = {
         } catch (error) {
           console.error('Failed to get market regime:', error);
         }
-        // Fallback
         return [
           { market: 'US', status: 'risk_on' },
           { market: 'UK', status: 'risk_on' }
