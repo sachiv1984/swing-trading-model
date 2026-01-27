@@ -16,7 +16,10 @@ from database import (
     update_position,
     delete_position,
     get_trade_history,
-    create_trade_history
+    create_trade_history,
+    get_settings,
+    create_settings,
+    update_settings
 )
 
 app = FastAPI(title="Trading Assistant API")
@@ -44,6 +47,19 @@ class AddPositionRequest(BaseModel):
     fx_rate: Optional[float] = None
     atr: float
     custom_stop: Optional[float] = None
+
+
+class SettingsRequest(BaseModel):
+    min_hold_days: Optional[int] = 5
+    atr_multiplier_initial: Optional[float] = 2
+    atr_multiplier_trailing: Optional[float] = 3
+    atr_period: Optional[int] = 14
+    default_currency: Optional[str] = "GBP"
+    theme: Optional[str] = "dark"
+    uk_commission: Optional[float] = 9.95
+    us_commission: Optional[float] = 0
+    stamp_duty_rate: Optional[float] = 0.005
+    fx_fee_rate: Optional[float] = 0.0015
 
 
 # Helper to convert Decimal to float
@@ -159,6 +175,55 @@ def root():
     return {"status": "ok", "message": "Trading Assistant API v1.0"}
 
 
+@app.get("/settings")
+def get_settings_endpoint():
+    """Get user settings"""
+    try:
+        settings = get_settings()
+        if not settings:
+            # Return default settings if none exist
+            return {
+                "status": "ok",
+                "data": []
+            }
+        
+        settings_list = [decimal_to_float(s) for s in settings]
+        return {
+            "status": "ok",
+            "data": settings_list
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
+@app.post("/settings")
+def create_settings_endpoint(request: SettingsRequest):
+    """Create new settings"""
+    try:
+        settings_data = request.dict()
+        new_settings = create_settings(settings_data)
+        return {
+            "status": "ok",
+            "data": decimal_to_float(new_settings)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.patch("/settings/{settings_id}")
+def update_settings_endpoint(settings_id: str, request: SettingsRequest):
+    """Update existing settings"""
+    try:
+        settings_data = {k: v for k, v in request.dict().items() if v is not None}
+        updated_settings = update_settings(settings_id, settings_data)
+        return {
+            "status": "ok",
+            "data": decimal_to_float(updated_settings)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/positions")
 def get_positions_endpoint():
     """Get open positions in the format the frontend expects"""
@@ -202,12 +267,12 @@ def get_positions_endpoint():
                 "entry_price": round(pos['entry_price'], 2),
                 "shares": pos['shares'],
                 "current_price": round(current_price, 2),
-                "stop_price": round(pos.get('current_stop', 0), 2),  # Changed from current_stop
+                "stop_price": round(pos.get('current_stop', 0), 2),
                 "pnl": round(pnl, 2),
-                "pnl_percent": round(pnl_pct, 2),  # Changed from pnl_pct
+                "pnl_percent": round(pnl_pct, 2),
                 "holding_days": holding_days,
-                "status": "open",  # Frontend expects "open" for all open positions
-                "display_status": display_status,  # Keep GRACE/PROFITABLE/LOSING as separate field
+                "status": "open",
+                "display_status": display_status,
                 "atr_value": pos.get('atr', 0),
                 "fx_rate": pos.get('fx_rate', 1.0)
             })
@@ -292,6 +357,16 @@ def add_position_endpoint(request: AddPositionRequest):
         
         portfolio_id = str(portfolio['id'])
         
+        # Get settings for commission and fee rates
+        settings_list = get_settings()
+        settings = settings_list[0] if settings_list else None
+        
+        # Use settings or defaults
+        uk_commission = float(settings.get('uk_commission', 9.95)) if settings else 9.95
+        us_commission = float(settings.get('us_commission', 0)) if settings else 0
+        stamp_duty_rate = float(settings.get('stamp_duty_rate', 0.005)) if settings else 0.005
+        fx_fee_rate = float(settings.get('fx_fee_rate', 0.0015)) if settings else 0.0015
+        
         # Calculate fees and costs
         is_uk = request.fill_currency == "GBP"
         
@@ -302,10 +377,9 @@ def add_position_endpoint(request: AddPositionRequest):
             print(f"✓ Auto-appended .L to UK ticker: {ticker}")
         
         if is_uk:
-            stamp_duty_rate = 0.005
             gross_cost = request.shares * request.fill_price
             stamp_duty = gross_cost * stamp_duty_rate
-            commission = 9.95  # UK commission
+            commission = uk_commission
             total_fees = stamp_duty + commission
             total_cost = gross_cost + total_fees
             entry_price = total_cost / request.shares
@@ -316,9 +390,8 @@ def add_position_endpoint(request: AddPositionRequest):
             fill_price_gbp = request.fill_price / fx_rate
             gross_cost = request.shares * fill_price_gbp
             
-            fx_fee_rate = 0.0015  # 0.15% FX fee
             fx_fee = gross_cost * fx_fee_rate
-            commission = 0  # US commission
+            commission = us_commission
             
             total_fees = fx_fee + commission
             total_cost = gross_cost + total_fees
@@ -326,7 +399,8 @@ def add_position_endpoint(request: AddPositionRequest):
             market = "US"
         
         # Calculate initial stop
-        initial_stop = request.custom_stop if request.custom_stop else (entry_price - (5 * request.atr))
+        atr_multiplier = float(settings.get('atr_multiplier_initial', 2)) if settings else 2
+        initial_stop = request.custom_stop if request.custom_stop else (entry_price - (atr_multiplier * request.atr))
         
         # Create position with the modified ticker
         position_data = {
@@ -339,8 +413,8 @@ def add_position_endpoint(request: AddPositionRequest):
             'fx_rate': request.fx_rate,
             'shares': request.shares,
             'total_cost': round(total_cost, 2),
-            'fees_paid': round(total_fees, 2),  # Total fees (stamp duty OR fx fee)
-            'fees': round(total_fees, 2),  # Use 'fees' column as well
+            'fees_paid': round(total_fees, 2),
+            'fees': round(total_fees, 2),
             'fee_type': 'stamp_duty' if is_uk else 'fx_fee',
             'initial_stop': round(initial_stop, 2),
             'current_stop': round(initial_stop, 2),
