@@ -382,7 +382,7 @@ def update_settings_endpoint(settings_id: str, request: SettingsRequest):
 
 @app.get("/positions")
 def get_positions_endpoint():
-    """Get open positions with live prices and calculated stops - ALL VALUES IN GBP"""
+    """Get open positions - current_price in NATIVE currency, separate value_gbp for calculations"""
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -440,10 +440,12 @@ def get_positions_endpoint():
                     current_price_native = current_price_native / 100
                     print(f"✓ Converted {pos['ticker']} from pence to pounds: {current_price_native}")
                 
-                # Use display stop (0 during grace period, actual stop after)
-                current_stop = analysis['current_stop']
-                pnl = analysis['pnl']  # Already in GBP from analysis
+                # P&L is already calculated in GBP by analysis endpoint
+                pnl = analysis['pnl']
                 pnl_pct = analysis['pnl_pct']
+                
+                # Use display stop (0 during grace period, actual stop after)
+                current_stop_gbp = analysis['current_stop']
                 holding_days = analysis['holding_days']
                 grace_period = analysis['grace_period']
                 stop_reason = analysis['stop_reason']
@@ -465,7 +467,7 @@ def get_positions_endpoint():
                 # Fallback to stored data
                 print(f"⚠️  No analysis found for {pos['ticker']}, using stored data")
                 current_price_native = pos.get('current_price', pos['entry_price'])
-                current_stop = pos.get('current_stop', 0)
+                current_stop_gbp = pos.get('current_stop', 0)
                 pnl = pos.get('pnl', 0)  # Already in GBP from database
                 pnl_pct = pos.get('pnl_pct', 0)
                 
@@ -483,37 +485,40 @@ def get_positions_endpoint():
                     display_status = "LOSING"
                 exit_reason = None
             
-            # CRITICAL FIX: Convert US stock prices to GBP so frontend calc works
-            # Frontend does: current_price * shares
-            # So current_price must be in GBP for both US and UK stocks
+            # Calculate value in GBP for Dashboard
+            current_value_native = current_price_native * pos['shares']
             if pos['market'] == 'US':
-                # Convert USD price to GBP
-                current_price_gbp = current_price_native / live_fx_rate
-                print(f"  💱 {pos['ticker']}: ${current_price_native:.2f} → £{current_price_gbp:.2f} (rate: {live_fx_rate:.4f})")
+                current_value_gbp = current_value_native / live_fx_rate
+                print(f"  💱 {pos['ticker']}: ${current_value_native:.2f} → £{current_value_gbp:.2f} (rate: {live_fx_rate:.4f})")
             else:
-                # UK stocks already in GBP
-                current_price_gbp = current_price_native
+                current_value_gbp = current_value_native
+            
+            # Convert stop price to native currency for display
+            if pos['market'] == 'US' and current_stop_gbp > 0:
+                stop_price_native = current_stop_gbp * live_fx_rate  # Convert GBP stop back to USD
+            else:
+                stop_price_native = current_stop_gbp
             
             # Display ticker without .L suffix for UK stocks
             display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
             
-            # For entry_price: US stocks show USD, UK stocks show GBP (for display purposes)
-            # But this doesn't affect calculations since we only use current_price * shares
+            # Entry price: Show in native currency
+            # For US stocks, use fill_price (USD). For UK stocks, use entry_price (GBP)
             display_entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
             
             # Map backend fields to frontend field names
-            # IMPORTANT: current_price is now ALWAYS in GBP
-            # So frontend calculation (current_price * shares) will be correct
+            # STRATEGY: current_price in native currency for display
+            #           value_gbp field for Dashboard calculations
             positions_list.append({
                 "id": str(pos['id']),
                 "ticker": display_ticker,
                 "market": pos['market'],
                 "entry_date": str(pos['entry_date']),
-                "entry_price": round(display_entry_price, 2),  # Keep original for display
+                "entry_price": round(display_entry_price, 2),  # Native currency
                 "shares": pos['shares'],
-                "current_price": round(current_price_gbp, 2),  # ⭐ NOW IN GBP FOR ALL STOCKS
-                "current_price_native": round(current_price_native, 2),  # Original price for reference
-                "stop_price": round(current_stop, 2),
+                "current_price": round(current_price_native, 2),  # ⭐ NATIVE currency (USD or GBP)
+                "value_gbp": round(current_value_gbp, 2),  # ⭐ For Dashboard: current_price * shares in GBP
+                "stop_price": round(stop_price_native, 2),  # Native currency
                 "pnl": round(pnl, 2),  # Already in GBP
                 "pnl_percent": round(pnl_pct, 2),
                 "holding_days": holding_days,
