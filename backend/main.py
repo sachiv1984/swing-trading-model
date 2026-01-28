@@ -76,6 +76,58 @@ def decimal_to_float(obj):
     return obj
 
 
+def calculate_atr(ticker: str, period: int = 14) -> float:
+    """Calculate ATR for a ticker if not stored in database"""
+    try:
+        # Fetch historical data
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+        params = {
+            "interval": "1d",
+            "range": "1mo"  # Need enough data for ATR calculation
+        }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'application/json',
+        }
+        
+        response = requests.get(url, params=params, headers=headers, timeout=10)
+        data = response.json()
+        
+        if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
+            result = data["chart"]["result"][0]
+            
+            if "indicators" in result and "quote" in result["indicators"]:
+                quote = result["indicators"]["quote"][0]
+                
+                # Get high, low, close
+                highs = [h for h in quote.get("high", []) if h is not None]
+                lows = [l for l in quote.get("low", []) if l is not None]
+                closes = [c for c in quote.get("close", []) if c is not None]
+                
+                if len(highs) >= period and len(lows) >= period and len(closes) >= period:
+                    # Calculate True Range
+                    true_ranges = []
+                    for i in range(1, len(closes)):
+                        high_low = highs[i] - lows[i]
+                        high_close = abs(highs[i] - closes[i-1])
+                        low_close = abs(lows[i] - closes[i-1])
+                        true_range = max(high_low, high_close, low_close)
+                        true_ranges.append(true_range)
+                    
+                    # Calculate ATR (simple moving average of TR)
+                    if len(true_ranges) >= period:
+                        atr = sum(true_ranges[-period:]) / period
+                        print(f"   📊 Calculated ATR for {ticker}: {atr:.2f}")
+                        return atr
+        
+        print(f"   ⚠️  Could not calculate ATR for {ticker}")
+        return None
+        
+    except Exception as e:
+        print(f"   ❌ ATR calculation error for {ticker}: {e}")
+        return None
+
+
 def get_current_price(ticker: str) -> float:
     """Fetch current price directly from Yahoo Finance API (bypassing yfinance library)"""
     try:
@@ -709,10 +761,19 @@ def analyze_positions_endpoint():
                     atr_mult = float(settings.get('atr_multiplier_initial', 5)) if settings else 5
                     stop_reason = f"At loss (wide {atr_mult}x ATR)"
                 
-                # Get ATR value (stored in position or default to 0)
-                atr_value = pos.get('atr', 0)
+                # Get ATR value (stored in position or calculate it)
+                atr_value = pos.get('atr')
                 
-                if atr_value > 0:
+                if not atr_value or atr_value == 0:
+                    print(f"   ⚠️  No ATR in database, calculating...")
+                    atr_value = calculate_atr(pos['ticker'])
+                    
+                    # Store calculated ATR in database for future use
+                    if atr_value and atr_value > 0:
+                        update_position(str(pos['id']), {'atr': round(atr_value, 4)})
+                        print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
+                
+                if atr_value and atr_value > 0:
                     # Calculate new stop: current_price - (multiplier * ATR)
                     new_stop = current_price - (atr_mult * atr_value)
                     # Trailing stop only moves up, never down
@@ -725,7 +786,7 @@ def analyze_positions_endpoint():
                 else:
                     # No ATR available, keep current stop
                     trailing_stop = current_stop
-                    print(f"   ⚠️  No ATR value, stop unchanged")
+                    print(f"   ⚠️  No ATR value available, stop unchanged")
             
             # Update current_stop for further checks
             current_stop = trailing_stop
