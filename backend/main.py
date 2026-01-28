@@ -390,6 +390,7 @@ def get_positions_endpoint():
                     current_price = current_price / 100
                     print(f"✓ Converted {pos['ticker']} from pence to pounds: {current_price}")
                 
+                # Use display stop (0 during grace period, actual stop after)
                 current_stop = analysis['current_stop']
                 pnl = analysis['pnl']
                 pnl_pct = analysis['pnl_pct']
@@ -742,8 +743,9 @@ def analyze_positions_endpoint():
             
             # Calculate new trailing stop based on strategy
             if grace_period:
-                # During grace period, keep initial stop
+                # During grace period, keep initial stop but don't display it
                 trailing_stop = current_stop
+                display_stop = 0  # Show 0 to indicate no active stop during grace period
                 stop_reason = f"Grace period ({holding_days}/10 days)"
                 print(f"   🆕 Grace period active - no stop loss")
             else:
@@ -778,6 +780,7 @@ def analyze_positions_endpoint():
                     new_stop = current_price - (atr_mult * atr_value)
                     # Trailing stop only moves up, never down
                     trailing_stop = max(current_stop, new_stop)
+                    display_stop = trailing_stop  # Show actual stop after grace period
                     
                     if trailing_stop > current_stop:
                         print(f"   📈 Stop moved up: ${current_stop:.2f} → ${trailing_stop:.2f}")
@@ -786,6 +789,7 @@ def analyze_positions_endpoint():
                 else:
                     # No ATR available, keep current stop
                     trailing_stop = current_stop
+                    display_stop = trailing_stop
                     print(f"   ⚠️  No ATR value available, stop unchanged")
             
             # Update current_stop for further checks
@@ -834,7 +838,7 @@ def analyze_positions_endpoint():
                 "shares": shares,
                 "pnl": round(pnl, 2),
                 "pnl_pct": round(pnl_pct, 2),
-                "current_stop": round(current_stop, 2),
+                "current_stop": round(display_stop, 2),  # Use display_stop instead of trailing_stop
                 "holding_days": holding_days,
                 "stop_reason": stop_reason,
                 "grace_period": grace_period
