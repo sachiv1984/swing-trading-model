@@ -67,9 +67,9 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                     portfolio_id, ticker, market, entry_date, entry_price,
                     fill_price, fill_currency, fx_rate, shares, total_cost,
                     fees_paid, fee_type, initial_stop, current_stop, current_price,
-                    holding_days, pnl, pnl_pct, status
+                    atr, holding_days, pnl, pnl_pct, status
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
                 RETURNING *
             """, (
@@ -88,6 +88,7 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                 position_data.get('initial_stop'),
                 position_data.get('current_stop'),
                 position_data.get('current_price'),
+                position_data.get('atr'),
                 position_data.get('holding_days', 0),
                 position_data.get('pnl', 0),
                 position_data.get('pnl_pct', 0),
