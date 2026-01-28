@@ -564,6 +564,7 @@ def add_position_endpoint(request: AddPositionRequest):
             'initial_stop': round(initial_stop, 2),
             'current_stop': round(initial_stop, 2),
             'current_price': round(entry_price_for_display, 4),  # Initialize with fill price
+            'atr': round(atr, 4) if atr > 0 else None,  # Store ATR for trailing stop calculations
             'holding_days': 0,
             'pnl': 0.0,
             'pnl_pct': 0.0,
@@ -681,19 +682,59 @@ def analyze_positions_endpoint():
             print(f"   P&L: ${pnl:+.2f} ({pnl_pct:+.2f}%)")
             print(f"   Days held: {holding_days}")
             
-            # Determine action
-            action = "HOLD"
-            exit_reason = None
-            stop_reason = ""
+            # Get current stop from database
             current_stop = pos.get('current_stop', pos.get('initial_stop', 0))
             
             # Check grace period
             grace_period = holding_days < 10
             
+            # Calculate new trailing stop based on strategy
             if grace_period:
+                # During grace period, keep initial stop
+                trailing_stop = current_stop
                 stop_reason = f"Grace period ({holding_days}/10 days)"
                 print(f"   🆕 Grace period active - no stop loss")
             else:
+                # After grace period, calculate trailing stop based on profitability
+                # Get settings for ATR multipliers
+                settings_list = get_settings()
+                settings = settings_list[0] if settings_list else None
+                
+                if pnl > 0:
+                    # Profitable: tight 2x ATR stop
+                    atr_mult = float(settings.get('atr_multiplier_trailing', 2)) if settings else 2
+                    stop_reason = f"Profitable (tight {atr_mult}x ATR)"
+                else:
+                    # At loss: wide 5x ATR stop
+                    atr_mult = float(settings.get('atr_multiplier_initial', 5)) if settings else 5
+                    stop_reason = f"At loss (wide {atr_mult}x ATR)"
+                
+                # Get ATR value (stored in position or default to 0)
+                atr_value = pos.get('atr', 0)
+                
+                if atr_value > 0:
+                    # Calculate new stop: current_price - (multiplier * ATR)
+                    new_stop = current_price - (atr_mult * atr_value)
+                    # Trailing stop only moves up, never down
+                    trailing_stop = max(current_stop, new_stop)
+                    
+                    if trailing_stop > current_stop:
+                        print(f"   📈 Stop moved up: ${current_stop:.2f} → ${trailing_stop:.2f}")
+                    else:
+                        print(f"   📊 Stop unchanged: ${current_stop:.2f}")
+                else:
+                    # No ATR available, keep current stop
+                    trailing_stop = current_stop
+                    print(f"   ⚠️  No ATR value, stop unchanged")
+            
+            # Update current_stop for further checks
+            current_stop = trailing_stop
+            
+            # Determine action
+            action = "HOLD"
+            exit_reason = None
+            
+            if not grace_period:
                 # Check market regime
                 is_uk = pos['market'] == 'UK'
                 market_risk_on = market_regime['ftse_risk_on'] if is_uk else market_regime['spy_risk_on']
@@ -708,18 +749,15 @@ def analyze_positions_endpoint():
                     exit_reason = "Stop Loss Hit"
                     stop_reason = "Stop triggered"
                     print(f"   🔴 EXIT: Stop loss hit (${current_stop:.2f})")
-                elif pnl > 0:
-                    stop_reason = "Profitable (tight 2x ATR)"
-                    print(f"   ✅ HOLD: Profitable, tight stop")
                 else:
-                    stop_reason = "At loss (wide 5x ATR)"
-                    print(f"   ✅ HOLD: At loss, wide stop")
+                    print(f"   ✅ HOLD: {stop_reason}")
             
-            # Update position in database if we have new price
-            if live_price and live_price != pos.get('current_price'):
-                print(f"   💾 Updating position with new price...")
+            # Update position in database with new prices AND stop
+            if live_price:
+                print(f"   💾 Updating position in database...")
                 update_position(str(pos['id']), {
                     'current_price': round(current_price, 4),
+                    'current_stop': round(current_stop, 2),
                     'holding_days': holding_days,
                     'pnl': round(pnl, 2),
                     'pnl_pct': round(pnl_pct, 2)
