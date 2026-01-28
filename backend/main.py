@@ -382,7 +382,7 @@ def update_settings_endpoint(settings_id: str, request: SettingsRequest):
 
 @app.get("/positions")
 def get_positions_endpoint():
-    """Get open positions with live prices and calculated stops"""
+    """Get open positions with live prices and calculated stops - ALL VALUES IN GBP"""
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -393,6 +393,9 @@ def get_positions_endpoint():
         
         if not positions:
             return []
+        
+        # Get live FX rate for conversions
+        live_fx_rate = get_live_fx_rate()
         
         # Get analysis data (live prices, stops, signals)
         try:
@@ -430,16 +433,16 @@ def get_positions_endpoint():
             
             if analysis:
                 # Use live analyzed data
-                current_price = analysis['current_price']
+                current_price_native = analysis['current_price']
                 
                 # Fix UK stocks: Yahoo returns pence, we need pounds
-                if pos['market'] == 'UK' and current_price > 1000:
-                    current_price = current_price / 100
-                    print(f"✓ Converted {pos['ticker']} from pence to pounds: {current_price}")
+                if pos['market'] == 'UK' and current_price_native > 1000:
+                    current_price_native = current_price_native / 100
+                    print(f"✓ Converted {pos['ticker']} from pence to pounds: {current_price_native}")
                 
                 # Use display stop (0 during grace period, actual stop after)
                 current_stop = analysis['current_stop']
-                pnl = analysis['pnl']
+                pnl = analysis['pnl']  # Already in GBP from analysis
                 pnl_pct = analysis['pnl_pct']
                 holding_days = analysis['holding_days']
                 grace_period = analysis['grace_period']
@@ -461,9 +464,9 @@ def get_positions_endpoint():
             else:
                 # Fallback to stored data
                 print(f"⚠️  No analysis found for {pos['ticker']}, using stored data")
-                current_price = pos.get('current_price', pos['entry_price'])
+                current_price_native = pos.get('current_price', pos['entry_price'])
                 current_stop = pos.get('current_stop', 0)
-                pnl = pos.get('pnl', 0)
+                pnl = pos.get('pnl', 0)  # Already in GBP from database
                 pnl_pct = pos.get('pnl_pct', 0)
                 
                 entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
@@ -480,25 +483,38 @@ def get_positions_endpoint():
                     display_status = "LOSING"
                 exit_reason = None
             
-            current_value = current_price * pos['shares']
+            # CRITICAL FIX: Convert US stock prices to GBP so frontend calc works
+            # Frontend does: current_price * shares
+            # So current_price must be in GBP for both US and UK stocks
+            if pos['market'] == 'US':
+                # Convert USD price to GBP
+                current_price_gbp = current_price_native / live_fx_rate
+                print(f"  💱 {pos['ticker']}: ${current_price_native:.2f} → £{current_price_gbp:.2f} (rate: {live_fx_rate:.4f})")
+            else:
+                # UK stocks already in GBP
+                current_price_gbp = current_price_native
             
             # Display ticker without .L suffix for UK stocks
             display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
             
-            # For display: US stocks should show USD fill_price, UK stocks show GBP entry_price
+            # For entry_price: US stocks show USD, UK stocks show GBP (for display purposes)
+            # But this doesn't affect calculations since we only use current_price * shares
             display_entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
             
             # Map backend fields to frontend field names
+            # IMPORTANT: current_price is now ALWAYS in GBP
+            # So frontend calculation (current_price * shares) will be correct
             positions_list.append({
                 "id": str(pos['id']),
                 "ticker": display_ticker,
                 "market": pos['market'],
                 "entry_date": str(pos['entry_date']),
-                "entry_price": round(display_entry_price, 2),
+                "entry_price": round(display_entry_price, 2),  # Keep original for display
                 "shares": pos['shares'],
-                "current_price": round(current_price, 2),
+                "current_price": round(current_price_gbp, 2),  # ⭐ NOW IN GBP FOR ALL STOCKS
+                "current_price_native": round(current_price_native, 2),  # Original price for reference
                 "stop_price": round(current_stop, 2),
-                "pnl": round(pnl, 2),
+                "pnl": round(pnl, 2),  # Already in GBP
                 "pnl_percent": round(pnl_pct, 2),
                 "holding_days": holding_days,
                 "status": "open",
@@ -507,7 +523,8 @@ def get_positions_endpoint():
                 "grace_period": grace_period,
                 "stop_reason": stop_reason,
                 "atr_value": pos.get('atr', 0),
-                "fx_rate": pos.get('fx_rate', 1.0)
+                "fx_rate": pos.get('fx_rate', 1.0),
+                "live_fx_rate": live_fx_rate
             })
         
         return positions_list
