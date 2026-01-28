@@ -187,6 +187,53 @@ def get_current_price(ticker: str) -> float:
         return None
 
 
+def get_live_fx_rate():
+    """Fetch live GBP/USD exchange rate from Yahoo Finance"""
+    try:
+        time.sleep(0.2)
+        
+        url = "https://query1.finance.yahoo.com/v8/finance/chart/GBPUSD=X"
+        params = {
+            "interval": "1d",
+            "range": "1d"
+        }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'application/json',
+        }
+        
+        response = requests.get(url, params=params, headers=headers, timeout=10)
+        data = response.json()
+        
+        if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
+            result = data["chart"]["result"][0]
+            
+            # Try meta.regularMarketPrice first
+            if "meta" in result and "regularMarketPrice" in result["meta"]:
+                fx_rate = float(result["meta"]["regularMarketPrice"])
+                if fx_rate > 0:
+                    print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
+                    return fx_rate
+            
+            # Try latest close price
+            if "indicators" in result and "quote" in result["indicators"]:
+                quotes = result["indicators"]["quote"]
+                if len(quotes) > 0 and "close" in quotes[0]:
+                    closes = [c for c in quotes[0]["close"] if c is not None]
+                    if closes:
+                        fx_rate = float(closes[-1])
+                        if fx_rate > 0:
+                            print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
+                            return fx_rate
+        
+        print("⚠️  Could not fetch live FX rate, using default 1.27")
+        return 1.27
+        
+    except Exception as e:
+        print(f"⚠️  FX rate fetch error: {e}, using default 1.27")
+        return 1.27
+
+
 def check_market_regime():
     """Check SPY and FTSE for risk on/off using direct Yahoo Finance API"""
     try:
@@ -473,6 +520,7 @@ def get_positions_endpoint():
 
 @app.get("/portfolio")
 def get_portfolio_endpoint():
+    """FIXED: Properly convert US stock values from USD to GBP using live FX rate"""
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -481,22 +529,48 @@ def get_portfolio_endpoint():
         portfolio_id = str(portfolio['id'])
         positions = get_positions(portfolio_id, status='open')
         
+        # Get live FX rate for current valuations
+        live_fx_rate = get_live_fx_rate()
+        
         positions_list = []
-        total_positions_value = 0
+        total_positions_value_gbp = 0  # Track in GBP
         
         for pos in positions:
             pos = decimal_to_float(pos)
             current_price = pos.get('current_price', pos['entry_price'])
-            current_value = current_price * pos['shares']
-            pnl = pos.get('pnl', 0)
-            pnl_pct = pos.get('pnl_pct', 0)
-            holding_days = pos.get('holding_days', 0)
+            shares = pos['shares']
+            market = pos['market']
+            stored_fx_rate = pos.get('fx_rate', 1.27)  # FX rate at purchase time
             
-            total_positions_value += current_value
+            # Calculate value in native currency
+            current_value_native = current_price * shares
+            
+            # Convert to GBP for portfolio total using LIVE FX rate
+            if market == 'US':
+                # US stocks: current_price is in USD, convert to GBP using LIVE rate
+                current_value_gbp = current_value_native / live_fx_rate
+            else:
+                # UK stocks: already in GBP
+                current_value_gbp = current_value_native
+            
+            total_positions_value_gbp += current_value_gbp
+            
+            # Calculate P&L using stored FX rate for cost basis, live rate for current value
+            entry_price = pos.get('fill_price', pos['entry_price']) if market == 'US' else pos['entry_price']
+            pnl_native = (current_price - entry_price) * shares
+            
+            # Convert P&L to GBP using LIVE FX rate for current valuation
+            if market == 'US':
+                pnl_gbp = pnl_native / live_fx_rate
+            else:
+                pnl_gbp = pnl_native
+            
+            pnl_pct = ((current_price - entry_price) / entry_price) * 100 if entry_price > 0 else 0
+            holding_days = pos.get('holding_days', 0)
             
             if holding_days < 10:
                 display_status = "GRACE"
-            elif pnl > 0:
+            elif pnl_gbp > 0:
                 display_status = "PROFITABLE"
             else:
                 display_status = "LOSING"
@@ -504,21 +578,25 @@ def get_portfolio_endpoint():
             positions_list.append({
                 "id": str(pos['id']),
                 "ticker": pos['ticker'],
-                "market": pos['market'],
+                "market": market,
                 "entry_date": str(pos['entry_date']),
-                "entry_price": round(pos['entry_price'], 2),
-                "shares": pos['shares'],
+                "entry_price": round(entry_price, 2),
+                "shares": shares,
                 "current_price": round(current_price, 2),
-                "current_value": round(current_value, 2),
-                "pnl": round(pnl, 2),
+                "current_value": round(current_value_native, 2),  # Native currency for display
+                "current_value_gbp": round(current_value_gbp, 2),  # GBP for portfolio calc
+                "pnl": round(pnl_gbp, 2),  # P&L in GBP
                 "pnl_pct": round(pnl_pct, 2),
                 "current_stop": round(pos.get('current_stop', 0), 2),
                 "holding_days": holding_days,
-                "status": display_status
+                "status": display_status,
+                "fx_rate": stored_fx_rate,  # Original FX rate at purchase
+                "live_fx_rate": live_fx_rate  # Current FX rate
             })
         
-        cash = float(portfolio['cash'])
-        total_value = cash + total_positions_value
+        cash = float(portfolio['cash'])  # Cash is in GBP
+        total_value = cash + total_positions_value_gbp
+        total_pnl_gbp = sum(p['pnl'] for p in positions_list)
         
         return {
             "status": "ok",
@@ -526,9 +604,10 @@ def get_portfolio_endpoint():
                 "cash": cash,
                 "cash_balance": cash,
                 "total_value": total_value,
-                "open_positions_value": total_positions_value,
-                "total_pnl": sum(p['pnl'] for p in positions_list),
+                "open_positions_value": total_positions_value_gbp,
+                "total_pnl": total_pnl_gbp,
                 "last_updated": str(portfolio['last_updated']),
+                "live_fx_rate": live_fx_rate,
                 "positions": positions_list
             }
         }
@@ -649,7 +728,7 @@ def add_position_endpoint(request: AddPositionRequest):
 
 @app.get("/positions/analyze")
 def analyze_positions_endpoint():
-    """Run daily position analysis with live prices and market regime"""
+    """Run daily position analysis with live prices and market regime using LIVE FX rate"""
     try:
         print("\n" + "="*70)
         print("🔍 STARTING POSITION ANALYSIS")
@@ -677,6 +756,9 @@ def analyze_positions_endpoint():
                 }
             }
         
+        # Get live FX rate for current valuations
+        live_fx_rate = get_live_fx_rate()
+        
         # Get market regime
         print("\n📊 Checking market regime...")
         market_regime = check_market_regime()
@@ -684,8 +766,8 @@ def analyze_positions_endpoint():
         print(f"   FTSE: {'🟢 Risk On' if market_regime['ftse_risk_on'] else '🔴 Risk Off'}")
         
         actions = []
-        total_value = 0
-        total_pnl = 0
+        total_value_gbp = 0  # Track in GBP
+        total_pnl_gbp = 0    # Track in GBP
         
         print(f"\n💼 Analyzing {len(positions)} position(s)...")
         
@@ -702,6 +784,7 @@ def analyze_positions_endpoint():
             
             # For US stocks, use fill_price (USD). For UK stocks, use entry_price (GBP)
             entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+            stored_fx_rate = pos.get('fx_rate', 1.27)  # FX rate at purchase time
             
             if live_price:
                 # Fix UK stocks: Yahoo returns pence, convert to pounds
@@ -720,19 +803,34 @@ def analyze_positions_endpoint():
             
             # Calculate metrics
             shares = pos['shares']
-            current_value = current_price * shares
-            pnl = (current_price - entry_price) * shares
+            
+            # Calculate value in native currency then convert to GBP using LIVE FX rate
+            current_value_native = current_price * shares
+            if pos['market'] == 'US':
+                current_value_gbp = current_value_native / live_fx_rate
+                print(f"   💱 Converting USD to GBP (LIVE rate): ${current_value_native:.2f} / {live_fx_rate:.4f} = £{current_value_gbp:.2f}")
+            else:
+                current_value_gbp = current_value_native
+            
+            # Calculate P&L in native currency then convert to GBP using LIVE FX rate
+            pnl_native = (current_price - entry_price) * shares
+            if pos['market'] == 'US':
+                pnl_gbp = pnl_native / live_fx_rate
+                print(f"   💰 P&L in GBP (LIVE rate): ${pnl_native:.2f} / {live_fx_rate:.4f} = £{pnl_gbp:.2f}")
+            else:
+                pnl_gbp = pnl_native
+            
             pnl_pct = ((current_price - entry_price) / entry_price) * 100
             
-            total_value += current_value
-            total_pnl += pnl
+            total_value_gbp += current_value_gbp
+            total_pnl_gbp += pnl_gbp
             
             # Calculate holding days
             entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
             holding_days = (datetime.now() - entry_date).days
             
-            print(f"   Holdings: {shares} shares = ${current_value:.2f}")
-            print(f"   P&L: ${pnl:+.2f} ({pnl_pct:+.2f}%)")
+            print(f"   Holdings: {shares} shares = £{current_value_gbp:.2f} (GBP)")
+            print(f"   P&L: £{pnl_gbp:+.2f} ({pnl_pct:+.2f}%)")
             print(f"   Days held: {holding_days}")
             
             # Get current stop from database
@@ -754,7 +852,7 @@ def analyze_positions_endpoint():
                 settings_list = get_settings()
                 settings = settings_list[0] if settings_list else None
                 
-                if pnl > 0:
+                if pnl_gbp > 0:
                     # Profitable: tight 2x ATR stop
                     atr_mult = float(settings.get('atr_multiplier_trailing', 2)) if settings else 2
                     stop_reason = f"Profitable (tight {atr_mult}x ATR)"
@@ -824,7 +922,7 @@ def analyze_positions_endpoint():
                     'current_price': round(current_price, 4),
                     'current_stop': round(current_stop, 2),
                     'holding_days': holding_days,
-                    'pnl': round(pnl, 2),
+                    'pnl': round(pnl_gbp, 2),  # Store P&L in GBP
                     'pnl_pct': round(pnl_pct, 2)
                 })
             
@@ -836,7 +934,7 @@ def analyze_positions_endpoint():
                 "entry_price": round(entry_price, 2),
                 "current_price": round(current_price, 2),
                 "shares": shares,
-                "pnl": round(pnl, 2),
+                "pnl": round(pnl_gbp, 2),  # P&L in GBP
                 "pnl_pct": round(pnl_pct, 2),
                 "current_stop": round(display_stop, 2),  # Use display_stop instead of trailing_stop
                 "holding_days": holding_days,
@@ -849,8 +947,9 @@ def analyze_positions_endpoint():
         print(f"\n{'='*70}")
         print(f"📊 ANALYSIS COMPLETE")
         print(f"{'='*70}")
-        print(f"Total Value: ${total_value:.2f}")
-        print(f"Total P&L: ${total_pnl:+.2f}")
+        print(f"Total Value: £{total_value_gbp:.2f} (GBP)")
+        print(f"Total P&L: £{total_pnl_gbp:+.2f} (GBP)")
+        print(f"Live FX Rate: {live_fx_rate:.4f}")
         print(f"Exit Signals: {exit_count}")
         print("="*70 + "\n")
         
@@ -859,9 +958,10 @@ def analyze_positions_endpoint():
             "data": {
                 "analysis_date": datetime.now().strftime('%Y-%m-%d'),
                 "market_regime": market_regime,
+                "live_fx_rate": live_fx_rate,
                 "summary": {
-                    "total_value": round(total_value, 2),
-                    "total_pnl": round(total_pnl, 2),
+                    "total_value": round(total_value_gbp, 2),
+                    "total_pnl": round(total_pnl_gbp, 2),
                     "exit_count": exit_count
                 },
                 "actions": actions
