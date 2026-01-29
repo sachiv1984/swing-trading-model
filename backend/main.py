@@ -382,7 +382,7 @@ def update_settings_endpoint(settings_id: str, request: SettingsRequest):
 
 @app.get("/positions")
 def get_positions_endpoint():
-    """Get open positions - current_price in NATIVE currency, separate value_gbp for calculations"""
+    """Get open positions - current_price in GBP for Dashboard, but keep native for display reference"""
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -485,19 +485,23 @@ def get_positions_endpoint():
                     display_status = "LOSING"
                 exit_reason = None
             
-            # Calculate value in GBP for Dashboard
-            current_value_native = current_price_native * pos['shares']
+            # CRITICAL: Convert current_price to GBP for Dashboard calculations
+            # Dashboard widget does: current_price * shares
+            # So current_price MUST be in GBP for all stocks
             if pos['market'] == 'US':
-                current_value_gbp = current_value_native / live_fx_rate
-                print(f"  💱 {pos['ticker']}: ${current_value_native:.2f} → £{current_value_gbp:.2f} (rate: {live_fx_rate:.4f})")
+                current_price_gbp = current_price_native / live_fx_rate
+                print(f"  💱 {pos['ticker']}: ${current_price_native:.2f} → £{current_price_gbp:.2f} (rate: {live_fx_rate:.4f})")
             else:
-                current_value_gbp = current_value_native
+                current_price_gbp = current_price_native
             
-            # Convert stop price to native currency for display
+            # Calculate value in GBP
+            current_value_gbp = current_price_gbp * pos['shares']
+            
+            # Convert stop price to GBP too (for consistency)
             if pos['market'] == 'US' and current_stop_gbp > 0:
-                stop_price_native = current_stop_gbp * live_fx_rate  # Convert GBP stop back to USD
+                stop_price_gbp = current_stop_gbp  # Already in GBP from analysis
             else:
-                stop_price_native = current_stop_gbp
+                stop_price_gbp = current_stop_gbp
             
             # Display ticker without .L suffix for UK stocks
             display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
@@ -507,8 +511,8 @@ def get_positions_endpoint():
             display_entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
             
             # Map backend fields to frontend field names
-            # STRATEGY: current_price in native currency for display
-            #           value_gbp field for Dashboard calculations
+            # CRITICAL: current_price is now IN GBP for all stocks so Dashboard calc works
+            # But we also provide native values for display
             positions_list.append({
                 "id": str(pos['id']),
                 "ticker": display_ticker,
@@ -516,9 +520,9 @@ def get_positions_endpoint():
                 "entry_date": str(pos['entry_date']),
                 "entry_price": round(display_entry_price, 2),  # Native currency
                 "shares": pos['shares'],
-                "current_price": round(current_price_native, 2),  # ⭐ NATIVE currency (USD or GBP)
-                "value_gbp": round(current_value_gbp, 2),  # ⭐ For Dashboard: current_price * shares in GBP
-                "stop_price": round(stop_price_native, 2),  # Native currency
+                "current_price": round(current_price_gbp, 2),  # ⭐ IN GBP for Dashboard calc!
+                "current_price_usd": round(current_price_native, 2) if pos['market'] == 'US' else None,  # Native for reference
+                "stop_price": round(stop_price_gbp, 2),  # GBP
                 "pnl": round(pnl, 2),  # Already in GBP
                 "pnl_percent": round(pnl_pct, 2),
                 "holding_days": holding_days,
@@ -542,7 +546,7 @@ def get_positions_endpoint():
 
 @app.get("/portfolio")
 def get_portfolio_endpoint():
-    """Returns portfolio with positions where current_price is in GBP for Dashboard calculations"""
+    """Returns portfolio with live prices - current_price in GBP for Dashboard calculations"""
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -551,33 +555,79 @@ def get_portfolio_endpoint():
         portfolio_id = str(portfolio['id'])
         positions = get_positions(portfolio_id, status='open')
         
-        # Get live FX rate for current valuations
+        if not positions:
+            cash = float(portfolio['cash'])
+            return {
+                "status": "ok",
+                "data": {
+                    "cash": cash,
+                    "cash_balance": cash,
+                    "total_value": cash,
+                    "open_positions_value": 0,
+                    "total_pnl": 0,
+                    "last_updated": str(portfolio['last_updated']),
+                    "live_fx_rate": 1.27,
+                    "positions": []
+                }
+            }
+        
+        # Get live FX rate
         live_fx_rate = get_live_fx_rate()
+        print(f"\n📊 /portfolio endpoint - fetching live prices for Dashboard")
         
         positions_list = []
-        total_positions_value_gbp = 0  # Track in GBP
+        total_positions_value_gbp = 0
         
         for pos in positions:
             pos = decimal_to_float(pos)
-            current_price_native = pos.get('current_price', pos['entry_price'])
+            
+            # FETCH LIVE PRICE - don't use stale database value
+            print(f"   Fetching live price for {pos['ticker']}...")
+            live_price = get_current_price(pos['ticker'])
+            
+            if live_price:
+                # Fix UK stocks: Yahoo returns pence
+                if pos['market'] == 'UK' and live_price > 1000:
+                    live_price = live_price / 100
+                    print(f"   ✓ Converted {pos['ticker']} from pence to pounds: {live_price}")
+                current_price_native = live_price
+                print(f"   ✓ Live price: {current_price_native:.2f}")
+            else:
+                # Fallback to stored price if live fetch fails
+                print(f"   ⚠️  Using stored price for {pos['ticker']}")
+                # Check if stored price is already converted (< 500 suggests GBP for US stock)
+                stored_price = pos.get('current_price', pos['entry_price'])
+                if pos['market'] == 'US' and stored_price < 500:
+                    # This looks like it's already in GBP, convert back to USD estimate
+                    current_price_native = stored_price * 1.38  # Rough estimate
+                    print(f"   ⚠️  Stored price appears to be GBP, estimated USD: {current_price_native:.2f}")
+                else:
+                    current_price_native = stored_price
+            
             shares = pos['shares']
             market = pos['market']
-            stored_fx_rate = pos.get('fx_rate', 1.27)  # FX rate at purchase time
+            stored_fx_rate = pos.get('fx_rate', 1.27)
             
-            # Convert current_price to GBP for Dashboard calculations
-            # Dashboard does: current_price * shares, so current_price MUST be in GBP
+            # Convert to GBP for Dashboard
             if market == 'US':
                 current_price_gbp = current_price_native / live_fx_rate
+                print(f"   💱 ${current_price_native:.2f} → £{current_price_gbp:.2f}")
             else:
                 current_price_gbp = current_price_native
             
-            # Calculate value in GBP
             current_value_gbp = current_price_gbp * shares
             total_positions_value_gbp += current_value_gbp
             
-            # Calculate P&L - use stored values if available
-            pnl_gbp = pos.get('pnl', 0)
-            pnl_pct = pos.get('pnl_pct', 0)
+            # Calculate P&L
+            entry_price = pos.get('fill_price', pos['entry_price']) if market == 'US' else pos['entry_price']
+            pnl_native = (current_price_native - entry_price) * shares
+            
+            if market == 'US':
+                pnl_gbp = pnl_native / live_fx_rate
+            else:
+                pnl_gbp = pnl_native
+            
+            pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
             holding_days = pos.get('holding_days', 0)
             
             if holding_days < 10:
@@ -587,9 +637,6 @@ def get_portfolio_endpoint():
             else:
                 display_status = "LOSING"
             
-            # Entry price for display
-            entry_price = pos.get('fill_price', pos['entry_price']) if market == 'US' else pos['entry_price']
-            
             positions_list.append({
                 "id": str(pos['id']),
                 "ticker": pos['ticker'],
@@ -597,9 +644,9 @@ def get_portfolio_endpoint():
                 "entry_date": str(pos['entry_date']),
                 "entry_price": round(entry_price, 2),
                 "shares": shares,
-                "current_price": round(current_price_gbp, 2),  # ⭐ IN GBP for Dashboard calc
+                "current_price": round(current_price_gbp, 2),  # GBP for Dashboard
                 "current_value": round(current_value_gbp, 2),
-                "pnl": round(pnl_gbp, 2),  # P&L in GBP
+                "pnl": round(pnl_gbp, 2),
                 "pnl_pct": round(pnl_pct, 2),
                 "current_stop": round(pos.get('current_stop', 0), 2),
                 "holding_days": holding_days,
@@ -608,9 +655,14 @@ def get_portfolio_endpoint():
                 "live_fx_rate": live_fx_rate
             })
         
-        cash = float(portfolio['cash'])  # Cash is in GBP
+        cash = float(portfolio['cash'])
         total_value = cash + total_positions_value_gbp
         total_pnl_gbp = sum(p['pnl'] for p in positions_list)
+        
+        print(f"\n✓ Portfolio calculated:")
+        print(f"   Total positions value: £{total_positions_value_gbp:.2f}")
+        print(f"   Cash: £{cash:.2f}")
+        print(f"   Total value: £{total_value:.2f}\n")
         
         return {
             "status": "ok",
@@ -626,6 +678,8 @@ def get_portfolio_endpoint():
             }
         }
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return {"status": "error", "message": str(e)}
 
 
