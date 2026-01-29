@@ -542,7 +542,7 @@ def get_positions_endpoint():
 
 @app.get("/portfolio")
 def get_portfolio_endpoint():
-    """FIXED: Properly convert US stock values from USD to GBP using live FX rate"""
+    """Returns portfolio with positions where current_price is in GBP for Dashboard calculations"""
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -559,35 +559,25 @@ def get_portfolio_endpoint():
         
         for pos in positions:
             pos = decimal_to_float(pos)
-            current_price = pos.get('current_price', pos['entry_price'])
+            current_price_native = pos.get('current_price', pos['entry_price'])
             shares = pos['shares']
             market = pos['market']
             stored_fx_rate = pos.get('fx_rate', 1.27)  # FX rate at purchase time
             
-            # Calculate value in native currency
-            current_value_native = current_price * shares
-            
-            # Convert to GBP for portfolio total using LIVE FX rate
+            # Convert current_price to GBP for Dashboard calculations
+            # Dashboard does: current_price * shares, so current_price MUST be in GBP
             if market == 'US':
-                # US stocks: current_price is in USD, convert to GBP using LIVE rate
-                current_value_gbp = current_value_native / live_fx_rate
+                current_price_gbp = current_price_native / live_fx_rate
             else:
-                # UK stocks: already in GBP
-                current_value_gbp = current_value_native
+                current_price_gbp = current_price_native
             
+            # Calculate value in GBP
+            current_value_gbp = current_price_gbp * shares
             total_positions_value_gbp += current_value_gbp
             
-            # Calculate P&L using stored FX rate for cost basis, live rate for current value
-            entry_price = pos.get('fill_price', pos['entry_price']) if market == 'US' else pos['entry_price']
-            pnl_native = (current_price - entry_price) * shares
-            
-            # Convert P&L to GBP using LIVE FX rate for current valuation
-            if market == 'US':
-                pnl_gbp = pnl_native / live_fx_rate
-            else:
-                pnl_gbp = pnl_native
-            
-            pnl_pct = ((current_price - entry_price) / entry_price) * 100 if entry_price > 0 else 0
+            # Calculate P&L - use stored values if available
+            pnl_gbp = pos.get('pnl', 0)
+            pnl_pct = pos.get('pnl_pct', 0)
             holding_days = pos.get('holding_days', 0)
             
             if holding_days < 10:
@@ -597,6 +587,9 @@ def get_portfolio_endpoint():
             else:
                 display_status = "LOSING"
             
+            # Entry price for display
+            entry_price = pos.get('fill_price', pos['entry_price']) if market == 'US' else pos['entry_price']
+            
             positions_list.append({
                 "id": str(pos['id']),
                 "ticker": pos['ticker'],
@@ -604,16 +597,15 @@ def get_portfolio_endpoint():
                 "entry_date": str(pos['entry_date']),
                 "entry_price": round(entry_price, 2),
                 "shares": shares,
-                "current_price": round(current_price, 2),
-                "current_value": round(current_value_native, 2),  # Native currency for display
-                "current_value_gbp": round(current_value_gbp, 2),  # GBP for portfolio calc
+                "current_price": round(current_price_gbp, 2),  # ⭐ IN GBP for Dashboard calc
+                "current_value": round(current_value_gbp, 2),
                 "pnl": round(pnl_gbp, 2),  # P&L in GBP
                 "pnl_pct": round(pnl_pct, 2),
                 "current_stop": round(pos.get('current_stop', 0), 2),
                 "holding_days": holding_days,
                 "status": display_status,
-                "fx_rate": stored_fx_rate,  # Original FX rate at purchase
-                "live_fx_rate": live_fx_rate  # Current FX rate
+                "fx_rate": stored_fx_rate,
+                "live_fx_rate": live_fx_rate
             })
         
         cash = float(portfolio['cash'])  # Cash is in GBP
