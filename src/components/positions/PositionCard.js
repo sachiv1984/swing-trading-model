@@ -5,8 +5,8 @@ import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
 
 export default function PositionCard({ position, onEdit, onExit }) {
-  const pnl = position.pnl || ((position.current_price - position.entry_price) * position.shares);
-  const pnlPercent = position.pnl_percent || ((position.current_price - position.entry_price) / position.entry_price * 100);
+  const pnl = position.pnl || ((position.current_price_native - position.entry_price) * position.shares);
+  const pnlPercent = position.pnl_percent || ((position.current_price_native - position.entry_price) / position.entry_price * 100);
   const isProfit = pnl >= 0;
   const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
   const currencySymbol = position.market === "UK" ? "£" : "$";
@@ -61,7 +61,7 @@ export default function PositionCard({ position, onEdit, onExit }) {
         <div className="p-3 rounded-xl bg-slate-800/50">
           <p className="text-xs text-slate-500 mb-1">Current</p>
           <p className="text-sm font-semibold text-white">
-            {currencySymbol}{position.current_price?.toFixed(2) || "—"}
+            {currencySymbol}{position.current_price_native?.toFixed(2) || "—"}
           </p>
         </div>
         <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
