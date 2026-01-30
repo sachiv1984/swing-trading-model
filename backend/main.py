@@ -419,16 +419,21 @@ def get_positions_endpoint():
                 print(f"   ⚠️  Using stored price")
                 current_price_native = pos.get('current_price', pos['entry_price'])
             
-            # Calculate P&L
-            entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
-            pnl_native = (current_price_native - entry_price) * pos['shares']
-            
+            # Calculate P&L correctly
+            # For US stocks: entry_price is in GBP (stored), but we need USD for comparison
+            # So use fill_price (USD) for US stocks, entry_price (GBP) for UK stocks
             if pos['market'] == 'US':
-                pnl_gbp = pnl_native / live_fx_rate
+                # US stock: Compare USD to USD
+                entry_price_usd = pos.get('fill_price', pos['entry_price'] * (pos.get('fx_rate', 1.27)))
+                pnl_usd = (current_price_native - entry_price_usd) * pos['shares']
+                pnl_gbp = pnl_usd / live_fx_rate
+                entry_price_display = entry_price_usd
             else:
-                pnl_gbp = pnl_native
+                # UK stock: Already in GBP
+                entry_price_display = pos['entry_price']
+                pnl_gbp = (current_price_native - entry_price_display) * pos['shares']
             
-            pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
+            pnl_pct = ((current_price_native - entry_price_display) / entry_price_display) * 100 if entry_price_display > 0 else 0
             
             # Convert to GBP for Dashboard calculations
             if pos['market'] == 'US':
@@ -442,14 +447,21 @@ def get_positions_endpoint():
             holding_days = (datetime.now() - entry_date).days
             grace_period = holding_days < 10
             
-            # Get stop from database
-            current_stop_gbp = pos.get('current_stop', pos.get('initial_stop', 0))
-            
-            # Convert stop to native for display
-            if pos['market'] == 'US' and current_stop_gbp > 0:
-                stop_price_native = current_stop_gbp * live_fx_rate
+            # Stop price handling
+            if grace_period:
+                # During grace period: No stop shown
+                current_stop_gbp = 0
+                stop_price_native = 0
+                print(f"   🆕 Grace period: {holding_days}/10 days - No stop active")
             else:
-                stop_price_native = current_stop_gbp
+                # After grace period: Show stop from database
+                current_stop_gbp = pos.get('current_stop', pos.get('initial_stop', 0))
+                
+                # Convert stop to native for display
+                if pos['market'] == 'US' and current_stop_gbp > 0:
+                    stop_price_native = current_stop_gbp * live_fx_rate
+                else:
+                    stop_price_native = current_stop_gbp
             
             # Display ticker without .L suffix
             display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
@@ -468,12 +480,12 @@ def get_positions_endpoint():
                 "ticker": display_ticker,
                 "market": pos['market'],
                 "entry_date": str(pos['entry_date']),
-                "entry_price": round(entry_price, 2),
+                "entry_price": round(entry_price_display, 2),  # Native currency for display
                 "shares": pos['shares'],
                 "current_price": round(current_price_gbp, 2),  # GBP for Dashboard
                 "current_price_native": round(current_price_native, 2),  # Native for display
-                "stop_price": round(current_stop_gbp, 2),  # GBP
-                "stop_price_native": round(stop_price_native, 2),  # Native for display
+                "stop_price": round(current_stop_gbp, 2),  # GBP (0 during grace)
+                "stop_price_native": round(stop_price_native, 2),  # Native (0 during grace)
                 "pnl": round(pnl_gbp, 2),
                 "pnl_percent": round(pnl_pct, 2),
                 "holding_days": holding_days,
