@@ -143,11 +143,16 @@ export default function Positions() {
           </TableHeader>
           <TableBody>
             {openPositions.map((position) => {
-              const pnl = ((position.current_price || position.entry_price) - position.entry_price) * position.shares;
-              const pnlPercent = ((position.current_price || position.entry_price) - position.entry_price) / position.entry_price * 100;
+              // P&L is already calculated in GBP by backend
+              const pnl = position.pnl || 0;
+              const pnlPercent = position.pnl_percent || 0;
               const isProfit = pnl >= 0;
               const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
               const currencySymbol = position.market === "UK" ? "£" : "$";
+              
+              // Use native prices for display
+              const displayCurrentPrice = position.current_price_native || position.current_price;
+              const displayStopPrice = position.stop_price_native || position.stop_price;
 
               return (
                 <TableRow key={position.id}>
@@ -160,8 +165,8 @@ export default function Positions() {
                     </div>
                   </TableCell>
                   <TableCell className="text-slate-300">{currencySymbol}{position.entry_price.toFixed(2)}</TableCell>
-                  <TableCell className="text-slate-300">{currencySymbol}{position.current_price?.toFixed(2) || "—"}</TableCell>
-                  <TableCell className="text-rose-400 font-medium">{currencySymbol}{position.stop_price?.toFixed(2) || "—"}</TableCell>
+                  <TableCell className="text-slate-300">{currencySymbol}{displayCurrentPrice?.toFixed(2) || "—"}</TableCell>
+                  <TableCell className="text-rose-400 font-medium">{currencySymbol}{displayStopPrice?.toFixed(2) || "—"}</TableCell>
                   <TableCell className="text-slate-300">{position.shares}</TableCell>
                   <TableCell className="text-right">
                     <div className={cn(
@@ -169,7 +174,7 @@ export default function Positions() {
                       isProfit ? "text-emerald-400" : "text-rose-400"
                     )}>
                       {isProfit ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                      {currencySymbol}{Math.abs(pnl).toFixed(2)}
+                      £{Math.abs(pnl).toFixed(2)}
                       <span className="text-xs opacity-70">({pnlPercent.toFixed(1)}%)</span>
                     </div>
                   </TableCell>
