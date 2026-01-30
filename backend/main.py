@@ -622,12 +622,31 @@ def get_portfolio_endpoint():
         
         cash = float(portfolio['cash'])
         total_value = cash + total_positions_value_gbp
-        total_pnl_gbp = sum(p['pnl'] for p in positions_list)
+        
+        # Calculate TRUE portfolio P&L
+        # P&L = Current Portfolio Value - Initial Investment
+        # Initial Investment = Starting Cash = what we assume portfolio started with
+        # We can infer this from: current_cash + money_spent_on_positions
+        
+        # Calculate total cost of all positions (what we paid including fees)
+        total_cost_of_positions = sum(pos.get('total_cost', 0) for pos in positions)
+        
+        # Initial portfolio value = current cash + what we spent on positions
+        initial_portfolio_value = cash + total_cost_of_positions
+        
+        # True P&L = Current Value - Initial Value
+        # Current positions are worth: total_positions_value_gbp
+        # We paid for them: total_cost_of_positions
+        # So positions P&L = total_positions_value_gbp - total_cost_of_positions
+        true_total_pnl = total_positions_value_gbp - total_cost_of_positions
         
         print(f"\n✓ Portfolio calculated:")
         print(f"   Total positions value: £{total_positions_value_gbp:.2f}")
+        print(f"   Total cost of positions: £{total_cost_of_positions:.2f}")
         print(f"   Cash: £{cash:.2f}")
-        print(f"   Total value: £{total_value:.2f}\n")
+        print(f"   Total value: £{total_value:.2f}")
+        print(f"   Initial portfolio value: £{initial_portfolio_value:.2f}")
+        print(f"   True total P&L: £{true_total_pnl:+.2f}\n")
         
         return {
             "status": "ok",
@@ -636,7 +655,8 @@ def get_portfolio_endpoint():
                 "cash_balance": cash,
                 "total_value": total_value,
                 "open_positions_value": total_positions_value_gbp,
-                "total_pnl": total_pnl_gbp,
+                "total_pnl": true_total_pnl,  # TRUE portfolio P&L
+                "initial_value": initial_portfolio_value,  # For reference
                 "last_updated": str(portfolio['last_updated']),
                 "live_fx_rate": live_fx_rate,
                 "positions": positions_list
