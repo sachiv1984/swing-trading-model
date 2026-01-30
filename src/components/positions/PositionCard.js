@@ -5,11 +5,15 @@ import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
 
 export default function PositionCard({ position, onEdit, onExit }) {
-  const pnl = position.pnl || ((position.current_price - position.entry_price) * position.shares);
-  const pnlPercent = position.pnl_percent || ((position.current_price - position.entry_price) / position.entry_price * 100);
+  const pnl = position.pnl || 0;
+  const pnlPercent = position.pnl_percent || 0;
   const isProfit = pnl >= 0;
   const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
   const currencySymbol = position.market === "UK" ? "£" : "$";
+  
+  // Use native prices for display
+  const displayCurrentPrice = position.current_price_native || position.current_price;
+  const displayStopPrice = position.stop_price_native || position.stop_price;
 
   return (
     <motion.div
@@ -61,13 +65,13 @@ export default function PositionCard({ position, onEdit, onExit }) {
         <div className="p-3 rounded-xl bg-slate-800/50">
           <p className="text-xs text-slate-500 mb-1">Current</p>
           <p className="text-sm font-semibold text-white">
-            {currencySymbol}{position.current_price_native?.toFixed(2) || "—"}
+            {currencySymbol}{displayCurrentPrice?.toFixed(2) || "—"}
           </p>
         </div>
         <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
           <p className="text-xs text-slate-500 mb-1">Stop</p>
           <p className="text-sm font-semibold text-rose-400">
-            {currencySymbol}{position.stop_price?.toFixed(2) || "—"}
+            {currencySymbol}{displayStopPrice?.toFixed(2) || "—"}
           </p>
         </div>
       </div>
