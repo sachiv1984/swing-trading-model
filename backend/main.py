@@ -382,7 +382,7 @@ def update_settings_endpoint(settings_id: str, request: SettingsRequest):
 
 @app.get("/positions")
 def get_positions_endpoint():
-    """Get open positions - current_price in GBP for Dashboard, but keep native for display reference"""
+    """Get open positions with live prices - always fetches fresh data"""
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -397,144 +397,97 @@ def get_positions_endpoint():
         # Get live FX rate for conversions
         live_fx_rate = get_live_fx_rate()
         
-        # Get analysis data (live prices, stops, signals)
-        try:
-            print(f"\n📊 Running live analysis for {len(positions)} positions...")
-            analysis_response = analyze_positions_endpoint()
-            
-            # Handle response format
-            if isinstance(analysis_response, dict):
-                if 'status' in analysis_response and analysis_response['status'] == 'ok':
-                    analysis_data = analysis_response.get('data', {})
-                else:
-                    analysis_data = analysis_response
-            else:
-                analysis_data = {}
-            
-            actions = analysis_data.get('actions', [])
-            market_regime = analysis_data.get('market_regime', {})
-            
-            print(f"✓ Analysis complete: {len(actions)} position(s) analyzed")
-            
-        except Exception as e:
-            print(f"⚠️  Analysis failed: {e}")
-            import traceback
-            traceback.print_exc()
-            actions = []
-            market_regime = {}
+        print(f"\n📊 /positions endpoint - fetching live prices for {len(positions)} position(s)")
         
         positions_list = []
         
         for pos in positions:
             pos = decimal_to_float(pos)
             
-            # Find analysis data for this position (match with full ticker including .L)
-            analysis = next((a for a in actions if a['ticker'] == pos['ticker']), None)
+            # ALWAYS fetch live price - don't rely on analysis
+            print(f"   Fetching {pos['ticker']}...")
+            live_price = get_current_price(pos['ticker'])
             
-            if analysis:
-                # Use live analyzed data
-                current_price_native = analysis['current_price']
-                
-                # Fix UK stocks: Yahoo returns pence, we need pounds
-                if pos['market'] == 'UK' and current_price_native > 1000:
-                    current_price_native = current_price_native / 100
-                    print(f"✓ Converted {pos['ticker']} from pence to pounds: {current_price_native}")
-                
-                # P&L is already calculated in GBP by analysis endpoint
-                pnl = analysis['pnl']
-                pnl_pct = analysis['pnl_pct']
-                
-                # Use display stop (0 during grace period, actual stop after)
-                current_stop_gbp = analysis['current_stop']
-                holding_days = analysis['holding_days']
-                grace_period = analysis['grace_period']
-                stop_reason = analysis['stop_reason']
-                
-                # Determine display status
-                if analysis['action'] == 'EXIT':
-                    display_status = "EXIT"
-                    exit_reason = analysis['exit_reason']
-                elif grace_period:
-                    display_status = "GRACE"
-                    exit_reason = None
-                elif pnl > 0:
-                    display_status = "PROFITABLE"
-                    exit_reason = None
-                else:
-                    display_status = "LOSING"
-                    exit_reason = None
+            if live_price:
+                # Fix UK stocks: Yahoo returns pence
+                if pos['market'] == 'UK' and live_price > 1000:
+                    live_price = live_price / 100
+                current_price_native = live_price
+                print(f"   ✓ Live: {current_price_native:.2f}")
             else:
-                # Fallback to stored data
-                print(f"⚠️  No analysis found for {pos['ticker']}, using stored data")
+                # Fallback to stored
+                print(f"   ⚠️  Using stored price")
                 current_price_native = pos.get('current_price', pos['entry_price'])
-                current_stop_gbp = pos.get('current_stop', 0)
-                pnl = pos.get('pnl', 0)  # Already in GBP from database
-                pnl_pct = pos.get('pnl_pct', 0)
-                
-                entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
-                holding_days = (datetime.now() - entry_date).days
-                
-                grace_period = holding_days < 10
-                stop_reason = f"Grace period ({holding_days}/10 days)" if grace_period else "No live data"
-                
-                if grace_period:
-                    display_status = "GRACE"
-                elif pnl > 0:
-                    display_status = "PROFITABLE"
-                else:
-                    display_status = "LOSING"
-                exit_reason = None
             
-            # CRITICAL: Convert current_price to GBP for Dashboard calculations
-            # Dashboard widget does: current_price * shares
-            # So current_price MUST be in GBP for all stocks
+            # Calculate P&L
+            entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+            pnl_native = (current_price_native - entry_price) * pos['shares']
+            
+            if pos['market'] == 'US':
+                pnl_gbp = pnl_native / live_fx_rate
+            else:
+                pnl_gbp = pnl_native
+            
+            pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
+            
+            # Convert to GBP for Dashboard calculations
             if pos['market'] == 'US':
                 current_price_gbp = current_price_native / live_fx_rate
-                print(f"  💱 {pos['ticker']}: ${current_price_native:.2f} → £{current_price_gbp:.2f} (rate: {live_fx_rate:.4f})")
+                print(f"   💱 ${current_price_native:.2f} → £{current_price_gbp:.2f}")
             else:
                 current_price_gbp = current_price_native
             
-            # Calculate value in GBP
-            current_value_gbp = current_price_gbp * pos['shares']
+            # Calculate holding days
+            entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
+            holding_days = (datetime.now() - entry_date).days
+            grace_period = holding_days < 10
             
-            # Convert stop price to GBP too (for consistency)
+            # Get stop from database
+            current_stop_gbp = pos.get('current_stop', pos.get('initial_stop', 0))
+            
+            # Convert stop to native for display
             if pos['market'] == 'US' and current_stop_gbp > 0:
-                stop_price_gbp = current_stop_gbp  # Already in GBP from analysis
+                stop_price_native = current_stop_gbp * live_fx_rate
             else:
-                stop_price_gbp = current_stop_gbp
+                stop_price_native = current_stop_gbp
             
-            # Display ticker without .L suffix for UK stocks
+            # Display ticker without .L suffix
             display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
             
-            # Entry price: Show in native currency
-            # For US stocks, use fill_price (USD). For UK stocks, use entry_price (GBP)
-            display_entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+            # Determine status
+            if grace_period:
+                display_status = "GRACE"
+            elif pnl_gbp > 0:
+                display_status = "PROFITABLE"
+            else:
+                display_status = "LOSING"
             
-            # Map backend fields to frontend field names
-            # CRITICAL: current_price is now IN GBP for all stocks so Dashboard calc works
-            # But we also provide native values for display
+            # Return both GBP and native prices
             positions_list.append({
                 "id": str(pos['id']),
                 "ticker": display_ticker,
                 "market": pos['market'],
                 "entry_date": str(pos['entry_date']),
-                "entry_price": round(display_entry_price, 2),  # Native currency
+                "entry_price": round(entry_price, 2),
                 "shares": pos['shares'],
-                "current_price": round(current_price_gbp, 2),  # ⭐ IN GBP for Dashboard calc!
-                "current_price_usd": round(current_price_native, 2) if pos['market'] == 'US' else None,  # Native for reference
-                "stop_price": round(stop_price_gbp, 2),  # GBP
-                "pnl": round(pnl, 2),  # Already in GBP
+                "current_price": round(current_price_gbp, 2),  # GBP for Dashboard
+                "current_price_native": round(current_price_native, 2),  # Native for display
+                "stop_price": round(current_stop_gbp, 2),  # GBP
+                "stop_price_native": round(stop_price_native, 2),  # Native for display
+                "pnl": round(pnl_gbp, 2),
                 "pnl_percent": round(pnl_pct, 2),
                 "holding_days": holding_days,
                 "status": "open",
                 "display_status": display_status,
-                "exit_reason": exit_reason,
+                "exit_reason": None,
                 "grace_period": grace_period,
-                "stop_reason": stop_reason,
+                "stop_reason": f"Grace period ({holding_days}/10 days)" if grace_period else "Active",
                 "atr_value": pos.get('atr', 0),
                 "fx_rate": pos.get('fx_rate', 1.0),
                 "live_fx_rate": live_fx_rate
             })
+        
+        print(f"✓ Returned {len(positions_list)} positions with live prices\n")
         
         return positions_list
         
