@@ -60,13 +60,13 @@ export default function Dashboard() {
   const portfolio = portfolios?.[0];
   const openPositions = positions || [];
   const closedPositions = allPositions?.filter(p => p.status === "closed") || [];
-  
-  const totalPositionsValue = openPositions.reduce((sum, p) => {
-    return sum + (p.current_price || p.entry_price) * p.shares;
+
+  // Use values directly from portfolio endpoint (already calculated correctly)
+  const totalPositionsValue = portfolio?.open_positions_value || openPositions.reduce((sum, p) => {
+  return sum + (p.current_price || p.entry_price) * p.shares;
   }, 0);
-  const totalPnL = openPositions.reduce((sum, p) => {
-  return sum + (p.pnl || 0);
-  }, 0);
+
+const totalPnL = portfolio?.total_pnl || 0;  // Use portfolio's pre-calculated P&L
 
   const isLoading = loadingPortfolio || loadingPositions || loadingRegimes || !isLoaded;
 
