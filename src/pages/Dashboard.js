@@ -65,7 +65,7 @@ export default function Dashboard() {
     return sum + (p.current_price || p.entry_price) * p.shares;
   }, 0);
   const totalPnL = openPositions.reduce((sum, p) => {
-    return sum + (p.pnl || 0);
+  return sum + (p.pnl || 0);
   }, 0);
 
   const isLoading = loadingPortfolio || loadingPositions || loadingRegimes || !isLoaded;
