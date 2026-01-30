@@ -629,7 +629,8 @@ def get_portfolio_endpoint():
         # We can infer this from: current_cash + money_spent_on_positions
         
         # Calculate total cost of all positions (what we paid including fees)
-        total_cost_of_positions = sum(pos.get('total_cost', 0) for pos in positions)
+        # Convert Decimal to float
+        total_cost_of_positions = sum(float(pos.get('total_cost', 0)) for pos in positions)
         
         # Initial portfolio value = current cash + what we spent on positions
         initial_portfolio_value = cash + total_cost_of_positions
