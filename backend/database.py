@@ -206,3 +206,71 @@ def update_settings(settings_id, data):
             cur.execute(query, list(data.values()) + [settings_id])
             result = cur.fetchone()
             return dict(result)
+
+
+# ============================================================================
+# PORTFOLIO HISTORY FUNCTIONS
+# ============================================================================
+
+def create_portfolio_snapshot(snapshot_data: Dict) -> Dict:
+    """Create a portfolio snapshot (or update if exists for that date)"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO portfolio_history 
+                (portfolio_id, snapshot_date, total_value, cash_balance, 
+                 positions_value, total_pnl, position_count)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (portfolio_id, snapshot_date) 
+                DO UPDATE SET
+                    total_value = EXCLUDED.total_value,
+                    cash_balance = EXCLUDED.cash_balance,
+                    positions_value = EXCLUDED.positions_value,
+                    total_pnl = EXCLUDED.total_pnl,
+                    position_count = EXCLUDED.position_count,
+                    created_at = CURRENT_TIMESTAMP
+                RETURNING *;
+            """, (
+                snapshot_data['portfolio_id'],
+                snapshot_data['snapshot_date'],
+                snapshot_data['total_value'],
+                snapshot_data['cash_balance'],
+                snapshot_data['positions_value'],
+                snapshot_data['total_pnl'],
+                snapshot_data.get('position_count', 0)
+            ))
+            return cur.fetchone()
+
+
+def get_portfolio_snapshots(portfolio_id: str, days: int = 30) -> List[Dict]:
+    """Get portfolio history for last N days"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT 
+                    snapshot_date,
+                    total_value,
+                    cash_balance,
+                    positions_value,
+                    total_pnl,
+                    position_count,
+                    created_at
+                FROM portfolio_history
+                WHERE portfolio_id = %s
+                AND snapshot_date >= CURRENT_DATE - INTERVAL '%s days'
+                ORDER BY snapshot_date ASC
+            """, (portfolio_id, days))
+            return cur.fetchall()
+
+
+def get_latest_snapshot(portfolio_id: str) -> Optional[Dict]:
+    """Get the most recent snapshot"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT * FROM portfolio_history
+                WHERE portfolio_id = %s
+                ORDER BY snapshot_date DESC
+                LIMIT 1
+            """, (portfolio_id,))
+            return cur.fetchone()
