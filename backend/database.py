@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 from typing import Optional, List, Dict
+from datetime import datetime
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -206,6 +207,61 @@ def update_settings(settings_id, data):
             cur.execute(query, list(data.values()) + [settings_id])
             result = cur.fetchone()
             return dict(result)
+
+
+# ============================================================================
+# CASH TRANSACTION FUNCTIONS
+# ============================================================================
+
+def create_cash_transaction(portfolio_id: str, transaction_data: Dict) -> Dict:
+    """Create a cash transaction (deposit or withdrawal)"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO cash_transactions 
+                (portfolio_id, type, amount, date, note)
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING *;
+            """, (
+                portfolio_id,
+                transaction_data['type'],
+                transaction_data['amount'],
+                transaction_data.get('date', datetime.now().date()),
+                transaction_data.get('note', '')
+            ))
+            return cur.fetchone()
+
+
+def get_cash_transactions(portfolio_id: str, order_by: str = 'DESC') -> List[Dict]:
+    """Get all cash transactions for a portfolio"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            query = f"""
+                SELECT * FROM cash_transactions
+                WHERE portfolio_id = %s
+                ORDER BY date {order_by}, created_at {order_by}
+            """
+            cur.execute(query, (portfolio_id,))
+            return cur.fetchall()
+
+
+def get_total_deposits_withdrawals(portfolio_id: str) -> Dict:
+    """Get total deposits and withdrawals for a portfolio"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT 
+                    COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) as total_deposits,
+                    COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0) as total_withdrawals
+                FROM cash_transactions
+                WHERE portfolio_id = %s
+            """, (portfolio_id,))
+            result = cur.fetchone()
+            return {
+                'total_deposits': float(result['total_deposits']),
+                'total_withdrawals': float(result['total_withdrawals']),
+                'net_cash_flow': float(result['total_deposits']) - float(result['total_withdrawals'])
+            }
 
 
 # ============================================================================
