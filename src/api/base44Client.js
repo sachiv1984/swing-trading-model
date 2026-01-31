@@ -17,6 +17,18 @@ export const api = {
       return handleResponse(response);
     },
     
+    getHistory: async (days = 30) => {
+      const response = await fetch(`${API_BASE_URL}/portfolio/history?days=${days}`);
+      return handleResponse(response);
+    },
+    
+    createSnapshot: async () => {
+      const response = await fetch(`${API_BASE_URL}/portfolio/snapshot`, {
+        method: 'POST'
+      });
+      return handleResponse(response);
+    },
+    
     addPosition: async (positionData) => {
       const response = await fetch(`${API_BASE_URL}/portfolio/position`, {
         method: 'POST',
@@ -79,6 +91,12 @@ export const base44 = {
       list: async () => {
         const data = await api.portfolio.get();
         return [{ cash: data.cash, ...data }];
+      },
+      getHistory: async (days) => {
+        return api.portfolio.getHistory(days);
+      },
+      createSnapshot: async () => {
+        return api.portfolio.createSnapshot();
       }
     },
     Position: {
