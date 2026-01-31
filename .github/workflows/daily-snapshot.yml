@@ -1,0 +1,13 @@
+name: Daily Portfolio Snapshot
+on:
+  schedule:
+    - cron: '0 16 * * 1-5'  # 4 PM weekdays
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Snapshot
+        run: |
+          curl -X POST ${{ secrets.API_URL }}/portfolio/snapshot
