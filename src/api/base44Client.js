@@ -81,6 +81,27 @@ export const api = {
       });
       return handleResponse(response);
     }
+  },
+  
+  cash: {
+    createTransaction: async (transactionData) => {
+      const response = await fetch(`${API_BASE_URL}/cash/transaction`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(transactionData)
+      });
+      return handleResponse(response);
+    },
+    
+    getTransactions: async (order = 'DESC') => {
+      const response = await fetch(`${API_BASE_URL}/cash/transactions?order=${order}`);
+      return handleResponse(response);
+    },
+    
+    getSummary: async () => {
+      const response = await fetch(`${API_BASE_URL}/cash/summary`);
+      return handleResponse(response);
+    }
   }
 };
 
@@ -162,6 +183,19 @@ export const base44 = {
           { market: 'US', status: 'risk_on' },
           { market: 'UK', status: 'risk_on' }
         ];
+      }
+    },
+    CashTransaction: {
+      list: async (orderBy = '-date') => {
+        const isDescending = orderBy.startsWith('-');
+        const order = isDescending ? 'DESC' : 'ASC';
+        return api.cash.getTransactions(order);
+      },
+      create: async (transactionData) => {
+        return api.cash.createTransaction(transactionData);
+      },
+      getSummary: async () => {
+        return api.cash.getSummary();
       }
     }
   }
