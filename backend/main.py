@@ -19,7 +19,9 @@ from database import (
     create_trade_history,
     get_settings,
     create_settings,
-    update_settings
+    update_settings,
+    create_portfolio_snapshot,
+    get_portfolio_snapshots
 )
 
 app = FastAPI(title="Trading Assistant API")
@@ -1023,6 +1025,101 @@ def analyze_positions_endpoint():
         }
     except Exception as e:
         print(f"\n❌ ANALYSIS FAILED: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+
+@app.post("/portfolio/snapshot")
+def create_snapshot_endpoint():
+    """Create a daily snapshot of portfolio performance"""
+    try:
+        print("\n📸 Creating portfolio snapshot...")
+        
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        # Get current portfolio data
+        portfolio_data = get_portfolio_endpoint()
+        
+        if portfolio_data.get('status') == 'error':
+            raise HTTPException(status_code=500, detail=portfolio_data.get('message'))
+        
+        data = portfolio_data['data']
+        
+        # Count open positions
+        portfolio_id = str(portfolio['id'])
+        positions = get_positions(portfolio_id, status='open')
+        position_count = len(positions) if positions else 0
+        
+        # Create snapshot
+        snapshot_data = {
+            'portfolio_id': portfolio_id,
+            'snapshot_date': datetime.now().date(),
+            'total_value': round(data['total_value'], 2),
+            'cash_balance': round(data['cash'], 2),
+            'positions_value': round(data['open_positions_value'], 2),
+            'total_pnl': round(data['total_pnl'], 2),
+            'position_count': position_count
+        }
+        
+        snapshot = create_portfolio_snapshot(snapshot_data)
+        
+        print(f"✓ Snapshot created:")
+        print(f"   Date: {snapshot_data['snapshot_date']}")
+        print(f"   Total Value: £{snapshot_data['total_value']:,.2f}")
+        print(f"   P&L: £{snapshot_data['total_pnl']:+,.2f}")
+        print(f"   Positions: {position_count}\n")
+        
+        return {
+            "status": "ok",
+            "data": decimal_to_float(snapshot)
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/portfolio/history")
+def get_history_endpoint(days: int = 30):
+    """Get portfolio performance history for the last N days"""
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        snapshots = get_portfolio_snapshots(portfolio_id, days)
+        
+        if not snapshots:
+            # No historical data yet - return empty array
+            print(f"⚠️  No portfolio history found (create snapshots with POST /portfolio/snapshot)")
+            return {
+                "status": "ok",
+                "data": []
+            }
+        
+        # Format for frontend
+        history = []
+        for snap in snapshots:
+            history.append({
+                'date': str(snap['snapshot_date']),
+                'total_value': float(snap['total_value']),
+                'cash_balance': float(snap['cash_balance']),
+                'positions_value': float(snap['positions_value']),
+                'total_pnl': float(snap['total_pnl']),
+                'position_count': snap.get('position_count', 0)
+            })
+        
+        print(f"✓ Retrieved {len(history)} snapshots from last {days} days")
+        
+        return {
+            "status": "ok",
+            "data": history
+        }
+    except Exception as e:
         import traceback
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
