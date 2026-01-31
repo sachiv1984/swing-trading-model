@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "../../api/base44Client";
+import { api } from "../../api/base44Client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -17,17 +17,7 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
 
   const createTransaction = useMutation({
     mutationFn: async (data) => {
-      await base44.entities.CashTransaction.create(data);
-      
-      const newBalance = type === "withdrawal" 
-        ? (portfolio?.cash_balance || 0) - parseFloat(amount)
-        : (portfolio?.cash_balance || 0) + parseFloat(amount);
-      
-      if (portfolio?.id) {
-        await base44.entities.Portfolio.update(portfolio.id, { 
-          cash_balance: newBalance
-        });
-      }
+      return api.cash.createTransaction(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["portfolios"] });
@@ -35,6 +25,9 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
       setAmount("");
       setNote("");
       onClose();
+    },
+    onError: (error) => {
+      alert(error.message || "Failed to create transaction");
     }
   });
 
