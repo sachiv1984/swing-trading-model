@@ -2,25 +2,30 @@ import StatsCard from "../../ui/StatsCard";
 import { Wallet, TrendingUp, Briefcase, PieChart, Award, Clock } from "lucide-react";
 
 export function PortfolioValueWidget({ portfolio, totalPositionsValue }) {
-  const value = portfolio?.total_value || totalPositionsValue + (portfolio?.cash_balance || 0);
+  const cashBalance = portfolio?.cash_balance || 0;
+  const value = cashBalance + totalPositionsValue;
   return (
     <StatsCard
       title="Portfolio Value"
       value={`£${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+      subtitle={`Cash + Positions`}
       icon={Wallet}
       gradient="cyan"
     />
   );
 }
 
-export function CashBalanceWidget({ portfolio }) {
+export function CashBalanceWidget({ portfolio, onManageCash }) {
   return (
-    <StatsCard
-      title="Cash Balance"
-      value={`£${(portfolio?.cash_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-      icon={Briefcase}
-      gradient="violet"
-    />
+    <div onClick={onManageCash} className="cursor-pointer">
+      <StatsCard
+        title="Cash Balance"
+        value={`£${(portfolio?.cash_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+        subtitle="Click to manage"
+        icon={Briefcase}
+        gradient="violet"
+      />
+    </div>
   );
 }
 
