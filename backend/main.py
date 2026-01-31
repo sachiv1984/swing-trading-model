@@ -21,7 +21,10 @@ from database import (
     create_settings,
     update_settings,
     create_portfolio_snapshot,
-    get_portfolio_snapshots
+    get_portfolio_snapshots,
+    create_cash_transaction,
+    get_cash_transactions,
+    get_total_deposits_withdrawals
 )
 
 app = FastAPI(title="Trading Assistant API")
@@ -65,6 +68,13 @@ class SettingsRequest(BaseModel):
     us_commission: Optional[float] = 0
     stamp_duty_rate: Optional[float] = 0.005
     fx_fee_rate: Optional[float] = 0.0015
+
+
+class CashTransactionRequest(BaseModel):
+    type: str  # "deposit" or "withdrawal"
+    amount: float
+    date: Optional[str] = None
+    note: Optional[str] = ""
 
 
 # Helper to convert Decimal to float
@@ -625,29 +635,32 @@ def get_portfolio_endpoint():
         cash = float(portfolio['cash'])
         total_value = cash + total_positions_value_gbp
         
-        # Calculate TRUE portfolio P&L
-        # P&L = Current Portfolio Value - Initial Investment
-        # Initial Investment = Starting Cash = what we assume portfolio started with
-        # We can infer this from: current_cash + money_spent_on_positions
+        # Calculate TRUE portfolio P&L accounting for deposits/withdrawals
+        # P&L = Current Value - Initial Investment
+        # Initial Investment = Net Deposits/Withdrawals
+        
+        # Get cash transaction summary
+        cash_summary = get_total_deposits_withdrawals(portfolio_id)
+        net_cash_flow = cash_summary['net_cash_flow']  # deposits - withdrawals
         
         # Calculate total cost of all positions (what we paid including fees)
-        # Convert Decimal to float
         total_cost_of_positions = sum(float(pos.get('total_cost', 0)) for pos in positions)
         
-        # Initial portfolio value = current cash + what we spent on positions
-        initial_portfolio_value = cash + total_cost_of_positions
+        # Initial portfolio value = net deposits/withdrawals
+        # This is the money you put in (minus what you took out)
+        initial_portfolio_value = net_cash_flow
         
-        # True P&L = Current Value - Initial Value
-        # Current positions are worth: total_positions_value_gbp
-        # We paid for them: total_cost_of_positions
-        # So positions P&L = total_positions_value_gbp - total_cost_of_positions
-        true_total_pnl = total_positions_value_gbp - total_cost_of_positions
+        # True P&L = Current Value - Initial Investment
+        # Current value = cash + positions
+        # Initial investment = net cash flow (deposits - withdrawals)
+        true_total_pnl = total_value - initial_portfolio_value
         
         print(f"\n✓ Portfolio calculated:")
         print(f"   Total positions value: £{total_positions_value_gbp:.2f}")
         print(f"   Total cost of positions: £{total_cost_of_positions:.2f}")
         print(f"   Cash: £{cash:.2f}")
         print(f"   Total value: £{total_value:.2f}")
+        print(f"   Net cash flow (deposits-withdrawals): £{net_cash_flow:.2f}")
         print(f"   Initial portfolio value: £{initial_portfolio_value:.2f}")
         print(f"   True total P&L: £{true_total_pnl:+.2f}\n")
         
@@ -660,6 +673,7 @@ def get_portfolio_endpoint():
                 "open_positions_value": total_positions_value_gbp,
                 "total_pnl": true_total_pnl,  # TRUE portfolio P&L
                 "initial_value": initial_portfolio_value,  # For reference
+                "net_deposits": net_cash_flow,  # Total deposits - withdrawals
                 "last_updated": str(portfolio['last_updated']),
                 "live_fx_rate": live_fx_rate,
                 "positions": positions_list
@@ -1118,6 +1132,134 @@ def get_history_endpoint(days: int = 30):
         return {
             "status": "ok",
             "data": history
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+
+@app.post("/cash/transaction")
+def create_cash_transaction_endpoint(request: CashTransactionRequest):
+    """Create a cash transaction (deposit or withdrawal)"""
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        
+        # Validate transaction type
+        if request.type not in ['deposit', 'withdrawal']:
+            raise HTTPException(status_code=400, detail="Invalid transaction type. Must be 'deposit' or 'withdrawal'")
+        
+        # Validate amount
+        if request.amount <= 0:
+            raise HTTPException(status_code=400, detail="Amount must be greater than 0")
+        
+        # For withdrawals, check if there's enough cash
+        current_cash = float(portfolio['cash'])
+        if request.type == 'withdrawal' and request.amount > current_cash:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Insufficient funds. Available cash: £{current_cash:.2f}"
+            )
+        
+        # Create transaction record
+        transaction_data = {
+            'type': request.type,
+            'amount': request.amount,
+            'date': request.date or datetime.now().strftime('%Y-%m-%d'),
+            'note': request.note or ''
+        }
+        
+        transaction = create_cash_transaction(portfolio_id, transaction_data)
+        
+        # Update portfolio cash balance
+        if request.type == 'deposit':
+            new_cash = current_cash + request.amount
+        else:  # withdrawal
+            new_cash = current_cash - request.amount
+        
+        update_portfolio_cash(portfolio_id, new_cash)
+        
+        print(f"✓ Cash transaction created:")
+        print(f"   Type: {request.type.upper()}")
+        print(f"   Amount: £{request.amount:,.2f}")
+        print(f"   New balance: £{new_cash:,.2f}")
+        
+        return {
+            "status": "ok",
+            "data": {
+                "transaction": decimal_to_float(transaction),
+                "new_balance": new_cash
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/cash/transactions")
+def get_cash_transactions_endpoint(order: str = "DESC"):
+    """Get all cash transactions"""
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        
+        # Validate order parameter
+        if order.upper() not in ['ASC', 'DESC']:
+            order = 'DESC'
+        
+        transactions = get_cash_transactions(portfolio_id, order.upper())
+        
+        # Format for frontend
+        formatted = []
+        for tx in transactions:
+            formatted.append({
+                'id': str(tx['id']),
+                'type': tx['type'],
+                'amount': float(tx['amount']),
+                'date': str(tx['date']),
+                'note': tx['note'] or '',
+                'created_at': str(tx['created_at'])
+            })
+        
+        return {
+            "status": "ok",
+            "data": formatted
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+
+@app.get("/cash/summary")
+def get_cash_summary_endpoint():
+    """Get summary of all deposits and withdrawals"""
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        summary = get_total_deposits_withdrawals(portfolio_id)
+        
+        return {
+            "status": "ok",
+            "data": {
+                "total_deposits": round(summary['total_deposits'], 2),
+                "total_withdrawals": round(summary['total_withdrawals'], 2),
+                "net_cash_flow": round(summary['net_cash_flow'], 2),
+                "current_cash": float(portfolio['cash'])
+            }
         }
     except Exception as e:
         import traceback
