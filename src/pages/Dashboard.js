@@ -11,6 +11,7 @@ import PageHeader from "../components/ui/PageHeader";
 import DashboardWidget from "../components/dashboard/DashboardWidget";
 import WidgetLibrary from "../components/dashboard/WidgetLibrary";
 import MonitorModal from "../components/monitor/MonitorModal";
+import CashManagementModal from "../components/cash/CashManagementModal";
 import { useDashboardLayout } from "../components/dashboard/useDashboardLayout";
 
 // Widget components
@@ -34,6 +35,7 @@ export default function Dashboard() {
   const [monitorOpen, setMonitorOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [cashModalOpen, setCashModalOpen] = useState(false);
   
   const { widgets, addWidget, removeWidget, reorderWidgets, resetToDefault, isLoaded } = useDashboardLayout();
 
@@ -57,16 +59,29 @@ export default function Dashboard() {
     queryFn: () => base44.entities.MarketRegime.list(),
   });
 
+  const { data: cashTransactions } = useQuery({
+    queryKey: ["cashTransactions"],
+    queryFn: () => base44.entities.CashTransaction.list("-date"),
+  });
+
   const portfolio = portfolios?.[0];
   const openPositions = positions || [];
   const closedPositions = allPositions?.filter(p => p.status === "closed") || [];
-
-  // Use values directly from portfolio endpoint (already calculated correctly)
-  const totalPositionsValue = portfolio?.open_positions_value || openPositions.reduce((sum, p) => {
-  return sum + (p.current_price || p.entry_price) * p.shares;
+  
+  // FIXED: Use value_gbp if available, otherwise calculate
+  const totalPositionsValue = openPositions.reduce((sum, p) => {
+    // Backend now provides value_gbp (already calculated and converted)
+    if (p.value_gbp !== undefined) {
+      return sum + p.value_gbp;
+    }
+    // Fallback for backward compatibility
+    return sum + (p.current_price || p.entry_price) * p.shares;
   }, 0);
-
-const totalPnL = portfolio?.total_pnl || 0;  // Use portfolio's pre-calculated P&L
+  
+  // Total P&L is already in GBP from API
+  const totalPnL = openPositions.reduce((sum, p) => {
+    return sum + (p.pnl || 0);
+  }, 0);
 
   const isLoading = loadingPortfolio || loadingPositions || loadingRegimes || !isLoaded;
 
@@ -111,7 +126,7 @@ const totalPnL = portfolio?.total_pnl || 0;  // Use portfolio's pre-calculated P
       case "portfolio_value":
         return <PortfolioValueWidget {...widgetProps} />;
       case "cash_balance":
-        return <CashBalanceWidget {...widgetProps} />;
+        return <CashBalanceWidget {...widgetProps} onManageCash={() => setCashModalOpen(true)} />;
       case "open_positions":
         return <OpenPositionsWidget {...widgetProps} />;
       case "total_pnl":
@@ -326,6 +341,13 @@ const totalPnL = portfolio?.total_pnl || 0;  // Use portfolio's pre-calculated P
         marketRegimes={marketRegimes}
         isLoading={loadingPositions}
         onConfirmExits={handleExitPositions}
+      />
+
+      <CashManagementModal
+        open={cashModalOpen}
+        onClose={() => setCashModalOpen(false)}
+        portfolio={portfolio}
+        transactions={cashTransactions}
       />
     </div>
   );
