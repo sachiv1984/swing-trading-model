@@ -951,24 +951,48 @@ def analyze_positions_endpoint():
                         print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
                 
                 if atr_value and atr_value > 0:
-                    # Calculate new stop: current_price - (multiplier * ATR)
-                    new_stop = current_price - (atr_mult * atr_value)
-                    # Trailing stop only moves up, never down
-                    trailing_stop = max(current_stop, new_stop)
+                    # Calculate new stop in NATIVE currency: current_price - (multiplier * ATR)
+                    new_stop_native = current_price - (atr_mult * atr_value)
+                    
+                    # Convert to GBP for storage (if US stock)
+                    if pos['market'] == 'US':
+                        new_stop_gbp = new_stop_native / live_fx_rate
+                        current_stop_gbp = current_stop / live_fx_rate if current_stop > 0 else 0
+                    else:
+                        new_stop_gbp = new_stop_native
+                        current_stop_gbp = current_stop
+                    
+                    # Trailing stop only moves up, never down (in GBP)
+                    trailing_stop_gbp = max(current_stop_gbp, new_stop_gbp)
+                    
+                    # Convert back to native for display
+                    if pos['market'] == 'US':
+                        trailing_stop = trailing_stop_gbp * live_fx_rate
+                    else:
+                        trailing_stop = trailing_stop_gbp
+                    
                     display_stop = trailing_stop  # Show actual stop after grace period
                     
-                    if trailing_stop > current_stop:
-                        print(f"   📈 Stop moved up: ${current_stop:.2f} → ${trailing_stop:.2f}")
+                    if trailing_stop_gbp > current_stop_gbp:
+                        print(f"   📈 Stop moved up: £{current_stop_gbp:.2f} → £{trailing_stop_gbp:.2f} (stored in GBP)")
                     else:
-                        print(f"   📊 Stop unchanged: ${current_stop:.2f}")
+                        print(f"   📊 Stop unchanged: £{trailing_stop_gbp:.2f} (stored in GBP)")
+                    
+                    # Store in GBP
+                    current_stop = trailing_stop_gbp
                 else:
-                    # No ATR available, keep current stop
-                    trailing_stop = current_stop
+                    # No ATR available, keep current stop (already in GBP)
+                    if pos['market'] == 'US':
+                        current_stop_gbp = current_stop / live_fx_rate if current_stop > 0 else 0
+                        trailing_stop_gbp = current_stop_gbp
+                        trailing_stop = trailing_stop_gbp * live_fx_rate
+                    else:
+                        trailing_stop_gbp = current_stop
+                        trailing_stop = current_stop
+                    
                     display_stop = trailing_stop
-                    print(f"   ⚠️  No ATR value available, stop unchanged")
-            
-            # Update current_stop for further checks
-            current_stop = trailing_stop
+                    current_stop = trailing_stop_gbp
+                    print(f"   ⚠️  No ATR value available, stop unchanged at £{current_stop:.2f}")
             
             # Determine action
             action = "HOLD"
@@ -984,20 +1008,27 @@ def analyze_positions_endpoint():
                     exit_reason = "Risk-Off Signal"
                     stop_reason = "Market risk-off"
                     print(f"   🔴 EXIT: Market risk-off")
-                elif current_price <= current_stop:
+                elif current_price <= trailing_stop:
                     action = "EXIT"
                     exit_reason = "Stop Loss Hit"
                     stop_reason = "Stop triggered"
-                    print(f"   🔴 EXIT: Stop loss hit (${current_stop:.2f})")
+                    print(f"   🔴 EXIT: Stop loss hit (native: {trailing_stop:.2f}, GBP: £{current_stop:.2f})")
                 else:
                     print(f"   ✅ HOLD: {stop_reason}")
             
-            # Update position in database with new prices AND stop
+            # Update position in database with new prices AND stop (all in GBP)
             if live_price:
                 print(f"   💾 Updating position in database...")
+                
+                # Convert current price to GBP for storage
+                if pos['market'] == 'US':
+                    current_price_gbp_for_storage = current_price / live_fx_rate
+                else:
+                    current_price_gbp_for_storage = current_price
+                
                 update_position(str(pos['id']), {
-                    'current_price': round(current_price, 4),
-                    'current_stop': round(current_stop, 2),
+                    'current_price': round(current_price_gbp_for_storage, 4),  # Store in GBP
+                    'current_stop': round(current_stop, 2),  # Already in GBP
                     'holding_days': holding_days,
                     'pnl': round(pnl_gbp, 2),  # Store P&L in GBP
                     'pnl_pct': round(pnl_pct, 2)
@@ -1272,6 +1303,160 @@ def get_cash_summary_endpoint():
         import traceback
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
+
+
+@app.post("/positions/{position_id}/exit")
+def exit_position_endpoint(position_id: str):
+    """Exit a position and record in trade history"""
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        
+        # Get the position
+        positions = get_positions(portfolio_id)
+        position = None
+        for pos in positions:
+            if str(pos['id']) == position_id:
+                position = pos
+                break
+        
+        if not position:
+            raise HTTPException(status_code=404, detail="Position not found")
+        
+        if position['status'] == 'closed':
+            raise HTTPException(status_code=400, detail="Position already closed")
+        
+        # Get current live price for exit
+        print(f"\n📤 Exiting position: {position['ticker']}")
+        
+        live_price = get_current_price(position['ticker'])
+        if not live_price:
+            raise HTTPException(status_code=500, detail="Could not fetch current price for exit")
+        
+        # Fix UK stocks (Yahoo returns pence)
+        if position['market'] == 'UK' and live_price > 1000:
+            live_price = live_price / 100
+        
+        exit_price_native = live_price
+        print(f"   Exit price: {exit_price_native:.2f}")
+        
+        # Get live FX rate
+        live_fx_rate = get_live_fx_rate()
+        
+        # Calculate exit proceeds
+        shares = float(position['shares'])
+        market = position['market']
+        
+        # Calculate in native currency first
+        gross_proceeds_native = exit_price_native * shares
+        
+        # Calculate exit fees
+        if market == 'UK':
+            exit_fee_rate = 0.0  # No stamp duty on sale, only commission
+            commission = 9.95  # From settings
+            exit_fees = commission
+        else:
+            exit_fee_rate = 0.0015  # FX fee
+            commission = 0.0
+            exit_fees = gross_proceeds_native * exit_fee_rate
+        
+        # Net proceeds in native currency
+        net_proceeds_native = gross_proceeds_native - exit_fees
+        
+        # Convert to GBP if US stock
+        if market == 'US':
+            gross_proceeds_gbp = gross_proceeds_native / live_fx_rate
+            net_proceeds_gbp = net_proceeds_native / live_fx_rate
+            exit_fees_gbp = exit_fees / live_fx_rate
+        else:
+            gross_proceeds_gbp = gross_proceeds_native
+            net_proceeds_gbp = net_proceeds_native
+            exit_fees_gbp = exit_fees
+        
+        # Calculate P&L
+        entry_price = float(position.get('fill_price', position['entry_price'])) if market == 'US' else float(position['entry_price'])
+        entry_fees = float(position.get('fees_paid', 0))
+        total_cost = float(position['total_cost'])
+        
+        # P&L = net proceeds - total cost
+        realized_pnl_gbp = net_proceeds_gbp - total_cost
+        realized_pnl_pct = (realized_pnl_gbp / total_cost) * 100
+        
+        # Calculate holding period
+        entry_date = datetime.strptime(str(position['entry_date']), '%Y-%m-%d')
+        exit_date = datetime.now()
+        holding_days = (exit_date - entry_date).days
+        
+        print(f"   Shares: {shares}")
+        print(f"   Gross proceeds: £{gross_proceeds_gbp:.2f}")
+        print(f"   Exit fees: £{exit_fees_gbp:.2f}")
+        print(f"   Net proceeds: £{net_proceeds_gbp:.2f}")
+        print(f"   Total cost: £{total_cost:.2f}")
+        print(f"   Realized P&L: £{realized_pnl_gbp:+.2f} ({realized_pnl_pct:+.2f}%)")
+        
+        # Create trade history record
+        trade_data = {
+            'ticker': position['ticker'],
+            'market': market,
+            'entry_date': position['entry_date'],
+            'exit_date': exit_date.strftime('%Y-%m-%d'),
+            'shares': shares,
+            'entry_price': entry_price,
+            'exit_price': exit_price_native,
+            'total_cost': total_cost,
+            'gross_proceeds': gross_proceeds_gbp,
+            'net_proceeds': net_proceeds_gbp,
+            'entry_fees': entry_fees,
+            'exit_fees': exit_fees_gbp,
+            'pnl': realized_pnl_gbp,
+            'pnl_pct': realized_pnl_pct,
+            'holding_days': holding_days,
+            'exit_reason': 'Manual Exit',
+            'entry_fx_rate': float(position.get('fx_rate', 1.0)),
+            'exit_fx_rate': live_fx_rate if market == 'US' else 1.0
+        }
+        
+        create_trade_history(portfolio_id, trade_data)
+        
+        # Update position to closed
+        update_position(position_id, {
+            'status': 'closed',
+            'exit_date': exit_date.strftime('%Y-%m-%d'),
+            'exit_price': exit_price_native,
+            'exit_reason': 'Manual Exit'
+        })
+        
+        # Update portfolio cash
+        current_cash = float(portfolio['cash'])
+        new_cash = current_cash + net_proceeds_gbp
+        update_portfolio_cash(portfolio_id, new_cash)
+        
+        print(f"   ✓ Position closed")
+        print(f"   New cash balance: £{new_cash:.2f}\n")
+        
+        return {
+            "status": "ok",
+            "data": {
+                "ticker": position['ticker'],
+                "exit_price": round(exit_price_native, 2),
+                "shares": shares,
+                "gross_proceeds": round(gross_proceeds_gbp, 2),
+                "exit_fees": round(exit_fees_gbp, 2),
+                "net_proceeds": round(net_proceeds_gbp, 2),
+                "realized_pnl": round(realized_pnl_gbp, 2),
+                "realized_pnl_pct": round(realized_pnl_pct, 2),
+                "new_cash_balance": round(new_cash, 2)
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/trades")
