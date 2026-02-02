@@ -752,9 +752,15 @@ def add_position_endpoint(request: AddPositionRequest):
         atr_multiplier = float(settings.get('atr_multiplier_initial', 2)) if settings else 2
         
         if atr > 0 and request.stop_price is None:
-            initial_stop = entry_price_for_display - (atr_multiplier * atr)
+            initial_stop_native = entry_price_for_display - (atr_multiplier * atr)
         else:
-            initial_stop = request.stop_price or entry_price_for_display
+            initial_stop_native = request.stop_price or entry_price_for_display
+        
+        # Convert stop to GBP for database storage (keeps currency consistent)
+        if is_uk:
+            initial_stop_gbp = initial_stop_native  # Already in GBP
+        else:
+            initial_stop_gbp = initial_stop_native / fx_rate  # Convert USD to GBP
         
         # Create position with the modified ticker
         position_data = {
@@ -770,8 +776,8 @@ def add_position_endpoint(request: AddPositionRequest):
             'fees_paid': round(total_fees, 2),
             'fees': round(total_fees, 2),
             'fee_type': 'stamp_duty' if is_uk else 'fx_fee',
-            'initial_stop': round(initial_stop, 2),
-            'current_stop': round(initial_stop, 2),
+            'initial_stop': round(initial_stop_gbp, 2),  # Store in GBP!
+            'current_stop': round(initial_stop_gbp, 2),  # Store in GBP!
             'current_price': round(entry_price_for_display, 4),  # Initialize with fill price
             'atr': round(atr, 4) if atr > 0 else None,  # Store ATR for trailing stop calculations
             'holding_days': 0,
@@ -793,7 +799,7 @@ def add_position_endpoint(request: AddPositionRequest):
                 "total_cost": round(total_cost, 2),
                 "fees_paid": round(total_fees, 2),
                 "entry_price": round(entry_price_for_display, 4),  # Return actual fill price
-                "initial_stop": round(initial_stop, 2),
+                "initial_stop": round(initial_stop_native, 2),  # Return native currency for display
                 "remaining_cash": round(new_cash, 2)
             }
         }
@@ -910,26 +916,33 @@ def analyze_positions_endpoint():
             print(f"   P&L: £{pnl_gbp:+.2f} ({pnl_pct:+.2f}%)")
             print(f"   Days held: {holding_days}")
             
-            # Get current stop from database
-            current_stop = pos.get('current_stop', pos.get('initial_stop', 0))
+            # Get current stop from database (ALWAYS stored in GBP)
+            current_stop_gbp = pos.get('current_stop', pos.get('initial_stop', 0))
+            
+            # Convert stop from GBP to native currency for calculations
+            if pos['market'] == 'US':
+                current_stop_native = current_stop_gbp * live_fx_rate if current_stop_gbp > 0 else 0
+            else:
+                current_stop_native = current_stop_gbp
             
             # Check grace period
             grace_period = holding_days < 10
             
-            # Calculate new trailing stop based on strategy
+            # Calculate new trailing stop based on strategy (ALL IN NATIVE CURRENCY)
             if grace_period:
                 # During grace period, keep initial stop but don't display it
-                trailing_stop = current_stop
-                display_stop = 0  # Show 0 to indicate no active stop during grace period
+                trailing_stop_native = current_stop_native
+                display_stop_native = 0  # Show 0 to indicate no active stop during grace period
+                trailing_stop_gbp = current_stop_gbp  # Keep GBP value
                 stop_reason = f"Grace period ({holding_days}/10 days)"
                 print(f"   🆕 Grace period active - no stop loss")
             else:
-                # After grace period, calculate trailing stop based on profitability
+                # After grace period, calculate trailing stop
                 # Get settings for ATR multipliers
                 settings_list = get_settings()
                 settings = settings_list[0] if settings_list else None
                 
-                if pnl_gbp > 0:
+                if pnl_native > 0:
                     # Profitable: tight 2x ATR stop
                     atr_mult = float(settings.get('atr_multiplier_trailing', 2)) if settings else 2
                     stop_reason = f"Profitable (tight {atr_mult}x ATR)"
@@ -952,47 +965,30 @@ def analyze_positions_endpoint():
                 
                 if atr_value and atr_value > 0:
                     # Calculate new stop in NATIVE currency: current_price - (multiplier * ATR)
+                    # CRITICAL: Both current_price and atr_value are in native currency!
                     new_stop_native = current_price - (atr_mult * atr_value)
                     
-                    # Convert to GBP for storage (if US stock)
+                    # Trailing stop only moves up, never down (in native currency)
+                    trailing_stop_native = max(current_stop_native, new_stop_native)
+                    display_stop_native = trailing_stop_native
+                    
+                    # Convert to GBP for database storage
                     if pos['market'] == 'US':
-                        new_stop_gbp = new_stop_native / live_fx_rate
-                        current_stop_gbp = current_stop / live_fx_rate if current_stop > 0 else 0
+                        trailing_stop_gbp = trailing_stop_native / live_fx_rate
                     else:
-                        new_stop_gbp = new_stop_native
-                        current_stop_gbp = current_stop
+                        trailing_stop_gbp = trailing_stop_native
                     
-                    # Trailing stop only moves up, never down (in GBP)
-                    trailing_stop_gbp = max(current_stop_gbp, new_stop_gbp)
-                    
-                    # Convert back to native for display
-                    if pos['market'] == 'US':
-                        trailing_stop = trailing_stop_gbp * live_fx_rate
+                    currency_symbol = "$" if pos['market'] == 'US' else "£"
+                    if trailing_stop_native > current_stop_native:
+                        print(f"   📈 Stop moved up: {currency_symbol}{current_stop_native:.2f} → {currency_symbol}{trailing_stop_native:.2f}")
                     else:
-                        trailing_stop = trailing_stop_gbp
-                    
-                    display_stop = trailing_stop  # Show actual stop after grace period
-                    
-                    if trailing_stop_gbp > current_stop_gbp:
-                        print(f"   📈 Stop moved up: £{current_stop_gbp:.2f} → £{trailing_stop_gbp:.2f} (stored in GBP)")
-                    else:
-                        print(f"   📊 Stop unchanged: £{trailing_stop_gbp:.2f} (stored in GBP)")
-                    
-                    # Store in GBP
-                    current_stop = trailing_stop_gbp
+                        print(f"   📊 Stop unchanged: {currency_symbol}{trailing_stop_native:.2f}")
                 else:
-                    # No ATR available, keep current stop (already in GBP)
-                    if pos['market'] == 'US':
-                        current_stop_gbp = current_stop / live_fx_rate if current_stop > 0 else 0
-                        trailing_stop_gbp = current_stop_gbp
-                        trailing_stop = trailing_stop_gbp * live_fx_rate
-                    else:
-                        trailing_stop_gbp = current_stop
-                        trailing_stop = current_stop
-                    
-                    display_stop = trailing_stop
-                    current_stop = trailing_stop_gbp
-                    print(f"   ⚠️  No ATR value available, stop unchanged at £{current_stop:.2f}")
+                    # No ATR available, keep current stop
+                    trailing_stop_native = current_stop_native
+                    trailing_stop_gbp = current_stop_gbp
+                    display_stop_native = trailing_stop_native
+                    print(f"   ⚠️  No ATR value available, stop unchanged")
             
             # Determine action
             action = "HOLD"
@@ -1008,15 +1004,16 @@ def analyze_positions_endpoint():
                     exit_reason = "Risk-Off Signal"
                     stop_reason = "Market risk-off"
                     print(f"   🔴 EXIT: Market risk-off")
-                elif current_price <= trailing_stop:
+                elif current_price <= trailing_stop_native:
                     action = "EXIT"
                     exit_reason = "Stop Loss Hit"
                     stop_reason = "Stop triggered"
-                    print(f"   🔴 EXIT: Stop loss hit (native: {trailing_stop:.2f}, GBP: £{current_stop:.2f})")
+                    currency_symbol = "$" if pos['market'] == 'US' else "£"
+                    print(f"   🔴 EXIT: Stop loss hit ({currency_symbol}{trailing_stop_native:.2f})")
                 else:
                     print(f"   ✅ HOLD: {stop_reason}")
             
-            # Update position in database with new prices AND stop (all in GBP)
+            # Update position in database with new prices AND stop (stop in GBP, prices converted)
             if live_price:
                 print(f"   💾 Updating position in database...")
                 
@@ -1028,7 +1025,7 @@ def analyze_positions_endpoint():
                 
                 update_position(str(pos['id']), {
                     'current_price': round(current_price_gbp_for_storage, 4),  # Store in GBP
-                    'current_stop': round(current_stop, 2),  # Already in GBP
+                    'current_stop': round(trailing_stop_gbp, 2),  # Store in GBP
                     'holding_days': holding_days,
                     'pnl': round(pnl_gbp, 2),  # Store P&L in GBP
                     'pnl_pct': round(pnl_pct, 2)
