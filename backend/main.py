@@ -129,7 +129,14 @@ def calculate_atr(ticker: str, period: int = 14) -> float:
                     # Calculate ATR (simple moving average of TR)
                     if len(true_ranges) >= period:
                         atr = sum(true_ranges[-period:]) / period
-                        print(f"   📊 Calculated ATR for {ticker}: {atr:.2f}")
+                        
+                        # Fix UK stocks: Yahoo returns pence, need to convert to pounds
+                        if ticker.endswith('.L') and atr > 100:
+                            atr = atr / 100
+                            print(f"   📊 Calculated ATR for {ticker}: {atr:.2f} (converted from pence)")
+                        else:
+                            print(f"   📊 Calculated ATR for {ticker}: {atr:.2f}")
+                        
                         return atr
         
         print(f"   ⚠️  Could not calculate ATR for {ticker}")
