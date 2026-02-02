@@ -153,6 +153,17 @@ export const base44 = {
           body: JSON.stringify(data)
         });
         return response.json();
+      },
+      exit: async (id) => {
+        const response = await fetch(`${API_BASE_URL}/positions/${id}/exit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        if (data.status === 'error') {
+          throw new Error(data.message);
+        }
+        return data.data;
       }
     },
     Settings: {
