@@ -1,17 +1,25 @@
-name: Daily Portfolio Snapshot
+# .github/workflows/daily-snapshot.yml
+name: Daily Portfolio Maintenance
 
 on:
   schedule:
     - cron: '0 16 * * 1-5'  # 4 PM UTC weekdays
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
 
 jobs:
-  create-snapshot:
+  daily-tasks:
     runs-on: ubuntu-latest
-    
     steps:
+      - name: Run Position Analysis
+        env:
+          API_URL: ${{ secrets.API_URL }}
+        run: |
+          echo "Running position analysis..."
+          curl -X GET "${API_URL}/positions/analyze"
+          
       - name: Create Portfolio Snapshot
         env:
           API_URL: ${{ secrets.API_URL }}
         run: |
+          echo "Creating portfolio snapshot..."
           curl -X POST "${API_URL}/portfolio/snapshot"
