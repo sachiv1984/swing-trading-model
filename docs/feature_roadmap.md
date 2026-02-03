@@ -51,7 +51,54 @@
 
 ### Priority 1: High Value, Quick Wins
 
-#### 1. Trade Journal & Notes System
+#### 1. Partial Exit & Exit Flexibility
+**Status:** Planned for v1.2  
+**Effort:** Low (1-2 days)  
+**Value:** High
+
+**Current Limitation:**
+Exit endpoint assumes:
+- Exit all shares (no partial exit)
+- Exit today (no custom date)
+- Exit at current market price (no override)
+
+**Features to Add:**
+- **Partial Exit:** Specify number of shares to exit
+- **Custom Exit Date:** Backdate exits for reconciliation
+- **Exit Price Override:** Manual price if needed
+- **Exit Reason Selection:** Dropdown (Stop Loss, Take Profit, Risk-Off, Manual)
+
+**Why:**
+- Allows profit-taking on partial positions
+- Scale out of winners gradually
+- Reconcile trades entered in broker first
+- More flexible position management
+
+**API Changes:**
+```python
+POST /positions/{position_id}/exit
+{
+  "shares": 10.5,           # Optional: null = all shares
+  "exit_date": "2026-02-01", # Optional: null = today  
+  "exit_price": 250.50,     # Optional: null = fetch live
+  "exit_reason": "Partial Profit Taking"  # Optional
+}
+```
+
+**UI Changes:**
+- Exit modal with form fields
+- Share quantity input (default: all shares)
+- Date picker (default: today)
+- Exit reason dropdown
+- Preview of proceeds and P&L
+
+**Database Impact:**
+- No schema changes needed
+- Trade history already supports all fields
+
+---
+
+#### 2. Trade Journal & Notes System
 **Status:** Planned for v1.2  
 **Effort:** Medium (2-3 days)  
 **Value:** High
@@ -308,6 +355,7 @@ CREATE TABLE watchlist (
 
 | Feature | Effort | Value | Priority | Version |
 |---------|--------|-------|----------|---------|
+| Partial Exit & Flexibility | Low | High | P1 | v1.2 |
 | Trade Journal | Medium | High | P1 | v1.2 |
 | Performance Analytics | Medium | High | P1 | v1.2 |
 | Alerts & Notifications | Medium-High | High | P1 | v1.3 |
@@ -324,7 +372,14 @@ CREATE TABLE watchlist (
 ## 🎯 Recommended Implementation Order
 
 ### Phase 1 (v1.2) - Q1 2026
-1. **Trade Journal** (2-3 days)
+
+1. **Partial Exit & Exit Flexibility** (1-2 days)
+   - Critical for real-world usage
+   - Simple API/UI changes
+   - Immediate practical value
+   - Enables partial profit-taking
+
+2. **Trade Journal** (2-3 days)
    - Most impactful for trading improvement
    - Low technical complexity
    - High user value
@@ -359,7 +414,8 @@ CREATE TABLE watchlist (
 
 ## 💡 Quick Wins (Can be done in 1-2 days each)
 
-1. **Position notes field** - Add single text field to positions
+1. **Partial exit support** - Add shares/date fields to exit modal
+2. **Position notes field** - Add single text field to positions
 2. **Best/worst trades widget** - Add to dashboard
 3. **Win rate chart** - Simple bar chart by month
 4. **CSV export button** - Download trades as CSV
@@ -402,15 +458,6 @@ When evaluating new features, ask:
 4. **Will I use it daily/weekly?**
    - Yes → High priority
    - No → Low priority
-
----
-
-## 🎁 Community Suggestions
-
-Have ideas? Submit via:
-- GitHub Issues
-- Feature request form
-- Direct feedback
 
 ---
 
