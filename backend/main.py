@@ -60,7 +60,7 @@ class AddPositionRequest(BaseModel):
 class SettingsRequest(BaseModel):
     min_hold_days: Optional[int] = 5
     atr_multiplier_initial: Optional[float] = 2
-    atr_multiplier_trailing: Optional[float] = 3
+    atr_multiplier_trailing: Optional[float] = 2
     atr_period: Optional[int] = 14
     default_currency: Optional[str] = "GBP"
     theme: Optional[str] = "dark"
@@ -1041,7 +1041,7 @@ def analyze_positions_endpoint():
                 "shares": shares,
                 "pnl": round(pnl_gbp, 2),  # P&L in GBP
                 "pnl_pct": round(pnl_pct, 2),
-                "current_stop": round(display_stop, 2),  # Use display_stop instead of trailing_stop
+                "current_stop": round(display_stop_native, 2),  # Use native currency stop
                 "holding_days": holding_days,
                 "stop_reason": stop_reason,
                 "grace_period": grace_period
