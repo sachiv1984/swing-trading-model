@@ -958,8 +958,19 @@ def analyze_positions_endpoint():
                     # Both current_price and atr_value are in native currency
                     new_stop_native = current_price - (atr_mult * atr_value)
                     
-                    # Trailing stop only moves up, never down (in native currency)
-                    trailing_stop_native = max(current_stop_native, new_stop_native)
+                    # Get entry price in native currency
+                    entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
+                    
+                    # Trailing stop logic depends on profitability:
+                    # - Profitable (tight 2×ATR): Never go below entry (protect gains)
+                    # - Losing (wide 5×ATR): Can go below entry (room to recover)
+                    if pnl_native > 0:
+                        # Profitable: enforce entry-level minimum
+                        trailing_stop_native = max(current_stop_native, new_stop_native, entry_price_native)
+                    else:
+                        # Losing: allow wide stop below entry
+                        trailing_stop_native = max(current_stop_native, new_stop_native)
+                    
                     display_stop_native = trailing_stop_native
                     
                     currency_symbol = "$" if pos['market'] == 'US' else "£"
@@ -968,10 +979,11 @@ def analyze_positions_endpoint():
                     else:
                         print(f"   📊 Stop unchanged: {currency_symbol}{trailing_stop_native:.2f}")
                 else:
-                    # No ATR available, keep current stop
-                    trailing_stop_native = current_stop_native
+                    # No ATR available, use entry price as stop
+                    entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
+                    trailing_stop_native = max(current_stop_native, entry_price_native)
                     display_stop_native = trailing_stop_native
-                    print(f"   ⚠️  No ATR value available, stop unchanged")
+                    print(f"   ⚠️  No ATR value available, stop at entry level")
             
             # Determine action
             action = "HOLD"
