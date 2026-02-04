@@ -1412,13 +1412,28 @@ def exit_position_endpoint(position_id: str):
         print(f"   ✓ Trade history created")
         
         # Update position to closed
+        # NOTE: If exit_date, exit_price, exit_reason columns don't exist in positions table,
+        # just update status. The real data is in trade_history anyway.
         print(f"   💾 Updating position status to closed...")
-        updated_position = update_position(position_id, {
-            'status': 'closed',
-            'exit_date': exit_date.strftime('%Y-%m-%d'),
-            'exit_price': exit_price_native,
-            'exit_reason': 'Manual Exit'
-        })
+        
+        try:
+            # Try updating with all exit fields (requires migration to add columns)
+            updated_position = update_position(position_id, {
+                'status': 'closed',
+                'exit_date': exit_date.strftime('%Y-%m-%d'),
+                'exit_price': exit_price_native,
+                'exit_reason': 'Manual Exit'
+            })
+        except Exception as e:
+            # If columns don't exist, just update status
+            if 'exit_date' in str(e) or 'UndefinedColumn' in str(e):
+                print(f"   ⚠️  Exit columns don't exist in positions table, updating status only")
+                print(f"   ⚠️  Run migration: add_exit_columns_to_positions.sql")
+                updated_position = update_position(position_id, {
+                    'status': 'closed'
+                })
+            else:
+                raise
         
         if updated_position:
             print(f"   ✓ Position status updated to: {updated_position.get('status', 'unknown')}")
