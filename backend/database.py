@@ -16,7 +16,7 @@ def get_db():
     conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
     try:
         yield conn
-        conn.commit()
+        conn.commit()  # CRITICAL: Ensure commit happens
     except Exception as e:
         conn.rollback()
         raise e
@@ -99,21 +99,51 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
 
 
 def update_position(position_id: str, updates: Dict):
-    """Update a position"""
+    """Update a position - FIXED VERSION with explicit commit and debugging"""
     with get_db() as conn:
         with conn.cursor() as cur:
             # Build dynamic UPDATE query
             set_parts = []
             values = []
+            
             for key, value in updates.items():
                 set_parts.append(f"{key} = %s")
                 values.append(value)
             
+            # Add position_id for WHERE clause
             values.append(position_id)
             
-            query = f"UPDATE positions SET {', '.join(set_parts)}, updated_at = NOW() WHERE id = %s RETURNING *"
+            # Build and execute query
+            query = f"""
+                UPDATE positions 
+                SET {', '.join(set_parts)}, updated_at = NOW() 
+                WHERE id = %s 
+                RETURNING *
+            """
+            
+            print(f"🔍 DEBUG: Executing update_position")
+            print(f"   Position ID: {position_id}")
+            print(f"   Updates: {updates}")
+            print(f"   Query: {query}")
+            print(f"   Values: {values}")
+            
             cur.execute(query, values)
-            return cur.fetchone()
+            result = cur.fetchone()
+            
+            if result:
+                print(f"✅ Position updated successfully")
+                print(f"   New status: {result.get('status')}")
+                print(f"   Exit date: {result.get('exit_date')}")
+            else:
+                print(f"❌ WARNING: update_position returned None!")
+                print(f"   This means no rows were updated")
+                print(f"   Position ID might not exist: {position_id}")
+            
+            # CRITICAL: Ensure the transaction commits
+            conn.commit()
+            print(f"✅ Transaction committed")
+            
+            return result
 
 
 def delete_position(position_id: str):
