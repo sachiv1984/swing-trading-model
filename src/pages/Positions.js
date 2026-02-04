@@ -29,8 +29,21 @@ export default function Positions() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       setEditingPosition(null);
+    },
+  });
+
+  // NEW: Separate mutation for exits - calls the backend exit endpoint
+  const exitMutation = useMutation({
+    mutationFn: (id) => base44.entities.Position.exit(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolio"] });
       setExitingPosition(null);
     },
+    onError: (error) => {
+      console.error("Exit failed:", error);
+      alert(`Failed to exit position: ${error.message}`);
+    }
   });
 
   const handleSave = (position) => {
@@ -44,17 +57,12 @@ export default function Positions() {
   };
 
   const handleExit = (position) => {
-    updateMutation.mutate({
-      id: position.id,
-      data: {
-        status: "closed",
-        exit_date: position.exit_date,
-        exit_price: position.exit_price,
-        exit_reason: position.exit_reason,
-        pnl: position.pnl,
-        pnl_percent: position.pnl_percent,
-      },
-    });
+    // Simply call the exit endpoint - backend handles:
+    // - Fetching live price
+    // - Calculating fees
+    // - Recording trade history
+    // - Updating cash balance
+    exitMutation.mutate(position.id);
   };
 
   const openPositions = positions || [];
