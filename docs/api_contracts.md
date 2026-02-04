@@ -7,31 +7,49 @@ This document defines the backend API contracts for the **Momentum Trading Assis
 The system is a **decision-support tool**, not a trading bot.  
 All strategy logic is deterministic, server-side, and frozen for MVP.
 
-**Last Updated:** February 2026  
-**Version:** 1.1 (includes cash management, portfolio history, multi-currency support)
+**Last Updated:** February 3, 2026  
+**Version:** 1.1
 
 ---
 
 ## Design Principles
 
 - Backend is the **single source of truth**
-- Frontend must never calculate:
-  - ATR
-  - Stops
-  - Market regime
-  - P&L
-  - Currency conversions
+- Frontend must never calculate: ATR, Stops, Market regime, P&L, Currency conversions
 - APIs return **fully explained decisions**
 - Human-in-the-loop: exits must be explicitly confirmed
 - Predictability > flexibility
 
 ---
 
-## Authentication (MVP)
+## Critical: Multi-Currency Design
 
-- Single-user system
-- Authentication is out of scope for v1
-- Endpoints assume an authenticated session
+### Database Storage
+- `entry_price`: GBP (cost basis for portfolio)
+- `fill_price`: Native currency (USD/GBP - actual fill price)
+- `current_price`: Native currency (USD/GBP)
+- `current_stop`: **Native currency (USD/GBP)** ← Prevents FX fluctuation
+- `atr`: Native currency (USD/GBP)
+
+### API Response (Dual Pricing)
+Every price field returns BOTH currencies:
+- `current_price`: GBP (for portfolio totals)
+- `current_price_native`: Native (for display to user)
+- `stop_price`: GBP (for portfolio totals)
+- `stop_price_native`: Native (for display) **← STABLE, no FX fluctuation!**
+
+**Why This Matters:**
+1. Stops in native currency **never change** due to FX rate fluctuations
+2. Portfolio calculations remain consistent in GBP
+3. Users see prices in their trading currency (USD/GBP)
+
+**Example:**
+```
+Database: current_stop = $398.09 (USD)
+FX Rate changes: 1.37 → 1.40
+Display: Still shows $398.09 ✓ (stable!)
+GBP equivalent: £290.92 → £284.35 (for portfolio total only)
+```
 
 ---
 
@@ -44,6 +62,7 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
   "data": { }
 }
 ```
+
 ### Error
 ```json
 {
@@ -54,25 +73,13 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
 
 ---
 
-## 1. Dashboard
-
-### GET /dashboard
-
-**Status:** Deprecated - Use GET /portfolio instead
-
----
-
-## 2. Portfolio Overview
+## 1. Portfolio Overview
 
 ### GET /portfolio
 
-### Purpose
-- Primary working screen
-- Returns complete portfolio state with live prices
-- All calculations in GBP
-- Accounts for deposits/withdrawals
+**Purpose:** Primary working screen with live prices and cash management
 
-### Response
+**Response:**
 ```json
 {
   "status": "ok",
@@ -84,97 +91,78 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
     "total_pnl": 133.52,
     "initial_value": 5000.00,
     "net_deposits": 5000.00,
-    "last_updated": "2026-01-31 18:42:10",
-    "live_fx_rate": 1.3685,
-    "positions": [
-      {
-        "id": "uuid",
-        "ticker": "PLTR",
-        "market": "US",
-        "entry_date": "2026-01-23",
-        "entry_price": 21.45,
-        "shares": 300,
-        "current_price": 18.65,
-        "current_value": 4095.00,
-        "pnl": 79.30,
-        "pnl_pct": 14.36,
-        "current_stop": 21.45,
-        "holding_days": 8,
-        "status": "GRACE",
-        "fx_rate": 1.3528,
-        "live_fx_rate": 1.3685
-      }
-    ]
+    "last_updated": "2026-02-03 18:42:10",
+    "live_fx_rate": 1.3684,
+    "positions": [...]
   }
 }
 ```
 
-### Notes
-- `current_price` is in GBP for dashboard calculations
-- `total_pnl` accounts for fees and deposits/withdrawals
-- `net_deposits` = total deposits - total withdrawals
-- True P&L = total_value - net_deposits
+**Notes:**
+- `total_pnl` = `total_value - net_deposits` (accounts for deposits/withdrawals)
+- `net_deposits` = sum of all deposits - sum of all withdrawals
+- All values in GBP
 
 ---
 
-## 3. Positions List
+## 2. Positions List
 
 ### GET /positions
 
-### Purpose
-- Get all open positions with live prices
-- Returns both GBP (for calculations) and native currency (for display)
-- Always fetches fresh prices from market
+**Purpose:** Get all open positions with live prices (ALWAYS fetches fresh prices)
 
-### Response
+**Response:**
 ```json
-[
-  {
-    "id": "uuid",
-    "ticker": "WDC",
-    "market": "US",
-    "entry_date": "2026-01-23",
-    "entry_price": 243.00,
-    "shares": 5.5,
-    "current_price": 182.85,
-    "current_price_native": 250.38,
-    "stop_price": 243.00,
-    "stop_price_native": 332.51,
-    "pnl": 29.06,
-    "pnl_percent": 2.98,
-    "holding_days": 8,
-    "status": "open",
-    "display_status": "GRACE",
-    "exit_reason": null,
-    "grace_period": true,
-    "stop_reason": "Grace period (8/10 days)",
-    "atr_value": 12.50,
-    "fx_rate": 1.3528,
-    "live_fx_rate": 1.3685
-  }
-]
+{
+  "status": "ok",
+  "data": [
+    {
+      "id": "uuid",
+      "ticker": "WDC",
+      "market": "US",
+      "entry_date": "2026-01-23",
+      "entry_price": 243.00,
+      "shares": 5.5,
+      "current_price": 209.17,
+      "current_price_native": 286.16,
+      "stop_price": 184.64,
+      "stop_price_native": 252.66,
+      "pnl": 173.77,
+      "pnl_percent": 17.79,
+      "holding_days": 11,
+      "status": "open",
+      "display_status": "PROFITABLE",
+      "exit_reason": null,
+      "grace_period": false,
+      "stop_reason": "Active",
+      "atr_value": 18.2607,
+      "fx_rate": 1.3528,
+      "live_fx_rate": 1.3684
+    }
+  ]
+}
 ```
 
-### Field Explanations
-- `current_price`: Price in GBP (for Dashboard widget calculations)
-- `current_price_native`: Price in native currency (USD/GBP for display)
-- `stop_price`: Stop in GBP (0 during grace period)
-- `stop_price_native`: Stop in native currency (0 during grace period)
-- `grace_period`: true if within first 10 days
-- `display_status`: GRACE | PROFITABLE | LOSING
+**Field Explanations:**
+- `entry_price`: Native currency (from `fill_price`)
+- `current_price`: GBP (for dashboard calculations)
+- `current_price_native`: Native currency (for display)
+- `stop_price`: GBP (0 during grace period)
+- `stop_price_native`: **Native currency (STABLE)** - use this for display!
+- `grace_period`: `true` if within first 10 days
+- `display_status`: `"GRACE"` | `"PROFITABLE"` | `"LOSING"`
+- `fx_rate`: Rate at entry time
+- `live_fx_rate`: Current FX rate
 
 ---
 
-## 4. Add Position (Manual Entry)
+## 3. Add Position (Manual Entry)
 
 ### POST /portfolio/position
 
-### Purpose
-- Manual sync with broker executions
-- Supports fractional shares
-- Auto-calculates fees based on market
+**Purpose:** Manual sync with broker executions, supports fractional shares
 
-### Request
+**Request:**
 ```json
 {
   "ticker": "FRES",
@@ -183,12 +171,12 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
   "shares": 27.25,
   "entry_price": 40.98,
   "fx_rate": null,
-  "atr_value": 1.20,
+  "atr_value": 2.58,
   "stop_price": null
 }
 ```
 
-### Response
+**Response:**
 ```json
 {
   "status": "ok",
@@ -197,37 +185,37 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
     "total_cost": 1116.70,
     "fees_paid": 9.95,
     "entry_price": 40.98,
-    "initial_stop": 38.58,
+    "initial_stop": 28.08,
     "remaining_cash": 4383.30
   }
 }
 ```
 
-### Notes
+**Notes:**
 - UK tickers auto-appended with `.L`
 - Fees calculated automatically:
   - UK: £9.95 commission + 0.5% stamp duty
   - US: 0.15% FX fee
-- Stop calculated as: entry_price - (2 × ATR)
+- Initial stop: `entry_price - (5 × ATR)` (wide stop)
 
 ---
 
-## 5. Daily Analysis (Core Engine)
+## 4. Daily Analysis
 
 ### GET /positions/analyze
 
-### Purpose
+**Purpose:** 
 - Runs full daily monitoring logic
 - Updates all position prices, stops, and P&L
 - Checks market regime
 - Idempotent (safe to refresh)
 
-### Response
+**Response:**
 ```json
 {
   "status": "ok",
   "data": {
-    "analysis_date": "2026-01-31",
+    "analysis_date": "2026-02-03",
     "market_regime": {
       "spy_risk_on": true,
       "ftse_risk_on": true,
@@ -236,58 +224,105 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
       "ftse_price": 7482.10,
       "ftse_ma200": 7401.44
     },
-    "live_fx_rate": 1.3685,
+    "live_fx_rate": 1.3684,
     "summary": {
       "total_value": 4600.90,
       "total_pnl": 133.52,
-      "exit_count": 0
+      "exit_count": 1
     },
     "actions": [
       {
-        "ticker": "WDC",
-        "action": "HOLD",
-        "stop_reason": "Grace period (8/10 days)",
-        "entry_price": 243.00,
-        "current_price": 250.38,
-        "shares": 5.5,
-        "pnl": 29.06,
-        "pnl_pct": 2.98,
-        "current_stop": 0,
-        "holding_days": 8,
-        "grace_period": true
+        "ticker": "FRES",
+        "action": "EXIT",
+        "exit_reason": "Stop Loss Hit",
+        "entry_price": 40.98,
+        "current_price": 36.68,
+        "shares": 27.25,
+        "pnl": -117.17,
+        "pnl_pct": -10.49,
+        "current_stop": 28.08,
+        "holding_days": 11,
+        "grace_period": false,
+        "stop_reason": "Stop triggered"
       }
     ]
   }
 }
 ```
 
-### Stop Logic
-- **Grace period (days 1-10):** No active stop
-- **After grace period (profitable):** Tight 2×ATR trailing stop
-- **After grace period (losing):** Wide 5×ATR stop
+**Stop Logic:**
+- **Grace period (days 0-9):** No active stop
+- **After grace, profitable (P&L > 0):** Tight 2×ATR trailing stop, enforced at entry minimum
+- **After grace, losing (P&L ≤ 0):** Wide 5×ATR stop, can go below entry (room to recover)
+
+**Trailing Rules:**
+- Profitable: `stop = max(current_stop, new_stop, entry_price)`
+- Losing: `stop = max(current_stop, new_stop)`
+- Stops only move UP, never down
 
 ---
 
-## 6. Cash Management (New in v1.1)
+## 5. Exit Position
+
+### POST /positions/{position_id}/exit
+
+**Purpose:** 
+- Exit a position and record in trade history
+- Fetches live market price automatically
+- Calculates fees and realized P&L
+- Updates portfolio cash balance
+
+**Request:**
+```json
+{
+  "shares": null,
+  "exit_date": null
+}
+```
+*Both optional - null = exit all shares today*
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "ticker": "FRES.L",
+    "exit_price": 36.68,
+    "shares": 27.25,
+    "gross_proceeds": 999.53,
+    "exit_fees": 9.95,
+    "net_proceeds": 989.58,
+    "realized_pnl": -127.12,
+    "realized_pnl_pct": -11.40,
+    "new_cash_balance": 1522.20
+  }
+}
+```
+
+**Planned v1.2 Enhancements:**
+- Partial exit (specify shares)
+- Custom exit date (for reconciliation)
+- Manual exit price override
+
+---
+
+## 6. Cash Management
 
 ### POST /cash/transaction
 
-### Purpose
-- Record deposits and withdrawals
-- Updates portfolio cash balance
-- Required for accurate P&L calculation
+**Purpose:** Record deposits and withdrawals for accurate P&L
 
-### Request
+**Request:**
 ```json
 {
   "type": "deposit",
   "amount": 1000.00,
-  "date": "2026-01-31",
+  "date": "2026-02-03",
   "note": "Monthly savings"
 }
 ```
 
-### Response
+**Response:**
 ```json
 {
   "status": "ok",
@@ -296,182 +331,47 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
       "id": "uuid",
       "type": "deposit",
       "amount": 1000.00,
-      "date": "2026-01-31",
+      "date": "2026-02-03",
       "note": "Monthly savings",
-      "created_at": "2026-01-31T18:42:10"
+      "created_at": "2026-02-03T18:42:10"
     },
     "new_balance": 1532.62
   }
 }
 ```
 
-### Validation
-- Withdrawals cannot exceed available cash
-- Amount must be positive
-- Type must be "deposit" or "withdrawal"
-
----
-
 ### GET /cash/transactions
 
-### Purpose
-- List all cash transactions
-- Used for transaction history in modal
+**Purpose:** List all cash transactions
 
-### Query Parameters
-- `order`: ASC | DESC (default: DESC)
-
-### Response
-```json
-{
-  "status": "ok",
-  "data": [
-    {
-      "id": "uuid",
-      "type": "deposit",
-      "amount": 5000.00,
-      "date": "2026-01-23",
-      "note": "Initial deposit",
-      "created_at": "2026-01-23T10:00:00"
-    }
-  ]
-}
-```
-
----
+**Query Parameters:**
+- `order`: `ASC` | `DESC` (default: `DESC`)
 
 ### GET /cash/summary
 
-### Purpose
-- Get aggregated cash flow statistics
-
-### Response
-```json
-{
-  "status": "ok",
-  "data": {
-    "total_deposits": 6000.00,
-    "total_withdrawals": 500.00,
-    "net_cash_flow": 5500.00,
-    "current_cash": 532.62
-  }
-}
-```
+**Purpose:** Get aggregated cash flow statistics
 
 ---
 
-## 7. Portfolio History (New in v1.1)
+## 7. Portfolio History
 
 ### POST /portfolio/snapshot
 
-### Purpose
-- Create daily snapshot of portfolio performance
-- Should be called once per day (automated via cron)
-- Idempotent (safe to call multiple times per day)
+**Purpose:** Create daily snapshot (automated via cron)
 
-### Response
-```json
-{
-  "status": "ok",
-  "data": {
-    "id": "uuid",
-    "portfolio_id": "uuid",
-    "snapshot_date": "2026-01-31",
-    "total_value": 5133.52,
-    "cash_balance": 532.62,
-    "positions_value": 4600.90,
-    "total_pnl": 133.52,
-    "position_count": 5,
-    "created_at": "2026-01-31T16:00:00"
-  }
-}
-```
+### GET /portfolio/history?days=30
+
+**Purpose:** Retrieve historical portfolio snapshots for charts
 
 ---
 
-### GET /portfolio/history
-
-### Purpose
-- Retrieve historical portfolio snapshots
-- Used for performance charts
-
-### Query Parameters
-- `days`: Number of days to retrieve (default: 30)
-
-### Response
-```json
-{
-  "status": "ok",
-  "data": [
-    {
-      "date": "2026-01-23",
-      "total_value": 5000.00,
-      "cash_balance": 5000.00,
-      "positions_value": 0,
-      "total_pnl": 0,
-      "position_count": 0
-    },
-    {
-      "date": "2026-01-24",
-      "total_value": 5050.20,
-      "cash_balance": 532.62,
-      "positions_value": 4517.58,
-      "total_pnl": 50.20,
-      "position_count": 5
-    }
-  ]
-}
-```
-
----
-
-## 8. Settings
-
-### GET /settings
-
-### Purpose
-- Get strategy configuration
-
-### Response
-```json
-{
-  "status": "ok",
-  "data": [
-    {
-      "id": "uuid",
-      "min_hold_days": 10,
-      "atr_multiplier_initial": 5,
-      "atr_multiplier_trailing": 2,
-      "atr_period": 14,
-      "default_currency": "GBP",
-      "uk_commission": 9.95,
-      "us_commission": 0,
-      "stamp_duty_rate": 0.005,
-      "fx_fee_rate": 0.0015
-    }
-  ]
-}
-```
-
----
-
-### POST /settings
-
-### Purpose
-- Create initial settings
-
-### PATCH /settings/{id}
-
-### Purpose
-- Update settings
-
----
-
-## 9. Trade History
+## 8. Trade History
 
 ### GET /trades
 
-### Response
+**Purpose:** Performance review
+
+**Response:**
 ```json
 {
   "status": "ok",
@@ -495,37 +395,76 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
 
 ---
 
-## Key Changes from v1.0
+## 9. Settings
 
-### New Features
-1. **Cash Management**
-   - Track deposits/withdrawals
-   - Accurate P&L accounting
-   - Transaction history
+### GET /settings
 
-2. **Portfolio History**
-   - Daily snapshots
-   - Performance tracking over time
-   - Chart data support
-
-3. **Multi-Currency Support**
-   - Live FX rates from Yahoo Finance
-   - Dual price fields (GBP + native)
-   - Proper currency conversion
-
-4. **Enhanced Position Data**
-   - Grace period status
-   - Stop reason explanations
-   - Both display and calculation values
-
-### Breaking Changes
-- `/positions` now returns both GBP and native prices
-- `/portfolio` includes `net_deposits` field
-- P&L calculation now accounts for cash transactions
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": [
+    {
+      "id": "uuid",
+      "min_hold_days": 10,
+      "atr_multiplier_initial": 5,
+      "atr_multiplier_trailing": 2,
+      "atr_period": 14,
+      "default_currency": "GBP",
+      "uk_commission": 9.95,
+      "us_commission": 0,
+      "stamp_duty_rate": 0.005,
+      "fx_fee_rate": 0.0015
+    }
+  ]
+}
+```
 
 ---
 
-## Explicit Non-Requirements (v1.1)
+## Key Implementation Notes
+
+### Currency Consistency
+**CRITICAL:** All stops stored in native currency to prevent FX fluctuation issues.
+
+**Before (GBP storage):**
+```
+Stop in DB: £421 (GBP)
+FX changes: 1.37 → 1.40
+Display: $421 × 1.37 = $576 → $421 × 1.40 = $589 ❌ Appears to move!
+```
+
+**After (Native storage):**
+```
+Stop in DB: $576 (USD)
+FX changes: 1.37 → 1.40
+Display: $576 ✓ (stable!)
+```
+
+### Grace Period
+- Days 0-9: Stop exists but not enforced
+- Day 10+: Stop becomes active
+
+### Stop Multipliers
+- Profitable: 2× ATR (tight, protect gains)
+- Losing: 5× ATR (wide, room to recover)
+
+### Trailing Logic
+- Profitable: Stop enforced at entry minimum
+- Losing: Stop can go below entry (wide protection)
+
+---
+
+## Breaking Changes from v1.0
+
+1. **Dual pricing** - All endpoints return both GBP and native prices
+2. **Stop storage** - Changed from GBP to native currency
+3. **Cash management** - P&L now accounts for deposits/withdrawals
+4. **Fractional shares** - `shares` field changed from `int` to `float`
+
+---
+
+## Explicit Non-Requirements (MVP)
 
 - No PATCH endpoints for positions
 - No partial updates
@@ -533,20 +472,9 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
 - No charting APIs (frontend responsibility)
 - No broker integrations
 - No multi-user identifiers
-- No trade notes (planned for v1.2)
 
 ---
 
-## Versioning
-- All endpoints are implicitly v1.1
-- Strategy rules are versioned internally only
-
----
-
-## Next Version (v1.2) Preview
-
-Planned additions:
-- Trade notes/journal
-- Performance analytics endpoints
-- Alert/notification system
-- Position sizing calculator
+**Document Version:** 1.1  
+**Last Review:** February 3, 2026  
+**Status:** Current
