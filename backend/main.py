@@ -1341,15 +1341,24 @@ def exit_position_endpoint(position_id: str):
         # Calculate in native currency first
         gross_proceeds_native = exit_price_native * shares
         
+        # Get settings for commission rates
+        settings_list = get_settings()
+        settings = settings_list[0] if settings_list else None
+        
+        # Use settings or defaults
+        uk_commission = float(settings.get('uk_commission', 0.00)) if settings else 0.00
+        us_commission = float(settings.get('us_commission', 0.00)) if settings else 0.00
+        fx_fee_rate = float(settings.get('fx_fee_rate', 0.0015)) if settings else 0.0015
+        
         # Calculate exit fees
         if market == 'UK':
-            exit_fee_rate = 0.0  # No stamp duty on sale, only commission
-            commission = 9.95  # From settings
-            exit_fees = commission
+            # UK: Commission only (no stamp duty on sales)
+            exit_fees = uk_commission
+            print(f"   UK exit fees: £{uk_commission:.2f} commission (stamp duty only on purchase)")
         else:
-            exit_fee_rate = 0.0015  # FX fee
-            commission = 0.0
-            exit_fees = gross_proceeds_native * exit_fee_rate
+            # US: FX fee only
+            exit_fees = gross_proceeds_native * fx_fee_rate
+            print(f"   US exit fees: ${exit_fees:.2f} ({fx_fee_rate*100:.2f}% FX fee)")
         
         # Net proceeds in native currency
         net_proceeds_native = gross_proceeds_native - exit_fees
