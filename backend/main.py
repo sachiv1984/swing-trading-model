@@ -1407,15 +1407,23 @@ def exit_position_endpoint(position_id: str):
             'exit_fx_rate': live_fx_rate if market == 'US' else 1.0
         }
         
+        print(f"   💾 Creating trade history record...")
         create_trade_history(portfolio_id, trade_data)
+        print(f"   ✓ Trade history created")
         
         # Update position to closed
-        update_position(position_id, {
+        print(f"   💾 Updating position status to closed...")
+        updated_position = update_position(position_id, {
             'status': 'closed',
             'exit_date': exit_date.strftime('%Y-%m-%d'),
             'exit_price': exit_price_native,
             'exit_reason': 'Manual Exit'
         })
+        
+        if updated_position:
+            print(f"   ✓ Position status updated to: {updated_position.get('status', 'unknown')}")
+        else:
+            print(f"   ⚠️  Warning: update_position returned None")
         
         # Update portfolio cash
         current_cash = float(portfolio['cash'])
