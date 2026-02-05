@@ -77,6 +77,12 @@ class CashTransactionRequest(BaseModel):
     note: Optional[str] = ""
 
 
+class ExitPositionRequest(BaseModel):
+    exit_price: Optional[float] = None  # User-provided exit price (optional)
+    exit_date: Optional[str] = None     # Optional custom exit date
+    exit_reason: Optional[str] = "Manual Exit"  # Optional exit reason
+
+
 # Helper to convert Decimal to float
 def decimal_to_float(obj):
     if isinstance(obj, dict):
@@ -1294,8 +1300,12 @@ def get_cash_summary_endpoint():
 
 
 @app.post("/positions/{position_id}/exit")
-def exit_position_endpoint(position_id: str):
-    """Exit a position and record in trade history"""
+def exit_position_endpoint(position_id: str, request: ExitPositionRequest = None):
+    """Exit a position and record in trade history
+    
+    Accepts optional exit_price from user. If not provided, fetches live market price.
+    This allows users to enter the actual price they got from their broker.
+    """
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -1317,19 +1327,24 @@ def exit_position_endpoint(position_id: str):
         if position['status'] == 'closed':
             raise HTTPException(status_code=400, detail="Position already closed")
         
-        # Get current live price for exit
         print(f"\n📤 Exiting position: {position['ticker']}")
         
-        live_price = get_current_price(position['ticker'])
-        if not live_price:
-            raise HTTPException(status_code=500, detail="Could not fetch current price for exit")
-        
-        # Fix UK stocks (Yahoo returns pence)
-        if position['market'] == 'UK' and live_price > 1000:
-            live_price = live_price / 100
-        
-        exit_price_native = live_price
-        print(f"   Exit price: {exit_price_native:.2f}")
+        # Use user-provided exit price if available, otherwise fetch live price
+        if request and request.exit_price and request.exit_price > 0:
+            exit_price_native = request.exit_price
+            print(f"   Exit price: {exit_price_native:.2f} (user-provided)")
+        else:
+            # Fetch live price as fallback
+            live_price = get_current_price(position['ticker'])
+            if not live_price:
+                raise HTTPException(status_code=500, detail="Could not fetch current price for exit")
+            
+            # Fix UK stocks (Yahoo returns pence)
+            if position['market'] == 'UK' and live_price > 1000:
+                live_price = live_price / 100
+            
+            exit_price_native = live_price
+            print(f"   Exit price: {exit_price_native:.2f} (live market price)")
         
         # Get live FX rate
         live_fx_rate = get_live_fx_rate()
