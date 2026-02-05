@@ -9,27 +9,31 @@ import { cn } from "../../lib/utils";
 
 export default function ExitModal({ position, open, onClose, onConfirm }) {
   const [exitData, setExitData] = useState({
-    exit_price: position?.current_price || "",
-    exit_reason: "manual"
+    exit_price: position?.current_price_native || position?.current_price || "",
+    exit_reason: "Manual Exit"
   });
 
   if (!position) return null;
 
   const currencySymbol = position.market === "UK" ? "£" : "$";
+  
+  // Use native price for display
+  const currentPrice = position.current_price_native || position.current_price;
+  const entryPrice = position.entry_price;
+  
   const exitPrice = parseFloat(exitData.exit_price) || 0;
-  const pnl = (exitPrice - position.entry_price) * position.shares;
-  const pnlPercent = ((exitPrice - position.entry_price) / position.entry_price * 100);
+  const pnl = (exitPrice - entryPrice) * position.shares;
+  const pnlPercent = ((exitPrice - entryPrice) / entryPrice * 100);
   const isProfit = pnl >= 0;
 
   const handleConfirm = () => {
+    // Pass all exit data including the user-entered exit_price
     onConfirm({
-      ...position,
-      exit_price: exitPrice,
+      id: position.id,
+      ticker: position.ticker,
+      exit_price: parseFloat(exitData.exit_price),
       exit_reason: exitData.exit_reason,
-      exit_date: new Date().toISOString().split("T")[0],
-      pnl: pnl,
-      pnl_percent: pnlPercent,
-      status: "closed"
+      exit_date: new Date().toISOString().split("T")[0]
     });
   };
 
@@ -58,20 +62,30 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Entry Price</span>
-              <span className="font-medium text-white">{currencySymbol}{position.entry_price.toFixed(2)}</span>
+              <span className="font-medium text-white">{currencySymbol}{entryPrice.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Current Price</span>
+              <span className="font-medium text-white">{currencySymbol}{currentPrice?.toFixed(2) || "—"}</span>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">Exit Price</Label>
+              <Label className="text-slate-400">
+                Exit Price <span className="text-rose-400">*</span>
+              </Label>
               <Input
                 type="number"
                 step="0.01"
                 value={exitData.exit_price}
                 onChange={(e) => setExitData({ ...exitData, exit_price: e.target.value })}
                 className="bg-slate-800/50 border-slate-700 text-white"
+                placeholder={`Enter your actual exit price in ${currencySymbol}`}
               />
+              <p className="text-xs text-slate-500">
+                Enter the price you actually got from your broker
+              </p>
             </div>
             <div className="space-y-2">
               <Label className="text-slate-400">Exit Reason</Label>
@@ -83,10 +97,11 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="manual">Manual Exit</SelectItem>
-                  <SelectItem value="stop_hit">Stop Hit</SelectItem>
-                  <SelectItem value="target">Target Reached</SelectItem>
-                  <SelectItem value="market_regime">Market Regime</SelectItem>
+                  <SelectItem value="Manual Exit">Manual Exit</SelectItem>
+                  <SelectItem value="Stop Loss Hit">Stop Loss Hit</SelectItem>
+                  <SelectItem value="Target Reached">Target Reached</SelectItem>
+                  <SelectItem value="Risk-Off Signal">Risk-Off Signal</SelectItem>
+                  <SelectItem value="Trailing Stop">Trailing Stop</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -127,7 +142,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           <Button 
             onClick={handleConfirm} 
             className="bg-rose-600 hover:bg-rose-500 text-white"
-            disabled={!exitData.exit_price}
+            disabled={!exitData.exit_price || parseFloat(exitData.exit_price) <= 0}
           >
             Confirm Exit
           </Button>
