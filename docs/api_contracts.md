@@ -1,4 +1,4 @@
-# API Contracts — Momentum Trading Assistant (v1.1)
+# API Contracts — Momentum Trading Assistant (v1.2)
 
 ## Overview
 
@@ -7,8 +7,8 @@ This document defines the backend API contracts for the **Momentum Trading Assis
 The system is a **decision-support tool**, not a trading bot.  
 All strategy logic is deterministic, server-side, and frozen for MVP.
 
-**Last Updated:** February 3, 2026  
-**Version:** 1.1
+**Last Updated:** February 5, 2026  
+**Version:** 1.2
 
 ---
 
@@ -19,6 +19,7 @@ All strategy logic is deterministic, server-side, and frozen for MVP.
 - APIs return **fully explained decisions**
 - Human-in-the-loop: exits must be explicitly confirmed
 - Predictability > flexibility
+- **Exit prices are user-entered** (actual broker execution prices)
 
 ---
 
@@ -262,24 +263,42 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
 
 ---
 
-## 5. Exit Position
+## 5. Exit Position (v1.2 UPDATED)
 
 ### POST /positions/{position_id}/exit
 
 **Purpose:** 
 - Exit a position and record in trade history
-- Fetches live market price automatically
-- Calculates fees and realized P&L
+- **Uses user-provided exit price** (actual fill price from broker)
+- Calculates fees and realized P&L with fee breakdown
 - Updates portfolio cash balance
+- Supports partial exits and custom exit dates
 
 **Request:**
 ```json
 {
-  "shares": null,
-  "exit_date": null
+  "shares": 27.25,
+  "exit_price": 36.68,
+  "exit_date": "2026-02-03",
+  "exit_reason": "Stop Loss Hit",
+  "fx_rate": 1.3684
 }
 ```
-*Both optional - null = exit all shares today*
+
+**Field Details:**
+- `shares`: Number of shares to exit (optional - defaults to all shares)
+- `exit_price`: **User-entered exit price from broker** (REQUIRED)
+- `exit_date`: Exit date (optional - defaults to today, format: YYYY-MM-DD)
+- `exit_reason`: Reason for exit (optional - defaults to "Manual Exit")
+- `fx_rate`: **User-entered FX rate (GBP/USD) from broker** (REQUIRED for US stocks, ignored for UK stocks)
+
+**Valid Exit Reasons:**
+- "Manual Exit"
+- "Stop Loss Hit"
+- "Target Reached"
+- "Risk-Off Signal"
+- "Trailing Stop"
+- "Partial Profit Taking"
 
 **Response:**
 ```json
@@ -287,22 +306,95 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
   "status": "ok",
   "data": {
     "ticker": "FRES.L",
+    "market": "UK",
     "exit_price": 36.68,
     "shares": 27.25,
     "gross_proceeds": 999.53,
     "exit_fees": 9.95,
+    "fee_breakdown": {
+      "commission": 9.95,
+      "stamp_duty": 0.00,
+      "fx_fee": 0.00
+    },
     "net_proceeds": 989.58,
     "realized_pnl": -127.12,
     "realized_pnl_pct": -11.40,
-    "new_cash_balance": 1522.20
+    "new_cash_balance": 1522.20,
+    "fx_rate": 1.3684,
+    "exit_date": "2026-02-03"
   }
 }
 ```
 
-**Planned v1.2 Enhancements:**
-- Partial exit (specify shares)
-- Custom exit date (for reconciliation)
-- Manual exit price override
+**Important Implementation Notes:**
+
+### Exit Price (CRITICAL)
+- Exit price is **ALWAYS user-provided**
+- **Never fetches live market price** - user enters actual broker execution
+- This ensures P&L matches actual broker statement
+- For US stocks, user enters price in USD (their trading currency)
+- For UK stocks, user enters price in GBP
+
+### FX Rate (CRITICAL for US Stocks)
+- FX rate is **ALWAYS user-provided** for US stocks
+- User enters the GBP/USD rate from their broker statement
+- This ensures cash conversion matches broker exactly
+- Rate is ignored for UK stocks (always 1.0)
+- Frontend must validate FX rate is provided for US stocks
+
+### Fee Calculation
+**UK Exits:**
+- Commission: £9.95 (fixed)
+- No stamp duty on sales
+- Total fees: £9.95
+
+**US Exits:**
+- FX fee: 0.15% of gross proceeds (in USD)
+- No commission
+- Converted to GBP using **live FX rate at exit time**
+
+### FX Rate for Cash Conversion (CRITICAL)
+- For US stock exits, the **user-entered FX rate** is used (from broker statement)
+- This FX rate is used to convert net proceeds to GBP
+- Rate must be provided by user for US stocks
+- Example:
+  ```
+  US stock exit:
+  - Exit price: $286.16 (user-entered from broker)
+  - Shares: 5.5
+  - Gross proceeds: $1573.88 USD
+  - FX fee: $2.36 (0.15%)
+  - Net proceeds: $1571.52 USD
+  - User-entered FX rate: 1.3684 (from broker statement)
+  - Net proceeds GBP: £1148.39 (= $1571.52 / 1.3684)
+  - Added to cash: £1148.39
+  ```
+
+### Partial Exits
+- If `shares` < position total, position remains open
+- Remaining shares keep same entry price and stop
+- Cost basis is proportionally reduced
+- Example: Exit 10 of 20 shares → 10 shares remain open
+
+### Error Cases
+```json
+{
+  "status": "error",
+  "message": "Insufficient shares. Position has 10.5 shares, exit requested 20"
+}
+```
+
+```json
+{
+  "status": "error", 
+  "message": "Exit price must be greater than 0"
+}
+```
+
+**Migration from v1.1:**
+- Previously: Backend fetched live price (optional user override)
+- Now: User MUST provide exit price (required field)
+- Frontend must validate exit_price > 0 before submission
 
 ---
 
@@ -453,14 +545,36 @@ Display: $576 ✓ (stable!)
 - Profitable: Stop enforced at entry minimum
 - Losing: Stop can go below entry (wide protection)
 
+### Exit Price Philosophy (v1.2)
+**Why user-entered exit prices:**
+1. **Accuracy**: Matches actual broker execution, not theoretical live price
+2. **Slippage**: Accounts for real-world slippage and execution quality
+3. **Reconciliation**: P&L matches broker statements exactly
+4. **Trust**: User sees fees and proceeds before confirmation
+5. **Flexibility**: Can backdate exits for reconciliation
+
+**Frontend responsibilities:**
+- Validate exit_price > 0
+- Show calculated fees before submission
+- Display gross vs net proceeds
+- Show FX conversion for US stocks
+- Pre-fill with current_price_native as suggestion
+
 ---
 
-## Breaking Changes from v1.0
+## Breaking Changes from v1.1
 
-1. **Dual pricing** - All endpoints return both GBP and native prices
-2. **Stop storage** - Changed from GBP to native currency
-3. **Cash management** - P&L now accounts for deposits/withdrawals
-4. **Fractional shares** - `shares` field changed from `int` to `float`
+### Exit Endpoint Changes (v1.2)
+1. **exit_price now REQUIRED** - was optional (fetched live price)
+2. **fee_breakdown added to response** - detailed fee display
+3. **fx_rate included in response** - for US stock exits
+4. **shares parameter added** - supports partial exits
+5. **exit_reason validation** - must use predefined list
+
+### Backwards Compatibility
+- Old clients calling without exit_price will receive 400 error
+- Frontend must be updated to always provide exit_price
+- Response structure expanded but existing fields unchanged
 
 ---
 
@@ -475,6 +589,7 @@ Display: $576 ✓ (stable!)
 
 ---
 
-**Document Version:** 1.1  
-**Last Review:** February 3, 2026  
-**Status:** Current
+**Document Version:** 1.2  
+**Last Review:** February 5, 2026  
+**Status:** Current  
+**Breaking Changes:** Yes - exit endpoint requires user-provided price
