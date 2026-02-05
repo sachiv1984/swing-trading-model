@@ -21,7 +21,11 @@ export default function Positions() {
 
   const { data: positions, isLoading } = useQuery({
     queryKey: ["positions", "open"],
-    queryFn: () => base44.entities.Position.filter({ status: "open" }, "-entry_date"),
+    queryFn: async () => {
+      const result = await base44.entities.Position.filter({ status: "open" }, "-entry_date");
+      console.log('Positions query result:', result);
+      return result;
+    },
   });
 
   const updateMutation = useMutation({
@@ -34,10 +38,17 @@ export default function Positions() {
 
   // NEW: Separate mutation for exits - calls the backend exit endpoint
   const exitMutation = useMutation({
-    mutationFn: (id) => base44.entities.Position.exit(id),
+    mutationFn: ({ id, exitData }) => base44.entities.Position.exit(id, exitData),
     onSuccess: () => {
+      // More aggressive cache invalidation
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       queryClient.invalidateQueries({ queryKey: ["portfolio"] });
+      queryClient.invalidateQueries({ queryKey: ["trades"] });
+      
+      // Force immediate refetch instead of waiting for stale time
+      queryClient.refetchQueries({ queryKey: ["positions", "open"] });
+      queryClient.refetchQueries({ queryKey: ["portfolio"] });
+      
       setExitingPosition(null);
     },
     onError: (error) => {
@@ -56,13 +67,20 @@ export default function Positions() {
     });
   };
 
-  const handleExit = (position) => {
-    // Simply call the exit endpoint - backend handles:
-    // - Fetching live price
-    // - Calculating fees
-    // - Recording trade history
-    // - Updating cash balance
-    exitMutation.mutate(position.id);
+  const handleExit = (exitData) => {
+    // exitData contains: position, exit_price, exit_reason from ExitModal
+    // Extract the exit parameters
+    const { id, exit_price, exit_reason } = exitData;
+    
+    const requestData = {
+      exit_price: parseFloat(exit_price) || null,
+      exit_reason: exit_reason || 'Manual Exit'
+    };
+    
+    console.log('Exiting position:', id, 'with data:', requestData);
+    
+    // Call the exit endpoint with the user-provided data
+    exitMutation.mutate({ id, exitData: requestData });
   };
 
   const openPositions = positions || [];
