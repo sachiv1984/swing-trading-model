@@ -42,6 +42,7 @@ export const api = {
   positions: {
     list: async () => {
       const response = await fetch(`${API_BASE_URL}/positions`);
+      // IMPORTANT: /positions returns array directly, not wrapped in {status, data}
       return response.json();
     },
     
@@ -125,11 +126,26 @@ export const base44 = {
         return api.positions.list();
       },
       filter: async (conditions, orderBy) => {
+        // Fetch all positions from /positions endpoint
         const positions = await api.positions.list();
-        let filtered = positions.filter(p => 
-          Object.entries(conditions).every(([key, value]) => p[key] === value)
-        );
         
+        console.log('Fetched positions:', positions.length);
+        
+        // Filter by conditions (e.g., {status: "open"})
+        let filtered = positions.filter(p => {
+          return Object.entries(conditions).every(([key, value]) => {
+            // Handle status filtering
+            if (key === 'status') {
+              // Backend returns "open" in status field
+              return p[key] === value;
+            }
+            return p[key] === value;
+          });
+        });
+        
+        console.log('Filtered positions:', filtered.length, 'for conditions:', conditions);
+        
+        // Sort if orderBy is provided
         if (orderBy) {
           const isDescending = orderBy.startsWith('-');
           const field = isDescending ? orderBy.slice(1) : orderBy;
@@ -154,15 +170,24 @@ export const base44 = {
         });
         return response.json();
       },
-      exit: async (id) => {
+      exit: async (id, exitData = {}) => {
+        console.log('Calling exit endpoint for position:', id);
+        console.log('Exit data:', exitData);
+        
         const response = await fetch(`${API_BASE_URL}/positions/${id}/exit`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(exitData)  // Send exit_price, exit_date, exit_reason
         });
+        
         const data = await response.json();
+        
+        console.log('Exit response:', data);
+        
         if (data.status === 'error') {
           throw new Error(data.message);
         }
+        
         return data.data;
       }
     },
