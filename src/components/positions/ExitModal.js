@@ -45,7 +45,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   const fxFee = position.market === "US" ? (grossProceeds * settingsData.fx_fee_rate) : 0;
   const totalExitFees = commission + stampDuty + fxFee;
   const netProceeds = grossProceeds - totalExitFees;
-  const netProceedsGBP = position.market === "US" ? (netProceeds / exitFxRate) : netProceeds;
+  const netProceedsGBP = position.market === "US" ? (netProceeds * exitFxRate) : netProceeds;
   
   // Calculate original entry cost for the shares being exited
   const entryCostPerShare = (position.entry_price * position.shares + (position.fees || 0)) / position.shares;
@@ -67,14 +67,14 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       pnl_percent: pnlPercent,
       status: "closed",
       exit_fx_rate: exitFxRate,
-      exit_fees: totalExitFees
+      exit_fees: totalFees
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] flex flex-col p-0">
-        <DialogHeader className="flex-shrink-0 px-6 pt-6">
+      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] flex flex-col">
+        <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-rose-400">
             <AlertTriangle className="w-5 h-5" />
             Exit Position
@@ -84,82 +84,75 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 px-6 py-4 overflow-y-auto flex-1 min-h-0">
-          {/* Position Info - 3 columns in a grid */}
-          <div className="grid grid-cols-3 gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-            <div className="text-center">
-              <div className="text-xs text-slate-400 mb-1">Ticker</div>
+        <div className="space-y-4 py-4 overflow-y-auto flex-1">
+          <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 grid grid-cols-3 gap-3 text-center">
+            <div>
+              <div className="text-xs text-slate-400">Ticker</div>
               <div className="font-medium text-white">{position.ticker}</div>
             </div>
-            <div className="text-center">
-              <div className="text-xs text-slate-400 mb-1">Total Shares</div>
+            <div>
+              <div className="text-xs text-slate-400">Total Shares</div>
               <div className="font-medium text-white">{position.shares}</div>
             </div>
-            <div className="text-center">
-              <div className="text-xs text-slate-400 mb-1">Entry Price</div>
+            <div>
+              <div className="text-xs text-slate-400">Entry Price</div>
               <div className="font-medium text-white">{currencySymbol}{position.entry_price.toFixed(2)}</div>
             </div>
           </div>
 
-          {/* Form Fields - 2 columns grid where appropriate */}
-          <div className="space-y-4">
-            {/* Shares and Exit Price in 2 columns */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-slate-400">Shares to Exit</Label>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-xs text-slate-400">Shares to Exit</Label>
                 <Input
                   type="number"
-                  step="0.01"
+                  step="1"
                   value={exitData.shares}
                   onChange={(e) => setExitData({ ...exitData, shares: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white"
+                  className="bg-slate-800/50 border-slate-700 text-white h-9"
                 />
               </div>
-              <div className="space-y-2">
-                <Label className="text-slate-400">Exit Price ({currencySymbol})</Label>
+              <div className="space-y-1">
+                <Label className="text-xs text-slate-400">Exit Price ({currencySymbol})</Label>
                 <Input
                   type="number"
                   step="0.01"
                   value={exitData.exit_price}
                   onChange={(e) => setExitData({ ...exitData, exit_price: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white"
+                  className="bg-slate-800/50 border-slate-700 text-white h-9"
                 />
               </div>
             </div>
-
-            {/* Exit Date and FX Rate in 2 columns (FX Rate only for US) */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-slate-400">Exit Date</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-xs text-slate-400">Exit Date</Label>
                 <Input
                   type="date"
                   value={exitData.exit_date}
                   onChange={(e) => setExitData({ ...exitData, exit_date: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white [color-scheme:dark]"
+                  className="bg-slate-800/50 border-slate-700 text-white h-9"
                 />
               </div>
               {position.market === "US" && (
-                <div className="space-y-2">
-                  <Label className="text-slate-400">FX Rate</Label>
+                <div className="space-y-1">
+                  <Label className="text-xs text-slate-400">FX Rate</Label>
                   <Input
                     type="number"
                     step="0.0001"
                     value={exitData.exit_fx_rate}
                     onChange={(e) => setExitData({ ...exitData, exit_fx_rate: e.target.value })}
-                    className="bg-slate-800/50 border-slate-700 text-white"
+                    className="bg-slate-800/50 border-slate-700 text-white h-9"
                   />
                 </div>
               )}
             </div>
-
-            {/* Exit Reason - full width */}
-            <div className="space-y-2">
-              <Label className="text-slate-400">Exit Reason</Label>
+            <div className="space-y-1">
+              <Label className="text-xs text-slate-400">Exit Reason</Label>
               <Select
                 value={exitData.exit_reason}
                 onValueChange={(value) => setExitData({ ...exitData, exit_reason: value })}
               >
-                <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
+                <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white h-9">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-800 border-slate-700">
@@ -172,59 +165,50 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
             </div>
           </div>
 
-          {/* Exit Cost Breakdown - only show when we have price and shares */}
           {exitData.exit_price && exitData.shares && (
-            <div className="space-y-3 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-              <p className="text-sm font-medium text-slate-300">Exit Cost Breakdown</p>
+            <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 space-y-2">
+              <p className="text-xs font-semibold text-slate-300 mb-2">Exit Cost Breakdown</p>
               
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
+              <div className="space-y-1.5 text-xs">
+                <div className="flex justify-between">
                   <span className="text-slate-400">Gross Value</span>
                   <span className="text-white">{currencySymbol}{grossProceeds.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between">
                   <span className="text-slate-400">Commission</span>
                   <span className="text-rose-400">-{currencySymbol}{commission.toFixed(2)}</span>
                 </div>
                 {position.market === "US" && (
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between">
                     <span className="text-slate-400">FX Fee</span>
                     <span className="text-rose-400">-{currencySymbol}{fxFee.toFixed(2)}</span>
                   </div>
                 )}
-              </div>
-
-              <div className="pt-2 border-t border-slate-700">
-                <div className="flex justify-between text-sm font-medium">
+                <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
                   <span className="text-slate-300">Net Proceeds</span>
-                  <span className="text-white">{position.market === "US" ? "£" : currencySymbol}{netProceedsGBP.toFixed(2)}</span>
+                  <span className="text-white">{position.market === "US" ? `£${netProceedsGBP.toFixed(2)}` : `£${netProceeds.toFixed(2)}`}</span>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-700 space-y-2">
-                <p className="text-xs font-medium text-slate-400">P&L Calculation</p>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Original Entry Cost ({exitShares} shares)</span>
+              <div className="space-y-1.5 pt-2 border-t-2 border-slate-700 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Entry Cost</span>
                   <span className="text-white">£{totalEntryCostForExitShares.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Exit Proceeds (after fees)</span>
-                  <span className="text-white">£{netProceedsGBP.toFixed(2)}</span>
-                </div>
-                <div className="pt-2 border-t border-slate-700">
-                  <div className="flex justify-between text-sm font-bold">
-                    <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>P&L</span>
-                    <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>
-                      {isProfit ? "+" : ""}£{pnl.toFixed(2)} ({isProfit ? "+" : ""}{pnlPercent.toFixed(2)}%)
-                    </span>
-                  </div>
+                <div className="flex justify-between font-bold pt-1.5 border-t border-slate-700">
+                  <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>P&L</span>
+                  <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>
+                    {isProfit ? "+" : ""}£{pnl.toFixed(2)} ({isProfit ? "+" : ""}{pnlPercent.toFixed(2)}%)
+                  </span>
                 </div>
               </div>
             </div>
           )}
+
+
         </div>
 
-        <DialogFooter className="flex-shrink-0 px-6 py-4 border-t border-slate-700">
+        <DialogFooter>
           <Button 
             variant="ghost" 
             onClick={onClose} 
