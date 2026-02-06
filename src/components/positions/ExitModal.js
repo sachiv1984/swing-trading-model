@@ -54,7 +54,9 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   const netProceeds = grossProceeds - totalExitFees;
   
   // Calculate original entry cost for the shares being exited
-  const entryCostPerShare = (position.total_cost || (position.entry_price * position.shares)) / position.shares;
+  // Use total_cost which already includes entry fees (commission, stamp duty, FX fees)
+  const totalEntryCost = position.total_cost || (position.entry_price * position.shares);
+  const entryCostPerShare = totalEntryCost / position.shares;
   const totalEntryCostForExitShares = entryCostPerShare * exitShares;
   
   // Calculate P&L
@@ -81,7 +83,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md">
+      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-rose-400">
             <AlertTriangle className="w-5 h-5" />
@@ -92,7 +94,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-4 overflow-y-auto">
           <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 grid grid-cols-3 gap-3 text-center">
             <div>
               <div className="text-xs text-slate-400">Ticker</div>
