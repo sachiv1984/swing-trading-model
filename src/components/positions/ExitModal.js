@@ -1,3 +1,13 @@
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { AlertTriangle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "../../api/base44Client";
+
 export default function ExitModal({ position, open, onClose, onConfirm }) {
   const [exitData, setExitData] = useState({
     shares: position?.shares || 0,
