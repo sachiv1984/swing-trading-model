@@ -10,11 +10,12 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 
 export default function ExitModal({ position, open, onClose, onConfirm }) {
+  // Initialize with string values to avoid 0 becoming falsy
   const [exitData, setExitData] = useState({
-    shares: position?.shares || 0,
-    exit_price: position?.current_price || "",
+    shares: position?.shares?.toString() || "",
+    exit_price: position?.current_price_native?.toString() || position?.current_price?.toString() || "",
     exit_reason: "manual",
-    exit_fx_rate: position?.market === "US" ? (position?.fx_rate || 1.27) : 1,
+    exit_fx_rate: position?.market === "US" ? (position?.live_fx_rate || position?.fx_rate || 1.27) : 1,
     exit_date: new Date().toISOString().split("T")[0]
   });
 
@@ -34,9 +35,16 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   if (!position) return null;
 
   const currencySymbol = position.market === "UK" ? "£" : "$";
+  
+  // Parse values - ensure they're numbers
   const exitPrice = parseFloat(exitData.exit_price) || 0;
   const exitShares = parseFloat(exitData.shares) || 0;
   const exitFxRate = parseFloat(exitData.exit_fx_rate) || 1;
+  
+  // Validation flags
+  const isValidShares = exitShares > 0 && exitShares <= position.shares;
+  const isValidPrice = exitPrice > 0;
+  const canSubmit = isValidShares && isValidPrice;
   
   // Calculate exit proceeds
   const grossProceeds = exitPrice * exitShares;
@@ -45,29 +53,31 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   const fxFee = position.market === "US" ? (grossProceeds * settingsData.fx_fee_rate) : 0;
   const totalExitFees = commission + stampDuty + fxFee;
   const netProceeds = grossProceeds - totalExitFees;
-  const netProceedsGBP = position.market === "US" ? (netProceeds * exitFxRate) : netProceeds;
+  const netProceedsGBP = position.market === "US" ? (netProceeds / exitFxRate) : netProceeds;
   
   // Calculate original entry cost for the shares being exited
-  const entryCostPerShare = (position.entry_price * position.shares + (position.fees || 0)) / position.shares;
+  const entryCostPerShare = (position.total_cost || (position.entry_price * position.shares)) / position.shares;
   const totalEntryCostForExitShares = entryCostPerShare * exitShares;
   
   // Calculate P&L
   const pnl = netProceedsGBP - totalEntryCostForExitShares;
-  const pnlPercent = (pnl / totalEntryCostForExitShares) * 100;
+  const pnlPercent = totalEntryCostForExitShares > 0 ? (pnl / totalEntryCostForExitShares) * 100 : 0;
   const isProfit = pnl >= 0;
 
   const handleConfirm = () => {
+    // Ensure we're sending valid numbers
+    if (!canSubmit) {
+      console.error("Invalid exit data:", { exitShares, exitPrice, canSubmit });
+      return;
+    }
+
     onConfirm({
-      ...position,
-      shares: exitShares,
-      exit_price: exitPrice,
+      position_id: position.id,
+      shares: exitShares, // Number, not string
+      exit_price: exitPrice, // Number, not string
       exit_reason: exitData.exit_reason,
       exit_date: exitData.exit_date,
-      pnl: pnl,
-      pnl_percent: pnlPercent,
-      status: "closed",
-      exit_fx_rate: exitFxRate,
-      exit_fees: totalExitFees
+      fx_rate: position.market === "US" ? exitFxRate : undefined,
     });
   };
 
@@ -96,31 +106,46 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
             </div>
             <div>
               <div className="text-xs text-slate-400">Entry Price</div>
-              <div className="font-medium text-white">{currencySymbol}{position.entry_price.toFixed(2)}</div>
+              <div className="font-medium text-white">{currencySymbol}{position.entry_price?.toFixed(2)}</div>
             </div>
           </div>
 
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs text-slate-400">Shares to Exit</Label>
-                <Input
-                  type="number"
-                  step="1"
-                  value={exitData.shares}
-                  onChange={(e) => setExitData({ ...exitData, shares: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white h-9"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs text-slate-400">Exit Price ({currencySymbol})</Label>
+                <Label className="text-xs text-slate-400">Shares to Exit *</Label>
                 <Input
                   type="number"
                   step="0.01"
+                  min="0.01"
+                  max={position.shares}
+                  value={exitData.shares}
+                  onChange={(e) => setExitData({ ...exitData, shares: e.target.value })}
+                  className={cn(
+                    "bg-slate-800/50 border-slate-700 text-white h-9",
+                    !isValidShares && exitData.shares && "border-rose-500"
+                  )}
+                />
+                {!isValidShares && exitData.shares && (
+                  <p className="text-xs text-rose-400">Must be between 0.01 and {position.shares}</p>
+                )}
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-slate-400">Exit Price ({currencySymbol}) *</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
                   value={exitData.exit_price}
                   onChange={(e) => setExitData({ ...exitData, exit_price: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white h-9"
+                  className={cn(
+                    "bg-slate-800/50 border-slate-700 text-white h-9",
+                    !isValidPrice && exitData.exit_price && "border-rose-500"
+                  )}
                 />
+                {!isValidPrice && exitData.exit_price && (
+                  <p className="text-xs text-rose-400">Must be greater than 0</p>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -131,18 +156,21 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   value={exitData.exit_date}
                   onChange={(e) => setExitData({ ...exitData, exit_date: e.target.value })}
                   className="bg-slate-800/50 border-slate-700 text-white h-9"
+                  max={new Date().toISOString().split("T")[0]}
                 />
               </div>
               {position.market === "US" && (
                 <div className="space-y-1">
-                  <Label className="text-xs text-slate-400">FX Rate</Label>
+                  <Label className="text-xs text-slate-400">FX Rate (GBP/USD) *</Label>
                   <Input
                     type="number"
                     step="0.0001"
+                    min="0.0001"
                     value={exitData.exit_fx_rate}
                     onChange={(e) => setExitData({ ...exitData, exit_fx_rate: e.target.value })}
                     className="bg-slate-800/50 border-slate-700 text-white h-9"
                   />
+                  <p className="text-xs text-slate-500">From your broker statement</p>
                 </div>
               )}
             </div>
@@ -156,16 +184,18 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="manual">Manual Exit</SelectItem>
-                  <SelectItem value="stop_hit">Stop Hit</SelectItem>
-                  <SelectItem value="target">Target Reached</SelectItem>
-                  <SelectItem value="market_regime">Market Regime</SelectItem>
+                  <SelectItem value="Manual Exit">Manual Exit</SelectItem>
+                  <SelectItem value="Stop Loss Hit">Stop Loss Hit</SelectItem>
+                  <SelectItem value="Target Reached">Target Reached</SelectItem>
+                  <SelectItem value="Risk-Off Signal">Risk-Off Signal</SelectItem>
+                  <SelectItem value="Trailing Stop">Trailing Stop</SelectItem>
+                  <SelectItem value="Partial Profit Taking">Partial Profit Taking</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          {exitData.exit_price && exitData.shares && (
+          {canSubmit && (
             <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 space-y-2">
               <p className="text-xs font-semibold text-slate-300 mb-2">Exit Cost Breakdown</p>
               
@@ -180,14 +210,20 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                 </div>
                 {position.market === "US" && (
                   <div className="flex justify-between">
-                    <span className="text-slate-400">FX Fee</span>
+                    <span className="text-slate-400">FX Fee (0.15%)</span>
                     <span className="text-rose-400">-{currencySymbol}{fxFee.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
-                  <span className="text-slate-300">Net Proceeds</span>
-                  <span className="text-white">{position.market === "US" ? `£${netProceedsGBP.toFixed(2)}` : `£${netProceeds.toFixed(2)}`}</span>
+                  <span className="text-slate-300">Net Proceeds ({position.market === "US" ? "USD" : "GBP"})</span>
+                  <span className="text-white">{currencySymbol}{netProceeds.toFixed(2)}</span>
                 </div>
+                {position.market === "US" && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Net Proceeds (GBP)</span>
+                    <span className="text-white">£{netProceedsGBP.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1.5 pt-2 border-t-2 border-slate-700 text-xs">
@@ -196,7 +232,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   <span className="text-white">£{totalEntryCostForExitShares.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold pt-1.5 border-t border-slate-700">
-                  <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>P&L</span>
+                  <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>Realized P&L</span>
                   <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>
                     {isProfit ? "+" : ""}£{pnl.toFixed(2)} ({isProfit ? "+" : ""}{pnlPercent.toFixed(2)}%)
                   </span>
@@ -204,8 +240,6 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
               </div>
             </div>
           )}
-
-
         </div>
 
         <DialogFooter>
@@ -218,8 +252,8 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           </Button>
           <Button 
             onClick={handleConfirm} 
-            className="bg-rose-600 hover:bg-rose-500 text-white"
-            disabled={!exitData.exit_price || !exitData.shares}
+            className="bg-rose-600 hover:bg-rose-500 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!canSubmit}
           >
             Confirm Exit
           </Button>
