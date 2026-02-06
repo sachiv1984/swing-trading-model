@@ -67,7 +67,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       pnl_percent: pnlPercent,
       status: "closed",
       exit_fx_rate: exitFxRate,
-      exit_fees: totalFees
+      exit_fees: totalExitFees
     });
   };
 
