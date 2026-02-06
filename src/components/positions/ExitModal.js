@@ -12,9 +12,9 @@ import { base44 } from "../../api/base44Client";
 export default function ExitModal({ position, open, onClose, onConfirm }) {
   const [exitData, setExitData] = useState({
     shares: position?.shares || 0,
-    exit_price: position?.current_price_native || position?.current_price || "",
-    exit_reason: "Manual Exit",
-    exit_fx_rate: position?.market === "US" ? (position?.live_fx_rate || position?.fx_rate || 1.27) : 1,
+    exit_price: position?.current_price || "",
+    exit_reason: "manual",
+    exit_fx_rate: position?.market === "US" ? (position?.fx_rate || 1.27) : 1,
     exit_date: new Date().toISOString().split("T")[0]
   });
 
@@ -58,13 +58,16 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
   const handleConfirm = () => {
     onConfirm({
-      id: position.id,
-      ticker: position.ticker,
+      ...position,
       shares: exitShares,
       exit_price: exitPrice,
       exit_reason: exitData.exit_reason,
       exit_date: exitData.exit_date,
-      exit_fx_rate: position.market === "US" ? exitFxRate : 1.0
+      pnl: pnl,
+      pnl_percent: pnlPercent,
+      status: "closed",
+      exit_fx_rate: exitFxRate,
+      exit_fees: totalExitFees
     });
   };
 
@@ -99,32 +102,24 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">Shares to Exit <span className="text-rose-400">*</span></Label>
+              <Label className="text-slate-400">Shares to Exit</Label>
               <Input
                 type="number"
-                step="0.01"
+                step="1"
                 value={exitData.shares}
                 onChange={(e) => setExitData({ ...exitData, shares: e.target.value })}
                 className="bg-slate-800/50 border-slate-700 text-white"
-                placeholder="Enter number of shares"
               />
-              <p className="text-xs text-slate-500">
-                Enter partial shares to exit only some of your position
-              </p>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-400">Exit Price ({currencySymbol}) <span className="text-rose-400">*</span></Label>
+              <Label className="text-slate-400">Exit Price ({currencySymbol})</Label>
               <Input
                 type="number"
                 step="0.01"
                 value={exitData.exit_price}
                 onChange={(e) => setExitData({ ...exitData, exit_price: e.target.value })}
                 className="bg-slate-800/50 border-slate-700 text-white"
-                placeholder={`Enter your actual exit price in ${currencySymbol}`}
               />
-              <p className="text-xs text-slate-500">
-                Enter the price you actually got from your broker
-              </p>
             </div>
             <div className="space-y-2">
               <Label className="text-slate-400">Exit Date</Label>
@@ -137,7 +132,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
             </div>
             {position.market === "US" && (
               <div className="space-y-2">
-                <Label className="text-slate-400">FX Rate (GBP/USD) <span className="text-rose-400">*</span></Label>
+                <Label className="text-slate-400">FX Rate (USD to GBP)</Label>
                 <Input
                   type="number"
                   step="0.0001"
@@ -145,9 +140,6 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   onChange={(e) => setExitData({ ...exitData, exit_fx_rate: e.target.value })}
                   className="bg-slate-800/50 border-slate-700 text-white"
                 />
-                <p className="text-xs text-slate-500">
-                  Enter the GBP/USD rate from your broker statement
-                </p>
               </div>
             )}
             <div className="space-y-2">
@@ -160,12 +152,10 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="Manual Exit">Manual Exit</SelectItem>
-                  <SelectItem value="Stop Loss Hit">Stop Loss Hit</SelectItem>
-                  <SelectItem value="Target Reached">Target Reached</SelectItem>
-                  <SelectItem value="Risk-Off Signal">Risk-Off Signal</SelectItem>
-                  <SelectItem value="Trailing Stop">Trailing Stop</SelectItem>
-                  <SelectItem value="Partial Profit Taking">Partial Profit Taking</SelectItem>
+                  <SelectItem value="manual">Manual Exit</SelectItem>
+                  <SelectItem value="stop_hit">Stop Hit</SelectItem>
+                  <SelectItem value="target">Target Reached</SelectItem>
+                  <SelectItem value="market_regime">Market Regime</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -244,7 +234,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           <Button 
             onClick={handleConfirm} 
             className="bg-rose-600 hover:bg-rose-500 text-white"
-            disabled={!exitData.exit_price || !exitData.shares || parseFloat(exitData.exit_price) <= 0 || parseFloat(exitData.shares) <= 0}
+            disabled={!exitData.exit_price || !exitData.shares}
           >
             Confirm Exit
           </Button>
