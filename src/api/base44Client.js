@@ -214,8 +214,7 @@ export const base44 = {
     
     return data.data;
   }
-}
-    },
+},
     Settings: {
       list: async () => {
         return api.settings.list();
