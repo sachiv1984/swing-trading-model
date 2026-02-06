@@ -9,6 +9,9 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 
 export default function ExitModal({ position, open, onClose, onConfirm }) {
+  if (!position) return null;
+
+  // Keep strings for inputs, parse for math
   const [exitData, setExitData] = useState({
     shares: position?.shares?.toString() || "",
     exit_price: position?.current_price_native?.toString() || position?.current_price?.toString() || "",
@@ -30,38 +33,39 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
     fx_fee_rate: 0.0015
   };
 
-  if (!position) return null;
-
   const currencySymbol = position.market === "UK" ? "£" : "$";
 
+  // Parse for calculations
   const exitPrice = parseFloat(exitData.exit_price) || 0;
   const exitShares = parseFloat(exitData.shares) || 0;
   const exitFxRate = parseFloat(exitData.exit_fx_rate) || 1;
 
+  // Validation
   const isValidShares = exitShares > 0 && exitShares <= position.shares;
   const isValidPrice = exitPrice > 0;
   const canSubmit = isValidShares && isValidPrice;
 
+  // Exit proceeds
   const grossProceeds = exitPrice * exitShares;
   const commission = position.market === "UK" ? settingsData.uk_commission : settingsData.us_commission;
-  const stampDuty = 0;
+  const stampDuty = 0; // no stamp on sales
   const fxFee = position.market === "US" ? (grossProceeds * settingsData.fx_fee_rate) : 0;
   const totalExitFees = commission + stampDuty + fxFee;
   const netProceeds = grossProceeds - totalExitFees;
+  const netProceedsGBP = position.market === "US" ? (netProceeds * exitFxRate) : netProceeds;
 
+  // Entry cost (total_cost includes entry fees if available)
   const totalEntryCost = position.total_cost || (position.entry_price * position.shares);
   const entryCostPerShare = totalEntryCost / position.shares;
   const totalEntryCostForExitShares = entryCostPerShare * exitShares;
 
-  const pnl = netProceeds - totalEntryCostForExitShares;
+  // P&L
+  const pnl = netProceedsGBP - totalEntryCostForExitShares;
   const pnlPercent = totalEntryCostForExitShares > 0 ? (pnl / totalEntryCostForExitShares) * 100 : 0;
   const isProfit = pnl >= 0;
 
   const handleConfirm = () => {
-    if (!canSubmit) {
-      console.error("Invalid exit data:", { exitShares, exitPrice, canSubmit });
-      return;
-    }
+    if (!canSubmit) return;
     onConfirm({
       position_id: position.id,
       shares: exitShares,
@@ -74,7 +78,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      {/* NOTE: removed overflow-hidden; kept flex-col and max-h */}
+      {/* MATCHING your original layout: no overflow-hidden here, flex-col + max-h */}
       <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-rose-400">
@@ -86,8 +90,8 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           </DialogDescription>
         </DialogHeader>
 
-        {/* NOTE: added flex-1 so this area can actually scroll */}
-        <div className="space-y-4 py-4 overflow-y-auto flex-1">
+        {/* MATCHING your original: scroll area gets overflow + flex-1; add min-h-0 to prevent "push out" */}
+        <div className="space-y-4 py-4 overflow-y-auto flex-1 min-h-0">
           <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 grid grid-cols-3 gap-3 text-center">
             <div>
               <div className="text-xs text-slate-400">Ticker</div>
@@ -100,7 +104,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
             <div>
               <div className="text-xs text-slate-400">Entry Price</div>
               <div className="font-medium text-white">
-                {currencySymbol}{position.entry_price?.toFixed(2)}
+                {currencySymbol}{position.entry_price?.toFixed?.(2)}
               </div>
             </div>
           </div>
@@ -111,7 +115,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                 <Label className="text-xs text-slate-400">Shares to Exit</Label>
                 <Input
                   type="number"
-                  step="0.01"
+                  step="1"
                   value={exitData.shares}
                   onChange={(e) => setExitData({ ...exitData, shares: e.target.value })}
                   className="bg-slate-800/50 border-slate-700 text-white h-9"
@@ -128,6 +132,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                 />
               </div>
             </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label className="text-xs text-slate-400">Exit Date</Label>
@@ -151,6 +156,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                 </div>
               )}
             </div>
+
             <div className="space-y-1">
               <Label className="text-xs text-slate-400">Exit Reason</Label>
               <Select
@@ -161,10 +167,11 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="Manual Exit">Manual Exit</SelectItem>
-                  <SelectItem value="Stop Loss Hit">Stop Loss Hit</SelectItem>
-                  <SelectItem value="Target Reached">Target Reached</SelectItem>
-                  <SelectItem value="Risk-Off Signal">Risk-Off Signal</SelectItem>
+                  {/* Keep values consistent with default "manual" */}
+                  <SelectItem value="manual">Manual Exit</SelectItem>
+                  <SelectItem value="stop_hit">Stop Loss Hit</SelectItem>
+                  <SelectItem value="target">Target Reached</SelectItem>
+                  <SelectItem value="risk_off">Risk-Off Signal</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -183,10 +190,15 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   <span className="text-slate-400">Commission</span>
                   <span className="text-rose-400">-{currencySymbol}{commission.toFixed(2)}</span>
                 </div>
+                {position.market === "US" && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">FX Fee</span>
+                    <span className="text-rose-400">-{currencySymbol}{fxFee.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
                   <span className="text-slate-300">Net Proceeds (GBP)</span>
-                  {/* Consider converting to GBP for US trades as noted above */}
-                  <span className="text-white">£{netProceeds.toFixed(2)}</span>
+                  <span className="text-white">£{netProceedsGBP.toFixed(2)}</span>
                 </div>
               </div>
 
