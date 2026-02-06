@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { AlertTriangle } from "lucide-react";
+import { cn } from "../../lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 
