@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 
 export default function ExitModal({ position, open, onClose, onConfirm }) {
-  // Initialize with string values to avoid 0 becoming falsy
   const [exitData, setExitData] = useState({
     shares: position?.shares?.toString() || "",
     exit_price: position?.current_price_native?.toString() || position?.current_price?.toString() || "",
@@ -34,47 +33,39 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   if (!position) return null;
 
   const currencySymbol = position.market === "UK" ? "£" : "$";
-  
-  // Parse values - ensure they're numbers
+
   const exitPrice = parseFloat(exitData.exit_price) || 0;
   const exitShares = parseFloat(exitData.shares) || 0;
   const exitFxRate = parseFloat(exitData.exit_fx_rate) || 1;
-  
-  // Validation flags
+
   const isValidShares = exitShares > 0 && exitShares <= position.shares;
   const isValidPrice = exitPrice > 0;
   const canSubmit = isValidShares && isValidPrice;
-  
-  // Calculate exit proceeds
+
   const grossProceeds = exitPrice * exitShares;
   const commission = position.market === "UK" ? settingsData.uk_commission : settingsData.us_commission;
-  const stampDuty = 0; // No stamp duty on sales
+  const stampDuty = 0;
   const fxFee = position.market === "US" ? (grossProceeds * settingsData.fx_fee_rate) : 0;
   const totalExitFees = commission + stampDuty + fxFee;
   const netProceeds = grossProceeds - totalExitFees;
-  
-  // Calculate original entry cost for the shares being exited
-  // Use total_cost which already includes entry fees (commission, stamp duty, FX fees)
+
   const totalEntryCost = position.total_cost || (position.entry_price * position.shares);
   const entryCostPerShare = totalEntryCost / position.shares;
   const totalEntryCostForExitShares = entryCostPerShare * exitShares;
-  
-  // Calculate P&L
+
   const pnl = netProceeds - totalEntryCostForExitShares;
   const pnlPercent = totalEntryCostForExitShares > 0 ? (pnl / totalEntryCostForExitShares) * 100 : 0;
   const isProfit = pnl >= 0;
 
   const handleConfirm = () => {
-    // Ensure we're sending valid numbers
     if (!canSubmit) {
       console.error("Invalid exit data:", { exitShares, exitPrice, canSubmit });
       return;
     }
-
     onConfirm({
       position_id: position.id,
-      shares: exitShares, // Number, not string
-      exit_price: exitPrice, // Number, not string
+      shares: exitShares,
+      exit_price: exitPrice,
       exit_reason: exitData.exit_reason,
       exit_date: exitData.exit_date,
       fx_rate: position.market === "US" ? exitFxRate : undefined,
@@ -83,7 +74,8 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+      {/* NOTE: removed overflow-hidden; kept flex-col and max-h */}
+      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-rose-400">
             <AlertTriangle className="w-5 h-5" />
@@ -94,7 +86,8 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4 overflow-y-auto">
+        {/* NOTE: added flex-1 so this area can actually scroll */}
+        <div className="space-y-4 py-4 overflow-y-auto flex-1">
           <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 grid grid-cols-3 gap-3 text-center">
             <div>
               <div className="text-xs text-slate-400">Ticker</div>
@@ -106,7 +99,9 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
             </div>
             <div>
               <div className="text-xs text-slate-400">Entry Price</div>
-              <div className="font-medium text-white">{currencySymbol}{position.entry_price?.toFixed(2)}</div>
+              <div className="font-medium text-white">
+                {currencySymbol}{position.entry_price?.toFixed(2)}
+              </div>
             </div>
           </div>
 
@@ -178,7 +173,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           {exitData.exit_price && exitData.shares && (
             <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 space-y-2">
               <p className="text-xs font-semibold text-slate-300 mb-2">Exit Cost Breakdown</p>
-              
+
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
                   <span className="text-slate-400">Gross Value</span>
@@ -190,6 +185,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                 </div>
                 <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
                   <span className="text-slate-300">Net Proceeds (GBP)</span>
+                  {/* Consider converting to GBP for US trades as noted above */}
                   <span className="text-white">£{netProceeds.toFixed(2)}</span>
                 </div>
               </div>
@@ -211,17 +207,17 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
         </div>
 
         <DialogFooter>
-          <Button 
-            variant="ghost" 
-            onClick={onClose} 
+          <Button
+            variant="ghost"
+            onClick={onClose}
             className="text-slate-400 hover:text-white hover:bg-slate-800"
           >
             Cancel
           </Button>
-          <Button 
-            onClick={handleConfirm} 
+          <Button
+            onClick={handleConfirm}
             className="bg-rose-600 hover:bg-rose-500 text-white"
-            disabled={!exitData.exit_price || !exitData.shares}
+            disabled={!canSubmit}
           >
             Confirm Exit
           </Button>
