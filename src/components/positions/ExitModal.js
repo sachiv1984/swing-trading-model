@@ -22,7 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 
 export default function ExitModal({ position, open, onClose, onConfirm }) {
-  // --- Hooks must be unconditional ---
+  // Hooks must be unconditional
   const [exitData, setExitData] = useState({
     shares: "",
     exit_price: "",
@@ -31,83 +31,74 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
     exit_date: new Date().toISOString().split("T")[0],
   });
 
-  // Seed/reset form when `position` changes
+  // Seed/reset when position changes
   useEffect(() => {
     if (!position) return;
     setExitData({
       shares: String(position.shares ?? ""),
-      exit_price: String(position.current_price ?? ""),
+      exit_price: String(
+        position.current_price_native ??
+          position.current_price ??
+          ""
+      ),
       exit_reason: "manual",
-      exit_fx_rate:
-        position.market === "US" ? position.fx_rate || 1.27 : 1,
+      exit_fx_rate: position.market === "US" ? (position.live_fx_rate ?? position.fx_rate ?? 1.27) : 1,
       exit_date: new Date().toISOString().split("T")[0],
     });
   }, [position]);
 
-  // Settings (commission/fees)
+  // Load settings
   const { data: settings } = useQuery({
     queryKey: ["settings"],
     queryFn: () => base44.entities.Settings.list(),
     initialData: [],
   });
 
-  const settingsData = useMemo(
-    () =>
-      (settings?.[0] as any) || {
-        uk_commission: 9.95,
-        us_commission: 0,
-        stamp_duty_rate: 0.005,
-        fx_fee_rate: 0.0015,
-      },
-    [settings]
-  );
+  const settingsData = useMemo(() => {
+    return (settings && settings[0]) ? settings[0] : {
+      uk_commission: 9.95,
+      us_commission: 0,
+      stamp_duty_rate: 0.005,
+      fx_fee_rate: 0.0015,
+    };
+  }, [settings]);
 
-  // ---------- Derived values (guarded) ----------
+  // Derived values (guarded)
   const currencySymbol = position?.market === "UK" ? "£" : "$";
 
-  const exitPrice = parseFloat(exitData.exit_price) || 0;
-  const exitShares = parseFloat(exitData.shares) || 0;
-  const exitFxRate = parseFloat(exitData.exit_fx_rate as any) || 1;
+  const exitPrice = Number(exitData.exit_price) || 0;
+  const exitShares = Number(exitData.shares) || 0;
+  const exitFxRate = Number(exitData.exit_fx_rate) || 1;
 
   const isValidShares =
     !!position && exitShares > 0 && exitShares <= position.shares;
   const isValidPrice = exitPrice > 0;
   const canSubmit = !!position && isValidShares && isValidPrice;
 
-  // Proceeds (compute in trade currency, convert to GBP if US)
+  // Proceeds (trade CCY -> GBP if US)
   const grossProceeds = exitPrice * exitShares;
   const commission = position
-    ? position.market === "UK"
-      ? settingsData.uk_commission
-      : settingsData.us_commission
+    ? (position.market === "UK" ? settingsData.uk_commission : settingsData.us_commission)
     : 0;
   const stampDuty = 0; // no stamp duty on sales
-  const fxFee =
-    position && position.market === "US"
-      ? grossProceeds * settingsData.fx_fee_rate
-      : 0;
+  const fxFee = position && position.market === "US" ? (grossProceeds * settingsData.fx_fee_rate) : 0;
   const totalExitFees = commission + stampDuty + fxFee;
   const netProceeds = grossProceeds - totalExitFees;
-
-  const netProceedsGBP =
-    position && position.market === "US" ? netProceeds * exitFxRate : netProceeds;
+  const netProceedsGBP = position && position.market === "US" ? netProceeds * exitFxRate : netProceeds;
 
   // Entry cost for exited shares (includes original fees if present)
   const totalEntryCost = position
-    ? (position.fees ?? 0) + position.entry_price * position.shares
+    ? (Number(position.fees) || 0) + (Number(position.entry_price) || 0) * (Number(position.shares) || 0)
     : 0;
-  const entryCostPerShare = position ? totalEntryCost / position.shares : 0;
+  const entryCostPerShare = position && position.shares ? (totalEntryCost / position.shares) : 0;
   const totalEntryCostForExitShares = entryCostPerShare * exitShares;
 
   // P&L
   const pnl = netProceedsGBP - totalEntryCostForExitShares;
-  const pnlPercent =
-    totalEntryCostForExitShares > 0
-      ? (pnl / totalEntryCostForExitShares) * 100
-      : 0;
+  const pnlPercent = totalEntryCostForExitShares > 0 ? (pnl / totalEntryCostForExitShares) * 100 : 0;
   const isProfit = pnl >= 0;
 
-  // ---------- Actions ----------
+  // Actions
   const handleConfirm = () => {
     if (!canSubmit || !position) return;
     onConfirm({
@@ -120,14 +111,13 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       pnl_percent: pnlPercent,
       status: "closed",
       exit_fx_rate: exitFxRate,
-      exit_fees: totalExitFees,
+      exit_fees: totalExitFees, // <-- correct variable name
     });
   };
 
-  // ---------- UI ----------
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      {/* IMPORTANT: use GRID shell so the body row always scrolls */}
+      {/* GRID SHELL so the body row always scrolls */}
       <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] grid grid-rows-[auto_1fr_auto]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-rose-400">
@@ -161,7 +151,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   <div className="text-xs text-slate-400">Entry Price</div>
                   <div className="font-medium text-white">
                     {currencySymbol}
-                    {position.entry_price?.toFixed?.(2)}
+                    {Number(position.entry_price || 0).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -173,7 +163,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     <Label className="text-xs text-slate-400">Shares to Exit</Label>
                     <Input
                       type="number"
-                      step="0.01" // allow fractional shares (e.g., 27.25)
+                      step="0.01"
                       value={exitData.shares}
                       onChange={(e) =>
                         setExitData({ ...exitData, shares: e.target.value })
@@ -243,95 +233,3 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       <SelectItem value="manual">Manual Exit</SelectItem>
                       <SelectItem value="stop_hit">Stop Hit</SelectItem>
                       <SelectItem value="target">Target Reached</SelectItem>
-                      <SelectItem value="market_regime">Market Regime</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Breakdown */}
-              {exitData.exit_price && exitData.shares && (
-                <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 space-y-2">
-                  <p className="text-xs font-semibold text-slate-300 mb-2">
-                    Exit Cost Breakdown
-                  </p>
-
-                  <div className="space-y-1.5 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Gross Value</span>
-                      <span className="text-white">
-                        {currencySymbol}
-                        {grossProceeds.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Commission</span>
-                      <span className="text-rose-400">
-                        -{currencySymbol}
-                        {commission.toFixed(2)}
-                      </span>
-                    </div>
-                    {position.market === "US" && (
-                      <div className="flex justify-between">
-                        <span className="text-slate-400">FX Fee</span>
-                        <span className="text-rose-400">
-                          -{currencySymbol}
-                          {fxFee.toFixed(2)}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
-                      <span className="text-slate-300">Net Proceeds</span>
-                      <span className="text-white">
-                        {position.market === "US"
-                          ? `£${netProceedsGBP.toFixed(2)}`
-                          : `£${netProceeds.toFixed(2)}`}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5 pt-2 border-t-2 border-slate-700 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Entry Cost</span>
-                      <span className="text-white">
-                        £{totalEntryCostForExitShares.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between font-bold pt-1.5 border-t border-slate-700">
-                      <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>
-                        P&L
-                      </span>
-                      <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>
-                        {isProfit ? "+" : ""}
-                        £{pnl.toFixed(2)} ({isProfit ? "+" : ""}
-                        {pnlPercent.toFixed(2)}%)
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Footer (ROW 3) */}
-        <DialogFooter>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            className="text-slate-400 hover:text-white hover:bg-slate-800"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirm}
-            className="bg-rose-600 hover:bg-rose-500 text-white"
-            disabled={!canSubmit}
-          >
-            Confirm Exit
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
