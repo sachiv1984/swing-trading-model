@@ -78,9 +78,11 @@ class CashTransactionRequest(BaseModel):
 
 
 class ExitPositionRequest(BaseModel):
-    exit_price: Optional[float] = None  # User-provided exit price (optional)
-    exit_date: Optional[str] = None     # Optional custom exit date
-    exit_reason: Optional[str] = "Manual Exit"  # Optional exit reason
+    shares: Optional[float] = None  # Optional: defaults to all shares
+    exit_price: float  # REQUIRED: user-provided exit price
+    exit_date: Optional[str] = None  # Optional: defaults to today
+    exit_reason: Optional[str] = "Manual Exit"
+    exit_fx_rate: Optional[float] = None  # REQUIRED for US stocks, ignored for UK
 
 
 # Helper to convert Decimal to float
@@ -697,9 +699,17 @@ def get_portfolio_endpoint():
         return {"status": "error", "message": str(e)}
 
 
-@app.post("/portfolio/position")
-def add_position_endpoint(request: AddPositionRequest):
-    """FIXED: Now accepts frontend format with fractional shares"""
+("/positions/{position_id}/exit")
+def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
+    """Exit a position (full or partial) and record in trade history
+    
+    v1.2 Updates:
+    - Accepts user-provided exit price (REQUIRED)
+    - Supports partial exits via shares parameter
+    - Accepts custom exit date for backdating
+    - Requires FX rate for US stocks (from broker statement)
+    - Returns detailed fee breakdown
+    """
     try:
         portfolio = get_portfolio()
         if not portfolio:
@@ -707,105 +717,223 @@ def add_position_endpoint(request: AddPositionRequest):
         
         portfolio_id = str(portfolio['id'])
         
-        # Get settings for commission and fee rates
+        # Get the position
+        positions = get_positions(portfolio_id)
+        position = None
+        for pos in positions:
+            if str(pos['id']) == position_id:
+                position = pos
+                break
+        
+        if not position:
+            raise HTTPException(status_code=404, detail="Position not found")
+        
+        if position['status'] == 'closed':
+            raise HTTPException(status_code=400, detail="Position already closed")
+        
+        # Validate exit price
+        if request.exit_price <= 0:
+            raise HTTPException(status_code=400, detail="Exit price must be greater than 0")
+        
+        # Validate shares for partial exit
+        total_shares = float(position['shares'])
+        exit_shares = float(request.shares) if request.shares else total_shares
+        
+        if exit_shares <= 0:
+            raise HTTPException(status_code=400, detail="Shares to exit must be greater than 0")
+        
+        if exit_shares > total_shares:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Insufficient shares. Position has {total_shares} shares, exit requested {exit_shares}"
+            )
+        
+        # Validate FX rate for US stocks
+        if position['market'] == 'US':
+            if not request.exit_fx_rate or request.exit_fx_rate <= 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail="FX rate is required for US stock exits. Please provide the GBP/USD rate from your broker statement."
+                )
+            exit_fx_rate = request.exit_fx_rate
+        else:
+            exit_fx_rate = 1.0
+        
+        print(f"\n📤 Exiting position: {position['ticker']}")
+        print(f"   Shares to exit: {exit_shares} of {total_shares}")
+        print(f"   Exit price: {request.exit_price:.2f} (user-provided)")
+        
+        # Get settings for commission rates
         settings_list = get_settings()
         settings = settings_list[0] if settings_list else None
         
-        # Use settings or defaults
         uk_commission = float(settings.get('uk_commission', 9.95)) if settings else 9.95
-        us_commission = float(settings.get('us_commission', 0)) if settings else 0
-        stamp_duty_rate = float(settings.get('stamp_duty_rate', 0.005)) if settings else 0.005
+        us_commission = float(settings.get('us_commission', 0.00)) if settings else 0.00
         fx_fee_rate = float(settings.get('fx_fee_rate', 0.0015)) if settings else 0.0015
         
-        # Calculate fees and costs
-        is_uk = request.market == "UK"
+        exit_price_native = request.exit_price
+        market = position['market']
         
-        # Auto-append .L for UK stocks
-        ticker = request.ticker.upper().strip()
-        if is_uk and not ticker.endswith('.L'):
-            ticker = f"{ticker}.L"
-            print(f"✓ Auto-appended .L to UK ticker: {ticker}")
+        # Calculate exit proceeds in native currency
+        gross_proceeds_native = exit_price_native * exit_shares
         
-        # Use entry_price from frontend as fill_price
-        fill_price = request.entry_price
-        shares = request.shares
-        fx_rate = request.fx_rate or (1.0 if is_uk else 1.27)
-        
-        if is_uk:
-            gross_cost = shares * fill_price
-            stamp_duty = gross_cost * stamp_duty_rate
+        # Calculate exit fees
+        if market == 'UK':
             commission = uk_commission
-            total_fees = stamp_duty + commission
-            total_cost = gross_cost + total_fees
-            # Entry price for display is the actual fill price, not adjusted for fees
-            entry_price_for_display = fill_price
+            stamp_duty = 0  # No stamp duty on sales
+            fx_fee = 0
+            exit_fees_native = commission
+            print(f"   UK exit fees: £{commission:.2f} commission")
         else:
-            # US position - costs calculated in GBP for portfolio tracking
-            fill_price_gbp = fill_price / fx_rate
-            gross_cost = shares * fill_price_gbp
-            
-            fx_fee = gross_cost * fx_fee_rate
             commission = us_commission
-            
-            total_fees = fx_fee + commission
-            total_cost = gross_cost + total_fees
-            # Entry price for display is the actual USD fill price
-            entry_price_for_display = fill_price
+            stamp_duty = 0
+            fx_fee = gross_proceeds_native * fx_fee_rate
+            exit_fees_native = fx_fee
+            print(f"   US exit fees: ${fx_fee:.2f} ({fx_fee_rate*100:.2f}% FX fee)")
         
-        # Calculate initial stop based on the fill price, not fee-adjusted price
-        atr = request.atr_value or 0
-        atr_multiplier = float(settings.get('atr_multiplier_initial', 2)) if settings else 2
+        # Net proceeds in native currency
+        net_proceeds_native = gross_proceeds_native - exit_fees_native
         
-        if atr > 0 and request.stop_price is None:
-            initial_stop_native = entry_price_for_display - (atr_multiplier * atr)
+        # Convert to GBP using user-provided FX rate
+        if market == 'US':
+            gross_proceeds_gbp = gross_proceeds_native / exit_fx_rate
+            net_proceeds_gbp = net_proceeds_native / exit_fx_rate
+            exit_fees_gbp = exit_fees_native / exit_fx_rate
+            print(f"   FX conversion: ${net_proceeds_native:.2f} / {exit_fx_rate:.4f} = £{net_proceeds_gbp:.2f}")
         else:
-            initial_stop_native = request.stop_price or entry_price_for_display
+            gross_proceeds_gbp = gross_proceeds_native
+            net_proceeds_gbp = net_proceeds_native
+            exit_fees_gbp = exit_fees_native
         
-        # Store stop in NATIVE currency (USD for US, GBP for UK)
-        # This prevents FX fluctuations from affecting displayed stop prices
-        initial_stop = initial_stop_native
+        # Calculate P&L for exited shares
+        # Total cost is proportional to shares being exited
+        total_cost = float(position['total_cost'])
+        cost_per_share = total_cost / total_shares
+        exit_total_cost = cost_per_share * exit_shares
         
-        # Create position with the modified ticker
-        position_data = {
-            'ticker': ticker,
-            'market': request.market,
-            'entry_date': request.entry_date,
-            'entry_price': round(entry_price_for_display, 4),  # Store actual fill price for display
-            'fill_price': fill_price,
-            'fill_currency': 'GBP' if is_uk else 'USD',
-            'fx_rate': fx_rate,
-            'shares': shares,
-            'total_cost': round(total_cost, 2),
-            'fees_paid': round(total_fees, 2),
-            'fees': round(total_fees, 2),
-            'fee_type': 'stamp_duty' if is_uk else 'fx_fee',
-            'initial_stop': round(initial_stop, 2),  # Native currency
-            'current_stop': round(initial_stop, 2),  # Native currency
-            'current_price': round(entry_price_for_display, 4),  # Initialize with fill price
-            'atr': round(atr, 4) if atr > 0 else None,  # Store ATR for trailing stop calculations
-            'holding_days': 0,
-            'pnl': 0.0,
-            'pnl_pct': 0.0,
-            'status': 'open'
+        entry_price = float(position.get('fill_price', position['entry_price'])) if market == 'US' else float(position['entry_price'])
+        entry_fees = float(position.get('fees_paid', 0))
+        entry_fees_per_share = entry_fees / total_shares
+        exit_entry_fees = entry_fees_per_share * exit_shares
+        
+        # Realized P&L = net proceeds - cost of exited shares
+        realized_pnl_gbp = net_proceeds_gbp - exit_total_cost
+        realized_pnl_pct = (realized_pnl_gbp / exit_total_cost) * 100
+        
+        # Calculate holding period
+        entry_date = datetime.strptime(str(position['entry_date']), '%Y-%m-%d')
+        exit_date_str = request.exit_date or datetime.now().strftime('%Y-%m-%d')
+        exit_date = datetime.strptime(exit_date_str, '%Y-%m-%d')
+        holding_days = (exit_date - entry_date).days
+        
+        print(f"   Shares: {exit_shares}")
+        print(f"   Gross proceeds: £{gross_proceeds_gbp:.2f}")
+        print(f"   Exit fees: £{exit_fees_gbp:.2f}")
+        print(f"   Net proceeds: £{net_proceeds_gbp:.2f}")
+        print(f"   Cost of exited shares: £{exit_total_cost:.2f}")
+        print(f"   Realized P&L: £{realized_pnl_gbp:+.2f} ({realized_pnl_pct:+.2f}%)")
+        
+        # Create trade history record
+        trade_data = {
+            'ticker': position['ticker'],
+            'market': market,
+            'entry_date': position['entry_date'],
+            'exit_date': exit_date_str,
+            'shares': exit_shares,
+            'entry_price': entry_price,
+            'exit_price': exit_price_native,
+            'total_cost': exit_total_cost,
+            'gross_proceeds': gross_proceeds_gbp,
+            'net_proceeds': net_proceeds_gbp,
+            'entry_fees': exit_entry_fees,
+            'exit_fees': exit_fees_gbp,
+            'pnl': realized_pnl_gbp,
+            'pnl_pct': realized_pnl_pct,
+            'holding_days': holding_days,
+            'exit_reason': request.exit_reason,
+            'entry_fx_rate': float(position.get('fx_rate', 1.0)),
+            'exit_fx_rate': exit_fx_rate
         }
         
-        new_position = create_position(portfolio_id, position_data)
+        print(f"   💾 Creating trade history record...")
+        create_trade_history(portfolio_id, trade_data)
+        print(f"   ✓ Trade history created")
         
-        # Update cash
-        new_cash = float(portfolio['cash']) - total_cost
+        # Determine if this is a partial or full exit
+        is_partial_exit = exit_shares < total_shares
+        
+        if is_partial_exit:
+            # Partial exit - update position to reduce shares
+            remaining_shares = total_shares - exit_shares
+            remaining_cost = total_cost - exit_total_cost
+            
+            print(f"   📝 Partial exit: {remaining_shares} shares remaining")
+            
+            updated_position = update_position(position_id, {
+                'shares': remaining_shares,
+                'total_cost': remaining_cost,
+                'fees_paid': entry_fees - exit_entry_fees
+            })
+            
+            print(f"   ✓ Position updated: {remaining_shares} shares remaining")
+        else:
+            # Full exit - close the position
+            print(f"   💾 Full exit: closing position...")
+            
+            try:
+                updated_position = update_position(position_id, {
+                    'status': 'closed',
+                    'exit_date': exit_date_str,
+                    'exit_price': exit_price_native,
+                    'exit_reason': request.exit_reason
+                })
+            except Exception as e:
+                if 'exit_date' in str(e) or 'UndefinedColumn' in str(e):
+                    print(f"   ⚠️  Exit columns don't exist, updating status only")
+                    updated_position = update_position(position_id, {
+                        'status': 'closed'
+                    })
+                else:
+                    raise
+            
+            print(f"   ✓ Position closed")
+        
+        # Update portfolio cash
+        current_cash = float(portfolio['cash'])
+        new_cash = current_cash + net_proceeds_gbp
         update_portfolio_cash(portfolio_id, new_cash)
+        
+        print(f"   ✓ Cash updated: £{current_cash:.2f} → £{new_cash:.2f}\n")
+        
+        # Build fee breakdown
+        fee_breakdown = {
+            "commission": commission,
+            "stamp_duty": stamp_duty,
+            "fx_fee": fx_fee
+        }
         
         return {
             "status": "ok",
             "data": {
-                "ticker": ticker,
-                "total_cost": round(total_cost, 2),
-                "fees_paid": round(total_fees, 2),
-                "entry_price": round(entry_price_for_display, 4),  # Return actual fill price
-                "initial_stop": round(initial_stop_native, 2),  # Return native currency for display
-                "remaining_cash": round(new_cash, 2)
+                "ticker": position['ticker'],
+                "market": market,
+                "exit_price": round(exit_price_native, 2),
+                "shares": exit_shares,
+                "gross_proceeds": round(gross_proceeds_gbp, 2),
+                "exit_fees": round(exit_fees_gbp, 2),
+                "fee_breakdown": fee_breakdown,
+                "net_proceeds": round(net_proceeds_gbp, 2),
+                "realized_pnl": round(realized_pnl_gbp, 2),
+                "realized_pnl_pct": round(realized_pnl_pct, 2),
+                "new_cash_balance": round(new_cash, 2),
+                "fx_rate": exit_fx_rate,
+                "exit_date": exit_date_str,
+                "is_partial_exit": is_partial_exit,
+                "remaining_shares": round(total_shares - exit_shares, 4) if is_partial_exit else 0
             }
         }
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         traceback.print_exc()
