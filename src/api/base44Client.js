@@ -171,25 +171,50 @@ export const base44 = {
         return response.json();
       },
       exit: async (id, exitData = {}) => {
-        console.log('Calling exit endpoint for position:', id);
-        console.log('Exit data:', exitData);
-        
-        const response = await fetch(`${API_BASE_URL}/positions/${id}/exit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(exitData)  // Send exit_price, exit_date, exit_reason
-        });
-        
-        const data = await response.json();
-        
-        console.log('Exit response:', data);
-        
-        if (data.status === 'error') {
-          throw new Error(data.message);
-        }
-        
-        return data.data;
-      }
+    console.log('Calling exit endpoint for position:', id);
+    console.log('Exit data:', exitData);
+    
+    // Validate required fields
+    if (!exitData.exit_price || exitData.exit_price <= 0) {
+      throw new Error('Exit price is required and must be greater than 0');
+    }
+    
+    if (!exitData.shares || exitData.shares <= 0) {
+      throw new Error('Number of shares to exit is required and must be greater than 0');
+    }
+    
+    // Prepare request body with all new fields
+    const requestBody = {
+      shares: parseFloat(exitData.shares),
+      exit_price: parseFloat(exitData.exit_price),
+      exit_date: exitData.exit_date || new Date().toISOString().split('T')[0],
+      exit_reason: exitData.exit_reason || 'Manual Exit'
+    };
+    
+    // Add FX rate for US stocks (required)
+    if (exitData.exit_fx_rate) {
+      requestBody.exit_fx_rate = parseFloat(exitData.exit_fx_rate);
+    }
+    
+    console.log('Request body:', requestBody);
+    
+    const response = await fetch(`${API_BASE_URL}/positions/${id}/exit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody)
+    });
+    
+    const data = await response.json();
+    
+    console.log('Exit response:', data);
+    
+    if (data.status === 'error') {
+      throw new Error(data.message);
+    }
+    
+    return data.data;
+  }
+}
     },
     Settings: {
       list: async () => {
