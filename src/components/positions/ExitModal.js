@@ -73,8 +73,8 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] flex flex-col">
-        <DialogHeader className="flex-shrink-0">
+      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md">
+        <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-rose-400">
             <AlertTriangle className="w-5 h-5" />
             Exit Position
@@ -84,7 +84,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4 overflow-y-auto flex-1">
+        <div className="space-y-6 py-4">
           <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 space-y-3">
             <div className="flex justify-between">
               <span className="text-slate-400">Ticker</span>
@@ -227,7 +227,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
         </div>
 
-        <DialogFooter className="flex-shrink-0 pt-4 border-t border-slate-700">
+        <DialogFooter>
           <Button 
             variant="ghost" 
             onClick={onClose} 
