@@ -5,7 +5,6 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { AlertTriangle } from "lucide-react";
-import { cn } from "../../lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 
@@ -53,14 +52,13 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   const fxFee = position.market === "US" ? (grossProceeds * settingsData.fx_fee_rate) : 0;
   const totalExitFees = commission + stampDuty + fxFee;
   const netProceeds = grossProceeds - totalExitFees;
-  const netProceedsGBP = position.market === "US" ? (netProceeds / exitFxRate) : netProceeds;
   
   // Calculate original entry cost for the shares being exited
   const entryCostPerShare = (position.total_cost || (position.entry_price * position.shares)) / position.shares;
   const totalEntryCostForExitShares = entryCostPerShare * exitShares;
   
   // Calculate P&L
-  const pnl = netProceedsGBP - totalEntryCostForExitShares;
+  const pnl = netProceeds - totalEntryCostForExitShares;
   const pnlPercent = totalEntryCostForExitShares > 0 ? (pnl / totalEntryCostForExitShares) * 100 : 0;
   const isProfit = pnl >= 0;
 
@@ -83,7 +81,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] flex flex-col">
+      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-rose-400">
             <AlertTriangle className="w-5 h-5" />
@@ -94,7 +92,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4 overflow-y-auto flex-1">
+        <div className="space-y-4 py-4">
           <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 grid grid-cols-3 gap-3 text-center">
             <div>
               <div className="text-xs text-slate-400">Ticker</div>
@@ -113,39 +111,24 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs text-slate-400">Shares to Exit *</Label>
+                <Label className="text-xs text-slate-400">Shares to Exit</Label>
                 <Input
                   type="number"
                   step="0.01"
-                  min="0.01"
-                  max={position.shares}
                   value={exitData.shares}
                   onChange={(e) => setExitData({ ...exitData, shares: e.target.value })}
-                  className={cn(
-                    "bg-slate-800/50 border-slate-700 text-white h-9",
-                    !isValidShares && exitData.shares && "border-rose-500"
-                  )}
+                  className="bg-slate-800/50 border-slate-700 text-white h-9"
                 />
-                {!isValidShares && exitData.shares && (
-                  <p className="text-xs text-rose-400">Must be between 0.01 and {position.shares}</p>
-                )}
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-slate-400">Exit Price ({currencySymbol}) *</Label>
+                <Label className="text-xs text-slate-400">Exit Price ({currencySymbol})</Label>
                 <Input
                   type="number"
                   step="0.01"
-                  min="0.01"
                   value={exitData.exit_price}
                   onChange={(e) => setExitData({ ...exitData, exit_price: e.target.value })}
-                  className={cn(
-                    "bg-slate-800/50 border-slate-700 text-white h-9",
-                    !isValidPrice && exitData.exit_price && "border-rose-500"
-                  )}
+                  className="bg-slate-800/50 border-slate-700 text-white h-9"
                 />
-                {!isValidPrice && exitData.exit_price && (
-                  <p className="text-xs text-rose-400">Must be greater than 0</p>
-                )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -156,21 +139,18 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   value={exitData.exit_date}
                   onChange={(e) => setExitData({ ...exitData, exit_date: e.target.value })}
                   className="bg-slate-800/50 border-slate-700 text-white h-9"
-                  max={new Date().toISOString().split("T")[0]}
                 />
               </div>
               {position.market === "US" && (
                 <div className="space-y-1">
-                  <Label className="text-xs text-slate-400">FX Rate (GBP/USD) *</Label>
+                  <Label className="text-xs text-slate-400">FX Rate</Label>
                   <Input
                     type="number"
                     step="0.0001"
-                    min="0.0001"
                     value={exitData.exit_fx_rate}
                     onChange={(e) => setExitData({ ...exitData, exit_fx_rate: e.target.value })}
                     className="bg-slate-800/50 border-slate-700 text-white h-9"
                   />
-                  <p className="text-xs text-slate-500">From your broker statement</p>
                 </div>
               )}
             </div>
@@ -188,14 +168,12 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   <SelectItem value="Stop Loss Hit">Stop Loss Hit</SelectItem>
                   <SelectItem value="Target Reached">Target Reached</SelectItem>
                   <SelectItem value="Risk-Off Signal">Risk-Off Signal</SelectItem>
-                  <SelectItem value="Trailing Stop">Trailing Stop</SelectItem>
-                  <SelectItem value="Partial Profit Taking">Partial Profit Taking</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          {canSubmit && (
+          {exitData.exit_price && exitData.shares && (
             <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 space-y-2">
               <p className="text-xs font-semibold text-slate-300 mb-2">Exit Cost Breakdown</p>
               
@@ -208,22 +186,10 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   <span className="text-slate-400">Commission</span>
                   <span className="text-rose-400">-{currencySymbol}{commission.toFixed(2)}</span>
                 </div>
-                {position.market === "US" && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">FX Fee (0.15%)</span>
-                    <span className="text-rose-400">-{currencySymbol}{fxFee.toFixed(2)}</span>
-                  </div>
-                )}
                 <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
-                  <span className="text-slate-300">Net Proceeds ({position.market === "US" ? "USD" : "GBP"})</span>
-                  <span className="text-white">{currencySymbol}{netProceeds.toFixed(2)}</span>
+                  <span className="text-slate-300">Net Proceeds (GBP)</span>
+                  <span className="text-white">£{netProceeds.toFixed(2)}</span>
                 </div>
-                {position.market === "US" && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Net Proceeds (GBP)</span>
-                    <span className="text-white">£{netProceedsGBP.toFixed(2)}</span>
-                  </div>
-                )}
               </div>
 
               <div className="space-y-1.5 pt-2 border-t-2 border-slate-700 text-xs">
@@ -252,8 +218,8 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           </Button>
           <Button 
             onClick={handleConfirm} 
-            className="bg-rose-600 hover:bg-rose-500 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={!canSubmit}
+            className="bg-rose-600 hover:bg-rose-500 text-white"
+            disabled={!exitData.exit_price || !exitData.shares}
           >
             Confirm Exit
           </Button>
