@@ -73,8 +73,8 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] flex flex-col">
-        <DialogHeader className="flex-shrink-0">
+      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="flex-shrink-0 px-6 pt-6">
           <DialogTitle className="flex items-center gap-2 text-rose-400">
             <AlertTriangle className="w-5 h-5" />
             Exit Position
@@ -84,7 +84,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4 overflow-y-auto flex-1">
+        <div className="space-y-6 px-6 py-4 overflow-y-auto flex-1 min-h-0">
           {/* Position Info - 3 columns in a grid */}
           <div className="grid grid-cols-3 gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
             <div className="text-center">
@@ -135,7 +135,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   type="date"
                   value={exitData.exit_date}
                   onChange={(e) => setExitData({ ...exitData, exit_date: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white"
+                  className="bg-slate-800/50 border-slate-700 text-white [color-scheme:dark]"
                 />
               </div>
               {position.market === "US" && (
@@ -224,7 +224,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           )}
         </div>
 
-        <DialogFooter className="flex-shrink-0 pt-4 border-t border-slate-700">
+        <DialogFooter className="flex-shrink-0 px-6 py-4 border-t border-slate-700">
           <Button 
             variant="ghost" 
             onClick={onClose} 
