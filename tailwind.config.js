@@ -1,9 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ["class"],
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./index.html",               // ← REQUIRED for Radix portals
+    "./src/**/*.{js,jsx,ts,tsx}", // ← Your app components
   ],
-  darkMode: 'class',
   theme: {
     extend: {},
   },
