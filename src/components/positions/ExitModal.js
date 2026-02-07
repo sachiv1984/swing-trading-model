@@ -205,13 +205,13 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       exit_date: exitData.exit_date,
     };
 
-    // Only include fx_rate if it's a US position and has a valid value
+    // Only include exit_fx_rate if it's a US position and has a valid value
     if (position.market === "US") {
       if (isNaN(parsedFxRate) || parsedFxRate <= 0) {
         console.error("Invalid FX rate for US position:", exitData.exit_fx_rate);
         return;
       }
-      exitPayload.fx_rate = parsedFxRate;
+      exitPayload.exit_fx_rate = parsedFxRate;  // FIXED: Use exit_fx_rate to match backend
     }
 
     console.log("Sending exit payload:", exitPayload);
