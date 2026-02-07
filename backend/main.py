@@ -1475,8 +1475,17 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest = None
             exit_price_native = live_price
             print(f"   Exit price: {exit_price_native:.2f} (live market price)")
         
-        # Get live FX rate
-        live_fx_rate = get_live_fx_rate()
+        # FIXED: Use user-provided FX rate for US stocks
+        if position['market'] == 'US':
+            if request and request.exit_fx_rate and request.exit_fx_rate > 0:
+                exit_fx_rate = request.exit_fx_rate
+                print(f"✓ Exit FX rate: {exit_fx_rate:.4f} (user-provided from broker)")
+            else:
+                # Fallback to live rate if not provided
+                exit_fx_rate = get_live_fx_rate()
+                print(f"⚠️  Exit FX rate: {exit_fx_rate:.4f} (live - fallback, user should provide this)")
+        else:
+            exit_fx_rate = 1.0
         
         # Calculate exit proceeds
         shares = float(position['shares'])
@@ -1498,7 +1507,7 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest = None
         if market == 'UK':
             # UK: Commission only (no stamp duty on sales)
             exit_fees = uk_commission
-            print(f"   UK exit fees: £{uk_commission:.2f} commission (stamp duty only on purchase)")
+            print(f"   UK exit fees: £{uk_commission:.2f} commission")
         else:
             # US: FX fee only
             exit_fees = gross_proceeds_native * fx_fee_rate
@@ -1507,11 +1516,12 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest = None
         # Net proceeds in native currency
         net_proceeds_native = gross_proceeds_native - exit_fees
         
-        # Convert to GBP if US stock
+        # FIXED: Convert to GBP using USER-PROVIDED FX rate
         if market == 'US':
-            gross_proceeds_gbp = gross_proceeds_native / live_fx_rate
-            net_proceeds_gbp = net_proceeds_native / live_fx_rate
-            exit_fees_gbp = exit_fees / live_fx_rate
+            gross_proceeds_gbp = gross_proceeds_native / exit_fx_rate
+            net_proceeds_gbp = net_proceeds_native / exit_fx_rate
+            exit_fees_gbp = exit_fees / exit_fx_rate
+            print(f"   💱 FX conversion: ${net_proceeds_native:.2f} / {exit_fx_rate:.4f} = £{net_proceeds_gbp:.2f}")
         else:
             gross_proceeds_gbp = gross_proceeds_native
             net_proceeds_gbp = net_proceeds_native
@@ -1526,9 +1536,18 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest = None
         realized_pnl_gbp = net_proceeds_gbp - total_cost
         realized_pnl_pct = (realized_pnl_gbp / total_cost) * 100
         
-        # Calculate holding period
+        # FIXED: Calculate holding period using user-provided exit date or today
         entry_date = datetime.strptime(str(position['entry_date']), '%Y-%m-%d')
-        exit_date = datetime.now()
+        
+        if request and request.exit_date:
+            exit_date = datetime.strptime(request.exit_date, '%Y-%m-%d')
+            exit_date_str = request.exit_date
+            print(f"   📅 Exit date: {exit_date_str} (user-provided)")
+        else:
+            exit_date = datetime.now()
+            exit_date_str = exit_date.strftime('%Y-%m-%d')
+            print(f"   📅 Exit date: {exit_date_str} (today)")
+        
         holding_days = (exit_date - entry_date).days
         
         print(f"   Shares: {shares}")
@@ -1538,12 +1557,15 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest = None
         print(f"   Total cost: £{total_cost:.2f}")
         print(f"   Realized P&L: £{realized_pnl_gbp:+.2f} ({realized_pnl_pct:+.2f}%)")
         
-        # Create trade history record
+        # FIXED: Get exit reason from request
+        exit_reason = request.exit_reason if request and request.exit_reason else 'Manual Exit'
+        
+        # Create trade history record with CORRECT FX rate and date
         trade_data = {
             'ticker': position['ticker'],
             'market': market,
             'entry_date': position['entry_date'],
-            'exit_date': exit_date.strftime('%Y-%m-%d'),
+            'exit_date': exit_date_str,  # ← FIXED: Use user-provided date
             'shares': shares,
             'entry_price': entry_price,
             'exit_price': exit_price_native,
@@ -1555,33 +1577,34 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest = None
             'pnl': realized_pnl_gbp,
             'pnl_pct': realized_pnl_pct,
             'holding_days': holding_days,
-            'exit_reason': 'Manual Exit',
+            'exit_reason': exit_reason,  # ← FIXED: Use from request
             'entry_fx_rate': float(position.get('fx_rate', 1.0)),
-            'exit_fx_rate': live_fx_rate if market == 'US' else 1.0
+            'exit_fx_rate': exit_fx_rate  # ← FIXED: Use user-provided rate
         }
         
         print(f"   💾 Creating trade history record...")
+        print(f"      Exit FX rate for history: {exit_fx_rate:.4f}")
+        print(f"      Exit date for history: {exit_date_str}")
+        print(f"      Exit reason: {exit_reason}")
+        
         create_trade_history(portfolio_id, trade_data)
         print(f"   ✓ Trade history created")
         
         # Update position to closed
-        # NOTE: If exit_date, exit_price, exit_reason columns don't exist in positions table,
-        # just update status. The real data is in trade_history anyway.
         print(f"   💾 Updating position status to closed...")
         
         try:
-            # Try updating with all exit fields (requires migration to add columns)
+            # Try updating with all exit fields
             updated_position = update_position(position_id, {
                 'status': 'closed',
-                'exit_date': exit_date.strftime('%Y-%m-%d'),
+                'exit_date': exit_date_str,
                 'exit_price': exit_price_native,
-                'exit_reason': 'Manual Exit'
+                'exit_reason': exit_reason
             })
         except Exception as e:
             # If columns don't exist, just update status
             if 'exit_date' in str(e) or 'UndefinedColumn' in str(e):
                 print(f"   ⚠️  Exit columns don't exist in positions table, updating status only")
-                print(f"   ⚠️  Run migration: add_exit_columns_to_positions.sql")
                 updated_position = update_position(position_id, {
                     'status': 'closed'
                 })
@@ -1590,8 +1613,6 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest = None
         
         if updated_position:
             print(f"   ✓ Position status updated to: {updated_position.get('status', 'unknown')}")
-        else:
-            print(f"   ⚠️  Warning: update_position returned None")
         
         # Update portfolio cash
         current_cash = float(portfolio['cash'])
@@ -1612,7 +1633,9 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest = None
                 "net_proceeds": round(net_proceeds_gbp, 2),
                 "realized_pnl": round(realized_pnl_gbp, 2),
                 "realized_pnl_pct": round(realized_pnl_pct, 2),
-                "new_cash_balance": round(new_cash, 2)
+                "new_cash_balance": round(new_cash, 2),
+                "exit_fx_rate": exit_fx_rate,  # Return the FX rate used
+                "exit_date": exit_date_str     # Return the date used
             }
         }
     except HTTPException:
