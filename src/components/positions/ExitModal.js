@@ -1,22 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "../ui/dialog";
+import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogFooter,DialogDescription,} from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "../ui/select";
 import { AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
@@ -26,7 +13,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   const [exitData, setExitData] = useState({
     shares: "",
     exit_price: "",
-    exit_reason: "manual",
+    exit_reason: "Manual Exit",
     exit_fx_rate: 1,
     exit_date: new Date().toISOString().split("T")[0],
   });
@@ -36,10 +23,11 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
     if (!position) return;
     setExitData({
       shares: String(position.shares ?? ""),
+      // Use current_price_native for display (shows USD for US stocks, GBP for UK)
       exit_price: String(
         position.current_price_native ?? position.current_price ?? ""
       ),
-      exit_reason: "manual",
+      exit_reason: "Manual Exit",
       exit_fx_rate:
         position.market === "US"
           ? position.live_fx_rate ?? position.fx_rate ?? 1.27
@@ -73,12 +61,13 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   const exitShares = Number(exitData.shares) || 0;
   const exitFxRate = Number(exitData.exit_fx_rate) || 1;
 
+  // Validation logic
   const isValidShares =
     !!position && exitShares > 0 && exitShares <= Number(position.shares || 0);
   const isValidPrice = exitPrice > 0;
   const canSubmit = !!position && isValidShares && isValidPrice;
 
-  // Proceeds (trade CCY -> GBP if US)
+  // Proceeds calculation
   const grossProceeds = exitPrice * exitShares;
   const commission = position
     ? position.market === "UK"
@@ -92,13 +81,18 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       : 0;
   const totalExitFees = commission + stampDuty + fxFee;
   const netProceeds = grossProceeds - totalExitFees;
+  
+  // FX conversion fix: Divide by FX rate to convert USD to GBP
   const netProceedsGBP =
-    position && position.market === "US" ? netProceeds * exitFxRate : netProceeds;
+    position && position.market === "US" 
+      ? netProceeds / exitFxRate 
+      : netProceeds;
 
-  // Entry cost for exited shares (includes original fees if present)
+  // Entry cost calculation - includes all entry fees
+  // position.total_cost already includes: entry_price * shares + commission + stamp_duty/fx_fee
   const totalEntryCost = position
-    ? (Number(position.fees) || 0) +
-      (Number(position.entry_price) || 0) * (Number(position.shares) || 0)
+    ? Number(position.total_cost || 0) ||
+      (Number(position.entry_price || 0) * Number(position.shares || 0) + Number(position.fees || 0))
     : 0;
   const entryCostPerShare =
     position && Number(position.shares) > 0
@@ -106,7 +100,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       : 0;
   const totalEntryCostForExitShares = entryCostPerShare * exitShares;
 
-  // P&L
+  // P&L calculation - now properly accounts for all fees (entry + exit)
   const pnl = netProceedsGBP - totalEntryCostForExitShares;
   const pnlPercent =
     totalEntryCostForExitShares > 0
@@ -114,20 +108,20 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       : 0;
   const isProfit = pnl >= 0;
 
-  // Actions
+  // Actions - corrected data structure for API
   const handleConfirm = () => {
-    if (!canSubmit || !position) return;
+    if (!canSubmit || !position) {
+      console.error("Invalid exit data:", { exitShares, exitPrice, canSubmit });
+      return;
+    }
+    
     onConfirm({
-      ...position,
-      shares: exitShares,
-      exit_price: exitPrice,
+      position_id: position.id,
+      shares: exitShares, // Number, not string
+      exit_price: exitPrice, // Number, not string
       exit_reason: exitData.exit_reason,
       exit_date: exitData.exit_date,
-      pnl: pnl,
-      pnl_percent: pnlPercent,
-      status: "closed",
-      exit_fx_rate: exitFxRate,
-      exit_fees: totalExitFees,
+      fx_rate: position.market === "US" ? exitFxRate : undefined,
     });
   };
 
@@ -218,7 +212,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   </div>
                   {position.market === "US" ? (
                     <div className="space-y-1">
-                      <Label className="text-xs text-slate-400">FX Rate</Label>
+                      <Label className="text-xs text-slate-400">FX Rate (GBP/USD)</Label>
                       <Input
                         type="number"
                         step="0.0001"
@@ -247,10 +241,12 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-800 border-slate-700">
-                      <SelectItem value="manual">Manual Exit</SelectItem>
-                      <SelectItem value="stop_hit">Stop Hit</SelectItem>
-                      <SelectItem value="target">Target Reached</SelectItem>
-                      <SelectItem value="market_regime">Market Regime</SelectItem>
+                      <SelectItem value="Manual Exit">Manual Exit</SelectItem>
+                      <SelectItem value="Stop Loss Hit">Stop Loss Hit</SelectItem>
+                      <SelectItem value="Target Reached">Target Reached</SelectItem>
+                      <SelectItem value="Risk-Off Signal">Risk-Off Signal</SelectItem>
+                      <SelectItem value="Trailing Stop">Trailing Stop</SelectItem>
+                      <SelectItem value="Partial Profit Taking">Partial Profit Taking</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -288,11 +284,9 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       </div>
                     ) : null}
                     <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
-                      <span className="text-slate-300">Net Proceeds</span>
+                      <span className="text-slate-300">Net Proceeds (GBP)</span>
                       <span className="text-white">
-                        {position.market === "US"
-                          ? `£${netProceedsGBP.toFixed(2)}`
-                          : `£${netProceeds.toFixed(2)}`}
+                        £{netProceedsGBP.toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -306,7 +300,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     </div>
                     <div className="flex justify-between font-bold pt-1.5 border-t border-slate-700">
                       <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>
-                        P&amp;L
+                        Realized P&L
                       </span>
                       <span className={isProfit ? "text-emerald-400" : "text-rose-400"}>
                         {isProfit ? "+" : ""}
