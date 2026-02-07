@@ -957,6 +957,173 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/portfolio/position")
+def add_position_endpoint(request: AddPositionRequest):
+    """Add a new position to the portfolio"""
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        portfolio_id = str(portfolio['id'])
+        
+        print(f"\n📝 Adding new position: {request.ticker}")
+        
+        # Validate market
+        if request.market not in ['US', 'UK']:
+            raise HTTPException(status_code=400, detail="Market must be 'US' or 'UK'")
+        
+        # Auto-detect market from ticker if not provided correctly
+        if request.ticker.endswith('.L') and request.market == 'US':
+            request.market = 'UK'
+            print(f"   Auto-detected UK market from .L suffix")
+        
+        # Add .L suffix for UK stocks if missing
+        ticker = request.ticker
+        if request.market == 'UK' and not ticker.endswith('.L'):
+            ticker = f"{ticker}.L"
+            print(f"   Added .L suffix: {ticker}")
+        
+        # Get settings for fees
+        settings_list = get_settings()
+        settings = settings_list[0] if settings_list else None
+        
+        uk_commission = float(settings.get('uk_commission', 9.95)) if settings else 9.95
+        us_commission = float(settings.get('us_commission', 0.00)) if settings else 0.00
+        stamp_duty_rate = float(settings.get('stamp_duty_rate', 0.005)) if settings else 0.005
+        fx_fee_rate = float(settings.get('fx_fee_rate', 0.0015)) if settings else 0.0015
+        
+        # Calculate entry details
+        shares = request.shares
+        entry_price_native = request.entry_price  # In native currency (USD or GBP)
+        
+        # Get or validate FX rate for US stocks
+        if request.market == 'US':
+            if request.fx_rate and request.fx_rate > 0:
+                fx_rate = request.fx_rate
+                print(f"   Using provided FX rate: {fx_rate:.4f}")
+            else:
+                # Fetch live FX rate if not provided
+                fx_rate = get_live_fx_rate()
+                print(f"   Using live FX rate: {fx_rate:.4f}")
+        else:
+            fx_rate = 1.0
+        
+        # Calculate gross cost in native currency
+        gross_cost_native = entry_price_native * shares
+        
+        # Calculate fees in native currency
+        if request.market == 'UK':
+            # UK: Commission + Stamp Duty
+            commission = uk_commission
+            stamp_duty = gross_cost_native * stamp_duty_rate
+            fx_fee = 0
+            total_fees_native = commission + stamp_duty
+            fee_type = 'stamp_duty'
+            print(f"   UK fees: £{commission:.2f} commission + £{stamp_duty:.2f} stamp duty = £{total_fees_native:.2f}")
+        else:
+            # US: FX fee only
+            commission = us_commission
+            stamp_duty = 0
+            fx_fee = gross_cost_native * fx_fee_rate
+            total_fees_native = fx_fee
+            fee_type = 'fx_fee'
+            print(f"   US fees: ${fx_fee:.2f} FX fee")
+        
+        # Total cost in native currency
+        total_cost_native = gross_cost_native + total_fees_native
+        
+        # Convert to GBP for portfolio tracking
+        if request.market == 'US':
+            entry_price_gbp = entry_price_native / fx_rate
+            total_cost_gbp = total_cost_native / fx_rate
+            fees_paid_gbp = total_fees_native / fx_rate
+            print(f"   💱 Total cost: ${total_cost_native:.2f} / {fx_rate:.4f} = £{total_cost_gbp:.2f}")
+        else:
+            entry_price_gbp = entry_price_native
+            total_cost_gbp = total_cost_native
+            fees_paid_gbp = total_fees_native
+        
+        # Check if enough cash
+        current_cash = float(portfolio['cash'])
+        if total_cost_gbp > current_cash:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Insufficient funds. Need £{total_cost_gbp:.2f}, have £{current_cash:.2f}"
+            )
+        
+        # Get or calculate ATR
+        atr_value = request.atr_value
+        if not atr_value or atr_value == 0:
+            print(f"   Calculating ATR for {ticker}...")
+            atr_value = calculate_atr(ticker)
+            if not atr_value:
+                # Use default 2% of entry price if can't calculate
+                atr_value = entry_price_native * 0.02
+                print(f"   ⚠️  Using default ATR (2% of entry): {atr_value:.2f}")
+        
+        # Calculate initial stop (wide 5x ATR for new positions)
+        initial_stop_native = entry_price_native - (5 * atr_value)
+        
+        print(f"   Entry price: {entry_price_native:.2f}")
+        print(f"   ATR: {atr_value:.2f}")
+        print(f"   Initial stop: {initial_stop_native:.2f}")
+        
+        # Create position record
+        position_data = {
+            'ticker': ticker,
+            'market': request.market,
+            'entry_date': request.entry_date,
+            'entry_price': entry_price_gbp,  # GBP for portfolio
+            'fill_price': entry_price_native,  # Native for display
+            'fill_currency': 'USD' if request.market == 'US' else 'GBP',
+            'fx_rate': fx_rate,
+            'shares': shares,
+            'total_cost': total_cost_gbp,
+            'fees_paid': fees_paid_gbp,
+            'fee_type': fee_type,
+            'initial_stop': initial_stop_native,  # Native currency
+            'current_stop': initial_stop_native,  # Native currency
+            'current_price': entry_price_native,  # Native currency
+            'atr': atr_value,
+            'holding_days': 0,
+            'pnl': 0,
+            'pnl_pct': 0,
+            'status': 'open'
+        }
+        
+        # Create position in database
+        new_position = create_position(portfolio_id, position_data)
+        
+        # Update portfolio cash
+        new_cash = current_cash - total_cost_gbp
+        update_portfolio_cash(portfolio_id, new_cash)
+        
+        print(f"   ✓ Position created")
+        print(f"   Cash: £{current_cash:.2f} → £{new_cash:.2f}\n")
+        
+        # Return response
+        display_ticker = ticker.replace('.L', '') if request.market == 'UK' else ticker
+        
+        return {
+            "status": "ok",
+            "data": {
+                "ticker": display_ticker,
+                "total_cost": round(total_cost_gbp, 2),
+                "fees_paid": round(fees_paid_gbp, 2),
+                "entry_price": round(entry_price_native, 2),
+                "initial_stop": round(initial_stop_native, 2),
+                "remaining_cash": round(new_cash, 2),
+                "position_id": str(new_position['id'])
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/positions/analyze")
 def analyze_positions_endpoint():
