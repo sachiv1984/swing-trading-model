@@ -108,21 +108,54 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       : 0;
   const isProfit = pnl >= 0;
 
-  // Actions - corrected data structure for API
+  // Actions - FIX: Ensure proper number conversion and validation
   const handleConfirm = () => {
     if (!canSubmit || !position) {
-      console.error("Invalid exit data:", { exitShares, exitPrice, canSubmit });
+      console.error("Invalid exit data:", { 
+        exitShares, 
+        exitPrice, 
+        canSubmit,
+        exitData 
+      });
       return;
     }
     
-    onConfirm({
+    // Parse and validate numbers explicitly
+    const parsedShares = parseFloat(exitData.shares);
+    const parsedPrice = parseFloat(exitData.exit_price);
+    const parsedFxRate = parseFloat(exitData.exit_fx_rate);
+    
+    // Double check validation
+    if (isNaN(parsedShares) || parsedShares <= 0) {
+      console.error("Invalid shares:", exitData.shares);
+      return;
+    }
+    
+    if (isNaN(parsedPrice) || parsedPrice <= 0) {
+      console.error("Invalid price:", exitData.exit_price);
+      return;
+    }
+    
+    // Build payload
+    const exitPayload = {
       position_id: position.id,
-      shares: exitShares, // Number, not string
-      exit_price: exitPrice, // Number, not string
+      shares: parsedShares,
+      exit_price: parsedPrice,
       exit_reason: exitData.exit_reason,
       exit_date: exitData.exit_date,
-      fx_rate: position.market === "US" ? exitFxRate : undefined,
-    });
+    };
+
+    // Only include fx_rate if it's a US position and has a valid value
+    if (position.market === "US") {
+      if (isNaN(parsedFxRate) || parsedFxRate <= 0) {
+        console.error("Invalid FX rate for US position:", exitData.exit_fx_rate);
+        return;
+      }
+      exitPayload.fx_rate = parsedFxRate;
+    }
+
+    console.log("Sending exit payload:", exitPayload);
+    onConfirm(exitPayload);
   };
 
   return (
@@ -175,12 +208,19 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     <Input
                       type="number"
                       step="0.01"
+                      min="0.01"
+                      max={position.shares}
                       value={exitData.shares}
                       onChange={(e) =>
                         setExitData({ ...exitData, shares: e.target.value })
                       }
                       className="bg-slate-800/50 border-slate-700 text-white h-9"
                     />
+                    {!isValidShares && exitData.shares && (
+                      <p className="text-xs text-rose-400 mt-1">
+                        Must be between 0.01 and {position.shares}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs text-slate-400">
@@ -189,12 +229,18 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     <Input
                       type="number"
                       step="0.01"
+                      min="0.01"
                       value={exitData.exit_price}
                       onChange={(e) =>
                         setExitData({ ...exitData, exit_price: e.target.value })
                       }
                       className="bg-slate-800/50 border-slate-700 text-white h-9"
                     />
+                    {!isValidPrice && exitData.exit_price && (
+                      <p className="text-xs text-rose-400 mt-1">
+                        Price must be greater than 0
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -216,6 +262,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       <Input
                         type="number"
                         step="0.0001"
+                        min="0.0001"
                         value={exitData.exit_fx_rate}
                         onChange={(e) =>
                           setExitData({
