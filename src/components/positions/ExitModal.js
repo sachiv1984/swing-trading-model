@@ -102,19 +102,52 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
     netProceedsGBP = netProceeds; // Already in GBP
   }
 
-  // === ENTRY COST CALCULATION - FIXED ===
+  // === ENTRY COST CALCULATION - FIXED FOR MISSING total_cost ===
   
-  // CRITICAL: position.total_cost is the TOTAL cost for ALL shares
-  // We need to calculate the cost for just the shares being exited
+  // CRITICAL: position object doesn't have total_cost field!
+  // We need to calculate it from entry_price and shares
   
-  const totalPositionCost = position ? Number(position.total_cost || 0) : 0;
+  let totalPositionCost = 0;
+  
+  if (position) {
+    if (position.total_cost !== undefined) {
+      // If total_cost exists, use it
+      totalPositionCost = Number(position.total_cost);
+    } else {
+      // Calculate entry cost from entry_price, shares, and fees
+      const entryPrice = Number(position.entry_price || 0); // In native currency
+      const shares = Number(position.shares || 0);
+      const entryFxRate = Number(position.fx_rate || 1);
+      
+      if (position.market === "US") {
+        // US Stock: entry_price is in USD, need to convert to GBP
+        const grossCostUSD = entryPrice * shares;
+        const entryCommission = Number(settingsData.us_commission || 0);
+        const entryFxFee = grossCostUSD * Number(settingsData.fx_fee_rate || 0.0015);
+        const totalCostUSD = grossCostUSD + entryCommission + entryFxFee;
+        
+        // Convert to GBP using ENTRY fx_rate
+        totalPositionCost = totalCostUSD / entryFxRate;
+      } else {
+        // UK Stock: entry_price is in GBP
+        const grossCostGBP = entryPrice * shares;
+        const entryCommission = Number(settingsData.uk_commission || 0);
+        const stampDuty = grossCostGBP * Number(settingsData.stamp_duty_rate || 0.005);
+        totalPositionCost = grossCostGBP + entryCommission + stampDuty;
+      }
+    }
+  }
+  
   const totalPositionShares = position ? Number(position.shares || 0) : 0;
   
   console.log('Entry cost calculation:', {
     totalPositionCost,
     totalPositionShares,
     exitShares,
-    position
+    entryPrice: position?.entry_price,
+    entryFxRate: position?.fx_rate,
+    market: position?.market,
+    calculatedFromFields: !position?.total_cost
   });
   
   // Calculate cost per share (this includes all entry fees distributed across shares)
