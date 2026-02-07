@@ -36,10 +36,19 @@ export default function Positions() {
     },
   });
 
-  // NEW: Separate mutation for exits - calls the backend exit endpoint
+  // FIXED: Exit mutation now accepts exitData directly from ExitModal
   const exitMutation = useMutation({
-    mutationFn: ({ id, exitData }) => base44.entities.Position.exit(id, exitData),
-    onSuccess: () => {
+    mutationFn: (exitData) => {
+      // exitData from ExitModal contains:
+      // { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
+      console.log('Exit mutation received:', exitData);
+      
+      // Pass the entire exitData object - the fixed base44Client will handle it
+      return base44.entities.Position.exit(exitData);
+    },
+    onSuccess: (data) => {
+      console.log('Exit successful:', data);
+      
       // More aggressive cache invalidation
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       queryClient.invalidateQueries({ queryKey: ["portfolio"] });
@@ -67,20 +76,30 @@ export default function Positions() {
     });
   };
 
+  // FIXED: handleExit now just passes exitData through to mutation
   const handleExit = (exitData) => {
-    // exitData contains: position, exit_price, exit_reason from ExitModal
-    // Extract the exit parameters
-    const { id, exit_price, exit_reason } = exitData;
+    // exitData from ExitModal already has everything:
+    // { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
+    console.log('handleExit called with:', exitData);
     
-    const requestData = {
-      exit_price: parseFloat(exit_price) || null,
-      exit_reason: exit_reason || 'Manual Exit'
-    };
+    // Validate required fields before sending
+    if (!exitData.position_id) {
+      alert('Invalid position data');
+      return;
+    }
     
-    console.log('Exiting position:', id, 'with data:', requestData);
+    if (!exitData.shares || exitData.shares <= 0) {
+      alert('Invalid number of shares');
+      return;
+    }
     
-    // Call the exit endpoint with the user-provided data
-    exitMutation.mutate({ id, exitData: requestData });
+    if (!exitData.exit_price || exitData.exit_price <= 0) {
+      alert('Invalid exit price');
+      return;
+    }
+    
+    // Pass the complete exitData object to mutation
+    exitMutation.mutate(exitData);
   };
 
   const openPositions = positions || [];
