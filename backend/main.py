@@ -506,12 +506,12 @@ def get_positions_endpoint():
                 "ticker": display_ticker,
                 "market": pos['market'],
                 "entry_date": str(pos['entry_date']),
-                "entry_price": round(entry_price_display, 2),  # Native currency for display
+                "entry_price": round(entry_price_display, 2),
                 "shares": pos['shares'],
-                "current_price": round(current_price_gbp, 2),  # GBP for Dashboard
-                "current_price_native": round(current_price_native, 2),  # Native for display
-                "stop_price": round(stop_price_gbp, 2),  # GBP (0 during grace)
-                "stop_price_native": round(stop_price_native, 2),  # Native (0 during grace) - STABLE!
+                "current_price": round(current_price_gbp, 2),
+                "current_price_native": round(current_price_native, 2),
+                "stop_price": round(stop_price_gbp, 2),
+                "stop_price_native": round(stop_price_native, 2),
                 "pnl": round(pnl_gbp, 2),
                 "pnl_percent": round(pnl_pct, 2),
                 "holding_days": holding_days,
@@ -522,7 +522,8 @@ def get_positions_endpoint():
                 "stop_reason": f"Grace period ({holding_days}/10 days)" if grace_period else "Active",
                 "atr_value": pos.get('atr', 0),
                 "fx_rate": pos.get('fx_rate', 1.0),
-                "live_fx_rate": live_fx_rate
+                "live_fx_rate": live_fx_rate,
+                "total_cost": round(pos.get('total_cost', 0), 2) 
             })
         
         print(f"✓ Returned {len(positions_list)} positions with live prices\n")
@@ -628,7 +629,7 @@ def get_portfolio_endpoint():
             else:
                 display_status = "LOSING"
             
-            positions_list.append({
+            ({
                 "id": str(pos['id']),
                 "ticker": pos['ticker'],
                 "market": market,
