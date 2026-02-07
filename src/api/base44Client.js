@@ -245,7 +245,7 @@ export const base44 = {
           const fxRateValue = requestData.fx_rate || requestData.exit_fx_rate;
           const fxRate = parseFloat(fxRateValue);
           if (!isNaN(fxRate) && fxRate > 0) {
-            requestBody.fx_rate = fxRate;
+            requestBody.exit_fx_rate = fxRate;  // FIXED: Use exit_fx_rate to match backend
           }
         }
         
