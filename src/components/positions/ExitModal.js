@@ -67,40 +67,59 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
   const isValidPrice = exitPrice > 0;
   const canSubmit = !!position && isValidShares && isValidPrice;
 
-  // Proceeds calculation
-  const grossProceeds = exitPrice * exitShares;
-  const commission = position
-    ? position.market === "UK"
-      ? Number(settingsData.uk_commission || 0)
-      : Number(settingsData.us_commission || 0)
-    : 0;
-  const stampDuty = 0; // no stamp duty on sales
-  const fxFee =
-    position && position.market === "US"
-      ? grossProceeds * Number(settingsData.fx_fee_rate || 0)
-      : 0;
-  const totalExitFees = commission + stampDuty + fxFee;
-  const netProceeds = grossProceeds - totalExitFees;
+  // === EXIT PROCEEDS CALCULATION ===
   
-  // FX conversion fix: Divide by FX rate to convert USD to GBP
-  const netProceedsGBP =
-    position && position.market === "US" 
-      ? netProceeds / exitFxRate 
-      : netProceeds;
+  // For US stocks: Calculate in USD first, then convert to GBP
+  // For UK stocks: Calculate directly in GBP
+  let grossProceeds, commission, fxFee, netProceeds, netProceedsGBP;
+  
+  if (position && position.market === "US") {
+    // US Stock Exit Calculation
+    // 1. Calculate gross proceeds in USD
+    grossProceeds = exitPrice * exitShares; // USD
+    
+    // 2. Commission (usually $0 for US stocks)
+    commission = Number(settingsData.us_commission || 0); // USD
+    
+    // 3. FX Fee: 0.15% of gross proceeds in USD
+    fxFee = grossProceeds * Number(settingsData.fx_fee_rate || 0.0015); // USD
+    
+    // 4. Net proceeds in USD
+    const netProceedsUSD = grossProceeds - commission - fxFee; // USD
+    
+    // 5. Convert to GBP using user's FX rate
+    netProceedsGBP = netProceedsUSD / exitFxRate; // GBP
+    
+    // For display purposes
+    netProceeds = netProceedsUSD; // Keep USD for breakdown display
+    
+  } else if (position) {
+    // UK Stock Exit Calculation
+    grossProceeds = exitPrice * exitShares; // GBP
+    commission = Number(settingsData.uk_commission || 0); // GBP
+    fxFee = 0; // No FX fee for UK stocks
+    netProceeds = grossProceeds - commission; // GBP
+    netProceedsGBP = netProceeds; // Already in GBP
+  }
 
-  // Entry cost calculation - includes all entry fees
-  // position.total_cost already includes: entry_price * shares + commission + stamp_duty/fx_fee
-  const totalEntryCost = position
-    ? Number(position.total_cost || 0) ||
-      (Number(position.entry_price || 0) * Number(position.shares || 0) + Number(position.fees || 0))
-    : 0;
+  // === ENTRY COST CALCULATION ===
+  
+  // CRITICAL FIX: Use total_cost directly from position
+  // This already includes ALL entry fees (commission + stamp duty/fx fee)
+  const totalEntryCost = position ? Number(position.total_cost || 0) : 0;
+  
+  // Calculate the cost per share (including entry fees)
   const entryCostPerShare =
     position && Number(position.shares) > 0
       ? totalEntryCost / Number(position.shares)
       : 0;
+  
+  // Calculate entry cost for the shares being exited
   const totalEntryCostForExitShares = entryCostPerShare * exitShares;
 
-  // P&L calculation - now properly accounts for all fees (entry + exit)
+  // === P&L CALCULATION ===
+  
+  // P&L = Net Proceeds (GBP) - Entry Cost (GBP)
   const pnl = netProceedsGBP - totalEntryCostForExitShares;
   const pnlPercent =
     totalEntryCostForExitShares > 0
@@ -308,28 +327,51 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Gross Value</span>
+                      <span className="text-slate-400">
+                        Gross Value {position.market === "US" ? "(USD)" : ""}
+                      </span>
                       <span className="text-white">
                         {currencySymbol}
                         {grossProceeds.toFixed(2)}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Commission</span>
-                      <span className="text-rose-400">
-                        -{currencySymbol}
-                        {commission.toFixed(2)}
-                      </span>
-                    </div>
-                    {position.market === "US" ? (
+                    {commission > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-slate-400">FX Fee</span>
+                        <span className="text-slate-400">Commission</span>
                         <span className="text-rose-400">
                           -{currencySymbol}
-                          {fxFee.toFixed(2)}
+                          {commission.toFixed(2)}
                         </span>
                       </div>
-                    ) : null}
+                    )}
+                    {position.market === "US" && fxFee > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">FX Fee (0.15%)</span>
+                        <span className="text-rose-400">
+                          ${fxFee.toFixed(2)}
+                        </span>
+                      </div>
+                    )}
+                    {position.market === "US" && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">
+                          Net Proceeds (USD)
+                        </span>
+                        <span className="text-white">
+                          ${netProceeds.toFixed(2)}
+                        </span>
+                      </div>
+                    )}
+                    {position.market === "US" && (
+                      <div className="flex justify-between text-xs opacity-75">
+                        <span className="text-slate-400">
+                          @ {exitFxRate.toFixed(4)}
+                        </span>
+                        <span className="text-slate-400">
+                          ÷ {exitFxRate.toFixed(4)} = GBP
+                        </span>
+                      </div>
+                    )}
                     <div className="flex justify-between pt-1.5 border-t border-slate-700 font-medium">
                       <span className="text-slate-300">Net Proceeds (GBP)</span>
                       <span className="text-white">
@@ -340,7 +382,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
                   <div className="space-y-1.5 pt-2 border-t-2 border-slate-700 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Entry Cost</span>
+                      <span className="text-slate-400">Entry Cost (incl. fees)</span>
                       <span className="text-white">
                         £{totalEntryCostForExitShares.toFixed(2)}
                       </span>
