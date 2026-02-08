@@ -1,9 +1,309 @@
 # Implementation Notes - Recent Features
 
-**Document Version:** 1.1  
-**Last Updated:** February 1, 2026
+**Document Version:** 1.2  
+**Last Updated:** February 8, 2026
 
 This document provides technical implementation details for features added after the initial MVP.
+
+---
+
+## Partial Exit & Exit Flexibility (v1.2)
+
+**Implemented:** February 7, 2026  
+**Status:** ✅ Complete
+
+### Overview
+Complete exit flexibility with partial exits, custom dates, user-provided prices and FX rates. This enables accurate P&L reconciliation with broker statements and flexible position management.
+
+### Key Features
+
+#### 1. Partial Exit
+- Specify number of shares to exit
+- Position remains open with reduced shares
+- Cost basis proportionally reduced
+- Stops remain unchanged
+- Example: Exit 2.5 of 5.5 shares → 3 shares remain open
+
+#### 2. User-Provided Exit Price (CRITICAL)
+- **REQUIRED** field (no longer fetches live price)
+- User enters actual broker execution price
+- Ensures P&L matches broker statement exactly
+- Accounts for slippage, execution quality
+- For US stocks: user enters price in USD (their trading currency)
+- For UK stocks: user enters price in GBP
+
+**Why this matters:**
+- Live market price ≠ actual execution price
+- Slippage can be significant (±0.5%)
+- Reconciliation requires exact broker prices
+- Trust: user sees exact fees/proceeds before confirmation
+
+#### 3. User-Provided FX Rate (CRITICAL for US stocks)
+- **REQUIRED** for US stock exits
+- User enters GBP/USD rate from broker statement
+- Ensures cash conversion matches broker exactly
+- Prevents discrepancies from live FX rate differences
+- Typical variance: 0.1-0.3% between live rate and broker rate
+
+**Why this matters:**
+```
+Example: Exit $1,000 position
+Live FX rate: 1.3650
+Broker FX rate: 1.3611 (0.29% difference)
+Cash difference: £732.60 vs £735.02 = £2.42 discrepancy
+
+Over 50 trades: ~£120 cumulative error!
+```
+
+#### 4. Custom Exit Date
+- Optional field (defaults to today)
+- Allows backdating for reconciliation
+- Format: YYYY-MM-DD
+- Holding days calculated from entry to exit date
+- Use case: Position exited in broker, now recording in app
+
+#### 5. Exit Reason Selection
+- Dropdown with predefined options
+- Tracked in trade history for analysis
+- Options:
+  - Manual Exit (default)
+  - Stop Loss Hit
+  - Target Reached
+  - Risk-Off Signal
+  - Trailing Stop
+  - Partial Profit Taking
+
+### Backend Implementation
+
+**File:** `backend/main.py` lines 737-930
+
+**Request Model:**
+```python
+class ExitPositionRequest(BaseModel):
+    shares: Optional[float] = None  # None = all shares
+    exit_price: float  # REQUIRED
+    exit_date: Optional[str] = None  # YYYY-MM-DD
+    exit_reason: Optional[str] = None
+    exit_fx_rate: Optional[float] = None  # REQUIRED for US stocks
+```
+
+**Key Logic Changes:**
+
+1. **FX Rate Validation (lines 752-761):**
+```python
+if position['market'] == 'US':
+    if request.exit_fx_rate and request.exit_fx_rate > 0:
+        exit_fx_rate = request.exit_fx_rate
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="FX rate is required for US stock exits. Please provide the GBP/USD rate from your broker statement."
+        )
+else:
+    exit_fx_rate = 1.0
+```
+
+2. **Proportional Cost Calculation (lines 812-820):**
+```python
+total_cost = float(position['total_cost'])
+cost_per_share = total_cost / total_shares
+exit_total_cost = cost_per_share * exit_shares
+
+entry_fees = float(position.get('fees_paid', 0))
+entry_fees_per_share = entry_fees / total_shares
+exit_entry_fees = entry_fees_per_share * exit_shares
+```
+
+3. **GBP Conversion with User FX Rate (lines 800-805):**
+```python
+if market == 'US':
+    gross_proceeds_gbp = gross_proceeds_native / exit_fx_rate
+    net_proceeds_gbp = net_proceeds_native / exit_fx_rate
+    exit_fees_gbp = exit_fees_native / exit_fx_rate
+else:
+    gross_proceeds_gbp = gross_proceeds_native
+    net_proceeds_gbp = net_proceeds_native
+```
+
+4. **Exit Date Handling (lines 827-836):**
+```python
+if request.exit_date:
+    exit_date = datetime.strptime(request.exit_date, '%Y-%m-%d')
+    exit_date_str = request.exit_date
+else:
+    exit_date = datetime.now()
+    exit_date_str = exit_date.strftime('%Y-%m-%d')
+
+holding_days = (exit_date - entry_date).days
+```
+
+5. **Partial vs Full Exit (lines 880-917):**
+```python
+is_partial_exit = exit_shares < total_shares
+
+if is_partial_exit:
+    remaining_shares = total_shares - exit_shares
+    remaining_cost = total_cost - exit_total_cost
+    
+    updated_position = update_position(position_id, {
+        'shares': remaining_shares,
+        'total_cost': remaining_cost,
+        'fees_paid': entry_fees - exit_entry_fees
+    })
+else:
+    updated_position = update_position(position_id, {
+        'status': 'closed',
+        'exit_date': exit_date_str,
+        'exit_price': exit_price_native,
+        'exit_reason': exit_reason
+    })
+```
+
+### Frontend Requirements
+
+**ExitModal Component Must:**
+
+1. **Validate inputs:**
+   - `exit_price > 0` (required)
+   - `shares > 0 and shares <= position.shares`
+   - `exit_fx_rate > 0` (required for US stocks only)
+   - `exit_date` format YYYY-MM-DD, not before entry_date
+
+2. **Display real-time preview:**
+   - Entry cost calculation (from `position.total_cost`)
+   - Exit proceeds calculation
+   - Fee breakdown (commission, FX fee)
+   - Net proceeds in GBP (show FX conversion)
+   - Realized P&L preview
+   - All calculations in native currency for clarity
+
+3. **Pre-fill sensible defaults:**
+   - Shares: all shares
+   - Exit price: current_price_native
+   - Exit date: today
+   - Exit reason: "Manual Exit"
+   - FX rate: live_fx_rate (user should verify against broker)
+
+4. **Show clear labels:**
+   - US stock: "Exit price (USD)", "GBP/USD rate from broker"
+   - UK stock: "Exit price (GBP)"
+
+### API Endpoint
+
+**POST /positions/{position_id}/exit**
+
+**Request:**
+```json
+{
+  "shares": 5.5,
+  "exit_price": 242.67,
+  "exit_date": "2026-02-07",
+  "exit_reason": "Stop Loss Hit",
+  "exit_fx_rate": 1.3611
+}
+```
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "ticker": "WDC",
+    "market": "US",
+    "exit_price": 242.67,
+    "shares": 5.5,
+    "gross_proceeds": 980.59,
+    "exit_fees": 1.47,
+    "fee_breakdown": {
+      "commission": 0,
+      "stamp_duty": 0,
+      "fx_fee": 2.00
+    },
+    "net_proceeds": 979.12,
+    "realized_pnl": -10.29,
+    "realized_pnl_pct": -1.04,
+    "new_cash_balance": 4153.35,
+    "exit_fx_rate": 1.3611,
+    "exit_date": "2026-02-07",
+    "is_partial_exit": false,
+    "remaining_shares": 0
+  }
+}
+```
+
+### Database Impact
+
+**No schema changes required!**
+
+All fields already existed in schema:
+- `positions.shares` (DECIMAL - supports fractional)
+- `positions.exit_date` (DATE)
+- `positions.exit_price` (DECIMAL)
+- `positions.exit_reason` (VARCHAR)
+- `trade_history.exit_fx_rate` (DECIMAL)
+
+### Example Usage
+
+**Full Exit:**
+```javascript
+const exitPayload = {
+  position_id: "f9516f4e-698d-43ec-8dde-c55ef7496657",
+  shares: null,  // null = all shares
+  exit_price: 242.67,
+  exit_date: "2026-02-07",
+  exit_reason: "Stop Loss Hit",
+  exit_fx_rate: 1.3611  // Required for US stocks
+};
+```
+
+**Partial Exit:**
+```javascript
+const exitPayload = {
+  position_id: "f9516f4e-698d-43ec-8dde-c55ef7496657",
+  shares: 2.5,  // Exit 2.5 of 5.5 shares
+  exit_price: 250.00,
+  exit_date: "2026-02-07",
+  exit_reason: "Partial Profit Taking",
+  exit_fx_rate: 1.3611
+};
+```
+
+### Testing Checklist
+
+- [x] Full exit US stock with user FX rate
+- [x] Full exit UK stock (no FX rate needed)
+- [x] Partial exit (2.5 of 5.5 shares)
+- [x] Custom exit date (backdated)
+- [x] All exit reasons from dropdown
+- [x] Validation: missing FX rate for US stock
+- [x] Validation: shares > position total
+- [x] Validation: exit_price = 0
+- [x] P&L matches ExitModal preview
+- [x] Trade history shows correct FX rate
+- [x] Remaining shares calculated correctly
+- [x] Cost basis proportionally reduced
+
+### Common Issues & Solutions
+
+**Issue:** P&L doesn't match broker statement  
+**Solution:** User must enter exact broker execution price and FX rate
+
+**Issue:** FX rate validation error  
+**Solution:** Ensure exit_fx_rate is provided for US stocks (check market field)
+
+**Issue:** Partial exit leaves wrong shares  
+**Solution:** Verify shares calculation: remaining = total - exited
+
+**Issue:** Exit date validation fails  
+**Solution:** Ensure exit_date >= entry_date format
+
+### Migration Notes
+
+**Breaking Change from v1.1:**
+- Previously: Backend fetched live price (optional user override)
+- Now: User MUST provide exit price (required field)
+- Frontend must be updated to always provide exit_price
+- Old API calls without exit_price will fail with 400 error
 
 ---
 
@@ -407,6 +707,12 @@ This accounts for everything:
 - Show current balance in error
 - Validate before API call when possible
 
+### 6. User-Provided Data for Reconciliation (v1.2)
+- Exit price from broker (not live price)
+- FX rate from broker (not live rate)
+- Allows exact reconciliation
+- Small differences compound over time
+
 ---
 
 ## Migration Checklist
@@ -414,17 +720,17 @@ This accounts for everything:
 When deploying these features:
 
 ### Backend
-- [ ] Run database migrations
+- [ ] Run database migrations (if needed)
 - [ ] Add cash transaction functions to database.py
 - [ ] Deploy updated main.py
 - [ ] Test all endpoints with curl
 
 ### Frontend  
 - [ ] Install Radix UI dependencies
-- [ ] Create cash modal component
-- [ ] Update Dashboard.js
-- [ ] Update StatsWidgets.js
-- [ ] Test cash modal interaction
+- [ ] Create/update ExitModal with all fields
+- [ ] Update Positions.js to pass position_id
+- [ ] Test exit modal with US and UK stocks
+- [ ] Verify FX rate validation
 
 ### Data Setup
 - [ ] Record initial deposit transaction
@@ -436,7 +742,8 @@ When deploying these features:
 - [ ] Check portfolio P&L matches expected
 - [ ] Verify cash transactions appear
 - [ ] Confirm charts show data
-- [ ] Test deposit/withdrawal flows
+- [ ] Test full and partial exits
+- [ ] Verify trade history records correct FX rate
 
 ---
 
@@ -457,6 +764,12 @@ When deploying these features:
 ### Issue: USD stocks showing GBP prices
 **Solution:** Use `current_price_native` for display, not `current_price`
 
+### Issue: Exit validation fails (v1.2)
+**Solution:** Check exit_fx_rate is provided for US stocks, verify parameter name is `exit_fx_rate` not `fx_rate`
+
+### Issue: Trade history shows wrong FX rate (v1.2)
+**Solution:** Run SQL fix script to update existing trades with correct broker FX rates
+
 ---
 
 ## Future Considerations
@@ -464,6 +777,7 @@ When deploying these features:
 ### When Adding Trade Journal
 - Add `entry_note` and `exit_note` to positions table
 - Update position entry form
+- Update exit modal
 - Create notes display component
 
 ### When Adding Alerts
@@ -481,4 +795,6 @@ When deploying these features:
 ---
 
 **Document maintained by:** Development Team  
-**Review frequency:** After each feature release
+**Review frequency:** After each feature release  
+**Version:** 1.2  
+**Last Updated:** February 8, 2026
