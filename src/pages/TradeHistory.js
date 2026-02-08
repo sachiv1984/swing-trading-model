@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
+import { api } from "../api/base44Client";
 import { Loader2, Filter, TrendingUp, TrendingDown, Calendar } from "lucide-react";
-import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Input } from "../components/ui/input";
 import PageHeader from "../components/ui/PageHeader";
@@ -20,14 +19,13 @@ export default function TradeHistory() {
     dateTo: "",
   });
 
-  const { data: closedPositions, isLoading } = useQuery({
-    queryKey: ["positions", "closed"],
-    queryFn: () => base44.entities.Position.filter({ status: "closed" }, "-exit_date"),
+  const { data: tradesData, isLoading } = useQuery({
+    queryKey: ["trades"],
+    queryFn: () => api.trades.list(),
   });
 
-  const trades = closedPositions || [];
+  const trades = tradesData?.trades || [];
 
-  // Apply filters
   const filteredTrades = trades.filter((trade) => {
     if (filters.market !== "all" && trade.market !== filters.market) return false;
     if (filters.result === "win" && trade.pnl < 0) return false;
@@ -37,26 +35,16 @@ export default function TradeHistory() {
     return true;
   });
 
-  // Calculate stats
   const totalPnL = filteredTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
   const winningTrades = filteredTrades.filter((t) => t.pnl >= 0);
   const losingTrades = filteredTrades.filter((t) => t.pnl < 0);
-  const winRate = filteredTrades.length > 0 
-    ? (winningTrades.length / filteredTrades.length) * 100 
-    : 0;
-  const avgWin = winningTrades.length > 0
-    ? winningTrades.reduce((sum, t) => sum + t.pnl, 0) / winningTrades.length
-    : 0;
-  const avgLoss = losingTrades.length > 0
-    ? losingTrades.reduce((sum, t) => sum + t.pnl, 0) / losingTrades.length
-    : 0;
+  const winRate = filteredTrades.length > 0 ? (winningTrades.length / filteredTrades.length) * 100 : 0;
+  const avgWin = winningTrades.length > 0 ? winningTrades.reduce((sum, t) => sum + t.pnl, 0) / winningTrades.length : 0;
+  const avgLoss = losingTrades.length > 0 ? losingTrades.reduce((sum, t) => sum + t.pnl, 0) / losingTrades.length : 0;
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Trade History"
-        description="Review your closed positions and performance"
-      />
+      <PageHeader title="Trade History" description="Review your closed positions and performance" />
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
@@ -64,7 +52,6 @@ export default function TradeHistory() {
         </div>
       ) : (
         <>
-          {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatsCard
               title="Total P&L"
@@ -80,35 +67,19 @@ export default function TradeHistory() {
               trend={winRate >= 50 ? "up" : "down"}
               gradient="violet"
             />
-            <StatsCard
-              title="Avg Win"
-              value={`+£${avgWin.toFixed(2)}`}
-              trend="up"
-              gradient="emerald"
-            />
-            <StatsCard
-              title="Avg Loss"
-              value={`£${Math.abs(avgLoss).toFixed(2)}`}
-              trend="down"
-              gradient="rose"
-            />
+            <StatsCard title="Avg Win" value={`+£${avgWin.toFixed(2)}`} trend="up" gradient="emerald" />
+            <StatsCard title="Avg Loss" value={`£${Math.abs(avgLoss).toFixed(2)}`} trend="down" gradient="rose" />
           </div>
 
-          {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <PnLBarChart trades={filteredTrades} />
             </div>
             <div>
-              <WinRateChart 
-                winRate={winRate} 
-                wins={winningTrades.length} 
-                losses={losingTrades.length} 
-              />
+              <WinRateChart winRate={winRate} wins={winningTrades.length} losses={losingTrades.length} />
             </div>
           </div>
 
-          {/* Filters */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -119,10 +90,7 @@ export default function TradeHistory() {
               <span className="text-sm font-medium text-slate-300">Filters</span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Select
-                value={filters.market}
-                onValueChange={(value) => setFilters({ ...filters, market: value })}
-              >
+              <Select value={filters.market} onValueChange={(value) => setFilters({ ...filters, market: value })}>
                 <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
                   <SelectValue placeholder="Market" />
                 </SelectTrigger>
@@ -133,10 +101,7 @@ export default function TradeHistory() {
                 </SelectContent>
               </Select>
 
-              <Select
-                value={filters.result}
-                onValueChange={(value) => setFilters({ ...filters, result: value })}
-              >
+              <Select value={filters.result} onValueChange={(value) => setFilters({ ...filters, result: value })}>
                 <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
                   <SelectValue placeholder="Result" />
                 </SelectTrigger>
@@ -171,7 +136,6 @@ export default function TradeHistory() {
             </div>
           </motion.div>
 
-          {/* Trade Table */}
           <TradeHistoryTable trades={filteredTrades} />
 
           {filteredTrades.length > 0 && (
