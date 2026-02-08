@@ -7,6 +7,7 @@ import TradeEntry from './pages/TradeEntry';
 import TradeHistory from './pages/TradeHistory';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Signals from './pages/Signals';
 
 const queryClient = new QueryClient();
 
