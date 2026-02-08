@@ -27,13 +27,13 @@ export default function TradeHistory() {
   const trades = tradesData?.trades || [];
 
   const filteredTrades = trades.filter((trade) => {
-    if (filters.market !== "all" && trade.market !== filters.market) return false;
-    if (filters.result === "win" && trade.pnl < 0) return false;
-    if (filters.result === "loss" && trade.pnl >= 0) return false;
-    if (filters.dateFrom && trade.exit_date < filters.dateFrom) return false;
-    if (filters.dateTo && trade.exit_date > filters.dateTo) return false;
-    return true;
-  });
+  if (filters.market !== "all" && trade.market?.toUpperCase() !== filters.market) return false;
+  if (filters.result === "win" && trade.pnl < 0) return false;
+  if (filters.result === "loss" && trade.pnl >= 0) return false;
+  if (filters.dateFrom && trade.exit_date < filters.dateFrom) return false;
+  if (filters.dateTo && trade.exit_date > filters.dateTo) return false;
+  return true;
+});
 
   const totalPnL = filteredTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
   const winningTrades = filteredTrades.filter((t) => t.pnl >= 0);
