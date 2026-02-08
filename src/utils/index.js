@@ -1,12 +1,13 @@
 export const createPageUrl = (pageName) => {
+  // Routes must match the keys in pages.config.js exactly
   const routes = {
     Dashboard: '/',
-    Positions: '/positions',
-    Signals: '/signals',  
-    TradeEntry: '/trade-entry',
-    TradeHistory: '/trade-history',
-    Reports: '/reports',
-    Settings: '/settings',
+    Positions: '/Positions',
+    Signals: '/Signals',  
+    TradeEntry: '/TradeEntry',  // Changed from /trade-entry
+    TradeHistory: '/TradeHistory',  // Changed from /trade-history
+    Reports: '/Reports',
+    Settings: '/Settings',
   };
   return routes[pageName] || '/';
 };
