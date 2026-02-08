@@ -160,23 +160,14 @@ export const base44 = {
      *   -> envelope: {status, data: { id, email, name, ... }}  OR raw user object
      */
     async me() {
-      if (DEV_FAKE_AUTH && !getToken()) {
-        // Dev-only fake identity (no backend yet)
-        return {
-          id: 'dev-user',
-          email: 'dev@example.com',
-          name: 'Dev User',
-          roles: ['admin'],
-        };
-      }
-      // Prefer envelope; if your backend returns raw user, we still handle it.
-      const result = await doFetch('/auth/me', { raw: true });
-      if (result && typeof result === 'object' && 'data' in result && 'status' in result) {
-        return result.data;
-      }
-      return result; // raw user object
-    },
-
+  // Always return fake user (no backend auth)
+  return {
+    id: 'dev-user',
+    email: 'dev@example.com',
+    name: 'Dev User',
+    role: 'admin',
+  };
+},
     /**
      * Starts a login redirect. Backend should begin OIDC/OAuth2 flow and
      * return to your app with ?token=... or ?code=... that you parse in initFromUrl().
