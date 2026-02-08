@@ -1,126 +1,34 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { base44 } from '../api/base44Client';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
+  const [user, setUser] = useState({
+    id: 'default-user',
+    email: 'trader@example.com',
+    name: 'Trader',
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(false);
+  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(false);
   const [authError, setAuthError] = useState(null);
-  const [appPublicSettings, setAppPublicSettings] = useState(null);
+  const [appPublicSettings, setAppPublicSettings] = useState({ id: 'app', public_settings: {} });
 
+  // No auth checks - just mark as ready immediately
   useEffect(() => {
-    checkAppState();
+    console.log('Auth: Using single-user mode (no authentication)');
   }, []);
 
-  const checkAppState = async () => {
-    try {
-      setIsLoadingPublicSettings(true);
-      setAuthError(null);
-      
-      const appId = process.env.REACT_APP_APP_ID || 'local-app-id';
-      const devFakeAuth = String(process.env.REACT_APP_DEV_FAKE_AUTH || '').toLowerCase() === 'true';
-      
-      try {
-        // Get app public settings
-        const publicSettings = await base44.apps.public.getPublicSettingsById(appId);
-        setAppPublicSettings(publicSettings);
-        
-        // Check if user is authenticated
-        const token = base44.auth.getToken();
-        if (token || devFakeAuth) {
-          await checkUserAuth();
-        } else {
-          setIsLoadingAuth(false);
-          setIsAuthenticated(false);
-        }
-        setIsLoadingPublicSettings(false);
-      } catch (appError) {
-        console.error('App state check failed:', appError);
-        
-        // Handle app-level errors
-        if (appError.status === 403 && appError.data?.extra_data?.reason) {
-          const reason = appError.data.extra_data.reason;
-          if (reason === 'auth_required') {
-            setAuthError({
-              type: 'auth_required',
-              message: 'Authentication required'
-            });
-          } else if (reason === 'user_not_registered') {
-            setAuthError({
-              type: 'user_not_registered',
-              message: 'User not registered for this app'
-            });
-          } else {
-            setAuthError({
-              type: reason,
-              message: appError.message
-            });
-          }
-        } else {
-          // Don't block app if public settings fail in dev mode
-          if (devFakeAuth) {
-            console.warn('Using dev mode - skipping public settings check');
-            setAppPublicSettings({ id: appId, public_settings: {} });
-            await checkUserAuth();
-          } else {
-            setAuthError({
-              type: 'unknown',
-              message: appError.message || 'Failed to load app'
-            });
-          }
-        }
-        setIsLoadingPublicSettings(false);
-        setIsLoadingAuth(false);
-      }
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      setAuthError({
-        type: 'unknown',
-        message: error.message || 'An unexpected error occurred'
-      });
-      setIsLoadingPublicSettings(false);
-      setIsLoadingAuth(false);
-    }
-  };
-
-  const checkUserAuth = async () => {
-    try {
-      setIsLoadingAuth(true);
-      const currentUser = await base44.auth.me();
-      setUser(currentUser);
-      setIsAuthenticated(true);
-      setIsLoadingAuth(false);
-    } catch (error) {
-      console.error('User auth check failed:', error);
-      setIsLoadingAuth(false);
-      setIsAuthenticated(false);
-      
-      // If user auth fails, it might be an expired token
-      if (error.status === 401 || error.status === 403) {
-        setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
-        });
-      }
-    }
-  };
-
-  const logout = (shouldRedirect = true) => {
-    setUser(null);
-    setIsAuthenticated(false);
-    
-    if (shouldRedirect) {
-      base44.auth.logout(window.location.href);
-    } else {
-      base44.auth.logout();
-    }
+  const logout = () => {
+    console.log('Logout not implemented (single-user app)');
   };
 
   const navigateToLogin = () => {
-    base44.auth.redirectToLogin(window.location.href);
+    console.log('Login not implemented (single-user app)');
+  };
+
+  const checkAppState = () => {
+    console.log('App state check skipped (single-user app)');
   };
 
   return (
