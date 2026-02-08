@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, Outlet } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { createPageUrl } from "../utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LayoutDashboard, 
@@ -15,10 +16,10 @@ import {
   ExternalLink,
   FileBarChart
 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
 
-export default function Layout() {
+export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [theme, setTheme] = useState("dark");
   const location = useLocation();
@@ -35,15 +36,15 @@ export default function Layout() {
   };
 
   const navItems = [
-    { name: "Dashboard", icon: LayoutDashboard, path: "/" },
-    { name: "Positions", icon: Briefcase, path: "/positions" },
-    { name: "Trade Entry", icon: PlusCircle, path: "/trade-entry" },
-    { name: "Trade History", icon: History, path: "/trade-history" },
-    { name: "Reports", icon: FileBarChart, path: "/reports" },
-    { name: "Settings", icon: Settings, path: "/settings" },
+    { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
+    { name: "Positions", icon: Briefcase, page: "Positions" },
+    { name: "Trade Entry", icon: PlusCircle, page: "TradeEntry" },
+    { name: "Trade History", icon: History, page: "TradeHistory" },
+    { name: "Reports", icon: FileBarChart, page: "Reports" },
+    { name: "Settings", icon: Settings, page: "Settings" },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (pageName) => currentPageName === pageName;
 
   const isDark = theme === "dark";
 
@@ -149,12 +150,12 @@ export default function Layout() {
                   const Icon = item.icon;
                   return (
                     <Link
-                      key={item.path}
-                      to={item.path}
+                      key={item.page}
+                      to={createPageUrl(item.page)}
                       onClick={() => setSidebarOpen(false)}
                       className={cn(
                         "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                        isActive(item.path)
+                        isActive(item.page)
                           ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-600 border border-cyan-500/30"
                           : isDark 
                             ? "text-slate-400 hover:text-white hover:bg-slate-800/50"
@@ -196,11 +197,11 @@ export default function Layout() {
             const Icon = item.icon;
             return (
               <Link
-                key={item.path}
-                to={item.path}
+                key={item.page}
+                to={createPageUrl(item.page)}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                  isActive(item.path)
+                  isActive(item.page)
                     ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-600 border border-cyan-500/30 shadow-lg shadow-cyan-500/10"
                     : isDark 
                       ? "text-slate-400 hover:text-white hover:bg-slate-800/50"
@@ -259,7 +260,7 @@ export default function Layout() {
         isDark ? "bg-slate-950" : "bg-slate-100"
       )}>
         <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-          <Outlet />
+          {children}
         </div>
       </main>
     </div>
