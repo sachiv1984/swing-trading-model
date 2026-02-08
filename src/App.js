@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Layout from './components/Layout';
+import Layout from './Layout';
 import Dashboard from './pages/Dashboard';
 import Positions from './pages/Positions';
 import TradeEntry from './pages/TradeEntry';
