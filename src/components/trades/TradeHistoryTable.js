@@ -12,20 +12,6 @@ export default function TradeHistoryTable({ trades }) {
     );
   }
 
-  const exitReasonLabels = {
-    stop_hit: "Stop Hit",
-    manual: "Manual",
-    target: "Target",
-    market_regime: "Market Regime"
-  };
-
-  const exitReasonColors = {
-    stop_hit: "bg-rose-500/20 text-rose-400 border-rose-500/30",
-    manual: "bg-violet-500/20 text-violet-400 border-violet-500/30",
-    target: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-    market_regime: "bg-amber-500/20 text-amber-400 border-amber-500/30"
-  };
-
   return (
     <DataTable>
       <TableHeader>
@@ -37,12 +23,11 @@ export default function TradeHistoryTable({ trades }) {
         <TableHead>Exit Reason</TableHead>
       </TableHeader>
       <TableBody>
-        {trades.map((trade) => {
+        {trades.map((trade, idx) => {
           const isProfit = trade.pnl >= 0;
-          const currencySymbol = trade.market === "UK" ? "£" : "$";
           
           return (
-            <TableRow key={trade.id}>
+            <TableRow key={trade.id || idx}>
               <TableCell>
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-white">{trade.ticker}</span>
@@ -55,35 +40,25 @@ export default function TradeHistoryTable({ trades }) {
                 {format(new Date(trade.entry_date), "MMM d, yyyy")}
               </TableCell>
               <TableCell className="text-slate-400">
-                {trade.exit_date ? format(new Date(trade.exit_date), "MMM d, yyyy") : "—"}
+                {format(new Date(trade.exit_date), "MMM d, yyyy")}
               </TableCell>
               <TableCell className="text-right">
                 <div className={cn(
                   "inline-flex items-center gap-1.5 font-medium",
                   isProfit ? "text-emerald-400" : "text-rose-400"
                 )}>
-                  {isProfit ? (
-                    <TrendingUp className="w-4 h-4" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4" />
-                  )}
-                  {currencySymbol}{Math.abs(trade.pnl || 0).toFixed(2)}
+                  {isProfit ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                  £{Math.abs(trade.pnl).toFixed(2)}
                 </div>
               </TableCell>
               <TableCell className="text-right">
-                <span className={cn(
-                  "font-medium",
-                  isProfit ? "text-emerald-400" : "text-rose-400"
-                )}>
-                  {isProfit ? "+" : ""}{(trade.pnl_percent || 0).toFixed(2)}%
+                <span className={cn("font-medium", isProfit ? "text-emerald-400" : "text-rose-400")}>
+                  {isProfit ? "+" : ""}{trade.pnl_pct.toFixed(2)}%
                 </span>
               </TableCell>
               <TableCell>
-                <span className={cn(
-                  "text-xs px-2.5 py-1 rounded-full border",
-                  exitReasonColors[trade.exit_reason] || "bg-slate-800 text-slate-400 border-slate-700"
-                )}>
-                  {exitReasonLabels[trade.exit_reason] || trade.exit_reason}
+                <span className="text-xs px-2.5 py-1 rounded-full border bg-slate-800 text-slate-400 border-slate-700">
+                  {trade.exit_reason || "Unknown"}
                 </span>
               </TableCell>
             </TableRow>
