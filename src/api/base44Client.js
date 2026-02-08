@@ -374,4 +374,85 @@ export const api = {
     getSummary: async () => doFetch('/cash/summary'),
   },
 };
+Signal: {
+      list: async (orderBy = '-signal_date') => {
+        try {
+          // Try to fetch from backend (when endpoint exists)
+          return await doFetch('/signals', { raw: true });
+        } catch (error) {
+          // Fallback to mock data if endpoint doesn't exist
+          console.warn('Signals endpoint not available, using mock data');
+          return generateMockSignals();
+        }
+      },
+      
+      create: async (signalData) =>
+        doFetch('/signals', {
+          method: 'POST',
+          body: JSON.stringify(signalData),
+        }),
+      
+      update: async (id, data) =>
+        doFetch(`/signals/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+        }),
+      
+      delete: async (id) =>
+        doFetch(`/signals/${id}`, {
+          method: 'DELETE',
+        }),
+    },
+  },
+};
+
+// Helper function for mock signals (remove when backend is ready)
+function generateMockSignals() {
+  const today = new Date();
+  const signalDate = new Date(today.getFullYear(), today.getMonth(), 1);
+  const signalDateStr = signalDate.toISOString().split('T')[0];
+  
+  const mockTickers = [
+    { ticker: 'NVDA', market: 'US', momentum: 12.3, price: 878.45, atr: 24.5 },
+    { ticker: 'TSLA', market: 'US', momentum: 8.7, price: 245.67, atr: 18.2 },
+    { ticker: 'FRES', market: 'UK', momentum: 15.2, price: 42.35, atr: 3.1 },
+    { ticker: 'BARC', market: 'UK', momentum: 6.4, price: 238.50, atr: 8.7 },
+    { ticker: 'AAPL', market: 'US', momentum: 5.9, price: 182.34, atr: 5.4 },
+  ];
+
+  const portfolioValue = 10000; // £10k default
+  const riskPerTrade = 0.02; // 2% risk per trade
+
+  const signals = mockTickers.map((stock, index) => {
+    const riskAmount = portfolioValue * riskPerTrade;
+    const stopDistance = stock.atr * 5; // 5x ATR wide stop
+    const suggestedShares = Math.floor(riskAmount / stopDistance);
+    
+    // Calculate total cost in GBP
+    let totalCost;
+    if (stock.market === 'US') {
+      // Convert USD to GBP (using 1.3611 rate)
+      totalCost = (suggestedShares * stock.price) / 1.3611;
+    } else {
+      totalCost = suggestedShares * stock.price;
+    }
+
+    return {
+      id: `signal-${index + 1}`,
+      ticker: stock.ticker,
+      market: stock.market,
+      signal_date: signalDateStr,
+      current_price: stock.price,
+      momentum_percent: stock.momentum,
+      atr_value: stock.atr,
+      initial_stop: stock.price - (stock.atr * 5),
+      suggested_shares: suggestedShares,
+      total_cost: totalCost,
+      rank: index + 1,
+      status: 'new', // new, entered, dismissed, expired
+    };
+  });
+
+  return signals;
+}
 ``
