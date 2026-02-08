@@ -23,6 +23,7 @@ function App() {
             <Route path="trade-history" element={<TradeHistory />} />
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="signals" element={<Signals />} />
           </Route>
         </Routes>
       </BrowserRouter>
