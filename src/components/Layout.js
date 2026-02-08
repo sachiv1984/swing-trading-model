@@ -14,7 +14,8 @@ import {
   Moon,
   TrendingUp,
   ExternalLink,
-  FileBarChart
+  FileBarChart,
+  Zap
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
@@ -38,6 +39,7 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
     { name: "Positions", icon: Briefcase, page: "Positions" },
+    { name: "Signals", icon: Zap, page: "Signals" },
     { name: "Trade Entry", icon: PlusCircle, page: "TradeEntry" },
     { name: "Trade History", icon: History, page: "TradeHistory" },
     { name: "Reports", icon: FileBarChart, page: "Reports" },
