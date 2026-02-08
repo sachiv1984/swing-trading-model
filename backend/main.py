@@ -1610,8 +1610,7 @@ def get_cash_summary_endpoint():
         import traceback
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
-
-
+        
 @app.get("/trades")
 def get_trades_endpoint():
     try:
@@ -1641,9 +1640,14 @@ def get_trades_endpoint():
         formatted_trades = []
         for t in trades:
             formatted_trades.append({
+                "id": str(t.get('id', '')),
                 "ticker": t['ticker'],
+                "market": t['market'],
                 "entry_date": str(t['entry_date']),
                 "exit_date": str(t['exit_date']),
+                "shares": float(t.get('shares', 0)),
+                "entry_price": round(float(t.get('entry_price', 0)), 2),
+                "exit_price": round(float(t.get('exit_price', 0)), 2),
                 "pnl": round(t.get('pnl', 0), 2),
                 "pnl_pct": round(t.get('pnl_pct', 0), 2),
                 "exit_reason": t.get('exit_reason', 'Unknown')
@@ -1660,7 +1664,6 @@ def get_trades_endpoint():
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}
-
 
 if __name__ == "__main__":
     import uvicorn
