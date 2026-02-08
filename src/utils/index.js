@@ -1,3 +1,12 @@
-export function createPageUrl(pageName: string) {
-    return '/' + pageName.replace(/ /g, '-');
-}
+export const createPageUrl = (pageName) => {
+  const routes = {
+    Dashboard: '/',
+    Positions: '/positions',
+    Signals: '/signals',  
+    TradeEntry: '/trade-entry',
+    TradeHistory: '/trade-history',
+    Reports: '/reports',
+    Settings: '/settings',
+  };
+  return routes[pageName] || '/';
+};
