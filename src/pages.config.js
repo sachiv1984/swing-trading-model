@@ -54,7 +54,7 @@ import Settings from './pages/Settings';
 import Signals from './pages/Signals';
 import TradeEntry from './pages/TradeEntry';
 import TradeHistory from './pages/TradeHistory';
-import __Layout from './Layout.jsx';
+import __Layout from './Layout.js';
 
 
 export const PAGES = {
