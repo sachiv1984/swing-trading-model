@@ -291,34 +291,39 @@ const StatCard = ({ icon, label, value, color }) => {
 // Signal Card Component
 const SignalCard = ({ signal, onAddPosition, onDismiss, isCreating }) => {
   const getStatusBadge = () => {
-    if (signal.status === 'already_held') {
-      return (
-        <span className="px-2 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded">
-          Already Held
-        </span>
-      );
-    }
-    if (signal.status === 'dismissed') {
-      return (
-        <span className="px-2 py-1 text-xs font-medium bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded">
-          Dismissed
-        </span>
-      );
-    }
-    if (signal.status === 'entered') {
-      return (
-        <span className="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded">
-          Position Entered
-        </span>
-      );
-    }
+  // Priority order: entered > dismissed > already_held > new
+  if (signal.status === 'entered') {
     return (
-      <span className="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded">
-        New
+      <span className="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded">
+        ✓ Position Entered
       </span>
     );
-  };
-
+  }
+  
+  if (signal.status === 'dismissed') {
+    return (
+      <span className="px-2 py-1 text-xs font-medium bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded">
+        ✗ Dismissed
+      </span>
+    );
+  }
+  
+  if (signal.status === 'already_held') {
+    return (
+      <span className="px-2 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded">
+        ◉ Already Held
+      </span>
+    );
+  }
+  
+  // Default: new signal
+  return (
+    <span className="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded">
+      ★ New Signal
+    </span>
+  );
+};
+  
   const currencySymbol = signal.market === 'US' ? '$' : '£';
   const isActionable = signal.status === 'new';
 
