@@ -360,3 +360,102 @@ def get_latest_snapshot(portfolio_id: str) -> Optional[Dict]:
                 LIMIT 1
             """, (portfolio_id,))
             return cur.fetchone()
+
+# ============================================================================
+# SIGNALS FUNCTIONS
+# ============================================================================
+
+def create_signal(portfolio_id: str, signal_data: Dict) -> Dict:
+    """Create or update a signal"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO signals (
+                    portfolio_id, ticker, market, signal_date, rank,
+                    momentum_percent, current_price, price_gbp, atr_value,
+                    volatility, initial_stop, suggested_shares, allocation_gbp,
+                    total_cost, status
+                ) VALUES (
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                )
+                ON CONFLICT (portfolio_id, ticker, signal_date)
+                DO UPDATE SET
+                    rank = EXCLUDED.rank,
+                    momentum_percent = EXCLUDED.momentum_percent,
+                    current_price = EXCLUDED.current_price,
+                    price_gbp = EXCLUDED.price_gbp,
+                    atr_value = EXCLUDED.atr_value,
+                    volatility = EXCLUDED.volatility,
+                    initial_stop = EXCLUDED.initial_stop,
+                    suggested_shares = EXCLUDED.suggested_shares,
+                    allocation_gbp = EXCLUDED.allocation_gbp,
+                    total_cost = EXCLUDED.total_cost,
+                    updated_at = NOW()
+                RETURNING *
+            """, (
+                portfolio_id,
+                signal_data['ticker'],
+                signal_data['market'],
+                signal_data['signal_date'],
+                signal_data['rank'],
+                signal_data['momentum_percent'],
+                signal_data['current_price'],
+                signal_data['price_gbp'],
+                signal_data['atr_value'],
+                signal_data['volatility'],
+                signal_data['initial_stop'],
+                signal_data['suggested_shares'],
+                signal_data['allocation_gbp'],
+                signal_data['total_cost'],
+                signal_data.get('status', 'new')
+            ))
+            return cur.fetchone()
+
+
+def get_signals(portfolio_id: str, status: str = None) -> List[Dict]:
+    """Get signals, optionally filtered by status"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            if status:
+                cur.execute(
+                    "SELECT * FROM signals WHERE portfolio_id = %s AND status = %s ORDER BY signal_date DESC, rank ASC",
+                    (portfolio_id, status)
+                )
+            else:
+                cur.execute(
+                    "SELECT * FROM signals WHERE portfolio_id = %s ORDER BY signal_date DESC, rank ASC",
+                    (portfolio_id,)
+                )
+            return cur.fetchall()
+
+
+def update_signal(signal_id: str, updates: Dict) -> Dict:
+    """Update a signal"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            set_parts = []
+            values = []
+            
+            for key, value in updates.items():
+                set_parts.append(f"{key} = %s")
+                values.append(value)
+            
+            values.append(signal_id)
+            
+            query = f"""
+                UPDATE signals 
+                SET {', '.join(set_parts)}, updated_at = NOW() 
+                WHERE id = %s 
+                RETURNING *
+            """
+            
+            cur.execute(query, values)
+            conn.commit()
+            return cur.fetchone()
+
+
+def delete_signal(signal_id: str):
+    """Delete a signal"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM signals WHERE id = %s", (signal_id,))
