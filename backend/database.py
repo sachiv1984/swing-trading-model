@@ -238,6 +238,93 @@ def update_settings(settings_id, data):
             result = cur.fetchone()
             return dict(result)
 
+def download_ticker_data(ticker: str, start_date: str, end_date: str = None):
+    """Download historical data for a single ticker using Yahoo API"""
+    try:
+        time.sleep(0.1)  # Rate limiting
+        
+        if end_date is None:
+            end_date = datetime.now().strftime('%Y-%m-%d')
+        
+        # Convert dates to timestamps
+        start_ts = int(datetime.strptime(start_date, '%Y-%m-%d').timestamp())
+        end_ts = int(datetime.strptime(end_date, '%Y-%m-%d').timestamp())
+        
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+        params = {
+            "interval": "1d",
+            "period1": start_ts,
+            "period2": end_ts
+        }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'application/json',
+        }
+        
+        response = requests.get(url, params=params, headers=headers, timeout=15)
+        
+        if response.status_code != 200:
+            return None
+        
+        data = response.json()
+        
+        if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
+            result = data["chart"]["result"][0]
+            
+            # Get timestamps
+            if "timestamp" not in result:
+                return None
+                
+            timestamps = result["timestamp"]
+            dates = [datetime.fromtimestamp(ts) for ts in timestamps]
+            
+            # Get price data
+            if "indicators" not in result or "quote" not in result["indicators"]:
+                return None
+                
+            quote = result["indicators"]["quote"][0]
+            
+            # Use adjusted close if available, otherwise close
+            if "adjclose" in result["indicators"] and result["indicators"]["adjclose"]:
+                closes = result["indicators"]["adjclose"][0]["adjclose"]
+            else:
+                closes = quote.get("close", [])
+            
+            highs = quote.get("high", [])
+            lows = quote.get("low", [])
+            
+            # Create DataFrame
+            df = pd.DataFrame({
+                'date': dates,
+                'close': closes,
+                'high': highs,
+                'low': lows
+            })
+            
+            # Remove None values
+            df = df.dropna()
+            
+            if len(df) < 50:  # Minimum data requirement
+                return None
+            
+            df['date'] = pd.to_datetime(df['date'])
+            df = df.set_index('date')
+            
+            return df
+            
+        return None
+        
+    except Exception as e:
+        print(f"  ⚠️  Error fetching {ticker}: {str(e)[:50]}")
+        return None
+
+
+def compute_atr_simple(prices: pd.Series, period: int = 14):
+    """Calculate ATR using close-to-close approximation (simpler)"""
+    close_to_close = prices.diff().abs()
+    atr = close_to_close.rolling(window=period, min_periods=period).mean()
+    return atr
+
 
 # ============================================================================
 # CASH TRANSACTION FUNCTIONS
