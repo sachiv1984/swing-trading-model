@@ -31,7 +31,8 @@ from database import (
     update_signal,
     delete_signal,
     get_all_tickers,
-    download_ticker_data
+    download_ticker_data,
+    compute_atr_simple
 )
 
 app = FastAPI(title="Trading Assistant API")
@@ -1737,7 +1738,7 @@ def generate_signals_endpoint():
             raise HTTPException(status_code=500, detail="Failed to download price data")
         
         prices = pd.DataFrame(prices_dict)
-        prices = prices.fillna(method='ffill', limit=5)
+        prices = prices.ffill(limit=5)
         
         print(f"✓ Downloaded {len(prices.columns)} tickers")
         if failed:
@@ -1770,7 +1771,7 @@ def generate_signals_endpoint():
         
         # Calculate momentum
         print("Calculating momentum...")
-        momentum = prices.pct_change(lookback_days)
+        momentum = prices.pct_change(lookback_days, fill_method=None)
         
         # Calculate MA200 trend
         ma200 = prices.rolling(ma_period).mean()
