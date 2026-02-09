@@ -5,6 +5,11 @@ from contextlib import contextmanager
 from typing import Optional, List, Dict
 from datetime import datetime
 import pandas as pd
+import time
+import requests
+
+
+
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
