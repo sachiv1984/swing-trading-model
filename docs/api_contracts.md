@@ -487,7 +487,58 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
 
 ---
 
-## 9. Settings
+## 9. Signals
+
+### POST /signals/generate
+
+**Purpose:** Generate momentum signals based on current portfolio state
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "signals_generated": 5,
+    "new_signals": 3,
+    "already_held": 2,
+    "signal_date": "2026-02-09",
+    "fx_rate": 1.3684,
+    "available_cash": 5000.00,
+    "market_regime": {
+      "spy_risk_on": true,
+      "ftse_risk_on": true
+    },
+    "signals": [...]
+  }
+}
+```
+
+### GET /signals
+
+**Purpose:** Get all signals
+
+**Query Parameters:**
+- `status`: Filter by status ('new', 'entered', 'dismissed', 'expired', 'already_held')
+
+### PATCH /signals/{signal_id}
+
+**Purpose:** Update signal status
+
+**Request:**
+```json
+{
+  "status": "dismissed"
+}
+```
+
+### DELETE /signals/{signal_id}
+
+**Purpose:** Delete a signal
+```
+
+---
+
+## 10. Settings
 
 ### GET /settings
 
@@ -590,6 +641,5 @@ Display: $576 ✓ (stable!)
 ---
 
 **Document Version:** 1.2  
-**Last Review:** February 5, 2026  
+**Last Review:** February 9, 2026  
 **Status:** Current  
-**Breaking Changes:** Yes - exit endpoint requires user-provided price
