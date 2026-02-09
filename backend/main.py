@@ -30,7 +30,8 @@ from database import (
     get_signals,
     update_signal,
     delete_signal,
-    get_all_tickers
+    get_all_tickers,
+    download_ticker_data
 )
 
 app = FastAPI(title="Trading Assistant API")
