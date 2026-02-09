@@ -1705,9 +1705,7 @@ def generate_signals_endpoint():
         max_position_pct = 0.20
         
         # Load universe
-        import pandas as pd
-        df = pd.read_csv("backend/tickers_full_list.csv")
-        tickers = df["Ticker"].dropna().unique().tolist()
+        tickers = get_all_tickers()
         
         print(f"Universe: {len(tickers)} tickers")
         
