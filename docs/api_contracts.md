@@ -534,7 +534,6 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
 ### DELETE /signals/{signal_id}
 
 **Purpose:** Delete a signal
-```
 
 ---
 
