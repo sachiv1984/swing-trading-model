@@ -18,22 +18,42 @@ export default function SignalsPage() {
   const [marketFilter, setMarketFilter] = useState("all");
   const [sortBy, setSortBy] = useState("rank");
   const [showDismissed, setShowDismissed] = useState(false);
+  const [showAlreadyHeld, setShowAlreadyHeld] = useState(true);
 
+  // Fetch signals from backend
   const { data: signals = [], isLoading } = useQuery({
     queryKey: ["signals"],
-    queryFn: () => base44.entities.Signal.list("-signal_date"),
+    queryFn: () => base44.entities.Signal.list(),
   });
 
+  // Fetch positions to cross-check
   const { data: positions = [] } = useQuery({
     queryKey: ["positions"],
     queryFn: () => base44.entities.Position.filter({ status: "open" }),
   });
 
+  // Fetch portfolio for cash balance
   const { data: portfolios = [] } = useQuery({
     queryKey: ["portfolios"],
     queryFn: () => base44.entities.Portfolio.list(),
   });
 
+  // Generate signals mutation (STEP 5)
+  const generateMutation = useMutation({
+    mutationFn: () => base44.entities.Signal.generate(),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["signals"] });
+      const data = result?.data || result;
+      toast.success(
+        `Generated ${data.signals_generated || 0} signals (${data.new_signals || 0} new, ${data.already_held || 0} already held)`
+      );
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to generate signals");
+    },
+  });
+
+  // Dismiss signal mutation
   const dismissMutation = useMutation({
     mutationFn: (signalId) => base44.entities.Signal.update(signalId, { status: "dismissed" }),
     onSuccess: () => {
@@ -42,38 +62,61 @@ export default function SignalsPage() {
     },
   });
 
+  // Create position from signal (STEP 6 - includes signal refresh after position creation)
   const createPositionMutation = useMutation({
-    mutationFn: (positionData) => base44.entities.Position.create(positionData),
+    mutationFn: async ({ signal, positionData }) => {
+      // Create the position
+      const position = await base44.entities.Position.create(positionData);
+      
+      // Update signal status to 'entered' and link position_id
+      await base44.entities.Signal.update(signal.id, { 
+        status: "entered",
+        position_id: position.id 
+      });
+      
+      return position;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["positions"] });
+      queryClient.invalidateQueries({ queryKey: ["signals"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolios"] });
       toast.success("Position added successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to add position");
     },
   });
 
   const handleAddPosition = async (signal) => {
+    // Get live FX rate for US stocks
+    const fxRate = signal.market === "US" ? 1.3611 : 1.0;
+    
     const positionData = {
       ticker: signal.ticker,
       market: signal.market,
       entry_date: new Date().toISOString().split("T")[0],
       entry_price: signal.current_price,
       shares: signal.suggested_shares,
-      stop_price: signal.initial_stop,
       atr_value: signal.atr_value || 0,
-      current_price: signal.current_price,
-      fx_rate: signal.market === "US" ? 1.3611 : 1,
+      fx_rate: fxRate,
       status: "open"
     };
 
-    await createPositionMutation.mutateAsync(positionData);
-    await base44.entities.Signal.update(signal.id, { status: "entered" });
-    queryClient.invalidateQueries({ queryKey: ["signals"] });
+    await createPositionMutation.mutateAsync({ signal, positionData });
   };
 
-  // Mark entered signals
+  // Mark entered signals based on open positions
   const signalsWithStatus = signals.map(signal => {
-    const hasPosition = positions.some(p => p.ticker === signal.ticker && p.status === "open");
+    const hasPosition = positions.some(p => {
+      // Remove .L suffix for comparison
+      const signalTicker = signal.ticker.replace('.L', '');
+      const posTicker = p.ticker.replace('.L', '');
+      return signalTicker === posTicker && p.status === "open";
+    });
+    
+    // If position exists but signal status is still 'new', update to 'already_held'
     if (hasPosition && signal.status === "new") {
-      return { ...signal, status: "entered" };
+      return { ...signal, status: "already_held" };
     }
     return signal;
   });
@@ -89,6 +132,10 @@ export default function SignalsPage() {
     filteredSignals = filteredSignals.filter(s => s.status !== "dismissed");
   }
 
+  if (!showAlreadyHeld) {
+    filteredSignals = filteredSignals.filter(s => s.status !== "already_held");
+  }
+
   // Sort signals
   filteredSignals.sort((a, b) => {
     if (sortBy === "rank") return a.rank - b.rank;
@@ -100,16 +147,23 @@ export default function SignalsPage() {
   // Calculate summary stats
   const totalCapital = filteredSignals
     .filter(s => s.status === "new")
-    .reduce((sum, s) => sum + s.total_cost, 0);
+    .reduce((sum, s) => sum + (s.total_cost || 0), 0);
   const avgMomentum = filteredSignals.length > 0
     ? filteredSignals.reduce((sum, s) => sum + s.momentum_percent, 0) / filteredSignals.length
     : 0;
   const usCount = filteredSignals.filter(s => s.market === "US").length;
   const ukCount = filteredSignals.filter(s => s.market === "UK").length;
+  const newCount = filteredSignals.filter(s => s.status === "new").length;
 
   const portfolio = portfolios[0] || { cash_balance: 0 };
   const currentMonth = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
+  // Get latest signal date from signals
+  const latestSignalDate = signals.length > 0 
+    ? new Date(Math.max(...signals.map(s => new Date(s.signal_date)))).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : "Never";
+
+  // Mock market status (will be replaced by real data from generate endpoint)
   const marketStatus = {
     spy: { isRiskOn: true, price: 598.43 },
     ftse: { isRiskOn: false, price: 8534.20 }
@@ -119,15 +173,21 @@ export default function SignalsPage() {
     <div>
       <PageHeader
         title="Monthly Signals"
-        description={`Signals for ${currentMonth}`}
+        description={`Signals for ${currentMonth} • Last updated: ${latestSignalDate}`}
         actions={
           <Button
             variant="outline"
             size="sm"
+            onClick={() => generateMutation.mutate()}
+            disabled={generateMutation.isPending}
             className="border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800"
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
+            {generateMutation.isPending ? (
+              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-2" />
+            )}
+            {generateMutation.isPending ? "Generating..." : "Refresh Signals"}
           </Button>
         }
       />
@@ -153,6 +213,7 @@ export default function SignalsPage() {
             <div>
               <p className="text-sm text-slate-400">Total Signals</p>
               <p className="text-2xl font-bold text-white">{filteredSignals.length}</p>
+              <p className="text-xs text-slate-500">{newCount} new</p>
             </div>
           </div>
         </motion.div>
@@ -247,13 +308,27 @@ export default function SignalsPage() {
         >
           {showDismissed ? "Hide" : "Show"} Dismissed
         </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowAlreadyHeld(!showAlreadyHeld)}
+          className={cn(
+            "border-slate-700 h-9",
+            showAlreadyHeld ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white hover:bg-slate-800"
+          )}
+        >
+          {showAlreadyHeld ? "Hide" : "Show"} Already Held
+        </Button>
       </div>
 
       {/* Signals Grid */}
-      {isLoading ? (
+      {isLoading || generateMutation.isPending ? (
         <div className="text-center py-12">
           <RefreshCw className="w-8 h-8 text-slate-400 animate-spin mx-auto mb-4" />
-          <p className="text-slate-400">Loading signals...</p>
+          <p className="text-slate-400">
+            {generateMutation.isPending ? "Generating signals..." : "Loading signals..."}
+          </p>
         </div>
       ) : filteredSignals.length === 0 ? (
         <motion.div
@@ -264,9 +339,15 @@ export default function SignalsPage() {
           <Zap className="w-12 h-12 text-slate-600 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-white mb-2">No signals available</h3>
           <p className="text-slate-400 mb-4">
-            Signals are generated monthly when market conditions are favorable
+            Click "Refresh Signals" to generate new momentum signals
           </p>
-          <p className="text-sm text-slate-500">Last signals: January 15, 2026</p>
+          <Button
+            onClick={() => generateMutation.mutate()}
+            className="bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500"
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Generate Signals
+          </Button>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -281,6 +362,7 @@ export default function SignalsPage() {
                 signal={signal}
                 onAddPosition={handleAddPosition}
                 onDismiss={(id) => dismissMutation.mutate(id)}
+                isLoading={createPositionMutation.isPending}
               />
             </motion.div>
           ))}
