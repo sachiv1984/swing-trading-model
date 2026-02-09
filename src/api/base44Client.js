@@ -332,7 +332,7 @@ export const base44 = {
     doFetch('/signals/generate', {
       method: 'POST',
     }),
-},
+};
 
 // ---------- Your original api.* methods, now using doFetch ----------
 export const api = {
