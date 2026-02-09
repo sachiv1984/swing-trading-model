@@ -1,373 +1,405 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Button } from "../components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import PageHeader from "../components/ui/PageHeader";
-import SignalCard from "../components/signals/SignalCard";
-import MarketStatusBar from "../components/signals/MarketStatusBar";
-import { Zap, RefreshCw, Filter, TrendingUp, DollarSign, Target } from "lucide-react";
-import { toast } from "sonner";
-import { cn } from "../lib/utils";
+import React, { useState, useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Signal, Position } from '../api/base44Client';
+import { toast } from 'react-hot-toast';
+import { TrendingUp, DollarSign, Activity, Globe } from 'lucide-react';
 
-export default function SignalsPage() {
-  const navigate = useNavigate();
+const Signals = () => {
   const queryClient = useQueryClient();
-  const [marketFilter, setMarketFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("rank");
+  
+  // Filters
+  const [marketFilter, setMarketFilter] = useState('all'); // all, US, UK
+  const [sortBy, setSortBy] = useState('rank'); // rank, momentum, price
   const [showDismissed, setShowDismissed] = useState(false);
-  const [showAlreadyHeld, setShowAlreadyHeld] = useState(true);
+  const [showAlreadyHeld, setShowAlreadyHeld] = useState(false);
 
-  // Fetch signals from backend
+  // Fetch signals
   const { data: signals = [], isLoading } = useQuery({
-    queryKey: ["signals"],
-    queryFn: () => base44.entities.Signal.list(),
+    queryKey: ['signals'],
+    queryFn: () => Signal.list(),
+    refetchInterval: 60000 // Refresh every minute
   });
 
-  // Fetch positions to cross-check
-  const { data: positions = [] } = useQuery({
-    queryKey: ["positions"],
-    queryFn: () => base44.entities.Position.filter({ status: "open" }),
-  });
-
-  // Fetch portfolio for cash balance
-  const { data: portfolios = [] } = useQuery({
-    queryKey: ["portfolios"],
-    queryFn: () => base44.entities.Portfolio.list(),
-  });
-
-  // Generate signals mutation (STEP 5)
-  const generateMutation = useMutation({
-    mutationFn: () => base44.entities.Signal.generate(),
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["signals"] });
-      const data = result?.data || result;
-      toast.success(
-        `Generated ${data.signals_generated || 0} signals (${data.new_signals || 0} new, ${data.already_held || 0} already held)`
-      );
+  // Create position mutation
+  const createPositionMutation = useMutation({
+    mutationFn: async (signal) => {
+      const positionData = {
+        ticker: signal.ticker,
+        market: signal.market,
+        entry_date: new Date().toISOString().split('T')[0],
+        shares: signal.suggested_shares,
+        entry_price: signal.current_price,
+        atr_value: signal.atr_value,
+        fx_rate: signal.market === 'US' ? signal.fx_rate : null
+      };
+      
+      const result = await Position.create(positionData);
+      
+      // Update signal status to 'entered'
+      await Signal.update(signal.id, { 
+        status: 'entered',
+        position_id: result.data.position_id 
+      });
+      
+      return result;
+    },
+    onSuccess: () => {
+      toast.success('✓ Position created successfully');
+      queryClient.invalidateQueries(['signals']);
+      queryClient.invalidateQueries(['positions']);
+      queryClient.invalidateQueries(['portfolio']);
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to generate signals");
-    },
+      toast.error(`Failed to create position: ${error.message}`);
+    }
   });
 
   // Dismiss signal mutation
   const dismissMutation = useMutation({
-    mutationFn: (signalId) => base44.entities.Signal.update(signalId, { status: "dismissed" }),
+    mutationFn: (signalId) => Signal.update(signalId, { status: 'dismissed' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["signals"] });
-      toast.success("Signal dismissed");
-    },
-  });
-
-  // Create position from signal (STEP 6 - includes signal refresh after position creation)
-  const createPositionMutation = useMutation({
-    mutationFn: async ({ signal, positionData }) => {
-      // Create the position
-      const position = await base44.entities.Position.create(positionData);
-      
-      // Update signal status to 'entered' and link position_id
-      await base44.entities.Signal.update(signal.id, { 
-        status: "entered",
-        position_id: position.id 
-      });
-      
-      return position;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["positions"] });
-      queryClient.invalidateQueries({ queryKey: ["signals"] });
-      queryClient.invalidateQueries({ queryKey: ["portfolios"] });
-      toast.success("Position added successfully");
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to add position");
-    },
-  });
-
-  const handleAddPosition = async (signal) => {
-    // Get live FX rate for US stocks
-    const fxRate = signal.market === "US" ? 1.3611 : 1.0;
-    
-    const positionData = {
-      ticker: signal.ticker,
-      market: signal.market,
-      entry_date: new Date().toISOString().split("T")[0],
-      entry_price: signal.current_price,
-      shares: signal.suggested_shares,
-      atr_value: signal.atr_value || 0,
-      fx_rate: fxRate,
-      status: "open"
-    };
-
-    await createPositionMutation.mutateAsync({ signal, positionData });
-  };
-
-  // Mark entered signals based on open positions
-  const signalsWithStatus = signals.map(signal => {
-    const hasPosition = positions.some(p => {
-      // Remove .L suffix for comparison
-      const signalTicker = signal.ticker.replace('.L', '');
-      const posTicker = p.ticker.replace('.L', '');
-      return signalTicker === posTicker && p.status === "open";
-    });
-    
-    // If position exists but signal status is still 'new', update to 'already_held'
-    if (hasPosition && signal.status === "new") {
-      return { ...signal, status: "already_held" };
+      toast.success('Signal dismissed');
+      queryClient.invalidateQueries(['signals']);
     }
-    return signal;
   });
 
-  // Filter signals
-  let filteredSignals = signalsWithStatus;
-  
-  if (marketFilter !== "all") {
-    filteredSignals = filteredSignals.filter(s => s.market === marketFilter);
-  }
+  // Filter and sort signals
+  const filteredSignals = useMemo(() => {
+    let filtered = signals.filter(s => {
+      // Market filter
+      if (marketFilter !== 'all' && s.market !== marketFilter) return false;
+      
+      // Show dismissed filter
+      if (!showDismissed && s.status === 'dismissed') return false;
+      
+      // Show already held filter
+      if (!showAlreadyHeld && s.status === 'already_held') return false;
+      
+      return true;
+    });
 
-  if (!showDismissed) {
-    filteredSignals = filteredSignals.filter(s => s.status !== "dismissed");
-  }
+    // Sort
+    filtered.sort((a, b) => {
+      if (sortBy === 'rank') return a.rank - b.rank;
+      if (sortBy === 'momentum') return b.momentum_percent - a.momentum_percent;
+      if (sortBy === 'price') return b.current_price - a.current_price;
+      return 0;
+    });
 
-  if (!showAlreadyHeld) {
-    filteredSignals = filteredSignals.filter(s => s.status !== "already_held");
-  }
-
-  // Sort signals
-  filteredSignals.sort((a, b) => {
-    if (sortBy === "rank") return a.rank - b.rank;
-    if (sortBy === "momentum") return b.momentum_percent - a.momentum_percent;
-    if (sortBy === "price") return b.current_price - a.current_price;
-    return 0;
-  });
+    return filtered;
+  }, [signals, marketFilter, sortBy, showDismissed, showAlreadyHeld]);
 
   // Calculate summary stats
-  const totalCapital = filteredSignals
-    .filter(s => s.status === "new")
-    .reduce((sum, s) => sum + (s.total_cost || 0), 0);
-  const avgMomentum = filteredSignals.length > 0
-    ? filteredSignals.reduce((sum, s) => sum + s.momentum_percent, 0) / filteredSignals.length
-    : 0;
-  const usCount = filteredSignals.filter(s => s.market === "US").length;
-  const ukCount = filteredSignals.filter(s => s.market === "UK").length;
-  const newCount = filteredSignals.filter(s => s.status === "new").length;
+  const stats = useMemo(() => {
+    const newSignals = signals.filter(s => s.status === 'new');
+    const totalCapital = newSignals.reduce((sum, s) => sum + (s.allocation_gbp || 0), 0);
+    const avgMomentum = newSignals.length > 0 
+      ? newSignals.reduce((sum, s) => sum + s.momentum_percent, 0) / newSignals.length 
+      : 0;
+    const usSplit = newSignals.filter(s => s.market === 'US').length;
+    const ukSplit = newSignals.filter(s => s.market === 'UK').length;
+    
+    return {
+      total: newSignals.length,
+      totalCapital,
+      avgMomentum,
+      usSplit,
+      ukSplit
+    };
+  }, [signals]);
 
-  const portfolio = portfolios[0] || { cash_balance: 0 };
-  const currentMonth = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
-
-  // Get latest signal date from signals
+  // Get latest signal date
   const latestSignalDate = signals.length > 0 
-    ? new Date(Math.max(...signals.map(s => new Date(s.signal_date)))).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
-    : "Never";
+    ? new Date(signals[0].signal_date).toLocaleDateString('en-GB', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    : 'No signals yet';
 
-  // Mock market status (will be replaced by real data from generate endpoint)
-  const marketStatus = {
-    spy: { isRiskOn: true, price: 598.43 },
-    ftse: { isRiskOn: false, price: 8534.20 }
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <PageHeader
-        title="Monthly Signals"
-        description={`Signals for ${currentMonth} • Last updated: ${latestSignalDate}`}
-        actions={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => generateMutation.mutate()}
-            disabled={generateMutation.isPending}
-            className="border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800"
-          >
-            {generateMutation.isPending ? (
-              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <RefreshCw className="w-4 h-4 mr-2" />
-            )}
-            {generateMutation.isPending ? "Generating..." : "Refresh Signals"}
-          </Button>
-        }
-      />
-
-      <MarketStatusBar
-        spyStatus={marketStatus.spy}
-        ftseStatus={marketStatus.ftse}
-        fxRate={1.3611}
-        availableCash={portfolio.cash_balance}
-      />
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            Momentum Signals
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Last updated: {latestSignalDate}
+          </p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">
+            Signals auto-generate daily at 4 PM UTC weekdays
+          </p>
+        </div>
+      </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-4 rounded-xl bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/30"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-cyan-400" />
-            </div>
-            <div>
-              <p className="text-sm text-slate-400">Total Signals</p>
-              <p className="text-2xl font-bold text-white">{filteredSignals.length}</p>
-              <p className="text-xs text-slate-500">{newCount} new</p>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-violet-400" />
-            </div>
-            <div>
-              <p className="text-sm text-slate-400">Total Capital</p>
-              <p className="text-2xl font-bold text-white">£{totalCapital.toLocaleString()}</p>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-emerald-400" />
-            </div>
-            <div>
-              <p className="text-sm text-slate-400">Avg Momentum</p>
-              <p className="text-2xl font-bold text-white">{avgMomentum.toFixed(1)}%</p>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-fuchsia-500/20 flex items-center justify-center">
-              <Target className="w-5 h-5 text-fuchsia-400" />
-            </div>
-            <div>
-              <p className="text-sm text-slate-400">Distribution</p>
-              <p className="text-2xl font-bold text-white">{usCount} US, {ukCount} UK</p>
-            </div>
-          </div>
-        </motion.div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatCard
+          icon={<TrendingUp className="w-5 h-5" />}
+          label="New Signals"
+          value={stats.total}
+          color="blue"
+        />
+        <StatCard
+          icon={<DollarSign className="w-5 h-5" />}
+          label="Total Capital"
+          value={`£${stats.totalCapital.toLocaleString()}`}
+          color="green"
+        />
+        <StatCard
+          icon={<Activity className="w-5 h-5" />}
+          label="Avg Momentum"
+          value={`${stats.avgMomentum.toFixed(1)}%`}
+          color="purple"
+        />
+        <StatCard
+          icon={<Globe className="w-5 h-5" />}
+          label="US / UK Split"
+          value={`${stats.usSplit} / ${stats.ukSplit}`}
+          color="orange"
+        />
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-4 mb-6">
+      <div className="flex flex-wrap items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+        {/* Market Filter */}
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-slate-400" />
-          <Select value={marketFilter} onValueChange={setMarketFilter}>
-            <SelectTrigger className="w-32 bg-slate-800/50 border-slate-700 text-white h-9">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-slate-800 border-slate-700">
-              <SelectItem value="all">All Markets</SelectItem>
-              <SelectItem value="US">US Only</SelectItem>
-              <SelectItem value="UK">UK Only</SelectItem>
-            </SelectContent>
-          </Select>
+          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Market:
+          </label>
+          <select
+            value={marketFilter}
+            onChange={(e) => setMarketFilter(e.target.value)}
+            className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          >
+            <option value="all">All</option>
+            <option value="US">US</option>
+            <option value="UK">UK</option>
+          </select>
         </div>
 
-        <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-40 bg-slate-800/50 border-slate-700 text-white h-9">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className="bg-slate-800 border-slate-700">
-            <SelectItem value="rank">Sort by Rank</SelectItem>
-            <SelectItem value="momentum">Sort by Momentum</SelectItem>
-            <SelectItem value="price">Sort by Price</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Sort */}
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Sort by:
+          </label>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          >
+            <option value="rank">Rank</option>
+            <option value="momentum">Momentum</option>
+            <option value="price">Price</option>
+          </select>
+        </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowDismissed(!showDismissed)}
-          className={cn(
-            "border-slate-700 h-9",
-            showDismissed ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white hover:bg-slate-800"
-          )}
-        >
-          {showDismissed ? "Hide" : "Show"} Dismissed
-        </Button>
+        {/* Show Dismissed */}
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showDismissed}
+            onChange={(e) => setShowDismissed(e.target.checked)}
+            className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+          />
+          <span className="text-sm text-slate-700 dark:text-slate-300">
+            Show dismissed
+          </span>
+        </label>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowAlreadyHeld(!showAlreadyHeld)}
-          className={cn(
-            "border-slate-700 h-9",
-            showAlreadyHeld ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white hover:bg-slate-800"
-          )}
-        >
-          {showAlreadyHeld ? "Hide" : "Show"} Already Held
-        </Button>
+        {/* Show Already Held */}
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showAlreadyHeld}
+            onChange={(e) => setShowAlreadyHeld(e.target.checked)}
+            className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+          />
+          <span className="text-sm text-slate-700 dark:text-slate-300">
+            Show already held
+          </span>
+        </label>
+
+        <div className="ml-auto text-sm text-slate-500 dark:text-slate-400">
+          {filteredSignals.length} signal{filteredSignals.length !== 1 ? 's' : ''}
+        </div>
       </div>
 
       {/* Signals Grid */}
-      {isLoading || generateMutation.isPending ? (
-        <div className="text-center py-12">
-          <RefreshCw className="w-8 h-8 text-slate-400 animate-spin mx-auto mb-4" />
-          <p className="text-slate-400">
-            {generateMutation.isPending ? "Generating signals..." : "Loading signals..."}
+      {filteredSignals.length === 0 ? (
+        <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-12 text-center">
+          <p className="text-slate-500 dark:text-slate-400">
+            No signals match your filters
           </p>
         </div>
-      ) : filteredSignals.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-12 px-6 rounded-xl bg-slate-800/50 border border-slate-700/50"
-        >
-          <Zap className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">No signals available</h3>
-          <p className="text-slate-400 mb-4">
-            Click "Refresh Signals" to generate new momentum signals
-          </p>
-          <Button
-            onClick={() => generateMutation.mutate()}
-            className="bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Generate Signals
-          </Button>
-        </motion.div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredSignals.map((signal, index) => (
-            <motion.div
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredSignals.map((signal) => (
+            <SignalCard
               key={signal.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <SignalCard
-                signal={signal}
-                onAddPosition={handleAddPosition}
-                onDismiss={(id) => dismissMutation.mutate(id)}
-                isLoading={createPositionMutation.isPending}
-              />
-            </motion.div>
+              signal={signal}
+              onAddPosition={() => createPositionMutation.mutate(signal)}
+              onDismiss={() => dismissMutation.mutate(signal.id)}
+              isCreating={createPositionMutation.isPending}
+            />
           ))}
         </div>
       )}
     </div>
   );
-}
+};
+
+// Stat Card Component
+const StatCard = ({ icon, label, value, color }) => {
+  const colorClasses = {
+    blue: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
+    green: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400',
+    purple: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
+    orange: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400'
+  };
+
+  return (
+    <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+      <div className="flex items-center gap-3">
+        <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
+          {icon}
+        </div>
+        <div>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
+          <p className="text-lg font-semibold text-slate-900 dark:text-white">
+            {value}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Signal Card Component
+const SignalCard = ({ signal, onAddPosition, onDismiss, isCreating }) => {
+  const getStatusBadge = () => {
+    if (signal.status === 'already_held') {
+      return (
+        <span className="px-2 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded">
+          Already Held
+        </span>
+      );
+    }
+    if (signal.status === 'dismissed') {
+      return (
+        <span className="px-2 py-1 text-xs font-medium bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded">
+          Dismissed
+        </span>
+      );
+    }
+    if (signal.status === 'entered') {
+      return (
+        <span className="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded">
+          Position Entered
+        </span>
+      );
+    }
+    return (
+      <span className="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded">
+        New
+      </span>
+    );
+  };
+
+  const currencySymbol = signal.market === 'US' ? '$' : '£';
+  const isActionable = signal.status === 'new';
+
+  return (
+    <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+              {signal.ticker.replace('.L', '')}
+            </h3>
+            <span className="px-1.5 py-0.5 text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded">
+              #{signal.rank}
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            {signal.market === 'US' ? '🇺🇸 US Stock' : '🇬🇧 UK Stock'}
+          </p>
+        </div>
+        {getStatusBadge()}
+      </div>
+
+      {/* Metrics */}
+      <div className="space-y-2 mb-4">
+        <div className="flex justify-between text-sm">
+          <span className="text-slate-600 dark:text-slate-400">Momentum</span>
+          <span className="font-semibold text-green-600 dark:text-green-400">
+            +{signal.momentum_percent.toFixed(1)}%
+          </span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-slate-600 dark:text-slate-400">Price</span>
+          <span className="font-semibold text-slate-900 dark:text-white">
+            {currencySymbol}{signal.current_price.toFixed(2)}
+          </span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-slate-600 dark:text-slate-400">Stop</span>
+          <span className="font-semibold text-red-600 dark:text-red-400">
+            {currencySymbol}{signal.initial_stop.toFixed(2)}
+          </span>
+        </div>
+        {isActionable && (
+          <>
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-600 dark:text-slate-400">Shares</span>
+              <span className="font-semibold text-slate-900 dark:text-white">
+                {signal.suggested_shares}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-600 dark:text-slate-400">Capital</span>
+              <span className="font-semibold text-slate-900 dark:text-white">
+                £{signal.allocation_gbp.toFixed(2)}
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Actions */}
+      {isActionable && (
+        <div className="flex gap-2">
+          <button
+            onClick={onAddPosition}
+            disabled={isCreating}
+            className="flex-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 rounded-md transition-colors"
+          >
+            {isCreating ? 'Creating...' : 'Add Position'}
+          </button>
+          <button
+            onClick={onDismiss}
+            className="px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md transition-colors"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Signals;
