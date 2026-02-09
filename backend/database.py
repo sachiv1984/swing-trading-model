@@ -459,3 +459,11 @@ def delete_signal(signal_id: str):
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("DELETE FROM signals WHERE id = %s", (signal_id,))
+
+def get_all_tickers() -> List[str]:
+    """Get list of all tickers in universe"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT ticker FROM tickers ORDER BY ticker")
+            results = cur.fetchall()
+            return [row['ticker'] for row in results]
