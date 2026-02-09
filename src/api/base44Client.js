@@ -110,14 +110,15 @@ export const base44 = {
      *   -> envelope: {status, data: { id, email, name, ... }}  OR raw user object
      */
     async me() {
-  // Always return fake user (no backend auth)
-  return {
-    id: 'dev-user',
-    email: 'dev@example.com',
-    name: 'Dev User',
-    role: 'admin',
-  };
-},
+      // Always return fake user (no backend auth)
+      return {
+        id: 'dev-user',
+        email: 'dev@example.com',
+        name: 'Dev User',
+        role: 'admin',
+      };
+    },
+
     /**
      * Starts a login redirect. Backend should begin OIDC/OAuth2 flow and
      * return to your app with ?token=... or ?code=... that you parse in initFromUrl().
@@ -307,31 +308,33 @@ export const base44 = {
       getSummary: async () => api.cash.getSummary(),
     },
     Signal: {
-  list: async (orderBy = '-signal_date') => {
-    return await doFetch('/signals', { raw: true });
+      list: async (orderBy = '-signal_date') => {
+        return await doFetch('/signals', { raw: true });
+      },
+
+      create: async (signalData) =>
+        doFetch('/signals', {
+          method: 'POST',
+          body: JSON.stringify(signalData),
+        }),
+
+      update: async (id, data) =>
+        doFetch(`/signals/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+        }),
+
+      delete: async (id) =>
+        doFetch(`/signals/${id}`, {
+          method: 'DELETE',
+        }),
+
+      generate: async () =>
+        doFetch('/signals/generate', {
+          method: 'POST',
+        }),
+    },
   },
-  
-  create: async (signalData) =>
-    doFetch('/signals', {
-      method: 'POST',
-      body: JSON.stringify(signalData),
-    }),
-  
-  update: async (id, data) =>
-    doFetch(`/signals/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    }),
-  
-  delete: async (id) =>
-    doFetch(`/signals/${id}`, {
-      method: 'DELETE',
-    }),
-  
-  generate: async () =>
-    doFetch('/signals/generate', {
-      method: 'POST',
-    }),
 };
 
 // ---------- Your original api.* methods, now using doFetch ----------
