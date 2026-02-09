@@ -386,3 +386,6 @@ export const api = {
     getSummary: async () => doFetch('/cash/summary'),
   },
 };
+
+export const Signal = base44.entities.Signal;
+export const Position = base44.entities.Position;
