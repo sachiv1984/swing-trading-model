@@ -7,7 +7,7 @@ from decimal import Decimal
 from datetime import timedelta
 import time
 import requests
-import pandas as pd
+
 
 from database import (
     get_portfolio,
@@ -1707,6 +1707,7 @@ def generate_signals_endpoint():
         max_position_pct = 0.20
         
         # Load universe
+        import pandas as pd
         tickers = get_all_tickers()
         
         print(f"Universe: {len(tickers)} tickers")
