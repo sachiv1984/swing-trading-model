@@ -4,6 +4,8 @@ from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 from typing import Optional, List, Dict
 from datetime import datetime
+import pandas as pd
+
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
