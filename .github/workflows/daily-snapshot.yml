@@ -23,3 +23,11 @@ jobs:
         run: |
           echo "Creating portfolio snapshot..."
           curl -X POST "${API_URL}/portfolio/snapshot"
+          
+      - name: Generate Signals
+        env:
+          API_URL: ${{ secrets.API_URL }}
+        run: |
+          echo "Generating Signals..."
+          curl -X POST "${API_URL}/signals/generate"
+
