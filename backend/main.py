@@ -1896,7 +1896,7 @@ def generate_signals_endpoint():
         for signal in signals_sorted:
             if signal['status'] == 'new':
                 signal['allocation_gbp'] = round(allocation_per_stock, 2)
-                signal['suggested_shares'] = round(allocation_per_stock / signal['price_gbp'], 2)
+                signal['suggested_shares'] = int(allocation_per_stock / signal['price_gbp'])  # ← FIND THIS LINE
                 
                 # Calculate fees
                 if signal['market'] == 'UK':
@@ -1945,6 +1945,53 @@ def generate_signals_endpoint():
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/market/status")
+def get_market_status():
+    """
+    Get current market regime (SPY and FTSE vs 200-day MA)
+    Returns live FX rate as well
+    
+    This endpoint provides real-time market status for the Signals page
+    """
+    try:
+        print("\n📊 Fetching market status...")
+        
+        # Reuse existing check_market_regime() function
+        market_regime = check_market_regime()
+        
+        # Get live FX rate
+        fx_rate = get_live_fx_rate()
+        
+        print(f"✓ Market status retrieved:")
+        print(f"   SPY: {'🟢 Risk On' if market_regime['spy_risk_on'] else '🔴 Risk Off'}")
+        print(f"   FTSE: {'🟢 Risk On' if market_regime['ftse_risk_on'] else '🔴 Risk Off'}")
+        print(f"   FX Rate: {fx_rate:.4f}\n")
+        
+        return {
+            "status": "ok",
+            "data": {
+                "spy": {
+                    "price": round(market_regime['spy_price'], 2),
+                    "ma200": round(market_regime['spy_ma200'], 2),
+                    "is_risk_on": market_regime['spy_risk_on']
+                },
+                "ftse": {
+                    "price": round(market_regime['ftse_price'], 2),
+                    "ma200": round(market_regime['ftse_ma200'], 2),
+                    "is_risk_on": market_regime['ftse_risk_on']
+                },
+                "fx_rate": round(fx_rate, 4),
+                "last_updated": datetime.now().isoformat()
+            }
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {
+            "status": "error",
+            "message": f"Failed to fetch market status: {str(e)}"
+        }
 
 
 @app.get("/signals")
