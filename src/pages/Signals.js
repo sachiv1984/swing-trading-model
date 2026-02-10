@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import PageHeader from "../components/ui/PageHeader";
 import SignalCard from "../components/signals/SignalCard";
 import MarketStatusBar from "../components/signals/MarketStatusBar";
+import PositionEntryModal from "../components/signals/PositionEntryModal";
 import { Zap, RefreshCw, Filter, TrendingUp, DollarSign, Target } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
@@ -18,6 +19,7 @@ export default function SignalsPage() {
   const [marketFilter, setMarketFilter] = useState("all");
   const [sortBy, setSortBy] = useState("rank");
   const [showDismissed, setShowDismissed] = useState(false);
+  const [selectedSignal, setSelectedSignal] = useState(null);
 
   // Fetch signals with auto-refresh every minute
   const { data: signals = [], isLoading } = useQuery({
@@ -36,6 +38,22 @@ export default function SignalsPage() {
     queryFn: () => base44.entities.Portfolio.list(),
   });
 
+  // ✅ FIX: Fetch live market status
+  const { data: marketStatus } = useQuery({
+    queryKey: ["marketStatus"],
+    queryFn: async () => {
+      const response = await fetch(`${base44.baseUrl}/market/status`);
+      const result = await response.json();
+      return result.data;
+    },
+    refetchInterval: 300000, // Refresh every 5 minutes
+    initialData: {
+      spy: { price: 0, ma200: 0, is_risk_on: false },
+      ftse: { price: 0, ma200: 0, is_risk_on: false },
+      fx_rate: 1.3611
+    }
+  });
+
   const dismissMutation = useMutation({
     mutationFn: (signalId) => base44.entities.Signal.update(signalId, { status: "dismissed" }),
     onSuccess: () => {
@@ -52,30 +70,22 @@ export default function SignalsPage() {
     },
   });
 
-  const handleAddPosition = async (signal) => {
-    const positionData = {
-      ticker: signal.ticker,
-      market: signal.market,
-      entry_date: new Date().toISOString().split("T")[0],
-      entry_price: signal.current_price,
-      shares: signal.suggested_shares,
-      stop_price: signal.initial_stop,
-      atr_value: signal.atr_value || 0,
-      current_price: signal.current_price,
-      fx_rate: signal.market === "US" ? 1.3611 : 1,
-      status: "open"
-    };
-
-    await createPositionMutation.mutateAsync(positionData);
-    await base44.entities.Signal.update(signal.id, { status: "entered" });
-    queryClient.invalidateQueries({ queryKey: ["signals"] });
+  const handleAddPosition = (signal) => {
+    setSelectedSignal(signal);
   };
 
-  // Mark entered signals
+  const handleConfirmPosition = async (positionData, signalId) => {
+    await createPositionMutation.mutateAsync(positionData);
+    await base44.entities.Signal.update(signalId, { status: "entered" });
+    queryClient.invalidateQueries({ queryKey: ["signals"] });
+    setSelectedSignal(null);
+  };
+
+  // Mark signals with correct status based on positions
   const signalsWithStatus = signals.map(signal => {
     const hasPosition = positions.some(p => p.ticker === signal.ticker && p.status === "open");
     if (hasPosition && signal.status === "new") {
-      return { ...signal, status: "entered" };
+      return { ...signal, status: "already_held" };
     }
     return signal;
   });
@@ -99,9 +109,9 @@ export default function SignalsPage() {
     return 0;
   });
 
-  // Calculate summary stats (only count 'new' signals, not already_held)
+  // ✅ FIX: Calculate stats only for NEW signals
   const newSignals = filteredSignals.filter(s => s.status === "new");
-  const totalCapital = newSignals.reduce((sum, s) => sum + s.total_cost, 0);
+  const totalCapital = newSignals.reduce((sum, s) => sum + (s.total_cost || 0), 0);
   const avgMomentum = filteredSignals.length > 0
     ? filteredSignals.reduce((sum, s) => sum + s.momentum_percent, 0) / filteredSignals.length
     : 0;
@@ -111,22 +121,18 @@ export default function SignalsPage() {
   const portfolio = portfolios[0] || { cash_balance: 0 };
   const currentMonth = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
-  // Get latest signal date
-  const latestSignalDate = signals.length > 0
-    ? new Date(signals[0].signal_date).toLocaleDateString("en-GB", {
+  // ✅ FIX: Format date properly
+  const latestSignalDate = signals.length > 0 && signals[0].signal_date
+    ? new Date(signals[0].signal_date).toLocaleString("en-GB", {
         weekday: "short",
         year: "numeric",
         month: "short",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
+        hour12: false
       })
     : "No signals yet";
-
-  const marketStatus = {
-    spy: { isRiskOn: true, price: 598.43 },
-    ftse: { isRiskOn: false, price: 8534.20 }
-  };
 
   return (
     <div>
@@ -144,7 +150,10 @@ export default function SignalsPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => queryClient.invalidateQueries({ queryKey: ["signals"] })}
+            onClick={() => {
+              queryClient.invalidateQueries({ queryKey: ["signals"] });
+              queryClient.invalidateQueries({ queryKey: ["marketStatus"] });
+            }}
             className="border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
@@ -153,10 +162,17 @@ export default function SignalsPage() {
         }
       />
 
+      {/* ✅ FIX: Use live market status */}
       <MarketStatusBar
-        spyStatus={marketStatus.spy}
-        ftseStatus={marketStatus.ftse}
-        fxRate={1.3611}
+        spyStatus={{
+          isRiskOn: marketStatus?.spy?.is_risk_on || false,
+          price: marketStatus?.spy?.price || 0
+        }}
+        ftseStatus={{
+          isRiskOn: marketStatus?.ftse?.is_risk_on || false,
+          price: marketStatus?.ftse?.price || 0
+        }}
+        fxRate={marketStatus?.fx_rate || 1.3611}
         availableCash={portfolio.cash_balance}
       />
 
@@ -307,6 +323,13 @@ export default function SignalsPage() {
           ))}
         </div>
       )}
+
+      <PositionEntryModal
+        signal={selectedSignal}
+        open={!!selectedSignal}
+        onClose={() => setSelectedSignal(null)}
+        onConfirm={handleConfirmPosition}
+      />
     </div>
   );
 }
