@@ -164,17 +164,18 @@ export default function SignalsPage() {
 
       {/* ✅ FIX: Use live market status */}
       <MarketStatusBar
-        spyStatus={{
-          isRiskOn: marketStatus?.spy?.is_risk_on || false,
-          price: marketStatus?.spy?.price || 0
-        }}
-        ftseStatus={{
-          isRiskOn: marketStatus?.ftse?.is_risk_on || false,
-          price: marketStatus?.ftse?.price || 0
-        }}
-        fxRate={marketStatus?.fx_rate || 1.3611}
-        availableCash={portfolio.cash_balance}
-      />
+  spyStatus={{
+    isRiskOn: marketStatus?.spy?.is_risk_on, // Map API snake_case to Component camelCase
+    price: marketStatus?.spy?.price || 0
+  }}
+  ftseStatus={{
+    isRiskOn: marketStatus?.ftse?.is_risk_on, 
+    price: marketStatus?.ftse?.price || 0
+  }}
+  fxRate={marketStatus?.fx_rate || 1.3611}
+  availableCash={portfolio.cash_balance}
+/>
+
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
