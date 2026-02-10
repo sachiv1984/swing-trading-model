@@ -1896,7 +1896,7 @@ def generate_signals_endpoint():
         for signal in signals_sorted:
             if signal['status'] == 'new':
                 signal['allocation_gbp'] = round(allocation_per_stock, 2)
-                signal['suggested_shares'] = int(allocation_per_stock / signal['price_gbp'])
+                signal['suggested_shares'] = round(allocation_per_stock / signal['price_gbp'], 2)
                 
                 # Calculate fees
                 if signal['market'] == 'UK':
