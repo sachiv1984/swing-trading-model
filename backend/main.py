@@ -1871,7 +1871,7 @@ def generate_signals_endpoint():
                 "status": "ok",
                 "data": {
                     "signals_generated": 0,
-                    "signal_date": signal_date_str,
+                    "signal_date": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                     "fx_rate": live_fx_rate,
                     "signals": []
                 }
