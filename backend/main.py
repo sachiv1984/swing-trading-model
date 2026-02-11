@@ -108,67 +108,7 @@ def decimal_to_float(obj):
         return [decimal_to_float(item) for item in obj]
     elif isinstance(obj, Decimal):
         return float(obj)
-    return obj
-
-
-def calculate_atr(ticker: str, period: int = 14) -> float:
-    """Calculate ATR for a ticker if not stored in database"""
-    try:
-        # Fetch historical data
-        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-        params = {
-            "interval": "1d",
-            "range": "1mo"  # Need enough data for ATR calculation
-        }
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'application/json',
-        }
-        
-        response = requests.get(url, params=params, headers=headers, timeout=10)
-        data = response.json()
-        
-        if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
-            result = data["chart"]["result"][0]
-            
-            if "indicators" in result and "quote" in result["indicators"]:
-                quote = result["indicators"]["quote"][0]
-                
-                # Get high, low, close
-                highs = [h for h in quote.get("high", []) if h is not None]
-                lows = [l for l in quote.get("low", []) if l is not None]
-                closes = [c for c in quote.get("close", []) if c is not None]
-                
-                if len(highs) >= period and len(lows) >= period and len(closes) >= period:
-                    # Calculate True Range
-                    true_ranges = []
-                    for i in range(1, len(closes)):
-                        high_low = highs[i] - lows[i]
-                        high_close = abs(highs[i] - closes[i-1])
-                        low_close = abs(lows[i] - closes[i-1])
-                        true_range = max(high_low, high_close, low_close)
-                        true_ranges.append(true_range)
-                    
-                    # Calculate ATR (simple moving average of TR)
-                    if len(true_ranges) >= period:
-                        atr = sum(true_ranges[-period:]) / period
-                        
-                        # Fix UK stocks: Yahoo returns pence, need to convert to pounds
-                        if ticker.endswith('.L') and atr > 100:
-                            atr = atr / 100
-                            print(f"   📊 Calculated ATR for {ticker}: {atr:.2f} (converted from pence)")
-                        else:
-                            print(f"   📊 Calculated ATR for {ticker}: {atr:.2f}")
-                        
-                        return atr
-        
-        print(f"   ⚠️  Could not calculate ATR for {ticker}")
-        return None
-        
-    except Exception as e:
-        print(f"   ❌ ATR calculation error for {ticker}: {e}")
-        return None
-        
+    return obj        
 
 @app.get("/")
 def root():
