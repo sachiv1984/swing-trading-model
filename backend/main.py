@@ -6,6 +6,8 @@ from decimal import Decimal
 from datetime import timedelta
 import time
 import requests
+from config import API_TITLE
+from config import ALLOWED_ORIGINS
 
 
 from database import (
@@ -55,16 +57,11 @@ from config import (
     DEFAULT_FX_RATE
 )
 
-app = FastAPI(title="Trading Assistant API")
+app = FastAPI(title=API_TITLE)
 
-# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://sachiv1984.github.io",
-        "https://trading-assistant-api-c0f9.onrender.com",
-        "http://localhost:3000"
-    ],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
