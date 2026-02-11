@@ -14,7 +14,6 @@ Functions:
 import time
 import requests
 from typing import Optional, Dict
-from config import DEFAULT_FX_RATE
 
 
 def get_current_price(ticker: str) -> Optional[float]:
@@ -138,14 +137,12 @@ def get_live_fx_rate() -> float:
                             print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
                             return fx_rate
         
-        
-
-print(f"⚠️  Could not fetch live FX rate, using default {DEFAULT_FX_RATE}")
-return DEFAULT_FX_RATE
+        print(f"⚠️  Could not fetch live FX rate, using default {DEFAULT_FX_RATE}")
+        return DEFAULT_FX_RATE
         
     except Exception as e:
         print(f"⚠️  FX rate fetch error: {e}, using default {DEFAULT_FX_RATE}")
-        return {DEFAULT_FX_RATE}
+        return DEFAULT_FX_RATE
 
 
 def check_market_regime() -> Dict[str, any]:
