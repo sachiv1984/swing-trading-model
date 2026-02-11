@@ -42,6 +42,13 @@ from utils.pricing import (
     calculate_atr
 )
 
+from models import (
+         AddPositionRequest,
+         SettingsRequest,
+         CashTransactionRequest,
+         ExitPositionRequest
+     )
+
 app = FastAPI(title="Trading Assistant API")
 
 # CORS
