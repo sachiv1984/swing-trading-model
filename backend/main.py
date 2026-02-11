@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 from decimal import Decimal
@@ -63,49 +62,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Request models - FIXED to match frontend
-class AddPositionRequest(BaseModel):
-    ticker: str
-    market: str
-    entry_date: str
-    shares: float  # Changed from int to allow fractional shares
-    entry_price: float  # Frontend sends this instead of fill_price
-    current_price: Optional[float] = None
-    fx_rate: Optional[float] = None
-    atr_value: Optional[float] = None  # Frontend sends this
-    stop_price: Optional[float] = None
-    fees: Optional[float] = None
-    status: Optional[str] = "open"
-
-
-class SettingsRequest(BaseModel):
-    min_hold_days: Optional[int] = 5
-    atr_multiplier_initial: Optional[float] = 2
-    atr_multiplier_trailing: Optional[float] = 2
-    atr_period: Optional[int] = 14
-    default_currency: Optional[str] = "GBP"
-    theme: Optional[str] = "dark"
-    uk_commission: Optional[float] = 9.95
-    us_commission: Optional[float] = 0
-    stamp_duty_rate: Optional[float] = 0.005
-    fx_fee_rate: Optional[float] = 0.0015
-
-
-class CashTransactionRequest(BaseModel):
-    type: str  # "deposit" or "withdrawal"
-    amount: float
-    date: Optional[str] = None
-    note: Optional[str] = ""
-
-
-class ExitPositionRequest(BaseModel):
-    shares: Optional[float] = None  # Optional: defaults to all shares
-    exit_price: float  # REQUIRED: user-provided exit price
-    exit_date: Optional[str] = None  # Optional: defaults to today
-    exit_reason: Optional[str] = "Manual Exit"
-    exit_fx_rate: Optional[float] = None  # REQUIRED for US stocks, ignored for UK
-
 
 # Helper to convert Decimal to float
 def decimal_to_float(obj):
