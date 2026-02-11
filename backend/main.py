@@ -168,66 +168,7 @@ def calculate_atr(ticker: str, period: int = 14) -> float:
     except Exception as e:
         print(f"   ❌ ATR calculation error for {ticker}: {e}")
         return None
-
-
-def get_current_price(ticker: str) -> float:
-    """Fetch current price directly from Yahoo Finance API (bypassing yfinance library)"""
-    try:
-        # Add delay to avoid rate limiting
-        time.sleep(0.3)
         
-        # Direct Yahoo Finance API call
-        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-        params = {
-            "interval": "1d",
-            "range": "1d"
-        }
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'application/json',
-            'Accept-Language': 'en-US,en;q=0.9',
-        }
-        
-        response = requests.get(url, params=params, headers=headers, timeout=10)
-        
-        if response.status_code != 200:
-            print(f"⚠️  {ticker}: HTTP {response.status_code}")
-            return None
-        
-        data = response.json()
-        
-        # Extract price from response
-        if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
-            result = data["chart"]["result"][0]
-            
-            # Try meta.regularMarketPrice first
-            if "meta" in result and "regularMarketPrice" in result["meta"]:
-                price = float(result["meta"]["regularMarketPrice"])
-                if price > 0:
-                    print(f"✓ {ticker}: ${price:.2f} (Yahoo API)")
-                    return price
-            
-            # Try latest close price from indicators
-            if "indicators" in result and "quote" in result["indicators"]:
-                quotes = result["indicators"]["quote"]
-                if len(quotes) > 0 and "close" in quotes[0]:
-                    closes = [c for c in quotes[0]["close"] if c is not None]
-                    if closes:
-                        price = float(closes[-1])
-                        if price > 0:
-                            print(f"✓ {ticker}: ${price:.2f} (Yahoo API - close)")
-                            return price
-        
-        print(f"⚠️  {ticker}: No price in API response")
-        return None
-        
-    except requests.exceptions.RequestException as e:
-        print(f"❌ {ticker}: Network error - {str(e)}")
-        return None
-    except Exception as e:
-        print(f"❌ {ticker}: Error - {str(e)}")
-        return None
-
 
 def get_live_fx_rate():
     """Fetch live GBP/USD exchange rate from Yahoo Finance"""
