@@ -48,6 +48,13 @@ from models import (
          ExitPositionRequest
      )
 
+from utils.formatting import decimal_to_float
+from config import (
+    API_TITLE,
+    ALLOWED_ORIGINS,
+    DEFAULT_FX_RATE
+)
+
 app = FastAPI(title="Trading Assistant API")
 
 # CORS
@@ -62,17 +69,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Helper to convert Decimal to float
-def decimal_to_float(obj):
-    if isinstance(obj, dict):
-        return {k: decimal_to_float(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [decimal_to_float(item) for item in obj]
-    elif isinstance(obj, Decimal):
-        return float(obj)
-    return obj        
-
+      
 @app.get("/")
 def root():
     return {"status": "ok", "message": "Trading Assistant API v1.0"}
