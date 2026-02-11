@@ -170,53 +170,6 @@ def calculate_atr(ticker: str, period: int = 14) -> float:
         return None
         
 
-def get_live_fx_rate():
-    """Fetch live GBP/USD exchange rate from Yahoo Finance"""
-    try:
-        time.sleep(0.2)
-        
-        url = "https://query1.finance.yahoo.com/v8/finance/chart/GBPUSD=X"
-        params = {
-            "interval": "1d",
-            "range": "1d"
-        }
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'application/json',
-        }
-        
-        response = requests.get(url, params=params, headers=headers, timeout=10)
-        data = response.json()
-        
-        if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
-            result = data["chart"]["result"][0]
-            
-            # Try meta.regularMarketPrice first
-            if "meta" in result and "regularMarketPrice" in result["meta"]:
-                fx_rate = float(result["meta"]["regularMarketPrice"])
-                if fx_rate > 0:
-                    print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
-                    return fx_rate
-            
-            # Try latest close price
-            if "indicators" in result and "quote" in result["indicators"]:
-                quotes = result["indicators"]["quote"]
-                if len(quotes) > 0 and "close" in quotes[0]:
-                    closes = [c for c in quotes[0]["close"] if c is not None]
-                    if closes:
-                        fx_rate = float(closes[-1])
-                        if fx_rate > 0:
-                            print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
-                            return fx_rate
-        
-        print("⚠️  Could not fetch live FX rate, using default 1.27")
-        return 1.27
-        
-    except Exception as e:
-        print(f"⚠️  FX rate fetch error: {e}, using default 1.27")
-        return 1.27
-
-
 def check_market_regime():
     """Check SPY and FTSE for risk on/off using direct Yahoo Finance API"""
     try:
