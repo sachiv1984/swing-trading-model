@@ -35,6 +35,13 @@ from database import (
     compute_atr_simple
 )
 
+from utils.pricing import (
+    get_current_price,
+    get_live_fx_rate,
+    check_market_regime,
+    calculate_atr
+)
+
 app = FastAPI(title="Trading Assistant API")
 
 # CORS
