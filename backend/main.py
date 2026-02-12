@@ -176,21 +176,19 @@ def get_positions_endpoint():
                 print(f"   ⚠️  Using stored price")
                 current_price_native = pos.get('current_price', pos['entry_price'])
             
-            # Calculate P&L correctly
-            # For US stocks: entry_price is in GBP (stored), but we need USD for comparison
-            # So use fill_price (USD) for US stocks, entry_price (GBP) for UK stocks
-            if pos['market'] == 'US':
-                # US stock: Compare USD to USD
-                entry_price_usd = pos.get('fill_price', pos['entry_price'] * (pos.get('fx_rate', 1.27)))
-                pnl_usd = (current_price_native - entry_price_usd) * pos['shares']
-                pnl_gbp = pnl_usd / live_fx_rate
-                entry_price_display = entry_price_usd
-            else:
-                # UK stock: Already in GBP
-                entry_price_display = pos['entry_price']
-                pnl_gbp = (current_price_native - entry_price_display) * pos['shares']
-            
-            pnl_pct = ((current_price_native - entry_price_display) / entry_price_display) * 100 if entry_price_display > 0 else 0
+            # Calculate P&L using utility function
+if pos['market'] == 'US':
+    entry_price_display = pos.get('fill_price', pos['entry_price'] * (pos.get('fx_rate', 1.27)))
+else:
+    entry_price_display = pos['entry_price']
+
+pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
+    entry_price=entry_price_display,
+    current_price=current_price_native,
+    shares=pos['shares'],
+    market=pos['market'],
+    live_fx_rate=live_fx_rate
+)
             
             # Convert to GBP for Dashboard calculations
             if pos['market'] == 'US':
