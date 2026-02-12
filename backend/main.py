@@ -537,20 +537,22 @@ else:
     print(f"   US exit fees: ${fx_fee:.2f} ({float(settings.get('fx_fee_rate', 0.0015))*100:.2f}% FX fee)")
     print(f"   💱 FX conversion: ${net_proceeds_native:.2f} / {exit_fx_rate:.4f} = £{net_proceeds_gbp:.2f}")
         
-        # Calculate P&L for exited shares
-        # Total cost is proportional to shares being exited
-        total_cost = float(position['total_cost'])
-        cost_per_share = total_cost / total_shares
-        exit_total_cost = cost_per_share * exit_shares
-        
-        entry_price = float(position.get('fill_price', position['entry_price'])) if market == 'US' else float(position['entry_price'])
-        entry_fees = float(position.get('fees_paid', 0))
-        entry_fees_per_share = entry_fees / total_shares
-        exit_entry_fees = entry_fees_per_share * exit_shares
-        
-        # Realized P&L = net proceeds - cost of exited shares
-        realized_pnl_gbp = net_proceeds_gbp - exit_total_cost
-        realized_pnl_pct = (realized_pnl_gbp / exit_total_cost) * 100
+        # Calculate realized P&L using utility function
+total_cost = float(position['total_cost'])
+realized_pnl_gbp, realized_pnl_pct = calculate_realized_pnl(
+    net_proceeds_gbp=net_proceeds_gbp,
+    total_cost=total_cost,
+    shares_exited=exit_shares,
+    total_shares=total_shares
+)
+
+# Calculate proportional costs for partial exit tracking
+cost_per_share = total_cost / total_shares
+exit_total_cost = cost_per_share * exit_shares
+
+entry_fees = float(position.get('fees_paid', 0))
+entry_fees_per_share = entry_fees / total_shares
+exit_entry_fees = entry_fees_per_share * exit_shares
         
         # FIXED: Calculate holding period using user-provided exit date or today
         entry_date = datetime.strptime(str(position['entry_date']), '%Y-%m-%d')
