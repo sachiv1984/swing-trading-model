@@ -554,19 +554,17 @@ entry_fees = float(position.get('fees_paid', 0))
 entry_fees_per_share = entry_fees / total_shares
 exit_entry_fees = entry_fees_per_share * exit_shares
         
-        # FIXED: Calculate holding period using user-provided exit date or today
-        entry_date = datetime.strptime(str(position['entry_date']), '%Y-%m-%d')
-        
-        if request.exit_date:
-            exit_date = datetime.strptime(request.exit_date, '%Y-%m-%d')
-            exit_date_str = request.exit_date
-            print(f"   📅 Exit date: {exit_date_str} (user-provided)")
-        else:
-            exit_date = datetime.now()
-            exit_date_str = exit_date.strftime('%Y-%m-%d')
-            print(f"   📅 Exit date: {exit_date_str} (today)")
-        
-        holding_days = (exit_date - entry_date).days
+        # Calculate holding period using utility function
+exit_date_str = request.exit_date or datetime.now().strftime('%Y-%m-%d')
+holding_days = calculate_holding_days(
+    entry_date=str(position['entry_date']),
+    exit_date=exit_date_str
+)
+
+if request.exit_date:
+    print(f"   📅 Exit date: {exit_date_str} (user-provided)")
+else:
+    print(f"   📅 Exit date: {exit_date_str} (today)")
         
         print(f"   Shares: {exit_shares}")
         print(f"   Gross proceeds: £{gross_proceeds_gbp:.2f}")
