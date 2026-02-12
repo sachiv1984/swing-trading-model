@@ -197,10 +197,9 @@ pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
             else:
                 current_price_gbp = current_price_native
             
-            # Calculate holding days
-            entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
-            holding_days = (datetime.now() - entry_date).days
-            grace_period = holding_days < 10
+           # Calculate holding days using utility function
+holding_days = calculate_holding_days(str(pos['entry_date']))
+grace_period = holding_days < 10
             
             # Stop price handling
             if grace_period:
