@@ -315,34 +315,13 @@ def create_cash_transaction_endpoint(request: CashTransactionRequest):
 def get_cash_transactions_endpoint(order: str = "DESC"):
     """Get all cash transactions"""
     try:
-        portfolio = get_portfolio()
-        if not portfolio:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
-        
-        portfolio_id = str(portfolio['id'])
-        
-        # Validate order parameter
-        if order.upper() not in ['ASC', 'DESC']:
-            order = 'DESC'
-        
-        transactions = get_cash_transactions(portfolio_id, order.upper())
-        
-        # Format for frontend
-        formatted = []
-        for tx in transactions:
-            formatted.append({
-                'id': str(tx['id']),
-                'type': tx['type'],
-                'amount': float(tx['amount']),
-                'date': str(tx['date']),
-                'note': tx['note'] or '',
-                'created_at': str(tx['created_at'])
-            })
-        
+        transactions = get_transaction_history(order)
         return {
             "status": "ok",
-            "data": formatted
+            "data": transactions
         }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         import traceback
         traceback.print_exc()
