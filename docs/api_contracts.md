@@ -7,7 +7,7 @@ This document defines the backend API contracts for the **Momentum Trading Assis
 The system is a **decision-support tool**, not a trading bot.  
 All strategy logic is deterministic, server-side, and frozen for MVP.
 
-**Last Updated:** February 5, 2026  
+**Last Updated:** February 12, 2026  
 **Version:** 1.2
 
 ---
@@ -281,7 +281,7 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
   "exit_price": 36.68,
   "exit_date": "2026-02-03",
   "exit_reason": "Stop Loss Hit",
-  "fx_rate": 1.3684
+  "exit_fx_rate": 1.3684
 }
 ```
 
@@ -290,7 +290,7 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
 - `exit_price`: **User-entered exit price from broker** (REQUIRED)
 - `exit_date`: Exit date (optional - defaults to today, format: YYYY-MM-DD)
 - `exit_reason`: Reason for exit (optional - defaults to "Manual Exit")
-- `fx_rate`: **User-entered FX rate (GBP/USD) from broker** (REQUIRED for US stocks, ignored for UK stocks)
+- `exit_fx_rate`: **User-entered FX rate (GBP/USD) from broker** (REQUIRED for US stocks, ignored for UK stocks)
 
 **Valid Exit Reasons:**
 - "Manual Exit"
@@ -320,8 +320,10 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
     "realized_pnl": -127.12,
     "realized_pnl_pct": -11.40,
     "new_cash_balance": 1522.20,
-    "fx_rate": 1.3684,
-    "exit_date": "2026-02-03"
+    "exit_fx_rate": 1.3684,
+    "exit_date": "2026-02-03",
+    "is_partial_exit": false,
+    "remaining_shares": 0
   }
 }
 ```
@@ -351,24 +353,7 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
 **US Exits:**
 - FX fee: 0.15% of gross proceeds (in USD)
 - No commission
-- Converted to GBP using **live FX rate at exit time**
-
-### FX Rate for Cash Conversion (CRITICAL)
-- For US stock exits, the **user-entered FX rate** is used (from broker statement)
-- This FX rate is used to convert net proceeds to GBP
-- Rate must be provided by user for US stocks
-- Example:
-  ```
-  US stock exit:
-  - Exit price: $286.16 (user-entered from broker)
-  - Shares: 5.5
-  - Gross proceeds: $1573.88 USD
-  - FX fee: $2.36 (0.15%)
-  - Net proceeds: $1571.52 USD
-  - User-entered FX rate: 1.3684 (from broker statement)
-  - Net proceeds GBP: £1148.39 (= $1571.52 / 1.3684)
-  - Added to cash: £1148.39
-  ```
+- Converted to GBP using **user-entered FX rate**
 
 ### Partial Exits
 - If `shares` < position total, position remains open
@@ -391,73 +376,78 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
 }
 ```
 
-**Migration from v1.1:**
-- Previously: Backend fetched live price (optional user override)
-- Now: User MUST provide exit price (required field)
-- Frontend must validate exit_price > 0 before submission
+```json
+{
+  "status": "error",
+  "message": "FX rate is required for US stock exits. Please provide the GBP/USD rate from your broker statement."
+}
+```
 
 ---
 
-## 6. Cash Management
+## 6. Portfolio History
 
-### POST /cash/transaction
+### POST /portfolio/snapshot
 
-**Purpose:** Record deposits and withdrawals for accurate P&L
-
-**Request:**
-```json
-{
-  "type": "deposit",
-  "amount": 1000.00,
-  "date": "2026-02-03",
-  "note": "Monthly savings"
-}
-```
+**Purpose:** Create daily snapshot (automated via cron)
 
 **Response:**
 ```json
 {
   "status": "ok",
   "data": {
-    "transaction": {
-      "id": "uuid",
-      "type": "deposit",
-      "amount": 1000.00,
-      "date": "2026-02-03",
-      "note": "Monthly savings",
-      "created_at": "2026-02-03T18:42:10"
-    },
-    "new_balance": 1532.62
+    "snapshot_date": "2026-02-12",
+    "total_value": 5133.52,
+    "cash_balance": 532.62,
+    "positions_value": 4600.90,
+    "total_pnl": 133.52,
+    "position_count": 5
   }
 }
 ```
 
-### GET /cash/transactions
-
-**Purpose:** List all cash transactions
-
-**Query Parameters:**
-- `order`: `ASC` | `DESC` (default: `DESC`)
-
-### GET /cash/summary
-
-**Purpose:** Get aggregated cash flow statistics
+**Notes:**
+- Idempotent: Can run multiple times per day (updates existing)
+- UNIQUE constraint on (portfolio_id, snapshot_date)
+- Recommended: Run at 4 PM UTC weekdays via cron
 
 ---
-
-## 7. Portfolio History
-
-### POST /portfolio/snapshot
-
-**Purpose:** Create daily snapshot (automated via cron)
 
 ### GET /portfolio/history?days=30
 
 **Purpose:** Retrieve historical portfolio snapshots for charts
 
+**Query Parameters:**
+- `days`: Number of days to retrieve (default: 30)
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": [
+    {
+      "snapshot_date": "2026-02-12",
+      "total_value": 5133.52,
+      "cash_balance": 532.62,
+      "positions_value": 4600.90,
+      "total_pnl": 133.52,
+      "position_count": 5
+    },
+    {
+      "snapshot_date": "2026-02-11",
+      "total_value": 5089.20,
+      "cash_balance": 532.62,
+      "positions_value": 4556.58,
+      "total_pnl": 89.20,
+      "position_count": 5
+    }
+  ]
+}
+```
+
 ---
 
-## 8. Trade History
+## 7. Trade History
 
 ### GET /trades
 
@@ -487,11 +477,140 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
 
 ---
 
-## 9. Signals
+## 8. Cash Management
+
+### POST /cash/transaction
+
+**Purpose:** Record deposits and withdrawals for accurate P&L
+
+**Request:**
+```json
+{
+  "type": "deposit",
+  "amount": 1000.00,
+  "date": "2026-02-03",
+  "note": "Monthly savings"
+}
+```
+
+**Field Details:**
+- `type`: "deposit" or "withdrawal" (required)
+- `amount`: Amount in GBP, must be > 0 (required)
+- `date`: Transaction date YYYY-MM-DD (optional, defaults to today)
+- `note`: Optional description (max 200 characters)
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "transaction": {
+      "id": "uuid",
+      "type": "deposit",
+      "amount": 1000.00,
+      "date": "2026-02-03",
+      "note": "Monthly savings",
+      "created_at": "2026-02-03T18:42:10"
+    },
+    "new_balance": 1532.62
+  }
+}
+```
+
+**Error Cases:**
+```json
+{
+  "status": "error",
+  "message": "Invalid transaction type. Must be 'deposit' or 'withdrawal'"
+}
+```
+
+```json
+{
+  "status": "error",
+  "message": "Insufficient funds. Available cash: £500.00, withdrawal: £1000.00"
+}
+```
+
+---
+
+### GET /cash/transactions
+
+**Purpose:** List all cash transactions
+
+**Query Parameters:**
+- `order`: `ASC` | `DESC` (default: `DESC` = newest first)
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": [
+    {
+      "id": "uuid",
+      "type": "deposit",
+      "amount": 1000.00,
+      "date": "2026-02-03",
+      "note": "Monthly savings",
+      "created_at": "2026-02-03T18:42:10"
+    },
+    {
+      "id": "uuid",
+      "type": "withdrawal",
+      "amount": 500.00,
+      "date": "2026-02-01",
+      "note": "Expenses",
+      "created_at": "2026-02-01T10:15:00"
+    }
+  ]
+}
+```
+
+**Notes:**
+- Returns empty array if no transactions exist
+- Sorted by date according to order parameter
+- All amounts in GBP
+
+---
+
+### GET /cash/summary
+
+**Purpose:** Get aggregated cash flow statistics
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "total_deposits": 15000.00,
+    "total_withdrawals": 2000.00,
+    "net_cash_flow": 13000.00,
+    "current_cash": 5432.10
+  }
+}
+```
+
+**Notes:**
+- `net_cash_flow` = total_deposits - total_withdrawals
+- Used for calculating true portfolio P&L
+- Portfolio P&L = current_value - net_cash_flow
+
+---
+
+## 9. Signal Generation
 
 ### POST /signals/generate
 
 **Purpose:** Generate momentum signals based on current portfolio state
+
+**Query Parameters:**
+- `lookback_days`: Momentum calculation period (default: 252 = 1 year)
+- `top_n`: Number of top momentum stocks to signal (default: 5)
+
+**Example Request:**
+```
+POST /signals/generate?lookback_days=252&top_n=5
+```
 
 **Response:**
 ```json
@@ -501,45 +620,352 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
     "signals_generated": 5,
     "new_signals": 3,
     "already_held": 2,
-    "signal_date": "2026-02-09",
+    "signal_date": "2026-02-12",
     "fx_rate": 1.3684,
     "available_cash": 5000.00,
     "market_regime": {
       "spy_risk_on": true,
       "ftse_risk_on": true
     },
-    "signals": [...]
+    "signals": [
+      {
+        "ticker": "NVDA",
+        "market": "US",
+        "rank": 1,
+        "momentum_percent": 45.2,
+        "current_price": 850.00,
+        "price_gbp": 621.07,
+        "atr_value": 15.32,
+        "volatility": 0.0234,
+        "initial_stop": 773.40,
+        "status": "new",
+        "allocation_gbp": 1000.00,
+        "suggested_shares": 1,
+        "total_cost": 622.57
+      },
+      {
+        "ticker": "TSLA",
+        "market": "US",
+        "rank": 2,
+        "momentum_percent": 38.5,
+        "current_price": 245.00,
+        "price_gbp": 179.01,
+        "atr_value": 8.50,
+        "volatility": 0.0312,
+        "initial_stop": 202.50,
+        "status": "already_held",
+        "allocation_gbp": 0,
+        "suggested_shares": 0,
+        "total_cost": 0
+      }
+    ]
   }
 }
 ```
 
+**Signal Fields:**
+- `ticker`: Stock symbol
+- `market`: "US" or "UK"
+- `rank`: Momentum rank (1 = highest momentum)
+- `momentum_percent`: Return over lookback period (%)
+- `current_price`: Current price in native currency
+- `price_gbp`: Current price in GBP
+- `atr_value`: Average True Range (for stop calculation)
+- `volatility`: 60-day rolling volatility
+- `initial_stop`: Suggested initial stop price
+- `status`: "new" (can enter) or "already_held" (already in portfolio)
+- `allocation_gbp`: Suggested position size in GBP
+- `suggested_shares`: Recommended number of shares
+- `total_cost`: Total cost including fees (GBP)
+
+**Notes:**
+- Only generates signals in risk-on market conditions
+- Filters by 200-day MA trend (price > MA200)
+- Equal-weight position sizing across new signals
+- Signals saved to database for later review
+- Can take 30-60 seconds to complete (downloads price data)
+
+---
+
 ### GET /signals
 
-**Purpose:** Get all signals
+**Purpose:** Get all signals, optionally filtered by status
 
 **Query Parameters:**
-- `status`: Filter by status ('new', 'entered', 'dismissed', 'expired', 'already_held')
+- `status`: Optional filter - "new", "entered", "dismissed", "expired", "already_held"
+
+**Example Requests:**
+```
+GET /signals
+GET /signals?status=new
+GET /signals?status=already_held
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "uuid",
+    "portfolio_id": "uuid",
+    "ticker": "NVDA",
+    "market": "US",
+    "rank": 1,
+    "momentum_percent": 45.2,
+    "current_price": 850.00,
+    "price_gbp": 621.07,
+    "atr_value": 15.32,
+    "volatility": 0.0234,
+    "initial_stop": 773.40,
+    "status": "new",
+    "allocation_gbp": 1000.00,
+    "suggested_shares": 1,
+    "total_cost": 622.57,
+    "signal_date": "2026-02-12",
+    "created_at": "2026-02-12T09:30:00"
+  }
+]
+```
+
+**Notes:**
+- Returns empty array if no signals exist
+- Signals ordered by rank (best first)
+- All prices in native currency
+
+---
 
 ### PATCH /signals/{signal_id}
 
-**Purpose:** Update signal status
+**Purpose:** Update signal status (typically after taking action)
 
 **Request:**
 ```json
 {
-  "status": "dismissed"
+  "status": "entered"
 }
 ```
+
+**Valid Status Transitions:**
+- "new" → "entered" (position opened)
+- "new" → "dismissed" (user skipped)
+- "new" → "expired" (signal too old)
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "id": "uuid",
+    "ticker": "NVDA",
+    "status": "entered",
+    "updated_at": "2026-02-12T14:30:00"
+  }
+}
+```
+
+---
 
 ### DELETE /signals/{signal_id}
 
 **Purpose:** Delete a signal
 
+**Response:**
+```json
+{
+  "status": "ok"
+}
+```
+
+**Notes:**
+- Permanently removes signal from database
+- Cannot be undone
+- Typically used to clean up old/stale signals
+
 ---
 
-## 10. Settings
+## 10. Market Status
+
+### GET /market/status
+
+**Purpose:** Get current market regime and FX rate (for Signals page)
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "spy": {
+      "price": 512.34,
+      "ma200": 488.91,
+      "is_risk_on": true
+    },
+    "ftse": {
+      "price": 7482.10,
+      "ma200": 7401.44,
+      "is_risk_on": true
+    },
+    "fx_rate": 1.3684,
+    "last_updated": "2026-02-12T14:30:00"
+  }
+}
+```
+
+**Field Explanations:**
+- `spy.price`: Current SPY price
+- `spy.ma200`: SPY 200-day moving average
+- `spy.is_risk_on`: true if SPY > MA200
+- `ftse.price`: Current FTSE price  
+- `ftse.ma200`: FTSE 200-day moving average
+- `ftse.is_risk_on`: true if FTSE > MA200
+- `fx_rate`: Current GBP/USD exchange rate
+- `last_updated`: Timestamp of data
+
+**Notes:**
+- Used to determine if market conditions favor new positions
+- Risk-on = price > 200-day MA
+- Risk-off = price < 200-day MA
+- Data fetched from Yahoo Finance in real-time
+
+---
+
+## 11. Health & Status (NEW in v1.3)
+
+### GET /health
+
+**Purpose:** Basic health check for load balancers and monitoring
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2026-02-12T14:30:00",
+  "version": "1.2.0"
+}
+```
+
+**Notes:**
+- Fast response (<10ms)
+- Use for load balancer health checks
+- Returns 200 OK if system is running
+
+---
+
+### GET /health/detailed
+
+**Purpose:** Comprehensive system status check
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2026-02-12T14:30:00",
+  "version": "1.2.0",
+  "response_time_ms": 45.3,
+  "checks": {
+    "database": {
+      "status": "healthy",
+      "details": {
+        "connected": true,
+        "portfolio_exists": true
+      }
+    },
+    "yahoo_finance": {
+      "status": "healthy",
+      "details": {
+        "gbp_usd_rate": 1.3684,
+        "accessible": true
+      }
+    },
+    "services": {
+      "status": "healthy",
+      "details": {
+        "position_service": "available",
+        "portfolio_service": "available",
+        "cash_service": "available"
+      }
+    },
+    "config": {
+      "status": "healthy",
+      "details": {
+        "settings_loaded": true
+      }
+    }
+  }
+}
+```
+
+**Status Values:**
+- `healthy`: Component working normally
+- `degraded`: Component working with issues
+- `unhealthy`: Component not working
+
+**Overall Status:**
+- `healthy`: All components healthy
+- `degraded`: One or more components degraded or unhealthy
+
+**Notes:**
+- Checks database connectivity
+- Verifies external service access (Yahoo Finance)
+- Tests service layer availability
+- Validates configuration
+- Use for post-deployment verification
+
+---
+
+### GET /test/endpoints
+
+**Purpose:** Test all API endpoints (for verification and monitoring)
+
+**Response:**
+```json
+{
+  "timestamp": "2026-02-12T14:30:00",
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "success_rate": 100.0
+  },
+  "results": [
+    {
+      "endpoint": "GET /",
+      "status": "pass",
+      "status_code": 200,
+      "expected_status": 200,
+      "response_time_ms": 5.2
+    },
+    {
+      "endpoint": "GET /health",
+      "status": "pass",
+      "status_code": 200,
+      "expected_status": 200,
+      "response_time_ms": 3.1
+    },
+    {
+      "endpoint": "GET /positions",
+      "status": "pass",
+      "status_code": 200,
+      "expected_status": 200,
+      "response_time_ms": 234.5
+    }
+  ]
+}
+```
+
+**Notes:**
+- Tests all GET endpoints that don't require parameters
+- Returns pass/fail status for each
+- Includes response times
+- Use for post-deployment smoke tests
+- Can take 10-30 seconds to complete
+
+---
+
+## 12. Settings
 
 ### GET /settings
+
+**Purpose:** Get user settings and strategy parameters
 
 **Response:**
 ```json
@@ -616,14 +1042,15 @@ Display: $576 ✓ (stable!)
 
 ### Exit Endpoint Changes (v1.2)
 1. **exit_price now REQUIRED** - was optional (fetched live price)
-2. **fee_breakdown added to response** - detailed fee display
-3. **fx_rate included in response** - for US stock exits
+2. **exit_fx_rate now REQUIRED for US stocks** - was optional
+3. **fee_breakdown added to response** - detailed fee display
 4. **shares parameter added** - supports partial exits
 5. **exit_reason validation** - must use predefined list
 
 ### Backwards Compatibility
 - Old clients calling without exit_price will receive 400 error
-- Frontend must be updated to always provide exit_price
+- Old clients calling without exit_fx_rate (US stocks) will receive 400 error
+- Frontend must be updated to always provide these fields
 - Response structure expanded but existing fields unchanged
 
 ---
@@ -640,5 +1067,5 @@ Display: $576 ✓ (stable!)
 ---
 
 **Document Version:** 1.2  
-**Last Review:** February 9, 2026  
-**Status:** Current  
+**Last Review:** February 12, 2026  
+**Status:** Current
