@@ -76,7 +76,16 @@ from services import (
     create_daily_snapshot,
     get_performance_history,
     # Trade service
-    get_trade_history_with_stats
+    get_trade_history_with_stats,
+    # Cash service
+    create_transaction,
+    get_transaction_history,
+    get_cash_summary,
+    # Signal service
+    generate_momentum_signals,
+    get_signals,
+    update_signal_status,
+    delete_signal
 )
 
 app = FastAPI(title=API_TITLE)
