@@ -742,23 +742,18 @@ def add_position_endpoint(request: AddPositionRequest):
         # Calculate gross cost in native currency
         gross_cost_native = entry_price_native * shares
         
-        # Calculate fees in native currency
-        if request.market == 'UK':
-            # UK: Commission + Stamp Duty
-            commission = uk_commission
-            stamp_duty = gross_cost_native * stamp_duty_rate
-            fx_fee = 0
-            total_fees_native = commission + stamp_duty
-            fee_type = 'stamp_duty'
-            print(f"   UK fees: £{commission:.2f} commission + £{stamp_duty:.2f} stamp duty = £{total_fees_native:.2f}")
-        else:
-            # US: FX fee only
-            commission = us_commission
-            stamp_duty = 0
-            fx_fee = gross_cost_native * fx_fee_rate
-            total_fees_native = fx_fee
-            fee_type = 'fx_fee'
-            print(f"   US fees: ${fx_fee:.2f} FX fee")
+        # Calculate fees using utility function
+if request.market == 'UK':
+    fee_breakdown = calculate_uk_entry_fees(gross_cost_native, settings or {})
+    fee_type = 'stamp_duty'
+    print(f"   UK fees: £{fee_breakdown['commission']:.2f} commission + £{fee_breakdown['stamp_duty']:.2f} stamp duty = £{fee_breakdown['total']:.2f}")
+else:
+    fee_breakdown = calculate_us_entry_fees(gross_cost_native, settings or {})
+    fee_type = 'fx_fee'
+    print(f"   US fees: ${fee_breakdown['fx_fee']:.2f} FX fee")
+
+total_fees_native = fee_breakdown['total']
+commission = fee_breakdown['commission']
         
         # Total cost in native currency
         total_cost_native = gross_cost_native + total_fees_native
