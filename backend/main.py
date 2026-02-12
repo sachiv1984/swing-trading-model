@@ -954,71 +954,58 @@ holding_days = calculate_holding_days(str(pos['entry_date']))
             # Check grace period
             grace_period = holding_days < 10
             
-            # Calculate new trailing stop based on strategy (ALL IN NATIVE CURRENCY)
-            if grace_period:
-                # During grace period, keep initial stop but don't display it
-                trailing_stop_native = current_stop_native
-                display_stop_native = 0  # Show 0 to indicate no active stop during grace period
-                stop_reason = f"Grace period ({holding_days}/10 days)"
-                print(f"   🆕 Grace period active - no stop loss")
-            else:
-                # After grace period, calculate trailing stop
-                # Get settings for ATR multipliers
-                settings_list = get_settings()
-                settings = settings_list[0] if settings_list else None
-                
-                if pnl_native > 0:
-                    # Profitable: tight 2x ATR stop
-                    atr_mult = float(settings.get('atr_multiplier_trailing', 2)) if settings else 2
-                    stop_reason = f"Profitable (tight {atr_mult}x ATR)"
-                else:
-                    # At loss: wide 5x ATR stop
-                    atr_mult = float(settings.get('atr_multiplier_initial', 5)) if settings else 5
-                    stop_reason = f"At loss (wide {atr_mult}x ATR)"
-                
-                # Get ATR value (stored in position or calculate it)
-                atr_value = pos.get('atr')
-                
-                if not atr_value or atr_value == 0:
-                    print(f"   ⚠️  No ATR in database, calculating...")
-                    atr_value = calculate_atr(pos['ticker'])
-                    
-                    # Store calculated ATR in database for future use
-                    if atr_value and atr_value > 0:
-                        update_position(str(pos['id']), {'atr': round(atr_value, 4)})
-                        print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
-                
-                if atr_value and atr_value > 0:
-                    # Calculate new stop in NATIVE currency: current_price - (multiplier * ATR)
-                    # Both current_price and atr_value are in native currency
-                    new_stop_native = current_price - (atr_mult * atr_value)
-                    
-                    # Get entry price in native currency
-                    entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
-                    
-                    # Trailing stop logic depends on profitability:
-                    # - Profitable (tight 2×ATR): Never go below entry (protect gains)
-                    # - Losing (wide 5×ATR): Can go below entry (room to recover)
-                    if pnl_native > 0:
-                        # Profitable: enforce entry-level minimum
-                        trailing_stop_native = max(current_stop_native, new_stop_native, entry_price_native)
-                    else:
-                        # Losing: allow wide stop below entry
-                        trailing_stop_native = max(current_stop_native, new_stop_native)
-                    
-                    display_stop_native = trailing_stop_native
-                    
-                    currency_symbol = "$" if pos['market'] == 'US' else "£"
-                    if trailing_stop_native > current_stop_native:
-                        print(f"   📈 Stop moved up: {currency_symbol}{current_stop_native:.2f} → {currency_symbol}{trailing_stop_native:.2f}")
-                    else:
-                        print(f"   📊 Stop unchanged: {currency_symbol}{trailing_stop_native:.2f}")
-                else:
-                    # No ATR available, use entry price as stop
-                    entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
-                    trailing_stop_native = max(current_stop_native, entry_price_native)
-                    display_stop_native = trailing_stop_native
-                    print(f"   ⚠️  No ATR value available, stop at entry level")
+            # Calculate trailing stop using utility function
+if grace_period:
+    # During grace period, keep initial stop but don't display it
+    trailing_stop_native = current_stop_native
+    display_stop_native = 0
+    stop_reason = f"Grace period ({holding_days}/10 days)"
+    atr_mult = 0
+    print(f"   🆕 Grace period active - no stop loss")
+else:
+    # Get settings
+    settings_list = get_settings()
+    settings_dict = settings_list[0] if settings_list else {}
+    
+    # Get ATR value
+    atr_value = pos.get('atr')
+    if not atr_value or atr_value == 0:
+        print(f"   ⚠️  No ATR in database, calculating...")
+        atr_value = calculate_atr(pos['ticker'])
+        
+        if atr_value and atr_value > 0:
+            update_position(str(pos['id']), {'atr': round(atr_value, 4)})
+            print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
+    
+    if atr_value and atr_value > 0:
+        # Get entry price in native currency
+        entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
+        
+        # Calculate trailing stop using utility function
+        trailing_stop_native, stop_reason, atr_mult = calculate_trailing_stop(
+            current_price=current_price,
+            atr=atr_value,
+            is_profitable=(pnl_native > 0),
+            current_stop=current_stop_native,
+            entry_price=entry_price_native,
+            settings=settings_dict
+        )
+        
+        display_stop_native = trailing_stop_native
+        
+        currency_symbol = "$" if pos['market'] == 'US' else "£"
+        if trailing_stop_native > current_stop_native:
+            print(f"   📈 Stop moved up: {currency_symbol}{current_stop_native:.2f} → {currency_symbol}{trailing_stop_native:.2f}")
+        else:
+            print(f"   📊 Stop unchanged: {currency_symbol}{trailing_stop_native:.2f}")
+    else:
+        # No ATR available, use entry price as stop
+        entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
+        trailing_stop_native = max(current_stop_native, entry_price_native)
+        display_stop_native = trailing_stop_native
+        stop_reason = "No ATR - stop at entry"
+        atr_mult = 0
+        print(f"   ⚠️  No ATR value available, stop at entry level")
             
             # Determine action
             action = "HOLD"
