@@ -13,20 +13,9 @@ from utils.formatting import decimal_to_float
 
 from database import (
     get_portfolio,
-    delete_position,
-    get_trade_history,
     get_settings,
     create_settings,
-    update_settings,
-    create_cash_transaction,
-    get_cash_transactions,
-    create_signal,
-    get_signals,
-    update_signal,
-    delete_signal,
-    get_all_tickers,
-    download_ticker_data,
-    compute_atr_simple
+    update_settings         
 )
 
 from utils.pricing import (
@@ -37,11 +26,11 @@ from utils.pricing import (
 )
 
 from models import (
-         AddPositionRequest,
-         SettingsRequest,
-         CashTransactionRequest,
-         ExitPositionRequest
-     )
+    AddPositionRequest,
+    SettingsRequest,
+    CashTransactionRequest,
+    ExitPositionRequest
+)
 
 from config import (
     API_TITLE,
