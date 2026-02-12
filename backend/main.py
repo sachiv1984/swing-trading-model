@@ -451,11 +451,13 @@ def get_signals_endpoint(status: str = None):
 def update_signal_endpoint(signal_id: str, updates: dict):
     """Update a signal (e.g., change status)"""
     try:
-        updated = update_signal(signal_id, updates)
+        updated = update_signal_status(signal_id, updates)
         return {
             "status": "ok",
-            "data": decimal_to_float(updated)
+            "data": updated
         }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
