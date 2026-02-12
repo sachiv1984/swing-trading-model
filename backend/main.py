@@ -13,21 +13,13 @@ from utils.formatting import decimal_to_float
 
 from database import (
     get_portfolio,
-    update_portfolio_cash,
-    get_positions,
-    create_position,
-    update_position,
     delete_position,
     get_trade_history,
-    create_trade_history,
     get_settings,
     create_settings,
     update_settings,
-    create_portfolio_snapshot,
-    get_portfolio_snapshots,
     create_cash_transaction,
     get_cash_transactions,
-    get_total_deposits_withdrawals,
     create_signal,
     get_signals,
     update_signal,
@@ -236,251 +228,15 @@ def add_position_endpoint(request: AddPositionRequest):
 
 @app.get("/positions/analyze")
 def analyze_positions_endpoint():
-    """Run daily position analysis with live prices and market regime using LIVE FX rate"""
+    """Run daily position analysis with live prices and market regime"""
     try:
-        print("\n" + "="*70)
-        print("🔍 STARTING POSITION ANALYSIS")
-        print("="*70)
-        
-        portfolio = get_portfolio()
-        if not portfolio:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
-        
-        portfolio_id = str(portfolio['id'])
-        positions = get_positions(portfolio_id, status='open')
-        
-        if not positions:
-            print("✓ No open positions to analyze")
-            return {
-                "status": "ok",
-                "data": {
-                    "analysis_date": datetime.now().strftime('%Y-%m-%d'),
-                    "summary": {
-                        "total_value": 0,
-                        "total_pnl": 0,
-                        "exit_count": 0
-                    },
-                    "actions": []
-                }
-            }
-        
-        # Get live FX rate for current valuations
-        live_fx_rate = get_live_fx_rate()
-        
-        # Get market regime
-        print("\n📊 Checking market regime...")
-        market_regime = check_market_regime()
-        print(f"   SPY: {'🟢 Risk On' if market_regime['spy_risk_on'] else '🔴 Risk Off'}")
-        print(f"   FTSE: {'🟢 Risk On' if market_regime['ftse_risk_on'] else '🔴 Risk Off'}")
-        
-        actions = []
-        total_value_gbp = 0  # Track in GBP
-        total_pnl_gbp = 0    # Track in GBP
-        
-        print(f"\n💼 Analyzing {len(positions)} position(s)...")
-        
-        for pos in positions:
-            pos = decimal_to_float(pos)
-            
-            print(f"\n{'='*70}")
-            print(f"📈 Analyzing: {pos['ticker']} ({pos['market']})")
-            print(f"{'='*70}")
-            
-            # Get live price with detailed logging
-            print(f"   🔍 Fetching live price from Yahoo Finance...")
-            live_price = get_current_price(pos['ticker'])
-            
-            # For US stocks, use fill_price (USD). For UK stocks, use entry_price (GBP)
-            entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
-            stored_fx_rate = pos.get('fx_rate', 1.27)  # FX rate at purchase time
-            
-            if live_price:
-                # Fix UK stocks: Yahoo returns pence, convert to pounds
-                if pos['market'] == 'UK' and live_price > 1000:
-                    live_price = live_price / 100
-                    print(f"   ✓ Converted from pence to pounds")
-                
-                print(f"   ✓ Live price: ${live_price:.2f}")
-                print(f"   Entry price: ${entry_price:.2f}")
-                print(f"   Change: {((live_price - entry_price) / entry_price * 100):+.2f}%")
-                current_price = live_price
-            else:
-                print(f"   ⚠️  Failed to fetch live price")
-                print(f"   Using stored price: ${pos.get('current_price', entry_price):.2f}")
-                current_price = pos.get('current_price', entry_price)
-            
-            # Calculate metrics
-            shares = pos['shares']
-            
-            # Calculate value in native currency then convert to GBP using LIVE FX rate
-            current_value_native = current_price * shares
-            if pos['market'] == 'US':
-                current_value_gbp = current_value_native / live_fx_rate
-                print(f"   💱 Converting USD to GBP (LIVE rate): ${current_value_native:.2f} / {live_fx_rate:.4f} = £{current_value_gbp:.2f}")
-            else:
-                current_value_gbp = current_value_native
-            
-            # Calculate P&L using utility function
-            pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
-                entry_price=entry_price,
-                current_price=current_price,
-                shares=shares,
-                market=pos['market'],
-                live_fx_rate=live_fx_rate
-            )
-
-            if pos['market'] == 'US':
-                print(f"   💰 P&L in GBP (LIVE rate): ${pnl_native:.2f} / {live_fx_rate:.4f} = £{pnl_gbp:.2f}")
-            
-            total_value_gbp += current_value_gbp
-            total_pnl_gbp += pnl_gbp
-            
-            # Calculate holding days using utility function
-            holding_days = calculate_holding_days(str(pos['entry_date']))
-            
-            print(f"   Holdings: {shares} shares = £{current_value_gbp:.2f} (GBP)")
-            print(f"   P&L: £{pnl_gbp:+.2f} ({pnl_pct:+.2f}%)")
-            print(f"   Days held: {holding_days}")
-            
-            # Get current stop from database (stored in NATIVE currency)
-            current_stop_native = pos.get('current_stop', pos.get('initial_stop', 0))
-            
-            # Check grace period
-            grace_period = holding_days < 10
-            
-            # Calculate trailing stop using utility function
-            if grace_period:
-                # During grace period, keep initial stop but don't display it
-                trailing_stop_native = current_stop_native
-                display_stop_native = 0
-                stop_reason = f"Grace period ({holding_days}/10 days)"
-                atr_mult = 0
-                print(f"   🆕 Grace period active - no stop loss")
-            else:
-                # Get settings
-                settings_list = get_settings()
-                settings_dict = settings_list[0] if settings_list else {}
-                
-                # Get ATR value
-                atr_value = pos.get('atr')
-                if not atr_value or atr_value == 0:
-                    print(f"   ⚠️  No ATR in database, calculating...")
-                    atr_value = calculate_atr(pos['ticker'])
-                    
-                    if atr_value and atr_value > 0:
-                        update_position(str(pos['id']), {'atr': round(atr_value, 4)})
-                        print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
-                
-                if atr_value and atr_value > 0:
-                    # Get entry price in native currency
-                    entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
-                    
-                    # Calculate trailing stop using utility function
-                    trailing_stop_native, stop_reason, atr_mult = calculate_trailing_stop(
-                        current_price=current_price,
-                        atr=atr_value,
-                        is_profitable=(pnl_native > 0),
-                        current_stop=current_stop_native,
-                        entry_price=entry_price_native,
-                        settings=settings_dict
-                    )
-                    
-                    display_stop_native = trailing_stop_native
-                    
-                    currency_symbol = "$" if pos['market'] == 'US' else "£"
-                    if trailing_stop_native > current_stop_native:
-                        print(f"   📈 Stop moved up: {currency_symbol}{current_stop_native:.2f} → {currency_symbol}{trailing_stop_native:.2f}")
-                    else:
-                        print(f"   📊 Stop unchanged: {currency_symbol}{trailing_stop_native:.2f}")
-                else:
-                    # No ATR available, use entry price as stop
-                    entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
-                    trailing_stop_native = max(current_stop_native, entry_price_native)
-                    display_stop_native = trailing_stop_native
-                    stop_reason = "No ATR - stop at entry"
-                    atr_mult = 0
-                    print(f"   ⚠️  No ATR value available, stop at entry level")
-            
-            # Determine action using utility function
-            is_uk = pos['market'] == 'UK'
-            market_risk_on = market_regime['ftse_risk_on'] if is_uk else market_regime['spy_risk_on']
-            
-            should_exit, exit_reason = should_exit_position(
-                current_price=current_price,
-                stop_price=trailing_stop_native,
-                holding_days=holding_days,
-                market_risk_on=market_risk_on,
-                grace_period_days=10
-            )
-            
-            if should_exit:
-                action = "EXIT"
-                if exit_reason == "Risk-Off Signal":
-                    stop_reason = "Market risk-off"
-                    print(f"   🔴 EXIT: Market risk-off")
-                else:
-                    stop_reason = "Stop triggered"
-                    currency_symbol = "$" if pos['market'] == 'US' else "£"
-                    print(f"   🔴 EXIT: Stop loss hit ({currency_symbol}{trailing_stop_native:.2f})")
-            else:
-                action = "HOLD"
-                print(f"   ✅ HOLD: {stop_reason}")
-            
-            # Update position in database with new prices AND stop (all in native currency)
-            if live_price:
-                print(f"   💾 Updating position in database...")
-                
-                # Store current price in native currency
-                # (It's converted to GBP in /positions endpoint for portfolio aggregation)
-                update_position(str(pos['id']), {
-                    'current_price': round(current_price, 4),  # Native currency
-                    'current_stop': round(trailing_stop_native, 2),  # Native currency
-                    'holding_days': holding_days,
-                    'pnl': round(pnl_gbp, 2),  # Store P&L in GBP for portfolio total
-                    'pnl_pct': round(pnl_pct, 2)
-                })
-            
-            actions.append({
-                "ticker": pos['ticker'],
-                "market": pos['market'],
-                "action": action,
-                "exit_reason": exit_reason,
-                "entry_price": round(entry_price, 2),
-                "current_price": round(current_price, 2),
-                "shares": shares,
-                "pnl": round(pnl_gbp, 2),  # P&L in GBP
-                "pnl_pct": round(pnl_pct, 2),
-                "current_stop": round(display_stop_native, 2),  # Use native currency stop
-                "holding_days": holding_days,
-                "stop_reason": stop_reason,
-                "grace_period": grace_period
-            })
-        
-        exit_count = len([a for a in actions if a['action'] == 'EXIT'])
-        
-        print(f"\n{'='*70}")
-        print(f"📊 ANALYSIS COMPLETE")
-        print(f"{'='*70}")
-        print(f"Total Value: £{total_value_gbp:.2f} (GBP)")
-        print(f"Total P&L: £{total_pnl_gbp:+.2f} (GBP)")
-        print(f"Live FX Rate: {live_fx_rate:.4f}")
-        print(f"Exit Signals: {exit_count}")
-        print("="*70 + "\n")
-        
+        result = analyze_positions()
         return {
             "status": "ok",
-            "data": {
-                "analysis_date": datetime.now().strftime('%Y-%m-%d'),
-                "market_regime": market_regime,
-                "live_fx_rate": live_fx_rate,
-                "summary": {
-                    "total_value": round(total_value_gbp, 2),
-                    "total_pnl": round(total_pnl_gbp, 2),
-                    "exit_count": exit_count
-                },
-                "actions": actions
-            }
+            "data": result
         }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         print(f"\n❌ ANALYSIS FAILED: {str(e)}")
         import traceback
