@@ -410,60 +410,60 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
         gross_proceeds_native = exit_price_native * exit_shares
         
         # Calculate exit proceeds using utility function
-proceeds = calculate_exit_proceeds(
-    exit_price=exit_price_native,
-    shares=exit_shares,
-    market=market,
-    exit_fx_rate=exit_fx_rate,
-    settings=settings or {}
-)
+        proceeds = calculate_exit_proceeds(
+            exit_price=exit_price_native,
+            shares=exit_shares,
+            market=market,
+            exit_fx_rate=exit_fx_rate,
+            settings=settings or {}
+        )
 
-gross_proceeds_native = proceeds['gross_proceeds_native']
-gross_proceeds_gbp = proceeds['gross_proceeds_gbp']
-exit_fees_native = proceeds['exit_fees_native']
-exit_fees_gbp = proceeds['exit_fees_gbp']
-net_proceeds_native = proceeds['net_proceeds_native']
-net_proceeds_gbp = proceeds['net_proceeds_gbp']
-fee_breakdown = proceeds['fee_breakdown']
+        gross_proceeds_native = proceeds['gross_proceeds_native']
+        gross_proceeds_gbp = proceeds['gross_proceeds_gbp']
+        exit_fees_native = proceeds['exit_fees_native']
+        exit_fees_gbp = proceeds['exit_fees_gbp']
+        net_proceeds_native = proceeds['net_proceeds_native']
+        net_proceeds_gbp = proceeds['net_proceeds_gbp']
+        fee_breakdown = proceeds['fee_breakdown']
 
-commission = fee_breakdown['commission']
-stamp_duty = fee_breakdown['stamp_duty']
-fx_fee = fee_breakdown['fx_fee']
+        commission = fee_breakdown['commission']
+        stamp_duty = fee_breakdown.get('stamp_duty', 0)
+        fx_fee = fee_breakdown.get('fx_fee', 0)
 
-if market == 'UK':
-    print(f"   UK exit fees: £{commission:.2f} commission")
-else:
-    print(f"   US exit fees: ${fx_fee:.2f} ({float(settings.get('fx_fee_rate', 0.0015))*100:.2f}% FX fee)")
-    print(f"   💱 FX conversion: ${net_proceeds_native:.2f} / {exit_fx_rate:.4f} = £{net_proceeds_gbp:.2f}")
+        if market == 'UK':
+            print(f"   UK exit fees: £{commission:.2f} commission")
+        else:
+            print(f"   US exit fees: ${fx_fee:.2f} ({float(settings.get('fx_fee_rate', 0.0015))*100:.2f}% FX fee)")
+            print(f"   💱 FX conversion: ${net_proceeds_native:.2f} / {exit_fx_rate:.4f} = £{net_proceeds_gbp:.2f}")
         
         # Calculate realized P&L using utility function
-total_cost = float(position['total_cost'])
-realized_pnl_gbp, realized_pnl_pct = calculate_realized_pnl(
-    net_proceeds_gbp=net_proceeds_gbp,
-    total_cost=total_cost,
-    shares_exited=exit_shares,
-    total_shares=total_shares
-)
+        total_cost = float(position['total_cost'])
+        realized_pnl_gbp, realized_pnl_pct = calculate_realized_pnl(
+            net_proceeds_gbp=net_proceeds_gbp,
+            total_cost=total_cost,
+            shares_exited=exit_shares,
+            total_shares=total_shares
+        )
 
-# Calculate proportional costs for partial exit tracking
-cost_per_share = total_cost / total_shares
-exit_total_cost = cost_per_share * exit_shares
+        # Calculate proportional costs for partial exit tracking
+        cost_per_share = total_cost / total_shares
+        exit_total_cost = cost_per_share * exit_shares
 
-entry_fees = float(position.get('fees_paid', 0))
-entry_fees_per_share = entry_fees / total_shares
-exit_entry_fees = entry_fees_per_share * exit_shares
+        entry_fees = float(position.get('fees_paid', 0))
+        entry_fees_per_share = entry_fees / total_shares
+        exit_entry_fees = entry_fees_per_share * exit_shares
         
         # Calculate holding period using utility function
-exit_date_str = request.exit_date or datetime.now().strftime('%Y-%m-%d')
-holding_days = calculate_holding_days(
-    entry_date=str(position['entry_date']),
-    exit_date=exit_date_str
-)
+        exit_date_str = request.exit_date or datetime.now().strftime('%Y-%m-%d')
+        holding_days = calculate_holding_days(
+            entry_date=str(position['entry_date']),
+            exit_date=exit_date_str
+        )
 
-if request.exit_date:
-    print(f"   📅 Exit date: {exit_date_str} (user-provided)")
-else:
-    print(f"   📅 Exit date: {exit_date_str} (today)")
+        if request.exit_date:
+            print(f"   📅 Exit date: {exit_date_str} (user-provided)")
+        else:
+            print(f"   📅 Exit date: {exit_date_str} (today)")
         
         print(f"   Shares: {exit_shares}")
         print(f"   Gross proceeds: £{gross_proceeds_gbp:.2f}")
@@ -475,6 +475,10 @@ else:
         # FIXED: Get exit reason from request
         exit_reason = request.exit_reason if request.exit_reason else 'Manual Exit'
         
+        # Determine entry price (native) for trade history
+        # For US stocks keep native USD (fill_price), for UK keep GBP entry_price
+        entry_price = float(position.get('fill_price', position['entry_price'])) if market == 'US' else float(position['entry_price'])
+
         # Create trade history record with CORRECT FX rate and date
         trade_data = {
             'ticker': position['ticker'],
@@ -634,17 +638,17 @@ def add_position_endpoint(request: AddPositionRequest):
         gross_cost_native = entry_price_native * shares
         
         # Calculate fees using utility function
-if request.market == 'UK':
-    fee_breakdown = calculate_uk_entry_fees(gross_cost_native, settings or {})
-    fee_type = 'stamp_duty'
-    print(f"   UK fees: £{fee_breakdown['commission']:.2f} commission + £{fee_breakdown['stamp_duty']:.2f} stamp duty = £{fee_breakdown['total']:.2f}")
-else:
-    fee_breakdown = calculate_us_entry_fees(gross_cost_native, settings or {})
-    fee_type = 'fx_fee'
-    print(f"   US fees: ${fee_breakdown['fx_fee']:.2f} FX fee")
+        if request.market == 'UK':
+            fee_breakdown = calculate_uk_entry_fees(gross_cost_native, settings or {})
+            fee_type = 'stamp_duty'
+            print(f"   UK fees: £{fee_breakdown['commission']:.2f} commission + £{fee_breakdown['stamp_duty']:.2f} stamp duty = £{fee_breakdown['total']:.2f}")
+        else:
+            fee_breakdown = calculate_us_entry_fees(gross_cost_native, settings or {})
+            fee_type = 'fx_fee'
+            print(f"   US fees: ${fee_breakdown['fx_fee']:.2f} FX fee")
 
-total_fees_native = fee_breakdown['total']
-commission = fee_breakdown['commission']
+        total_fees_native = fee_breakdown['total']
+        commission = fee_breakdown['commission']
         
         # Total cost in native currency
         total_cost_native = gross_cost_native + total_fees_native
@@ -679,8 +683,7 @@ commission = fee_breakdown['commission']
                 print(f"   ⚠️  Using default ATR (2% of entry): {atr_value:.2f}")
         
         # Calculate initial stop using utility function
-
-initial_stop_native = calculate_initial_stop(entry_price_native, atr_value, multiplier=5.0)
+        initial_stop_native = calculate_initial_stop(entry_price_native, atr_value, multiplier=5.0)
         
         print(f"   Entry price: {entry_price_native:.2f}")
         print(f"   ATR: {atr_value:.2f}")
@@ -829,22 +832,22 @@ def analyze_positions_endpoint():
                 current_value_gbp = current_value_native
             
             # Calculate P&L using utility function
-pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
-    entry_price=entry_price,
-    current_price=current_price,
-    shares=shares,
-    market=pos['market'],
-    live_fx_rate=live_fx_rate
-)
+            pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
+                entry_price=entry_price,
+                current_price=current_price,
+                shares=shares,
+                market=pos['market'],
+                live_fx_rate=live_fx_rate
+            )
 
-if pos['market'] == 'US':
-    print(f"   💰 P&L in GBP (LIVE rate): ${pnl_native:.2f} / {live_fx_rate:.4f} = £{pnl_gbp:.2f}")
+            if pos['market'] == 'US':
+                print(f"   💰 P&L in GBP (LIVE rate): ${pnl_native:.2f} / {live_fx_rate:.4f} = £{pnl_gbp:.2f}")
             
             total_value_gbp += current_value_gbp
             total_pnl_gbp += pnl_gbp
             
             # Calculate holding days using utility function
-holding_days = calculate_holding_days(str(pos['entry_date']))
+            holding_days = calculate_holding_days(str(pos['entry_date']))
             
             print(f"   Holdings: {shares} shares = £{current_value_gbp:.2f} (GBP)")
             print(f"   P&L: £{pnl_gbp:+.2f} ({pnl_pct:+.2f}%)")
@@ -857,82 +860,82 @@ holding_days = calculate_holding_days(str(pos['entry_date']))
             grace_period = holding_days < 10
             
             # Calculate trailing stop using utility function
-if grace_period:
-    # During grace period, keep initial stop but don't display it
-    trailing_stop_native = current_stop_native
-    display_stop_native = 0
-    stop_reason = f"Grace period ({holding_days}/10 days)"
-    atr_mult = 0
-    print(f"   🆕 Grace period active - no stop loss")
-else:
-    # Get settings
-    settings_list = get_settings()
-    settings_dict = settings_list[0] if settings_list else {}
-    
-    # Get ATR value
-    atr_value = pos.get('atr')
-    if not atr_value or atr_value == 0:
-        print(f"   ⚠️  No ATR in database, calculating...")
-        atr_value = calculate_atr(pos['ticker'])
-        
-        if atr_value and atr_value > 0:
-            update_position(str(pos['id']), {'atr': round(atr_value, 4)})
-            print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
-    
-    if atr_value and atr_value > 0:
-        # Get entry price in native currency
-        entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
-        
-        # Calculate trailing stop using utility function
-        trailing_stop_native, stop_reason, atr_mult = calculate_trailing_stop(
-            current_price=current_price,
-            atr=atr_value,
-            is_profitable=(pnl_native > 0),
-            current_stop=current_stop_native,
-            entry_price=entry_price_native,
-            settings=settings_dict
-        )
-        
-        display_stop_native = trailing_stop_native
-        
-        currency_symbol = "$" if pos['market'] == 'US' else "£"
-        if trailing_stop_native > current_stop_native:
-            print(f"   📈 Stop moved up: {currency_symbol}{current_stop_native:.2f} → {currency_symbol}{trailing_stop_native:.2f}")
-        else:
-            print(f"   📊 Stop unchanged: {currency_symbol}{trailing_stop_native:.2f}")
-    else:
-        # No ATR available, use entry price as stop
-        entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
-        trailing_stop_native = max(current_stop_native, entry_price_native)
-        display_stop_native = trailing_stop_native
-        stop_reason = "No ATR - stop at entry"
-        atr_mult = 0
-        print(f"   ⚠️  No ATR value available, stop at entry level")
+            if grace_period:
+                # During grace period, keep initial stop but don't display it
+                trailing_stop_native = current_stop_native
+                display_stop_native = 0
+                stop_reason = f"Grace period ({holding_days}/10 days)"
+                atr_mult = 0
+                print(f"   🆕 Grace period active - no stop loss")
+            else:
+                # Get settings
+                settings_list = get_settings()
+                settings_dict = settings_list[0] if settings_list else {}
+                
+                # Get ATR value
+                atr_value = pos.get('atr')
+                if not atr_value or atr_value == 0:
+                    print(f"   ⚠️  No ATR in database, calculating...")
+                    atr_value = calculate_atr(pos['ticker'])
+                    
+                    if atr_value and atr_value > 0:
+                        update_position(str(pos['id']), {'atr': round(atr_value, 4)})
+                        print(f"   💾 Stored calculated ATR: {atr_value:.2f}")
+                
+                if atr_value and atr_value > 0:
+                    # Get entry price in native currency
+                    entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
+                    
+                    # Calculate trailing stop using utility function
+                    trailing_stop_native, stop_reason, atr_mult = calculate_trailing_stop(
+                        current_price=current_price,
+                        atr=atr_value,
+                        is_profitable=(pnl_native > 0),
+                        current_stop=current_stop_native,
+                        entry_price=entry_price_native,
+                        settings=settings_dict
+                    )
+                    
+                    display_stop_native = trailing_stop_native
+                    
+                    currency_symbol = "$" if pos['market'] == 'US' else "£"
+                    if trailing_stop_native > current_stop_native:
+                        print(f"   📈 Stop moved up: {currency_symbol}{current_stop_native:.2f} → {currency_symbol}{trailing_stop_native:.2f}")
+                    else:
+                        print(f"   📊 Stop unchanged: {currency_symbol}{trailing_stop_native:.2f}")
+                else:
+                    # No ATR available, use entry price as stop
+                    entry_price_native = pos.get('fill_price', entry_price) if pos['market'] == 'US' else entry_price
+                    trailing_stop_native = max(current_stop_native, entry_price_native)
+                    display_stop_native = trailing_stop_native
+                    stop_reason = "No ATR - stop at entry"
+                    atr_mult = 0
+                    print(f"   ⚠️  No ATR value available, stop at entry level")
             
             # Determine action using utility function
-is_uk = pos['market'] == 'UK'
-market_risk_on = market_regime['ftse_risk_on'] if is_uk else market_regime['spy_risk_on']
-
-should_exit, exit_reason = should_exit_position(
-    current_price=current_price,
-    stop_price=trailing_stop_native,
-    holding_days=holding_days,
-    market_risk_on=market_risk_on,
-    grace_period_days=10
-)
-
-if should_exit:
-    action = "EXIT"
-    if exit_reason == "Risk-Off Signal":
-        stop_reason = "Market risk-off"
-        print(f"   🔴 EXIT: Market risk-off")
-    else:
-        stop_reason = "Stop triggered"
-        currency_symbol = "$" if pos['market'] == 'US' else "£"
-        print(f"   🔴 EXIT: Stop loss hit ({currency_symbol}{trailing_stop_native:.2f})")
-else:
-    action = "HOLD"
-    print(f"   ✅ HOLD: {stop_reason}")
+            is_uk = pos['market'] == 'UK'
+            market_risk_on = market_regime['ftse_risk_on'] if is_uk else market_regime['spy_risk_on']
+            
+            should_exit, exit_reason = should_exit_position(
+                current_price=current_price,
+                stop_price=trailing_stop_native,
+                holding_days=holding_days,
+                market_risk_on=market_risk_on,
+                grace_period_days=10
+            )
+            
+            if should_exit:
+                action = "EXIT"
+                if exit_reason == "Risk-Off Signal":
+                    stop_reason = "Market risk-off"
+                    print(f"   🔴 EXIT: Market risk-off")
+                else:
+                    stop_reason = "Stop triggered"
+                    currency_symbol = "$" if pos['market'] == 'US' else "£"
+                    print(f"   🔴 EXIT: Stop loss hit ({currency_symbol}{trailing_stop_native:.2f})")
+            else:
+                action = "HOLD"
+                print(f"   ✅ HOLD: {stop_reason}")
             
             # Update position in database with new prices AND stop (all in native currency)
             if live_price:
