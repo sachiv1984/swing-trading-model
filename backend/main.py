@@ -856,48 +856,13 @@ def analyze_positions_endpoint():
 def create_snapshot_endpoint():
     """Create a daily snapshot of portfolio performance"""
     try:
-        print("\n📸 Creating portfolio snapshot...")
-        
-        portfolio = get_portfolio()
-        if not portfolio:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
-        
-        # Get current portfolio data
-        portfolio_data = get_portfolio_endpoint()
-        
-        if portfolio_data.get('status') == 'error':
-            raise HTTPException(status_code=500, detail=portfolio_data.get('message'))
-        
-        data = portfolio_data['data']
-        
-        # Count open positions
-        portfolio_id = str(portfolio['id'])
-        positions = get_positions(portfolio_id, status='open')
-        position_count = len(positions) if positions else 0
-        
-        # Create snapshot
-        snapshot_data = {
-            'portfolio_id': portfolio_id,
-            'snapshot_date': datetime.now().date(),
-            'total_value': round(data['total_value'], 2),
-            'cash_balance': round(data['cash'], 2),
-            'positions_value': round(data['open_positions_value'], 2),
-            'total_pnl': round(data['total_pnl'], 2),
-            'position_count': position_count
-        }
-        
-        snapshot = create_portfolio_snapshot(snapshot_data)
-        
-        print(f"✓ Snapshot created:")
-        print(f"   Date: {snapshot_data['snapshot_date']}")
-        print(f"   Total Value: £{snapshot_data['total_value']:,.2f}")
-        print(f"   P&L: £{snapshot_data['total_pnl']:+,.2f}")
-        print(f"   Positions: {position_count}\n")
-        
+        snapshot = create_daily_snapshot()
         return {
             "status": "ok",
-            "data": decimal_to_float(snapshot)
+            "data": snapshot
         }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         import traceback
         traceback.print_exc()
