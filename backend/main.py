@@ -332,22 +332,13 @@ def get_cash_transactions_endpoint(order: str = "DESC"):
 def get_cash_summary_endpoint():
     """Get summary of all deposits and withdrawals"""
     try:
-        portfolio = get_portfolio()
-        if not portfolio:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
-        
-        portfolio_id = str(portfolio['id'])
-        summary = get_total_deposits_withdrawals(portfolio_id)
-        
+        summary = get_cash_summary()
         return {
             "status": "ok",
-            "data": {
-                "total_deposits": round(summary['total_deposits'], 2),
-                "total_withdrawals": round(summary['total_withdrawals'], 2),
-                "net_cash_flow": round(summary['net_cash_flow'], 2),
-                "current_cash": float(portfolio['cash'])
-            }
+            "data": summary
         }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         import traceback
         traceback.print_exc()
