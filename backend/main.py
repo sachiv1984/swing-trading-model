@@ -10,7 +10,6 @@ from config import API_TITLE
 from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 
-
 from database import (
     get_portfolio,
     update_portfolio_cash,
@@ -511,33 +510,32 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
         # Calculate exit proceeds in native currency
         gross_proceeds_native = exit_price_native * exit_shares
         
-        # Calculate exit fees
-        if market == 'UK':
-            commission = uk_commission
-            stamp_duty = 0  # No stamp duty on sales
-            fx_fee = 0
-            exit_fees_native = commission
-            print(f"   UK exit fees: £{commission:.2f} commission")
-        else:
-            commission = us_commission
-            stamp_duty = 0
-            fx_fee = gross_proceeds_native * fx_fee_rate
-            exit_fees_native = fx_fee
-            print(f"   US exit fees: ${fx_fee:.2f} ({fx_fee_rate*100:.2f}% FX fee)")
-        
-        # Net proceeds in native currency
-        net_proceeds_native = gross_proceeds_native - exit_fees_native
-        
-        # FIXED: Convert to GBP using user-provided FX rate
-        if market == 'US':
-            gross_proceeds_gbp = gross_proceeds_native / exit_fx_rate
-            net_proceeds_gbp = net_proceeds_native / exit_fx_rate
-            exit_fees_gbp = exit_fees_native / exit_fx_rate
-            print(f"   💱 FX conversion: ${net_proceeds_native:.2f} / {exit_fx_rate:.4f} = £{net_proceeds_gbp:.2f}")
-        else:
-            gross_proceeds_gbp = gross_proceeds_native
-            net_proceeds_gbp = net_proceeds_native
-            exit_fees_gbp = exit_fees_native
+        # Calculate exit proceeds using utility function
+proceeds = calculate_exit_proceeds(
+    exit_price=exit_price_native,
+    shares=exit_shares,
+    market=market,
+    exit_fx_rate=exit_fx_rate,
+    settings=settings or {}
+)
+
+gross_proceeds_native = proceeds['gross_proceeds_native']
+gross_proceeds_gbp = proceeds['gross_proceeds_gbp']
+exit_fees_native = proceeds['exit_fees_native']
+exit_fees_gbp = proceeds['exit_fees_gbp']
+net_proceeds_native = proceeds['net_proceeds_native']
+net_proceeds_gbp = proceeds['net_proceeds_gbp']
+fee_breakdown = proceeds['fee_breakdown']
+
+commission = fee_breakdown['commission']
+stamp_duty = fee_breakdown['stamp_duty']
+fx_fee = fee_breakdown['fx_fee']
+
+if market == 'UK':
+    print(f"   UK exit fees: £{commission:.2f} commission")
+else:
+    print(f"   US exit fees: ${fx_fee:.2f} ({float(settings.get('fx_fee_rate', 0.0015))*100:.2f}% FX fee)")
+    print(f"   💱 FX conversion: ${net_proceeds_native:.2f} / {exit_fx_rate:.4f} = £{net_proceeds_gbp:.2f}")
         
         # Calculate P&L for exited shares
         # Total cost is proportional to shares being exited
