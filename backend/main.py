@@ -9,6 +9,7 @@ import requests
 from config import API_TITLE
 from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
+from utils.formatting import decimal_to_float
 
 from database import (
     get_portfolio,
@@ -50,7 +51,6 @@ from models import (
          ExitPositionRequest
      )
 
-from utils.formatting import decimal_to_float
 from config import (
     API_TITLE,
     ALLOWED_ORIGINS,
@@ -71,6 +71,20 @@ from utils.calculations import (
     calculate_trailing_stop,
     should_exit_position,
     calculate_holding_days
+)
+
+from services import (
+    # Position service
+    get_positions_with_prices,
+    analyze_positions,
+    add_position as add_position_service,
+    exit_position as exit_position_service,
+    # Portfolio service
+    get_portfolio_summary,
+    create_daily_snapshot,
+    get_performance_history,
+    # Trade service
+    get_trade_history_with_stats
 )
 
 app = FastAPI(title=API_TITLE)
