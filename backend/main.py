@@ -291,60 +291,20 @@ def get_history_endpoint(days: int = 30):
 def create_cash_transaction_endpoint(request: CashTransactionRequest):
     """Create a cash transaction (deposit or withdrawal)"""
     try:
-        portfolio = get_portfolio()
-        if not portfolio:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
-        
-        portfolio_id = str(portfolio['id'])
-        
-        # Validate transaction type
-        if request.type not in ['deposit', 'withdrawal']:
-            raise HTTPException(status_code=400, detail="Invalid transaction type. Must be 'deposit' or 'withdrawal'")
-        
-        # Validate amount
-        if request.amount <= 0:
-            raise HTTPException(status_code=400, detail="Amount must be greater than 0")
-        
-        # For withdrawals, check if there's enough cash
-        current_cash = float(portfolio['cash'])
-        if request.type == 'withdrawal' and request.amount > current_cash:
-            raise HTTPException(
-                status_code=400, 
-                detail=f"Insufficient funds. Available cash: £{current_cash:.2f}"
-            )
-        
-        # Create transaction record
-        transaction_data = {
-            'type': request.type,
-            'amount': request.amount,
-            'date': request.date or datetime.now().strftime('%Y-%m-%d'),
-            'note': request.note or ''
-        }
-        
-        transaction = create_cash_transaction(portfolio_id, transaction_data)
-        
-        # Update portfolio cash balance
-        if request.type == 'deposit':
-            new_cash = current_cash + request.amount
-        else:  # withdrawal
-            new_cash = current_cash - request.amount
-        
-        update_portfolio_cash(portfolio_id, new_cash)
-        
-        print(f"✓ Cash transaction created:")
-        print(f"   Type: {request.type.upper()}")
-        print(f"   Amount: £{request.amount:,.2f}")
-        print(f"   New balance: £{new_cash:,.2f}")
+        result = create_transaction(
+            transaction_type=request.type,
+            amount=request.amount,
+            date=request.date,
+            note=request.note
+        )
         
         return {
             "status": "ok",
-            "data": {
-                "transaction": decimal_to_float(transaction),
-                "new_balance": new_cash
-            }
+            "data": result
         }
-    except HTTPException:
-        raise
+    except ValueError as e:
+        # ValueError from service = business logic error (400)
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         import traceback
         traceback.print_exc()
