@@ -873,39 +873,13 @@ def create_snapshot_endpoint():
 def get_history_endpoint(days: int = 30):
     """Get portfolio performance history for the last N days"""
     try:
-        portfolio = get_portfolio()
-        if not portfolio:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
-        
-        portfolio_id = str(portfolio['id'])
-        snapshots = get_portfolio_snapshots(portfolio_id, days)
-        
-        if not snapshots:
-            # No historical data yet - return empty array
-            print(f"⚠️  No portfolio history found (create snapshots with POST /portfolio/snapshot)")
-            return {
-                "status": "ok",
-                "data": []
-            }
-        
-        # Format for frontend
-        history = []
-        for snap in snapshots:
-            history.append({
-                'date': str(snap['snapshot_date']),
-                'total_value': float(snap['total_value']),
-                'cash_balance': float(snap['cash_balance']),
-                'positions_value': float(snap['positions_value']),
-                'total_pnl': float(snap['total_pnl']),
-                'position_count': snap.get('position_count', 0)
-            })
-        
-        print(f"✓ Retrieved {len(history)} snapshots from last {days} days")
-        
+        history = get_performance_history(days)
         return {
             "status": "ok",
             "data": history
         }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         import traceback
         traceback.print_exc()
