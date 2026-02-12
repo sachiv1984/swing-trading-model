@@ -926,15 +926,17 @@ def analyze_positions_endpoint():
             else:
                 current_value_gbp = current_value_native
             
-            # Calculate P&L in native currency then convert to GBP using LIVE FX rate
-            pnl_native = (current_price - entry_price) * shares
-            if pos['market'] == 'US':
-                pnl_gbp = pnl_native / live_fx_rate
-                print(f"   💰 P&L in GBP (LIVE rate): ${pnl_native:.2f} / {live_fx_rate:.4f} = £{pnl_gbp:.2f}")
-            else:
-                pnl_gbp = pnl_native
-            
-            pnl_pct = ((current_price - entry_price) / entry_price) * 100
+            # Calculate P&L using utility function
+pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
+    entry_price=entry_price,
+    current_price=current_price,
+    shares=shares,
+    market=pos['market'],
+    live_fx_rate=live_fx_rate
+)
+
+if pos['market'] == 'US':
+    print(f"   💰 P&L in GBP (LIVE rate): ${pnl_native:.2f} / {live_fx_rate:.4f} = £{pnl_gbp:.2f}")
             
             total_value_gbp += current_value_gbp
             total_pnl_gbp += pnl_gbp
