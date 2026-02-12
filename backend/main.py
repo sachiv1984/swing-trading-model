@@ -153,124 +153,12 @@ def update_settings_endpoint(settings_id: str, request: SettingsRequest):
 
 @app.get("/positions")
 def get_positions_endpoint():
-    """Get open positions with live prices - always fetches fresh data"""
+    """Get open positions with live prices"""
     try:
-        portfolio = get_portfolio()
-        if not portfolio:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
-        
-        portfolio_id = str(portfolio['id'])
-        positions = get_positions(portfolio_id, status='open')
-        
-        if not positions:
-            return []
-        
-        # Get live FX rate for conversions
-        live_fx_rate = get_live_fx_rate()
-        
-        print(f"\n📊 /positions endpoint - fetching live prices for {len(positions)} position(s)")
-        
-        positions_list = []
-        
-        for pos in positions:
-            pos = decimal_to_float(pos)
-            
-            # ALWAYS fetch live price - don't rely on analysis
-            print(f"   Fetching {pos['ticker']}...")
-            live_price = get_current_price(pos['ticker'])
-            
-            if live_price:
-                # Fix UK stocks: Yahoo returns pence
-                if pos['market'] == 'UK' and live_price > 1000:
-                    live_price = live_price / 100
-                current_price_native = live_price
-                print(f"   ✓ Live: {current_price_native:.2f}")
-            else:
-                # Fallback to stored
-                print(f"   ⚠️  Using stored price")
-                current_price_native = pos.get('current_price', pos['entry_price'])
-            
-            # Calculate P&L using utility function
-if pos['market'] == 'US':
-    entry_price_display = pos.get('fill_price', pos['entry_price'] * (pos.get('fx_rate', 1.27)))
-else:
-    entry_price_display = pos['entry_price']
-
-pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
-    entry_price=entry_price_display,
-    current_price=current_price_native,
-    shares=pos['shares'],
-    market=pos['market'],
-    live_fx_rate=live_fx_rate
-)
-            
-            # Convert to GBP for Dashboard calculations
-            if pos['market'] == 'US':
-                current_price_gbp = current_price_native / live_fx_rate
-                print(f"   💱 ${current_price_native:.2f} → £{current_price_gbp:.2f}")
-            else:
-                current_price_gbp = current_price_native
-            
-           # Calculate holding days using utility function
-holding_days = calculate_holding_days(str(pos['entry_date']))
-grace_period = holding_days < 10
-            
-            # Stop price handling
-            if grace_period:
-                # During grace period: No stop shown
-                stop_price_native = 0
-                print(f"   🆕 Grace period: {holding_days}/10 days - No stop active")
-            else:
-                # After grace period: Show stop from database (already in native currency)
-                stop_price_native = pos.get('current_stop', pos.get('initial_stop', 0))
-            
-            # Convert stop to GBP for portfolio aggregation
-            if pos['market'] == 'US':
-                stop_price_gbp = stop_price_native / live_fx_rate if stop_price_native > 0 else 0
-            else:
-                stop_price_gbp = stop_price_native
-            
-            # Display ticker without .L suffix
-            display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
-            
-            # Determine status
-            if grace_period:
-                display_status = "GRACE"
-            elif pnl_gbp > 0:
-                display_status = "PROFITABLE"
-            else:
-                display_status = "LOSING"
-            
-            # FIXED: Return total_cost field
-            positions_list.append({
-                "id": str(pos['id']),
-                "ticker": display_ticker,
-                "market": pos['market'],
-                "entry_date": str(pos['entry_date']),
-                "entry_price": round(entry_price_display, 2),
-                "shares": pos['shares'],
-                "current_price": round(current_price_gbp, 2),
-                "current_price_native": round(current_price_native, 2),
-                "stop_price": round(stop_price_gbp, 2),
-                "stop_price_native": round(stop_price_native, 2),
-                "pnl": round(pnl_gbp, 2),
-                "pnl_percent": round(pnl_pct, 2),
-                "holding_days": holding_days,
-                "status": "open",
-                "display_status": display_status,
-                "exit_reason": None,
-                "grace_period": grace_period,
-                "stop_reason": f"Grace period ({holding_days}/10 days)" if grace_period else "Active",
-                "atr_value": pos.get('atr', 0),
-                "fx_rate": pos.get('fx_rate', 1.0),
-                "live_fx_rate": live_fx_rate,
-                "total_cost": round(pos.get('total_cost', 0), 2)  # FIXED: Added total_cost
-            })
-        
-        print(f"✓ Returned {len(positions_list)} positions with live prices\n")
-        
-        return positions_list
-        
+        positions = get_positions_with_prices()
+        return positions
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         import traceback
         traceback.print_exc()
