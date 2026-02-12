@@ -461,13 +461,14 @@ def update_signal_endpoint(signal_id: str, updates: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.delete("/signals/{signal_id}")
 def delete_signal_endpoint(signal_id: str):
     """Delete a signal"""
     try:
         delete_signal(signal_id)
         return {"status": "ok"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
