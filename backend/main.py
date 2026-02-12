@@ -8,6 +8,7 @@ import time
 import requests
 from config import API_TITLE
 from config import ALLOWED_ORIGINS
+from utils.calculations import calculate_initial_stop
 
 
 from database import (
@@ -787,8 +788,9 @@ commission = fee_breakdown['commission']
                 atr_value = entry_price_native * 0.02
                 print(f"   ⚠️  Using default ATR (2% of entry): {atr_value:.2f}")
         
-        # Calculate initial stop (wide 5x ATR for new positions)
-        initial_stop_native = entry_price_native - (5 * atr_value)
+        # Calculate initial stop using utility function
+
+initial_stop_native = calculate_initial_stop(entry_price_native, atr_value, multiplier=5.0)
         
         print(f"   Entry price: {entry_price_native:.2f}")
         print(f"   ATR: {atr_value:.2f}")
