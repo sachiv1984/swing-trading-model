@@ -941,9 +941,8 @@ if pos['market'] == 'US':
             total_value_gbp += current_value_gbp
             total_pnl_gbp += pnl_gbp
             
-            # Calculate holding days
-            entry_date = datetime.strptime(str(pos['entry_date']), '%Y-%m-%d')
-            holding_days = (datetime.now() - entry_date).days
+            # Calculate holding days using utility function
+holding_days = calculate_holding_days(str(pos['entry_date']))
             
             print(f"   Holdings: {shares} shares = £{current_value_gbp:.2f} (GBP)")
             print(f"   P&L: £{pnl_gbp:+.2f} ({pnl_pct:+.2f}%)")
