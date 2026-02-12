@@ -1007,28 +1007,30 @@ else:
         atr_mult = 0
         print(f"   ⚠️  No ATR value available, stop at entry level")
             
-            # Determine action
-            action = "HOLD"
-            exit_reason = None
-            
-            if not grace_period:
-                # Check market regime
-                is_uk = pos['market'] == 'UK'
-                market_risk_on = market_regime['ftse_risk_on'] if is_uk else market_regime['spy_risk_on']
-                
-                if not market_risk_on:
-                    action = "EXIT"
-                    exit_reason = "Risk-Off Signal"
-                    stop_reason = "Market risk-off"
-                    print(f"   🔴 EXIT: Market risk-off")
-                elif current_price <= trailing_stop_native:
-                    action = "EXIT"
-                    exit_reason = "Stop Loss Hit"
-                    stop_reason = "Stop triggered"
-                    currency_symbol = "$" if pos['market'] == 'US' else "£"
-                    print(f"   🔴 EXIT: Stop loss hit ({currency_symbol}{trailing_stop_native:.2f})")
-                else:
-                    print(f"   ✅ HOLD: {stop_reason}")
+            # Determine action using utility function
+is_uk = pos['market'] == 'UK'
+market_risk_on = market_regime['ftse_risk_on'] if is_uk else market_regime['spy_risk_on']
+
+should_exit, exit_reason = should_exit_position(
+    current_price=current_price,
+    stop_price=trailing_stop_native,
+    holding_days=holding_days,
+    market_risk_on=market_risk_on,
+    grace_period_days=10
+)
+
+if should_exit:
+    action = "EXIT"
+    if exit_reason == "Risk-Off Signal":
+        stop_reason = "Market risk-off"
+        print(f"   🔴 EXIT: Market risk-off")
+    else:
+        stop_reason = "Stop triggered"
+        currency_symbol = "$" if pos['market'] == 'US' else "£"
+        print(f"   🔴 EXIT: Stop loss hit ({currency_symbol}{trailing_stop_native:.2f})")
+else:
+    action = "HOLD"
+    print(f"   ✅ HOLD: {stop_reason}")
             
             # Update position in database with new prices AND stop (all in native currency)
             if live_price:
