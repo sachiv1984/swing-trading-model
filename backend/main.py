@@ -652,13 +652,6 @@ else:
         
         print(f"   ✓ Cash updated: £{current_cash:.2f} → £{new_cash:.2f}\n")
         
-        # Build fee breakdown
-        fee_breakdown = {
-            "commission": commission,
-            "stamp_duty": stamp_duty,
-            "fx_fee": fx_fee
-        }
-        
         return {
             "status": "ok",
             "data": {
