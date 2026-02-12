@@ -57,6 +57,22 @@ from config import (
     DEFAULT_FX_RATE
 )
 
+from utils.calculations import (
+    # Fee calculations
+    calculate_uk_entry_fees,
+    calculate_us_entry_fees,
+    calculate_uk_exit_fees,
+    calculate_us_exit_fees,
+    # P&L calculations
+    calculate_position_pnl,
+    calculate_exit_proceeds,
+    calculate_realized_pnl,
+    # Stop loss calculations
+    calculate_trailing_stop,
+    should_exit_position,
+    calculate_holding_days
+)
+
 app = FastAPI(title=API_TITLE)
 
 app.add_middleware(
