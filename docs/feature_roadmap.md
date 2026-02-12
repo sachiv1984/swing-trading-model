@@ -1,6 +1,6 @@
 # Feature Roadmap - Momentum Trading Assistant
 
-**Last Updated:** February 8, 2026  
+**Last Updated:** February 12, 2026  
 **Current Version:** 1.2
 
 ---
@@ -47,9 +47,16 @@
 - ✅ Detailed fee breakdown in exit response
 - ✅ Proportional cost basis calculation for partial exits
 
+### Backend Architecture (v1.2) ⭐ NEW
+- ✅ Complete refactoring to service layer architecture
+- ✅ 67% code reduction in main.py (1,439 → 470 lines)
+- ✅ 5 service modules (position, portfolio, trade, cash, signal)
+- ✅ 100% testable business logic
+- ✅ Clean separation of concerns (HTTP → Service → Utils → Database)
+
 ### Technical Infrastructure
 - ✅ PostgreSQL database
-- ✅ FastAPI backend
+- ✅ FastAPI backend with clean architecture
 - ✅ React frontend with TanStack Query
 - ✅ Real-time FX rate conversion
 - ✅ Error handling and validation
@@ -60,7 +67,47 @@
 
 ### Priority 1: High Value, Quick Wins
 
-#### 1. Trade Journal & Notes System
+#### 1. API Health & Status Page
+**Status:** Planned for v1.3  
+**Effort:** Low (4-6 hours)  
+**Value:** Very High
+
+**Features:**
+- Health check endpoint (`GET /health`) for load balancers
+- Detailed system status (`GET /health/detailed`)
+- Automated endpoint testing (`GET /test/endpoints`)
+- Frontend status dashboard page
+- Real-time system health monitoring
+- Component-level health checks:
+  - Database connectivity
+  - External services (Yahoo Finance)
+  - Service layer health
+  - Configuration validity
+- One-click endpoint testing with results
+- Auto-refresh capability
+- Response time monitoring
+- Success rate tracking
+
+**Why:**
+- Essential for post-deployment verification
+- Quick diagnosis of production issues
+- Professional operational visibility
+- Verify all services working after refactor
+- Monitor system health continuously
+
+**Implementation:**
+- Backend: 3 new endpoints (1-2 hours)
+- Frontend: Status page component (2-3 hours)
+- Testing & integration (1 hour)
+
+**API Endpoints:**
+- `GET /health` - Basic health check (for load balancers)
+- `GET /health/detailed` - Comprehensive system status
+- `GET /test/endpoints` - Test all API endpoints
+
+---
+
+#### 2. Trade Journal & Notes System
 **Status:** Planned for v1.3  
 **Effort:** Medium (2-3 days)  
 **Value:** High
@@ -93,7 +140,7 @@ ALTER TABLE trade_history ADD COLUMN tags TEXT[];
 
 ---
 
-#### 2. Performance Analytics Page
+#### 3. Performance Analytics Page
 **Status:** Planned for v1.3  
 **Effort:** Medium (3-4 days)  
 **Value:** High
@@ -125,7 +172,7 @@ ALTER TABLE trade_history ADD COLUMN tags TEXT[];
 
 ---
 
-#### 3. Alerts & Notifications
+#### 4. Alerts & Notifications
 **Status:** Planned for v1.3  
 **Effort:** Medium-High (4-5 days)  
 **Value:** High
@@ -170,7 +217,7 @@ CREATE TABLE alert_preferences (
 
 ### Priority 2: Medium Value, Good ROI
 
-#### 4. Position Sizing Calculator
+#### 5. Position Sizing Calculator
 **Status:** Planned for v1.3  
 **Effort:** Low (1-2 days)  
 **Value:** Medium
@@ -201,7 +248,7 @@ Position Size = Risk Amount / Stop Distance
 
 ---
 
-#### 5. Watchlist & Screening
+#### 6. Watchlist & Screening
 **Status:** Planned for v1.3  
 **Effort:** Medium (3-4 days)  
 **Value:** Medium
@@ -235,7 +282,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 6. Export & Reporting
+#### 7. Export & Reporting
 **Status:** Planned for v1.3  
 **Effort:** Low-Medium (2-3 days)  
 **Value:** Medium
@@ -261,7 +308,7 @@ CREATE TABLE watchlist (
 
 ### Priority 3: Nice to Have
 
-#### 7. Position Correlation Analysis
+#### 8. Position Correlation Analysis
 **Status:** Planned for v2.0  
 **Effort:** High (5-6 days)  
 **Value:** Medium
@@ -274,7 +321,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 8. Backtesting Module
+#### 9. Backtesting Module
 **Status:** Planned for v2.0  
 **Effort:** Very High (2-3 weeks)  
 **Value:** High (for validation)
@@ -287,7 +334,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 9. Multi-Portfolio Support
+#### 10. Multi-Portfolio Support
 **Status:** Planned for v2.0  
 **Effort:** High (1 week)  
 **Value:** Low (single user system)
@@ -300,7 +347,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 10. Mobile App
+#### 11. Mobile App
 **Status:** Planned for v2.0  
 **Effort:** Very High (4-6 weeks)  
 **Value:** Medium
@@ -317,6 +364,7 @@ CREATE TABLE watchlist (
 
 | Feature | Effort | Value | Priority | Version |
 |---------|--------|-------|----------|---------|
+| API Health & Status Page | Low | Very High | P1 | v1.3 |
 | Trade Journal | Medium | High | P1 | v1.3 |
 | Performance Analytics | Medium | High | P1 | v1.3 |
 | Alerts & Notifications | Medium-High | High | P1 | v1.3 |
@@ -334,50 +382,58 @@ CREATE TABLE watchlist (
 
 ### Phase 1 (v1.3) - Q1 2026
 
-1. **Trade Journal** (2-3 days)
+1. **API Health & Status Page** (4-6 hours) ⭐ HIGHEST PRIORITY
+   - Essential for verifying refactor worked
+   - Quick to implement
+   - High operational value
+   - Professional monitoring capability
+
+2. **Trade Journal** (2-3 days)
    - Most impactful for trading improvement
    - Low technical complexity
    - High user value
 
-2. **Performance Analytics** (3-4 days)
+3. **Performance Analytics** (3-4 days)
    - Understand what's working
    - Data already available
    - Visual insights
 
-3. **Alerts & Notifications** (4-5 days)
+4. **Alerts & Notifications** (4-5 days)
    - Stay informed without checking constantly
    - Professional feature
    - Good user experience
 
 ### Phase 2 (v1.3) - Q2 2026
-4. **Position Sizing Calculator** (1-2 days)
+
+5. **Position Sizing Calculator** (1-2 days)
    - Quick win
    - Improves risk management
    - Easy to implement
 
-5. **Export & Reporting** (2-3 days)
+6. **Export & Reporting** (2-3 days)
    - Practical necessity (taxes)
    - Low effort
    - High utility
 
-6. **Watchlist & Screening** (3-4 days)
+7. **Watchlist & Screening** (3-4 days)
 
 ### Phase 3 (v2.0) - Q3 2026
-7. **Correlation Analysis** (5-6 days)
-8. Consider **Backtesting** if needed for validation
+8. **Correlation Analysis** (5-6 days)
+9. Consider **Backtesting** if needed for validation
 
 ---
 
 ## 💡 Quick Wins (Can be done in 1-2 days each)
 
-1. **Position notes field** - Add single text field to positions
-2. **Best/worst trades widget** - Add to dashboard
-3. **Win rate chart** - Simple bar chart by month
-4. **CSV export button** - Download trades as CSV
-5. **Daily email summary** - Cron job to send portfolio status
-6. **Stop loss alert** - Email when stop is hit
-7. **Grace period indicator** - Visual countdown in UI
-8. **FX rate history** - Track GBP/USD changes
+1. **API Health Check** - System status monitoring ⭐ DO THIS FIRST
+2. **Position notes field** - Add single text field to positions
+3. **Best/worst trades widget** - Add to dashboard
+4. **Win rate chart** - Simple bar chart by month
+5. **CSV export button** - Download trades as CSV
+6. **Daily email summary** - Cron job to send portfolio status
+7. **Stop loss alert** - Email when stop is hit
+8. **Grace period indicator** - Visual countdown in UI
+9. **FX rate history** - Track GBP/USD changes
 
 ---
 
@@ -425,6 +481,10 @@ When evaluating new features, ask:
 - ✅ User-provided FX rates
 - ✅ Exit reason tracking
 - ✅ Detailed fee breakdowns
+- ✅ Complete backend refactoring to service layer architecture
+- ✅ 67% code reduction (1,439 → 470 lines)
+- ✅ 5 production-ready service modules
+- ✅ 100% testable business logic
 
 ---
 
