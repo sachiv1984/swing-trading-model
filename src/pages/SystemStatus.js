@@ -126,15 +126,6 @@ export default function SystemStatus() {
 
   return (
     <div className="space-y-6">
-      {/* DEBUG INFO CARD */}
-      <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-300 text-sm font-mono">
-        <div className="font-bold mb-2">🔍 Debug Info:</div>
-        <div>API URL: {API_URL}</div>
-        <div>Current Location: {window.location.href}</div>
-        <div>Health Error: {healthError?.message || 'None'}</div>
-        <div>Test Error: {testError?.message || 'None'}</div>
-      </div>
-
       {/* Page Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
