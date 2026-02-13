@@ -4,10 +4,11 @@ export const createPageUrl = (pageName) => {
     Dashboard: '/',
     Positions: '/Positions',
     Signals: '/Signals',  
-    TradeEntry: '/TradeEntry',  // Changed from /trade-entry
-    TradeHistory: '/TradeHistory',  // Changed from /trade-history
+    TradeEntry: '/TradeEntry',
+    TradeHistory: '/TradeHistory',
     Reports: '/Reports',
     Settings: '/Settings',
+    SystemStatus: '/SystemStatus',
   };
   return routes[pageName] || '/';
 };
