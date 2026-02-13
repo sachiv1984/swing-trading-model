@@ -218,7 +218,7 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
 def add_position_endpoint(request: AddPositionRequest):
     """Add a new position to the portfolio"""
     try:
-        result = add_position(...)(
+        result = add_position(
             ticker=request.ticker,
             market=request.market,
             entry_date=request.entry_date,
