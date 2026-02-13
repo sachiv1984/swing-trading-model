@@ -7,6 +7,7 @@ import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
 
 export default function PositionCard({ position, onEdit, onExit }) {
+  const [showNoteModal, setShowNoteModal] = useState(false);
   const pnl = position.pnl || 0;
   const pnlPercent = position.pnl_percent || 0;
   const isProfit = pnl >= 0;
