@@ -25,11 +25,25 @@ export default function TradeEntry() {
     entry_price: "",
     fx_rate: "1",
     atr_value: "",
+    entry_note: "",
+    tags: [],
   });
+
+  const [tagInput, setTagInput] = useState("");
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
 
   const { data: settings } = useQuery({
     queryKey: ["settings"],
     queryFn: () => base44.entities.Settings.list(),
+  });
+
+  const { data: existingTags = [] } = useQuery({
+    queryKey: ["position-tags"],
+    queryFn: async () => {
+      const positions = await base44.entities.Position.list();
+      const allTags = positions.flatMap(p => p.tags || []);
+      return [...new Set(allTags)].sort();
+    },
   });
 
   const currentSettings = settings?.[0] || {
@@ -67,6 +81,40 @@ export default function TradeEntry() {
       market,
       fx_rate: market === "US" ? "1.27" : "1",
     }));
+  };
+
+  const defaultTags = ["momentum", "breakout", "pullback", "news-driven", "high-conviction"];
+  const allAvailableTags = [...new Set([...existingTags, ...defaultTags])];
+
+  const filteredTags = tagInput
+    ? allAvailableTags.filter(tag => 
+        tag.toLowerCase().includes(tagInput.toLowerCase()) &&
+        !formData.tags.includes(tag)
+      )
+    : allAvailableTags.filter(tag => !formData.tags.includes(tag));
+
+  const handleAddTag = (tag) => {
+    if (formData.tags.length >= 5) return;
+    const normalizedTag = tag.toLowerCase().replace(/\s+/g, "-");
+    if (!formData.tags.includes(normalizedTag)) {
+      setFormData(prev => ({ ...prev, tags: [...prev.tags, normalizedTag] }));
+    }
+    setTagInput("");
+    setShowTagSuggestions(false);
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
+  const handleTagInputKeyDown = (e) => {
+    if (e.key === "Enter" && tagInput.trim()) {
+      e.preventDefault();
+      handleAddTag(tagInput.trim());
+    }
   };
 
   const calculateCosts = () => {
@@ -129,6 +177,8 @@ export default function TradeEntry() {
       stop_price: costs.initialStop > 0 ? costs.initialStop : null,
       fees: costs.commission + costs.stampDuty + costs.fxFee,
       status: "open",
+      entry_note: formData.entry_note || null,
+      tags: formData.tags.length > 0 ? formData.tags : null,
     });
   };
 
@@ -248,6 +298,93 @@ export default function TradeEntry() {
                 {" "}({currentSettings.atr_multiplier_initial}x ATR below entry)
               </p>
             )}
+          </div>
+
+          {/* Entry Note */}
+          <div className="space-y-2">
+            <Label className="text-slate-400">Entry Note (Optional)</Label>
+            <Textarea
+              value={formData.entry_note}
+              onChange={(e) => {
+                if (e.target.value.length <= 500) {
+                  handleChange("entry_note", e.target.value);
+                }
+              }}
+              placeholder="Why are you entering this trade? What's your thesis?"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20 resize-none"
+              rows={4}
+            />
+            <div className="flex justify-end">
+              <span className={cn(
+                "text-xs",
+                formData.entry_note.length > 450 ? "text-rose-400" : "text-slate-500"
+              )}>
+                {formData.entry_note.length}/500
+              </span>
+            </div>
+          </div>
+
+          {/* Tags */}
+          <div className="space-y-2">
+            <Label className="text-slate-400">Tags (Optional)</Label>
+            <div className="space-y-2">
+              {/* Tag Pills */}
+              {formData.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                    >
+                      {tag}
+                      <button
+                        onClick={() => handleRemoveTag(tag)}
+                        className="hover:text-cyan-300 transition-colors"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              
+              {/* Tag Input */}
+              {formData.tags.length < 5 && (
+                <div className="relative">
+                  <Input
+                    value={tagInput}
+                    onChange={(e) => {
+                      setTagInput(e.target.value);
+                      setShowTagSuggestions(e.target.value.length > 0);
+                    }}
+                    onFocus={() => setShowTagSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
+                    onKeyDown={handleTagInputKeyDown}
+                    placeholder="Type to add tags..."
+                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20"
+                  />
+                  
+                  {/* Tag Suggestions */}
+                  {showTagSuggestions && filteredTags.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-48 overflow-auto">
+                      {filteredTags.slice(0, 10).map((tag) => (
+                        <button
+                          key={tag}
+                          onClick={() => handleAddTag(tag)}
+                          className="w-full px-3 py-2 text-left text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {formData.tags.length >= 5 && (
+                <p className="text-xs text-slate-500">Maximum 5 tags reached</p>
+              )}
+            </div>
           </div>
         </div>
       </motion.div>

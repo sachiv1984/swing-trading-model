@@ -8,10 +8,6 @@ import pandas as pd
 import time
 import requests
 
-
-
-
-
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
@@ -75,9 +71,12 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                     portfolio_id, ticker, market, entry_date, entry_price,
                     fill_price, fill_currency, fx_rate, shares, total_cost,
                     fees_paid, fee_type, initial_stop, current_stop, current_price,
-                    atr, holding_days, pnl, pnl_pct, status
+                    atr, holding_days, pnl, pnl_pct, status,
+                    entry_note, tags  -- 
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s  --
                 )
                 RETURNING *
             """, (
@@ -100,7 +99,9 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                 position_data.get('holding_days', 0),
                 position_data.get('pnl', 0),
                 position_data.get('pnl_pct', 0),
-                position_data.get('status', 'open')
+                position_data.get('status', 'open'),
+                position_data.get('entry_note'),
+                position_data.get('tags')
             ))
             return cur.fetchone()
 
@@ -180,9 +181,12 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                     portfolio_id, ticker, market, entry_date, exit_date,
                     shares, entry_price, exit_price, total_cost, gross_proceeds,
                     net_proceeds, entry_fees, exit_fees, pnl, pnl_pct,
-                    holding_days, exit_reason, entry_fx_rate, exit_fx_rate
+                    holding_days, exit_reason, entry_fx_rate, exit_fx_rate,
+                    entry_note, exit_note, tags  -- 
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s  -- 
                 )
                 RETURNING *
             """, (
@@ -204,7 +208,10 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                 trade_data.get('holding_days'),
                 trade_data.get('exit_reason'),
                 trade_data.get('entry_fx_rate'),
-                trade_data.get('exit_fx_rate')
+                trade_data.get('exit_fx_rate'),
+                trade_data.get('entry_note'),
+                trade_data.get('exit_note'),
+                trade_data.get('tags')
             ))
             return cur.fetchone()
 
@@ -561,3 +568,85 @@ def get_all_tickers() -> List[str]:
             cur.execute("SELECT ticker FROM tickers ORDER BY ticker")
             results = cur.fetchall()
             return [row['ticker'] for row in results]
+
+
+def update_position_note(position_id: str, entry_note: str) -> Dict:
+    """Update entry note for a position"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE positions 
+                SET entry_note = %s, updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s
+                RETURNING id, ticker, entry_note
+            """, (entry_note, position_id))
+            
+            result = cur.fetchone()
+            
+            if not result:
+                raise ValueError(f"Position {position_id} not found")
+            
+            return {
+                "id": str(result['id']),
+                "ticker": result['ticker'],
+                "entry_note": result['entry_note'],
+                "updated_at": datetime.now().isoformat()
+            }
+
+
+def update_position_tags(position_id: str, tags: List[str]) -> Dict:
+    """Update tags for a position"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE positions 
+                SET tags = %s, updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s
+                RETURNING id, ticker, tags
+            """, (tags, position_id))
+            
+            result = cur.fetchone()
+            
+            if not result:
+                raise ValueError(f"Position {position_id} not found")
+            
+            return {
+                "id": str(result['id']),
+                "ticker": result['ticker'],
+                "tags": result['tags'] or [],
+                "updated_at": datetime.now().isoformat()
+            }
+
+
+def get_all_tags(portfolio_id: str) -> List[str]:
+    """Get all unique tags used across positions and trade history"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT DISTINCT unnest(tags) as tag
+                FROM (
+                    SELECT tags FROM positions WHERE portfolio_id = %s
+                    UNION ALL
+                    SELECT tags FROM trade_history WHERE portfolio_id = %s
+                ) combined
+                WHERE tags IS NOT NULL
+                ORDER BY tag
+            """, (portfolio_id, portfolio_id))
+            
+            tags = [row['tag'] for row in cur.fetchall()]
+            return tags
+
+
+def search_positions_by_tags(portfolio_id: str, tags: List[str]) -> List[Dict]:
+    """Search positions by tags (OR logic - any tag match)"""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT * FROM positions
+                WHERE portfolio_id = %s 
+                AND tags && %s
+                ORDER BY entry_date DESC
+            """, (portfolio_id, tags))
+            
+            positions = cur.fetchall()
+            return [dict(p) for p in positions]

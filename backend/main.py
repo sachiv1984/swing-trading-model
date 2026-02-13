@@ -1,6 +1,6 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
 from datetime import timedelta
@@ -10,12 +10,21 @@ from config import API_TITLE
 from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
+from pydantic import BaseModel
+
 
 from database import (
     get_portfolio,
+    get_positions,
+    update_position,
+    create_position,
+    update_portfolio_cash,
     get_settings,
-    create_settings,
-    update_settings         
+    create_trade_history,
+    update_position_note,
+    update_position_tags,
+    get_all_tags,
+    search_positions_by_tags
 )
 
 from utils.pricing import (
@@ -58,8 +67,12 @@ from services import (
     # Position service
     get_positions_with_prices,
     analyze_positions,
-    add_position as add_position_service,
-    exit_position as exit_position_service,
+    add_position,
+    exit_position,
+    update_note,
+    update_tags,
+    get_available_tags,
+    filter_by_tags,
     # Portfolio service
     get_portfolio_summary,
     create_daily_snapshot,
@@ -74,9 +87,12 @@ from services import (
     generate_momentum_signals,
     get_signals,
     update_signal_status,
-    delete_signal
+    delete_signal,
+    # Health service
+    get_basic_health,
+    get_detailed_health,
+    test_all_endpoints
 )
-
 app = FastAPI(title=API_TITLE)
 
 app.add_middleware(
@@ -176,13 +192,14 @@ def get_portfolio_endpoint():
 def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
     """Exit a position (full or partial) and record in trade history"""
     try:
-        result = exit_position_service(
+        result = exit_position(...)(
             position_id=position_id,
             exit_price=request.exit_price,
             shares=request.shares,
             exit_date=request.exit_date,
             exit_reason=request.exit_reason,
-            exit_fx_rate=request.exit_fx_rate
+            exit_fx_rate=request.exit_fx_rate,
+            exit_note=request.exit_note
         )
         
         return {
@@ -201,7 +218,7 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
 def add_position_endpoint(request: AddPositionRequest):
     """Add a new position to the portfolio"""
     try:
-        result = add_position_service(
+        result = add_position(...)(
             ticker=request.ticker,
             market=request.market,
             entry_date=request.entry_date,
@@ -209,7 +226,9 @@ def add_position_endpoint(request: AddPositionRequest):
             entry_price=request.entry_price,
             fx_rate=request.fx_rate,
             atr_value=request.atr_value,
-            stop_price=request.stop_price
+            stop_price=request.stop_price,
+            entry_note=request.entry_note,
+            tags=request.tags
         )
         
         return {
@@ -459,6 +478,153 @@ def delete_signal_endpoint(signal_id: str):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/health")
+def health_check():
+    """
+    Basic health check - fast response for load balancers
+    """
+    try:
+        result = get_basic_health()
+        return result
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+
+@app.get("/health/detailed")
+def detailed_health_check():
+    """
+    Comprehensive system status check
+    
+    Checks:
+    - Database connectivity
+    - External services (Yahoo Finance)
+    - Service layer health
+    - Configuration validity
+    """
+    try:
+        result = get_detailed_health()
+        return result
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+@app.post("/test/endpoints")
+def test_endpoints(request: Request):
+    """
+    Test all API endpoints
+    
+    Returns:
+        Test results for all endpoints
+    
+    Note:
+        - Can take 10-30 seconds to complete
+        - Tests all GET endpoints
+        - Returns pass/fail status and response times
+    """
+    try:
+        # Get the base URL from the request
+        # This works for both localhost and production
+        base_url = str(request.base_url).rstrip('/')
+        
+        # Pass the actual server URL to the test function
+        result = test_all_endpoints(base_url)
+        return result
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+class UpdateNoteRequest(BaseModel):
+    entry_note: str
+
+class UpdateTagsRequest(BaseModel):
+    tags: List[str]
+
+@app.patch("/positions/{position_id}/note")
+def update_position_note_endpoint(position_id: str, request: UpdateNoteRequest):
+    """Update entry note for a position"""
+    try:
+        result = update_note(position_id, request.entry_note)  # ✅ Direct call
+        return {"status": "ok", "data": result}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+def get_portfolio_id() -> str:
+    """Helper to get portfolio ID"""
+    portfolio = get_portfolio()
+    if not portfolio:
+        raise ValueError("Portfolio not found")
+    return str(portfolio['id'])
+
+@app.patch("/positions/{position_id}/tags")
+def update_position_tags_endpoint(position_id: str, request: UpdateTagsRequest):
+    """
+    Update tags for a position.
+    
+    Tags help categorize trades by strategy, setup type, or other criteria.
+    Examples: ["momentum", "breakout", "earnings-play"]
+    """
+    try:
+        result = update_tags(position_id, request.tags)
+        return {"status": "ok", "data": result}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/positions/tags")
+def get_available_tags_endpoint():
+    """
+    Get all unique tags used across positions and trade history.
+    
+    Used for tag autocomplete and filtering.
+    """
+    try:
+        portfolio_id = get_portfolio_id()  # Your existing helper
+        tags = get_available_tags(portfolio_id)
+        return {"status": "ok", "data": tags}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/positions/search/tags")
+def search_positions_by_tags_endpoint(tags: str):
+    """
+    Search positions by tags.
+    
+    Query params:
+        tags: Comma-separated list of tags (e.g., "momentum,breakout")
+    
+    Returns positions that match ANY of the provided tags.
+    """
+    try:
+        portfolio_id = get_portfolio_id()
+        tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+        
+        if not tag_list:
+            raise ValueError("At least one tag is required")
+        
+        positions = filter_by_tags(portfolio_id, tag_list)
+        return {"status": "ok", "data": positions}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Card } from "../components/ui/card";
@@ -31,88 +30,64 @@ export default function SystemStatus() {
   const [expandedComponents, setExpandedComponents] = useState({});
   const queryClient = useQueryClient();
 
+  // Get API URL from environment variable
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
   // Fetch health status
-  const { data: healthData, isLoading: healthLoading, refetch: refetchHealth } = useQuery({
+  const { data: healthData, isLoading: healthLoading, error: healthError, refetch: refetchHealth } = useQuery({
     queryKey: ['systemHealth'],
     queryFn: async () => {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: "Return mock system health data",
-        response_json_schema: {
-          type: "object",
-          properties: {
-            status: { type: "string" },
-            responseTime: { type: "number" },
-            timestamp: { type: "string" },
-            components: {
-              type: "object",
-              properties: {
-                database: {
-                  type: "object",
-                  properties: {
-                    status: { type: "string" },
-                    details: { type: "object" }
-                  }
-                },
-                yahooFinance: {
-                  type: "object",
-                  properties: {
-                    status: { type: "string" },
-                    details: { type: "object" }
-                  }
-                },
-                services: {
-                  type: "object",
-                  properties: {
-                    status: { type: "string" },
-                    details: { type: "object" }
-                  }
-                },
-                config: {
-                  type: "object",
-                  properties: {
-                    status: { type: "string" },
-                    details: { type: "object" }
-                  }
-                }
-              }
-            }
-          }
-        }
+      console.log(`Fetching: ${API_URL}/health/detailed`);
+      const response = await fetch(`${API_URL}/health/detailed`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors', // Explicitly set CORS mode
       });
-      return response;
+      
+      console.log('Health response status:', response.status);
+      console.log('Health response headers:', [...response.headers.entries()]);
+      
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Health response error:', text);
+        throw new Error(`HTTP ${response.status}: ${text}`);
+      }
+      
+      const data = await response.json();
+      console.log('Health data:', data);
+      return data;
     },
     refetchInterval: autoRefresh ? 5000 : false,
+    retry: false, // Don't retry on error
   });
 
   // Fetch endpoint tests
-  const { data: testData, isLoading: testLoading, mutate: runTests } = useMutation({
+  const { data: testData, isLoading: testLoading, error: testError, mutate: runTests } = useMutation({
     mutationFn: async () => {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: "Return mock endpoint test results for a trading app with endpoints like GET /positions, GET /signals, POST /positions, etc.",
-        response_json_schema: {
-          type: "object",
-          properties: {
-            totalTests: { type: "number" },
-            passed: { type: "number" },
-            failed: { type: "number" },
-            errors: { type: "number" },
-            tests: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  endpoint: { type: "string" },
-                  status: { type: "string" },
-                  statusCode: { type: "number" },
-                  responseTime: { type: "number" },
-                  error: { type: "string" }
-                }
-              }
-            }
-          }
-        }
+      console.log(`Posting to: ${API_URL}/test/endpoints`);
+      const response = await fetch(`${API_URL}/test/endpoints`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
       });
-      return response;
+      
+      console.log('Test response status:', response.status);
+      
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Test response error:', text);
+        throw new Error(`HTTP ${response.status}: ${text}`);
+      }
+      
+      const data = await response.json();
+      console.log('Test data:', data);
+      return data;
     }
   });
 
@@ -188,6 +163,17 @@ export default function SystemStatus() {
           </Button>
         </div>
       </div>
+
+      {/* Show error if fetch failed */}
+      {healthError && (
+        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+          <div className="font-bold mb-2">❌ Health Check Failed:</div>
+          <div className="text-sm">{healthError.message}</div>
+          <div className="text-xs mt-2 opacity-70">
+            This usually means CORS is blocking the request or the backend is not running.
+          </div>
+        </div>
+      )}
 
       {/* Overall Status Hero Card */}
       <motion.div
@@ -410,13 +396,17 @@ export default function SystemStatus() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="text-slate-300">
-                      {test.statusCode}
-                    </Badge>
-                    <div className="text-right">
-                      <p className="text-sm text-slate-400">Response Time</p>
-                      <p className="font-bold text-white">{test.responseTime}ms</p>
-                    </div>
+                    {test.statusCode && (
+                      <Badge variant="outline" className="text-slate-300">
+                        {test.statusCode}
+                      </Badge>
+                    )}
+                    {test.responseTime && (
+                      <div className="text-right">
+                        <p className="text-sm text-slate-400">Response Time</p>
+                        <p className="font-bold text-white">{test.responseTime}ms</p>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               );

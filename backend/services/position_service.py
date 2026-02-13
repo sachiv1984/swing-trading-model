@@ -9,10 +9,11 @@ Business logic for position management including:
 
 All functions are independent of FastAPI for maximum testability.
 """
-
+import re
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 from decimal import Decimal
+
 
 from database import (
     get_portfolio,
@@ -460,7 +461,9 @@ def add_position(
     entry_price: float,
     fx_rate: Optional[float] = None,
     atr_value: Optional[float] = None,
-    stop_price: Optional[float] = None
+    stop_price: Optional[float] = None,
+    entry_note: Optional[str] = None,
+    tags: Optional[List[str]] = None
 ) -> Dict:
     """
     Add a new position to the portfolio with automatic fee calculation
@@ -600,7 +603,9 @@ def add_position(
         'holding_days': 0,
         'pnl': 0,
         'pnl_pct': 0,
-        'status': 'open'
+        'status': 'open',
+        'entry_note': entry_note,
+        'tags': tags
     }
     
     # Create position in database
@@ -637,7 +642,8 @@ def exit_position(
     shares: Optional[float] = None,
     exit_date: Optional[str] = None,
     exit_reason: Optional[str] = None,
-    exit_fx_rate: Optional[float] = None
+    exit_fx_rate: Optional[float] = None,
+    exit_note: Optional[str] = None
 ) -> Dict:
     """
     Exit a position (full or partial) and record in trade history
@@ -808,7 +814,10 @@ def exit_position(
         'holding_days': holding_days,
         'exit_reason': reason,
         'entry_fx_rate': float(position.get('fx_rate', 1.0)),
-        'exit_fx_rate': fx_rate_to_use
+        'exit_fx_rate': fx_rate_to_use,
+        'entry_note': position.get('entry_note'),
+        'exit_note': exit_note,
+        'tags': position.get('tags')
     }
     
     print(f"   💾 Creating trade history record...")
@@ -878,3 +887,87 @@ def exit_position(
         "is_partial_exit": is_partial_exit,
         "remaining_shares": round(total_shares - exit_shares, 4) if is_partial_exit else 0
     }
+
+def update_note(position_id: str, entry_note: str) -> Dict:
+    """
+    Update entry note for a position.
+    
+    Args:
+        position_id: UUID of position
+        entry_note: Note text (can be empty to clear)
+    
+    Returns:
+        Updated position with note
+    """
+    if not position_id:
+        raise ValueError("Position ID is required")
+    
+    # Validate position exists
+    position = get_position(position_id)
+    if not position:
+        raise ValueError(f"Position {position_id} not found")
+    
+    # Update note in database
+    result = update_position_note(position_id, entry_note)
+    
+    return result
+
+
+def update_tags(position_id: str, tags: List[str]) -> Dict:
+    """
+    Update tags for a position.
+    
+    Args:
+        position_id: UUID of position
+        tags: List of tag strings (e.g., ["momentum", "breakout"])
+    
+    Returns:
+        Updated position with tags
+    """
+    if not position_id:
+        raise ValueError("Position ID is required")
+    
+    # Validate position exists
+    position = get_position(position_id)
+    if not position:
+        raise ValueError(f"Position {position_id} not found")
+    
+    # Validate tags (lowercase, no special chars except hyphen)
+    validated_tags = []
+    for tag in tags:
+        clean_tag = tag.strip().lower()
+        if clean_tag and re.match(r'^[a-z0-9-]+$', clean_tag):
+            validated_tags.append(clean_tag)
+    
+    # Update tags in database
+    result = update_position_tags(position_id, validated_tags)
+    
+    return result
+
+
+def get_available_tags(portfolio_id: str) -> List[str]:
+    """Get all unique tags used in portfolio"""
+    return get_all_tags(portfolio_id)
+
+
+def filter_by_tags(portfolio_id: str, tags: List[str]) -> List[Dict]:
+    """Search positions by tags"""
+    if not tags:
+        raise ValueError("At least one tag is required")
+    
+    return search_positions_by_tags(portfolio_id, tags)
+
+def get_position(position_id: str) -> Optional[Dict]:
+    """Get a single position by ID"""
+    portfolio = get_portfolio()
+    if not portfolio:
+        return None
+    
+    portfolio_id = str(portfolio['id'])
+    positions = get_positions(portfolio_id)
+    
+    for pos in positions:
+        if str(pos['id']) == position_id:
+            return decimal_to_float(pos)
+    
+    return None
