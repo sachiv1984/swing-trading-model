@@ -191,7 +191,8 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
             shares=request.shares,
             exit_date=request.exit_date,
             exit_reason=request.exit_reason,
-            exit_fx_rate=request.exit_fx_rate
+            exit_fx_rate=request.exit_fx_rate,
+            exit_note=request.exit_note
         )
         
         return {
@@ -218,7 +219,9 @@ def add_position_endpoint(request: AddPositionRequest):
             entry_price=request.entry_price,
             fx_rate=request.fx_rate,
             atr_value=request.atr_value,
-            stop_price=request.stop_price
+            stop_price=request.stop_price,
+            entry_note=request.entry_note,
+            tags=request.tags
         )
         
         return {
