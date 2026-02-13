@@ -952,3 +952,18 @@ def filter_by_tags(portfolio_id: str, tags: List[str]) -> List[Dict]:
         raise ValueError("At least one tag is required")
     
     return search_positions_by_tags(portfolio_id, tags)
+
+def get_position(position_id: str) -> Optional[Dict]:
+    """Get a single position by ID"""
+    portfolio = get_portfolio()
+    if not portfolio:
+        return None
+    
+    portfolio_id = str(portfolio['id'])
+    positions = get_positions(portfolio_id)
+    
+    for pos in positions:
+        if str(pos['id']) == position_id:
+            return decimal_to_float(pos)
+    
+    return None
