@@ -15,7 +15,8 @@ import {
   TrendingUp,
   ExternalLink,
   FileBarChart,
-  Zap
+  Zap,
+  Activity
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -43,6 +44,7 @@ export default function Layout({ children, currentPageName }) {
   { name: "Trade Entry", icon: PlusCircle, page: "TradeEntry" },
   { name: "Trade History", icon: History, page: "TradeHistory" },  
   { name: "Reports", icon: FileBarChart, page: "Reports" },
+  { name: "System Status", icon: Activity, page: "SystemStatus" },
   { name: "Settings", icon: Settings, page: "Settings" },
 ];
 
