@@ -8,10 +8,6 @@ import pandas as pd
 import time
 import requests
 
-
-
-
-
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
@@ -75,9 +71,12 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                     portfolio_id, ticker, market, entry_date, entry_price,
                     fill_price, fill_currency, fx_rate, shares, total_cost,
                     fees_paid, fee_type, initial_stop, current_stop, current_price,
-                    atr, holding_days, pnl, pnl_pct, status
+                    atr, holding_days, pnl, pnl_pct, status,
+                    entry_note, tags  -- 
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s  --
                 )
                 RETURNING *
             """, (
@@ -100,7 +99,9 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                 position_data.get('holding_days', 0),
                 position_data.get('pnl', 0),
                 position_data.get('pnl_pct', 0),
-                position_data.get('status', 'open')
+                position_data.get('status', 'open'),
+                position_data.get('entry_note'),
+                position_data.get('tags')
             ))
             return cur.fetchone()
 
@@ -180,9 +181,12 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                     portfolio_id, ticker, market, entry_date, exit_date,
                     shares, entry_price, exit_price, total_cost, gross_proceeds,
                     net_proceeds, entry_fees, exit_fees, pnl, pnl_pct,
-                    holding_days, exit_reason, entry_fx_rate, exit_fx_rate
+                    holding_days, exit_reason, entry_fx_rate, exit_fx_rate,
+                    entry_note, exit_note, tags  -- 
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s  -- 
                 )
                 RETURNING *
             """, (
@@ -204,7 +208,10 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                 trade_data.get('holding_days'),
                 trade_data.get('exit_reason'),
                 trade_data.get('entry_fx_rate'),
-                trade_data.get('exit_fx_rate')
+                trade_data.get('exit_fx_rate'),
+                trade_data.get('entry_note'),
+                trade_data.get('exit_note'),
+                trade_data.get('tags')
             ))
             return cur.fetchone()
 
@@ -562,6 +569,7 @@ def get_all_tickers() -> List[str]:
             results = cur.fetchall()
             return [row['ticker'] for row in results]
 
+
 def update_position_note(position_id: str, entry_note: str) -> Dict:
     """Update entry note for a position"""
     with get_db() as conn:
@@ -642,4 +650,3 @@ def search_positions_by_tags(portfolio_id: str, tags: List[str]) -> List[Dict]:
             
             positions = cur.fetchall()
             return [dict(p) for p in positions]
-
