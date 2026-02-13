@@ -58,8 +58,8 @@ from services import (
     # Position service
     get_positions_with_prices,
     analyze_positions,
-    add_position as add_position_service,
-    exit_position as exit_position_service,
+    add_position,
+    exit_position,
     # Portfolio service
     get_portfolio_summary,
     create_daily_snapshot,
@@ -74,9 +74,12 @@ from services import (
     generate_momentum_signals,
     get_signals,
     update_signal_status,
-    delete_signal
+    delete_signal,
+    # Health service
+    get_basic_health,
+    get_detailed_health,
+    test_all_endpoints
 )
-
 app = FastAPI(title=API_TITLE)
 
 app.add_middleware(
@@ -460,6 +463,64 @@ def delete_signal_endpoint(signal_id: str):
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/health")
+def health_check():
+    """
+    Basic health check - fast response for load balancers
+    """
+    try:
+        result = get_basic_health()
+        return result
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+
+@app.get("/health/detailed")
+def detailed_health_check():
+    """
+    Comprehensive system status check
+    
+    Checks:
+    - Database connectivity
+    - External services (Yahoo Finance)
+    - Service layer health
+    - Configuration validity
+    """
+    try:
+        result = get_detailed_health()
+        return result
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+
+@app.post("/test/endpoints")
+def test_endpoints(base_url: str = "http://localhost:8000"):
+    """
+    Test all API endpoints
+    
+    Args:
+        base_url: Base URL to test against (optional, defaults to localhost)
+    
+    Returns:
+        Test results for all endpoints
+    
+    Note:
+        - Can take 10-30 seconds to complete
+        - Tests all GET endpoints
+        - Returns pass/fail status and response times
+    """
+    try:
+        result = test_all_endpoints(base_url)
+        return result
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
 
 if __name__ == "__main__":
     import uvicorn
