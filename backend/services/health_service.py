@@ -141,12 +141,12 @@ def get_detailed_health() -> Dict:
     }
 
 
-def test_all_endpoints(base_url: str = "http://localhost:8000") -> Dict:
+def test_all_endpoints(base_url: str = None) -> Dict:
     """
     Test all API endpoints
     
     Args:
-        base_url: Base URL of the API (default: http://localhost:8000)
+        base_url: Base URL of the API (if None, uses localhost:8000)
     
     Returns:
         Dictionary with:
@@ -161,6 +161,13 @@ def test_all_endpoints(base_url: str = "http://localhost:8000") -> Dict:
         - Use for post-deployment smoke tests
         - Can take 10-30 seconds to complete
     """
+    # If no base_url provided, use localhost (for local testing)
+    if base_url is None:
+        base_url = "http://localhost:8000"
+    
+    # Remove trailing slash if present
+    base_url = base_url.rstrip('/')
+    
     # Define endpoints to test
     endpoints = [
         {"method": "GET", "path": "/", "expected_status": 200},
