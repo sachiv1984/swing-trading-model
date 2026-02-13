@@ -101,7 +101,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-lg">
+      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-lg max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <span className="text-xl font-bold">{position.ticker}</span>
@@ -111,7 +111,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 overflow-y-auto flex-1">
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
