@@ -21,6 +21,8 @@ class AddPositionRequest(BaseModel):
     stop_price: Optional[float] = None
     fees: Optional[float] = None
     status: Optional[str] = "open"
+    entry_note: Optional[str] = None
+    tags: Optional[List[str]] = None
 
 
 class SettingsRequest(BaseModel):
@@ -60,3 +62,4 @@ class ExitPositionRequest(BaseModel):
     exit_date: Optional[str] = None  # Optional: defaults to today
     exit_reason: Optional[str] = "Manual Exit"
     exit_fx_rate: Optional[float] = None  # REQUIRED for US stocks, ignored for UK
+    exit_note: Optional[str] = None
