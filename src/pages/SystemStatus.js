@@ -33,15 +33,6 @@ export default function SystemStatus() {
   // Get API URL from environment variable
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
-  // DEBUG: Log environment info on mount
-  useEffect(() => {
-    console.log('=== SYSTEM STATUS DEBUG ===');
-    console.log('API_URL:', API_URL);
-    console.log('window.location:', window.location.href);
-    console.log('All env vars:', process.env);
-    console.log('==========================');
-  }, [API_URL]);
-
   // Fetch health status
   const { data: healthData, isLoading: healthLoading, error: healthError, refetch: refetchHealth } = useQuery({
     queryKey: ['systemHealth'],
