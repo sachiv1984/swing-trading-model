@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Card } from "../components/ui/card";
@@ -35,51 +34,11 @@ export default function SystemStatus() {
   const { data: healthData, isLoading: healthLoading, refetch: refetchHealth } = useQuery({
     queryKey: ['systemHealth'],
     queryFn: async () => {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: "Return mock system health data",
-        response_json_schema: {
-          type: "object",
-          properties: {
-            status: { type: "string" },
-            responseTime: { type: "number" },
-            timestamp: { type: "string" },
-            components: {
-              type: "object",
-              properties: {
-                database: {
-                  type: "object",
-                  properties: {
-                    status: { type: "string" },
-                    details: { type: "object" }
-                  }
-                },
-                yahooFinance: {
-                  type: "object",
-                  properties: {
-                    status: { type: "string" },
-                    details: { type: "object" }
-                  }
-                },
-                services: {
-                  type: "object",
-                  properties: {
-                    status: { type: "string" },
-                    details: { type: "object" }
-                  }
-                },
-                config: {
-                  type: "object",
-                  properties: {
-                    status: { type: "string" },
-                    details: { type: "object" }
-                  }
-                }
-              }
-            }
-          }
-        }
-      });
-      return response;
+      const response = await fetch('/health/detailed');
+      if (!response.ok) {
+        throw new Error('Failed to fetch health status');
+      }
+      return response.json();
     },
     refetchInterval: autoRefresh ? 5000 : false,
   });
@@ -87,32 +46,16 @@ export default function SystemStatus() {
   // Fetch endpoint tests
   const { data: testData, isLoading: testLoading, mutate: runTests } = useMutation({
     mutationFn: async () => {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: "Return mock endpoint test results for a trading app with endpoints like GET /positions, GET /signals, POST /positions, etc.",
-        response_json_schema: {
-          type: "object",
-          properties: {
-            totalTests: { type: "number" },
-            passed: { type: "number" },
-            failed: { type: "number" },
-            errors: { type: "number" },
-            tests: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  endpoint: { type: "string" },
-                  status: { type: "string" },
-                  statusCode: { type: "number" },
-                  responseTime: { type: "number" },
-                  error: { type: "string" }
-                }
-              }
-            }
-          }
-        }
+      const response = await fetch('/test/endpoints', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-      return response;
+      if (!response.ok) {
+        throw new Error('Failed to run endpoint tests');
+      }
+      return response.json();
     }
   });
 
@@ -410,13 +353,17 @@ export default function SystemStatus() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="text-slate-300">
-                      {test.statusCode}
-                    </Badge>
-                    <div className="text-right">
-                      <p className="text-sm text-slate-400">Response Time</p>
-                      <p className="font-bold text-white">{test.responseTime}ms</p>
-                    </div>
+                    {test.statusCode && (
+                      <Badge variant="outline" className="text-slate-300">
+                        {test.statusCode}
+                      </Badge>
+                    )}
+                    {test.responseTime && (
+                      <div className="text-right">
+                        <p className="text-sm text-slate-400">Response Time</p>
+                        <p className="font-bold text-white">{test.responseTime}ms</p>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               );
