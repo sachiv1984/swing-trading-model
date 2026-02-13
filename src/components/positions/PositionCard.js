@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Edit2, LogOut } from "lucide-react";
 import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
 
@@ -76,6 +78,39 @@ export default function PositionCard({ position, onEdit, onExit }) {
         </div>
       </div>
 
+      {/* Note & Tags Preview */}
+      {(position.entry_note || position.tags?.length > 0) && (
+        <div className="mb-4 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30">
+          {position.entry_note && (
+            <button
+              onClick={() => setShowNoteModal(true)}
+              className="w-full text-left mb-2 text-sm text-slate-400 italic hover:text-slate-300 transition-colors"
+            >
+              {position.entry_note.length > 80 
+                ? `${position.entry_note.substring(0, 80)}...` 
+                : position.entry_note}
+            </button>
+          )}
+          {position.tags?.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {position.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2 py-0.5 text-xs rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                >
+                  {tag}
+                </span>
+              ))}
+              {position.tags.length > 3 && (
+                <span className="px-2 py-0.5 text-xs text-slate-500">
+                  +{position.tags.length - 3} more
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="flex items-center gap-2 pt-4 border-t border-slate-700/50">
         <Button
           variant="ghost"
@@ -102,6 +137,35 @@ export default function PositionCard({ position, onEdit, onExit }) {
         "absolute -bottom-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-20",
         isProfit ? "bg-emerald-500" : "bg-rose-500"
       )} />
+
+      {/* Note Modal */}
+      <Dialog open={showNoteModal} onOpenChange={setShowNoteModal}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-cyan-400">Trade Entry Note</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+              {position.entry_note}
+            </p>
+            {position.tags?.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-slate-700/50">
+                <p className="text-xs text-slate-500 mb-2">Tags:</p>
+                <div className="flex flex-wrap gap-2">
+                  {position.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-2 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
