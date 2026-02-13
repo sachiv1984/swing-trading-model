@@ -12,6 +12,7 @@ Modules:
     - trade_service: Trade history and statistics
     - cash_service: Cash transactions and flow tracking
     - signal_service: Momentum signal generation and management
+    - health_service: System health monitoring and endpoint testing
 
 Benefits:
     - Testable without FastAPI
@@ -50,6 +51,12 @@ from .signal_service import (
     delete_signal
 )
 
+from .health_service import (
+    get_basic_health,
+    get_detailed_health,
+    test_all_endpoints
+)
+
 __all__ = [
     # Position service
     'get_positions_with_prices',
@@ -70,5 +77,9 @@ __all__ = [
     'generate_momentum_signals',
     'get_signals',
     'update_signal_status',
-    'delete_signal'
+    'delete_signal',
+    # Health service
+    'get_basic_health',
+    'get_detailed_health',
+    'test_all_endpoints'
 ]
