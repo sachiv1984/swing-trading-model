@@ -15,9 +15,16 @@ from pydantic import BaseModel
 
 from database import (
     get_portfolio,
+    get_positions,
+    update_position,
+    create_position,
+    update_portfolio_cash,
     get_settings,
-    create_settings,
-    update_settings         
+    create_trade_history,
+    update_position_note,
+    update_position_tags,
+    get_all_tags,
+    search_positions_by_tags
 )
 
 from utils.pricing import (
@@ -185,7 +192,7 @@ def get_portfolio_endpoint():
 def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
     """Exit a position (full or partial) and record in trade history"""
     try:
-        result = exit_position_service(
+        result = exit_position(...)(
             position_id=position_id,
             exit_price=request.exit_price,
             shares=request.shares,
@@ -211,7 +218,7 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
 def add_position_endpoint(request: AddPositionRequest):
     """Add a new position to the portfolio"""
     try:
-        result = add_position_service(
+        result = add_position(...)(
             ticker=request.ticker,
             market=request.market,
             entry_date=request.entry_date,
@@ -532,6 +539,12 @@ def test_endpoints(request: Request):
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
 
+class UpdateNoteRequest(BaseModel):
+    entry_note: str
+
+class UpdateTagsRequest(BaseModel):
+    tags: List[str]
+
 @app.patch("/positions/{position_id}/note")
 def update_position_note_endpoint(position_id: str, request: UpdateNoteRequest):
     """Update entry note for a position"""
@@ -561,7 +574,7 @@ def update_position_tags_endpoint(position_id: str, request: UpdateTagsRequest):
     Examples: ["momentum", "breakout", "earnings-play"]
     """
     try:
-        result = position_service.update_tags(position_id, request.tags)
+        result = update_tags(position_id, request.tags)
         return {"status": "ok", "data": result}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -580,7 +593,7 @@ def get_available_tags_endpoint():
     """
     try:
         portfolio_id = get_portfolio_id()  # Your existing helper
-        tags = position_service.get_available_tags(portfolio_id)
+        tags = get_available_tags(portfolio_id)
         return {"status": "ok", "data": tags}
     except Exception as e:
         import traceback
@@ -605,7 +618,7 @@ def search_positions_by_tags_endpoint(tags: str):
         if not tag_list:
             raise ValueError("At least one tag is required")
         
-        positions = position_service.filter_by_tags(portfolio_id, tag_list)
+        positions = filter_by_tags(portfolio_id, tag_list)
         return {"status": "ok", "data": positions}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
