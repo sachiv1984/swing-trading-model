@@ -65,7 +65,7 @@ from services import (
     update_note,
     update_tags,
     get_available_tags,
-    filter_by_tags
+    filter_by_tags,
     # Portfolio service
     get_portfolio_summary,
     create_daily_snapshot,
