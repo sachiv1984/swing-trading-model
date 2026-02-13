@@ -878,3 +878,72 @@ def exit_position(
         "is_partial_exit": is_partial_exit,
         "remaining_shares": round(total_shares - exit_shares, 4) if is_partial_exit else 0
     }
+
+def update_note(position_id: str, entry_note: str) -> Dict:
+    """
+    Update entry note for a position.
+    
+    Args:
+        position_id: UUID of position
+        entry_note: Note text (can be empty to clear)
+    
+    Returns:
+        Updated position with note
+    """
+    if not position_id:
+        raise ValueError("Position ID is required")
+    
+    # Validate position exists
+    position = get_position(position_id)
+    if not position:
+        raise ValueError(f"Position {position_id} not found")
+    
+    # Update note in database
+    result = update_position_note(position_id, entry_note)
+    
+    return result
+
+
+def update_tags(position_id: str, tags: List[str]) -> Dict:
+    """
+    Update tags for a position.
+    
+    Args:
+        position_id: UUID of position
+        tags: List of tag strings (e.g., ["momentum", "breakout"])
+    
+    Returns:
+        Updated position with tags
+    """
+    if not position_id:
+        raise ValueError("Position ID is required")
+    
+    # Validate position exists
+    position = get_position(position_id)
+    if not position:
+        raise ValueError(f"Position {position_id} not found")
+    
+    # Validate tags (lowercase, no special chars except hyphen)
+    validated_tags = []
+    for tag in tags:
+        clean_tag = tag.strip().lower()
+        if clean_tag and re.match(r'^[a-z0-9-]+$', clean_tag):
+            validated_tags.append(clean_tag)
+    
+    # Update tags in database
+    result = update_position_tags(position_id, validated_tags)
+    
+    return result
+
+
+def get_available_tags(portfolio_id: str) -> List[str]:
+    """Get all unique tags used in portfolio"""
+    return get_all_tags(portfolio_id)
+
+
+def filter_by_tags(portfolio_id: str, tags: List[str]) -> List[Dict]:
+    """Search positions by tags"""
+    if not tags:
+        raise ValueError("At least one tag is required")
+    
+    return search_positions_by_tags(portfolio_id, tags)
