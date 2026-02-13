@@ -187,7 +187,8 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
             shares=request.shares,
             exit_date=request.exit_date,
             exit_reason=request.exit_reason,
-            exit_fx_rate=request.exit_fx_rate
+            exit_fx_rate=request.exit_fx_rate,
+            exit_note: Optional[str] = None
         )
         
         return {
@@ -501,9 +502,6 @@ def detailed_health_check():
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
 
-
-# UPDATE THIS ENDPOINT IN main.py
-
 @app.post("/test/endpoints")
 def test_endpoints(request: Request):
     """
@@ -536,10 +534,6 @@ class UpdateNoteRequest(BaseModel):
 
 class UpdateTagsRequest(BaseModel):
     tags: List[str]
-
-class ExitPositionRequest(BaseModel):
-    exit_note: Optional[str] = None
-
 
 @app.patch("/positions/{position_id}/note")
 def update_position_note_endpoint(position_id: str, request: UpdateNoteRequest):
