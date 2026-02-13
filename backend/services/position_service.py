@@ -637,7 +637,8 @@ def exit_position(
     shares: Optional[float] = None,
     exit_date: Optional[str] = None,
     exit_reason: Optional[str] = None,
-    exit_fx_rate: Optional[float] = None
+    exit_fx_rate: Optional[float] = None,
+    exit_note: str = None
 ) -> Dict:
     """
     Exit a position (full or partial) and record in trade history
@@ -808,7 +809,10 @@ def exit_position(
         'holding_days': holding_days,
         'exit_reason': reason,
         'entry_fx_rate': float(position.get('fx_rate', 1.0)),
-        'exit_fx_rate': fx_rate_to_use
+        'exit_fx_rate': fx_rate_to_use,
+        'entry_note': position.get('entry_note'),
+        'exit_note': exit_note,
+        'tags': position.get('tags')
     }
     
     print(f"   💾 Creating trade history record...")
