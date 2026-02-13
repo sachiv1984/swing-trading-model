@@ -28,10 +28,15 @@ from .position_service import (
     exit_position
 )
 
-from .portfolio_service import (
-    get_portfolio_summary,
-    create_daily_snapshot,
-    get_performance_history
+from .position_service import (
+    get_positions_with_prices,
+    analyze_positions,
+    add_position,
+    exit_position,
+    update_note,
+    update_tags,
+    get_available_tags,
+    filter_by_tags 
 )
 
 from .trade_service import (
@@ -63,6 +68,10 @@ __all__ = [
     'analyze_positions',
     'add_position',
     'exit_position',
+    'update_note',
+    'update_tags',
+    'get_available_tags',
+    'filter_by_tags',
     # Portfolio service
     'get_portfolio_summary',
     'create_daily_snapshot',
