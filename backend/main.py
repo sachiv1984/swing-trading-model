@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
 from datetime import timedelta
@@ -10,6 +10,8 @@ from config import API_TITLE
 from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
+from pydantic import BaseModel
+
 
 from database import (
     get_portfolio,
@@ -212,7 +214,9 @@ def add_position_endpoint(request: AddPositionRequest):
             entry_price=request.entry_price,
             fx_rate=request.fx_rate,
             atr_value=request.atr_value,
-            stop_price=request.stop_price
+            stop_price=request.stop_price,
+            entry_note: Optional[str] = None
+            tags: Optional[List[str]] = None
         )
         
         return {
@@ -525,6 +529,97 @@ def test_endpoints(request: Request):
         import traceback
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
+
+
+class UpdateNoteRequest(BaseModel):
+    entry_note: str
+
+class UpdateTagsRequest(BaseModel):
+    tags: List[str]
+
+class ExitPositionRequest(BaseModel):
+    exit_note: Optional[str] = None
+
+
+@app.patch("/positions/{position_id}/note")
+def update_position_note_endpoint(position_id: str, request: UpdateNoteRequest):
+    """
+    Update entry note for a position.
+    
+    Allows traders to add context about why they entered a position.
+    """
+    try:
+        result = position_service.update_note(position_id, request.entry_note)
+        return {"status": "ok", "data": result}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.patch("/positions/{position_id}/tags")
+def update_position_tags_endpoint(position_id: str, request: UpdateTagsRequest):
+    """
+    Update tags for a position.
+    
+    Tags help categorize trades by strategy, setup type, or other criteria.
+    Examples: ["momentum", "breakout", "earnings-play"]
+    """
+    try:
+        result = position_service.update_tags(position_id, request.tags)
+        return {"status": "ok", "data": result}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/positions/tags")
+def get_available_tags_endpoint():
+    """
+    Get all unique tags used across positions and trade history.
+    
+    Used for tag autocomplete and filtering.
+    """
+    try:
+        portfolio_id = get_portfolio_id()  # Your existing helper
+        tags = position_service.get_available_tags(portfolio_id)
+        return {"status": "ok", "data": tags}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/positions/search/tags")
+def search_positions_by_tags_endpoint(tags: str):
+    """
+    Search positions by tags.
+    
+    Query params:
+        tags: Comma-separated list of tags (e.g., "momentum,breakout")
+    
+    Returns positions that match ANY of the provided tags.
+    """
+    try:
+        portfolio_id = get_portfolio_id()
+        tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+        
+        if not tag_list:
+            raise ValueError("At least one tag is required")
+        
+        positions = position_service.filter_by_tags(portfolio_id, tag_list)
+        return {"status": "ok", "data": positions}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
