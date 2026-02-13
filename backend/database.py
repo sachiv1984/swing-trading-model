@@ -561,3 +561,107 @@ def get_all_tickers() -> List[str]:
             cur.execute("SELECT ticker FROM tickers ORDER BY ticker")
             results = cur.fetchall()
             return [row['ticker'] for row in results]
+
+def update_position_note(position_id: str, entry_note: str) -> Dict:
+    """Update entry note for a position"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            UPDATE positions 
+            SET entry_note = %s, updated_at = CURRENT_TIMESTAMP
+            WHERE id = %s
+            RETURNING id, ticker, entry_note
+        """, (entry_note, position_id))
+        
+        result = cursor.fetchone()
+        conn.commit()
+        
+        if not result:
+            raise ValueError(f"Position {position_id} not found")
+        
+        return {
+            "id": result[0],
+            "ticker": result[1],
+            "entry_note": result[2],
+            "updated_at": datetime.now().isoformat()
+        }
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_position_tags(position_id: str, tags: List[str]) -> Dict:
+    """Update tags for a position"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            UPDATE positions 
+            SET tags = %s, updated_at = CURRENT_TIMESTAMP
+            WHERE id = %s
+            RETURNING id, ticker, tags
+        """, (tags, position_id))
+        
+        result = cursor.fetchone()
+        conn.commit()
+        
+        if not result:
+            raise ValueError(f"Position {position_id} not found")
+        
+        return {
+            "id": result[0],
+            "ticker": result[1],
+            "tags": result[2] or [],
+            "updated_at": datetime.now().isoformat()
+        }
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_all_tags(portfolio_id: str) -> List[str]:
+    """Get all unique tags used across positions and trade history"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            SELECT DISTINCT unnest(tags) as tag
+            FROM (
+                SELECT tags FROM positions WHERE portfolio_id = %s
+                UNION ALL
+                SELECT tags FROM trade_history WHERE portfolio_id = %s
+            ) combined
+            WHERE tags IS NOT NULL
+            ORDER BY tag
+        """, (portfolio_id, portfolio_id))
+        
+        tags = [row[0] for row in cursor.fetchall()]
+        return tags
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def search_positions_by_tags(portfolio_id: str, tags: List[str]) -> List[Dict]:
+    """Search positions by tags (OR logic - any tag match)"""
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    
+    try:
+        cursor.execute("""
+            SELECT * FROM positions
+            WHERE portfolio_id = %s 
+            AND tags && %s
+            ORDER BY entry_date DESC
+        """, (portfolio_id, tags))
+        
+        positions = cursor.fetchall()
+        return [dict(p) for p in positions]
+    finally:
+        cursor.close()
+        conn.close()
+
