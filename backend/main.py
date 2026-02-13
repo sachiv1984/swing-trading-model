@@ -62,6 +62,10 @@ from services import (
     analyze_positions,
     add_position,
     exit_position,
+    update_note,
+    update_tags,
+    get_available_tags,
+    filter_by_tags
     # Portfolio service
     get_portfolio_summary,
     create_daily_snapshot,
@@ -187,8 +191,7 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
             shares=request.shares,
             exit_date=request.exit_date,
             exit_reason=request.exit_reason,
-            exit_fx_rate=request.exit_fx_rate,
-            exit_note: Optional[str] = None
+            exit_fx_rate=request.exit_fx_rate
         )
         
         return {
@@ -215,9 +218,7 @@ def add_position_endpoint(request: AddPositionRequest):
             entry_price=request.entry_price,
             fx_rate=request.fx_rate,
             atr_value=request.atr_value,
-            stop_price=request.stop_price,
-            entry_note: Optional[str] = None
-            tags: Optional[List[str]] = None
+            stop_price=request.stop_price
         )
         
         return {
@@ -537,13 +538,9 @@ class UpdateTagsRequest(BaseModel):
 
 @app.patch("/positions/{position_id}/note")
 def update_position_note_endpoint(position_id: str, request: UpdateNoteRequest):
-    """
-    Update entry note for a position.
-    
-    Allows traders to add context about why they entered a position.
-    """
+    """Update entry note for a position"""
     try:
-        result = position_service.update_note(position_id, request.entry_note)
+        result = update_note(position_id, request.entry_note)  # ✅ Direct call
         return {"status": "ok", "data": result}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -552,6 +549,12 @@ def update_position_note_endpoint(position_id: str, request: UpdateNoteRequest):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
+def get_portfolio_id() -> str:
+    """Helper to get portfolio ID"""
+    portfolio = get_portfolio()
+    if not portfolio:
+        raise ValueError("Portfolio not found")
+    return str(portfolio['id'])
 
 @app.patch("/positions/{position_id}/tags")
 def update_position_tags_endpoint(position_id: str, request: UpdateTagsRequest):
