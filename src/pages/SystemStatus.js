@@ -30,11 +30,14 @@ export default function SystemStatus() {
   const [expandedComponents, setExpandedComponents] = useState({});
   const queryClient = useQueryClient();
 
+  // Get API URL from environment variable
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
   // Fetch health status
   const { data: healthData, isLoading: healthLoading, refetch: refetchHealth } = useQuery({
     queryKey: ['systemHealth'],
     queryFn: async () => {
-      const response = await fetch('/health/detailed');
+      const response = await fetch(`${API_URL}/health/detailed`);
       if (!response.ok) {
         throw new Error('Failed to fetch health status');
       }
@@ -46,7 +49,7 @@ export default function SystemStatus() {
   // Fetch endpoint tests
   const { data: testData, isLoading: testLoading, mutate: runTests } = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/test/endpoints', {
+      const response = await fetch(`${API_URL}/test/endpoints`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
