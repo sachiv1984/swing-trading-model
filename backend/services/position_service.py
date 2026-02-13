@@ -461,7 +461,9 @@ def add_position(
     entry_price: float,
     fx_rate: Optional[float] = None,
     atr_value: Optional[float] = None,
-    stop_price: Optional[float] = None
+    stop_price: Optional[float] = None,
+    entry_note: Optional[str] = None,
+    tags: Optional[List[str]] = None
 ) -> Dict:
     """
     Add a new position to the portfolio with automatic fee calculation
@@ -601,7 +603,9 @@ def add_position(
         'holding_days': 0,
         'pnl': 0,
         'pnl_pct': 0,
-        'status': 'open'
+        'status': 'open',
+        'entry_note': entry_note,
+        'tags': tags
     }
     
     # Create position in database
@@ -639,7 +643,7 @@ def exit_position(
     exit_date: Optional[str] = None,
     exit_reason: Optional[str] = None,
     exit_fx_rate: Optional[float] = None,
-    exit_note: str = None
+    exit_note: Optional[str] = None
 ) -> Dict:
     """
     Exit a position (full or partial) and record in trade history
