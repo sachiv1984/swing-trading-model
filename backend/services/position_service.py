@@ -180,7 +180,9 @@ def get_positions_with_prices() -> List[Dict]:
             "atr_value": pos.get('atr', 0),
             "fx_rate": pos.get('fx_rate', 1.0),
             "live_fx_rate": live_fx_rate,
-            "total_cost": round(pos.get('total_cost', 0), 2)
+            "total_cost": round(pos.get('total_cost', 0), 2),
+            "entry_note": pos.get('entry_note'),
+            "tags": pos.get('tags', [])
         })
     
     print(f"✓ Returned {len(positions_list)} positions with live prices\n")
