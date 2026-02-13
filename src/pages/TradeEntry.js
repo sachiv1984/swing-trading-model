@@ -25,6 +25,8 @@ export default function TradeEntry() {
     entry_price: "",
     fx_rate: "1",
     atr_value: "",
+    entry_note: "",
+    tags: [],
   });
 
   const { data: settings } = useQuery({
@@ -129,6 +131,8 @@ export default function TradeEntry() {
       stop_price: costs.initialStop > 0 ? costs.initialStop : null,
       fees: costs.commission + costs.stampDuty + costs.fxFee,
       status: "open",
+      entry_note: formData.entry_note,
+      tags: formData.tags,
     });
   };
 
