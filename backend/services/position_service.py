@@ -9,10 +9,11 @@ Business logic for position management including:
 
 All functions are independent of FastAPI for maximum testability.
 """
-
+import re
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 from decimal import Decimal
+
 
 from database import (
     get_portfolio,
