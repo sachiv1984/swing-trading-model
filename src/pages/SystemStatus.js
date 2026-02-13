@@ -33,32 +33,70 @@ export default function SystemStatus() {
   // Get API URL from environment variable
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
+  // DEBUG: Log environment info on mount
+  useEffect(() => {
+    console.log('=== SYSTEM STATUS DEBUG ===');
+    console.log('API_URL:', API_URL);
+    console.log('window.location:', window.location.href);
+    console.log('All env vars:', process.env);
+    console.log('==========================');
+  }, [API_URL]);
+
   // Fetch health status
-  const { data: healthData, isLoading: healthLoading, refetch: refetchHealth } = useQuery({
+  const { data: healthData, isLoading: healthLoading, error: healthError, refetch: refetchHealth } = useQuery({
     queryKey: ['systemHealth'],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/health/detailed`);
+      console.log(`Fetching: ${API_URL}/health/detailed`);
+      const response = await fetch(`${API_URL}/health/detailed`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors', // Explicitly set CORS mode
+      });
+      
+      console.log('Health response status:', response.status);
+      console.log('Health response headers:', [...response.headers.entries()]);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch health status');
+        const text = await response.text();
+        console.error('Health response error:', text);
+        throw new Error(`HTTP ${response.status}: ${text}`);
       }
-      return response.json();
+      
+      const data = await response.json();
+      console.log('Health data:', data);
+      return data;
     },
     refetchInterval: autoRefresh ? 5000 : false,
+    retry: false, // Don't retry on error
   });
 
   // Fetch endpoint tests
-  const { data: testData, isLoading: testLoading, mutate: runTests } = useMutation({
+  const { data: testData, isLoading: testLoading, error: testError, mutate: runTests } = useMutation({
     mutationFn: async () => {
+      console.log(`Posting to: ${API_URL}/test/endpoints`);
       const response = await fetch(`${API_URL}/test/endpoints`, {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
+        mode: 'cors',
       });
+      
+      console.log('Test response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Failed to run endpoint tests');
+        const text = await response.text();
+        console.error('Test response error:', text);
+        throw new Error(`HTTP ${response.status}: ${text}`);
       }
-      return response.json();
+      
+      const data = await response.json();
+      console.log('Test data:', data);
+      return data;
     }
   });
 
@@ -97,6 +135,15 @@ export default function SystemStatus() {
 
   return (
     <div className="space-y-6">
+      {/* DEBUG INFO CARD */}
+      <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-300 text-sm font-mono">
+        <div className="font-bold mb-2">🔍 Debug Info:</div>
+        <div>API URL: {API_URL}</div>
+        <div>Current Location: {window.location.href}</div>
+        <div>Health Error: {healthError?.message || 'None'}</div>
+        <div>Test Error: {testError?.message || 'None'}</div>
+      </div>
+
       {/* Page Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
@@ -134,6 +181,17 @@ export default function SystemStatus() {
           </Button>
         </div>
       </div>
+
+      {/* Show error if fetch failed */}
+      {healthError && (
+        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+          <div className="font-bold mb-2">❌ Health Check Failed:</div>
+          <div className="text-sm">{healthError.message}</div>
+          <div className="text-xs mt-2 opacity-70">
+            This usually means CORS is blocking the request or the backend is not running.
+          </div>
+        </div>
+      )}
 
       {/* Overall Status Hero Card */}
       <motion.div
