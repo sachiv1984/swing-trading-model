@@ -3,13 +3,34 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
 import { format, differenceInDays } from "date-fns";
+import { BookOpen, Edit2, X } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "../../api/base44Client";
 
 export default function PositionModal({ position, open, onClose, onSave }) {
   const [formData, setFormData] = useState({
     current_price: "",
     stop_price: ""
+  });
+
+  const [journalEdit, setJournalEdit] = useState(false);
+  const [journalData, setJournalData] = useState({
+    entry_note: "",
+    tags: []
+  });
+  const [tagInput, setTagInput] = useState("");
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
+
+  const { data: existingTags = [] } = useQuery({
+    queryKey: ["position-tags"],
+    queryFn: async () => {
+      const positions = await base44.entities.Position.list();
+      const allTags = positions.flatMap(p => p.tags || []);
+      return [...new Set(allTags)].sort();
+    },
   });
 
   useEffect(() => {
@@ -18,6 +39,11 @@ export default function PositionModal({ position, open, onClose, onSave }) {
         current_price: position.current_price || "",
         stop_price: position.stop_price || ""
       });
+      setJournalData({
+        entry_note: position.entry_note || "",
+        tags: position.tags || []
+      });
+      setJournalEdit(false);
     }
   }, [position]);
 
@@ -29,11 +55,47 @@ export default function PositionModal({ position, open, onClose, onSave }) {
   const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
   const currencySymbol = position.market === "UK" ? "£" : "$";
 
+  const defaultTags = ["momentum", "breakout", "pullback", "news-driven", "high-conviction"];
+  const allAvailableTags = [...new Set([...existingTags, ...defaultTags])];
+
+  const filteredTags = tagInput
+    ? allAvailableTags.filter(tag => 
+        tag.toLowerCase().includes(tagInput.toLowerCase()) &&
+        !journalData.tags.includes(tag)
+      )
+    : allAvailableTags.filter(tag => !journalData.tags.includes(tag));
+
+  const handleAddTag = (tag) => {
+    if (journalData.tags.length >= 5) return;
+    const normalizedTag = tag.toLowerCase().replace(/\s+/g, "-");
+    if (!journalData.tags.includes(normalizedTag)) {
+      setJournalData(prev => ({ ...prev, tags: [...prev.tags, normalizedTag] }));
+    }
+    setTagInput("");
+    setShowTagSuggestions(false);
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setJournalData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
+  const handleTagInputKeyDown = (e) => {
+    if (e.key === "Enter" && tagInput.trim()) {
+      e.preventDefault();
+      handleAddTag(tagInput.trim());
+    }
+  };
+
   const handleSave = () => {
     onSave({
       ...position,
       current_price: parseFloat(formData.current_price),
-      stop_price: parseFloat(formData.stop_price)
+      stop_price: parseFloat(formData.stop_price),
+      entry_note: journalData.entry_note || null,
+      tags: journalData.tags.length > 0 ? journalData.tags : null
     });
   };
 
@@ -97,6 +159,147 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                 <p className="text-sm text-white">{position.fx_rate?.toFixed(4) || "1.0000"}</p>
               </div>
             </div>
+          </div>
+
+          {/* Trade Journal */}
+          <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/50 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-cyan-400" />
+                <h4 className="text-sm font-medium text-slate-400">Trade Journal</h4>
+              </div>
+              {!journalEdit && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setJournalEdit(true)}
+                  className="h-8 text-slate-400 hover:text-white hover:bg-slate-800"
+                >
+                  <Edit2 className="w-3 h-3 mr-1" />
+                  Edit
+                </Button>
+              )}
+            </div>
+
+            {!journalEdit ? (
+              <div className="space-y-3">
+                {journalData.entry_note ? (
+                  <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30">
+                    <p className="text-sm text-slate-300 whitespace-pre-wrap">{journalData.entry_note}</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500 italic">No entry note</p>
+                )}
+
+                {journalData.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {journalData.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {/* Edit Note */}
+                <div className="space-y-2">
+                  <Label className="text-slate-400 text-xs">Entry Note</Label>
+                  <Textarea
+                    value={journalData.entry_note}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 500) {
+                        setJournalData(prev => ({ ...prev, entry_note: e.target.value }));
+                      }
+                    }}
+                    placeholder="Why are you entering this trade? What's your thesis?"
+                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 resize-none"
+                    rows={4}
+                  />
+                  <div className="flex justify-end">
+                    <span className={cn(
+                      "text-xs",
+                      journalData.entry_note.length > 450 ? "text-rose-400" : "text-slate-500"
+                    )}>
+                      {journalData.entry_note.length}/500
+                    </span>
+                  </div>
+                </div>
+
+                {/* Edit Tags */}
+                <div className="space-y-2">
+                  <Label className="text-slate-400 text-xs">Tags</Label>
+                  {journalData.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {journalData.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                        >
+                          {tag}
+                          <button
+                            onClick={() => handleRemoveTag(tag)}
+                            className="hover:text-cyan-300 transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {journalData.tags.length < 5 && (
+                    <div className="relative">
+                      <Input
+                        value={tagInput}
+                        onChange={(e) => {
+                          setTagInput(e.target.value);
+                          setShowTagSuggestions(e.target.value.length > 0);
+                        }}
+                        onFocus={() => setShowTagSuggestions(true)}
+                        onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
+                        onKeyDown={handleTagInputKeyDown}
+                        placeholder="Type to add tags..."
+                        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50"
+                      />
+
+                      {showTagSuggestions && filteredTags.length > 0 && (
+                        <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-48 overflow-auto">
+                          {filteredTags.slice(0, 10).map((tag) => (
+                            <button
+                              key={tag}
+                              onClick={() => handleAddTag(tag)}
+                              className="w-full px-3 py-2 text-left text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                            >
+                              {tag}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setJournalEdit(false);
+                    setJournalData({
+                      entry_note: position.entry_note || "",
+                      tags: position.tags || []
+                    });
+                  }}
+                  className="text-slate-400 hover:text-white hover:bg-slate-800"
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Editable Fields */}
