@@ -532,13 +532,6 @@ def test_endpoints(request: Request):
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
 
-
-class UpdateNoteRequest(BaseModel):
-    entry_note: str
-
-class UpdateTagsRequest(BaseModel):
-    tags: List[str]
-
 @app.patch("/positions/{position_id}/note")
 def update_position_note_endpoint(position_id: str, request: UpdateNoteRequest):
     """Update entry note for a position"""
