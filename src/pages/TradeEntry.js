@@ -7,9 +7,10 @@ import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
-import { ArrowLeft, Calculator, Loader2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Calculator, Loader2, CheckCircle2, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
 
