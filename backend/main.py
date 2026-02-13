@@ -498,13 +498,12 @@ def detailed_health_check():
         return {"status": "error", "message": str(e)}
 
 
+# UPDATE THIS ENDPOINT IN main.py
+
 @app.post("/test/endpoints")
-def test_endpoints(base_url: str = "http://localhost:8000"):
+def test_endpoints(request: Request):
     """
     Test all API endpoints
-    
-    Args:
-        base_url: Base URL to test against (optional, defaults to localhost)
     
     Returns:
         Test results for all endpoints
@@ -515,6 +514,11 @@ def test_endpoints(base_url: str = "http://localhost:8000"):
         - Returns pass/fail status and response times
     """
     try:
+        # Get the base URL from the request
+        # This works for both localhost and production
+        base_url = str(request.base_url).rstrip('/')
+        
+        # Pass the actual server URL to the test function
         result = test_all_endpoints(base_url)
         return result
     except Exception as e:
