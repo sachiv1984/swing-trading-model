@@ -49,8 +49,13 @@ export default function PositionModal({ position, open, onClose, onSave }) {
 
   if (!position) return null;
 
-  const pnl = (formData.current_price - position.entry_price) * position.shares;
-  const pnlPercent = ((formData.current_price - position.entry_price) / position.entry_price * 100);
+  // ✅ FIXED P&L CALCULATION
+  const currentPrice = parseFloat(formData.current_price) || position.current_price || 0;
+  const entryPrice = position.entry_price || 0;
+  const shares = position.shares || 0;
+
+  const pnl = (currentPrice - entryPrice) * shares;
+  const pnlPercent = entryPrice > 0 ? ((currentPrice - entryPrice) / entryPrice * 100) : 0;
   const isProfit = pnl >= 0;
   const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
   const currencySymbol = position.market === "UK" ? "£" : "$";
@@ -101,7 +106,9 @@ export default function PositionModal({ position, open, onClose, onSave }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-lg max-h-[90vh] flex flex-col">
+      {/* ✅ FIXED: Use grid instead of flex for proper scrolling */}
+      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-lg max-h-[90vh] grid grid-rows-[auto_1fr_auto]">
+        {/* Row 1: Header (auto height) */}
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <span className="text-xl font-bold">{position.ticker}</span>
@@ -111,7 +118,8 @@ export default function PositionModal({ position, open, onClose, onSave }) {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4 overflow-y-auto flex-1">
+        {/* Row 2: Scrollable content (1fr = takes available space) */}
+        <div className="space-y-6 py-4 overflow-y-auto min-h-0">
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
@@ -120,7 +128,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
             </div>
             <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
               <p className="text-xs text-slate-500 mb-1">Shares</p>
-              <p className="text-lg font-semibold text-white">{position.shares}</p>
+              <p className="text-lg font-semibold text-white">{shares}</p>
             </div>
             <div className={cn(
               "p-3 rounded-xl border",
@@ -133,7 +141,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                 "text-lg font-semibold",
                 isProfit ? "text-emerald-400" : "text-rose-400"
               )}>
-                {isProfit ? "+" : ""}{currencySymbol}{pnl.toFixed(2)}
+                {isProfit ? "+" : ""}{currencySymbol}{Math.abs(pnl).toFixed(2)}
               </p>
             </div>
           </div>
@@ -148,7 +156,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
               </div>
               <div>
                 <p className="text-xs text-slate-500">Entry Price</p>
-                <p className="text-sm text-white">{currencySymbol}{position.entry_price.toFixed(2)}</p>
+                <p className="text-sm text-white">{currencySymbol}{entryPrice.toFixed(2)}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500">ATR Value</p>
@@ -327,6 +335,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
           </div>
         </div>
 
+        {/* Row 3: Footer (auto height) */}
         <DialogFooter>
           <Button 
             variant="ghost" 
