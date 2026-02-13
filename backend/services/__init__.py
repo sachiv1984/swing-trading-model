@@ -21,13 +21,7 @@ Benefits:
     - Easy to mock for unit testing
 """
 
-from .position_service import (
-    get_positions_with_prices,
-    analyze_positions,
-    add_position,
-    exit_position
-)
-
+# Position service
 from .position_service import (
     get_positions_with_prices,
     analyze_positions,
@@ -36,19 +30,29 @@ from .position_service import (
     update_note,
     update_tags,
     get_available_tags,
-    filter_by_tags 
+    filter_by_tags
 )
 
+# Portfolio service
+from .portfolio_service import (
+    get_portfolio_summary,
+    create_daily_snapshot,
+    get_performance_history
+)
+
+# Trade service
 from .trade_service import (
     get_trade_history_with_stats
 )
 
+# Cash service
 from .cash_service import (
     create_transaction,
     get_transaction_history,
     get_summary as get_cash_summary
 )
 
+# Signal service
 from .signal_service import (
     generate_momentum_signals,
     get_signals,
@@ -56,6 +60,7 @@ from .signal_service import (
     delete_signal
 )
 
+# Health service
 from .health_service import (
     get_basic_health,
     get_detailed_health,
