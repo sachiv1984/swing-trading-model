@@ -5,7 +5,8 @@ Pydantic models for validating incoming API requests.
 """
 
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
 
 
 class AddPositionRequest(BaseModel):
