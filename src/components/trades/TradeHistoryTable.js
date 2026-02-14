@@ -128,57 +128,54 @@ export default function TradeHistoryTable({ trades }) {
                 </TableCell>
               </TableRow>
               
-              {/* ✅ IMPROVED: Expanded Row - Shows notes and tags with better visual hierarchy */}
+              {/* ✅ IMPROVED: Expanded Row - Full-width vertical layout */}
               {isExpanded && hasExpandableContent && (
                 <TableRow key={`${tradeId}-details`} className="bg-slate-900/50 border-t-2 border-slate-700/50">
                   <TableCell colSpan={6} className="p-0">
-                    <div className="p-6 space-y-6">
+                    <div className="p-6 space-y-5">
                       {/* Trade Journal Header */}
-                      <div className="flex items-center gap-2 pb-2 border-b border-slate-700/50">
+                      <div className="flex items-center gap-2 pb-3 border-b border-slate-700/50">
                         <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />
                         <h3 className="text-sm font-semibold text-slate-300">Trade Journal</h3>
                       </div>
 
-                      {/* Content Grid */}
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* Entry Note */}
-                        {trade.entry_note && (
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                              <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-400">
-                                Entry Analysis
-                              </h4>
-                            </div>
-                            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
-                              <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
-                                {trade.entry_note}
-                              </p>
-                            </div>
+                      {/* Entry Note */}
+                      {trade.entry_note && (
+                        <div className="space-y-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-400">
+                              Entry Analysis
+                            </h4>
                           </div>
-                        )}
-                        
-                        {/* Exit Note */}
-                        {trade.exit_note && (
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-rose-400" />
-                              <h4 className="text-xs font-semibold uppercase tracking-wider text-rose-400">
-                                Exit Reflection
-                              </h4>
-                            </div>
-                            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
-                              <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
-                                {trade.exit_note}
-                              </p>
-                            </div>
+                          <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
+                            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+                              {trade.entry_note}
+                            </p>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
+                      
+                      {/* Exit Note */}
+                      {trade.exit_note && (
+                        <div className="space-y-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-rose-400" />
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-rose-400">
+                              Exit Reflection
+                            </h4>
+                          </div>
+                          <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
+                            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+                              {trade.exit_note}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                       
                       {/* Tags Section */}
                       {hasTags && (
-                        <div className="space-y-3 pt-2">
+                        <div className="space-y-2.5">
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-violet-400" />
                             <h4 className="text-xs font-semibold uppercase tracking-wider text-violet-400">
