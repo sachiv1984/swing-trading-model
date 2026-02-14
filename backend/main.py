@@ -20,6 +20,8 @@ from database import (
     create_position,
     update_portfolio_cash,
     get_settings,
+    create_settings
+    update_settings,
     create_trade_history,
     update_position_note,
     update_position_tags,
