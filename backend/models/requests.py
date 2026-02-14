@@ -38,6 +38,7 @@ class SettingsRequest(BaseModel):
     us_commission: Optional[float] = 0
     stamp_duty_rate: Optional[float] = 0.005
     fx_fee_rate: Optional[float] = 0.0015
+    min_trades_for_analytics: Optional[int] = 10
 
 
 class CashTransactionRequest(BaseModel):
