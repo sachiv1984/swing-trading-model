@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api, base44 } from "../api/base44Client";
+import { api } from "../api/base44Client";
 import { Loader2, Filter, TrendingUp, TrendingDown, Calendar, Tag, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Input } from "../components/ui/input";
@@ -24,18 +24,20 @@ export default function TradeHistory() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [showTagDropdown, setShowTagDropdown] = useState(false);
 
-  // ✅ FIXED: Get tags from the trades data directly (trade_history already has only closed trades)
-  const availableTags = trades
-    .flatMap(trade => trade.tags || [])
-    .filter((tag, index, self) => self.indexOf(tag) === index) // Remove duplicates
-    .sort();
-
   const { data: tradesData, isLoading } = useQuery({
     queryKey: ["trades"],
     queryFn: () => api.trades.list(),
   });
 
   const trades = tradesData?.trades || [];
+
+  // ✅ FIXED: Get tags from the trades data (MUST be after trades is defined!)
+  const availableTags = trades && Array.isArray(trades)
+    ? trades
+        .flatMap(trade => trade.tags || [])
+        .filter((tag, index, self) => self.indexOf(tag) === index) // Remove duplicates
+        .sort()
+    : [];
 
   // ✅ NEW: Tag toggle handler
   const handleTagToggle = (tag) => {
