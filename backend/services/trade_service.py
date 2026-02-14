@@ -21,15 +21,10 @@ def get_trade_history_with_stats() -> Dict:
             - total_trades: Total number of closed trades
             - win_rate: Percentage of profitable trades
             - total_pnl: Total realized P&L across all trades
-            - trades: List of trade dictionaries
+            - trades: List of trade dictionaries (NOW INCLUDING NOTES AND TAGS!)
     
     Raises:
         ValueError: If portfolio not found
-        
-    Note:
-        - Only includes closed trades
-        - Sorted by exit date (most recent first)
-        - Calculates win rate and totals dynamically
     """
     portfolio = get_portfolio()
     if not portfolio:
@@ -66,7 +61,11 @@ def get_trade_history_with_stats() -> Dict:
             "exit_price": round(float(t.get('exit_price', 0)), 2),
             "pnl": round(t.get('pnl', 0), 2),
             "pnl_pct": round(t.get('pnl_pct', 0), 2),
-            "exit_reason": t.get('exit_reason', 'Unknown')
+            "exit_reason": t.get('exit_reason', 'Unknown'),
+            # ✅ ADDED: Notes and tags
+            "entry_note": t.get('entry_note'),
+            "exit_note": t.get('exit_note'),
+            "tags": t.get('tags', [])
         })
     
     return {
