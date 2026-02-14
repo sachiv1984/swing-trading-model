@@ -36,11 +36,14 @@ export default function TradeHistoryTable({ trades }) {
 
   // ✅ NEW: Toggle row expansion
   const toggleRow = (id) => {
+    console.log('Toggling row:', id);
     const newExpanded = new Set(expandedRows);
     if (newExpanded.has(id)) {
       newExpanded.delete(id);
+      console.log('Collapsed row:', id);
     } else {
       newExpanded.add(id);
+      console.log('Expanded row:', id);
     }
     setExpandedRows(newExpanded);
   };
@@ -58,7 +61,8 @@ export default function TradeHistoryTable({ trades }) {
       <TableBody>
         {trades.map((trade, idx) => {
           const isProfit = trade.pnl >= 0;
-          const isExpanded = expandedRows.has(trade.id || idx);
+          const tradeId = trade.id || idx;
+          const isExpanded = expandedRows.has(tradeId);
           const hasNotes = trade.entry_note || trade.exit_note;
           const hasTags = trade.tags && trade.tags.length > 0;
           const hasExpandableContent = hasNotes || hasTags;
@@ -67,8 +71,8 @@ export default function TradeHistoryTable({ trades }) {
             <>
               {/* ✅ Main Row - Clickable if has notes/tags */}
               <TableRow 
-                key={trade.id || idx}
-                onClick={() => hasExpandableContent && toggleRow(trade.id || idx)}
+                key={tradeId}
+                onClick={() => hasExpandableContent && toggleRow(tradeId)}
                 className={cn(
                   hasExpandableContent && "cursor-pointer hover:bg-slate-800/50 transition-colors"
                 )}
@@ -122,7 +126,7 @@ export default function TradeHistoryTable({ trades }) {
               
               {/* ✅ NEW: Expanded Row - Shows notes and tags */}
               {isExpanded && hasExpandableContent && (
-                <TableRow key={`${trade.id || idx}-details`} className="bg-slate-800/30">
+                <TableRow key={`${tradeId}-details`} className="bg-slate-800/30">
                   <TableCell colSpan={6} className="p-6">
                     <div className="space-y-4">
                       {/* Entry Note */}
