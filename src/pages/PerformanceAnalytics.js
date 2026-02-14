@@ -19,20 +19,33 @@ import TagPerformance from "../components/analytics/TagPerformance";
 export default function PerformanceAnalytics() {
   const [timePeriod, setTimePeriod] = useState("last_month");
 
+  const timePeriodLabels = {
+  last_7_days: "Last 7 Days",
+  last_month: "Last Month", 
+  last_quarter: "Last Quarter",
+  last_year: "Last Year",
+  ytd: "Year to Date",
+  all_time: "All Time"
+};
+
   const { data: settings } = useQuery({
     queryKey: ["settings"],
     queryFn: () => base44.entities.Settings.list(),
     initialData: [],
   });
 
-  const { data: positions, isLoading } = useQuery({
-    queryKey: ["positions"],
-    queryFn: () => base44.entities.Position.list("-exit_date"),
-    initialData: [],
-  });
+  const { data: tradesData, isLoading } = useQuery({
+  queryKey: ["trades"],
+  queryFn: async () => {
+    const response = await fetch("http://localhost:8000/trades");
+    const result = await response.json();
+    return result.data;
+  },
+  initialData: { trades: [] },
+});
 
   const settingsData = settings?.[0] || { min_trades_for_analytics: 10 };
-  const closedTrades = positions.filter(p => p.status === "closed");
+  const closedTrades = tradesData?.trades || [];
 
   // Filter by time period
   const getFilteredTrades = () => {
@@ -68,9 +81,6 @@ export default function PerformanceAnalytics() {
 
   const filteredTrades = getFilteredTrades();
   const hasEnoughTrades = filteredTrades.length >= settingsData.min_trades_for_analytics;
-  
-  const winners = filteredTrades.filter(t => t.pnl > 0);
-  const winRate = filteredTrades.length > 0 ? (winners.length / filteredTrades.length) * 100 : 0;
 
   // Calculate metrics
   const calculateMetrics = () => {
@@ -170,16 +180,7 @@ export default function PerformanceAnalytics() {
 
   const generatePrintReport = () => {
     if (!metrics) return;
-
-    const timePeriodLabels = {
-      last_7_days: "Last 7 Days",
-      last_month: "Last Month",
-      last_quarter: "Last Quarter",
-      last_year: "Last Year",
-      ytd: "Year to Date",
-      all_time: "All Time"
-    };
-
+    
     const reportHTML = `
       <!DOCTYPE html>
       <html>
@@ -592,7 +593,7 @@ export default function PerformanceAnalytics() {
       />
 
       <ExecutiveSummaryCards metrics={metrics} />
-      <KeyInsightsCard metrics={metrics} winRate={winRate} />
+      <KeyInsightsCard metrics={metrics} winRate={hasEnoughTrades ? (filteredTrades.filter(t => t.pnl > 0).length / filteredTrades.length) * 100 : 0}>
       <AdvancedMetricsGrid metrics={metrics} />
       <MonthlyHeatmap monthlyData={getMonthlyData()} />
       <MarketComparison 
