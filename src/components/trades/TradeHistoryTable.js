@@ -128,41 +128,70 @@ export default function TradeHistoryTable({ trades }) {
                 </TableCell>
               </TableRow>
               
-              {/* ✅ NEW: Expanded Row - Shows notes and tags */}
+              {/* ✅ IMPROVED: Expanded Row - Shows notes and tags with better visual hierarchy */}
               {isExpanded && hasExpandableContent && (
-                <TableRow key={`${tradeId}-details`} className="bg-slate-800/30">
-                  <TableCell colSpan={6} className="p-6">
-                    <div className="space-y-4">
-                      {/* Entry Note */}
-                      {trade.entry_note && (
-                        <div className="space-y-2">
-                          <h4 className="text-xs font-medium text-cyan-400">Entry Note</h4>
-                          <p className="text-sm text-slate-300 whitespace-pre-wrap bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-                            {trade.entry_note}
-                          </p>
-                        </div>
-                      )}
+                <TableRow key={`${tradeId}-details`} className="bg-slate-900/50 border-t-2 border-slate-700/50">
+                  <TableCell colSpan={6} className="p-0">
+                    <div className="p-6 space-y-6">
+                      {/* Trade Journal Header */}
+                      <div className="flex items-center gap-2 pb-2 border-b border-slate-700/50">
+                        <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />
+                        <h3 className="text-sm font-semibold text-slate-300">Trade Journal</h3>
+                      </div>
+
+                      {/* Content Grid */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Entry Note */}
+                        {trade.entry_note && (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                              <h4 className="text-xs font-semibold uppercase tracking-wider text-cyan-400">
+                                Entry Analysis
+                              </h4>
+                            </div>
+                            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
+                              <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                {trade.entry_note}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Exit Note */}
+                        {trade.exit_note && (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-rose-400" />
+                              <h4 className="text-xs font-semibold uppercase tracking-wider text-rose-400">
+                                Exit Reflection
+                              </h4>
+                            </div>
+                            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
+                              <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                {trade.exit_note}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                       
-                      {/* Exit Note */}
-                      {trade.exit_note && (
-                        <div className="space-y-2">
-                          <h4 className="text-xs font-medium text-rose-400">Exit Note</h4>
-                          <p className="text-sm text-slate-300 whitespace-pre-wrap bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-                            {trade.exit_note}
-                          </p>
-                        </div>
-                      )}
-                      
-                      {/* Tags */}
+                      {/* Tags Section */}
                       {hasTags && (
-                        <div className="space-y-2">
-                          <h4 className="text-xs font-medium text-violet-400">Tags</h4>
+                        <div className="space-y-3 pt-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-violet-400" />
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-violet-400">
+                              Strategy Tags
+                            </h4>
+                          </div>
                           <div className="flex flex-wrap gap-2">
                             {trade.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="px-3 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500/10 to-violet-500/10 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400/50 transition-colors"
                               >
+                                <span className="w-1 h-1 rounded-full bg-cyan-400" />
                                 {tag}
                               </span>
                             ))}
