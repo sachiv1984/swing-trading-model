@@ -3,10 +3,12 @@ import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogFooter,DialogDescrip
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "../ui/select";
 import { AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
+import { cn } from "../../lib/utils";
 
 export default function ExitModal({ position, open, onClose, onConfirm }) {
   // Unconditional hooks
@@ -16,6 +18,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
     exit_reason: "Manual Exit",
     exit_fx_rate: 1,
     exit_date: new Date().toISOString().split("T")[0],
+    exit_note: "" // ✅ NEW: Exit note field
   });
 
   // Seed/reset when position changes
@@ -33,6 +36,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           ? position.live_fx_rate ?? position.fx_rate ?? 1.27
           : 1,
       exit_date: new Date().toISOString().split("T")[0],
+      exit_note: "" // ✅ NEW: Reset exit note
     });
   }, [position]);
 
@@ -203,6 +207,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
       exit_price: parsedPrice,
       exit_reason: exitData.exit_reason,
       exit_date: exitData.exit_date,
+      exit_note: exitData.exit_note || null // ✅ NEW: Include exit note
     };
 
     // Only include exit_fx_rate if it's a US position and has a valid value
@@ -211,7 +216,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
         console.error("Invalid FX rate for US position:", exitData.exit_fx_rate);
         return;
       }
-      exitPayload.exit_fx_rate = parsedFxRate;  // FIXED: Use exit_fx_rate to match backend
+      exitPayload.exit_fx_rate = parsedFxRate;
     }
 
     console.log("Sending exit payload:", exitPayload);
@@ -356,6 +361,30 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       <SelectItem value="Partial Profit Taking">Partial Profit Taking</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* ✅ NEW: Exit Note Field */}
+                <div className="space-y-1">
+                  <Label className="text-xs text-slate-400">Exit Note (Optional)</Label>
+                  <Textarea
+                    value={exitData.exit_note}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 500) {
+                        setExitData({ ...exitData, exit_note: e.target.value });
+                      }
+                    }}
+                    placeholder="How did the trade play out? What did you learn?"
+                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 resize-none"
+                    rows={3}
+                  />
+                  <div className="flex justify-end">
+                    <span className={cn(
+                      "text-xs",
+                      exitData.exit_note.length > 450 ? "text-rose-400" : "text-slate-500"
+                    )}>
+                      {exitData.exit_note.length}/500
+                    </span>
+                  </div>
                 </div>
               </div>
 
