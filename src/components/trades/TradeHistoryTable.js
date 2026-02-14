@@ -131,8 +131,8 @@ export default function TradeHistoryTable({ trades }) {
               {/* ✅ IMPROVED: Expanded Row - Full-width vertical layout */}
               {isExpanded && hasExpandableContent && (
                 <TableRow key={`${tradeId}-details`} className="bg-slate-900/50 border-t-2 border-slate-700/50">
-                  <TableCell colSpan={6} className="p-0">
-                    <div className="p-6 space-y-5">
+                  <TableCell colSpan={6} className="!p-0">
+                    <div className="w-full px-6 py-5 space-y-5">
                       {/* Trade Journal Header */}
                       <div className="flex items-center gap-2 pb-3 border-b border-slate-700/50">
                         <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />
@@ -148,7 +148,7 @@ export default function TradeHistoryTable({ trades }) {
                               Entry Analysis
                             </h4>
                           </div>
-                          <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
+                          <div className="w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
                             <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
                               {trade.entry_note}
                             </p>
@@ -165,7 +165,7 @@ export default function TradeHistoryTable({ trades }) {
                               Exit Reflection
                             </h4>
                           </div>
-                          <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
+                          <div className="w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 shadow-lg">
                             <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
                               {trade.exit_note}
                             </p>
