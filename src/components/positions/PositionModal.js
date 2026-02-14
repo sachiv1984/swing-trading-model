@@ -33,11 +33,12 @@ export default function PositionModal({ position, open, onClose, onSave }) {
     },
   });
 
+  // ✅ FIXED: Initialize with native prices
   useEffect(() => {
     if (position) {
       setFormData({
-        current_price: position.current_price || "",
-        stop_price: position.stop_price || ""
+        current_price: position.current_price_native || position.current_price || "",
+        stop_price: position.stop_price_native || position.stop_price || ""
       });
       setJournalData({
         entry_note: position.entry_note || "",
@@ -49,13 +50,13 @@ export default function PositionModal({ position, open, onClose, onSave }) {
 
   if (!position) return null;
 
-  // ✅ FIXED P&L CALCULATION
-  const currentPrice = parseFloat(formData.current_price) || position.current_price || 0;
-  const entryPrice = position.entry_price || 0;
+  // ✅ FIXED: Calculate P&L using native prices consistently
+  const currentPriceNative = parseFloat(formData.current_price) || 0;
+  const entryPriceNative = position.entry_price || 0;  // entry_price is already in native currency
   const shares = position.shares || 0;
 
-  const pnl = (currentPrice - entryPrice) * shares;
-  const pnlPercent = entryPrice > 0 ? ((currentPrice - entryPrice) / entryPrice * 100) : 0;
+  const pnl = (currentPriceNative - entryPriceNative) * shares;
+  const pnlPercent = entryPriceNative > 0 ? ((currentPriceNative - entryPriceNative) / entryPriceNative * 100) : 0;
   const isProfit = pnl >= 0;
   const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
   const currencySymbol = position.market === "UK" ? "£" : "$";
@@ -95,10 +96,20 @@ export default function PositionModal({ position, open, onClose, onSave }) {
   };
 
   const handleSave = () => {
+    // Convert native prices back to GBP for backend if needed
+    let currentPriceForSave = parseFloat(formData.current_price);
+    let stopPriceForSave = parseFloat(formData.stop_price);
+    
+    // If US stock, convert from USD to GBP
+    if (position.market === "US" && position.live_fx_rate) {
+      currentPriceForSave = currentPriceForSave / position.live_fx_rate;
+      stopPriceForSave = stopPriceForSave / position.live_fx_rate;
+    }
+    
     onSave({
       ...position,
-      current_price: parseFloat(formData.current_price),
-      stop_price: parseFloat(formData.stop_price),
+      current_price: currentPriceForSave,
+      stop_price: stopPriceForSave,
       entry_note: journalData.entry_note || null,
       tags: journalData.tags.length > 0 ? journalData.tags : null
     });
@@ -156,7 +167,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
               </div>
               <div>
                 <p className="text-xs text-slate-500">Entry Price</p>
-                <p className="text-sm text-white">{currencySymbol}{entryPrice.toFixed(2)}</p>
+                <p className="text-sm text-white">{currencySymbol}{entryPriceNative.toFixed(2)}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500">ATR Value</p>
@@ -313,7 +324,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
           {/* Editable Fields */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">Current Price</Label>
+              <Label className="text-slate-400">Current Price ({currencySymbol})</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -323,7 +334,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-400">Stop Price (Manual Override)</Label>
+              <Label className="text-slate-400">Stop Price ({currencySymbol}) - Manual Override</Label>
               <Input
                 type="number"
                 step="0.01"
