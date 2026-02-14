@@ -33,8 +33,8 @@
 ### Summary: **100% PASS RATE** 🎉
 
 ```
-Total Tests: 14  (Updated: +3 new endpoints)
-Passed: 14 ✅
+Total Tests: 12  (Updated: +1 new endpoints)
+Passed: 12 ✅
 Failed: 0
 Errors: 0
 Success Rate: 100.0%
@@ -56,8 +56,7 @@ Success Rate: 100.0%
 | GET /market/status | ✅ Pass | 1,522ms | Normal (3 Yahoo API calls) |
 | GET /portfolio/history | ✅ Pass | 569ms | Normal |
 | **GET /positions/tags** | ✅ **Pass** | **543ms** | **NEW v1.4** |
-| **PATCH /positions/{id}/note** | ✅ **Pass** | **N/A** | **NEW v1.4 (requires position)** |
-| **PATCH /positions/{id}/tags** | ✅ **Pass** | **N/A** | **NEW v1.4 (requires position)** |
+
 
 ---
 
