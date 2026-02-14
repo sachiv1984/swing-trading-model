@@ -56,9 +56,9 @@ export function TableRow({ children, className, onClick }) {
   );
 }
 
-export function TableCell({ children, className }) {
+export function TableCell({ children, className, colSpan }) {
   return (
-    <td className={cn("px-6 py-4 text-sm text-slate-300", className)}>
+    <td className={cn("px-6 py-4 text-sm text-slate-300", className)} colSpan={colSpan}>
       {children}
     </td>
   );
