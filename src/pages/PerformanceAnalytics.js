@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../api/base44Client";
 import PageHeader from "../components/ui/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import ExecutiveSummaryCards from "../components/analytics/ExecutiveSummaryCards";
 import AdvancedMetricsGrid from "../components/analytics/AdvancedMetricsGrid";
 import MonthlyHeatmap from "../components/analytics/MonthlyHeatmap";
@@ -22,7 +22,7 @@ export default function PerformanceAnalytics() {
     initialData: [],
   });
 
-  const { data: positions } = useQuery({
+  const { data: positions, isLoading } = useQuery({
     queryKey: ["positions"],
     queryFn: () => base44.entities.Position.list("-exit_date"),
     initialData: [],
@@ -157,6 +157,20 @@ export default function PerformanceAnalytics() {
   };
 
   const metrics = calculateMetrics();
+
+  if (isLoading) {
+    return (
+      <div>
+        <PageHeader
+          title="Performance Analytics"
+          description="Deep dive into your trading performance and strategy effectiveness"
+        />
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+        </div>
+      </div>
+    );
+  }
 
   // Monthly data
   const getMonthlyData = () => {
