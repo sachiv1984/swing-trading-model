@@ -55,6 +55,7 @@ import Signals from './pages/Signals';
 import TradeEntry from './pages/TradeEntry';
 import TradeHistory from './pages/TradeHistory';
 import SystemStatus from './pages/SystemStatus';
+import PerformanceAnalytics from './pages/PerformanceAnalytics';
 import __Layout from './Layout.js';
 
 
@@ -67,6 +68,7 @@ export const PAGES = {
     "TradeEntry": TradeEntry,
     "TradeHistory": TradeHistory,
     "SystemStatus": SystemStatus,
+    "PerformanceAnalytics": PerformanceAnalytics,
 }
 
 export const pagesConfig = {
