@@ -6,7 +6,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import PageHeader from "@/components/ui/PageHeader";
+import PageHeader from "../components/ui/PageHeader";
 import { Settings as SettingsIcon, Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
