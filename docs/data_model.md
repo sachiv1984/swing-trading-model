@@ -1,7 +1,7 @@
 # Data Model - Momentum Trading Assistant
 
-**Version:** 1.1  
-**Last Updated:** February 1, 2026
+**Version:** 1.4  
+**Last Updated:** February 14, 2026
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
 
@@ -76,6 +76,9 @@ CREATE TABLE positions (
     exit_date DATE,
     exit_price DECIMAL(10, 4),
     exit_reason VARCHAR(50),
+    entry_note TEXT,
+    exit_note TEXT,
+    tags TEXT[],
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -83,6 +86,7 @@ CREATE TABLE positions (
 CREATE INDEX idx_positions_portfolio ON positions(portfolio_id);
 CREATE INDEX idx_positions_status ON positions(status);
 CREATE INDEX idx_positions_ticker ON positions(ticker);
+CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 ```
 
 ### Fields
@@ -115,6 +119,9 @@ CREATE INDEX idx_positions_ticker ON positions(ticker);
 | exit_reason | VARCHAR(50) | YES | Reason for exit |
 | created_at | TIMESTAMP | NO | Record creation |
 | updated_at | TIMESTAMP | NO | Last update |
+| entry_note | TEXT | YES | Trade journal entry note (max 500 chars) |
+| exit_note | TEXT | YES | Trade journal exit note (max 500 chars) |
+| tags | TEXT[] | YES | Array of tags for categorization (e.g., ["momentum", "breakout"]) |
 
 ### Notes
 - UK tickers automatically appended with ".L" (e.g., "FRES.L")
@@ -239,11 +246,15 @@ CREATE TABLE trade_history (
     exit_reason VARCHAR(50),
     entry_fx_rate DECIMAL(10, 6),
     exit_fx_rate DECIMAL(10, 6),
+    entry_note TEXT,
+    exit_note TEXT,
+    tags TEXT[],
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_trade_history_portfolio 
 ON trade_history(portfolio_id, exit_date DESC);
+CREATE INDEX idx_trade_history_tags ON trade_history USING GIN(tags);
 ```
 
 ### Fields
@@ -271,6 +282,9 @@ ON trade_history(portfolio_id, exit_date DESC);
 | entry_fx_rate | DECIMAL(10,6) | GBP/USD at entry |
 | exit_fx_rate | DECIMAL(10,6) | GBP/USD at exit |
 | created_at | TIMESTAMP | Record creation |
+| entry_note | TEXT | Journal note from entry (copied from position) |
+| exit_note | TEXT | Journal note from exit |
+| tags | TEXT[] | Tags from position (e.g., ["momentum", "winner"]) |
 
 ### Exit Reasons
 
@@ -430,6 +444,37 @@ FROM cash_transactions
 WHERE portfolio_id = 'portfolio-id';
 ```
 
+### Search Positions by Tag
+```sql
+SELECT * FROM positions
+WHERE portfolio_id = 'portfolio-id'
+AND tags && ARRAY['momentum', 'breakout']  -- Contains any of these tags
+ORDER BY entry_date DESC;
+```
+
+### Get All Unique Tags
+```sql
+SELECT DISTINCT unnest(tags) as tag
+FROM positions
+WHERE portfolio_id = 'portfolio-id'
+ORDER BY tag;
+```
+
+### Get Trades with Notes
+```sql
+SELECT 
+    ticker,
+    entry_date,
+    exit_date,
+    pnl,
+    entry_note,
+    exit_note,
+    tags
+FROM trade_history
+WHERE portfolio_id = 'portfolio-id'
+AND (entry_note IS NOT NULL OR exit_note IS NOT NULL)
+ORDER BY exit_date DESC;
+```
 ---
 
 ## Migration from v1.0 to v1.1
@@ -471,19 +516,44 @@ FROM portfolios;
 COMMIT;
 ```
 
----
+## Migration from v1.3 to v1.4
 
-## Future Schema Changes (Planned)
+### Required Changes - Trade Journal
 
-### v1.2 - Trade Journal
+**Implemented:** February 14, 2026
+
+Add journal fields to positions and trade_history tables:
 ```sql
+-- Migration script
+BEGIN;
+
+-- Add journal fields to positions
 ALTER TABLE positions ADD COLUMN entry_note TEXT;
+ALTER TABLE positions ADD COLUMN exit_note TEXT;
 ALTER TABLE positions ADD COLUMN tags TEXT[];
+
+-- Add journal fields to trade_history
+ALTER TABLE trade_history ADD COLUMN entry_note TEXT;
 ALTER TABLE trade_history ADD COLUMN exit_note TEXT;
 ALTER TABLE trade_history ADD COLUMN tags TEXT[];
+
+-- Add GIN index for tag searching
+CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
+CREATE INDEX idx_trade_history_tags ON trade_history USING GIN(tags);
+
+COMMIT;
 ```
 
-### v1.3 - Alerts
+**Notes:**
+- All fields are nullable (existing records unaffected)
+- GIN indexes enable fast tag-based queries
+- No data migration needed (new fields start as NULL)
+- Frontend handles NULL gracefully (displays as empty)
+```
+
+### Updated Future Schema Changes (Planned)
+
+### v1.5 - Alerts (Planned)
 ```sql
 CREATE TABLE alerts (
     id UUID PRIMARY KEY,
@@ -495,7 +565,7 @@ CREATE TABLE alerts (
 );
 ```
 
-### v2.0 - Multi-User
+### v2.0 - Multi-User (Planned)
 ```sql
 CREATE TABLE users (
     id UUID PRIMARY KEY,
@@ -506,9 +576,8 @@ CREATE TABLE users (
 
 ALTER TABLE portfolios ADD COLUMN user_id UUID REFERENCES users(id);
 ```
-
 ---
 
-**Document Version:** 1.1  
+**Document Version:** 1.4
 **Maintained By:** Development Team  
-**Last Review:** February 1, 2026
+**Last Review:** February 14, 2026
