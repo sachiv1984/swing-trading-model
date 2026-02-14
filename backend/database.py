@@ -240,16 +240,33 @@ def create_settings(data):
             return dict(result)
 
 
-def update_settings(settings_id, data):
+def update_settings(settings_id: str, data: dict) -> dict:
     """Update existing settings"""
     with get_db() as conn:
         with conn.cursor() as cur:
+            # Filter out None values
+            filtered_data = {k: v for k, v in data.items() if v is not None}
+            
+            if not filtered_data:
+                cur.execute("SELECT * FROM settings WHERE id = %s", (settings_id,))
+                result = cur.fetchone()
+                if not result:
+                    raise ValueError(f"Settings with id {settings_id} not found")
+                return dict(result)
+            
             # Build SET clause
-            set_clause = ', '.join([f"{k} = %s" for k in data.keys()])
+            set_parts = [f"{k} = %s" for k in filtered_data.keys()]
+            set_clause = ', '.join(set_parts)
             query = f"UPDATE settings SET {set_clause}, updated_at = NOW() WHERE id = %s RETURNING *"
             
-            cur.execute(query, list(data.values()) + [settings_id])
+            # Execute
+            values = list(filtered_data.values()) + [settings_id]
+            cur.execute(query, values)
             result = cur.fetchone()
+            
+            if not result:
+                raise ValueError(f"Settings with id {settings_id} not found")
+            
             return dict(result)
 
 def download_ticker_data(ticker: str, start_date: str, end_date: str = None):
