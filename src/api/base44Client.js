@@ -218,6 +218,39 @@ export const base44 = {
           body: JSON.stringify(data),
           raw: true, // backend returns raw json for this route
         }),
+      
+      // ✅ NEW: Update position note
+      updateNote: async (positionId, entryNote) => {
+        const response = await fetch(`${API_BASE_URL}/positions/${positionId}/note`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ entry_note: entryNote })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.detail || 'Failed to update note');
+        }
+        
+        return response.json();
+      },
+      
+      // ✅ NEW: Update position tags
+      updateTags: async (positionId, tags) => {
+        const response = await fetch(`${API_BASE_URL}/positions/${positionId}/tags`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tags })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.detail || 'Failed to update tags');
+        }
+        
+        return response.json();
+      },
+      
       // Exit supports both call shapes:
       //   exit(id, {exit_price, shares, ...})
       //   exit({position_id, exit_price, shares, ...})
@@ -260,6 +293,11 @@ export const base44 = {
         const fxRate = parseFloat(fxRateValue);
         if (!isNaN(fxRate) && fxRate > 0) {
           body.exit_fx_rate = fxRate;
+        }
+
+        // ✅ ADDED: Include exit_note if provided
+        if (requestData.exit_note) {
+          body.exit_note = requestData.exit_note;
         }
 
         const result = await doFetch(`/positions/${positionId}/exit`, {
