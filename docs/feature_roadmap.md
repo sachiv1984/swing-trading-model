@@ -1,7 +1,7 @@
 # Feature Roadmap - Momentum Trading Assistant
 
-**Last Updated:** February 13, 2026  
-**Current Version:** 1.3
+**Last Updated:** February 14, 2026  
+**Current Version:** 1.4
 
 ---
 
@@ -54,7 +54,7 @@
 - ✅ 100% testable business logic
 - ✅ Clean separation of concerns (HTTP → Service → Utils → Database)
 
-### System Health & Monitoring (v1.3) ⭐ NEW
+### System Health & Monitoring (v1.3)
 - ✅ Health check endpoint (`GET /health`) for load balancers
 - ✅ Detailed system status (`GET /health/detailed`)
 - ✅ Automated endpoint testing (`POST /test/endpoints`)
@@ -65,6 +65,20 @@
 - ✅ Auto-refresh capability (5-second intervals)
 - ✅ Response time tracking
 - ✅ 100% success rate monitoring
+
+### Trade Journal & Notes System (v1.4) ⭐ NEW
+- ✅ Entry notes when creating positions
+- ✅ Exit notes when closing positions
+- ✅ Tags system for categorizing trades
+- ✅ Tag filtering in trade history
+- ✅ Expandable trade rows showing full journal entries
+- ✅ Tag autocomplete from existing tags
+- ✅ Journal view mode in Positions page
+- ✅ Visual entry/exit note cards with color-coded headers
+- ✅ Strategy tag pills with gradient styling
+- ✅ Database schema updates (entry_note, exit_note, tags fields)
+- ✅ Backend endpoints for note/tag management
+- ✅ Full-width journal display in trade history
 
 ### Technical Infrastructure
 - ✅ PostgreSQL database
@@ -81,40 +95,7 @@
 
 ### Priority 1: High Value, Quick Wins
 
-#### 1. Trade Journal & Notes System
-**Status:** Planned for v1.4  
-**Effort:** Medium (2-3 days)  
-**Value:** High
-
-**Features:**
-- Add `entry_note` field when creating position
-- Add `exit_note` field when closing position
-- Display notes in position detail view
-- Search/filter by notes
-- Tags system (e.g., #momentum, #breakout, #earnings)
-
-**Why:**
-- Crucial for learning and improving
-- Helps identify edge in strategy
-- Documents decision-making process
-- Professional traders always journal
-
-**Database Changes:**
-```sql
-ALTER TABLE positions ADD COLUMN entry_note TEXT;
-ALTER TABLE positions ADD COLUMN tags TEXT[];
-ALTER TABLE trade_history ADD COLUMN exit_note TEXT;
-ALTER TABLE trade_history ADD COLUMN tags TEXT[];
-```
-
-**API Endpoints:**
-- `POST /positions` - Add entry_note parameter
-- `POST /positions/{id}/note` - Add/update note
-- `GET /positions/{id}/notes` - Get all notes for position
-
----
-
-#### 2. Performance Analytics Page
+#### 1. Performance Analytics Page
 **Status:** Planned for v1.4  
 **Effort:** Medium (3-4 days)  
 **Value:** High
@@ -146,7 +127,7 @@ ALTER TABLE trade_history ADD COLUMN tags TEXT[];
 
 ---
 
-#### 3. Alerts & Notifications
+#### 2. Alerts & Notifications
 **Status:** Planned for v1.4  
 **Effort:** Medium-High (4-5 days)  
 **Value:** High
@@ -191,7 +172,7 @@ CREATE TABLE alert_preferences (
 
 ### Priority 2: Medium Value, Good ROI
 
-#### 4. Position Sizing Calculator
+#### 3. Position Sizing Calculator
 **Status:** Planned for v1.4  
 **Effort:** Low (1-2 days)  
 **Value:** Medium
@@ -222,7 +203,7 @@ Position Size = Risk Amount / Stop Distance
 
 ---
 
-#### 5. Watchlist & Screening
+#### 4. Watchlist & Screening
 **Status:** Planned for v1.4  
 **Effort:** Medium (3-4 days)  
 **Value:** Medium
@@ -256,7 +237,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 6. Export & Reporting
+#### 5. Export & Reporting
 **Status:** Planned for v1.4  
 **Effort:** Low-Medium (2-3 days)  
 **Value:** Medium
@@ -282,7 +263,7 @@ CREATE TABLE watchlist (
 
 ### Priority 3: Nice to Have
 
-#### 7. Position Correlation Analysis
+#### 6. Position Correlation Analysis
 **Status:** Planned for v2.0  
 **Effort:** High (5-6 days)  
 **Value:** Medium
@@ -295,7 +276,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 8. Backtesting Module
+#### 7. Backtesting Module
 **Status:** Planned for v2.0  
 **Effort:** Very High (2-3 weeks)  
 **Value:** High (for validation)
@@ -308,7 +289,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 9. Multi-Portfolio Support
+#### 8. Multi-Portfolio Support
 **Status:** Planned for v2.0  
 **Effort:** High (1 week)  
 **Value:** Low (single user system)
@@ -321,7 +302,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 10. Mobile App
+#### 9. Mobile App
 **Status:** Planned for v2.0  
 **Effort:** Very High (4-6 weeks)  
 **Value:** Medium
@@ -339,7 +320,7 @@ CREATE TABLE watchlist (
 | Feature | Effort | Value | Priority | Version |
 |---------|--------|-------|----------|---------|
 | ~~API Health & Status Page~~ | ~~Low~~ | ~~Very High~~ | ~~P1~~ | ✅ v1.3 |
-| Trade Journal | Medium | High | P1 | v1.4 |
+| ~~Trade Journal~~ | ~~Medium~~ | ~~High~~ | ~~P1~~ | ✅ v1.4 |
 | Performance Analytics | Medium | High | P1 | v1.4 |
 | Alerts & Notifications | Medium-High | High | P1 | v1.4 |
 | Position Sizing | Low | Medium | P2 | v1.4 |
@@ -356,17 +337,12 @@ CREATE TABLE watchlist (
 
 ### Phase 1 (v1.4) - Q2 2026
 
-1. **Trade Journal** (2-3 days)
-   - Most impactful for trading improvement
-   - Low technical complexity
-   - High user value
-
-2. **Performance Analytics** (3-4 days)
+1. **Performance Analytics** (3-4 days)
    - Understand what's working
    - Data already available
    - Visual insights
 
-3. **Alerts & Notifications** (4-5 days)
+2. **Alerts & Notifications** (4-5 days)
    - Stay informed without checking constantly
    - Professional feature
    - Good user experience
@@ -394,7 +370,7 @@ CREATE TABLE watchlist (
 ## 💡 Quick Wins (Can be done in 1-2 days each)
 
 1. ~~**API Health Check**~~ ✅ COMPLETED
-2. **Position notes field** - Add single text field to positions
+2. ~~**Position notes field**~~ ✅ COMPLETED (Trade Journal v1.4)
 3. **Best/worst trades widget** - Add to dashboard
 4. **Win rate chart** - Simple bar chart by month
 5. **CSV export button** - Download trades as CSV
@@ -442,7 +418,18 @@ When evaluating new features, ask:
 
 ## 🆕 Recent Changes
 
-### Completed in v1.3 (February 2026) ⭐ NEW
+### Completed in v1.4 (February 2026) ⭐ NEW
+- ✅ Trade Journal & Notes System
+- ✅ Entry and exit note fields (500 char limit)
+- ✅ Tag system with autocomplete
+- ✅ Tag filtering in trade history
+- ✅ Expandable trade rows with journal display
+- ✅ Journal view mode in Positions page
+- ✅ Full-width responsive journal cards
+- ✅ Backend API endpoints (updateNote, updateTags, getTags)
+- ✅ Database schema updates for notes and tags
+
+### Completed in v1.3 (February 2026)
 - ✅ API Health & Status Page
 - ✅ Health check endpoint for load balancers
 - ✅ Detailed system health monitoring
@@ -465,4 +452,4 @@ When evaluating new features, ask:
 
 ---
 
-**Next Review:** April 2026
+**Next Review:** May 2026
