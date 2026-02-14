@@ -66,33 +66,21 @@ export default function Positions() {
     }
   });
 
-  // ✅ FIXED: Updated handleSave to use updateNote and updateTags methods
+  // ✅ FIXED: Updated handleSave to only update notes and tags
   const handleSave = async (position) => {
     try {
-      // Update current_price and stop_price (in GBP for backend)
-      if (position.current_price || position.stop_price) {
-        await base44.entities.Position.update(position.id, {
-          current_price: position.current_price,
-          stop_price: position.stop_price,
-        });
-      }
-
       // Update entry note using the new method
-      if (position.entry_note !== null && position.entry_note !== undefined) {
-        await base44.entities.Position.updateNote(position.id, position.entry_note || "");
-      }
+      await base44.entities.Position.updateNote(position.id, position.entry_note || "");
 
       // Update tags using the new method
-      if (position.tags !== null && position.tags !== undefined) {
-        await base44.entities.Position.updateTags(position.id, position.tags || []);
-      }
+      await base44.entities.Position.updateTags(position.id, position.tags || []);
 
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       setEditingPosition(null);
     } catch (error) {
       console.error("Failed to save position:", error);
-      alert("Failed to save changes. Please try again.");
+      alert(`Failed to save changes: ${error.message}`);
     }
   };
 
