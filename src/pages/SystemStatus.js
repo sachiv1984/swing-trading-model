@@ -375,7 +375,7 @@ export default function SystemStatus() {
             <div className="text-center">
               <Play className="w-10 h-10 text-slate-400 mx-auto mb-3" />
               <p className="text-slate-400">Click 'Run Tests' to verify all endpoints</p>
-              <p className="text-slate-500 text-sm mt-1">Tests 14 endpoints including Trade Journal APIs</p>
+              <p className="text-slate-500 text-sm mt-1">Tests 12 endpoints</p>
             </div>
           </div>
         ) : (
