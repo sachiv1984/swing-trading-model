@@ -20,13 +20,13 @@ export default function PerformanceAnalytics() {
   const [timePeriod, setTimePeriod] = useState("last_month");
 
   const timePeriodLabels = {
-  last_7_days: "Last 7 Days",
-  last_month: "Last Month", 
-  last_quarter: "Last Quarter",
-  last_year: "Last Year",
-  ytd: "Year to Date",
-  all_time: "All Time"
-};
+    last_7_days: "Last 7 Days",
+    last_month: "Last Month", 
+    last_quarter: "Last Quarter",
+    last_year: "Last Year",
+    ytd: "Year to Date",
+    all_time: "All Time"
+  };
 
   const { data: settings } = useQuery({
     queryKey: ["settings"],
@@ -35,14 +35,14 @@ export default function PerformanceAnalytics() {
   });
 
   const { data: tradesData, isLoading } = useQuery({
-  queryKey: ["trades"],
-  queryFn: async () => {
-    const response = await fetch("http://localhost:8000/trades");
-    const result = await response.json();
-    return result.data;
-  },
-  initialData: { trades: [] },
-});
+    queryKey: ["trades"],
+    queryFn: async () => {
+      const response = await fetch("http://localhost:8000/trades");
+      const result = await response.json();
+      return result.data;
+    },
+    initialData: { trades: [] },
+  });
 
   const settingsData = settings?.[0] || { min_trades_for_analytics: 10 };
   const closedTrades = tradesData?.trades || [];
@@ -593,7 +593,10 @@ export default function PerformanceAnalytics() {
       />
 
       <ExecutiveSummaryCards metrics={metrics} />
-      <KeyInsightsCard metrics={metrics} winRate={hasEnoughTrades ? (filteredTrades.filter(t => t.pnl > 0).length / filteredTrades.length) * 100 : 0}>
+      <KeyInsightsCard 
+        metrics={metrics} 
+        winRate={hasEnoughTrades ? (filteredTrades.filter(t => t.pnl > 0).length / filteredTrades.length) * 100 : 0} 
+      />
       <AdvancedMetricsGrid metrics={metrics} />
       <MonthlyHeatmap monthlyData={getMonthlyData()} />
       <MarketComparison 
