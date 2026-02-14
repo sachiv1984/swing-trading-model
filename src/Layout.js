@@ -38,15 +38,16 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navItems = [
-  { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
-  { name: "Positions", icon: Briefcase, page: "Positions" },
-  { name: "Signals", icon: Zap, page: "Signals" },
-  { name: "Trade Entry", icon: PlusCircle, page: "TradeEntry" },
-  { name: "Trade History", icon: History, page: "TradeHistory" },  
-  { name: "Reports", icon: FileBarChart, page: "Reports" },
-  { name: "System Status", icon: Activity, page: "SystemStatus" },
-  { name: "Settings", icon: Settings, page: "Settings" },
-];
+    { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
+    { name: "Positions", icon: Briefcase, page: "Positions" },
+    { name: "Signals", icon: Zap, page: "Signals" },
+    { name: "Trade Entry", icon: PlusCircle, page: "TradeEntry" },
+    { name: "Trade History", icon: History, page: "TradeHistory" },
+    { name: "Reports", icon: FileBarChart, page: "Reports" },
+    { name: "Analytics", icon: TrendingUp, page: "PerformanceAnalytics" },
+    { name: "System Status", icon: Activity, page: "SystemStatus" },
+    { name: "Settings", icon: Settings, page: "Settings" },
+  ];
 
   const isActive = (pageName) => currentPageName === pageName;
 
