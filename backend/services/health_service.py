@@ -36,7 +36,7 @@ def get_basic_health() -> Dict:
     return {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
-        "version": "1.2.0"
+        "version": "1.4.0"
     }
 
 
@@ -135,9 +135,9 @@ def get_detailed_health() -> Dict:
     return {
         "status": overall_status,
         "timestamp": datetime.now().isoformat(),
-        "version": "1.2.0",
-        "responseTime": response_time,
-        "components": checks
+        "version": "1.4.0",
+        "response_time_ms": response_time,
+        "checks": checks
     }
 
 
@@ -201,9 +201,9 @@ def test_all_endpoints(base_url: str = None) -> Dict:
             result = {
                 "endpoint": f"{endpoint['method']} {endpoint['path']}",
                 "status": "pass" if response.status_code == endpoint["expected_status"] else "fail",
-                "statusCode": response.status_code,
-                "expectedStatus": endpoint["expected_status"],
-                "responseTime": response_time
+                "status_code": response.status_code,
+                "expected_status": endpoint["expected_status"],
+                "response_time_ms": response_time
             }
             
             test_results.append(result)
@@ -213,9 +213,9 @@ def test_all_endpoints(base_url: str = None) -> Dict:
                 "endpoint": f"{endpoint['method']} {endpoint['path']}",
                 "status": "error",
                 "error": str(e),
-                "statusCode": None,
-                "responseTime": None
-            })
+                "status_code": None,
+                "response_time_ms": None
+             })
     
     # Calculate summary
     total = len(test_results)
@@ -225,11 +225,13 @@ def test_all_endpoints(base_url: str = None) -> Dict:
     success_rate = round((passed / total) * 100, 1) if total > 0 else 0
     
     return {
-        "timestamp": datetime.now().isoformat(),
-        "totalTests": total,
+    "timestamp": datetime.now().isoformat(),
+    "summary": {
+        "total": total,
         "passed": passed,
         "failed": failed,
         "errors": errors,
-        "successRate": success_rate,
-        "tests": test_results
-    }
+        "success_rate": success_rate
+    },
+    "results": test_results
+}
