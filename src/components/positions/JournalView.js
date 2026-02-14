@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { TrendingUp, TrendingDown, ChevronDown, ChevronUp, Search, Tag, X, Calendar } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { Input } from "../ui/input";
+import { cn } from "../../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function JournalView({ positions, availableTags }) {
