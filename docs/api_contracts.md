@@ -173,7 +173,9 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
   "entry_price": 40.98,
   "fx_rate": null,
   "atr_value": 2.58,
-  "stop_price": null
+  "stop_price": null,
+  "entry_note": "Strong momentum breakout above resistance. Volume spike confirms buying.",
+  "tags": ["momentum", "breakout"]
 }
 ```
 
@@ -191,6 +193,17 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
   }
 }
 ```
+**Field Details:**
+- `ticker`: Stock symbol (required)
+- `market`: "US" or "UK" (auto-detected from ticker if not provided)
+- `entry_date`: Entry date YYYY-MM-DD (required)
+- `shares`: Number of shares, supports fractional (required)
+- `entry_price`: Entry price in native currency (required)
+- `fx_rate`: GBP/USD rate (optional - auto-fetched for US stocks)
+- `atr_value`: ATR value (optional - auto-calculated from Yahoo Finance)
+- `stop_price`: Custom stop (optional - auto-calculated as entry_price - 5×ATR)
+- `entry_note`: Journal entry note (optional, max 500 characters)
+- `tags`: Array of tags for categorization (optional)
 
 **Notes:**
 - UK tickers auto-appended with `.L`
@@ -263,7 +276,7 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
 
 ---
 
-## 5. Exit Position (v1.2 UPDATED)
+## 5. Exit Position
 
 ### POST /positions/{position_id}/exit
 
@@ -281,7 +294,8 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
   "exit_price": 36.68,
   "exit_date": "2026-02-03",
   "exit_reason": "Stop Loss Hit",
-  "exit_fx_rate": 1.3684
+  "exit_fx_rate": 1.3684,
+  "exit_note": "Stopped out as planned. Support failed. Good risk management, kept loss to target."
 }
 ```
 
@@ -291,6 +305,7 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
 - `exit_date`: Exit date (optional - defaults to today, format: YYYY-MM-DD)
 - `exit_reason`: Reason for exit (optional - defaults to "Manual Exit")
 - `exit_fx_rate`: **User-entered FX rate (GBP/USD) from broker** (REQUIRED for US stocks, ignored for UK stocks)
+- `exit_note`: Journal exit note (optional, max 500 characters)
 
 **Valid Exit Reasons:**
 - "Manual Exit"
@@ -468,13 +483,21 @@ GBP equivalent: £290.92 → £284.35 (for portfolio total only)
         "exit_date": "2025-11-02",
         "pnl": 1240.50,
         "pnl_pct": 22.4,
-        "exit_reason": "Stop Loss Hit"
+        "exit_reason": "Stop Loss Hit",
+        "entry_note": "Breakout above $800 resistance...",
+        "exit_note": "Stopped out at planned level...",
+        "tags": ["momentum", "breakout", "loser"]
       }
     ]
   }
 }
 ```
 
+**Field Explanations:**
+- `entry_note`: Journal note from when position was entered (may be null)
+- `exit_note`: Journal note from when position was exited (may be null)
+- `tags`: Array of tags for categorization (e.g., ["momentum", "winner"])
+  
 ---
 
 ## 8. Cash Management
@@ -961,7 +984,162 @@ GET /signals?status=already_held
 
 ---
 
-## 12. Settings
+## 12. Trade Journal
+
+### PATCH /positions/{position_id}/note
+
+**Purpose:** Update entry or exit note for a position
+
+**Request:**
+```json
+{
+  "entry_note": "Updated entry reasoning with new market context.",
+  "exit_note": null
+}
+```
+
+**Field Details:**
+- `entry_note`: Entry note (optional, max 500 chars, null to clear)
+- `exit_note`: Exit note (optional, max 500 chars, null to clear)
+- At least one field must be provided
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "id": "uuid",
+    "ticker": "NVDA",
+    "entry_note": "Updated entry reasoning with new market context.",
+    "exit_note": null,
+    "updated_at": "2026-02-14T10:30:00"
+  }
+}
+```
+
+**Error Cases:**
+```json
+{
+  "status": "error",
+  "message": "Position not found"
+}
+```
+```json
+{
+  "status": "error",
+  "message": "Entry note exceeds 500 character limit"
+}
+```
+
+**Notes:**
+- Can update entry_note for open or closed positions
+- Can update exit_note only for closed positions
+- Notes are preserved when position is closed (copied to trade_history)
+- Pass null to clear a note
+- Empty string is treated as null
+
+---
+
+### PATCH /positions/{position_id}/tags
+
+**Purpose:** Update tags for a position
+
+**Request:**
+```json
+{
+  "tags": ["momentum", "breakout", "winner"]
+}
+```
+
+**Field Details:**
+- `tags`: Array of tag strings (required, can be empty array to clear all tags)
+- Each tag: lowercase, max 20 chars, alphanumeric plus hyphens
+- Maximum 10 tags per position
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "id": "uuid",
+    "ticker": "NVDA",
+    "tags": ["momentum", "breakout", "winner"],
+    "updated_at": "2026-02-14T10:30:00"
+  }
+}
+```
+
+**Error Cases:**
+```json
+{
+  "status": "error",
+  "message": "Position not found"
+}
+```
+```json
+{
+  "status": "error",
+  "message": "Tag 'My Tag!' is invalid. Use lowercase letters, numbers, and hyphens only."
+}
+```
+```json
+{
+  "status": "error",
+  "message": "Maximum 10 tags allowed per position"
+}
+```
+
+**Tag Validation Rules:**
+- Lowercase letters, numbers, hyphens only
+- No spaces (use hyphens instead)
+- Max 20 characters per tag
+- Max 10 tags per position
+- Auto-converted to lowercase
+- Duplicates automatically removed
+
+**Notes:**
+- Tags are preserved when position is closed (copied to trade_history)
+- Pass empty array `[]` to clear all tags
+- Invalid tags are rejected with descriptive error
+
+---
+
+### GET /positions/tags
+
+**Purpose:** Get all unique tags used across all positions
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "data": {
+    "tags": [
+      "breakout",
+      "earnings-play",
+      "loser",
+      "momentum",
+      "winner"
+    ],
+    "total_positions": 42,
+    "positions_with_tags": 38
+  }
+}
+```
+
+**Field Explanations:**
+- `tags`: Sorted array of all unique tags used
+- `total_positions`: Total number of positions (open + closed)
+- `positions_with_tags`: Number of positions that have at least one tag
+
+**Notes:**
+- Returns tags from both open and closed positions
+- Sorted alphabetically
+- Used for tag autocomplete in UI
+- Used for tag filter dropdown in trade history
+
+```
+```
+## 13. Settings
 
 ### GET /settings
 
@@ -1040,6 +1218,27 @@ Display: $576 ✓ (stable!)
 
 ## Breaking Changes from v1.1
 
+### Trade Journal Changes (v1.4)
+
+**New optional fields in requests:**
+1. **POST /portfolio/position** - Added `entry_note` and `tags` fields (optional)
+2. **POST /positions/{id}/exit** - Added `exit_note` field (optional)
+
+**New fields in responses:**
+1. **GET /trades** - Response now includes `entry_note`, `exit_note`, `tags` fields
+2. All trade objects now include journal fields (may be null)
+
+**New endpoints:**
+1. **PATCH /positions/{id}/note** - Update entry/exit notes
+2. **PATCH /positions/{id}/tags** - Update position tags
+3. **GET /positions/tags** - Get all unique tags
+
+**Backwards Compatibility:**
+- All new request fields are optional
+- Old clients continue to work without sending journal fields
+- New response fields are always present (null if not set)
+- Frontend should handle null values gracefully
+
 ### Exit Endpoint Changes (v1.2)
 1. **exit_price now REQUIRED** - was optional (fetched live price)
 2. **exit_fx_rate now REQUIRED for US stocks** - was optional
@@ -1063,9 +1262,12 @@ Display: $576 ✓ (stable!)
 - No charting APIs (frontend responsibility)
 - No broker integrations
 - No multi-user identifiers
+- No full-text search in notes (use tags for filtering)
+- No note edit history/versioning
+- No collaborative journaling features
 
 ---
 
-**Document Version:** 1.2  
-**Last Review:** February 12, 2026  
+**Document Version:** 1.4 
+**Last Review:** February 14, 2026  
 **Status:** Current
