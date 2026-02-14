@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "../api/base44Client";
-import { Loader2, LayoutGrid, List, Plus, Edit2, LogOut, TrendingUp, TrendingDown } from "lucide-react";
+import { Loader2, LayoutGrid, List, BookOpen, Plus, Edit2, LogOut, TrendingUp, TrendingDown } from "lucide-react";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import PositionCard from "../components/positions/PositionCard";
 import PositionModal from "../components/positions/PositionModal";
 import ExitModal from "../components/positions/ExitModal";
+import JournalView from "../components/positions/JournalView";
 import { DataTable, TableHeader, TableHead, TableBody, TableRow, TableCell } from "../components/ui/DataTable";
 import { cn } from "../lib/utils";
 import { differenceInDays } from "date-fns";
@@ -20,11 +21,20 @@ export default function Positions() {
   const queryClient = useQueryClient();
 
   const { data: positions, isLoading } = useQuery({
-    queryKey: ["positions", "open"],
+    queryKey: ["positions"],
     queryFn: async () => {
-      const result = await base44.entities.Position.filter({ status: "open" }, "-entry_date");
+      const result = await base44.entities.Position.list("-entry_date");
       console.log('Positions query result:', result);
       return result;
+    },
+  });
+
+  const { data: availableTags = [] } = useQuery({
+    queryKey: ["position-tags"],
+    queryFn: async () => {
+      const positions = await base44.entities.Position.list();
+      const allTags = positions.flatMap(p => p.tags || []);
+      return [...new Set(allTags)].sort();
     },
   });
 
@@ -110,13 +120,14 @@ export default function Positions() {
     exitMutation.mutate(exitData);
   };
 
-  const openPositions = positions || [];
+  const allPositions = positions || [];
+  const openPositions = allPositions.filter(p => p.status === "open");
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Open Positions"
-        description={`${openPositions.length} active position${openPositions.length !== 1 ? "s" : ""}`}
+        title={viewMode === "journal" ? "Trade Journal" : "Open Positions"}
+        description={viewMode === "journal" ? `${allPositions.length} total entries` : `${openPositions.length} active position${openPositions.length !== 1 ? "s" : ""}`}
         actions={
           <div className="flex items-center gap-3">
             <div className="flex items-center rounded-xl bg-slate-800/50 border border-slate-700/50 p-1">
@@ -146,6 +157,19 @@ export default function Positions() {
               >
                 <List className="w-4 h-4" />
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setViewMode("journal")}
+                className={cn(
+                  "h-8 w-8 p-0 rounded-lg",
+                  viewMode === "journal" 
+                    ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400" 
+                    : "text-slate-400 hover:text-white"
+                )}
+              >
+                <BookOpen className="w-4 h-4" />
+              </Button>
             </div>
             <Link to={createPageUrl("TradeEntry")}>
               <Button className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25">
@@ -161,6 +185,8 @@ export default function Positions() {
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
         </div>
+      ) : viewMode === "journal" ? (
+        <JournalView positions={allPositions} availableTags={availableTags} />
       ) : openPositions.length === 0 ? (
         <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-12 text-center">
           <p className="text-slate-500 mb-4">No open positions</p>
