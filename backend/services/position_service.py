@@ -22,7 +22,11 @@ from database import (
     create_position,
     update_portfolio_cash,
     get_settings,
-    create_trade_history
+    create_trade_history,
+    update_position_note,
+    update_position_tags,
+    get_all_tags,
+    search_positions_by_tags
 )
 
 from utils.pricing import (
