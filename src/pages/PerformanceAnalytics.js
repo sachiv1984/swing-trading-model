@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../api/base44Client";
 import PageHeader from "../components/ui/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, Download } from "lucide-react";
+import { Button } from "../components/ui/button";
 import ExecutiveSummaryCards from "../components/analytics/ExecutiveSummaryCards";
 import KeyInsightsCard from "../components/analytics/KeyInsightsCard";
 import AdvancedMetricsGrid from "../components/analytics/AdvancedMetricsGrid";
@@ -13,6 +14,7 @@ import ExitReasonTable from "../components/analytics/ExitReasonTable";
 import TimeBasedCharts from "../components/analytics/TimeBasedCharts";
 import TopPerformers from "../components/analytics/TopPerformers";
 import ConsistencyMetrics from "../components/analytics/ConsistencyMetrics";
+import TagPerformance from "../components/analytics/TagPerformance";
 
 export default function PerformanceAnalytics() {
   const [timePeriod, setTimePeriod] = useState("last_month");
@@ -39,16 +41,20 @@ export default function PerformanceAnalytics() {
 
     switch (timePeriod) {
       case "last_7_days":
-        startDate = new Date(now.setDate(now.getDate() - 7));
+        startDate = new Date(now);
+        startDate.setDate(startDate.getDate() - 7);
         break;
       case "last_month":
-        startDate = new Date(now.setMonth(now.getMonth() - 1));
+        startDate = new Date(now);
+        startDate.setMonth(startDate.getMonth() - 1);
         break;
       case "last_quarter":
-        startDate = new Date(now.setMonth(now.getMonth() - 3));
+        startDate = new Date(now);
+        startDate.setMonth(startDate.getMonth() - 3);
         break;
       case "last_year":
-        startDate = new Date(now.setFullYear(now.getFullYear() - 1));
+        startDate = new Date(now);
+        startDate.setFullYear(startDate.getFullYear() - 1);
         break;
       case "ytd":
         startDate = new Date(now.getFullYear(), 0, 1);
@@ -161,6 +167,143 @@ export default function PerformanceAnalytics() {
   };
 
   const metrics = calculateMetrics();
+
+  const generatePrintReport = () => {
+    if (!metrics) return;
+
+    const timePeriodLabels = {
+      last_7_days: "Last 7 Days",
+      last_month: "Last Month",
+      last_quarter: "Last Quarter",
+      last_year: "Last Year",
+      ytd: "Year to Date",
+      all_time: "All Time"
+    };
+
+    const reportHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Performance Analytics Report</title>
+          <style>
+            body { font-family: system-ui, -apple-system, sans-serif; padding: 40px; color: #1e293b; }
+            h1 { color: #0f172a; margin-bottom: 8px; font-size: 28px; }
+            .subtitle { color: #64748b; margin-bottom: 32px; font-size: 14px; }
+            .section { margin-bottom: 32px; page-break-inside: avoid; }
+            .section-title { font-size: 18px; font-weight: 600; color: #0f172a; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+            .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+            .metric-card { background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; }
+            .metric-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+            .metric-value { font-size: 24px; font-weight: 700; color: #0f172a; }
+            .metric-subtitle { font-size: 12px; color: #64748b; margin-top: 4px; }
+            .positive { color: #16a34a; }
+            .negative { color: #dc2626; }
+            .insight-list { list-style: none; padding: 0; }
+            .insight-item { background: #fffbeb; padding: 12px 16px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid #f59e0b; font-size: 14px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+            th { background: #f1f5f9; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; color: #64748b; border-bottom: 2px solid #cbd5e1; }
+            td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+            @media print {
+              body { padding: 20px; }
+              .section { page-break-inside: avoid; }
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Performance Analytics Report</h1>
+          <div class="subtitle">Generated ${new Date().toLocaleDateString()} • Period: ${timePeriodLabels[timePeriod]} • ${filteredTrades.length} Trades</div>
+          
+          <div class="section">
+            <div class="section-title">Executive Summary</div>
+            <div class="metric-grid">
+              <div class="metric-card">
+                <div class="metric-label">Sharpe Ratio</div>
+                <div class="metric-value">${metrics.sharpeRatio.toFixed(2)}</div>
+                <div class="metric-subtitle">Risk-Adjusted Returns</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Max Drawdown</div>
+                <div class="metric-value negative">${metrics.maxDrawdown.percent.toFixed(1)}%</div>
+                <div class="metric-subtitle">£${metrics.maxDrawdown.amount.toFixed(0)}</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Recovery Factor</div>
+                <div class="metric-value">${metrics.recoveryFactor.toFixed(2)}</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Expectancy</div>
+                <div class="metric-value ${metrics.expectancy >= 0 ? 'positive' : 'negative'}">£${metrics.expectancy.toFixed(2)}</div>
+                <div class="metric-subtitle">Per Trade</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Profit Factor</div>
+                <div class="metric-value">${metrics.profitFactor.toFixed(2)}</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Risk/Reward</div>
+                <div class="metric-value">${metrics.riskRewardRatio.toFixed(2)}:1</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Key Insights</div>
+            <ul class="insight-list">
+              ${metrics.sharpeRatio > 2 ? `<li class="insight-item">Excellent risk-adjusted returns with a Sharpe ratio of ${metrics.sharpeRatio.toFixed(2)}</li>` : 
+                metrics.sharpeRatio > 1 ? `<li class="insight-item">Strong risk-adjusted returns with a Sharpe ratio of ${metrics.sharpeRatio.toFixed(2)}</li>` :
+                `<li class="insight-item">Risk-adjusted returns need improvement (Sharpe: ${metrics.sharpeRatio.toFixed(2)})</li>`}
+              ${metrics.avgHoldWinners > metrics.avgHoldLosers ? 
+                `<li class="insight-item">✅ Great discipline - cutting losers faster (${metrics.avgHoldLosers.toFixed(1)} days) than letting winners run (${metrics.avgHoldWinners.toFixed(1)} days)</li>` :
+                `<li class="insight-item">⚠️ Holding losers too long (${metrics.avgHoldLosers.toFixed(1)} days) compared to winners (${metrics.avgHoldWinners.toFixed(1)} days)</li>`}
+              ${metrics.profitFactor > 2 ? `<li class="insight-item">Excellent profit factor of ${metrics.profitFactor.toFixed(2)} means earning £${metrics.profitFactor.toFixed(2)} for every £1 lost</li>` :
+                `<li class="insight-item">Profit factor of ${metrics.profitFactor.toFixed(2)} - earning £${metrics.profitFactor.toFixed(2)} per £1 lost</li>`}
+            </ul>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Advanced Metrics</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Win Streak (Max)</td>
+                  <td>${metrics.winStreak} trades</td>
+                  <td>Loss Streak (Max)</td>
+                  <td>${metrics.lossStreak} trades</td>
+                </tr>
+                <tr>
+                  <td>Avg Hold (Winners)</td>
+                  <td>${metrics.avgHoldWinners.toFixed(1)} days</td>
+                  <td>Avg Hold (Losers)</td>
+                  <td>${metrics.avgHoldLosers.toFixed(1)} days</td>
+                </tr>
+                <tr>
+                  <td>Trade Frequency</td>
+                  <td>${metrics.tradeFrequency.toFixed(1)} per week</td>
+                  <td>Capital Efficiency</td>
+                  <td>${metrics.capitalEfficiency.toFixed(1)}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(reportHTML);
+    printWindow.document.close();
+    setTimeout(() => {
+      printWindow.print();
+    }, 250);
+  };
 
   if (isLoading) {
     return (
@@ -371,6 +514,32 @@ export default function PerformanceAnalytics() {
         <PageHeader
           title="Performance Analytics"
           description="Deep dive into your trading performance and strategy effectiveness"
+          actions={
+            <div className="flex gap-2">
+              <Select value={timePeriod} onValueChange={setTimePeriod}>
+                <SelectTrigger className="w-48 bg-slate-800/50 border-slate-700 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectItem value="last_7_days">Last 7 Days</SelectItem>
+                  <SelectItem value="last_month">Last Month</SelectItem>
+                  <SelectItem value="last_quarter">Last Quarter</SelectItem>
+                  <SelectItem value="last_year">Last Year</SelectItem>
+                  <SelectItem value="ytd">Year to Date</SelectItem>
+                  <SelectItem value="all_time">All Time</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={generatePrintReport}
+                variant="outline"
+                className="bg-slate-800/50 border-slate-700 text-white hover:bg-slate-700"
+                disabled
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export PDF
+              </Button>
+            </div>
+          }
         />
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
@@ -395,20 +564,30 @@ export default function PerformanceAnalytics() {
       <PageHeader
         title="Performance Analytics"
         description="Deep dive into your trading performance and strategy effectiveness"
-        action={
-          <Select value={timePeriod} onValueChange={setTimePeriod}>
-            <SelectTrigger className="w-48 bg-slate-800/50 border-slate-700 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-slate-800 border-slate-700">
-              <SelectItem value="last_7_days">Last 7 Days</SelectItem>
-              <SelectItem value="last_month">Last Month</SelectItem>
-              <SelectItem value="last_quarter">Last Quarter</SelectItem>
-              <SelectItem value="last_year">Last Year</SelectItem>
-              <SelectItem value="ytd">Year to Date</SelectItem>
-              <SelectItem value="all_time">All Time</SelectItem>
-            </SelectContent>
-          </Select>
+        actions={
+          <div className="flex gap-2">
+            <Select value={timePeriod} onValueChange={setTimePeriod}>
+              <SelectTrigger className="w-48 bg-slate-800/50 border-slate-700 text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectItem value="last_7_days">Last 7 Days</SelectItem>
+                <SelectItem value="last_month">Last Month</SelectItem>
+                <SelectItem value="last_quarter">Last Quarter</SelectItem>
+                <SelectItem value="last_year">Last Year</SelectItem>
+                <SelectItem value="ytd">Year to Date</SelectItem>
+                <SelectItem value="all_time">All Time</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              onClick={generatePrintReport}
+              variant="outline"
+              className="bg-slate-800/50 border-slate-700 text-white hover:bg-slate-700"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export PDF
+            </Button>
+          </div>
         }
       />
 
@@ -429,6 +608,7 @@ export default function PerformanceAnalytics() {
       />
       <TopPerformers {...getTopPerformers()} />
       <ConsistencyMetrics metrics={getConsistencyMetrics()} />
+      <TagPerformance trades={filteredTrades} />
     </div>
   );
 }
