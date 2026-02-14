@@ -38,6 +38,13 @@ export default function TradeHistory() {
         .filter((tag, index, self) => self.indexOf(tag) === index) // Remove duplicates
         .sort()
     : [];
+  
+  // 🐛 DEBUG: Log tags for debugging
+  console.log('📊 Trade History Debug:');
+  console.log('  Total trades:', trades.length);
+  console.log('  Trades with tags:', trades.filter(t => t.tags && t.tags.length > 0).length);
+  console.log('  Available tags:', availableTags);
+  console.log('  First trade sample:', trades[0]);
 
   // ✅ NEW: Tag toggle handler
   const handleTagToggle = (tag) => {
