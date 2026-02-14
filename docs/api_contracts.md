@@ -1,4 +1,4 @@
-# API Contracts — Momentum Trading Assistant (v1.2)
+# API Contracts — Momentum Trading Assistant (v1.4)
 
 ## Overview
 
@@ -7,8 +7,8 @@ This document defines the backend API contracts for the **Momentum Trading Assis
 The system is a **decision-support tool**, not a trading bot.  
 All strategy logic is deterministic, server-side, and frozen for MVP.
 
-**Last Updated:** February 12, 2026  
-**Version:** 1.2
+**Last Updated:** February 14, 2026  
+**Version:** 1.4
 
 ---
 
