@@ -5,6 +5,7 @@ import PageHeader from "../components/ui/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { AlertCircle, Loader2 } from "lucide-react";
 import ExecutiveSummaryCards from "../components/analytics/ExecutiveSummaryCards";
+import KeyInsightsCard from "../components/analytics/KeyInsightsCard";
 import AdvancedMetricsGrid from "../components/analytics/AdvancedMetricsGrid";
 import MonthlyHeatmap from "../components/analytics/MonthlyHeatmap";
 import MarketComparison from "../components/analytics/MarketComparison";
@@ -61,6 +62,9 @@ export default function PerformanceAnalytics() {
 
   const filteredTrades = getFilteredTrades();
   const hasEnoughTrades = filteredTrades.length >= settingsData.min_trades_for_analytics;
+  
+  const winners = filteredTrades.filter(t => t.pnl > 0);
+  const winRate = filteredTrades.length > 0 ? (winners.length / filteredTrades.length) * 100 : 0;
 
   // Calculate metrics
   const calculateMetrics = () => {
@@ -409,6 +413,7 @@ export default function PerformanceAnalytics() {
       />
 
       <ExecutiveSummaryCards metrics={metrics} />
+      <KeyInsightsCard metrics={metrics} winRate={winRate} />
       <AdvancedMetricsGrid metrics={metrics} />
       <MonthlyHeatmap monthlyData={getMonthlyData()} />
       <MarketComparison 
