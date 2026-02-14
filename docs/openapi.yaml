@@ -5,7 +5,7 @@ info:
     API for the Momentum Trading Assistant web application.
     Decision-support tool only (not a trading bot).  
     Strategy logic is deterministic and server-side.
-  version: 1.2.0
+  version: 1.4.0
 
 servers:
   - url: https://api.example.com
@@ -130,59 +130,75 @@ paths:
         Create a new position with automatic fee calculation,
         ATR calculation, and initial stop setting.
         Supports fractional shares.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                ticker:
-                  type: string
-                  description: Stock symbol (e.g., 'NVDA', 'FRES')
-                  example: "NVDA"
-                market:
-                  type: string
-                  enum: [US, UK]
-                  description: Market (auto-detected from ticker if not provided)
-                  example: "US"
-                entry_date:
-                  type: string
-                  format: date
-                  description: Entry date (YYYY-MM-DD)
-                  example: "2026-02-07"
-                shares:
-                  type: number
-                  format: float
-                  description: Number of shares (fractional supported)
-                  example: 5.5
-                entry_price:
-                  type: number
-                  format: float
-                  description: Entry price in native currency (USD for US, GBP for UK)
-                  example: 243.00
-                fx_rate:
-                  type: number
-                  format: float
-                  nullable: true
-                  description: GBP/USD rate (auto-fetched if not provided for US stocks)
-                  example: 1.3528
-                atr_value:
-                  type: number
-                  format: float
-                  nullable: true
-                  description: ATR value (auto-calculated from Yahoo Finance if not provided)
-                  example: 18.26
-                stop_price:
-                  type: number
-                  format: float
-                  nullable: true
-                  description: Custom stop (optional, auto-calculated as entry_price - 5×ATR if not provided)
-              required:
-                - ticker
-                - entry_date
-                - shares
-                - entry_price
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticker:
+                    type: string
+                    description: Stock symbol (e.g., 'NVDA', 'FRES')
+                    example: "NVDA"
+                  market:
+                    type: string
+                    enum: [US, UK]
+                    description: Market (auto-detected from ticker if not provided)
+                    example: "US"
+                  entry_date:
+                    type: string
+                    format: date
+                    description: Entry date (YYYY-MM-DD)
+                    example: "2026-02-07"
+                  shares:
+                    type: number
+                    format: float
+                    description: Number of shares (fractional supported)
+                    example: 5.5
+                  entry_price:
+                    type: number
+                    format: float
+                    description: Entry price in native currency (USD for US, GBP for UK)
+                    example: 243.00
+                  fx_rate:
+                    type: number
+                    format: float
+                    nullable: true
+                    description: GBP/USD rate (auto-fetched if not provided for US stocks)
+                    example: 1.3528
+                  atr_value:
+                    type: number
+                    format: float
+                    nullable: true
+                    description: ATR value (auto-calculated from Yahoo Finance if not provided)
+                    example: 18.26
+                  stop_price:
+                    type: number
+                    format: float
+                    nullable: true
+                    description: Custom stop (optional, auto-calculated as entry_price - 5×ATR if not provided)
+                  entry_note:
+                    type: string
+                    maxLength: 500
+                    nullable: true
+                    description: Journal entry note (optional, max 500 characters)
+                    example: "Breakout above $800 resistance on heavy volume. RSI trending up."
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                      pattern: '^[a-z0-9-]+$'
+                      maxLength: 20
+                    maxItems: 10
+                    nullable: true
+                    description: Array of tags for categorization (optional)
+                    example: ["momentum", "breakout"]
+                required:
+                  - ticker
+                  - entry_date
+                  - shares
+                  - entry_price
       responses:
         "200":
           description: Position created successfully
@@ -374,50 +390,57 @@ paths:
           schema:
             type: string
             format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                shares:
-                  type: number
-                  format: float
-                  nullable: true
-                  description: Number of shares to exit (null = all shares)
-                  example: 2.5
-                exit_price:
-                  type: number
-                  format: float
-                  description: Actual exit price from broker (REQUIRED)
-                  example: 242.67
-                exit_date:
-                  type: string
-                  format: date
-                  nullable: true
-                  description: Exit date (YYYY-MM-DD, null = today)
-                  example: "2026-02-07"
-                exit_reason:
-                  type: string
-                  nullable: true
-                  enum:
-                    - Manual Exit
-                    - Stop Loss Hit
-                    - Target Reached
-                    - Risk-Off Signal
-                    - Trailing Stop
-                    - Partial Profit Taking
-                  description: Reason for exit (default 'Manual Exit')
-                  example: "Stop Loss Hit"
-                exit_fx_rate:
-                  type: number
-                  format: float
-                  nullable: true
-                  description: GBP/USD rate from broker (REQUIRED for US stocks, ignored for UK)
-                  example: 1.3611
-              required:
-                - exit_price
+      # FIND this section and ADD exit_note property:
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    shares:
+                      type: number
+                      format: float
+                      nullable: true
+                      description: Number of shares to exit (null = all shares)
+                      example: 2.5
+                    exit_price:
+                      type: number
+                      format: float
+                      description: Actual exit price from broker (REQUIRED)
+                      example: 242.67
+                    exit_date:
+                      type: string
+                      format: date
+                      nullable: true
+                      description: Exit date (YYYY-MM-DD, null = today)
+                      example: "2026-02-07"
+                    exit_reason:
+                      type: string
+                      nullable: true
+                      enum:
+                        - Manual Exit
+                        - Stop Loss Hit
+                        - Target Reached
+                        - Risk-Off Signal
+                        - Trailing Stop
+                        - Partial Profit Taking
+                      description: Reason for exit (default 'Manual Exit')
+                      example: "Stop Loss Hit"
+                    exit_fx_rate:
+                      type: number
+                      format: float
+                      nullable: true
+                      description: GBP/USD rate from broker (REQUIRED for US stocks, ignored for UK)
+                      example: 1.3611
+                    exit_note:
+                      type: string
+                      maxLength: 500
+                      nullable: true
+                      description: Journal exit note (optional, max 500 characters)
+                      example: "Stopped out as planned. Good risk management, kept loss to target."
+                  required:
+                    - exit_price
       responses:
         "200":
           description: Exit successful
@@ -576,6 +599,232 @@ paths:
                           format: float
                         exit_reason:
                           type: string
+                        # ✅ ADD THESE THREE NEW PROPERTIES:
+                        entry_note:
+                          type: string
+                          nullable: true
+                          description: Journal note from entry
+                        exit_note:
+                          type: string
+                          nullable: true
+                          description: Journal note from exit
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                          description: Tags for categorization
+
+/positions/{position_id}/note:
+    patch:
+      summary: Update position notes
+      description: |
+        Update entry note or exit note for a position.
+        At least one note field must be provided.
+        Pass null to clear a note.
+      parameters:
+        - name: position_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entry_note:
+                  type: string
+                  nullable: true
+                  maxLength: 500
+                  description: Entry note (max 500 chars, null to clear)
+                exit_note:
+                  type: string
+                  nullable: true
+                  maxLength: 500
+                  description: Exit note (max 500 chars, null to clear)
+            examples:
+              update_entry:
+                value:
+                  entry_note: "Updated reasoning after market analysis"
+                  exit_note: null
+              update_both:
+                value:
+                  entry_note: "Breakout setup confirmed"
+                  exit_note: "Target reached, profits taken"
+      responses:
+        "200":
+          description: Notes updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      ticker:
+                        type: string
+                      entry_note:
+                        type: string
+                        nullable: true
+                      exit_note:
+                        type: string
+                        nullable: true
+                      updated_at:
+                        type: string
+                        format: date-time
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                char_limit:
+                  value:
+                    status: error
+                    message: "Entry note exceeds 500 character limit"
+        "404":
+          description: Position not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /positions/{position_id}/tags:
+    patch:
+      summary: Update position tags
+      description: |
+        Update tags for a position.
+        Tags are validated: lowercase, numbers, hyphens only.
+        Max 20 chars per tag, max 10 tags total.
+        Pass empty array to clear all tags.
+      parameters:
+        - name: position_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tags:
+                  type: array
+                  items:
+                    type: string
+                    pattern: '^[a-z0-9-]+$'
+                    maxLength: 20
+                  maxItems: 10
+                  description: Array of tags (lowercase, numbers, hyphens only)
+              required:
+                - tags
+            examples:
+              add_tags:
+                value:
+                  tags: ["momentum", "breakout", "winner"]
+              clear_tags:
+                value:
+                  tags: []
+      responses:
+        "200":
+          description: Tags updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      ticker:
+                        type: string
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                      updated_at:
+                        type: string
+                        format: date-time
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_tag:
+                  value:
+                    status: error
+                    message: "Tag 'My Tag!' is invalid. Use lowercase letters, numbers, and hyphens only."
+                too_many:
+                  value:
+                    status: error
+                    message: "Maximum 10 tags allowed per position"
+        "404":
+          description: Position not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /positions/tags:
+    get:
+      summary: Get all unique tags
+      description: |
+        Retrieve all unique tags used across all positions.
+        Returns sorted alphabetically.
+        Used for tag autocomplete and filtering.
+      responses:
+        "200":
+          description: Tags retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                        description: Sorted array of all unique tags
+                      total_positions:
+                        type: integer
+                        description: Total number of positions
+                      positions_with_tags:
+                        type: integer
+                        description: Number of positions that have tags
+              example:
+                status: ok
+                data:
+                  tags: ["breakout", "earnings-play", "loser", "momentum", "winner"]
+                  total_positions: 42
+                  positions_with_tags: 38
 
 components:
   schemas:
