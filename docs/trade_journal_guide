@@ -1,0 +1,532 @@
+# Trade Journal & Notes System - User Guide
+
+**Version:** 1.4  
+**Last Updated:** February 14, 2026
+
+This guide explains how to use the Trade Journal & Notes System to document your trading decisions, track your thought process, and improve your trading over time.
+
+---
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Adding Entry Notes](#adding-entry-notes)
+3. [Adding Exit Notes](#adding-exit-notes)
+4. [Using Tags](#using-tags)
+5. [Viewing Your Journal](#viewing-your-journal)
+6. [Filtering by Tags](#filtering-by-tags)
+7. [Best Practices](#best-practices)
+8. [Example Workflows](#example-workflows)
+
+---
+
+## Overview
+
+The Trade Journal helps you:
+- **Document your reasoning** for entering and exiting positions
+- **Identify patterns** in your winning and losing trades
+- **Track your trading evolution** over time
+- **Learn from mistakes** by reviewing past decisions
+- **Organize trades** using tags for easy filtering
+
+### Key Features
+
+✅ **Entry Notes** - Document why you entered a position  
+✅ **Exit Notes** - Record why you exited and lessons learned  
+✅ **Tags** - Categorize trades by strategy, setup, or criteria  
+✅ **Search & Filter** - Find specific trades quickly  
+✅ **Expandable View** - See full journal entries in trade history  
+
+---
+
+## Adding Entry Notes
+
+### When Entering a New Position
+
+1. **Navigate to Positions page** → Click "New Position"
+2. **Fill in position details** (ticker, shares, price)
+3. **Scroll to "Entry Note" section**
+4. **Write your reasoning** in the text box (500 characters max)
+
+**Example Entry Note:**
+```
+Strong momentum breakout above $420 resistance. 
+Volume spike confirms institutional buying. 
+200-day MA support at $380. Risk 2% with stop at $398.
+Targeting $480 resistance zone.
+```
+
+### Editing Entry Notes on Open Positions
+
+1. **Go to Positions page** → Click position card/row
+2. **Position modal opens** with current data
+3. **Update Entry Note** in the text area
+4. **Click "Save"** to update
+
+💡 **Tip:** You can edit entry notes any time before exiting the position.
+
+---
+
+## Adding Exit Notes
+
+### When Exiting a Position
+
+1. **Click "Exit" button** on the position
+2. **Fill exit details** (shares, price, date, reason)
+3. **Scroll to "Exit Note" section**
+4. **Document your exit reasoning** (500 characters max)
+5. **Click "Confirm Exit"**
+
+**Example Exit Note:**
+```
+Stopped out at $398 as planned. Trade didn't work - 
+failed to hold above breakout level. Market turned 
+risk-off with SPY breaking 200MA. Good risk management,
+kept loss to 2%. No regrets on entry logic.
+```
+
+### What to Include in Exit Notes
+
+✅ **Why you exited** - Stop hit? Target reached? Changed mind?  
+✅ **What you learned** - What worked? What didn't?  
+✅ **Emotions** - Were you nervous? Confident? Greedy?  
+✅ **Market context** - What was happening in the broader market?  
+✅ **Execution** - Did you follow your plan?  
+
+---
+
+## Using Tags
+
+Tags help you categorize and find trades quickly.
+
+### How to Add Tags
+
+**When Creating a Position:**
+1. In the position entry form, find the "Tags" section
+2. Type a tag name and press Enter
+3. Add multiple tags as needed
+4. Tags are saved with the position
+
+**When Editing a Position:**
+1. Open the position modal
+2. Add/remove tags in the Tags section
+3. Click "Save"
+
+### Tag Naming Guidelines
+
+✅ **Use lowercase** - Automatic (e.g., "momentum", not "Momentum")  
+✅ **Keep it short** - 1-2 words (e.g., "breakout", not "breakout-with-volume")  
+✅ **Be consistent** - Use same tags for similar setups  
+✅ **Use hyphens** - For multi-word tags (e.g., "earnings-play")  
+
+❌ **Don't use:**
+- Special characters (!@#$%)
+- Spaces (use hyphens instead)
+- Uppercase letters
+- Overly specific names
+
+### Recommended Tag Categories
+
+**Strategy Tags:**
+- `momentum`
+- `mean-reversion`
+- `breakout`
+- `pullback`
+- `trend-following`
+
+**Setup Tags:**
+- `earnings-play`
+- `gap-up`
+- `consolidation`
+- `new-high`
+- `oversold-bounce`
+
+**Outcome Tags:**
+- `winner`
+- `loser`
+- `scratch` (break-even)
+- `partial-exit`
+- `stopped-out`
+
+**Market Tags:**
+- `risk-on`
+- `risk-off`
+- `volatile`
+- `quiet-market`
+
+💡 **Tip:** Start with 5-10 core tags and add more as needed.
+
+---
+
+## Viewing Your Journal
+
+### In Position Modal
+
+**For Open Positions:**
+1. Go to Positions page
+2. Click any position card/row
+3. See Entry Note and Tags in the modal
+
+### In Trade History
+
+**For Closed Trades:**
+1. Go to Trade History page
+2. **Click any trade row** to expand
+3. **See full journal:**
+   - 📘 Entry Analysis (cyan header)
+   - 📕 Exit Reflection (rose header)
+   - 🏷️ Strategy Tags (violet header)
+
+**Visual Layout:**
+```
+┌─────────────────────────────────────────┐
+│ 📊 Trade Journal                        │
+├─────────────────────────────────────────┤
+│ 📘 ENTRY ANALYSIS                       │
+│ ┌─────────────────────────────────────┐ │
+│ │ Your entry note text here...        │ │
+│ └─────────────────────────────────────┘ │
+│                                         │
+│ 📕 EXIT REFLECTION                      │
+│ ┌─────────────────────────────────────┐ │
+│ │ Your exit note text here...         │ │
+│ └─────────────────────────────────────┘ │
+│                                         │
+│ 🏷️ STRATEGY TAGS                        │
+│ [momentum] [breakout] [winner]         │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## Filtering by Tags
+
+### Using Tag Filter in Trade History
+
+1. **Go to Trade History page**
+2. **Tag dropdown appears** (if you have tagged trades)
+3. **Click dropdown** → See all available tags
+4. **Select one or more tags** → Filter applies automatically
+5. **Selected tags shown as pills** → Click X to remove
+
+**How Filtering Works:**
+- **OR logic** - Shows trades matching ANY selected tag
+- **Example:** Select `momentum` + `breakout` → Shows trades with either tag
+- **Combine with other filters** - Market, Date Range, Win/Loss still work
+
+**Use Cases:**
+- "Show me all my `earnings-play` trades"
+- "Find all `stopped-out` trades to review mistakes"
+- "Compare `momentum` vs `mean-reversion` win rates"
+
+---
+
+## Best Practices
+
+### 📝 Entry Notes Best Practices
+
+**✅ DO:**
+- Document your hypothesis/thesis
+- Note key technical levels (support/resistance)
+- Record your stop loss plan
+- Mention market context (SPY, sector)
+- Keep it factual and objective
+
+**❌ DON'T:**
+- Write a novel (keep under 500 chars)
+- Skip entries because you're "sure"
+- Wait until later (memory fades)
+- Focus only on why you'll win
+- Ignore the downside scenario
+
+**Template:**
+```
+Setup: [What you see]
+Catalyst: [Why now]
+Risk: [Stop level and %]
+Target: [Profit goal]
+Context: [Market regime]
+```
+
+### 📕 Exit Notes Best Practices
+
+**✅ DO:**
+- Be honest about mistakes
+- Note what you'd do differently
+- Record emotional state
+- Celebrate good execution
+- Learn from both wins and losses
+
+**❌ DON'T:**
+- Blame external factors only
+- Skip exits because you're embarrassed
+- Focus only on P&L
+- Ignore process quality
+- Make excuses
+
+**Template:**
+```
+Exit: [Why/How]
+Plan: [Did I follow it?]
+Lesson: [What I learned]
+Emotion: [How I felt]
+Next time: [What I'll change]
+```
+
+### 🏷️ Tagging Best Practices
+
+**✅ DO:**
+- Tag immediately when entering
+- Use consistent tag names
+- Limit to 2-5 tags per trade
+- Create tags for patterns you want to track
+- Review tag list monthly and consolidate
+
+**❌ DON'T:**
+- Over-tag (10+ tags is too many)
+- Create one-off tags
+- Mix categories (strategy + outcome)
+- Use tags as notes (that's what notes are for)
+- Change tag names mid-year (breaks continuity)
+
+---
+
+## Example Workflows
+
+### Workflow 1: New Momentum Trade
+
+**Step 1 - Entry (Day 0):**
+```
+Position: NVDA, 10 shares @ $850
+Entry Note: "Breaking out of 3-week consolidation on earnings beat. 
+            Volume 2x average. Stop at $820 (-3.5%). Target $920."
+Tags: momentum, earnings-play, breakout
+```
+
+**Step 2 - Monitoring (Days 1-15):**
+- Check position daily in Positions page
+- Can add to entry note if situation changes
+
+**Step 3 - Exit (Day 12):**
+```
+Exit: $912 (+7.3%)
+Exit Note: "Hit near target, profit-taking into resistance. 
+           Great risk/reward. Execution followed plan perfectly. 
+           Confident entry, patient hold."
+```
+
+**Step 4 - Review (End of Month):**
+- Go to Trade History
+- Filter by `momentum` + `earnings-play`
+- Expand NVDA trade
+- Review what worked
+- Compare to other earnings plays
+
+---
+
+### Workflow 2: Learning from a Loss
+
+**The Loss:**
+```
+Position: TSLA, 15 shares @ $245
+Entry Note: "Oversold bounce attempt at support. 
+            RSI <30. Stop at $230."
+Tags: mean-reversion, oversold-bounce
+
+Exit: $228 (-6.9%)
+Exit Note: "Stopped out. Support failed - was a bear flag not 
+           consolidation. Ignored downtrend. Rushed entry without 
+           confirming volume. Lesson: Wait for reversal confirmation."
+Tags: loser, stopped-out
+```
+
+**The Review (Week Later):**
+1. Go to Trade History
+2. Filter by `loser` tag
+3. Expand all losing trades
+4. **Look for patterns:**
+   - "Am I rushing mean-reversion entries?"
+   - "Do I ignore bigger trend too often?"
+5. **Create action item:**
+   - "New rule: No mean-reversion against strong trend"
+   - Add to trading checklist
+
+---
+
+### Workflow 3: Monthly Review
+
+**First Sunday of Month:**
+
+1. **Go to Trade History**
+2. **Set date range:** Last month
+3. **Review winners:**
+   - Filter by `winner` tag
+   - Expand top 3 trades
+   - Note: What did these have in common?
+   
+4. **Review losers:**
+   - Filter by `loser` tag
+   - Expand all losing trades
+   - Note: What patterns led to losses?
+
+5. **Tag analysis:**
+   - Filter by each strategy tag
+   - Compare win rates:
+     - `momentum`: 65% win rate (keep doing!)
+     - `mean-reversion`: 40% win rate (reduce size or stop)
+     
+6. **Update trading plan:**
+   - Double down on what works
+   - Eliminate what doesn't
+   - Document insights
+
+---
+
+## Tips for Maximum Value
+
+### 💡 Pro Tips
+
+**Tip 1: Write Entry Notes BEFORE the Trade**
+- Forces you to think through the setup
+- Prevents impulsive entries
+- Creates accountability
+
+**Tip 2: Review Your Journal Weekly**
+- Friday afternoons work well
+- Look for emerging patterns
+- Adjust strategy as needed
+
+**Tip 3: Compare Your Notes to Outcome**
+- Did reality match your thesis?
+- Were you right for the right reasons?
+- Lucky vs skilled wins?
+
+**Tip 4: Share Winning Trade Notes**
+- Reinforce what works
+- Build confidence in edge
+- Create repeatable process
+
+**Tip 5: Tag Review Trades**
+- Add `review` tag to interesting trades
+- Monthly: Filter by `review`
+- Study these trades deeply
+
+---
+
+## Common Questions
+
+**Q: Do I need to journal every trade?**  
+A: Yes! Even "obvious" trades benefit from documentation. Patterns emerge over time.
+
+**Q: What if I forget to add notes?**  
+A: You can add/edit notes anytime before exit. For exits, you can add exit_note when closing.
+
+**Q: How many tags should I use?**  
+A: Start with 5-10 core tags. Add more only if you see consistent patterns worth tracking.
+
+**Q: Can I search by note content?**  
+A: Currently, no. Use tags for searchable attributes. Notes are for detailed reflection.
+
+**Q: Should I journal demo trades?**  
+A: Absolutely! The habit matters more than the money.
+
+**Q: How long should notes be?**  
+A: Entry notes: 2-4 sentences. Exit notes: 3-5 sentences. Stay concise and factual.
+
+---
+
+## Advanced: Tag-Based Performance Analysis
+
+### Strategy Win Rate Comparison
+
+**Goal:** Find your highest win-rate strategy
+
+**Method:**
+1. Tag all trades by strategy for 3 months
+2. End of quarter:
+   - Filter by `momentum` → Note win rate
+   - Filter by `mean-reversion` → Note win rate
+   - Filter by `breakout` → Note win rate
+3. **Compare:**
+   ```
+   Momentum: 12 trades, 8 wins = 67% win rate
+   Mean-reversion: 8 trades, 3 wins = 37% win rate
+   Breakout: 6 trades, 4 wins = 67% win rate
+   ```
+4. **Decision:** Focus on momentum & breakouts, reduce mean-reversion
+
+### Setup Success Tracking
+
+**Goal:** Identify best setups
+
+**Tags to use:**
+- `earnings-play`
+- `gap-up`
+- `consolidation`
+- `new-high`
+
+**Analysis:**
+- Which setups have highest win rate?
+- Which have best avg R-multiple?
+- Which are most consistent?
+
+---
+
+## Keyboard Shortcuts (Future)
+
+*Planned for v1.5:*
+- `Ctrl/Cmd + J` - Open journal for selected position
+- `Ctrl/Cmd + T` - Quick tag add
+- `Ctrl/Cmd + E` - Edit entry note
+
+---
+
+## Integration with Other Features
+
+### Journal + Daily Analysis
+
+**Workflow:**
+1. Run Daily Analysis (4 PM)
+2. Review EXIT recommendations
+3. **Before exiting:**
+   - Open position modal
+   - Review entry note
+   - Ask: "Did my thesis play out?"
+4. Add thoughtful exit note
+5. Confirm exit
+
+### Journal + Trade History
+
+**All closed trades automatically include:**
+- Entry note (from when you opened position)
+- Exit note (from exit modal)
+- Tags (carry through from position)
+
+**View in Trade History:**
+- Click any row to expand
+- See full journal in beautiful layout
+- Filter by tags to find specific trades
+
+---
+
+## Summary
+
+The Trade Journal is **not optional** if you want to improve as a trader. It's where learning happens.
+
+**Key Takeaways:**
+1. ✍️ Journal every trade - wins AND losses
+2. 🏷️ Tag consistently with 5-10 core tags
+3. 📊 Review patterns weekly/monthly
+4. 🎯 Use insights to refine strategy
+5. 📈 Track improvement over time
+
+**Remember:** 
+> "The goal isn't to have a perfect journal. The goal is to have a journal that makes you a better trader."
+
+Start simple. Stay consistent. Let patterns emerge.
+
+---
+
+**Document Version:** 1.0  
+**Last Updated:** February 14, 2026  
+**Feature Version:** v1.4  
