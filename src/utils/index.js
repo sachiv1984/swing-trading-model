@@ -9,6 +9,7 @@ export const createPageUrl = (pageName) => {
     Reports: '/Reports',
     Settings: '/Settings',
     SystemStatus: '/SystemStatus',
+    PerformanceAnalytics: '/PerformanceAnalytics',
   };
   return routes[pageName] || '/';
 };
