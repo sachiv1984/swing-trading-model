@@ -295,10 +295,12 @@ export const base44 = {
           body.exit_fx_rate = fxRate;
         }
 
-        // ✅ ADDED: Include exit_note if provided
+        // ✅ FIXED: Include exit_note if provided
         if (requestData.exit_note) {
           body.exit_note = requestData.exit_note;
         }
+
+        console.log('Exit request body:', body); // Debug log
 
         const result = await doFetch(`/positions/${positionId}/exit`, {
           method: 'POST',
