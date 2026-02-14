@@ -137,10 +137,10 @@ export default function TagPerformance({ trades }) {
                     {item.winRate.toFixed(0)}%
                   </Badge>
                 </td>
-                <td className={`px-6 py-4 text-right text-sm font-medium ${item.totalPnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <td className={`px-6 py-4 text-right text-sm font-medium ${item.totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                   {item.totalPnl >= 0 ? '+' : ''}£{item.totalPnl.toFixed(0)}
                 </td>
-                <td className={`px-6 py-4 text-right text-sm font-medium ${item.avgPnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <td className={`px-6 py-4 text-right text-sm font-medium ${item.avgPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                   {item.avgPnl >= 0 ? '+' : ''}£{item.avgPnl.toFixed(0)}
                 </td>
               </tr>
