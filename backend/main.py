@@ -187,32 +187,18 @@ def get_portfolio_endpoint():
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
 
-
 @app.post("/positions/{position_id}/exit")
 def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
-    """Exit a position (full or partial) and record in trade history"""
-    try:
-        result = exit_position(...)(
-            position_id=position_id,
-            exit_price=request.exit_price,
-            shares=request.shares,
-            exit_date=request.exit_date,
-            exit_reason=request.exit_reason,
-            exit_fx_rate=request.exit_fx_rate,
-            exit_note=request.exit_note
-        )
-        
-        return {
-            "status": "ok",
-            "data": result
-        }
-    except ValueError as e:
-        # ValueError from service = business logic error (400)
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+    result = exit_position(
+        position_id=position_id,
+        exit_price=request.exit_price,
+        shares=request.shares,
+        exit_date=request.exit_date,
+        exit_reason=request.exit_reason,
+        exit_fx_rate=request.exit_fx_rate,
+        exit_note=request.exit_note  # ✅ NEW
+    )
+    return {"status": "ok", "data": result}
 
 @app.post("/portfolio/position")
 def add_position_endpoint(request: AddPositionRequest):
