@@ -181,7 +181,8 @@ def test_all_endpoints(base_url: str = None) -> Dict:
         {"method": "GET", "path": "/signals", "expected_status": 200},
         {"method": "GET", "path": "/market/status", "expected_status": 200},
         {"method": "GET", "path": "/portfolio/history?days=7", "expected_status": 200},
-    ]
+        {"method": "GET", "path": "/positions/tags", "expected_status": 200},
+        ]
     
     test_results = []
     
