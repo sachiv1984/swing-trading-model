@@ -15,6 +15,10 @@ export default function TradeHistoryTable({ trades }) {
     );
   }
 
+  // ✅ DEBUG: Log first trade to see structure
+  console.log('First trade:', trades[0]);
+  console.log('Trades with notes/tags:', trades.filter(t => t.entry_note || t.exit_note || (t.tags && t.tags.length > 0)).length);
+
   // ✅ NEW: Exit reason styling
   const exitReasonLabels = {
     "Stop Loss Hit": "Stop Hit",
