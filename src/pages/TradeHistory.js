@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "../api/base44Client";
-import { Loader2, Filter, TrendingUp, TrendingDown, Calendar } from "lucide-react";
+import { api, base44 } from "../api/base44Client";
+import { Loader2, Filter, TrendingUp, TrendingDown, Calendar, Tag, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Input } from "../components/ui/input";
+import { cn } from "../lib/utils";
 import PageHeader from "../components/ui/PageHeader";
 import StatsCard from "../components/ui/StatsCard";
 import TradeHistoryTable from "../components/trades/TradeHistoryTable";
@@ -18,6 +19,20 @@ export default function TradeHistory() {
     dateFrom: "",
     dateTo: "",
   });
+  
+  // ✅ NEW: Tag filtering state
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [showTagDropdown, setShowTagDropdown] = useState(false);
+
+  // ✅ NEW: Fetch available tags from all positions
+  const { data: availableTags = [] } = useQuery({
+    queryKey: ["position-tags"],
+    queryFn: async () => {
+      const positions = await base44.entities.Position.list();
+      const allTags = positions.flatMap(p => p.tags || []);
+      return [...new Set(allTags)].sort();
+    },
+  });
 
   const { data: tradesData, isLoading } = useQuery({
     queryKey: ["trades"],
@@ -26,14 +41,32 @@ export default function TradeHistory() {
 
   const trades = tradesData?.trades || [];
 
+  // ✅ NEW: Tag toggle handler
+  const handleTagToggle = (tag) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  // Apply filters (including tag filter)
   const filteredTrades = trades.filter((trade) => {
-  if (filters.market !== "all" && trade.market?.toUpperCase() !== filters.market) return false;
-  if (filters.result === "win" && trade.pnl < 0) return false;
-  if (filters.result === "loss" && trade.pnl >= 0) return false;
-  if (filters.dateFrom && trade.exit_date < filters.dateFrom) return false;
-  if (filters.dateTo && trade.exit_date > filters.dateTo) return false;
-  return true;
-});
+    if (filters.market !== "all" && trade.market?.toUpperCase() !== filters.market) return false;
+    if (filters.result === "win" && trade.pnl < 0) return false;
+    if (filters.result === "loss" && trade.pnl >= 0) return false;
+    if (filters.dateFrom && trade.exit_date < filters.dateFrom) return false;
+    if (filters.dateTo && trade.exit_date > filters.dateTo) return false;
+    
+    // ✅ NEW: Tag filter - show trades that have ANY of the selected tags
+    if (selectedTags.length > 0) {
+      if (!trade.tags || !selectedTags.some(tag => trade.tags.includes(tag))) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
 
   const totalPnL = filteredTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
   const winningTrades = filteredTrades.filter((t) => t.pnl >= 0);
@@ -89,6 +122,65 @@ export default function TradeHistory() {
               <Filter className="w-4 h-4 text-cyan-400" />
               <span className="text-sm font-medium text-slate-300">Filters</span>
             </div>
+            
+            {/* ✅ NEW: Tag Filter Section */}
+            {availableTags.length > 0 && (
+              <div className="mb-4">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowTagDropdown(!showTagDropdown)}
+                    className="w-full flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-white hover:bg-slate-800 transition-colors"
+                  >
+                    <Tag className="w-4 h-4 text-violet-400" />
+                    <span className="text-sm">
+                      {selectedTags.length === 0 
+                        ? "Filter by tags..." 
+                        : `${selectedTags.length} tag${selectedTags.length > 1 ? 's' : ''} selected`}
+                    </span>
+                  </button>
+                  
+                  {showTagDropdown && (
+                    <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-64 overflow-auto">
+                      {availableTags.map((tag) => (
+                        <button
+                          key={tag}
+                          onClick={() => handleTagToggle(tag)}
+                          className={cn(
+                            "w-full px-4 py-2.5 text-left text-sm transition-colors flex items-center justify-between",
+                            selectedTags.includes(tag)
+                              ? "bg-cyan-500/20 text-cyan-400"
+                              : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                          )}
+                        >
+                          <span>{tag}</span>
+                          {selectedTags.includes(tag) && (
+                            <span className="text-cyan-400">✓</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Selected tags pills */}
+                {selectedTags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedTags.map((tag) => (
+                      <button
+                        key={tag}
+                        onClick={() => handleTagToggle(tag)}
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition-colors"
+                      >
+                        {tag}
+                        <X className="w-3 h-3" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Existing filters */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Select value={filters.market} onValueChange={(value) => setFilters({ ...filters, market: value })}>
                 <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
