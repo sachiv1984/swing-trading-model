@@ -11,11 +11,6 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../../api/base44Client";
 
 export default function PositionModal({ position, open, onClose, onSave }) {
-  const [formData, setFormData] = useState({
-    current_price: "",
-    stop_price: ""
-  });
-
   const [journalEdit, setJournalEdit] = useState(false);
   const [journalData, setJournalData] = useState({
     entry_note: "",
@@ -33,13 +28,9 @@ export default function PositionModal({ position, open, onClose, onSave }) {
     },
   });
 
-  // ✅ FIXED: Initialize with native prices
+  // Initialize journal data when position changes
   useEffect(() => {
     if (position) {
-      setFormData({
-        current_price: position.current_price_native || position.current_price || "",
-        stop_price: position.stop_price_native || position.stop_price || ""
-      });
       setJournalData({
         entry_note: position.entry_note || "",
         tags: position.tags || []
@@ -50,9 +41,9 @@ export default function PositionModal({ position, open, onClose, onSave }) {
 
   if (!position) return null;
 
-  // ✅ FIXED: Calculate P&L using native prices consistently
-  const currentPriceNative = parseFloat(formData.current_price) || 0;
-  const entryPriceNative = position.entry_price || 0;  // entry_price is already in native currency
+  // ✅ Calculate P&L using native prices from position
+  const currentPriceNative = position.current_price_native || 0;
+  const entryPriceNative = position.entry_price || 0;
   const shares = position.shares || 0;
 
   const pnl = (currentPriceNative - entryPriceNative) * shares;
@@ -96,20 +87,9 @@ export default function PositionModal({ position, open, onClose, onSave }) {
   };
 
   const handleSave = () => {
-    // Convert native prices back to GBP for backend if needed
-    let currentPriceForSave = parseFloat(formData.current_price);
-    let stopPriceForSave = parseFloat(formData.stop_price);
-    
-    // If US stock, convert from USD to GBP
-    if (position.market === "US" && position.live_fx_rate) {
-      currentPriceForSave = currentPriceForSave / position.live_fx_rate;
-      stopPriceForSave = stopPriceForSave / position.live_fx_rate;
-    }
-    
+    // Just save the journal data - prices are managed by backend
     onSave({
       ...position,
-      current_price: currentPriceForSave,
-      stop_price: stopPriceForSave,
       entry_note: journalData.entry_note || null,
       tags: journalData.tags.length > 0 ? journalData.tags : null
     });
@@ -319,30 +299,6 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                 </Button>
               </div>
             )}
-          </div>
-
-          {/* Editable Fields */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-slate-400">Current Price ({currencySymbol})</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.current_price}
-                onChange={(e) => setFormData({ ...formData, current_price: e.target.value })}
-                className="bg-slate-800/50 border-slate-700 text-white focus:border-cyan-500/50"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-slate-400">Stop Price ({currencySymbol}) - Manual Override</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.stop_price}
-                onChange={(e) => setFormData({ ...formData, stop_price: e.target.value })}
-                className="bg-slate-800/50 border-slate-700 text-white focus:border-rose-500/50"
-              />
-            </div>
           </div>
         </div>
 
