@@ -44,11 +44,10 @@ export default function SystemStatus() {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        mode: 'cors', // Explicitly set CORS mode
+        mode: 'cors',
       });
       
       console.log('Health response status:', response.status);
-      console.log('Health response headers:', [...response.headers.entries()]);
       
       if (!response.ok) {
         const text = await response.text();
@@ -61,7 +60,7 @@ export default function SystemStatus() {
       return data;
     },
     refetchInterval: autoRefresh ? 5000 : false,
-    retry: false, // Don't retry on error
+    retry: false,
   });
 
   // Fetch endpoint tests
@@ -104,7 +103,7 @@ export default function SystemStatus() {
 
   const componentIcons = {
     database: Database,
-    yahooFinance: Globe,
+    yahoo_finance: Globe,
     services: Server,
     config: Settings
   };
@@ -122,7 +121,12 @@ export default function SystemStatus() {
     error: { color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/30", icon: AlertTriangle }
   };
 
-  const successRate = testData ? ((testData.passed / testData.totalTests) * 100).toFixed(1) : 0;
+  // Access nested summary object from backend response
+  const totalTests = testData?.summary?.total || 0;
+  const passedTests = testData?.summary?.passed || 0;
+  const failedTests = testData?.summary?.failed || 0;
+  const errorTests = testData?.summary?.errors || 0;
+  const successRate = testData?.summary?.success_rate?.toFixed(1) || "0.0";
 
   return (
     <div className="space-y-6">
@@ -172,6 +176,13 @@ export default function SystemStatus() {
           <div className="text-xs mt-2 opacity-70">
             This usually means CORS is blocking the request or the backend is not running.
           </div>
+        </div>
+      )}
+
+      {testError && (
+        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+          <div className="font-bold mb-2">❌ Endpoint Tests Failed:</div>
+          <div className="text-sm">{testError.message}</div>
         </div>
       )}
 
@@ -231,7 +242,7 @@ export default function SystemStatus() {
                   Response Time
                 </div>
                 <p className="text-2xl font-bold text-white">
-                  {healthData?.responseTime?.toFixed(1) || "0.0"}ms
+                  {healthData?.response_time_ms?.toFixed(1) || "0.0"}ms
                 </p>
               </div>
               <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-700/50">
@@ -252,7 +263,7 @@ export default function SystemStatus() {
       <div>
         <h2 className="text-xl font-bold text-white mb-4">Component Health Checks</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {healthData?.components && Object.entries(healthData.components).map(([key, component]) => {
+          {healthData?.checks && Object.entries(healthData.checks).map(([key, component]) => {
             const Icon = componentIcons[key] || Server;
             const config = statusConfig[component.status] || statusConfig.unknown;
             const StatusIcon = config.icon;
@@ -276,7 +287,7 @@ export default function SystemStatus() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-white capitalize">
-                        {key.replace(/([A-Z])/g, ' $1').trim()}
+                        {key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim()}
                       </h3>
                       <Badge className={cn("mt-1 border", config.color, config.border)}>
                         <StatusIcon className="w-3 h-3 mr-1" />
@@ -325,22 +336,22 @@ export default function SystemStatus() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-400">Total:</span>
-                <span className="font-bold text-white">{testData.totalTests}</span>
+                <span className="font-bold text-white">{totalTests}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-400">Passed:</span>
-                <span className="font-bold text-emerald-400">{testData.passed}</span>
+                <span className="font-bold text-emerald-400">{passedTests}</span>
               </div>
-              {testData.failed > 0 && (
+              {failedTests > 0 && (
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-slate-400">Failed:</span>
-                  <span className="font-bold text-rose-400">{testData.failed}</span>
+                  <span className="font-bold text-rose-400">{failedTests}</span>
                 </div>
               )}
-              {testData.errors > 0 && (
+              {errorTests > 0 && (
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-slate-400">Errors:</span>
-                  <span className="font-bold text-yellow-400">{testData.errors}</span>
+                  <span className="font-bold text-yellow-400">{errorTests}</span>
                 </div>
               )}
               <div className="flex items-center gap-2 text-sm">
@@ -364,11 +375,12 @@ export default function SystemStatus() {
             <div className="text-center">
               <Play className="w-10 h-10 text-slate-400 mx-auto mb-3" />
               <p className="text-slate-400">Click 'Run Tests' to verify all endpoints</p>
+              <p className="text-slate-500 text-sm mt-1">Tests 14 endpoints including Trade Journal APIs</p>
             </div>
           </div>
         ) : (
           <div className="space-y-2">
-            {testData.tests?.map((test, index) => {
+            {testData.results?.map((test, index) => {
               const config = testStatusConfig[test.status] || testStatusConfig.error;
               const StatusIcon = config.icon;
 
@@ -396,15 +408,15 @@ export default function SystemStatus() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    {test.statusCode && (
+                    {test.status_code && (
                       <Badge variant="outline" className="text-slate-300">
-                        {test.statusCode}
+                        {test.status_code}
                       </Badge>
                     )}
-                    {test.responseTime && (
+                    {test.response_time_ms && (
                       <div className="text-right">
                         <p className="text-sm text-slate-400">Response Time</p>
-                        <p className="font-bold text-white">{test.responseTime}ms</p>
+                        <p className="font-bold text-white">{test.response_time_ms.toFixed(0)}ms</p>
                       </div>
                     )}
                   </div>
