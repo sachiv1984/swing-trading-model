@@ -24,16 +24,11 @@ export default function TradeHistory() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [showTagDropdown, setShowTagDropdown] = useState(false);
 
-  // ✅ FIXED: Fetch available tags from CLOSED positions only (trade history)
-  const { data: availableTags = [] } = useQuery({
-    queryKey: ["trade-history-tags"],
-    queryFn: async () => {
-      // Get closed positions (trade history)
-      const closedPositions = await base44.entities.Position.filter({ status: "closed" }, "-exit_date");
-      const allTags = closedPositions.flatMap(p => p.tags || []);
-      return [...new Set(allTags)].sort();
-    },
-  });
+  // ✅ FIXED: Get tags from the trades data directly (trade_history already has only closed trades)
+  const availableTags = trades
+    .flatMap(trade => trade.tags || [])
+    .filter((tag, index, self) => self.indexOf(tag) === index) // Remove duplicates
+    .sort();
 
   const { data: tradesData, isLoading } = useQuery({
     queryKey: ["trades"],
