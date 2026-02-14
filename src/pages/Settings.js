@@ -6,8 +6,8 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import PageHeader from "../components/ui/PageHeader";
-import { Settings as SettingsIcon, Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette } from "lucide-react";
+import PageHeader from "@/components/ui/PageHeader";
+import { Settings as SettingsIcon, Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 
@@ -21,21 +21,22 @@ export default function Settings() {
     queryFn: () => base44.entities.Settings.list(),
   });
 
+  const defaults = {
+    min_hold_days: 5,
+    atr_multiplier_initial: 2,
+    atr_multiplier_trailing: 3,
+    atr_period: 14,
+    default_currency: "GBP",
+    theme: "dark",
+    uk_commission: 9.95,
+    us_commission: 0,
+    stamp_duty_rate: 0.005,
+    fx_fee_rate: 0.0015,
+    min_trades_for_analytics: 10,
+  };
+
   useEffect(() => {
-    if (formData) return; // Don't reset if we already have form data
-    
-    const defaults = {
-      min_hold_days: 5,
-      atr_multiplier_initial: 2,
-      atr_multiplier_trailing: 3,
-      atr_period: 14,
-      default_currency: "GBP",
-      theme: "dark",
-      uk_commission: 9.95,
-      us_commission: 0,
-      stamp_duty_rate: 0.005,
-      fx_fee_rate: 0.0015,
-    };
+    if (formData) return;
     
     if (settings?.[0]) {
       setFormData({ ...defaults, ...settings[0] });
@@ -274,6 +275,26 @@ export default function Settings() {
               </SelectContent>
             </Select>
           </div>
+        </div>
+      </SectionCard>
+
+      {/* Analytics */}
+      <SectionCard 
+        icon={TrendingUp} 
+        title="Analytics" 
+        iconColor="bg-emerald-500/20 text-emerald-400"
+      >
+        <div className="space-y-2">
+          <Label className="text-slate-400">Minimum Trades for Analytics</Label>
+          <Input
+            type="number"
+            step="1"
+            min="1"
+            value={formData.min_trades_for_analytics || 10}
+            onChange={(e) => handleChange("min_trades_for_analytics", parseInt(e.target.value))}
+            className="bg-slate-800/50 border-slate-700 text-white"
+          />
+          <p className="text-xs text-slate-500">Minimum number of closed trades required to display analytics</p>
         </div>
       </SectionCard>
     </div>
