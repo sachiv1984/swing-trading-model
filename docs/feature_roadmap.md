@@ -1,11 +1,11 @@
-# Feature Roadmap - Momentum Trading Assistant
+l# Feature Roadmap - Momentum Trading Assistant
 
 **Last Updated:** February 14, 2026  
-**Current Version:** 1.4
+**Current Version:** 1.4 (Analytics in progress)
 
 ---
 
-## ✅ Completed Features (v1.0 - v1.3)
+## ✅ Completed Features (v1.0 - v1.4)
 
 ### Core Trading Features
 - ✅ Portfolio management
@@ -66,7 +66,7 @@
 - ✅ Response time tracking
 - ✅ 100% success rate monitoring
 
-### Trade Journal & Notes System (v1.4) ⭐ NEW
+### Trade Journal & Notes System (v1.4)
 - ✅ Entry notes when creating positions
 - ✅ Exit notes when closing positions
 - ✅ Tags system for categorizing trades
@@ -93,10 +93,10 @@
 
 ## 🎯 Planned Features
 
-### Priority 1: High Value, Quick Wins
+### Priority 1: High Value, Essential for Trading
 
-#### 1. Performance Analytics Page
-**Status:** Planned for v1.4  
+#### 1. Performance Analytics Page ⏳ IN PROGRESS
+**Status:** In Progress (v1.4)  
 **Effort:** Medium (3-4 days)  
 **Value:** High
 
@@ -105,18 +105,24 @@
 - Best/worst trades leaderboard
 - Win rate by month chart
 - Average profit vs average loss
-- Max drawdown tracking
+- **Max drawdown tracking** (critical for risk management)
+- **Underwater chart** (% drawdown from peak over time)
 - Sharpe ratio calculation
-- R-multiple distribution chart
+- **R-multiple distribution chart** (strategy effectiveness)
+- **Expectancy per trade** (edge validation)
+- **Average R-multiple** (by tag, by outcome)
 
 **Metrics to Display:**
 - Total return %
 - Annualized return
-- Max drawdown
-- Win rate (by month, quarter, year)
+- **Max drawdown** (emphasize this)
+- **Current drawdown** (prominent display)
+- **Time underwater** (days from peak)
+- Win rate (by month, quarter, year, tag)
 - Average winner / Average loser
 - Profit factor
 - Expectancy per trade
+- **R-multiple by tag** (which setups work best)
 
 **API Endpoints:**
 - `GET /analytics/summary` - Overall statistics
@@ -124,10 +130,125 @@
 - `GET /analytics/trades/best` - Top performers
 - `GET /analytics/trades/worst` - Biggest losses
 - `GET /analytics/drawdown` - Drawdown history
+- `GET /analytics/r-multiples` - R-multiple distribution
 
 ---
 
-#### 2. Alerts & Notifications
+#### 2. Position Sizing Calculator 🚀 PROMOTED TO P1
+**Status:** Planned for v1.4  
+**Effort:** Low (1-2 days)  
+**Value:** **HIGH** (daily workflow improvement)
+
+**Features:**
+- Input: Risk per trade (% of portfolio)
+- Input: Stop loss distance
+- Output: Optimal share count
+- **Integrated into position entry modal** (not separate page)
+- Pre-populate shares field automatically
+- Real-time calculation as user types
+- Validates against available cash
+- Shows warning if position would exceed cash
+
+**Formula:**
+```
+Risk Amount = Portfolio Value × Risk %
+Position Size = Risk Amount / Stop Distance
+```
+
+**Example:**
+- Portfolio: £10,000
+- Risk per trade: 2% = £200
+- Stop distance: £5
+- Position size: 40 shares
+- Cost: 40 × £100 = £4,000
+
+**UI Integration:**
+- **Embedded widget in position entry modal**
+- Shows: "To risk 2% (£200), buy X shares at £Y"
+- Auto-fills shares field
+- Updates live as entry price or stop changes
+- Validates against available cash
+
+**Why Promoted:**
+- Daily value (used every time you enter a position)
+- Prevents sizing errors
+- Enforces risk discipline
+- Quick to implement (1-2 days)
+
+---
+
+#### 3. Portfolio Heat Gauge ⭐ NEW - P1
+**Status:** Planned for v1.4  
+**Effort:** Low-Medium (2-3 days)  
+**Value:** **HIGH** (risk management)
+
+**Features:**
+- Calculate total capital at risk across all positions
+- Display as % of portfolio
+- Color-coded risk indicator
+- Shows risk per position
+- Integrated into Position Sizing Calculator
+- Dashboard widget showing current heat
+
+**Calculation:**
+```
+For each open position:
+  Position Risk = (Entry Price - Stop Price) × Shares
+
+Total Portfolio Heat = Sum of all Position Risks / Portfolio Value
+```
+
+**Example:**
+```
+Position 1: £10k, stop at -5% = £500 risk
+Position 2: £8k, stop at -8% = £640 risk
+Position 3: £12k, stop at -3% = £360 risk
+
+Total Heat = £1,500 / £50,000 = 3% portfolio heat
+```
+
+**UI Display:**
+
+Dashboard Widget:
+```
+┌────────────────────────────────┐
+│ Portfolio Heat                 │
+├────────────────────────────────┤
+│ [████████░░] 3.2%             │
+│                                │
+│ Total Risk: £1,600            │
+│ If all stops hit: -3.2%       │
+│                                │
+│ 5 positions open              │
+│ Max recommended: 10% heat      │
+└────────────────────────────────┘
+```
+
+Position Entry Modal Integration:
+```
+Current heat: 3.2%
+After adding position: 5.2% ✓ (safe)
+```
+
+**Color Coding:**
+- 0-5%: Green (conservative)
+- 5-10%: Yellow (moderate)
+- 10-15%: Orange (aggressive)
+- 15%+: Red (danger - too concentrated)
+
+**API Endpoints:**
+- `GET /portfolio/heat` - Current portfolio heat calculation
+- Returns: total_heat_pct, positions_risk_breakdown, recommendations
+
+**Why Added:**
+- Critical for position sizing discipline
+- Prevents overexposure
+- Answers: "Can I add this position safely?"
+- Complements Position Sizing Calculator perfectly
+
+---
+
+#### 4. Alerts & Notifications
 **Status:** Planned for v1.4  
 **Effort:** Medium-High (4-5 days)  
 **Value:** High
@@ -135,10 +256,10 @@
 **Features:**
 - Email alerts for:
   - Stop loss hit
-  - Position exits grace period
-  - Market regime change
-  - Daily summary report
-- SMS alerts (via Twilio)
+  - Position exits grace period ending (day 8-9 warning)
+  - Market regime change (risk-off signal)
+  - Daily portfolio summary
+- SMS alerts (via Twilio) - optional
 - In-app notifications
 - Configurable alert preferences
 
@@ -172,38 +293,31 @@ CREATE TABLE alert_preferences (
 
 ### Priority 2: Medium Value, Good ROI
 
-#### 3. Position Sizing Calculator
+#### 5. Export & Reporting
 **Status:** Planned for v1.4  
-**Effort:** Low (1-2 days)  
-**Value:** Medium
+**Effort:** Low-Medium (2-3 days)  
+**Value:** Medium (tax necessity)
 
 **Features:**
-- Input: Risk per trade (% of portfolio)
-- Input: Stop loss distance
-- Output: Optimal share count
-- Visual risk calculator in UI
-- Pre-populate position entry form
+- Export trades to CSV (for taxes)
+- Export portfolio snapshots to CSV
+- Generate monthly PDF report
+- Export performance metrics
+- Tax loss harvesting report
 
-**Formula:**
-```
-Risk Amount = Portfolio Value × Risk %
-Position Size = Risk Amount / Stop Distance
-```
+**Export Formats:**
+- CSV for Excel/Google Sheets
+- PDF for sharing/printing
+- JSON for backup
 
-**Example:**
-- Portfolio: £10,000
-- Risk per trade: 2% = £200
-- Stop distance: £5
-- Position size: 40 shares
-
-**UI Integration:**
-- Widget on position entry page
-- Shows: "To risk 2% (£200), buy X shares at £Y"
-- Validates against available cash
+**API Endpoints:**
+- `GET /exports/trades.csv` - Trade history CSV
+- `GET /exports/portfolio.pdf` - Portfolio report PDF
+- `GET /exports/tax-report` - Tax document
 
 ---
 
-#### 4. Watchlist & Screening
+#### 6. Watchlist & Screening
 **Status:** Planned for v1.4  
 **Effort:** Medium (3-4 days)  
 **Value:** Medium
@@ -237,33 +351,9 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 5. Export & Reporting
-**Status:** Planned for v1.4  
-**Effort:** Low-Medium (2-3 days)  
-**Value:** Medium
+### Priority 3: Nice to Have (v2.0)
 
-**Features:**
-- Export trades to CSV (for taxes)
-- Export portfolio snapshots to CSV
-- Generate monthly PDF report
-- Export performance metrics
-- Tax loss harvesting report
-
-**Export Formats:**
-- CSV for Excel/Google Sheets
-- PDF for sharing/printing
-- JSON for backup
-
-**API Endpoints:**
-- `GET /exports/trades.csv` - Trade history CSV
-- `GET /exports/portfolio.pdf` - Portfolio report PDF
-- `GET /exports/tax-report` - Tax document
-
----
-
-### Priority 3: Nice to Have
-
-#### 6. Position Correlation Analysis
+#### 7. Position Correlation Analysis
 **Status:** Planned for v2.0  
 **Effort:** High (5-6 days)  
 **Value:** Medium
@@ -276,7 +366,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 7. Backtesting Module
+#### 8. Backtesting Module
 **Status:** Planned for v2.0  
 **Effort:** Very High (2-3 weeks)  
 **Value:** High (for validation)
@@ -289,7 +379,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 8. Multi-Portfolio Support
+#### 9. Multi-Portfolio Support
 **Status:** Planned for v2.0  
 **Effort:** High (1 week)  
 **Value:** Low (single user system)
@@ -302,7 +392,7 @@ CREATE TABLE watchlist (
 
 ---
 
-#### 9. Mobile App
+#### 10. Mobile App
 **Status:** Planned for v2.0  
 **Effort:** Very High (4-6 weeks)  
 **Value:** Medium
@@ -315,69 +405,93 @@ CREATE TABLE watchlist (
 
 ---
 
-## 📊 Feature Priority Matrix
+## 📊 Updated Feature Priority Matrix
 
-| Feature | Effort | Value | Priority | Version |
-|---------|--------|-------|----------|---------|
-| ~~API Health & Status Page~~ | ~~Low~~ | ~~Very High~~ | ~~P1~~ | ✅ v1.3 |
-| ~~Trade Journal~~ | ~~Medium~~ | ~~High~~ | ~~P1~~ | ✅ v1.4 |
-| Performance Analytics | Medium | High | P1 | v1.4 |
-| Alerts & Notifications | Medium-High | High | P1 | v1.4 |
-| Position Sizing | Low | Medium | P2 | v1.4 |
-| Watchlist | Medium | Medium | P2 | v1.4 |
-| Export & Reporting | Low-Medium | Medium | P2 | v1.4 |
-| Correlation Analysis | High | Medium | P3 | v2.0 |
-| Backtesting | Very High | High | P3 | v2.0 |
-| Multi-Portfolio | High | Low | P3 | v2.0 |
-| Mobile App | Very High | Medium | P3 | v2.0 |
+| Feature | Effort | Value | Priority | Version | Status |
+|---------|--------|-------|----------|---------|--------|
+| ~~API Health & Status~~ | ~~Low~~ | ~~Very High~~ | ~~P1~~ | ✅ v1.3 | DONE |
+| ~~Trade Journal~~ | ~~Medium~~ | ~~High~~ | ~~P1~~ | ✅ v1.4 | DONE |
+| Performance Analytics | Medium | High | P1 | v1.4 | ⏳ IN PROGRESS |
+| Position Sizing Calculator | Low | **High** | P1 | v1.4 | 🚀 PROMOTED |
+| Portfolio Heat Gauge | Low-Med | **High** | P1 | v1.4 | ⭐ NEW |
+| Alerts & Notifications | Medium-High | High | P1 | v1.4 | Planned |
+| Export & Reporting | Low-Medium | Medium | P2 | v1.4 | Planned |
+| Watchlist | Medium | Medium | P2 | v1.4 | Planned |
+| Correlation Analysis | High | Medium | P3 | v2.0 | Deferred |
+| Backtesting | Very High | High | P3 | v2.0 | Deferred |
+| Multi-Portfolio | High | Low | P3 | v2.0 | Deferred |
+| Mobile App | Very High | Medium | P3 | v2.0 | Deferred |
 
 ---
 
-## 🎯 Recommended Implementation Order
+## 🎯 Updated Implementation Order
 
 ### Phase 1 (v1.4) - Q2 2026
 
-1. **Performance Analytics** (3-4 days)
-   - Understand what's working
-   - Data already available
-   - Visual insights
+1. ⏳ **Performance Analytics** (3-4 days) - **IN PROGRESS**
+   - Finish current work
+   - Emphasize R-multiples and drawdown tracking
+   - Add underwater chart
+   - R-multiple by tag analysis
 
-2. **Alerts & Notifications** (4-5 days)
-   - Stay informed without checking constantly
-   - Professional feature
-   - Good user experience
+2. 🚀 **Position Sizing Calculator** (1-2 days) - **DO NEXT**
+   - Integrate into position entry modal
+   - Auto-calculate optimal shares
+   - Real-time validation
+
+3. ⭐ **Portfolio Heat Gauge** (2-3 days)
+   - Dashboard widget
+   - Integration with Position Sizing
+   - Risk warnings
+
+4. **Alerts & Notifications** (4-5 days)
+   - Stop hit alerts
+   - Grace period warnings
+   - Risk-off signals
+   - Daily summaries
 
 ### Phase 2 (v1.4) - Q2 2026
 
-4. **Position Sizing Calculator** (1-2 days)
-   - Quick win
-   - Improves risk management
-   - Easy to implement
-
 5. **Export & Reporting** (2-3 days)
-   - Practical necessity (taxes)
-   - Low effort
-   - High utility
+   - CSV export for taxes
+   - PDF reports
 
-6. **Watchlist & Screening** (3-4 days)
+6. **Watchlist** (3-4 days) - **OPTIONAL**
+   - Can defer to v2.0 if time-constrained
 
 ### Phase 3 (v2.0) - Q3 2026
 7. **Correlation Analysis** (5-6 days)
-8. Consider **Backtesting** if needed for validation
+8. **Backtesting** (2-3 weeks) - If needed for validation
 
 ---
 
-## 💡 Quick Wins (Can be done in 1-2 days each)
+## 💡 Quick Wins (Can slot between major features)
 
+### High Priority Quick Wins
 1. ~~**API Health Check**~~ ✅ COMPLETED
 2. ~~**Position notes field**~~ ✅ COMPLETED (Trade Journal v1.4)
-3. **Best/worst trades widget** - Add to dashboard
-4. **Win rate chart** - Simple bar chart by month
-5. **CSV export button** - Download trades as CSV
-6. **Daily email summary** - Cron job to send portfolio status
-7. **Stop loss alert** - Email when stop is hit
-8. **Grace period indicator** - Visual countdown in UI
-9. **FX rate history** - Track GBP/USD changes
+3. **Slippage calculation** (1-2 hours) ⭐ NEW
+   - Add to trade history table
+   - Show: "Avg slippage: -0.12%"
+   - Formula: (Fill Price - Market Price) / Market Price
+4. **Current drawdown widget** (30 mins) ⭐ NEW
+   - Dashboard display
+   - "Drawdown: -8.2%, 12 days underwater"
+5. **R-multiple column** in trade history (1 hour) ⭐ NEW
+
+### Medium Priority Quick Wins
+6. **Best/worst trades widget** - Add to dashboard
+7. **Win rate chart** - Simple bar chart by month
+8. **CSV export button** - Download trades as CSV
+9. **Grace period indicator** - Visual countdown in UI
+10. **Compliance metrics** (1 day) ⭐ NEW
+    - Journal completion rate
+    - Stop-based exit rate
+    - Avg position size
+
+### Lower Priority Quick Wins
+11. **Daily email summary** - Cron job to send portfolio status
+12. **FX rate history** - Track GBP/USD changes
 
 ---
 
@@ -391,6 +505,8 @@ CREATE TABLE watchlist (
 - Machine learning predictions
 - Options trading support
 - Futures trading support
+- **Gap risk monitor** (not actionable for this strategy) ❌ NEW
+- **Full compliance scoring system** (defer to v2.0 until more data) 🤔 NEW
 
 ---
 
@@ -418,7 +534,21 @@ When evaluating new features, ask:
 
 ## 🆕 Recent Changes
 
-### Completed in v1.4 (February 2026) ⭐ NEW
+### In Progress (February 2026) ⏳
+- ⏳ Performance Analytics Page
+  - Adding R-multiple tracking
+  - Emphasizing drawdown analysis
+  - Underwater chart visualization
+
+### Roadmap Updates (February 2026) 🔄
+- 🚀 Promoted Position Sizing Calculator to P1 (from P2)
+- ⭐ Added Portfolio Heat Gauge as new P1 feature
+- ⭐ Added Slippage Tracking as quick win
+- ⭐ Added Basic Compliance Metrics as quick win
+- ❌ Removed Gap Risk Monitor (not actionable)
+- 🤔 Deferred Full Compliance Score to v2.0
+
+### Completed in v1.4 (February 2026)
 - ✅ Trade Journal & Notes System
 - ✅ Entry and exit note fields (500 char limit)
 - ✅ Tag system with autocomplete
@@ -452,4 +582,30 @@ When evaluating new features, ask:
 
 ---
 
-**Next Review:** May 2026
+## 📋 Summary of Key Changes
+
+### Priority Changes
+- **Position Sizing Calculator**: P2 → P1 (daily workflow value)
+- **Portfolio Heat Gauge**: NEW P1 feature (risk management)
+
+### New Features Added
+- Portfolio Heat Gauge (P1)
+- Slippage Tracking (Quick Win)
+- Basic Compliance Metrics (Quick Win)
+- Current Drawdown Widget (Quick Win)
+- R-multiple Column (Quick Win)
+
+### Features Removed/Deferred
+- Gap Risk Monitor (removed - not actionable)
+- Full Compliance Score (deferred to v2.0)
+
+### Analytics Enhancements
+- Emphasize R-multiple tracking
+- Emphasize drawdown analysis
+- Add underwater chart
+- R-multiple by tag analysis
+
+---
+
+**Next Review:** May 2026  
+**Current Focus:** Complete Analytics → Position Sizing → Portfolio Heat
