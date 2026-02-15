@@ -335,6 +335,8 @@ export default function PerformanceAnalytics() {
 
     // Capital efficiency (simplified - assuming average position size)
     const avgPositionSize = filteredTrades.reduce((sum, t) => sum + (t.entry_price * t.shares), 0) / filteredTrades.length;
+    // Calculate total P&L from filtered trades
+    const totalPnl = filteredTrades.reduce((sum, t) => sum + t.pnl, 0);
     const capitalEfficiency = avgPositionSize > 0 ? (totalPnl / avgPositionSize) * 100 : 0;
 
     // ✅ NEW: Calculate time underwater
