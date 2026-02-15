@@ -132,83 +132,6 @@ export default function PerformanceAnalytics() {
     const grossProfit = winners.reduce((sum, t) => sum + t.pnl, 0);
     const grossLoss = Math.abs(losers.reduce((sum, t) => sum + t.pnl, 0));
 
-    // ✅ Step 4: Fallback for No History (time-weighted trade returns)
-    const calculateTradeSharpe = () => {
-      if (filteredTrades.length < 10) return 0;
-
-      const weightedReturns = filteredTrades
-        .map(t => {
-          const holdDays = Math.max(
-            1,
-            (new Date(t.exit_date) - new Date(t.entry_date)) / (1000 * 60 * 60 * 24)
-          );
-
-          const pnlPercent = Number(t.pnl_percent);
-          if (!Number.isFinite(pnlPercent)) return null;
-
-          // Annualize return for this holding period
-          return (pnlPercent / holdDays) * 252;
-        })
-        .filter(r => Number.isFinite(r));
-
-      if (weightedReturns.length < 2) return 0;
-
-      const avgReturn = weightedReturns.reduce((a, b) => a + b, 0) / weightedReturns.length;
-      const stdDev = Math.sqrt(
-        weightedReturns.reduce((sum, r) => sum + Math.pow(r - avgReturn, 2), 0) / weightedReturns.length
-      );
-
-      // Already annualized, no √252
-      return stdDev > 0 ? avgReturn / stdDev : 0;
-    };
-
-    // ✅ Step 2 + 3 + 5: Correct Sharpe using DAILY portfolio returns (with method tracking)
-    let sharpeRatio = 0;
-    let sharpeMethod = portfolioHistory.length >= 30 ? "portfolio" : "trade";
-
-    if (portfolioHistory.length >= 30) {
-      // ✅ Sort by date chronologically
-      const sorted = [...portfolioHistory].sort((a, b) =>
-        new Date(a.snapshot_date) - new Date(b.snapshot_date)
-      );
-
-      // ✅ Calculate daily returns
-      const dailyReturns = [];
-      for (let i = 1; i < sorted.length; i++) {
-        const prevValue = parseFloat(sorted[i - 1].total_value);
-        const currValue = parseFloat(sorted[i].total_value);
-
-        if (prevValue > 0 && Number.isFinite(prevValue) && Number.isFinite(currValue)) {
-          const dailyReturn = ((currValue - prevValue) / prevValue) * 100;
-          dailyReturns.push(dailyReturn);
-        }
-      }
-
-      if (dailyReturns.length >= 2) {
-        // ✅ Average daily return
-        const avgDailyReturn =
-          dailyReturns.reduce((a, b) => a + b, 0) / dailyReturns.length;
-
-        // ✅ Standard deviation of daily returns
-        const variance =
-          dailyReturns.reduce((sum, r) => sum + Math.pow(r - avgDailyReturn, 2), 0) /
-          dailyReturns.length;
-
-        const stdDev = Math.sqrt(variance);
-
-        // ✅ Annualize with √252 (now correct because we have DAILY returns)
-        sharpeRatio = stdDev > 0 ? (avgDailyReturn / stdDev) * Math.sqrt(252) : 0;
-        sharpeMethod = "portfolio";
-      } else {
-        // If portfolio history exists but daily returns are unusable, fallback
-        sharpeRatio = calculateTradeSharpe();
-        sharpeMethod = "trade";
-      }
-    } else {
-      sharpeRatio = calculateTradeSharpe();
-      sharpeMethod = "trade";
-    }
-
     // ✅ Filter portfolio history to match selected time window
     const getFilteredPortfolioHistory = () => {
       if (timePeriod === "all_time") return portfolioHistory;
@@ -243,37 +166,104 @@ export default function PerformanceAnalytics() {
       );
     };
 
-    // ✅ Max Drawdown based on REAL portfolio equity (daily snapshots)
-    let peakEquity = 0;
-    let maxDrawdown = 0;
-    let maxDrawdownPercent = 0;
-    let maxDrawdownDate = "";
-    
-    const filteredPortfolioHistory = getFilteredPortfolioHistory();
-    const sortedEquity = [...filteredPortfolioHistory].sort(
-      (a, b) => new Date(a.snapshot_date) - new Date(b.snapshot_date)
-    );
-    
-    sortedEquity.forEach(snapshot => {
-      const equity = Number(snapshot.total_value);
-      if (!Number.isFinite(equity)) return;
-    
-      if (equity > peakEquity) {
-        peakEquity = equity;
-      }
-    
-      const drawdownAmount = peakEquity - equity;
-      const drawdownPct = peakEquity > 0
-        ? (drawdownAmount / peakEquity) * 100
-        : 0;
-    
-      if (drawdownAmount > maxDrawdown) {
-        maxDrawdown = drawdownAmount;
-        maxDrawdownPercent = drawdownPct;
-        maxDrawdownDate = snapshot.snapshot_date;
-      }
-    });
+    // ✅ Step 4: Fallback for No History (time-weighted trade returns)
+    const calculateTradeSharpe = () => {
+      if (filteredTrades.length < 10) return 0;
 
+      const weightedReturns = filteredTrades
+        .map(t => {
+          const holdDays = Math.max(
+            1,
+            (new Date(t.exit_date) - new Date(t.entry_date)) / (1000 * 60 * 60 * 24)
+          );
+
+          const pnlPercent = Number(t.pnl_percent);
+          if (!Number.isFinite(pnlPercent)) return null;
+
+          // Annualize return for this holding period
+          return (pnlPercent / holdDays) * 252;
+        })
+        .filter(r => Number.isFinite(r));
+
+      if (weightedReturns.length < 2) return 0;
+
+      const avgReturn = weightedReturns.reduce((a, b) => a + b, 0) / weightedReturns.length;
+      const stdDev = Math.sqrt(
+        weightedReturns.reduce((sum, r) => sum + Math.pow(r - avgReturn, 2), 0) / weightedReturns.length
+      );
+
+      // Already annualized, no √252
+      return stdDev > 0 ? avgReturn / stdDev : 0;
+    };
+
+          // ✅ Use the same filtered portfolio history for BOTH Sharpe and Drawdown
+      const filteredPortfolioHistory = getFilteredPortfolioHistory();
+      
+      // ✅ Sharpe (filtered)
+      let sharpeRatio = 0;
+      let sharpeMethod = filteredPortfolioHistory.length >= 1 ? "portfolio" : "trade";
+      
+      if (filteredPortfolioHistory.length >= 30) {
+        const sorted = [...filteredPortfolioHistory].sort(
+          (a, b) => new Date(a.snapshot_date) - new Date(b.snapshot_date)
+        );
+      
+        const dailyReturns = [];
+        for (let i = 1; i < sorted.length; i++) {
+          const prevValue = parseFloat(sorted[i - 1].total_value);
+          const currValue = parseFloat(sorted[i].total_value);
+      
+          if (prevValue > 0 && Number.isFinite(prevValue) && Number.isFinite(currValue)) {
+            const dailyReturn = ((currValue - prevValue) / prevValue) * 100;
+            dailyReturns.push(dailyReturn);
+          }
+        }
+      
+        if (dailyReturns.length >= 2) {
+          const avgDailyReturn = dailyReturns.reduce((a, b) => a + b, 0) / dailyReturns.length;
+      
+          const variance =
+            dailyReturns.reduce((sum, r) => sum + Math.pow(r - avgDailyReturn, 2), 0) /
+            dailyReturns.length;
+      
+          const stdDev = Math.sqrt(variance);
+      
+          sharpeRatio = stdDev > 0 ? (avgDailyReturn / stdDev) * Math.sqrt(252) : 0;
+          sharpeMethod = "portfolio";
+        } else {
+          sharpeRatio = calculateTradeSharpe();
+          sharpeMethod = "trade";
+        }
+      } else {
+        sharpeRatio = calculateTradeSharpe();
+        sharpeMethod = "trade";
+      }
+      
+      // ✅ Max Drawdown (filtered) — reuse the same filteredPortfolioHistory
+      let peakEquity = 0;
+      let maxDrawdown = 0;
+      let maxDrawdownPercent = 0;
+      let maxDrawdownDate = "";
+      
+      const sortedEquity = [...filteredPortfolioHistory].sort(
+        (a, b) => new Date(a.snapshot_date) - new Date(b.snapshot_date)
+      );
+      
+      sortedEquity.forEach(snapshot => {
+        const equity = Number(snapshot.total_value);
+        if (!Number.isFinite(equity)) return;
+      
+        if (equity > peakEquity) peakEquity = equity;
+      
+        const drawdownAmount = peakEquity - equity;
+        const drawdownPct = peakEquity > 0 ? (drawdownAmount / peakEquity) * 100 : 0;
+      
+        if (drawdownAmount > maxDrawdown) {
+          maxDrawdown = drawdownAmount;
+          maxDrawdownPercent = drawdownPct;
+          maxDrawdownDate = snapshot.snapshot_date;
+        }
+      });
     const totalPnl = filteredTrades.reduce((sum, t) => sum + t.pnl, 0);
 
     const firstEquity = sortedEquity.length ? Number(sortedEquity[0].total_value) : 0;
