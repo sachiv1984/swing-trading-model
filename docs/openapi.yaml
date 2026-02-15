@@ -3,80 +3,257 @@ info:
   title: Momentum Trading Assistant API
   version: 1.4.1
   description: |
-    Fully synced OpenAPI specification for Momentum Trading Assistant.
-    Decision-support tool only. Deterministic, server-side logic.
+    Complete API specification for Momentum Trading Assistant.
+    Decision-support tool with deterministic, server-side logic.
+    
+    **Key Principles:**
+    - Backend is single source of truth
+    - All calculations server-side
+    - Exit prices user-provided (broker executions)
+    - Multi-currency support (GBP base, USD/GBP native)
+
 servers:
   - url: https://api.example.com
+    description: Production server
+  - url: http://localhost:8000
+    description: Development server
 
 tags:
   - name: Portfolio
+    description: Portfolio management and overview
   - name: Positions
+    description: Position entry, exit, and monitoring
   - name: Trades
+    description: Trade history and statistics
   - name: Cash
+    description: Cash management and transactions
   - name: Signals
+    description: Momentum signal generation
   - name: Market
+    description: Market regime and status
   - name: Health
+    description: System health and diagnostics
   - name: Settings
+    description: Strategy configuration
+  - name: Journal
+    description: Trade journaling and notes
 
 paths:
   /portfolio:
     get:
       tags: [Portfolio]
       summary: Get portfolio overview
+      description: |
+        Returns complete portfolio overview with live prices, cash balance, 
+        and all open positions.
       responses:
         '200':
-          description: Portfolio overview
+          description: Portfolio overview retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PortfolioOverviewResponse'
-
-  /positions:
-    get:
-      tags: [Positions]
-      summary: Get all open positions
-      responses:
-        '200':
-          description: Positions list
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PositionsListResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PortfolioOverview'
+              example:
+                status: ok
+                data:
+                  cash: 5000.00
+                  cash_balance: 5000.00
+                  total_value: 15000.00
+                  open_positions_value: 10000.00
+                  total_pnl: 1000.00
+                  initial_value: 14000.00
+                  net_deposits: 14000.00
+                  live_fx_rate: 1.3642
+                  last_updated: "2026-02-15T10:30:00Z"
+                  positions: []
 
   /portfolio/position:
     post:
       tags: [Portfolio]
       summary: Add a new position
+      description: |
+        Manual position entry supporting fractional shares.
+        Auto-calculates fees, ATR, and initial stops.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AddPositionRequest'
+            example:
+              ticker: NVDA
+              market: US
+              entry_date: "2026-02-15"
+              shares: 10.5
+              entry_price: 850.00
+              fx_rate: 1.3642
+              atr_value: 15.32
+              entry_note: "Breakout above $800 resistance"
+              tags: ["momentum", "breakout"]
       responses:
         '200':
-          description: Position created
+          description: Position created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AddPositionResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AddPositionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /portfolio/snapshot:
+    post:
+      tags: [Portfolio]
+      summary: Create daily portfolio snapshot
+      description: |
+        Idempotent endpoint to create or update daily snapshot.
+        Used for historical tracking and analytics.
+      responses:
+        '200':
+          description: Snapshot created/updated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PortfolioSnapshot'
+
+  /portfolio/history:
+    get:
+      tags: [Portfolio]
+      summary: Get portfolio history
+      description: Retrieve historical portfolio snapshots for charting
+      parameters:
+        - in: query
+          name: days
+          schema:
+            type: integer
+            default: 30
+          description: Number of days to retrieve
+      responses:
+        '200':
+          description: Portfolio history retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/PortfolioSnapshot'
+
+  /positions:
+    get:
+      tags: [Positions]
+      summary: Get all open positions
+      description: |
+        Returns all open positions with live prices, stops, and P&L.
+        ALWAYS fetches fresh prices from market.
+      responses:
+        '200':
+          description: Positions retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Position'
 
   /positions/analyze:
     get:
       tags: [Positions]
-      summary: Run daily analysis
+      summary: Run daily position analysis
+      description: |
+        Deterministic daily monitoring:
+        - Updates all prices
+        - Recalculates stops
+        - Checks market regime
+        - Recommends HOLD/EXIT actions
       responses:
         '200':
-          description: Analysis result
+          description: Analysis complete
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AnalysisResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AnalysisResult'
 
   /positions/{position_id}/exit:
     post:
       tags: [Positions]
       summary: Exit a position
+      description: |
+        Exit full or partial position using user-provided prices.
+        Records in trade history and updates cash.
+      parameters:
+        - in: path
+          name: position_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Position UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExitPositionRequest'
+            example:
+              shares: 10.5
+              exit_price: 920.00
+              exit_date: "2026-02-15"
+              exit_reason: "Target Reached"
+              exit_fx_rate: 1.3650
+              exit_note: "Hit target, took profits"
+      responses:
+        '200':
+          description: Exit successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ExitPositionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /positions/{position_id}/note:
+    patch:
+      tags: [Journal]
+      summary: Update position notes
+      description: |
+        Update entry or exit notes for a position.
+        Pass null to clear a note.
       parameters:
         - in: path
           name: position_id
@@ -89,31 +266,126 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExitPositionRequest'
+              $ref: '#/components/schemas/UpdateNoteRequest'
+            examples:
+              updateEntry:
+                value:
+                  entry_note: "Updated reasoning after analysis"
+                  exit_note: null
+              updateBoth:
+                value:
+                  entry_note: "Breakout confirmed"
+                  exit_note: "Target reached"
       responses:
         '200':
-          description: Exit result
+          description: Notes updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExitPositionResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/UpdateNoteResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /positions/{position_id}/tags:
+    patch:
+      tags: [Journal]
+      summary: Update position tags
+      description: |
+        Update tags for categorizing positions.
+        Tags: lowercase, numbers, hyphens only. Max 20 chars, max 10 tags.
+      parameters:
+        - in: path
+          name: position_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTagsRequest'
+            examples:
+              addTags:
+                value:
+                  tags: ["momentum", "breakout", "winner"]
+              clearTags:
+                value:
+                  tags: []
+      responses:
+        '200':
+          description: Tags updated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/UpdateTagsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /positions/tags:
+    get:
+      tags: [Journal]
+      summary: Get all unique tags
+      description: |
+        Retrieve all tags used across positions for autocomplete.
+        Returns sorted alphabetically.
+      responses:
+        '200':
+          description: Tags retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/TagsListResponse'
+              example:
+                status: ok
+                data:
+                  tags: ["breakout", "momentum", "winner"]
+                  total_positions: 42
+                  positions_with_tags: 38
 
   /trades:
     get:
       tags: [Trades]
       summary: Get trade history
+      description: Retrieve all closed trades with statistics
       responses:
         '200':
-          description: Trades
+          description: Trade history retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TradeHistoryResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/TradeHistoryResponse'
 
   /cash/transaction:
     post:
       tags: [Cash]
       summary: Record cash transaction
+      description: Record deposit or withdrawal for accurate P&L
       requestBody:
         required: true
         content:
@@ -122,35 +394,61 @@ paths:
               $ref: '#/components/schemas/CashTransactionRequest'
       responses:
         '200':
-          description: Cash updated
+          description: Transaction recorded
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CashTransactionResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CashTransactionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /cash/transactions:
     get:
       tags: [Cash]
       summary: List cash transactions
+      parameters:
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum: [ASC, DESC]
+            default: DESC
       responses:
         '200':
-          description: Transactions
+          description: Transactions retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CashTransactionsListResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/CashTransaction'
 
   /cash/summary:
     get:
       tags: [Cash]
-      summary: Cash summary
+      summary: Get cash flow summary
       responses:
         '200':
-          description: Cash summary
+          description: Summary retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CashSummaryResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CashSummary'
 
   /signals/generate:
     post:
@@ -173,7 +471,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignalGenerationResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/SignalGenerationResponse'
 
   /signals:
     get:
@@ -184,13 +487,21 @@ paths:
           name: status
           schema:
             type: string
+            enum: [new, entered, dismissed, expired, already_held]
       responses:
         '200':
-          description: Signals
+          description: Signals retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignalsListResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Signal'
 
   /signals/{signal_id}:
     patch:
@@ -208,20 +519,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateSignalRequest'
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [entered, dismissed, expired]
       responses:
         '200':
-          description: Updated
+          description: Signal updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateSignalResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Signal'
+
     delete:
       tags: [Signals]
       summary: Delete signal
+      parameters:
+        - in: path
+          name: signal_id
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
-          description: Deleted
+          description: Signal deleted
           content:
             application/json:
               schema:
@@ -230,22 +559,27 @@ paths:
   /market/status:
     get:
       tags: [Market]
-      summary: Get market status
+      summary: Get market regime status
       responses:
         '200':
-          description: Market status
+          description: Market status retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MarketStatusResponse'
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MarketStatus'
 
   /health:
     get:
       tags: [Health]
-      summary: Health check
+      summary: Basic health check
       responses:
         '200':
-          description: Health
+          description: System healthy
           content:
             application/json:
               schema:
@@ -254,57 +588,121 @@ paths:
   /health/detailed:
     get:
       tags: [Health]
-      summary: Detailed health
+      summary: Detailed health check
       responses:
         '200':
-          description: Detailed health
+          description: Detailed health status
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthDetailedResponse'
 
-  /settings:
-    get:
-      tags: [Settings]
-      summary: Get settings
+  /test/endpoints:
+    post:
+      tags: [Health]
+      summary: Test all endpoints
       responses:
         '200':
-          description: Settings
+          description: Tests complete
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SettingsResponse'
+                $ref: '#/components/schemas/EndpointTestResponse'
+
+  /settings:
+    get:
+      tags: [Settings]
+      summary: Get strategy settings
+      responses:
+        '200':
+          description: Settings retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiOk'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Settings'
 
 components:
   schemas:
     ApiOk:
       type: object
+      required: [status]
       properties:
         status:
           type: string
+          enum: [ok]
           example: ok
 
     ApiError:
       type: object
+      required: [status, message]
       properties:
         status:
           type: string
-          example: error
+          enum: [error]
         message:
           type: string
+          description: Human-readable error message
 
     PriceDual:
       type: object
+      description: Dual-currency price representation
+      required: [gbp, native]
       properties:
         gbp:
           type: number
           format: float
+          description: Price in GBP (for portfolio calculations)
         native:
           type: number
           format: float
+          description: Price in native currency (for display)
 
-    PositionListItem:
+    PortfolioOverview:
       type: object
+      required: [cash, total_value, open_positions_value, total_pnl]
+      properties:
+        cash:
+          type: number
+          format: float
+        cash_balance:
+          type: number
+          format: float
+        total_value:
+          type: number
+          format: float
+        open_positions_value:
+          type: number
+          format: float
+        total_pnl:
+          type: number
+          format: float
+        initial_value:
+          type: number
+          format: float
+        net_deposits:
+          type: number
+          format: float
+        live_fx_rate:
+          type: number
+          format: float
+        last_updated:
+          type: string
+          format: date-time
+        positions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Position'
+
+    Position:
+      type: object
+      required: [id, ticker, market, entry_date, shares, entry_price, current_price, stop_price, pnl, pnl_percent, holding_days, status]
       properties:
         id:
           type: string
@@ -318,63 +716,58 @@ components:
           type: string
           format: date
         entry_price:
-          $ref: '#/components/schemas/PriceDual'
+          type: number
+          format: float
         shares:
           type: number
+          format: float
         current_price:
-          $ref: '#/components/schemas/PriceDual'
+          type: number
+          format: float
+        current_price_native:
+          type: number
+          format: float
         stop_price:
-          $ref: '#/components/schemas/PriceDual'
+          type: number
+          format: float
+        stop_price_native:
+          type: number
+          format: float
         pnl:
           type: number
+          format: float
         pnl_percent:
           type: number
+          format: float
         holding_days:
           type: integer
         status:
           type: string
-
-    PortfolioOverviewResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
-              properties:
-                cash:
-                  type: number
-                cash_balance:
-                  type: number
-                total_value:
-                  type: number
-                open_positions_value:
-                  type: number
-                total_pnl:
-                  type: number
-                initial_value:
-                  type: number
-                net_deposits:
-                  type: number
-                live_fx_rate:
-                  type: number
-                last_updated:
-                  type: string
-                  format: date-time
-                positions:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/PositionListItem'
-
-    PositionsListResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/PositionListItem'
+          enum: [open, closed]
+        grace_period:
+          type: boolean
+        display_status:
+          type: string
+          enum: [GRACE, PROFITABLE, LOSING]
+        atr_value:
+          type: number
+          format: float
+        fx_rate:
+          type: number
+          format: float
+        live_fx_rate:
+          type: number
+          format: float
+        entry_note:
+          type: string
+          nullable: true
+        exit_note:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
 
     AddPositionRequest:
       type: object
@@ -382,6 +775,7 @@ components:
       properties:
         ticker:
           type: string
+          maxLength: 20
         market:
           type: string
           enum: [US, UK]
@@ -390,63 +784,60 @@ components:
           format: date
         shares:
           type: number
+          format: float
+          minimum: 0.0001
         entry_price:
           type: number
+          format: float
+          minimum: 0.01
         fx_rate:
           type: number
+          format: float
           nullable: true
         atr_value:
           type: number
+          format: float
           nullable: true
         stop_price:
           type: number
+          format: float
           nullable: true
         entry_note:
           type: string
+          maxLength: 500
           nullable: true
         tags:
           type: array
+          maxItems: 10
           items:
             type: string
+            pattern: '^[a-z0-9-]+$'
+            maxLength: 20
 
     AddPositionResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
-              properties:
-                ticker:
-                  type: string
-                total_cost:
-                  type: number
-                fees_paid:
-                  type: number
-                entry_price:
-                  type: number
-                initial_stop:
-                  type: number
-                remaining_cash:
-                  type: number
-
-    AnalysisResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
-              properties:
-                analysis_date:
-                  type: string
-                  format: date
-                summary:
-                  type: object
-                actions:
-                  type: array
-                  items:
-                    type: object
+      type: object
+      required: [ticker, total_cost, fees_paid, entry_price, initial_stop, remaining_cash, position_id]
+      properties:
+        ticker:
+          type: string
+        total_cost:
+          type: number
+          format: float
+        fees_paid:
+          type: number
+          format: float
+        entry_price:
+          type: number
+          format: float
+        initial_stop:
+          type: number
+          format: float
+        remaining_cash:
+          type: number
+          format: float
+        position_id:
+          type: string
+          format: uuid
 
     ExitPositionRequest:
       type: object
@@ -454,36 +845,253 @@ components:
       properties:
         shares:
           type: number
+          format: float
           nullable: true
         exit_price:
           type: number
+          format: float
+          minimum: 0.01
         exit_date:
           type: string
           format: date
+          nullable: true
         exit_reason:
           type: string
+          enum: ["Manual Exit", "Stop Loss Hit", "Target Reached", "Risk-Off Signal", "Trailing Stop", "Partial Profit Taking"]
         exit_fx_rate:
           type: number
+          format: float
+          nullable: true
+        exit_note:
+          type: string
+          maxLength: 500
+          nullable: true
+
+    ExitPositionResponse:
+      type: object
+      required: [ticker, market, exit_price, shares, gross_proceeds, exit_fees, net_proceeds, realized_pnl, realized_pnl_pct, new_cash_balance, exit_date, is_partial_exit, remaining_shares]
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum: [US, UK]
+        exit_price:
+          type: number
+          format: float
+        shares:
+          type: number
+          format: float
+        gross_proceeds:
+          type: number
+          format: float
+        exit_fees:
+          type: number
+          format: float
+        fee_breakdown:
+          type: object
+          properties:
+            commission:
+              type: number
+            stamp_duty:
+              type: number
+            fx_fee:
+              type: number
+        net_proceeds:
+          type: number
+          format: float
+        realized_pnl:
+          type: number
+          format: float
+        realized_pnl_pct:
+          type: number
+          format: float
+        new_cash_balance:
+          type: number
+          format: float
+        exit_fx_rate:
+          type: number
+          format: float
+        exit_date:
+          type: string
+          format: date
+        is_partial_exit:
+          type: boolean
+        remaining_shares:
+          type: number
+          format: float
+
+    UpdateNoteRequest:
+      type: object
+      minProperties: 1
+      properties:
+        entry_note:
+          type: string
+          maxLength: 500
+          nullable: true
+        exit_note:
+          type: string
+          maxLength: 500
+          nullable: true
+
+    UpdateNoteResponse:
+      type: object
+      required: [id, ticker, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        ticker:
+          type: string
+        entry_note:
+          type: string
           nullable: true
         exit_note:
           type: string
           nullable: true
+        updated_at:
+          type: string
+          format: date-time
 
-    ExitPositionResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
+    UpdateTagsRequest:
+      type: object
+      required: [tags]
+      properties:
+        tags:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            pattern: '^[a-z0-9-]+$'
+            maxLength: 20
+
+    UpdateTagsResponse:
+      type: object
+      required: [id, ticker, tags, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        ticker:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        updated_at:
+          type: string
+          format: date-time
+
+    TagsListResponse:
+      type: object
+      required: [tags, total_positions, positions_with_tags]
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: Sorted array of unique tags
+        total_positions:
+          type: integer
+        positions_with_tags:
+          type: integer
 
     TradeHistoryResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
+      type: object
+      required: [total_trades, win_rate, total_pnl, trades]
+      properties:
+        total_trades:
+          type: integer
+        win_rate:
+          type: number
+          format: float
+        total_pnl:
+          type: number
+          format: float
+        trades:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trade'
+
+    Trade:
+      type: object
+      required: [id, ticker, market, entry_date, exit_date, shares, entry_price, exit_price, pnl, pnl_pct, exit_reason]
+      properties:
+        id:
+          type: string
+          format: uuid
+        ticker:
+          type: string
+        market:
+          type: string
+          enum: [US, UK]
+        entry_date:
+          type: string
+          format: date
+        exit_date:
+          type: string
+          format: date
+        shares:
+          type: number
+          format: float
+        entry_price:
+          type: number
+          format: float
+        exit_price:
+          type: number
+          format: float
+        pnl:
+          type: number
+          format: float
+        pnl_pct:
+          type: number
+          format: float
+        pnl_percent:
+          type: number
+          format: float
+          description: Duplicate of pnl_pct for compatibility
+        exit_reason:
+          type: string
+        holding_days:
+          type: integer
+        entry_note:
+          type: string
+          nullable: true
+        exit_note:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+
+    PortfolioSnapshot:
+      type: object
+      required: [snapshot_date, total_value, cash_balance, positions_value, total_pnl, position_count]
+      properties:
+        id:
+          type: string
+          format: uuid
+        snapshot_date:
+          type: string
+          format: date
+        total_value:
+          type: number
+          format: float
+        cash_balance:
+          type: number
+          format: float
+        positions_value:
+          type: number
+          format: float
+        total_pnl:
+          type: number
+          format: float
+        position_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
 
     CashTransactionRequest:
       type: object
@@ -494,84 +1102,260 @@ components:
           enum: [deposit, withdrawal]
         amount:
           type: number
+          format: float
+          minimum: 0.01
+        date:
+          type: string
+          format: date
+          nullable: true
+        note:
+          type: string
+          maxLength: 200
+
+    CashTransactionResponse:
+      type: object
+      required: [transaction, new_balance]
+      properties:
+        transaction:
+          $ref: '#/components/schemas/CashTransaction'
+        new_balance:
+          type: number
+          format: float
+
+    CashTransaction:
+      type: object
+      required: [id, type, amount, date, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [deposit, withdrawal]
+        amount:
+          type: number
+          format: float
         date:
           type: string
           format: date
         note:
           type: string
+        created_at:
+          type: string
+          format: date-time
 
-    CashTransactionResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
-
-    CashTransactionsListResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                type: object
-
-    CashSummaryResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
-
-    SignalGenerationResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
-
-    SignalsListResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                type: object
-
-    UpdateSignalRequest:
+    CashSummary:
       type: object
-      required: [status]
+      required: [total_deposits, total_withdrawals, net_cash_flow, current_cash]
       properties:
-        status:
+        total_deposits:
+          type: number
+          format: float
+        total_withdrawals:
+          type: number
+          format: float
+        net_cash_flow:
+          type: number
+          format: float
+        current_cash:
+          type: number
+          format: float
+
+    AnalysisResult:
+      type: object
+      required: [analysis_date, market_regime, live_fx_rate, summary, actions]
+      properties:
+        analysis_date:
+          type: string
+          format: date
+        market_regime:
+          $ref: '#/components/schemas/MarketRegime'
+        live_fx_rate:
+          type: number
+          format: float
+        summary:
+          type: object
+          properties:
+            total_value:
+              type: number
+            total_pnl:
+              type: number
+            exit_count:
+              type: integer
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PositionAction'
+
+    PositionAction:
+      type: object
+      properties:
+        ticker:
+          type: string
+        action:
+          type: string
+          enum: [HOLD, EXIT]
+        exit_reason:
+          type: string
+        entry_price:
+          type: number
+        current_price:
+          type: number
+        shares:
+          type: number
+        pnl:
+          type: number
+        pnl_pct:
+          type: number
+        current_stop:
+          type: number
+        holding_days:
+          type: integer
+        grace_period:
+          type: boolean
+        stop_reason:
           type: string
 
-    UpdateSignalResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
+    MarketStatus:
+      type: object
+      required: [spy, ftse, fx_rate, last_updated]
+      properties:
+        spy:
+          $ref: '#/components/schemas/MarketIndex'
+        ftse:
+          $ref: '#/components/schemas/MarketIndex'
+        fx_rate:
+          type: number
+          format: float
+        last_updated:
+          type: string
+          format: date-time
 
-    MarketStatusResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
-          properties:
-            data:
-              type: object
+    MarketIndex:
+      type: object
+      required: [price, ma200, is_risk_on]
+      properties:
+        price:
+          type: number
+          format: float
+        ma200:
+          type: number
+          format: float
+        is_risk_on:
+          type: boolean
+
+    MarketRegime:
+      type: object
+      properties:
+        spy_risk_on:
+          type: boolean
+        ftse_risk_on:
+          type: boolean
+        spy_price:
+          type: number
+        spy_ma200:
+          type: number
+        ftse_price:
+          type: number
+        ftse_ma200:
+          type: number
+
+    Signal:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ticker:
+          type: string
+        market:
+          type: string
+        rank:
+          type: integer
+        momentum_percent:
+          type: number
+        current_price:
+          type: number
+        price_gbp:
+          type: number
+        atr_value:
+          type: number
+        volatility:
+          type: number
+        initial_stop:
+          type: number
+        status:
+          type: string
+        allocation_gbp:
+          type: number
+        suggested_shares:
+          type: number
+        total_cost:
+          type: number
+        signal_date:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+
+    SignalGenerationResponse:
+      type: object
+      properties:
+        signals_generated:
+          type: integer
+        new_signals:
+          type: integer
+        already_held:
+          type: integer
+        signal_date:
+          type: string
+          format: date
+        fx_rate:
+          type: number
+        available_cash:
+          type: number
+        market_regime:
+          $ref: '#/components/schemas/MarketRegime'
+        signals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Signal'
+
+    Settings:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        min_hold_days:
+          type: integer
+        atr_multiplier_initial:
+          type: number
+        atr_multiplier_trailing:
+          type: number
+        atr_period:
+          type: integer
+        default_currency:
+          type: string
+        uk_commission:
+          type: number
+        us_commission:
+          type: number
+        stamp_duty_rate:
+          type: number
+        fx_fee_rate:
+          type: number
+        min_trades_for_analytics:
+          type: integer
 
     HealthResponse:
       type: object
+      required: [status, timestamp, version]
       properties:
         status:
           type: string
+          enum: [healthy, degraded, unhealthy]
         timestamp:
           type: string
           format: date-time
@@ -579,24 +1363,104 @@ components:
           type: string
 
     HealthDetailedResponse:
+      allOf:
+        - $ref: '#/components/schemas/HealthResponse'
+        - type: object
+          properties:
+            response_time_ms:
+              type: number
+            checks:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ComponentHealth'
+
+    ComponentHealth:
       type: object
+      required: [status]
       properties:
         status:
           type: string
+          enum: [healthy, degraded, unhealthy]
+        details:
+          type: object
+
+    EndpointTestResponse:
+      type: object
+      required: [timestamp, summary, results]
+      properties:
         timestamp:
           type: string
           format: date-time
-        version:
-          type: string
-        checks:
+        summary:
           type: object
-
-    SettingsResponse:
-      allOf:
-        - $ref: '#/components/schemas/ApiOk'
-        - type: object
+          required: [total, passed, failed, errors, success_rate]
           properties:
-            data:
-              type: array
-              items:
-                type: object
+            total:
+              type: integer
+            passed:
+              type: integer
+            failed:
+              type: integer
+            errors:
+              type: integer
+            success_rate:
+              type: number
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EndpointTest'
+
+    EndpointTest:
+      type: object
+      required: [endpoint, status, status_code, expected_status]
+      properties:
+        endpoint:
+          type: string
+        status:
+          type: string
+          enum: [pass, fail, error]
+        status_code:
+          type: integer
+        expected_status:
+          type: integer
+        response_time_ms:
+          type: number
+        error:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Validation error or business rule violation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            validation:
+              value:
+                status: error
+                message: "Invalid input: shares must be greater than 0"
+            business:
+              value:
+                status: error
+                message: "Insufficient funds. Available: £500, Required: £1000"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          example:
+            status: error
+            message: "Position not found"
+
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication (future use)
+
+security:
+  - ApiKey: []
