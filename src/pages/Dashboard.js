@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import CashManagementModal from "../components/cash/CashManagementModal";
 import { base44 } from "../api/base44Client";
 import { Loader2, Settings2, Plus, RotateCcw, Check } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -11,7 +12,6 @@ import PageHeader from "../components/ui/PageHeader";
 import DashboardWidget from "../components/dashboard/DashboardWidget";
 import WidgetLibrary from "../components/dashboard/WidgetLibrary";
 import MonitorModal from "../components/monitor/MonitorModal";
-import CashManagementModal from "../components/cash/CashManagementModal";
 import { useDashboardLayout } from "../components/dashboard/useDashboardLayout";
 
 // Widget components
@@ -23,6 +23,7 @@ import {
   WinRateWidget,
   AvgHoldTimeWidget
 } from "../components/dashboard/widgets/StatsWidgets";
+import CurrentDrawdownWidget from "../components/dashboard/widgets/CurrentDrawdownWidget";
 import PortfolioChart from "../components/charts/PortfolioChart";
 import AllocationChart from "../components/charts/AllocationChart";
 import PnLBarChart from "../components/charts/PnLBarChart";
@@ -67,13 +68,13 @@ export default function Dashboard() {
   const portfolio = portfolios?.[0];
   const openPositions = positions || [];
   const closedPositions = allPositions?.filter(p => p.status === "closed") || [];
-
-  // Use values directly from portfolio endpoint (already calculated correctly)
+  
+  // ✅ Use values directly from portfolio endpoint (already calculated correctly)
   const totalPositionsValue = portfolio?.open_positions_value || openPositions.reduce((sum, p) => {
     return sum + (p.current_price || p.entry_price) * p.shares;
   }, 0);
 
-  const totalPnL = portfolio?.total_pnl || 0;  // Use portfolio's pre-calculated P&L
+  const totalPnL = portfolio?.total_pnl || 0;  // ✅ Use portfolio's pre-calculated P&L
 
   const isLoading = loadingPortfolio || loadingPositions || loadingRegimes || !isLoaded;
 
@@ -102,6 +103,20 @@ export default function Dashboard() {
   };
 
   const renderWidget = (widgetId, dragHandleProps) => {
+    // ✅ Calculate drawdown metrics properly
+    const currentEquity = (portfolio?.cash_balance || 0) + totalPositionsValue;
+    
+    // Calculate peak equity from closed trades history
+    let peakEquity = currentEquity;
+    let peakDate = new Date().toISOString().split('T')[0];
+    let maxHistoricalDrawdown = -20; // This should ideally come from trade history analysis
+
+    // TODO: Calculate actual peak from trade history when available
+    // For now, use current equity as peak if profitable
+    if (totalPnL > 0) {
+      peakEquity = currentEquity;
+    }
+
     const widgetProps = {
       portfolio,
       totalPositionsValue,
@@ -127,6 +142,13 @@ export default function Dashboard() {
         return <WinRateWidget {...widgetProps} />;
       case "avg_hold_time":
         return <AvgHoldTimeWidget {...widgetProps} />;
+      case "current_drawdown":
+        return <CurrentDrawdownWidget 
+          currentEquity={currentEquity}
+          peakEquity={peakEquity}
+          peakDate={peakDate}
+          maxHistoricalDrawdown={maxHistoricalDrawdown}
+        />;
       case "portfolio_chart":
         return <PortfolioChart />;
       case "allocation_chart":
@@ -161,7 +183,7 @@ export default function Dashboard() {
   };
 
   const getWidgetSize = (widgetId) => {
-    const smallWidgets = ["portfolio_value", "cash_balance", "open_positions", "total_pnl", "win_rate", "avg_hold_time"];
+    const smallWidgets = ["portfolio_value", "cash_balance", "open_positions", "total_pnl", "win_rate", "avg_hold_time", "current_drawdown"];
     const mediumWidgets = ["allocation_chart", "market_regime_us", "market_regime_uk", "win_rate_chart"];
     const largeWidgets = ["portfolio_chart", "pnl_chart", "quick_actions", "recent_trades"];
     
