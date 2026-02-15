@@ -1,11 +1,19 @@
-import { TrendingUp, TrendingDown, Target, Zap } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, Zap, Calendar } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export default function ExecutiveSummaryCards({ metrics }) {
+  // Calculate days underwater color
+  const getDaysUnderwaterColor = (days) => {
+    if (days === 0) return "from-emerald-500 to-green-500";
+    if (days <= 30) return "from-cyan-500 to-blue-500";
+    if (days <= 90) return "from-amber-500 to-orange-500";
+    return "from-rose-500 to-red-500";
+  };
+
   const cards = [
     {
       title: "Sharpe Ratio",
-      subtitle: "Risk-Adjusted Performance",
+      subtitle: "Risk-Adjusted Returns",
       value: metrics.sharpeRatio?.toFixed(2) || "N/A",
       icon: TrendingUp,
       gradient: "from-cyan-500 to-blue-500",
@@ -13,7 +21,7 @@ export default function ExecutiveSummaryCards({ metrics }) {
     },
     {
       title: "Max Drawdown",
-      subtitle: "Worst Portfolio Decline",
+      subtitle: "Worst Case Scenario",
       value: metrics.maxDrawdown ? `${metrics.maxDrawdown.percent.toFixed(1)}%` : "N/A",
       subValue: metrics.maxDrawdown ? `£${metrics.maxDrawdown.amount.toFixed(2)}` : "",
       date: metrics.maxDrawdown?.date,
@@ -22,7 +30,7 @@ export default function ExecutiveSummaryCards({ metrics }) {
     },
     {
       title: "Recovery Factor",
-      subtitle: "Profit to Risk Ratio",
+      subtitle: "Resilience Measure",
       value: metrics.recoveryFactor?.toFixed(2) || "N/A",
       icon: Target,
       gradient: "from-violet-500 to-purple-500",
@@ -30,16 +38,33 @@ export default function ExecutiveSummaryCards({ metrics }) {
     },
     {
       title: "Expectancy",
-      subtitle: "Expected £ per Trade",
+      subtitle: "Edge Per Trade",
       value: metrics.expectancy ? `£${metrics.expectancy.toFixed(2)}` : "N/A",
       icon: Zap,
       gradient: "from-emerald-500 to-green-500",
       isPositive: metrics.expectancy > 0
+    },
+    {
+      title: "Time Underwater",
+      subtitle: "Current Risk Status",
+      value: metrics.daysUnderwater === 0 ? "At Peak 🎉" : metrics.daysUnderwater ? `${metrics.daysUnderwater} days` : "No Data",
+      subValue: metrics.peakEquity ? `Peak: £${metrics.peakEquity.toFixed(0)}` : "",
+      date: metrics.peakDate ? `on ${metrics.peakDate}` : "",
+      icon: Calendar,
+      gradient: getDaysUnderwaterColor(metrics.daysUnderwater || 0)
+    },
+    {
+      title: "Profit Factor",
+      subtitle: "Win/Loss Ratio",
+      value: metrics.profitFactor?.toFixed(2) || "N/A",
+      icon: Target,
+      gradient: "from-amber-500 to-orange-500",
+      benchmark: metrics.profitFactor > 2 ? "Excellent" : metrics.profitFactor > 1 ? "Good" : "Poor"
     }
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {cards.map((card, idx) => (
         <div
           key={idx}
