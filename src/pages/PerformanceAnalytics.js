@@ -209,24 +209,83 @@ export default function PerformanceAnalytics() {
       sharpeMethod = "trade";
     }
 
-    // Max Drawdown
-    let peak = 0;
+    // ✅ Filter portfolio history to match selected time window
+    const getFilteredPortfolioHistory = () => {
+      if (timePeriod === "all_time") return portfolioHistory;
+    
+      const now = new Date();
+      let startDate = new Date(0);
+    
+      switch (timePeriod) {
+        case "last_7_days":
+          startDate = new Date(now);
+          startDate.setDate(startDate.getDate() - 7);
+          break;
+        case "last_month":
+          startDate = new Date(now);
+          startDate.setMonth(startDate.getMonth() - 1);
+          break;
+        case "last_quarter":
+          startDate = new Date(now);
+          startDate.setMonth(startDate.getMonth() - 3);
+          break;
+        case "last_year":
+          startDate = new Date(now);
+          startDate.setFullYear(startDate.getFullYear() - 1);
+          break;
+        case "ytd":
+          startDate = new Date(now.getFullYear(), 0, 1);
+          break;
+      }
+    
+      return portfolioHistory.filter(p =>
+        new Date(p.snapshot_date) >= startDate
+      );
+    };
+
+    // ✅ Max Drawdown based on REAL portfolio equity (daily snapshots)
+    let peakEquity = 0;
     let maxDrawdown = 0;
+    let maxDrawdownPercent = 0;
     let maxDrawdownDate = "";
-    let cumPnl = 0;
-    sortedTrades.forEach(t => {
-      cumPnl += t.pnl;
-      if (cumPnl > peak) peak = cumPnl;
-      const drawdown = peak - cumPnl;
-      if (drawdown > maxDrawdown) {
-        maxDrawdown = drawdown;
-        maxDrawdownDate = t.exit_date;
+    
+    const filteredPortfolioHistory = getFilteredPortfolioHistory();
+    const sortedEquity = [...filteredPortfolioHistory].sort(
+      (a, b) => new Date(a.snapshot_date) - new Date(b.snapshot_date)
+    );
+    
+    sortedEquity.forEach(snapshot => {
+      const equity = Number(snapshot.total_value);
+      if (!Number.isFinite(equity)) return;
+    
+      if (equity > peakEquity) {
+        peakEquity = equity;
+      }
+    
+      const drawdownAmount = peakEquity - equity;
+      const drawdownPct = peakEquity > 0
+        ? (drawdownAmount / peakEquity) * 100
+        : 0;
+    
+      if (drawdownAmount > maxDrawdown) {
+        maxDrawdown = drawdownAmount;
+        maxDrawdownPercent = drawdownPct;
+        maxDrawdownDate = snapshot.snapshot_date;
       }
     });
-    const maxDrawdownPercent = peak > 0 ? (maxDrawdown / peak) * 100 : 0;
 
     const totalPnl = filteredTrades.reduce((sum, t) => sum + t.pnl, 0);
-    const recoveryFactor = maxDrawdown > 0 ? totalPnl / maxDrawdown : 0;
+
+    const firstEquity = sortedEquity.length ? Number(sortedEquity[0].total_value) : 0;
+    const lastEquity = sortedEquity.length ? Number(sortedEquity[sortedEquity.length - 1].total_value) : 0;
+    const periodProfit = lastEquity - firstEquity;
+
+    
+    
+    const recoveryFactor =
+      maxDrawdown > 0 && Number.isFinite(periodProfit) && periodProfit > 0
+        ? periodProfit / maxDrawdown
+        : 0;
     const expectancy = (winRate / 100 * avgWin) + ((100 - winRate) / 100 * avgLoss);
     const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : 0;
     const riskRewardRatio = Math.abs(avgLoss) > 0 ? avgWin / Math.abs(avgLoss) : 0;
@@ -275,15 +334,15 @@ export default function PerformanceAnalytics() {
 
     // ✅ NEW: Calculate time underwater
     let runningEquity = 0;
-    let peakEquity = 0;
+    let peakTradeEquity = 0;
     let peakDate = null;
     let daysUnderwater = 0;
     
     sortedTrades.forEach(trade => {
       runningEquity += trade.pnl;
     
-      if (runningEquity >= peakEquity) {
-        peakEquity = runningEquity;
+      if (runningEquity >= peakTradeEquity) {
+        peakTradeEquity = runningEquity;
         peakDate = trade.exit_date;
         daysUnderwater = 0;
       } else if (peakDate) {
@@ -309,7 +368,8 @@ export default function PerformanceAnalytics() {
       tradeFrequency,
       capitalEfficiency,
       daysUnderwater,
-      peakEquity,
+      peakEquity: peakTradeEquity,
+      periodPeakEquity: peakEquity,
       peakDate
     };
   };
