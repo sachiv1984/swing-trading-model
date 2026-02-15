@@ -3,7 +3,7 @@ info:
   title: Momentum Trading Assistant API
   description: |
     API for the Momentum Trading Assistant web application.
-    Decision-support tool only (not a trading bot).  
+    Decision-support tool only (not a trading bot).
     Strategy logic is deterministic and server-side.
   version: 1.4.0
 
@@ -11,9 +11,18 @@ servers:
   - url: https://api.example.com
     description: Production server (placeholder)
 
+tags:
+  - name: Dashboard
+  - name: Portfolio
+  - name: Positions
+  - name: Trades
+  - name: Metadata
+
 paths:
   /dashboard:
     get:
+      tags: [Dashboard]
+      operationId: getDashboardSnapshot
       summary: Get daily portfolio dashboard snapshot
       responses:
         "200":
@@ -21,55 +30,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  portfolio_value:
-                    type: number
-                    format: float
-                  cash:
-                    type: number
-                    format: float
-                  cash_pct:
-                    type: number
-                    format: float
-                  positions_value:
-                    type: number
-                    format: float
-                  open_positions:
-                    type: integer
-                  exit_alerts:
-                    type: integer
-                  market_status:
-                    type: object
-                    properties:
-                      date:
-                        type: string
-                        format: date
-                      spy:
-                        type: object
-                        properties:
-                          risk_on:
-                            type: boolean
-                          price:
-                            type: number
-                            format: float
-                          ma200:
-                            type: number
-                            format: float
-                      ftse:
-                        type: object
-                        properties:
-                          risk_on:
-                            type: boolean
-                          price:
-                            type: number
-                            format: float
-                          ma200:
-                            type: number
-                            format: float
+                $ref: "#/components/schemas/DashboardSnapshot"
 
   /portfolio:
     get:
+      tags: [Portfolio]
+      operationId: getPortfolioOverview
       summary: Get portfolio overview
       responses:
         "200":
@@ -77,183 +43,41 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  cash:
-                    type: number
-                    format: float
-                  last_updated:
-                    type: string
-                    format: date-time
-                  positions:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        ticker:
-                          type: string
-                        market:
-                          type: string
-                        entry_date:
-                          type: string
-                          format: date
-                        entry_price:
-                          type: number
-                          format: float
-                        shares:
-                          type: number
-                        current_price:
-                          type: number
-                          format: float
-                        current_value:
-                          type: number
-                          format: float
-                        pnl:
-                          type: number
-                          format: float
-                        pnl_pct:
-                          type: number
-                          format: float
-                        current_stop:
-                          type: number
-                          format: float
-                        holding_days:
-                          type: integer
-                        status:
-                          type: string
-                          enum: [GRACE, PROFITABLE, LOSING, EXIT]
+                $ref: "#/components/schemas/PortfolioOverview"
 
   /portfolio/position:
     post:
+      tags: [Portfolio]
+      operationId: createPosition
       summary: Add a new position (manual entry)
       description: |
         Create a new position with automatic fee calculation,
         ATR calculation, and initial stop setting.
         Supports fractional shares.
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ticker:
-                    type: string
-                    description: Stock symbol (e.g., 'NVDA', 'FRES')
-                    example: "NVDA"
-                  market:
-                    type: string
-                    enum: [US, UK]
-                    description: Market (auto-detected from ticker if not provided)
-                    example: "US"
-                  entry_date:
-                    type: string
-                    format: date
-                    description: Entry date (YYYY-MM-DD)
-                    example: "2026-02-07"
-                  shares:
-                    type: number
-                    format: float
-                    description: Number of shares (fractional supported)
-                    example: 5.5
-                  entry_price:
-                    type: number
-                    format: float
-                    description: Entry price in native currency (USD for US, GBP for UK)
-                    example: 243.00
-                  fx_rate:
-                    type: number
-                    format: float
-                    nullable: true
-                    description: GBP/USD rate (auto-fetched if not provided for US stocks)
-                    example: 1.3528
-                  atr_value:
-                    type: number
-                    format: float
-                    nullable: true
-                    description: ATR value (auto-calculated from Yahoo Finance if not provided)
-                    example: 18.26
-                  stop_price:
-                    type: number
-                    format: float
-                    nullable: true
-                    description: Custom stop (optional, auto-calculated as entry_price - 5×ATR if not provided)
-                  entry_note:
-                    type: string
-                    maxLength: 500
-                    nullable: true
-                    description: Journal entry note (optional, max 500 characters)
-                    example: "Breakout above $800 resistance on heavy volume. RSI trending up."
-                  tags:
-                    type: array
-                    items:
-                      type: string
-                      pattern: '^[a-z0-9-]+$'
-                      maxLength: 20
-                    maxItems: 10
-                    nullable: true
-                    description: Array of tags for categorization (optional)
-                    example: ["momentum", "breakout"]
-                required:
-                  - ticker
-                  - entry_date
-                  - shares
-                  - entry_price
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PositionCreateRequest"
       responses:
         "200":
           description: Position created successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "ok"
-                  data:
-                    type: object
-                    properties:
-                      ticker:
-                        type: string
-                        example: "NVDA"
-                      total_cost:
-                        type: number
-                        format: float
-                        description: Total cost including fees (GBP)
-                        example: 986.70
-                      fees_paid:
-                        type: number
-                        format: float
-                        description: Total fees paid (GBP)
-                        example: 1.48
-                      entry_price:
-                        type: number
-                        format: float
-                        description: Entry price in native currency
-                        example: 243.00
-                      initial_stop:
-                        type: number
-                        format: float
-                        description: Initial stop level (entry_price - 5×ATR)
-                        example: 151.70
-                      remaining_cash:
-                        type: number
-                        format: float
-                        description: Cash remaining after entry (GBP)
-                        example: 4013.30
-                      position_id:
-                        type: string
-                        format: uuid
-                        example: "f9516f4e-698d-43ec-8dde-c55ef7496657"
+                $ref: "#/components/schemas/PositionCreateResponse"
         "400":
           description: Validation error (insufficient funds, invalid data, etc.)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 
   /positions/{ticker}:
     get:
+      tags: [Positions]
+      operationId: getPositionByTicker
       summary: Get detailed position information
       parameters:
         - name: ticker
@@ -267,51 +91,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  ticker:
-                    type: string
-                  market:
-                    type: string
-                  entry_date:
-                    type: string
-                    format: date
-                  entry_price:
-                    type: number
-                    format: float
-                  shares:
-                    type: number
-                    format: float
-                  holding_days:
-                    type: integer
-                  current_price:
-                    type: number
-                    format: float
-                  atr:
-                    type: number
-                    format: float
-                  current_stop:
-                    type: number
-                    format: float
-                  stop_logic:
-                    type: object
-                    properties:
-                      atr_multiplier:
-                        type: number
-                      reason:
-                        type: string
-                  pnl:
-                    type: number
-                    format: float
-                  pnl_pct:
-                    type: number
-                    format: float
-                  risk_status:
-                    type: string
-                    enum: [RISK_ON, RISK_OFF]
+                $ref: "#/components/schemas/PositionDetail"
 
   /positions/analyze:
     get:
+      tags: [Positions]
+      operationId: analyzePositions
       summary: Run daily position analysis
       description: |
         Analyzes all open positions, updates stops, checks market regime,
@@ -322,61 +107,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  analysis_date:
-                    type: string
-                    format: date
-                  summary:
-                    type: object
-                    properties:
-                      total_value:
-                        type: number
-                        format: float
-                      total_pnl:
-                        type: number
-                        format: float
-                      exit_count:
-                        type: integer
-                  actions:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        ticker:
-                          type: string
-                        action:
-                          type: string
-                          enum: [HOLD, EXIT]
-                        exit_reason:
-                          type: string
-                          nullable: true
-                        entry_price:
-                          type: number
-                          format: float
-                        current_price:
-                          type: number
-                          format: float
-                        shares:
-                          type: number
-                          format: float
-                        pnl:
-                          type: number
-                          format: float
-                        pnl_pct:
-                          type: number
-                          format: float
-                        current_stop:
-                          type: number
-                          format: float
-                        holding_days:
-                          type: integer
-                        stop_reason:
-                          type: string
-                          nullable: true
+                $ref: "#/components/schemas/PositionAnalysisResponse"
 
   /positions/{position_id}/exit:
     post:
+      tags: [Positions]
+      operationId: exitPosition
       summary: Exit a position (full or partial)
       description: |
         Exit a position and record in trade history.
@@ -388,157 +124,26 @@ paths:
           required: true
           description: UUID of the position to exit
           schema:
-            type: string
-            format: uuid
-      # FIND this section and ADD exit_note property:
-          requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    shares:
-                      type: number
-                      format: float
-                      nullable: true
-                      description: Number of shares to exit (null = all shares)
-                      example: 2.5
-                    exit_price:
-                      type: number
-                      format: float
-                      description: Actual exit price from broker (REQUIRED)
-                      example: 242.67
-                    exit_date:
-                      type: string
-                      format: date
-                      nullable: true
-                      description: Exit date (YYYY-MM-DD, null = today)
-                      example: "2026-02-07"
-                    exit_reason:
-                      type: string
-                      nullable: true
-                      enum:
-                        - Manual Exit
-                        - Stop Loss Hit
-                        - Target Reached
-                        - Risk-Off Signal
-                        - Trailing Stop
-                        - Partial Profit Taking
-                      description: Reason for exit (default 'Manual Exit')
-                      example: "Stop Loss Hit"
-                    exit_fx_rate:
-                      type: number
-                      format: float
-                      nullable: true
-                      description: GBP/USD rate from broker (REQUIRED for US stocks, ignored for UK)
-                      example: 1.3611
-                    exit_note:
-                      type: string
-                      maxLength: 500
-                      nullable: true
-                      description: Journal exit note (optional, max 500 characters)
-                      example: "Stopped out as planned. Good risk management, kept loss to target."
-                  required:
-                    - exit_price
+            $ref: "#/components/schemas/UUID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExitPositionRequest"
       responses:
         "200":
           description: Exit successful
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "ok"
-                  data:
-                    type: object
-                    properties:
-                      ticker:
-                        type: string
-                        example: "WDC"
-                      market:
-                        type: string
-                        enum: [US, UK]
-                        example: "US"
-                      exit_price:
-                        type: number
-                        format: float
-                        example: 242.67
-                      shares:
-                        type: number
-                        format: float
-                        example: 5.5
-                      gross_proceeds:
-                        type: number
-                        format: float
-                        description: Gross proceeds in GBP
-                        example: 980.59
-                      exit_fees:
-                        type: number
-                        format: float
-                        description: Total exit fees in GBP
-                        example: 1.47
-                      fee_breakdown:
-                        type: object
-                        properties:
-                          commission:
-                            type: number
-                            description: Commission in native currency
-                            example: 0
-                          stamp_duty:
-                            type: number
-                            description: Stamp duty (UK only, always 0 on sales)
-                            example: 0
-                          fx_fee:
-                            type: number
-                            description: FX fee in native currency (US only)
-                            example: 2.00
-                      net_proceeds:
-                        type: number
-                        format: float
-                        description: Net proceeds in GBP
-                        example: 979.12
-                      realized_pnl:
-                        type: number
-                        format: float
-                        description: Realized P&L in GBP
-                        example: -10.29
-                      realized_pnl_pct:
-                        type: number
-                        format: float
-                        description: Realized P&L percentage
-                        example: -1.04
-                      new_cash_balance:
-                        type: number
-                        format: float
-                        description: Portfolio cash balance after exit
-                        example: 4153.35
-                      exit_fx_rate:
-                        type: number
-                        format: float
-                        description: FX rate used for conversion
-                        example: 1.3611
-                      exit_date:
-                        type: string
-                        format: date
-                        example: "2026-02-07"
-                      is_partial_exit:
-                        type: boolean
-                        description: True if position remains open with reduced shares
-                        example: false
-                      remaining_shares:
-                        type: number
-                        format: float
-                        description: Shares remaining in position (0 if full exit)
-                        example: 0
+                $ref: "#/components/schemas/ExitPositionResponse"
         "400":
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               examples:
                 insufficient_shares:
                   value:
@@ -557,10 +162,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 
   /trades:
     get:
+      tags: [Trades]
+      operationId: getTradeHistory
       summary: Get trade history
       responses:
         "200":
@@ -568,54 +175,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  total_trades:
-                    type: integer
-                  win_rate:
-                    type: number
-                    format: float
-                  total_pnl:
-                    type: number
-                    format: float
-                  trades:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        ticker:
-                          type: string
-                        entry_date:
-                          type: string
-                          format: date
-                        exit_date:
-                          type: string
-                          format: date
-                        pnl:
-                          type: number
-                          format: float
-                        pnl_pct:
-                          type: number
-                          format: float
-                        exit_reason:
-                          type: string
-                        # ✅ ADD THESE THREE NEW PROPERTIES:
-                        entry_note:
-                          type: string
-                          nullable: true
-                          description: Journal note from entry
-                        exit_note:
-                          type: string
-                          nullable: true
-                          description: Journal note from exit
-                        tags:
-                          type: array
-                          items:
-                            type: string
-                          description: Tags for categorization
+                $ref: "#/components/schemas/TradeHistoryResponse"
 
-/positions/{position_id}/note:
+  /positions/{position_id}/note:
     patch:
+      tags: [Positions]
+      operationId: updatePositionNotes
       summary: Update position notes
       description: |
         Update entry note or exit note for a position.
@@ -626,25 +191,13 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            format: uuid
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                entry_note:
-                  type: string
-                  nullable: true
-                  maxLength: 500
-                  description: Entry note (max 500 chars, null to clear)
-                exit_note:
-                  type: string
-                  nullable: true
-                  maxLength: 500
-                  description: Exit note (max 500 chars, null to clear)
+              $ref: "#/components/schemas/UpdateNotesRequest"
             examples:
               update_entry:
                 value:
@@ -660,34 +213,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      ticker:
-                        type: string
-                      entry_note:
-                        type: string
-                        nullable: true
-                      exit_note:
-                        type: string
-                        nullable: true
-                      updated_at:
-                        type: string
-                        format: date-time
+                $ref: "#/components/schemas/UpdateNotesResponse"
         "400":
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               examples:
                 char_limit:
                   value:
@@ -698,10 +230,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 
   /positions/{position_id}/tags:
     patch:
+      tags: [Positions]
+      operationId: updatePositionTags
       summary: Update position tags
       description: |
         Update tags for a position.
@@ -713,25 +247,13 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            format: uuid
+            $ref: "#/components/schemas/UUID"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                tags:
-                  type: array
-                  items:
-                    type: string
-                    pattern: '^[a-z0-9-]+$'
-                    maxLength: 20
-                  maxItems: 10
-                  description: Array of tags (lowercase, numbers, hyphens only)
-              required:
-                - tags
+              $ref: "#/components/schemas/UpdateTagsRequest"
             examples:
               add_tags:
                 value:
@@ -745,32 +267,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      ticker:
-                        type: string
-                      tags:
-                        type: array
-                        items:
-                          type: string
-                      updated_at:
-                        type: string
-                        format: date-time
+                $ref: "#/components/schemas/UpdateTagsResponse"
         "400":
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               examples:
                 invalid_tag:
                   value:
@@ -785,10 +288,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 
   /positions/tags:
     get:
+      tags: [Metadata]
+      operationId: getAllTags
       summary: Get all unique tags
       description: |
         Retrieve all unique tags used across all positions.
@@ -800,34 +305,639 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-                  data:
-                    type: object
-                    properties:
-                      tags:
-                        type: array
-                        items:
-                          type: string
-                        description: Sorted array of all unique tags
-                      total_positions:
-                        type: integer
-                        description: Total number of positions
-                      positions_with_tags:
-                        type: integer
-                        description: Number of positions that have tags
-              example:
-                status: ok
-                data:
-                  tags: ["breakout", "earnings-play", "loser", "momentum", "winner"]
-                  total_positions: 42
-                  positions_with_tags: 38
+                $ref: "#/components/schemas/AllTagsResponse"
 
 components:
   schemas:
+    # -------------------------
+    # Shared primitives / enums
+    # -------------------------
+    Market:
+      type: string
+      enum: [US, UK]
+
+    PositionStatus:
+      type: string
+      enum: [GRACE, PROFITABLE, LOSING, EXIT]
+
+    RiskStatus:
+      type: string
+      enum: [RISK_ON, RISK_OFF]
+
+    HoldExitAction:
+      type: string
+      enum: [HOLD, EXIT]
+
+    Tag:
+      type: string
+      pattern: "^[a-z0-9-]+$"
+      maxLength: 20
+
+    UUID:
+      type: string
+      format: uuid
+
+    # -------------------------
+    # Tighter DRY: envelope base
+    # -------------------------
+    ApiOkResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+          example: ok
+
+    # -------------------------
+    # Dashboard
+    # -------------------------
+    MarketIndexStatus:
+      type: object
+      properties:
+        risk_on:
+          type: boolean
+        price:
+          type: number
+          format: float
+        ma200:
+          type: number
+          format: float
+
+    MarketStatus:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        spy:
+          $ref: "#/components/schemas/MarketIndexStatus"
+        ftse:
+          $ref: "#/components/schemas/MarketIndexStatus"
+
+    DashboardSnapshot:
+      type: object
+      properties:
+        portfolio_value:
+          type: number
+          format: float
+        cash:
+          type: number
+          format: float
+        cash_pct:
+          type: number
+          format: float
+        positions_value:
+          type: number
+          format: float
+        open_positions:
+          type: integer
+        exit_alerts:
+          type: integer
+        market_status:
+          $ref: "#/components/schemas/MarketStatus"
+
+    # -------------------------
+    # Portfolio list / summary
+    # -------------------------
+    PortfolioPositionSummary:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          $ref: "#/components/schemas/Market"
+        entry_date:
+          type: string
+          format: date
+        entry_price:
+          type: number
+          format: float
+        shares:
+          type: number
+          format: float
+        current_price:
+          type: number
+          format: float
+        current_value:
+          type: number
+          format: float
+        pnl:
+          type: number
+          format: float
+        pnl_pct:
+          type: number
+          format: float
+        current_stop:
+          type: number
+          format: float
+        holding_days:
+          type: integer
+        status:
+          $ref: "#/components/schemas/PositionStatus"
+
+    PortfolioOverview:
+      type: object
+      properties:
+        cash:
+          type: number
+          format: float
+        last_updated:
+          type: string
+          format: date-time
+        positions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PortfolioPositionSummary"
+
+    # -------------------------
+    # Position create
+    # -------------------------
+    PositionCreateRequest:
+      type: object
+      properties:
+        ticker:
+          type: string
+          description: Stock symbol (e.g., 'NVDA', 'FRES')
+          example: "NVDA"
+        market:
+          $ref: "#/components/schemas/Market"
+        entry_date:
+          type: string
+          format: date
+          description: Entry date (YYYY-MM-DD)
+          example: "2026-02-07"
+        shares:
+          type: number
+          format: float
+          description: Number of shares (fractional supported)
+          example: 5.5
+        entry_price:
+          type: number
+          format: float
+          description: Entry price in native currency (USD for US, GBP for UK)
+          example: 243.0
+        fx_rate:
+          type: number
+          format: float
+          nullable: true
+          description: GBP/USD rate (auto-fetched if not provided for US stocks)
+          example: 1.3528
+        atr_value:
+          type: number
+          format: float
+          nullable: true
+          description: ATR value (auto-calculated from Yahoo Finance if not provided)
+          example: 18.26
+        stop_price:
+          type: number
+          format: float
+          nullable: true
+          description: Custom stop (optional, auto-calculated as entry_price - 5×ATR if not provided)
+        entry_note:
+          type: string
+          maxLength: 500
+          nullable: true
+          description: Journal entry note (optional, max 500 characters)
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+          maxItems: 10
+          nullable: true
+      required: [ticker, entry_date, shares, entry_price]
+
+    PositionCreateData:
+      type: object
+      properties:
+        ticker:
+          type: string
+        total_cost:
+          type: number
+          format: float
+          description: Total cost including fees (GBP)
+        fees_paid:
+          type: number
+          format: float
+          description: Total fees paid (GBP)
+        entry_price:
+          type: number
+          format: float
+          description: Entry price in native currency
+        initial_stop:
+          type: number
+          format: float
+          description: Initial stop level (entry_price - 5×ATR)
+        remaining_cash:
+          type: number
+          format: float
+          description: Cash remaining after entry (GBP)
+        position_id:
+          $ref: "#/components/schemas/UUID"
+
+    PositionCreateResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiOkResponse"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/PositionCreateData"
+
+    # -------------------------
+    # Position detail
+    # -------------------------
+    StopLogic:
+      type: object
+      properties:
+        atr_multiplier:
+          type: number
+        reason:
+          type: string
+
+    PositionDetail:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          $ref: "#/components/schemas/Market"
+        entry_date:
+          type: string
+          format: date
+        entry_price:
+          type: number
+          format: float
+        shares:
+          type: number
+          format: float
+        holding_days:
+          type: integer
+        current_price:
+          type: number
+          format: float
+        atr:
+          type: number
+          format: float
+        current_stop:
+          type: number
+          format: float
+        stop_logic:
+          $ref: "#/components/schemas/StopLogic"
+        pnl:
+          type: number
+          format: float
+        pnl_pct:
+          type: number
+          format: float
+        risk_status:
+          $ref: "#/components/schemas/RiskStatus"
+
+    # -------------------------
+    # Daily analysis
+    # -------------------------
+    AnalysisSummary:
+      type: object
+      properties:
+        total_value:
+          type: number
+          format: float
+        total_pnl:
+          type: number
+          format: float
+        exit_count:
+          type: integer
+
+    AnalysisAction:
+      type: object
+      properties:
+        ticker:
+          type: string
+        action:
+          $ref: "#/components/schemas/HoldExitAction"
+        exit_reason:
+          type: string
+          nullable: true
+        entry_price:
+          type: number
+          format: float
+        current_price:
+          type: number
+          format: float
+        shares:
+          type: number
+          format: float
+        pnl:
+          type: number
+          format: float
+        pnl_pct:
+          type: number
+          format: float
+        current_stop:
+          type: number
+          format: float
+        holding_days:
+          type: integer
+        stop_reason:
+          type: string
+          nullable: true
+
+    PositionAnalysisResponse:
+      type: object
+      properties:
+        analysis_date:
+          type: string
+          format: date
+        summary:
+          $ref: "#/components/schemas/AnalysisSummary"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalysisAction"
+
+    # -------------------------
+    # Exit position
+    # -------------------------
+    ExitReason:
+      type: string
+      enum:
+        - Manual Exit
+        - Stop Loss Hit
+        - Target Reached
+        - Risk-Off Signal
+        - Trailing Stop
+        - Partial Profit Taking
+
+    ExitPositionRequest:
+      type: object
+      properties:
+        shares:
+          type: number
+          format: float
+          nullable: true
+          description: Number of shares to exit (null = all shares)
+        exit_price:
+          type: number
+          format: float
+          description: Actual exit price from broker (REQUIRED)
+        exit_date:
+          type: string
+          format: date
+          nullable: true
+          description: Exit date (YYYY-MM-DD, null = today)
+        exit_reason:
+          $ref: "#/components/schemas/ExitReason"
+        exit_fx_rate:
+          type: number
+          format: float
+          nullable: true
+          description: GBP/USD rate from broker (REQUIRED for US stocks, ignored for UK)
+        exit_note:
+          type: string
+          maxLength: 500
+          nullable: true
+          description: Journal exit note (optional, max 500 characters)
+      required: [exit_price]
+
+    FeeBreakdown:
+      type: object
+      properties:
+        commission:
+          type: number
+          description: Commission in native currency
+        stamp_duty:
+          type: number
+          description: Stamp duty (UK only, always 0 on sales)
+        fx_fee:
+          type: number
+          description: FX fee in native currency (US only)
+
+    ExitData:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          $ref: "#/components/schemas/Market"
+        exit_price:
+          type: number
+          format: float
+        shares:
+          type: number
+          format: float
+        gross_proceeds:
+          type: number
+          format: float
+          description: Gross proceeds in GBP
+        exit_fees:
+          type: number
+          format: float
+          description: Total exit fees in GBP
+        fee_breakdown:
+          $ref: "#/components/schemas/FeeBreakdown"
+        net_proceeds:
+          type: number
+          format: float
+          description: Net proceeds in GBP
+        realized_pnl:
+          type: number
+          format: float
+          description: Realized P&L in GBP
+        realized_pnl_pct:
+          type: number
+          format: float
+          description: Realized P&L percentage
+        new_cash_balance:
+          type: number
+          format: float
+          description: Portfolio cash balance after exit
+        exit_fx_rate:
+          type: number
+          format: float
+          description: FX rate used for conversion
+        exit_date:
+          type: string
+          format: date
+        is_partial_exit:
+          type: boolean
+          description: True if position remains open with reduced shares
+        remaining_shares:
+          type: number
+          format: float
+          description: Shares remaining in position (0 if full exit)
+
+    ExitPositionResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiOkResponse"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/ExitData"
+
+    # -------------------------
+    # Trades
+    # -------------------------
+    TradeItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        entry_date:
+          type: string
+          format: date
+        exit_date:
+          type: string
+          format: date
+        pnl:
+          type: number
+          format: float
+        pnl_pct:
+          type: number
+          format: float
+        exit_reason:
+          type: string
+        entry_note:
+          type: string
+          nullable: true
+          description: Journal note from entry
+        exit_note:
+          type: string
+          nullable: true
+          description: Journal note from exit
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+          description: Tags for categorization
+
+    TradeHistoryResponse:
+      type: object
+      properties:
+        total_trades:
+          type: integer
+        win_rate:
+          type: number
+          format: float
+        total_pnl:
+          type: number
+          format: float
+        trades:
+          type: array
+          items:
+            $ref: "#/components/schemas/TradeItem"
+
+    # -------------------------
+    # Notes + tags update
+    # -------------------------
+    UpdateNotesRequest:
+      type: object
+      properties:
+        entry_note:
+          type: string
+          nullable: true
+          maxLength: 500
+          description: Entry note (max 500 chars, null to clear)
+        exit_note:
+          type: string
+          nullable: true
+          maxLength: 500
+          description: Exit note (max 500 chars, null to clear)
+
+    UpdateNotesData:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        ticker:
+          type: string
+        entry_note:
+          type: string
+          nullable: true
+        exit_note:
+          type: string
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+
+    UpdateNotesResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiOkResponse"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/UpdateNotesData"
+
+    UpdateTagsRequest:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+          maxItems: 10
+          description: Array of tags (lowercase, numbers, hyphens only)
+      required: [tags]
+
+    UpdateTagsData:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        ticker:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        updated_at:
+          type: string
+          format: date-time
+
+    UpdateTagsResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiOkResponse"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/UpdateTagsData"
+
+    AllTagsData:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+          description: Sorted array of all unique tags
+        total_positions:
+          type: integer
+          description: Total number of positions
+        positions_with_tags:
+          type: integer
+          description: Number of positions that have tags
+
+    AllTagsResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiOkResponse"
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/AllTagsData"
+      example:
+        status: ok
+        data:
+          tags: ["breakout", "earnings-play", "loser", "momentum", "winner"]
+          total_positions: 42
+          positions_with_tags: 38
+
+    # -------------------------
+    # Error
+    # -------------------------
     ErrorResponse:
       type: object
       properties:
