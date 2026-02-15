@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { Card } from "../components/ui/card";
 import { Switch } from "../components/ui/switch";
 import { Label } from "../components/ui/label";
 import { 
@@ -19,7 +18,9 @@ import {
   Server,
   Settings,
   Clock,
-  Zap
+  Zap,
+  Calculator,
+  Download
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,7 +29,7 @@ import moment from "moment";
 export default function SystemStatus() {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [expandedComponents, setExpandedComponents] = useState({});
-  const queryClient = useQueryClient();
+  const [expandedValidations, setExpandedValidations] = useState({});
 
   // Get API URL from environment variable
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
@@ -90,11 +91,72 @@ export default function SystemStatus() {
     }
   });
 
+  // ✅ NEW: Fetch validation data
+  const { data: validationData, isLoading: validationLoading, error: validationError, mutate: runValidation } = useMutation({
+    mutationFn: async () => {
+      console.log(`Posting to: ${API_URL}/validate/calculations`);
+      const response = await fetch(`${API_URL}/validate/calculations`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
+      });
+      
+      console.log('Validation response status:', response.status);
+      
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Validation response error:', text);
+        throw new Error(`HTTP ${response.status}: ${text}`);
+      }
+      
+      const data = await response.json();
+      console.log('Validation data:', data);
+      return data;
+    }
+  });
+
   const toggleComponentExpanded = (component) => {
     setExpandedComponents(prev => ({
       ...prev,
       [component]: !prev[component]
     }));
+  };
+
+  const toggleValidationExpanded = (metric) => {
+    setExpandedValidations(prev => ({
+      ...prev,
+      [metric]: !prev[metric]
+    }));
+  };
+
+  const exportValidationCSV = () => {
+    if (!validationData?.data?.validations) return;
+
+    const headers = ['Metric', 'Expected', 'Actual', 'Difference', 'Status', 'Timestamp'];
+    const rows = validationData.data.validations.map(v => [
+      v.metric,
+      v.expected,
+      v.actual,
+      v.diff,
+      v.status,
+      validationData.data.timestamp || new Date().toISOString()
+    ]);
+
+    const csv = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `validation-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
   };
 
   const overallStatus = healthData?.status || "unknown";
@@ -118,7 +180,8 @@ export default function SystemStatus() {
   const testStatusConfig = {
     pass: { color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/30", icon: CheckCircle2 },
     fail: { color: "text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/30", icon: XCircle },
-    error: { color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/30", icon: AlertTriangle }
+    error: { color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/30", icon: AlertTriangle },
+    warn: { color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/30", icon: AlertTriangle }
   };
 
   // Access nested summary object from backend response
@@ -128,6 +191,12 @@ export default function SystemStatus() {
   const errorTests = testData?.summary?.errors || 0;
   const successRate = testData?.summary?.success_rate?.toFixed(1) || "0.0";
 
+  // Validation summary
+  const totalValidations = validationData?.data?.summary?.total || 0;
+  const passedValidations = validationData?.data?.summary?.passed || 0;
+  const failedValidations = validationData?.data?.summary?.failed || 0;
+  const warnedValidations = validationData?.data?.summary?.warned || 0;
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -136,7 +205,7 @@ export default function SystemStatus() {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
             System Status
           </h1>
-          <p className="text-slate-400 mt-1">Monitor system health and test API endpoints</p>
+          <p className="text-slate-400 mt-1">Monitor system health and validate calculations</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50">
@@ -183,6 +252,13 @@ export default function SystemStatus() {
         <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
           <div className="font-bold mb-2">❌ Endpoint Tests Failed:</div>
           <div className="text-sm">{testError.message}</div>
+        </div>
+      )}
+
+      {validationError && (
+        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+          <div className="font-bold mb-2">❌ Validation Failed:</div>
+          <div className="text-sm">{validationError.message}</div>
         </div>
       )}
 
@@ -420,6 +496,176 @@ export default function SystemStatus() {
                       </div>
                     )}
                   </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* ✅ NEW: Data Validation Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-white">Data Validation</h2>
+          {validationData && (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-slate-400">Total:</span>
+                <span className="font-bold text-white">{totalValidations}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-slate-400">Passed:</span>
+                <span className="font-bold text-emerald-400">{passedValidations}</span>
+              </div>
+              {warnedValidations > 0 && (
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-slate-400">Warned:</span>
+                  <span className="font-bold text-amber-400">{warnedValidations}</span>
+                </div>
+              )}
+              {failedValidations > 0 && (
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-slate-400">Failed:</span>
+                  <span className="font-bold text-rose-400">{failedValidations}</span>
+                </div>
+              )}
+              <Button
+                onClick={exportValidationCSV}
+                variant="outline"
+                size="sm"
+                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export CSV
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {validationLoading ? (
+          <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
+            <div className="text-center">
+              <RefreshCw className="w-10 h-10 text-slate-400 animate-spin mx-auto mb-3" />
+              <p className="text-slate-400">Running validation checks...</p>
+              <p className="text-slate-500 text-sm mt-1">Validating calculations...</p>
+            </div>
+          </div>
+        ) : !validationData ? (
+          <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
+            <div className="text-center">
+              <Calculator className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+              <p className="text-slate-400">Click 'Run Validation' to verify calculations</p>
+              <p className="text-slate-500 text-sm mt-1">Validates 12 metrics</p>
+              <Button
+                onClick={() => runValidation()}
+                className="mt-4 bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Run Validation
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {validationData.data?.validations?.map((validation, index) => {
+              const config = testStatusConfig[validation.status] || testStatusConfig.error;
+              const StatusIcon = config.icon;
+              const isExpanded = expandedValidations[validation.metric];
+
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className={cn(
+                    "p-4 rounded-xl border backdrop-blur-sm",
+                    config.bg,
+                    config.border
+                  )}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3 flex-1">
+                      <StatusIcon className={cn("w-5 h-5", config.color)} />
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-white capitalize">
+                          {validation.metric.replace(/_/g, ' ')}
+                        </h3>
+                        <Badge className={cn("mt-1 border", config.color, config.border)}>
+                          {validation.status.toUpperCase()}
+                        </Badge>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleValidationExpanded(validation.metric)}
+                      className="text-slate-400 hover:text-white"
+                    >
+                      <ChevronDown className={cn(
+                        "w-4 h-4 transition-transform",
+                        isExpanded && "rotate-180"
+                      )} />
+                    </Button>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4 mb-3">
+                    <div>
+                      <p className="text-xs text-slate-400 mb-1">Expected</p>
+                      <p className="font-mono text-sm text-white">{validation.expected}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400 mb-1">Actual</p>
+                      <p className="font-mono text-sm text-white">{validation.actual}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400 mb-1">Difference</p>
+                      <p className={cn(
+                        "font-mono text-sm",
+                        validation.status === 'pass' ? "text-emerald-400" :
+                        validation.status === 'warn' ? "text-amber-400" :
+                        "text-rose-400"
+                      )}>
+                        {validation.diff} 
+                        {validation.diff_percent && ` (${validation.diff_percent}%)`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={cn(
+                    "px-3 py-2 rounded-lg text-sm",
+                    validation.status === 'pass' && "bg-emerald-500/10 text-emerald-400",
+                    validation.status === 'warn' && "bg-amber-500/10 text-amber-400",
+                    validation.status === 'fail' && "bg-rose-500/10 text-rose-400"
+                  )}>
+                    {validation.status === 'pass' && `✓ Within tolerance (±${validation.tolerance})`}
+                    {validation.status === 'warn' && `⚠ Near tolerance limit (±${validation.tolerance})`}
+                    {validation.status === 'fail' && `✗ Outside tolerance (±${validation.tolerance})`}
+                  </div>
+
+                  <AnimatePresence>
+                    {isExpanded && validation.formula && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-3 pt-3 border-t border-slate-700/50"
+                      >
+                        <h4 className="text-sm font-medium text-slate-300 mb-2">
+                          Calculation Details
+                        </h4>
+                        <div className="text-xs text-slate-400 bg-slate-900/50 p-3 rounded space-y-1">
+                          <p><span className="text-slate-500">Formula:</span> {validation.formula}</p>
+                          {validation.method && (
+                            <p><span className="text-slate-500">Method:</span> {validation.method}</p>
+                          )}
+                          {validation.data_points && (
+                            <p><span className="text-slate-500">Data Points:</span> {validation.data_points}</p>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               );
             })}
