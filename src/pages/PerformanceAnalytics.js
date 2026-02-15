@@ -119,6 +119,11 @@ export default function PerformanceAnalytics() {
   const calculateMetrics = () => {
     if (!hasEnoughTrades) return null;
 
+  // ✅ Chronologically sorted trades (oldest → newest by exit date)
+    const sortedTrades = [...filteredTrades].sort(
+    (a, b) => new Date(a.exit_date) - new Date(b.exit_date)
+    );
+
     const winners = filteredTrades.filter(t => t.pnl > 0);
     const losers = filteredTrades.filter(t => t.pnl < 0);
     const winRate = (winners.length / filteredTrades.length) * 100;
@@ -209,7 +214,7 @@ export default function PerformanceAnalytics() {
     let maxDrawdown = 0;
     let maxDrawdownDate = "";
     let cumPnl = 0;
-    filteredTrades.forEach(t => {
+    sortedTrades.forEach(t => {
       cumPnl += t.pnl;
       if (cumPnl > peak) peak = cumPnl;
       const drawdown = peak - cumPnl;
@@ -230,7 +235,7 @@ export default function PerformanceAnalytics() {
     let currentStreak = 0;
     let maxWinStreak = 0;
     let maxLossStreak = 0;
-    filteredTrades.forEach(t => {
+    sortedTrades.forEach(t => {
       if (t.pnl > 0) {
         currentStreak = currentStreak > 0 ? currentStreak + 1 : 1;
         maxWinStreak = Math.max(maxWinStreak, currentStreak);
@@ -257,7 +262,11 @@ export default function PerformanceAnalytics() {
       : 0;
 
     // Trade frequency (per week)
-    const daySpan = (new Date(filteredTrades[0]?.exit_date) - new Date(filteredTrades[filteredTrades.length - 1]?.entry_date)) / (1000 * 60 * 60 * 24);
+    const firstTrade = sortedTrades[0];
+    const lastTrade = sortedTrades[sortedTrades.length - 1];
+    const daySpan = firstTrade && lastTrade
+      ? (new Date(lastTrade.exit_date) - new Date(firstTrade.entry_date)) / (1000 * 60 * 60 * 24)
+      : 0;
     const tradeFrequency = daySpan > 0 ? (filteredTrades.length / daySpan) * 7 : 0;
 
     // Capital efficiency (simplified - assuming average position size)
@@ -270,12 +279,9 @@ export default function PerformanceAnalytics() {
     let peakDate = null;
     let daysUnderwater = 0;
     
-    const sortedTrades = [...filteredTrades].sort((a, b) => 
-      new Date(a.exit_date) - new Date(b.exit_date)
-    );
-
     sortedTrades.forEach(trade => {
       runningEquity += trade.pnl;
+    
       if (runningEquity >= peakEquity) {
         peakEquity = runningEquity;
         peakDate = trade.exit_date;
