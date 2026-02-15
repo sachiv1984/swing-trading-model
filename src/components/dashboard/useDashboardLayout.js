@@ -5,11 +5,15 @@ const DEFAULT_LAYOUT = [
   { id: "cash_balance", order: 1 },
   { id: "open_positions", order: 2 },
   { id: "total_pnl", order: 3 },
-  { id: "portfolio_chart", order: 4 },
-  { id: "allocation_chart", order: 5 },
-  { id: "market_regime_us", order: 6 },
-  { id: "market_regime_uk", order: 7 },
-  { id: "quick_actions", order: 8 },
+  { id: "win_rate", order: 4 },
+  { id: "avg_hold_time", order: 5 },
+  { id: "current_drawdown", order: 6 },
+  { id: "recent_trades", order: 7 },
+  { id: "portfolio_chart", order: 8 },
+  { id: "allocation_chart", order: 9 },
+  { id: "market_regime_us", order: 10 },
+  { id: "market_regime_uk", order: 11 },
+  { id: "quick_actions", order: 12 },
 ];
 
 const STORAGE_KEY = "dashboard_layout";
