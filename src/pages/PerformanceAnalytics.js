@@ -239,43 +239,58 @@ export default function PerformanceAnalytics() {
         sharpeMethod = "trade";
       }
       
-      // ✅ Max Drawdown (filtered) — reuse the same filteredPortfolioHistory
-      let peakEquity = 0;
-      let maxDrawdown = 0;
-      let maxDrawdownPercent = 0;
-      let maxDrawdownDate = "";
+      // ✅ Max Drawdown - MUST use full history to get true max DD
+    let peakEquity = 0;
+    let maxDrawdown = 0;
+    let maxDrawdownPercent = 0;
+    let maxDrawdownDate = "";
+    
+    // Use FULL portfolioHistory, not filtered!
+    const sortedEquity = [...portfolioHistory].sort(
+      (a, b) => new Date(a.snapshot_date) - new Date(b.snapshot_date)
+    );
+    
+    sortedEquity.forEach(snapshot => {
+      const equity = Number(snapshot.total_value);
+      if (!Number.isFinite(equity)) return;
+    
+      if (equity > peakEquity) peakEquity = equity;
+    
+      const drawdownAmount = peakEquity - equity;
+      const drawdownPct = peakEquity > 0 ? (drawdownAmount / peakEquity) * 100 : 0;
+    
+      if (drawdownAmount > maxDrawdown) {
+        maxDrawdown = drawdownAmount;
+        maxDrawdownPercent = drawdownPct;
+        maxDrawdownDate = snapshot.snapshot_date;
+      }
+    });
+   // Use period-specific max drawdown
+    let periodPeakEquity = 0;
+    let periodMaxDrawdown = 0;
+    
+    const sortedPeriodEquity = [...filteredPortfolioHistory].sort(
+      (a, b) => new Date(a.snapshot_date) - new Date(b.snapshot_date)
+    );
+    
+    sortedPeriodEquity.forEach(snapshot => {
+      const equity = Number(snapshot.total_value);
+      if (!Number.isFinite(equity)) return;
       
-      const sortedEquity = [...filteredPortfolioHistory].sort(
-        (a, b) => new Date(a.snapshot_date) - new Date(b.snapshot_date)
-      );
+      if (equity > periodPeakEquity) periodPeakEquity = equity;
       
-      sortedEquity.forEach(snapshot => {
-        const equity = Number(snapshot.total_value);
-        if (!Number.isFinite(equity)) return;
-      
-        if (equity > peakEquity) peakEquity = equity;
-      
-        const drawdownAmount = peakEquity - equity;
-        const drawdownPct = peakEquity > 0 ? (drawdownAmount / peakEquity) * 100 : 0;
-      
-        if (drawdownAmount > maxDrawdown) {
-          maxDrawdown = drawdownAmount;
-          maxDrawdownPercent = drawdownPct;
-          maxDrawdownDate = snapshot.snapshot_date;
-        }
-      });
-    const totalPnl = filteredTrades.reduce((sum, t) => sum + t.pnl, 0);
-
-    const firstEquity = sortedEquity.length ? Number(sortedEquity[0].total_value) : 0;
-    const lastEquity = sortedEquity.length ? Number(sortedEquity[sortedEquity.length - 1].total_value) : 0;
+      const dd = periodPeakEquity - equity;
+      if (dd > periodMaxDrawdown) periodMaxDrawdown = dd;
+    });
+    
+    const firstEquity = sortedPeriodEquity.length ? Number(sortedPeriodEquity[0].total_value) : 0;
+    const lastEquity = sortedPeriodEquity.length ? Number(sortedPeriodEquity[sortedPeriodEquity.length - 1].total_value) : 0;
     const periodProfit = lastEquity - firstEquity;
-
     
+    const recoveryFactor = periodMaxDrawdown > 0 && periodProfit > 0
+      ? periodProfit / periodMaxDrawdown
+      : 0;
     
-    const recoveryFactor =
-      maxDrawdown > 0 && Number.isFinite(periodProfit) && periodProfit > 0
-        ? periodProfit / maxDrawdown
-        : 0;
     const expectancy = (winRate / 100 * avgWin) + ((100 - winRate) / 100 * avgLoss);
     const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : 0;
     const riskRewardRatio = Math.abs(avgLoss) > 0 ? avgWin / Math.abs(avgLoss) : 0;
@@ -346,21 +361,34 @@ export default function PerformanceAnalytics() {
     return {
       sharpeRatio,
       sharpeMethod,
-      maxDrawdown: { percent: maxDrawdownPercent, amount: maxDrawdown, date: maxDrawdownDate },
+      maxDrawdown: { 
+        percent: maxDrawdownPercent, 
+        amount: maxDrawdown, 
+        date: maxDrawdownDate 
+      },
       recoveryFactor,
       expectancy,
       profitFactor,
       riskRewardRatio,
+      
+      // Streak metrics
       winStreak: maxWinStreak,
       lossStreak: maxLossStreak,
+      
+      // Holding time metrics
       avgHoldWinners,
       avgHoldLosers,
+      
+      // Efficiency metrics
       tradeFrequency,
       capitalEfficiency,
-      daysUnderwater,
-      peakEquity: peakTradeEquity,
-      periodPeakEquity: peakEquity,
-      peakDate
+      
+      // Underwater metrics (trade-based)
+      daysUnderwater,              // Days since last trade peak
+      peakDate,                     // Date of last trade peak
+      
+      // Peak metrics (equity-based)
+      portfolioPeakEquity: peakEquity,  // Peak from equity curve
     };
   };
 
