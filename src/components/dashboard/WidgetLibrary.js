@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { 
   Wallet, 
   TrendingUp, 
+  TrendingDown,
   Briefcase, 
   PieChart, 
   BarChart3, 
@@ -28,6 +29,7 @@ const WIDGET_CATALOG = [
       { id: "total_pnl", name: "Total P&L", icon: TrendingUp, description: "Profit and loss", size: "small" },
       { id: "win_rate", name: "Win Rate", icon: Award, description: "Trading win percentage", size: "small" },
       { id: "avg_hold_time", name: "Avg Hold Time", icon: Clock, description: "Average position duration", size: "small" },
+      { id: "current_drawdown", name: "Current Drawdown", icon: TrendingDown, description: "Drawdown from peak", size: "small" },
     ]
   },
   {
