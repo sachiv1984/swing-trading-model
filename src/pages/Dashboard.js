@@ -65,6 +65,23 @@ export default function Dashboard() {
     queryFn: () => base44.entities.CashTransaction.list("-date"),
   });
 
+  // ✅ NEW: Fetch portfolio history for accurate peak calculation
+  const { data: portfolioHistory } = useQuery({
+    queryKey: ["portfolioHistory"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/portfolio/history?days=365`);
+        if (!response.ok) return [];
+        const result = await response.json();
+        return result.data || [];
+      } catch (error) {
+        console.error('Failed to load portfolio history:', error);
+        return [];
+      }
+    },
+    initialData: [],
+  });
+
   const portfolio = portfolios?.[0];
   const openPositions = positions || [];
   const closedPositions = allPositions?.filter(p => p.status === "closed") || [];
@@ -103,19 +120,76 @@ export default function Dashboard() {
   };
 
   const renderWidget = (widgetId, dragHandleProps) => {
-    // ✅ Calculate drawdown metrics properly
+    // ✅ FIXED: Calculate proper drawdown metrics from portfolio_history
     const currentEquity = (portfolio?.cash_balance || 0) + totalPositionsValue;
     
-    // Calculate peak equity from closed trades history
-    let peakEquity = currentEquity;
-    let peakDate = new Date().toISOString().split('T')[0];
-    let maxHistoricalDrawdown = -20; // This should ideally come from trade history analysis
+    const calculateDrawdownMetrics = () => {
+      // If we have portfolio history, use it for accurate peak calculation
+      if (portfolioHistory && portfolioHistory.length > 0) {
+        // Find all-time peak from history
+        const historicalPeak = Math.max(
+          ...portfolioHistory.map(h => parseFloat(h.total_value)),
+          currentEquity  // Include current equity in case it's a new peak
+        );
+        
+        // Find when peak occurred
+        const peakSnapshot = portfolioHistory.find(h => 
+          parseFloat(h.total_value) === historicalPeak
+        );
+        const peakDate = peakSnapshot?.snapshot_date || new Date().toISOString().split('T')[0];
+        
+        // Calculate max historical drawdown from the history data
+        let maxDD = 0;
+        let runningPeak = 0;
+        
+        // Sort by date ascending
+        const sortedHistory = [...portfolioHistory].sort((a, b) => 
+          new Date(a.snapshot_date) - new Date(b.snapshot_date)
+        );
+        
+        sortedHistory.forEach(snapshot => {
+          const value = parseFloat(snapshot.total_value);
+          if (value > runningPeak) {
+            runningPeak = value;
+          }
+          const drawdown = runningPeak > 0 ? ((value - runningPeak) / runningPeak) * 100 : 0;
+          if (drawdown < maxDD) {
+            maxDD = drawdown;
+          }
+        });
+        
+        return {
+          currentEquity,
+          peakEquity: historicalPeak,
+          peakDate,
+          maxHistoricalDrawdown: maxDD
+        };
+      }
+      
+      // Fallback: Calculate from current portfolio data if no history
+      // This estimates peak by assuming current equity + any realized losses
+      const realizedPnL = closedPositions.reduce((sum, p) => sum + (p.pnl || 0), 0);
+      const unrealizedPnL = openPositions.reduce((sum, p) => sum + (p.pnl || 0), 0);
+      
+      // If we've taken losses, the peak was higher
+      const estimatedPeak = realizedPnL < 0 
+        ? currentEquity - realizedPnL  // Add back the losses
+        : currentEquity;
+      
+      // Max drawdown = worst closed position as percentage
+      const maxLoss = closedPositions.length > 0
+        ? Math.min(...closedPositions.map(p => p.pnl_percent || 0), 0)
+        : 0;
+      
+      return {
+        currentEquity,
+        peakEquity: Math.max(currentEquity, estimatedPeak),
+        peakDate: new Date().toISOString().split('T')[0],
+        maxHistoricalDrawdown: maxLoss
+      };
+    };
 
-    // TODO: Calculate actual peak from trade history when available
-    // For now, use current equity as peak if profitable
-    if (totalPnL > 0) {
-      peakEquity = currentEquity;
-    }
+    const drawdownMetrics = calculateDrawdownMetrics();
 
     const widgetProps = {
       portfolio,
@@ -144,10 +218,10 @@ export default function Dashboard() {
         return <AvgHoldTimeWidget {...widgetProps} />;
       case "current_drawdown":
         return <CurrentDrawdownWidget 
-          currentEquity={currentEquity}
-          peakEquity={peakEquity}
-          peakDate={peakDate}
-          maxHistoricalDrawdown={maxHistoricalDrawdown}
+          currentEquity={drawdownMetrics.currentEquity}
+          peakEquity={drawdownMetrics.peakEquity}
+          peakDate={drawdownMetrics.peakDate}
+          maxHistoricalDrawdown={drawdownMetrics.maxHistoricalDrawdown}
         />;
       case "portfolio_chart":
         return <PortfolioChart />;
