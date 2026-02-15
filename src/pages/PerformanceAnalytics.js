@@ -19,6 +19,9 @@ import TagPerformance from "../components/analytics/TagPerformance";
 export default function PerformanceAnalytics() {
   const [timePeriod, setTimePeriod] = useState("last_month");
 
+  // ✅ PRODUCTION-SAFE: Use environment variable for API URL
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
   const timePeriodLabels = {
     last_7_days: "Last 7 Days",
     last_month: "Last Month", 
@@ -34,12 +37,21 @@ export default function PerformanceAnalytics() {
     initialData: [],
   });
 
+  // ✅ PRODUCTION-SAFE: Uses environment-aware API URL
   const { data: tradesData, isLoading } = useQuery({
     queryKey: ["trades"],
     queryFn: async () => {
-      const response = await fetch("http://localhost:8000/trades");
-      const result = await response.json();
-      return result.data;
+      try {
+        const response = await fetch(`${API_URL}/trades`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const result = await response.json();
+        return result.data;
+      } catch (error) {
+        console.error('Failed to load trades:', error);
+        return { trades: [] };
+      }
     },
     initialData: { trades: [] },
   });
@@ -471,7 +483,7 @@ export default function PerformanceAnalytics() {
       entryDate: t.entry_date,
       pnl: t.pnl,
       pnlPercent: t.pnl_percent || 0,
-      daysHeld: Math.round((new Date(t.exit_date) - new Date(t.entry_date)) / (1000 * 60 * 60 * 24)),
+      daysHeld: Math.round((new Date(t.exit_date) - new Date(t.exit_date)) / (1000 * 60 * 60 * 24)),
       exitReason: t.exit_reason || "manual"
     }));
     return { topWinners, topLosers };
