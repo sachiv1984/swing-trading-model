@@ -33,7 +33,7 @@ export default function CurrentDrawdownWidget({ currentEquity, peakEquity, peakD
   // Handle edge cases
   if (!peakEquity || peakEquity === 0) {
     return (
-      <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm p-6">
+      <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm p-6 h-[160px] flex flex-col">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-gradient-to-br from-slate-500 to-slate-600">
             <TrendingDown className="w-5 h-5 text-white" />
@@ -48,7 +48,7 @@ export default function CurrentDrawdownWidget({ currentEquity, peakEquity, peakD
   }
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm p-6">
+    <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm p-6 h-[160px] flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className={`p-2 rounded-lg bg-gradient-to-br ${getIconColor()}`}>
