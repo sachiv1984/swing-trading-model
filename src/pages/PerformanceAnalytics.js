@@ -15,6 +15,8 @@ import TimeBasedCharts from "../components/analytics/TimeBasedCharts";
 import TopPerformers from "../components/analytics/TopPerformers";
 import ConsistencyMetrics from "../components/analytics/ConsistencyMetrics";
 import TagPerformance from "../components/analytics/TagPerformance";
+import UnderwaterChart from "../components/analytics/UnderwaterChart";
+import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
 
 export default function PerformanceAnalytics() {
   const [timePeriod, setTimePeriod] = useState("last_month");
@@ -37,7 +39,7 @@ export default function PerformanceAnalytics() {
     initialData: [],
   });
 
-  // ✅ PRODUCTION-SAFE: Uses environment-aware API URL
+  // ✅ PRODUCTION-SAFE: Query /trades endpoint with environment-aware URL
   const { data: tradesData, isLoading } = useQuery({
     queryKey: ["trades"],
     queryFn: async () => {
@@ -172,6 +174,30 @@ export default function PerformanceAnalytics() {
     const avgPositionSize = filteredTrades.reduce((sum, t) => sum + (t.entry_price * t.shares), 0) / filteredTrades.length;
     const capitalEfficiency = avgPositionSize > 0 ? (totalPnl / avgPositionSize) * 100 : 0;
 
+    // ✅ NEW: Calculate time underwater
+    let runningEquity = 0;
+    let peakEquity = 0;
+    let peakDate = null;
+    let daysUnderwater = 0;
+    
+    const sortedTrades = [...filteredTrades].sort((a, b) => 
+      new Date(a.exit_date) - new Date(b.exit_date)
+    );
+
+    sortedTrades.forEach(trade => {
+      runningEquity += trade.pnl;
+      if (runningEquity >= peakEquity) {
+        peakEquity = runningEquity;
+        peakDate = trade.exit_date;
+        daysUnderwater = 0;
+      } else if (peakDate) {
+        const daysSincePeak = Math.floor(
+          (new Date(trade.exit_date) - new Date(peakDate)) / (1000 * 60 * 60 * 24)
+        );
+        daysUnderwater = Math.max(daysUnderwater, daysSincePeak);
+      }
+    });
+
     return {
       sharpeRatio,
       maxDrawdown: { percent: maxDrawdownPercent, amount: maxDrawdown, date: maxDrawdownDate },
@@ -184,7 +210,10 @@ export default function PerformanceAnalytics() {
       avgHoldWinners,
       avgHoldLosers,
       tradeFrequency,
-      capitalEfficiency
+      capitalEfficiency,
+      daysUnderwater,
+      peakEquity,
+      peakDate
     };
   };
 
@@ -192,7 +221,7 @@ export default function PerformanceAnalytics() {
 
   const generatePrintReport = () => {
     if (!metrics) return;
-    
+
     const reportHTML = `
       <!DOCTYPE html>
       <html>
@@ -483,7 +512,7 @@ export default function PerformanceAnalytics() {
       entryDate: t.entry_date,
       pnl: t.pnl,
       pnlPercent: t.pnl_percent || 0,
-      daysHeld: Math.round((new Date(t.exit_date) - new Date(t.exit_date)) / (1000 * 60 * 60 * 24)),
+      daysHeld: Math.round((new Date(t.exit_date) - new Date(t.entry_date)) / (1000 * 60 * 60 * 24)),
       exitReason: t.exit_reason || "manual"
     }));
     return { topWinners, topLosers };
@@ -611,6 +640,7 @@ export default function PerformanceAnalytics() {
       />
       <AdvancedMetricsGrid metrics={metrics} />
       <MonthlyHeatmap monthlyData={getMonthlyData()} />
+      <UnderwaterChart trades={filteredTrades} />
       <MarketComparison 
         ukMetrics={getMarketMetrics("UK")} 
         usMetrics={getMarketMetrics("US")} 
@@ -622,6 +652,7 @@ export default function PerformanceAnalytics() {
         holdingPeriodData={getHoldingPeriodData()}
         entryExitData={getEntryExitData()}
       />
+      <RMultipleAnalysis trades={filteredTrades} />
       <TopPerformers {...getTopPerformers()} />
       <ConsistencyMetrics metrics={getConsistencyMetrics()} />
       <TagPerformance trades={filteredTrades} />
