@@ -379,12 +379,12 @@ export default function PerformanceAnalytics() {
         }
       />
 
-      <ExecutiveSummaryCards metrics={metrics} />
+      <ExecutiveSummaryCards metrics={metrics} advancedMetrics={advancedMetrics} />
       <KeyInsightsCard 
         metrics={metrics} 
         winRate={summary.winRate || 0} 
       />
-      <AdvancedMetricsGrid metrics={advancedMetrics} />
+      <AdvancedMetricsGrid metrics={advancedMetrics} executiveMetrics={metrics} />
       <MonthlyHeatmap monthlyData={analyticsData?.monthlyData || []} />
       <UnderwaterChart trades={analyticsData?.tradesForCharts || []} />
       <MarketComparison 
