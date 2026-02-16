@@ -23,14 +23,14 @@ class AnalyticsService:
     def get_metrics(self, period: str = "all_time", min_trades: int = 10) -> Dict[str, Any]:
         """
         Calculate ALL analytics metrics for the given period.
-        
+
         NOTE: This version is designed to work with data fetched via API endpoints.
         The analytics service should be called from the router AFTER fetching
         the necessary data (trades and portfolio history).
-        
+
         For now, returns a structure indicating implementation is needed.
         """
-        
+
         return {
             "summary": {
                 "total_trades": 0,
@@ -38,7 +38,7 @@ class AnalyticsService:
                 "total_pnl": 0.0,
                 "has_enough_data": False,
                 "min_required": min_trades,
-                "message": "Analytics service needs to be called with pre-fetched data"
+                "message": "Analytics service needs to be called with pre-fetched data",
             },
             "executive_metrics": {},
             "advanced_metrics": {},
@@ -48,36 +48,36 @@ class AnalyticsService:
             "day_of_week": [],
             "holding_periods": [],
             "top_performers": {"winners": [], "losers": []},
-            "consistency_metrics": {}
+            "consistency_metrics": {},
         }
 
     def calculate_metrics_from_data(
-        self, 
-        trades: List[Dict], 
+        self,
+        trades: List[Dict],
         portfolio_history: List[Dict],
         period: str = "all_time",
-        min_trades: int = 10
+        min_trades: int = 10,
     ) -> Dict[str, Any]:
         """
         Calculate metrics from pre-fetched data.
-        
+
         Args:
             trades: List of trade dicts (from /trades endpoint)
             portfolio_history: List of portfolio snapshot dicts
             period: Time period filter
             min_trades: Minimum trades required
-            
+
         Returns:
             Complete metrics dictionary
         """
         # Filter by period
         filtered_trades = self._filter_trades_by_period(trades, period)
         filtered_history = self._filter_history_by_period(portfolio_history, period)
-        
+
         # Check minimum
         if len(filtered_trades) < min_trades:
             return self._insufficient_data_response(len(filtered_trades), min_trades)
-        
+
         # Calculate all metrics
         executive = self._calculate_executive_metrics(filtered_trades, filtered_history)
         advanced = self._calculate_advanced_metrics(filtered_trades, filtered_history)
@@ -88,36 +88,36 @@ class AnalyticsService:
         holding_periods = self._calculate_holding_periods(filtered_trades)
         top_performers = self._calculate_top_performers(filtered_trades)
         consistency = self._calculate_consistency_metrics(monthly)
-        
-        # Summary
-        winners = [t for t in filtered_trades if t.get('pnl', 0) > 0]
-        win_rate = (len(winners) / len(filtered_trades)) * 100 if filtered_trades else 0
-        total_pnl = sum(t.get('pnl', 0) for t in filtered_trades)
 
-        # Add trades for charts (line 228, before the return statement)
+        # Summary
+        winners = [t for t in filtered_trades if t.get("pnl", 0) > 0]
+        win_rate = (len(winners) / len(filtered_trades)) * 100 if filtered_trades else 0
+        total_pnl = sum(t.get("pnl", 0) for t in filtered_trades)
+
+        # Add trades for charts (before the return statement)
         trades_for_charts = [
             {
-                "id": t.get('id'),
-                "ticker": t.get('ticker'),
-                "market": t.get('market'),
-                "entry_date": t.get('entry_date'),
-                "exit_date": t.get('exit_date'),
-                "pnl": t.get('pnl', 0),
-                "pnl_percent": t.get('pnl_percent', 0),
-                "exit_reason": t.get('exit_reason'),
-                "holding_days": t.get('holding_days', 0),
-                "tags": t.get('tags')
+                "id": t.get("id"),
+                "ticker": t.get("ticker"),
+                "market": t.get("market"),
+                "entry_date": t.get("entry_date"),
+                "exit_date": t.get("exit_date"),
+                "pnl": t.get("pnl", 0),
+                "pnl_percent": t.get("pnl_percent", 0),
+                "exit_reason": t.get("exit_reason"),
+                "holding_days": t.get("holding_days", 0),
+                "tags": t.get("tags"),
             }
             for t in filtered_trades
         ]
-        
+
         return {
             "summary": {
                 "total_trades": len(filtered_trades),
                 "win_rate": round(win_rate, 2),
                 "total_pnl": round(total_pnl, 2),
                 "has_enough_data": True,
-                "min_required": min_trades
+                "min_required": min_trades,
             },
             "executive_metrics": executive,
             "advanced_metrics": advanced,
@@ -128,30 +128,30 @@ class AnalyticsService:
             "holding_periods": holding_periods,
             "top_performers": top_performers,
             "consistency_metrics": consistency,
-            "trades_for_charts": trades_for_charts
+            "trades_for_charts": trades_for_charts,
         }
 
-            def _insufficient_data_response(self, trade_count: int, min_required: int) -> Dict:
-            """Return empty response when not enough data."""
-            return {
-                "summary": {
-                    "total_trades": trade_count,
-                    "win_rate": 0.0,
-                    "total_pnl": 0.0,
-                    "has_enough_data": False,
-                    "min_required": min_required
-                },
-                "executive_metrics": {},
-                "advanced_metrics": {},
-                "market_comparison": {},
-                "exit_reasons": [],
-                "monthly_data": [],
-                "day_of_week": [],
-                "holding_periods": [],
-                "top_performers": {"winners": [], "losers": []},
-                "consistency_metrics": {},
-                "trades_for_charts": []
-            }
+    def _insufficient_data_response(self, trade_count: int, min_required: int) -> Dict[str, Any]:
+        """Return empty response when not enough data."""
+        return {
+            "summary": {
+                "total_trades": trade_count,
+                "win_rate": 0.0,
+                "total_pnl": 0.0,
+                "has_enough_data": False,
+                "min_required": min_required,
+            },
+            "executive_metrics": {},
+            "advanced_metrics": {},
+            "market_comparison": {},
+            "exit_reasons": [],
+            "monthly_data": [],
+            "day_of_week": [],
+            "holding_periods": [],
+            "top_performers": {"winners": [], "losers": []},
+            "consistency_metrics": {},
+            "trades_for_charts": [],
+        }
     def _filter_trades_by_period(self, trades: List[Dict], period: str) -> List[Dict]:
         """Filter trades by time period."""
         if period == "all_time":
