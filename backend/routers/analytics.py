@@ -1,12 +1,12 @@
 """
-Analytics Router - Uses database session correctly
+Analytics Router - Uses existing service functions
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Query, HTTPException, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import text
 from database import get_db
-from services import AnalyticsService
+from services import AnalyticsService, get_trade_history_with_stats, get_performance_history
+
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -17,64 +17,58 @@ async def get_analytics_metrics(
         "all_time",
         regex="^(last_7_days|last_month|last_quarter|last_year|ytd|all_time)$"
     ),
-    db: Session = Depends(get_db)  # FastAPI handles the generator for us
+    db: Session = Depends(get_db)
 ):
     """
     Get comprehensive analytics metrics.
     
-    Queries database directly for trades and portfolio history,
+    Uses existing service functions to fetch data,
     then calculates metrics server-side.
     """
     try:
-        # Query closed trades directly from database
-        trades_query = text("""
-            SELECT 
-                id, ticker, market, entry_date, exit_date, shares,
-                entry_price, exit_price, pnl, pnl_percent, exit_reason
-            FROM positions
-            WHERE status = 'closed' AND exit_date IS NOT NULL
-            ORDER BY exit_date ASC
-        """)
+        # Use existing trade service to get trades
+        # get_trade_history_with_stats returns {trades: [...], ...}
+        trade_data = get_trade_history_with_stats(db)
+        trades = trade_data.get("trades", [])
         
-        trades_result = db.execute(trades_query)
-        trades = []
-        for row in trades_result:
-            trades.append({
-                'id': str(row[0]),
-                'ticker': row[1],
-                'market': row[2],
-                'entry_date': row[3].isoformat() if row[3] else None,
-                'exit_date': row[4].isoformat() if row[4] else None,
-                'shares': float(row[5]) if row[5] else 0,
-                'entry_price': float(row[6]) if row[6] else 0,
-                'exit_price': float(row[7]) if row[7] else 0,
-                'pnl': float(row[8]) if row[8] else 0,
-                'pnl_percent': float(row[9]) if row[9] else 0,
-                'exit_reason': row[10]
+        # Convert trade objects to dicts
+        trades_list = []
+        for trade in trades:
+            trades_list.append({
+                'id': str(trade.get('id', '')),
+                'ticker': trade.get('ticker'),
+                'market': trade.get('market'),
+                'entry_date': trade.get('entry_date'),
+                'exit_date': trade.get('exit_date'),
+                'shares': trade.get('shares', 0),
+                'entry_price': trade.get('entry_price', 0),
+                'exit_price': trade.get('exit_price', 0),
+                'pnl': trade.get('pnl', 0),
+                'pnl_percent': trade.get('pnl_percent', 0),
+                'exit_reason': trade.get('exit_reason')
             })
         
-        # Query portfolio history
-        history_query = text("""
-            SELECT snapshot_date, total_value, cash_balance, positions_value, total_pnl
-            FROM portfolio_snapshots
-            ORDER BY snapshot_date ASC
-        """)
-        
-        history_result = db.execute(history_query)
-        portfolio_history = []
-        for row in history_result:
-            portfolio_history.append({
-                'snapshot_date': row[0].isoformat() if row[0] else None,
-                'total_value': float(row[1]) if row[1] else 0,
-                'cash_balance': float(row[2]) if row[2] else 0,
-                'positions_value': float(row[3]) if row[3] else 0,
-                'total_pnl': float(row[4]) if row[4] else 0
-            })
+        # Use existing portfolio service to get history
+        # get_performance_history returns list of snapshots
+        try:
+            portfolio_history_raw = get_performance_history(db, days=365)
+            portfolio_history = []
+            for snapshot in portfolio_history_raw:
+                portfolio_history.append({
+                    'snapshot_date': snapshot.get('date') or snapshot.get('snapshot_date'),
+                    'total_value': snapshot.get('total_value', 0),
+                    'cash_balance': snapshot.get('cash_balance', 0),
+                    'positions_value': snapshot.get('positions_value', 0),
+                    'total_pnl': snapshot.get('total_pnl', 0)
+                })
+        except Exception as e:
+            print(f"Error fetching portfolio history: {e}")
+            portfolio_history = []
         
         # Calculate metrics
-        service = AnalyticsService()  # No db needed
+        service = AnalyticsService()
         metrics = service.calculate_metrics_from_data(
-            trades=trades,
+            trades=trades_list,
             portfolio_history=portfolio_history,
             period=period
         )
