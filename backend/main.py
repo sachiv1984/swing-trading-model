@@ -11,7 +11,7 @@ from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
 from pydantic import BaseModel
-from backend.routers import validation
+from routers import validation
 
 
 from database import (
