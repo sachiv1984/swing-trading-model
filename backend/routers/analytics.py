@@ -34,6 +34,17 @@ async def get_analytics_metrics(
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         
         try:
+            # Query settings to get min_trades_for_analytics
+            cursor.execute("""
+                SELECT min_trades_for_analytics
+                FROM settings
+                ORDER BY created_at DESC
+                LIMIT 1
+            """)
+            
+            settings_row = cursor.fetchone()
+            min_trades = int(settings_row['min_trades_for_analytics']) if settings_row else 10
+            
             # Query closed positions
             cursor.execute("""
                 SELECT 
@@ -98,7 +109,8 @@ async def get_analytics_metrics(
         metrics = service.calculate_metrics_from_data(
             trades=trades,
             portfolio_history=portfolio_history,
-            period=period
+            period=period,
+            min_trades=min_trades
         )
         
         return {"status": "ok", "data": metrics}
