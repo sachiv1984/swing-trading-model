@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from backend.database import get_db
-from backend.services.validation_service import ValidationService
-from backend.services.analytics_service import AnalyticsService
+from database import get_db
+from validation_service import ValidationService
+from analytics_service import AnalyticsService
 
 router = APIRouter(prefix="/validate", tags=["Validation"])
 
