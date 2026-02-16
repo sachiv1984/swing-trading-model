@@ -11,6 +11,7 @@ from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
 from pydantic import BaseModel
+from backend.routers import validation
 
 
 from database import (
@@ -104,7 +105,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-      
+
+app.include_router(validation.router)
+
 @app.get("/")
 def root():
     return {"status": "ok", "message": "Trading Assistant API v1.0"}
