@@ -1,5 +1,5 @@
 """
-Analytics Router - Uses database session directly
+Analytics Router - Uses database session correctly
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from database import get_db
 from services import AnalyticsService
-from datetime import datetime
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -18,7 +17,7 @@ async def get_analytics_metrics(
         "all_time",
         regex="^(last_7_days|last_month|last_quarter|last_year|ytd|all_time)$"
     ),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db)  # FastAPI handles the generator for us
 ):
     """
     Get comprehensive analytics metrics.
@@ -31,16 +30,16 @@ async def get_analytics_metrics(
         trades_query = text("""
             SELECT 
                 id, ticker, market, entry_date, exit_date, shares,
-                entry_price, exit_price, pnl, pnl_percent, exit_reason,
-                entry_note, exit_note, tags, status
+                entry_price, exit_price, pnl, pnl_percent, exit_reason
             FROM positions
             WHERE status = 'closed' AND exit_date IS NOT NULL
             ORDER BY exit_date ASC
         """)
         
         trades_result = db.execute(trades_query)
-        trades = [
-            {
+        trades = []
+        for row in trades_result:
+            trades.append({
                 'id': str(row[0]),
                 'ticker': row[1],
                 'market': row[2],
@@ -51,14 +50,8 @@ async def get_analytics_metrics(
                 'exit_price': float(row[7]) if row[7] else 0,
                 'pnl': float(row[8]) if row[8] else 0,
                 'pnl_percent': float(row[9]) if row[9] else 0,
-                'exit_reason': row[10],
-                'entry_note': row[11],
-                'exit_note': row[12],
-                'tags': row[13],
-                'status': row[14]
-            }
-            for row in trades_result
-        ]
+                'exit_reason': row[10]
+            })
         
         # Query portfolio history
         history_query = text("""
@@ -68,19 +61,18 @@ async def get_analytics_metrics(
         """)
         
         history_result = db.execute(history_query)
-        portfolio_history = [
-            {
+        portfolio_history = []
+        for row in history_result:
+            portfolio_history.append({
                 'snapshot_date': row[0].isoformat() if row[0] else None,
                 'total_value': float(row[1]) if row[1] else 0,
                 'cash_balance': float(row[2]) if row[2] else 0,
                 'positions_value': float(row[3]) if row[3] else 0,
                 'total_pnl': float(row[4]) if row[4] else 0
-            }
-            for row in history_result
-        ]
+            })
         
         # Calculate metrics
-        service = AnalyticsService(db)
+        service = AnalyticsService()  # No db needed
         metrics = service.calculate_metrics_from_data(
             trades=trades,
             portfolio_history=portfolio_history,
