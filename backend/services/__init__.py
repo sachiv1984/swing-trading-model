@@ -13,6 +13,7 @@ Modules:
     - cash_service: Cash transactions and flow tracking
     - signal_service: Momentum signal generation and management
     - health_service: System health monitoring and endpoint testing
+    - analytics_service: Comprehensive trading analytics and metrics
 
 Benefits:
     - Testable without FastAPI
@@ -67,6 +68,9 @@ from .health_service import (
     test_all_endpoints
 )
 
+# Analytics service
+from .analytics_service import AnalyticsService
+
 __all__ = [
     # Position service
     'get_positions_with_prices',
@@ -95,5 +99,7 @@ __all__ = [
     # Health service
     'get_basic_health',
     'get_detailed_health',
-    'test_all_endpoints'
+    'test_all_endpoints',
+    # Analytics service
+    'AnalyticsService'
 ]
