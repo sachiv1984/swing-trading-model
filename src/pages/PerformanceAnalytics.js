@@ -17,6 +17,20 @@ import TagPerformance from "../components/analytics/TagPerformance";
 import UnderwaterChart from "../components/analytics/UnderwaterChart";
 import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
 
+// ✅ Helper to convert snake_case to camelCase recursively
+const toCamelCase = (obj) => {
+  if (Array.isArray(obj)) {
+    return obj.map(v => toCamelCase(v));
+  } else if (obj !== null && obj !== undefined && obj.constructor === Object) {
+    return Object.keys(obj).reduce((result, key) => {
+      const camelKey = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+      result[camelKey] = toCamelCase(obj[key]);
+      return result;
+    }, {});
+  }
+  return obj;
+};
+
 export default function PerformanceAnalytics() {
   const [timePeriod, setTimePeriod] = useState("last_month");
 
@@ -42,11 +56,16 @@ export default function PerformanceAnalytics() {
           throw new Error(`HTTP ${response.status}`);
         }
         const result = await response.json();
-        console.log('Analytics data received:', result);
-        return result.data;
+        console.log('Analytics data received (raw):', result);
+        
+        // Transform snake_case to camelCase
+        const camelData = toCamelCase(result.data);
+        console.log('Analytics data (camelCase):', camelData);
+        
+        return camelData;
       } catch (error) {
         console.error('Failed to load analytics:', error);
-        throw error; // Let React Query handle the error
+        throw error;
       }
     },
     enabled: true,
@@ -54,12 +73,55 @@ export default function PerformanceAnalytics() {
   });
 
   // ✅ Extract data from API response with safe defaults
-  const summary = analyticsData?.summary || { has_enough_data: false, total_trades: 0, min_required: 10 };
-  const metrics = analyticsData?.executive_metrics || {};
-  const advancedMetrics = analyticsData?.advanced_metrics || {};
-  const hasEnoughTrades = summary.has_enough_data;
+  const summary = analyticsData?.summary || { 
+    hasEnoughData: false, 
+    totalTrades: 0, 
+    minRequired: 10,
+    winRate: 0,
+    totalPnl: 0
+  };
+  
+  const metrics = analyticsData?.executiveMetrics || {
+    sharpeRatio: 0,
+    sharpeMethod: 'insufficient_data',
+    maxDrawdown: { percent: 0, amount: 0, date: null },
+    recoveryFactor: 0,
+    expectancy: 0,
+    profitFactor: 0,
+    riskRewardRatio: 0
+  };
+  
+  const advancedMetrics = analyticsData?.advancedMetrics || {
+    winStreak: 0,
+    lossStreak: 0,
+    avgHoldWinners: 0,
+    avgHoldLosers: 0,
+    tradeFrequency: 0,
+    capitalEfficiency: 0,
+    daysUnderwater: 0
+  };
+  
+  const hasEnoughTrades = summary.hasEnoughData;
 
-  console.log('Current state:', { analyticsLoading, analyticsError, hasEnoughTrades, summary, metrics });
+  // Default structures for components
+  const defaultMarketMetrics = {
+    totalTrades: 0,
+    winRate: 0,
+    totalPnl: 0,
+    avgWin: 0,
+    avgLoss: 0,
+    bestPerformer: { ticker: 'N/A', pnl: 0 },
+    worstPerformer: { ticker: 'N/A', pnl: 0 }
+  };
+
+  console.log('Current state:', { 
+    analyticsLoading, 
+    analyticsError, 
+    hasEnoughTrades, 
+    summary, 
+    metrics,
+    advancedMetrics 
+  });
 
   const generatePrintReport = () => {
     if (!metrics || !hasEnoughTrades) return;
@@ -95,7 +157,7 @@ export default function PerformanceAnalytics() {
         </head>
         <body>
           <h1>Performance Analytics Report</h1>
-          <div class="subtitle">Generated ${new Date().toLocaleDateString()} • Period: ${timePeriodLabels[timePeriod]} • ${summary.total_trades} Trades</div>
+          <div class="subtitle">Generated ${new Date().toLocaleDateString()} • Period: ${timePeriodLabels[timePeriod]} • ${summary.totalTrades} Trades</div>
           
           <div class="section">
             <div class="section-title">Executive Summary</div>
@@ -136,9 +198,9 @@ export default function PerformanceAnalytics() {
               ${(metrics.sharpeRatio || 0) > 2 ? `<li class="insight-item">Excellent risk-adjusted returns with a Sharpe ratio of ${metrics.sharpeRatio.toFixed(2)}</li>` : 
                 (metrics.sharpeRatio || 0) > 1 ? `<li class="insight-item">Strong risk-adjusted returns with a Sharpe ratio of ${metrics.sharpeRatio.toFixed(2)}</li>` :
                 `<li class="insight-item">Risk-adjusted returns need improvement (Sharpe: ${(metrics.sharpeRatio || 0).toFixed(2)})</li>`}
-              ${(metrics.avgHoldWinners || 0) > (metrics.avgHoldLosers || 0) ? 
-                `<li class="insight-item">✅ Great discipline - cutting losers faster (${(metrics.avgHoldLosers || 0).toFixed(1)} days) than letting winners run (${(metrics.avgHoldWinners || 0).toFixed(1)} days)</li>` :
-                `<li class="insight-item">⚠️ Holding losers too long (${(metrics.avgHoldLosers || 0).toFixed(1)} days) compared to winners (${(metrics.avgHoldWinners || 0).toFixed(1)} days)</li>`}
+              ${(advancedMetrics.avgHoldWinners || 0) > (advancedMetrics.avgHoldLosers || 0) ? 
+                `<li class="insight-item">✅ Great discipline - cutting losers faster (${(advancedMetrics.avgHoldLosers || 0).toFixed(1)} days) than letting winners run (${(advancedMetrics.avgHoldWinners || 0).toFixed(1)} days)</li>` :
+                `<li class="insight-item">⚠️ Holding losers too long (${(advancedMetrics.avgHoldLosers || 0).toFixed(1)} days) compared to winners (${(advancedMetrics.avgHoldWinners || 0).toFixed(1)} days)</li>`}
               ${(metrics.profitFactor || 0) > 2 ? `<li class="insight-item">Excellent profit factor of ${metrics.profitFactor.toFixed(2)} means earning £${metrics.profitFactor.toFixed(2)} for every £1 lost</li>` :
                 `<li class="insight-item">Profit factor of ${(metrics.profitFactor || 0).toFixed(2)} - earning £${(metrics.profitFactor || 0).toFixed(2)} per £1 lost</li>`}
             </ul>
@@ -158,21 +220,21 @@ export default function PerformanceAnalytics() {
               <tbody>
                 <tr>
                   <td>Win Streak (Max)</td>
-                  <td>${metrics.winStreak || 0} trades</td>
+                  <td>${advancedMetrics.winStreak || 0} trades</td>
                   <td>Loss Streak (Max)</td>
-                  <td>${metrics.lossStreak || 0} trades</td>
+                  <td>${advancedMetrics.lossStreak || 0} trades</td>
                 </tr>
                 <tr>
                   <td>Avg Hold (Winners)</td>
-                  <td>${(metrics.avgHoldWinners || 0).toFixed(1)} days</td>
+                  <td>${(advancedMetrics.avgHoldWinners || 0).toFixed(1)} days</td>
                   <td>Avg Hold (Losers)</td>
-                  <td>${(metrics.avgHoldLosers || 0).toFixed(1)} days</td>
+                  <td>${(advancedMetrics.avgHoldLosers || 0).toFixed(1)} days</td>
                 </tr>
                 <tr>
                   <td>Trade Frequency</td>
-                  <td>${(metrics.tradeFrequency || 0).toFixed(1)} per week</td>
+                  <td>${(advancedMetrics.tradeFrequency || 0).toFixed(1)} per week</td>
                   <td>Capital Efficiency</td>
-                  <td>${(metrics.capitalEfficiency || 0).toFixed(1)}%</td>
+                  <td>${(advancedMetrics.capitalEfficiency || 0).toFixed(1)}%</td>
                 </tr>
               </tbody>
             </table>
@@ -275,8 +337,8 @@ export default function PerformanceAnalytics() {
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">Not Enough Data</h3>
             <p className="text-slate-400 max-w-md">
-              Need at least {summary.min_required} closed trades to show analytics.
-              You currently have {summary.total_trades} trade{summary.total_trades !== 1 ? 's' : ''} in the selected period.
+              Need at least {summary.minRequired} closed trades to show analytics.
+              You currently have {summary.totalTrades} trade{summary.totalTrades !== 1 ? 's' : ''} in the selected period.
             </p>
           </div>
         </div>
@@ -320,29 +382,29 @@ export default function PerformanceAnalytics() {
       <ExecutiveSummaryCards metrics={metrics} />
       <KeyInsightsCard 
         metrics={metrics} 
-        winRate={summary.win_rate || 0} 
+        winRate={summary.winRate || 0} 
       />
       <AdvancedMetricsGrid metrics={advancedMetrics} />
-      <MonthlyHeatmap monthlyData={analyticsData?.monthly_data || []} />
-      <UnderwaterChart trades={analyticsData?.trades_for_charts || []} />
+      <MonthlyHeatmap monthlyData={analyticsData?.monthlyData || []} />
+      <UnderwaterChart trades={analyticsData?.tradesForCharts || []} />
       <MarketComparison 
-        ukMetrics={analyticsData?.market_comparison?.UK || {}} 
-        usMetrics={analyticsData?.market_comparison?.US || {}} 
+        ukMetrics={analyticsData?.marketComparison?.UK || defaultMarketMetrics} 
+        usMetrics={analyticsData?.marketComparison?.US || defaultMarketMetrics} 
       />
-      <ExitReasonTable exitReasonData={analyticsData?.exit_reasons || []} />
+      <ExitReasonTable exitReasonData={analyticsData?.exitReasons || []} />
       <TimeBasedCharts
-        dayOfWeekData={analyticsData?.day_of_week || []}
-        monthlyData={analyticsData?.monthly_data || []}
-        holdingPeriodData={analyticsData?.holding_periods || []}
-        entryExitData={analyticsData?.entry_exit_scatter || []}
+        dayOfWeekData={analyticsData?.dayOfWeek || []}
+        monthlyData={analyticsData?.monthlyData || []}
+        holdingPeriodData={analyticsData?.holdingPeriods || []}
+        entryExitData={analyticsData?.entryExitScatter || []}
       />
-      <RMultipleAnalysis trades={analyticsData?.trades_for_charts || []} />
+      <RMultipleAnalysis trades={analyticsData?.tradesForCharts || []} />
       <TopPerformers 
-        topWinners={analyticsData?.top_performers?.winners || []}
-        topLosers={analyticsData?.top_performers?.losers || []}
+        topWinners={analyticsData?.topPerformers?.winners || []}
+        topLosers={analyticsData?.topPerformers?.losers || []}
       />
-      <ConsistencyMetrics metrics={analyticsData?.consistency_metrics || {}} />
-      <TagPerformance trades={analyticsData?.trades_for_charts || []} />
+      <ConsistencyMetrics metrics={analyticsData?.consistencyMetrics || {}} />
+      <TagPerformance trades={analyticsData?.tradesForCharts || []} />
     </div>
   );
 }
