@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
 import PageHeader from "../components/ui/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { AlertCircle, Loader2, Download } from "lucide-react";
@@ -33,29 +32,34 @@ export default function PerformanceAnalytics() {
   };
 
   // ✅ NEW: Single API call replaces ALL calculations
-  const { data: analyticsData, isLoading: analyticsLoading } = useQuery({
+  const { data: analyticsData, isLoading: analyticsLoading, error: analyticsError } = useQuery({
     queryKey: ["analytics", timePeriod],
     queryFn: async () => {
       try {
+        console.log('Fetching analytics from:', `${API_URL}/analytics/metrics?period=${timePeriod}`);
         const response = await fetch(`${API_URL}/analytics/metrics?period=${timePeriod}`);
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
         const result = await response.json();
+        console.log('Analytics data received:', result);
         return result.data;
       } catch (error) {
         console.error('Failed to load analytics:', error);
-        return null;
+        throw error; // Let React Query handle the error
       }
     },
     enabled: true,
+    retry: 1,
   });
 
-  // ✅ Extract data from API response
+  // ✅ Extract data from API response with safe defaults
   const summary = analyticsData?.summary || { has_enough_data: false, total_trades: 0, min_required: 10 };
   const metrics = analyticsData?.executive_metrics || {};
   const advancedMetrics = analyticsData?.advanced_metrics || {};
   const hasEnoughTrades = summary.has_enough_data;
+
+  console.log('Current state:', { analyticsLoading, analyticsError, hasEnoughTrades, summary, metrics });
 
   const generatePrintReport = () => {
     if (!metrics || !hasEnoughTrades) return;
@@ -185,6 +189,7 @@ export default function PerformanceAnalytics() {
     }, 250);
   };
 
+  // Show loading state
   if (analyticsLoading) {
     return (
       <div>
@@ -199,6 +204,35 @@ export default function PerformanceAnalytics() {
     );
   }
 
+  // Show error state
+  if (analyticsError) {
+    return (
+      <div>
+        <PageHeader
+          title="Performance Analytics"
+          description="Deep dive into your trading performance and strategy effectiveness"
+        />
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="p-4 rounded-full bg-red-900/20 border border-red-700">
+                <AlertCircle className="w-12 h-12 text-red-500" />
+              </div>
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-2">Failed to Load Analytics</h3>
+            <p className="text-slate-400 max-w-md mb-4">
+              {analyticsError.message || 'Unable to fetch analytics data'}
+            </p>
+            <p className="text-slate-500 text-sm">
+              Check console for details. Is your backend running at {API_URL}?
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show "not enough data" state
   if (!hasEnoughTrades) {
     return (
       <div>
@@ -250,6 +284,7 @@ export default function PerformanceAnalytics() {
     );
   }
 
+  // Main render - show analytics
   return (
     <div className="space-y-6">
       <PageHeader
