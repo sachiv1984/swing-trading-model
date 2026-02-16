@@ -11,15 +11,14 @@ import math
 class AnalyticsService:
     """
     Centralized analytics calculation service.
-    Works with Base44 entity system instead of direct SQLAlchemy queries.
+    Works with pre-fetched data (no database queries).
     """
 
-    def __init__(self, db):
+    def __init__(self):
         """
-        Args:
-            db: Database session (not used with Base44, kept for compatibility)
+        No database session needed - works with provided data.
         """
-        self.db = db
+        pass
 
     def get_metrics(self, period: str = "all_time", min_trades: int = 10) -> Dict[str, Any]:
         """
