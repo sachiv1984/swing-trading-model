@@ -1,13 +1,11 @@
 """
-Analytics Router - Uses existing service functions
+Analytics Router - Queries database tables directly
 """
 
 from fastapi import APIRouter, Query, HTTPException, Depends
 from sqlalchemy.orm import Session
 from database import get_db
 from services.analytics_service import AnalyticsService
-from services.trade_service import get_trade_history_with_stats
-from services.portfolio_service import get_performance_history
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -23,53 +21,66 @@ async def get_analytics_metrics(
     """
     Get comprehensive analytics metrics.
     
-    Uses existing service functions to fetch data,
-    then calculates metrics server-side.
+    Queries database tables directly and calculates metrics.
     """
     try:
-        # Use existing trade service to get trades
-        # get_trade_history_with_stats returns {trades: [...], ...}
-        trade_data = get_trade_history_with_stats(db)
-        trades = trade_data.get("trades", [])
+        # Import table models - these should exist in your database
+        from sqlalchemy import Table, MetaData
         
-        # Convert trade objects to dicts
-        trades_list = []
-        for trade in trades:
-            trades_list.append({
-                'id': str(trade.get('id', '')),
-                'ticker': trade.get('ticker'),
-                'market': trade.get('market'),
-                'entry_date': trade.get('entry_date'),
-                'exit_date': trade.get('exit_date'),
-                'shares': trade.get('shares', 0),
-                'entry_price': trade.get('entry_price', 0),
-                'exit_price': trade.get('exit_price', 0),
-                'pnl': trade.get('pnl', 0),
-                'pnl_percent': trade.get('pnl_percent', 0),
-                'exit_reason': trade.get('exit_reason')
+        metadata = MetaData()
+        metadata.reflect(bind=db.bind)
+        
+        # Get positions table
+        positions_table = metadata.tables.get('positions')
+        if positions_table is None:
+            raise Exception("Positions table not found")
+        
+        # Query closed positions
+        from sqlalchemy import select
+        stmt = select(positions_table).where(
+            positions_table.c.status == 'closed',
+            positions_table.c.exit_date.isnot(None)
+        ).order_by(positions_table.c.exit_date)
+        
+        result = db.execute(stmt)
+        
+        # Convert to dicts
+        trades = []
+        for row in result:
+            trades.append({
+                'id': str(row.id) if hasattr(row, 'id') else '',
+                'ticker': row.ticker if hasattr(row, 'ticker') else '',
+                'market': row.market if hasattr(row, 'market') else '',
+                'entry_date': row.entry_date.isoformat() if hasattr(row, 'entry_date') and row.entry_date else None,
+                'exit_date': row.exit_date.isoformat() if hasattr(row, 'exit_date') and row.exit_date else None,
+                'shares': float(row.shares) if hasattr(row, 'shares') and row.shares else 0,
+                'entry_price': float(row.entry_price) if hasattr(row, 'entry_price') and row.entry_price else 0,
+                'exit_price': float(row.exit_price) if hasattr(row, 'exit_price') and row.exit_price else 0,
+                'pnl': float(row.pnl) if hasattr(row, 'pnl') and row.pnl else 0,
+                'pnl_percent': float(row.pnl_percent) if hasattr(row, 'pnl_percent') and row.pnl_percent else 0,
+                'exit_reason': row.exit_reason if hasattr(row, 'exit_reason') else None
             })
         
-        # Use existing portfolio service to get history
-        # get_performance_history returns list of snapshots
-        try:
-            portfolio_history_raw = get_performance_history(db, days=365)
-            portfolio_history = []
-            for snapshot in portfolio_history_raw:
+        # Get portfolio snapshots table
+        portfolio_history = []
+        snapshots_table = metadata.tables.get('portfolio_snapshots')
+        if snapshots_table is not None:
+            stmt = select(snapshots_table).order_by(snapshots_table.c.snapshot_date)
+            result = db.execute(stmt)
+            
+            for row in result:
                 portfolio_history.append({
-                    'snapshot_date': snapshot.get('date') or snapshot.get('snapshot_date'),
-                    'total_value': snapshot.get('total_value', 0),
-                    'cash_balance': snapshot.get('cash_balance', 0),
-                    'positions_value': snapshot.get('positions_value', 0),
-                    'total_pnl': snapshot.get('total_pnl', 0)
+                    'snapshot_date': row.snapshot_date.isoformat() if hasattr(row, 'snapshot_date') and row.snapshot_date else None,
+                    'total_value': float(row.total_value) if hasattr(row, 'total_value') and row.total_value else 0,
+                    'cash_balance': float(row.cash_balance) if hasattr(row, 'cash_balance') and row.cash_balance else 0,
+                    'positions_value': float(row.positions_value) if hasattr(row, 'positions_value') and row.positions_value else 0,
+                    'total_pnl': float(row.total_pnl) if hasattr(row, 'total_pnl') and row.total_pnl else 0
                 })
-        except Exception as e:
-            print(f"Error fetching portfolio history: {e}")
-            portfolio_history = []
         
         # Calculate metrics
         service = AnalyticsService()
         metrics = service.calculate_metrics_from_data(
-            trades=trades_list,
+            trades=trades,
             portfolio_history=portfolio_history,
             period=period
         )
