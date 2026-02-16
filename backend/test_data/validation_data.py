@@ -17,6 +17,7 @@ VALIDATION_TRADES = [
         "pnl": 93.68,
         "pnl_percent": 12.23,
         "exit_reason": "Trailing Stop",
+        "holding_days": 19,  # ✅ ADD THIS
     },
     {
         "id": "8ff40cd3-09c6-4482-b78c-a1ff864e59e6",
@@ -30,6 +31,7 @@ VALIDATION_TRADES = [
         "pnl": -2.33,
         "pnl_percent": -0.23,
         "exit_reason": "Manual Exit",
+        "holding_days": 12,  # ✅ ADD THIS
     },
     {
         "id": "3e65ca71-305e-462d-bc22-1125014b6438",
@@ -43,6 +45,7 @@ VALIDATION_TRADES = [
         "pnl": 104.98,
         "pnl_percent": 18.76,
         "exit_reason": "Trailing Stop",
+        "holding_days": 12,  # ✅ ADD THIS
     },
     {
         "id": "4d498885-4735-413f-9ecc-c2882440a338",
@@ -56,6 +59,7 @@ VALIDATION_TRADES = [
         "pnl": -182.16,
         "pnl_percent": -16.23,
         "exit_reason": "Manual Exit",
+        "holding_days": 10,  # ✅ ADD THIS
     },
     {
         "id": "65e3e445-960a-4936-b49b-3005918c1f37",
@@ -69,23 +73,23 @@ VALIDATION_TRADES = [
         "pnl": -12.23,
         "pnl_percent": -1.24,
         "exit_reason": "Manual Exit",
+        "holding_days": 10,  # ✅ ADD THIS
     }
 ]
 
-# Your actual 12 portfolio snapshots
 VALIDATION_PORTFOLIO_HISTORY = [
-    {"date": "2026-01-31", "total_value": 5133.52},
-    {"date": "2026-02-02", "total_value": 5361.88},
-    {"date": "2026-02-03", "total_value": 5444.29},  # Peak
-    {"date": "2026-02-04", "total_value": 5179.76},
-    {"date": "2026-02-05", "total_value": 5146.58},
-    {"date": "2026-02-06", "total_value": 5241.25},
-    {"date": "2026-02-07", "total_value": 5258.45},
-    {"date": "2026-02-09", "total_value": 5241.66},
-    {"date": "2026-02-10", "total_value": 5025.22},  # Trough
-    {"date": "2026-02-11", "total_value": 5204.19},
-    {"date": "2026-02-12", "total_value": 5353.38},
-    {"date": "2026-02-13", "total_value": 5285.69},  # Current
+    {"snapshot_date": "2026-01-31", "total_value": 5133.52},
+    {"snapshot_date": "2026-02-02", "total_value": 5361.88},
+    {"snapshot_date": "2026-02-03", "total_value": 5444.29},  # Peak
+    {"snapshot_date": "2026-02-04", "total_value": 5179.76},
+    {"snapshot_date": "2026-02-05", "total_value": 5146.58},
+    {"snapshot_date": "2026-02-06", "total_value": 5241.25},
+    {"snapshot_date": "2026-02-07", "total_value": 5258.45},
+    {"snapshot_date": "2026-02-09", "total_value": 5241.66},
+    {"snapshot_date": "2026-02-10", "total_value": 5025.22},  # Trough
+    {"snapshot_date": "2026-02-11", "total_value": 5204.19},
+    {"snapshot_date": "2026-02-12", "total_value": 5353.38},
+    {"snapshot_date": "2026-02-13", "total_value": 5285.69},  # Current
 ]
 
 # Expected metrics (from your EXPECTED_ANALYTICS_RESULTS.md)
