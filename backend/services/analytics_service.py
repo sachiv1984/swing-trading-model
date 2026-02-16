@@ -592,7 +592,15 @@ class AnalyticsService:
     
     def _calculate_top_performers(self, trades):
         """Calculate top winners and losers."""
-        sorted_trades = sorted(trades, key=lambda t: t.get('pnl', 0), reverse=True)
+        # ✅ Filter first: separate actual winners from actual losers
+        winners = [t for t in trades if t.get('pnl', 0) > 0]
+        losers = [t for t in trades if t.get('pnl', 0) < 0]
+        
+        # Sort winners (highest to lowest)
+        sorted_winners = sorted(winners, key=lambda t: t.get('pnl', 0), reverse=True)
+        
+        # Sort losers (most negative to least negative)
+        sorted_losers = sorted(losers, key=lambda t: t.get('pnl', 0))
         
         def format_trade(trade):
             return {
@@ -605,8 +613,8 @@ class AnalyticsService:
             }
         
         return {
-            "winners": [format_trade(t) for t in sorted_trades[:5]],
-            "losers": [format_trade(t) for t in sorted_trades[-5:][::-1]]
+            "winners": [format_trade(t) for t in sorted_winners[:5]],
+            "losers": [format_trade(t) for t in sorted_losers[:5]]
         }
     
     def _calculate_consistency_metrics(self, monthly_data):
