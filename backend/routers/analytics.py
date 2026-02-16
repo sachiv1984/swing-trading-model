@@ -1,11 +1,12 @@
 """
-Analytics Router - Queries database tables directly
+Analytics Router - Uses database connection directly
 """
 
-from fastapi import APIRouter, Query, HTTPException, Depends
-from sqlalchemy.orm import Session
-from database import get_db
+from fastapi import APIRouter, Query, HTTPException
 from services.analytics_service import AnalyticsService
+import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -15,67 +16,72 @@ async def get_analytics_metrics(
     period: str = Query(
         "all_time",
         regex="^(last_7_days|last_month|last_quarter|last_year|ytd|all_time)$"
-    ),
-    db: Session = Depends(get_db)
+    )
 ):
     """
     Get comprehensive analytics metrics.
     
-    Queries database tables directly and calculates metrics.
+    Queries database directly and calculates metrics.
     """
     try:
-        # Import table models - these should exist in your database
-        from sqlalchemy import Table, MetaData
+        # Get database URL from environment
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise Exception("DATABASE_URL not configured")
         
-        metadata = MetaData()
-        metadata.reflect(bind=db.bind)
+        # Connect to database
+        conn = psycopg2.connect(database_url)
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
         
-        # Get positions table
-        positions_table = metadata.tables.get('positions')
-        if positions_table is None:
-            raise Exception("Positions table not found")
-        
-        # Query closed positions
-        from sqlalchemy import select
-        stmt = select(positions_table).where(
-            positions_table.c.status == 'closed',
-            positions_table.c.exit_date.isnot(None)
-        ).order_by(positions_table.c.exit_date)
-        
-        result = db.execute(stmt)
-        
-        # Convert to dicts
-        trades = []
-        for row in result:
-            trades.append({
-                'id': str(row.id) if hasattr(row, 'id') else '',
-                'ticker': row.ticker if hasattr(row, 'ticker') else '',
-                'market': row.market if hasattr(row, 'market') else '',
-                'entry_date': row.entry_date.isoformat() if hasattr(row, 'entry_date') and row.entry_date else None,
-                'exit_date': row.exit_date.isoformat() if hasattr(row, 'exit_date') and row.exit_date else None,
-                'shares': float(row.shares) if hasattr(row, 'shares') and row.shares else 0,
-                'entry_price': float(row.entry_price) if hasattr(row, 'entry_price') and row.entry_price else 0,
-                'exit_price': float(row.exit_price) if hasattr(row, 'exit_price') and row.exit_price else 0,
-                'pnl': float(row.pnl) if hasattr(row, 'pnl') and row.pnl else 0,
-                'pnl_percent': float(row.pnl_percent) if hasattr(row, 'pnl_percent') and row.pnl_percent else 0,
-                'exit_reason': row.exit_reason if hasattr(row, 'exit_reason') else None
-            })
-        
-        # Get portfolio snapshots table
-        portfolio_history = []
-        snapshots_table = metadata.tables.get('portfolio_snapshots')
-        if snapshots_table is not None:
-            stmt = select(snapshots_table).order_by(snapshots_table.c.snapshot_date)
-            result = db.execute(stmt)
+        try:
+            # Query closed positions
+            cursor.execute("""
+                SELECT 
+                    id, ticker, market, entry_date, exit_date, shares,
+                    entry_price, exit_price, pnl, pnl_percent, exit_reason
+                FROM positions
+                WHERE status = 'closed' AND exit_date IS NOT NULL
+                ORDER BY exit_date ASC
+            """)
             
-            for row in result:
-                portfolio_history.append({
-                    'snapshot_date': row.snapshot_date.isoformat() if hasattr(row, 'snapshot_date') and row.snapshot_date else None,
-                    'total_value': float(row.total_value) if hasattr(row, 'total_value') and row.total_value else 0,
-                    'cash_balance': float(row.cash_balance) if hasattr(row, 'cash_balance') and row.cash_balance else 0,
-                    'positions_value': float(row.positions_value) if hasattr(row, 'positions_value') and row.positions_value else 0,
-                    'total_pnl': float(row.total_pnl) if hasattr(row, 'total_pnl') and row.total_pnl else 0
+            trades = []
+            for row in cursor.fetchall():
+                trades.append({
+                    'id': str(row['id']) if row['id'] else '',
+                    'ticker': row['ticker'],
+                    'market': row['market'],
+                    'entry_date': row['entry_date'].isoformat() if row['entry_date'] else None,
+                    'exit_date': row['exit_date'].isoformat() if row['exit_date'] else None,
+                    'shares': float(row['shares']) if row['shares'] else 0,
+                    'entry_price': float(row['entry_price']) if row['entry_price'] else 0,
+                    'exit_price': float(row['exit_price']) if row['exit_price'] else 0,
+                    'pnl': float(row['pnl']) if row['pnl'] else 0,
+                    'pnl_percent': float(row['pnl_percent']) if row['pnl_percent'] else 0,
+                    'exit_reason': row['exit_reason']
                 })
+            
+            # Query portfolio snapshots
+            cursor.execute("""
+                SELECT 
+                    snapshot_date, total_value, cash_balance, 
+                    positions_value, total_pnl
+                FROM portfolio_snapshots
+                ORDER BY snapshot_date ASC
+            """)
+            
+            portfolio_history = []
+            for row in cursor.fetchall():
+                portfolio_history.append({
+                    'snapshot_date': row['snapshot_date'].isoformat() if row['snapshot_date'] else None,
+                    'total_value': float(row['total_value']) if row['total_value'] else 0,
+                    'cash_balance': float(row['cash_balance']) if row['cash_balance'] else 0,
+                    'positions_value': float(row['positions_value']) if row['positions_value'] else 0,
+                    'total_pnl': float(row['total_pnl']) if row['total_pnl'] else 0
+                })
+            
+        finally:
+            cursor.close()
+            conn.close()
         
         # Calculate metrics
         service = AnalyticsService()
