@@ -1,10 +1,10 @@
-from backend.test_data.validation_data import (
+from test_data.validation_data import (
     VALIDATION_TRADES,
     VALIDATION_PORTFOLIO_HISTORY,
     EXPECTED_METRICS,
     TOLERANCE
 )
-from backend.services.analytics_service import AnalyticsService
+from services.analytics_service import AnalyticsService
 
 
 class ValidationService:
