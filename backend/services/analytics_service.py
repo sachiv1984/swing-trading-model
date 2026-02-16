@@ -452,7 +452,10 @@ class AnalyticsService:
             
             winners = [t for t in market_trades if t.get('pnl', 0) > 0]
             losers = [t for t in market_trades if t.get('pnl', 0) < 0]
-            sorted_trades = sorted(market_trades, key=lambda t: t.get('pnl', 0), reverse=True)
+            
+            # ✅ Get actual best winner and worst loser
+            best_winner = max(winners, key=lambda t: t.get('pnl', 0)) if winners else None
+            worst_loser = min(losers, key=lambda t: t.get('pnl', 0)) if losers else None
             
             markets[market] = {
                 "total_trades": len(market_trades),
@@ -461,13 +464,13 @@ class AnalyticsService:
                 "avg_win": round(sum(t.get('pnl', 0) for t in winners) / len(winners), 2) if winners else 0.0,
                 "avg_loss": round(sum(t.get('pnl', 0) for t in losers) / len(losers), 2) if losers else 0.0,
                 "best_performer": {
-                    "ticker": sorted_trades[0].get('ticker'),
-                    "pnl": round(sorted_trades[0].get('pnl', 0), 2)
-                } if sorted_trades else None,
+                    "ticker": best_winner.get('ticker'),
+                    "pnl": round(best_winner.get('pnl', 0), 2)
+                } if best_winner else None,
                 "worst_performer": {
-                    "ticker": sorted_trades[-1].get('ticker'),
-                    "pnl": round(sorted_trades[-1].get('pnl', 0), 2)
-                } if sorted_trades else None
+                    "ticker": worst_loser.get('ticker'),
+                    "pnl": round(worst_loser.get('pnl', 0), 2)
+                } if worst_loser else None
             }
         
         return markets
