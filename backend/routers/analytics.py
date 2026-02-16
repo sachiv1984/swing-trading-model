@@ -60,24 +60,34 @@ async def get_analytics_metrics(
                     'exit_reason': row['exit_reason']
                 })
             
-            # Query portfolio snapshots
-            cursor.execute("""
-                SELECT 
-                    snapshot_date, total_value, cash_balance, 
-                    positions_value, total_pnl
-                FROM portfolio_snapshots
-                ORDER BY snapshot_date ASC
-            """)
-            
+            # Query portfolio history (if table exists)
             portfolio_history = []
-            for row in cursor.fetchall():
-                portfolio_history.append({
-                    'snapshot_date': row['snapshot_date'].isoformat() if row['snapshot_date'] else None,
-                    'total_value': float(row['total_value']) if row['total_value'] else 0,
-                    'cash_balance': float(row['cash_balance']) if row['cash_balance'] else 0,
-                    'positions_value': float(row['positions_value']) if row['positions_value'] else 0,
-                    'total_pnl': float(row['total_pnl']) if row['total_pnl'] else 0
-                })
+            try:
+                cursor.execute("""
+                    SELECT 
+                        snapshot_date, total_value, cash_balance, 
+                        positions_value, total_pnl, position_count
+                    FROM portfolio_history
+                    ORDER BY snapshot_date ASC
+                """)
+                
+                for row in cursor.fetchall():
+                    portfolio_history.append({
+                        'snapshot_date': row['snapshot_date'].isoformat() if row['snapshot_date'] else None,
+                        'total_value': float(row['total_value']) if row['total_value'] else 0,
+                        'cash_balance': float(row['cash_balance']) if row['cash_balance'] else 0,
+                        'positions_value': float(row['positions_value']) if row['positions_value'] else 0,
+                        'total_pnl': float(row['total_pnl']) if row['total_pnl'] else 0,
+                        'position_count': int(row['position_count']) if row['position_count'] else 0
+                    })
+            except psycopg2.errors.UndefinedTable:
+                # Table doesn't exist yet - that's OK
+                print("portfolio_history table not found, using empty history")
+                portfolio_history = []
+            except Exception as e:
+                # Any other error - log but continue
+                print(f"Error fetching portfolio history: {e}")
+                portfolio_history = []
             
         finally:
             cursor.close()
