@@ -3,7 +3,7 @@ Endpoint Testing Router - Comprehensive test suite
 Tests all API endpoints to verify system health
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 import httpx
 import time
 import os
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/test", tags=["Testing"])
 
 
 @router.post("/endpoints")
-async def test_all_endpoints():
+async def test_all_endpoints(request: Request):
     """
     Test all API endpoints and return results.
     
@@ -28,8 +28,13 @@ async def test_all_endpoints():
         dict: Test results with pass/fail status for each endpoint
     """
     
-    # Get the base URL (same server we're running on)
-    base_url = os.getenv("API_BASE_URL", "http://localhost:8000")
+    # Auto-detect the base URL from the incoming request
+    # This works both locally and on Render
+    base_url = str(request.base_url).rstrip('/')
+    
+    # If API_BASE_URL is explicitly set, use that instead
+    if os.getenv("API_BASE_URL"):
+        base_url = os.getenv("API_BASE_URL").rstrip('/')
     
     # Define all test cases
     test_cases = [
@@ -144,12 +149,17 @@ async def test_all_endpoints():
 
 
 @router.get("/quick-health")
-async def quick_health_check():
+async def quick_health_check(request: Request):
     """
     Quick health check - tests only critical endpoints.
     Faster than full test suite.
     """
-    base_url = os.getenv("API_BASE_URL", "http://localhost:8000")
+    # Auto-detect the base URL from the incoming request
+    base_url = str(request.base_url).rstrip('/')
+    
+    # If API_BASE_URL is explicitly set, use that instead
+    if os.getenv("API_BASE_URL"):
+        base_url = os.getenv("API_BASE_URL").rstrip('/')
     
     critical_tests = [
         {"name": "Health", "url": f"{base_url}/health"},
