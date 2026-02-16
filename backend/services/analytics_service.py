@@ -323,29 +323,308 @@ class AnalyticsService:
         
         return 0.0
 
-    # Add remaining calculation methods (_calculate_advanced_metrics, etc.)
-    # Simplified for space - full implementation in complete file
-    
     def _calculate_advanced_metrics(self, trades, history):
-        return {"win_streak": 0, "loss_streak": 0}
+        """Calculate advanced metrics."""
+        if not trades:
+            return {"win_streak": 0, "loss_streak": 0}
+        
+        sorted_trades = sorted(trades, key=lambda t: t.get('exit_date', ''))
+        
+        # Streaks
+        win_streak, loss_streak = self._calculate_streaks(sorted_trades)
+        
+        # Holding times
+        winners = [t for t in trades if t.get('pnl', 0) > 0]
+        losers = [t for t in trades if t.get('pnl', 0) < 0]
+        
+        avg_hold_winners = sum(t.get('holding_days', 0) for t in winners) / len(winners) if winners else 0
+        avg_hold_losers = sum(t.get('holding_days', 0) for t in losers) / len(losers) if losers else 0
+        
+        # Trade frequency
+        if len(sorted_trades) >= 2:
+            first_date = datetime.fromisoformat(sorted_trades[0].get('entry_date', '').replace('Z', '+00:00'))
+            last_date = datetime.fromisoformat(sorted_trades[-1].get('exit_date', '').replace('Z', '+00:00'))
+            day_span = (last_date - first_date).days
+            trade_frequency = (len(trades) / day_span) * 7 if day_span > 0 else 0
+        else:
+            trade_frequency = 0
+        
+        # Capital efficiency
+        avg_position = sum(t.get('entry_price', 0) * t.get('shares', 0) for t in trades) / len(trades) if trades else 0
+        total_pnl = sum(t.get('pnl', 0) for t in trades)
+        capital_eff = (total_pnl / avg_position) * 100 if avg_position > 0 else 0
+        
+        # Time underwater
+        days_underwater, peak_date = self._calculate_underwater(sorted_trades)
+        
+        # Portfolio peak
+        portfolio_peak = max(float(s.get('total_value', 0)) for s in history) if history else 0.0
+        
+        return {
+            "win_streak": win_streak,
+            "loss_streak": loss_streak,
+            "avg_hold_winners": round(avg_hold_winners, 1),
+            "avg_hold_losers": round(avg_hold_losers, 1),
+            "trade_frequency": round(trade_frequency, 1),
+            "capital_efficiency": round(capital_eff, 2),
+            "days_underwater": days_underwater,
+            "peak_date": peak_date,
+            "portfolio_peak_equity": round(portfolio_peak, 2)
+        }
+    
+    def _calculate_streaks(self, sorted_trades):
+        """Calculate win/loss streaks."""
+        current = 0
+        max_win = 0
+        max_loss = 0
+        
+        for trade in sorted_trades:
+            if trade.get('pnl', 0) > 0:
+                current = current + 1 if current > 0 else 1
+                max_win = max(max_win, current)
+            else:
+                current = current - 1 if current < 0 else -1
+                max_loss = max(max_loss, abs(current))
+        
+        return max_win, max_loss
+    
+    def _calculate_underwater(self, sorted_trades):
+        """Calculate days underwater."""
+        running_equity = 0
+        peak_equity = 0
+        peak_date = None
+        days_underwater = 0
+        
+        for trade in sorted_trades:
+            running_equity += trade.get('pnl', 0)
+            
+            if running_equity >= peak_equity:
+                peak_equity = running_equity
+                peak_date = trade.get('exit_date')
+                days_underwater = 0
+            elif peak_date:
+                try:
+                    peak_dt = datetime.fromisoformat(peak_date.replace('Z', '+00:00'))
+                    exit_dt = datetime.fromisoformat(trade.get('exit_date', '').replace('Z', '+00:00'))
+                    days_since = (exit_dt - peak_dt).days
+                    days_underwater = max(days_underwater, days_since)
+                except:
+                    pass
+        
+        return days_underwater, peak_date
     
     def _calculate_market_comparison(self, trades):
-        return {"US": {}, "UK": {}}
+        """Calculate per-market metrics."""
+        markets = {}
+        
+        for market in ["US", "UK"]:
+            market_trades = [t for t in trades if t.get('market') == market]
+            
+            if not market_trades:
+                markets[market] = {
+                    "total_trades": 0,
+                    "win_rate": 0.0,
+                    "total_pnl": 0.0,
+                    "avg_win": 0.0,
+                    "avg_loss": 0.0,
+                    "best_performer": None,
+                    "worst_performer": None
+                }
+                continue
+            
+            winners = [t for t in market_trades if t.get('pnl', 0) > 0]
+            losers = [t for t in market_trades if t.get('pnl', 0) < 0]
+            sorted_trades = sorted(market_trades, key=lambda t: t.get('pnl', 0), reverse=True)
+            
+            markets[market] = {
+                "total_trades": len(market_trades),
+                "win_rate": round((len(winners) / len(market_trades)) * 100, 1),
+                "total_pnl": round(sum(t.get('pnl', 0) for t in market_trades), 2),
+                "avg_win": round(sum(t.get('pnl', 0) for t in winners) / len(winners), 2) if winners else 0.0,
+                "avg_loss": round(sum(t.get('pnl', 0) for t in losers) / len(losers), 2) if losers else 0.0,
+                "best_performer": {
+                    "ticker": sorted_trades[0].get('ticker'),
+                    "pnl": round(sorted_trades[0].get('pnl', 0), 2)
+                } if sorted_trades else None,
+                "worst_performer": {
+                    "ticker": sorted_trades[-1].get('ticker'),
+                    "pnl": round(sorted_trades[-1].get('pnl', 0), 2)
+                } if sorted_trades else None
+            }
+        
+        return markets
     
     def _calculate_exit_reasons(self, trades):
-        return []
+        """Calculate exit reason statistics."""
+        reason_map = {}
+        
+        for trade in trades:
+            reason = trade.get('exit_reason') or "Manual Exit"
+            
+            if reason not in reason_map:
+                reason_map[reason] = {"count": 0, "wins": 0, "total_pnl": 0.0}
+            
+            reason_map[reason]["count"] += 1
+            reason_map[reason]["total_pnl"] += trade.get('pnl', 0)
+            if trade.get('pnl', 0) > 0:
+                reason_map[reason]["wins"] += 1
+        
+        results = []
+        for reason, data in reason_map.items():
+            results.append({
+                "reason": reason,
+                "count": data["count"],
+                "win_rate": round((data["wins"] / data["count"]) * 100, 1),
+                "total_pnl": round(data["total_pnl"], 2),
+                "avg_pnl": round(data["total_pnl"] / data["count"], 2),
+                "percentage": round((data["count"] / len(trades)) * 100, 1)
+            })
+        
+        return results
     
     def _calculate_monthly_data(self, trades):
-        return []
+        """Calculate monthly performance."""
+        monthly_map = {}
+        
+        for trade in trades:
+            exit_date = trade.get('exit_date', '')
+            if not exit_date:
+                continue
+            
+            month_key = exit_date[:7]  # YYYY-MM
+            
+            if month_key not in monthly_map:
+                monthly_map[month_key] = {"pnl": 0.0, "trades": 0, "wins": 0}
+            
+            monthly_map[month_key]["pnl"] += trade.get('pnl', 0)
+            monthly_map[month_key]["trades"] += 1
+            if trade.get('pnl', 0) > 0:
+                monthly_map[month_key]["wins"] += 1
+        
+        results = []
+        cumulative = 0
+        
+        for month in sorted(monthly_map.keys()):
+            data = monthly_map[month]
+            cumulative += data["pnl"]
+            
+            results.append({
+                "month": month,
+                "pnl": round(data["pnl"], 2),
+                "trades": data["trades"],
+                "win_rate": round((data["wins"] / data["trades"]) * 100, 0),
+                "cumulative": round(cumulative, 2)
+            })
+        
+        return results[-12:]  # Last 12 months
     
     def _calculate_day_of_week(self, trades):
-        return []
+        """Calculate day of week performance."""
+        days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+        day_map = {day: {"pnl": 0.0, "trades": 0} for day in days}
+        
+        for trade in trades:
+            try:
+                exit_date = datetime.fromisoformat(trade.get('exit_date', '').replace('Z', '+00:00'))
+                day_idx = exit_date.weekday()
+                if day_idx < 5:
+                    day_name = days[day_idx]
+                    day_map[day_name]["pnl"] += trade.get('pnl', 0)
+                    day_map[day_name]["trades"] += 1
+            except:
+                pass
+        
+        return [
+            {
+                "day": day,
+                "avg_pnl": round(day_map[day]["pnl"] / day_map[day]["trades"], 2) if day_map[day]["trades"] > 0 else 0.0,
+                "trades": day_map[day]["trades"]
+            }
+            for day in days
+        ]
     
     def _calculate_holding_periods(self, trades):
-        return []
+        """Calculate holding period analysis."""
+        buckets = [
+            {"label": "1-5 days", "min": 1, "max": 5},
+            {"label": "6-10 days", "min": 6, "max": 10},
+            {"label": "11-20 days", "min": 11, "max": 20},
+            {"label": "21-30 days", "min": 21, "max": 30},
+            {"label": "31+ days", "min": 31, "max": 9999}
+        ]
+        
+        results = []
+        
+        for bucket in buckets:
+            bucket_trades = [
+                t for t in trades
+                if bucket["min"] <= t.get('holding_days', 0) <= bucket["max"]
+            ]
+            
+            wins = [t for t in bucket_trades if t.get('pnl', 0) > 0]
+            
+            results.append({
+                "period": bucket["label"],
+                "avg_pnl": round(sum(t.get('pnl', 0) for t in bucket_trades) / len(bucket_trades), 2) if bucket_trades else 0.0,
+                "trades": len(bucket_trades),
+                "win_rate": round((len(wins) / len(bucket_trades)) * 100, 0) if bucket_trades else 0
+            })
+        
+        return results
     
     def _calculate_top_performers(self, trades):
-        return {"winners": [], "losers": []}
+        """Calculate top winners and losers."""
+        sorted_trades = sorted(trades, key=lambda t: t.get('pnl', 0), reverse=True)
+        
+        def format_trade(trade):
+            return {
+                "ticker": trade.get('ticker'),
+                "entry_date": trade.get('entry_date'),
+                "pnl": round(trade.get('pnl', 0), 2),
+                "pnl_percent": round(trade.get('pnl_percent', 0), 2),
+                "days_held": trade.get('holding_days', 0),
+                "exit_reason": trade.get('exit_reason') or "Manual Exit"
+            }
+        
+        return {
+            "winners": [format_trade(t) for t in sorted_trades[:5]],
+            "losers": [format_trade(t) for t in sorted_trades[-5:][::-1]]
+        }
     
     def _calculate_consistency_metrics(self, monthly_data):
-        return {}
+        """Calculate consistency metrics."""
+        if not monthly_data:
+            return {
+                "consecutive_profitable_months": 0,
+                "current_streak": 0,
+                "win_rate_std_dev": 0.0,
+                "pnl_std_dev": 0.0
+            }
+        
+        # Consecutive profitable
+        max_streak = 0
+        current_streak = 0
+        
+        for month in monthly_data:
+            if month["pnl"] > 0:
+                current_streak += 1
+                max_streak = max(max_streak, current_streak)
+            else:
+                current_streak = 0
+        
+        # Standard deviations
+        win_rates = [m["win_rate"] for m in monthly_data]
+        pnls = [m["pnl"] for m in monthly_data]
+        
+        avg_wr = sum(win_rates) / len(win_rates)
+        avg_pnl = sum(pnls) / len(pnls)
+        
+        wr_std = math.sqrt(sum((wr - avg_wr) ** 2 for wr in win_rates) / len(win_rates))
+        pnl_std = math.sqrt(sum((p - avg_pnl) ** 2 for p in pnls) / len(pnls))
+        
+        return {
+            "consecutive_profitable_months": max_streak,
+            "current_streak": current_streak,
+            "win_rate_std_dev": round(wr_std, 2),
+            "pnl_std_dev": round(pnl_std, 2)
+        }
