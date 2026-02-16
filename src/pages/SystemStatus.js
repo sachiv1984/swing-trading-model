@@ -20,7 +20,9 @@ import {
   Clock,
   Zap,
   Calculator,
-  Download
+  Download,
+  BarChart3,
+  Shield
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,9 +32,49 @@ export default function SystemStatus() {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [expandedComponents, setExpandedComponents] = useState({});
   const [expandedValidations, setExpandedValidations] = useState({});
+  const [expandedCategory, setExpandedCategory] = useState({});
 
   // Get API URL from environment variable
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
+  // Helper to categorize endpoints
+  const categorizeEndpoint = (endpointName) => {
+    if (endpointName.includes('/health') || endpointName.includes('GET /')) return 'Core';
+    if (endpointName.includes('/settings')) return 'Configuration';
+    if (endpointName.includes('/position') || endpointName.includes('/portfolio')) return 'Portfolio';
+    if (endpointName.includes('/trades')) return 'Trading';
+    if (endpointName.includes('/cash')) return 'Cash Management';
+    if (endpointName.includes('/signals') || endpointName.includes('/market')) return 'Market Data';
+    if (endpointName.includes('/analytics')) return 'Analytics';
+    if (endpointName.includes('/validate')) return 'Validation';
+    return 'Other';
+  };
+
+  // Group tests by category
+  const groupTestsByCategory = (results) => {
+    const grouped = {};
+    results?.forEach(test => {
+      const category = categorizeEndpoint(test.endpoint);
+      if (!grouped[category]) {
+        grouped[category] = [];
+      }
+      grouped[category].push(test);
+    });
+    return grouped;
+  };
+
+  // Category icons and colors
+  const categoryConfig = {
+    'Core': { icon: Server, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
+    'Configuration': { icon: Settings, color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/30' },
+    'Portfolio': { icon: Database, color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
+    'Trading': { icon: Activity, color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/30' },
+    'Cash Management': { icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
+    'Market Data': { icon: Globe, color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/30' },
+    'Analytics': { icon: BarChart3, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/30' },
+    'Validation': { icon: Shield, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
+    'Other': { icon: HelpCircle, color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/30' }
+  };
 
   // Fetch health status
   const { data: healthData, isLoading: healthLoading, error: healthError, refetch: refetchHealth } = useQuery({
@@ -91,7 +133,7 @@ export default function SystemStatus() {
     }
   });
 
-  // ✅ NEW: Fetch validation data
+  // Fetch validation data
   const { data: validationData, isLoading: validationLoading, error: validationError, mutate: runValidation } = useMutation({
     mutationFn: async () => {
       console.log(`Posting to: ${API_URL}/validate/calculations`);
@@ -129,6 +171,13 @@ export default function SystemStatus() {
     setExpandedValidations(prev => ({
       ...prev,
       [metric]: !prev[metric]
+    }));
+  };
+
+  const toggleCategoryExpanded = (category) => {
+    setExpandedCategory(prev => ({
+      ...prev,
+      [category]: !prev[category]
     }));
   };
 
@@ -196,6 +245,9 @@ export default function SystemStatus() {
   const passedValidations = validationData?.data?.summary?.passed || 0;
   const failedValidations = validationData?.data?.summary?.failed || 0;
   const warnedValidations = validationData?.data?.summary?.warned || 0;
+
+  // Group tests by category
+  const groupedTests = testData?.results ? groupTestsByCategory(testData.results) : {};
 
   return (
     <div className="space-y-6">
@@ -407,7 +459,10 @@ export default function SystemStatus() {
       {/* Endpoint Tests Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-white">Endpoint Tests</h2>
+          <div>
+            <h2 className="text-xl font-bold text-white">Endpoint Tests</h2>
+            <p className="text-slate-400 text-sm mt-1">Testing {totalTests} endpoints across all system modules</p>
+          </div>
           {testData && (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm">
@@ -432,7 +487,12 @@ export default function SystemStatus() {
               )}
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-400">Success Rate:</span>
-                <span className="font-bold text-white">{successRate}%</span>
+                <span className={cn(
+                  "font-bold",
+                  parseFloat(successRate) === 100 ? "text-emerald-400" :
+                  parseFloat(successRate) >= 90 ? "text-yellow-400" :
+                  "text-rose-400"
+                )}>{successRate}%</span>
               </div>
             </div>
           )}
@@ -451,59 +511,101 @@ export default function SystemStatus() {
             <div className="text-center">
               <Play className="w-10 h-10 text-slate-400 mx-auto mb-3" />
               <p className="text-slate-400">Click 'Run Tests' to verify all endpoints</p>
-              <p className="text-slate-500 text-sm mt-1">Tests 12 endpoints</p>
+              <p className="text-slate-500 text-sm mt-1">Tests {totalTests || '17'} endpoints</p>
             </div>
           </div>
         ) : (
-          <div className="space-y-2">
-            {testData.results?.map((test, index) => {
-              const config = testStatusConfig[test.status] || testStatusConfig.error;
-              const StatusIcon = config.icon;
+          <div className="space-y-4">
+            {/* Categorized Tests */}
+            {Object.entries(groupedTests).map(([category, tests]) => {
+              const config = categoryConfig[category] || categoryConfig.Other;
+              const CategoryIcon = config.icon;
+              const isExpanded = expandedCategory[category] !== false; // Default to expanded
+              const categoryPassed = tests.filter(t => t.status === 'pass').length;
+              const categoryTotal = tests.length;
 
               return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className={cn(
-                    "p-4 rounded-lg border flex items-center justify-between",
-                    config.bg,
-                    config.border
-                  )}
-                >
-                  <div className="flex items-center gap-4 flex-1">
-                    <StatusIcon className={cn("w-5 h-5", config.color)} />
-                    <div className="flex-1">
-                      <p className="font-medium text-white">{test.endpoint}</p>
-                      {test.error && (
-                        <p className="text-sm text-slate-400 mt-1 truncate max-w-md">
-                          {test.error}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {test.status_code && (
+                <div key={category} className={cn("rounded-xl border", config.bg, config.border)}>
+                  <button
+                    onClick={() => toggleCategoryExpanded(category)}
+                    className="w-full p-4 flex items-center justify-between hover:bg-slate-900/20 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <CategoryIcon className={cn("w-5 h-5", config.color)} />
+                      <span className="font-semibold text-white">{category}</span>
                       <Badge variant="outline" className="text-slate-300">
-                        {test.status_code}
+                        {categoryPassed}/{categoryTotal}
                       </Badge>
+                    </div>
+                    <ChevronDown className={cn(
+                      "w-4 h-4 text-slate-400 transition-transform",
+                      isExpanded && "rotate-180"
+                    )} />
+                  </button>
+
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="border-t border-slate-700/50"
+                      >
+                        <div className="p-2 space-y-2">
+                          {tests.map((test, index) => {
+                            const testConfig = testStatusConfig[test.status] || testStatusConfig.error;
+                            const StatusIcon = testConfig.icon;
+
+                            return (
+                              <motion.div
+                                key={index}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.02 }}
+                                className={cn(
+                                  "p-3 rounded-lg border flex items-center justify-between",
+                                  testConfig.bg,
+                                  testConfig.border
+                                )}
+                              >
+                                <div className="flex items-center gap-3 flex-1">
+                                  <StatusIcon className={cn("w-4 h-4", testConfig.color)} />
+                                  <div className="flex-1">
+                                    <p className="font-medium text-white text-sm">{test.endpoint}</p>
+                                    {test.error && (
+                                      <p className="text-xs text-slate-400 mt-1 truncate max-w-md">
+                                        {test.error}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {test.status_code && (
+                                    <Badge variant="outline" className="text-slate-300 text-xs">
+                                      {test.status_code}
+                                    </Badge>
+                                  )}
+                                  {test.response_time_ms && (
+                                    <div className="text-right">
+                                      <p className="text-xs font-bold text-white">{test.response_time_ms.toFixed(0)}ms</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
                     )}
-                    {test.response_time_ms && (
-                      <div className="text-right">
-                        <p className="text-sm text-slate-400">Response Time</p>
-                        <p className="font-bold text-white">{test.response_time_ms.toFixed(0)}ms</p>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
+                  </AnimatePresence>
+                </div>
               );
             })}
           </div>
         )}
       </div>
 
-      {/* ✅ NEW: Data Validation Section */}
+      {/* Data Validation Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-white">Data Validation</h2>
