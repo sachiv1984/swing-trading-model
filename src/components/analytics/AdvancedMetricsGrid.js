@@ -1,8 +1,8 @@
-export default function AdvancedMetricsGrid({ metrics }) {
+export default function AdvancedMetricsGrid({ metrics, executiveMetrics }) {
   const gridMetrics = [
     [
-      { label: "Profit Factor", value: metrics.profitFactor?.toFixed(2) || "N/A", target: ">1.5" },
-      { label: "Risk/Reward Ratio", value: metrics.riskRewardRatio?.toFixed(2) || "N/A", target: ">2.0" }
+      { label: "Profit Factor", value: executiveMetrics?.profitFactor?.toFixed(2) || "N/A", target: ">1.5" },
+      { label: "Risk/Reward Ratio", value: executiveMetrics?.riskRewardRatio?.toFixed(2) || "N/A", target: ">2.0" }
     ],
     [
       { label: "Win Streak", value: metrics.winStreak || 0, suffix: " trades" },
