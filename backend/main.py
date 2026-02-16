@@ -11,7 +11,7 @@ from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
 from pydantic import BaseModel
-from routers import validation
+from routers import validation, analytics
 
 
 from database import (
@@ -107,6 +107,8 @@ app.add_middleware(
 )
 
 app.include_router(validation.router)
+app.include_router(analytics.router)
+
 
 @app.get("/")
 def root():
