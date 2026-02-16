@@ -14,6 +14,7 @@ Modules:
     - signal_service: Momentum signal generation and management
     - health_service: System health monitoring and endpoint testing
     - analytics_service: Comprehensive trading analytics and metrics
+    - validation_service: Analytics calculation validation
 
 Benefits:
     - Testable without FastAPI
@@ -71,6 +72,9 @@ from .health_service import (
 # Analytics service
 from .analytics_service import AnalyticsService
 
+# Validation service
+from .validation_service import ValidationService
+
 __all__ = [
     # Position service
     'get_positions_with_prices',
@@ -101,5 +105,7 @@ __all__ = [
     'get_detailed_health',
     'test_all_endpoints',
     # Analytics service
-    'AnalyticsService'
+    'AnalyticsService',
+    # Validation service
+    'ValidationService'
 ]
