@@ -93,6 +93,23 @@ class AnalyticsService:
         winners = [t for t in filtered_trades if t.get('pnl', 0) > 0]
         win_rate = (len(winners) / len(filtered_trades)) * 100 if filtered_trades else 0
         total_pnl = sum(t.get('pnl', 0) for t in filtered_trades)
+
+        # Add trades for charts (line 228, before the return statement)
+        trades_for_charts = [
+            {
+                "id": t.get('id'),
+                "ticker": t.get('ticker'),
+                "market": t.get('market'),
+                "entry_date": t.get('entry_date'),
+                "exit_date": t.get('exit_date'),
+                "pnl": t.get('pnl', 0),
+                "pnl_percent": t.get('pnl_percent', 0),
+                "exit_reason": t.get('exit_reason'),
+                "holding_days": t.get('holding_days', 0),
+                "tags": t.get('tags')
+            }
+            for t in filtered_trades
+        ]
         
         return {
             "summary": {
@@ -110,13 +127,14 @@ class AnalyticsService:
             "day_of_week": day_of_week,
             "holding_periods": holding_periods,
             "top_performers": top_performers,
-            "consistency_metrics": consistency
+            "consistency_metrics": consistency,
+            "trades_for_charts": trades_for_charts
         }
 
     def _insufficient_data_response(self, trade_count: int, min_required: int) -> Dict:
         """Return empty response when not enough data."""
         return {
-            "summary": {
+            
                 "total_trades": trade_count,
                 "win_rate": 0.0,
                 "total_pnl": 0.0,
