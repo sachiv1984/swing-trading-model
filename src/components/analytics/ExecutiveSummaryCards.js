@@ -1,7 +1,7 @@
 import { TrendingUp, TrendingDown, Target, Zap, Calendar } from "lucide-react";
 import { cn } from "../../lib/utils";
 
-export default function ExecutiveSummaryCards({ metrics }) {
+export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
   // Calculate days underwater color
   const getDaysUnderwaterColor = (days) => {
     if (days === 0) return "from-emerald-500 to-green-500";
@@ -47,11 +47,11 @@ export default function ExecutiveSummaryCards({ metrics }) {
     {
       title: "Time Underwater",
       subtitle: "Current Risk Status",
-      value: metrics.daysUnderwater === 0 ? "At Peak 🎉" : metrics.daysUnderwater ? `${metrics.daysUnderwater} days` : "No Data",
-      subValue: metrics.peakEquity ? `Peak: £${metrics.peakEquity.toFixed(0)}` : "",
-      date: metrics.peakDate ? `on ${metrics.peakDate}` : "",
+      value: advancedMetrics?.daysUnderwater === 0 ? "At Peak 🎉" : advancedMetrics?.daysUnderwater ? `${advancedMetrics.daysUnderwater} days` : "No Data",
+      subValue: advancedMetrics?.portfolioPeakEquity ? `Peak: £${advancedMetrics.portfolioPeakEquity.toFixed(0)}` : "",
+      date: advancedMetrics?.peakDate ? `on ${advancedMetrics.peakDate}` : "",
       icon: Calendar,
-      gradient: getDaysUnderwaterColor(metrics.daysUnderwater || 0)
+      gradient: getDaysUnderwaterColor(advancedMetrics?.daysUnderwater || 0)
     },
     {
       title: "Profit Factor",
@@ -84,7 +84,7 @@ export default function ExecutiveSummaryCards({ metrics }) {
             <div>
               <p className="text-2xl font-bold text-white mb-1">{card.value}</p>
               {card.subValue && <p className="text-sm text-slate-400">{card.subValue}</p>}
-              {card.date && <p className="text-xs text-slate-500 mt-1">on {card.date}</p>}
+              {card.date && <p className="text-xs text-slate-500 mt-1">{card.date}</p>}
               {card.benchmark && (
                 <div className="mt-2">
                   <span className={cn(
