@@ -45,13 +45,13 @@ async def get_analytics_metrics(
             settings_row = cursor.fetchone()
             min_trades = int(settings_row['min_trades_for_analytics']) if settings_row else 10
             
-            # Query closed positions
+            # Query closed trades from trade_history table
             cursor.execute("""
                 SELECT 
                     id, ticker, market, entry_date, exit_date, shares,
-                    entry_price, exit_price, pnl, pnl_percent, exit_reason
-                FROM positions
-                WHERE status = 'closed' AND exit_date IS NOT NULL
+                    entry_price, exit_price, pnl, pnl_pct, exit_reason,
+                    holding_days, entry_note, exit_note, tags
+                FROM trade_history
                 ORDER BY exit_date ASC
             """)
             
@@ -67,8 +67,12 @@ async def get_analytics_metrics(
                     'entry_price': float(row['entry_price']) if row['entry_price'] else 0,
                     'exit_price': float(row['exit_price']) if row['exit_price'] else 0,
                     'pnl': float(row['pnl']) if row['pnl'] else 0,
-                    'pnl_percent': float(row['pnl_percent']) if row['pnl_percent'] else 0,
-                    'exit_reason': row['exit_reason']
+                    'pnl_percent': float(row['pnl_pct']) if row['pnl_pct'] else 0,
+                    'exit_reason': row['exit_reason'],
+                    'holding_days': int(row['holding_days']) if row['holding_days'] else 0,
+                    'entry_note': row['entry_note'],
+                    'exit_note': row['exit_note'],
+                    'tags': row['tags']
                 })
             
             # Query portfolio history (if table exists)
