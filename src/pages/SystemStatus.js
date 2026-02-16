@@ -39,14 +39,16 @@ export default function SystemStatus() {
 
   // Helper to categorize endpoints
   const categorizeEndpoint = (endpointName) => {
-    if (endpointName.includes('/health') || endpointName.includes('GET /')) return 'Core';
-    if (endpointName.includes('/settings')) return 'Configuration';
+    // Check more specific patterns first
+    if (endpointName.includes('/analytics')) return 'Analytics';
+    if (endpointName.includes('/validate')) return 'Validation';
     if (endpointName.includes('/position') || endpointName.includes('/portfolio')) return 'Portfolio';
     if (endpointName.includes('/trades')) return 'Trading';
     if (endpointName.includes('/cash')) return 'Cash Management';
     if (endpointName.includes('/signals') || endpointName.includes('/market')) return 'Market Data';
-    if (endpointName.includes('/analytics')) return 'Analytics';
-    if (endpointName.includes('/validate')) return 'Validation';
+    if (endpointName.includes('/settings')) return 'Configuration';
+    // Check for core LAST (most general)
+    if (endpointName.includes('/health') || endpointName === 'GET /') return 'Core';
     return 'Other';
   };
 
