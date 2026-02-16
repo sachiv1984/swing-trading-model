@@ -131,27 +131,27 @@ class AnalyticsService:
             "trades_for_charts": trades_for_charts
         }
 
-    def _insufficient_data_response(self, trade_count: int, min_required: int) -> Dict:
-    """Return empty response when not enough data."""
-    return {
-        "summary": {
-            "total_trades": trade_count,
-            "win_rate": 0.0,
-            "total_pnl": 0.0,
-            "has_enough_data": False,
-            "min_required": min_required
-        },
-        "executive_metrics": {},
-        "advanced_metrics": {},
-        "market_comparison": {},
-        "exit_reasons": [],
-        "monthly_data": [],
-        "day_of_week": [],
-        "holding_periods": [],
-        "top_performers": {"winners": [], "losers": []},
-        "consistency_metrics": {},
-        "trades_for_charts": []
-    }
+        def _insufficient_data_response(self, trade_count: int, min_required: int) -> Dict:
+        """Return empty response when not enough data."""
+        return {
+            "summary": {
+                "total_trades": trade_count,
+                "win_rate": 0.0,
+                "total_pnl": 0.0,
+                "has_enough_data": False,
+                "min_required": min_required
+            },
+            "executive_metrics": {},
+            "advanced_metrics": {},
+            "market_comparison": {},
+            "exit_reasons": [],
+            "monthly_data": [],
+            "day_of_week": [],
+            "holding_periods": [],
+            "top_performers": {"winners": [], "losers": []},
+            "consistency_metrics": {},
+            "trades_for_charts": []
+        }
     def _filter_trades_by_period(self, trades: List[Dict], period: str) -> List[Dict]:
         """Filter trades by time period."""
         if period == "all_time":
