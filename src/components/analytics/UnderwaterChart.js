@@ -6,10 +6,10 @@ export default function UnderwaterChart({ trades }) {
   const calculateUnderwaterData = () => {
     if (!trades || trades.length === 0) return [];
 
-    // Sort trades by exit date
+    // Sort trades by exit date - USE CAMELCASE
     const sortedTrades = [...trades]
-      .filter(t => t.exit_date)
-      .sort((a, b) => new Date(a.exit_date) - new Date(b.exit_date));
+      .filter(t => t.exitDate)  // ✅ Changed from exit_date
+      .sort((a, b) => new Date(a.exitDate) - new Date(b.exitDate));  // ✅ Changed from exit_date
 
     if (sortedTrades.length === 0) return [];
 
@@ -26,7 +26,7 @@ export default function UnderwaterChart({ trades }) {
       const drawdown = peakEquity === 0 ? 0 : ((runningEquity - peakEquity) / peakEquity) * 100;
 
       data.push({
-        date: trade.exit_date,
+        date: trade.exitDate,  // ✅ Changed from exit_date
         drawdown: drawdown,
         equity: runningEquity,
         peak: peakEquity
