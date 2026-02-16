@@ -29,8 +29,8 @@ class AnalyticsService:
         Returns:
             Complete metrics dictionary
         """
-        from backend.models.position import Position
-        from backend.models.portfolio import PortfolioSnapshot
+        from models.position import Position
+        from models.portfolio import PortfolioSnapshot
         
         # Get filtered data
         trades = self._get_filtered_trades(period)
@@ -100,7 +100,7 @@ class AnalyticsService:
 
     def _get_filtered_trades(self, period: str) -> List:
         """Get closed trades filtered by time period."""
-        from backend.models.position import Position
+        from models.position import Position
         
         query = self.db.query(Position).filter(
             Position.status == "closed",
@@ -116,7 +116,7 @@ class AnalyticsService:
 
     def _get_filtered_portfolio_history(self, period: str) -> List:
         """Get portfolio history filtered by period."""
-        from backend.models.portfolio import PortfolioSnapshot
+        from models.portfolio import PortfolioSnapshot
         
         query = self.db.query(PortfolioSnapshot)
         
