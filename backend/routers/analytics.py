@@ -5,8 +5,9 @@ Analytics Router - Uses existing service functions
 from fastapi import APIRouter, Query, HTTPException, Depends
 from sqlalchemy.orm import Session
 from database import get_db
-from services import AnalyticsService, get_trade_history_with_stats, get_performance_history
-
+from services.analytics_service import AnalyticsService
+from services.trade_service import get_trade_history_with_stats
+from services.portfolio_service import get_performance_history
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
