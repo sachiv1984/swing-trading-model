@@ -109,19 +109,44 @@ It points to the **single canonical source**.
 
 ---
 
-### 3.5 Frontend & UX Semantics (Planned)
+### 3.5 Frontend & UX Semantics
 
-**What it will own**
-- User-visible meanings
-- Display states and labels
-- Allowed user actions and affordances
+**What it owns**
+- User-visible meanings and mental models
+- Page-level user goals, states, and flows
+- Reusable UI component behavior
+- Cross-cutting UX patterns (errors, API dependency behavior)
+- Visual and interaction consistency
 
-**Status**
-- Planned / to be formalised
+**Canonical Location**
+- `specs/frontend/`
+
+**Canonical Documents (Root)**
+- `frontend/README.md` — Navigation and orientation
+- `frontend/design_system.md` — Shared visual language, interaction rules, and constraints
+- `frontend/Frontend_Specifications_&_UX_Documentation_Owner.md` — Ownership & governance
+
+**Page Specifications**
+- `frontend/pages/dashboard.md`
+- `frontend/pages/positions.md`
+- `frontend/pages/trade_history.md`
+- `frontend/pages/analytics.md`
+- `frontend/pages/settings.md`
+- `frontend/pages/system_status.md`
+
+**Component Specifications**
+- `frontend/components/position_form.md`
+- `frontend/components/exit_modal.md`
+- `frontend/components/cash_management_modal.md`
+- `frontend/components/position_detail_modal.md`
+- `frontend/components/journal_components.md`
+
+**UX Patterns**
+- `frontend/patterns/error_handling.md`
+- `frontend/patterns/api_dependencies.md`
 
 **Owner**
-- Frontend Spec Owner (TBD)
-
+- Frontend Specifications & UX Documentation Owner
 ---
 
 ## 4. Conflict Resolution Order
