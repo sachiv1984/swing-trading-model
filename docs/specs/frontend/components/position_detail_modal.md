@@ -19,7 +19,7 @@ Within this modal, the user can:
 
 ## Inputs (Conceptual)
 ### Position (required)
-The modal requires a `position` object with enough data to render:
+The modal requires a `position` object with enough data to render. This object is passed in as a prop from the parent Positions page, which already holds position data from `GET /positions`. The modal does not make its own fetch call for position data.
 
 **Header**
 - `ticker`
@@ -29,7 +29,8 @@ The modal requires a `position` object with enough data to render:
 - `entry_date`
 - `shares`
 - `entry_price`
-- `current_price_native`
+- `current_price_native` (for display in entry details)
+- `pnl` — authoritative GBP P&L as returned by `GET /positions`. Used directly for the P&L stat. Must not be recalculated client-side
 
 **For entry details**
 - `atr_value` (optional)
@@ -60,17 +61,14 @@ The modal requires a `position` object with enough data to render:
 - Displays the position share quantity (supports fractional).
 
 **P&L**
-- Calculated using native prices:
-  - `(current_price_native - entry_price) * shares`
+- Displays `pnl` from the position prop — the authoritative GBP P&L computed server-side by `GET /positions`.
 - Display:
-  - Uses the currency symbol based on market:
-    - UK → `£`
-    - non-UK → `$`
+  - Uses `£` prefix (GBP).
   - Always shows a 2-decimal value.
   - Shows `+` prefix for positive P&L.
   - Styling indicates profit vs loss (green-ish vs red-ish).
 
-> Note: The P&L shown here is a simple native-price calculation for quick reference (not a full GBP-realised/unrealised accounting breakdown). The authoritative GBP P&L is provided by the backend via `GET /positions`.
+> **Note:** P&L must be taken from the `pnl` field in the prop. It must not be recalculated client-side using `current_price_native` and `entry_price`. The backend `pnl` value correctly accounts for FX conversion, position lifecycle, and cost basis. A native-price approximation would produce different results for US positions and partial exits, and would violate the system principle that the backend is the single source of truth for financial values.
 
 ### 3) Entry Details
 Displays:
