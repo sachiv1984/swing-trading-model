@@ -1,5 +1,4 @@
 # Data Model & Domain Schema Owner
-
 ## Role: Data Model & Domain Schema Owner
 
 This document defines the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the **Data Model** for the Momentum Trading Assistant.
@@ -13,7 +12,6 @@ The data model is treated as a **product‑level contract**, not merely a databa
 ## 1. Core Responsibility
 
 The primary responsibility of this role is to ensure that the data model remains:
-
 - **Correct** — financial values, P&L, and cash flows are unambiguous and reliable
 - **Consistent** — concepts mean the same thing everywhere they appear
 - **Intentional** — tables and fields exist for clear domain reasons
@@ -30,7 +28,6 @@ The data model is the **source of truth** for:
 ## 2. Domain Ownership & Conceptual Clarity
 
 ### Required skills
-
 - Strong understanding of **trading and portfolio domains**
 - Ability to distinguish:
   - Conceptual entities vs derived data
@@ -39,7 +36,6 @@ The data model is the **source of truth** for:
 - Discipline to prevent domain leakage
 
 ### Expectations
-
 - Each table represents a **clear domain concept**
 - Field names reflect **business meaning**, not implementation convenience
 - Similar concepts (e.g. P&L, cost, value) are defined **once and consistently**
@@ -52,7 +48,6 @@ The data model is the **source of truth** for:
 ## 3. Financial & Numerical Correctness
 
 ### Required skills
-
 - Strong numeracy and financial literacy
 - Understanding of:
   - Cash flow vs profit
@@ -61,7 +56,6 @@ The data model is the **source of truth** for:
   - FX handling and rounding
 
 ### Expectations
-
 - Currency assumptions are **explicit**
 - Calculated fields are clearly defined:
   - What they represent
@@ -77,13 +71,11 @@ The data model is the **source of truth** for:
 ## 4. Schema Design & Data Integrity
 
 ### Required skills
-
 - Strong relational modeling skills
 - Comfort with constraints, indexes, and normalization trade‑offs
 - Ability to reason about long‑term schema health
 
 ### Expectations
-
 - Primary keys, foreign keys, and constraints are intentional
 - Idempotent processes (e.g. daily snapshots) are enforced structurally
 - Historical tables are append‑only unless explicitly justified
@@ -94,7 +86,6 @@ The data model is the **source of truth** for:
 ## 5. Change Management & Migrations
 
 ### Required skills
-
 - Schema evolution planning
 - Impact analysis across:
   - API contracts
@@ -103,7 +94,6 @@ The data model is the **source of truth** for:
 - Clear written communication
 
 ### Expectations
-
 - Every schema change includes:
   - Rationale
   - Migration strategy
@@ -111,18 +101,20 @@ The data model is the **source of truth** for:
 - Versioned changes are documented clearly
 - Destructive changes are avoided unless explicitly agreed
 
+### Lifecycle & Versioning Compliance (mandatory)
+- All data model documentation must follow the lifecycle states, header block, and versioning rules defined in:
+  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
+
 ---
 
 ## 6. Alignment with Other Specs
 
 ### Required skills
-
 - Systems thinking across specifications
 - Ability to spot semantic drift
 - Comfort collaborating across disciplines
 
 ### Expectations
-
 - The data model aligns with:
   - API contracts (field meaning and ownership)
   - Frontend specs (displayed vs stored values)
@@ -137,15 +129,13 @@ The data model is the **source of truth** for:
 ## 7. Documentation Quality & Readability
 
 ### Required skills
-
 - Clear technical writing
 - Ability to explain complex structures simply
 - Comfort writing for engineers, analysts, and reviewers
 
 ### Writing standards
-
 - Tables and fields are described in **plain language**
-- Notes explain *why*, not just *what*
+- Notes explain **why**, not just **what**
 - Examples are used to remove ambiguity
 - Historical context is preserved where it prevents misuse
 
@@ -154,13 +144,11 @@ The data model is the **source of truth** for:
 ## 8. Operational Mindset
 
 ### Required skills
-
 - Pragmatism over over‑engineering
 - Comfort maintaining living documentation
 - Bias toward correctness over convenience
 
 ### Expectations
-
 - The data model doc is kept continuously up to date
 - Small clarifications are made opportunistically
 - The model is trusted enough to be used for:
@@ -174,7 +162,6 @@ The data model is the **source of truth** for:
 ## 9. Definition of Success
 
 Someone doing this role well enables:
-
 - Correct and explainable financial outcomes
 - Safer product and strategy evolution
 - Reliable analytics and reporting
