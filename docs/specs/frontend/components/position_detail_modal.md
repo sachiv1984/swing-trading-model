@@ -1,7 +1,7 @@
 # position_detail_modal.md
 
 ## Purpose & Usage Context
-The Position Detail Modal provides a focused view of a single position’s key stats and entry context, plus lightweight journaling tools (entry note + tags). It helps users quickly review the position and capture/adjust their thinking without navigating away from the current workflow.
+The Position Detail Modal provides a focused view of a single position's key stats and entry context, plus lightweight journaling tools (entry note + tags). It helps users quickly review the position and capture/adjust their thinking without navigating away from the current workflow.
 
 Accessed when a user opens the position details from the Positions experience.
 
@@ -12,7 +12,7 @@ Within this modal, the user can:
 - Review high-level stats (Days Held, Shares, P&L)
 - Review entry details (Entry Date, Entry Price, ATR Value, FX Rate)
 - Read or edit the **Entry Note**
-- Add/remove **Tags** (up to 5)
+- Add/remove **Tags** (up to 10)
 - Save changes or cancel/close
 
 ---
@@ -50,7 +50,7 @@ The modal requires a `position` object with enough data to render:
 
 ### 1) Header
 - Displays the position ticker prominently.
-- Displays the market as a small badge (e.g., “UK” or “US”).
+- Displays the market as a small badge (e.g., "UK" or "US").
 
 ### 2) Summary Stats (3-column)
 **Days Held**
@@ -70,16 +70,16 @@ The modal requires a `position` object with enough data to render:
   - Shows `+` prefix for positive P&L.
   - Styling indicates profit vs loss (green-ish vs red-ish).
 
-> Note: The P&L shown here is a simple native-price calculation for quick reference (not a full “GBP-realized/unrealized” accounting breakdown).
+> Note: The P&L shown here is a simple native-price calculation for quick reference (not a full GBP-realised/unrealised accounting breakdown). The authoritative GBP P&L is provided by the backend via `GET /positions`.
 
 ### 3) Entry Details
 Displays:
-- Entry Date (formatted as “MMM d, yyyy”)
+- Entry Date (formatted as "MMM d, yyyy")
 - Entry Price (in native currency with symbol)
 - ATR Value:
-  - If absent, show “—”
+  - If absent, show "—"
 - FX Rate:
-  - If absent, show “1.0000”
+  - If absent, show "1.0000"
 
 ### 4) Trade Journal
 Contains:
@@ -92,14 +92,14 @@ Contains:
 
 ### Entry Note
 - If the entry note exists, show it in a bordered card.
-- If empty, show: **“No entry note”** (italic/quiet).
+- If empty, show: **"No entry note"** (italic/quiet).
 
 ### Tags
 - If tags exist, show them as pills.
 - If there are no tags, tags are simply not displayed in read mode (no explicit empty message).
 
 ### Edit action
-- “Edit” button appears in the Trade Journal header.
+- "Edit" button appears in the Trade Journal header.
 - Clicking Edit switches the journal area into Edit Mode.
 
 ---
@@ -111,7 +111,7 @@ Edit mode allows changes to **Entry Note** and **Tags**.
 ### Entry Note Editing
 - Field: multiline text area.
 - Placeholder:
-  - “Why are you entering this trade? What’s your thesis?”
+  - "Why are you entering this trade? What's your thesis?"
 - Character limit:
   - Maximum **500** characters.
   - Input is constrained so users cannot exceed 500.
@@ -122,12 +122,12 @@ Edit mode allows changes to **Entry Note** and **Tags**.
 ### Tags Editing
 #### Tag display and removal
 - Existing tags are shown as pills with a remove (X) control.
+- A counter label shows the current count (e.g., `Tags (3/10)`).
 - Clicking the X removes that tag immediately (in edit state).
 
 #### Adding tags
-- Tag limit:
-  - Users can add tags until there are **5 total** tags.
-  - When 5 tags are present, the “add tag” input is not shown.
+- Tag limit: **10 tags maximum** (consistent with API contract and all other surfaces).
+- When 10 tags are present, the "add tag" input is not shown.
 
 #### Tag normalization rules (on add)
 When a tag is added:
@@ -136,13 +136,12 @@ When a tag is added:
 - Duplicates are not added.
 
 #### Tag suggestions
-While typing in the “add tag” input:
+While typing in the "add tag" input:
 - A suggestion list may appear.
+- Suggestions are fetched from `GET /positions/tags` (the dedicated tag list endpoint).
+- Merged with a small set of default tags (e.g., momentum-style defaults) to provide useful starting suggestions.
 - Suggestions exclude tags already selected.
 - Only the first 10 suggestions are shown at a time.
-- The suggestions include:
-  - Tags seen on other positions (to encourage reuse)
-  - A small set of default tags (e.g., momentum-style tags)
 
 #### Adding tags via keyboard
 - Pressing **Enter** adds the typed tag (if non-empty), applying normalization.
@@ -151,19 +150,19 @@ While typing in the “add tag” input:
 
 ## Cancel vs Close Behavior
 
-### “Cancel” inside Journal Edit Mode
+### "Cancel" inside Journal Edit Mode
 - Exits edit mode for the journal section.
 - Discards journal edits made during the edit session.
-- Restores the journal fields to the position’s current saved values.
+- Restores the journal fields to the position's current saved values.
 
-### Footer “Cancel”
+### Footer "Cancel"
 - Closes the modal (same as onClose).
 
 ---
 
 ## Saving Behavior
 
-### “Save Changes” (footer)
+### "Save Changes" (footer)
 On save:
 - The modal calls `onSave` with:
   - `entry_note`:
@@ -180,8 +179,8 @@ The component assumes persistence happens outside the modal (e.g., API update ha
 ## Validation & Error Handling (User-Visible)
 
 ### Enforced constraints
-- Entry note: maximum 500 characters (hard limit).
-- Tags: maximum 5 tags (hard limit).
+- Entry note: maximum 500 characters (hard limit enforced in input handler).
+- Tags: maximum 10 tags (hard limit — input hidden when limit reached).
 - Tags are normalized on add (lowercase, spaces → hyphens).
 - Duplicate tags are prevented.
 
@@ -193,7 +192,7 @@ The component assumes persistence happens outside the modal (e.g., API update ha
 
 ## Loading / Empty States
 - If no `position` is provided, nothing is rendered.
-- Tag suggestions depend on an available set of known tags; if none exist, defaults still provide suggestions.
+- Tag suggestions depend on `GET /positions/tags`; if no tags have been used yet, the default tag set still provides suggestions.
 
 ---
 
@@ -202,10 +201,5 @@ The component assumes persistence happens outside the modal (e.g., API update ha
 - Keyboard support:
   - Tab navigation through interactive controls.
   - Enter adds a tag while focused in tag input.
-- Buttons have clear labels (“Edit”, “Cancel”, “Save Changes”).
+- Buttons have clear labels ("Edit", "Cancel", "Save Changes").
 - Tag remove control should remain reachable via keyboard navigation.
-
----
-
-## Consistency Note (Potential Spec Alignment Issue)
-This component currently enforces **5 tags max**, while other areas of the product documentation may allow **10**. If the product intent is 10, this should be aligned across components and patterns; otherwise, document the 5-tag limit as the standard pattern.
