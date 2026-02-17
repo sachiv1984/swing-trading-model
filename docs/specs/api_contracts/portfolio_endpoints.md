@@ -28,6 +28,8 @@ Global response envelopes, error shape, defaults, and multi-currency rules are d
 
 Primary working screen returning cash balances, portfolio totals, and **open positions** with refreshed live prices on every call.
 
+> **Position detail depth:** This endpoint returns a summary view of open positions. For the full enriched position object — including native currency prices, stop context, ATR, FX rates, and journal fields — use `GET /positions`.
+
 **Method & Path**
 
 - `GET /portfolio`
@@ -56,7 +58,7 @@ Response uses the standard success envelope from **conventions.md**.
   "initial_value": 14000.00,
   "net_deposits": 14000.00,
   "live_fx_rate": 1.3642,
-  "last_updated": "2026-02-15T10:30:00Z",
+  "last_updated": "2026-02-17T10:30:00Z",
   "positions": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -82,12 +84,25 @@ Response uses the standard success envelope from **conventions.md**.
 
 #### Field notes (portfolio-level)
 
-- `cash` and `cash_balance` are the available cash balance (`cash_balance` is retained for legacy compatibility).
-- `total_value` is cash + open positions value.
-- `open_positions_value` is the sum of open positions.
-- `total_pnl` represents realized + unrealized P&L.
+- `cash` and `cash_balance` are both the available cash balance. `cash_balance` is retained for legacy compatibility.
+- `total_value` is cash plus open positions value.
+- `open_positions_value` is the sum of current values across all open positions.
+- `total_pnl` is realised plus unrealised P&L.
+- `net_deposits` is total deposits minus total withdrawals. Used as the cost basis for portfolio-level return calculations.
 - `last_updated` is an ISO 8601 timestamp.
 - `positions` is an array of open positions; returns `[]` if none.
+
+#### Field notes (position summary object)
+
+The position objects returned here are a **summary shape**. Key omissions versus the full object from `GET /positions`:
+
+| Omitted field | Available at |
+|---------------|-------------|
+| `initial_stop` | `GET /positions` |
+| `atr_value` | `GET /positions` |
+| `fx_rate`, `live_fx_rate` | `GET /positions` |
+| `entry_note`, `exit_note` | `GET /positions` |
+| `tags` | `GET /positions` |
 
 ### Errors
 
@@ -99,7 +114,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 **Purpose**
 
-Create a new position based on user-entered broker execution details. Supports fractional shares. Creates the position and deducts cash.
+Create a new position based on user-entered broker execution details. Supports fractional shares. Creates the position and deducts the total cost from available cash.
 
 **Method & Path**
 
@@ -117,7 +132,7 @@ Create a new position based on user-entered broker execution details. Supports f
 {
   "ticker": "NVDA",
   "market": "US",
-  "entry_date": "2026-02-15",
+  "entry_date": "2026-02-17",
   "shares": 10.5,
   "entry_price": 850.00,
   "fx_rate": 1.3642,
@@ -137,12 +152,12 @@ Create a new position based on user-entered broker execution details. Supports f
 
 #### Optional fields
 
-- `market` (string: `"US"` or `"UK"`; default: auto-detect)
+- `market` (string: `"US"` or `"UK"`; default: auto-detect from ticker suffix)
 - `fx_rate` (number; required for US if not auto-detected)
-- `atr_value` (number; auto-fetched if not provided)
-- `stop_price` (number; auto-calculated if not provided)
+- `atr_value` (number; auto-fetched by server if not provided)
+- `stop_price` (number; calculated as `entry_price − (5 × ATR)` if not provided)
 - `entry_note` (string, max 500; empty string treated as `null`)
-- `tags` (array; max 10; each max 20; lowercase/numbers/hyphens)
+- `tags` (array; max 10; each max 20 characters; lowercase, numbers, hyphens only)
 
 ### Response (200)
 
@@ -164,11 +179,11 @@ Response uses the standard success envelope from **conventions.md**.
 
 ### Validation rules & constraints
 
-- `ticker` must be valid format; max length 20.
+- `ticker` must be a valid format; max 20 characters.
 - `entry_date` must be a valid date and must not be in the future.
 - `shares` must be greater than 0.
 - `entry_price` must be greater than 0.
-- `tags` must follow tag rules (lowercase letters, numbers, hyphens only; max 20 chars each; max 10 tags).
+- `tags` must follow tag rules (lowercase letters, numbers, hyphens only; max 20 characters each; max 10 tags).
 
 ### Errors
 
@@ -186,7 +201,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 **Purpose**
 
-Create or update a **daily portfolio snapshot** (idempotent upsert by portfolio + date). Intended to be called once per day (often automated).
+Create or update a **daily portfolio snapshot** (idempotent upsert by portfolio + date). Intended to be called once per day, typically automated at market close.
 
 **Method & Path**
 
@@ -194,7 +209,7 @@ Create or update a **daily portfolio snapshot** (idempotent upsert by portfolio 
 
 **Idempotency**
 
-- Idempotent upsert: calling multiple times per day updates the same snapshot for that date.
+- Idempotent upsert: calling multiple times on the same day updates the same snapshot record for that date.
 
 ### Request
 
@@ -209,20 +224,21 @@ Response uses the standard success envelope from **conventions.md**.
 ```json
 {
   "id": "650e8400-e29b-41d4-a716-446655440000",
-  "snapshot_date": "2026-02-15",
+  "snapshot_date": "2026-02-17",
   "total_value": 15000.00,
   "cash_balance": 5000.00,
   "positions_value": 10000.00,
   "total_pnl": 1000.00,
   "position_count": 3,
-  "created_at": "2026-02-15T10:30:00Z"
+  "created_at": "2026-02-17T10:30:00Z"
 }
 ```
 
 ### Notes
 
-- If a snapshot exists for `snapshot_date`, the backend updates it.
-- If missing, the backend creates a new snapshot.
+- If a snapshot already exists for today's date, the backend updates it in place.
+- If no snapshot exists for today, the backend creates a new one.
+- Snapshots feed the Sharpe ratio (portfolio method) and drawdown calculations in `GET /analytics/metrics`. A minimum of 30 snapshots is required for the portfolio-method Sharpe ratio.
 
 ### Errors
 
@@ -254,27 +270,29 @@ Retrieve historical portfolio snapshots for charting and analytics.
 
 Response uses the standard success envelope from **conventions.md**.
 
-#### `data` schema
+#### `data` schema (array)
 
 ```json
 [
   {
     "id": "650e8400-e29b-41d4-a716-446655440000",
-    "snapshot_date": "2026-02-15",
+    "snapshot_date": "2026-02-17",
     "total_value": 15000.00,
     "cash_balance": 5000.00,
     "positions_value": 10000.00,
     "total_pnl": 1000.00,
     "position_count": 3,
-    "created_at": "2026-02-15T10:30:00Z"
+    "created_at": "2026-02-17T10:30:00Z"
   },
   {
-    "snapshot_date": "2026-02-14",
+    "id": "640e8400-e29b-41d4-a716-446655440000",
+    "snapshot_date": "2026-02-16",
     "total_value": 14800.00,
     "cash_balance": 5000.00,
     "positions_value": 9800.00,
     "total_pnl": 800.00,
-    "position_count": 3
+    "position_count": 3,
+    "created_at": "2026-02-16T17:00:00Z"
   }
 ]
 ```
