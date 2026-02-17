@@ -50,10 +50,14 @@ No parameters.
 ```json
 {
   "status": "healthy",
-  "timestamp": "2026-02-15T10:30:00Z",
-  "version": "1.4.1"
+  "timestamp": "2026-02-17T10:30:00Z",
+  "version": "1.5.0"
 }
 ```
+
+#### Field notes
+
+- `version` reflects the deployed backend version and advances with each release. Treat as informational; do not use for contract compatibility checks.
 
 ### Status values
 
@@ -96,38 +100,52 @@ No parameters.
 ```json
 {
   "status": "healthy",
-  "timestamp": "2026-02-15T10:30:00Z",
-  "version": "1.4.1",
+  "timestamp": "2026-02-17T10:30:00Z",
+  "version": "1.5.0",
   "response_time_ms": 42.5,
   "checks": {
     "database": {
       "status": "healthy",
       "details": {
-        "connection": "ok",
-        "response_time_ms": 5.2
+        "connected": true,
+        "portfolio_exists": true
       }
     },
     "yahoo_finance": {
       "status": "healthy",
       "details": {
-        "last_fetch": "2026-02-15T10:29:00Z",
-        "response_time_ms": 150.0
+        "gbp_usd_rate": 1.3642,
+        "accessible": true
       }
     },
     "services": {
-      "status": "healthy"
+      "status": "healthy",
+      "details": {
+        "position_service": "available",
+        "portfolio_service": "available",
+        "cash_service": "available"
+      }
     },
     "config": {
-      "status": "healthy"
+      "status": "healthy",
+      "details": {
+        "settings_loaded": true
+      }
     }
   }
 }
 ```
 
+#### Field notes
+
+- `version` reflects the deployed backend version. See note under `GET /health`.
+- `checks` key names and `details` structures are implementation-specific but stable within a version.
+- Internal error details must not expose secrets or credentials.
+
 ### Notes
 
-- Dependency names and structure are implementation-specific but stable within a version.
-- Internal error details must still not expose secrets or credentials.
+- Returns `"degraded"` overall status if any component is unhealthy.
+- Use for post-deployment verification.
 
 ---
 
@@ -158,38 +176,50 @@ No request body.
 
 ```json
 {
-  "timestamp": "2026-02-15T10:30:00Z",
+  "timestamp": "2026-02-17T10:30:00Z",
   "summary": {
-    "total": 12,
-    "passed": 11,
-    "failed": 1,
+    "total": 17,
+    "passed": 17,
+    "failed": 0,
     "errors": 0,
-    "success_rate": 91.7
+    "success_rate": 100.0
   },
   "results": [
     {
       "endpoint": "GET /portfolio",
+      "critical": true,
       "status": "pass",
       "status_code": 200,
-      "expected_status": 200,
       "response_time_ms": 45.0
     },
     {
-      "endpoint": "POST /positions/{id}/exit",
-      "status": "fail",
-      "status_code": 404,
-      "expected_status": 200,
-      "response_time_ms": 12.0,
-      "error": "Position not found"
+      "endpoint": "GET /analytics/metrics (all_time)",
+      "critical": true,
+      "status": "pass",
+      "status_code": 200,
+      "response_time_ms": 312.0
+    },
+    {
+      "endpoint": "POST /validate/calculations",
+      "critical": true,
+      "status": "pass",
+      "status_code": 200,
+      "response_time_ms": 28.0
     }
   ]
 }
 ```
 
+#### Field notes
+
+- `critical` indicates whether a failure on this endpoint is considered a system-level issue.
+- `total` reflects all endpoints under test, including analytics and validation endpoints added in v1.5.0.
+
 ### Notes
 
 - Failures indicate contract or environment issues.
 - This endpoint must never mutate production data.
+- Can take 10–30 seconds to complete (live price fetches for position/portfolio endpoints).
 
 ---
 
