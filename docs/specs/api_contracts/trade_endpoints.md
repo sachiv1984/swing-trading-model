@@ -55,15 +55,15 @@ Response uses the standard success envelope from **conventions.md**.
       "ticker": "NVDA",
       "market": "US",
       "entry_date": "2026-01-15",
-      "exit_date": "2026-02-15",
+      "exit_date": "2026-02-17",
       "shares": 10.5,
       "entry_price": 622.00,
       "exit_price": 920.00,
       "pnl": 3200.00,
       "pnl_pct": 35.8,
       "pnl_percent": 35.8,
+      "holding_days": 33,
       "exit_reason": "Target Reached",
-      "holding_days": 31,
       "entry_note": "Breakout above $800",
       "exit_note": "Hit target",
       "tags": ["momentum", "winner"]
@@ -74,14 +74,19 @@ Response uses the standard success envelope from **conventions.md**.
 
 #### Field notes
 
-- `trades` contains **closed** trades only.
-- `pnl_pct` and `pnl_percent` are both returned for compatibility.
-- Notes (`entry_note`, `exit_note`) may be `string` or `null`.
+| Field | Notes |
+|-------|-------|
+| `trades` | Closed trades only. Empty array if no closed trades exist |
+| `pnl_pct` and `pnl_percent` | Both fields are returned with the same value for compatibility |
+| `holding_days` | Number of calendar days from `entry_date` to `exit_date` inclusive |
+| `exit_reason` | The reason recorded at exit. `null` values are normalised to `"Manual Exit"` in the analytics service but stored as-is here |
+| `entry_note`, `exit_note` | May be `string` or `null` |
+| `tags` | Array of tag strings copied from the position at time of exit. May be empty array |
 
 ### Validation rules & constraints
 
-- The endpoint returns an empty `trades` array when there are no closed trades.
 - Trade records are read-only via this endpoint.
+- The endpoint returns an empty `trades` array when there are no closed trades.
 
 ### Errors
 
