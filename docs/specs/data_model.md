@@ -585,7 +585,7 @@ Existing settings rows will receive the default value of `10`, which matches the
 
 ## Planned Future Schema Changes
 
-### v1.5 — Alerts (Planned)
+### v1.6 — Alerts (Planned)
 ```sql
 CREATE TABLE alerts (
     id UUID PRIMARY KEY,
@@ -593,7 +593,8 @@ CREATE TABLE alerts (
     type VARCHAR(50),
     message TEXT,
     is_read BOOLEAN DEFAULT false,
-    created_at TIMESTAMP
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 ```
 
@@ -603,7 +604,8 @@ CREATE TABLE users (
     id UUID PRIMARY KEY,
     email VARCHAR(255) UNIQUE,
     password_hash VARCHAR(255),
-    created_at TIMESTAMP
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 
 ALTER TABLE portfolios ADD COLUMN user_id UUID REFERENCES users(id);
