@@ -121,3 +121,23 @@ Unless explicitly overridden by an endpoint, the following defaults apply **serv
 ## 11. Health Endpoint Exception
 
 Health endpoints do not use the standard `{ status, data }` response envelope.
+
+---
+
+## 12. DELETE Response Convention
+
+Successful `DELETE` operations return HTTP 200 with the standard success envelope. The `data` object confirms the deletion:
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "deleted": true,
+    "id": "550e8400-e29b-41d4-a716-446655440000"
+  }
+}
+```
+
+- `deleted: true` confirms the record was removed.
+- `id` echoes the identifier of the deleted record.
+- DELETE endpoints are **non-idempotent**: a second call to the same resource returns `404 Not Found`.
