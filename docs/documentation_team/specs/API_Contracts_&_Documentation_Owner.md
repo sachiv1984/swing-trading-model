@@ -1,7 +1,7 @@
 # API Contracts & Documentation Owner
 ## Role: API Contracts & Documentation Owner
 
-This document describes the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the API contracts in `specs/api_contracts/`.
+This document describes the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the API contracts in `docs/specs/api_contracts/`.
 
 This role acts as the **guardian of API clarity, correctness, and reviewability** across teams.
 
@@ -33,7 +33,7 @@ The documentation is treated as a **first-class product artifact**, not an after
   - Avoids duplication of conventions or rules defined elsewhere
 - Cross-cutting rules live only in `conventions.md`
 - High-level orientation and navigation live only in `README.md`
-- Reference artifacts (e.g., /docs/reference/openapi.yaml) are maintained as supporting representations of the canonical Markdown contracts and must not diverge from specs/api_contracts/ documentation
+- Reference artifacts (e.g. `docs/reference/openapi.yaml`) are maintained as **supporting representations** of the canonical Markdown contracts and must not diverge from `docs/specs/api_contracts/` documentation
 
 ---
 
@@ -57,7 +57,7 @@ The documentation is treated as a **first-class product artifact**, not an after
 
 ---
 
-## 4. Change Management & Version Discipline
+## 4. Change Management, Version Discipline & OpenAPI Alignment
 
 ### Required skills
 - Strong change impact analysis
@@ -65,6 +65,7 @@ The documentation is treated as a **first-class product artifact**, not an after
   - Clarification vs behavioral change
   - Non-breaking vs breaking change
 - Clear written communication
+- Discipline in maintaining alignment between canonical contracts and reference artifacts
 
 ### Expectations
 - Any API change must result in:
@@ -75,10 +76,23 @@ The documentation is treated as a **first-class product artifact**, not an after
   - What clients can rely on
   - What might change in the future
 
+### Mandatory OpenAPI Inline Review
+- When a pull request **changes canonical API contracts** in `docs/specs/api_contracts/` **or changes backend behavior that affects the API**, this role **must**:
+  - Review the canonical Markdown contract changes **and**
+  - Review `docs/reference/openapi.yaml` **inline, in the same pull request**
+- Approval must only be given once the OpenAPI file is confirmed to:
+  - Contain the same endpoints and methods
+  - Reflect the same request and response shapes
+  - Preserve documented envelope rules and explicit exceptions
+  - Remain consistent with the documented contract version
+- If a change is explicitly marked **“no contract change”** (internal refactor only), OpenAPI review is not required
+
+This requirement is **non-optional** for contract-affecting changes and exists to prevent silent drift between canonical contracts and reference representations.
 
 ### Lifecycle & Versioning Compliance (mandatory)
 All documentation owned by this role must follow the lifecycle states,
 header block, and versioning rules defined in:
+
 - `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
 
 ---
@@ -154,7 +168,7 @@ header block, and versioning rules defined in:
 - Markdown (GitHub-flavored)
 - Pull-request-based review workflows
 - Diff-friendly documentation practices
-- Optional: OpenAPI/schema formats (as reference, not replacement)
+- Optional: OpenAPI/schema formats (**as reference, not replacement**)
 
 ### Working practices
 - Documentation changes are reviewed like code
@@ -178,7 +192,7 @@ The documentation becomes a **shared source of truth**, not a liability.
 
 ## Guiding Principle
 
-> If an API behavior is important enough to rely on,
-> it is important enough to be **clearly documented**.
+> If an API behavior is important enough to rely on,  
+> it is important enough to be **clearly documented and reviewed end-to-end**.
 
 This role exists to enforce that principle over time.
