@@ -38,7 +38,7 @@ Returns all **open positions** with live prices, stop context, FX context, and j
 
 **Idempotency**
 
-- Safe to refresh. Fetches refreshed prices.
+- Safe to refresh. Fetches refreshed prices on every call.
 
 ### Request
 
@@ -64,7 +64,6 @@ Response uses the standard success envelope from **conventions.md**.
     "stop_price": 607.50,
     "stop_price_native": 829.00,
     "initial_stop": 545.00,
-    "initial_stop_native": 743.00,
     "pnl": 2394.00,
     "pnl_percent": 3.7,
     "holding_days": 14,
@@ -81,11 +80,22 @@ Response uses the standard success envelope from **conventions.md**.
 ]
 ```
 
-#### Validation notes & constraints
+#### Field notes
 
-- `display_status` values: `GRACE`, `PROFITABLE`, `LOSING`.
-- `entry_note` and `exit_note` may be `string` or `null`.
-- `tags` is an array; may be empty.
+| Field | Notes |
+|-------|-------|
+| `current_price` | GBP — used for portfolio calculations |
+| `current_price_native` | USD or GBP — used for display (what the trader sees in their broker) |
+| `stop_price` | Current trailing stop in GBP. `0.0` during grace period |
+| `stop_price_native` | Current trailing stop in native currency. `0.0` during grace period |
+| `initial_stop` | The stop calculated at entry (`entry_price − (5 × ATR)`), in GBP. Informational; used to show how far the stop has trailed |
+| `display_status` | `"GRACE"` (days 0–9), `"PROFITABLE"` (day 10+, P&L > 0), or `"LOSING"` (day 10+, P&L ≤ 0) |
+| `fx_rate` | The GBP/USD rate at time of entry (stored) |
+| `live_fx_rate` | The current GBP/USD rate (fetched live) |
+| `exit_note` | Always `null` for open positions. Present for schema consistency with closed trade records |
+| `tags` | Array of tag strings. Empty array if no tags set |
+
+> **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
 ### Errors
 
@@ -105,7 +115,7 @@ Runs deterministic daily monitoring logic across open positions and returns an a
 
 **Idempotency**
 
-- Safe to refresh. Deterministic recomputation.
+- Safe to refresh. Deterministic recomputation on every call.
 
 ### Request
 
@@ -119,7 +129,7 @@ Response uses the standard success envelope from **conventions.md**.
 
 ```json
 {
-  "analysis_date": "2026-02-15",
+  "analysis_date": "2026-02-17",
   "market_regime": {
     "spy_risk_on": true,
     "ftse_risk_on": true,
@@ -169,7 +179,7 @@ Response uses the standard success envelope from **conventions.md**.
 #### Action types
 
 - `HOLD`: position healthy; no user action required.
-- `EXIT`: exit recommended (e.g., stop hit, risk-off signal, trailing stop); user must confirm exit with broker execution price.
+- `EXIT`: exit recommended (stop hit, risk-off signal, or trailing stop triggered); user must confirm exit with their actual broker execution price.
 
 ### Errors
 
@@ -184,7 +194,7 @@ Errors use the standard error envelope from **conventions.md**.
 User-confirmed exit using actual broker execution details.
 
 - Supports full exit (default) or partial exit (by specifying `shares`).
-- **Exit price is always user-provided.**
+- **Exit price is always user-provided** — the backend never fetches a live price to use as the exit price.
 - For **US** positions, `exit_fx_rate` is required.
 
 **Method & Path**
@@ -207,7 +217,7 @@ User-confirmed exit using actual broker execution details.
 {
   "shares": 10.5,
   "exit_price": 920.00,
-  "exit_date": "2026-02-15",
+  "exit_date": "2026-02-17",
   "exit_reason": "Target Reached",
   "exit_fx_rate": 1.3650,
   "exit_note": "Hit target, took profits"
@@ -220,7 +230,7 @@ User-confirmed exit using actual broker execution details.
 
 #### Optional fields
 
-- `shares` (number): number of shares to exit (default: all remaining shares).
+- `shares` (number): shares to exit; default is all remaining shares.
 - `exit_date` (string, `YYYY-MM-DD`): default is today (UTC).
 - `exit_reason` (string): one of:
   - `Manual Exit` (default)
@@ -230,7 +240,7 @@ User-confirmed exit using actual broker execution details.
   - `Trailing Stop`
   - `Partial Profit Taking`
 - `exit_fx_rate` (number): **required for US stocks**; ignored for UK stocks.
-- `exit_note` (string, max 500): journal note (empty string treated as `null`).
+- `exit_note` (string, max 500): journal note. Empty string treated as `null`.
 
 ### Response (200)
 
@@ -256,7 +266,7 @@ Response uses the standard success envelope from **conventions.md**.
   "realized_pnl_pct": 35.8,
   "new_cash_balance": 14650.00,
   "exit_fx_rate": 1.3650,
-  "exit_date": "2026-02-15",
+  "exit_date": "2026-02-17",
   "is_partial_exit": false,
   "remaining_shares": 0
 }
@@ -264,11 +274,11 @@ Response uses the standard success envelope from **conventions.md**.
 
 ### Validation rules & constraints
 
-- `position_id` must identify an existing position.
+- `position_id` must identify an existing open position.
 - `exit_price` must be greater than 0.
 - If provided, `shares` must be > 0 and must not exceed position size.
-- `exit_reason` must be one of the allowed values.
-- For US positions, `exit_fx_rate` is required; backend rejects requests without it.
+- `exit_reason` must be one of the allowed values listed above.
+- For US positions, `exit_fx_rate` is required; the backend rejects requests without it.
 
 ### Errors
 
@@ -285,7 +295,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 **Purpose**
 
-Update entry and/or exit notes for a position (works for open and closed positions).
+Update entry and/or exit notes for a position. Works for both open and closed positions.
 
 **Method & Path**
 
@@ -293,7 +303,7 @@ Update entry and/or exit notes for a position (works for open and closed positio
 
 **Idempotency**
 
-- Mutating. Replaces provided fields.
+- Mutating. Replaces provided fields with submitted values.
 
 ### Request
 
@@ -329,7 +339,7 @@ Response uses the standard success envelope from **conventions.md**.
   "ticker": "NVDA",
   "entry_note": "Updated reasoning after analysis",
   "exit_note": "Hit target, took profits",
-  "updated_at": "2026-02-15T10:30:00Z"
+  "updated_at": "2026-02-17T10:30:00Z"
 }
 ```
 
@@ -353,7 +363,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 **Purpose**
 
-Replace all tags for a position. Works for open and closed positions.
+Replace all tags for a position. Works for both open and closed positions.
 
 **Method & Path**
 
@@ -361,7 +371,7 @@ Replace all tags for a position. Works for open and closed positions.
 
 **Idempotency**
 
-- Mutating. Replaces the tag set with the provided array.
+- Mutating. Replaces the full tag set with the provided array.
 
 ### Request
 
@@ -399,16 +409,16 @@ Response uses the standard success envelope from **conventions.md**.
   "id": "550e8400-e29b-41d4-a716-446655440000",
   "ticker": "NVDA",
   "tags": ["momentum", "breakout", "winner"],
-  "updated_at": "2026-02-15T10:30:00Z"
+  "updated_at": "2026-02-17T10:30:00Z"
 }
 ```
 
 ### Validation rules & constraints
 
-- Tags must meet formatting requirements.
-- Each tag max length 20.
-- No more than 10 tags.
-- Tag array replaces all existing tags.
+- Tags must meet the formatting requirements above.
+- Each tag max 20 characters.
+- No more than 10 tags per position.
+- The submitted array replaces all existing tags.
 
 ### Errors
 
@@ -425,7 +435,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 **Purpose**
 
-Retrieve all unique tags used across positions (for UI autocomplete/suggestions).
+Retrieve all unique tags used across positions (for UI autocomplete and tag filter suggestions).
 
 **Method & Path**
 
@@ -453,9 +463,11 @@ Response uses the standard success envelope from **conventions.md**.
 }
 ```
 
-### Notes
+#### Field notes
 
 - `tags` is sorted alphabetically (case-insensitive).
+- Returns tags from both open and closed positions.
+- `total_positions` includes open and closed positions.
 - Returns an empty array if no tags exist.
 
 ### Errors
