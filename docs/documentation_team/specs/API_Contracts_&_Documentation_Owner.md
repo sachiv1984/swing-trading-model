@@ -1,5 +1,4 @@
 # API Contracts & Documentation Owner
-
 ## Role: API Contracts & Documentation Owner
 
 This document describes the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the API contracts in `specs/api_contracts/`.
@@ -11,7 +10,6 @@ This role acts as the **guardian of API clarity, correctness, and reviewability*
 ## 1. Core Responsibility
 
 The primary responsibility of this role is to ensure that API contracts remain:
-
 - **Accurate** — always reflect actual backend behavior
 - **Reviewable** — easy to scan, reason about, and approve incrementally
 - **Stable** — changes are intentional, well-scoped, and communicated
@@ -24,35 +22,31 @@ The documentation is treated as a **first-class product artifact**, not an after
 ## 2. Domain Ownership & Structure
 
 ### Required skills
-
 - Strong understanding of **domain-driven API design**
 - Ability to group endpoints by **business capability**, not technical layers
-- Discipline to prevent cross-domain leakage (e.g., portfolio logic creeping into position docs)
+- Discipline to prevent cross-domain leakage
 
 ### Expectations
-
 - Each `*_endpoints.md` file:
   - Owns a single, clear domain
   - Has a consistent internal structure
   - Avoids duplication of conventions or rules defined elsewhere
-- Cross-cutting rules live **only** in `conventions.md`
-- High-level orientation and navigation live **only** in `README.md`
+- Cross-cutting rules live only in `conventions.md`
+- High-level orientation and navigation live only in `README.md`
 
 ---
 
 ## 3. API Design & Contract Literacy
 
 ### Required skills
-
 - Deep understanding of:
   - HTTP semantics (methods, status codes, idempotency)
   - REST-style resource modeling
   - Deterministic vs mutating operations
-- Ability to read backend code and translate it into **clear contracts**
-- Comfort reasoning about **edge cases, defaults, and validation rules**
+- Ability to translate backend behavior into clear contracts
+- Comfort reasoning about edge cases, defaults, and validation rules
 
 ### Expectations
-
 - Every endpoint definition clearly answers:
   - What does this do?
   - When is it safe to call repeatedly?
@@ -65,7 +59,6 @@ The documentation is treated as a **first-class product artifact**, not an after
 ## 4. Change Management & Version Discipline
 
 ### Required skills
-
 - Strong change impact analysis
 - Ability to distinguish:
   - Clarification vs behavioral change
@@ -73,44 +66,43 @@ The documentation is treated as a **first-class product artifact**, not an after
 - Clear written communication
 
 ### Expectations
-
 - Any API change must result in:
   - An explicit documentation update
   - Clear indication of what changed and why
 - Backward compatibility is preserved unless explicitly agreed otherwise
-- The documentation should make it obvious:
+- Documentation makes it obvious:
   - What clients can rely on
   - What might change in the future
+
+### Lifecycle & Versioning Compliance (mandatory)
+- All API contract documents must follow the lifecycle states, header block, and versioning rules defined in:
+  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
 
 ---
 
 ## 5. Precision Writing & Technical Communication
 
 ### Required skills
-
 - Clear, concise technical writing
 - Ability to explain complex behavior without ambiguity
 - Comfort writing for multiple audiences (frontend, backend, QA)
 
 ### Writing standards
-
-- Prefer **short sections and bullet points** over long prose
-- Use **examples** to remove ambiguity
-- Avoid speculative language ("might", "should usually")
-- Prefer deterministic phrasing ("always", "never", "must")
+- Prefer short sections and bullet points over long prose
+- Use examples to remove ambiguity
+- Avoid speculative language (“might”, “should usually”)
+- Prefer deterministic phrasing (“always”, “never”, “must”)
 
 ---
 
 ## 6. Consistency & Review Hygiene
 
 ### Required skills
-
 - High attention to detail
 - Pattern recognition across endpoints
 - Willingness to say “no” to inconsistency
 
 ### Expectations
-
 - Field names, response shapes, and terminology are consistent across files
 - Similar endpoints are documented in similar ways
 - Inconsistencies are either:
@@ -122,14 +114,12 @@ The documentation is treated as a **first-class product artifact**, not an after
 ## 7. Frontend–Backend Contract Stewardship
 
 ### Required skills
-
 - Empathy for frontend consumers
 - Understanding of UI workflows and failure modes
 - Ability to anticipate misuse or misinterpretation of APIs
 
 ### Expectations
-
-- The documentation makes it difficult for clients to:
+- Documentation makes it difficult for clients to:
   - Accidentally calculate server-owned values
   - Misuse live prices vs execution prices
   - Misinterpret currency or FX behavior
@@ -141,16 +131,14 @@ The documentation is treated as a **first-class product artifact**, not an after
 ## 8. Operational Mindset
 
 ### Required skills
-
 - Pragmatism over theoretical purity
 - Comfort working with evolving systems
-- Ability to balance completeness with readability
+- Balance completeness with readability
 
 ### Expectations
-
-- Documentation is kept **continuously up to date**, not batch-updated
+- Documentation is kept continuously up to date
 - Small improvements are made opportunistically
-- The docs are trusted enough to be used in:
+- Docs are trusted enough to be used in:
   - Code reviews
   - Onboarding
   - Incident investigation
@@ -160,14 +148,12 @@ The documentation is treated as a **first-class product artifact**, not an after
 ## 9. Tooling & Workflow Expectations
 
 ### Familiarity with
-
 - Markdown (GitHub-flavored)
 - Pull-request-based review workflows
 - Diff-friendly documentation practices
-- Optional: OpenAPI / schema formats (as reference, not replacement)
+- Optional: OpenAPI/schema formats (as reference, not replacement)
 
 ### Working practices
-
 - Documentation changes are reviewed like code
 - Large changes are broken into reviewable chunks
 - Files are kept intentionally small and focused
@@ -177,7 +163,6 @@ The documentation is treated as a **first-class product artifact**, not an after
 ## 10. Definition of Success
 
 Someone doing this role well enables:
-
 - Faster frontend development
 - Safer backend changes
 - Shorter reviews
