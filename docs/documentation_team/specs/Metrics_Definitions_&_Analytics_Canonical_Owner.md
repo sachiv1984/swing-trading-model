@@ -1,5 +1,4 @@
 # Metrics Definitions & Analytics Canonical Owner
-
 ## Role: Metrics Definitions & Analytics Canonical Owner
 
 This document defines the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the **Metrics Definitions – Canonical Specification**.
@@ -13,7 +12,6 @@ The metrics specification is treated as a **mathematical and analytical contract
 ## 1. Core Responsibility
 
 The primary responsibility of this role is to ensure that all metrics are:
-
 - **Correct** — calculations are mathematically sound and reproducible
 - **Canonical** — there is exactly one approved definition per metric
 - **Consistent** — implementations across backend, frontend, and validation match exactly
@@ -26,13 +24,11 @@ When conflicts arise, **this document is the source of truth**.
 ## 2. Metric Authority & Ownership
 
 ### Required skills
-
 - Strong analytical and statistical literacy
 - Deep understanding of trading and performance metrics
 - Comfort asserting authority when definitions are challenged
 
 ### Expectations
-
 - Every metric has:
   - A clear definition
   - An unambiguous formula
@@ -45,7 +41,6 @@ When conflicts arise, **this document is the source of truth**.
 ## 3. Analytical Correctness & Statistical Judgment
 
 ### Required skills
-
 - Strong grounding in:
   - Statistics
   - Financial performance analysis
@@ -53,7 +48,6 @@ When conflicts arise, **this document is the source of truth**.
 - Ability to evaluate trade‑offs between theoretical purity and practical constraints
 
 ### Expectations
-
 - Preferred calculation methods are justified and documented
 - Fallback methods are:
   - Explicit
@@ -66,12 +60,10 @@ When conflicts arise, **this document is the source of truth**.
 ## 4. Metric Scope & Tiering Discipline
 
 ### Required skills
-
 - Ability to reason about metric importance and user impact
 - Judgment about cognitive load and analytical focus
 
 ### Expectations
-
 - Metrics are deliberately tiered by importance
 - Tier 1 metrics:
   - Are stable
@@ -84,12 +76,10 @@ When conflicts arise, **this document is the source of truth**.
 ## 5. Data Dependency & Lineage Stewardship
 
 ### Required skills
-
 - Strong understanding of data lineage and dependency chains
 - Ability to reason about upstream data quality and availability
 
 ### Expectations
-
 - Every metric explicitly documents:
   - Required source tables
   - Minimum data thresholds
@@ -102,12 +92,10 @@ When conflicts arise, **this document is the source of truth**.
 ## 6. Cross‑Spec Alignment
 
 ### Required skills
-
 - Systems thinking across specifications
 - Ability to detect semantic drift between domains
 
 ### Expectations
-
 - Metric definitions align with:
   - Data model semantics (e.g. PnL, equity, value)
   - API responses (field meaning and naming)
@@ -122,13 +110,11 @@ When conflicts arise, **this document is the source of truth**.
 ## 7. Validation & Verification Discipline
 
 ### Required skills
-
 - Test‑driven analytical thinking
 - Comfort defining tolerances and expected ranges
 - Ability to reason about numerical stability
 
 ### Expectations
-
 - Metrics include:
   - Validation tolerances
   - Deterministic test cases
@@ -142,32 +128,32 @@ When conflicts arise, **this document is the source of truth**.
 ## 8. Change Management & Versioning
 
 ### Required skills
-
 - Impact analysis across historical data and user interpretation
 - Clear written communication
 - Comfort managing analytical breaking changes
 
 ### Expectations
-
 - Metric changes are versioned and documented
 - Historical comparability implications are made explicit
 - Backward compatibility is preserved unless explicitly rejected
+
+### Lifecycle & Versioning Compliance (mandatory)
+- All metrics documentation must follow the lifecycle states, header block, and versioning rules defined in:
+  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
 
 ---
 
 ## 9. Documentation Clarity & Interpretability
 
 ### Required skills
-
 - Clear explanatory writing
 - Ability to explain metrics without over‑simplifying
 - Comfort writing for mixed audiences (traders, engineers, analysts)
 
 ### Writing standards
-
 - Definitions distinguish:
   - What the metric measures
-  - What it does *not* measure
+  - What it does not measure
 - Interpretation guidance is included where misuse is likely
 - Examples are used to eliminate ambiguity
 
@@ -176,13 +162,11 @@ When conflicts arise, **this document is the source of truth**.
 ## 10. Operational Mindset
 
 ### Required skills
-
 - Pragmatism over academic perfection
 - Comfort with evolving datasets
 - Bias toward trustworthiness over novelty
 
 ### Expectations
-
 - The metrics spec is reviewed on a fixed cadence
 - Implementations are periodically audited against the spec
 - Metrics remain stable enough to be trusted longitudinally
@@ -192,7 +176,6 @@ When conflicts arise, **this document is the source of truth**.
 ## 11. Definition of Success
 
 Someone doing this role well enables:
-
 - High confidence in performance analytics
 - Comparable results across time and implementations
 - Fewer analytical disputes
@@ -209,3 +192,4 @@ The analytics system becomes **interpretable and defensible**, not opaque.
 > it is important enough to be **defined, validated, and understood**.
 
 This role exists to protect analytical truth over time.
+``
