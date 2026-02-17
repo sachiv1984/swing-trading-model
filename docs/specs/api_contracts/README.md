@@ -1,10 +1,10 @@
 # README.md
 
-## Momentum Trading Assistant — API Contracts (v1.5.0)
+## Momentum Trading Assistant — API Contracts (v1.6.0)
 
 **Status:** Complete & current  
 **Last updated:** 2026-02-17  
-**Contract version:** 1.5.0  
+**Contract version:** 1.6.0  
 
 This directory contains the **backend API contracts** for the *Momentum Trading Assistant* web application.
 
@@ -84,10 +84,10 @@ The API contracts are split by concern to support incremental review and clear o
 
 ### Domain-specific endpoints
 - **`portfolio_endpoints.md`**  
-  Portfolio overview, position creation, daily snapshots, and portfolio history (`GET /portfolio/history`).
+  Portfolio overview, position creation, daily snapshots, and portfolio history (`GET /portfolio/history`). The portfolio overview returns a summary position shape; use `position_endpoints.md` for the full enriched position object.
 
 - **`position_endpoints.md`**  
-  Open positions, daily analysis, exits, notes, tags, and tag discovery.
+  Open positions (full detail including native prices, stop context, ATR, FX, and journal fields), daily analysis, exits, notes, tags, and tag discovery.
 
 - **`trade_endpoints.md`**  
   Closed trade history and trade-level statistics.
@@ -95,11 +95,14 @@ The API contracts are split by concern to support incremental review and clear o
 - **`cash_endpoints.md`**  
   Deposits, withdrawals, cash transactions, and cash summaries.
 
+- **`settings_endpoints.md`**  
+  Strategy configuration and fee parameters (`GET /settings`, `PUT /settings`). Covers grace period, ATR multipliers, commissions, stamp duty, and analytics thresholds.
+
 - **`analytics_endpoints.md`**  
   Comprehensive trading analytics via `GET /analytics/metrics` (executive metrics, advanced metrics, monthly trends, top performers, drawdown, and more), plus `POST /validate/calculations` for smoke-testing metric correctness.
 
 - **`signal_endpoints.md`**  
-  Signal generation, signal listing, and signal state updates.
+  Signal generation, signal listing, signal status updates, and signal deletion.
 
 - **`health_endpoints.md`**  
   Health checks, diagnostics, and endpoint test execution.
@@ -116,11 +119,20 @@ Each endpoint file follows a consistent structure:
 
 ## Versioning
 
-- **Current contract version:** 1.5.0
-- **Change type:** Non-breaking — analytics contract rewritten to reflect completed implementation; README corrected
-- **Previous version:** 1.4.1
+- **Current contract version:** 1.6.0
+- **Change type:** Non-breaking additions and accuracy corrections
+- **Previous version:** 1.5.0
 
 ### Changelog (Summary)
+
+- **1.6.0 (2026-02-17)**
+  - `settings_endpoints.md` created — `GET /settings` and `PUT /settings` were previously undocumented in the split contract set
+  - `conventions.md`: removed stale version number (version is tracked in README only)
+  - `health_endpoints.md`: corrected stale version in response examples; added `version` field note; updated `POST /test/endpoints` example to reflect current endpoint count
+  - `position_endpoints.md`: removed `initial_stop_native` (not returned by implementation); added field notes table; added `exit_note` field note clarifying it is always `null` for open positions; added cross-reference to `GET /portfolio` for summary vs full position depth
+  - `portfolio_endpoints.md`: added note on position summary depth vs `GET /positions`; added field omission table; added snapshot note linking to analytics Sharpe ratio threshold; minor example date updates
+  - `signal_endpoints.md`: added `DELETE /signals/{signal_id}` (existed in implementation, missing from contract)
+  - `trade_endpoints.md`: added `holding_days` to response schema; added field notes table; clarified `exit_reason` null normalisation behaviour
 
 - **1.5.0 (2026-02-17)**
   - `analytics_endpoints.md` rewritten to reflect the completed implementation:
@@ -128,7 +140,7 @@ Each endpoint file follows a consistent structure:
     - Full nested response structure documented
     - `POST /validate/calculations` added
     - Known limitations and backlog items recorded
-  - README: `GET /portfolio/history` correctly attributed to `portfolio_endpoints.md` (was incorrectly listed under analytics)
+  - README: `GET /portfolio/history` correctly attributed to `portfolio_endpoints.md`
   - README: `analytics_endpoints.md` description updated to reflect actual scope
 
 - **1.4.1 (2026-02-15)**
