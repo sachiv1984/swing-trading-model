@@ -1,85 +1,116 @@
-# Document Lifecycle Guide
+# Documentation Lifecycle Guide
 
 **Owner:** Head of Specs Team  
-**Scope:** Documentation upkeep (not code, not delivery, not enforcement)  
-**Applies to:** Specs, contracts, frontend docs, metrics docs, data model docs, indexes  
-**Status:** Canonical governance guide
+**Scope:** Documentation governance and upkeep  
+**Applies to:** Canonical specs, supporting specs, reference artifacts  
+**Status:** Canonical
 
 ---
 
-## 1) Why this exists
-This guide ensures documentation remains:
-- **Coherent** across domains
-- **Authoritative** over tribal knowledge
-- **Evolvable** without silent drift
+## 1. Purpose
 
-If a document can change outcomes or decisions, its lifecycle must be explicit.
+This guide defines how documentation is:
+- Created
+- Maintained
+- Reviewed
+- Versioned
+- Deprecated
 
----
-
-## 2) Lifecycle States (choose exactly one)
-
-### DRAFT
-**Meaning:** Work in progress; not authoritative  
-**Rules:**
-- Must be labelled `Status: Draft`
-- Must not be referenced as canonical truth
-- Can change freely
-
-### CANONICAL
-**Meaning:** Current source of truth; relied on by teams  
-**Rules:**
-- Must be labelled `Status: Canonical`
-- Must name an Owner (role)
-- Must be listed in `SPECS_INDEX.md`
-- Changes require owner approval (and Head of Specs review if cross-domain)
-
-### DEPRECATED
-**Meaning:** Historically accurate, but no longer active truth  
-**Rules:**
-- Must be labelled `Status: Deprecated`
-- Must include `Superseded By:` and `Effective From:`
-- No edits except correcting references/metadata
-
-### ARCHIVED
-**Meaning:** Not relevant; retained only for audit/history  
-**Rules:**
-- Must be labelled `Status: Archived`
-- Must not be edited or referenced by active specs
+Its goal is to prevent:
+- Silent drift
+- Conflicting sources of truth
+- Undocumented behavioral change
 
 ---
 
-## 3) Versioning (documentation-only)
+## 2. Document Classes
 
-Use versioning when a change could alter interpretation.
+### Canonical Documents
+- Define authoritative product truth
+- Are listed in the Specs Index
+- Prevail in case of conflict
 
-**Format (if used):**
-- `Version: MAJOR.MINOR`
-  - **MAJOR** = meaning/behavior change (semantic shift)
-  - **MINOR** = additive or clarifying (no semantic change)
+Examples:
+- Strategy rules
+- Data model
+- Metrics definitions
+- API contract Markdown files
 
-**No version bump needed for:**
-- spelling/grammar
-- formatting
-- rewording with identical meaning
+### Supporting Documents
+- Represent or summarize canonical truth
+- Must never contradict canonical documents
+- Are reviewed **inline** with their canonical source
+
+Examples:
+- OpenAPI specifications
+- Diagrams
+- Generated or manually maintained references
+
+Supporting documents **do not introduce new rules**.
 
 ---
 
-## 4) Change Rules (who approves)
+## 3. Lifecycle States
 
-- **Draft:** anyone can edit
-- **Canonical:** domain owner must approve
-- **Cross-domain Canonical change:** domain owner + Head of Specs Team review
-- **Deprecated/Archived:** no edits (except metadata links for Deprecated)
+Every governed document must be in exactly one state:
+
+- **Draft** — in progress, not authoritative
+- **Canonical** — authoritative source of truth
+- **Deprecated** — superseded, retained for context
+- **Archived** — historical only, no longer relevant
+
+Lifecycle state must be declared explicitly in the document header where applicable.
 
 ---
 
-## 5) Mandatory Header Block (paste into docs)
+## 4. Versioning Rules
 
-```text
-**Status:** Canonical|Draft|Deprecated|Archived
-**Owner:** <role name>
-**Last Updated:** YYYY-MM-DD
-**Version:** MAJOR.MINOR (optional)
-**Superseded By:** <doc> (Deprecated only)
-**Effective From:** <date/version> (Deprecated only)
+Versioning is required when:
+- Meaning changes
+- Behavior changes
+- Interpretation by consumers changes
+
+Versioning is **not required** for:
+- Typos
+- Formatting
+- Pure clarification with no semantic change
+
+---
+
+## 5. Mandatory Inline Review for Supporting Artifacts
+
+When a change affects a **canonical document**:
+
+- Any **supporting or reference artifact** that represents that domain **must be reviewed inline in the same pull request**
+- Approval must only be granted once alignment is confirmed
+
+This applies explicitly to:
+- API contracts ↔ `docs/reference/openapi.yaml`
+
+If a change is explicitly declared **“no contract change”** and affects only internal implementation:
+- Supporting artifact review is not required
+
+Disputes about whether a change is contract‑affecting are escalated to the **Head of Specs Team**.
+
+---
+
+## 6. Ownership & Accountability
+
+- Domain owners are responsible for:
+  - Accuracy of their canonical specs
+  - Ensuring supporting artifacts remain aligned
+- The Head of Specs Team is responsible for:
+  - Enforcing lifecycle compliance
+  - Blocking merges when alignment is skipped
+  - Resolving ambiguity and escalation
+
+Automation may assist review, but **does not replace owner accountability**.
+
+---
+
+## 7. Non‑Negotiable Rule
+
+> If a document influences decisions,  
+> it must be owned, reviewed, and aligned at the point of change.
+
+This rule applies regardless of tooling, format, or team.
