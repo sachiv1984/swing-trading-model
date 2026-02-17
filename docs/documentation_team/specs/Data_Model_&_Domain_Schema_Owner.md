@@ -101,9 +101,14 @@ The data model is the **source of truth** for:
 - Versioned changes are documented clearly
 - Destructive changes are avoided unless explicitly agreed
 
+
 ### Lifecycle & Versioning Compliance (mandatory)
-- All data model documentation must follow the lifecycle states, header block, and versioning rules defined in:
-  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
+
+All documentation owned by this role must follow the lifecycle states,
+header block, and versioning rules defined in:
+
+- `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
+
 
 ---
 
