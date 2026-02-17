@@ -65,7 +65,6 @@ It points to the **single canonical source**.
 
 **Canonical Documents**
 - `data_model.md`
-- `Data_Model_&_Domain_Schema_Owner.md`
 
 **Owner**
 - Data Model & Domain Schema Owner
@@ -81,7 +80,6 @@ It points to the **single canonical source**.
 
 **Canonical Documents**
 - `metrics_definitions.md`
-- `Metrics_Definitions_&_Analytics_Canonical_Owner.md`
 
 **Owner**
 - Metrics Definitions & Analytics Canonical Owner
@@ -103,7 +101,6 @@ It points to the **single canonical source**.
 - `api_contracts/README.md` — *Navigation, scope, versioning*
 - `api_contracts/conventions.md` — *Global API rules*
 - `api_contracts/*_endpoints.md` — *Domain-specific contracts*
-- `API_Contracts_&_Documentation_Owner.md` — *Ownership & governance*
 
 **Owner**
 - API Contracts & Documentation Owner
@@ -125,7 +122,6 @@ It points to the **single canonical source**.
 **Canonical Documents (Root)**
 - `frontend/README.md` — Navigation and orientation
 - `frontend/design_system.md` — Shared visual language, interaction rules, and constraints
-- `frontend/Frontend_Specifications_&_UX_Documentation_Owner.md` — Ownership & governance
 
 **Page Specifications**
 - `frontend/pages/dashboard.md`
@@ -148,6 +144,7 @@ It points to the **single canonical source**.
 
 **Owner**
 - Frontend Specifications & UX Documentation Owner
+
 ---
 
 ## 4. Conflict Resolution Order
@@ -177,4 +174,3 @@ No downstream system may override upstream intent.
 
 > Specs explain decisions.  
 > This index ensures those decisions form a coherent system.
-``
