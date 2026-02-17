@@ -103,12 +103,9 @@ The data model is the **source of truth** for:
 
 
 ### Lifecycle & Versioning Compliance (mandatory)
-
 All documentation owned by this role must follow the lifecycle states,
 header block, and versioning rules defined in:
-
 - `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
-
 
 ---
 
