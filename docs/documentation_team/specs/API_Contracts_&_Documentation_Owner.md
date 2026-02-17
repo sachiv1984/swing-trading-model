@@ -33,6 +33,7 @@ The documentation is treated as a **first-class product artifact**, not an after
   - Avoids duplication of conventions or rules defined elsewhere
 - Cross-cutting rules live only in `conventions.md`
 - High-level orientation and navigation live only in `README.md`
+- Reference artifacts (e.g., /docs/reference/openapi.yaml) are maintained as supporting representations of the canonical Markdown contracts and must not diverge from specs/api_contracts/ documentation
 
 ---
 
