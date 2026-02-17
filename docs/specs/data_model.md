@@ -1,7 +1,7 @@
 # Data Model - Momentum Trading Assistant
 
-**Version:** 1.4  
-**Last Updated:** February 14, 2026
+**Version:** 1.5
+**Last Updated:** February 17, 2026
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
 
@@ -9,8 +9,8 @@ This document describes the complete database schema and data structures used in
 
 ## Database Overview
 
-**Database:** PostgreSQL 13+  
-**Schema:** Public (single schema)  
+**Database:** PostgreSQL 13+
+**Schema:** Public (single schema)
 **User Model:** Single user (multi-user planned for v2.0)
 
 ---
@@ -35,14 +35,14 @@ CREATE TABLE portfolios (
 |-------|------|-------------|
 | id | UUID | Primary key |
 | cash | DECIMAL(12,2) | Current cash balance (GBP) |
-| initial_cash | DECIMAL(12,2) | Starting cash (deprecated - use cash_transactions) |
+| initial_cash | DECIMAL(12,2) | Starting cash (**deprecated** — use `cash_transactions` table) |
 | created_at | TIMESTAMP | Portfolio creation date |
 | last_updated | TIMESTAMP | Last update timestamp |
 
 ### Notes
-- `cash` is always in GBP
-- Updated on every position entry/exit
-- `initial_cash` deprecated in favor of cash_transactions table
+- `cash` is always in GBP.
+- Updated on every position entry/exit.
+- `initial_cash` is deprecated in favour of the `cash_transactions` table. Do not use for P&L calculations.
 
 ---
 
@@ -98,41 +98,63 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | ticker | VARCHAR(20) | NO | Stock symbol (e.g., "PLTR", "FRES.L") |
 | market | VARCHAR(5) | NO | "US" or "UK" |
 | entry_date | DATE | NO | Position entry date |
-| entry_price | DECIMAL(10,4) | NO | Entry price (GBP for UK, USD for US) |
+| entry_price | DECIMAL(10,4) | NO | Entry price in native currency (USD for US, GBP for UK) |
 | fill_price | DECIMAL(10,4) | YES | Actual fill price in native currency |
 | fill_currency | VARCHAR(3) | YES | "GBP" or "USD" |
-| fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at entry (for US stocks) |
+| fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at time of entry (stored; for US stocks) |
 | shares | DECIMAL(10,4) | NO | Number of shares (fractional allowed) |
-| total_cost | DECIMAL(12,2) | NO | Total cost including fees (GBP) |
-| fees_paid | DECIMAL(10,2) | NO | Total fees (commission + stamp duty/FX) |
+| total_cost | DECIMAL(12,2) | NO | Total cost including fees in GBP |
+| fees_paid | DECIMAL(10,2) | NO | Total fees (commission + stamp duty or FX fee) |
 | fee_type | VARCHAR(20) | YES | "stamp_duty" or "fx_fee" |
-| initial_stop | DECIMAL(10,4) | YES | Initial stop loss level |
-| current_stop | DECIMAL(10,4) | YES | Current trailing stop level |
-| current_price | DECIMAL(10,4) | YES | Latest market price |
-| atr | DECIMAL(10,4) | YES | Average True Range value |
-| holding_days | INTEGER | NO | Days held (updated daily) |
+| initial_stop | DECIMAL(10,4) | YES | Initial stop loss level calculated at entry (`entry_price − (atr_multiplier_initial × ATR)`) in native currency |
+| current_stop | DECIMAL(10,4) | YES | Current trailing stop level in native currency. **API name:** `stop_price` / `stop_price_native` |
+| current_price | DECIMAL(10,4) | YES | Latest stored market price (GBP). **API also returns** `current_price_native` (computed at query time) |
+| atr | DECIMAL(10,4) | YES | Average True Range value. **API name:** `atr_value` |
+| holding_days | INTEGER | NO | Days held (updated daily by position analysis) |
 | pnl | DECIMAL(12,2) | NO | Profit/Loss in GBP |
-| pnl_pct | DECIMAL(10,2) | NO | Profit/Loss percentage |
+| pnl_pct | DECIMAL(10,2) | NO | Profit/Loss percentage. **API name:** `pnl_percent` (canonical in position responses); `pnl_pct` is the compatibility alias used in trade history |
 | status | VARCHAR(20) | NO | "open" or "closed" |
 | exit_date | DATE | YES | Position exit date |
-| exit_price | DECIMAL(10,4) | YES | Exit price |
-| exit_reason | VARCHAR(50) | YES | Reason for exit |
+| exit_price | DECIMAL(10,4) | YES | Exit price (user-provided) |
+| exit_reason | VARCHAR(50) | YES | Reason for exit (see exit reason values below) |
+| entry_note | TEXT | YES | Trade journal entry note (max 500 chars) |
+| exit_note | TEXT | YES | Trade journal exit note (max 500 chars). Always `null` while status = 'open' |
+| tags | TEXT[] | YES | Array of tags for categorization (max 10 tags; each max 20 chars; lowercase, numbers, hyphens only) |
 | created_at | TIMESTAMP | NO | Record creation |
 | updated_at | TIMESTAMP | NO | Last update |
-| entry_note | TEXT | YES | Trade journal entry note (max 500 chars) |
-| exit_note | TEXT | YES | Trade journal exit note (max 500 chars) |
-| tags | TEXT[] | YES | Array of tags for categorization (e.g., ["momentum", "breakout"]) |
+
+### API field name mapping
+
+The following fields are stored under one name but exposed via the API under a different name. Both refer to the same data:
+
+| Stored column | API field name | Notes |
+|---------------|----------------|-------|
+| `atr` | `atr_value` | Renamed in API response for clarity |
+| `current_stop` | `stop_price` / `stop_price_native` | API returns both GBP and native currency versions |
+| `pnl_pct` | `pnl_percent` | `pnl_percent` is canonical in position responses; `pnl_pct` used in trade history for compatibility |
+
+### API-computed fields (not stored columns)
+
+These fields appear in `GET /positions` responses but are not stored in the database. They are computed at query time:
+
+| API field | How computed |
+|-----------|-------------|
+| `current_price_native` | `current_price` converted to native currency using live FX rate |
+| `stop_price_native` | `current_stop` converted to native currency using live FX rate |
+| `live_fx_rate` | Fetched live from Yahoo Finance at query time |
+| `display_status` | Derived from `holding_days`, `pnl`, and grace period threshold: `"GRACE"` (day 0–9), `"PROFITABLE"` (day 10+, pnl > 0), `"LOSING"` (day 10+, pnl ≤ 0) |
+| `grace_period` | `holding_days < min_hold_days` (boolean) |
+| `initial_stop` (GBP) | `initial_stop` stored in native currency, converted to GBP for the API response |
 
 ### Notes
-- UK tickers automatically appended with ".L" (e.g., "FRES.L")
-- `entry_price` is in native currency for display
-- `total_cost` always in GBP for portfolio tracking
-- `shares` supports fractional values (e.g., 5.5)
-- `atr` stored for trailing stop calculations
+- UK tickers are automatically appended with ".L" (e.g., "FRES.L").
+- `total_cost` is always in GBP for portfolio tracking.
+- `shares` supports fractional values (e.g., 5.5).
+- `atr` is stored at entry and updated on each position analysis call.
 
 ---
 
-## 3. Cash Transactions Table (New in v1.1)
+## 3. Cash Transactions Table
 
 Tracks deposits and withdrawals for accurate P&L calculation.
 
@@ -148,10 +170,10 @@ CREATE TABLE cash_transactions (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_cash_transactions_portfolio 
+CREATE INDEX idx_cash_transactions_portfolio
 ON cash_transactions(portfolio_id, date DESC);
 
-CREATE INDEX idx_cash_transactions_date 
+CREATE INDEX idx_cash_transactions_date
 ON cash_transactions(date DESC);
 ```
 
@@ -169,16 +191,16 @@ ON cash_transactions(date DESC);
 | updated_at | TIMESTAMP | NO | Last update |
 
 ### Notes
-- **Critical:** Initial deposit must be recorded for correct P&L
-- Amount always positive; type determines add/subtract
-- Used to calculate: `net_cash_flow = deposits - withdrawals`
-- Portfolio P&L = `total_value - net_cash_flow`
+- **Critical:** The initial deposit must be recorded for correct P&L calculations.
+- `amount` is always positive; `type` determines whether it is added or subtracted.
+- `net_cash_flow = total deposits − total withdrawals`
+- Portfolio P&L = `total_value − net_cash_flow`
 
 ---
 
-## 4. Portfolio History Table (New in v1.1)
+## 4. Portfolio History Table
 
-Daily snapshots of portfolio performance for historical tracking.
+Daily snapshots of portfolio performance for historical tracking and Sharpe ratio calculation.
 
 ```sql
 CREATE TABLE portfolio_history (
@@ -194,7 +216,7 @@ CREATE TABLE portfolio_history (
     UNIQUE(portfolio_id, snapshot_date)
 );
 
-CREATE INDEX idx_portfolio_history_date 
+CREATE INDEX idx_portfolio_history_date
 ON portfolio_history(portfolio_id, snapshot_date DESC);
 ```
 
@@ -205,24 +227,24 @@ ON portfolio_history(portfolio_id, snapshot_date DESC);
 | id | UUID | NO | Primary key |
 | portfolio_id | UUID | NO | FK to portfolios |
 | snapshot_date | DATE | NO | Date of snapshot |
-| total_value | DECIMAL(12,2) | NO | Total portfolio value (GBP) |
-| cash_balance | DECIMAL(12,2) | NO | Cash balance (GBP) |
-| positions_value | DECIMAL(12,2) | NO | Total positions value (GBP) |
-| total_pnl | DECIMAL(12,2) | NO | Total P&L (GBP) |
-| position_count | INTEGER | NO | Number of open positions |
+| total_value | DECIMAL(12,2) | NO | Total portfolio value in GBP |
+| cash_balance | DECIMAL(12,2) | NO | Cash balance in GBP |
+| positions_value | DECIMAL(12,2) | NO | Total positions value in GBP |
+| total_pnl | DECIMAL(12,2) | NO | Total P&L in GBP |
+| position_count | INTEGER | NO | Number of open positions at snapshot time |
 | created_at | TIMESTAMP | NO | Snapshot creation time |
 
 ### Notes
-- UNIQUE constraint prevents duplicate snapshots per day
-- Idempotent: Can run multiple times per day (updates existing)
-- Should be automated via cron (4 PM weekdays recommended)
-- Used for performance charts and historical analysis
+- `UNIQUE(portfolio_id, snapshot_date)` prevents duplicate snapshots per day. The upsert pattern makes snapshot creation idempotent.
+- Should be automated via cron (4 PM weekdays recommended).
+- Used for performance charts and historical analysis.
+- The analytics service uses 30+ snapshots to compute the portfolio-method Sharpe ratio. Fewer than 30 snapshots falls back to the trade-method Sharpe calculation.
 
 ---
 
 ## 5. Trade History Table
 
-Historical record of closed positions.
+Immutable historical record of closed positions. Records are written once on exit and never updated.
 
 ```sql
 CREATE TABLE trade_history (
@@ -252,7 +274,7 @@ CREATE TABLE trade_history (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_trade_history_portfolio 
+CREATE INDEX idx_trade_history_portfolio
 ON trade_history(portfolio_id, exit_date DESC);
 CREATE INDEX idx_trade_history_tags ON trade_history USING GIN(tags);
 ```
@@ -268,36 +290,44 @@ CREATE INDEX idx_trade_history_tags ON trade_history USING GIN(tags);
 | entry_date | DATE | Entry date |
 | exit_date | DATE | Exit date |
 | shares | DECIMAL(10,4) | Number of shares |
-| entry_price | DECIMAL(10,4) | Entry price |
-| exit_price | DECIMAL(10,4) | Exit price |
-| total_cost | DECIMAL(12,2) | Total cost (GBP) |
-| gross_proceeds | DECIMAL(12,2) | Proceeds before fees (GBP) |
-| net_proceeds | DECIMAL(12,2) | Proceeds after fees (GBP) |
+| entry_price | DECIMAL(10,4) | Entry price in native currency |
+| exit_price | DECIMAL(10,4) | Exit price in native currency (user-provided) |
+| total_cost | DECIMAL(12,2) | Total cost in GBP |
+| gross_proceeds | DECIMAL(12,2) | Proceeds before fees in GBP |
+| net_proceeds | DECIMAL(12,2) | Proceeds after fees in GBP |
 | entry_fees | DECIMAL(10,2) | Fees paid on entry |
 | exit_fees | DECIMAL(10,2) | Fees paid on exit |
-| pnl | DECIMAL(12,2) | Realized P&L (GBP) |
-| pnl_pct | DECIMAL(10,2) | P&L percentage |
-| holding_days | INTEGER | Days held |
-| exit_reason | VARCHAR(50) | Reason for exit |
-| entry_fx_rate | DECIMAL(10,6) | GBP/USD at entry |
-| exit_fx_rate | DECIMAL(10,6) | GBP/USD at exit |
-| created_at | TIMESTAMP | Record creation |
-| entry_note | TEXT | Journal note from entry (copied from position) |
-| exit_note | TEXT | Journal note from exit |
-| tags | TEXT[] | Tags from position (e.g., ["momentum", "winner"]) |
+| pnl | DECIMAL(12,2) | Realized P&L in GBP |
+| pnl_pct | DECIMAL(10,2) | P&L percentage. The API also returns this as `pnl_percent` for compatibility |
+| holding_days | INTEGER | Calendar days from `entry_date` to `exit_date` inclusive |
+| exit_reason | VARCHAR(50) | Reason for exit (see exit reason values below). `null` values are normalised to `"Manual Exit"` in the analytics service, but stored as-is here |
+| entry_fx_rate | DECIMAL(10,6) | GBP/USD rate at entry |
+| exit_fx_rate | DECIMAL(10,6) | GBP/USD rate at exit |
+| entry_note | TEXT | Journal note copied from position at exit time |
+| exit_note | TEXT | Journal note entered at exit |
+| tags | TEXT[] | Tags copied from position at exit time |
+| created_at | TIMESTAMP | Record creation time |
 
-### Exit Reasons
+### Exit Reason Values
 
-- "Stop Loss Hit"
-- "Risk-Off Signal"
-- "Manual Exit"
-- "Profit Target"
+Valid exit reason strings used across the system:
+
+| Value | Description |
+|-------|-------------|
+| `"Manual Exit"` | User-initiated exit outside of automated logic |
+| `"Stop Loss Hit"` | Initial or trailing stop level breached |
+| `"Trailing Stop"` | Trailing stop triggered after profitable period |
+| `"Risk-Off Signal"` | Market regime turned risk-off (SPY or FTSE below 200-day MA) |
+| `"Target Reached"` | User defined profit target met |
+| `"Partial Profit Taking"` | Partial exit to lock in gains |
+
+> **Note:** `null` values in `exit_reason` are normalised to `"Manual Exit"` by the analytics service at read time. They are stored as `null` in this table.
 
 ---
 
 ## 6. Settings Table
 
-Configuration for trading strategy and preferences.
+Global configuration for trading strategy, fee parameters, and UI preferences. Single row per deployment.
 
 ```sql
 CREATE TABLE settings (
@@ -312,6 +342,7 @@ CREATE TABLE settings (
     us_commission DECIMAL(10, 2) DEFAULT 0.00,
     stamp_duty_rate DECIMAL(6, 5) DEFAULT 0.005,
     fx_fee_rate DECIMAL(6, 5) DEFAULT 0.0015,
+    min_trades_for_analytics INTEGER DEFAULT 10,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -321,19 +352,23 @@ CREATE TABLE settings (
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| id | UUID | - | Primary key |
-| min_hold_days | INTEGER | 10 | Grace period (days) |
-| atr_multiplier_initial | DECIMAL | 5.0 | Wide stop for losing positions |
-| atr_multiplier_trailing | DECIMAL | 2.0 | Tight stop for profitable positions |
-| atr_period | INTEGER | 14 | ATR calculation period |
-| default_currency | VARCHAR | GBP | Portfolio base currency |
-| theme | VARCHAR | dark | UI theme preference |
-| uk_commission | DECIMAL | 9.95 | UK trading commission (£) |
-| us_commission | DECIMAL | 0.00 | US trading commission |
-| stamp_duty_rate | DECIMAL | 0.005 | UK stamp duty (0.5%) |
-| fx_fee_rate | DECIMAL | 0.0015 | FX conversion fee (0.15%) |
+| id | UUID | — | Primary key |
+| min_hold_days | INTEGER | 10 | Grace period in days. Stop losses not enforced during days 0–(n-1) |
+| atr_multiplier_initial | DECIMAL(4,2) | 5.0 | ATR multiplier for **losing** positions (wide stop, room to recover) |
+| atr_multiplier_trailing | DECIMAL(4,2) | 2.0 | ATR multiplier for **profitable** positions (tight trailing stop to protect gains) |
+| atr_period | INTEGER | 14 | ATR calculation lookback window in days |
+| default_currency | VARCHAR(3) | GBP | Portfolio base currency. GBP only — multi-currency is position-level, not portfolio-level |
+| theme | VARCHAR(20) | dark | UI theme preference ("dark" or "light") |
+| uk_commission | DECIMAL(10,2) | 9.95 | Fixed commission per UK trade in GBP |
+| us_commission | DECIMAL(10,2) | 0.00 | Fixed commission per US trade (zero-commission brokers) |
+| stamp_duty_rate | DECIMAL(6,5) | 0.005 | UK stamp duty rate on purchases (0.5%) |
+| fx_fee_rate | DECIMAL(6,5) | 0.0015 | FX conversion fee rate for USD trades (0.15%) |
+| min_trades_for_analytics | INTEGER | 10 | Minimum number of closed trades required before analytics metrics are computed |
 | created_at | TIMESTAMP | NOW | Record creation |
 | updated_at | TIMESTAMP | NOW | Last update |
+
+### Strategy parameter context
+The default values for `min_hold_days`, `atr_multiplier_initial`, and `atr_multiplier_trailing` are backtest-optimised and produced 26.37% CAGR, 1.29 Sharpe Ratio, and −25.38% maximum drawdown. Changes affect all future stop calculations; existing open positions are not retroactively affected.
 
 ---
 
@@ -369,21 +404,23 @@ INSERT INTO positions (
 );
 
 -- Update portfolio cash
-UPDATE portfolios 
-SET cash = cash - 986.70 
+UPDATE portfolios
+SET cash = cash - 986.70
 WHERE id = 'portfolio-id';
 ```
 
 ### 2. Daily Position Analysis
 
 ```sql
--- Update position with live price
-UPDATE positions 
-SET 
+-- Update position with live price (note: column is 'atr', API returns 'atr_value')
+UPDATE positions
+SET
     current_price = 250.38,
     holding_days = 8,
     pnl = 29.06,
     pnl_pct = 2.98,
+    atr = 3.15,
+    current_stop = 236.85,
     updated_at = NOW()
 WHERE id = 'position-id';
 ```
@@ -413,7 +450,7 @@ DO UPDATE SET
 
 ### Get Portfolio Summary
 ```sql
-SELECT 
+SELECT
     p.cash,
     COUNT(pos.id) FILTER (WHERE pos.status = 'open') as open_positions,
     SUM(pos.total_cost) FILTER (WHERE pos.status = 'open') as invested,
@@ -426,7 +463,7 @@ GROUP BY p.id, p.cash;
 
 ### Get Win Rate
 ```sql
-SELECT 
+SELECT
     COUNT(*) FILTER (WHERE pnl > 0) * 100.0 / COUNT(*) as win_rate,
     AVG(pnl) FILTER (WHERE pnl > 0) as avg_winner,
     AVG(pnl) FILTER (WHERE pnl < 0) as avg_loser
@@ -436,7 +473,7 @@ WHERE portfolio_id = 'portfolio-id';
 
 ### Get Net Cash Flow
 ```sql
-SELECT 
+SELECT
     SUM(amount) FILTER (WHERE type = 'deposit') as total_deposits,
     SUM(amount) FILTER (WHERE type = 'withdrawal') as total_withdrawals,
     SUM(CASE WHEN type = 'deposit' THEN amount ELSE -amount END) as net_cash_flow
@@ -462,7 +499,7 @@ ORDER BY tag;
 
 ### Get Trades with Notes
 ```sql
-SELECT 
+SELECT
     ticker,
     entry_date,
     exit_date,
@@ -475,85 +512,80 @@ WHERE portfolio_id = 'portfolio-id'
 AND (entry_note IS NOT NULL OR exit_note IS NOT NULL)
 ORDER BY exit_date DESC;
 ```
+
 ---
 
 ## Migration from v1.0 to v1.1
 
 ### Required Changes
 
-1. **Add cash_transactions table**
-2. **Add portfolio_history table**
-3. **Alter positions.shares to DECIMAL(10,4)**
-4. **Record initial deposit**
+1. Add `cash_transactions` table
+2. Add `portfolio_history` table
+3. Alter `positions.shares` to `DECIMAL(10,4)`
+4. Record initial deposit
 
 ```sql
--- Migration script
 BEGIN;
 
--- Add cash transactions table
-CREATE TABLE cash_transactions (
-    -- schema above
-);
+CREATE TABLE cash_transactions ( -- schema above );
+CREATE TABLE portfolio_history ( -- schema above );
 
--- Add portfolio history table
-CREATE TABLE portfolio_history (
-    -- schema above
-);
-
--- Allow fractional shares
 ALTER TABLE positions ALTER COLUMN shares TYPE DECIMAL(10, 4);
 
 -- Record initial deposit (CRITICAL!)
 INSERT INTO cash_transactions (portfolio_id, type, amount, date, note)
-SELECT 
-    id,
-    'deposit',
-    initial_cash,
-    created_at::date,
-    'Initial deposit (migration)'
+SELECT id, 'deposit', initial_cash, created_at::date, 'Initial deposit (migration)'
 FROM portfolios;
 
 COMMIT;
 ```
 
+---
+
 ## Migration from v1.3 to v1.4
 
-### Required Changes - Trade Journal
+### Required Changes — Trade Journal
 
-**Implemented:** February 14, 2026
-
-Add journal fields to positions and trade_history tables:
 ```sql
--- Migration script
 BEGIN;
 
--- Add journal fields to positions
 ALTER TABLE positions ADD COLUMN entry_note TEXT;
 ALTER TABLE positions ADD COLUMN exit_note TEXT;
 ALTER TABLE positions ADD COLUMN tags TEXT[];
 
--- Add journal fields to trade_history
 ALTER TABLE trade_history ADD COLUMN entry_note TEXT;
 ALTER TABLE trade_history ADD COLUMN exit_note TEXT;
 ALTER TABLE trade_history ADD COLUMN tags TEXT[];
 
--- Add GIN index for tag searching
 CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 CREATE INDEX idx_trade_history_tags ON trade_history USING GIN(tags);
 
 COMMIT;
 ```
 
-**Notes:**
-- All fields are nullable (existing records unaffected)
-- GIN indexes enable fast tag-based queries
-- No data migration needed (new fields start as NULL)
-- Frontend handles NULL gracefully (displays as empty)
+All fields are nullable. No data migration required. GIN indexes enable fast tag-based queries.
+
+---
+
+## Migration from v1.4 to v1.5
+
+### Required Changes — Analytics Threshold
+
+```sql
+BEGIN;
+
+ALTER TABLE settings ADD COLUMN min_trades_for_analytics INTEGER DEFAULT 10;
+
+COMMIT;
 ```
 
-### Updated Future Schema Changes (Planned)
+Existing settings rows will receive the default value of `10`, which matches the pre-existing hardcoded threshold in the analytics service.
 
-### v1.5 - Alerts (Planned)
+---
+
+## Planned Future Schema Changes
+
+### v1.5 — Alerts (Planned)
 ```sql
 CREATE TABLE alerts (
     id UUID PRIMARY KEY,
@@ -565,7 +597,7 @@ CREATE TABLE alerts (
 );
 ```
 
-### v2.0 - Multi-User (Planned)
+### v2.0 — Multi-User (Planned)
 ```sql
 CREATE TABLE users (
     id UUID PRIMARY KEY,
@@ -576,8 +608,9 @@ CREATE TABLE users (
 
 ALTER TABLE portfolios ADD COLUMN user_id UUID REFERENCES users(id);
 ```
+
 ---
 
-**Document Version:** 1.4
-**Maintained By:** Development Team  
-**Last Review:** February 14, 2026
+**Document Version:** 1.5
+**Maintained By:** Development Team
+**Last Review:** February 17, 2026
