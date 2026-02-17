@@ -114,7 +114,7 @@ Unless explicitly overridden by an endpoint, the following defaults apply **serv
 
 ## 10. Versioning
 
-- Current contract version: **1.4.1**
+- Contract version is tracked in **README.md**.
 
 ---
 
