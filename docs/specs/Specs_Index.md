@@ -167,6 +167,8 @@ No downstream system may override upstream intent.
 - Changes to **domain canonical specs** require domain owner approval
 - Changes affecting multiple domains require Head of Specs Team review
 - Silent divergence between specs and behavior is treated as a **system bug**
+- **All canonical documents must follow the lifecycle states, header format, and versioning rules defined in:**
+  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
 
 ---
 
