@@ -442,7 +442,8 @@ paths:
       description: |
         Unified analytics endpoint returning all analytics data for a given period.
         All monetary values in analytics are GBP.
-        When insufficient data exists (total_trades < min_required), the API returns 200 with has_enough_data=false and empty metric objects.
+        When insufficient data exists (total_trades < min_required), the API returns 200
+        with has_enough_data=false and empty metric objects.
       parameters:
         - in: query
           name: period
@@ -476,6 +477,12 @@ paths:
     get:
       tags: [Market]
       summary: Get market regime status
+      description: |
+        NOTE: This endpoint exists in the implementation but does not yet have a
+        canonical Markdown contract in docs/specs/api_contracts/. The canonical
+        market regime data is currently surfaced inline via GET /positions/analyze.
+        A dedicated market_endpoints.md should be created to formally contract
+        this endpoint. Until then, this path is documented here for reference only.
       responses:
         "200":
           $ref: "#/components/responses/OkMarketStatus"
@@ -832,6 +839,10 @@ components:
 
     Signal:
       type: object
+      description: |
+        Signal object. suggested_shares is always an integer (whole shares only).
+        Fractional share sizing is not supported in signal generation.
+        See docs/specs/api_contracts/signal_endpoints.md and data_model.md Section 7.
       properties:
         id: { type: string, format: uuid }
         ticker: { type: string }
@@ -845,7 +856,7 @@ components:
         initial_stop: { type: number }
         status: { type: string }
         allocation_gbp: { type: number }
-        suggested_shares: { type: number }
+        suggested_shares: { type: integer }   # Always integer — fractional not supported in signal generation
         total_cost: { type: number }
         signal_date: { type: string, format: date }
         created_at: { type: string, format: date-time }
@@ -884,7 +895,9 @@ components:
     MarketStatus:
       type: object
       description: |
-        Market status payload. Canonical structure lives in the market status endpoint documentation.
+        Market status payload. No dedicated canonical Markdown contract exists yet.
+        Market regime data is currently surfaced inline via GET /positions/analyze.
+        See docs/specs/api_contracts/position_endpoints.md for the analyze response shape.
       additionalProperties: true
 
     HealthResponse:
