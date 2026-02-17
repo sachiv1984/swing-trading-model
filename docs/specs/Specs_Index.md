@@ -135,6 +135,28 @@ It points to the **single canonical source**.
 
 ---
 
+### 3.6 Glossary (System-Level Reference)
+
+**What it owns**
+- Shared terminology used across specs
+- Cross-domain language consistency
+- Canonical meanings of commonly referenced terms
+
+**Reference Document**
+- `docs/reference/glossary.md`
+
+**Authority**
+- Language only — canonical definitions, formulas, and rules live in domain specs
+
+**Owner**
+- Head of Specs Team
+
+**Notes**
+- The glossary must not introduce new behavior or override domain specifications
+- In case of conflict, the relevant domain canonical spec prevails
+
+---
+
 ## 4. Conflict Resolution Order
 
 In case of conflict, precedence is resolved in the following order:
@@ -142,7 +164,7 @@ In case of conflict, precedence is resolved in the following order:
 1. **Specs Index**
 2. Domain Canonical Spec
 3. Supporting Specs
-4. Reference Artifacts (e.g. OpenAPI)
+4. Reference Artifacts (e.g. OpenAPI, Glossary)
 5. Code
 6. UI behavior
 7. Tribal knowledge
