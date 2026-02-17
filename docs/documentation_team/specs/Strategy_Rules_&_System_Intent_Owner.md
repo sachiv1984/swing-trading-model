@@ -123,8 +123,9 @@ This role owns **what the system is trying to do**, not how it is coded.
 - Experimental ideas do not leak into canonical rules
 
 ### Lifecycle & Versioning Compliance (mandatory)
-- All strategy documents must follow the lifecycle states, header block, and versioning rules defined in:
-  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
+All documentation owned by this role must follow the lifecycle states,
+header block, and versioning rules defined in:
+- `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
 
 ---
 
