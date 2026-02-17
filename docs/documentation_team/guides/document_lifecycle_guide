@@ -1,0 +1,85 @@
+# Document Lifecycle Guide
+
+**Owner:** Head of Specs Team  
+**Scope:** Documentation upkeep (not code, not delivery, not enforcement)  
+**Applies to:** Specs, contracts, frontend docs, metrics docs, data model docs, indexes  
+**Status:** Canonical governance guide
+
+---
+
+## 1) Why this exists
+This guide ensures documentation remains:
+- **Coherent** across domains
+- **Authoritative** over tribal knowledge
+- **Evolvable** without silent drift
+
+If a document can change outcomes or decisions, its lifecycle must be explicit.
+
+---
+
+## 2) Lifecycle States (choose exactly one)
+
+### DRAFT
+**Meaning:** Work in progress; not authoritative  
+**Rules:**
+- Must be labelled `Status: Draft`
+- Must not be referenced as canonical truth
+- Can change freely
+
+### CANONICAL
+**Meaning:** Current source of truth; relied on by teams  
+**Rules:**
+- Must be labelled `Status: Canonical`
+- Must name an Owner (role)
+- Must be listed in `SPECS_INDEX.md`
+- Changes require owner approval (and Head of Specs review if cross-domain)
+
+### DEPRECATED
+**Meaning:** Historically accurate, but no longer active truth  
+**Rules:**
+- Must be labelled `Status: Deprecated`
+- Must include `Superseded By:` and `Effective From:`
+- No edits except correcting references/metadata
+
+### ARCHIVED
+**Meaning:** Not relevant; retained only for audit/history  
+**Rules:**
+- Must be labelled `Status: Archived`
+- Must not be edited or referenced by active specs
+
+---
+
+## 3) Versioning (documentation-only)
+
+Use versioning when a change could alter interpretation.
+
+**Format (if used):**
+- `Version: MAJOR.MINOR`
+  - **MAJOR** = meaning/behavior change (semantic shift)
+  - **MINOR** = additive or clarifying (no semantic change)
+
+**No version bump needed for:**
+- spelling/grammar
+- formatting
+- rewording with identical meaning
+
+---
+
+## 4) Change Rules (who approves)
+
+- **Draft:** anyone can edit
+- **Canonical:** domain owner must approve
+- **Cross-domain Canonical change:** domain owner + Head of Specs Team review
+- **Deprecated/Archived:** no edits (except metadata links for Deprecated)
+
+---
+
+## 5) Mandatory Header Block (paste into docs)
+
+```text
+**Status:** Canonical|Draft|Deprecated|Archived
+**Owner:** <role name>
+**Last Updated:** YYYY-MM-DD
+**Version:** MAJOR.MINOR (optional)
+**Superseded By:** <doc> (Deprecated only)
+**Effective From:** <date/version> (Deprecated only)
