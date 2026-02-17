@@ -1,6 +1,6 @@
 # Data Model - Momentum Trading Assistant
 
-**Version:** 1.5
+**Version:** 1.6
 **Last Updated:** February 17, 2026
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -48,7 +48,7 @@ CREATE TABLE portfolios (
 
 ## 2. Positions Table
 
-Tracks all positions (open and closed).
+> **Lifecycle note:** This table serves both open and closed positions. All `exit_*` fields are `null` while `status = 'open'`. Queries must always filter by `status` unless intentionally spanning both lifecycle states — failure to do so is a common source of incorrect P&L aggregations.
 
 ```sql
 CREATE TABLE positions (
@@ -63,7 +63,7 @@ CREATE TABLE positions (
     fx_rate DECIMAL(10, 6),
     shares DECIMAL(10, 4) NOT NULL,
     total_cost DECIMAL(12, 2) NOT NULL,
-    fees_paid DECIMAL(10, 2) DEFAULT 0,
+    fees_paid DECIMAL(10, 2) NOT NULL DEFAULT 0,
     fee_type VARCHAR(20),
     initial_stop DECIMAL(10, 4),
     current_stop DECIMAL(10, 4),
@@ -104,7 +104,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at time of entry (stored; for US stocks) |
 | shares | DECIMAL(10,4) | NO | Number of shares (fractional allowed) |
 | total_cost | DECIMAL(12,2) | NO | Total cost including fees in GBP |
-| fees_paid | DECIMAL(10,2) | NO | Total fees (commission + stamp duty or FX fee) |
+| fees_paid | DECIMAL(10,2) | NO | Total fees (commission + stamp duty or FX fee). Zero-fee trades store `0`, never `null` |
 | fee_type | VARCHAR(20) | YES | "stamp_duty" or "fx_fee" |
 | initial_stop | DECIMAL(10,4) | YES | Initial stop loss level calculated at entry (`entry_price − (atr_multiplier_initial × ATR)`) in native currency |
 | current_stop | DECIMAL(10,4) | YES | Current trailing stop level in native currency. **API name:** `stop_price` / `stop_price_native` |
@@ -114,9 +114,9 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | pnl | DECIMAL(12,2) | NO | Profit/Loss in GBP |
 | pnl_pct | DECIMAL(10,2) | NO | Profit/Loss percentage. **API name:** `pnl_percent` (canonical in position responses); `pnl_pct` is the compatibility alias used in trade history |
 | status | VARCHAR(20) | NO | "open" or "closed" |
-| exit_date | DATE | YES | Position exit date |
-| exit_price | DECIMAL(10,4) | YES | Exit price (user-provided) |
-| exit_reason | VARCHAR(50) | YES | Reason for exit (see exit reason values below) |
+| exit_date | DATE | YES | Position exit date. `null` while open |
+| exit_price | DECIMAL(10,4) | YES | Exit price (user-provided). `null` while open |
+| exit_reason | VARCHAR(50) | YES | Reason for exit (see exit reason values below). `null` while open |
 | entry_note | TEXT | YES | Trade journal entry note (max 500 chars) |
 | exit_note | TEXT | YES | Trade journal exit note (max 500 chars). Always `null` while status = 'open' |
 | tags | TEXT[] | YES | Array of tags for categorization (max 10 tags; each max 20 chars; lowercase, numbers, hyphens only) |
@@ -151,6 +151,7 @@ These fields appear in `GET /positions` responses but are not stored in the data
 - `total_cost` is always in GBP for portfolio tracking.
 - `shares` supports fractional values (e.g., 5.5).
 - `atr` is stored at entry and updated on each position analysis call.
+- The `min_hold_days` setting defaults to `10`, meaning grace covers days 0–9 inclusive. Day 10 is the first day stop logic is active. In general, grace covers days `0` through `min_hold_days − 1`.
 
 ---
 
@@ -281,32 +282,32 @@ CREATE INDEX idx_trade_history_tags ON trade_history USING GIN(tags);
 
 ### Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary key |
-| portfolio_id | UUID | FK to portfolios |
-| ticker | VARCHAR(20) | Stock symbol |
-| market | VARCHAR(5) | "US" or "UK" |
-| entry_date | DATE | Entry date |
-| exit_date | DATE | Exit date |
-| shares | DECIMAL(10,4) | Number of shares |
-| entry_price | DECIMAL(10,4) | Entry price in native currency |
-| exit_price | DECIMAL(10,4) | Exit price in native currency (user-provided) |
-| total_cost | DECIMAL(12,2) | Total cost in GBP |
-| gross_proceeds | DECIMAL(12,2) | Proceeds before fees in GBP |
-| net_proceeds | DECIMAL(12,2) | Proceeds after fees in GBP |
-| entry_fees | DECIMAL(10,2) | Fees paid on entry |
-| exit_fees | DECIMAL(10,2) | Fees paid on exit |
-| pnl | DECIMAL(12,2) | Realized P&L in GBP |
-| pnl_pct | DECIMAL(10,2) | P&L percentage. The API also returns this as `pnl_percent` for compatibility |
-| holding_days | INTEGER | Calendar days from `entry_date` to `exit_date` inclusive |
-| exit_reason | VARCHAR(50) | Reason for exit (see exit reason values below). `null` values are normalised to `"Manual Exit"` in the analytics service, but stored as-is here |
-| entry_fx_rate | DECIMAL(10,6) | GBP/USD rate at entry |
-| exit_fx_rate | DECIMAL(10,6) | GBP/USD rate at exit |
-| entry_note | TEXT | Journal note copied from position at exit time |
-| exit_note | TEXT | Journal note entered at exit |
-| tags | TEXT[] | Tags copied from position at exit time |
-| created_at | TIMESTAMP | Record creation time |
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| portfolio_id | UUID | NO | FK to portfolios |
+| ticker | VARCHAR(20) | NO | Stock symbol |
+| market | VARCHAR(5) | NO | "US" or "UK" |
+| entry_date | DATE | NO | Entry date |
+| exit_date | DATE | NO | Exit date |
+| shares | DECIMAL(10,4) | NO | Number of shares |
+| entry_price | DECIMAL(10,4) | NO | Entry price in native currency |
+| exit_price | DECIMAL(10,4) | NO | Exit price in native currency (user-provided) |
+| total_cost | DECIMAL(12,2) | NO | Total cost in GBP |
+| gross_proceeds | DECIMAL(12,2) | NO | Proceeds before fees in GBP |
+| net_proceeds | DECIMAL(12,2) | NO | Proceeds after fees in GBP |
+| entry_fees | DECIMAL(10,2) | YES | Fees paid on entry |
+| exit_fees | DECIMAL(10,2) | YES | Fees paid on exit |
+| pnl | DECIMAL(12,2) | NO | Realized P&L in GBP |
+| pnl_pct | DECIMAL(10,2) | NO | P&L percentage. The API also returns this as `pnl_percent` for compatibility |
+| holding_days | INTEGER | NO | Calendar days from `entry_date` to `exit_date` inclusive |
+| exit_reason | VARCHAR(50) | YES | Reason for exit (see exit reason values below). `null` values are normalised to `"Manual Exit"` by the analytics service at read time |
+| entry_fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at entry (US stocks only) |
+| exit_fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at exit (US stocks only) |
+| entry_note | TEXT | YES | Journal note copied from position at exit time |
+| exit_note | TEXT | YES | Journal note entered at exit |
+| tags | TEXT[] | YES | Tags copied from position at exit time |
+| created_at | TIMESTAMP | NO | Record creation time |
 
 ### Exit Reason Values
 
@@ -353,7 +354,7 @@ CREATE TABLE settings (
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | id | UUID | — | Primary key |
-| min_hold_days | INTEGER | 10 | Grace period in days. Stop losses not enforced during days 0–(n-1) |
+| min_hold_days | INTEGER | 10 | Grace period in days. Stop losses not enforced during days 0–(n-1). With default `10`, grace covers days 0–9 inclusive; day 10 is the first day stop logic is active |
 | atr_multiplier_initial | DECIMAL(4,2) | 5.0 | ATR multiplier for **losing** positions (wide stop, room to recover) |
 | atr_multiplier_trailing | DECIMAL(4,2) | 2.0 | ATR multiplier for **profitable** positions (tight trailing stop to protect gains) |
 | atr_period | INTEGER | 14 | ATR calculation lookback window in days |
@@ -372,13 +373,104 @@ The default values for `min_hold_days`, `atr_multiplier_initial`, and `atr_multi
 
 ---
 
+## 7. Signals Table
+
+Stores generated momentum signals produced by `POST /signals/generate`. Each signal represents a ranked entry candidate for a given ticker on a given date. For endpoint behaviour see `signal_endpoints.md`.
+
+```sql
+CREATE TABLE signals (
+    id UUID NOT NULL DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL,
+    ticker VARCHAR(20) NOT NULL,
+    market VARCHAR(5) NOT NULL,
+    signal_date DATE NOT NULL,
+    rank INTEGER NOT NULL,
+    momentum_percent NUMERIC(10, 2) NOT NULL,
+    current_price NUMERIC(10, 4) NOT NULL,
+    price_gbp NUMERIC(10, 4) NOT NULL,
+    atr_value NUMERIC(10, 4) NOT NULL,
+    volatility NUMERIC(10, 6) NOT NULL,
+    initial_stop NUMERIC(10, 4) NOT NULL,
+    suggested_shares INTEGER NOT NULL,
+    allocation_gbp NUMERIC(12, 2) NOT NULL,
+    total_cost NUMERIC(12, 2) NOT NULL,
+    status VARCHAR(20) NULL DEFAULT 'new',
+    position_id UUID NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT signals_pkey PRIMARY KEY (id),
+    CONSTRAINT signals_portfolio_id_ticker_signal_date_key
+        UNIQUE (portfolio_id, ticker, signal_date),
+    CONSTRAINT signals_portfolio_id_fkey
+        FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
+    CONSTRAINT signals_position_id_fkey
+        FOREIGN KEY (position_id) REFERENCES positions(id),
+    CONSTRAINT signals_market_check
+        CHECK (market IN ('US', 'UK')),
+    CONSTRAINT signals_status_check
+        CHECK (status IN ('new', 'entered', 'dismissed', 'expired', 'already_held'))
+) TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS idx_signals_portfolio
+    ON signals USING btree (portfolio_id) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_signals_status
+    ON signals USING btree (status) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_signals_date
+    ON signals USING btree (signal_date DESC) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_signals_ticker
+    ON signals USING btree (ticker) TABLESPACE pg_default;
+```
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| portfolio_id | UUID | NO | FK to portfolios |
+| ticker | VARCHAR(20) | NO | Stock symbol |
+| market | VARCHAR(5) | NO | "US" or "UK" |
+| signal_date | DATE | NO | Date the signal was generated |
+| rank | INTEGER | NO | Momentum rank within the generation batch (1 = strongest) |
+| momentum_percent | NUMERIC(10,2) | NO | Momentum percentage over the lookback period |
+| current_price | NUMERIC(10,4) | NO | Price in native currency at signal generation time (point-in-time) |
+| price_gbp | NUMERIC(10,4) | NO | Price converted to GBP at signal generation time (point-in-time) |
+| atr_value | NUMERIC(10,4) | NO | ATR at signal generation time |
+| volatility | NUMERIC(10,6) | NO | Volatility measure used for inverse-volatility position sizing |
+| initial_stop | NUMERIC(10,4) | NO | Suggested initial stop in native currency: `current_price − (atr_multiplier_initial × ATR)` |
+| suggested_shares | INTEGER | NO | Whole-share position size based on available cash and volatility weighting. Integer only — fractional shares are not supported in signal generation |
+| allocation_gbp | NUMERIC(12,2) | NO | Capital allocated to this signal in GBP |
+| total_cost | NUMERIC(12,2) | NO | Estimated total cost including fees in GBP |
+| status | VARCHAR(20) | YES | Signal lifecycle status. Defaults to `'new'`. See status values below |
+| position_id | UUID | YES | FK to positions — set only when `status = 'entered'`; links signal to the resulting position |
+| created_at | TIMESTAMP | YES | Record creation time |
+| updated_at | TIMESTAMP | YES | Last update time |
+
+### Signal Status Values
+
+| Value | Description |
+|-------|-------------|
+| `new` | Generated and not yet acted upon |
+| `entered` | User entered a position based on this signal; `position_id` is populated |
+| `dismissed` | User dismissed this signal without acting |
+| `expired` | Signal is more than 7 days old without action |
+| `already_held` | A matching open position existed when the signal was generated |
+
+### Constraints & Design Notes
+- `UNIQUE(portfolio_id, ticker, signal_date)` prevents duplicate signals for the same ticker on the same day. Re-running `POST /signals/generate` on the same day does not create duplicate records for already-generated tickers.
+- `position_id` is nullable and only set when `status = 'entered'`. It provides traceability from signal to the position that resulted from it.
+- `suggested_shares` is `INTEGER`. Signal generation does not support fractional share sizing. Actual position entry via `POST /portfolio/position` supports fractional shares.
+- `current_price`, `price_gbp`, `atr_value`, `initial_stop`, and `volatility` are all point-in-time values captured at generation. They will diverge from live values as time passes and must not be used as live market data.
+
+---
+
 ## Data Relationships
 
 ```
 portfolios (1) ──┬── (N) positions
                  ├── (N) cash_transactions
                  ├── (N) portfolio_history
-                 └── (N) trade_history
+                 ├── (N) trade_history
+                 └── (N) signals ──── (0..1) positions (via position_id)
 
 settings (1 global)
 ```
@@ -444,6 +536,31 @@ DO UPDATE SET
     position_count = EXCLUDED.position_count;
 ```
 
+### 4. Signal Lifecycle
+
+```sql
+-- Signal generated for NVDA
+INSERT INTO signals (
+    portfolio_id, ticker, market, signal_date, rank,
+    momentum_percent, current_price, price_gbp, atr_value,
+    volatility, initial_stop, suggested_shares,
+    allocation_gbp, total_cost, status
+) VALUES (
+    'portfolio-id', 'NVDA', 'US', '2026-02-17', 1,
+    45.2, 850.00, 623.00, 18.50,
+    0.021800, 757.50, 1,
+    986.00, 996.00, 'new'
+);
+
+-- User enters position based on signal
+UPDATE signals
+SET
+    status = 'entered',
+    position_id = 'new-position-id',
+    updated_at = NOW()
+WHERE id = 'signal-id';
+```
+
 ---
 
 ## Query Examples
@@ -452,9 +569,9 @@ DO UPDATE SET
 ```sql
 SELECT
     p.cash,
-    COUNT(pos.id) FILTER (WHERE pos.status = 'open') as open_positions,
-    SUM(pos.total_cost) FILTER (WHERE pos.status = 'open') as invested,
-    SUM(pos.pnl) FILTER (WHERE pos.status = 'open') as unrealized_pnl
+    COUNT(pos.id) FILTER (WHERE pos.status = 'open') AS open_positions,
+    SUM(pos.total_cost) FILTER (WHERE pos.status = 'open') AS invested,
+    SUM(pos.pnl) FILTER (WHERE pos.status = 'open') AS unrealized_pnl
 FROM portfolios p
 LEFT JOIN positions pos ON p.id = pos.portfolio_id
 WHERE p.id = 'portfolio-id'
@@ -464,9 +581,9 @@ GROUP BY p.id, p.cash;
 ### Get Win Rate
 ```sql
 SELECT
-    COUNT(*) FILTER (WHERE pnl > 0) * 100.0 / COUNT(*) as win_rate,
-    AVG(pnl) FILTER (WHERE pnl > 0) as avg_winner,
-    AVG(pnl) FILTER (WHERE pnl < 0) as avg_loser
+    COUNT(*) FILTER (WHERE pnl > 0) * 100.0 / COUNT(*) AS win_rate,
+    AVG(pnl) FILTER (WHERE pnl > 0) AS avg_winner,
+    AVG(pnl) FILTER (WHERE pnl < 0) AS avg_loser
 FROM trade_history
 WHERE portfolio_id = 'portfolio-id';
 ```
@@ -474,9 +591,9 @@ WHERE portfolio_id = 'portfolio-id';
 ### Get Net Cash Flow
 ```sql
 SELECT
-    SUM(amount) FILTER (WHERE type = 'deposit') as total_deposits,
-    SUM(amount) FILTER (WHERE type = 'withdrawal') as total_withdrawals,
-    SUM(CASE WHEN type = 'deposit' THEN amount ELSE -amount END) as net_cash_flow
+    SUM(amount) FILTER (WHERE type = 'deposit') AS total_deposits,
+    SUM(amount) FILTER (WHERE type = 'withdrawal') AS total_withdrawals,
+    SUM(CASE WHEN type = 'deposit' THEN amount ELSE -amount END) AS net_cash_flow
 FROM cash_transactions
 WHERE portfolio_id = 'portfolio-id';
 ```
@@ -491,7 +608,7 @@ ORDER BY entry_date DESC;
 
 ### Get All Unique Tags
 ```sql
-SELECT DISTINCT unnest(tags) as tag
+SELECT DISTINCT unnest(tags) AS tag
 FROM positions
 WHERE portfolio_id = 'portfolio-id'
 ORDER BY tag;
@@ -500,17 +617,29 @@ ORDER BY tag;
 ### Get Trades with Notes
 ```sql
 SELECT
-    ticker,
-    entry_date,
-    exit_date,
-    pnl,
-    entry_note,
-    exit_note,
-    tags
+    ticker, entry_date, exit_date, pnl,
+    entry_note, exit_note, tags
 FROM trade_history
 WHERE portfolio_id = 'portfolio-id'
 AND (entry_note IS NOT NULL OR exit_note IS NOT NULL)
 ORDER BY exit_date DESC;
+```
+
+### Get Active Signals with Position Linkage
+```sql
+SELECT
+    s.ticker,
+    s.market,
+    s.rank,
+    s.momentum_percent,
+    s.current_price,
+    s.status,
+    p.pnl AS position_pnl
+FROM signals s
+LEFT JOIN positions p ON s.position_id = p.id
+WHERE s.portfolio_id = 'portfolio-id'
+AND s.status IN ('new', 'already_held')
+ORDER BY s.rank ASC;
 ```
 
 ---
@@ -583,9 +712,70 @@ Existing settings rows will receive the default value of `10`, which matches the
 
 ---
 
+## Migration from v1.5 to v1.6
+
+### Required Changes — Signals Table + positions.fees_paid constraint
+
+```sql
+BEGIN;
+
+-- Formalise NOT NULL on positions.fees_paid.
+-- Safe: DEFAULT 0 was always enforced at the application layer; no rows have null values.
+ALTER TABLE positions ALTER COLUMN fees_paid SET NOT NULL;
+
+-- Add signals table (full DDL in Section 7 above).
+-- Note: this table already exists in the live database.
+-- This migration formalises it in the documentation for the first time.
+CREATE TABLE signals (
+    id UUID NOT NULL DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL,
+    ticker VARCHAR(20) NOT NULL,
+    market VARCHAR(5) NOT NULL,
+    signal_date DATE NOT NULL,
+    rank INTEGER NOT NULL,
+    momentum_percent NUMERIC(10, 2) NOT NULL,
+    current_price NUMERIC(10, 4) NOT NULL,
+    price_gbp NUMERIC(10, 4) NOT NULL,
+    atr_value NUMERIC(10, 4) NOT NULL,
+    volatility NUMERIC(10, 6) NOT NULL,
+    initial_stop NUMERIC(10, 4) NOT NULL,
+    suggested_shares INTEGER NOT NULL,
+    allocation_gbp NUMERIC(12, 2) NOT NULL,
+    total_cost NUMERIC(12, 2) NOT NULL,
+    status VARCHAR(20) NULL DEFAULT 'new',
+    position_id UUID NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT signals_pkey PRIMARY KEY (id),
+    CONSTRAINT signals_portfolio_id_ticker_signal_date_key
+        UNIQUE (portfolio_id, ticker, signal_date),
+    CONSTRAINT signals_portfolio_id_fkey
+        FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
+    CONSTRAINT signals_position_id_fkey
+        FOREIGN KEY (position_id) REFERENCES positions(id),
+    CONSTRAINT signals_market_check
+        CHECK (market IN ('US', 'UK')),
+    CONSTRAINT signals_status_check
+        CHECK (status IN ('new', 'entered', 'dismissed', 'expired', 'already_held'))
+) TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS idx_signals_portfolio
+    ON signals USING btree (portfolio_id) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_signals_status
+    ON signals USING btree (status) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_signals_date
+    ON signals USING btree (signal_date DESC) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_signals_ticker
+    ON signals USING btree (ticker) TABLESPACE pg_default;
+
+COMMIT;
+```
+
+---
+
 ## Planned Future Schema Changes
 
-### v1.6 — Alerts (Planned)
+### v1.7 — Alerts (Planned)
 ```sql
 CREATE TABLE alerts (
     id UUID PRIMARY KEY,
@@ -594,7 +784,7 @@ CREATE TABLE alerts (
     message TEXT,
     is_read BOOLEAN DEFAULT false,
     created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP  -- consistent with all other tables; add at formal design time
 );
 ```
 
@@ -604,8 +794,7 @@ CREATE TABLE users (
     id UUID PRIMARY KEY,
     email VARCHAR(255) UNIQUE,
     password_hash VARCHAR(255),
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMP
 );
 
 ALTER TABLE portfolios ADD COLUMN user_id UUID REFERENCES users(id);
@@ -613,6 +802,6 @@ ALTER TABLE portfolios ADD COLUMN user_id UUID REFERENCES users(id);
 
 ---
 
-**Document Version:** 1.5
+**Document Version:** 1.6
 **Maintained By:** Development Team
 **Last Review:** February 17, 2026
