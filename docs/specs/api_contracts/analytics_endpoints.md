@@ -1,9 +1,5 @@
 # analytics_endpoints.md
 
-> **Implementation status:** Complete — v1.5  
-> Backend implementation exists in `routers/analytics.py` and `services/analytics_service.py`.  
-> This document reflects the actual implementation. See `conventions.md` for global response envelopes.
-
 ## Overview
 
 This document defines the **Analytics** domain endpoints.
