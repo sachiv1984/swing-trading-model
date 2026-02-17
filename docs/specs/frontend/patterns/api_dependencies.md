@@ -9,7 +9,7 @@ Its goal is to ensure API usage is:
 - UX-aligned (focus on user-visible loading, error, and state outcomes)
 - Maintainable (easy to update when contracts or flows change)
 
-This pattern applies to all pages, modals, and components that read or write backend data. 
+This pattern applies to all pages, modals, and components that read or write backend data.
 
 ---
 
@@ -19,7 +19,7 @@ Use the API Dependencies pattern whenever:
 - A UI action writes data (create/update/exit)
 - A reusable component depends on remote data (e.g., tag suggestions)
 - A change to an endpoint could affect multiple UX surfaces
-- A reviewer needs to assess blast-radius for a backend or data model change 
+- A reviewer needs to assess blast-radius for a backend or data model change
 
 ---
 
@@ -27,18 +27,17 @@ Use the API Dependencies pattern whenever:
 - Designers and QA need to know **what data a surface relies on** to validate states and edge cases without reading code.
 - Engineers need a single place to see **read vs write dependencies** to evaluate change impact quickly.
 - Documentation should not repeat schemas; schemas drift unless they remain owned by a single source.
-- A dependency view helps prevent silent regressions by making shared data contracts visible across the product. 
+- A dependency view helps prevent silent regressions by making shared data contracts visible across the product.
 
 ---
 
 ## Source of Truth (Contracts)
-Canonical request/response shapes, error payloads, and field-level schemas live in:
-- https://github.com/sachiv1984/swing-trading-model/tree/10ee6a4b0d640d2743acc93b55be4d10701f494a/docs/specs/api_contracts 
+Canonical request/response shapes, error payloads, and field-level schemas live in the API contracts (`specs/api_contracts/`).
 
 This pattern intentionally documents only:
 - which surfaces depend on which endpoints
 - whether they read or write
-- UX-visible loading/error expectations tied to those calls 
+- UX-visible loading/error expectations tied to those calls
 
 ---
 
@@ -51,7 +50,7 @@ Used when the UI must retrieve data to render.
 - If the request fails:
   - show a global error banner (page) or modal error banner (modal)
   - preserve user context (do not navigate away)
-  - allow retry where feasible 
+  - allow retry where feasible
 
 ---
 
@@ -62,7 +61,7 @@ Used when the user commits a change.
 - If submission fails:
   - the UI does not discard user input
   - the user remains in context (modal stays open)
-  - a retry path is available 
+  - a retry path is available
 
 ---
 
@@ -70,132 +69,113 @@ Used when the user commits a change.
 Used for autocomplete lists, filters, and configuration-driven UI.
 **Behavior expectations:**
 - Supporting data must not block primary tasks when unavailable.
-- If it fails to load, the primary experience still works with graceful fallback (e.g., manual entry). 
+- If it fails to load, the primary experience still works with graceful fallback (e.g., manual entry).
 
 ---
 
 ## API Dependency Map (Surfaces → Endpoints)
 
-> Note: This is a dependency index. For payload shapes, see API contracts. 
+> Note: This is a dependency index. For payload shapes, see API contracts.
 
 ### Dashboard (Home)
 **Reads**
-- `GET /portfolio` (portfolio summary) 
-- `GET /portfolio/history?days=30` (performance series) 
+- `GET /portfolio` (portfolio summary)
+- `GET /portfolio/history?days=30` (performance series)
 
 **Triggers**
-- `GET /positions/analyze` (daily monitor analysis) 
+- `GET /positions/analyze` (daily monitor analysis)
 
 ---
 
 ### Positions Page (Grid / Table / Journal Views)
 **Reads**
-- `GET /positions` (positions list, includes live pricing and journal fields where applicable) 
-- `GET /positions/tags` (tag filter options / autocomplete source) 
+- `GET /positions` (positions list, includes live pricing and journal fields where applicable)
+- `GET /positions/tags` (tag filter options / autocomplete source)
 
 **Opens related flows**
 - Exit flow (Exit Modal)
-- Journal/detail review (Position Detail Modal) 
+- Journal/detail review (Position Detail Modal)
 
 ---
 
 ### Position Detail Modal (Journal / Details)
-**Reads**
-- `GET /positions/{ticker}` (position detail + notes/tags) 
-- `GET /positions/tags` (tag suggestions/autocomplete) 
+
+> **Data source note:** This modal does not fetch position data independently. The full position object is passed in as a prop from the parent Positions page, which already holds position data from `GET /positions`. The modal only makes API calls for tag suggestions and journal writes.
+
+**Reads (supporting)**
+- `GET /positions/tags` (tag suggestions/autocomplete)
 
 **Writes**
-- `PATCH /positions/{id}/note` (update entry_note or exit_note) 
-- `PATCH /positions/{id}/tags` (update tags) 
+- `PATCH /positions/{id}/note` (update entry_note or exit_note)
+- `PATCH /positions/{id}/tags` (update tags)
 
 ---
 
 ### Trade Entry Page
 **Writes**
-- `POST /portfolio/position` (create position, optionally includes entry_note and tags) 
+- `POST /portfolio/position` (create position, optionally includes entry_note and tags)
 
 **Reads (supporting)**
-- `GET /positions/tags` (tag suggestions) 
-- `GET /settings` (fees/strategy parameters where needed for UI) 
+- `GET /positions/tags` (tag suggestions)
+- `GET /settings` (fees/strategy parameters where needed for UI)
 
 ---
 
 ### Exit Position Modal
 **Writes**
-- `POST /positions/{position_id}/exit` (exit full/partial, optionally includes exit_note) 
+- `POST /positions/{position_id}/exit` (exit full/partial, optionally includes exit_note)
 
 **UX note**
-- The modal continuously updates preview values as the user edits exit inputs (regardless of where calculations occur). 
+- The modal continuously updates preview values as the user edits exit inputs (regardless of where calculations occur).
 
 ---
 
 ### Trade History Page
 **Reads**
-- `GET /trades` (closed trades + journal fields for entry/exit notes + tags) 
-- `GET /positions/tags` (tag filter dropdown values) 
+- `GET /trades` (closed trades + journal fields for entry/exit notes + tags)
+- `GET /positions/tags` (tag filter dropdown values)
 
 ---
 
 ### Cash Management Modal
 **Reads**
-- `GET /cash/transactions` (transaction history) 
-- `GET /cash/summary` (running totals / current cash) 
+- `GET /cash/transactions` (transaction history)
+- `GET /cash/summary` (running totals / current cash)
 
 **Writes**
-- `POST /cash/transaction` (deposit/withdrawal) 
+- `POST /cash/transaction` (deposit/withdrawal)
 
 ---
 
 ### Settings Page
 **Reads**
-- `GET /settings` 
+- `GET /settings`
 
 **Writes**
-- `PUT /settings` 
+- `PUT /settings`
 
 ---
 
-## Do / Don’t Guidance
+### Performance Analytics Page
+**Reads**
+- `GET /analytics/metrics?period={period}` (all analytics data — executive metrics, advanced metrics, market comparison, monthly data, exit reasons, day-of-week, holding periods, top performers, consistency metrics, trades for charts)
+
+**UX note**
+- This is a single-endpoint page. All charts and metrics on the page are derived from one response. Period filter changes re-fetch the full response.
+- The page gates all output behind `summary.has_enough_data`. When `false`, only the period selector and a "not enough data" message are shown.
+
+---
+
+## Do / Don't Guidance
 
 ### Do
-- Keep endpoint lists in this file, not scattered across specs. 
-- Link to API contracts for schemas instead of copying them. 
+- Keep endpoint lists in this file, not scattered across specs.
+- Link to API contracts for schemas instead of copying them.
 - Record read vs write dependencies so impact is clear.
-- Call out UX-visible behaviors tied to calls (loading, retry, preservation of input). 
-- Update this file whenever a surface adds/removes an endpoint dependency. 
+- Call out UX-visible behaviors tied to calls (loading, retry, preservation of input).
+- Update this file whenever a surface adds/removes an endpoint dependency.
 
-### Don’t
-- Don’t paste full request/response shapes here (that belongs to API contracts). 
-- Don’t document implementation mechanisms (React Query, caching, interceptors).
-- Don’t repeat the same endpoint list across multiple component/page specs.
-- Don’t include technical detail unless it changes user-visible outcomes. 
-
----
-
-## Reusable Principles Across the App
-
-### 1. Single Source of Truth
-- Schemas live in API contracts.
-- Dependencies live in this pattern file. 
-
-### 2. Separation of Concern
-- Specs describe UX intent and observable behavior.
-- This file describes “what depends on what,” not “how it is implemented.” 
-
-### 3. Change Discipline
-When backend endpoints change:
-- Update API contracts first (canonical).
-- Update this file if dependencies change.
-- Update surface specs only if UX-visible behavior changes (states, errors, constraints). 
-
-### 4. Failure Is a UX State
-Every dependency implies expected failure behavior:
-- errors must be clear, actionable, and non-destructive
-- users should be able to retry without losing work 
-
----
-
-## Summary
-The API Dependencies pattern keeps frontend documentation clean by centralizing endpoint usage and read/write relationships in one place, while leaving schemas to the canonical API contracts.
-
-This enables faster impact analysis, prevents documentation drift, and ensures UX surfaces remain predictable under loading, failure, and partial-data conditions. 
+### Don't
+- Don't paste full request/response shapes here (that belongs to API contracts).
+- Don't document implementation mechanisms (React Query, caching, interceptors).
+- Don't document endpoints that a surface receives via props — only direct API calls.
