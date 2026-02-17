@@ -94,6 +94,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `live_fx_rate` | The current GBP/USD rate (fetched live) |
 | `exit_note` | Always `null` for open positions. Present for schema consistency with closed trade records |
 | `tags` | Array of tag strings. Empty array if no tags set |
+| `pnl_percent` | Percentage P&L relative to entry cost. Same value as would be seen in `pnl_pct` in trade records. Both field names exist in the system for compatibility; `pnl_percent` is the canonical name in position responses |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
