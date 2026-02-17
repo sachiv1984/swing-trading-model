@@ -1,6 +1,8 @@
 # Data Model - Momentum Trading Assistant
 
 **Version:** 1.6
+**Status:** Canonical
+**Owner:** Data Model & Domain Schema Owner
 **Last Updated:** February 17, 2026
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -803,5 +805,5 @@ ALTER TABLE portfolios ADD COLUMN user_id UUID REFERENCES users(id);
 ---
 
 **Document Version:** 1.6
-**Maintained By:** Development Team
+**Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** February 17, 2026
