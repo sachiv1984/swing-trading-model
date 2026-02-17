@@ -104,6 +104,8 @@ The position objects returned here are a **summary shape**. Key omissions versus
 | `entry_note`, `exit_note` | `GET /positions` |
 | `tags` | `GET /positions` |
 
+**`pnl_percent`** is present in the summary object. This is the percentage P&L relative to entry cost. The same value appears as `pnl_pct` in trade history records — both names exist in the system for compatibility. `pnl_percent` is the canonical name in position responses.
+
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
