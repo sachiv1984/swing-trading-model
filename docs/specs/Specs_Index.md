@@ -46,9 +46,10 @@ It points to the **single canonical source**.
 - Strategy parameter governance
 
 **Canonical Documents**
-- `strategy/production_strategy.md` — *Canonical production behavior*
-- `strategy/strategy_rules.md` — *Detailed rule mechanics*
-- `strategy/Strategy_Rules_&_System_Intent_Owner.md` — *Ownership & governance*
+- `strategy_rules.md` — *Canonical strategy specification*
+
+**Implementation (Non-Canonical)**
+- Strategy code files (implementation only; must conform to `strategy_rules.md`)
 
 **Owner**
 - Strategy Rules & System Intent Owner
