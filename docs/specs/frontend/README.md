@@ -56,9 +56,7 @@ Each file is focused, readable in isolation, and avoids unnecessary implementati
 - ./components/journal_components.md  
 
 ### UX Patterns
-- ./patterns/error_handling.md  
-- ./patterns/validation.md  
-- ./patterns/data_fetching.md  
+- ./patterns/error_handling.md   
 
 ## How to Use These Specs
 
