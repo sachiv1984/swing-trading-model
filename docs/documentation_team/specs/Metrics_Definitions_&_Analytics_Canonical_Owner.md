@@ -138,8 +138,9 @@ When conflicts arise, **this document is the source of truth**.
 - Backward compatibility is preserved unless explicitly rejected
 
 ### Lifecycle & Versioning Compliance (mandatory)
-- All metrics documentation must follow the lifecycle states, header block, and versioning rules defined in:
-  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
+All documentation owned by this role must follow the lifecycle states,
+header block, and versioning rules defined in:
+- `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
 
 ---
 
