@@ -76,12 +76,9 @@ The documentation is treated as a **first-class product artifact**, not an after
 
 
 ### Lifecycle & Versioning Compliance (mandatory)
-
 All documentation owned by this role must follow the lifecycle states,
 header block, and versioning rules defined in:
-
 - `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
-
 
 ---
 
