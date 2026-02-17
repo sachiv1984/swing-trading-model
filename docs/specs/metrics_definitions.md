@@ -1,5 +1,5 @@
 # Metrics Definitions – Canonical Specification
-**Version:** 1.5.5  
+**Version:** 1.5.6  
 **Owner:** Analytics Team  
 **Last Updated:** 2026-02-17  
 **Review Cycle:** Monthly  
@@ -98,7 +98,7 @@ Sample variance:  s² = Σ(xᵢ − x̄)² / (n − 1)
 Sample std dev:   s  = √s²
 ```
 
-**Important:** The current implementation historically used population variance (÷ n). This is considered **non-conformant** with the canonical spec and is tracked as a backlog item (see Appendix D).
+**Important:** The current implementation historically used population variance (÷ n). This is considered **non-conformant** with the canonical spec and is tracked as a backlog item (see Appendix E).
 
 ### Data Requirements
 - Portfolio method: `portfolio_history.total_value` with ≥30 `snapshot_date` points.
@@ -341,7 +341,7 @@ Tolerance: ±0.05
 - avg_position_value_gbp == 0 → 0.0
 
 ### Implementation Conformance
-**Known non-conformance (current implementation):** Some implementations compute `avg_position_value` as `entry_price × shares` (native currency), which mixes USD and GBP in multi-market portfolios. This is **non-conformant** with the canonical spec and is tracked as a backlog item (see Appendix D).
+**Known non-conformance (current implementation):** Some implementations compute `avg_position_value` as `entry_price × shares` (native currency), which mixes USD and GBP in multi-market portfolios. This is **non-conformant** with the canonical spec and is tracked as a backlog item (see Appendix E).
 
 ---
 
@@ -398,13 +398,25 @@ If `monthly_data` is empty, return zeros for all fields.
 
 ---
 
-## Appendix A — API Schema Coverage (Quick Audit Checklist)
+## Appendix A: Data Lineage (Referential)
+
+This Metrics Definitions document is the canonical source for **metric semantics and formulas**.
+
+Canonical data lineage and field mapping live in:
+- `data_model.md` (database schema, GBP vs native currency rules, API field mappings)
+- `analytics_endpoints.md` (endpoint schema, response object shapes, and data sourcing rules)
+
+Any future lineage changes MUST be made in those documents and referenced here.
+
+---
+
+## Appendix B — API Schema Coverage (Quick Audit Checklist)
 The `GET /analytics/metrics` response contains the following top-level fields and MUST remain in sync with this spec:
 - `summary`, `executive_metrics`, `advanced_metrics`, `market_comparison`, `exit_reasons`, `monthly_data`, `day_of_week`, `holding_periods`, `top_performers`, `consistency_metrics`, `trades_for_charts`.
 
 ---
 
-## Appendix B — Validation Alignment (Source of Truth)
+## Appendix C — Validation Alignment (Source of Truth)
 Validation is performed by `POST /validate/calculations` comparing computed metrics to `test_data/validation_data.py` expected values and tolerances.
 
 ### Metrics validated (current)
@@ -425,7 +437,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 
 ---
 
-## Appendix C — Change Log
+## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
 | 2026-02-16 | 1.5.0 | Initial comprehensive spec | Analytics Team |
@@ -433,10 +445,11 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 | 2026-02-17 | 1.5.2 | FIX-MD-02: Add Risk/Reward Ratio and Expectancy | Analytics Team |
 | 2026-02-17 | 1.5.3 | FIX-MD-03: Align Days Underwater to trade-sequence method | Analytics Team |
 | 2026-02-17 | 1.5.5 | FIX-MD-04 backlog + FIX-MD-05: Specify Sharpe sample variance (canonical) and capital efficiency GBP-safe cost basis | Analytics Team |
+| 2026-02-17 | 1.5.6 | ADVISORY-MD-D: Remove drift-prone lineage appendix; reference `data_model.md` and `analytics_endpoints.md` as lineage sources | Analytics Team |
 
 ---
 
-## Appendix D — Known Deviations & Backlog Items
+## Appendix E — Known Deviations & Backlog Items
 ### Backlog Item 1 — Sharpe variance method
 **Issue:** Current implementation uses population variance (÷ n) for Sharpe volatility.
 
