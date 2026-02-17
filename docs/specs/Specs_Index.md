@@ -98,9 +98,9 @@ It points to the **single canonical source**.
 - `specs/api_contracts/`
 
 **Canonical Documents**
-- `api_contracts/README.md` — *Navigation, scope, versioning*
-- `api_contracts/conventions.md` — *Global API rules*
-- `api_contracts/*_endpoints.md` — *Domain-specific contracts*
+- `api_contracts/README.md` — Navigation, scope, versioning
+- `api_contracts/conventions.md` — Global API rules
+- `api_contracts/*_endpoints.md` — Domain-specific contracts
 
 **Owner**
 - API Contracts & Documentation Owner
@@ -120,8 +120,8 @@ It points to the **single canonical source**.
 - `specs/frontend/`
 
 **Canonical Documents (Root)**
-- `frontend/README.md` — Navigation and orientation
-- `frontend/design_system.md` — Shared visual language, interaction rules, and constraints
+- `frontend/README.md`
+- `frontend/design_system.md`
 
 **Page Specifications**
 - `frontend/pages/dashboard.md`
@@ -168,7 +168,7 @@ No downstream system may override upstream intent.
 - Changes affecting multiple domains require Head of Specs Team review
 - Silent divergence between specs and behavior is treated as a **system bug**
 - **All canonical documents must follow the lifecycle states, header format, and versioning rules defined in:**
-  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
+  - `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
 
 ---
 
