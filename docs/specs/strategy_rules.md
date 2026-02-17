@@ -1,6 +1,6 @@
 # Production Strategy – Momentum Trading System
 **Document Owner:** Strategy Rules & System Intent Owner
-**Status:** Canonical Production Specification
+**Status:** Canonical
 **Applies To:** Production backtest, live system, and documentation
 **Last Reviewed:** February 2026
 
