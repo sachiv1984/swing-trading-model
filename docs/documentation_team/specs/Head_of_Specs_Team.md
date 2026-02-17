@@ -98,9 +98,10 @@ This role does not own individual specs, but does own the system in which those 
 - Specs do not drift silently from reality
 - The quality bar is visible, stable, and enforced consistently
 
-### Lifecycle & Versioning Governance (mandatory)
-- The lifecycle model for all documentation is defined in:
-  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
+### Lifecycle & Versioning Compliance (mandatory)
+All documentation owned by this role must follow the lifecycle states,
+header block, and versioning rules defined in:
+- `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
 - The Head of Specs Team ensures:
   - Canonical docs include the lifecycle header block
   - Deprecated docs include “Superseded By” and “Effective From”
