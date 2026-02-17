@@ -19,12 +19,12 @@ export default function PositionModal({ position, open, onClose, onSave }) {
   const [tagInput, setTagInput] = useState("");
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
 
+  // ✅ FIX: Call GET /positions/tags directly instead of fetching all positions
   const { data: existingTags = [] } = useQuery({
     queryKey: ["position-tags"],
     queryFn: async () => {
-      const positions = await base44.entities.Position.list();
-      const allTags = positions.flatMap(p => p.tags || []);
-      return [...new Set(allTags)].sort();
+      const response = await base44.api.get("/positions/tags");
+      return response.data?.tags ?? [];
     },
   });
 
@@ -63,7 +63,8 @@ export default function PositionModal({ position, open, onClose, onSave }) {
     : allAvailableTags.filter(tag => !journalData.tags.includes(tag));
 
   const handleAddTag = (tag) => {
-    if (journalData.tags.length >= 5) return;
+    // ✅ FIX: Tag limit raised from 5 → 10 to match API contract
+    if (journalData.tags.length >= 10) return;
     const normalizedTag = tag.toLowerCase().replace(/\s+/g, "-");
     if (!journalData.tags.includes(normalizedTag)) {
       setJournalData(prev => ({ ...prev, tags: [...prev.tags, normalizedTag] }));
@@ -231,7 +232,8 @@ export default function PositionModal({ position, open, onClose, onSave }) {
 
                 {/* Edit Tags */}
                 <div className="space-y-2">
-                  <Label className="text-slate-400 text-xs">Tags</Label>
+                  {/* ✅ FIX: Counter reflects the correct limit of 10 */}
+                  <Label className="text-slate-400 text-xs">Tags ({journalData.tags.length}/10)</Label>
                   {journalData.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {journalData.tags.map((tag) => (
@@ -251,7 +253,8 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                     </div>
                   )}
 
-                  {journalData.tags.length < 5 && (
+                  {/* ✅ FIX: Input hidden at 10 tags, not 5 */}
+                  {journalData.tags.length < 10 && (
                     <div className="relative">
                       <Input
                         value={tagInput}
