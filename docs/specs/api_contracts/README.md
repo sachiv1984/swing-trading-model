@@ -1,10 +1,10 @@
 # README.md
 
-## Momentum Trading Assistant — API Contracts (v1.4.1)
+## Momentum Trading Assistant — API Contracts (v1.5.0)
 
 **Status:** Complete & current  
-**Last updated:** 2026-02-15  
-**Contract version:** 1.4.1  
+**Last updated:** 2026-02-17  
+**Contract version:** 1.5.0  
 
 This directory contains the **backend API contracts** for the *Momentum Trading Assistant* web application.
 
@@ -84,7 +84,7 @@ The API contracts are split by concern to support incremental review and clear o
 
 ### Domain-specific endpoints
 - **`portfolio_endpoints.md`**  
-  Portfolio overview, position creation via portfolio, daily snapshots, and portfolio history.
+  Portfolio overview, position creation, daily snapshots, and portfolio history (`GET /portfolio/history`).
 
 - **`position_endpoints.md`**  
   Open positions, daily analysis, exits, notes, tags, and tag discovery.
@@ -96,7 +96,7 @@ The API contracts are split by concern to support incremental review and clear o
   Deposits, withdrawals, cash transactions, and cash summaries.
 
 - **`analytics_endpoints.md`**  
-  Analytics-related retrieval endpoints (e.g. snapshot history used for performance analysis).
+  Comprehensive trading analytics via `GET /analytics/metrics` (executive metrics, advanced metrics, monthly trends, top performers, drawdown, and more), plus `POST /validate/calculations` for smoke-testing metric correctness.
 
 - **`signal_endpoints.md`**  
   Signal generation, signal listing, and signal state updates.
@@ -116,11 +116,20 @@ Each endpoint file follows a consistent structure:
 
 ## Versioning
 
-- **Current contract version:** 1.4.1
-- **Change type:** Non-breaking clarification and consolidation
-- **Previous version:** 1.4.0
+- **Current contract version:** 1.5.0
+- **Change type:** Non-breaking — analytics contract rewritten to reflect completed implementation; README corrected
+- **Previous version:** 1.4.1
 
 ### Changelog (Summary)
+
+- **1.5.0 (2026-02-17)**
+  - `analytics_endpoints.md` rewritten to reflect the completed implementation:
+    - Five planned endpoints replaced by unified `GET /analytics/metrics?period=`
+    - Full nested response structure documented
+    - `POST /validate/calculations` added
+    - Known limitations and backlog items recorded
+  - README: `GET /portfolio/history` correctly attributed to `portfolio_endpoints.md` (was incorrectly listed under analytics)
+  - README: `analytics_endpoints.md` description updated to reflect actual scope
 
 - **1.4.1 (2026-02-15)**
   - Complete endpoint specifications
