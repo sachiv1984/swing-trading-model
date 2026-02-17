@@ -11,6 +11,8 @@ This document defines **Signal** domain endpoints:
 
 Global response envelopes, error shape, defaults, and conventions are defined in **conventions.md** and apply unless explicitly stated otherwise.
 
+> **Data model note:** The `signals` table schema is formally documented in `data_model.md` Section 7. Key design points relevant to these endpoints: a `UNIQUE(portfolio_id, ticker, signal_date)` constraint prevents duplicate signal records for the same ticker on the same day; `position_id` is only set when `status = 'entered'`; `suggested_shares` is always an integer (whole shares only at generation time).
+
 ---
 
 ## Endpoints
@@ -37,14 +39,16 @@ Generate a ranked set of momentum signals using deterministic server-side logic.
 
 **Idempotency**
 
-- Not explicitly classified. Treat as a server-side generation action that returns current deterministic outputs based on live market data. Repeated calls on the same day may produce different signals if prices or rankings have changed.
+- Not explicitly classified. Treat as a server-side generation action that returns current deterministic outputs based on live market data. Repeated calls on the same day may return different rankings if prices have changed. The `UNIQUE(portfolio_id, ticker, signal_date)` database constraint prevents duplicate signal records for the same ticker on the same day — re-running generation does not accumulate duplicates.
 
 ### Request
 
 #### Query parameters
 
-- `lookback_days` (integer, optional): momentum lookback period in days. Default: `252`.
-- `top_n` (integer, optional): number of signals to generate. Default: `5`.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `lookback_days` | integer | No | `252` | Momentum lookback period in days |
+| `top_n` | integer | No | `5` | Number of signals to generate |
 
 No request body.
 
@@ -80,7 +84,7 @@ Response uses the standard success envelope from **conventions.md**.
       "initial_stop": 780.00,
       "status": "new",
       "allocation_gbp": 1000.00,
-      "suggested_shares": 1.16,
+      "suggested_shares": 1,
       "total_cost": 986.00,
       "signal_date": "2026-02-17",
       "created_at": "2026-02-17T10:30:00Z"
@@ -88,6 +92,18 @@ Response uses the standard success envelope from **conventions.md**.
   ]
 }
 ```
+
+#### Field notes
+
+| Field | Notes |
+|-------|-------|
+| `suggested_shares` | Always an integer (whole shares). Fractional share sizing is not supported in signal generation. Actual position entry via `POST /portfolio/position` supports fractional shares |
+| `current_price` | Native currency price at signal generation time. Point-in-time — will diverge from live price as time passes. Do not use as a live price |
+| `price_gbp` | GBP equivalent at signal generation time. Point-in-time |
+| `atr_value` | ATR at generation time. Stored for auditability; not updated after generation |
+| `initial_stop` | Suggested stop in native currency: `current_price − (atr_multiplier_initial × ATR)`. Uses `atr_multiplier_initial` at generation time |
+| `volatility` | Volatility measure used for inverse-volatility position sizing. Stored for auditability |
+| `allocation_gbp` | Capital allocated to this signal based on volatility weighting and available cash at generation time |
 
 ### Validation rules & constraints
 
@@ -118,15 +134,19 @@ List existing signals, optionally filtered by status.
 
 #### Query parameters
 
-- `status` (string, optional): filter by signal status. If omitted, all signals are returned.
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `status` | string | No | Filter by signal status. If omitted, all signals are returned |
 
 #### Status values
 
-- `new`: not yet acted upon
-- `entered`: user entered a position based on this signal
-- `dismissed`: user dismissed the signal
-- `expired`: signal expired (> 7 days old without action)
-- `already_held`: a matching open position already existed when the signal was generated
+| Value | Description |
+|-------|-------------|
+| `new` | Not yet acted upon |
+| `entered` | User entered a position based on this signal |
+| `dismissed` | User dismissed the signal |
+| `expired` | Signal expired (> 7 days old without action) |
+| `already_held` | A matching open position already existed when the signal was generated |
 
 ### Response (200)
 
