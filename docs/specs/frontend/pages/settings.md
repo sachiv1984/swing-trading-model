@@ -68,7 +68,7 @@ These values define the core risk model and stop logic.
   - Type: number
   - Default: `10`
   - Helper text: "Days before stop can trail"
-  - Used as the *grace period* before trailing stops become active.
+  - Used as the *grace period* before trailing stops become active. With the default of `10`, grace covers days 0–9 inclusive; day 10 is the first day stop logic is active. In general, grace covers days `0` through `min_hold_days − 1`.
 
 - **ATR Period**
   - Type: number
@@ -146,6 +146,8 @@ Configures when analytics become meaningful enough to display.
   - Helper text: "Minimum number of closed trades required to display analytics"
 
 Analytics views show only once this threshold is met, avoiding misleading statistics on very small samples.
+
+> **Analytics page default period note:** The Analytics page explicitly passes `period=last_month` on initial load as a UX decision — it does not rely on the API's default (`all_time`). This is intentional: `last_month` presents a meaningful recent window rather than the full historical dataset on first view. `all_time` remains available as a user-selectable option on the Analytics page. This note is here because the `min_trades_for_analytics` threshold applies across all period selections; a user who has enough trades all-time may not meet the threshold for `last_month`.
 
 ---
 
