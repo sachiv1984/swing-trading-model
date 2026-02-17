@@ -42,13 +42,13 @@ It points to the **single canonical source**.
 **What it owns**
 - Trading intent
 - Risk philosophy
-- Lifecycle rules
-- Parameter governance
+- Position lifecycle rules
+- Strategy parameter governance
 
 **Canonical Documents**
 - `strategy/production_strategy.md` — *Canonical production behavior*
 - `strategy/strategy_rules.md` — *Detailed rule mechanics*
-- `strategy/strategy_intent_owner.md` — *Ownership & governance*
+- `strategy/Strategy_Rules_&_System_Intent_Owner.md` — *Ownership & governance*
 
 **Owner**
 - Strategy Rules & System Intent Owner
@@ -60,13 +60,14 @@ It points to the **single canonical source**.
 **What it owns**
 - Meaning of fields (price, stop, P&L, value)
 - Currency semantics
-- State representations
+- Lifecycle and state representations
 
 **Canonical Documents**
-- `data-model/data_model.md`
+- `data_model.md`
+- `Data_Model_&_Domain_Schema_Owner.md`
 
 **Owner**
-- Data Model Owner
+- Data Model & Domain Schema Owner
 
 ---
 
@@ -74,14 +75,15 @@ It points to the **single canonical source**.
 
 **What it owns**
 - Definitions of performance metrics
-- Calculation methods
-- Time alignment rules
+- Canonical formulas and tolerances
+- Data sufficiency and failure behavior
 
 **Canonical Documents**
-- `metrics/metrics_definitions.md`
+- `metrics_definitions.md`
+- `Metrics_Definitions_&_Analytics_Canonical_Owner.md`
 
 **Owner**
-- Metrics Owner
+- Metrics Definitions & Analytics Canonical Owner
 
 ---
 
@@ -89,29 +91,36 @@ It points to the **single canonical source**.
 
 **What it owns**
 - Request/response schemas
-- Field guarantees
+- Field guarantees and defaults
+- Idempotency and error semantics
 - Backward compatibility rules
 
+**Canonical Location**
+- `specs/api_contracts/`
+
 **Canonical Documents**
-- `api/api_contracts.md`
+- `api_contracts/README.md` — *Navigation, scope, versioning*
+- `api_contracts/conventions.md` — *Global API rules*
+- `api_contracts/*_endpoints.md` — *Domain-specific contracts*
+- `API_Contracts_&_Documentation_Owner.md` — *Ownership & governance*
 
 **Owner**
-- API Spec Owner
+- API Contracts & Documentation Owner
 
 ---
 
-### 3.5 Frontend & UX Semantics
+### 3.5 Frontend & UX Semantics (Planned)
 
-**What it owns**
+**What it will own**
 - User-visible meanings
-- Labels, states, and affordances
-- What the user is allowed to do and see
+- Display states and labels
+- Allowed user actions and affordances
 
-**Canonical Documents**
-- `frontend/frontend_specs.md`
+**Status**
+- Planned / to be formalised
 
 **Owner**
-- Frontend Spec Owner
+- Frontend Spec Owner (TBD)
 
 ---
 
@@ -120,7 +129,7 @@ It points to the **single canonical source**.
 In case of conflict, precedence is resolved in the following order:
 
 1. **Specs Index**
-2. Domain Canonical Spec (e.g. Production Strategy)
+2. Domain Canonical Spec
 3. Supporting Specs
 4. Code
 5. UI behavior
@@ -132,9 +141,9 @@ No downstream system may override upstream intent.
 
 ## 5. Change Governance
 
-- Changes to **domain specs** require owner approval
+- Changes to **domain canonical specs** require domain owner approval
 - Changes affecting multiple domains require Head of Specs Team review
-- Silent divergence is treated as a system bug
+- Silent divergence between specs and behavior is treated as a **system bug**
 
 ---
 
@@ -142,3 +151,4 @@ No downstream system may override upstream intent.
 
 > Specs explain decisions.  
 > This index ensures those decisions form a coherent system.
+``
