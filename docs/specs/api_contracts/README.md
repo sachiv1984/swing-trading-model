@@ -1,10 +1,10 @@
 # README.md
 
-## Momentum Trading Assistant — API Contracts (v1.6.0)
+## Momentum Trading Assistant — API Contracts (v1.7.0)
 
 **Status:** Complete & current  
 **Last updated:** 2026-02-17  
-**Contract version:** 1.6.0  
+**Contract version:** 1.7.0  
 
 This directory contains the **backend API contracts** for the *Momentum Trading Assistant* web application.
 
@@ -119,11 +119,17 @@ Each endpoint file follows a consistent structure:
 
 ## Versioning
 
-- **Current contract version:** 1.6.0
-- **Change type:** Non-breaking additions and accuracy corrections
-- **Previous version:** 1.5.0
+- **Current contract version:** 1.7.0
+- **Change type:** Accuracy corrections, convention additions, and schema completions
+- **Previous version:** 1.6.0
 
 ### Changelog (Summary)
+
+- **1.7.0 (2026-02-17)**
+  - `analytics_endpoints.md`: removed stale editorial note from overview (README correction was completed in v1.5.0); added `entry_price`, `exit_price`, `stop_price` to `trades_for_charts` schema with note explaining client-side R-multiple use
+  - `position_endpoints.md`: added `pnl_percent` field note to `GET /positions` response — clarifies it is the canonical name in position responses; `pnl_pct` is the equivalent in trade history records
+  - `portfolio_endpoints.md`: added `pnl_percent` field note to position summary object in `GET /portfolio` response
+  - `conventions.md`: added Section 12 — DELETE response convention (shape, non-idempotency rule)
 
 - **1.6.0 (2026-02-17)**
   - `settings_endpoints.md` created — `GET /settings` and `PUT /settings` were previously undocumented in the split contract set
