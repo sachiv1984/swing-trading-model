@@ -46,10 +46,7 @@ It points to the **single canonical source**.
 - Strategy parameter governance
 
 **Canonical Documents**
-- `strategy_rules.md` — *Canonical strategy specification*
-
-**Implementation (Non-Canonical)**
-- Strategy code files (implementation only; must conform to `strategy_rules.md`)
+- `strategy_rules.md`
 
 **Owner**
 - Strategy Rules & System Intent Owner
@@ -95,15 +92,24 @@ It points to the **single canonical source**.
 - Backward compatibility rules
 
 **Canonical Location**
-- `specs/api_contracts/`
+- `docs/specs/api_contracts/`
 
 **Canonical Documents**
-- `api_contracts/README.md` — Navigation, scope, versioning
-- `api_contracts/conventions.md` — Global API rules
-- `api_contracts/*_endpoints.md` — Domain-specific contracts
+- `README.md`
+- `conventions.md`
+- `*_endpoints.md`
+
+**Supporting Reference**
+- `docs/reference/openapi.yaml` — *Supporting reference only; must not diverge from canonical contracts*
 
 **Owner**
 - API Contracts & Documentation Owner
+
+**Enforcement**
+- Any pull request that changes canonical API contracts or backend API behavior **must** be reviewed inline against:
+  - Canonical Markdown contracts **and**
+  - `docs/reference/openapi.yaml`
+- Approval is blocked if OpenAPI alignment is skipped for contract‑affecting changes.
 
 ---
 
@@ -113,34 +119,16 @@ It points to the **single canonical source**.
 - User-visible meanings and mental models
 - Page-level user goals, states, and flows
 - Reusable UI component behavior
-- Cross-cutting UX patterns (errors, API dependency behavior)
+- Cross-cutting UX patterns
 - Visual and interaction consistency
 
 **Canonical Location**
 - `specs/frontend/`
 
-**Canonical Documents (Root)**
+**Canonical Documents**
 - `frontend/README.md`
 - `frontend/design_system.md`
-
-**Page Specifications**
-- `frontend/pages/dashboard.md`
-- `frontend/pages/positions.md`
-- `frontend/pages/trade_history.md`
-- `frontend/pages/analytics.md`
-- `frontend/pages/settings.md`
-- `frontend/pages/system_status.md`
-
-**Component Specifications**
-- `frontend/components/position_form.md`
-- `frontend/components/exit_modal.md`
-- `frontend/components/cash_management_modal.md`
-- `frontend/components/position_detail_modal.md`
-- `frontend/components/journal_components.md`
-
-**UX Patterns**
-- `frontend/patterns/error_handling.md`
-- `frontend/patterns/api_dependencies.md`
+- Page, component, and pattern specifications
 
 **Owner**
 - Frontend Specifications & UX Documentation Owner
@@ -154,20 +142,22 @@ In case of conflict, precedence is resolved in the following order:
 1. **Specs Index**
 2. Domain Canonical Spec
 3. Supporting Specs
-4. Code
-5. UI behavior
-6. Tribal knowledge
+4. Reference Artifacts (e.g. OpenAPI)
+5. Code
+6. UI behavior
+7. Tribal knowledge
 
 No downstream system may override upstream intent.
 
 ---
 
-## 5. Change Governance
+## 5. Change Governance & Enforcement
 
 - Changes to **domain canonical specs** require domain owner approval
 - Changes affecting multiple domains require Head of Specs Team review
+- **Supporting reference artifacts must be reviewed inline with their canonical specs**
 - Silent divergence between specs and behavior is treated as a **system bug**
-- **All canonical documents must follow the lifecycle states, header format, and versioning rules defined in:**
+- All documentation must comply with the lifecycle rules defined in:
   - `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
 
 ---
