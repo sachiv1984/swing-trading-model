@@ -1,368 +1,531 @@
 # analytics_endpoints.md
 
-> **Implementation status:** Planned — not yet implemented.  
-> Backend endpoints, service layer, and database queries do not exist yet.  
-> This contract is the authoritative specification for implementation.  
-> Data sources are confirmed to exist in `trade_history` and `portfolio_history` tables.
-
 ## Overview
 
-This document defines **Analytics** domain endpoints:
+This document defines the **Analytics** domain endpoints.
 
-- Overall performance summary statistics
-- Monthly performance breakdown
-- Best and worst trade analysis
-- Drawdown history
+The implementation uses a **unified endpoint** (`GET /analytics/metrics`) rather than the five separate endpoints originally planned. All analytics data is returned in a single response, with an optional `period` filter controlling which trades and history are included.
 
-All analytics are computed **server-side** from closed trade records and portfolio snapshots. The frontend must never calculate or derive these metrics.
+A validation endpoint (`POST /validate/calculations`) is also provided for smoke-testing metric correctness against a known dataset.
+
+All analytics are computed **server-side** from closed trade records (`trade_history`) and portfolio snapshots (`portfolio_history`). The frontend must never calculate or derive these metrics.
 
 Global response envelopes, error shape, defaults, and conventions are defined in **conventions.md** and apply unless explicitly stated otherwise.
+
+> **Note:** `GET /portfolio/history` is documented in `portfolio_endpoints.md`. The README should list it there, not under analytics.
 
 ---
 
 ## Endpoints
 
-- [GET /analytics/summary](#get-analyticssummary)
-- [GET /analytics/monthly](#get-analyticsmonthly)
-- [GET /analytics/trades/best](#get-analyticstradesbest)
-- [GET /analytics/trades/worst](#get-analyticstradesworst)
-- [GET /analytics/drawdown](#get-analyticsdrawdown)
+- [GET /analytics/metrics](#get-analyticsmetrics)
+- [POST /validate/calculations](#post-validatecalculations)
 
 ---
 
-## GET /analytics/summary
+## GET /analytics/metrics
 
 **Purpose**
 
-Return overall portfolio performance statistics computed from all closed trades and portfolio snapshots.
+Return comprehensive portfolio analytics for a given time period. Includes executive-level statistics, advanced metrics, per-market breakdowns, monthly trends, exit reason analysis, holding period buckets, day-of-week performance, top/worst performers, and consistency metrics.
 
-- Requires a minimum number of closed trades to produce meaningful output (configurable via settings: `min_trades_for_analytics`).
-- All monetary values are in GBP.
+Requires a minimum number of closed trades to produce meaningful output (configurable via `settings.min_trades_for_analytics`, default `10`).
+
+All monetary values are in GBP.
 
 **Method & Path**
 
-- `GET /analytics/summary`
+- `GET /analytics/metrics`
 
 **Idempotency**
 
 - Safe to refresh (read-only). Deterministic recomputation from stored records.
 
+---
+
 ### Request
 
-No parameters.
+#### Query parameters
+
+| Parameter | Type | Required | Default | Allowed values |
+|-----------|------|----------|---------|----------------|
+| `period` | string | No | `all_time` | `all_time`, `last_7_days`, `last_month`, `last_quarter`, `last_year`, `ytd` |
+
+Period filters trades by `exit_date` and portfolio snapshots by `snapshot_date`. `all_time` includes all records.
+
+---
 
 ### Response (200)
 
 Response uses the standard success envelope from **conventions.md**.
 
-#### `data` schema
+#### `data` schema — top level
 
 ```json
 {
-  "total_trades": 42,
-  "win_rate": 58.5,
-  "total_pnl": 5200.00,
-  "total_return_pct": 36.4,
-  "annualized_return_pct": 24.1,
-  "profit_factor": 2.31,
-  "expectancy_per_trade": 123.81,
-  "average_winner": 480.00,
-  "average_loser": -207.50,
-  "largest_winner": 3200.00,
-  "largest_loser": -620.00,
-  "average_holding_days": 22,
-  "sharpe_ratio": 1.29,
-  "max_drawdown_pct": 25.38,
-  "max_drawdown_gbp": 3807.00,
-  "sufficient_data": true,
-  "min_trades_required": 10
+  "summary": { ... },
+  "executive_metrics": { ... },
+  "advanced_metrics": { ... },
+  "market_comparison": { ... },
+  "exit_reasons": [ ... ],
+  "monthly_data": [ ... ],
+  "day_of_week": [ ... ],
+  "holding_periods": [ ... ],
+  "top_performers": { ... },
+  "consistency_metrics": { ... },
+  "trades_for_charts": [ ... ]
 }
 ```
 
-#### Field notes
-
-- `win_rate` is expressed as a percentage (0–100).
-- `total_return_pct` is calculated as `total_pnl / net_cash_flow × 100`, where `net_cash_flow = total_deposits − total_withdrawals`. This matches the portfolio-level P&L basis used throughout the system.
-- `profit_factor` is gross profit divided by gross loss. Values above `1.0` indicate a net-profitable strategy.
-- `expectancy_per_trade` is average P&L per trade in GBP.
-- `sharpe_ratio` uses daily returns derived from portfolio snapshots. Returns `null` if insufficient snapshot history exists.
-- `max_drawdown_pct` and `max_drawdown_gbp` reflect the largest peak-to-trough decline in portfolio value.
-- `sufficient_data` is `false` when closed trade count is below `min_trades_required`. In this case, all statistical fields return `null`.
-- `annualized_return_pct` returns `null` if the portfolio has been active for fewer than 30 days.
-
-### Validation rules & constraints
-
-- All calculations are server-side.
-- Returns a valid response with `sufficient_data: false` (not an error) when trade count is below the minimum threshold.
-
-### Errors
-
-Errors use the standard error envelope from **conventions.md**.
-
 ---
 
-## GET /analytics/monthly
-
-**Purpose**
-
-Return a month-by-month performance breakdown derived from closed trades.
-
-- Each row represents a calendar month.
-- Only months with at least one closed trade are included.
-
-**Method & Path**
-
-- `GET /analytics/monthly`
-
-**Idempotency**
-
-- Safe to refresh (read-only).
-
-### Request
-
-No parameters.
-
-### Response (200)
-
-Response uses the standard success envelope from **conventions.md**.
-
-#### `data` schema (array)
-
-```json
-[
-  {
-    "month": "2026-02",
-    "trades": 6,
-    "wins": 4,
-    "losses": 2,
-    "win_rate": 66.7,
-    "total_pnl": 1240.00,
-    "average_pnl": 206.67,
-    "best_trade_pnl": 820.00,
-    "worst_trade_pnl": -185.00
-  },
-  {
-    "month": "2026-01",
-    "trades": 8,
-    "wins": 4,
-    "losses": 4,
-    "win_rate": 50.0,
-    "total_pnl": 560.00,
-    "average_pnl": 70.00,
-    "best_trade_pnl": 640.00,
-    "worst_trade_pnl": -310.00
-  }
-]
-```
-
-#### Field notes
-
-- `month` is formatted as `YYYY-MM`.
-- Results are sorted by `month` descending (newest first).
-- Returns `[]` if there are no closed trades.
-- All P&L values are in GBP.
-
-### Errors
-
-Errors use the standard error envelope from **conventions.md**.
-
----
-
-## GET /analytics/trades/best
-
-**Purpose**
-
-Return the top-performing closed trades ranked by absolute P&L (GBP), descending.
-
-**Method & Path**
-
-- `GET /analytics/trades/best`
-
-**Idempotency**
-
-- Safe to refresh (read-only).
-
-### Request
-
-#### Query parameters
-
-- `limit` (integer, optional): number of trades to return. Default: `10`. Maximum: `50`.
-
-### Response (200)
-
-Response uses the standard success envelope from **conventions.md**.
-
-#### `data` schema (array)
-
-```json
-[
-  {
-    "id": "750e8400-e29b-41d4-a716-446655440000",
-    "ticker": "NVDA",
-    "market": "US",
-    "entry_date": "2026-01-15",
-    "exit_date": "2026-02-15",
-    "shares": 10.5,
-    "entry_price": 622.00,
-    "exit_price": 920.00,
-    "pnl": 3200.00,
-    "pnl_pct": 35.8,
-    "holding_days": 31,
-    "exit_reason": "Target Reached",
-    "tags": ["momentum", "winner"]
-  }
-]
-```
-
-#### Field notes
-
-- Sorted by `pnl` descending (largest winner first).
-- Returns `[]` if there are no closed trades.
-- Notes (`entry_note`, `exit_note`) are intentionally excluded from this summary view.
-
-### Validation rules & constraints
-
-- `limit` must be a positive integer when provided.
-- `limit` is capped at `50` regardless of the value submitted.
-
-### Errors
-
-Errors use the standard error envelope from **conventions.md**.
-
----
-
-## GET /analytics/trades/worst
-
-**Purpose**
-
-Return the worst-performing closed trades ranked by absolute P&L (GBP), ascending.
-
-**Method & Path**
-
-- `GET /analytics/trades/worst`
-
-**Idempotency**
-
-- Safe to refresh (read-only).
-
-### Request
-
-#### Query parameters
-
-- `limit` (integer, optional): number of trades to return. Default: `10`. Maximum: `50`.
-
-### Response (200)
-
-Response uses the standard success envelope from **conventions.md**.
-
-#### `data` schema (array)
-
-```json
-[
-  {
-    "id": "850e8400-e29b-41d4-a716-446655440001",
-    "ticker": "AAPL",
-    "market": "US",
-    "entry_date": "2026-01-20",
-    "exit_date": "2026-02-01",
-    "shares": 20.0,
-    "entry_price": 180.00,
-    "exit_price": 168.00,
-    "pnl": -620.00,
-    "pnl_pct": -8.8,
-    "holding_days": 12,
-    "exit_reason": "Stop Loss Hit",
-    "tags": ["momentum", "loser"]
-  }
-]
-```
-
-#### Field notes
-
-- Sorted by `pnl` ascending (largest loss first).
-- Returns `[]` if there are no closed trades.
-- Notes (`entry_note`, `exit_note`) are intentionally excluded from this summary view.
-
-### Validation rules & constraints
-
-- `limit` must be a positive integer when provided.
-- `limit` is capped at `50` regardless of the value submitted.
-
-### Errors
-
-Errors use the standard error envelope from **conventions.md**.
-
----
-
-## GET /analytics/drawdown
-
-**Purpose**
-
-Return the portfolio's drawdown history derived from daily portfolio snapshots.
-
-- Each record represents a snapshot date with its corresponding drawdown from the preceding peak.
-- Requires portfolio snapshot history to exist (see `POST /portfolio/snapshot` in `portfolio_endpoints.md`).
-
-**Method & Path**
-
-- `GET /analytics/drawdown`
-
-**Idempotency**
-
-- Safe to refresh (read-only). Deterministic recomputation from snapshots.
-
-### Request
-
-#### Query parameters
-
-- `days` (integer, optional): number of days of history to include in `history`. Default: `90`.
-
-### Response (200)
-
-Response uses the standard success envelope from **conventions.md**.
-
-#### `data` schema
+#### `summary` object
 
 ```json
 {
-  "max_drawdown_pct": 25.38,
-  "max_drawdown_gbp": 3807.00,
-  "max_drawdown_date": "2026-01-10",
-  "current_drawdown_pct": 4.20,
-  "current_drawdown_gbp": -637.00,
-  "history": [
+  "total_trades": 5,
+  "win_rate": 40.0,
+  "total_pnl": 2.06,
+  "has_enough_data": true,
+  "min_required": 10
+}
+```
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `total_trades` | integer | Closed trades in the selected period |
+| `win_rate` | float | Percentage of trades with positive P&L (0–100) |
+| `total_pnl` | float | Sum of all realised P&L in GBP |
+| `has_enough_data` | boolean | `false` when `total_trades < min_required`. When false, `executive_metrics` and `advanced_metrics` return `{}` |
+| `min_required` | integer | Minimum trades threshold from `settings.min_trades_for_analytics` |
+
+---
+
+#### `executive_metrics` object
+
+Present when `has_enough_data` is `true`. Returns `{}` otherwise.
+
+```json
+{
+  "sharpe_ratio": 1.29,
+  "sharpe_method": "portfolio",
+  "max_drawdown": {
+    "percent": -7.70,
+    "amount": 419.07,
+    "date": "2026-02-10"
+  },
+  "recovery_factor": 0.36,
+  "expectancy": 0.39,
+  "profit_factor": 1.01,
+  "risk_reward_ratio": 1.51
+}
+```
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `sharpe_ratio` | float | See Sharpe calculation method below. Returns `0.0` if insufficient data |
+| `sharpe_method` | string | `"portfolio"` (30+ snapshots), `"trade"` (10+ trades), or `"insufficient_data"` |
+| `max_drawdown.percent` | float | Largest peak-to-trough decline as a percentage. Always zero or negative (e.g. `-7.70`) |
+| `max_drawdown.amount` | float | Absolute GBP value of the drawdown (positive) |
+| `max_drawdown.date` | string \| null | Date of the trough (`YYYY-MM-DD`), or `null` if no snapshots |
+| `recovery_factor` | float | Period net profit divided by max drawdown. `0.0` if drawdown is zero or period is unprofitable |
+| `expectancy` | float | `(win_rate × avg_win) + (loss_rate × avg_loss)` in GBP per trade |
+| `profit_factor` | float | Gross profit divided by gross loss. Values above `1.0` indicate a net-profitable strategy. `0.0` if no losing trades |
+| `risk_reward_ratio` | float | Average winner divided by absolute average loser. `0.0` if no losing trades |
+
+**Sharpe ratio calculation:**
+
+- **Portfolio method** (preferred, requires 30+ portfolio snapshots): computes daily returns from consecutive snapshot values, then `(avg_daily_return / std_dev) × √252`.
+- **Trade method** (fallback, requires 10+ trades): annualises each trade's percentage return by holding period, then applies the same formula.
+- If neither threshold is met, returns `0.0` with `sharpe_method: "insufficient_data"`.
+
+**`total_return_pct` note:** This field is not currently returned by the implementation. When added, the canonical definition is `total_pnl / net_cash_flow × 100`, where `net_cash_flow = total_deposits − total_withdrawals`. This matches the portfolio-level P&L basis used throughout the system.
+
+---
+
+#### `advanced_metrics` object
+
+Present when `has_enough_data` is `true`. Returns `{}` otherwise.
+
+```json
+{
+  "win_streak": 2,
+  "loss_streak": 3,
+  "avg_hold_winners": 15.5,
+  "avg_hold_losers": 10.7,
+  "trade_frequency": 1.8,
+  "capital_efficiency": 0.17,
+  "days_underwater": 0,
+  "peak_date": "2026-02-03",
+  "portfolio_peak_equity": 5444.29
+}
+```
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `win_streak` | integer | Maximum consecutive winning trades in the period |
+| `loss_streak` | integer | Maximum consecutive losing trades in the period |
+| `avg_hold_winners` | float | Average days held for profitable trades |
+| `avg_hold_losers` | float | Average days held for losing trades |
+| `trade_frequency` | float | Trades per week, calculated from span between first entry and last exit |
+| `capital_efficiency` | float | `total_pnl / avg_position_value × 100` |
+| `days_underwater` | integer | Maximum days since peak running equity, calculated from trade P&L sequence |
+| `peak_date` | string \| null | Exit date of the trade at which running equity was highest |
+| `portfolio_peak_equity` | float | Peak `total_value` from portfolio snapshots in the period. `0.0` if no snapshots |
+
+---
+
+#### `market_comparison` object
+
+Breakdown of metrics by market. Always present (values `0.0` / `null` if no trades for that market).
+
+```json
+{
+  "US": {
+    "total_trades": 4,
+    "win_rate": 50.0,
+    "total_pnl": 184.10,
+    "avg_win": 99.33,
+    "avg_loss": -7.28,
+    "best_performer": { "ticker": "SNDK", "pnl": 104.98 },
+    "worst_performer": { "ticker": "FRES.L", "pnl": -182.16 }
+  },
+  "UK": {
+    "total_trades": 1,
+    "win_rate": 0.0,
+    "total_pnl": -182.16,
+    "avg_win": 0.0,
+    "avg_loss": -182.16,
+    "best_performer": null,
+    "worst_performer": { "ticker": "FRES.L", "pnl": -182.16 }
+  }
+}
+```
+
+---
+
+#### `exit_reasons` array
+
+One entry per distinct exit reason found in the period.
+
+```json
+[
+  {
+    "reason": "Trailing Stop",
+    "count": 2,
+    "win_rate": 100.0,
+    "total_pnl": 198.66,
+    "avg_pnl": 99.33,
+    "percentage": 40.0
+  },
+  {
+    "reason": "Manual Exit",
+    "count": 3,
+    "win_rate": 0.0,
+    "total_pnl": -196.72,
+    "avg_pnl": -65.57,
+    "percentage": 60.0
+  }
+]
+```
+
+- `null` exit reasons are normalised to `"Manual Exit"`.
+- `percentage` is the share of total trades for this reason.
+
+---
+
+#### `monthly_data` array
+
+Month-by-month breakdown of closed trades. Limited to the last 12 months of available data (not affected by the `period` filter — always last 12 months from the filtered dataset).
+
+```json
+[
+  {
+    "month": "2026-01",
+    "pnl": -23.69,
+    "trades": 2,
+    "win_rate": 0.0,
+    "cumulative": -23.69
+  },
+  {
+    "month": "2026-02",
+    "pnl": 25.75,
+    "trades": 3,
+    "win_rate": 66.0,
+    "cumulative": 2.06
+  }
+]
+```
+
+- `month` is `YYYY-MM`, sorted ascending.
+- `cumulative` is running sum of `pnl` across months.
+- `win_rate` is rounded to the nearest integer (no decimal).
+- Only months with at least one closed trade are included.
+
+---
+
+#### `day_of_week` array
+
+Performance by exit day of week. Always five entries (Mon–Fri). Zero values for days with no trades.
+
+```json
+[
+  { "day": "Mon", "avg_pnl": 0.0, "trades": 0 },
+  { "day": "Tue", "avg_pnl": -65.57, "trades": 3 },
+  { "day": "Wed", "avg_pnl": 0.0, "trades": 0 },
+  { "day": "Thu", "avg_pnl": 0.0, "trades": 0 },
+  { "day": "Fri", "avg_pnl": 49.33, "trades": 2 }
+]
+```
+
+---
+
+#### `holding_periods` array
+
+Performance bucketed by holding duration. Always five entries.
+
+```json
+[
+  { "period": "1-5 days",  "avg_pnl": 0.0,   "trades": 0, "win_rate": 0 },
+  { "period": "6-10 days", "avg_pnl": -97.20, "trades": 2, "win_rate": 0 },
+  { "period": "11-20 days","avg_pnl": 31.78,  "trades": 3, "win_rate": 67 },
+  { "period": "21-30 days","avg_pnl": 0.0,    "trades": 0, "win_rate": 0 },
+  { "period": "31+ days",  "avg_pnl": 0.0,    "trades": 0, "win_rate": 0 }
+]
+```
+
+---
+
+#### `top_performers` object
+
+Top 5 winners and top 5 losers from the filtered period.
+
+```json
+{
+  "winners": [
     {
-      "snapshot_date": "2026-02-15",
-      "total_value": 15000.00,
-      "peak_value": 15637.00,
-      "drawdown_pct": 4.20,
-      "drawdown_gbp": -637.00
-    },
+      "ticker": "SNDK",
+      "entry_date": "2026-01-23",
+      "pnl": 104.98,
+      "pnl_percent": 18.76,
+      "days_held": 12,
+      "exit_reason": "Trailing Stop"
+    }
+  ],
+  "losers": [
     {
-      "snapshot_date": "2026-02-14",
-      "total_value": 14800.00,
-      "peak_value": 15637.00,
-      "drawdown_pct": 5.36,
-      "drawdown_gbp": -837.00
+      "ticker": "FRES.L",
+      "entry_date": "2026-01-23",
+      "pnl": -182.16,
+      "pnl_percent": -16.23,
+      "days_held": 10,
+      "exit_reason": "Manual Exit"
     }
   ]
 }
 ```
 
-#### Field notes
+- `winners` contains only trades with `pnl > 0`, sorted descending.
+- `losers` contains only trades with `pnl < 0`, sorted ascending (most negative first).
+- Up to 5 entries each. Empty arrays if no qualifying trades.
 
-- `max_drawdown_pct` and `max_drawdown_gbp` reflect the largest peak-to-trough decline over the **full** snapshot history, not limited to the `days` window.
-- `max_drawdown_date` is the date on which the maximum drawdown trough occurred.
-- `current_drawdown_pct` and `current_drawdown_gbp` reflect the drawdown as of the most recent snapshot.
-- `history` is limited to the `days` window and sorted by `snapshot_date` descending (newest first).
-- `drawdown_gbp` is always zero or negative. Zero indicates the portfolio is at or above its prior peak.
-- Returns `null` for all summary fields and `[]` for `history` if no snapshots exist.
+---
 
-### Validation rules & constraints
+#### `consistency_metrics` object
 
-- `days` must be a positive integer when provided.
-- Peak calculation uses all available snapshot history, not just the `days` window.
+```json
+{
+  "consecutive_profitable_months": 1,
+  "current_streak": 1,
+  "win_rate_std_dev": 33.0,
+  "pnl_std_dev": 24.72
+}
+```
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `consecutive_profitable_months` | integer | Longest run of months with positive `pnl` |
+| `current_streak` | integer | Current run of profitable months (resets to 0 on a loss month) |
+| `win_rate_std_dev` | float | Standard deviation of monthly win rates |
+| `pnl_std_dev` | float | Standard deviation of monthly P&L values |
+
+Returns zero values if `monthly_data` is empty.
+
+---
+
+#### `trades_for_charts` array
+
+Lightweight trade list for frontend chart rendering. Always present (empty if no trades).
+
+```json
+[
+  {
+    "id": "87ad66e0-c789-4490-9399-055b580b6312",
+    "ticker": "STX",
+    "market": "US",
+    "entry_date": "2026-01-23",
+    "exit_date": "2026-02-11",
+    "pnl": 93.68,
+    "pnl_percent": 12.23,
+    "exit_reason": "Trailing Stop",
+    "holding_days": 19,
+    "tags": null
+  }
+]
+```
+
+---
+
+### Insufficient data response
+
+When `total_trades < min_required`, the response is still HTTP 200 with `has_enough_data: false`. All nested metric objects return empty:
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "summary": {
+      "total_trades": 3,
+      "win_rate": 0.0,
+      "total_pnl": 0.0,
+      "has_enough_data": false,
+      "min_required": 10
+    },
+    "executive_metrics": {},
+    "advanced_metrics": {},
+    "market_comparison": {},
+    "exit_reasons": [],
+    "monthly_data": [],
+    "day_of_week": [],
+    "holding_periods": [],
+    "top_performers": { "winners": [], "losers": [] },
+    "consistency_metrics": {},
+    "trades_for_charts": []
+  }
+}
+```
+
+---
 
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+| Code | Condition |
+|------|-----------|
+| 400 | `period` value not in the allowed enum |
+| 500 | Database error or calculation failure |
+
+---
+
+## POST /validate/calculations
+
+**Purpose**
+
+Validate all analytics calculations against a fixed internal test dataset (5 known trades + 12 portfolio snapshots). Returns a pass/fail/warn result for each metric, with expected value, actual value, diff, and tolerance.
+
+No request body required.
+
+**Method & Path**
+
+- `POST /validate/calculations`
+
+**Idempotency**
+
+- Safe to repeat. Uses only internal test data, no database writes.
+
+---
+
+### Request
+
+No parameters. No request body.
+
+---
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "validations": [
+      {
+        "metric": "sharpe_ratio",
+        "expected": 0.0,
+        "actual": 0.0,
+        "diff": 0.0,
+        "status": "pass",
+        "tolerance": 0.01,
+        "formula": "(Avg Return / Std Dev) × √252",
+        "method": "insufficient_data"
+      },
+      {
+        "metric": "max_drawdown_percent",
+        "expected": -7.70,
+        "actual": -7.70,
+        "diff": 0.0,
+        "status": "pass",
+        "tolerance": 0.1,
+        "formula": "((Peak - Trough) / Peak) × 100"
+      },
+      {
+        "metric": "profit_factor",
+        "expected": 1.01,
+        "actual": 1.01,
+        "diff": 0.0,
+        "status": "pass",
+        "tolerance": 0.02,
+        "formula": "Gross Profit / Gross Loss"
+      }
+    ],
+    "summary": {
+      "total": 12,
+      "passed": 12,
+      "warned": 0,
+      "failed": 0
+    },
+    "timestamp": "2026-02-17T10:30:00Z"
+  }
+}
+```
+
+#### Metrics validated
+
+| Metric | Formula | Tolerance |
+|--------|---------|-----------|
+| `sharpe_ratio` | `(Avg Return / Std Dev) × √252` | ±0.01 |
+| `max_drawdown_percent` | `((Peak − Trough) / Peak) × 100` | ±0.1% |
+| `recovery_factor` | `Net Profit / Max Drawdown` | ±0.05 |
+| `expectancy` | `(Win Rate × Avg Win) + (Loss Rate × Avg Loss)` | ±£0.10 |
+| `profit_factor` | `Gross Profit / Gross Loss` | ±0.02 |
+| `risk_reward_ratio` | `Avg Win / Avg Loss` | ±0.02 |
+| `win_streak` | Max consecutive winning trades | Exact |
+| `loss_streak` | Max consecutive losing trades | Exact |
+| `avg_hold_winners` | Avg days held, winning trades | ±0.5 days |
+| `avg_hold_losers` | Avg days held, losing trades | ±0.5 days |
+| `trade_frequency` | Trades per week | ±0.2 |
+| `days_underwater` | Days since peak equity | Exact |
+
+#### `validation.status` values
+
+- `"pass"` — actual is within tolerance of expected
+- `"warn"` — actual is outside tolerance but within 2× tolerance (reserved for future use)
+- `"fail"` — actual is outside tolerance
+
+---
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 500 | Calculation failure in the analytics service |
+
+---
+
+## Known limitations & backlog
+
+- **`total_return_pct`** is not yet returned by `GET /analytics/metrics`. When implemented, the canonical formula is `total_pnl / net_cash_flow × 100`.
+- **ValidationService** (`services/validation_service.py`) is a stub and not invoked. The active validation logic lives in `routers/validation.py`. Backlog: consolidate or remove the stub class.
+- **Sharpe variance** currently uses population variance (`÷ n`). Sample variance (`÷ n−1`) is the convention for financial time series and should be adopted.
+- **Capital efficiency** uses `entry_price × shares` for cost basis, which mixes USD and GBP for portfolios with both markets. Should use `total_cost` (always GBP) from `trade_history`.
+- **No portfolio_id filter** in the analytics router database queries. Will produce incorrect results in multi-portfolio configurations.
