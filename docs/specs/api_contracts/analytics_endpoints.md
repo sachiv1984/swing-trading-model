@@ -1,5 +1,9 @@
 # analytics_endpoints.md
 
+> **Implementation status:** Complete — v1.5  
+> Backend implementation exists in `routers/analytics.py` and `services/analytics_service.py`.  
+> This document reflects the actual implementation. See `conventions.md` for global response envelopes.
+
 ## Overview
 
 This document defines the **Analytics** domain endpoints.
@@ -11,8 +15,6 @@ A validation endpoint (`POST /validate/calculations`) is also provided for smoke
 All analytics are computed **server-side** from closed trade records (`trade_history`) and portfolio snapshots (`portfolio_history`). The frontend must never calculate or derive these metrics.
 
 Global response envelopes, error shape, defaults, and conventions are defined in **conventions.md** and apply unless explicitly stated otherwise.
-
-> **Note:** `GET /portfolio/history` is documented in `portfolio_endpoints.md`. The README should list it there, not under analytics.
 
 ---
 
@@ -365,6 +367,9 @@ Lightweight trade list for frontend chart rendering. Always present (empty if no
     "market": "US",
     "entry_date": "2026-01-23",
     "exit_date": "2026-02-11",
+    "entry_price": 55.20,
+    "exit_price": 70.40,
+    "stop_price": 48.50,
     "pnl": 93.68,
     "pnl_percent": 12.23,
     "exit_reason": "Trailing Stop",
@@ -373,6 +378,8 @@ Lightweight trade list for frontend chart rendering. Always present (empty if no
   }
 ]
 ```
+
+> **Note on `entry_price`, `exit_price`, `stop_price`:** These fields are included to support client-side R-multiple visualisation: `R = (exit_price − entry_price) / |entry_price − stop_price|`. This is the only analytics calculation performed client-side, and only because the initial stop price is not stored in `trade_history`. R-multiple is a visualisation aid only; it is not a server-computed metric.
 
 ---
 
