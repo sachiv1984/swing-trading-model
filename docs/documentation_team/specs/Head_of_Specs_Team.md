@@ -84,12 +84,13 @@ This role does not own individual specs, but does own the system in which those 
 
 ---
 
-## 5. Change Governance & Quality Bar
+## 5. Change Governance, Quality Bar & Reference Alignment
 
 ### Required skills
 - Strong judgment on change impact
 - Ability to balance rigor with delivery
 - Comfort enforcing quality without micromanaging
+- Discipline in enforcing alignment between canonical specs and reference artifacts
 
 ### Expectations
 - Significant product changes trigger:
@@ -98,6 +99,18 @@ This role does not own individual specs, but does own the system in which those 
 - Specs do not drift silently from reality
 - The quality bar is visible, stable, and enforced consistently
 
+### Mandatory Enforcement: API Contracts & OpenAPI Alignment
+- When canonical API contracts or backend behavior affecting the API change:
+  - The **API Contracts & Documentation Owner** must review both:
+    - The canonical Markdown API contracts **and**
+    - The supporting OpenAPI reference (`docs/reference/openapi.yaml`) **inline, in the same pull request**
+- The Head of Specs Team is responsible for:
+  - Ensuring this requirement is enforced consistently
+  - Blocking merges where OpenAPI review is skipped for contract-affecting changes
+  - Resolving ambiguity when a change is disputed as “contract-affecting” vs “internal only”
+- If a change is explicitly marked **“no contract change”**, OpenAPI review is not required.
+
+This enforcement exists to prevent silent drift between canonical specifications and supporting reference artifacts.
 
 ### Lifecycle & Versioning Governance (mandatory)
 
