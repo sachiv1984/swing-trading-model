@@ -1,222 +1,211 @@
 # position_detail_modal.md
 
 ## Purpose & Usage Context
-The Position Detail Modal provides a **single, focused place** for users to understand an individual position’s current state and to review/edit journaling information (notes and tags). It supports decision-making by making the **stop logic, risk context, and P&L** legible without requiring users to navigate away from the Positions page. 
+The Position Detail Modal provides a focused view of a single position’s key stats and entry context, plus lightweight journaling tools (entry note + tags). It helps users quickly review the position and capture/adjust their thinking without navigating away from the current workflow.
 
-This component is accessed from the **Positions page** when the user selects **“View Journal”** (or equivalent detail action) on a position row/card. 
-
-Users rely on the Position Detail Modal to:
-- Confirm the position’s key entry/current metrics at a glance
-- Understand *why* the position is in its current status (including grace period)
-- Read and update entry/exit notes without leaving context
-- Add/remove tags to support later filtering and review 
+Accessed when a user opens the position details from the Positions experience.
 
 ---
 
-## Inputs (Conceptual Props)
-> These are conceptual inputs describing what the modal needs to render and behave correctly. They are not implementation requirements.
-
-### Position Identifier (required)
-- A stable identifier for fetching/updating the position and its journals (e.g., `id`, `ticker`, or both) 
-
-### Position Summary Data (required)
-Used for the “Position Details” and “Current Status” sections:
-- Ticker + market (US/UK indicator)
-- Entry date
-- Entry price (native currency)
-- Shares (fractional supported)
-- Total cost (GBP)
-- Fees paid
-- Current price (native currency)
-- Days held
-- Grace period indicator (if applicable)
-- Stop levels and risk status (as provided by backend logic)
-- Unrealized P&L (GBP)
-- P&L % 
-
-### Journal Data (optional but expected)
-- `entry_note` (string | null)
-- `exit_note` (string | null)
-- `tags` (string[] | null) 
-
-### Tag Suggestions (optional)
-- Autocomplete source list for tags (fetched separately) 
+## What the User Can Do
+Within this modal, the user can:
+- Review high-level stats (Days Held, Shares, P&L)
+- Review entry details (Entry Date, Entry Price, ATR Value, FX Rate)
+- Read or edit the **Entry Note**
+- Add/remove **Tags** (up to 5)
+- Save changes or cancel/close
 
 ---
 
-## Information Layout (User-Facing Sections)
+## Inputs (Conceptual)
+### Position (required)
+The modal requires a `position` object with enough data to render:
 
-### 1) Position Details
-Displays core entry context:
-- Entry date
-- Entry price (native currency)
-- Shares (fractional)
-- Total cost (GBP)
-- Fees paid 
+**Header**
+- `ticker`
+- `market` (used for display and currency symbol)
 
-### 2) Current Status
-Displays current state context:
-- Current price (native currency)
-- Days held
-- Grace period indicator (when applicable)
-- Stop levels
-- Risk status 
+**For summary stats**
+- `entry_date`
+- `shares`
+- `entry_price`
+- `current_price_native`
 
-### 3) P&L Breakdown
-Shows performance in GBP:
-- Unrealized P&L (GBP)
-- P&L % 
+**For entry details**
+- `atr_value` (optional)
+- `fx_rate` (optional)
 
-### 4) Journal Section
-Supports review and editing of:
-- Entry Note card
-- Exit Note card (only if position is closed; if open, it may be absent or shown as empty/disabled depending on product rules)
-- Tags section (view + edit) 
+**For journal**
+- `entry_note` (optional)
+- `tags` (optional)
 
-### 5) Actions
-- Edit Note (entry/exit depending on what is shown)
-- Edit Tags
-- Save (when edits are active)
-- Close 
+### Modal state + callbacks (required)
+- `open` (boolean)
+- `onClose()` — closes the modal
+- `onSave(updatedPosition)` — persists journal changes (note + tags)
 
 ---
 
-## Journal Editing Behavior
+## Information Architecture (Visible Sections)
 
-### Entry Note Card
-**Read mode**
-- Shows the entry note text when present
-- If empty: show “No entry note” 
+### 1) Header
+- Displays the position ticker prominently.
+- Displays the market as a small badge (e.g., “UK” or “US”).
 
-**Edit mode**
-- “Edit” triggers inline editor inside the card (not a separate modal)
-- Show character count while editing
-- Maximum length: **500 characters**
-- Save commits changes via the note update API (see API section) 
+### 2) Summary Stats (3-column)
+**Days Held**
+- Calculated as the number of days between today and the position entry date.
 
-### Exit Note Card (conditional)
-- Only shown when an exit note exists or when the position is in a closed state that supports exit journaling
-- If present but empty: show “No exit note”
-- “Edit” triggers inline editor
-- Character count visible during editing
-- Maximum length: **500 characters** 
+**Shares**
+- Displays the position share quantity (supports fractional).
 
-### Tags Section
-**Read mode**
-- Tags displayed as colored pills
-- If empty: show a lightweight empty state (e.g., “No tags”) 
+**P&L**
+- Calculated using native prices:
+  - `(current_price_native - entry_price) * shares`
+- Display:
+  - Uses the currency symbol based on market:
+    - UK → `£`
+    - non-UK → `$`
+  - Always shows a 2-decimal value.
+  - Shows `+` prefix for positive P&L.
+  - Styling indicates profit vs loss (green-ish vs red-ish).
 
-**Edit mode**
-- “Edit Tags” reveals tag input with autocomplete suggestions
-- User can add tags (Enter to add)
-- User can remove tags (X on pill)
-- Show max-tags indicator: **10 tags**
-- Tags are normalized to lowercase (behavioral expectation) 
+> Note: The P&L shown here is a simple native-price calculation for quick reference (not a full “GBP-realized/unrealized” accounting breakdown).
 
----
+### 3) Entry Details
+Displays:
+- Entry Date (formatted as “MMM d, yyyy”)
+- Entry Price (in native currency with symbol)
+- ATR Value:
+  - If absent, show “—”
+- FX Rate:
+  - If absent, show “1.0000”
 
-## Validation & Error Behavior
-
-### Validation Rules
-- Notes:
-  - Optional
-  - Max **500 characters** (entry and exit) 
-- Tags:
-  - Max **10 tags**
-  - Tag format: lowercase letters, numbers, hyphens only (as documented in overall spec)
-  - Max 20 characters per tag (as documented in overall spec) 
-
-> Note: If the backend enforces stricter rules, the UI should mirror them via user-visible validation to prevent surprise failures.
-
-### Inline Error Messages
-Displayed near the edited control (note field or tag input):
-- “Note exceeds 500 character limit”
-- “Invalid tag format”
-- “Too many tags (max 10)” 
-
-### API Error Handling
-If saving fails:
-- Show error banner within the modal
-- Keep the modal open and preserve user input
-- Provide a retry action 
+### 4) Trade Journal
+Contains:
+- Entry note (read or edit)
+- Tags (read or edit)
 
 ---
 
-## Data Loading & States
+## Journal: Read Mode (Default)
 
-### Initial Loading
-- When opened, the modal fetches position details if not already available in context
-- While loading:
-  - Disable edit/save actions
-  - Display a clear loading state for the modal content (skeletons or placeholders) 
+### Entry Note
+- If the entry note exists, show it in a bordered card.
+- If empty, show: **“No entry note”** (italic/quiet).
 
-### Saving State
-- When saving notes/tags:
-  - Disable Save while the request is in-flight
-  - Keep editor open until success/failure returns
-  - On success:
-    - Update displayed text/pills immediately to reflect saved state
-    - Return to read mode for the edited section 
+### Tags
+- If tags exist, show them as pills.
+- If there are no tags, tags are simply not displayed in read mode (no explicit empty message).
+
+### Edit action
+- “Edit” button appears in the Trade Journal header.
+- Clicking Edit switches the journal area into Edit Mode.
 
 ---
 
-## Confirmation & Safety
-This modal is primarily informational/editing-focused. It should feel **safe**:
-- Closing the modal should not discard changes silently:
-  - If there are unsaved edits, show a lightweight warning or require explicit discard (pattern decision) 
+## Journal: Edit Mode
+
+Edit mode allows changes to **Entry Note** and **Tags**.
+
+### Entry Note Editing
+- Field: multiline text area.
+- Placeholder:
+  - “Why are you entering this trade? What’s your thesis?”
+- Character limit:
+  - Maximum **500** characters.
+  - Input is constrained so users cannot exceed 500.
+- Character counter:
+  - Displays `current/500`.
+  - The counter becomes visually warning-colored when > 450 characters.
+
+### Tags Editing
+#### Tag display and removal
+- Existing tags are shown as pills with a remove (X) control.
+- Clicking the X removes that tag immediately (in edit state).
+
+#### Adding tags
+- Tag limit:
+  - Users can add tags until there are **5 total** tags.
+  - When 5 tags are present, the “add tag” input is not shown.
+
+#### Tag normalization rules (on add)
+When a tag is added:
+- It is normalized to lowercase.
+- Spaces are converted to hyphens.
+- Duplicates are not added.
+
+#### Tag suggestions
+While typing in the “add tag” input:
+- A suggestion list may appear.
+- Suggestions exclude tags already selected.
+- Only the first 10 suggestions are shown at a time.
+- The suggestions include:
+  - Tags seen on other positions (to encourage reuse)
+  - A small set of default tags (e.g., momentum-style tags)
+
+#### Adding tags via keyboard
+- Pressing **Enter** adds the typed tag (if non-empty), applying normalization.
 
 ---
 
-## User Interactions & States (Summary)
+## Cancel vs Close Behavior
 
-### Read-only (default)
-- All journal content visible as cards/pills
-- Edit actions available 
+### “Cancel” inside Journal Edit Mode
+- Exits edit mode for the journal section.
+- Discards journal edits made during the edit session.
+- Restores the journal fields to the position’s current saved values.
 
-### Editing Note
-- Inline editor shown inside the relevant card
-- Character counter visible
-- Save/Cancel available 
+### Footer “Cancel”
+- Closes the modal (same as onClose).
 
-### Editing Tags
-- Tag input shown with autocomplete
-- Existing tags remain visible and removable
-- Save/Cancel available 
+---
 
-### Error State
-- Error banner at top of modal content
-- Field-level messages near invalid inputs
-- User can retry without losing work 
+## Saving Behavior
+
+### “Save Changes” (footer)
+On save:
+- The modal calls `onSave` with:
+  - `entry_note`:
+    - saved as `null` if empty
+    - otherwise saved as the entered string
+  - `tags`:
+    - saved as `null` if empty
+    - otherwise saved as the array of normalized tags
+
+The component assumes persistence happens outside the modal (e.g., API update handled by parent).
+
+---
+
+## Validation & Error Handling (User-Visible)
+
+### Enforced constraints
+- Entry note: maximum 500 characters (hard limit).
+- Tags: maximum 5 tags (hard limit).
+- Tags are normalized on add (lowercase, spaces → hyphens).
+- Duplicate tags are prevented.
+
+### Error messaging
+- No explicit inline error messages are shown for note length or tag limit because inputs are constrained by the UI.
+- Save failure handling is not shown in this component; it should be handled by the parent experience that implements `onSave`.
+
+---
+
+## Loading / Empty States
+- If no `position` is provided, nothing is rendered.
+- Tag suggestions depend on an available set of known tags; if none exist, defaults still provide suggestions.
 
 ---
 
 ## Accessibility Considerations
-- Modal traps focus while open
-- Keyboard navigation supports:
-  - Tab through controls and fields in a logical order
-  - Escape closes modal (unless blocked by unsaved changes pattern)
-- Buttons and inputs have clear labels for screen readers
-- Validation errors are announced and visually distinct
-- Tag remove controls are keyboard-accessible and labeled (e.g., “Remove tag momentum”) 
+- Modal should trap focus while open.
+- Keyboard support:
+  - Tab navigation through interactive controls.
+  - Enter adds a tag while focused in tag input.
+- Buttons have clear labels (“Edit”, “Cancel”, “Save Changes”).
+- Tag remove control should remain reachable via keyboard navigation.
 
 ---
 
-## Visual & UX Notes
-- Present “Position Details”, “Current Status”, and “P&L” as distinct sections to reduce scanning burden
-- Journal cards should feel readable and “document-like” (not cramped form UI)
-- Tags should be visually consistent with tags elsewhere (Trade Entry, Trade History filters)
-- Grace period indicator should be visible and understandable without requiring tooltip hunting 
-
----
-
-## Optional: Graph (If Implemented)
-- A price history chart may be shown as an optional section
-- If included, it must not obscure core journal reading/editing flows 
-
----
-
-## API Integration
-- `GET /positions/{ticker}` — fetch position details including notes/tags (when not available in-memory) 
-- `PATCH /positions/{id}/note` — update entry_note or exit_note 
-- `PATCH /positions/{id}/tags` — update tags 
-- `GET /positions/tags` — fetch tag suggestions for autocomplete 
+## Consistency Note (Potential Spec Alignment Issue)
+This component currently enforces **5 tags max**, while other areas of the product documentation may allow **10**. If the product intent is 10, this should be aligned across components and patterns; otherwise, document the 5-tag limit as the standard pattern.
