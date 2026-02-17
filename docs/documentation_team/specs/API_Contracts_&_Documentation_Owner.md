@@ -74,9 +74,14 @@ The documentation is treated as a **first-class product artifact**, not an after
   - What clients can rely on
   - What might change in the future
 
+
 ### Lifecycle & Versioning Compliance (mandatory)
-- All API contract documents must follow the lifecycle states, header block, and versioning rules defined in:
-  - `docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
+
+All documentation owned by this role must follow the lifecycle states,
+header block, and versioning rules defined in:
+
+- `/docs/documentation_team/guides/DOC_LIFECYCLE_GUIDE.md`
+
 
 ---
 
