@@ -19,7 +19,7 @@ Users rely on this form to:
 - Text input  
 - Auto‑uppercase  
 - Market auto‑detected based on suffix (e.g., `.L` for UK)  
-- Max 10 characters  
+- Max 20 characters  
 
 ### Entry Date (required)
 - Date picker  
