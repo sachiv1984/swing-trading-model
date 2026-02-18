@@ -1,127 +1,291 @@
-# Feature Backlog — Momentum Trading Assistant
+# Product Backlog — Momentum Trading Assistant
 
-**Owner:** Product Owner  
-**Class:** Planning Document (Class 4)  
-**Status:** Active  
-**Last Updated:** 2026-02-18
+Owner: Product Owner  
+Status: Active  
+Class: Planning Document (Class 4)  
+Last Updated: 2026-02-18
 
-> ⚠️ **Standing Notice:** This document records backlog thinking and quick-win candidates. Items here are not committed and have not been reviewed against canonical specifications. Before any item moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner.
+> ⚠️ Standing Notice  
+> This backlog records prioritisation and intent only.  
+> All formulas, schemas, API contracts, and behavioural rules are indicative until
+> confirmed in the relevant canonical specifications.  
+> No item may proceed to implementation without canonical owner sign-off.
 
 ---
 
-## 1. Quick Wins (Low Effort, High Return)
+## Priority Definitions
 
-These items can be slotted between major features. Each is estimated at 30 minutes to 2 hours unless otherwise noted.
+- **P0 — Critical**: Blocks correctness, trust, or release safety
+- **P1 — High**: Enables core workflows or governance
+- **P2 — Medium**: High leverage but not blocking
+- **P3 — Low**: Nice-to-have or future scale
 
-### 1.1 Current Drawdown Widget
+---
+
+## 1. Platform & Validation Governance Backlog
+
+These items ensure analytical correctness, validation integrity, and operational safety.
+They are not user-facing, but they directly affect trust in outputs and release confidence.
+
+---
+
+### BLG-TECH-01 — Fix Sharpe variance method + Capital Efficiency currency basis
+**Priority:** P0 (Critical)  
+**Type:** Metrics Correctness / Validation Integrity  
+
+**Problem**
+- Sharpe ratio currently uses population variance instead of sample variance.
+- Capital efficiency uses `entry_price * shares` instead of actual GBP cost.
+- Validation cannot reliably detect non-conformant behaviour.
+
+**Scope**
+- Fix `_calculate_sharpe()` to use sample variance (divide by n-1) for:
+  - Portfolio Sharpe
+  - Trade-level Sharpe
+- Fix capital efficiency to use `total_cost (GBP)` from `trade_history`.
+- Update `validation_data.py` expected values accordingly.
+
+**Acceptance Criteria**
+- Validation passes with updated expected values.
+- Metrics Definitions & Analytics Canonical Owner signs off on expected values.
+- No regression in existing analytics outputs.
+
+**Owners**
+- Engineering (implementation)
+- QA (verification)
+- Metrics Definitions & Analytics Canonical Owner (sign-off)
+
+---
+
+### BLG-TECH-02 — Implement validation severity model
+**Priority:** P1 (High)  
+**Type:** Governance / Operational Control  
+
+**Problem**
+- Validation severity is documented but not enforced.
+- No reliable mechanism to block deployments on critical failures.
+
+**Scope**
+- Add `severity` field to each validation result.
+- Add `by_severity` aggregation to validation summary.
+- Update API contract in `analytics_endpoints.md` before implementation.
+- Implement in validation layer.
+
+**Acceptance Criteria**
+- API responses include severity per validation result.
+- Aggregated counts by severity are returned.
+- Four-tier severity model matches `validation_system.md`.
+
+**Owners**
+- Engineering
+- QA
+
+---
+
+### BLG-TECH-03 — Consolidate ValidationService into service layer
+**Priority:** P1 (High)  
+**Type:** Architecture / Maintainability  
+
+**Problem**
+- Validation logic is split between router and service stub.
+- Increases risk of duplication and inconsistent behaviour.
+
+**Scope**
+- Move all active validation logic into `services/validation_service.py`.
+- Delete placeholder stub.
+- Keep router thin (request/response only).
+
+**Acceptance Criteria**
+- No validation logic remains in router layer.
+- Tests pass without behavioural change.
+- Code touched once alongside BLG-TECH-02.
+
+**Dependencies**
+- Must be delivered alongside BLG-TECH-02.
+
+**Owners**
+- Engineering
+- QA
+
+---
+
+### BLG-TECH-04 — CI/CD validation workflow (GitHub Actions)
+**Priority:** P2 (Medium)  
+**Type:** Delivery Quality / Automation  
+
+**Problem**
+- Validation is manual and not enforced at merge time.
+
+**Scope**
+- Add `.github/workflows/validate-analytics.yml`.
+- Run `POST /validate/calculations` on:
+  - Pull requests
+  - Pushes to `main` and `develop`
+- Block merge if any **critical-severity** validation fails.
+- Post validation summary as PR comment.
+
+**Acceptance Criteria**
+- Workflow reliably runs on all PRs.
+- Merge is blocked only for critical severity failures.
+- Clear PR feedback is visible.
+
+**Dependencies**
+- BLG-TECH-02 (severity model must exist).
+
+**Owners**
+- Engineering
+- QA
+
+---
+
+### BLG-TECH-05 — Prometheus metrics endpoint
+**Priority:** P3 (Low — v2.0 candidate)  
+**Type:** Observability  
+
+**Scope**
+- Add `GET /metrics` Prometheus endpoint exposing:
+  - Validation run count
+  - Failure count by metric and severity
+  - Validation duration
+- Optional Grafana dashboard.
+
+**Acceptance Criteria**
+- Metrics scrape successfully in Prometheus format.
+- Counters and histograms are correct.
+
+**Target**
+- v2.0 or when system becomes multi-user.
+
+---
+
+## 2. Product Feature Backlog (User-Facing)
+
+---
+
+### BLG-FEAT-01 — Current Drawdown Widget
+**Priority:** P1  
 **Effort:** ~30 minutes  
-**Value:** High visibility — surfaces risk posture immediately on dashboard  
+**Value:** High visibility risk awareness  
 
-Dashboard display showing current drawdown from peak and days underwater. Example: "Drawdown: −8.2%, 12 days underwater".
+Display current drawdown from peak and days underwater.  
+Example: "Drawdown: -8.2%, 12 days underwater"
 
-> Metrics Definitions owner must confirm the drawdown calculation before implementation.
+**Dependency**
+- Metrics Definitions owner must confirm drawdown calculation.
 
 ---
 
-### 1.2 R-Multiple Column in Trade History
+### BLG-FEAT-02 — R-Multiple Column in Trade History
+**Priority:** P2  
 **Effort:** ~1 hour  
-**Value:** Medium — makes strategy edge visible in the trade list  
 
-Add an R-multiple column to the trade history table. Calculated as `(Exit Price − Entry Price) / (Entry Price − Stop Price)`.
+Add R-multiple column to trade history table.
 
-> Formula is indicative. Metrics Definitions owner must confirm before implementation. Note: R-multiple may be frontend-only for display — confirm with API Contracts owner whether this should be server-side or client-side.
+**Indicative Formula**
 
----
+`(Exit Price - Entry Price) / (Entry Price - Stop Price)`
 
-### 1.3 Slippage Tracking
-**Effort:** 1–2 hours  
-**Value:** Medium — useful for execution quality monitoring  
-
-Add a slippage field to the trade history table. Show average slippage in the analytics summary.
-
-> Indicative formula: `(Fill Price − Market Price) / Market Price`. Metrics Definitions owner must define this before implementation. Requires data model update for the slippage field.
+**Notes**
+- Formula must be confirmed by Metrics Definitions owner.
+- Decide server-side vs frontend-only calculation.
 
 ---
 
-### 1.4 Best / Worst Trades Widget
+### BLG-FEAT-03 — Slippage Tracking
+**Priority:** P2  
+**Effort:** 1-2 hours  
+
+Track and display trade slippage and average slippage summary.
+
+**Indicative Formula**
+
+`(Fill Price - Market Price) / Market Price`
+
+Requires data model update.
+
+---
+
+### BLG-FEAT-04 — Best / Worst Trades Widget
+**Priority:** P2  
 **Effort:** ~1 hour  
-**Value:** Medium — supports review and pattern recognition  
 
-Dashboard or analytics widget showing top 3 and bottom 3 trades by R-multiple or P&L.
+Show top 3 and bottom 3 trades by R-multiple or P&L.
 
 ---
 
-### 1.5 Win Rate Chart
+### BLG-FEAT-05 — Win Rate by Month Chart
+**Priority:** P2  
 **Effort:** ~1 hour  
-**Value:** Medium  
 
-Simple bar chart showing win rate by calendar month. Can be delivered as part of the Performance Analytics page or as a standalone dashboard widget.
+Bar chart of win rate grouped by calendar month.
 
 ---
 
-### 1.6 Grace Period Indicator
+### BLG-FEAT-06 — Grace Period Indicator
+**Priority:** P2  
 **Effort:** ~1 hour  
-**Value:** Medium — reduces manual counting  
 
-Visual countdown in the open positions table showing remaining days in the grace period (e.g. "Day 6 of 10").
+Show remaining grace period days in open positions table.  
+Example: "Day 6 of 10"
 
 ---
 
-### 1.7 CSV Export Button
+### BLG-FEAT-07 — CSV Export of Trade History
+**Priority:** P2  
 **Effort:** ~1 hour  
-**Value:** Medium (tax preparation)  
 
-One-click export of the trade history table as a CSV file. Simple implementation, high practical value.
+One-click CSV export for tax and analysis use.
 
 ---
 
-### 1.8 Basic Compliance Metrics
+### BLG-FEAT-08 — Basic Compliance Metrics
+**Priority:** P2  
 **Effort:** ~1 day  
-**Value:** Medium (discipline monitoring)  
 
-Lightweight metrics tracking process discipline rather than performance: journal completion rate (% of trades with notes), stop-based exit rate (% of exits that were stop-triggered), average position size as % of portfolio.
+Lightweight discipline metrics:
+- Journal completion rate
+- Stop-based exit rate
+- Average position size (% of portfolio)
 
-> Definitions must be confirmed in Metrics Definitions before implementation.
-
----
-
-## 2. Removed Items
-
-Items explicitly removed from consideration with rationale.
-
-| Item | Decision | Rationale |
-|---|---|---|
-| Gap Risk Monitor | Removed | Not actionable for this strategy. The trailing stop framework handles gap risk implicitly. Adding a monitor would create noise without enabling a different decision. |
-| Full Compliance Scoring System | Deferred to v2.0 | Meaningful only with sufficient trade history. Lightweight compliance metrics (see 1.8 above) cover the immediate need. |
+Definitions must be canonicalised first.
 
 ---
 
-## 3. Deferred Items (not current priority)
+## 3. Deferred / v2.0 Candidates
 
-Items with confirmed value that are not being pursued now.
-
-| Item | Target | Notes |
-|---|---|---|
-| Daily email summary | v2.0 | Cron job sending daily portfolio status. Useful but not urgent. |
-| FX rate history tracking | v2.0 | Track GBP/USD changes over time. Low priority. |
+- Daily email portfolio summary
+- FX rate history tracking
+- Prometheus validation observability (BLG-TECH-05)
+- Position correlation analysis
+- Backtesting module
+- Multi-portfolio support
+- Mobile app
+- Full compliance scoring system
 
 ---
 
-## 4. Out of Scope (product level)
+## 4. Explicitly Out of Scope (Product-Level)
 
-These are product decisions — not strategic constraints. They may be revisited.
+These are deliberate product decisions, not deferrals:
 
 - Broker API integration
-- Real-time streaming prices  
+- Automated trading execution
+- Configurable strategy builder
+- ML-based predictions
 - Social / community features
-- Options trading support
-- Futures trading support
-- Multi-portfolio support (deferred to v2.0)
-- Mobile app (deferred to v2.0)
-
-For strategic constraints (automated execution, strategy builder, ML predictions), see `docs/specs/strategy_rules.md §13`. Those cannot be revisited without a canonical spec change.
+- Options and futures trading support
 
 ---
 
-*For committed priorities and phasing, see `docs/product/roadmap.md`.*  
-*For delivery history, see `docs/product/changelog.md`.*
+## 5. Lifecycle Governance Notes
+
+- This backlog is not canonical and must never override:
+  - Strategy rules
+  - Metrics definitions
+  - API contracts
+- Any shipped feature must be backed by:
+  - Canonical specification
+  - Updated validation where applicable
+- Once implemented, backlog items are superseded by canonical documentation.
+
+---
