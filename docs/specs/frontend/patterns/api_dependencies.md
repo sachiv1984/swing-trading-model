@@ -1,5 +1,10 @@
 # api_dependencies.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner  
+**Status:** Canonical  
+**Version:** 1.0
+**Last Updated:** February 18, 2026
+
 ## Purpose
 The API Dependencies pattern defines how the frontend documentation records **which UX surfaces depend on which backend APIs**, without duplicating API contract detail.
 
