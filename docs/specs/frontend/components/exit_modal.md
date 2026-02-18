@@ -1,5 +1,10 @@
 # exit_modal.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner  
+**Status:** Canonical  
+**Version:** 1.0
+**Last Updated:** February 18, 2026
+
 ## Purpose & Usage Context
 The Exit Modal allows users to **close a position**, either fully or partially.  
 It provides real‑time fee calculations, P&L previews, and optional journal notes.  
