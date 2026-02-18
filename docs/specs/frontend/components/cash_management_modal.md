@@ -1,5 +1,10 @@
 # cash_management_modal.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner  
+**Status:** Canonical  
+**Version:** 1.0
+**Last Updated:** February 18, 2026
+
 ## Purpose & Usage Context
 The Cash Management Modal allows users to record **deposits and withdrawals** so that portfolio cash and P&L remain accurate over time.  
 It is typically opened from the Dashboard (by clicking cash balance) or any context where the user needs to adjust cash outside of trade entries and exits.
