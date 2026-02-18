@@ -1,8 +1,19 @@
 # Production Strategy – Momentum Trading System
+
 **Document Owner:** Strategy Rules & System Intent Owner
 **Status:** Canonical
+**Version:** 1.1
+**Last Updated:** February 18, 2026
 **Applies To:** Production backtest, live system, and documentation
-**Last Reviewed:** February 2026
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | February 18, 2026 | Section 13 expanded. Added single-strategy boundary, gap risk exclusion rationale, and full design boundary rationale block. No behavioral rules changed. |
+| 1.0 | February 2026 | Initial canonical version. |
 
 ---
 
@@ -249,6 +260,7 @@ Until such a versioned change is made, **10 days, 5× ATR, and 2× ATR define th
 
 - A deterministic decision‑support engine
 - A risk‑managed momentum framework
+- A single, explicit, human‑designed momentum strategy
 - Human‑in‑the‑loop by design
 
 ### This System Is Not
@@ -256,6 +268,21 @@ Until such a versioned change is made, **10 days, 5× ATR, and 2× ATR define th
 - An automated trading bot
 - A broker execution engine
 - A discretionary or adaptive rule system
+- A multi‑strategy or configurable strategy platform
+- A machine learning or AI‑driven prediction system
+- An options or futures trading system
+- A real‑time streaming or execution system
+
+### Design Boundary Rationale
+
+**Human‑in‑the‑loop execution is a design principle, not a limitation.**
+All entries and exits are manually confirmed by the user. This deliberate review step is part of the strategy. Automated execution would remove it. Broker API integration is excluded for the same reason: user‑provided prices and FX rates sourced directly from broker statements are intentional. The system is not designed to be connected to a broker.
+
+**Gap risk monitoring is excluded by design.**
+The system operates on a daily decision cadence. Gap risk cannot be acted on within this model — by the time the user reviews the system, the gap has already occurred. Displaying a gap risk metric would present information the user cannot act on at the moment it matters. This creates noise without enabling a decision. The exclusion is a deliberate design choice, not a deferred feature.
+
+**The strategy is fixed and explicit. Adaptability is not a goal.**
+The system implements one human‑designed momentum strategy with defined, versioned parameters. A strategy builder, adaptive rules engine, or ML‑generated signals would fundamentally alter the nature of the system. Predictability, auditability, and human oversight would be compromised. These capabilities are not features to be added in a future version; they are outside the design intent of this system.
 
 ---
 
