@@ -1,5 +1,10 @@
 # system_status.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner  
+**Status:** Canonical  
+**Version:** 1.0
+**Last Updated:** February 18, 2026
+
 ## Purpose & User Goals
 The System Status page provides users with visibility into the health of the application’s data sources and operational processes.  
 Its goal is to increase user confidence by clearly showing whether the system is functioning normally and whether key services (such as data fetching, pricing, analysis, or settings) are operating correctly.
