@@ -1,0 +1,167 @@
+# Product Owner
+
+**Role:** Product Owner  
+**Reports to:** Executive Leadership  
+**Direct reports:** Head of Engineering, Head of Specs Team  
+**Scope:** Product intent, prioritization, and outcome accountability  
+**Status:** Canonical
+
+---
+
+## 1. Purpose
+
+This role exists to ensure that the product:
+
+- Solves the right problems
+- Delivers clear and intentional value
+- Evolves coherently over time
+- Aligns strategy, specifications, and engineering execution
+
+The Product Owner is the **single accountable owner of product intent and outcomes**.
+
+---
+
+## 2. Core Responsibility
+
+The Product Owner owns:
+
+- Product vision and strategic direction
+- Prioritization of product work and trade‑offs
+- Definition of success and outcome measurement
+- Alignment between specification intent and engineering delivery
+
+This role ensures that **the right things are specified** and **the right things are built**.
+
+---
+
+## 3. Authority Model & Role Boundaries (Non‑Negotiable)
+
+### 3.1 Authority Relationships
+
+- The Product Owner owns **what the product is meant to achieve** and **why**.
+- The Head of Specs owns **canonical product truth** (formal definitions of behavior and meaning).
+- The Head of Engineering owns **how the system is built and operated**.
+
+All three roles are peers in decision‑making, but the Product Owner is the **tie‑breaker on product direction and prioritization**.
+
+---
+
+## 4. Relationship to Canonical Specifications
+
+The Product Owner:
+
+- Sets product intent and priorities that drive specification work
+- Does **not** author or directly modify canonical specifications
+- Relies on the Head of Specs Team to formalize intent into canonical documents
+- Ensures that specifications reflect real product decisions, not assumptions
+
+If product intent changes, the Product Owner ensures that:
+- The change is explicit
+- The relevant spec owners are engaged
+- The impact is understood before delivery proceeds
+
+---
+
+## 5. Relationship to Engineering Execution
+
+The Product Owner:
+
+- Prioritizes engineering work based on product value and risk
+- Makes scope and sequencing trade‑offs explicit
+- Accepts or rejects outcomes based on spec‑defined behavior and product goals
+- Does **not** redefine behavior through delivery pressure
+
+Engineering feasibility concerns are surfaced early and resolved through collaboration, not silent compromise.
+
+---
+
+## 6. Required Skills
+
+- Strong product judgment and strategic thinking
+- Ability to balance customer value, business goals, and system constraints
+- Clear decision‑making under uncertainty
+- Excellent communication across technical and non‑technical stakeholders
+- Comfort owning trade‑offs and saying “no”
+
+---
+
+## 7. Responsibilities
+
+### 7.1 Product Vision & Strategy
+
+- Define and communicate product vision and long‑term direction
+- Ensure all major initiatives tie back to explicit product goals
+- Prevent reactive or opportunistic scope creep
+
+### 7.2 Prioritization & Trade‑Off Management
+
+- Own prioritization across initiatives and teams
+- Balance new capability, quality, and operational investment
+- Make trade‑offs explicit and documented
+
+### 7.3 Outcome Ownership
+
+- Define what success means for the product
+- Ensure metrics and evaluation criteria exist
+- Hold the organization accountable for outcomes, not just output
+
+### 7.4 Cross‑Role Alignment
+
+- Ensure strong alignment between:
+  - Product intent
+  - Canonical specifications
+  - Engineering delivery
+- Resolve conflicts that span product, specs, and engineering
+
+---
+
+## 8. Explicit Non‑Responsibilities
+
+The Product Owner does **not**:
+
+- Own technical architecture or implementation details
+- Author or edit canonical specifications directly
+- Override documented behavior through informal direction
+- Act as a proxy spec owner or engineering manager
+
+This role leads through **clarity and prioritization**, not micromanagement.
+
+---
+
+## 9. Reporting & Interfaces
+
+### Reports to
+- Executive Leadership
+
+### Direct Reports
+- Head of Engineering
+- Head of Specs Team
+
+### Works closely with
+- Design leadership
+- Analytics and business stakeholders
+- QA & Testing Owner
+- Infrastructure & Operations Owner
+
+---
+
+## 10. Definition of Success
+
+Someone doing this role well enables:
+
+- A product with clear direction and coherence
+- Specifications that reflect real, intentional decisions
+- Engineering teams that build with confidence
+- Fewer late‑stage reversals and surprises
+- Measurable progress toward meaningful outcomes
+
+The product evolves **intentionally**, not accidentally.
+
+---
+
+## 11. Guiding Principles
+
+- Intent must be explicit before it is specified.
+- What is built reflects what was decided.
+- Trade‑offs are owned, not hidden.
+- Outcomes matter more than activity.
