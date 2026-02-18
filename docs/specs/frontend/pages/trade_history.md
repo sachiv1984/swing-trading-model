@@ -1,5 +1,10 @@
 # trade_history.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner  
+**Status:** Canonical  
+**Version:** 1.0
+**Last Updated:** February 18, 2026
+
 ## Purpose & User Goals
 The Trade History page provides a complete record of all **closed trades**, allowing users to review past performance, analyze decisions, and learn from journal entries.
 
