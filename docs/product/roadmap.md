@@ -11,8 +11,8 @@
 
 ## 1. Current Version
 
-**v1.4** — Trade Journal complete. Performance Analytics in progress.  
-**Next planned release:** v1.5
+**v1.5** — Performance Analytics complete. Position Sizing Calculator is next.  
+**Next planned release:** v1.6
 
 ---
 
@@ -43,23 +43,21 @@ These may be revisited in future versions without any canonical spec change:
 
 ---
 
-## 3. Priority 1 — Current Focus (v1.4 completing / v1.5)
+## 3. Priority 1 — Current Focus (v1.6)
 
 ### 3.1 Performance Analytics Page
-**Status:** In Progress  
+**Status:** ✅ Complete (shipped v1.5)  
 **Effort:** Medium (3–4 days)  
 **Value:** High
 
-Full view of trading performance over time.
+Full view of trading performance over time. Delivered via a unified `GET /analytics/metrics?period=` endpoint. All metrics computed server-side; frontend is display-only.
 
-Intended outputs: monthly and quarterly returns, win rate by month, profit factor, max drawdown, current drawdown, time underwater (days from peak), Sharpe ratio, R-multiple distribution chart, expectancy per trade, R-multiple breakdown by tag.
-
-> **Before implementation:** All metric formulas must be defined or confirmed in `docs/specs/metrics_definitions.md`. All analytics API endpoints must be specified in `docs/specs/api_contracts/` before frontend integration begins.
+Delivered: executive summary cards (Sharpe, max drawdown, recovery factor, expectancy, profit factor, risk/reward), advanced metrics grid, monthly performance heatmap, underwater equity chart, market comparison (UK vs US), exit reason analysis, time-based charts (day of week, monthly, holding periods, entry scatter), R-multiple analysis and tag breakdown, top 5 winners and losers, consistency metrics, strategy tag performance table, period filter (6 options), PDF export, and a `POST /validate/calculations` endpoint for smoke-testing metric correctness against a known dataset.
 
 ---
 
 ### 3.2 Position Sizing Calculator
-**Status:** Planned — next after Analytics  
+**Status:** Planned — current priority  
 **Effort:** Low (1–2 days)  
 **Value:** High (daily workflow improvement)
 
@@ -91,7 +89,7 @@ Email alerts for: stop loss approach, grace period ending (days 8–9 warning), 
 
 ---
 
-## 4. Priority 2 — Next Phase (v1.5)
+## 4. Priority 2 — Next Phase (v1.6)
 
 ### 4.1 Export & Reporting
 **Status:** Planned  
