@@ -9,14 +9,48 @@
 
 ---
 
-## v1.4 — Trade Journal & Analytics (February 2026)
+## v1.5 — Performance Analytics (February 2026)
+
+### Performance Analytics Page ✅ Complete
+
+**Backend**
+- Unified analytics endpoint: `GET /analytics/metrics?period=` (six period options: last 7 days, last month, last quarter, last year, YTD, all time)
+- All metrics computed server-side from `trade_history` and `portfolio_history`; frontend performs no calculations
+- Period filtering on both trade exit date and portfolio snapshot date
+- `has_enough_data` gate: configurable minimum trade threshold (default 10, set via Settings)
+- `POST /validate/calculations` endpoint: smoke-tests all metric calculations against a known 5-trade validation dataset with per-metric tolerance checks and CSV export
+
+**Metrics delivered**
+- Executive: Sharpe ratio (portfolio-based when 30+ snapshots available, trade-based fallback), max drawdown (percent, amount, date), recovery factor, expectancy per trade, profit factor, risk/reward ratio
+- Advanced: win streak, loss streak, average hold time for winners vs losers, trade frequency (per week), capital efficiency, days underwater, portfolio peak equity
+- Market comparison: win rate, total P&L, average win/loss, best and worst performer — UK and US independently
+- Exit reason analysis: count, win rate, total P&L, average P&L, percentage of trades — per exit reason
+- Monthly performance: P&L, trade count, win rate, cumulative — last 12 months
+- Day of week: average P&L and trade count per weekday
+- Holding period buckets: 1–5, 6–10, 11–20, 21–30, 31+ days — average P&L, count, win rate
+- Top 5 winners and top 5 losers by P&L
+- Consistency metrics: consecutive profitable months, current streak, win rate standard deviation, P&L standard deviation
+- R-multiple analysis and tag performance derived from `trades_for_charts`
+
+**Frontend**
+- 12-component page render: executive summary cards, key insights, advanced metrics grid, monthly heatmap, underwater equity chart, market comparison, exit reason table, time-based charts, R-multiple analysis, top performers, consistency metrics, strategy tag performance
+- Period selector drives single re-fetch of unified endpoint
+- Loading, error, and not-enough-data states
+- Key insights: up to 5 generated observations from metric values (Sharpe quality, hold time discipline check, profit factor commentary, expectancy edge, risk/reward)
+- PDF export: print-optimised HTML report covering executive summary, key insights, and advanced metrics table
+- snake_case → camelCase transformation on API response
+- System Status page updated: analytics and validation endpoints categorised and included in automated endpoint testing suite
+
+---
+
+## v1.4 — Trade Journal & Notes System (February 2026)
 
 ### Trade Journal & Notes System ✅ Complete
 
 - Entry notes when creating positions (500 character limit)
 - Exit notes when closing positions (500 character limit)
 - Tag system for categorising trades, with autocomplete from existing tags
-- Tag validation: lowercase, hyphens only
+- Tag validation: lowercase, hyphens only, up to 10 tags per position
 - Tag filtering in trade history (OR logic)
 - Expandable trade rows showing full journal entries
 - Journal view mode in Positions page
@@ -26,19 +60,13 @@
 - GIN indexes on tags fields for fast filtering
 - Backend endpoints: updateNote, updateTags, getTags
 
-### Performance Analytics ⏳ In Progress
-
-- R-multiple tracking
-- Drawdown analysis
-- Underwater chart visualisation
-
 ---
 
 ## v1.3 — System Health & Monitoring (February 2026)
 
 - Health check endpoint (`GET /health`) for load balancers
 - Detailed system status (`GET /health/detailed`)
-- Automated endpoint testing (`POST /test/endpoints`) — 11 endpoints
+- Automated endpoint testing (`POST /test/endpoints`) — 11 endpoints at launch
 - Frontend status dashboard page with real-time monitoring
 - Component-level health checks: Database, Yahoo Finance, Services, Config
 - One-click endpoint testing with pass/fail results
