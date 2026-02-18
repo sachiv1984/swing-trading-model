@@ -1,5 +1,10 @@
 # position_form.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner  
+**Status:** Canonical  
+**Version:** 1.1
+**Last Updated:** February 18, 2026
+
 ## Purpose & Usage Context
 The Position Form is used to manually create a new position in the portfolio.  
 It supports both UK and US markets, with dynamic fields that adjust based on the detected market.  
