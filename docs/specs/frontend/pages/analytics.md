@@ -1,5 +1,10 @@
 # analytics.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner  
+**Status:** Canonical  
+**Version:** 1.0
+**Last Updated:** February 18, 2026
+
 ## Purpose & User Goals
 The Performance Analytics page provides deep insight into closed trade performance, risk metrics, and strategy effectiveness. It connects directly to the backend analytics system and is data-driven throughout — no values are calculated or derived on the frontend.
 
