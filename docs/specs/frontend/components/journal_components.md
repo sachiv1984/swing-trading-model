@@ -1,5 +1,10 @@
 # journal_components.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner  
+**Status:** Canonical  
+**Version:** 1.0
+**Last Updated:** February 18, 2026
+
 ## Purpose & Usage Context
 The journal components support all note‑taking and tagging features across the application.  
 They appear in multiple contexts:
