@@ -1,5 +1,10 @@
 # dashboard.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner  
+**Status:** Canonical  
+**Version:** 1.0
+**Last Updated:** February 18, 2026
+
 ## Purpose & User Goals
 The Dashboard provides a high‑level overview of the user’s portfolio and current market conditions.  
 It serves as the primary entry point for daily monitoring and quick navigation to key workflows.
