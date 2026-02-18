@@ -1,140 +1,132 @@
 # Product Roadmap — Momentum Trading Assistant
 
-**Owner:** Product Owner  
-**Class:** Planning Document (Class 4)  
-**Status:** Active  
-**Last Updated:** 2026-02-18
+Owner: Product Owner  
+Status: Active  
+Class: Planning Document (Class 4)  
+Last Updated: 2026-02-18
 
-> ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
+> ⚠️ Standing Notice  
+> This roadmap records product intent and sequencing only.  
+> All implementation detail is indicative until confirmed in canonical specifications.  
+> This document must not be treated as a source of truth for formulas, schemas, or APIs.
 
 ---
 
 ## 1. Current Version
 
-**v1.5** — Performance Analytics complete. Position Sizing Calculator is next.  
+**Current:** v1.5 — Performance Analytics  
 **Next planned release:** v1.6
 
 ---
 
-## 2. Strategic Scope
+## 2. v1.6 — Position Sizing & Analytics Correctness
 
-### This system is
-
-- A deterministic, human-in-the-loop decision support tool for momentum trading
-- A risk-managed framework built around ATR-based trailing stops and regime detection
-- A single-user portfolio tracker with journalling and analytics
-
-### Strategic exclusions (canonical — see `docs/specs/strategy_rules.md §13`)
-
-These are not deferred features. They are formally recorded as system boundaries in the Strategy Rules canonical spec and prevail over any planning document:
-
-- **Not an automated trading bot.** All exits require manual confirmation. This is a core design constraint.
-- **Not a configurable strategy builder.** The strategy is a fixed, versioned behavioral contract. User-defined rule systems contradict the determinism principle.
-- **Not an ML-based prediction system.** The system is explicitly deterministic. Non-deterministic signals are architecturally incompatible.
-
-### Product scope exclusions (deferred, not strategically excluded)
-
-These may be revisited in future versions without any canonical spec change:
-
-- Broker API integration
-- Real-time streaming prices
-- Social / community features
-- Options and futures trading support
+**Theme:** Core workflow enablement + analytics correctness  
+**Rationale:**  
+v1.6 delivers the Position Sizing Calculator while hardening the analytics layer so
+metrics exposed to real users are mathematically correct and validation can be trusted.
+These fixes are small in scope but high in impact and must not be deferred.
 
 ---
 
-## 3. Priority 1 — Current Focus (v1.6)
-
-### 3.1 Performance Analytics Page
-**Status:** ✅ Complete (shipped v1.5)  
-**Effort:** Medium (3–4 days)  
-**Value:** High
-
-Full view of trading performance over time. Delivered via a unified `GET /analytics/metrics?period=` endpoint. All metrics computed server-side; frontend is display-only.
-
-Delivered: executive summary cards (Sharpe, max drawdown, recovery factor, expectancy, profit factor, risk/reward), advanced metrics grid, monthly performance heatmap, underwater equity chart, market comparison (UK vs US), exit reason analysis, time-based charts (day of week, monthly, holding periods, entry scatter), R-multiple analysis and tag breakdown, top 5 winners and losers, consistency metrics, strategy tag performance table, period filter (6 options), PDF export, and a `POST /validate/calculations` endpoint for smoke-testing metric correctness against a known dataset.
-
----
-
-### 3.2 Position Sizing Calculator
-**Status:** Planned — current priority  
-**Effort:** Low (1–2 days)  
-**Value:** High (daily workflow improvement)
-
-Embedded widget inside the position entry modal. Takes risk percentage and stop distance as inputs. Outputs optimal share count. Auto-fills the shares field. Validates against available cash in real time.
-
-> **Before implementation:** The sizing formula must be canonicalized in `docs/specs/strategy_rules.md`. Indicative logic: `Risk Amount = Portfolio Value × Risk %`, `Position Size = Risk Amount / Stop Distance`. These are illustrative only until confirmed by the Strategy Rules owner.
-
----
-
-### 3.3 Portfolio Heat Gauge
+### 2.1 Position Sizing Calculator (Primary Feature)
 **Status:** Planned  
-**Effort:** Low–Medium (2–3 days)  
-**Value:** High (risk management)
+**Value:** High — daily workflow improvement  
 
-Dashboard widget showing total capital at risk across all open positions as a percentage of portfolio value. Integrates with the Position Sizing Calculator to show the heat impact of a prospective new position.
+Embedded widget inside the position entry modal.  
+Inputs:
+- Risk percentage
+- Stop distance  
 
-> **Before implementation:** The heat formula and display thresholds must be defined in `docs/specs/metrics_definitions.md`. Indicative formula: `Position Risk = (Entry Price − Stop Price) × Shares`; `Portfolio Heat = Sum of Position Risks / Portfolio Value`. Indicative thresholds (0–5% green, 5–10% yellow, 10–15% orange, 15%+ red) are illustrative — the Metrics Definitions owner must confirm them.
+Outputs:
+- Optimal share count
+- Real-time validation against available cash
 
----
-
-### 3.4 Alerts & Notifications
-**Status:** Planned  
-**Effort:** Medium–High (4–5 days)  
-**Value:** High
-
-Email alerts for: stop loss approach, grace period ending (days 8–9 warning), market regime change to risk-off, daily portfolio summary. Optional SMS. In-app notification feed. Configurable per-user preferences.
-
-> **Before implementation:** Database schema must be defined in `docs/specs/data_model.md`. API endpoints must be specified in `docs/specs/api_contracts/`. Schema sketches in the legacy roadmap file are illustrative only.
+> Before implementation:  
+> The sizing formula must be canonicalised in `strategy_rules.md` by the Strategy Rules owner.
 
 ---
 
-## 4. Priority 2 — Next Phase (v1.6)
+### 2.2 Analytics Correctness & Validation Hardening (Supporting Scope)
 
-### 4.1 Export & Reporting
-**Status:** Planned  
-**Effort:** Low–Medium (2–3 days)  
-**Value:** Medium (tax necessity)
-
-CSV export of trade history. PDF monthly portfolio report. JSON backup export.
+These items do not merit a standalone release, but **must be explicitly listed** to ensure
+they are delivered as part of v1.6 and not dropped.
 
 ---
 
-### 4.2 Watchlist & Screening
-**Status:** Planned — may defer to v2.0  
-**Effort:** Medium (3–4 days)  
-**Value:** Medium
+#### BLG-TECH-01 — Sharpe & Capital Efficiency Correctness (**Quality Gate**)
+**Type:** Data correctness / metrics integrity  
 
-Monitor tickers for entry signals. Target entry and stop fields. Quick-add to position entry modal.
+- Fix Sharpe ratio to use sample variance (divide by n-1).
+- Fix capital efficiency to use actual GBP `total_cost` from trade history.
+- Update validation expected values and require canonical sign-off.
 
-> **Before implementation:** Schema and API endpoints must be defined in canonical specs. Illustrative sketches existed in legacy planning — do not treat as canonical.
-
----
-
-## 5. Priority 3 — Deferred (v2.0)
-
-| Feature | Effort | Rationale for deferral |
-|---|---|---|
-| Position Correlation Analysis | High | Value confirmed; not urgent for single-user system |
-| Backtesting Module | Very High | High value for validation; significant scope |
-| Multi-Portfolio Support | High | Low value at current scale |
-| Mobile App | Very High | Web experience sufficient |
-| Full Compliance Scoring | High | Requires more trade history to be meaningful |
+**Release Gate:**  
+v1.6 **must not ship** unless this item is complete.  
+This affects any user with sufficient trades to produce a non-zero Sharpe, which will
+be true in real usage.
 
 ---
 
-## 6. Decision Framework
+#### BLG-TECH-02 — Validation Severity Model
+**Type:** Governance enablement  
 
-When evaluating new features:
-
-1. Does it help make better trading decisions?
-2. Will it be used daily or weekly?
-3. Can it be implemented in under a week?
-4. Does it require external dependencies?
-5. Does it conflict with system boundaries in `strategy_rules.md §13`? If yes, do not proceed without a canonical spec change.
+- Add severity to each validation result.
+- Add summary breakdown by severity.
+- Align API responses with documented validation model.
 
 ---
 
-*For delivery history, see `docs/product/changelog.md`.*  
-*For backlog and quick wins, see `docs/product/feature_backlog.md`.*  
-*For strategic constraints and system boundaries, see `docs/specs/strategy_rules.md`.*
+#### BLG-TECH-03 — Validation Service Layer Consolidation
+**Type:** Internal architecture  
+
+- Move validation logic into service layer.
+- Keep routers thin.
+- Delivered alongside BLG-TECH-02 to avoid rework.
+
+---
+
+## 3. v1.7 — Delivery & Process Hardening
+
+**Theme:** Engineering quality and release safety  
+**Rationale:**  
+This release focuses on improving delivery confidence rather than adding user-facing
+capability.
+
+---
+
+### 3.1 CI/CD Validation Workflow
+**Item:** BLG-TECH-04  
+**Type:** Process improvement  
+
+- GitHub Actions workflow running analytics validation on PRs and branch pushes.
+- Block merge on critical-severity validation failures.
+- Post validation summary as PR comment.
+
+This is intentionally scheduled **after v1.6**, once severity exists and analytics
+correctness has been fixed.
+
+---
+
+## 4. v2.0 — Deferred / Scale-Oriented Work
+
+These items have confirmed value but are deferred until there is sufficient scale,
+usage, or operational need.
+
+- BLG-TECH-05 — Prometheus validation metrics endpoint
+- Position correlation analysis
+- Backtesting module
+- Multi-portfolio support
+- Mobile app
+- Full compliance scoring system
+
+---
+
+## 5. Roadmap Principles
+
+- Core workflow features take precedence over observability and automation.
+- Data correctness issues are treated as release-quality gates, not optional fixes.
+- Process improvements follow functional stability.
+- Deferred does not mean rejected; it means intentionally sequenced.
+
+---
