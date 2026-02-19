@@ -323,7 +323,7 @@ export default function TradeEntry() {
           </div>
 
           {/* Position Sizing Widget — calls POST /portfolio/size, backend-authoritative */}
-          <PositionSizingWidget
+          <Positionsizingwidget
             entryPrice={parseFloat(formData.entry_price) || null}
             stopPrice={parseFloat(formData.stop_price) || null}
             market={formData.market}
