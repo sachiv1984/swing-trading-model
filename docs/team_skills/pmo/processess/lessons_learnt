@@ -1,0 +1,153 @@
+# Lessons Learnt
+
+**Owner:** PMO Lead
+**Type:** PMO Process Template
+**Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-02-19
+
+---
+
+## Purpose
+
+Run this review at the end of every pre-alignment phase, once the scope document is committed. Its job is to identify what worked, what created friction, and what should change in the process or templates before the next feature.
+
+The output is a short filed record — not a long report. The value is in the actions it produces, not the document itself.
+
+---
+
+## When to Run
+
+- Triggered by the PMO Lead when the scope document is committed
+- Completed before the next feature enters pre-alignment
+- Takes precedence over starting the next readiness audit — process debt compounds if lessons learnt are skipped
+
+---
+
+## Review Structure
+
+Work through each section in order. For each section, the question is: did this work cleanly, and if not, what specifically went wrong?
+
+---
+
+### Section 1 — Readiness Audit
+
+- Did the readiness audit catch everything before the meeting?
+- Was any scope discovered during the meeting that the audit should have caught?
+- Were any data model fields missing that were not identified in the audit?
+- Were any endpoints undocumented or inaccurate that the audit should have flagged?
+- **Action trigger:** If scope was discovered in the meeting that the audit missed → update `pre_alignment_readiness.md` with the additional check.
+
+---
+
+### Section 2 — Decision Closure
+
+- Were all decisions closed by the end of the pre-alignment meeting?
+- Were any decisions deferred and, if so, did the deferral cause downstream delay?
+- Were any decisions reopened after the meeting (indicating they were not fully resolved)?
+- Was the decisions record committed before Phase 2 spec work began?
+- **Action trigger:** If decisions were reopened → review what was ambiguous and add a clarification prompt to the relevant section of `pre_alignment_run.md`.
+
+---
+
+### Section 3 — Parallel Spec Delivery
+
+- Did the action tracking table reflect reality throughout Phase 2?
+- Were any blockers not surfaced until they had already caused delay?
+- Were any patches applied incorrectly (committed but containing old text)?
+- Was `openapi.yaml` committed in the same PR as the API contract?
+- Were any actions marked complete before they were actually verified?
+- **Action trigger:** Any "yes" to the above → add a verification step or gate to `pre_alignment_run.md`.
+
+---
+
+### Section 4 — QA Review Gate
+
+- Did the QA review pass first time, or were there findings?
+- If there were findings: were they spec content issues (belong to the spec owner) or process issues (belong to the PMO Lead)?
+- Was the QA gate run at the right time, or was it attempted before all specs were complete?
+- Did the QA review catch anything that indicates a gap in an earlier phase?
+- **Action trigger:** If the QA review caught a conflict between two canonical specs → add a cross-spec consistency check to the relevant readiness audit checklist item.
+
+---
+
+### Section 5 — Scope Document
+
+- Was the scope document produced cleanly from the QA output and canonical specs?
+- Were there any missing inputs (effort estimate not revised, spec version not recorded)?
+- Was the document committed to the correct location with a compliant header?
+- Did any "out of scope" items need to be added retrospectively?
+- **Action trigger:** If the template was missing a section that was needed → update `feature_scope_document.md`.
+
+---
+
+### Section 6 — Effort Estimate Accuracy
+
+- What was the original roadmap effort estimate?
+- What was the final effort estimate in the scope document?
+- If they differed: what caused the change, and when was it discovered?
+- Could the change have been discovered earlier (readiness audit, pre-meeting)?
+- **Action trigger:** If the estimate changed significantly → note the category of change (schema gap, additional spec updates, complexity underestimate) and add a check for that category to `pre_alignment_readiness.md`.
+
+---
+
+### Section 7 — New Skills or Templates Needed
+
+- Were there tasks during pre-alignment that had no template to follow?
+- Were there recurring manual steps that could be templated?
+- Are any existing templates missing a section that was needed this time?
+- Are any role charters missing guidance on a task the PMO Lead needed to coordinate?
+- **Action trigger:** For each gap → create a new template or update an existing one before the next feature.
+
+---
+
+## Output
+
+### Lessons Learnt Record
+
+A short document filed at `docs/product/lessons_learnt/{id}-{slug}-lessons.md`:
+
+```markdown
+# Lessons Learnt — {Feature Name}
+
+**Feature:** {roadmap item id} — {feature name}
+**Pre-alignment completed:** {date}
+**Reviewed by:** PMO Lead
+**Date filed:** {date}
+
+## What worked well
+{2–4 bullet points}
+
+## What created friction
+{Each item: what happened, which phase, what the root cause was}
+
+## Process improvements actioned
+{Each item: what changed, which template was updated, version bumped}
+
+## New skills or templates created
+{List any new files created as a result of this review}
+
+## Outstanding actions
+{Any improvements not yet actioned, with owner and target date}
+```
+
+---
+
+## Process Improvement Actions
+
+For each improvement identified in the review:
+
+1. Update the relevant template file
+2. Bump the template version (minor increment for additive changes)
+3. Note the change in the template's change log if one exists
+4. Record the update in the lessons learnt record under "Process improvements actioned"
+
+The PMO Lead does not defer process improvements to "later". If a friction point is identified, the template is updated before the next readiness audit begins.
+
+---
+
+## Escalation
+
+If the lessons learnt review identifies a systemic issue that cannot be resolved by updating a PMO template — for example, a governance gap, a role boundary ambiguity, or a recurring conflict between domain owners — the PMO Lead escalates to the Product Owner and Head of Specs Team for resolution.
+
+Process problems that live outside the PMO's remit are not papered over. They are surfaced explicitly.
