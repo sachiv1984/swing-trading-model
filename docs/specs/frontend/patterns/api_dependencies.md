@@ -1,66 +1,30 @@
 # api_dependencies.md
 
-**Owner:** Frontend Specifications & UX Documentation Owner  
-**Status:** Canonical  
-**Version:** 1.0
-**Last Updated:** February 18, 2026
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Status:** Canonical
+**Version:** 1.1
+**Last Updated:** 2026-02-19
 
 ## Purpose
-The API Dependencies pattern defines how the frontend documentation records **which UX surfaces depend on which backend APIs**, without duplicating API contract detail.
+This document maps every **surface** (page, modal, or component) to the **API endpoints** it directly calls. It exists to make change impact visible — when an endpoint changes, this document tells you which surfaces are affected.
 
-Its goal is to ensure API usage is:
-- Discoverable (easy to find which surfaces call what)
-- Non-duplicative (no scattered endpoint lists across files)
-- UX-aligned (focus on user-visible loading, error, and state outcomes)
-- Maintainable (easy to update when contracts or flows change)
-
-This pattern applies to all pages, modals, and components that read or write backend data.
+This is a dependency index, not an API contract. For payload shapes, see `docs/specs/api_contracts/`.
 
 ---
 
-## When This Pattern Is Used
-Use the API Dependencies pattern whenever:
-- A page or modal fetches data (initial load or refresh)
-- A UI action writes data (create/update/exit)
-- A reusable component depends on remote data (e.g., tag suggestions)
-- A change to an endpoint could affect multiple UX surfaces
-- A reviewer needs to assess blast-radius for a backend or data model change
+## Dependency Categories
 
----
-
-## UX Rationale
-- Designers and QA need to know **what data a surface relies on** to validate states and edge cases without reading code.
-- Engineers need a single place to see **read vs write dependencies** to evaluate change impact quickly.
-- Documentation should not repeat schemas; schemas drift unless they remain owned by a single source.
-- A dependency view helps prevent silent regressions by making shared data contracts visible across the product.
-
----
-
-## Source of Truth (Contracts)
-Canonical request/response shapes, error payloads, and field-level schemas live in the API contracts (`specs/api_contracts/`).
-
-This pattern intentionally documents only:
-- which surfaces depend on which endpoints
-- whether they read or write
-- UX-visible loading/error expectations tied to those calls
-
----
-
-## Dependency Types & Expected Behavior
-
-### 1. Read Dependencies (GET)
-Used when the UI must retrieve data to render.
+### 1. Primary Data Dependencies (page loads, critical reads)
+Required for the page to render its primary content.
 **Behavior expectations:**
-- A loading state is visible while data is being fetched.
-- If the request fails:
-  - show a global error banner (page) or modal error banner (modal)
-  - preserve user context (do not navigate away)
-  - allow retry where feasible
+- Loading states are shown while data is being fetched.
+- Error states are shown if the fetch fails.
+- Retry is available where appropriate.
 
 ---
 
-### 2. Write Dependencies (POST / PATCH / PUT)
-Used when the user commits a change.
+### 2. Mutation Dependencies (writes, form submissions)
+Triggered by user actions that change state.
 **Behavior expectations:**
 - Confirmation actions are disabled during submission.
 - If submission fails:
@@ -75,6 +39,16 @@ Used for autocomplete lists, filters, and configuration-driven UI.
 **Behavior expectations:**
 - Supporting data must not block primary tasks when unavailable.
 - If it fails to load, the primary experience still works with graceful fallback (e.g., manual entry).
+
+---
+
+### 4. Debounced Live Calculation Dependencies
+Triggered continuously as the user types. Not form submissions — these calls are read-only and stateless.
+**Behavior expectations:**
+- The frontend owns debounce timing. The specified debounce delay must be respected to prevent unnecessary API load.
+- A loading/shimmer state is shown during the debounce window and response window.
+- Failures show a graceful fallback (e.g., `—` values) without blocking the form.
+- These calls must not block form submission on failure or invalid result.
 
 ---
 
@@ -122,7 +96,19 @@ Used for autocomplete lists, filters, and configuration-driven UI.
 
 **Reads (supporting)**
 - `GET /positions/tags` (tag suggestions)
-- `GET /settings` (fees/strategy parameters where needed for UI)
+- `GET /settings` (fees/strategy parameters; `default_risk_percent` used to pre-populate the sizing calculator Risk % field on form load)
+
+**Debounced live calculations**
+- `POST /portfolio/size` (Position Sizing Calculator)
+  - **Debounce:** 300ms after the user stops typing in Entry Price, Stop Price, FX Rate, or the Risk % field within the widget
+  - **Trigger fields:** `entry_price`, `stop_price`, `fx_rate` (from form fields), `risk_percent` (from widget input)
+  - **Called on:** field change (debounced), not on form submission
+  - **Read-only:** does not mutate state. Safe to call repeatedly.
+  - **On valid result (`valid: true`, `cash_sufficient: true`):** auto-fills Shares if Shares is empty; shows "Use suggested shares" affordance if Shares already has a value
+  - **On insufficient cash (`cash_sufficient: false`):** shows `max_affordable_shares` as informational text; does not auto-fill Shares
+  - **On invalid result (`valid: false`):** shows plain-language message derived from `reason` code; does not auto-fill Shares
+  - **On network failure:** shows `—` in all output fields; retries on next keystroke
+  - **Does not block form submission** in any state
 
 ---
 
@@ -178,6 +164,7 @@ Used for autocomplete lists, filters, and configuration-driven UI.
 - Link to API contracts for schemas instead of copying them.
 - Record read vs write dependencies so impact is clear.
 - Call out UX-visible behaviors tied to calls (loading, retry, preservation of input).
+- Record debounce timing for live calculation dependencies.
 - Update this file whenever a surface adds/removes an endpoint dependency.
 
 ### Don't
