@@ -9,6 +9,7 @@ separation between HTTP handling (FastAPI) and domain logic.
 Modules:
     - position_service: Position management (get, add, exit, analyze)
     - portfolio_service: Portfolio summary, snapshots, history
+    - sizing_service: Position sizing calculator (POST /portfolio/size)
     - trade_service: Trade history and statistics
     - cash_service: Cash transactions and flow tracking
     - signal_service: Momentum signal generation and management
@@ -41,6 +42,9 @@ from .portfolio_service import (
     create_daily_snapshot,
     get_performance_history
 )
+
+# Sizing service
+from .sizing_service import size_position
 
 # Trade service
 from .trade_service import (
@@ -89,6 +93,8 @@ __all__ = [
     'get_portfolio_summary',
     'create_daily_snapshot',
     'get_performance_history',
+    # Sizing service
+    'size_position',
     # Trade service
     'get_trade_history_with_stats',
     # Cash service
