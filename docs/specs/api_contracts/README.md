@@ -1,10 +1,10 @@
 # README.md
 
-## Momentum Trading Assistant — API Contracts (v1.7.0)
+## Momentum Trading Assistant — API Contracts
 
 **Status:** Complete & current  
 **Last updated:** 2026-02-17  
-**Contract version:** 1.7.0  
+**Contract version:** 1.8.0  
 
 This directory contains the **backend API contracts** for the *Momentum Trading Assistant* web application.
 
@@ -84,7 +84,7 @@ The API contracts are split by concern to support incremental review and clear o
 
 ### Domain-specific endpoints
 - **`portfolio_endpoints.md`**  
-  Portfolio overview, position creation, daily snapshots, and portfolio history (`GET /portfolio/history`). The portfolio overview returns a summary position shape; use `position_endpoints.md` for the full enriched position object.
+  Portfolio overview, position creation, position sizing calculator, daily snapshots, and portfolio history (`GET /portfolio/history`). The portfolio overview returns a summary position shape; use `position_endpoints.md` for the full enriched position object.
 
 - **`position_endpoints.md`**  
   Open positions (full detail including native prices, stop context, ATR, FX, and journal fields), daily analysis, exits, notes, tags, and tag discovery.
@@ -124,6 +124,11 @@ Each endpoint file follows a consistent structure:
 - **Previous version:** 1.6.0
 
 ### Changelog (Summary)
+
+- **1.8.0 (2026-02-19)**
+  - `portfolio_endpoints.md`: added `POST /portfolio/size` — Position Sizing Calculator endpoint. Returns suggested share quantity, risk amount, stop distance, estimated cost, fees, FX rate used, and cash feasibility for a prospective new position. No state mutation. Idempotent. Authoritative backend calculation per `strategy_rules.md §4.1`. Includes three distinct response shapes: valid result, insufficient cash (with `max_affordable_shares` always present), and invalid inputs (with machine-readable `reason` code and development-only `reason_detail`).
+  - `settings_endpoints.md`: added `default_risk_percent` field to `GET /settings` response and `PUT /settings` request/response. Type: float. Default: `1.00`. Constraint: > 0 and ≤ 100. Represents the pre-population default for the Position Sizing Calculator risk percentage input — a user preference, not an enforced limit.
+  - `docs/reference/openapi.yaml`: updated in alignment with the above contract changes per governance rules.
 
 - **1.7.0 (2026-02-17)**
   - `analytics_endpoints.md`: removed stale editorial note from overview (README correction was completed in v1.5.0); added `entry_price`, `exit_price`, `stop_price` to `trades_for_charts` schema with note explaining client-side R-multiple use
