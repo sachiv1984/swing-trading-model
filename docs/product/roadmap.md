@@ -1,15 +1,15 @@
 # Product Roadmap — Momentum Trading Assistant
 
-**Owner:** Product Owner  
-**Class:** Planning Document (Class 4)  
-**Status:** Active  
-**Last Updated:** 2026-02-18  
+**Owner:** Product Owner
+**Class:** Planning Document (Class 4)
+**Status:** Active
+**Last Updated:** 2026-02-19
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
 ---
 
 ## 1. Current Version
-**v1.5** — Performance Analytics complete. Position Sizing Calculator is next.  
+**v1.5** — Performance Analytics complete. Position Sizing Calculator is next.
 **Next planned release:** **v1.6**
 
 ---
@@ -39,19 +39,21 @@ These may be revisited in future versions without any canonical spec change:
 ## 3. Priority 1 — Current Focus (v1.6)
 
 ### 3.1 Performance Analytics Page
-**Status:** ✅ Complete (shipped v1.5)  
+**Status:** ✅ Complete (shipped v1.5)
 Delivered via a unified `GET /analytics/metrics?period=` endpoint. Includes a `POST /validate/calculations` endpoint for smoke-testing metric correctness against a known dataset.
 
 ---
 
 ### 3.2 Position Sizing Calculator (Primary Feature)
-**Status:** Planned — current priority  
-**Effort:** Low (1–2 days)  
+**Status:** Planned — current priority
+**Effort:** Low–Medium (2–3 days) *(revised from 1–2 days — see scope note below)*
 **Value:** High (daily workflow improvement)
 
-Embedded widget inside the position entry modal. Takes risk percentage and stop distance as inputs. Outputs optimal share count and auto-fills the shares field. Validates against available cash in real time.
+Always-visible widget inside the position entry form, directly above the shares field. User provides risk percentage (pre-populated from settings default) and stop price; system calculates suggested share count. Auto-fills the shares field when empty; shows a "use this" affordance when the user has already entered a value. Validates against available cash in real time via debounced calculation (300ms).
 
-> **Before implementation:** The sizing formula must be canonicalised in `docs/specs/strategy_rules.md`. Indicative logic: `Risk Amount = Portfolio Value × Risk %`, `Position Size = Risk Amount / Stop Distance`. (Illustrative only until confirmed by the Strategy Rules owner.)
+> **Scope note (revised 2026-02-19):** Scope expanded during pre-alignment to include `default_risk_percent` field in the settings table, settings endpoint, and settings page UI. This is required to support widget pre-population and is in scope for v1.6 — not deferred. The original 1–2 day estimate did not account for the settings field, database migration, and additional spec updates across four documents. Revised estimate: 2–3 days. Full decision rationale: `docs/product/decisions/3.2-position-sizing-calculator.md`.
+
+> **Canonical specifications:** Sizing formula, validity rules, FX handling, and cash constraint behaviour are canonicalised in `docs/specs/strategy_rules.md §4.1`. Endpoint contract at `docs/specs/api_contracts/portfolio_endpoints.md` (`POST /portfolio/size`). Data model at `docs/specs/data_model.md §6`. Settings field at `docs/specs/api_contracts/settings_endpoints.md`.
 
 ---
 
@@ -60,7 +62,7 @@ Embedded widget inside the position entry modal. Takes risk percentage and stop 
 These items are intentionally included in v1.6 (alongside Position Sizing) because they are small enough to absorb into the release, but high enough impact that they must be explicit to avoid being dropped.
 
 #### BLG-TECH-01 — Fix Sharpe variance method + Capital Efficiency currency basis (**Quality Gate**)
-**Purpose:** Data correctness and validation trust.  
+**Purpose:** Data correctness and validation trust.
 **Release Gate:** v1.6 must not ship unless this item is complete and validation passes with signed-off expected values. This affects any user with enough trades to produce a non-zero Sharpe, which will be true of real usage.
 
 Scope (summary):
@@ -77,8 +79,8 @@ Migrate active validation logic into the service layer and keep the router thin.
 ---
 
 ### 3.4 Portfolio Heat Gauge
-**Status:** Planned  
-**Effort:** Low–Medium (2–3 days)  
+**Status:** Planned
+**Effort:** Low–Medium (2–3 days)
 **Value:** High (risk management)
 
 Dashboard widget showing total capital at risk across all open positions as a percentage of portfolio value. Integrates with Position Sizing Calculator to show the heat impact of a prospective new position.
@@ -88,8 +90,8 @@ Dashboard widget showing total capital at risk across all open positions as a pe
 ---
 
 ### 3.5 Alerts & Notifications
-**Status:** Planned  
-**Effort:** Medium–High (4–5 days)  
+**Status:** Planned
+**Effort:** Medium–High (4–5 days)
 **Value:** High
 
 Email alerts for: stop loss approach, grace period ending (days 8–9 warning), market regime change to risk-off, daily portfolio summary. Optional SMS. In-app notification feed. Configurable per-user preferences.
@@ -101,15 +103,15 @@ Email alerts for: stop loss approach, grace period ending (days 8–9 warning), 
 ## 4. Priority 2 — Next Phase (post v1.6)
 
 ### 4.1 Export & Reporting
-**Status:** Planned  
-**Effort:** Low–Medium (2–3 days)  
+**Status:** Planned
+**Effort:** Low–Medium (2–3 days)
 **Value:** Medium (tax necessity)
 
 CSV export of trade history. PDF monthly portfolio report. JSON backup export.
 
 ### 4.2 Watchlist & Screening
-**Status:** Planned — may defer to v2.0  
-**Effort:** Medium (3–4 days)  
+**Status:** Planned — may defer to v2.0
+**Effort:** Medium (3–4 days)
 **Value:** Medium
 
 Monitor tickers for entry signals. Target entry and stop fields. Quick-add to position entry modal.
@@ -119,7 +121,7 @@ Monitor tickers for entry signals. Target entry and stop fields. Quick-add to po
 ## 5. v1.7 — Process Improvement (Supporting Release)
 
 ### 5.1 BLG-TECH-04 — CI/CD: GitHub Actions validation workflow
-**Purpose:** Process improvement (not user-facing)  
+**Purpose:** Process improvement (not user-facing)
 Implement GitHub Actions workflow to run `POST /validate/calculations` on pull requests and branch pushes, block merge if any critical-severity validation fails, and post a results summary as a PR comment. Depends on validation severity.
 
 ---
@@ -147,6 +149,6 @@ When evaluating new features:
 
 ---
 
-*For delivery history, see `docs/product/changelog.md`.*  
-*For backlog and quick wins, see `docs/product/feature_backlog.md`.*  
+*For delivery history, see `docs/product/changelog.md`.*
+*For backlog and quick wins, see `docs/product/feature_backlog.md`.*
 *For strategic constraints and system boundaries, see `docs/specs/strategy_rules.md`.*
