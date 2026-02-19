@@ -5,6 +5,15 @@
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions); Frontend Specifications & UX Documentation Owner (canonical source of truth for all UI behaviour)
 **Scope:** Producing precise, complete prompts for the Base44 code generation platform to implement frontend changes; reviewing and integrating Base44-generated code into the codebase
 **Status:** Canonical
+**Version:** 1.1
+**Last Updated:** 2026-02-19
+
+### Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | 2026-02-19 | Added Section 5 rules 2a (import path validation), 2b (spec reconciliation), and 6 (deployment confirmation). Added Section 11 (Frontend File Naming Conventions). Changes actioned from lessons learnt review: 3.2 Position Sizing Calculator, filed 2026-02-19. |
+| 1.0 | — | Initial canonical version |
 
 ---
 
@@ -57,7 +66,7 @@ State every widget state, every edge case, and every rule that governs the featu
 State what must not change — existing form fields that must remain, submission behaviour that must not be broken, states that must be preserved, interactions that are out of scope.
 
 **6. Expected outcome — what Base44 should return**
-Tell Base44 exactly what to produce: the complete modified file, or a specific named component. State the output format expected.
+Tell Base44 exactly what to produce: the complete modified file, or a specific named component. State the exact intended filename per the naming convention in Section 11.
 
 ---
 
@@ -85,10 +94,20 @@ Every prompt must include enough context to be understood without access to the 
 When Base44 returns generated code:
 
 1. **Review against the canonical spec** — read the relevant spec section and verify each rule is correctly implemented. Do not assume the code is correct because it looks reasonable.
+
 2. **Review for regressions** — check that existing functionality in the modified file has not been changed or removed.
+
+2a. **Verify all import paths resolve from the component's actual filesystem location** — for any new component placed in `src/components/`, confirm that every import uses the correct number of `../` levels relative to the component's actual location on disk, not the page that consumes it. The rule of thumb: a file in `src/components/trades/` (or any `src/components/` subdirectory) must use `../../` to reach `src/api/`, `src/lib/`, or `src/components/`. Any import beginning with `../api`, `../lib`, or `../components` inside a file in a component subdirectory is incorrect. This class of error does not surface until the application loads — it must be caught at integration, not at runtime.
+
+2b. **Check existing files in scope for spec compliance before generating new code** — when a canonical spec is updated or newly written (e.g. a new calculation rule added to `strategy_rules.md`, a new field constraint added to an API contract), review any existing pages and components that touch the same domain against the updated spec before writing the prompt. Do not assume prior code is compliant with the current spec. Flag any divergence to the Frontend Specifications & UX Documentation Owner before writing the prompt — do not silently patch divergences in the generated code without a corresponding spec reference.
+
 3. **Do not edit the generated code for style** — if a behaviour is wrong, write a follow-up prompt to fix it. Do not silently patch the code, as this creates drift between the prompt record and the codebase.
+
 4. **If the generated code contradicts the spec** — flag to the Frontend Specifications & UX Documentation Owner before integrating. The spec may need clarification, or the prompt may need revision.
+
 5. **Commit the integrated code** — follow the standard commit and review process. The PR description should reference the Base44 prompt that produced the code.
+
+6. **Confirm the updated file is live in the running environment** — verify the change is reflected in the running application before closing the integration task. Do not treat a file as integrated until it has been confirmed running. If the environment requires a manual deploy step, a file copy, or a dev server restart, that step is part of integration and must be completed before the task is closed. A file that exists in the output but has not replaced the live file is not integrated.
 
 ---
 
@@ -150,6 +169,27 @@ This role is working well when:
 - Every frontend change has a filed prompt that explains exactly what was asked for and why
 
 The frontend becomes **predictable to change** — because every change starts from a complete, precise prompt grounded in the canonical spec.
+
+---
+
+## 11. Frontend File Naming Conventions
+
+All React component files must use PascalCase that matches the exported component name exactly, character-for-character including capitalisation.
+
+| File | Export |
+|------|--------|
+| `PositionSizingWidget.js` | `export default function PositionSizingWidget` |
+| `TradeHistoryTable.js` | `export default function TradeHistoryTable` |
+| `ExitModal.js` | `export default function ExitModal` |
+
+The filename and the export name must be identical. A mismatch is not a style issue — on Linux filesystems (which this project runs on), a casing difference between the filename and an import reference is a silent module-not-found error at runtime.
+
+### Rules
+
+- When writing a Base44 prompt that introduces a new component, the prompt must state the exact intended filename in the Expected Outcome section.
+- When integrating generated code, confirm the actual filename on disk matches the import reference in every consuming file before marking integration complete.
+- When consuming a component in a page or another component, verify the import path spells the filename exactly as it exists on disk. Do not infer casing from the component name alone — check the file.
+- If a file was created with incorrect casing (e.g. `Positionsizingwidget.js` instead of `PositionSizingWidget.js`), rename the file and update all import references before closing the integration task. Do not work around it by matching the import to the wrong casing.
 
 ---
 
