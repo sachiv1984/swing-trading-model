@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { base44 } from "../api/base44Client";
+import { base44 } from "../../api/base44Client";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Loader2, Ruler } from "lucide-react";
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 
 const SYSTEM_MESSAGES = {
   INVALID_ENTRY_PRICE: "Enter a valid entry price",
