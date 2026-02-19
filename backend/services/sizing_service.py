@@ -22,7 +22,7 @@ Available cash (portfolios.cash) is the feasibility gate only — not the risk b
 import math
 from typing import Dict, Optional
 
-from database import get_portfolio, get_latest_snapshot
+from database import get_portfolio, get_latest_snapshot, get_settings
 from utils.pricing import get_live_fx_rate
 from utils.calculations import calculate_uk_entry_fees, calculate_us_entry_fees
 
@@ -145,22 +145,29 @@ def size_position(
     suggested_shares = _floor_4dp(raw_shares)
 
     # ------------------------------------------------------------------
-    # Fee estimation
+    # Fee estimation — uses settings for commission/rate values
     # ------------------------------------------------------------------
+    settings_list = get_settings()
+    settings = settings_list[0] if settings_list else {}
+
+    gross_cost_native = suggested_shares * entry_price
+
     if market == "US":
-        estimated_fees = calculate_us_entry_fees(
-            entry_price, suggested_shares, fx_rate_used
-        )
+        fee_breakdown = calculate_us_entry_fees(gross_cost_native, settings)
     else:
-        estimated_fees = calculate_uk_entry_fees(entry_price, suggested_shares)
+        fee_breakdown = calculate_uk_entry_fees(gross_cost_native, settings)
+
+    estimated_fees_native = fee_breakdown["total"]
 
     # ------------------------------------------------------------------
     # Estimated cost in GBP
     # ------------------------------------------------------------------
     if market == "US":
-        estimated_cost = (suggested_shares * entry_price / fx_rate_used) + estimated_fees
+        estimated_cost = (gross_cost_native + estimated_fees_native) / fx_rate_used
+        estimated_fees = round(estimated_fees_native / fx_rate_used, 2)
     else:
-        estimated_cost = (suggested_shares * entry_price) + estimated_fees
+        estimated_cost = gross_cost_native + estimated_fees_native
+        estimated_fees = round(estimated_fees_native, 2)
 
     estimated_cost = round(estimated_cost, 2)
     estimated_fees = round(estimated_fees, 2)
@@ -184,12 +191,22 @@ def size_position(
 
     if not cash_sufficient:
         # §4.1.6 — include max_affordable_shares when insufficient cash
+        # Conservative: deduct estimated fee rate from available cash before dividing
         if market == "US":
-            # Approximate: net of fees, back-calculate max shares
-            max_cost_for_shares = available_cash * 0.995  # conservative: leave ~0.5% for fees
-            max_raw = max_cost_for_shares * fx_rate_used / entry_price
+            fx_fee_rate = float(settings.get("fx_fee_rate", 0.0015))
+            effective_price_gbp = entry_price * (1 + fx_fee_rate) / fx_rate_used
         else:
-            max_raw = available_cash / entry_price
+            stamp_duty_rate = float(settings.get("stamp_duty_rate", 0.005))
+            commission = float(settings.get("uk_commission", 9.95))
+            # Back out commission from available cash first, then apply stamp duty
+            spendable = max(0.0, available_cash - commission)
+            effective_price_gbp = entry_price * (1 + stamp_duty_rate)
+
+        if market == "US":
+            max_raw = available_cash / effective_price_gbp
+        else:
+            max_raw = spendable / effective_price_gbp
+
         result["max_affordable_shares"] = _floor_4dp(max_raw)
 
     return result
