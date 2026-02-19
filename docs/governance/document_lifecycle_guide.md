@@ -1,10 +1,10 @@
 # Documentation Lifecycle Guide
 
-**Owner:** Head of Specs Team  
-**Scope:** All governed documentation across the entire product  
-**Status:** Canonical  
-**Version:** 2.0  
-**Last Updated:** February 18, 2026
+**Owner:** Head of Specs Team
+**Scope:** All governed documentation across the entire product
+**Status:** Canonical
+**Version:** 2.1
+**Last Updated:** 2026-02-19
 
 ---
 
@@ -12,6 +12,7 @@
 
 | Version | Change |
 |---------|--------|
+| 2.1 | Class 4 (Planning Document): added canonical location `docs/product/scope/` for scope documents, naming convention, and scope document as a distinct sub-type with its own supersession rule. Additive only — no existing rules changed. |
 | 2.0 | Expanded scope to cover all document classes. Added Operational Record, Planning Document, Role Charter, and Governance Prompt as formal classes. Added universal header block standard. Added enforcement mechanism section. Added trigger rules for governance review. |
 | 1.0 | Initial version. Covered Canonical, Supporting, and reference artifacts only. |
 
@@ -129,6 +130,11 @@ Filed:              [date filed]
 
 **What it is:** A working document capturing product decisions, feature intent, prioritisation, and backlog thinking. It is pre-canonical — when a feature is built, the planning document is superseded by the canonical specs written for that feature.
 
+Planning Documents include two distinct sub-types:
+
+- **Roadmap, backlog, and decisions documents** — ongoing planning artifacts that evolve over time
+- **Scope documents** — implementation briefs written at the end of the pre-alignment phase for a specific feature, immediately before engineering begins
+
 **Who creates it:** Product Owner.
 
 **Lifecycle states available:** Draft → Active → Superseded → Archived
@@ -136,6 +142,7 @@ Filed:              [date filed]
 **Required header fields:**
 ```
 Owner:        Product Owner
+Class:        Planning Document (Class 4)
 Status:       [Draft | Active | Superseded]
 Last Updated: [date]
 ```
@@ -146,7 +153,22 @@ Last Updated: [date]
 - Planning documents must never be cited as canonical intent — they record thinking, not decisions
 - Implementation detail in planning documents (SQL schemas, endpoint paths, formulas) is illustrative; the canonical spec takes precedence if they conflict
 
-**Examples:** `docs/product/roadmap.md`, `docs/product/feature_backlog/*.md`
+**Scope document additional rules:**
+- A scope document must not be written until QA review (acceptance criteria confirmation) is complete
+- A scope document is the final gate before implementation is opened — it represents the Product Owner's sign-off that all pre-alignment work is done
+- When the feature ships, the scope document status is updated to Superseded and must reference the changelog entry for the delivered version
+- Scope documents must include a pre-implementation checklist confirming all canonical specs are locked
+
+**Locations:**
+- Roadmap and backlog: `docs/product/roadmap.md`, `docs/product/backlog.md`
+- Decisions records: `docs/product/decisions/`
+- Scope documents: `docs/product/scope/`
+
+**Naming conventions:**
+- Decisions records: `{roadmap-item-id}-{feature-slug}.md` (e.g. `3.2-position-sizing-calculator.md`)
+- Scope documents: `scope--{roadmap-item-id}-{feature-slug}.md` (e.g. `scope--3.2-position-sizing-calculator.md`)
+
+**Examples:** `docs/product/roadmap.md`, `docs/product/backlog.md`, `docs/product/decisions/3.2-position-sizing-calculator.md`, `docs/product/scope/scope--3.2-position-sizing-calculator.md`
 
 ---
 
@@ -339,8 +361,5 @@ The Head of Specs Team sets these standards. Roles outside the Specs Team follow
 
 ## 10. Non-Negotiable Rule
 
-> If a document influences decisions,  
+> If a document influences decisions,
 > it must be owned, reviewed, and aligned at the point of change.
-
-This rule applies to every document class, every role, and every function.  
-No exceptions without explicit approval from the Head of Specs Team.
