@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 1.7.0
+  version: 1.8.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -91,6 +91,37 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OkAddPosition"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /portfolio/size:
+    post:
+      tags: [Portfolio]
+      summary: Calculate position size
+      description: |
+        Calculate suggested share quantity for a prospective new position.
+        Returns sizing result, risk amount, estimated cost, and cash feasibility.
+        Idempotent for same inputs. Does not mutate any state.
+        All calculations are authoritative and performed server-side.
+        Canonical rules: docs/specs/strategy_rules.md §4.1
+        Canonical contract: docs/specs/api_contracts/portfolio_endpoints.md
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SizePositionRequest"
+            example:
+              entry_price: 850.00
+              stop_price: 780.00
+              risk_percent: 1.00
+              market: US
+              fx_rate: 1.3642
+      responses:
+        "200":
+          $ref: "#/components/responses/OkPositionSize"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -576,7 +607,6 @@ components:
         data:
           description: Payload varies by endpoint.
           type: object
-          additionalProperties: true
 
     ApiError:
       type: object
@@ -682,6 +712,88 @@ components:
         initial_stop: { type: number }
         remaining_cash: { type: number }
         position_id: { type: string, format: uuid }
+
+    SizePositionRequest:
+      type: object
+      required: [entry_price, stop_price, risk_percent]
+      properties:
+        entry_price:
+          type: number
+          minimum: 0.0001
+          description: Prospective entry price in instrument's native currency (GBP for UK, USD for US)
+        stop_price:
+          type: number
+          minimum: 0.0001
+          description: Intended initial stop price in instrument's native currency
+        risk_percent:
+          type: number
+          minimum: 0.0001
+          description: Percentage of portfolio value to risk, e.g. 1.00 for 1%
+        market:
+          type: string
+          enum: [US, UK]
+          default: UK
+          description: Used for fee estimation in cash feasibility gate
+        fx_rate:
+          type: number
+          minimum: 0.0001
+          description: User-provided FX rate override for US positions. Omit to use live system rate.
+
+    PositionSizeResponse:
+      type: object
+      description: |
+        Sizing result. Three distinct shapes depending on outcome:
+        - valid: true, cash_sufficient: true — full valid result with suggested_shares auto-filled
+        - valid: true, cash_sufficient: false — valid result with max_affordable_shares (always present)
+        - valid: false — invalid inputs with reason code
+        Canonical field definitions: docs/specs/api_contracts/portfolio_endpoints.md
+        Canonical rules: docs/specs/strategy_rules.md §4.1
+      properties:
+        valid:
+          type: boolean
+          description: true if inputs satisfy all validity rules in strategy_rules.md §4.1.4
+        suggested_shares:
+          type: number
+          description: Share quantity floored to 4dp. Present only when valid is true.
+        risk_amount:
+          type: number
+          description: PortfolioValue × RiskPercent in GBP. Present when valid is true.
+        stop_distance:
+          type: number
+          description: EntryPrice − StopPrice in native currency. Present when valid is true.
+        estimated_cost:
+          type: number
+          description: SuggestedShares × EntryPrice + EstimatedFees in GBP. Present when valid is true.
+        estimated_fees:
+          type: number
+          description: Fee estimate using current settings parameters. Present when valid is true.
+        fx_rate_used:
+          type: number
+          description: FX rate applied. Always returned when valid is true. 1.0 for UK positions.
+        cash_sufficient:
+          type: boolean
+          description: true if estimated_cost <= available_cash. Present when valid is true.
+        available_cash:
+          type: number
+          description: Current portfolios.cash in GBP. Present when valid is true.
+        max_affordable_shares:
+          type: number
+          description: Always present when cash_sufficient is false. Maximum affordable share quantity floored to 4dp.
+        reason:
+          type: string
+          enum:
+            - INVALID_RISK_PERCENT
+            - INVALID_ENTRY_PRICE
+            - INVALID_STOP_PRICE
+            - INVALID_STOP_DISTANCE
+            - NO_PORTFOLIO_VALUE_SNAPSHOT
+          description: Machine-readable reason code. Present only when valid is false.
+        reason_detail:
+          type: string
+          description: |
+            Human-readable description for development and logging use only.
+            Must NOT be used as user-facing display text.
+            Present only when valid is false.
 
     ExitPositionRequest:
       type: object
@@ -882,6 +994,8 @@ components:
       description: |
         Settings object. Canonical field meanings and constraints live in:
         docs/specs/api_contracts/settings_endpoints.md
+        Includes default_risk_percent (float, > 0, <= 100) added in v1.8.0
+        for Position Sizing Calculator pre-population support.
       additionalProperties: true
 
     UpdateSettingsRequest:
@@ -890,6 +1004,7 @@ components:
         All fields optional. Only provided fields are updated.
         Canonical field meanings and constraints live in:
         docs/specs/api_contracts/settings_endpoints.md
+        Includes default_risk_percent (float, > 0, <= 100) added in v1.8.0.
       additionalProperties: true
 
     MarketStatus:
@@ -926,7 +1041,8 @@ components:
     EndpointTestResponse:
       type: object
       description: |
-        Endpoint test results payload. Canonical structure lives in:
+        Endpoint test results payload.
+        Canonical structure lives in:
         docs/specs/api_contracts/health_endpoints.md
       additionalProperties: true
 
@@ -982,6 +1098,18 @@ components:
                 properties:
                   data:
                     $ref: "#/components/schemas/AddPositionResponse"
+
+    OkPositionSize:
+      description: Position size calculated
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ApiOk"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/PositionSizeResponse"
 
     OkPortfolioSnapshot:
       description: Snapshot created/updated
