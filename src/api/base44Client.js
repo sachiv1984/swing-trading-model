@@ -218,7 +218,7 @@ export const base44 = {
           body: JSON.stringify(data),
           raw: true, // backend returns raw json for this route
         }),
-      
+
       // ✅ NEW: Update position note
       updateNote: async (positionId, entryNote) => {
         const response = await fetch(`${API_BASE_URL}/positions/${positionId}/note`, {
@@ -226,15 +226,15 @@ export const base44 = {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ entry_note: entryNote })
         });
-        
+
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error.detail || 'Failed to update note');
         }
-        
+
         return response.json();
       },
-      
+
       // ✅ NEW: Update position tags
       updateTags: async (positionId, tags) => {
         const response = await fetch(`${API_BASE_URL}/positions/${positionId}/tags`, {
@@ -242,15 +242,15 @@ export const base44 = {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tags })
         });
-        
+
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error.detail || 'Failed to update tags');
         }
-        
+
         return response.json();
       },
-      
+
       // Exit supports both call shapes:
       //   exit(id, {exit_price, shares, ...})
       //   exit({position_id, exit_price, shares, ...})
@@ -387,6 +387,12 @@ export const api = {
       doFetch('/portfolio/position', {
         method: 'POST',
         body: JSON.stringify(positionData),
+      }),
+    // Added for Position Sizing Calculator (roadmap 3.2)
+    size: async (sizeData) =>
+      doFetch('/portfolio/size', {
+        method: 'POST',
+        body: JSON.stringify(sizeData),
       }),
   },
 
