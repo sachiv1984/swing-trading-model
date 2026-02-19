@@ -13,7 +13,7 @@ import PageHeader from "../components/ui/PageHeader";
 import { ArrowLeft, Calculator, Loader2, CheckCircle2, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
-import PositionSizingWidget from "../components/trades/PositionSizingWidget";
+import Positionsizingwidget from "../components/trades/Positionsizingwidget";
 
 export default function TradeEntry() {
   const navigate = useNavigate();
