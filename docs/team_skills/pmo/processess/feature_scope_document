@@ -1,0 +1,179 @@
+# Feature Scope Document
+
+**Owner:** PMO Lead
+**Type:** PMO Process Template
+**Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-02-19
+
+---
+
+## Purpose
+
+This template is used by the Product Owner to produce the scope document for a feature once QA sign-off has been confirmed. The scope document is the final deliverable of the pre-alignment phase. It is the implementation brief handed to engineering.
+
+The PMO Lead coordinates the production of the scope document and confirms it is compliant before declaring implementation open.
+
+---
+
+## When to Use
+
+- Triggered when the QA Review Gate (Phase 3) passes
+- Produced by the Product Owner
+- Committed before implementation is declared open
+
+---
+
+## Required Inputs
+
+Before writing the scope document, confirm all of the following are available:
+
+- [ ] Decisions record committed at `docs/product/decisions/{id}-{slug}.md`
+- [ ] All canonical spec updates committed and verified
+- [ ] QA review verdict confirmed as Pass (or Conditional Pass fully resolved)
+- [ ] Revised effort estimate (if scope changed during pre-alignment)
+
+---
+
+## Scope Document Template
+
+The scope document is a Class 4 Planning Document. It must follow the header format defined in `docs/governance/document_lifecycle_guide.md`.
+
+---
+
+```markdown
+# Scope Document — {Feature Name}
+
+**Owner:** Product Owner
+**Class:** Planning Document (Class 4)
+**Status:** Active
+**Last Updated:** {date}
+**Roadmap item:** {item id}
+**Target release:** {version}
+
+> ⚠️ Standing Notice: This document describes delivery intent and summarises
+> canonical spec decisions for the purposes of implementation. All authoritative
+> rules, formulas, field definitions, and constraints live in the canonical
+> specifications listed in Section 2. In any conflict between this document and
+> those specs, the canonical specs prevail. This document must not be cited as
+> canonical intent.
+
+---
+
+## 1. What This Is
+
+{2–3 sentence plain-language description of the feature. What it does, who
+uses it, and why it matters. No technical detail — that belongs in the specs.}
+
+---
+
+## 2. Canonical Specifications (Implementation Source of Truth)
+
+Engineering must implement against these documents. This scope document
+summarises; the specs govern.
+
+| Spec | What it owns |
+|------|--------------|
+| {spec file} ({version}) | {what it owns for this feature} |
+| {spec file} ({version}) | {what it owns for this feature} |
+
+---
+
+## 3. Scope
+
+### 3.1 In scope
+
+**Backend**
+{Bullet list of backend work items — endpoint implementation, migrations,
+settings changes, etc.}
+
+**Frontend**
+{Bullet list of frontend work items — component changes, page changes,
+settings UI changes, etc.}
+
+### 3.2 Out of scope
+
+{Explicit list of things that were considered and excluded. Each item should
+state the decision and where it was made (e.g. "Decision 3, decisions record").}
+
+---
+
+## 4. Calculation Summary (if applicable)
+
+{For features involving business logic: a plain-language summary of the key
+formulas. Canonical rules are in the spec — this is orientation only.}
+
+---
+
+## 5. API Endpoint(s)
+
+{For each new or modified endpoint: method, path, and a one-line summary of
+the three response shapes (if applicable). Full contract is in the API spec.}
+
+---
+
+## 6. Acceptance Criteria
+
+Derived from {spec file(s)} per QA review ({date}).
+
+**Backend**
+{Bullet list of backend acceptance criteria — each one testable and
+unambiguous.}
+
+**Frontend**
+{Bullet list of frontend acceptance criteria — each one testable and
+unambiguous.}
+
+---
+
+## 7. Effort Estimate
+
+{X–Y days.} {One sentence explaining the estimate and noting if it changed
+during pre-alignment and why.}
+
+---
+
+## 8. Pre-Implementation Checklist
+
+All items confirmed complete before this document was written:
+
+- [ ] {Spec file} updated ({version})
+- [ ] {Spec file} updated ({version})
+- [ ] `openapi.yaml` updated ({version})
+- [ ] Data model updated with migration ({version})
+- [ ] QA review complete — acceptance criteria confirmed derivable ({date})
+
+---
+
+## 9. Out of Scope Confirmation
+
+| Item | Decision |
+|------|----------|
+| {Item} | {Why excluded and where decided} |
+```
+
+---
+
+## Compliance Check
+
+Before committing the scope document, the PMO Lead confirms:
+
+- [ ] Header block is complete (Owner, Class, Status, Last Updated, Roadmap item, Target release)
+- [ ] Standing notice is present
+- [ ] All canonical specs in Section 2 include version numbers
+- [ ] Section 9 explicitly lists items that were considered and excluded
+- [ ] Pre-implementation checklist is complete — no unchecked items
+- [ ] File is committed to `docs/product/scope/scope--{id}-{slug}.md`
+- [ ] File naming follows the convention: `scope--{roadmap-item-id}-{feature-slug}.md`
+
+A scope document with unchecked items in the pre-implementation checklist must not be committed. It means pre-alignment is not complete.
+
+---
+
+## After Commitment
+
+Once the scope document is committed:
+
+- The PMO Lead notifies the Head of Engineering that implementation is open
+- The PMO Lead schedules the lessons learnt review using `processes/lessons_learnt.md`
+- The roadmap entry for the feature is updated to reference the scope document location
