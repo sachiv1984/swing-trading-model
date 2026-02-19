@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { base44 } from "../../api/base44Client";
+import { api } from "../../api/base44Client";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -63,16 +63,17 @@ export default function PositionSizingWidget({
           body.fx_rate = fxRate;
         }
 
-        const response = await base44.api.post("/portfolio/size", body);
+        // doFetch unwraps the {status, data} envelope — response IS the data object directly
+        const response = await api.portfolio.size(body);
 
-        if (response?.status === "ok") {
-          setSizingResult(response.data);
+        if (response != null) {
+          setSizingResult(response);
           setUsedSuggestion(false);
 
           // Auto-fill shares only when valid + cash sufficient + shares field is empty
-          if (response.data?.valid && response.data?.cash_sufficient) {
+          if (response.valid && response.cash_sufficient) {
             if (!sharesRef.current || sharesRef.current === "") {
-              onSharesChange(String(response.data.suggested_shares));
+              onSharesChange(String(response.suggested_shares));
             }
           }
         } else {
