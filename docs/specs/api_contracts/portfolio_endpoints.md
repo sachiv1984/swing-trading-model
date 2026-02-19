@@ -6,6 +6,7 @@ This document defines **Portfolio** domain endpoints:
 
 - Portfolio overview (working screen)
 - Add position (via portfolio)
+- Position sizing calculator
 - Daily snapshot upsert
 - Snapshot history retrieval
 
@@ -17,6 +18,7 @@ Global response envelopes, error shape, defaults, and multi-currency rules are d
 
 - [GET /portfolio](#get-portfolio)
 - [POST /portfolio/position](#post-portfolioposition)
+- [POST /portfolio/size](#post-portfoliosize)
 - [POST /portfolio/snapshot](#post-portfoliosnapshot)
 - [GET /portfolio/history](#get-portfoliohistory)
 
@@ -199,6 +201,153 @@ Errors use the standard error envelope from **conventions.md**.
 
 ---
 
+## POST /portfolio/size
+
+**Purpose**
+
+Calculate a suggested share quantity for a prospective new position based on portfolio risk parameters.
+
+Returns a deterministic sizing result including suggested shares, risk amount, estimated cost, and cash feasibility. Does not create a position or mutate any state. The backend is the authoritative source of all calculations — the frontend must not derive or recalculate any returned value.
+
+All calculation rules are defined canonically in `strategy_rules.md §4.1`.
+
+**Method & Path**
+
+- `POST /portfolio/size`
+
+**Idempotency**
+
+- Idempotent for the same inputs. Safe to call repeatedly, including on debounced keystrokes. Does not mutate portfolio state, cash balances, or position records.
+
+### Request
+
+#### Body
+
+```json
+{
+  "entry_price": 850.00,
+  "stop_price": 780.00,
+  "risk_percent": 1.00,
+  "market": "US",
+  "fx_rate": 1.3642
+}
+```
+
+#### Required fields
+
+| Field | Type | Constraint | Description |
+|-------|------|------------|-------------|
+| `entry_price` | number | > 0 | Prospective entry price in the instrument's native currency (GBP for UK, USD for US) |
+| `stop_price` | number | > 0 | Intended initial stop price in the instrument's native currency |
+| `risk_percent` | number | > 0 | Percentage of portfolio value to risk on this position, e.g. `1.00` for 1% |
+
+#### Optional fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `market` | string | `"UK"` | `"US"` or `"UK"`. Used for fee estimation in the cash feasibility gate |
+| `fx_rate` | number | Live system rate | User-provided FX rate override for US positions. If omitted, the system live rate is used |
+
+### Response (200) — Valid result
+
+Response uses the standard success envelope from **conventions.md**.
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "valid": true,
+    "suggested_shares": 17.8571,
+    "risk_amount": 125.00,
+    "stop_distance": 70.00,
+    "estimated_cost": 15178.57,
+    "estimated_fees": 0.00,
+    "fx_rate_used": 1.3642,
+    "cash_sufficient": true,
+    "available_cash": 20000.00
+  }
+}
+```
+
+### Response (200) — Insufficient cash
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "valid": true,
+    "suggested_shares": 17.8571,
+    "risk_amount": 125.00,
+    "stop_distance": 70.00,
+    "estimated_cost": 15178.57,
+    "estimated_fees": 0.00,
+    "fx_rate_used": 1.3642,
+    "cash_sufficient": false,
+    "available_cash": 8000.00,
+    "max_affordable_shares": 9.3750
+  }
+}
+```
+
+### Response (200) — Invalid inputs
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "valid": false,
+    "reason": "INVALID_STOP_DISTANCE",
+    "reason_detail": "Stop price must be below entry price"
+  }
+}
+```
+
+### Field notes
+
+| Field | Notes |
+|-------|-------|
+| `valid` | `true` if inputs satisfy all validity rules in `strategy_rules.md §4.1.4`. `false` if any rule is breached or portfolio value snapshot is missing |
+| `suggested_shares` | Share quantity floored to 4 decimal places per canonical spec. Present only when `valid: true` |
+| `risk_amount` | `PortfolioValue × RiskPercent` in GBP |
+| `stop_distance` | `EntryPrice − StopPrice` in the instrument's native currency |
+| `estimated_cost` | `SuggestedShares × EntryPrice + EstimatedFees` in GBP |
+| `estimated_fees` | Fee estimate using current settings parameters (commission, stamp duty, FX fee as applicable) |
+| `fx_rate_used` | The FX rate applied in this calculation. Always returned when `valid: true` for auditability. `1.0` for UK positions |
+| `cash_sufficient` | `true` if `estimated_cost <= available_cash` |
+| `available_cash` | Current `portfolios.cash` in GBP. Returned when `valid: true` to support cash display in the UI |
+| `max_affordable_shares` | Present and always populated when `cash_sufficient: false`. Floored to 4 decimal places. Maximum share quantity the user can afford given `available_cash` |
+| `reason` | Machine-readable reason code. Present only when `valid: false`. See reason codes table below |
+| `reason_detail` | Human-readable description of the invalid condition. Present only when `valid: false`. **For development and logging use only — must not be used as user-facing display text.** The frontend derives its own plain-language messages from the `reason` code |
+
+### Reason codes
+
+| Code | Condition |
+|------|-----------|
+| `INVALID_RISK_PERCENT` | `risk_percent <= 0` |
+| `INVALID_ENTRY_PRICE` | `entry_price <= 0` |
+| `INVALID_STOP_PRICE` | `stop_price <= 0` |
+| `INVALID_STOP_DISTANCE` | `stop_price >= entry_price` (stop distance is zero or negative) |
+| `NO_PORTFOLIO_VALUE_SNAPSHOT` | No snapshot exists in `portfolio_history`. Backend cannot determine portfolio value for risk calculation |
+
+### Validation rules & constraints
+
+- All three required fields must be present. Missing fields return HTTP 400.
+- Business rule failures (invalid inputs per `strategy_rules.md §4.1.4`) return HTTP 200 with `valid: false` — not HTTP 400.
+- `market` must be `"US"` or `"UK"` if provided. Invalid market value returns HTTP 400.
+- `fx_rate` must be > 0 if provided. Invalid FX rate returns HTTP 400.
+- The endpoint never auto-fills, stores, or applies `SuggestedShares` to any position. It is a read-only calculation.
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+- `400` Missing required field (`entry_price`, `stop_price`, or `risk_percent`)
+- `400` Invalid `market` value
+- `400` Invalid `fx_rate` value (≤ 0)
+- `500` Internal error
+
+---
+
 ## POST /portfolio/snapshot
 
 **Purpose**
@@ -283,26 +432,15 @@ Response uses the standard success envelope from **conventions.md**.
     "cash_balance": 5000.00,
     "positions_value": 10000.00,
     "total_pnl": 1000.00,
-    "position_count": 3,
-    "created_at": "2026-02-17T10:30:00Z"
-  },
-  {
-    "id": "640e8400-e29b-41d4-a716-446655440000",
-    "snapshot_date": "2026-02-16",
-    "total_value": 14800.00,
-    "cash_balance": 5000.00,
-    "positions_value": 9800.00,
-    "total_pnl": 800.00,
-    "position_count": 3,
-    "created_at": "2026-02-16T17:00:00Z"
+    "position_count": 3
   }
 ]
 ```
 
 ### Notes
 
-- Returned array is sorted by `snapshot_date` descending (newest first).
-- Returns `[]` if no snapshots exist.
+- Returns an empty array `[]` if no snapshots exist.
+- Sorted by `snapshot_date` ascending (oldest first) to support charting.
 
 ### Errors
 
