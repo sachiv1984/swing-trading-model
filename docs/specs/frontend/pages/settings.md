@@ -1,15 +1,16 @@
 # settings.md
 
-**Owner:** Frontend Specifications & UX Documentation Owner  
-**Status:** Canonical  
-**Version:** 1.0
-**Last Updated:** February 18, 2026
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Status:** Canonical
+**Version:** 1.1
+**Last Updated:** 2026-02-19
 
 ## Purpose & User Goals
 The Settings page allows users to configure **strategy parameters**, **trading fees**, **UI preferences**, and **analytics thresholds** that control how the Position Manager Web App behaves and calculates results.
 
 Users should be able to:
 - Adjust core strategy settings (minimum hold days, ATR parameters, stop multipliers).
+- Set the default risk percentage pre-populated in the Position Sizing Calculator.
 - Configure commissions, stamp duty, and FX fee rates used in cost and P&L calculations.
 - Set the theme preference.
 - Define the minimum number of trades required before analytics are displayed.
@@ -49,7 +50,7 @@ Sections:
 - **PageHeader** – main title, description, and Save button actions.
 - **SectionCard** – reusable layout wrapper with motion/animation, icon, title, and content.
 - **Form Controls**:
-  - `Input` for numeric values (days, multipliers, commissions, rates, thresholds).
+  - `Input` for numeric values (days, multipliers, commissions, rates, thresholds, risk percent).
   - `Select` for `theme`.
   - `Label` and small helper text for each field.
 - **Save Button** (`Button`):
@@ -63,7 +64,7 @@ Sections:
 
 ### 1. Strategy Parameters
 
-These values define the core risk model and stop logic.
+These values define the core risk model, stop logic, and position sizing defaults.
 
 > These defaults are the backtest-optimised values (26.37% CAGR, 1.29 Sharpe, −25.38% max drawdown). Users should understand the strategy rationale before changing them.
 
@@ -92,7 +93,16 @@ These values define the core risk model and stop logic.
   - Helper text: "e.g., 2 = High − 2×ATR (tight trailing stop for profitable positions)"
   - Applied to positions that are profitable to protect gains.
 
-> **Important:** Changes to strategy parameters take effect on the **next** call to `GET /positions/analyze`. Open positions are not retroactively affected.
+- **Default Risk %**
+  - Type: number, step `0.01`, min `0.01`, max `100`
+  - Default: `1.00`
+  - Helper text: "Pre-filled in the Position Sizing Calculator on trade entry. This is your default — you can override it per trade."
+  - Maps to `default_risk_percent` in `GET /PUT /settings`.
+  - This is a **user preference default**, not an enforced limit. The user may type any valid risk percentage on any individual trade entry without restriction.
+  - Stored as `DECIMAL(4,2)` — accepts up to two decimal places (e.g. `1.50`, `0.75`).
+  - Constraint: must be `> 0` and `<= 100`. Values outside this range are rejected by the API with a `400`.
+
+> **Important:** Changes to strategy parameters take effect on the **next** call to `GET /positions/analyze`. Open positions are not retroactively affected. Changes to `default_risk_percent` take effect immediately on the next load of the Trade Entry page — no positions are affected.
 
 ---
 
@@ -163,6 +173,7 @@ Analytics views show only once this threshold is met, avoiding misleading statis
 - The response is an array containing a single settings object (`settings[0]`).
 - The form is initialized with a merge of defaults and the stored record.
 - If no settings exist, the form is initialized with defaults only.
+- `default_risk_percent` defaults to `1.00` if not present in the stored record.
 
 ### Saving Settings
 - On save:
@@ -204,6 +215,7 @@ Analytics views show only once this threshold is met, avoiding misleading statis
 
 ## UX Notes
 - Defaults match the canonical strategy parameters. Users can adopt them without changes.
-- Helper text clarifies how each parameter is used (ATR multipliers, stamp duty, FX fee, analytics threshold).
+- Helper text clarifies how each parameter is used (ATR multipliers, stamp duty, FX fee, analytics threshold, risk percent default).
+- The `default_risk_percent` field helper text makes clear it is a convenience default, not a hard limit — users retain full control per trade.
 - Grouping into Strategy Parameters, Commission & Fees, Preferences, and Analytics mirrors the domain model.
 - Save feedback (button state + toast) confirms changes are persisted and applied.
