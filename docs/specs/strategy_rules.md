@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.3 | 19 February 2026 | Revised §4.1.7 — replaced toggle activation model with always-visible widget model per pre-alignment decision record for roadmap item 3.2 (Decision 3). No changes to calculation rules, validity rules, FX handling, or cash constraint behaviour in §4.1.1–§4.1.6. |
 | 1.2 | 18 February 2026 | Added canonical rules for the Position Sizing Calculator (Section 4.1). No changes to stop-loss, trailing logic, or exit conditions. |
 | 1.1 | 18 February 2026 | Expanded system boundaries and design rationale (Section 13). No behavioural rules changed. |
 | 1.0 | February 2026 | Initial canonical version. |
@@ -187,12 +188,31 @@ In this case:
 
 ### 4.1.7 User interface interaction requirement
 
-- The Position Sizing Calculator is enabled via a toggle in the Position Entry modal.  
-- When enabled, the backend computes `SuggestedShares`.  
-- The user interface auto-fills Shares only when:
-  - the result is valid, and  
-  - `EstimatedCost <= AvailableCash`.
+- The Position Sizing Calculator is always visible within the Position Entry form. It does not require activation via a toggle or any other user action.
 
+**Calculation behaviour**
+
+- The calculator recalculates automatically as the user enters or modifies entry_price, stop_price, or risk_percent.
+- Recalculation is debounced: the backend call is made 300ms after the user stops typing.
+- A loading state is shown during the window between the debounce firing and the response returning.
+- All sizing calculations are performed on the backend and are authoritative.
+
+**Auto-fill behaviour**
+
+- When a valid result is returned and the shares field is empty: the shares field is auto-filled with SuggestedShares.
+- When a valid result is returned and the user has already manually entered a share count: the shares field is not overwritten. The suggested value is displayed alongside the field with an explicit "use this" affordance, allowing the user to apply it deliberately.
+- When the result is INSUFFICIENT_CASH: the shares field is not auto-filled. MaxAffordableShares is shown as informational context only.
+- When the result is invalid: the shares field is not auto-filled. An inline plain-language message is shown beneath the widget.
+
+**Form submission**
+
+- An invalid or cash-constrained sizing result does not block form submission.
+- The user may enter shares manually and proceed regardless of widget state.
+- The sizing calculator is decision support; it is not a submission gate.
+
+**Rationale for change from v1.2**
+
+The toggle model specified in v1.2 was written before the pre-alignment meeting for roadmap item 3.2. During that meeting, the Head of UX & Design and Product Owner agreed that the calculator should be always visible in the entry form — requiring users to discover and activate a toggle would reduce the daily workflow value that justifies the feature. The auto-fill protection rule (do not overwrite a manually entered value) is a financial safety constraint: silently replacing a user-entered share count could cause an unintended position size to be submitted. Full decision rationale: docs/product/decisions/3.2-position-sizing-calculator.md Decision 3.
 ---
 
 ## 5. Initial stop calculation
