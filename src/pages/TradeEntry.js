@@ -13,17 +13,19 @@ import PageHeader from "../components/ui/PageHeader";
 import { ArrowLeft, Calculator, Loader2, CheckCircle2, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
+import PositionSizingWidget from "../components/trades/PositionSizingWidget";
 
 export default function TradeEntry() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  
+
   const [formData, setFormData] = useState({
     ticker: "",
     market: "UK",
     entry_date: new Date().toISOString().split("T")[0],
     shares: "",
     entry_price: "",
+    stop_price: "",
     fx_rate: "1",
     atr_value: "",
     entry_note: "",
@@ -54,6 +56,9 @@ export default function TradeEntry() {
     stamp_duty_rate: 0.005,
     fx_fee_rate: 0.0015,
   };
+
+  // Read default_risk_percent from settings for PositionSizingWidget
+  const defaultRiskPercent = settings?.[0]?.default_risk_percent ?? 1.0;
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Position.create(data),
@@ -88,7 +93,7 @@ export default function TradeEntry() {
   const allAvailableTags = [...new Set([...existingTags, ...defaultTags])];
 
   const filteredTags = tagInput
-    ? allAvailableTags.filter(tag => 
+    ? allAvailableTags.filter(tag =>
         tag.toLowerCase().includes(tagInput.toLowerCase()) &&
         !formData.tags.includes(tag)
       )
@@ -118,7 +123,13 @@ export default function TradeEntry() {
     }
   };
 
-  const calculateCosts = () => {
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Cost preview — client-side estimate for display only.
+  // These values are NOT passed to the backend on submission.
+  // Authoritative fee and stop calculations are performed server-side by
+  // POST /portfolio/position per strategy_rules.md §4.1.
+  // ─────────────────────────────────────────────────────────────────────────────
+  const estimateCosts = () => {
     const shares = parseFloat(formData.shares) || 0;
     const price = parseFloat(formData.entry_price) || 0;
     const fxRate = parseFloat(formData.fx_rate) || 1;
@@ -127,22 +138,27 @@ export default function TradeEntry() {
     const grossValue = shares * price;
     const grossValueGBP = formData.market === "US" ? grossValue / fxRate : grossValue;
 
-    const commission = formData.market === "UK" 
-      ? currentSettings.uk_commission 
+    const commission = formData.market === "UK"
+      ? currentSettings.uk_commission
       : currentSettings.us_commission;
 
-    const stampDuty = formData.market === "UK" 
-      ? grossValueGBP * currentSettings.stamp_duty_rate 
+    const stampDuty = formData.market === "UK"
+      ? grossValueGBP * currentSettings.stamp_duty_rate
       : 0;
 
-    const fxFee = formData.market === "US" 
+    const fxFee = formData.market === "US"
       ? grossValueGBP * (currentSettings.fx_fee_rate || 0.0015)
       : 0;
 
     const totalCost = grossValueGBP + commission + stampDuty + fxFee;
 
-    const initialStop = price - (atr * currentSettings.atr_multiplier_initial);
-    const riskPerShare = price - initialStop;
+    // ATR-derived stop hint — shown as a suggestion in the UI only
+    const suggestedStop = atr > 0 ? price - (atr * currentSettings.atr_multiplier_initial) : 0;
+
+    // Risk calculation uses the user's manually entered stop_price if set,
+    // otherwise falls back to the ATR-derived suggestion
+    const effectiveStop = parseFloat(formData.stop_price) || suggestedStop;
+    const riskPerShare = effectiveStop > 0 ? price - effectiveStop : 0;
     const totalRisk = riskPerShare * shares;
     const totalRiskGBP = formData.market === "US" ? totalRisk / fxRate : totalRisk;
 
@@ -153,19 +169,21 @@ export default function TradeEntry() {
       stampDuty,
       fxFee,
       totalCost,
-      initialStop,
+      suggestedStop,
       riskPerShare,
       totalRisk: totalRiskGBP,
       currencySymbol: formData.market === "UK" ? "£" : "$",
     };
   };
 
-  const costs = calculateCosts();
+  const costs = estimateCosts();
   const isFormValid = formData.ticker && formData.shares && formData.entry_price;
 
   const handleSubmit = () => {
     if (!isFormValid) return;
 
+    // Note: fees are NOT passed here — the backend calculates authoritative fees
+    // via POST /portfolio/position. stop_price uses the user's manual input.
     createMutation.mutate({
       ticker: formData.ticker,
       market: formData.market,
@@ -175,8 +193,7 @@ export default function TradeEntry() {
       current_price: parseFloat(formData.entry_price),
       fx_rate: parseFloat(formData.fx_rate),
       atr_value: parseFloat(formData.atr_value) || null,
-      stop_price: costs.initialStop > 0 ? costs.initialStop : null,
-      fees: costs.commission + costs.stampDuty + costs.fxFee,
+      stop_price: parseFloat(formData.stop_price) || null,
       status: "open",
       entry_note: formData.entry_note || null,
       tags: formData.tags.length > 0 ? formData.tags : null,
@@ -243,32 +260,20 @@ export default function TradeEntry() {
             />
           </div>
 
-          {/* Shares & Price */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-slate-400">Number of Shares</Label>
-              <Input
-                type="number"
-                value={formData.shares}
-                onChange={(e) => handleChange("shares", e.target.value)}
-                placeholder="0"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-slate-400">Fill Price ({costs.currencySymbol})</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.entry_price}
-                onChange={(e) => handleChange("entry_price", e.target.value)}
-                placeholder="0.00"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
-              />
-            </div>
+          {/* Entry Price */}
+          <div className="space-y-2">
+            <Label className="text-slate-400">Fill Price ({costs.currencySymbol})</Label>
+            <Input
+              type="number"
+              step="0.01"
+              value={formData.entry_price}
+              onChange={(e) => handleChange("entry_price", e.target.value)}
+              placeholder="0.00"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+            />
           </div>
 
-          {/* FX Rate (for US) */}
+          {/* FX Rate (US only) */}
           {formData.market === "US" && (
             <div className="space-y-2">
               <Label className="text-slate-400">FX Rate (USD/GBP)</Label>
@@ -282,23 +287,62 @@ export default function TradeEntry() {
             </div>
           )}
 
-          {/* ATR */}
+          {/* ATR & Stop Price */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-slate-400">ATR Value (Optional)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={formData.atr_value}
+                onChange={(e) => handleChange("atr_value", e.target.value)}
+                placeholder="For stop suggestion"
+                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+              />
+              {formData.atr_value && costs.suggestedStop > 0 && (
+                <p className="text-xs text-slate-500">
+                  Suggested stop:{" "}
+                  <span className="text-rose-400">
+                    {costs.currencySymbol}{costs.suggestedStop.toFixed(2)}
+                  </span>{" "}
+                  ({currentSettings.atr_multiplier_initial}× ATR)
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-400">Stop Price ({costs.currencySymbol})</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={formData.stop_price}
+                onChange={(e) => handleChange("stop_price", e.target.value)}
+                placeholder="0.00"
+                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+              />
+            </div>
+          </div>
+
+          {/* Position Sizing Widget — calls POST /portfolio/size, backend-authoritative */}
+          <PositionSizingWidget
+            entryPrice={parseFloat(formData.entry_price) || null}
+            stopPrice={parseFloat(formData.stop_price) || null}
+            market={formData.market}
+            fxRate={parseFloat(formData.fx_rate) || null}
+            shares={formData.shares}
+            onSharesChange={(val) => handleChange("shares", val)}
+            defaultRiskPercent={defaultRiskPercent}
+          />
+
+          {/* Shares */}
           <div className="space-y-2">
-            <Label className="text-slate-400">ATR Value (Optional)</Label>
+            <Label className="text-slate-400">Number of Shares</Label>
             <Input
               type="number"
-              step="0.01"
-              value={formData.atr_value}
-              onChange={(e) => handleChange("atr_value", e.target.value)}
-              placeholder="For stop calculation"
+              value={formData.shares}
+              onChange={(e) => handleChange("shares", e.target.value)}
+              placeholder="0"
               className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
             />
-            {formData.atr_value && costs.initialStop > 0 && (
-              <p className="text-xs text-slate-500">
-                Initial stop: <span className="text-rose-400">{costs.currencySymbol}{costs.initialStop.toFixed(2)}</span>
-                {" "}({currentSettings.atr_multiplier_initial}x ATR below entry)
-              </p>
-            )}
           </div>
 
           {/* Entry Note */}
@@ -329,7 +373,6 @@ export default function TradeEntry() {
           <div className="space-y-2">
             <Label className="text-slate-400">Tags (Optional)</Label>
             <div className="space-y-2">
-              {/* Tag Pills */}
               {formData.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {formData.tags.map((tag) => (
@@ -348,8 +391,7 @@ export default function TradeEntry() {
                   ))}
                 </div>
               )}
-              
-              {/* Tag Input */}
+
               {formData.tags.length < 5 && (
                 <div className="relative">
                   <Input
@@ -364,8 +406,6 @@ export default function TradeEntry() {
                     placeholder="Type to add tags..."
                     className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20"
                   />
-                  
-                  {/* Tag Suggestions */}
                   {showTagSuggestions && filteredTags.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-48 overflow-auto">
                       {filteredTags.slice(0, 10).map((tag) => (
@@ -381,7 +421,7 @@ export default function TradeEntry() {
                   )}
                 </div>
               )}
-              
+
               {formData.tags.length >= 5 && (
                 <p className="text-xs text-slate-500">Maximum 5 tags reached</p>
               )}
@@ -390,7 +430,7 @@ export default function TradeEntry() {
         </div>
       </motion.div>
 
-      {/* Cost Summary */}
+      {/* Cost Preview — client-side estimate only. Actual fees calculated server-side. */}
       {isFormValid && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -401,7 +441,8 @@ export default function TradeEntry() {
             <div className="p-2 rounded-lg bg-cyan-500/20">
               <Calculator className="w-5 h-5 text-cyan-400" />
             </div>
-            <h3 className="font-semibold text-white">Cost Breakdown</h3>
+            <h3 className="font-semibold text-white">Estimated Cost</h3>
+            <span className="text-xs text-slate-500 ml-1">(preview — actual fees calculated on submission)</span>
           </div>
 
           <div className="space-y-3">
@@ -432,16 +473,16 @@ export default function TradeEntry() {
             )}
             <div className="pt-3 border-t border-slate-700">
               <div className="flex justify-between">
-                <span className="font-medium text-white">Total Cost</span>
+                <span className="font-medium text-white">Est. Total Cost</span>
                 <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400">
                   £{costs.totalCost.toFixed(2)}
                 </span>
               </div>
             </div>
-            {costs.initialStop > 0 && (
+            {costs.riskPerShare > 0 && (
               <div className="pt-3 border-t border-slate-700">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Risk (to initial stop)</span>
+                  <span className="text-slate-400">Risk (to stop)</span>
                   <span className="text-rose-400 font-medium">£{costs.totalRisk.toFixed(2)}</span>
                 </div>
               </div>
@@ -450,7 +491,7 @@ export default function TradeEntry() {
         </motion.div>
       )}
 
-      {/* Submit Button */}
+      {/* Submit */}
       <div className="flex justify-end gap-3">
         <Link to={createPageUrl("Positions")}>
           <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-slate-800">
