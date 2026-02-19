@@ -58,7 +58,8 @@ Response uses the standard success envelope from **conventions.md**.
     "us_commission": 0.00,
     "stamp_duty_rate": 0.005,
     "fx_fee_rate": 0.0015,
-    "min_trades_for_analytics": 10
+    "min_trades_for_analytics": 10,
+    "default_risk_percent": 1.00
   }
 ]
 ```
@@ -80,6 +81,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `stamp_duty_rate` | float | `0.005` | UK stamp duty rate on purchases (0.5%) |
 | `fx_fee_rate` | float | `0.0015` | FX conversion fee rate for USD trades (0.15%) |
 | `min_trades_for_analytics` | integer | `10` | Minimum closed trades required before analytics metrics are computed |
+| `default_risk_percent` | float | `1.00` | Default risk percentage pre-populated in the Position Sizing Calculator widget on the Trade Entry page. Represents percentage of portfolio value to risk per position, e.g. `1.00` = 1%. This is a user preference default, not an enforced position limit — users may override it per trade |
 
 **Strategy parameter context:**
 
@@ -125,7 +127,8 @@ All fields are optional. Include only the fields to be changed.
   "us_commission": 0.00,
   "stamp_duty_rate": 0.005,
   "fx_fee_rate": 0.0015,
-  "min_trades_for_analytics": 10
+  "min_trades_for_analytics": 10,
+  "default_risk_percent": 1.00
 }
 ```
 
@@ -144,6 +147,7 @@ All fields are optional. Include only the fields to be changed.
 | `stamp_duty_rate` | float | Must be ≥ 0 and ≤ 1 |
 | `fx_fee_rate` | float | Must be ≥ 0 and ≤ 1 |
 | `min_trades_for_analytics` | integer | Must be ≥ 1 |
+| `default_risk_percent` | float | Must be > 0 and ≤ 100 |
 
 ### Response (200)
 
@@ -167,7 +171,8 @@ Returns the full updated settings object.
   "stamp_duty_rate": 0.005,
   "fx_fee_rate": 0.0015,
   "min_trades_for_analytics": 10,
-  "updated_at": "2026-02-17T10:30:00Z"
+  "default_risk_percent": 1.00,
+  "updated_at": "2026-02-19T10:30:00Z"
 }
 ```
 
@@ -175,9 +180,10 @@ Returns the full updated settings object.
 
 - Strategy parameter changes (`min_hold_days`, ATR multipliers) take effect on the **next** call to `GET /positions/analyze`. Open positions are not retroactively affected.
 - Fee parameter changes (`uk_commission`, `stamp_duty_rate`, etc.) apply to new transactions only. Existing trade history is not recalculated.
+- `default_risk_percent` changes take effect immediately on the next load of the Trade Entry page. No existing trades or open positions are affected.
 
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
 
-- `400` Invalid field value (e.g. negative commission, multiplier ≤ 0)
+- `400` Invalid field value (e.g. negative commission, multiplier ≤ 0, `default_risk_percent` ≤ 0 or > 100)
