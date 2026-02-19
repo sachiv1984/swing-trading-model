@@ -10,6 +10,7 @@ Modules:
 from .requests import (
     AddPositionRequest,
     SettingsRequest,
+    SizePositionRequest,
     CashTransactionRequest,
     ExitPositionRequest
 )
@@ -17,6 +18,7 @@ from .requests import (
 __all__ = [
     'AddPositionRequest',
     'SettingsRequest',
+    'SizePositionRequest',
     'CashTransactionRequest',
     'ExitPositionRequest'
 ]
