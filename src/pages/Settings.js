@@ -7,7 +7,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
-import { Settings as SettingsIcon, Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp } from "lucide-react";
+import { Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 
@@ -26,6 +26,7 @@ export default function Settings() {
     atr_multiplier_initial: 2,
     atr_multiplier_trailing: 3,
     atr_period: 14,
+    default_risk_percent: 1.0,       // NEW — pre-populates position sizing calculator
     default_currency: "GBP",
     theme: "dark",
     uk_commission: 9.95,
@@ -35,9 +36,10 @@ export default function Settings() {
     min_trades_for_analytics: 10,
   };
 
+  // Dependency array is [settings] only — adding formData causes an infinite loop
   useEffect(() => {
     if (formData) return;
-    
+
     if (settings?.[0]) {
       setFormData({ ...defaults, ...settings[0] });
     } else if (settings && settings.length === 0) {
@@ -53,8 +55,10 @@ export default function Settings() {
         return base44.entities.Settings.create(data);
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["settings"] });
+      // Capture the id returned on first-time create so subsequent saves use update
+      setFormData(prev => ({ ...prev, id: data.id }));
       setSaved(true);
       toast.success("Settings saved successfully");
       setTimeout(() => setSaved(false), 2000);
@@ -125,12 +129,13 @@ export default function Settings() {
       />
 
       {/* Strategy Parameters */}
-      <SectionCard 
-        icon={Sliders} 
-        title="Strategy Parameters" 
+      <SectionCard
+        icon={Sliders}
+        title="Strategy Parameters"
         iconColor="bg-cyan-500/20 text-cyan-400"
       >
         <div className="space-y-6">
+          {/* Row 1 — ATR Period (solo, matching existing layout) */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-slate-400">Minimum Hold Days</Label>
@@ -154,6 +159,7 @@ export default function Settings() {
             </div>
           </div>
 
+          {/* Row 2 — ATR Multipliers */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-slate-400">Initial Stop (ATR Multiple)</Label>
@@ -164,7 +170,7 @@ export default function Settings() {
                 onChange={(e) => handleChange("atr_multiplier_initial", parseFloat(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-500">e.g., 2 = Entry - 2×ATR</p>
+              <p className="text-xs text-slate-500">e.g., 5 = Entry − 5×ATR (wide stop for losing positions)</p>
             </div>
             <div className="space-y-2">
               <Label className="text-slate-400">Trailing Stop (ATR Multiple)</Label>
@@ -175,16 +181,33 @@ export default function Settings() {
                 onChange={(e) => handleChange("atr_multiplier_trailing", parseFloat(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-500">e.g., 3 = High - 3×ATR</p>
+              <p className="text-xs text-slate-500">e.g., 2 = High − 2×ATR (tight trailing stop for profitable positions)</p>
+            </div>
+          </div>
+
+          {/* Row 3 — Default Risk % (NEW) */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-slate-400">Default Risk % Per Trade</Label>
+              <Input
+                type="number"
+                step="0.1"
+                min="0.01"
+                max="100"
+                value={formData.default_risk_percent}
+                onChange={(e) => handleChange("default_risk_percent", parseFloat(e.target.value))}
+                className="bg-slate-800/50 border-slate-700 text-white"
+              />
+              <p className="text-xs text-slate-500">Pre-populates the position sizing calculator</p>
             </div>
           </div>
         </div>
       </SectionCard>
 
       {/* Commission & Fees */}
-      <SectionCard 
-        icon={CreditCard} 
-        title="Commission & Fees" 
+      <SectionCard
+        icon={CreditCard}
+        title="Commission & Fees"
         iconColor="bg-violet-500/20 text-violet-400"
       >
         <div className="space-y-6">
@@ -239,9 +262,9 @@ export default function Settings() {
       </SectionCard>
 
       {/* Preferences */}
-      <SectionCard 
-        icon={Palette} 
-        title="Preferences" 
+      <SectionCard
+        icon={Palette}
+        title="Preferences"
         iconColor="bg-fuchsia-500/20 text-fuchsia-400"
       >
         <div className="grid grid-cols-2 gap-4">
@@ -279,9 +302,9 @@ export default function Settings() {
       </SectionCard>
 
       {/* Analytics */}
-      <SectionCard 
-        icon={TrendingUp} 
-        title="Analytics" 
+      <SectionCard
+        icon={TrendingUp}
+        title="Analytics"
         iconColor="bg-emerald-500/20 text-emerald-400"
       >
         <div className="space-y-2">
