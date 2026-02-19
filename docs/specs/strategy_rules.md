@@ -213,6 +213,7 @@ In this case:
 **Rationale for change from v1.2**
 
 The toggle model specified in v1.2 was written before the pre-alignment meeting for roadmap item 3.2. During that meeting, the Head of UX & Design and Product Owner agreed that the calculator should be always visible in the entry form — requiring users to discover and activate a toggle would reduce the daily workflow value that justifies the feature. The auto-fill protection rule (do not overwrite a manually entered value) is a financial safety constraint: silently replacing a user-entered share count could cause an unintended position size to be submitted. Full decision rationale: docs/product/decisions/3.2-position-sizing-calculator.md Decision 3.
+
 ---
 
 ## 5. Initial stop calculation
