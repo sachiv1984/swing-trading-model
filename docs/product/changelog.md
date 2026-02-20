@@ -5,6 +5,8 @@
 **Status:** Active
 **Last Updated:** 2026-02-20
 
+> **Update standard:** This document is updated by the PMO Lead on behalf of the Product Owner as part of the shipping closure checklist at the end of every feature delivery. The Product Owner reviews and approves each entry before the Phase Gate Document is Filed. No entry may be added outside of a shipping closure event without explicit Product Owner approval.
+
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
 ---
