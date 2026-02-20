@@ -1,10 +1,21 @@
 # Head of Engineering
 
-**Role:** Head of Engineering  
-**Reports to:** Executive Leadership  
-**Governance alignment:** Head of Specs Team (canonical truth, documentation lifecycle enforcement)  
-**Scope:** Engineering delivery, technical execution, and operational accountability  
+**Role:** Head of Engineering
+**Reports to:** Executive Leadership
+**Governance alignment:** Head of Specs Team (canonical truth, documentation lifecycle enforcement)
+**Scope:** Engineering delivery, technical execution, and operational accountability
 **Status:** Canonical
+**Version:** 1.1
+**Last Updated:** 2026-02-20
+
+---
+
+## Change Log
+
+| Version | Change |
+|---------|--------|
+| 1.1 | Section 8 (Governance & Documentation Expectations) expanded: added implementation intake requirement referencing `implementation_intake.md`, and mid-implementation spec query process referencing `spec_query_process.md`. Version and Last Updated fields added to header to bring charter into full Class 5 compliance. |
+| 1.0 | Initial version. |
 
 ---
 
@@ -98,10 +109,7 @@ The Head of Engineering is responsible for ensuring that:
 
 ### 5.5 Cross‑Role Coordination
 
-- Ensure effective collaboration between:
-  - Infrastructure & Operations Owner
-  - QA & Testing Owner
-  - Canonical spec owners
+- Ensure effective collaboration between Infrastructure & Operations Owner, QA & Testing Owner, and canonical spec owners
 - Resolve delivery conflicts and prioritization issues
 - Escalate specification conflicts through the proper governance path
 
@@ -135,6 +143,7 @@ This role enforces alignment; it does not replace specification ownership.
 - Head of Specs Team
 - Product and Strategy leadership
 - Design and Analytics leadership
+- PMO Lead (implementation open, defect assignment, shipping coordination)
 
 ---
 
@@ -146,6 +155,25 @@ The Head of Engineering ensures that:
 - Supporting documents do not conflict with canonical specifications
 - Documentation changes are reviewed with the same discipline as code
 - Engineering participates constructively in spec reviews and alignment
+
+### Implementation Intake
+
+When the PMO Lead declares implementation open for a feature, the Head of Engineering runs the implementation intake checklist before any code is written:
+
+`docs/team_skills/engineering/implementation_intake.md`
+
+This confirms: scope document read, spec versions locked, test scenarios reviewed, spec query path understood, feasibility concerns surfaced. If any intake item cannot be checked, the Head of Engineering notifies the PMO Lead before proceeding. Engineering does not start implementation while unresolved intake blockers exist.
+
+### Mid-Implementation Spec Queries
+
+When engineering encounters an ambiguity, gap, or conflict in a canonical specification during implementation:
+
+1. **Do not build a guess.** If a spec point materially affects implementation, raise the question before building against an interpretation.
+2. **Use the spec query process** defined at `docs/team_skills/specs/spec_query_process.md`. This sets out the format, the correct recipient (spec owner, not PMO Lead), the turnaround expectation, and the record-keeping requirement.
+3. **Notify the PMO Lead immediately** if implementation must pause pending an answer. The Phase Gate Document must be updated and stakeholders notified.
+4. **Spec patches come before fixes.** If resolving a defect requires a canonical spec change, the spec owner must patch the spec first. Engineering implements against the updated spec. Do not fix the code and update the spec retrospectively.
+
+The Head of Engineering is responsible for ensuring all engineers on the team understand and follow this process.
 
 ---
 
@@ -163,7 +191,18 @@ Engineering becomes a **reliable execution engine**, not a source of ambiguity.
 
 ---
 
-## 10. Guiding Principles
+## 10. Lifecycle & Versioning Compliance
+
+All documentation owned by this role must follow the lifecycle states, header block, and versioning rules defined in `docs/governance/document_lifecycle_guide.md`. The Head of Engineering is accountable for compliance of all documents they own.
+
+### Documents owned by this role
+
+| Document | Class | Location |
+|----------|-------|----------|
+| Implementation Intake | Class 1 Canonical | `docs/team_skills/engineering/implementation_intake.md` |
+| This role charter | Class 5 Role Charter | `docs/team_skills/engineering/Head_of_Engineering.md` |
+
+### Guiding Principles
 
 - Canonical intent is implemented, not interpreted.
 - Engineering owns execution and reliability.
