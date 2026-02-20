@@ -323,9 +323,10 @@ export default function TradeEntry() {
           </div>
 
           {/* Position Sizing Widget — calls POST /portfolio/size, backend-authoritative */}
+          {/* DEF-002 / DEF-003 fix: pass null only when field is empty string, not when value is 0 */}
           <PositionSizingWidget
-            entryPrice={parseFloat(formData.entry_price) || null}
-            stopPrice={parseFloat(formData.stop_price) || null}
+            entryPrice={formData.entry_price === "" ? null : parseFloat(formData.entry_price)}
+            stopPrice={formData.stop_price === "" ? null : parseFloat(formData.stop_price)}
             market={formData.market}
             fxRate={parseFloat(formData.fx_rate) || null}
             shares={formData.shares}
