@@ -2,14 +2,15 @@
 
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
-**Status:** Active
+**Status:** Superseded
 **Last Updated:** 2026-02-20
 **Roadmap item:** 3.2
 **Target release:** v1.6
+**Superseded by:** `docs/product/changelog.md §v1.6` — feature shipped 2026-02-20
 
 > ⚠️ **Standing Notice:** This document describes delivery intent and summarises canonical spec decisions for the purposes of implementation. All authoritative rules, formulas, field definitions, and constraints live in the canonical specifications listed in Section 2. In any conflict between this document and those specs, the canonical specs prevail. This document must not be cited as canonical intent.
 
-> **Verification status (updated 2026-02-20):** Implementation verified. Director of Quality sign-off granted 2026-02-19 (v1.1) and re-verification pass signed off 2026-02-20 (v1.2). Shipping closure pending resolution of DEF-006 (Low — Risk % session persistence) and execution of F15 (deferred — database access constraint). Full verification record: `docs/product/verification/3.2-position-sizing-calculator-verification.md`.
+> **Supersession notice:** This scope document is superseded. The feature shipped in v1.6 (2026-02-20). This document is retained for traceability. The canonical specifications listed in Section 2 remain authoritative. For delivery record see `docs/product/changelog.md §v1.6`. For verification record see `docs/product/verification/3.2-position-sizing-calculator-verification.md`.
 
 ---
 
