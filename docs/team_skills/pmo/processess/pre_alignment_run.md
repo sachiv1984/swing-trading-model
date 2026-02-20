@@ -40,7 +40,7 @@ At every phase gate, and at every significant status change within a phase, the 
 
 This is not a reporting function — it is an active orchestration function. If a stakeholder is asking "what do I do next?" or "what's happening?", the PMO Lead has already failed this standard.
 
-The **Phase Gate Document** (see `processes/phase_gate_document.md`) is the primary tool for this. It is updated at every gate transition and shared with all stakeholders. It is not optional.
+The **Phase Gate Document** (see `processes/templates/phase_gate_template.md`) is the primary tool for this. It is updated at every gate transition and shared with all stakeholders. It is not optional.
 
 ---
 
