@@ -18,6 +18,12 @@ const AMBER_MESSAGES = {
   INVALID_STOP_PRICE: "Enter a valid stop price above zero",
 };
 
+// DEF-006 fix: persist Risk % across navigation using sessionStorage.
+// On mount, reads the last-used session value first. Falls back to
+// defaultRiskPercent (from settings) only when no session value exists.
+// Cleared automatically when the browser tab is closed.
+const SESSION_KEY = "widget_risk_percent";
+
 export default function PositionSizingWidget({
   entryPrice,
   stopPrice,
@@ -27,7 +33,10 @@ export default function PositionSizingWidget({
   onSharesChange,
   defaultRiskPercent,
 }) {
-  const [riskPercent, setRiskPercent] = useState(defaultRiskPercent ?? 1.0);
+  const [riskPercent, setRiskPercent] = useState(() => {
+    const stored = sessionStorage.getItem(SESSION_KEY);
+    return stored !== null ? parseFloat(stored) : (defaultRiskPercent ?? 1.0);
+  });
   const [sizingResult, setSizingResult] = useState(null);
   const [sizingLoading, setSizingLoading] = useState(false);
   const [usedSuggestion, setUsedSuggestion] = useState(false);
@@ -38,9 +47,15 @@ export default function PositionSizingWidget({
     sharesRef.current = shares;
   }, [shares]);
 
-  // When settings load, initialize risk %
+  // Persist riskPercent to sessionStorage whenever it changes
   useEffect(() => {
-    if (defaultRiskPercent != null) {
+    sessionStorage.setItem(SESSION_KEY, String(riskPercent));
+  }, [riskPercent]);
+
+  // When settings load for the first time (no session value yet), initialise from settings.
+  // Once the user has overridden Risk % in-session, settings changes do not overwrite it.
+  useEffect(() => {
+    if (defaultRiskPercent != null && sessionStorage.getItem(SESSION_KEY) === null) {
       setRiskPercent(defaultRiskPercent);
     }
   }, [defaultRiskPercent]);
