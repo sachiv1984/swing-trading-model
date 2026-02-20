@@ -16,6 +16,8 @@ Its job is to ensure no one ever has to ask "what's happening?" or "what do I do
 
 One Phase Gate Document is created per feature at the start of Phase 0 and closed at shipping. It is filed at `docs/product/phase_gates/{id}-{slug}-phase-gate.md`.
 
+**Template location:** `docs/team_skills/pmo/processess/templates/phase_gate_template.md`
+
 ---
 
 ## How to Use
@@ -140,7 +142,9 @@ Completed by PMO Lead once Director of Quality final sign-off is confirmed.
 
 ## Template Usage Notes
 
-**File location:** `docs/product/phase_gates/{roadmap-item-id}-{feature-slug}-phase-gate.md`
+**Template location:** `docs/team_skills/pmo/processess/templates/phase_gate_template.md`
+
+**Filled document location:** `docs/product/phase_gates/{roadmap-item-id}-{feature-slug}-phase-gate.md`
 
 **When to create:** At the start of Phase 0 (readiness audit). Not after the meeting — before.
 
