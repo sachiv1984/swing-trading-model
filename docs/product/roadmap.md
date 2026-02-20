@@ -10,7 +10,7 @@
 
 ## 1. Current Version
 **v1.5** — Performance Analytics complete. Position Sizing Calculator verified and in shipping closure.
-**Next planned release: v1.6**
+**Next planned release:** **v1.6**
 
 ---
 
@@ -53,10 +53,9 @@ Always-visible widget inside the position entry form, directly above the shares 
 
 > **Scope note (revised 2026-02-19):** Scope expanded during pre-alignment to include `default_risk_percent` field in the settings table, settings endpoint, and settings page UI. This is required to support widget pre-population and is in scope for v1.6 — not deferred. The original 1–2 day estimate did not account for the settings field, database migration, and additional spec updates across four documents. Revised estimate: 2–3 days. Full decision rationale: `docs/product/decisions/3.2-position-sizing-calculator.md`.
 
-> **Canonical specifications:** Sizing formula, validity rules, FX handling, and cash constraint behaviour are canonicalised in docs/specs/strategy_rules.md §4.1. Endpoint contract at docs/specs/api_contracts/portfolio_endpoints.md (POST /portfolio/size). Data model at docs/specs/data_model.md §6. Settings field at docs/specs/api_contracts/settings_endpoints.md.
+> **Canonical specifications:** Sizing formula, validity rules, FX handling, and cash constraint behaviour are canonicalised in `docs/specs/strategy_rules.md §4.1`. Endpoint contract at `docs/specs/api_contracts/portfolio_endpoints.md` (`POST /portfolio/size`). Data model at `docs/specs/data_model.md §6`. Settings field at `docs/specs/api_contracts/settings_endpoints.md`.
 
-
->**Verification status:** (updated 2026-02-20): Phase 1 verification complete. Director of Quality sign-off granted at v1.1 (2026-02-19) and re-verification pass signed off at v1.2 (2026-02-20). Two items remain before shipping closure: DEF-006 (Low — Risk % session persistence, engineering assigned) and F15 (deferred — requires database access). Verification report: docs/product/verification/3.2-position-sizing-calculator-verification.md.
+> **Verification status (updated 2026-02-20):** Phase 1 verification complete. Director of Quality sign-off granted at v1.1 (2026-02-19) and re-verification pass signed off at v1.2 (2026-02-20). Two items remain before shipping closure: DEF-006 (Low — Risk % session persistence, engineering assigned) and F15 (deferred — requires database access). Verification report: `docs/product/verification/3.2-position-sizing-calculator-verification.md`.
 
 ---
 
