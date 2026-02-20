@@ -1,10 +1,19 @@
 # Testing Guide
 
 **Owner:** QA & Testing Owner
-**Type:** PMO Process Template
+**Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** 2026-02-20
+
+---
+
+## Change Log
+
+| Version | Change |
+|---------|--------|
+| 1.1 | Added Section — Observation-to-Backlog Pathway. Defines the formal process from OBS- raise through to Product Owner disposition and BLG- assignment. Fixes gap identified in 3.2 post-delivery assessment (Gap 7.1). Updated header from `Type: PMO Process Template` to `Class: Canonical (Class 1)` following lifecycle guide v2.2 formalisation of PMO process templates as Class 1. |
+| 1.0 | Initial version. |
 
 ---
 
@@ -183,6 +192,41 @@ If any of the above are not in place, do not start verification. Notify the PMO 
 
 ---
 
+## Observation-to-Backlog Pathway
+
+An observation (OBS-) is something noticed during verification that is not a defect against a canonical acceptance criterion but is notable enough to flag — a UX concern, an unexpected behaviour, a performance signal, or a potential improvement. Observations are not defects and do not block shipping unless the Director of Quality determines the observation reveals an undocumented behavioural gap that should have been an acceptance criterion.
+
+**Step 1 — QA Lead raises the observation in the verification report.**
+
+Format:
+```
+ID:           OBS-{NNN}
+Title:        One sentence describing what was noticed
+Observed:     What the QA Lead saw
+Why notable:  Why this is worth flagging — not a complaint, a specific concern
+Spec ref:     If there is a related spec section, reference it. If there isn't, note that.
+```
+
+**Step 2 — QA Lead flags all open observations to the PMO Lead at the end of each verification pass.**
+
+Observations are not silently dropped. The PMO Lead tracks them in the Phase Gate Document alongside defects.
+
+**Step 3 — PMO Lead reviews all observations with the Product Owner at shipping closure.**
+
+For each observation, the Product Owner decides one of three dispositions:
+
+| Disposition | What it means | What happens |
+|-------------|---------------|--------------|
+| **Raise as backlog item** | Worth addressing in a future release | PMO Lead assigns a BLG- reference and adds it to `docs/product/backlog.md` with the observation as context. Observation record updated with BLG- reference. |
+| **Address now** | Significant enough to fix before shipping | Treated as a defect from this point — assigned severity, raised to Head of Engineering, re-verified before closure. Director of Quality notified. |
+| **Close — not significant** | Not worth further action | Observation record updated with `Disposition: Closed — {reason}`. No further action. |
+
+**Step 4 — Every observation has a recorded disposition before the verification report is Filed.**
+
+The verification report cannot move to Filed status with any observation in an undisposed state. The PMO Lead confirms all observations are disposed before requesting Director of Quality final sign-off.
+
+---
+
 ## Quick Reference: Who Does What
 
 | Activity | Owner | When |
@@ -191,8 +235,11 @@ If any of the above are not in place, do not start verification. Notify the PMO 
 | Write test scenario document | QA & Testing Owner | Phase 4 (after QA sign-off) |
 | Execute test scenarios | QA Lead | Phase 5 (after implementation complete) |
 | Record results and raise defects | QA Lead | Phase 5 |
+| Raise observations | QA Lead | Phase 5 (as noticed) |
 | Produce verification report | QA Lead | Phase 5 |
-| Sign off on verification report | Director of Quality | Phase 5 |
+| Review observations with Product Owner | PMO Lead | Phase 5 (at shipping closure) |
+| Dispose observations (raise, address, or close) | Product Owner | Phase 5 (at shipping closure) |
+| Sign off on verification report | Director of Quality | Phase 5 (after all observations disposed) |
 | Resolve defects | Head of Engineering | Phase 5 (as raised) |
 | Re-verify fixed defects | QA Lead | Phase 5 (after fix deployed) |
 | Confirm shipping closure | PMO Lead | After Director of Quality final sign-off |
