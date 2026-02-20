@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from services.analytics_service import AnalyticsService
+from .analytics_service import AnalyticsService
 from test_data.validation_data import (
     VALIDATION_TRADES,
     VALIDATION_PORTFOLIO_HISTORY,
