@@ -7,10 +7,15 @@ import { Loader2, Ruler } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 const SYSTEM_MESSAGES = {
-  INVALID_ENTRY_PRICE: "Enter a valid entry price",
-  INVALID_STOP_PRICE: "Enter a valid stop price",
   INVALID_STOP_DISTANCE: "Stop price must be below entry price",
   NO_PORTFOLIO_VALUE_SNAPSHOT: "Portfolio snapshot unavailable",
+};
+
+// DEF-002 / DEF-003 fix: user input invalid conditions render amber, not grey
+const AMBER_MESSAGES = {
+  INVALID_RISK_PERCENT: "Risk % must be greater than 0",
+  INVALID_ENTRY_PRICE: "Enter a valid entry price above zero",
+  INVALID_STOP_PRICE: "Enter a valid stop price above zero",
 };
 
 export default function PositionSizingWidget({
@@ -124,9 +129,9 @@ export default function PositionSizingWidget({
       return null;
     }
 
-    // Invalid
-    if (sizingResult.reason === "INVALID_RISK_PERCENT") {
-      return { type: "amber", text: "Risk % must be greater than 0" };
+    // Invalid — user input conditions (amber) take priority over system conditions (grey)
+    if (AMBER_MESSAGES[sizingResult.reason]) {
+      return { type: "amber", text: AMBER_MESSAGES[sizingResult.reason] };
     }
     const msg = SYSTEM_MESSAGES[sizingResult.reason];
     return msg ? { type: "grey", text: msg } : null;
