@@ -1,8 +1,8 @@
 # Metrics Definitions – Canonical Specification
-**Version:** 1.5.6  
-**Owner:** Analytics Team  
-**Last Updated:** 2026-02-17  
-**Review Cycle:** Monthly  
+**Version:** 1.5.7
+**Owner:** Analytics Team
+**Last Updated:** 2026-02-20
+**Review Cycle:** Monthly
 
 ---
 
@@ -98,8 +98,6 @@ Sample variance:  s² = Σ(xᵢ − x̄)² / (n − 1)
 Sample std dev:   s  = √s²
 ```
 
-**Important:** The current implementation historically used population variance (÷ n). This is considered **non-conformant** with the canonical spec and is tracked as a backlog item (see Appendix E).
-
 ### Data Requirements
 - Portfolio method: `portfolio_history.total_value` with ≥30 `snapshot_date` points.
 - Trade method: ≥10 trades with `entry_date`, `exit_date`, `pnl_percent`.
@@ -112,6 +110,10 @@ Returned under `executive_metrics`:
 
 ### Validation
 Tolerance: ±0.01
+
+Both methods are independently validated by `POST /validate/calculations`:
+- Primary pass: full dataset (35 snapshots + 12 trades) → portfolio method
+- Second pass: trade-only dataset (no snapshots) → trade method fallback
 
 ### Failure Behaviour
 - If method thresholds are not met: `sharpe_ratio = 0.0`, `sharpe_method = "insufficient_data"`.
@@ -203,7 +205,7 @@ Returned under `advanced_metrics`:
 Exact match (integer days).
 
 ### Notes
-A portfolio-snapshot definition of “days underwater” exists in earlier drafts, but the live API field `advanced_metrics.days_underwater` is trade-sequence based.
+A portfolio-snapshot definition of "days underwater" exists in earlier drafts, but the live API field `advanced_metrics.days_underwater` is trade-sequence based.
 
 ---
 
@@ -311,7 +313,7 @@ Tolerance: ±0.05
 ### Definition
 Percent return generated per unit of average deployed capital **in GBP** over the measurement window.
 
-### Canonical Formula (SPEC — GBP-SAFE)
+### Canonical Formula (GBP-SAFE)
 This metric MUST use a GBP-denominated cost basis to avoid currency mixing across markets.
 
 ```text
@@ -330,7 +332,7 @@ Closed trades from `trade_history` with:
 ### Response Format
 Returned under `advanced_metrics`:
 ```json
-{ "capital_efficiency": 0.17 }
+{ "capital_efficiency": 16.18 }
 ```
 
 ### Validation
@@ -339,9 +341,6 @@ Tolerance: ±0.05
 ### Failure Behaviour
 - No trades → 0.0
 - avg_position_value_gbp == 0 → 0.0
-
-### Implementation Conformance
-**Known non-conformance (current implementation):** Some implementations compute `avg_position_value` as `entry_price × shares` (native currency), which mixes USD and GBP in multi-market portfolios. This is **non-conformant** with the canonical spec and is tracked as a backlog item (see Appendix E).
 
 ---
 
@@ -420,7 +419,8 @@ The `GET /analytics/metrics` response contains the following top-level fields an
 Validation is performed by `POST /validate/calculations` comparing computed metrics to `test_data/validation_data.py` expected values and tolerances.
 
 ### Metrics validated (current)
-- `sharpe_ratio` (±0.01)
+- `sharpe_ratio` — portfolio method (±0.01) — primary pass
+- `sharpe_ratio_trade_method` — trade method fallback (±0.01) — second pass, trade-only dataset
 - `max_drawdown_percent` (±0.1)
 - `recovery_factor` (±0.05)
 - `expectancy` (±0.10)
@@ -446,20 +446,20 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 | 2026-02-17 | 1.5.3 | FIX-MD-03: Align Days Underwater to trade-sequence method | Analytics Team |
 | 2026-02-17 | 1.5.5 | FIX-MD-04 backlog + FIX-MD-05: Specify Sharpe sample variance (canonical) and capital efficiency GBP-safe cost basis | Analytics Team |
 | 2026-02-17 | 1.5.6 | ADVISORY-MD-D: Remove drift-prone lineage appendix; reference `data_model.md` and `analytics_endpoints.md` as lineage sources | Analytics Team |
+| 2026-02-20 | 1.5.7 | BLG-TECH-01: Resolved Appendix E backlog items 1 and 2. Sharpe sample variance (÷ n−1) and capital efficiency GBP cost basis (`total_cost`) implemented and validated. Non-conformance notes removed from Sharpe and Capital Efficiency sections. Second-pass trade-method Sharpe validation added to Appendix C. Canonical Owner sign-off: 2026-02-20. | Analytics Team |
 
 ---
 
 ## Appendix E — Known Deviations & Backlog Items
-### Backlog Item 1 — Sharpe variance method
-**Issue:** Current implementation uses population variance (÷ n) for Sharpe volatility.
 
-**Canonical requirement:** Sample variance (÷ n−1).
+All previously documented deviations have been resolved as of v1.5.7. No open items.
 
-**Action:** Update `_calculate_sharpe()` to compute variance using (n−1) for both portfolio and trade methods; update any future non-zero Sharpe validation expected values.
+### Resolved — Backlog Item 1 — Sharpe variance method
+**Status:** ✅ Resolved in v1.5.7 — BLG-TECH-01, 2026-02-20
+**Issue was:** Implementation used population variance (÷ n) for Sharpe volatility.
+**Resolution:** `_calculate_sharpe()` updated to use sample variance (÷ n−1) for both portfolio and trade methods. Validation dataset expanded to 12 trades and 35 snapshots to exercise both methods independently. Expected values independently calculated and signed off by Canonical Owner 2026-02-20.
 
-### Backlog Item 2 — Capital Efficiency currency basis
-**Issue:** Some implementations compute average position value as `entry_price × shares` (native currency), mixing USD and GBP.
-
-**Canonical requirement:** Use `trade_history.total_cost` (GBP) as the cost basis.
-
-**Action:** Update capital efficiency calculation to use `Mean(total_cost)` in GBP; ensure `GET /analytics/metrics` continues to return the same field name (`capital_efficiency`) and update expected values if required.
+### Resolved — Backlog Item 2 — Capital Efficiency currency basis
+**Status:** ✅ Resolved in v1.5.7 — BLG-TECH-01, 2026-02-20
+**Issue was:** Implementation computed average position value as `entry_price × shares` (native currency), mixing USD and GBP in multi-market portfolios.
+**Resolution:** Capital efficiency updated to use `Mean(trade_history.total_cost)` in GBP. Validation expected value updated to 16.18% and signed off by Canonical Owner 2026-02-20.
