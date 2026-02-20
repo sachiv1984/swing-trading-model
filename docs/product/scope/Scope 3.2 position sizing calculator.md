@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-02-19
+**Last Updated:** 2026-02-20
 **Roadmap item:** 3.2
 **Target release:** v1.6
 
