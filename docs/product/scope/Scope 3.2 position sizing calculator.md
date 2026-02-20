@@ -9,6 +9,8 @@
 
 > ⚠️ **Standing Notice:** This document describes delivery intent and summarises canonical spec decisions for the purposes of implementation. All authoritative rules, formulas, field definitions, and constraints live in the canonical specifications listed in Section 2. In any conflict between this document and those specs, the canonical specs prevail. This document must not be cited as canonical intent.
 
+> **Verification status (updated 2026-02-20):** Implementation verified. Director of Quality sign-off granted 2026-02-19 (v1.1) and re-verification pass signed off 2026-02-20 (v1.2). Shipping closure pending resolution of DEF-006 (Low — Risk % session persistence) and execution of F15 (deferred — database access constraint). Full verification record: `docs/product/verification/3.2-position-sizing-calculator-verification.md`.
+
 ---
 
 ## 1. What This Is
@@ -139,40 +141,40 @@ Derived from `portfolio_endpoints.md` and `position_form.md` per QA review (A10,
 - Missing required field (`entry_price`, `stop_price`, or `risk_percent`): returns HTTP 400
 - Invalid `market` value: returns HTTP 400
 - `fx_rate_used` is `1.0` for UK positions and the applied rate for US positions
-- Repeated calls with same inputs return same result (idempotent)
-- Calling the endpoint does not mutate portfolio state, cash, or position records
+- No state mutation — portfolio cash, positions, and history rows are unchanged after any call
 
-**Backend — `default_risk_percent`**
+**Backend — `default_risk_percent` settings field**
 
-- `GET /settings` response includes `default_risk_percent` field
-- `PUT /settings` with `default_risk_percent: 0` returns HTTP 400
-- `PUT /settings` with `default_risk_percent: 101` returns HTTP 400
-- `PUT /settings` with `default_risk_percent: 1.5` persists correctly and is returned in subsequent `GET /settings`
-- Existing settings rows unaffected by migration (receive default `1.00`)
+- `GET /settings` response includes `default_risk_percent`
+- `PUT /settings` with `default_risk_percent: 0` returns HTTP 422
+- `PUT /settings` with `default_risk_percent: -1` returns HTTP 422
+- `PUT /settings` with `default_risk_percent: 101` returns HTTP 422
+- `PUT /settings` with a valid value persists and is returned on subsequent `GET`
 
-**Frontend — widget states**
+**Frontend — Widget**
 
 - Widget is visible on Trade Entry form load without any user action
-- Risk % field is pre-populated with value from `settings.default_risk_percent`
-- Widget output fields show `—` on load (Entry Price and Stop Price are empty)
-- 300ms after user enters valid Entry Price and Stop Price (with Risk %): API call is made and results appear
-- On valid result with Shares field empty: Shares auto-fills with `suggested_shares`
-- On valid result with Shares field already populated: Shares not overwritten; "Use suggested shares" button appears
-- Clicking "Use suggested shares": Shares updates to `suggested_shares`; button disappears
-- On `cash_sufficient: false`: Shares not auto-filled; `max_affordable_shares` shown as informational text; "Use suggested shares" not shown
-- On `INVALID_STOP_DISTANCE`: amber message "Stop price must be below entry price" shown; Shares not auto-filled
-- On `INVALID_RISK_PERCENT`: amber message "Risk % must be greater than zero" shown
-- On `NO_PORTFOLIO_VALUE_SNAPSHOT`: muted grey message shown (not amber)
-- On network failure: `—` shown in all output fields; form remains submittable
-- Form submits successfully regardless of widget state
-- After successful form submission: widget returns to idle; Risk % retains last-used value
+- Risk % field pre-populates from `settings.default_risk_percent`
+- No API call is made when Entry Price or Stop Price is empty
+- Loading state is shown during debounce and API round-trip
+- When Shares is empty and result is valid with sufficient cash: Shares auto-fills
+- When Shares already has a value: "Use suggested shares" button appears; clicking it fills Shares
+- `INVALID_STOP_DISTANCE` → amber message "Stop price must be below entry price"
+- `INVALID_RISK_PERCENT` → amber message "Risk % must be greater than zero"
+- `INVALID_ENTRY_PRICE` → amber message "Enter a valid entry price above zero"
+- `INVALID_STOP_PRICE` → amber message "Enter a valid stop price above zero"
+- `cash_sufficient: false` → muted grey informational display with `max_affordable_shares`
+- `NO_PORTFOLIO_VALUE_SNAPSHOT` → muted grey message
+- Network failure → dashes shown, form remains submittable
+- Form submits regardless of widget state
+- Post-submit: widget resets; Risk % retains last-used session value
 
 **Frontend — Settings page**
 
 - `default_risk_percent` field present in Strategy Parameters section
-- Helper text reads: "Pre-filled in the Position Sizing Calculator on trade entry. This is your default — you can override it per trade."
-- Saving `0` or a negative value is rejected
-- Saving a valid value persists and is reflected on next Trade Entry form load
+- Saving `0` is rejected with a visible error message
+- Saving a negative value is rejected with a visible error message
+- Saving a valid value persists and pre-populates widget on next Trade Entry load
 
 ---
 
