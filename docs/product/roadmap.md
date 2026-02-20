@@ -11,8 +11,7 @@
 
 ## 1. Current Version
 
-**v1.5** — Performance Analytics complete.
-**v1.6** — Position Sizing Calculator: implementation open. Scope locked — see `docs/product/scope/scope--3.2-position-sizing-calculator.md`.
+**v1.6** — Position Sizing Calculator shipped. Portfolio Heat Gauge is next.
 **Next planned release:** **v1.6.1**
 
 ---
