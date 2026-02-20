@@ -15,6 +15,7 @@ export default function Settings() {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});  // DEF-004: inline field error state
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ["settings"],
@@ -59,14 +60,45 @@ export default function Settings() {
       queryClient.invalidateQueries({ queryKey: ["settings"] });
       // Capture the id returned on first-time create so subsequent saves use update
       setFormData(prev => ({ ...prev, id: data.id }));
+      setFieldErrors({});  // DEF-004: clear any previous field errors on successful save
       setSaved(true);
       toast.success("Settings saved successfully");
       setTimeout(() => setSaved(false), 2000);
+    },
+    // DEF-004: surface backend validation errors to the user
+    onError: (error) => {
+      const detail = error?.data?.detail;
+
+      // Pydantic returns an array of validation errors — parse field-level messages
+      if (Array.isArray(detail)) {
+        const errors = {};
+        detail.forEach((err) => {
+          // loc is e.g. ["body", "default_risk_percent"] — take the last element as field name
+          const field = err.loc?.[err.loc.length - 1];
+          if (field) {
+            errors[field] = err.msg?.replace("Value error, ", "") ?? "Invalid value";
+          }
+        });
+        setFieldErrors(errors);
+        toast.error("Please fix the errors below before saving");
+      } else {
+        // Fallback for non-Pydantic errors
+        setFieldErrors({});
+        toast.error(
+          typeof detail === "string"
+            ? detail
+            : "Failed to save settings — please check your values and try again"
+        );
+      }
     },
   });
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // DEF-004: clear field error when user edits that field
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
   };
 
   const handleSave = () => {
@@ -185,7 +217,7 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Row 3 — Default Risk % (NEW) */}
+          {/* Row 3 — Default Risk % */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-slate-400">Default Risk % Per Trade</Label>
@@ -196,9 +228,17 @@ export default function Settings() {
                 max="100"
                 value={formData.default_risk_percent}
                 onChange={(e) => handleChange("default_risk_percent", parseFloat(e.target.value))}
-                className="bg-slate-800/50 border-slate-700 text-white"
+                className={cn(
+                  "bg-slate-800/50 border-slate-700 text-white",
+                  fieldErrors.default_risk_percent && "border-red-500 focus:border-red-500"
+                )}
               />
-              <p className="text-xs text-slate-500">Pre-populates the position sizing calculator</p>
+              {/* DEF-004: show inline error if backend rejected the value */}
+              {fieldErrors.default_risk_percent ? (
+                <p className="text-xs text-red-400">{fieldErrors.default_risk_percent}</p>
+              ) : (
+                <p className="text-xs text-slate-500">Pre-populates the position sizing calculator</p>
+              )}
             </div>
           </div>
         </div>
