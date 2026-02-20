@@ -1,14 +1,14 @@
 # Product Backlog — Momentum Trading Assistant
 
-Owner: Product Owner  
-Status: Active  
-Class: Planning Document (Class 4)  
-Last Updated: 2026-02-18
+**Owner:** Product Owner
+**Status:** Active
+**Class:** Planning Document (Class 4)
+**Last Updated:** 2026-02-20
 
-> ⚠️ Standing Notice  
-> This backlog records prioritisation and intent only.  
+> ⚠️ Standing Notice
+> This backlog records prioritisation and intent only.
 > All formulas, schemas, API contracts, and behavioural rules are indicative until
-> confirmed in the relevant canonical specifications.  
+> confirmed in the relevant canonical specifications.
 > No item may proceed to implementation without canonical owner sign-off.
 
 ---
@@ -30,8 +30,8 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ---
 
 ### BLG-TECH-01 — Fix Sharpe variance method + Capital Efficiency currency basis
-**Priority:** P0 (Critical)  
-**Type:** Metrics Correctness / Validation Integrity  
+**Priority:** P0 (Critical)
+**Type:** Metrics Correctness / Validation Integrity
 
 **Problem**
 - Sharpe ratio currently uses population variance instead of sample variance.
@@ -58,8 +58,8 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ---
 
 ### BLG-TECH-02 — Implement validation severity model
-**Priority:** P1 (High)  
-**Type:** Governance / Operational Control  
+**Priority:** P1 (High)
+**Type:** Governance / Operational Control
 
 **Problem**
 - Validation severity is documented but not enforced.
@@ -83,8 +83,8 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ---
 
 ### BLG-TECH-03 — Consolidate ValidationService into service layer
-**Priority:** P1 (High)  
-**Type:** Architecture / Maintainability  
+**Priority:** P1 (High)
+**Type:** Architecture / Maintainability
 
 **Problem**
 - Validation logic is split between router and service stub.
@@ -110,8 +110,8 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ---
 
 ### BLG-TECH-04 — CI/CD validation workflow (GitHub Actions)
-**Priority:** P2 (Medium)  
-**Type:** Delivery Quality / Automation  
+**Priority:** P2 (Medium)
+**Type:** Delivery Quality / Automation
 
 **Problem**
 - Validation is manual and not enforced at merge time.
@@ -139,8 +139,8 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ---
 
 ### BLG-TECH-05 — Prometheus metrics endpoint
-**Priority:** P3 (Low — v2.0 candidate)  
-**Type:** Observability  
+**Priority:** P3 (Low — v2.0 candidate)
+**Type:** Observability
 
 **Scope**
 - Add `GET /metrics` Prometheus endpoint exposing:
@@ -163,11 +163,11 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ---
 
 ### BLG-FEAT-01 — Current Drawdown Widget
-**Priority:** P1  
-**Effort:** ~30 minutes  
-**Value:** High visibility risk awareness  
+**Priority:** P1
+**Effort:** ~30 minutes
+**Value:** High visibility risk awareness
 
-Display current drawdown from peak and days underwater.  
+Display current drawdown from peak and days underwater.
 Example: "Drawdown: -8.2%, 12 days underwater"
 
 **Dependency**
@@ -176,8 +176,8 @@ Example: "Drawdown: -8.2%, 12 days underwater"
 ---
 
 ### BLG-FEAT-02 — R-Multiple Column in Trade History
-**Priority:** P2  
-**Effort:** ~1 hour  
+**Priority:** P2
+**Effort:** ~1 hour
 
 Add R-multiple column to trade history table.
 
@@ -192,8 +192,8 @@ Add R-multiple column to trade history table.
 ---
 
 ### BLG-FEAT-03 — Slippage Tracking
-**Priority:** P2  
-**Effort:** 1-2 hours  
+**Priority:** P2
+**Effort:** 1-2 hours
 
 Track and display trade slippage and average slippage summary.
 
@@ -206,41 +206,41 @@ Requires data model update.
 ---
 
 ### BLG-FEAT-04 — Best / Worst Trades Widget
-**Priority:** P2  
-**Effort:** ~1 hour  
+**Priority:** P2
+**Effort:** ~1 hour
 
 Show top 3 and bottom 3 trades by R-multiple or P&L.
 
 ---
 
 ### BLG-FEAT-05 — Win Rate by Month Chart
-**Priority:** P2  
-**Effort:** ~1 hour  
+**Priority:** P2
+**Effort:** ~1 hour
 
 Bar chart of win rate grouped by calendar month.
 
 ---
 
 ### BLG-FEAT-06 — Grace Period Indicator
-**Priority:** P2  
-**Effort:** ~1 hour  
+**Priority:** P2
+**Effort:** ~1 hour
 
-Show remaining grace period days in open positions table.  
+Show remaining grace period days in open positions table.
 Example: "Day 6 of 10"
 
 ---
 
 ### BLG-FEAT-07 — CSV Export of Trade History
-**Priority:** P2  
-**Effort:** ~1 hour  
+**Priority:** P2
+**Effort:** ~1 hour
 
 One-click CSV export for tax and analysis use.
 
 ---
 
 ### BLG-FEAT-08 — Basic Compliance Metrics
-**Priority:** P2  
-**Effort:** ~1 day  
+**Priority:** P2
+**Effort:** ~1 day
 
 Lightweight discipline metrics:
 - Journal completion rate
@@ -251,7 +251,109 @@ Definitions must be canonicalised first.
 
 ---
 
-## 3. Deferred / v2.0 Candidates
+### BLG-FEAT-09 — Settings page React re-render on keystroke (OBS-005)
+**Priority:** P3 (Low)
+**Type:** Frontend Performance
+**Raised:** 2026-02-20 (observed during 3.2 verification)
+
+**Problem**
+The Settings page re-renders the entire form on every keystroke because all fields share a single `formData` state object. Each `setFormData` call triggers a full re-render of all `SectionCard` components, causing a visible flicker.
+
+**Scope**
+- Wrap `SectionCard` components in `React.memo`
+- Pass individual field values as props rather than the full `formData` object
+- Each section only re-renders when its own field values change
+
+**Acceptance Criteria**
+- Typing in one settings field does not cause visible re-render of other sections
+- Save behaviour is unchanged
+- No regression on settings load or save
+
+**Owner**
+- Head of Engineering (routine frontend housekeeping)
+
+**Note**
+This is a UX polish item. It does not affect correctness. No spec changes required.
+
+---
+
+## 3. Process Improvement Backlog
+
+Items in this section are improvements to the delivery process itself, not to the product. They are raised for Product Owner prioritisation — some may require PMO Lead time, some may be self-contained template updates.
+
+---
+
+### BLG-PROC-01 — PMO Lead proactive next steps communication
+**Priority:** P1
+**Type:** Process / PMO
+**Raised:** 2026-02-20 (identified during 3.2 delivery)
+
+**Problem**
+During 3.2, stakeholders had to ask what was happening next at multiple points — after verification passes, after defect resolution, and during shipping closure. The PMO Lead was reactive rather than proactive. This created friction and slowed the pace of the delivery cycle.
+
+**Resolution actioned**
+`pre_alignment_run.md` updated to v1.1 with an explicit next steps communication requirement at every phase gate. The Phase Gate Document template has been created (`processes/templates/phase_gate_template.md`) as the primary tool for this.
+
+**What remains for Product Owner**
+- Confirm the Phase Gate Document format is fit for purpose
+- Confirm whether a Phase Gate Document should be retroactively created for any current in-flight features
+- Prioritise adoption for the next feature entering pre-alignment (3.4 Portfolio Heat Gauge)
+
+---
+
+### BLG-PROC-02 — Settings field dependency check in readiness audit
+**Priority:** P1
+**Type:** Process / PMO
+**Raised:** 2026-02-20 (identified during 3.2 lessons learnt)
+
+**Problem**
+During 3.2 pre-alignment, the `default_risk_percent` settings field was not identified in the readiness audit. It surfaced in the meeting when widget pre-population was discussed, causing the effort estimate to revise mid-meeting and adding four additional spec document updates to Phase 2.
+
+**Resolution actioned**
+`pre_alignment_readiness.md` updated to v1.1 with an explicit settings field dependency check in Section 1.
+
+**What remains for Product Owner**
+- No further action required — process improvement is complete
+- Confirm awareness so this is not encountered again
+
+---
+
+### BLG-PROC-03 — Cross-navigation state persistence check in QA gate
+**Priority:** P1
+**Type:** Process / QA
+**Raised:** 2026-02-20 (identified during 3.2 lessons learnt)
+
+**Problem**
+DEF-006 (Risk % resetting to default after navigation) was not caught before verification. The spec said "retains last-used session value" but no gate explicitly checked that the implementation mechanism was specified and the acceptance criterion covered navigation-away and return.
+
+**Resolution actioned**
+`pre_alignment_run.md` Phase 3 updated with an explicit cross-navigation persistence check. Any component with user-editable state must have an acceptance criterion covering navigation behaviour before the QA gate passes.
+
+**What remains for Product Owner**
+- No further action required — process improvement is complete
+- Confirm awareness so this is not encountered again
+
+---
+
+### BLG-PROC-04 — Test scenario authorship clarity
+**Priority:** P1
+**Type:** Process / QA
+**Raised:** 2026-02-20 (identified during 3.2 delivery)
+
+**Problem**
+During 3.2 verification, there was ambiguity about who writes the test scenarios, when they are written, and what format they follow. The QA Lead and wider team were unclear on the process, causing friction at the start of Phase 5.
+
+**Resolution actioned**
+`processes/testing_guide.md` created — a new canonical template covering who writes what, when, in what format, and how the QA Lead executes against it.
+
+**What remains for Product Owner**
+- Review `testing_guide.md` and confirm it reflects intent
+- Confirm whether the QA & Testing Owner should be formally notified to adopt this process from the next feature
+- Consider whether existing test scenario documents need to be brought into this format
+
+---
+
+## 4. Deferred / v2.0 Candidates
 
 - Daily email portfolio summary
 - FX rate history tracking
@@ -264,7 +366,7 @@ Definitions must be canonicalised first.
 
 ---
 
-## 4. Explicitly Out of Scope (Product-Level)
+## 5. Explicitly Out of Scope (Product-Level)
 
 These are deliberate product decisions, not deferrals:
 
@@ -277,7 +379,7 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-## 5. Lifecycle Governance Notes
+## 6. Lifecycle Governance Notes
 
 - This backlog is not canonical and must never override:
   - Strategy rules
@@ -287,5 +389,3 @@ These are deliberate product decisions, not deferrals:
   - Canonical specification
   - Updated validation where applicable
 - Once implemented, backlog items are superseded by canonical documentation.
-
----
