@@ -46,18 +46,23 @@ These may be revisited in future versions without any canonical spec change:
 
 ---
 
-### v1.6 — Position Sizing Calculator *(in flight)*
+3.1 Performance Analytics Page
+Status: ✅ Complete (shipped v1.5)
+Delivered via a unified GET /analytics/metrics?period= endpoint. Includes a POST /validate/calculations endpoint for smoke-testing metric correctness against a known dataset.
 
-#### 3.2 Position Sizing Calculator
-**Status:** Implementation open
-**Effort:** 2–3 days *(revised from 1–2 days — see scope note)*
-**Value:** High (daily workflow improvement)
-**Scope document:** `docs/product/scope/scope--3.2-position-sizing-calculator.md`
-
+3.2 Position Sizing Calculator (Primary Feature)
+Status: ✅ Complete (shipped v1.6)
+Effort: Low–Medium (2–3 days) (revised from 1–2 days — see scope note below)
+Value: High (daily workflow improvement)
 Always-visible widget inside the position entry form, directly above the shares field. User provides risk percentage (pre-populated from settings default) and stop price; system calculates suggested share count. Auto-fills the shares field when empty; shows a "use this" affordance when the user has already entered a value. Validates against available cash in real time via debounced calculation (300ms).
 
-> **Scope note (revised 2026-02-19):** Scope expanded during pre-alignment to include `default_risk_percent` field in the settings table, settings endpoint, and settings page UI.
+Scope note (revised 2026-02-19): Scope expanded during pre-alignment to include default_risk_percent field in the settings table, settings endpoint, and settings page UI. This is required to support widget pre-population and is in scope for v1.6 — not deferred. The original 1–2 day estimate did not account for the settings field, database migration, and additional spec updates across four documents. Revised estimate: 2–3 days. Full decision rationale: docs/product/decisions/3.2-position-sizing-calculator.md.
 
+
+Canonical specifications: Sizing formula, validity rules, FX handling, and cash constraint behaviour are canonicalised in docs/specs/strategy_rules.md §4.1. Endpoint contract at docs/specs/api_contracts/portfolio_endpoints.md (POST /portfolio/size). Data model at docs/specs/data_model.md §6. Settings field at docs/specs/api_contracts/settings_endpoints.md.
+
+
+Shipped: Director of Quality sign-off 2026-02-20. Verification report: docs/product/verification/3.2-position-sizing-calculator-verification.md (v1.4). Changelog: v1.6 entry. Scope and decisions documents superseded.
 ---
 
 ### v1.6.1 — Correctness & Quick Wins *(new)*
