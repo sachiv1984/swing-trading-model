@@ -51,7 +51,7 @@ export default function PositionSizingWidget({
     setSizingLoading(true);
 
     const timer = setTimeout(async () => {
-      if (!entryPrice || !stopPrice) {
+      if (entryPrice === "" || entryPrice == null || stopPrice === "" || stopPrice == null) {
         setSizingResult(null);
         setSizingLoading(false);
         return;
