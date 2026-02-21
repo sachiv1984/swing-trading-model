@@ -116,8 +116,8 @@ class ValidationService:
     The router delegates entirely to validate_all().
     """
 
-    def __init__(self, analytics_service: AnalyticsService):
-        self.analytics = analytics_service
+    def __init__(self, analytics_service: AnalyticsService = None):
+        self.analytics = analytics_service if analytics_service is not None else AnalyticsService()
 
     def validate_all(self) -> dict:
         """
