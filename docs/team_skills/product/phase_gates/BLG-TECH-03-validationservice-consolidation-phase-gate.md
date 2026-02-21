@@ -35,7 +35,7 @@ Current state:    LOGGED
 Next gate:        G1 — LOGGED → TRIAGED
 Who acts next:    QA Lead (severity), Head of Specs Team (canonical spec),
                   Engineering (BLG-TECH-01 confirmation + co-delivery ack)
-Blockers:         B-02 (severity), B-03 (canonical spec — THIS DEFECT),
+Blockers:         B-03 (canonical spec — THIS DEFECT),
                   B-04 (validation_system.md v1.0.2 action unconfirmed)
 Escalation timer: STARTED — 2026-02-21T00:00:00Z
                   (timer runs against severity-tier SLA once severity is assigned)
@@ -60,7 +60,7 @@ BLG-TECH-02 and BLG-TECH-03 are co-delivered per backlog and roadmap:
 
 ### Gate G1 — LOGGED → TRIAGED
 
-**Gate status: 🔴 CANNOT PASS — items outstanding**
+**Gate status: 🟡 3 OF 5 ITEMS PASS — G1.4 (canonical spec) outstanding; G1.2 pre-registered hard block on G3**
 
 ---
 
@@ -80,9 +80,10 @@ Satisfiability note:
   roadmap.md records "v1.6 quality gate satisfied"
   — Satisfiable subject to Engineering owner confirmation below.
 
-Evidence:             ⬜ PENDING (source records available)
-Owner confirmation:   ⬜ PENDING — Engineering, date required
-PMO validation:       ⬜ PENDING
+Evidence:             backlog.md — BLG-TECH-01 status: ✅ COMPLETE 2026-02-21;
+                      roadmap.md — "v1.6 quality gate satisfied"
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
 ```
 
 ---
@@ -176,9 +177,12 @@ Evidence required:
   Written acknowledgement from Engineering owner of this constraint
   (recorded in this document and mirrored in BLG-TECH-02 Phase Gate Document)
 
-Evidence:             🔴 MISSING
-Owner confirmation:   🔴 MISSING — Engineering, date required
-PMO validation:       ⬜ PENDING
+Evidence:             Written confirmation: BLG-TECH-02 and BLG-TECH-03 to be
+                      progressed in lock-step; neither will enter Fix In Progress,
+                      Fix Validated, or Closed independently without formal
+                      PMO-validated scope decision
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
 ```
 
 ---
@@ -215,10 +219,10 @@ PMO validation:       ⬜ PENDING
 
 | Action ID | Description | Owner | Deadline | Status | Blocked on |
 |-----------|-------------|-------|----------|--------|------------|
-| A-01 | Provide written confirmation that BLG-TECH-01 is closed and v1.6 quality gate satisfied (G1.1) | Engineering | By triage session — deadline TBC by PMO Lead | 🔴 OPEN | — |
+| A-01 | Provide written confirmation that BLG-TECH-01 is closed and v1.6 quality gate satisfied (G1.1) | Engineering | 2026-02-21 | ✅ COMPLETE | — |
 | A-02 | Assign severity classification for BLG-TECH-03 (written, dated, QA Lead name) (G1.3) | QA Lead | 2026-02-21 | ✅ COMPLETE | — |
 | A-03 | Identify and confirm in writing the canonical specification governing BLG-TECH-03 service layer scope (G1.4) | Head of Specs Team | By triage session — deadline TBC by PMO Lead | 🔴 OPEN | — |
-| A-04 | Acknowledge co-delivery constraint with BLG-TECH-02 in writing in this document (G1.5) | Engineering | By triage session — deadline TBC by PMO Lead | 🔴 OPEN | — |
+| A-04 | Acknowledge co-delivery constraint with BLG-TECH-02 in writing in this document (G1.5) | Engineering | 2026-02-21 | ✅ COMPLETE | — |
 | A-05 | Confirm completion of BLG-TECH-01 outstanding action: apply validation_system.md v1.0.2 rules — written evidence with document version reference (G1.2 — blocks G3, transitively via co-delivery) | Infrastructure & Operations Documentation Owner + Engineering | Before Fix In Progress gate opens | 🔴 OPEN | — |
 
 > ⚠️ GI-2 notice: Deadlines marked "TBC" must be replaced with UTC-dated deadlines by the PMO Lead when the triage session is scheduled. "TBC" is not a compliant deadline.
