@@ -22,7 +22,7 @@
 | target_release | v1.6.1 |
 | canonical_spec | `analytics_endpoints.md` v1.8.1 (severity model contract — confirmed in roadmap) |
 | severity | **High** — confirmed by QA Lead, 2026-02-21 |
-| current_state | **ROOT CAUSE IDENTIFIED** |
+| current_state | **CLOSED** |
 | state_entered_at | 2026-02-21T00:00:00Z *(recorded at Phase Gate Document creation — UTC)* |
 | co_delivery_constraint | Must be delivered alongside BLG-TECH-03. Neither defect may enter Fix In Progress, Fix Validated, or Closed independently without a formal PMO-validated scope decision. See §Co-Delivery Constraint. |
 
@@ -31,11 +31,10 @@
 ## Current Status
 
 ```
-Current state:    ROOT CAUSE IDENTIFIED
-Next gate:        G3 — ROOT CAUSE IDENTIFIED → FIX IN PROGRESS
-Who acts next:    Engineering
-Blockers:         None
-Escalation timer: RUNNING — 2026-02-21T00:00:00Z (High severity SLA)
+Current state:    CLOSED ✅
+Filed:            2026-02-21T21:30:00Z (immutable)
+Director of Quality sign-off: 2026-02-21
+Open conditions:  3 (non-blocking — tracked by PMO Lead)
 ```
 
 ---
@@ -239,20 +238,128 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 
 ### Gate G3 — ROOT CAUSE IDENTIFIED → FIX IN PROGRESS
 
-*Not yet open.*
-**Pre-registered hard block:** G1.2 (validation_system.md v1.0.2 action) must pass before this gate opens.
+**Gate status: ✅ ALL G3 ITEMS PASS**
+
+---
+
+#### G3.1 — Fix confirmed in progress
+
+```
+Gate item:  Engineering confirms fix work has begun
+Evidence:   Branch: fix/blg-tech-02-03-severity-service-consolidation
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
+
+---
+
+#### G3.2 — Fix scope matches confirmed root cause
+
+```
+Gate item:  Engineering confirms fix is scoped to the files identified
+            at G2.2 and addresses the root cause identified at G2.1
+Evidence:   backend/routers/validation.py — thinned to HTTP in/out only;
+            severity field + by_severity produced by service layer.
+            backend/services/validation_service.py — full implementation
+            of all 13-metric + trade-Sharpe validation logic with severity.
+            No additional files in scope.
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
+
+---
+
+#### G3.3 — Co-delivery constraint observed
+
+```
+Gate item:  BLG-TECH-02 and BLG-TECH-03 fixes are in the same PR/branch
+Evidence:   Single branch covers both defects:
+            fix/blg-tech-02-03-severity-service-consolidation
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
+
+---
 
 ---
 
 ### Gate G4 — FIX IN PROGRESS → FIX VALIDATED
 
-*Not yet open.*
+**Gate status: ✅ ALL G4 ITEMS PASS**
+
+---
+
+#### G4.1 — Fix deployed to verification environment
+
+```
+Gate item:  Engineering confirms fix is deployed and available for QA
+Evidence:   Verbal confirmation — Head of Engineering, 2026-02-21T20:55:00Z
+            Branch: fix/blg-tech-02-03-severity-service-consolidation
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21T20:55:00Z
+PMO validation:       Pass — PMO Lead, 2026-02-21T20:55:00Z
+```
+
+---
+
+#### G4.2 — QA Lead re-verification: pass
+
+```
+Gate item:  QA Lead re-executes acceptance criteria for BLG-TECH-02
+            and confirms pass
+
+Scope decision: Full re-run NOT required. AnalyticsService and
+validation_data.py untouched. Re-verification scoped to:
+
+  SC-02-01: severity field present on every result object
+            PASS — severity present on all 14 results
+  SC-02-02: severity values match analytics_endpoints.md v1.8.1 mapping
+            PASS — all 14 metrics match canonical severity tier
+  SC-02-03: by_severity aggregation present, all four tiers, internally
+            consistent with validations[] array
+            PASS — critical:4, high:3, medium:6, low:1 = total:14
+
+Production response timestamp: 2026-02-21T21:25:19.368999Z
+Owner confirmation:   Yes — QA Lead, 2026-02-21T21:25:00Z
+PMO validation:       Pass — PMO Lead, 2026-02-21T21:25:00Z
+
+OBS-01: sharpe_ratio_trade_method present as 14th result (critical).
+        Predates BLG-TECH-02. Not a defect against this fix.
+        Flagged for Product Owner awareness — backlog item warranted
+        to formally canonicalise 14th metric in analytics_endpoints.md.
+```
+
+---
 
 ---
 
 ### Gate G5 — FIX VALIDATED → CLOSED
 
-*Not yet open.*
+**Gate status: ✅ ALL G5 ITEMS PASS**
+
+---
+
+#### G5.1 — Director of Quality sign-off
+
+```
+Gate item:  Director of Quality independently reviews verification record
+            and signs off both defects
+
+Evidence:   Independent review conducted 2026-02-21. Five findings raised:
+            Finding 1 (blocking) — G4 header corrected before sign-off.
+            Findings 2–5 (non-blocking) — recorded, conditions attached.
+            All acceptance criteria confirmed covered by passing scenarios.
+            Re-verification pass confirmed — QA Lead, 2026-02-21T21:25:00Z.
+            Record internally consistent. QA Lead independence confirmed.
+
+Conditions: (1) Lessons learnt entry required — two failed production deploys
+            (2) Product Owner to be notified of OBS-01; backlog item required
+                before v1.6.1 ships to canonicalise sharpe_ratio_trade_method
+            (3) backend_engineering_patterns.md version governance action
+                to be tracked by PMO Lead as separate open item
+
+Owner confirmation:   Yes — Director of Quality, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
 
 ---
 
@@ -285,6 +392,9 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 | 1 | PRE-LOGGED | LOGGED | 2026-02-21 | 00:00:00Z | PMO Lead | — (initial logging) |
 | 2 | LOGGED | TRIAGED | 2026-02-21 | 00:00:00Z | PMO Lead | G1 — all items pass |
 | 3 | TRIAGED | ROOT CAUSE IDENTIFIED | 2026-02-21 | 00:00:00Z | PMO Lead | G2 — all items pass |
+| 4 | ROOT CAUSE IDENTIFIED | FIX IN PROGRESS | 2026-02-21 | 00:00:00Z | PMO Lead | G3 — all items pass |
+| 5 | FIX IN PROGRESS | FIX VALIDATED | 2026-02-21 | 21:25:00Z | PMO Lead | G4 — all items pass; QA Lead re-verification pass |
+| 6 | FIX VALIDATED | CLOSED | 2026-02-21 | 21:30:00Z | PMO Lead | G5 — Director of Quality sign-off |
 
 ---
 
