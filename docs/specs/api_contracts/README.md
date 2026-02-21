@@ -2,9 +2,9 @@
 
 ## Momentum Trading Assistant — API Contracts
 
-**Status:** Complete & current  
-**Last updated:** 2026-02-17  
-**Contract version:** 1.8.0  
+**Status:** Complete & current
+**Last updated:** 2026-02-21
+**Contract version:** 1.8.1
 
 This directory contains the **backend API contracts** for the *Momentum Trading Assistant* web application.
 
@@ -24,7 +24,7 @@ These API contracts are intended for:
 
 ## How to Use This Documentation
 
-1. **Start with `conventions.md`**  
+1. **Start with `conventions.md`**
    This file defines global rules that apply to *all* endpoints, including:
    - Authentication and authorization
    - Request and response envelopes
@@ -32,10 +32,10 @@ These API contracts are intended for:
    - Pagination, filtering, and versioning
    - Common headers and HTTP status codes
 
-2. **Navigate to the relevant domain file**  
+2. **Navigate to the relevant domain file**
    Each domain-specific file contains only the endpoints for that functional area, making reviews and ownership clear.
 
-3. **Treat these files as contracts**  
+3. **Treat these files as contracts**
    - Frontend clients must not infer or calculate values that are provided by the backend.
    - Backend changes that affect request/response shapes must be reflected here.
 
@@ -79,32 +79,32 @@ The following principles apply across all APIs:
 The API contracts are split by concern to support incremental review and clear ownership.
 
 ### Cross-cutting standards
-- **`conventions.md`**  
+- **`conventions.md`**
   Global API rules and conventions that apply to every endpoint.
 
 ### Domain-specific endpoints
-- **`portfolio_endpoints.md`**  
+- **`portfolio_endpoints.md`**
   Portfolio overview, position creation, position sizing calculator, daily snapshots, and portfolio history (`GET /portfolio/history`). The portfolio overview returns a summary position shape; use `position_endpoints.md` for the full enriched position object.
 
-- **`position_endpoints.md`**  
+- **`position_endpoints.md`**
   Open positions (full detail including native prices, stop context, ATR, FX, and journal fields), daily analysis, exits, notes, tags, and tag discovery.
 
-- **`trade_endpoints.md`**  
+- **`trade_endpoints.md`**
   Closed trade history and trade-level statistics.
 
-- **`cash_endpoints.md`**  
+- **`cash_endpoints.md`**
   Deposits, withdrawals, cash transactions, and cash summaries.
 
-- **`settings_endpoints.md`**  
+- **`settings_endpoints.md`**
   Strategy configuration and fee parameters (`GET /settings`, `PUT /settings`). Covers grace period, ATR multipliers, commissions, stamp duty, and analytics thresholds.
 
-- **`analytics_endpoints.md`**  
-  Comprehensive trading analytics via `GET /analytics/metrics` (executive metrics, advanced metrics, monthly trends, top performers, drawdown, and more), plus `POST /validate/calculations` for smoke-testing metric correctness.
+- **`analytics_endpoints.md`**
+  Comprehensive trading analytics via `GET /analytics/metrics` (executive metrics, advanced metrics, monthly trends, top performers, drawdown, and more), plus `POST /validate/calculations` for smoke-testing metric correctness. Validation results include per-metric severity and a `by_severity` summary breakdown.
 
-- **`signal_endpoints.md`**  
+- **`signal_endpoints.md`**
   Signal generation, signal listing, signal status updates, and signal deletion.
 
-- **`health_endpoints.md`**  
+- **`health_endpoints.md`**
   Health checks, diagnostics, and endpoint test execution.
 
 Each endpoint file follows a consistent structure:
@@ -119,11 +119,15 @@ Each endpoint file follows a consistent structure:
 
 ## Versioning
 
-- **Current contract version:** 1.7.0
-- **Change type:** Accuracy corrections, convention additions, and schema completions
-- **Previous version:** 1.6.0
+- **Current contract version:** 1.8.1
+- **Change type:** BLG-TECH-02 contract — validation severity model
+- **Previous version:** 1.8.0
 
 ### Changelog (Summary)
+
+- **1.8.1 (2026-02-21)**
+  - `analytics_endpoints.md`: added `severity` field to each `POST /validate/calculations` validation result object (values: `critical` | `high` | `medium` | `low`); added `by_severity` object to `summary` with `total`/`passed`/`warned`/`failed` counts per tier; added severity model reference table mapping metrics to severity tiers and required actions on failure; updated metrics validated table to include severity column and `capital_efficiency` row (previously absent from table); updated response example; removed resolved known limitation entries for Sharpe variance and capital efficiency (resolved in BLG-TECH-01). This is the canonical contract spec for BLG-TECH-02 engineering implementation.
+  - `docs/reference/openapi.yaml`: version bumped to 1.8.1; `ValidationResponse` schema description updated to note `severity` field and `by_severity` summary additions.
 
 - **1.8.0 (2026-02-19)**
   - `portfolio_endpoints.md`: added `POST /portfolio/size` — Position Sizing Calculator endpoint. Returns suggested share quantity, risk amount, stop distance, estimated cost, fees, FX rate used, and cash feasibility for a prospective new position. No state mutation. Idempotent. Authoritative backend calculation per `strategy_rules.md §4.1`. Includes three distinct response shapes: valid result, insufficient cash (with `max_affordable_shares` always present), and invalid inputs (with machine-readable `reason` code and development-only `reason_detail`).
@@ -131,19 +135,19 @@ Each endpoint file follows a consistent structure:
   - `docs/reference/openapi.yaml`: updated in alignment with the above contract changes per governance rules.
 
 - **1.7.0 (2026-02-17)**
-  - `analytics_endpoints.md`: removed stale editorial note from overview (README correction was completed in v1.5.0); added `entry_price`, `exit_price`, `stop_price` to `trades_for_charts` schema with note explaining client-side R-multiple use
-  - `position_endpoints.md`: added `pnl_percent` field note to `GET /positions` response — clarifies it is the canonical name in position responses; `pnl_pct` is the equivalent in trade history records
+  - `analytics_endpoints.md`: removed stale editorial note from overview; added `entry_price`, `exit_price`, `stop_price` to `trades_for_charts` schema with note explaining client-side R-multiple use
+  - `position_endpoints.md`: added `pnl_percent` field note to `GET /positions` response
   - `portfolio_endpoints.md`: added `pnl_percent` field note to position summary object in `GET /portfolio` response
   - `conventions.md`: added Section 12 — DELETE response convention (shape, non-idempotency rule)
 
 - **1.6.0 (2026-02-17)**
-  - `settings_endpoints.md` created — `GET /settings` and `PUT /settings` were previously undocumented in the split contract set
-  - `conventions.md`: removed stale version number (version is tracked in README only)
-  - `health_endpoints.md`: corrected stale version in response examples; added `version` field note; updated `POST /test/endpoints` example to reflect current endpoint count
-  - `position_endpoints.md`: removed `initial_stop_native` (not returned by implementation); added field notes table; added `exit_note` field note clarifying it is always `null` for open positions; added cross-reference to `GET /portfolio` for summary vs full position depth
-  - `portfolio_endpoints.md`: added note on position summary depth vs `GET /positions`; added field omission table; added snapshot note linking to analytics Sharpe ratio threshold; minor example date updates
-  - `signal_endpoints.md`: added `DELETE /signals/{signal_id}` (existed in implementation, missing from contract)
-  - `trade_endpoints.md`: added `holding_days` to response schema; added field notes table; clarified `exit_reason` null normalisation behaviour
+  - `settings_endpoints.md` created — `GET /settings` and `PUT /settings` were previously undocumented
+  - `conventions.md`: removed stale version number
+  - `health_endpoints.md`: corrected stale version in response examples; added `version` field note; updated `POST /test/endpoints` example
+  - `position_endpoints.md`: removed `initial_stop_native`; added field notes table; added `exit_note` field note; added cross-reference to `GET /portfolio`
+  - `portfolio_endpoints.md`: added note on position summary depth; added field omission table; added snapshot note
+  - `signal_endpoints.md`: added `DELETE /signals/{signal_id}`
+  - `trade_endpoints.md`: added `holding_days` to response schema; added field notes table; clarified `exit_reason` null normalisation
 
 - **1.5.0 (2026-02-17)**
   - `analytics_endpoints.md` rewritten to reflect the completed implementation:
@@ -169,4 +173,4 @@ Each endpoint file follows a consistent structure:
 
 ## Guiding Rule
 
-If a behavior, field, or calculation is not explicitly documented in these contracts, **clients must not assume it exists**. When in doubt, the backend behavior defined here is authoritative.
+If a behavior, field, or calculation is not explicitly documented in these contracts, **clients must not assume it exists**.
