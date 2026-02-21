@@ -29,36 +29,27 @@ They are not user-facing, but they directly affect trust in outputs and release 
 
 ---
 
-### ✅ BLG-TECH-01 — Fix Sharpe variance method + Capital Efficiency currency basis
-**Status: COMPLETE — 2026-02-21**
+### BLG-TECH-01 — Fix Sharpe variance method + Capital Efficiency currency basis
 **Priority:** P0 (Critical)
 **Type:** Metrics Correctness / Validation Integrity
+**Status:** ✅ COMPLETE — 2026-02-21
 
-**Problem**
-- Sharpe ratio used population variance instead of sample variance.
-- Capital efficiency used `entry_price * shares` instead of actual GBP cost.
-- Validation could not reliably detect non-conformant behaviour (`capital_efficiency` block was absent from `routers/validation.py`).
-
-**Scope delivered**
-- `_calculate_sharpe()` updated to sample variance (÷ n−1) for both portfolio and trade methods (AP-06).
-- `_calculate_advanced_metrics()` updated to use `Mean(trade.total_cost)` GBP cost basis (AP-07).
-- `total_cost` field added to all 5 entries in `test_data/validation_data.py`.
-- `capital_efficiency` expected value updated `0.17 → 0.22` to reflect corrected basis.
-- `capital_efficiency` validation block added to `routers/validation.py` (was previously absent).
-- `metrics_definitions.md` updated to v1.5.7: Appendix E Backlog Items 1 and 2 marked resolved; inline conformance notes updated; changelog entry added.
-
-**Closure evidence**
-- `POST /validate/calculations` 13/13 pass, zero warnings, zero failures.
-- Timestamp: 2026-02-21T00:24:41Z.
-- Metrics Definitions & Analytics Canonical Owner sign-off granted: 2026-02-21.
-
-**Release gate cleared:** v1.6 quality gate for this item is satisfied.
+**Closed**
+- `_calculate_sharpe()` updated to use sample variance (÷ n−1) for portfolio and trade-level Sharpe methods
+- Capital efficiency updated to use `Mean(total_cost)` in GBP from `trade_history`
+- `validation_data.py` expected values updated: `capital_efficiency` 0.17 → 0.22; `total_cost` fields added
+- Validation: 13/13 pass confirmed at 2026-02-21T00:24:41Z
+- Canonical Owner sign-off: 2026-02-21
+- `metrics_definitions.md` v1.5.7 — Appendix E both items marked resolved
+- `analytics_endpoints.md` v1.8.1 — resolved known limitations removed
+- v1.6 quality gate: satisfied
 
 ---
 
 ### BLG-TECH-02 — Implement validation severity model
 **Priority:** P1 (High)
 **Type:** Governance / Operational Control
+**Target release:** v1.6.1
 
 **Problem**
 - Validation severity is documented but not enforced.
@@ -67,7 +58,7 @@ They are not user-facing, but they directly affect trust in outputs and release 
 **Scope**
 - Add `severity` field to each validation result.
 - Add `by_severity` aggregation to validation summary.
-- Update API contract in `analytics_endpoints.md` before implementation.
+- Contract locked: `analytics_endpoints.md` v1.8.1 is the canonical implementation spec.
 - Implement in validation layer.
 
 **Acceptance Criteria**
@@ -84,6 +75,7 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ### BLG-TECH-03 — Consolidate ValidationService into service layer
 **Priority:** P1 (High)
 **Type:** Architecture / Maintainability
+**Target release:** v1.6.1
 
 **Problem**
 - Validation logic is split between router and service stub.
@@ -111,6 +103,7 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ### BLG-TECH-04 — CI/CD validation workflow (GitHub Actions)
 **Priority:** P2 (Medium)
 **Type:** Delivery Quality / Automation
+**Target release:** v1.7
 
 **Problem**
 - Validation is manual and not enforced at merge time.
@@ -138,7 +131,7 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ---
 
 ### BLG-TECH-05 — Prometheus metrics endpoint
-**Priority:** P3 (Low — v2.0 candidate)
+**Priority:** P3 (Low — v2.1 candidate)
 **Type:** Observability
 
 **Scope**
@@ -153,7 +146,7 @@ They are not user-facing, but they directly affect trust in outputs and release 
 - Counters and histograms are correct.
 
 **Target**
-- v2.0 or when system becomes multi-user.
+- v2.1 or when system becomes multi-user.
 
 ---
 
@@ -165,18 +158,20 @@ They are not user-facing, but they directly affect trust in outputs and release 
 **Priority:** P1
 **Effort:** ~30 minutes
 **Value:** High visibility risk awareness
+**Target release:** v1.6.1
 
 Display current drawdown from peak and days underwater.
 Example: "Drawdown: -8.2%, 12 days underwater"
 
 **Dependency**
-- Metrics Definitions owner must confirm drawdown calculation.
+- Metrics Definitions owner must confirm drawdown calculation before implementation.
 
 ---
 
 ### BLG-FEAT-02 — R-Multiple Column in Trade History
 **Priority:** P2
 **Effort:** ~1 hour
+**Target release:** v1.6.1
 
 Add R-multiple column to trade history table.
 
@@ -207,6 +202,7 @@ Requires data model update.
 ### BLG-FEAT-04 — Best / Worst Trades Widget
 **Priority:** P2
 **Effort:** ~1 hour
+**Target release:** v1.6.1
 
 Show top 3 and bottom 3 trades by R-multiple or P&L.
 
@@ -215,6 +211,7 @@ Show top 3 and bottom 3 trades by R-multiple or P&L.
 ### BLG-FEAT-05 — Win Rate by Month Chart
 **Priority:** P2
 **Effort:** ~1 hour
+**Target release:** v1.6.1
 
 Bar chart of win rate grouped by calendar month.
 
@@ -223,6 +220,7 @@ Bar chart of win rate grouped by calendar month.
 ### BLG-FEAT-06 — Grace Period Indicator
 **Priority:** P2
 **Effort:** ~1 hour
+**Target release:** v1.6.1
 
 Show remaining grace period days in open positions table.
 Example: "Day 6 of 10"
@@ -232,6 +230,7 @@ Example: "Day 6 of 10"
 ### BLG-FEAT-07 — CSV Export of Trade History
 **Priority:** P2
 **Effort:** ~1 hour
+**Target release:** v1.6.1
 
 One-click CSV export for tax and analysis use.
 
@@ -240,17 +239,18 @@ One-click CSV export for tax and analysis use.
 ### BLG-FEAT-08 — Basic Compliance Metrics
 **Priority:** P2
 **Effort:** ~1 day
+**Target release:** v1.9 (pre-work gate for Structured Trade Reflection Template)
 
 Lightweight discipline metrics:
 - Journal completion rate
 - Stop-based exit rate
 - Average position size (% of portfolio)
 
-Definitions must be canonicalised first.
+Definitions must be canonicalised in `metrics_definitions.md` first.
 
 ---
 
-## 3. Deferred / v2.0 Candidates
+## 3. Deferred / v2.1 Candidates
 
 - Daily email portfolio summary
 - FX rate history tracking
@@ -286,5 +286,3 @@ These are deliberate product decisions, not deferrals:
   - Canonical specification
   - Updated validation where applicable
 - Once implemented, backlog items are superseded by canonical documentation.
-
----
