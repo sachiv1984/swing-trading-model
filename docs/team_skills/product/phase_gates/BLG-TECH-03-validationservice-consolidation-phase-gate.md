@@ -20,9 +20,9 @@
 | source | Roadmap / Backlog (`docs/product/backlog.md`) |
 | backlog_priority | P1 — High |
 | target_release | v1.6.1 |
-| canonical_spec | 🔴 NOT YET CONFIRMED — awaiting Head of Specs Team (blocks G1.4) |
+| canonical_spec | `docs/team_skills/engineering/backend_engineering_patterns.md` (Canonical) — confirmed Head of Specs Team, 2026-02-21 |
 | severity | **Medium** — confirmed by QA Lead, 2026-02-21 |
-| current_state | **LOGGED** |
+| current_state | **TRIAGED** |
 | state_entered_at | 2026-02-21T00:00:00Z *(recorded at Phase Gate Document creation — UTC)* |
 | co_delivery_constraint | Must be delivered alongside BLG-TECH-02. Neither defect may enter Fix In Progress, Fix Validated, or Closed independently without a formal PMO-validated scope decision. See §Co-Delivery Constraint. |
 
@@ -31,14 +31,11 @@
 ## Current Status
 
 ```
-Current state:    LOGGED
-Next gate:        G1 — LOGGED → TRIAGED
-Who acts next:    QA Lead (severity), Head of Specs Team (canonical spec),
-                  Engineering (BLG-TECH-01 confirmation + co-delivery ack)
-Blockers:         B-03 (canonical spec — THIS DEFECT),
-                  B-04 (validation_system.md v1.0.2 action unconfirmed)
-Escalation timer: STARTED — 2026-02-21T00:00:00Z
-                  (timer runs against severity-tier SLA once severity is assigned)
+Current state:    TRIAGED
+Next gate:        G2 — TRIAGED → ROOT CAUSE IDENTIFIED
+Who acts next:    Engineering
+Blockers:         B-04 — validation_system.md v1.0.2 unconfirmed (hard block on G3)
+Escalation timer: RESET — 2026-02-21T00:00:00Z (Medium severity SLA now running)
 ```
 
 ---
@@ -60,7 +57,7 @@ BLG-TECH-02 and BLG-TECH-03 are co-delivered per backlog and roadmap:
 
 ### Gate G1 — LOGGED → TRIAGED
 
-**Gate status: 🟡 3 OF 5 ITEMS PASS — G1.4 (canonical spec) outstanding; G1.2 pre-registered hard block on G3**
+**Gate status: ✅ ALL G1 ITEMS PASS — state transition to TRIAGED pending co-delivery lock-step confirmation with BLG-TECH-02**
 
 ---
 
@@ -155,14 +152,18 @@ Evidence required:
     - Validation consolidation (no validation logic in router)
   Named spec document + version required.
 
-⚠️  This is a BLOCKING gap specific to BLG-TECH-03.
-  BLG-TECH-02 has a confirmed canonical spec (analytics_endpoints.md v1.8.1).
-  BLG-TECH-03 does not. The PMO Lead cannot infer a canonical owner.
-  The Head of Specs Team must resolve this before G1 can pass for this defect.
-
-Evidence:             🔴 MISSING
-Owner confirmation:   🔴 MISSING — Head of Specs Team, date required
-PMO validation:       FAIL (pending evidence)
+Evidence:             docs/team_skills/engineering/backend_engineering_patterns.md
+                      (Status: Canonical) — §3 non-negotiable rules:
+                      "Routers must be thin. No business logic in a router."
+                      "Services contain all business logic."
+                      Secondary ref: analytics_endpoints.md v1.8.1 known
+                      limitations confirms the deviation is tracked as BLG-TECH-03.
+                      Compliance note raised: backend_engineering_patterns.md
+                      carries no version number — non-compliant with
+                      document_lifecycle_guide.md §2 Class 1; separate
+                      governance action raised by Head of Specs Team.
+Owner confirmation:   Yes — Head of Specs Team, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
 ```
 
 ---
@@ -221,7 +222,7 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 |-----------|-------------|-------|----------|--------|------------|
 | A-01 | Provide written confirmation that BLG-TECH-01 is closed and v1.6 quality gate satisfied (G1.1) | Engineering | 2026-02-21 | ✅ COMPLETE | — |
 | A-02 | Assign severity classification for BLG-TECH-03 (written, dated, QA Lead name) (G1.3) | QA Lead | 2026-02-21 | ✅ COMPLETE | — |
-| A-03 | Identify and confirm in writing the canonical specification governing BLG-TECH-03 service layer scope (G1.4) | Head of Specs Team | By triage session — deadline TBC by PMO Lead | 🔴 OPEN | — |
+| A-03 | Identify and confirm in writing the canonical specification governing BLG-TECH-03 service layer scope (G1.4) | Head of Specs Team | 2026-02-21 | ✅ COMPLETE | — |
 | A-04 | Acknowledge co-delivery constraint with BLG-TECH-02 in writing in this document (G1.5) | Engineering | 2026-02-21 | ✅ COMPLETE | — |
 | A-05 | Confirm completion of BLG-TECH-01 outstanding action: apply validation_system.md v1.0.2 rules — written evidence with document version reference (G1.2 — blocks G3, transitively via co-delivery) | Infrastructure & Operations Documentation Owner + Engineering | Before Fix In Progress gate opens | 🔴 OPEN | — |
 
@@ -233,7 +234,6 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 
 | # | Blocker | Affects | Owner | Raised | Status |
 |---|---------|---------|-------|--------|--------|
-| B-03 | Canonical spec for service layer scope not identified | G1.4 — state transition to Triaged | Head of Specs Team | 2026-02-21 | 🔴 OPEN |
 | B-04 | validation_system.md v1.0.2 action unconfirmed | G3 — Fix In Progress gate hard-blocked | Infra & Ops Documentation Owner + Engineering | 2026-02-21 | 🔴 OPEN |
 
 ---
@@ -243,6 +243,7 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 | # | From | To | Date | Time (UTC) | Declared by | Gate passed |
 |---|------|----|------|------------|-------------|-------------|
 | 1 | PRE-LOGGED | LOGGED | 2026-02-21 | 00:00:00Z | PMO Lead | — (initial logging) |
+| 2 | LOGGED | TRIAGED | 2026-02-21 | 00:00:00Z | PMO Lead | G1 — all items pass |
 
 ---
 
