@@ -4,16 +4,7 @@
 **Type:** PMO Process Template
 **Status:** Canonical
 **Version:** 1.1
-**Last Updated:** 2026-02-20
-
----
-
-## Change Log
-
-| Version | Change |
-|---------|--------|
-| 1.1 | Section 1: added settings field dependency check. If a feature includes a widget or form input that requires a user-configured default, the audit must confirm whether a settings field is needed and whether it already exists. Added following 3.2 lessons learnt — `default_risk_percent` was not identified until the pre-alignment meeting, causing an in-meeting estimate revision and four additional spec document updates. |
-| 1.0 | Initial version. |
+**Last Updated:** 2026-02-21
 
 ---
 
@@ -53,14 +44,16 @@ For every field the feature reads or writes:
 - [ ] If not: is the field type, constraint, default, and migration strategy clear enough to spec before the meeting?
 - [ ] If schema changes are needed: has the Data Model owner been notified and given time to prepare?
 
-**Settings field dependency check (added v1.1):**
-- [ ] Does the feature include any widget, form input, or pre-populated value that requires a user-configured default?
-- [ ] If yes: is the corresponding settings field already present in `data_model.md` and `settings_endpoints.md`?
-- [ ] If the settings field does not exist: add it to the spec action list now and notify the Data Model owner before the meeting is scheduled. Do not leave this to be discovered in the meeting.
+**Failure condition:** Any required field does not exist and has not been pre-designed. This expands scope and will change the effort estimate. Do not schedule the meeting until the field is at least pre-designed.
 
-> **Why this check exists:** During 3.2 pre-alignment, the `default_risk_percent` settings field was not identified in the readiness audit. It surfaced during the meeting when widget pre-population was discussed. This caused the effort estimate to revise mid-meeting from 1–2 to 2–3 days and added four additional spec document updates to Phase 2. A 10-minute audit check prevents this class of scope discovery entirely.
+#### 1a. Settings Table Dependency *(added v1.1)*
 
-**Failure condition:** Any required field — including a settings field required to support widget pre-population — does not exist and has not been pre-designed. This expands scope and will change the effort estimate. Do not schedule the meeting until the field is at least pre-designed.
+- [ ] Does the feature read from or write to the settings table in any way? (e.g. a user preference that pre-populates a widget, a configurable threshold, a default value)
+- [ ] If yes: does the required field already exist in `data_model.md` and `settings_endpoints.md`?
+- [ ] If yes: is the Settings page UI spec (`settings.md`) current and does it include the field?
+- [ ] If the field does not yet exist: has the scope been updated to include the field definition, migration script, settings endpoint change, and settings page UI update?
+
+**Failure condition:** A settings field dependency is not identified until the pre-alignment meeting. This adds a full spec domain (data model migration, settings endpoint update, settings page UI) that will change the effort estimate. The 3.2 Position Sizing Calculator pre-alignment discovered `default_risk_percent` at the meeting rather than before it — this check exists to prevent that recurrence.
 
 ---
 
@@ -78,7 +71,7 @@ For every endpoint the feature calls or introduces:
 
 ### 3. Frontend Spec Readiness
 
-- [ ] Is the current `position_form.md` (or equivalent component spec) up to date?
+- [ ] Is the relevant component or page spec (e.g. `position_form.md`, `settings.md`) up to date?
 - [ ] Does the Frontend Spec owner have enough context to participate in the pre-alignment meeting?
 - [ ] Are there UX decisions that need to be pre-resolved before the meeting (e.g. widget placement, interaction model)?
 
@@ -100,7 +93,7 @@ For every endpoint the feature calls or introduces:
 
 - [ ] Does the roadmap effort estimate account for all of: backend implementation, data migration, API contract authoring, frontend spec updates, settings changes, and QA review?
 - [ ] Has the effort estimate been reviewed against the actual scope of spec changes required?
-- [ ] If the audit has surfaced additional scope (e.g. new data model fields, settings field additions, additional spec updates): has the estimate been revised?
+- [ ] If the audit has surfaced additional scope (e.g. new data model fields, settings table dependencies, additional spec updates): has the estimate been revised?
 
 **Failure condition:** The estimate does not reflect actual scope. Revise the roadmap entry before scheduling the meeting. An inaccurate estimate creates delivery pressure that compresses pre-alignment quality.
 
@@ -139,3 +132,12 @@ If the audit reveals that significant pre-work is needed and the Product Owner i
 - The Product Owner decides — but the decision and its rationale are recorded
 
 The PMO Lead does not make this call unilaterally.
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | 2026-02-21 | Added Section 1a — Settings Table Dependency check. Identified via lessons learnt for 3.2 Position Sizing Calculator: `default_risk_percent` settings field was discovered at the pre-alignment meeting rather than during the readiness audit, causing an estimate change from 1–2 days to 2–3 days. |
+| 1.0 | 2026-02-19 | Initial version |
