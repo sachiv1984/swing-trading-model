@@ -1,10 +1,20 @@
 # Backend Engineering Patterns
 
-**Role:** Backend Engineering Patterns Owner
+**Owner:** Backend Engineering Patterns Owner
 **Reports to:** Head of Engineering
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)
 **Scope:** Backend implementation patterns, conventions, and engineering standards for the FastAPI / PostgreSQL codebase
 **Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-02-21
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0 | 2026-02-21 | Version field, Last Updated field, and Change Log added to bring document into Class 1 compliance with `document_lifecycle_guide.md` v2.2. No content change. Identified as non-compliant via Head of Specs Team review during BLG-TECH-03 gate G1.4 (2026-02-21). Actioned by Head of Engineering per Director of Quality sign-off Condition 3. |
 
 ---
 
