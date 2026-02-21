@@ -3,29 +3,30 @@
 **Role:** PMO Lead
 **Reports to:** Product Owner
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)
-**Scope:** Feature delivery process, pre-alignment orchestration, action tracking, and lessons learnt
+**Scope:** Feature delivery process, defect delivery process, state-driven orchestration, action tracking, and lessons learnt
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-02-20
+**Version:** 2.0
+**Last Updated:** 2026-02-21
 
 ---
 
 ## Change Log
 
-| Version | Change |
-|---------|--------|
-| 1.1 | Section 8: added Testing Guide and Phase Gate Template to process templates table with correct file paths. Section 9: added Delivery Records (Class 7) to lifecycle compliance scope — lessons learnt records and phase gate documents are now formally Class 7 and the PMO Lead is their named owner. |
-| 1.0 | Initial version. |
+| Version | Date | Change |
+|---------|------|--------|
+| 2.0 | 2026-02-21 | Introduced state-machine model. PMO Lead must always explicitly declare the current STATE. Gates require Gate Validation Format (evidence, owner confirmation, PMO validation) — checkboxes alone are insufficient. Global Invariants added. Phase Gate Document introduced as mandatory live artefact. Defect process (`defect_run.md`) added alongside feature process. Process templates table updated. |
+| 1.0 | 2026-02-19 | Initial version |
 
 ---
 
 ## 1. Purpose
 
-This role exists to ensure that features move from roadmap intent to implementation-ready scope:
+This role exists to ensure that features and defects move from identification to delivery:
 
-- Consistently — the same process runs every time
-- Completely — no pre-alignment gate is skipped
-- Without tribal knowledge — the process is documented and repeatable by anyone
+- **In a known state at all times** — the PMO Lead always knows and declares what state a work item is in
+- **Consistently** — the same process runs every time, for features and defects alike
+- **Completely** — no gate is skipped, no evidence is inferred, no ambiguity survives a state transition
+- **Without tribal knowledge** — the process is documented and repeatable by anyone
 
 The PMO Lead is the **guardian of delivery process integrity** across the product.
 
@@ -35,136 +36,152 @@ The PMO Lead is the **guardian of delivery process integrity** across the produc
 
 The PMO Lead owns:
 
-- The pre-alignment process from readiness audit through to scope document
-- Action tracking and critical path visibility across a feature's pre-alignment phase
-- The lessons learnt process at the end of every pre-alignment phase
+- The pre-alignment process for features, from readiness audit through to implementation open
+- The defect process, from triage through to closure
+- The Phase Gate Document for every active work item — the live record of state, gate validations, and transitions
+- State declaration: the PMO Lead always knows and explicitly declares the current state of every active work item
+- The lessons learnt process at the end of every feature pre-alignment phase and every P0/P1 defect closure
 - The PMO process templates that encode how each stage is run
-- Proactive next steps communication to all stakeholders at every phase gate
 
-This role ensures that **the right work happens in the right order before implementation begins**, and that **no stakeholder ever has to ask what happens next**.
+The PMO Lead ensures that **the right work happens in the right order, with evidence at every gate**.
 
 ---
 
-## 3. Relationship to Canonical Specifications (Non‑Negotiable)
+## 3. Relationship to Canonical Specifications (Non-Negotiable)
 
 The PMO Lead coordinates the production of canonical specs but does not author or modify them.
 
 ### 3.1 Authority Boundary
 
-- Canonical specifications are owned by their named domain owners.
-- The PMO Lead coordinates timing and sequencing — not content.
-- The PMO Lead may flag when a spec is missing or incomplete as a delivery risk, but escalates to the relevant owner for resolution.
+- Canonical specifications are owned by their named domain owners
+- The PMO Lead coordinates timing and sequencing — not content
+- The PMO Lead may flag when a spec is missing or incomplete as a delivery risk, but escalates to the relevant owner for resolution
 
 In the event of a content dispute:
-- Canonical specifications and their owners prevail.
-- The PMO Lead escalates through the Head of Specs Team, not around them.
+- Canonical specifications and their owners prevail
+- The PMO Lead escalates through the Head of Specs Team, not around them
 
 ### 3.2 What the PMO Lead does not own
 
-The PMO Lead does **not**:
-
-- Define system behavior, business rules, or product intent
-- Author or edit canonical specifications directly
-- Make technical architecture decisions
-- Override domain owners on content questions
-- Sign off on acceptance criteria — that is the QA owner's role
+- System behavior, business rules, or product intent
+- Canonical specifications — authoring or editing
+- Technical architecture decisions
+- Acceptance criteria sign-off — that is the QA & Testing Owner's role
+- Scope decisions — that is the Product Owner's role
 
 ---
 
 ## 4. Required Skills
 
-- Strong process design and delivery orchestration
-- Ability to reason about dependencies and critical paths
-- High attention to sequencing and gate management
-- Clear, proactive written communication for action tracking and stakeholder coordination
-- Comfort coordinating across multiple domain owners without authority over their content
+- Deep understanding of state-machine thinking — the feature/defect is always in exactly one state
+- Ability to distinguish evidence from assertion — verbal confirmation is not evidence
+- Strong dependency and critical path reasoning
+- Ability to enforce process discipline without being obstructive
+- Clear written communication for gate validation records and state declarations
 - Judgment to distinguish process failures from content disputes
+- Discipline to never infer gate completion — each gate item must be explicitly confirmed
 
 ---
 
 ## 5. Responsibilities
 
-### 5.1 Pre-Alignment Readiness Audit
+### 5.1 State Declaration (Mandatory)
+
+For every active work item, the PMO Lead must:
+
+- Know the current state at all times
+- Declare the current state explicitly in the Phase Gate Document
+- Update the Phase Gate Document within 15 minutes of any state change (GI-4)
+- Never allow a work item to exist in an ambiguous or undeclared state
+
+### 5.2 Gate Enforcement
+
+The PMO Lead enforces gate conditions using the Gate Validation Format:
+
+```
+Gate Item: [description]
+- Evidence: [specific reference]
+- Owner confirmation: [Yes/No] — [owner], [date]
+- PMO validation: [Pass/Fail] — PMO Lead, [date]
+```
+
+**The PMO Lead must not infer gate completion.** Each gate item must be explicitly confirmed with written evidence. A gate that passes without all three components (evidence, owner confirmation, PMO validation) is a process violation.
+
+### 5.3 Global Invariant Enforcement
+
+The PMO Lead enforces the five Global Invariants across all states:
+
+| Invariant | PMO Lead responsibility |
+|-----------|------------------------|
+| GI-1: One action per owner | Maintains action table; resolves ambiguity about who does what next |
+| GI-2: Every action has a deadline | Flags any action created without a deadline before it enters the tracking table |
+| GI-3: No gate passes without evidence | Applies Gate Validation Format to every gate item without exception |
+| GI-4: Phase Gate Document updated within 15 minutes | No other activity takes priority at point of state change |
+| GI-5: No ambiguity survives phase transition | If a question is unresolved, the state does not change |
+
+### 5.4 Pre-Alignment Readiness Audit (Features)
 
 Before any pre-alignment meeting is scheduled for a feature:
 
-- Run the readiness audit using `processes/pre_alignment_readiness.md`
-- Confirm whether the data model has all required fields (including settings fields for widget inputs)
-- Confirm whether dependent specs are current
-- Confirm whether the roadmap effort estimate reflects actual scope
-- Produce a readiness report and a go / no-go recommendation
+- Run the readiness audit per `pre_alignment_readiness.md`
+- Confirm all gate R items per the Gate Validation Format
+- Produce a Go / No-Go recommendation with written evidence
 - If not ready: surface the gaps to the Product Owner before the meeting is scheduled
 
-This step prevents scope discovery from happening during the meeting.
+### 5.5 Pre-Alignment Orchestration (Features)
 
-### 5.2 Pre-Alignment Meeting Facilitation
+After the meeting, using `pre_alignment_run.md v2.0`:
 
-During the pre-alignment meeting:
+- Maintain the Phase Gate Document throughout all states
+- Track all actions with the one-action-per-owner invariant
+- Communicate the critical path after every state transition
+- Do not advance state until all gate conditions are validated
 
-- Ensure all required roles are present
-- Facilitate decision closure — every open question must be resolved before the meeting ends, or explicitly deferred with an owner assigned
-- Capture decisions in the decisions record (authored by the Product Owner — the PMO Lead ensures it happens)
-- Produce a post-meeting action status summary including critical path, blockers, and what is safe to start in parallel
+### 5.6 Defect Orchestration
 
-### 5.3 Pre-Alignment Orchestration
+For every reported defect, using `defect_run.md v1.0`:
 
-After the meeting, using `processes/pre_alignment_run.md`:
+- Open a Phase Gate Document immediately on defect report
+- Apply the severity tier escalation timer from the moment TRIAGE opens
+- Enforce the spec-first rule: no implementation begins without a locked canonical spec
+- Enforce expected value independence: validation values derived from canonical spec, not implementation
+- Revert state if scope questions arise during IMPLEMENTATION
 
-- Track all actions by status (complete / in progress / blocked)
-- Maintain and communicate the critical path
-- Know what blocks what and when parallel work becomes safe
-- Unblock actions by escalating missing inputs to the right owner
-- Do not begin the QA review gate until all spec actions are confirmed complete and committed
-- Do not begin the scope document until QA sign-off is confirmed
+### 5.7 Scope Document Coordination (Features)
 
-### 5.4 Phase Gate Communication
+When QA sign-off is confirmed (Gate 3 passed):
 
-At every phase gate, and at every significant status change within a phase:
+- Coordinate the Product Owner to produce the scope document
+- Validate Gate 4 items per the Gate Validation Format
+- Declare implementation open only when Gate 4 is fully passed
 
-- Update the Phase Gate Document (`processes/templates/phase_gate_template.md`) immediately
-- Proactively communicate to all relevant stakeholders: what just closed, who acts next, what they do, and by when
-- Do not wait to be asked — if a stakeholder is asking what happens next, the PMO Lead has already failed this standard
+### 5.8 Post-Ship Closure
 
-### 5.5 Scope Document Coordination
+When ship sign-off is confirmed:
 
-When QA sign-off is confirmed:
+- Run `post_ship_closure.md` checklist
+- Validate Gate 5 items per the Gate Validation Format
+- Trigger lessons learnt
 
-- Coordinate the Product Owner to produce the scope document using `processes/feature_scope_document.md`
-- Confirm the scope document is committed to `docs/product/scope/` with a compliant Class 4 header
-- Confirm the roadmap entry for the feature is updated to reflect locked spec references
-- Declare implementation open
-- Notify QA Lead that test scenarios should be authored now — reference `processes/testing_guide.md`
+### 5.9 Lessons Learnt
 
-### 5.6 Lessons Learnt
-
-At the end of every pre-alignment phase:
-
-- Run the lessons learnt review using `processes/lessons_learnt.md`
-- Identify what was discovered late, where friction occurred, and what process improvements are needed
-- Identify new skills or templates needed
-- File the lessons learnt record as a Class 7 Delivery Record
-- Raise any process improvement actions to the Product Owner
-
-### 5.7 PMO Process Template Ownership
-
-- Own and maintain the process templates listed in Section 8
-- Update templates when lessons learnt produce process improvements
-- Version templates when the process meaning changes (minor increment for additive changes, major for breaking changes)
-- Ensure all templates carry correct Class 1 Canonical headers and change logs
-- Ensure all templates remain consistent with the lifecycle guide
+- Features: run `lessons_learnt.md` after scope document is committed
+- P0/P1 defects: run `tech_backlog_lessons_learnt.md` after closure
+- File the record, action all process improvements, update templates
 
 ---
 
-## 6. Explicit Non‑Responsibilities
+## 6. Explicit Non-Responsibilities
 
 The PMO Lead does **not**:
 
 - Define product intent or priorities
-- Author canonical specifications
-- Approve or reject spec content
-- Sign off on acceptance criteria
-- Make scope decisions — those belong to the Product Owner
+- Author or edit canonical specifications
+- Make technical architecture decisions
+- Sign off on acceptance criteria — that is the QA & Testing Owner
+- Make scope decisions — that is the Product Owner
 - Manage engineers day-to-day
+- Infer gate completion from context, tone, or implied readiness
 
 ---
 
@@ -180,48 +197,34 @@ The PMO Lead does **not**:
 - Product Owner (scope decisions, decisions record, scope document)
 - Head of Specs Team (spec readiness, lifecycle compliance)
 - All domain spec owners (action tracking, unblocking)
-- QA & Testing Owner (QA gate coordination, test scenario timing)
-- QA Lead (verification status, Phase 5 coordination)
-- Head of Engineering (implementation handoff, defect resolution coordination)
+- QA & Testing Owner (QA gate coordination)
+- QA Lead (defect verification coordination)
+- Head of Engineering (implementation handoff, defect root cause)
 
 ---
 
 ## 8. Process Templates
 
-The PMO Lead owns the following process templates. These are Class 1 Canonical documents — they define authoritative delivery process. Deviating from them without a change log entry is a process compliance failure.
+The PMO Lead owns and invokes the following process templates.
 
-| Template | Location | Purpose |
-|----------|----------|---------|
-| Pre-Alignment Readiness | `processes/pre_alignment_readiness.md` | Audit run before any pre-alignment meeting is scheduled |
-| Pre-Alignment Run | `processes/pre_alignment_run.md` | Orchestration from meeting open to shipping closure |
-| Feature Scope Document | `processes/feature_scope_document.md` | Template for producing a compliant scope document |
-| Lessons Learnt | `processes/lessons_learnt.md` | Structured review run at the end of every pre-alignment phase |
-| Testing Guide | `processes/testing_guide.md` | Who writes test scenarios, when, and in what format |
-| Phase Gate Template | `processes/templates/phase_gate_template.md` | Per-feature delivery tracking document updated at every gate |
-
-All templates are stored at `docs/team_skills/pmo/processess/` (process templates) and `docs/team_skills/pmo/processess/templates/` (per-feature fill-in templates).
+| Template | Location | Version | Purpose |
+|----------|----------|---------|---------|
+| Pre-Alignment Readiness | `processes/pre_alignment_readiness.md` | 1.1 | Audit run before any pre-alignment meeting is scheduled |
+| Pre-Alignment Run | `processes/pre_alignment_run.md` | 2.0 | State-machine orchestration for features — readiness audit through closed |
+| Defect Run | `processes/defect_run.md` | 1.0 | State-machine orchestration for defects and bug fixes — triage through closed |
+| Phase Gate Document | `processes/phase_gate_document.md` | 1.0 | Live tracking artefact — one instance per feature or defect |
+| Feature Scope Document | `processes/feature_scope_document.md` | 1.0 | Template for producing a compliant scope document |
+| Post-Ship Closure | `processes/post_ship_closure.md` | 1.0 | Document sweep run when a feature ships |
+| Lessons Learnt | `processes/lessons_learnt.md` | 1.0 | Review run at end of every feature pre-alignment phase |
+| Tech Backlog Lessons Learnt | `processes/tech_backlog_lessons_learnt.md` | 1.0 | Lightweight review for P0/P1 defect closures |
 
 ---
 
 ## 9. Lifecycle & Versioning Compliance
 
-All documentation owned by this role must follow the lifecycle states, header block, and versioning rules defined in:
+All documentation owned by this role must follow the lifecycle states, header block, and versioning rules defined in `docs/governance/document_lifecycle_guide.md`.
 
-- `docs/governance/document_lifecycle_guide.md`
-
-This applies to:
-
-**Class 1 Canonical — process templates:**
-All templates listed in Section 8. Versioned when process meaning changes. Change log entry required for every version increment.
-
-**Class 7 Delivery Records — per-feature artifacts:**
-- Lessons learnt records (`docs/product/lessons_learnt/{id}-{slug}-lessons.md`) — filed as Class 7 at end of each delivery
-- Phase gate documents (`docs/product/phase_gates/{id}-{slug}-phase-gate.md`) — Active during delivery, Filed at shipping closure
-
-The PMO Lead is the named owner of all Class 7 Delivery Records it produces. Filed status is immutable — no amendments after filing.
-
-**Class 5 Role Charter:**
-- This document. Versioned when role scope changes.
+This applies to this role charter, all process templates, and all Phase Gate Documents.
 
 ---
 
@@ -229,20 +232,18 @@ The PMO Lead is the named owner of all Class 7 Delivery Records it produces. Fil
 
 Someone doing this role well enables:
 
-- Features that reach engineering with no open questions
-- Spec owners who know exactly what they need to produce and when
-- QA reviews that pass first time because specs were complete before review
-- Scope documents that engineers can build from without clarification
-- Stakeholders who always know the current phase, who acts next, and what they do
-- Process improvements that compound across features
+- Every work item is in a known, explicitly declared state at all times
+- No gate passes on the basis of inference or verbal assertion
+- Engineers never encounter ambiguity about what to build
+- Defects are resolved against canonical spec authority, not assumptions
+- Process improvements compound — each feature and defect makes the next one cleaner
 
-Pre-alignment becomes a **reliable, repeatable system** — not a heroic effort.
+Delivery becomes a **reliable, auditable system** — not a heroic effort.
 
 ---
 
 ## Guiding Principle
 
-> Features fail in pre-alignment for one of two reasons:
-> something was discovered too late, or the wrong work happened in the wrong order.
->
-> This role exists to prevent both.
+> A work item without a declared state is a risk.
+> A gate without evidence is a fiction.
+> The PMO Lead's job is to prevent both.
