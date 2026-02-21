@@ -3,9 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-02-20
-
-> **Update standard:** This document is updated by the PMO Lead on behalf of the Product Owner as part of the shipping closure checklist at the end of every feature delivery. The Product Owner reviews and approves each entry before the Phase Gate Document is Filed. No entry may be added outside of a shipping closure event without explicit Product Owner approval.
+**Last Updated:** 2026-02-21
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
 
@@ -15,41 +13,47 @@
 
 ### Position Sizing Calculator ✅ Complete
 
+**Sign-off:** Director of Quality, 2026-02-20
+**Verification report:** `docs/product/verification/3.2-position-sizing-calculator-verification.md` (v1.4)
+
 **Backend**
-- New endpoint: `POST /portfolio/size` — calculates suggested share count from entry price, stop price, and risk percentage
-- All sizing calculations are server-side and authoritative; frontend performs no financial calculations
-- Three response shapes: valid with sufficient cash, valid with insufficient cash (`max_affordable_shares` always present), invalid inputs (`reason` machine-readable code)
-- Reason codes: `INVALID_RISK_PERCENT`, `INVALID_ENTRY_PRICE`, `INVALID_STOP_PRICE`, `INVALID_STOP_DISTANCE`, `NO_PORTFOLIO_VALUE_SNAPSHOT`
-- HTTP 400 for malformed requests; HTTP 200 with `valid: false` for all business rule failures
-- FX handling: UK positions `fx_rate_used: 1.0`; US positions use live rate or explicit user override
-- `suggested_shares` floored to 4dp (conservative — never rounds up)
-- `default_risk_percent` field added to `settings` table via safe migration (`NOT NULL DEFAULT 1.00`; existing rows receive `1.00` automatically)
+- `POST /portfolio/size` endpoint — calculates suggested share quantity for a prospective new position. Idempotent. No state mutation. Returns three distinct response shapes: valid result, insufficient cash (with `max_affordable_shares` always present), and invalid inputs (with machine-readable `reason` code)
+- `default_risk_percent` field added to `settings` table — supports widget pre-population. Database migration applied; all existing rows default to `1.00`
 - `GET /settings` and `PUT /settings` updated to expose and accept `default_risk_percent`
-- `PUT /settings` rejects `default_risk_percent` of 0 or below, or above 100 (HTTP 422)
 
 **Frontend**
-- Position Sizing Calculator widget embedded in Trade Entry form, directly above the Shares field — always visible, no toggle or activation required
+- Position Sizing Calculator widget — always visible in Trade Entry form, directly above the Shares field
 - Risk % field pre-populated from `settings.default_risk_percent` on form load
-- Debounced live calculation: `POST /portfolio/size` called 300ms after user stops typing in Entry Price, Stop Price, FX Rate, or Risk %
-- Eight widget states implemented: idle, loading, valid auto-fill, valid with existing shares, insufficient cash, invalid input (amber), invalid system (grey), post-submit reset
-- Auto-fills Shares field when `valid: true`, `cash_sufficient: true`, and Shares is empty
-- "Use suggested shares" affordance shown when Shares field already has a user-entered value
-- `max_affordable_shares` shown as muted informational text when `cash_sufficient: false` — shares not auto-filled
-- Plain-language amber messages for user input errors; muted grey for system conditions; raw reason codes never shown in UI
-- Form submission not blocked by any widget state — widget is decision support only
-- Network failure: dashes shown, form remains submittable, retries on next keystroke
-- Risk % persists across navigation within the session via `sessionStorage`; cleared on tab close
-- `default_risk_percent` field added to Settings page, Strategy Parameters section, with helper text clarifying it is a convenience default not an enforced limit
+- Eight widget states implemented: idle, loading, valid auto-fill, valid with existing shares, insufficient cash, invalid input, invalid system, post-submit reset
+- Auto-fills Shares field when result is valid and field is empty; "Use suggested shares" affordance shown when Shares already populated
+- Debounced API call (300ms) on input change — does not block form submission in any state
+- `default_risk_percent` field added to Settings page — Strategy Parameters section
 
-**Defects resolved during verification**
-- DEF-002 — INVALID_ENTRY_PRICE amber message not rendered (root cause: missing key in AMBER_MESSAGES map + null coercion in parent TradeEntry.js)
-- DEF-003 — INVALID_STOP_PRICE amber message not rendered (same root cause as DEF-002)
-- DEF-004 — Settings page silently swallowed invalid save (root cause: missing onError handler in saveMutation)
-- DEF-006 — Risk % reset to settings default after navigation (root cause: component local state lost on unmount; fixed via sessionStorage persistence)
+**Canonical specifications updated**
+- `strategy_rules.md` v1.3 — §4.1 sizing calculator rules
+- `portfolio_endpoints.md` v1.8.0 — `POST /portfolio/size` contract
+- `settings_endpoints.md` v1.8.0 — `default_risk_percent` field
+- `data_model.md` v1.7 — settings column and migration script
+- `position_form.md` v1.2 — widget spec and all eight states
+- `settings.md` v1.1 — Strategy Parameters section
+- `openapi.yaml` v1.8.0 — aligned with above contract changes
 
-**Verification**
-- Verification report: `docs/product/verification/3.2-position-sizing-calculator-verification.md` (v1.4)
-- Director of Quality sign-off: 2026-02-20
+---
+
+### BLG-TECH-01 — Sharpe Variance + Capital Efficiency Fix ✅ Complete
+
+**Closed:** 2026-02-21
+**Canonical Owner sign-off:** 2026-02-21
+**Validation result:** 13/13 pass at 2026-02-21T00:24:41Z
+
+This item was the v1.6 quality gate. v1.6 did not ship until these fixes were verified.
+
+- `_calculate_sharpe()` updated to use sample variance (÷ n−1) for both portfolio-based and trade-based Sharpe methods
+- Capital efficiency updated to use `Mean(total_cost)` in GBP from `trade_history` — eliminates USD/GBP mixing for portfolios with both markets
+- `validation_data.py` expected values updated: `capital_efficiency` 0.17 → 0.22; `total_cost` fields added
+- Validation metric count increased from 12 to 13 (capital efficiency added as explicitly validated metric)
+- `metrics_definitions.md` v1.5.7 — Appendix E Backlog Items 1 and 2 marked resolved with closure detail
+- `analytics_endpoints.md` v1.8.1 — resolved known limitations removed; severity contract added (A5/A6 actions completed alongside this closure)
 
 ---
 
@@ -116,74 +120,4 @@
 - One-click endpoint testing with pass/fail results
 - Auto-refresh at 5-second intervals
 - Response time tracking
-- 100% test pass rate monitoring established
-
----
-
-## v1.2 — Exit Flexibility & Backend Refactor (February 2026)
-
-### Exit Features
-
-- Partial exit support: specify share count to exit
-- Custom exit date for backdating reconciliation
-- User-provided exit price from actual broker execution
-- User-provided FX rate for US stocks (from broker statement)
-- Exit reason selection dropdown
-- Detailed fee breakdown in exit response
-- Proportional cost basis calculation for partial exits
-
-### Backend Architecture
-
-- Complete refactor to service layer architecture
-- 67% code reduction in `main.py` (1,439 → 470 lines)
-- Five service modules: position, portfolio, trade, cash, signal
-- Clean separation of concerns: HTTP → Service → Utils → Database
-- 100% testable business logic
-
----
-
-## v1.1 — Cash Management & Portfolio History (early 2026)
-
-- Deposit and withdrawal tracking
-- Transaction history
-- Accurate P&L accounting incorporating cash flows
-- Cash management modal UI
-- Daily portfolio snapshots
-- Historical performance data
-- Performance chart visualisation
-- Automated snapshot creation via cron
-
----
-
-## v1.0 — Initial Release
-
-### Core Trading Features
-
-- Portfolio management
-- Manual position entry with fractional share support
-- Daily position analysis
-- ATR-based trailing stops
-- Grace period (10 calendar days, stop calculated but not enforced)
-- Market regime detection: SPY / FTSE vs 200-day moving average
-- Multi-currency support: USD and GBP
-- Live price fetching via Yahoo Finance
-- Fee calculation: UK (commission + stamp duty), US (FX fees)
-
-### Dashboard & UI
-
-- Responsive dashboard with draggable widgets
-- Portfolio value display
-- Open positions summary
-- Total P&L tracking
-- Cash balance management
-- Dark mode UI
-
-### Technical Infrastructure
-
-- PostgreSQL database
-- FastAPI backend
-- React frontend with TanStack Query
-- Real-time FX rate conversion
-- Error handling and validation
-- Production deployment on Render
-- Frontend hosting on GitHub Pages
+- 100% test pass rate at launch
