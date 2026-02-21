@@ -22,7 +22,7 @@
 | target_release | v1.6.1 |
 | canonical_spec | `docs/team_skills/engineering/backend_engineering_patterns.md` (Canonical) — confirmed Head of Specs Team, 2026-02-21 |
 | severity | **Medium** — confirmed by QA Lead, 2026-02-21 |
-| current_state | **TRIAGED** |
+| current_state | **ROOT CAUSE IDENTIFIED** |
 | state_entered_at | 2026-02-21T00:00:00Z *(recorded at Phase Gate Document creation — UTC)* |
 | co_delivery_constraint | Must be delivered alongside BLG-TECH-02. Neither defect may enter Fix In Progress, Fix Validated, or Closed independently without a formal PMO-validated scope decision. See §Co-Delivery Constraint. |
 
@@ -31,8 +31,8 @@
 ## Current Status
 
 ```
-Current state:    TRIAGED
-Next gate:        G2 — TRIAGED → ROOT CAUSE IDENTIFIED
+Current state:    ROOT CAUSE IDENTIFIED
+Next gate:        G3 — ROOT CAUSE IDENTIFIED → FIX IN PROGRESS
 Who acts next:    Engineering
 Blockers:         None
 Escalation timer: RUNNING — 2026-02-21T00:00:00Z (Medium severity SLA)
@@ -194,7 +194,58 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 
 ### Gate G2 — TRIAGED → ROOT CAUSE IDENTIFIED
 
-*Not yet open. Gate items will be defined on entry to TRIAGED state.*
+**Gate status: ✅ ALL G2 ITEMS PASS**
+
+---
+
+#### G2.1 — Root cause identified
+
+```
+Gate item:  Written root cause statement provided by Engineering
+
+Evidence:   services/validation_service.py is a stub — validate_all()
+            contains only TODO comments and returns hardcoded zeroes.
+            All 13-metric validation logic lives in routers/validation.py
+            validate_calculations() in direct violation of
+            backend_engineering_patterns.md §3. Service was scaffolded
+            but never implemented; router used as shortcut and never
+            migrated.
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
+
+---
+
+#### G2.2 — Files/components confirmed
+
+```
+Gate item:  Engineering confirms which files the fix will touch
+
+Evidence:   backend/services/validation_service.py — implement full
+            13-metric validation logic.
+            backend/routers/validation.py — strip business logic,
+            delegate to ValidationService. (Co-delivery: also receives
+            severity field additions as part of BLG-TECH-02 in same PR)
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
+
+---
+
+#### G2.3 — No spec change required
+
+```
+Gate item:  Engineering confirms no canonical spec change is required
+            before fix proceeds
+
+Evidence:   backend_engineering_patterns.md §3 is unambiguous.
+            No spec conflict identified. Fix proceeds directly against
+            existing canonical spec.
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
+
+---
 
 ---
 
@@ -248,6 +299,7 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 |---|------|----|------|------------|-------------|-------------|
 | 1 | PRE-LOGGED | LOGGED | 2026-02-21 | 00:00:00Z | PMO Lead | — (initial logging) |
 | 2 | LOGGED | TRIAGED | 2026-02-21 | 00:00:00Z | PMO Lead | G1 — all items pass |
+| 3 | TRIAGED | ROOT CAUSE IDENTIFIED | 2026-02-21 | 00:00:00Z | PMO Lead | G2 — all items pass |
 
 ---
 
