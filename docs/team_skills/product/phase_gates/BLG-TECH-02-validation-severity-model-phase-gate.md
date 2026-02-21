@@ -22,7 +22,7 @@
 | target_release | v1.6.1 |
 | canonical_spec | `analytics_endpoints.md` v1.8.1 (severity model contract — confirmed in roadmap) |
 | severity | **High** — confirmed by QA Lead, 2026-02-21 |
-| current_state | **TRIAGED** |
+| current_state | **ROOT CAUSE IDENTIFIED** |
 | state_entered_at | 2026-02-21T00:00:00Z *(recorded at Phase Gate Document creation — UTC)* |
 | co_delivery_constraint | Must be delivered alongside BLG-TECH-03. Neither defect may enter Fix In Progress, Fix Validated, or Closed independently without a formal PMO-validated scope decision. See §Co-Delivery Constraint. |
 
@@ -31,8 +31,8 @@
 ## Current Status
 
 ```
-Current state:    TRIAGED
-Next gate:        G2 — TRIAGED → ROOT CAUSE IDENTIFIED
+Current state:    ROOT CAUSE IDENTIFIED
+Next gate:        G3 — ROOT CAUSE IDENTIFIED → FIX IN PROGRESS
 Who acts next:    Engineering
 Blockers:         None
 Escalation timer: RUNNING — 2026-02-21T00:00:00Z (High severity SLA)
@@ -186,7 +186,54 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 
 ### Gate G2 — TRIAGED → ROOT CAUSE IDENTIFIED
 
-*Not yet open. Gate items will be defined on entry to TRIAGED state.*
+**Gate status: ✅ ALL G2 ITEMS PASS**
+
+---
+
+#### G2.1 — Root cause identified
+
+```
+Gate item:  Written root cause statement provided by Engineering
+
+Evidence:   routers/validation.py builds each validation result dict
+            without a severity field. summary dict returns total/passed/
+            warned/failed only — no by_severity aggregation.
+            analytics_endpoints.md v1.8.1 requires both. Contract was
+            locked at v1.8.1 but no code was written to satisfy it.
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
+
+---
+
+#### G2.2 — Files/components confirmed
+
+```
+Gate item:  Engineering confirms which files the fix will touch
+
+Evidence:   backend/routers/validation.py — add severity field to all
+            result dicts; add by_severity aggregation to summary.
+            (Co-delivery: also thinned as part of BLG-TECH-03 in same PR)
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
+
+---
+
+#### G2.3 — No spec change required
+
+```
+Gate item:  Engineering confirms no canonical spec change is required
+            before fix proceeds
+
+Evidence:   analytics_endpoints.md v1.8.1 contract is locked and
+            unambiguous. No spec ambiguity identified. Fix proceeds
+            directly against existing canonical spec.
+Owner confirmation:   Yes — Head of Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
+```
+
+---
 
 ---
 
@@ -237,6 +284,7 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 |---|------|----|------|------------|-------------|-------------|
 | 1 | PRE-LOGGED | LOGGED | 2026-02-21 | 00:00:00Z | PMO Lead | — (initial logging) |
 | 2 | LOGGED | TRIAGED | 2026-02-21 | 00:00:00Z | PMO Lead | G1 — all items pass |
+| 3 | TRIAGED | ROOT CAUSE IDENTIFIED | 2026-02-21 | 00:00:00Z | PMO Lead | G2 — all items pass |
 
 ---
 
