@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 1.8.0
+  version: 1.8.1
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -246,20 +246,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/UpdateNoteRequest"
-            examples:
-              updateEntry:
-                value:
-                  entry_note: "Updated reasoning after analysis"
-                  exit_note: null
-              updateBoth:
-                value:
-                  entry_note: "Breakout confirmed"
-                  exit_note: "Target reached"
       responses:
         "200":
           $ref: "#/components/responses/OkUpdateNote"
-        "400":
-          $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -267,11 +256,8 @@ paths:
 
   /positions/{position_id}/tags:
     patch:
-      tags: [Journal]
+      tags: [Positions]
       summary: Update position tags
-      description: |
-        Replace the full tag set for a position.
-        Tags: lowercase, numbers, hyphens only. Max 20 chars each, max 10 tags.
       parameters:
         - in: path
           name: position_id
@@ -285,13 +271,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/UpdateTagsRequest"
-            examples:
-              addTags:
-                value:
-                  tags: ["momentum", "breakout", "winner"]
-              clearTags:
-                value:
-                  tags: []
       responses:
         "200":
           $ref: "#/components/responses/OkUpdateTags"
@@ -304,11 +283,9 @@ paths:
 
   /positions/tags:
     get:
-      tags: [Journal]
-      summary: Get all unique tags
-      description: |
-        Retrieve all tags used across positions for autocomplete.
-        Returns sorted alphabetically.
+      tags: [Positions]
+      summary: Get all tags
+      description: Returns all unique tags in use across open positions.
       responses:
         "200":
           $ref: "#/components/responses/OkTagsList"
@@ -498,6 +475,9 @@ paths:
       description: |
         Smoke-tests analytics calculations against a fixed internal test dataset.
         Does not write to business data.
+        Each validation result includes a severity field (critical/high/medium/low).
+        The summary includes a by_severity breakdown.
+        Canonical contract: docs/specs/api_contracts/analytics_endpoints.md
       responses:
         "200":
           $ref: "#/components/responses/OkValidation"
@@ -510,65 +490,17 @@ paths:
       summary: Get market regime status
       description: |
         NOTE: This endpoint exists in the implementation but does not yet have a
-        canonical Markdown contract in docs/specs/api_contracts/. The canonical
-        market regime data is currently surfaced inline via GET /positions/analyze.
-        A dedicated market_endpoints.md should be created to formally contract
-        this endpoint. Until then, this path is documented here for reference only.
+        canonical Markdown contract in docs/specs/api_contracts/.
       responses:
         "200":
           $ref: "#/components/responses/OkMarketStatus"
         "500":
           $ref: "#/components/responses/InternalError"
 
-  /health:
-    get:
-      tags: [Health]
-      summary: Basic health check
-      description: |
-        Health endpoints are an explicit exception to the standard {status,data} response envelope.
-      responses:
-        "200":
-          description: System healthy
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HealthResponse"
-
-  /health/detailed:
-    get:
-      tags: [Health]
-      summary: Detailed health check
-      description: |
-        Health endpoints are an explicit exception to the standard {status,data} response envelope.
-      responses:
-        "200":
-          description: Detailed health status
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HealthDetailedResponse"
-
-  /test/endpoints:
-    post:
-      tags: [Health]
-      summary: Test all endpoints
-      description: |
-        Runs endpoint smoke tests. Does not mutate production data.
-        Health endpoints are an explicit exception to the standard {status,data} response envelope.
-      responses:
-        "200":
-          description: Tests complete
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EndpointTestResponse"
-
   /settings:
     get:
       tags: [Settings]
       summary: Get strategy settings
-      description: |
-        Returns the global settings object as a single-element array.
       responses:
         "200":
           $ref: "#/components/responses/OkSettings"
@@ -592,6 +524,37 @@ paths:
           $ref: "#/components/responses/OkUpdateSettings"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /health:
+    get:
+      tags: [Health]
+      summary: Basic health check
+      responses:
+        "200":
+          $ref: "#/components/responses/OkHealth"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /health/detailed:
+    get:
+      tags: [Health]
+      summary: Detailed health check
+      responses:
+        "200":
+          $ref: "#/components/responses/OkHealthDetailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /test/endpoints:
+    post:
+      tags: [Health]
+      summary: Test all endpoints
+      description: Runs a smoke test against all registered endpoints and returns results.
+      responses:
+        "200":
+          $ref: "#/components/responses/OkEndpointTest"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -728,89 +691,31 @@ components:
         risk_percent:
           type: number
           minimum: 0.0001
-          description: Percentage of portfolio value to risk, e.g. 1.00 for 1%
+          description: Percentage of portfolio value to risk (e.g. 1.0 = 1%)
         market:
           type: string
           enum: [US, UK]
-          default: UK
-          description: Used for fee estimation in cash feasibility gate
+          description: Market determines fee schedule and FX conversion
         fx_rate:
           type: number
-          minimum: 0.0001
-          description: User-provided FX rate override for US positions. Omit to use live system rate.
+          nullable: true
+          description: Override FX rate (USD/GBP). If omitted, live rate is fetched.
 
     PositionSizeResponse:
       type: object
       description: |
-        Sizing result. Three distinct shapes depending on outcome:
-        - valid: true, cash_sufficient: true — full valid result with suggested_shares auto-filled
-        - valid: true, cash_sufficient: false — valid result with max_affordable_shares (always present)
-        - valid: false — invalid inputs with reason code
-        Canonical field definitions: docs/specs/api_contracts/portfolio_endpoints.md
-        Canonical rules: docs/specs/strategy_rules.md §4.1
-      properties:
-        valid:
-          type: boolean
-          description: true if inputs satisfy all validity rules in strategy_rules.md §4.1.4
-        suggested_shares:
-          type: number
-          description: Share quantity floored to 4dp. Present only when valid is true.
-        risk_amount:
-          type: number
-          description: PortfolioValue × RiskPercent in GBP. Present when valid is true.
-        stop_distance:
-          type: number
-          description: EntryPrice − StopPrice in native currency. Present when valid is true.
-        estimated_cost:
-          type: number
-          description: SuggestedShares × EntryPrice + EstimatedFees in GBP. Present when valid is true.
-        estimated_fees:
-          type: number
-          description: Fee estimate using current settings parameters. Present when valid is true.
-        fx_rate_used:
-          type: number
-          description: FX rate applied. Always returned when valid is true. 1.0 for UK positions.
-        cash_sufficient:
-          type: boolean
-          description: true if estimated_cost <= available_cash. Present when valid is true.
-        available_cash:
-          type: number
-          description: Current portfolios.cash in GBP. Present when valid is true.
-        max_affordable_shares:
-          type: number
-          description: Always present when cash_sufficient is false. Maximum affordable share quantity floored to 4dp.
-        reason:
-          type: string
-          enum:
-            - INVALID_RISK_PERCENT
-            - INVALID_ENTRY_PRICE
-            - INVALID_STOP_PRICE
-            - INVALID_STOP_DISTANCE
-            - NO_PORTFOLIO_VALUE_SNAPSHOT
-          description: Machine-readable reason code. Present only when valid is false.
-        reason_detail:
-          type: string
-          description: |
-            Human-readable description for development and logging use only.
-            Must NOT be used as user-facing display text.
-            Present only when valid is false.
+        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        docs/specs/api_contracts/portfolio_endpoints.md
+      additionalProperties: true
 
     ExitPositionRequest:
       type: object
-      required: [exit_price]
+      required: [shares, exit_price, exit_date]
       properties:
-        shares: { type: number, nullable: true }
-        exit_price: { type: number, minimum: 0.01 }
-        exit_date: { type: string, format: date, nullable: true }
-        exit_reason:
-          type: string
-          enum:
-            - Manual Exit
-            - Stop Loss Hit
-            - Target Reached
-            - Risk-Off Signal
-            - Trailing Stop
-            - Partial Profit Taking
+        shares: { type: number, minimum: 0.0001 }
+        exit_price: { type: number, minimum: 0.0001 }
+        exit_date: { type: string, format: date }
+        exit_reason: { type: string, nullable: true }
         exit_fx_rate: { type: number, nullable: true }
         exit_note: { type: string, maxLength: 500, nullable: true }
 
@@ -818,38 +723,25 @@ components:
       type: object
       properties:
         ticker: { type: string }
-        market: { type: string, enum: [US, UK] }
-        exit_price: { type: number }
-        shares: { type: number }
-        gross_proceeds: { type: number }
-        exit_fees: { type: number }
-        fee_breakdown:
-          type: object
-          additionalProperties: true
-        net_proceeds: { type: number }
+        shares_exited: { type: number }
         realized_pnl: { type: number }
-        realized_pnl_pct: { type: number }
-        new_cash_balance: { type: number }
-        exit_fx_rate: { type: number, nullable: true }
-        exit_date: { type: string, format: date }
-        is_partial_exit: { type: boolean }
+        exit_price: { type: number }
+        fees_paid: { type: number }
         remaining_shares: { type: number }
+        cash_received: { type: number }
 
     UpdateNoteRequest:
       type: object
-      minProperties: 1
       properties:
-        entry_note: { type: string, maxLength: 500, nullable: true }
-        exit_note: { type: string, maxLength: 500, nullable: true }
+        entry_note: { type: string, nullable: true, maxLength: 500 }
+        exit_note: { type: string, nullable: true, maxLength: 500 }
 
     UpdateNoteResponse:
       type: object
       properties:
         id: { type: string, format: uuid }
-        ticker: { type: string }
         entry_note: { type: string, nullable: true }
         exit_note: { type: string, nullable: true }
-        updated_at: { type: string, format: date-time }
 
     UpdateTagsRequest:
       type: object
@@ -867,11 +759,9 @@ components:
       type: object
       properties:
         id: { type: string, format: uuid }
-        ticker: { type: string }
         tags:
           type: array
           items: { type: string }
-        updated_at: { type: string, format: date-time }
 
     TagsListResponse:
       type: object
@@ -879,51 +769,22 @@ components:
         tags:
           type: array
           items: { type: string }
-        total_positions: { type: integer }
-        positions_with_tags: { type: integer }
 
     TradeHistoryResponse:
       type: object
-      properties:
-        total_trades: { type: integer }
-        win_rate: { type: number }
-        total_pnl: { type: number }
-        trades:
-          type: array
-          items: { $ref: "#/components/schemas/Trade" }
-
-    Trade:
-      type: object
-      properties:
-        id: { type: string, format: uuid }
-        ticker: { type: string }
-        market: { type: string, enum: [US, UK] }
-        entry_date: { type: string, format: date }
-        exit_date: { type: string, format: date }
-        shares: { type: number }
-        entry_price: { type: number }
-        exit_price: { type: number }
-        pnl: { type: number }
-        pnl_pct: { type: number }
-        pnl_percent:
-          type: number
-          description: Duplicate of pnl_pct for compatibility
-        holding_days: { type: integer }
-        exit_reason: { type: string, nullable: true }
-        entry_note: { type: string, nullable: true }
-        exit_note: { type: string, nullable: true }
-        tags:
-          type: array
-          items: { type: string }
+      description: |
+        Intentionally broad to avoid drift. Canonical nested field definitions live in:
+        docs/specs/api_contracts/trade_endpoints.md
+      additionalProperties: true
 
     CashTransactionRequest:
       type: object
-      required: [type, amount]
+      required: [type, amount, date]
       properties:
         type: { type: string, enum: [deposit, withdrawal] }
         amount: { type: number, minimum: 0.01 }
-        date: { type: string, format: date, nullable: true }
-        note: { type: string, maxLength: 200, nullable: true }
+        date: { type: string, format: date }
+        note: { type: string, nullable: true }
 
     CashTransaction:
       type: object
@@ -938,8 +799,7 @@ components:
     CashTransactionResponse:
       type: object
       properties:
-        transaction: { $ref: "#/components/schemas/CashTransaction" }
-        new_balance: { type: number }
+        id: { type: string, format: uuid }
 
     CashSummary:
       type: object
@@ -947,36 +807,22 @@ components:
         total_deposits: { type: number }
         total_withdrawals: { type: number }
         net_cash_flow: { type: number }
-        current_cash: { type: number }
 
     Signal:
       type: object
-      description: |
-        Signal object. suggested_shares is always an integer (whole shares only).
-        Fractional share sizing is not supported in signal generation.
-        See docs/specs/api_contracts/signal_endpoints.md and data_model.md Section 7.
       properties:
         id: { type: string, format: uuid }
         ticker: { type: string }
-        market: { type: string }
-        rank: { type: integer }
-        momentum_percent: { type: number }
-        current_price: { type: number }
-        price_gbp: { type: number }
-        atr_value: { type: number }
-        volatility: { type: number }
-        initial_stop: { type: number }
-        status: { type: string }
-        allocation_gbp: { type: number }
-        suggested_shares: { type: integer }   # Always integer — fractional not supported in signal generation
-        total_cost: { type: number }
+        market: { type: string, enum: [US, UK] }
         signal_date: { type: string, format: date }
-        created_at: { type: string, format: date-time }
+        status: { type: string, enum: [new, entered, dismissed, expired, already_held] }
+        momentum_score: { type: number }
+        current_price: { type: number }
+        reason: { type: string, nullable: true }
 
     AnalyticsMetricsResponse:
       type: object
       description: |
-        Unified analytics payload.
         Intentionally broad to avoid drift. Canonical nested field definitions live in:
         docs/specs/api_contracts/analytics_endpoints.md
       additionalProperties: true
@@ -987,6 +833,11 @@ components:
         Validation payload.
         Intentionally broad to avoid drift. Canonical nested field definitions live in:
         docs/specs/api_contracts/analytics_endpoints.md
+        As of v1.8.1 (BLG-TECH-02): each validation result object includes a
+        severity field (string: critical | high | medium | low). The summary
+        object includes a by_severity breakdown with total/passed/warned/failed
+        counts per tier. See analytics_endpoints.md for the full severity model
+        and per-metric severity assignments.
       additionalProperties: true
 
     Settings:
@@ -1041,8 +892,7 @@ components:
     EndpointTestResponse:
       type: object
       description: |
-        Endpoint test results payload.
-        Canonical structure lives in:
+        Endpoint test results payload. Canonical structure lives in:
         docs/specs/api_contracts/health_endpoints.md
       additionalProperties: true
 
@@ -1366,6 +1216,42 @@ components:
                 properties:
                   data:
                     $ref: "#/components/schemas/Settings"
+
+    OkHealth:
+      description: Health check passed
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ApiOk"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/HealthResponse"
+
+    OkHealthDetailed:
+      description: Detailed health check passed
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ApiOk"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/HealthDetailedResponse"
+
+    OkEndpointTest:
+      description: Endpoint test results
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ApiOk"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/EndpointTestResponse"
 
 security:
   - ApiKey: []
