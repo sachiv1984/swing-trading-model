@@ -143,6 +143,47 @@ Example: "Drawdown: -8.2%, 12 days underwater"
 
 ---
 
+BLG-TECH-06 — Canonicalise sharpe_ratio_trade_method as 14th validation metric in analytics_endpoints.md
+Priority: P2 (Medium)
+Type: Spec Accuracy / Governance
+Target release: v1.6.1
+Status: Open
+Problem
+POST /validate/calculations returns 14 validation results. analytics_endpoints.md v1.8.1
+describes 13 metrics and does not document sharpe_ratio_trade_method.
+The 14th metric was introduced under BLG-TECH-01 Addendum 1 (PMO-confirmed scope, 2026-02-20)
+to exercise the trade-based Sharpe fallback path. The implementation is correct and the result
+passes. The spec is incomplete.
+This was recorded as OBS-01 by the QA Lead during BLG-TECH-02/03 re-verification
+(2026-02-21T21:25:00Z) and formally acknowledged by the Product Owner (2026-02-21).
+Per document_lifecycle_guide.md v2.2 — deviation must have priority, target release,
+and owner at time of documentation. These are recorded here.
+Scope
+
+Update analytics_endpoints.md to add sharpe_ratio_trade_method as a formally
+documented 14th validation metric
+Add to the validated metrics table with: severity critical, formula, tolerance
+Update the response example to show 14 results and correct by_severity.critical.total: 4
+No code change required — implementation is correct
+
+Acceptance Criteria
+
+analytics_endpoints.md validated metrics table includes sharpe_ratio_trade_method
+Response schema example reflects 14 results
+by_severity.critical.total shown as 4 in example (not 3)
+No deviation exists between the spec and the live POST /validate/calculations response
+
+Owner
+
+API Contracts & Documentation Owner
+
+Source
+
+OBS-01 — QA Lead, BLG-TECH-02/03 re-verification, 2026-02-21T21:25:00Z
+Product Owner disposition: backlog item, v1.6.1 target, 2026-02-21
+
+---
+
 ### BLG-FEAT-02 — R-Multiple Column in Trade History
 **Priority:** P2
 **Effort:** ~1 hour
