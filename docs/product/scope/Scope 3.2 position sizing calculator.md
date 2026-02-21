@@ -3,14 +3,14 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Superseded
-**Last Updated:** 2026-02-20
+**Last Updated:** 2026-02-21
 **Roadmap item:** 3.2
 **Target release:** v1.6
-**Superseded by:** `docs/product/changelog.md §v1.6` — feature shipped 2026-02-20
+**Superseded by:** `docs/product/changelog.md` — v1.6 entry (shipped 2026-02-20, Director of Quality sign-off)
 
 > ⚠️ **Standing Notice:** This document describes delivery intent and summarises canonical spec decisions for the purposes of implementation. All authoritative rules, formulas, field definitions, and constraints live in the canonical specifications listed in Section 2. In any conflict between this document and those specs, the canonical specs prevail. This document must not be cited as canonical intent.
 
-> **Supersession notice:** This scope document is superseded. The feature shipped in v1.6 (2026-02-20). This document is retained for traceability. The canonical specifications listed in Section 2 remain authoritative. For delivery record see `docs/product/changelog.md §v1.6`. For verification record see `docs/product/verification/3.2-position-sizing-calculator-verification.md`.
+> **Lifecycle note:** This scope document is superseded. The feature shipped in v1.6 (Director of Quality sign-off 2026-02-20). Verification report: `docs/product/verification/3.2-position-sizing-calculator-verification.md` (v1.4). For the delivery record, see `docs/product/changelog.md` v1.6 entry. The canonical specifications listed in Section 2 remain authoritative and current.
 
 ---
 
@@ -101,89 +101,33 @@ Business rule failures (`INVALID_STOP_DISTANCE` etc.) return HTTP 200 with `vali
 
 ## 6. Widget Behaviour Summary
 
-Full spec in `position_form.md §Position Sizing Calculator`. Key rules:
+Full spec in `position_form.md §Position Sizing Calculator`.
 
-- Always visible — no toggle, no activation required
-- Risk % pre-populated from `settings.default_risk_percent` on form load
-- Recalculates 300ms after user stops typing in Entry Price, Stop Price, FX Rate, or Risk %
-- Auto-fills Shares when `valid: true` and `cash_sufficient: true` and Shares field is empty
-- Does not overwrite Shares if user has manually entered a value — shows "Use suggested shares" button instead
-- Does not auto-fill when `cash_sufficient: false` — shows `max_affordable_shares` as informational text only
-- Does not block form submission in any state
-- On network failure: shows `—`, no error message, retries on next keystroke
-- After successful form submission: resets to idle; Risk % retains last-used value (not reset to settings default)
+Eight states: idle → loading → valid (auto-fill or with existing shares) → insufficient cash → invalid input → invalid system → post-submit reset.
+
+The widget never blocks form submission.
 
 ---
 
-## 7. Settings Change
+## 7. Settings Page Change
 
-`default_risk_percent` is a new field on the `settings` table and the Settings page.
+`default_risk_percent` field added to Strategy Parameters section. Full spec in `settings.md`.
 
-- Type: `DECIMAL(4,2)`, constraint `> 0 AND <= 100`, default `1.00`
-- Migration is safe: `NOT NULL DEFAULT 1.00` — existing rows receive `1.00` automatically, no backfill needed
-- On the Settings page it sits in the Strategy Parameters section with helper text: *"Pre-filled in the Position Sizing Calculator on trade entry. This is your default — you can override it per trade."*
-- It is a user preference, not an enforced limit. The widget allows any valid risk % to be typed per trade.
+Helper text: "Pre-filled in the Position Sizing Calculator on trade entry. This is your default — you can override it per trade."
+
+Constraint: > 0 and ≤ 100. Zero or negative values rejected with HTTP 400.
 
 ---
 
 ## 8. Acceptance Criteria
 
-Derived from `portfolio_endpoints.md` and `position_form.md` per QA review (A10, 2026-02-19).
-
-**Backend — `POST /portfolio/size`**
-
-- Given valid inputs with `stop_price < entry_price` and sufficient cash: returns `valid: true`, `cash_sufficient: true`, `suggested_shares` floored to 4dp, all output fields present
-- Given valid inputs with `stop_price < entry_price` and insufficient cash: returns `valid: true`, `cash_sufficient: false`, `max_affordable_shares` present and populated
-- Given `risk_percent = 0`: returns `valid: false`, `reason: INVALID_RISK_PERCENT`
-- Given `stop_price >= entry_price`: returns `valid: false`, `reason: INVALID_STOP_DISTANCE`
-- Given `entry_price = 0`: returns `valid: false`, `reason: INVALID_ENTRY_PRICE`
-- Given `stop_price = 0`: returns `valid: false`, `reason: INVALID_STOP_PRICE`
-- Given no portfolio history snapshot exists: returns `valid: false`, `reason: NO_PORTFOLIO_VALUE_SNAPSHOT`
-- Missing required field (`entry_price`, `stop_price`, or `risk_percent`): returns HTTP 400
-- Invalid `market` value: returns HTTP 400
-- `fx_rate_used` is `1.0` for UK positions and the applied rate for US positions
-- No state mutation — portfolio cash, positions, and history rows are unchanged after any call
-
-**Backend — `default_risk_percent` settings field**
-
-- `GET /settings` response includes `default_risk_percent`
-- `PUT /settings` with `default_risk_percent: 0` returns HTTP 422
-- `PUT /settings` with `default_risk_percent: -1` returns HTTP 422
-- `PUT /settings` with `default_risk_percent: 101` returns HTTP 422
-- `PUT /settings` with a valid value persists and is returned on subsequent `GET`
-
-**Frontend — Widget**
-
-- Widget is visible on Trade Entry form load without any user action
-- Risk % field pre-populates from `settings.default_risk_percent`
-- No API call is made when Entry Price or Stop Price is empty
-- Loading state is shown during debounce and API round-trip
-- When Shares is empty and result is valid with sufficient cash: Shares auto-fills
-- When Shares already has a value: "Use suggested shares" button appears; clicking it fills Shares
-- `INVALID_STOP_DISTANCE` → amber message "Stop price must be below entry price"
-- `INVALID_RISK_PERCENT` → amber message "Risk % must be greater than zero"
-- `INVALID_ENTRY_PRICE` → amber message "Enter a valid entry price above zero"
-- `INVALID_STOP_PRICE` → amber message "Enter a valid stop price above zero"
-- `cash_sufficient: false` → muted grey informational display with `max_affordable_shares`
-- `NO_PORTFOLIO_VALUE_SNAPSHOT` → muted grey message
-- Network failure → dashes shown, form remains submittable
-- Form submits regardless of widget state
-- Post-submit: widget resets; Risk % retains last-used session value
-
-**Frontend — Settings page**
-
-- `default_risk_percent` field present in Strategy Parameters section
-- Saving `0` is rejected with a visible error message
-- Saving a negative value is rejected with a visible error message
-- Saving a valid value persists and pre-populates widget on next Trade Entry load
+Full criteria in the verification report: `docs/product/verification/3.2-position-sizing-calculator-verification.md` (v1.4).
 
 ---
 
 ## 9. Effort Estimate
 
 **2–3 days.** Revised from the original roadmap estimate of 1–2 days to account for the expanded scope confirmed during pre-alignment (migration, settings endpoint update, settings page UI update, and spec updates across four documents — all now complete).
-
-The canonical specs are locked. The pre-implementation spec phase is done. Engineering is clear to begin.
 
 ---
 
