@@ -21,7 +21,7 @@
 | backlog_priority | P1 — High |
 | target_release | v1.6.1 |
 | canonical_spec | `analytics_endpoints.md` v1.8.1 (severity model contract — confirmed in roadmap) |
-| severity | 🔴 NOT YET ASSIGNED — awaiting QA Lead (blocks G1.3) |
+| severity | **High** — confirmed by QA Lead, 2026-02-21 |
 | current_state | **LOGGED** |
 | state_entered_at | 2026-02-21T00:00:00Z *(recorded at Phase Gate Document creation — UTC)* |
 | co_delivery_constraint | Must be delivered alongside BLG-TECH-03. Neither defect may enter Fix In Progress, Fix Validated, or Closed independently without a formal PMO-validated scope decision. See §Co-Delivery Constraint. |
@@ -130,9 +130,11 @@ PMO note:
   independent determination. PMO will not infer severity from
   backlog priority. (GI-3)
 
-Evidence:             🔴 MISSING
-Owner confirmation:   🔴 MISSING — QA Lead, date required
-PMO validation:       ⬜ PENDING
+Evidence:             Severity: High — deviation from analytics_endpoints.md v1.8.1;
+                      severity field and by_severity aggregation absent from API
+                      responses; canonical acceptance criteria unmet
+Owner confirmation:   Yes — QA Lead, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
 ```
 
 ---
@@ -206,7 +208,7 @@ PMO validation:       ⬜ PENDING
 | Action ID | Description | Owner | Deadline | Status | Blocked on |
 |-----------|-------------|-------|----------|--------|------------|
 | A-01 | Provide written confirmation that BLG-TECH-01 is closed and v1.6 quality gate satisfied (G1.1) | Engineering | By triage session — deadline TBC by PMO Lead | 🔴 OPEN | — |
-| A-02 | Assign severity classification for BLG-TECH-02 (written, dated, QA Lead name) (G1.3) | QA Lead | By triage session — deadline TBC by PMO Lead | 🔴 OPEN | — |
+| A-02 | Assign severity classification for BLG-TECH-02 (written, dated, QA Lead name) (G1.3) | QA Lead | 2026-02-21 | ✅ COMPLETE | — |
 | A-03 | Confirm analytics_endpoints.md v1.8.1 as sole canonical authority for BLG-TECH-02 (G1.4) | Engineering | By triage session — deadline TBC by PMO Lead | 🔴 OPEN | — |
 | A-04 | Acknowledge co-delivery constraint with BLG-TECH-03 in writing in this document (G1.5) | Engineering | By triage session — deadline TBC by PMO Lead | 🔴 OPEN | — |
 | A-05 | Confirm completion of BLG-TECH-01 outstanding action: apply validation_system.md v1.0.2 rules — provide written evidence with document version reference (G1.2 — blocks G3) | Infrastructure & Operations Documentation Owner + Engineering | Before Fix In Progress gate opens | 🔴 OPEN | — |
@@ -219,7 +221,6 @@ PMO validation:       ⬜ PENDING
 
 | # | Blocker | Affects | Owner | Raised | Status |
 |---|---------|---------|-------|--------|--------|
-| B-02 | Severity not assigned | G1.3 — state transition to Triaged | QA Lead | 2026-02-21 | 🔴 OPEN |
 | B-03 | BLG-TECH-03 canonical spec unconfirmed (transitively blocks co-delivery) | G1.5 — state transition to Triaged for BLG-TECH-03 | Head of Specs Team | 2026-02-21 | 🔴 OPEN |
 | B-04 | validation_system.md v1.0.2 action unconfirmed | G3 — Fix In Progress gate hard-blocked | Infra & Ops Documentation Owner + Engineering | 2026-02-21 | 🔴 OPEN |
 
