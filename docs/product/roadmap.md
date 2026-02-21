@@ -74,13 +74,17 @@ This release is inserted immediately after v1.6. It exists to resolve known corr
 
 Fix `_calculate_sharpe()` to use sample variance (n−1) for portfolio and trade-level Sharpe. Fixed capital efficiency to use `total_cost (GBP)` from `trade_history` instead of `entry_price × shares`. `validation_data.py` expected values updated accordingly. v1.6 quality gate satisfied.
 
-#### BLG-TECH-02 + BLG-TECH-03 — Validation Severity Model + Service Layer Consolidation *(promoted from backlog — P1)*
-**Status:** Planned — contract locked, awaiting implementation
-**Effort:** 1–2 days
-**Value:** Governance — enables CI/CD gate in v1.7
-**Contract:** `analytics_endpoints.md` v1.8.1 defines the canonical severity model. Engineering may begin pre-alignment.
+BLG-TECH-02 + BLG-TECH-03 — Validation Severity Model + Service Layer Consolidation (promoted from backlog — P1)
+Status: ✅ Complete — 2026-02-21
+Closed: Director of Quality sign-off 2026-02-21T21:30:00Z. 14/14 validation results pass with severity model. Phase Gate Documents filed.
 
-Add `severity` field to validation results. Add `by_severity` aggregation to validation summary. Consolidate all active validation logic into `services/validation_service.py`.
+severity field added to every validation result (critical / high / medium / low) per analytics_endpoints.md v1.8.1
+by_severity aggregation added to summary — all four tiers always present
+All validation logic consolidated into services/validation_service.py per backend_engineering_patterns.md §3
+Router thinned to HTTP in/out only — delegates entirely to ValidationService.validate_all()
+Delivered co-delivered on single branch: fix/blg-tech-02-03-severity-service-consolidation
+Phase Gate Documents: docs/product/phase_gates/BLG-TECH-02-validation-severity-model-phase-gate.md, docs/product/phase_gates/BLG-TECH-03-validationservice-consolidation-phase-gate.md
+BLG-TECH-04 (CI/CD gate) dependency now unblocked ✅
 
 #### Quick Wins Bundle *(promoted from backlog — P2)*
 **Status:** Planned — awaiting pre-alignment gate (formula/definition confirmation per item)
