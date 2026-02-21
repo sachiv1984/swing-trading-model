@@ -1,9 +1,11 @@
 # Analytics Validation System - Operations Guide
 
-**Version:** 1.0.0  
-**Owner:** Platform Team  
-**Last Updated:** 2026-02-16  
+**Version:** 1.0.1
+**Owner:** Platform Team
+**Last Updated:** 2026-02-21
 **Review Cycle:** Quarterly
+
+> ⚠️ **Governance note:** The owner field "Platform Team" is a team name, not a named individual role as required by `docs/governance/document_lifecycle_guide.md`. This is a pre-existing compliance gap flagged by the Head of Specs Team on 2026-02-21. The Infrastructure & Operations Documentation Owner should resolve this at next review.
 
 ---
 
@@ -80,7 +82,7 @@ print(r.json())
 
 **What Gets Validated**:
 ```python
-# From validation_data.py
+# From validation_data.py — 13 metrics (updated 2026-02-21, BLG-TECH-01)
 EXPECTED_METRICS = {
     "sharpe_ratio": 0.00,
     "max_drawdown_percent": -7.70,
@@ -93,6 +95,7 @@ EXPECTED_METRICS = {
     "avg_hold_winners": 15.5,
     "avg_hold_losers": 10.7,
     "trade_frequency": 1.8,
+    "capital_efficiency": 0.22,   # Added BLG-TECH-01: uses Mean(total_cost) GBP
     "days_underwater": 0,
 }
 ```
@@ -108,7 +111,7 @@ EXPECTED_METRICS = {
 - `max_drawdown_percent` - Risk management fundamental
 - `profit_factor` - Strategy viability
 
-**Action on Failure**: 
+**Action on Failure**:
 - ❌ Block production deployment
 - 🔔 Page on-call engineer
 - 📊 Investigate immediately
@@ -139,6 +142,7 @@ EXPECTED_METRICS = {
 - `win_streak` / `loss_streak` - Pattern analysis
 - `avg_hold_winners` / `avg_hold_losers` - Behavior metrics
 - `trade_frequency` - Activity metric
+- `capital_efficiency` - Cost basis metric
 
 **Action on Failure**:
 - 📝 Log warning
@@ -193,21 +197,23 @@ EXPECTED_METRICS = {
       }
     ],
     "summary": {
-      "total": 12,
-      "passed": 11,
+      "total": 13,
+      "passed": 13,
       "warned": 0,
-      "failed": 1,
+      "failed": 0,
       "by_severity": {
-        "critical": {"passed": 3, "failed": 0},
-        "high": {"passed": 3, "failed": 0},
-        "medium": {"passed": 4, "failed": 1},
-        "low": {"passed": 1, "failed": 0}
+        "critical": {"total": 3, "passed": 3, "warned": 0, "failed": 0},
+        "high": {"total": 3, "passed": 3, "warned": 0, "failed": 0},
+        "medium": {"total": 6, "passed": 6, "warned": 0, "failed": 0},
+        "low": {"total": 1, "passed": 1, "warned": 0, "failed": 0}
       }
     },
-    "timestamp": "2026-02-16T10:30:00Z"
+    "timestamp": "2026-02-21T00:24:41Z"
   }
 }
 ```
+
+> **Note:** The `severity` field per result and `by_severity` summary object are specified in `analytics_endpoints.md` v1.8.1. These are contract additions for BLG-TECH-02 — they will appear in API responses once BLG-TECH-02 is implemented.
 
 ---
 
@@ -248,17 +254,17 @@ EXPECTED_METRICS = {
 ```python
 # Add comment in validation_data.py
 """
-Updated 2026-02-16: Added TSLA trade exit on 2026-02-15
-Previous max_drawdown: -7.70%
-New max_drawdown: -8.50%
-Reason: New drawdown occurred after TSLA stop out
+Updated 2026-02-21 (BLG-TECH-01):
+capital_efficiency: 0.17 → 0.22
+  Reason: Cost basis corrected to Mean(total_cost) GBP from trade_history.
+  Previous method used entry_price × shares (mixed USD/GBP).
 """
 ```
 
 **Step 3**: Commit and document
 ```bash
 git add test_data/validation_data.py
-git commit -m "Update validation: TSLA exit changes max drawdown to -8.50%"
+git commit -m "Update validation: BLG-TECH-01 capital_efficiency 0.17→0.22, total_cost fields added"
 ```
 
 **Step 4**: Run validation to confirm
@@ -300,7 +306,7 @@ validations.append({
     "status": "pass" if ... else "fail",
     "tolerance": TOLERANCE["new_metric_name"],
     "formula": "NEW_METRIC_FORMULA_HERE",
-    "severity": "medium"  # Set appropriate severity
+    "severity": "medium"  # Set appropriate severity per validation_system.md
 })
 ```
 
@@ -361,211 +367,10 @@ ELSE:
    - Price data stale/incorrect
    - Database corruption
 
-2. **Code Regression**
-   - Recent deploy changed calculation
-   - Bug introduced in analytics service
-   - Frontend/backend mismatch
-
-3. **Expected Values Outdated**
-   - Test portfolio changed
-   - Forgot to update expected metrics
-   - Tolerance too tight
-
-**Step 3**: Fix and Verify
-```bash
-# Fix identified issue
-# Then re-run validation
-curl -X POST http://localhost:8000/validate/calculations
-
-# Should pass after fix
-```
-
-**Step 4**: Document in Post-Mortem
-```markdown
-## Validation Failure Post-Mortem
-
-**Date**: 2026-02-16
-**Metric**: max_drawdown_percent
-**Expected**: -7.70%
-**Actual**: -12.50%
-**Root Cause**: TSLA position stopped out, creating new max drawdown
-**Resolution**: Updated EXPECTED_METRICS to -12.50%
-**Prevention**: Add alert when max_drawdown changes >2% in single day
-```
-
----
-
-## CI/CD Integration (Planned v1.5)
-
-### GitHub Actions Workflow
-
-**File**: `.github/workflows/validate-analytics.yml`
-```yaml
-name: Validate Analytics
-
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
-
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-      
-      - name: Start test server
-        run: |
-          python backend/main.py &
-          sleep 5
-      
-      - name: Run validation tests
-        id: validation
-        run: |
-          response=$(curl -X POST http://localhost:8000/validate/calculations)
-          echo "::set-output name=result::$response"
-          
-          # Parse response
-          failed=$(echo $response | jq '.data.summary.failed')
-          
-          # Check critical failures
-          critical_failed=$(echo $response | jq '.data.summary.by_severity.critical.failed')
-          
-          if [ "$critical_failed" -gt 0 ]; then
-            echo "❌ CRITICAL validation failures detected"
-            exit 1
-          fi
-      
-      - name: Post comment on PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const result = ${{ steps.validation.outputs.result }}
-            const comment = `
-            ## Analytics Validation Results
-            
-            ✅ Passed: ${result.data.summary.passed}
-            ❌ Failed: ${result.data.summary.failed}
-            
-            [View full results](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})
-            `
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            })
-```
-
----
-
-## Production Monitoring (Planned v1.5)
-
-### Prometheus Metrics Endpoint
-
-**File**: `backend/routers/metrics.py`
-```python
-from prometheus_client import Counter, Histogram, generate_latest
-
-# Metrics
-validation_runs = Counter('validation_runs_total', 'Total validation runs')
-validation_failures = Counter('validation_failures_total', 'Total validation failures', ['metric', 'severity'])
-validation_duration = Histogram('validation_duration_seconds', 'Validation duration')
-
-@router.get("/metrics")
-async def prometheus_metrics():
-    """Prometheus metrics endpoint"""
-    return Response(generate_latest(), media_type="text/plain")
-```
-
-### Grafana Dashboard
-
-**Panels**:
-1. Validation Pass Rate (last 7 days)
-2. Critical Failures Over Time
-3. Validation Duration Trend
-4. Failure Breakdown by Metric
-
-**Alerts**:
-```yaml
-# alerts.yml
-groups:
-  - name: analytics_validation
-    rules:
-      - alert: CriticalValidationFailure
-        expr: validation_failures_total{severity="critical"} > 0
-        for: 1m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Critical analytics validation failure"
-          description: "{{ $labels.metric }} failed validation"
-          
-      - alert: HighFailureRate
-        expr: rate(validation_failures_total[1h]) > 0.1
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High validation failure rate"
-```
-
----
-
-## Troubleshooting Guide
-
-### Problem: All metrics failing validation
-
-**Symptoms**:
-- All 12 metrics show "fail" status
-- Large variances across the board
-
-**Likely Causes**:
-1. Test portfolio data corrupted
-2. Database connection issue
-3. Analytics service bug
-
-**Steps to Resolve**:
-```bash
-# 1. Check database connection
-curl http://localhost:8000/health/detailed
-
-# 2. Verify test portfolio exists
-curl http://localhost:8000/trades | jq '.data.total_trades'
-
-# 3. Check analytics endpoint directly
-curl http://localhost:8000/analytics/metrics?period=all_time
-
-# 4. Compare to expected
-python test_data/validation_data.py  # Should print expected values
-```
-
----
-
-### Problem: Single metric consistently failing
-
-**Symptoms**:
-- One metric always fails
-- Others pass
-- Variance is consistent (e.g., always off by same amount)
-
-**Likely Causes**:
-1. Calculation formula changed
-2. Expected value outdated
-3. Data changed (new trade, withdrawal)
+2. **Calculation Change**
+   - Calculation formula changed
+   - Expected value outdated
+   - Data changed (new trade, withdrawal)
 
 **Steps to Resolve**:
 ```bash
@@ -596,8 +401,9 @@ curl http://localhost:8000/validate/calculations | \
 Adjust tolerance in `validation_data.py`:
 ```python
 TOLERANCE = {
-    "sharpe_ratio": 0.01,  # ±1% variance acceptable
-    "max_drawdown_percent": 0.1,  # ±0.1% acceptable
+    "sharpe_ratio": 0.01,           # ±0.01 variance acceptable
+    "max_drawdown_percent": 0.1,    # ±0.1% acceptable
+    "capital_efficiency": 0.05,     # ±0.05 acceptable
     # ... etc
 }
 ```
@@ -607,6 +413,7 @@ TOLERANCE = {
 - **Percentages** (win_rate, max_drawdown): tolerance = 0.1-0.5% (small variance OK)
 - **Ratios** (sharpe, profit_factor): tolerance = 0.01-0.05 (moderate variance OK)
 - **Currency** (expectancy): tolerance = 0.10 (pennies OK)
+- **Efficiency ratios** (capital_efficiency): tolerance = 0.05
 
 ---
 
@@ -620,11 +427,14 @@ TOLERANCE = {
 ```json
 {
   "summary": {
-    "total": 12,
-    "passed": 12,
+    "total": 13,
+    "passed": 13,
     "failed": 0,
     "by_severity": {
-      "critical": {"passed": 3, "failed": 0}
+      "critical": {"total": 3, "passed": 3, "warned": 0, "failed": 0},
+      "high": {"total": 3, "passed": 3, "warned": 0, "failed": 0},
+      "medium": {"total": 6, "passed": 6, "warned": 0, "failed": 0},
+      "low": {"total": 1, "passed": 1, "warned": 0, "failed": 0}
     }
   }
 }
@@ -646,7 +456,8 @@ TOLERANCE = {
     "expected": -7.70,
     "actual": -12.50,
     "diff": 4.80,
-    "status": "fail"
+    "status": "fail",
+    "severity": "critical"
   }]
 }
 ```
@@ -668,6 +479,7 @@ TOLERANCE = {
     "actual": 0.00,
     "diff": 0.00,
     "status": "pass",
+    "severity": "critical",
     "method": "insufficient_data"
   }]
 }
@@ -679,12 +491,21 @@ TOLERANCE = {
 
 ## Glossary
 
-**Critical Metric**: Metric that directly affects trading decisions; failures block deployment  
-**Expected Value**: Ground truth metric calculated manually from test portfolio  
-**Tolerance**: Acceptable variance between expected and actual values  
-**Severity**: Importance level determining response to validation failure  
-**Test Portfolio**: Static set of 5 trades used for validation testing  
-**Validation Run**: Single execution of validation endpoint  
-**Pass**: Actual value within tolerance of expected value  
-**Fail**: Actual value outside tolerance  
+**Critical Metric**: Metric that directly affects trading decisions; failures block deployment
+**Expected Value**: Ground truth metric calculated manually from test portfolio
+**Tolerance**: Acceptable variance between expected and actual values
+**Severity**: Importance level determining response to validation failure (critical/high/medium/low)
+**Test Portfolio**: Static set of 5 trades used for validation testing
+**Validation Run**: Single execution of validation endpoint
+**Pass**: Actual value within tolerance of expected value
+**Fail**: Actual value outside tolerance
 **Warn**: Near tolerance limit (within 10% of boundary)
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0.1 | 2026-02-21 | BLG-TECH-01 closure: added `capital_efficiency` to EXPECTED_METRICS list; corrected metric count 12→13 throughout; updated by_severity totals in examples; added governance note on owner field; added `capital_efficiency` to Medium severity tier |
+| 1.0.0 | 2026-02-16 | Initial version |
