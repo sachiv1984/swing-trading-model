@@ -1,9 +1,9 @@
 # Product Backlog — Momentum Trading Assistant
 
-**Owner:** Product Owner
-**Status:** Active
-**Class:** Planning Document (Class 4)
-**Last Updated:** 2026-02-20
+Owner: Product Owner
+Status: Active
+Class: Planning Document (Class 4)
+Last Updated: 2026-02-21
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -29,31 +29,30 @@ They are not user-facing, but they directly affect trust in outputs and release 
 
 ---
 
-### BLG-TECH-01 — Fix Sharpe variance method + Capital Efficiency currency basis
+### ✅ BLG-TECH-01 — Fix Sharpe variance method + Capital Efficiency currency basis
+**Status: COMPLETE — 2026-02-21**
 **Priority:** P0 (Critical)
 **Type:** Metrics Correctness / Validation Integrity
 
 **Problem**
-- Sharpe ratio currently uses population variance instead of sample variance.
-- Capital efficiency uses `entry_price * shares` instead of actual GBP cost.
-- Validation cannot reliably detect non-conformant behaviour.
+- Sharpe ratio used population variance instead of sample variance.
+- Capital efficiency used `entry_price * shares` instead of actual GBP cost.
+- Validation could not reliably detect non-conformant behaviour (`capital_efficiency` block was absent from `routers/validation.py`).
 
-**Scope**
-- Fix `_calculate_sharpe()` to use sample variance (divide by n-1) for:
-  - Portfolio Sharpe
-  - Trade-level Sharpe
-- Fix capital efficiency to use `total_cost (GBP)` from `trade_history`.
-- Update `validation_data.py` expected values accordingly.
+**Scope delivered**
+- `_calculate_sharpe()` updated to sample variance (÷ n−1) for both portfolio and trade methods (AP-06).
+- `_calculate_advanced_metrics()` updated to use `Mean(trade.total_cost)` GBP cost basis (AP-07).
+- `total_cost` field added to all 5 entries in `test_data/validation_data.py`.
+- `capital_efficiency` expected value updated `0.17 → 0.22` to reflect corrected basis.
+- `capital_efficiency` validation block added to `routers/validation.py` (was previously absent).
+- `metrics_definitions.md` updated to v1.5.7: Appendix E Backlog Items 1 and 2 marked resolved; inline conformance notes updated; changelog entry added.
 
-**Acceptance Criteria**
-- Validation passes with updated expected values.
-- Metrics Definitions & Analytics Canonical Owner signs off on expected values.
-- No regression in existing analytics outputs.
+**Closure evidence**
+- `POST /validate/calculations` 13/13 pass, zero warnings, zero failures.
+- Timestamp: 2026-02-21T00:24:41Z.
+- Metrics Definitions & Analytics Canonical Owner sign-off granted: 2026-02-21.
 
-**Owners**
-- Engineering (implementation)
-- QA (verification)
-- Metrics Definitions & Analytics Canonical Owner (sign-off)
+**Release gate cleared:** v1.6 quality gate for this item is satisfied.
 
 ---
 
@@ -251,109 +250,7 @@ Definitions must be canonicalised first.
 
 ---
 
-### BLG-FEAT-09 — Settings page React re-render on keystroke (OBS-005)
-**Priority:** P3 (Low)
-**Type:** Frontend Performance
-**Raised:** 2026-02-20 (observed during 3.2 verification)
-
-**Problem**
-The Settings page re-renders the entire form on every keystroke because all fields share a single `formData` state object. Each `setFormData` call triggers a full re-render of all `SectionCard` components, causing a visible flicker.
-
-**Scope**
-- Wrap `SectionCard` components in `React.memo`
-- Pass individual field values as props rather than the full `formData` object
-- Each section only re-renders when its own field values change
-
-**Acceptance Criteria**
-- Typing in one settings field does not cause visible re-render of other sections
-- Save behaviour is unchanged
-- No regression on settings load or save
-
-**Owner**
-- Head of Engineering (routine frontend housekeeping)
-
-**Note**
-This is a UX polish item. It does not affect correctness. No spec changes required.
-
----
-
-## 3. Process Improvement Backlog
-
-Items in this section are improvements to the delivery process itself, not to the product. They are raised for Product Owner prioritisation — some may require PMO Lead time, some may be self-contained template updates.
-
----
-
-### BLG-PROC-01 — PMO Lead proactive next steps communication
-**Priority:** P1
-**Type:** Process / PMO
-**Raised:** 2026-02-20 (identified during 3.2 delivery)
-
-**Problem**
-During 3.2, stakeholders had to ask what was happening next at multiple points — after verification passes, after defect resolution, and during shipping closure. The PMO Lead was reactive rather than proactive. This created friction and slowed the pace of the delivery cycle.
-
-**Resolution actioned**
-`pre_alignment_run.md` updated to v1.1 with an explicit next steps communication requirement at every phase gate. The Phase Gate Document template has been created (`processes/templates/phase_gate_template.md`) as the primary tool for this.
-
-**What remains for Product Owner**
-- Confirm the Phase Gate Document format is fit for purpose
-- Confirm whether a Phase Gate Document should be retroactively created for any current in-flight features
-- Prioritise adoption for the next feature entering pre-alignment (3.4 Portfolio Heat Gauge)
-
----
-
-### BLG-PROC-02 — Settings field dependency check in readiness audit
-**Priority:** P1
-**Type:** Process / PMO
-**Raised:** 2026-02-20 (identified during 3.2 lessons learnt)
-
-**Problem**
-During 3.2 pre-alignment, the `default_risk_percent` settings field was not identified in the readiness audit. It surfaced in the meeting when widget pre-population was discussed, causing the effort estimate to revise mid-meeting and adding four additional spec document updates to Phase 2.
-
-**Resolution actioned**
-`pre_alignment_readiness.md` updated to v1.1 with an explicit settings field dependency check in Section 1.
-
-**What remains for Product Owner**
-- No further action required — process improvement is complete
-- Confirm awareness so this is not encountered again
-
----
-
-### BLG-PROC-03 — Cross-navigation state persistence check in QA gate
-**Priority:** P1
-**Type:** Process / QA
-**Raised:** 2026-02-20 (identified during 3.2 lessons learnt)
-
-**Problem**
-DEF-006 (Risk % resetting to default after navigation) was not caught before verification. The spec said "retains last-used session value" but no gate explicitly checked that the implementation mechanism was specified and the acceptance criterion covered navigation-away and return.
-
-**Resolution actioned**
-`pre_alignment_run.md` Phase 3 updated with an explicit cross-navigation persistence check. Any component with user-editable state must have an acceptance criterion covering navigation behaviour before the QA gate passes.
-
-**What remains for Product Owner**
-- No further action required — process improvement is complete
-- Confirm awareness so this is not encountered again
-
----
-
-### BLG-PROC-04 — Test scenario authorship clarity
-**Priority:** P1
-**Type:** Process / QA
-**Raised:** 2026-02-20 (identified during 3.2 delivery)
-
-**Problem**
-During 3.2 verification, there was ambiguity about who writes the test scenarios, when they are written, and what format they follow. The QA Lead and wider team were unclear on the process, causing friction at the start of Phase 5.
-
-**Resolution actioned**
-`processes/testing_guide.md` created — a new canonical template covering who writes what, when, in what format, and how the QA Lead executes against it.
-
-**What remains for Product Owner**
-- Review `testing_guide.md` and confirm it reflects intent
-- Confirm whether the QA & Testing Owner should be formally notified to adopt this process from the next feature
-- Consider whether existing test scenario documents need to be brought into this format
-
----
-
-## 4. Deferred / v2.0 Candidates
+## 3. Deferred / v2.0 Candidates
 
 - Daily email portfolio summary
 - FX rate history tracking
@@ -366,7 +263,7 @@ During 3.2 verification, there was ambiguity about who writes the test scenarios
 
 ---
 
-## 5. Explicitly Out of Scope (Product-Level)
+## 4. Explicitly Out of Scope (Product-Level)
 
 These are deliberate product decisions, not deferrals:
 
@@ -379,7 +276,7 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-## 6. Lifecycle Governance Notes
+## 5. Lifecycle Governance Notes
 
 - This backlog is not canonical and must never override:
   - Strategy rules
@@ -389,3 +286,5 @@ These are deliberate product decisions, not deferrals:
   - Canonical specification
   - Updated validation where applicable
 - Once implemented, backlog items are superseded by canonical documentation.
+
+---
