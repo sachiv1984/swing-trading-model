@@ -133,8 +133,8 @@ Present when `has_enough_data` is `true`. Returns `{}` otherwise.
 
 **Sharpe ratio calculation:**
 
-- **Portfolio method** (preferred, requires 30+ portfolio snapshots): computes daily returns from consecutive snapshot values, then `(avg_daily_return / std_dev) × √252`.
-- **Trade method** (fallback, requires 10+ trades): annualises each trade's percentage return by holding period, then applies the same formula.
+- **Portfolio method** (preferred, requires 30+ portfolio snapshots): computes daily returns from consecutive snapshot values, then `(avg_daily_return / std_dev) × √252`. Uses sample variance (÷ n−1).
+- **Trade method** (fallback, requires 10+ trades): annualises each trade's percentage return by holding period, then applies the same formula. Uses sample variance (÷ n−1).
 - If neither threshold is met, returns `0.0` with `sharpe_method: "insufficient_data"`.
 
 **`total_return_pct` note:** This field is not currently returned by the implementation. When added, the canonical definition is `total_pnl / net_cash_flow × 100`, where `net_cash_flow = total_deposits − total_withdrawals`. This matches the portfolio-level P&L basis used throughout the system.
@@ -152,7 +152,7 @@ Present when `has_enough_data` is `true`. Returns `{}` otherwise.
   "avg_hold_winners": 15.5,
   "avg_hold_losers": 10.7,
   "trade_frequency": 1.8,
-  "capital_efficiency": 0.17,
+  "capital_efficiency": 0.22,
   "days_underwater": 0,
   "peak_date": "2026-02-03",
   "portfolio_peak_equity": 5444.29
@@ -166,7 +166,7 @@ Present when `has_enough_data` is `true`. Returns `{}` otherwise.
 | `avg_hold_winners` | float | Average days held for profitable trades |
 | `avg_hold_losers` | float | Average days held for losing trades |
 | `trade_frequency` | float | Trades per week, calculated from span between first entry and last exit |
-| `capital_efficiency` | float | `total_pnl / avg_position_value × 100` |
+| `capital_efficiency` | float | `(total_pnl / mean(total_cost)) × 100`. Cost basis uses `trade_history.total_cost` (GBP) |
 | `days_underwater` | integer | Maximum days since peak running equity, calculated from trade P&L sequence |
 | `peak_date` | string \| null | Exit date of the trade at which running equity was highest |
 | `portfolio_peak_equity` | float | Peak `total_value` from portfolio snapshots in the period. `0.0` if no snapshots |
@@ -240,39 +240,23 @@ Month-by-month breakdown of closed trades. Limited to the last 12 months of avai
 [
   {
     "month": "2026-01",
-    "pnl": -23.69,
-    "trades": 2,
-    "win_rate": 0.0,
-    "cumulative": -23.69
-  },
-  {
-    "month": "2026-02",
-    "pnl": 25.75,
-    "trades": 3,
-    "win_rate": 66.0,
-    "cumulative": 2.06
+    "trade_count": 3,
+    "pnl": 150.00,
+    "win_rate": 66.7
   }
 ]
 ```
-
-- `month` is `YYYY-MM`, sorted ascending.
-- `cumulative` is running sum of `pnl` across months.
-- `win_rate` is rounded to the nearest integer (no decimal).
-- Only months with at least one closed trade are included.
 
 ---
 
 #### `day_of_week` array
 
-Performance by exit day of week. Always five entries (Mon–Fri). Zero values for days with no trades.
+Performance grouped by exit day of week. Always 7 entries (Monday–Sunday), zero values for days with no exits.
 
 ```json
 [
-  { "day": "Mon", "avg_pnl": 0.0, "trades": 0 },
-  { "day": "Tue", "avg_pnl": -65.57, "trades": 3 },
-  { "day": "Wed", "avg_pnl": 0.0, "trades": 0 },
-  { "day": "Thu", "avg_pnl": 0.0, "trades": 0 },
-  { "day": "Fri", "avg_pnl": 49.33, "trades": 2 }
+  { "day": "Monday", "trade_count": 0, "avg_pnl": 0.0 },
+  { "day": "Tuesday", "trade_count": 2, "avg_pnl": 45.5 }
 ]
 ```
 
@@ -280,15 +264,15 @@ Performance by exit day of week. Always five entries (Mon–Fri). Zero values fo
 
 #### `holding_periods` array
 
-Performance bucketed by holding duration. Always five entries.
+Trades bucketed by holding duration.
 
 ```json
 [
-  { "period": "1-5 days",  "avg_pnl": 0.0,   "trades": 0, "win_rate": 0 },
-  { "period": "6-10 days", "avg_pnl": -97.20, "trades": 2, "win_rate": 0 },
-  { "period": "11-20 days","avg_pnl": 31.78,  "trades": 3, "win_rate": 67 },
-  { "period": "21-30 days","avg_pnl": 0.0,    "trades": 0, "win_rate": 0 },
-  { "period": "31+ days",  "avg_pnl": 0.0,    "trades": 0, "win_rate": 0 }
+  { "period": "1-5 days",  "trades": 1, "avg_pnl": -12.23, "win_rate": 0.0 },
+  { "period": "6-10 days", "trades": 0, "avg_pnl": 0.0,    "win_rate": 0.0 },
+  { "period": "11-20 days","trades": 3, "avg_pnl": 29.96,  "win_rate": 33.3 },
+  { "period": "21-30 days","trades": 1, "avg_pnl": 93.68,  "win_rate": 100.0 },
+  { "period": "31+ days",  "trades": 0, "avg_pnl": 0.0,    "win_rate": 0.0 }
 ]
 ```
 
@@ -296,36 +280,20 @@ Performance bucketed by holding duration. Always five entries.
 
 #### `top_performers` object
 
-Top 5 winners and top 5 losers from the filtered period.
-
 ```json
 {
   "winners": [
-    {
-      "ticker": "SNDK",
-      "entry_date": "2026-01-23",
-      "pnl": 104.98,
-      "pnl_percent": 18.76,
-      "days_held": 12,
-      "exit_reason": "Trailing Stop"
-    }
+    { "ticker": "SNDK", "pnl": 104.98, "pnl_percent": 18.76 },
+    { "ticker": "STX",  "pnl": 93.68,  "pnl_percent": 12.23 }
   ],
   "losers": [
-    {
-      "ticker": "FRES.L",
-      "entry_date": "2026-01-23",
-      "pnl": -182.16,
-      "pnl_percent": -16.23,
-      "days_held": 10,
-      "exit_reason": "Manual Exit"
-    }
+    { "ticker": "FRES.L", "pnl": -182.16, "pnl_percent": -16.23 },
+    { "ticker": "WDC",    "pnl": -12.23,  "pnl_percent": -1.24 }
   ]
 }
 ```
 
-- `winners` contains only trades with `pnl > 0`, sorted descending.
-- `losers` contains only trades with `pnl < 0`, sorted ascending (most negative first).
-- Up to 5 entries each. Empty arrays if no qualifying trades.
+Up to 5 winners and 5 losers, sorted by P&L descending / ascending respectively.
 
 ---
 
@@ -425,7 +393,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 **Purpose**
 
-Validate all analytics calculations against a fixed internal test dataset (5 known trades + 12 portfolio snapshots). Returns a pass/fail/warn result for each metric, with expected value, actual value, diff, and tolerance.
+Validate all analytics calculations against a fixed internal test dataset (5 known trades + 12 portfolio snapshots). Returns a pass/fail/warn result for each metric, with expected value, actual value, diff, tolerance, and severity.
 
 No request body required.
 
@@ -458,6 +426,7 @@ No parameters. No request body.
         "actual": 0.0,
         "diff": 0.0,
         "status": "pass",
+        "severity": "critical",
         "tolerance": 0.01,
         "formula": "(Avg Return / Std Dev) × √252",
         "method": "insufficient_data"
@@ -468,52 +437,109 @@ No parameters. No request body.
         "actual": -7.70,
         "diff": 0.0,
         "status": "pass",
+        "severity": "critical",
         "tolerance": 0.1,
         "formula": "((Peak - Trough) / Peak) × 100"
       },
       {
-        "metric": "profit_factor",
-        "expected": 1.01,
-        "actual": 1.01,
+        "metric": "capital_efficiency",
+        "expected": 0.22,
+        "actual": 0.22,
         "diff": 0.0,
         "status": "pass",
-        "tolerance": 0.02,
-        "formula": "Gross Profit / Gross Loss"
+        "severity": "medium",
+        "tolerance": 0.05,
+        "formula": "(Total PnL / Mean(total_cost)) × 100"
       }
     ],
     "summary": {
-      "total": 12,
-      "passed": 12,
+      "total": 13,
+      "passed": 13,
       "warned": 0,
-      "failed": 0
+      "failed": 0,
+      "by_severity": {
+        "critical": { "total": 3, "passed": 3, "warned": 0, "failed": 0 },
+        "high":     { "total": 3, "passed": 3, "warned": 0, "failed": 0 },
+        "medium":   { "total": 6, "passed": 6, "warned": 0, "failed": 0 },
+        "low":      { "total": 1, "passed": 1, "warned": 0, "failed": 0 }
+      }
     },
-    "timestamp": "2026-02-17T10:30:00Z"
+    "timestamp": "2026-02-21T00:24:41.984760Z"
   }
 }
 ```
 
-#### Metrics validated
+---
 
-| Metric | Formula | Tolerance |
-|--------|---------|-----------|
-| `sharpe_ratio` | `(Avg Return / Std Dev) × √252` | ±0.01 |
-| `max_drawdown_percent` | `((Peak − Trough) / Peak) × 100` | ±0.1% |
-| `recovery_factor` | `Net Profit / Max Drawdown` | ±0.05 |
-| `expectancy` | `(Win Rate × Avg Win) + (Loss Rate × Avg Loss)` | ±£0.10 |
-| `profit_factor` | `Gross Profit / Gross Loss` | ±0.02 |
-| `risk_reward_ratio` | `Avg Win / Avg Loss` | ±0.02 |
-| `win_streak` | Max consecutive winning trades | Exact |
-| `loss_streak` | Max consecutive losing trades | Exact |
-| `avg_hold_winners` | Avg days held, winning trades | ±0.5 days |
-| `avg_hold_losers` | Avg days held, losing trades | ±0.5 days |
-| `trade_frequency` | Trades per week | ±0.2 |
-| `days_underwater` | Days since peak equity | Exact |
+#### `validations` array — per-result object fields
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `metric` | string | Metric identifier |
+| `expected` | number | Ground truth value from `validation_data.py` |
+| `actual` | number | Value computed by the analytics service |
+| `diff` | number | `abs(actual − expected)` |
+| `status` | string | `"pass"`, `"warn"`, or `"fail"` — see status values below |
+| `severity` | string | `"critical"`, `"high"`, `"medium"`, or `"low"` — see severity model below |
+| `tolerance` | number | Maximum acceptable `diff` for a `"pass"` |
+| `formula` | string | Human-readable formula description |
+| `method` | string | Sharpe only: `"portfolio"`, `"trade"`, or `"insufficient_data"` |
+
+---
 
 #### `validation.status` values
 
-- `"pass"` — actual is within tolerance of expected
-- `"warn"` — actual is outside tolerance but within 2× tolerance (reserved for future use)
-- `"fail"` — actual is outside tolerance
+- `"pass"` — `diff` is within `tolerance`
+- `"warn"` — `diff` exceeds `tolerance` but is within `2 × tolerance` (reserved for future use)
+- `"fail"` — `diff` exceeds `tolerance`
+
+---
+
+#### Severity model
+
+Severity is assigned per metric and is fixed regardless of pass/fail status. It governs how a failure should be actioned. The four-tier model matches `docs/operations/validation_system.md`.
+
+| Severity | Metrics | Action on failure |
+|----------|---------|-------------------|
+| `critical` | `sharpe_ratio`, `max_drawdown_percent`, `profit_factor` | Block deployment. Page on-call engineer. Investigate immediately |
+| `high` | `recovery_factor`, `expectancy`, `risk_reward_ratio` | Require manual sign-off before deploy. Alert analytics team |
+| `medium` | `win_streak`, `loss_streak`, `avg_hold_winners`, `avg_hold_losers`, `trade_frequency`, `capital_efficiency` | Log warning. Investigate if persistent (3+ consecutive runs) |
+| `low` | `days_underwater` | Log only. Review monthly |
+
+---
+
+#### Metrics validated
+
+| Metric | Severity | Formula | Tolerance |
+|--------|----------|---------|-----------|
+| `sharpe_ratio` | critical | `(Avg Return / Std Dev) × √252` | ±0.01 |
+| `max_drawdown_percent` | critical | `((Peak − Trough) / Peak) × 100` | ±0.1% |
+| `profit_factor` | critical | `Gross Profit / Gross Loss` | ±0.02 |
+| `recovery_factor` | high | `Net Profit / Max Drawdown` | ±0.05 |
+| `expectancy` | high | `(Win Rate × Avg Win) + (Loss Rate × Avg Loss)` | ±£0.10 |
+| `risk_reward_ratio` | high | `Avg Win / Avg Loss` | ±0.02 |
+| `win_streak` | medium | Max consecutive winning trades | Exact |
+| `loss_streak` | medium | Max consecutive losing trades | Exact |
+| `avg_hold_winners` | medium | Avg days held, winning trades | ±0.5 days |
+| `avg_hold_losers` | medium | Avg days held, losing trades | ±0.5 days |
+| `trade_frequency` | medium | Trades per week | ±0.2 |
+| `capital_efficiency` | medium | `(Total PnL / Mean(total_cost)) × 100` | ±0.05 |
+| `days_underwater` | low | Days since peak equity | Exact |
+
+---
+
+#### `summary.by_severity` object
+
+Aggregated counts per severity tier. Always present with all four keys, even if a tier has zero metrics.
+
+```json
+"by_severity": {
+  "critical": { "total": 3, "passed": 3, "warned": 0, "failed": 0 },
+  "high":     { "total": 3, "passed": 3, "warned": 0, "failed": 0 },
+  "medium":   { "total": 6, "passed": 6, "warned": 0, "failed": 0 },
+  "low":      { "total": 1, "passed": 1, "warned": 0, "failed": 0 }
+}
+```
 
 ---
 
@@ -528,7 +554,15 @@ No parameters. No request body.
 ## Known limitations & backlog
 
 - **`total_return_pct`** is not yet returned by `GET /analytics/metrics`. When implemented, the canonical formula is `total_pnl / net_cash_flow × 100`.
-- **ValidationService** (`services/validation_service.py`) is a stub and not invoked. The active validation logic lives in `routers/validation.py`. Backlog: consolidate or remove the stub class.
-- **Sharpe variance** currently uses population variance (`÷ n`). Sample variance (`÷ n−1`) is the convention for financial time series and should be adopted.
-- **Capital efficiency** uses `entry_price × shares` for cost basis, which mixes USD and GBP for portfolios with both markets. Should use `total_cost` (always GBP) from `trade_history`.
+- **ValidationService** (`services/validation_service.py`) is a stub and not invoked. Active validation logic lives in `routers/validation.py`. This is tracked as BLG-TECH-03 (consolidate into service layer, deliver alongside BLG-TECH-02).
 - **No portfolio_id filter** in the analytics router database queries. Will produce incorrect results in multi-portfolio configurations.
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.5.0 | 2026-02-17 | Initial rewrite: unified endpoint, validation endpoint, known limitations recorded |
+| 1.7.0 | 2026-02-17 | Added `entry_price`, `exit_price`, `stop_price` to `trades_for_charts`; R-multiple note added |
+| 1.8.1 | 2026-02-21 | BLG-TECH-02 contract: added `severity` field to each validation result object; added `by_severity` aggregation to `summary`; added severity model table; updated metrics validated table to include severity column and `capital_efficiency` row; updated response example; removed resolved known limitation entries for Sharpe variance and capital efficiency currency basis (resolved via BLG-TECH-01). API Contracts Owner. |
