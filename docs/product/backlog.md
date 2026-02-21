@@ -46,57 +46,32 @@ They are not user-facing, but they directly affect trust in outputs and release 
 
 ---
 
-### BLG-TECH-02 — Implement validation severity model
-**Priority:** P1 (High)
-**Type:** Governance / Operational Control
-**Target release:** v1.6.1
+BLG-TECH-02 — Implement validation severity model
+Priority: P1 (High)
+Type: Governance / Operational Control
+Status: ✅ COMPLETE — 2026-02-21
+Closed
 
-**Problem**
-- Validation severity is documented but not enforced.
-- No reliable mechanism to block deployments on critical failures.
-
-**Scope**
-- Add `severity` field to each validation result.
-- Add `by_severity` aggregation to validation summary.
-- Contract locked: `analytics_endpoints.md` v1.8.1 is the canonical implementation spec.
-- Implement in validation layer.
-
-**Acceptance Criteria**
-- API responses include severity per validation result.
-- Aggregated counts by severity are returned.
-- Four-tier severity model matches `validation_system.md`.
-
-**Owners**
-- Engineering
-- QA
+severity field added to every validation result object (critical / high / medium / low)
+by_severity aggregation added to summary — all four tiers always present
+Severity mapping implemented in ValidationService per analytics_endpoints.md v1.8.1
+Director of Quality sign-off: 2026-02-21T21:30:00Z
+Phase Gate Document filed: docs/product/phase_gates/BLG-TECH-02-validation-severity-model-phase-gate.md
 
 ---
 
-### BLG-TECH-03 — Consolidate ValidationService into service layer
-**Priority:** P1 (High)
-**Type:** Architecture / Maintainability
-**Target release:** v1.6.1
+BLG-TECH-03 — Consolidate ValidationService into service layer
+Priority: P1 (High)
+Type: Architecture / Maintainability
+Status: ✅ COMPLETE — 2026-02-21
+Closed
 
-**Problem**
-- Validation logic is split between router and service stub.
-- Increases risk of duplication and inconsistent behaviour.
-
-**Scope**
-- Move all active validation logic into `services/validation_service.py`.
-- Delete placeholder stub.
-- Keep router thin (request/response only).
-
-**Acceptance Criteria**
-- No validation logic remains in router layer.
-- Tests pass without behavioural change.
-- Code touched once alongside BLG-TECH-02.
-
-**Dependencies**
-- Must be delivered alongside BLG-TECH-02.
-
-**Owners**
-- Engineering
-- QA
+All validation logic moved from routers/validation.py into services/validation_service.py
+Router thinned to HTTP in/out only — delegates entirely to ValidationService.validate_all()
+Stub replaced with full 13-metric + trade-Sharpe implementation
+Delivered in same branch as BLG-TECH-02 per co-delivery constraint
+Director of Quality sign-off: 2026-02-21T21:30:00Z
+Phase Gate Document filed: docs/product/phase_gates/BLG-TECH-03-validationservice-consolidation-phase-gate.md
 
 ---
 
