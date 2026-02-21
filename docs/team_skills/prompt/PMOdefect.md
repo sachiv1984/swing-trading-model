@@ -30,3 +30,8 @@ Perform the PMO Lead workflow:
 4. Identify required actions, owners, and deadlines.
 5. Explicitly state what evidence is required to pass the next gate.
 6. Block progress where information is missing.
+
+Output constraints:
+- Use structured sections only (State, Gates, Actions, Blocks).
+- Do not add narrative explanations beyond what is required to justify a block.
+- Prefer tables or bullet lists over prose.
