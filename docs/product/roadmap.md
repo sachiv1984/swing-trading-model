@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-02-20
+**Last Updated:** 2026-02-21
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -58,35 +58,32 @@ Always-visible widget inside the position entry form, directly above the shares 
 
 **Scope note (revised 2026-02-19):** Scope expanded during pre-alignment to include default_risk_percent field in the settings table, settings endpoint, and settings page UI. This is required to support widget pre-population and is in scope for v1.6 — not deferred. The original 1–2 day estimate did not account for the settings field, database migration, and additional spec updates across four documents. Revised estimate: 2–3 days. Full decision rationale: docs/product/decisions/3.2-position-sizing-calculator.md.
 
-
 **Canonical specifications:** Sizing formula, validity rules, FX handling, and cash constraint behaviour are canonicalised in docs/specs/strategy_rules.md §4.1. Endpoint contract at docs/specs/api_contracts/portfolio_endpoints.md (POST /portfolio/size). Data model at docs/specs/data_model.md §6. Settings field at docs/specs/api_contracts/settings_endpoints.md.
 
+**Shipped:** Director of Quality sign-off 2026-02-20. Verification report: docs/product/verification/3.2-position-sizing-calculator-verification.md (v1.4). Changelog: v1.6 entry. Scope and decisions documents superseded.
 
-**Shipped:** **Director of Quality sign-off 2026-02-20. Verification report: docs/product/verification/3.2-position-sizing-calculator-verification.md (v1.4). Changelog: v1.6 entry. Scope and decisions documents superseded.**
 ---
 
 ### v1.6.1 — Correctness & Quick Wins *(new)*
 
-This release is inserted immediately after v1.6. It exists to resolve a known P0 correctness issue and ship a cluster of small, high-value backlog items before any new feature investment begins. No new feature work opens until this release is complete.
+This release is inserted immediately after v1.6. It exists to resolve known correctness issues and ship a cluster of small, high-value backlog items before any new feature investment begins. No new feature work opens until this release is complete.
 
 #### BLG-TECH-01 — Fix Sharpe Variance + Capital Efficiency *(promoted from backlog — P0)*
-**Status:** Planned — ships first in this release
-**Effort:** ~0.5 days implementation + Metrics Definitions owner sign-off
-**Value:** Critical — correctness of reported analytics
+**Status:** ✅ Complete — 2026-02-21
+**Closed:** Canonical Owner sign-off granted 2026-02-21. Validation confirmed 13/13 pass at 2026-02-21T00:24:41Z. `metrics_definitions.md` updated to v1.5.7 (Appendix E both items resolved). `analytics_endpoints.md` updated to v1.8.1. No regressions.
 
-Fix `_calculate_sharpe()` to use sample variance (n−1) for portfolio and trade-level Sharpe. Fix capital efficiency to use `total_cost (GBP)` from `trade_history` instead of `entry_price × shares`. Update `validation_data.py` expected values accordingly.
-
-> **Pre-implementation:** Metrics Definitions & Analytics Canonical Owner must sign off on updated expected values before this ships.
+Fix `_calculate_sharpe()` to use sample variance (n−1) for portfolio and trade-level Sharpe. Fixed capital efficiency to use `total_cost (GBP)` from `trade_history` instead of `entry_price × shares`. `validation_data.py` expected values updated accordingly. v1.6 quality gate satisfied.
 
 #### BLG-TECH-02 + BLG-TECH-03 — Validation Severity Model + Service Layer Consolidation *(promoted from backlog — P1)*
-**Status:** Planned — delivered together
+**Status:** Planned — contract locked, awaiting implementation
 **Effort:** 1–2 days
 **Value:** Governance — enables CI/CD gate in v1.7
+**Contract:** `analytics_endpoints.md` v1.8.1 defines the canonical severity model. Engineering may begin pre-alignment.
 
-Add `severity` field to validation results. Add `by_severity` aggregation to validation summary. Consolidate all active validation logic into `services/validation_service.py`. Update `analytics_endpoints.md` before implementation.
+Add `severity` field to validation results. Add `by_severity` aggregation to validation summary. Consolidate all active validation logic into `services/validation_service.py`.
 
 #### Quick Wins Bundle *(promoted from backlog — P2)*
-**Status:** Planned — delivered as a single sprint
+**Status:** Planned — awaiting pre-alignment gate (formula/definition confirmation per item)
 **Estimated total effort:** ~6–8 hours
 **Value:** Visible, tangible user-facing improvements
 
@@ -325,8 +322,9 @@ When evaluating new features:
 
 | Release | Theme | Key deliveries |
 |---------|-------|----------------|
-| **v1.6** | Position Sizing | Calculator — in flight |
-| **v1.6.1** | Correctness & Quick Wins | P0 Sharpe fix, validation governance, 6 quick-win features, settings spec, error standard |
+| **v1.5** | Performance Analytics | Unified analytics endpoint, validation endpoint — ✅ Shipped |
+| **v1.6** | Position Sizing | Calculator, settings default risk % — ✅ Shipped |
+| **v1.6.1** | Correctness & Quick Wins | BLG-TECH-01 ✅ done, BLG-TECH-02/03 pending, 6 quick-win features, settings spec, error standard |
 | **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision |
 | **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk |
 | **v1.9** | User Value & Insight | Trade reflection template, compliance metrics, cohort analysis, dashboard homepage |
