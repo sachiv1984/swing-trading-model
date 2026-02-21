@@ -34,8 +34,8 @@
 Current state:    TRIAGED
 Next gate:        G2 — TRIAGED → ROOT CAUSE IDENTIFIED
 Who acts next:    Engineering
-Blockers:         B-04 — validation_system.md v1.0.2 unconfirmed (hard block on G3)
-Escalation timer: RESET — 2026-02-21T00:00:00Z (High severity SLA now running)
+Blockers:         None
+Escalation timer: RUNNING — 2026-02-21T00:00:00Z (High severity SLA)
 ```
 
 ---
@@ -103,12 +103,16 @@ Evidence required:
   Owner and Engineering that validation_system.md v1.0.2 rules have
   been applied. Reference to updated document version required.
 
-Evidence:             🔴 MISSING
-Owner confirmation:   🔴 MISSING — Infrastructure & Operations
-                      Documentation Owner + Engineering, date required
-PMO validation:       FAIL (pending evidence)
-
-⚠️  G3 is hard-blocked until this item passes.
+Evidence:             docs/operations/validation_system.md v1.0.2
+                      Rule 1 added: expected value independence — values must
+                      be independently hand-calculated from metrics_definitions.md,
+                      never derived by running the implementation.
+                      Rule 2 added: coverage completeness — every metric in
+                      GET /analytics/metrics must have a EXPECTED_METRICS entry;
+                      omission is a governance violation.
+Owner confirmation:   Yes — Infrastructure & Operations Documentation Owner
+                      + Engineering, 2026-02-21
+PMO validation:       Pass — PMO Lead, 2026-02-21
 ```
 
 ---
@@ -213,7 +217,7 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 | A-02 | Assign severity classification for BLG-TECH-02 (written, dated, QA Lead name) (G1.3) | QA Lead | 2026-02-21 | ✅ COMPLETE | — |
 | A-03 | Confirm analytics_endpoints.md v1.8.1 as sole canonical authority for BLG-TECH-02 (G1.4) | Engineering | 2026-02-21 | ✅ COMPLETE | — |
 | A-04 | Acknowledge co-delivery constraint with BLG-TECH-03 in writing in this document (G1.5) | Engineering | 2026-02-21 | ✅ COMPLETE | — |
-| A-05 | Confirm completion of BLG-TECH-01 outstanding action: apply validation_system.md v1.0.2 rules — provide written evidence with document version reference (G1.2 — blocks G3) | Infrastructure & Operations Documentation Owner + Engineering | Before Fix In Progress gate opens | 🔴 OPEN | — |
+| A-05 | Confirm completion of BLG-TECH-01 outstanding action: apply validation_system.md v1.0.2 rules — provide written evidence with document version reference (G1.2 — blocks G3) | Infrastructure & Operations Documentation Owner + Engineering | 2026-02-21 | ✅ COMPLETE | — |
 
 > ⚠️ GI-2 notice: Deadlines marked "TBC" must be replaced with UTC-dated deadlines by the PMO Lead when the triage session is scheduled. "TBC" is not a compliant deadline.
 
@@ -223,7 +227,7 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 
 | # | Blocker | Affects | Owner | Raised | Status |
 |---|---------|---------|-------|--------|--------|
-| B-04 | validation_system.md v1.0.2 action unconfirmed | G3 — Fix In Progress gate hard-blocked | Infra & Ops Documentation Owner + Engineering | 2026-02-21 | 🔴 OPEN |
+**No open blockers.**
 
 ---
 
