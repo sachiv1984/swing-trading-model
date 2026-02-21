@@ -22,7 +22,7 @@
 | target_release | v1.6.1 |
 | canonical_spec | `analytics_endpoints.md` v1.8.1 (severity model contract — confirmed in roadmap) |
 | severity | **High** — confirmed by QA Lead, 2026-02-21 |
-| current_state | **LOGGED** |
+| current_state | **TRIAGED** |
 | state_entered_at | 2026-02-21T00:00:00Z *(recorded at Phase Gate Document creation — UTC)* |
 | co_delivery_constraint | Must be delivered alongside BLG-TECH-03. Neither defect may enter Fix In Progress, Fix Validated, or Closed independently without a formal PMO-validated scope decision. See §Co-Delivery Constraint. |
 
@@ -31,14 +31,11 @@
 ## Current Status
 
 ```
-Current state:    LOGGED
-Next gate:        G1 — LOGGED → TRIAGED
-Who acts next:    QA Lead (severity), Engineering (BLG-TECH-01 confirmation),
-                  Infra & Ops Documentation Owner (validation_system.md action)
-Blockers:         B-02 (severity), B-03 (BLG-TECH-03 canonical spec),
-                  B-04 (validation_system.md v1.0.2 action unconfirmed)
-Escalation timer: STARTED — 2026-02-21T00:00:00Z
-                  (timer runs against severity-tier SLA once severity is assigned)
+Current state:    TRIAGED
+Next gate:        G2 — TRIAGED → ROOT CAUSE IDENTIFIED
+Who acts next:    Engineering
+Blockers:         B-04 — validation_system.md v1.0.2 unconfirmed (hard block on G3)
+Escalation timer: RESET — 2026-02-21T00:00:00Z (High severity SLA now running)
 ```
 
 ---
@@ -60,7 +57,7 @@ BLG-TECH-02 and BLG-TECH-03 are co-delivered per backlog and roadmap:
 
 ### Gate G1 — LOGGED → TRIAGED
 
-**Gate status: 🟡 4 OF 5 ITEMS PASS — G1.4 (BLG-TECH-03 canonical spec) outstanding via co-delivery dependency**
+**Gate status: ✅ ALL G1 ITEMS PASS — state transition to TRIAGED valid**
 
 ---
 
@@ -226,7 +223,6 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 
 | # | Blocker | Affects | Owner | Raised | Status |
 |---|---------|---------|-------|--------|--------|
-| B-03 | BLG-TECH-03 canonical spec unconfirmed (transitively blocks co-delivery) | G1.5 — state transition to Triaged for BLG-TECH-03 | Head of Specs Team | 2026-02-21 | 🔴 OPEN |
 | B-04 | validation_system.md v1.0.2 action unconfirmed | G3 — Fix In Progress gate hard-blocked | Infra & Ops Documentation Owner + Engineering | 2026-02-21 | 🔴 OPEN |
 
 ---
@@ -236,6 +232,7 @@ PMO validation:       Pass — PMO Lead, 2026-02-21
 | # | From | To | Date | Time (UTC) | Declared by | Gate passed |
 |---|------|----|------|------------|-------------|-------------|
 | 1 | PRE-LOGGED | LOGGED | 2026-02-21 | 00:00:00Z | PMO Lead | — (initial logging) |
+| 2 | LOGGED | TRIAGED | 2026-02-21 | 00:00:00Z | PMO Lead | G1 — all items pass |
 
 ---
 
