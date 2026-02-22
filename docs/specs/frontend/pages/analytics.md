@@ -421,6 +421,6 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
-| 1.2 | 2026-02-26 | F-02 fix: correct Win Rate by Month tooltip field name from `total_trades` to `trade_count` to match `analytics_endpoints.md` monthly_data schema. QA finding A-QA-01. | Frontend Spec owner |
+| 1.2 | 2026-02-26 | F-02 fix: correct Win Rate by Month tooltip field name from `total_trades` to `trade_count` to match `analytics_endpoints.md` monthly_data schema. QA finding A-QA-01.
 | 1.1 | 2026-02-25 | BLG-FEAT-04: Add Best / Worst Trades component spec (R-multiple ranking, top 3 / bottom 3, trades_for_charts source). BLG-FEAT-05: Add Win Rate by Month bar chart spec (monthly_data source, 50% reference line, colour-coded bars). Components inserted at positions 11 and 12 in rendering order. QWB D3. |
 | 1.0 | 2026-02-18 | Initial version. |
