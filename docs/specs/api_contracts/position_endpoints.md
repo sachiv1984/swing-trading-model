@@ -70,6 +70,7 @@ Response uses the standard success envelope from **conventions.md**.
     "status": "open",
     "grace_period": false,
     "display_status": "PROFITABLE",
+    "grace_days_remaining": null,
     "atr_value": 15.32,
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
@@ -95,6 +96,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `exit_note` | Always `null` for open positions. Present for schema consistency with closed trade records |
 | `tags` | Array of tag strings. Empty array if no tags set |
 | `pnl_percent` | Percentage P&L relative to entry cost. Same value as would be seen in `pnl_pct` in trade records. Both field names exist in the system for compatibility; `pnl_percent` is the canonical name in position responses |
+| `grace_days_remaining` | integer when grace_period = true, null when grace_period = false. Derived server-side as max(0, 10 - holding_days) during the grace period. Represents the number of days remaining in the grace window. Returns 0 on day 10 (grace period ends). Intended display format: "Day {holding_days + 1} of 10". Always present in the response object.   |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
