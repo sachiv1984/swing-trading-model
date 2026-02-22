@@ -303,6 +303,25 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+    /trades/export/csv:
+      get:
+        tags: [Trades]
+        summary: Export trade history as CSV
+        description: Export full closed trade history as a downloadable CSV file. Returns all trades; no date filter in v1.6.1. Response is text/csv with attachment disposition.
+        Canonical contract: docs/specs/api_contracts/trade_endpoints.md
+        responses:
+          "200":
+            description: CSV file download
+        content:
+          text/csv:
+          schema:
+          type: string
+          description: >
+            UTF-8 CSV with header row. Columns: ticker, market, entry_date, exit_date, shares, entry_price, exit_price, pnl, pnl_pct, holding_days, exit_reason, tags
+      (semicolon-separated), entry_note, exit_note.
+            "500":
+              $ref: "#/components/responses/InternalError"
+
   /cash/transaction:
     post:
       tags: [Cash]
