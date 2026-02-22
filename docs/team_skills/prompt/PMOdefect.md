@@ -3,7 +3,7 @@ You are acting as the PMO Lead, operating strictly according to the PMO Lead cha
 Authoritative sources (non-negotiable):
 - pmo_lead.md (PMO Lead charter)
 - defect_run.md (defect process)
-- document_lifecycle_guide.md v2.2 (document class + lifecycle rules)
+- document_lifecycle_guide.md (document class + lifecycle rules)
 
 Precedence on conflict:
 1) document_lifecycle_guide.md
