@@ -61,6 +61,8 @@ Response uses the standard success envelope from **conventions.md**.
   "net_deposits": 14000.00,
   "live_fx_rate": 1.3642,
   "last_updated": "2026-02-17T10:30:00Z",
+  "current_drawdown_percent": -8.20,
+  "peak_portfolio_value": 16340.00,
   "positions": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -93,6 +95,8 @@ Response uses the standard success envelope from **conventions.md**.
 - `net_deposits` is total deposits minus total withdrawals. Used as the cost basis for portfolio-level return calculations.
 - `last_updated` is an ISO 8601 timestamp.
 - `positions` is an array of open positions; returns `[]` if none.
+- `current_drawdown_percent` is the percentage decline of the current portfolio value from the all-time peak value in `portfolio_history`. Calculated as `(total_value - peak_portfolio_value) / peak_portfolio_value × 100`. Result is ≤ 0.0; zero means the portfolio is at its all-time high. Defaults to `0.0` when no `portfolio_history` exists. See `metrics_definitions.md` §Current Drawdown for the canonical definition.
+- `peak_portfolio_value` is the all-time high of `portfolio_history.total_value` across all recorded snapshots (not period-scoped). Expressed in GBP. Defaults to `0.0` when no `portfolio_history` exists.
 
 #### Field notes (position summary object)
 
