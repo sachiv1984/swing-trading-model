@@ -593,6 +593,15 @@ components:
         net_deposits: { type: number }
         live_fx_rate: { type: number }
         last_updated: { type: string, format: date-time }
+        current_drawdown_percent: { type: number, format: float }
+        description: >
+        Percentage decline from all-time peak portfolio value.
+        Result is <= 0.0; zero means portfolio is at peak.
+        Defaults to 0.0 when no portfolio_history exists.
+        peak_portfolio_value: { type: number, format: float }
+        description: >
+        All-time high total_value from portfolio_history (GBP, all-time, not period-scoped).
+        Defaults to 0.0 when no portfolio_history exists.
         positions:
           type: array
           items: { $ref: "#/components/schemas/PositionSummary" }
