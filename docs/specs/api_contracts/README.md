@@ -125,6 +125,9 @@ Each endpoint file follows a consistent structure:
 
 ### Changelog (Summary)
 
+- **1.8.3 (2026-02-25)**
+- position_endpoints.md: added grace_days_remaining (integer | null) to GET /positions response. Derived server-side as max(0, 10 - holding_days) when grace_period = true; null otherwise. Always present. No data model change required. QWB BLG-FEAT-06, decision D4.
+
 - **1.8.2 (2026-02-25)**
 -  portfolio_endpoints.md: added current_drawdown_percent (float, ≤0.0, GBP percentage) and peak_portfolio_value (float, GBP) to GET /portfolio response data object. Both fields always present; default 0.0 when no portfolio_history exists. QWB BLG-FEAT-01, decision D1.
 
