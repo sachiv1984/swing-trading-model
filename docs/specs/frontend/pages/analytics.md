@@ -2,7 +2,7 @@
 
 **Owner:** Frontend Specifications & UX Documentation Owner  
 **Status:** Canonical  
-**Version:** 1.1
+**Version:** 1.2
 **Last Updated:** February 22, 2026
 
 ## Purpose & User Goals
@@ -351,7 +351,9 @@ Each bar uses a single colour determined by its own value --- not a gradient.
 
 #### Tooltip
 
-On hover/touch: show month label, win rate (%), and trade count for that month. Trade count sourced from `monthly_data[].total_trades` (or nearest equivalent field).
+- On hover/touch: show month label, win rate (%), and trade count for that month. Trade count sourced from monthly_data[].trade_count.
+- Rationale: analytics_endpoints.md canonical schema names this field trade_count.
+total_trades does not exist in monthly_data. Correcting to match the API contract.
 
 #### Minimum data requirement
 
