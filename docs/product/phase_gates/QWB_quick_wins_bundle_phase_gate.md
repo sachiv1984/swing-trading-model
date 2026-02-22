@@ -162,6 +162,8 @@ Evidence required:
                     BLG-FEAT-06 (Grace Period Indicator): [MISSING: target page/component — likely positions table]
                     BLG-FEAT-07 (CSV Export): [MISSING: target page/component — likely trade history]
                     Spec currency: [MISSING: confirm relevant component spec is current or note gaps]
+ Owner confirmation: [MISSING: Yes/No] — Frontend Spec owner, [MISSING: date]
+ PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
 
 ```
 
