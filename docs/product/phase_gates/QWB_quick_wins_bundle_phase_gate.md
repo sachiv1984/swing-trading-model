@@ -111,9 +111,10 @@ Gate item:  No bundle item reads from or writes to the settings table.
 - Evidence:         Audit confirmed no settings dependency across all six items.
 - Owner confirmation: Yes — PMO Lead, 2026-02-22
 - PMO validation:   Pass — PMO Lead, 2026-02-22
-```
 
+```
 ### Gate R.2 — API contract readiness confirmed
+
 ```
 Gate item:  All required endpoints documented, or API Contracts owner briefed.
 
@@ -122,12 +123,18 @@ Evidence required:
   BLG-FEAT-06: grace days field exposure in GET /positions — confirmation outstanding
   BLG-FEAT-02: server-side vs frontend decision open — determines whether endpoint change needed
 
-- Evidence:         [MISSING — A-PRE-03, A-PRE-04 outstanding]
-- Owner confirmation: No — API Contracts owner, 2026-02-22
-- PMO validation:   Fail — PMO Lead, 2026-02-22 (evidence not yet present)
-```
+#### R.2 — BLG-FEAT-06: Grace days field confirmed in GET /positions
 
+ Evidence:         `docs/specs/api_contracts/` [MISSING: exact file name and version]
+                    Field confirmed present: [MISSING: Yes — field name e.g. "grace_days_remaining" /
+                    No — endpoint update required, field name and type to be added]
+                    If absent: contract update scope: [MISSING: field name, type, example value]
+ Owner confirmation: [MISSING: Yes/No] — API Contracts owner, [MISSING: date]
+ PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
+
+```
 ### Gate R.3 — Frontend spec readiness confirmed
+
 ```
 Gate item:  Relevant component/page specs current, or UX decisions pre-resolved.
 
