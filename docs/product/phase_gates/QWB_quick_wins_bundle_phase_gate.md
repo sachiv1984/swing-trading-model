@@ -131,6 +131,7 @@ Evidence required:
                     If absent: contract update scope: [MISSING: field name, type, example value]
  Owner confirmation: [MISSING: Yes/No] — API Contracts owner, [MISSING: date]
  PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
+
 #### R.2 — BLG-FEAT-07: CSV export endpoint briefing confirmed
 
  Evidence:          API Contracts owner briefed by PMO Lead: [MISSING: date of briefing]
@@ -142,6 +143,7 @@ Evidence required:
  PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
 
 ```
+
 ### Gate R.3 — Frontend spec readiness confirmed
 
 ```
@@ -151,12 +153,20 @@ Evidence required:
   Confirm which page/component spec each item targets (positions table, trade history,
   analytics page). Frontend Spec owner must be briefed before meeting.
 
-- Evidence:         [MISSING — Frontend Spec owner not yet briefed]
-- Owner confirmation: No — Frontend Spec owner, 2026-02-22
-- PMO validation:   Fail — PMO Lead, 2026-02-22
+ Evidence:         Written briefing confirmation from Frontend Spec owner.
+                    Page/component targets confirmed per item:
+                    BLG-FEAT-01 (Drawdown Widget): [MISSING: target page/component]
+                    BLG-FEAT-02 (R-Multiple Column): [MISSING: target page/component — likely trade history table]
+                    BLG-FEAT-04 (Best/Worst Widget): [MISSING: target page/component]
+                    BLG-FEAT-05 (Win Rate by Month): [MISSING: target page/component — likely analytics page]
+                    BLG-FEAT-06 (Grace Period Indicator): [MISSING: target page/component — likely positions table]
+                    BLG-FEAT-07 (CSV Export): [MISSING: target page/component — likely trade history]
+                    Spec currency: [MISSING: confirm relevant component spec is current or note gaps]
+
 ```
 
 ### Gate R.4 — Strategy rules readiness confirmed
+
 ```
 Gate item:  No bundle item requires changes to strategy_rules.md.
             Grace period lifecycle is already defined there.
