@@ -131,6 +131,15 @@ Evidence required:
                     If absent: contract update scope: [MISSING: field name, type, example value]
  Owner confirmation: [MISSING: Yes/No] — API Contracts owner, [MISSING: date]
  PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
+#### R.2 — BLG-FEAT-07: CSV export endpoint briefing confirmed
+
+ Evidence:          API Contracts owner briefed by PMO Lead: [MISSING: date of briefing]
+                    Endpoint path agreed: [MISSING: e.g. "GET /trades/export/csv"]
+                    Fields confirmed: [MISSING: list of fields to include in CSV]
+                    Scope: [MISSING: full history / filtered by date range / other]
+                    Contract document to be authored: `docs/specs/api_contracts/` [MISSING: file name]
+ Owner confirmation: [MISSING: Yes/No] — API Contracts owner, [MISSING: date]
+ PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
 
 ```
 ### Gate R.3 — Frontend spec readiness confirmed
