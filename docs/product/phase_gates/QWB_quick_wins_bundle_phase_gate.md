@@ -217,14 +217,17 @@ Gate item:  Preliminary decisions list produced and agreed as meeting agenda.
 
 | # | Action | Owner | Deadline | Status | Blocked on |
 |---|--------|-------|----------|--------|------------|
-| A-PRE-01 | Provide written confirmation of drawdown formula for BLG-FEAT-01 (Gate R.1) | Metrics Definitions owner | ASAP — blocks meeting scheduling | 🔴 OPEN | — |
-| A-PRE-02 | Provide written confirmation of R-multiple formula for BLG-FEAT-02 (Gate R.1) | Metrics Definitions owner | ASAP — blocks meeting scheduling | 🔴 OPEN | — |
-| A-PRE-03 | Confirm whether grace days remaining is currently exposed in GET /positions response (Gate R.2) | API Contracts owner | ASAP | 🔴 OPEN | — |
-| A-PRE-04 | Brief API Contracts owner on BLG-FEAT-07 CSV export endpoint requirement (Gate R.2) | PMO Lead | ASAP | 🔴 OPEN | — |
-| A-PRE-05 | Brief Frontend Spec owner on all six bundle items; confirm page/component spec targets (Gate R.3) | PMO Lead | ASAP | 🔴 OPEN | — |
-| A-PRE-06 | Revise effort estimate to include spec authoring for BLG-FEAT-07 and BLG-FEAT-02 (Gate R.5) | Product Owner | At or before meeting | 🔴 OPEN | A-PRE-02 (server-side decision) |
+| A-PRE-01 | Provide written confirmation of drawdown formula for BLG-FEAT-01 — apply to Gate R.1 patch | Metrics Definitions owner | 2026-02-23T17:00:00Z (PROPOSED) | 🔴 OPEN | — |
+| A-PRE-02 | Provide written confirmation of R-multiple formula + server-side vs frontend decision — apply to Gate R.1 patch | Metrics Definitions owner | 2026-02-23T17:00:00Z (PROPOSED) | 🔴 OPEN | — |
+| A-PRE-03 | Confirm grace days field in GET /positions — apply to Gate R.2 patch | API Contracts owner | 2026-02-23T17:00:00Z (PROPOSED) | 🔴 OPEN | — |
+| A-PRE-04 | Confirm CSV export endpoint scope after PMO briefing — apply to Gate R.2 patch | API Contracts owner | 2026-02-23T17:00:00Z (PROPOSED) | 🔴 OPEN | A-PRE-04 briefing by PMO Lead |
+| A-PRE-05 | Confirm briefing received + page/component targets for all six items — apply to Gate R.3 patch | Frontend Spec owner | 2026-02-23T17:00:00Z (PROPOSED) | 🔴 OPEN | PMO Lead briefing |
+| A-PRE-06 | Confirm revised total effort estimate including spec authoring — apply to Gate R.5 patch | Product Owner | 2026-02-24T12:00:00Z (PROPOSED) | 🔴 OPEN | A-PRE-02 (server-side decision) |
+| A-PRE-07 | Confirm or replace all PROPOSED deadlines above with actual UTC deadlines | Product Owner | 2026-02-23T12:00:00Z (PROPOSED) | 🔴 OPEN | — |
 
-> GI-2 compliance: Deadlines set to "ASAP" are interim. PMO Lead must replace with UTC-dated deadlines once the Product Owner confirms timeline expectations.
+
+> GI-2 compliant: All deadlines are either UTC-dated (PROPOSED) or [MISSING] with A-PRE-07 covering resolution.
+> PROPOSED deadlines become binding when confirmed by Product Owner via A-PRE-07.
 
 ---
 
