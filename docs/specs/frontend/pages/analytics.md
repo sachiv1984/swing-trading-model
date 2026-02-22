@@ -94,9 +94,11 @@ When data is available and sufficient, components render in this order:
 7. **Performance by Exit Reason** — sortable table from `exit_reasons`
 8. **Time-Based Analysis** — tabbed charts (day of week / monthly / holding period / entry scatter)
 9. **R-Multiple Analysis** — distribution chart + tag breakdown from `trades_for_charts`
-10. **Top Performers** — top 5 winners and top 5 losers from `top_performers`
-11. **Consistency Metrics** — three consistency cards from `consistency_metrics`
-12. **Performance by Strategy Tag** — sortable tag performance table from `trades_for_charts`
+10. **Best / Worst Trades** — top 3 / bottom 3 by R-multiple from trades_for_charts  ← NEW (BLG-FEAT-04)
+11. **Top Performers** — top 5 winners and top 5 losers from `top_performers`
+12. **Win Rate by Month** — bar chart from monthly_data  ← NEW (BLG-FEAT-05)
+13. **Consistency Metrics** — three consistency cards from `consistency_metrics`
+14. **Performance by Strategy Tag** — sortable tag performance table from `trades_for_charts`
 
 ---
 
@@ -275,7 +277,97 @@ Each trade card shows:
 
 ---
 
-### 11. Consistency Metrics
+### 11. Best / Worst Trades
+
+Source: `trades_for_charts` from `GET /analytics/metrics`
+
+Two side-by-side panels: **Top 3 Trades by R-Multiple** and **Bottom 3 Trades by R-Multiple**.
+
+#### Ranking
+
+Trades ranked by R-multiple (frontend-calculated). Canonical formula per `metrics_definitions.md` v1.5.7:
+
+```
+R = (exit_price - entry_price) / (entry_price - stop_price)
+```
+
+Top 3 = highest positive R-multiple values. Bottom 3 = lowest (most negative) R-multiple values.
+
+Trades where `stop_price` is null or zero are excluded from ranking (R-multiple cannot be calculated).
+
+If fewer than 3 qualifying trades exist for either panel, render available trades and leave remaining card slots empty (do not pad with unqualified trades or show placeholders).
+
+#### Minimum data requirement
+
+Requires at least 1 qualifying trade to render. If no qualifying trades exist (no `stop_price` present on any trade in `trades_for_charts`), render the component's empty state.
+
+#### Trade card contents
+
+Each card shows:
+
+-   Ticker (bold)
+-   R-multiple value: signed, 2dp, "R" suffix (e.g. `+3.12R` / `-0.54R`)
+-   P&L (GBP, signed --- secondary label)
+-   Exit date (tertiary label)
+-   Exit reason (tertiary label)
+
+#### Colour treatment
+
+-   Top 3 panel header and R-multiple values: profit colour (green tone per `design_system.md`)
+-   Bottom 3 panel header and R-multiple values: loss colour (red tone per `design_system.md`)
+
+#### Layout
+
+Responsive: 1 column (mobile, panels stack) → 2 columns (lg, panels side-by-side). Each panel title: "Best Trades (R-Multiple)" and "Worst Trades (R-Multiple)".
+
+#### Empty state
+
+If no qualifying trades: display a muted message --- "No trades with stop data available."
+
+---
+
+### 12. Win Rate by Month
+
+Source: `monthly_data` from `GET /analytics/metrics`
+
+A bar chart showing win rate (%) for each calendar month in the selected period.
+
+#### Data mapping
+
+-   X-axis: month labels (e.g. "Jan 26", "Feb 26") derived from `monthly_data[].month`
+-   Y-axis: win rate (%), 0--100 range. Fixed scale; does not auto-scale.
+-   Bar value: `monthly_data[].win_rate`
+
+#### Reference line
+
+A horizontal reference line at 50% (break-even win rate). Rendered as a muted dashed line. Does not have an interactive label --- it is orientation only.
+
+#### Colour treatment
+
+-   Bars above 50%: profit colour (green tone per `design_system.md`)
+-   Bars at or below 50%: loss colour (red tone per `design_system.md`)
+
+Each bar uses a single colour determined by its own value --- not a gradient.
+
+#### Tooltip
+
+On hover/touch: show month label, win rate (%), and trade count for that month. Trade count sourced from `monthly_data[].total_trades` (or nearest equivalent field).
+
+#### Minimum data requirement
+
+Requires at least 1 month of data. If `monthly_data` is empty, the component does not render (consistent with `has_enough_data = false` guard).
+
+#### Layout
+
+Full-width within the analytics page column. Chart height: consistent with other bar charts on the page (implementation choice within this constraint).
+
+#### Empty state
+
+If `monthly_data` is empty, component does not render. No explicit empty state message needed --- the page-level insufficient data guard handles this case.
+
+---
+
+### 13. Consistency Metrics
 Source: `consistency_metrics`
 
 Three cards:
@@ -288,7 +380,7 @@ Three cards:
 
 ---
 
-### 12. Performance by Strategy Tag
+### 14. Performance by Strategy Tag
 Source: `trades_for_charts` (uses `tags` and `pnl` fields)
 
 A sortable table showing one row per tag used across trades in the selected period.
@@ -320,3 +412,12 @@ Returns `null` (renders nothing) if no tagged trades exist.
 
 ## Empty & Null Safety
 All component props are null-safe with safe defaults. If the API returns partial data for a specific sub-object, the relevant component renders its empty state rather than crashing. The root-level insufficient data check (`has_enough_data`) is the primary gate.
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+| --- | --- | --- |
+| 1.1 | 2026-02-25 | BLG-FEAT-04: Add Best / Worst Trades component spec (R-multiple ranking, top 3 / bottom 3, trades_for_charts source). BLG-FEAT-05: Add Win Rate by Month bar chart spec (monthly_data source, 50% reference line, colour-coded bars). Components inserted at positions 11 and 12 in rendering order. QWB D3. |
+| 1.0 | 2026-02-18 | Initial version. |
