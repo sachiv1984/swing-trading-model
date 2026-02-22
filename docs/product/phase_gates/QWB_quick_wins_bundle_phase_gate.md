@@ -176,9 +176,11 @@ Gate item:  No bundle item requires changes to strategy_rules.md.
 - Evidence:         Audit confirmed. No strategy_rules.md changes required.
 - Owner confirmation: Yes — PMO Lead, 2026-02-22
 - PMO validation:   Pass — PMO Lead, 2026-02-22
+
 ```
 
 ### Gate R.5 — Effort estimate reviewed
+
 ```
 Gate item:  Roadmap estimate accounts for all spec, backend, and frontend work.
 
@@ -186,12 +188,19 @@ Note:       Current estimate (~6–8 hours) covers implementation only.
             Spec authoring for BLG-FEAT-07 (new endpoint) and BLG-FEAT-02
             (if server-side) is additional. Estimate must be revised at meeting.
 
-- Evidence:         [MISSING — estimate not yet revised to include spec work]
-- Owner confirmation: No — Product Owner, 2026-02-22
-- PMO validation:   Fail — PMO Lead, 2026-02-22
+ Evidence:         Product Owner revised estimate confirmed.
+                    Implementation effort: ~6–8 hours (unchanged)
+                    Spec authoring — BLG-FEAT-07 new endpoint: [MISSING: estimated hours]
+                    Spec authoring — BLG-FEAT-02 if server-side: [MISSING: estimated hours or N/A]
+                    Revised total estimate: [MISSING: X hours]
+                    Roadmap entry updated: [MISSING: Yes/No — docs/product/roadmap.md commit hash]
+ Owner confirmation: [MISSING: Yes/No] — Product Owner, [MISSING: date]
+ PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
+
 ```
 
 ### Gate R.6 — Decisions inventory produced
+
 ```
 Gate item:  Preliminary decisions list produced and agreed as meeting agenda.
 
