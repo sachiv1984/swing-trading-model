@@ -164,6 +164,68 @@ max_drawdown.date    = max_dd_date
 
 ---
 
+## Current Drawdown
+### Definition
+
+`current_drawdown_percent` is the percentage decline of the current portfolio value from the all-time peak portfolio value recorded in `portfolio_history`. It is a **live, point-in-time metric** --- distinct from Max Drawdown, which records the largest historical peak-to-trough decline.
+
+Current Drawdown is zero when the portfolio is at an all-time high. It is negative when the portfolio is below its peak.
+
+### Canonical Formula
+
+text
+
+```
+peak_portfolio_value = MAX(portfolio_history.total_value)
+
+current_drawdown_percent =
+  (current_portfolio_value - peak_portfolio_value) / peak_portfolio_value × 100
+```
+
+Result is ≤ 0.0. Zero means the portfolio is at peak.
+
+### Data Requirements
+
+-   `portfolio_history` table with ≥1 snapshot (for `peak_portfolio_value`)
+-   Current `total_value` from the live portfolio state
+
+### Data Sources (API)
+
+This metric is **served via `GET /portfolio`**, not `GET /analytics/metrics`. Two new response fields are added to the `GET /portfolio` data object:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `current_drawdown_percent` | float (≤ 0.0) | Current drawdown as a percentage. Negative or zero. |
+| `peak_portfolio_value` | float (GBP) | All-time peak total portfolio value from `portfolio_history`. |
+
+Both fields are always present in the response. Default to `0.0` when no `portfolio_history` exists.
+
+### Related Fields (from GET /analytics/metrics)
+
+The Current Drawdown widget also reads from `GET /analytics/metrics`:
+
+| Field | Path | Used for |
+| --- | --- | --- |
+| `days_underwater` | `advanced_metrics.days_underwater` | Days since equity peak (trade-sequence method --- see Days Underwater section) |
+| `max_drawdown.percent` | `advanced_metrics.max_drawdown.percent` | Historical maximum drawdown --- used to contextualise current drawdown as a proportion of worst-ever |
+
+### Failure Behaviour
+
+-   No `portfolio_history` snapshots: `current_drawdown_percent = 0.0`, `peak_portfolio_value = 0.0`
+-   `peak_portfolio_value = 0`: widget renders "Establishing Peak" empty state; no percentage displayed.
+
+### Validation
+
+Not included in `POST /validate/calculations` --- this is a live point-in-time metric derived from current portfolio state, not a historical analytics metric.
+
+### Implementation Note
+
+The `peak_portfolio_value` field in `GET /portfolio` represents the all-time high across **all** `portfolio_history` snapshots regardless of the period filter. It is not period-scoped. This is consistent with the purpose of the widget (showing risk relative to the user's personal all-time best, not a windowed subset).
+
+The progress bar in the Current Drawdown widget displays current drawdown as a proportion of `max_drawdown.percent` from `GET /analytics/metrics`. Colour thresholds (green ≤5%, amber ≤10%, orange ≤20%, red >20%) are a UX convention owned by Engineering --- they are not canonical business rules and are not defined in this document.
+
+---
+
 ## Days Underwater
 ### Definition
 `advanced_metrics.days_underwater` is defined as the **maximum number of days since the peak running equity**, computed from the cumulative sequence of trade P&L (trade-sequence method).
@@ -447,6 +509,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 | 2026-02-17 | 1.5.5 | FIX-MD-04 backlog + FIX-MD-05: Specify Sharpe sample variance (canonical) and capital efficiency GBP-safe cost basis | Analytics Team |
 | 2026-02-17 | 1.5.6 | ADVISORY-MD-D: Remove drift-prone lineage appendix; reference `data_model.md` and `analytics_endpoints.md` as lineage sources | Analytics Team |
 | 2026-02-21 | 1.5.7 | BLG-TECH-01 resolution: mark Appendix E Backlog Items 1 and 2 as resolved. Update inline conformance notes in Sharpe Ratio and Capital Efficiency sections. Update Capital Efficiency response format example value to 0.22. Validation confirmed 13/13 pass at 2026-02-21T00:24:41Z. Canonical Owner sign-off granted. | Metrics Definitions & Analytics Canonical Owner |
+| 2026-02-25 | 1.5.8 | BLG-FEAT-01: Add Current Drawdown section. Defines current_drawdown_percent formula, data sources (GET /portfolio new fields), relationship to days_underwater and max_drawdown metrics, failure behaviour, and implementation notes. QWB pre-alignment D1. | Metrics Definitions owner |
 
 ---
 
