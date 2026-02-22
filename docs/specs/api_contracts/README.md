@@ -4,7 +4,7 @@
 
 **Status:** Complete & current
 **Last updated:** 2026-02-21
-**Contract version:** 1.8.1
+**Contract version:** 1.8.2
 
 This directory contains the **backend API contracts** for the *Momentum Trading Assistant* web application.
 
@@ -124,6 +124,9 @@ Each endpoint file follows a consistent structure:
 - **Previous version:** 1.8.0
 
 ### Changelog (Summary)
+
+- **1.8.2 (2026-02-25)**
+-  portfolio_endpoints.md: added current_drawdown_percent (float, ≤0.0, GBP percentage) and peak_portfolio_value (float, GBP) to GET /portfolio response data object. Both fields always present; default 0.0 when no portfolio_history exists. QWB BLG-FEAT-01, decision D1.
 
 - **1.8.1 (2026-02-21)**
   - `analytics_endpoints.md`: added `severity` field to each `POST /validate/calculations` validation result object (values: `critical` | `high` | `medium` | `low`); added `by_severity` object to `summary` with `total`/`passed`/`warned`/`failed` counts per tier; added severity model reference table mapping metrics to severity tiers and required actions on failure; updated metrics validated table to include severity column and `capital_efficiency` row (previously absent from table); updated response example; removed resolved known limitation entries for Sharpe variance and capital efficiency (resolved in BLG-TECH-01). This is the canonical contract spec for BLG-TECH-02 engineering implementation.
