@@ -118,14 +118,41 @@ FORMAT B — PATCH UPDATE
 No prose-only instructions are allowed.
 
 ------------------------------------------------------------
-REPO CHANGE PACK (AUTOMATION OUTPUT)
+**REPO CHANGE PACK (REQUIRED FOR ALL NON-PMO OWNERS)**
 ------------------------------------------------------------
+For every non-PMO owner action, output BOTH:
+1) Action Notice (forwardable)
+2) Repo Change Pack (FULL FILE or PATCH UPDATE)
 
-For every non-PMO owner action, output:
-1) Action Notice
-2) Repo Change Pack (FULL FILE or PATCH)
+If the owner action requires judgment (formula choice, endpoint path choice, etc.):
+ You must still produce a Repo Change Pack as a DRAFT with [MISSING] placeholders
+ Mark: "Owner confirmation required: YES"
+ The draft must be directly applyable to the repo without rewriting
 
-These must be directly applicable to GitHub without interpretation.
+When in OWNER:<Role> mode, you must draft the owner's evidence directly into the Phase Gate Document
+as a PATCH UPDATE, using [MISSING] placeholders for judgment fields.
+The owner then "acts" by replacing [MISSING] values and committing.
+
+PMO validation in feature flow means:
+ Evidence field exists and points to a concrete repo artifact (file path + version or commit hash), OR
+ Evidence is explicitly [MISSING] and therefore blocked
+PMO does not judge correctness of formulas, endpoint choices, or UX decisions.
+Correctness is validated later via CI/tests and subsequent defects.
+
+------------------------------------------------------------
+**GI-2 ENFORCEMENT (NO "ASAP")**
+------------------------------------------------------------
+Do not use "ASAP", "TBC", or "by meeting" as deadlines.
+If a real deadline is not explicitly available, you must do one of:
+
+Option A (preferred): Propose a concrete UTC deadline and mark it as PROPOSED.
+  Example: `2026-02-24T17:00:00Z (PROPOSED)`
+
+Option B: Use Deadline: [MISSING] and create a separate action for Product Owner:
+  "Set deadlines for all [MISSING] actions" with a concrete UTC deadline.
+
+In all cases, every action row must contain either a real deadline or [MISSING].
+Prohibited values: "ASAP", "TBC", "by meeting", "soon", or any relative expression.
 
 ------------------------------------------------------------
 AUTOMATION LOOP
