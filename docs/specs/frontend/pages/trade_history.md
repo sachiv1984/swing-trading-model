@@ -2,8 +2,8 @@
 
 **Owner:** Frontend Specifications & UX Documentation Owner  
 **Status:** Canonical  
-**Version:** 1.0
-**Last Updated:** February 18, 2026
+**Version:** 1.1
+**Last Updated:** February 22, 2026
 
 ## Purpose & User Goals
 The Trade History page provides a complete record of all **closed trades**, allowing users to review past performance, analyze decisions, and learn from journal entries.
@@ -61,9 +61,39 @@ Columns include:
 - Entry price (native currency)  
 - Exit price (native currency)  
 - P&L (GBP)  
-- P&L %  
+- P&L %
+- R-Multiple
 - Days held  
-- Exit reason  
+- Exit reason
+
+#### R-Multiple Column
+
+**Calculation:** Frontend-only. Canonical formula (per `metrics_definitions.md` v1.5.7 --- Tier 1, Visualisation-Only):
+
+```
+R = (exit_price - entry_price) / (entry_price - stop_price)
+```
+
+**Data source:** `trades_for_charts` array from `GET /analytics/metrics`. Fields used:
+
+-   `entry_price`
+-   `exit_price`
+-   `stop_price`
+
+> **Note:** The Trade History table is currently sourced from `GET /trades`. R-multiple requires `stop_price`, which is not present in `GET /trades` (confirmed D2a --- absent from direct response). The R-multiple column reads from `trades_for_charts` via `GET /analytics/metrics` and is joined to the trade table by trade `id`. The page must call both endpoints when this column is visible.
+
+**Null handling:** If a trade has no matching entry in `trades_for_charts`, or if `stop_price` is null or zero for that trade (denominator would be zero), display `---` (em dash) in the R-multiple cell. Do not show 0 or an error.
+
+**Display format:** Signed to 2 decimal places with "R" suffix.
+
+-   Positive: `+2.31R` (use profit colour --- green tone per design system)
+-   Negative: `-0.87R` (use loss colour --- red tone per design system)
+-   Zero: `0.00R` (neutral colour)
+-   Missing: `---` (muted, no colour treatment)
+
+**Colour treatment:** Follows profit/loss colour convention from `design_system.md`. Positive R is green, negative R is red. Thresholds (green ≤5%, amber ≤10% etc.) defined for the Drawdown widget do **not** apply here --- R-multiple uses binary profit/loss colouring only.
+
+**Column sort:** Sortable ascending / descending. Trades with `---` sort to the end.
 
 **Interaction:**  
 - Clicking a row expands it to show the full journal.
@@ -136,3 +166,10 @@ Displays:
 - Users should be able to navigate back and forth between trades without losing filter context  
 
 ---
+
+## Change Log
+
+| Version | Date | Change |
+| --- | --- | --- |
+| 1.1 | 2026-02-25 | BLG-FEAT-02: Add R-Multiple column specification. Frontend-only calculation from trades_for_charts. Null handling for missing stop_price. Display format with signed R suffix and profit/loss colour. QWB D2, D2a. |
+| 1.0 | 2026-02-18 | Initial version. |
