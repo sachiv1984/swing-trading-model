@@ -119,11 +119,14 @@ Each endpoint file follows a consistent structure:
 
 ## Versioning
 
-- **Current contract version:** 1.8.1
-- **Change type:** BLG-TECH-02 contract — validation severity model
-- **Previous version:** 1.8.0
+- **Current contract version:** 1.8.4
+- **Change type:** QWB BLG-FEAT-07, decision D5.
+- **Previous version:** 1.8.3
 
 ### Changelog (Summary)
+
+- **1.8.4 (2026-02-25)**
+- trade_endpoints.md: added GET /trades/export/csv endpoint. Returns full closed trade history as text/csv attachment. 14 columns confirmed in decisions record D5. No request parameters in v1.6.1. openapi.yaml updated in same PR. QWB BLG-FEAT-07, decision D5.
 
 - **1.8.3 (2026-02-25)**
 - position_endpoints.md: added grace_days_remaining (integer | null) to GET /positions response. Derived server-side as max(0, 10 - holding_days) when grace_period = true; null otherwise. Always present. No data model change required. QWB BLG-FEAT-06, decision D4.
