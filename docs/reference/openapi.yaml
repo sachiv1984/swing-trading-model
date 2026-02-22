@@ -625,6 +625,12 @@ components:
         status: { type: string, enum: [open, closed] }
         grace_period: { type: boolean }
         display_status: { type: string, enum: [GRACE, PROFITABLE, LOSING] }
+        grace_days_remaining: { type: integer, nullable: true }
+        description: >
+        Days remaining in the 10-day grace period.
+        Derived as max(0, 10 - holding_days) when grace_period is true.
+        null when grace_period is false.
+        Always present in response.
 
     Position:
       allOf:
