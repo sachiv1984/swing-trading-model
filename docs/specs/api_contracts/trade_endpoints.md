@@ -14,7 +14,7 @@ Global response envelopes, error shape, and conventions are defined in **convent
 ## Endpoints
 
 - [GET /trades](#get-trades)
-- [GET /trades/export/csv] (#get-trades-export-csv)
+- [GET /trades/export/csv](#get-trades-export-csv)
 
 ---
 
