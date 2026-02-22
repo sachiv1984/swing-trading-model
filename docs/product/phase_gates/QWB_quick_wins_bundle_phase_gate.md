@@ -84,12 +84,18 @@ Evidence required:
   BLG-FEAT-06: grace days field confirmed in GET /positions response
   BLG-FEAT-07: no schema changes required — confirmed by audit
 
-- Evidence:         [MISSING — A-PRE-01, A-PRE-02 outstanding]
-- Owner confirmation: No — Metrics Definitions owner, 2026-02-22
-- PMO validation:   Fail — PMO Lead, 2026-02-22 (evidence not yet present)
-```
+#### R.1 — BLG-FEAT-01: Drawdown formula confirmed
 
+ Evidence:         `docs/specs/metrics_definitions.md` [MISSING: version number after update]
+                    Formula confirmed: [MISSING: exact formula e.g. "(peak_equity - current_equity) / peak_equity"]
+                    Data source confirmed: [MISSING: existing GET /analytics/metrics field name OR new endpoint required]
+                    Display format confirmed: [MISSING: e.g. "Drawdown: -8.2%, 12 days underwater"]
+ Owner confirmation: [MISSING: Yes/No] — Metrics Definitions owner, [MISSING: date]
+ PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
+
+```
 ### Gate R.1a — Settings table dependency
+
 ```
 Gate item:  No bundle item reads from or writes to the settings table.
 
