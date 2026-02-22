@@ -3,8 +3,8 @@
 **Owner:** PMO Lead
 **Type:** PMO Process Template
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-02-21
+**Version:** 1.2
+**Last Updated:** 2026-02-22
 
 ---
 
@@ -71,11 +71,18 @@ For every endpoint the feature calls or introduces:
 
 ### 3. Frontend Spec Readiness
 
-- [ ] Is the relevant component or page spec (e.g. `position_form.md`, `settings.md`) up to date?
-- [ ] Does the Frontend Spec owner have enough context to participate in the pre-alignment meeting?
-- [ ] Are there UX decisions that need to be pre-resolved before the meeting (e.g. widget placement, interaction model)?
+ [ ] **Has the Frontend Spec owner been briefed on this feature before this audit completes?**
+      Written confirmation of briefing is required. This is a mandatory gate item — not advisory.
+      Acceptable evidence: a written confirmation from the Frontend Spec owner that they have
+      received the feature description and understand the page/component targets.
+ [ ] Is the relevant component or page spec (e.g. `position_form.md`, `settings.md`) up to date?
+ [ ] Are there UX decisions that need to be pre-resolved before the meeting (e.g. widget placement, interaction model)?
 
-**Failure condition:** Significant UX decisions are unresolved and would dominate the meeting. Pre-resolve or scope the UX design as a pre-meeting deliverable.
+**Failure condition (mandatory):** The Frontend Spec owner has not been briefed before the audit
+completes. The meeting may not be scheduled until written briefing confirmation exists.
+Discovering UX scope at the meeting is equivalent to discovering a data model gap at the meeting —
+it changes the effort estimate and creates pressure that compresses pre-alignment quality.
+This gate is not satisfied by "the Frontend Spec owner will be briefed at the meeting."
 
 ---
 
@@ -109,6 +116,22 @@ Produce a preliminary decisions list. This becomes the agenda for the pre-alignm
 
 ---
 
+### 7. Action Deadline Rule (GI-2 — Mandatory)
+
+Every action produced by this audit must have a deadline in one of these two forms:
+
+**Form A (preferred):** A real UTC datetime, marked PROPOSED if estimated.
+  Example: `2026-02-24T17:00:00Z (PROPOSED)`
+
+**Form B:** `[MISSING]` — with a separate action assigned to the Product Owner:
+  *"Set deadlines for all [MISSING] actions"* with its own concrete UTC deadline.
+
+Prohibited deadline values: "ASAP", "TBC", "by meeting", "soon", or any relative expression
+without a concrete date. These are GI-2 violations and must be corrected before the
+Phase Gate Document is committed.
+
+---
+
 ## Outputs
 
 ### Readiness Report
@@ -139,5 +162,6 @@ The PMO Lead does not make this call unilaterally.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-02-22 | Section 3: Frontend Spec owner briefing made mandatory hard gate (previously advisory). Section 7 added: GI-2 Action Deadline Rule — prohibits ASAP/TBC, requires UTC date or [MISSING] with deadline-setting action. Identified via QWB readiness audit lessons learnt 2026-02-22. |
 | 1.1 | 2026-02-21 | Added Section 1a — Settings Table Dependency check. Identified via lessons learnt for 3.2 Position Sizing Calculator: `default_risk_percent` settings field was discovered at the pre-alignment meeting rather than during the readiness audit, causing an estimate change from 1–2 days to 2–3 days. |
 | 1.0 | 2026-02-19 | Initial version |
