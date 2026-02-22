@@ -93,6 +93,15 @@ Evidence required:
  Owner confirmation: [MISSING: Yes/No] — Metrics Definitions owner, [MISSING: date]
  PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
 
+#### R.1 — BLG-FEAT-02: R-multiple formula confirmed
+
+ Evidence:         `docs/specs/metrics_definitions.md` [MISSING: version number after update]
+                    Formula confirmed: [MISSING: e.g. "(exit_price - entry_price) / (entry_price - stop_price)"]
+                    Calculation location: [MISSING: server-side (new endpoint field) OR frontend-only derivation]
+                    If server-side: endpoint and field name: [MISSING]
+ Owner confirmation: [MISSING: Yes/No] — Metrics Definitions owner, [MISSING: date]
+ PMO validation:   [MISSING: Pass/Fail] — PMO Lead, [MISSING: date]
+
 ```
 ### Gate R.1a — Settings table dependency
 
