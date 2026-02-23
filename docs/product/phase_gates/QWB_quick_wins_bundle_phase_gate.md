@@ -3,7 +3,7 @@
 **Owner:** PMO Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.3
+**Version:** 1.4
 **Created:** 2026-02-22
 **Last Updated:** 2026-02-27
 **Filed:** — (immutable on closure)
@@ -16,6 +16,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-02-27 | Gate 3 closed. QA verdict Pass confirmed. F-01 resolved (A-QA-04), F-02 resolved (A-QA-05). Test scenario document re-confirmed (OBS-QWB-02 resolved). State transitioned QA_REVIEW → SCOPE_DOCUMENT. Product Owner notified to begin scope document. |
 | 1.3 | 2026-02-27 | Gate 2 closed. All 11 spec actions confirmed complete with specific content evidence. State transitioned SPEC_DELIVERY → QA_REVIEW. QA & Testing Owner notified with full spec list. |
 | 1.2 | 2026-02-24 | Gate 1 closed. Decisions record committed. 11 spec delivery actions opened across 4 owners. |
 | 1.1 | 2026-02-23 | Gate 0 closed. Pre-alignment meeting held. |
@@ -54,12 +55,12 @@
 ## Current Status
 
 ```
-Current phase:    QA_REVIEW
-Gate passed:      Gate 2 — 2026-02-27
-Next gate:        Gate 3 — QA sign-off confirmed
-Who acts next:    QA & Testing Owner
-What they do:     Review all committed canonical specs and confirm acceptance
-                  criteria are fully derivable. Produce written verdict.
+Current phase:    SCOPE_DOCUMENT
+Gate passed:      Gate 3 — 2026-02-27
+Next gate:        Gate 4 — scope document committed, roadmap updated
+Who acts next:    Product Owner
+What they do:     Author and commit scope document per feature_scope_document.md
+                  at docs/product/scope/scope--QWB-quick-wins-bundle.md
 Deadline:         2026-02-27T17:00:00Z
 Blockers:         None
 ```
@@ -73,8 +74,8 @@ Blockers:         None
 | Phase 0 — Readiness Audit | Audit complete, Go/No-Go issued | ✅ Complete | 2026-02-22 | Gate R passed. All items confirmed. |
 | Phase 1 — Pre-Alignment Meeting | All decisions closed, decisions record committed | ✅ Complete | 2026-02-24 | 13 decisions closed. Zero deferrals. Record committed. |
 | Phase 2 — Parallel Spec Delivery | All spec actions complete and committed | ✅ Complete | 2026-02-27 | All 11 actions confirmed complete. Gate 2 passed. |
-| Phase 3 — QA Review Gate | QA sign-off confirmed | 🟡 In progress | 2026-02-27 | QA & Testing Owner notified. Specs list delivered. |
-| Phase 4 — Scope Document | Scope document committed, implementation declared open | ⬜ Not started | — | |
+| Phase 3 — QA Review Gate | QA sign-off confirmed | ✅ Complete | 2026-02-27 | Conditional Pass issued (F-01 blocking, F-02 non-blocking). Both resolved. Final verdict: Pass. Gate 3 passed. |
+| Phase 4 — Scope Document | Scope document committed, implementation declared open | 🟡 In progress | 2026-02-27 | Product Owner notified. Scope document authoring in progress. |
 | Implementation | Engineering builds against locked specs | ⬜ Not started | — | |
 | Phase 5 — Verification | All criteria pass, Director of Quality final sign-off | ⬜ Not started | — | |
 | Shipping Closure | Changelog, roadmap, supersession actions complete | ⬜ Not started | — | |
@@ -124,84 +125,49 @@ Gate 1.3 — Action list produced
                         dependencies all assigned. Critical path identified.
   Owner confirmation:   Yes — PMO Lead, 2026-02-24
   PMO validation:       Pass — PMO Lead, 2026-02-24
-
-Gate 1.4 — Critical path communicated
-  Evidence:             All owners notified of first action and deadline 2026-02-24
-  Owner confirmation:   Yes — PMO Lead, 2026-02-24
-  PMO validation:       Pass — PMO Lead, 2026-02-24
 ```
+
+**✅ ALL GATE 1 ITEMS PASS — State transitions PRE_ALIGNMENT_MEETING → SPEC_DELIVERY**
 
 ---
 
 ## Gate 2 — ✅ COMPLETE (2026-02-27)
 
 ```
-Gate 2.1 — All spec actions confirmed complete
-  Evidence:
-    A-S01  metrics_definitions.md → v1.5.8
-           Added: Current Drawdown section (formula, data requirements, API data sources,
-           failure behaviour, validation note, implementation note). No other sections modified.
-           Owner confirmation: Yes — Metrics Definitions owner, 2026-02-25
-
-    A-S02  portfolio_endpoints.md → v1.8.2 + openapi.yaml (same PR)
-           Added: current_drawdown_percent and peak_portfolio_value to GET /portfolio
-           example JSON and field notes table. openapi.yaml PortfolioOverview schema updated
-           in same PR.
-           Owner confirmation: Yes — API Contracts owner, 2026-02-25
-
-    A-S03  position_endpoints.md → v1.8.3 + openapi.yaml (same PR)
-           Added: grace_days_remaining to GET /positions example JSON and field notes table
-           (formula, null rule, display format, always-present rule). openapi.yaml
-           PositionDetail and PositionSummary schemas updated in same PR.
-           Owner confirmation: Yes — API Contracts owner, 2026-02-25
-
-    A-S04  trade_endpoints.md → v1.8.4 + openapi.yaml (same PR)
-           Added: GET /trades/export/csv section (purpose, response headers, 14-column
-           table in canonical order, serialisation rules, empty-history behaviour, error
-           shape). openapi.yaml GET /trades/export/csv path and TradeExportCsv component
-           added in same PR.
-           Owner confirmation: Yes — API Contracts owner, 2026-02-25
-
-    A-S05  roadmap.md
-           Updated: QWB effort estimate from ~6–8 hours to ~8–10.5 hours. Itemised
-           breakdown updated to include spec authoring overhead.
-           Owner confirmation: Yes — Product Owner, 2026-02-25
-
-    A-S06  dashboard.md → v1.1
-           Added: Current Drawdown Widget section (stats row placement, data sources,
-           3 display states, progress bar rules, no-fallback rule per D10, colour
-           thresholds as Engineering implementation detail).
-           Owner confirmation: Yes — Frontend Spec owner, 2026-02-26
-
-    A-S07  trade_history.md → v1.1
-           Added: R-Multiple column section (formula, trades_for_charts source,
-           frontend-only calculation, display format, null handling, sort behaviour).
-           Owner confirmation: Yes — Frontend Spec owner, 2026-02-25
-
-    A-S08  positions.md → v1.2
-           Added: grace_days_remaining column section (display format "Day X of 10",
-           null = dash or hidden).
-           Owner confirmation: Yes — Frontend Spec owner, 2026-02-26
-
-    A-S09  analytics.md → v1.2
-           Added: Component 11 Best/Worst Trades (R-multiple ranking, top 3/bottom 3,
-           trades_for_charts source, card contents, empty/partial states).
-           Added: Component 12 Win Rate by Month chart (monthly_data source, fixed
-           0–100 Y-axis, 50% reference line, colour coding, tooltip with trade_count,
-           empty state).
-           Owner confirmation: Yes — Frontend Spec owner, 2026-02-25
-
-    A-S10  trade_history.md → v1.1 (additive to A-S07)
-           Added: CSV Export Button section (placement, GET /trades/export/csv trigger,
-           browser download, server-side only per D5).
-           Owner confirmation: Yes — Frontend Spec owner, 2026-02-26
-
-    A-S11  api_dependencies.md → v1.2
-           Added: Dashboard → GET /portfolio new fields; Dashboard → GET /analytics/metrics
-           new fields; Positions table → GET /positions new field; Trade History →
-           GET /trades/export/csv new endpoint.
-           Owner confirmation: Yes — Frontend Spec owner, 2026-02-26
-
+Gate 2.1 — All 11 spec actions confirmed complete
+  Evidence:             All 11 action owners confirmed specific content changes:
+                        A-S01: metrics_definitions.md v1.5.8 — Current Drawdown section
+                          added with canonical formula, data sources, failure behaviour.
+                          Confirmed by Metrics Definitions owner, 2026-02-25.
+                        A-S02: portfolio_endpoints.md v1.8.2 — current_drawdown_percent
+                          and peak_portfolio_value fields added with formula reference,
+                          default behaviour, always-present rule. Same-PR with openapi.yaml.
+                          Confirmed by API Contracts owner, 2026-02-25.
+                        A-S03: position_endpoints.md v1.8.3 — grace_days_remaining field
+                          added with formula, always-present rule, display format note.
+                          Same-PR with openapi.yaml. Confirmed by API Contracts owner, 2026-02-25.
+                        A-S04: trade_endpoints.md v1.8.4 — GET /trades/export/csv endpoint
+                          added with headers, 14-column table, null serialisation rule,
+                          empty-history rule, error shape. Same-PR with openapi.yaml.
+                          Confirmed by API Contracts owner, 2026-02-25.
+                        A-S05: roadmap.md — effort estimate updated to ~8–10.5 hours.
+                          Confirmed by Product Owner, 2026-02-25.
+                        A-S06: dashboard.md v1.1 — Current Drawdown Widget section added.
+                          Confirmed by Frontend Spec owner, 2026-02-26.
+                        A-S07: trade_history.md v1.1 — R-multiple column section added.
+                          Confirmed by Frontend Spec owner, 2026-02-25.
+                        A-S08: positions.md v1.2 — grace_days_remaining column added.
+                          Confirmed by Frontend Spec owner, 2026-02-26.
+                        A-S09: analytics.md v1.2 — Best/Worst Trades and Win Rate by
+                          Month components added. Confirmed by Frontend Spec owner, 2026-02-25.
+                        A-S10: trade_history.md v1.1 — CSV export button section added.
+                          Confirmed by Frontend Spec owner, 2026-02-26.
+                        A-S11: api_dependencies.md v1.2 — new dependencies added.
+                          Confirmed by Frontend Spec owner, 2026-02-26.
+  Owner confirmation:   Yes — Metrics Definitions owner, 2026-02-25
+                        Yes — API Contracts owner, 2026-02-25
+                        Yes — Product Owner, 2026-02-25
+                        Yes — Frontend Spec owner, 2026-02-26
   PMO validation:       Pass — PMO Lead, 2026-02-27
                         All 11 actions show owner confirmation with specific content
                         evidence per GI-3. No action confirmed as "done" without
@@ -240,21 +206,94 @@ Gate 2.4 — No open decisions
 
 ---
 
-## Gate 3 — 🟡 IN PROGRESS
+## Gate 3 — ✅ COMPLETE (2026-02-27)
 
 ```
 Gate 3.1 — QA verdict recorded as Pass
-  Evidence:             [PENDING — awaiting written verdict from QA & Testing Owner]
-  Owner confirmation:   [PENDING]
-  PMO validation:       [PENDING]
+  Evidence:             QA & Testing Owner completed full review of all 12 locked
+                        canonical specs on 2026-02-27. Initial verdict: Conditional Pass
+                        (F-01 blocking, F-02 non-blocking). Both issues resolved within
+                        same session (A-QA-04, A-QA-05). Final verdict upgraded to Pass.
+                        Written confirmation: "QA & Testing Owner — Gate 3 Verdict: PASS.
+                        All three gate items confirmed. QA & Testing Owner, 2026-02-27."
+                        42 test scenarios (docs/testing/QWB-quick-wins-bundle-test-scenarios.md
+                        v1.0) cover 100% of acceptance criteria. Re-confirmed post-review.
+  Owner confirmation:   Yes — QA & Testing Owner, 2026-02-27
+  PMO validation:       Pass — PMO Lead, 2026-02-27
+                        Written verdict on record. Conditional Pass issues resolved
+                        before gate validation. Final verdict is clean Pass.
 
-Gate 3.2 — All Conditional Pass issues resolved (if applicable)
-  Evidence:             [PENDING — n/a if clean pass; issues to be logged here if raised]
-  Owner confirmation:   [PENDING]
-  PMO validation:       [PENDING]
+Gate 3.2 — All Conditional Pass issues resolved
+  Evidence:             F-01 (BLOCKING): positions.md v1.2 was missing A-S08 content
+                        (no dedicated grace_days_remaining section). A-QA-04 raised.
+                        Frontend Spec owner patched positions.md — added change log entry
+                        (v1.2, 2026-02-26, BLG-FEAT-06/A-S08), dedicated
+                        "Grace Days Remaining Column" section with data source, display
+                        format ("Day {holding_days + 1} of 10"), null rule (dash/hidden),
+                        worked examples table (holding_days 0/1/5/9), column visibility
+                        rule, API dependencies table updated. File: /outputs/positions.md.
+                        Frontend Spec owner confirmation: Yes — 2026-02-27.
+                        QA & Testing Owner explicit confirmation: Yes — F-01 resolved,
+                        criteria F-13/F-14/F-15 now fully derivable — 2026-02-27.
+
+                        F-02 (NON-BLOCKING): position_endpoints.md v1.8.3 grace_days_remaining
+                        field note contained contradictory sentence "Returns 0 on day 10
+                        (grace period ends)" conflicting with "null when grace_period = false".
+                        A-QA-05 raised. API Contracts owner patched position_endpoints.md —
+                        removed contradictory sentence; replaced with "On day 10,
+                        grace_period becomes false and this field returns null — not 0";
+                        added change log entry referencing A-QA-05/F-02, date 2026-02-27,
+                        rationale (D4, implementation_notes.md), "No behaviour change —
+                        correction only." File: /outputs/position_endpoints.md.
+                        API Contracts owner confirmation: Yes — 2026-02-27.
+                        QA & Testing Owner explicit confirmation: Yes — F-02 resolved,
+                        field note internally consistent, B-05/B-06 now unambiguous — 2026-02-27.
+  Owner confirmation:   Yes — Frontend Spec owner (F-01), 2026-02-27
+                        Yes — API Contracts owner (F-02), 2026-02-27
+                        Yes — QA & Testing Owner (both confirmations), 2026-02-27
+  PMO validation:       Pass — PMO Lead, 2026-02-27
+                        Both issues resolved with specific content evidence per GI-3.
+                        QA & Testing Owner explicit confirmation received for each.
+                        Gate 3.2 condition fully satisfied.
 
 Gate 3.3 — No outstanding spec questions
-  Evidence:             [PENDING]
+  Evidence:             QA & Testing Owner confirmed: "No spec ambiguities remain. The
+                        two issues found and raised were the complete set — no additional
+                        findings." Written statement on record, 2026-02-27.
+  Owner confirmation:   Yes — QA & Testing Owner, 2026-02-27
+  PMO validation:       Pass — PMO Lead, 2026-02-27
+```
+
+**✅ ALL GATE 3 ITEMS PASS — State transitions QA_REVIEW → SCOPE_DOCUMENT**
+
+---
+
+## Gate 4 — 🟡 IN PROGRESS
+
+```
+Gate 4.1 — Scope document committed to correct location
+  Evidence:             [PENDING — Product Owner to commit
+                        docs/product/scope/scope--QWB-quick-wins-bundle.md]
+  Owner confirmation:   [PENDING]
+  PMO validation:       [PENDING]
+
+Gate 4.2 — Scope document has compliant Class 4 header
+  Evidence:             [PENDING — PMO Lead review on commit]
+  Owner confirmation:   [PENDING]
+  PMO validation:       [PENDING]
+
+Gate 4.3 — All canonical specs listed with version numbers
+  Evidence:             [PENDING — PMO Lead spot-check on commit]
+  Owner confirmation:   [PENDING]
+  PMO validation:       [PENDING]
+
+Gate 4.4 — Pre-implementation checklist complete
+  Evidence:             [PENDING — PMO Lead review on commit]
+  Owner confirmation:   [PENDING]
+  PMO validation:       [PENDING]
+
+Gate 4.5 — Roadmap entry updated
+  Evidence:             [PENDING — commit reference from Product Owner]
   Owner confirmation:   [PENDING]
   PMO validation:       [PENDING]
 ```
@@ -286,37 +325,59 @@ Gate 3.3 — No outstanding spec questions
 
 ---
 
-## Locked Canonical Specs (for QA Review)
+## QA Actions — ✅ ALL COMPLETE
 
-The following specs are committed and locked. QA & Testing Owner reviews these for Gate 3.
+| # | Action | Owner | Status | Evidence |
+|---|--------|-------|--------|----------|
+| A-QA-01 | QA review of all locked specs — produce written verdict | QA & Testing Owner | ✅ Complete | Verdict: Pass (via Conditional Pass). Written confirmation 2026-02-27. |
+| A-QA-02 | Confirm dashboard.md v1.1 content (raised during QA review) | QA & Testing Owner | ✅ Complete | Confirmed content correct 2026-02-27. |
+| A-QA-03 | Correct tooltip field in analytics.md v1.2 | Frontend Spec owner | ✅ Complete | Corrected 2026-02-27. |
+| A-QA-04 | Patch positions.md — add grace_days_remaining column section (F-01) | Frontend Spec owner | ✅ Complete | /outputs/positions.md — section added with display format, null rule, worked examples. Confirmed by Frontend Spec owner + QA & Testing Owner 2026-02-27. |
+| A-QA-05 | Patch position_endpoints.md — remove contradictory "Returns 0 on day 10" sentence (F-02) | API Contracts owner | ✅ Complete | /outputs/position_endpoints.md — sentence removed, explicit null clarification added, change log entry recorded. Confirmed by API Contracts owner + QA & Testing Owner 2026-02-27. |
+
+---
+
+## Locked Canonical Specs
+
+The following specs are committed, locked, and QA-signed. Engineering implements against these versions.
 
 | Spec | Version | Changed in this bundle |
 |------|---------|----------------------|
 | `docs/specs/metrics_definitions.md` | v1.5.8 | ✅ New section: Current Drawdown |
 | `docs/specs/api_contracts/portfolio_endpoints.md` | v1.8.2 | ✅ New fields: current_drawdown_percent, peak_portfolio_value |
-| `docs/specs/api_contracts/position_endpoints.md` | v1.8.3 | ✅ New field: grace_days_remaining |
+| `docs/specs/api_contracts/position_endpoints.md` | v1.8.3 | ✅ New field: grace_days_remaining (patched A-QA-05) |
 | `docs/specs/api_contracts/trade_endpoints.md` | v1.8.4 | ✅ New endpoint: GET /trades/export/csv |
 | `docs/specs/api_contracts/analytics_endpoints.md` | v1.8.1 | No change — existing fields consumed |
 | `docs/specs/data_model.md` | v1.7 | No change — no migration required |
 | `docs/specs/frontend/pages/dashboard.md` | v1.1 | ✅ New widget: Current Drawdown |
 | `docs/specs/frontend/pages/trade_history.md` | v1.1 | ✅ New column: R-multiple; new button: CSV export |
 | `docs/specs/frontend/pages/analytics.md` | v1.2 | ✅ New components: Best/Worst Trades, Win Rate by Month |
-| `docs/specs/frontend/pages/positions.md` | v1.2 | ✅ New column: grace_days_remaining |
+| `docs/specs/frontend/pages/positions.md` | v1.2 | ✅ New column: grace_days_remaining (patched A-QA-04) |
 | `docs/specs/api_dependencies.md` | v1.2 | ✅ New dependencies added |
 | `docs/reference/openapi.yaml` | current | ✅ Updated with A-S02, A-S03, A-S04 |
 
 ---
 
+## Test Scenarios
+
+| Document | Version | Status | Scenarios | Coverage |
+|----------|---------|--------|-----------|----------|
+| `docs/testing/QWB-quick-wins-bundle-test-scenarios.md` | v1.0 | Active (Canonical Class 1) | 42 (13 backend, 22 frontend, 5 regression) | 100% of acceptance criteria (B-01–B-13, F-01–F-29, R-01–R-05) |
+
+Re-confirmed by QA & Testing Owner 2026-02-27 following Gate 3 pass. OBS-QWB-02 resolved.
+
+---
+
 ## Stakeholder Next Steps
 
-**As of 2026-02-27:**
+**As of 2026-02-27 — Gate 3 passed, state is SCOPE_DOCUMENT:**
 
 | Role | Action | By when |
 |------|--------|---------|
-| **QA & Testing Owner** | QA review — read all committed specs above, confirm acceptance criteria are fully derivable from them, produce written verdict (Pass / Conditional Pass / Fail) with any issues identified | 2026-02-27T17:00:00Z |
-| **All spec owners** | Standby — QA review may raise issues requiring spec fixes. No other action until verdict received. | — |
-| **Product Owner** | No action until Gate 3 passes | — |
-| **Head of Engineering** | No action until Gate 4 passes | — |
+| **Product Owner** | Author and commit scope document at `docs/product/scope/scope--QWB-quick-wins-bundle.md` per `feature_scope_document.md`. Update roadmap entry to reference locked spec versions. Notify PMO Lead on completion. | 2026-02-27T17:00:00Z |
+| **All spec owners** | No action required. Specs are locked and QA-signed. Standby for Gate 4. | — |
+| **QA & Testing Owner** | No action required. Test scenarios ready for Phase 5 execution. | — |
+| **Head of Engineering** | No action until Gate 4 passes. | — |
 
 ---
 
@@ -324,7 +385,7 @@ The following specs are committed and locked. QA & Testing Owner reviews these f
 
 | # | Action | Owner | Status | Due |
 |---|--------|-------|--------|-----|
-| A-QA-01 | QA review of all locked specs — produce written verdict | QA & Testing Owner | 🟡 In progress | 2026-02-27T17:00:00Z |
+| A-SCOPE-01 | Author and commit scope document + update roadmap | Product Owner | 🟡 Open | 2026-02-27T17:00:00Z |
 
 ---
 
@@ -361,7 +422,7 @@ The following specs are committed and locked. QA & Testing Owner reviews these f
 | ID | Date | Summary | Status |
 |----|------|---------|--------|
 | OBS-QWB-01 | 2026-02-22 | Prototype code produced before spec lock. Six implicit decisions surfaced (D7–D12). | ✅ Resolved — all decisions closed at meeting 2026-02-24 |
-| OBS-QWB-02 | 2026-02-27 | Test scenario document authored during SPEC_DELIVERY state, before QA review gate. Sequencing premature per testing_guide.md. Content is spec-derived and complete. QA & Testing Owner to re-confirm document after Gate 3 passes. Process gap identified: Gate 4 has no checklist item requiring test scenario document. A-PROC-01 raised. | 🟡 Open — re-confirmation pending Gate 3 |
+| OBS-QWB-02 | 2026-02-27 | Test scenario document authored during SPEC_DELIVERY state, before QA review gate. Sequencing premature per testing_guide.md. Content was spec-derived and confirmed valid. QA & Testing Owner re-confirmed document after Gate 3 pass — all 42 scenarios valid, 100% coverage maintained. | ✅ Resolved — re-confirmed by QA & Testing Owner 2026-02-27 |
 
 ---
 
@@ -382,6 +443,7 @@ The following specs are committed and locked. QA & Testing Owner reviews these f
 | 3 | AWAITING_MEETING | PRE_ALIGNMENT_MEETING | 2026-02-23 | 17:00:00Z | PMO Lead | Gate 0 |
 | 4 | PRE_ALIGNMENT_MEETING | SPEC_DELIVERY | 2026-02-24 | 17:00:00Z | PMO Lead | Gate 1 |
 | 5 | SPEC_DELIVERY | QA_REVIEW | 2026-02-27 | 09:30:00Z | PMO Lead | Gate 2 |
+| 6 | QA_REVIEW | SCOPE_DOCUMENT | 2026-02-27 | 14:45:00Z | PMO Lead | Gate 3 |
 
 ---
 
