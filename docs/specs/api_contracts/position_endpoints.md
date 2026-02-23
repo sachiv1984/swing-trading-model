@@ -15,6 +15,15 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 ---
 
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.8.3 | 2026-02-25 | BLG-FEAT-06 (A-S03): Added `grace_days_remaining` (integer \| null) to `GET /positions` response. Derived server-side as `max(0, 10 - holding_days)` when `grace_period = true`; `null` when `grace_period = false`. Always present. No data model change required. QWB decision D4. |
+| 1.8.3 | 2026-02-27 | A-QA-05 (F-02): Removed contradictory sentence "Returns 0 on day 10 (grace period ends)" from `grace_days_remaining` field note. Canonical behaviour is `null` when `grace_period = false` (consistent with decision D4 and `implementation_notes.md`). No behaviour change — correction only. |
+
+---
+
 ## Endpoints
 
 - [GET /positions](#get-positions)
@@ -96,7 +105,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `exit_note` | Always `null` for open positions. Present for schema consistency with closed trade records |
 | `tags` | Array of tag strings. Empty array if no tags set |
 | `pnl_percent` | Percentage P&L relative to entry cost. Same value as would be seen in `pnl_pct` in trade records. Both field names exist in the system for compatibility; `pnl_percent` is the canonical name in position responses |
-| `grace_days_remaining` | integer when grace_period = true, null when grace_period = false. Derived server-side as max(0, 10 - holding_days) during the grace period. Represents the number of days remaining in the grace window. Returns 0 on day 10 (grace period ends). Intended display format: "Day {holding_days + 1} of 10". Always present in the response object.   |
+| `grace_days_remaining` | `integer` when `grace_period = true`; `null` when `grace_period = false`. Derived server-side as `max(0, 10 - holding_days)` during the grace period. Represents the number of days remaining in the grace window. On day 10, `grace_period` becomes `false` and this field returns `null` — not `0`. Intended display format: `"Day {holding_days + 1} of 10"`. Always present in the response object. |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
