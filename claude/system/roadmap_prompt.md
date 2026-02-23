@@ -227,9 +227,6 @@ If claude/backlog/backlog.md is missing:
 - Create it as Class 4 Planning Document owned by Product Owner, Status: Active, Last Updated: today.
 - Do not invent content; initialise with an empty structure and a “no backlog items recorded yet” notice.
 
-If any required canonical governance input is missing or non‑compliant:
-- Halt execution.
-
 Define:
 - cycle_id = `YYYY-MM-DD__item-<id>` where `<id>` is the completed roadmap item ID (e.g. `2026-02-23__item-3.2`).
 
@@ -239,6 +236,28 @@ If a required authority role is not defined in claude/agents/, or its charter is
 - Halt execution.
 - Report the missing authority explicitly.
 - Do not infer, substitute, or bypass the role.
+
+#### Step 0.A — Minimal Header Remediation (Class 4 & 5 Only)
+
+If a Class 4 (Planning Document) or Class 5 (Role Charter) document exists but fails lifecycle compliance due to header issues only,
+the Head of Specs Team may perform a minimal remediation to the header before proceeding.
+
+Allowed remediation:
+- Add missing required header fields for the document’s class
+- Correct header formatting (ordering, spacing, line breaks)
+- Correct obvious header-label errors (e.g., "Last updated" → "Last Updated")
+- Update Last Updated to today if a header-only change is made
+- Add missing "Class: Planning Document (Class 4)" for Class 4 documents
+- Add missing "Version: x.y" for Class 5 documents (using minor increment only if the charter already had a versioning scheme)
+
+Not allowed remediation:
+- Any modification to body content
+- Any modification to decision logic, rules, or requirements
+- Any change to ownership beyond what is mandated by the document class rules
+- Any change to lifecycle state that would alter meaning or governance interpretation
+
+If the compliance issue is not strictly header-only, or the document is Class 1 or Class 6:
+- Halt execution and report the violation.
 
 ---
 
@@ -338,10 +357,12 @@ Write summary:
 
 ---
 
-### STEP 5 — Structured Debate (Zero‑Sum)  
+### STEP 5 — Structured Debate (Zero‑Sum)
 Authorities: Product Owner (chair) + Challenger (non‑decision challenge)
 
 For each candidate idea (and each ⚠ initiative under reconsideration), require answers:
+
+5.0 Required Case (Sponsor / Product Owner must state)
 1) What problem does this solve?
 2) Which strategy intent or boundary in strategy_rules.md does it serve, and which roadmap outcome does it advance?
 3) What happens if we don’t do it?
@@ -349,6 +370,41 @@ For each candidate idea (and each ⚠ initiative under reconsideration), require
 
 Hard rule:
 - If no displacement is named, the item cannot advance.
+
+#### 5.1 Challenger Counter‑Argument (Mandatory, Evidence-Based)
+For every candidate that is proposed to ✅ Advance, the Challenger must provide exactly ONE specific reason it should be 🅿 Parked or ❌ Rejected.
+
+Constraints on the counter‑argument:
+- It must cite a specific constraint, intent, or boundary from strategy_rules.md (or other canonical governance constraints).
+- It must be concrete (not generic risk statements).
+- It must specify the failure mode (what breaks, what violates intent, what opportunity cost is unacceptable).
+- It must name which outcome it implies: 🅿 Park or ❌ Reject.
+
+Format (must be used):
+- Challenger position: Park | Reject
+- Evidence: quote or section reference from strategy_rules.md (e.g., §3 human-in-loop, §13 boundaries)
+- Reason: one paragraph
+- Consequence: what happens if we proceed anyway
+
+If the Challenger cannot produce an evidence-based counter‑argument:
+- Treat this as a process failure.
+- Halt execution and record the gap in lessons learnt.
+
+#### 5.2 Product Owner Response (Mandatory, Must Address Counter-Argument)
+Before any candidate proceeds to scoring (STEP 6), the Product Owner must explicitly respond to the Challenger’s counter‑argument.
+
+Allowed responses:
+- Accept: downgrade to 🅿 Park or ❌ Reject (with rationale)
+- Rebut: explain why the counter‑argument does not apply (with references)
+- Modify: change scope/approach so the counter‑argument no longer applies, then restate displacement
+
+The Product Owner response must:
+- address the evidence cited
+- state the final outcome (Advance | Park | Reject)
+
+If the Product Owner does not explicitly address the counter-argument:
+- The item cannot proceed to scoring.
+- Treat as a governance failure and halt.
 
 Outcomes per item:
 - ✅ Advance
@@ -360,7 +416,6 @@ Record:
 
 Update rejected‑but‑strong ideas where applicable:
 - `claude/ideas/rejected_but_strong.md` (create if needed)
-
 ---
 
 ### STEP 6 — Scoring Matrix Overlay (Decision Support Only)  
@@ -426,6 +481,38 @@ In this case:
 - The roadmap must still be re-written with an updated Last Updated date.
 - A decision log entry must be added stating that no changes were made and why.
 - The run must not invent changes to satisfy process flow.
+
+### STEP 8.5 — Stateless Write Safety Gate (Hard Gate)
+
+Purpose:
+- Prevent prohibited writes due to context overflow or instruction drift.
+
+Before executing STEP 9, you must perform a stateless verification:
+
+1) Re-read Section 5 (Write Scope Restriction) verbatim.
+2) Re-read Section 10 (Completion Condition) verbatim.
+3) Construct a complete “write plan” listing every file you intend to create or modify in STEP 9.
+
+Write plan must include:
+- file path
+- action (create | modify | append-only)
+- reason (which step requires it)
+
+Verification rules:
+- Every file in the write plan must be within the allowed write scope in Section 5.
+- No file outside allowed scope may be created, modified, or reformatted.
+- Decision log updates must be append-only as per the Decision Log Invariant.
+
+If any violation is detected:
+- Discard the pending write plan immediately.
+- Do not write any files.
+- Report the conflict precisely:
+  - offending file path(s)
+  - which rule was violated
+  - what would have been written
+- Halt execution.
+
+Only if the write plan passes verification may STEP 9 proceed.
 
 ---
 
