@@ -4,81 +4,115 @@ Team Charter -- Roles & Accountability
 Purpose
 -------
 
-This document defines **how roles work together**, where authority sits, and how accountability is maintained across the organization.
+This document defines **how authority, ownership, and accountability are distributed** across the Momentum Trading Assistant organization.
+
+It exists to ensure that:
+
+-   Every decision domain has a single accountable owner
+-   Canonical truth prevails over implementation, analytics, or interpretation
+-   Validation is independent from execution
+-   Financial, technical, and strategic integrity are protected as the system evolves
 
 * * * * *
 
-Core Principles
----------------
+Core Operating Principles
+-------------------------
 
--   **Single ownership per decision domain**
--   **Canonical truth over tribal knowledge**
--   **Validation is independent from execution**
--   **Trade‑offs are explicit, not hidden**
+-   **Single ownership per domain**
+-   **Canonical documentation over tribal knowledge**
+-   **Independence between intent, execution, and validation**
+-   **Explicit boundaries prevent accidental scope creep**
+-   **Records assert facts; analytics explain them**
 
 * * * * *
 
-Role System Overview
---------------------
+Role System Overview (Updated)
+------------------------------
 
-### Product & Intent
+### Product & Strategic Intent
 
--   **Product Owner** -- Owns product intent, prioritization, and outcomes
+-   **Product Owner**\
+    Owns product intent, prioritisation, roadmap trade‑offs, and outcome accountability.
 
-### Canonical Truth
+-   **Strategy Rules & System Intent Owner**\
+    Owns the deterministic trading strategy, lifecycle rules, and system boundaries.
 
--   **Head of Specs Team** -- Owns the system of canonical truth
--   **Strategy Rules Owner**
--   **Data Model Owner**
--   **Metrics Definitions Owner**
--   **API Contracts Owner**
--   **Frontend Specifications Owner**
+* * * * *
 
-### Execution & Operations
+### Canonical Truth & Specification System
 
--   **Head of Engineering** -- Owns implementation and reliability
--   **Infrastructure & Operations Owner**
--   **Backend Engineering Patterns Owner**
--   **Base44 Frontend Prompt Owner**
+-   **Head of Specs Team**\
+    Owns the coherence, governance, and lifecycle of all canonical specifications.
 
-### Quality & Validation
+-   **Data Model & Domain Schema Owner**\
+    Owns financial and domain data semantics.
 
--   **Director of Quality** -- Owns system confidence
--   **QA & Testing Owner**
--   **QA Lead**
+-   **Metrics Definitions & Analytics Canonical Owner**\
+    Owns analytical meaning, formulas, and validation tolerances.
 
-### Governance & Risk
+-   **API Contracts & Documentation Owner**\
+    Owns API behaviour, request/response contracts, and versioning discipline.
 
--   **Cybersecurity & Trust Lead**
--   **AI Compliance & Governance Officer**
--   **FinOps & Resource Architect**
+-   **Frontend Specifications & UX Documentation Owner**\
+    Owns user-visible behaviour and UX intent as canonical documentation.
 
-### Delivery Orchestration
+* * * * *
 
--   **PMO Lead** -- Owns delivery state and gate integrity
+### Engineering & Execution
+
+-   **Head of Engineering**\
+    Owns system implementation, delivery execution, and operational reliability.
+
+-   **Infrastructure & Operations Owner**\
+    Owns deployment, environments, runbooks, and operational documentation.
+
+-   **Backend Engineering Patterns Owner**\
+    Owns backend implementation standards and patterns.
+
+-   **Base44 Frontend Prompt Owner**\
+    Owns translation of frontend canonical specs into Base44 prompts and code integration.
+
+* * * * *
+
+### Quality, Validation & Delivery Governance
+
+-   **Director of Quality**\
+    Owns system confidence, verification independence, and quality governance.
+
+-   **QA & Testing Owner**\
+    Owns test strategy, acceptance criteria, and regression coverage.
+
+-   **QA Lead**\
+    Owns test execution, automation, and release confidence reporting.
+
+-   **PMO Lead**\
+    Owns delivery state, phase gates, invariant enforcement, and auditability.
+
+* * * * *
+
+### Governance, Risk & Trust
+
+-   **Cybersecurity & Trust Lead**\
+    Owns security posture, threat models, and trust boundaries.
+
+-   **AI Compliance & Governance Officer**\
+    Owns AI usage constraints, compliance, and ethical governance.
+
+-   **FinOps & Resource Architect**\
+    Owns cost visibility, resource efficiency, and economic sustainability.
+
+* * * * *
+
+### Financial Records & External Trust
+
+-   **Financial Reporting & Records Owner**\
+    Owns formal financial reports, tax‑relevant statements, immutability rules, and reconciliation between analytics and records.
+
+This role exists to ensure **analytics do not silently become financial statements**.
+
+* * * * *
 
 ### People & Organization
 
--   **Director of HR** -- Owns people systems and role clarity
-
-* * * * *
-
-Conflict Resolution
--------------------
-
--   Domain conflicts → resolved by the **domain owner**
--   Cross‑domain conflicts → escalated to **Head of Specs Team** or **Executive Leadership**
--   No role resolves disputes by implementation or workaround
-
-* * * * *
-
-Definition of Success
----------------------
-
-The organization functions well when:
-
--   Decisions have a clear owner
--   Behavior matches documented intent
--   Risks are surfaced early
--   Systems are explainable
--   People know what they own and what they do not
+-   **Director of HR**\
+    Owns people systems, role clarity, capability frameworks, and organizational health.
