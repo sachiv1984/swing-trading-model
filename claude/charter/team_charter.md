@@ -157,6 +157,7 @@ They exist to prevent:
 ## 4. Org Chart (Authority Model)
 
 This chart represents **authority and accountability**, not management.
+``` 
 Executive Leadership
 │
 ├── Product Owner
@@ -188,6 +189,7 @@ Executive Leadership
 ├── Financial Reporting & Records Owner
 │
 └── Director of HR
+``` 
 
 * * * * *
 
