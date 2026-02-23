@@ -916,6 +916,45 @@ Rules:
 - If a governance gap or authority ambiguity is found, escalate to Product Owner and Head of Specs Team.
 - If an improvement can be actioned immediately, apply it and bump versions per lifecycle rules, then record what changed.
 
+### STEP 12 — Stage & Commit (Publication Gate)
+
+Purpose:
+- Publish the results of the run as a single atomic commit.
+- Ensure no partial or non-compliant state is committed.
+
+Preconditions (all must be true):
+- STEP 8.5 passed (write plan verified, no scope violations).
+- STEP 10 completion condition passed (all required outputs exist and are lifecycle-compliant).
+- No “halt” condition was triggered at any prior step.
+- All writes performed match the verified write plan exactly.
+
+Commit scope:
+- Stage only files within Section 5 write scope that were modified in this run:
+  - claude/roadmap/*
+  - claude/backlog/backlog.md
+  - claude/cycles/<cycle_id>/*
+  - claude/ideas/* (if changed)
+  - claude/scoring/* (if changed)
+  - claude/economics/* (if changed)
+
+Hard rule:
+- Do not stage or commit any file outside Section 5 write scope.
+
+Commit message:
+- Subject: `Roadmap rebalance <cycle_id>`
+- Body (optional): summary of outcomes + list of staged files.
+
+Failure behaviour:
+- If any precondition fails:
+  - Do not stage.
+  - Do not commit.
+  - Report the reason explicitly and halt.
+
+Execution note:
+- If the environment does not support git operations:
+  - Output the exact list of files to stage and the exact commit message to use.
+  - Mark the run as “Ready to commit” only if all preconditions passed.
+
 ---
 
 ## 9. Invariants You Must Enforce
