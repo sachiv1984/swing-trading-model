@@ -86,25 +86,35 @@ Delivered co-delivered on single branch: fix/blg-tech-02-03-severity-service-con
 Phase Gate Documents: docs/product/phase_gates/BLG-TECH-02-validation-severity-model-phase-gate.md, docs/product/phase_gates/BLG-TECH-03-validationservice-consolidation-phase-gate.md
 BLG-TECH-04 (CI/CD gate) dependency now unblocked ✅
 
-#### Quick Wins Bundle *(promoted from backlog — P2)*
-**Status:** Planned — awaiting pre-alignment gate (formula/definition confirmation per item)
-**Estimated total effort:** ~6–8 hours
-**Value:** Visible, tangible user-facing improvements
+#### Quick Wins Bundle *(promoted from backlog --- P2)*
 
-All items require formula/definition confirmed by the relevant canonical owner before implementation. That confirmation is the pre-alignment gate for this bundle.
+**Status:** 🟡 Implementation Open --- 2026-02-27 **Estimated total effort:** ~8--10.5 hours (revised from ~6--8 hours to account for spec authoring --- A-S05, 2026-02-25) **Scope document:** `docs/product/scope/scope--QWB-quick-wins-bundle.md` **Decisions record:** `docs/product/decisions/QWB-quick-wins-bundle.md` **Phase Gate Document:** `docs/product/phase_gates/QWB_quick_wins_bundle_phase_gate.md` **Value:** Visible, tangible user-facing improvements. All decisions closed. All specs locked and QA-signed.
 
-| Item | Effort | Notes |
-|------|--------|-------|
-| BLG-FEAT-01 — Current Drawdown Widget | ~30 min | Depends on Metrics Definitions owner confirming drawdown calculation |
-| BLG-FEAT-02 — R-Multiple Column in Trade History | ~1 hour | Formula must be confirmed by Metrics Definitions owner; decide server-side vs frontend |
-| BLG-FEAT-04 — Best / Worst Trades Widget | ~1 hour | Top 3 / bottom 3 by R-multiple or P&L |
-| BLG-FEAT-05 — Win Rate by Month Chart | ~1 hour | Bar chart grouped by calendar month |
-| BLG-FEAT-06 — Grace Period Indicator | ~1 hour | Remaining days displayed in open positions table |
-| BLG-FEAT-07 — CSV Export of Trade History | ~1 hour | One-click export for tax and analysis use |
+| Item | Effort | Status |
+| --- | --- | --- |
+| BLG-FEAT-01 --- Current Drawdown Widget | ~30 min | 🟡 In progress |
+| BLG-FEAT-02 --- R-Multiple Column in Trade History | ~1 hour | 🟡 In progress |
+| BLG-FEAT-04 --- Best / Worst Trades Widget | ~1 hour | 🟡 In progress |
+| BLG-FEAT-05 --- Win Rate by Month Chart | ~1 hour | 🟡 In progress |
+| BLG-FEAT-06 --- Grace Period Indicator | ~1 hour | 🟡 In progress |
+| BLG-FEAT-07 --- CSV Export of Trade History | ~1 hour | 🟡 In progress |
 
-#### Pre-work items to close before v1.6.1 exits
-- **Settings canonical spec** — formalise the settings model in a dedicated canonical document before any further settings-dependent features begin. Owner: Head of Specs Team.
-- **Error response standard** — define canonical error shapes in `openapi.yaml` and apply consistently. Owner: API Contracts owner + Engineering.
+**Locked canonical specs (implementation source of truth):**
+
+| Spec | Version |
+| --- | --- |
+| `docs/specs/metrics_definitions.md` | v1.5.8 |
+| `docs/specs/api_contracts/portfolio_endpoints.md` | v1.8.2 |
+| `docs/specs/api_contracts/position_endpoints.md` | v1.8.3 |
+| `docs/specs/api_contracts/trade_endpoints.md` | v1.8.4 |
+| `docs/specs/api_contracts/analytics_endpoints.md` | v1.8.1 |
+| `docs/specs/data_model.md` | v1.7 |
+| `docs/specs/frontend/pages/dashboard.md` | v1.1 |
+| `docs/specs/frontend/pages/trade_history.md` | v1.1 |
+| `docs/specs/frontend/pages/analytics.md` | v1.2 |
+| `docs/specs/frontend/pages/positions.md` | v1.2 |
+| `docs/specs/api_dependencies.md` | v1.2 |
+| `docs/reference/openapi.yaml` | current |
 
 ---
 
