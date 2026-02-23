@@ -181,6 +181,22 @@ Rules:
 - You must not backfill historical decisions.
 - Each irreversible roadmap change (Add / Replace / Defer / Kill) must produce exactly one new entry.
 
+Each decision log entry MUST include:
+- Date
+- Decision type (Add / Replace / Defer / Kill)
+- Initiative(s) affected
+- Explicit displacement (if any)
+- Workforce impact (FTE, skills)
+- Rationale
+- Decision owner
+
+Before appending a new decision entry, you must check whether an identical decision
+(same initiative(s), same decision type, same rationale) has already been logged.
+
+If so:
+- Do not re-log the decision.
+- Reference the prior decision in the cycle summary instead.
+
 If the decision log does not exist, you may create it using a lifecycle‑compliant Class 4 header.
 If you cannot append without violating lifecycle rules:
 - Halt execution.
@@ -218,6 +234,12 @@ Define:
 
 Create `claude/cycles/<cycle_id>/` on first run if missing.
 
+If a required authority role is not defined in claude/agents/, or its charter is missing or non-compliant:
+
+- Halt execution.
+- Report the missing authority explicitly.
+- Do not infer, substitute, or bypass the role.
+
 ---
 
 ### STEP 1 — Run Manifest & Capacity Release Registration  
@@ -229,7 +251,7 @@ Before recording capacity changes or making any decisions, you must create a run
 
 - Location: `claude/cycles/<cycle_id>/run_manifest.md`
 - Class: Operational Record (Class 3)
-- Owner: Infrastructure & Operations Documentation Owner (or PMO Lead if Ops Doc Owner role is not defined in agents yet)
+- Owner: Infrastructure & Operations Owner
 
 The run manifest must record:
 - Completion event details (ID, name, date)
@@ -252,6 +274,7 @@ Record the capacity freed by the completed roadmap item:
 
 If workforce values are unknown:
 - Record them as “unknown” and flag as a blocking input only if later steps require numeric allocation to resolve conflicts.
+- If workforce values remain unknown and are required to resolve a capacity conflict, execution must halt until clarified by the FinOps & Resource Architect.
 
 ---
 
@@ -272,6 +295,12 @@ Justifications are mandatory.
 
 Write results:
 - `claude/cycles/<cycle_id>/stage1_validation.md`
+
+Any initiative marked ⚠ Re‑evaluate must, by STEP 8, be either:
+- Re‑committed (🔥) with explicit justification, or
+- Replaced, deferred, or killed.
+
+No initiative may remain indefinitely in Re‑evaluate state.
 
 ---
 
@@ -314,7 +343,7 @@ Authorities: Product Owner (chair) + Challenger (non‑decision challenge)
 
 For each candidate idea (and each ⚠ initiative under reconsideration), require answers:
 1) What problem does this solve?
-2) What strategic objective does it link to? (Anchored to `strategy_rules.md` and current roadmap intent)
+2) Which strategy intent or boundary in strategy_rules.md does it serve, and which roadmap outcome does it advance?
 3) What happens if we don’t do it?
 4) What initiative would we stop to fund this?
 
@@ -390,6 +419,13 @@ Hard rules:
 
 Write:
 - `claude/cycles/<cycle_id>/stage5_rebalance.md`
+
+It is a valid outcome of this routine that no initiatives are added, replaced, deferred, or killed.
+
+In this case:
+- The roadmap must still be re-written with an updated Last Updated date.
+- A decision log entry must be added stating that no changes were made and why.
+- The run must not invent changes to satisfy process flow.
 
 ---
 
