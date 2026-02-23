@@ -229,3 +229,15 @@ This charter exists to prevent:
 If ambiguity arises about **who decides**, this document is the reference.
 
 
+8\. Document Ownership & Governance
+-----------------------
+
+**Owner:** Head of Specs Team  
+**Contributors:** Product Owner, Director of Quality, Director of HR  
+**Document Class:** Canonical (Organisational Governance)
+
+The Head of Specs Team is responsible for maintaining coherence,
+resolving ambiguity, and enforcing alignment with this charter.
+
+The Director of HR ensures role definitions remain viable, sustainable,
+and aligned with people frameworks, but does not own authority boundaries.
