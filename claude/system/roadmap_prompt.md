@@ -360,6 +360,13 @@ Write summary:
 ### STEP 5 — Structured Debate (Zero‑Sum)
 Authorities: Product Owner (chair) + Challenger (non‑decision challenge)
 
+Before STEP 5, re-read:
+- Section 2 (Strategy Source of Truth)
+- Section 9 (Invariants)
+
+Proceed only after restating, in your own words, the top 2 constraints
+most likely to block an “easy yes”.
+
 For each candidate idea (and each ⚠ initiative under reconsideration), require answers:
 
 5.0 Required Case (Sponsor / Product Owner must state)
@@ -511,6 +518,27 @@ If any violation is detected:
   - which rule was violated
   - what would have been written
 - Halt execution.
+
+### STEP 8.6 — Run‑Level Disagreement Guardrail (Fatigue Detection)
+
+Purpose:
+- Detect cognitive convergence or fatigue across the run.
+- Prevent “everything passes” outcomes caused by late‑stage agreement bias.
+
+Rule:
+- Across all candidates evaluated in this run, at least one must be either:
+  - 🅿 Parked, or
+  - ❌ Rejected.
+
+If all candidates are marked ✅ Advance:
+- Treat this as a likely fatigue or convergence signal.
+- Halt execution.
+- Do not proceed to STEP 9.
+- Record the issue in `claude/cycles/<cycle_id>/lessons_learnt.md` as:
+  “Fatigue / convergence detected — insufficient challenge diversity.”
+
+This rule applies even if all candidates appear strong.
+Passing everything is not a valid outcome.
 
 Only if the write plan passes verification may STEP 9 proceed.
 
