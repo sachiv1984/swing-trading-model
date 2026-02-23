@@ -670,65 +670,73 @@ After this step completes:
   
 ---
 
-### STEP 9 — Canonical Write (Final Output of the Run)  
+### STEP 9 — Canonical Write (Final Output of the Run)
 Authorities: Head of Specs Team + PMO Lead (process), Product Owner (planning owner)
 
+Precondition:
+- A verified STEP 9 Write Plan exists and has passed STEP 8.5.
+- STEP 9 may only modify files explicitly listed in the verified write plan.
+- Any deviation requires returning to STEP 8.5.
+
 Update (or create-if-missing) the following Class 4 Planning Documents with lifecycle‑compliant headers:
-- `claude/roadmap/current_roadmap.md`  (FINAL REQUIRED OUTPUT)
-- `claude/roadmap/initiative_register.md` (create if needed)
-- `claude/roadmap/workforce_capacity.md` (create if needed)
-- `claude/roadmap/decision_log.md` (create if needed)
-- `claude/backlog/backlog.md` (reconcile to reflect decisions; see rules below)
+- claude/roadmap/current_roadmap.md  (FINAL REQUIRED OUTPUT)
+- claude/roadmap/initiative_register.md (create if needed)
+- claude/roadmap/workforce_capacity.md (create if needed)
+- claude/roadmap/decision_log.md (create if needed)
+- claude/backlog/backlog.md (reconcile to reflect decisions)
 
 Rules:
 - No drafts or “proposed” roadmap. Write the updated roadmap as the current authoritative planning state.
 - Do not backfill history.
-- Ensure Add/Replace/Defer/Kill outcomes are reflected.
-- Ensure decision_log captures each decision with date, owner, and rationale (append-only).
+- Ensure Add / Replace / Defer / Kill outcomes are reflected exactly as decided in STEP 8 / STEP 8.7.
+- Ensure decision_log captures each decision with date, owner, and rationale (append‑only).
 - If supersession is relevant, include successor references.
 
-**Write Plan (Pre-Commit)**
+---
+
+## STEP 9 Write Plan (Pre‑Commit — Mandatory)
 
 Cycle:
 - <cycle_id>
 
 Context refresh completed:
-- Yes (8.5.A)
+- Yes (STEP 8.5.A)
 
 ### Planned Writes (Allowlist Only)
 
-For each file, complete the block below. Do not include any file not in Section 5 write scope.
+You must complete every applicable section below.
+If no changes apply, explicitly state “No‑change”.
 
 ---
 
 #### 1) File: claude/roadmap/current_roadmap.md
 Action: modify
 Reason:
-- Reflect STEP 8 decisions (Add / Replace / Defer / Kill) in the roadmap view.
+- Reflect STEP 8 decisions in the roadmap view.
 Traceability:
-- STEP 8 decision(s): <list decision IDs or describe decisions precisely>
-- Lifecycle compliance: header check only (if required)
+- STEP 8 decision(s): <decision IDs or explicit descriptions>
+- Lifecycle compliance: header only (if required)
 Delta summary (minimal):
-- Add: <items>
-- Replace: <items>
-- Defer: <items + conditions>
-- Kill: <items>
-- No-change: <if applicable, state explicitly>
+- Add: <items | none>
+- Replace: <items | none>
+- Defer: <items + conditions | none>
+- Kill: <items | none>
+- No‑change: <explicit yes/no>
 Constraints:
-- No formatting-only edits
+- No formatting‑only edits
 - No scope expansion beyond recorded decisions
 
 ---
 
 #### 2) File: claude/roadmap/decision_log.md
-Action: append-only
+Action: append‑only
 Reason:
-- Record irreversible roadmap changes for auditability.
+- Record irreversible roadmap outcomes.
 Traceability:
 - STEP 8 decision(s): <list>
-Delta summary (minimal):
-- Append entries for: <Add/Replace/Defer/Kill or No-change>
-Append-only enforcement:
+Delta summary:
+- Append entries for: <Add / Replace / Defer / Kill | No‑change>
+Append‑only enforcement:
 - Confirm no edits to existing entries
 Duplicate decision check:
 - Confirm identical decision not already logged
@@ -738,104 +746,71 @@ Duplicate decision check:
 #### 3) File: claude/backlog/backlog.md
 Action: modify (reconciliation only)
 Reason:
-- Reconcile backlog to reflect STEP 8 decisions without grooming or reprioritisation.
+- Reconcile backlog to reflect roadmap decisions without grooming.
 Traceability:
 - STEP 8 decision(s): <list>
 Allowed changes only:
 - Move items between sections
-- Remove duplicates that are now committed roadmap initiatives
-- Add one-line status notes referencing decision log/date
-- Add minimal headings if needed (structure only)
-Delta summary (minimal):
+- Remove duplicates promoted to roadmap
+- Add one‑line status notes referencing decision log + date
+- Add minimal section headings if needed
+Delta summary:
 - Promoted to Roadmap: <count + list>
-- Deferred/Parked: <count + list + conditions>
-- Killed/Closed: <count + list>
+- Deferred / Parked: <count + list + conditions>
+- Killed / Closed: <count + list>
 - Duplicates removed: <count + list>
 Constraints:
-- Do not rewrite item descriptions beyond one-line status note
+- Do not rewrite descriptions beyond one‑line note
 - Do not reprioritise
-- Do not add new backlog items unless explicitly required by a STEP 8 Add decision and your backlog policy requires a tracking entry
+- Do not add new backlog items unless explicitly required by a STEP 8 Add decision
+
+Execution order:
+- Roadmap update must occur before backlog reconciliation.
 
 ---
 
 #### 4) File: claude/roadmap/workforce_capacity.md
 Action: create | modify | none
 Reason:
-- Record workforce economics required by STEP 7/STEP 8 decisions.
+- Record workforce economics required by STEP 7 / STEP 8 decisions.
 Traceability:
 - STEP 7 economics outcome: <summary>
 - STEP 8 decisions impacted: <list>
-Delta summary (minimal):
-- Capacity freed: <FTE + skills>
-- Allocation changes: <initiative → FTE/skills>
+Delta summary:
+- Capacity freed: <FTE + skills | none>
+- Allocation changes: <initiative → FTE/skills | none>
 Constraints:
 - No fabricated numbers
-- If unknown values block allocation conflicts, halt earlier (per STEP 1.2 rule)
+- If unknown values block conflict resolution, halt earlier (per STEP 1.2)
 
 ---
 
 #### 5) File: claude/roadmap/initiative_register.md
 Action: create | modify | none
 Reason:
-- Maintain canonical initiative inventory consistent with roadmap decisions.
+- Maintain canonical initiative inventory.
 Traceability:
 - STEP 8 decision(s): <list>
-Delta summary (minimal):
-- Status updates: <initiative → new status>
+Delta summary:
+- Status updates: <initiative → status>
 - Links added: <decision log refs>
 Constraints:
-- No new initiatives unless they were explicitly Added in STEP 8
+- No new initiatives unless explicitly Added in STEP 8
 
 ---
 
 ### Write Plan Integrity Checks (Must Pass)
 
-- All files listed above are within Section 5 write scope: Yes/No
-- Every write is traceable to:
-  - STEP 8 decision OR lifecycle compliance only: Yes/No
-- No formatting-only edits included: Yes/No
-- Decision log is append-only and duplicate-checked: Yes/No
-- Backlog edits are reconciliation-only (no grooming): Yes/No
+- All files are within Section 5 write scope: Yes / No
+- Every write is traceable to STEP 8 decision or lifecycle compliance only: Yes / No
+- No formatting‑only edits included: Yes / No
+- Decision log is append‑only and duplicate‑checked: Yes / No
+- Backlog edits are reconciliation‑only (no grooming): Yes / No
 
 If any check is “No”:
 - Discard this plan.
 - Halt per STEP 8.5.E.
-
-#### Backlog Reconciliation Rules (Deterministic; No Grooming)
-
-Purpose:
-- Prevent drift between roadmap decisions and backlog state.
-
-Backlog policy:
-- The backlog is an inventory of candidate work and parked/deferred items.
-- The roadmap is the portfolio commitment view.
-- Backlog must not contain duplicate active roadmap initiatives as separate backlog items.
-
-Allowed backlog edits (only):
-- Move items between sections
-- Add a one-line status note indicating promotion/deferral/kill with decision reference
-- Remove duplicates where an item is now a committed roadmap initiative
-- Create minimal section headings if they do not exist (structure only)
-
-Not allowed:
-- Re-prioritising backlog items
-- Rewriting backlog item descriptions beyond a one-line status note
-- Adding new backlog content not implied by decisions
-
-Mandatory reconciliation actions:
-- If an initiative is ➕ Added or 🔥 Must continue on the roadmap:
-  - If it exists in the backlog as a separate item, remove it from the active backlog list and place it under a “Promoted to Roadmap” section with a one-line note referencing the decision (date + type).
-- If an initiative is 🔁 Replaced:
-  - Move the replaced initiative to “Killed / Closed” (or “Stopped”) with a one-line note referencing the replacement decision.
-  - Ensure the replacement initiative is not duplicated across backlog and roadmap (treat as promoted if it exists as backlog item).
-- If an initiative is ⏸ Deferred or 🅿 Parked:
-  - Move it to a “Deferred / Parked” section and include its explicit return condition.
-- If an initiative is ❌ Killed:
-  - Move it to “Killed / Closed” with a one-line note referencing the decision, or remove it entirely if your backlog policy does not retain killed work (choose one and apply consistently).
-
-If you cannot update the roadmap or reconcile the backlog due to a blocking governance issue:
-- Halt and report the blocker.
-
+  
 ---
 
 ### STEP 10 — Publish Delta Summary  
