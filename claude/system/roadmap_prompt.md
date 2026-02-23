@@ -208,6 +208,74 @@ If you cannot append without violating lifecycle rules:
 
 Execute the following steps in order, without skipping.
 
+### STEP -1 — Preflight Gate (Hard Gate)
+
+Purpose:
+- Fail fast on missing prerequisites before executing the routine.
+- Prevent mid-run halts caused by missing roles, missing headers, or write permission failures.
+
+#### -1.1 Required Files Present (Governance + Planning)
+
+Verify the following exist:
+- claude/charter/team_charter.md
+- claude/charter/documentation_lifecycle_guide.md
+- claude/strategy/strategy_rules.md
+- claude/roadmap/current_roadmap.md
+- claude/backlog/backlog.md
+
+If any are missing:
+- Halt execution and report exactly which are missing.
+
+#### -1.2 Header Compliance Pre-Check (Header-Only)
+
+Verify header compliance for:
+- claude/roadmap/current_roadmap.md (Class 4 required fields: Owner, Class, Status, Last Updated)
+- claude/backlog/backlog.md (Class 4 required fields: Owner, Class, Status, Last Updated)
+
+Do not require Version for Class 4 planning documents.
+
+If a Class 4 or Class 5 document fails due to header issues only:
+- Apply Step 0.A minimal header remediation.
+If non-header lifecycle violations exist, or any Class 1 or Class 6 document is non-compliant:
+- Halt execution and report.
+
+#### -1.3 Required Authority Roles Exist (Agent Integrity)
+
+Verify that each required authority role has a corresponding agent file in claude/agents/ and that the file contains the role string in its content:
+
+Minimum required roles for this routine:
+- Product Owner
+- Strategy Rules & System Intent Owner
+- Head of Specs Team
+- PMO Lead
+- FinOps & Resource Architect
+- Infrastructure & Operations Owner
+- Director of Quality
+- Facilitator
+- Challenger
+
+For each:
+- File exists in claude/agents/
+- Contains the line: **Role:** <Role Name>
+
+If any required role is missing or malformed:
+- Halt execution.
+- Report the missing/invalid role(s).
+- Do not infer, substitute, or bypass.
+
+#### -1.4 Write Permission Test (Non-Destructive)
+
+Verify write permission for the allowed write scope by performing a non-destructive write test:
+- Create a temporary marker file under claude/cycles/ (or under the current cycle folder if already created)
+- Confirm it can be written
+- Remove it if removal is supported; otherwise leave it and record it in the run manifest as a preflight marker
+
+If write permission cannot be confirmed:
+- Halt execution and report the error.
+
+If all preflight checks pass:
+- Proceed to STEP 0.
+
 ### STEP 0 — Load and Validate Inputs (Hard Gate)
 
 Load and validate lifecycle compliance of:
