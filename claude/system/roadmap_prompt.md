@@ -478,7 +478,7 @@ Write economics:
 
 ---
 
-### STEP 8 — Final Rebalance Decision  
+### STEP 8 — Final Rebalance Decision
 Authority: Product Owner (within all constraints and vetoes)
 
 For every initiative decide:
@@ -503,10 +503,40 @@ In this case:
 - A decision log entry must be added stating that no changes were made and why.
 - The run must not invent changes to satisfy process flow.
 
+---
+
 ### STEP 8.5 — Stateless Write Safety Gate (Hard Gate)
 
 Purpose:
-- Prevent prohibited writes due to context overflow or instruction drift.
+- Prevent prohibited writes due to context overflow, instruction drift, or debate residue.
+- Ensure STEP 9 outputs reflect only the final, recorded decisions and lifecycle requirements.
+
+#### 8.5.A Context Re‑Anchoring Requirement (Refresh)
+
+Before constructing the write plan, you must perform a context refresh:
+
+- Disregard all debate prose, hypothetical arguments, challenger narratives, and exploratory reasoning from earlier steps.
+- Re-anchor exclusively to the current authoritative state represented by:
+  - Final outcomes from STEP 8 (Add / Replace / Defer / Kill decisions)
+  - The existing on-disk content of:
+    - claude/roadmap/current_roadmap.md
+    - claude/backlog/backlog.md
+    - claude/roadmap/decision_log.md
+    - claude/roadmap/workforce_capacity.md (if applicable)
+    - claude/roadmap/initiative_register.md (if applicable)
+
+You must treat these artefacts as the only sources of truth for writing.
+
+Do not rely on:
+- debate summaries
+- scoring rationale
+- challenger arguments
+- narrative justifications
+
+If a change is not implied by a recorded STEP 8 decision or required for lifecycle compliance,
+it must not appear in the write plan.
+
+#### 8.5.B Stateless Verification Steps
 
 Before executing STEP 9, you must perform a stateless verification:
 
@@ -514,25 +544,47 @@ Before executing STEP 9, you must perform a stateless verification:
 2) Re-read Section 10 (Completion Condition) verbatim.
 3) Construct a complete “write plan” listing every file you intend to create or modify in STEP 9.
 
-Write plan must include:
+Write plan must include, for each file:
 - file path
 - action (create | modify | append-only)
-- reason (which step requires it)
+- reason (which step/decision requires it)
+- traceability reference (which STEP 8 decision or lifecycle requirement)
 
-Verification rules:
+#### 8.5.C Verification Rules (Hard Constraints)
+
+All of the following must be true:
+
 - Every file in the write plan must be within the allowed write scope in Section 5.
 - No file outside allowed scope may be created, modified, or reformatted.
 - Decision log updates must be append-only as per the Decision Log Invariant.
 - Do not make formatting-only or stylistic edits. Only minimal deltas required for compliance and decision reflection are allowed.
+- STEP 9 may only modify files included in the verified write plan.
+  - If STEP 9 discovers a need to touch any additional file not in the plan, you must return to STEP 8.5 and re-verify with an updated plan.
+
+#### 8.5.D Extra Hardening — Decision-to-Write Traceability Gate
+
+For each planned write, you must be able to prove one of the following:
+
+A) It is directly required to reflect a STEP 8 decision (Add / Replace / Defer / Kill), or  
+B) It is directly required to satisfy lifecycle compliance (headers, required fields, valid state transitions), without changing body logic.
+
+If a proposed write cannot be traced to (A) or (B):
+- The write is invalid and must be removed from the plan.
+
+#### 8.5.E Failure Mode (Discard Pending Writes)
 
 If any violation is detected:
 - Discard the pending write plan immediately.
 - Do not write any files.
 - Report the conflict precisely:
   - offending file path(s)
-  - which rule was violated
+  - which rule was violated (Section 5, Decision Log Invariant, lifecycle gate, or traceability gate)
   - what would have been written
 - Halt execution.
+
+Only if the write plan passes verification may STEP 9 proceed.
+
+---
 
 ### STEP 8.6 — Run‑Level Disagreement Guardrail (Fatigue Detection)
 
@@ -546,17 +598,76 @@ Rule:
   - ❌ Rejected.
 
 If all candidates are marked ✅ Advance:
-- Treat this as a likely fatigue or convergence signal.
-- Halt execution.
 - Do not proceed to STEP 9.
-- Record the issue in `claude/cycles/<cycle_id>/lessons_learnt.md` as:
-  “Fatigue / convergence detected — insufficient challenge diversity.”
+- Trigger the Pivot Loop (STEP 8.7) exactly once.
+- After STEP 8.7 completes, re-evaluate this guardrail.
+- If the guardrail still fails after one pivot loop:
+  - Halt execution.
+  - Record “Fatigue / convergence detected — insufficient challenge diversity” in lessons learnt.
 
-This rule applies even if all candidates appear strong.
-Passing everything is not a valid outcome.
+---
 
-Only if the write plan passes verification may STEP 9 proceed.
+### STEP 8.7 — Pivot Loop (Controlled Re‑Challenge)
 
+Purpose:
+- Recover from likely convergence by forcing a disciplined second-pass challenge on the weakest ✅ Advance candidate.
+
+Trigger:
+- Executed only when STEP 8.6 detects all candidates were marked ✅ Advance.
+
+Constraints:
+- This pivot loop may run at most once per execution.
+- No new candidates may be introduced.
+- No additional files may be written as part of the pivot loop.
+
+#### 8.7.1 Facilitator identifies the weakest ✅ Advance candidate
+
+The Facilitator must select exactly one candidate as the “weakest advance” and justify the selection using at least two of:
+- weakest strategic alignment to strategy_rules.md intent/boundaries
+- highest workforce intensity relative to impact
+- lowest time to value
+- lowest reversibility (highest lock-in)
+- weakest displacement rationale (stop candidate is unclear or politically convenient)
+
+Anti‑gaming constraint:
+- The Facilitator may not select a candidate that was heavily modified solely to satisfy the STEP 8.6 guardrail.
+- Indicators of “guardrail-only modification” include:
+  - sudden scope reductions without strategic rationale,
+  - displacement swaps made only to create an apparent trade-off,
+  - changes that do not materially address strategy_rules.md constraints or workforce economics,
+  - modifications introduced only after STEP 8.6 triggered.
+
+If all candidates were heavily modified solely to satisfy the guardrail:
+- Halt execution and record “Guardrail circumvention attempt” in lessons learnt.
+
+The Facilitator must state:
+- Candidate selected
+- Why it is weakest (2+ criteria)
+- What new challenge angle is required (see 8.7.2)
+
+#### 8.7.2 Challenger re-challenges with a new angle (mandatory)
+
+The Challenger must produce a new counter‑argument for the selected candidate that:
+- is materially different from the earlier counter‑argument (not a rephrase)
+- cites a specific clause/section from strategy_rules.md and/or an economic constraint
+- concludes with a required disposition: 🅿 Park or ❌ Reject
+
+If the Challenger cannot produce a new angle:
+- Halt execution and record a process failure in lessons learnt.
+
+#### 8.7.3 Product Owner must respond and re‑decide
+
+The Product Owner must explicitly respond to the new counter‑argument and choose one:
+- Maintain ✅ Advance (must rebut with evidence)
+- Downgrade to 🅿 Park
+- Downgrade to ❌ Reject
+
+The outcome of this candidate is final for this run.
+
+After this step completes:
+- Re-check STEP 8.6.
+- Proceed to STEP 9 only if the guardrail passes.
+  
 ---
 
 ### STEP 9 — Canonical Write (Final Output of the Run)  
@@ -575,6 +686,120 @@ Rules:
 - Ensure Add/Replace/Defer/Kill outcomes are reflected.
 - Ensure decision_log captures each decision with date, owner, and rationale (append-only).
 - If supersession is relevant, include successor references.
+
+**Write Plan (Pre-Commit)**
+
+Cycle:
+- <cycle_id>
+
+Context refresh completed:
+- Yes (8.5.A)
+
+### Planned Writes (Allowlist Only)
+
+For each file, complete the block below. Do not include any file not in Section 5 write scope.
+
+---
+
+#### 1) File: claude/roadmap/current_roadmap.md
+Action: modify
+Reason:
+- Reflect STEP 8 decisions (Add / Replace / Defer / Kill) in the roadmap view.
+Traceability:
+- STEP 8 decision(s): <list decision IDs or describe decisions precisely>
+- Lifecycle compliance: header check only (if required)
+Delta summary (minimal):
+- Add: <items>
+- Replace: <items>
+- Defer: <items + conditions>
+- Kill: <items>
+- No-change: <if applicable, state explicitly>
+Constraints:
+- No formatting-only edits
+- No scope expansion beyond recorded decisions
+
+---
+
+#### 2) File: claude/roadmap/decision_log.md
+Action: append-only
+Reason:
+- Record irreversible roadmap changes for auditability.
+Traceability:
+- STEP 8 decision(s): <list>
+Delta summary (minimal):
+- Append entries for: <Add/Replace/Defer/Kill or No-change>
+Append-only enforcement:
+- Confirm no edits to existing entries
+Duplicate decision check:
+- Confirm identical decision not already logged
+
+---
+
+#### 3) File: claude/backlog/backlog.md
+Action: modify (reconciliation only)
+Reason:
+- Reconcile backlog to reflect STEP 8 decisions without grooming or reprioritisation.
+Traceability:
+- STEP 8 decision(s): <list>
+Allowed changes only:
+- Move items between sections
+- Remove duplicates that are now committed roadmap initiatives
+- Add one-line status notes referencing decision log/date
+- Add minimal headings if needed (structure only)
+Delta summary (minimal):
+- Promoted to Roadmap: <count + list>
+- Deferred/Parked: <count + list + conditions>
+- Killed/Closed: <count + list>
+- Duplicates removed: <count + list>
+Constraints:
+- Do not rewrite item descriptions beyond one-line status note
+- Do not reprioritise
+- Do not add new backlog items unless explicitly required by a STEP 8 Add decision and your backlog policy requires a tracking entry
+
+---
+
+#### 4) File: claude/roadmap/workforce_capacity.md
+Action: create | modify | none
+Reason:
+- Record workforce economics required by STEP 7/STEP 8 decisions.
+Traceability:
+- STEP 7 economics outcome: <summary>
+- STEP 8 decisions impacted: <list>
+Delta summary (minimal):
+- Capacity freed: <FTE + skills>
+- Allocation changes: <initiative → FTE/skills>
+Constraints:
+- No fabricated numbers
+- If unknown values block allocation conflicts, halt earlier (per STEP 1.2 rule)
+
+---
+
+#### 5) File: claude/roadmap/initiative_register.md
+Action: create | modify | none
+Reason:
+- Maintain canonical initiative inventory consistent with roadmap decisions.
+Traceability:
+- STEP 8 decision(s): <list>
+Delta summary (minimal):
+- Status updates: <initiative → new status>
+- Links added: <decision log refs>
+Constraints:
+- No new initiatives unless they were explicitly Added in STEP 8
+
+---
+
+### Write Plan Integrity Checks (Must Pass)
+
+- All files listed above are within Section 5 write scope: Yes/No
+- Every write is traceable to:
+  - STEP 8 decision OR lifecycle compliance only: Yes/No
+- No formatting-only edits included: Yes/No
+- Decision log is append-only and duplicate-checked: Yes/No
+- Backlog edits are reconciliation-only (no grooming): Yes/No
+
+If any check is “No”:
+- Discard this plan.
+- Halt per STEP 8.5.E.
 
 #### Backlog Reconciliation Rules (Deterministic; No Grooming)
 
