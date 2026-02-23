@@ -3,8 +3,8 @@
 **Owner:** Head of Specs Team
 **Scope:** All governed documentation across the entire product
 **Status:** Canonical
-**Version:** 2.2
-**Last Updated:** 2026-02-21
+**Version:** 2.3
+**Last Updated:** 2026-02-23
 
 ---
 
@@ -12,6 +12,7 @@
 
 | Version | Change |
 |---------|--------|
+| 2.3 | Clarified lifecycle enforcement roles to explicitly include Facilitator and Challenger as non-decision governance roles. No changes to document classes or lifecycle semantics. |
 | 2.2 | Added Section 9 — Known Deviation Documentation Standard. When any deviation from canonical behaviour is documented in a spec, it must be assigned a priority tier, a target resolution release, and a named owner at the time of documentation. P0 deviations must be resolved within one release cycle. Identified via lessons learnt for BLG-TECH-01. |
 | 2.1 | Class 4 (Planning Document): added canonical location `docs/product/scope/` for scope documents, naming convention, and scope document as a distinct sub-type with its own supersession rule. Additive only — no existing rules changed. |
 | 2.0 | Expanded scope to cover all document classes. Added Operational Record, Planning Document, Role Charter, and Governance Prompt as formal classes. Added universal header block standard. Added enforcement mechanism section. Added trigger rules for governance review. |
@@ -344,6 +345,34 @@ Automated review assists but does not replace owner accountability.
 | **Blocking** | Missing owner, missing status, Canonical document with no version | Document must not be merged or treated as authoritative until remediated |
 | **Required** | Incorrect lifecycle state, version not incremented when required, Supporting artifact not reviewed inline | Must be remediated before the change is considered complete |
 | **Advisory** | Minor header formatting inconsistency, Last Updated date stale | Should be remediated; does not block |
+
+
+## Lifecycle Enforcement Roles
+
+### Head of Specs Team
+
+- Owns lifecycle standards
+- Blocks non‑compliant documents
+- Resolves classification ambiguity
+- Conducts audits
+
+---
+
+### Facilitator (Process Role)
+
+- Enforces lifecycle compliance during governed routines
+- Verifies document class, headers, and state transitions
+- May halt execution if lifecycle rules are violated
+- Has **no authority** to waive requirements
+
+---
+
+### Challenger (Process Role)
+
+- Surfaces lifecycle risk during decision routines
+- Requires explicit justification when documents are relied upon
+- May delay advancement when documentation integrity is unclear
+- Does **not** assess or approve compliance
 
 ---
 
