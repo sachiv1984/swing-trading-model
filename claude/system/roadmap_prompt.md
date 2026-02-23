@@ -1,3 +1,4 @@
+
 Owner: Head of Specs Team
 Status: Active  
 Version: 1.3  
@@ -235,7 +236,6 @@ Define:
 Create `claude/cycles/<cycle_id>/` on first run if missing.
 
 If a required authority role is not defined in claude/agents/, or its charter is missing or non-compliant:
-
 - Halt execution.
 - Report the missing authority explicitly.
 - Do not infer, substitute, or bypass the role.
