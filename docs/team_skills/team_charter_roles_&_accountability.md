@@ -1,4 +1,4 @@
-Team Charter -- Roles & Accountability
+Team Charter - Roles & Accountability
 =====================================
 
 **Momentum Trading Assistant**
