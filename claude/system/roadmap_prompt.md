@@ -259,6 +259,19 @@ Not allowed remediation:
 If the compliance issue is not strictly header-only, or the document is Class 1 or Class 6:
 - Halt execution and report the violation.
 
+#### Step 0.B — Disagreement Routing (Product Owner vs Head of Specs Team)
+
+If the Product Owner and Head of Specs Team disagree during STEP 0:
+
+- If the disagreement concerns lifecycle compliance, document class, ownership, or canonical truth:
+  - Treat as a blocking governance issue.
+  - Halt execution and report the conflict explicitly.
+
+- If the disagreement concerns prioritisation, value, trade-offs, or roadmap choices:
+  - Do not halt in STEP 0.
+  - Record the disagreement as an “Open Decision” in the run manifest.
+  - Continue to STEP 5 (debate) and STEP 8 (final rebalance) where Product Owner decides within constraints.
+
 ---
 
 ### STEP 1 — Run Manifest & Capacity Release Registration  
