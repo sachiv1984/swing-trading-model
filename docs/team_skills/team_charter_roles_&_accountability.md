@@ -116,3 +116,27 @@ This role exists to ensure **analytics do not silently become financial statemen
 
 -   **Director of HR**\
     Owns people systems, role clarity, capability frameworks, and organizational health.
+
+* * * * *
+
+Conflict Resolution Model
+-------------------------
+
+-   **Within a domain:** resolved by the domain owner
+-   **Across domains:** escalated to the Head of Specs Team
+-   **Product trade‑offs:** resolved by the Product Owner
+-   **Quality or record integrity disputes:** Director of Quality or Financial Reporting & Records Owner prevail
+-   **No role resolves disputes through implementation or workaround**
+
+* * * * *
+
+Definition of Success
+---------------------
+
+The organization is functioning correctly when:
+
+-   Every decision has a named owner
+-   Behaviour matches documented intent
+-   Validation is evidence‑based
+-   Financial records are defensible
+-   People understand what they own --- and what they do not
