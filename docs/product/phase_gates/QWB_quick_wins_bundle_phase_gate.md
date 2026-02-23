@@ -3,12 +3,23 @@
 **Owner:** PMO Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.2
+**Version:** 1.3
 **Created:** 2026-02-22
-**Last Updated:** 2026-02-24
+**Last Updated:** 2026-02-27
 **Filed:** — (immutable on closure)
 
 **Charter authority:** `docs/team_skills/pmo/processess/pre_alignment_run.md` v2.0
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.3 | 2026-02-27 | Gate 2 closed. All 11 spec actions confirmed complete with specific content evidence. State transitioned SPEC_DELIVERY → QA_REVIEW. QA & Testing Owner notified with full spec list. |
+| 1.2 | 2026-02-24 | Gate 1 closed. Decisions record committed. 11 spec delivery actions opened across 4 owners. |
+| 1.1 | 2026-02-23 | Gate 0 closed. Pre-alignment meeting held. |
+| 1.0 | 2026-02-22 | Document created. Gate R passed. |
 
 ---
 
@@ -43,15 +54,13 @@
 ## Current Status
 
 ```
-Current phase:    SPEC_DELIVERY
-Gate passed:      Gate 1 — 2026-02-24
-Next gate:        Gate 2 — all spec actions committed and verified
-Who acts next:    API Contracts owner (A-S02, A-S03, A-S04 — sequential)
-                  + Metrics Definitions owner (A-S01)
-                  + Product Owner (A-S05)
-                  + Frontend Spec owner (A-S07, A-S09 — can start now)
-Deadline:         Parallel stream: 2026-02-25T17:00:00Z
-                  Frontend spec stream: 2026-02-26T17:00:00Z
+Current phase:    QA_REVIEW
+Gate passed:      Gate 2 — 2026-02-27
+Next gate:        Gate 3 — QA sign-off confirmed
+Who acts next:    QA & Testing Owner
+What they do:     Review all committed canonical specs and confirm acceptance
+                  criteria are fully derivable. Produce written verdict.
+Deadline:         2026-02-27T17:00:00Z
 Blockers:         None
 ```
 
@@ -63,8 +72,8 @@ Blockers:         None
 |-------|---------------|--------|------|-------|
 | Phase 0 — Readiness Audit | Audit complete, Go/No-Go issued | ✅ Complete | 2026-02-22 | Gate R passed. All items confirmed. |
 | Phase 1 — Pre-Alignment Meeting | All decisions closed, decisions record committed | ✅ Complete | 2026-02-24 | 13 decisions closed. Zero deferrals. Record committed. |
-| Phase 2 — Parallel Spec Delivery | All spec actions complete and committed | 🟡 In progress | 2026-02-24 | 11 actions open across 3 owners. |
-| Phase 3 — QA Review Gate | QA sign-off confirmed | ⬜ Not started | — | |
+| Phase 2 — Parallel Spec Delivery | All spec actions complete and committed | ✅ Complete | 2026-02-27 | All 11 actions confirmed complete. Gate 2 passed. |
+| Phase 3 — QA Review Gate | QA sign-off confirmed | 🟡 In progress | 2026-02-27 | QA & Testing Owner notified. Specs list delivered. |
 | Phase 4 — Scope Document | Scope document committed, implementation declared open | ⬜ Not started | — | |
 | Implementation | Engineering builds against locked specs | ⬜ Not started | — | |
 | Phase 5 — Verification | All criteria pass, Director of Quality final sign-off | ⬜ Not started | — | |
@@ -76,7 +85,7 @@ Status key: ⬜ Not started | 🟡 In progress | ✅ Complete | 🔴 Blocked
 
 ## Gate R — ✅ COMPLETE (2026-02-22)
 
-All 6 gate items passed. Full evidence record in phase gate document v1.1.
+All 6 gate items passed. Full evidence on record.
 
 ---
 
@@ -111,7 +120,7 @@ Gate 1.2 — Decisions record committed
   PMO validation:       Pass — PMO Lead, 2026-02-24
 
 Gate 1.3 — Action list produced
-  Evidence:             Spec Delivery Action Table below — 11 actions, owners, deadlines,
+  Evidence:             Spec Delivery Action Table — 11 actions, owners, deadlines,
                         dependencies all assigned. Critical path identified.
   Owner confirmation:   Yes — PMO Lead, 2026-02-24
   PMO validation:       Pass — PMO Lead, 2026-02-24
@@ -124,86 +133,198 @@ Gate 1.4 — Critical path communicated
 
 ---
 
-## Gate 2 — 🟡 IN PROGRESS
+## Gate 2 — ✅ COMPLETE (2026-02-27)
 
 ```
 Gate 2.1 — All spec actions confirmed complete
-  Evidence:             [PENDING — A-S01 through A-S11 must all show ✅ Complete]
-  PMO validation:       [PENDING]
+  Evidence:
+    A-S01  metrics_definitions.md → v1.5.8
+           Added: Current Drawdown section (formula, data requirements, API data sources,
+           failure behaviour, validation note, implementation note). No other sections modified.
+           Owner confirmation: Yes — Metrics Definitions owner, 2026-02-25
+
+    A-S02  portfolio_endpoints.md → v1.8.2 + openapi.yaml (same PR)
+           Added: current_drawdown_percent and peak_portfolio_value to GET /portfolio
+           example JSON and field notes table. openapi.yaml PortfolioOverview schema updated
+           in same PR.
+           Owner confirmation: Yes — API Contracts owner, 2026-02-25
+
+    A-S03  position_endpoints.md → v1.8.3 + openapi.yaml (same PR)
+           Added: grace_days_remaining to GET /positions example JSON and field notes table
+           (formula, null rule, display format, always-present rule). openapi.yaml
+           PositionDetail and PositionSummary schemas updated in same PR.
+           Owner confirmation: Yes — API Contracts owner, 2026-02-25
+
+    A-S04  trade_endpoints.md → v1.8.4 + openapi.yaml (same PR)
+           Added: GET /trades/export/csv section (purpose, response headers, 14-column
+           table in canonical order, serialisation rules, empty-history behaviour, error
+           shape). openapi.yaml GET /trades/export/csv path and TradeExportCsv component
+           added in same PR.
+           Owner confirmation: Yes — API Contracts owner, 2026-02-25
+
+    A-S05  roadmap.md
+           Updated: QWB effort estimate from ~6–8 hours to ~8–10.5 hours. Itemised
+           breakdown updated to include spec authoring overhead.
+           Owner confirmation: Yes — Product Owner, 2026-02-25
+
+    A-S06  dashboard.md → v1.1
+           Added: Current Drawdown Widget section (stats row placement, data sources,
+           3 display states, progress bar rules, no-fallback rule per D10, colour
+           thresholds as Engineering implementation detail).
+           Owner confirmation: Yes — Frontend Spec owner, 2026-02-26
+
+    A-S07  trade_history.md → v1.1
+           Added: R-Multiple column section (formula, trades_for_charts source,
+           frontend-only calculation, display format, null handling, sort behaviour).
+           Owner confirmation: Yes — Frontend Spec owner, 2026-02-25
+
+    A-S08  positions.md → v1.2
+           Added: grace_days_remaining column section (display format "Day X of 10",
+           null = dash or hidden).
+           Owner confirmation: Yes — Frontend Spec owner, 2026-02-26
+
+    A-S09  analytics.md → v1.2
+           Added: Component 11 Best/Worst Trades (R-multiple ranking, top 3/bottom 3,
+           trades_for_charts source, card contents, empty/partial states).
+           Added: Component 12 Win Rate by Month chart (monthly_data source, fixed
+           0–100 Y-axis, 50% reference line, colour coding, tooltip with trade_count,
+           empty state).
+           Owner confirmation: Yes — Frontend Spec owner, 2026-02-25
+
+    A-S10  trade_history.md → v1.1 (additive to A-S07)
+           Added: CSV Export Button section (placement, GET /trades/export/csv trigger,
+           browser download, server-side only per D5).
+           Owner confirmation: Yes — Frontend Spec owner, 2026-02-26
+
+    A-S11  api_dependencies.md → v1.2
+           Added: Dashboard → GET /portfolio new fields; Dashboard → GET /analytics/metrics
+           new fields; Positions table → GET /positions new field; Trade History →
+           GET /trades/export/csv new endpoint.
+           Owner confirmation: Yes — Frontend Spec owner, 2026-02-26
+
+  PMO validation:       Pass — PMO Lead, 2026-02-27
+                        All 11 actions show owner confirmation with specific content
+                        evidence per GI-3. No action confirmed as "done" without
+                        specific changed text.
 
 Gate 2.2 — openapi.yaml committed in same PR as each API contract change
-  Evidence:             [PENDING — A-S02, A-S03, A-S04 each require same-PR openapi.yaml]
-  PMO validation:       [PENDING]
+  Evidence:             A-S02: portfolio_endpoints.md + openapi.yaml — same PR confirmed
+                          by API Contracts owner, 2026-02-25
+                        A-S03: position_endpoints.md + openapi.yaml — same PR confirmed
+                          by API Contracts owner, 2026-02-25
+                        A-S04: trade_endpoints.md + openapi.yaml — same PR confirmed
+                          by API Contracts owner, 2026-02-25
+  Owner confirmation:   Yes — API Contracts owner, 2026-02-25 (all three PRs)
+  PMO validation:       Pass — PMO Lead, 2026-02-27
 
 Gate 2.3 — Patch verification confirmed for all patched files
-  Evidence:             [PENDING — each owner confirms specific changed text]
-  PMO validation:       [PENDING]
+  Evidence:             Each of the 11 action confirmations above includes the specific
+                        content change (section added, field added, formula confirmed,
+                        rule documented). No owner confirmed with "it's done" alone.
+                        Patch verification satisfied for all 11 actions.
+  Owner confirmation:   Yes — all four owners on record (dates above)
+  PMO validation:       Pass — PMO Lead, 2026-02-27
 
 Gate 2.4 — No open decisions
-  Evidence:             [PENDING — confirm no new questions arose during spec delivery]
+  Evidence:             Confirmed by all four spec owners: no new decisions or questions
+                        arose during spec delivery. All 11 actions executed against the
+                        locked decisions record (D1–D12 + D2a). Zero deviations.
+  Owner confirmation:   Yes — Metrics Definitions owner, 2026-02-25
+                        Yes — API Contracts owner, 2026-02-25
+                        Yes — Product Owner, 2026-02-25
+                        Yes — Frontend Spec owner, 2026-02-26
+  PMO validation:       Pass — PMO Lead, 2026-02-27
+```
+
+**✅ ALL GATE 2 ITEMS PASS — State transitions SPEC_DELIVERY → QA_REVIEW**
+
+---
+
+## Gate 3 — 🟡 IN PROGRESS
+
+```
+Gate 3.1 — QA verdict recorded as Pass
+  Evidence:             [PENDING — awaiting written verdict from QA & Testing Owner]
+  Owner confirmation:   [PENDING]
+  PMO validation:       [PENDING]
+
+Gate 3.2 — All Conditional Pass issues resolved (if applicable)
+  Evidence:             [PENDING — n/a if clean pass; issues to be logged here if raised]
+  Owner confirmation:   [PENDING]
+  PMO validation:       [PENDING]
+
+Gate 3.3 — No outstanding spec questions
+  Evidence:             [PENDING]
+  Owner confirmation:   [PENDING]
   PMO validation:       [PENDING]
 ```
 
 ---
 
-## Spec Delivery Action Table
+## Spec Delivery Action Table — ✅ ALL COMPLETE
 
-### Parallel stream — no dependencies, start immediately
+### Parallel stream
 
-| # | Action | Owner | Deadline | Status | Blocked on | Evidence |
-|---|--------|-------|----------|--------|------------|---------|
-| A-S01 | Add Current Drawdown section to `metrics_definitions.md` → v1.5.8. Include: formula, data sources (GET /portfolio fields), failure behaviour (0.0 when no history), relationship to days_underwater. | Metrics Definitions owner | 2026-02-25T17:00:00Z | 🟡 Not started | — | — |
-| A-S02 | Add `current_drawdown_percent` (float, ≤0.0, default 0.0) and `peak_portfolio_value` (float, GBP, default 0.0) to GET /portfolio response in `portfolio_endpoints.md`. Update `openapi.yaml` in same PR. | API Contracts owner | 2026-02-25T17:00:00Z | 🟡 Not started | — | — |
-| A-S03 | Add `grace_days_remaining` (integer \| null) to GET /positions response in `position_endpoints.md`. Formula: `max(0, 10 - holding_days)` when `grace_period = true`; null otherwise. Always present. Update `openapi.yaml` in same PR. | API Contracts owner | 2026-02-25T17:00:00Z | 🟡 Not started | GI-1: complete A-S02 first | — |
-| A-S04 | Add `GET /trades/export/csv` section to `trade_endpoints.md`. 14 fields (see D5). Response: text/csv, attachment. No params. Update `openapi.yaml` in same PR. | API Contracts owner | 2026-02-25T17:00:00Z | 🟡 Not started | GI-1: complete A-S03 first | — |
-| A-S05 | Update `docs/product/roadmap.md` — QWB effort estimate to ~8–10.5 hours; itemise spec authoring additions. | Product Owner | 2026-02-25T17:00:00Z | 🟡 Not started | — | — |
-| A-S07 | Update trade history component spec — R-multiple column: formula `(exit-entry)/(entry-stop)`, `trades_for_charts` source, frontend-only calculation, colour threshold convention. | Frontend Spec owner | 2026-02-26T17:00:00Z | 🟡 Not started | — (no API dependency) | — |
-| A-S09 | Update analytics page spec — Best/Worst Trades widget (R-multiple ranking, top 3/bottom 3, `trades_for_charts`) + Win Rate by month chart (`monthly_data[].win_rate`). | Frontend Spec owner | 2026-02-26T17:00:00Z | 🟡 Not started | — (no API dependency) | — |
+| # | Action | Owner | Deadline | Status | Evidence |
+|---|--------|-------|----------|--------|----------|
+| A-S01 | Add Current Drawdown section to `metrics_definitions.md` → v1.5.8 | Metrics Definitions owner | 2026-02-25T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-25 — section content detailed above |
+| A-S02 | Add drawdown fields to `portfolio_endpoints.md` v1.8.2 + `openapi.yaml` | API Contracts owner | 2026-02-25T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-25 — same-PR confirmed |
+| A-S03 | Add `grace_days_remaining` to `position_endpoints.md` v1.8.3 + `openapi.yaml` | API Contracts owner | 2026-02-25T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-25 — same-PR confirmed |
+| A-S04 | Add `GET /trades/export/csv` to `trade_endpoints.md` v1.8.4 + `openapi.yaml` | API Contracts owner | 2026-02-25T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-25 — same-PR confirmed |
+| A-S05 | Update `roadmap.md` effort estimate to ~8–10.5 hours | Product Owner | 2026-02-25T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-25 |
+| A-S07 | Update `trade_history.md` v1.1 — R-multiple column | Frontend Spec owner | 2026-02-26T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-25 |
+| A-S09 | Update `analytics.md` v1.2 — Best/Worst Trades + Win Rate by Month | Frontend Spec owner | 2026-02-26T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-25 |
 
-### Blocked stream — waits for upstream commits
+### Blocked stream (unblocked and completed)
 
-| # | Action | Owner | Deadline | Status | Blocked on | Evidence |
-|---|--------|-------|----------|--------|------------|---------|
-| A-S06 | Update dashboard stats frontend spec — drawdown widget: stats row placement, GET /portfolio data source (drawdown %), GET /analytics/metrics data source (days_underwater, max_drawdown), at-peak state, progress bar, colour threshold convention (impl detail). | Frontend Spec owner | 2026-02-26T17:00:00Z | ⛔ Blocked | A-S01 + A-S02 committed | — |
-| A-S08 | Update positions table spec — `grace_days_remaining` column: display format "Day X of 10", null = not in grace (hide or dash). | Frontend Spec owner | 2026-02-26T17:00:00Z | ⛔ Blocked | A-S03 committed | — |
-| A-S10 | Update trade history page spec — CSV export button: triggers GET /trades/export/csv, browser file download, button placement. | Frontend Spec owner | 2026-02-26T17:00:00Z | ⛔ Blocked | A-S04 committed | — |
-| A-S11 | Update `api_dependencies.md` — add: Dashboard page → GET /portfolio new fields; Positions table → GET /positions new field; Trade History page → GET /trades/export/csv. | Frontend Spec owner | 2026-02-26T17:00:00Z | ⛔ Blocked | A-S02 + A-S03 + A-S04 committed | — |
+| # | Action | Owner | Deadline | Status | Evidence |
+|---|--------|-------|----------|--------|----------|
+| A-S06 | Update `dashboard.md` v1.1 — Current Drawdown Widget | Frontend Spec owner | 2026-02-26T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-26 |
+| A-S08 | Update `positions.md` v1.2 — grace_days_remaining column | Frontend Spec owner | 2026-02-26T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-26 |
+| A-S10 | Update `trade_history.md` v1.1 — CSV export button | Frontend Spec owner | 2026-02-26T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-26 |
+| A-S11 | Update `api_dependencies.md` v1.2 | Frontend Spec owner | 2026-02-26T17:00:00Z | ✅ Complete | Confirmed by owner 2026-02-26 |
 
-### Critical path
+---
 
-```
-2026-02-25T17:00:00Z target:
-  A-S01 ─────────────────────────────────────────────────────┐
-  A-S02 → A-S03 → A-S04 (sequential per GI-1) ──────────────┤
-  A-S05 ─────────────────────────────────────────────────────┤ all complete
-  A-S07 ─────────────────────────────────────────────────────┤
-  A-S09 ─────────────────────────────────────────────────────┘
+## Locked Canonical Specs (for QA Review)
 
-2026-02-26T17:00:00Z target:
-  A-S06 (unblocked by A-S01 + A-S02) ───────────────────────┐
-  A-S08 (unblocked by A-S03) ────────────────────────────────┤
-  A-S10 (unblocked by A-S04) ────────────────────────────────┤ → Gate 2
-  A-S11 (unblocked by A-S02 + A-S03 + A-S04) ───────────────┘
-```
+The following specs are committed and locked. QA & Testing Owner reviews these for Gate 3.
+
+| Spec | Version | Changed in this bundle |
+|------|---------|----------------------|
+| `docs/specs/metrics_definitions.md` | v1.5.8 | ✅ New section: Current Drawdown |
+| `docs/specs/api_contracts/portfolio_endpoints.md` | v1.8.2 | ✅ New fields: current_drawdown_percent, peak_portfolio_value |
+| `docs/specs/api_contracts/position_endpoints.md` | v1.8.3 | ✅ New field: grace_days_remaining |
+| `docs/specs/api_contracts/trade_endpoints.md` | v1.8.4 | ✅ New endpoint: GET /trades/export/csv |
+| `docs/specs/api_contracts/analytics_endpoints.md` | v1.8.1 | No change — existing fields consumed |
+| `docs/specs/data_model.md` | v1.7 | No change — no migration required |
+| `docs/specs/frontend/pages/dashboard.md` | v1.1 | ✅ New widget: Current Drawdown |
+| `docs/specs/frontend/pages/trade_history.md` | v1.1 | ✅ New column: R-multiple; new button: CSV export |
+| `docs/specs/frontend/pages/analytics.md` | v1.2 | ✅ New components: Best/Worst Trades, Win Rate by Month |
+| `docs/specs/frontend/pages/positions.md` | v1.2 | ✅ New column: grace_days_remaining |
+| `docs/specs/api_dependencies.md` | v1.2 | ✅ New dependencies added |
+| `docs/reference/openapi.yaml` | current | ✅ Updated with A-S02, A-S03, A-S04 |
 
 ---
 
 ## Stakeholder Next Steps
 
-**As of 2026-02-24:**
+**As of 2026-02-27:**
 
 | Role | Action | By when |
 |------|--------|---------|
-| **Metrics Definitions owner** | A-S01 — add Current Drawdown section to `metrics_definitions.md` v1.5.8 | 2026-02-25T17:00:00Z |
-| **API Contracts owner** | A-S02 — `portfolio_endpoints.md` + `openapi.yaml` | 2026-02-25T17:00:00Z |
-| **API Contracts owner** | A-S03 — `position_endpoints.md` + `openapi.yaml` (after A-S02 complete) | 2026-02-25T17:00:00Z |
-| **API Contracts owner** | A-S04 — `trade_endpoints.md` + `openapi.yaml` (after A-S03 complete) | 2026-02-25T17:00:00Z |
-| **Product Owner** | A-S05 — roadmap effort estimate update | 2026-02-25T17:00:00Z |
-| **Frontend Spec owner** | A-S07 — trade history spec (R-multiple column) — start now | 2026-02-26T17:00:00Z |
-| **Frontend Spec owner** | A-S09 — analytics page spec (Best/Worst + Win Rate) — start now | 2026-02-26T17:00:00Z |
-| **Frontend Spec owner** | A-S06, A-S08, A-S10, A-S11 — start when upstream commits confirmed | 2026-02-26T17:00:00Z |
-| **Engineering** | No action. Discard `WidgetLibrary.jsx`. Note: prototype `days_underwater` calc and `dataSource` fallback logic to be removed when implementation begins. | Before implementation |
-| **QA & Testing Owner** | No action until Gate 2 passes | — |
+| **QA & Testing Owner** | QA review — read all committed specs above, confirm acceptance criteria are fully derivable from them, produce written verdict (Pass / Conditional Pass / Fail) with any issues identified | 2026-02-27T17:00:00Z |
+| **All spec owners** | Standby — QA review may raise issues requiring spec fixes. No other action until verdict received. | — |
+| **Product Owner** | No action until Gate 3 passes | — |
+| **Head of Engineering** | No action until Gate 4 passes | — |
+
+---
+
+## Open Actions
+
+| # | Action | Owner | Status | Due |
+|---|--------|-------|--------|-----|
+| A-QA-01 | QA review of all locked specs — produce written verdict | QA & Testing Owner | 🟡 In progress | 2026-02-27T17:00:00Z |
 
 ---
 
@@ -219,8 +340,8 @@ Gate 2.4 — No open decisions
 
 | # | Decision | Summary |
 |---|----------|---------|
-| D1 | BLG-FEAT-01 formula + endpoint | `(peak-current)/peak×100` via GET /portfolio (2 new fields) |
-| D2 | BLG-FEAT-02 R-multiple | Frontend-only, `metrics_definitions.md` v1.5.7 canonical, no spec change |
+| D1 | BLG-FEAT-01 formula + endpoint | `(peak−current)/peak×100` via GET /portfolio (2 new fields) |
+| D2 | BLG-FEAT-02 R-multiple | Frontend-only, `metrics_definitions.md` v1.5.8 canonical |
 | D2a | stop_price in GET /trades | Absent — use `trades_for_charts` |
 | D3 | BLG-FEAT-04 ranking | R-multiple, top 3 / bottom 3 |
 | D4 | BLG-FEAT-06 grace field | New `grace_days_remaining` on GET /positions |
@@ -240,6 +361,15 @@ Gate 2.4 — No open decisions
 | ID | Date | Summary | Status |
 |----|------|---------|--------|
 | OBS-QWB-01 | 2026-02-22 | Prototype code produced before spec lock. Six implicit decisions surfaced (D7–D12). | ✅ Resolved — all decisions closed at meeting 2026-02-24 |
+| OBS-QWB-02 | 2026-02-27 | Test scenario document authored during SPEC_DELIVERY state, before QA review gate. Sequencing premature per testing_guide.md. Content is spec-derived and complete. QA & Testing Owner to re-confirm document after Gate 3 passes. Process gap identified: Gate 4 has no checklist item requiring test scenario document. A-PROC-01 raised. | 🟡 Open — re-confirmation pending Gate 3 |
+
+---
+
+## Process Improvement Actions
+
+| # | Action | Owner | Status |
+|---|--------|-------|--------|
+| A-PROC-01 | Add Gate 4.6 checklist item to `pre_alignment_run.md`: "Test scenario document committed at `docs/testing/{id}-{slug}-test-scenarios.md`. Evidence: file path + QA & Testing Owner confirmation." Prevents recurrence of A-TS-01 sequencing issue. | Head of Specs Team | 🟡 Open |
 
 ---
 
@@ -251,6 +381,7 @@ Gate 2.4 — No open decisions
 | 2 | READINESS_AUDIT | AWAITING_MEETING | 2026-02-22 | 23:59:00Z | PMO Lead | Gate R |
 | 3 | AWAITING_MEETING | PRE_ALIGNMENT_MEETING | 2026-02-23 | 17:00:00Z | PMO Lead | Gate 0 |
 | 4 | PRE_ALIGNMENT_MEETING | SPEC_DELIVERY | 2026-02-24 | 17:00:00Z | PMO Lead | Gate 1 |
+| 5 | SPEC_DELIVERY | QA_REVIEW | 2026-02-27 | 09:30:00Z | PMO Lead | Gate 2 |
 
 ---
 
