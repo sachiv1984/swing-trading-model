@@ -1,7 +1,6 @@
-
 Owner: Head of Specs Team
 Status: Active  
-Version: 1.3  
+Version: 1.4  
 Last Updated: 2026-02-23  
 
 ---
@@ -69,7 +68,7 @@ Before writing or updating any document you MUST verify:
 ### 3.2 Required Header Block
 - Required fields exist for that class
 - Owner role is valid per Team Charter
-- Status is valid for that class
+- Status is valid per lifecycle rules
 - Version present where required
 
 ### 3.3 Valid State Transition
@@ -111,6 +110,7 @@ During this routine you may write only to:
 - claude/roadmap/initiative_register.md
 - claude/roadmap/workforce_capacity.md
 - claude/roadmap/decision_log.md
+- claude/backlog/backlog.md
 - claude/cycles/<cycle_id>/*
 - claude/ideas/* (only when creating or updating idea artefacts)
 - claude/scoring/* (only when scoring artefacts are produced)
@@ -423,6 +423,7 @@ Record:
 
 Update rejected‑but‑strong ideas where applicable:
 - `claude/ideas/rejected_but_strong.md` (create if needed)
+
 ---
 
 ### STEP 6 — Scoring Matrix Overlay (Decision Support Only)  
@@ -509,6 +510,7 @@ Verification rules:
 - Every file in the write plan must be within the allowed write scope in Section 5.
 - No file outside allowed scope may be created, modified, or reformatted.
 - Decision log updates must be append-only as per the Decision Log Invariant.
+- Do not make formatting-only or stylistic edits. Only minimal deltas required for compliance and decision reflection are allowed.
 
 If any violation is detected:
 - Discard the pending write plan immediately.
@@ -552,6 +554,7 @@ Update (or create-if-missing) the following Class 4 Planning Documents with life
 - `claude/roadmap/initiative_register.md` (create if needed)
 - `claude/roadmap/workforce_capacity.md` (create if needed)
 - `claude/roadmap/decision_log.md` (create if needed)
+- `claude/backlog/backlog.md` (reconcile to reflect decisions; see rules below)
 
 Rules:
 - No drafts or “proposed” roadmap. Write the updated roadmap as the current authoritative planning state.
@@ -560,7 +563,39 @@ Rules:
 - Ensure decision_log captures each decision with date, owner, and rationale (append-only).
 - If supersession is relevant, include successor references.
 
-If you cannot update the roadmap due to a blocking governance issue:
+#### Backlog Reconciliation Rules (Deterministic; No Grooming)
+
+Purpose:
+- Prevent drift between roadmap decisions and backlog state.
+
+Backlog policy:
+- The backlog is an inventory of candidate work and parked/deferred items.
+- The roadmap is the portfolio commitment view.
+- Backlog must not contain duplicate active roadmap initiatives as separate backlog items.
+
+Allowed backlog edits (only):
+- Move items between sections
+- Add a one-line status note indicating promotion/deferral/kill with decision reference
+- Remove duplicates where an item is now a committed roadmap initiative
+- Create minimal section headings if they do not exist (structure only)
+
+Not allowed:
+- Re-prioritising backlog items
+- Rewriting backlog item descriptions beyond a one-line status note
+- Adding new backlog content not implied by decisions
+
+Mandatory reconciliation actions:
+- If an initiative is ➕ Added or 🔥 Must continue on the roadmap:
+  - If it exists in the backlog as a separate item, remove it from the active backlog list and place it under a “Promoted to Roadmap” section with a one-line note referencing the decision (date + type).
+- If an initiative is 🔁 Replaced:
+  - Move the replaced initiative to “Killed / Closed” (or “Stopped”) with a one-line note referencing the replacement decision.
+  - Ensure the replacement initiative is not duplicated across backlog and roadmap (treat as promoted if it exists as backlog item).
+- If an initiative is ⏸ Deferred or 🅿 Parked:
+  - Move it to a “Deferred / Parked” section and include its explicit return condition.
+- If an initiative is ❌ Killed:
+  - Move it to “Killed / Closed” with a one-line note referencing the decision, or remove it entirely if your backlog policy does not retain killed work (choose one and apply consistently).
+
+If you cannot update the roadmap or reconcile the backlog due to a blocking governance issue:
 - Halt and report the blocker.
 
 ---
@@ -574,6 +609,7 @@ Produce a concise summary:
 - net roadmap change
 - key risks reduced
 - key skills reallocated
+- backlog reconciliation performed (briefly note moved/promoted/killed counts)
 
 Write:
 - `claude/cycles/<cycle_id>/cycle_summary.md`
@@ -620,6 +656,7 @@ Violation → halt.
 The run is incomplete unless:
 
 - `claude/roadmap/current_roadmap.md` is updated (lifecycle‑compliant)
+- `claude/backlog/backlog.md` is reconciled to reflect Add/Replace/Defer/Kill outcomes (lifecycle‑compliant)
 - Decisions are recorded (cycle outputs + decision_log)
 - Stopped work is explicit
 - Workforce implications are explicit
