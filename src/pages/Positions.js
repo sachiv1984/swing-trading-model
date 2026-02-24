@@ -79,13 +79,13 @@ export default function Positions() {
    // ✅ FIXED: Updated handleSave to only update notes and tags
   const handleSave = async (position) => {
     try {
-       Update entry note using the new method
+       // Update entry note using the new method
       await base44.entities.Position.updateNote(position.id, position.entry_note || "");
 
-       Update tags using the new method
+       // Update tags using the new method
       await base44.entities.Position.updateTags(position.id, position.tags || []);
 
-       Invalidate queries to refresh data
+       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       setEditingPosition(null);
     } catch (error) {
@@ -100,7 +100,7 @@ export default function Positions() {
      // { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
     console.log('handleExit called with:', exitData);
     
-     Validate required fields before sending
+     // Validate required fields before sending
     if (!exitData.position_id) {
       alert('Invalid position data');
       return;
@@ -116,7 +116,7 @@ export default function Positions() {
       return;
     }
     
-     Pass the complete exitData object to mutation
+     // Pass the complete exitData object to mutation
     exitMutation.mutate(exitData);
   };
 
