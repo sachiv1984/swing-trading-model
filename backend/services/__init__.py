@@ -79,6 +79,10 @@ from .analytics_service import AnalyticsService
 # Validation service
 from .validation_service import ValidationService
 
+from services.drawdown_service import get_drawdown_fields
+from services.grace_service import compute_grace_days_remaining
+from services.trade_csv_service import build_trade_history_csv
+
 __all__ = [
     # Position service
     'get_positions_with_prices',
