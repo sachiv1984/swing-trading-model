@@ -136,6 +136,18 @@ def get_portfolio_summary() -> Dict:
         else:
             display_status = "LOSING"
         
+        holding_days = pos.get('holding_days', 0)
+        
+        # Compute grace fields before building the dict
+        grace_period = holding_days < 10
+        grace_days_remaining = compute_grace_days_remaining(
+            grace_period=grace_period,
+            holding_days=holding_days,
+        )
+        
+        if holding_days < 10:
+            display_status = "GRACE"
+        elif pnl_gbp > 0:
 
         positions_list.append({
             "id": str(pos["id"]),
