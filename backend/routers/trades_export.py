@@ -15,8 +15,7 @@ from fastapi.responses import Response
 from database import get_all_closed_trades_for_csv_export
 from services.trade_csv_service import build_trade_history_csv
 
-router = APIRouter(prefix="/trades", tags=["Trades"])
-
+router = APIRouter(tags=["Trades"])
 
 @router.get("/trades/export/csv")
 def export_trade_history_csv(request: Request):
