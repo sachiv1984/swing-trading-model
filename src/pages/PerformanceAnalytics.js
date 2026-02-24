@@ -20,7 +20,7 @@ import BestWorstTrades from "../components/analytics/BestWorstTrades";
 import WinRateByMonth  from "../components/analytics/WinRateByMonth";
 
 
- ✅ Helper to convert snake_case to camelCase recursively
+ // ✅ Helper to convert snake_case to camelCase recursively
 const toCamelCase = (obj) => {
   if (Array.isArray(obj)) {
     return obj.map(v => toCamelCase(v));
@@ -48,7 +48,7 @@ export default function PerformanceAnalytics() {
     all_time: "All Time"
   };
 
-   ✅ NEW: Single API call replaces ALL calculations
+   // ✅ NEW: Single API call replaces ALL calculations
   const { data: analyticsData, isLoading: analyticsLoading, error: analyticsError } = useQuery({
     queryKey: ["analytics", timePeriod],
     queryFn: async () => {
@@ -75,7 +75,7 @@ export default function PerformanceAnalytics() {
     retry: 1,
   });
 
-   ✅ Extract data from API response with safe defaults
+   // ✅ Extract data from API response with safe defaults
   const summary = analyticsData?.summary || { 
     hasEnoughData: false, 
     totalTrades: 0, 
@@ -106,7 +106,7 @@ export default function PerformanceAnalytics() {
   
   const hasEnoughTrades = summary.hasEnoughData;
 
-   Default structures for components
+   // Default structures for components
   const defaultMarketMetrics = {
     totalTrades: 0,
     winRate: 0,
