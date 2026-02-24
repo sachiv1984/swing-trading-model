@@ -136,23 +136,28 @@ def get_portfolio_summary() -> Dict:
         else:
             display_status = "LOSING"
         
+
         positions_list.append({
-            "id": str(pos['id']),
-            "ticker": pos['ticker'],
+            "id": str(pos["id"]),
+            "ticker": pos["ticker"],
             "market": market,
-            "entry_date": str(pos['entry_date']),
+            "entry_date": str(pos["entry_date"]),
             "entry_price": round(entry_price, 2),
             "shares": shares,
             "current_price": round(current_price_gbp, 2),
             "current_value": round(current_value_gbp, 2),
             "pnl": round(pnl_gbp, 2),
             "pnl_pct": round(pnl_pct, 2),
-            "current_stop": round(pos.get('current_stop', 0), 2),
+            "current_stop": round(pos.get("current_stop", 0), 2),
             "holding_days": holding_days,
-            "status": display_status,
+            "status": "open",
+            "display_status": display_status,
             "fx_rate": stored_fx_rate,
-            "live_fx_rate": live_fx_rate
+            "grace_period": grace_period,
+            "grace_days_remaining": grace_days_remaining,
+            "live_fx_rate": live_fx_rate,
         })
+
     
     total_value = cash + total_positions_value_gbp
     
