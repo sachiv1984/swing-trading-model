@@ -49,8 +49,8 @@ export default function Positions() {
   // FIXED: Exit mutation now accepts exitData directly from ExitModal
   const exitMutation = useMutation({
     mutationFn: (exitData) => {
-       exitData from ExitModal contains:
-       { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
+       // exitData from ExitModal contains:
+       // { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
       console.log('Exit mutation received:', exitData);
       
        Pass the entire exitData object - the fixed base44Client will handle it
@@ -59,12 +59,12 @@ export default function Positions() {
     onSuccess: (data) => {
       console.log('Exit successful:', data);
       
-       More aggressive cache invalidation
+      // More aggressive cache invalidation
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       queryClient.invalidateQueries({ queryKey: ["portfolio"] });
       queryClient.invalidateQueries({ queryKey: ["trades"] });
       
-       Force immediate refetch instead of waiting for stale time
+      // Force immediate refetch instead of waiting for stale time
       queryClient.refetchQueries({ queryKey: ["positions", "open"] });
       queryClient.refetchQueries({ queryKey: ["portfolio"] });
       
@@ -76,7 +76,7 @@ export default function Positions() {
     }
   });
 
-   ✅ FIXED: Updated handleSave to only update notes and tags
+   // ✅ FIXED: Updated handleSave to only update notes and tags
   const handleSave = async (position) => {
     try {
        Update entry note using the new method
@@ -94,10 +94,10 @@ export default function Positions() {
     }
   };
 
-   FIXED: handleExit now just passes exitData through to mutation
+   // FIXED: handleExit now just passes exitData through to mutation
   const handleExit = (exitData) => {
-     exitData from ExitModal already has everything:
-     { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
+     // exitData from ExitModal already has everything:
+     // { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
     console.log('handleExit called with:', exitData);
     
      Validate required fields before sending
