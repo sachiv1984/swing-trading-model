@@ -667,3 +667,78 @@ def search_positions_by_tags(portfolio_id: str, tags: List[str]) -> List[Dict]:
             
             positions = cur.fetchall()
             return [dict(p) for p in positions]
+
+# ---------------------------------------------------------------------------
+# Current Drawdown: peak portfolio value query
+# ---------------------------------------------------------------------------
+
+def get_peak_portfolio_value(portfolio_id: str) -> float:
+    """
+    Return the all-time peak total_value from portfolio_history for
+    this portfolio. Returns 0.0 when no snapshots exist.
+
+    All-time means across ALL portfolio_history records — not
+    period-scoped. This is the correct behaviour per
+    metrics_definitions.md v1.5.8 §Implementation Note and
+    portfolio_endpoints.md v1.8.2 §peak_portfolio_value field note.
+
+    Returns:
+        float: Peak total_value in GBP. 0.0 if no records exist.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT COALESCE(MAX(total_value), 0.0)
+                FROM portfolio_history
+                WHERE portfolio_id = %s
+                """,
+                (portfolio_id,),
+            )
+            result = cur.fetchone()
+            return float(result[0]) if result else 0.0
+
+
+# ---------------------------------------------------------------------------
+# CSV export: closed trade history query
+# ---------------------------------------------------------------------------
+
+def get_all_closed_trades_for_csv_export(portfolio_id: str) -> list:
+    """
+    Return all closed trades for the CSV export endpoint, ordered
+    by exit_date descending (newest first).
+
+    Selects exactly the 14 fields required by the CSV column spec in
+    trade_endpoints.md v1.8.4. No business logic — caller handles
+    serialisation.
+
+    Returns:
+        list[dict]: List of trade dicts. Empty list if no closed trades.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                    ticker,
+                    market,
+                    entry_date,
+                    exit_date,
+                    shares,
+                    entry_price,
+                    exit_price,
+                    pnl,
+                    pnl_pct,
+                    holding_days,
+                    exit_reason,
+                    tags,
+                    entry_note,
+                    exit_note
+                FROM trade_history
+                WHERE portfolio_id = %s
+                ORDER BY exit_date DESC
+                """,
+                (portfolio_id,),
+            )
+            rows = cur.fetchall()
+            return [dict(row) for row in rows]
