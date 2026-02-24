@@ -19,66 +19,81 @@ export default function TradeHistory() {
     dateFrom: "",
     dateTo: "",
   });
-  
-  // ✅ NEW: Tag filtering state
   const [selectedTags, setSelectedTags] = useState([]);
   const [showTagDropdown, setShowTagDropdown] = useState(false);
 
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
+  // Primary trades query — unchanged
   const { data: tradesData, isLoading } = useQuery({
     queryKey: ["trades"],
     queryFn: () => api.trades.list(),
   });
 
+  // BLG-FEAT-02: Analytics metrics query for R-multiple column.
+  // Provides trades_for_charts which carries stop_price per trade (D2a).
+  // Non-blocking: if this call fails the trade table still renders,
+  // R-multiple column degrades to "—" for all rows (F-12 / R-05 regression).
+  const { data: analyticsMetrics } = useQuery({
+    queryKey: ["analyticsMetrics"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${API_URL}/analytics/metrics`);
+        if (!response.ok) {
+          console.warn('Analytics metrics unavailable for R-multiple column:', response.status);
+          return null;
+        }
+        const result = await response.json();
+        return result.data || null;
+      } catch (error) {
+        console.error('Failed to load analytics metrics (R-multiple will show —):', error);
+        return null;
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
+
   const trades = tradesData?.trades || [];
 
-  // ✅ FIXED: Get tags from the trades data (MUST be after trades is defined!)
+  // trades_for_charts: the source for stop_price / R-multiple join.
+  // Spec: trade_history.md v1.1; analytics_endpoints.md v1.8.1.
+  // Safe-default to [] so TradeHistoryTable receives a valid array when loading.
+  const tradesForCharts = analyticsMetrics?.trades_for_charts ?? [];
+
   const availableTags = trades && Array.isArray(trades)
     ? trades
         .flatMap(trade => trade.tags || [])
-        .filter((tag, index, self) => self.indexOf(tag) === index) // Remove duplicates
+        .filter((tag, index, self) => self.indexOf(tag) === index)
         .sort()
     : [];
-  
-  // 🐛 DEBUG: Log tags for debugging
-  console.log('📊 Trade History Debug:');
-  console.log('  Total trades:', trades.length);
-  console.log('  Trades with tags:', trades.filter(t => t.tags && t.tags.length > 0).length);
-  console.log('  Available tags:', availableTags);
-  console.log('  First trade sample:', trades[0]);
 
-  // ✅ NEW: Tag toggle handler
   const handleTagToggle = (tag) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
+    setSelectedTags(prev =>
+      prev.includes(tag)
         ? prev.filter(t => t !== tag)
         : [...prev, tag]
     );
   };
 
-  // Apply filters (including tag filter)
   const filteredTrades = trades.filter((trade) => {
     if (filters.market !== "all" && trade.market?.toUpperCase() !== filters.market) return false;
-    if (filters.result === "win" && trade.pnl < 0) return false;
+    if (filters.result === "win"  && trade.pnl < 0)  return false;
     if (filters.result === "loss" && trade.pnl >= 0) return false;
     if (filters.dateFrom && trade.exit_date < filters.dateFrom) return false;
-    if (filters.dateTo && trade.exit_date > filters.dateTo) return false;
-    
-    // ✅ NEW: Tag filter - show trades that have ANY of the selected tags
+    if (filters.dateTo   && trade.exit_date > filters.dateTo)   return false;
     if (selectedTags.length > 0) {
-      if (!trade.tags || !selectedTags.some(tag => trade.tags.includes(tag))) {
-        return false;
-      }
+      if (!trade.tags || !selectedTags.some(tag => trade.tags.includes(tag))) return false;
     }
-    
     return true;
   });
 
-  const totalPnL = filteredTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
-  const winningTrades = filteredTrades.filter((t) => t.pnl >= 0);
-  const losingTrades = filteredTrades.filter((t) => t.pnl < 0);
-  const winRate = filteredTrades.length > 0 ? (winningTrades.length / filteredTrades.length) * 100 : 0;
-  const avgWin = winningTrades.length > 0 ? winningTrades.reduce((sum, t) => sum + t.pnl, 0) / winningTrades.length : 0;
-  const avgLoss = losingTrades.length > 0 ? losingTrades.reduce((sum, t) => sum + t.pnl, 0) / losingTrades.length : 0;
+  const totalPnL       = filteredTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
+  const winningTrades  = filteredTrades.filter(t => t.pnl >= 0);
+  const losingTrades   = filteredTrades.filter(t => t.pnl < 0);
+  const winRate        = filteredTrades.length > 0 ? (winningTrades.length / filteredTrades.length) * 100 : 0;
+  const avgWin         = winningTrades.length > 0 ? winningTrades.reduce((sum, t) => sum + t.pnl, 0) / winningTrades.length : 0;
+  const avgLoss        = losingTrades.length > 0  ? losingTrades.reduce((sum, t) => sum + t.pnl, 0)  / losingTrades.length  : 0;
 
   return (
     <div className="space-y-6">
@@ -103,89 +118,36 @@ export default function TradeHistory() {
               value={`${winRate.toFixed(1)}%`}
               subtitle={`${winningTrades.length}W / ${losingTrades.length}L`}
               trend={winRate >= 50 ? "up" : "down"}
-              gradient="violet"
+              icon={winRate >= 50 ? TrendingUp : TrendingDown}
+              gradient={winRate >= 50 ? "emerald" : "rose"}
             />
-            <StatsCard title="Avg Win" value={`+£${avgWin.toFixed(2)}`} trend="up" gradient="emerald" />
-            <StatsCard title="Avg Loss" value={`£${Math.abs(avgLoss).toFixed(2)}`} trend="down" gradient="rose" />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <PnLBarChart trades={filteredTrades} />
-            </div>
-            <div>
-              <WinRateChart winRate={winRate} wins={winningTrades.length} losses={losingTrades.length} />
-            </div>
+            <StatsCard
+              title="Avg Winner"
+              value={`+£${avgWin.toFixed(2)}`}
+              trend="up"
+              icon={TrendingUp}
+              gradient="emerald"
+            />
+            <StatsCard
+              title="Avg Loser"
+              value={`-£${Math.abs(avgLoss).toFixed(2)}`}
+              trend="down"
+              icon={TrendingDown}
+              gradient="rose"
+            />
           </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-5"
+            className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 space-y-4"
           >
-            <div className="flex items-center gap-2 mb-4">
-              <Filter className="w-4 h-4 text-cyan-400" />
-              <span className="text-sm font-medium text-slate-300">Filters</span>
+            <div className="flex items-center gap-2 text-slate-400">
+              <Filter className="w-4 h-4" />
+              <span className="text-sm font-medium">Filters</span>
             </div>
-            
-            {/* ✅ NEW: Tag Filter Section */}
-            {availableTags.length > 0 && (
-              <div className="mb-4">
-                <div className="relative">
-                  <button
-                    onClick={() => setShowTagDropdown(!showTagDropdown)}
-                    className="w-full flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-white hover:bg-slate-800 transition-colors"
-                  >
-                    <Tag className="w-4 h-4 text-violet-400" />
-                    <span className="text-sm">
-                      {selectedTags.length === 0 
-                        ? "Filter by tags..." 
-                        : `${selectedTags.length} tag${selectedTags.length > 1 ? 's' : ''} selected`}
-                    </span>
-                  </button>
-                  
-                  {showTagDropdown && (
-                    <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-64 overflow-auto">
-                      {availableTags.map((tag) => (
-                        <button
-                          key={tag}
-                          onClick={() => handleTagToggle(tag)}
-                          className={cn(
-                            "w-full px-4 py-2.5 text-left text-sm transition-colors flex items-center justify-between",
-                            selectedTags.includes(tag)
-                              ? "bg-cyan-500/20 text-cyan-400"
-                              : "text-slate-300 hover:bg-slate-700 hover:text-white"
-                          )}
-                        >
-                          <span>{tag}</span>
-                          {selectedTags.includes(tag) && (
-                            <span className="text-cyan-400">✓</span>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Selected tags pills */}
-                {selectedTags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedTags.map((tag) => (
-                      <button
-                        key={tag}
-                        onClick={() => handleTagToggle(tag)}
-                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition-colors"
-                      >
-                        {tag}
-                        <X className="w-3 h-3" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {/* Existing filters */}
+
+            {/* Standard filters */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Select value={filters.market} onValueChange={(value) => setFilters({ ...filters, market: value })}>
                 <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
@@ -231,9 +193,64 @@ export default function TradeHistory() {
                 />
               </div>
             </div>
+
+            {/* Tag filter */}
+            {availableTags.length > 0 && (
+              <div className="space-y-2">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowTagDropdown(!showTagDropdown)}
+                    className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    <Tag className="w-4 h-4" />
+                    Filter by tag
+                    {selectedTags.length > 0 && (
+                      <span className="px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-xs">
+                        {selectedTags.length}
+                      </span>
+                    )}
+                  </button>
+                  {showTagDropdown && (
+                    <div className="absolute top-full left-0 mt-1 z-10 min-w-48 rounded-xl bg-slate-800 border border-slate-700 shadow-xl p-2">
+                      {availableTags.map(tag => (
+                        <button
+                          key={tag}
+                          onClick={() => handleTagToggle(tag)}
+                          className={cn(
+                            "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
+                            selectedTags.includes(tag)
+                              ? "bg-cyan-500/20 text-cyan-400"
+                              : "text-slate-300 hover:bg-slate-700"
+                          )}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {selectedTags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTags.map(tag => (
+                      <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                        {tag}
+                        <button onClick={() => handleTagToggle(tag)}>
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </motion.div>
 
-          <TradeHistoryTable trades={filteredTrades} />
+          {/* BLG-FEAT-02: tradesForCharts passed for R-multiple join.
+              Falls back to [] (already defaulted) if analytics call is still loading. */}
+          <TradeHistoryTable
+            trades={filteredTrades}
+            tradesForCharts={tradesForCharts}
+          />
 
           {filteredTrades.length > 0 && (
             <p className="text-center text-sm text-slate-500">
