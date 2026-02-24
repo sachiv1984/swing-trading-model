@@ -13,6 +13,7 @@ import re
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 from decimal import Decimal
+from services.grace_service import compute_grace_days_remaining
 
 
 from database import (
@@ -179,6 +180,10 @@ def get_positions_with_prices() -> List[Dict]:
             "status": "open",
             "display_status": display_status,
             "exit_reason": None,
+            position_dict["grace_days_remaining"] = compute_grace_days_remaining(
+            grace_period=pos["grace_period"],
+            holding_days=pos["holding_days"],
+             )
             "grace_period": grace_period,
             "stop_reason": f"Grace period ({holding_days}/10 days)" if grace_period else "Active",
             "atr_value": pos.get('atr', 0),
