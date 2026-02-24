@@ -695,8 +695,17 @@ def get_peak_portfolio_value(portfolio_id: str) -> float:
                 """,
                 (portfolio_id,),
             )
-            result = cur.fetchone()
-            return float(result[0])
+        
+        cur.execute(
+                """
+                SELECT COALESCE(MAX(total_value), 0.0) AS peak_value
+                FROM portfolio_history
+                WHERE portfolio_id = %s
+                """,
+                (portfolio_id,),
+        )
+        result = cur.fetchone()
+        return float(result['peak_value'])
 
 
 # ---------------------------------------------------------------------------
