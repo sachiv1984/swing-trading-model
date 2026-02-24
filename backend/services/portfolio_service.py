@@ -176,9 +176,9 @@ def get_portfolio_summary() -> Dict:
 
    # B1 — Current drawdown fields (QWB BLG-FEAT-01)
    # Spec: portfolio_endpoints.md v1.8.2, metrics_definitions.md v1.5.8
-     drawdown_fields = get_drawdown_fields(
-     portfolio_id=portfolio_id,
-    current_total_value=total_value,
+    drawdown_fields = get_drawdown_fields(
+        portfolio_id=portfolio_id,
+        current_total_value=total_value,
     )
     
     return {
