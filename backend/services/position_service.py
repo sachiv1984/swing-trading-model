@@ -195,6 +195,7 @@ def get_positions_with_prices() -> List[Dict]:
             "live_fx_rate": live_fx_rate,
             "total_cost": round(pos.get('total_cost', 0), 2),
             "entry_note": pos.get('entry_note'),
+            "exit_note": pos.get('exit_note')
             "tags": pos.get('tags', [])
         })
     
