@@ -400,10 +400,11 @@ export default function PerformanceAnalytics() {
         entryExitData={analyticsData?.entryExitScatter || []}
       />
       <RMultipleAnalysis trades={analyticsData?.tradesForCharts || []} />
-      <TopPerformers 
+      <TopPerformers
         topWinners={analyticsData?.topPerformers?.winners || []}
         topLosers={analyticsData?.topPerformers?.losers || []}
-      />
+       />
+      <BestWorstTrades tradesForCharts={analyticsData?.tradesForCharts || []} />
       <ConsistencyMetrics metrics={analyticsData?.consistencyMetrics || {}} />
       <TagPerformance trades={analyticsData?.tradesForCharts || []} />
     </div>
