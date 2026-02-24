@@ -254,7 +254,7 @@ export default function PerformanceAnalytics() {
     }, 250);
   };
 
-   Show loading state
+   // Show loading state
   if (analyticsLoading) {
     return (
       <div>
@@ -269,7 +269,7 @@ export default function PerformanceAnalytics() {
     );
   }
 
-   Show error state
+   // Show error state
   if (analyticsError) {
     return (
       <div>
@@ -297,7 +297,7 @@ export default function PerformanceAnalytics() {
     );
   }
 
-   Show "not enough data" state
+   // Show "not enough data" state
   if (!hasEnoughTrades) {
     return (
       <div>
@@ -349,7 +349,7 @@ export default function PerformanceAnalytics() {
     );
   }
 
-   Main render - show analytics
+   // Main render - show analytics
   return (
     <div className="space-y-6">
       <PageHeader
