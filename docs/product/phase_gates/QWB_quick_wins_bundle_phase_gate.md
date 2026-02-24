@@ -3,7 +3,7 @@
 **Owner:** PMO Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.4
+**Version:** 1.5
 **Created:** 2026-02-22
 **Last Updated:** 2026-02-27
 **Filed:** — (immutable on closure)
@@ -16,6 +16,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-02-27 | Gate 4 closed. Scope document and roadmap patch confirmed. All 5 gate items Pass. State transitioned SCOPE_DOCUMENT → IMPLEMENTATION_OPEN. Head of Engineering notified. |
 | 1.4 | 2026-02-27 | Gate 3 closed. QA verdict Pass confirmed. F-01 resolved (A-QA-04), F-02 resolved (A-QA-05). Test scenario document re-confirmed (OBS-QWB-02 resolved). State transitioned QA_REVIEW → SCOPE_DOCUMENT. Product Owner notified to begin scope document. |
 | 1.3 | 2026-02-27 | Gate 2 closed. All 11 spec actions confirmed complete with specific content evidence. State transitioned SPEC_DELIVERY → QA_REVIEW. QA & Testing Owner notified with full spec list. |
 | 1.2 | 2026-02-24 | Gate 1 closed. Decisions record committed. 11 spec delivery actions opened across 4 owners. |
@@ -55,13 +56,13 @@
 ## Current Status
 
 ```
-Current phase:    SCOPE_DOCUMENT
-Gate passed:      Gate 3 — 2026-02-27
-Next gate:        Gate 4 — scope document committed, roadmap updated
-Who acts next:    Product Owner
-What they do:     Author and commit scope document per feature_scope_document.md
-                  at docs/product/scope/scope--QWB-quick-wins-bundle.md
-Deadline:         2026-02-27T17:00:00Z
+Current phase:    IMPLEMENTATION_OPEN
+Gate passed:      Gate 4 — 2026-02-27
+Next gate:        Gate 5 — ship sign-off confirmed, post-ship closure complete
+Who acts next:    Head of Engineering
+What they do:     Run implementation intake (implementation_intake.md), then build
+                  all six bundle items against locked canonical specs
+Deadline:         Per engineering schedule — Head of Engineering to confirm
 Blockers:         None
 ```
 
@@ -75,8 +76,8 @@ Blockers:         None
 | Phase 1 — Pre-Alignment Meeting | All decisions closed, decisions record committed | ✅ Complete | 2026-02-24 | 13 decisions closed. Zero deferrals. Record committed. |
 | Phase 2 — Parallel Spec Delivery | All spec actions complete and committed | ✅ Complete | 2026-02-27 | All 11 actions confirmed complete. Gate 2 passed. |
 | Phase 3 — QA Review Gate | QA sign-off confirmed | ✅ Complete | 2026-02-27 | Conditional Pass issued (F-01 blocking, F-02 non-blocking). Both resolved. Final verdict: Pass. Gate 3 passed. |
-| Phase 4 — Scope Document | Scope document committed, implementation declared open | 🟡 In progress | 2026-02-27 | Product Owner notified. Scope document authoring in progress. |
-| Implementation | Engineering builds against locked specs | ⬜ Not started | — | |
+| Phase 4 — Scope Document | Scope document committed, implementation declared open | ✅ Complete | 2026-02-27 | Scope document and roadmap patch committed. All 5 Gate 4 items Pass. Gate 4 passed. |
+| Implementation | Engineering builds against locked specs | 🟡 In progress | 2026-02-27 | Head of Engineering notified. Implementation intake to be run. |
 | Phase 5 — Verification | All criteria pass, Director of Quality final sign-off | ⬜ Not started | — | |
 | Shipping Closure | Changelog, roadmap, supersession actions complete | ⬜ Not started | — | |
 
@@ -268,35 +269,72 @@ Gate 3.3 — No outstanding spec questions
 
 ---
 
-## Gate 4 — 🟡 IN PROGRESS
+## Gate 4 — ✅ COMPLETE (2026-02-27)
 
 ```
 Gate 4.1 — Scope document committed to correct location
-  Evidence:             [PENDING — Product Owner to commit
-                        docs/product/scope/scope--QWB-quick-wins-bundle.md]
-  Owner confirmation:   [PENDING]
-  PMO validation:       [PENDING]
+  Evidence:             docs/product/scope/scope--QWB-quick-wins-bundle.md
+                        Filed at correct path per pre_alignment_run.md v2.0 convention.
+                        Confirmed by PMO Lead review of output file 2026-02-27.
+  Owner confirmation:   Yes — Product Owner, 2026-02-27
+  PMO validation:       Pass — PMO Lead, 2026-02-27
 
 Gate 4.2 — Scope document has compliant Class 4 header
-  Evidence:             [PENDING — PMO Lead review on commit]
-  Owner confirmation:   [PENDING]
-  PMO validation:       [PENDING]
+  Evidence:             Header confirmed present and complete:
+                        Owner: Product Owner ✅
+                        Class: Planning Document (Class 4) ✅
+                        Status: Active ✅
+                        Last Updated: 2026-02-27 ✅
+                        Roadmap item: Quick Wins Bundle — BLG-FEAT-01, 02, 04, 05, 06, 07 ✅
+                        Target release: v1.6.1 ✅
+                        Standing notice present ✅
+  Owner confirmation:   Yes — Product Owner, 2026-02-27
+  PMO validation:       Pass — PMO Lead, 2026-02-27
 
 Gate 4.3 — All canonical specs listed with version numbers
-  Evidence:             [PENDING — PMO Lead spot-check on commit]
-  Owner confirmation:   [PENDING]
-  PMO validation:       [PENDING]
+  Evidence:             Section 2 of scope document contains all 12 locked canonical
+                        specs, each with exact version number and a description of
+                        what it owns for this bundle. PMO Lead spot-check complete.
+                        Specs confirmed:
+                          metrics_definitions.md v1.5.8 ✅
+                          portfolio_endpoints.md v1.8.2 ✅
+                          position_endpoints.md v1.8.3 ✅
+                          trade_endpoints.md v1.8.4 ✅
+                          analytics_endpoints.md v1.8.1 ✅
+                          data_model.md v1.7 ✅
+                          dashboard.md v1.1 ✅
+                          trade_history.md v1.1 ✅
+                          analytics.md v1.2 ✅
+                          positions.md v1.2 ✅
+                          api_dependencies.md v1.2 ✅
+                          openapi.yaml current ✅
+  Owner confirmation:   Yes — Product Owner, 2026-02-27
+  PMO validation:       Pass — PMO Lead, 2026-02-27
+                        All 12 specs present. All version numbers explicit.
+                        Consistent with locked specs table in this phase gate document.
 
 Gate 4.4 — Pre-implementation checklist complete
-  Evidence:             [PENDING — PMO Lead review on commit]
-  Owner confirmation:   [PENDING]
-  PMO validation:       [PENDING]
+  Evidence:             Section 8 of scope document contains 15 checklist items.
+                        All 15 marked [x]. Zero unchecked items. PMO Lead review complete.
+                        Items cover: all 12 specs confirmed at locked versions, decisions
+                        record committed, QA review complete with date and owner, test
+                        scenarios document committed with version and coverage count.
+  Owner confirmation:   Yes — Product Owner, 2026-02-27
+  PMO validation:       Pass — PMO Lead, 2026-02-27
 
 Gate 4.5 — Roadmap entry updated
-  Evidence:             [PENDING — commit reference from Product Owner]
-  Owner confirmation:   [PENDING]
-  PMO validation:       [PENDING]
+  Evidence:             roadmap-QWB-patch.md committed 2026-02-27. Patch updates QWB
+                        entry in docs/product/roadmap.md:
+                          Status: Planned → 🟡 Implementation Open — 2026-02-27
+                          Effort: ~6–8 hours → ~8–10.5 hours (A-S05 confirmed)
+                          All 12 locked canonical spec versions added in table
+                          Scope document and decisions record paths added
+                          Item notes updated from pre-alignment caveats to In progress
+  Owner confirmation:   Yes — Product Owner, 2026-02-27
+  PMO validation:       Pass — PMO Lead, 2026-02-27
 ```
+
+**✅ ALL GATE 4 ITEMS PASS — State transitions SCOPE_DOCUMENT → IMPLEMENTATION_OPEN**
 
 ---
 
@@ -370,14 +408,14 @@ Re-confirmed by QA & Testing Owner 2026-02-27 following Gate 3 pass. OBS-QWB-02 
 
 ## Stakeholder Next Steps
 
-**As of 2026-02-27 — Gate 3 passed, state is SCOPE_DOCUMENT:**
+**As of 2026-02-27 — Gate 4 passed, state is IMPLEMENTATION_OPEN:**
 
 | Role | Action | By when |
 |------|--------|---------|
-| **Product Owner** | Author and commit scope document at `docs/product/scope/scope--QWB-quick-wins-bundle.md` per `feature_scope_document.md`. Update roadmap entry to reference locked spec versions. Notify PMO Lead on completion. | 2026-02-27T17:00:00Z |
-| **All spec owners** | No action required. Specs are locked and QA-signed. Standby for Gate 4. | — |
-| **QA & Testing Owner** | No action required. Test scenarios ready for Phase 5 execution. | — |
-| **Head of Engineering** | No action until Gate 4 passes. | — |
+| **Head of Engineering** | Run implementation intake per `implementation_intake.md`. Implement all six bundle items against locked canonical specs in `docs/product/scope/scope--QWB-quick-wins-bundle.md`. Spec questions go to the relevant spec owner — not PMO Lead. | Per engineering schedule |
+| **Product Owner** | No action until Phase 5 — ship sign-off. | — |
+| **QA & Testing Owner** | No action until Phase 5 — QA Lead executes test scenarios in `docs/testing/QWB-quick-wins-bundle-test-scenarios.md` v1.0. | — |
+| **All spec owners** | Standby for spec queries from Engineering. No pre-emptive action required. | — |
 
 ---
 
@@ -385,7 +423,8 @@ Re-confirmed by QA & Testing Owner 2026-02-27 following Gate 3 pass. OBS-QWB-02 
 
 | # | Action | Owner | Status | Due |
 |---|--------|-------|--------|-----|
-| A-SCOPE-01 | Author and commit scope document + update roadmap | Product Owner | 🟡 Open | 2026-02-27T17:00:00Z |
+| A-SCOPE-01 | Author and commit scope document + update roadmap | Product Owner | ✅ Complete | 2026-02-27 |
+| A-ENG-01 | Run implementation intake (`implementation_intake.md`) then implement all six bundle items against locked canonical specs | Head of Engineering | 🟡 Open | Per engineering schedule |
 
 ---
 
@@ -444,6 +483,7 @@ Re-confirmed by QA & Testing Owner 2026-02-27 following Gate 3 pass. OBS-QWB-02 
 | 4 | PRE_ALIGNMENT_MEETING | SPEC_DELIVERY | 2026-02-24 | 17:00:00Z | PMO Lead | Gate 1 |
 | 5 | SPEC_DELIVERY | QA_REVIEW | 2026-02-27 | 09:30:00Z | PMO Lead | Gate 2 |
 | 6 | QA_REVIEW | SCOPE_DOCUMENT | 2026-02-27 | 14:45:00Z | PMO Lead | Gate 3 |
+| 7 | SCOPE_DOCUMENT | IMPLEMENTATION_OPEN | 2026-02-27 | 16:00:00Z | PMO Lead | Gate 4 |
 
 ---
 
