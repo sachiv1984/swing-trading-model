@@ -46,25 +46,25 @@ export default function Positions() {
     },
   });
 
-  // FIXED: Exit mutation now accepts exitData directly from ExitModal
+   FIXED: Exit mutation now accepts exitData directly from ExitModal
   const exitMutation = useMutation({
     mutationFn: (exitData) => {
-      // exitData from ExitModal contains:
-      // { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
+       exitData from ExitModal contains:
+       { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
       console.log('Exit mutation received:', exitData);
       
-      // Pass the entire exitData object - the fixed base44Client will handle it
+       Pass the entire exitData object - the fixed base44Client will handle it
       return base44.entities.Position.exit(exitData);
     },
     onSuccess: (data) => {
       console.log('Exit successful:', data);
       
-      // More aggressive cache invalidation
+       More aggressive cache invalidation
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       queryClient.invalidateQueries({ queryKey: ["portfolio"] });
       queryClient.invalidateQueries({ queryKey: ["trades"] });
       
-      // Force immediate refetch instead of waiting for stale time
+       Force immediate refetch instead of waiting for stale time
       queryClient.refetchQueries({ queryKey: ["positions", "open"] });
       queryClient.refetchQueries({ queryKey: ["portfolio"] });
       
@@ -76,16 +76,16 @@ export default function Positions() {
     }
   });
 
-  // ✅ FIXED: Updated handleSave to only update notes and tags
+   ✅ FIXED: Updated handleSave to only update notes and tags
   const handleSave = async (position) => {
     try {
-      // Update entry note using the new method
+       Update entry note using the new method
       await base44.entities.Position.updateNote(position.id, position.entry_note || "");
 
-      // Update tags using the new method
+       Update tags using the new method
       await base44.entities.Position.updateTags(position.id, position.tags || []);
 
-      // Invalidate queries to refresh data
+       Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       setEditingPosition(null);
     } catch (error) {
@@ -94,13 +94,13 @@ export default function Positions() {
     }
   };
 
-  // FIXED: handleExit now just passes exitData through to mutation
+   FIXED: handleExit now just passes exitData through to mutation
   const handleExit = (exitData) => {
-    // exitData from ExitModal already has everything:
-    // { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
+     exitData from ExitModal already has everything:
+     { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
     console.log('handleExit called with:', exitData);
     
-    // Validate required fields before sending
+     Validate required fields before sending
     if (!exitData.position_id) {
       alert('Invalid position data');
       return;
@@ -116,7 +116,7 @@ export default function Positions() {
       return;
     }
     
-    // Pass the complete exitData object to mutation
+     Pass the complete exitData object to mutation
     exitMutation.mutate(exitData);
   };
 
@@ -218,18 +218,19 @@ export default function Positions() {
             <TableHead>Shares</TableHead>
             <TableHead className="text-right">P&L</TableHead>
             <TableHead>Days</TableHead>
+            <TableHead>Grace</TableHead>
             <TableHead>Actions</TableHead>
           </TableHeader>
           <TableBody>
             {openPositions.map((position) => {
-              // P&L is already calculated in GBP by backend
+               P&L is already calculated in GBP by backend
               const pnl = position.pnl || 0;
               const pnlPercent = position.pnl_percent || 0;
               const isProfit = pnl >= 0;
               const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
               const currencySymbol = position.market === "UK" ? "£" : "$";
               
-              // Use native prices for display
+               Use native prices for display
               const displayCurrentPrice = position.current_price_native || position.current_price;
               const displayStopPrice = position.stop_price_native || position.stop_price;
 
@@ -257,9 +258,24 @@ export default function Positions() {
                       <span className="text-xs opacity-70">({pnlPercent.toFixed(1)}%)</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-slate-400">{daysHeld}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
+                 <TableCell className="text-slate-400">{daysHeld}</TableCell>
+
+                 {/* BLG-FEAT-06: Grace Days Remaining
+                     Spec: positions.md v1.2; position_endpoints.md v1.8.3
+                     Display: "Day {holding_days + 1} of 10" when integer; "—" when null.
+                     field name: grace_days_remaining (from GET /positions, always present). */}
+                 <TableCell>
+                   {position.grace_days_remaining !== null && position.grace_days_remaining !== undefined ? (
+                     <span className="text-xs font-medium px-2 py-1 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/25 whitespace-nowrap">
+                       Day {(position.holding_days ?? 0) + 1} of 10
+                     </span>
+                   ) : (
+                     <span className="text-slate-600">—</span>
+                   )}
+                 </TableCell>
+              
+                 <TableCell>
+     
                       <Button
                         variant="ghost"
                         size="icon"
