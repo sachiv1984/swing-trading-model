@@ -273,27 +273,28 @@ export default function Positions() {
                      <span className="text-slate-600">—</span>
                    )}
                  </TableCell>
-              
                  <TableCell>
-     
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
-                        onClick={() => setEditingPosition(position)}
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
-                        onClick={() => setExitingPosition(position)}
-                      >
-                        <LogOut className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+                   <div className="flex items-center gap-2">
+                     <Button
+                       variant="ghost"
+                       size="icon"
+                       className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
+                       onClick={() => setEditingPosition(position)}
+                     >
+                       <Edit2 className="w-4 h-4" />
+                     </Button>
+                
+                     <Button
+                       variant="ghost"
+                       size="icon"
+                       className="h-8 w-8 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                       onClick={() => setExitingPosition(position)}
+                     >
+                       <LogOut className="w-4 h-4" />
+                     </Button>
+                   </div>
+                 </TableCell>
+                </TableCell>
                 </TableRow>
               );
             })}
