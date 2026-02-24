@@ -167,12 +167,21 @@ def get_positions_with_prices() -> List[Dict]:
         grace_period=grace_period,
         holding_days=holding_days,
         )
+
+        
+        initial_stop = pos.get("initial_stop")
+        
+        # Fallbacks if your DB uses different column names
+        if initial_stop is None:
+            initial_stop = pos.get("initial_stop_price", pos.get("stop_price"))
+
         
         # Build position dict
         positions_list.append({
             "id": str(pos['id']),
             "ticker": display_ticker,
             "market": pos['market'],
+            "initial_stop": round(initial_stop, 2) if initial_stop is not None else None,
             "entry_date": str(pos['entry_date']),
             "entry_price": round(entry_price_display, 2),
             "shares": pos['shares'],
@@ -195,7 +204,7 @@ def get_positions_with_prices() -> List[Dict]:
             "live_fx_rate": live_fx_rate,
             "total_cost": round(pos.get('total_cost', 0), 2),
             "entry_note": pos.get('entry_note'),
-            "exit_note": pos.get('exit_note')
+            "exit_note": pos.get('exit_note'),
             "tags": pos.get('tags', [])
         })
     
