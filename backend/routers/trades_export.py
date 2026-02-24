@@ -18,7 +18,7 @@ from services.trade_csv_service import build_trade_history_csv
 router = APIRouter(prefix="/trades", tags=["Trades"])
 
 
-@router.get("/export/csv")
+@router.get("/trades/export/csv")
 def export_trade_history_csv(request: Request):
     """
     Export the full closed trade history as a downloadable CSV file.
