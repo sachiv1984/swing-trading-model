@@ -53,7 +53,7 @@ export default function Positions() {
        // { position_id, shares, exit_price, exit_date, exit_reason, fx_rate }
       console.log('Exit mutation received:', exitData);
       
-       Pass the entire exitData object - the fixed base44Client will handle it
+       // Pass the entire exitData object - the fixed base44Client will handle it
       return base44.entities.Position.exit(exitData);
     },
     onSuccess: (data) => {
