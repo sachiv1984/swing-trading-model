@@ -17,8 +17,10 @@ import TagPerformance from "../components/analytics/TagPerformance";
 import UnderwaterChart from "../components/analytics/UnderwaterChart";
 import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
 import BestWorstTrades from "../components/analytics/BestWorstTrades";
+import WinRateByMonth  from "../components/analytics/WinRateByMonth";
 
-// ✅ Helper to convert snake_case to camelCase recursively
+
+ ✅ Helper to convert snake_case to camelCase recursively
 const toCamelCase = (obj) => {
   if (Array.isArray(obj)) {
     return obj.map(v => toCamelCase(v));
@@ -35,7 +37,7 @@ const toCamelCase = (obj) => {
 export default function PerformanceAnalytics() {
   const [timePeriod, setTimePeriod] = useState("last_month");
 
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+  const API_URL = process.env.REACT_APP_API_URL || "http:localhost:8000";
 
   const timePeriodLabels = {
     last_7_days: "Last 7 Days",
@@ -46,7 +48,7 @@ export default function PerformanceAnalytics() {
     all_time: "All Time"
   };
 
-  // ✅ NEW: Single API call replaces ALL calculations
+   ✅ NEW: Single API call replaces ALL calculations
   const { data: analyticsData, isLoading: analyticsLoading, error: analyticsError } = useQuery({
     queryKey: ["analytics", timePeriod],
     queryFn: async () => {
@@ -59,7 +61,7 @@ export default function PerformanceAnalytics() {
         const result = await response.json();
         console.log('Analytics data received (raw):', result);
         
-        // Transform snake_case to camelCase
+         Transform snake_case to camelCase
         const camelData = toCamelCase(result.data);
         console.log('Analytics data (camelCase):', camelData);
         
@@ -73,7 +75,7 @@ export default function PerformanceAnalytics() {
     retry: 1,
   });
 
-  // ✅ Extract data from API response with safe defaults
+   ✅ Extract data from API response with safe defaults
   const summary = analyticsData?.summary || { 
     hasEnoughData: false, 
     totalTrades: 0, 
@@ -104,7 +106,7 @@ export default function PerformanceAnalytics() {
   
   const hasEnoughTrades = summary.hasEnoughData;
 
-  // Default structures for components
+   Default structures for components
   const defaultMarketMetrics = {
     totalTrades: 0,
     winRate: 0,
@@ -252,7 +254,7 @@ export default function PerformanceAnalytics() {
     }, 250);
   };
 
-  // Show loading state
+   Show loading state
   if (analyticsLoading) {
     return (
       <div>
@@ -267,7 +269,7 @@ export default function PerformanceAnalytics() {
     );
   }
 
-  // Show error state
+   Show error state
   if (analyticsError) {
     return (
       <div>
@@ -295,7 +297,7 @@ export default function PerformanceAnalytics() {
     );
   }
 
-  // Show "not enough data" state
+   Show "not enough data" state
   if (!hasEnoughTrades) {
     return (
       <div>
@@ -347,7 +349,7 @@ export default function PerformanceAnalytics() {
     );
   }
 
-  // Main render - show analytics
+   Main render - show analytics
   return (
     <div className="space-y-6">
       <PageHeader
@@ -400,12 +402,21 @@ export default function PerformanceAnalytics() {
         entryExitData={analyticsData?.entryExitScatter || []}
       />
       <RMultipleAnalysis trades={analyticsData?.tradesForCharts || []} />
-      <TopPerformers
-        topWinners={analyticsData?.topPerformers?.winners || []}
-        topLosers={analyticsData?.topPerformers?.losers || []}
-       />
-      <BestWorstTrades tradesForCharts={analyticsData?.tradesForCharts || []} />
-      <ConsistencyMetrics metrics={analyticsData?.consistencyMetrics || {}} />
+     <TopPerformers
+     topWinners={analyticsData?.topPerformers?.winners || []}
+     topLosers={analyticsData?.topPerformers?.losers || []}
+     />
+  
+     {/* Component 11 — BLG-FEAT-04: Best / Worst Trades by R-Multiple
+         Source: trades_for_charts. Decision D3. Spec: analytics.md v1.2 §11.
+         No new API call — tradesForCharts already in analyticsData. */}
+     <BestWorstTrades tradesForCharts={analyticsData?.tradesForCharts || []} />
+  
+     {/* Component 12 — BLG-FEAT-05: Win Rate by Month bar chart
+         Source: monthly_data. Spec: analytics.md v1.2 §12.
+         Returns null when monthlyData is empty — no extra guard needed. */}
+     <WinRateByMonth monthlyData={analyticsData?.monthlyData || []} />
+     <ConsistencyMetrics metrics={analyticsData?.consistencyMetrics || {}} />
       <TagPerformance trades={analyticsData?.tradesForCharts || []} />
     </div>
   );
