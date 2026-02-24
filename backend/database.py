@@ -696,7 +696,7 @@ def get_peak_portfolio_value(portfolio_id: str) -> float:
                 (portfolio_id,),
             )
             result = cur.fetchone()
-            return float(result[0]) if result else 0.0
+            return float(result[0])
 
 
 # ---------------------------------------------------------------------------
