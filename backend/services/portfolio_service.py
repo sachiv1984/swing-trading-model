@@ -127,27 +127,20 @@ def get_portfolio_summary() -> Dict:
             pnl_gbp = pnl_native
         
         pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
-        holding_days = pos.get('holding_days', 0)
-        
-        if holding_days < 10:
+        holding_days = pos.get('holding_days', 0)                   
+
+        if holding_days < 10:                                      
             display_status = "GRACE"
         elif pnl_gbp > 0:
             display_status = "PROFITABLE"
         else:
             display_status = "LOSING"
-        
-        holding_days = pos.get('holding_days', 0)
-        
-        # Compute grace fields before building the dict
-        grace_period = holding_days < 10
+
+        grace_period = holding_days < 10                          
         grace_days_remaining = compute_grace_days_remaining(
             grace_period=grace_period,
             holding_days=holding_days,
         )
-        
-        if holding_days < 10:
-            display_status = "GRACE"
-        elif pnl_gbp > 0:
 
         positions_list.append({
             "id": str(pos["id"]),
