@@ -46,7 +46,6 @@ export default function Positions() {
     },
   });
 
-   FIXED: Exit mutation now accepts exitData directly from ExitModal
   const exitMutation = useMutation({
     mutationFn: (exitData) => {
        exitData from ExitModal contains:
