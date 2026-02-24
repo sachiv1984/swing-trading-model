@@ -223,14 +223,14 @@ export default function Positions() {
           </TableHeader>
           <TableBody>
             {openPositions.map((position) => {
-               P&L is already calculated in GBP by backend
+               // P&L is already calculated in GBP by backend
               const pnl = position.pnl || 0;
               const pnlPercent = position.pnl_percent || 0;
               const isProfit = pnl >= 0;
               const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
               const currencySymbol = position.market === "UK" ? "£" : "$";
               
-               Use native prices for display
+               // Use native prices for display
               const displayCurrentPrice = position.current_price_native || position.current_price;
               const displayStopPrice = position.stop_price_native || position.stop_price;
 
