@@ -61,7 +61,7 @@ export default function PerformanceAnalytics() {
         const result = await response.json();
         console.log('Analytics data received (raw):', result);
         
-         Transform snake_case to camelCase
+         // Transform snake_case to camelCase
         const camelData = toCamelCase(result.data);
         console.log('Analytics data (camelCase):', camelData);
         
