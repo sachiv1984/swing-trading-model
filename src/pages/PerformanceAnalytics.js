@@ -16,6 +16,7 @@ import ConsistencyMetrics from "../components/analytics/ConsistencyMetrics";
 import TagPerformance from "../components/analytics/TagPerformance";
 import UnderwaterChart from "../components/analytics/UnderwaterChart";
 import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
+import BestWorstTrades from "../components/analytics/BestWorstTrades";
 
 // ✅ Helper to convert snake_case to camelCase recursively
 const toCamelCase = (obj) => {
