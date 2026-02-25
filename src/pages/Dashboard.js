@@ -15,10 +15,10 @@ import MonitorModal from "../components/monitor/MonitorModal";
 import { useDashboardLayout } from "../components/dashboard/useDashboardLayout";
 
 // Widget components
-import { 
-  PortfolioValueWidget, 
-  CashBalanceWidget, 
-  OpenPositionsWidget, 
+import {
+  PortfolioValueWidget,
+  CashBalanceWidget,
+  OpenPositionsWidget,
   TotalPnLWidget,
   WinRateWidget,
   AvgHoldTimeWidget
@@ -37,10 +37,12 @@ export default function Dashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [cashModalOpen, setCashModalOpen] = useState(false);
-  
+
   const { widgets, addWidget, removeWidget, reorderWidgets, resetToDefault, isLoaded } = useDashboardLayout();
 
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
+  // ── Data queries ──────────────────────────────────────────────────────────
 
   const { data: portfolios, isLoading: loadingPortfolio } = useQuery({
     queryKey: ["portfolios"],
@@ -67,12 +69,15 @@ export default function Dashboard() {
     queryFn: () => base44.entities.CashTransaction.list("-date"),
   });
 
-  // B1 / F1 — BLG-FEAT-01: Analytics metrics for drawdown widget secondary fields.
-  // Provides: advanced_metrics.days_underwater, advanced_metrics.max_drawdown.percent
-  // Spec: dashboard.md v1.1; decisions D7, D8
-  // This query is non-blocking — widget degrades gracefully if it fails.
+  /**
+   * Analytics metrics — provides days_underwater and max_drawdown for the
+   * Current Drawdown widget. Uses a dedicated query key to avoid collisions
+   * with PerformanceAnalytics page which uses ["analytics", timePeriod].
+   *
+   * Spec: dashboard.md v1.1, metrics_definitions.md v1.5.8
+   */
   const { data: analyticsMetrics } = useQuery({
-    queryKey: ["analyticsMetrics"],
+    queryKey: ["analyticsMetricsDashboard"],
     queryFn: async () => {
       try {
         const response = await fetch(`${API_URL}/analytics/metrics`);
@@ -83,27 +88,28 @@ export default function Dashboard() {
         const result = await response.json();
         return result.data || null;
       } catch (error) {
-        console.error('Failed to load analytics metrics:', error);
+        console.error('Failed to load analytics metrics for dashboard:', error);
         return null;
       }
     },
-    // Stale after 5 minutes — this data changes slowly
-    staleTime: 5 * 60 * 1000,
-    // Do not throw on error — widget handles null gracefully
-    retry: false,
+    refetchInterval: 5 * 60 * 1000,
+    staleTime: 60 * 1000,
   });
+
+  // ── Derived values ────────────────────────────────────────────────────────
 
   const portfolio = portfolios?.[0];
   const openPositions = positions || [];
   const closedPositions = allPositions?.filter(p => p.status === "closed") || [];
-  
-  const totalPositionsValue = portfolio?.open_positions_value || openPositions.reduce((sum, p) => {
-    return sum + (p.current_price || p.entry_price) * p.shares;
-  }, 0);
+
+  const totalPositionsValue = portfolio?.open_positions_value
+    || openPositions.reduce((sum, p) => sum + (p.current_price || p.entry_price) * p.shares, 0);
 
   const totalPnL = portfolio?.total_pnl || 0;
 
   const isLoading = loadingPortfolio || loadingPositions || loadingRegimes || !isLoaded;
+
+  // ── Event handlers ────────────────────────────────────────────────────────
 
   const handleExitPositions = async (positionsToExit) => {
     for (const position of positionsToExit) {
@@ -121,13 +127,13 @@ export default function Dashboard() {
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-    
     const items = Array.from(widgets);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
-    
     reorderWidgets(items.map(w => w.id));
   };
+
+  // ── Widget renderer ───────────────────────────────────────────────────────
 
   const renderWidget = (widgetId) => {
     const widgetProps = {
@@ -145,42 +151,55 @@ export default function Dashboard() {
     switch (widgetId) {
       case "portfolio_value":
         return <PortfolioValueWidget {...widgetProps} />;
+
       case "cash_balance":
         return <CashBalanceWidget {...widgetProps} onManageCash={() => setCashModalOpen(true)} />;
+
       case "open_positions":
         return <OpenPositionsWidget {...widgetProps} />;
+
       case "total_pnl":
         return <TotalPnLWidget {...widgetProps} />;
+
       case "win_rate":
         return <WinRateWidget {...widgetProps} />;
+
       case "avg_hold_time":
         return <AvgHoldTimeWidget {...widgetProps} />;
 
-      // B1 / F1 — BLG-FEAT-01: Current Drawdown Widget
-      // Data sourced directly from API fields per decisions D1, D7, D8, D10.
-      // No client-side peak/drawdown calculation. No fallback logic.
-      // - currentDrawdownPercent: GET /portfolio → data.current_drawdown_percent
-      // - peakPortfolioValue:     GET /portfolio → data.peak_portfolio_value
-      // - daysUnderwater:         GET /analytics/metrics → advanced_metrics.days_underwater
-      // - maxDrawdownPercent:     GET /analytics/metrics → advanced_metrics.max_drawdown.percent
+      /**
+       * Current Drawdown Widget
+       *
+       * All four props are read directly from API responses.
+       * No client-side peak calculation. No fallback paths. (Decision D10)
+       *
+       * currentDrawdownPercent : GET /portfolio  → data.current_drawdown_percent
+       * peakPortfolioValue     : GET /portfolio  → data.peak_portfolio_value
+       * daysUnderwater         : GET /analytics/metrics → data.advanced_metrics.days_underwater
+       * maxDrawdownPercent     : GET /analytics/metrics → data.executive_metrics.max_drawdown.percent
+       */
       case "current_drawdown":
         return (
           <CurrentDrawdownWidget
-            currentDrawdownPercent={portfolio?.current_drawdown_percent ?? 0}
-            peakPortfolioValue={portfolio?.peak_portfolio_value ?? 0}
+            currentDrawdownPercent={portfolio?.current_drawdown_percent ?? 0.0}
+            peakPortfolioValue={portfolio?.peak_portfolio_value ?? 0.0}
             daysUnderwater={analyticsMetrics?.advanced_metrics?.days_underwater ?? 0}
-            maxDrawdownPercent={analyticsMetrics?.advanced_metrics?.max_drawdown?.percent ?? 0}
+            maxDrawdownPercent={analyticsMetrics?.executive_metrics?.max_drawdown?.percent ?? 0}
           />
         );
 
       case "portfolio_chart":
         return <PortfolioChart />;
+
       case "allocation_chart":
         return <AllocationChart positions={openPositions} />;
+
       case "pnl_chart":
         return <PnLBarChart trades={closedPositions} />;
+
       case "win_rate_chart":
         return <WinRateChart trades={closedPositions} />;
+
       case "market_regime_us":
         return (
           <MarketRegimeCard
@@ -189,6 +208,7 @@ export default function Dashboard() {
             index="SPY"
           />
         );
+
       case "market_regime_uk":
         return (
           <MarketRegimeCard
@@ -197,28 +217,42 @@ export default function Dashboard() {
             index="FTSE 100"
           />
         );
+
       case "quick_actions":
         return <QuickActions onRunMonitor={() => setMonitorOpen(true)} />;
+
       case "recent_trades":
         return <RecentTradesWidget positions={allPositions} />;
+
       default:
         return null;
     }
   };
 
+  // ── Layout helpers ────────────────────────────────────────────────────────
+
   const getWidgetSize = (widgetId) => {
-    const smallWidgets = ["portfolio_value", "cash_balance", "open_positions", "total_pnl", "win_rate", "avg_hold_time", "current_drawdown"];
-    const mediumWidgets = ["allocation_chart", "market_regime_us", "market_regime_uk", "win_rate_chart"];
-    const largeWidgets = ["portfolio_chart", "pnl_chart", "quick_actions", "recent_trades"];
-    
-    if (smallWidgets.includes(widgetId)) return "small";
+    const smallWidgets = [
+      "portfolio_value", "cash_balance", "open_positions",
+      "total_pnl", "win_rate", "avg_hold_time", "current_drawdown"
+    ];
+    const mediumWidgets = [
+      "allocation_chart", "market_regime_us", "market_regime_uk", "win_rate_chart"
+    ];
+    const largeWidgets = [
+      "portfolio_chart", "pnl_chart", "quick_actions", "recent_trades"
+    ];
+
+    if (smallWidgets.includes(widgetId))  return "small";
     if (mediumWidgets.includes(widgetId)) return "medium";
-    if (largeWidgets.includes(widgetId)) return "large";
+    if (largeWidgets.includes(widgetId))  return "large";
     return "medium";
   };
 
   const smallWidgets = widgets.filter(w => getWidgetSize(w.id) === "small");
   const otherWidgets = widgets.filter(w => getWidgetSize(w.id) !== "small");
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="space-y-6">
@@ -254,21 +288,15 @@ export default function Dashboard() {
               size="sm"
               onClick={() => setIsEditing(!isEditing)}
               className={cn(
-                isEditing 
+                isEditing
                   ? "bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white"
                   : "bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white"
               )}
             >
               {isEditing ? (
-                <>
-                  <Check className="w-4 h-4 mr-2" />
-                  Done
-                </>
+                <><Check className="w-4 h-4 mr-2" />Done</>
               ) : (
-                <>
-                  <Settings2 className="w-4 h-4 mr-2" />
-                  Customize
-                </>
+                <><Settings2 className="w-4 h-4 mr-2" />Customize</>
               )}
             </Button>
           </div>
@@ -288,13 +316,13 @@ export default function Dashboard() {
                 {...provided.droppableProps}
                 className="space-y-6"
               >
-                {/* Small Widgets Grid */}
+                {/* Small stats cards grid */}
                 {smallWidgets.length > 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {smallWidgets.map((widget) => (
-                      <Draggable 
-                        key={widget.id} 
-                        draggableId={widget.id} 
+                      <Draggable
+                        key={widget.id}
+                        draggableId={widget.id}
                         index={widgets.findIndex(w => w.id === widget.id)}
                         isDragDisabled={!isEditing}
                       >
@@ -319,14 +347,13 @@ export default function Dashboard() {
                   </div>
                 )}
 
-                {/* Other Widgets */}
+                {/* Other widgets */}
                 {otherWidgets.map((widget) => {
                   const size = getWidgetSize(widget.id);
-                  
                   return (
-                    <Draggable 
-                      key={widget.id} 
-                      draggableId={widget.id} 
+                    <Draggable
+                      key={widget.id}
+                      draggableId={widget.id}
                       index={widgets.findIndex(w => w.id === widget.id)}
                       isDragDisabled={!isEditing}
                     >
@@ -354,6 +381,7 @@ export default function Dashboard() {
                     </Draggable>
                   );
                 })}
+
                 {provided.placeholder}
               </div>
             )}
