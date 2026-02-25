@@ -215,6 +215,36 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
             ))
             return cur.fetchone()
 
+def get_all_trade_history(portfolio_id: str) -> list:
+    """
+    Retrieve all closed trades for a portfolio ordered by exit_date descending.
+    Returns raw rows for CSV serialisation.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    ticker,
+                    market,
+                    entry_date,
+                    exit_date,
+                    shares,
+                    entry_price,
+                    exit_price,
+                    pnl,
+                    pnl_pct,
+                    holding_days,
+                    exit_reason,
+                    tags,
+                    entry_note,
+                    exit_note
+                FROM trade_history
+                WHERE portfolio_id = %s
+                ORDER BY exit_date DESC
+            """, (portfolio_id,))
+            rows = cur.fetchall()
+            return [dict(row) for row in rows]
+
 
 def get_settings():
     """Get all settings"""
