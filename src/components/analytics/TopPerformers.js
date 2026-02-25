@@ -35,7 +35,7 @@ export default function TopPerformers({ topWinners, topLosers }) {
             </div>
             <div className="flex items-center justify-between text-xs text-slate-400">
               <span>{trade.daysHeld} days</span>
-              <span className="capitalize">{trade.exitReason.replace(/_/g, ' ')}</span>
+              <span className="capitalize">{trade.exitReason ? trade.exitReason.replace(/_/g, ' ') : '—'}</span>
             </div>
           </div>
         ))}
