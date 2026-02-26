@@ -712,69 +712,6 @@ def get_peak_portfolio_value(portfolio_id: str) -> float:
 # CSV export: closed trade history query
 # ---------------------------------------------------------------------------
 
-# ---------------------------------------------------------------------------
-# BLG-TECH-07 — trades_for_charts with stop_price via positions JOIN
-# ---------------------------------------------------------------------------
-
-def get_trades_for_charts(portfolio_id: str, since_date=None) -> list:
-    """
-    Return closed trades for analytics charts, including stop_price sourced
-    from positions.initial_stop via LEFT JOIN on trade_history.position_id.
-
-    Implements the trades_for_charts contract in analytics_endpoints.md v1.8.1.
-    stop_price is not stored in trade_history — it is joined from the
-    originating position record using the position_id FK.
-
-    LEFT JOIN (not INNER JOIN) ensures trades whose position record has been
-    deleted still appear in results, with stop_price returning null.
-    The frontend null-guard displays '—' and excludes null-stop trades from
-    R-multiple calculations (per trade_history.md v1.1 §Null handling).
-
-    Args:
-        portfolio_id: Portfolio UUID to filter by.
-        since_date:   Optional datetime.date or 'YYYY-MM-DD' string.
-                      When provided, only trades with exit_date >= since_date
-                      are returned. Used by the period filter.
-
-    Returns:
-        list[dict]: Trades matching the trades_for_charts schema.
-                    Empty list if no qualifying trades exist.
-    """
-    with get_db() as conn:
-        with conn.cursor() as cur:
-            base_sql = """
-                SELECT
-                    th.id,
-                    th.ticker,
-                    th.market,
-                    th.entry_date,
-                    th.exit_date,
-                    th.entry_price,
-                    th.exit_price,
-                    p.initial_stop  AS stop_price,
-                    th.pnl,
-                    th.pnl_pct      AS pnl_percent,
-                    th.exit_reason,
-                    th.holding_days,
-                    th.tags
-                FROM trade_history th
-                LEFT JOIN positions p ON th.position_id = p.id
-                WHERE th.portfolio_id = %s
-            """
-            if since_date:
-                cur.execute(
-                    base_sql + " AND th.exit_date >= %s ORDER BY th.exit_date DESC",
-                    (portfolio_id, since_date),
-                )
-            else:
-                cur.execute(
-                    base_sql + " ORDER BY th.exit_date DESC",
-                    (portfolio_id,),
-                )
-            rows = cur.fetchall()
-            return [dict(row) for row in rows]
-
-
 def get_all_closed_trades_for_csv_export(portfolio_id: str) -> list:
     """
     Return all closed trades for the CSV export endpoint, ordered
@@ -812,5 +749,68 @@ def get_all_closed_trades_for_csv_export(portfolio_id: str) -> list:
                 """,
                 (portfolio_id,),
             )
+            rows = cur.fetchall()
+            return [dict(row) for row in rows]
+
+
+# ---------------------------------------------------------------------------
+# BLG-TECH-07 — trades_for_charts with stop_price via positions JOIN
+# ---------------------------------------------------------------------------
+
+def get_trades_for_charts(portfolio_id: str, since_date=None) -> list:
+    """
+    Return closed trades for analytics charts, including stop_price sourced
+    from positions.initial_stop via LEFT JOIN on trade_history.position_id.
+
+    Implements the trades_for_charts contract in analytics_endpoints.md v1.8.1.
+    stop_price is not stored in trade_history — it is joined from the
+    originating position record using the position_id FK.
+
+    LEFT JOIN (not INNER JOIN) ensures trades whose position record has been
+    deleted still appear in results, with stop_price returning null.
+    The frontend null-guard displays '—' and excludes null-stop trades from
+    R-multiple calculations (per trade_history.md v1.1 §Null handling).
+
+    Args:
+        portfolio_id: Portfolio UUID to filter by.
+        since_date:   Optional datetime.date or 'YYYY-MM-DD' string.
+                      When provided, only trades with exit_date >= since_date
+                      are returned. Used by the analytics period filter.
+
+    Returns:
+        list[dict]: Trades matching the trades_for_charts schema.
+                    Empty list if no qualifying trades exist.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            base_sql = """
+                SELECT
+                    th.id,
+                    th.ticker,
+                    th.market,
+                    th.entry_date,
+                    th.exit_date,
+                    th.entry_price,
+                    th.exit_price,
+                    p.initial_stop  AS stop_price,
+                    th.pnl,
+                    th.pnl_pct      AS pnl_percent,
+                    th.exit_reason,
+                    th.holding_days,
+                    th.tags
+                FROM trade_history th
+                LEFT JOIN positions p ON th.position_id = p.id
+                WHERE th.portfolio_id = %s
+            """
+            if since_date:
+                cur.execute(
+                    base_sql + " AND th.exit_date >= %s ORDER BY th.exit_date DESC",
+                    (portfolio_id, since_date),
+                )
+            else:
+                cur.execute(
+                    base_sql + " ORDER BY th.exit_date DESC",
+                    (portfolio_id,),
+                )
             rows = cur.fetchall()
             return [dict(row) for row in rows]
