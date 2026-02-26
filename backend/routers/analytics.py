@@ -67,7 +67,7 @@ def _build_trades_for_charts_with_join(cursor, since_date) -> list:
                 FROM trade_history th
                 LEFT JOIN positions p ON th.position_id = p.id
                 WHERE th.exit_date >= %s
-                ORDER BY th.exit_date DESC
+                ORDER BY th.exit_date ASC
             """, (since_date,))
         else:
             cursor.execute("""
@@ -87,7 +87,7 @@ def _build_trades_for_charts_with_join(cursor, since_date) -> list:
                     th.tags
                 FROM trade_history th
                 LEFT JOIN positions p ON th.position_id = p.id
-                ORDER BY th.exit_date DESC
+                ORDER BY th.exit_date ASC
             """)
 
         trades_for_charts = []
@@ -137,7 +137,7 @@ def _build_trades_for_charts_no_join(cursor, since_date) -> list:
                 exit_reason, holding_days, tags
             FROM trade_history
             WHERE exit_date >= %s
-            ORDER BY exit_date DESC
+            ORDER BY exit_date ASC
         """, (since_date,))
     else:
         cursor.execute("""
@@ -146,7 +146,7 @@ def _build_trades_for_charts_no_join(cursor, since_date) -> list:
                 entry_price, exit_price, pnl, pnl_pct AS pnl_percent,
                 exit_reason, holding_days, tags
             FROM trade_history
-            ORDER BY exit_date DESC
+            ORDER BY exit_date ASC
         """)
 
     trades_for_charts = []
