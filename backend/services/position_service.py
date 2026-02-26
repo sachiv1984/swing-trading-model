@@ -180,10 +180,10 @@ def get_positions_with_prices() -> List[Dict]:
             "status": "open",
             "display_status": display_status,
             "exit_reason": None,
-            position_dict["grace_days_remaining"] = compute_grace_days_remaining(
-            grace_period=pos["grace_period"],
-            holding_days=pos["holding_days"],
-             )
+            "grace_days_remaining": compute_grace_days_remaining(
+                grace_period=pos["grace_period"],
+                holding_days=pos["holding_days"],
+            ),
             "grace_period": grace_period,
             "stop_reason": f"Grace period ({holding_days}/10 days)" if grace_period else "Active",
             "atr_value": pos.get('atr', 0),
