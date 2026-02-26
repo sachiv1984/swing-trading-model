@@ -9,9 +9,11 @@ BLG-TECH-01 fixes applied 2026-02-20:
          changed from entry_price × shares to trade.total_cost (GBP)
 """
 
-from typing import Dict, List, Any
+from typing import List, Dict, Optional
 from datetime import datetime, timedelta
 import math
+from database import get_portfolio, get_trades_for_charts
+from utils.formatting import decimal_to_float
 
 
 class AnalyticsService:
@@ -551,3 +553,99 @@ class AnalyticsService:
             "win_rate_std_dev": round(wr_std, 2),
             "pnl_std_dev": round(pnl_std, 2)
         }
+
+# ---------------------------------------------------------------------------
+# Period → cutoff date mapping
+# Mirrors the period filter logic used elsewhere in the analytics router.
+# ---------------------------------------------------------------------------
+
+def _period_to_since_date(period: str) -> Optional[date]:
+    """
+    Convert a period string to a since_date cutoff for the SQL filter.
+
+    Returns None for 'all_time' (no date restriction).
+    Raises ValueError for unrecognised period values.
+    """
+    today = date.today()
+
+    period_map = {
+        "all_time":     None,
+        "last_7_days":  today - timedelta(days=7),
+        "last_month":   today - timedelta(days=30),
+        "last_quarter": today - timedelta(days=90),
+        "last_year":    today - timedelta(days=365),
+        "ytd":          date(today.year, 1, 1),
+    }
+
+    if period not in period_map:
+        raise ValueError(
+            f"Invalid period '{period}'. "
+            f"Allowed: {', '.join(period_map.keys())}"
+        )
+
+    return period_map[period]
+
+
+# ---------------------------------------------------------------------------
+# Public interface — called by the analytics router
+# ---------------------------------------------------------------------------
+
+def get_trades_for_charts_by_period(period: str = "all_time") -> List[Dict]:
+    """
+    Return trades_for_charts for the given period, with stop_price populated
+    from positions.initial_stop via LEFT JOIN (BLG-TECH-07).
+
+    Each returned dict matches the trades_for_charts schema:
+        id, ticker, market, entry_date, exit_date,
+        entry_price, exit_price, stop_price,
+        pnl, pnl_percent, exit_reason, holding_days, tags
+
+    stop_price is null when:
+      - The originating position record no longer exists (position deleted)
+      - The position never had initial_stop recorded
+
+    The frontend treats null stop_price as '—' and excludes the trade
+    from R-multiple calculations (trade_history.md v1.1 §Null handling).
+
+    Args:
+        period: One of 'all_time', 'last_7_days', 'last_month',
+                'last_quarter', 'last_year', 'ytd'.
+                Defaults to 'all_time'.
+
+    Returns:
+        List of trade dicts. Empty list if no trades in the period.
+
+    Raises:
+        ValueError: Portfolio not found, or invalid period value.
+    """
+    portfolio = get_portfolio()
+    if not portfolio:
+        raise ValueError("Portfolio not found")
+
+    portfolio_id = str(portfolio["id"])
+    since_date = _period_to_since_date(period)
+
+    raw_trades = get_trades_for_charts(portfolio_id, since_date=since_date)
+
+    result = []
+    for t in raw_trades:
+        t = decimal_to_float(t)
+        result.append({
+            "id":           str(t["id"]),
+            "ticker":       t["ticker"],
+            "market":       t["market"],
+            "entry_date":   str(t["entry_date"]),
+            "exit_date":    str(t["exit_date"]),
+            "entry_price":  round(float(t.get("entry_price") or 0), 4),
+            "exit_price":   round(float(t.get("exit_price") or 0), 4),
+            # stop_price: null when no position JOIN match — frontend handles
+            "stop_price":   round(float(t["stop_price"]), 4)
+                            if t.get("stop_price") is not None else None,
+            "pnl":          round(float(t.get("pnl") or 0), 2),
+            "pnl_percent":  round(float(t.get("pnl_percent") or 0), 2),
+            "exit_reason":  t.get("exit_reason"),
+            "holding_days": t.get("holding_days"),
+            "tags":         t.get("tags") or None,
+        })
+
+    return result
