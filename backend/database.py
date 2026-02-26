@@ -178,19 +178,20 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO trade_history (
-                    portfolio_id, ticker, market, entry_date, exit_date,
+                    portfolio_id, position_id, ticker, market, entry_date, exit_date,
                     shares, entry_price, exit_price, total_cost, gross_proceeds,
                     net_proceeds, entry_fees, exit_fees, pnl, pnl_pct,
                     holding_days, exit_reason, entry_fx_rate, exit_fx_rate,
-                    entry_note, exit_note, tags  -- 
+                    entry_note, exit_note, tags
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s  -- 
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s
                 )
                 RETURNING *
             """, (
                 portfolio_id,
+                trade_data.get('position_id'),
                 trade_data.get('ticker'),
                 trade_data.get('market'),
                 trade_data.get('entry_date'),
@@ -695,17 +696,8 @@ def get_peak_portfolio_value(portfolio_id: str) -> float:
                 """,
                 (portfolio_id,),
             )
-        
-        cur.execute(
-                """
-                SELECT COALESCE(MAX(total_value), 0.0) AS peak_value
-                FROM portfolio_history
-                WHERE portfolio_id = %s
-                """,
-                (portfolio_id,),
-        )
-        result = cur.fetchone()
-        return float(result['peak_value'])
+            result = cur.fetchone()
+            return float(result[0])
 
 
 # ---------------------------------------------------------------------------
@@ -749,68 +741,5 @@ def get_all_closed_trades_for_csv_export(portfolio_id: str) -> list:
                 """,
                 (portfolio_id,),
             )
-            rows = cur.fetchall()
-            return [dict(row) for row in rows]
-
-
-# ---------------------------------------------------------------------------
-# BLG-TECH-07 — trades_for_charts with stop_price via positions JOIN
-# ---------------------------------------------------------------------------
-
-def get_trades_for_charts(portfolio_id: str, since_date=None) -> list:
-    """
-    Return closed trades for analytics charts, including stop_price sourced
-    from positions.initial_stop via LEFT JOIN on trade_history.position_id.
-
-    Implements the trades_for_charts contract in analytics_endpoints.md v1.8.1.
-    stop_price is not stored in trade_history — it is joined from the
-    originating position record using the position_id FK.
-
-    LEFT JOIN (not INNER JOIN) ensures trades whose position record has been
-    deleted still appear in results, with stop_price returning null.
-    The frontend null-guard displays '—' and excludes null-stop trades from
-    R-multiple calculations (per trade_history.md v1.1 §Null handling).
-
-    Args:
-        portfolio_id: Portfolio UUID to filter by.
-        since_date:   Optional datetime.date or 'YYYY-MM-DD' string.
-                      When provided, only trades with exit_date >= since_date
-                      are returned. Used by the analytics period filter.
-
-    Returns:
-        list[dict]: Trades matching the trades_for_charts schema.
-                    Empty list if no qualifying trades exist.
-    """
-    with get_db() as conn:
-        with conn.cursor() as cur:
-            base_sql = """
-                SELECT
-                    th.id,
-                    th.ticker,
-                    th.market,
-                    th.entry_date,
-                    th.exit_date,
-                    th.entry_price,
-                    th.exit_price,
-                    p.initial_stop  AS stop_price,
-                    th.pnl,
-                    th.pnl_pct      AS pnl_percent,
-                    th.exit_reason,
-                    th.holding_days,
-                    th.tags
-                FROM trade_history th
-                LEFT JOIN positions p ON th.position_id = p.id
-                WHERE th.portfolio_id = %s
-            """
-            if since_date:
-                cur.execute(
-                    base_sql + " AND th.exit_date >= %s ORDER BY th.exit_date DESC",
-                    (portfolio_id, since_date),
-                )
-            else:
-                cur.execute(
-                    base_sql + " ORDER BY th.exit_date DESC",
-                    (portfolio_id,),
-                )
             rows = cur.fetchall()
             return [dict(row) for row in rows]
