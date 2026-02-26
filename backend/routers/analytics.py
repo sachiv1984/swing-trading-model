@@ -3,9 +3,13 @@ Analytics Router
 
 GET /analytics/metrics — Comprehensive portfolio analytics for a given period.
 
-BLG-TECH-07 fix: trades_for_charts is now built via a LEFT JOIN to
-positions.initial_stop within this router's existing database connection.
-No dependency on external service functions at import time.
+BLG-TECH-07 fix: trades_for_charts attempts to source stop_price from
+positions.initial_stop via LEFT JOIN on trade_history.position_id.
+
+If the position_id column does not yet exist in the live trade_history table
+(migration pending), the JOIN query falls back gracefully: stop_price returns
+null for all trades, analytics loads normally, and no 500 error is raised.
+Run migration_add_position_id.sql to enable the JOIN fully.
 
 Contract: docs/specs/api_contracts/analytics_endpoints.md v1.8.1
 """
@@ -34,6 +38,137 @@ def _period_to_since_date(period: str):
     return period_map.get(period)
 
 
+def _build_trades_for_charts_with_join(cursor, since_date) -> list:
+    """
+    Attempt to build trades_for_charts with stop_price via positions JOIN.
+
+    Returns list of trade dicts with stop_price populated from
+    positions.initial_stop. If the position_id column does not exist in
+    trade_history (migration pending), falls back to returning all trades
+    with stop_price: null so analytics loads without error.
+    """
+    try:
+        if since_date:
+            cursor.execute("""
+                SELECT
+                    th.id,
+                    th.ticker,
+                    th.market,
+                    th.entry_date,
+                    th.exit_date,
+                    th.entry_price,
+                    th.exit_price,
+                    p.initial_stop  AS stop_price,
+                    th.pnl,
+                    th.pnl_pct      AS pnl_percent,
+                    th.exit_reason,
+                    th.holding_days,
+                    th.tags
+                FROM trade_history th
+                LEFT JOIN positions p ON th.position_id = p.id
+                WHERE th.exit_date >= %s
+                ORDER BY th.exit_date DESC
+            """, (since_date,))
+        else:
+            cursor.execute("""
+                SELECT
+                    th.id,
+                    th.ticker,
+                    th.market,
+                    th.entry_date,
+                    th.exit_date,
+                    th.entry_price,
+                    th.exit_price,
+                    p.initial_stop  AS stop_price,
+                    th.pnl,
+                    th.pnl_pct      AS pnl_percent,
+                    th.exit_reason,
+                    th.holding_days,
+                    th.tags
+                FROM trade_history th
+                LEFT JOIN positions p ON th.position_id = p.id
+                ORDER BY th.exit_date DESC
+            """)
+
+        trades_for_charts = []
+        for row in cursor.fetchall():
+            stop = row['stop_price']
+            trades_for_charts.append({
+                'id':           str(row['id']) if row['id'] else '',
+                'ticker':       row['ticker'],
+                'market':       row['market'],
+                'entry_date':   row['entry_date'].isoformat() if row['entry_date'] else None,
+                'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
+                'entry_price':  round(float(row['entry_price']), 4) if row['entry_price'] else 0,
+                'exit_price':   round(float(row['exit_price']), 4) if row['exit_price'] else 0,
+                'stop_price':   round(float(stop), 4) if stop is not None else None,
+                'pnl':          round(float(row['pnl']), 2) if row['pnl'] else 0,
+                'pnl_percent':  round(float(row['pnl_percent']), 2) if row['pnl_percent'] else 0,
+                'exit_reason':  row['exit_reason'],
+                'holding_days': int(row['holding_days']) if row['holding_days'] else 0,
+                'tags':         row['tags'] or None,
+            })
+        return trades_for_charts
+
+    except psycopg2.errors.UndefinedColumn:
+        # position_id column not yet in live trade_history table.
+        # Migration (migration_add_position_id.sql) has not run yet.
+        # Roll back the failed transaction so the cursor is still usable,
+        # then fall back to trades without stop_price (all null).
+        cursor.connection.rollback()
+        print(
+            "BLG-TECH-07: trade_history.position_id column not found. "
+            "Run migration_add_position_id.sql to enable stop_price JOIN. "
+            "Returning trades_for_charts with stop_price: null."
+        )
+        return _build_trades_for_charts_no_join(cursor, since_date)
+
+
+def _build_trades_for_charts_no_join(cursor, since_date) -> list:
+    """
+    Fallback: trades_for_charts without stop_price (all null).
+    Used when position_id migration has not yet run.
+    """
+    if since_date:
+        cursor.execute("""
+            SELECT
+                id, ticker, market, entry_date, exit_date,
+                entry_price, exit_price, pnl, pnl_pct AS pnl_percent,
+                exit_reason, holding_days, tags
+            FROM trade_history
+            WHERE exit_date >= %s
+            ORDER BY exit_date DESC
+        """, (since_date,))
+    else:
+        cursor.execute("""
+            SELECT
+                id, ticker, market, entry_date, exit_date,
+                entry_price, exit_price, pnl, pnl_pct AS pnl_percent,
+                exit_reason, holding_days, tags
+            FROM trade_history
+            ORDER BY exit_date DESC
+        """)
+
+    trades_for_charts = []
+    for row in cursor.fetchall():
+        trades_for_charts.append({
+            'id':           str(row['id']) if row['id'] else '',
+            'ticker':       row['ticker'],
+            'market':       row['market'],
+            'entry_date':   row['entry_date'].isoformat() if row['entry_date'] else None,
+            'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
+            'entry_price':  round(float(row['entry_price']), 4) if row['entry_price'] else 0,
+            'exit_price':   round(float(row['exit_price']), 4) if row['exit_price'] else 0,
+            'stop_price':   None,  # not available without position_id migration
+            'pnl':          round(float(row['pnl']), 2) if row['pnl'] else 0,
+            'pnl_percent':  round(float(row['pnl_percent']), 2) if row['pnl_percent'] else 0,
+            'exit_reason':  row['exit_reason'],
+            'holding_days': int(row['holding_days']) if row['holding_days'] else 0,
+            'tags':         row['tags'] or None,
+        })
+    return trades_for_charts
+
+
 @router.get("/metrics")
 async def get_analytics_metrics(
     period: str = Query(
@@ -44,8 +179,9 @@ async def get_analytics_metrics(
     """
     Get comprehensive analytics metrics.
 
-    trades_for_charts is populated with stop_price from positions.initial_stop
-    via LEFT JOIN on trade_history.position_id (BLG-TECH-07).
+    trades_for_charts attempts to include stop_price from positions.initial_stop
+    via LEFT JOIN (BLG-TECH-07). Falls back to stop_price: null for all trades
+    if the position_id migration has not yet run.
     """
     try:
         database_url = os.getenv("DATABASE_URL")
@@ -69,7 +205,7 @@ async def get_analytics_metrics(
             min_trades = int(settings_row['min_trades_for_analytics']) if settings_row else 10
 
             # ----------------------------------------------------------------
-            # Closed trades — for metric calculation (no stop_price needed here)
+            # Closed trades — for metric calculation
             # ----------------------------------------------------------------
             cursor.execute("""
                 SELECT
@@ -101,75 +237,10 @@ async def get_analytics_metrics(
                 })
 
             # ----------------------------------------------------------------
-            # BLG-TECH-07 — trades_for_charts with stop_price via JOIN
-            #
-            # stop_price is not stored in trade_history. It is sourced from
-            # positions.initial_stop via LEFT JOIN on position_id.
-            # LEFT JOIN ensures trades with no position linkage still appear,
-            # returning stop_price: null (frontend displays '---').
+            # trades_for_charts — with stop_price via JOIN, or null fallback
             # ----------------------------------------------------------------
             since_date = _period_to_since_date(period)
-
-            if since_date:
-                cursor.execute("""
-                    SELECT
-                        th.id,
-                        th.ticker,
-                        th.market,
-                        th.entry_date,
-                        th.exit_date,
-                        th.entry_price,
-                        th.exit_price,
-                        p.initial_stop  AS stop_price,
-                        th.pnl,
-                        th.pnl_pct      AS pnl_percent,
-                        th.exit_reason,
-                        th.holding_days,
-                        th.tags
-                    FROM trade_history th
-                    LEFT JOIN positions p ON th.position_id = p.id
-                    WHERE th.exit_date >= %s
-                    ORDER BY th.exit_date DESC
-                """, (since_date,))
-            else:
-                cursor.execute("""
-                    SELECT
-                        th.id,
-                        th.ticker,
-                        th.market,
-                        th.entry_date,
-                        th.exit_date,
-                        th.entry_price,
-                        th.exit_price,
-                        p.initial_stop  AS stop_price,
-                        th.pnl,
-                        th.pnl_pct      AS pnl_percent,
-                        th.exit_reason,
-                        th.holding_days,
-                        th.tags
-                    FROM trade_history th
-                    LEFT JOIN positions p ON th.position_id = p.id
-                    ORDER BY th.exit_date DESC
-                """)
-
-            trades_for_charts = []
-            for row in cursor.fetchall():
-                stop = row['stop_price']
-                trades_for_charts.append({
-                    'id':           str(row['id']) if row['id'] else '',
-                    'ticker':       row['ticker'],
-                    'market':       row['market'],
-                    'entry_date':   row['entry_date'].isoformat() if row['entry_date'] else None,
-                    'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
-                    'entry_price':  round(float(row['entry_price']), 4) if row['entry_price'] else 0,
-                    'exit_price':   round(float(row['exit_price']), 4) if row['exit_price'] else 0,
-                    'stop_price':   round(float(stop), 4) if stop is not None else None,
-                    'pnl':          round(float(row['pnl']), 2) if row['pnl'] else 0,
-                    'pnl_percent':  round(float(row['pnl_percent']), 2) if row['pnl_percent'] else 0,
-                    'exit_reason':  row['exit_reason'],
-                    'holding_days': int(row['holding_days']) if row['holding_days'] else 0,
-                    'tags':         row['tags'] or None,
-                })
+            trades_for_charts = _build_trades_for_charts_with_join(cursor, since_date)
 
             # ----------------------------------------------------------------
             # Portfolio history
@@ -214,7 +285,7 @@ async def get_analytics_metrics(
             min_trades=min_trades,
         )
 
-        # Override trades_for_charts with the correctly-joined result
+        # Override trades_for_charts with the JOIN result (or fallback)
         metrics["trades_for_charts"] = trades_for_charts
 
         return {"status": "ok", "data": metrics}
