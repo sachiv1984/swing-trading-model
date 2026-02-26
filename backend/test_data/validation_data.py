@@ -21,6 +21,100 @@ Previous update 2026-02-21 (BLG-TECH-01):
     Reason: Cost basis corrected to Mean(total_cost) GBP from trade_history.
 """
 
+# Your actual 5 trades from /trades endpoint
+VALIDATION_TRADES = [
+    {
+        "id": "87ad66e0-c789-4490-9399-055b580b6312",
+        "ticker": "STX",
+        "market": "US",
+        "entry_date": "2026-01-23",
+        "exit_date": "2026-02-11",
+        "shares": 3.0,
+        "entry_price": 345.0,
+        "exit_price": 392.14,
+        "total_cost": 765.99,   # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "pnl": 93.68,
+        "pnl_percent": 12.23,
+        "exit_reason": "Trailing Stop",
+        "holding_days": 19,
+    },
+    {
+        "id": "8ff40cd3-09c6-4482-b78c-a1ff864e59e6",
+        "ticker": "MU",
+        "market": "US",
+        "entry_date": "2026-01-23",
+        "exit_date": "2026-02-04",
+        "shares": 3.5,
+        "entry_price": 397.5,
+        "exit_price": 402.84,
+        "total_cost": 1013.04,  # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "pnl": -2.33,
+        "pnl_percent": -0.23,
+        "exit_reason": "Manual Exit",
+        "holding_days": 12,
+    },
+    {
+        "id": "3e65ca71-305e-462d-bc22-1125014b6438",
+        "ticker": "SNDK",
+        "market": "US",
+        "entry_date": "2026-01-23",
+        "exit_date": "2026-02-04",
+        "shares": 1.5,
+        "entry_price": 503.9,
+        "exit_price": 606.29,
+        "total_cost": 559.59,   # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "pnl": 104.98,
+        "pnl_percent": 18.76,
+        "exit_reason": "Trailing Stop",
+        "holding_days": 12,
+    },
+    {
+        "id": "4d498885-4735-413f-9ecc-c2882440a338",
+        "ticker": "FRES.L",
+        "market": "UK",
+        "entry_date": "2026-01-23",
+        "exit_date": "2026-02-02",
+        "shares": 27.25,
+        "entry_price": 40.98,
+        "exit_price": 34.5,
+        "total_cost": 1122.37,  # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "pnl": -182.16,
+        "pnl_percent": -16.23,
+        "exit_reason": "Manual Exit",
+        "holding_days": 10,
+    },
+    {
+        "id": "65e3e445-960a-4936-b49b-3005918c1f37",
+        "ticker": "WDC",
+        "market": "US",
+        "entry_date": "2026-01-23",
+        "exit_date": "2026-02-02",
+        "shares": 5.5,
+        "entry_price": 243.0,
+        "exit_price": 242.67,
+        "total_cost": 986.29,   # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "pnl": -12.23,
+        "pnl_percent": -1.24,
+        "exit_reason": "Manual Exit",
+        "holding_days": 10,
+    }
+]
+
+VALIDATION_PORTFOLIO_HISTORY = [
+    {"snapshot_date": "2026-01-31", "total_value": 5133.52},
+    {"snapshot_date": "2026-02-02", "total_value": 5361.88},
+    {"snapshot_date": "2026-02-03", "total_value": 5444.29},  # Peak
+    {"snapshot_date": "2026-02-04", "total_value": 5179.76},
+    {"snapshot_date": "2026-02-05", "total_value": 5146.58},
+    {"snapshot_date": "2026-02-06", "total_value": 5241.25},
+    {"snapshot_date": "2026-02-07", "total_value": 5258.45},
+    {"snapshot_date": "2026-02-09", "total_value": 5241.66},
+    {"snapshot_date": "2026-02-10", "total_value": 5025.22},  # Trough
+    {"snapshot_date": "2026-02-11", "total_value": 5204.19},
+    {"snapshot_date": "2026-02-12", "total_value": 5353.38},
+    {"snapshot_date": "2026-02-13", "total_value": 5285.69},  # Current
+]
+
 # ---------------------------------------------------------------------------
 # Expected values — compared against GET /analytics/metrics response
 # ---------------------------------------------------------------------------
