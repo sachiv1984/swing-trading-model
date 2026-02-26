@@ -1,21 +1,30 @@
 """
 Analytics Service
 
-AnalyticsService calculates all portfolio metrics from trade and portfolio
-history data passed in by the analytics router.
+Calculates all portfolio metrics from trade and portfolio history data.
+Field names match the canonical API contract (analytics_endpoints.md v1.8.1)
+and the frontend component field expectations exactly.
 
-The trades_for_charts key in the returned dict is overridden by the router
-with data sourced via a positions LEFT JOIN (BLG-TECH-07). The value built
-here is a placeholder only.
+Key field mappings (snake_case → camelCase after frontend conversion):
+  monthly_data:      pnl, trades, win_rate, month
+  exit_reasons:      reason, count, win_rate, total_pnl, avg_pnl, percentage
+  market_comparison: US/UK keys → totalTrades, winRate, totalPnl, avgWin,
+                     avgLoss, bestPerformer, worstPerformer
+  top_performers:    winners/losers → ticker, pnl, pnl_percent, entry_date,
+                     holding_days, exit_reason
+  consistency_metrics: consecutive_profitable_months, current_streak,
+                       win_rate_std_dev, pnl_std_dev
+  day_of_week:       day, trade_count, avg_pnl (7 entries always)
+  holding_periods:   period, trades, avg_pnl, win_rate (5 buckets always)
 """
 
 from collections import Counter, defaultdict
 from datetime import date, timedelta
 from typing import Dict, List, Optional
+import math
 
 
 def _period_to_since_date(period: str) -> Optional[date]:
-    """Convert a period string to the earliest exit_date to include."""
     today = date.today()
     period_map = {
         "all_time":     None,
@@ -26,23 +35,11 @@ def _period_to_since_date(period: str) -> Optional[date]:
         "ytd":          date(today.year, 1, 1),
     }
     if period not in period_map:
-        raise ValueError(
-            f"Invalid period '{period}'. "
-            f"Allowed: {', '.join(period_map.keys())}"
-        )
+        raise ValueError(f"Invalid period '{period}'.")
     return period_map[period]
 
 
 class AnalyticsService:
-    """
-    Calculates comprehensive portfolio analytics from trade and portfolio
-    history data. Called by the analytics router via
-    calculate_metrics_from_data().
-
-    NOTE (BLG-TECH-07): The trades_for_charts key in the dict returned by
-    calculate_metrics_from_data() is a placeholder. The analytics router
-    replaces it with data sourced via a LEFT JOIN to positions.initial_stop.
-    """
 
     def calculate_metrics_from_data(
         self,
@@ -51,10 +48,10 @@ class AnalyticsService:
         period: str = "all_time",
         min_trades: int = 10,
     ) -> Dict:
-        filtered_trades = self._filter_trades_by_period(trades, period)
+        filtered = self._filter_trades_by_period(trades, period)
         filtered_history = self._filter_history_by_period(portfolio_history, period)
 
-        total_trades = len(filtered_trades)
+        total_trades = len(filtered)
         has_enough_data = total_trades >= min_trades
 
         if not has_enough_data:
@@ -70,38 +67,37 @@ class AnalyticsService:
                 "advanced_metrics": {},
                 "market_comparison": {},
                 "exit_reasons": [],
-                "monthly_data": self._build_monthly_data(filtered_trades),
-                "day_of_week": [],
-                "holding_periods": [],
+                "monthly_data": [],
+                "day_of_week": self._build_day_of_week(filtered),
+                "holding_periods": self._build_holding_periods(filtered),
                 "top_performers": {"winners": [], "losers": []},
                 "consistency_metrics": {},
-                "trades_for_charts": [],  # overridden by router
+                "trades_for_charts": [],
             }
 
-        wins = [t for t in filtered_trades if t.get("pnl", 0) > 0]
-        losses = [t for t in filtered_trades if t.get("pnl", 0) < 0]
-        total_pnl = sum(t.get("pnl", 0) for t in filtered_trades)
-        win_rate = (len(wins) / total_trades * 100) if total_trades else 0.0
+        wins = [t for t in filtered if t.get("pnl", 0) > 0]
+        total_pnl = sum(t.get("pnl", 0) for t in filtered)
+        win_rate = round(len(wins) / total_trades * 100, 1)
+
+        monthly = self._build_monthly_data(filtered)
 
         return {
             "summary": {
                 "total_trades": total_trades,
-                "win_rate": round(win_rate, 1),
+                "win_rate": win_rate,
                 "total_pnl": round(total_pnl, 2),
                 "has_enough_data": True,
                 "min_required": min_trades,
             },
-            "executive_metrics": self._build_executive_metrics(
-                filtered_trades, filtered_history
-            ),
-            "advanced_metrics": self._build_advanced_metrics(filtered_trades),
-            "market_comparison": self._build_market_comparison(filtered_trades),
-            "exit_reasons": self._build_exit_reasons(filtered_trades),
-            "monthly_data": self._build_monthly_data(filtered_trades),
-            "day_of_week": self._build_day_of_week(filtered_trades),
-            "holding_periods": self._build_holding_periods(filtered_trades),
-            "top_performers": self._build_top_performers(filtered_trades),
-            "consistency_metrics": self._build_consistency_metrics(filtered_trades),
+            "executive_metrics": self._build_executive_metrics(filtered, filtered_history),
+            "advanced_metrics": self._build_advanced_metrics(filtered, filtered_history),
+            "market_comparison": self._build_market_comparison(filtered),
+            "exit_reasons": self._build_exit_reasons(filtered),
+            "monthly_data": monthly,
+            "day_of_week": self._build_day_of_week(filtered),
+            "holding_periods": self._build_holding_periods(filtered),
+            "top_performers": self._build_top_performers(filtered),
+            "consistency_metrics": self._build_consistency_metrics(monthly),
             "trades_for_charts": [],  # overridden by router
         }
 
@@ -109,42 +105,49 @@ class AnalyticsService:
     # Period filtering
     # ----------------------------------------------------------------
 
-    def _filter_trades_by_period(self, trades: List[Dict], period: str) -> List[Dict]:
+    def _filter_trades_by_period(self, trades, period):
         since = _period_to_since_date(period)
         if since is None:
             return trades
-        since_str = since.isoformat()
-        return [t for t in trades if (t.get("exit_date") or "") >= since_str]
+        s = since.isoformat()
+        return [t for t in trades if (t.get("exit_date") or "") >= s]
 
-    def _filter_history_by_period(self, history: List[Dict], period: str) -> List[Dict]:
+    def _filter_history_by_period(self, history, period):
         since = _period_to_since_date(period)
         if since is None:
             return history
-        since_str = since.isoformat()
-        return [h for h in history if (h.get("snapshot_date") or "") >= since_str]
+        s = since.isoformat()
+        return [h for h in history if (h.get("snapshot_date") or "") >= s]
 
     # ----------------------------------------------------------------
-    # Metric builders
+    # executive_metrics
     # ----------------------------------------------------------------
 
-    def _build_executive_metrics(self, trades: List[Dict], history: List[Dict]) -> Dict:
+    def _build_executive_metrics(self, trades, history):
         if not trades:
             return {}
 
-        wins = [t for t in trades if t.get("pnl", 0) > 0]
+        wins  = [t for t in trades if t.get("pnl", 0) > 0]
         losses = [t for t in trades if t.get("pnl", 0) < 0]
+        n = len(trades)
 
-        avg_win = sum(t["pnl"] for t in wins) / len(wins) if wins else 0
-        avg_loss = sum(t["pnl"] for t in losses) / len(losses) if losses else 0
-        expectancy = (
-            (len(wins) / len(trades)) * avg_win
-            + (len(losses) / len(trades)) * avg_loss
+        avg_win  = sum(t["pnl"] for t in wins)  / len(wins)  if wins  else 0.0
+        avg_loss = sum(t["pnl"] for t in losses) / len(losses) if losses else 0.0
+
+        gross_profit = sum(t["pnl"] for t in wins)  if wins  else 0.0
+        gross_loss   = abs(sum(t["pnl"] for t in losses)) if losses else 0.0
+        profit_factor = round(gross_profit / gross_loss, 2) if gross_loss > 0 else 0.0
+
+        expectancy = round(
+            (len(wins) / n) * avg_win + (len(losses) / n) * avg_loss, 2
         )
-        gross_wins = sum(t["pnl"] for t in wins) if wins else 0
-        gross_losses = abs(sum(t["pnl"] for t in losses)) if losses else 0
-        profit_factor = gross_wins / gross_losses if gross_losses > 0 else 0
 
+        rr = round(avg_win / abs(avg_loss), 2) if avg_loss != 0 else 0.0
+
+        # Max drawdown from portfolio history
         max_dd_pct = 0.0
+        max_dd_amt = 0.0
+        max_dd_date = None
         if history:
             peak = 0.0
             for h in history:
@@ -152,112 +155,324 @@ class AnalyticsService:
                 if v > peak:
                     peak = v
                 if peak > 0:
-                    dd = (v - peak) / peak * 100
-                    if dd < max_dd_pct:
-                        max_dd_pct = dd
+                    dd_pct = (v - peak) / peak * 100
+                    if dd_pct < max_dd_pct:
+                        max_dd_pct = dd_pct
+                        max_dd_amt = v - peak
+                        max_dd_date = h.get("snapshot_date")
+
+        # Sharpe (sample variance, requires 30+ history points)
+        sharpe = 0.0
+        sharpe_method = "insufficient_data"
+        if len(history) >= 30:
+            daily_returns = []
+            for i in range(1, len(history)):
+                prev = history[i - 1].get("total_value", 0)
+                curr = history[i].get("total_value", 0)
+                if prev > 0:
+                    daily_returns.append((curr - prev) / prev)
+            if len(daily_returns) >= 2:
+                mean_r = sum(daily_returns) / len(daily_returns)
+                variance = sum((r - mean_r) ** 2 for r in daily_returns) / (len(daily_returns) - 1)
+                std_dev = math.sqrt(variance) if variance > 0 else 0
+                if std_dev > 0:
+                    sharpe = round((mean_r / std_dev) * math.sqrt(252), 2)
+                    sharpe_method = "portfolio"
+
+        # Recovery factor
+        period_profit = (history[-1].get("total_value", 0) - history[0].get("total_value", 0)) if len(history) >= 2 else 0
+        recovery_factor = round(period_profit / abs(max_dd_amt), 2) if max_dd_amt < 0 and period_profit > 0 else 0.0
 
         return {
-            "sharpe_ratio": 0.0,
-            "sharpe_method": "insufficient_data",
-            "max_drawdown": {"percent": round(max_dd_pct, 2), "amount": 0.0, "date": None},
-            "recovery_factor": 0.0,
-            "expectancy": round(expectancy, 2),
-            "profit_factor": round(profit_factor, 2),
-            "risk_reward_ratio": round(avg_win / abs(avg_loss) if avg_loss != 0 else 0, 2),
+            "sharpe_ratio": sharpe,
+            "sharpe_method": sharpe_method,
+            "max_drawdown": {
+                "percent": round(max_dd_pct, 2),
+                "amount": round(max_dd_amt, 2),
+                "date": str(max_dd_date) if max_dd_date else None,
+            },
+            "recovery_factor": recovery_factor,
+            "expectancy": expectancy,
+            "profit_factor": profit_factor,
+            "risk_reward_ratio": rr,
         }
 
-    def _build_advanced_metrics(self, trades: List[Dict]) -> Dict:
+    # ----------------------------------------------------------------
+    # advanced_metrics
+    # ----------------------------------------------------------------
+
+    def _build_advanced_metrics(self, trades, history):
         if not trades:
             return {}
 
-        wins = [t for t in trades if t.get("pnl", 0) > 0]
-        losses = [t for t in trades if t.get("pnl", 0) <= 0]
+        wins   = [t for t in trades if t.get("pnl", 0) > 0]
+        losses = [t for t in trades if t.get("pnl", 0) < 0]
 
-        avg_hold_winners = (
-            sum(t.get("holding_days", 0) for t in wins) / len(wins) if wins else 0
-        )
-        avg_hold_losers = (
-            sum(t.get("holding_days", 0) for t in losses) / len(losses) if losses else 0
-        )
+        avg_hold_winners = round(
+            sum(t.get("holding_days", 0) for t in wins) / len(wins), 1
+        ) if wins else 0.0
+        avg_hold_losers = round(
+            sum(t.get("holding_days", 0) for t in losses) / len(losses), 1
+        ) if losses else 0.0
 
-        win_streak = loss_streak = cur_win = cur_loss = 0
+        # Streak calculation (exit_date order, already ASC from router query)
+        win_streak = loss_streak = cur_w = cur_l = 0
         for t in trades:
             if t.get("pnl", 0) > 0:
-                cur_win += 1
-                cur_loss = 0
+                cur_w += 1; cur_l = 0
             else:
-                cur_loss += 1
-                cur_win = 0
-            win_streak = max(win_streak, cur_win)
-            loss_streak = max(loss_streak, cur_loss)
+                cur_l += 1; cur_w = 0
+            win_streak  = max(win_streak,  cur_w)
+            loss_streak = max(loss_streak, cur_l)
+
+        # Trade frequency (trades per week)
+        trade_frequency = 0.0
+        if len(trades) >= 2:
+            try:
+                first = date.fromisoformat(str(trades[0].get("entry_date", "")))
+                last  = date.fromisoformat(str(trades[-1].get("exit_date", "")))
+                span  = (last - first).days
+                if span > 0:
+                    trade_frequency = round(len(trades) / span * 7, 1)
+            except (ValueError, TypeError):
+                pass
+
+        # Capital efficiency — total_pnl / mean(total_cost) * 100
+        capital_efficiency = 0.0
+        costs = [t.get("total_cost") or t.get("shares", 0) * t.get("entry_price", 0)
+                 for t in trades]
+        valid_costs = [c for c in costs if c and c > 0]
+        if valid_costs:
+            avg_cost = sum(valid_costs) / len(valid_costs)
+            total_pnl = sum(t.get("pnl", 0) for t in trades)
+            capital_efficiency = round(total_pnl / avg_cost * 100, 2) if avg_cost else 0.0
+
+        # Days underwater (trade-sequence method)
+        running_eq = peak_eq = 0.0
+        peak_date_str = None
+        max_days_uw = 0
+        for t in trades:
+            running_eq += t.get("pnl", 0)
+            if running_eq >= peak_eq:
+                peak_eq = running_eq
+                peak_date_str = str(t.get("exit_date", ""))
+            elif peak_date_str:
+                try:
+                    td = date.fromisoformat(str(t.get("exit_date", "")))
+                    pd = date.fromisoformat(peak_date_str)
+                    max_days_uw = max(max_days_uw, (td - pd).days)
+                except (ValueError, TypeError):
+                    pass
+
+        # Portfolio peak equity from history
+        portfolio_peak = max((h.get("total_value", 0) for h in history), default=0.0)
 
         return {
             "win_streak": win_streak,
             "loss_streak": loss_streak,
-            "avg_hold_winners": round(avg_hold_winners, 1),
-            "avg_hold_losers": round(avg_hold_losers, 1),
-            "trade_frequency": 0.0,
-            "capital_efficiency": 0.0,
-            "days_underwater": 0,
+            "avg_hold_winners": avg_hold_winners,
+            "avg_hold_losers": avg_hold_losers,
+            "trade_frequency": trade_frequency,
+            "capital_efficiency": capital_efficiency,
+            "days_underwater": max_days_uw,
+            "peak_date": peak_date_str,
+            "portfolio_peak_equity": round(portfolio_peak, 2),
         }
 
-    def _build_market_comparison(self, trades: List[Dict]) -> Dict:
+    # ----------------------------------------------------------------
+    # market_comparison  — keys must be "US" / "UK" (uppercase)
+    # ----------------------------------------------------------------
+
+    def _build_market_comparison(self, trades):
         result = {}
         for market in ("US", "UK"):
             mt = [t for t in trades if t.get("market") == market]
             if not mt:
+                result[market] = {
+                    "total_trades": 0, "win_rate": 0.0, "total_pnl": 0.0,
+                    "avg_win": 0.0, "avg_loss": 0.0,
+                    "best_performer": None, "worst_performer": None,
+                }
                 continue
-            wins = [t for t in mt if t.get("pnl", 0) > 0]
-            result[market.lower()] = {
+            wins   = [t for t in mt if t.get("pnl", 0) > 0]
+            losses = [t for t in mt if t.get("pnl", 0) < 0]
+            best   = max(mt, key=lambda t: t.get("pnl", 0))
+            worst  = min(mt, key=lambda t: t.get("pnl", 0))
+            result[market] = {
                 "total_trades": len(mt),
-                "win_rate": round(len(wins) / len(mt) * 100, 1),
-                "total_pnl": round(sum(t.get("pnl", 0) for t in mt), 2),
-                "avg_pnl": round(sum(t.get("pnl", 0) for t in mt) / len(mt), 2),
+                "win_rate":     round(len(wins) / len(mt) * 100, 1),
+                "total_pnl":    round(sum(t.get("pnl", 0) for t in mt), 2),
+                "avg_win":      round(sum(t["pnl"] for t in wins)   / len(wins),   2) if wins   else 0.0,
+                "avg_loss":     round(sum(t["pnl"] for t in losses) / len(losses), 2) if losses else 0.0,
+                "best_performer":  {"ticker": best["ticker"],  "pnl": round(best.get("pnl", 0),  2)},
+                "worst_performer": {"ticker": worst["ticker"], "pnl": round(worst.get("pnl", 0), 2)},
             }
         return result
 
-    def _build_exit_reasons(self, trades: List[Dict]) -> List[Dict]:
-        counts = Counter(t.get("exit_reason", "Unknown") for t in trades)
-        total = len(trades)
-        return [
-            {
-                "exit_reason": reason,
-                "count": count,
-                "percentage": round(count / total * 100, 1),
-                "total_pnl": round(
-                    sum(t.get("pnl", 0) for t in trades if t.get("exit_reason") == reason), 2
-                ),
-            }
-            for reason, count in counts.most_common()
-        ]
+    # ----------------------------------------------------------------
+    # exit_reasons  — field "reason" (not "exit_reason")
+    # ----------------------------------------------------------------
 
-    def _build_monthly_data(self, trades: List[Dict]) -> List[Dict]:
+    def _build_exit_reasons(self, trades):
         buckets: Dict[str, list] = defaultdict(list)
         for t in trades:
-            exit_date = str(t.get("exit_date", ""))
-            if len(exit_date) >= 7:
-                buckets[exit_date[:7]].append(t)
+            reason = t.get("exit_reason") or "Manual Exit"
+            buckets[reason].append(t)
+        total = len(trades)
         result = []
-        for month in sorted(buckets.keys()):
-            mt = buckets[month]
-            wins = [t for t in mt if t.get("pnl", 0) > 0]
+        for reason, group in sorted(buckets.items(), key=lambda x: -len(x[1])):
+            wins   = [t for t in group if t.get("pnl", 0) > 0]
+            pnls   = [t.get("pnl", 0) for t in group]
             result.append({
-                "month": month,
-                "trade_count": len(mt),
-                "win_rate": round(len(wins) / len(mt) * 100, 1) if mt else 0,
-                "total_pnl": round(sum(t.get("pnl", 0) for t in mt), 2),
+                "reason":     reason,
+                "count":      len(group),
+                "win_rate":   round(len(wins) / len(group) * 100, 1),
+                "total_pnl":  round(sum(pnls), 2),
+                "avg_pnl":    round(sum(pnls) / len(pnls), 2),
+                "percentage": round(len(group) / total * 100, 1),
             })
         return result
 
-    def _build_day_of_week(self, trades: List[Dict]) -> List[Dict]:
-        return []
+    # ----------------------------------------------------------------
+    # monthly_data  — fields: month, pnl, trades, win_rate
+    #   "pnl" (not "total_pnl"), "trades" (not "trade_count")
+    #   MonthlyHeatmap reads: month.pnl, month.trades, month.winRate
+    #   Win Rate by Month reads: month.winRate, month.tradeCount
+    #   Both are satisfied: pnl + trades + win_rate + trade_count
+    # ----------------------------------------------------------------
 
-    def _build_holding_periods(self, trades: List[Dict]) -> List[Dict]:
-        return []
+    def _build_monthly_data(self, trades):
+        buckets: Dict[str, list] = defaultdict(list)
+        for t in trades:
+            d = str(t.get("exit_date", ""))
+            if len(d) >= 7:
+                buckets[d[:7]].append(t)
 
-    def _build_top_performers(self, trades: List[Dict]) -> Dict:
-        sorted_trades = sorted(trades, key=lambda t: t.get("pnl", 0), reverse=True)
-        return {"winners": sorted_trades[:3], "losers": sorted_trades[-3:]}
+        result = []
+        for month in sorted(buckets.keys()):
+            mt   = buckets[month]
+            wins = [t for t in mt if t.get("pnl", 0) > 0]
+            pnl_val = round(sum(t.get("pnl", 0) for t in mt), 2)
+            wr      = round(len(wins) / len(mt) * 100, 1) if mt else 0.0
+            result.append({
+                "month":       month,
+                "pnl":         pnl_val,    # MonthlyHeatmap: month.pnl
+                "trades":      len(mt),    # MonthlyHeatmap: month.trades
+                "win_rate":    wr,         # → winRate after camelCase
+                "trade_count": len(mt),    # Win Rate by Month tooltip: month.tradeCount
+            })
+        return result
 
-    def _build_consistency_metrics(self, trades: List[Dict]) -> Dict:
-        return {}
+    # ----------------------------------------------------------------
+    # day_of_week  — 7 entries always
+    # ----------------------------------------------------------------
+
+    def _build_day_of_week(self, trades):
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        buckets: Dict[str, list] = defaultdict(list)
+        for t in trades:
+            try:
+                d = date.fromisoformat(str(t.get("exit_date", "")))
+                buckets[days[d.weekday()]].append(t)
+            except (ValueError, TypeError):
+                pass
+        return [
+            {
+                "day":         day,
+                "trade_count": len(buckets[day]),
+                "avg_pnl":     round(
+                    sum(t.get("pnl", 0) for t in buckets[day]) / len(buckets[day]), 2
+                ) if buckets[day] else 0.0,
+            }
+            for day in days
+        ]
+
+    # ----------------------------------------------------------------
+    # holding_periods  — 5 buckets always
+    # ----------------------------------------------------------------
+
+    def _build_holding_periods(self, trades):
+        buckets = [
+            ("1-5 days",   1,  5),
+            ("6-10 days",  6,  10),
+            ("11-20 days", 11, 20),
+            ("21-30 days", 21, 30),
+            ("31+ days",   31, 9999),
+        ]
+        result = []
+        for label, lo, hi in buckets:
+            group = [t for t in trades if lo <= (t.get("holding_days") or 0) <= hi]
+            wins  = [t for t in group if t.get("pnl", 0) > 0]
+            result.append({
+                "period":   label,
+                "trades":   len(group),
+                "avg_pnl":  round(
+                    sum(t.get("pnl", 0) for t in group) / len(group), 2
+                ) if group else 0.0,
+                "win_rate": round(len(wins) / len(group) * 100, 1) if group else 0.0,
+            })
+        return result
+
+    # ----------------------------------------------------------------
+    # top_performers  — ticker, pnl, pnl_percent, entry_date,
+    #                   holding_days, exit_reason  (up to 5 each)
+    # ----------------------------------------------------------------
+
+    def _build_top_performers(self, trades):
+        by_pnl = sorted(trades, key=lambda t: t.get("pnl", 0), reverse=True)
+        def _fmt(t):
+            return {
+                "ticker":       t.get("ticker", ""),
+                "pnl":          round(t.get("pnl", 0), 2),
+                "pnl_percent":  round(t.get("pnl_percent", 0), 2),
+                "entry_date":   str(t.get("entry_date", "")),
+                "holding_days": t.get("holding_days", 0),
+                "exit_reason":  t.get("exit_reason") or "Manual Exit",
+            }
+        return {
+            "winners": [_fmt(t) for t in by_pnl[:5]  if t.get("pnl", 0) > 0],
+            "losers":  [_fmt(t) for t in by_pnl[-5:]  if t.get("pnl", 0) < 0],
+        }
+
+    # ----------------------------------------------------------------
+    # consistency_metrics  — derived from monthly_data
+    # ----------------------------------------------------------------
+
+    def _build_consistency_metrics(self, monthly_data):
+        if not monthly_data:
+            return {
+                "consecutive_profitable_months": 0,
+                "current_streak": 0,
+                "win_rate_std_dev": 0.0,
+                "pnl_std_dev": 0.0,
+            }
+
+        # Longest profitable run
+        best_streak = cur_streak = 0
+        for m in monthly_data:
+            if m.get("pnl", 0) > 0:
+                cur_streak += 1
+                best_streak = max(best_streak, cur_streak)
+            else:
+                cur_streak = 0
+
+        # Current streak (from end)
+        current = 0
+        for m in reversed(monthly_data):
+            if m.get("pnl", 0) > 0:
+                current += 1
+            else:
+                break
+
+        def _pop_std(values):
+            if len(values) < 2:
+                return 0.0
+            mean = sum(values) / len(values)
+            return round(math.sqrt(sum((v - mean) ** 2 for v in values) / len(values)), 2)
+
+        return {
+            "consecutive_profitable_months": best_streak,
+            "current_streak": current,
+            "win_rate_std_dev": _pop_std([m.get("win_rate", 0) for m in monthly_data]),
+            "pnl_std_dev":      _pop_std([m.get("pnl", 0)      for m in monthly_data]),
+        }
