@@ -12,7 +12,6 @@ All functions are independent of FastAPI for maximum testability.
 from typing import Dict, List
 from datetime import datetime
 from services.drawdown_service import get_drawdown_fields
-from services.grace_service import compute_grace_days_remaining
 
 from database import (
     get_portfolio,
@@ -23,6 +22,7 @@ from database import (
 )
 
 from utils.pricing import get_current_price, get_live_fx_rate
+from services.grace_service import compute_grace_days_remaining
 from utils.formatting import decimal_to_float
 
 
@@ -128,16 +128,16 @@ def get_portfolio_summary() -> Dict:
             pnl_gbp = pnl_native
         
         pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
-        holding_days = pos.get('holding_days', 0)                   
-
-        if holding_days < 10:                                      
+        holding_days = pos.get('holding_days', 0)
+        
+        if holding_days < 10:
             display_status = "GRACE"
         elif pnl_gbp > 0:
             display_status = "PROFITABLE"
         else:
             display_status = "LOSING"
 
-        grace_period = holding_days < 10                          
+        grace_period = holding_days < 10
         grace_days_remaining = compute_grace_days_remaining(
             grace_period=grace_period,
             holding_days=holding_days,
@@ -185,8 +185,8 @@ def get_portfolio_summary() -> Dict:
     print(f"   Net cash flow (deposits-withdrawals): £{net_cash_flow:.2f}")
     print(f"   True total P&L: £{true_total_pnl:+.2f}\n")
 
-    # B1 — Current drawdown fields (QWB BLG-FEAT-01)
-    # Spec: portfolio_endpoints.md v1.8.2, metrics_definitions.md v1.5.8
+   # B1 — Current drawdown fields (QWB BLG-FEAT-01)
+   # Spec: portfolio_endpoints.md v1.8.2, metrics_definitions.md v1.5.8
     drawdown_fields = get_drawdown_fields(
         portfolio_id=portfolio_id,
         current_total_value=total_value,
