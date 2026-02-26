@@ -161,27 +161,12 @@ def get_positions_with_prices() -> List[Dict]:
             display_status = "PROFITABLE"
         else:
             display_status = "LOSING"
-
-        grace_period = holding_days < 10
-        grace_days_remaining = compute_grace_days_remaining(
-        grace_period=grace_period,
-        holding_days=holding_days,
-        )
-
-        
-        initial_stop = pos.get("initial_stop")
-        
-        # Fallbacks if your DB uses different column names
-        if initial_stop is None:
-            initial_stop = pos.get("initial_stop_price", pos.get("stop_price"))
-
         
         # Build position dict
         positions_list.append({
             "id": str(pos['id']),
             "ticker": display_ticker,
             "market": pos['market'],
-            "initial_stop": round(initial_stop, 2) if initial_stop is not None else None,
             "entry_date": str(pos['entry_date']),
             "entry_price": round(entry_price_display, 2),
             "shares": pos['shares'],
@@ -195,8 +180,10 @@ def get_positions_with_prices() -> List[Dict]:
             "status": "open",
             "display_status": display_status,
             "exit_reason": None,
-            "grace_period": grace_period,
-            "grace_days_remaining": grace_days_remaining,
+            position_dict["grace_days_remaining"] = compute_grace_days_remaining(
+            grace_period=pos["grace_period"],
+            holding_days=pos["holding_days"],
+             )
             "grace_period": grace_period,
             "stop_reason": f"Grace period ({holding_days}/10 days)" if grace_period else "Active",
             "atr_value": pos.get('atr', 0),
@@ -204,7 +191,6 @@ def get_positions_with_prices() -> List[Dict]:
             "live_fx_rate": live_fx_rate,
             "total_cost": round(pos.get('total_cost', 0), 2),
             "entry_note": pos.get('entry_note'),
-            "exit_note": pos.get('exit_note'),
             "tags": pos.get('tags', [])
         })
     
@@ -822,6 +808,7 @@ def exit_position(
     
     # Create trade history record
     trade_data = {
+        'position_id': position_id,  # BLG-TECH-07: FK enables stop_price JOIN for R-multiple
         'ticker': position['ticker'],
         'market': market,
         'entry_date': position['entry_date'],
