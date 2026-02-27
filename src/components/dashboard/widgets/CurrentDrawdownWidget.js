@@ -19,12 +19,30 @@ import PropTypes from 'prop-types';
  *   2. At Peak            — currentDrawdownPercent === 0.0 (portfolio at all-time high)
  *   3. In Drawdown        — currentDrawdownPercent < 0  (portfolio below peak)
  */
-export default function CurrentDrawdownWidget({
-  currentDrawdownPercent,
-  peakPortfolioValue,
-  daysUnderwater,
-  maxDrawdownPercent,
-}) {
+export default function CurrentDrawdownWidget(props) {
+  // Support both prop naming conventions:
+  //   Canonical: currentDrawdownPercent / peakPortfolioValue / daysUnderwater / maxDrawdownPercent
+  //   Legacy:    currentEquity / peakEquity / maxHistoricalDrawdown (Dashboard pre-API-fix)
+  let currentDrawdownPercent;
+  let peakPortfolioValue;
+  let daysUnderwater;
+  let maxDrawdownPercent;
+
+  const { currentEquity, peakEquity, maxHistoricalDrawdown } = props;
+
+  if (peakEquity !== undefined && peakEquity > 0 && currentEquity !== undefined) {
+    // Legacy props path — compute drawdown client-side from equity values
+    currentDrawdownPercent = Number(((currentEquity - peakEquity) / peakEquity) * 100) || 0;
+    peakPortfolioValue     = Number(peakEquity) || 0;
+    maxDrawdownPercent     = Number(maxHistoricalDrawdown) || 0;
+    daysUnderwater         = Number(props.daysUnderwater) || 0;
+  } else {
+    // Canonical props path — all values from API
+    currentDrawdownPercent = Number(props.currentDrawdownPercent) || 0;
+    peakPortfolioValue     = Number(props.peakPortfolioValue) || 0;
+    daysUnderwater         = Number(props.daysUnderwater) || 0;
+    maxDrawdownPercent     = Number(props.maxDrawdownPercent) || 0;
+  }
   // ─── Establishing Peak state ──────────────────────────────────────────────
   // Backend returns 0.0 sentinel when no portfolio_history records exist.
   if (peakPortfolioValue === 0.0) {
@@ -148,19 +166,15 @@ export default function CurrentDrawdownWidget({
 }
 
 CurrentDrawdownWidget.propTypes = {
-  /** From GET /portfolio → data.current_drawdown_percent. ≤ 0.0. */
-  currentDrawdownPercent: PropTypes.number.isRequired,
-  /** From GET /portfolio → data.peak_portfolio_value. 0.0 when no history. */
-  peakPortfolioValue:     PropTypes.number.isRequired,
-  /** From GET /analytics/metrics → data.advanced_metrics.days_underwater. */
-  daysUnderwater:         PropTypes.number.isRequired,
-  /** From GET /analytics/metrics → data.executive_metrics.max_drawdown.percent. Negative or 0. */
-  maxDrawdownPercent:     PropTypes.number.isRequired,
+  // Canonical props (from API)
+  currentDrawdownPercent: PropTypes.number,
+  peakPortfolioValue:     PropTypes.number,
+  daysUnderwater:         PropTypes.number,
+  maxDrawdownPercent:     PropTypes.number,
+  // Legacy props (from Dashboard drawdownMetrics calculation)
+  currentEquity:          PropTypes.number,
+  peakEquity:             PropTypes.number,
+  maxHistoricalDrawdown:  PropTypes.number,
 };
 
-CurrentDrawdownWidget.defaultProps = {
-  currentDrawdownPercent: 0.0,
-  peakPortfolioValue:     0.0,
-  daysUnderwater:         0,
-  maxDrawdownPercent:     0,
-};
+CurrentDrawdownWidget.defaultProps = {};
