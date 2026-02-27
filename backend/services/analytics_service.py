@@ -1,30 +1,31 @@
 """
-Analytics Service
+Analytics Router
 
-Calculates all portfolio metrics from trade and portfolio history data.
-Field names match the canonical API contract (analytics_endpoints.md v1.8.1)
-and the frontend component field expectations exactly.
+GET /analytics/metrics — Comprehensive portfolio analytics for a given period.
 
-Key field mappings (snake_case → camelCase after frontend conversion):
-  monthly_data:      pnl, trades, win_rate, month
-  exit_reasons:      reason, count, win_rate, total_pnl, avg_pnl, percentage
-  market_comparison: US/UK keys → totalTrades, winRate, totalPnl, avgWin,
-                     avgLoss, bestPerformer, worstPerformer
-  top_performers:    winners/losers → ticker, pnl, pnl_percent, entry_date,
-                     holding_days, exit_reason
-  consistency_metrics: consecutive_profitable_months, current_streak,
-                       win_rate_std_dev, pnl_std_dev
-  day_of_week:       day, trade_count, avg_pnl (7 entries always)
-  holding_periods:   period, trades, avg_pnl, win_rate (5 buckets always)
+BLG-TECH-07 fix: trades_for_charts attempts to source stop_price from
+positions.initial_stop via LEFT JOIN on trade_history.position_id.
+
+If the position_id column does not yet exist in the live trade_history table
+(migration pending), the JOIN query falls back gracefully: stop_price returns
+null for all trades, analytics loads normally, and no 500 error is raised.
+Run migration_add_position_id.sql to enable the JOIN fully.
+
+Contract: docs/specs/api_contracts/analytics_endpoints.md v1.8.1
 """
 
-from collections import Counter, defaultdict
+from fastapi import APIRouter, Query, HTTPException
+from services.analytics_service import AnalyticsService
 from datetime import date, timedelta
-from typing import Dict, List, Optional
-import math
+import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 
-def _period_to_since_date(period: str) -> Optional[date]:
+def _period_to_since_date(period: str):
+    """Convert period string to earliest exit_date cutoff. None = all_time."""
     today = date.today()
     period_map = {
         "all_time":     None,
@@ -34,445 +35,265 @@ def _period_to_since_date(period: str) -> Optional[date]:
         "last_year":    today - timedelta(days=365),
         "ytd":          date(today.year, 1, 1),
     }
-    if period not in period_map:
-        raise ValueError(f"Invalid period '{period}'.")
-    return period_map[period]
+    return period_map.get(period)
 
 
-class AnalyticsService:
+def _build_trades_for_charts_with_join(cursor, since_date) -> list:
+    """
+    Attempt to build trades_for_charts with stop_price via positions JOIN.
 
-    def calculate_metrics_from_data(
-        self,
-        trades: List[Dict],
-        portfolio_history: List[Dict],
-        period: str = "all_time",
-        min_trades: int = 10,
-    ) -> Dict:
-        filtered = self._filter_trades_by_period(trades, period)
-        filtered_history = self._filter_history_by_period(portfolio_history, period)
+    Returns list of trade dicts with stop_price populated from
+    positions.initial_stop. If the position_id column does not exist in
+    trade_history (migration pending), falls back to returning all trades
+    with stop_price: null so analytics loads without error.
+    """
+    try:
+        if since_date:
+            cursor.execute("""
+                SELECT
+                    th.id,
+                    th.ticker,
+                    th.market,
+                    th.entry_date,
+                    th.exit_date,
+                    th.entry_price,
+                    th.exit_price,
+                    p.initial_stop  AS stop_price,
+                    th.pnl,
+                    th.pnl_pct      AS pnl_percent,
+                    th.exit_reason,
+                    th.holding_days,
+                    th.tags
+                FROM trade_history th
+                LEFT JOIN positions p ON th.position_id = p.id
+                WHERE th.exit_date >= %s
+                ORDER BY th.exit_date ASC
+            """, (since_date,))
+        else:
+            cursor.execute("""
+                SELECT
+                    th.id,
+                    th.ticker,
+                    th.market,
+                    th.entry_date,
+                    th.exit_date,
+                    th.entry_price,
+                    th.exit_price,
+                    p.initial_stop  AS stop_price,
+                    th.pnl,
+                    th.pnl_pct      AS pnl_percent,
+                    th.exit_reason,
+                    th.holding_days,
+                    th.tags
+                FROM trade_history th
+                LEFT JOIN positions p ON th.position_id = p.id
+                ORDER BY th.exit_date ASC
+            """)
 
-        total_trades = len(filtered)
-        has_enough_data = total_trades >= min_trades
+        trades_for_charts = []
+        for row in cursor.fetchall():
+            stop = row['stop_price']
+            trades_for_charts.append({
+                'id':           str(row['id']) if row['id'] else '',
+                'ticker':       row['ticker'],
+                'market':       row['market'],
+                'entry_date':   row['entry_date'].isoformat() if row['entry_date'] else None,
+                'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
+                'entry_price':  round(float(row['entry_price']), 4) if row['entry_price'] else 0,
+                'exit_price':   round(float(row['exit_price']), 4) if row['exit_price'] else 0,
+                'stop_price':   round(float(stop), 4) if stop is not None else None,
+                'pnl':          round(float(row['pnl']), 2) if row['pnl'] else 0,
+                'pnl_percent':  round(float(row['pnl_percent']), 2) if row['pnl_percent'] else 0,
+                'exit_reason':  row['exit_reason'],
+                'holding_days': int(row['holding_days']) if row['holding_days'] else 0,
+                'tags':         row['tags'] or None,
+            })
+        return trades_for_charts
 
-        if not has_enough_data:
-            return {
-                "summary": {
-                    "total_trades": total_trades,
-                    "win_rate": 0.0,
-                    "total_pnl": 0.0,
-                    "has_enough_data": False,
-                    "min_required": min_trades,
-                },
-                "executive_metrics": {},
-                "advanced_metrics": {},
-                "market_comparison": {},
-                "exit_reasons": [],
-                "monthly_data": [],
-                "day_of_week": self._build_day_of_week(filtered),
-                "holding_periods": self._build_holding_periods(filtered),
-                "top_performers": {"winners": [], "losers": []},
-                "consistency_metrics": {},
-                "trades_for_charts": [],
-            }
+    except psycopg2.errors.UndefinedColumn:
+        # position_id column not yet in live trade_history table.
+        # Migration (migration_add_position_id.sql) has not run yet.
+        # Roll back the failed transaction so the cursor is still usable,
+        # then fall back to trades without stop_price (all null).
+        cursor.connection.rollback()
+        print(
+            "BLG-TECH-07: trade_history.position_id column not found. "
+            "Run migration_add_position_id.sql to enable stop_price JOIN. "
+            "Returning trades_for_charts with stop_price: null."
+        )
+        return _build_trades_for_charts_no_join(cursor, since_date)
 
-        wins = [t for t in filtered if t.get("pnl", 0) > 0]
-        total_pnl = sum(t.get("pnl", 0) for t in filtered)
-        win_rate = round(len(wins) / total_trades * 100, 1)
 
-        monthly = self._build_monthly_data(filtered)
+def _build_trades_for_charts_no_join(cursor, since_date) -> list:
+    """
+    Fallback: trades_for_charts without stop_price (all null).
+    Used when position_id migration has not yet run.
+    """
+    if since_date:
+        cursor.execute("""
+            SELECT
+                id, ticker, market, entry_date, exit_date,
+                entry_price, exit_price, pnl, pnl_pct AS pnl_percent,
+                exit_reason, holding_days, tags
+            FROM trade_history
+            WHERE exit_date >= %s
+            ORDER BY exit_date ASC
+        """, (since_date,))
+    else:
+        cursor.execute("""
+            SELECT
+                id, ticker, market, entry_date, exit_date,
+                entry_price, exit_price, pnl, pnl_pct AS pnl_percent,
+                exit_reason, holding_days, tags
+            FROM trade_history
+            ORDER BY exit_date ASC
+        """)
 
-        return {
-            "summary": {
-                "total_trades": total_trades,
-                "win_rate": win_rate,
-                "total_pnl": round(total_pnl, 2),
-                "has_enough_data": True,
-                "min_required": min_trades,
-            },
-            "executive_metrics": self._build_executive_metrics(filtered, filtered_history),
-            "advanced_metrics": self._build_advanced_metrics(filtered, filtered_history),
-            "market_comparison": self._build_market_comparison(filtered),
-            "exit_reasons": self._build_exit_reasons(filtered),
-            "monthly_data": monthly,
-            "day_of_week": self._build_day_of_week(filtered),
-            "holding_periods": self._build_holding_periods(filtered),
-            "top_performers": self._build_top_performers(filtered),
-            "consistency_metrics": self._build_consistency_metrics(monthly),
-            "trades_for_charts": [],  # overridden by router
-        }
+    trades_for_charts = []
+    for row in cursor.fetchall():
+        trades_for_charts.append({
+            'id':           str(row['id']) if row['id'] else '',
+            'ticker':       row['ticker'],
+            'market':       row['market'],
+            'entry_date':   row['entry_date'].isoformat() if row['entry_date'] else None,
+            'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
+            'entry_price':  round(float(row['entry_price']), 4) if row['entry_price'] else 0,
+            'exit_price':   round(float(row['exit_price']), 4) if row['exit_price'] else 0,
+            'stop_price':   None,  # not available without position_id migration
+            'pnl':          round(float(row['pnl']), 2) if row['pnl'] else 0,
+            'pnl_percent':  round(float(row['pnl_percent']), 2) if row['pnl_percent'] else 0,
+            'exit_reason':  row['exit_reason'],
+            'holding_days': int(row['holding_days']) if row['holding_days'] else 0,
+            'tags':         row['tags'] or None,
+        })
+    return trades_for_charts
 
-    # ----------------------------------------------------------------
-    # Period filtering
-    # ----------------------------------------------------------------
 
-    def _filter_trades_by_period(self, trades, period):
-        since = _period_to_since_date(period)
-        if since is None:
-            return trades
-        s = since.isoformat()
-        return [t for t in trades if (t.get("exit_date") or "") >= s]
+@router.get("/metrics")
+async def get_analytics_metrics(
+    period: str = Query(
+        "all_time",
+        regex="^(last_7_days|last_month|last_quarter|last_year|ytd|all_time)$"
+    )
+):
+    """
+    Get comprehensive analytics metrics.
 
-    def _filter_history_by_period(self, history, period):
-        since = _period_to_since_date(period)
-        if since is None:
-            return history
-        s = since.isoformat()
-        return [h for h in history if (h.get("snapshot_date") or "") >= s]
+    trades_for_charts attempts to include stop_price from positions.initial_stop
+    via LEFT JOIN (BLG-TECH-07). Falls back to stop_price: null for all trades
+    if the position_id migration has not yet run.
+    """
+    try:
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise Exception("DATABASE_URL not configured")
 
-    # ----------------------------------------------------------------
-    # executive_metrics
-    # ----------------------------------------------------------------
+        conn = psycopg2.connect(database_url)
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-    def _build_executive_metrics(self, trades, history):
-        if not trades:
-            return {}
+        try:
+            # ----------------------------------------------------------------
+            # Settings
+            # ----------------------------------------------------------------
+            cursor.execute("""
+                SELECT min_trades_for_analytics
+                FROM settings
+                ORDER BY created_at DESC
+                LIMIT 1
+            """)
+            settings_row = cursor.fetchone()
+            min_trades = int(settings_row['min_trades_for_analytics']) if settings_row else 10
 
-        wins  = [t for t in trades if t.get("pnl", 0) > 0]
-        losses = [t for t in trades if t.get("pnl", 0) < 0]
-        n = len(trades)
+            # ----------------------------------------------------------------
+            # Closed trades — for metric calculation
+            # ----------------------------------------------------------------
+            cursor.execute("""
+                SELECT
+                    id, ticker, market, entry_date, exit_date, shares,
+                    entry_price, exit_price, pnl, pnl_pct, exit_reason,
+                    holding_days, entry_note, exit_note, tags
+                FROM trade_history
+                ORDER BY exit_date ASC
+            """)
 
-        avg_win  = sum(t["pnl"] for t in wins)  / len(wins)  if wins  else 0.0
-        avg_loss = sum(t["pnl"] for t in losses) / len(losses) if losses else 0.0
+            trades = []
+            for row in cursor.fetchall():
+                trades.append({
+                    'id':           str(row['id']) if row['id'] else '',
+                    'ticker':       row['ticker'],
+                    'market':       row['market'],
+                    'entry_date':   row['entry_date'].isoformat() if row['entry_date'] else None,
+                    'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
+                    'shares':       float(row['shares']) if row['shares'] else 0,
+                    'entry_price':  float(row['entry_price']) if row['entry_price'] else 0,
+                    'exit_price':   float(row['exit_price']) if row['exit_price'] else 0,
+                    'pnl':          float(row['pnl']) if row['pnl'] else 0,
+                    'pnl_percent':  float(row['pnl_pct']) if row['pnl_pct'] else 0,
+                    'exit_reason':  row['exit_reason'],
+                    'holding_days': int(row['holding_days']) if row['holding_days'] else 0,
+                    'entry_note':   row['entry_note'],
+                    'exit_note':    row['exit_note'],
+                    'tags':         row['tags'],
+                })
 
-        gross_profit = sum(t["pnl"] for t in wins)  if wins  else 0.0
-        gross_loss   = abs(sum(t["pnl"] for t in losses)) if losses else 0.0
-        profit_factor = round(gross_profit / gross_loss, 2) if gross_loss > 0 else 0.0
+            # ----------------------------------------------------------------
+            # trades_for_charts — with stop_price via JOIN, or null fallback
+            # ----------------------------------------------------------------
+            since_date = _period_to_since_date(period)
+            trades_for_charts = _build_trades_for_charts_with_join(cursor, since_date)
 
-        expectancy = round(
-            (len(wins) / n) * avg_win + (len(losses) / n) * avg_loss, 2
+            # ----------------------------------------------------------------
+            # Portfolio history
+            # ----------------------------------------------------------------
+            portfolio_history = []
+            try:
+                cursor.execute("""
+                    SELECT
+                        snapshot_date, total_value, cash_balance,
+                        positions_value, total_pnl, position_count
+                    FROM portfolio_history
+                    ORDER BY snapshot_date ASC
+                """)
+                for row in cursor.fetchall():
+                    portfolio_history.append({
+                        'snapshot_date':   row['snapshot_date'].isoformat() if row['snapshot_date'] else None,
+                        'total_value':     float(row['total_value']) if row['total_value'] else 0,
+                        'cash_balance':    float(row['cash_balance']) if row['cash_balance'] else 0,
+                        'positions_value': float(row['positions_value']) if row['positions_value'] else 0,
+                        'total_pnl':       float(row['total_pnl']) if row['total_pnl'] else 0,
+                        'position_count':  int(row['position_count']) if row['position_count'] else 0,
+                    })
+            except psycopg2.errors.UndefinedTable:
+                print("portfolio_history table not found, using empty history")
+                portfolio_history = []
+            except Exception as e:
+                print(f"Error fetching portfolio history: {e}")
+                portfolio_history = []
+
+        finally:
+            cursor.close()
+            conn.close()
+
+        # ----------------------------------------------------------------
+        # Calculate metrics via AnalyticsService
+        # ----------------------------------------------------------------
+        service = AnalyticsService()
+        metrics = service.calculate_metrics_from_data(
+            trades=trades,
+            portfolio_history=portfolio_history,
+            period=period,
+            min_trades=min_trades,
         )
 
-        rr = round(avg_win / abs(avg_loss), 2) if avg_loss != 0 else 0.0
+        # Override trades_for_charts with the JOIN result (or fallback)
+        metrics["trades_for_charts"] = trades_for_charts
 
-        # Max drawdown from portfolio history
-        max_dd_pct = 0.0
-        max_dd_amt = 0.0
-        max_dd_date = None
-        if history:
-            peak = 0.0
-            for h in history:
-                v = h.get("total_value", 0)
-                if v > peak:
-                    peak = v
-                if peak > 0:
-                    dd_pct = (v - peak) / peak * 100
-                    if dd_pct < max_dd_pct:
-                        max_dd_pct = dd_pct
-                        max_dd_amt = v - peak
-                        max_dd_date = h.get("snapshot_date")
+        return {"status": "ok", "data": metrics}
 
-        # Sharpe (sample variance, requires 30+ history points)
-        sharpe = 0.0
-        sharpe_method = "insufficient_data"
-        if len(history) >= 30:
-            daily_returns = []
-            for i in range(1, len(history)):
-                prev = history[i - 1].get("total_value", 0)
-                curr = history[i].get("total_value", 0)
-                if prev > 0:
-                    daily_returns.append((curr - prev) / prev)
-            if len(daily_returns) >= 2:
-                mean_r = sum(daily_returns) / len(daily_returns)
-                variance = sum((r - mean_r) ** 2 for r in daily_returns) / (len(daily_returns) - 1)
-                std_dev = math.sqrt(variance) if variance > 0 else 0
-                if std_dev > 0:
-                    sharpe = round((mean_r / std_dev) * math.sqrt(252), 2)
-                    sharpe_method = "portfolio"
-
-        # Recovery factor
-        period_profit = (history[-1].get("total_value", 0) - history[0].get("total_value", 0)) if len(history) >= 2 else 0
-        recovery_factor = round(period_profit / abs(max_dd_amt), 2) if max_dd_amt < 0 and period_profit > 0 else 0.0
-
-        return {
-            "sharpe_ratio": sharpe,
-            "sharpe_method": sharpe_method,
-            "max_drawdown": {
-                "percent": round(max_dd_pct, 2),
-                "amount": round(max_dd_amt, 2),
-                "date": str(max_dd_date) if max_dd_date else None,
-            },
-            "recovery_factor": recovery_factor,
-            "expectancy": expectancy,
-            "profit_factor": profit_factor,
-            "risk_reward_ratio": rr,
-        }
-
-    # ----------------------------------------------------------------
-    # advanced_metrics
-    # ----------------------------------------------------------------
-
-    def _build_advanced_metrics(self, trades, history):
-        if not trades:
-            return {}
-
-        wins   = [t for t in trades if t.get("pnl", 0) > 0]
-        losses = [t for t in trades if t.get("pnl", 0) < 0]
-
-        avg_hold_winners = round(
-            sum(t.get("holding_days", 0) for t in wins) / len(wins), 1
-        ) if wins else 0.0
-        avg_hold_losers = round(
-            sum(t.get("holding_days", 0) for t in losses) / len(losses), 1
-        ) if losses else 0.0
-
-        # Streak calculation (exit_date order, already ASC from router query)
-        win_streak = loss_streak = cur_w = cur_l = 0
-        for t in trades:
-            if t.get("pnl", 0) > 0:
-                cur_w += 1; cur_l = 0
-            else:
-                cur_l += 1; cur_w = 0
-            win_streak  = max(win_streak,  cur_w)
-            loss_streak = max(loss_streak, cur_l)
-
-        # Trade frequency (trades per week)
-        trade_frequency = 0.0
-        if len(trades) >= 2:
-            try:
-                first = date.fromisoformat(str(trades[0].get("entry_date", "")))
-                last  = date.fromisoformat(str(trades[-1].get("exit_date", "")))
-                span  = (last - first).days
-                if span > 0:
-                    trade_frequency = round(len(trades) / span * 7, 1)
-            except (ValueError, TypeError):
-                pass
-
-        # Capital efficiency — total_pnl / mean(total_cost) * 100
-        capital_efficiency = 0.0
-        costs = [t.get("total_cost") or t.get("shares", 0) * t.get("entry_price", 0)
-                 for t in trades]
-        valid_costs = [c for c in costs if c and c > 0]
-        if valid_costs:
-            avg_cost = sum(valid_costs) / len(valid_costs)
-            total_pnl = sum(t.get("pnl", 0) for t in trades)
-            capital_efficiency = round(total_pnl / avg_cost * 100, 2) if avg_cost else 0.0
-
-        # Days underwater (trade-sequence method)
-        running_eq = peak_eq = 0.0
-        peak_date_str = None
-        max_days_uw = 0
-        for t in trades:
-            running_eq += t.get("pnl", 0)
-            if running_eq >= peak_eq:
-                peak_eq = running_eq
-                peak_date_str = str(t.get("exit_date", ""))
-            elif peak_date_str:
-                try:
-                    td = date.fromisoformat(str(t.get("exit_date", "")))
-                    pd = date.fromisoformat(peak_date_str)
-                    max_days_uw = max(max_days_uw, (td - pd).days)
-                except (ValueError, TypeError):
-                    pass
-
-        # Portfolio peak equity from history
-        portfolio_peak = max((h.get("total_value", 0) for h in history), default=0.0)
-
-        return {
-            "win_streak": win_streak,
-            "loss_streak": loss_streak,
-            "avg_hold_winners": avg_hold_winners,
-            "avg_hold_losers": avg_hold_losers,
-            "trade_frequency": trade_frequency,
-            "capital_efficiency": capital_efficiency,
-            "days_underwater": max_days_uw,
-            "peak_date": peak_date_str,
-            "portfolio_peak_equity": round(portfolio_peak, 2),
-        }
-
-    # ----------------------------------------------------------------
-    # market_comparison  — keys must be "US" / "UK" (uppercase)
-    # ----------------------------------------------------------------
-
-    def _build_market_comparison(self, trades):
-        result = {}
-        for market in ("US", "UK"):
-            mt = [t for t in trades if t.get("market") == market]
-            if not mt:
-                result[market] = {
-                    "total_trades": 0, "win_rate": 0.0, "total_pnl": 0.0,
-                    "avg_win": 0.0, "avg_loss": 0.0,
-                    "best_performer": None, "worst_performer": None,
-                }
-                continue
-            wins   = [t for t in mt if t.get("pnl", 0) > 0]
-            losses = [t for t in mt if t.get("pnl", 0) < 0]
-            best   = max(mt, key=lambda t: t.get("pnl", 0))
-            worst  = min(mt, key=lambda t: t.get("pnl", 0))
-            result[market] = {
-                "total_trades": len(mt),
-                "win_rate":     round(len(wins) / len(mt) * 100, 1),
-                "total_pnl":    round(sum(t.get("pnl", 0) for t in mt), 2),
-                "avg_win":      round(sum(t["pnl"] for t in wins)   / len(wins),   2) if wins   else 0.0,
-                "avg_loss":     round(sum(t["pnl"] for t in losses) / len(losses), 2) if losses else 0.0,
-                "best_performer":  {"ticker": best["ticker"],  "pnl": round(best.get("pnl", 0),  2)},
-                "worst_performer": {"ticker": worst["ticker"], "pnl": round(worst.get("pnl", 0), 2)},
-            }
-        return result
-
-    # ----------------------------------------------------------------
-    # exit_reasons  — field "reason" (not "exit_reason")
-    # ----------------------------------------------------------------
-
-    def _build_exit_reasons(self, trades):
-        buckets: Dict[str, list] = defaultdict(list)
-        for t in trades:
-            reason = t.get("exit_reason") or "Manual Exit"
-            buckets[reason].append(t)
-        total = len(trades)
-        result = []
-        for reason, group in sorted(buckets.items(), key=lambda x: -len(x[1])):
-            wins   = [t for t in group if t.get("pnl", 0) > 0]
-            pnls   = [t.get("pnl", 0) for t in group]
-            result.append({
-                "reason":     reason,
-                "count":      len(group),
-                "win_rate":   round(len(wins) / len(group) * 100, 1),
-                "total_pnl":  round(sum(pnls), 2),
-                "avg_pnl":    round(sum(pnls) / len(pnls), 2),
-                "percentage": round(len(group) / total * 100, 1),
-            })
-        return result
-
-    # ----------------------------------------------------------------
-    # monthly_data  — fields: month, pnl, trades, win_rate
-    #   "pnl" (not "total_pnl"), "trades" (not "trade_count")
-    #   MonthlyHeatmap reads: month.pnl, month.trades, month.winRate
-    #   Win Rate by Month reads: month.winRate, month.tradeCount
-    #   Both are satisfied: pnl + trades + win_rate + trade_count
-    # ----------------------------------------------------------------
-
-    def _build_monthly_data(self, trades):
-        buckets: Dict[str, list] = defaultdict(list)
-        for t in trades:
-            d = str(t.get("exit_date", ""))
-            if len(d) >= 7:
-                buckets[d[:7]].append(t)
-
-        result = []
-        for month in sorted(buckets.keys()):
-            mt   = buckets[month]
-            wins = [t for t in mt if t.get("pnl", 0) > 0]
-            pnl_val = round(sum(t.get("pnl", 0) for t in mt), 2)
-            wr      = round(len(wins) / len(mt) * 100, 1) if mt else 0.0
-            result.append({
-                "month":       month,
-                "pnl":         pnl_val,    # MonthlyHeatmap: month.pnl
-                "trades":      len(mt),    # MonthlyHeatmap: month.trades
-                "win_rate":    wr,         # → winRate after camelCase
-                "trade_count": len(mt),    # Win Rate by Month tooltip: month.tradeCount
-            })
-        return result
-
-    # ----------------------------------------------------------------
-    # day_of_week  — 7 entries always
-    # ----------------------------------------------------------------
-
-    def _build_day_of_week(self, trades):
-        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        buckets: Dict[str, list] = defaultdict(list)
-        for t in trades:
-            try:
-                d = date.fromisoformat(str(t.get("exit_date", "")))
-                buckets[days[d.weekday()]].append(t)
-            except (ValueError, TypeError):
-                pass
-        return [
-            {
-                "day":         day,
-                "trade_count": len(buckets[day]),
-                "avg_pnl":     round(
-                    sum(t.get("pnl", 0) for t in buckets[day]) / len(buckets[day]), 2
-                ) if buckets[day] else 0.0,
-            }
-            for day in days
-        ]
-
-    # ----------------------------------------------------------------
-    # holding_periods  — 5 buckets always
-    # ----------------------------------------------------------------
-
-    def _build_holding_periods(self, trades):
-        buckets = [
-            ("1-5 days",   1,  5),
-            ("6-10 days",  6,  10),
-            ("11-20 days", 11, 20),
-            ("21-30 days", 21, 30),
-            ("31+ days",   31, 9999),
-        ]
-        result = []
-        for label, lo, hi in buckets:
-            group = [t for t in trades if lo <= (t.get("holding_days") or 0) <= hi]
-            wins  = [t for t in group if t.get("pnl", 0) > 0]
-            result.append({
-                "period":   label,
-                "trades":   len(group),
-                "avg_pnl":  round(
-                    sum(t.get("pnl", 0) for t in group) / len(group), 2
-                ) if group else 0.0,
-                "win_rate": round(len(wins) / len(group) * 100, 1) if group else 0.0,
-            })
-        return result
-
-    # ----------------------------------------------------------------
-    # top_performers  — ticker, pnl, pnl_percent, entry_date,
-    #                   holding_days, exit_reason  (up to 5 each)
-    # ----------------------------------------------------------------
-
-    def _build_top_performers(self, trades):
-        by_pnl = sorted(trades, key=lambda t: t.get("pnl", 0), reverse=True)
-        def _fmt(t):
-            return {
-                "ticker":       t.get("ticker", ""),
-                "pnl":          round(t.get("pnl", 0), 2),
-                "pnl_percent":  round(t.get("pnl_percent", 0), 2),
-                "entry_date":   str(t.get("entry_date", "")),
-                "holding_days": t.get("holding_days", 0),
-                "exit_reason":  t.get("exit_reason") or "Manual Exit",
-            }
-        return {
-            "winners": [_fmt(t) for t in by_pnl[:5]  if t.get("pnl", 0) > 0],
-            "losers":  [_fmt(t) for t in by_pnl[-5:]  if t.get("pnl", 0) < 0],
-        }
-
-    # ----------------------------------------------------------------
-    # consistency_metrics  — derived from monthly_data
-    # ----------------------------------------------------------------
-
-    def _build_consistency_metrics(self, monthly_data):
-        if not monthly_data:
-            return {
-                "consecutive_profitable_months": 0,
-                "current_streak": 0,
-                "win_rate_std_dev": 0.0,
-                "pnl_std_dev": 0.0,
-            }
-
-        # Longest profitable run
-        best_streak = cur_streak = 0
-        for m in monthly_data:
-            if m.get("pnl", 0) > 0:
-                cur_streak += 1
-                best_streak = max(best_streak, cur_streak)
-            else:
-                cur_streak = 0
-
-        # Current streak (from end)
-        current = 0
-        for m in reversed(monthly_data):
-            if m.get("pnl", 0) > 0:
-                current += 1
-            else:
-                break
-
-        def _pop_std(values):
-            if len(values) < 2:
-                return 0.0
-            mean = sum(values) / len(values)
-            return round(math.sqrt(sum((v - mean) ** 2 for v in values) / len(values)), 2)
-
-        return {
-            "consecutive_profitable_months": best_streak,
-            "current_streak": current,
-            "win_rate_std_dev": _pop_std([m.get("win_rate", 0) for m in monthly_data]),
-            "pnl_std_dev":      _pop_std([m.get("pnl", 0)      for m in monthly_data]),
-        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Analytics calculation failed: {str(e)}"
+        )
