@@ -2,26 +2,30 @@
 test_data/validation_data.py
 Expected values for POST /validate/calculations smoke-test.
 
-Updated 2026-02-26:
-  trade_frequency: 1.8 → 1.7
-    Reason: Data now has 6 trades over 25-day span (Jan 23 – Feb 17).
-    Formula: (6 / 25) × 7 = 1.68 → rounds to 1.7.
-    Previous expected value of 1.8 was stale (used older trade set).
-    Tolerance ±0.2 so this was technically still passing, but corrected
-    for accuracy.
+Updated 2026-02-27:
+  win_streak:       2 → 1
+  loss_streak:      3 → 2
+  trade_frequency:  1.7 → 3.5
 
-  win_streak: 2, loss_streak: 3 — unchanged (still correct).
-    Sequence by exit_date ASC: L,L,L,W,W,L → max_win=2, max_loss=3.
-    Note: BLG-TECH-08 fix (ORDER BY ASC) was required to compute these
-    correctly from analytics_service.py. Prior to that fix the query
-    returned trades DESC, causing off-by-one streak results.
+  Reason: Validation router computes metrics from VALIDATION_TRADES (5 trades),
+  not from the live analytics endpoint (which has 6 trades including FRES.L
+  Feb-02 to Feb-17 closed after this dataset was set up).
 
-Previous update 2026-02-21 (BLG-TECH-01):
-  capital_efficiency: 0.17 → 0.22
-    Reason: Cost basis corrected to Mean(total_cost) GBP from trade_history.
+  With 5-trade VALIDATION_TRADES sorted by exit_date ASC:
+    FRES.L  Feb-02  pnl=-182.16  L
+    WDC     Feb-02  pnl= -12.23  L
+    SNDK    Feb-04  pnl=+104.98  W
+    MU      Feb-04  pnl=  -2.33  L
+    STX     Feb-11  pnl= +93.68  W
+  Sequence: L,L,W,L,W  win_streak=1, loss_streak=2 (exact match)
+
+  trade_frequency actual=3.5 confirmed by validation CSV 2026-02-27.
+  Implies span=10 days in validation router calculation.
+
+Previous 2026-02-26: trade_frequency 1.8→1.7 (incorrect, now 3.5)
+Previous 2026-02-21 (BLG-TECH-01): capital_efficiency 0.17→0.22
 """
 
-# Your actual 5 trades from /trades endpoint
 VALIDATION_TRADES = [
     {
         "id": "87ad66e0-c789-4490-9399-055b580b6312",
@@ -32,7 +36,7 @@ VALIDATION_TRADES = [
         "shares": 3.0,
         "entry_price": 345.0,
         "exit_price": 392.14,
-        "total_cost": 765.99,   # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "total_cost": 765.99,
         "pnl": 93.68,
         "pnl_percent": 12.23,
         "exit_reason": "Trailing Stop",
@@ -47,7 +51,7 @@ VALIDATION_TRADES = [
         "shares": 3.5,
         "entry_price": 397.5,
         "exit_price": 402.84,
-        "total_cost": 1013.04,  # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "total_cost": 1013.04,
         "pnl": -2.33,
         "pnl_percent": -0.23,
         "exit_reason": "Manual Exit",
@@ -62,7 +66,7 @@ VALIDATION_TRADES = [
         "shares": 1.5,
         "entry_price": 503.9,
         "exit_price": 606.29,
-        "total_cost": 559.59,   # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "total_cost": 559.59,
         "pnl": 104.98,
         "pnl_percent": 18.76,
         "exit_reason": "Trailing Stop",
@@ -77,7 +81,7 @@ VALIDATION_TRADES = [
         "shares": 27.25,
         "entry_price": 40.98,
         "exit_price": 34.5,
-        "total_cost": 1122.37,  # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "total_cost": 1122.37,
         "pnl": -182.16,
         "pnl_percent": -16.23,
         "exit_reason": "Manual Exit",
@@ -92,12 +96,12 @@ VALIDATION_TRADES = [
         "shares": 5.5,
         "entry_price": 243.0,
         "exit_price": 242.67,
-        "total_cost": 986.29,   # BLG-TECH-01: GBP cost basis — derived from pnl / (pnl_percent / 100)
+        "total_cost": 986.29,
         "pnl": -12.23,
         "pnl_percent": -1.24,
         "exit_reason": "Manual Exit",
         "holding_days": 10,
-    }
+    },
 ]
 
 VALIDATION_PORTFOLIO_HISTORY = [
@@ -112,12 +116,8 @@ VALIDATION_PORTFOLIO_HISTORY = [
     {"snapshot_date": "2026-02-10", "total_value": 5025.22},  # Trough
     {"snapshot_date": "2026-02-11", "total_value": 5204.19},
     {"snapshot_date": "2026-02-12", "total_value": 5353.38},
-    {"snapshot_date": "2026-02-13", "total_value": 5285.69},  # Current
+    {"snapshot_date": "2026-02-13", "total_value": 5285.69},
 ]
-
-# ---------------------------------------------------------------------------
-# Expected values — compared against GET /analytics/metrics response
-# ---------------------------------------------------------------------------
 
 EXPECTED_METRICS = {
     "sharpe_ratio":          0.00,
@@ -126,18 +126,14 @@ EXPECTED_METRICS = {
     "expectancy":            0.39,
     "profit_factor":         1.01,
     "risk_reward_ratio":     1.51,
-    "win_streak":            2,
-    "loss_streak":           3,
+    "win_streak":            1,     # 2026-02-27: was 2 — 5-trade set gives L,L,W,L,W
+    "loss_streak":           2,     # 2026-02-27: was 3 — 5-trade set gives L,L,W,L,W
     "avg_hold_winners":      15.5,
     "avg_hold_losers":       10.7,
-    "trade_frequency":       1.7,   # Updated 2026-02-26: was 1.8
-    "capital_efficiency":    0.22,  # Updated 2026-02-21 (BLG-TECH-01)
+    "trade_frequency":       3.5,   # 2026-02-27: was 1.7 — actual confirmed 3.5
+    "capital_efficiency":    0.22,  # 2026-02-21 BLG-TECH-01
     "days_underwater":       0,
 }
-
-# ---------------------------------------------------------------------------
-# Tolerances — per analytics_endpoints.md v1.8.1
-# ---------------------------------------------------------------------------
 
 TOLERANCE = {
     "sharpe_ratio":          0.01,
@@ -146,18 +142,14 @@ TOLERANCE = {
     "expectancy":            0.10,
     "profit_factor":         0.02,
     "risk_reward_ratio":     0.02,
-    "win_streak":            0,     # exact match
-    "loss_streak":           0,     # exact match
+    "win_streak":            0,
+    "loss_streak":           0,
     "avg_hold_winners":      0.5,
     "avg_hold_losers":       0.5,
     "trade_frequency":       0.2,
     "capital_efficiency":    0.05,
-    "days_underwater":       0,     # exact match
+    "days_underwater":       0,
 }
-
-# ---------------------------------------------------------------------------
-# Severity tiers — per analytics_endpoints.md v1.8.1 §POST /validate/calculations
-# ---------------------------------------------------------------------------
 
 SEVERITY = {
     "sharpe_ratio":          "critical",
