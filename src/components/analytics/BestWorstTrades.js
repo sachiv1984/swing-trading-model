@@ -10,7 +10,7 @@ import { cn } from "../../lib/utils";
 // Ranking: R-multiple (frontend-calculated). Formula per metrics_definitions.md v1.5.7.
 //   R = (exit_price - entry_price) / (entry_price - stop_price)
 //
-// Exclusion: trades where stop_price is null or zero are excluded entirely.
+// Exclusion: trades where stop_price is null, zero, or >= entry_price (invalid long stop) are excluded.
 // Panel size: top 3 / bottom 3. Partial panels rendered when < 3 qualify.
 // Empty state: "No trades with stop data available." when zero qualifying trades.
 // Placement: below Top Performers (Component 10 in render order).
@@ -18,9 +18,14 @@ import { cn } from "../../lib/utils";
 
 function calcR(trade) {
   const { entry_price, exit_price, stop_price } = trade;
+  // Exclude missing or zero stops
   if (!stop_price || stop_price === 0) return null;
   const denom = entry_price - stop_price;
-  if (denom === 0) return null;
+  // Exclude invalid stops: for a long position the stop must be strictly
+  // below entry. If denom <= 0 the stop is at or above entry (breakeven
+  // trailing stop recorded instead of initial stop, or bad data) — the
+  // R-multiple would be meaningless or inverted, so exclude the trade.
+  if (denom <= 0) return null;
   return (exit_price - entry_price) / denom;
 }
 
