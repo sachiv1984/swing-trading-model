@@ -8,7 +8,7 @@ Tooltip,
 ReferenceLine,
 ResponsiveContainer,
 Cell,
-} from recharts;
+} from "recharts";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // WinRateByMonth — Component 12 (BLG-FEAT-05)
