@@ -58,7 +58,11 @@ def _build_trades_for_charts_with_join(cursor, since_date) -> list:
                     th.exit_date,
                     th.entry_price,
                     th.exit_price,
-                    p.initial_stop  AS stop_price,
+                    CASE WHEN p.initial_stop IS NOT NULL
+                              AND p.initial_stop < th.entry_price
+                         THEN p.initial_stop
+                         ELSE NULL
+                    END AS stop_price,
                     th.pnl,
                     th.pnl_pct      AS pnl_percent,
                     th.exit_reason,
@@ -79,7 +83,11 @@ def _build_trades_for_charts_with_join(cursor, since_date) -> list:
                     th.exit_date,
                     th.entry_price,
                     th.exit_price,
-                    p.initial_stop  AS stop_price,
+                    CASE WHEN p.initial_stop IS NOT NULL
+                              AND p.initial_stop < th.entry_price
+                         THEN p.initial_stop
+                         ELSE NULL
+                    END AS stop_price,
                     th.pnl,
                     th.pnl_pct      AS pnl_percent,
                     th.exit_reason,
