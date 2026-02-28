@@ -80,7 +80,18 @@ export default function Dashboard() {
 
   const { data: cashTransactions } = useQuery({
     queryKey: ["cashTransactions"],
-    queryFn: () => base44.entities.CashTransaction.list("-date"),
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${API_URL}/cash/transactions?order=DESC`);
+        if (!response.ok) return [];
+        const result = await response.json();
+        return result.data || [];
+      } catch {
+        return [];
+      }
+    },
+    refetchInterval: 60_000,
+    staleTime: 30_000,
   });
 
   // ✅ CRITICAL: Fetch portfolio history for accurate peak calculation
