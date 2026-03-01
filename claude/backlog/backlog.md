@@ -123,32 +123,12 @@ Phase Gate Document filed: docs/product/phase_gates/BLG-TECH-03-validationservic
 **Target**
 - v2.1 or when system becomes multi-user.
 
----
-
-## 2. Product Feature Backlog (User-Facing)
-
----
-
-### BLG-FEAT-01 — Current Drawdown Widget
-**Priority:** P1
-**Effort:** ~30 minutes
-**Value:** High visibility risk awareness
+**BLG-TECH-06** — Canonicalise sharpe_ratio_trade_method as 14th validation metric in analytics_endpoints.md
+**Priority:** P2 (Medium)
+**Type:** Spec Accuracy / Governance
 **Target release:** v1.6.1
-
-Display current drawdown from peak and days underwater.
-Example: "Drawdown: -8.2%, 12 days underwater"
-
-**Dependency**
-- Metrics Definitions owner must confirm drawdown calculation before implementation.
-
----
-
-BLG-TECH-06 — Canonicalise sharpe_ratio_trade_method as 14th validation metric in analytics_endpoints.md
-Priority: P2 (Medium)
-Type: Spec Accuracy / Governance
-Target release: v1.6.1
-Status: Open
-Problem
+**Status:** Open
+**Problem**
 POST /validate/calculations returns 14 validation results. analytics_endpoints.md v1.8.1
 describes 13 metrics and does not document sharpe_ratio_trade_method.
 The 14th metric was introduced under BLG-TECH-01 Addendum 1 (PMO-confirmed scope, 2026-02-20)
@@ -166,28 +146,93 @@ Add to the validated metrics table with: severity critical, formula, tolerance
 Update the response example to show 14 results and correct by_severity.critical.total: 4
 No code change required — implementation is correct
 
-Acceptance Criteria
+**Acceptance Criteria**
 
 analytics_endpoints.md validated metrics table includes sharpe_ratio_trade_method
 Response schema example reflects 14 results
 by_severity.critical.total shown as 4 in example (not 3)
 No deviation exists between the spec and the live POST /validate/calculations response
 
-Owner
+**Owner**
 
 API Contracts & Documentation Owner
 
-Source
+**Source**
 
 OBS-01 — QA Lead, BLG-TECH-02/03 re-verification, 2026-02-21T21:25:00Z
 Product Owner disposition: backlog item, v1.6.1 target, 2026-02-21
 
 ---
 
-### BLG-FEAT-02 — R-Multiple Column in Trade History
-**Priority:** P2
+**BLG-TECH-08** — Align portfolio_endpoints.md positions summary field list
+**Priority:** P3
+**Effort:** ~30 min
+**Target release:** v1.7
+**Source:** OBS-QWB-R1-01 — QA Lead observation, QWB verification, 2026-03-01
+GET /portfolio positions summary objects omit current_price_native, stop_price,
+stop_price_native, and pnl_percent — fields listed in R-01 test scenario step 3
+and in portfolio_endpoints.md. Pre-existing behaviour, not introduced by QWB.
+Decision required: Either (a) update portfolio_endpoints.md to accurately document
+the lightweight summary shape, explicitly distinguishing it from the full position object
+on GET /positions; or (b) add the missing fields to the backend response. Product Owner
+
+API Contracts owner to decide.
+
+**Acceptance Criteria**
+
+portfolio_endpoints.md positions summary field list matches the live API response
+No discrepancy between spec and implementation for /portfolio positions objects
+
+Owner: API Contracts & Documentation Owner
+Raised by: QA Lead, 2026-03-01
+
+---
+
+**BLG-TECH-09** — Add holding_days to GET /trades response
+**Priority:** P3
 **Effort:** ~1 hour
-**Target release:** v1.6.1
+**Target release:** v1.7
+**Source:** OBS-QWB-R3-01 — QA Lead observation, QWB verification, 2026-03-01
+holding_days is absent from trade objects in the GET /trades response.
+trade_endpoints.md v1.8.4 lists it as a required field. Pre-existing behaviour,
+not introduced by QWB.
+Decision required: Either (a) add holding_days to the backend GET /trades
+response (the spec-compliant fix); or (b) remove holding_days from trade_endpoints.md
+documented schema. Product Owner + API Contracts owner to decide.
+Acceptance Criteria
+
+GET /trades trade objects include holding_days (integer), OR
+trade_endpoints.md schema is corrected to remove the field, with a note explaining
+its absence and where the value can be sourced (e.g. trades_for_charts)
+
+**Owner:** API Contracts & Documentation Owner
+Raised by: QA Lead, 2026-03-01
+
+---
+
+## 2. Product Feature Backlog (User-Facing)
+
+---
+
+### BLG-FEAT-01 — Current Drawdown Widget
+**Status:** ✅ COMPLETE
+**Shipped:** v1.6.1, 2026-03-01
+**Evidence:** docs/product/verification/QWB-quick-wins-bundle-verification.md v1.0
+**Changelog:** docs/product/changelog.md v1.6.1
+
+Display current drawdown from peak and days underwater.
+Example: "Drawdown: -8.2%, 12 days underwater"
+
+**Dependency**
+- Metrics Definitions owner must confirm drawdown calculation before implementation.
+
+---
+
+### BLG-FEAT-02 — R-Multiple Column in Trade History
+**Status:** ✅ COMPLETE
+**Shipped:** v1.6.1, 2026-03-01
+**Evidence:** docs/product/verification/QWB-quick-wins-bundle-verification.md v1.0
+**Changelog:** docs/product/changelog.md v1.6.1
 
 Add R-multiple column to trade history table.
 
@@ -216,27 +261,30 @@ Requires data model update.
 ---
 
 ### BLG-FEAT-04 — Best / Worst Trades Widget
-**Priority:** P2
-**Effort:** ~1 hour
-**Target release:** v1.6.1
+**Status:** ✅ COMPLETE
+**Shipped:** v1.6.1, 2026-03-01
+**Evidence:** docs/product/verification/QWB-quick-wins-bundle-verification.md v1.0
+**Changelog:** docs/product/changelog.md v1.6.1
 
 Show top 3 and bottom 3 trades by R-multiple or P&L.
 
 ---
 
 ### BLG-FEAT-05 — Win Rate by Month Chart
-**Priority:** P2
-**Effort:** ~1 hour
-**Target release:** v1.6.1
+**Status:** ✅ COMPLETE
+**Shipped:** v1.6.1, 2026-03-01
+**Evidence:** docs/product/verification/QWB-quick-wins-bundle-verification.md v1.0
+**Changelog:** docs/product/changelog.md v1.6.1
 
 Bar chart of win rate grouped by calendar month.
 
 ---
 
 ### BLG-FEAT-06 — Grace Period Indicator
-**Priority:** P2
-**Effort:** ~1 hour
-**Target release:** v1.6.1
+**Status:** ✅ COMPLETE
+**Shipped:** v1.6.1, 2026-03-01
+**Evidence:** docs/product/verification/QWB-quick-wins-bundle-verification.md v1.0
+**Changelog:** docs/product/changelog.md v1.6.1
 
 Show remaining grace period days in open positions table.
 Example: "Day 6 of 10"
@@ -244,9 +292,10 @@ Example: "Day 6 of 10"
 ---
 
 ### BLG-FEAT-07 — CSV Export of Trade History
-**Priority:** P2
-**Effort:** ~1 hour
-**Target release:** v1.6.1
+**Status:** ✅ COMPLETE
+**Shipped:** v1.6.1, 2026-03-01
+**Evidence:** docs/product/verification/QWB-quick-wins-bundle-verification.md v1.0
+**Changelog:** docs/product/changelog.md v1.6.1
 
 One-click CSV export for tax and analysis use.
 
