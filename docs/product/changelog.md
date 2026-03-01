@@ -3,9 +3,123 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-02-21
+**Last Updated:** 2026-03-01
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v1.6.1 — Quick Wins Bundle (March 2026)
+
+**Shipped:** 2026-03-01
+**Director of Quality sign-off:** 2026-03-01
+**Verification report:** `docs/product/verification/QWB-quick-wins-bundle-verification.md` v1.0
+**Scope document:** `docs/product/scope/scope--QWB-quick-wins-bundle.md` (Superseded)
+
+Six self-contained user-facing improvements. No new pages. No data model migrations.
+
+---
+
+### BLG-FEAT-01 — Current Drawdown Widget ✅ Complete
+
+**Backend**
+- `GET /portfolio` extended with two always-present fields: `current_drawdown_percent` (float, ≤ 0.0) and `peak_portfolio_value` (float, GBP)
+- Calculated server-side: `(peak − current) / peak × 100`. Peak = `MAX(portfolio_history.total_value)` all-time. Both default to `0.0` when no `portfolio_history` exists
+- Spec: `portfolio_endpoints.md` v1.8.2
+
+**Frontend — Dashboard**
+- Current Drawdown Widget added as fifth card in stats row
+- Three display states: in-drawdown (% + peak equity + days underwater + progress bar), at-peak ("New Peak!"), no-history
+- Progress bar sourced from `max_drawdown.percent` via `GET /analytics/metrics`. `days_underwater` sourced from `advanced_metrics.days_underwater` — no fallback calculation
+- Spec: `dashboard.md` v1.1
+
+---
+
+### BLG-FEAT-02 — R-Multiple Column in Trade History ✅ Complete
+
+**Frontend — Trade History**
+- R-multiple column added to trade history table
+- Frontend-only calculation: `R = (exit_price − entry_price) / (entry_price − stop_price)`. Source: `trades_for_charts` from `GET /analytics/metrics`, joined by trade `id`
+- Display: signed, 2dp, R suffix (e.g. `+2.31R`, `−0.54R`). Em dash when `stop_price` absent or denominator is zero
+- Column sortable; em-dash rows sort to end
+- Spec: `trade_history.md` v1.1, `metrics_definitions.md` v1.5.8
+
+---
+
+### BLG-FEAT-04 — Best / Worst Trades Widget ✅ Complete
+
+**Frontend — Performance Analytics**
+- Best/Worst Trades component added below Top Performers on Performance Analytics page
+- Two panels: top 3 and bottom 3 closed trades by R-multiple. Trades without `stop_price` excluded from ranking
+- Partial panels when fewer than 3 qualifying trades; empty state when none
+- Card content: ticker, R-multiple, P&L (GBP), exit date, exit reason
+- Spec: `analytics.md` v1.2
+
+---
+
+### BLG-FEAT-05 — Win Rate by Month Chart ✅ Complete
+
+**Frontend — Performance Analytics**
+- Win Rate by Month bar chart added below Best/Worst Trades
+- Source: `monthly_data` from `GET /analytics/metrics`
+- Y-axis fixed 0–100. Bars green when `win_rate > 50%`, red at or below 50%. Dashed reference line at 50%
+- Tooltip shows month, win rate %, and `trade_count`
+- Returns null (no render) when `monthly_data` is empty
+- Spec: `analytics.md` v1.2
+
+---
+
+### BLG-FEAT-06 — Grace Period Indicator ✅ Complete
+
+**Backend**
+- `GET /positions` extended with `grace_days_remaining` (integer | null) on every position object. Always present
+- Formula: `max(0, 10 − holding_days)` when `grace_period = true`; `null` when `grace_period = false`. On day 10, `grace_period` becomes `false` → field returns `null`, not `0`
+- Spec: `position_endpoints.md` v1.8.3
+
+**Frontend — Positions**
+- Grace Days Remaining column added to open positions table
+- Display: `"Day {holding_days + 1} of 10"` when in grace; dash (`—`) when `null`
+- Spec: `positions.md` v1.2
+
+---
+
+### BLG-FEAT-07 — CSV Export of Trade History ✅ Complete
+
+**Backend**
+- New endpoint: `GET /trades/export/csv`
+- `Content-Type: text/csv`, `Content-Disposition: attachment; filename="trade_history.csv"`
+- 14 columns: `ticker, market, entry_date, exit_date, shares, entry_price, exit_price, pnl, pnl_pct, holding_days, exit_reason, tags, entry_note, exit_note`
+- Null fields → empty string. Tags array → semicolon-separated string. Empty history → header row only (HTTP 200)
+- Spec: `trade_endpoints.md` v1.8.4
+
+**Frontend — Trade History**
+- CSV Export button added to Trade History page; triggers browser-native download
+- Spec: `trade_history.md` v1.1
+
+---
+
+### Canonical Specs Updated
+
+| Spec | Version | Change |
+|------|---------|--------|
+| `docs/specs/metrics_definitions.md` | v1.5.8 | New section: Current Drawdown |
+| `docs/specs/api_contracts/portfolio_endpoints.md` | v1.8.2 | New fields: `current_drawdown_percent`, `peak_portfolio_value` |
+| `docs/specs/api_contracts/position_endpoints.md` | v1.8.3 | New field: `grace_days_remaining`; A-QA-05 day-10 contradiction corrected |
+| `docs/specs/api_contracts/trade_endpoints.md` | v1.8.4 | New endpoint: `GET /trades/export/csv` |
+| `docs/specs/frontend/pages/dashboard.md` | v1.1 | Current Drawdown Widget added |
+| `docs/specs/frontend/pages/trade_history.md` | v1.1 | R-Multiple column + CSV Export button added |
+| `docs/specs/frontend/pages/analytics.md` | v1.2 | Best/Worst Trades (§11) + Win Rate by Month (§12) added |
+| `docs/specs/frontend/pages/positions.md` | v1.2 | Grace Days Remaining column added |
+| `docs/specs/api_dependencies.md` | v1.2 | New dependencies added |
+
+---
+
+### Verification Summary
+
+- **Scenarios:** 47 total — 45 pass, 2 deferred (F-17: data prerequisite; F-27: environment state), 0 fail
+- **Defects:** 0 raised at any severity
+- **Observations:** 2 pre-existing issues raised for backlog (BLG-TECH-08, BLG-TECH-09)
+- **Sign-off:** Director of Quality, 2026-03-01. Verdict: Pass with logged deferrals
 
 ---
 
