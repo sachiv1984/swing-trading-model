@@ -207,17 +207,31 @@ The R-01 test scenario step 3 field list appears to conflate the `/portfolio` po
 
 ## Director of Quality Sign-Off
 
-*To be completed by Director of Quality.*
+**Independent review conducted against all 5 criteria per `defect_lifecycle.md` v1.0 §6.**
+
+| Review item | Result |
+|---|---|
+| 1. Acceptance criteria coverage | ✅ Pass — all 42 criteria covered. F-17 and F-27 deferred with documented rationale and completion plans. Deferrals are acceptable: F-17 is a data prerequisite (pre-existing issue, not a code defect); F-27 is code-confirmed via source inspection |
+| 2. Defect resolution completeness | ✅ Pass — 0 defects raised across all severity levels. No resolution required |
+| 3. Observations | ✅ Pass — OBS-QWB-R1-01 and OBS-QWB-R3-01 both confirmed as pre-existing, non-blocking, with backlog disposition. BLG- references to be assigned by Product Owner at shipping closure |
+| 4. Verification report integrity | ✅ Pass — single version reflects clean first-run pass. Scenario count (47) consistent with test scenario document (42 acceptance + 5 regression). No scenario results changed without re-verification event |
+| 5. Independence | ✅ Pass — QA Lead and Head of Engineering are distinct roles. QA Lead did not author canonical specifications under test |
 
 ```
 Quality sign-off confirmed.
 Verified by:   QA Lead
-Reviewed by:   [Director of Quality name]
-Date:          [date]
-Verdict:       [Pass | Pass with logged deferrals]
+Reviewed by:   Director of Quality
+Date:          2026-03-01
+Verdict:       Pass with logged deferrals (F-17, F-27) and observations (OBS-QWB-R1-01, OBS-QWB-R3-01)
+
 Feature is cleared for shipping.
+
+Condition attached (closure action, not a sign-off block):
+Product Owner to assign BLG- references to OBS-QWB-R1-01 and OBS-QWB-R3-01
+during shipping closure per defect_lifecycle.md §8.
 ```
 
 ---
 
 *Report filed: 2026-03-01 (v1.0)*
+*Sign-off appended: 2026-03-01 — Director of Quality*
