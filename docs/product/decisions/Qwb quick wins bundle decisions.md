@@ -2,17 +2,28 @@
 
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
-**Status:** Active
-**Last Updated:** 2026-02-24
+**Status:** Superseded
+**Last Updated:** 2026-03-01
 **Roadmap item:** Quick Wins Bundle — BLG-FEAT-01, 02, 04, 05, 06, 07
 **Target release:** v1.6.1
 **Pre-alignment meeting:** QWB-PA-001, 2026-02-24
 **Phase Gate Document:** `docs/product/phase_gates/QWB-quick-wins-bundle-phase-gate.md`
+**Superseded by:** docs/product/changelog.md — v1.6.1 entry (shipped 2026-03-01,
+Director of Quality sign-off 2026-03-01). The canonical specifications referenced
+against each decision remain authoritative and current. This document records
+decision rationale only — refer to the canonical specs for system behaviour.
 
 > ⚠️ Standing Notice: This document records decisions made at the pre-alignment
 > meeting. All authoritative rules, formulas, field definitions, and constraints
 > live in the canonical specifications listed against each decision. This document
 > must not be cited as canonical intent — it records the decision rationale only.
+
+> **Lifecycle note:** This decisions record is superseded. All decisions were
+implemented and shipped in v1.6.1 (Director of Quality sign-off 2026-03-01).
+Verification report: docs/product/verification/QWB-quick-wins-bundle-verification.md v1.0.
+For the delivery record, see docs/product/changelog.md v1.6.1 entry.
+The canonical specifications produced by these decisions remain authoritative
+and current.
 
 ---
 
