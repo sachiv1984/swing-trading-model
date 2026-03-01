@@ -1,5 +1,5 @@
 # Head of Specs Team
-## Role: Head of Specs Team
+**Role:** Head of Specs Team
 
 This document defines the **skills, responsibilities, and operating standards** for the role responsible for leading the **Specs Team**.
 

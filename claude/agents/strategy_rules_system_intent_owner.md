@@ -1,5 +1,5 @@
 # Strategy Rules & System Intent Owner
-## Role: Strategy Rules & System Intent Owner
+**Role:** Strategy Rules & System Intent Owner
 
 This document defines the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the **Strategy Rules** for the Momentum Trading Assistant.
 

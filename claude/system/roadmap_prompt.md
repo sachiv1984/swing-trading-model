@@ -1,7 +1,7 @@
 Owner: Head of Specs Team
 Status: Active  
-Version: 1.4  
-Last Updated: 2026-02-23  
+Version: 1.5
+Last Updated: 2026-03-01
 
 ---
 
@@ -29,7 +29,7 @@ No other user input may trigger execution of this routine.
 You must treat the following documents as binding authority:
 
 - claude/charter/team_charter.md
-- claude/charter/documentation_lifecycle_guide.md
+- claude/charter/document_lifecycle_guide.md
 
 If any routine, document, or output conflicts with these, governance documents prevail.
 
@@ -218,7 +218,7 @@ Purpose:
 
 Verify the following exist:
 - claude/charter/team_charter.md
-- claude/charter/documentation_lifecycle_guide.md
+- claude/charter/document_lifecycle_guide.md
 - claude/strategy/strategy_rules.md
 - claude/roadmap/current_roadmap.md
 - claude/backlog/backlog.md
@@ -280,7 +280,7 @@ If all preflight checks pass:
 
 Load and validate lifecycle compliance of:
 - claude/charter/team_charter.md
-- claude/charter/documentation_lifecycle_guide.md
+- claude/charter/document_lifecycle_guide.md
 - claude/strategy/strategy_rules.md
 
 Planning inputs:
