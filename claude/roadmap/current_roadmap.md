@@ -11,8 +11,8 @@
 
 ## 1. Current Version
 
-**v1.6** — Position Sizing Calculator shipped. Portfolio Heat Gauge is next.
-**Next planned release:** **v1.6.1**
+**v1.61** — Quick Wins Bundle — Shipped 2026-03-01
+**Next planned release:** **v1.7**
 
 ---
 
@@ -88,16 +88,16 @@ BLG-TECH-04 (CI/CD gate) dependency now unblocked ✅
 
 #### Quick Wins Bundle *(promoted from backlog --- P2)*
 
-**Status:** 🟡 Implementation Open --- 2026-02-27 **Estimated total effort:** ~8--10.5 hours (revised from ~6--8 hours to account for spec authoring --- A-S05, 2026-02-25) **Scope document:** `docs/product/scope/scope--QWB-quick-wins-bundle.md` **Decisions record:** `docs/product/decisions/QWB-quick-wins-bundle.md` **Phase Gate Document:** `docs/product/phase_gates/QWB_quick_wins_bundle_phase_gate.md` **Value:** Visible, tangible user-facing improvements. All decisions closed. All specs locked and QA-signed.
+**Status:** ✅ Complete --- 2026-03-01 **Estimated total effort:** ~8--10.5 hours (revised from ~6--8 hours to account for spec authoring --- A-S05, 2026-02-25) **Scope document:** `docs/product/scope/scope--QWB-quick-wins-bundle.md` **Decisions record:** `docs/product/decisions/QWB-quick-wins-bundle.md` **Phase Gate Document:** `docs/product/phase_gates/QWB_quick_wins_bundle_phase_gate.md` **Value:** Visible, tangible user-facing improvements. All decisions closed. All specs locked and QA-signed.
 
 | Item | Effort | Status |
 | --- | --- | --- |
-| BLG-FEAT-01 --- Current Drawdown Widget | ~30 min | 🟡 In progress |
-| BLG-FEAT-02 --- R-Multiple Column in Trade History | ~1 hour | 🟡 In progress |
-| BLG-FEAT-04 --- Best / Worst Trades Widget | ~1 hour | 🟡 In progress |
-| BLG-FEAT-05 --- Win Rate by Month Chart | ~1 hour | 🟡 In progress |
-| BLG-FEAT-06 --- Grace Period Indicator | ~1 hour | 🟡 In progress |
-| BLG-FEAT-07 --- CSV Export of Trade History | ~1 hour | 🟡 In progress |
+| BLG-FEAT-01 --- Current Drawdown Widget | ~30 min | ✅ Complete — Shipped v1.6.1, 2026-03-01 |
+| BLG-FEAT-02 --- R-Multiple Column in Trade History | ~1 hour | ✅ Complete — Shipped v1.6.1, 2026-03-01 |
+| BLG-FEAT-04 --- Best / Worst Trades Widget | ~1 hour | ✅ Complete — Shipped v1.6.1, 2026-03-01 |
+| BLG-FEAT-05 --- Win Rate by Month Chart | ~1 hour | ✅ Complete — Shipped v1.6.1, 2026-03-01 |
+| BLG-FEAT-06 --- Grace Period Indicator | ~1 hour | ✅ Complete — Shipped v1.6.1, 2026-03-01 |
+| BLG-FEAT-07 --- CSV Export of Trade History | ~1 hour | ✅ Complete — Shipped v1.6.1, 2026-03-01 |
 
 **Locked canonical specs (implementation source of truth):**
 
@@ -115,6 +115,11 @@ BLG-TECH-04 (CI/CD gate) dependency now unblocked ✅
 | `docs/specs/frontend/pages/positions.md` | v1.2 |
 | `docs/specs/api_dependencies.md` | v1.2 |
 | `docs/reference/openapi.yaml` | current |
+
+Verification: docs/product/verification/QWB-quick-wins-bundle-verification.md v1.0
+Director of Quality sign-off: 2026-03-01 — Pass with logged deferrals (F-17, F-27)
+Changelog: docs/product/changelog.md — v1.6.1 entry
+Last Updated: 2026-03-01
 
 ---
 
@@ -338,7 +343,7 @@ When evaluating new features:
 |---------|-------|----------------|
 | **v1.5** | Performance Analytics | Unified analytics endpoint, validation endpoint — ✅ Shipped |
 | **v1.6** | Position Sizing | Calculator, settings default risk % — ✅ Shipped |
-| **v1.6.1** | Correctness & Quick Wins | BLG-TECH-01 ✅ done, BLG-TECH-02/03 pending, 6 quick-win features, settings spec, error standard |
+| **v1.6.1** | Correctness & Quick Wins | Quick Wins Bundle (6 features) — ✅ Shipped 2026-03-01" |
 | **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision |
 | **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk |
 | **v1.9** | User Value & Insight | Trade reflection template, compliance metrics, cohort analysis, dashboard homepage |
