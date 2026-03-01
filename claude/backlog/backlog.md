@@ -3,7 +3,7 @@
 Owner: Product Owner
 Status: Active
 Class: Planning Document (Class 4)
-Last Updated: 2026-02-21
+Last Updated: 2026-03-01
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -126,7 +126,7 @@ Phase Gate Document filed: docs/product/phase_gates/BLG-TECH-03-validationservic
 **BLG-TECH-06** — Canonicalise sharpe_ratio_trade_method as 14th validation metric in analytics_endpoints.md
 **Priority:** P2 (Medium)
 **Type:** Spec Accuracy / Governance
-**Target release:** v1.6.1
+**Target release:** v1.7 *(updated from v1.6.1 — v1.6.1 has shipped; DL-001 cycle 2026-03-01__item-3.2)*
 **Status:** Open
 **Problem**
 POST /validate/calculations returns 14 validation results. analytics_endpoints.md v1.8.1

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-02-21
+**Last Updated:** 2026-03-01
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -232,21 +232,20 @@ A proper home page for the product. On load: open positions count, total portfol
 **Status:** Planned
 **Effort:** Medium–High (4–5 days)
 **Value:** High
-**Pre-requisites:**
-- Structured logging / observability standards (v1.7) — async failure modes must be observable
-- API versioning strategy decision record (v1.7) — async patterns may introduce new contract considerations
-- QA planning session required before pre-alignment opens — the testing surface for email/SMS delivery is significantly larger than the effort estimate implies
+
+> ⛔ **Hard gates — v2.0 pre-alignment may not open until ALL THREE are confirmed:**
+> 1. Structured logging / observability standards (v1.7) — **complete**
+> 2. API versioning strategy decision record (v1.7) — **complete**
+> 3. QA planning session for notification delivery — **complete**
 
 Email alerts for: stop loss approach, grace period ending (days 8–9 warning), market regime change to risk-off, daily portfolio summary. Optional SMS. In-app notification feed. Configurable per-user preferences.
 
 > **Before implementation:** Database schema must be defined in `docs/specs/data_model.md`. API endpoints must be specified in `docs/specs/api_contracts/`. Notification preference model must be specced before frontend work begins.
 
 #### 4.1a — CSV Export of Trade History
-**Status:** Planned *(may already ship via BLG-FEAT-07 in v1.6.1)*
-**Effort:** ~1 hour if not already shipped
-**Value:** Medium (tax necessity, analysis)
+**Status:** ❌ Killed — superseded by BLG-FEAT-07 (shipped v1.6.1, 2026-03-01)
 
-One-click CSV export of closed trade history. If BLG-FEAT-07 ships in v1.6.1, this item is superseded.
+BLG-FEAT-07 (CSV Export) was delivered as part of the QWB Quick Wins Bundle and shipped in v1.6.1. This planning item is closed. Decision log: 2026-03-01__item-3.2.
 
 #### 4.1b — Tax-Year P&L Statement *(new sub-item)*
 **Status:** Planned
@@ -347,7 +346,7 @@ When evaluating new features:
 | **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision |
 | **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk |
 | **v1.9** | User Value & Insight | Trade reflection template, compliance metrics, cohort analysis, dashboard homepage |
-| **v2.0** | Reporting & Alerts | Alerts & notifications, tax-year statement, server-side PDF, signal parameter exposure |
+| **v2.0** | Reporting & Alerts | Alerts & notifications (hard gates apply), tax-year statement, server-side PDF, signal parameter exposure (gated) |
 | **v2.1+** | Enhancements | Watchlists, chart interactivity, Prometheus |
 
 ---

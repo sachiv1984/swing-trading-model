@@ -1,437 +1,319 @@
-# Documentation Lifecycle Guide
+# Team Charter — Momentum Trading Assistant
 
 **Owner:** Head of Specs Team
-**Scope:** All governed documentation across the entire product
 **Status:** Canonical
-**Version:** 2.3
-**Last Updated:** 2026-02-23
+**Version:** 1.0
+**Last Updated:** 2026-03-01
 
 ---
 
 ## Change Log
 
-| Version | Change |
-|---------|--------|
-| 2.3 | Clarified lifecycle enforcement roles to explicitly include Facilitator and Challenger as non-decision governance roles. No changes to document classes or lifecycle semantics. |
-| 2.2 | Added Section 9 — Known Deviation Documentation Standard. When any deviation from canonical behaviour is documented in a spec, it must be assigned a priority tier, a target resolution release, and a named owner at the time of documentation. P0 deviations must be resolved within one release cycle. Identified via lessons learnt for BLG-TECH-01. |
-| 2.1 | Class 4 (Planning Document): added canonical location `docs/product/scope/` for scope documents, naming convention, and scope document as a distinct sub-type with its own supersession rule. Additive only — no existing rules changed. |
-| 2.0 | Expanded scope to cover all document classes. Added Operational Record, Planning Document, Role Charter, and Governance Prompt as formal classes. Added universal header block standard. Added enforcement mechanism section. Added trigger rules for governance review. |
-| 1.0 | Initial version. Covered Canonical, Supporting, and reference artifacts only. |
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0 | 2026-03-01 | Initial charter. Establishes role authority model, domain ownership boundaries, conflict resolution rules, and non-decision role definitions for all governed routines. |
 
 ---
 
 ## 1. Purpose
 
-This guide defines how all product documentation is:
-- Classified
-- Created
-- Maintained
-- Reviewed
-- Versioned
-- Deprecated or archived
-- Enforced for compliance
+This charter defines the authoritative governance model for the Momentum Trading Assistant product team. It establishes:
 
-Its goal is to prevent:
-- Silent drift between documents and reality
-- Conflicting sources of truth
-- Undocumented behavioural change
-- Documents that influence decisions without a named owner
+- Which roles exist and what authority each holds
+- Domain ownership boundaries (non-negotiable)
+- Conflict resolution rules for inter-role disputes
+- Non-decision process roles and their scope
+- Blocking authority rules that apply within governed routines
 
-**This guide applies to every document in the repository** — not only specs. All roles that own documentation are bound by it, regardless of which function they report into.
+When this charter and any other document disagree on role authority or conflict resolution, this charter prevails.
 
 ---
 
-## 2. Document Classes
+## 2. Governance Source Hierarchy
 
-Every governed document belongs to exactly one class. The class determines which header fields are required, which lifecycle states are valid, and how compliance is checked.
+The following documents form the binding governance stack, in precedence order:
 
----
+1. `claude/charter/team_charter.md` (this document) — role authority and conflict resolution
+2. `claude/charter/document_lifecycle_guide.md` — documentation lifecycle rules
+3. `claude/strategy/strategy_rules.md` — strategy intent, behavioural constraints, system boundaries
+4. Role charters in `claude/agents/` — individual role responsibilities and operating standards
 
-### Class 1 — Canonical
-
-**What it is:** The authoritative source of truth for a product domain. When this document and any other document disagree, this document prevails.
-
-**Who creates it:** A named domain owner.
-
-**Lifecycle states available:** Draft → Canonical → Deprecated → Archived
-
-**Required header fields:**
-```
-Owner:        [Role name]
-Status:       Canonical
-Version:      [x.y]
-Last Updated: [date]
-```
-
-**Rules:**
-- Must be listed in the Specs Index
-- Must not be contradicted by any Supporting document
-- Changes that alter meaning, behaviour, or consumer interpretation require a version increment
-- Deprecation requires an explicit successor declaration and effective date
-
-**Examples:** `strategy_rules.md`, `data_model.md`, `metrics_definitions.md`, `api_contracts/*_endpoints.md`, `frontend/pages/*.md`, `document_lifecycle_guide.md` (this document)
+No other document may override or supersede any of the above without a formal versioned update to the relevant governing document.
 
 ---
 
-### Class 2 — Supporting
+## 3. Roles and Authority Domains
 
-**What it is:** A document that represents or summarises canonical truth. It adds no new rules. It must never contradict a Canonical document.
+### 3.1 Decision Authorities
 
-**Who creates it:** The domain owner of the canonical document it supports, or a designated maintainer.
-
-**Lifecycle states available:** Current → Deprecated → Archived (no "Canonical" status — it derives authority from its source)
-
-**Required header fields:**
-```
-Owner:            [Role name]
-Status:           Supporting
-Canonical Source: [path to canonical document]
-Last Updated:     [date]
-```
-
-**Rules:**
-- Must be reviewed inline with its canonical source whenever the canonical source changes
-- Must declare which canonical document it represents
-- A Supporting document becoming inconsistent with its canonical source is a system bug
-
-**Examples:** `docs/reference/openapi.yaml`, diagrams, generated references
+These roles hold binding decision authority within their domain. Their domain decisions may not be overridden by any peer role except through the conflict resolution process in Section 5.
 
 ---
 
-### Class 3 — Operational Record
+#### Product Owner
 
-**What it is:** A point-in-time record of observed system state. It records facts — it does not define rules or intended behaviour.
+**Domain:** Product intent, prioritisation, and outcome accountability
+**Reports to:** Executive Leadership
+**Decision authority:**
+- What the product is meant to achieve and why
+- Prioritisation of all product work and trade-offs
+- Final decisions on roadmap additions, deferrals, replacements, and kills within governance constraints
+- Acceptance or rejection of delivered outcomes
+- Scope boundaries for individual releases
 
-**Who creates it:** Infrastructure & Operations Documentation Owner (governs and files); engineering team (generates the underlying data).
+**Constraints:**
+- May not add initiatives without explicit displacement (stops ≥ adds)
+- May not override canonical specification content directly
+- Roadmap decisions are constrained by workforce economics (FinOps gate), quality domain (Director of Quality), and strategy boundaries (Strategy Rules owner)
+- Does not author canonical specifications
 
-**Lifecycle states available:** Filed (permanent — Operational Records are never deprecated or superseded)
-
-**Required header fields:**
-```
-Owner:              Infrastructure & Operations Documentation Owner
-Status:             Operational Record
-Deployment Version: [version]
-Report Date:        [date]
-Environment:        [e.g. Production]
-Generated By:       [system or person]
-Filed:              [date filed]
-```
-
-**Rules:**
-- Body content is immutable after filing — it records observed state at a fixed moment
-- A newer record does not supersede an older one — both remain permanent artefacts
-- Deviations from canonical specs observed in a record must be raised to the relevant domain owner; they are not resolved by annotating the record
-- Naming convention: `System_status_report_v{version}_{YYYY-MM-DD}.md`
-- Location: `docs/operations/status_reports/`
-
-**Examples:** `System_status_report_v1.4_2026-02-14.md`
+**Tie-breaking:** Product Owner is tie-breaker on product direction and prioritisation disputes between peer roles.
 
 ---
 
-### Class 4 — Planning Document
+#### Strategy Rules & System Intent Owner
 
-**What it is:** A working document capturing product decisions, feature intent, prioritisation, and backlog thinking. It is pre-canonical — when a feature is built, the planning document is superseded by the canonical specs written for that feature.
+**Domain:** Trading strategy intent, behavioural constraints, and system boundaries
+**Reports to:** Strategy Rules & System Intent Owner (functional lead)
+**Decision authority:**
+- What constitutes a violation of strategy intent or system boundaries (§13)
+- Whether a proposed feature conflicts with the deterministic, human-in-the-loop, single-strategy design principles
+- Versioning and content of `claude/strategy/strategy_rules.md`
+- Formal confirmation that system boundaries are unchanged (required before gated features may enter pre-alignment)
 
-Planning Documents include two distinct sub-types:
+**Constraints:**
+- Does not prioritise product work
+- Does not own roadmap or backlog planning
+- §13 boundary decisions require documented decision record before any affected feature enters pre-alignment
 
-- **Roadmap, backlog, and decisions documents** — ongoing planning artifacts that evolve over time
-- **Scope documents** — implementation briefs written at the end of the pre-alignment phase for a specific feature, immediately before engineering begins
-
-**Who creates it:** Product Owner.
-
-**Lifecycle states available:** Draft → Active → Superseded → Archived
-
-**Required header fields:**
-```
-Owner:        Product Owner
-Class:        Planning Document (Class 4)
-Status:       [Draft | Active | Superseded]
-Last Updated: [date]
-```
-
-**Rules:**
-- Must carry a standing notice that all implementation detail is indicative and subject to canonical spec review before any code is written
-- When a feature moves from planning to implementation, the planning document status is updated to Superseded and must reference the canonical documents that replace it
-- Planning documents must never be cited as canonical intent — they record thinking, not decisions
-- Implementation detail in planning documents (SQL schemas, endpoint paths, formulas) is illustrative; the canonical spec takes precedence if they conflict
-
-**Scope document additional rules:**
-- A scope document must not be written until QA review (acceptance criteria confirmation) is complete
-- A scope document is the final gate before implementation is opened — it represents the Product Owner's sign-off that all pre-alignment work is done
-- When the feature ships, the scope document status is updated to Superseded and must reference the changelog entry for the delivered version
-- Scope documents must include a pre-implementation checklist confirming all canonical specs are locked
-
-**Locations:**
-- Roadmap and backlog: `docs/product/roadmap.md`, `docs/product/backlog.md`
-- Decisions records: `docs/product/decisions/`
-- Scope documents: `docs/product/scope/`
-
-**Naming conventions:**
-- Decisions records: `{roadmap-item-id}-{feature-slug}.md` (e.g. `3.2-position-sizing-calculator.md`)
-- Scope documents: `scope--{roadmap-item-id}-{feature-slug}.md` (e.g. `scope--3.2-position-sizing-calculator.md`)
-
-**Examples:** `docs/product/roadmap.md`, `docs/product/backlog.md`, `docs/product/decisions/3.2-position-sizing-calculator.md`, `docs/product/scope/scope--3.2-position-sizing-calculator.md`
+**Blocking authority:** May block any initiative or feature that violates strategy intent or system boundaries defined in `strategy_rules.md`. This block may only be overridden by a formal, documented strategy rules revision.
 
 ---
 
-### Class 5 — Role Charter
+#### Head of Specs Team
 
-**What it is:** A document defining the scope, responsibilities, and operating standards of a named role in the documentation or engineering system.
+**Domain:** Canonical specification ecosystem, documentation lifecycle, and governance standards
+**Reports to:** Product Owner
+**Decision authority:**
+- Documentation class, ownership, and lifecycle state for all governed documents
+- Lifecycle compliance blocking (non-compliant documents may not be merged or relied upon)
+- Tie-breaker on specification conflicts between domain owners
+- Governance prompt versioning and enforcement standards
+- Whether a document may be treated as authoritative
 
-**Who creates it:** Head of Specs Team (for Specs Team roles) or the role's functional lead (for Engineering roles). All charters are stored in `docs/documentation_team/specs/`.
+**Constraints:**
+- Does not define product intent or priorities
+- Does not author domain-specific canonical specs (delegates to domain owners)
+- Standards role, not management role — has authority to audit and block but does not manage domain owners
 
-**Lifecycle states available:** Draft → Canonical → Deprecated
-
-**Required header fields:**
-```
-Owner:        Head of Specs Team [or functional lead]
-Status:       Canonical
-Version:      [x.y]
-Last Updated: [date]
-```
-
-**Rules:**
-- Every role that owns documents must have a charter
-- Every charter must include a "Lifecycle & Versioning Compliance" section explicitly stating that the role owner is accountable for compliance of all documents they own
-- Every charter must declare who the role reports to
-- Charters are versioned when role scope or reporting line changes
-- A role without a charter may not be treated as authoritative — their documents are Draft until a charter exists
-
-**Examples:** `Head_of_Specs_Team.md`, `API_Contracts_&_Documentation_Owner.md`, `Infrastructure_and_Operations_Owner.md`
+**Blocking authority:** May block any document write, merge, or reliance where lifecycle rules are violated. This block is not subject to Product Owner override.
 
 ---
 
-### Class 6 — Governance Prompt
+#### PMO Lead
 
-**What it is:** An instruction set used to invoke automated compliance checking against this lifecycle guide. It is part of the governance infrastructure, not a product document.
+**Domain:** Delivery process integrity and work item state governance
+**Reports to:** Head of Specs Team (process), Product Owner (delivery)
+**Decision authority:**
+- Phase gate process and gate validation for all work items
+- Work item state transitions and state machine integrity
+- Run manifest creation and filing for governed routines
+- Lessons learnt and process improvement records
 
-**Who creates it:** Head of Specs Team.
-
-**Lifecycle states available:** Draft → Active → Deprecated
-
-**Required header fields:**
-```
-Owner:        Head of Specs Team
-Status:       Active
-Version:      [x.y]
-Last Updated: [date]
-```
-
-**Rules:**
-- Must reference this lifecycle guide by version
-- Must be updated whenever a new document class is added or header requirements change
-- Must cover all document classes, not only Canonical documents
-- Location: `docs/documentation_team/prompts/`
-
-**Examples:** `governance_reviewer.md`
+**Constraints:**
+- Does not own product intent or canonical specifications
+- Does not make scope or prioritisation decisions
+- Does not override domain owner decisions on spec content
 
 ---
 
-## 3. Lifecycle States
+#### FinOps & Resource Architect
 
-### Universal states (available to all classes unless restricted above)
+**Domain:** Workforce economics, cost governance, and resource sustainability
+**Reports to:** Executive Leadership
+**Decision authority:**
+- Workforce capacity allocation and release registration
+- Cost-value trade-off assessments
+- Whether a proposed initiative is sustainable given current resource constraints
+- Workforce economics gate in roadmap routines (binding constraint — must clear before Add decisions proceed)
 
-| State | Meaning | Who sets it |
-|-------|---------|-------------|
-| **Draft** | In progress, not authoritative | Document owner |
-| **Canonical** | Authoritative source of truth | Document owner, confirmed by Head of Specs Team |
-| **Active** | In use and current (for non-canonical classes) | Document owner |
-| **Filed** | Permanently recorded (Operational Records only) | Ops Documentation Owner |
-| **Superseded** | Replaced by canonical documents (Planning only) | Product Owner |
-| **Deprecated** | No longer authoritative; successor declared | Document owner |
-| **Archived** | Historical only; no longer referenced | Head of Specs Team |
+**Constraints:**
+- Does not dictate architecture choices unilaterally
+- Does not redefine product scope
+- Does not override engineering judgement on implementation
 
-**Rules that apply to all classes:**
-- Every governed document must be in exactly one state at all times
-- State must be declared explicitly in the document header
-- No document may move from Deprecated or Archived back to an active state — a new document must be created instead
-- Deprecation requires: what supersedes it, and from what date
+**Blocking authority:** If workforce constraints are violated (scarce skills over-allocated, capacity unavailable), may force Replace, Defer, or Kill decisions in roadmap routines. This block may not be bypassed by Product Owner priority override.
 
 ---
 
-## 4. Universal Header Block
+#### Infrastructure & Operations Owner
 
-Every governed document must carry a header block. The exact fields depend on document class (see Section 2), but the following fields are **required for all classes** except Operational Record (which has its own fixed set):
+**Domain:** Infrastructure and operational documentation
+**Reports to:** Head of Engineering
+**Decision authority:**
+- Operational record filing (Class 3) and immutability enforcement
+- Deployment, release, and operational runbook content
+- Run manifest and cycle artefact filing within governed routines
 
-- **Owner** — the named role accountable for this document
-- **Status** — one of the lifecycle states defined in Section 3
-- **Last Updated** — the date the document was last meaningfully changed
-
-Canonical documents and Role Charters additionally require:
-- **Version** — incremented according to the versioning rules in Section 5
-
-A document without a complete header block is non-compliant and must not be treated as authoritative regardless of its content.
-
----
-
-## 5. Versioning Rules
-
-Versioning applies to Canonical documents, Role Charters, and Governance Prompts.
-
-**A version increment is required when:**
-- Meaning changes
-- Behaviour or rules change
-- A consumer reading the document would act differently as a result
-
-**A version increment is not required for:**
-- Typo corrections
-- Formatting changes
-- Pure clarification that adds no new meaning
-
-**Version format:** `x.y` where `x` (major) increments on breaking or significant behavioural changes, and `y` (minor) increments on additive or clarifying changes.
+**Constraints:**
+- Does not define system behaviour — only describes how to operate the system
+- May not edit canonical specifications
+- Governed by Head of Specs Team for lifecycle compliance
 
 ---
 
-## 6. Mandatory Inline Review for Supporting Artifacts
+#### Director of Quality
 
-When a change affects a Canonical document:
+**Domain:** Quality governance, behavioural conformance, and verification independence
+**Reports to:** Executive Leadership
+**Direct reports:** QA & Testing Owner, QA Lead
+**Decision authority:**
+- Sign-off authority on all verification reports
+- Quality governance standards and testing strategy
+- Defect severity classification and shipping impact decisions
+- Release readiness — may block release if acceptance criteria are unmet
 
-- Any Supporting document that represents that domain must be reviewed inline in the same change
-- Approval must only be granted once alignment is confirmed
+**Constraints:**
+- Does not define product behaviour
+- Does not modify canonical specifications
+- Sign-off independence is non-negotiable and may not be waived under delivery pressure
 
-This applies explicitly to:
-- API contracts ↔ `docs/reference/openapi.yaml`
-
-If a change is explicitly declared "no contract change" and affects only internal implementation, Supporting artifact review is not required. Disputes are escalated to the Head of Specs Team.
-
----
-
-## 7. Ownership & Accountability
-
-**Every document must have a named owner.** A document without an owner is non-compliant.
-
-**Domain owners are responsible for:**
-- Accuracy of their documents
-- Keeping documents current when the system they describe changes
-- Ensuring Supporting documents remain aligned with their Canonical sources
-- Initiating deprecation when a document is superseded
-
-**The Head of Specs Team is responsible for:**
-- Enforcing lifecycle compliance across all document classes
-- Blocking changes when lifecycle rules are violated
-- Resolving ambiguity about document class or ownership
-- Maintaining and updating this guide
-- Conducting or triggering compliance audits
-
-**The Head of Specs Team has authority to audit any document in the repository** regardless of which function its owner reports into. Lifecycle compliance is a cross-functional standard, not a Specs Team internal rule.
+**Blocking authority:** May block release or advancement of any item where quality acceptance criteria are unmet. This block applies within the quality domain and requires documented evidence to exercise or waive.
 
 ---
 
-## 8. Enforcement Mechanism
+### 3.2 Non-Decision Process Roles
 
-### When compliance is checked
-
-Governance review must be triggered at the following points:
-
-| Trigger | What is reviewed | Who triggers it |
-|---------|-----------------|-----------------|
-| New document created | Header completeness, correct class assignment, owner named | Document owner (self-check), Head of Specs Team (on merge) |
-| Existing document updated | Version increment if required, header currency | Document owner (self-check), Head of Specs Team (on merge) |
-| Feature shipped | Planning documents for that feature updated to Superseded; canonical specs confirmed as filed | Head of Specs Team |
-| New role created | Charter exists and is compliant before role is treated as authoritative | Head of Specs Team |
-| Periodic audit | All documents checked for compliance | Head of Specs Team (quarterly recommended) |
-| Governance guide updated | Governance reviewer prompt updated in same change | Head of Specs Team |
-
-### How compliance is checked
-
-The governance reviewer prompt (`docs/documentation_team/prompts/governance_reviewer.md`) is the primary compliance tool. It must be invoked using the prompt as a system instruction with the document(s) under review provided as context.
-
-Automated review assists but does not replace owner accountability.
-
-### What happens when compliance fails
-
-| Severity | Condition | Consequence |
-|----------|-----------|-------------|
-| **Blocking** | Missing owner, missing status, Canonical document with no version | Document must not be merged or treated as authoritative until remediated |
-| **Required** | Incorrect lifecycle state, version not incremented when required, Supporting artifact not reviewed inline | Must be remediated before the change is considered complete |
-| **Advisory** | Minor header formatting inconsistency, Last Updated date stale | Should be remediated; does not block |
-
-
-## Lifecycle Enforcement Roles
-
-### Head of Specs Team
-
-- Owns lifecycle standards
-- Blocks non‑compliant documents
-- Resolves classification ambiguity
-- Conducts audits
+These roles enforce process and surface risk. They have **no decision authority** over product, strategy, or prioritisation. They may halt execution and delay advancement. They may not approve, approve subject to conditions, or decide outcomes.
 
 ---
 
-### Facilitator (Process Role)
+#### Facilitator
 
-- Enforces lifecycle compliance during governed routines
-- Verifies document class, headers, and state transitions
-- May halt execution if lifecycle rules are violated
-- Has **no authority** to waive requirements
+**Domain:** Process integrity, orchestration, and compliance enforcement
+**Reports to:** Head of Specs Team (process authority)
+**Scope:**
+- Executes governed routines in the defined order
+- Enforces hard gates (displacement required, workforce economics, lifecycle compliance)
+- Activates the correct authority for each decision
+- Produces run manifests, scoring overlays, and delta summaries
+- Halts execution on gate failure, missing authority, or lifecycle violation
 
----
+**Non-decision constraint:** The Facilitator may not:
+- Express opinions on strategic merit or prioritisation
+- Override any decision authority
+- Waive governance rules
+- Substitute judgement for authority
 
-### Challenger (Process Role)
-
-- Surfaces lifecycle risk during decision routines
-- Requires explicit justification when documents are relied upon
-- May delay advancement when documentation integrity is unclear
-- Does **not** assess or approve compliance
-
----
-
-## 9. Known Deviation Documentation Standard
-
-### Purpose
-
-When a canonical spec owner identifies that the system's actual behaviour deviates from the canonical specification — whether discovered during implementation, code review, testing, or audit — they must document the deviation. However, documentation without triage is insufficient. An undated, unprioritised deviation note in a spec can sit unresolved indefinitely, as demonstrated by BLG-TECH-01 (Sharpe variance and capital efficiency errors sat in `analytics_endpoints.md` known limitations and `metrics_definitions.md` Appendix E through the full v1.5 lifecycle without a forced resolution path).
-
-This section defines the mandatory standard for all such documentation.
-
-### Required fields when documenting a deviation
-
-Every deviation documented in a canonical spec — whether in a "Known Limitations", "Backlog Items", "Deviations", or equivalent section — must include at the time of writing:
-
-| Field | Description |
-|-------|-------------|
-| **Deviation description** | What the current behaviour is and how it differs from canonical |
-| **Canonical requirement** | What the spec says should happen |
-| **Priority** | P0 / P1 / P2 / P3 using the standard backlog priority definitions |
-| **Target resolution release** | The specific version by which this must be resolved (not "TBD") |
-| **Owner** | The named role responsible for the fix |
-| **Backlog reference** | The backlog item ID (e.g. BLG-TECH-01) — must be created at the time the deviation is documented |
-
-### Priority-based resolution rules
-
-| Priority | Required action |
-|----------|----------------|
-| **P0** | Must be resolved before the next release ships. May not be deferred. The release is a quality gate for this item. |
-| **P1** | Must be assigned a specific target release within the current or next release cycle. May not remain open-ended. |
-| **P2** | Target release must be named. May be deferred one release cycle with explicit Product Owner acknowledgement. |
-| **P3** | Target release may be "backlog" but must be reviewed at the next quarterly audit. |
-
-### Enforcement
-
-- The Head of Specs Team is responsible for ensuring deviations are documented with all required fields
-- A deviation documented without a priority, target release, or owner is non-compliant and must be remediated before the document is merged
-- At each governance review trigger point (§8), any deviation notes in canonical specs are checked for compliance with this standard
-
-### Roles outside the Specs Team
-
-This standard applies to all canonical documents, regardless of which function their owner reports into. Engineering-owned operational documentation that records deviations from canonical behaviour must follow the same standard and escalate to the relevant canonical spec owner.
+**Halt authority:** The Facilitator has blocking authority to halt any governed routine where a hard gate is violated. This halt is not subject to override by any decision authority.
 
 ---
 
-## 10. Roles Outside the Specs Team
+#### Challenger
 
-This guide applies to **all roles that own documents**, including those outside the Specs Team. Specifically:
+**Domain:** Structured challenge, assumption testing, and trade-off exposure
+**Reports to:** Director of Quality (independent assurance)
+**Scope:**
+- Provides mandatory evidence-based counter-arguments to proposed advances
+- Tests problem clarity, strategic alignment, displacement reality, workforce economics, and reversibility
+- Requires explicit justification before items advance
+- May delay advancement until questions are answered meaningfully
 
-- **Product Owner** — Planning Documents must follow Class 4 rules
-- **Engineering Lead** — any documentation owned by the engineering function must follow this guide
-- **Infrastructure & Operations Documentation Owner** — Operational Records and Operational Guides must follow Class 3 and Class 1 rules respectively
-- **QA & Testing Owner** — testing documentation must follow this guide
+**Non-decision constraint:** The Challenger may not:
+- Propose alternative ideas or improvements
+- Make final decisions or recommendations
+- Override declared authorities
+- Exercise veto
 
-The Head of Specs Team sets these standards. Roles outside the Specs Team follow them. This is a standards relationship, not a management relationship — the Head of Specs Team does not manage those roles but does have authority to flag non-compliance to their functional lead.
+**Challenge authority:** The Challenger's power is delay and exposure. If the Challenger cannot produce an evidence-based counter-argument in a governed routine, this is a process failure requiring a halt and lessons learnt record.
 
 ---
 
-## 11. Non-Negotiable Rule
+## 4. Domain Ownership Map
 
-> If a document influences decisions,
-> it must be owned, reviewed, and aligned at the point of change.
+| Domain | Owner | Canonical document(s) |
+|--------|-------|----------------------|
+| Product intent and prioritisation | Product Owner | `claude/roadmap/current_roadmap.md`, `claude/backlog/backlog.md` |
+| Trading strategy intent and boundaries | Strategy Rules & System Intent Owner | `claude/strategy/strategy_rules.md` |
+| Specification ecosystem governance | Head of Specs Team | `claude/charter/document_lifecycle_guide.md` |
+| Delivery process and gate integrity | PMO Lead | Phase gate documents, run manifests |
+| Workforce economics and cost governance | FinOps & Resource Architect | `claude/roadmap/workforce_capacity.md` |
+| Operational documentation and records | Infrastructure & Operations Owner | `claude/cycles/`, operational guides |
+| Quality governance and verification | Director of Quality | Verification reports, defect lifecycle |
+
+---
+
+## 5. Conflict Resolution Rules
+
+### 5.1 Governance and lifecycle disputes
+
+If any role disputes a lifecycle classification, document class, header requirement, or canonical status:
+- Head of Specs Team decides
+- Decision is final unless it conflicts with a Class 1 canonical document
+- If Product Owner disagrees with Head of Specs Team on lifecycle compliance: treat as blocking governance issue; halt the governed routine and escalate
+
+### 5.2 Strategy intent and boundary disputes
+
+If any role proposes an initiative that the Strategy Rules & System Intent Owner believes violates strategy intent or §13 system boundaries:
+- Strategy Rules & System Intent Owner may block
+- Product Owner may not override this block without a formal documented strategy rules revision (version-incremented `strategy_rules.md`)
+
+### 5.3 Prioritisation and value disputes
+
+If Product Owner and any other decision authority disagree on value, prioritisation, or trade-offs (not governance or strategy boundaries):
+- Product Owner has tie-breaking authority
+- Dissent must be recorded in the relevant decision artefact with the dissenting role named
+
+### 5.4 Quality domain disputes
+
+If Director of Quality blocks release or advancement on quality grounds:
+- Product Owner may not override
+- Resolution requires either: (a) Director of Quality sign-off after re-verification, or (b) documented deferral of the quality finding with explicit Product Owner acknowledgement and backlog item filed
+
+### 5.5 Workforce economics disputes
+
+If FinOps & Resource Architect applies a workforce constraint that forces a Replace, Defer, or Kill:
+- Product Owner may not override the constraint itself
+- Product Owner may choose which specific initiative to stop in order to satisfy the constraint
+
+### 5.6 Process halt disputes
+
+If Facilitator halts a governed routine:
+- No decision authority may override the halt
+- Resolution requires the specific gate violation to be remediated
+- Product Owner + Head of Specs Team must jointly agree that the gate is satisfied before the routine resumes
+
+---
+
+## 6. Hard Constraints (Non-Negotiable in All Governed Routines)
+
+The following constraints apply in every governed routine regardless of role hierarchy or Product Owner instruction:
+
+1. **No addition without displacement.** Stops must be ≥ adds. No exception.
+2. **No initiative without workforce justification.** Workforce economics gate is mandatory before any Add decision.
+3. **Canonical truth overrides planning.** Planning documents are pre-canonical. When a canonical spec and a planning document conflict, the canonical spec prevails.
+4. **Lifecycle rules are absolute.** Documents that violate the lifecycle guide may not be relied upon in any governed routine.
+5. **No decision without a named owner.** Every irreversible decision must be attributed to a role in the decision log.
+6. **Delivery pressure never redefines intent.** A timeline or stakeholder preference does not constitute a governance override.
+7. **Quality and strategy blocks are non-negotiable.** Director of Quality and Strategy Rules owner blocking authority may not be bypassed.
+
+---
+
+## 7. Governing Routines
+
+This charter governs the following routines. Each routine has a corresponding governance prompt in `claude/system/`:
+
+| Routine | Prompt | Trigger |
+|---------|--------|---------|
+| Roadmap Rebalance Engine | `claude/system/roadmap_prompt.md` | Completion of a roadmap item |
+
+Additional routines may be added by the Head of Specs Team via versioned update to this charter.
+
+---
+
+## 8. Amendments
+
+This charter may only be amended by the Head of Specs Team with Product Owner acknowledgement. Amendments require:
+- Version increment (minor for additive changes, major for authority boundary changes)
+- Last Updated date updated to the amendment date
+- Change log entry describing what changed and why

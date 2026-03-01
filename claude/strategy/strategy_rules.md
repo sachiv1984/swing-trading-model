@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.2  
-**Last updated:** 18 February 2026  
+**Version:** 1.3
+**Last Updated:** 2026-02-19
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
