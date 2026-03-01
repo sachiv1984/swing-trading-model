@@ -2,10 +2,11 @@
 
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
-**Status:** Active
-**Last Updated:** 2026-02-27
+**Status:** Superseded
+**Last Updated:** 2026-03-01
 **Roadmap item:** Quick Wins Bundle — BLG-FEAT-01, 02, 04, 05, 06, 07
 **Target release:** v1.6.1
+**Superseded by:** docs/product/changelog.md — v1.6.1 entry (shipped 2026-03-01, Director of Quality sign-off 2026-03-01). Verification report: docs/product/verification/QWB-quick-wins-bundle-verification.md v1.0. The canonical specifications listed in Section 2 remain authoritative and current.
 
 > ⚠️ Standing Notice: This document describes delivery intent and summarises
 > canonical spec decisions for the purposes of implementation. All authoritative
@@ -13,6 +14,11 @@
 > specifications listed in Section 2. In any conflict between this document and
 > those specs, the canonical specs prevail. This document must not be cited as
 > canonical intent.
+
+> Lifecycle note: This scope document is superseded. All six bundle items shipped
+in v1.6.1 (Director of Quality sign-off 2026-03-01). For the delivery record, see
+docs/product/changelog.md v1.6.1 entry. The canonical specifications listed in
+Section 2 remain authoritative and current — refer to them directly for system behaviour.
 
 ---
 
