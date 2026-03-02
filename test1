@@ -1,36 +1,4 @@
 
-⸻
-
-🔶 3️⃣ State Definitions Slightly Overlap
-
-You currently have:
-	•	PlanDrafted
-	•	PlanExecutable
-	•	Committed
-	•	Feasible
-	•	IntegrityPassed
-	•	DecisionsValidated
-	•	Published
-
-There is minor semantic overlap between:
-	•	PlanExecutable
-	•	Committed
-	•	Feasible
-	•	IntegrityPassed
-
-It works, but it’s slightly verbose.
-
-You might consider:
-	•	Drafted
-	•	Executable
-	•	Committed
-	•	Feasible
-	•	IntegrityValidated
-	•	Published
-
-Small naming cleanup — not urgent.
-
-⸻
 
 🔶 4️⃣ “Soft Gate” vs “Hard Gate” Language Inconsistency
 
