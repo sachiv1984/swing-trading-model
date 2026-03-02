@@ -479,4 +479,9 @@ If any role disputes a proposed “Accepted Risk” disposition:
 If the outcome is **Accepted Risk** or **Deferred**, the escalation entry must:
 - name the accepting authority (Product Owner cannot accept Quality or Strategy domain blocks),
 - state the rationale,
-- and link to the follow-up backlog item / target release (where applicable). 
+- and link to the follow-up backlog item / target release (where applicable).
+
+- Decision records are not general documentation. In Release Planning, decision records may be created only when required as evidence to:
+- close an “Accepted Risk” escalation (Workforce or Schedule/Delivery only), or
+- document a Strategy Rules Boundary confirmation (“boundaries unchanged”) without changing strategy_rules.md.
+All other decision record creation in Release Planning is non-compliant and must be rejected.
