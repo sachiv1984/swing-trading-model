@@ -11,7 +11,7 @@
 
 | Version | Date       | Change |
 |--------:|------------|--------|
-| 1.2 | 2026-03-02 | **Added Formal Authority Escalation Protocol** (Section 9). Defines escalation triggers, required escalation record fields, routing, SLAs, and resolution criteria. Additive only; no authority or conflict rule changes. |
+| 1.2 | 2026-03-02 | **Added Formal Authority Escalation Protocol** (Section 9). Defines escalation triggers, required escalation record fields, routing, SLAs, and resolution criteria. Additive only; no authority or conflict rule changes. **Accepted Risk Governance Constraint** (Section 10). Defines which risk domains may be accepted, who may accept them, and mandatory decision record requirements. Additive only; no changes to authority boundaries or conflict rules. |
 | 1.1     | 2026-03-02 | Added Release Planning Engine as a governed routine. No changes to role authority, conflict rules, or constraints. |
 | 1.0     | 2026-03-01 | Initial charter. Establishes role authority model, domain ownership boundaries, conflict resolution rules, and non-decision role definitions for all governed routines. |
 
@@ -394,7 +394,87 @@ Escalations route according to domain authority and conflict rules:
 ### 9.6 Resolution (When an escalation may be closed)
 An escalation may be marked **Resolved** only when:
 1) The owning authority explicitly states the unblock criteria are met, AND
-2) The required evidence is linked in the escalation entry (docs, decision record, verification report, etc.). 
+2) The required evidence is linked in the escalation entry (docs, decision record, verification report, etc.).
+
+---
+
+## 10. Accepted Risk Governance Constraint
+
+### 10.1 Purpose
+“Accepted Risk” is an irreversible governance decision that allows work to proceed while knowingly carrying an identified risk. It is not equivalent to “Resolved” and must not be used as a convenience mechanism to bypass domain blocks, lifecycle compliance, or canonical constraints.
+
+### 10.2 Risk Domains
+All risks in governed routines must be classified into exactly one domain:
+- **Strategy Risk** (system intent, determinism principle, §13 boundaries)
+- **Quality Risk** (verification gaps, incomplete acceptance evidence, release readiness uncertainty)
+- **Lifecycle / Governance Risk** (non-compliant documents, missing required artefacts, broken stage integrity)
+- **Workforce / Capacity Risk** (insufficient capacity, unrealistic timebox assumptions, throughput constraints)
+- **Schedule / Delivery Risk** (delivery timing risk without changes to scope or quality gates)
+
+### 10.3 Non-Acceptable Risk Domains (Hard Constraint)
+The following domains may **never** be marked “Accepted Risk” in any governed routine:
+- **Strategy Risk**
+- **Quality Risk**
+- **Lifecycle / Governance Risk**
+
+If any escalation or blocker is classified into one of the above domains, valid dispositions are:
+- **Open** (until resolved), or
+- **Deferred** (only with a named trigger and next action)
+
+Any attempt to mark these domains as “Accepted Risk” is a governance violation and must result in a routine halt.
+
+### 10.4 Acceptable Risk Domains (Permitted with Constraints)
+The following domains may be marked “Accepted Risk” only under the conditions below:
+- **Workforce / Capacity Risk**
+- **Schedule / Delivery Risk**
+
+Permitted accepting authority:
+- **Product Owner** may accept Workforce/Capacity and Schedule/Delivery risks **only if**:
+  - No Strategy Risk is implicated
+  - No Quality gate is bypassed
+  - No Lifecycle compliance requirement is violated
+  - No scope change is introduced inside a Release Planning routine (scope changes require Roadmap Rebalance Engine)
+
+### 10.5 Mandatory Decision Record for Accepted Risk (Hard Gate)
+Any “Accepted Risk” disposition MUST produce a durable decision record.
+
+**Required artefact:**
+- A decision record under: `docs/product/decisions/`
+- Classification: Planning Document (Class 4)
+- Owner: Product Owner
+- Status: Active
+- Must be linked from:
+  - the cycle escalation entry, and
+  - the cycle summary
+
+**Minimum required contents of the decision record:**
+- Decision title (specific)
+- Reference to escalation ID(s) being accepted
+- Risk domain (Workforce/Capacity or Schedule/Delivery)
+- Risk statement: what could go wrong (one paragraph)
+- Impact statement: user/system consequences if it occurs
+- Rationale: why acceptance is the least harmful path
+- Guardrails: what is explicitly not being compromised (Strategy boundaries unchanged; Quality gates unaffected; Lifecycle compliance maintained)
+- Time boundary: valid for **this release only** unless explicitly extended by a new decision record
+- Accepting authority: Product Owner
+
+If a decision record cannot be created (missing required info, lifecycle non-compliance, write scope restriction), the escalation must remain Open/Deferred and the routine must halt.
+
+### 10.6 Evidence and Closure Rules
+An escalation marked “Accepted Risk” must include:
+- a link to the decision record
+- the acceptance date
+- the time boundary (release/version)
+- the monitoring/mitigation action (if any) included in the execution plan risk register
+
+“Accepted Risk” must not be used for risks that require additional engineering work to make safe; those are either “Resolved” (work done) or “Deferred” (moved to future plan).
+
+### 10.7 Conflict Handling
+If any role disputes a proposed “Accepted Risk” disposition:
+- **Head of Specs Team** adjudicates classification correctness (risk domain and lifecycle compliance).
+- **Director of Quality** may block if a Quality Risk is being implicitly accepted.
+- **Strategy Rules & System Intent Owner** may block if a Strategy Risk is being implicitly accepted.
+- If any of the above blocks apply, the “Accepted Risk” disposition is invalid and must be reverted to Open/Deferred.
 
 If the outcome is **Accepted Risk** or **Deferred**, the escalation entry must:
 - name the accepting authority (Product Owner cannot accept Quality or Strategy domain blocks),
