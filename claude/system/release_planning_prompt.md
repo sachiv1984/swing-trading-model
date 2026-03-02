@@ -412,6 +412,74 @@ If any backlog change beyond the release slice is required:
 - Record a ⛔ Blocker (Lifecycle / Process Integrity; owner: Head of Specs Team)
 - Apply Global Rule — Blockers Must Route
 
+## STEP 4.5 — Capacity Feasibility Sense Check (Soft Gate)
+Primary Authority: FinOps & Resource Architect  
+Process Authority: Head of Specs Team
+
+Create:
+- `claude/cycles/<cycle_id>/stage4_5_capacity_check.md`
+
+Purpose:
+- Perform a lightweight feasibility sanity check to ensure the planned release is not obviously undeliverable given the declared timebox and capacity.
+- This step does NOT reprioritise work, does NOT resize scope, and does NOT perform estimation.
+- It answers one question only: “Is this plan clearly infeasible as written?”
+
+Inputs:
+- `stage3_execution_plan.md`
+- `stage4_backlog_slice.md`
+- Invocation parameters:
+  - `--timebox`
+  - `--capacity`
+
+Checks:
+
+1) Order-of-magnitude fit
+   - Given the number of EPIC-xx items, their described effort signals (e.g. “multi-day”, “requires spec + verification”), and the declared timebox/capacity:
+     - Is the plan obviously too large?
+   - Example FAIL conditions:
+     - Multiple non-trivial epics in a very short timebox with low capacity
+     - No slack or buffer implied anywhere in the plan
+
+2) Critical-path plausibility
+   - Identify the longest dependency chain across EPIC-xx items.
+   - Determine whether that chain plausibly fits inside the declared timebox.
+   - If the critical path alone clearly exceeds the timebox → FAIL.
+
+3) Capacity assumption consistency
+   - Check whether the execution plan respects the declared capacity model.
+   - Example FAIL conditions:
+     - Capacity declared as “solo-dev evenings” but plan assumes parallel backend/frontend execution
+     - Capacity declared as part-time but sequencing assumes full-time throughput
+
+Outcomes:
+
+- PASS:
+  - Record “PASS” with a short justification in `stage4_5_capacity_check.md`.
+  - Proceed to STEP 5.
+
+- WARN (allowed only if `mode=standard`):
+  - Borderline feasibility (tight fit, no slack).
+  - Record “WARN” with explicit risks.
+  - Proceed, but ensure the risk is also reflected in the Stage 3 risk register.
+
+- FAIL:
+  - Plan is clearly infeasible and cannot be corrected by resequencing alone.
+  - Record “FAIL” with evidence in `stage4_5_capacity_check.md`.
+  - Create ⛔ Blocker(s) with:
+    - Trigger type: Workforce
+    - Owning authority: FinOps & Resource Architect
+    - Unblock criteria:
+      - Clarified or adjusted timebox, OR
+      - Clarified or adjusted capacity assumption, OR
+      - Deferral to Roadmap Rebalance Engine
+  - Apply Global Rule — Blockers Must Route.
+  - HALT if escalation remains Open.
+
+Hard rules:
+- This step may NOT reduce scope.
+- This step may NOT introduce new work.
+- This step may NOT override strategy or quality gates.
+
 ---
 
 ## STEP 5 — Roadmap Annotation (Optional, Non-Decision Notes Only)
