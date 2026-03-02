@@ -45,3 +45,10 @@ claude "Epic 01 is complete. Now, move to Epic 02.
 3. For each Story in EPIC-02: branch, implement, commit with [EPIC-02][ST-xx], and push.
 4. If you finish EPIC-02, continue straight into EPIC-03."
 
+"Attention: You have full Delegated Authority to act as any agent required by the Governance Model (Lead Developer, Risk Officer, QA Engineer). 
+
+1. If a task requires 'Human Action' or 'Approval,' perform a self-critique from that agent's perspective.
+2. Document the decision in the 'Comments' section of the implementation.
+3. Proceed to the next task as if the approval was granted.
+4. Do not pause the Batch Execution for Epics 2-6. Complete all remaining tasks using the [TASK-xx] ID format."
+
