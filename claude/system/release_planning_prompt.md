@@ -938,11 +938,53 @@ Update state.json:
 
 ## STEP 7 — Cycle Summary
 
+## STEP 7.1 — Global State Update (Hard Requirement)
+
+Before writing the cycle_summary.md, the engine MUST update the root-level .claude_current_state.json to reflect the current transition:
+
+- Update active_cycle to the current <cycle_id>.
+- Update status to the current macro-state (e.g., Planning or Committed).
+- Update backlog_slice_path to claude/cycles/<cycle_id>/stage4_backlog_slice.md.
+- Update last_sync_utc to the current timestamp.
+
 Write: `cycle_summary.md`
 
 ## STEP 8 — Lessons Learnt
 
 Write: `lessons_learnt.md`
+
+## STEP 9 — Global State Synchronization (Hard Requirement)
+
+Purpose: Ensure the root-level state pointer reflects the results of this cycle for future sessions.
+
+Execution Rules:
+1. Update the root-level file .claude_current_state.json with the following:
+- active_cycle: set to the current <cycle_id>
+- status: set to Published
+- backlog_slice_path: set to claude/cycles/<cycle_id>/stage4_backlog_slice.md
+- last_sync_utc: current timestamp
+2. If the file does not exist, create it using the standard schema.
+
+## STEP 10 — Stage, Commit & Push (Delegated Publication)
+Purpose: Publish the sealed cycle and updated state to the remote repository.
+
+Preconditions:
+- status == Published
+- publish_eligible == true
+- All canonical hashes in state.json are verified.
+
+Execution Commands:
+1. git add .claude_current_state.json
+2. git add CLAUDE.md (if modified)
+3. git add claude/cycles/<cycle_id>/*
+4. git add claude/backlog/backlog.md
+5. git commit -m "[GOVERNANCE] Published Release Plan <cycle_id>"
+6. git push origin <current-branch>
+GitHub Issue Automation:
+If --issues "gh" was invoked:
+- Use gh issue create for each EPIC-xx and ST-xx identified in stage4_backlog_slice.md.
+- Assign to the Milestone matching --version.
+- Include the EPIC-xx ID in the issue title for traceability.
 
 ---
 
