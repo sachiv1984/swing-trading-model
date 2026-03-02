@@ -1,4 +1,13 @@
-If escalations.md does not exist:
-- Treat its canonical hash as SHA-256 of empty string.
-- Write that value into sealed.sealed_hashes.escalations.
+### STEP 5 Postcondition — Release Roadmap Lock (Strict)
+
+After roadmap_txn state = committed:
+
+- Remove `claude/roadmap/.lock`
+- Update state.json:
+  - locks.roadmap_lock.status = "released"
+  - locks.roadmap_lock.owned = false
+  - artifacts.roadmap_lock = "released"
+
+If removal fails:
+- Record blocker and HALT.
 
