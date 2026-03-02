@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Canonical  
-**Version:** 1.2 
+**Version:** 1.3
 **Last Updated:** 2026-03-02  
 
 ---
@@ -11,8 +11,9 @@
 
 | Version | Date       | Change |
 |--------:|------------|--------|
+| 1.3     | 2026-03-02 | **Added Shared Write Concurrency Constraint**  Only one governed cycle may modify the shared backlog file at a time. |
 | 1.2 | 2026-03-02 | **Added Formal Authority Escalation Protocol** (Section 9). Defines escalation triggers, required escalation record fields, routing, SLAs, and resolution criteria. Additive only; no authority or conflict rule changes. **Accepted Risk Governance Constraint** (Section 10). Defines which risk domains may be accepted, who may accept them, and mandatory decision record requirements. Additive only; no changes to authority boundaries or conflict rules. |
-| 1.1     | 2026-03-02 | Added Release Planning Engine as a governed routine. No changes to role authority, conflict rules, or constraints. |
+| 1.1     | 2026-03-02 | **Added Release Planning Engine** as a governed routine. No changes to role authority, conflict rules, or constraints. |
 | 1.0     | 2026-03-01 | Initial charter. Establishes role authority model, domain ownership boundaries, conflict resolution rules, and non-decision role definitions for all governed routines. |
 
 ---
@@ -298,6 +299,44 @@ The following constraints apply in every governed routine regardless of role hie
 5. **No decision without a named owner.** Every irreversible decision must be attributed to a role in the decision log.
 6. **Delivery pressure never redefines intent.** A timeline or stakeholder preference does not constitute a governance override.
 7. **Quality and strategy blocks are non-negotiable.** Director of Quality and Strategy Rules owner blocking authority may not be bypassed.
+
+## Shared Write Concurrency Constraint (Strict Lock)
+
+### Purpose
+Certain governed routines may write to shared planning artefacts that are global to the repository (e.g., the backlog). To prevent conflicting concurrent writes, a strict lock protocol is required.
+
+### Rule (Hard Constraint)
+Only one governed cycle may modify the shared backlog file at a time.
+
+- Shared file: `claude/backlog/backlog.md`
+- Lock file: `claude/backlog/.lock`
+
+A governed routine that intends to write to the shared backlog file MUST:
+1) Acquire the lock by creating `claude/backlog/.lock` with the owning `cycle_id` recorded, and
+2) Verify that the lock is owned by its current `cycle_id` before writing.
+
+If the lock already exists and is not owned by the current `cycle_id`:
+- The routine MUST halt.
+- The situation MUST be recorded as a blocker and routed via escalation.
+
+### Strictness
+This lock is strict:
+- No routine may override or bypass it.
+- No routine may auto-delete an existing lock.
+
+### Manual Release Only (Stale Protocol)
+Locks may be cleared only via explicit manual action under the stale-lock protocol:
+
+A lock may be treated as stale only if:
+- the lock’s recorded timestamp exceeds the stale threshold (defined by PMO Lead for the routine), AND
+- there is evidence the owning cycle is no longer active (e.g., no updates to the owning cycle folder during that period).
+
+Stale lock removal:
+- Must be executed by PMO Lead (process authority) with acknowledgement recorded in the current cycle’s escalation record.
+- Must include: stale evidence, removed lock contents, and the date/time of removal.
+
+### Traceability
+Any lock acquisition, lock conflict, or stale removal action must be recorded in the cycle’s state (`state.json`) and in the cycle summary.
 
 ---
 
