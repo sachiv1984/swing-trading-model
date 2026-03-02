@@ -3,7 +3,7 @@ Status: Active
 Version: 1.4
 Last Updated: 2026-03-02
 Lifecycle Guide: claude/charter/document_lifecycle_guide.md (v2.4)
-Team Charter: claude/charter/team_charter.md (v1.1)
+Team Charter: claude/charter/team_charter.md (v1.2)
 ---
 
 # Claude Governance Prompt — Release Planning Engine (Cycle-Based, Reusable, Escalation-Aware)
@@ -56,7 +56,7 @@ If invocation is not exact, do not run. Treat as conversational.
 
 ## Canonical Governance Sources (Non-Negotiable)
 Binding governance stack:
-- claude/charter/team_charter.md (role authority, conflict rules)
+- claude/charter/team_charter.md (role authority, conflict rules, escalation + accepted risk constraints)
 - claude/charter/document_lifecycle_guide.md (lifecycle rules)
 - claude/strategy/strategy_rules.md (system intent, boundaries)
 
@@ -81,6 +81,7 @@ Minimum required roles for this routine:
 - Director of Quality
 - Infrastructure & Operations Owner
 - Strategy Rules & System Intent Owner
+- FinOps & Resource Architect
 - Facilitator
 - Challenger
 
@@ -93,7 +94,7 @@ During this routine you may write only to:
 - claude/cycles/<cycle_id>/*
 - claude/backlog/backlog.md  (release slice only; no global reprioritisation)
 - claude/roadmap/current_roadmap.md (ONLY to add execution notes/links under the existing release section; no scope change)
-- docs/product/decisions/* (ONLY when required to resolve an escalation; must be lifecycle-compliant decision record)
+- docs/product/decisions/* (ONLY when required to resolve an escalation under the rules below; must be lifecycle-compliant)
 - claude/scoring/* (only if explicitly requested by Product Owner for sequencing support)
 
 You must not modify:
@@ -227,6 +228,11 @@ Class: Planning Document (Class 4)
 Status: Active
 Last Updated: <date>
 
+Where:
+- `<release>` = value of `--version` (e.g., v1.7)
+- `<cycle_id>` = `{date}__release-{release}`
+- `<esc_id>` = escalation ID (ESC-YYYYMMDD-nn)
+
 Each escalation entry must include:
 - Escalation ID: `ESC-YYYYMMDD-nn`
 - Raised by step: e.g., `STEP 3.5`
@@ -272,6 +278,10 @@ Only these trigger types may be marked “Accepted Risk”:
 And only by:
 - Product Owner (accepting authority)
 
+---
+
+### Decision Record Controls (Minimal Anti-Drift Set)
+
 #### DR-1: Typed decision records only (Release Planning)
 Decision records created by this routine are restricted to exactly two types:
 - **AR** = Accepted Risk (Workforce or Schedule/Delivery only)
@@ -279,13 +289,13 @@ Decision records created by this routine are restricted to exactly two types:
 
 No other decision record types may be created in Release Planning. If needed, halt.
 
-#### DR-2: Naming convention (required)
-- Accepted Risk: `docs/product/decisions/AR-<cycle_id>-<esc_id>.md`
-- Strategy Boundary confirmation: `docs/product/decisions/SRB-<cycle_id>-<esc_id>.md`
+#### DR-2: Naming convention (required; Option 2)
+- Accepted Risk: `docs/product/decisions/AR-<release>-<cycle_id>-<esc_id>.md`
+- Strategy Boundary confirmation: `docs/product/decisions/SRB-<release>-<cycle_id>-<esc_id>.md`
 
 Examples:
-- `AR-2026-03-02__release-v1.7-ESC-20260302-01.md`
-- `SRB-2026-03-02__release-v1.8-ESC-20260302-02.md`
+- `docs/product/decisions/AR-v1.7-2026-03-02__release-v1.7-ESC-20260302-01.md`
+- `docs/product/decisions/SRB-v1.8-2026-03-02__release-v1.8-ESC-20260302-02.md`
 
 #### DR-3: Mandatory template (hard requirement)
 Any decision record created MUST follow this exact template.
@@ -296,7 +306,7 @@ Class: Planning Document (Class 4)
 Status: Active
 Last Updated: <date>
 Decision Type: AR | SRB
-Decision ID: <matches filename>
+Decision ID: <matches filename exactly, including AR-/SRB- prefix>
 Related Escalation: <ESC-YYYYMMDD-nn>
 Related Cycle: <cycle_id>
 Applies To Release: <vX.Y>
@@ -317,7 +327,8 @@ Body sections (required):
 If any required header field or section is missing:
 - The decision record is non-compliant
 - The escalation may not be closed as Accepted Risk / Resolved-via-Decision
-- Halt
+- HALT
+
 ---
 
 ### Resolution loop behaviour (delegated authority)
@@ -329,7 +340,9 @@ A) Lifecycle / Process Integrity (Head of Specs Team):
 - If it requires scope change or writes outside allowed scope: keep Open and HALT.
 
 B) Strategy (§13 / boundaries) (Strategy Rules & System Intent Owner):
-- If resolvable by creating a decision record confirming “boundaries unchanged” WITHOUT editing `strategy_rules.md`, create it under `docs/product/decisions/` and mark Resolved with evidence link.
+- If resolvable by creating a decision record confirming “boundaries unchanged” WITHOUT editing `strategy_rules.md`, create:
+  - `docs/product/decisions/SRB-<release>-<cycle_id>-<esc_id>.md`
+  using the mandatory template and mark Resolved with evidence link.
 - If it requires changing `strategy_rules.md`: keep Open and HALT (out of scope).
 
 C) Quality (Director of Quality):
@@ -342,7 +355,7 @@ D) Workforce (FinOps & Resource Architect):
 
 E) Schedule/Delivery (Product Owner):
 - If resolvable by sequencing adjustments, explicit timeboxing, or adding non-scope-changing guardrails: update stage3/stage4 notes and mark Resolved.
-- If the only path is to knowingly accept schedule risk without affecting Strategy/Quality/Lifecycle: may mark Accepted Risk ONLY if AR-2 and AR-3 are satisfied.
+- If the only path is to knowingly accept schedule risk without affecting Strategy/Quality/Lifecycle: may mark Accepted Risk ONLY if AR-2 and DR-2/DR-3 are satisfied.
 
 F) Other escalation:
 - Route to Product Owner; only resolvable if it does not violate Strategy/Quality/Lifecycle constraints.
@@ -351,13 +364,16 @@ F) Other escalation:
 
 ### Applying “Accepted Risk” (Mechanics)
 If an escalation is proposed to be marked “Accepted Risk”:
-1) Validate trigger type is Workforce or Schedule/Delivery. Otherwise: halt.
-2) Validate accepting authority is Product Owner. Otherwise: halt.
-3) Create the required AR decision record using DR-2 + DR-3.
-4) Update the escalation entry with:
+1) Validate trigger type is Workforce or Schedule/Delivery (AR-2). If not, apply AR-1.
+2) Validate accepting authority is Product Owner (AR-2). If not, HALT.
+3) Create the mandatory AR decision record at:
+   - `docs/product/decisions/AR-<release>-<cycle_id>-<esc_id>.md`
+   using DR-3 template.
+4) Update the escalation entry:
    - Disposition: Accepted Risk
-   - Decision link
+   - Link to decision record
    - Time Boundary: This release only
+5) Ensure Stage 3 risk register includes the risk and monitoring/mitigation note.
 
 If any step above cannot be satisfied: HALT.
 
@@ -411,10 +427,12 @@ Create:
 Rules:
 - Extract only what is already stated under the target release in `claude/roadmap/current_roadmap.md`.
 - You may clarify wording but may not add features or expand scope.
-- Output MUST include a list of scope items with IDs:
+
+Output MUST include:
+- A list of scope items with IDs:
   - `S2-01: ...`
   - `S2-02: ...`
-- Output MUST include a “Scope-to-Epic Mapping Table (seed)” section:
+- A “Scope-to-Epic Mapping Table (seed)” section:
   - `S2-01 -> (to be mapped in Stage 3)`
   - `S2-02 -> (to be mapped in Stage 3)`
 
@@ -509,8 +527,10 @@ If any backlog change beyond the release slice is required:
 - Record a ⛔ Blocker (Lifecycle / Process Integrity; owner: Head of Specs Team)
 - Apply Global Rule — Blockers Must Route
 
+---
+
 ## STEP 4.5 — Capacity Feasibility Sense Check (Soft Gate)
-Primary Authority: FinOps & Resource Architect  
+Primary Authority: FinOps & Resource Architect
 Process Authority: Head of Specs Team
 
 Create:
@@ -524,44 +544,26 @@ Purpose:
 Inputs:
 - `stage3_execution_plan.md`
 - `stage4_backlog_slice.md`
-- Invocation parameters:
-  - `--timebox`
-  - `--capacity`
+- Invocation parameters: `--timebox`, `--capacity`
 
 Checks:
-
 1) Order-of-magnitude fit
-   - Given the number of EPIC-xx items, their described effort signals (e.g. “multi-day”, “requires spec + verification”), and the declared timebox/capacity:
+   - Given the number of EPIC-xx items, their described effort signals, and the declared timebox/capacity:
      - Is the plan obviously too large?
-   - Example FAIL conditions:
-     - Multiple non-trivial epics in a very short timebox with low capacity
-     - No slack or buffer implied anywhere in the plan
-
 2) Critical-path plausibility
    - Identify the longest dependency chain across EPIC-xx items.
    - Determine whether that chain plausibly fits inside the declared timebox.
-   - If the critical path alone clearly exceeds the timebox → FAIL.
-
 3) Capacity assumption consistency
    - Check whether the execution plan respects the declared capacity model.
-   - Example FAIL conditions:
-     - Capacity declared as “solo-dev evenings” but plan assumes parallel backend/frontend execution
-     - Capacity declared as part-time but sequencing assumes full-time throughput
+   - Example: “solo-dev evenings” must not assume parallel execution without explicit sequencing.
 
 Outcomes:
-
 - PASS:
-  - Record “PASS” with a short justification in `stage4_5_capacity_check.md`.
-  - Proceed to STEP 5.
-
+  - Record “PASS” with short justification.
 - WARN (allowed only if `mode=standard`):
-  - Borderline feasibility (tight fit, no slack).
-  - Record “WARN” with explicit risks.
-  - Proceed, but ensure the risk is also reflected in the Stage 3 risk register.
-
+  - Borderline feasibility; record “WARN” with explicit risks and ensure the risk is reflected in Stage 3 risk register.
 - FAIL:
-  - Plan is clearly infeasible and cannot be corrected by resequencing alone.
-  - Record “FAIL” with evidence in `stage4_5_capacity_check.md`.
+  - Record “FAIL” with evidence.
   - Create ⛔ Blocker(s) with:
     - Trigger type: Workforce
     - Owning authority: FinOps & Resource Architect
@@ -569,7 +571,7 @@ Outcomes:
       - Clarified or adjusted timebox, OR
       - Clarified or adjusted capacity assumption, OR
       - Deferral to Roadmap Rebalance Engine
-  - Apply Global Rule — Blockers Must Route.
+  - Apply Global Rule — Blockers Must Route
   - HALT if escalation remains Open.
 
 Hard rules:
@@ -630,6 +632,8 @@ Failure behaviour (mandatory):
 - Apply Global Rule — Blockers Must Route
 - HALT regardless of mode if any escalation remains Open
 
+---
+
 ## STEP 5.7 — Decision Record Integrity Validation (Hard Gate)
 Authority: Head of Specs Team (governance integrity)
 
@@ -643,22 +647,28 @@ Trigger:
 
 Checks (must all pass):
 1) A decision record exists for each such escalation:
-   - Accepted Risk → AR-<cycle_id>-<esc_id>.md
-   - Strategy boundary confirmation → SRB-<cycle_id>-<esc_id>.md
+   - Accepted Risk → `docs/product/decisions/AR-<release>-<cycle_id>-<esc_id>.md`
+   - Strategy boundary confirmation → `docs/product/decisions/SRB-<release>-<cycle_id>-<esc_id>.md`
 
 2) Each decision record is typed correctly:
    - Only Decision Type AR or SRB allowed
    - Filename prefix matches Decision Type
-   - Decision ID matches filename exactly
+   - Decision ID matches filename exactly (including prefix)
 
 3) Required header fields present:
    - Owner, Class, Status, Last Updated
    - Decision Type, Decision ID
    - Related Escalation, Related Cycle
-   - Applies To Release, Time Boundary (“This release only”)
+   - Applies To Release
+   - Time Boundary (“This release only”)
 
 4) Required body sections present:
-   - Decision, Context, Risk/Impact, Guardrails, Evidence, Follow-up
+   - Decision
+   - Context
+   - Risk / Impact
+   - Guardrails (Non-Negotiable)
+   - Evidence
+   - Follow-up
 
 Failure behaviour:
 - Write FAIL with evidence into stage5_7_decision_record_integrity.md
@@ -667,7 +677,7 @@ Failure behaviour:
 - HALT
 
 Pass behaviour:
-- Write PASS and list validated decision record filenames
+- Write PASS and list validated decision record filenames.
 
 ---
 
@@ -704,6 +714,10 @@ Must include:
 - Release version planned
 - Escalations raised + disposition (IDs)
 - Remaining blockers (if any) and owning roles
+- Any Accepted Risk entries must include:
+  - escalation ID
+  - decision record link
+  - time boundary (this release only)
 - Final scoped epics count
 - Key risks and mitigations
 - Files produced in this cycle folder
@@ -734,7 +748,9 @@ The run is incomplete unless:
   - stage3_execution_plan.md
   - stage3_5_model_integrity.md
   - stage4_backlog_slice.md
+  - stage4_5_capacity_check.md
   - stage5_5_cross_stage_integrity.md
+  - stage5_7_decision_record_integrity.md (only required if triggered per STEP 5.7)
   - cycle_summary.md
   - lessons_learnt.md
 - If any blockers occurred and `--auto-escalate=true`, `escalations.md` exists and contains entries
