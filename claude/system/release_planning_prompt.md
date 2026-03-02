@@ -230,7 +230,7 @@ Last Updated: <date>
 Each escalation entry must include:
 - Escalation ID: `ESC-YYYYMMDD-nn`
 - Raised by step: e.g., `STEP 3.5`
-- Trigger type: Lifecycle | Strategy | Quality | Workforce | Other
+- Trigger type: Lifecycle | Strategy | Quality | Workforce | Schedule/Delivery | Other
 - Owning authority role
 - Unblock criteria + required evidence
 - SLA due-by (default if not specified below)
@@ -240,19 +240,83 @@ Each escalation entry must include:
 Default SLAs (unless a step specifies otherwise):
 - Lifecycle / Process Integrity: 24 hours
 - Strategy boundary (§13): 72 hours
-- Quality: before execution begins (cannot be waived here)
-- Workforce: next planning checkpoint (cannot be overridden)
+- Quality: before execution begins
+- Workforce: next planning checkpoint
+- Schedule/Delivery: next planning checkpoint
 
-Resolution loop behaviour (delegated authority):
+---
+
+### Accepted Risk Governance Constraint (Hard Gate)
+“Accepted Risk” is an irreversible decision and is permitted only under strict rules.
+
+#### AR-1: Non-acceptable domains (may NEVER be Accepted Risk)
+The following trigger types may not be marked “Accepted Risk” under any circumstances:
+- Strategy
+- Quality
+- Lifecycle
+
+If an escalation is in one of these domains, valid dispositions are:
+- Open (until resolved), or
+- Deferred (only with a named trigger and next action)
+
+Any attempt to mark these as “Accepted Risk” is a governance violation:
+- Immediately set disposition back to Open
+- Record a note in the escalation entry: “Accepted Risk not permitted for this domain”
+- HALT
+
+#### AR-2: Acceptable domains (permitted only with constraints)
+Only these trigger types may be marked “Accepted Risk”:
+- Workforce
+- Schedule/Delivery
+
+And only by:
+- Product Owner (accepting authority)
+
+#### AR-3: Mandatory decision record for Accepted Risk (Required)
+Any “Accepted Risk” disposition MUST create a decision record under:
+- `docs/product/decisions/`
+
+Rules:
+- Class: Planning Document (Class 4)
+- Owner: Product Owner
+- Status: Active
+- Must be linked from:
+  - the escalation entry, and
+  - the cycle summary
+- If the decision record cannot be created within allowed write scope or lifecycle compliance: HALT
+
+Decision record naming convention (recommended):
+- `AR-<cycle_id>-<ESC-ID>.md`
+  - Example: `AR-2026-03-02__release-v1.7-ESC-20260302-01.md`
+
+Minimum required content (must be present):
+- Title: Accepted Risk — <short description>
+- Escalation ID(s): <list>
+- Domain: Workforce | Schedule/Delivery
+- Risk statement: what could go wrong (one paragraph)
+- Impact statement: user/system consequence (bullets)
+- Rationale: why accepting is the least harmful path (one paragraph)
+- Guardrails (explicit):
+  - Strategy boundaries unchanged
+  - Quality gates not bypassed
+  - Lifecycle compliance maintained
+  - No scope change inside Release Planning routine
+- Time boundary: “Valid for release <vX.Y> only”
+- Accepting authority: Product Owner
+- Date
+
+---
+
+### Resolution loop behaviour (delegated authority)
 For each Open escalation:
 - Switch to the owning authority agent perspective and attempt resolution within allowed write scope.
 
 A) Lifecycle / Process Integrity (Head of Specs Team):
-- If resolvable via local artefact remediation (IDs missing, mapping lines missing, acceptance criteria missing, missing risk links): fix the artefacts **inside the cycle folder** (and permitted files) and mark Resolved.
+- If resolvable via local artefact remediation (IDs missing, mapping lines missing, acceptance criteria missing, missing risk links): fix the artefacts inside the cycle folder (and permitted files) and mark Resolved.
 - If it requires scope change or writes outside allowed scope: keep Open and HALT.
 
 B) Strategy (§13 / boundaries) (Strategy Rules & System Intent Owner):
-- If resolvable by creating a decision record that confirms “boundaries unchanged” WITHOUT editing `strategy_rules.md`, create it under `docs/product/decisions/` and mark Resolved with evidence.
+- If resolvable by creating a decision record confirming “boundaries unchanged” WITHOUT editing `strategy_rules.md`, create it under `docs/product/decisions/` and mark Resolved with evidence link.
 - If it requires changing `strategy_rules.md`: keep Open and HALT (out of scope).
 
 C) Quality (Director of Quality):
@@ -263,15 +327,38 @@ D) Workforce (FinOps & Resource Architect):
 - If resolvable by sequencing/timebox/capacity assumptions without changing scope: update stage3 plan and mark Resolved.
 - If it requires scope change or displacement: keep Open and HALT (requires Roadmap Rebalance Engine).
 
-E) Other escalation:
-- Route to Product Owner; only resolvable if it does not violate domain blocks.
+E) Schedule/Delivery (Product Owner):
+- If resolvable by sequencing adjustments, explicit timeboxing, or adding non-scope-changing guardrails: update stage3/stage4 notes and mark Resolved.
+- If the only path is to knowingly accept schedule risk without affecting Strategy/Quality/Lifecycle: may mark Accepted Risk ONLY if AR-2 and AR-3 are satisfied.
 
-Hard rule:
-- If any escalation remains Open after attempted resolution:
-  - If escalation type is Strategy, Quality, or Lifecycle → HALT regardless of mode
-  - Otherwise:
-    - mode=strict → HALT
-    - mode=standard → HALT unless the missing info is purely clerical and can be authored deterministically from existing repo context
+F) Other escalation:
+- Route to Product Owner; only resolvable if it does not violate Strategy/Quality/Lifecycle constraints.
+
+---
+
+### Applying “Accepted Risk” (Mechanics)
+If an escalation is proposed to be marked “Accepted Risk”:
+1) Validate trigger type is Workforce or Schedule/Delivery (AR-2). If not, apply AR-1.
+2) Validate accepting authority is Product Owner (AR-2). If not, HALT.
+3) Create the mandatory decision record in `docs/product/decisions/` (AR-3).
+4) Update the escalation entry:
+   - Disposition: Accepted Risk
+   - Link to decision record
+   - Time boundary: release version
+5) Ensure the Stage 3 risk register includes:
+   - the same risk ID (or a cross-reference)
+   - mitigation/monitoring note
+
+If any step above cannot be satisfied: HALT.
+
+---
+
+### Hard rule — end state after loop
+If any escalation remains Open after attempted resolution:
+- If trigger type is Strategy, Quality, or Lifecycle → HALT regardless of mode
+- Otherwise:
+  - mode=strict → HALT
+  - mode=standard → HALT unless missing info is purely clerical and can be authored deterministically from existing repo context
 
 ---
 
