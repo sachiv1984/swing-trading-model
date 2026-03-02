@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Status: Active
-Version: 1.2
+Version: 1.3
 Last Updated: 2026-03-02
-Lifecycle Guide: claude/charter/document_lifecycle_guide.md
-Team Charter: claude/charter/team_charter.md
+Lifecycle Guide: claude/charter/document_lifecycle_guide.md (v2.4)
+Team Charter: claude/charter/team_charter.md (v1.1)
 ---
 
 # Claude Governance Prompt — Release Planning Engine (Cycle-Based, Reusable, Escalation-Aware)
@@ -14,7 +14,8 @@ Translate an already-approved roadmap release (e.g., v1.7, v1.8) into an executi
 - A release backlog slice (without reprioritising the global backlog)
 - Optional GitHub issue plan (or issue import text)
 
-This routine is NOT a roadmap rebalance. It may NOT add/replace/defer/kill initiatives or alter strategy boundaries. Those remain reserved for the Roadmap Rebalance Engine. 
+This routine is **NOT** a roadmap rebalance. It may **NOT** add/replace/defer/kill initiatives or alter strategy boundaries. Those remain reserved for the Roadmap Rebalance Engine.
+
 ---
 
 ## Delegated Authority Model (User Delegation)
@@ -24,6 +25,7 @@ The user delegates operational decision-making to the defined role agents. Durin
 - If an escalation requires information that is not present in-repo and cannot be inferred safely, the routine must record the escalation and halt.
 
 Non-decision roles (Facilitator, Challenger) have no decision authority. They enforce process and demand clarity only.
+
 ---
 
 ## Invocation Rule (Hard Gate)
@@ -38,17 +40,18 @@ Rules:
 - `--timebox` optional (e.g., "1 week", "2 weeks", "1 sprint").
 - `--capacity` optional (e.g., "solo-dev evenings", "full-time", "part-time").
 - `--mode` optional:
-  - `strict`: halt on any missing prerequisite or unclear scope
-  - `standard`: proceed with explicit assumptions and flags
+  - `strict`: halt on any missing prerequisite, unclear scope, or failed hard gate
+  - `standard`: proceed with explicit assumptions and flags where allowed, but still halt on hard gates
 - `--issues` optional:
   - `none`: do not generate issue artifacts
   - `import`: create `issue_import.md` only
   - `gh`: attempt to create GitHub issues via `gh` CLI; if unavailable, fall back to `import`
 - `--auto-escalate` optional:
-  - `true` (default): system creates, routes, and attempts to resolve escalations using delegated authority.
-  - `false`: system records blockers only and halts without attempting resolution.
+  - `true` (default): system creates, routes, and attempts to resolve escalations using delegated authority
+  - `false`: system records blockers only and halts without attempting resolution
 
 If invocation is not exact, do not run. Treat as conversational.
+
 ---
 
 ## Canonical Governance Sources (Non-Negotiable)
@@ -58,6 +61,7 @@ Binding governance stack:
 - claude/strategy/strategy_rules.md (system intent, boundaries)
 
 This routine may not override any of the above.
+
 ---
 
 ## Source-of-Truth Planning Inputs
@@ -66,6 +70,7 @@ Authoritative planning inputs:
 - claude/backlog/backlog.md
 - docs/specs/* (canonical specs as needed for readiness checks)
 - docs/reference/openapi.yaml (supporting reference; align when needed)
+
 ---
 
 ## Agent Integrity (Required Roles)
@@ -80,6 +85,7 @@ Minimum required roles for this routine:
 - Challenger
 
 If any required role is missing or malformed (agent file absent or missing the required `**Role:** <Role Name>` line), halt.
+
 ---
 
 ## Write Scope Restriction (Hard Gate)
@@ -87,7 +93,7 @@ During this routine you may write only to:
 - claude/cycles/<cycle_id>/*
 - claude/backlog/backlog.md  (release slice only; no global reprioritisation)
 - claude/roadmap/current_roadmap.md (ONLY to add execution notes/links under the existing release section; no scope change)
-- docs/product/decisions/* (ONLY when required to resolve an escalation; must be lifecycle-compliant Class 4 decision record owned by Product Owner unless the lifecycle guide requires otherwise)
+- docs/product/decisions/* (ONLY when required to resolve an escalation; must be lifecycle-compliant decision record)
 - claude/scoring/* (only if explicitly requested by Product Owner for sequencing support)
 
 You must not modify:
@@ -98,6 +104,31 @@ You must not modify:
 - any doc outside allowed scope
 
 Violation → halt.
+
+---
+
+## Identifier Standards (Hard Requirement)
+To enable deterministic cross-stage integrity checks, all stage artefacts MUST use stable IDs.
+
+### ID Formats
+- Stage 2 scope items: `S2-01`, `S2-02`, ...
+- Stage 3 epics: `EPIC-01`, `EPIC-02`, ...
+- Stage 3 stories/tasks (optional but recommended): `ST-01`, `TASK-01`, ...
+- Risks: `RISK-01`, `RISK-02`, ...
+
+### Mapping Rules
+- Every Stage 2 scope item MUST have an `S2-xx` ID.
+- Every Stage 3 epic MUST have an `EPIC-xx` ID and MUST declare:
+  - `Maps to: S2-xx, S2-yy`
+- Every risk MUST have an ID and MUST declare:
+  - `Relates to: EPIC-xx` OR `Release-level`
+- Stage 4 backlog slice MUST reference EPIC IDs exactly (no free-text epics).
+
+If IDs are missing, treat as a **Process Integrity** failure:
+- Record a ⛔ Blocker
+- If `--auto-escalate=true`, invoke the Escalation Handling Subroutine
+- Halt if not remediable in-place without changing scope
+
 ---
 
 ## Cycle Folder (Required)
@@ -105,15 +136,26 @@ Define:
 - date = `--date` or today (YYYY-MM-DD)
 - release = `--version` (e.g., v1.7)
 - cycle_id = `{date}__release-{release}` (example: `2026-03-02__release-v1.7`)
+
 Create:
 - `claude/cycles/<cycle_id>/`
 
 This routine must always produce a cycle folder with a run manifest and stage outputs.
+
 ---
 
 # Mandatory End-to-End Process (Single Run)
 
+### Global Rule — Blockers Must Route
+If any step produces one or more ⛔ Blockers:
+- If `--auto-escalate=true`: invoke the **ESCALATION HANDLING SUBROUTINE** immediately after that step.
+- If `--auto-escalate=false`: record blockers in the step output and **HALT**.
+
+---
+
 ## STEP -1 — Preflight Gate (Hard Gate)
+Purpose: fail fast on missing prerequisites.
+
 ### -1.1 Required Files Present
 Verify these exist:
 - claude/charter/team_charter.md
@@ -138,14 +180,14 @@ Remove it if possible; if not, keep it and record it in the run manifest.
 ---
 
 ## STEP 0 — Create Run Manifest (Hard Requirement; must be first write)
-**Create:**
+Create:
 - `claude/cycles/<cycle_id>/run_manifest.md`
 
-**Class:** Operational Record (Class 3)
-**Owner:** Infrastructure & Operations Owner
-**Status:** Filed
+Class: Operational Record (Class 3)
+Owner: Infrastructure & Operations Owner
+Status: Filed
 
-**Header (required fields):**
+Header (required fields):
 Owner: Infrastructure & Operations Documentation Owner
 Status: Operational Record
 Deployment Version: N/A
@@ -154,7 +196,7 @@ Environment: Governance
 Generated By: Claude Code (Release Planning Engine)
 Filed: <date filed>
 
-**Manifest must record:**
+Manifest must record:
 - Invocation command text
 - Release version targeted
 - Inputs used (file paths)
@@ -165,15 +207,81 @@ Filed: <date filed>
 - Auto-escalate: true|false
 
 If the run manifest cannot be written in a lifecycle-compliant way: halt immediately.
+
+---
+
+## ESCALATION HANDLING SUBROUTINE — Callable (Delegated Authority)
+Trigger:
+- Invoke this subroutine whenever any step produces ⛔ Blockers AND `--auto-escalate=true`.
+
+Create or append:
+- `claude/cycles/<cycle_id>/escalations.md`
+
+Escalations file rules:
+- Location is always within the cycle folder: `claude/cycles/<cycle_id>/escalations.md`
+- Append-only within the cycle (do not edit previous entries)
+- Start the file with a minimal header block suitable for a cycle-local planning artefact:
+
+Owner: PMO Lead
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: <date>
+
+Each escalation entry must include:
+- Escalation ID: `ESC-YYYYMMDD-nn`
+- Raised by step: e.g., `STEP 3.5`
+- Trigger type: Lifecycle | Strategy | Quality | Workforce | Other
+- Owning authority role
+- Unblock criteria + required evidence
+- SLA due-by (default if not specified below)
+- Disposition: Open | Resolved | Accepted Risk | Deferred
+- Resolution summary + evidence links (required when closing)
+
+Default SLAs (unless a step specifies otherwise):
+- Lifecycle / Process Integrity: 24 hours
+- Strategy boundary (§13): 72 hours
+- Quality: before execution begins (cannot be waived here)
+- Workforce: next planning checkpoint (cannot be overridden)
+
+Resolution loop behaviour (delegated authority):
+For each Open escalation:
+- Switch to the owning authority agent perspective and attempt resolution within allowed write scope.
+
+A) Lifecycle / Process Integrity (Head of Specs Team):
+- If resolvable via local artefact remediation (IDs missing, mapping lines missing, acceptance criteria missing, missing risk links): fix the artefacts **inside the cycle folder** (and permitted files) and mark Resolved.
+- If it requires scope change or writes outside allowed scope: keep Open and HALT.
+
+B) Strategy (§13 / boundaries) (Strategy Rules & System Intent Owner):
+- If resolvable by creating a decision record that confirms “boundaries unchanged” WITHOUT editing `strategy_rules.md`, create it under `docs/product/decisions/` and mark Resolved with evidence.
+- If it requires changing `strategy_rules.md`: keep Open and HALT (out of scope).
+
+C) Quality (Director of Quality):
+- If resolvable by clarifying acceptance gates and verification criteria inside planning artefacts: update stage1/stage3 and mark Resolved.
+- If it requires evidence not present (re-testing, missing specs, missing datasets): keep Open and HALT.
+
+D) Workforce (FinOps & Resource Architect):
+- If resolvable by sequencing/timebox/capacity assumptions without changing scope: update stage3 plan and mark Resolved.
+- If it requires scope change or displacement: keep Open and HALT (requires Roadmap Rebalance Engine).
+
+E) Other escalation:
+- Route to Product Owner; only resolvable if it does not violate domain blocks.
+
+Hard rule:
+- If any escalation remains Open after attempted resolution:
+  - If escalation type is Strategy, Quality, or Lifecycle → HALT regardless of mode
+  - Otherwise:
+    - mode=strict → HALT
+    - mode=standard → HALT unless the missing info is purely clerical and can be authored deterministically from existing repo context
+
 ---
 
 ## STEP 1 — Release Readiness Validation
 Authorities: Product Owner + Strategy Rules & System Intent Owner + Head of Specs Team + Director of Quality
 
-**Create:**
+Create:
 - `claude/cycles/<cycle_id>/stage1_readiness.md`
 
-**Validate:**
+Validate:
 1) Strategy boundary safety:
    - Confirm nothing in this release violates strategy intent or §13 boundaries.
    - If a boundary decision/confirmation is required (per roadmap gating), record as blocker.
@@ -187,137 +295,122 @@ Authorities: Product Owner + Strategy Rules & System Intent Owner + Head of Spec
    - Confirm prerequisite roadmap items for the release are complete/closed as required.
    - If not, record as blocker or constraint.
 
-**Output format:**
+Output format:
 - ✅ Ready items
 - ⚠ Risks
-- ⛔ Blockers (must name owning role + unblock criteria)
-  
----
+- ⛔ Blockers (must name owning role + unblock criteria + evidence required)
 
-## STEP 1.5 — Escalation Handling Loop (Delegated Authority)
-**Trigger:**
-- If any ⛔ Blockers exist in stage1_readiness.md AND `--auto-escalate=true`
+If ⛔ Blockers exist:
+- Apply Global Rule — Blockers Must Route
 
-**Create or append:**
-- `claude/cycles/<cycle_id>/escalations.md`
-
-**Escalation file rules:**
-- Append-only within the cycle (do not edit previous entries).
-- Each entry must be factual and must name:
-  - Escalation ID (ESC-YYYYMMDD-nn)
-  - Trigger type: Lifecycle | Strategy | Quality | Workforce | Other
-  - Owning authority role
-  - Unblock criteria + required evidence
-  - SLA due-by (default: Lifecycle 24h; Strategy 72h; Quality before execution; Workforce next checkpoint unless prompt-specific override)
-  - Disposition: Open | Resolved | Accepted Risk | Deferred
-
-**Resolution loop behaviour:**
-For each Open escalation, switch to the owning authority agent perspective and attempt resolution:
-
-A) Lifecycle escalation (Head of Specs Team):
-- If resolvable within allowed write scope via header-only remediation or lifecycle correction: perform the minimal compliant change and mark Resolved with evidence link.
-- If resolution requires edits outside allowed scope: keep Open and halt.
-
-B) Strategy escalation (§13 / boundaries) (Strategy Rules & System Intent Owner):
-- If resolution can be achieved by a decision record (e.g., "Boundaries unchanged for <feature>") WITHOUT editing strategy_rules.md, create a lifecycle-compliant decision record under `docs/product/decisions/` and mark Resolved with link.
-- If resolution requires strategy_rules.md revision: keep Open and halt (outside scope).
-
-C) Quality escalation (Director of Quality):
-- If resolution is “define/clarify acceptance gates” and no missing verification prerequisites remain, update stage1_readiness + stage3_execution_plan gates and mark Resolved.
-- If resolution requires re-testing, missing specs, or evidence not available in repo: keep Open and halt.
-
-D) Workforce escalation (FinOps & Resource Architect):
-- If resolution is possible by sequencing adjustments, timebox adjustments, or clarifying capacity assumptions (without scope change), update stage3 plan and mark Resolved.
-- If resolution requires changing scope or stopping work: keep Open and halt (requires Roadmap Rebalance Engine).
-
-E) Other escalation:
-- Route to Product Owner; only resolvable if it does not violate domain blocks.
-
-**Hard rule:**
-- If any escalation remains Open after the loop and mode=strict OR the escalation is Strategy/Quality/Lifecycle: halt and report the escalation IDs and required next action.
-  
 ---
 
 ## STEP 2 — Scope Extraction (No Scope Changes Allowed)
 Authorities: Product Owner + Head of Specs Team
 
-**Create:**
+Create:
 - `claude/cycles/<cycle_id>/stage2_scope_extraction.md`
 
-**Rules:**
+Rules:
 - Extract only what is already stated under the target release in `claude/roadmap/current_roadmap.md`.
 - You may clarify wording but may not add features or expand scope.
-- Any ambiguity must become:
-  - a clarifying question, or
-  - an assumption (mode=standard only), or
-  - a blocker (mode=strict), which routes to STEP 1.5 if auto-escalate is true.
+- Output MUST include a list of scope items with IDs:
+  - `S2-01: ...`
+  - `S2-02: ...`
+- Output MUST include a “Scope-to-Epic Mapping Table (seed)” section:
+  - `S2-01 -> (to be mapped in Stage 3)`
+  - `S2-02 -> (to be mapped in Stage 3)`
+
+If IDs are missing or the output cannot be represented as S2 items:
+- Record a ⛔ Blocker (Lifecycle / Process Integrity; owner: Head of Specs Team)
+- Apply Global Rule — Blockers Must Route
+
 ---
 
 ## STEP 3 — Execution Plan (Sequencing + Work Breakdown)
 Authorities: Product Owner (sequencing), Director of Quality (verification gates), Head of Specs Team (spec governance), Infrastructure & Ops (operational considerations)
 
-**Create:**
+Create:
 - `claude/cycles/<cycle_id>/stage3_execution_plan.md`
 
-**Must include:**
+Must include:
 - Workstreams (backend, frontend, docs/governance, CI/CD)
-- Epics → Stories → Tasks
-- Dependencies
-- Acceptance criteria + verification approach per epic
-- Definition of Done per epic
-- Sequencing based on timebox/capacity if provided
-- Risk register (top 5) with mitigations + owners
+- Epics → Stories → Tasks breakdown
+- Dependencies between items
+- Delivery sequencing (Week 1/Week 2 or Sprint days) based on timebox/capacity if provided
+- Risk register (top 5) with mitigations and owners
 
-## STEP 3.5 — Local Model Integrity Check
+Epic format (hard requirement):
+For each epic:
+- `EPIC-xx: <title>`
+  - Maps to: `S2-yy, S2-zz`
+  - Acceptance Criteria: (bullets)
+  - Verification Approach: (bullets)
+  - Definition of Done: (bullets)
+  - Stories/Tasks: (optional IDs ST-xx / TASK-xx)
+
+Risk format (hard requirement):
+- `RISK-xx: <risk title>`
+  - Relates to: `EPIC-xx` OR `Release-level`
+  - Mitigation: (bullets)
+  - Owner: <role>
+
+If EPIC IDs, S2 mappings, or required epic sections are missing:
+- Record a ⛔ Blocker (Lifecycle / Process Integrity; owner: Head of Specs Team)
+- Apply Global Rule — Blockers Must Route
+
+---
+
+## STEP 3.5 — Local Model Integrity Check (Soft Gate)
 Authority: Head of Specs Team (process integrity), Director of Quality (gate completeness)
 
-**Create:**
-- `stage3_5_model_integrity.md`
+Create:
+- `claude/cycles/<cycle_id>/stage3_5_model_integrity.md`
 
-**Purpose:**
+Purpose:
 - Validate that the Stage 3 execution model is internally executable before committing it to the backlog slice.
 
-**Checks (local only — does not require Stage 4):**
-1) Epic completeness (mandatory for every epic in stage3_execution_plan.md):
-   - Acceptance criteria present
-   - Verification approach present
-   - Definition of Done present
-2) Risk alignment (mandatory):
-   - Every risk references at least one epic ID OR is explicitly marked “Release-level risk”
-   - No orphan risks
+Checks (local only — does not require Stage 4):
+1) Epic completeness:
+   - Every `EPIC-xx` includes Acceptance Criteria, Verification Approach, and Definition of Done.
+2) Risk alignment:
+   - Every `RISK-xx` has `Relates to: EPIC-xx` OR `Release-level`.
+3) Basic mapping presence:
+   - Every `EPIC-xx` contains a `Maps to:` line with at least one `S2-xx`.
 
-**Outcomes:**
+Outcomes:
 - PASS: record “PASS” and list epic IDs validated.
-- FAIL (remediable within Stage 3 without changing scope):
-  - If missing acceptance criteria / verification / DoD: update `stage3_execution_plan.md` to add the missing sections for the affected epics.
-  - Re-run checks and record “PASS after remediation” in stage3_5_model_integrity.md.
-- FAIL (not remediable without scope change or missing external info):
-  - Create/append an escalation entry in `escalations.md` (if auto-escalate=true) with:
-    - Trigger type: Lifecycle (Process Integrity)
-    - Owning authority: Head of Specs Team
-    - Unblock criteria: “Stage 3 epics must be made executable; no epic may proceed without acceptance criteria + verification + DoD”
-  - If mode=strict: HALT.
-  - If mode=standard: HALT unless the missing information is purely clerical and can be authored deterministically from existing docs.
-    
+- FAIL (remediable without scope change):
+  - Update `stage3_execution_plan.md` to add the missing sections/lines.
+  - Re-run checks and record “PASS after remediation”.
+- FAIL (not remediable without scope change or requires missing external info):
+  - Record ⛔ Blocker(s) (Lifecycle / Process Integrity; owner: Head of Specs Team)
+  - Apply Global Rule — Blockers Must Route
+  - Halt if escalation remains Open.
+
 ---
 
 ## STEP 4 — Backlog Slice (Release Section Only; No Global Reprioritisation)
-Authorities: Product Owner + PMO Lead + Head of Specs Team
+Authorities: Product Owner + PMO Lead (process) + Head of Specs Team (no grooming)
 
-**Create:**
+Create:
 - `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
 
-**Then update:**
+Then update:
 - `claude/backlog/backlog.md`
 
-**Rules:**
+Rules for backlog update:
 - Do NOT reprioritise global backlog.
 - Only add a clearly marked section:
   - “Release Plan: <version> (Prepared <date>)”
-- List selected epics/stories and link to cycle docs.
-- Do not rewrite existing items; only add one-line status notes:
+- Within that section, list epics **by EPIC ID** exactly (no free-text epics), with links to cycle docs.
+- Stage 4 slice MUST NOT introduce any EPIC IDs that are not present in Stage 3.
+- Do not rewrite existing backlog items; you may add one-line status notes:
   - “Planned for vX.Y — see cycle <cycle_id>”
-If any backlog change beyond the release slice is required: halt.
+
+If any backlog change beyond the release slice is required:
+- Record a ⛔ Blocker (Lifecycle / Process Integrity; owner: Head of Specs Team)
+- Apply Global Rule — Blockers Must Route
 
 ---
 
@@ -328,71 +421,77 @@ Update `claude/roadmap/current_roadmap.md` ONLY to:
 - add links to the cycle folder under the relevant release section, and/or
 - add a short “Execution Notes” subsection that does not change scope, status, or priority.
 
-If an edit would change scope/priority: halt (requires Roadmap Rebalance Engine).
+If an edit would change scope/priority:
+- Record a ⛔ Blocker (Lifecycle / Process Integrity; owner: Head of Specs Team)
+- Apply Global Rule — Blockers Must Route
+
+---
 
 ## STEP 5.5 — Cross-Stage Integrity Validation (Hard Gate)
 Authority: Head of Specs Team (governance integrity)
 
-**Create:**
-- `stage5_5_cross_stage_integrity.md`
+Create:
+- `claude/cycles/<cycle_id>/stage5_5_cross_stage_integrity.md`
 
-**Purpose:**
+Purpose:
 - Enforce cross-stage consistency so the release plan is coherent, traceable, and executable.
 - This is a HARD GATE. Any failure must halt.
 
-**Validation Inputs:**
+Validation Inputs:
 - stage2_scope_extraction.md
 - stage3_execution_plan.md
 - stage4_backlog_slice.md
-- (optional) stage1_readiness.md for blockers/assumptions alignment
+- stage1_readiness.md (for blockers/assumptions alignment)
 
-**Checks (must all pass):**
+Checks (must all pass; ID-based):
 1) Scope preservation (no dropped scope):
-   - Every Stage 2 scope item must map to ≥ 1 Stage 3 epic ID.
-   - If any Stage 2 scope item has zero epic mappings → FAIL.
-
+   - Every `S2-xx` in Stage 2 must be referenced by at least one `EPIC-xx` “Maps to:” line in Stage 3.
 2) No new scope (no scope creep):
-   - Every Stage 3 epic must map back to ≥ 1 Stage 2 scope item.
-   - If any epic has no Stage 2 mapping → FAIL.
-
-3) Epic completeness (re-validated as cross-stage invariant):
-   - Every Stage 3 epic has acceptance criteria + verification approach + DoD.
-   - If any epic missing any of these → FAIL.
-
+   - Every `EPIC-xx` in Stage 3 must map back to at least one `S2-xx` in Stage 2.
+3) Epic completeness (cross-stage invariant):
+   - Every `EPIC-xx` has Acceptance Criteria + Verification Approach + Definition of Done.
 4) Commitment integrity (plan → slice):
-   - Every Stage 3 epic ID appears in Stage 4 backlog slice.
-   - Stage 4 backlog slice must not introduce any epic IDs that do not exist in Stage 3.
-   - Any missing/extra epic IDs → FAIL.
-
+   - Every `EPIC-xx` in Stage 3 appears in Stage 4 slice.
+   - Stage 4 slice contains no unknown `EPIC-xx` IDs.
 5) Risk alignment:
-   - Every risk references ≥ 1 Stage 3 epic ID OR is explicitly “Release-level risk”.
-   - No orphan risks → FAIL.
-   - If risk mitigations mention work not represented in epics/tasks → FAIL (implicit scope creep).
+   - Every `RISK-xx` relates to at least one `EPIC-xx` OR is explicitly `Release-level`.
+   - Risk mitigations must not imply new work not represented in epics/tasks (implicit scope creep).
 
-**Failure behaviour (mandatory):**
-- Write a FAIL report in stage5_5_cross_stage_integrity.md including:
+Failure behaviour (mandatory):
+- Write a FAIL report including:
   - Each failed check
-  - Evidence (exact IDs and where they appear/mismatch)
-- Create/append an escalation entry in `escalations.md` (if auto-escalate=true) with:
-  - Trigger type: Lifecycle (Process Integrity)
-  - Owning authority: Head of Specs Team
-  - Unblock criteria: “Cross-stage mapping must be corrected without scope change”
-- HALT regardless of mode (strict/standard).
+  - Evidence (exact IDs and where they mismatch)
+- Record ⛔ Blocker(s) (Lifecycle / Process Integrity; owner: Head of Specs Team)
+- Apply Global Rule — Blockers Must Route
+- HALT regardless of mode if any escalation remains Open
 
 ---
 
 ## STEP 6 — Issue Artifacts (Optional; depends on --issues)
-Authority: PMO Lead + Product Owner
+Authority: PMO Lead (process), Product Owner (content)
 
-Create:
-- `claude/cycles/<cycle_id>/issue_import.md` if --issues=import OR gh fails
+Create one of:
+- `claude/cycles/<cycle_id>/issue_import.md` (always if --issues=import OR gh fails)
 - If --issues=gh:
   - attempt to create issues via `gh` CLI
   - if `gh auth status` fails: fall back to `issue_import.md`
+
+Issue requirements:
+- One epic issue per epic (EPIC IDs)
+- Child issues for stories (if you created ST/TASK IDs)
+- Include:
+  - acceptance criteria
+  - verification notes
+  - links to cycle docs
+- Labels (suggested):
+  - release:<version>
+  - area:backend / area:frontend / area:docs
+  - type:feature / type:tech-debt / type:chore
+
 ---
 
 ## STEP 7 — Cycle Summary (Required)
-Authority: Facilitator
+Authority: Facilitator (process summary)
 
 Create:
 - `claude/cycles/<cycle_id>/cycle_summary.md`
@@ -400,23 +499,41 @@ Create:
 Must include:
 - Release version planned
 - Escalations raised + disposition (IDs)
-- Remaining blockers (if any)
+- Remaining blockers (if any) and owning roles
 - Final scoped epics count
 - Key risks and mitigations
-- Files produced
+- Files produced in this cycle folder
+- If issues created/import produced, note where
+
 ---
 
 ## STEP 8 — Lessons Learnt Stub (Required)
 Authority: PMO Lead
 
 Create:
-- `claude/cycles/<cycle_id>/lessons_learnt.md` (stub)
+- `claude/cycles/<cycle_id>/lessons_learnt.md` (stub; to be filled post-release)
+
+Structure:
+- What went well in planning
+- What was unclear / caused delay
+- Governance improvements suggested (prompt updates, templates, checks)
+
 ---
 
 ## Completion Condition (Run Success)
 The run is incomplete unless:
-- Cycle folder exists at `claude/cycles/<cycle_id>/`
-- run_manifest.md, stage1_readiness.md, stage2_scope_extraction.md, stage3_execution_plan.md, stage4_backlog_slice.md, cycle_summary.md, lessons_learnt.md exist
-- If blockers occurred and auto-escalate=true, escalations.md exists and contains entries
+- A cycle folder exists at `claude/cycles/<cycle_id>/`
+- The following files exist and are lifecycle compliant:
+  - run_manifest.md
+  - stage1_readiness.md
+  - stage2_scope_extraction.md
+  - stage3_execution_plan.md
+  - stage3_5_model_integrity.md
+  - stage4_backlog_slice.md
+  - stage5_5_cross_stage_integrity.md
+  - cycle_summary.md
+  - lessons_learnt.md
+- If any blockers occurred and `--auto-escalate=true`, `escalations.md` exists and contains entries
 - No prohibited files were edited
+
 If you cannot reach this state: report the precise blocking rule and halt.
