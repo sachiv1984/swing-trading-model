@@ -351,3 +351,32 @@ These are deliberate product decisions, not deferrals:
   - Canonical specification
   - Updated validation where applicable
 - Once implemented, backlog items are superseded by canonical documentation.
+
+---
+
+## 6. v1.7 Release Slice (Active)
+
+<!-- release-plan-marker: RP:v1.7:2026-03-02__release-v1.7 -->
+
+**Cycle:** 2026-03-02__release-v1.7
+**Planning Date:** 2026-03-02
+**Status:** Active
+**Reference:** claude/cycles/2026-03-02__release-v1.7/stage4_backlog_slice.md
+
+| S2 ID | Item | Epic | Priority | Effort |
+|-------|------|------|----------|--------|
+| S2-01 | BLG-TECH-04 — CI/CD GitHub Actions Validation Workflow | EPIC-01 | P2 | ~1 day |
+| S2-02 | Strategy Rules §13 Boundary Review | EPIC-02 | P1 | ~0.5 day |
+| S2-03 | Metrics Definitions — Portfolio Heat Formula & Thresholds | EPIC-03 | P1 | ~0.5 day |
+| S2-04 | Structured Logging / Observability Standards | EPIC-04 | P2 | ~1 day |
+| S2-05 | API Versioning Strategy Decision Record | EPIC-05 | P2 | ~0.5 day |
+| S2-06 | BLG-TECH-06 — Canonicalise sharpe_ratio_trade_method | EPIC-06 | P2 | ~30 min–1 hr |
+| S2-07 | BLG-TECH-08 — Align portfolio_endpoints.md positions summary | EPIC-06 | P3 | ~30 min + decision |
+| S2-08 | BLG-TECH-09 — Add holding_days to GET /trades | EPIC-06 | P3 | ~30 min + decision |
+
+**Total estimated effort:** ~3.5–4 days
+**Capacity assessment:** PASS (workforce_capacity.md — no constraints violated)
+**Key gates unlocked by this release:**
+- EPIC-02 → §13-gated features may enter pre-alignment
+- EPIC-03 → v1.8 Risk Dashboard pre-alignment
+- EPIC-04 + EPIC-05 → v2.0 Alerts pre-alignment (2 of 3 gates)

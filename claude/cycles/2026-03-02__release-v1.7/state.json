@@ -1,0 +1,117 @@
+{
+  "cycle_id": "2026-03-02__release-v1.7",
+  "release": "v1.7",
+  "date": "2026-03-02",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-03-02T10:15:00Z",
+
+  "sealed": {
+    "sealed_utc": "2026-03-02T10:15:00Z",
+    "sealed_hashes": {
+      "stage2_scope_extraction": "230d9fd5300978243aeacb96d7c45d2612e708b37c552336eaf11d56cc8c22f9",
+      "stage3_execution_plan": "85cf16b1550c12ec5d5287508f38c6f2823cbf63cadac9bf8a17cf866aefc8ba",
+      "stage4_backlog_slice": "db9ac2e4634f0bf885b90f18c93096727ac60636e67d1e9c03860e4281cf3039",
+      "escalations": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sealed_assumptions": {
+      "timebox": "",
+      "capacity": ""
+    },
+    "state_snapshot_hash": "6a5ed90b9168278dafc160f5defe7f4e7f22fc7852ebbbbc997c725102a97912"
+  },
+
+  "drift_detected": false,
+  "drift_notes": [],
+
+  "mutation_seq": 0,
+  "assumptions": {
+    "timebox": "",
+    "capacity": ""
+  },
+
+  "artifact_hashes": {
+    "method": "sha256",
+    "canonicalization": "md-v1",
+    "tracked_set": [
+      "stage2_scope_extraction",
+      "stage3_execution_plan",
+      "stage4_backlog_slice",
+      "escalations"
+    ],
+    "stage2_scope_extraction": "230d9fd5300978243aeacb96d7c45d2612e708b37c552336eaf11d56cc8c22f9",
+    "stage3_execution_plan": "85cf16b1550c12ec5d5287508f38c6f2823cbf63cadac9bf8a17cf866aefc8ba",
+    "stage4_backlog_slice": "db9ac2e4634f0bf885b90f18c93096727ac60636e67d1e9c03860e4281cf3039",
+    "escalations": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+
+  "locks": {
+    "backlog_lock": {
+      "required": true,
+      "lock_file": "claude/backlog/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-03-02__release-v1.7",
+      "owner_release": "v1.7",
+      "acquired_utc": "2026-03-02T10:05:00Z",
+      "txn_file": "claude/cycles/2026-03-02__release-v1.7/backlog_txn.json",
+      "txn_id": "BLTX-20260302-01",
+      "txn_state": "committed",
+      "marker": "RP:v1.7:2026-03-02__release-v1.7",
+      "status": "released"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "",
+      "owner_release": "",
+      "acquired_utc": "",
+      "txn_file": "claude/cycles/2026-03-02__release-v1.7/roadmap_txn.json",
+      "txn_id": "",
+      "txn_state": "none",
+      "marker": "RA:v1.7:2026-03-02__release-v1.7",
+      "status": "not_checked"
+    }
+  },
+
+  "mutations": [],
+  "invalidated_steps": [],
+
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "deferred_execution_blockers": [],
+  "accepted_risk_escalations": [],
+
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "capacity_feasible": "pass",
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "not_applicable"
+  },
+
+  "artifacts": {
+    "run_manifest": "present",
+    "backlog_lock": "released",
+    "backlog_txn": "committed",
+    "roadmap_lock": "not_checked",
+    "roadmap_txn": "not_started",
+
+    "stage1_readiness": "pass",
+    "stage2_scope_extraction": "pass",
+    "stage3_execution_plan": "pass",
+    "stage3_5_model_integrity": "pass",
+    "stage4_backlog_slice": "pass",
+    "stage4_5_capacity_check": "pass",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "not_applicable",
+
+    "cycle_summary": "present",
+    "lessons_learnt": "present",
+    "escalations": "not_started"
+  }
+}
