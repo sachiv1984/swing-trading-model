@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
+**Version:** 1.9
 **Last Updated:** 2026-03-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -174,6 +174,11 @@ All detailed checks remain in artifacts + attributes; macro-states are phase mar
 ---
 
 # Mandatory End-to-End Process (Single Run)
+
+## Gate Semantics (Definitions)
+**Hard Gate:** Any FAIL halts immediately (no continuation).
+**Conditional Gate:** FAIL may be remediated or escalated; the run halts only if the resulting escalation remains Open or blocks publishing/execution.
+**Advisory Check:** WARN-only; never creates blockers; never escalates; never halts.
 
 ### Global Rule — Blockers Must Route
 If any step produces one or more ⛔ Blockers:
@@ -517,7 +522,8 @@ Update state.json:
 - attributes.plan_structured = true on pass
 - status = Planning when Stage 3 exists (pass) even if not yet executable
 
-## STEP 3.5 — Local Model Integrity Check
+## STEP 3.5 — Local Model Integrity Check (Conditional Gate)
+Classification: Conditional Gate (halts only if escalation remains Open / blocking)
 
 Write: `stage3_5_model_integrity.md`
 Update state.json:
@@ -535,7 +541,8 @@ Update state.json:
 - attributes.backlog_committed = true on pass
 - status = Committed on pass
 
-## STEP 4.5 — Capacity Feasibility Sense Check
+## STEP 4.5 — Capacity Feasibility Sense Check (Conditional Gate)
+Classification: Conditional Gate (halts only if escalation remains Open / blocking)
 
 Write: `stage4_5_capacity_check.md`
 Update state.json:
