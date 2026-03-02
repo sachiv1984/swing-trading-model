@@ -442,6 +442,19 @@ If `state.json.status == "Published"`:
 - Do NOT change assumptions (timebox/capacity).
 - Do NOT acquire locks (backlog/roadmap) or perform lock/txn steps.
 
+#### Artifact Hash Freeze Rule (Hard Gate)
+If `status == Published`:
+- `state.json.artifact_hashes.*` must not change.
+- Any recomputed hash that differs from `state.json.sealed.sealed_hashes.*` triggers drift detection.
+- `state.json.artifact_hashes.*` must remain aligned with `state.json.sealed.sealed_hashes.*`.
+
+#### State File Immutability Rule (Hard Gate)
+If `status == Published`:
+- `state.json` may not be modified except for:
+  - `drift_detected`
+  - `drift_notes`
+- Any other modification constitutes drift.
+
 Perform drift detection only (see Drift Detection).
 
 If drift found: HALT with instruction:
@@ -924,6 +937,19 @@ If Publish Gate passes:
 - publish_eligible = true
 Else:
 - publish_eligible = false
+
+---
+
+# Pre-Seal Revalidation (Hard Gate)
+Before executing **Publish Sealing**:
+
+1. Re-run **RESUME PRECHECK — Mutation Detection & Invalidation**.
+2. If any tracked artifact or assumption changed since Publish Gate evaluation:
+   - Invalidate Publish Gate.
+   - Set `publish_eligible = false`.
+   - Resume from the earliest invalidated step.
+   - **HALT** (sealing may not proceed).
+3. Sealing may only proceed if **no invalidations** occur during this check.
 
 ---
 
