@@ -1,0 +1,24 @@
+name: "Quality & Governance Gate"
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, edited, synchronize]
+
+jobs:
+  verify_governance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Title for ID
+        run: |
+          # Ensures the PR title includes an EPIC or ST ID
+          if [[ ! "${{ github.event.pull_request.title }}" =~ \[(EPIC|ST)-[0-9]+\] ]]; then
+            echo "Error: PR title must include a Governance ID (e.g., [EPIC-01])."
+            exit 1
+          fi
+
+      - name: Verify Documentation Sync
+        run: |
+          # Potential check to ensure state.json was updated in the PR
+          echo "Governance ID found. Proceeding with technical checks..."
