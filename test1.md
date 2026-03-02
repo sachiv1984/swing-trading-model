@@ -1,4 +1,4 @@
-Initialize the execution for Cycle v1.7. 
+lol Initialize the execution for Cycle v1.7. 
 
 First, read 'claude/cycles/2026-03-02__release-v1.7/stage4_backlog_slice.md' to identify the specific requirements for [ST-01] under [EPIC-01]. 
 
@@ -36,3 +36,6 @@ Since the workflow file is now on your main branch and will be inherited by this
  * The "Governance Sync Loop": This time, it should appear and run.
  * The Auto-Close: Check Issue [ST-02] on GitHub. If we set up the App and the ID-matching correctly, that issue should turn purple (Closed) the moment the Action finishes.
 I’m standing by—let me know if the "Sync Loop" appears in your Actions tab this time!
+
+"I am moving to Batch Mode. Please look at the remaining issues for v1.7. Execute ST-03, ST-04, and ST-05 sequentially. For each one: Create the branch, write the code, commit with the governance ID, and push. Do not stop to ask me for permission between these three tasks unless there is an error."
+
