@@ -1,33 +1,6 @@
 
 ⸻
 
-🔶 2️⃣ You Don’t Enforce Re-Validation on Resume After Mutation
-
-You correctly allow resume.
-
-But imagine:
-	•	Stage 3 passed
-	•	Stage 4 passed
-	•	Capacity FAIL occurs
-	•	Workforce escalation resolved by adjusting timebox
-	•	Plan sequencing changes
-
-You should invalidate downstream states automatically.
-
-Right now state transitions are linear, but not invalidation-aware.
-
-You need a rule like:
-
-If a step modifies:
-	•	stage3_execution_plan.md → invalidate stage3_5, stage4, stage4_5, stage5_5
-	•	stage2_scope_extraction.md → invalidate everything downstream
-
-Without invalidation, resume could pass stale integrity checks.
-
-This is subtle but important.
-
-⸻
-
 🔶 3️⃣ State Definitions Slightly Overlap
 
 You currently have:
