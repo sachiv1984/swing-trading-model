@@ -1,291 +1,63 @@
-Owner: Head of Specs Team  
-Status: Active  
-Version: 1.6  
-Last Updated: 2026-03-02  
-Lifecycle Guide: claude/charter/document_lifecycle_guide.md (v2.4)  
-Team Charter: claude/charter/team_charter.md (v1.2)  
+**Owner:** Head of Specs Team **Status:** Active **Version:** 1.7 **Last Updated:** 2026-03-02 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md **Team Charter:** claude/charter/team_charter.md 
 
 ---
 
-# Claude Governance Prompt — Release Planning Engine (Cycle-Based, Reusable, Escalation-Aware, State-Driven)
-
-## Purpose
-Translate an already-approved roadmap release (e.g., v1.7, v1.8) into an execution-ready plan:
-- Sequencing, dependencies, acceptance gates, verification approach
-- A release backlog slice (without reprioritising the global backlog)
-- Optional GitHub issue plan (or issue import text)
-
+# Claude Governance Prompt — Release Planning Engine (Cycle-Based, Reusable, Escalation-Aware, State-Driven, Mutation-Safe)
+## PurposeTranslate an already-approved roadmap release (e.g., v1.7, v1.8) into an execution-ready plan:- Sequencing, dependencies, acceptance gates, verification approach- A release backlog slice (without reprioritising the global backlog)- Optional GitHub issue plan (or issue import text)
 This routine is **NOT** a roadmap rebalance. It may **NOT** add/replace/defer/kill initiatives or alter strategy boundaries. Those remain reserved for the Roadmap Rebalance Engine.
-
 ---
-
-## Delegated Authority Model (User Delegation)
-The user delegates operational decision-making to the defined role agents. During this routine:
-- Each authority role may decide within its chartered domain.
-- Domain blocks remain binding (Quality and Strategy blocks cannot be overridden by Product Owner).
-- If an escalation requires information that is not present in-repo and cannot be inferred safely, the routine must record the escalation and halt.
-
+## Delegated Authority Model (User Delegation)The user delegates operational decision-making to the defined role agents. During this routine:- Each authority role may decide within its chartered domain.- Domain blocks remain binding (Quality and Strategy blocks cannot be overridden by Product Owner).- If an escalation requires information that is not present in-repo and cannot be inferred safely, the routine must record the escalation and halt.
 Non-decision roles (Facilitator, Challenger) have no decision authority. They enforce process and demand clarity only.
-
 ---
-
-## Invocation Rule (Hard Gate)
-This routine executes ONLY when the user issues the explicit command:
-
-`plan release --version "<vX.Y>" [--date "YYYY-MM-DD"] [--timebox "<text>"] [--capacity "<text>"] [--mode "<strict|standard>"] [--issues "<none|import|gh>"] [--auto-escalate "<true|false>"]`
-
-Rules:
-- Invocation must start with `plan release` (case-insensitive allowed).
-- `--version` is required and must match a planned release label in `claude/roadmap/current_roadmap.md` (e.g., `v1.7`).
-- `--date` optional (defaults to today, YYYY-MM-DD).
-- `--timebox` optional (e.g., "1 week", "2 weeks", "1 sprint").
-- `--capacity` optional (e.g., "solo-dev evenings", "full-time", "part-time").
-- `--mode` optional:
-  - `strict`: halt on any missing prerequisite, unclear scope, or failed hard gate
-  - `standard`: proceed with explicit assumptions and flags where allowed, but still halt on hard gates
-- `--issues` optional:
-  - `none`: do not generate issue artifacts
-  - `import`: create `issue_import.md` only
-  - `gh`: attempt to create GitHub issues via `gh` CLI; if unavailable, fall back to `import`
-- `--auto-escalate` optional:
-  - `true` (default): system creates, routes, and attempts to resolve escalations using delegated authority
-  - `false`: system records blockers only and halts without attempting resolution
-
+## Invocation Rule (Hard Gate)This routine executes ONLY when the user issues the explicit command:
+plan release --version "<vX.Y>" [--date "YYYY-MM-DD"] [--timebox "<text>"] [--capacity "<text>"] [--mode "<strict|standard>"] [--issues "<none|import|gh>"] [--auto-escalate "<true|false>"]
+Rules:- Invocation must start with `plan release` (case-insensitive allowed).- `--version` is required and must match a planned release label in `claude/roadmap/current_roadmap.md` (e.g., `v1.7`).- `--date` optional (defaults to today, YYYY-MM-DD).- `--timebox` optional (e.g., "1 week", "2 weeks", "1 sprint").- `--capacity` optional (e.g., "solo-dev evenings", "full-time", "part-time").- `--mode` optional:  - `strict`: halt on any missing prerequisite, unclear scope, or failed hard gate  - `standard`: proceed with explicit assumptions and flags where allowed, but still halt on hard gates- `--issues` optional:  - `none`: do not generate issue artifacts  - `import`: create `issue_import.md` only  - `gh`: attempt to create GitHub issues via `gh` CLI; if unavailable, fall back to `import`- `--auto-escalate` optional:  - `true` (default): system creates, routes, and attempts to resolve escalations using delegated authority  - `false`: system records blockers only and halts without attempting resolution
 If invocation is not exact, do not run. Treat as conversational.
-
 ---
-
-## Canonical Governance Sources (Non-Negotiable)
-Binding governance stack:
-- `claude/charter/team_charter.md` (role authority, conflict rules, escalation + accepted risk constraints)
-- `claude/charter/document_lifecycle_guide.md` (lifecycle rules)
-- `claude/strategy/strategy_rules.md` (system intent, boundaries)
-
+## Canonical Governance Sources (Non-Negotiable)Binding governance stack:- claude/charter/team_charter.md (role authority, conflict rules, escalation + accepted risk constraints)- claude/charter/document_lifecycle_guide.md (lifecycle rules)- claude/strategy/strategy_rules.md (system intent, boundaries)
 This routine may not override any of the above.
-
 ---
-
-## Source-of-Truth Planning Inputs
-Authoritative planning inputs:
-- `claude/roadmap/current_roadmap.md`
-- `claude/backlog/backlog.md`
-- `docs/specs/*` (canonical specs as needed for readiness checks)
-- `docs/reference/openapi.yaml` (supporting reference; align when needed)
-
+## Source-of-Truth Planning InputsAuthoritative planning inputs:- claude/roadmap/current_roadmap.md- claude/backlog/backlog.md- docs/specs/* (canonical specs as needed for readiness checks)- docs/reference/openapi.yaml (supporting reference; align when needed)
 ---
-
-## Agent Integrity (Required Roles)
-Minimum required roles for this routine:
-- Product Owner
-- Head of Specs Team
-- PMO Lead
-- Director of Quality
-- Infrastructure & Operations Owner
-- Strategy Rules & System Intent Owner
-- FinOps & Resource Architect
-- Facilitator
-- Challenger
-
+## Agent Integrity (Required Roles)Minimum required roles for this routine:- Product Owner- Head of Specs Team- PMO Lead- Director of Quality- Infrastructure & Operations Owner- Strategy Rules & System Intent Owner- FinOps & Resource Architect- Facilitator- Challenger
 If any required role is missing or malformed (agent file absent or missing the required `**Role:** <Role Name>` line), halt.
-
 ---
-
-## Write Scope Restriction (Hard Gate)
-During this routine you may write only to:
-- `claude/cycles/<cycle_id>/*`
-- `claude/backlog/backlog.md` (release slice only; no global reprioritisation)
-- `claude/roadmap/current_roadmap.md` (ONLY to add execution notes/links under the existing release section; no scope change)
-- `docs/product/decisions/*` (ONLY when required to resolve an escalation under the rules below; must be lifecycle-compliant)
-- `claude/scoring/*` (only if explicitly requested by Product Owner for sequencing support)
-
-You must not modify:
-- source code
-- `claude/strategy/strategy_rules.md`
-- `claude/roadmap/initiative_register.md`
-- `claude/roadmap/decision_log.md` (reserved for irreversible roadmap decisions in rebalance)
-- any doc outside allowed scope
-
+## Write Scope Restriction (Hard Gate)During this routine you may write only to:- claude/cycles/<cycle_id>/*- claude/backlog/backlog.md  (release slice only; no global reprioritisation)- claude/roadmap/current_roadmap.md (ONLY to add execution notes/links under the existing release section; no scope change)- docs/product/decisions/* (ONLY when required to resolve an escalation under the rules below; must be lifecycle-compliant)- claude/scoring/* (only if explicitly requested by Product Owner for sequencing support)
+You must not modify:- source code- claude/strategy/strategy_rules.md- claude/roadmap/initiative_register.md- claude/roadmap/decision_log.md (reserved for irreversible roadmap decisions in rebalance)- any doc outside allowed scope
 Violation → halt.
-
 ---
-
-## Identifier Standards (Hard Requirement)
-To enable deterministic cross-stage integrity checks, all stage artefacts MUST use stable IDs.
-
-### ID Formats
-- Stage 2 scope items: `S2-01`, `S2-02`, ...
-- Stage 3 epics: `EPIC-01`, `EPIC-02`, ...
-- Stage 3 stories/tasks (optional but recommended): `ST-01`, `TASK-01`, ...
-- Risks: `RISK-01`, `RISK-02`, ...
-- Escalations: `ESC-YYYYMMDD-nn`
-
-### Mapping Rules
-- Every Stage 2 scope item MUST have an `S2-xx` ID.
-- Every Stage 3 epic MUST have an `EPIC-xx` ID and MUST declare:
-  - `Maps to: S2-xx, S2-yy`
-- Every risk MUST have an ID and MUST declare:
-  - `Relates to: EPIC-xx` OR `Release-level`
-- Stage 4 backlog slice MUST reference EPIC IDs exactly (no free-text epics).
-
-If IDs are missing, treat as a **Process Integrity** failure:
-- Record a ⛔ Blocker
-- If `--auto-escalate=true`, invoke the Escalation Handling Subroutine
-- Halt if not remediable in-place without changing scope
-
+## Identifier Standards (Hard Requirement)To enable deterministic cross-stage integrity checks, all stage artefacts MUST use stable IDs.
+### ID Formats- Stage 2 scope items: `S2-01`, `S2-02`, ...- Stage 3 epics: `EPIC-01`, `EPIC-02`, ...- Stage 3 stories/tasks (optional but recommended): `ST-01`, `TASK-01`, ...- Risks: `RISK-01`, `RISK-02`, ...- Escalations: `ESC-YYYYMMDD-nn`
+### Mapping Rules- Every Stage 2 scope item MUST have an `S2-xx` ID.- Every Stage 3 epic MUST have an `EPIC-xx` ID and MUST declare:  - `Maps to: S2-xx, S2-yy`- Every risk MUST have an ID and MUST declare:  - `Relates to: EPIC-xx` OR `Release-level`- Stage 4 backlog slice MUST reference EPIC IDs exactly (no free-text epics).
+If IDs are missing, treat as a **Process Integrity** failure:- Record a ⛔ Blocker- If `--auto-escalate=true`, invoke the Escalation Handling Subroutine- Halt if not remediable in-place without changing scope
 ---
-
-## Cycle Folder + State (Required)
-Define:
-- date = `--date` or today (YYYY-MM-DD)
-- release = `--version` (e.g., v1.7)
-- cycle_id = `{date}__release-{release}` (example: `2026-03-02__release-v1.7`)
-
-Create:
-- `claude/cycles/<cycle_id>/`
-
-State file (required):
-- `claude/cycles/<cycle_id>/state.json`
-
-The routine is **state-driven**:
-- If `state.json` exists, resume from the recorded state.
-- If the cycle folder exists but `state.json` is missing, rebuild state from artefacts present, write `state.json`, then continue.
-- Steps MUST update `state.json` at completion.
-
+## Cycle Folder + State (Required)Define:- date = `--date` or today (YYYY-MM-DD)- release = `--version` (e.g., v1.7)- cycle_id = `{date}__release-{release}` (example: `2026-03-02__release-v1.7`)
+Create:- `claude/cycles/<cycle_id>/`
+State file (required):- `claude/cycles/<cycle_id>/state.json`
+The routine is **state-driven**:- If `state.json` exists, resume from the recorded state.- If the cycle folder exists but `state.json` is missing, rebuild state from artefacts present, write `state.json`, then continue.- Steps MUST update `state.json` at completion.
 ---
-
 # State Machine Model (Hard Requirement)
-
-## Canonical states
-- `Initialized`
-- `ReadinessValidated`
-- `ScopeLocked`
-- `PlanDrafted`
-- `PlanExecutable`
-- `Committed`
-- `Feasible`
-- `IntegrityPassed`
-- `DecisionsValidated` (or `NotApplicable`)
-- `Published`
-- `Blocked`
-- `Deferred`
-
-## State transition rule
-A state transition may occur only when:
-- the required artefact(s) for that state exist and are compliant, AND
-- no Open escalations block progress for that transition (per escalation rules).
-
-If Open escalations exist:
-- State MUST be `Blocked` with escalation IDs recorded.
-
+## Canonical states- `Initialized`- `ReadinessValidated`- `ScopeLocked`- `PlanDrafted`- `PlanExecutable`- `Committed`- `Feasible`- `IntegrityPassed`- `DecisionsValidated` (or `NotApplicable`)- `Published`- `Blocked`- `Deferred`
+## State transition ruleA state transition may occur only when:- the required artefact(s) for that state exist and are compliant, AND- no Open escalations block progress for that transition (per escalation rules).
+If Open escalations exist:- State MUST be `Blocked` with escalation IDs recorded.
 ---
-
 # Mandatory End-to-End Process (Single Run)
-
-### Global Rule — Blockers Must Route
-If any step produces one or more ⛔ Blockers:
-- If `--auto-escalate=true`: invoke the **ESCALATION HANDLING SUBROUTINE** immediately after that step.
-- If `--auto-escalate=false`: record blockers in the step output and **HALT**.
-
-### Global Rule — State Must Be Updated
-At the end of every step:
-- Update `state.json` with:
-  - current state
-  - artefact statuses
-  - open escalations (IDs)
-  - last transition timestamp (UTC)
-If state cannot be updated: halt.
-
+### Global Rule — Blockers Must RouteIf any step produces one or more ⛔ Blockers:- If `--auto-escalate=true`: invoke the **ESCALATION HANDLING SUBROUTINE** immediately after that step.- If `--auto-escalate=false`: record blockers in the step output and **HALT**.
+### Global Rule — State Must Be UpdatedAt the end of every step:- Update `state.json` with:  - current state  - artefact statuses  - open escalations (IDs)  - last transition timestamp (UTC)If state cannot be updated: halt.
 ---
-
-## STEP -1 — Preflight Gate (Hard Gate)
-Purpose: fail fast on missing prerequisites.
-
-### -1.1 Required Files Present
-Verify these exist:
-- `claude/charter/team_charter.md`
-- `claude/charter/document_lifecycle_guide.md`
-- `claude/strategy/strategy_rules.md`
-- `claude/roadmap/current_roadmap.md`
-- `claude/backlog/backlog.md`
-
-If any are missing: halt and report exactly which.
-
-### -1.2 Verify Release Exists on the Roadmap
-Open `claude/roadmap/current_roadmap.md` and confirm the requested `--version` exists as a planned release section.
-- If not found: halt (this routine cannot invent new releases).
-
-### -1.3 Required Authority Roles Exist (Agent Integrity)
-Verify agent files exist under `claude/agents/` for the minimum required roles listed above and contain the correct `**Role:**` line.  
-If any missing/malformed: halt.
-
-### -1.4 Write Permission Test (Non-Destructive)
-Create a temporary marker file under `claude/cycles/<cycle_id>/` and confirm it can be written.  
-Remove it if possible; if not, keep it and record it in the run manifest.
-
+## STEP -1 — Preflight Gate (Hard Gate)Purpose: fail fast on missing prerequisites.
+### -1.1 Required Files PresentVerify these exist:- claude/charter/team_charter.md- claude/charter/document_lifecycle_guide.md- claude/strategy/strategy_rules.md- claude/roadmap/current_roadmap.md- claude/backlog/backlog.mdIf any are missing: halt and report exactly which.
+### -1.2 Verify Release Exists on the RoadmapOpen `claude/roadmap/current_roadmap.md` and confirm the requested `--version` exists as a planned release section.- If not found: halt (this routine cannot invent new releases).
+### -1.3 Required Authority Roles Exist (Agent Integrity)Verify agent files exist under `claude/agents/` for the minimum required roles listed above and contain the correct `**Role:**` line.If any missing/malformed: halt.
+### -1.4 Write Permission Test (Non-Destructive)Create a temporary marker file under `claude/cycles/<cycle_id>/` and confirm it can be written.Remove it if possible; if not, keep it and record it in the run manifest.
 ---
+## STEP 0 — Create Run Manifest + Initialize State (Hard Requirement; must be first write)Create:- `claude/cycles/<cycle_id>/run_manifest.md`
+Class: Operational Record (Class 3)Owner: Infrastructure & Operations OwnerStatus: Filed
+Header (required fields):Owner: Infrastructure & Operations Documentation OwnerStatus: Operational RecordDeployment Version: N/AReport Date: <date>Environment: GovernanceGenerated By: Claude Code (Release Planning Engine)Filed: <date filed>
+Manifest must record:- Invocation command text- Release version targeted- Inputs used (file paths)- Activated roles (authorities + process roles)- Any preflight marker file created- Mode: strict|standard- Issues mode: none|import|gh- Auto-escalate: true|false
+Then create or update:- `claude/cycles/<cycle_id>/state.json`
+State.json schema (minimum required keys):```json{  "cycle_id": "<cycle_id>",  "release": "<vX.Y>",  "date": "YYYY-MM-DD",  "mode": "strict|standard",  "issues_mode": "none|import|gh",  "auto_escalate": true,  "status": "Initialized",  "publish_eligible": false,  "last_transition_utc": "<ISO-8601 UTC>",  "mutation_seq": 0,  "assumptions": {    "timebox": "<text or empty>",    "capacity": "<text or empty>"  },  "artifact_fingerprints": {    "stage2_scope_extraction": "<fingerprint or empty>",    "stage3_execution_plan": "<fingerprint or empty>",    "stage4_backlog_slice": "<fingerprint or empty>",    "escalations": "<fingerprint or empty>"  },  "mutations": [],  "invalidated_steps": [],  "open_escalations": [],  "deferred_escalations": [],  "deferred_execution_blockers": [],  "accepted_risk_escalations": [],  "artifacts": {    "run_manifest": "present|missing",    "stage1_readiness": "not_started|pass|fail|blocked",    "stage2_scope_extraction": "not_started|pass|fail|blocked",    "stage3_execution_plan": "not_started|pass|fail|blocked",    "stage3_5_model_integrity": "not_started|pass|fail|blocked",    "stage4_backlog_slice": "not_started|pass|fail|blocked",    "stage4_5_capacity_check": "not_started|pass|warn|fail|blocked",    "stage5_5_cross_stage_integrity": "not_started|pass|fail|blocked",    "stage5_7_decision_record_integrity": "not_started|pass|fail|not_applicable|blocked",    "cycle_summary": "not_started|present",    "lessons_learnt": "not_started|present",    "escalations": "not_started|present"  }}```
 
-## STEP 0 — Create Run Manifest + Initialize State (Hard Requirement; must be first write)
-Create:
-- `claude/cycles/<cycle_id>/run_manifest.md`
-
-Class: Operational Record (Class 3)  
-Owner: Infrastructure & Operations Owner  
-Status: Filed  
-
-Header (required fields):
-- Owner: Infrastructure & Operations Documentation Owner
-- Status: Operational Record
-- Deployment Version: N/A
-- Report Date: `<date>`
-- Environment: Governance
-- Generated By: Claude Code (Release Planning Engine)
-- Filed: `<date filed>`
-
-Manifest must record:
-- Invocation command text
-- Release version targeted
-- Inputs used (file paths)
-- Activated roles (authorities + process roles)
-- Any preflight marker file created
-- Mode: strict|standard
-- Issues mode: none|import|gh
-- Auto-escalate: true|false
-
-Then create or update:
-- `claude/cycles/<cycle_id>/state.json`
-
-State.json schema (minimum required keys):
-```json
-{
-  "cycle_id": "<cycle_id>",
-  "release": "<vX.Y>",
-  "date": "YYYY-MM-DD",
-  "mode": "strict|standard",
-  "issues_mode": "none|import|gh",
-  "auto_escalate": true,
-  "status": "Initialized",
-  "publish_eligible": false,
-  "last_transition_utc": "<ISO-8601 UTC>",
-  "open_escalations": [],
-  "deferred_escalations": [],
-  "deferred_execution_blockers": [],
-  "accepted_risk_escalations": [],
-  "artifacts": {
-    "run_manifest": "present|missing",
-    "stage1_readiness": "not_started|pass|fail|blocked",
-    "stage2_scope_extraction": "not_started|pass|fail|blocked",
-    "stage3_execution_plan": "not_started|pass|fail|blocked",
-    "stage3_5_model_integrity": "not_started|pass|fail|blocked",
-    "stage4_backlog_slice": "not_started|pass|fail|blocked",
-    "stage4_5_capacity_check": "not_started|pass|warn|fail|blocked",
-    "stage5_5_cross_stage_integrity": "not_started|pass|fail|blocked",
-    "stage5_7_decision_record_integrity": "not_started|pass|fail|not_applicable|blocked",
-    "cycle_summary": "not_started|present",
-    "lessons_learnt": "not_started|present",
-    "escalations": "not_started|present"
-  }
-}
-```
 If the run manifest cannot be written in a lifecycle-compliant way: halt immediately.
 If state.json cannot be created/updated: halt immediately.
 
@@ -293,6 +65,8 @@ Update state:
 
 - status = `Initialized`
 - artifacts.run_manifest = `present`
+- assumptions.timebox = value from invocation (or empty)
+- assumptions.capacity = value from invocation (or empty)
 
 ---
 
@@ -301,7 +75,7 @@ Update state:
 If `state.json` exists:
 
 - Continue from the first step whose artifact status is `not_started` or `fail` or `blocked`,
-- BUT do not rerun steps marked `pass` unless required by a downstream invalidation.
+- BUT do not rerun steps marked `pass` unless required by invalidation (see RESUME PRECHECK).
 
 If status is `Blocked`:
 
@@ -314,6 +88,76 @@ If `state.json` is missing but artifacts exist:
 - mark as `pass` any stage file present that satisfies the step’s requirements
 - otherwise mark as `not_started`
 - Write `state.json` and continue.
+
+---
+
+## RESUME PRECHECK — Mutation Detection & Invalidation (Hard Gate)
+
+### Purpose
+
+Prevent stale “pass” stamps after any mutation to assumptions or tracked artifacts. This routine must be executed:
+
+- at the start of any run after STEP 0, and
+- immediately after resolving any escalation that changes assumptions or artifacts.
+
+### Fingerprints (what to track)
+
+Tracked items:
+
+- `stage2_scope_extraction.md`
+- `stage3_execution_plan.md`
+- `stage4_backlog_slice.md`
+- `escalations.md`
+- assumptions: `timebox`, `capacity`
+
+Fingerprint rule:
+
+- A fingerprint is any deterministic representation of current content, e.g. file length + last modified time, or a simple content hash.
+- If fingerprints cannot be computed: HALT.
+
+### Detection
+
+1. Recompute current fingerprints.
+2. Compare to `state.json.artifact_fingerprints` and `state.json.assumptions`.
+3. If any differ, record a mutation:
+- `mutation_seq += 1`
+- append to `mutations[]`:
+- timestamp, changed_keys, reason (e.g. "Workforce escalation resolution: timebox change")
+- update fingerprints and assumptions in state.json.
+
+### Invalidation Map (dependency graph)
+
+If a tracked item changes, invalidate dependent steps by setting their artifact status to `not_started` and recording them in `invalidated_steps[]`.
+
+Rules:
+
+- If `stage2_scope_extraction` changed → invalidate: STEP 3, STEP 3.5, STEP 4, STEP 5.5
+- If `stage3_execution_plan` changed → invalidate: STEP 3.5, STEP 4, STEP 5.5
+- If `stage4_backlog_slice` changed → invalidate: STEP 5.5
+- If `escalations` changed in a way that adds/removes decision records or Accepted Risk → invalidate: STEP 5.7 and Publish Gate evaluation
+
+Special rule (your chosen safety policy):
+
+- Always re-run STEP 4.5 after any resume where:
+- timebox changed OR capacity changed OR STEP 4.5 previously failed/blocked, OR
+- any workforce escalation was opened/resolved in this cycle.
+Implementation: set `artifacts.stage4_5_capacity_check = not_started`.
+
+Special rule (your chosen efficiency policy):
+
+- Re-run STEP 5.5 only if Stage 2/3/4 changed (fingerprint-based), i.e. only when at least one of:
+- stage2_scope_extraction fingerprint changed, OR
+- stage3_execution_plan fingerprint changed, OR
+- stage4_backlog_slice fingerprint changed.
+Otherwise do not invalidate STEP 5.5.
+
+### Resume position
+
+After applying invalidations:
+
+- Resume from the earliest invalidated step (lowest numbered step).
+If no invalidations exist:
+- Continue normal resume rule.
 
 ---
 
@@ -462,7 +306,7 @@ Decision records created by this routine are restricted to exactly two types:
 - SRB = Strategy Rules Boundary confirmation (“boundaries unchanged”)
 No other decision record types may be created in Release Planning. If needed, halt.
 
-#### DR-2: Naming convention (required; Option 2)
+#### DR-2: Naming convention (required)
 
 - Accepted Risk: `docs/product/decisions/AR-<release>-<cycle_id>-<esc_id>.md`
 - Strategy Boundary confirmation: `docs/product/decisions/SRB-<release>-<cycle_id>-<esc_id>.md`
@@ -549,20 +393,19 @@ F) Other escalation
 
 ---
 
-### Applying “Accepted Risk” (Mechanics)
+### Escalation Mutation Rule (Hard Gate)
 
-If an escalation is proposed to be marked “Accepted Risk”:
+If resolving an escalation modifies:
 
-- Validate trigger type is Workforce or Schedule/Delivery (AR-2). If not, apply AR-1.
-- Validate accepting authority is Product Owner (AR-2). If not, HALT.
-- Create the mandatory AR decision record at:
-`docs/product/decisions/AR-<release>-<cycle_id>-<esc_id>.md`
-using DR-3 template.
-- Update the escalation entry:
-- Disposition: Accepted Risk
-- Link to decision record
-- Time Boundary: This release only
-If any step above cannot be satisfied: HALT.
+- assumptions (timebox/capacity), OR
+- any tracked stage artifact (Stage 2/3/4), OR
+- escalations content (including Deferred blocks execution toggles), OR
+- decision records created/changed,
+then:
+
+1. Update `state.json` fingerprints/assumptions
+2. Execute RESUME PRECHECK invalidation map
+3. Do not proceed until required invalidated steps are re-run
 
 ---
 
@@ -587,187 +430,27 @@ If no Open escalations remain:
 
 ---
 
-## STEP 1 — Release Readiness Validation
-
-Authorities: Product Owner + Strategy Rules & System Intent Owner + Head of Specs Team + Director of Quality
-
-Create:
-
-- `claude/cycles/<cycle_id>/stage1_readiness.md`
-
-Validate:
-
-- Strategy boundary safety
-- Spec readiness
-- Quality readiness
-- Dependency readiness
-
-Output format:
-
-- ✅ Ready items
-- ⚠ Risks
-- ⛔ Blockers (must name owning role + unblock criteria + evidence required)
-
-If ⛔ Blockers exist:
-
-- Apply Global Rule — Blockers Must Route
-
-Update state.json:
-
-- artifacts.stage1_readiness = pass|fail|blocked
-- If pass: status = ReadinessValidated
-
----
-
-## STEP 2 — Scope Extraction (No Scope Changes Allowed)
-
-Authorities: Product Owner + Head of Specs Team
-
-Create:
-
-- `claude/cycles/<cycle_id>/stage2_scope_extraction.md`
-
-Rules:
-
-- Extract only what is already stated under the target release in claude/roadmap/current_roadmap.md.
-- You may clarify wording but may not add features or expand scope.
-
-Output MUST include:
-
-- S2-xx list
-- Scope-to-Epic mapping seed
-
-If invalid:
-
-- Blocker + route
-
-Update state.json:
-
-- artifacts.stage2_scope_extraction = pass|fail|blocked
-- If pass: status = ScopeLocked
-
----
-
-## STEP 3 — Execution Plan (Sequencing + Work Breakdown)
-
-Authorities: Product Owner, Director of Quality, Head of Specs Team, Infrastructure & Ops
-
-Create:
-
-- `claude/cycles/<cycle_id>/stage3_execution_plan.md`
-
-Hard requirements:
-
-- EPIC IDs with Maps to S2 IDs
-- Acceptance criteria, verification, DoD
-- RISK IDs linked to EPIC or Release-level
-
-If invalid:
-
-- Blocker + route
-
-Update state.json:
-
-- artifacts.stage3_execution_plan = pass|fail|blocked
-- If pass: status = PlanDrafted
-
----
-
-## STEP 3.5 — Local Model Integrity Check (Soft Gate)
-
-Create:
-
-- `claude/cycles/<cycle_id>/stage3_5_model_integrity.md`
-
-If fail not remediable:
-
-- Blocker + route
-
-Update state.json:
-
-- artifacts.stage3_5_model_integrity = pass|fail|blocked
-- If pass: status = PlanExecutable
-
----
-
-## STEP 4 — Backlog Slice (Release Section Only; No Global Reprioritisation)
-
-Create:
-
-- `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
-Then update:
-- `claude/backlog/backlog.md` (release slice only)
-
-Update state.json:
-
-- artifacts.stage4_backlog_slice = pass|fail|blocked
-- If pass: status = Committed
-
----
-
-## STEP 4.5 — Capacity Feasibility Sense Check (Soft Gate)
-
-Create:
-
-- `claude/cycles/<cycle_id>/stage4_5_capacity_check.md`
-
-Update state.json:
-
-- artifacts.stage4_5_capacity_check = pass|warn|fail|blocked
-- If pass/warn: status = Feasible
-- If fail/blocked: status = Blocked
-
----
-
-## STEP 5 — Roadmap Annotation (Optional)
-
-Optional notes/links only; no scope/status changes.
-
----
-
-## STEP 5.5 — Cross-Stage Integrity Validation (Hard Gate)
-
-Create:
-
-- `claude/cycles/<cycle_id>/stage5_5_cross_stage_integrity.md`
-
-Update state.json:
-
-- artifacts.stage5_5_cross_stage_integrity = pass|fail|blocked
-- If pass: status = IntegrityPassed
-
----
-
-## STEP 5.7 — Decision Record Integrity Validation (Hard Gate)
-
-Create:
-
-- `claude/cycles/<cycle_id>/stage5_7_decision_record_integrity.md` (only if triggered)
-
-Update state.json:
-
-- artifacts.stage5_7_decision_record_integrity = pass|fail|blocked|not_applicable
-- If pass or not_applicable: status = DecisionsValidated
-
----
-
-## STEP 7 — Cycle Summary (Required)
-
-Create:
-
-- `claude/cycles/<cycle_id>/cycle_summary.md`
-Update state.json:
-- artifacts.cycle_summary = present
-
----
-
-## STEP 8 — Lessons Learnt Stub (Required)
-
-Create:
-
-- `claude/cycles/<cycle_id>/lessons_learnt.md`
-Update state.json:
-- artifacts.lessons_learnt = present
+# Steps (Implementation Notes)
+
+All steps remain as defined in v1.6:
+
+- STEP 1: stage1_readiness.md
+- STEP 2: stage2_scope_extraction.md
+- STEP 3: stage3_execution_plan.md
+- STEP 3.5: stage3_5_model_integrity.md
+- STEP 4: stage4_backlog_slice.md + update backlog slice
+- STEP 4.5: stage4_5_capacity_check.md
+- STEP 5: roadmap annotation (optional)
+- STEP 5.5: stage5_5_cross_stage_integrity.md
+- STEP 5.7: stage5_7_decision_record_integrity.md (conditional)
+- STEP 6: issue artifacts (optional)
+- STEP 7: cycle_summary.md
+- STEP 8: lessons_learnt.md
+
+Hard requirement for mutation safety:
+
+- At the start of the run after STEP 0, execute RESUME PRECHECK.
+- After any escalation mutation, execute RESUME PRECHECK.
 
 ---
 
@@ -783,6 +466,7 @@ The run may be marked Published only if:
 If any Deferred escalation has `Blocks execution: Yes`:
 
 - status MUST be Blocked (or remain non-Published)
+- publish_eligible = false
 - HALT (do not mark Published)
 
 When Publish Gate passes:
@@ -798,8 +482,8 @@ Otherwise:
 The run is incomplete unless:
 
 - cycle folder exists at `claude/cycles/<cycle_id>/`
-- state.json exists and reflects the latest statuses
-- required files exist and are compliant for this run
+- `state.json` exists and reflects the latest statuses, including mutation_seq, fingerprints, and publish_eligible
+- required stage files exist and are compliant for this run
 - if auto-escalate=true and blockers occurred, escalations.md exists
 - Publish Gate passes
 
