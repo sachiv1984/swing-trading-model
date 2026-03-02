@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Canonical  
-**Version:** 1.1  
+**Version:** 1.2 
 **Last Updated:** 2026-03-02  
 
 ---
@@ -11,6 +11,7 @@
 
 | Version | Date       | Change |
 |--------:|------------|--------|
+| 1.2 | 2026-03-02 | **Added Formal Authority Escalation Protocol** (Section 9). Defines escalation triggers, required escalation record fields, routing, SLAs, and resolution criteria. Additive only; no authority or conflict rule changes. |
 | 1.1     | 2026-03-02 | Added Release Planning Engine as a governed routine. No changes to role authority, conflict rules, or constraints. |
 | 1.0     | 2026-03-01 | Initial charter. Establishes role authority model, domain ownership boundaries, conflict resolution rules, and non-decision role definitions for all governed routines. |
 
@@ -329,3 +330,73 @@ This charter may only be amended by the Head of Specs Team with Product Owner ac
 - Version increment (minor for additive changes, major for authority boundary changes)
 - Last Updated date updated to the amendment date
 - Change log entry describing what changed and why
+
+---
+
+## 9. Formal Authority Escalation Protocol
+
+### 9.1 Purpose
+This protocol defines the standard escalation mechanism for all governed routines when:
+- a hard gate halts execution, or
+- a domain authority applies a block, or
+- a cross-domain dispute cannot be resolved within the routine.
+This protocol does not create new authorities; it standardises how blocking events are recorded, routed, timeboxed, and closed. 
+
+### 9.2 Escalation Triggers (When escalation is mandatory)
+An escalation record MUST be created when any of the following occurs during a governed routine:
+1) **Hard-gate halt** (e.g., lifecycle non-compliance, missing authority, prohibited write scope). 
+2) **Authority block** is applied within a domain:
+   - Strategy boundary / §13 block (Strategy Rules & System Intent Owner) 
+   - Quality / release readiness block (Director of Quality) 
+   - Workforce economics constraint block (FinOps & Resource Architect) 
+   - Lifecycle compliance block (Head of Specs Team)   
+3) **Unresolved dispute** where the routine cannot proceed without a decision and the applicable conflict rule does not resolve it within the run. 
+
+### 9.3 Escalation Record (Where it lives and what it must contain)
+Escalations are recorded **inside the cycle folder** of the run that encountered the blocker to preserve traceability.
+
+- Location: `claude/cycles/<cycle_id>/escalations.md`
+- Class: Planning Document (Class 4) OR Operational Record (Class 3) as specified by the governing prompt that creates it.
+- Rule: This file is **append-only within the cycle** (do not edit previous entries).
+
+Each escalation entry MUST include:
+- **Escalation ID:** `ESC-<YYYYMMDD>-<nn>` (unique within the cycle)
+- **Date/time raised**
+- **Routine:** (e.g., Roadmap Rebalance Engine / Release Planning Engine)
+- **Cycle ID**
+- **Trigger type:** Lifecycle | Strategy | Quality | Workforce | Other
+- **Release impacted:** (if applicable)
+- **Blocking statement:** one paragraph, precise and factual
+- **Owning authority:** role required to unblock
+- **Required responders:** roles that must contribute
+- **Due-by / SLA:** date/time
+- **Unblock criteria:** “what must be true to resume”
+- **Evidence required:** links to docs/artefacts that prove resolution
+- **Disposition:** Open | Resolved | Accepted Risk | Deferred
+- **Resolution summary + evidence links** (required when closing)
+
+### 9.4 Standard SLAs (Default timeboxes)
+Unless a governing prompt specifies otherwise:
+- **Lifecycle compliance blocks:** 24 hours (remediate header/class/state issues or formally halt and reschedule). 
+- **Strategy boundary blocks (§13):** 72 hours to produce either:
+  - a decision record confirming “boundaries unchanged”, or
+  - a versioned `strategy_rules.md` revision (if boundaries change). 
+- **Quality blocks:** must be resolved before release execution begins; cannot be waived outside Director of Quality rules. 
+- **Workforce blocks:** resolved by next planning checkpoint; constraint is binding, Product Owner selects displacement if needed. 
+
+### 9.5 Escalation Routing (Who decides what)
+Escalations route according to domain authority and conflict rules:
+- **Lifecycle / document class / compliance:** Head of Specs Team decides; if resolution requires joint acknowledgement per routine, Product Owner + Head of Specs Team must explicitly declare the gate satisfied before resuming.   
+- **Strategy intent / §13 boundaries:** Strategy Rules & System Intent Owner decides; a block stands until resolved by a formal, versioned strategy rules update or explicit confirmation decision. 
+- **Quality readiness / sign-off:** Director of Quality decides; Product Owner may not override. 
+- **Workforce economics:** FinOps & Resource Architect constraint is binding; Product Owner chooses which work stops/defers to satisfy it. 
+
+### 9.6 Resolution (When an escalation may be closed)
+An escalation may be marked **Resolved** only when:
+1) The owning authority explicitly states the unblock criteria are met, AND
+2) The required evidence is linked in the escalation entry (docs, decision record, verification report, etc.). 
+
+If the outcome is **Accepted Risk** or **Deferred**, the escalation entry must:
+- name the accepting authority (Product Owner cannot accept Quality or Strategy domain blocks),
+- state the rationale,
+- and link to the follow-up backlog item / target release (where applicable). 
