@@ -1,0 +1,39 @@
+name: "Governance Sync Loop"
+
+on:
+  push:
+    branches:
+      - 'exec/**' # Triggers when you push to your v1.7 execution branch
+
+jobs:
+  sync_state:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Parse Commit for Governance
+        id: parse
+        run: |
+          # Extracts [EPIC-XX][ST-XX] from the latest commit message
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if [[ $COMMIT_MSG =~ \[(EPIC-[0-9]+)\]\[(ST-[0-9]+)\] ]]; then
+            echo "epic_id=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "st_id=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
+            echo "found=true" >> $GITHUB_OUTPUT
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update State and Close Issue
+        if: steps.parse.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 1. Close the corresponding GitHub Issue
+          gh issue close --comment "Resolved via Claude Code commit: ${{ steps.parse.outputs.st_id }}" "${{ steps.parse.outputs.st_id }}"
+          
+          # 2. Update the local state.json (Optional: can be done by Claude locally)
+          echo "Syncing state for ${{ steps.parse.outputs.st_id }}..."
