@@ -1011,6 +1011,14 @@ If escalations.md does not exist:
 - Treat its canonical hash as SHA-256 of empty string.
 - Write that value into sealed.sealed_hashes.escalations.
 
+If any of the required tracked artifacts are missing at sealing time:
+- stage2_scope_extraction.md
+- stage3_execution_plan.md
+- stage4_backlog_slice.md
+Then:
+- HALT.
+- status remains Validated.
+
 Write them into:
 - state.sealed.sealed_hashes
 
