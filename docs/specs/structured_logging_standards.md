@@ -1,11 +1,12 @@
 **Owner:** Head of Engineering
-**Status:** Draft — Pending Head of Specs Team class assignment (TASK-16)
+**Class:** Canonical Specification (Class 1)
+**Status:** Active
 **Version:** 0.1.0
 **Last Updated:** 2026-03-02
 **Cycle:** 2026-03-02__release-v1.7
 **Maps to:** S2-04 (EPIC-04)
 
-> **Note:** Document class has not yet been assigned by the Head of Specs Team (TASK-16 open). This document is not authoritative until TASK-16 is complete and the header is updated with an approved class, owner confirmation, and lifecycle status.
+> **Lifecycle Sign-off (TASK-16):** Head of Specs Team — Class 1 (Canonical Specification) assigned 2026-03-02 (Delegated Authority). This document is the authoritative source of truth for structured logging standards. All backend implementations must conform. v2.0 hard gate (structured logging / observability) cleared.
 
 ---
 
@@ -203,4 +204,4 @@ The following must **never** appear in any log record, regardless of level:
 
 | Version | Date | Change | Author |
 |---------|------|--------|--------|
-| 0.1.0 | 2026-03-02 | Initial draft — TASK-11/12/13/14/15 complete. Pending TASK-16 Head of Specs Team class assignment and sign-off. | Head of Engineering |
+| 0.1.0 | 2026-03-02 | Initial draft — TASK-11/12/13/14/15 complete. TASK-16: Class 1 (Canonical Specification) assigned by Head of Specs Team (Delegated Authority). Document status set to Active. v2.0 hard gate cleared. | Head of Engineering + Head of Specs Team |
