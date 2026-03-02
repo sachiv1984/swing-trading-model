@@ -1,6 +1,7 @@
 
 📘 Swing Trading Model: Operational Runbook
 This guide defines the end-to-end flow from high-level strategy to automated code execution.
+
 Step 1: Roadmap Rebalance (Strategy)
 When to run: When you want to add new features, change priorities, or alter the long-term direction.
 Command:
@@ -10,6 +11,7 @@ What happens: * Claude analyzes claude/strategy/ and claude/roadmap/.
  * It identifies conflicts or new opportunities.
  * It updates current_roadmap.md with new version targets (e.g., v1.8, v1.9).
  * Output: A revised strategic roadmap.
+
 Step 2: Release Planning (Governance)
 When to run: When a roadmap version (e.g., v1.7) is ready to be turned into a concrete work plan.
 Command:
@@ -20,8 +22,10 @@ What happens: * State Check: Creates a new folder: claude/cycles/YYYY-MM-DD__rel
  * Locking: Temporarily locks the backlog to prevent data corruption.
  * Sync: Automatically creates GitHub Issues for every task.
  * Output: A "Sealed" cycle folder and a live GitHub Project board.
+
 Step 3: Execution Loop (Engineering)
 When to run: Daily, to actually write the code and close tasks.
+
 3.1: Initialize Task
 Identify the next ST-xx in your cycle folder and tell Claude:
 claude "Let's start [ST-xx]. Create a new branch 'exec/v1.7-[TaskName]' and implement the requirements from the stage4_backlog_slice.md."
