@@ -39,3 +39,9 @@ I’m standing by—let me know if the "Sync Loop" appears in your Actions tab t
 
 "I am moving to Batch Mode. Please look at the remaining issues for v1.7. Execute ST-03, ST-04, and ST-05 sequentially. For each one: Create the branch, write the code, commit with the governance ID, and push. Do not stop to ask me for permission between these three tasks unless there is an error."
 
+claude "Epic 01 is complete. Now, move to Epic 02. 
+1. Read 'stage4_backlog_slice.md' to extract the requirements for all Stories under EPIC-02.
+2. Resume 'Batch Mode' execution.
+3. For each Story in EPIC-02: branch, implement, commit with [EPIC-02][ST-xx], and push.
+4. If you finish EPIC-02, continue straight into EPIC-03."
+
