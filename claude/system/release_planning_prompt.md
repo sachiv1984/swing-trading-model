@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.6
+**Version:** 2.7
 **Last Updated:** 2026-03-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -949,6 +949,11 @@ The run may be marked Validated/Published only if:
 - artifacts.stage4_5_capacity_check is pass OR warn (warn allowed only if mode=standard), AND
 - artifacts.stage5_5_cross_stage_integrity is pass, AND
 - artifacts.stage5_7_decision_record_integrity is pass OR not_applicable
+- artifacts.stage1_readiness = pass
+- artifacts.stage3_5_model_integrity = pass
+- attributes.plan_structured = true
+- attributes.plan_executable = true
+- attributes.backlog_committed = true
 
 If any Deferred escalation has `Blocks execution: Yes`:
 - status MUST be Blocked (or remain non-Published)
