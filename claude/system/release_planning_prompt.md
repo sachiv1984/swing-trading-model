@@ -1,6 +1,6 @@
 Owner: Head of Specs Team
 Status: Active
-Version: 1.3
+Version: 1.4
 Last Updated: 2026-03-02
 Lifecycle Guide: claude/charter/document_lifecycle_guide.md (v2.4)
 Team Charter: claude/charter/team_charter.md (v1.1)
@@ -272,39 +272,52 @@ Only these trigger types may be marked “Accepted Risk”:
 And only by:
 - Product Owner (accepting authority)
 
-#### AR-3: Mandatory decision record for Accepted Risk (Required)
-Any “Accepted Risk” disposition MUST create a decision record under:
-- `docs/product/decisions/`
+#### DR-1: Typed decision records only (Release Planning)
+Decision records created by this routine are restricted to exactly two types:
+- **AR** = Accepted Risk (Workforce or Schedule/Delivery only)
+- **SRB** = Strategy Rules Boundary confirmation (“boundaries unchanged”)
 
-Rules:
-- Class: Planning Document (Class 4)
-- Owner: Product Owner
-- Status: Active
-- Must be linked from:
-  - the escalation entry, and
-  - the cycle summary
-- If the decision record cannot be created within allowed write scope or lifecycle compliance: HALT
+No other decision record types may be created in Release Planning. If needed, halt.
 
-Decision record naming convention (recommended):
-- `AR-<cycle_id>-<ESC-ID>.md`
-  - Example: `AR-2026-03-02__release-v1.7-ESC-20260302-01.md`
+#### DR-2: Naming convention (required)
+- Accepted Risk: `docs/product/decisions/AR-<cycle_id>-<esc_id>.md`
+- Strategy Boundary confirmation: `docs/product/decisions/SRB-<cycle_id>-<esc_id>.md`
 
-Minimum required content (must be present):
-- Title: Accepted Risk — <short description>
-- Escalation ID(s): <list>
-- Domain: Workforce | Schedule/Delivery
-- Risk statement: what could go wrong (one paragraph)
-- Impact statement: user/system consequence (bullets)
-- Rationale: why accepting is the least harmful path (one paragraph)
-- Guardrails (explicit):
-  - Strategy boundaries unchanged
-  - Quality gates not bypassed
-  - Lifecycle compliance maintained
-  - No scope change inside Release Planning routine
-- Time boundary: “Valid for release <vX.Y> only”
-- Accepting authority: Product Owner
-- Date
+Examples:
+- `AR-2026-03-02__release-v1.7-ESC-20260302-01.md`
+- `SRB-2026-03-02__release-v1.8-ESC-20260302-02.md`
 
+#### DR-3: Mandatory template (hard requirement)
+Any decision record created MUST follow this exact template.
+
+Header (required):
+Owner: Product Owner
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: <date>
+Decision Type: AR | SRB
+Decision ID: <matches filename>
+Related Escalation: <ESC-YYYYMMDD-nn>
+Related Cycle: <cycle_id>
+Applies To Release: <vX.Y>
+Time Boundary: This release only
+
+Body sections (required):
+## Decision
+## Context
+## Risk / Impact
+## Guardrails (Non-Negotiable)
+- Strategy boundaries unchanged: Yes/No (explain)
+- Quality gates not bypassed: Yes/No (explain)
+- Lifecycle compliance maintained: Yes/No (explain)
+- No scope change inside Release Planning: Yes/No (explain)
+## Evidence
+## Follow-up
+
+If any required header field or section is missing:
+- The decision record is non-compliant
+- The escalation may not be closed as Accepted Risk / Resolved-via-Decision
+- Halt
 ---
 
 ### Resolution loop behaviour (delegated authority)
@@ -338,16 +351,13 @@ F) Other escalation:
 
 ### Applying “Accepted Risk” (Mechanics)
 If an escalation is proposed to be marked “Accepted Risk”:
-1) Validate trigger type is Workforce or Schedule/Delivery (AR-2). If not, apply AR-1.
-2) Validate accepting authority is Product Owner (AR-2). If not, HALT.
-3) Create the mandatory decision record in `docs/product/decisions/` (AR-3).
-4) Update the escalation entry:
+1) Validate trigger type is Workforce or Schedule/Delivery. Otherwise: halt.
+2) Validate accepting authority is Product Owner. Otherwise: halt.
+3) Create the required AR decision record using DR-2 + DR-3.
+4) Update the escalation entry with:
    - Disposition: Accepted Risk
-   - Link to decision record
-   - Time boundary: release version
-5) Ensure the Stage 3 risk register includes:
-   - the same risk ID (or a cross-reference)
-   - mitigation/monitoring note
+   - Decision link
+   - Time Boundary: This release only
 
 If any step above cannot be satisfied: HALT.
 
@@ -619,6 +629,45 @@ Failure behaviour (mandatory):
 - Record ⛔ Blocker(s) (Lifecycle / Process Integrity; owner: Head of Specs Team)
 - Apply Global Rule — Blockers Must Route
 - HALT regardless of mode if any escalation remains Open
+
+## STEP 5.7 — Decision Record Integrity Validation (Hard Gate)
+Authority: Head of Specs Team (governance integrity)
+
+Create:
+- `claude/cycles/<cycle_id>/stage5_7_decision_record_integrity.md`
+
+Trigger:
+- Run this step only if either:
+  - Any escalation disposition is “Accepted Risk”, OR
+  - Any escalation was resolved via a decision record (e.g., SRB boundary confirmation)
+
+Checks (must all pass):
+1) A decision record exists for each such escalation:
+   - Accepted Risk → AR-<cycle_id>-<esc_id>.md
+   - Strategy boundary confirmation → SRB-<cycle_id>-<esc_id>.md
+
+2) Each decision record is typed correctly:
+   - Only Decision Type AR or SRB allowed
+   - Filename prefix matches Decision Type
+   - Decision ID matches filename exactly
+
+3) Required header fields present:
+   - Owner, Class, Status, Last Updated
+   - Decision Type, Decision ID
+   - Related Escalation, Related Cycle
+   - Applies To Release, Time Boundary (“This release only”)
+
+4) Required body sections present:
+   - Decision, Context, Risk/Impact, Guardrails, Evidence, Follow-up
+
+Failure behaviour:
+- Write FAIL with evidence into stage5_7_decision_record_integrity.md
+- Record ⛔ Blocker (Lifecycle / Process Integrity; owner: Head of Specs Team)
+- Apply Global Rule — Blockers Must Route
+- HALT
+
+Pass behaviour:
+- Write PASS and list validated decision record filenames
 
 ---
 
