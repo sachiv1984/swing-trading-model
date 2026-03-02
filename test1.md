@@ -1,12 +1,19 @@
-### Final Publish Preconditions (Hard Gate)
+- artifacts.stage1_readiness = pass
+- artifacts.stage3_5_model_integrity = pass
+- attributes.plan_structured = true
+- attributes.plan_executable = true
+- attributes.backlog_committed = true
 
-Before Publish Sealing:
+- open_escalations must not change
+- deferred_escalations must not change
+- accepted_risk_escalations must not change
+- deferred_execution_blockers must not change
 
-- locks.backlog_lock.status must be "released"
-- locks.roadmap_lock.status must be "released" OR "not_checked"
-- locks.*.owned must be false
-- locks.*.txn_state must be "committed" OR "none"
-
-If any lock remains acquired, prepared, or blocked:
+If any of the required tracked artifacts are missing at sealing time:
+- stage2_scope_extraction.md
+- stage3_execution_plan.md
+- stage4_backlog_slice.md
+Then:
 - HALT.
+- status remains Validated.
 
