@@ -1,13 +1,4 @@
 
-Here is the clean Markdown-ready version of your consolidated prompt file (v2.4), formatted for direct use in GitHub.
-
-You can save this as:
-
-claude/governance/release_planning_engine_v2.4.md
-
-
-⸻
-
 Release Planning Engine — Governance Prompt
 
 Owner: Head of Specs Team
@@ -416,26 +407,3 @@ Run is complete only if:
 	•	No open escalations
 
 ⸻
-
-Governance Guarantees
-
-This engine guarantees:
-	•	Deterministic planning
-	•	Deterministic invalidation
-	•	Transactional shared writes
-	•	Concurrency-safe locks
-	•	Escalation containment
-	•	Deferred governance discipline
-	•	Accepted risk constraints
-	•	Assumption immutability
-	•	Escalation immutability
-	•	Tamper-evident state
-	•	Terminal publish sealing
-	•	Amendment-only correction
-
-⸻
-
-If you’d like next, I can generate:
-	•	A minimal “Claude system prompt” condensed version
-	•	An Amendment Cycle Protocol (v1.0)
-	•	Or a visual state diagram for the engine
