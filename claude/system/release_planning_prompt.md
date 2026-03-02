@@ -194,7 +194,7 @@ Authorities: Product Owner + Strategy Rules & System Intent Owner + Head of Spec
   
 ---
 
-## STEP 1.5 — Escalation Handling Loop (Delegated Authority)  [NEW]
+## STEP 1.5 — Escalation Handling Loop (Delegated Authority)
 **Trigger:**
 - If any ⛔ Blockers exist in stage1_readiness.md AND `--auto-escalate=true`
 
@@ -268,7 +268,7 @@ Authorities: Product Owner (sequencing), Director of Quality (verification gates
 - Sequencing based on timebox/capacity if provided
 - Risk register (top 5) with mitigations + owners
 
-## STEP 3.5 — Local Model Integrity Check (Soft Gate)  [NEW]
+## STEP 3.5 — Local Model Integrity Check
 Authority: Head of Specs Team (process integrity), Director of Quality (gate completeness)
 
 **Create:**
@@ -330,7 +330,7 @@ Update `claude/roadmap/current_roadmap.md` ONLY to:
 
 If an edit would change scope/priority: halt (requires Roadmap Rebalance Engine).
 
-## STEP 5.5 — Cross-Stage Integrity Validation (Hard Gate)  [NEW]
+## STEP 5.5 — Cross-Stage Integrity Validation (Hard Gate)
 Authority: Head of Specs Team (governance integrity)
 
 **Create:**
