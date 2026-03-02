@@ -973,6 +973,10 @@ Recompute canonicalized SHA-256 hashes for:
 - stage4_backlog_slice.md
 - escalations.md
 
+If escalations.md does not exist:
+- Treat its canonical hash as SHA-256 of empty string.
+- Write that value into sealed.sealed_hashes.escalations.
+
 Write them into:
 - state.sealed.sealed_hashes
 
