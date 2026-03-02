@@ -1,13 +1,12 @@
-### STEP 5 Postcondition — Release Roadmap Lock (Strict)
+### Final Publish Preconditions (Hard Gate)
 
-After roadmap_txn state = committed:
+Before Publish Sealing:
 
-- Remove `claude/roadmap/.lock`
-- Update state.json:
-  - locks.roadmap_lock.status = "released"
-  - locks.roadmap_lock.owned = false
-  - artifacts.roadmap_lock = "released"
+- locks.backlog_lock.status must be "released"
+- locks.roadmap_lock.status must be "released" OR "not_checked"
+- locks.*.owned must be false
+- locks.*.txn_state must be "committed" OR "none"
 
-If removal fails:
-- Record blocker and HALT.
+If any lock remains acquired, prepared, or blocked:
+- HALT.
 
