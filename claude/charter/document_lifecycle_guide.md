@@ -1,28 +1,30 @@
 # Documentation Lifecycle Guide
 
-**Owner:** Head of Specs Team
-**Scope:** All governed documentation across the entire product
-**Status:** Canonical
-**Version:** 2.3
-**Last Updated:** 2026-02-23
+**Owner:** Head of Specs Team  
+**Scope:** All governed documentation across the entire product  
+**Status:** Canonical  
+**Version:** 2.4  
+**Last Updated:** 2026-03-02  
 
 ---
 
 ## Change Log
 
 | Version | Change |
-|---------|--------|
+|--------:|--------|
+| 2.4 | Added Release Planning Engine governance alignment. Clarified that multiple governed routines may exist (e.g., Roadmap Rebalance, Release Planning), all invoked via Class 6 Governance Prompts. Explicitly recognised `claude/roadmap/` and `claude/backlog/` as valid planning-document locations for governed routines. |
 | 2.3 | Clarified lifecycle enforcement roles to explicitly include Facilitator and Challenger as non-decision governance roles. No changes to document classes or lifecycle semantics. |
-| 2.2 | Added Section 9 --- Known Deviation Documentation Standard. When any deviation from canonical behaviour is documented in a spec, it must be assigned a priority tier, a target resolution release, and a named owner at the time of documentation. P0 deviations must be resolved within one release cycle. Identified via lessons learnt for BLG-TECH-01. |
-| 2.1 | Class 4 (Planning Document): added canonical location `docs/product/scope/` for scope documents, naming convention, and scope document as a distinct sub-type with its own supersession rule. Additive only --- no existing rules changed. |
-| 2.0 | Expanded scope to cover all document classes. Added Operational Record, Planning Document, Role Charter, and Governance Prompt as formal classes. Added universal header block standard. Added enforcement mechanism section. Added trigger rules for governance review. |
-| 1.0 | Initial version. Covered Canonical, Supporting, and reference artifacts only. |
+| 2.2 | Added Section 9 — Known Deviation Documentation Standard. When any deviation from canonical behaviour is documented in a spec, it must be assigned a priority tier, a target resolution release, and a named owner at the time of documentation. P0 deviations must be resolved within one release cycle. |
+| 2.1 | Class 4 (Planning Document): added canonical location `docs/product/scope/` for scope documents, naming convention, and scope document as a distinct sub-type with its own supersession rule. |
+| 2.0 | Expanded scope to cover all document classes. Added Operational Record, Planning Document, Role Charter, and Governance Prompt as formal classes. Added universal header block standard and enforcement mechanisms. |
+| 1.0 | Initial version. |
 
 ---
 
 ## 1. Purpose
 
 This guide defines how all product documentation is:
+
 - Classified
 - Created
 - Maintained
@@ -32,12 +34,13 @@ This guide defines how all product documentation is:
 - Enforced for compliance
 
 Its goal is to prevent:
+
 - Silent drift between documents and reality
 - Conflicting sources of truth
 - Undocumented behavioural change
 - Documents that influence decisions without a named owner
 
-**This guide applies to every document in the repository** --- not only specs. All roles that own documentation are bound by it, regardless of which function they report into.
+This guide applies to every document in the repository — not only specs. All roles that own documentation are bound by it.
 
 ---
 
@@ -128,49 +131,30 @@ Filed:              [date filed]
 
 ---
 
-### Class 4 --- Planning Document
+### Class 4 — Planning Document
 
-**What it is:** A working document capturing product decisions, feature intent, prioritisation, and backlog thinking. It is pre-canonical --- when a feature is built, the planning document is superseded by the canonical specs written for that feature.
+**What it is:** A working document capturing product decisions, feature intent, prioritisation, and backlog thinking. It is pre-canonical.
 
 Planning Documents include two distinct sub-types:
 
-- **Roadmap, backlog, and decisions documents** --- ongoing planning artifacts that evolve over time
-- **Scope documents** --- implementation briefs written at the end of the pre-alignment phase for a specific feature, immediately before engineering begins
+1. **Roadmap, backlog, and decisions documents** — ongoing planning artefacts that evolve over time  
+2. **Scope documents** — implementation briefs written at the end of pre-alignment  
 
-**Who creates it:** Product Owner.
-
-**Lifecycle states available:** Draft → Active → Superseded → Archived
+**Who creates it:** Product Owner.  
+**Lifecycle states:** Draft → Active → Superseded → Archived  
 
 **Required header fields:**
-```
-Owner:        Product Owner
-Class:        Planning Document (Class 4)
-Status:       [Draft | Active | Superseded]
-Last Updated: [date]
-```
+
+- **Owner:** Product Owner  
+- **Class:** Planning Document (Class 4)  
+- **Status:** Draft \| Active \| Superseded  
+- **Last Updated:** `<date>`  
 
 **Rules:**
-- Must carry a standing notice that all implementation detail is indicative and subject to canonical spec review before any code is written
-- When a feature moves from planning to implementation, the planning document status is updated to Superseded and must reference the canonical documents that replace it
-- Planning documents must never be cited as canonical intent --- they record thinking, not decisions
-- Implementation detail in planning documents (SQL schemas, endpoint paths, formulas) is illustrative; the canonical spec takes precedence if they conflict
 
-**Scope document additional rules:**
-- A scope document must not be written until QA review (acceptance criteria confirmation) is complete
-- A scope document is the final gate before implementation is opened --- it represents the Product Owner's sign-off that all pre-alignment work is done
-- When the feature ships, the scope document status is updated to Superseded and must reference the changelog entry for the delivered version
-- Scope documents must include a pre-implementation checklist confirming all canonical specs are locked
-
-**Locations:**
-- Roadmap and backlog: `docs/product/roadmap.md`, `docs/product/backlog.md`
-- Decisions records: `docs/product/decisions/`
-- Scope documents: `docs/product/scope/`
-
-**Naming conventions:**
-- Decisions records: `{roadmap-item-id}-{feature-slug}.md` (e.g. `3.2-position-sizing-calculator.md`)
-- Scope documents: `scope--{roadmap-item-id}-{feature-slug}.md` (e.g. `scope--3.2-position-sizing-calculator.md`)
-
-**Examples:** `docs/product/roadmap.md`, `docs/product/backlog.md`, `docs/product/decisions/3.2-position-sizing-calculator.md`, `docs/product/scope/scope--3.2-position-sizing-calculator.md`
+- Planning documents may exist in governed planning workspaces used by governance prompts (e.g., `claude/roadmap/`, `claude/backlog/`) as well as in `docs/product/`.
+- When a governed routine is in effect (e.g., Roadmap Rebalance Engine or Release Planning Engine), the prompt-defined write scope is authoritative for where Class 4 documents are created or updated.
+- Planning documents must never be cited as canonical intent.
 
 ---
 
@@ -199,25 +183,31 @@ Last Updated: [date]
 
 **Examples:** `Head_of_Specs_Team.md`, `API_Contracts_&_Documentation_Owner.md`, `Infrastructure_and_Operations_Owner.md`
 
+
 ---
 
-### Class 6 --- Governance Prompt
+### Class 6 — Governance Prompt
 
-**What it is:** An instruction set used to invoke automated compliance checking against this lifecycle guide. It is part of the governance infrastructure, not a product document.
-
-**Who creates it:** Head of Specs Team.
-
-**Lifecycle states available:** Draft → Active → Deprecated
+**What it is:** An instruction set used to invoke automated, governed routines that enforce this lifecycle guide.  
+**Who creates it:** Head of Specs Team.  
+**Lifecycle states:** Draft → Active → Deprecated  
 
 **Required header fields:**
-```
-Owner:        Head of Specs Team
-Status:       Active
-Version:      [x.y]
-Last Updated: [date]
-```
 
-**Rules:** - Must reference this lifecycle guide by version - Must be updated whenever a new document class is added or header requirements change - Must cover all document classes, not only Canonical documents - Location: `claude/system/` Governance prompts stored in `claude/system/` are the authoritative execution instructions used to invoke governed routines (e.g., roadmap rebalance). They are governance infrastructure and must follow this lifecycle guide by version. **Examples:** `governance_reviewer.md`
+- **Owner:** Head of Specs Team  
+- **Status:** Active  
+- **Version:** `x.y`  
+- **Last Updated:** `<date>`  
+
+**Rules (clarified):**
+
+- Multiple governed routines may coexist (e.g., Roadmap Rebalance, Release Planning).
+- Each governed routine must have exactly one Class 6 governance prompt stored under `claude/system/`.
+- The prompt defines:
+  - invocation syntax
+  - allowed write scope
+  - enabled vs disabled governance steps
+- Governance prompts are governance infrastructure, not product documentation.
 
 ---
 
