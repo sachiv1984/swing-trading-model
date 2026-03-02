@@ -1,9 +1,9 @@
-Owner: Head of Specs Team
-Status: Active
-Version: 1.0
-Last Updated: 2026-03-02
-Lifecycle Guide: claude/charter/document_lifecycle_guide.md (v2.4)
-Team Charter: claude/charter/team_charter.md (v1.1)
+**Owner:** Head of Specs Team
+**Status:** Active
+**Version:** 1.0
+**Last Updated:** 2026-03-02
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Team Charter:** claude/charter/team_charter.md
 ---
 
 # Claude Governance Prompt — Release Planning Engine (Cycle-Based, Reusable)
