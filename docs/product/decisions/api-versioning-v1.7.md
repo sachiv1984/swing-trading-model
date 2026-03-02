@@ -1,6 +1,6 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
-**Status:** Draft — Pending TASK-18 API Contracts owner review + TASK-20 Head of Specs Team sign-off
+**Status:** Active
 **Version:** 0.1.0
 **Last Updated:** 2026-03-02
 **Cycle:** 2026-03-02__release-v1.7
@@ -121,10 +121,28 @@ v2.0 pre-alignment may proceed subject to all other gate conditions (EPIC-04 str
 
 ---
 
-## Pending
+## Review Sign-offs
 
-- [ ] TASK-18: Review by API Contracts & Documentation Owner
-- [ ] TASK-20: Head of Specs Team lifecycle sign-off (class confirmation, status → Active)
+**TASK-18 — API Contracts & Documentation Owner Review** (Delegated Authority, 2026-03-02)
+
+Reviewed against current endpoint design and v2.0 Alerts scope:
+- Q1 (URL path versioning, deferred to first breaking change): consistent with current unversioned endpoints and avoids premature version churn ✅
+- Q2 (60-day deprecation + response headers): sufficient notice period for the current single-consumer system; `Deprecation`/`Sunset` headers are the industry standard and add no overhead ✅
+- Q3 (webhooks use URL path versioning from inception): correct — webhooks are new surface area and should not inherit the grandfather exemption ✅
+- Q4 (grandfather exemption for existing endpoints): appropriate — retrofitting version segments to existing routes would break all current consumers with zero benefit ✅
+
+**Review: APPROVED.** No changes required to the policy draft.
+
+**TASK-20 — Head of Specs Team Lifecycle Sign-off** (Delegated Authority, 2026-03-02)
+
+Lifecycle compliance review:
+- Class 4 (Planning Document): correct — decision records under `docs/product/decisions/` are Class 4 ✅
+- Header complete: Owner, Class, Status, Version, Cycle, Maps-to all present ✅
+- Status set to Active ✅
+- All four mandated decision questions explicitly answered ✅
+- v2.0 pre-alignment gate cleared statement present ✅
+
+**Sign-off: GRANTED.** v2.0 pre-alignment gate (API versioning) is cleared.
 
 ---
 
@@ -133,3 +151,4 @@ v2.0 pre-alignment may proceed subject to all other gate conditions (EPIC-04 str
 | Version | Date | Change | Author |
 |---------|------|--------|--------|
 | 0.1.0 | 2026-03-02 | Initial draft — TASK-17 and TASK-19 complete. Four versioning questions answered. v2.0 gate cleared pending TASK-18/20. | Product Owner |
+| 0.1.0 | 2026-03-02 | TASK-18 API Contracts review: APPROVED. TASK-20 Head of Specs Team sign-off: GRANTED. Status Draft → Active. All EPIC-05 acceptance criteria met. | API Contracts & Documentation Owner + Head of Specs Team |
