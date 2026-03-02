@@ -7,7 +7,8 @@
 
 ---
 
-# Claude Governance Prompt — Release Planning Engine (Cycle-Based, Reusable, Escalation-Aware, State-Driven, Mutation-Safe, Concurrency-Safe, Terminal-Publish)
+# Claude Governance Prompt — Release Planning Engine
+(Cycle-Based, Reusable, Escalation-Aware, State-Driven, Mutation-Safe, Concurrency-Safe, Terminal-Publish)
 
 ## Purpose
 Translate an already-approved roadmap release (e.g., v1.7, v1.8) into an execution-ready plan:
@@ -161,7 +162,7 @@ The routine is **state-driven**:
 - `Committed` — backlog slice committed (release slice written)
 - `Validated` — feasibility + integrity + decisions validated + publish gate eligible
 - `Published` — sealed; cycle summary + lessons filed; publish gate passed
-- `Blocked` — one or more Open escalations exist; publish gate cannot pass; strict lock blocks progress; or terminal publish guard halts further action
+- `Blocked` — one or more Open escalations exist; publish gate cannot pass; strict locks block progress; or terminal publish guard halts further action
 
 ## State semantics (no overlap)
 - **Planning** means “Stage 3 exists and Stage 3.5 passed.”
@@ -302,6 +303,19 @@ State.json schema (minimum required keys):
       "txn_state": "none|prepared|committed",
       "marker": "RP:<release>:<cycle_id>",
       "status": "not_checked|acquired|blocked|released|stale_detected"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "",
+      "owner_release": "",
+      "acquired_utc": "",
+      "txn_file": "claude/cycles/<cycle_id>/roadmap_txn.json",
+      "txn_id": "",
+      "txn_state": "none|prepared|committed",
+      "marker": "RA:<release>:<cycle_id>",
+      "status": "not_checked|acquired|blocked|released|stale_detected"
     }
   },
 
@@ -324,8 +338,12 @@ State.json schema (minimum required keys):
 
   "artifacts": {
     "run_manifest": "present|missing",
+
     "backlog_lock": "not_checked|acquired|blocked|released|stale_detected",
     "backlog_txn": "not_started|prepared|committed",
+
+    "roadmap_lock": "not_checked|acquired|blocked|released|stale_detected",
+    "roadmap_txn": "not_started|prepared|committed",
 
     "stage1_readiness": "not_started|pass|fail|blocked",
     "stage2_scope_extraction": "not_started|pass|fail|blocked",
@@ -353,6 +371,7 @@ Update state:
 - assumptions.timebox = value from invocation (or empty)
 - assumptions.capacity = value from invocation (or empty)
 - locks.backlog_lock.marker = `RP:<release>:<cycle_id>`
+- locks.roadmap_lock.marker = `RA:<release>:<cycle_id>`
 
 ---
 
@@ -489,9 +508,7 @@ If no invalidations exist:
 
 ---
 
-### Lock + STEP 4 Recovery (Hard Gate)
-
-This section handles strict lock behavior plus crash recovery around backlog writes.
+### Shared Write Recovery — Backlog (Hard Gate)
 
 If `claude/backlog/.lock` exists OR `artifacts.backlog_lock` in state.json is `acquired`:
 
@@ -502,42 +519,79 @@ If `claude/backlog/.lock` exists OR `artifacts.backlog_lock` in state.json is `a
 - HALT (strict lock; no override; no auto-delete)
 3. If `owner_cycle_id == <cycle_id>`:
 
-- Perform STEP 4 recovery.
+- Perform backlog STEP 4 recovery.
 
-STEP 4 recovery procedure (deterministic):
-A) Determine marker value: `RP:<release>:<cycle_id>`
-B) Check if backlog contains marker line:
+Backlog recovery procedure:
+A) Marker value: `RP:<release>:<cycle_id>`
+B) Check backlog contains:
 
 - `<!-- release-plan-marker: RP:<release>:<cycle_id> -->`
 
-C) If marker is present:
+C) If marker present:
 
-- Treat backlog write as completed.
-- Ensure `claude/cycles/<cycle_id>/backlog_txn.json` exists and is committed:
-- If missing → create with state=committed and committed_utc=now.
-- If prepared → upgrade to committed and set committed_utc=now.
-- Update `state.json`:
+- Ensure `backlog_txn.json` exists and committed (create/upgrade if needed).
+- Update state.json:
 - artifacts.stage4_backlog_slice = pass
 - attributes.backlog_committed = true
 - artifacts.backlog_txn = committed
 - locks.backlog_lock.txn_state = committed
-- Proceed to lock release (remove `.lock`), and update:
+- Remove `claude/backlog/.lock`, update:
 - artifacts.backlog_lock = released
 - locks.backlog_lock.status = released
 - locks.backlog_lock.owned = false
-- Continue resume.
+- Continue.
 
-D) If marker is not present:
+D) If marker absent:
 
 - Treat STEP 4 as incomplete:
 - artifacts.stage4_backlog_slice = not_started
 - artifacts.backlog_txn = prepared (create txn file if missing)
 - locks.backlog_lock.txn_state = prepared
-- Continue resume at STEP 4 (idempotency rules apply).
+- Resume at STEP 4.
 
-If lock removal fails during recovery:
+If lock removal fails: record blocker and HALT.
 
-- Record a blocker and HALT (lock cannot be left ambiguous).
+---
+
+### Shared Write Recovery — Roadmap (Hard Gate)
+
+If `claude/roadmap/.lock` exists OR `artifacts.roadmap_lock` in state.json is `acquired`:
+
+1. Read `claude/roadmap/.lock` and determine `owner_cycle_id`.
+2. If `owner_cycle_id != <cycle_id>`:
+
+- Record a blocker (Lifecycle / Process Integrity; owner: PMO Lead)
+- HALT (strict lock; no override; no auto-delete)
+3. If `owner_cycle_id == <cycle_id>`:
+
+- Perform roadmap STEP 5 recovery.
+
+Roadmap recovery procedure:
+A) Marker value: `RA:<release>:<cycle_id>`
+B) Check roadmap contains:
+
+- `<!-- roadmap-annotation-marker: RA:<release>:<cycle_id> -->`
+
+C) If marker present:
+
+- Ensure `roadmap_txn.json` exists and committed (create/upgrade if needed).
+- Update state.json:
+- artifacts.roadmap_txn = committed
+- locks.roadmap_lock.txn_state = committed
+- Remove `claude/roadmap/.lock`, update:
+- artifacts.roadmap_lock = released
+- locks.roadmap_lock.status = released
+- locks.roadmap_lock.owned = false
+- Continue.
+
+D) If marker absent:
+
+- Treat STEP 5 annotation as incomplete:
+- artifacts.roadmap_txn = prepared (create txn file if missing)
+- locks.roadmap_lock.txn_state = prepared
+- Resume at STEP 4.95 / STEP 5.
+
+If lock removal fails: record blocker and HALT.
 
 ---
 
@@ -678,159 +732,13 @@ Update state.json:
 - artifacts.stage3_5_model_integrity = pass|fail|blocked
 - attributes.plan_executable = true on pass
 
-## STEP 3.9 — Shared Write Lock Preflight (Hard Gate)
+## STEP 3.9 — Shared Write Lock Preflight (Hard Gate) — Backlog
 
-Purpose:
-
-- Enforce strict concurrency control for shared backlog writes.
-
-Shared resource:
-
-- Backlog file: `claude/backlog/backlog.md`
-- Lock file: `claude/backlog/.lock`
-
-Hard rules:
-
-- If `claude/backlog/.lock` exists and is not owned by the current `cycle_id`, HALT.
-- No auto-deletion of existing locks is permitted.
-- Stale locks follow the manual stale protocol only.
-
-Lock acquisition procedure:
-
-1. If `claude/backlog/.lock` does NOT exist:
-
-- Create it with deterministic contents:
-- cycle_id: `<cycle_id>`
-- release: `<release>`
-- acquired_utc: `<ISO-8601 UTC>`
-- acquired_by: "Release Planning Engine"
-- Update `state.json`:
-- locks.backlog_lock.owned = true
-- locks.backlog_lock.owner_cycle_id = `<cycle_id>`
-- locks.backlog_lock.owner_release = `<release>`
-- locks.backlog_lock.acquired_utc = `<timestamp>`
-- locks.backlog_lock.status = "acquired"
-- locks.backlog_lock.marker = `RP:<release>:<cycle_id>`
-- artifacts.backlog_lock = "acquired"
-2. If `claude/backlog/.lock` exists:
-
-- Read owner_cycle_id.
-- If owner_cycle_id == `<cycle_id>`:
-- Treat as re-entrant: proceed.
-- artifacts.backlog_lock = "acquired"
-- If owner_cycle_id != `<cycle_id>`:
-- Record a ⛔ Blocker (Lifecycle / Process Integrity; owning authority: PMO Lead)
-- Unblock criteria: "Backlog lock must be manually released or declared stale under protocol"
-- Evidence: include lock file contents
-- If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
-- Update `state.json`:
-- locks.backlog_lock.owned = false
-- locks.backlog_lock.owner_cycle_id = <from lock="" file=""></from>
-- locks.backlog_lock.owner_release = <from lock="" file="" if="" present=""></from>
-- locks.backlog_lock.status = "blocked"
-- artifacts.backlog_lock = "blocked"
-- HALT.
-
-Stale protocol (detect only; do not clear):
-
-- If lock appears stale based on timestamp threshold defined by PMO Lead, you may:
-- set locks.backlog_lock.status = "stale_detected"
-- set artifacts.backlog_lock = "stale_detected"
-- create a blocker requiring manual stale resolution
-- You may not delete or overwrite the lock automatically.
+(Identical to v2.3 behavior; acquire/verify `claude/backlog/.lock`.)
 
 ## STEP 4 — Backlog Slice (commitment)
 
-Write: `stage4_backlog_slice.md` + update backlog slice section
-
-### STEP 4 Precondition — Backlog Lock Required (Hard Gate)
-
-Before writing to `claude/backlog/backlog.md`:
-
-- Verify `claude/backlog/.lock` exists AND contains owner_cycle_id == `<cycle_id>`.
-If not true:
-- Record a ⛔ Blocker (Lifecycle / Process Integrity; owner: PMO Lead)
-- Invoke escalation subroutine if auto-escalate=true
-- HALT
-
-### Backlog Section Marker (Required for Idempotency)
-
-When writing the release slice section into `claude/backlog/backlog.md`, include this HTML comment marker inside the section:
-
-- `<!-- release-plan-marker: RP:<release>:<cycle_id> -->`
-
-### STEP 4 Transaction — Prepare (Hard Requirement)
-
-Create or update:
-
-- `claude/cycles/<cycle_id>/backlog_txn.json`
-
-Set to “prepared” BEFORE any modification to `claude/backlog/backlog.md`.
-
-Minimum required fields:
-
-- cycle_id: `<cycle_id>`
-- release: `<release>`
-- txn_id: `BLTX-<YYYYMMDD>-<nn>`
-- state: `prepared`
-- prepared_utc: `<ISO-8601 UTC>`
-- marker: `RP:<release>:<cycle_id>`
-- target_file: `claude/backlog/backlog.md`
-
-Update `state.json`:
-
-- locks.backlog_lock.txn_state = "prepared"
-- artifacts.backlog_txn = "prepared"
-
-### STEP 4 Idempotency Rule (Hard Requirement)
-
-Before inserting/appending the release slice section:
-
-- Search backlog for marker:
-- `<!-- release-plan-marker: RP:<release>:<cycle_id> -->`
-
-If marker is found:
-
-- Do NOT write the section again.
-- Treat backlog update as already completed for this cycle.
-- Proceed to Transaction Commit + Lock Release.
-
-If marker is not found:
-
-- Write the release slice section once, including the marker.
-
-### STEP 4 Transaction — Commit (Hard Requirement)
-
-After backlog write completes successfully (or marker already present):
-
-- Update `claude/cycles/<cycle_id>/backlog_txn.json`:
-- state: `committed`
-- committed_utc: `<ISO-8601 UTC>`
-
-Update `state.json`:
-
-- locks.backlog_lock.txn_state = "committed"
-- artifacts.backlog_txn = "committed"
-
-Update state.json (Step 4 outcome):
-
-- artifacts.stage4_backlog_slice = pass|fail|blocked
-- attributes.backlog_committed = true on pass
-- status = Committed on pass
-
-### STEP 4 Postcondition — Release Backlog Lock (Strict)
-
-After successfully completing STEP 4 (txn committed):
-
-- Remove `claude/backlog/.lock`
-- Update `state.json`:
-- locks.backlog_lock.status = "released"
-- locks.backlog_lock.owned = false
-- artifacts.backlog_lock = "released"
-
-If the environment does not permit removing the lock file:
-
-- Record a blocker and HALT (lock cannot be left ambiguous).
+(Identical to v2.3 behavior; includes txn + marker + strict lock release.)
 
 ## STEP 4.5 — Capacity Feasibility Sense Check (Conditional Gate)
 
@@ -842,9 +750,136 @@ Update state.json:
 
 - artifacts.stage4_5_capacity_check = pass|warn|fail|blocked
 - attributes.capacity_feasible = pass|warn|fail|blocked
-(NOTE: this step is forced to rerun by RESUME PRECHECK per safety policy)
+(NOTE: forced to rerun by RESUME PRECHECK per safety policy)
 
-## STEP 5 — Roadmap Annotation (optional)
+## STEP 4.95 — Shared Write Lock Preflight (Hard Gate) — Roadmap (Only if STEP 5 will run)
+
+Purpose:
+
+- Enforce strict concurrency control for shared roadmap annotation writes.
+
+Shared resource:
+
+- Roadmap file: `claude/roadmap/current_roadmap.md`
+- Lock file: `claude/roadmap/.lock`
+
+Hard rules:
+
+- STEP 5 may not execute unless the roadmap lock is acquired by this cycle.
+- If `claude/roadmap/.lock` exists and is not owned by current `cycle_id`, HALT.
+- No auto-deletion of existing locks permitted.
+- Stale locks follow the manual stale protocol only.
+
+Lock acquisition procedure:
+
+1. If `claude/roadmap/.lock` does NOT exist:
+
+- Create it with deterministic contents:
+- cycle_id: `<cycle_id>`
+- release: `<release>`
+- acquired_utc: `<ISO-8601 UTC>`
+- acquired_by: "Release Planning Engine"
+- Update `state.json`:
+- locks.roadmap_lock.owned = true
+- locks.roadmap_lock.owner_cycle_id = `<cycle_id>`
+- locks.roadmap_lock.owner_release = `<release>`
+- locks.roadmap_lock.acquired_utc = `<timestamp>`
+- locks.roadmap_lock.status = "acquired"
+- locks.roadmap_lock.marker = `RA:<release>:<cycle_id>`
+- artifacts.roadmap_lock = "acquired"
+2. If `claude/roadmap/.lock` exists:
+
+- Read owner_cycle_id.
+- If owner_cycle_id == `<cycle_id>`:
+- Treat as re-entrant: proceed.
+- artifacts.roadmap_lock = "acquired"
+- If owner_cycle_id != `<cycle_id>`:
+- Record a ⛔ Blocker (Lifecycle / Process Integrity; owning authority: PMO Lead)
+- Unblock criteria: "Roadmap lock must be manually released or declared stale under protocol"
+- Evidence: include lock file contents
+- If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
+- Update `state.json`:
+- locks.roadmap_lock.owned = false
+- locks.roadmap_lock.owner_cycle_id = <from lock="" file=""></from>
+- locks.roadmap_lock.owner_release = <from lock="" file="" if="" present=""></from>
+- locks.roadmap_lock.status = "blocked"
+- artifacts.roadmap_lock = "blocked"
+- HALT.
+
+Stale protocol (detect only; do not clear):
+
+- If lock appears stale based on timestamp threshold defined by PMO Lead, you may:
+- set locks.roadmap_lock.status = "stale_detected"
+- set artifacts.roadmap_lock = "stale_detected"
+- create a blocker requiring manual stale resolution
+- You may not delete or overwrite the lock automatically.
+
+## STEP 5 — Roadmap Annotation (Optional, Non-Decision Notes Only) — Roadmap Txn + Marker
+
+Authority: Product Owner
+
+Precondition (Hard Gate):
+
+- Roadmap lock must be acquired by this cycle (artifacts.roadmap_lock == acquired AND lock file owner_cycle_id == `<cycle_id>`).
+If not true: HALT.
+
+Allowed roadmap changes (still apply):
+
+- Add links to the cycle folder under the relevant release section, and/or
+- Add a short “Execution Notes” subsection that does not change scope, status, or priority.
+
+Roadmap marker (Required for Idempotency):
+Include inside the annotated release section:
+
+- `<!-- roadmap-annotation-marker: RA:<release>:<cycle_id> -->`
+
+Roadmap transaction (Hard Requirement):
+Create or update:
+
+- `claude/cycles/<cycle_id>/roadmap_txn.json`
+
+Prepare:
+
+- state: `prepared`
+- prepared_utc: now
+- marker: `RA:<release>:<cycle_id>`
+- target_file: `claude/roadmap/current_roadmap.md`
+
+Update state.json:
+
+- locks.roadmap_lock.txn_state = prepared
+- artifacts.roadmap_txn = prepared
+
+Idempotency:
+Before writing annotation:
+
+- Search `claude/roadmap/current_roadmap.md` for marker:
+- `<!-- roadmap-annotation-marker: RA:<release>:<cycle_id> -->`
+If found:
+- Do NOT write annotation again.
+- Proceed to commit + unlock.
+If not found:
+- Write annotation and marker once.
+
+Commit:
+
+- set roadmap_txn.json:
+- state: committed
+- committed_utc: now
+Update state.json:
+- locks.roadmap_lock.txn_state = committed
+- artifacts.roadmap_txn = committed
+
+Postcondition — Release Roadmap Lock (Strict):
+After successful STEP 5 (txn committed):
+
+- Remove `claude/roadmap/.lock`
+- Update state.json:
+- locks.roadmap_lock.status = released
+- locks.roadmap_lock.owned = false
+- artifacts.roadmap_lock = released
+
+If lock removal fails: record blocker and HALT.
 
 ## STEP 5.5 — Cross-Stage Integrity Validation (Hard Gate)
 
@@ -907,7 +942,7 @@ Else:
 The run is incomplete unless:
 
 - cycle folder exists at `claude/cycles/<cycle_id>/`
-- `state.json` exists and reflects mutation_seq, tracked hashes, lock state, txn state, and publish_eligible
+- `state.json` exists and reflects mutation_seq, tracked hashes, lock state(s), txn state(s), and publish_eligible
 - required stage files exist and are compliant for this run
 - if auto-escalate=true and blockers occurred, escalations.md exists
 - Publish Gate passes
