@@ -1,7 +1,7 @@
 # Metrics Definitions – Canonical Specification
-**Version:** 1.5.7
+**Version:** 1.6.0
 **Owner:** Analytics Team
-**Last Updated:** 2026-02-21
+**Last Updated:** 2026-03-02
 **Review Cycle:** Monthly
 
 ---
@@ -460,6 +460,105 @@ If `monthly_data` is empty, return zeros for all fields.
 
 ---
 
+---
+
+# Portfolio Risk Metrics
+
+## Position Risk
+
+### Definition
+The GBP-denominated risk capital exposed by a single open position — the maximum loss if the stop price is hit from the current entry. This is the canonical "R" unit for portfolio heat calculation.
+
+### Canonical Formula (TASK-06 — v1.7)
+
+```text
+# For GBP-denominated positions (UK market):
+Position_Risk_GBP = (entry_price_gbp − stop_price_gbp) × shares
+
+# For non-GBP positions (US market, priced in USD):
+Position_Risk_GBP = (entry_price_usd − stop_price_usd) × shares ÷ fx_rate_gbp_usd
+
+# General form:
+Position_Risk_GBP = (entry_price_native − stop_price_native) × shares × fx_adjustment
+
+where:
+  fx_adjustment = 1.0            for GBP positions (UK market)
+  fx_adjustment = 1 / fx_rate   for USD positions (US market)
+  fx_rate = GBP/USD rate at time of position entry (stored as position.fx_rate)
+```
+
+**Important constraints:**
+- `entry_price` and `stop_price` must be in the same native currency before applying fx_adjustment.
+- UK prices stored in pence must be converted to pounds before applying the formula: `price_gbp = price_pence / 100`.
+- Position Risk is always ≥ 0. If stop_price ≥ entry_price (e.g. lock-in stop above entry), Position Risk = 0.
+- Position Risk is a point-in-time metric: it uses the entry stop, not a trailing stop.
+
+### Data Sources
+- `positions.entry_price` — native currency
+- `positions.stop_price` — native currency
+- `positions.shares`
+- `positions.fx_rate` — GBP/USD rate at entry (1.0 for GBP positions)
+- `positions.market` — `"UK"` or `"US"` (determines fx_adjustment)
+
+---
+
+## Portfolio Heat
+
+### Definition
+The aggregate stop-loss risk exposure of all open positions, expressed as a percentage of total portfolio value. Answers: "If every open position hits its stop simultaneously, what percentage of the portfolio is lost?"
+
+### Canonical Formula (TASK-07 — v1.7)
+
+```text
+Portfolio_Heat_Percent = (Sum of Position_Risk_GBP for all open positions) / Portfolio_Value_GBP × 100
+
+where:
+  Portfolio_Value_GBP = portfolio.total_value (GBP, from GET /portfolio)
+  Position_Risk_GBP   = canonical Position Risk formula above, for each open position
+```
+
+**Important constraints:**
+- Portfolio Heat uses **open positions only** — closed trades are excluded.
+- Portfolio Value is the live total portfolio value (cash + open position market values), not invested capital only.
+- If Portfolio_Value_GBP = 0, return 0.0.
+- Portfolio Heat is a live, point-in-time metric — it is not stored in `portfolio_history` and is not period-filterable.
+
+### Response Format
+Served via `GET /portfolio` as an additional field in the `data` object:
+```json
+{
+  "portfolio_heat_percent": 12.4,
+  "position_risks": [
+    { "ticker": "AAPL", "position_risk_gbp": 85.20 },
+    { "ticker": "FRES.L", "position_risk_gbp": 42.00 }
+  ]
+}
+```
+
+---
+
+## Portfolio Heat Display Thresholds (TASK-08 — v1.7)
+
+These are canonical business thresholds, not UX conventions. All implementations (backend, frontend, reporting) **MUST** use these exact bands.
+
+| Band | Range | Colour | Meaning |
+|------|-------|--------|---------|
+| Low | 0% ≤ heat < 10% | Green (`#22c55e`) | Portfolio is within safe risk parameters |
+| Moderate | 10% ≤ heat < 20% | Amber (`#f59e0b`) | Risk is elevated; monitor positions |
+| High | 20% ≤ heat < 30% | Orange (`#f97316`) | Risk is high; consider reducing exposure |
+| Extreme | heat ≥ 30% | Red (`#ef4444`) | Critically over-exposed; immediate review required |
+
+**Threshold rationale:**
+- A 10% maximum portfolio heat target is the canonical risk management rule for this strategy (per `claude/strategy/strategy_rules.md` §5).
+- The 10% boundary therefore defines the green/amber transition.
+- Each subsequent 10-point band represents a proportional escalation of risk severity.
+- Colour codes are canonical hex values; frontend must not substitute alternatives without a spec update.
+
+### Validation
+Portfolio Heat is a live metric and is **not** included in `POST /validate/calculations`. Threshold correctness is verified by frontend integration tests only.
+
+---
+
 ## Appendix A: Data Lineage (Referential)
 
 This Metrics Definitions document is the canonical source for **metric semantics and formulas**.
@@ -510,6 +609,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 | 2026-02-17 | 1.5.6 | ADVISORY-MD-D: Remove drift-prone lineage appendix; reference `data_model.md` and `analytics_endpoints.md` as lineage sources | Analytics Team |
 | 2026-02-21 | 1.5.7 | BLG-TECH-01 resolution: mark Appendix E Backlog Items 1 and 2 as resolved. Update inline conformance notes in Sharpe Ratio and Capital Efficiency sections. Update Capital Efficiency response format example value to 0.22. Validation confirmed 13/13 pass at 2026-02-21T00:24:41Z. Canonical Owner sign-off granted. | Metrics Definitions & Analytics Canonical Owner |
 | 2026-02-25 | 1.5.8 | BLG-FEAT-01: Add Current Drawdown section. Defines current_drawdown_percent formula, data sources (GET /portfolio new fields), relationship to days_underwater and max_drawdown metrics, failure behaviour, and implementation notes. QWB pre-alignment D1. | Metrics Definitions owner |
+| 2026-03-02 | 1.6.0 | EPIC-03 (v1.7): Add Portfolio Risk Metrics section — canonical Position Risk formula (GBP-adjusted, FX handling for US positions, pence conversion for UK), Portfolio Heat formula (sum of position risks / portfolio value × 100), and explicit display threshold bands (Low <10%, Moderate 10–20%, High 20–30%, Extreme ≥30%) with canonical hex colour codes. TASK-06, TASK-07, TASK-08, TASK-09 complete. Pending: TASK-10 Head of Specs Team sign-off. | Metrics Definitions & Analytics Owner |
 
 ---
 
