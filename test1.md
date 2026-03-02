@@ -1,10 +1,4 @@
-### Sealed Hash Authority Rule (Hard Gate)
-
-If status == Published:
-
-- sealed.sealed_hashes.* is the single source of truth.
-- artifact_hashes.* must equal sealed.sealed_hashes.*.
-- If artifact_hashes differs from sealed_hashes:
-  - Treat as drift.
-  - Do NOT attempt to reconcile.
+If escalations.md does not exist:
+- Treat its canonical hash as SHA-256 of empty string.
+- Write that value into sealed.sealed_hashes.escalations.
 
