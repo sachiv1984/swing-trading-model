@@ -968,23 +968,20 @@ Execution Rules:
 ## STEP 10 — Stage, Commit & Push (Delegated Publication)
 Purpose: Publish the sealed cycle and updated state to the remote repository.
 
-Preconditions:
-- status == Published
-- publish_eligible == true
-- All canonical hashes in state.json are verified.
+GitHub Issue Automation:
+If --issues "gh" was invoked:
+1. For each EPIC-xx and ST-xx in stage4_backlog_slice.md:
+- Write the issue body to a temporary file: .gh_issue_body.tmp.
+-  Execute: gh issue create --title "[ID] Title" --body-file .gh_issue_body.tmp --milestone "v2.7"
+-  Delete the temporary file.
+-  Note: This avoids shell errors caused by backticks in the markdown body.
 
 Execution Commands:
 1. git add .claude_current_state.json
-2. git add CLAUDE.md (if modified)
-3. git add claude/cycles/<cycle_id>/*
-4. git add claude/backlog/backlog.md
-5. git commit -m "[GOVERNANCE] Published Release Plan <cycle_id>"
-6. git push origin <current-branch>
-GitHub Issue Automation:
-If --issues "gh" was invoked:
-- Use gh issue create for each EPIC-xx and ST-xx identified in stage4_backlog_slice.md.
-- Assign to the Milestone matching --version.
-- Include the EPIC-xx ID in the issue title for traceability.
+2. git add claude/cycles/<cycle_id>/*
+3. git add claude/backlog/backlog.md
+4. git commit -m "[GOVERNANCE] Published Release Plan <cycle_id>"
+5. git push origin <current-branch>
 
 ---
 
