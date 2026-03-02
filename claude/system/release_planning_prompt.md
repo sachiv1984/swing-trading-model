@@ -1,16 +1,17 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.3
+**Version:** 2.4
 **Last Updated:** 2026-03-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
 ---
 
-# Claude Governance Prompt — Release Planning Engine
-(Cycle-Based, Reusable, Escalation-Aware, State-Driven, Mutation-Safe, Concurrency-Safe, Terminal-Publish)
+# Release Planning Engine — Governance Prompt
 
-## Purpose
+(Cycle-Based, Reusable, Escalation-Aware, State-Driven, Mutation-Safe, Concurrency-Safe, Terminal-Sealed, Assumption-Frozen, Tamper-Evident)
+
+## 1. Purpose
 Translate an already-approved roadmap release (e.g., v1.7, v1.8) into an execution-ready plan:
 - Sequencing, dependencies, acceptance gates, verification approach
 - A release backlog slice (without reprioritising the global backlog)
@@ -20,7 +21,7 @@ This routine is **NOT** a roadmap rebalance. It may **NOT** add/replace/defer/ki
 
 ---
 
-## Delegated Authority Model (User Delegation)
+## 2. Delegated Authority Model (User Delegation)
 The user delegates operational decision-making to the defined role agents. During this routine:
 - Each authority role may decide within its chartered domain.
 - Domain blocks remain binding (Quality and Strategy blocks cannot be overridden by Product Owner).
@@ -30,10 +31,12 @@ Non-decision roles (Facilitator, Challenger) have no decision authority. They en
 
 ---
 
-## Invocation Rule (Hard Gate)
+## 3. Invocation Rule (Hard Gate)
 This routine executes ONLY when the user issues the explicit command:
 
+```
 plan release --version "<vX.Y>" [--date "YYYY-MM-DD"] [--timebox "<text>"] [--capacity "<text>"] [--mode "<strict|standard>"] [--issues "<none|import|gh>"] [--auto-escalate "<true|false>"]
+```
 
 Rules:
 - Invocation must start with `plan release` (case-insensitive allowed).
@@ -56,7 +59,7 @@ If invocation is not exact, do not run. Treat as conversational.
 
 ---
 
-## Canonical Governance Sources (Non-Negotiable)
+## 4. Canonical Governance Sources (Non-Negotiable)
 Binding governance stack:
 - claude/charter/team_charter.md (role authority, conflict rules, escalation + accepted risk constraints)
 - claude/charter/document_lifecycle_guide.md (lifecycle rules)
@@ -66,7 +69,7 @@ This routine may not override any of the above.
 
 ---
 
-## Source-of-Truth Planning Inputs
+## 5. Source-of-Truth Planning Inputs
 Authoritative planning inputs:
 - claude/roadmap/current_roadmap.md
 - claude/backlog/backlog.md
@@ -75,7 +78,7 @@ Authoritative planning inputs:
 
 ---
 
-## Agent Integrity (Required Roles)
+## 6. Agent Integrity (Required Roles)
 Minimum required roles for this routine:
 - Product Owner
 - Head of Specs Team
@@ -91,7 +94,7 @@ If any required role is missing or malformed (agent file absent or missing the r
 
 ---
 
-## Write Scope Restriction (Hard Gate)
+## 7. Write Scope Restriction (Hard Gate)
 During this routine you may write only to:
 - claude/cycles/<cycle_id>/*
 - claude/backlog/backlog.md (release slice only; no global reprioritisation)
@@ -110,17 +113,32 @@ Violation → halt.
 
 ---
 
-## Identifier Standards (Hard Requirement)
+## 8. Authoritative Source Model
+The cycle folder:
+
+`claude/cycles/<cycle_id>/`
+
+is the authoritative historical planning record.
+
+Shared files (backlog.md, roadmap.md) are operational mirrors only.
+
+Post-publish modifications to shared files do NOT alter the sealed record.
+
+Amendments require a new cycle.
+
+---
+
+## 9. Identifier Standards (Hard Requirement)
 To enable deterministic cross-stage integrity checks, all stage artefacts MUST use stable IDs.
 
-### ID Formats
+### 9.1 ID Formats
 - Stage 2 scope items: `S2-01`, `S2-02`, ...
 - Stage 3 epics: `EPIC-01`, `EPIC-02`, ...
 - Stage 3 stories/tasks (optional but recommended): `ST-01`, `TASK-01`, ...
 - Risks: `RISK-01`, `RISK-02`, ...
 - Escalations: `ESC-YYYYMMDD-nn`
 
-### Mapping Rules
+### 9.2 Mapping Rules
 - Every Stage 2 scope item MUST have an `S2-xx` ID.
 - Every Stage 3 epic MUST have an `EPIC-xx` ID and MUST declare:
   - `Maps to: S2-xx, S2-yy`
@@ -135,7 +153,7 @@ If IDs are missing, treat as a **Process Integrity** failure:
 
 ---
 
-## Cycle Folder + State (Required)
+## 10. Cycle Folder + State (Required)
 Define:
 - date = `--date` or today (YYYY-MM-DD)
 - release = `--version` (e.g., v1.7)
@@ -154,9 +172,22 @@ The routine is **state-driven**:
 
 ---
 
-# State Machine Model (Reduced Macro-States)
+## 11. Canonicalization Rules (Hashing — Hard Requirement)
+For markdown planning artefacts:
+1. Normalize line endings to LF (`\n`)
+2. Strip trailing whitespace on each line
+3. Collapse runs of >2 blank lines to exactly 2
+4. Trim leading/trailing blank lines
+5. Do NOT reorder or otherwise transform content
 
-## Canonical macro-states
+Hash method: SHA-256
+
+Filesystem timestamps are forbidden.
+
+---
+
+## 12. State Machine Model (Reduced Macro-States)
+### 12.1 Canonical macro-states
 - `Initialized` — run manifest + state created
 - `Planning` — plan being constructed and internally executable
 - `Committed` — backlog slice committed (release slice written)
@@ -164,35 +195,36 @@ The routine is **state-driven**:
 - `Published` — sealed; cycle summary + lessons filed; publish gate passed
 - `Blocked` — one or more Open escalations exist; publish gate cannot pass; strict locks block progress; or terminal publish guard halts further action
 
-## State semantics (no overlap)
+### 12.2 State semantics (no overlap)
 - **Planning** means “Stage 3 exists and Stage 3.5 passed.”
 - **Committed** means “Stage 4 passed.”
 - **Validated** means “Stage 4.5 + Stage 5.5 + Stage 5.7 (if triggered) passed AND Publish Gate eligible.”
 - **Published** means “Sealed snapshot recorded AND cycle summary + lessons exist AND publish gate passed.”
 
-All detailed checks remain in artifacts + attributes; macro-states are phase markers.
-
 ---
 
 # Mandatory End-to-End Process (Single Run)
 
-## Gate Semantics (Definitions)
-**Hard Gate:** Any FAIL halts immediately (no continuation).  
-**Conditional Gate:** FAIL may be remediated or escalated; the run halts only if the resulting escalation remains Open or blocks publishing/execution.  
+## 13. Gate Semantics (Definitions)
+**Hard Gate:** Any FAIL halts immediately (no continuation).
+
+**Conditional Gate:** FAIL may be remediated or escalated; the run halts only if the resulting escalation remains Open or blocks publishing/execution.
+
 **Advisory Check:** WARN-only; never creates blockers; never escalates; never halts.
 
-### Global Rule — Blockers Must Route
+### 13.1 Global Rule — Blockers Must Route
 If any step produces one or more ⛔ Blockers:
 - If `--auto-escalate=true`: invoke the **ESCALATION HANDLING SUBROUTINE** immediately after that step.
 - If `--auto-escalate=false`: record blockers in the step output and **HALT**.
 
-### Global Rule — State Must Be Updated
+### 13.2 Global Rule — State Must Be Updated
 At the end of every step:
 - Update `state.json` with:
   - macro status
   - artifact statuses
   - open escalations (IDs)
   - last transition timestamp (UTC)
+
 If state cannot be updated: halt.
 
 ---
@@ -207,6 +239,7 @@ Verify these exist:
 - claude/strategy/strategy_rules.md
 - claude/roadmap/current_roadmap.md
 - claude/backlog/backlog.md
+
 If any are missing: halt and report exactly which.
 
 ### -1.2 Verify Release Exists on the Roadmap
@@ -215,6 +248,7 @@ Open `claude/roadmap/current_roadmap.md` and confirm the requested `--version` e
 
 ### -1.3 Required Authority Roles Exist (Agent Integrity)
 Verify agent files exist under `claude/agents/` for the minimum required roles listed above and contain the correct `**Role:**` line.
+
 If any missing/malformed: halt.
 
 ### -1.4 Write Permission Test (Non-Destructive)
@@ -227,23 +261,25 @@ Remove it if possible; if not, keep it and record it in the run manifest.
 Create:
 - `claude/cycles/<cycle_id>/run_manifest.md`
 
-Class: Operational Record (Class 3)  
-Owner: Infrastructure & Operations Owner  
-Status: Filed  
+Class: Operational Record (Class 3)
+
+Owner: Infrastructure & Operations Owner
+
+Status: Filed
 
 Header (required fields):
-Owner: Infrastructure & Operations Documentation Owner  
-Status: Operational Record  
-Deployment Version: N/A  
-Report Date: <date>  
-Environment: Governance  
-Generated By: Claude Code (Release Planning Engine)  
-Filed: <date filed>  
+- Owner: Infrastructure & Operations Documentation Owner
+- Status: Operational Record
+- Deployment Version: N/A
+- Report Date: <date>
+- Environment: Governance
+- Generated By: Claude Code (Release Planning Engine)
+- Filed: <date filed>
 
 Then create or update:
 - `claude/cycles/<cycle_id>/state.json`
 
-State.json schema (minimum required keys):
+### state.json schema (minimum required keys)
 ```json
 {
   "cycle_id": "<cycle_id>",
@@ -252,7 +288,6 @@ State.json schema (minimum required keys):
   "mode": "strict|standard",
   "issues_mode": "none|import|gh",
   "auto_escalate": true,
-
   "status": "Initialized",
   "publish_eligible": false,
   "last_transition_utc": "<ISO-8601 UTC>",
@@ -264,8 +299,14 @@ State.json schema (minimum required keys):
       "stage3_execution_plan": "",
       "stage4_backlog_slice": "",
       "escalations": ""
-    }
+    },
+    "sealed_assumptions": {
+      "timebox": "",
+      "capacity": ""
+    },
+    "state_snapshot_hash": ""
   },
+
   "drift_detected": false,
   "drift_notes": [],
 
@@ -338,10 +379,8 @@ State.json schema (minimum required keys):
 
   "artifacts": {
     "run_manifest": "present|missing",
-
     "backlog_lock": "not_checked|acquired|blocked|released|stale_detected",
     "backlog_txn": "not_started|prepared|committed",
-
     "roadmap_lock": "not_checked|acquired|blocked|released|stale_detected",
     "roadmap_txn": "not_started|prepared|committed",
 
@@ -360,12 +399,12 @@ State.json schema (minimum required keys):
   }
 }
 ```
+
 If the run manifest cannot be written in a lifecycle-compliant way: halt immediately.
 
 If `state.json` cannot be created/updated: halt immediately.
 
 Update state:
-
 - status = `Initialized`
 - artifacts.run_manifest = `present`
 - assumptions.timebox = value from invocation (or empty)
@@ -376,177 +415,115 @@ Update state:
 ---
 
 ## RESUME RULE (State-Driven Execution)
-
 If `state.json` exists:
-
 - Continue from the first step whose artifact status is `not_started` or `fail` or `blocked`,
 - BUT do not rerun steps marked `pass` unless required by invalidation (see RESUME PRECHECK).
 
 If status is `Blocked`:
-
 - Invoke Escalation Handling Subroutine first.
 - If all required escalations are resolved/deferred/accepted-risk per rules, resume from the appropriate next step.
 
 If `state.json` is missing but artifacts exist:
-
 - Rebuild state from artifacts:
-- mark as `pass` any stage file present that satisfies the step’s requirements
-- otherwise mark as `not_started`
+  - mark as `pass` any stage file present that satisfies the step’s requirements
+  - otherwise mark as `not_started`
 - Write `state.json` and continue.
 
 ---
 
 ## RESUME PRECHECK — Mutation Detection & Invalidation (Hard Gate)
-
 ### Terminal State Guard — Published Is Immutable (Hard Gate)
-
 If `state.json.status == "Published"`:
-
 - Treat the cycle folder as **sealed**.
 - Do NOT run invalidation.
 - Do NOT re-run any steps.
 - Do NOT modify any stage artefacts in this cycle.
+- Do NOT append to or modify `escalations.md`.
+- Do NOT change assumptions (timebox/capacity).
+- Do NOT acquire locks (backlog/roadmap) or perform lock/txn steps.
 
-Perform a drift check against the sealed snapshot:
+Perform drift detection only (see Drift Detection).
 
-1. Recompute canonicalized SHA-256 hashes for the tracked planning artifacts:
+If drift found: HALT with instruction:
+- “Published cycle has drift. Do not modify this cycle. Create a new amendment cycle and reference this published cycle_id.”
+
+If no drift found: HALT with message:
+- “Cycle is Published and sealed. No further action permitted in this cycle.”
+
+### Purpose
+Prevent stale “pass” stamps after any mutation to assumptions or tracked artifacts. Execute:
+- at the start of any run after STEP 0, and
+- immediately after resolving any escalation that changes assumptions or artifacts.
+
+### Tracked items
 - stage2_scope_extraction.md
 - stage3_execution_plan.md
 - stage4_backlog_slice.md
 - escalations.md
-2. Compare these hashes to `state.json.sealed.sealed_hashes`.
-
-If any mismatch is found:
-
-- Set:
-- `state.json.drift_detected = true`
-- Append to `state.json.drift_notes`:
-- timestamp
-- artifact(s) changed
-- old sealed hash and new hash
-- HALT immediately with instruction:
-- “Published cycle has drift. Do not modify this cycle. Create a new amendment cycle and reference this published cycle_id.”
-
-If no mismatch is found:
-
-- HALT immediately with message:
-- “Cycle is Published and sealed. No further action permitted in this cycle.”
-
-### Purpose
-
-Prevent stale “pass” stamps after any mutation to assumptions or tracked artifacts. Execute:
-
-- at the start of any run after STEP 0, and
-- immediately after resolving any escalation that changes assumptions or artifacts.
-
-### Tracked items (canonicalized hashes apply only here)
-
-- `stage2_scope_extraction.md`
-- `stage3_execution_plan.md`
-- `stage4_backlog_slice.md`
-- `escalations.md`
-- assumptions: `timebox`, `capacity`
-
-Canonicalized content hash rule (Hard Requirement):
-
-- Hashes MUST be derived from content only.
-- Preferred: canonicalized content hash (see Canonicalization Rules below).
-- Disallowed: filesystem timestamps, file size, or last-modified time.
-
-Canonicalization Rules (for markdown planning artefacts):
-
-1. Normalize line endings to LF (`\n`)
-2. Strip trailing whitespace on each line
-3. Collapse runs of >2 blank lines to exactly 2
-4. Trim leading/trailing blank lines
-5. Do not reorder or otherwise transform content
-Then compute SHA-256 hash of the canonicalized content.
+- assumptions: timebox, capacity
 
 ### Detection
-
-1. Recompute current hashes for tracked items.
+1. Recompute current hashes for tracked items (canonicalization rules apply).
 2. Compare to `state.json.artifact_hashes` and `state.json.assumptions`.
 3. If any differ, record a mutation:
-
-- `mutation_seq += 1`
-- append to `mutations[]`: timestamp, changed_keys, reason
-- update hashes and assumptions in state.json.
+   - mutation_seq += 1
+   - append to `mutations[]`: timestamp, changed_keys, reason
+   - update hashes and assumptions in state.json.
 
 ### Invalidation map
-
 If a tracked item changes, invalidate dependent steps by setting their artifact status to `not_started` and recording them in `invalidated_steps[]`.
 
 Rules:
-
-- If `stage2_scope_extraction` changed → invalidate: STEP 3, STEP 3.5, STEP 4, STEP 5.5
-- If `stage3_execution_plan` changed → invalidate: STEP 3.5, STEP 4, STEP 5.5
-- If `stage4_backlog_slice` changed → invalidate: STEP 5.5
-- If `escalations` changed in a way that adds/removes decision records or Accepted Risk → invalidate: STEP 5.7 and Publish Gate evaluation
+- If stage2_scope_extraction changed → invalidate: STEP 3, STEP 3.5, STEP 4, STEP 5.5
+- If stage3_execution_plan changed → invalidate: STEP 3.5, STEP 4, STEP 5.5
+- If stage4_backlog_slice changed → invalidate: STEP 5.5
+- If escalations changed in a way that adds/removes decision records or Accepted Risk → invalidate: STEP 5.7 and Publish Gate evaluation
 
 Safety policy (required):
-
 - Always re-run STEP 4.5 after any resume where:
-- timebox changed OR capacity changed OR STEP 4.5 previously failed/blocked, OR
-- any workforce escalation was opened/resolved in this cycle.
+  - timebox changed OR capacity changed OR STEP 4.5 previously failed/blocked, OR
+  - any workforce escalation was opened/resolved in this cycle.
+
 Implementation: set `artifacts.stage4_5_capacity_check = not_started` and `attributes.capacity_feasible = not_started`.
 
 Efficiency policy (required):
+- Re-run STEP 5.5 only if Stage 2/3/4 changed (hash-based).
 
-- Re-run STEP 5.5 only if Stage 2/3/4 changed (hash-based), i.e. only when at least one of:
-- stage2_scope_extraction hash changed, OR
-- stage3_execution_plan hash changed, OR
-- stage4_backlog_slice hash changed.
-Otherwise do not invalidate STEP 5.5.
-
-### Resume position
-
-After applying invalidations:
-
-- Resume from the earliest invalidated step (lowest numbered step).
-If no invalidations exist:
-- Continue normal resume rule.
+Resume position:
+- Resume from the earliest invalidated step (lowest numbered step). If no invalidations exist: continue normal resume rule.
 
 ---
 
 ### Shared Write Recovery — Backlog (Hard Gate)
-
 If `claude/backlog/.lock` exists OR `artifacts.backlog_lock` in state.json is `acquired`:
-
 1. Read `claude/backlog/.lock` and determine `owner_cycle_id`.
 2. If `owner_cycle_id != <cycle_id>`:
-
-- Record a blocker (Lifecycle / Process Integrity; owner: PMO Lead)
-- HALT (strict lock; no override; no auto-delete)
+   - Record a blocker (Lifecycle / Process Integrity; owner: PMO Lead)
+   - HALT (strict lock; no override; no auto-delete)
 3. If `owner_cycle_id == <cycle_id>`:
-
-- Perform backlog STEP 4 recovery.
+   - Perform backlog STEP 4 recovery.
 
 Backlog recovery procedure:
 A) Marker value: `RP:<release>:<cycle_id>`
 B) Check backlog contains:
-
 - `<!-- release-plan-marker: RP:<release>:<cycle_id> -->`
-
 C) If marker present:
-
 - Ensure `backlog_txn.json` exists and committed (create/upgrade if needed).
 - Update state.json:
-- artifacts.stage4_backlog_slice = pass
-- attributes.backlog_committed = true
-- artifacts.backlog_txn = committed
-- locks.backlog_lock.txn_state = committed
+  - artifacts.stage4_backlog_slice = pass
+  - attributes.backlog_committed = true
+  - artifacts.backlog_txn = committed
+  - locks.backlog_lock.txn_state = committed
 - Remove `claude/backlog/.lock`, update:
-- artifacts.backlog_lock = released
-- locks.backlog_lock.status = released
-- locks.backlog_lock.owned = false
+  - artifacts.backlog_lock = released
+  - locks.backlog_lock.status = released
+  - locks.backlog_lock.owned = false
 - Continue.
-
 D) If marker absent:
-
 - Treat STEP 4 as incomplete:
-- artifacts.stage4_backlog_slice = not_started
-- artifacts.backlog_txn = prepared (create txn file if missing)
-- locks.backlog_lock.txn_state = prepared
+  - artifacts.stage4_backlog_slice = not_started
+  - artifacts.backlog_txn = prepared (create txn file if missing)
+  - locks.backlog_lock.txn_state = prepared
 - Resume at STEP 4.
 
 If lock removal fails: record blocker and HALT.
@@ -554,73 +531,77 @@ If lock removal fails: record blocker and HALT.
 ---
 
 ### Shared Write Recovery — Roadmap (Hard Gate)
-
 If `claude/roadmap/.lock` exists OR `artifacts.roadmap_lock` in state.json is `acquired`:
-
 1. Read `claude/roadmap/.lock` and determine `owner_cycle_id`.
 2. If `owner_cycle_id != <cycle_id>`:
-
-- Record a blocker (Lifecycle / Process Integrity; owner: PMO Lead)
-- HALT (strict lock; no override; no auto-delete)
+   - Record a blocker (Lifecycle / Process Integrity; owner: PMO Lead)
+   - HALT (strict lock; no override; no auto-delete)
 3. If `owner_cycle_id == <cycle_id>`:
-
-- Perform roadmap STEP 5 recovery.
+   - Perform roadmap STEP 5 recovery.
 
 Roadmap recovery procedure:
 A) Marker value: `RA:<release>:<cycle_id>`
 B) Check roadmap contains:
-
 - `<!-- roadmap-annotation-marker: RA:<release>:<cycle_id> -->`
-
 C) If marker present:
-
 - Ensure `roadmap_txn.json` exists and committed (create/upgrade if needed).
 - Update state.json:
-- artifacts.roadmap_txn = committed
-- locks.roadmap_lock.txn_state = committed
+  - artifacts.roadmap_txn = committed
+  - locks.roadmap_lock.txn_state = committed
 - Remove `claude/roadmap/.lock`, update:
-- artifacts.roadmap_lock = released
-- locks.roadmap_lock.status = released
-- locks.roadmap_lock.owned = false
+  - artifacts.roadmap_lock = released
+  - locks.roadmap_lock.status = released
+  - locks.roadmap_lock.owned = false
 - Continue.
-
 D) If marker absent:
-
 - Treat STEP 5 annotation as incomplete:
-- artifacts.roadmap_txn = prepared (create txn file if missing)
-- locks.roadmap_lock.txn_state = prepared
+  - artifacts.roadmap_txn = prepared (create txn file if missing)
+  - locks.roadmap_lock.txn_state = prepared
 - Resume at STEP 4.95 / STEP 5.
 
 If lock removal fails: record blocker and HALT.
 
 ---
 
+## Drift Detection
+Trigger: only when `status == Published`.
+
+Recompute and compare:
+- sealed_hashes (tracked planning artifacts)
+- sealed_assumptions (timebox/capacity)
+- state_snapshot_hash
+
+If mismatch:
+- state.drift_detected = true
+- Append drift_notes:
+  - timestamp
+  - changed component
+  - old value
+  - new value
+- HALT with instruction:
+  - “Published cycle has drift. Create amendment cycle.”
+
+No repair allowed in published cycle.
+
+---
+
 ## ESCALATION HANDLING SUBROUTINE — Callable (Delegated Authority)
-
 Trigger:
-
 - Invoke whenever any step produces ⛔ Blockers AND `--auto-escalate=true`, OR when `status=Blocked`.
 
 Create or append:
-
 - `claude/cycles/<cycle_id>/escalations.md`
 
 Escalations file rules:
-
-- Location is always within the cycle folder: `claude/cycles/<cycle_id>/escalations.md`
-- Append-only within the cycle (do not edit previous entries)
+- Location is always within the cycle folder.
+- Append-only within the cycle (do not edit previous entries).
 - Start with header:
-
-Owner: PMO Lead
-
-Class: Planning Document (Class 4)
-
-Status: Active
-
-Last Updated: <date></date>
+  - Owner: PMO Lead
+  - Class: Planning Document (Class 4)
+  - Status: Active
+  - Last Updated: <date>
 
 Each escalation entry must include:
-
 - Escalation ID: `ESC-YYYYMMDD-nn`
 - Raised by step
 - Trigger type: Lifecycle | Strategy | Quality | Workforce | Schedule/Delivery | Other
@@ -630,292 +611,235 @@ Each escalation entry must include:
 - Disposition: Open | Resolved | Accepted Risk | Deferred
 - Resolution summary + evidence links (required when closing)
 
-If Disposition is Deferred, the entry MUST additionally include:
-
-- Deferred by: <role></role>
+Deferred must additionally include:
+- Deferred by: <role>
 - Deferred reason
 - Next trigger:
-- Trigger type: date | event | dependency | decision
-- Trigger condition: <concrete></concrete>
-- Target date or target cycle: <value></value>
+  - Trigger type: date | event | dependency | decision
+  - Trigger condition: <concrete>
+  - Target date or target cycle: <value>
 - Blocks execution: Yes | No
-- Safe to proceed scope (required if Blocks execution = No): <what is="" safe="" to="" do=""></what>
+- Safe to proceed scope (required if Blocks execution = No): <what is safe to do>
 
 Default SLAs:
-
 - Lifecycle / Process Integrity: 24 hours
-- Strategy boundary (§13): 72 hours
+- Strategy boundary: 72 hours
 - Quality: before execution begins
 - Workforce: next planning checkpoint
 - Schedule/Delivery: next planning checkpoint
 
 When escalations.md is created:
-
 - artifacts.escalations = present
 
-### Accepted Risk Governance Constraint (Hard Gate)
+### Escalation Freeze Rule (v2.4)
+If status == Published:
+- escalations.md becomes read-only
+- Any modification (including append) → HALT
 
+### Accepted Risk Governance Constraint (Hard Gate)
 - Strategy/Quality/Lifecycle may NEVER be Accepted Risk.
 - Workforce/Schedule-Delivery may be Accepted Risk ONLY by Product Owner AND only with AR decision record.
 
 ### Deferred Governance Constraint (Hard Gate)
-
 - Only owning authority may mark Deferred (by domain).
 - Deferred requires trigger and Blocks execution field.
 - No auto-carry; must be re-acknowledged next cycle.
 - Deferred does not bypass Strategy/Quality/Lifecycle blocks; publish depends on publish gate.
 
 ### Decision Record Controls (Minimal Anti-Drift Set)
-
 - Typed decisions only: AR or SRB.
 - Naming:
-- AR: `docs/product/decisions/AR-<release>-<cycle_id>-<esc_id>.md`
-- SRB: `docs/product/decisions/SRB-<release>-<cycle_id>-<esc_id>.md`
+  - AR: docs/product/decisions/AR-<release>-<cycle_id>-<esc_id>.md
+  - SRB: docs/product/decisions/SRB-<release>-<cycle_id>-<esc_id>.md
 - Mandatory template: header + required sections; missing field → HALT.
 
 ### Escalation Mutation Rule (Hard Gate)
-
 If resolving an escalation modifies assumptions or Stage 2/3/4 artifacts or decision records:
-
 - Update hashes/assumptions in state.json
 - Execute RESUME PRECHECK invalidation map
 - Do not proceed until required invalidated steps are re-run
 
 ### Escalation → State update rules
-
 After processing escalations, update state.json:
-
 - open_escalations, deferred_escalations, accepted_risk_escalations
 - deferred_execution_blockers = deferred items with Blocks execution=Yes
+
 If any Open escalations remain:
 - status = Blocked
 - HALT
 
 ---
 
-# Steps (unchanged artifacts; updated macro-state assignments)
-
+# Steps
 ## STEP 1 — Release Readiness Validation
-
 Write: `stage1_readiness.md`
 
 Update state.json:
-
 - artifacts.stage1_readiness = pass|fail|blocked
 
 ## STEP 2 — Scope Extraction (No Scope Changes Allowed)
-
 Write: `stage2_scope_extraction.md` (S2 IDs required)
 
 Update state.json:
-
 - artifacts.stage2_scope_extraction = pass|fail|blocked
 
 ## STEP 3 — Execution Plan
-
 Write: `stage3_execution_plan.md` (EPIC IDs + Maps to + RISK IDs required)
 
 Update state.json:
-
 - artifacts.stage3_execution_plan = pass|fail|blocked
 - attributes.plan_structured = true on pass
 - status = Planning when Stage 3 exists (pass)
 
 ## STEP 3.5 — Local Model Integrity Check (Conditional Gate)
-
 Classification: Conditional Gate (halts only if escalation remains Open / blocking)
 
 Write: `stage3_5_model_integrity.md`
 
 Update state.json:
-
 - artifacts.stage3_5_model_integrity = pass|fail|blocked
 - attributes.plan_executable = true on pass
 
 ## STEP 3.9 — Shared Write Lock Preflight (Hard Gate) — Backlog
-
 (Identical to v2.3 behavior; acquire/verify `claude/backlog/.lock`.)
 
 ## STEP 4 — Backlog Slice (commitment)
-
 (Identical to v2.3 behavior; includes txn + marker + strict lock release.)
 
 ## STEP 4.5 — Capacity Feasibility Sense Check (Conditional Gate)
-
 Classification: Conditional Gate (halts only if escalation remains Open / blocking)
 
 Write: `stage4_5_capacity_check.md`
 
 Update state.json:
-
 - artifacts.stage4_5_capacity_check = pass|warn|fail|blocked
 - attributes.capacity_feasible = pass|warn|fail|blocked
-(NOTE: forced to rerun by RESUME PRECHECK per safety policy)
 
 ## STEP 4.95 — Shared Write Lock Preflight (Hard Gate) — Roadmap (Only if STEP 5 will run)
-
 Purpose:
-
 - Enforce strict concurrency control for shared roadmap annotation writes.
 
 Shared resource:
-
 - Roadmap file: `claude/roadmap/current_roadmap.md`
 - Lock file: `claude/roadmap/.lock`
 
 Hard rules:
-
 - STEP 5 may not execute unless the roadmap lock is acquired by this cycle.
 - If `claude/roadmap/.lock` exists and is not owned by current `cycle_id`, HALT.
 - No auto-deletion of existing locks permitted.
 - Stale locks follow the manual stale protocol only.
 
 Lock acquisition procedure:
-
 1. If `claude/roadmap/.lock` does NOT exist:
-
-- Create it with deterministic contents:
-- cycle_id: `<cycle_id>`
-- release: `<release>`
-- acquired_utc: `<ISO-8601 UTC>`
-- acquired_by: "Release Planning Engine"
-- Update `state.json`:
-- locks.roadmap_lock.owned = true
-- locks.roadmap_lock.owner_cycle_id = `<cycle_id>`
-- locks.roadmap_lock.owner_release = `<release>`
-- locks.roadmap_lock.acquired_utc = `<timestamp>`
-- locks.roadmap_lock.status = "acquired"
-- locks.roadmap_lock.marker = `RA:<release>:<cycle_id>`
-- artifacts.roadmap_lock = "acquired"
+   - Create it with deterministic contents:
+     - cycle_id: `<cycle_id>`
+     - release: `<release>`
+     - acquired_utc: `<ISO-8601 UTC>`
+     - acquired_by: "Release Planning Engine"
+   - Update `state.json`:
+     - locks.roadmap_lock.owned = true
+     - locks.roadmap_lock.owner_cycle_id = `<cycle_id>`
+     - locks.roadmap_lock.owner_release = `<release>`
+     - locks.roadmap_lock.acquired_utc = `<timestamp>`
+     - locks.roadmap_lock.status = "acquired"
+     - locks.roadmap_lock.marker = `RA:<release>:<cycle_id>`
+     - artifacts.roadmap_lock = "acquired"
 2. If `claude/roadmap/.lock` exists:
-
-- Read owner_cycle_id.
-- If owner_cycle_id == `<cycle_id>`:
-- Treat as re-entrant: proceed.
-- artifacts.roadmap_lock = "acquired"
-- If owner_cycle_id != `<cycle_id>`:
-- Record a ⛔ Blocker (Lifecycle / Process Integrity; owning authority: PMO Lead)
-- Unblock criteria: "Roadmap lock must be manually released or declared stale under protocol"
-- Evidence: include lock file contents
-- If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
-- Update `state.json`:
-- locks.roadmap_lock.owned = false
-- locks.roadmap_lock.owner_cycle_id = <from lock="" file=""></from>
-- locks.roadmap_lock.owner_release = <from lock="" file="" if="" present=""></from>
-- locks.roadmap_lock.status = "blocked"
-- artifacts.roadmap_lock = "blocked"
-- HALT.
+   - Read owner_cycle_id.
+   - If owner_cycle_id == `<cycle_id>`:
+     - Treat as re-entrant: proceed.
+     - artifacts.roadmap_lock = "acquired"
+   - If owner_cycle_id != `<cycle_id>`:
+     - Record a ⛔ Blocker (Lifecycle / Process Integrity; owning authority: PMO Lead)
+     - Unblock criteria: "Roadmap lock must be manually released or declared stale under protocol"
+     - Evidence: include lock file contents
+     - If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
+     - Update `state.json`:
+       - locks.roadmap_lock.owned = false
+       - locks.roadmap_lock.owner_cycle_id = <from lock file>
+       - locks.roadmap_lock.owner_release = <from lock file if present>
+       - locks.roadmap_lock.status = "blocked"
+       - artifacts.roadmap_lock = "blocked"
+     - HALT.
 
 Stale protocol (detect only; do not clear):
-
 - If lock appears stale based on timestamp threshold defined by PMO Lead, you may:
-- set locks.roadmap_lock.status = "stale_detected"
-- set artifacts.roadmap_lock = "stale_detected"
-- create a blocker requiring manual stale resolution
+  - set locks.roadmap_lock.status = "stale_detected"
+  - set artifacts.roadmap_lock = "stale_detected"
+  - create a blocker requiring manual stale resolution
 - You may not delete or overwrite the lock automatically.
 
 ## STEP 5 — Roadmap Annotation (Optional, Non-Decision Notes Only) — Roadmap Txn + Marker
-
 Authority: Product Owner
 
 Precondition (Hard Gate):
+- Roadmap lock must be acquired by this cycle.
 
-- Roadmap lock must be acquired by this cycle (artifacts.roadmap_lock == acquired AND lock file owner_cycle_id == `<cycle_id>`).
-If not true: HALT.
-
-Allowed roadmap changes (still apply):
-
+Allowed roadmap changes:
 - Add links to the cycle folder under the relevant release section, and/or
 - Add a short “Execution Notes” subsection that does not change scope, status, or priority.
 
 Roadmap marker (Required for Idempotency):
-Include inside the annotated release section:
-
 - `<!-- roadmap-annotation-marker: RA:<release>:<cycle_id> -->`
 
 Roadmap transaction (Hard Requirement):
 Create or update:
-
 - `claude/cycles/<cycle_id>/roadmap_txn.json`
 
 Prepare:
-
-- state: `prepared`
+- state: prepared
 - prepared_utc: now
 - marker: `RA:<release>:<cycle_id>`
 - target_file: `claude/roadmap/current_roadmap.md`
 
 Update state.json:
-
 - locks.roadmap_lock.txn_state = prepared
 - artifacts.roadmap_txn = prepared
 
 Idempotency:
-Before writing annotation:
-
-- Search `claude/roadmap/current_roadmap.md` for marker:
-- `<!-- roadmap-annotation-marker: RA:<release>:<cycle_id> -->`
-If found:
-- Do NOT write annotation again.
-- Proceed to commit + unlock.
-If not found:
-- Write annotation and marker once.
+- If marker found, do NOT write annotation again; proceed to commit + unlock.
 
 Commit:
-
-- set roadmap_txn.json:
-- state: committed
+- set roadmap_txn.json state: committed
 - committed_utc: now
+
 Update state.json:
 - locks.roadmap_lock.txn_state = committed
 - artifacts.roadmap_txn = committed
 
 Postcondition — Release Roadmap Lock (Strict):
-After successful STEP 5 (txn committed):
-
 - Remove `claude/roadmap/.lock`
 - Update state.json:
-- locks.roadmap_lock.status = released
-- locks.roadmap_lock.owned = false
-- artifacts.roadmap_lock = released
+  - locks.roadmap_lock.status = released
+  - locks.roadmap_lock.owned = false
+  - artifacts.roadmap_lock = released
 
 If lock removal fails: record blocker and HALT.
 
 ## STEP 5.5 — Cross-Stage Integrity Validation (Hard Gate)
-
 Write: `stage5_5_cross_stage_integrity.md`
 
 Update state.json:
-
 - artifacts.stage5_5_cross_stage_integrity = pass|fail|blocked
 - attributes.cross_stage_integrity = pass|fail|blocked
-(NOTE: rerun only if Stage 2/3/4 changed, hash-based)
 
 ## STEP 5.7 — Decision Record Integrity Validation (Hard Gate)
-
 Write: `stage5_7_decision_record_integrity.md` only if triggered
 
 Update state.json:
-
 - artifacts.stage5_7_decision_record_integrity = pass|fail|blocked|not_applicable
 - attributes.decisions_validated = pass|fail|not_applicable|blocked
 
 ## STEP 7 — Cycle Summary
-
 Write: `cycle_summary.md`
 
 ## STEP 8 — Lessons Learnt
-
 Write: `lessons_learnt.md`
 
 ---
 
 # Publish Gate (Hard Constraint)
-
-## Publish Gate — Deferred Execution Blockers
-
 The run may be marked Validated/Published only if:
-
 - open_escalations is empty, AND
 - every Deferred escalation has `Blocks execution: No`, AND
 - artifacts.stage4_5_capacity_check is pass OR warn (warn allowed only if mode=standard), AND
@@ -923,13 +847,11 @@ The run may be marked Validated/Published only if:
 - artifacts.stage5_7_decision_record_integrity is pass OR not_applicable
 
 If any Deferred escalation has `Blocks execution: Yes`:
-
 - status MUST be Blocked (or remain non-Published)
 - publish_eligible = false
 - HALT (do not mark Published)
 
 If Publish Gate passes:
-
 - status = Validated
 - publish_eligible = true
 Else:
@@ -937,36 +859,98 @@ Else:
 
 ---
 
-## Completion Condition (Run Success)
-
-The run is incomplete unless:
-
-- cycle folder exists at `claude/cycles/<cycle_id>/`
-- `state.json` exists and reflects mutation_seq, tracked hashes, lock state(s), txn state(s), and publish_eligible
-- required stage files exist and are compliant for this run
-- if auto-escalate=true and blockers occurred, escalations.md exists
-- Publish Gate passes
-- cycle_summary.md and lessons_learnt.md exist
-
-### Publish Sealing (Required)
-
+# Publish Sealing
 Before setting `status = Published`:
 
-- Recompute canonicalized SHA-256 hashes for the tracked planning artifacts:
+## 18.1 Recompute Canonical Hashes
+Recompute canonicalized SHA-256 hashes for:
 - stage2_scope_extraction.md
 - stage3_execution_plan.md
 - stage4_backlog_slice.md
 - escalations.md
-- Write them into:
-- `state.json.sealed.sealed_hashes`
-- Set:
-- `state.json.sealed.sealed_utc = now (UTC)`
-- `state.json.drift_detected = false`
-- `state.json.drift_notes = []`
 
-On success:
+Write them into:
+- state.sealed.sealed_hashes
 
-- status = Published
+## 18.2 Seal Assumptions
+Capture:
+
+```json
+{
+  "timebox": "<assumptions.timebox>",
+  "capacity": "<assumptions.capacity>"
+}
+```
+
+Write into:
+- state.sealed.sealed_assumptions
+
+These become immutable.
+
+## 18.3 Seal Canonical State Snapshot (Tamper-Evident)
+Create canonical JSON excluding:
+- last_transition_utc
+- Drift flags
+- locks.*
+- Dynamic artefact lock states
+
+Include:
+- cycle_id
+- release
+- date
+- mode
+- assumptions
+- artifact_hashes
+- mutation_seq
+- escalation lists
+- attributes
+- sealed_hashes
+- sealed_assumptions
+
+Canonicalize key order.
+
+Hash using SHA-256.
+
+Write into:
+- state.sealed.state_snapshot_hash
+
+## 18.4 Finalize Seal
+Set:
+- sealed_utc = now (UTC)
+- drift_detected = false
+- drift_notes = []
+
+## 18.5 Final Transition
+After successful sealing:
+- status = "Published"
 - last_transition_utc = now
 - publish_eligible = true
-- open_escalations = []
+
+It is forbidden to mark Published before sealing completes.
+
+If sealing fails → halt and remain Validated.
+
+---
+
+# State Integrity Rule
+If:
+- status == Published
+- Sealed fields missing OR
+- state_snapshot_hash mismatch
+
+Treat as drift.
+
+Do NOT repair.
+
+Require amendment cycle.
+
+---
+
+# Completion Condition
+Run is complete only if:
+- Cycle folder exists
+- state.json valid
+- publish_eligible = true
+- status = Published
+- Summary + Lessons exist
+- No open escalations
