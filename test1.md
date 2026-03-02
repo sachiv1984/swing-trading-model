@@ -9,3 +9,5 @@ Next, perform these actions:
 4. Push the branch to origin.
 
 Confirm once the push is complete so I can verify the GitHub Action trigger.
+
+claude "Use the 'gh' CLI to create a Pull Request from 'exec/v1.7-foundation' to 'main'. Title it '[EPIC-01][ST-01] Foundation & Governance Anchors'. In the body, link it to the issue by writing 'Closes #XX' (replace XX with the actual issue number for ST-01)."
