@@ -1,22 +1,4 @@
 
-
-🔶 4️⃣ “Soft Gate” vs “Hard Gate” Language Inconsistency
-
-Stage 3.5 is called Soft Gate but halts if escalation remains Open.
-
-Stage 4.5 is Soft Gate but can HALT.
-
-They are actually:
-
-Conditionally Hard Gates.
-
-You may want to standardize terminology:
-	•	Hard Gate → always halts on failure
-	•	Conditional Gate → may pass/warn/halt based on mode
-	•	Integrity Gate → always halts
-
-Right now the semantics require interpretation.
-
 ⸻
 
 🔶 5️⃣ You Have Not Defined Concurrency Behavior
