@@ -900,6 +900,19 @@ Update state.json:
 
 ## STEP 5 — Roadmap Annotation (optional)
 
+### STEP 5 Postcondition — Release Roadmap Lock (Strict)
+
+After roadmap_txn state = committed:
+
+- Remove `claude/roadmap/.lock`
+- Update state.json:
+  - locks.roadmap_lock.status = "released"
+  - locks.roadmap_lock.owned = false
+  - artifacts.roadmap_lock = "released"
+
+If removal fails:
+- Record blocker and HALT.
+
 ## STEP 5.5 — Cross-Stage Integrity Validation (Hard Gate)
 
 Write: `stage5_5_cross_stage_integrity.md`
