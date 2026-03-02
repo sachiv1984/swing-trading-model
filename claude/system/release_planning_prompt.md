@@ -1,13 +1,13 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.1
+**Version:** 2.3
 **Last Updated:** 2026-03-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
 ---
 
-# Claude Governance Prompt — Release Planning Engine (Cycle-Based, Reusable, Escalation-Aware, State-Driven, Mutation-Safe, Concurrency-Safe)
+# Claude Governance Prompt — Release Planning Engine (Cycle-Based, Reusable, Escalation-Aware, State-Driven, Mutation-Safe, Concurrency-Safe, Terminal-Publish)
 
 ## Purpose
 Translate an already-approved roadmap release (e.g., v1.7, v1.8) into an execution-ready plan:
@@ -160,14 +160,14 @@ The routine is **state-driven**:
 - `Planning` — plan being constructed and internally executable
 - `Committed` — backlog slice committed (release slice written)
 - `Validated` — feasibility + integrity + decisions validated + publish gate eligible
-- `Published` — summary + lessons filed and publish gate passed
-- `Blocked` — one or more Open escalations exist, publish gate cannot pass, or strict lock blocks progress
+- `Published` — sealed; cycle summary + lessons filed; publish gate passed
+- `Blocked` — one or more Open escalations exist; publish gate cannot pass; strict lock blocks progress; or terminal publish guard halts further action
 
 ## State semantics (no overlap)
 - **Planning** means “Stage 3 exists and Stage 3.5 passed.”
 - **Committed** means “Stage 4 passed.”
 - **Validated** means “Stage 4.5 + Stage 5.5 + Stage 5.7 (if triggered) passed AND Publish Gate eligible.”
-- **Published** means “Cycle summary + lessons exist AND publish gate passed.”
+- **Published** means “Sealed snapshot recorded AND cycle summary + lessons exist AND publish gate passed.”
 
 All detailed checks remain in artifacts + attributes; macro-states are phase markers.
 
@@ -255,6 +255,18 @@ State.json schema (minimum required keys):
   "status": "Initialized",
   "publish_eligible": false,
   "last_transition_utc": "<ISO-8601 UTC>",
+
+  "sealed": {
+    "sealed_utc": "",
+    "sealed_hashes": {
+      "stage2_scope_extraction": "",
+      "stage3_execution_plan": "",
+      "stage4_backlog_slice": "",
+      "escalations": ""
+    }
+  },
+  "drift_detected": false,
+  "drift_notes": [],
 
   "mutation_seq": 0,
   "assumptions": {
@@ -366,6 +378,40 @@ If `state.json` is missing but artifacts exist:
 ---
 
 ## RESUME PRECHECK — Mutation Detection & Invalidation (Hard Gate)
+
+### Terminal State Guard — Published Is Immutable (Hard Gate)
+
+If `state.json.status == "Published"`:
+
+- Treat the cycle folder as **sealed**.
+- Do NOT run invalidation.
+- Do NOT re-run any steps.
+- Do NOT modify any stage artefacts in this cycle.
+
+Perform a drift check against the sealed snapshot:
+
+1. Recompute canonicalized SHA-256 hashes for the tracked planning artifacts:
+- stage2_scope_extraction.md
+- stage3_execution_plan.md
+- stage4_backlog_slice.md
+- escalations.md
+2. Compare these hashes to `state.json.sealed.sealed_hashes`.
+
+If any mismatch is found:
+
+- Set:
+- `state.json.drift_detected = true`
+- Append to `state.json.drift_notes`:
+- timestamp
+- artifact(s) changed
+- old sealed hash and new hash
+- HALT immediately with instruction:
+- “Published cycle has drift. Do not modify this cycle. Create a new amendment cycle and reference this published cycle_id.”
+
+If no mismatch is found:
+
+- HALT immediately with message:
+- “Cycle is Published and sealed. No further action permitted in this cycle.”
 
 ### Purpose
 
@@ -866,6 +912,22 @@ The run is incomplete unless:
 - if auto-escalate=true and blockers occurred, escalations.md exists
 - Publish Gate passes
 - cycle_summary.md and lessons_learnt.md exist
+
+### Publish Sealing (Required)
+
+Before setting `status = Published`:
+
+- Recompute canonicalized SHA-256 hashes for the tracked planning artifacts:
+- stage2_scope_extraction.md
+- stage3_execution_plan.md
+- stage4_backlog_slice.md
+- escalations.md
+- Write them into:
+- `state.json.sealed.sealed_hashes`
+- Set:
+- `state.json.sealed.sealed_utc = now (UTC)`
+- `state.json.drift_detected = false`
+- `state.json.drift_notes = []`
 
 On success:
 
