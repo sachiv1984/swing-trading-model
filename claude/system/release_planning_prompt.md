@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.9
+**Version:** 2.0
 **Last Updated:** 2026-03-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -269,6 +269,19 @@ State.json schema (minimum required keys):
     "escalations": "<fingerprint or empty>"
   },
 
+
+   "locks": {
+      "backlog_lock": {
+        "required": true,
+        "lock_file": "claude/backlog/.lock",
+        "owned": false,
+        "owner_cycle_id": "",
+        "owner_release": "",
+        "acquired_utc": "",
+        "status": "not_checked|acquired|blocked|released|stale_detected"
+      }
+    },
+
   "mutations": [],
   "invalidated_steps": [],
 
@@ -288,6 +301,7 @@ State.json schema (minimum required keys):
 
   "artifacts": {
     "run_manifest": "present|missing",
+    "backlog_lock": "not_checked|acquired|blocked|released|stale_detected",
     "stage1_readiness": "not_started|pass|fail|blocked",
     "stage2_scope_extraction": "not_started|pass|fail|blocked",
     "stage3_execution_plan": "not_started|pass|fail|blocked",
@@ -399,6 +413,11 @@ After applying invalidations:
 - Resume from the earliest invalidated step (lowest numbered step).
 If no invalidations exist:
 - Continue normal resume rule.
+
+### Lock consistency check (Hard Gate)
+If artifacts.backlog_lock == "acquired" in state.json:
+- Verify the lock file exists and is owned by `<cycle_id>`.
+- If not, record a blocker and HALT (inconsistent lock state).
 
 ---
 
@@ -532,14 +551,89 @@ Update state.json:
 - attributes.plan_executable = true on pass
 - status remains Planning (now meaning “plan executable”)
 
+## STEP 3.9 — Shared Write Lock Preflight (Hard Gate)
+Purpose:
+- Enforce strict concurrency control for shared backlog writes.
+
+Shared resource:
+- Backlog file: `claude/backlog/backlog.md`
+- Lock file: `claude/backlog/.lock`
+
+Hard rules:
+- If `claude/backlog/.lock` exists and is not owned by the current `cycle_id`, HALT.
+- No auto-deletion of existing locks is permitted.
+- Stale locks follow the manual stale protocol only.
+
+Lock acquisition procedure:
+1) If `claude/backlog/.lock` does NOT exist:
+   - Create it with the following contents (plain text or JSON is acceptable, must be deterministic):
+     - cycle_id: `<cycle_id>`
+     - release: `<release>`
+     - acquired_utc: `<ISO-8601 UTC>`
+     - acquired_by: "Release Planning Engine"
+   - Update `state.json`:
+     - locks.backlog_lock.owned = true
+     - locks.backlog_lock.owner_cycle_id = `<cycle_id>`
+     - locks.backlog_lock.owner_release = `<release>`
+     - locks.backlog_lock.acquired_utc = `<timestamp>`
+     - locks.backlog_lock.status = "acquired"
+     - artifacts.backlog_lock = "acquired"
+
+2) If `claude/backlog/.lock` exists:
+   - Read its recorded owner cycle_id.
+   - If owner cycle_id == `<cycle_id>`:
+     - Treat as re-entrant: proceed.
+     - Update `state.json` artifacts.backlog_lock = "acquired"
+   - If owner cycle_id != `<cycle_id>`:
+     - Record a ⛔ Blocker:
+       - Trigger type: Lifecycle / Process Integrity
+       - Owning authority: PMO Lead
+       - Unblock criteria: "Backlog lock must be manually released or declared stale under protocol"
+       - Evidence: include lock file contents
+     - If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
+     - Set state.json:
+       - locks.backlog_lock.owned = false
+       - locks.backlog_lock.owner_cycle_id = <from lock file>
+       - locks.backlog_lock.owner_release = <from lock file if present>
+       - locks.backlog_lock.status = "blocked"
+       - artifacts.backlog_lock = "blocked"
+     - HALT.
+
+Stale protocol (detect only; do not clear):
+- If lock appears stale based on timestamp threshold defined by PMO Lead, you may:
+  - set locks.backlog_lock.status = "stale_detected"
+  - set artifacts.backlog_lock = "stale_detected"
+  - create a blocker requiring manual stale resolution
+- You may not delete or overwrite the lock automatically.
+
 ## STEP 4 — Backlog Slice (commitment)
 
 Write: `stage4_backlog_slice.md` + update backlog slice section
+
+### STEP 4 Precondition — Backlog Lock Required (Hard Gate)
+Before writing to `claude/backlog/backlog.md`:
+- Verify `claude/backlog/.lock` exists AND contains owner_cycle_id == `<cycle_id>`.
+If not true:
+- Record a ⛔ Blocker (Lifecycle / Process Integrity; owner: PMO Lead)
+- Invoke escalation subroutine if auto-escalate=true
+- HALT
+
 Update state.json:
 
 - artifacts.stage4_backlog_slice = pass|fail|blocked
 - attributes.backlog_committed = true on pass
 - status = Committed on pass
+
+### STEP 4 Postcondition — Release Backlog Lock (Strict)
+After successfully updating `claude/backlog/backlog.md`:
+- Remove `claude/backlog/.lock`
+- Update `state.json`:
+  - locks.backlog_lock.status = "released"
+  - locks.backlog_lock.owned = false
+  - artifacts.backlog_lock = "released"
+
+If the environment does not permit removing the lock file:
+- Record a blocker and HALT (lock cannot be left ambiguous).
 
 ## STEP 4.5 — Capacity Feasibility Sense Check (Conditional Gate)
 Classification: Conditional Gate (halts only if escalation remains Open / blocking)
