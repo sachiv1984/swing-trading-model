@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.0
+**Version:** 2.1
 **Last Updated:** 2026-03-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -262,12 +262,14 @@ State.json schema (minimum required keys):
     "capacity": "<text or empty>"
   },
 
-  "artifact_fingerprints": {
-    "stage2_scope_extraction": "<fingerprint or empty>",
-    "stage3_execution_plan": "<fingerprint or empty>",
-    "stage4_backlog_slice": "<fingerprint or empty>",
-    "escalations": "<fingerprint or empty>"
-  },
+  "artifact_hashes": {
+  "method": "sha256",
+  "canonicalization": "md-v1",
+  "stage2_scope_extraction": "<sha256>",
+  "stage3_execution_plan": "<sha256>",
+  "stage4_backlog_slice": "<sha256>",
+  "escalations": "<sha256>"
+  }
 
 
    "locks": {
@@ -366,10 +368,18 @@ Prevent stale “pass” stamps after any mutation to assumptions or tracked art
 - `escalations.md`
 - assumptions: `timebox`, `capacity`
 
-Fingerprint rule:
+Fingerprint rule (Hard Requirement):
+- Fingerprints MUST be derived from content only.
+- Preferred: canonicalized content hash (see Canonicalization Rules below).
+- Disallowed: filesystem timestamps, file size, or last-modified time.
 
-- A fingerprint is any deterministic representation of current content, e.g. file length + last modified time, or a simple content hash.
-- If fingerprints cannot be computed: HALT.
+Canonicalization Rules (for markdown planning artefacts):
+1) Normalize line endings to LF (`\n`)
+2) Strip trailing whitespace on each line
+3) Collapse runs of >2 blank lines to exactly 2
+4) Trim leading/trailing blank lines
+5) Do not reorder or otherwise transform content
+Then compute SHA-256 hash of the canonicalized content.
 
 ### Detection
 
