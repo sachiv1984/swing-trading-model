@@ -464,6 +464,10 @@ If `status == Published`:
   - `drift_detected`
   - `drift_notes`
 - Any other modification constitutes drift.
+- open_escalations must not change
+- deferred_escalations must not change
+- accepted_risk_escalations must not change
+- deferred_execution_blockers must not change
 
 Perform drift detection only (see Drift Detection).
 
