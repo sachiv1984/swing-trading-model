@@ -71,16 +71,18 @@ Response uses the standard success envelope from **conventions.md**.
       "entry_date": "2026-02-01",
       "entry_price": 622.00,
       "shares": 10.5,
-      "current_price": 623.00,
-      "current_price_native": 850.00,
-      "stop_price": 607.50,
-      "stop_price_native": 829.00,
-      "pnl": 2394.00,
-      "pnl_percent": 3.7,
+      "current_price": 570.87,
+      "current_value": 5994.14,
+      "pnl": 851.57,
+      "pnl_pct": 16.56,
+      "current_stop": 607.50,
       "holding_days": 14,
       "status": "open",
+      "display_status": "PROFITABLE",
+      "fx_rate": 1.2650,
       "grace_period": false,
-      "display_status": "PROFITABLE"
+      "grace_days_remaining": null,
+      "live_fx_rate": 1.2750
     }
   ]
 }
@@ -106,11 +108,12 @@ The position objects returned here are a **summary shape**. Key omissions versus
 |---------------|-------------|
 | `initial_stop` | `GET /positions` |
 | `atr_value` | `GET /positions` |
-| `fx_rate`, `live_fx_rate` | `GET /positions` |
 | `entry_note`, `exit_note` | `GET /positions` |
 | `tags` | `GET /positions` |
 
-**`pnl_percent`** is present in the summary object. This is the percentage P&L relative to entry cost. The same value appears as `pnl_pct` in trade history records — both names exist in the system for compatibility. `pnl_percent` is the canonical name in position responses.
+**`pnl_pct`** is the percentage P&L field in this position summary object — the percentage return relative to entry price, expressed as a signed percentage. In trade history responses (`GET /trades`), the same value appears as both `pnl_pct` and `pnl_percent` for backward compatibility; in position objects only `pnl_pct` is returned.
+
+**`current_price`** is always expressed in GBP, regardless of the instrument's native currency. For US positions, the live USD price is converted to GBP using `live_fx_rate` at time of call. `entry_price` is in native currency (USD for US, GBP for UK). `fx_rate` is the stored rate at time of entry; `live_fx_rate` is the rate used for the current price conversion.
 
 ### Errors
 
@@ -449,3 +452,13 @@ Response uses the standard success envelope from **conventions.md**.
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0.0 | 2026-02-17 | Initial spec — GET /portfolio, POST /portfolio/position, POST /portfolio/size, POST /portfolio/snapshot, GET /portfolio/history |
+| 1.8.2 | 2026-02-25 | BLG-FEAT-01: Added `current_drawdown_percent` and `peak_portfolio_value` fields to GET /portfolio portfolio-level response (QWB pre-alignment D1) |
+| 1.9.0 | 2026-03-02 | S2-07 (EPIC-06/BLG-TECH-08): Spec updated to match live `portfolio_service.py` implementation. Position object example and field notes corrected — removed stale fields (`current_price_native`, `stop_price`, `stop_price_native`, `pnl_percent`); added live fields (`current_value`, `pnl_pct`, `current_stop`, `fx_rate`, `grace_days_remaining`, `live_fx_rate`). Key omissions table corrected (fx_rate/live_fx_rate ARE returned by this endpoint). pnl_pct note corrected. OBS-QWB-R1-01 resolved. TASK-25/26/27 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |

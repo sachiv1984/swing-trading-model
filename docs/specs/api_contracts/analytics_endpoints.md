@@ -453,12 +453,12 @@ No parameters. No request body.
       }
     ],
     "summary": {
-      "total": 13,
-      "passed": 13,
+      "total": 14,
+      "passed": 14,
       "warned": 0,
       "failed": 0,
       "by_severity": {
-        "critical": { "total": 3, "passed": 3, "warned": 0, "failed": 0 },
+        "critical": { "total": 4, "passed": 4, "warned": 0, "failed": 0 },
         "high":     { "total": 3, "passed": 3, "warned": 0, "failed": 0 },
         "medium":   { "total": 6, "passed": 6, "warned": 0, "failed": 0 },
         "low":      { "total": 1, "passed": 1, "warned": 0, "failed": 0 }
@@ -501,7 +501,7 @@ Severity is assigned per metric and is fixed regardless of pass/fail status. It 
 
 | Severity | Metrics | Action on failure |
 |----------|---------|-------------------|
-| `critical` | `sharpe_ratio`, `max_drawdown_percent`, `profit_factor` | Block deployment. Page on-call engineer. Investigate immediately |
+| `critical` | `sharpe_ratio`, `max_drawdown_percent`, `profit_factor`, `sharpe_ratio_trade_method` | Block deployment. Page on-call engineer. Investigate immediately |
 | `high` | `recovery_factor`, `expectancy`, `risk_reward_ratio` | Require manual sign-off before deploy. Alert analytics team |
 | `medium` | `win_streak`, `loss_streak`, `avg_hold_winners`, `avg_hold_losers`, `trade_frequency`, `capital_efficiency` | Log warning. Investigate if persistent (3+ consecutive runs) |
 | `low` | `days_underwater` | Log only. Review monthly |
@@ -515,6 +515,7 @@ Severity is assigned per metric and is fixed regardless of pass/fail status. It 
 | `sharpe_ratio` | critical | `(Avg Return / Std Dev) × √252` | ±0.01 |
 | `max_drawdown_percent` | critical | `((Peak − Trough) / Peak) × 100` | ±0.1% |
 | `profit_factor` | critical | `Gross Profit / Gross Loss` | ±0.02 |
+| `sharpe_ratio_trade_method` | critical | `(Avg Ann Return / Sample StdDev) — trade method fallback` | ±0.01 |
 | `recovery_factor` | high | `Net Profit / Max Drawdown` | ±0.05 |
 | `expectancy` | high | `(Win Rate × Avg Win) + (Loss Rate × Avg Loss)` | ±£0.10 |
 | `risk_reward_ratio` | high | `Avg Win / Avg Loss` | ±0.02 |
@@ -534,7 +535,7 @@ Aggregated counts per severity tier. Always present with all four keys, even if 
 
 ```json
 "by_severity": {
-  "critical": { "total": 3, "passed": 3, "warned": 0, "failed": 0 },
+  "critical": { "total": 4, "passed": 4, "warned": 0, "failed": 0 },
   "high":     { "total": 3, "passed": 3, "warned": 0, "failed": 0 },
   "medium":   { "total": 6, "passed": 6, "warned": 0, "failed": 0 },
   "low":      { "total": 1, "passed": 1, "warned": 0, "failed": 0 }
@@ -566,3 +567,4 @@ Aggregated counts per severity tier. Always present with all four keys, even if 
 | 1.5.0 | 2026-02-17 | Initial rewrite: unified endpoint, validation endpoint, known limitations recorded |
 | 1.7.0 | 2026-02-17 | Added `entry_price`, `exit_price`, `stop_price` to `trades_for_charts`; R-multiple note added |
 | 1.8.1 | 2026-02-21 | BLG-TECH-02 contract: added `severity` field to each validation result object; added `by_severity` aggregation to `summary`; added severity model table; updated metrics validated table to include severity column and `capital_efficiency` row; updated response example; removed resolved known limitation entries for Sharpe variance and capital efficiency currency basis (resolved via BLG-TECH-01). API Contracts Owner. |
+| 1.9.0 | 2026-03-02 | BLG-TECH-06 (EPIC-06/S2-06): Add `sharpe_ratio_trade_method` to validated metrics table (severity: critical, formula: Avg Ann Return / Sample StdDev — trade method, tolerance ±0.01). Update response example summary total from 13 → 14 and `by_severity.critical.total` from 3 → 4. Update severity model table critical tier. OBS-01 formally resolved. TASK-21 through TASK-24 complete. API Contracts & Documentation Owner sign-off granted 2026-03-02 (Delegated Authority). |

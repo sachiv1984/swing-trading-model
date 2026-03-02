@@ -64,8 +64,8 @@ def get_trade_history_with_stats() -> Dict:
             "pnl": round(t.get('pnl', 0), 2),
             "pnl_pct": round(t.get('pnl_pct', 0), 2),
             "pnl_percent": round(t.get('pnl_pct', 0), 2),
+            "holding_days": t.get('holding_days'),
             "exit_reason": t.get('exit_reason', 'Unknown'),
-            # ✅ ADDED: Notes and tags
             "entry_note": t.get('entry_note'),
             "exit_note": t.get('exit_note'),
             "tags": t.get('tags', [])
