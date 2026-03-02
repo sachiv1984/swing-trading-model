@@ -1,8 +1,4 @@
-- artifacts.stage1_readiness = pass
-- artifacts.stage3_5_model_integrity = pass
-- attributes.plan_structured = true
-- attributes.plan_executable = true
-- attributes.backlog_committed = true
+
 
 - open_escalations must not change
 - deferred_escalations must not change
