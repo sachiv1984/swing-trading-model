@@ -642,16 +642,17 @@ Must include:
 
 ### 5.4 Lessons Learnt
 
-Create: `claude/cycles/<cycle_id>/lessons_learnt_execution.md`
+Invoke: `claude/system/lessons_learnt_prompt.md` (§3.3 — Sprint Execution inputs)
 
-Record:
-- Delegation patterns (what kept needing humans that could be improved)
-- GitHub integration friction
-- Acceptance criteria gaps
-- Governance process friction
-- Immediate improvements that can be actioned now (if any, apply and record what changed)
+Output path: `claude/cycles/<cycle_id>/lessons_learnt_execution.md`
 
-Do not re-litigate scope decisions. Record only what improves the process.
+The shared prompt governs structure, action rules, lifecycle compliance, and completion conditions. The execution-specific friction areas to focus on:
+- Delegation patterns (which classification kept needing humans — could any become autonomous?)
+- GitHub integration friction (CI behaviour, issue/PR lifecycle)
+- Acceptance criteria gaps (items that lacked criteria and had to be parked as `delegated_decision`)
+- Governance process friction (gates that fired unexpectedly, SLA misses)
+
+The prompt's §6.2 rule applies: if any friction can be resolved by updating a template or prompt during this run, apply it immediately and record it.
 
 ---
 
