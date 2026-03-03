@@ -1,16 +1,7 @@
-Owner: Head of Specs Team
-Status: Active
-Version: 1.1
-Last Updated: 2026-03-02
-
----
-
-## Change Log
-
-| Version | Change |
-|---------|--------|
-| 1.1 | Added §3.3 (Execution routine inputs) and §4.1 (Output path override) to support invocation from Sprint Execution Engine. No changes to structure, action rules, or lifecycle requirements. |
-| 1.0 | Initial version. Roadmap Rebalance and Release Planning routines. |
+**Owner:** Head of Specs Team
+**Status:** Active
+**Version:** 1.2
+**Last Updated:** 2026-03-03
 
 ---
 
@@ -18,10 +9,11 @@ Last Updated: 2026-03-02
 
 ## Invocation Rule
 
-This prompt is NOT user-invoked.
+This prompt is **NOT user-invoked.**
 
 It may only be invoked internally by a governed routine step (e.g., "STEP 11 — Lessons Learnt", "STEP 8 — Lessons Learnt", "STEP 5.4 — Lessons Learnt").
-If a user attempts to run this directly, refuse and instruct them to run the appropriate routine (e.g., "run roadmap", "run sprint").
+
+If a user attempts to run this directly, refuse and instruct them to run the appropriate routine (e.g., `run roadmap`, `run sprint`, `run delivery verification`, `run post-ship`).
 
 ---
 
@@ -87,6 +79,26 @@ Read the inputs appropriate to the invoking routine:
 - `claude/cycles/<cycle_id>/execution_escalations.md` (if present)
 - `claude/cycles/<cycle_id>/sprint_close.md`
 
+### 3.4 Delivery Verification inputs
+
+- `claude/cycles/<cycle_id>/verification_report.md`
+- `claude/cycles/<cycle_id>/sprint_close.md`
+- `claude/cycles/<cycle_id>/execution_state.json`
+- `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per merged EPIC)
+- `claude/cycles/<cycle_id>/verification_escalations.md` (if present)
+
+Focus areas for Delivery Verification lessons: gate sequencing friction (was QA evidence ready when needed?), deviation severity assessment patterns (were P0/P1/P2 calls contested?), test scenario coverage gaps (recurring or systemic?), and sign-off coordination friction between Director of Quality and Product Owner.
+
+### 3.5 Post-Ship Closure inputs
+
+- `claude/cycles/<cycle_id>/closure_record.md`
+- `claude/cycles/<cycle_id>/lessons_learnt.md` (Release Planning — read for cross-cycle pattern detection)
+- `claude/cycles/<cycle_id>/lessons_learnt_execution.md` (Sprint Execution — read for cross-cycle pattern detection)
+- `docs/product/changelog.md` (confirm entry quality)
+- `docs/specs/Specs_Index.md` (confirm open items were reconciled)
+
+Focus areas for Post-Ship Closure lessons: document closure friction (which documents were hardest to locate or update?), lessons learnt action application rate (how many immediate actions were actually applied vs deferred?), and whether any closure steps revealed gaps that should have been caught earlier in the cycle.
+
 If some files are missing:
 - Record the absence as a process failure
 - Do not invent content
@@ -104,8 +116,10 @@ The output path depends on the invoking routine:
 | Roadmap Rebalance (STEP 11) | `claude/cycles/<cycle_id>/lessons_learnt.md` |
 | Release Planning (STEP 8) | `claude/cycles/<cycle_id>/lessons_learnt.md` |
 | Sprint Execution (STEP 5.4) | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` |
+| Delivery Verification | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` |
+| Post-Ship Closure | `claude/cycles/<cycle_id>/lessons_learnt_closure.md` |
 
-The execution routine uses a distinct filename because both a Release Planning cycle and a Sprint Execution cycle may share the same `cycle_id` folder, and their lessons learnt records must remain separate.
+The execution, verification, and closure routines use distinct filenames because multiple routines share the same `cycle_id` folder and their lessons learnt records must remain separate and traceable to their source routine.
 
 ### 4.2 Header block
 
@@ -184,7 +198,7 @@ Include the reason (governance gap, boundary ambiguity, systemic conflict).
 ## 6. Action Rules (Non-Negotiable)
 
 **6.1 Do not re-litigate decisions**
-Do not argue whether roadmap outcomes, sprint scope selections, or delegation decisions were "right".
+Do not argue whether roadmap outcomes, sprint scope selections, delegation decisions, deviation severity calls, or closure document updates were "right".
 Focus only on process quality and governance integrity.
 
 **6.2 Action improvements immediately when safe**
@@ -207,6 +221,8 @@ If the issue is:
 - an authority boundary ambiguity
 - a recurring conflict between domain owners
 - a delegation classification that repeatedly fails (execution routine only)
+- a deviation severity pattern that is consistently contested (verification routine only)
+- a closure document that is consistently missing or stale at post-ship (closure routine only)
 
 Then escalate to Product Owner and Head of Specs Team and record it.
 
@@ -227,3 +243,13 @@ This prompt completes only when:
 - It follows the required structure (§5)
 - Any actioned improvements are reflected in updated files with correct lifecycle versioning
 - Any outstanding actions and escalations are explicitly listed
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.2 | 2026-03-03 | Added §3.4 (Delivery Verification inputs) and §3.5 (Post-Ship Closure inputs) with focus areas for each. Added output path entries for Delivery Verification (`lessons_learnt_verification.md`) and Post-Ship Closure (`lessons_learnt_closure.md`) to §4.1. Updated §4.1 note to cover all three distinct-filename routines. Added verification and closure escalation triggers to §6.4. Updated invocation rule examples to include `run delivery verification` and `run post-ship`. Fixed header to use bold formatting consistent with other governance prompts. Moved Change Log to end of document. |
+| 1.1 | 2026-03-02 | Added §3.3 (Execution routine inputs) and §4.1 (Output path override) to support invocation from Sprint Execution Engine. No changes to structure, action rules, or lifecycle requirements. |
+| 1.0 | 2026-03-02 | Initial version. Roadmap Rebalance and Release Planning routines. |
