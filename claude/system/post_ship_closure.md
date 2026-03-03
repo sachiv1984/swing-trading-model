@@ -83,6 +83,7 @@ This routine may not override any of the above.
 | Execution state (sealed) | `claude/cycles/<cycle_id>/execution_state.json` | Hard gate |
 | Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Required |
 | Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Required |
+| Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` | Required (if produced) |
 | QA evidence logs | `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per merged EPIC) | Required |
 | System status report | `docs/System_status_report.md` | Required |
 | Roadmap | `claude/roadmap/current_roadmap.md` | Required |
@@ -108,6 +109,7 @@ During this routine you may write only to:
 - `docs/specs/Specs_Index.md` (mark resolved items; add new gaps identified during delivery)
 - Templates and prompt files where a lessons learnt action specifies an immediate fix (version bump required)
 - `claude/cycles/<cycle_id>/closure_record.md` (create at close)
+- `claude/cycles/<cycle_id>/lessons_learnt_closure.md` (create via lessons_learnt_prompt.md §3.5)
 - `.claude_current_state.json` (status update only)
 
 You must **not** modify:
@@ -382,12 +384,13 @@ Update `Last Updated` on `docs/specs/Specs_Index.md` to today's date if any chan
 
 ## STEP 8 — Lessons Learnt Review and Application
 
-Read both lessons learnt records:
+Read all available lessons learnt records for this cycle:
 
 | Record | Location |
 |--------|----------|
 | Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` |
 | Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` |
+| Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` (if present) |
 
 For each action item in both records, classify it:
 
@@ -450,7 +453,7 @@ Closure run: <ISO-8601 UTC>
 
 **§4 — Deviation Compliance Summary** — list of deviations checked, any fields corrected, all now compliant: Yes / No (with detail if No).
 
-**§5 — Lessons Learnt Action Summary** — from STEP 8. Full three-way breakdown (immediate / deferred / decision_required) with detail per item.
+**§5 — Lessons Learnt Action Summary** — from STEP 8. Full three-way breakdown (immediate / deferred / decision_required) with detail per item. References all records reviewed (Release Planning, Execution, Verification).
 
 **§6 — Outstanding Actions** — any items that could not be completed by this routine (e.g. scope document not found, document owner unresponsive). For each: description, owner, deadline, escalation path.
 
@@ -501,6 +504,7 @@ git add docs/operations/validation_system.md (if modified)
 git add docs/specs/Specs_Index.md            (if modified)
 git add <any template or prompt files updated by lessons learnt actions>
 git add claude/cycles/<cycle_id>/closure_record.md
+git add claude/cycles/<cycle_id>/lessons_learnt_closure.md
 git add .claude_current_state.json
 git commit -m "[GOVERNANCE] Post-ship closure complete: <cycle_id> — v<X.Y>"
 git push origin <current-branch>
@@ -515,6 +519,7 @@ If git operations are unavailable: output the exact files to stage and the commi
 The run is complete only if:
 
 - `closure_record.md` exists with all 7 sections
+- `lessons_learnt_closure.md` exists and follows required structure
 - Changelog entry written and complete for this release version
 - Roadmap entry marked ✅ Complete
 - All shipped backlog items marked COMPLETE; all Phase 4 additions confirmed present
