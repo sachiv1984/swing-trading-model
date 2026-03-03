@@ -1,11 +1,11 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-03-02
+**Version:** 1.1
+**Last Updated:** 2026-03-03
 
 # Shared Standards — All Governed Routines
 
-This file defines standards that apply across all three governance prompts. Each prompt references this file rather than repeating these definitions. When a prompt says "per shared_standards", read this file.
+This file defines standards that apply across all five governance prompts. Each prompt references this file rather than repeating these definitions. When a prompt says "per shared_standards", read this file.
 
 ---
 
@@ -44,8 +44,10 @@ A hard gate may only be cleared by the relevant domain authority. The Facilitato
 | Stories | `ST-01`, `ST-02` | Sprint Backlog |
 | Tasks | `TASK-01` | Sprint Backlog (optional) |
 | Risks | `RISK-01`, `RISK-02` | Stage 3 (Release Planning) |
-| Escalations (Release) | `ESC-YYYYMMDD-nn` | Escalations file |
-| Escalations (Execution) | `ESC-EXEC-YYYYMMDD-nn` | Execution escalations file |
+| Escalations (Release Planning) | `ESC-YYYYMMDD-nn` | Escalations file |
+| Escalations (Sprint Execution) | `ESC-EXEC-YYYYMMDD-nn` | Execution escalations file |
+| Escalations (Delivery Verification) | `ESC-VERIF-YYYYMMDD-nn` | Verification escalations file |
+| Escalations (Post-Ship Closure) | `ESC-CLOSE-YYYYMMDD-nn` | Closure record |
 | Delegation records | `DEL-YYYYMMDD-nn` | Delegation log |
 
 IDs must be stable — never renumber existing IDs. Missing IDs on required fields is a Process Integrity failure that halts execution.
@@ -54,7 +56,11 @@ IDs must be stable — never renumber existing IDs. Missing IDs on required fiel
 
 ## 4. Escalation Record Format
 
-Used in: `claude/cycles/<cycle_id>/escalations.md` and `claude/cycles/<cycle_id>/execution_escalations.md`
+Used in:
+- `claude/cycles/<cycle_id>/escalations.md` (Release Planning)
+- `claude/cycles/<cycle_id>/execution_escalations.md` (Sprint Execution)
+- `claude/cycles/<cycle_id>/verification_escalations.md` (Delivery Verification)
+- `claude/cycles/<cycle_id>/closure_record.md` §6 (Post-Ship Closure)
 
 These files are **append-only**. Never edit a previous entry.
 
@@ -73,7 +79,7 @@ Last Updated: <date>
 ## <ESC-ID>
 
 - **Raised at:** <ISO-8601 UTC>
-- **Routine:** <Roadmap Rebalance | Release Planning | Sprint Execution>
+- **Routine:** <Roadmap Rebalance | Release Planning | Sprint Execution | Delivery Verification | Post-Ship Closure>
 - **Cycle ID:** <cycle_id>
 - **Step:** <step number or name>
 - **ST/EPIC item:** <if applicable>
@@ -108,7 +114,7 @@ When a hard gate fires or a blocking condition is encountered, output exactly th
 ```
 🛑 HALT — <Gate Name>
 
-Routine:     <Roadmap Rebalance | Release Planning | Sprint Execution>
+Routine:     <Roadmap Rebalance | Release Planning | Sprint Execution | Delivery Verification | Post-Ship Closure>
 Cycle:       <cycle_id>
 Step:        <step number>
 Gate:        <gate name>
@@ -201,6 +207,7 @@ The following files are append-only within their cycle. Never edit a previous en
 
 - `claude/cycles/<cycle_id>/escalations.md`
 - `claude/cycles/<cycle_id>/execution_escalations.md`
+- `claude/cycles/<cycle_id>/verification_escalations.md`
 - `claude/cycles/<cycle_id>/delegation_log.md`
 - `claude/roadmap/decision_log.md`
 
@@ -212,7 +219,7 @@ If a correction is needed to a previous entry, append a correction note referenc
 
 Every governed routine is resumable. On every invocation:
 
-1. **First action:** Read the relevant state file (`state.json` or `execution_state.json`)
+1. **First action:** Read the relevant state file (`state.json`, `execution_state.json`, or `.claude_current_state.json` for post-ship)
 2. If the file exists and status is not `not_started` or `Initialized`: you are resuming
 3. Skip all completed steps (any step whose output artefact exists and is valid)
 4. Re-evaluate all `blocked_*` items: check whether their unblock criteria are now met
@@ -220,6 +227,8 @@ Every governed routine is resumable. On every invocation:
 6. Never re-execute a step that already produced a valid output
 
 If the state file does not exist: this is a fresh run. Proceed from STEP -1.
+
+**Post-Ship Closure resumability:** The closure engine does not maintain a separate state file. On re-invocation, it reads `closure_record.md` (if it exists) to determine which steps have produced output, and resumes from the first step whose document check has not yet passed. If `closure_record.md` does not exist, this is a fresh run.
 
 ---
 
@@ -235,3 +244,12 @@ Every governed artefact must have a complete header. Minimum required fields by 
 | Class 6 (Governance Prompt) | Owner, Status: Active, Version, Last Updated |
 
 A document without a complete header is non-compliant and must not be relied upon. Non-compliant documents discovered during a routine: apply header remediation (headers only) and continue.
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | 2026-03-03 | Updated "three governance prompts" to "five". Added `ESC-VERIF-YYYYMMDD-nn` and `ESC-CLOSE-YYYYMMDD-nn` to identifier standards. Added Delivery Verification and Post-Ship Closure to escalation file list, escalation entry routine field, and halt report routine field. Added `verification_escalations.md` to append-only file list. Added Post-Ship Closure resumability note to §8. |
+| 1.0 | 2026-03-02 | Initial version. |
