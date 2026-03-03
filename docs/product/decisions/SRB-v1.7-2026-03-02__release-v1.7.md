@@ -1,8 +1,9 @@
 **Owner:** Product Owner (with Strategy Rules & System Intent Owner co-sign)
 **Class:** Planning Document (Class 4)
-**Status:** Active
+**Status:** Superseded
+**Superseded by:** Sprint shipped and verified — outcomes recorded in `claude/cycles/2026-03-02__release-v1.7/verification_report.md` and `docs/product/changelog.md` v1.7 entry. §13-gated features cleared per conditions stated in this record.
 **Cycle:** 2026-03-02__release-v1.7
-**Last Updated:** 2026-03-02
+**Last Updated:** 2026-03-03
 
 ---
 

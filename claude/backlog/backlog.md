@@ -3,7 +3,7 @@
 Owner: Product Owner
 Status: Active
 Class: Planning Document (Class 4)
-Last Updated: 2026-03-01
+Last Updated: 2026-03-03
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -78,6 +78,7 @@ Phase Gate Document filed: docs/product/phase_gates/BLG-TECH-03-validationservic
 ### BLG-TECH-04 — CI/CD validation workflow (GitHub Actions)
 **Priority:** P2 (Medium)
 **Type:** Delivery Quality / Automation
+**Status:** ✅ COMPLETE — 2026-03-03 (cycle: 2026-03-02__release-v1.7, EPIC-01)
 **Target release:** v1.7
 
 **Problem**
@@ -127,7 +128,7 @@ Phase Gate Document filed: docs/product/phase_gates/BLG-TECH-03-validationservic
 **Priority:** P2 (Medium)
 **Type:** Spec Accuracy / Governance
 **Target release:** v1.7 *(updated from v1.6.1 — v1.6.1 has shipped; DL-001 cycle 2026-03-01__item-3.2)*
-**Status:** Open
+**Status:** ✅ COMPLETE — 2026-03-03 (cycle: 2026-03-02__release-v1.7, EPIC-06/TASK-21–24)
 **Problem**
 POST /validate/calculations returns 14 validation results. analytics_endpoints.md v1.8.1
 describes 13 metrics and does not document sharpe_ratio_trade_method.
@@ -168,6 +169,7 @@ Product Owner disposition: backlog item, v1.6.1 target, 2026-02-21
 **Priority:** P3
 **Effort:** ~30 min
 **Target release:** v1.7
+**Status:** ✅ COMPLETE — 2026-03-03 (cycle: 2026-03-02__release-v1.7, EPIC-06/TASK-25–27; spec update path chosen)
 **Source:** OBS-QWB-R1-01 — QA Lead observation, QWB verification, 2026-03-01
 GET /portfolio positions summary objects omit current_price_native, stop_price,
 stop_price_native, and pnl_percent — fields listed in R-01 test scenario step 3
@@ -192,6 +194,7 @@ Raised by: QA Lead, 2026-03-01
 **Priority:** P3
 **Effort:** ~1 hour
 **Target release:** v1.7
+**Status:** ✅ COMPLETE — 2026-03-03 (cycle: 2026-03-02__release-v1.7, EPIC-06/TASK-28–30; backend fix path chosen)
 **Source:** OBS-QWB-R3-01 — QA Lead observation, QWB verification, 2026-03-01
 holding_days is absent from trade objects in the GET /trades response.
 trade_endpoints.md v1.8.4 lists it as a required field. Pre-existing behaviour,
@@ -360,7 +363,7 @@ These are deliberate product decisions, not deferrals:
 
 **Cycle:** 2026-03-02__release-v1.7
 **Planning Date:** 2026-03-02
-**Status:** Active
+**Status:** ✅ Complete — all 6 EPICs shipped 2026-03-03; verified 2026-03-03
 **Reference:** claude/cycles/2026-03-02__release-v1.7/stage4_backlog_slice.md
 
 | S2 ID | Item | Epic | Priority | Effort |

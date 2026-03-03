@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-02-21
+**Last Updated:** 2026-03-03
 
 ---
 
@@ -136,6 +136,22 @@ It points to the **single canonical source**.
 
 ---
 
+### 3.5b Observability & Logging
+
+**What it owns**
+- Structured log format standards
+- Log levels and usage policy
+- Correlation ID generation and propagation scheme
+- Async failure observability approach
+
+**Canonical Documents**
+- `docs/specs/structured_logging_standards.md` — Class 1 Canonical Specification, v0.1.0, Active (created 2026-03-02, EPIC-04)
+
+**Owner**
+- Head of Engineering
+
+---
+
 ### 3.6 Glossary (System-Level Reference)
 
 **What it owns**
@@ -193,8 +209,9 @@ This section tracks canonical spec gaps that have been identified but not yet fi
 
 ### 6.1 Settings Canonical Specification *(v1.6.1 pre-work gate)*
 
-**Status:** Not yet created — gap identified 2026-02-21
-**Blocks:** Any further settings-dependent features entering pre-alignment
+**Status:** Not yet created — gap identified 2026-02-21; still open 2026-03-03
+**Backlog item:** BLG-SPEC-G1 (added 2026-03-03, Head of Specs review)
+**Blocks:** Any further settings-dependent features entering pre-alignment; must be resolved after BLG-SPEC-D2 (settings endpoint method drift) is decided
 **Required by:** v1.6.1 (roadmap pre-work item)
 **Assigned owner:** Head of Specs Team
 
@@ -206,7 +223,8 @@ This section tracks canonical spec gaps that have been identified but not yet fi
 
 ### 6.2 Error Response Standard *(v1.6.1 pre-work gate)*
 
-**Status:** Not yet defined — gap identified 2026-02-21
+**Status:** Not yet defined — gap identified 2026-02-21; still open 2026-03-03
+**Backlog item:** BLG-SPEC-G2 (added 2026-03-03, Head of Specs review)
 **Blocks:** Consistent error handling across all endpoints; required before v1.6.1 exits
 **Required by:** v1.6.1 (roadmap pre-work item)
 **Assigned owner:** API Contracts & Documentation Owner (spec definition) + Head of Engineering (implementation alignment)
@@ -226,9 +244,11 @@ This section records known lifecycle or governance compliance gaps that have bee
 ### 7.1 `docs/operations/validation_system.md` — Owner field non-compliant
 
 **Identified:** 2026-02-21
+**Status:** Still open 2026-03-03
+**Backlog item:** BLG-SPEC-G5 (added 2026-03-03, Head of Specs review)
 **Severity:** Advisory (does not block)
 **Current state:** `Owner: Platform Team` — a team name, not a named individual role
-**Required state:** A named role per `docs/governance/document_lifecycle_guide.md` §7
+**Required state:** A named role per `claude/charter/document_lifecycle_guide.md` §7
 **Resolution owner:** Infrastructure & Operations Documentation Owner
 **Action:** Update the owner field to the named role responsible for this document. Coordinate with Head of Engineering if the correct owner is unclear.
 

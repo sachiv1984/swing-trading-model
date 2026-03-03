@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-01
+**Last Updated:** 2026-03-03
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,8 +11,8 @@
 
 ## 1. Current Version
 
-**v1.61** — Quick Wins Bundle — Shipped 2026-03-01
-**Next planned release:** **v1.7**
+**v1.7** — Foundation & Governance — Shipped 2026-03-03
+**Next planned release:** **v1.8**
 
 ---
 
@@ -125,45 +125,36 @@ Last Updated: 2026-03-01
 
 ### v1.7 — Foundation & Governance *(revised)*
 
-This release delivers the technical and governance foundations that de-risk everything that follows. It is non-user-facing but is a hard dependency for several v1.8+ features.
+**Status:** ✅ Complete — Shipped 2026-03-03
+**Cycle:** 2026-03-02__release-v1.7
+**Verification:** Verified — `claude/cycles/2026-03-02__release-v1.7/verification_report.md`
+**Changelog:** `docs/product/changelog.md` — v1.7 entry
+
+This release delivered the technical and governance foundations that de-risk everything that follows. It was non-user-facing but a hard dependency for several v1.8+ features.
 
 #### BLG-TECH-04 — CI/CD GitHub Actions Validation Workflow
-**Status:** Planned (existing roadmap item)
-**Effort:** ~1 day
-**Dependency:** BLG-TECH-02 must be complete (severity model required for merge gate)
+**Status:** ✅ Complete — 2026-03-03 (EPIC-01)
+`.github/workflows/validate-analytics.yml` merged. Triggers on PR/push to main/develop. Blocks merge on `critical_failed > 0`. Posts severity breakdown as PR comment. PR #11 merged.
 
-Add `.github/workflows/validate-analytics.yml`. Run `POST /validate/calculations` on pull requests and pushes to `main` and `develop`. Block merge on critical-severity failures. Post validation summary as PR comment.
+#### Strategy Rules §13 Boundary Review
+**Status:** ✅ Complete — 2026-03-03 (EPIC-02)
+Three features reviewed: Signal Params COMPLIANT, AI Journal CONDITIONALLY COMPLIANT, New Indicators COMPLIANT if canonical. §13-gated features cleared to proceed. Decision record: `docs/product/decisions/SRB-v1.7-2026-03-02__release-v1.7.md`.
 
-#### Strategy Rules §13 Boundary Review *(new)*
-**Status:** Planned
-**Effort:** ~0.5 days workshop + document update
-**Owner:** Strategy Rules & System Intent Owner + Product Owner
-**Output:** Updated `strategy_rules.md` or confirmed decision that boundaries are unchanged
+#### Metrics Definitions — Portfolio Heat Formula & Thresholds *(pre-work gate for v1.8)*
+**Status:** ✅ Complete — 2026-03-03 (EPIC-03)
+`metrics_definitions.md` v1.6.0: Position Risk (GBP-adjusted), Portfolio Heat formula, explicit display thresholds. v1.8 pre-alignment gate cleared.
 
-A formal review of system boundaries in light of features now under consideration: signals parameter exposure, AI journal summarisation, and new technical indicators. Each of these touches §13. This review must produce a documented decision before any of those features enters pre-alignment. It is not an engineering task — it is a product and spec governance task.
+#### Structured Logging / Observability Standards
+**Status:** ✅ Complete — 2026-03-03 (EPIC-04)
+`docs/specs/structured_logging_standards.md` v0.1.0 created (Class 1 Canonical Specification). Log levels, JSON format, correlation IDs, async observability. v2.0 pre-alignment gate (logging) cleared.
 
-#### Metrics Definitions — Portfolio Heat Formula & Thresholds *(new — pre-work gate for v1.8)*
-**Status:** Planned
-**Effort:** ~0.5 days
-**Owner:** Metrics Definitions & Analytics owner
-**Output:** `metrics_definitions.md` updated with canonical heat formula and display thresholds
+#### API Versioning Strategy Decision Record
+**Status:** ✅ Complete — 2026-03-03 (EPIC-05)
+`docs/product/decisions/api-versioning-v1.7.md` filed. URL path versioning deferred to first breaking change; 60-day deprecation; webhooks versioned from inception. v2.0 pre-alignment gate (API versioning) cleared.
 
-Must be complete before v1.8 enters pre-alignment. Indicative formula: `Position Risk = (Entry Price − Stop Price) × Shares`; `Portfolio Heat = Sum of Position Risks / Portfolio Value`. Thresholds are illustrative — the canonical definition prevails.
-
-#### Structured Logging / Observability Standards *(new)*
-**Status:** Planned
-**Effort:** ~1 day
-**Owner:** Head of Engineering
-
-Lightweight observability baseline before Alerts (v2.0) introduces async processing. Not full Prometheus (BLG-TECH-05 remains deferred). Define agreed structured logging standards, log levels, and correlation IDs. Ensures async failures in v2.0 are observable and debuggable.
-
-#### API Versioning Strategy Decision Record *(new)*
-**Status:** Planned
-**Effort:** ~0.5 days
-**Owner:** Product Owner + API Contracts owner
-**Output:** Decision record in `docs/product/decisions/`
-
-Define the API versioning and deprecation policy before Alerts (v2.0) introduces webhook or async patterns. Questions to resolve: do we version endpoints? What is the deprecation notice period? This decision must be made before v2.0 pre-alignment opens.
+#### Spec Debt Resolution (BLG-TECH-06, BLG-TECH-08, BLG-TECH-09)
+**Status:** ✅ Complete — 2026-03-03 (EPIC-06)
+`analytics_endpoints.md` v1.9.0 (14 metrics, OBS-01 resolved); `portfolio_endpoints.md` v1.9.0 (corrected to live API, OBS-QWB-R1-01 resolved); `trade_endpoints.md` v1.9.0 (`holding_days` added, OBS-QWB-R3-01 resolved).
 
 ---
 
@@ -208,6 +199,8 @@ A structured post-trade reflection form presented at trade close, built on top o
 **Value:** Discipline visibility
 
 Lightweight compliance metrics: journal completion rate, stop-based exit rate, average position size as a percentage of portfolio. Definitions must be canonicalised in `metrics_definitions.md` before implementation. These metrics also feed the reflection template prompts.
+
+> ⚠️ **Capacity check required at v1.9 pre-alignment:** The Metrics Definitions & Analytics Owner was committed to EPIC-03 (v1.7). Before BLG-FEAT-08 enters pre-alignment, the FinOps & Resource Architect must confirm the Metrics Definitions owner is available and EPIC-03 deliverables are stable. Do not open v1.9 pre-alignment without this confirmation. *(LL-05, v1.7 Release Planning Lessons — 2026-03-02)*
 
 #### 5.2 Cohort Analysis *(new — from roadmap review session)*
 **Status:** Planned
@@ -343,7 +336,7 @@ When evaluating new features:
 | **v1.5** | Performance Analytics | Unified analytics endpoint, validation endpoint — ✅ Shipped |
 | **v1.6** | Position Sizing | Calculator, settings default risk % — ✅ Shipped |
 | **v1.6.1** | Correctness & Quick Wins | Quick Wins Bundle (6 features) — ✅ Shipped 2026-03-01" |
-| **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision |
+| **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision — ✅ Shipped 2026-03-03 |
 | **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk |
 | **v1.9** | User Value & Insight | Trade reflection template, compliance metrics, cohort analysis, dashboard homepage |
 | **v2.0** | Reporting & Alerts | Alerts & notifications (hard gates apply), tax-year statement, server-side PDF, signal parameter exposure (gated) |
@@ -352,5 +345,5 @@ When evaluating new features:
 ---
 
 *For delivery history, see `docs/product/changelog.md`.*
-*For backlog and quick wins, see `docs/product/feature_backlog.md`.*
+*For backlog and quick wins, see `claude/backlog/backlog.md`.*
 *For strategic constraints and system boundaries, see `docs/specs/strategy_rules.md`.*
