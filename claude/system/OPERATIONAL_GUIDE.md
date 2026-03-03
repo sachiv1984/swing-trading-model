@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 1.4  
+**Version:** 1.5  
 **Last Updated:** 2026-03-03  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -35,6 +35,9 @@ run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mod
 
 # Phase 4 — Delivery Verification
 run delivery verification [--cycle "<cycle_id>"] [--mode "strict|standard"]
+
+# Post-Ship Closure
+run post-ship [--cycle "<cycle_id>"] [--mode "strict|standard"] [--dry-run]
 ```
 
 ### Git Standards
@@ -628,6 +631,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
+**Source prompt:** `claude/system/post_ship_closure_prompt.md` (v1.0)  
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)  
 **Owner:** PMO Lead  
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -636,7 +640,21 @@ Post-Ship Closure is the mandatory bridge between a verified sprint and a clean 
 
 > `next_cycle_unblocked = true` is a necessary but not sufficient condition for opening the next cycle. Post-Ship Closure must also be complete.
 
-### 10.1 Inputs Required
+### 10.1 Invocation
+
+```
+run post-ship [--cycle "<cycle_id>"] [--mode "strict|standard"] [--dry-run]
+```
+
+| Flag | Notes |
+|------|-------|
+| `--cycle` | Optional — loaded from `.claude_current_state.json` if omitted |
+| `--mode` | `strict`: halt on any missing document or incomplete field; `standard` (default): proceed with flags |
+| `--dry-run` | Read all inputs and produce a closure plan without making any writes or commits |
+
+**Pre-condition:** `.claude_current_state.json` status must be `Verified` or `Verified_with_deviations` and `next_cycle_unblocked = true`.
+
+### 10.2 Inputs Required
 
 - `.claude_current_state.json` — `status = Verified`, `next_cycle_unblocked = true`
 - `claude/cycles/<cycle_id>/verification_report.md`
@@ -647,7 +665,7 @@ Post-Ship Closure is the mandatory bridge between a verified sprint and a clean 
 - `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per merged EPIC)
 - `docs/System_status_report.md`
 
-### 10.2 Closure Steps
+### 10.3 Closure Steps
 
 | Step | Document | Action | Failure Condition |
 |------|----------|--------|-------------------|
@@ -661,7 +679,7 @@ Post-Ship Closure is the mandatory bridge between a verified sprint and a clean 
 | 8 | `docs/specs/Specs_Index.md` | Mark resolved items closed with date and `cycle_id`; add new gaps identified during delivery | Index not reconciled with delivery |
 | 9 | Lessons learnt (both records) | Review all action items; apply immediate process improvements (bump template/prompt versions); schedule deferred actions; escalate decisions to named owners | Lessons learnt filed but not reviewed — process debt compounds |
 
-### 10.3 Changelog Entry Structure
+### 10.4 Changelog Entry Structure
 
 ```
 ## v<X.Y> — <feature name> — <ship date>
@@ -686,7 +704,7 @@ Sign-off: Product Owner — <date>
 QA sign-off: Director of Quality — <date>
 ```
 
-### 10.4 Lessons Learnt Application
+### 10.5 Lessons Learnt Application
 
 This release produces two lessons learnt records that must both be reviewed:
 
@@ -697,7 +715,14 @@ This release produces two lessons learnt records that must both be reviewed:
 
 For each record: actions that can be resolved by updating a template or prompt must be applied immediately with a version bump. Actions requiring a role decision must be surfaced to the relevant owner with a deadline. Filing without reviewing is equivalent to skipping.
 
-### 10.5 Escalation
+### 10.6 Closure Status Values
+
+| Status | Meaning | Next cycle? |
+|--------|---------|-------------|
+| `Closed` | All steps complete; no outstanding actions | Open immediately |
+| `Closed_with_actions` | All steps complete; minor outstanding actions carried forward | Open — actions tracked in closure record |
+
+### 10.7 Escalation
 
 If a document owner has not made their required update and it is blocking closure:
 
@@ -706,7 +731,7 @@ If a document owner has not made their required update and it is blocking closur
 - PMO Lead does not make content changes to documents outside their ownership — they coordinate and escalate
 - The next cycle does not open until closure is confirmed, regardless of delivery pressure
 
-### 10.6 Closure Confirmation
+### 10.8 Closure Confirmation
 
 When all steps are complete, PMO Lead communicates to Product Owner and Head of Specs Team:
 
@@ -849,6 +874,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Escalations (Verification) | `claude/cycles/<id>/verification_escalations.md` | 4 | PMO Lead | 4 |
 | Changelog | `docs/product/changelog.md` | 3 | PMO Lead | Post-Ship |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` | 1 | PMO Lead | Post-Ship |
+| Closure Record | `claude/cycles/<id>/closure_record.md` | 3 | PMO Lead | Post-Ship |
 
 ---
 
@@ -858,13 +884,14 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 1.4 |
+| Version | 1.5 |
 | Last Updated | 2026-03-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v1.5 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v1.3 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.0 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` v1.0 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v1.1 |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.4 |
@@ -880,6 +907,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 1.5 | 2026-03-03 | Added `post_ship_closure_prompt.md` (v1.0) as the engine source for §10. Added `run post-ship` invocation command to Quick Reference. Added invocation subsection (§10.1), flags table, and pre-condition to §10. Added closure status values (§10.6). Added Closure Record to Artefact Register. Added Post-Ship Closure Engine to §14 governance table. |
 | 1.4 | 2026-03-03 | Added §10 Post-Ship Closure. Updated Quick Reference summary, Hard Rules, Phase Gate Checklist, Lifecycle Overview table, Cycle Trigger & Flow table, Artefact Register, and §14 governance table to reflect post-ship_closure.md (v2.0). Renumbered §10–13 to §11–14. Updated cycle gate rule to require Post-Ship Closure before next cycle opens. |
 | 1.3 | 2026-03-03 | Added `execution_prompt.md` (v1.3) and `delivery_verification_prompt.md` (v1.0) to governance. Updated Quick Reference to include Phase 3 & 4 invocation commands. Added "no autonomous merge" and "no cycle unlock without Verified status" to Hard Rules. Expanded Phase 3 checklist to match execution prompt exit criteria. Aligned §8 (Phase 3) and §9 (Phase 4) detail with prompt content. Resolved header/§13 version discrepancy (both now 1.3). |
 | 1.2 | 2026-03-02 | Prior version. |
