@@ -1,63 +1,208 @@
-# Post-Ship Closure
-
-**Owner:** PMO Lead  
-**Type:** PMO Process Template  
-**Status:** Canonical  
-**Version:** 2.0  
-**Last Updated:** 2026-03-03  
-**Playbook Reference:** `claude/system/OPERATIONAL_GUIDE.md` v1.3  
-
----
-
-## Purpose
-
-Run this process after Phase 4 (Delivery Verification) completes with a `Verified` or `Verified_with_deviations` status. Its job is to ensure all planning, operational, and governance documents are updated to reflect the closed state of the release before the next cycle opens.
-
-A release is not fully delivered until its documentation is closed. Stale planning documents, unclosed backlog items, missing changelog entries, and unfiled lessons learnt are process debt that compounds across releases.
+**Owner:** Head of Specs Team
+**Status:** Active
+**Version:** 1.0
+**Last Updated:** 2026-03-03
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Team Charter:** claude/charter/team_charter.md
+**Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
 
 ---
 
-## When to Run
+# Post-Ship Closure Engine — Governance Prompt
 
-- Triggered by the PMO Lead immediately after `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
-- Must be complete before the next cycle's Phase 1 or Phase 1B is invoked
-- Applies to every shipped release, including releases that contain tech backlog items alongside a primary feature
-- The `next_cycle_unblocked = true` flag in `.claude_current_state.json` is a necessary but not sufficient condition — this closure process must also be complete before the next cycle opens
+(Evidence-Driven, Document-Sweeping, Lessons-Applying, Cycle-Sealing)
 
 ---
 
-## Inputs Required
+## 1. Purpose
 
-Before running the closure sweep, collect:
+Close all planning, operational, and governance documents for a completed release cycle, apply lessons learnt, and confirm the cycle is fully sealed before the next one opens.
 
-- `.claude_current_state.json` — confirm `status = Verified` or `Verified_with_deviations` and `next_cycle_unblocked = true`
-- `claude/cycles/<cycle_id>/verification_report.md` — the definitive record of what passed, what deviated, and any accepted items
-- `claude/cycles/<cycle_id>/sprint_close.md` — outcomes, returned items, deviations filed
-- `claude/cycles/<cycle_id>/execution_state.json` — sealed item list with spec references and delegation outcomes
-- `claude/cycles/<cycle_id>/lessons_learnt.md` — Release Planning lessons (Phase 1B)
-- `claude/cycles/<cycle_id>/lessons_learnt_execution.md` — Sprint Execution lessons (Phase 3)
-- `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` — one per merged EPIC
-- `docs/System_status_report.md` — confirmed current by Phase 4
-- The roadmap item ID, release version, and feature name
-- Any tech backlog items that shipped alongside the primary feature
+This engine:
+- Verifies Phase 4 completion and confirmed verification status
+- Writes the changelog entry for the shipped release
+- Updates the roadmap, backlog, scope, and decisions documents to reflect the shipped state
+- Confirms canonical spec deviation entries are compliant
+- Reconciles operational and index documents
+- Reviews both lessons learnt records and applies immediate process improvement actions
+- Produces a closure record and communicates completion to the Product Owner and Head of Specs Team
+- Updates global state to confirm the cycle is fully sealed
+
+This routine does **NOT**:
+- Re-run or re-evaluate Phase 4 verification
+- Rebalance the roadmap or reprioritise the backlog
+- Override QA or Product Owner sign-offs
+- Open the next planning cycle (that is the Product Owner's decision after this routine confirms closure)
 
 ---
 
-## Closure Checklist
+## 2. Invocation Rule (Hard Gate)
 
-### 1. Changelog
-
-- [ ] Has a changelog entry been written for this release version?
-- [ ] Does the entry cover: all EPICs merged this sprint (with EPIC IDs), all spec versions updated, all canonical spec deviations accepted (P1/P2 with rationale references), and the verification report reference?
-- [ ] If any tech backlog items shipped alongside the feature: are they recorded as distinct sub-sections within the same version entry?
-- [ ] Does the entry reference the `cycle_id` and the `verification_report.md` path?
-- [ ] Is `Last Updated` on `docs/product/changelog.md` set to today's date?
-
-**Failure condition:** Missing changelog entry. The changelog is the permanent delivery record — a ship without an entry is not recorded.
-
-**What the entry must include:**
+This routine executes ONLY when the user issues the explicit command:
 
 ```
+run post-ship [--cycle "<cycle_id>"] [--mode "strict|standard"] [--dry-run]
+```
+
+Rules:
+- `--cycle` optional: if omitted, load `active_cycle` from `.claude_current_state.json`. If absent, halt.
+- `--mode` optional:
+  - `strict`: halt on any missing document, incomplete field, or unresolved action item
+  - `standard` (default): proceed with flags on minor gaps; still halt on hard gates
+- `--dry-run` optional: read all inputs and produce a closure plan without making any writes or commits
+- Invocation must start with `run post-ship` (case-insensitive match allowed)
+
+If invocation is not exact, do not run. Treat as conversational.
+
+**Who issues this command:** The PMO Lead persona, immediately after Phase 4 completes with a passing status.
+
+**Tool call budget:** This routine typically requires 15–35 tool calls. Proceed through steps without asking for confirmation unless a hard gate fires.
+
+---
+
+## 3. Canonical Governance Sources (Non-Negotiable)
+
+Binding governance stack (precedence order):
+
+1. `claude/charter/team_charter.md`
+2. `claude/charter/document_lifecycle_guide.md`
+3. `claude/strategy/strategy_rules.md`
+4. Role charters in `claude/agents/`
+
+This routine may not override any of the above.
+
+---
+
+## 4. Source-of-Truth Closure Inputs
+
+| Input | Location | Required |
+|-------|----------|---------|
+| Global state | `.claude_current_state.json` | Hard gate |
+| Verification report | `claude/cycles/<cycle_id>/verification_report.md` | Hard gate |
+| Sprint close record | `claude/cycles/<cycle_id>/sprint_close.md` | Hard gate |
+| Execution state (sealed) | `claude/cycles/<cycle_id>/execution_state.json` | Hard gate |
+| Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Required |
+| Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Required |
+| QA evidence logs | `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per merged EPIC) | Required |
+| System status report | `docs/System_status_report.md` | Required |
+| Roadmap | `claude/roadmap/current_roadmap.md` | Required |
+| Backlog | `claude/backlog/backlog.md` | Required |
+| Changelog | `docs/product/changelog.md` | Required (create if absent) |
+| Canonical specs | Paths from `spec_references` in `execution_state.json` | Required (deviation check) |
+| Specs Index | `docs/specs/Specs_Index.md` | Required |
+
+---
+
+## 5. Write Scope Restriction (Hard Gate)
+
+During this routine you may write only to:
+
+- `docs/product/changelog.md` (append new version entry)
+- `claude/roadmap/current_roadmap.md` (status update + version headers only)
+- `claude/backlog/backlog.md` (mark shipped items complete; no other changes)
+- Scope document at `docs/product/scope/scope--{id}-{slug}.md` (status → Superseded only)
+- Decisions record at `docs/product/decisions/{id}-{slug}.md` (status → Superseded only)
+- Canonical spec files (deviation note compliance fixes only — missing required fields per §3 Known Deviation Standard; no other spec edits permitted)
+- `docs/System_status_report.md` (reconciliation only — correct stale notes)
+- `docs/operations/validation_system.md` (reconciliation only — correct stale notes)
+- `docs/specs/Specs_Index.md` (mark resolved items; add new gaps identified during delivery)
+- Templates and prompt files where a lessons learnt action specifies an immediate fix (version bump required)
+- `claude/cycles/<cycle_id>/closure_record.md` (create at close)
+- `.claude_current_state.json` (status update only)
+
+You must **not** modify:
+- `claude/cycles/<cycle_id>/verification_report.md` (sealed)
+- `claude/cycles/<cycle_id>/sprint_close.md` (sealed)
+- `claude/cycles/<cycle_id>/execution_state.json` (sealed)
+- `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
+- `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed)
+- `claude/cycles/<cycle_id>/lessons_learnt.md` (read-only — do not edit, only apply)
+- `claude/cycles/<cycle_id>/lessons_learnt_execution.md` (read-only — do not edit, only apply)
+- `claude/strategy/strategy_rules.md`
+- Any governance document not listed in the permitted write scope above
+
+Violation → halt.
+
+---
+
+## 6. Required Authority Roles
+
+Minimum required roles for this routine:
+
+- PMO Lead
+- Product Owner
+- Head of Specs Team
+
+Verify: each role has an agent file in `claude/agents/` containing `**Role:** <Role Name>`. If any required role is missing or malformed: halt.
+
+---
+
+## Mandatory End-to-End Process
+
+---
+
+## STEP -1 — Preflight Gate (Hard Gate)
+
+Purpose: fail fast before any writes begin.
+
+Shared standards (escalation format, halt report format, identifier conventions): `claude/system/shared_standards.md`.
+
+### -1.1 Status Check
+
+Read `.claude_current_state.json`:
+- `status` must be `Verified` or `Verified_with_deviations`
+- `next_cycle_unblocked` must be `true`
+- If `status` is anything else: halt — Phase 4 has not completed. Phase 4 must reach a passing status before post-ship closure can run.
+
+### -1.2 Execution State Sealed
+
+Read `claude/cycles/<cycle_id>/execution_state.json`:
+- `sealed` must be `true`
+- If not sealed: halt — the execution record is not closed.
+
+### -1.3 Verification Report Present and Signed
+
+Read `claude/cycles/<cycle_id>/verification_report.md`:
+- Confirm `§9 Sign-off Block` is present
+- Confirm `Signed off by: Director of Quality` with a date
+- Confirm `Accepted by: Product Owner` with a date
+- If either sign-off is blank: halt — verification is not complete.
+
+### -1.4 Required Files Present
+
+Verify all files in Section 4 exist. If any are missing: halt and report exactly which.
+
+### -1.5 Required Authority Roles Exist
+
+Verify agent files per Section 6. If any missing: halt.
+
+### -1.6 Write Permission Test
+
+Create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can be written. Remove it. If write fails: halt.
+
+---
+
+## STEP 0 — Load Release Context
+
+Extract from the verified inputs:
+
+1. From `verification_report.md`: release version (`vX.Y`), verification status (`Verified` / `Verified_with_deviations`), deviation register, QA summary.
+2. From `execution_state.json`: merged EPICs (with EPIC IDs and descriptions), all ST items with `spec_references`, `deviations_filed` flags, returned-to-backlog items.
+3. From `sprint_close.md`: sprint goal, deviations filed list, outstanding delegated items, verification readiness statement.
+4. From `current_roadmap.md`: the roadmap item ID and feature name for this release.
+5. From `backlog.md`: identify all items with this `cycle_id` added by Phase 4 (returned items, P2/P3 deviation items, test scenario gap items) — these must all be present before Step 3 can pass.
+
+Confirm: release version, feature name, `cycle_id`, ship date (use today if not recorded elsewhere), and Product Owner sign-off date are all resolvable. If any cannot be determined: halt in `strict` mode; flag and proceed with `[UNKNOWN]` placeholder in `standard` mode.
+
+---
+
+## STEP 1 — Changelog Entry (Hard Gate)
+
+Write a new versioned entry to `docs/product/changelog.md`.
+
+### 1.1 Entry Structure (Required)
+
+```markdown
 ## v<X.Y> — <feature name> — <ship date>
 Cycle: <cycle_id>
 Verified: <Verified | Verified_with_deviations>
@@ -66,190 +211,340 @@ Verification report: claude/cycles/<cycle_id>/verification_report.md
 ### Changes shipped
 | EPIC | Description | Spec sections updated |
 |------|-------------|----------------------|
-| EPIC-xx | <description> | <spec file#section> |
+| EPIC-xx | <description> | <spec file#section(s)> |
 
 ### Deviations accepted
 | Ref | Priority | Description | Accepted by |
 |-----|----------|-------------|-------------|
 | DEV-ref | P1/P2/P3 | <one line> | PO / PO + DoQ |
 
+*(If no deviations accepted: "None")*
+
 ### Tech backlog items shipped
 - [ST-xx] <title> — <one line description>
+
+*(If none: "None")*
 
 Sign-off: Product Owner — <date>
 QA sign-off: Director of Quality — <date>
 ```
 
----
+### 1.2 Entry Rules
 
-### 2. Roadmap
+- One entry per release version. Do not create duplicate entries.
+- All merged EPICs must appear with their EPIC ID and at least one spec section reference.
+- All accepted P1/P2 deviations from the deviation register must appear.
+- P3 deviations need not appear individually — they may be summarised as "N minor deviations — see verification_report.md".
+- Tech backlog items that shipped alongside the primary feature must appear as a distinct sub-section.
+- Update `Last Updated` on `docs/product/changelog.md` to today's date.
 
-- [ ] Is the feature's roadmap entry in `claude/roadmap/current_roadmap.md` updated to **✅ Complete** with the ship date and `cycle_id` reference?
-- [ ] Has the "Current Version" header been updated to reflect the shipped version?
-- [ ] Has the "Next planned release" header been updated to the next version?
-- [ ] If the shipped release contained quality gate items (e.g. P0/P1 tech backlog items): are those marked complete within their roadmap section?
-- [ ] Is the release summary table current?
-- [ ] Is `Last Updated` on `claude/roadmap/current_roadmap.md` set to today's date?
-
-**Failure condition:** Roadmap still shows feature as Planned or In Progress after ship. Stale roadmap status erodes trust in the document and will cause Phase 1 (Roadmap Rebalance) to misread the current state.
+**Failure condition:** If `docs/product/changelog.md` does not exist: create it with a standard header (Owner: PMO Lead, Class: Operational Record, Status: Active) and then add the entry. A ship without a changelog entry is not recorded — this is a hard gate.
 
 ---
 
-### 3. Backlog
+## STEP 2 — Roadmap Update
 
-- [ ] Are all shipped backlog items (tech and feature) marked **✅ COMPLETE** in `claude/backlog/backlog.md` with closure date and `cycle_id` reference?
-- [ ] Are all items returned to backlog during this sprint (per `sprint_close.md`) confirmed present with context and `cycle_id` reference?
-- [ ] Are all P2/P3 deviation backlog items (added by Phase 4) confirmed present?
-- [ ] Are all test scenario gap backlog items (added by Phase 4) confirmed present?
-- [ ] Do items assigned to the next release have their target release noted?
-- [ ] Is `Last Updated` on `claude/backlog/backlog.md` set to today's date?
+Update `claude/roadmap/current_roadmap.md`:
 
-**Failure condition:** Shipped item still shown as open. Items added by Phase 4 engines missing from backlog.
+1. Locate the roadmap entry for this release (match by version label or feature name from STEP 0).
+2. Mark it **✅ Complete** with the ship date and `cycle_id` reference.
+3. Update the "Current Version" header to the shipped version.
+4. Update the "Next planned release" header to the next version (if known; leave as `[TBD]` if not).
+5. If the release contained P0/P1 quality gate items (confirmed in `verification_report.md`): mark those complete within their roadmap section.
+6. Update the release summary table if present.
+7. Update `Last Updated` to today's date.
+
+**Failure condition (hard gate in `strict` mode; flag in `standard`):** Roadmap entry still shows Planned or In Progress after this step. Stale roadmap status will cause Phase 1 (Roadmap Rebalance) to misread the current state.
 
 ---
 
-### 4. Scope Document
+## STEP 3 — Backlog Reconciliation (Hard Gate)
 
-- [ ] Has the scope document status been updated from **Active** to **Superseded**?
-- [ ] Does the supersession note reference: the changelog entry, the `verification_report.md` path, and the `cycle_id`?
-- [ ] Is `Last Updated` on the scope document set to today's date?
+Update `claude/backlog/backlog.md`:
 
-Location: `docs/product/scope/scope--{id}-{slug}.md`
+### 3.1 Mark shipped items complete
+
+For every ST item in `execution_state.json` with status `done` or `merged`:
+- Locate the corresponding entry in `backlog.md`.
+- Mark it **✅ COMPLETE** with closure date and `cycle_id` reference.
+- If the item is not in `backlog.md`: record the gap in the closure record (permitted to add a note; do not silently skip).
+
+### 3.2 Confirm Phase 4 additions are present
+
+Cross-reference against items added by the Phase 4 engine:
+- Returned-to-backlog items (from `sprint_close.md` "Items Returned to Backlog" section)
+- P2/P3 deviation items (from `verification_report.md §4`)
+- Test scenario gap items (from `verification_report.md §6`)
+
+For each: confirm a `backlog.md` entry exists with the `cycle_id` reference. If any are missing: **add them now** (permitted write). Record each addition in the closure record.
+
+### 3.3 Confirm next-release items are tagged
+
+Items in `backlog.md` that have been assigned to the next release (per sprint close or verification report): confirm they have a target release note. Flag any that are missing one.
+
+Update `Last Updated` on `backlog.md` to today's date.
+
+**Failure condition:** Any shipped item still shown as open after this step. Any Phase 4 addition unaccounted for.
+
+---
+
+## STEP 4 — Scope and Decisions Documents
+
+### 4.1 Scope document
+
+Locate: `docs/product/scope/scope--{id}-{slug}.md` (derive the ID and slug from the roadmap item).
+
+Update:
+- Status: `Active` → `Superseded`
+- Add supersession note:
+  ```
+  Superseded by: v<X.Y> ship — <ship date>
+  Changelog: docs/product/changelog.md#v<X.Y>
+  Verification report: claude/cycles/<cycle_id>/verification_report.md
+  Cycle: <cycle_id>
+  ```
+- Update `Last Updated` to today's date.
 
 **Failure condition:** Scope document still Active after ship. Per lifecycle guide §4: scope documents must be updated to Superseded when the feature ships.
 
----
+If the scope document cannot be located: flag in `strict` mode (halt); flag and continue in `standard` mode — record in closure record as an outstanding action for the PMO Lead to resolve manually.
 
-### 5. Decisions Record
+### 4.2 Decisions record
 
-- [ ] Has the decisions record status been updated from **Active** to **Superseded**?
-- [ ] Does the supersession note reference the changelog entry and `cycle_id`?
-- [ ] Is `Last Updated` on the decisions record set to today's date?
+Locate: `docs/product/decisions/{id}-{slug}.md`
 
-Location: `docs/product/decisions/{id}-{slug}.md`
+Update:
+- Status: `Active` → `Superseded`
+- Add supersession note referencing changelog entry and `cycle_id`
+- Update `Last Updated` to today's date.
 
-**Note:** Any Accepted Risk decision records (`AR-<release>-<cycle_id>-<esc_id>.md`) created during this cycle are Operational Records (Class 3) — they do not get Superseded; they are permanent. Confirm they are filed and linked from the changelog entry.
+**Note on Accepted Risk decision records:** `AR-<release>-<cycle_id>-<esc_id>.md` files are Operational Records (Class 3) — they are permanent and must **not** be marked Superseded. Confirm they are filed and linked from the changelog entry.
 
-**Failure condition:** Decisions record still Active after ship.
-
----
-
-### 6. Canonical Specs — Deviation Notes
-
-- [ ] For each deviation filed this sprint (listed in `sprint_close.md`): confirm the deviation entry in the relevant canonical spec contains all required fields: description, canonical requirement, priority (P0–P3), target resolution release, owner, and backlog reference.
-- [ ] Are P3 deviations noted in the changelog entry?
-- [ ] Are accepted P1/P2 deviations referenced in both the changelog entry and the `verification_report.md` acceptance block?
-
-**Failure condition:** Deviation note in spec missing required fields. This renders the spec non-compliant per §3 Known Deviation Standard.
+If the decisions record cannot be located: same flag behaviour as scope document.
 
 ---
 
-### 7. Supporting Operational Documents
+## STEP 5 — Canonical Spec Deviation Compliance Check
 
-For each operational document that references metrics, validation, or system behaviour affected by this release:
+For each deviation listed in `sprint_close.md` "Deviations filed this sprint":
 
-- [ ] Are metric counts, expected values, and example outputs current?
-- [ ] Are any "planned" or "backlog" notes in operational docs updated to reflect what actually shipped?
-- [ ] Does `docs/System_status_report.md` reflect the final verified status for this cycle (confirmed by Phase 4 — if Phase 4 made corrections, verify those corrections are present)?
+1. Locate the deviation entry in the referenced canonical spec file (filed there during Phase 3 execution per §3.1.A step 10 of the execution prompt).
+2. Confirm the entry contains all required fields per §3 Known Deviation Standard:
+   - Description
+   - Canonical requirement
+   - Priority (P0–P3)
+   - Target resolution release
+   - Owner
+   - Backlog reference
+3. If any required field is missing:
+   - In `strict` mode: halt and list exactly which fields are missing for which deviations.
+   - In `standard` mode: add the missing fields now (permitted write — deviation compliance only) and record the correction in the closure record.
+4. Confirm P3 deviations have corresponding backlog items (from STEP 3.2 check). If missing: add now.
+5. Confirm accepted P1/P2 deviations appear in the changelog entry (STEP 1). If not: add them now.
 
-**Common documents to check:**
-- `docs/System_status_report.md` — capabilities live, deviations, test scenarios referenced
-- `docs/operations/validation_system.md` — metric list, counts, severity assignments, example summaries
-- Any status report that references the affected feature
-
----
-
-### 8. Specs Index — Open Items Review
-
-- [ ] Review `docs/specs/Specs_Index.md` Section 6 (Pending Spec Work) and Section 7 (Open Compliance Issues)
-- [ ] Have any items been resolved by this release? If so, mark them resolved with date and `cycle_id`.
-- [ ] Have any new gaps been identified during this delivery (from `qa_evidence_EPIC-xx.md` or the `verification_report.md`) that should be added?
-- [ ] Is `Last Updated` on the Specs Index set to today's date if changes were made?
+**Failure condition (hard gate):** Any deviation entry in a canonical spec missing required fields after this step. Non-compliant deviation notes render the spec non-compliant.
 
 ---
 
-### 9. Lessons Learnt — Review and Apply
+## STEP 6 — Operational Documents Reconciliation
 
-This release produces **two** lessons learnt records that must both be reviewed:
+For each of the following documents, read the current content and check for stale references to this release's features:
 
-| Record | Location | Covers |
-|--------|----------|--------|
-| Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Phase 1B planning friction, escalation patterns, backlog quality |
-| Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Delegation patterns, GitHub integration, acceptance criteria gaps, gate friction |
+- `docs/System_status_report.md` — confirmed current by Phase 4, but verify the section for this `cycle_id` reflects the final verified status (not "pending verification"). Correct if needed.
+- `docs/operations/validation_system.md` — check metric counts, expected values, and example outputs. Update any entries that reference "planned" or "backlog" behaviour that has now shipped.
 
-For each record:
+If other operational documents are referenced in `execution_state.json` spec references: check those too for stale notes.
 
-- [ ] Has each action item been reviewed by the PMO Lead?
-- [ ] For actions that can be resolved by updating a template, prompt, or process document: has that update been made and the version bumped?
-- [ ] For actions requiring a role decision (e.g. classification change, authority boundary question): has it been surfaced to the relevant owner with a deadline?
-- [ ] Is there a consolidated action log noting which items were applied immediately, which are deferred to next cycle, and which require escalation?
-- [ ] Have any process improvements applied during this closure been noted so they are visible before the next cycle opens?
+Update `Last Updated` on any document that is modified.
 
-**Failure condition:** Lessons learnt filed but not reviewed. Per the lessons learnt template: process debt compounds if this step is skipped. Filing without reviewing is equivalent to skipping.
+Record all corrections in the closure record. If a document is outside the write scope (e.g. a Class 1 spec that is not being corrected for deviation compliance): flag for the document owner rather than editing.
 
 ---
 
-## Outputs
+## STEP 7 — Specs Index Review
 
-When all checklist items are complete, the PMO Lead communicates to the Product Owner and Head of Specs Team:
+Read `docs/specs/Specs_Index.md`:
 
+### 7.1 Resolve closed items
+
+For each item in Section 6 (Pending Spec Work) and Section 7 (Open Compliance Issues):
+- Cross-reference against this delivery: did any shipped ST items or deviation filings resolve a listed item?
+- If yes: mark it resolved with date and `cycle_id`.
+
+### 7.2 Add new gaps
+
+From `verification_report.md §6` (Test Coverage Assessment) and `qa_evidence_EPIC-xx.md` notes: identify any new spec gaps or compliance issues surfaced during this delivery that are not yet in the Specs Index.
+- Add each as a new entry in the appropriate section.
+
+Update `Last Updated` on `docs/specs/Specs_Index.md` to today's date if any changes were made.
+
+---
+
+## STEP 8 — Lessons Learnt Review and Application
+
+Read both lessons learnt records:
+
+| Record | Location |
+|--------|----------|
+| Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` |
+| Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` |
+
+For each action item in both records, classify it:
+
+| Class | Criteria | Action |
+|-------|----------|--------|
+| `immediate` | Can be resolved by updating a template, prompt, or process document right now | Apply now; bump version of the modified document; record in closure record |
+| `deferred` | Requires changes that depend on the next cycle's context, or needs more than one session to implement | Record in closure record with owner and target cycle |
+| `decision_required` | Requires a named authority to decide (e.g. authority boundary change, strategy question, new role) | Surface to the relevant owner with a clear decision question and 72-hour deadline; record in closure record |
+
+**Immediate action rule:** If a lessons learnt action specifies updating a template or prompt and that update can be made without ambiguity, make it now within the permitted write scope. Do not defer what can be done immediately.
+
+**Filing without reviewing is equivalent to skipping.** Every action item must have a recorded disposition (`immediate`, `deferred`, or `decision_required`) in the closure record. Blank or unreviewed items are non-compliant.
+
+Produce a consolidated action summary:
+- Immediate actions applied: `N` (list each: document updated, version bumped)
+- Deferred to next cycle: `N` (list each: action, owner, target cycle)
+- Escalated for decision: `N` (list each: question, owner, deadline)
+
+---
+
+## STEP 9 — Produce Closure Record
+
+Create: `claude/cycles/<cycle_id>/closure_record.md`
+
+Lifecycle header:
+```
+Owner: PMO Lead
+Class: Operational Record (Class 3)
+Status: Active
+Last Updated: <date>
+Cycle: <cycle_id>
+```
+
+Body (seven sections in order):
+
+**§1 — Closure Status**
+```
+Status: Closed | Closed_with_actions
+Release: v<X.Y> — <feature name>
+Ship date: <date>
+Cycle: <cycle_id>
+Verification status: <Verified | Verified_with_deviations>
+Closure run: <ISO-8601 UTC>
+```
+
+**§2 — Documents Updated** — for each step, confirm status:
+
+| Step | Document | Action Taken | Status |
+|------|----------|--------------|--------|
+| 1 | docs/product/changelog.md | Entry written for v<X.Y> | ✅ |
+| 2 | claude/roadmap/current_roadmap.md | Marked ✅ Complete; version headers updated | ✅ |
+| 3 | claude/backlog/backlog.md | N items marked COMPLETE; N Phase 4 additions confirmed | ✅ |
+| 4 | Scope document | Status → Superseded | ✅ / ⚠ not found |
+| 5 | Decisions record | Status → Superseded | ✅ / ⚠ not found |
+| 6 | Canonical specs | N deviations checked; N fields corrected | ✅ |
+| 7 | Operational docs | N corrections made | ✅ / N/A |
+| 8 | Specs Index | N items resolved; N gaps added | ✅ |
+
+**§3 — Backlog Additions This Run** — any items added to `backlog.md` by this routine (Phase 4 items that were missing, new gaps). List each with backlog ref.
+
+**§4 — Deviation Compliance Summary** — list of deviations checked, any fields corrected, all now compliant: Yes / No (with detail if No).
+
+**§5 — Lessons Learnt Action Summary** — from STEP 8. Full three-way breakdown (immediate / deferred / decision_required) with detail per item.
+
+**§6 — Outstanding Actions** — any items that could not be completed by this routine (e.g. scope document not found, document owner unresponsive). For each: description, owner, deadline, escalation path.
+
+**§7 — Closure Confirmation**
 ```
 Post-ship closure complete — <cycle_id> — <date>
-
 Release: v<X.Y> — <feature name>
 Verification status: <Verified | Verified_with_deviations>
-
-Documents updated:
-  ✅ Changelog — docs/product/changelog.md
-  ✅ Roadmap — claude/roadmap/current_roadmap.md
-  ✅ Backlog — claude/backlog/backlog.md
-  ✅ Scope document — <path> → Superseded
-  ✅ Decisions record — <path> → Superseded
-  ✅ Canonical spec deviations — confirmed compliant
-  ✅ System status report — confirmed current
-  ✅ Specs Index — reviewed
-
-Lessons learnt applied:
-  Immediate actions applied: <N> (<list or "none">)
-  Deferred to next cycle: <N> (<list or "none">)
-  Escalated for decision: <N> (<list or "none">)
-
+Lessons learnt applied: <N immediate> | <N deferred> | <N escalated>
 Outstanding actions carried forward: <list or "none">
-
 Next cycle may now open.
 ```
 
 ---
 
-## Escalation
+## STEP 10 — Global State Update (Hard Requirement)
 
-If a document owner has not made their required update and it is blocking closure:
+Update `.claude_current_state.json`:
 
-- PMO Lead notifies the owner directly with the specific item and a 24-hour deadline
-- If unresolved within 24 hours: escalate to Product Owner
-- PMO Lead does not make content changes to documents outside their ownership — they coordinate and escalate
-- The next cycle does not open until closure is confirmed, regardless of delivery pressure
+```json
+{
+  "status": "Closed",
+  "closure_record": "claude/cycles/<cycle_id>/closure_record.md",
+  "closure_status": "Closed | Closed_with_actions",
+  "post_ship_complete": true,
+  "last_sync_utc": "<now>"
+}
+```
+
+Surface §7 Closure Confirmation to the user for communication to the Product Owner and Head of Specs Team.
+
+If any outstanding actions remain in §6: set `closure_status = Closed_with_actions`. The next cycle may still open — outstanding actions do not block it unless a hard gate condition is unmet.
 
 ---
 
-## Relationship to Playbook Phases
+## STEP 11 — Commit
+
+Commit all artefacts created or modified by this routine:
 
 ```
-Phase 3 (Sprint Execution & Close)
-  └─► Phase 4 (Delivery Verification)
-        └─► .claude_current_state.json → Verified
-              └─► Post-Ship Closure  ◄── YOU ARE HERE
-                    └─► Phase 1 (Roadmap Rebalance, optional)
-                          └─► Phase 1B (Release Planning — next cycle)
+git add docs/product/changelog.md
+git add claude/roadmap/current_roadmap.md
+git add claude/backlog/backlog.md
+git add docs/product/scope/scope--*.md       (if modified)
+git add docs/product/decisions/*.md          (if modified)
+git add docs/System_status_report.md         (if modified)
+git add docs/operations/validation_system.md (if modified)
+git add docs/specs/Specs_Index.md            (if modified)
+git add <any template or prompt files updated by lessons learnt actions>
+git add claude/cycles/<cycle_id>/closure_record.md
+git add .claude_current_state.json
+git commit -m "[GOVERNANCE] Post-ship closure complete: <cycle_id> — v<X.Y>"
+git push origin <current-branch>
 ```
 
-Phase 4 sets `next_cycle_unblocked = true` but does not perform document closure. This process is the bridge between a verified sprint and a clean next cycle.
+If git operations are unavailable: output the exact files to stage and the commit message. Mark as "Ready to commit."
 
 ---
 
-## Change Log
+## 7. Completion Condition
 
-| Version | Date | Change |
-|---------|------|--------|
-| 2.0 | 2026-03-03 | Full rewrite to align with Sprint Planning Operational Playbook v1.3. Added cycle artefact inputs (verification_report.md, sprint_close.md, execution_state.json, lessons_learnt_execution.md). Split lessons learnt into two records (Phase 1B and Phase 3). Added changelog entry template. Updated all document paths to match playbook conventions (claude/roadmap/, claude/backlog/). Added canonical spec deviation check. Added explicit sequencing diagram. Added Accepted Risk decision record note. Removed trigger dependency on generic ship sign-off — now triggers on Phase 4 Verified state. |
-| 1.0 | 2026-02-21 | Initial version. Created as a result of lessons learnt for 3.2 Position Sizing Calculator — post-ship document sweep had no template and was reconstructed by audit. |
+The run is complete only if:
+
+- `closure_record.md` exists with all 7 sections
+- Changelog entry written and complete for this release version
+- Roadmap entry marked ✅ Complete
+- All shipped backlog items marked COMPLETE; all Phase 4 additions confirmed present
+- Scope and decisions documents marked Superseded (or outstanding action filed if not found)
+- All deviation entries in canonical specs have required fields
+- Operational documents reconciled
+- Specs Index reviewed and updated
+- Both lessons learnt records reviewed; every action item has a disposition
+- `.claude_current_state.json` updated with `post_ship_complete = true` and `status = Closed`
+- STEP 11 commit complete (or commit manifest produced)
+
+---
+
+## 8. Closure Status Values
+
+| Status | Meaning | Next cycle? |
+|--------|---------|-------------|
+| `Closed` | All steps complete; no outstanding actions | Open immediately |
+| `Closed_with_actions` | All steps complete; minor outstanding actions carried forward (e.g. scope doc not found, deferred lessons learnt items) | Open — outstanding actions tracked in closure record |
+
+There is no `Failed` state for post-ship closure. If a hard gate fires before completion, the routine halts and reports. Re-issue `run post-ship --cycle "<cycle_id>"` once the condition is resolved — the engine resumes from the first incomplete step.
+
+---
+
+## 9. Governance Invariants
+
+- **No re-verification.** This engine reads sealed Phase 4 artefacts. It does not re-assess what passed or failed.
+- **No scope revision.** The execution state is sealed. The engine records what shipped; it does not alter it.
+- **Write scope is strictly bounded.** Status updates, changelog entries, and deviation compliance fixes only. No content changes to specs, strategies, or canonical documents beyond the permitted scope.
+- **Lessons learnt must be reviewed, not just filed.** Every action item requires a disposition. Deferred is acceptable; unreviewed is not.
+- **Immediate lessons learnt actions are non-deferrable.** If an action can be applied now (template fix, prompt correction), it must be. Do not defer what can be done immediately.
+- **Outstanding actions do not block the next cycle** — but they must be recorded and owned. Nothing is silently dropped.
+- **Delivery pressure does not override closure steps.** The changelog, roadmap, and backlog must be updated before the next cycle opens, regardless of timeline.
