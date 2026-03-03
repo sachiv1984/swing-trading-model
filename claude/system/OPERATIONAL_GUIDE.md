@@ -1,4 +1,4 @@
-# Sprint Planning Operational Playbook
+# Operational Playbook
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
