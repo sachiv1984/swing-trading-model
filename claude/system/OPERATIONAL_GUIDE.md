@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 1.5  
+**Version:** 1.6  
 **Last Updated:** 2026-03-03  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -662,6 +662,7 @@ run post-ship [--cycle "<cycle_id>"] [--mode "strict|standard"] [--dry-run]
 - `claude/cycles/<cycle_id>/execution_state.json` (sealed)
 - `claude/cycles/<cycle_id>/lessons_learnt.md` (Phase 1B)
 - `claude/cycles/<cycle_id>/lessons_learnt_execution.md` (Phase 3)
+- `claude/cycles/<cycle_id>/lessons_learnt_verification.md` (Phase 4, if produced)
 - `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per merged EPIC)
 - `docs/System_status_report.md`
 
@@ -712,6 +713,7 @@ This release produces two lessons learnt records that must both be reviewed:
 |--------|----------|--------|
 | Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Phase 1B planning friction, escalation patterns, backlog quality |
 | Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Delegation patterns, GitHub integration, acceptance criteria gaps, gate friction |
+| Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` | Gate sequencing, deviation severity patterns, test coverage gaps, sign-off coordination |
 
 For each record: actions that can be resolved by updating a template or prompt must be applied immediately with a version bump. Actions requiring a role decision must be surfaced to the relevant owner with a deadline. Filing without reviewing is equivalent to skipping.
 
@@ -837,6 +839,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Sprint Execution Prompt | `claude/system/execution_prompt.md` | 6 | Head of Specs Team | Governance |
 | Delivery Verification Prompt | `claude/system/delivery_verification_prompt.md` | 6 | Head of Specs Team | Governance |
 | Shared Standards | `claude/system/shared_standards.md` | 6 | Head of Specs Team | Governance |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` | 6 | Head of Specs Team | Governance |
 | Current Roadmap | `claude/roadmap/current_roadmap.md` | 4 | Product Owner | 1 |
 | Backlog | `claude/backlog/backlog.md` | 4 | Product Owner | 1, 1B, 4, Post-Ship |
 | Initiative Register | `claude/roadmap/initiative_register.md` | 4 | Product Owner | 1 |
@@ -869,6 +872,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Escalations (Execution) | `claude/cycles/<id>/execution_escalations.md` | 4 | PMO Lead | 3 |
 | Sprint Close Summary | `claude/cycles/<id>/sprint_close.md` | 3 | PMO Lead | 3 |
 | Lessons Learnt (Execution) | `claude/cycles/<id>/lessons_learnt_execution.md` | 3 | PMO Lead | 3 |
+| Lessons Learnt (Verification) | `claude/cycles/<id>/lessons_learnt_verification.md` | 3 | PMO Lead | 4 |
+| Lessons Learnt (Closure) | `claude/cycles/<id>/lessons_learnt_closure.md` | 3 | PMO Lead | Post-Ship |
 | System Status Report | `docs/System_status_report.md` | 3 | Director of Quality | 3, 4 |
 | Verification Report | `claude/cycles/<id>/verification_report.md` | 3 | Director of Quality | 4 |
 | Escalations (Verification) | `claude/cycles/<id>/verification_escalations.md` | 4 | PMO Lead | 4 |
@@ -894,6 +899,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` v1.0 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v1.1 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.2 |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.4 |
 | Team Charter | `claude/charter/team_charter.md` v1.3 |
 
@@ -907,6 +913,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 1.6 | 2026-03-03 | Updated `shared_standards.md` to v1.1 and `lessons_learnt_prompt.md` to v1.2 in §14 governance table. Added Lessons Learnt Prompt to Artefact Register. Added `lessons_learnt_verification.md` (Phase 4) and `lessons_learnt_closure.md` (Post-Ship) to Artefact Register. |
 | 1.5 | 2026-03-03 | Added `post_ship_closure_prompt.md` (v1.0) as the engine source for §10. Added `run post-ship` invocation command to Quick Reference. Added invocation subsection (§10.1), flags table, and pre-condition to §10. Added closure status values (§10.6). Added Closure Record to Artefact Register. Added Post-Ship Closure Engine to §14 governance table. |
 | 1.4 | 2026-03-03 | Added §10 Post-Ship Closure. Updated Quick Reference summary, Hard Rules, Phase Gate Checklist, Lifecycle Overview table, Cycle Trigger & Flow table, Artefact Register, and §14 governance table to reflect post-ship_closure.md (v2.0). Renumbered §10–13 to §11–14. Updated cycle gate rule to require Post-Ship Closure before next cycle opens. |
 | 1.3 | 2026-03-03 | Added `execution_prompt.md` (v1.3) and `delivery_verification_prompt.md` (v1.0) to governance. Updated Quick Reference to include Phase 3 & 4 invocation commands. Added "no autonomous merge" and "no cycle unlock without Verified status" to Hard Rules. Expanded Phase 3 checklist to match execution prompt exit criteria. Aligned §8 (Phase 3) and §9 (Phase 4) detail with prompt content. Resolved header/§13 version discrepancy (both now 1.3). |
