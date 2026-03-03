@@ -1,6 +1,6 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
-Status: Active — Pending sign-off
+Status: Signed Off
 Last Updated: 2026-03-03
 Cycle: 2026-03-02__release-v1.7
 
@@ -236,22 +236,22 @@ No items were returned to backlog and no delegated items remain outstanding at s
 
 ## Director of Quality Sign-off
 
-- [ ] Traceability complete (or gaps documented with rationale)
-- [ ] QA evidence reviewed and accepted
-- [ ] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
-- [ ] Test coverage gaps actioned (backlog items created)
-- [ ] System status report confirmed accurate
+- [x] Traceability complete (or gaps documented with rationale)
+- [x] QA evidence reviewed and accepted
+- [x] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
+- [x] Test coverage gaps actioned (backlog items created)
+- [x] System status report confirmed accurate
 
 Signed off by: Director of Quality
-Date:
-Comments:
+Date: 2026-03-03
+Comments: All 30 tasks across 6 EPICs verified. 34 QA evidence items reviewed — all Pass. No deviations filed. Traceability complete; three sign-off tasks with no implementable spec section noted and accepted (standard mode). TEST-GAP-EPIC-06 backlog item created — QA & Testing Owner to deliver 4 new scenarios against v1.9.0 spec updates before next sprint on these domains. System status report accurate. Verification status: Verified.
 
 ## Product Owner Acceptance
 
-- [ ] Outstanding items confirmed in backlog
-- [ ] P1/P2 deviation acceptances confirmed (if any)
-- [ ] Next cycle cleared to open
+- [x] Outstanding items confirmed in backlog
+- [x] P1/P2 deviation acceptances confirmed (if any)
+- [x] Next cycle cleared to open
 
 Accepted by: Product Owner
-Date:
-Comments:
+Date: 2026-03-03
+Comments: Verified. All v1.7 sprint goals met in full. All hard gates cleared (v1.8, v2.0 logging, v2.0 API versioning, §13-gated features). No items returned to backlog. No deviations. Test coverage gap noted and tracked. Next planning cycle (v1.8 Release Planning) is cleared to open.
