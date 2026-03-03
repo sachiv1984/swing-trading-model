@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 1.3  
+**Version:** 1.4  
 **Last Updated:** 2026-03-03  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -11,7 +11,7 @@
 
 ## Quick Reference Summary
 
-> **The full cycle in one paragraph:** A completed roadmap item optionally triggers a **Roadmap Rebalance** (Phase 1), which reassesses priorities and decides what to add, stop, defer, or kill. The output (or a direct invocation) feeds **Release Planning** (Phase 1B), which translates an approved release into an execution-ready plan with a sequenced backlog slice. That backlog drives **Sprint Planning** (Phase 2), which scopes and capacity-confirms a time-boxed sprint. **Sprint Execution & Close** (Phase 3) delivers the work, closes the sprint, and — when a roadmap item completes — may trigger the next cycle. **Delivery Verification** (Phase 4) confirms what was built matches what was scoped and unlocks the next cycle.
+> **The full cycle in one paragraph:** A completed roadmap item optionally triggers a **Roadmap Rebalance** (Phase 1), which reassesses priorities and decides what to add, stop, defer, or kill. The output (or a direct invocation) feeds **Release Planning** (Phase 1B), which translates an approved release into an execution-ready plan with a sequenced backlog slice. That backlog drives **Sprint Planning** (Phase 2), which scopes and capacity-confirms a time-boxed sprint. **Sprint Execution & Close** (Phase 3) delivers the work, closes the sprint, and — when a roadmap item completes — may trigger the next cycle. **Delivery Verification** (Phase 4) confirms what was built matches what was scoped and unlocks the next cycle. **Post-Ship Closure** then closes all planning and operational documents, applies lessons learnt, and confirms the cycle is clean before the next one opens.
 
 ### Engine Commands & Aliases
 
@@ -60,6 +60,7 @@ State pointer:  .claude_current_state.json  (always check for active_cycle befor
 | No sprint starts without signed-off backlog and acceptance criteria | Phase 2 |
 | No autonomous merge — QA sign-off and Product Owner acceptance always required | Phase 3 |
 | No cycle unlock without `Verified` or `Verified_with_deviations` status | Phase 4 |
+| Post-Ship Closure must complete before the next cycle's Phase 1 or Phase 1B is invoked | Post-Ship |
 
 ### Conflict Resolution — Who Wins What
 
@@ -117,6 +118,18 @@ Phase 4 complete?
   ✅ Test scenario gaps sent to QA & Testing Owner
   ✅ .claude_current_state.json status = Verified
   ✅ next_cycle_unblocked = true
+
+Post-Ship Closure complete?
+  ✅ Changelog entry written and complete (docs/product/changelog.md)
+  ✅ Roadmap entry marked ✅ Complete with ship date and cycle_id (claude/roadmap/current_roadmap.md)
+  ✅ All shipped backlog items marked COMPLETE; Phase 4 additions confirmed present (claude/backlog/backlog.md)
+  ✅ Scope document updated to Superseded
+  ✅ Decisions record updated to Superseded
+  ✅ Canonical spec deviation notes confirmed compliant (all required fields present)
+  ✅ Supporting operational documents current (System_status_report.md, validation_system.md)
+  ✅ Specs Index open items reviewed (resolved items closed, new gaps added)
+  ✅ Both lessons learnt records reviewed and actions applied or scheduled
+  ✅ Closure confirmation communicated to Product Owner and Head of Specs Team
 ```
 
 ---
@@ -132,10 +145,11 @@ Phase 4 complete?
 7. [Phase 2 — Sprint Planning](#7-phase-2--sprint-planning)
 8. [Phase 3 — Sprint Execution & Close](#8-phase-3--sprint-execution--close)
 9. [Phase 4 — Delivery Verification](#9-phase-4--delivery-verification)
-10. [Escalation & Accepted Risk Rules](#10-escalation--accepted-risk-rules)
-11. [Cycle Trigger & Flow Reference](#11-cycle-trigger--flow-reference)
-12. [Artefact Register](#12-artefact-register)
-13. [Playbook Governance](#13-playbook-governance)
+10. [Post-Ship Closure](#10-post-ship-closure)
+11. [Escalation & Accepted Risk Rules](#11-escalation--accepted-risk-rules)
+12. [Cycle Trigger & Flow Reference](#12-cycle-trigger--flow-reference)
+13. [Artefact Register](#13-artefact-register)
+14. [Playbook Governance](#14-playbook-governance)
 
 ---
 
@@ -220,10 +234,11 @@ Each cycle progresses through up to five phases:
 | **Phase 2** | Sprint Planning | Phase 1B Publish Gate passed | Sprint backlog + acceptance criteria |
 | **Phase 3** | Sprint Execution & Close | Sprint start date reached | Delivered increments + sprint close record |
 | **Phase 4** | Delivery Verification | Phase 3 complete (`Sprint_Complete`) | Verification report + next cycle unlocked |
+| **Post-Ship** | Post-Ship Closure | Phase 4 complete (`Verified`) | Closed documents + applied lessons learnt |
 
 Phase 1 is **optional**. Phase 1B may be invoked directly when a release is already approved on the roadmap. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
 
-**Phase 4 is a hard gate on the next cycle.** The Roadmap Rebalance and Release Planning engines will not run for a new cycle until `.claude_current_state.json` status is `Verified` or `Verified_with_deviations`.
+**Phase 4 is a hard gate on the next cycle.** The Roadmap Rebalance and Release Planning engines will not run for a new cycle until `.claude_current_state.json` status is `Verified` or `Verified_with_deviations`. Post-Ship Closure must also be complete before the next cycle opens — `next_cycle_unblocked = true` is necessary but not sufficient.
 
 ---
 
@@ -611,9 +626,104 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ---
 
-## 10. Escalation & Accepted Risk Rules
+## 10. Post-Ship Closure
 
-### 10.1 When an Escalation Is Mandatory
+**Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)  
+**Owner:** PMO Lead  
+**Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
+
+Post-Ship Closure is the mandatory bridge between a verified sprint and a clean next cycle. It ensures all planning, operational, and governance documents reflect the shipped state before the next Phase 1 or Phase 1B is invoked.
+
+> `next_cycle_unblocked = true` is a necessary but not sufficient condition for opening the next cycle. Post-Ship Closure must also be complete.
+
+### 10.1 Inputs Required
+
+- `.claude_current_state.json` — `status = Verified`, `next_cycle_unblocked = true`
+- `claude/cycles/<cycle_id>/verification_report.md`
+- `claude/cycles/<cycle_id>/sprint_close.md`
+- `claude/cycles/<cycle_id>/execution_state.json` (sealed)
+- `claude/cycles/<cycle_id>/lessons_learnt.md` (Phase 1B)
+- `claude/cycles/<cycle_id>/lessons_learnt_execution.md` (Phase 3)
+- `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per merged EPIC)
+- `docs/System_status_report.md`
+
+### 10.2 Closure Steps
+
+| Step | Document | Action | Failure Condition |
+|------|----------|--------|-------------------|
+| 1 | `docs/product/changelog.md` | Write versioned entry (EPIC IDs, spec versions updated, deviations accepted, verification report ref, `cycle_id`) | Missing entry — ship not recorded |
+| 2 | `claude/roadmap/current_roadmap.md` | Mark feature ✅ Complete with ship date and `cycle_id`; update Current Version and Next planned release headers | Roadmap still shows Planned or In Progress |
+| 3 | `claude/backlog/backlog.md` | Mark all shipped items COMPLETE; confirm Phase 4 additions present (returned items, P2/P3 deviations, test scenario gaps) | Shipped item still open; Phase 4 additions missing |
+| 4 | Scope document | Status → Superseded; reference changelog entry, `verification_report.md`, and `cycle_id` | Scope document still Active after ship |
+| 5 | Decisions record | Status → Superseded; reference changelog entry and `cycle_id` | Decisions record still Active after ship |
+| 6 | Canonical specs | Confirm all deviation entries have required fields: description, canonical requirement, priority (P0–P3), target resolution release, owner, backlog reference | Deviation note missing required fields — spec non-compliant |
+| 7 | `docs/System_status_report.md`, `docs/operations/validation_system.md` | Confirm current; update any stale "planned" or "backlog" notes | Operational docs reference superseded behaviour |
+| 8 | `docs/specs/Specs_Index.md` | Mark resolved items closed with date and `cycle_id`; add new gaps identified during delivery | Index not reconciled with delivery |
+| 9 | Lessons learnt (both records) | Review all action items; apply immediate process improvements (bump template/prompt versions); schedule deferred actions; escalate decisions to named owners | Lessons learnt filed but not reviewed — process debt compounds |
+
+### 10.3 Changelog Entry Structure
+
+```
+## v<X.Y> — <feature name> — <ship date>
+Cycle: <cycle_id>
+Verified: <Verified | Verified_with_deviations>
+Verification report: claude/cycles/<cycle_id>/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-xx | <description> | <spec file#section> |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-ref | P1/P2/P3 | <one line> | PO / PO + DoQ |
+
+### Tech backlog items shipped
+- [ST-xx] <title> — <one line description>
+
+Sign-off: Product Owner — <date>
+QA sign-off: Director of Quality — <date>
+```
+
+### 10.4 Lessons Learnt Application
+
+This release produces two lessons learnt records that must both be reviewed:
+
+| Record | Location | Covers |
+|--------|----------|--------|
+| Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Phase 1B planning friction, escalation patterns, backlog quality |
+| Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Delegation patterns, GitHub integration, acceptance criteria gaps, gate friction |
+
+For each record: actions that can be resolved by updating a template or prompt must be applied immediately with a version bump. Actions requiring a role decision must be surfaced to the relevant owner with a deadline. Filing without reviewing is equivalent to skipping.
+
+### 10.5 Escalation
+
+If a document owner has not made their required update and it is blocking closure:
+
+- PMO Lead notifies the owner directly with the specific item and a 24-hour deadline
+- If unresolved within 24 hours: escalate to Product Owner
+- PMO Lead does not make content changes to documents outside their ownership — they coordinate and escalate
+- The next cycle does not open until closure is confirmed, regardless of delivery pressure
+
+### 10.6 Closure Confirmation
+
+When all steps are complete, PMO Lead communicates to Product Owner and Head of Specs Team:
+
+```
+Post-ship closure complete — <cycle_id> — <date>
+Release: v<X.Y> — <feature name>
+Verification status: <Verified | Verified_with_deviations>
+Lessons learnt applied: <N immediate> | <N deferred> | <N escalated>
+Outstanding actions carried forward: <list or "none">
+Next cycle may now open.
+```
+
+---
+
+## 11. Escalation & Accepted Risk Rules
+
+### 11.1 When an Escalation Is Mandatory
 
 An escalation record must be created when:
 - A hard gate halts execution
@@ -625,7 +735,7 @@ Escalation ID prefixes by phase:
 - Sprint Execution: `ESC-EXEC-YYYYMMDD-nn`
 - Delivery Verification: `ESC-VERIF-YYYYMMDD-nn`
 
-### 10.2 Escalation SLAs
+### 11.2 Escalation SLAs
 
 | Trigger Type | SLA | Can Be Accepted Risk? |
 |-------------|-----|-----------------------|
@@ -635,7 +745,7 @@ Escalation ID prefixes by phase:
 | Workforce / Capacity | Next planning checkpoint | Yes — Product Owner only |
 | Schedule / Delivery | Next planning checkpoint | Yes — Product Owner only |
 
-### 10.3 Accepted Risk — Hard Constraints
+### 11.3 Accepted Risk — Hard Constraints
 
 The following domains may **never** be marked Accepted Risk:
 
@@ -651,7 +761,7 @@ Workforce and Schedule/Delivery risks may be accepted by the Product Owner **onl
 - No Lifecycle compliance requirement is violated
 - No scope change is introduced (scope changes require Phase 1)
 
-### 10.4 Accepted Risk Decision Record (Hard Gate)
+### 11.4 Accepted Risk Decision Record (Hard Gate)
 
 Any Accepted Risk disposition requires a durable decision record:
 
@@ -667,7 +777,7 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 
 ---
 
-## 11. Cycle Trigger & Flow Reference
+## 12. Cycle Trigger & Flow Reference
 
 | Event | Triggers | Owner |
 |-------|----------|-------|
@@ -676,18 +786,19 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 | Phase 1B Publish Gate passed | Phase 2 — Sprint Planning | PMO Lead |
 | Sprint backlog signed off | Phase 3 — Sprint Execution | PMO Lead |
 | Phase 3 complete (`Sprint_Complete`) | Phase 4 — Delivery Verification | PMO Lead |
-| Phase 4 complete (`Verified`) | New Phase 1 (optional) or Phase 1B cycle | Product Owner |
+| Phase 4 complete (`Verified`) | Post-Ship Closure | PMO Lead |
+| Post-Ship Closure confirmed | New Phase 1 (optional) or Phase 1B cycle | Product Owner |
 | Sprint item returned to backlog | Backlog reconciliation only (no new cycle) | Head of Specs Team |
 | Governance gap detected | Escalation → Product Owner + Head of Specs Team | PMO Lead |
 | Test scenario gap found (Phase 4) | Action written to QA & Testing Owner agent file | QA & Testing Owner |
 
 > **Loop rule:** Phase 1 is only triggered when a roadmap item completes and a rebalance is warranted. Sprint items that are backlog items (not roadmap items) never trigger a rebalance.
 
-> **Cycle gate:** Phase 1B (new cycle) may not open until Phase 4 of the previous cycle reaches `Verified` or `Verified_with_deviations`.
+> **Cycle gate:** Phase 1B (new cycle) may not open until Phase 4 of the previous cycle reaches `Verified` or `Verified_with_deviations` **and** Post-Ship Closure is confirmed complete.
 
 ---
 
-## 12. Artefact Register
+## 13. Artefact Register
 
 All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle_guide.md`.
 
@@ -702,7 +813,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Delivery Verification Prompt | `claude/system/delivery_verification_prompt.md` | 6 | Head of Specs Team | Governance |
 | Shared Standards | `claude/system/shared_standards.md` | 6 | Head of Specs Team | Governance |
 | Current Roadmap | `claude/roadmap/current_roadmap.md` | 4 | Product Owner | 1 |
-| Backlog | `claude/backlog/backlog.md` | 4 | Product Owner | 1, 1B, 4 |
+| Backlog | `claude/backlog/backlog.md` | 4 | Product Owner | 1, 1B, 4, Post-Ship |
 | Initiative Register | `claude/roadmap/initiative_register.md` | 4 | Product Owner | 1 |
 | Workforce Capacity | `claude/roadmap/workforce_capacity.md` | 4 | FinOps & Resource Architect | 1 |
 | Decision Log | `claude/roadmap/decision_log.md` | 4 | PMO Lead | 1 |
@@ -736,22 +847,25 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | System Status Report | `docs/System_status_report.md` | 3 | Director of Quality | 3, 4 |
 | Verification Report | `claude/cycles/<id>/verification_report.md` | 3 | Director of Quality | 4 |
 | Escalations (Verification) | `claude/cycles/<id>/verification_escalations.md` | 4 | PMO Lead | 4 |
+| Changelog | `docs/product/changelog.md` | 3 | PMO Lead | Post-Ship |
+| Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` | 1 | PMO Lead | Post-Ship |
 
 ---
 
-## 13. Playbook Governance
+## 14. Playbook Governance
 
 | Field | Value |
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 1.3 |
+| Version | 1.4 |
 | Last Updated | 2026-03-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v1.5 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v1.3 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.0 |
+| Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v1.1 |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.4 |
 | Team Charter | `claude/charter/team_charter.md` v1.3 |
@@ -766,5 +880,6 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 1.4 | 2026-03-03 | Added §10 Post-Ship Closure. Updated Quick Reference summary, Hard Rules, Phase Gate Checklist, Lifecycle Overview table, Cycle Trigger & Flow table, Artefact Register, and §14 governance table to reflect post-ship_closure.md (v2.0). Renumbered §10–13 to §11–14. Updated cycle gate rule to require Post-Ship Closure before next cycle opens. |
 | 1.3 | 2026-03-03 | Added `execution_prompt.md` (v1.3) and `delivery_verification_prompt.md` (v1.0) to governance. Updated Quick Reference to include Phase 3 & 4 invocation commands. Added "no autonomous merge" and "no cycle unlock without Verified status" to Hard Rules. Expanded Phase 3 checklist to match execution prompt exit criteria. Aligned §8 (Phase 3) and §9 (Phase 4) detail with prompt content. Resolved header/§13 version discrepancy (both now 1.3). |
 | 1.2 | 2026-03-02 | Prior version. |
