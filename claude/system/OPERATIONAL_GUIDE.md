@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 1.2  
-**Last Updated:** 2026-03-02  
+**Version:** 1.3  
+**Last Updated:** 2026-03-03  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -11,7 +11,7 @@
 
 ## Quick Reference Summary
 
-> **The full cycle in one paragraph:** A completed roadmap item optionally triggers a **Roadmap Rebalance** (Phase 1), which reassesses priorities and decides what to add, stop, defer, or kill. The output (or a direct invocation) feeds **Release Planning** (Phase 1B), which translates an approved release into an execution-ready plan with a sequenced backlog slice. That backlog drives **Sprint Planning** (Phase 2), which scopes and capacity-confirms a time-boxed sprint. **Sprint Execution & Close** (Phase 3) delivers the work, closes the sprint, and — when a roadmap item completes — may trigger the next cycle.
+> **The full cycle in one paragraph:** A completed roadmap item optionally triggers a **Roadmap Rebalance** (Phase 1), which reassesses priorities and decides what to add, stop, defer, or kill. The output (or a direct invocation) feeds **Release Planning** (Phase 1B), which translates an approved release into an execution-ready plan with a sequenced backlog slice. That backlog drives **Sprint Planning** (Phase 2), which scopes and capacity-confirms a time-boxed sprint. **Sprint Execution & Close** (Phase 3) delivers the work, closes the sprint, and — when a roadmap item completes — may trigger the next cycle. **Delivery Verification** (Phase 4) confirms what was built matches what was scoped and unlocks the next cycle.
 
 ### Engine Commands & Aliases
 
@@ -29,6 +29,12 @@ run planning v<version>     # equivalent to: plan release --version "v<version>"
 
 # GitHub issue sync (run after Phase 1B publishes)
 sync gh                     # parses active stage4_backlog_slice.md → creates/updates issues
+
+# Phase 3 — Sprint Execution
+run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mode "strict|standard"] [--dry-run]
+
+# Phase 4 — Delivery Verification
+run delivery verification [--cycle "<cycle_id>"] [--mode "strict|standard"]
 ```
 
 ### Git Standards
@@ -52,6 +58,8 @@ State pointer:  .claude_current_state.json  (always check for active_cycle befor
 | Publish Gate must pass before a release plan is sealed | Phase 1B |
 | Backlog lock must be acquired before any backlog write | Phase 1B |
 | No sprint starts without signed-off backlog and acceptance criteria | Phase 2 |
+| No autonomous merge — QA sign-off and Product Owner acceptance always required | Phase 3 |
+| No cycle unlock without `Verified` or `Verified_with_deviations` status | Phase 4 |
 
 ### Conflict Resolution — Who Wins What
 
@@ -92,8 +100,23 @@ Phase 2 complete?
 Phase 3 complete?
   ✅ All items have a recorded outcome (Done / Returned / Deferred)
   ✅ Acceptance criteria verified for all Done items
-  ✅ Sprint close summary filed
-  ✅ If roadmap item completed → Phase 1 (or direct Phase 1B) invocation ready
+  ✅ One qa_evidence_EPIC-xx.md per merged EPIC, consolidation block complete
+  ✅ Sprint close summary filed with verification readiness statement
+  ✅ docs/System_status_report.md updated with this sprint's section
+  ✅ lessons_learnt_execution.md filed
+  ✅ execution_state.json sealed
+  ✅ .claude_current_state.json status = Sprint_Complete
+  ✅ STEP 8 commit complete
+
+Phase 4 complete?
+  ✅ verification_report.md status = Verified or Verified_with_deviations
+  ✅ Director of Quality sign-off recorded in verification_report.md
+  ✅ Product Owner acceptance recorded in verification_report.md
+  ✅ docs/System_status_report.md updated
+  ✅ All outstanding items backlogged or confirmed done
+  ✅ Test scenario gaps sent to QA & Testing Owner
+  ✅ .claude_current_state.json status = Verified
+  ✅ next_cycle_unblocked = true
 ```
 
 ---
@@ -108,10 +131,11 @@ Phase 3 complete?
 6. [Phase 1B — Release Planning](#6-phase-1b--release-planning)
 7. [Phase 2 — Sprint Planning](#7-phase-2--sprint-planning)
 8. [Phase 3 — Sprint Execution & Close](#8-phase-3--sprint-execution--close)
-9. [Escalation & Accepted Risk Rules](#9-escalation--accepted-risk-rules)
-10. [Cycle Trigger & Flow Reference](#10-cycle-trigger--flow-reference)
-11. [Artefact Register](#11-artefact-register)
-12. [Playbook Governance](#12-playbook-governance)
+9. [Phase 4 — Delivery Verification](#9-phase-4--delivery-verification)
+10. [Escalation & Accepted Risk Rules](#10-escalation--accepted-risk-rules)
+11. [Cycle Trigger & Flow Reference](#11-cycle-trigger--flow-reference)
+12. [Artefact Register](#12-artefact-register)
+13. [Playbook Governance](#13-playbook-governance)
 
 ---
 
@@ -123,6 +147,7 @@ This playbook governs the repeating cycle through which product releases are pla
 - When and how to invoke the Release Planning Engine
 - How planning artefacts feed into sprint scope
 - How to execute, review, and close a sprint
+- How to verify delivery before the next cycle opens
 - What records must be maintained at each stage
 - Which role resolves which dispute
 
@@ -136,13 +161,14 @@ All authority is defined in `claude/charter/team_charter.md`. The table below su
 
 | Role | Phase | Authority Type |
 |------|-------|----------------|
-| Product Owner | 1, 1B, 2, 3 | Final decision — prioritisation, rebalance, scope; tie-breaker on value disputes |
+| Product Owner | 1, 1B, 2, 3, 4 | Final decision — prioritisation, rebalance, scope; acceptance of deviations |
 | Strategy Rules & System Intent Owner | 1, 1B | Veto — strategy alignment and §13 boundaries |
 | Head of Specs Team | 1, 1B, 2 | Veto — lifecycle compliance; tie-breaker on spec conflicts |
-| PMO Lead | 1, 1B, 2, 3 | Process enforcement; gate validation; lessons learnt |
+| PMO Lead | 1, 1B, 2, 3, 4 | Process enforcement; gate validation; lessons learnt; verification invoker |
 | FinOps & Resource Architect | 1, 1B | Binding constraint — workforce economics gate |
 | Infrastructure & Operations Owner | 1, 1B | Run manifest and cycle artefact filing |
-| Director of Quality | 1, 1B, 3 | Veto — quality gates and release readiness |
+| Director of Quality | 1, 1B, 3, 4 | Veto — quality gates, QA evidence sign-off, verification report sign-off |
+| QA & Testing Owner | 3, 4 | Test scenario creation; receives coverage gap actions from Phase 4 |
 | Facilitator | All | Non-decision: process orchestration, hard gate enforcement, halt authority |
 | Challenger | 1 | Non-decision: evidence-based counter-arguments, delay authority |
 
@@ -185,16 +211,19 @@ A document without a complete header is non-compliant and must not be treated as
 
 ## 4. Lifecycle Overview
 
-Each cycle progresses through up to four phases:
+Each cycle progresses through up to five phases:
 
 | Phase | Name | Trigger | Output |
 |-------|------|---------|--------|
 | **Phase 1** | Roadmap Rebalance | Roadmap item completed | Updated roadmap + decision log |
 | **Phase 1B** | Release Planning | Phase 1 complete *or* direct invocation | Sequenced release plan + backlog slice |
 | **Phase 2** | Sprint Planning | Phase 1B Publish Gate passed | Sprint backlog + acceptance criteria |
-| **Phase 3** | Sprint Execution & Close | Sprint start date reached | Delivered increments + retrospective |
+| **Phase 3** | Sprint Execution & Close | Sprint start date reached | Delivered increments + sprint close record |
+| **Phase 4** | Delivery Verification | Phase 3 complete (`Sprint_Complete`) | Verification report + next cycle unlocked |
 
-Phase 1 is **optional**. Phase 1B may be invoked directly when a release is already approved on the roadmap. Phases 2 and 3 are always required. Each phase must fully exit before the next begins.
+Phase 1 is **optional**. Phase 1B may be invoked directly when a release is already approved on the roadmap. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
+
+**Phase 4 is a hard gate on the next cycle.** The Roadmap Rebalance and Release Planning engines will not run for a new cycle until `.claude_current_state.json` status is `Verified` or `Verified_with_deviations`.
 
 ---
 
@@ -289,7 +318,7 @@ run planning v<version>
 | `--issues` | No | `none` / `import` (creates `issue_import.md`) / `gh` (uses `gh` CLI, falls back to `import`) |
 | `--auto-escalate` | No | `true` (default): routes and attempts resolution; `false`: records only, halts |
 
-**Before invoking:** Check `.claude_current_state.json` for `active_cycle` and `status`. Do not invoke if status is `Blocked` without first resolving open escalations.
+**Before invoking:** Check `.claude_current_state.json` for `active_cycle` and `status`. Do not invoke if status is `Blocked` without first resolving open escalations. Do not invoke if status is anything other than `Verified`, `Verified_with_deviations`, or a fresh cycle start — Phase 4 must complete before Phase 1B opens a new cycle.
 
 ### 6.2 State Machine
 
@@ -413,50 +442,190 @@ Phase 2 converts the release-planned backlog into a time-boxed, executable sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-### 8.1 Execution Principles
+**Source prompt:** `claude/system/execution_prompt.md` (v1.3)
+
+### 8.1 Invocation
+
+```
+run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mode "strict|standard"] [--dry-run]
+```
+
+| Flag | Notes |
+|------|-------|
+| `--cycle` | Optional — loaded from `.claude_current_state.json` if omitted |
+| `--epic` | Optional — scope to a single EPIC |
+| `--item` | Optional — scope to a single ST item |
+| `--mode` | `strict`: halt on any ambiguity; `standard` (default): proceed with flags |
+| `--dry-run` | Plan only — no writes, commits, or GitHub operations |
+
+**Pre-condition:** `.claude_current_state.json` status must be `Committed`, `Validated`, or `Published` (release plan complete). If `Blocked`: resolve escalations first.
+
+### 8.2 Execution Principles
 
 - Scope is frozen at sprint start. New items require explicit Product Owner approval and a recorded decision.
-- Blockers escalated to PMO Lead same-day.
-- Director of Quality quality gates apply to all deliverables before they are Done.
+- Blockers escalated same-day via escalation record (`ESC-EXEC-YYYYMMDD-nn`).
+- Director of Quality QA gates apply to all EPICs before merge.
 - Partial completion does not count — items must satisfy all acceptance criteria.
+- The engine is fully resumable — re-invoke with the same command to resume from last state.
+- **No autonomous merge.** QA sign-off and Product Owner acceptance are always required.
 
-### 8.2 During the Sprint
+### 8.3 Delegation Model
 
-| Activity | Frequency | Owner | Output |
-|----------|-----------|-------|--------|
-| Standup / status check | Daily | PMO Lead | Blocker log updated |
-| Blocker escalation | Same-day | PMO Lead | Escalation note in sprint log |
-| Scope change request | As needed | Product Owner | Recorded decision in `decision_log.md` |
-| Quality review | Per deliverable | Director of Quality | QA sign-off |
+Every ST item is classified on load. The engine acts autonomously where possible and delegates to humans where required.
 
-### 8.3 Sprint Close
+| Class | Assigned To | Engine Action |
+|-------|-------------|---------------|
+| `autonomous` | Engine | Execute directly |
+| `delegated_backend` | Head of Engineering | Assign with spec reference, park, continue |
+| `delegated_frontend` | Base44 Frontend Prompt Owner | Assign with Base44 prompt draft, park, continue |
+| `delegated_qa` | Director of Quality | Complete autonomous work, then await QA gate |
+| `delegated_decision` | Named authority | Escalate, park, continue |
 
-1. **Acceptance review** — Each item reviewed against acceptance criteria. Items not meeting criteria returned to backlog (not marked Done).
-2. **Demo / review** — Completed increments demonstrated. Product Owner confirms acceptance.
-3. **Retrospective** — PMO Lead facilitates. Output filed as a process improvement record (not a decision record). Governance gaps escalated to Product Owner + Head of Specs Team.
-4. **Roadmap item completion** — If a roadmap item was completed, trigger Phase 1 (or Phase 1B directly if rebalance is not needed).
-5. **Sprint close record** — PMO Lead files `claude/cycles/<id>/sprint_close.md`.
+Delegated items are tracked in `delegation_log.md`. Nothing is silently skipped.
 
-### 8.4 Phase 3 Exit Criteria
+**Backend delegation:** Spec must be locked before delegating. If no lockable spec reference exists, classify as `delegated_decision` and surface to Head of Specs Team.
 
-- All sprint items have a recorded outcome (Done / Returned / Deferred)
-- Acceptance criteria verified for all Done items
-- Sprint close summary filed and lifecycle-compliant
-- Retrospective lessons filed
-- If a roadmap item completed: next cycle invocation queued
+**Frontend delegation:** Engine must produce a complete Base44 prompt draft (all six sections: context, change, API contract, behaviour rules, non-functional rules, expected outcome) as part of the delegation record.
+
+### 8.4 Key Artefacts Produced
+
+| Artefact | Location | Purpose |
+|----------|----------|---------|
+| Execution state | `claude/cycles/<id>/execution_state.json` | Per-item progress, spec references, delegation status |
+| QA evidence log | `claude/cycles/<id>/qa_evidence_EPIC-xx.md` | What was tested, Director of Quality sign-off (one per EPIC) |
+| Delegation log | `claude/cycles/<id>/delegation_log.md` | All delegated task records |
+| Sprint close record | `claude/cycles/<id>/sprint_close.md` | Outcomes, deviations filed, verification readiness statement |
+| System status report | `docs/System_status_report.md` | Capabilities now live (updated at close) |
+| Lessons learnt | `claude/cycles/<id>/lessons_learnt_execution.md` | Execution friction and improvement actions |
+
+### 8.5 Merge Gate (Per EPIC — Hard Gate)
+
+A PR may only be merged when all of the following are true:
+
+- All ST items in EPIC: `done`
+- `spec_references` populated for all `done` items
+- `qa_evidence_EPIC-xx.md` exists and sign-off block complete (Director of Quality)
+- QA sign-off comment on PR from Director of Quality
+- Product Owner acceptance recorded
+- `quality_gate.yml` CI passed
+- No open escalations for items in this EPIC
+- No unresolved P0 deviations in referenced specs
+
+### 8.6 Phase 3 Exit Criteria
+
+- All in-scope ST items have a recorded outcome (`done`, `merged`, or `returned_to_backlog`)
+- All `done` items have `spec_references` populated and `deviations_filed = true`
+- One `qa_evidence_EPIC-xx.md` per merged EPIC, consolidation block complete
+- `sprint_close.md` filed with verification readiness statement
+- `docs/System_status_report.md` updated with this sprint's section
+- `lessons_learnt_execution.md` filed
+- `execution_state.json` sealed
+- `.claude_current_state.json` status = `Sprint_Complete`
+- STEP 8 commit complete
 
 ---
 
-## 9. Escalation & Accepted Risk Rules
+## 9. Phase 4 — Delivery Verification
 
-### 9.1 When an Escalation Is Mandatory
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.0)
 
-An escalation record must be created in `claude/cycles/<cycle_id>/escalations.md` (append-only) when:
+Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
+
+### 9.1 Invocation
+
+```
+run delivery verification [--cycle "<cycle_id>"] [--mode "strict|standard"]
+```
+
+**Invoker:** PMO Lead. This command should be issued after the Director of Quality has confirmed (via QA evidence sign-offs in `qa_evidence_EPIC-xx.md`) that the sprint evidence is ready for verification. The readiness gate will fail fast if it is not.
+
+**Pre-condition:** `.claude_current_state.json` status = `Sprint_Complete`. If not: Phase 3 must complete first.
+
+### 9.2 What This Engine Verifies
+
+| Check | Hard Gate? |
+|-------|-----------|
+| Sprint close verification readiness statement all `Yes` | Yes |
+| Every ST item has a recorded outcome and spec reference | Yes |
+| QA evidence logs exist and sign-off blocks are complete | Yes |
+| No `Fail` results in any QA evidence table | Yes |
+| P0 deviations: no open, no acceptance path | Yes |
+| P1 deviations: hard block unless explicitly accepted by PO + DoQ in writing | Yes |
+| P2 deviations: hard block unless explicitly accepted by PO in writing | Yes |
+| Outstanding delegated items: confirmed done, pending ETA, or backlogged | No (recorded) |
+| Test scenario coverage gaps: sent to QA & Testing Owner | No (actioned) |
+| P3 deviations: recorded, backlogged | No (recorded) |
+
+### 9.3 Deviation Severity Policy
+
+| Priority | Condition | Verification outcome |
+|----------|-----------|---------------------|
+| P0 | System-breaking, data loss, or security issue | `Not_Verified` — no acceptance path |
+| P1 | Material functional deviation | `Not_Verified` unless PO + DoQ both accept in writing |
+| P2 | Degraded behaviour affecting significant user subset | `Not_Verified` unless PO accepts in writing |
+| P3 | Minor / cosmetic / edge case | `Verified_with_deviations` — backlog item added |
+
+### 9.4 Verification Outcomes
+
+| Status | Meaning | Next cycle? |
+|--------|---------|-------------|
+| `Verified` | Clean pass — no open deviations | Unlocked |
+| `Verified_with_deviations` | Accepted P1/P2 or P3 deviations only | Unlocked |
+| `Not_Verified` | P0/P1/P2 blocks remain open | **Blocked** — re-run required |
+
+### 9.5 Outstanding Delegated Items
+
+Any ST item still blocked at sprint close must be resolved by Phase 4:
+
+| Situation | Action |
+|-----------|--------|
+| Completed since sprint seal | Verified if acceptance criteria met |
+| In progress with confirmed ETA | Recorded in report; Product Owner acknowledges |
+| Stalled — no ETA | Added to `backlog.md` with context |
+| `delegated_decision` never resolved | Added to `backlog.md` with decision question intact |
+
+### 9.6 Test Scenario Coverage
+
+If test scenario gaps are found (scenarios that exist in `docs/testing/` but were not run, or acceptance criteria with no scenario at all): the engine writes specific creation instructions directly to the QA & Testing Owner's agent file. These become backlog items for the next sprint if they cover core user journeys.
+
+### 9.7 Phase 4 Artefacts Produced
+
+| Artefact | Location | Owner |
+|----------|----------|-------|
+| Verification report | `claude/cycles/<id>/verification_report.md` | Director of Quality |
+| System status report (updated) | `docs/System_status_report.md` | Director of Quality |
+| Test scenario gap actions | `claude/agents/qa_testing_owner.md` (appended) | QA & Testing Owner |
+| Backlog additions | `claude/backlog/backlog.md` (appended) | PMO Lead |
+| Global state | `.claude_current_state.json` | Engine |
+
+### 9.8 Phase 4 Exit Criteria
+
+- `verification_report.md` status = `Verified` or `Verified_with_deviations`
+- Director of Quality sign-off recorded in report
+- Product Owner acceptance recorded in report
+- `docs/System_status_report.md` updated to final verification status
+- All outstanding items backlogged or confirmed done
+- Test scenario gaps actioned to QA & Testing Owner
+- `.claude_current_state.json` status = `Verified`, `next_cycle_unblocked = true`
+- Commit complete
+
+---
+
+## 10. Escalation & Accepted Risk Rules
+
+### 10.1 When an Escalation Is Mandatory
+
+An escalation record must be created when:
 - A hard gate halts execution
 - A domain authority applies a block (Strategy, Quality, Workforce, Lifecycle)
 - An unresolved cross-domain dispute cannot be resolved within the routine
 
-### 9.2 Escalation SLAs
+Escalation ID prefixes by phase:
+- Release Planning: `ESC-YYYYMMDD-nn`
+- Sprint Execution: `ESC-EXEC-YYYYMMDD-nn`
+- Delivery Verification: `ESC-VERIF-YYYYMMDD-nn`
+
+### 10.2 Escalation SLAs
 
 | Trigger Type | SLA | Can Be Accepted Risk? |
 |-------------|-----|-----------------------|
@@ -466,12 +635,12 @@ An escalation record must be created in `claude/cycles/<cycle_id>/escalations.md
 | Workforce / Capacity | Next planning checkpoint | Yes — Product Owner only |
 | Schedule / Delivery | Next planning checkpoint | Yes — Product Owner only |
 
-### 9.3 Accepted Risk — Hard Constraints
+### 10.3 Accepted Risk — Hard Constraints
 
 The following domains may **never** be marked Accepted Risk:
 
 - **Strategy Risk**
-- **Quality Risk**  
+- **Quality Risk**
 - **Lifecycle / Governance Risk**
 
 These may only be Open or Deferred until resolved. Any attempt to mark them Accepted Risk is a governance violation and must result in a routine halt.
@@ -482,7 +651,7 @@ Workforce and Schedule/Delivery risks may be accepted by the Product Owner **onl
 - No Lifecycle compliance requirement is violated
 - No scope change is introduced (scope changes require Phase 1)
 
-### 9.4 Accepted Risk Decision Record (Hard Gate)
+### 10.4 Accepted Risk Decision Record (Hard Gate)
 
 Any Accepted Risk disposition requires a durable decision record:
 
@@ -498,7 +667,7 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 
 ---
 
-## 10. Cycle Trigger & Flow Reference
+## 11. Cycle Trigger & Flow Reference
 
 | Event | Triggers | Owner |
 |-------|----------|-------|
@@ -506,15 +675,19 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 | Phase 1 exit criteria met | Phase 1B — Release Planning Engine | PMO Lead |
 | Phase 1B Publish Gate passed | Phase 2 — Sprint Planning | PMO Lead |
 | Sprint backlog signed off | Phase 3 — Sprint Execution | PMO Lead |
+| Phase 3 complete (`Sprint_Complete`) | Phase 4 — Delivery Verification | PMO Lead |
+| Phase 4 complete (`Verified`) | New Phase 1 (optional) or Phase 1B cycle | Product Owner |
 | Sprint item returned to backlog | Backlog reconciliation only (no new cycle) | Head of Specs Team |
-| Sprint roadmap item completed | New Phase 1 (optional) or Phase 1B cycle | Product Owner |
 | Governance gap detected | Escalation → Product Owner + Head of Specs Team | PMO Lead |
+| Test scenario gap found (Phase 4) | Action written to QA & Testing Owner agent file | QA & Testing Owner |
 
 > **Loop rule:** Phase 1 is only triggered when a roadmap item completes and a rebalance is warranted. Sprint items that are backlog items (not roadmap items) never trigger a rebalance.
 
+> **Cycle gate:** Phase 1B (new cycle) may not open until Phase 4 of the previous cycle reaches `Verified` or `Verified_with_deviations`.
+
 ---
 
-## 11. Artefact Register
+## 12. Artefact Register
 
 All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle_guide.md`.
 
@@ -525,8 +698,11 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
 | Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
+| Sprint Execution Prompt | `claude/system/execution_prompt.md` | 6 | Head of Specs Team | Governance |
+| Delivery Verification Prompt | `claude/system/delivery_verification_prompt.md` | 6 | Head of Specs Team | Governance |
+| Shared Standards | `claude/system/shared_standards.md` | 6 | Head of Specs Team | Governance |
 | Current Roadmap | `claude/roadmap/current_roadmap.md` | 4 | Product Owner | 1 |
-| Backlog | `claude/backlog/backlog.md` | 4 | Product Owner | 1, 1B |
+| Backlog | `claude/backlog/backlog.md` | 4 | Product Owner | 1, 1B, 4 |
 | Initiative Register | `claude/roadmap/initiative_register.md` | 4 | Product Owner | 1 |
 | Workforce Capacity | `claude/roadmap/workforce_capacity.md` | 4 | FinOps & Resource Architect | 1 |
 | Decision Log | `claude/roadmap/decision_log.md` | 4 | PMO Lead | 1 |
@@ -543,32 +719,52 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Stage 2 Scope Extraction | `claude/cycles/<id>/stage2_scope_extraction.md` | 3 | PMO Lead | 1B |
 | Stage 3 Execution Plan | `claude/cycles/<id>/stage3_execution_plan.md` | 3 | PMO Lead | 1B |
 | Stage 4 Backlog Slice | `claude/cycles/<id>/stage4_backlog_slice.md` | 3 | PMO Lead | 1B |
-| Escalations | `claude/cycles/<id>/escalations.md` | 4 | PMO Lead | 1B |
+| Escalations (Release) | `claude/cycles/<id>/escalations.md` | 4 | PMO Lead | 1B |
 | AR / SRB Decision Records | `docs/product/decisions/AR-*.md` | 4 | Product Owner | 1B |
 | Cycle Summary (Release) | `claude/cycles/<id>/cycle_summary.md` | 3 | PMO Lead | 1B |
 | Lessons Learnt (Release) | `claude/cycles/<id>/lessons_learnt.md` | 3 | PMO Lead | 1B |
-| Global State Pointer | `.claude_current_state.json` | — | PMO Lead | 1B |
+| Global State Pointer | `.claude_current_state.json` | — | PMO Lead | 1B, 3, 4 |
 | Sprint Goal | `claude/cycles/<id>/sprint_goal.md` | 4 | Product Owner | 2 |
 | Sprint Backlog | `claude/cycles/<id>/sprint_backlog.md` | 4 | PMO Lead | 2 |
 | Sprint Capacity | `claude/cycles/<id>/sprint_capacity.md` | 4 | PMO Lead | 2 |
+| Execution State | `claude/cycles/<id>/execution_state.json` | — | PMO Lead | 3 |
+| QA Evidence Log | `claude/cycles/<id>/qa_evidence_EPIC-xx.md` | 4 | Director of Quality | 3 |
+| Delegation Log | `claude/cycles/<id>/delegation_log.md` | 4 | PMO Lead | 3 |
+| Escalations (Execution) | `claude/cycles/<id>/execution_escalations.md` | 4 | PMO Lead | 3 |
 | Sprint Close Summary | `claude/cycles/<id>/sprint_close.md` | 3 | PMO Lead | 3 |
+| Lessons Learnt (Execution) | `claude/cycles/<id>/lessons_learnt_execution.md` | 3 | PMO Lead | 3 |
+| System Status Report | `docs/System_status_report.md` | 3 | Director of Quality | 3, 4 |
+| Verification Report | `claude/cycles/<id>/verification_report.md` | 3 | Director of Quality | 4 |
+| Escalations (Verification) | `claude/cycles/<id>/verification_escalations.md` | 4 | PMO Lead | 4 |
 
 ---
 
-## 12. Playbook Governance
+## 13. Playbook Governance
 
 | Field | Value |
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 1.2 |
-| Last Updated | 2026-03-02 |
+| Version | 1.3 |
+| Last Updated | 2026-03-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v1.5 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v1.3 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.0 |
+| Shared Standards | `claude/system/shared_standards.md` v1.1 |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.4 |
 | Team Charter | `claude/charter/team_charter.md` v1.3 |
 
-This playbook is subordinate to and must remain consistent with all four documents above. In any conflict, governance documents prevail. Update this playbook to reflect the change — do not operate with a known divergence.
+This playbook is subordinate to and must remain consistent with all governing documents above. In any conflict, governance documents prevail. Update this playbook to reflect the change — do not operate with a known divergence.
 
 **Version control:** All changes require approval by the Head of Specs Team and must be version-bumped per lifecycle rules. Patch = typo/formatting. Minor = structural change. Major = scope change or authority boundary change.
+
+---
+
+### Change Log
+
+| Version | Date | Change Summary |
+|---------|------|----------------|
+| 1.3 | 2026-03-03 | Added `execution_prompt.md` (v1.3) and `delivery_verification_prompt.md` (v1.0) to governance. Updated Quick Reference to include Phase 3 & 4 invocation commands. Added "no autonomous merge" and "no cycle unlock without Verified status" to Hard Rules. Expanded Phase 3 checklist to match execution prompt exit criteria. Aligned §8 (Phase 3) and §9 (Phase 4) detail with prompt content. Resolved header/§13 version discrepancy (both now 1.3). |
+| 1.2 | 2026-03-02 | Prior version. |
