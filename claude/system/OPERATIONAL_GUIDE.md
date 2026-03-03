@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 1.2  
-**Last Updated:** 2026-03-02  
+**Version:** 1.3  
+**Last Updated:** 2026-03-03  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -11,7 +11,7 @@
 
 ## Quick Reference Summary
 
-> **The full cycle in one paragraph:** A completed roadmap item optionally triggers a **Roadmap Rebalance** (Phase 1), which reassesses priorities and decides what to add, stop, defer, or kill. The output (or a direct invocation) feeds **Release Planning** (Phase 1B), which translates an approved release into an execution-ready plan with a sequenced backlog slice. That backlog drives **Sprint Planning** (Phase 2), which scopes and capacity-confirms a time-boxed sprint. **Sprint Execution & Close** (Phase 3) delivers the work, closes the sprint, and — when a roadmap item completes — may trigger the next cycle.
+> **The full cycle in one paragraph:** A completed roadmap item optionally triggers a **Roadmap Rebalance** (Phase 1), which reassesses priorities and decides what to add, stop, defer, or kill. The output (or a direct invocation) feeds **Release Planning** (Phase 1B), which translates an approved release into an execution-ready plan with a sequenced backlog slice. That backlog drives **Sprint Planning** (Phase 2), which scopes and capacity-confirms a time-boxed sprint. **Sprint Execution & Close** (Phase 3) delivers the work, closes the sprint, and — when a roadmap item completes — may trigger the next cycle. **Delivery Verification** (Phase 4) confirms what was built matches what was scoped and unlocks the next cycle.
 
 ### Engine Commands & Aliases
 
@@ -29,6 +29,12 @@ run planning v<version>     # equivalent to: plan release --version "v<version>"
 
 # GitHub issue sync (run after Phase 1B publishes)
 sync gh                     # parses active stage4_backlog_slice.md → creates/updates issues
+
+# Phase 3 — Sprint Execution
+run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mode "strict|standard"] [--dry-run]
+
+# Phase 4 — Delivery Verification
+run delivery verification [--cycle "<cycle_id>"] [--mode "strict|standard"]
 ```
 
 ### Git Standards
@@ -52,6 +58,8 @@ State pointer:  .claude_current_state.json  (always check for active_cycle befor
 | Publish Gate must pass before a release plan is sealed | Phase 1B |
 | Backlog lock must be acquired before any backlog write | Phase 1B |
 | No sprint starts without signed-off backlog and acceptance criteria | Phase 2 |
+| No autonomous merge — QA sign-off and Product Owner acceptance always required | Phase 3 |
+| No cycle unlock without `Verified` or `Verified_with_deviations` status | Phase 4 |
 
 ### Conflict Resolution — Who Wins What
 
@@ -92,8 +100,13 @@ Phase 2 complete?
 Phase 3 complete?
   ✅ All items have a recorded outcome (Done / Returned / Deferred)
   ✅ Acceptance criteria verified for all Done items
-  ✅ Sprint close summary filed
-  ✅ If roadmap item completed → Phase 1 (or direct Phase 1B) invocation ready
+  ✅ One qa_evidence_EPIC-xx.md per merged EPIC, consolidation block complete
+  ✅ Sprint close summary filed with verification readiness statement
+  ✅ docs/System_status_report.md updated with this sprint's section
+  ✅ lessons_learnt_execution.md filed
+  ✅ execution_state.json sealed
+  ✅ .claude_current_state.json status = Sprint_Complete
+  ✅ STEP 8 commit complete
 
 Phase 4 complete?
   ✅ verification_report.md status = Verified or Verified_with_deviations
@@ -454,6 +467,7 @@ run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mod
 - Director of Quality QA gates apply to all EPICs before merge.
 - Partial completion does not count — items must satisfy all acceptance criteria.
 - The engine is fully resumable — re-invoke with the same command to resume from last state.
+- **No autonomous merge.** QA sign-off and Product Owner acceptance are always required.
 
 ### 8.3 Delegation Model
 
@@ -468,6 +482,10 @@ Every ST item is classified on load. The engine acts autonomously where possible
 | `delegated_decision` | Named authority | Escalate, park, continue |
 
 Delegated items are tracked in `delegation_log.md`. Nothing is silently skipped.
+
+**Backend delegation:** Spec must be locked before delegating. If no lockable spec reference exists, classify as `delegated_decision` and surface to Head of Specs Team.
+
+**Frontend delegation:** Engine must produce a complete Base44 prompt draft (all six sections: context, change, API contract, behaviour rules, non-functional rules, expected outcome) as part of the delegation record.
 
 ### 8.4 Key Artefacts Produced
 
@@ -486,7 +504,7 @@ A PR may only be merged when all of the following are true:
 
 - All ST items in EPIC: `done`
 - `spec_references` populated for all `done` items
-- `qa_evidence_EPIC-xx.md` exists and sign-off block complete
+- `qa_evidence_EPIC-xx.md` exists and sign-off block complete (Director of Quality)
 - QA sign-off comment on PR from Director of Quality
 - Product Owner acceptance recorded
 - `quality_gate.yml` CI passed
@@ -741,3 +759,12 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 This playbook is subordinate to and must remain consistent with all governing documents above. In any conflict, governance documents prevail. Update this playbook to reflect the change — do not operate with a known divergence.
 
 **Version control:** All changes require approval by the Head of Specs Team and must be version-bumped per lifecycle rules. Patch = typo/formatting. Minor = structural change. Major = scope change or authority boundary change.
+
+---
+
+### Change Log
+
+| Version | Date | Change Summary |
+|---------|------|----------------|
+| 1.3 | 2026-03-03 | Added `execution_prompt.md` (v1.3) and `delivery_verification_prompt.md` (v1.0) to governance. Updated Quick Reference to include Phase 3 & 4 invocation commands. Added "no autonomous merge" and "no cycle unlock without Verified status" to Hard Rules. Expanded Phase 3 checklist to match execution prompt exit criteria. Aligned §8 (Phase 3) and §9 (Phase 4) detail with prompt content. Resolved header/§13 version discrepancy (both now 1.3). |
+| 1.2 | 2026-03-02 | Prior version. |
