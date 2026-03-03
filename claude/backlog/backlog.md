@@ -380,3 +380,9 @@ These are deliberate product decisions, not deferrals:
 - EPIC-02 → §13-gated features may enter pre-alignment
 - EPIC-03 → v1.8 Risk Dashboard pre-alignment
 - EPIC-04 + EPIC-05 → v2.0 Alerts pre-alignment (2 of 3 gates)
+
+---
+
+## Test Coverage Gaps (from Delivery Verification)
+
+- [TEST-GAP-EPIC-06] Test scenario coverage gap from 2026-03-02__release-v1.7: QA & Testing Owner to create scenarios per verification_report.md §6 (Test Coverage Assessment). Gaps: no scenarios asserting sharpe_ratio_trade_method presence in /validate/calculations response (14 metrics); no scenario asserting portfolio_endpoints.md field alignment; no scenario asserting holding_days in GET /trades. Target: pre-next sprint on analytics, portfolio, or trade endpoint domains.

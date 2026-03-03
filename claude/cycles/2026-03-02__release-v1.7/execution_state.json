@@ -1,0 +1,746 @@
+{
+  "cycle_id": "2026-03-02__release-v1.7",
+  "sprint_goal": "Establish foundational governance, quality, and specification artefacts required to unlock v1.8 pre-alignment and v2.0 pre-alignment, and resolve outstanding spec debt items identified in the QWB review.",
+  "invoked_utc": "2026-03-02T10:30:00Z",
+  "mode": "standard",
+  "status": "Sealed",
+  "last_updated_utc": "2026-03-02T22:00:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "merged",
+      "branch": "exec/v1.7-foundation",
+      "pr_number": 11,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-02__release-v1.7/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "Author .github/workflows/validate-analytics.yml workflow",
+          "classification": "delegated_backend",
+          "status": "merged",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 1,
+          "branch": "exec/v1.7-foundation",
+          "commit_sha": "946c16b541454a9c4173ff808508956b052ce481",
+          "delegation_record_id": "DEL-20260302-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T14:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md#POST /validate/calculations"
+          ],
+          "deviations_filed": true,
+          "notes": "Workflow created. Calls POST /validate/calculations. Uses dummy DATABASE_URL for CI. Blocks merge on critical_failed > 0."
+        },
+        "ST-02": {
+          "title": "Test workflow on real/dry-run PR",
+          "classification": "delegated_backend",
+          "status": "merged",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 2,
+          "branch": "exec/v1.7-foundation",
+          "commit_sha": "946c16b541454a9c4173ff808508956b052ce481",
+          "delegation_record_id": "DEL-20260302-02",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T14:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md#POST /validate/calculations"
+          ],
+          "deviations_filed": true,
+          "notes": "Workflow tested via PR #11. Blocking and warning behaviours confirmed."
+        },
+        "ST-03": {
+          "title": "Verify PR comment content",
+          "classification": "delegated_qa",
+          "status": "merged",
+          "assigned_to": "QA & Testing Owner",
+          "github_issue": 3,
+          "branch": "exec/v1.7-foundation",
+          "commit_sha": "946c16b541454a9c4173ff808508956b052ce481",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T15:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md#POST /validate/calculations"
+          ],
+          "deviations_filed": true,
+          "notes": "PR comment shows severity breakdown summary. Format verified."
+        },
+        "ST-04": {
+          "title": "Director of Quality sign-off",
+          "classification": "delegated_qa",
+          "status": "merged",
+          "assigned_to": "Director of Quality",
+          "github_issue": 4,
+          "branch": "exec/v1.7-foundation",
+          "commit_sha": "946c16b541454a9c4173ff808508956b052ce481",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T15:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "notes": "Director of Quality sign-off recorded. EPIC-01 acceptance criteria confirmed met."
+        }
+      }
+    },
+
+    "EPIC-02": {
+      "status": "merged",
+      "branch": "exec/v1.7-epic02-strategy-boundaries",
+      "pr_number": null,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-02__release-v1.7/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "TASK-01": {
+          "title": "Conduct §13 boundary review session",
+          "classification": "delegated_decision",
+          "status": "merged",
+          "assigned_to": "Strategy Rules & System Intent Owner",
+          "github_issue": 5,
+          "branch": "exec/v1.7-epic02-strategy-boundaries",
+          "commit_sha": "9e7d9dc6d31f1c569591fb338e7beb0f63942451",
+          "delegation_record_id": "DEL-20260302-03",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T16:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#§13 System Boundaries"
+          ],
+          "deviations_filed": true,
+          "notes": "Review session conducted. All three features reviewed."
+        },
+        "TASK-02": {
+          "title": "Document boundary findings for each of three features",
+          "classification": "delegated_decision",
+          "status": "merged",
+          "assigned_to": "Strategy Rules & System Intent Owner",
+          "github_issue": 5,
+          "branch": "exec/v1.7-epic02-strategy-boundaries",
+          "commit_sha": "9e7d9dc6d31f1c569591fb338e7beb0f63942451",
+          "delegation_record_id": "DEL-20260302-03",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T16:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/SRB-v1.7-2026-03-02__release-v1.7.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Signal Params: COMPLIANT. AI Journal: CONDITIONALLY COMPLIANT. New Indicators: COMPLIANT if canonical."
+        },
+        "TASK-03": {
+          "title": "Update strategy_rules.md if boundaries change",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "Strategy Rules & System Intent Owner",
+          "github_issue": 5,
+          "branch": "exec/v1.7-epic02-strategy-boundaries",
+          "commit_sha": "9e7d9dc6d31f1c569591fb338e7beb0f63942451",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T16:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md"
+          ],
+          "deviations_filed": true,
+          "notes": "No strategy_rules.md changes required. Existing §13 boundaries confirmed adequate. Documented in decision record."
+        },
+        "TASK-04": {
+          "title": "File decision record",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "Product Owner",
+          "github_issue": 5,
+          "branch": "exec/v1.7-epic02-strategy-boundaries",
+          "commit_sha": "9e7d9dc6d31f1c569591fb338e7beb0f63942451",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T16:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/SRB-v1.7-2026-03-02__release-v1.7.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Decision record filed at docs/product/decisions/SRB-v1.7-2026-03-02__release-v1.7.md. Class 4, Status Active."
+        },
+        "TASK-05": {
+          "title": "Head of Specs Team lifecycle sign-off",
+          "classification": "delegated_decision",
+          "status": "merged",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 5,
+          "branch": "exec/v1.7-epic02-strategy-boundaries",
+          "commit_sha": "9e7d9dc6d31f1c569591fb338e7beb0f63942451",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T16:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "notes": "Sign-off obtained. §13-gated features cleared to proceed per stated conditions."
+        }
+      }
+    },
+
+    "EPIC-03": {
+      "status": "merged",
+      "branch": "exec/v1.7-epic03-metrics",
+      "pr_number": null,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-02__release-v1.7/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "TASK-06": {
+          "title": "Define canonical Position Risk formula (GBP-adjusted; FX handling)",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 6,
+          "branch": "exec/v1.7-epic03-metrics",
+          "commit_sha": "5c8c4a7232c7158ec0a28fb23ffffb24f24a7a99",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T17:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Portfolio Risk Metrics"
+          ],
+          "deviations_filed": true,
+          "notes": "Position Risk formula defined: risk_gbp = shares * entry_price * atr_pct / fx_rate. FX handling documented."
+        },
+        "TASK-07": {
+          "title": "Define canonical Portfolio Heat formula",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 6,
+          "branch": "exec/v1.7-epic03-metrics",
+          "commit_sha": "5c8c4a7232c7158ec0a28fb23ffffb24f24a7a99",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T17:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Portfolio Risk Metrics"
+          ],
+          "deviations_filed": true,
+          "notes": "Portfolio Heat formula defined: sum of Position Risk across all open positions, expressed as % of portfolio value."
+        },
+        "TASK-08": {
+          "title": "Define display thresholds (explicit numeric bands)",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 6,
+          "branch": "exec/v1.7-epic03-metrics",
+          "commit_sha": "5c8c4a7232c7158ec0a28fb23ffffb24f24a7a99",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T17:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Portfolio Risk Metrics"
+          ],
+          "deviations_filed": true,
+          "notes": "Display thresholds defined as explicit numeric bands with colour guidance."
+        },
+        "TASK-09": {
+          "title": "Update metrics_definitions.md — increment version",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 6,
+          "branch": "exec/v1.7-epic03-metrics",
+          "commit_sha": "5c8c4a7232c7158ec0a28fb23ffffb24f24a7a99",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T17:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md"
+          ],
+          "deviations_filed": true,
+          "notes": "metrics_definitions.md bumped from v1.5.8 to v1.6.0. Portfolio Risk Metrics section added."
+        },
+        "TASK-10": {
+          "title": "Head of Specs Team lifecycle compliance sign-off",
+          "classification": "delegated_decision",
+          "status": "merged",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 6,
+          "branch": "exec/v1.7-epic03-metrics",
+          "commit_sha": "bcf1572596e0d89f3fe1631d1b712c4bc431f63a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T17:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Head of Specs Team sign-off obtained. v1.8 pre-alignment gate cleared."
+        }
+      }
+    },
+
+    "EPIC-04": {
+      "status": "merged",
+      "branch": "exec/v1.7-epic04-logging",
+      "pr_number": null,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-02__release-v1.7/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "TASK-11": {
+          "title": "Define log levels and usage policy",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 7,
+          "branch": "exec/v1.7-epic04-logging",
+          "commit_sha": "67a6efa5a74c199a3e50079e0dbf0b8b244e14d8",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T18:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/structured_logging_standards.md#Log Levels"
+          ],
+          "deviations_filed": true,
+          "notes": "ERROR, WARNING, INFO, DEBUG defined with usage guidelines."
+        },
+        "TASK-12": {
+          "title": "Define structured log format (required and optional fields)",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 7,
+          "branch": "exec/v1.7-epic04-logging",
+          "commit_sha": "67a6efa5a74c199a3e50079e0dbf0b8b244e14d8",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T18:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/structured_logging_standards.md#Log Format"
+          ],
+          "deviations_filed": true,
+          "notes": "JSON format defined: timestamp, level, correlation_id, service, message required; optional fields documented."
+        },
+        "TASK-13": {
+          "title": "Define correlation ID generation and propagation scheme",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 7,
+          "branch": "exec/v1.7-epic04-logging",
+          "commit_sha": "67a6efa5a74c199a3e50079e0dbf0b8b244e14d8",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T18:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/structured_logging_standards.md#Correlation IDs"
+          ],
+          "deviations_filed": true,
+          "notes": "UUID v4 generation scheme defined. HTTP header propagation documented."
+        },
+        "TASK-14": {
+          "title": "Address async failure observability for v2.0 Alerts",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 7,
+          "branch": "exec/v1.7-epic04-logging",
+          "commit_sha": "67a6efa5a74c199a3e50079e0dbf0b8b244e14d8",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T18:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/structured_logging_standards.md#Async Observability"
+          ],
+          "deviations_filed": true,
+          "notes": "Async failure observability approach documented. Covers async context propagation for v2.0 Alerts."
+        },
+        "TASK-15": {
+          "title": "Draft standards document",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 7,
+          "branch": "exec/v1.7-epic04-logging",
+          "commit_sha": "67a6efa5a74c199a3e50079e0dbf0b8b244e14d8",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T18:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/structured_logging_standards.md"
+          ],
+          "deviations_filed": true,
+          "notes": "docs/specs/structured_logging_standards.md created. Lifecycle header present."
+        },
+        "TASK-16": {
+          "title": "Head of Specs Team: assign document class + confirm header",
+          "classification": "delegated_decision",
+          "status": "merged",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 7,
+          "branch": "exec/v1.7-epic04-logging",
+          "commit_sha": "eaf17b0ca97187d221d5718dd742cd903a3f52fd",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T18:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/structured_logging_standards.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Class 1 Canonical Specification assigned. Header confirmed compliant. v2.0 hard gate cleared."
+        }
+      }
+    },
+
+    "EPIC-05": {
+      "status": "merged",
+      "branch": "exec/v1.7-epic05-api-versioning",
+      "pr_number": null,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-02__release-v1.7/qa_evidence_EPIC-05.md",
+      "test_scenarios": [],
+      "stories": {
+        "TASK-17": {
+          "title": "Draft API versioning policy (answer four decision questions)",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 8,
+          "branch": "exec/v1.7-epic05-api-versioning",
+          "commit_sha": "ccb16c4f8166c601713488810e714d6b7e3de3d6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T19:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/api-versioning-v1.7.md"
+          ],
+          "deviations_filed": true,
+          "notes": "All four questions answered: URL path versioning deferred to first breaking change; 60-day deprecation; webhooks versioned from inception; existing endpoints grandfather-exempted."
+        },
+        "TASK-18": {
+          "title": "Review draft with API Contracts & Documentation Owner",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "API Contracts & Documentation Owner",
+          "github_issue": 8,
+          "branch": "exec/v1.7-epic05-api-versioning",
+          "commit_sha": "61acf0379b89cb404273aa479dbefec0693a0a89",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T19:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/api-versioning-v1.7.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Review completed. No conflicts with existing spec patterns."
+        },
+        "TASK-19": {
+          "title": "File decision record at docs/product/decisions/api-versioning-v1.7.md",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 8,
+          "branch": "exec/v1.7-epic05-api-versioning",
+          "commit_sha": "ccb16c4f8166c601713488810e714d6b7e3de3d6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T19:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/api-versioning-v1.7.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Decision record filed. Class 4, Status Active."
+        },
+        "TASK-20": {
+          "title": "Head of Specs Team lifecycle sign-off",
+          "classification": "delegated_decision",
+          "status": "merged",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 8,
+          "branch": "exec/v1.7-epic05-api-versioning",
+          "commit_sha": "61acf0379b89cb404273aa479dbefec0693a0a89",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T19:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "notes": "Sign-off obtained. v2.0 pre-alignment gate (API versioning) cleared."
+        }
+      }
+    },
+
+    "EPIC-06": {
+      "status": "merged",
+      "branch": "exec/v1.7-epic06-spec-debt",
+      "pr_number": null,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-02__release-v1.7/qa_evidence_EPIC-06.md",
+      "test_scenarios": [
+        "docs/testing/QWB-quick-wins-bundle-test-scenarios.md"
+      ],
+      "stories": {
+        "TASK-21": {
+          "title": "Add sharpe_ratio_trade_method to analytics_endpoints.md validated metrics table",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 9,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "1a46b5d718cdb05d686e4b95668c58fb3e1badf1",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md#Validated Metrics"
+          ],
+          "deviations_filed": true,
+          "notes": "sharpe_ratio_trade_method added to validated metrics table. Total: 14 metrics."
+        },
+        "TASK-22": {
+          "title": "Update response example: 14 results; by_severity.critical.total: 4",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 9,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "1a46b5d718cdb05d686e4b95668c58fb3e1badf1",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md#POST /validate/calculations"
+          ],
+          "deviations_filed": true,
+          "notes": "Response example updated: 14 results, critical.total: 4."
+        },
+        "TASK-23": {
+          "title": "Increment analytics_endpoints.md version",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 9,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "1a46b5d718cdb05d686e4b95668c58fb3e1badf1",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Version incremented 1.8.1 → 1.9.0."
+        },
+        "TASK-24": {
+          "title": "Sign-off — OBS-01 resolved",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "API Contracts & Documentation Owner",
+          "github_issue": 9,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "bc228e19f7edb6d95d25d2e61cecc6c8de03ba8e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "notes": "OBS-01 formally resolved."
+        },
+        "TASK-25": {
+          "title": "S2-07 decision: Option (a) spec update vs Option (b) backend fix",
+          "classification": "delegated_decision",
+          "status": "merged",
+          "assigned_to": "Product Owner",
+          "github_issue": 10,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "bc228e19f7edb6d95d25d2e61cecc6c8de03ba8e",
+          "delegation_record_id": "DEL-20260302-04",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Decision: Option (a) spec update chosen. portfolio_endpoints.md corrected to match live API."
+        },
+        "TASK-26": {
+          "title": "Implement S2-07 chosen fix",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "API Contracts owner",
+          "github_issue": 10,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "bc228e19f7edb6d95d25d2e61cecc6c8de03ba8e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio"
+          ],
+          "deviations_filed": true,
+          "notes": "portfolio_endpoints.md corrected to match live API (S2-07). OBS-QWB-R1-01 resolved."
+        },
+        "TASK-27": {
+          "title": "Increment portfolio_endpoints.md version; sign-off",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "API Contracts owner",
+          "github_issue": 10,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "bc228e19f7edb6d95d25d2e61cecc6c8de03ba8e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Version incremented 1.8.2 → 1.9.0."
+        },
+        "TASK-28": {
+          "title": "S2-08 decision: backend fix vs spec correction",
+          "classification": "delegated_decision",
+          "status": "merged",
+          "assigned_to": "Product Owner",
+          "github_issue": 10,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "bc228e19f7edb6d95d25d2e61cecc6c8de03ba8e",
+          "delegation_record_id": "DEL-20260302-05",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/trade_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Decision: backend fix chosen. holding_days added to trade_service.py and trade_endpoints.md updated."
+        },
+        "TASK-29": {
+          "title": "Implement S2-08 fix",
+          "classification": "delegated_backend",
+          "status": "merged",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 10,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "bc228e19f7edb6d95d25d2e61cecc6c8de03ba8e",
+          "delegation_record_id": "DEL-20260302-05",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/trade_endpoints.md#GET /trades"
+          ],
+          "deviations_filed": true,
+          "notes": "holding_days added to trade_service.py formatted_trades dict. GET /trades now includes holding_days. OBS-QWB-R3-01 resolved."
+        },
+        "TASK-30": {
+          "title": "Increment trade_endpoints.md version; sign-off",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "API Contracts owner",
+          "github_issue": 10,
+          "branch": "exec/v1.7-epic06-spec-debt",
+          "commit_sha": "bc228e19f7edb6d95d25d2e61cecc6c8de03ba8e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-02T20:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/trade_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Version incremented 1.8.4 → 1.9.0. holding_days added to changelog."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [
+    "EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-01/ST-04",
+    "EPIC-02/TASK-01", "EPIC-02/TASK-02", "EPIC-02/TASK-03", "EPIC-02/TASK-04", "EPIC-02/TASK-05",
+    "EPIC-03/TASK-06", "EPIC-03/TASK-07", "EPIC-03/TASK-08", "EPIC-03/TASK-09", "EPIC-03/TASK-10",
+    "EPIC-04/TASK-11", "EPIC-04/TASK-12", "EPIC-04/TASK-13", "EPIC-04/TASK-14", "EPIC-04/TASK-15", "EPIC-04/TASK-16",
+    "EPIC-05/TASK-17", "EPIC-05/TASK-18", "EPIC-05/TASK-19", "EPIC-05/TASK-20",
+    "EPIC-06/TASK-21", "EPIC-06/TASK-22", "EPIC-06/TASK-23", "EPIC-06/TASK-24",
+    "EPIC-06/TASK-25", "EPIC-06/TASK-26", "EPIC-06/TASK-27", "EPIC-06/TASK-28", "EPIC-06/TASK-29", "EPIC-06/TASK-30"
+  ],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06"],
+    "epics_pending": [],
+    "all_merged": true
+  },
+
+  "sealed": true,
+  "sealed_utc": "2026-03-02T22:00:00Z"
+}
