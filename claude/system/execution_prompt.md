@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-03-02
+**Version:** 1.3
+**Last Updated:** 2026-03-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -168,9 +168,11 @@ During this routine you may write only to:
 - `claude/cycles/<cycle_id>/execution_state.json` (create/update)
 - `claude/cycles/<cycle_id>/delegation_log.md` (append-only)
 - `claude/cycles/<cycle_id>/execution_escalations.md` (append-only)
+- `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per EPIC, created at EPIC completion)
 - `claude/cycles/<cycle_id>/sprint_close.md` (create at close only)
 - `claude/cycles/<cycle_id>/lessons_learnt_execution.md` (create at close only)
 - Source files required by ST items (within repo, outside governance folders)
+- Canonical spec files (deviation documentation only — §9 Known Deviation Standard; no other spec edits permitted)
 - `.claude_current_state.json` (status updates only)
 
 You must **not** modify:
@@ -274,6 +276,8 @@ All per-item progress is recorded in:
       "pr_number": null,
       "pr_status": "none|open|approved|merged",
       "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/<cycle_id>/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
       "stories": {
         "ST-01": {
           "title": "<text>",
@@ -288,6 +292,8 @@ All per-item progress is recorded in:
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
           "notes": ""
         }
       }
@@ -458,8 +464,15 @@ Create `claude/cycles/<cycle_id>/execution_state.json` if it does not exist.
 1. Parse `stage4_backlog_slice.md` to extract all EPIC and ST items in dependency order.
 2. Cross-reference with `sprint_backlog.md` to confirm which items are in sprint scope.
 3. For each ST item: classify (`autonomous` / `delegated_backend` / `delegated_frontend` / `delegated_qa` / `delegated_decision`) based on acceptance criteria and item type.
-4. Initialise all statuses to `not_started`.
-5. Set cycle-level status to `Running`.
+4. For each ST item: populate `spec_references` — the canonical spec file path(s) and section heading(s) this item implements:
+   - `delegated_backend`: **mandatory** — must name the locked spec file and section before delegation proceeds (e.g., `["docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/size"]`)
+   - `delegated_frontend`: record the frontend spec file and page/component section (e.g., `["docs/specs/frontend/pages/positions.md#Position Entry Form"]`)
+   - `autonomous`: record spec if one governs the work; leave `[]` only if purely infrastructural
+   - `delegated_decision`: leave `[]` until resolved — populate when re-classified
+   If a `delegated_backend` item has no lockable spec reference: classify as `delegated_decision` instead and surface to Head of Specs Team.
+5. For each EPIC: check `docs/testing/` for existing test scenario files referencing the EPIC ID or any of its ST items. Record found scenario file paths in `execution_state.json` under the EPIC's `test_scenarios` field. If none found: set `test_scenarios: []`. The verification engine will use this to confirm which scenarios were run.
+6. Initialise all statuses to `not_started`.
+7. Set cycle-level status to `Running`.
 
 Update `.claude_current_state.json`:
 - `status` → `Executing` (new state; does not affect Release Planning Engine semantics)
@@ -505,13 +518,17 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 #### 3.1.A If `autonomous`:
 
 1. Execute the work defined in the acceptance criteria.
-2. Commit to the EPIC branch with format: `[EPIC-xx][ST-xx] <imperative description>`
-3. Push to `exec/<cycle_id>/EPIC-xx`.
-4. `governance_sync.yml` will close the GitHub issue automatically on push.
-5. Verify issue is closed (re-check after push).
-6. Mark item `done` in `execution_state.json`.
-7. Set `acceptance_verified = true` once acceptance criteria are confirmed met.
-8. Set `commit_sha` to the pushed commit.
+2. Confirm `spec_references` is populated in `execution_state.json` for this item. If empty and a spec exists: populate now before proceeding.
+3. Commit to the EPIC branch with format: `[EPIC-xx][ST-xx] <imperative description>`
+4. Push to `exec/<cycle_id>/EPIC-xx`.
+5. `governance_sync.yml` will close the GitHub issue automatically on push.
+6. Verify issue is closed (re-check after push).
+7. Mark item `done` in `execution_state.json`.
+8. Set `acceptance_verified = true` once acceptance criteria are confirmed met.
+9. Set `commit_sha` to the pushed commit.
+10. Deviation check: compare implementation against canonical spec.
+    - If no deviation: set `deviations_filed = true` (meaning "deviation check completed; none found").
+    - If a deviation exists: document it in the canonical spec per `claude/charter/document_lifecycle_guide.md` §9 (description, canonical requirement, priority P0–P3, target resolution release, owner, backlog reference). Set `deviations_filed = true` once filed. A P0 deviation blocks the merge gate — escalate immediately.
 
 #### 3.1.B If `delegated_backend` or `delegated_frontend`:
 
@@ -531,22 +548,32 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 **Unblock detection (on resume):**
 - Check whether a commit matching `[EPIC-xx][ST-xx]` has been pushed to the branch since delegation.
 - If yes: transition item to `done`, verify acceptance criteria, update state.
+  - Confirm `spec_references` is populated (fill now if missing — ask the assignee which spec section was implemented).
+  - Check for deviations: if implementation diverges from the spec, file the deviation in the canonical spec before setting `deviations_filed = true`.
 - If no: keep blocked and report status to user.
 
 #### 3.1.C If `delegated_qa`:
 
 1. Complete all autonomous work for the item.
-2. Commit and push per 3.1.A.
-3. Set item status to `blocked_qa`.
-4. Create a delegation record: QA sign-off required.
-5. Surface to Director of Quality:
-   - What was built
-   - The acceptance criteria to verify
-   - The commit SHA
-   - How to signal sign-off (comment on PR / issue)
-6. Continue to next item.
+2. Confirm `spec_references` is populated. Populate now if missing.
+3. Commit and push per 3.1.A steps 3–9 (deviation check applies here too).
+4. Set item status to `blocked_qa`.
+5. Create `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` if it does not already exist (use the header and structure defined in Section 3.2.A). Then append an entry for this ST item:
+   - ST item ID and title
+   - Spec references (from `spec_references` field)
+   - Acceptance criteria (from `sprint_backlog.md`)
+   - Commit SHA
+   - What was built (one paragraph)
+   - Test scenarios to execute: list any from `execution_state.json.epics.EPIC-xx.test_scenarios`; if none, derive from spec + acceptance criteria
+   - Open section for QA findings (Director of Quality fills this)
+   - Open section for disposition (Pass / Pass with notes / Fail)
+6. Surface to Director of Quality:
+   - Link to `qa_evidence_EPIC-xx.md`
+   - The specific section for this ST item
+   - How to signal sign-off (complete the disposition section + comment on PR)
+7. Continue to next item.
 
-**Unblock detection:** Check PR or issue for QA sign-off comment. If present and from Director of Quality: transition to `done`, set `qa_signed_off = true`.
+**Unblock detection:** Check `qa_evidence_EPIC-xx.md` for completed disposition section AND PR comment from Director of Quality. If both present: transition to `done`, set `qa_signed_off = true` on the EPIC.
 
 #### 3.1.D If `delegated_decision`:
 
@@ -565,9 +592,53 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 An EPIC is `done` (not yet `merged`) when all of its ST items are `done`.
 
 When an EPIC is done:
+
+**3.2.A — Consolidate QA Evidence Log (required before PR)**
+
+`claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` should already exist with per-ST-item entries from STEP 3.1.C. If it does not exist (e.g., all items were `autonomous` or `delegated_backend`/`delegated_frontend` with no explicit `delegated_qa` items): create it now using the structure below.
+
+Add or complete the **EPIC-level consolidation block** at the end of the file:
+
+```
+Owner: Director of Quality
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: <date>
+```
+
+The consolidation block must include:
+
+**EPIC:** EPIC-xx — <title>
+**Cycle:** <cycle_id>
+**Sprint goal:** <text>
+**Test scenarios used:** <list paths from `test_scenarios` field, or "Derived from spec + AC">
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|---------------|----------------|--------------------|---------|----|
+| ST-xx | <spec file#section> | <one line> | <criteria text> | Pass / Fail | None / DEV-ref |
+
+*(Reconcile any partial per-item entries from STEP 3.1.C into this table. Do not duplicate — one row per ST item.)*
+
+**QA test coverage:**
+- Scenarios run: <list scenario file names, or "manual acceptance review">
+- Regression areas checked: <list affected spec domains>
+- Known deviations filed: <list deviation refs or "None">
+
+**QA sign-off block:** (Director of Quality completes this)
+- [ ] All acceptance criteria verified against canonical spec
+- [ ] No unresolved P0 or P1 deviations
+- [ ] Regression areas checked
+- Signed off by: Director of Quality
+- Date:
+- Comments:
+
+This file is the evidence backing `qa_signed_off = true` in `execution_state.json`. A PR comment alone is not sufficient — this file must exist and the sign-off block must be complete before the merge gate runs.
+
+**3.2.B — Open PR**
+
 1. Open a pull request: `exec/<cycle_id>/EPIC-xx` → `main`
 2. PR title: `[EPIC-xx] <epic description>`
-3. PR body: per Section 8.4
+3. PR body: per Section 8.4 — include link to `qa_evidence_EPIC-xx.md`
 4. Update `execution_state.json`: EPIC `pr_status` = `open`, `pr_number` = PR number.
 5. Do not merge. The merge gate (STEP 4) governs this.
 
@@ -581,10 +652,13 @@ A PR may only be merged when **all** of the following are true:
 |-----------|---------------|
 | All ST items in EPIC | `done` (not `blocked_*`) |
 | Acceptance criteria | verified for all ST items |
-| QA sign-off | present on PR (comment from Director of Quality) |
+| `spec_references` | populated for all `done` ST items |
+| `qa_evidence_EPIC-xx.md` | exists; all ST item disposition sections completed by Director of Quality |
+| QA sign-off | comment from Director of Quality on PR referencing qa_evidence log |
 | Product Owner acceptance | recorded (comment on PR or in `sprint_backlog.md`) |
 | `quality_gate.yml` CI | passed (PR title has `[EPIC-xx]`, all checks green) |
 | No open escalations | for items in this EPIC |
+| No unresolved P0 deviations | all `deviations_filed = true`; no P0 deviations open in referenced specs |
 
 If all conditions pass:
 1. Merge the PR (squash or merge as configured).
@@ -633,12 +707,45 @@ Create: `claude/cycles/<cycle_id>/sprint_close.md`
 
 Must include:
 - Sprint goal
-- Items Done (with commit SHAs)
+- Items Done (with commit SHAs and spec references)
 - Items Returned to Backlog (with reason)
 - Items Delegated and outstanding (with delegation record IDs)
-- QA sign-offs received
+- QA evidence logs produced (list: `qa_evidence_EPIC-xx.md` per EPIC)
+- Deviations filed this sprint (list: spec file, deviation ref, priority — or "None")
 - Open escalations (if any)
 - Net outcome vs sprint goal
+- **Verification readiness statement:** "All spec references populated: Yes/No. All deviations filed: Yes/No. QA evidence logs complete: Yes/No." — This tells the Delivery Verification Engine whether it can proceed.
+
+### 5.3A System Status Report Update (required)
+
+Update or create: `docs/System_status_report.md`
+
+This is the living record of what is deployed and verified. The Delivery Verification Engine reads it to confirm what the system can do vs what the verification report will check.
+
+For this sprint, add or update a section:
+
+```
+## Sprint: <cycle_id>
+**Date:** <sprint close date>
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-xx | <description> | <spec file#section(s)> | None / <ref> |
+
+### Capabilities deferred or returned
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-xx | <reason> | backlog.md |
+
+### Verification inputs ready
+- QA evidence logs: <list qa_evidence_EPIC-xx.md files>
+- Deviations filed: <list or None>
+- Test scenarios referenced: <list or None>
+```
+
+If `docs/System_status_report.md` does not exist: create it with this sprint's section as the initial content. Use lifecycle header (Owner: Director of Quality, Class: Living Document, Status: Active).
 
 ### 5.4 Lessons Learnt
 
@@ -691,8 +798,10 @@ Stage and commit all cycle artefacts created or modified by this routine:
 git add claude/cycles/<cycle_id>/execution_state.json
 git add claude/cycles/<cycle_id>/delegation_log.md
 git add claude/cycles/<cycle_id>/execution_escalations.md  (if created)
+git add claude/cycles/<cycle_id>/qa_evidence_EPIC-*.md
 git add claude/cycles/<cycle_id>/sprint_close.md
 git add claude/cycles/<cycle_id>/lessons_learnt_execution.md
+git add docs/System_status_report.md
 git add .claude_current_state.json
 git commit -m "[GOVERNANCE] Sprint execution closed: <cycle_id>"
 git push origin <current-branch>
@@ -708,7 +817,11 @@ The run is complete only if:
 
 - `execution_state.json.status = Sealed`
 - All in-scope ST items have a recorded outcome (`done`, `merged`, or `returned_to_backlog`)
-- `sprint_close.md` exists and is lifecycle-compliant
+- All `done` ST items have `spec_references` populated (or documented reason why none applies)
+- All `done` ST items have `deviations_filed = true`
+- One `qa_evidence_EPIC-xx.md` exists per merged EPIC, with consolidation block complete
+- `docs/System_status_report.md` updated with this sprint's section
+- `sprint_close.md` exists, is lifecycle-compliant, and includes verification readiness statement
 - `lessons_learnt_execution.md` exists
 - `.claude_current_state.json` updated to `Sprint_Complete`
 - No open escalations with `Blocks execution: Yes`
