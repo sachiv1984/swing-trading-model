@@ -1,16 +1,12 @@
 {
-  "active_cycle": "2026-03-04__item-3.4",
-  "cycle_name": "Roadmap Rebalance — Item 3.4 Risk Dashboard",
-  "status": "Closed",
-  "closure_status": "Complete",
-  "engine": "roadmap_rebalance",
-  "last_sync_utc": "2026-03-04T00:00:00Z",
-  "prior_cycle": "2026-03-02__release-v1.7",
-  "rebalance_decisions": {
-    "DL-003": "3.5 Alerts — Defer confirmed; auto-advance trigger set",
-    "DL-004": "4.3 Signal Exposure — Gate cleared (POG-20260304-01); active v2.0 planning",
-    "DL-005": "BLG-NEW-01 through BLG-NEW-08 added to backlog"
-  },
+  "active_cycle": "2026-03-04__release-v1.8",
+  "cycle_name": "Release Planning — v1.8 Risk Dashboard",
+  "status": "Published",
+  "engine": "release_planning",
+  "last_sync_utc": "2026-03-04T00:20:00Z",
+  "prior_cycle": "2026-03-04__item-3.4",
+  "backlog_slice_path": "claude/cycles/2026-03-04__release-v1.8/stage4_backlog_slice.md",
+  "next_release": "v1.8",
   "active_pog": {
     "POG-20260304-01": {
       "initiative": "4.3 Signal Exposure Enhancement",
@@ -24,8 +20,15 @@
     "gate_3_qa_planning": false,
     "gate_3_auto_advance": "Once QA planning session for notification delivery documented — see DL-003"
   },
-  "next_cycle_unblocked": true,
-  "next_release": "v1.8",
-  "cps_baseline": 2.0,
-  "gh_sync_status": "Pending"
+  "open_escalations": {
+    "ESC-20260304-01": {
+      "cycle": "2026-03-04__release-v1.8",
+      "summary": "Settings endpoint method decision (option a vs b) required before ST-09 execution",
+      "blocks_execution": false,
+      "owner": "Product Owner"
+    }
+  },
+  "design_gate_required": true,
+  "design_gate_status": "Pending",
+  "next_command": "run design-gate --cycle 2026-03-04__release-v1.8"
 }

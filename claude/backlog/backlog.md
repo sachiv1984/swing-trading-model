@@ -560,3 +560,16 @@ There is no single running changelog document for API contract changes. Changes 
 - P1: 6 (BLG-NEW-01, 02, 03, 05, 07, 08)
 - P2: 1 (BLG-NEW-04)
 - Archived: BLG-NEW-06 (merged into 4.1b — see backlog_archive.md)
+
+---
+
+## v1.8 Release Slice — 2026-03-04
+
+<!-- release-plan-marker: RP:v1.8:2026-03-04__release-v1.8 -->
+
+**Cycle:** 2026-03-04__release-v1.8
+**Release:** v1.8 — Risk Dashboard
+**Planned:** 2026-03-04
+**Backlog slice:** `claude/cycles/2026-03-04__release-v1.8/stage4_backlog_slice.md`
+
+Items in v1.8 sprint: EPIC-01 (ST-01–ST-04), EPIC-02 (ST-05–ST-08), EPIC-03 (ST-09–ST-10), EPIC-04 (ST-11–ST-12)
