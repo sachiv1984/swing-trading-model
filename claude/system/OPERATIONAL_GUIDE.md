@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 1.7  
+**Version:** 1.8  
 **Last Updated:** 2026-03-03  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -11,7 +11,7 @@
 
 ## Quick Reference Summary
 
-> **The full cycle in one paragraph:** A completed roadmap item optionally triggers a **Roadmap Rebalance** (Phase 1), which reassesses priorities and decides what to add, stop, defer, or kill. The output (or a direct invocation) feeds **Release Planning** (Phase 1B), which translates an approved release into an execution-ready plan with a sequenced backlog slice. That backlog drives **Sprint Planning** (Phase 2), which scopes and capacity-confirms a time-boxed sprint. **Sprint Execution & Close** (Phase 3) delivers the work, closes the sprint, and — when a roadmap item completes — may trigger the next cycle. **Delivery Verification** (Phase 4) confirms what was built matches what was scoped and unlocks the next cycle. **Post-Ship Closure** then closes all planning and operational documents, applies lessons learnt, and confirms the cycle is clean before the next one opens.
+> **The full cycle in one paragraph:** A completed roadmap item optionally triggers a **Roadmap Rebalance** (Phase 1), which reassesses priorities and decides what to add, stop, defer, or kill. The output (or a direct invocation) feeds **Release Planning** (Phase 1B), which translates an approved release into an execution-ready plan with a sequenced backlog slice. That backlog drives **Sprint Planning** (Phase 2), which selects scope within confirmed capacity, confirms acceptance criteria per item, maps dependencies, and seals a signed-off sprint backlog. **Sprint Execution & Close** (Phase 3) delivers the work, closes the sprint, and — when a roadmap item completes — may trigger the next cycle. **Delivery Verification** (Phase 4) confirms what was built matches what was scoped and unlocks the next cycle. **Post-Ship Closure** then closes all planning and operational documents, applies lessons learnt, and confirms the cycle is clean before the next one opens.
 
 ### Engine Commands & Aliases
 
@@ -29,6 +29,9 @@ run planning v<version>     # equivalent to: plan release --version "v<version>"
 
 # GitHub issue sync (run after Phase 1B publishes)
 sync gh                     # parses active stage4_backlog_slice.md → creates/updates issues
+
+# Phase 2 — Sprint Planning
+plan sprint [--cycle "<cycle_id>"] [--mode "strict|standard"] [--dry-run]
 
 # Phase 3 — Sprint Execution
 run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mode "strict|standard"] [--dry-run]
@@ -61,6 +64,7 @@ State pointer:  .claude_current_state.json  (always check for active_cycle befor
 | Publish Gate must pass before a release plan is sealed | Phase 1B |
 | Backlog lock must be acquired before any backlog write | Phase 1B |
 | No sprint starts without signed-off backlog and acceptance criteria | Phase 2 |
+| No item enters the sprint without confirmed acceptance criteria and an explicit owner | Phase 2 |
 | No autonomous merge — QA sign-off and Product Owner acceptance always required | Phase 3 |
 | No cycle unlock without `Verified` or `Verified_with_deviations` status | Phase 4 |
 | Post-Ship Closure must complete before the next cycle's Phase 1 or Phase 1B is invoked | Post-Ship |
@@ -96,10 +100,15 @@ Phase 1B complete?
   ✅ Backlog lock released
 
 Phase 2 complete?
-  ✅ Sprint goal approved by Product Owner
-  ✅ Sprint backlog with acceptance criteria per item
-  ✅ Capacity confirmed — no over-allocation
-  ✅ Product Owner sign-off recorded in sprint_backlog.md
+  ✅ Sprint goal documented and confirmed by Product Owner (sprint_goal.md)
+  ✅ sprint_backlog.md status = Sealed with Product Owner sign-off
+  ✅ Every in-scope item has confirmed acceptance criteria (no [AC REQUIRED] placeholders)
+  ✅ Every in-scope item has an effort estimate (no [ESTIMATE REQUIRED] placeholders)
+  ✅ Capacity confirmed — no unresolved over-allocation
+  ✅ Dependency map and execution sequence documented (sprint_planning_notes.md)
+  ✅ Delegation class recorded per ST item
+  ✅ .claude_current_state.json status = Sprint_Planning_Complete, sprint_sealed = true
+  ✅ Commit complete
 
 Phase 3 complete?
   ✅ All items have a recorded outcome (Done / Returned / Deferred)
@@ -422,39 +431,85 @@ The cycle may only be sealed `Published` if **all** of the following are true:
 
 ## 7. Phase 2 — Sprint Planning
 
-Phase 2 converts the release-planned backlog into a time-boxed, executable sprint. It may only begin after Phase 1B exit criteria are satisfied.
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v1.0)  
+**Owner:** PMO Lead  
+**Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
-### 7.1 Inputs
+Phase 2 converts the release-planned backlog slice into a time-boxed, executable sprint. It may only begin after Phase 1B exit criteria are satisfied and `state.json` status is `Published`.
 
-- Updated `claude/roadmap/current_roadmap.md`
-- Committed `stage4_backlog_slice.md` and reconciled `backlog.md`
-- `claude/roadmap/workforce_capacity.md`
-- `cycle_summary.md` from the completed Phase 1B cycle
+### 7.1 Invocation
 
-### 7.2 Sprint Planning Steps
+```
+plan sprint [--cycle "<cycle_id>"] [--mode "strict|standard"] [--dry-run]
+```
 
-1. **Define sprint goal** — One sentence describing the sprint's primary outcome. Owned by Product Owner.
-2. **Capacity confirmation** — PMO Lead confirms available FTE, skills, and duration.
-3. **Backlog grooming** — Head of Specs Team confirms each entering item has acceptance criteria, effort estimate, and explicit owner.
-4. **Sprint scope selection** — Product Owner selects items from the release backlog slice within confirmed capacity. No item enters without acceptance criteria.
-5. **Dependency check** — PMO Lead identifies cross-item dependencies and adjusts ordering.
-6. **Sprint backlog sign-off** — Product Owner signs off. This is the Phase 2 exit gate.
+| Flag | Notes |
+|------|-------|
+| `--cycle` | Optional — loaded from `.claude_current_state.json` if omitted |
+| `--mode` | `strict`: halt on any missing AC, unclear owner, or unresolved dependency; `standard` (default): flag and proceed |
+| `--dry-run` | Preview only — no writes or state updates |
 
-### 7.3 Sprint Planning Artefacts
+**Pre-condition:** `.claude_current_state.json` status must be `Published`, `Validated`, or `Committed`. `stage4_backlog_slice.md` must exist and `state.json` must be `Published`.
+
+### 7.2 Planning Steps
+
+| Step | Name | Key Output | Hard Gate? |
+|------|------|-----------|-----------|
+| -1 | Preflight | — | Yes — halts on any missing input or unsealed release plan |
+| 0 | Load release context | Load summary | No |
+| 1 | Capacity baseline | `sprint_capacity.md` | Yes — halts if estimates missing in strict mode |
+| 2 | Sprint goal definition | `sprint_goal.md` | Yes — no planning proceeds without confirmed goal |
+| 3 | Scope selection | Include/defer classification | Yes — over-allocation must be resolved or explicitly accepted |
+| 4 | Acceptance criteria confirmation | AC confirmed per ST item | Yes — no AC-less items may be sealed |
+| 5 | Dependency mapping and sequencing | `sprint_planning_notes.md` | Yes — circular dependencies halt |
+| 6 | Sprint backlog production and sign-off | `sprint_backlog.md` (Sealed) | Yes — Product Owner sign-off required |
+| 7 | Global state update | `.claude_current_state.json` | Hard requirement |
+| 8 | Commit | — | Only if sprint_sealed = true |
+
+### 7.3 Acceptance Criteria Standard
+
+Every item entering the sprint must have all four dimensions confirmed:
+
+| Dimension | Requirement |
+|-----------|-------------|
+| Technical | Observable behaviour — what must be built or changed |
+| Quality | Specific test scenario — not just "tested" |
+| Security | Explicit check or explicit N/A with justification |
+| Verification | How the Director of Quality will confirm done |
+
+Items without confirmed acceptance criteria may not enter the sprint. In `standard` mode they receive an `[AC REQUIRED]` placeholder that must be resolved before the backlog can be sealed.
+
+### 7.4 Capacity and Scope Rules
+
+- Sprint scope must not exceed confirmed available capacity
+- Deferred items remain in `backlog.md` unchanged — sprint planning does not modify the backlog
+- Over-allocation requires explicit Product Owner acceptance with a recorded rationale (`standard` mode only)
+- Delegation class (`autonomous`, `delegated_backend`, `delegated_frontend`, `delegated_qa`, `delegated_decision`) is set per ST item at planning time so Phase 3 can load and act without re-classifying
+
+### 7.5 Sprint Planning Artefacts
 
 | Artefact | Location | Owner | Required? |
 |----------|----------|-------|-----------|
-| Sprint goal | `claude/cycles/<id>/sprint_goal.md` | Product Owner | Yes |
-| Sprint backlog | `claude/cycles/<id>/sprint_backlog.md` | PMO Lead | Yes |
-| Acceptance criteria | Per item in `sprint_backlog.md` | Head of Specs Team | Yes (per item) |
-| Capacity confirmation | `claude/cycles/<id>/sprint_capacity.md` | PMO Lead | Yes |
+| Sprint goal | `claude/cycles/<id>/sprint_goal.md` | Product Owner | Yes — hard gate |
+| Sprint backlog (sealed) | `claude/cycles/<id>/sprint_backlog.md` | PMO Lead | Yes — hard gate |
+| Sprint capacity | `claude/cycles/<id>/sprint_capacity.md` | PMO Lead | Yes |
+| Sprint planning notes | `claude/cycles/<id>/sprint_planning_notes.md` | PMO Lead | Yes |
+| Sprint escalations | `claude/cycles/<id>/sprint_escalations.md` | PMO Lead | If raised |
 
-### 7.4 Phase 2 Exit Criteria
+### 7.6 Phase 2 Exit Criteria
 
-- Sprint goal documented and approved by Product Owner
-- Sprint backlog contains only items with defined acceptance criteria
-- Capacity confirmed — no over-allocation
-- Product Owner sign-off recorded in `sprint_backlog.md`
+- `sprint_goal.md` exists with confirmed Product Owner sign-off
+- `sprint_backlog.md` status = `Sealed` with Product Owner sign-off recorded
+- All in-scope items have confirmed acceptance criteria (no `[AC REQUIRED]` placeholders)
+- All in-scope items have effort estimates (no `[ESTIMATE REQUIRED]` placeholders)
+- Capacity confirmed — no unresolved over-allocation
+- Dependency map and execution sequence documented
+- Delegation class recorded per ST item
+- `.claude_current_state.json` status = `Sprint_Planning_Complete`, `sprint_sealed = true`
+
+### 7.7 Escalation
+
+Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprint_escalations.md` (format: `ESC-PLAN-YYYYMMDD-nn`). The engine sets status to `Sprint_Planning_Blocked` and halts. Re-invoke `plan sprint` once resolved — the engine resumes from the first incomplete step.
 
 ---
 
@@ -476,7 +531,7 @@ run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mod
 | `--mode` | `strict`: halt on any ambiguity; `standard` (default): proceed with flags |
 | `--dry-run` | Plan only — no writes, commits, or GitHub operations |
 
-**Pre-condition:** `.claude_current_state.json` status must be `Committed`, `Validated`, or `Published` (release plan complete). If `Blocked`: resolve escalations first.
+**Pre-condition:** `.claude_current_state.json` status must be `Sprint_Planning_Complete` and `sprint_sealed = true`. If `Blocked`: resolve escalations first.
 
 ### 8.2 Execution Principles
 
@@ -810,8 +865,8 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 |-------|----------|-------|
 | Roadmap item completed | Phase 1 (optional) or direct Phase 1B | Product Owner |
 | Phase 1 exit criteria met | Phase 1B — Release Planning Engine | PMO Lead |
-| Phase 1B Publish Gate passed | Phase 2 — Sprint Planning | PMO Lead |
-| Sprint backlog signed off | Phase 3 — Sprint Execution | PMO Lead |
+| Phase 1B Publish Gate passed | Phase 2 — Sprint Planning (`plan sprint`) | PMO Lead |
+| Phase 2 complete (`Sprint_Planning_Complete`) | Phase 3 — Sprint Execution (`run sprint`) | PMO Lead |
 | Phase 3 complete (`Sprint_Complete`) | Phase 4 — Delivery Verification | PMO Lead |
 | Phase 4 complete (`Verified`) | Post-Ship Closure | PMO Lead |
 | Post-Ship Closure confirmed | New Phase 1 (optional) or Phase 1B cycle | Product Owner |
@@ -836,7 +891,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
 | Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
-| Sprint Execution Prompt | `claude/system/execution_prompt.md` | 6 | Head of Specs Team | Governance |
+| Sprint Planning Prompt | `claude/system/sprint_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Delivery Verification Prompt | `claude/system/delivery_verification_prompt.md` | 6 | Head of Specs Team | Governance |
 | Shared Standards | `claude/system/shared_standards.md` | 6 | Head of Specs Team | Governance |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` | 6 | Head of Specs Team | Governance |
@@ -862,10 +917,12 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | AR / SRB Decision Records | `docs/product/decisions/AR-*.md` | 4 | Product Owner | 1B |
 | Cycle Summary (Release) | `claude/cycles/<id>/cycle_summary.md` | 3 | PMO Lead | 1B |
 | Lessons Learnt (Release) | `claude/cycles/<id>/lessons_learnt.md` | 3 | PMO Lead | 1B |
-| Global State Pointer | `.claude_current_state.json` | — | PMO Lead | 1B, 3, 4 |
+| Global State Pointer | `.claude_current_state.json` | — | PMO Lead | 1B, 2, 3, 4 |
 | Sprint Goal | `claude/cycles/<id>/sprint_goal.md` | 4 | Product Owner | 2 |
 | Sprint Backlog | `claude/cycles/<id>/sprint_backlog.md` | 4 | PMO Lead | 2 |
 | Sprint Capacity | `claude/cycles/<id>/sprint_capacity.md` | 4 | PMO Lead | 2 |
+| Sprint Planning Notes | `claude/cycles/<id>/sprint_planning_notes.md` | 4 | PMO Lead | 2 |
+| Sprint Escalations | `claude/cycles/<id>/sprint_escalations.md` | 4 | PMO Lead | 2 |
 | Execution State | `claude/cycles/<id>/execution_state.json` | — | PMO Lead | 3 |
 | QA Evidence Log | `claude/cycles/<id>/qa_evidence_EPIC-xx.md` | 4 | Director of Quality | 3 |
 | Delegation Log | `claude/cycles/<id>/delegation_log.md` | 4 | PMO Lead | 3 |
@@ -889,11 +946,12 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 1.5 |
+| Version | 1.8 |
 | Last Updated | 2026-03-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v1.6 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.0 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v1.3 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` v1.0 |
@@ -913,6 +971,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 1.8 | 2026-03-03 | Added `sprint_planning_prompt.md` (v1.0) as Phase 2 engine. Rewrote §7 with invocation command, step table, AC standard, capacity rules, and exit criteria. Added `plan sprint` to Quick Reference commands. Added "no AC-less items" to Hard Rules. Expanded Phase 2 Phase Gate Checklist. Updated Cycle Trigger table (Phase 1B now triggers `plan sprint`; Phase 2 triggers `run sprint`). Added Sprint Planning Engine to Artefact Register and §14 governance table. Updated Phase 3 pre-condition to require `Sprint_Planning_Complete`. Updated Global State Pointer phase column. Updated Quick Reference summary paragraph. |
 | 1.7 | 2026-03-03 | Updated `roadmap_prompt.md` to v1.6 in §14 governance table. |
 | 1.6 | 2026-03-03 | Updated `shared_standards.md` to v1.1 and `lessons_learnt_prompt.md` to v1.2 in §14 governance table. Added Lessons Learnt Prompt to Artefact Register. Added `lessons_learnt_verification.md` (Phase 4) and `lessons_learnt_closure.md` (Post-Ship) to Artefact Register. |
 | 1.5 | 2026-03-03 | Added `post_ship_closure_prompt.md` (v1.0) as the engine source for §10. Added `run post-ship` invocation command to Quick Reference. Added invocation subsection (§10.1), flags table, and pre-condition to §10. Added closure status values (§10.6). Added Closure Record to Artefact Register. Added Post-Ship Closure Engine to §14 governance table. |
