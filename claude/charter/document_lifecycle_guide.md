@@ -3,8 +3,8 @@
 **Owner:** Head of Specs Team  
 **Scope:** All governed documentation across the entire product  
 **Status:** Canonical  
-**Version:** 2.4  
-**Last Updated:** 2026-03-02  
+**Version:** 2.5  
+**Last Updated:** 2026-03-04  
 
 ---
 
@@ -12,6 +12,7 @@
 
 | Version | Change |
 |--------:|--------|
+| 2.5 | Added Class 8 — Proof of Gate. New document class for hard gate clearance evidence. Immutable once issued; status field only may change to Superseded; permanent governance record stored in `claude/evidence/gates/`. Required when any governed routine records a hard gate condition that must be cleared before an item advances. Added Class 8 to Section 2, Section 3 (lifecycle states), Section 4 (universal header block), and Section 5 (versioning — Class 8 does not use version numbers). |
 | 2.4 | Added Release Planning Engine governance alignment. Clarified that multiple governed routines may exist (e.g., Roadmap Rebalance, Release Planning), all invoked via Class 6 Governance Prompts. Explicitly recognised `claude/roadmap/` and `claude/backlog/` as valid planning-document locations for governed routines. |
 | 2.3 | Clarified lifecycle enforcement roles to explicitly include Facilitator and Challenger as non-decision governance roles. No changes to document classes or lifecycle semantics. |
 | 2.2 | Added Section 9 — Known Deviation Documentation Standard. When any deviation from canonical behaviour is documented in a spec, it must be assigned a priority tier, a target resolution release, and a named owner at the time of documentation. P0 deviations must be resolved within one release cycle. |
@@ -50,7 +51,7 @@ Every governed document belongs to exactly one class. The class determines which
 
 ---
 
-### Class 1 --- Canonical
+### Class 1 — Canonical
 
 **What it is:** The authoritative source of truth for a product domain. When this document and any other document disagree, this document prevails.
 
@@ -76,13 +77,13 @@ Last Updated: [date]
 
 ---
 
-### Class 2 --- Supporting
+### Class 2 — Supporting
 
 **What it is:** A document that represents or summarises canonical truth. It adds no new rules. It must never contradict a Canonical document.
 
 **Who creates it:** The domain owner of the canonical document it supports, or a designated maintainer.
 
-**Lifecycle states available:** Current → Deprecated → Archived (no "Canonical" status --- it derives authority from its source)
+**Lifecycle states available:** Current → Deprecated → Archived (no "Canonical" status — it derives authority from its source)
 
 **Required header fields:**
 ```
@@ -101,13 +102,13 @@ Last Updated:     [date]
 
 ---
 
-### Class 3 --- Operational Record
+### Class 3 — Operational Record
 
-**What it is:** A point-in-time record of observed system state. It records facts --- it does not define rules or intended behaviour.
+**What it is:** A point-in-time record of observed system state. It records facts — it does not define rules or intended behaviour.
 
 **Who creates it:** Infrastructure & Operations Documentation Owner (governs and files); engineering team (generates the underlying data).
 
-**Lifecycle states available:** Filed (permanent --- Operational Records are never deprecated or superseded)
+**Lifecycle states available:** Filed (permanent — Operational Records are never deprecated or superseded)
 
 **Required header fields:**
 ```
@@ -121,8 +122,8 @@ Filed:              [date filed]
 ```
 
 **Rules:**
-- Body content is immutable after filing --- it records observed state at a fixed moment
-- A newer record does not supersede an older one --- both remain permanent artefacts
+- Body content is immutable after filing — it records observed state at a fixed moment
+- A newer record does not supersede an older one — both remain permanent artefacts
 - Deviations from canonical specs observed in a record must be raised to the relevant domain owner; they are not resolved by annotating the record
 - Naming convention: `System_status_report_v{version}_{YYYY-MM-DD}.md`
 - Location: `docs/operations/status_reports/`
@@ -137,18 +138,20 @@ Filed:              [date filed]
 
 Planning Documents include two distinct sub-types:
 
-1. **Roadmap, backlog, and decisions documents** — ongoing planning artefacts that evolve over time  
-2. **Scope documents** — implementation briefs written at the end of pre-alignment  
+1. **Roadmap, backlog, and decisions documents** — ongoing planning artefacts that evolve over time
+2. **Scope documents** — implementation briefs written at the end of pre-alignment
 
-**Who creates it:** Product Owner.  
-**Lifecycle states:** Draft → Active → Superseded → Archived  
+**Who creates it:** Product Owner.
+**Lifecycle states:** Draft → Active → Superseded → Archived
 
 **Required header fields:**
 
-- **Owner:** Product Owner  
-- **Class:** Planning Document (Class 4)  
-- **Status:** Draft \| Active \| Superseded  
-- **Last Updated:** `<date>`  
+```
+Owner:        Product Owner
+Class:        Planning Document (Class 4)
+Status:       Draft | Active | Superseded
+Last Updated: [date]
+```
 
 **Rules:**
 
@@ -158,7 +161,7 @@ Planning Documents include two distinct sub-types:
 
 ---
 
-### Class 5 --- Role Charter
+### Class 5 — Role Charter
 
 **What it is:** A document defining the scope, responsibilities, and operating standards of a named role in the documentation or engineering system.
 
@@ -179,27 +182,28 @@ Last Updated: [date]
 - Every charter must include a "Lifecycle & Versioning Compliance" section explicitly stating that the role owner is accountable for compliance of all documents they own
 - Every charter must declare who the role reports to
 - Charters are versioned when role scope or reporting line changes
-- A role without a charter may not be treated as authoritative --- their documents are Draft until a charter exists
+- A role without a charter may not be treated as authoritative — their documents are Draft until a charter exists
 
 **Examples:** `Head_of_Specs_Team.md`, `API_Contracts_&_Documentation_Owner.md`, `Infrastructure_and_Operations_Owner.md`
-
 
 ---
 
 ### Class 6 — Governance Prompt
 
-**What it is:** An instruction set used to invoke automated, governed routines that enforce this lifecycle guide.  
-**Who creates it:** Head of Specs Team.  
-**Lifecycle states:** Draft → Active → Deprecated  
+**What it is:** An instruction set used to invoke automated, governed routines that enforce this lifecycle guide.
+**Who creates it:** Head of Specs Team.
+**Lifecycle states:** Draft → Active → Deprecated
 
 **Required header fields:**
 
-- **Owner:** Head of Specs Team  
-- **Status:** Active  
-- **Version:** `x.y`  
-- **Last Updated:** `<date>`  
+```
+Owner:        Head of Specs Team
+Status:       Active
+Version:      [x.y]
+Last Updated: [date]
+```
 
-**Rules (clarified):**
+**Rules:**
 
 - Multiple governed routines may coexist (e.g., Roadmap Rebalance, Release Planning).
 - Each governed routine must have exactly one Class 6 governance prompt stored under `claude/system/`.
@@ -208,6 +212,53 @@ Last Updated: [date]
   - allowed write scope
   - enabled vs disabled governance steps
 - Governance prompts are governance infrastructure, not product documentation.
+
+---
+
+### Class 8 — Proof of Gate
+
+**What it is:** An immutable evidence record confirming that a specific hard gate condition has been cleared. A hard gate is not considered cleared until a Class 8 document exists in `claude/evidence/gates/` referencing the specific initiative, gate condition, and the versioned document whose content the clearance was based on.
+
+**Who creates it:** The authority role responsible for clearing the gate (e.g. Strategy Rules & System Intent Owner for §13 boundary gates; Head of Specs Team for lifecycle compliance gates; Director of Quality for quality gates).
+
+**Lifecycle states available:** Active → Superseded
+
+> Superseded is the only permitted state transition. A PoG document may never be edited, deleted, or archived. If the gate must be re-cleared (e.g. because the referenced document was incremented), a new PoG is issued and the prior one is marked Superseded with a reference to its successor. Both documents remain as permanent audit records.
+
+**Required header fields:**
+```
+Owner:                        [Clearing authority role]
+Class:                        Proof of Gate (Class 8)
+Status:                       Active | Superseded
+Gate ID:                      POG-<YYYYMMDD>-<nn>
+Issued:                       [date]
+Cycle:                        [cycle_id]
+Initiative:                   [initiative name]
+Gate cleared:                 [one sentence — what condition is now satisfied]
+Versioned document referenced:[file path] v[version]
+Decision:                     [exact decision text — specific enough to stand alone]
+Confirmed by:                 [role name]
+Checksum note:                [document version at time of signing, e.g. "strategy_rules.md v2.3 as of 2026-03-04"]
+```
+
+If Status is Superseded, add:
+```
+Superseded by:                [Gate ID of successor PoG]
+Superseded date:              [date]
+```
+
+**Rules:**
+- Body content is immutable after issuance — only the Status, Superseded by, and Superseded date fields may be added or changed
+- A PoG is automatically stale (and must be re-issued) when the versioned document it references is incremented after the PoG was issued
+- Stale PoG documents do not clear their gate — the gate is treated as open until a fresh PoG is issued against the current document version
+- The `claude/evidence/gates/` folder is append-only; no PoG document may be deleted
+- PoG documents are not subject to the planning document grooming lifecycle — they are permanent governance records
+- One PoG per gate condition per initiative per cycle — if the same gate must be cleared twice in one cycle (e.g. after a document increment), the second PoG supersedes the first
+- Location: `claude/evidence/gates/<gate-slug>_<YYYYMMDD>.md`
+
+**When required:** A Class 8 PoG is required whenever a governed routine (roadmap rebalance, design gate, or any other engine) records a hard gate condition in a stage artefact. Items carrying an uncleared hard gate may not advance to the next stage.
+
+**Not required for:** Items with no recorded hard gate conditions. The absence of a PoG is not a compliance violation for items where no hard gate was raised.
 
 ---
 
@@ -221,28 +272,31 @@ Last Updated: [date]
 | **Canonical** | Authoritative source of truth | Document owner, confirmed by Head of Specs Team |
 | **Active** | In use and current (for non-canonical classes) | Document owner |
 | **Filed** | Permanently recorded (Operational Records only) | Ops Documentation Owner |
-| **Superseded** | Replaced by canonical documents (Planning only) | Product Owner |
+| **Superseded** | Replaced by canonical documents (Planning only); or prior gate clearance replaced by new PoG (Class 8) | Product Owner (Class 4); Clearing authority (Class 8) |
 | **Deprecated** | No longer authoritative; successor declared | Document owner |
 | **Archived** | Historical only; no longer referenced | Head of Specs Team |
 
 **Rules that apply to all classes:**
 - Every governed document must be in exactly one state at all times
 - State must be declared explicitly in the document header
-- No document may move from Deprecated or Archived back to an active state --- a new document must be created instead
+- No document may move from Deprecated or Archived back to an active state — a new document must be created instead
 - Deprecation requires: what supersedes it, and from what date
+- **Class 8 exception:** PoG documents may only transition Active → Superseded. They may never be Deprecated, Archived, or deleted. Supersession does not remove the document from the record.
 
 ---
 
 ## 4. Universal Header Block
 
-Every governed document must carry a header block. The exact fields depend on document class (see Section 2), but the following fields are **required for all classes** except Operational Record (which has its own fixed set):
+Every governed document must carry a header block. The exact fields depend on document class (see Section 2), but the following fields are **required for all classes** except Operational Record (which has its own fixed set) and Class 8 (which has its own fixed set):
 
-- **Owner** --- the named role accountable for this document
-- **Status** --- one of the lifecycle states defined in Section 3
-- **Last Updated** --- the date the document was last meaningfully changed
+- **Owner** — the named role accountable for this document
+- **Status** — one of the lifecycle states defined in Section 3
+- **Last Updated** — the date the document was last meaningfully changed
 
 Canonical documents and Role Charters additionally require:
-- **Version** --- incremented according to the versioning rules in Section 5
+- **Version** — incremented according to the versioning rules in Section 5
+
+Class 8 (Proof of Gate) documents use their own fixed header set (see Section 2 — Class 8). They do not carry a Version field. Gate IDs serve as the unique identifier.
 
 A document without a complete header block is non-compliant and must not be treated as authoritative regardless of its content.
 
@@ -251,6 +305,8 @@ A document without a complete header block is non-compliant and must not be trea
 ## 5. Versioning Rules
 
 Versioning applies to Canonical documents, Role Charters, and Governance Prompts.
+
+**Class 8 (Proof of Gate) documents do not use version numbers.** Gate IDs (`POG-<YYYYMMDD>-<nn>`) serve as the unique identifier. When a PoG must be re-issued, a new Gate ID is issued and the prior PoG is marked Superseded — no version increment is involved.
 
 **A version increment is required when:**
 - Meaning changes
@@ -315,6 +371,7 @@ Governance review must be triggered at the following points:
 | New role created | Charter exists and is compliant before role is treated as authoritative | Head of Specs Team |
 | Periodic audit | All documents checked for compliance | Head of Specs Team (quarterly recommended) |
 | Governance guide updated | Governance reviewer prompt updated in same change | Head of Specs Team |
+| PoG referenced document incremented | All PoG documents referencing that document checked for staleness | Head of Specs Team / PMO Lead |
 
 ### How compliance is checked
 
@@ -329,24 +386,27 @@ Automated review assists but does not replace owner accountability.
 | **Blocking** | Missing owner, missing status, Canonical document with no version | Document must not be merged or treated as authoritative until remediated |
 | **Required** | Incorrect lifecycle state, version not incremented when required, Supporting artifact not reviewed inline | Must be remediated before the change is considered complete |
 | **Advisory** | Minor header formatting inconsistency, Last Updated date stale | Should be remediated; does not block |
+| **Blocking (Class 8)** | PoG references a document version that has been incremented — gate is stale | Gate treated as uncleared; item may not advance until PoG re-issued |
 
 ### Enforcement Roles
 
 **Head of Specs Team**
--   Owns lifecycle standards
--   Blocks non‑compliant documents
--   Resolves classification ambiguity
--   Conducts audits
+- Owns lifecycle standards
+- Blocks non‑compliant documents
+- Resolves classification ambiguity
+- Conducts audits
+- Triggers PoG staleness checks when a referenced document is incremented
 
 **Facilitator (Process Role)**
--   Enforces lifecycle compliance during governed routines.
--   May halt execution if lifecycle rules are violated.
--   Has no authority to waive requirements or approve non-compliance.
+- Enforces lifecycle compliance during governed routines
+- May halt execution if lifecycle rules are violated
+- Has no authority to waive requirements or approve non-compliance
+- Must verify PoG validity before allowing a gated item to advance
 
-**Challenger(Process Role)**
--   Surfaces documentation risk or ambiguity during decision routines.
--   May delay advancement until documentation integrity is clarified.
--   Does not assess, approve, or override lifecycle compliance.
+**Challenger (Process Role)**
+- Surfaces documentation risk or ambiguity during decision routines
+- May delay advancement until documentation integrity is clarified
+- Does not assess, approve, or override lifecycle compliance
 
 ---
 
@@ -354,13 +414,13 @@ Automated review assists but does not replace owner accountability.
 
 ### Purpose
 
-When a canonical spec owner identifies that the system's actual behaviour deviates from the canonical specification --- whether discovered during implementation, code review, testing, or audit --- they must document the deviation. However, documentation without triage is insufficient. An undated, unprioritised deviation note in a spec can sit unresolved indefinitely, as demonstrated by BLG-TECH-01 (Sharpe variance and capital efficiency errors sat in `analytics_endpoints.md` known limitations and `metrics_definitions.md` Appendix E through the full v1.5 lifecycle without a forced resolution path).
+When a canonical spec owner identifies that the system's actual behaviour deviates from the canonical specification — whether discovered during implementation, code review, testing, or audit — they must document the deviation. However, documentation without triage is insufficient. An undated, unprioritised deviation note in a spec can sit unresolved indefinitely, as demonstrated by BLG-TECH-01 (Sharpe variance and capital efficiency errors sat in `analytics_endpoints.md` known limitations and `metrics_definitions.md` Appendix E through the full v1.5 lifecycle without a forced resolution path).
 
 This section defines the mandatory standard for all such documentation.
 
 ### Required fields when documenting a deviation
 
-Every deviation documented in a canonical spec --- whether in a "Known Limitations", "Backlog Items", "Deviations", or equivalent section --- must include at the time of writing:
+Every deviation documented in a canonical spec — whether in a "Known Limitations", "Backlog Items", "Deviations", or equivalent section — must include at the time of writing:
 
 | Field | Description |
 |-------|-------------|
@@ -369,7 +429,7 @@ Every deviation documented in a canonical spec --- whether in a "Known Limitatio
 | **Priority** | P0 / P1 / P2 / P3 using the standard backlog priority definitions |
 | **Target resolution release** | The specific version by which this must be resolved (not "TBD") |
 | **Owner** | The named role responsible for the fix |
-| **Backlog reference** | The backlog item ID (e.g. BLG-TECH-01) --- must be created at the time the deviation is documented |
+| **Backlog reference** | The backlog item ID (e.g. BLG-TECH-01) — must be created at the time the deviation is documented |
 
 ### Priority-based resolution rules
 
@@ -396,12 +456,12 @@ This standard applies to all canonical documents, regardless of which function t
 
 This guide applies to **all roles that own documents**, including those outside the Specs Team. Specifically:
 
-- **Product Owner** --- Planning Documents must follow Class 4 rules
-- **Engineering Lead** --- any documentation owned by the engineering function must follow this guide
-- **Infrastructure & Operations Documentation Owner** --- Operational Records and Operational Guides must follow Class 3 and Class 1 rules respectively
-- **QA & Testing Owner** --- testing documentation must follow this guide
+- **Product Owner** — Planning Documents must follow Class 4 rules
+- **Engineering Lead** — any documentation owned by the engineering function must follow this guide
+- **Infrastructure & Operations Documentation Owner** — Operational Records and Operational Guides must follow Class 3 and Class 1 rules respectively
+- **QA & Testing Owner** — testing documentation must follow this guide
 
-The Head of Specs Team sets these standards. Roles outside the Specs Team follow them. This is a standards relationship, not a management relationship --- the Head of Specs Team does not manage those roles but does have authority to flag non-compliance to their functional lead.
+The Head of Specs Team sets these standards. Roles outside the Specs Team follow them. This is a standards relationship, not a management relationship — the Head of Specs Team does not manage those roles but does have authority to flag non-compliance to their functional lead.
 
 ---
 
