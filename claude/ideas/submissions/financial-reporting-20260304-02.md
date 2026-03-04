@@ -1,6 +1,6 @@
 **Owner:** Financial Reporting & Records Owner
 **Class:** Planning Document (Class 4)
-**Status:** Submitted
+**Status:** Advancing
 **Submitted by:** Financial Reporting & Records Owner
 **Submitted at:** 2026-03-04
 **Window ID:** IW-20260304-01
@@ -58,9 +58,9 @@ Reasoning: Should be implemented before the tax year summary endpoint to ensure 
 
 | Field | Value |
 |-------|-------|
-| STEP 4 classification | |
-| Classification date | |
+| STEP 4 classification | ✅ Advancing |
+| Classification date | 2026-03-04 |
 | Classified by | Product Owner |
-| STEP 5 outcome | |
-| Outcome date | |
+| STEP 5 outcome | ✅ Advance — merged into 4.1b scope as prerequisite pre-work |
+| Outcome date | 2026-03-04 |
 | Notes | |

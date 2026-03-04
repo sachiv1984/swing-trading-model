@@ -1,6 +1,6 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Planning Document (Class 4)
-**Status:** Submitted
+**Status:** Advancing
 **Submitted by:** API Contracts & Documentation Owner
 **Submitted at:** 2026-03-04
 **Window ID:** IW-20260304-01
@@ -58,9 +58,9 @@ Reasoning: The mandate exists but is unenforced. Every PR since the mandate was 
 
 | Field | Value |
 |-------|-------|
-| STEP 4 classification | |
-| Classification date | |
+| STEP 4 classification | ✅ Advancing |
+| Classification date | 2026-03-04 |
 | Classified by | Product Owner |
-| STEP 5 outcome | |
-| Outcome date | |
+| STEP 5 outcome | ✅ Advance — promoted to backlog (interim enforcement; long-term: auto-generation) |
+| Outcome date | 2026-03-04 |
 | Notes | |

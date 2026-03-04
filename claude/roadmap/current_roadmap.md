@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-03
+**Last Updated:** 2026-03-04
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -123,7 +123,7 @@ Last Updated: 2026-03-01
 
 ---
 
-### v1.7 — Foundation & Governance *(revised)*
+### 3.3 Foundation & Governance (v1.7)
 
 **Status:** ✅ Complete — Shipped 2026-03-03
 **Cycle:** 2026-03-02__release-v1.7
@@ -229,7 +229,9 @@ A proper home page for the product. On load: open positions count, total portfol
 > ⛔ **Hard gates — v2.0 pre-alignment may not open until ALL THREE are confirmed:**
 > 1. Structured logging / observability standards (v1.7) — **complete**
 > 2. API versioning strategy decision record (v1.7) — **complete**
-> 3. QA planning session for notification delivery — **complete**
+> 3. QA planning session for notification delivery — **pending** *(uncleared as of 2026-03-04)*
+
+> 🔄 **Auto-advance trigger (DL-003, 2026-03-04):** Once the QA planning session for notification delivery is completed and documented, 3.5 Alerts auto-advances to active v2.0 planning without requiring a new rebalance cycle. The session output must specify: test types required, notification delivery modes to be tested, expected test infrastructure.
 
 Email alerts for: stop loss approach, grace period ending (days 8–9 warning), market regime change to risk-off, daily portfolio summary. Optional SMS. In-app notification feed. Configurable per-user preferences.
 
@@ -247,6 +249,8 @@ BLG-FEAT-07 (CSV Export) was delivered as part of the QWB Quick Wins Bundle and 
 
 A structured, server-side generated tax-year P&L statement. GBP-adjusted, fee-inclusive, covering all realised gains and losses in a given tax year. This is a financial record, not an analytics view — it requires its own canonical specification separate from the analytics endpoint. Dedicated report endpoint required.
 
+> **Scope note (2026-03-04):** Realised vs Unrealised P&L display labelling (originally submitted as BLG-NEW-06) is pre-work for this item. The P&L statement must clearly distinguish realised and unrealised amounts per trade. BLG-NEW-06 is merged into 4.1b pre-work scope — not a standalone backlog item.
+
 #### 4.1c — Server-Side PDF Report *(new sub-item)*
 **Status:** Planned
 **Effort:** Low–Medium (1–2 days)
@@ -255,14 +259,15 @@ A structured, server-side generated tax-year P&L statement. GBP-adjusted, fee-in
 Replaces the current client-side browser-print PDF export on the analytics page. Server-side generation using a library (WeasyPrint or equivalent). Output: a consistently formatted, printable performance report. Covers executive summary, key insights, and advanced metrics. Removes dependency on browser print behaviour.
 
 #### 4.3 — Signal Exposure Enhancement *(new — narrow scope)*
-**Status:** Planned — gated
-**Effort:** Low (frontend only once spec gate is cleared)
+**Status:** Planned — active v2.0 planning *(§13 gate cleared; PoG POG-20260304-01 issued 2026-03-04)*
+**Effort:** Low (frontend only — backend already supports these parameters)
 **Value:** Medium
-**Pre-requisite:** `strategy_rules.md` update confirming `top_n` and `lookback_days` are formally user-configurable parameters. Decision record required before pre-alignment opens.
 
-Expose the existing `top_n` and `lookback_days` signal generation parameters as user-facing controls on the signals page. The backend already supports these parameters — this is a frontend and spec task, not an engineering one. Must not be treated as a configurable strategy builder; scope is strictly limited to these two existing parameters.
+Expose the existing `top_n` and `lookback_days` signal generation parameters as user-facing controls on the signals page. The backend already supports these parameters — this is a frontend and spec task, not an engineering one.
 
-> **Scope boundary:** Any screening parameter beyond `top_n` and `lookback_days` would constitute a configurable strategy builder, which is a §13 boundary violation. This item must not expand beyond the two named parameters without a formal strategy rules revision.
+> **Gate clearance (DL-004, 2026-03-04):** The v1.7 SRB (EPIC-02) confirmed that `top_n` and `lookback_days` are display/query-scope controls, not strategy execution parameters, and their exposure does not violate §13.2. PoG: `claude/evidence/gates/signal-exposure-4.3_20260304.md` (POG-20260304-01). Referenced document: `strategy_rules.md` v1.3.
+
+> **Scope constraint (immutable):** Only `top_n` and `lookback_days` are cleared by this PoG. Any parameter beyond these two — including signal weights, scoring logic, or ranking methodology — requires a new §13 review before it may enter pre-alignment. This PoG is automatically stale if `strategy_rules.md` is incremented.
 
 ---
 
@@ -309,10 +314,12 @@ These features have been discussed and provisionally agreed but may not enter pr
 
 | Feature | Gate condition | Gate owner |
 |---------|---------------|------------|
-| Signal parameter exposure (4.3) | `strategy_rules.md` updated to formally define `top_n` and `lookback_days` as user-configurable | Strategy Rules owner + Product Owner |
+| ~~Signal parameter exposure (4.3)~~ | ~~`strategy_rules.md` updated to formally define `top_n` and `lookback_days` as user-configurable~~ | ~~Strategy Rules owner + Product Owner~~ |
 | AI Journal Summarisation | §13 boundary decision documented: does non-deterministic AI output conflict with the deterministic system principle? | Product Owner + Strategy Rules owner |
 | New Technical Indicators | Strategy rules review: which indicators, if any, are canonical to this strategy? | Strategy Rules owner |
 | Market Correlation | External data pipeline decision: do we ingest benchmark prices (SPY, FTSE)? | Product Owner + Head of Engineering |
+
+> **Gate cleared (2026-03-04):** Signal parameter exposure (4.3) gate cleared by PoG POG-20260304-01. Item promoted to active v2.0 planning. See 4.3 entry in §3 above.
 
 ---
 
@@ -339,7 +346,7 @@ When evaluating new features:
 | **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision — ✅ Shipped 2026-03-03 |
 | **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk |
 | **v1.9** | User Value & Insight | Trade reflection template, compliance metrics, cohort analysis, dashboard homepage |
-| **v2.0** | Reporting & Alerts | Alerts & notifications (hard gates apply), tax-year statement, server-side PDF, signal parameter exposure (gated) |
+| **v2.0** | Reporting & Alerts | Alerts & notifications (QA gate pending), tax-year statement, server-side PDF, signal parameter exposure (gate cleared — active planning) |
 | **v2.1+** | Enhancements | Watchlists, chart interactivity, Prometheus |
 
 ---

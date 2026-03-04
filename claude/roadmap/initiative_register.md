@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-01
+**Last Updated:** 2026-03-04
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -19,19 +19,22 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 | ID | Initiative | Release | Status | Decision log ref |
 |----|-----------|---------|--------|-----------------|
-| BLG-TECH-04 | CI/CD GitHub Actions Validation Workflow | v1.7 | Planned — unblocked | — |
-| §13-BR | Strategy Rules §13 Boundary Review | v1.7 | Planned | — |
-| HEAT-DEF | Metrics Definitions — Portfolio Heat Formula & Thresholds | v1.7 | Planned | — |
-| LOG-STD | Structured Logging / Observability Standards | v1.7 | Planned | — |
-| API-VER | API Versioning Strategy Decision Record | v1.7 | Planned | — |
-| 3.4 | Risk Dashboard | v1.8 | Planned — pre-req: HEAT-DEF | — |
+| 3.4 | Risk Dashboard | v1.8 | Planned — pre-req gate cleared (v1.7) | — |
+| BLG-NEW-01 | Golden Output Regression Baseline for CI | v1.8 | Backlog — P1 | DL-005 |
+| BLG-NEW-02 | Backtest vs Live Stop Reconciliation Report | v1.8 | Backlog — P1 (after BLG-NEW-01) | DL-005 |
+| BLG-NEW-03 | Define and Document Unavailability Failure Mode | v1.8 | Backlog — P1 | DL-005 |
+| BLG-NEW-04 | AI-Assisted Workflow Governance Policy | v1.8 | Backlog — P2 | DL-005 |
+| BLG-NEW-05 | Dependency Vulnerability Scanning in CI | v1.8 | Backlog — P1 | DL-005 |
+| BLG-NEW-07 | Running API Changelog Document | v1.8 | Backlog — P1 | DL-005 |
+| BLG-NEW-08 | Automated OpenAPI Drift Detection in CI | v1.8 | Backlog — P1 | DL-005 |
 | BLG-FEAT-08 | Basic Compliance Metrics | v1.9 | Planned — pre-req gate for 5.1 | — |
 | 5.1 | Structured Trade Reflection Template | v1.9 | Planned — pre-req: BLG-FEAT-08 | — |
 | 5.2 | Cohort Analysis | v1.9 | Planned | — |
 | 5.3 | Dashboard Homepage / Session Summary | v1.9 | Planned | — |
-| 3.5 | Alerts & Notifications | v2.0 | Planned — hard gates apply (see DL-002) | DL-002 |
-| 4.1b | Tax-Year P&L Statement | v2.0 | Planned | — |
-| 4.1c | Server-Side PDF Report | v2.0 | Planned | — |
+| 3.5 | Alerts & Notifications | v2.0 | Deferred — QA gate pending; auto-advance trigger set (DL-003) | DL-002, DL-003 |
+| 4.1b | Tax-Year P&L Statement | v2.0 | Planned — BLG-NEW-06 P&L labelling pre-work merged into scope | — |
+| 4.1c | Server-Side PDF Report | v2.0 | Planned — lowest-value item; displacement candidate | — |
+| 4.3 | Signal Exposure Enhancement | v2.0 | Active planning — §13 gate cleared (PoG POG-20260304-01) | DL-004 |
 
 ---
 
@@ -39,7 +42,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 | ID | Initiative | Gate condition | Gate owner |
 |----|-----------|---------------|------------|
-| 4.3 | Signal Exposure Enhancement | `strategy_rules.md` §13 boundary review confirms `top_n` and `lookback_days` are user-configurable | Strategy Rules owner + Product Owner |
+| ~~4.3~~ | ~~Signal Exposure Enhancement~~ | ~~Gate cleared 2026-03-04 (PoG POG-20260304-01)~~ | ~~Strategy Rules owner + Product Owner~~ |
 | AI-SUM | AI Journal Summarisation | §13 boundary decision: non-deterministic AI vs determinism principle | Product Owner + Strategy Rules owner |
 | TECH-IND | New Technical Indicators | Strategy rules review confirms which indicators are in scope | Strategy Rules owner |
 | MKT-COR | Market Correlation Analysis | External data pipeline decision (SPY/FTSE ingestion) | Product Owner + Head of Engineering |
@@ -92,3 +95,11 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 | BLG-FEAT-05 | Win Rate by Month Chart | 2026-03-01 | v1.6.1 |
 | BLG-FEAT-06 | Grace Period Indicator | 2026-03-01 | v1.6.1 |
 | BLG-FEAT-07 | CSV Export of Trade History | 2026-03-01 | v1.6.1 |
+| BLG-TECH-04 | CI/CD GitHub Actions Validation Workflow | 2026-03-03 | v1.7 |
+| §13-BR | Strategy Rules §13 Boundary Review | 2026-03-03 | v1.7 |
+| HEAT-DEF | Metrics Definitions — Portfolio Heat Formula & Thresholds | 2026-03-03 | v1.7 |
+| LOG-STD | Structured Logging / Observability Standards | 2026-03-03 | v1.7 |
+| API-VER | API Versioning Strategy Decision Record | 2026-03-03 | v1.7 |
+| BLG-TECH-06 | Canonicalise sharpe_ratio_trade_method | 2026-03-03 | v1.7 |
+| BLG-TECH-08 | Align portfolio_endpoints.md positions summary | 2026-03-03 | v1.7 |
+| BLG-TECH-09 | Add holding_days to GET /trades | 2026-03-03 | v1.7 |

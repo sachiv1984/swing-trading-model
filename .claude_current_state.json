@@ -1,27 +1,31 @@
 {
-  "active_cycle": "2026-03-02__release-v1.7",
-  "cycle_name": "v1.7 — Foundation & Governance",
+  "active_cycle": "2026-03-04__item-3.4",
+  "cycle_name": "Roadmap Rebalance — Item 3.4 Risk Dashboard",
   "status": "Closed",
-  "closure_status": "Closed_with_actions",
-  "closure_record": "claude/cycles/2026-03-02__release-v1.7/closure_record.md",
-  "post_ship_complete": true,
-  "engine": "post_ship_closure",
+  "closure_status": "Complete",
+  "engine": "roadmap_rebalance",
   "last_sync_utc": "2026-03-04T00:00:00Z",
-  "backlog_slice_path": "claude/cycles/2026-03-02__release-v1.7/stage4_backlog_slice.md",
-  "execution_state_path": "claude/cycles/2026-03-02__release-v1.7/execution_state.json",
-  "verification_report": "claude/cycles/2026-03-02__release-v1.7/verification_report.md",
-  "verification_status": "Verified",
-  "next_cycle_unblocked": true,
-  "gh_sync_status": "Pending",
-  "hard_gates": {
-    "v1.8": "EPIC-03",
-    "v2.0": ["EPIC-04", "EPIC-05"],
-    "Gated_Features": "EPIC-02"
+  "prior_cycle": "2026-03-02__release-v1.7",
+  "rebalance_decisions": {
+    "DL-003": "3.5 Alerts — Defer confirmed; auto-advance trigger set",
+    "DL-004": "4.3 Signal Exposure — Gate cleared (POG-20260304-01); active v2.0 planning",
+    "DL-005": "BLG-NEW-01 through BLG-NEW-08 added to backlog"
   },
-  "hard_gates_cleared": {
-    "v1.8": true,
-    "v2.0_logging": true,
-    "v2.0_api_versioning": true,
-    "Gated_Features": true
-  }
+  "active_pog": {
+    "POG-20260304-01": {
+      "initiative": "4.3 Signal Exposure Enhancement",
+      "file": "claude/evidence/gates/signal-exposure-4.3_20260304.md",
+      "stale_if": "strategy_rules.md incremented past v1.3"
+    }
+  },
+  "v2_0_gates": {
+    "gate_1_logging": true,
+    "gate_2_api_versioning": true,
+    "gate_3_qa_planning": false,
+    "gate_3_auto_advance": "Once QA planning session for notification delivery documented — see DL-003"
+  },
+  "next_cycle_unblocked": true,
+  "next_release": "v1.8",
+  "cps_baseline": 2.0,
+  "gh_sync_status": "Pending"
 }

@@ -80,3 +80,33 @@
 **FinOps & Resource Architect finding:** No workforce constraints are violated by the current roadmap. The v1.7 → v1.8 → v1.9 → v2.0 sequencing is appropriate. The 3.5 Alerts hard gate pre-conditions ensure workforce is not allocated prematurely to the most complex and resource-intensive feature. No Replace, Defer, or Kill is forced by workforce constraints in this cycle.
 
 Scarce skill note: Metrics Definitions owner is required for both v1.7 (heat formula) and v1.9 (BLG-FEAT-08). These should not run concurrently. Confirmed sequential sequencing (v1.7 heat formula before v1.9 BLG-FEAT-08 may proceed) already satisfies this constraint.
+
+---
+
+## Capacity Released — Cycle 2026-03-04__item-3.4
+
+### Trigger: v1.7 Foundation & Governance — Complete (2026-03-03)
+
+| Field | Value |
+|-------|-------|
+| Estimated effort released | ~3.5–4 days (6 EPICs: CI/CD, §13 review, metrics defs, logging, API versioning, spec debt) |
+| Skills released | Governance/spec: Product Owner, Strategy Rules owner, Metrics owner. Engineering: backend/CI. |
+| Duration | Immediately available for v1.8 |
+| Constraints | None — all v1.7 work is complete and verified |
+
+### New Backlog Items Added (from IW-20260304-01 — STEP 5 Advance)
+
+| Item | Est. Effort | Skills | Priority |
+|------|------------|--------|---------|
+| BLG-NEW-01 Golden Output CI Baseline | 1–3 days | Engineering + QA | P1 |
+| BLG-NEW-02 Backtest Stop Reconciliation | 1–3 days | Engineering + QA | P1 (after BLG-NEW-01) |
+| BLG-NEW-03 Unavailability Failure Mode | ~0.5 day | Governance | P1 |
+| BLG-NEW-04 AI Governance Policy | ~0.5 day | Governance | P2 |
+| BLG-NEW-05 Dependency Vulnerability Scanning | ~0.5 day | Engineering (CI) | P1 |
+| BLG-NEW-07 Running API Changelog | ~0.5 day | Documentation | P1 |
+| BLG-NEW-08 OpenAPI Drift Detection CI | ~0.5 day | Engineering (CI) | P1 |
+| BLG-NEW-06 (merged into 4.1b) | — | — | — |
+
+**Skill-Silo check (v1.8 scope):** Governance load ~21%. Within 20–60% bounds. No alert triggered. Product Owner sign-off capacity confirmed.
+
+**Assessment:** New backlog items are predominantly execution-heavy (CI, engineering). Combined with the Risk Dashboard (execution-heavy), v1.8 is well-balanced. The small governance items (BLG-NEW-03, 04, 07) are low-effort and can be delivered alongside engineering work without creating a governance bottleneck.

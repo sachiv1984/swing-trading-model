@@ -1,6 +1,6 @@
 **Owner:** AI Compliance & Governance Officer
 **Class:** Planning Document (Class 4)
-**Status:** Submitted
+**Status:** Advancing
 **Submitted by:** AI Compliance & Governance Officer
 **Submitted at:** 2026-03-04
 **Window ID:** IW-20260304-01
@@ -58,9 +58,9 @@ Reasoning: AI tool usage in this workflow is growing. The longer the policy is a
 
 | Field | Value |
 |-------|-------|
-| STEP 4 classification | |
-| Classification date | |
+| STEP 4 classification | ✅ Advancing |
+| Classification date | 2026-03-04 |
 | Classified by | Product Owner |
-| STEP 5 outcome | |
-| Outcome date | |
+| STEP 5 outcome | ✅ Advance — promoted to backlog (references CLAUDE.md as anchor) |
+| Outcome date | 2026-03-04 |
 | Notes | |

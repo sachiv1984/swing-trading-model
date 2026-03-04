@@ -3,7 +3,7 @@
 Owner: Product Owner
 Status: Active
 Class: Planning Document (Class 4)
-Last Updated: 2026-03-03
+Last Updated: 2026-03-04
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -678,3 +678,189 @@ Per document_lifecycle_guide.md, Owner must be a named governance role (e.g., He
 - P3: 9 (D1, D4, D5, D6, D8, D9, G3, G4, G5)
 - Oldest open items: G1, G2, G5 — open since 2026-02-21
 - Recommended resolution order: D2 → G1 → D7 → D3 → G2 (address spec/impl integrity before reference artefacts)
+
+---
+
+## 8. New Backlog Items — IW-20260304-01 (Cycle 2026-03-04__item-3.4)
+
+Items promoted to backlog from Idea Intake Window IW-20260304-01 (2026-03-04). Decision log: DL-005.
+All items compete within v1.8 release capacity. Release planning engine determines v1.8 backlog slice.
+
+---
+
+### BLG-NEW-01 — Golden Output Regression Baseline for CI
+**Priority:** P1 (High)
+**Type:** Quality / CI
+**Owner:** Engineering + QA
+**Source:** IDEA-director-of-quality-20260304-02 — Director of Quality, IW-20260304-01
+**Cycle added:** 2026-03-04__item-3.4
+
+**Problem**
+The current CI gate (`POST /validate/calculations`, EPIC-01) checks only that `critical_failed > 0` blocks the merge. It does not verify that specific calculations return the correct numeric values. A change that silently alters the trailing stop formula from `CurrentPrice - (2 × ATR)` to `CurrentPrice - (2.1 × ATR)` would pass the current gate. Numeric regressions are the highest-risk defect class in a trading system.
+
+**Scope**
+- Define a set of deterministic golden test cases: known inputs (entry_price, ATR, risk_percent, etc.) with expected output values derived directly from the canonical strategy spec
+- Store as `tests/golden_outputs.json` — treated as a canonical artefact; updated only via spec-linked PR
+- Scope limited to stop/sizing calculations only (per STEP 5 scoping from IW-20260304-01)
+- Add a CI step that calls the backend with each golden input and asserts output matches to required precision
+- Any numeric divergence from golden values fails the build
+
+**Acceptance Criteria**
+- `tests/golden_outputs.json` exists with spec-derived golden values for stop and sizing calculations
+- CI step added that runs golden output assertions on every PR
+- Build fails on any numeric deviation from golden values
+- Precision tolerance documented (e.g., 4 decimal places for share counts)
+- Golden values derived from canonical spec, not from current implementation
+
+**Dependencies**
+- None (prerequisite: BLG-NEW-02 must follow, not precede)
+
+---
+
+### BLG-NEW-02 — Backtest vs Live Stop Reconciliation Report
+**Priority:** P1 (High)
+**Type:** Quality / CI
+**Owner:** Engineering + QA
+**Source:** IW-20260304-01 (promoted 2026-03-04)
+**Cycle added:** 2026-03-04__item-3.4
+**Dependency:** After BLG-NEW-01 (golden output baseline must be in place first)
+
+**Problem**
+There is no automated verification that the trailing stop formula used in backtests and the formula used in the live system produce identical results for the same inputs. Silent divergence between backtest and live logic is a category of defect that cannot be caught by either gate independently.
+
+**Scope**
+- Report or CI assertion that compares backtest stop calculations vs live system stop calculations for a set of known inputs
+- Output: reconciliation result confirming parity or flagging divergence
+
+**Acceptance Criteria**
+- Automated check exists that verifies backtest and live stop logic produce identical results for all golden inputs
+- Any divergence between backtest and live calculation fails the check
+
+---
+
+### BLG-NEW-03 — Define and Document Unavailability Failure Mode
+**Priority:** P1 (High)
+**Type:** Policy / Governance
+**Owner:** Infrastructure & Operations Owner
+**Source:** IW-20260304-01 (promoted 2026-03-04)
+**Cycle added:** 2026-03-04__item-3.4
+**Effort:** ~0.5 day
+
+**Problem**
+There is no documented policy for what happens when the system is unavailable during a trading session (e.g., backend down, market data feed unavailable). The system has no documented failure modes or fallback procedures for the user.
+
+**Scope**
+- Define and document the unavailability failure mode: what the user should do, what the system state is, and any manual fallback procedures
+- Document where this policy lives (e.g., OPERATIONAL_GUIDE.md or a new docs/ops/ document)
+
+**Acceptance Criteria**
+- Unavailability failure mode documented: system states covered, user action required, data integrity implications
+- Document registered in appropriate governance index
+
+---
+
+### BLG-NEW-04 — AI-Assisted Workflow Governance Policy
+**Priority:** P2 (Medium)
+**Type:** Governance
+**Owner:** Product Owner
+**Source:** IW-20260304-01 (promoted 2026-03-04)
+**Cycle added:** 2026-03-04__item-3.4
+**Effort:** ~0.5 day
+
+**Problem**
+The project uses AI-assisted workflows (Claude Code) for governed routines. There is no documented policy governing: which decisions may be taken by AI, which require human override, and how AI output is reviewed before it becomes a canonical record.
+
+**Scope**
+- Author an AI-Assisted Workflow Governance Policy document
+- Define: AI authority scope, human-in-the-loop requirements, escalation triggers, record-keeping obligations
+
+**Acceptance Criteria**
+- Policy document authored and filed under appropriate governance path
+- Policy covers: scope of AI authority, mandatory human review checkpoints, record-keeping requirements
+
+---
+
+### BLG-NEW-05 — Dependency Vulnerability Scanning in CI
+**Priority:** P1 (High)
+**Type:** Security / CI
+**Owner:** Engineering (CI)
+**Source:** IW-20260304-01 (promoted 2026-03-04)
+**Cycle added:** 2026-03-04__item-3.4
+**Effort:** ~0.5 day
+
+**Problem**
+There is no automated scanning of Python dependencies for known vulnerabilities in the CI pipeline. A compromised or vulnerable dependency could be introduced silently.
+
+**Scope**
+- Add a CI step that scans Python dependencies (e.g., using `pip-audit` or `safety`) for known CVEs
+- Block merge (or warn at configurable severity) on high/critical vulnerabilities
+- Integrate with existing `.github/workflows/` structure
+
+**Acceptance Criteria**
+- Dependency vulnerability scan runs on every PR
+- High/critical CVEs block merge (or produce a required review comment)
+- Scan tool and severity threshold documented
+
+---
+
+### BLG-NEW-06 — Realised vs Unrealised P&L Labelling
+**Status:** Merged into 4.1b pre-work scope — not a standalone backlog item
+**Source:** IW-20260304-01
+**Cycle added:** 2026-03-04__item-3.4
+
+This item (clear distinction of realised vs unrealised P&L amounts in the tax-year P&L statement) has been merged into the 4.1b Tax-Year P&L Statement scope as pre-work. See current_roadmap.md §4.1b scope note (2026-03-04). No standalone delivery required.
+
+---
+
+### BLG-NEW-07 — Running API Changelog Document
+**Priority:** P1 (High)
+**Type:** Documentation / Governance
+**Owner:** API Contracts & Documentation Owner
+**Source:** IW-20260304-01 (promoted 2026-03-04)
+**Cycle added:** 2026-03-04__item-3.4
+**Effort:** ~0.5 day
+
+**Problem**
+There is no single running changelog document for API contract changes. Changes to endpoint contracts (new fields, removed fields, version bumps) are recorded in individual spec files but there is no centralised, human-readable history of API evolution across versions.
+
+**Scope**
+- Create a running API Changelog document that summarises contract changes per version
+- Cover all contracts under `docs/specs/api_contracts/`
+- Backfill from v1.8.x → v1.9.0 changes (EPIC-06 scope)
+- Document maintainer obligation: must be updated alongside every contract version bump
+
+**Acceptance Criteria**
+- API Changelog document exists and is registered in Specs_Index.md
+- All v1.9.0 contract changes (EPIC-06) are backfilled
+- Maintenance obligation documented alongside contract spec authoring workflow
+
+---
+
+### BLG-NEW-08 — Automated OpenAPI Drift Detection in CI
+**Priority:** P1 (High)
+**Type:** CI / Governance
+**Owner:** Engineering (CI)
+**Source:** IW-20260304-01 (promoted 2026-03-04)
+**Cycle added:** 2026-03-04__item-3.4
+**Effort:** ~0.5 day
+
+**Problem**
+`docs/reference/openapi.yaml` was not updated during EPIC-06 when three contracts were bumped to v1.9.0 (BLG-SPEC-D7). There is no CI check that detects drift between the markdown API contracts and openapi.yaml. Drift will recur without an automated gate.
+
+**Scope**
+- Add a CI step that detects drift between `openapi.yaml` and the markdown API contracts
+- Approach: either (a) generate openapi.yaml from contracts and compare, or (b) run a custom lint/diff check against known contract fields
+- Block merge on detected drift
+
+**Acceptance Criteria**
+- CI step detects drift between openapi.yaml and markdown contracts
+- Merge blocked if drift is detected
+- Approach documented (generation vs diff) — approach decision to be made in pre-alignment
+
+---
+
+**Section Summary (IW-20260304-01 additions)**
+- Total items added: 7 standalone (BLG-NEW-01 through BLG-NEW-08 excl. BLG-NEW-06) + 1 merged (BLG-NEW-06 → 4.1b)
+- P1: 5 (BLG-NEW-01, 02, 03, 05, 07, 08)
+- P2: 1 (BLG-NEW-04)
+- Merged: 1 (BLG-NEW-06)

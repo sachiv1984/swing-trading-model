@@ -1,6 +1,6 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
-**Status:** Submitted
+**Status:** Rejected
 **Submitted by:** Product Owner
 **Submitted at:** 2026-03-04
 **Window ID:** IW-20260304-01
@@ -58,9 +58,9 @@ Reasoning: Every day without this feature is a day when a missed exit recommenda
 
 | Field | Value |
 |-------|-------|
-| STEP 4 classification | |
-| Classification date | |
+| STEP 4 classification | ❌ Rejected |
+| Classification date | 2026-03-04 |
 | Classified by | Product Owner |
-| STEP 5 outcome | |
-| Outcome date | |
+| STEP 5 outcome | N/A — not advanced to STEP 5 debate |
+| Outcome date | N/A |
 | Notes | |
