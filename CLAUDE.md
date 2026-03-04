@@ -39,6 +39,7 @@ These rules apply in every session regardless of which engine is running:
 - **Commit format is non-negotiable:** `[EPIC-xx][ST-xx] <description>` on all commits to `exec/**` branches.
 - **PR title format is non-negotiable:** `[EPIC-xx] <description>` — required by `quality_gate.yml`.
 - **Bash commands that write files outside an active prompt's write scope are prohibited**, even as side-effects.
+- **Document section headings must be descriptive and human-readable.** Task IDs, story IDs, and ticket references (e.g. `TASK-11`, `ST-xx`) must never appear in headings. They belong only in metadata blocks, changelogs, or inline cross-references.
 
 Shared standards (escalation format, identifier conventions, halt output format) are defined in:
 `claude/system/shared_standards.md` — read this when any prompt references "per shared_standards".
