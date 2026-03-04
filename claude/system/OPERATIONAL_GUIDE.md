@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 1.8  
+**Version:** 1.9  
 **Last Updated:** 2026-03-03  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -32,6 +32,9 @@ sync gh                     # parses active stage4_backlog_slice.md → creates/
 
 # Phase 2 — Sprint Planning
 plan sprint [--cycle "<cycle_id>"] [--mode "strict|standard"] [--dry-run]
+
+# Amendment Cycle (emergency only — after Phase 1B published, before Phase 2 sealed)
+amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>" [--mode "strict|standard"]
 
 # Phase 3 — Sprint Execution
 run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mode "strict|standard"] [--dry-run]
@@ -68,6 +71,9 @@ State pointer:  .claude_current_state.json  (always check for active_cycle befor
 | No autonomous merge — QA sign-off and Product Owner acceptance always required | Phase 3 |
 | No cycle unlock without `Verified` or `Verified_with_deviations` status | Phase 4 |
 | Post-Ship Closure must complete before the next cycle's Phase 1 or Phase 1B is invoked | Post-Ship |
+| Amendment cycles are emergency-only — delivery pressure never qualifies | Amendment |
+| Amendments require two-authority ratification — PMO Lead may never self-approve | Amendment |
+| Amendments are not permitted after Phase 2 seals (`sprint_sealed = true`) | Amendment |
 
 ### Conflict Resolution — Who Wins What
 
@@ -247,6 +253,7 @@ Each cycle progresses through up to five phases:
 | **Phase 3** | Sprint Execution & Close | Sprint start date reached | Delivered increments + sprint close record |
 | **Phase 4** | Delivery Verification | Phase 3 complete (`Sprint_Complete`) | Verification report + next cycle unlocked |
 | **Post-Ship** | Post-Ship Closure | Phase 4 complete (`Verified`) | Closed documents + applied lessons learnt |
+| **Amendment** | Amendment Cycle | Emergency post-publish (before Phase 2 sealed) | Amended backlog slice + ratification record |
 
 Phase 1 is **optional**. Phase 1B may be invoked directly when a release is already approved on the roadmap. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
 
@@ -360,7 +367,7 @@ All progress is recorded in `claude/cycles/<cycle_id>/state.json`. The routine i
 | `Published` | Sealed; immutable; cycle summary + lessons filed |
 | `Blocked` | One or more open escalations; Publish Gate cannot pass |
 
-**Terminal state rule:** Once `Published`, the cycle folder is sealed. No step may re-run, no artefact may be modified, no escalation may be appended. Any post-publish change requires a new **amendment cycle** referencing the original `cycle_id`.
+**Terminal state rule:** Once `Published`, the cycle folder is sealed. No step may re-run, no artefact may be modified, no escalation may be appended. Any post-publish backlog change requires an **Amendment Cycle** (`amend cycle --cycle "<cycle_id>" --reason "emergency-fix|hard-blocker"`). Amendment cycles are emergency-only and require two-authority ratification.
 
 ### 6.3 Engine Steps
 
@@ -426,6 +433,29 @@ The cycle may only be sealed `Published` if **all** of the following are true:
 - `cycle_summary.md` and `lessons_learnt.md` filed
 - No open escalations
 - Backlog lock released
+
+### 6.8 Amendment Cycle (Emergency Only)
+
+**Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.0)
+
+An amendment cycle may be opened after Phase 1B publishes and before Phase 2 seals (`sprint_sealed = true`). It is the only permitted mechanism for changing the backlog slice after the release plan is sealed.
+
+```
+amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>" [--mode "strict|standard"]
+```
+
+| Reason | Meaning | Ratifying Authorities |
+|--------|---------|----------------------|
+| `emergency-fix` | Security patch, regulatory requirement, or critical production issue that must enter this sprint | Product Owner + Director of Quality |
+| `hard-blocker` | A planned item is confirmed undeliverable and must be replaced or removed | Product Owner + Head of Specs Team |
+
+**Key constraints:**
+- Backlog slice changes only — no AC edits, no EPIC restructuring, no capacity changes
+- Original sealed cycle artefacts are never modified
+- Amendment artefacts live in `claude/cycles/<original_cycle_id>/amendments/<AMD-id>/`
+- Once sealed, `amended_backlog_slice_path` in `.claude_current_state.json` is the source of truth for Phase 2
+- One active amendment at a time — seal or withdraw before opening another
+- Delivery pressure never qualifies as an emergency
 
 ---
 
@@ -871,7 +901,8 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 | Phase 4 complete (`Verified`) | Post-Ship Closure | PMO Lead |
 | Post-Ship Closure confirmed | New Phase 1 (optional) or Phase 1B cycle | Product Owner |
 | Sprint item returned to backlog | Backlog reconciliation only (no new cycle) | Head of Specs Team |
-| Governance gap detected | Escalation → Product Owner + Head of Specs Team | PMO Lead |
+| Emergency discovered post-publish (before Phase 2 sealed) | Amendment Cycle (`amend cycle`) | PMO Lead |
+| Amendment sealed | Sprint Planning uses `amended_backlog_slice_path` | PMO Lead |
 | Test scenario gap found (Phase 4) | Action written to QA & Testing Owner agent file | QA & Testing Owner |
 
 > **Loop rule:** Phase 1 is only triggered when a roadmap item completes and a rebalance is warranted. Sprint items that are backlog items (not roadmap items) never trigger a rebalance.
@@ -891,7 +922,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
 | Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
-| Sprint Planning Prompt | `claude/system/sprint_planning_prompt.md` | 6 | Head of Specs Team | Governance |
+| Amendment Cycle Prompt | `claude/system/amendment_cycle_prompt.md` | 6 | Head of Specs Team | Governance |
 | Delivery Verification Prompt | `claude/system/delivery_verification_prompt.md` | 6 | Head of Specs Team | Governance |
 | Shared Standards | `claude/system/shared_standards.md` | 6 | Head of Specs Team | Governance |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` | 6 | Head of Specs Team | Governance |
@@ -937,6 +968,11 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Changelog | `docs/product/changelog.md` | 3 | PMO Lead | Post-Ship |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` | 1 | PMO Lead | Post-Ship |
 | Closure Record | `claude/cycles/<id>/closure_record.md` | 3 | PMO Lead | Post-Ship |
+| Amendment Manifest | `claude/cycles/<id>/amendments/<AMD-id>/amendment_manifest.md` | 3 | PMO Lead | Amendment |
+| Amendment State | `claude/cycles/<id>/amendments/<AMD-id>/amendment_state.json` | — | PMO Lead | Amendment |
+| Amendment Ratification | `claude/cycles/<id>/amendments/<AMD-id>/amendment_ratification.md` | 4 | PMO Lead | Amendment |
+| Amended Backlog Slice | `claude/cycles/<id>/amendments/<AMD-id>/amended_backlog_slice.md` | 4 | PMO Lead | Amendment |
+| Amendment Lessons | `claude/cycles/<id>/amendments/<AMD-id>/amendment_lessons.md` | 3 | PMO Lead | Amendment |
 
 ---
 
@@ -946,12 +982,13 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 1.8 |
+| Version | 1.9 |
 | Last Updated | 2026-03-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v1.6 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.0 |
+| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.0 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v1.3 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` v1.0 |
@@ -971,7 +1008,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
-| 1.8 | 2026-03-03 | Added `sprint_planning_prompt.md` (v1.0) as Phase 2 engine. Rewrote §7 with invocation command, step table, AC standard, capacity rules, and exit criteria. Added `plan sprint` to Quick Reference commands. Added "no AC-less items" to Hard Rules. Expanded Phase 2 Phase Gate Checklist. Updated Cycle Trigger table (Phase 1B now triggers `plan sprint`; Phase 2 triggers `run sprint`). Added Sprint Planning Engine to Artefact Register and §14 governance table. Updated Phase 3 pre-condition to require `Sprint_Planning_Complete`. Updated Global State Pointer phase column. Updated Quick Reference summary paragraph. |
+| 1.9 | 2026-03-03 | Added Amendment Cycle Engine (`amendment_cycle_prompt.md` v1.0). Added `amend cycle` to Quick Reference commands. Added §6.8 Amendment Cycle under Phase 1B. Added three amendment hard rules. Added Amendment row to Lifecycle Overview table. Added amendment trigger rows to Cycle Trigger table. Added amendment engine to Artefact Register (5 artefact types) and §14 governance table. Updated Phase 1B terminal state rule to reference the amendment command explicitly. |
+| 1.8 | 2026-03-03 | Added `sprint_planning_prompt.md` (v1.0) as Phase 2 engine. Rewrote §7 with invocation command, step table, AC standard, capacity rules, and exit criteria. Added `plan sprint` to Quick Reference commands. Added "no AC-less items" to Hard Rules. Expanded Phase 2 Phase Gate Checklist. Updated Cycle Trigger table. Added Sprint Planning Engine to Artefact Register and §14 governance table. Updated Phase 3 pre-condition. Updated Global State Pointer phase column. Updated Quick Reference summary paragraph. |
 | 1.7 | 2026-03-03 | Updated `roadmap_prompt.md` to v1.6 in §14 governance table. |
 | 1.6 | 2026-03-03 | Updated `shared_standards.md` to v1.1 and `lessons_learnt_prompt.md` to v1.2 in §14 governance table. Added Lessons Learnt Prompt to Artefact Register. Added `lessons_learnt_verification.md` (Phase 4) and `lessons_learnt_closure.md` (Post-Ship) to Artefact Register. |
 | 1.5 | 2026-03-03 | Added `post_ship_closure_prompt.md` (v1.0) as the engine source for §10. Added `run post-ship` invocation command to Quick Reference. Added invocation subsection (§10.1), flags table, and pre-condition to §10. Added closure status values (§10.6). Added Closure Record to Artefact Register. Added Post-Ship Closure Engine to §14 governance table. |
