@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Canonical  
-**Version:** 1.3
-**Last Updated:** 2026-03-02  
+**Version:** 1.4
+**Last Updated:** 2026-03-04  
 
 ---
 
@@ -11,10 +11,11 @@
 
 | Version | Date       | Change |
 |--------:|------------|--------|
-| 1.3     | 2026-03-02 | **Added Shared Write Concurrency Constraint**  Only one governed cycle may modify the shared backlog file at a time. |
-| 1.2 | 2026-03-02 | **Added Formal Authority Escalation Protocol** (Section 9). Defines escalation triggers, required escalation record fields, routing, SLAs, and resolution criteria. Additive only; no authority or conflict rule changes. **Accepted Risk Governance Constraint** (Section 10). Defines which risk domains may be accepted, who may accept them, and mandatory decision record requirements. Additive only; no changes to authority boundaries or conflict rules. |
-| 1.1     | 2026-03-02 | **Added Release Planning Engine** as a governed routine. No changes to role authority, conflict rules, or constraints. |
-| 1.0     | 2026-03-01 | Initial charter. Establishes role authority model, domain ownership boundaries, conflict resolution rules, and non-decision role definitions for all governed routines. |
+| 1.4     | 2026-03-04 | **Added §3.3 Specialist & Supporting Roles.** All agent file roles not previously listed in §3 now have a charter entry with domain, reporting line, and authority scope. Added entries for: Head of Engineering, Head of UX & Design, QA & Testing Owner, QA Lead, API Contracts & Documentation Owner, Metrics Definitions & Analytics Owner, Data Model & Domain Schema Owner, Frontend Specifications & UX Documentation Owner, Backend Engineering Patterns Owner, Base44 Frontend Prompt Owner, Strategy Rules & System Intent Owner (note — also in §3.1), AI Compliance & Governance Officer, Cybersecurity & Trust Lead, Financial Reporting & Records Owner, Director of HR. Added Design Gate Engine to §7 Governing Routines. |
+| 1.3     | 2026-03-02 | Added Shared Write Concurrency Constraint. Only one governed cycle may modify the shared backlog file at a time. |
+| 1.2 | 2026-03-02 | Added Formal Authority Escalation Protocol (Section 9). Added Accepted Risk Governance Constraint (Section 10). |
+| 1.1     | 2026-03-02 | Added Release Planning Engine as a governed routine. |
+| 1.0     | 2026-03-01 | Initial charter. |
 
 ---
 
@@ -232,6 +233,161 @@ These roles enforce process and surface risk. They have **no decision authority*
 
 ---
 
+### 3.3 Specialist & Supporting Roles
+
+These roles hold **domain specialist authority** within their named area. They are accountable for the quality, accuracy, and lifecycle compliance of documents they own. They do **not** hold the cross-domain blocking authority of §3.1 decision authorities, and they do not hold process halt authority.
+
+Within their domain, their decisions are authoritative. Cross-domain disputes are escalated to the Head of Specs Team (for specification matters) or the Product Owner (for prioritisation matters).
+
+---
+
+#### Head of Engineering
+
+**Domain:** Engineering delivery, technical implementation, and operational accountability
+**Reports to:** Executive Leadership
+**Charter:** `claude/agents/head_of_engineering.md`
+
+Owns engineering execution and delivery outcomes. Implementation must conform to canonical specifications. Does not author or modify canonical specs — escalates ambiguity to the relevant domain owner. Cross-functional coordination role between Infrastructure & Operations Owner, QA & Testing Owner, and canonical spec owners.
+
+---
+
+#### Head of UX & Design
+
+**Domain:** User experience strategy, design execution, and alignment to product intent
+**Reports to:** Product Owner
+**Charter:** `claude/agents/head_of_ux_&_design.md`
+
+Owns experience quality and design consistency. Produces and approves design artefacts. Partners with Frontend Specs & UX Documentation Owner to translate designs into canonical specifications. Does not redefine product intent or override canonical specifications. Authority role in the Design Gate Engine (Phase 1.5).
+
+---
+
+#### QA & Testing Owner
+
+**Domain:** Test strategy, acceptance criteria, regression coverage, and testing documentation
+**Reports to:** Head of Engineering
+**Charter:** `claude/agents/qa_testing_owner.md`
+
+Owns test scenario documents (Class 1 Canonical) and acceptance criteria derived from canonical specifications. Does not define or reinterpret system behaviour. Spec feedback loop role — surfaces ambiguity or gaps to the relevant canonical spec owner.
+
+---
+
+#### QA Lead
+
+**Domain:** Test execution, automation oversight, and operational quality delivery
+**Reports to:** Director of Quality
+**Charter:** `claude/agents/qa_lead.md`
+
+Owns test execution planning, automation frameworks, and defect lifecycle visibility. Executes acceptance criteria authored by the QA & Testing Owner. Does not redefine product behaviour or reinterpret canonical specifications.
+
+---
+
+#### API Contracts & Documentation Owner
+
+**Domain:** API contract accuracy, correctness, and reviewability
+**Reports to:** Head of Specs Team
+**Charter:** `claude/agents/api_contracts_documentation_owner.md`
+
+Owns all `docs/specs/api_contracts/` documents (Class 1 Canonical) and `docs/reference/openapi.yaml` (Class 2 Supporting). Required inline reviewer for all contract-affecting changes — OpenAPI review is mandatory in the same pull request. Does not define product intent or modify business rules.
+
+---
+
+#### Metrics Definitions & Analytics Owner
+
+**Domain:** Analytical meaning, calculation correctness, and metric consistency
+**Reports to:** Head of Specs Team
+**Charter:** `claude/agents/metrics_definitions_analytics_owner.md`
+
+Owns `docs/specs/metrics_definitions.md` (Class 1 Canonical). Final authority on metric definitions, formulas, and validation tolerances. Does not prioritise product work or own roadmap planning. Changes to metric formulas require updated test cases and explicit acknowledgement of behavioural change.
+
+---
+
+#### Data Model & Domain Schema Owner
+
+**Domain:** Data model correctness, domain integrity, and schema evolution
+**Reports to:** Head of Specs Team
+**Charter:** `claude/agents/data_model_domain_schema_owner.md`
+
+Owns `docs/specs/data_model.md` (Class 1 Canonical). Final authority on table structure, field semantics, and migration strategy. Does not define API response shapes or frontend behaviour — aligns with API contracts and frontend specs but does not own them.
+
+---
+
+#### Frontend Specifications & UX Documentation Owner
+
+**Domain:** Frontend page specifications and UX documentation
+**Reports to:** Head of Specs Team
+**Charter:** `claude/agents/frontend_specs_ux_documentation_owner.md`
+
+Owns `docs/specs/frontend/pages/` (Class 1 Canonical). Translates approved design artefacts from the Head of UX & Design into canonical frontend specifications. Does not define product intent or engineering implementation. Works closely with Base44 Frontend Prompt Owner and QA & Testing Owner.
+
+---
+
+#### Backend Engineering Patterns Owner
+
+**Domain:** Backend implementation conventions, architecture patterns, and engineering standards
+**Reports to:** Head of Engineering
+**Charter:** `claude/agents/backend_engineering_patterns_owner.md`
+
+Owns `docs/specs/backend_engineering_patterns.md` (Class 1 Canonical). Defines the implementation handbook for the codebase — router, service, and database layer conventions. Does not own API contracts or define system behaviour — describes how canonical intent is expressed in code.
+
+---
+
+#### Base44 Frontend Prompt Owner
+
+**Domain:** Frontend code generation prompt quality and Base44 integration
+**Reports to:** Head of Engineering
+**Charter:** `claude/agents/base44_frontend_prompt_owner.md`
+
+Owns filed Base44 prompt documents at `docs/frontend/prompts/`. Translates canonical frontend specs into complete, unambiguous Base44 prompts and reviews generated code before integration. Does not own the frontend spec — the Frontend Specifications & UX Documentation Owner is authoritative on what the UI should do.
+
+---
+
+#### Strategy Rules & System Intent Owner *(also §3.1)*
+
+**Note:** This role holds §3.1 Decision Authority (blocking authority over §13 strategy boundary violations). This §3.3 entry exists solely to note the agent file location and confirm the role is fully chartered.
+**Charter:** `claude/agents/strategy_rules_system_intent_owner.md`
+
+---
+
+#### AI Compliance & Governance Officer
+
+**Domain:** AI usage governance, compliance, ethical constraints, and risk management
+**Reports to:** Executive Leadership
+**Charter:** `claude/agents/ai_compliance_governance_officer.md`
+
+Owns AI usage policies and compliance validation. Ensures AI behaviour remains within defined ethical, legal, and operational boundaries. Does not design AI features or tune models. Escalates non-compliant AI usage immediately.
+
+---
+
+#### Cybersecurity & Trust Lead
+
+**Domain:** Security posture, trust controls, threat governance, and security-by-design enforcement
+**Reports to:** Executive Leadership
+**Charter:** `claude/agents/cybersecurity_trust_lead.md`
+
+Owns system-wide security principles, threat models, and security controls. Validates security assumptions are explicit and enforced. Does not implement application features or redefine canonical product behaviour.
+
+---
+
+#### Financial Reporting & Records Owner
+
+**Domain:** Financial records, tax-relevant reporting, formal statements, and record integrity
+**Reports to:** Executive Leadership
+**Charter:** `claude/agents/financial_reporting_records_owner.md`
+
+Owns the definition and integrity of formal financial reports generated by the system. Defines what constitutes a financial record versus an analytics view. Does not define trading strategy, own analytical dashboards, or provide legal or tax advice.
+
+---
+
+#### Director of HR
+
+**Domain:** People strategy, organisational health, capability development, and compliance
+**Reports to:** Executive Leadership
+**Charter:** `claude/agents/director_of_hr.md`
+
+Owns people systems, role clarity frameworks, hiring standards, and organisational health indicators. Does not manage delivery priorities, override functional leadership decisions, or act as line management for all staff.
+
+---
+
 ## 4. Domain Ownership Map
 
 | Domain | Owner | Canonical document(s) |
@@ -243,6 +399,19 @@ These roles enforce process and surface risk. They have **no decision authority*
 | Workforce economics and cost governance | FinOps & Resource Architect | `claude/roadmap/workforce_capacity.md` |
 | Operational documentation and records | Infrastructure & Operations Owner | `claude/cycles/`, operational guides |
 | Quality governance and verification | Director of Quality | Verification reports, defect lifecycle |
+| Engineering delivery and implementation | Head of Engineering | `docs/team_skills/engineering/` |
+| User experience and design | Head of UX & Design | `docs/design/` |
+| API contracts | API Contracts & Documentation Owner | `docs/specs/api_contracts/` |
+| Metrics definitions | Metrics Definitions & Analytics Owner | `docs/specs/metrics_definitions.md` |
+| Data model | Data Model & Domain Schema Owner | `docs/specs/data_model.md` |
+| Frontend specifications | Frontend Specs & UX Documentation Owner | `docs/specs/frontend/pages/` |
+| Backend engineering patterns | Backend Engineering Patterns Owner | `docs/specs/backend_engineering_patterns.md` |
+| Test strategy and acceptance criteria | QA & Testing Owner | `docs/testing/` |
+| Test execution | QA Lead | Execution reports |
+| AI governance | AI Compliance & Governance Officer | AI usage policies |
+| Security | Cybersecurity & Trust Lead | Threat models, security controls |
+| Financial reporting | Financial Reporting & Records Owner | `docs/specs/financial_reporting.md` |
+| People systems | Director of HR | People frameworks |
 
 ---
 
@@ -328,15 +497,15 @@ This lock is strict:
 Locks may be cleared only via explicit manual action under the stale-lock protocol:
 
 A lock may be treated as stale only if:
-- the lock’s recorded timestamp exceeds the stale threshold (defined by PMO Lead for the routine), AND
-- there is evidence the owning cycle is no longer active (e.g., no updates to the owning cycle folder during that period).
+- the lock's recorded timestamp exceeds the stale threshold (defined by PMO Lead for the routine), AND
+- there is evidence the owning cycle is no longer active.
 
 Stale lock removal:
-- Must be executed by PMO Lead (process authority) with acknowledgement recorded in the current cycle’s escalation record.
+- Must be executed by PMO Lead (process authority) with acknowledgement recorded in the current cycle's escalation record.
 - Must include: stale evidence, removed lock contents, and the date/time of removal.
 
 ### Traceability
-Any lock acquisition, lock conflict, or stale removal action must be recorded in the cycle’s state (`state.json`) and in the cycle summary.
+Any lock acquisition, lock conflict, or stale removal action must be recorded in the cycle's state (`state.json`) and in the cycle summary.
 
 ---
 
@@ -344,19 +513,27 @@ Any lock acquisition, lock conflict, or stale removal action must be recorded in
 
 This charter governs the following routines. Each routine has a corresponding governance prompt in `claude/system/`.
 
-| Routine                  | Prompt                                   | Trigger |
-|--------------------------|-------------------------------------------|---------|
-| Roadmap Rebalance Engine | `claude/system/roadmap_prompt.md`         | Completion of a roadmap item |
-| Release Planning Engine  | `claude/system/release_planning_prompt.md`| Explicit user invocation (e.g., `plan release --version "v1.7"`) |
+| Routine | Prompt | Trigger |
+|---------|--------|---------|
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` | Optional — before roadmap rebalance |
+| Roadmap Rebalance Engine | `claude/system/roadmap_prompt.md` | Completion of a roadmap item |
+| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` | After Post-Ship Closure (document lifecycle) |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` | After Post-Ship Closure or before roadmap rebalance |
+| Release Planning Engine | `claude/system/release_planning_prompt.md` | Explicit invocation (`plan release`) |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` | After Release Planning Publish Gate, before Sprint Planning |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` | After Design Gate passed |
+| Sprint Execution Engine | `claude/system/execution_prompt.md` | After Sprint Planning sealed |
+| Delivery Verification Engine | `claude/system/delivery_verification_prompt.md` | After Sprint Execution complete |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` | After Delivery Verification passed |
+| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` | Emergency only — post-publish, pre-Sprint Planning seal |
 
-### Release Planning Engine — Scope Clarification
+### Engine Scope Constraints
 
-- **Purpose:** Translate an already-approved roadmap release into an execution-ready plan.
-- **Constraints:**
-  - May not add, replace, defer, or kill initiatives.
-  - May not alter strategy intent or §13 boundaries.
-  - May not bypass lifecycle, quality, or workforce gates.
-- **Outputs:** Planning and operational artefacts only (e.g., release plan, sequencing, acceptance gates, cycle records).
+- **Roadmap Management Engine:** Manages document lifecycle only — retires completed items, flags stale items, updates release summary. Makes no product decisions.
+- **Backlog Management Engine:** Archives completed/killed items, flags orphans, produces health summary. Makes no prioritisation decisions.
+- **Design Gate Engine:** Classifies sprint items by design requirement, gates Sprint Planning. Does not change sprint scope.
+- **Release Planning Engine:** Translates approved roadmap release into execution plan. May not add, replace, defer, or kill initiatives.
+- **Amendment Cycle Engine:** Emergency backlog slice changes only. No AC edits, no EPIC restructuring, no capacity changes.
 
 Additional routines may be added by the Head of Specs Team via versioned update to this charter.
 
@@ -379,29 +556,29 @@ This protocol defines the standard escalation mechanism for all governed routine
 - a hard gate halts execution, or
 - a domain authority applies a block, or
 - a cross-domain dispute cannot be resolved within the routine.
-This protocol does not create new authorities; it standardises how blocking events are recorded, routed, timeboxed, and closed. 
+This protocol does not create new authorities; it standardises how blocking events are recorded, routed, timeboxed, and closed.
 
 ### 9.2 Escalation Triggers (When escalation is mandatory)
 An escalation record MUST be created when any of the following occurs during a governed routine:
-1) **Hard-gate halt** (e.g., lifecycle non-compliance, missing authority, prohibited write scope). 
+1) **Hard-gate halt** (e.g., lifecycle non-compliance, missing authority, prohibited write scope).
 2) **Authority block** is applied within a domain:
-   - Strategy boundary / §13 block (Strategy Rules & System Intent Owner) 
-   - Quality / release readiness block (Director of Quality) 
-   - Workforce economics constraint block (FinOps & Resource Architect) 
-   - Lifecycle compliance block (Head of Specs Team)   
-3) **Unresolved dispute** where the routine cannot proceed without a decision and the applicable conflict rule does not resolve it within the run. 
+   - Strategy boundary / §13 block (Strategy Rules & System Intent Owner)
+   - Quality / release readiness block (Director of Quality)
+   - Workforce economics constraint block (FinOps & Resource Architect)
+   - Lifecycle compliance block (Head of Specs Team)
+3) **Unresolved dispute** where the routine cannot proceed without a decision and the applicable conflict rule does not resolve it within the run.
 
 ### 9.3 Escalation Record (Where it lives and what it must contain)
-Escalations are recorded **inside the cycle folder** of the run that encountered the blocker to preserve traceability.
+Escalations are recorded **inside the cycle folder** of the run that encountered the blocker.
 
 - Location: `claude/cycles/<cycle_id>/escalations.md`
-- Class: Planning Document (Class 4) OR Operational Record (Class 3) as specified by the governing prompt that creates it.
-- Rule: This file is **append-only within the cycle** (do not edit previous entries).
+- Class: Planning Document (Class 4) OR Operational Record (Class 3) as specified by the governing prompt.
+- Rule: This file is **append-only within the cycle**.
 
 Each escalation entry MUST include:
 - **Escalation ID:** `ESC-<YYYYMMDD>-<nn>` (unique within the cycle)
 - **Date/time raised**
-- **Routine:** (e.g., Roadmap Rebalance Engine / Release Planning Engine)
+- **Routine:** (e.g., Roadmap Rebalance Engine / Design Gate Engine)
 - **Cycle ID**
 - **Trigger type:** Lifecycle | Strategy | Quality | Workforce | Other
 - **Release impacted:** (if applicable)
@@ -409,38 +586,35 @@ Each escalation entry MUST include:
 - **Owning authority:** role required to unblock
 - **Required responders:** roles that must contribute
 - **Due-by / SLA:** date/time
-- **Unblock criteria:** “what must be true to resume”
+- **Unblock criteria:** "what must be true to resume"
 - **Evidence required:** links to docs/artefacts that prove resolution
 - **Disposition:** Open | Resolved | Accepted Risk | Deferred
 - **Resolution summary + evidence links** (required when closing)
 
 ### 9.4 Standard SLAs (Default timeboxes)
 Unless a governing prompt specifies otherwise:
-- **Lifecycle compliance blocks:** 24 hours (remediate header/class/state issues or formally halt and reschedule). 
-- **Strategy boundary blocks (§13):** 72 hours to produce either:
-  - a decision record confirming “boundaries unchanged”, or
-  - a versioned `strategy_rules.md` revision (if boundaries change). 
-- **Quality blocks:** must be resolved before release execution begins; cannot be waived outside Director of Quality rules. 
-- **Workforce blocks:** resolved by next planning checkpoint; constraint is binding, Product Owner selects displacement if needed. 
+- **Lifecycle compliance blocks:** 24 hours
+- **Strategy boundary blocks (§13):** 72 hours
+- **Quality blocks:** must be resolved before release execution begins
+- **Workforce blocks:** resolved by next planning checkpoint
 
 ### 9.5 Escalation Routing (Who decides what)
-Escalations route according to domain authority and conflict rules:
-- **Lifecycle / document class / compliance:** Head of Specs Team decides; if resolution requires joint acknowledgement per routine, Product Owner + Head of Specs Team must explicitly declare the gate satisfied before resuming.   
-- **Strategy intent / §13 boundaries:** Strategy Rules & System Intent Owner decides; a block stands until resolved by a formal, versioned strategy rules update or explicit confirmation decision. 
-- **Quality readiness / sign-off:** Director of Quality decides; Product Owner may not override. 
-- **Workforce economics:** FinOps & Resource Architect constraint is binding; Product Owner chooses which work stops/defers to satisfy it. 
+- **Lifecycle / document class / compliance:** Head of Specs Team decides
+- **Strategy intent / §13 boundaries:** Strategy Rules & System Intent Owner decides
+- **Quality readiness / sign-off:** Director of Quality decides
+- **Workforce economics:** FinOps & Resource Architect constraint is binding; Product Owner chooses which work stops/defers
 
 ### 9.6 Resolution (When an escalation may be closed)
 An escalation may be marked **Resolved** only when:
 1) The owning authority explicitly states the unblock criteria are met, AND
-2) The required evidence is linked in the escalation entry (docs, decision record, verification report, etc.).
+2) The required evidence is linked in the escalation entry.
 
 ---
 
 ## 10. Accepted Risk Governance Constraint
 
 ### 10.1 Purpose
-“Accepted Risk” is an irreversible governance decision that allows work to proceed while knowingly carrying an identified risk. It is not equivalent to “Resolved” and must not be used as a convenience mechanism to bypass domain blocks, lifecycle compliance, or canonical constraints.
+"Accepted Risk" is an irreversible governance decision that allows work to proceed while knowingly carrying an identified risk. It is not equivalent to "Resolved" and must not be used as a convenience mechanism to bypass domain blocks, lifecycle compliance, or canonical constraints.
 
 ### 10.2 Risk Domains
 All risks in governed routines must be classified into exactly one domain:
@@ -451,76 +625,27 @@ All risks in governed routines must be classified into exactly one domain:
 - **Schedule / Delivery Risk** (delivery timing risk without changes to scope or quality gates)
 
 ### 10.3 Non-Acceptable Risk Domains (Hard Constraint)
-The following domains may **never** be marked “Accepted Risk” in any governed routine:
+The following domains may **never** be marked "Accepted Risk":
 - **Strategy Risk**
 - **Quality Risk**
 - **Lifecycle / Governance Risk**
 
-If any escalation or blocker is classified into one of the above domains, valid dispositions are:
-- **Open** (until resolved), or
-- **Deferred** (only with a named trigger and next action)
-
-Any attempt to mark these domains as “Accepted Risk” is a governance violation and must result in a routine halt.
-
 ### 10.4 Acceptable Risk Domains (Permitted with Constraints)
-The following domains may be marked “Accepted Risk” only under the conditions below:
 - **Workforce / Capacity Risk**
 - **Schedule / Delivery Risk**
 
-Permitted accepting authority:
-- **Product Owner** may accept Workforce/Capacity and Schedule/Delivery risks **only if**:
-  - No Strategy Risk is implicated
-  - No Quality gate is bypassed
-  - No Lifecycle compliance requirement is violated
-  - No scope change is introduced inside a Release Planning routine (scope changes require Roadmap Rebalance Engine)
+Permitted accepting authority: **Product Owner only**, provided no Strategy Risk, Quality gate bypass, Lifecycle violation, or scope change is implicated.
 
 ### 10.5 Mandatory Decision Record for Accepted Risk (Hard Gate)
-Any “Accepted Risk” disposition MUST produce a durable decision record.
-
-**Required artefact:**
-- A decision record under: `docs/product/decisions/`
-- Classification: Planning Document (Class 4)
-- Owner: Product Owner
-- Status: Active
-- Must be linked from:
-  - the cycle escalation entry, and
-  - the cycle summary
-
-**Minimum required contents of the decision record:**
-- Decision title (specific)
-- Reference to escalation ID(s) being accepted
-- Risk domain (Workforce/Capacity or Schedule/Delivery)
-- Risk statement: what could go wrong (one paragraph)
-- Impact statement: user/system consequences if it occurs
-- Rationale: why acceptance is the least harmful path
-- Guardrails: what is explicitly not being compromised (Strategy boundaries unchanged; Quality gates unaffected; Lifecycle compliance maintained)
-- Time boundary: valid for **this release only** unless explicitly extended by a new decision record
-- Accepting authority: Product Owner
-
-If a decision record cannot be created (missing required info, lifecycle non-compliance, write scope restriction), the escalation must remain Open/Deferred and the routine must halt.
+Any "Accepted Risk" disposition MUST produce a decision record at `docs/product/decisions/` (Class 4, Owner: Product Owner). Minimum contents: decision title, escalation ID reference, risk domain, risk statement, impact statement, rationale, guardrails, time boundary (this release only), accepting authority.
 
 ### 10.6 Evidence and Closure Rules
-An escalation marked “Accepted Risk” must include:
-- a link to the decision record
-- the acceptance date
-- the time boundary (release/version)
-- the monitoring/mitigation action (if any) included in the execution plan risk register
-
-“Accepted Risk” must not be used for risks that require additional engineering work to make safe; those are either “Resolved” (work done) or “Deferred” (moved to future plan).
+An escalation marked "Accepted Risk" must include a link to the decision record, acceptance date, time boundary, and monitoring/mitigation action.
 
 ### 10.7 Conflict Handling
-If any role disputes a proposed “Accepted Risk” disposition:
-- **Head of Specs Team** adjudicates classification correctness (risk domain and lifecycle compliance).
-- **Director of Quality** may block if a Quality Risk is being implicitly accepted.
-- **Strategy Rules & System Intent Owner** may block if a Strategy Risk is being implicitly accepted.
-- If any of the above blocks apply, the “Accepted Risk” disposition is invalid and must be reverted to Open/Deferred.
+- Head of Specs Team adjudicates classification correctness
+- Director of Quality may block if a Quality Risk is being implicitly accepted
+- Strategy Rules & System Intent Owner may block if a Strategy Risk is being implicitly accepted
+- If any of the above blocks apply, the "Accepted Risk" disposition is invalid and must be reverted to Open/Deferred
 
-If the outcome is **Accepted Risk** or **Deferred**, the escalation entry must:
-- name the accepting authority (Product Owner cannot accept Quality or Strategy domain blocks),
-- state the rationale,
-- and link to the follow-up backlog item / target release (where applicable).
-
-- Decision records are not general documentation. In Release Planning, decision records may be created only when required as evidence to:
-- close an “Accepted Risk” escalation (Workforce or Schedule/Delivery only), or
-- document a Strategy Rules Boundary confirmation (“boundaries unchanged”) without changing strategy_rules.md.
-All other decision record creation in Release Planning is non-compliant and must be rejected.
+- Decision records in Release Planning are permitted only to close an Accepted Risk escalation (Workforce or Schedule/Delivery only), or to document a Strategy Rules Boundary confirmation. All other decision record creation in Release Planning is non-compliant.
