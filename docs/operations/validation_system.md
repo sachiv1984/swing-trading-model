@@ -1,8 +1,8 @@
 # Analytics Validation System - Operations Guide
 
-**Version:** 1.0.1
+**Version:** 1.0.2
 **Owner:** Platform Team
-**Last Updated:** 2026-02-21
+**Last Updated:** 2026-03-04
 **Review Cycle:** Quarterly
 
 > ⚠️ **Governance note:** The owner field "Platform Team" is a team name, not a named individual role as required by `docs/governance/document_lifecycle_guide.md`. This is a pre-existing compliance gap flagged by the Head of Specs Team on 2026-02-21. The Infrastructure & Operations Documentation Owner should resolve this at next review.
@@ -39,9 +39,10 @@ This document defines:
 │     test_data/validation_data.py:TOLERANCE      │
 │     - Acceptable variance per metric            │
 │                                                  │
-│  4. CI/CD Integration (PLANNED)                 │
-│     .github/workflows/validate.yml              │
-│     - Runs on every commit                      │
+│  4. CI/CD Integration (LIVE — EPIC-01, v1.7, 2026-03-03)  │
+│     .github/workflows/validate-analytics.yml    │
+│     - Runs on every PR and push to main/develop │
+│     - Blocks merge on critical_failed > 0       │
 │                                                  │
 │  5. Production Monitoring (PLANNED)             │
 │     /metrics endpoint for Prometheus            │
@@ -82,7 +83,7 @@ print(r.json())
 
 **What Gets Validated**:
 ```python
-# From validation_data.py — 13 metrics (updated 2026-02-21, BLG-TECH-01)
+# From validation_data.py — 14 metrics (13 from BLG-TECH-01 2026-02-21; sharpe_ratio_trade_method added EPIC-06, v1.7, 2026-03-03)
 EXPECTED_METRICS = {
     "sharpe_ratio": 0.00,
     "max_drawdown_percent": -7.70,
@@ -197,23 +198,23 @@ EXPECTED_METRICS = {
       }
     ],
     "summary": {
-      "total": 13,
-      "passed": 13,
+      "total": 14,
+      "passed": 14,
       "warned": 0,
       "failed": 0,
       "by_severity": {
-        "critical": {"total": 3, "passed": 3, "warned": 0, "failed": 0},
+        "critical": {"total": 4, "passed": 4, "warned": 0, "failed": 0},
         "high": {"total": 3, "passed": 3, "warned": 0, "failed": 0},
         "medium": {"total": 6, "passed": 6, "warned": 0, "failed": 0},
         "low": {"total": 1, "passed": 1, "warned": 0, "failed": 0}
       }
     },
-    "timestamp": "2026-02-21T00:24:41Z"
+    "timestamp": "2026-03-03T00:00:00Z"
   }
 }
 ```
 
-> **Note:** The `severity` field per result and `by_severity` summary object are specified in `analytics_endpoints.md` v1.8.1. These are contract additions for BLG-TECH-02 — they will appear in API responses once BLG-TECH-02 is implemented.
+> **Note:** The `severity` field per result and `by_severity` summary object are live as of BLG-TECH-02 (shipped v1.6.1, 2026-02-21). Specified in `analytics_endpoints.md` v1.8.1 → v1.9.0.
 
 ---
 
@@ -423,15 +424,15 @@ TOLERANCE = {
 
 **Setup**: Fresh test portfolio, all calculations correct
 
-**Expected Result**:
+**Expected Result** (as of v1.7/EPIC-06 — 14 metrics):
 ```json
 {
   "summary": {
-    "total": 13,
-    "passed": 13,
+    "total": 14,
+    "passed": 14,
     "failed": 0,
     "by_severity": {
-      "critical": {"total": 3, "passed": 3, "warned": 0, "failed": 0},
+      "critical": {"total": 4, "passed": 4, "warned": 0, "failed": 0},
       "high": {"total": 3, "passed": 3, "warned": 0, "failed": 0},
       "medium": {"total": 6, "passed": 6, "warned": 0, "failed": 0},
       "low": {"total": 1, "passed": 1, "warned": 0, "failed": 0}
@@ -507,5 +508,6 @@ TOLERANCE = {
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.0.2 | 2026-03-04 | Post-ship closure reconciliation (v1.7): corrected metric count 13→14 (sharpe_ratio_trade_method added EPIC-06); CI/CD Integration section updated PLANNED→LIVE (EPIC-01); severity field note updated (BLG-TECH-02 live since v1.6.1); response format examples updated to 14 metrics / critical total 4. |
 | 1.0.1 | 2026-02-21 | BLG-TECH-01 closure: added `capital_efficiency` to EXPECTED_METRICS list; corrected metric count 12→13 throughout; updated by_severity totals in examples; added governance note on owner field; added `capital_efficiency` to Medium severity tier |
 | 1.0.0 | 2026-02-16 | Initial version |

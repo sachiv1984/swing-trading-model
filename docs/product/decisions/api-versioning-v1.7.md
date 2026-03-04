@@ -1,8 +1,12 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
-**Status:** Active
+**Status:** Superseded
+**Superseded by:** v1.7 ship — 2026-03-03
+**Changelog:** docs/product/changelog.md#v1.7
+**Verification report:** claude/cycles/2026-03-02__release-v1.7/verification_report.md
+**Cycle:** 2026-03-02__release-v1.7
 **Version:** 0.1.0
-**Last Updated:** 2026-03-02
+**Last Updated:** 2026-03-04
 **Cycle:** 2026-03-02__release-v1.7
 **Maps to:** S2-05 (EPIC-05)
 
