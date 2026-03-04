@@ -1,8 +1,8 @@
-# Operational Playbook
+# Sprint Planning Operational Playbook
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 1.6  
+**Version:** 1.7  
 **Last Updated:** 2026-03-03  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -892,7 +892,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Version | 1.5 |
 | Last Updated | 2026-03-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v1.5 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v1.6 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v1.3 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.0 |
@@ -913,6 +913,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 1.7 | 2026-03-03 | Updated `roadmap_prompt.md` to v1.6 in §14 governance table. |
 | 1.6 | 2026-03-03 | Updated `shared_standards.md` to v1.1 and `lessons_learnt_prompt.md` to v1.2 in §14 governance table. Added Lessons Learnt Prompt to Artefact Register. Added `lessons_learnt_verification.md` (Phase 4) and `lessons_learnt_closure.md` (Post-Ship) to Artefact Register. |
 | 1.5 | 2026-03-03 | Added `post_ship_closure_prompt.md` (v1.0) as the engine source for §10. Added `run post-ship` invocation command to Quick Reference. Added invocation subsection (§10.1), flags table, and pre-condition to §10. Added closure status values (§10.6). Added Closure Record to Artefact Register. Added Post-Ship Closure Engine to §14 governance table. |
 | 1.4 | 2026-03-03 | Added §10 Post-Ship Closure. Updated Quick Reference summary, Hard Rules, Phase Gate Checklist, Lifecycle Overview table, Cycle Trigger & Flow table, Artefact Register, and §14 governance table to reflect post-ship_closure.md (v2.0). Renumbered §10–13 to §11–14. Updated cycle gate rule to require Post-Ship Closure before next cycle opens. |
