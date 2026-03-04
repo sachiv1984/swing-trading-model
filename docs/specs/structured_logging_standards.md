@@ -3,10 +3,9 @@
 **Status:** Active
 **Version:** 0.1.0
 **Last Updated:** 2026-03-02
-**Cycle:** 2026-03-02__release-v1.7
-**Maps to:** S2-04 (EPIC-04)
 
-> **Lifecycle Sign-off (TASK-16):** Head of Specs Team — Class 1 (Canonical Specification) assigned 2026-03-02 (Delegated Authority). This document is the authoritative source of truth for structured logging standards. All backend implementations must conform. v2.0 hard gate (structured logging / observability) cleared.
+
+> **Lifecycle Sign-off:** Head of Specs Team — Class 1 (Canonical Specification) assigned 2026-03-02 (Delegated Authority). This document is the authoritative source of truth for structured logging standards. All backend implementations must conform. v2.0 hard gate (structured logging / observability) cleared.
 
 ---
 
@@ -25,7 +24,7 @@ All backend services **MUST** conform to this standard from v1.7 onwards.
 
 ---
 
-## TASK-11 — Log Levels and Usage Policy
+## Log Levels and Usage Policy
 
 Four log levels are defined. Every log statement must use exactly one of these levels. Usage outside the defined policy is a code review blocker.
 
@@ -47,7 +46,7 @@ Four log levels are defined. Every log statement must use exactly one of these l
 
 ---
 
-## TASK-12 — Structured Log Format
+## Structured Log Format
 
 All log output **MUST** be valid JSON, one object per line (JSON Lines / NDJSON format).
 
@@ -106,7 +105,7 @@ These fields may be added when relevant. All are optional.
 
 ---
 
-## TASK-13 — Correlation ID Scheme
+## Correlation ID Scheme
 
 Correlation IDs enable request tracing across logs, API responses, and (in v2.0) async job chains.
 
@@ -153,7 +152,7 @@ This is mandatory for 500-level responses and recommended for 400-level response
 
 ---
 
-## TASK-14 — Async Failure Observability (v2.0 Alerts)
+## Async Failure Observability (v2.0 Alerts)
 
 v2.0 Alerts will introduce background/scheduled jobs (e.g. alert evaluation, notification dispatch). These jobs run outside the HTTP request cycle and cannot surface errors via HTTP status codes. Structured logging is the primary observability mechanism.
 
@@ -183,7 +182,7 @@ v2.0 Alerts will introduce background/scheduled jobs (e.g. alert evaluation, not
 
 ---
 
-## TASK-15 — What NOT to Log
+## What NOT to Log
 
 The following must **never** appear in any log record, regardless of level:
 
