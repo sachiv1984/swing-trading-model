@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 2.1  
-**Last Updated:** 2026-03-03  
+**Version:** 2.2  
+**Last Updated:** 2026-03-04  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -21,6 +21,13 @@ run ideas [--window-id "<id>"] [--mode "strict|standard"]
 
 # Phase 1 — Roadmap Rebalance (OPTIONAL — triggers on completed roadmap item)
 run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"]
+
+# Phase 1M — Document Management (OPTIONAL — run after Post-Ship Closure)
+manage roadmap [--dry-run]                        # retire completed items, flag stale
+groom backlog [--dry-run]                         # archive completed items, health check
+
+# Phase 1.5 — Design Gate (run after Phase 1B Publish Gate, before Phase 2)
+run design-gate --cycle "<cycle_id>" [--dry-run]
 
 # Phase 1B — Release Planning (primary entry point)
 plan release --version "<vX.Y>" [--date "YYYY-MM-DD"] [--timebox "<text>"] \
@@ -252,14 +259,16 @@ Each cycle progresses through up to six phases, with an optional Phase 0 for ide
 |-------|------|---------|--------|
 | **Phase 0** | Idea Intake | Optional — before any roadmap run | Submitted idea files + window summary |
 | **Phase 1** | Roadmap Rebalance | Roadmap item completed | Updated roadmap + decision log |
+| **Phase 1M** | Document Management | After Post-Ship Closure (optional) | Clean roadmap + healthy backlog |
 | **Phase 1B** | Release Planning | Phase 1 complete *or* direct invocation | Sequenced release plan + backlog slice |
+| **Phase 1.5** | Design Gate | After Phase 1B Publish Gate | Design artefacts approved + frontend specs updated |
 | **Phase 2** | Sprint Planning | Phase 1B Publish Gate passed | Sprint backlog + acceptance criteria |
 | **Phase 3** | Sprint Execution & Close | Sprint start date reached | Delivered increments + sprint close record |
 | **Phase 4** | Delivery Verification | Phase 3 complete (`Sprint_Complete`) | Verification report + next cycle unlocked |
 | **Post-Ship** | Post-Ship Closure | Phase 4 complete (`Verified`) | Closed documents + applied lessons learnt |
 | **Amendment** | Amendment Cycle | Emergency post-publish (before Phase 2 sealed) | Amended backlog slice + ratification record |
 
-Phase 0 is **optional** — the roadmap engine notes its absence and continues. Phase 1 is **optional**. Phase 1B may be invoked directly when a release is already approved. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
+Phase 0 is **optional** — the roadmap engine notes its absence and continues. Phase 1 is **optional**. Phase 1M is **optional but strongly recommended** after every Post-Ship Closure. Phase 1B may be invoked directly when a release is already approved. Phase 1.5 (Design Gate) is **required** unless all sprint items are classified Design Not Applicable. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
 
 **Phase 4 is a hard gate on the next cycle.** The Roadmap Rebalance and Release Planning engines will not run for a new cycle until `.claude_current_state.json` status is `Verified` or `Verified_with_deviations`. Post-Ship Closure must also be complete before the next cycle opens — `next_cycle_unblocked = true` is necessary but not sufficient.
 
@@ -390,6 +399,114 @@ run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"]
 - Workforce implications documented
 - `lessons_learnt.md` filed
 - STEP 12 commit complete
+
+---
+
+## 6M. Phase 1M — Document Management (Optional)
+
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.0), `claude/system/backlog_management_prompt.md` (v1.0)  
+**Owner:** PMO Lead / Product Owner  
+**Trigger:** Optional — recommended after every Post-Ship Closure and before any `run roadmap` invocation.
+
+Two independent engines that manage the lifecycle of the two primary planning documents. They may be run independently or together. Neither makes product decisions — they enforce document hygiene only.
+
+### 6M.1 Roadmap Management Engine (`manage roadmap`)
+
+Keeps `claude/roadmap/current_roadmap.md` clean and readable.
+
+| What it does | What it does NOT do |
+|-------------|-------------------|
+| Retires ✅ Complete and ❌ Killed items to `claude/roadmap/roadmap_archive.md` | Change priorities or scope |
+| Flags stale Planned items with no cycle activity | Make product decisions |
+| Updates the release summary table | Touch the backlog |
+| Produces a run log | Retire items without evidence |
+
+**Ambiguous items** (complete but no verification reference) require explicit Product Owner confirmation before retirement.
+
+**Hard rules:**
+- Archive is append-only — retired items are permanent records
+- Stale items are flagged, not decided — only the Roadmap Rebalance Engine may park or kill them
+- `--dry-run` is always safe — produces change plan without writing
+
+### 6M.2 Backlog Management Engine (`groom backlog`)
+
+Keeps `claude/backlog/backlog.md` healthy and aligned with the roadmap.
+
+| What it does | What it does NOT do |
+|-------------|-------------------|
+| Archives ✅ Complete and ❌ Killed items to `claude/backlog/backlog_archive.md` | Change priorities |
+| Flags orphaned items (no roadmap home, no cycle activity) | Add items to the roadmap |
+| Validates spec debt items (BLG-SPEC-*) against spec update status | Touch the roadmap document |
+| Produces a promotion shortlist for Product Owner consideration | Make promotion decisions |
+| Flags priority misalignments vs current roadmap | Change item definitions |
+
+**Hard rules:**
+- Lock must be acquired before any write (`claude/backlog/.lock`)
+- Archive is append-only
+- Promotion shortlist is advisory — Roadmap Rebalance Engine executes promotions
+- `--dry-run` is always safe
+
+### 6M.3 Phase 1M Exit Criteria
+
+- `roadmap_archive.md` updated (if items retired)
+- `backlog_archive.md` updated (if items archived)
+- Run log written for roadmap management
+- Health report written for backlog grooming
+- No ambiguous items unresolved
+- Commits complete
+
+---
+
+## 6.5 Phase 1.5 — Design Gate (Required*)
+
+**Source prompt:** `claude/system/design_gate_prompt.md` (v1.0)  
+**Owner:** Head of UX & Design (artefacts), PMO Lead (gate record)  
+**Pre-condition:** Phase 1B Publish Gate passed; `sprint_sealed = false`  
+**\*Required** unless all sprint items are confirmed Design Not Applicable
+
+The Design Gate runs between Release Planning and Sprint Planning. It classifies every sprint item by design requirement, routes items needing design through a structured review, and produces a gate record that Sprint Planning uses as a pre-condition.
+
+### 6.5.1 Classification
+
+| Classification | Meaning |
+|----------------|---------|
+| Design Required | User-facing UI change — new component, modified layout, new page, changed flow |
+| Design Pre-Approved | Frontend spec already locked from prior cycle; no UI change |
+| Design Not Applicable | Purely technical — CI/CD, database, logging, observability |
+
+**Default:** When in doubt, classify as Design Required. Head of UX & Design may downgrade with explicit confirmation.
+
+### 6.5.2 Gate Flow
+
+1. PMO Lead invokes `run design-gate --cycle "<cycle_id>"`
+2. Facilitator classifies all sprint items (Head of UX & Design confirms)
+3. For Design Required items: Head of UX & Design produces artefacts; Product Owner approves
+4. Frontend Specs & UX Documentation Owner updates frontend specs
+5. Head of Specs Team confirms spec lifecycle compliance
+6. Gate record written; global state updated (`design_gate_status`)
+
+**Gate passes only when:** all Design Required items have approved artefacts AND updated frontend specs.
+
+### 6.5.3 Sprint Planning Pre-Condition
+
+`plan sprint` may not be issued until `design_gate_status = Passed` in `state.json`.
+
+If the gate is bypassed (Sprint Planning run without a passing design gate), this is a **process deviation** — must be recorded in escalations and lessons learnt.
+
+### 6.5.4 Phase 1.5 Artefacts
+
+| Artefact | Location | Owner |
+|----------|----------|-------|
+| Design Gate Record | `claude/cycles/<id>/design_gate.md` | PMO Lead |
+| Design Artefacts | `docs/design/<cycle_id>/<item-slug>/` | Head of UX & Design |
+| Updated Frontend Specs | `docs/specs/frontend/pages/*.md` | Frontend Specs & UX Owner |
+
+### 6.5.5 Phase 1.5 Exit Criteria
+
+- All items classified
+- All Design Required items: artefacts approved + frontend specs updated
+- `design_gate_status = Passed` in `state.json`
+- Gate record committed
 
 ---
 
@@ -964,11 +1081,14 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 |-------|----------|-------|
 | Roadmap item completed | Phase 1 (optional) or direct Phase 1B | Product Owner |
 | Phase 1 exit criteria met | Phase 1B — Release Planning Engine | PMO Lead |
-| Phase 1B Publish Gate passed | Phase 2 — Sprint Planning (`plan sprint`) | PMO Lead |
+# already replaced
 | Phase 2 complete (`Sprint_Planning_Complete`) | Phase 3 — Sprint Execution (`run sprint`) | PMO Lead |
 | Phase 3 complete (`Sprint_Complete`) | Phase 4 — Delivery Verification | PMO Lead |
 | Phase 4 complete (`Verified`) | Post-Ship Closure | PMO Lead |
-| Post-Ship Closure confirmed | New Phase 1 (optional) or Phase 1B cycle | Product Owner |
+| Post-Ship Closure confirmed | Phase 1M: `manage roadmap` + `groom backlog` (optional) | PMO Lead / Product Owner |
+| Phase 1M complete (or skipped) | New Phase 1 (optional) or Phase 1B cycle | Product Owner |
+| Phase 1B Publish Gate passed | Phase 1.5: Design Gate (`run design-gate`) | PMO Lead |
+| Design Gate passed (`design_gate_status = Passed`) | Phase 2: Sprint Planning (`plan sprint`) | PMO Lead |
 | Sprint item returned to backlog | Backlog reconciliation only (no new cycle) | Head of Specs Team |
 | Emergency discovered post-publish (before Phase 2 sealed) | Amendment Cycle (`amend cycle`) | PMO Lead |
 | Amendment sealed | Sprint Planning uses `amended_backlog_slice_path` | PMO Lead |
@@ -1006,6 +1126,12 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Idea Submission | `claude/ideas/submissions/<agent-slug>-<date>-<nn>.md` | 4 | Submitting agent | 0 |
 | Window Summary | `claude/ideas/submissions/window_summary_<IW-id>.md` | 4 | PMO Lead | 0 |
 | Rejected-but-Strong Register | `claude/ideas/rejected_but_strong.md` | 4 | PMO Lead | 0, 1 |
+| Roadmap Archive | `claude/roadmap/roadmap_archive.md` | 4 | Product Owner | 1M |
+| Roadmap Management Log | `claude/roadmap/manage_roadmap_log_<date>.md` | 4 | PMO Lead | 1M |
+| Backlog Archive | `claude/backlog/backlog_archive.md` | 4 | Product Owner | 1M |
+| Backlog Health Report | `claude/backlog/backlog_health_<date>.md` | 4 | PMO Lead | 1M |
+| Design Gate Record | `claude/cycles/<id>/design_gate.md` | 4 | PMO Lead | 1.5 |
+| Design Artefacts | `docs/design/<cycle_id>/<item-slug>/` | 4 | Head of UX & Design | 1.5 |
 | Stage Outputs 1–5 | `claude/cycles/<id>/stage*.md` | 3 | PMO Lead | 1 |
 | Cycle Summary (Rebalance) | `claude/cycles/<id>/cycle_summary.md` | 3 | PMO Lead | 1 |
 | Lessons Learnt (Rebalance) | `claude/cycles/<id>/lessons_learnt.md` | 3 | PMO Lead | 1 |
@@ -1056,11 +1182,14 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 2.1 |
-| Last Updated | 2026-03-03 |
+| Version | 2.2 |
+| Last Updated | 2026-03-04 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
 | Idea Template | `claude/system/idea_template.md` |
+| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.0 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.0 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v1.8 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.0 |
@@ -1072,7 +1201,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Standards | `claude/system/shared_standards.md` v1.1 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.2 |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.4 |
-| Team Charter | `claude/charter/team_charter.md` v1.3 |
+| Team Charter | `claude/charter/team_charter.md` v1.4 |
 
 This playbook is subordinate to and must remain consistent with all governing documents above. In any conflict, governance documents prevail. Update this playbook to reflect the change — do not operate with a known divergence.
 
@@ -1084,6 +1213,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 2.2 | 2026-03-04 | Added Phase 1M (Document Management): `manage roadmap` and `groom backlog` engines. Added Phase 1.5 (Design Gate): `run design-gate` engine. Added both to Quick Reference, Lifecycle Overview table, Cycle Trigger table, Artefact Register, and §14 governance table. Added §6M and §6.5 sections. Updated Sprint Planning pre-condition to require design gate. Updated team charter version to v1.4. |
 | 2.1 | 2026-03-03 | Added Phase 0 Idea Intake engine. Added `run ideas` command to Quick Reference. Added Phase 0 row to Lifecycle Overview table. Added §5 Phase 0 section (invocation, who submits, idea lifecycle status table, displacement note, artefacts, exit criteria). Fixed duplicate §6 — Phase 1B renumbered to §6B. Updated roadmap engine source to v1.8. Added Idea Intake Engine, Idea Template, and 4 Phase 0 artefact types to Artefact Register. Added Idea Intake Engine and Idea Template to §14 governance table. Updated governance table version to 2.1. |
 | 1.9 | 2026-03-03 | Added Amendment Cycle Engine (`amendment_cycle_prompt.md` v1.0). Added `amend cycle` to Quick Reference commands. Added §6.8 Amendment Cycle under Phase 1B. Added three amendment hard rules. Added Amendment row to Lifecycle Overview table. Added amendment trigger rows to Cycle Trigger table. Added amendment engine to Artefact Register (5 artefact types) and §14 governance table. Updated Phase 1B terminal state rule to reference the amendment command explicitly. |
 | 1.8 | 2026-03-03 | Added `sprint_planning_prompt.md` (v1.0) as Phase 2 engine. Rewrote §7 with invocation command, step table, AC standard, capacity rules, and exit criteria. Added `plan sprint` to Quick Reference commands. Added "no AC-less items" to Hard Rules. Expanded Phase 2 Phase Gate Checklist. Updated Cycle Trigger table. Added Sprint Planning Engine to Artefact Register and §14 governance table. Updated Phase 3 pre-condition. Updated Global State Pointer phase column. Updated Quick Reference summary paragraph. |
