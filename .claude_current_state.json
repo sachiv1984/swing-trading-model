@@ -20,12 +20,15 @@
     "gate_3_qa_planning": false,
     "gate_3_auto_advance": "Once QA planning session for notification delivery documented — see DL-003"
   },
-  "open_escalations": {
+  "open_escalations": {},
+  "resolved_pre_sprint": {
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
-      "summary": "Settings endpoint method decision (option a vs b) required before ST-09 execution",
-      "blocks_execution": false,
-      "owner": "Product Owner"
+      "summary": "Settings endpoint method decision resolved",
+      "resolution": "Option (a) — update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
+      "resolved_by": "Product Owner",
+      "resolved_utc": "2026-03-04T00:25:00Z",
+      "formal_capture": "Sprint Planning cycle — ST-09 acceptance criteria update"
     }
   },
   "design_gate_required": true,
