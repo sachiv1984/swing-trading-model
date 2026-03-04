@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-03-03
+**Version:** 1.9
+**Last Updated:** 2026-03-04
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -120,6 +120,7 @@ During this routine you may write only to:
 - `claude/ideas/rejected_but_strong.md` (append only — STEP 4.2 rejected-but-strong management)
 - `claude/scoring/*` (only when scoring artefacts are produced)
 - `claude/economics/*` (only when economics artefacts are produced)
+- `claude/evidence/gates/*` (only when a hard gate is cleared per STEP 5.3 — PoG documents only)
 - `.claude_current_state.json` (STEP 12 only — cycle closure note)
 
 You must not modify:
@@ -142,6 +143,7 @@ Allowed create-if-missing artifacts:
 - `claude/cycles/` (folder; created on first run execution)
 - `claude/scoring/` (folder; created when first scoring artefact is written)
 - `claude/economics/` (folder; created when first economics artefact is written)
+- `claude/evidence/gates/` (folder; created when first PoG document is written)
 - `claude/ideas/rejected_but_strong.md` (create if needed during STEP 4.2)
 
 Rules:
@@ -401,6 +403,39 @@ Force classification:
 
 Justifications are mandatory.
 
+#### 2.1 Strategy Proximity Score (Mandatory per Initiative)
+
+For every active initiative — including those classified 🔥 Must continue — the Strategy Rules & System Intent Owner must assign a **Strategy Proximity Score** on a 1–5 scale:
+
+| Score | Meaning |
+|-------|---------|
+| 1 | Pure infrastructure or maintenance — no contact with strategy boundaries |
+| 2 | Standard improvement — well within established patterns |
+| 3 | Standard feature — normal product scope, no boundary proximity |
+| 4 | Boundary-adjacent — touches or extends a pattern that is near a §13 constraint |
+| 5 | Edge-walking — directly engages a §13 boundary (e.g. signal exposure, automation level, data retention scope) |
+
+**Scoring rules:**
+- Score is assigned by the Strategy Rules & System Intent Owner, not the Product Owner.
+- Score must cite the specific `strategy_rules.md` section that supports the classification (or "None — not applicable" for scores 1–2).
+- The score is recorded against the initiative and carries forward into STEP 5 and STEP 6.
+
+**Score-5 hard rule:** Any initiative scoring 5 requires the Strategy Rules & System Intent Owner to be present and active in STEP 5 debate. The Strategy Rules & System Intent Owner holds explicit veto authority over Score-5 items — they may block advancement regardless of Product Owner disposition if the item, in their judgement, violates or materially erodes a §13 boundary. This veto may only be overridden by a formal, versioned amendment to `strategy_rules.md`.
+
+**Score-4 soft rule:** Score-4 items require the Challenger to lead with a §13-referenced counter-argument in STEP 5.1. The Challenger may not use a generic strategic risk argument for Score-4 items — the counter-argument must name the specific boundary being approached.
+
+#### 2.2 Cycle Proximity Aggregate (Mandatory)
+
+After scoring all initiatives, compute:
+
+- **Cycle proximity score (CPS):** arithmetic mean of all active initiative scores, rounded to one decimal place
+- **Prior cycle CPS:** load from `claude/cycles/<prior_cycle_id>/stage1_validation.md` if present; record "No prior cycle" if absent
+- **Trend:** CPS delta vs prior cycle (e.g. +0.3, −0.1, or "No prior baseline")
+
+**Trend alert rule:** If CPS has increased by 0.5 or more compared to the prior cycle, the Facilitator must add a Strategy Drift Alert to `stage1_validation.md` and surface it explicitly at the start of STEP 5. A Strategy Drift Alert does not halt the routine but requires the Strategy Rules & System Intent Owner to acknowledge it before STEP 5 proceeds.
+
+Record all scores, the CPS, and the trend in `stage1_validation.md`.
+
 Write results:
 - `claude/cycles/<cycle_id>/stage1_validation.md`
 
@@ -527,6 +562,18 @@ Before STEP 5, re-read:
 
 Proceed only after restating, in your own words, the top 2 constraints most likely to block an "easy yes".
 
+#### 5.0 Pre-Debate Gate Checks (Hard Gate)
+
+Before debate begins, the Facilitator must perform two checks:
+
+**A) PoG validity check:** For any candidate that carries a hard gate from a prior cycle (i.e. a Proof of Gate document exists in `claude/evidence/gates/` referencing this initiative), verify that:
+- The PoG document is present and readable
+- The versioned document referenced in the PoG has not been incremented since the PoG was issued
+
+If a referenced document has been incremented: the PoG is **stale**. The item may not advance until the PoG is re-issued against the current document version. Record the stale PoG as a blocker in `stage4_debate.md` and halt that item's debate pending re-issuance.
+
+**B) Score-5 presence check:** If any candidate in this debate round has a Strategy Proximity Score of 5 (assigned in STEP 2.1), confirm that the Strategy Rules & System Intent Owner is active for this STEP. If the Score-5 item was not identified in STEP 2 (e.g. it is a new idea added via STEP 4), assign a proximity score now before proceeding.
+
 For each candidate idea (and each ⚠ initiative under reconsideration), require answers:
 
 **5.0 Required Case (Sponsor / Product Owner must state)**
@@ -547,6 +594,8 @@ Constraints on the counter‑argument:
 - It must be concrete (not generic risk statements).
 - It must specify the failure mode (what breaks, what violates intent, what opportunity cost is unacceptable).
 - It must name which outcome it implies: 🅿 Park or ❌ Reject.
+- **Score-4 items:** the counter-argument must name the specific §13 boundary being approached — generic strategic risk arguments are not valid.
+- **Score-5 items:** the counter-argument must open with the specific §13 clause the item engages, before any other argument.
 
 Format (must be used):
 - Challenger position: Park | Reject
@@ -571,6 +620,8 @@ The Product Owner response must:
 - address the evidence cited
 - state the final outcome (Advance | Park | Reject)
 
+**Score-5 items — Strategy Rules & System Intent Owner veto check:** After the Product Owner states ✅ Advance on a Score-5 item, the Strategy Rules & System Intent Owner must explicitly confirm or veto. Silence is not confirmation. If the Strategy Rules & System Intent Owner vetoes: the item is immediately downgraded to ❌ Reject and may not be advanced without a formal, versioned amendment to `strategy_rules.md`. Record the veto and the specific §13 basis in `stage4_debate.md`.
+
 If the Product Owner does not explicitly address the counter-argument:
 - The item cannot proceed to scoring.
 - Treat as a governance failure and halt.
@@ -586,6 +637,43 @@ Record:
 Update rejected‑but‑strong ideas where applicable:
 - `claude/ideas/rejected_but_strong.md` (create if needed)
 
+#### 5.3 Proof of Gate (PoG) Issuance (Hard Gate — Required for Hard-Gated Items)
+
+A **Proof of Gate (PoG)** document is required whenever an advancing item carries a hard gate that must be cleared before the item can enter STEP 6 scoring. Hard gates are defined in `stage4_debate.md` as explicit blocking conditions (e.g. "API versioning sign-off required", "§13 boundary confirmation required").
+
+**PoG is not required for items with no hard gates.** It is required for every item where `stage4_debate.md` records a hard gate condition.
+
+**PoG document specification:**
+- Location: `claude/evidence/gates/<gate-slug>_<YYYYMMDD>.md`
+- Class: **Class 8 — Proof of Gate** (see document class definition below)
+- Owner: the authority role responsible for clearing the gate (e.g. Strategy Rules & System Intent Owner for §13 gates; Head of Specs Team for spec compliance gates)
+- Required fields:
+
+```markdown
+**Owner:** <role>
+**Class:** Proof of Gate (Class 8)
+**Status:** Active
+**Gate ID:** POG-<YYYYMMDD>-<nn>
+**Issued:** <date>
+**Cycle:** <cycle_id>
+**Initiative:** <initiative name>
+**Gate cleared:** <one sentence — what condition is now satisfied>
+**Versioned document referenced:** <file path> v<version>
+**Decision:** <exact decision text — specific enough to stand alone>
+**Confirmed by:** <role name>
+**Checksum note:** <document version at time of signing, e.g. "strategy_rules.md v2.3 as of 2026-03-04">
+```
+
+**Validity rule:** A PoG is valid only while the versioned document it references remains at the same version. If the referenced document is incremented after the PoG is issued, the PoG is automatically stale and must be re-issued before the gate is treated as cleared. The stale PoG is not deleted — it is superseded; add `**Status:** Superseded` and `**Superseded by:** <new PoG gate ID>`.
+
+**Class 8 — Proof of Gate** is a new document class with the following properties:
+- Immutable once issued (no body edits permitted — only status field may change to Superseded)
+- Append-only within the `claude/evidence/gates/` folder
+- Not subject to the planning document grooming lifecycle — PoG documents are permanent governance records
+- Supersession does not delete; the superseded document remains as an audit trail
+
+An item with an uncleared hard gate may not advance to STEP 6. If a required PoG cannot be produced in this run (e.g. the clearing authority is unavailable): park the item and record the blocker in `stage4_debate.md`.
+
 ---
 
 ### STEP 6 — Scoring Matrix Overlay (Decision Support Only)
@@ -598,8 +686,11 @@ Score each surviving item (new and existing) with rationale:
 - Workforce intensity
 - Time to value
 - Reversibility
+- **Strategy Proximity Score** (carry forward from STEP 2.1 — do not re-score; use the value assigned by the Strategy Rules & System Intent Owner)
 
 Scores inform decisions but do not decide them.
+
+The proximity score is displayed alongside other scores to make boundary-adjacency visible to the Product Owner at the point of final decision. It does not contribute to a weighted total.
 
 Write:
 - `claude/scoring/scored_initiatives.md` (create if needed)
@@ -620,6 +711,28 @@ Ask explicitly:
 
 If workforce constraints are violated:
 - Force Replace / Defer / Kill until constraints clear.
+
+#### 7.1 Skill-Silo Alert (Governance Load Check)
+
+After recording FTE loads per initiative, classify each initiative's primary skill demand as one of:
+- **Governance-heavy:** work primarily consumed by Product Owner, Strategy Owner, Head of Specs Team, or PMO Lead (decision records, charter updates, spec governance, process design)
+- **Execution-heavy:** work primarily consumed by engineering, QA, design, or infrastructure roles
+
+Compute:
+- **Governance load %:** (governance-heavy FTE load) ÷ (total cycle FTE load) × 100
+
+**Upper bound rule (Skill-Silo Ceiling — 60%):** If governance load exceeds 60% of total cycle FTE load, the FinOps & Resource Architect must flag this as a Skill-Silo Alert. The engine must then scan the backlog for the highest-priority item that is:
+- Execution-heavy (engineering, QA, or design primary)
+- Has no outstanding blockers
+- Is within available capacity after current governance commitments
+
+If such an item exists, present it as a **pull-forward candidate** to the Product Owner for consideration. The Product Owner decides whether to include it. This is advisory — the product owner is not required to accept it — but the check is mandatory and the result must be recorded in `stage5_rebalance.md`.
+
+**Lower bound rule (Sign-Off Capacity Floor — 20%):** If governance load falls below 20% of total cycle FTE load, the FinOps & Resource Architect must verify that:
+- The Product Owner has confirmed sufficient review and sign-off capacity for the planned execution volume
+- No critical spec approvals or decision records are deferred to a future cycle without explicit acknowledgement
+
+If the Product Owner cannot confirm adequate sign-off capacity, record this as a governance capacity risk in `stage5_rebalance.md`. This does not halt the routine but must appear in lessons learnt.
 
 Write economics:
 - `claude/roadmap/workforce_capacity.md` (create if needed)
@@ -953,6 +1066,7 @@ Constraints:
 - No formatting‑only edits included: Yes / No
 - Decision log is append‑only and duplicate‑checked: Yes / No
 - Backlog edits are reconciliation‑only (no grooming): Yes / No
+- PoG documents are Class 8 compliant and only written for items with recorded hard gates: Yes / No / Not applicable
 
 If any check is "No":
 - Discard this plan.
@@ -1037,6 +1151,7 @@ Commit scope — stage only files within Section 5 write scope that were modifie
 - `claude/ideas/*` (if changed)
 - `claude/scoring/*` (if changed)
 - `claude/economics/*` (if changed)
+- `claude/evidence/gates/*` (if PoG documents were issued)
 - `.claude_current_state.json`
 
 Hard rule:
@@ -1082,6 +1197,10 @@ The run is incomplete unless:
 - Decisions are recorded (cycle outputs + decision_log)
 - Stopped work is explicit
 - Workforce implications are explicit
+- Strategy Proximity Scores recorded for all active initiatives in `stage1_validation.md`
+- Cycle Proximity Score (CPS) and trend recorded in `stage1_validation.md`
+- Skill-Silo check completed and result recorded in `stage5_rebalance.md`
+- All hard-gated advancing items have a valid PoG document in `claude/evidence/gates/`
 - Lessons learnt record is filed at `claude/cycles/<cycle_id>/lessons_learnt.md`
 - `.claude_current_state.json` updated with rebalance keys
 - STEP 12 commit complete (or commit manifest produced)
@@ -1095,6 +1214,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-03-04 | **Six governance improvements.** (1) Added Class 8 — Proof of Gate (PoG): hard gates are not cleared until a specific file exists in `claude/evidence/gates/`; PoG documents are immutable, versioned, and stale automatically when the referenced document increments. Added STEP 5.0 pre-debate PoG validity check and STEP 5.3 PoG issuance requirement. Added `claude/evidence/gates/*` to write scope and commit scope. (2) Added Strategy Proximity Score (1–5) in STEP 2.1: per-initiative score assigned by Strategy Rules & System Intent Owner; Score-5 gives veto authority; Score-4 requires §13-specific Challenger argument. (3) Added Cycle Proximity Score aggregate and trend check in STEP 2.2: CPS drift of ≥0.5 triggers a Strategy Drift Alert surfaced at STEP 5 start. (4) Added Skill-Silo Alert in STEP 7.1: governance load ceiling (60%) triggers pull-forward candidate suggestion; governance load floor (20%) triggers sign-off capacity check. (5) Proximity score added to STEP 6 scoring matrix as a display field. (6) Added PoG validity and CPS to completion condition (§10). Updated write scope (§5), optional artefact list (§6), and write plan integrity checks. |
 | 1.8 | 2026-03-03 | Removed displacement as an advancement gate in STEP 4.1 — displacement is now determined in STEP 5.0, not at intake. Added note that "What Would You Stop?" does not gate classification. Updated `idea_intake_prompt.md` to v1.1 in preflight required files reference. |
 | 1.7 | 2026-03-03 | Rewrote STEP 4 — replaced "Idea Intake & Eligibility Gate" with "Idea Review and Document Management". STEP 4 now reads from `claude/ideas/submissions/` (governed by `run ideas`), classifies ideas (Advance/Park/Reject), manages document status, and checks participation. No longer generates ideas or halts if submissions are absent — notes absence and continues. Added `idea_intake_prompt.md` and `idea_template.md` to preflight required files. Updated write scope: `claude/ideas/*` now restricted to status updates and `rejected_but_strong.md` appends only. Removed `claude/ideas/` folder from optional artifact creation (now managed by intake engine). |
 | 1.6 | 2026-03-03 | Fixed header to bold formatting. Added `lessons_learnt_prompt.md` to preflight as hard requirement. Removed lessons learnt fallback clause. Added STEP 12.1 Global State Update. Added `.claude_current_state.json` to write scope (STEP 12 only) and commit scope. |
