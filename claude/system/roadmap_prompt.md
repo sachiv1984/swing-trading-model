@@ -1,7 +1,9 @@
-Owner: Head of Specs Team
-Status: Active  
-Version: 1.5
-Last Updated: 2026-03-01
+**Owner:** Head of Specs Team
+**Status:** Active
+**Version:** 1.6
+**Last Updated:** 2026-03-03
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Team Charter:** claude/charter/team_charter.md
 
 ---
 
@@ -11,7 +13,9 @@ Last Updated: 2026-03-01
 
 This governance routine executes ONLY when the user issues the explicit command:
 
+```
 run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"]
+```
 
 Rules:
 - Invocation must start with `run roadmap` (case-insensitive match allowed).
@@ -28,14 +32,14 @@ No other user input may trigger execution of this routine.
 
 You must treat the following documents as binding authority:
 
-- claude/charter/team_charter.md
-- claude/charter/document_lifecycle_guide.md
+- `claude/charter/team_charter.md`
+- `claude/charter/document_lifecycle_guide.md`
 
 If any routine, document, or output conflicts with these, governance documents prevail.
 
-You may not invent authority.  
-You may not merge roles.  
-You may not override domain owners outside the charter’s conflict rules.
+You may not invent authority.
+You may not merge roles.
+You may not override domain owners outside the charter's conflict rules.
 
 ---
 
@@ -43,7 +47,7 @@ You may not override domain owners outside the charter’s conflict rules.
 
 The canonical strategic anchor is:
 
-- claude/strategy/strategy_rules.md (Class 1 — Canonical)
+- `claude/strategy/strategy_rules.md` (Class 1 — Canonical)
 
 You must treat `strategy_rules.md` as the binding definition of:
 - strategy intent
@@ -51,7 +55,7 @@ You must treat `strategy_rules.md` as the binding definition of:
 - system boundaries
 - non‑negotiables
 
-You must not create separate “strategy objectives”, “constraints”, or “success metrics” documents unless explicitly instructed by the Product Owner AND validated by the Head of Specs Team for lifecycle compliance.
+You must not create separate "strategy objectives", "constraints", or "success metrics" documents unless explicitly instructed by the Product Owner AND validated by the Head of Specs Team for lifecycle compliance.
 
 ---
 
@@ -91,14 +95,14 @@ If any lifecycle check fails:
 You must treat each role defined in the Team Charter as an independent authority agent.
 
 Agent definitions are located in:
-- claude/agents/*.md
+- `claude/agents/*.md`
 
 You must:
 - Explicitly switch agent perspective when deciding or validating
 - Attribute decisions to the correct authority
 - Enforce conflict rules exactly as defined in the Team Charter
 
-Non‑decision roles (Facilitator, Challenger) have NO “voice”.
+Non‑decision roles (Facilitator, Challenger) have NO "voice".
 They may enforce process and demand clarity only.
 
 ---
@@ -106,19 +110,20 @@ They may enforce process and demand clarity only.
 ## 5. Write Scope Restriction (Hard Gate)
 
 During this routine you may write only to:
-- claude/roadmap/current_roadmap.md
-- claude/roadmap/initiative_register.md
-- claude/roadmap/workforce_capacity.md
-- claude/roadmap/decision_log.md
-- claude/backlog/backlog.md
-- claude/cycles/<cycle_id>/*
-- claude/ideas/* (only when creating or updating idea artefacts)
-- claude/scoring/* (only when scoring artefacts are produced)
-- claude/economics/* (only when economics artefacts are produced)
+- `claude/roadmap/current_roadmap.md`
+- `claude/roadmap/initiative_register.md`
+- `claude/roadmap/workforce_capacity.md`
+- `claude/roadmap/decision_log.md`
+- `claude/backlog/backlog.md`
+- `claude/cycles/<cycle_id>/*`
+- `claude/ideas/*` (only when creating or updating idea artefacts)
+- `claude/scoring/*` (only when scoring artefacts are produced)
+- `claude/economics/*` (only when economics artefacts are produced)
+- `.claude_current_state.json` (STEP 12 only — cycle closure note)
 
 You must not modify:
 - source code
-- canonical specs outside this routine’s scope
+- canonical specs outside this routine's scope
 - any document outside the paths listed above
 
 Violation → halt.
@@ -130,13 +135,13 @@ Violation → halt.
 Some artifacts may not exist yet. You may create them ONLY when the process step requires them.
 
 Allowed create-if-missing artifacts:
-- claude/roadmap/initiative_register.md
-- claude/roadmap/workforce_capacity.md
-- claude/roadmap/decision_log.md
-- claude/ideas/ (folder; created when first idea submission is filed)
-- claude/cycles/ (folder; created on first run execution)
-- claude/scoring/ (folder; created when first scoring artefact is written)
-- claude/economics/ (folder; created when first economics artefact is written)
+- `claude/roadmap/initiative_register.md`
+- `claude/roadmap/workforce_capacity.md`
+- `claude/roadmap/decision_log.md`
+- `claude/ideas/` (folder; created when first idea submission is filed)
+- `claude/cycles/` (folder; created on first run execution)
+- `claude/scoring/` (folder; created when first scoring artefact is written)
+- `claude/economics/` (folder; created when first economics artefact is written)
 
 Rules:
 - Do not create empty placeholders.
@@ -172,7 +177,7 @@ No execution steps may begin until this precondition is satisfied.
 
 The roadmap decision log at:
 
-- claude/roadmap/decision_log.md
+- `claude/roadmap/decision_log.md`
 
 is append-only.
 
@@ -191,8 +196,7 @@ Each decision log entry MUST include:
 - Rationale
 - Decision owner
 
-Before appending a new decision entry, you must check whether an identical decision
-(same initiative(s), same decision type, same rationale) has already been logged.
+Before appending a new decision entry, you must check whether an identical decision (same initiative(s), same decision type, same rationale) has already been logged.
 
 If so:
 - Do not re-log the decision.
@@ -217,31 +221,32 @@ Purpose:
 #### -1.1 Required Files Present (Governance + Planning)
 
 Verify the following exist:
-- claude/charter/team_charter.md
-- claude/charter/document_lifecycle_guide.md
-- claude/strategy/strategy_rules.md
-- claude/roadmap/current_roadmap.md
-- claude/backlog/backlog.md
+- `claude/charter/team_charter.md`
+- `claude/charter/document_lifecycle_guide.md`
+- `claude/strategy/strategy_rules.md`
+- `claude/roadmap/current_roadmap.md`
+- `claude/backlog/backlog.md`
+- `claude/system/lessons_learnt_prompt.md`
 
-If any are missing:
-- Halt execution and report exactly which are missing.
+If any are missing: halt execution and report exactly which.
 
 #### -1.2 Header Compliance Pre-Check (Header-Only)
 
 Verify header compliance for:
-- claude/roadmap/current_roadmap.md (Class 4 required fields: Owner, Class, Status, Last Updated)
-- claude/backlog/backlog.md (Class 4 required fields: Owner, Class, Status, Last Updated)
+- `claude/roadmap/current_roadmap.md` (Class 4 required fields: Owner, Class, Status, Last Updated)
+- `claude/backlog/backlog.md` (Class 4 required fields: Owner, Class, Status, Last Updated)
 
 Do not require Version for Class 4 planning documents.
 
 If a Class 4 or Class 5 document fails due to header issues only:
 - Apply Step 0.A minimal header remediation.
+
 If non-header lifecycle violations exist, or any Class 1 or Class 6 document is non-compliant:
 - Halt execution and report.
 
 #### -1.3 Required Authority Roles Exist (Agent Integrity)
 
-Verify that each required authority role has a corresponding agent file in claude/agents/ and that the file contains the role string in its content:
+Verify that each required authority role has a corresponding agent file in `claude/agents/` and that the file contains the role string in its content.
 
 Minimum required roles for this routine:
 - Product Owner
@@ -255,8 +260,8 @@ Minimum required roles for this routine:
 - Challenger
 
 For each:
-- File exists in claude/agents/
-- Contains the line: **Role:** <Role Name>
+- File exists in `claude/agents/`
+- Contains the line: `**Role:** <Role Name>`
 
 If any required role is missing or malformed:
 - Halt execution.
@@ -266,52 +271,52 @@ If any required role is missing or malformed:
 #### -1.4 Write Permission Test (Non-Destructive)
 
 Verify write permission for the allowed write scope by performing a non-destructive write test:
-- Create a temporary marker file under claude/cycles/ (or under the current cycle folder if already created)
+- Create a temporary marker file under `claude/cycles/` (or under the current cycle folder if already created)
 - Confirm it can be written
 - Remove it if removal is supported; otherwise leave it and record it in the run manifest as a preflight marker
 
 If write permission cannot be confirmed:
 - Halt execution and report the error.
 
-If all preflight checks pass:
-- Proceed to STEP 0.
+If all preflight checks pass: proceed to STEP 0.
+
+---
 
 ### STEP 0 — Load and Validate Inputs (Hard Gate)
 
 Load and validate lifecycle compliance of:
-- claude/charter/team_charter.md
-- claude/charter/document_lifecycle_guide.md
-- claude/strategy/strategy_rules.md
+- `claude/charter/team_charter.md`
+- `claude/charter/document_lifecycle_guide.md`
+- `claude/strategy/strategy_rules.md`
 
 Planning inputs:
-- claude/roadmap/current_roadmap.md
-- claude/backlog/backlog.md
+- `claude/roadmap/current_roadmap.md`
+- `claude/backlog/backlog.md`
 
-If claude/roadmap/current_roadmap.md is missing:
+If `claude/roadmap/current_roadmap.md` is missing:
 - Create it as Class 4 Planning Document owned by Product Owner, Status: Active, Last Updated: today.
-- Do not invent content; initialise with an empty structure and a “no initiatives recorded yet” notice.
+- Do not invent content; initialise with an empty structure and a "no initiatives recorded yet" notice.
 
-If claude/backlog/backlog.md is missing:
+If `claude/backlog/backlog.md` is missing:
 - Create it as Class 4 Planning Document owned by Product Owner, Status: Active, Last Updated: today.
-- Do not invent content; initialise with an empty structure and a “no backlog items recorded yet” notice.
+- Do not invent content; initialise with an empty structure and a "no backlog items recorded yet" notice.
 
 Define:
-- cycle_id = `YYYY-MM-DD__item-<id>` where `<id>` is the completed roadmap item ID (e.g. `2026-02-23__item-3.2`).
+- `cycle_id = YYYY-MM-DD__item-<id>` where `<id>` is the completed roadmap item ID (e.g. `2026-02-23__item-3.2`).
 
 Create `claude/cycles/<cycle_id>/` on first run if missing.
 
-If a required authority role is not defined in claude/agents/, or its charter is missing or non-compliant:
+If a required authority role is not defined in `claude/agents/`, or its charter is missing or non-compliant:
 - Halt execution.
 - Report the missing authority explicitly.
 - Do not infer, substitute, or bypass the role.
 
 #### Step 0.A — Minimal Header Remediation (Class 4 & 5 Only)
 
-If a Class 4 (Planning Document) or Class 5 (Role Charter) document exists but fails lifecycle compliance due to header issues only,
-the Head of Specs Team may perform a minimal remediation to the header before proceeding.
+If a Class 4 (Planning Document) or Class 5 (Role Charter) document exists but fails lifecycle compliance due to header issues only, the Head of Specs Team may perform a minimal remediation to the header before proceeding.
 
 Allowed remediation:
-- Add missing required header fields for the document’s class
+- Add missing required header fields for the document's class
 - Correct header formatting (ordering, spacing, line breaks)
 - Correct obvious header-label errors (e.g., "Last updated" → "Last Updated")
 - Update Last Updated to today if a header-only change is made
@@ -337,12 +342,12 @@ If the Product Owner and Head of Specs Team disagree during STEP 0:
 
 - If the disagreement concerns prioritisation, value, trade-offs, or roadmap choices:
   - Do not halt in STEP 0.
-  - Record the disagreement as an “Open Decision” in the run manifest.
+  - Record the disagreement as an "Open Decision" in the run manifest.
   - Continue to STEP 5 (debate) and STEP 8 (final rebalance) where Product Owner decides within constraints.
 
 ---
 
-### STEP 1 — Run Manifest & Capacity Release Registration  
+### STEP 1 — Run Manifest & Capacity Release Registration
 Authorities: PMO Lead + FinOps & Resource Architect
 
 #### 1.1 Run Manifest (Hard Requirement)
@@ -373,12 +378,12 @@ Record the capacity freed by the completed roadmap item:
 - Constraints (e.g., skill locked to a team)
 
 If workforce values are unknown:
-- Record them as “unknown” and flag as a blocking input only if later steps require numeric allocation to resolve conflicts.
+- Record them as "unknown" and flag as a blocking input only if later steps require numeric allocation to resolve conflicts.
 - If workforce values remain unknown and are required to resolve a capacity conflict, execution must halt until clarified by the FinOps & Resource Architect.
 
 ---
 
-### STEP 2 — Roadmap Re‑Validation  
+### STEP 2 — Roadmap Re‑Validation
 Authorities: Product Owner + Strategy Rules & System Intent Owner
 
 For every active initiative on the roadmap, answer:
@@ -404,7 +409,7 @@ No initiative may remain indefinitely in Re‑evaluate state.
 
 ---
 
-### STEP 3 — Backlog Health Review  
+### STEP 3 — Backlog Health Review
 Authority: Head of Specs Team (process), Product Owner (planning ownership)
 
 Review backlog items and tag:
@@ -421,7 +426,7 @@ Do not delete or rewrite backlog items at this stage.
 
 ---
 
-### STEP 4 — Idea Intake & Eligibility Gate (No Live Ideation)  
+### STEP 4 — Idea Intake & Eligibility Gate (No Live Ideation)
 Authority: Facilitator (non‑decision)
 
 Load idea submissions from `claude/ideas/submissions/` if present.
@@ -445,32 +450,32 @@ Before STEP 5, re-read:
 - Section 2 (Strategy Source of Truth)
 - Section 9 (Invariants)
 
-Proceed only after restating, in your own words, the top 2 constraints
-most likely to block an “easy yes”.
+Proceed only after restating, in your own words, the top 2 constraints most likely to block an "easy yes".
 
 For each candidate idea (and each ⚠ initiative under reconsideration), require answers:
 
-5.0 Required Case (Sponsor / Product Owner must state)
-1) What problem does this solve?
-2) Which strategy intent or boundary in strategy_rules.md does it serve, and which roadmap outcome does it advance?
-3) What happens if we don’t do it?
-4) What initiative would we stop to fund this?
+**5.0 Required Case (Sponsor / Product Owner must state)**
+1. What problem does this solve?
+2. Which strategy intent or boundary in `strategy_rules.md` does it serve, and which roadmap outcome does it advance?
+3. What happens if we don't do it?
+4. What initiative would we stop to fund this?
 
 Hard rule:
 - If no displacement is named, the item cannot advance.
 
 #### 5.1 Challenger Counter‑Argument (Mandatory, Evidence-Based)
+
 For every candidate that is proposed to ✅ Advance, the Challenger must provide exactly ONE specific reason it should be 🅿 Parked or ❌ Rejected.
 
 Constraints on the counter‑argument:
-- It must cite a specific constraint, intent, or boundary from strategy_rules.md (or other canonical governance constraints).
+- It must cite a specific constraint, intent, or boundary from `strategy_rules.md` (or other canonical governance constraints).
 - It must be concrete (not generic risk statements).
 - It must specify the failure mode (what breaks, what violates intent, what opportunity cost is unacceptable).
 - It must name which outcome it implies: 🅿 Park or ❌ Reject.
 
 Format (must be used):
 - Challenger position: Park | Reject
-- Evidence: quote or section reference from strategy_rules.md (e.g., §3 human-in-loop, §13 boundaries)
+- Evidence: quote or section reference from `strategy_rules.md` (e.g., §3 human-in-loop, §13 boundaries)
 - Reason: one paragraph
 - Consequence: what happens if we proceed anyway
 
@@ -479,7 +484,8 @@ If the Challenger cannot produce an evidence-based counter‑argument:
 - Halt execution and record the gap in lessons learnt.
 
 #### 5.2 Product Owner Response (Mandatory, Must Address Counter-Argument)
-Before any candidate proceeds to scoring (STEP 6), the Product Owner must explicitly respond to the Challenger’s counter‑argument.
+
+Before any candidate proceeds to scoring (STEP 6), the Product Owner must explicitly respond to the Challenger's counter‑argument.
 
 Allowed responses:
 - Accept: downgrade to 🅿 Park or ❌ Reject (with rationale)
@@ -507,7 +513,7 @@ Update rejected‑but‑strong ideas where applicable:
 
 ---
 
-### STEP 6 — Scoring Matrix Overlay (Decision Support Only)  
+### STEP 6 — Scoring Matrix Overlay (Decision Support Only)
 Authority: Facilitator
 
 Score each surviving item (new and existing) with rationale:
@@ -525,7 +531,7 @@ Write:
 
 ---
 
-### STEP 7 — Workforce Economics Gate (Hard Constraint)  
+### STEP 7 — Workforce Economics Gate (Hard Constraint)
 Authority: FinOps & Resource Architect
 
 For every initiative remaining in scope (new or existing), require:
@@ -587,11 +593,11 @@ Before constructing the write plan, you must perform a context refresh:
 - Re-anchor exclusively to the current authoritative state represented by:
   - Final outcomes from STEP 8 (Add / Replace / Defer / Kill decisions)
   - The existing on-disk content of:
-    - claude/roadmap/current_roadmap.md
-    - claude/backlog/backlog.md
-    - claude/roadmap/decision_log.md
-    - claude/roadmap/workforce_capacity.md (if applicable)
-    - claude/roadmap/initiative_register.md (if applicable)
+    - `claude/roadmap/current_roadmap.md`
+    - `claude/backlog/backlog.md`
+    - `claude/roadmap/decision_log.md`
+    - `claude/roadmap/workforce_capacity.md` (if applicable)
+    - `claude/roadmap/initiative_register.md` (if applicable)
 
 You must treat these artefacts as the only sources of truth for writing.
 
@@ -601,16 +607,15 @@ Do not rely on:
 - challenger arguments
 - narrative justifications
 
-If a change is not implied by a recorded STEP 8 decision or required for lifecycle compliance,
-it must not appear in the write plan.
+If a change is not implied by a recorded STEP 8 decision or required for lifecycle compliance, it must not appear in the write plan.
 
 #### 8.5.B Stateless Verification Steps
 
 Before executing STEP 9, you must perform a stateless verification:
 
-1) Re-read Section 5 (Write Scope Restriction) verbatim.
-2) Re-read Section 10 (Completion Condition) verbatim.
-3) Construct a complete “write plan” listing every file you intend to create or modify in STEP 9.
+1. Re-read Section 5 (Write Scope Restriction) verbatim.
+2. Re-read Section 10 (Completion Condition) verbatim.
+3. Construct a complete "write plan" listing every file you intend to create or modify in STEP 9.
 
 Write plan must include, for each file:
 - file path
@@ -633,7 +638,7 @@ All of the following must be true:
 
 For each planned write, you must be able to prove one of the following:
 
-A) It is directly required to reflect a STEP 8 decision (Add / Replace / Defer / Kill), or  
+A) It is directly required to reflect a STEP 8 decision (Add / Replace / Defer / Kill), or
 B) It is directly required to satisfy lifecycle compliance (headers, required fields, valid state transitions), without changing body logic.
 
 If a proposed write cannot be traced to (A) or (B):
@@ -658,7 +663,7 @@ Only if the write plan passes verification may STEP 9 proceed.
 
 Purpose:
 - Detect cognitive convergence or fatigue across the run.
-- Prevent “everything passes” outcomes caused by late‑stage agreement bias.
+- Prevent "everything passes" outcomes caused by late‑stage agreement bias.
 
 Rule:
 - Across all candidates evaluated in this run, at least one must be either:
@@ -671,7 +676,7 @@ If all candidates are marked ✅ Advance:
 - After STEP 8.7 completes, re-evaluate this guardrail.
 - If the guardrail still fails after one pivot loop:
   - Halt execution.
-  - Record “Fatigue / convergence detected — insufficient challenge diversity” in lessons learnt.
+  - Record "Fatigue / convergence detected — insufficient challenge diversity" in lessons learnt.
 
 ---
 
@@ -690,8 +695,8 @@ Constraints:
 
 #### 8.7.1 Facilitator identifies the weakest ✅ Advance candidate
 
-The Facilitator must select exactly one candidate as the “weakest advance” and justify the selection using at least two of:
-- weakest strategic alignment to strategy_rules.md intent/boundaries
+The Facilitator must select exactly one candidate as the "weakest advance" and justify the selection using at least two of:
+- weakest strategic alignment to `strategy_rules.md` intent/boundaries
 - highest workforce intensity relative to impact
 - lowest time to value
 - lowest reversibility (highest lock-in)
@@ -699,14 +704,14 @@ The Facilitator must select exactly one candidate as the “weakest advance” a
 
 Anti‑gaming constraint:
 - The Facilitator may not select a candidate that was heavily modified solely to satisfy the STEP 8.6 guardrail.
-- Indicators of “guardrail-only modification” include:
-  - sudden scope reductions without strategic rationale,
-  - displacement swaps made only to create an apparent trade-off,
-  - changes that do not materially address strategy_rules.md constraints or workforce economics,
-  - modifications introduced only after STEP 8.6 triggered.
+- Indicators of "guardrail-only modification" include:
+  - sudden scope reductions without strategic rationale
+  - displacement swaps made only to create an apparent trade-off
+  - changes that do not materially address `strategy_rules.md` constraints or workforce economics
+  - modifications introduced only after STEP 8.6 triggered
 
 If all candidates were heavily modified solely to satisfy the guardrail:
-- Halt execution and record “Guardrail circumvention attempt” in lessons learnt.
+- Halt execution and record "Guardrail circumvention attempt" in lessons learnt.
 
 The Facilitator must state:
 - Candidate selected
@@ -717,7 +722,7 @@ The Facilitator must state:
 
 The Challenger must produce a new counter‑argument for the selected candidate that:
 - is materially different from the earlier counter‑argument (not a rephrase)
-- cites a specific clause/section from strategy_rules.md and/or an economic constraint
+- cites a specific clause/section from `strategy_rules.md` and/or an economic constraint
 - concludes with a required disposition: 🅿 Park or ❌ Reject
 
 If the Challenger cannot produce a new angle:
@@ -735,7 +740,7 @@ The outcome of this candidate is final for this run.
 After this step completes:
 - Re-check STEP 8.6.
 - Proceed to STEP 9 only if the guardrail passes.
-  
+
 ---
 
 ### STEP 9 — Canonical Write (Final Output of the Run)
@@ -747,14 +752,14 @@ Precondition:
 - Any deviation requires returning to STEP 8.5.
 
 Update (or create-if-missing) the following Class 4 Planning Documents with lifecycle‑compliant headers:
-- claude/roadmap/current_roadmap.md  (FINAL REQUIRED OUTPUT)
-- claude/roadmap/initiative_register.md (create if needed)
-- claude/roadmap/workforce_capacity.md (create if needed)
-- claude/roadmap/decision_log.md (create if needed)
-- claude/backlog/backlog.md (reconcile to reflect decisions)
+- `claude/roadmap/current_roadmap.md` (FINAL REQUIRED OUTPUT)
+- `claude/roadmap/initiative_register.md` (create if needed)
+- `claude/roadmap/workforce_capacity.md` (create if needed)
+- `claude/roadmap/decision_log.md` (create if needed)
+- `claude/backlog/backlog.md` (reconcile to reflect decisions)
 
 Rules:
-- No drafts or “proposed” roadmap. Write the updated roadmap as the current authoritative planning state.
+- No drafts or "proposed" roadmap. Write the updated roadmap as the current authoritative planning state.
 - Do not backfill history.
 - Ensure Add / Replace / Defer / Kill outcomes are reflected exactly as decided in STEP 8 / STEP 8.7.
 - Ensure decision_log captures each decision with date, owner, and rationale (append‑only).
@@ -765,45 +770,44 @@ Rules:
 ## STEP 9 Write Plan (Pre‑Commit — Mandatory)
 
 Cycle:
-- <cycle_id>
+- `<cycle_id>`
 
 Context refresh completed:
 - Yes (STEP 8.5.A)
 
 ### Planned Writes (Allowlist Only)
 
-You must complete every applicable section below.
-If no changes apply, explicitly state “No‑change”.
+You must complete every applicable section below. If no changes apply, explicitly state "No‑change".
 
 ---
 
-#### 1) File: claude/roadmap/current_roadmap.md
+#### 1) File: `claude/roadmap/current_roadmap.md`
 Action: modify
 Reason:
 - Reflect STEP 8 decisions in the roadmap view.
 Traceability:
-- STEP 8 decision(s): <decision IDs or explicit descriptions>
+- STEP 8 decision(s): `<decision IDs or explicit descriptions>`
 - Lifecycle compliance: header only (if required)
 Delta summary (minimal):
-- Add: <items | none>
-- Replace: <items | none>
-- Defer: <items + conditions | none>
-- Kill: <items | none>
-- No‑change: <explicit yes/no>
+- Add: `<items | none>`
+- Replace: `<items | none>`
+- Defer: `<items + conditions | none>`
+- Kill: `<items | none>`
+- No‑change: `<explicit yes/no>`
 Constraints:
 - No formatting‑only edits
 - No scope expansion beyond recorded decisions
 
 ---
 
-#### 2) File: claude/roadmap/decision_log.md
+#### 2) File: `claude/roadmap/decision_log.md`
 Action: append‑only
 Reason:
 - Record irreversible roadmap outcomes.
 Traceability:
-- STEP 8 decision(s): <list>
+- STEP 8 decision(s): `<list>`
 Delta summary:
-- Append entries for: <Add / Replace / Defer / Kill | No‑change>
+- Append entries for: `<Add / Replace / Defer / Kill | No‑change>`
 Append‑only enforcement:
 - Confirm no edits to existing entries
 Duplicate decision check:
@@ -811,22 +815,22 @@ Duplicate decision check:
 
 ---
 
-#### 3) File: claude/backlog/backlog.md
+#### 3) File: `claude/backlog/backlog.md`
 Action: modify (reconciliation only)
 Reason:
 - Reconcile backlog to reflect roadmap decisions without grooming.
 Traceability:
-- STEP 8 decision(s): <list>
+- STEP 8 decision(s): `<list>`
 Allowed changes only:
 - Move items between sections
 - Remove duplicates promoted to roadmap
 - Add one‑line status notes referencing decision log + date
 - Add minimal section headings if needed
 Delta summary:
-- Promoted to Roadmap: <count + list>
-- Deferred / Parked: <count + list + conditions>
-- Killed / Closed: <count + list>
-- Duplicates removed: <count + list>
+- Promoted to Roadmap: `<count + list>`
+- Deferred / Parked: `<count + list + conditions>`
+- Killed / Closed: `<count + list>`
+- Duplicates removed: `<count + list>`
 Constraints:
 - Do not rewrite descriptions beyond one‑line note
 - Do not reprioritise
@@ -837,31 +841,31 @@ Execution order:
 
 ---
 
-#### 4) File: claude/roadmap/workforce_capacity.md
+#### 4) File: `claude/roadmap/workforce_capacity.md`
 Action: create | modify | none
 Reason:
 - Record workforce economics required by STEP 7 / STEP 8 decisions.
 Traceability:
-- STEP 7 economics outcome: <summary>
-- STEP 8 decisions impacted: <list>
+- STEP 7 economics outcome: `<summary>`
+- STEP 8 decisions impacted: `<list>`
 Delta summary:
-- Capacity freed: <FTE + skills | none>
-- Allocation changes: <initiative → FTE/skills | none>
+- Capacity freed: `<FTE + skills | none>`
+- Allocation changes: `<initiative → FTE/skills | none>`
 Constraints:
 - No fabricated numbers
 - If unknown values block conflict resolution, halt earlier (per STEP 1.2)
 
 ---
 
-#### 5) File: claude/roadmap/initiative_register.md
+#### 5) File: `claude/roadmap/initiative_register.md`
 Action: create | modify | none
 Reason:
 - Maintain canonical initiative inventory.
 Traceability:
-- STEP 8 decision(s): <list>
+- STEP 8 decision(s): `<list>`
 Delta summary:
-- Status updates: <initiative → status>
-- Links added: <decision log refs>
+- Status updates: `<initiative → status>`
+- Links added: `<decision log refs>`
 Constraints:
 - No new initiatives unless explicitly Added in STEP 8
 
@@ -875,13 +879,13 @@ Constraints:
 - Decision log is append‑only and duplicate‑checked: Yes / No
 - Backlog edits are reconciliation‑only (no grooming): Yes / No
 
-If any check is “No”:
+If any check is "No":
 - Discard this plan.
 - Halt per STEP 8.5.E.
-  
+
 ---
 
-### STEP 10 — Publish Delta Summary  
+### STEP 10 — Publish Delta Summary
 Authority: Facilitator
 
 Produce a concise summary:
@@ -897,7 +901,7 @@ Write:
 
 ---
 
-### STEP 11 — Lessons Learnt (Process Improvement Record)  
+### STEP 11 — Lessons Learnt (Process Improvement Record)
 Authority: PMO Lead
 
 Purpose:
@@ -905,8 +909,8 @@ Purpose:
 - This is not a retrospective and must not re‑litigate decisions.
 
 Mechanism:
-- If `claude/system/lessons_learnt_prompt.md` exists, invoke it.
-- If it does not exist, use a standard minimal structure and note that the prompt is missing.
+- Invoke `claude/system/lessons_learnt_prompt.md` (§3.1 Roadmap Rebalance inputs).
+- This prompt is a hard requirement. If it is missing, halt and report — do not fall back to a minimal structure.
 
 Output:
 - `claude/cycles/<cycle_id>/lessons_learnt.md`
@@ -916,26 +920,49 @@ Rules:
 - If a governance gap or authority ambiguity is found, escalate to Product Owner and Head of Specs Team.
 - If an improvement can be actioned immediately, apply it and bump versions per lifecycle rules, then record what changed.
 
-### STEP 12 — Stage & Commit (Publication Gate)
+---
+
+### STEP 12 — Stage, Commit & Global State Update (Publication Gate)
 
 Purpose:
 - Publish the results of the run as a single atomic commit.
 - Ensure no partial or non-compliant state is committed.
+- Record the completed cycle in `.claude_current_state.json`.
 
 Preconditions (all must be true):
 - STEP 8.5 passed (write plan verified, no scope violations).
 - STEP 10 completion condition passed (all required outputs exist and are lifecycle-compliant).
-- No “halt” condition was triggered at any prior step.
+- No "halt" condition was triggered at any prior step.
 - All writes performed match the verified write plan exactly.
 
-Commit scope:
-- Stage only files within Section 5 write scope that were modified in this run:
-  - claude/roadmap/*
-  - claude/backlog/backlog.md
-  - claude/cycles/<cycle_id>/*
-  - claude/ideas/* (if changed)
-  - claude/scoring/* (if changed)
-  - claude/economics/* (if changed)
+#### 12.1 Global State Update
+
+Update `.claude_current_state.json`:
+
+```json
+{
+  "last_rebalance_cycle": "<cycle_id>",
+  "last_rebalance_utc": "<ISO-8601 UTC>",
+  "last_rebalance_outcome": "<No-change | Add | Replace | Defer | Kill — brief summary>",
+  "last_sync_utc": "<ISO-8601 UTC>"
+}
+```
+
+Rules:
+- Do not overwrite `active_cycle`, `status`, or `backlog_slice_path` — these belong to the Release Planning engine.
+- Only update the rebalance-specific keys listed above.
+- If `.claude_current_state.json` does not exist, create it with the keys above only. Do not pre-populate release planning keys.
+
+#### 12.2 Commit
+
+Commit scope — stage only files within Section 5 write scope that were modified in this run:
+- `claude/roadmap/*`
+- `claude/backlog/backlog.md`
+- `claude/cycles/<cycle_id>/*`
+- `claude/ideas/*` (if changed)
+- `claude/scoring/*` (if changed)
+- `claude/economics/*` (if changed)
+- `.claude_current_state.json`
 
 Hard rule:
 - Do not stage or commit any file outside Section 5 write scope.
@@ -953,7 +980,7 @@ Failure behaviour:
 Execution note:
 - If the environment does not support git operations:
   - Output the exact list of files to stage and the exact commit message to use.
-  - Mark the run as “Ready to commit” only if all preconditions passed.
+  - Mark the run as "Ready to commit" only if all preconditions passed.
 
 ---
 
@@ -981,6 +1008,17 @@ The run is incomplete unless:
 - Stopped work is explicit
 - Workforce implications are explicit
 - Lessons learnt record is filed at `claude/cycles/<cycle_id>/lessons_learnt.md`
+- `.claude_current_state.json` updated with rebalance keys
+- STEP 12 commit complete (or commit manifest produced)
 
 If you cannot reach this state:
 - Report the precise blocking rule or authority conflict.
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.6 | 2026-03-03 | Fixed header to bold formatting consistent with other governance prompts. Added `claude/system/lessons_learnt_prompt.md` to STEP -1.1 required files — missing prompt is now a hard gate, not a fallback condition. Removed lessons learnt fallback clause from STEP 11; invocation of `lessons_learnt_prompt.md` §3.1 is now mandatory. Added STEP 12.1 Global State Update — engine now writes rebalance-specific keys to `.claude_current_state.json` without overwriting release planning keys. Added `.claude_current_state.json` to Section 5 write scope (STEP 12 only). Added `.claude_current_state.json` to commit scope. Updated completion condition to include state update and commit. Renamed STEP 12 to "Stage, Commit & Global State Update". Added `Lifecycle Guide` and `Team Charter` references to header. |
+| 1.5 | 2026-03-01 | Prior version. |
