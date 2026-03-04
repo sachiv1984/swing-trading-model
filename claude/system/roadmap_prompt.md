@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.6
+**Version:** 1.8
 **Last Updated:** 2026-03-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -116,7 +116,8 @@ During this routine you may write only to:
 - `claude/roadmap/decision_log.md`
 - `claude/backlog/backlog.md`
 - `claude/cycles/<cycle_id>/*`
-- `claude/ideas/*` (only when creating or updating idea artefacts)
+- `claude/ideas/*` (only when managing idea document status per STEP 4.2; no new idea creation)
+- `claude/ideas/rejected_but_strong.md` (append only — STEP 4.2 rejected-but-strong management)
 - `claude/scoring/*` (only when scoring artefacts are produced)
 - `claude/economics/*` (only when economics artefacts are produced)
 - `.claude_current_state.json` (STEP 12 only — cycle closure note)
@@ -138,10 +139,10 @@ Allowed create-if-missing artifacts:
 - `claude/roadmap/initiative_register.md`
 - `claude/roadmap/workforce_capacity.md`
 - `claude/roadmap/decision_log.md`
-- `claude/ideas/` (folder; created when first idea submission is filed)
 - `claude/cycles/` (folder; created on first run execution)
 - `claude/scoring/` (folder; created when first scoring artefact is written)
 - `claude/economics/` (folder; created when first economics artefact is written)
+- `claude/ideas/rejected_but_strong.md` (create if needed during STEP 4.2)
 
 Rules:
 - Do not create empty placeholders.
@@ -227,6 +228,8 @@ Verify the following exist:
 - `claude/roadmap/current_roadmap.md`
 - `claude/backlog/backlog.md`
 - `claude/system/lessons_learnt_prompt.md`
+- `claude/system/idea_intake_prompt.md`
+- `claude/system/idea_template.md`
 
 If any are missing: halt execution and report exactly which.
 
@@ -426,20 +429,92 @@ Do not delete or rewrite backlog items at this stage.
 
 ---
 
-### STEP 4 — Idea Intake & Eligibility Gate (No Live Ideation)
-Authority: Facilitator (non‑decision)
+### STEP 4 — Idea Review and Document Management
+Authority: Facilitator (review), Product Owner (classification decisions)
 
-Load idea submissions from `claude/ideas/submissions/` if present.
-If missing, continue (innovation debt may be flagged).
+Load all idea submissions from `claude/ideas/submissions/` with `**Status:** Submitted` or `**Status:** Parked`.
 
-If the idea system is in use, enforce:
-- Each agent submits at least 2 net‑new ideas per cycle
-- Preserve rejected‑but‑strong ideas
+If the submissions folder is absent or contains no eligible ideas:
+- Record "No ideas available this cycle" in `stage3_ideas.md`
+- Continue to STEP 5 (only ⚠ re-evaluate initiatives from STEP 2 will enter debate)
 
-Do not generate ideas during this step unless explicitly instructed by the Product Owner.
+Do **not** generate new ideas during this step. The intake engine (`run ideas`) is the only governed mechanism for idea collection.
 
-Write summary:
-- `claude/cycles/<cycle_id>/stage3_ideas.md`
+### 4.1 Per-Idea Classification
+
+For each loaded idea, the Facilitator presents it and the Product Owner classifies it as one of:
+
+- ✅ **Advance** — enters STEP 5 debate as a candidate
+- 🅿 **Park** — not ready; keep in submissions for next cycle
+- ❌ **Reject** — not viable; remove from active consideration
+
+Classification rules:
+- Any idea with a `[FIELD REQUIRED]` flag on any required template field is **ineligible to advance** until the field is completed. Classify as Park or Reject only.
+- The Facilitator must surface both the submitter's recommendation and any `[FIELD REQUIRED]` flags before the Product Owner classifies.
+- The "What Would You Stop?" field does not gate advancement — displacement will be required by STEP 5.0 for any idea that reaches debate.
+
+### 4.2 Document Management (Required — Run in Order)
+
+After all ideas are classified, apply the following document actions **before proceeding to STEP 5**:
+
+| Classification | Document Action |
+|----------------|----------------|
+| ✅ Advance | Update file: `**Status:** Advancing` |
+| 🅿 Park | Update file: `**Status:** Parked` (if not already) |
+| ❌ Reject — strong | Update file: `**Status:** Rejected`; copy core content to `claude/ideas/rejected_but_strong.md` (append, create if needed) |
+| ❌ Reject — not strong | Update file: `**Status:** Rejected` |
+
+**Rejected files are not deleted.** They remain in `claude/ideas/submissions/` as a permanent record with `Status: Rejected`.
+
+### 4.3 Idea Participation Check
+
+Count submissions per agent from the window summary (`window_summary_<window_id>.md` if present).
+
+If any agent submitted fewer than 2 net-new ideas:
+- Record the gap in `stage3_ideas.md` as an innovation debt note
+- Do not halt — this is informational only at this stage
+
+If no window summary exists (i.e. `run ideas` was not run before this roadmap run):
+- Record "Idea intake engine was not run this cycle" in `stage3_ideas.md`
+- Continue
+
+### 4.4 Write Summary
+
+Write: `claude/cycles/<cycle_id>/stage3_ideas.md`
+
+```markdown
+# Idea Intake Summary — <cycle_id>
+
+Window: <window_id | "not run this cycle">
+Total submissions loaded: <n>
+Advancing to STEP 5: <n>
+Parked: <n>
+Rejected: <n>
+Rejected-but-strong (added to register): <n>
+
+## Ideas Advancing to STEP 5
+
+| Idea ID | Agent | Title | Displacement Named |
+|---------|-------|-------|--------------------|
+| <id> | <role> | <title> | Yes |
+
+## Parked Ideas
+
+| Idea ID | Agent | Title | Reason |
+|---------|-------|-------|--------|
+| <id> | <role> | <title> | <one line> |
+
+## Rejected Ideas
+
+| Idea ID | Agent | Title | Strong? |
+|---------|-------|-------|---------|
+| <id> | <role> | <title> | Yes / No |
+
+## Innovation Debt Notes
+
+<List any agents below minimum submissions, or "None">
+<Note if intake engine was not run>
+```
 
 ---
 
@@ -1020,5 +1095,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
-| 1.6 | 2026-03-03 | Fixed header to bold formatting consistent with other governance prompts. Added `claude/system/lessons_learnt_prompt.md` to STEP -1.1 required files — missing prompt is now a hard gate, not a fallback condition. Removed lessons learnt fallback clause from STEP 11; invocation of `lessons_learnt_prompt.md` §3.1 is now mandatory. Added STEP 12.1 Global State Update — engine now writes rebalance-specific keys to `.claude_current_state.json` without overwriting release planning keys. Added `.claude_current_state.json` to Section 5 write scope (STEP 12 only). Added `.claude_current_state.json` to commit scope. Updated completion condition to include state update and commit. Renamed STEP 12 to "Stage, Commit & Global State Update". Added `Lifecycle Guide` and `Team Charter` references to header. |
+| 1.8 | 2026-03-03 | Removed displacement as an advancement gate in STEP 4.1 — displacement is now determined in STEP 5.0, not at intake. Added note that "What Would You Stop?" does not gate classification. Updated `idea_intake_prompt.md` to v1.1 in preflight required files reference. |
+| 1.7 | 2026-03-03 | Rewrote STEP 4 — replaced "Idea Intake & Eligibility Gate" with "Idea Review and Document Management". STEP 4 now reads from `claude/ideas/submissions/` (governed by `run ideas`), classifies ideas (Advance/Park/Reject), manages document status, and checks participation. No longer generates ideas or halts if submissions are absent — notes absence and continues. Added `idea_intake_prompt.md` and `idea_template.md` to preflight required files. Updated write scope: `claude/ideas/*` now restricted to status updates and `rejected_but_strong.md` appends only. Removed `claude/ideas/` folder from optional artifact creation (now managed by intake engine). |
+| 1.6 | 2026-03-03 | Fixed header to bold formatting. Added `lessons_learnt_prompt.md` to preflight as hard requirement. Removed lessons learnt fallback clause. Added STEP 12.1 Global State Update. Added `.claude_current_state.json` to write scope (STEP 12 only) and commit scope. |
 | 1.5 | 2026-03-01 | Prior version. |
