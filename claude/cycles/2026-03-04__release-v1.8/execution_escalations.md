@@ -20,8 +20,8 @@ Last Updated: 2026-03-05
 - **Unblock criteria:** (a) `governance_sync.yml` corrected to look up the numeric issue number from the ST ID before calling `gh issue close`; (b) PR checks re-run and sync_state passes green on both PR #29 and PR #30; OR (c) Product Owner and Director of Quality explicitly acknowledge this as a workflow infrastructure defect and grant merge authorisation for PR #29 and PR #30 despite the sync_state failure, recording their decision on each PR.
 - **SLA due-by:** 2026-03-06T00:00:00Z (24 hours — Lifecycle/GitHub integrity)
 - **Blocks execution:** Yes — blocks merge gate for EPIC-03 and EPIC-04
-- **Disposition:** Open
-- **Resolution summary:** (pending)
+- **Disposition:** Open — Infrastructure & Operations Owner assigned
+- **Resolution summary:** Fix required in `.github/workflows/governance_sync.yml` line 36: replace `"${{ steps.parse.outputs.st_id }}"` with a `gh issue list` lookup returning the numeric issue number for that ST ID. Infrastructure & Operations Owner owns this. All completed ST issues from v1.8 sprint to be closed manually by I&O Owner once fix is confirmed. SLA: 2026-03-06.
 
 **Interim mitigation applied:** GitHub issues #25 (ST-09), #26 (ST-10), #27 (ST-11), #28 (ST-12) manually closed by engine at 2026-03-05T02:00:00Z with comments referencing this escalation ID and the commit SHAs. Issue closure is correct; the only remaining gap is the sync_state CI check on the open PRs.
 
@@ -42,8 +42,8 @@ Last Updated: 2026-03-05
 - **Unblock criteria:** Product Owner records acceptance of the ST-03 implementation as meeting ST-03 acceptance criteria (with deviations noted); confirms the P2 entity fallback deviation is either accepted (with backlog item raised) or removed before QA sign-off is sought; confirms the P3 GracePeriodPanel error state gap is accepted or addressed. ST-03 will then be marked `done` and ST-04 will proceed.
 - **SLA due-by:** 2026-03-06T02:15:00Z (24 hours — Lifecycle / Process Integrity)
 - **Blocks execution:** No — ST-04 QA scenario authoring may begin in parallel; QA execution against the implementation can begin; merge of EPIC-03 and EPIC-04 is unaffected. However, ST-03 cannot be formally marked `done` and EPIC-01 cannot proceed to merge gate without Product Owner acceptance.
-- **Disposition:** Open
-- **Resolution summary:** (pending)
+- **Disposition:** Resolved
+- **Resolution summary:** Product Owner accepted ST-03 implementation on 2026-03-05. All 8 deviations (DEV-ST03-01 through DEV-ST03-08) accepted for v1.8; documented in `docs/specs/frontend/pages/risk_dashboard.md §11` v0.1.1. Backlog items to be assigned before cycle close (DEV-ST03-01 through DEV-ST03-07). DEV-ST03-08 (drawdown data source) flagged to Head of Specs Team for spec update. Governance breach acknowledged — future sprints must use EPIC branches and compliant commit format without exception. ST-03 marked `done`. ST-04 now active.
 
 **Deviations for documentation in canonical spec (`docs/specs/frontend/pages/risk_dashboard.md`) once Product Owner accepts:**
 

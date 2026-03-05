@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.0
-**Last Updated:** 2026-03-04
+**Version:** 0.1.1
+**Last Updated:** 2026-03-05
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-03-04
@@ -277,8 +277,32 @@ Key boundary conditions to cover:
 
 ---
 
+---
+
+## 11. Known Deviations (v1.8 Delivery)
+
+The following deviations between this specification and the v1.8 implementation were identified at sprint execution. All accepted for v1.8 by Product Owner (2026-03-05). All carry a v1.9 resolution target unless noted otherwise.
+
+| Ref | Priority | Canonical Requirement | v1.8 Actual | Resolution Target | Owner | Backlog Ref |
+|-----|----------|-----------------------|-------------|-------------------|-------|-------------|
+| DEV-ST03-01 | P2 | §8: Each component renders its own error state independently on `GET /portfolio` failure | Entity store fallback (`base44.entities.Position/Portfolio`) activates on API failure; error states not displayed when entity data is available | v1.9 — add explicit error indicator while fallback is active | Head of Engineering | TBD |
+| DEV-ST03-02 | P3 | §5.5: GracePeriodPanel renders "Unable to load position data" error state | On API failure `positions` is `[]`; "No positions in grace period" shown — indistinguishable from valid empty state | v1.9 — surface error card when `portfolioError` is set | Head of Engineering | TBD |
+| DEV-ST03-03 | P2 | §6.4: Sort by stop distance ascending (tightest/smallest first = most at risk) | Sorted descending (largest stop distance first); Base44 prompt incorrectly specified "descending" | v1.9 — correct sort direction to ascending | Head of Engineering | TBD |
+| DEV-ST03-04 | P2 | §6.2: Stop Price column (`current_stop`, GBP, 2 dp) in Position Risk Table | Stop Price column absent; Stop Distance % shown instead (presentational derivation only) | v1.9 — restore Stop Price column alongside Stop Distance % | Head of Engineering | TBD |
+| DEV-ST03-05 | P3 | §6.3: GRACE badge colour = Blue | GRACE badge rendered in Amber | v1.9 — correct badge colour to Blue | Head of Engineering | TBD |
+| DEV-ST03-06 | P3 | §3.2: "GBP value at risk" as tertiary metric in Heat Gauge | Absent | v1.9 — add GBP value at risk below gauge value | Head of Engineering | TBD |
+| DEV-ST03-07 | P3 | §5.2: "Days in Grace" (`holding_days`) column in Grace Period table | `holding_days` column absent from Grace Period table | v1.9 — restore Days in Grace column | Head of Engineering | TBD |
+| DEV-ST03-08 | P2 | §4.1: Drawdown data source is `GET /analytics/metrics` | Drawdown reads from `GET /portfolio`; ST-02 pre-alignment may have changed this | Head of Specs Team to verify ST-02 alignment outcome and update §4.1 if `GET /portfolio` is confirmed | Head of Specs Team | TBD |
+
+**Accepted by:** Product Owner
+**Accepted on:** 2026-03-05
+**Conditions:** All P2 deviations must have backlog references assigned before cycle close. DEV-ST03-08 requires spec update by Head of Specs Team to reflect confirmed data source.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.1 | 2026-03-05 | Added §11 Known Deviations. 8 deviations (3×P2, 4×P3, 1×P2 awaiting spec owner) identified from v1.8 delivery and accepted for v1.8 by Product Owner. All carry v1.9 resolution target. |
 | 0.1.0 | 2026-03-04 | Initial specification. Design source: docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md. Approved for EPIC-01 Sprint Planning. |

@@ -175,6 +175,12 @@ Status correction (append-only): DEL-20260305-01 (ST-02) is now **Unblocked/Comp
 
 ---
 
+## DEL-20260305-02 UPDATE — 2026-03-05T02:30:00Z (Product Owner Decision)
+
+**ESC-EXEC-20260305-02 RESOLVED.** Product Owner accepted ST-03 implementation for v1.8 on 2026-03-05. Decision: all 8 deviations (DEV-ST03-01 through DEV-ST03-08) accepted for v1.8 with v1.9 resolution targets. Deviations filed in `docs/specs/frontend/pages/risk_dashboard.md §11` v0.1.1. Governance breach acknowledged — future sprints must use EPIC branch workflow without exception. Issue #19 closed. ST-03 marked `done`. ST-04 now actionable. **Updated status: Complete.**
+
+---
+
 ## DEL-20260305-02 UPDATE — 2026-03-05T02:15:00Z
 
 **GOVERNANCE BREACH FINDING (append-only):** ST-03 implementation was committed directly to `main` (commits `0d319b4`–`7b08fa7`, 2026-03-05 10:10–11:05 UTC) bypassing the EPIC-01 branch and `[EPIC-01][ST-03]` commit format. All five Risk Dashboard components are present and largely spec-compliant. Two deviations identified: DEV-ST03-01 (P2 entity fallback masks error states) and DEV-ST03-02 (P3 GracePeriodPanel error vs empty state indistinguishable). ESC-EXEC-20260305-02 raised for Product Owner acknowledgement. ST-03 set to `blocked_decision` pending PO acceptance. **Updated status: Blocked (decision) — ESC-EXEC-20260305-02.**
