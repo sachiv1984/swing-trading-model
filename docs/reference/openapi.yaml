@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 1.8.1
+  version: 1.9.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -526,12 +526,42 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
-    put:
+    post:
       tags: [Settings]
-      summary: Update strategy settings
+      summary: Create settings record
       description: |
-        Updates one or more settings fields.
+        Creates a new settings record. Used to initialise settings if none exist.
+        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.1.0
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSettingsRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkUpdateSettings"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /settings/{settings_id}:
+    patch:
+      tags: [Settings]
+      summary: Update strategy settings by ID
+      description: |
+        Updates one or more settings fields on an existing record.
         Fields not provided remain unchanged.
+        Canonical contract: docs/specs/api_contracts/settings_endpoints.md v1.1.0
+      parameters:
+        - in: path
+          name: settings_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the settings record to update
       requestBody:
         required: true
         content:
@@ -543,6 +573,8 @@ paths:
           $ref: "#/components/responses/OkUpdateSettings"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -627,6 +659,13 @@ components:
 
     PositionSummary:
       type: object
+      description: >
+        Portfolio position summary object as returned by GET /portfolio.
+        v1.9.0 field list per docs/specs/api_contracts/portfolio_endpoints.md.
+        current_price is always GBP (USD converted via live_fx_rate for US positions).
+        entry_price is in the instrument's native currency (USD for US, GBP for UK).
+        pnl_pct is the percentage return relative to entry price (signed %).
+        grace_days_remaining is max(0, 10 - holding_days) when grace_period is true; null otherwise.
       properties:
         id: { type: string, format: uuid }
         ticker: { type: string }
@@ -634,22 +673,18 @@ components:
         entry_date: { type: string, format: date }
         entry_price: { type: number }
         shares: { type: number }
-        current_price: { type: number }
-        current_price_native: { type: number }
-        stop_price: { type: number }
-        stop_price_native: { type: number }
+        current_price: { type: number, description: "Always GBP regardless of instrument currency" }
+        current_value: { type: number, description: "current_price × shares, in GBP" }
         pnl: { type: number }
-        pnl_percent: { type: number }
+        pnl_pct: { type: number, description: "Percentage return relative to entry price (signed %)" }
+        current_stop: { type: number, description: "Current stop loss price in GBP" }
         holding_days: { type: integer }
         status: { type: string, enum: [open, closed] }
-        grace_period: { type: boolean }
         display_status: { type: string, enum: [GRACE, PROFITABLE, LOSING] }
+        fx_rate: { type: number, description: "FX rate stored at time of position entry" }
+        grace_period: { type: boolean }
         grace_days_remaining: { type: integer, nullable: true }
-        description: >
-        Days remaining in the 10-day grace period.
-        Derived as max(0, 10 - holding_days) when grace_period is true.
-        null when grace_period is false.
-        Always present in response.
+        live_fx_rate: { type: number, description: "FX rate used for current price conversion" }
 
     Position:
       allOf:
@@ -809,6 +844,9 @@ components:
       description: |
         Intentionally broad to avoid drift. Canonical nested field definitions live in:
         docs/specs/api_contracts/trade_endpoints.md
+        v1.9.0: trade objects include holding_days (integer, calendar days from
+        entry_date to exit_date inclusive). Both pnl_pct and pnl_percent are
+        returned for backward compatibility.
       additionalProperties: true
 
     CashTransactionRequest:
@@ -867,11 +905,12 @@ components:
         Validation payload.
         Intentionally broad to avoid drift. Canonical nested field definitions live in:
         docs/specs/api_contracts/analytics_endpoints.md
-        As of v1.8.1 (BLG-TECH-02): each validation result object includes a
-        severity field (string: critical | high | medium | low). The summary
-        object includes a by_severity breakdown with total/passed/warned/failed
-        counts per tier. See analytics_endpoints.md for the full severity model
-        and per-metric severity assignments.
+        v1.9.0: 14 validated metrics total. Each result includes severity
+        (critical | high | medium | low) and optional method field (Sharpe only).
+        Critical metrics: sharpe_ratio, max_drawdown_percent, profit_factor,
+        sharpe_ratio_trade_method. Summary includes by_severity breakdown.
+        See analytics_endpoints.md §POST /validate/calculations for the full
+        severity model and per-metric assignments.
       additionalProperties: true
 
     Settings:

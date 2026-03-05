@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.0
-**Last Updated:** 2026-03-04
+**Version:** 0.1.5
+**Last Updated:** 2026-03-05
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-03-04
@@ -277,8 +277,40 @@ Key boundary conditions to cover:
 
 ---
 
+---
+
+## 11. Known Deviations (v1.8 Delivery)
+
+The following deviations between this specification and the v1.8 implementation were identified at sprint execution. All accepted for v1.8 by Product Owner (2026-03-05). All carry a v1.9 resolution target unless noted otherwise.
+
+| Ref | Priority | Canonical Requirement | v1.8 Actual | Resolution Target | Owner | Backlog Ref |
+|-----|----------|-----------------------|-------------|-------------------|-------|-------------|
+| DEV-ST03-01 | P2 | §8: Each component renders its own error state independently on `GET /portfolio` failure | Entity store fallback (`base44.entities.Position/Portfolio`) activates on API failure; error states not displayed when entity data is available | v1.9 — add explicit error indicator while fallback is active | Head of Engineering | TBD |
+| DEV-ST03-02 | P3 | §5.5: GracePeriodPanel renders "Unable to load position data" error state | On API failure `positions` is `[]`; "No positions in grace period" shown — indistinguishable from valid empty state | v1.9 — surface error card when `portfolioError` is set | Head of Engineering | TBD |
+| DEV-ST03-03 | P2 | §6.4: Sort by stop distance ascending (tightest/smallest first = most at risk) | Sorted descending (largest stop distance first); Base44 prompt incorrectly specified "descending" | v1.9 — correct sort direction to ascending | Head of Engineering | TBD |
+| DEV-ST03-04 | P2 | §6.2: Stop Price column (`current_stop`, GBP, 2 dp) in Position Risk Table | Stop Price column absent; Stop Distance % shown instead (presentational derivation only) | v1.9 — restore Stop Price column alongside Stop Distance % | Head of Engineering | TBD |
+| DEV-ST03-05 | P3 | §6.3: GRACE badge colour = Blue | GRACE badge rendered in Amber | v1.9 — correct badge colour to Blue | Head of Engineering | TBD |
+| DEV-ST03-06 | P3 | §3.2: "GBP value at risk" as tertiary metric in Heat Gauge | Absent | v1.9 — add GBP value at risk below gauge value | Head of Engineering | TBD |
+| DEV-ST03-07 | P3 | §5.2: "Days in Grace" (`holding_days`) column in Grace Period table | `holding_days` column absent from Grace Period table | v1.9 — restore Days in Grace column | Head of Engineering | TBD |
+| DEV-ST03-08 | P2 | §4.1: Drawdown data source is `GET /analytics/metrics` | Drawdown reads from `GET /portfolio`; ST-02 pre-alignment may have changed this | Head of Specs Team to verify ST-02 alignment outcome and update §4.1 if `GET /portfolio` is confirmed | Head of Specs Team | TBD |
+| DEV-ST03-09 | P3 | §7.5: Threshold label changes if hypothetical position crosses a boundary | `ProspectiveHeatPanel.js` renders projected heat % and delta only — threshold label absent from result display | v1.9 — add threshold label badge to prospective heat result row | Head of Engineering | TBD |
+| DEV-ST03-10 | P2 | §1: Nav label "Risk", nav position between Portfolio and Analytics, always visible | Navigation sidebar entry absent — page is inaccessible via normal UX; route `/risk` IS registered and accessible via direct URL | RESOLVED 2026-03-05 — nav entry added (index.js fix) | Head of Engineering | — |
+| DEV-ST03-11 | P2 | §6.2: Entry Price column — "GBP, 2 decimal places" for all positions | US position entry prices display in native USD ($) instead of GBP (£); backend returns `entry_price` in native currency, not GBP-converted | v1.9 — convert entry_price to GBP for US positions in `portfolio_service.py` and update frontend display | Head of Engineering | TBD |
+| DEV-ST03-12 | P2 | §6.2: Stop Distance % derived as `(current_price − current_stop) / current_price × 100` — assumes both values in GBP | `current_stop` returned in native USD for US positions (mirrors `entry_price` currency pattern — DEV-ST03-11); `current_price` is in GBP; display derivation mixes currencies → Stop Distance % incorrect for all US positions | v1.9 — return `current_stop` in GBP in `portfolio_service.py` for US positions (apply FX conversion consistent with `current_price`) | Head of Engineering | TBD |
+
+**Accepted by:** Product Owner
+**Accepted on:** 2026-03-05 (DEV-ST03-01 through DEV-ST03-12 — all deviations accepted for v1.8)
+**Conditions:** All P2 deviations must have backlog references assigned before cycle close. DEV-ST03-08 requires spec update by Head of Specs Team to reflect confirmed data source. DEV-ST03-09 (P3) identified by Director of Quality during ST-04 review (2026-03-05); accepted for v1.8 by Product Owner. DEV-ST03-10 RESOLVED — navigation fixed 2026-03-05.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.5 | 2026-03-05 | Added DEV-ST03-12 (P2): `current_stop` returned in USD for US positions; Stop Distance % display derivation mixes currencies per §6.2. Found SC-RD-27 network tab inspection. Acceptance pending PO. |
+| 0.1.4 | 2026-03-05 | Added DEV-ST03-11 (P2): US position entry prices display in USD instead of GBP per §6.2. Found SC-RD-14 live execution. DEV-ST03-10 marked RESOLVED (nav fix applied). |
+| 0.1.3 | 2026-03-05 | Added DEV-ST03-10 (P2) to §11: Navigation sidebar entry absent for /risk page per §1. Identified during live scenario execution of SC-RD-01. Subsequently resolved by fix 2026-03-05. |
+| 0.1.2 | 2026-03-05 | Added DEV-ST03-09 (P3) to §11: ProspectiveHeatPanel missing threshold label per §7.5. Identified by Director of Quality during ST-04 QA review. Accepted for v1.8; v1.9 resolution target. |
+| 0.1.1 | 2026-03-05 | Added §11 Known Deviations. 8 deviations (3×P2, 4×P3, 1×P2 awaiting spec owner) identified from v1.8 delivery and accepted for v1.8 by Product Owner. All carry v1.9 resolution target. |
 | 0.1.0 | 2026-03-04 | Initial specification. Design source: docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md. Approved for EPIC-01 Sprint Planning. |

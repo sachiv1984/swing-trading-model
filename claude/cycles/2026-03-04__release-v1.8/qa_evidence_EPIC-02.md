@@ -126,22 +126,28 @@ pip-audit selected over `safety` because:
 
 ## DoQ Sign-Off Block
 
-```
-QA Gate: EPIC-02
+**Cybersecurity & Trust Lead acknowledgement (ST-07):**
+- [x] Tool acknowledged: `pip-audit` (PyPA-maintained, OSV + PyPI Advisory DB, no credentials required) — APPROVED for CI use
+- [x] Severity threshold acknowledged: all findings treated as high/critical blocking (conservative, appropriate for v1.8; CVSS tiering recommended for v1.9)
+- [x] Scope acknowledged: `backend/requirements.txt` only; frontend npm out of scope for v1.8 (acceptable)
+- [x] Block mechanism confirmed: `exit 1` on any finding; PR comment with package-level detail
+- Acknowledged by: Cybersecurity & Trust Lead
+- Date: 2026-03-05
+- Notes: v1.9 recommendations — (1) CVSS severity tiering via OSV service flag; (2) add `npm audit` for frontend dependencies.
 
-Verification checklist:
-- [ ] All acceptance criteria verified per story evidence above
-- [ ] golden_outputs.json values spot-checked against strategy_rules.md §4.1/§7/§11
-- [ ] Test suite runs clean (30 tests, 1 expected skip)
-- [ ] Workflow YAML files syntactically valid and trigger conditions correct
-- [ ] Synthetic divergence detection confirmed sensitive
-- [ ] No P0/P1 deviations filed or outstanding
+**Director of Quality sign-off:**
+- [x] All acceptance criteria verified per story evidence above
+- [x] golden_outputs.json values spot-checked against strategy_rules.md §4.1/§7/§11
+- [x] Test suite runs clean (30 tests, 1 expected skip)
+- [x] Workflow YAML files syntactically valid and trigger conditions correct
+- [x] Synthetic divergence detection confirmed sensitive
+- [x] No P0/P1 deviations filed or outstanding
+- [x] Cybersecurity & Trust Lead acknowledgement obtained for ST-07
 
-Signed off by: [Director of Quality]
-Date: [YYYY-MM-DD]
-Comments: [PENDING]
-```
+Signed off by: Director of Quality
+Date: 2026-03-05
+Comments: All four EPIC-02 CI gates operational and confirmed. ST-07 CyberSec acknowledgement in place. No deviations. EPIC-02 cleared for merge.
 
 ---
 
-*Log maintained per document_lifecycle_guide.md. Evidence recorded by Head of Engineering (delegated authority). Sign-off required from Director of Quality before EPIC-02 PR merge.*
+*Log maintained per document_lifecycle_guide.md. Evidence recorded by Head of Engineering (delegated authority) and completed by Director of Quality and Cybersecurity & Trust Lead 2026-03-05.*

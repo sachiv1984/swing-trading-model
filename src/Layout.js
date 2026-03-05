@@ -16,7 +16,8 @@ import {
   ExternalLink,
   FileBarChart,
   Zap,
-  Activity
+  Activity,
+  ShieldAlert
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -45,6 +46,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Trade History", icon: History, page: "TradeHistory" },
     { name: "Reports", icon: FileBarChart, page: "Reports" },
     { name: "Analytics", icon: TrendingUp, page: "PerformanceAnalytics" },
+    { name: "Risk Dashboard", icon: ShieldAlert, page: "RiskDashboard" },
     { name: "System Status", icon: Activity, page: "SystemStatus" },
     { name: "Settings", icon: Settings, page: "Settings" },
   ];

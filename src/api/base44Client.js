@@ -394,6 +394,10 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(sizeData),
       }),
+    prospectiveHeat: async (ticker, shares, entry_price, stop_price) =>
+      doFetch(
+        `/portfolio/prospective-heat?ticker=${encodeURIComponent(ticker)}&shares=${shares}&entry_price=${entry_price}&stop_price=${stop_price}`
+      ),
   },
 
   positions: {
