@@ -4,7 +4,7 @@
   "invoked_utc": "2026-03-05T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-05T02:30:00Z",
+  "last_updated_utc": "2026-03-05T02:45:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -74,15 +74,15 @@
           "assigned_to": "human",
           "github_issue": 20,
           "branch": "exec/2026-03-04__release-v1.8/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "f261f0f",
           "delegation_record_id": "DEL-20260305-03",
           "blocked_since_utc": "2026-03-05T01:00:00Z",
-          "unblock_criteria": "docs/testing/risk_dashboard_scenarios.md created and lifecycle-compliant; Director of Quality reviews and approves; committed in format [EPIC-01][ST-04]",
+          "unblock_criteria": "Director of Quality reviews risk_dashboard_scenarios.md and explicitly approves; signs off on EPIC-01 QA evidence log; comments on PR",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["docs/testing/risk_dashboard_scenarios.md", "docs/specs/metrics_definitions.md#Portfolio Heat"],
-          "deviations_filed": false,
-          "notes": "Scenario document may be drafted in parallel; execution and sign-off requires ST-03 available."
+          "deviations_filed": true,
+          "notes": "Scenario document created at docs/testing/risk_dashboard_scenarios.md v1.0.0 (Class 1 Canonical). 27 scenarios across 7 groups. Derived from risk_dashboard.md v0.1.1 and metrics_definitions.md v1.6.0. 5 known deviations (DEV-ST03-01 through DEV-ST03-05) documented in §2 with QA execution guidance. Committed f261f0f to EPIC-01 branch. Issue #20 closed manually (sync_state bug). Awaiting Director of Quality sign-off."
         }
       }
     },
