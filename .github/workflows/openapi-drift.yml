@@ -58,8 +58,9 @@ jobs:
           HTTP_METHODS  = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
 
           # Known gaps during transition periods (METHOD PATH strings).
-          # Clear this after EPIC-03 / ST-10 merges to main.
-          KNOWN_GAPS: set = set()
+          # GET /market/status: endpoint exists in implementation but has no canonical
+          # markdown contract yet. Tracked as pre-v1.9.0 debt; contract to be written in v1.9.
+          KNOWN_GAPS: set = {"GET /market/status"}
 
           # ── Parse openapi.yaml via regex (resilient to YAML syntax errors) ───
           openapi_text = OPENAPI_PATH.read_text()
