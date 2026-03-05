@@ -19,7 +19,7 @@ import {
   Activity,
   ShieldAlert
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
 
 export default function Layout({ children, currentPageName }) {
