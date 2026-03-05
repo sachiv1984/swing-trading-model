@@ -4,7 +4,7 @@
   "invoked_utc": "2026-03-05T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-05T04:00:00Z",
+  "last_updated_utc": "2026-03-05T04:30:00Z",
 
   "epics": {
     "EPIC-01": {
