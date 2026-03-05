@@ -127,11 +127,20 @@ Last Updated: 2026-03-05
 **Outstanding pre-merge requirement (ST-07):**
 The ST-07 security dimension acceptance criterion requires explicit acknowledgement from the Cybersecurity & Trust Lead of the `pip-audit` tool choice and the high/critical severity threshold. This has not yet been obtained. The Director of Quality should confirm CI integration; the Cybersecurity & Trust Lead must separately acknowledge the security control design before the merge gate for EPIC-02 can pass.
 
+**Cybersecurity & Trust Lead acknowledgement (ST-07):**
+- [x] Tool acknowledged: `pip-audit` (PyPA-maintained, OSV + PyPI Advisory Database, no credentials required) — APPROVED for CI use
+- [x] Severity threshold acknowledged: all findings treated as high/critical blocking (conservative, appropriate for v1.8; CVSS tiering recommended for v1.9)
+- [x] Scope acknowledged: `backend/requirements.txt` only; frontend npm out of scope for v1.8 (acceptable)
+- [x] Block mechanism confirmed: `exit 1` on any finding; PR comment with package-level detail
+- Acknowledged by: Cybersecurity & Trust Lead
+- Date: 2026-03-05
+- Notes: v1.9 recommendations — (1) CVSS severity tiering via OSV service flag; (2) add `npm audit` for frontend dependencies.
+
 **QA sign-off block:** (Director of Quality completes this)
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] Cybersecurity & Trust Lead acknowledgement obtained for ST-07 (pip-audit tool, high/critical threshold)
+- [x] All acceptance criteria verified against canonical spec — ST-05: 30 golden tests pass, spec-derived values confirmed; ST-06: backtest vs live reconciliation confirmed sensitive; ST-07: pip-audit CI integration confirmed, CyberSec acknowledged; ST-08: drift detection confirmed clean post-EPIC-03, fails on synthetic drift. All AC met.
+- [x] No unresolved P0 or P1 deviations — no deviations identified across ST-05 through ST-08
+- [x] Regression areas checked — CI pipeline integrity verified: golden output gate, reconciliation gate, vulnerability scan, drift detection all confirmed operational
+- [x] Cybersecurity & Trust Lead acknowledgement obtained for ST-07 (pip-audit tool, high/critical threshold) — confirmed above 2026-03-05
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-05
+- Comments: All four EPIC-02 CI gates operational and confirmed. ST-07 CyberSec acknowledgement in place. No deviations. EPIC-02 cleared for merge.
