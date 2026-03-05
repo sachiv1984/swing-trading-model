@@ -55,3 +55,21 @@ Last Updated: 2026-03-05
 gh issue close --comment "Resolved via Claude Code commit: ${{ steps.parse.outputs.st_id }}" "${{ steps.parse.outputs.st_id }}"
 ```
 The last argument `"${{ steps.parse.outputs.st_id }}"` must be replaced with the numeric issue number obtained by querying `gh issue list --search "[ST-xx]"`.
+
+---
+
+## ESC-EXEC-20260305-03
+
+- **Raised at:** 2026-03-05T05:30:00Z
+- **Routine:** Sprint Execution
+- **Cycle ID:** 2026-03-04__release-v1.8
+- **Step:** STEP 4 — Merge Gate, EPIC-01
+- **ST/EPIC item:** EPIC-01 / ST-03 — Frontend: Risk Dashboard Page Implementation
+- **Trigger type:** Quality
+- **Blocking statement:** The EPIC-01 merge gate condition "Director of Quality executes ST-04 test scenarios and confirms pass" (sprint_backlog.md ST-03 Verification dimension) has not been met. The Director of Quality's sign-off on the QA evidence log was based on code review of `HeatGauge.js getColor()` logic and approval of the scenario *document* (ST-04), but the 27 acceptance scenarios in `docs/testing/risk_dashboard_scenarios.md` v1.0.1 (SC-RD-01 through SC-RD-27) have not been executed against the running Risk Dashboard UI. Scenario execution against a live environment is explicitly required by the sprint backlog and is not substitutable by code review.
+- **Owning authority:** Director of Quality
+- **Unblock criteria:** Director of Quality confirms execution of the ST-04 scenarios against the running Risk Dashboard at `/risk` and records: (a) which scenarios passed, (b) which scenarios could not be executed (with reason), (c) any new defects found. Pass disposition required for all scenarios not covered by an accepted v1.8 deviation.
+- **SLA due-by:** 2026-03-06T05:30:00Z (24 hours — Quality)
+- **Blocks execution:** Yes — blocks merge of PR #31 (EPIC-01)
+- **Disposition:** Open
+- **Resolution summary:**
