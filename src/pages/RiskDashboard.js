@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
+import { base44, api } from "../api/base44Client";
 import { Loader2, AlertCircle } from "lucide-react";
 import PageHeader from "../components/ui/PageHeader";
 import HeatGauge from "../components/risk/HeatGauge";
@@ -24,11 +24,7 @@ export default function RiskDashboard() {
     error: portfolioError,
   } = useQuery({
     queryKey: ["riskPortfolio"],
-    queryFn: async () => {
-      const res = await fetch("/api/portfolio");
-      if (!res.ok) throw new Error(`Portfolio API error ${res.status}`);
-      return res.json();
-    },
+    queryFn: () => api.portfolio.get(),
     retry: 1,
   });
 
