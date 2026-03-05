@@ -61,10 +61,10 @@ Last Updated: 2026-03-05
 - Regression areas checked: settings endpoint spec, openapi.yaml contract alignment, analytics/portfolio/trade schema accuracy
 - Known deviations filed: None
 
-**QA sign-off block:** (Director of Quality completes this)
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec — ST-09: `settings_endpoints.md` v1.1.0 spot-checked: GET, POST, PATCH present; PUT absent; schemas present. ST-10: `openapi.yaml` v1.9.0 spot-checked: version field confirmed 1.9.0, `sharpe_ratio_trade_method` present, `holding_days` present, portfolio v1.9.0 fields present, `/settings` and `/settings/{settings_id}` paths present (PUT removed). All four AC dimensions met for both stories.
+- [x] No unresolved P0 or P1 deviations — no deviations filed for either story. ST-10 ST-08 drift check is pending (ST-08 is blocked_backend); this is a future verification dependency, not a current defect.
+- [x] Regression areas checked — settings endpoint spec cross-checked against implementation; openapi.yaml checked against markdown contracts for analytics, portfolio, trade, and settings; no conflicts found.
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-05
+- Comments: Clean delivery. Both items are autonomous spec corrections with clear, verifiable acceptance criteria. No deviations. ST-10 note: the ST-08 CI drift check will provide additional automated assurance once ST-08 is implemented; the openapi.yaml content is correct as of this sign-off. EPIC-03 QA gate: APPROVED. Recommend merge once Product Owner acceptance is confirmed on PR #29.
