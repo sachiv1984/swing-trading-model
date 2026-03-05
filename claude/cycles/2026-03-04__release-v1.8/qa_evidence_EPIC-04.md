@@ -64,10 +64,10 @@ Each scenario includes user required actions and data integrity implications. `d
 - Regression areas checked: lifecycle header compliance, content completeness per AC, index registration
 - Known deviations filed: None
 
-**QA sign-off block:** (Director of Quality completes this)
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec — ST-11: `unavailability_policy.md` v1.0.0 spot-checked: sections 2.1 (Backend Down), 2.2 (Market Data Feed Unavailable), 2.3 (Partial Degradation) all present with user actions and data integrity implications; lifecycle header confirmed; `docs/ops/` directory created. ST-12: `api_changelog.md` v1.0.0 spot-checked: v1.9.0 section present with entries for analytics, portfolio, trade, and settings contracts; maintenance obligation section present; Specs_Index.md registration confirmed at §3.4.
+- [x] No unresolved P0 or P1 deviations — no deviations filed for either story.
+- [x] Regression areas checked — lifecycle header compliance verified for both documents; content completeness checked against AC for each story; Specs_Index.md registration confirmed.
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-05
+- Comments: Clean delivery. Both items are governance documents created to spec. Lifecycle headers confirmed compliant. ST-11 note: the unavailability policy correctly reflects the system's read-only nature (no in-flight state changes to protect). ST-12 note: the changelog backfill is complete and the maintenance obligation is clearly stated. EPIC-04 QA gate: APPROVED. Recommend merge once Product Owner acceptance is confirmed on PR #30.
