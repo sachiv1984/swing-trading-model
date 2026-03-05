@@ -56,6 +56,7 @@ import TradeEntry from './pages/TradeEntry';
 import TradeHistory from './pages/TradeHistory';
 import SystemStatus from './pages/SystemStatus';
 import PerformanceAnalytics from './pages/PerformanceAnalytics';
+import RiskDashboard from './pages/RiskDashboard';
 import __Layout from './Layout.js';
 
 
@@ -69,6 +70,7 @@ export const PAGES = {
     "TradeHistory": TradeHistory,
     "SystemStatus": SystemStatus,
     "PerformanceAnalytics": PerformanceAnalytics,
+    "RiskDashboard": RiskDashboard,
 }
 
 export const pagesConfig = {
