@@ -190,3 +190,9 @@ Status correction (append-only): DEL-20260305-01 (ST-02) is now **Unblocked/Comp
 ## DEL-20260305-02 UPDATE — 2026-03-05T02:00:00Z
 
 Status update (append-only): ST-02 (EPIC-01/EPIC-01 dependency for ST-03) is now complete. **The first unblock criterion for ST-03 is met.** The Base44 prompt draft is already recorded in DEL-20260305-02 above. The Base44 Frontend Prompt Owner may now proceed with code generation using that prompt. Note: the prospective heat endpoint approach should be confirmed with Head of Engineering before wiring the Prospective Heat Indicator section (ST-02 confirms `portfolio_heat_percent` exists; the prospective endpoint approach for new-position simulation was not explicitly resolved in the ST-02 commit — confirm before building that panel). **Updated status: In Progress — ST-02 unblocked; awaiting Base44 implementation and commit.**
+
+---
+
+## DEL-20260305-03 UPDATE — 2026-03-05T03:00:00Z
+
+Director of Quality signed off ST-04 on 2026-03-05. Scenario document `docs/testing/risk_dashboard_scenarios.md` v1.0.1 approved. DEV-ST03-09 (P3, ProspectiveHeatPanel missing threshold label) identified during review and filed in `risk_dashboard.md §11` v0.1.2; accepted for v1.8 by Product Owner. §2 reference corrected (scenario numbering). Issue #20 closed. ST-04 marked `done`. EPIC-01 all stories complete. QA evidence log complete. **Updated status: Complete — EPIC-01 ready for PR (PR #31 opened 2026-03-05T04:00:00Z).**

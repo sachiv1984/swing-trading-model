@@ -69,7 +69,9 @@ def get_portfolio_summary() -> Dict:
             "total_pnl": 0,
             "last_updated": str(portfolio['last_updated']),
             "live_fx_rate": 1.27,
-            "positions": []
+            "portfolio_heat_percent": 0.0,
+            "position_risks": [],
+            "positions": [],
         }
     
     # Get live FX rate
@@ -77,8 +79,9 @@ def get_portfolio_summary() -> Dict:
     print(f"\n📊 /portfolio endpoint - fetching live prices for Dashboard")
     
     positions_list = []
+    position_risks = []
     total_positions_value_gbp = 0
-    
+
     for pos in positions:
         pos = decimal_to_float(pos)
         
@@ -143,6 +146,27 @@ def get_portfolio_summary() -> Dict:
             holding_days=holding_days,
         )
 
+        # Calculate Position Risk per metrics_definitions.md §Position Risk (TASK-06 — v1.7)
+        # Uses initial_stop (entry stop), not trailing current_stop
+        # Formula: (entry_price_native - initial_stop_native) * shares * fx_adjustment
+        # fx_adjustment = 1/fx_rate for US (USD→GBP), 1.0 for UK
+        initial_stop = pos.get("initial_stop")
+        if initial_stop is not None and float(initial_stop) > 0:
+            initial_stop = float(initial_stop)
+            risk_native = max(0.0, entry_price - initial_stop)
+            if market == 'US':
+                fx_adj = 1.0 / stored_fx_rate if stored_fx_rate else 1.0 / live_fx_rate
+            else:
+                fx_adj = 1.0
+            position_risk_gbp = round(risk_native * shares * fx_adj, 2)
+        else:
+            position_risk_gbp = 0.0
+
+        position_risks.append({
+            "ticker": pos["ticker"],
+            "position_risk_gbp": position_risk_gbp,
+        })
+
         positions_list.append({
             "id": str(pos["id"]),
             "ticker": pos["ticker"],
@@ -166,7 +190,12 @@ def get_portfolio_summary() -> Dict:
 
     
     total_value = cash + total_positions_value_gbp
-    
+
+    # Calculate Portfolio Heat per metrics_definitions.md §Portfolio Heat (TASK-07 — v1.7)
+    # Formula: Sum(Position_Risk_GBP) / Portfolio_Value_GBP * 100
+    total_risk_gbp = sum(r["position_risk_gbp"] for r in position_risks)
+    portfolio_heat_percent = round(total_risk_gbp / total_value * 100, 2) if total_value > 0 else 0.0
+
     # Calculate TRUE portfolio P&L accounting for deposits/withdrawals
     cash_summary = get_total_deposits_withdrawals(portfolio_id)
     net_cash_flow = cash_summary['net_cash_flow']
@@ -204,7 +233,9 @@ def get_portfolio_summary() -> Dict:
         "live_fx_rate": live_fx_rate,
         "current_drawdown_percent": drawdown_fields["current_drawdown_percent"],
         "peak_portfolio_value": drawdown_fields["peak_portfolio_value"],
-        "positions": positions_list
+        "portfolio_heat_percent": portfolio_heat_percent,
+        "position_risks": position_risks,
+        "positions": positions_list,
     }
 
 
