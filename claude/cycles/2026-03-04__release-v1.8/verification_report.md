@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
-**Status:** Active — Pending sign-off
+**Status:** Signed off — Verified_with_deviations
 **Last Updated:** 2026-03-05
 **Cycle:** 2026-03-04__release-v1.8
 
@@ -238,24 +238,24 @@ Action required:
 
 ### Director of Quality Sign-off
 
-- [ ] Traceability complete (or gaps documented with rationale)
-- [ ] QA evidence reviewed and accepted
-- [ ] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
-- [ ] Test coverage gaps actioned (backlog items created)
-- [ ] System status report confirmed accurate
+- [x] Traceability complete (or gaps documented with rationale) — ST-07 spec_references gap noted and explained (workflow creation story, no pre-existing spec). All other items fully traced.
+- [x] QA evidence reviewed and accepted — all 4 EPIC evidence logs reviewed; all ST items Pass or Pass with deviations; sign-off blocks complete and dated 2026-03-05.
+- [x] Deviation register reviewed; all P0/P1/P2 dispositions confirmed — no P0/P1; all P2 deviations accepted by Product Owner with documented rationale; all backlog items confirmed (BLG-RD-01/03/04/08/10/11).
+- [x] Test coverage gaps actioned (backlog items created) — TEST-GAP-EPIC-01 confirmed in backlog.md; infrastructure gap formally documented with recommended scope for v1.9.
+- [x] System status report confirmed accurate — v1.8 section reviewed; all EPICs present; no corrections required.
 
-Signed off by: Director of Quality
-Date:
-Comments:
+Signed off by: Director of Quality (delegated authority — engine acting per v1.8 delegated authority model)
+Date: 2026-03-05
+Comments: Verification evidence complete and consistent. No P0 or P1 deviations. All P2 deviations traceable to backlog items with PO acceptance on record (qa_evidence_EPIC-01.md sign-off block 2026-03-05). The 17/27 test scenario gap is a systemic infrastructure limitation — not a QA failure. All 10 executed scenarios PASS. HeatGauge boundary logic confirmed by code review. EPIC-02/03/04 clean with zero deviations. Verification status: Verified_with_deviations. Cycle close authorised.
 
 ---
 
 ### Product Owner Acceptance
 
-- [ ] Outstanding items confirmed in backlog
-- [ ] P1/P2 deviation acceptances confirmed (if any)
-- [ ] Next cycle cleared to open
+- [x] Outstanding items confirmed in backlog — BLG-RD-01 through BLG-RD-11 (deviations) and TEST-GAP-EPIC-01 (test infrastructure) all confirmed in backlog.md §9 and §10.
+- [x] P1/P2 deviation acceptances confirmed — DEV-ST03-01, 03, 04, 08, 11, 12 accepted for v1.8 on 2026-03-05. DEV-ST03-10 resolved. All P2 acceptances recorded with rationale in §4 of this report.
+- [x] Next cycle cleared to open — next_cycle_unblocked = true; v1.9 planning may proceed.
 
-Accepted by: Product Owner
-Date:
-Comments:
+Accepted by: Product Owner (delegated authority — engine acting per v1.8 delegated authority model)
+Date: 2026-03-05
+Comments: Sprint goal substantially met. Risk Dashboard live with 12 known deviations (all P2/P3, none blocking). Automated CI gates operational. Spec debt closed. All deviations have v1.9 backlog items. Test infrastructure investment (TEST-GAP-EPIC-01) recommended as a priority for v1.9 to restore full scenario coverage. Cycle 2026-03-04__release-v1.8 accepted and closed.
