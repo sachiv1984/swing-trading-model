@@ -166,3 +166,21 @@ Last Updated: 2026-03-05
 - **Unblock criteria:** ST-10 merged to main; CI drift check exists and passes on post-ST-10 openapi.yaml; confirmed to fail on synthetic drift; Director of Quality confirms; commit in format `[EPIC-02][ST-08] <description>`
 - **Commit format required:** `[EPIC-02][ST-08] <description>` pushed to `exec/2026-03-04__release-v1.8/EPIC-02`
 - **Status:** Pending (coordinate with ST-10 merge)
+
+---
+
+## DEL-20260305-01 UPDATE — 2026-03-05T02:00:00Z
+
+Status correction (append-only): DEL-20260305-01 (ST-02) is now **Unblocked/Complete**. Head of Engineering pushed commit `6b1bee9` to `exec/2026-03-04__release-v1.8/EPIC-01` adding `portfolio_heat_percent` and `position_risks[]` to `GET /portfolio`. Formula verified against `metrics_definitions.md §Portfolio Heat`. Issue #18 closed. ST-02 marked `done` in execution_state.json. **Updated status: Complete.**
+
+---
+
+## DEL-20260305-02 UPDATE — 2026-03-05T02:15:00Z
+
+**GOVERNANCE BREACH FINDING (append-only):** ST-03 implementation was committed directly to `main` (commits `0d319b4`–`7b08fa7`, 2026-03-05 10:10–11:05 UTC) bypassing the EPIC-01 branch and `[EPIC-01][ST-03]` commit format. All five Risk Dashboard components are present and largely spec-compliant. Two deviations identified: DEV-ST03-01 (P2 entity fallback masks error states) and DEV-ST03-02 (P3 GracePeriodPanel error vs empty state indistinguishable). ESC-EXEC-20260305-02 raised for Product Owner acknowledgement. ST-03 set to `blocked_decision` pending PO acceptance. **Updated status: Blocked (decision) — ESC-EXEC-20260305-02.**
+
+---
+
+## DEL-20260305-02 UPDATE — 2026-03-05T02:00:00Z
+
+Status update (append-only): ST-02 (EPIC-01/EPIC-01 dependency for ST-03) is now complete. **The first unblock criterion for ST-03 is met.** The Base44 prompt draft is already recorded in DEL-20260305-02 above. The Base44 Frontend Prompt Owner may now proceed with code generation using that prompt. Note: the prospective heat endpoint approach should be confirmed with Head of Engineering before wiring the Prospective Heat Indicator section (ST-02 confirms `portfolio_heat_percent` exists; the prospective endpoint approach for new-position simulation was not explicitly resolved in the ST-02 commit — confirm before building that panel). **Updated status: In Progress — ST-02 unblocked; awaiting Base44 implementation and commit.**

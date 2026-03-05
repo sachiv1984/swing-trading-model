@@ -4,7 +4,7 @@
   "invoked_utc": "2026-03-05T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-05T01:30:00Z",
+  "last_updated_utc": "2026-03-05T02:20:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -53,19 +53,19 @@
         "ST-03": {
           "title": "Frontend: Risk Dashboard Page Implementation",
           "classification": "delegated_frontend",
-          "status": "blocked_frontend",
+          "status": "blocked_decision",
           "assigned_to": "human",
           "github_issue": 19,
-          "branch": "exec/2026-03-04__release-v1.8/EPIC-01",
-          "commit_sha": null,
+          "branch": "main (governance breach — see ESC-EXEC-20260305-02)",
+          "commit_sha": "7b08fa7 (latest of 8 commits to main: 0d319b4, b1bb3d2, 2182b9d, ccbd645, ba6131c, b034d29, 3e4d143, 7b08fa7)",
           "delegation_record_id": "DEL-20260305-02",
-          "blocked_since_utc": "2026-03-05T01:00:00Z",
-          "unblock_criteria": "ST-02 confirmed done; Base44 Frontend Prompt Owner submits Base44 prompt and implementation committed to branch in format [EPIC-01][ST-03]; ST-04 scenarios all pass",
+          "blocked_since_utc": "2026-03-05T02:15:00Z",
+          "unblock_criteria": "Product Owner accepts ST-03 implementation as meeting AC (with deviations DEV-ST03-01 P2, DEV-ST03-02 P3 noted); deviations documented in spec; ST-03 marked done",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["docs/specs/frontend/pages/risk_dashboard.md"],
           "deviations_filed": false,
-          "notes": "Blocked on ST-02 for full implementation; Base44 prompt draft to be produced by engine."
+          "notes": "GOVERNANCE BREACH (ESC-EXEC-20260305-02): Implementation committed directly to main (commits 0d319b4–7b08fa7, 2026-03-05) bypassing EPIC-01 branch and [EPIC-01][ST-03] commit format. All 5 Risk Dashboard components present: HeatGauge, DrawdownSummary, GracePeriodPanel, PositionRiskTable, ProspectiveHeatPanel. Route registered in Layout.js and pages.config.js. Spec compliance check: PASS on heat thresholds, sorting, collapsible panel, server-side calc, input validation. Two deviations: DEV-ST03-01 (P2) entity fallback masks error states; DEV-ST03-02 (P3) GracePeriodPanel error vs empty state indistinguishable. Awaiting Product Owner acceptance."
         },
         "ST-04": {
           "title": "QA: Risk Dashboard Acceptance Test Scenarios",
@@ -258,9 +258,10 @@
   },
 
   "blocked_items": ["ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08"],
+  "_note_ST03": "ST-03 blocked_decision pending PO acceptance of governance breach. Implementation exists on main. ST-04 QA scenario authoring may proceed.",
   "delegated_items": ["ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08"],
   "completed_items": ["ST-01", "ST-02", "ST-09", "ST-10", "ST-11", "ST-12"],
-  "open_escalations": [],
+  "open_escalations": ["ESC-EXEC-20260305-01", "ESC-EXEC-20260305-02"],
 
   "merge_gate": {
     "epics_merged": [],
