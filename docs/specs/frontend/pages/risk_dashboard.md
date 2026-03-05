@@ -1,7 +1,7 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.2
+**Version:** 0.1.5
 **Last Updated:** 2026-03-05
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md
@@ -296,10 +296,11 @@ The following deviations between this specification and the v1.8 implementation 
 | DEV-ST03-09 | P3 | §7.5: Threshold label changes if hypothetical position crosses a boundary | `ProspectiveHeatPanel.js` renders projected heat % and delta only — threshold label absent from result display | v1.9 — add threshold label badge to prospective heat result row | Head of Engineering | TBD |
 | DEV-ST03-10 | P2 | §1: Nav label "Risk", nav position between Portfolio and Analytics, always visible | Navigation sidebar entry absent — page is inaccessible via normal UX; route `/risk` IS registered and accessible via direct URL | RESOLVED 2026-03-05 — nav entry added (index.js fix) | Head of Engineering | — |
 | DEV-ST03-11 | P2 | §6.2: Entry Price column — "GBP, 2 decimal places" for all positions | US position entry prices display in native USD ($) instead of GBP (£); backend returns `entry_price` in native currency, not GBP-converted | v1.9 — convert entry_price to GBP for US positions in `portfolio_service.py` and update frontend display | Head of Engineering | TBD |
+| DEV-ST03-12 | P2 | §6.2: Stop Distance % derived as `(current_price − current_stop) / current_price × 100` — assumes both values in GBP | `current_stop` returned in native USD for US positions (mirrors `entry_price` currency pattern — DEV-ST03-11); `current_price` is in GBP; display derivation mixes currencies → Stop Distance % incorrect for all US positions | v1.9 — return `current_stop` in GBP in `portfolio_service.py` for US positions (apply FX conversion consistent with `current_price`) | Head of Engineering | TBD |
 
 **Accepted by:** Product Owner
 **Accepted on:** 2026-03-05 (DEV-ST03-01 through DEV-ST03-09)
-**Acceptance pending:** DEV-ST03-11 (P2) — raised 2026-03-05 during live scenario execution (SC-RD-14). Awaiting Product Owner acceptance.
+**Acceptance pending:** DEV-ST03-11 (P2) — raised 2026-03-05 during live scenario execution (SC-RD-14). Awaiting Product Owner acceptance. DEV-ST03-12 (P2) — raised 2026-03-05 during SC-RD-27 network tab inspection. Awaiting Product Owner acceptance.
 **Conditions:** All P2 deviations must have backlog references assigned before cycle close. DEV-ST03-08 requires spec update by Head of Specs Team to reflect confirmed data source. DEV-ST03-09 (P3) identified by Director of Quality during ST-04 review (2026-03-05); accepted for v1.8 by Product Owner. DEV-ST03-10 RESOLVED — navigation fixed 2026-03-05.
 
 ---
@@ -308,6 +309,7 @@ The following deviations between this specification and the v1.8 implementation 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.5 | 2026-03-05 | Added DEV-ST03-12 (P2): `current_stop` returned in USD for US positions; Stop Distance % display derivation mixes currencies per §6.2. Found SC-RD-27 network tab inspection. Acceptance pending PO. |
 | 0.1.4 | 2026-03-05 | Added DEV-ST03-11 (P2): US position entry prices display in USD instead of GBP per §6.2. Found SC-RD-14 live execution. DEV-ST03-10 marked RESOLVED (nav fix applied). |
 | 0.1.3 | 2026-03-05 | Added DEV-ST03-10 (P2) to §11: Navigation sidebar entry absent for /risk page per §1. Identified during live scenario execution of SC-RD-01. Subsequently resolved by fix 2026-03-05. |
 | 0.1.2 | 2026-03-05 | Added DEV-ST03-09 (P3) to §11: ProspectiveHeatPanel missing threshold label per §7.5. Identified by Director of Quality during ST-04 QA review. Accepted for v1.8; v1.9 resolution target. |

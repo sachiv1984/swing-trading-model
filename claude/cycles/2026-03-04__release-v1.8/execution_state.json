@@ -4,7 +4,7 @@
   "invoked_utc": "2026-03-05T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-05T09:00:00Z",
+  "last_updated_utc": "2026-03-05T09:30:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -65,7 +65,7 @@
           "acceptance_verified": true,
           "spec_references": ["docs/specs/frontend/pages/risk_dashboard.md"],
           "deviations_filed": true,
-          "notes": "Done. Governance breach (ESC-EXEC-20260305-02) resolved by Product Owner 2026-03-05 — all 8 deviations (DEV-ST03-01 through DEV-ST03-08) accepted for v1.8; documented in risk_dashboard.md §11 v0.1.1. Components: HeatGauge (thresholds correct), DrawdownSummary, GracePeriodPanel, PositionRiskTable, ProspectiveHeatPanel. Route registered. Acceptance verified against AC. ST-04 now active."
+          "notes": "Done. Governance breach (ESC-EXEC-20260305-02) resolved by Product Owner 2026-03-05 — all 8 deviations (DEV-ST03-01 through DEV-ST03-08) accepted for v1.8; documented in risk_dashboard.md §11 v0.1.1. Components: HeatGauge (thresholds correct), DrawdownSummary, GracePeriodPanel, PositionRiskTable, ProspectiveHeatPanel. Route registered. Acceptance verified against AC. ST-04 now active. ADDITIONAL DEVIATIONS found during live QA: DEV-ST03-11 (P2, SC-RD-14 — entry_price in USD for US positions); DEV-ST03-12 (P2, SC-RD-27 — current_stop in USD for US positions; Stop Distance % calculation mixes currencies). Both filed in risk_dashboard.md §11; PO acceptance pending. Total deviations: 12 (DEV-ST03-01 through DEV-ST03-12)."
         },
         "ST-04": {
           "title": "QA: Risk Dashboard Acceptance Test Scenarios",

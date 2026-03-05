@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-03-05
+Last Updated: 2026-03-05 (updated SC-RD-27 result; DEV-ST03-12 filed)
 
 # QA Evidence Log — EPIC-01: Risk Dashboard Page
 
@@ -125,7 +125,7 @@ Last Updated: 2026-03-05
 | SC-RD-24 | NOT EXECUTED | Test environment gap — requires no open positions. |
 | SC-RD-25 | NOT EXECUTED | Test environment gap — requires no open positions and portfolio_heat_percent = 0.0; cannot seed backend state in v1.8. |
 | SC-RD-26 | **PASS** | Browser console confirmed clean on page load — no errors. Matches spec §10 (implicit). |
-| SC-RD-27 | PENDING | No client-side recalculation — requires network tab inspection comparing API response to displayed values. |
+| SC-RD-27 | **PASS (new defect DEV-ST03-12)** | API response: `current_drawdown_percent: -9.2069` → UI displays "-9.2%" ✓ (rounding only, not recalculation). All server-provided metric values confirmed passed through directly. New defect: `current_stop` returned in native USD for US positions while `current_price` is in GBP — Stop Distance % display derivation `(current_price_GBP − current_stop_USD) / current_price_GBP` mixes currencies. DEV-ST03-12 (P2) filed in `risk_dashboard.md §11` v0.1.5. PO acceptance pending. |
 
 **DEV-ST03-10:** RESOLVED — navigation fixed (index.js). Code defect DEF-RD-API-01 also fixed (RiskDashboard.js line 28, commit 24d8e5e to main). Both fixes applied 2026-03-05.
 
@@ -151,5 +151,5 @@ Mitigation applied: threshold boundary logic was verified by code review of `Hea
 - [x] No unresolved P0 or P1 deviations — DEV-ST03-10 RESOLVED; DEV-ST03-11 P2 awaiting PO acceptance; all others P2/P3 accepted v1.8
 - [ ] Regression areas checked — partially complete (code review + live execution for loaded/empty states; Group A/B boundary and error state scenarios blocked by test env gap)
 - Signed off by: Director of Quality
-- Date: 2026-03-05 (partial — live execution in progress)
-- Comments: SC-RD-01 PASS (DEV-ST03-10 resolved). SC-RD-13 PASS. SC-RD-14 PASS (partial — DEV-ST03-11 P2 filed, PO acceptance pending). DEF-RD-API-02 found SC-RD-16 attempt: ProspectiveHeatPanel hardcoded URL — fixed commit e7caaa9. SC-RD-16/17/18 retest blocked pending GitHub Pages deploy. 11 scenarios (Group A/B boundary conditions) cannot be executed without test data injection. SC-RD-19–27 pending user execution.
+- Date: 2026-03-05 (partial — SC-RD-16–18 retest pending)
+- Comments: SC-RD-01 PASS (DEV-ST03-10 resolved). SC-RD-13 PASS. SC-RD-14 PASS (partial — DEV-ST03-11 P2 filed, PO acceptance pending). DEF-RD-API-02 found SC-RD-16 attempt: ProspectiveHeatPanel hardcoded URL — fixed commit e7caaa9. SC-RD-16/17/18 retest blocked pending GitHub Pages deploy. 11 scenarios (Group A/B boundary conditions) cannot be executed without test data injection. SC-RD-19 PASS (collapsed default). SC-RD-20–23 PASS (API error states). SC-RD-26 PASS (console clean). SC-RD-27 PASS — network tab confirmed no client-side recalculation of server metrics; drawdown -9.2069 → -9.2% (rounding only). NEW: DEV-ST03-12 (P2) found — current_stop in USD vs current_price in GBP causes incorrect Stop Distance % for US positions; filed in risk_dashboard.md §11 v0.1.5, PO acceptance pending.
