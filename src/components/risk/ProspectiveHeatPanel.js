@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { cn } from "../../lib/utils";
+import { api } from "../../api/base44Client";
 
 export default function ProspectiveHeatPanel({ currentHeat }) {
   const [open, setOpen] = useState(false);
@@ -36,23 +37,19 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
     setResult(null);
     setApiError(null);
 
-    const params = new URLSearchParams({
-      ticker: form.ticker.trim(),
-      shares: form.shares,
-      entry_price: form.entry_price,
-      stop_price: form.stop_price,
-    });
-
-    const res = await fetch(`/api/portfolio/prospective-heat?${params.toString()}`);
-    if (!res.ok) {
-      const text = await res.text();
-      setApiError(text || `Server error ${res.status}`);
+    try {
+      const data = await api.portfolio.prospectiveHeat(
+        form.ticker.trim(),
+        form.shares,
+        form.entry_price,
+        form.stop_price
+      );
+      setResult(data);
+    } catch (err) {
+      setApiError(err?.message || `Server error ${err?.status ?? ''}`);
+    } finally {
       setLoading(false);
-      return;
     }
-    const data = await res.json();
-    setResult(data);
-    setLoading(false);
   };
 
   const delta = result?.projected_heat_percent != null && currentHeat != null
