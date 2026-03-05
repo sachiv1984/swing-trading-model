@@ -294,9 +294,11 @@ The following deviations between this specification and the v1.8 implementation 
 | DEV-ST03-07 | P3 | §5.2: "Days in Grace" (`holding_days`) column in Grace Period table | `holding_days` column absent from Grace Period table | v1.9 — restore Days in Grace column | Head of Engineering | TBD |
 | DEV-ST03-08 | P2 | §4.1: Drawdown data source is `GET /analytics/metrics` | Drawdown reads from `GET /portfolio`; ST-02 pre-alignment may have changed this | Head of Specs Team to verify ST-02 alignment outcome and update §4.1 if `GET /portfolio` is confirmed | Head of Specs Team | TBD |
 | DEV-ST03-09 | P3 | §7.5: Threshold label changes if hypothetical position crosses a boundary | `ProspectiveHeatPanel.js` renders projected heat % and delta only — threshold label absent from result display | v1.9 — add threshold label badge to prospective heat result row | Head of Engineering | TBD |
+| DEV-ST03-10 | P2 | §1: Nav label "Risk", nav position between Portfolio and Analytics, always visible | Navigation sidebar entry absent — page is inaccessible via normal UX; route `/risk` IS registered and accessible via direct URL | v1.9 — add sidebar nav entry at correct position | Head of Engineering | TBD |
 
 **Accepted by:** Product Owner
-**Accepted on:** 2026-03-05
+**Accepted on:** 2026-03-05 (DEV-ST03-01 through DEV-ST03-09)
+**Acceptance pending:** DEV-ST03-10 (P2) — raised 2026-03-05 during live scenario execution (SC-RD-01). Awaiting Product Owner acceptance decision before EPIC-01 PR #31 can merge.
 **Conditions:** All P2 deviations must have backlog references assigned before cycle close. DEV-ST03-08 requires spec update by Head of Specs Team to reflect confirmed data source. DEV-ST03-09 (P3) identified by Director of Quality during ST-04 review (2026-03-05); accepted for v1.8 by Product Owner.
 
 ---
@@ -305,6 +307,7 @@ The following deviations between this specification and the v1.8 implementation 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.3 | 2026-03-05 | Added DEV-ST03-10 (P2) to §11: Navigation sidebar entry absent for /risk page per §1. Identified by Director of Quality during live scenario execution of SC-RD-01. Pending Product Owner acceptance. |
 | 0.1.2 | 2026-03-05 | Added DEV-ST03-09 (P3) to §11: ProspectiveHeatPanel missing threshold label per §7.5. Identified by Director of Quality during ST-04 QA review. Accepted for v1.8; v1.9 resolution target. |
 | 0.1.1 | 2026-03-05 | Added §11 Known Deviations. 8 deviations (3×P2, 4×P3, 1×P2 awaiting spec owner) identified from v1.8 delivery and accepted for v1.8 by Product Owner. All carry v1.9 resolution target. |
 | 0.1.0 | 2026-03-04 | Initial specification. Design source: docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md. Approved for EPIC-01 Sprint Planning. |

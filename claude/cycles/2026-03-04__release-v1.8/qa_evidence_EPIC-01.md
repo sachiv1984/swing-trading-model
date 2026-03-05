@@ -95,13 +95,23 @@ Last Updated: 2026-03-05
 - Regression areas checked: frontend rendering, heat calculation, colour thresholds, grace period logic
 - Known deviations filed: DEV-ST03-01 (P2), DEV-ST03-02 (P3), DEV-ST03-03 (P2), DEV-ST03-04 (P2), DEV-ST03-05 (P3), DEV-ST03-06 (P3), DEV-ST03-07 (P3), DEV-ST03-08 (P2) — all filed in `risk_dashboard.md §11` v0.1.1; all accepted for v1.8 by Product Owner
 
+**Scenario Execution Log (2026-03-05)**
+
+| Scenario | Result | Notes |
+|----------|--------|-------|
+| SC-RD-01 | **FAIL** | Navigation sidebar entry for `/risk` is absent. Spec §1 requires "Nav label: Risk, Nav position: Between Portfolio and Analytics". New defect: DEV-ST03-10 (P2). Route IS accessible via direct URL. |
+| SC-RD-02 through SC-RD-27 | BLOCKED | Cannot execute via normal navigation. May be tested via direct URL `/risk` — pending user confirmation that direct URL access works. |
+
+**New defect raised during scenario execution:**
+- **DEV-ST03-10** (P2): Navigation sidebar entry absent. Filed in `risk_dashboard.md §11` v0.1.3. Pending Product Owner acceptance.
+
 **QA sign-off block:** (Director of Quality completes this)
-- [x] All acceptance criteria verified against canonical spec (`risk_dashboard.md` v0.1.2)
-- [x] No unresolved P0 or P1 deviations — 9 deviations total (DEV-ST03-01 through DEV-ST03-09), all P2 or P3, all accepted for v1.8 by Product Owner
-- [x] Regression areas checked: frontend rendering, heat calculation, colour thresholds, grace period logic, sort orders, error handling isolation
 - [x] ST-04 scenario document approved — `risk_dashboard_scenarios.md` v1.0.1 (signed off 2026-03-05)
 - [x] Heat gauge colour at boundary values verified — HeatGauge.js getColor() uses `>=` comparisons in correct precedence order; 10%=Moderate (#f59e0b), 20%=High (#f97316), 30%=Extreme (#ef4444)
 - [x] No client-side recalculation of metric values confirmed — heat and drawdown values passed directly from API; Stop Distance % is permitted display arithmetic (spec §6.2)
+- [ ] All acceptance criteria verified against canonical spec — INCOMPLETE: SC-RD-01 FAIL; SC-RD-02–27 blocked pending DEV-ST03-10 resolution or direct URL workaround confirmed
+- [ ] No unresolved P0 or P1 deviations — DEV-ST03-10 (P2) open, pending PO acceptance
+- [ ] Regression areas checked — partially complete (code review only; live execution blocked by DEV-ST03-10)
 - Signed off by: Director of Quality
-- Date: 2026-03-05
-- Comments: One new deviation identified during review: DEV-ST03-09 (P3) — ProspectiveHeatPanel omits threshold label from result display per spec §7.5. Filed in risk_dashboard.md §11 v0.1.2. Accepted for v1.8. Minor §2 reference error in scenario document corrected (v1.0.1). EPIC-01 QA gate: APPROVED. Recommend opening EPIC-01 PR.
+- Date: 2026-03-05 (partial — live execution in progress)
+- Comments: SC-RD-01 FAIL during live scenario execution. DEV-ST03-10 (P2) filed: navigation sidebar entry for /risk absent. This defect was not captured in the prior code-review-based sign-off (ESC-EXEC-20260305-03 was correct to flag this gap). PO acceptance required for DEV-ST03-10 before EPIC-01 QA gate can be fully signed off. Remaining 26 scenarios may be executable via direct URL to /risk — user to confirm.
