@@ -32,8 +32,17 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 1. Close the corresponding GitHub Issue
-          gh issue close --comment "Resolved via Claude Code commit: ${{ steps.parse.outputs.st_id }}" "${{ steps.parse.outputs.st_id }}"
-          
+          ST_ID="${{ steps.parse.outputs.st_id }}"
+          EPIC_ID="${{ steps.parse.outputs.epic_id }}"
+
+          # 1. Look up numeric issue number for this ST item, then close it
+          ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}]" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$ISSUE_NUMBER" ]; then
+            gh issue close "$ISSUE_NUMBER" --comment "Resolved via Claude Code commit: ${ST_ID} (${EPIC_ID})"
+            echo "Closed issue #${ISSUE_NUMBER} for ${ST_ID}"
+          else
+            echo "No open issue found for ${ST_ID} — may already be closed or never created"
+          fi
+
           # 2. Update the local state.json (Optional: can be done by Claude locally)
-          echo "Syncing state for ${{ steps.parse.outputs.st_id }}..."
+          echo "Syncing state for ${ST_ID}..."
