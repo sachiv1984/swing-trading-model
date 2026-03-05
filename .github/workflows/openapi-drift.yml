@@ -1,0 +1,235 @@
+name: OpenAPI Drift Detection
+
+# [EPIC-02][ST-08] — Detect drift between docs/reference/openapi.yaml and
+# the canonical markdown API contracts in docs/specs/api_contracts/.
+#
+# Approach: regex-based path/method extraction and cross-check (no YAML parser).
+#   Regex is used deliberately: the YAML parser cannot handle malformed openapi.yaml
+#   files — and a malformed file IS a form of drift we want to surface, not crash on.
+#   1. Parse markdown contracts for "## METHOD /path" section headings.
+#   2. Parse openapi.yaml for "  /path:" blocks and their "    method:" keys.
+#   3. Flag: any contract-declared METHOD+PATH missing from openapi.yaml.
+#   4. Flag: any openapi.yaml METHOD+PATH missing from all contracts.
+#   5. Flag: YAML parse errors in openapi.yaml as a blocking issue.
+#
+# Canonical truth: markdown contracts take precedence over openapi.yaml.
+# See docs/reference/openapi.yaml header for source-of-truth hierarchy.
+#
+# Dependency: fully meaningful after EPIC-03 (ST-10, openapi.yaml v1.9.0) merges.
+# Until then, known pre-v1.9.0 gaps are listed in KNOWN_GAPS below.
+#
+# Cycle: 2026-03-04__release-v1.8
+# Maps to: ST-08 (Automated OpenAPI Drift Detection)
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  openapi-drift:
+    name: OpenAPI Drift Detection (ST-08)
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Detect drift
+        id: drift
+        run: |
+          python3 - <<'EOF'
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          # ── Config ────────────────────────────────────────────────────────────
+          OPENAPI_PATH  = Path("docs/reference/openapi.yaml")
+          CONTRACTS_DIR = Path("docs/specs/api_contracts")
+          HTTP_METHODS  = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
+
+          # Known gaps during transition periods (METHOD PATH strings).
+          # Clear this after EPIC-03 / ST-10 merges to main.
+          KNOWN_GAPS: set = set()
+
+          # ── Parse openapi.yaml via regex (resilient to YAML syntax errors) ───
+          openapi_text = OPENAPI_PATH.read_text()
+
+          # Detect YAML syntax issues by trying to load with PyYAML if available.
+          yaml_parse_error = None
+          try:
+              import yaml
+              yaml.safe_load(openapi_text)
+          except Exception as e:
+              yaml_parse_error = str(e)
+
+          # Regex extraction: find path blocks ("  /foo:") and their HTTP method keys
+          # ("    get:", "    post:", etc. at 4-space indent inside a paths block).
+          PATH_RE   = re.compile(r"^  (/[^\s:]+)\s*:", re.MULTILINE)
+          METHOD_RE = re.compile(r"^    (get|post|put|patch|delete|head|options)\s*:", re.MULTILINE)
+
+          openapi_pairs: set = set()
+          path_spans = [(m.group(1), m.start(), m.end()) for m in PATH_RE.finditer(openapi_text)]
+
+          for i, (path, start, end) in enumerate(path_spans):
+              # Slice up to next path declaration (or end of file)
+              next_start = path_spans[i + 1][1] if i + 1 < len(path_spans) else len(openapi_text)
+              block = openapi_text[end:next_start]
+              for mm in METHOD_RE.finditer(block):
+                  openapi_pairs.add(f"{mm.group(1).upper()} {path}")
+
+          # ── Parse markdown contracts ──────────────────────────────────────────
+          HEADING_RE = re.compile(
+              r"^##\s+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(/\S+)",
+              re.MULTILINE
+          )
+
+          contract_pairs: set = set()
+          contract_files = sorted(CONTRACTS_DIR.glob("*.md"))
+
+          if not contract_files:
+              print(f"ERROR: No markdown contracts found in {CONTRACTS_DIR}")
+              sys.exit(1)
+
+          for contract in contract_files:
+              text = contract.read_text()
+              for m in HEADING_RE.finditer(text):
+                  contract_pairs.add(f"{m.group(1).upper()} {m.group(2)}")
+
+          # ── Cross-check ───────────────────────────────────────────────────────
+          in_contracts_not_openapi = contract_pairs - openapi_pairs - KNOWN_GAPS
+          in_openapi_not_contracts = openapi_pairs - contract_pairs - KNOWN_GAPS
+
+          drift_count = len(in_contracts_not_openapi) + len(in_openapi_not_contracts)
+          if yaml_parse_error:
+              drift_count += 1  # YAML error is a blocking issue
+
+          # ── Build report ──────────────────────────────────────────────────────
+          lines = [
+              "## OpenAPI Drift Detection Report",
+              "",
+              f"**Spec:** `docs/reference/openapi.yaml`  |  "
+              f"**Contracts:** `docs/specs/api_contracts/*.md`",
+              f"**Cycle:** `2026-03-04__release-v1.8`  |  **Gate:** `[EPIC-02][ST-08]`",
+              "",
+              f"Scanned {len(contract_files)} contract file(s).  "
+              f"Contracts: {len(contract_pairs)} endpoint(s).  "
+              f"OpenAPI: {len(openapi_pairs)} endpoint(s).",
+              "",
+          ]
+
+          if yaml_parse_error:
+              lines += [
+                  "### YAML Syntax Error in openapi.yaml",
+                  "",
+                  f"```",
+                  yaml_parse_error,
+                  "```",
+                  "",
+                  "Fix the YAML syntax error before drift check can be fully reliable.",
+                  "",
+              ]
+
+          if drift_count == 0 or (drift_count == 0 and not yaml_parse_error):
+              lines += [
+                  "### No drift detected",
+                  "",
+                  "All contract-declared endpoints are present in openapi.yaml "
+                  "and vice versa. Merge gate: PASSED.",
+              ]
+          else:
+              if in_contracts_not_openapi:
+                  lines += [
+                      "### In contracts but MISSING from openapi.yaml",
+                      "",
+                      "Declared as canonical in markdown but absent from "
+                      "`docs/reference/openapi.yaml`. Update openapi.yaml.",
+                      "",
+                      "| Method + Path |",
+                      "|--------------|",
+                  ]
+                  for pair in sorted(in_contracts_not_openapi):
+                      lines.append(f"| `{pair}` |")
+                  lines.append("")
+
+              if in_openapi_not_contracts:
+                  lines += [
+                      "### In openapi.yaml but MISSING from contracts",
+                      "",
+                      "Present in `docs/reference/openapi.yaml` but has no matching "
+                      "`## METHOD /path` heading in any markdown contract. "
+                      "Add the canonical contract section or remove from openapi.yaml.",
+                      "",
+                      "| Method + Path |",
+                      "|--------------|",
+                  ]
+                  for pair in sorted(in_openapi_not_contracts):
+                      lines.append(f"| `{pair}` |")
+                  lines.append("")
+
+              if drift_count > 0:
+                  lines += [
+                      f"### MERGE BLOCKED — {drift_count} issue(s) detected.",
+                      "",
+                      "Resolve drift before merging: update openapi.yaml (ST-10 pattern) "
+                      "or update the relevant markdown contract.",
+                  ]
+
+          report = "\n".join(lines)
+          print(report)
+
+          with open("drift_report.md", "w") as fh:
+              fh.write(report)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"drift_count={drift_count}\n")
+          EOF
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs   = require('fs');
+            const body = fs.readFileSync('drift_report.md', 'utf8');
+            const marker = 'OpenAPI Drift Detection Report';
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner:      context.repo.owner,
+                repo:       context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Fail on drift
+        if: steps.drift.outputs.drift_count != '0'
+        run: |
+          echo "MERGE BLOCKED: ${{ steps.drift.outputs.drift_count }} OpenAPI drift/YAML issue(s) detected."
+          echo "Review the PR comment for path-level detail."
+          exit 1
