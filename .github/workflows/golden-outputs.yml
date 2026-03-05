@@ -1,0 +1,61 @@
+name: Golden Output Regression Gate
+
+# [EPIC-02][ST-05][ST-06] — Golden output regression and backtest reconciliation.
+# Loads tests/golden_outputs.json (spec-derived vectors from strategy_rules.md).
+# Runs on every PR to main/develop and every push to exec/** branches.
+# Blocks merge if any spec formula or backtest reconciliation test fails.
+#
+# Cycle: 2026-03-04__release-v1.8
+# Maps to: ST-05 (golden output baseline), ST-06 (backtest vs live reconciliation)
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches:
+      - 'exec/**'
+      - main
+      - develop
+
+jobs:
+  golden-outputs:
+    name: Golden Output Regression (ST-05 + ST-06)
+    runs-on: ubuntu-latest
+
+    env:
+      # DATABASE_URL is checked at import time by database.py.
+      # Tests in this suite use only pure-math functions — no DB calls.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run golden output regression (ST-05)
+        run: |
+          python -m unittest tests.test_golden_outputs -v
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+
+      - name: Run backtest reconciliation (ST-06)
+        run: |
+          python -m unittest tests.test_stop_reconciliation -v
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Golden output regression complete."
+          echo "  ST-05: tests/test_golden_outputs.py — spec formula correctness"
+          echo "  ST-06: tests/test_stop_reconciliation.py — backtest vs spec reconciliation"
+          echo "If either step failed, check tests/golden_outputs.json against strategy_rules.md §4.1, §5, §7, §11."
