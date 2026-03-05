@@ -114,18 +114,18 @@ Last Updated: 2026-03-05
 | SC-RD-13 | **PASS** | Grace Period Panel empty state renders correctly: amber shield badge, "Grace Period" label, "No positions in grace period" in muted smaller text. No table rows. No count badge. Matches spec §5.5. |
 | SC-RD-14 | **PASS (partial — live data, new deviation observed)** | Live data: LOSING (TER, STX) before PROFITABLE (MU, SNDK, WDC). No GRACE positions in live dataset. Primary group sort correct ✓. Secondary within-group sort tightest first ✓ (consistent with DEV-ST03-03 — visually matches spec even with different sort logic). Entry prices display in USD ($) for US positions; spec §6.2 requires GBP — NEW deviation DEV-ST03-11 filed. |
 | SC-RD-15 | NOT EXECUTED | Test environment gap — requires no open positions to render empty state. |
-| SC-RD-16 | BLOCKED → RETEST PENDING | ProspectiveHeatPanel used hardcoded `fetch('/api/portfolio/prospective-heat?...')` resolving to GitHub Pages 404. Code defect DEF-RD-API-02 identified. Fix applied commit e7caaa9 (main). Awaiting retest after deploy. |
-| SC-RD-17 | BLOCKED → RETEST PENDING | Same root cause as SC-RD-16 (DEF-RD-API-02). Fix applied. Awaiting retest. |
-| SC-RD-18 | BLOCKED → RETEST PENDING | Same root cause as SC-RD-16 (DEF-RD-API-02). Fix applied. Awaiting retest. |
-| SC-RD-19 | PENDING | Collapsed default state — to be executed. |
-| SC-RD-20 | PENDING | API error states — to be executed. |
-| SC-RD-21 | PENDING | API error states — to be executed. |
-| SC-RD-22 | PENDING | API error states — to be executed. |
-| SC-RD-23 | PENDING | API error states — to be executed. |
+| SC-RD-16 | NOT EXECUTED | Test environment gap — GitHub Pages deploy of DEF-RD-API-02 fix (e7caaa9) not confirmed; prospective heat endpoint unreachable in test environment. |
+| SC-RD-17 | NOT EXECUTED | Test environment gap — as above. |
+| SC-RD-18 | NOT EXECUTED | Test environment gap — as above. |
+| SC-RD-19 | **PASS** | Prospective Heat panel renders collapsed by default. Heading and expand chevron visible. No form shown until expanded. Matches spec §7.2. |
+| SC-RD-20 | **PASS** | GET /portfolio failure: Heat Gauge renders error state correctly. |
+| SC-RD-21 | **PASS** | GET /portfolio failure: Drawdown Summary renders error state correctly. |
+| SC-RD-22 | **PASS (v1.8 actual — DEV-ST03-02 confirmed)** | GracePeriodPanel shows "No positions in grace period" on API failure — indistinguishable from empty state. Matches v1.8 expected per scenario doc. DEV-ST03-02 behaviour confirmed in live execution. |
+| SC-RD-23 | **PASS (v1.8 actual — DEV-ST03-02 confirmed)** | PositionRiskTable shows "No open positions to display" on API failure — indistinguishable from empty state. Matches v1.8 expected per scenario doc. DEV-ST03-02 behaviour confirmed in live execution. |
 | SC-RD-24 | NOT EXECUTED | Test environment gap — requires no open positions. |
-| SC-RD-25 | PENDING | Non-functional: no console errors — to be executed. |
-| SC-RD-26 | PENDING | Non-functional: no client-side recalculation — to be executed. |
-| SC-RD-27 | PENDING | Remaining scenario — to be executed. |
+| SC-RD-25 | NOT EXECUTED | Test environment gap — requires no open positions and portfolio_heat_percent = 0.0; cannot seed backend state in v1.8. |
+| SC-RD-26 | **PASS** | Browser console confirmed clean on page load — no errors. Matches spec §10 (implicit). |
+| SC-RD-27 | PENDING | No client-side recalculation — requires network tab inspection comparing API response to displayed values. |
 
 **DEV-ST03-10:** RESOLVED — navigation fixed (index.js). Code defect DEF-RD-API-01 also fixed (RiskDashboard.js line 28, commit 24d8e5e to main). Both fixes applied 2026-03-05.
 
