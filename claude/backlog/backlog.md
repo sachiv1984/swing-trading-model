@@ -563,6 +563,197 @@ There is no single running changelog document for API contract changes. Changes 
 
 ---
 
+---
+
+## 9. Risk Dashboard v1.9 Fixes (from v1.8 Deviations — 2026-03-04__release-v1.8)
+
+All items below correspond to deviations filed in `docs/specs/frontend/pages/risk_dashboard.md §11`.
+All P2 items accepted by Product Owner 2026-03-05 on condition backlog references are assigned.
+Source: delivery verification `2026-03-04__release-v1.8`, STEP 3.
+
+---
+
+### BLG-RD-01 — DEV-ST03-01: Error states masked when entity store fallback active
+**Priority:** P2
+**Deviation ref:** DEV-ST03-01
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §8`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+When `GET /portfolio` fails, the Base44 entity store fallback activates and surfaces cached data instead of an error indicator. The spec requires each component to render its own error state independently on API failure.
+
+**Acceptance Criteria**
+- All five Risk Dashboard components display an explicit error indicator when `portfolioError` is set, even when fallback data is available.
+- Error indicator does not prevent the fallback data from being shown alongside it (informational only).
+
+---
+
+### BLG-RD-02 — DEV-ST03-02: GracePeriodPanel shows empty state on API failure
+**Priority:** P3
+**Deviation ref:** DEV-ST03-02
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §5.5`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+On API failure, GracePeriodPanel shows "No positions in grace period" — indistinguishable from a valid empty state. Spec requires "Unable to load position data" error card when `portfolioError` is set.
+
+**Acceptance Criteria**
+- GracePeriodPanel renders "Unable to load position data" error card when `portfolioError` is set, regardless of positions array content.
+
+---
+
+### BLG-RD-03 — DEV-ST03-03: PositionRiskTable sort direction incorrect
+**Priority:** P2
+**Deviation ref:** DEV-ST03-03
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §6.4`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+PositionRiskTable sorts by stop distance descending (largest first). Spec requires ascending (smallest/tightest stop distance first = most at risk shown at top).
+
+**Acceptance Criteria**
+- Within each status group, positions sorted ascending by stop distance (tightest first).
+
+---
+
+### BLG-RD-04 — DEV-ST03-04: Stop Price column absent from PositionRiskTable
+**Priority:** P2
+**Deviation ref:** DEV-ST03-04
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §6.2`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+Stop Price column (`current_stop`, GBP, 2 dp) is absent from PositionRiskTable. Stop Distance % is shown but Stop Price is not displayed.
+
+**Acceptance Criteria**
+- Stop Price column present in PositionRiskTable displaying `current_stop` in GBP to 2 decimal places.
+- Note: resolve DEV-ST03-12 (BLG-RD-11) first to ensure `current_stop` is returned in GBP for US positions.
+
+---
+
+### BLG-RD-05 — DEV-ST03-05: GRACE badge colour amber instead of blue
+**Priority:** P3
+**Deviation ref:** DEV-ST03-05
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §6.3`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+GRACE status badge rendered in amber. Spec requires blue.
+
+**Acceptance Criteria**
+- GRACE badge rendered in blue per §6.3.
+
+---
+
+### BLG-RD-06 — DEV-ST03-06: GBP value at risk absent from HeatGauge
+**Priority:** P3
+**Deviation ref:** DEV-ST03-06
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §3.2`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+HeatGauge is missing the tertiary "GBP value at risk" display (e.g., `£4,260 at risk`) specified in §3.2.
+
+**Acceptance Criteria**
+- HeatGauge renders GBP value at risk in smaller text below the primary heat percentage.
+
+---
+
+### BLG-RD-07 — DEV-ST03-07: Days in Grace column absent from GracePeriodPanel
+**Priority:** P3
+**Deviation ref:** DEV-ST03-07
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §5.2`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+GracePeriodPanel table is missing the "Days in Grace" column sourced from `holding_days`.
+
+**Acceptance Criteria**
+- GracePeriodPanel table includes "Days in Grace" column showing `holding_days` as an integer.
+
+---
+
+### BLG-RD-08 — DEV-ST03-08: Drawdown data source to be verified
+**Priority:** P2
+**Deviation ref:** DEV-ST03-08
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §4.1`
+**Owner:** Head of Specs Team (verify); Head of Engineering (fix if needed)
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9 planning (verify before sprint)
+
+Spec §4.1 specifies `GET /analytics/metrics` as drawdown data source. v1.8 implementation reads from `GET /portfolio`. Head of Specs Team must confirm which is canonical before v1.9 implementation.
+
+**Acceptance Criteria**
+- Head of Specs Team verifies intended data source and updates `risk_dashboard.md §4.1` to reflect confirmed source.
+- If `GET /portfolio` is confirmed canonical: no implementation change needed; spec updated.
+- If `GET /analytics/metrics` remains canonical: frontend updated to read from correct endpoint.
+
+---
+
+### BLG-RD-09 — DEV-ST03-09: ProspectiveHeatPanel missing threshold label
+**Priority:** P3
+**Deviation ref:** DEV-ST03-09
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §7.5`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+Result row shows projected heat % and delta but no threshold label (e.g., "Moderate", "High"). Spec §7.5 requires threshold label in the result display.
+
+**Acceptance Criteria**
+- Prospective heat result row includes threshold label badge per §3.3 colour thresholds.
+- Label changes if hypothetical position crosses a boundary.
+
+---
+
+### BLG-RD-10 — DEV-ST03-11: US position entry prices displayed in USD not GBP
+**Priority:** P2
+**Deviation ref:** DEV-ST03-11
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §6.2`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+US position entry prices display in native USD ($) in PositionRiskTable. Spec requires GBP (£) for all positions. Backend returns `entry_price` in native currency; conversion needed in `portfolio_service.py`.
+
+**Acceptance Criteria**
+- `entry_price` returned in GBP for all positions (FX conversion applied in `portfolio_service.py` for US positions using `1/stored_fx_rate` per ST-02 heat formula pattern).
+- PositionRiskTable displays `£` prefix for all entry prices.
+
+---
+
+### BLG-RD-11 — DEV-ST03-12: current_stop in USD for US positions causes incorrect Stop Distance %
+**Priority:** P2
+**Deviation ref:** DEV-ST03-12
+**Spec ref:** `docs/specs/frontend/pages/risk_dashboard.md §6.2`
+**Owner:** Head of Engineering
+**Raised:** 2026-03-05 — v1.8 delivery deviation
+**Target:** v1.9
+
+`current_stop` is returned in native USD for US positions while `current_price` is in GBP. The Stop Distance % derivation `(current_price − current_stop) / current_price` mixes currencies, producing incorrect values for all US positions.
+
+**Acceptance Criteria**
+- `current_stop` returned in GBP for all positions (FX conversion applied in `portfolio_service.py` for US positions, consistent with `current_price`).
+- Stop Distance % calculation uses GBP-normalised values throughout.
+- Note: coordinate with BLG-RD-04 (Stop Price column) so Stop Price column also shows GBP.
+
+---
+
+## 10. Test Coverage Gaps — 2026-03-04__release-v1.8
+
+---
+
+- [TEST-GAP-EPIC-01] Test scenario coverage gap from 2026-03-04__release-v1.8: 17 of 27 Risk Dashboard acceptance scenarios (Groups A, B, C, D, F in `docs/testing/risk_dashboard_scenarios.md`) could not be executed due to absence of test data injection mechanism. Specific gap: no way to seed `portfolio_heat_percent`, `holding_days`, `grace_days_remaining`, empty position state, or prospective heat API response to specific values in the test environment. QA & Testing Owner to commission test environment infrastructure story for v1.9 sprint. Priority: P2. See `qa_evidence_EPIC-01.md` §Test Infrastructure Gap and `verification_report.md §6` for full gap specification.
+
+---
+
 ## v1.8 Release Slice — 2026-03-04
 
 <!-- release-plan-marker: RP:v1.8:2026-03-04__release-v1.8 -->
