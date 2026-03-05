@@ -1,3 +1,8 @@
+**Owner:** API Contracts & Documentation Owner
+**Status:** Canonical
+**Version:** 1.1.0
+**Last Updated:** 2026-03-05
+
 # settings_endpoints.md
 
 ## Overview
@@ -5,16 +10,20 @@
 This document defines **Settings** domain endpoints:
 
 - Retrieve current strategy configuration and fee parameters
-- Update strategy configuration and fee parameters
+- Create initial settings record
+- Update strategy configuration and fee parameters by ID
 
 Global response envelopes, error shape, and conventions are defined in **conventions.md** and apply unless explicitly stated otherwise.
+
+> **v1.1.0 — Method correction (2026-03-05):** The update endpoint was previously documented as `PUT /settings`. The live implementation uses `PATCH /settings/{settings_id}` (update by ID) and `POST /settings` (create new settings). This document now reflects the canonical live behaviour. No backend change was required. Decision record: ESC-20260304-01 option (a).
 
 ---
 
 ## Endpoints
 
 - [GET /settings](#get-settings)
-- [PUT /settings](#put-settings)
+- [POST /settings](#post-settings)
+- [PATCH /settings/{settings_id}](#patch-settingssettings_id)
 
 ---
 
@@ -93,21 +102,115 @@ Errors use the standard error envelope from **conventions.md**.
 
 ---
 
-## PUT /settings
+## POST /settings
 
 **Purpose**
 
-Update one or more strategy configuration or fee parameters.
+Create a new settings record. Used to initialise the settings row if one does not exist.
+
+**Method & Path**
+
+- `POST /settings`
+
+**Idempotency**
+
+- Non-idempotent. Each call creates a new settings record.
+
+### Request
+
+#### Body
+
+All fields are optional. Fields not provided use system defaults.
+
+```json
+{
+  "min_hold_days": 10,
+  "atr_multiplier_initial": 5.0,
+  "atr_multiplier_trailing": 2.0,
+  "atr_period": 14,
+  "default_currency": "GBP",
+  "theme": "dark",
+  "uk_commission": 9.95,
+  "us_commission": 0.00,
+  "stamp_duty_rate": 0.005,
+  "fx_fee_rate": 0.0015,
+  "min_trades_for_analytics": 10,
+  "default_risk_percent": 1.00
+}
+```
+
+#### Field constraints
+
+| Field | Type | Constraint |
+|-------|------|------------|
+| `min_hold_days` | integer | Must be ≥ 1 |
+| `atr_multiplier_initial` | float | Must be > 0 |
+| `atr_multiplier_trailing` | float | Must be > 0 |
+| `atr_period` | integer | Must be ≥ 1 |
+| `default_currency` | string | `"GBP"` only (multi-currency support is position-level, not portfolio-level) |
+| `theme` | string | `"dark"` or `"light"` |
+| `uk_commission` | float | Must be ≥ 0 |
+| `us_commission` | float | Must be ≥ 0 |
+| `stamp_duty_rate` | float | Must be ≥ 0 and ≤ 1 |
+| `fx_fee_rate` | float | Must be ≥ 0 and ≤ 1 |
+| `min_trades_for_analytics` | integer | Must be ≥ 1 |
+| `default_risk_percent` | float | Must be > 0 and ≤ 100 |
+
+### Response (200)
+
+Response uses the standard success envelope from **conventions.md**.
+
+Returns the created settings object.
+
+#### `data` schema
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "min_hold_days": 10,
+  "atr_multiplier_initial": 5.0,
+  "atr_multiplier_trailing": 2.0,
+  "atr_period": 14,
+  "default_currency": "GBP",
+  "theme": "dark",
+  "uk_commission": 9.95,
+  "us_commission": 0.00,
+  "stamp_duty_rate": 0.005,
+  "fx_fee_rate": 0.0015,
+  "min_trades_for_analytics": 10,
+  "default_risk_percent": 1.00
+}
+```
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+- `400` Invalid field value (e.g. negative commission, multiplier ≤ 0, `default_risk_percent` ≤ 0 or > 100)
+
+---
+
+## PATCH /settings/{settings_id}
+
+**Purpose**
+
+Update one or more strategy configuration or fee parameters on an existing settings record.
 
 All fields are optional — only the fields provided are updated. Fields not included in the request retain their current values.
 
 **Method & Path**
 
-- `PUT /settings`
+- `PATCH /settings/{settings_id}`
 
 **Idempotency**
 
 - Idempotent for the same input. Repeating the same request produces the same result.
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `settings_id` | string (UUID) | Yes | The UUID of the settings record to update |
 
 ### Request
 
@@ -187,3 +290,13 @@ Returns the full updated settings object.
 Errors use the standard error envelope from **conventions.md**.
 
 - `400` Invalid field value (e.g. negative commission, multiplier ≤ 0, `default_risk_percent` ≤ 0 or > 100)
+- `404` Settings record with provided `settings_id` not found
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1.0 | 2026-03-05 | Replaced `PUT /settings` with `PATCH /settings/{settings_id}` and `POST /settings` to match live implementation. ESC-20260304-01 option (a). Added lifecycle header. |
+| 1.0.0 | (pre-v1.8) | Initial version — `GET /settings` and `PUT /settings` (superseded). |

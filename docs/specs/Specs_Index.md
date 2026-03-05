@@ -99,6 +99,7 @@ It points to the **single canonical source**.
 - `README.md`
 - `conventions.md`
 - `*_endpoints.md`
+- `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**
 - `docs/reference/openapi.yaml` — *Supporting reference only; must not diverge from canonical contracts*
