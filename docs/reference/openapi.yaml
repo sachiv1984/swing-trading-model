@@ -303,24 +303,21 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
-    /trades/export/csv:
-      get:
-        tags: [Trades]
-        summary: Export trade history as CSV
-        description: Export full closed trade history as a downloadable CSV file. Returns all trades; no date filter in v1.6.1. Response is text/csv with attachment disposition.
-        Canonical contract: docs/specs/api_contracts/trade_endpoints.md
-        responses:
-          "200":
-            description: CSV file download
-        content:
-          text/csv:
-          schema:
-          type: string
-          description: >
-            UTF-8 CSV with header row. Columns: ticker, market, entry_date, exit_date, shares, entry_price, exit_price, pnl, pnl_pct, holding_days, exit_reason, tags
-      (semicolon-separated), entry_note, exit_note.
-            "500":
-              $ref: "#/components/responses/InternalError"
+  /trades/export/csv:
+    get:
+      tags: [Trades]
+      summary: Export trade history as CSV
+      description: "Export full closed trade history as a downloadable CSV file. Returns all trades; no date filter in v1.6.1. Response is text/csv with attachment disposition. Canonical contract: docs/specs/api_contracts/trade_endpoints.md"
+      responses:
+        "200":
+          description: CSV file download
+          content:
+            text/csv:
+              schema:
+                type: string
+                description: "UTF-8 CSV with header row. Columns: ticker, market, entry_date, exit_date, shares, entry_price, exit_price, pnl, pnl_pct, holding_days, exit_reason, tags (semicolon-separated), entry_note, exit_note."
+        "500":
+          $ref: "#/components/responses/InternalError"
 
   /cash/transaction:
     post:
@@ -644,15 +641,14 @@ components:
         net_deposits: { type: number }
         live_fx_rate: { type: number }
         last_updated: { type: string, format: date-time }
-        current_drawdown_percent: { type: number, format: float }
-        description: >
-        Percentage decline from all-time peak portfolio value.
-        Result is <= 0.0; zero means portfolio is at peak.
-        Defaults to 0.0 when no portfolio_history exists.
-        peak_portfolio_value: { type: number, format: float }
-        description: >
-        All-time high total_value from portfolio_history (GBP, all-time, not period-scoped).
-        Defaults to 0.0 when no portfolio_history exists.
+        current_drawdown_percent:
+          type: number
+          format: float
+          description: "Percentage decline from all-time peak portfolio value. Result is <= 0.0; zero means portfolio is at peak. Defaults to 0.0 when no portfolio_history exists."
+        peak_portfolio_value:
+          type: number
+          format: float
+          description: "All-time high total_value from portfolio_history (GBP, all-time, not period-scoped). Defaults to 0.0 when no portfolio_history exists."
         positions:
           type: array
           items: { $ref: "#/components/schemas/PositionSummary" }

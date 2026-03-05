@@ -1,0 +1,247 @@
+{
+  "_metadata": {
+    "version": "1.0.0",
+    "spec_source": "claude/strategy/strategy_rules.md",
+    "spec_version": "1.3",
+    "description": "Golden test vectors for stop-loss and position sizing calculations. All expected values are derived from strategy_rules.md canonical spec — NOT reverse-engineered from the implementation. If the implementation diverges from these values, it diverges from spec.",
+    "precision": {
+      "share_counts_decimal_places": 4,
+      "share_counts_rounding": "floor (conservative — never exceed intended risk)",
+      "prices_decimal_places": 2
+    },
+    "canonical_parameters": {
+      "grace_period_days": 10,
+      "initial_atr_multiplier": 5,
+      "profit_atr_multiplier": 2,
+      "atr_period_days": 14
+    }
+  },
+
+  "position_sizing": [
+    {
+      "id": "PS-01",
+      "description": "UK position — round result, no floor needed",
+      "spec_section": "§4.1.2, §4.1.3",
+      "inputs": {
+        "entry_price": 100.00,
+        "stop_price": 95.00,
+        "risk_percent": 1.0,
+        "portfolio_value": 10000.00,
+        "market": "UK",
+        "fx_rate": 1.0
+      },
+      "derivation": {
+        "stop_distance": "100.00 - 95.00 = 5.00",
+        "risk_amount": "10000.00 * (1.0 / 100) = 100.00",
+        "raw_shares": "100.00 / (5.00 * 1.0) = 20.0",
+        "suggested_shares": "floor(20.0 * 10000) / 10000 = 20.0000"
+      },
+      "expected": {
+        "stop_distance": 5.0000,
+        "risk_amount": 100.00,
+        "raw_shares": 20.0,
+        "suggested_shares": 20.0000
+      }
+    },
+    {
+      "id": "PS-02",
+      "description": "UK position — floor required (non-terminating decimal)",
+      "spec_section": "§4.1.2, §4.1.3",
+      "inputs": {
+        "entry_price": 150.25,
+        "stop_price": 142.00,
+        "risk_percent": 1.5,
+        "portfolio_value": 25000.00,
+        "market": "UK",
+        "fx_rate": 1.0
+      },
+      "derivation": {
+        "stop_distance": "150.25 - 142.00 = 8.25",
+        "risk_amount": "25000.00 * (1.5 / 100) = 375.00",
+        "raw_shares": "375.00 / (8.25 * 1.0) = 45.45454545...",
+        "suggested_shares": "floor(45.45454545 * 10000) / 10000 = 45.4545"
+      },
+      "expected": {
+        "stop_distance": 8.2500,
+        "risk_amount": 375.00,
+        "raw_shares": 45.454545454545454,
+        "suggested_shares": 45.4545
+      }
+    },
+    {
+      "id": "PS-03",
+      "description": "UK position — small risk, round result",
+      "spec_section": "§4.1.2, §4.1.3",
+      "inputs": {
+        "entry_price": 75.00,
+        "stop_price": 73.00,
+        "risk_percent": 0.75,
+        "portfolio_value": 8000.00,
+        "market": "UK",
+        "fx_rate": 1.0
+      },
+      "derivation": {
+        "stop_distance": "75.00 - 73.00 = 2.00",
+        "risk_amount": "8000.00 * (0.75 / 100) = 60.00",
+        "raw_shares": "60.00 / (2.00 * 1.0) = 30.0",
+        "suggested_shares": "floor(30.0 * 10000) / 10000 = 30.0000"
+      },
+      "expected": {
+        "stop_distance": 2.0000,
+        "risk_amount": 60.00,
+        "raw_shares": 30.0,
+        "suggested_shares": 30.0000
+      }
+    },
+    {
+      "id": "PS-04",
+      "description": "US position with FX — round result",
+      "spec_section": "§4.1.2, §4.1.3, §4.1.5",
+      "inputs": {
+        "entry_price": 200.00,
+        "stop_price": 190.00,
+        "risk_percent": 1.0,
+        "portfolio_value": 20000.00,
+        "market": "US",
+        "fx_rate": 1.25
+      },
+      "derivation": {
+        "stop_distance": "200.00 - 190.00 = 10.00 (USD)",
+        "risk_amount": "20000.00 * (1.0 / 100) = 200.00 (GBP)",
+        "raw_shares": "200.00 / (10.00 * 1.25) = 200.00 / 12.50 = 16.0",
+        "suggested_shares": "floor(16.0 * 10000) / 10000 = 16.0000"
+      },
+      "expected": {
+        "stop_distance": 10.0000,
+        "risk_amount": 200.00,
+        "raw_shares": 16.0,
+        "suggested_shares": 16.0000
+      }
+    },
+    {
+      "id": "PS-05",
+      "description": "US position with FX — floor required",
+      "spec_section": "§4.1.2, §4.1.3, §4.1.5",
+      "inputs": {
+        "entry_price": 350.00,
+        "stop_price": 342.50,
+        "risk_percent": 1.0,
+        "portfolio_value": 50000.00,
+        "market": "US",
+        "fx_rate": 1.27
+      },
+      "derivation": {
+        "stop_distance": "350.00 - 342.50 = 7.50 (USD)",
+        "risk_amount": "50000.00 * (1.0 / 100) = 500.00 (GBP)",
+        "raw_shares": "500.00 / (7.50 * 1.27) = 500.00 / 9.525 = 52.49343832...",
+        "suggested_shares": "floor(52.49343832 * 10000) / 10000 = 52.4934"
+      },
+      "expected": {
+        "stop_distance": 7.5000,
+        "risk_amount": 500.00,
+        "raw_shares": 52.49343832020997,
+        "suggested_shares": 52.4934
+      }
+    }
+  ],
+
+  "stop_loss": [
+    {
+      "id": "SL-01",
+      "description": "Initial stop at entry — spec §5",
+      "spec_section": "§5",
+      "inputs": {
+        "entry_price": 100.00,
+        "atr": 2.50,
+        "atr_multiplier": 5
+      },
+      "derivation": "InitialStop = EntryPrice - (InitialATRMultiplier * ATR) = 100.00 - (5 * 2.50) = 87.50",
+      "expected": {
+        "initial_stop": 87.50
+      }
+    },
+    {
+      "id": "SL-02",
+      "description": "Losing position trailing stop — wide multiplier",
+      "spec_section": "§7.2 (losing/breakeven)",
+      "inputs": {
+        "current_price": 95.00,
+        "atr": 2.00,
+        "is_profitable": false,
+        "atr_multiplier": 5
+      },
+      "derivation": "Stop = CurrentPrice - (InitialATRMultiplier * ATR) = 95.00 - (5 * 2.00) = 85.00",
+      "expected": {
+        "new_stop": 85.00
+      }
+    },
+    {
+      "id": "SL-03",
+      "description": "Profitable position trailing stop — tight multiplier",
+      "spec_section": "§7.2 (profitable)",
+      "inputs": {
+        "current_price": 130.00,
+        "atr": 1.80,
+        "is_profitable": true,
+        "atr_multiplier": 2
+      },
+      "derivation": "Stop = CurrentPrice - (ProfitATRMultiplier * ATR) = 130.00 - (2 * 1.80) = 126.40",
+      "expected": {
+        "new_stop": 126.40
+      }
+    },
+    {
+      "id": "SL-04",
+      "description": "Stop movement — upward, allowed",
+      "spec_section": "§7.3",
+      "inputs": {
+        "current_stop": 85.00,
+        "new_calculated_stop": 87.00
+      },
+      "derivation": "TrailingStop = max(85.00, 87.00) = 87.00",
+      "expected": {
+        "trailing_stop": 87.00
+      }
+    },
+    {
+      "id": "SL-05",
+      "description": "Stop movement — downward BLOCKED (critical rule §7.3: stops never move down)",
+      "spec_section": "§7.3",
+      "inputs": {
+        "current_stop": 90.00,
+        "new_calculated_stop": 85.00
+      },
+      "derivation": "TrailingStop = max(90.00, 85.00) = 90.00 — stop must NOT decrease",
+      "expected": {
+        "trailing_stop": 90.00
+      }
+    },
+    {
+      "id": "SL-06",
+      "description": "Stop movement — equal, no change",
+      "spec_section": "§7.3",
+      "inputs": {
+        "current_stop": 88.00,
+        "new_calculated_stop": 88.00
+      },
+      "derivation": "TrailingStop = max(88.00, 88.00) = 88.00",
+      "expected": {
+        "trailing_stop": 88.00
+      }
+    },
+    {
+      "id": "SL-07",
+      "description": "Stop stays high after position turns losing — §7.3 absolute rule",
+      "spec_section": "§7.3",
+      "inputs": {
+        "current_stop": 120.00,
+        "new_calculated_stop": 118.00,
+        "note": "Position previously profitable; stop was tightened. Now at loss but stop cannot loosen."
+      },
+      "derivation": "TrailingStop = max(120.00, 118.00) = 120.00 — §7.3: UpdatedStop = max(CurrentStop, NewlyCalculatedStop). No exception for state transitions.",
+      "expected": {
+        "trailing_stop": 120.00
+      }
+    }
+  ]
+}
