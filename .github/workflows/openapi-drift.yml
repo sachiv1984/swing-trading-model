@@ -43,6 +43,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install PyYAML
+        run: pip install pyyaml -q
+
       - name: Detect drift
         id: drift
         run: |
