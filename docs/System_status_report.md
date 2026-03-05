@@ -1,7 +1,44 @@
 # System Status Verification Report
 
-**Date:** February 14, 2026  
-**Version:** 1.4  
+**Owner:** Director of Quality
+**Class:** Living Document (Class 3)
+**Status:** Active
+**Date:** 2026-03-05
+**Version:** 1.5
+**Environment:** Production (Render + GitHub Pages)
+
+---
+
+## Sprint: 2026-03-04__release-v1.8
+
+**Date:** 2026-03-05
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Risk Dashboard page (`/risk`): Portfolio Heat Gauge, Drawdown Summary, Grace Period Panel, Position Risk Table, Prospective Heat Indicator | docs/specs/frontend/pages/risk_dashboard.md §3–§7; docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio (portfolio_heat_percent, position_risks[]); docs/specs/metrics_definitions.md §Portfolio Heat | DEV-ST03-01 through DEV-ST03-12 (all P2/P3, accepted for v1.8; DEV-ST03-10 resolved) |
+| EPIC-02 | Automated correctness gates: golden output regression CI, backtest vs live stop reconciliation, dependency CVE scanning (pip-audit), OpenAPI drift detection | tests/golden_outputs.json; .github/workflows/golden-outputs.yml; .github/workflows/vulnerability-scan.yml; .github/workflows/openapi-drift.yml | None |
+| EPIC-03 | Settings endpoint spec correction (PUT→PATCH/POST); openapi.yaml v1.9.0 | docs/specs/api_contracts/settings_endpoints.md v1.1.0; docs/reference/openapi.yaml v1.9.0 | None |
+| EPIC-04 | Unavailability policy documentation; running API changelog | docs/ops/unavailability_policy.md v1.0.0; docs/specs/api_contracts/api_changelog.md v1.0.0 | None |
+
+### Capabilities deferred or returned
+
+None. All 12 story items completed this sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: claude/cycles/2026-03-04__release-v1.8/qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md
+- Deviations filed: DEV-ST03-01 through DEV-ST03-12 (docs/specs/frontend/pages/risk_dashboard.md §11)
+- Test scenarios referenced: docs/testing/risk_dashboard_scenarios.md v1.0.1 (10/27 executed PASS; 17/27 NOT EXECUTED — test infrastructure gap)
+
+---
+
+## Prior sprint status (v1.7, merged February 2026)
+
+**Date:** February 14, 2026
+**Version:** 1.4
 **Environment:** Production (Render + GitHub Pages)
 
 ---

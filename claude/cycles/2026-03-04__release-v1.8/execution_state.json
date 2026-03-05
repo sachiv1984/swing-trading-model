@@ -3,8 +3,8 @@
   "sprint_goal": "Ship a fully functional Risk Dashboard page giving the trader daily visibility into portfolio heat, drawdown, grace period status, and per-position risk, while simultaneously establishing automated correctness gates (golden output CI, vulnerability scanning, OpenAPI drift detection) and closing the highest-priority spec and governance debt carried from v1.7.",
   "invoked_utc": "2026-03-05T00:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-03-05T20:20:00Z",
+  "status": "Completed",
+  "last_updated_utc": "2026-03-05T20:55:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -87,10 +87,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-03-04__release-v1.8/EPIC-02",
       "pr_number": 32,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-04__release-v1.8/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -263,11 +263,11 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-03", "EPIC-04", "EPIC-01"],
-    "epics_pending": ["EPIC-02"],
-    "all_merged": false
+    "epics_merged": ["EPIC-03", "EPIC-04", "EPIC-01", "EPIC-02"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-03-05T21:00:00Z"
 }
