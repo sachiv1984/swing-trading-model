@@ -299,8 +299,7 @@ The following deviations between this specification and the v1.8 implementation 
 | DEV-ST03-12 | P2 | §6.2: Stop Distance % derived as `(current_price − current_stop) / current_price × 100` — assumes both values in GBP | `current_stop` returned in native USD for US positions (mirrors `entry_price` currency pattern — DEV-ST03-11); `current_price` is in GBP; display derivation mixes currencies → Stop Distance % incorrect for all US positions | v1.9 — return `current_stop` in GBP in `portfolio_service.py` for US positions (apply FX conversion consistent with `current_price`) | Head of Engineering | TBD |
 
 **Accepted by:** Product Owner
-**Accepted on:** 2026-03-05 (DEV-ST03-01 through DEV-ST03-09)
-**Acceptance pending:** DEV-ST03-11 (P2) — raised 2026-03-05 during live scenario execution (SC-RD-14). Awaiting Product Owner acceptance. DEV-ST03-12 (P2) — raised 2026-03-05 during SC-RD-27 network tab inspection. Awaiting Product Owner acceptance.
+**Accepted on:** 2026-03-05 (DEV-ST03-01 through DEV-ST03-12 — all deviations accepted for v1.8)
 **Conditions:** All P2 deviations must have backlog references assigned before cycle close. DEV-ST03-08 requires spec update by Head of Specs Team to reflect confirmed data source. DEV-ST03-09 (P3) identified by Director of Quality during ST-04 review (2026-03-05); accepted for v1.8 by Product Owner. DEV-ST03-10 RESOLVED — navigation fixed 2026-03-05.
 
 ---
