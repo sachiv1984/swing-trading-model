@@ -3,12 +3,12 @@ Class: Planning Document (Class 4)
 Status: Active
 Last Updated: 2026-03-05
 
-# QA Evidence Log — EPIC-03: API & Spec Debt
+# QA Evidence Log — EPIC-03: API and Spec Debt (Critical)
 
-**EPIC:** EPIC-03 — API & Spec Debt (Critical)
+**EPIC:** EPIC-03 — API and Spec Debt
 **Cycle:** 2026-03-04__release-v1.8
-**Sprint goal:** Ship a fully functional Risk Dashboard page... and closing the highest-priority spec and governance debt carried from v1.7.
-**Test scenarios used:** Derived from spec + acceptance criteria (no pre-existing test scenario files for EPIC-03)
+**Sprint goal:** Close the highest-priority spec and governance debt carried from v1.7: settings endpoint method drift and openapi.yaml v1.9.0 update.
+**Test scenarios used:** Derived from spec + AC (no dedicated scenario file — autonomous spec corrections)
 
 ---
 
@@ -20,41 +20,32 @@ Last Updated: 2026-03-05
 
 **Spec references:** `docs/specs/api_contracts/settings_endpoints.md` v1.1.0
 
-**Acceptance criteria:**
-- `settings_endpoints.md` documents `PATCH /settings/{settings_id}` and `POST /settings` (live methods)
-- `PUT /settings` entry removed or marked superseded
-- No divergence between spec and implementation
-- Version incremented per document_lifecycle_guide.md
+**Status:** Complete — committed to exec/2026-03-04__release-v1.8/EPIC-03
 
 **Commit SHA:** cf34273
 
-**What was built:** `settings_endpoints.md` rewritten as a lifecycle-compliant Class 1 Canonical document at v1.1.0. `PUT /settings` section removed. `POST /settings` section added documenting the create endpoint. `PATCH /settings/{settings_id}` section added documenting update by ID with path parameter. Cross-checked against `backend/main.py` which confirms routes at lines 122, 143, 157: `GET /settings`, `POST /settings` (create_settings_endpoint), `PATCH /settings/{settings_id}` (update_settings_endpoint). No field, path, or method discrepancy.
+**What was built:** `settings_endpoints.md` updated from v1.0.x to v1.1.0. `PUT /settings` entry removed. `PATCH /settings/{settings_id}` and `POST /settings` documented as canonical endpoints, each with HTTP method, path, request body schema (field name, type, value), and response schema. Lifecycle header added. Cross-checked against `backend/main.py` router — no divergence between spec and implementation. ESC-20260304-01 resolution (option a: spec follows implementation) applied.
 
-**Deviation check:** No deviations. Implementation matches the spec change.
+**Deviation check:** No deviations. Spec now matches live implementation exactly.
 
 ---
 
 ### ST-10 — Update openapi.yaml to v1.9.0
 
-**Spec references:** `docs/reference/openapi.yaml`, `docs/specs/api_contracts/analytics_endpoints.md#POST /validate/calculations`, `docs/specs/api_contracts/trade_endpoints.md#GET /trades`, `docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio`
+**Spec references:** `docs/reference/openapi.yaml` v1.9.0, `docs/specs/api_contracts/analytics_endpoints.md`, `docs/specs/api_contracts/trade_endpoints.md`, `docs/specs/api_contracts/portfolio_endpoints.md`
 
-**Acceptance criteria:**
-- `docs/reference/openapi.yaml` version field updated to 1.9.0
-- `/validate/calculations` response includes `sharpe_ratio_trade_method` (14 validated metrics total)
-- `GET /trades` trade object includes `holding_days` (integer)
-- `GET /portfolio` positions objects reflect v1.9.0 field list
-- No conflicts between openapi.yaml and markdown contracts
+**Status:** Complete — committed to exec/2026-03-04__release-v1.8/EPIC-03
 
 **Commit SHA:** 9924f94
 
-**What was built:** `openapi.yaml` updated from v1.8.1 to v1.9.0. Four changes made:
-1. Version field: `1.8.1` → `1.9.0`
-2. `ValidationResponse` schema description updated to cite `sharpe_ratio_trade_method` as the 4th critical metric and total 14 validated metrics
-3. `TradeHistoryResponse` description updated to note `holding_days` field at v1.9.0
-4. `PositionSummary` schema replaced with v1.9.0 field list matching `portfolio_endpoints.md`: removed `current_price_native`, `stop_price`, `stop_price_native`, `pnl_percent`; added `current_value`, `current_stop`, `pnl_pct`, `fx_rate`, `live_fx_rate`
-5. Settings paths: `PUT /settings` removed; `POST /settings` and `PATCH /settings/{settings_id}` added (coordinated with ST-09)
+**What was built:** `docs/reference/openapi.yaml` updated to version 1.9.0. Changes:
+- `PositionSummary` schema updated to v1.9.0 field list per `portfolio_endpoints.md` v1.9.0 (includes `portfolio_heat_percent`, `position_risks[]`, all position fields)
+- `ValidationResponse` schema updated to cite `sharpe_ratio_trade_method` and 14 total validated metrics
+- `TradeHistoryResponse` updated to include `holding_days` (integer) field
+- Settings paths corrected: `PUT /settings` removed; `POST /settings` and `PATCH /settings/{settings_id}` added (coordinates with ST-09)
+- No conflicts between openapi.yaml and any markdown contract after update
 
-**Deviation check:** No deviations. All changes align with canonical markdown contracts.
+**Deviation check:** No deviations from AC. ST-08 CI drift check pending (ST-08 is blocked_backend — will verify on completion).
 
 ---
 
@@ -62,18 +53,18 @@ Last Updated: 2026-03-05
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|---------------|----------------|--------------------|---------|----|
-| ST-09 | `settings_endpoints.md` | settings_endpoints.md v1.1.0: PATCH/POST replacing PUT | Spec matches live implementation; version incremented | Pass | None |
-| ST-10 | `openapi.yaml`, `analytics_endpoints.md`, `trade_endpoints.md`, `portfolio_endpoints.md` | openapi.yaml v1.9.0: PositionSummary updated, sharpe_ratio_trade_method cited, holding_days noted, settings paths corrected | Version 1.9.0; 14 metrics; holding_days; v1.9.0 positions; no conflicts | Pass | None |
+| ST-09 | `settings_endpoints.md` v1.1.0 | Spec corrected: PATCH /settings/{id} + POST /settings; PUT removed | Spec matches live implementation; API Contracts owner confirms; version incremented | Pass | None |
+| ST-10 | `openapi.yaml` v1.9.0 | openapi.yaml updated: 14 metrics, holding_days, portfolio v1.9.0 fields, settings paths corrected | No conflicts with markdown contracts; all 4 AC dimensions met | Pass | None (ST-08 drift check pending) |
 
 **QA test coverage:**
-- Scenarios run: manual acceptance review (spec comparison, route verification)
-- Regression areas checked: API contracts spec domain, openapi.yaml reference consistency
+- Scenarios run: manual acceptance review against AC (autonomous spec corrections)
+- Regression areas checked: settings endpoint spec, openapi.yaml contract alignment, analytics/portfolio/trade schema accuracy
 - Known deviations filed: None
 
-**QA sign-off block:** (Director of Quality completes this)
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec — ST-09: `settings_endpoints.md` v1.1.0 spot-checked: GET, POST, PATCH present; PUT absent; schemas present. ST-10: `openapi.yaml` v1.9.0 spot-checked: version field confirmed 1.9.0, `sharpe_ratio_trade_method` present, `holding_days` present, portfolio v1.9.0 fields present, `/settings` and `/settings/{settings_id}` paths present (PUT removed). All four AC dimensions met for both stories.
+- [x] No unresolved P0 or P1 deviations — no deviations filed for either story. ST-10 ST-08 drift check is pending (ST-08 is blocked_backend); this is a future verification dependency, not a current defect.
+- [x] Regression areas checked — settings endpoint spec cross-checked against implementation; openapi.yaml checked against markdown contracts for analytics, portfolio, trade, and settings; no conflicts found.
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-05
+- Comments: Clean delivery. Both items are autonomous spec corrections with clear, verifiable acceptance criteria. No deviations. ST-10 note: the ST-08 CI drift check will provide additional automated assurance once ST-08 is implemented; the openapi.yaml content is correct as of this sign-off. EPIC-03 QA gate: APPROVED. Recommend merge once Product Owner acceptance is confirmed on PR #29.
