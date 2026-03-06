@@ -501,13 +501,9 @@ The "Days in Grace" (`holding_days`) column required by spec §5.2 is absent fro
 **Owner:** Head of Specs Team
 **Source:** DEV-ST03-08 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** RESOLVED — 2026-03-06
 
-Spec §4.1 states drawdown data source is `GET /analytics/metrics`. The v1.8 implementation reads from `GET /portfolio` (outcome of ST-02 pre-alignment). Head of Specs Team must verify whether §4.1 should be updated to reflect `GET /portfolio` as the confirmed canonical data source.
-
-**Acceptance Criteria**
-- Head of Specs Team verifies ST-02 alignment outcome and updates risk_dashboard.md §4.1 to reflect the confirmed data source
-- If `GET /portfolio` is confirmed: §4.1 updated and DEV-ST03-08 resolved
-- If `GET /analytics/metrics` remains canonical: backend/frontend alignment required
+ST-06 investigation confirmed split-source data model: `current_drawdown_percent` is computed by `drawdown_service.py` and returned on `GET /portfolio` (confirmed in portfolio_service.py and openapi.yaml). `days_underwater` is computed by `analytics_service.py` and returned on `GET /analytics/metrics`. `risk_dashboard.md §4.1` updated to v0.1.7 to reflect correct split sources. DEV-ST03-08 marked resolved. Head of Specs Team decision 2026-03-06.
 
 ---
 

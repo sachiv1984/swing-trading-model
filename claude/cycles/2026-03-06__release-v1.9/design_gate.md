@@ -86,4 +86,4 @@ None.
 
 3. **ST-05 composite endpoint:** If a `GET /dashboard/summary` endpoint is introduced, it must be documented in API contracts and openapi.yaml. The design gate approves the layout and data model; the endpoint decision is deferred to sprint pre-alignment.
 
-4. **RISK-06 (drawdown spec alignment — ST-06):** Design gate does not resolve RISK-06. ST-06 must complete before sprint planning seals. This advisory carries forward.
+4. **RISK-06 (drawdown spec alignment — ST-06):** RESOLVED 2026-03-06. Head of Specs Team reviewed backend implementation and confirmed split-source data model (see `risk_dashboard.md §4.1` v0.1.7). DEV-ST03-08 closed. Sprint planning may seal without this blocker.

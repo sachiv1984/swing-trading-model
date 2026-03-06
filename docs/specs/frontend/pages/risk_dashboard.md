@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.6
-**Last Updated:** 2026-03-06
+**Version:** 0.1.7
+**Last Updated:** 2026-03-06 (ST-06)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-03-04
@@ -84,9 +84,13 @@ Colour applies to: gauge fill, threshold label badge, card left-border accent.
 
 ### 4.1 Data
 
-- **Source:** `GET /analytics/metrics`
-- **Fields:** `current_drawdown_percent`, `days_underwater`
-  - Field names to be confirmed against live API in ST-02 pre-alignment
+- **`current_drawdown_percent`** — Source: `GET /portfolio` (`PortfolioOverview.current_drawdown_percent`)
+  - Value is `<= 0.0`; zero means portfolio is at peak equity
+- **`days_underwater`** — Source: `GET /analytics/metrics` (behavioral metrics section)
+  - Field: `days_underwater` (integer) — maximum days since peak running equity, computed from trade P&L sequence
+  - Documented in `docs/specs/api_contracts/analytics_endpoints.md` §behavioral metrics
+
+> **Note (Head of Specs Team — 2026-03-06):** §4.1 previously listed `GET /analytics/metrics` as the source for both fields. Investigation for ST-06 confirmed that `current_drawdown_percent` is computed by `drawdown_service.py` and returned on `GET /portfolio` (confirmed in `portfolio_service.py` and `openapi.yaml` PortfolioOverview schema). `days_underwater` is computed by `analytics_service.py` and returned on `GET /analytics/metrics`. Split-source data model documented here. `days_underwater` is absent from `openapi.yaml` AnalyticsMetricsResponse (schema is `additionalProperties: true`); a schema addition is deferred to a future spec debt cycle. DEV-ST03-08 resolved.
 
 ### 4.2 Display
 
@@ -292,7 +296,7 @@ The following deviations between this specification and the v1.8 implementation 
 | DEV-ST03-05 | P3 | §6.3: GRACE badge colour = Blue | GRACE badge rendered in Amber | v1.9 — correct badge colour to Blue | Head of Engineering | BLG-RD-05 |
 | DEV-ST03-06 | P3 | §3.2: "GBP value at risk" as tertiary metric in Heat Gauge | Absent | v1.9 — add GBP value at risk below gauge value | Head of Engineering | BLG-RD-06 |
 | DEV-ST03-07 | P3 | §5.2: "Days in Grace" (`holding_days`) column in Grace Period table | `holding_days` column absent from Grace Period table | v1.9 — restore Days in Grace column | Head of Engineering | BLG-RD-07 |
-| DEV-ST03-08 | P2 | §4.1: Drawdown data source is `GET /analytics/metrics` | Drawdown reads from `GET /portfolio`; ST-02 pre-alignment may have changed this | Head of Specs Team to verify ST-02 alignment outcome and update §4.1 if `GET /portfolio` is confirmed | Head of Specs Team | BLG-RD-08 |
+| DEV-ST03-08 | — | §4.1: Drawdown data source is `GET /analytics/metrics` | RESOLVED 2026-03-06 — §4.1 updated to split-source model: `current_drawdown_percent` from `GET /portfolio`; `days_underwater` from `GET /analytics/metrics`. See §4.1 note. BLG-RD-08 closed. | Head of Specs Team | BLG-RD-08 (closed) |
 | DEV-ST03-09 | P3 | §7.5: Threshold label changes if hypothetical position crosses a boundary | `ProspectiveHeatPanel.js` renders projected heat % and delta only — threshold label absent from result display | v1.9 — add threshold label badge to prospective heat result row | Head of Engineering | BLG-RD-09 |
 | DEV-ST03-10 | P2 | §1: Nav label "Risk", nav position between Portfolio and Analytics, always visible | Navigation sidebar entry absent — page is inaccessible via normal UX; route `/risk` IS registered and accessible via direct URL | RESOLVED 2026-03-05 — nav entry added (index.js fix) | Head of Engineering | — |
 | DEV-ST03-11 | P2 | §6.2: Entry Price column — "GBP, 2 decimal places" for all positions | US position entry prices display in native USD ($) instead of GBP (£); backend returns `entry_price` in native currency, not GBP-converted | v1.9 — convert entry_price to GBP for US positions in `portfolio_service.py` and update frontend display | Head of Engineering | BLG-RD-10 |
@@ -308,6 +312,7 @@ The following deviations between this specification and the v1.8 implementation 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.7 | 2026-03-06 | ST-06 / DEV-ST03-08 resolution: §4.1 updated to split-source data model — `current_drawdown_percent` from `GET /portfolio`, `days_underwater` from `GET /analytics/metrics`. DEV-ST03-08 marked resolved in §11. Head of Specs Team decision 2026-03-06. |
 | 0.1.6 | 2026-03-06 | §11 deviation compliance update: backlog references assigned for all active deviations (BLG-RD-01 through BLG-RD-11). Updated by Delivery Verification Engine 2026-03-06 per standard mode deviation compliance. |
 | 0.1.5 | 2026-03-05 | Added DEV-ST03-12 (P2): `current_stop` returned in USD for US positions; Stop Distance % display derivation mixes currencies per §6.2. Found SC-RD-27 network tab inspection. Acceptance pending PO. |
 | 0.1.4 | 2026-03-05 | Added DEV-ST03-11 (P2): US position entry prices display in USD instead of GBP per §6.2. Found SC-RD-14 live execution. DEV-ST03-10 marked RESOLVED (nav fix applied). |
