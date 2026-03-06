@@ -1,18 +1,21 @@
 {
   "active_cycle": "2026-03-06__release-v1.9",
-  "cycle_name": "Design Gate Passed — v1.9 User Value & Insight",
-  "status": "Published",
-  "engine": "design_gate",
+  "cycle_name": "Sprint Planning In Progress — v1.9 User Value & Insight",
+  "status": "Sprint_Planning_In_Progress",
+  "engine": "sprint_planning",
   "next_release": "v1.9",
   "backlog_slice_path": "claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md",
-  "last_sync_utc": "2026-03-06T00:15:00Z",
+  "sprint_backlog_path": "claude/cycles/2026-03-06__release-v1.9/sprint_backlog.md",
+  "sprint_goal_path": "claude/cycles/2026-03-06__release-v1.9/sprint_goal.md",
+  "sprint_capacity_path": "claude/cycles/2026-03-06__release-v1.9/sprint_capacity.md",
+  "last_sync_utc": "2026-03-06T01:00:00Z",
   "prior_cycle": "2026-03-04__release-v1.8",
   "sprint_sealed": false,
   "design_gate_required": true,
   "design_gate_status": "Passed",
   "design_gate_record": "claude/cycles/2026-03-06__release-v1.9/design_gate.md",
   "sprint_planning_pre_condition": true,
-  "next_command": "plan sprint --cycle 2026-03-06__release-v1.9",
+  "next_command": "Product Owner sign-off required — confirm sprint goal, scope, and over-allocation acceptance in sprint_backlog.md",
   "open_escalations": {},
   "last_rebalance_cycle": "2026-03-06__item-3.4",
   "last_rebalance_utc": "2026-03-06T00:00:00Z",
@@ -62,5 +65,18 @@
       "docs/specs/frontend/pages/trade_reflection.md v0.1 (new)",
       "docs/specs/frontend/pages/dashboard.md v2.0"
     ]
+  },
+  "sprint_planning": {
+    "started_utc": "2026-03-06T01:00:00Z",
+    "mode": "standard",
+    "epics_in_scope": 6,
+    "story_items_in_scope": 19,
+    "story_items_pre_completed": 1,
+    "pip_audit": "clean",
+    "over_allocation": true,
+    "over_allocation_accepted": false,
+    "pending_sign_off": ["sprint_goal", "scope", "over_allocation_acceptance"],
+    "st06_resolved": true,
+    "risk06_resolved": true
   }
 }
