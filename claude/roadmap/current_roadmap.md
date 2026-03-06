@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-06 (manage roadmap — v1.8 retired to archive)
 **Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — v1.8 completion event)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -52,27 +52,6 @@ These may be revisited in future versions without any canonical spec change:
 Delivered via a unified GET /analytics/metrics?period= endpoint. Includes a POST /validate/calculations endpoint for smoke-testing metric correctness against a known dataset.
 
 > ⚠️ **Product Owner Action Required:** No verification report path or decision log entry exists for this item (predates governance). Please provide a verification reference or decision log entry before the next `manage roadmap` run so this item can be retired to the archive.
-
----
-
-### v1.8 — Risk Dashboard *(expanded from 3.4)* ✅ Complete — Shipped 2026-03-06
-
-#### 3.4 Risk Dashboard
-**Status:** ✅ Complete — Shipped 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | Verified_with_deviations
-**Effort:** Medium (3–4 days with expanded scope)
-**Value:** High (risk management — daily visibility)
-**Pre-requisite:** Metrics Definitions (Portfolio Heat formula and thresholds) must be canonical before pre-alignment opens *(v1.7 gate — cleared)*
-
-Previously scoped as a single Portfolio Heat Gauge widget. Scope expanded to a dedicated Risk Dashboard page that consolidates all risk-awareness features.
-
-**Planned page contents:**
-- Portfolio Heat Gauge — total capital at risk across open positions as a percentage of portfolio value
-- Current Drawdown summary — from peak equity, days underwater *(if not already shipped in v1.6.1)*
-- Grace Period status panel — positions currently in grace period with days remaining
-- Position-level risk table — stop distance, ATR, position state (GRACE / LOSING / PROFITABLE) per open position
-- Prospective heat indicator — integration with Position Sizing Calculator to show heat impact of a new position before entry
-
-> **Before implementation:** The heat formula and display thresholds must be canonical in `docs/specs/metrics_definitions.md`. All other data is available from existing endpoints — `GET /portfolio`, `GET /positions`, `GET /analytics/metrics`. No new backend data dependencies beyond the heat calculation endpoint.
 
 ---
 

@@ -1,13 +1,47 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-04
+**Last Updated:** 2026-03-06
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## §3.4 / v1.8 — Risk Dashboard
+
+**Original roadmap location:** §3 Delivery Plan — v1.8 section
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-06
+**Shipped version:** v1.8
+**Cycle reference:** 2026-03-04__release-v1.8
+**Verification report:** `claude/cycles/2026-03-04__release-v1.8/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** Product Owner
+
+### Original Roadmap Entry
+
+### v1.8 — Risk Dashboard *(expanded from 3.4)* ✅ Complete — Shipped 2026-03-06
+
+#### 3.4 Risk Dashboard
+**Status:** ✅ Complete — Shipped 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | Verified_with_deviations
+**Effort:** Medium (3–4 days with expanded scope)
+**Value:** High (risk management — daily visibility)
+**Pre-requisite:** Metrics Definitions (Portfolio Heat formula and thresholds) must be canonical before pre-alignment opens *(v1.7 gate — cleared)*
+
+Previously scoped as a single Portfolio Heat Gauge widget. Scope expanded to a dedicated Risk Dashboard page that consolidates all risk-awareness features.
+
+**Planned page contents:**
+- Portfolio Heat Gauge — total capital at risk across open positions as a percentage of portfolio value
+- Current Drawdown summary — from peak equity, days underwater *(if not already shipped in v1.6.1)*
+- Grace Period status panel — positions currently in grace period with days remaining
+- Position-level risk table — stop distance, ATR, position state (GRACE / LOSING / PROFITABLE) per open position
+- Prospective heat indicator — integration with Position Sizing Calculator to show heat impact of a new position before entry
+
+> **Before implementation:** The heat formula and display thresholds must be canonical in `docs/specs/metrics_definitions.md`. All other data is available from existing endpoints — `GET /portfolio`, `GET /positions`, `GET /analytics/metrics`. No new backend data dependencies beyond the heat calculation endpoint.
 
 ---
 
