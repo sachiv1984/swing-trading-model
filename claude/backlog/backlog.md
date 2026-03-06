@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-06 (groom backlog — 8 items archived)
 **Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — DL-006)
 
 > ⚠️ Standing Notice
@@ -163,31 +163,6 @@ README.md was not updated.
 
 ---
 
-**BLG-SPEC-D2** — settings_endpoints.md spec/implementation mismatch ✅ COMPLETE
-**Priority:** P1 (High)
-**Type:** Spec–Implementation Drift
-**Owner:** API Contracts & Documentation Owner + Head of Engineering
-**Raised:** 2026-03-03 — Head of Specs Team review
-**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-09 — settings_endpoints.md v1.1.0 published; PATCH/POST documented as canonical
-
-**Problem**
-`docs/specs/api_contracts/settings_endpoints.md` specifies `PUT /settings` (replace all settings).
-Live implementation in `backend/main.py` uses `PATCH /settings/{settings_id}` (update single setting by ID).
-Additionally, `POST /settings` is implemented but not documented anywhere.
-This is a P1 drift: clients relying on the spec will call the wrong method and path.
-
-**Decision Required**
-Product Owner + API Contracts owner to choose:
-(a) Update spec to document `PATCH /settings/{settings_id}` and `POST /settings` as the canonical interface, or
-(b) Align backend to implement `PUT /settings` as specced (breaking change to existing frontend).
-
-**Acceptance Criteria**
-- settings_endpoints.md accurately documents the live HTTP method, path, and request/response schema
-- No divergence between spec and implementation
-- Decision record filed if option (b) chosen (breaking change)
-
----
-
 **BLG-SPEC-D3** — GET /market/status completely undocumented live endpoint
 **Priority:** P2 (Medium)
 **Type:** Documentation Gap / Drift
@@ -222,31 +197,6 @@ Not documented in `docs/specs/api_contracts/position_endpoints.md`.
 
 **Acceptance Criteria**
 - position_endpoints.md includes GET /positions/search/tags with request parameters and response schema
-
----
-
-**BLG-SPEC-D7** — openapi.yaml frozen at v1.8.1; not updated for v1.9.0 contracts ✅ COMPLETE
-**Priority:** P2 (Medium)
-**Type:** Documentation Drift / Reference Artefact Staleness
-**Owner:** API Contracts & Documentation Owner
-**Raised:** 2026-03-03 — Head of Specs Team review
-**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-10 — openapi.yaml updated to v1.9.0
-
-**Problem**
-`docs/reference/openapi.yaml` is at version 1.8.1 (1193 lines).
-Three contracts were bumped to v1.9.0 in EPIC-06:
-- `sharpe_ratio_trade_method` absent from /validate/calculations validated metrics list
-- portfolio positions response schema not aligned to v1.9.0 field list
-- `holding_days` absent from GET /trades trade object schema
-Specs_Index.md §4 states: "openapi.yaml must be reviewed inline with every contract change; markdown contracts take precedence on conflict."
-This was not done during EPIC-06.
-
-**Acceptance Criteria**
-- openapi.yaml version field updated to 1.9.0
-- /validate/calculations response includes sharpe_ratio_trade_method (14 validated metrics total)
-- GET /trades trade object includes holding_days (integer)
-- GET /portfolio positions objects reflect v1.9.0 field list
-- No conflicts between openapi.yaml and markdown contracts
 
 ---
 
@@ -379,13 +329,13 @@ Per document_lifecycle_guide.md, Owner must be a named governance role (e.g., He
 
 ---
 
-**Review Summary (active items)**
-- Active items: 7 DRIFT (D1–D4, D7–D9), 5 GAP (G1–G5) = 12 total
-- P1: 1 (D2 — settings endpoint method mismatch — decision required)
-- P2: 4 (D3, D7, G1, G2)
+**Review Summary (active items — updated 2026-03-06 groom)**
+- Active items: 5 DRIFT (D1, D3, D4, D8, D9), 5 GAP (G1–G5) = 10 total
+- Archived this run: D2 (✅ ST-09), D7 (✅ ST-10)
+- P2: 3 (D3, G1, G2)
 - P3: 7 (D1, D4, D8, D9, G3, G4, G5)
-- Oldest open items: G1, G2, G5 — open since 2026-02-21 (2 cycles; flag for upgrade review)
-- Recommended resolution order: D2 → G1 → D7 → D3 → G2
+- Oldest open items: G1, G2, G5 — open since 2026-02-21 (3 cycles; ⚠️ priority upgrade review recommended at v1.9 pre-alignment)
+- Recommended resolution order: G1 → D3 → G2
 
 ---
 
@@ -393,80 +343,6 @@ Per document_lifecycle_guide.md, Owner must be a named governance role (e.g., He
 
 Items promoted to backlog from Idea Intake Window IW-20260304-01 (2026-03-04). Decision log: DL-005.
 All items compete within v1.8 release capacity. Release planning engine determines v1.8 backlog slice.
-
----
-
-### BLG-NEW-01 — Golden Output Regression Baseline for CI ✅ COMPLETE
-**Priority:** P1 (High)
-**Type:** Quality / CI
-**Owner:** Engineering + QA
-**Source:** IDEA-director-of-quality-20260304-02 — Director of Quality, IW-20260304-01
-**Cycle added:** 2026-03-04__item-3.4
-**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-05
-
-**Problem**
-The current CI gate (`POST /validate/calculations`, EPIC-01) checks only that `critical_failed > 0` blocks the merge. It does not verify that specific calculations return the correct numeric values. A change that silently alters the trailing stop formula from `CurrentPrice - (2 × ATR)` to `CurrentPrice - (2.1 × ATR)` would pass the current gate. Numeric regressions are the highest-risk defect class in a trading system.
-
-**Scope**
-- Define a set of deterministic golden test cases: known inputs (entry_price, ATR, risk_percent, etc.) with expected output values derived directly from the canonical strategy spec
-- Store as `tests/golden_outputs.json` — treated as a canonical artefact; updated only via spec-linked PR
-- Scope limited to stop/sizing calculations only (per STEP 5 scoping from IW-20260304-01)
-- Add a CI step that calls the backend with each golden input and asserts output matches to required precision
-- Any numeric divergence from golden values fails the build
-
-**Acceptance Criteria**
-- `tests/golden_outputs.json` exists with spec-derived golden values for stop and sizing calculations
-- CI step added that runs golden output assertions on every PR
-- Build fails on any numeric deviation from golden values
-- Precision tolerance documented (e.g., 4 decimal places for share counts)
-- Golden values derived from canonical spec, not from current implementation
-
-**Dependencies**
-- None (prerequisite: BLG-NEW-02 must follow, not precede)
-
----
-
-### BLG-NEW-02 — Backtest vs Live Stop Reconciliation Report ✅ COMPLETE
-**Priority:** P1 (High)
-**Type:** Quality / CI
-**Owner:** Engineering + QA
-**Source:** IW-20260304-01 (promoted 2026-03-04)
-**Cycle added:** 2026-03-04__item-3.4
-**Dependency:** After BLG-NEW-01 (golden output baseline must be in place first)
-**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-06
-
-**Problem**
-There is no automated verification that the trailing stop formula used in backtests and the formula used in the live system produce identical results for the same inputs. Silent divergence between backtest and live logic is a category of defect that cannot be caught by either gate independently.
-
-**Scope**
-- Report or CI assertion that compares backtest stop calculations vs live system stop calculations for a set of known inputs
-- Output: reconciliation result confirming parity or flagging divergence
-
-**Acceptance Criteria**
-- Automated check exists that verifies backtest and live stop logic produce identical results for all golden inputs
-- Any divergence between backtest and live calculation fails the check
-
----
-
-### BLG-NEW-03 — Define and Document Unavailability Failure Mode ✅ COMPLETE
-**Priority:** P1 (High)
-**Type:** Policy / Governance
-**Owner:** Infrastructure & Operations Owner
-**Source:** IW-20260304-01 (promoted 2026-03-04)
-**Cycle added:** 2026-03-04__item-3.4
-**Effort:** ~0.5 day
-**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-11
-
-**Problem**
-There is no documented policy for what happens when the system is unavailable during a trading session (e.g., backend down, market data feed unavailable). The system has no documented failure modes or fallback procedures for the user.
-
-**Scope**
-- Define and document the unavailability failure mode: what the user should do, what the system state is, and any manual fallback procedures
-- Document where this policy lives (e.g., OPERATIONAL_GUIDE.md or a new docs/ops/ document)
-
-**Acceptance Criteria**
-- Unavailability failure mode documented: system states covered, user action required, data integrity implications
-- Document registered in appropriate governance index
 
 ---
 
@@ -491,84 +367,11 @@ The project uses AI-assisted workflows (Claude Code) for governed routines. Ther
 
 ---
 
-### BLG-NEW-05 — Dependency Vulnerability Scanning in CI ✅ COMPLETE
-**Priority:** P1 (High)
-**Type:** Security / CI
-**Owner:** Engineering (CI)
-**Source:** IW-20260304-01 (promoted 2026-03-04)
-**Cycle added:** 2026-03-04__item-3.4
-**Effort:** ~0.5 day
-**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-07
-
-**Problem**
-There is no automated scanning of Python dependencies for known vulnerabilities in the CI pipeline. A compromised or vulnerable dependency could be introduced silently.
-
-**Scope**
-- Add a CI step that scans Python dependencies (e.g., using `pip-audit` or `safety`) for known CVEs
-- Block merge (or warn at configurable severity) on high/critical vulnerabilities
-- Integrate with existing `.github/workflows/` structure
-
-**Acceptance Criteria**
-- Dependency vulnerability scan runs on every PR
-- High/critical CVEs block merge (or produce a required review comment)
-- Scan tool and severity threshold documented
-
----
-
-### BLG-NEW-07 — Running API Changelog Document ✅ COMPLETE
-**Priority:** P1 (High)
-**Type:** Documentation / Governance
-**Owner:** API Contracts & Documentation Owner
-**Source:** IW-20260304-01 (promoted 2026-03-04)
-**Cycle added:** 2026-03-04__item-3.4
-**Effort:** ~0.5 day
-**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-12
-
-**Problem**
-There is no single running changelog document for API contract changes. Changes to endpoint contracts (new fields, removed fields, version bumps) are recorded in individual spec files but there is no centralised, human-readable history of API evolution across versions.
-
-**Scope**
-- Create a running API Changelog document that summarises contract changes per version
-- Cover all contracts under `docs/specs/api_contracts/`
-- Backfill from v1.8.x → v1.9.0 changes (EPIC-06 scope)
-- Document maintainer obligation: must be updated alongside every contract version bump
-
-**Acceptance Criteria**
-- API Changelog document exists and is registered in Specs_Index.md
-- All v1.9.0 contract changes (EPIC-06) are backfilled
-- Maintenance obligation documented alongside contract spec authoring workflow
-
----
-
-### BLG-NEW-08 — Automated OpenAPI Drift Detection in CI ✅ COMPLETE
-**Priority:** P1 (High)
-**Type:** CI / Governance
-**Owner:** Engineering (CI)
-**Source:** IW-20260304-01 (promoted 2026-03-04)
-**Cycle added:** 2026-03-04__item-3.4
-**Effort:** ~0.5 day
-**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-08
-
-**Problem**
-`docs/reference/openapi.yaml` was not updated during EPIC-06 when three contracts were bumped to v1.9.0 (BLG-SPEC-D7). There is no CI check that detects drift between the markdown API contracts and openapi.yaml. Drift will recur without an automated gate.
-
-**Scope**
-- Add a CI step that detects drift between `openapi.yaml` and the markdown API contracts
-- Approach: either (a) generate openapi.yaml from contracts and compare, or (b) run a custom lint/diff check against known contract fields
-- Block merge on detected drift
-
-**Acceptance Criteria**
-- CI step detects drift between openapi.yaml and markdown contracts
-- Merge blocked if drift is detected
-- Approach documented (generation vs diff) — approach decision to be made in pre-alignment
-
----
-
-**Section Summary (IW-20260304-01 active items)**
-- Active: 7 standalone (BLG-NEW-01–05, 07, 08)
-- P1: 6 (BLG-NEW-01, 02, 03, 05, 07, 08)
+**Section Summary (IW-20260304-01 active items — updated 2026-03-06 groom)**
+- Active: 1 (BLG-NEW-04)
 - P2: 1 (BLG-NEW-04)
-- Archived: BLG-NEW-06 (merged into 4.1b — see backlog_archive.md)
+- Archived this run: BLG-NEW-01 (✅ ST-05), BLG-NEW-02 (✅ ST-06), BLG-NEW-03 (✅ ST-11), BLG-NEW-05 (✅ ST-07), BLG-NEW-07 (✅ ST-12), BLG-NEW-08 (✅ ST-08)
+- Archived prior: BLG-NEW-06 (merged into 4.1b — see backlog_archive.md)
 
 ---
 
@@ -885,3 +688,21 @@ The golden output baseline (BLG-NEW-01, COMPLETE) covers end-to-end calculation 
 - Active new items: 4 (BLG-NEW-09 through BLG-NEW-12)
 - P1: 2 (BLG-NEW-10, BLG-NEW-12)
 - P2: 2 (BLG-NEW-09, BLG-NEW-11)
+
+---
+
+## Closed Items
+
+Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
+
+| Item ID | Title | Shipped | Cycle | Story |
+|---------|-------|---------|-------|-------|
+| BLG-NEW-08 | Automated OpenAPI Drift Detection in CI | v1.8 | 2026-03-04__release-v1.8 | ST-08 |
+| BLG-NEW-07 | Running API Changelog Document | v1.8 | 2026-03-04__release-v1.8 | ST-12 |
+| BLG-NEW-05 | Dependency Vulnerability Scanning in CI | v1.8 | 2026-03-04__release-v1.8 | ST-07 |
+| BLG-NEW-03 | Define and Document Unavailability Failure Mode | v1.8 | 2026-03-04__release-v1.8 | ST-11 |
+| BLG-NEW-02 | Backtest vs Live Stop Reconciliation Report | v1.8 | 2026-03-04__release-v1.8 | ST-06 |
+| BLG-NEW-01 | Golden Output Regression Baseline for CI | v1.8 | 2026-03-04__release-v1.8 | ST-05 |
+| BLG-SPEC-D7 | openapi.yaml frozen at v1.8.1 | v1.8 | 2026-03-04__release-v1.8 | ST-10 |
+| BLG-SPEC-D2 | settings_endpoints.md spec/implementation mismatch | v1.8 | 2026-03-04__release-v1.8 | ST-09 |
+| BLG-NEW-06 | Realised vs Unrealised P&L Labelling | N/A | 2026-03-04__item-3.4 | Merged into 4.1b |
