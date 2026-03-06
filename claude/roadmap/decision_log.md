@@ -1,7 +1,7 @@
-Owner: Product Owner
-Class: Planning Document (Class 4)  
-Status: Active  
-Last Updated: 2026-03-01
+**Owner:** Product Owner
+**Class:** Planning Document (Class 4)
+**Status:** Active
+**Last Updated:** 2026-03-06
 
 ---
 
@@ -141,3 +141,41 @@ Each decision entry must include:
 **Workforce impact:** New items are predominantly execution-heavy (CI, engineering). Combined governance items (BLG-NEW-03, 04, 07) are low-effort. Skill-Silo check: governance load ~21% (within 20–60% bounds). No Skill-Silo Alert issued.
 
 **Source:** IW-20260304-01 idea intake window (44 submissions, 22 agents). BLG-NEW-06 merged into 4.1b scope — not promoted as standalone.
+
+---
+
+### DL-006 — 2026-03-06
+
+**Decision type:** Add (backlog-level — not roadmap-level initiatives)
+**Cycle:** 2026-03-06__item-3.4
+**Date:** 2026-03-06
+**Decision owner:** Product Owner
+
+**Initiatives added to backlog:**
+1. BLG-NEW-09 — R-Multiple Distribution Report (Analytics/User Value, P2; Metrics Definitions owner required; sequence after BLG-FEAT-08)
+2. BLG-NEW-10 — Canonical Test Scenario Library (QA Infrastructure, P1; scoped to Risk Dashboard + new v1.9 features)
+3. BLG-NEW-11 — Canonical Terms Glossary (Governance/Spec, P2; Class 2 Supporting document; Head of Specs Team owner)
+4. BLG-NEW-12 — Service Layer Test Coverage Standard (Engineering Quality, P1; CI-enforceable coverage threshold required)
+
+**Displacement:** None at roadmap level. These are backlog-level items only. 0 roadmap Adds ≥ 0 roadmap Stops ✅.
+
+**Workforce impact:** Combined ~3.5–7 days across analytics, QA, spec, and engineering skill domains. No scarce skill constraint violated. Metrics Definitions owner sequencing constraint noted: BLG-FEAT-08 definitions must precede BLG-NEW-09 work. LL-05 capacity check applies to both.
+
+**Source:** IW-20260304-01 parked carry-forwards (cycle 2026-03-04__item-3.4). All 4 items met STEP 5 debate advancement criteria.
+
+---
+
+### DL-007 — 2026-03-06
+
+**Decision type:** No-change / Confirm (roadmap-level)
+**Cycle:** 2026-03-06__item-3.4
+**Date:** 2026-03-06
+**Decision owner:** Product Owner
+
+**Initiative(s) affected:** All active roadmap initiatives (no change)
+
+**Displacement:** N/A — no additions.
+
+**Workforce impact:** No change to roadmap-level workforce allocations.
+
+**Rationale:** All roadmap initiatives were re-validated in STEP 2. No initiative merits Kill, Replace, or Defer beyond the standing DL-003 status for 3.5 Alerts. The roadmap is correctly balanced for the v1.9 → v2.0 delivery sequence. v1.9 scope is confirmed: 5.1, BLG-FEAT-08, 5.2, 5.3, BLG-RD deviation bundle, TEST-GAP-EPIC-01. No roadmap-level changes are required at this time. Roadmap updated with Last Updated date per lifecycle compliance requirement.

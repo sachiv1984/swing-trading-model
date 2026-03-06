@@ -4,6 +4,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Last Updated:** 2026-03-06
+**Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — v1.8 completion event)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -75,9 +76,11 @@ Previously scoped as a single Portfolio Heat Gauge widget. Scope expanded to a d
 
 ---
 
-### v1.9 — User Value & Insight *(new)*
+### v1.9 — User Value & Insight *(next release — planning active)*
 
 Three closely related user-facing features that build on existing data and the existing journal system. Delivered together as a cohesive release.
+
+> **v1.9 scope note (2026-03-06):** In addition to the user value features below, v1.9 will include resolution of Risk Dashboard deviation backlog items (BLG-RD-01 through BLG-RD-11) and TEST-GAP-EPIC-01 (scenario execution infrastructure). Release planning engine will determine the v1.9 backlog slice across all items.
 
 #### 5.1 Structured Trade Reflection Template *(new)*
 **Status:** Planned

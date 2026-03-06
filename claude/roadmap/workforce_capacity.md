@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-01
+**Last Updated:** 2026-03-06
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -110,3 +110,31 @@ Scarce skill note: Metrics Definitions owner is required for both v1.7 (heat for
 **Skill-Silo check (v1.8 scope):** Governance load ~21%. Within 20–60% bounds. No alert triggered. Product Owner sign-off capacity confirmed.
 
 **Assessment:** New backlog items are predominantly execution-heavy (CI, engineering). Combined with the Risk Dashboard (execution-heavy), v1.8 is well-balanced. The small governance items (BLG-NEW-03, 04, 07) are low-effort and can be delivered alongside engineering work without creating a governance bottleneck.
+
+---
+
+## Capacity Released — Cycle 2026-03-06__item-3.4
+
+### Completed item: 3.4 Risk Dashboard (v1.8 — shipped 2026-03-06)
+
+| Field | Value |
+|-------|-------|
+| Estimated effort released | ~3–4 days (EPIC-01 through EPIC-04: frontend, backend, CI/CD, governance) |
+| Skills released | Frontend development (Base44), Backend (FastAPI), QA execution, API Contracts authoring, Spec authoring, CI/DevOps, Governance/PMO |
+| Duration freed | Immediately available for v1.9 pre-alignment |
+| Constraints | None — v1.8 is fully verified and closed |
+
+### New Backlog Items Added (from cycle 2026-03-06__item-3.4 — DL-006)
+
+| Item | Est. Effort | Skills | Priority |
+|------|------------|--------|---------|
+| BLG-NEW-09 R-Multiple Distribution Report | ~1–2 days | Backend + Metrics Definitions | P2 |
+| BLG-NEW-10 Canonical Test Scenario Library | ~1–3 days (scoped) | QA + Engineering | P1 |
+| BLG-NEW-11 Canonical Terms Glossary | ~1 day | Head of Specs Team | P2 |
+| BLG-NEW-12 Service Layer Test Coverage Standard | ~0.5 day (doc) + CI setup | Backend Engineering + QA | P1 |
+
+**Metrics Definitions owner sequencing constraint:** BLG-FEAT-08 definitions must precede BLG-NEW-09 implementation. LL-05 capacity check must confirm Metrics Definitions owner availability before v1.9 pre-alignment opens (applies to both BLG-FEAT-08 and BLG-NEW-09).
+
+**Skill-Silo check (this cycle's additions):** Governance load 17% (below 20% floor). Product Owner sign-off capacity confirmed. No pull-forward required. No skill-silo alert issued.
+
+**Assessment:** v1.9 scope is well-balanced — execution-heavy user value features (5.1, 5.2, 5.3, BLG-RD fixes) combined with low-governance-overhead quality standards (BLG-NEW-10, 12) and a spec governance item (BLG-NEW-11). Metrics Definitions owner is the key capacity constraint to monitor at v1.9 pre-alignment (LL-05).

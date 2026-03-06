@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Class:** Planning Document (Class 4)
-**Status:** Parked
+**Status:** Advancing
 **Submitted by:** Head of Specs Team
 **Submitted at:** 2026-03-04
 **Window ID:** IW-20260304-01

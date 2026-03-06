@@ -1,9 +1,10 @@
 # Product Backlog — Momentum Trading Assistant
 
-Owner: Product Owner
-Status: Active
-Class: Planning Document (Class 4)
-Last Updated: 2026-03-06
+**Owner:** Product Owner
+**Status:** Active
+**Class:** Planning Document (Class 4)
+**Last Updated:** 2026-03-06
+**Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — DL-006)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -773,3 +774,114 @@ See verification_report.md §6 for full test coverage feedback record. See `docs
 - Test infrastructure preconditions section added to risk_dashboard_scenarios.md documenting required setup per scenario group
 
 **Last Updated:** 2026-03-06
+
+---
+
+## 11. New Backlog Items — Cycle 2026-03-06__item-3.4
+
+Items promoted to backlog from IW-20260304-01 parked carry-forwards. Decision log: DL-006.
+Release planning engine determines v1.9 backlog slice.
+
+---
+
+### BLG-NEW-09 — R-Multiple Distribution Report
+**Priority:** P2 (Medium)
+**Type:** Analytics / User Value
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** IDEA-metrics-analytics-20260304-01, IW-20260304-01
+**Cycle added:** 2026-03-06__item-3.4
+**Sequence constraint:** After BLG-FEAT-08 metrics definitions (Metrics Definitions owner capacity — LL-05 check applies)
+
+**Problem**
+No visualisation of R-multiple distribution exists. R-multiple (profit in units of initial risk) is the canonical trade quality measure in this strategy — users cannot see whether trades are systematically achieving R > 1 on winners or not.
+
+**Scope**
+- Add R-multiple distribution chart/panel to the Performance Analytics page (extends existing §3.1 delivery)
+- Backend: compute R-multiple per closed trade from existing trade data
+- Metrics Definitions owner must define R-multiple formula in metrics_definitions.md before implementation
+
+**Acceptance Criteria**
+- R-multiple formula defined and canonicalised in metrics_definitions.md
+- Distribution visualisation present on analytics page showing frequency of R-multiple values across closed trades
+- Values computed from canonical backend formula; no client-side derivation
+
+---
+
+### BLG-NEW-10 — Canonical Test Scenario Library
+**Priority:** P1 (High)
+**Type:** QA Infrastructure
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260304-01, IW-20260304-01
+**Cycle added:** 2026-03-06__item-3.4
+**Scope constraint:** Risk Dashboard components first (resolves TEST-GAP-EPIC-01 infrastructure dependency); new v1.9 feature scenarios added at release time; no retroactive full-coverage mandate
+
+**Problem**
+Test scenarios are ad-hoc per feature. TEST-GAP-EPIC-01 identified that 17/27 Risk Dashboard scenarios cannot be executed without a seeded test infrastructure. A systematic canonical library with documented infrastructure preconditions prevents this gap recurring in every release.
+
+**Scope**
+- Phase 1: Create seeded test infrastructure and resolve TEST-GAP-EPIC-01 (17 unexecuted Risk Dashboard scenarios)
+- Phase 2: Add test scenarios for each new feature delivered in v1.9 at time of delivery
+- Document infrastructure preconditions per scenario group
+
+**Acceptance Criteria**
+- TEST-GAP-EPIC-01: all 17 unexecuted Risk Dashboard scenarios run against seeded environment and results recorded
+- Infrastructure preconditions documented in risk_dashboard_scenarios.md
+- v1.9 feature scenarios added to scenario library as each feature is delivered
+- No retroactive full-endpoint coverage required
+
+---
+
+### BLG-NEW-11 — Canonical Terms Glossary
+**Priority:** P2 (Medium)
+**Type:** Governance / Spec Quality
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260304-01, IW-20260304-01
+**Cycle added:** 2026-03-06__item-3.4
+**Class constraint:** Document must be Class 2 (Supporting) — cross-reference index only; no new canonical rules
+
+**Problem**
+Terms like "portfolio heat", "grace period", "stop distance", "R-multiple" are used across multiple specs without a single cross-reference point. Term drift causes ambiguity (e.g., BLG-RD-08 — drawdown data source ambiguity).
+
+**Scope**
+- Create a canonical terms glossary as a Class 2 Supporting document
+- Each term: definition + link to Class 1 canonical source (metrics_definitions.md, strategy_rules.md, etc.)
+- No new canonical definitions — only cross-references
+- Register in Specs_Index.md
+
+**Acceptance Criteria**
+- Glossary exists as Class 2 Supporting document with compliant header
+- All key trading and system terms defined with canonical source links
+- Registered in Specs_Index.md
+- No duplicate or conflicting definitions introduced
+
+---
+
+### BLG-NEW-12 — Service Layer Test Coverage Standard
+**Priority:** P1 (High)
+**Type:** Engineering Quality / CI
+**Owner:** Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260304-01, IW-20260304-01
+**Cycle added:** 2026-03-06__item-3.4
+**Prerequisite:** BLG-NEW-01 (golden output baseline) — COMPLETE
+**CI constraint:** Standard must include a minimum coverage threshold enforceable via CI (pytest-cov or equivalent)
+
+**Problem**
+The golden output baseline (BLG-NEW-01, COMPLETE) covers end-to-end calculation correctness. The service layer (portfolio_service.py, trade_service.py, analytics_service.py) has no documented test coverage standard. Logic errors at the service layer may not be caught by golden tests if they produce correct outputs on golden inputs.
+
+**Scope**
+- Author a Service Layer Test Coverage Standard
+- Define minimum unit test coverage threshold for services/ directory
+- Add CI step that enforces coverage threshold on every PR
+
+**Acceptance Criteria**
+- Coverage standard documented with named threshold (agreed at pre-alignment)
+- CI step adds pytest-cov (or equivalent) coverage check on services/ directory
+- Build fails if coverage falls below threshold
+- Standard integrated with or referenced from backend_engineering_patterns.md
+
+---
+
+**Section 11 Summary**
+- Active new items: 4 (BLG-NEW-09 through BLG-NEW-12)
+- P1: 2 (BLG-NEW-10, BLG-NEW-12)
+- P2: 2 (BLG-NEW-09, BLG-NEW-11)
