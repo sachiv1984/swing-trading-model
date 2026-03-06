@@ -81,7 +81,7 @@ Reasoning: <one sentence>
 
 | Field | Value |
 |-------|-------|
-| STEP 4 classification | Advance / Park / Reject / Reject-Strong |
+| STEP 4 classification | Advance / Parked-cycle-1 / Reject / Reject-Strong |
 | Classification date | |
 | Classified by | Product Owner |
 | STEP 5 outcome | Promoted-Added / Promoted-Rejected / — |
