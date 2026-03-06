@@ -706,3 +706,16 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 | BLG-SPEC-D7 | openapi.yaml frozen at v1.8.1 | v1.8 | 2026-03-04__release-v1.8 | ST-10 |
 | BLG-SPEC-D2 | settings_endpoints.md spec/implementation mismatch | v1.8 | 2026-03-04__release-v1.8 | ST-09 |
 | BLG-NEW-06 | Realised vs Unrealised P&L Labelling | N/A | 2026-03-04__item-3.4 | Merged into 4.1b |
+
+---
+
+## v1.9 Release Slice — 2026-03-06
+
+<!-- release-plan-marker: RP:v1.9:2026-03-06__release-v1.9 -->
+
+**Cycle:** 2026-03-06__release-v1.9
+**Release:** v1.9 — User Value & Insight
+**Planned:** 2026-03-06
+**Backlog slice:** `claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md`
+
+Items in v1.9 sprint: EPIC-01 (ST-01–ST-02), EPIC-02 (ST-03–ST-04), EPIC-03 (ST-05), EPIC-04 (ST-06–ST-10), EPIC-05 (ST-11–ST-13), EPIC-06 (ST-14–ST-19)
