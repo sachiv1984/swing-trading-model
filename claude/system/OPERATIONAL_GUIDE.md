@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 2.3  
-**Last Updated:** 2026-03-04  
+**Version:** 2.4  
+**Last Updated:** 2026-03-06  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -19,8 +19,9 @@
 # Phase 0 — Idea Intake (OPTIONAL — run before roadmap rebalance)
 run ideas [--window-id "<id>"] [--mode "strict|standard"]
 
-# Phase 1 — Roadmap Rebalance (OPTIONAL — triggers on completed roadmap item)
+# Phase 1 — Roadmap Rebalance (OPTIONAL — triggers on completed roadmap item OR scheduled)
 run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"]
+run roadmap --reason "scheduled" [--date "YYYY-MM-DD"]
 
 # Phase 1M — Document Management (OPTIONAL — run after Post-Ship Closure)
 manage roadmap [--dry-run]                        # retire completed items, flag stale
@@ -103,7 +104,10 @@ Phase 1 complete? (optional)
   ✅ current_roadmap.md updated and lifecycle-compliant
   ✅ backlog.md reconciled (Add/Replace/Defer/Kill reflected)
   ✅ decision_log.md appended
-  ✅ lessons_learnt.md filed
+  ✅ lessons_learnt.md filed (structure per lessons_learnt_prompt.md §5)
+  ✅ All action-now prompt patches applied, version-incremented, logged in prompt_change_log.md
+  ✅ All deferred patches have named owner and target date (or recorded as escalations)
+  ✅ Meta-review conducted if due (every third cycle); meta_review.md filed if so
   ✅ Commit done (or commit manifest produced)
 
 Phase 1B complete?
@@ -205,7 +209,7 @@ All authority is defined in `claude/charter/team_charter.md`. The table below su
 |------|-------|----------------|
 | Product Owner | 1, 1B, 2, 3, 4 | Final decision — prioritisation, rebalance, scope; acceptance of deviations |
 | Strategy Rules & System Intent Owner | 1, 1B | Veto — strategy alignment and §13 boundaries |
-| Head of Specs Team | 1, 1B, 2 | Veto — lifecycle compliance; tie-breaker on spec conflicts |
+| Head of Specs Team | 1, 1B, 2 | Veto — lifecycle compliance; tie-breaker on spec conflicts; sign-off required for all action-now prompt patches |
 | PMO Lead | 1, 1B, 2, 3, 4 | Process enforcement; gate validation; lessons learnt; verification invoker |
 | FinOps & Resource Architect | 1, 1B | Binding constraint — workforce economics gate |
 | Infrastructure & Operations Owner | 1, 1B | Run manifest and cycle artefact filing |
@@ -260,7 +264,7 @@ Each cycle progresses through up to six phases, with an optional Phase 0 for ide
 | Phase | Name | Trigger | Output |
 |-------|------|---------|--------|
 | **Phase 0** | Idea Intake | Optional — before any roadmap run | Submitted idea files + window summary |
-| **Phase 1** | Roadmap Rebalance | Roadmap item completed | Updated roadmap + decision log |
+| **Phase 1** | Roadmap Rebalance | Roadmap item completed OR scheduled review | Updated roadmap + decision log + prompt change log (if patches applied) |
 | **Phase 1M** | Document Management | After Post-Ship Closure (optional) | Clean roadmap + healthy backlog |
 | **Phase 1B** | Release Planning | Phase 1 complete *or* direct invocation | Sequenced release plan + backlog slice |
 | **Phase 1.5** | Design Gate | After Phase 1B Publish Gate | Design artefacts approved + frontend specs updated |
@@ -309,7 +313,7 @@ Each idea is one file per agent per submission in `claude/ideas/submissions/`, n
 | Status | Set by | Meaning |
 |--------|--------|---------|
 | `Submitted` | Phase 0 engine | Filed during open window; awaiting STEP 4 review |
-| `Parked` | Roadmap STEP 4 | Not ready; stays in submissions for next window |
+| `Parked-cycle-<n>` | Roadmap STEP 4 | Not ready; `<n>` = consecutive cycles parked. At 3+ cycles, Product Owner must make an active disposition — silent re-park not permitted |
 | `Advancing` | Roadmap STEP 4 | Progressing to STEP 5 debate |
 | `Promoted-Added` | Roadmap STEP 9 | Promoted in debate and added to roadmap |
 | `Promoted-Rejected` | Roadmap STEP 5 | Promoted to debate but lost |
@@ -317,7 +321,7 @@ Each idea is one file per agent per submission in `claude/ideas/submissions/`, n
 | `Rejected-Strong` | Roadmap STEP 4 | Rejected but strong; core content appended to `rejected_but_strong.md` |
 | `Withdrawn` | Agent or Phase 0 engine | Withdrawn by submitter |
 
-Parked ideas are never deleted — they carry forward to the next window. All other terminal statuses retain the file as a permanent record.
+Parked ideas carry forward with an incrementing cycle count. At 3 or more consecutive cycles parked, the idea is considered stale and requires an active Product Owner disposition. All terminal-status files are retained as permanent records.
 
 ### 5.4 Displacement
 
@@ -343,63 +347,79 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v1.9)  
-**Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning.
+**Source prompt:** `claude/system/roadmap_prompt.md` (v2.0)  
+**Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
-### 5.1 Invocation
+### 6.1 Invocation
 
 ```
+# Completion-triggered
 run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"]
+
+# Scheduled (no completion event required)
+run roadmap --reason "scheduled" [--date "YYYY-MM-DD"]
 ```
 
+**Completion-triggered:**
 - `--item-id` required (e.g., `3.2`)
 - `--item-name` must uniquely match an item in `current_roadmap.md`
 - `--date` defaults to today
-- Any other input is treated as conversational — the Engine will not run
 
-### 5.2 Preflight Checklist
+**Scheduled:**
+- No completion event or item ID required
+- STEP 1.2 (Capacity Release Registration) is skipped automatically
+- `cycle_id` takes the form `YYYY-MM-DD__scheduled`
+
+Any other input is treated as conversational — the Engine will not run.
+
+### 6.2 Preflight Checklist
 
 | Check | Requirement | Action if Fail |
 |-------|-------------|----------------|
-| Required files present | charter, lifecycle guide, strategy rules, roadmap, backlog | Halt |
+| Required files present | charter, lifecycle guide, strategy rules, roadmap, backlog, lessons_learnt_prompt, idea_intake_prompt, idea_template | Halt |
 | Header compliance | Class 4 headers on roadmap + backlog | Apply Step 0.A header remediation (headers only) |
 | Authority roles exist | All 9 required roles have agent files in `claude/agents/` | Halt |
 | Write permission | `claude/cycles/` writable | Halt |
+| Prior cycle outstanding actions | All actions from prior lessons_learnt resolved, or carried forward with named owner + new target date | Halt if any unresolved without carry-forward |
 
-### 5.3 Engine Steps
+### 6.3 Engine Steps
 
 | Step | Name | Gate | Output |
 |------|------|------|--------|
-| STEP -1 | Preflight | **HARD** | Pass / Halt |
+| STEP -1 | Preflight (incl. prior cycle outstanding actions check) | **HARD** | Pass / Halt |
 | STEP 0 | Load & Validate Inputs | **HARD** | Validated inputs; `cycle_id` defined |
-| STEP 1 | Run Manifest & Capacity Release | — | `run_manifest.md` |
-| STEP 2 | Roadmap Re-Validation | — | `stage1_validation.md` |
+| STEP 1 | Run Manifest & Capacity Release | — | `run_manifest.md` (capacity skipped for scheduled runs) |
+| STEP 2 | Roadmap Re-Validation (incl. Strategy Proximity Scores + CPS) | — | `stage1_validation.md` |
 | STEP 3 | Backlog Health Review | — | `stage2_backlog_health.md` |
-| STEP 4 | Idea Intake & Eligibility Gate | — | `stage3_ideas.md` |
+| STEP 4 | Idea Review & Document Management (incl. stale idea expiry) | — | `stage3_ideas.md` |
 | STEP 5 | Structured Debate (Zero-Sum) | — | `stage4_debate.md` |
-| STEP 6 | Scoring Matrix Overlay | — | `scored_initiatives.md` |
-| STEP 7 | Workforce Economics Gate | **HARD** | `workforce_capacity.md` |
+| STEP 6 | Scoring Matrix Overlay (incl. effort banding S/M/L) | — | `scored_initiatives.md` |
+| STEP 7 | Workforce Economics Gate (incl. Skill-Silo Alert) | **HARD** | `workforce_capacity.md` |
 | STEP 8 | Final Rebalance Decision | — | `stage5_rebalance.md` |
 | STEP 8.5 | Stateless Write Safety Gate | **HARD** | Verified write plan |
 | STEP 8.6/8.7 | Fatigue Detection + Pivot Loop | **HARD** | Guardrail check |
-| STEP 9 | Canonical Write | — | Updated roadmap, backlog, decision log |
+| STEP 9 | Canonical Write | — | Updated roadmap, backlog, decision log, initiative register |
 | STEP 10 | Publish Delta Summary | — | `cycle_summary.md` |
-| STEP 11 | Lessons Learnt | — | `lessons_learnt.md` |
-| STEP 12 | Stage & Commit | **HARD** | Git commit or commit manifest |
+| STEP 11 | Lessons Learnt + Prompt Change Classification + Prompt Change Log + Meta-Review (if due) | — | `lessons_learnt.md`; `prompt_change_log.md` (if patches applied); `meta_review.md` (if due) |
+| STEP 12 | Stage & Commit (incl. `last_meta_review_cycle` state update) | **HARD** | Git commit or commit manifest |
 
 **Key constraints:**
 - STEP 5: No candidate advances without naming a displacement. No name = cannot proceed.
 - STEP 8.6: At least one candidate per run must be Parked or Rejected. If all advance, Pivot Loop runs once. If all still advance, execution halts.
 - STEP 9 write scope is restricted — no files outside the allowed list may be modified.
+- STEP 11: Every friction item patch must be classified as action-now or defer. Action-now patches require Head of Specs Team sign-off and produce a `prompt_change_log.md` entry. Deferred patches without a named owner and target date are escalations, not valid outstanding actions.
 
-### 5.4 Phase 1 Exit Criteria
+### 6.4 Phase 1 Exit Criteria
 
 - `current_roadmap.md` updated and lifecycle-compliant
 - `backlog.md` reconciled (Add / Replace / Defer / Kill reflected)
 - All decisions in `decision_log.md` (append-only)
 - Stopped work explicitly named
 - Workforce implications documented
-- `lessons_learnt.md` filed
+- `lessons_learnt.md` filed with all friction items classified (Type A–E), blast radius recorded, and patches classified as action-now or deferred
+- All action-now patches applied, version-incremented, and recorded in `claude/system/prompt_change_log.md`
+- All deferred patches have a named owner (role) and target date — or are recorded as escalations
+- Meta-review conducted and `meta_review.md` filed if due (every third cycle)
 - STEP 12 commit complete
 
 ---
@@ -1082,6 +1102,7 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 | Event | Triggers | Owner |
 |-------|----------|-------|
 | Roadmap item completed | Phase 1 (optional) or direct Phase 1B | Product Owner |
+| Scheduled review due | Phase 1 (`run roadmap --reason "scheduled"`) | Product Owner |
 | Phase 1 exit criteria met | Phase 1B — Release Planning Engine | PMO Lead |
 | Phase 1B Publish Gate passed | Phase 1.5: Design Gate (`run design-gate`) | PMO Lead |
 | Phase 2 complete (`Sprint_Planning_Complete`) | Phase 3 — Sprint Execution (`run sprint`) | PMO Lead |
@@ -1095,8 +1116,9 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 | Emergency discovered post-publish (before Phase 2 sealed) | Amendment Cycle (`amend cycle`) | PMO Lead |
 | Amendment sealed | Sprint Planning uses `amended_backlog_slice_path` | PMO Lead |
 | Test scenario gap found (Phase 4) | Action written to QA & Testing Owner agent file | QA & Testing Owner |
+| Third completed rebalance cycle since last meta-review | Meta-review triggered within STEP 11 | PMO Lead |
 
-> **Loop rule:** Phase 1 is only triggered when a roadmap item completes and a rebalance is warranted. Sprint items that are backlog items (not roadmap items) never trigger a rebalance.
+> **Loop rule:** Phase 1 is only triggered when a roadmap item completes and a rebalance is warranted, or when a scheduled review is due. Sprint items that are backlog items (not roadmap items) never trigger a rebalance.
 
 > **Cycle gate:** Phase 1B (new cycle) may not open until Phase 4 of the previous cycle reaches `Verified` or `Verified_with_deviations` **and** Post-Ship Closure is confirmed complete.
 
@@ -1119,6 +1141,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Delivery Verification Prompt | `claude/system/delivery_verification_prompt.md` | 6 | Head of Specs Team | Governance |
 | Shared Standards | `claude/system/shared_standards.md` | 6 | Head of Specs Team | Governance |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` | 6 | Head of Specs Team | Governance |
+| Prompt Change Log | `claude/system/prompt_change_log.md` | 6 | Head of Specs Team | Governance |
 | Current Roadmap | `claude/roadmap/current_roadmap.md` | 4 | Product Owner | 1 |
 | Backlog | `claude/backlog/backlog.md` | 4 | Product Owner | 1, 1B, 4, Post-Ship |
 | Initiative Register | `claude/roadmap/initiative_register.md` | 4 | Product Owner | 1 |
@@ -1137,6 +1160,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Stage Outputs 1–5 | `claude/cycles/<id>/stage*.md` | 3 | PMO Lead | 1 |
 | Cycle Summary (Rebalance) | `claude/cycles/<id>/cycle_summary.md` | 3 | PMO Lead | 1 |
 | Lessons Learnt (Rebalance) | `claude/cycles/<id>/lessons_learnt.md` | 3 | PMO Lead | 1 |
+| Meta-Review Record | `claude/cycles/<id>/meta_review.md` | 3 | PMO Lead | 1 |
 | Scored Initiatives | `claude/scoring/scored_initiatives.md` | 4 | Facilitator | 1 |
 | Run Manifest (Release) | `claude/cycles/<id>/run_manifest.md` | 3 | Infra & Ops Owner | 1B |
 | State File | `claude/cycles/<id>/state.json` | — | PMO Lead | 1B |
@@ -1184,15 +1208,15 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 2.3 |
-| Last Updated | 2026-03-04 |
+| Version | 2.4 |
+| Last Updated | 2026-03-06 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.0 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.0 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v1.9 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.0 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.0 |
@@ -1201,7 +1225,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` v1.0 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v1.1 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.3 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.4 |
+| Prompt Change Log | `claude/system/prompt_change_log.md` (created on first action-now patch) |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
 | Team Charter | `claude/charter/team_charter.md` v1.4 |
 
@@ -1215,14 +1240,15 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
-| 2.3 | 2026-03-04 | Added Class 8 (Proof of Gate) to §3 Document Classes Reference table and header fields quick reference. Fixed broken row in §12 Cycle Trigger table (`# already replaced` artefact). Updated Phase 1 source prompt reference to `roadmap_prompt.md` v1.9. Lessons Learnt Prompt already correctly shows v1.3 in §14; no change needed. |
-| 2.2 | 2026-03-04 | Added Phase 1M (Document Management): `manage roadmap` and `groom backlog` engines. Added Phase 1.5 (Design Gate): `run design-gate` engine. Added both to Quick Reference, Lifecycle Overview table, Cycle Trigger table, Artefact Register, and §14 governance table. Added §6M and §6.5 sections. Updated Sprint Planning pre-condition to require design gate. Updated team charter version to v1.4. |
-| 2.1 | 2026-03-03 | Added Phase 0 Idea Intake engine. Added `run ideas` command to Quick Reference. Added Phase 0 row to Lifecycle Overview table. Added §5 Phase 0 section (invocation, who submits, idea lifecycle status table, displacement note, artefacts, exit criteria). Fixed duplicate §6 — Phase 1B renumbered to §6B. Updated roadmap engine source to v1.8. Added Idea Intake Engine, Idea Template, and 4 Phase 0 artefact types to Artefact Register. Added Idea Intake Engine and Idea Template to §14 governance table. Updated governance table version to 2.1. |
-| 1.9 | 2026-03-03 | Added Amendment Cycle Engine (`amendment_cycle_prompt.md` v1.0). Added `amend cycle` to Quick Reference commands. Added §6.8 Amendment Cycle under Phase 1B. Added three amendment hard rules. Added Amendment row to Lifecycle Overview table. Added amendment trigger rows to Cycle Trigger table. Added amendment engine to Artefact Register (5 artefact types) and §14 governance table. Updated Phase 1B terminal state rule to reference the amendment command explicitly. |
-| 1.8 | 2026-03-03 | Added `sprint_planning_prompt.md` (v1.0) as Phase 2 engine. Rewrote §7 with invocation command, step table, AC standard, capacity rules, and exit criteria. Added `plan sprint` to Quick Reference commands. Added "no AC-less items" to Hard Rules. Expanded Phase 2 Phase Gate Checklist. Updated Cycle Trigger table. Added Sprint Planning Engine to Artefact Register and §14 governance table. Updated Phase 3 pre-condition. Updated Global State Pointer phase column. Updated Quick Reference summary paragraph. |
-| 1.7 | 2026-03-03 | Updated `roadmap_prompt.md` to v1.6 in §14 governance table. |
-| 1.6 | 2026-03-03 | Updated `shared_standards.md` to v1.1 and `lessons_learnt_prompt.md` to v1.2 in §14 governance table. Added Lessons Learnt Prompt to Artefact Register. Added `lessons_learnt_verification.md` (Phase 4) and `lessons_learnt_closure.md` (Post-Ship) to Artefact Register. |
-| 1.5 | 2026-03-03 | Added `post_ship_closure_prompt.md` (v1.0) as the engine source for §10. Added `run post-ship` invocation command to Quick Reference. Added invocation subsection (§10.1), flags table, and pre-condition to §10. Added closure status values (§10.6). Added Closure Record to Artefact Register. Added Post-Ship Closure Engine to §14 governance table. |
-| 1.4 | 2026-03-03 | Added §10 Post-Ship Closure. Updated Quick Reference summary, Hard Rules, Phase Gate Checklist, Lifecycle Overview table, Cycle Trigger & Flow table, Artefact Register, and §14 governance table to reflect post-ship_closure.md (v2.0). Renumbered §10–13 to §11–14. Updated cycle gate rule to require Post-Ship Closure before next cycle opens. |
-| 1.3 | 2026-03-03 | Added `execution_prompt.md` (v1.3) and `delivery_verification_prompt.md` (v1.0) to governance. Updated Quick Reference to include Phase 3 & 4 invocation commands. Added "no autonomous merge" and "no cycle unlock without Verified status" to Hard Rules. Expanded Phase 3 checklist to match execution prompt exit criteria. Aligned §8 (Phase 3) and §9 (Phase 4) detail with prompt content. Resolved header/§13 version discrepancy (both now 1.3). |
+| 2.4 | 2026-03-06 | Updated to reflect `roadmap_prompt.md` v2.0 and `lessons_learnt_prompt.md` v1.4. **Phase 1:** Updated source prompt version (v1.9 → v2.0). Added scheduled run invocation form (`--reason "scheduled"`) to Quick Reference commands and §6.1. Added prior cycle outstanding actions check to preflight checklist (§6.2). Updated engine steps table (§6.3) to reflect new STEP -1.5, STEP 4 stale idea expiry, STEP 6 effort banding, STEP 11 four-sub-step structure (lessons learnt + prompt change classification + prompt change log + meta-review), and STEP 12 `last_meta_review_cycle` state update. Updated Phase 1 exit criteria (§6.4) to include action-now patch requirements, deferred patch validity rules, and meta-review output. Updated Phase Gate Checklist (Quick Reference) to match. **Phase 0:** Updated idea lifecycle status table (§5.3) — `Parked` replaced with `Parked-cycle-<n>` with stale threshold note. **§2 Roles:** Added Head of Specs Team sign-off note for action-now prompt patches. **§4 Lifecycle Overview:** Added prompt change log to Phase 1 output column; added scheduled review to Phase 1 trigger column. **§12 Cycle Trigger table:** Added scheduled review row and meta-review trigger row. Updated loop rule note. **§13 Artefact Register:** Added Prompt Change Log and Meta-Review Record rows. **§14 Governance table:** Updated roadmap engine source to v2.0, lessons learnt prompt to v1.4, added Prompt Change Log entry. |
+| 2.3 | 2026-03-04 | Added Class 8 (Proof of Gate) to §3. Fixed broken row in §12. Updated Phase 1 source prompt to v1.9. |
+| 2.2 | 2026-03-04 | Added Phase 1M (Document Management) and Phase 1.5 (Design Gate). |
+| 2.1 | 2026-03-03 | Added Phase 0 Idea Intake engine. |
+| 1.9 | 2026-03-03 | Added Amendment Cycle Engine. |
+| 1.8 | 2026-03-03 | Added Sprint Planning engine (Phase 2). |
+| 1.7 | 2026-03-03 | Updated roadmap_prompt.md to v1.6. |
+| 1.6 | 2026-03-03 | Updated shared_standards.md and lessons_learnt_prompt.md versions. Added lessons learnt artefact types. |
+| 1.5 | 2026-03-03 | Added post_ship_closure_prompt.md as Phase 10 engine source. |
+| 1.4 | 2026-03-03 | Added Post-Ship Closure (§10). |
+| 1.3 | 2026-03-03 | Added execution_prompt.md and delivery_verification_prompt.md. |
 | 1.2 | 2026-03-02 | Prior version. |
