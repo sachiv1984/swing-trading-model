@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.9
-**Last Updated:** 2026-03-04
+**Version:** 2.0
+**Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -17,11 +17,17 @@ This governance routine executes ONLY when the user issues the explicit command:
 run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"]
 ```
 
+or the scheduled form:
+
+```
+run roadmap --reason "scheduled" [--date "YYYY-MM-DD"]
+```
+
 Rules:
 - Invocation must start with `run roadmap` (case-insensitive match allowed).
-- `--item-id` is required (e.g., `3.2`).
-- `--item-name` is required (must uniquely match a roadmap item in `claude/roadmap/current_roadmap.md`).
-- `--date` is optional (defaults to today in YYYY-MM-DD).
+- **Completion-triggered runs:** `--item-id` and `--item-name` are required (e.g., `3.2`). `--item-name` must uniquely match a roadmap item in `claude/roadmap/current_roadmap.md`.
+- **Scheduled runs:** `--reason "scheduled"` replaces `--item-id` and `--item-name`. No completion event is required. STEP 1.2 (Capacity Release Registration) is skipped and recorded as "N/A — scheduled run" in the run manifest.
+- `--date` is optional in both forms (defaults to today in YYYY-MM-DD).
 - If invocation is not exact, do not run. Treat the input as conversational.
 
 No other user input may trigger execution of this routine.
@@ -121,6 +127,8 @@ During this routine you may write only to:
 - `claude/scoring/*` (only when scoring artefacts are produced)
 - `claude/economics/*` (only when economics artefacts are produced)
 - `claude/evidence/gates/*` (only when a hard gate is cleared per STEP 5.3 — PoG documents only)
+- `claude/system/*` (STEP 11 only — immediate prompt patches applied by PMO Lead under Head of Specs Team sign-off)
+- `claude/system/prompt_change_log.md` (STEP 11 only — append only; records every prompt version change with triggering friction item reference)
 - `.claude_current_state.json` (STEP 12 only — cycle closure note)
 
 You must not modify:
@@ -145,12 +153,14 @@ Allowed create-if-missing artifacts:
 - `claude/economics/` (folder; created when first economics artefact is written)
 - `claude/evidence/gates/` (folder; created when first PoG document is written)
 - `claude/ideas/rejected_but_strong.md` (create if needed during STEP 4.2)
+- `claude/system/prompt_change_log.md` (create if missing during STEP 11; Class 6 Governance Prompt, append-only thereafter)
 
 Rules:
 - Do not create empty placeholders.
 - Do not backfill history.
 - Create only when a decision/event requires a durable record.
 - All created artifacts must be lifecycle compliant (correct header, owner, status).
+- **New files in new directories must be created via bash (`mkdir -p` + heredoc or redirect), not the Write tool.** The Write tool requires a prior Read call even for non-existent files. This applies to all optional artefacts listed above when their parent directory does not yet exist.
 
 If creation is required but lifecycle compliance cannot be satisfied:
 - Halt execution and report why.
@@ -158,6 +168,8 @@ If creation is required but lifecycle compliance cannot be satisfied:
 ---
 
 ## 7. Completion Event Definition (Run Preconditions)
+
+### Completion-triggered runs
 
 This routine is triggered only when a roadmap item is completed.
 
@@ -170,6 +182,15 @@ Rules:
 - You must not infer or guess the completed item.
 - If the completed item cannot be uniquely identified in the roadmap, the run must halt.
 - If these inputs are missing or ambiguous, you must refuse to proceed and report the error.
+
+### Scheduled runs
+
+When invoked with `--reason "scheduled"`:
+- No completion event is required.
+- Record "Scheduled run — no completion event" in the run manifest.
+- Skip STEP 1.2 (Capacity Release Registration); record "N/A — scheduled run".
+- Define `cycle_id = YYYY-MM-DD__scheduled`.
+- All other steps execute normally.
 
 This section defines whether the run is valid at all.
 No execution steps may begin until this precondition is satisfied.
@@ -283,7 +304,29 @@ Verify write permission for the allowed write scope by performing a non-destruct
 If write permission cannot be confirmed:
 - Halt execution and report the error.
 
-If all preflight checks pass: proceed to STEP 0.
+#### -1.5 Prior Cycle Outstanding Actions Check (Hard Gate)
+
+Before proceeding, load the lessons learnt file from the most recent prior cycle:
+- Path: `claude/cycles/<prior_cycle_id>/lessons_learnt.md`
+- Identify the prior cycle by reading `.claude_current_state.json` key `last_rebalance_cycle`.
+
+If no prior cycle exists (first run ever): skip this check and record "No prior cycle — first run" in the run manifest.
+
+For each outstanding action listed in the prior lessons learnt:
+
+| Prior action status | Required action |
+|--------------------|----------------|
+| Resolved | Record as resolved in the run manifest. No further action. |
+| Unresolved — owner is present in this run | The named owner must confirm resolution or provide an explicit carry-forward with a new target date before STEP 0 proceeds. If the owner cannot confirm and cannot carry forward with a new date, halt execution and report. |
+| Unresolved — owner not determinable | Escalate to Head of Specs Team. Head of Specs Team must assign an owner and target date before STEP 0 proceeds, or explicitly accept the risk of deferral and record it. |
+
+Record the outcome for every outstanding action in the run manifest under a section titled "Prior Cycle Outstanding Actions".
+
+If any outstanding action is unresolved and cannot be carried forward with a named owner and new target date:
+- Halt execution.
+- Report the blocking action(s) explicitly.
+
+If all preflight checks pass (including outstanding actions resolved or formally carried forward): proceed to STEP 0.
 
 ---
 
@@ -306,8 +349,9 @@ If `claude/backlog/backlog.md` is missing:
 - Create it as Class 4 Planning Document owned by Product Owner, Status: Active, Last Updated: today.
 - Do not invent content; initialise with an empty structure and a "no backlog items recorded yet" notice.
 
-Define:
-- `cycle_id = YYYY-MM-DD__item-<id>` where `<id>` is the completed roadmap item ID (e.g. `2026-02-23__item-3.2`).
+**Cycle ID definition:**
+- Completion-triggered: `cycle_id = YYYY-MM-DD__item-<id>` (e.g. `2026-02-23__item-3.2`)
+- Scheduled: `cycle_id = YYYY-MM-DD__scheduled`
 
 Create `claude/cycles/<cycle_id>/` on first run if missing.
 
@@ -364,10 +408,12 @@ Before recording capacity changes or making any decisions, you must create a run
 - Owner: Infrastructure & Operations Owner
 
 The run manifest must record:
-- Completion event details (ID, name, date)
+- Run type (completion-triggered | scheduled)
+- Completion event details (ID, name, date) — or "N/A — scheduled run"
 - Canonical inputs used (roadmap, backlog, strategy rules, charter, lifecycle guide)
 - Decision authorities activated
 - Non‑decision roles activated (Facilitator, Challenger)
+- **Prior Cycle Outstanding Actions** — outcome for each action from prior lessons learnt (resolved / carried forward with new owner + date / escalated)
 
 If the run manifest cannot be written in a lifecycle‑compliant way:
 - Halt execution immediately.
@@ -375,6 +421,8 @@ If the run manifest cannot be written in a lifecycle‑compliant way:
 No other files may be written before the run manifest exists.
 
 #### 1.2 Capacity Release Registration
+
+*(Completion-triggered runs only. Skip and record "N/A — scheduled run" for scheduled runs.)*
 
 Record the capacity freed by the completed roadmap item:
 - Released FTE (FTE‑weeks or FTE‑months)
@@ -432,7 +480,11 @@ After scoring all initiatives, compute:
 - **Prior cycle CPS:** load from `claude/cycles/<prior_cycle_id>/stage1_validation.md` if present; record "No prior cycle" if absent
 - **Trend:** CPS delta vs prior cycle (e.g. +0.3, −0.1, or "No prior baseline")
 
-**Trend alert rule:** If CPS has increased by 0.5 or more compared to the prior cycle, the Facilitator must add a Strategy Drift Alert to `stage1_validation.md` and surface it explicitly at the start of STEP 5. A Strategy Drift Alert does not halt the routine but requires the Strategy Rules & System Intent Owner to acknowledge it before STEP 5 proceeds.
+**Trend alert rules:**
+- **Delta alert:** If CPS has increased by 0.5 or more compared to the prior cycle, the Facilitator must add a Strategy Drift Alert to `stage1_validation.md` and surface it explicitly at the start of STEP 5.
+- **Absolute alert:** If CPS exceeds 2.5 in absolute terms — regardless of delta from prior cycle — the Facilitator must also add a Strategy Drift Alert. This catches gradual upward drift across multiple small increments that individually fall below the delta threshold.
+
+A Strategy Drift Alert does not halt the routine but requires the Strategy Rules & System Intent Owner to acknowledge it before STEP 5 proceeds.
 
 Record all scores, the CPS, and the trend in `stage1_validation.md`.
 
@@ -467,7 +519,7 @@ Do not delete or rewrite backlog items at this stage.
 ### STEP 4 — Idea Review and Document Management
 Authority: Facilitator (review), Product Owner (classification decisions)
 
-Load all idea submissions from `claude/ideas/submissions/` with `**Status:** Submitted` or `**Status:** Parked`.
+Load all idea submissions from `claude/ideas/submissions/` with `**Status:** Submitted`, `**Status:** Parked`, or `**Status:** Parked-cycle-<n>` (stale cycle tracking — see §4.5).
 
 If the submissions folder is absent or contains no eligible ideas:
 - Record "No ideas available this cycle" in `stage3_ideas.md`
@@ -487,6 +539,7 @@ Classification rules:
 - Any idea with a `[FIELD REQUIRED]` flag on any required template field is **ineligible to advance** until the field is completed. Classify as Park or Reject only.
 - The Facilitator must surface both the submitter's recommendation and any `[FIELD REQUIRED]` flags before the Product Owner classifies.
 - The "What Would You Stop?" field does not gate advancement — displacement will be required by STEP 5.0 for any idea that reaches debate.
+- **Stale parked ideas** (parked for three or more consecutive cycles per §4.5) are surfaced to the Product Owner with their stale cycle count. The Product Owner must classify them as ✅ Advance, ❌ Reject, or explicitly re-park with a written rationale. Silent re-park is not permitted for stale ideas.
 
 ### 4.2 Document Management (Required — Run in Order)
 
@@ -495,11 +548,13 @@ After all ideas are classified, apply the following document actions **before pr
 | Classification | Document Action |
 |----------------|----------------|
 | ✅ Advance | Update file: `**Status:** Advancing` |
-| 🅿 Park | Update file: `**Status:** Parked` (if not already) |
+| 🅿 Park (fresh or re-park with rationale) | Update file: `**Status:** Parked-cycle-<n>` where `<n>` is the number of consecutive cycles parked (increment from prior value, or set to 1 if first park) |
 | ❌ Reject — strong | Update file: `**Status:** Rejected`; copy core content to `claude/ideas/rejected_but_strong.md` (append, create if needed) |
 | ❌ Reject — not strong | Update file: `**Status:** Rejected` |
 
 **Rejected files are not deleted.** They remain in `claude/ideas/submissions/` as a permanent record with `Status: Rejected`.
+
+**Bulk status updates (>5 files):** Use bash `sed` rather than the Write/Edit tool to avoid the prior-read constraint. Pattern: `sed -i 's/**Status:** Submitted/**Status:** Parked-cycle-1/' file.md`. This is appropriate for uniform field replacement across submission files.
 
 ### 4.3 Idea Participation Check
 
@@ -526,6 +581,8 @@ Advancing to STEP 5: <n>
 Parked: <n>
 Rejected: <n>
 Rejected-but-strong (added to register): <n>
+Stale ideas (≥3 cycles parked) surfaced: <n>
+Stale ideas closed this cycle: <n>
 
 ## Ideas Advancing to STEP 5
 
@@ -535,9 +592,9 @@ Rejected-but-strong (added to register): <n>
 
 ## Parked Ideas
 
-| Idea ID | Agent | Title | Reason |
-|---------|-------|-------|--------|
-| <id> | <role> | <title> | <one line> |
+| Idea ID | Agent | Title | Consecutive Cycles Parked | Reason |
+|---------|-------|-------|--------------------------|--------|
+| <id> | <role> | <title> | <n> | <one line> |
 
 ## Rejected Ideas
 
@@ -545,11 +602,28 @@ Rejected-but-strong (added to register): <n>
 |---------|-------|-------|---------|
 | <id> | <role> | <title> | Yes / No |
 
+## Stale Idea Dispositions
+
+| Idea ID | Agent | Title | Cycles Parked | Disposition | Rationale |
+|---------|-------|-------|--------------|-------------|-----------|
+| <id> | <role> | <title> | <n> | Advance / Reject / Re-park | <required for re-park> |
+
 ## Innovation Debt Notes
 
 <List any agents below minimum submissions, or "None">
 <Note if intake engine was not run>
 ```
+
+### 4.5 Parked Idea Expiry Rule
+
+An idea that has been parked for **three or more consecutive cycles** is considered **stale**.
+
+Rules:
+- At STEP 4.1, the Facilitator must identify all stale ideas and surface them to the Product Owner with their consecutive park count.
+- The Product Owner must make an active disposition: Advance, Reject, or explicit Re-park with written rationale.
+- **Silent re-park is not permitted.** An idea that receives no written rationale for continued parking must be closed as stale (treated as Reject — not strong).
+- If re-parked with rationale, the consecutive cycle count continues to increment. There is no cap — an idea may be re-parked indefinitely as long as each re-park receives a written rationale.
+- If the submitting agent wishes to revive a Rejected-stale idea, they must re-submit it as a fresh idea through the `run ideas` intake engine. The rejected file remains as a permanent record.
 
 ---
 
@@ -666,7 +740,7 @@ A **Proof of Gate (PoG)** document is required whenever an advancing item carrie
 
 **Validity rule:** A PoG is valid only while the versioned document it references remains at the same version. If the referenced document is incremented after the PoG is issued, the PoG is automatically stale and must be re-issued before the gate is treated as cleared. The stale PoG is not deleted — it is superseded; add `**Status:** Superseded` and `**Superseded by:** <new PoG gate ID>`.
 
-**Class 8 — Proof of Gate** is a new document class with the following properties:
+**Class 8 — Proof of Gate** is a document class with the following properties:
 - Immutable once issued (no body edits permitted — only status field may change to Superseded)
 - Append-only within the `claude/evidence/gates/` folder
 - Not subject to the planning document grooming lifecycle — PoG documents are permanent governance records
@@ -687,13 +761,24 @@ Score each surviving item (new and existing) with rationale:
 - Time to value
 - Reversibility
 - **Strategy Proximity Score** (carry forward from STEP 2.1 — do not re-score; use the value assigned by the Strategy Rules & System Intent Owner)
+- **Effort band** (S / M / L — assign at promotion time for backlog items; carry forward for existing initiatives)
 
 Scores inform decisions but do not decide them.
 
 The proximity score is displayed alongside other scores to make boundary-adjacency visible to the Product Owner at the point of final decision. It does not contribute to a weighted total.
 
+The effort band (S / M / L) is recorded for all items promoted to backlog or roadmap in this cycle, and must be present in `scored_initiatives.md` for all active roadmap items. This provides the release planning engine with sizing signal without requiring a full sizing exercise at rebalance time.
+
+**Effort band definitions:**
+
+| Band | Indicative size |
+|------|----------------|
+| S | ~1 day or less |
+| M | 2–5 days |
+| L | More than 5 days |
+
 Write:
-- `claude/scoring/scored_initiatives.md` (create if needed)
+- `claude/scoring/scored_initiatives.md` (create if needed — use bash heredoc if directory does not exist)
 
 ---
 
@@ -754,6 +839,9 @@ Hard rules:
 - Stops ≥ adds
 - Scarce skills protected
 - Quality / Security / Financial Records may block within their domains per Team Charter
+
+**Initiative register — displacement candidate flag:**
+If any initiative is identified as the natural displacement candidate (i.e. it is the lowest-value active item and would be the first stop if a future Add requires displacement), record this in `claude/roadmap/initiative_register.md` as a field on that initiative's entry: `Displacement candidate: Yes — <brief rationale> — <date>`. Do **not** record this flag in `stage5_rebalance.md` or `current_roadmap.md`. The rebalance document records only actual decisions; the initiative register is the appropriate home for forward-looking planning flags.
 
 Write:
 - `claude/cycles/<cycle_id>/stage5_rebalance.md`
@@ -941,7 +1029,7 @@ Precondition:
 
 Update (or create-if-missing) the following Class 4 Planning Documents with lifecycle‑compliant headers:
 - `claude/roadmap/current_roadmap.md` (FINAL REQUIRED OUTPUT)
-- `claude/roadmap/initiative_register.md` (create if needed)
+- `claude/roadmap/initiative_register.md` (create if needed — include displacement candidate flags from STEP 8)
 - `claude/roadmap/workforce_capacity.md` (create if needed)
 - `claude/roadmap/decision_log.md` (create if needed)
 - `claude/backlog/backlog.md` (reconcile to reflect decisions)
@@ -952,6 +1040,7 @@ Rules:
 - Ensure Add / Replace / Defer / Kill outcomes are reflected exactly as decided in STEP 8 / STEP 8.7.
 - Ensure decision_log captures each decision with date, owner, and rationale (append‑only).
 - If supersession is relevant, include successor references.
+- **Hard gate marking rule:** Any hard gate status change in `current_roadmap.md` (marking a gate as "complete") must be accompanied by a reference to the evidence artefact that cleared it (PoG Gate ID, decision record path, or verifiable session output reference). If no such artefact exists, the gate must remain marked "pending". A gate may not be marked complete without evidence.
 
 ---
 
@@ -982,9 +1071,11 @@ Delta summary (minimal):
 - Defer: `<items + conditions | none>`
 - Kill: `<items | none>`
 - No‑change: `<explicit yes/no>`
+- Hard gate status changes: `<gate name → new status + evidence artefact reference | none>`
 Constraints:
 - No formatting‑only edits
 - No scope expansion beyond recorded decisions
+- Hard gate "complete" markings must reference evidence artefact
 
 ---
 
@@ -1014,11 +1105,13 @@ Allowed changes only:
 - Remove duplicates promoted to roadmap
 - Add one‑line status notes referencing decision log + date
 - Add minimal section headings if needed
+- Update parked idea status fields to `Parked-cycle-<n>` per §4.2
 Delta summary:
 - Promoted to Roadmap: `<count + list>`
 - Deferred / Parked: `<count + list + conditions>`
 - Killed / Closed: `<count + list>`
 - Duplicates removed: `<count + list>`
+- Stale ideas closed: `<count + list>`
 Constraints:
 - Do not rewrite descriptions beyond one‑line note
 - Do not reprioritise
@@ -1054,8 +1147,11 @@ Traceability:
 Delta summary:
 - Status updates: `<initiative → status>`
 - Links added: `<decision log refs>`
+- Displacement candidate flags: `<initiative → flag + rationale + date | none>`
+- Effort bands added/updated: `<initiative → S/M/L | none>`
 Constraints:
 - No new initiatives unless explicitly Added in STEP 8
+- Displacement candidate flags written here only — not in roadmap or rebalance documents
 
 ---
 
@@ -1067,6 +1163,12 @@ Constraints:
 - Decision log is append‑only and duplicate‑checked: Yes / No
 - Backlog edits are reconciliation‑only (no grooming): Yes / No
 - PoG documents are Class 8 compliant and only written for items with recorded hard gates: Yes / No / Not applicable
+- Hard gate "complete" markings in current_roadmap.md reference evidence artefacts: Yes / No / Not applicable
+- Displacement candidate flags written to initiative_register.md only: Yes / No / Not applicable
+- Effort bands recorded for all new or updated roadmap/backlog items: Yes / No / Not applicable
+- All action-now prompt patches confirmed by Head of Specs Team, version-incremented, and recorded in prompt_change_log.md: Yes / No / Not applicable
+- All deferred prompt patches have named owner, target date, specific file, and specific section (or are escalations): Yes / No / Not applicable
+- Meta-review conducted if due and recorded in meta_review.md: Yes / No / Not applicable
 
 If any check is "No":
 - Discard this plan.
@@ -1078,12 +1180,15 @@ If any check is "No":
 Authority: Facilitator
 
 Produce a concise summary:
-- capacity freed
-- initiatives added/stopped
-- net roadmap change
-- key risks reduced
-- key skills reallocated
-- backlog reconciliation performed (briefly note moved/promoted/killed counts)
+- Run type (completion-triggered | scheduled)
+- Capacity freed (or "N/A — scheduled run")
+- Initiatives added/stopped
+- Net roadmap change
+- Key risks reduced
+- Key skills reallocated
+- Backlog reconciliation performed (briefly note moved/promoted/killed counts)
+- Stale ideas closed this cycle (count)
+- Prior cycle outstanding actions — resolved count / carried forward count
 
 Write:
 - `claude/cycles/<cycle_id>/cycle_summary.md`
@@ -1091,23 +1196,81 @@ Write:
 ---
 
 ### STEP 11 — Lessons Learnt (Process Improvement Record)
-Authority: PMO Lead
+Authority: PMO Lead (process), Head of Specs Team (prompt change sign-off)
 
 Purpose:
 - Capture process friction and improvement actions from this roadmap run.
+- Produce governed prompt changes — not just observations.
 - This is not a retrospective and must not re‑litigate decisions.
 
-Mechanism:
-- Invoke `claude/system/lessons_learnt_prompt.md` (§3.1 Roadmap Rebalance inputs).
-- This prompt is a hard requirement. If it is missing, halt and report — do not fall back to a minimal structure.
+#### 11.1 Invoke Lessons Learnt Prompt
 
-Output:
-- `claude/cycles/<cycle_id>/lessons_learnt.md`
+Invoke `claude/system/lessons_learnt_prompt.md` (§3.1 Roadmap Rebalance inputs).
 
-Rules:
-- Record only what improves the process, templates, or governance prompts.
-- If a governance gap or authority ambiguity is found, escalate to Product Owner and Head of Specs Team.
-- If an improvement can be actioned immediately, apply it and bump versions per lifecycle rules, then record what changed.
+This prompt is a hard requirement. If it is missing: halt and report — do not fall back to a minimal structure.
+
+Output: `claude/cycles/<cycle_id>/lessons_learnt.md`
+
+The lessons learnt file must follow the structure defined in `lessons_learnt_prompt.md §5` exactly. Every friction item must have a classification (Type A–E), blast radius analysis, and a process patch (immediate or deferred). A deferred patch without a named owner and target date is not valid — it must be escalated to the Head of Specs Team and recorded under Escalations, not in the outstanding actions table.
+
+#### 11.2 Prompt Change Classification (Mandatory)
+
+After the lessons learnt file is drafted, the PMO Lead must classify every process patch as one of:
+
+- **Action-now:** Can be applied to a governed prompt or template in this run. Requires Head of Specs Team sign-off before the file is modified.
+- **Defer:** Cannot be applied this run. Must name: specific file, specific section, specific change, named owner (role), target date. Vague defers are escalations.
+
+**Action-now prompt patches — governance rules:**
+- The Head of Specs Team must explicitly confirm the patch before it is applied.
+- The modified file must receive a version increment (per lifecycle rules for its class).
+- `Last Updated` must be updated to today.
+- The change must be recorded in `claude/system/prompt_change_log.md` (see §11.3).
+- The patch entry in the lessons learnt file must record the resulting file version.
+
+**Deferred prompt patches — validity rules:**
+- Must name: exact file path, exact section reference, exact change in one sentence actionable without further clarification.
+- Must have a named owner (role) and a target date.
+- A deferred patch with no file path or no section reference is not a valid deferred patch — it is an escalation to the Head of Specs Team.
+- Deferred patches carry forward into STEP -1.5 of the next run.
+
+#### 11.3 Prompt Change Log (Append-Only)
+
+Every prompt or template change applied in this run (action-now patches) must be recorded in `claude/system/prompt_change_log.md`.
+
+If `claude/system/prompt_change_log.md` does not exist: create it as Class 6 — Governance Prompt, owned by Head of Specs Team, Status: Active, Version: 1.0.
+
+Each entry must include:
+
+```markdown
+## <date> — <file path> v<old> → v<new>
+
+- **Triggering friction item:** <friction item description from lessons_learnt.md>
+- **Cycle:** <cycle_id>
+- **Change applied:** <one sentence — what changed and why>
+- **Confirmed by:** Head of Specs Team
+```
+
+This log is append-only. Entries may not be edited or deleted. It provides a traceable link from every prompt version to the friction that motivated the change.
+
+#### 11.4 Meta-Review Trigger (Every Third Cycle)
+
+After completing §11.1–11.3, the Facilitator must check whether a meta-review is due.
+
+**Trigger condition:** Count the number of completed rebalance cycles recorded in `.claude_current_state.json` since the last meta-review (key: `last_meta_review_cycle`). If the count is 3 or more, a meta-review is due this cycle.
+
+If a meta-review is due:
+
+1. Load the lessons learnt files from all cycles since the last meta-review.
+2. Aggregate all friction items by Type (A–E).
+3. Identify: any friction type appearing in 2 or more cycles; any deferred patch carried forward more than once without resolution; any invariant in §9 that was tested (triggered a halt or near-halt) more than once.
+4. For each recurring pattern, produce one candidate prompt change: a specific, file-and-section-referenced improvement that would prevent recurrence.
+5. Present the candidate changes to the Head of Specs Team for decision: Apply now (action-now) or Defer with owner and date.
+6. Record the meta-review outcome in `claude/cycles/<cycle_id>/meta_review.md` (Class 3 — Operational Record, owned by PMO Lead).
+7. Update `.claude_current_state.json` key `last_meta_review_cycle` to this `cycle_id`.
+
+If no meta-review is due: record "Meta-review not due this cycle — <n> cycles since last review" in `cycle_summary.md` and continue.
+
+If `last_meta_review_cycle` does not exist in `.claude_current_state.json`: treat this as the first cycle and initialise the counter. Meta-review will trigger after the third completed cycle from this point.
 
 ---
 
@@ -1133,6 +1296,7 @@ Update `.claude_current_state.json`:
   "last_rebalance_cycle": "<cycle_id>",
   "last_rebalance_utc": "<ISO-8601 UTC>",
   "last_rebalance_outcome": "<No-change | Add | Replace | Defer | Kill — brief summary>",
+  "last_meta_review_cycle": "<cycle_id | unchanged if meta-review not due this cycle>",
   "last_sync_utc": "<ISO-8601 UTC>"
 }
 ```
@@ -1140,6 +1304,7 @@ Update `.claude_current_state.json`:
 Rules:
 - Do not overwrite `active_cycle`, `status`, or `backlog_slice_path` — these belong to the Release Planning engine.
 - Only update the rebalance-specific keys listed above.
+- Update `last_meta_review_cycle` only if a meta-review was conducted this cycle (STEP 11.4). If no meta-review was due, leave the existing value unchanged.
 - If `.claude_current_state.json` does not exist, create it with the keys above only. Do not pre-populate release planning keys.
 
 #### 12.2 Commit
@@ -1152,6 +1317,8 @@ Commit scope — stage only files within Section 5 write scope that were modifie
 - `claude/scoring/*` (if changed)
 - `claude/economics/*` (if changed)
 - `claude/evidence/gates/*` (if PoG documents were issued)
+- `claude/system/*` (if prompt patches were applied in STEP 11)
+- `claude/system/prompt_change_log.md` (if entries appended in STEP 11)
 - `.claude_current_state.json`
 
 Hard rule:
@@ -1183,6 +1350,7 @@ Execution note:
 - No decision without a recorded owner
 - Canonical truth overrides convenience
 - Delivery pressure never redefines intent
+- Hard gates may not be marked complete without a referenced evidence artefact
 
 Violation → halt.
 
@@ -1201,8 +1369,16 @@ The run is incomplete unless:
 - Cycle Proximity Score (CPS) and trend recorded in `stage1_validation.md`
 - Skill-Silo check completed and result recorded in `stage5_rebalance.md`
 - All hard-gated advancing items have a valid PoG document in `claude/evidence/gates/`
-- Lessons learnt record is filed at `claude/cycles/<cycle_id>/lessons_learnt.md`
-- `.claude_current_state.json` updated with rebalance keys
+- All hard gate status changes in `current_roadmap.md` are backed by a referenced evidence artefact
+- Displacement candidate flags (if any) are recorded in `claude/roadmap/initiative_register.md` only
+- Effort bands recorded for all new or updated roadmap/backlog items in `claude/scoring/scored_initiatives.md`
+- Stale idea dispositions recorded in `stage3_ideas.md`
+- Prior cycle outstanding actions resolved or formally carried forward (named owner + target date) — recorded in run manifest
+- Lessons learnt record filed at `claude/cycles/<cycle_id>/lessons_learnt.md` using the structure from `lessons_learnt_prompt.md §5` — all friction items have classification, blast radius, and process patch
+- All action-now prompt patches applied, version-incremented, and recorded in `claude/system/prompt_change_log.md`
+- All deferred prompt patches have a named owner (role), target date, specific file, and specific section — or are recorded as escalations
+- Meta-review conducted if due (every third cycle) and outcome recorded in `claude/cycles/<cycle_id>/meta_review.md`
+- `.claude_current_state.json` updated with rebalance keys including `last_meta_review_cycle` if applicable
 - STEP 12 commit complete (or commit manifest produced)
 
 If you cannot reach this state:
@@ -1214,8 +1390,9 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
-| 1.9 | 2026-03-04 | **Six governance improvements.** (1) Added Class 8 — Proof of Gate (PoG): hard gates are not cleared until a specific file exists in `claude/evidence/gates/`; PoG documents are immutable, versioned, and stale automatically when the referenced document increments. Added STEP 5.0 pre-debate PoG validity check and STEP 5.3 PoG issuance requirement. Added `claude/evidence/gates/*` to write scope and commit scope. (2) Added Strategy Proximity Score (1–5) in STEP 2.1: per-initiative score assigned by Strategy Rules & System Intent Owner; Score-5 gives veto authority; Score-4 requires §13-specific Challenger argument. (3) Added Cycle Proximity Score aggregate and trend check in STEP 2.2: CPS drift of ≥0.5 triggers a Strategy Drift Alert surfaced at STEP 5 start. (4) Added Skill-Silo Alert in STEP 7.1: governance load ceiling (60%) triggers pull-forward candidate suggestion; governance load floor (20%) triggers sign-off capacity check. (5) Proximity score added to STEP 6 scoring matrix as a display field. (6) Added PoG validity and CPS to completion condition (§10). Updated write scope (§5), optional artefact list (§6), and write plan integrity checks. |
-| 1.8 | 2026-03-03 | Removed displacement as an advancement gate in STEP 4.1 — displacement is now determined in STEP 5.0, not at intake. Added note that "What Would You Stop?" does not gate classification. Updated `idea_intake_prompt.md` to v1.1 in preflight required files reference. |
-| 1.7 | 2026-03-03 | Rewrote STEP 4 — replaced "Idea Intake & Eligibility Gate" with "Idea Review and Document Management". STEP 4 now reads from `claude/ideas/submissions/` (governed by `run ideas`), classifies ideas (Advance/Park/Reject), manages document status, and checks participation. No longer generates ideas or halts if submissions are absent — notes absence and continues. Added `idea_intake_prompt.md` and `idea_template.md` to preflight required files. Updated write scope: `claude/ideas/*` now restricted to status updates and `rejected_but_strong.md` appends only. Removed `claude/ideas/` folder from optional artifact creation (now managed by intake engine). |
-| 1.6 | 2026-03-03 | Fixed header to bold formatting. Added `lessons_learnt_prompt.md` to preflight as hard requirement. Removed lessons learnt fallback clause. Added STEP 12.1 Global State Update. Added `.claude_current_state.json` to write scope (STEP 12 only) and commit scope. |
+| 2.0 | 2026-03-06 | **Six governance improvements plus continuous improvement loop.** (1) Added STEP -1.5: Prior Cycle Outstanding Actions Check. (2) Added Parked Idea Expiry Rule (§4.5). (3) Displacement candidate flag moved to initiative_register.md exclusively. (4) Added scheduled run trigger. (5) Added absolute CPS alert threshold (>2.5). (6) Added effort banding (S/M/L). **Continuous improvement additions:** Expanded STEP 11 into four sub-steps: 11.1 lessons learnt invocation (unchanged), 11.2 prompt change classification (action-now vs defer — Head of Specs Team sign-off required for action-now), 11.3 prompt change log (`claude/system/prompt_change_log.md` — append-only, traceable from every prompt version to its triggering friction item), 11.4 meta-review trigger (every third cycle — aggregates friction patterns across cycles and produces candidate prompt changes). Added `claude/system/*` and `claude/system/prompt_change_log.md` to write scope (§5). Added `prompt_change_log.md` to optional artifact list (§6). Added `last_meta_review_cycle` key to `.claude_current_state.json` (§12.1). Updated commit scope, write plan integrity checks, and completion condition accordingly. Also incorporated two tooling notes from cycle 2 lessons learnt: bash heredoc pattern for new files (§6); bash sed pattern for bulk idea updates (§4.2). Added hard gate marking rule to STEP 9 and §9 invariants. |
+| 1.9 | 2026-03-04 | **Six governance improvements.** (1) Added Class 8 — Proof of Gate (PoG). (2) Added Strategy Proximity Score (1–5) in STEP 2.1. (3) Added Cycle Proximity Score aggregate and trend check in STEP 2.2. (4) Added Skill-Silo Alert in STEP 7.1. (5) Proximity score added to STEP 6 scoring matrix. (6) Added PoG validity and CPS to completion condition (§10). |
+| 1.8 | 2026-03-03 | Removed displacement as an advancement gate in STEP 4.1. |
+| 1.7 | 2026-03-03 | Rewrote STEP 4 — replaced "Idea Intake & Eligibility Gate" with "Idea Review and Document Management". |
+| 1.6 | 2026-03-03 | Fixed header formatting. Added lessons_learnt_prompt.md to preflight. Added STEP 12.1 Global State Update. |
 | 1.5 | 2026-03-01 | Prior version. |
