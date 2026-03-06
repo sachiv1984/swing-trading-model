@@ -1,9 +1,12 @@
 # analytics.md
 
-**Owner:** Frontend Specifications & UX Documentation Owner  
-**Status:** Canonical  
-**Version:** 1.2
-**Last Updated:** February 22, 2026
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Canonical Specification (Class 1)
+**Status:** Canonical
+**Version:** 1.3
+**Last Updated:** 2026-03-06
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v1.9 additions):** docs/design/2026-03-06__release-v1.9/
 
 ## Purpose & User Goals
 The Performance Analytics page provides deep insight into closed trade performance, risk metrics, and strategy effectiveness. It connects directly to the backend analytics system and is data-driven throughout — no values are calculated or derived on the frontend.
@@ -14,17 +17,27 @@ Users can:
 - Compare performance by market (UK vs US)
 - Analyse strategy tags to understand which setups work best
 - Review time-based and R-multiple distributions
+- Analyse performance by cohort period (month/quarter/year)
+- View R-multiple distribution computed canonically from backend
+- Monitor discipline and compliance metrics
 - Export a PDF summary report
 
 ---
 
 ## API Dependency
 
-**Single endpoint:** `GET /analytics/metrics?period={period}`
+**Primary endpoint:** `GET /analytics/metrics?period={period}`
 
-All data on this page — including every metric, chart, and table — is sourced from this one call. The frontend transforms the snake_case response to camelCase and passes the nested objects directly to child components.
+All core analytics data is sourced from this call. The frontend transforms the snake_case response to camelCase and passes nested objects directly to child components.
+
+**Additional endpoints (v1.9 additions):**
+- `GET /analytics/cohort?period={month|quarter|year}` — Cohort Analysis panel (§15)
+- `GET /analytics/r-multiple-distribution` — R-Multiple Distribution Backend panel (§16)
+- `GET /analytics/compliance-metrics` — Discipline & Compliance panel (§17)
 
 The page must never recalculate, derive, or override values returned by the backend.
+
+> **Note on §9 R-Multiple Analysis:** The existing §9 component performs client-side R-multiple calculation from `trades_for_charts` data as an intentional exception. The new §16 component (R-Multiple Distribution Backend) uses server-side computed values from a dedicated endpoint. Both may coexist; §16 is the canonical metric; §9 remains a visualisation aid.
 
 ---
 
@@ -99,6 +112,9 @@ When data is available and sufficient, components render in this order:
 12. **Win Rate by Month** — bar chart from monthly_data  ← NEW (BLG-FEAT-05)
 13. **Consistency Metrics** — three consistency cards from `consistency_metrics`
 14. **Performance by Strategy Tag** — sortable tag performance table from `trades_for_charts`
+15. **Cohort Analysis** — trade performance grouped by entry period (month/quarter/year) ← NEW (v1.9, ST-03)
+16. **R-Multiple Distribution (Backend)** — canonical server-side R-multiple distribution chart ← NEW (v1.9, ST-04)
+17. **Discipline & Compliance** — journal completion rate, stop-based exit rate, avg position size ← NEW (v1.9, ST-01)
 
 ---
 
@@ -402,6 +418,88 @@ Returns `null` (renders nothing) if no tagged trades exist.
 
 ---
 
+### 15. Cohort Analysis
+Source: `GET /analytics/cohort?period={month|quarter|year}`
+
+**Design source:** docs/design/2026-03-06__release-v1.9/cohort-analysis/ux_spec.md
+
+A performance table grouping closed trades by entry period.
+
+**Period selector:** Three toggle buttons (Month / Quarter / Year) rendered above the table. Active state highlighted. Changing period triggers a new API call with the updated period parameter.
+
+**Table columns:**
+| Column | Source field | Format |
+|--------|-------------|--------|
+| Period | `period_label` | e.g., "Mar 2026" |
+| Trades | `trade_count` | integer |
+| Win Rate | `win_rate` | percentage, 1dp |
+| Avg R-Multiple | `avg_r_multiple` | 1dp with "R" suffix |
+| Total P&L | `total_pnl` | signed GBP, 2dp; green if positive, red if negative |
+
+Rows sorted descending by period (most recent first). Requires canonical definitions in `metrics_definitions.md` (cohort metric formulas).
+
+**States:**
+- Loading: skeleton table rows
+- Loaded: table rendered
+- Insufficient history: message "Not enough closed trades to show [period] cohorts" (fewer than 3 periods available)
+- Error: section-level error card
+
+---
+
+### 16. R-Multiple Distribution (Backend)
+Source: `GET /analytics/r-multiple-distribution`
+
+**Design source:** docs/design/2026-03-06__release-v1.9/r-multiple-distribution/ux_spec.md
+
+A bar chart of R-multiple values computed server-side. Uses the canonical R-multiple formula from `metrics_definitions.md`. This is the authoritative R-multiple distribution; the §9 component remains as a supplementary visualisation aid.
+
+**Chart:**
+- X-axis: R-multiple range buckets (bucket boundaries defined by Metrics Definitions owner in `metrics_definitions.md`)
+- Y-axis: trade count
+- Bars: green for positive R buckets, red for negative R buckets
+- Hover tooltip: trade count and R-multiple range for hovered bar
+
+**Summary stats row (below chart):**
+| Stat | Source field |
+|------|-------------|
+| Median R | `median_r` |
+| % trades > 1R | `pct_above_1r` |
+| Avg Winner | `avg_winner_r` |
+| Avg Loser | `avg_loser_r` |
+
+**Minimum data:** 5 closed trades required. Below threshold: "Close at least 5 trades to see R-multiple distribution."
+
+**Hard rule:** All values sourced from backend. No client-side R-multiple computation in this component.
+
+**States:** Loading (skeleton chart), Loaded, Insufficient data (message), Error (section-level card).
+
+---
+
+### 17. Discipline & Compliance
+Source: `GET /analytics/compliance-metrics`
+
+**Design source:** docs/design/2026-03-06__release-v1.9/compliance-metrics/ux_spec.md
+
+A section displaying three compliance scalar metrics as stat cards. Section title: "Discipline & Compliance".
+
+**Three metric cards in a horizontal row (responsive: stacks on narrow viewports):**
+
+| Card | Source field | Format |
+|------|-------------|--------|
+| Journal Completion Rate | `journal_completion_rate` | percentage, 1dp; sub-label: "last N trades" |
+| Stop-Based Exit Rate | `stop_exit_rate` | percentage, 1dp; sub-label: "last N trades" |
+| Avg Position Size | `avg_position_size_pct` | percentage, 2dp; sub-label: "of portfolio, last N trades" |
+
+Metric definitions are canonical per `metrics_definitions.md`. Denominator/period reflected in sub-label per API response.
+
+**Insufficient data:** Individual card shows "–" with tooltip "Insufficient trade history" when denominator is zero or null.
+
+**States:** Loading (skeleton cards), Loaded, Error (section-level card).
+
+**Hard rule:** All values backend-computed. No frontend derivation.
+
+---
+
 ## Responsive Behavior
 - Period selector and export button stack or compress at smaller widths
 - Summary cards: 1 column (mobile) → 2 columns (sm) → 3 columns (lg)
@@ -421,6 +519,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
-| 1.2 | 2026-02-26 | F-02 fix: correct Win Rate by Month tooltip field name from `total_trades` to `trade_count` to match `analytics_endpoints.md` monthly_data schema. QA finding A-QA-01.
+| 1.3 | 2026-03-06 | v1.9 additions: §15 Cohort Analysis (ST-03), §16 R-Multiple Distribution Backend (ST-04), §17 Discipline & Compliance (ST-01). Updated API Dependency section to list additional endpoints. Updated Purpose & User Goals. Updated Component Rendering Order to items 15–17. Governance header upgraded to Class 1 compliant format. Design sources: docs/design/2026-03-06__release-v1.9/. |
+| 1.2 | 2026-02-26 | F-02 fix: correct Win Rate by Month tooltip field name from `total_trades` to `trade_count` to match `analytics_endpoints.md` monthly_data schema. QA finding A-QA-01. |
 | 1.1 | 2026-02-25 | BLG-FEAT-04: Add Best / Worst Trades component spec (R-multiple ranking, top 3 / bottom 3, trades_for_charts source). BLG-FEAT-05: Add Win Rate by Month bar chart spec (monthly_data source, 50% reference line, colour-coded bars). Components inserted at positions 11 and 12 in rendering order. QWB D3. |
 | 1.0 | 2026-02-18 | Initial version. |

@@ -1,17 +1,18 @@
 {
   "active_cycle": "2026-03-06__release-v1.9",
-  "cycle_name": "Release Planning Complete — v1.9 User Value & Insight",
+  "cycle_name": "Design Gate Passed — v1.9 User Value & Insight",
   "status": "Published",
-  "engine": "release_planning",
+  "engine": "design_gate",
   "next_release": "v1.9",
   "backlog_slice_path": "claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md",
-  "last_sync_utc": "2026-03-06T00:10:00Z",
+  "last_sync_utc": "2026-03-06T00:15:00Z",
   "prior_cycle": "2026-03-04__release-v1.8",
   "sprint_sealed": false,
   "design_gate_required": true,
-  "design_gate_status": "Not started",
-  "sprint_planning_pre_condition": false,
-  "next_command": "run design-gate --cycle 2026-03-06__release-v1.9 [then plan sprint --cycle 2026-03-06__release-v1.9]",
+  "design_gate_status": "Passed",
+  "design_gate_record": "claude/cycles/2026-03-06__release-v1.9/design_gate.md",
+  "sprint_planning_pre_condition": true,
+  "next_command": "plan sprint --cycle 2026-03-06__release-v1.9",
   "open_escalations": {},
   "last_rebalance_cycle": "2026-03-06__item-3.4",
   "last_rebalance_utc": "2026-03-06T00:00:00Z",
@@ -48,5 +49,18 @@
     "capacity_check": "warn",
     "state_json": "claude/cycles/2026-03-06__release-v1.9/state.json",
     "scope_doc": "docs/product/scope/scope--2026-03-06__release-v1.9-user-value-insight.md"
+  },
+  "design_gate": {
+    "completed_utc": "2026-03-06T00:15:00Z",
+    "items_classified": 19,
+    "design_required": 5,
+    "design_pre_approved": 4,
+    "design_not_applicable": 10,
+    "blocked": 0,
+    "frontend_specs_updated": [
+      "docs/specs/frontend/pages/analytics.md v1.3",
+      "docs/specs/frontend/pages/trade_reflection.md v0.1 (new)",
+      "docs/specs/frontend/pages/dashboard.md v2.0"
+    ]
   }
 }

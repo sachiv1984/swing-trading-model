@@ -9,6 +9,11 @@
   "publish_eligible": true,
   "last_transition_utc": "2026-03-06T00:11:00Z",
 
+  "design_gate_status": "Passed",
+  "design_gate_completed_utc": "2026-03-06T00:15:00Z",
+  "design_gate_record": "claude/cycles/2026-03-06__release-v1.9/design_gate.md",
+  "sprint_planning_pre_condition": true,
+
   "sealed": {
     "sealed_utc": "2026-03-06T00:10:00Z",
     "sealed_hashes": {

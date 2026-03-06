@@ -1,97 +1,153 @@
-# dashboard.md
+# Frontend Specification — Dashboard Homepage
 
-**Owner:** Frontend Specifications & UX Documentation Owner  
-**Status:** Canonical  
-**Version:** 1.0
-**Last Updated:** February 18, 2026
-
-## Purpose & User Goals
-The Dashboard provides a high‑level overview of the user’s portfolio and current market conditions.  
-It serves as the primary entry point for daily monitoring and quick navigation to key workflows.
-
-Users should be able to quickly understand:
-- Total portfolio performance  
-- Current cash and position values  
-- Recent performance trends  
-- Market regime signals  
-- What actions they should take next (e.g., review positions, enter a new trade)
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Canonical Specification (Class 1)
+**Status:** Canonical
+**Version:** 2.0
+**Last Updated:** 2026-03-06
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Release:** v1.9
+**EPIC:** EPIC-03
+**Design Source:** docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md
+**Confirmed by:** Head of Specs Team — 2026-03-06
 
 ---
 
-## Layout Structure
+## 1. Purpose & User Goals
 
-### Header (global)
-- App name/logo  
-- Navigation: Dashboard, Positions, Trade Entry, Trade History, Settings  
-- Theme toggle (Dark/Light)
+The Dashboard Homepage is the primary entry point for daily use. It provides an at-a-glance session summary across five key data categories, enabling the user to understand their current position, risk, and market status in a single view.
 
-### Main Content
+**Route:** `/` (root / home)
 
-#### Portfolio Summary Cards
-- **Total portfolio value**  
-- **Cash balance** (clickable → opens cash management modal)  
-- **Open positions value**  
-- **Total P&L**
-
-#### Market Status
-- Displays market regime indicator (e.g., SPY / FTSE risk on/off)
-- Clear visual status indicator (color-coded)
-
-#### Performance Chart
-- 30‑day portfolio performance trend
-- Line or area chart (implementation choice, UX intent is trend visibility)
-
-#### Quick Actions
-- **Go to Positions**  
-- **Enter New Position**  
-- **Daily Monitor** (runs automated position analysis)
+Users should immediately see:
+- How many positions are open and in what states
+- Current portfolio heat level (risk exposure)
+- How many positions are in grace period and when the next expires
+- Current market regime signals and today’s signal count
+- Recent trade activity (closes, opens, stop updates)
 
 ---
 
-## Key Components Used
-- Summary value cards  
-- Performance chart component  
-- Link/button group for quick actions  
-- Cash Management Modal (triggered from cash balance)  
-- Global navigation header  
+## 2. Data Sources
+
+| Card | Endpoint | Key field(s) |
+|------|----------|-------------|
+| Open Positions | `GET /positions` (active filter) | count, state breakdown |
+| Portfolio Heat | `GET /portfolio` | `portfolio_heat_percent` |
+| In Grace Today | `GET /portfolio` or `GET /positions` | `grace_days_remaining`, earliest expiry |
+| Signal Status | `GET /market/status`, `GET /signals` | regime per market, signals today |
+| Recent Activity | `GET /trades` or activity endpoint | last 3–5 trade events |
+
+A composite endpoint (`GET /dashboard/summary`) may be introduced to reduce page-load request count. This is an engineering decision to be confirmed at pre-alignment. If introduced, it must be documented in `docs/specs/api_contracts/` and added to `docs/reference/openapi.yaml`. Composite endpoint must only aggregate — no new server-side computations.
 
 ---
 
-## States
+## 3. Layout
 
-### Loading State
-- Skeleton or spinner while:  
-  - Portfolio summary loads  
-  - Performance chart loads  
+### Desktop (>768px)
 
-### Empty State
-Occurs when:
-- No portfolio exists  
-- No positions have been added  
+```
+Row 1: [ Open Positions ] [ Portfolio Heat ] [ In Grace Today ]
+Row 2: [ Signal Status                    ] [ Recent Activity              ]
+```
 
-Display:
-- Friendly message explaining the next step  
-- Action: “Enter New Position”
+- Row 1: three equal-width cards
+- Row 2: two wider cards (Signal Status slightly wider; layout implementation choice within this constraint)
 
-### Error State
-- Global error banner for API failures  
-- Retry option for failed data fetches
+### Mobile (<768px)
+
+All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In Grace Today → Signal Status → Recent Activity.
 
 ---
 
-## Responsive Behavior
-- Cards stack vertically on small screens  
-- Chart becomes smaller or scrollable horizontally if needed  
-- Quick actions wrap into two rows  
-- Cash modal becomes full‑screen on mobile  
+## 4. Card Specifications
+
+### Card 1 — Open Positions
+
+- **Primary:** count of open positions (integer, large)
+- **Sub-label:** state breakdown: “N profitable / N losing / N in grace”
+- **Source:** `GET /positions` (active filter)
+- **Click target:** navigates to `/positions`
 
 ---
 
-## UX Notes
-- The Dashboard should answer “How am I doing today?” instantly.  
-- Important numeric values must be readable at a glance.  
-- Market regime and total P&L should be visually distinct.  
-- Quick actions should be high‑visibility and require minimal cognitive load.  
-- Cash balance being clickable must feel discoverable (use affordances like underlined text, icon, or card hover state).  
+### Card 2 — Portfolio Heat
+
+- **Primary:** `portfolio_heat_percent` value (percentage, 1dp)
+- **Sub-label:** delta vs prior day (from `portfolio_history` if available; omit if unavailable — do not show stale delta)
+- **Colour coding:**
+  - < 15%: green
+  - 15–25%: amber
+  - > 25%: red
+- **Source:** `GET /portfolio`
+- **Click target:** navigates to `/risk`
 
 ---
+
+### Card 3 — In Grace Today
+
+- **Primary:** count of positions currently in grace period (integer)
+- **Sub-label:** “Next expires: {date}” using the earliest `grace_end_date` among grace positions; if none in grace: show “No positions in grace”
+- **Source:** `GET /portfolio` or `GET /positions`
+- **Click target:** navigates to `/risk` (scrolled to grace panel where supported)
+
+---
+
+### Card 4 — Signal Status
+
+- **Market regime per market:**
+  - SPY: RISK-ON ✓ or RISK-OFF ✗
+  - FTSE: RISK-ON ✓ or RISK-OFF ✗
+- **Signals today:** count of signals generated today (“N new signals today”)
+- **Source:** `GET /market/status` (regime), `GET /signals` (today filter)
+- **Click target:** navigates to `/signals`
+
+---
+
+### Card 5 — Recent Activity
+
+- **Content:** last 3–5 trade events in reverse chronological order
+- **Each entry:** ticker + event type + brief value + relative date
+  - Closed: “{ticker} closed (+{R}R)” or “{ticker} closed ({P&L})”
+  - Opened: “{ticker} opened”
+  - Stop updated: “Stop updated on {ticker}”
+- **Source:** `GET /trades` (last N, or activity endpoint — engineering to confirm)
+- **Click target:** navigates to `/trades`
+
+If no recent activity: show “No recent trade activity”
+
+---
+
+## 5. States
+
+| State | Behaviour |
+|-------|-----------|
+| Page loading | Skeleton cards for all 5 (loading animation) |
+| All loaded | All 5 cards render with live data |
+| Individual card error | Card shows error indicator (“Unable to load”); other cards render normally |
+| All endpoints failed | Full page error with “Retry” button |
+
+Individual card failure must not break other cards. Each card fetches its data independently (or receives it from a composite endpoint that returns partial results).
+
+---
+
+## 6. Navigation Targets
+
+| Card | Click navigates to |
+|------|--------------------|
+| Open Positions | `/positions` |
+| Portfolio Heat | `/risk` |
+| In Grace Today | `/risk` |
+| Signal Status | `/signals` |
+| Recent Activity | `/trades` |
+
+Cards are fully clickable (entire card surface is the click target). Visual affordance: subtle hover state (border highlight or shadow lift).
+
+---
+
+## 7. Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 2.0 | 2026-03-06 | Full rewrite for v1.9 EPIC-03 (ST-05). Dashboard Homepage session summary with 5 data cards. Governance header upgraded to Class 1 compliant format. Design source: docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md. |
+| 1.0 | 2026-02-18 | Initial version (pre-governance, general portfolio overview). |
