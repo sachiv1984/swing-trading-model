@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-03
+**Last Updated:** 2026-03-06
 
 ---
 
@@ -210,9 +210,10 @@ This section tracks canonical spec gaps that have been identified but not yet fi
 
 ### 6.1 Settings Canonical Specification *(v1.6.1 pre-work gate)*
 
-**Status:** Not yet created — gap identified 2026-02-21; still open 2026-03-03
+**Status:** Not yet created — gap identified 2026-02-21; still open 2026-03-06
 **Backlog item:** BLG-SPEC-G1 (added 2026-03-03, Head of Specs review)
-**Blocks:** Any further settings-dependent features entering pre-alignment; must be resolved after BLG-SPEC-D2 (settings endpoint method drift) is decided
+**Blocks:** Any further settings-dependent features entering pre-alignment
+**Unblocked:** BLG-SPEC-D2 (settings endpoint method drift) resolved in v1.8 / ST-09 — PATCH /settings/{settings_id} and POST /settings are now the canonical interface (settings_endpoints.md v1.1.0). The pre-condition for §6.1 resolution is now met.
 **Required by:** v1.6.1 (roadmap pre-work item)
 **Assigned owner:** Head of Specs Team
 

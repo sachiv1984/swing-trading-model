@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-04
+**Last Updated:** 2026-03-06
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,8 +11,8 @@
 
 ## 1. Current Version
 
-**v1.7** — Foundation & Governance — Shipped 2026-03-03
-**Next planned release:** **v1.8**
+**v1.8** — Risk Dashboard — Shipped 2026-03-06
+**Next planned release:** **v1.9**
 
 ---
 
@@ -54,13 +54,13 @@ Delivered via a unified GET /analytics/metrics?period= endpoint. Includes a POST
 
 ---
 
-### v1.8 — Risk Dashboard *(expanded from 3.4)*
+### v1.8 — Risk Dashboard *(expanded from 3.4)* ✅ Complete — Shipped 2026-03-06
 
 #### 3.4 Risk Dashboard
-**Status:** Planned
+**Status:** ✅ Complete — Shipped 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | Verified_with_deviations
 **Effort:** Medium (3–4 days with expanded scope)
 **Value:** High (risk management — daily visibility)
-**Pre-requisite:** Metrics Definitions (Portfolio Heat formula and thresholds) must be canonical before pre-alignment opens *(v1.7 gate)*
+**Pre-requisite:** Metrics Definitions (Portfolio Heat formula and thresholds) must be canonical before pre-alignment opens *(v1.7 gate — cleared)*
 
 Previously scoped as a single Portfolio Heat Gauge widget. Scope expanded to a dedicated Risk Dashboard page that consolidates all risk-awareness features.
 
@@ -235,7 +235,7 @@ When evaluating new features:
 | **v1.6** | Position Sizing | Calculator, settings default risk % — ✅ Shipped |
 | **v1.6.1** | Correctness & Quick Wins | Quick Wins Bundle (6 features) — ✅ Shipped 2026-03-01 |
 | **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision — ✅ Shipped 2026-03-03 |
-| **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk |
+| **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk — ✅ Shipped 2026-03-06 |
 | **v1.9** | User Value & Insight | Trade reflection template, compliance metrics, cohort analysis, dashboard homepage |
 | **v2.0** | Reporting & Alerts | Alerts & notifications (QA gate pending), tax-year statement, server-side PDF, signal parameter exposure (gate cleared — active planning) |
 | **v2.1+** | Enhancements | Watchlists, chart interactivity, Prometheus |

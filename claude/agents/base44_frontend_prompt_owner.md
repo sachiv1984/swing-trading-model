@@ -5,13 +5,14 @@
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions); Frontend Specifications & UX Documentation Owner (canonical source of truth for all UI behaviour)
 **Scope:** Producing precise, complete prompts for the Base44 code generation platform to implement frontend changes; reviewing and integrating Base44-generated code into the codebase
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-02-19
+**Version:** 1.2
+**Last Updated:** 2026-03-06
 
 ### Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-03-06 | Added Section 12 (Delegation Requirements) — mandatory "Target branch" field for delegation records. Immediate lessons learnt action from 2026-03-04__release-v1.8 friction item 1 (EX-LL): ST-03 committed to main bypassing EPIC branch due to missing "Target branch" field in delegation. |
 | 1.1 | 2026-02-19 | Added Section 5 rules 2a (import path validation), 2b (spec reconciliation), and 6 (deployment confirmation). Added Section 11 (Frontend File Naming Conventions). Changes actioned from lessons learnt review: 3.2 Position Sizing Calculator, filed 2026-02-19. |
 | 1.0 | — | Initial canonical version |
 
@@ -190,6 +191,25 @@ The filename and the export name must be identical. A mismatch is not a style is
 - When integrating generated code, confirm the actual filename on disk matches the import reference in every consuming file before marking integration complete.
 - When consuming a component in a page or another component, verify the import path spells the filename exactly as it exists on disk. Do not infer casing from the component name alone — check the file.
 - If a file was created with incorrect casing (e.g. `Positionsizingwidget.js` instead of `PositionSizingWidget.js`), rename the file and update all import references before closing the integration task. Do not work around it by matching the import to the wrong casing.
+
+---
+
+## 12. Delegation Requirements
+
+When the Sprint Execution Engine (PMO Lead) creates a delegation record to this role, the delegation record **must** contain the following fields. The engine must not issue an incomplete delegation, and this role must not accept or act on a delegation that lacks these fields.
+
+### Mandatory fields in every delegation record to this role
+
+| Field | Required value | Notes |
+|-------|---------------|-------|
+| ST item | `ST-xx` | The story item being delegated |
+| Target branch | `exec/<cycle_id>/EPIC-xx` | The exact branch name; commits must go here, not to `main` |
+| Commit format | `[EPIC-xx][ST-xx] <imperative description>` | Must appear in every commit message |
+| Spec reference | Path to canonical spec | The spec section governing this change |
+
+**Target branch is non-negotiable.** All commits for a delegated frontend item must go to the designated EPIC branch. Direct commits to `main` bypass the PR review gate and break the EPIC-per-PR governance model. If no target branch is specified in the delegation record, request it before beginning work.
+
+> **Rationale (lessons learnt — 2026-03-04__release-v1.8 / EX-LL Friction Item 1):** ST-03 was committed directly to `main` across 8 commits because the delegation record (DEL-20260305-02) did not specify a target branch. The PR-per-EPIC structure was bypassed, causing a governance breach. This section makes the target branch a mandatory declared field to prevent recurrence.
 
 ---
 

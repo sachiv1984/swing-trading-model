@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-03-03
+**Version:** 1.4
+**Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -664,10 +664,15 @@ If all conditions pass:
 1. Merge the PR (squash or merge as configured).
 2. Update `execution_state.json`: EPIC `pr_status` = `merged`, `status` = `merged`.
 3. Update `merge_gate.epics_merged`.
+4. **Output the following user-facing re-invocation reminder:**
+
+> ✅ EPIC-xx merged. If there are remaining EPICs pending, re-invoke `run sprint --cycle <cycle_id>` after each subsequent EPIC merge so the engine can update state and check for sprint close readiness. Do not proceed to `run delivery verification` until all EPICs are merged and `run sprint` has been invoked after the final merge.
 
 If any condition fails: do not merge. Record which condition is unmet. If QA or Product Owner has not responded within their SLA: file an escalation record.
 
 **The engine may not self-approve a merge.** QA sign-off and Product Owner acceptance are always required and must come from the relevant authority.
+
+> **Rationale for re-invocation reminder (lessons learnt — 2026-03-04__release-v1.8 / EX-LL Friction Item 4):** A session ended after recording EPIC-02 QA sign-off but before the PR merge was reported. The user then merged the PR on GitHub without re-invoking `run sprint`. `sprint_close.md` was never created, `execution_state.json` remained unsealed, and `run delivery verification` failed preflight. The reminder makes the re-invocation requirement visible at the moment the user receives merge gate output.
 
 ---
 

@@ -3,7 +3,7 @@
 Owner: Product Owner
 Status: Active
 Class: Planning Document (Class 4)
-Last Updated: 2026-03-04
+Last Updated: 2026-03-06
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -162,11 +162,12 @@ README.md was not updated.
 
 ---
 
-**BLG-SPEC-D2** — settings_endpoints.md spec/implementation mismatch
+**BLG-SPEC-D2** — settings_endpoints.md spec/implementation mismatch ✅ COMPLETE
 **Priority:** P1 (High)
 **Type:** Spec–Implementation Drift
 **Owner:** API Contracts & Documentation Owner + Head of Engineering
 **Raised:** 2026-03-03 — Head of Specs Team review
+**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-09 — settings_endpoints.md v1.1.0 published; PATCH/POST documented as canonical
 
 **Problem**
 `docs/specs/api_contracts/settings_endpoints.md` specifies `PUT /settings` (replace all settings).
@@ -223,11 +224,12 @@ Not documented in `docs/specs/api_contracts/position_endpoints.md`.
 
 ---
 
-**BLG-SPEC-D7** — openapi.yaml frozen at v1.8.1; not updated for v1.9.0 contracts
+**BLG-SPEC-D7** — openapi.yaml frozen at v1.8.1; not updated for v1.9.0 contracts ✅ COMPLETE
 **Priority:** P2 (Medium)
 **Type:** Documentation Drift / Reference Artefact Staleness
 **Owner:** API Contracts & Documentation Owner
 **Raised:** 2026-03-03 — Head of Specs Team review
+**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-10 — openapi.yaml updated to v1.9.0
 
 **Problem**
 `docs/reference/openapi.yaml` is at version 1.8.1 (1193 lines).
@@ -393,12 +395,13 @@ All items compete within v1.8 release capacity. Release planning engine determin
 
 ---
 
-### BLG-NEW-01 — Golden Output Regression Baseline for CI
+### BLG-NEW-01 — Golden Output Regression Baseline for CI ✅ COMPLETE
 **Priority:** P1 (High)
 **Type:** Quality / CI
 **Owner:** Engineering + QA
 **Source:** IDEA-director-of-quality-20260304-02 — Director of Quality, IW-20260304-01
 **Cycle added:** 2026-03-04__item-3.4
+**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-05
 
 **Problem**
 The current CI gate (`POST /validate/calculations`, EPIC-01) checks only that `critical_failed > 0` blocks the merge. It does not verify that specific calculations return the correct numeric values. A change that silently alters the trailing stop formula from `CurrentPrice - (2 × ATR)` to `CurrentPrice - (2.1 × ATR)` would pass the current gate. Numeric regressions are the highest-risk defect class in a trading system.
@@ -422,13 +425,14 @@ The current CI gate (`POST /validate/calculations`, EPIC-01) checks only that `c
 
 ---
 
-### BLG-NEW-02 — Backtest vs Live Stop Reconciliation Report
+### BLG-NEW-02 — Backtest vs Live Stop Reconciliation Report ✅ COMPLETE
 **Priority:** P1 (High)
 **Type:** Quality / CI
 **Owner:** Engineering + QA
 **Source:** IW-20260304-01 (promoted 2026-03-04)
 **Cycle added:** 2026-03-04__item-3.4
 **Dependency:** After BLG-NEW-01 (golden output baseline must be in place first)
+**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-06
 
 **Problem**
 There is no automated verification that the trailing stop formula used in backtests and the formula used in the live system produce identical results for the same inputs. Silent divergence between backtest and live logic is a category of defect that cannot be caught by either gate independently.
@@ -443,13 +447,14 @@ There is no automated verification that the trailing stop formula used in backte
 
 ---
 
-### BLG-NEW-03 — Define and Document Unavailability Failure Mode
+### BLG-NEW-03 — Define and Document Unavailability Failure Mode ✅ COMPLETE
 **Priority:** P1 (High)
 **Type:** Policy / Governance
 **Owner:** Infrastructure & Operations Owner
 **Source:** IW-20260304-01 (promoted 2026-03-04)
 **Cycle added:** 2026-03-04__item-3.4
 **Effort:** ~0.5 day
+**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-11
 
 **Problem**
 There is no documented policy for what happens when the system is unavailable during a trading session (e.g., backend down, market data feed unavailable). The system has no documented failure modes or fallback procedures for the user.
@@ -485,13 +490,14 @@ The project uses AI-assisted workflows (Claude Code) for governed routines. Ther
 
 ---
 
-### BLG-NEW-05 — Dependency Vulnerability Scanning in CI
+### BLG-NEW-05 — Dependency Vulnerability Scanning in CI ✅ COMPLETE
 **Priority:** P1 (High)
 **Type:** Security / CI
 **Owner:** Engineering (CI)
 **Source:** IW-20260304-01 (promoted 2026-03-04)
 **Cycle added:** 2026-03-04__item-3.4
 **Effort:** ~0.5 day
+**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-07
 
 **Problem**
 There is no automated scanning of Python dependencies for known vulnerabilities in the CI pipeline. A compromised or vulnerable dependency could be introduced silently.
@@ -508,13 +514,14 @@ There is no automated scanning of Python dependencies for known vulnerabilities 
 
 ---
 
-### BLG-NEW-07 — Running API Changelog Document
+### BLG-NEW-07 — Running API Changelog Document ✅ COMPLETE
 **Priority:** P1 (High)
 **Type:** Documentation / Governance
 **Owner:** API Contracts & Documentation Owner
 **Source:** IW-20260304-01 (promoted 2026-03-04)
 **Cycle added:** 2026-03-04__item-3.4
 **Effort:** ~0.5 day
+**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-12
 
 **Problem**
 There is no single running changelog document for API contract changes. Changes to endpoint contracts (new fields, removed fields, version bumps) are recorded in individual spec files but there is no centralised, human-readable history of API evolution across versions.
@@ -532,13 +539,14 @@ There is no single running changelog document for API contract changes. Changes 
 
 ---
 
-### BLG-NEW-08 — Automated OpenAPI Drift Detection in CI
+### BLG-NEW-08 — Automated OpenAPI Drift Detection in CI ✅ COMPLETE
 **Priority:** P1 (High)
 **Type:** CI / Governance
 **Owner:** Engineering (CI)
 **Source:** IW-20260304-01 (promoted 2026-03-04)
 **Cycle added:** 2026-03-04__item-3.4
 **Effort:** ~0.5 day
+**Closed:** 2026-03-06 | Cycle: 2026-03-04__release-v1.8 | ST-08
 
 **Problem**
 `docs/reference/openapi.yaml` was not updated during EPIC-06 when three contracts were bumped to v1.9.0 (BLG-SPEC-D7). There is no CI check that detects drift between the markdown API contracts and openapi.yaml. Drift will recur without an automated gate.
@@ -753,6 +761,7 @@ US position entry prices display in native USD ($) in the Risk Dashboard. Spec �
 **Owner:** QA & Testing Owner
 **Source:** Delivery verification 2026-03-04__release-v1.8 — Director of Quality recommendation
 **Cycle added:** 2026-03-04__release-v1.8
+**Target release:** v1.9
 
 17 of 27 Risk Dashboard acceptance scenarios (SC-RD-02–06, SC-RD-07–12, SC-RD-15, SC-RD-16–18, SC-RD-24–25) cannot be executed in the v1.8 environment due to the absence of a test data injection mechanism. All 17 require specific backend state (portfolio heat %, grace days, empty positions, or live prospective heat API call) that cannot be loaded without either a seeded test database, a mock/stub API layer, or a test data management UI.
 

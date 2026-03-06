@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-03-03
+**Version:** 1.1
+**Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -200,6 +200,23 @@ Confirm `claude/system/lessons_learnt_prompt.md` exists. If missing: halt.
 ### -1.7 Write Permission Test
 
 Create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can be written. Remove it. If write fails: halt.
+
+### -1.8 Dependency Health Check (Pre-Sprint Vulnerability Scan)
+
+Run `pip-audit` against `backend/requirements.txt`:
+
+```bash
+pip-audit -r backend/requirements.txt --format=json
+```
+
+Report findings before sprint scope is sealed:
+- **High/critical CVEs found:** Record each in sprint planning notes; Product Owner and Head of Engineering must explicitly accept each known CVE as a documented risk (with backlog item) before the sprint may be sealed. Do not silently proceed with known high/critical vulnerabilities.
+- **No high/critical CVEs:** Note "pre-sprint pip-audit: clean" in sprint planning notes.
+- **pip-audit not available:** Flag in sprint planning notes; recommend installation before sprint execution begins.
+
+This step is advisory — it does not block sprint planning. Its purpose is to surface the vulnerability landscape before scope is sealed, so mid-sprint CVE discoveries do not block merge gates unexpectedly.
+
+> **Rationale (lessons learnt — 2026-03-04__release-v1.8 / EX-LL Friction Item 5):** A pre-existing CVE in `requests` was discovered reactively during ST-07 (pip-audit CI gate). Had the scan CI gate been active from a prior sprint, a different EPIC's merge could have been blocked unexpectedly. Pre-sprint scanning makes the vulnerability landscape visible before scope locks.
 
 ---
 
