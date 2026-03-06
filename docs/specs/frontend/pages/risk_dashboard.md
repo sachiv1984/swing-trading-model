@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.5
-**Last Updated:** 2026-03-05
+**Version:** 0.1.6
+**Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-03-04
@@ -285,18 +285,18 @@ The following deviations between this specification and the v1.8 implementation 
 
 | Ref | Priority | Canonical Requirement | v1.8 Actual | Resolution Target | Owner | Backlog Ref |
 |-----|----------|-----------------------|-------------|-------------------|-------|-------------|
-| DEV-ST03-01 | P2 | §8: Each component renders its own error state independently on `GET /portfolio` failure | Entity store fallback (`base44.entities.Position/Portfolio`) activates on API failure; error states not displayed when entity data is available | v1.9 — add explicit error indicator while fallback is active | Head of Engineering | TBD |
-| DEV-ST03-02 | P3 | §5.5: GracePeriodPanel renders "Unable to load position data" error state | On API failure `positions` is `[]`; "No positions in grace period" shown — indistinguishable from valid empty state | v1.9 — surface error card when `portfolioError` is set | Head of Engineering | TBD |
-| DEV-ST03-03 | P2 | §6.4: Sort by stop distance ascending (tightest/smallest first = most at risk) | Sorted descending (largest stop distance first); Base44 prompt incorrectly specified "descending" | v1.9 — correct sort direction to ascending | Head of Engineering | TBD |
-| DEV-ST03-04 | P2 | §6.2: Stop Price column (`current_stop`, GBP, 2 dp) in Position Risk Table | Stop Price column absent; Stop Distance % shown instead (presentational derivation only) | v1.9 — restore Stop Price column alongside Stop Distance % | Head of Engineering | TBD |
-| DEV-ST03-05 | P3 | §6.3: GRACE badge colour = Blue | GRACE badge rendered in Amber | v1.9 — correct badge colour to Blue | Head of Engineering | TBD |
-| DEV-ST03-06 | P3 | §3.2: "GBP value at risk" as tertiary metric in Heat Gauge | Absent | v1.9 — add GBP value at risk below gauge value | Head of Engineering | TBD |
-| DEV-ST03-07 | P3 | §5.2: "Days in Grace" (`holding_days`) column in Grace Period table | `holding_days` column absent from Grace Period table | v1.9 — restore Days in Grace column | Head of Engineering | TBD |
-| DEV-ST03-08 | P2 | §4.1: Drawdown data source is `GET /analytics/metrics` | Drawdown reads from `GET /portfolio`; ST-02 pre-alignment may have changed this | Head of Specs Team to verify ST-02 alignment outcome and update §4.1 if `GET /portfolio` is confirmed | Head of Specs Team | TBD |
-| DEV-ST03-09 | P3 | §7.5: Threshold label changes if hypothetical position crosses a boundary | `ProspectiveHeatPanel.js` renders projected heat % and delta only — threshold label absent from result display | v1.9 — add threshold label badge to prospective heat result row | Head of Engineering | TBD |
+| DEV-ST03-01 | P2 | §8: Each component renders its own error state independently on `GET /portfolio` failure | Entity store fallback (`base44.entities.Position/Portfolio`) activates on API failure; error states not displayed when entity data is available | v1.9 — add explicit error indicator while fallback is active | Head of Engineering | BLG-RD-01 |
+| DEV-ST03-02 | P3 | §5.5: GracePeriodPanel renders "Unable to load position data" error state | On API failure `positions` is `[]`; "No positions in grace period" shown — indistinguishable from valid empty state | v1.9 — surface error card when `portfolioError` is set | Head of Engineering | BLG-RD-02 |
+| DEV-ST03-03 | P2 | §6.4: Sort by stop distance ascending (tightest/smallest first = most at risk) | Sorted descending (largest stop distance first); Base44 prompt incorrectly specified "descending" | v1.9 — correct sort direction to ascending | Head of Engineering | BLG-RD-03 |
+| DEV-ST03-04 | P2 | §6.2: Stop Price column (`current_stop`, GBP, 2 dp) in Position Risk Table | Stop Price column absent; Stop Distance % shown instead (presentational derivation only) | v1.9 — restore Stop Price column alongside Stop Distance % | Head of Engineering | BLG-RD-04 |
+| DEV-ST03-05 | P3 | §6.3: GRACE badge colour = Blue | GRACE badge rendered in Amber | v1.9 — correct badge colour to Blue | Head of Engineering | BLG-RD-05 |
+| DEV-ST03-06 | P3 | §3.2: "GBP value at risk" as tertiary metric in Heat Gauge | Absent | v1.9 — add GBP value at risk below gauge value | Head of Engineering | BLG-RD-06 |
+| DEV-ST03-07 | P3 | §5.2: "Days in Grace" (`holding_days`) column in Grace Period table | `holding_days` column absent from Grace Period table | v1.9 — restore Days in Grace column | Head of Engineering | BLG-RD-07 |
+| DEV-ST03-08 | P2 | §4.1: Drawdown data source is `GET /analytics/metrics` | Drawdown reads from `GET /portfolio`; ST-02 pre-alignment may have changed this | Head of Specs Team to verify ST-02 alignment outcome and update §4.1 if `GET /portfolio` is confirmed | Head of Specs Team | BLG-RD-08 |
+| DEV-ST03-09 | P3 | §7.5: Threshold label changes if hypothetical position crosses a boundary | `ProspectiveHeatPanel.js` renders projected heat % and delta only — threshold label absent from result display | v1.9 — add threshold label badge to prospective heat result row | Head of Engineering | BLG-RD-09 |
 | DEV-ST03-10 | P2 | §1: Nav label "Risk", nav position between Portfolio and Analytics, always visible | Navigation sidebar entry absent — page is inaccessible via normal UX; route `/risk` IS registered and accessible via direct URL | RESOLVED 2026-03-05 — nav entry added (index.js fix) | Head of Engineering | — |
-| DEV-ST03-11 | P2 | §6.2: Entry Price column — "GBP, 2 decimal places" for all positions | US position entry prices display in native USD ($) instead of GBP (£); backend returns `entry_price` in native currency, not GBP-converted | v1.9 — convert entry_price to GBP for US positions in `portfolio_service.py` and update frontend display | Head of Engineering | TBD |
-| DEV-ST03-12 | P2 | §6.2: Stop Distance % derived as `(current_price − current_stop) / current_price × 100` — assumes both values in GBP | `current_stop` returned in native USD for US positions (mirrors `entry_price` currency pattern — DEV-ST03-11); `current_price` is in GBP; display derivation mixes currencies → Stop Distance % incorrect for all US positions | v1.9 — return `current_stop` in GBP in `portfolio_service.py` for US positions (apply FX conversion consistent with `current_price`) | Head of Engineering | TBD |
+| DEV-ST03-11 | P2 | §6.2: Entry Price column — "GBP, 2 decimal places" for all positions | US position entry prices display in native USD ($) instead of GBP (£); backend returns `entry_price` in native currency, not GBP-converted | v1.9 — convert entry_price to GBP for US positions in `portfolio_service.py` and update frontend display | Head of Engineering | BLG-RD-10 |
+| DEV-ST03-12 | P2 | §6.2: Stop Distance % derived as `(current_price − current_stop) / current_price × 100` — assumes both values in GBP | `current_stop` returned in native USD for US positions (mirrors `entry_price` currency pattern — DEV-ST03-11); `current_price` is in GBP; display derivation mixes currencies → Stop Distance % incorrect for all US positions | v1.9 — return `current_stop` in GBP in `portfolio_service.py` for US positions (apply FX conversion consistent with `current_price`) | Head of Engineering | BLG-RD-11 |
 
 **Accepted by:** Product Owner
 **Accepted on:** 2026-03-05 (DEV-ST03-01 through DEV-ST03-12 — all deviations accepted for v1.8)
@@ -308,6 +308,7 @@ The following deviations between this specification and the v1.8 implementation 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.6 | 2026-03-06 | §11 deviation compliance update: backlog references assigned for all active deviations (BLG-RD-01 through BLG-RD-11). Updated by Delivery Verification Engine 2026-03-06 per standard mode deviation compliance. |
 | 0.1.5 | 2026-03-05 | Added DEV-ST03-12 (P2): `current_stop` returned in USD for US positions; Stop Distance % display derivation mixes currencies per §6.2. Found SC-RD-27 network tab inspection. Acceptance pending PO. |
 | 0.1.4 | 2026-03-05 | Added DEV-ST03-11 (P2): US position entry prices display in USD instead of GBP per §6.2. Found SC-RD-14 live execution. DEV-ST03-10 marked RESOLVED (nav fix applied). |
 | 0.1.3 | 2026-03-05 | Added DEV-ST03-10 (P2) to §11: Navigation sidebar entry absent for /risk page per §1. Identified during live scenario execution of SC-RD-01. Subsequently resolved by fix 2026-03-05. |
