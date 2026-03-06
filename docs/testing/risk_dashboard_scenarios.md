@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0.0
-**Last Updated:** 2026-03-05
+**Version:** 1.0.1
+**Last Updated:** 2026-03-06
 **Derived from:** `docs/specs/frontend/pages/risk_dashboard.md` v0.1.1; `docs/specs/metrics_definitions.md` v1.6.0
 **Sprint:** 2026-03-04__release-v1.8 — ST-04
 **Roadmap item:** §3.4 — Risk Dashboard
@@ -243,7 +243,52 @@ For a scenario that pushes heat **above** 20%:
 
 ---
 
-## 5. Scenarios
+## 5. Test Infrastructure Preconditions
+
+Before attempting to execute scenarios, QA Lead must confirm the following conditions. Scenarios that require test data injection cannot be executed without the corresponding infrastructure in place.
+
+---
+
+### 5.1 Environment Requirements
+
+- Backend API must be reachable at the configured API base URL (same origin or via `api.*` client).
+- Browser developer tools (Network tab, Console tab) must be available for Groups E and G.
+- Entity store (`base44.entities`) state must be known and controllable for Group E error-state scenarios.
+
+---
+
+### 5.2 Test Data Injection Status
+
+The following scenario groups require specific portfolio states that cannot be set up in a production environment without a dedicated test data injection mechanism. **This mechanism does not currently exist (v1.8).**
+
+| Scenario Group | Required infrastructure | Current status |
+|----------------|------------------------|----------------|
+| Group A — Heat Gauge Thresholds (SC-RD-01–SC-RD-06) | Backend must return controlled `portfolio_heat_percent` and `positions[]` values matching TD-01 through TD-06 | **Not available** — requires test data injection endpoint or mock backend |
+| Group B — Grace Period Panel (SC-RD-07–SC-RD-13) | Backend must return positions with specific `grace_period`, `grace_days_remaining` values matching TD-07, TD-08 | **Not available** — requires test data injection or seeded test DB |
+| Group C — Position Risk Table (SC-RD-14–SC-RD-15) | Backend must return positions with specific `display_status`, `current_price`, `current_stop` values matching TD-09 | **Not available** — requires test data injection |
+| Group F — Empty State (SC-RD-25) | Backend must return no open positions | **Conditionally available** — executable if the live portfolio has zero open positions |
+
+---
+
+### 5.3 Scenarios Executable Without Test Data Injection
+
+The following scenarios can be executed against a live production-connected environment without special state:
+
+| Scenario Group | Scenarios | Precondition |
+|----------------|-----------|--------------|
+| Group D — Prospective Heat (SC-RD-16–SC-RD-19) | SC-RD-16, SC-RD-17, SC-RD-18, SC-RD-19 | Any portfolio state; endpoint `/api/portfolio/prospective-heat` available |
+| Group E — API Error States (SC-RD-20–SC-RD-24) | SC-RD-20, SC-RD-21, SC-RD-22, SC-RD-23, SC-RD-24 | Requires ability to force API errors (e.g. kill backend process, block endpoint at network layer); entity store must not contain matching data (see §2 DEV-ST03-01 note) |
+| Group G — Non-Functional (SC-RD-26–SC-RD-27) | SC-RD-26, SC-RD-27 | Any portfolio state with at least one open position |
+
+---
+
+### 5.4 Backlog Reference
+
+The test data injection gap is tracked at `TEST-GAP-EPIC-01` in `claude/backlog/backlog.md §10`. Until this backlog item is addressed, 17 of 27 scenarios (Groups A, B, C, and most of F) remain unanswerable. QA sign-off on those scenarios cannot be given until the infrastructure exists.
+
+---
+
+## 6. Scenarios
 
 ---
 
@@ -783,7 +828,7 @@ For a scenario that pushes heat **above** 20%:
 
 ---
 
-## 6. Sign-Off Checklist (Director of Quality)
+## 7. Sign-Off Checklist (Director of Quality)
 
 The following must be confirmed before marking ST-04 done and opening EPIC-01 merge gate:
 
@@ -804,8 +849,9 @@ The following must be confirmed before marking ST-04 done and opening EPIC-01 me
 
 ---
 
-## 7. Change Log
+## 8. Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.0.1 | 2026-03-06 | Added §5 Test Infrastructure Preconditions: documents which scenario groups require test data injection (Groups A–C and most of F — 17/27 scenarios), which are executable without injection (Groups D, E, G — 10/27 scenarios), environment requirements, and backlog reference TEST-GAP-EPIC-01. Renumbered prior §5–§7 to §6–§8. Applied from EX-LL Friction Item 3 deferred patch. |
 | 1.0.0 | 2026-03-05 | Initial version. 27 scenarios covering heat thresholds, grace period, position risk table, prospective heat, API error states, empty states, and non-functional requirements. Derived from risk_dashboard.md v0.1.1 and metrics_definitions.md v1.6.0. Known deviations DEV-ST03-01 through DEV-ST03-05 documented in §2. |

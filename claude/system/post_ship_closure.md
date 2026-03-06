@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-03-03
+**Version:** 1.1
+**Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -324,6 +324,8 @@ Update:
 
 If the decisions record cannot be located: same flag behaviour as scope document.
 
+**N/A condition:** If no decisions document exists for this release AND no decisions with options analysis or accepted risk were made this cycle, mark STEP 4.2 as N/A — no decision record required. Document the rationale in the closure record (§6 Outstanding Actions or §5 Lessons Learnt Action Summary as appropriate). Do not flag as a missing artefact in this case.
+
 ---
 
 ## STEP 5 — Canonical Spec Deviation Compliance Check
@@ -490,6 +492,8 @@ If any outstanding actions remain in §6: set `closure_status = Closed_with_acti
 ---
 
 ## STEP 11 — Commit
+
+**Push-before-pull rule (required):** Do NOT perform a `git pull` or `git merge` from the remote branch before pushing. Push local governance commits first. If the push is rejected due to divergent history, investigate the cause — do not run `git pull` automatically, as a remote merge commit may overwrite or reorder governance commits. Resolve divergence manually with PMO Lead approval before retrying the push.
 
 Commit all artefacts created or modified by this routine:
 

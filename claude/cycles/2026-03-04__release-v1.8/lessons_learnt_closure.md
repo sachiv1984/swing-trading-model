@@ -116,14 +116,14 @@ STEP 4.2 required locating `docs/product/decisions/{id}-{slug}.md` for v1.8. No 
 
 ## Outstanding deferred patches
 
-| File | Section | Change required | Owner | Target |
+| File | Section | Change required | Owner | Status |
 |------|---------|----------------|-------|--------|
-| `claude/system/release_planning_prompt.md` | Write scope / STEP 1 | Mandate creation of `scope--{cycle_id}-{slug}.md` as required planning output (enables STEP 4.1 supersession at closure) | Head of Specs Team | Before next release planning run |
-| `claude/system/post_ship_closure.md` | STEP 4.2 — Decisions record | Add N/A condition for releases with no formal decisions record | Head of Specs Team | Next governance prompt revision cycle |
-| `claude/system/post_ship_closure.md` | STEP 11 — Commit (carried from v1.7 CL-LL-01) | Add explicit push-before-pull instruction to prevent remote merge overwriting governance commits | Head of Specs Team | Next governance prompt revision cycle |
-| `.github/workflows/governance_sync.yml` | "Update State and Close Issue" step | Remove `--comment "..."` flag from `gh issue close` (carried from execution EX-LL Friction Item 2) | Infrastructure & Operations Owner | Before next sprint execution |
-| `docs/testing/risk_dashboard_scenarios.md` | New section before scenario groups | Add "Test Infrastructure Preconditions" section (carried from execution EX-LL Friction Item 3) | Director of Quality | Before next sprint touching Risk Dashboard spec sections |
-| `claude/system/sprint_planning_prompt.md` or `execution_prompt.md` | STEP -1 / STEP 4 | Pip-audit and re-invocation reminder (APPLIED THIS RUN — carried deferred note for completeness) | — | Applied |
+| `claude/system/release_planning_prompt.md` | STEP 2 — Scope Extraction | Mandate creation of `scope--{cycle_id}-{slug}.md` as required planning output (enables STEP 4.1 supersession at closure) | Head of Specs Team | ✅ APPLIED 2026-03-06 — v2.7 → v2.8 |
+| `claude/system/post_ship_closure.md` | STEP 4.2 — Decisions record | Add N/A condition for releases with no formal decisions record | Head of Specs Team | ✅ APPLIED 2026-03-06 — v1.0 → v1.1 |
+| `claude/system/post_ship_closure.md` | STEP 11 — Commit (carried from v1.7 CL-LL-01) | Add explicit push-before-pull instruction to prevent remote merge overwriting governance commits | Head of Specs Team | ✅ APPLIED 2026-03-06 — v1.0 → v1.1 |
+| `.github/workflows/governance_sync.yml` | "Update State and Close Issue" step | Remove `--comment "..."` flag from `gh issue close` (carried from execution EX-LL Friction Item 2) | Infrastructure & Operations Owner | ✅ APPLIED 2026-03-06 |
+| `docs/testing/risk_dashboard_scenarios.md` | New §5 before scenario groups | Add "Test Infrastructure Preconditions" section (carried from execution EX-LL Friction Item 3) | Director of Quality | ✅ APPLIED 2026-03-06 — v1.0.0 → v1.0.1 |
+| `claude/system/sprint_planning_prompt.md` or `execution_prompt.md` | STEP -1 / STEP 4 | Pip-audit and re-invocation reminder (APPLIED IN POST-SHIP RUN — carried deferred note for completeness) | — | ✅ Applied (prior run) |
 
 ---
 

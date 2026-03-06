@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.7
-**Last Updated:** 2026-03-02
+**Version:** 2.8
+**Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -710,6 +710,45 @@ Update state.json:
 ## STEP 2 — Scope Extraction (No Scope Changes Allowed)
 
 Write: `stage2_scope_extraction.md` (S2 IDs required)
+
+**Scope document (required output):**
+
+Create: `docs/product/scope/scope--{cycle_id}-{slug}.md`
+
+Where `{slug}` is a short lowercase hyphenated name derived from the release feature name (e.g. `scope--2026-03-04__release-v1.8-risk-dashboard.md`).
+
+Minimum required content:
+
+```markdown
+Owner: Head of Specs Team
+Class: Planning Document (Class 4)
+Status: Active
+Release: vX.Y
+Cycle: <cycle_id>
+Last Updated: <date>
+
+## Release Scope — vX.Y <Feature Name>
+
+### Items in scope
+| S2-ID | Epic | Description |
+|-------|------|-------------|
+| S2-01 | EPIC-xx | ... |
+
+### Items explicitly deferred
+| Item | Reason | Target |
+|------|--------|--------|
+| ...  | ...    | ...    |
+
+*(If nothing deferred: "None")*
+
+### Supersession note (to be completed at post-ship closure)
+Superseded by: v<X.Y> ship — <ship date>
+Changelog: docs/product/changelog.md#v<X.Y>
+Verification report: claude/cycles/<cycle_id>/verification_report.md
+Cycle: <cycle_id>
+```
+
+This document is the authoritative scope record for post-ship STEP 4.1 supersession. If this document is not created here, STEP 4.1 of post-ship closure will flag it as missing every cycle.
 
 Update state.json:
 

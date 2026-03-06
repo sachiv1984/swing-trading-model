@@ -38,7 +38,7 @@ jobs:
           # 1. Look up numeric issue number for this ST item, then close it
           ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}]" --state open --json number --jq '.[0].number // empty')
           if [ -n "$ISSUE_NUMBER" ]; then
-            gh issue close "$ISSUE_NUMBER" --comment "Resolved via Claude Code commit: ${ST_ID} (${EPIC_ID})"
+            gh issue close "$ISSUE_NUMBER"
             echo "Closed issue #${ISSUE_NUMBER} for ${ST_ID}"
           else
             echo "No open issue found for ${ST_ID} — may already be closed or never created"
