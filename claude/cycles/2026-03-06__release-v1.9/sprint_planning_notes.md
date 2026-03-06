@@ -8,9 +8,18 @@
 
 ---
 
-## 1. Deferred Items
+## 1. Deferred Items — Sprint 2 (Product Owner decision 2026-03-06 — Option B phased approach)
 
-None. All 19 items included in sprint scope (ST-06 pre-completed; 18 remaining items selected). Over-allocation accepted pending Product Owner sign-off per sprint_capacity.md §4.
+| Item | EPIC | Reason | Sprint 2 Candidate? |
+|------|------|--------|-------------------|
+| ST-01 | EPIC-01 | Phased approach — feature sprint deferred | Yes |
+| ST-02 | EPIC-01 | Phased approach — feature sprint deferred | Yes |
+| ST-03 | EPIC-02 | Phased approach — feature sprint deferred | Yes |
+| ST-04 | EPIC-02 | Phased approach — feature sprint deferred | Yes |
+| ST-05 | EPIC-03 | Phased approach — feature sprint deferred | Yes |
+| ST-12 | EPIC-05 | Depends on Sprint 2 feature delivery | Yes |
+
+Sprint 1 scope: EPIC-04 + EPIC-05 (ST-11, ST-13) + EPIC-06. Sprint 2 scope: EPIC-01 + EPIC-02 + EPIC-03 + ST-12.
 
 ---
 
@@ -111,11 +120,11 @@ None. All 19 items included in sprint scope (ST-06 pre-completed; 18 remaining i
 
 | Action | Owner | Required Before Seal? |
 |--------|-------|----------------------|
-| Product Owner: confirm sprint goal wording | Product Owner | Yes |
-| Product Owner: confirm scope (single sprint or phased) | Product Owner | Yes |
-| Product Owner: confirm over-allocation explicitly accepted | Product Owner | Yes |
-| Data Model & Domain Schema Owner: confirm trade_reflections schema in data_model.md | Data Model Owner | Before ST-02 execution (not a seal blocker) |
-| Head of Specs Team: verify ADR-002 location (RISK-09) | Head of Specs Team | Before ST-19 execution (not a seal blocker) |
+| Product Owner: confirm sprint goal wording | Product Owner | RESOLVED 2026-03-06 |
+| Product Owner: confirm scope (Option B phased approach) | Product Owner | RESOLVED 2026-03-06 |
+| Product Owner: confirm over-allocation acceptance | Product Owner | RESOLVED 2026-03-06 |
+| Data Model & Domain Schema Owner: confirm trade_reflections schema in data_model.md | Data Model Owner | Before ST-02 execution (Sprint 2 — not a Sprint 1 blocker) |
+| Head of Specs Team: verify ADR-002 location (RISK-09) | Head of Specs Team | Before ST-19 execution (Sprint 1 — check at start) |
 
 ---
 
