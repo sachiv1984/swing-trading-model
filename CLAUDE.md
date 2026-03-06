@@ -21,6 +21,7 @@ These prompts are **not** always-on context. They are loaded by Claude Code when
 |---------|-------------|-----------------|
 | `run ideas [--window-id <id>] [--mode strict\|standard]` | `claude/system/idea_intake_prompt.md` | Phase 0 — Idea intake (optional, before rebalance) |
 | `run roadmap --item-id <id> --item-name <n> [--date YYYY-MM-DD]` | `claude/system/roadmap_prompt.md` | Phase 1 — Roadmap rebalance (roadmap item completed) |
+| `run roadmap --reason "scheduled" [--date YYYY-MM-DD]` | `claude/system/roadmap_prompt.md` | Phase 1 — Roadmap rebalance (scheduled review, no completion event required) |
 | `manage roadmap [--dry-run]` | `claude/system/roadmap_management_prompt.md` | Phase 1M — Retire completed items, flag stale |
 | `groom backlog [--dry-run]` | `claude/system/backlog_management_prompt.md` | Phase 1M — Archive completed backlog items, health check |
 | `plan release --version <vX.Y> [--date YYYY-MM-DD]` or `run planning v<version>` | `claude/system/release_planning_prompt.md` | Phase 1B — Release planning |
@@ -41,7 +42,7 @@ When a command is issued, **read the prompt file first**, then begin execution. 
 These rules apply in every session regardless of which engine is running:
 
 - **Never modify sealed artefacts.** Files marked `sealed: true` in state.json, or in `Published` state, are immutable.
-- **Never modify governance files** unless explicitly instructed by the relevant prompt: `claude/charter/`, `claude/strategy/`, `claude/system/`.
+- **Never modify governance files** unless explicitly instructed by the relevant prompt: `claude/charter/`, `claude/strategy/`, `claude/system/`. Exception: `claude/system/prompt_change_log.md` may be appended by the roadmap engine's STEP 11 when action-now patches are applied under Head of Specs Team sign-off.
 - **Never merge a PR autonomously.** QA sign-off and Product Owner acceptance are always required.
 - **Delivery pressure does not override governance.** No timeline instruction changes a hard gate.
 - **Commit format is non-negotiable:** `[EPIC-xx][ST-xx] <description>` on all commits to `exec/**` branches.
