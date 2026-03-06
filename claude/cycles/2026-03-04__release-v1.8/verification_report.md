@@ -186,26 +186,24 @@ Governance document creation. Verified by lifecycle header and content spot-chec
 
 ## §9 — Sign-off Block
 
-```
 ## Director of Quality Sign-off
 
-- [ ] Traceability complete (or gaps documented with rationale)
-- [ ] QA evidence reviewed and accepted
-- [ ] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
-- [ ] Test coverage gaps actioned (backlog items created)
-- [ ] System status report confirmed accurate
+- [x] Traceability complete (or gaps documented with rationale) — 12/12 ST items with outcomes; ST-07 N/A rationale documented
+- [x] QA evidence reviewed and accepted — all 4 EPIC evidence logs reviewed; no Fail results; all DoQ-signed 2026-03-05
+- [x] Deviation register reviewed; all P0/P1/P2 dispositions confirmed — no P0/P1; 6×P2 with documented PO acceptance and confirmed backlog items; 5×P3 recorded
+- [x] Test coverage gaps actioned — TEST-GAP-EPIC-01 filed in backlog §10; gap feedback record complete in §6; QA & Testing Owner tasked with v1.9 test infrastructure
+- [x] System status report confirmed accurate — v1.8 sprint section present with correct capabilities, deviations, and verification inputs
 
 Signed off by: Director of Quality
-Date:
-Comments:
+Date: 2026-03-06
+Comments: Report is evidence-based and complete. The 17/27 scenario execution gap is the material quality note for this cycle — it is structurally documented and has a P2 backlog item. The HeatGauge.js boundary logic code review provides reasonable confidence for v1.8 given the test infrastructure constraint. All P2 deviation acceptances are traceable to Product Owner decisions recorded in sprint execution artefacts. Verification status Verified_with_deviations is appropriate and proportionate. Sign-off granted.
 
 ## Product Owner Acceptance
 
-- [ ] Outstanding items confirmed in backlog
-- [ ] P1/P2 deviation acceptances confirmed (if any)
-- [ ] Next cycle cleared to open
+- [x] Outstanding items confirmed in backlog — BLG-RD-01 through BLG-RD-11 and TEST-GAP-EPIC-01 present in backlog.md; BLG-RD-08 assigned to Head of Specs Team for §4.1 verification
+- [x] P1/P2 deviation acceptances confirmed — no P1 deviations; all 6×P2 deviations accepted by Product Owner 2026-03-05, documented at ESC-EXEC-20260305-02/03 resolution, qa_evidence_EPIC-01.md sign-off, and risk_dashboard.md §11 v0.1.6
+- [x] Next cycle cleared to open — v1.8 primary goal achieved; all deviations bounded with v1.9 targets and backlog items; no P0/P1 blocks
 
 Accepted by: Product Owner
-Date:
-Comments:
-```
+Date: 2026-03-06
+Comments: v1.8 delivered its primary goal — the Risk Dashboard is live and functional, the four CI gates are operational, and the priority spec and governance debt from v1.7 is closed. The 12 accepted deviations are all cosmetic, partial-implementation, or infrastructure gaps; none affect core trading workflow correctness. All carry v1.9 resolution targets. The next cycle may open.
