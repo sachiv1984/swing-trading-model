@@ -354,6 +354,33 @@ The system is ready for:
 
 ---
 
+## Sprint: 2026-03-04__release-v1.8
+**Date:** 2026-03-06
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Risk Dashboard page — portfolio heat gauge, drawdown summary, grace period panel, per-position risk table, prospective heat panel | docs/specs/frontend/pages/risk_dashboard.md; docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio; docs/specs/metrics_definitions.md#Portfolio Heat | DEV-ST03-01 through DEV-ST03-12 (all accepted P2/P3; see risk_dashboard.md §11) |
+| EPIC-02 | CI Quality Gates — golden output regression (5 PS + 7 SL vectors), backtest vs live stop reconciliation, pip-audit CVE scanning, OpenAPI drift detection | claude/strategy/strategy_rules.md; docs/reference/openapi.yaml | None |
+| EPIC-03 | Settings spec correction (PATCH/POST replaces PUT); openapi.yaml updated to v1.9.0 | docs/specs/api_contracts/settings_endpoints.md; docs/reference/openapi.yaml | None |
+| EPIC-04 | Unavailability failure mode policy; running API changelog | docs/ops/unavailability_policy.md; docs/specs/api_contracts/api_changelog.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| (none) | All 12 ST items completed within sprint | N/A |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md
+- Deviations filed: DEV-ST03-01 through DEV-ST03-12 (docs/specs/frontend/pages/risk_dashboard.md §11)
+- Test scenarios referenced: docs/testing/risk_dashboard_scenarios.md (EPIC-01; 10/27 executable in v1.8 environment)
+
+---
+
 ## Sprint: 2026-03-02__release-v1.7
 **Date:** 2026-03-02
 **Status:** Verified — Director of Quality sign-off 2026-03-03; Product Owner acceptance 2026-03-03
