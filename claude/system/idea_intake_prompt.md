@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-03-03
+**Version:** 1.2
+**Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -205,19 +205,19 @@ Minimum submissions per agent: 2 net-new ideas
 Template: claude/system/idea_template.md
 Submit to: claude/ideas/submissions/
 
-Parked ideas from prior windows are available for resubmission. Review claude/ideas/submissions/ for any files with Status: Parked.
+Parked ideas from prior windows are available for resubmission. Review claude/ideas/submissions/ for any files with Status: Parked-cycle-<n>.
 ```
 
 ---
 
 ## STEP 1 — Load Prior Parked Ideas
 
-Read `claude/ideas/submissions/` for any files with `**Status:** Parked`.
+Read `claude/ideas/submissions/` for any files with `**Status:** Parked-cycle-<n>` (where `<n>` is any positive integer).
 
 For each parked idea:
 - Surface it to the submitting agent as a candidate for resubmission
-- Note the original submission date and window ID
-- The agent may: resubmit with updates (file updated, status reset to `Submitted`), leave it parked (no action), or withdraw it (file updated, status set to `Withdrawn`)
+- Note the original submission date, window ID, and current cycle count
+- The agent may: resubmit with updates (file updated, status reset to `Submitted`), leave it parked (no action — cycle count will increment in STEP 4 of the next roadmap run), or withdraw it (file updated, status set to `Withdrawn`)
 
 Record the count of parked ideas surfaced in `ideas_window.json`.
 
@@ -310,9 +310,9 @@ Closed: <date/time>
 
 ## Parked Ideas Carried Forward (Not Resubmitted)
 
-| Idea ID | Agent | Title | Original Window |
-|---------|-------|-------|----------------|
-| ... | | | |
+| Idea ID | Agent | Title | Original Window | Parked Cycle |
+|---------|-------|-------|----------------|--------------|
+| ... | | | | |
 
 ## Notes
 
@@ -353,7 +353,7 @@ The roadmap engine's STEP 4 is responsible for managing idea documents after a r
 |----------------------------------|-----------------|
 | ✅ Promoted to roadmap (Add decision in STEP 8) | Status updated to `Promoted` — file remains as historical record |
 | ❌ Rejected | Status updated to `Rejected`; if strong, copied to `claude/ideas/rejected_but_strong.md` |
-| 🅿 Parked | Status remains `Parked` (or updated to `Parked` if it was `Submitted`) — stays in submissions for next window |
+| 🅿 Parked | Status updated to `Parked-cycle-1` on first park; incremented to `Parked-cycle-<n+1>` on each subsequent roadmap run where the idea remains parked. Ideas at `Parked-cycle-3` or above require active Product Owner disposition — silent re-park is not permitted |
 | Withdrawn by agent | Status updated to `Withdrawn` — file remains as record |
 
 The submissions folder is never bulk-cleared. Document state is managed item by item.
@@ -366,9 +366,9 @@ The submissions folder is never bulk-cleared. Document state is managed item by 
 - **Template compliance is mandatory.** An incomplete submission is either discarded (strict) or flagged (standard) — it is never silently accepted.
 - **No decisions made here.** The intake engine collects and structures. The roadmap engine decides.
 - **Parked ideas persist.** A parked idea is never deleted by the intake engine. It stays until the roadmap engine or the submitting agent withdraws it.
+- **Parked cycle count is authoritative.** The `Parked-cycle-<n>` suffix in the Status field is the single source of truth for how many consecutive roadmap runs an idea has remained parked. The roadmap engine's stale idea expiry logic keys on this value.
 - **Displacement is not required at submission time.** The "What Would You Stop?" field invites thinking — it is not a gate. Displacement is determined in STEP 5 of the roadmap engine where all candidates and constraints are visible simultaneously.
 - **All agent roles submit.** Domain breadth matters — a narrow domain does not exempt an agent from the minimum. If no net-new ideas exist, the agent records that explicitly rather than submitting nothing.
-
 
 ---
 
@@ -376,5 +376,6 @@ The submissions folder is never bulk-cleared. Document state is managed item by 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-03-06 | Updated all `Status: Parked` references to `Parked-cycle-<n>` to align with roadmap_prompt.md v2.0 stale idea expiry logic. STEP 1 read instruction, STEP 0 window announcement, §9 lifecycle table, and §10 governance invariants updated. Added `Parked Cycle` column to window summary Parked Ideas table. Added explicit governance invariant documenting the cycle count as authoritative for stale idea expiry. |
 | 1.1 | 2026-03-03 | Removed "Proposed Displacement" as a required submission field. Replaced with "What Would You Stop?" as a non-binding thinking prompt — "No view — leave to debate" is a valid answer. Displacement is now determined in STEP 5 of the roadmap engine. Updated required fields table, submission quality check, and governance invariants accordingly. Updated idea_template.md to match. |
 | 1.0 | 2026-03-03 | Initial version. |
