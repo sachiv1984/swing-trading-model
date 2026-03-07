@@ -1,7 +1,7 @@
 You are performing a full operational audit of the development lifecycle defined in this repository.
 
 Primary document under review:
-Sprint Planning Operational Playbook v3.0
+Sprint Planning Operational Playbook
 
 Your objective is to determine whether the playbook and supporting prompts collectively provide a **complete, low-friction, and reliable development cycle** when executed by Claude Code agents.
 
