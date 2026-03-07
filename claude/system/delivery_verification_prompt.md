@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-03-03
+**Version:** 1.1
+**Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -21,7 +21,7 @@ This engine:
 - Confirms every in-scope item has a traceable outcome
 - Reviews QA evidence against canonical specs
 - Assesses deviations and enforces resolution thresholds
-- Confirms outstanding delegated items are in the backlog
+- Confirms outstanding delegated items and deferred execution blockers are dispositioned
 - Identifies test scenario gaps and commissions the QA & Testing Owner to fill them
 - Produces a `verification_report.md` with a definitive status
 - Updates global state to unlock (or block) the next planning cycle
@@ -30,7 +30,7 @@ This routine does **NOT**:
 - Re-execute or re-test work (that is the Director of Quality's domain)
 - Reprioritise the backlog or roadmap
 - Override QA sign-offs already given
-- Alter canonical specs (read-only except where system_status_report.md is updated)
+- Alter canonical specs (read-only except where `docs/System_status_report.md` is updated)
 
 ---
 
@@ -49,7 +49,7 @@ Rules:
   - `standard` (default): proceed with flags on minor gaps; still halt on hard gates
 - Invocation must start with `run delivery verification` (case-insensitive match allowed).
 
-**Who issues this command:** The PMO Lead persona. In practice, the user running this in Claude Code is acting in the PMO Lead capacity — closing out the sprint phase before the next cycle opens. This command should be issued after the Director of Quality has confirmed (via QA evidence sign-offs on `qa_evidence_EPIC-xx.md`) that the sprint evidence is ready for verification. The readiness gate (STEP -1) will fail fast if it is not.
+**Who issues this command:** The PMO Lead persona, after the Director of Quality has confirmed (via QA evidence sign-offs on `qa_evidence_EPIC-xx.md`) that the sprint evidence is ready for verification. The readiness gate (STEP -1) will fail fast if it is not.
 
 If invocation is not exact, do not run. Treat as conversational.
 
@@ -77,13 +77,16 @@ This routine may not override any of the above.
 | Global state | `.claude_current_state.json` | Hard gate |
 | Sprint close record | `claude/cycles/<cycle_id>/sprint_close.md` | Hard gate |
 | Execution state (sealed) | `claude/cycles/<cycle_id>/execution_state.json` | Hard gate |
-| Backlog slice (sealed) | `claude/cycles/<cycle_id>/stage4_backlog_slice.md` | Hard gate |
+| Backlog slice (sealed) | See note below — may be amended | Hard gate |
 | Sprint backlog (sealed) | `claude/cycles/<cycle_id>/sprint_backlog.md` | Hard gate |
 | QA evidence logs | `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per merged EPIC) | Hard gate |
 | System status report | `docs/System_status_report.md` | Required |
 | Canonical specs | Paths from `spec_references` in `execution_state.json` | Required |
 | Test scenarios | Paths from `test_scenarios` per EPIC in `execution_state.json` | Required (may be empty) |
 | Backlog | `claude/backlog/backlog.md` | Required for traceability check |
+| Release plan state | `claude/cycles/<cycle_id>/state.json` | Required (deferred execution blockers) |
+
+**Backlog slice source-of-truth rule:** At STEP -1, check `.claude_current_state.json` for `amended_backlog_slice_path`. If present and non-empty, that file is the authoritative backlog slice — use it throughout in place of `stage4_backlog_slice.md`. Cross-reference against `execution_state.json.backlog_slice_source` to confirm both pointers agree. If they disagree: flag to the PMO Lead before proceeding. If `amended_backlog_slice_path` is absent or empty, use `stage4_backlog_slice.md`.
 
 ---
 
@@ -92,6 +95,7 @@ This routine may not override any of the above.
 During this routine you may write only to:
 
 - `claude/cycles/<cycle_id>/verification_report.md` (create)
+- `claude/cycles/<cycle_id>/verification_escalations.md` (create or append — hard gate blockers only)
 - `docs/System_status_report.md` (update — reconciliation only)
 - `claude/backlog/backlog.md` (append-only — outstanding items and test scenario gaps only)
 - `.claude_current_state.json` (status update only)
@@ -100,6 +104,7 @@ You must **not** modify:
 - `claude/cycles/<cycle_id>/execution_state.json` (sealed)
 - `claude/cycles/<cycle_id>/sprint_close.md` (sealed)
 - `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
+- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
 - `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed)
 - `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (owned by Director of Quality)
 - Any canonical spec file
@@ -142,6 +147,22 @@ If any required role is missing or malformed: halt.
 
 ---
 
+## ESCALATION SUBROUTINE (Callable)
+
+Trigger: whenever a hard gate produces a blocker that cannot be resolved within this run (e.g. a P0 deviation with an unreachable owner, a missing QA sign-off that requires human action before the report can seal).
+
+Create or append to: `claude/cycles/<cycle_id>/verification_escalations.md`
+
+Use escalation format per `claude/system/shared_standards.md` §4. ID prefix: `ESC-VER-YYYYMMDD-nn`.
+
+Record: blocking condition, owning authority, resolution path, SLA.
+
+After filing: update `verification_report.md` §8 (Open Items) with a reference to the escalation record.
+
+This subroutine does not change the verification status — a P0 that is escalated is still a P0. The escalation tracks progress toward resolution; only resolution itself changes the status.
+
+---
+
 ## STEP -1 — Preflight Gate (Hard Gate)
 
 **First action:** Read `claude/cycles/<cycle_id>/execution_state.json`. Confirm `sealed = true`. If not sealed: halt — the sprint execution record is not closed. The execution engine must complete and seal before verification can run.
@@ -152,8 +173,14 @@ Shared standards (escalation format, halt report format, gh CLI commands, identi
 
 Read `.claude_current_state.json`:
 - `status` must be `Sprint_Complete`.
-- If `Executing` or `Blocked`: halt — sprint is not closed.
-- If `Verified` or `Verification_Failed`: confirm with the user whether they are re-running verification for this cycle. If yes: proceed. If a prior `verification_report.md` exists, archive it by appending `_prev_<timestamp>` to the filename before creating a new one.
+- If `status` is `Executing` or `Blocked`: halt — sprint is not closed. The execution engine must complete all EPICs, seal the execution record, and set status to `Sprint_Complete` before verification can proceed.
+- If `status` is `Verified` or `Not_Verified`: confirm with the user whether they are re-running verification for this cycle. If yes: proceed. If a prior `verification_report.md` exists, archive it by appending `_prev_<timestamp>` to the filename before creating a new one.
+
+Check `amended_backlog_slice_path`:
+- If present and non-empty: record this as the authoritative backlog slice path for this run. Verify the file exists — if not, halt and report.
+- If absent or empty: `stage4_backlog_slice.md` is the authoritative slice.
+
+Cross-reference the identified authoritative path against `execution_state.json.backlog_slice_source`. If they disagree: flag to PMO Lead before proceeding. Do not silently verify against a mismatched scope.
 
 ### -1.2 Sprint Close Readiness Statement
 
@@ -185,7 +212,7 @@ Verify all files in Section 4 exist. If any are missing: halt and report exactly
 
 Purpose: confirm every item that was in scope has a traceable outcome.
 
-For every ST item in `stage4_backlog_slice.md`:
+For every ST item in the authoritative backlog slice (identified in STEP -1.1):
 
 1. Locate its record in `execution_state.json`.
 2. Check status — must be `done`, `merged`, or `returned_to_backlog`.
@@ -242,7 +269,7 @@ For each deviation:
 1. Locate it in the referenced canonical spec file (filed there per execution_prompt §3.1.A step 10).
 2. Confirm the deviation entry contains: priority (P0–P3), description, canonical requirement, target resolution release, owner, and backlog reference.
 3. Apply the severity policy (Section 7):
-   - **P0:** Hard block. Set `verification_status = Not_Verified`. Do not proceed to STEP 8 signing until resolved. No acceptance path exists.
+   - **P0:** Hard block. Set `verification_status = Not_Verified`. File an escalation record in `verification_escalations.md` (ESC-VER subroutine). Do not proceed to STEP 8 signing until resolved. No acceptance path exists.
    - **P1:** Hard block. Require documented acceptance from Product Owner AND Director of Quality in `verification_report.md` §4 to proceed.
    - **P2:** Hard block. Require documented acceptance with confirmed backlog item. If backlog item is missing: add it now (permitted write).
    - **P3:** Record in report. Confirm backlog item exists (add if missing). Verification proceeds as `Verified_with_deviations`.
@@ -256,7 +283,9 @@ For each deviation:
 
 ---
 
-## STEP 4 — Outstanding Items Backlog Check
+## STEP 4 — Outstanding Items and Deferred Execution Blockers
+
+### 4.1 Outstanding Items Backlog Check
 
 Any item unresolved at sprint close must be in the backlog. This is a final sweep — not a block.
 
@@ -267,6 +296,22 @@ Check `sprint_close.md` for:
 For each:
 1. Confirm `backlog.md` entry exists with `cycle_id` reference. If missing: add it now (permitted write).
 2. Record in `verification_report.md` §5.
+
+### 4.2 Deferred Execution Blockers Review
+
+Read `deferred_execution_blockers` from `claude/cycles/<cycle_id>/state.json` (set by the Release Planning Engine at publish time; accepted by the Product Owner at Sprint Planning).
+
+For each deferred execution blocker:
+
+| Situation | Action |
+|-----------|--------|
+| Resolved during execution (item `done` or `merged`) | Record as resolved in `verification_report.md` §5 |
+| Item `returned_to_backlog` | Confirm backlog entry references the original blocker; record as carried forward |
+| Not resolved and no backlog entry | Add backlog entry now (permitted write); record as unresolved carry-forward |
+
+If `deferred_execution_blockers` is empty or field is absent: note "No deferred execution blockers" and continue.
+
+This step is informational — deferred execution blockers do not block verification status (the Product Owner accepted them at planning time). Their purpose here is audit closure: every blocker accepted at planning must be traceable to an outcome at verification.
 
 ---
 
@@ -336,7 +381,7 @@ Based on findings from STEPS 1–6:
 | Hard blocks present but all P1/P2 deviations have documented acceptance by Product Owner + Director of Quality | `Verified_with_deviations` |
 | Any P0 deviation open; any P1/P2 without documented acceptance; any QA Fail result unresolved | `Not_Verified` |
 
-`Verified` and `Verified_with_deviations` both unlock the next cycle.  
+`Verified` and `Verified_with_deviations` both unlock the next cycle.
 `Not_Verified` blocks the next cycle until the engine is re-run and produces a passing status.
 
 ---
@@ -361,6 +406,7 @@ Body (nine sections in order):
 Status: Verified | Verified_with_deviations | Not_Verified
 Sprint goal: <text>
 Cycle: <cycle_id>
+Backlog slice source: <file path used — original or amended>
 Verification run: <ISO-8601 UTC>
 ```
 
@@ -370,13 +416,13 @@ Verification run: <ISO-8601 UTC>
 
 **§4 — Deviation Register** — from STEP 3. Full table. Hard blocks section. Acceptance records section (for any P1/P2 accepted: who accepted, when, rationale).
 
-**§5 — Outstanding Items Carried to Backlog** — from STEP 4. List: item, reason, backlog entry ref.
+**§5 — Outstanding Items and Deferred Execution Blockers** — from STEP 4. Two sub-sections: (a) outstanding items carried to backlog (item, reason, backlog entry ref); (b) deferred execution blocker dispositions (blocker description, original acceptance, outcome).
 
 **§6 — Test Coverage Assessment** — from STEP 5. Per EPIC: scenario status. Full gap feedback records. Backlog items added.
 
 **§7 — System Status Confirmation** — from STEP 6. Confirmed / corrected / created. Any corrections listed.
 
-**§8 — Open Items** *(only if `Not_Verified`)* — every condition that must be resolved before re-running. Each: description, owner, resolution path.
+**§8 — Open Items** *(only if `Not_Verified`)* — every condition that must be resolved before re-running. Each: description, owner, resolution path. Reference any `verification_escalations.md` entries by ID.
 
 **§9 — Sign-off Block**
 
@@ -388,6 +434,7 @@ Verification run: <ISO-8601 UTC>
 - [ ] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
 - [ ] Test coverage gaps actioned (backlog items created)
 - [ ] System status report confirmed accurate
+- [ ] Deferred execution blockers dispositioned
 
 Signed off by: Director of Quality
 Date:
@@ -397,6 +444,7 @@ Comments:
 
 - [ ] Outstanding items confirmed in backlog
 - [ ] P1/P2 deviation acceptances confirmed (if any)
+- [ ] Deferred execution blocker outcomes acknowledged
 - [ ] Next cycle cleared to open
 
 Accepted by: Product Owner
@@ -432,7 +480,7 @@ Surface to user:
 Update `.claude_current_state.json`:
 ```json
 {
-  "status": "Verification_Failed",
+  "status": "Not_Verified",
   "verification_report": "claude/cycles/<cycle_id>/verification_report.md",
   "verification_status": "Not_Verified",
   "next_cycle_unblocked": false,
@@ -444,6 +492,7 @@ Output halt report per `claude/system/shared_standards.md` §5. Include:
 - Which conditions are unresolved (exact list)
 - Owner per condition
 - Resolution path per condition
+- Reference to `verification_escalations.md` entries (if any filed this run)
 - How to re-run: once conditions are met, re-issue `run delivery verification --cycle "<cycle_id>"`. The engine re-reads all inputs and re-evaluates. It does not re-process steps that were already clean.
 
 **The next planning cycle may not open until `next_cycle_unblocked = true`.** The Roadmap Rebalance Engine and Release Planning Engine must check this flag at their preflight gates.
@@ -456,6 +505,7 @@ Commit all artefacts created or modified by this routine:
 
 ```
 git add claude/cycles/<cycle_id>/verification_report.md
+git add claude/cycles/<cycle_id>/verification_escalations.md  (if created)
 git add docs/System_status_report.md
 git add claude/backlog/backlog.md  (if modified)
 git add .claude_current_state.json
@@ -471,12 +521,14 @@ If git operations are unavailable: output the exact files to stage and the commi
 
 The run is complete only if:
 
-- `verification_report.md` exists with all 9 sections (§8 only if Not_Verified)
+- `verification_report.md` exists with all 9 sections (§8 only if `Not_Verified`)
 - Verification status is one of: `Verified`, `Verified_with_deviations`, `Not_Verified`
 - All `returned_to_backlog` items have confirmed backlog entries
 - All P2/P3 deviations have backlog items
 - All test coverage gaps have backlog items for QA & Testing Owner
+- All deferred execution blockers have a recorded disposition in `verification_report.md` §5
 - `docs/System_status_report.md` confirmed accurate for this cycle
+- `verification_escalations.md` filed for any hard gate blockers that required escalation (if applicable)
 - `.claude_current_state.json` updated with verification outcome and `next_cycle_unblocked` flag
 - STEP 10 commit complete (or commit manifest produced)
 
@@ -487,7 +539,17 @@ The run is complete only if:
 - **No autonomous verification.** The engine assembles evidence and produces the report. The Director of Quality and Product Owner sign off. The engine does not self-certify.
 - **No cycle unlocking without passing status.** `next_cycle_unblocked = true` is only set when status is `Verified` or `Verified_with_deviations`. Never when `Not_Verified`.
 - **No scope revision.** This engine reads sealed artefacts. It does not add, remove, or change what was in scope.
-- **All gaps are traceable.** Nothing is silently dropped. Every outstanding item, test gap, and deviation has a backlog entry before the report is sealed.
+- **All gaps are traceable.** Nothing is silently dropped. Every outstanding item, test gap, deviation, and deferred execution blocker has a disposition before the report is sealed.
 - **Re-runnable.** `Not_Verified` does not close the cycle — re-issue the command once conditions are resolved. The engine focuses only on the remaining open items.
 - **P0 deviations have no acceptance path.** They must be resolved. The engine will never record a P0 deviation as accepted — only the resolution of the underlying issue unlocks verification.
+- **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, scope traceability runs against that file. Verifying against the original slice when an amendment has sealed is a process integrity failure.
 - **Delivery pressure does not override quality gates.** The Director of Quality and Product Owner sign off independently. Neither can unilaterally accept a P0 deviation.
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | 2026-03-07 | **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. STEP -1.1 extended: checks `amended_backlog_slice_path` in `.claude_current_state.json`; cross-references against `execution_state.json.backlog_slice_source`; flags disagreement before proceeding. STEP 1 updated: iterates over the authoritative slice (not hardcoded `stage4_backlog_slice.md`). §5 write scope: amended backlog slice added to must-not-modify list. `verification_report.md` §1 template: `Backlog slice source` field added. §9 invariant added. **`Verification_Failed` status corrected to `Not_Verified`.** STEP 9 `Not_Verified` path: `status` field in `.claude_current_state.json` changed from `Verification_Failed` to `Not_Verified`, consistent with guide §9.4 state machine and lifecycle table. **Deferred execution blockers acknowledged (STEP 4.2, new).** STEP 4 split into §4.1 (outstanding items, unchanged) and §4.2 (deferred execution blockers). §4.2 reads `deferred_execution_blockers` from `state.json`, dispositions each blocker, and records outcomes in `verification_report.md` §5. Informational only — does not block verification status. Sign-off blocks in `verification_report.md` §9 updated: DoQ checklist and PO checklist each add a deferred blocker acknowledgement line. §8 completion condition updated. §9 invariant updated. **Escalation subroutine added.** `verification_escalations.md` added to §5 write scope. Escalation subroutine added (callable, ID prefix `ESC-VER-YYYYMMDD-nn`). STEP 3: P0 deviation now files escalation record. STEP 9 Not_Verified path: references escalation records in halt report. STEP 10 commit: `verification_escalations.md` added. §8 completion condition updated. **Guide fix required:** §9 source prompt v1.0 → v1.1; §14 Verification Engine Source → v1.1; `Not_Verified` confirmed as the canonical status string (not `Verification_Failed`). |
+| 1.0 | 2026-03-03 | Initial version. |

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-03-06
+**Version:** 1.2
+**Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -24,7 +24,8 @@ This engine:
 - Updates the roadmap, backlog, scope, and decisions documents to reflect the shipped state
 - Confirms canonical spec deviation entries are compliant
 - Reconciles operational and index documents
-- Reviews both lessons learnt records and applies immediate process improvement actions
+- Reviews all lessons learnt records and applies immediate process improvement actions
+- Produces a `lessons_learnt_closure.md` record via `lessons_learnt_prompt.md §3.5`
 - Produces a closure record and communicates completion to the Product Owner and Head of Specs Team
 - Updates global state to confirm the cycle is fully sealed
 
@@ -49,7 +50,7 @@ Rules:
 - `--mode` optional:
   - `strict`: halt on any missing document, incomplete field, or unresolved action item
   - `standard` (default): proceed with flags on minor gaps; still halt on hard gates
-- `--dry-run` optional: read all inputs and produce a closure plan without making any writes or commits
+- `--dry-run` optional: read all inputs and produce a full closure plan — listing every write that would be made, every step outcome, and any flags — without making any writes, state updates, or commits. Dry-run output is the deliverable; the routine ends after producing it.
 - Invocation must start with `run post-ship` (case-insensitive match allowed)
 
 If invocation is not exact, do not run. Treat as conversational.
@@ -81,6 +82,7 @@ This routine may not override any of the above.
 | Verification report | `claude/cycles/<cycle_id>/verification_report.md` | Hard gate |
 | Sprint close record | `claude/cycles/<cycle_id>/sprint_close.md` | Hard gate |
 | Execution state (sealed) | `claude/cycles/<cycle_id>/execution_state.json` | Hard gate |
+| Backlog slice (sealed) | See note below — may be amended | Hard gate |
 | Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Required |
 | Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Required |
 | Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` | Required (if produced) |
@@ -92,15 +94,19 @@ This routine may not override any of the above.
 | Canonical specs | Paths from `spec_references` in `execution_state.json` | Required (deviation check) |
 | Specs Index | `docs/specs/Specs_Index.md` | Required |
 
+**Backlog slice source-of-truth rule:** At STEP 0, check `.claude_current_state.json` for `amended_backlog_slice_path`. If present and non-empty, that file is the authoritative backlog slice — use it throughout in place of `stage4_backlog_slice.md`. Cross-reference against `execution_state.json.backlog_slice_source` to confirm both pointers agree. If they disagree: flag to the PMO Lead before proceeding. If `amended_backlog_slice_path` is absent or empty, use `stage4_backlog_slice.md`.
+
 ---
 
 ## 5. Write Scope Restriction (Hard Gate)
+
+**Dry-run exception:** If `--dry-run` is active, none of the permitted writes below may be made. The routine produces a closure plan only.
 
 During this routine you may write only to:
 
 - `docs/product/changelog.md` (append new version entry)
 - `claude/roadmap/current_roadmap.md` (status update + version headers only)
-- `claude/backlog/backlog.md` (mark shipped items complete; no other changes)
+- `claude/backlog/backlog.md` (mark shipped items complete; add missing Phase 4 items; no other changes)
 - Scope document at `docs/product/scope/scope--{id}-{slug}.md` (status → Superseded only)
 - Decisions record at `docs/product/decisions/{id}-{slug}.md` (status → Superseded only)
 - Canonical spec files (deviation note compliance fixes only — missing required fields per §3 Known Deviation Standard; no other spec edits permitted)
@@ -108,8 +114,8 @@ During this routine you may write only to:
 - `docs/operations/validation_system.md` (reconciliation only — correct stale notes)
 - `docs/specs/Specs_Index.md` (mark resolved items; add new gaps identified during delivery)
 - Templates and prompt files where a lessons learnt action specifies an immediate fix (version bump required)
+- `claude/cycles/<cycle_id>/lessons_learnt_closure.md` (create via STEP 8.5)
 - `claude/cycles/<cycle_id>/closure_record.md` (create at close)
-- `claude/cycles/<cycle_id>/lessons_learnt_closure.md` (create via lessons_learnt_prompt.md §3.5)
 - `.claude_current_state.json` (status update only)
 
 You must **not** modify:
@@ -117,9 +123,11 @@ You must **not** modify:
 - `claude/cycles/<cycle_id>/sprint_close.md` (sealed)
 - `claude/cycles/<cycle_id>/execution_state.json` (sealed)
 - `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
+- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
 - `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed)
 - `claude/cycles/<cycle_id>/lessons_learnt.md` (read-only — do not edit, only apply)
 - `claude/cycles/<cycle_id>/lessons_learnt_execution.md` (read-only — do not edit, only apply)
+- `claude/cycles/<cycle_id>/lessons_learnt_verification.md` (read-only — do not edit, only apply)
 - `claude/strategy/strategy_rules.md`
 - Any governance document not listed in the permitted write scope above
 
@@ -172,7 +180,7 @@ Read `claude/cycles/<cycle_id>/verification_report.md`:
 
 ### -1.4 Required Files Present
 
-Verify all files in Section 4 exist. If any are missing: halt and report exactly which.
+Verify all files in Section 4 exist (backlog slice subject to the source-of-truth rule resolved in STEP 0). If any are missing: halt and report exactly which.
 
 ### -1.5 Required Authority Roles Exist
 
@@ -180,21 +188,31 @@ Verify agent files per Section 6. If any missing: halt.
 
 ### -1.6 Write Permission Test
 
-Create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can be written. Remove it. If write fails: halt.
+If `--dry-run` is NOT active: create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can be written. Remove it. If write fails: halt.
+
+If `--dry-run` is active: skip this check.
 
 ---
 
 ## STEP 0 — Load Release Context
 
+**Backlog slice resolution (first action):** Check `.claude_current_state.json` for `amended_backlog_slice_path`:
+- If present and non-empty: this is the authoritative backlog slice for this run. Verify the file exists — if not, halt.
+- If absent or empty: `stage4_backlog_slice.md` is the authoritative slice.
+
+Cross-reference the identified path against `execution_state.json.backlog_slice_source`. If they disagree: flag to PMO Lead before proceeding. Record the authoritative path as `backlog_slice_source` in the closure record §1.
+
 Extract from the verified inputs:
 
 1. From `verification_report.md`: release version (`vX.Y`), verification status (`Verified` / `Verified_with_deviations`), deviation register, QA summary.
-2. From `execution_state.json`: merged EPICs (with EPIC IDs and descriptions), all ST items with `spec_references`, `deviations_filed` flags, returned-to-backlog items.
+2. From `execution_state.json`: merged EPICs (with EPIC IDs and descriptions), all ST items with `spec_references`, `deviations_filed` flags, returned-to-backlog items, `backlog_slice_source`.
 3. From `sprint_close.md`: sprint goal, deviations filed list, outstanding delegated items, verification readiness statement.
 4. From `current_roadmap.md`: the roadmap item ID and feature name for this release.
-5. From `backlog.md`: identify all items with this `cycle_id` added by Phase 4 (returned items, P2/P3 deviation items, test scenario gap items) — these must all be present before Step 3 can pass.
+5. From `backlog.md`: identify all items with this `cycle_id` added by Phase 4 (returned items, P2/P3 deviation items, test scenario gap items) — these must all be present before STEP 3 can pass.
 
 Confirm: release version, feature name, `cycle_id`, ship date (use today if not recorded elsewhere), and Product Owner sign-off date are all resolvable. If any cannot be determined: halt in `strict` mode; flag and proceed with `[UNKNOWN]` placeholder in `standard` mode.
+
+**If `--dry-run` is active:** After completing context load, produce the full closure plan (listing every step, every write that would be made, every flag) and end the routine. Do not proceed to STEP 1.
 
 ---
 
@@ -262,7 +280,7 @@ Update `claude/roadmap/current_roadmap.md`:
 
 ## STEP 3 — Backlog Reconciliation (Hard Gate)
 
-Update `claude/backlog/backlog.md`:
+Update `claude/backlog/backlog.md`. All reconciliation is performed against the authoritative backlog slice identified in STEP 0.
 
 ### 3.1 Mark shipped items complete
 
@@ -286,7 +304,7 @@ Items in `backlog.md` that have been assigned to the next release (per sprint cl
 
 Update `Last Updated` on `backlog.md` to today's date.
 
-**Failure condition:** Any shipped item still shown as open after this step. Any Phase 4 addition unaccounted for.
+**Failure condition:** Any shipped item still shown as open after this step. Any Phase 4 addition unaccounted for. Any item in the authoritative backlog slice with no traceable outcome in `backlog.md`.
 
 ---
 
@@ -394,7 +412,7 @@ Read all available lessons learnt records for this cycle:
 | Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` |
 | Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` (if present) |
 
-For each action item in both records, classify it:
+For each action item in all records, classify it:
 
 | Class | Criteria | Action |
 |-------|----------|--------|
@@ -409,7 +427,23 @@ For each action item in both records, classify it:
 Produce a consolidated action summary:
 - Immediate actions applied: `N` (list each: document updated, version bumped)
 - Deferred to next cycle: `N` (list each: action, owner, target cycle)
-- Escalated for decision: `N` (list each: question, owner, deadline)
+- Escalated for decision: `N` (list each: question, owner, 72-hour deadline from today)
+
+---
+
+## STEP 8.5 — Produce Lessons Learnt Closure Record
+
+Invoke `lessons_learnt_prompt.md §3.5` using the consolidated action summary produced in STEP 8 as input.
+
+The lessons learnt prompt will create: `claude/cycles/<cycle_id>/lessons_learnt_closure.md`
+
+This record covers:
+- Closure-phase observations (document gaps surfaced, deviation compliance corrections, spec index gaps added)
+- The consolidated action summary from STEP 8 (all three records reviewed, classified, and applied)
+- Any process improvements applied immediately during this run (with document refs and version bumps)
+- Carry-forward items for the next cycle
+
+Do not proceed to STEP 9 until `lessons_learnt_closure.md` exists and is non-empty. If the lessons learnt prompt cannot be invoked: produce the file directly using the structure from `lessons_learnt_prompt.md §3.5`, record the deviation in the closure record §6.
 
 ---
 
@@ -435,6 +469,7 @@ Release: v<X.Y> — <feature name>
 Ship date: <date>
 Cycle: <cycle_id>
 Verification status: <Verified | Verified_with_deviations>
+Backlog slice source: <file path used — original or amended>
 Closure run: <ISO-8601 UTC>
 ```
 
@@ -446,10 +481,11 @@ Closure run: <ISO-8601 UTC>
 | 2 | claude/roadmap/current_roadmap.md | Marked ✅ Complete; version headers updated | ✅ |
 | 3 | claude/backlog/backlog.md | N items marked COMPLETE; N Phase 4 additions confirmed | ✅ |
 | 4 | Scope document | Status → Superseded | ✅ / ⚠ not found |
-| 5 | Decisions record | Status → Superseded | ✅ / ⚠ not found |
+| 5 | Decisions record | Status → Superseded | ✅ / ⚠ not found / N/A |
 | 6 | Canonical specs | N deviations checked; N fields corrected | ✅ |
 | 7 | Operational docs | N corrections made | ✅ / N/A |
 | 8 | Specs Index | N items resolved; N gaps added | ✅ |
+| 8.5 | lessons_learnt_closure.md | Created via lessons_learnt_prompt.md §3.5 | ✅ |
 
 **§3 — Backlog Additions This Run** — any items added to `backlog.md` by this routine (Phase 4 items that were missing, new gaps). List each with backlog ref.
 
@@ -457,7 +493,7 @@ Closure run: <ISO-8601 UTC>
 
 **§5 — Lessons Learnt Action Summary** — from STEP 8. Full three-way breakdown (immediate / deferred / decision_required) with detail per item. References all records reviewed (Release Planning, Execution, Verification).
 
-**§6 — Outstanding Actions** — any items that could not be completed by this routine (e.g. scope document not found, document owner unresponsive). For each: description, owner, deadline, escalation path.
+**§6 — Outstanding Actions** — any items that could not be completed by this routine (e.g. scope document not found, document owner unresponsive, lessons_learnt_prompt.md could not be invoked). For each: description, owner, deadline, escalation path.
 
 **§7 — Closure Confirmation**
 ```
@@ -507,8 +543,8 @@ git add docs/System_status_report.md         (if modified)
 git add docs/operations/validation_system.md (if modified)
 git add docs/specs/Specs_Index.md            (if modified)
 git add <any template or prompt files updated by lessons learnt actions>
-git add claude/cycles/<cycle_id>/closure_record.md
 git add claude/cycles/<cycle_id>/lessons_learnt_closure.md
+git add claude/cycles/<cycle_id>/closure_record.md
 git add .claude_current_state.json
 git commit -m "[GOVERNANCE] Post-ship closure complete: <cycle_id> — v<X.Y>"
 git push origin <current-branch>
@@ -523,17 +559,19 @@ If git operations are unavailable: output the exact files to stage and the commi
 The run is complete only if:
 
 - `closure_record.md` exists with all 7 sections
-- `lessons_learnt_closure.md` exists and follows required structure
+- `lessons_learnt_closure.md` exists and follows the structure from `lessons_learnt_prompt.md §3.5`
 - Changelog entry written and complete for this release version
 - Roadmap entry marked ✅ Complete
-- All shipped backlog items marked COMPLETE; all Phase 4 additions confirmed present
+- All shipped backlog items marked COMPLETE; all Phase 4 additions confirmed present; authoritative backlog slice (original or amended) fully reconciled
 - Scope and decisions documents marked Superseded (or outstanding action filed if not found)
 - All deviation entries in canonical specs have required fields
 - Operational documents reconciled
 - Specs Index reviewed and updated
-- Both lessons learnt records reviewed; every action item has a disposition
+- All lessons learnt records reviewed; every action item has a disposition
 - `.claude_current_state.json` updated with `post_ship_complete = true` and `status = Closed`
 - STEP 11 commit complete (or commit manifest produced)
+
+**Dry-run:** Run is complete when the closure plan is produced after STEP 0. No files written, no state updated, no commit.
 
 ---
 
@@ -557,3 +595,15 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 - **Immediate lessons learnt actions are non-deferrable.** If an action can be applied now (template fix, prompt correction), it must be. Do not defer what can be done immediately.
 - **Outstanding actions do not block the next cycle** — but they must be recorded and owned. Nothing is silently dropped.
 - **Delivery pressure does not override closure steps.** The changelog, roadmap, and backlog must be updated before the next cycle opens, regardless of timeline.
+- **Dry-run produces no side effects.** No files written, no state changed, no commit made. The closure plan is the sole output.
+- **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, backlog reconciliation (STEP 3) runs against that file. Reconciling against the original slice when an amendment has sealed is a process integrity failure.
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.2 | 2026-03-07 | **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. §5 must-not-modify: amended backlog slice added. STEP 0: `amended_backlog_slice_path` read from `.claude_current_state.json` as first action; cross-referenced against `execution_state.json.backlog_slice_source`; disagreement flagged before proceeding; authoritative path recorded in closure record §1. STEP 3 intro updated: reconciliation runs against the authoritative slice. STEP 3.3 failure condition expanded. `closure_record.md` §1 template: `Backlog slice source` field added. §9 invariant added. **`lessons_learnt_closure.md` creation formalised (STEP 8.5, new).** STEP 8.5 added: invokes `lessons_learnt_prompt.md §3.5` using STEP 8 consolidated action summary as input; produces `claude/cycles/<cycle_id>/lessons_learnt_closure.md`; hard gate before STEP 9. §5 write scope: `lessons_learnt_closure.md` creation entry updated to reference STEP 8.5 explicitly. §7 completion condition: `lessons_learnt_closure.md` condition updated to reference `lessons_learnt_prompt.md §3.5` structure. §9 closure record §2 table: STEP 8.5 row added. §6 outstanding actions: `lessons_learnt_prompt.md` invocation failure added as example. STEP 11 commit: order corrected (`lessons_learnt_closure.md` before `closure_record.md`). §1 Purpose updated to name STEP 8.5 explicitly. **Dry-run enforcement added throughout.** §2: dry-run definition tightened — closure plan is the deliverable; routine ends after producing it. §5: dry-run exception block added at top (no writes permitted). STEP -1.6: write permission test skipped in dry-run. STEP 0: dry-run exits here after producing closure plan. §7 completion condition: dry-run completion defined. §9 invariant added. |
+| 1.1 | 2026-03-06 | Added `decisions_record` N/A condition (STEP 4.2). Added push-before-pull rule (STEP 11). Clarified AR record exemption from Superseded status. |
+| 1.0 | 2026-03-03 | Initial version. |

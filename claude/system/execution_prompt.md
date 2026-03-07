@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-03-06
+**Version:** 1.5
+**Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -76,13 +76,13 @@ This routine may not override any of the above.
 | Input | Location | Purpose |
 |-------|----------|---------|
 | Active cycle | `.claude_current_state.json` → `active_cycle` | Identifies the cycle folder |
-| Backlog slice | `claude/cycles/<cycle_id>/stage4_backlog_slice.md` | Authoritative list of EPICs and STs for this sprint |
+| Backlog slice | See note below — may be amended | Authoritative list of EPICs and STs for this sprint |
 | Sprint backlog | `claude/cycles/<cycle_id>/sprint_backlog.md` | Confirms scope, acceptance criteria, ownership |
 | Sprint goal | `claude/cycles/<cycle_id>/sprint_goal.md` | Frames the sprint intent |
 | Workforce capacity | `claude/roadmap/workforce_capacity.md` | Confirms available skills/FTE |
 | Execution state | `claude/cycles/<cycle_id>/execution_state.json` | Per-item progress (created by this routine) |
 
-The `stage4_backlog_slice.md` is the **sealed, authoritative scope** for this sprint. Scope may not be altered by this routine.
+**Backlog slice source-of-truth rule:** At STEP -1, check `.claude_current_state.json` for `amended_backlog_slice_path`. If this field is present and non-empty, that file is the authoritative backlog slice for this sprint — use it in place of `stage4_backlog_slice.md` throughout. If absent or empty, use `stage4_backlog_slice.md`. Never execute from `stage4_backlog_slice.md` if an amendment has sealed. The authoritative slice is sealed — this engine may not modify it.
 
 ---
 
@@ -177,6 +177,7 @@ During this routine you may write only to:
 
 You must **not** modify:
 - `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
+- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
 - `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed)
 - `claude/roadmap/*`
 - `claude/backlog/backlog.md`
@@ -264,6 +265,7 @@ All per-item progress is recorded in:
 {
   "cycle_id": "<cycle_id>",
   "sprint_goal": "<text>",
+  "backlog_slice_source": "claude/cycles/<cycle_id>/stage4_backlog_slice.md | <amended path>",
   "invoked_utc": "<ISO-8601>",
   "mode": "strict|standard",
   "status": "Running|Blocked|Completed|Sealed",
@@ -315,6 +317,8 @@ All per-item progress is recorded in:
   "sealed_utc": null
 }
 ```
+
+`backlog_slice_source` records the exact file path of the authoritative backlog slice used for this execution. Set at STEP 0. The Delivery Verification Engine may use this to confirm scope provenance.
 
 ### 9.2 State Update Rule (Hard Requirement)
 
@@ -408,50 +412,61 @@ Shared standards (escalation format, halt report format, gh CLI commands, identi
 
 Purpose: fail fast before any execution begins.
 
-### -1.1 Required Files Present
+### -1.1 Required Files and Backlog Slice Source
 
 Verify:
 - `.claude_current_state.json` (and `active_cycle` is populated)
 - `claude/charter/team_charter.md`
 - `claude/charter/document_lifecycle_guide.md`
 - `claude/strategy/strategy_rules.md`
-- `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
 - `claude/cycles/<cycle_id>/sprint_backlog.md`
 - `claude/cycles/<cycle_id>/sprint_goal.md`
 
-If any are missing: halt and report exactly which.
+Check `amended_backlog_slice_path` in `.claude_current_state.json`:
+- If present and non-empty: this is the authoritative backlog slice. Verify the file exists — if not, halt and report. Record this path for use throughout this run.
+- If absent or empty: verify `claude/cycles/<cycle_id>/stage4_backlog_slice.md` exists — if not, halt and report. Record this path for use throughout this run.
 
-### -1.2 Active Cycle Status Check
+If any required file is missing: halt and report exactly which.
+
+### -1.2 Active Cycle Status Check (Hard Gate)
 
 Read `.claude_current_state.json`:
-- `status` must be `Committed` or `Validated` or `Published` (i.e., the release plan is complete).
-- If `status` is `Blocked`: halt — the release cycle has unresolved escalations. Resolve them via the Release Planning Engine before executing.
-- If `status` is `Initialized` or `Planning`: halt — the release plan is not yet complete.
+- `status` must be `Sprint_Planning_Complete` (fresh run) or `Executing` (resuming an in-progress sprint).
+- `sprint_sealed` must be `true`.
+- If `status` is `Blocked`: halt — the cycle has unresolved escalations. Resolve them before executing.
+- If `status` is anything other than `Sprint_Planning_Complete` or `Executing`: halt — Sprint Planning has not completed or the cycle is in an unexpected state. Check that `plan sprint` has been completed and sealed before invoking `run sprint`.
 
-### -1.3 Backlog Slice Integrity
+### -1.3 Sprint Backlog Sealed (Hard Gate)
 
-Verify `stage4_backlog_slice.md`:
+Verify `sprint_backlog.md`:
+- Status field must be `Sealed`.
+- Product Owner sign-off must be recorded — no `[AWAITING SIGN-OFF]` fields remaining.
+
+If either condition fails: halt — Sprint Planning sign-off gate was not completed. Re-invoke `plan sprint` to resolve outstanding sign-off items before proceeding.
+
+### -1.4 Backlog Slice Integrity
+
+Verify the authoritative backlog slice file (identified in STEP -1.1):
 - Contains at least one EPIC with `EPIC-xx` IDs.
 - Each EPIC contains at least one story with `ST-xx` IDs.
 - All IDs are unique within the slice.
 
 If IDs are missing or duplicated: halt. Do not invent IDs.
 
-### -1.4 Sprint Backlog Acceptance Criteria Check
+### -1.5 Acceptance Criteria Check
 
 Verify `sprint_backlog.md`:
-- Product Owner sign-off is recorded.
 - Each ST item in the sprint scope has acceptance criteria defined.
 
 If any in-scope ST item lacks acceptance criteria:
 - In `strict` mode: halt and report which items are missing criteria.
 - In `standard` mode: flag as a blocker, classify the item as `delegated_decision`, and continue with remaining items.
 
-### -1.5 Required Authority Roles Exist
+### -1.6 Required Authority Roles Exist
 
 Verify agent files in `claude/agents/` for all required roles (Section 6). If any missing: halt.
 
-### -1.6 Write Permission Test
+### -1.7 Write Permission Test
 
 Create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can be written. Remove it. If write fails: halt.
 
@@ -461,21 +476,24 @@ Create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can
 
 Create `claude/cycles/<cycle_id>/execution_state.json` if it does not exist.
 
-1. Parse `stage4_backlog_slice.md` to extract all EPIC and ST items in dependency order.
-2. Cross-reference with `sprint_backlog.md` to confirm which items are in sprint scope.
-3. For each ST item: classify (`autonomous` / `delegated_backend` / `delegated_frontend` / `delegated_qa` / `delegated_decision`) based on acceptance criteria and item type.
-4. For each ST item: populate `spec_references` — the canonical spec file path(s) and section heading(s) this item implements:
+1. Parse the authoritative backlog slice (identified in STEP -1.1) to extract all EPIC and ST items in dependency order.
+2. Record `backlog_slice_source` in `execution_state.json` — the exact file path used.
+3. Cross-reference with `sprint_backlog.md` to confirm which items are in sprint scope.
+4. For each ST item: classify (`autonomous` / `delegated_backend` / `delegated_frontend` / `delegated_qa` / `delegated_decision`) based on acceptance criteria and item type.
+5. For each ST item: populate `spec_references` — the canonical spec file path(s) and section heading(s) this item implements:
    - `delegated_backend`: **mandatory** — must name the locked spec file and section before delegation proceeds (e.g., `["docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/size"]`)
    - `delegated_frontend`: record the frontend spec file and page/component section (e.g., `["docs/specs/frontend/pages/positions.md#Position Entry Form"]`)
    - `autonomous`: record spec if one governs the work; leave `[]` only if purely infrastructural
    - `delegated_decision`: leave `[]` until resolved — populate when re-classified
    If a `delegated_backend` item has no lockable spec reference: classify as `delegated_decision` instead and surface to Head of Specs Team.
-5. For each EPIC: check `docs/testing/` for existing test scenario files referencing the EPIC ID or any of its ST items. Record found scenario file paths in `execution_state.json` under the EPIC's `test_scenarios` field. If none found: set `test_scenarios: []`. The verification engine will use this to confirm which scenarios were run.
-6. Initialise all statuses to `not_started`.
-7. Set cycle-level status to `Running`.
+6. For each EPIC: check `docs/testing/` for existing test scenario files referencing the EPIC ID or any of its ST items. Record found scenario file paths in `execution_state.json` under the EPIC's `test_scenarios` field. If none found: set `test_scenarios: []`. The verification engine will use this to confirm which scenarios were run.
+7. Initialise all statuses to `not_started`.
+8. Set cycle-level status to `Running`.
 
 Update `.claude_current_state.json`:
-- `status` → `Executing` (new state; does not affect Release Planning Engine semantics)
+- `status` → `Executing`
+
+`Executing` is a valid intermediate status between `Sprint_Planning_Complete` and `Sprint_Complete`. It is documented in the guide's lifecycle table and cycle trigger table. Phase 4 (`run delivery verification`) may not be invoked while status is `Executing` — Phase 3 must complete and status must reach `Sprint_Complete` first.
 
 If execution_state.json already exists: resume (do not reinitialise). Perform STEP 0 only for items with status `not_started`.
 
@@ -843,4 +861,14 @@ The run is complete only if:
 - **Commit format is non-negotiable.** `[EPIC-xx][ST-xx]` prefix on every commit to `exec/**`. `governance_sync.yml` depends on it.
 - **PR title is non-negotiable.** `[EPIC-xx]` in title. `quality_gate.yml` blocks merge without it.
 - **Every block is recorded.** Nothing is silently skipped. Blocked items are documented in `execution_state.json` and surfaced to the user.
+- **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, it is used exclusively. Executing from the original slice when an amendment has sealed is a process integrity failure.
 - **Delivery pressure does not override quality gates.** Director of Quality sign-off is required on every EPIC before merge, regardless of timeline.
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.5 | 2026-03-07 | **Pre-condition status check corrected (STEP -1.2).** Was checking for Release Planning states (`Committed`, `Validated`, `Published`) — corrected to `Sprint_Planning_Complete` (fresh run) or `Executing` (resume); `sprint_sealed = true` added as required condition. **Sprint backlog sealed check added (STEP -1.3).** Verifies `sprint_backlog.md` status = `Sealed` and no `[AWAITING SIGN-OFF]` fields remain — was absent in prior version. **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. STEP -1.1 extended: checks `amended_backlog_slice_path`; if present, uses that file as the authoritative scope; records the authoritative path for use throughout the run. STEP 0 updated: parses the authoritative slice (not hardcoded `stage4_backlog_slice.md`); records `backlog_slice_source` in `execution_state.json`. §7 write scope: amended backlog slice added to must-not-modify list. §9.1 schema: `backlog_slice_source` field added. §13 invariant added. **`Executing` status documented.** STEP 0 note: `Executing` is a valid intermediate status between `Sprint_Planning_Complete` and `Sprint_Complete`; Phase 4 may not be invoked while `Executing`. Guide updated separately (§4 lifecycle table, §12 cycle trigger table, §13 artefact register). **STEP numbering adjusted:** -1.1 now includes backlog slice source check; -1.2 status check; -1.3 sprint backlog sealed (new); former -1.3/-1.4/-1.5/-1.6 renumbered to -1.4/-1.5/-1.6/-1.7. |
+| 1.4 | 2026-03-06 | Prior version. |

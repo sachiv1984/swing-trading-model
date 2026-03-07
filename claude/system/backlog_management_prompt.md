@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-03-04
+**Version:** 1.1
+**Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -20,7 +20,7 @@ This engine maintains the health and accuracy of `claude/backlog/backlog.md`. It
 - Archive completed and killed items (move to a closed section — not delete)
 - Revalidate priorities on remaining items against the current roadmap
 - Flag orphaned items (no roadmap home, no cycle activity)
-- Flag blocked items where the blocker is unresolved
+- Flag blocked items where the blocker is unresolved or stale
 - Promote candidates to the roadmap consideration list
 - Produce a backlog health summary
 
@@ -45,9 +45,22 @@ Rules:
 - `--dry-run`: optional — produces the health summary and change plan without writing any files. Outputs the plan to the user and halts before STEP 6.
 - If invocation is not exact, do not run. Treat as conversational.
 
-**Who issues this command:** Product Owner or PMO Lead, typically after Post-Ship Closure or before a Roadmap Rebalance run.
+**Who issues this command:** Product Owner or PMO Lead.
 
-**Recommended cadence:** After every Post-Ship Closure, and before every `run roadmap` invocation (so the Roadmap Rebalance Engine has a clean backlog to work from).
+**Valid trigger windows:**
+
+| Window | Rationale |
+|--------|-----------|
+| After Post-Ship Closure is confirmed | Ensures the backlog reflects shipped state before any new cycle opens |
+| Immediately before `run roadmap` | Gives the Roadmap Rebalance Engine a clean, accurate backlog to work from |
+
+Both windows are equally valid. Either may be used independently.
+
+**Known gap:** If Phase 1 is skipped and `plan release` is invoked directly, the backlog will not have been groomed since the last Post-Ship Closure. In this case, `groom backlog` should be run before `plan release` is issued. This is not yet a formal trigger — teams skipping Phase 1 regularly should raise this for promotion to a full trigger window.
+
+**Lock conflict:** If `claude/backlog/.lock` is held by an active Phase 1B cycle when this engine is invoked, the preflight gate will halt. Do not attempt to clear a live lock — wait for the owning cycle to release it, or confirm with the PMO Lead that the owning cycle is inactive before following the stale lock protocol.
+
+**This engine is optional but strongly recommended** at both trigger windows above to prevent backlog decay.
 
 ---
 
@@ -95,10 +108,12 @@ Violation → halt.
 | **Killed — Archive** | Status ❌ Killed or superseded with decision reference | Move to `## Closed Items` section; append to archive |
 | **Active — Keep** | Open, prioritised, has a roadmap home or is a standalone improvement | No change |
 | **Orphan — Flag** | Open, no roadmap home, no cycle activity, no blocker | Add orphan flag; surface for Product Owner review |
-| **Blocked — Flag** | Open, has a stated blocker; blocker status not updated in 2+ cycles | Add staleness note to blocker; do not flag as orphan |
-| **Promote Candidate** | Open, high priority, aligns with next planned release, no pre-work outstanding | Add to promotion shortlist for Product Owner consideration |
+| **Blocked — Stale Blocker** | Open, has a stated blocker, blocker status not updated in 2+ cycles | Add staleness note to blocker field; do not flag as orphan; surface for owner review |
+| **Promote Candidate** | Open, high priority, aligns with next planned release, no pre-work outstanding | Add to promotion shortlist for Product Owner consideration — advisory only |
 | **Spec Debt — Validate** | BLG-SPEC-* items; check if owning spec has been updated | Confirm open/resolved; update status |
 | **Ambiguous — Confirm** | Appears complete (referenced in changelog or verification) but status not updated | Surface to Product Owner before archiving |
+
+**Note on promotion candidates:** The promotion shortlist produced by this engine is advisory only. No items are added to the roadmap by this engine. The Product Owner decides which (if any) candidates to advance, and the Roadmap Rebalance Engine executes any additions.
 
 ---
 
@@ -120,7 +135,7 @@ If any missing: halt and report.
 
 ### -1.2 Concurrency Lock Check
 
-Check `claude/backlog/.lock`. If lock exists and is not owned by this run: halt and report the owning cycle_id. Do not proceed.
+Check `claude/backlog/.lock`. If lock exists and is not owned by this run: halt and report the owning cycle_id. Do not proceed. Do not attempt to clear a live lock without PMO Lead confirmation and evidence that the owning cycle is inactive.
 
 ### -1.3 Header Compliance Check
 
@@ -226,6 +241,7 @@ Produce change plan:
 |------|--------|------|--------|
 | `backlog.md` | Move to Closed section | BLG-xx | Complete — archive |
 | `backlog.md` | Add orphan flag | BLG-xx | No roadmap home or cycle activity |
+| `backlog.md` | Add stale blocker note | BLG-xx | Blocker not updated in 2+ cycles |
 | `backlog_archive.md` | Append | BLG-xx | Archiving completed item |
 
 If `--dry-run`: output health summary and change plan. Halt. Do not write.
@@ -275,7 +291,7 @@ For each Complete — Archive and Killed — Archive item, append:
 
 - Move all Complete — Archive and Killed — Archive items to a `## Closed Items` section at the bottom of the file (or remove entirely if archive is confirmed as the record)
 - Add orphan flags: `> ⚠️ **Orphan Notice:** No roadmap home or cycle activity detected. Review at next Roadmap Rebalance.`
-- Add stale blocker notes where applicable
+- Add stale blocker notes: `> ⚠️ **Stale Blocker:** Blocker status not updated in 2+ cycles. Owner review required.`
 - Update `**Last Updated:**` header field
 - Do not change item definitions, priorities, or descriptions — status and flags only
 
@@ -298,6 +314,7 @@ Write: `claude/backlog/backlog_health_<YYYYMMDD>.md`
 ## Promotion Candidates
 
 <Promotion shortlist from STEP 4, or "None identified">
+Note: This list is advisory only. No items are added to the roadmap by this engine.
 
 ## Priority Alignment Notes
 
@@ -308,6 +325,12 @@ Write: `claude/backlog/backlog_health_<YYYYMMDD>.md`
 | Item ID | Title | Last activity | Flag added |
 |---------|-------|--------------|------------|
 | <id> | <title> | <cycle_id or "none"> | Yes |
+
+## Blocked Items — Stale Blockers
+
+| Item ID | Title | Blocker | Last updated | Flag added |
+|---------|-------|---------|-------------|------------|
+| <id> | <title> | <blocker description> | <cycle_id or "none"> | Yes |
 
 ## Spec Debt Status
 
@@ -356,8 +379,8 @@ The run is complete when:
 - **No content changes.** Archiving moves items; it does not reword or reprioritise them. The archived entry is verbatim.
 - **No roadmap writes.** This engine does not touch `current_roadmap.md`. Use `manage roadmap`.
 - **Archive is append-only.** Archived items are permanent records. Do not edit existing archive entries.
-- **No promotion without Product Owner decision.** The promotion shortlist is advisory. The Roadmap Rebalance Engine executes the addition.
-- **Lock discipline.** The lock must be acquired before any write and released after commit. A stale lock must be cleared by PMO Lead only.
+- **Promotion shortlist is advisory.** No items are added to the roadmap by this engine. The Roadmap Rebalance Engine executes any additions following a Product Owner decision.
+- **Lock discipline.** The lock must be acquired before any write and released after commit. A live lock owned by another cycle must not be cleared without PMO Lead confirmation. A stale lock may only be cleared by the PMO Lead following the stale lock protocol.
 - **Dry-run is safe.** `--dry-run` never writes. It is always safe to run.
 - **Priority revalidation is advisory.** This engine flags misalignments; it does not change priorities.
 
@@ -367,4 +390,5 @@ The run is complete when:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-03-06 | Widened valid trigger windows to include pre-`run roadmap` invocation alongside Post-Ship Closure. Both windows now explicitly equal. Added known gap note for Phase 1 skipped path. Added lock conflict guidance to §2. Expanded §6 classification table to include Blocked — Stale Blocker as a distinct classification. Added stale blocker row to STEP 5 change plan and STEP 6.2/6.3 outputs. Added promotion shortlist advisory note to §6 and health report template. |
 | 1.0 | 2026-03-04 | Initial version. |
