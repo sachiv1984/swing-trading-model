@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-03-06
+**Version:** 1.2
+**Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -47,11 +47,11 @@ Rules:
 - `--mode` optional:
   - `strict`: halt on any missing acceptance criteria, unclear owner, or unresolved dependency
   - `standard` (default): proceed with flags on minor gaps; still halt on hard gates
-- `--dry-run` optional: read all inputs and produce a planning preview without writing any artefacts or updating state
+- `--dry-run` optional: read all inputs and produce a planning preview without writing any artefacts or updating state. The pip-audit scan (STEP -1.8) still runs — it is a read-only operation.
 
 If invocation is not exact, do not run. Treat as conversational.
 
-**Who issues this command:** The PMO Lead persona, after Phase 1B has reached `Published` status.
+**Who issues this command:** The PMO Lead persona, after Phase 1B has reached `Published` status and the Design Gate has passed (`design_gate_status = Passed`).
 
 **Tool call budget:** This routine typically requires 10–20 tool calls. Proceed through steps without requesting confirmation unless a hard gate fires.
 
@@ -92,12 +92,14 @@ Verify: each role has an agent file in `claude/agents/` containing `**Role:** <R
 |-------|----------|---------|
 | Global state pointer | `.claude_current_state.json` | Hard gate |
 | Release plan state | `claude/cycles/<cycle_id>/state.json` | Hard gate |
-| Backlog slice | `claude/cycles/<cycle_id>/stage4_backlog_slice.md` | Hard gate |
+| Backlog slice | See note below — may be amended | Hard gate |
 | Committed backlog | `claude/backlog/backlog.md` | Required |
 | Execution plan (EPICs) | `claude/cycles/<cycle_id>/stage3_execution_plan.md` | Required |
 | Capacity check | `claude/cycles/<cycle_id>/stage4_5_capacity_check.md` | Required |
 | Cycle summary | `claude/cycles/<cycle_id>/cycle_summary.md` | Required |
 | Workforce capacity | `claude/roadmap/workforce_capacity.md` | Required (if present) |
+
+**Backlog slice source-of-truth rule:** At STEP -1, check `.claude_current_state.json` for `amended_backlog_slice_path`. If this field is present and non-empty, that file is the authoritative backlog slice for this sprint — use it in place of `stage4_backlog_slice.md` throughout. If absent or empty, use `stage4_backlog_slice.md`. Never plan from `stage4_backlog_slice.md` if an amendment has sealed.
 
 ---
 
@@ -114,6 +116,7 @@ During this routine you may write only to:
 
 You must **not** modify:
 - `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
+- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
 - `claude/cycles/<cycle_id>/state.json` (owned by Release Planning engine)
 - `claude/backlog/backlog.md` (no grooming during sprint planning)
 - `claude/roadmap/current_roadmap.md`
@@ -171,43 +174,58 @@ Read `.claude_current_state.json`:
 - If `status` is `Blocked`: resolve release planning escalations before planning the sprint.
 - If `status` is anything else below `Committed`: Phase 1B has not completed. Halt.
 
+Check `amended_backlog_slice_path`:
+- If present and non-empty: note the amendment path; this file will be used as the backlog slice throughout (see §5). Confirm the file exists — if not, halt and report.
+- If absent or empty: `stage4_backlog_slice.md` is the authoritative source.
+
 ### -1.2 Release Plan Sealed
 
 Read `claude/cycles/<cycle_id>/state.json`:
 - `status` must be `Published`
 - `publish_eligible` must be `true`
 - `open_escalations` must be empty
-- If any of these fail: halt — the release plan is not sealed.
+- `deferred_execution_blockers` must be empty. If this field is non-empty: surface each blocker to the PMO Lead. In `strict` mode: halt — blockers must be resolved before planning. In `standard` mode: record each blocker in `sprint_escalations.md` as a named risk, require Product Owner to explicitly accept each before the sprint may be sealed.
+- If any of the above fail: halt — the release plan is not sealed.
 
-### -1.3 Backlog Slice Present
+### -1.3 Design Gate Passed (Hard Gate)
 
-Confirm `claude/cycles/<cycle_id>/stage4_backlog_slice.md` exists and contains at least one EPIC with at least one ST item.
+Read `design_gate_status` from `claude/cycles/<cycle_id>/state.json`:
+- Must be `Passed`. If `not_started` or `Blocked`: halt. The Design Gate (Phase 1.5) must be completed and cleared before Sprint Planning may proceed.
+- If the field is absent: treat as `not_started` and halt. Record as a process deviation — the Release Planning Engine should have initialised this field.
+
+**Exception:** If every sprint item is confirmed `Design Not Applicable` by the Head of UX & Design and this is recorded explicitly in `state.json` or escalations, the PMO Lead may proceed with a recorded deviation. This is not a silent bypass — it must be documented.
+
+### -1.4 Backlog Slice Present
+
+Confirm the authoritative backlog slice file (per STEP -1.1) exists and contains at least one EPIC with at least one ST item.
 
 If absent or empty: halt.
 
-### -1.4 Required Files Present
+### -1.5 Required Files Present
 
 Verify all inputs in Section 5 exist. If any required file is missing: halt and report exactly which.
 
-### -1.5 Required Authority Roles Exist
+### -1.6 Required Authority Roles Exist
 
 Verify agent files per Section 4. If any missing: halt.
 
-### -1.6 Lessons Learnt Prompt Present
+### -1.7 Lessons Learnt Prompt Present
 
 Confirm `claude/system/lessons_learnt_prompt.md` exists. If missing: halt.
 
-### -1.7 Write Permission Test
+### -1.8 Write Permission Test
 
 Create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can be written. Remove it. If write fails: halt.
 
-### -1.8 Dependency Health Check (Pre-Sprint Vulnerability Scan)
+### -1.9 Dependency Health Check (Pre-Sprint Vulnerability Scan)
 
 Run `pip-audit` against `backend/requirements.txt`:
 
 ```bash
 pip-audit -r backend/requirements.txt --format=json
 ```
+
+**This step runs in both normal and `--dry-run` mode** — it is a read-only scan and does not affect the dry-run guarantee.
 
 Report findings before sprint scope is sealed:
 - **High/critical CVEs found:** Record each in sprint planning notes; Product Owner and Head of Engineering must explicitly accept each known CVE as a documented risk (with backlog item) before the sprint may be sealed. Do not silently proceed with known high/critical vulnerabilities.
@@ -224,7 +242,7 @@ This step is advisory — it does not block sprint planning. Its purpose is to s
 
 Extract from the backlog slice and execution plan:
 
-1. From `stage4_backlog_slice.md`: all EPICs with their EPIC IDs, descriptions, and ST items. Note any items already marked as deferred or blocked.
+1. From the authoritative backlog slice (per §5 and STEP -1.1): all EPICs with their EPIC IDs, descriptions, and ST items. Note any items already marked as deferred or blocked. If an amendment file is in use, note this explicitly in the load summary.
 2. From `stage3_execution_plan.md`: sequencing dependencies, risk IDs associated with EPICs, estimated effort per EPIC.
 3. From `stage4_5_capacity_check.md`: confirmed available capacity (FTE, skills, duration). If the check result was `warn`: surface the warning to the user before proceeding.
 4. From `cycle_summary.md`: the sprint goal candidate (if the release planning engine proposed one), any outstanding escalations deferred to execution.
@@ -234,7 +252,8 @@ Produce a load summary confirming:
 - Number of EPICs loaded
 - Number of ST items loaded
 - Confirmed capacity (FTE and duration)
-- Any deferred execution blockers from the release plan escalations file
+- Backlog slice source (original or amended — name the file)
+- Any deferred execution blockers from the release plan escalations file (cross-check against `deferred_execution_blockers` field verified in STEP -1.2)
 
 ---
 
@@ -331,7 +350,7 @@ Date: <date>
 
 ### 3.1 Candidate Item Review
 
-For each EPIC and ST item from the backlog slice, review:
+For each EPIC and ST item from the authoritative backlog slice, review:
 - Is this item within confirmed capacity?
 - Does this item have an owner (from `stage3_execution_plan.md`)?
 - Does this item have acceptance criteria defined, or will they be drafted in STEP 4?
@@ -369,7 +388,7 @@ For every `include` item, confirm acceptance criteria against the standard in Se
 ### 4.1 Criteria Source
 
 Acceptance criteria may come from:
-- `stage4_backlog_slice.md` (if defined during release planning)
+- The authoritative backlog slice (if defined during release planning or amendment)
 - `stage3_execution_plan.md` (if defined at EPIC level)
 - Drafted during this step (if not yet defined)
 
@@ -431,6 +450,10 @@ From `stage3_execution_plan.md` risk register: confirm which risk IDs are associ
 **Last Updated:** <date>
 **Cycle:** <cycle_id>
 
+## Backlog Slice Source
+
+Original / Amended — <file path used>
+
 ## Deferred Items
 
 | Item | Reason | Next Sprint Candidate? |
@@ -452,6 +475,10 @@ From `stage3_execution_plan.md` risk register: confirm which risk IDs are associ
 | Risk ID | Associated Item | Mitigation Status |
 |---------|----------------|------------------|
 | RISK-xx | EPIC-xx | Valid / Changed / Materialised |
+
+## Pre-Sprint Vulnerability Scan
+
+<pip-audit result: clean / findings listed / tool unavailable>
 
 ## Outstanding Actions
 
@@ -478,6 +505,7 @@ Write: `claude/cycles/<cycle_id>/sprint_backlog.md`
 **Cycle:** <cycle_id>
 **Release:** <vX.Y>
 **Sprint Goal:** <goal from sprint_goal.md>
+**Backlog Slice Source:** <original stage4_backlog_slice.md | amended: path>
 
 ---
 
@@ -531,6 +559,14 @@ Write: `claude/cycles/<cycle_id>/sprint_backlog.md`
 |------|------|--------|
 | ST-xx | EPIC-xx | <reason> |
 
+## Deferred Execution Blockers Accepted
+
+| Blocker | Accepted by | Date |
+|---------|-------------|------|
+| <blocker description> | Product Owner | <date> |
+
+*(omit section if deferred_execution_blockers was empty)*
+
 ## Outstanding Actions at Planning Seal
 
 | Action | Owner | Blocker? |
@@ -544,6 +580,7 @@ Write: `claude/cycles/<cycle_id>/sprint_backlog.md`
 **Sprint goal confirmed:** [AWAITING SIGN-OFF]
 **Scope confirmed:** [AWAITING SIGN-OFF]
 **Capacity confirmed:** [AWAITING SIGN-OFF]
+**Deferred execution blockers accepted (if any):** [AWAITING SIGN-OFF / N/A]
 **Signed off by:** Product Owner
 **Date:** [AWAITING SIGN-OFF]
 ```
@@ -556,6 +593,7 @@ The sprint backlog is not sealed until:
 - All `[ESTIMATE REQUIRED]` placeholders are resolved
 - No outstanding actions are marked `Blocker? Yes`
 - Sprint goal confirmed in `sprint_goal.md`
+- All deferred execution blockers explicitly accepted by the Product Owner (if any were present)
 
 If any of the above are unresolved: the sprint backlog status remains `Active` (not `Sealed`). Phase 3 may not be invoked.
 
@@ -633,6 +671,7 @@ The run is complete only if:
 - `sprint_planning_notes.md` exists with dependency map and sequencing
 - No outstanding actions marked `Blocker? Yes`
 - No `[AC REQUIRED]` or `[ESTIMATE REQUIRED]` placeholders unresolved
+- All deferred execution blockers explicitly accepted by Product Owner (or confirmed empty)
 - `.claude_current_state.json` status = `Sprint_Planning_Complete` and `sprint_sealed = true`
 - STEP 8 commit complete (or commit manifest produced)
 
@@ -668,4 +707,17 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 - **Product Owner sign-off is a hard gate.** The sprint backlog may not be sealed without it.
 - **Dependencies must be resolved before sequencing is final.** Circular dependencies always halt.
 - **Delegation classification is set at planning time.** Each ST item's delegation class is recorded in the sprint backlog so Phase 3 can load and act without re-classifying.
+- **Design gate must be passed before Sprint Planning proceeds.** `design_gate_status = Passed` is a hard pre-condition. The only permitted exception is a fully documented Design Not Applicable determination for all items.
+- **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, it is used exclusively. Planning from the original slice when an amendment has sealed is a process integrity failure.
+- **Deferred execution blockers require explicit Product Owner acceptance.** They may not be silently carried into sprint execution.
 - **Delivery pressure never overrides these gates.** A sprint that skips sign-off is not a sprint — it is unplanned execution.
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.2 | 2026-03-07 | **Design gate pre-condition enforced.** STEP -1.3 added: `design_gate_status` must be `Passed` before planning may proceed; `not_started` and `Blocked` both halt; absent field halts with process deviation note; Design Not Applicable exception documented. **Amendment slice handling added.** §5 backlog slice source-of-truth rule added: `amended_backlog_slice_path` checked at STEP -1.1; if present, used in place of `stage4_backlog_slice.md` throughout. STEP -1.1 extended to check and note the amendment path. STEP 0 load summary now names the backlog slice source. STEP 3.1, STEP 4.1, sprint_backlog.md header, and sprint_planning_notes.md all updated to reference the authoritative slice. §6 write scope: amended backlog slice added to must-not-modify list. §12 invariant added. **`deferred_execution_blockers` formally gated.** STEP -1.2 now explicitly checks this field: `strict` mode halts; `standard` mode requires Product Owner acceptance per blocker. STEP 6.1 sprint backlog template: Deferred Execution Blockers Accepted section added. STEP 6.2 sign-off gate: blocker acceptance added as a required condition. §10 completion condition updated. §12 invariant added. **`--dry-run` and pip-audit clarified.** §2 invocation rule: dry-run guarantee stated; pip-audit explicitly noted as running in dry-run (read-only). STEP -1.9 (was -1.8): dry-run note added. STEP numbering adjusted: -1.8 Write Permission Test, -1.9 Vulnerability Scan (previously -1.7 and -1.8). **Guide fix required:** §7 source prompt reference should be updated from v1.0 to v1.2. |
+| 1.1 | 2026-03-06 | Prior version. |
+| 1.0 | 2026-03-05 | Initial version. |
