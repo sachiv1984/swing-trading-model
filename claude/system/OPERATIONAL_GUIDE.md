@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 2.5  
-**Last Updated:** 2026-03-06  
+**Version:** 2.6  
+**Last Updated:** 2026-03-07  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -125,9 +125,12 @@ Phase 1B complete?
   ✅ state.json status = Published
   ✅ publish_eligible = true
   ✅ stage4_backlog_slice.md committed to backlog.md (with idempotency marker)
-  ✅ .claude_current_state.json updated
+  ✅ docs/product/scope/scope--{cycle_id}-{slug}.md created (scope document)
+  ✅ docs/product/decisions/decisions--{cycle_id}.md created (decisions record)
+  ✅ .claude_current_state.json updated (STEP 7 intermediate sync + STEP 9 terminal sync both complete)
   ✅ cycle_summary.md and lessons_learnt.md filed
   ✅ No open escalations
+  ✅ deferred_execution_blockers is empty
   ✅ Backlog lock released
 
 Phase 2 complete?
@@ -536,7 +539,7 @@ The Design Gate runs between Release Planning and Sprint Planning. It classifies
 3. For Design Required items: Head of UX & Design produces artefacts; Product Owner approves
 4. Frontend Specs & UX Documentation Owner updates frontend specs
 5. Head of Specs Team confirms spec lifecycle compliance
-6. Gate record written; global state updated (`design_gate_status`)
+6. Gate record written; global state updated (`design_gate_status = Passed` written to `state.json` by the Design Gate Engine; reserved as a read-only field by the Release Planning Engine, which initialises it to `not_started` at STEP 0)
 
 **Gate passes only when:** all Design Required items have approved artefacts AND updated frontend specs.
 
@@ -565,7 +568,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.7)  
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.9)  
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -617,8 +620,8 @@ All progress is recorded in `claude/cycles/<cycle_id>/state.json`. The routine i
 | STEP -1 | Preflight | **HARD** | Pass / Halt |
 | STEP 0 | Run Manifest + Initialize State | **HARD** | `run_manifest.md`, `state.json` |
 | STEP 1 | Release Readiness Validation | — | `stage1_readiness.md` |
-| STEP 2 | Scope Extraction | — | `stage2_scope_extraction.md` (S2-xx IDs required) |
-| STEP 3 | Execution Plan | — | `stage3_execution_plan.md` (EPIC-xx + Maps to + RISK-xx required) |
+| STEP 2 | Scope Extraction | — | `stage2_scope_extraction.md` (S2-xx IDs required); `docs/product/scope/scope--{cycle_id}-{slug}.md` created |
+| STEP 3 | Execution Plan | — | `stage3_execution_plan.md` (EPIC-xx + Maps to + RISK-xx required); `docs/product/decisions/decisions--{cycle_id}.md` created |
 | STEP 3.5 | Local Model Integrity Check | Conditional | `stage3_5_model_integrity.md` |
 | STEP 3.9 | Shared Write Lock Preflight | **HARD** | Backlog lock acquired |
 | STEP 4 | Backlog Slice | **HARD** | `stage4_backlog_slice.md` + backlog updated |
@@ -626,10 +629,11 @@ All progress is recorded in `claude/cycles/<cycle_id>/state.json`. The routine i
 | STEP 5 | Roadmap Annotation | — | Roadmap execution notes updated |
 | STEP 5.5 | Cross-Stage Integrity Validation | **HARD** | `stage5_5_cross_stage_integrity.md` |
 | STEP 5.7 | Decision Record Integrity Validation | **HARD** | `stage5_7_decision_record_integrity.md` |
-| STEP 7 | Cycle Summary | — | `cycle_summary.md` |
+| STEP 7 | Cycle Summary + Intermediate State Sync | — | `cycle_summary.md`; `.claude_current_state.json` intermediate sync (must NOT set status = Published) |
+| STEP 7.1 | Intermediate Global State Sync | **HARD** | `.claude_current_state.json` updated: `active_cycle`, `status` = current macro-state, `backlog_slice_path`, `last_sync_utc` — status must NOT be `Published` at this step |
 | STEP 8 | Lessons Learnt | — | `lessons_learnt.md` |
-| STEP 9 | Global State Synchronization | **HARD** | `.claude_current_state.json` updated |
-| STEP 10 | Stage, Commit & Push | — | Git commit; issues if `--issues gh` |
+| STEP 9 | Terminal Global State Synchronization | **HARD** | `.claude_current_state.json` terminal update — the only step that may set `status = Published`; verifies STEP 7.1 ran first |
+| STEP 10 | Stage, Commit & Push | — | Git commit (includes scope document and decisions record); issues if `--issues gh` |
 
 ### 6B.4 Identifier Standards
 
@@ -659,18 +663,23 @@ The cycle may only be sealed `Published` if **all** of the following are true:
 
 - `open_escalations` is empty
 - Every deferred escalation has `Blocks execution: No`
+- `deferred_execution_blockers` is empty
 - `stage4_5_capacity_check` is `pass` or `warn` (`warn` allowed in `standard` mode only)
 - `stage5_5_cross_stage_integrity` is `pass`
 - `stage5_7_decision_record_integrity` is `pass` or `not_applicable`
 - `stage1_readiness` and `stage3_5_model_integrity` are `pass`
 - `plan_structured = true`, `plan_executable = true`, `backlog_committed = true`
 - All locks are `released` or `not_checked` (none `acquired` or `prepared`)
+- STEP 7.1 intermediate sync is confirmed complete (`last_sync_utc` is set)
 
 ### 6B.7 Phase 1B Exit Criteria
 
 - `state.json` status = `Published`, `publish_eligible = true`
 - `stage4_backlog_slice.md` committed to `backlog.md` with idempotency marker
-- `.claude_current_state.json` updated
+- `docs/product/scope/scope--{cycle_id}-{slug}.md` exists and is committed
+- `docs/product/decisions/decisions--{cycle_id}.md` exists and is committed
+- `.claude_current_state.json` updated (STEP 7.1 intermediate sync + STEP 9 terminal sync both confirmed)
+- `deferred_execution_blockers` is empty
 - `cycle_summary.md` and `lessons_learnt.md` filed
 - No open escalations
 - Backlog lock released
@@ -694,7 +703,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 - Backlog slice changes only — no AC edits, no EPIC restructuring, no capacity changes
 - Original sealed cycle artefacts are never modified
 - Amendment artefacts live in `claude/cycles/<original_cycle_id>/amendments/<AMD-id>/`
-- Once sealed, `amended_backlog_slice_path` in `.claude_current_state.json` is the source of truth for Phase 2
+- Once sealed, `amended_backlog_slice_path` in `.claude_current_state.json` is the source of truth for Phase 2; this field is written by the Amendment Cycle Engine and read directly by Sprint Planning — the original `backlog_slice_path` is superseded for this cycle
 - One active amendment at a time — seal or withdraw before opening another
 - Delivery pressure never qualifies as an emergency
 
@@ -1208,6 +1217,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Stage 4 Backlog Slice | `claude/cycles/<id>/stage4_backlog_slice.md` | 3 | PMO Lead | 1B |
 | Escalations (Release) | `claude/cycles/<id>/escalations.md` | 4 | PMO Lead | 1B |
 | AR / SRB Decision Records | `docs/product/decisions/AR-*.md` | 4 | Product Owner | 1B |
+| Scope Document | `docs/product/scope/scope--{cycle_id}-{slug}.md` | 4 | PMO Lead | 1B, Post-Ship |
+| Decisions Record | `docs/product/decisions/decisions--{cycle_id}.md` | 4 | PMO Lead | 1B, Post-Ship |
 | Cycle Summary (Release) | `claude/cycles/<id>/cycle_summary.md` | 3 | PMO Lead | 1B |
 | Lessons Learnt (Release) | `claude/cycles/<id>/lessons_learnt.md` | 3 | PMO Lead | 1B |
 | Global State Pointer | `.claude_current_state.json` | — | PMO Lead | 1B, 2, 3, 4 |
@@ -1244,8 +1255,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 2.5 |
-| Last Updated | 2026-03-06 |
+| Version | 2.6 |
+| Last Updated | 2026-03-07 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1253,7 +1264,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.1 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.9 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.0 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.0 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v1.3 |
@@ -1276,6 +1287,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 2.6 | 2026-03-07 | **Aligned with `release_planning_prompt.md` v2.9.** §6B source prompt updated to v2.9. §6B.3 engine steps table: STEP 2 output now includes scope document creation; STEP 3 output now includes decisions record creation; STEP 7 renamed to include intermediate state sync; STEP 7.1 added as explicit hard-requirement row; STEP 9 renamed terminal and clarified as the only step that may set `status = Published`; STEP 10 note updated to include scope + decisions record in commit. §6B.6 Publish Gate: added `deferred_execution_blockers is empty` and STEP 7.1 completion as required conditions. §6B.7 Exit Criteria: added scope document, decisions record, `deferred_execution_blockers`, and STEP 7.1/9 sync confirmation. Phase 1B checklist in Quick Reference updated to match. **§13 Artefact Register:** added Scope Document (`docs/product/scope/scope--{cycle_id}-{slug}.md`) and Decisions Record (`docs/product/decisions/decisions--{cycle_id}.md`) rows. **§6.5.2 Design Gate:** `design_gate_status` ownership clarified — Design Gate Engine writes it; Release Planning Engine initialises to `not_started`. **§6B.8 Amendment Cycle:** `amended_backlog_slice_path` field note expanded to name the writing engine and clarify supersession of `backlog_slice_path`. **§14 Governance table:** version → 2.6, Release Engine Source → v2.9. |
 | 2.5 | 2026-03-06 | **Phase 1M trigger windows widened.** Both `manage roadmap` and `groom backlog` are now valid at two equally-weighted trigger points: after Post-Ship Closure and immediately before `run roadmap`. Updated: Quick Reference engine commands comment; §4 Lifecycle Overview trigger column; §6M intro replaced single trigger with explicit trigger table; §12 Cycle Trigger table added pre-`run roadmap` row (bolded); known gap note added for Phase 1 skipped path in §6M, §12, and both prompt files. **Phase 1M gaps closed.** Added Phase 1M block to Phase Gate Checklist. Expanded §6M.3 exit criteria to match other phases (full checklist format). Added stale blocker classification to §6M.2 table. Added lock conflict note to §6M.2. Added promotion shortlist advisory note to §6M.2. **Hard Rules table** updated: backlog lock row now includes Phase 1M. **§6B subsection numbering fixed**: 6.1–6.8 collision with Phase 1 resolved — renamed to 6B.1–6B.8 throughout. **Amendment Cycle discoverability** improved: added callout block at top of §6B; added Amendment Cycle as named sub-entry in Table of Contents. **Backlog Lock artefact** phase column updated to include 1M. **§14 Governance table** updated: Roadmap Management Engine → v1.1, Backlog Management Engine → v1.1. |
 | 2.4 | 2026-03-06 | Updated to reflect `roadmap_prompt.md` v2.0 and `lessons_learnt_prompt.md` v1.4. Added scheduled run invocation, prior cycle outstanding actions check, engine steps updates, Phase 1 exit criteria updates, idea lifecycle status updates, roles update, lifecycle overview updates, cycle trigger table updates, artefact register updates, governance table updates. |
 | 2.3 | 2026-03-04 | Added Class 8 (Proof of Gate) to §3. Fixed broken row in §12. Updated Phase 1 source prompt to v1.9. |
