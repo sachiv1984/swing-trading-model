@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-03-04
+**Version:** 1.1
+**Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -43,9 +43,20 @@ Rules:
 - `--dry-run`: optional — produces the change plan and proposed archive entries without writing any files. Outputs the plan to the user and halts before STEP 5.
 - If invocation is not exact, do not run. Treat as conversational.
 
-**Who issues this command:** Product Owner or PMO Lead, after a release has been verified and post-ship closure is confirmed.
+**Who issues this command:** Product Owner or PMO Lead.
 
-**This engine is optional but strongly recommended** after every Post-Ship Closure to prevent roadmap document decay.
+**Valid trigger windows:**
+
+| Window | Rationale |
+|--------|-----------|
+| After Post-Ship Closure is confirmed | Ensures the roadmap reflects shipped state before any new cycle opens |
+| Immediately before `run roadmap` | Gives the Roadmap Rebalance Engine a clean, accurate roadmap to work from |
+
+Both windows are equally valid. Either may be used independently.
+
+**Known gap:** If Phase 1 is skipped and `plan release` is invoked directly, the roadmap will not have been cleaned since the last Post-Ship Closure. In this case, `manage roadmap` should be run before `plan release` is issued. This is not yet a formal trigger — teams skipping Phase 1 regularly should raise this for promotion to a full trigger window.
+
+**This engine is optional but strongly recommended** at both trigger windows above to prevent roadmap document decay.
 
 ---
 
@@ -336,4 +347,5 @@ The run is complete when:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-03-06 | Widened valid trigger windows to include pre-`run roadmap` invocation alongside Post-Ship Closure. Both windows now explicitly equal. Added known gap note for Phase 1 skipped path. Restructured §2 with explicit trigger window table for clarity. |
 | 1.0 | 2026-03-04 | Initial version. |
