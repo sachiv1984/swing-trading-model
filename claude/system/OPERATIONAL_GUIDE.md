@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 2.9  
+**Version:** 3.0  
 **Last Updated:** 2026-03-07  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -966,7 +966,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure_prompt.md` (v1.0)  
+**Source prompt:** `claude/system/post_ship_closure_prompt.md` (v1.2)  
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)  
 **Owner:** PMO Lead  
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1256,7 +1256,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 2.9 |
+| Version | 3.0 |
 | Last Updated | 2026-03-07 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
@@ -1270,7 +1270,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.0 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v1.5 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.1 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` v1.0 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` v1.2 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v1.1 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.4 |
@@ -1288,6 +1288,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.0 | 2026-03-07 | **Aligned with `post_ship_closure_prompt.md` v1.2.** §10 source prompt updated to v1.2. §14 Post-Ship Closure Engine → v1.2. Key changes now documented in guide: `amended_backlog_slice_path` handling in closure (STEP 0 + STEP 3); `lessons_learnt_closure.md` created by explicit STEP 8.5 (invokes `lessons_learnt_prompt.md §3.5`); dry-run enforcement consistent with other engines in chain. |
 | 2.9 | 2026-03-07 | **Aligned with `delivery_verification_prompt.md` v1.1.** §9 source prompt updated to v1.1. §14 Verification Engine Source → v1.1. `Not_Verified` confirmed as the canonical `.claude_current_state.json` status string for failed verification (not `Verification_Failed`). |
 | 2.8 | 2026-03-07 | **Aligned with `execution_prompt.md` v1.5 and `design_gate_prompt.md` v1.1.** §8 source prompt updated to v1.5. §6.5 source prompt updated to v1.1. §14: Execution Engine → v1.5, Design Gate Engine → v1.1. **`Executing` status added to lifecycle.** §4 Phase 3 row updated: trigger condition and intermediate `Executing` status documented. §12 cycle trigger table: `Executing` row added (Phase 3 resume via re-invocation after each EPIC merge). **Note:** `execution_escalations.md` was already present in §13 Artefact Register (confirmed). |
 | 2.7 | 2026-03-07 | **Aligned with `sprint_planning_prompt.md` v1.2.** §7 source prompt updated to v1.2. §14 Sprint Planning Engine version updated to v1.2. |
