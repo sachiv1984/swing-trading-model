@@ -37,7 +37,7 @@ run design-gate --cycle "<cycle_id>" [--dry-run]
 Rules:
 - Invocation must start with `run design-gate` (case-insensitive match allowed).
 - `--cycle` is required and must match an active cycle in `claude/cycles/`.
-- `--dry-run`: produces the classification and gap list without writing files or gating Sprint Planning.
+- `--dry-run`: produces the classification table and gap list without writing any files, updating global state, or gating Sprint Planning. Output ends after the classification table and blocked items summary — no gate record, no state update, no commit.
 - If invocation is not exact, do not run. Treat as conversational.
 
 **Pre-condition (Hard Gate):** Phase 1B must be complete and `sprint_sealed = false` (Sprint Planning has not yet started). If Sprint Planning is already sealed, this engine may not run — the gate has been bypassed and must be flagged as a process deviation.
@@ -74,7 +74,7 @@ Binding governance stack (precedence order):
 During this routine you may write only to:
 
 - `claude/cycles/<cycle_id>/design_gate.md` (design gate record — create)
-- `claude/cycles/<cycle_id>/state.json` (update `design_gate_status`)
+- `claude/cycles/<cycle_id>/state.json` (update `design_gate_status` and related fields — additive write only; do not overwrite unrelated fields)
 - `docs/specs/frontend/pages/` (update frontend specs with approved design decisions — Head of Specs Team and Frontend Specs owner only, not Facilitator)
 
 You must **not** modify:
@@ -83,6 +83,8 @@ You must **not** modify:
 - Any canonical spec beyond the approved frontend spec updates
 
 Violation → halt.
+
+**`--dry-run` write scope:** nothing. No files are written, no state is updated.
 
 ---
 
@@ -114,6 +116,12 @@ Verify:
 - `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
 - `claude/cycles/<cycle_id>/state.json` with `sprint_sealed = false`
 
+Check `design_gate_status` in `state.json`:
+- `not_started` (default set by Release Planning Engine at STEP 0): proceed normally
+- `Passed`: gate already cleared — confirm with PMO Lead before re-running; re-run is idempotent but should be intentional
+- `Blocked`: prior run left items unresolved — proceed to clear blocked items
+- Any other value or field absent: treat as `not_started` and proceed
+
 If `sprint_sealed = true`: halt. Design gate was bypassed. Record as process deviation in escalations.
 
 ### -1.2 Agent Files Present
@@ -123,6 +131,8 @@ Verify agent files exist for:
 - `claude/agents/frontend_specs_ux_documentation_owner.md`
 
 If missing: halt and report.
+
+**`--dry-run`:** preflight runs normally. If preflight fails, report and stop — do not proceed to classification.
 
 ---
 
@@ -151,6 +161,8 @@ For any item where Product Owner or Head of UX & Design disagree on classificati
 - Record the disagreement
 - Default to **Design Required** unless Product Owner explicitly accepts Design Pre-Approved/Not Applicable
 - Record the decision and rationale
+
+**`--dry-run` exit point:** output the classification table and any identified gaps (items with no existing artefact, items likely to block). Stop here — do not proceed to STEP 2 or beyond.
 
 ---
 
@@ -266,7 +278,7 @@ Head of UX & Design: confirmed
 
 ## STEP 6 — Update Global State
 
-Update `claude/cycles/<cycle_id>/state.json`:
+Update `claude/cycles/<cycle_id>/state.json` — additive write only; do not overwrite unrelated fields set by other engines:
 
 ```json
 {
@@ -277,6 +289,11 @@ Update `claude/cycles/<cycle_id>/state.json`:
 }
 ```
 
+**State lifecycle for `design_gate_status`:**
+- `not_started` — initial value set by Release Planning Engine (STEP 0); this engine reads it at preflight
+- `Blocked` — set here if one or more items are unresolved
+- `Passed` — set here only when all Design Required items are cleared; this is the value that unlocks Sprint Planning
+
 If gate status is **Blocked**:
 - Do not set `sprint_planning_pre_condition` to true
 - Record blocked items in `claude/cycles/<cycle_id>/escalations.md`
@@ -285,6 +302,8 @@ If gate status is **Blocked**:
 ---
 
 ## STEP 7 — Commit
+
+**Skip entirely if `--dry-run`.** Dry-run ends at STEP 1.
 
 ```
 git add claude/cycles/<cycle_id>/design_gate.md
@@ -305,9 +324,11 @@ The run is complete when:
 
 - All items classified
 - All Design Required items have approved artefacts and updated frontend specs, or are recorded as blocked
-- Design gate record written
-- Global state updated
+- Design gate record written (`claude/cycles/<cycle_id>/design_gate.md`)
+- Global state updated (`design_gate_status = Passed | Blocked`)
 - Commit complete (or commit manifest produced)
+
+**`--dry-run` completion condition:** classification table produced and gap summary output. No files written, no state updated, no commit. Run is complete.
 
 Sprint Planning (`plan sprint`) may only be issued when `design_gate_status = Passed`.
 
@@ -320,7 +341,8 @@ Sprint Planning (`plan sprint`) may only be issued when `design_gate_status = Pa
 - **Frontend spec must be updated before the gate clears.** A design artefact without a corresponding spec update does not clear the gate.
 - **Product Owner approves all design artefacts.** The Head of UX & Design produces; the Product Owner approves. These are not the same step.
 - **Gate bypass is a process deviation.** If Sprint Planning is run without a passing design gate, this must be recorded in escalations and lessons learnt.
-- **Dry-run is safe.** `--dry-run` never writes or updates global state.
+- **Dry-run is safe.** `--dry-run` never writes files, updates state, or affects Sprint Planning gating. It exits after classification.
+- **State writes are additive.** STEP 6 writes only the four `design_gate_*` fields — it must not overwrite fields set by other engines (e.g. `backlog_committed`, `publish_eligible`).
 
 ---
 
@@ -328,4 +350,5 @@ Sprint Planning (`plan sprint`) may only be issued when `design_gate_status = Pa
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-03-07 | **Dry-run behaviour made explicit throughout.** §2 invocation rule: dry-run output scope defined (classification table + gap list only; no gate record, no state, no commit). §5 write scope: dry-run write scope stated as nothing. STEP -1.1: dry-run preflight note added. STEP 1: dry-run exit point added. STEP 7: explicit skip instruction for dry-run added. §7 completion condition: dry-run completion condition added. §8 governance invariants: dry-run invariant updated with exit point. **`design_gate_status` state lifecycle documented.** STEP -1.1: preflight now checks existing `design_gate_status` value and defines behaviour for each state (`not_started`, `Passed`, `Blocked`). STEP 6: state lifecycle table added (`not_started` → `Blocked` / `Passed`); note that `not_started` is set by Release Planning Engine at STEP 0. **State write scope tightened.** §5 write scope note: additive write only. STEP 6 instruction: additive write only; must not overwrite unrelated fields. §8 governance invariants: additive write invariant added. |
 | 1.0 | 2026-03-04 | Initial version. |
