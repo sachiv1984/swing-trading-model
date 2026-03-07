@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 3.1
+**Version:** 3.2
 **Last Updated:** 2026-03-07  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -593,7 +593,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.9)  
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.11)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -644,16 +644,16 @@ All progress is recorded in `claude/cycles/<cycle_id>/state.json`. The routine i
 |------|------|------|--------|
 | STEP -1 | Preflight | **HARD** | Pass / Halt |
 | STEP 0 | Run Manifest + Initialize State | **HARD** | `run_manifest.md`, `state.json` |
-| STEP 1 | Release Readiness Validation | — | `stage1_readiness.md` |
-| STEP 2 | Scope Extraction | — | `stage2_scope_extraction.md` (S2-xx IDs required); `docs/product/scope/scope--{cycle_id}-{slug}.md` created |
-| STEP 3 | Execution Plan | — | `stage3_execution_plan.md` (EPIC-xx + Maps to + RISK-xx required); `docs/product/decisions/decisions--{cycle_id}.md` created |
-| STEP 3.5 | Local Model Integrity Check | Conditional | `stage3_5_model_integrity.md` |
+| STEP 1 | Release Readiness Validation | — | `release_plan.md` §Readiness |
+| STEP 2 | Scope Extraction | — | `release_plan.md` §Scope (S2-xx IDs required); `docs/product/scope/scope--{cycle_id}-{slug}.md` created |
+| STEP 3 | Execution Plan | — | `release_plan.md` §Execution Plan (EPIC-xx + Maps to + RISK-xx required); `docs/product/decisions/decisions--{cycle_id}.md` created |
+| STEP 3.5 | Local Model Integrity Check | Conditional | `release_plan.md` §Integrity Validation — 3.5 |
 | STEP 3.9 | Shared Write Lock Preflight | **HARD** | Backlog lock acquired |
 | STEP 4 | Backlog Slice | **HARD** | `stage4_backlog_slice.md` + backlog updated |
-| STEP 4.5 | Capacity Feasibility Sense Check | Conditional | `stage4_5_capacity_check.md` |
+| STEP 4.5 | Capacity Feasibility Sense Check | Conditional | `release_plan.md` §Capacity Check |
 | STEP 5 | Roadmap Annotation | — | Roadmap execution notes updated |
-| STEP 5.5 | Cross-Stage Integrity Validation | **HARD** | `stage5_5_cross_stage_integrity.md` |
-| STEP 5.7 | Decision Record Integrity Validation | **HARD** | `stage5_7_decision_record_integrity.md` |
+| STEP 5.5 | Cross-Stage Integrity Validation | **HARD** | `release_plan.md` §Integrity Validation — 5.5 |
+| STEP 5.7 | Decision Record Integrity Validation | **HARD** | `release_plan.md` §Integrity Validation — 5.7 (only if triggered) |
 | STEP 7 | Cycle Summary + Intermediate State Sync | — | `cycle_summary.md`; `.claude_current_state.json` intermediate sync (must NOT set status = Published) |
 | STEP 7.1 | Intermediate Global State Sync | **HARD** | `.claude_current_state.json` updated: `active_cycle`, `status` = current macro-state, `backlog_slice_path`, `last_sync_utc` — status must NOT be `Published` at this step |
 | STEP 8 | Lessons Learnt | — | `lessons_learnt.md` |
@@ -1237,9 +1237,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | State File | `claude/cycles/<id>/state.json` | — | PMO Lead | 1B |
 | Backlog Lock | `claude/backlog/.lock` | — | PMO Lead | 1B, 1M |
 | Backlog Transaction | `claude/cycles/<id>/backlog_txn.json` | — | PMO Lead | 1B |
-| Stage 1 Readiness | `claude/cycles/<id>/stage1_readiness.md` | 3 | PMO Lead | 1B |
-| Stage 2 Scope Extraction | `claude/cycles/<id>/stage2_scope_extraction.md` | 3 | PMO Lead | 1B |
-| Stage 3 Execution Plan | `claude/cycles/<id>/stage3_execution_plan.md` | 3 | PMO Lead | 1B |
+| Release Plan (consolidated intermediate) | `claude/cycles/<id>/release_plan.md` | 4 | PMO Lead | 1B |
 | Stage 4 Backlog Slice | `claude/cycles/<id>/stage4_backlog_slice.md` | 3 | PMO Lead | 1B |
 | Escalations (Release) | `claude/cycles/<id>/escalations.md` | 4 | PMO Lead | 1B |
 | AR / SRB Decision Records | `docs/product/decisions/AR-*.md` | 4 | Product Owner | 1B |
@@ -1290,14 +1288,14 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.1 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.9 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.2 |
-| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.0 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v1.5 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.1 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` v1.2 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.11 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.3 |
+| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.1 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v1.6 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.2 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.3 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v1.1 |
+| Shared Standards | `claude/system/shared_standards.md` v1.2 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.4 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` (created on first action-now patch) |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
@@ -1313,6 +1311,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.2 | 2026-03-07 | **Phase 1B artefacts consolidation.** §6B source prompt updated to v2.11. §6B.3 step table: Steps 1, 2, 3, 3.5, 4.5, 5.5, 5.7 now write sections into `release_plan.md` instead of separate stage files. §13 Artefact Register: Stage 1 Readiness, Stage 2 Scope Extraction, Stage 3 Execution Plan rows replaced with single `release_plan.md` (consolidated intermediate) row; Stage 4 Backlog Slice retained separately. §14 Governance table: all engine versions updated to current (release_planning_prompt v2.11, sprint_planning v1.3, amendment_cycle v1.1, execution v1.6, delivery_verification v1.2, post_ship_closure v1.3, shared_standards v1.2). |
+| 3.1 | 2026-03-07 | **Lifecycle state machine hardening.** Added §4.1 Lifecycle State Machine — allowed transition table with from/to/engine/entry condition. Lifecycle Guard enforcement paragraph added referencing `shared_standards.md §10` and `lifecycle_schema.json`. |
 | 3.0 | 2026-03-07 | **Aligned with `post_ship_closure_prompt.md` v1.2.** §10 source prompt updated to v1.2. §14 Post-Ship Closure Engine → v1.2. Key changes now documented in guide: `amended_backlog_slice_path` handling in closure (STEP 0 + STEP 3); `lessons_learnt_closure.md` created by explicit STEP 8.5 (invokes `lessons_learnt_prompt.md §3.5`); dry-run enforcement consistent with other engines in chain. |
 | 2.9 | 2026-03-07 | **Aligned with `delivery_verification_prompt.md` v1.1.** §9 source prompt updated to v1.1. §14 Verification Engine Source → v1.1. `Not_Verified` confirmed as the canonical `.claude_current_state.json` status string for failed verification (not `Verification_Failed`). |
 | 2.8 | 2026-03-07 | **Aligned with `execution_prompt.md` v1.5 and `design_gate_prompt.md` v1.1.** §8 source prompt updated to v1.5. §6.5 source prompt updated to v1.1. §14: Execution Engine → v1.5, Design Gate Engine → v1.1. **`Executing` status added to lifecycle.** §4 Phase 3 row updated: trigger condition and intermediate `Executing` status documented. §12 cycle trigger table: `Executing` row added (Phase 3 resume via re-invocation after each EPIC merge). **Note:** `execution_escalations.md` was already present in §13 Artefact Register (confirmed). |
