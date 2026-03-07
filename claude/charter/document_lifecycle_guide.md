@@ -3,8 +3,8 @@
 **Owner:** Head of Specs Team  
 **Scope:** All governed documentation across the entire product  
 **Status:** Canonical  
-**Version:** 2.5  
-**Last Updated:** 2026-03-04  
+**Version:** 2.6
+**Last Updated:** 2026-03-07  
 
 ---
 
@@ -12,6 +12,7 @@
 
 | Version | Change |
 |--------:|--------|
+| 2.6 | Added Class 4 sub-type 3 — Release Plan (`release_plan.md`). The Release Planning Engine now consolidates all intermediate reasoning artefacts (readiness, scope, execution plan, capacity check, integrity validation) into a single `release_plan.md` per cycle. Final outputs (scope document, decisions record, backlog slice) remain separate. |
 | 2.5 | Added Class 8 — Proof of Gate. New document class for hard gate clearance evidence. Immutable once issued; status field only may change to Superseded; permanent governance record stored in `claude/evidence/gates/`. Required when any governed routine records a hard gate condition that must be cleared before an item advances. Added Class 8 to Section 2, Section 3 (lifecycle states), Section 4 (universal header block), and Section 5 (versioning — Class 8 does not use version numbers). |
 | 2.4 | Added Release Planning Engine governance alignment. Clarified that multiple governed routines may exist (e.g., Roadmap Rebalance, Release Planning), all invoked via Class 6 Governance Prompts. Explicitly recognised `claude/roadmap/` and `claude/backlog/` as valid planning-document locations for governed routines. |
 | 2.3 | Clarified lifecycle enforcement roles to explicitly include Facilitator and Challenger as non-decision governance roles. No changes to document classes or lifecycle semantics. |
@@ -136,10 +137,11 @@ Filed:              [date filed]
 
 **What it is:** A working document capturing product decisions, feature intent, prioritisation, and backlog thinking. It is pre-canonical.
 
-Planning Documents include two distinct sub-types:
+Planning Documents include three distinct sub-types:
 
 1. **Roadmap, backlog, and decisions documents** — ongoing planning artefacts that evolve over time
 2. **Scope documents** — implementation briefs written at the end of pre-alignment
+3. **Release plan** (`release_plan.md`) — consolidated intermediate planning record produced by the Release Planning Engine. Contains all intermediate reasoning (readiness, scope, execution plan, capacity check, integrity validation). Retained in `claude/cycles/<cycle_id>/release_plan.md`. Final outputs (scope document, decisions record, backlog slice) are retained separately.
 
 **Who creates it:** Product Owner.
 **Lifecycle states:** Draft → Active → Superseded → Archived

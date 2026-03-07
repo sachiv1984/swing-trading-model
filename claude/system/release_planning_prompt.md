@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.10
+**Version:** 2.11
 **Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -205,6 +205,8 @@ Minimum required content per issue:
 
 One entry per EPIC-xx and ST-xx in `stage4_backlog_slice.md`, in backlog order. This file is the authoritative import source if `gh` CLI is unavailable or falls back.
 
+For EPIC descriptions, source from `release_plan.md ## Execution Plan` section.
+
 ---
 
 ## 11. Canonicalization Rules (Hashing — Hard Requirement)
@@ -331,8 +333,7 @@ Then create or update:
   "sealed": {
     "sealed_utc": "",
     "sealed_hashes": {
-      "stage2_scope_extraction": "",
-      "stage3_execution_plan": "",
+      "release_plan": "",
       "stage4_backlog_slice": "",
       "escalations": ""
     },
@@ -356,13 +357,11 @@ Then create or update:
     "method": "sha256",
     "canonicalization": "md-v1",
     "tracked_set": [
-      "stage2_scope_extraction",
-      "stage3_execution_plan",
+      "release_plan",
       "stage4_backlog_slice",
       "escalations"
     ],
-    "stage2_scope_extraction": "<sha256 or empty>",
-    "stage3_execution_plan": "<sha256 or empty>",
+    "release_plan": "<sha256 or empty>",
     "stage4_backlog_slice": "<sha256 or empty>",
     "escalations": "<sha256 or empty>"
   },
@@ -528,8 +527,7 @@ Prevent stale "pass" stamps after any mutation to assumptions or tracked artifac
 - immediately after resolving any escalation that changes assumptions or artifacts.
 
 ### Tracked items
-- stage2_scope_extraction.md
-- stage3_execution_plan.md
+- release_plan.md (consolidated intermediate artefact — covers Scope, Execution Plan, and Integrity Validation content)
 - stage4_backlog_slice.md
 - escalations.md
 - assumptions: timebox, capacity
@@ -546,8 +544,8 @@ Prevent stale "pass" stamps after any mutation to assumptions or tracked artifac
 If a tracked item changes, invalidate dependent steps by setting their artifact status to `not_started` and recording them in `invalidated_steps[]`.
 
 Rules:
-- If stage2_scope_extraction changed → invalidate: STEP 3, STEP 3.5, STEP 4, STEP 5.5
-- If stage3_execution_plan changed → invalidate: STEP 3.5, STEP 4, STEP 5.5
+- If release_plan.md (## Scope section) changed → invalidate: STEP 3, STEP 3.5, STEP 4, STEP 5.5
+- If release_plan.md (## Execution Plan section) changed → invalidate: STEP 3.5, STEP 4, STEP 5.5
 - If stage4_backlog_slice changed → invalidate: STEP 5.5
 - If escalations changed in a way that adds/removes decision records or Accepted Risk → invalidate: STEP 5.7 and Publish Gate evaluation
 
@@ -746,7 +744,7 @@ If any Open escalations remain:
 
 ## STEP 1 — Release Readiness Validation
 
-Write: `stage1_readiness.md`
+Write: `## Readiness` section in `release_plan.md` (create the file if this is the first step; append the section if resuming)
 
 Update state.json:
 
@@ -756,7 +754,7 @@ Update state.json:
 
 ## STEP 2 — Scope Extraction (No Scope Changes Allowed)
 
-Write: `stage2_scope_extraction.md` (S2 IDs required)
+Write: `## Scope` section in `release_plan.md` (S2 IDs required)
 
 **Scope document (required output):**
 
@@ -808,7 +806,7 @@ Update state.json:
 
 ## STEP 3 — Execution Plan + Decisions Record
 
-Write: `stage3_execution_plan.md` (EPIC IDs + Maps to + RISK IDs required)
+Write: `## Execution Plan` section in `release_plan.md` (EPIC IDs + Maps to + RISK IDs required)
 
 **Decisions record (required output):**
 
@@ -866,7 +864,7 @@ Update state.json:
 
 Classification: Conditional Gate (halts only if escalation remains Open / blocking)
 
-Write: `stage3_5_model_integrity.md`
+Write: `## Integrity Validation — 3.5 Local Model Integrity` subsection in `release_plan.md`
 
 Update state.json:
 
@@ -1038,7 +1036,7 @@ If the environment does not permit removing the lock file:
 
 Classification: Conditional Gate (halts only if escalation remains Open / blocking)
 
-Write: `stage4_5_capacity_check.md`
+Write: `## Capacity Check` section in `release_plan.md`
 
 Update state.json:
 
@@ -1098,7 +1096,7 @@ If removal fails:
 
 ## STEP 5.5 — Cross-Stage Integrity Validation (Hard Gate)
 
-Write: `stage5_5_cross_stage_integrity.md`
+Write: `## Integrity Validation — 5.5 Cross-Stage Integrity` subsection in `release_plan.md`
 
 Update state.json:
 
@@ -1111,7 +1109,7 @@ Update state.json:
 
 ## STEP 5.7 — Decision Record Integrity Validation (Hard Gate)
 
-Write: `stage5_7_decision_record_integrity.md` only if triggered
+Write: `## Integrity Validation — 5.7 Decision Record Integrity` subsection in `release_plan.md` (only if triggered)
 
 Update state.json:
 

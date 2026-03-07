@@ -1,0 +1,23 @@
+**Owner:** Head of Specs Team
+**Status:** Active
+**Version:** 1.0
+**Last Updated:** 2026-03-07
+
+# Prompt Change Log
+
+This file records all changes to governance prompts (Class 6 documents) and related governance artefacts. Append-only.
+
+---
+
+## Changes
+
+| Date | Prompt | Version | Change | Authority |
+|------|--------|---------|--------|-----------|
+| 2026-03-07 | `release_planning_prompt.md` | v2.10→v2.11 | Intermediate Release Planning artefacts collapsed into `release_plan.md`. Steps 1, 2, 3, 3.5, 4.5, 5.5, 5.7 now write sections into a single consolidated file instead of separate stage files. Final outputs retained separately: scope document, decisions record, stage4_backlog_slice.md. Tracked set in state.json schema updated from `[stage2_scope_extraction, stage3_execution_plan, stage4_backlog_slice, escalations]` to `[release_plan, stage4_backlog_slice, escalations]`. | Head of Specs Team |
+| 2026-03-07 | `release_planning_prompt.md` | v2.9→v2.10 | Added Lifecycle Guard (valid from-states: `Closed`) per `shared_standards.md §10`. | Head of Specs Team |
+| 2026-03-07 | `sprint_planning_prompt.md` | v1.2→v1.3 | Added Lifecycle Guard (valid from-states: `Design_Gate_Passed`; or `Release_Planning_Complete` when design gate not required). | Head of Specs Team |
+| 2026-03-07 | `execution_prompt.md` | v1.5→v1.6 | Added Lifecycle Guard (valid from-states: `Sprint_Planning_Complete`, `Executing` on resume). | Head of Specs Team |
+| 2026-03-07 | `delivery_verification_prompt.md` | v1.1→v1.2 | Added Lifecycle Guard (valid from-states: `Sprint_Complete`). | Head of Specs Team |
+| 2026-03-07 | `post_ship_closure.md` | v1.2→v1.3 | Added Lifecycle Guard (valid from-states: `Verified`, `Verified_with_deviations`). | Head of Specs Team |
+| 2026-03-07 | `design_gate_prompt.md` | v1.0→v1.1 | Added Lifecycle Guard (valid from-states: `Release_Planning_Complete`). | Head of Specs Team |
+| 2026-03-07 | `amendment_cycle_prompt.md` | v1.0→v1.1 | Added Lifecycle Guard (valid from-states: `Sprint_Planning_Complete` with `sprint_sealed = false`). | Head of Specs Team |
