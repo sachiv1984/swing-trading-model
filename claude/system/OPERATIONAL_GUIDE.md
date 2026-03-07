@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 2.8  
+**Version:** 2.9  
 **Last Updated:** 2026-03-07  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -880,7 +880,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.0)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.1)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1256,7 +1256,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 2.8 |
+| Version | 2.9 |
 | Last Updated | 2026-03-07 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
@@ -1269,7 +1269,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.2 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.0 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v1.5 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.0 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` v1.0 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v1.1 |
@@ -1288,6 +1288,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 2.9 | 2026-03-07 | **Aligned with `delivery_verification_prompt.md` v1.1.** §9 source prompt updated to v1.1. §14 Verification Engine Source → v1.1. `Not_Verified` confirmed as the canonical `.claude_current_state.json` status string for failed verification (not `Verification_Failed`). |
 | 2.8 | 2026-03-07 | **Aligned with `execution_prompt.md` v1.5 and `design_gate_prompt.md` v1.1.** §8 source prompt updated to v1.5. §6.5 source prompt updated to v1.1. §14: Execution Engine → v1.5, Design Gate Engine → v1.1. **`Executing` status added to lifecycle.** §4 Phase 3 row updated: trigger condition and intermediate `Executing` status documented. §12 cycle trigger table: `Executing` row added (Phase 3 resume via re-invocation after each EPIC merge). **Note:** `execution_escalations.md` was already present in §13 Artefact Register (confirmed). |
 | 2.7 | 2026-03-07 | **Aligned with `sprint_planning_prompt.md` v1.2.** §7 source prompt updated to v1.2. §14 Sprint Planning Engine version updated to v1.2. |
 | 2.6 | 2026-03-07 | **Aligned with `release_planning_prompt.md` v2.9.** §6B source prompt updated to v2.9. §6B.3 engine steps table: STEP 2 output now includes scope document creation; STEP 3 output now includes decisions record creation; STEP 7 renamed to include intermediate state sync; STEP 7.1 added as explicit hard-requirement row; STEP 9 renamed terminal and clarified as the only step that may set `status = Published`; STEP 10 note updated to include scope + decisions record in commit. §6B.6 Publish Gate: added `deferred_execution_blockers is empty` and STEP 7.1 completion as required conditions. §6B.7 Exit Criteria: added scope document, decisions record, `deferred_execution_blockers`, and STEP 7.1/9 sync confirmation. Phase 1B checklist in Quick Reference updated to match. **§13 Artefact Register:** added Scope Document (`docs/product/scope/scope--{cycle_id}-{slug}.md`) and Decisions Record (`docs/product/decisions/decisions--{cycle_id}.md`) rows. **§6.5.2 Design Gate:** `design_gate_status` ownership clarified — Design Gate Engine writes it; Release Planning Engine initialises to `not_started`. **§6B.8 Amendment Cycle:** `amended_backlog_slice_path` field note expanded to name the writing engine and clarify supersession of `backlog_slice_path`. **§14 Governance table:** version → 2.6, Release Engine Source → v2.9. |
