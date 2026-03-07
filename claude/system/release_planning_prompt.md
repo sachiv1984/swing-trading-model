@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.8
-**Last Updated:** 2026-03-06
+**Version:** 2.9
+**Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -49,7 +49,7 @@ Rules:
   - `standard`: proceed with explicit assumptions and flags where allowed, but still halt on hard gates
 - `--issues` optional:
   - `none`: do not generate issue artifacts
-  - `import`: create `issue_import.md` only
+  - `import`: create `issue_import.md` in `claude/cycles/<cycle_id>/issue_import.md` — see §10.1
   - `gh`: attempt to create GitHub issues via `gh` CLI; if unavailable, fall back to `import`
 - `--auto-escalate` optional:
   - `true` (default): system creates, routes, and attempts to resolve escalations using delegated authority
@@ -99,7 +99,8 @@ During this routine you may write only to:
 - claude/cycles/<cycle_id>/*
 - claude/backlog/backlog.md (release slice only; no global reprioritisation)
 - claude/roadmap/current_roadmap.md (ONLY to add execution notes/links under the existing release section; no scope change)
-- docs/product/decisions/* (ONLY when required to resolve an escalation under the rules below; must be lifecycle-compliant)
+- docs/product/scope/* (scope document created at STEP 2)
+- docs/product/decisions/* (decisions record created at STEP 3; also when required to resolve an escalation under the rules below; must be lifecycle-compliant)
 - claude/scoring/* (only if explicitly requested by Product Owner for sequencing support)
 
 You must not modify:
@@ -172,6 +173,38 @@ The routine is **state-driven**:
 
 ---
 
+## 10.1 Issue Import Format (`--issues import`)
+When `--issues import` (or `gh` fallback) is specified, write:
+
+`claude/cycles/<cycle_id>/issue_import.md`
+
+Minimum required content per issue:
+
+```markdown
+## [EPIC-xx] <Epic Title>
+
+**Labels:** epic, release-vX.Y
+**Milestone:** vX.Y
+**Assignee:** (unassigned)
+
+<Epic description from stage3_execution_plan.md>
+
+---
+
+## [ST-xx] <Story Title>
+
+**Labels:** story, release-vX.Y
+**Milestone:** vX.Y
+**Parent epic:** EPIC-xx
+**Assignee:** (unassigned)
+
+<Story description and acceptance criteria summary>
+```
+
+One entry per EPIC-xx and ST-xx in `stage4_backlog_slice.md`, in backlog order. This file is the authoritative import source if `gh` CLI is unavailable or falls back.
+
+---
+
 ## 11. Canonicalization Rules (Hashing — Hard Requirement)
 For markdown planning artefacts:
 1. Normalize line endings to LF (`\n`)
@@ -179,6 +212,7 @@ For markdown planning artefacts:
 3. Collapse runs of >2 blank lines to exactly 2
 4. Trim leading/trailing blank lines
 5. Do NOT reorder or otherwise transform content
+6. Front matter (YAML or HTML comment headers) is included in the hash — do not strip it
 
 Hash method: SHA-256
 
@@ -196,10 +230,10 @@ Filesystem timestamps are forbidden.
 - `Blocked` — one or more Open escalations exist; publish gate cannot pass; strict locks block progress; or terminal publish guard halts further action
 
 ### 12.2 State semantics (no overlap)
-- **Planning** means “Stage 3 exists and Stage 3.5 passed.”
-- **Committed** means “Stage 4 passed.”
-- **Validated** means “Stage 4.5 + Stage 5.5 + Stage 5.7 (if triggered) passed AND Publish Gate eligible.”
-- **Published** means “Sealed snapshot recorded AND cycle summary + lessons exist AND publish gate passed.”
+- **Planning** means "Stage 3 exists and Stage 3.5 passed."
+- **Committed** means "Stage 4 passed."
+- **Validated** means "Stage 4.5 + Stage 5.5 + Stage 5.7 (if triggered) passed AND Publish Gate eligible."
+- **Published** means "Sealed snapshot recorded AND cycle summary + lessons exist AND publish gate passed."
 
 ---
 
@@ -377,6 +411,9 @@ Then create or update:
     "decisions_validated": "not_started|pass|fail|not_applicable|blocked"
   },
 
+  "design_gate_status": "not_started|passed|bypassed",
+  "amended_backlog_slice_path": "",
+
   "artifacts": {
     "run_manifest": "present|missing",
     "backlog_lock": "not_checked|acquired|blocked|released|stale_detected",
@@ -386,7 +423,9 @@ Then create or update:
 
     "stage1_readiness": "not_started|pass|fail|blocked",
     "stage2_scope_extraction": "not_started|pass|fail|blocked",
+    "stage2_scope_document": "not_started|present|missing",
     "stage3_execution_plan": "not_started|pass|fail|blocked",
+    "stage3_decisions_record": "not_started|present|missing",
     "stage3_5_model_integrity": "not_started|pass|fail|blocked",
     "stage4_backlog_slice": "not_started|pass|fail|blocked",
     "stage4_5_capacity_check": "not_started|pass|warn|fail|blocked",
@@ -399,6 +438,10 @@ Then create or update:
   }
 }
 ```
+
+**Notes on reserved fields:**
+- `design_gate_status`: written by the Design Gate Engine (Phase 1.5) after this cycle publishes. Reserved here so Phase 1.5 and Phase 2 can read it from a known location. This engine initialises it to `not_started` and does not modify it further.
+- `amended_backlog_slice_path`: written by the Amendment Cycle Engine if an amendment is sealed after this cycle publishes. Reserved here. This engine initialises it to empty string and does not modify it further.
 
 If the run manifest cannot be written in a lifecycle-compliant way: halt immediately.
 
@@ -425,7 +468,7 @@ If status is `Blocked`:
 
 If `state.json` is missing but artifacts exist:
 - Rebuild state from artifacts:
-  - mark as `pass` any stage file present that satisfies the step’s requirements
+  - mark as `pass` any stage file present that satisfies the step's requirements
   - otherwise mark as `not_started`
 - Write `state.json` and continue.
 
@@ -472,13 +515,13 @@ If `status == Published`:
 Perform drift detection only (see Drift Detection).
 
 If drift found: HALT with instruction:
-- “Published cycle has drift. Do not modify this cycle. Create a new amendment cycle and reference this published cycle_id.”
+- "Published cycle has drift. Do not modify this cycle. Create a new amendment cycle and reference this published cycle_id."
 
 If no drift found: HALT with message:
-- “Cycle is Published and sealed. No further action permitted in this cycle.”
+- "Cycle is Published and sealed. No further action permitted in this cycle."
 
 ### Purpose
-Prevent stale “pass” stamps after any mutation to assumptions or tracked artifacts. Execute:
+Prevent stale "pass" stamps after any mutation to assumptions or tracked artifacts. Execute:
 - at the start of any run after STEP 0, and
 - immediately after resolving any escalation that changes assumptions or artifacts.
 
@@ -606,7 +649,7 @@ If mismatch:
   - old value
   - new value
 - HALT with instruction:
-  - “Published cycle has drift. Create amendment cycle.”
+  - "Published cycle has drift. Create amendment cycle."
 
 No repair allowed in published cycle.
 
@@ -697,7 +740,7 @@ If any Open escalations remain:
 
 ---
 
-# Steps (unchanged artifacts; updated macro-state assignments)
+# Steps
 
 ## STEP 1 — Release Readiness Validation
 
@@ -706,6 +749,8 @@ Write: `stage1_readiness.md`
 Update state.json:
 
 - artifacts.stage1_readiness = pass|fail|blocked
+
+---
 
 ## STEP 2 — Scope Extraction (No Scope Changes Allowed)
 
@@ -741,28 +786,79 @@ Last Updated: <date>
 
 *(If nothing deferred: "None")*
 
-### Supersession note (to be completed at post-ship closure)
-Superseded by: v<X.Y> ship — <ship date>
-Changelog: docs/product/changelog.md#v<X.Y>
-Verification report: claude/cycles/<cycle_id>/verification_report.md
+### Supersession note
+*To be completed at Post-Ship Closure — do not populate at planning time.*
+
+Superseded by: [TBD]
+Changelog: [TBD]
+Verification report: [TBD]
 Cycle: <cycle_id>
 ```
 
-This document is the authoritative scope record for post-ship STEP 4.1 supersession. If this document is not created here, STEP 4.1 of post-ship closure will flag it as missing every cycle.
+This document is the authoritative scope record for Post-Ship Closure Step 4 supersession. If this document is not created here, the post-ship closure engine will flag it as missing.
 
 Update state.json:
 
 - artifacts.stage2_scope_extraction = pass|fail|blocked
+- artifacts.stage2_scope_document = present|missing
 
-## STEP 3 — Execution Plan
+---
+
+## STEP 3 — Execution Plan + Decisions Record
 
 Write: `stage3_execution_plan.md` (EPIC IDs + Maps to + RISK IDs required)
+
+**Decisions record (required output):**
+
+Create: `docs/product/decisions/decisions--{cycle_id}.md`
+
+This document is the authoritative planning decisions record for this release. It is superseded at Post-Ship Closure. If not created here, the post-ship closure engine will flag it as missing.
+
+Minimum required content:
+
+```markdown
+Owner: Product Owner
+Class: Planning Document (Class 4)
+Status: Active
+Release: vX.Y
+Cycle: <cycle_id>
+Last Updated: <date>
+
+## Planning Decisions — vX.Y <Feature Name>
+
+### Scope decisions
+| Decision | Rationale | Made by | Date |
+|----------|-----------|---------|------|
+| ...      | ...       | ...     | ...  |
+
+### Sequencing decisions
+| Decision | Rationale | Made by | Date |
+|----------|-----------|---------|------|
+| ...      | ...       | ...     | ...  |
+
+### Accepted risks
+| ESC ID | Risk domain | Rationale | Accepted by | AR record |
+|--------|-------------|-----------|-------------|-----------|
+| ...    | ...         | ...       | ...         | ...       |
+
+*(Populate from any Accepted Risk escalations in this cycle. If none: "None")*
+
+### Supersession note
+*To be completed at Post-Ship Closure — do not populate at planning time.*
+
+Superseded by: [TBD]
+Changelog: [TBD]
+Cycle: <cycle_id>
+```
 
 Update state.json:
 
 - artifacts.stage3_execution_plan = pass|fail|blocked
+- artifacts.stage3_decisions_record = present|missing
 - attributes.plan_structured = true on pass
 - status = Planning when Stage 3 exists (pass)
+
+---
 
 ## STEP 3.5 — Local Model Integrity Check (Conditional Gate)
 
@@ -774,6 +870,8 @@ Update state.json:
 
 - artifacts.stage3_5_model_integrity = pass|fail|blocked
 - attributes.plan_executable = true on pass
+
+---
 
 ## STEP 3.9 — Shared Write Lock Preflight (Hard Gate)
 
@@ -796,45 +894,48 @@ Lock acquisition procedure:
 
 1. If `claude/backlog/.lock` does NOT exist:
 
-- Create it with deterministic contents:
-- cycle_id: `<cycle_id>`
-- release: `<release>`
-- acquired_utc: `<ISO-8601 UTC>`
-- acquired_by: "Release Planning Engine"
-- Update `state.json`:
-- locks.backlog_lock.owned = true
-- locks.backlog_lock.owner_cycle_id = `<cycle_id>`
-- locks.backlog_lock.owner_release = `<release>`
-- locks.backlog_lock.acquired_utc = `<timestamp>`
-- locks.backlog_lock.status = "acquired"
-- locks.backlog_lock.marker = `RP:<release>:<cycle_id>`
-- artifacts.backlog_lock = "acquired"
+   - Create it with deterministic contents:
+     - cycle_id: `<cycle_id>`
+     - release: `<release>`
+     - acquired_utc: `<ISO-8601 UTC>`
+     - acquired_by: "Release Planning Engine"
+   - Update `state.json`:
+     - locks.backlog_lock.owned = true
+     - locks.backlog_lock.owner_cycle_id = `<cycle_id>`
+     - locks.backlog_lock.owner_release = `<release>`
+     - locks.backlog_lock.acquired_utc = `<timestamp>`
+     - locks.backlog_lock.status = "acquired"
+     - locks.backlog_lock.marker = `RP:<release>:<cycle_id>`
+     - artifacts.backlog_lock = "acquired"
+
 2. If `claude/backlog/.lock` exists:
 
-- Read owner_cycle_id.
-- If owner_cycle_id == `<cycle_id>`:
-- Treat as re-entrant: proceed.
-- artifacts.backlog_lock = "acquired"
-- If owner_cycle_id != `<cycle_id>`:
-- Record a ⛔ Blocker (Lifecycle / Process Integrity; owning authority: PMO Lead)
-- Unblock criteria: "Backlog lock must be manually released or declared stale under protocol"
-- Evidence: include lock file contents
-- If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
-- Update `state.json`:
-- locks.backlog_lock.owned = false
-- locks.backlog_lock.owner_cycle_id = <from lock="" file=""></from>
-- locks.backlog_lock.owner_release = <from lock="" file="" if="" present=""></from>
-- locks.backlog_lock.status = "blocked"
-- artifacts.backlog_lock = "blocked"
-- HALT.
+   - Read `owner_cycle_id` from lock file contents.
+   - If `owner_cycle_id == <cycle_id>`:
+     - Treat as re-entrant: proceed.
+     - artifacts.backlog_lock = "acquired"
+   - If `owner_cycle_id != <cycle_id>`:
+     - Record a ⛔ Blocker (Lifecycle / Process Integrity; owning authority: PMO Lead)
+     - Unblock criteria: "Backlog lock must be manually released or declared stale under protocol"
+     - Evidence: include lock file contents
+     - If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
+     - Update `state.json`:
+       - locks.backlog_lock.owned = false
+       - locks.backlog_lock.owner_cycle_id = `<value from lock file>`
+       - locks.backlog_lock.owner_release = `<value from lock file, if present>`
+       - locks.backlog_lock.status = "blocked"
+       - artifacts.backlog_lock = "blocked"
+     - HALT.
 
 Stale protocol (detect only; do not clear):
 
 - If lock appears stale based on timestamp threshold defined by PMO Lead, you may:
-- set locks.backlog_lock.status = "stale_detected"
-- set artifacts.backlog_lock = "stale_detected"
-- create a blocker requiring manual stale resolution
+  - set locks.backlog_lock.status = "stale_detected"
+  - set artifacts.backlog_lock = "stale_detected"
+  - create a blocker requiring manual stale resolution
 - You may not delete or overwrite the lock automatically.
+
+---
 
 ## STEP 4 — Backlog Slice (commitment)
 
@@ -862,7 +963,7 @@ Create or update:
 
 - `claude/cycles/<cycle_id>/backlog_txn.json`
 
-Set to “prepared” BEFORE any modification to `claude/backlog/backlog.md`.
+Set to "prepared" BEFORE any modification to `claude/backlog/backlog.md`.
 
 Minimum required fields:
 
@@ -901,8 +1002,8 @@ If marker is not found:
 After backlog write completes successfully (or marker already present):
 
 - Update `claude/cycles/<cycle_id>/backlog_txn.json`:
-- state: `committed`
-- committed_utc: `<ISO-8601 UTC>`
+  - state: `committed`
+  - committed_utc: `<ISO-8601 UTC>`
 
 Update `state.json`:
 
@@ -921,13 +1022,15 @@ After successfully completing STEP 4 (txn committed):
 
 - Remove `claude/backlog/.lock`
 - Update `state.json`:
-- locks.backlog_lock.status = "released"
-- locks.backlog_lock.owned = false
-- artifacts.backlog_lock = "released"
+  - locks.backlog_lock.status = "released"
+  - locks.backlog_lock.owned = false
+  - artifacts.backlog_lock = "released"
 
 If the environment does not permit removing the lock file:
 
 - Record a blocker and HALT (lock cannot be left ambiguous).
+
+---
 
 ## STEP 4.5 — Capacity Feasibility Sense Check (Conditional Gate)
 
@@ -939,9 +1042,42 @@ Update state.json:
 
 - artifacts.stage4_5_capacity_check = pass|warn|fail|blocked
 - attributes.capacity_feasible = pass|warn|fail|blocked
-(NOTE: this step is forced to rerun by RESUME PRECHECK per safety policy)
 
-## STEP 5 — Roadmap Annotation (optional)
+*(NOTE: this step is forced to rerun by RESUME PRECHECK per safety policy)*
+
+---
+
+## STEP 5 — Roadmap Annotation
+
+Purpose: Record that planning is underway for this release by adding execution notes to the roadmap entry. This does not change scope, priority, or strategy — it adds a link to the cycle folder and current status.
+
+Write: Update `claude/roadmap/current_roadmap.md` — under the existing release section only.
+
+Required annotation content (append under the release section heading; do not modify any other content):
+
+```markdown
+<!-- roadmap-annotation-marker: RA:<release>:<cycle_id> -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: <cycle_id>
+- Plan published: <date>
+- Cycle folder: claude/cycles/<cycle_id>/
+- Backlog slice: claude/cycles/<cycle_id>/stage4_backlog_slice.md
+- Status at annotation: <macro-state at time of annotation>
+```
+
+Lock and transaction procedure:
+
+1. Acquire `claude/roadmap/.lock` with marker `RA:<release>:<cycle_id>` (same rules as backlog lock — halt if held by different cycle_id; re-entrant if same).
+2. Create or update `claude/cycles/<cycle_id>/roadmap_txn.json` — set state = "prepared" before writing.
+3. Write the annotation (idempotent — check for existing marker before writing; do not write twice).
+4. Update roadmap_txn.json: state = "committed".
+5. Release lock (see postcondition below).
+
+Update state.json:
+
+- artifacts.roadmap_txn = committed (on success)
+- locks.roadmap_lock.status = released (on success)
 
 ### STEP 5 Postcondition — Release Roadmap Lock (Strict)
 
@@ -956,6 +1092,8 @@ After roadmap_txn state = committed:
 If removal fails:
 - Record blocker and HALT.
 
+---
+
 ## STEP 5.5 — Cross-Stage Integrity Validation (Hard Gate)
 
 Write: `stage5_5_cross_stage_integrity.md`
@@ -964,7 +1102,10 @@ Update state.json:
 
 - artifacts.stage5_5_cross_stage_integrity = pass|fail|blocked
 - attributes.cross_stage_integrity = pass|fail|blocked
-(NOTE: rerun only if Stage 2/3/4 changed, hash-based)
+
+*(NOTE: rerun only if Stage 2/3/4 changed, hash-based)*
+
+---
 
 ## STEP 5.7 — Decision Record Integrity Validation (Hard Gate)
 
@@ -975,76 +1116,101 @@ Update state.json:
 - artifacts.stage5_7_decision_record_integrity = pass|fail|blocked|not_applicable
 - attributes.decisions_validated = pass|fail|not_applicable|blocked
 
+---
+
 ## STEP 7 — Cycle Summary
 
-## STEP 7.1 — Global State Update (Hard Requirement)
-
-Before writing the cycle_summary.md, the engine MUST update the root-level .claude_current_state.json to reflect the current transition:
-
-- Update active_cycle to the current <cycle_id>.
-- Update status to the current macro-state (e.g., Planning or Committed).
-- Update backlog_slice_path to claude/cycles/<cycle_id>/stage4_backlog_slice.md.
-- Update last_sync_utc to the current timestamp.
-
 Write: `cycle_summary.md`
+
+**Intermediate global state sync (required before writing cycle_summary.md):**
+
+Before writing `cycle_summary.md`, update `.claude_current_state.json` to reflect the current in-progress state. This is a pre-publish sync — it does not mark the cycle Published. Its purpose is to ensure the global state pointer reflects the active cycle if the session is interrupted before STEP 9.
+
+Update `.claude_current_state.json`:
+- active_cycle = `<cycle_id>`
+- status = current macro-state (e.g., `Validated` — not `Published`)
+- backlog_slice_path = `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
+- last_sync_utc = current timestamp
+
+STEP 9 (Global State Synchronization) is the terminal sync and is the only step that sets status = `Published`. Do not set Published here.
+
+---
 
 ## STEP 8 — Lessons Learnt
 
 Write: `lessons_learnt.md`
 
-## STEP 9 — Global State Synchronization (Hard Requirement)
+---
 
-Purpose: Ensure the root-level state pointer reflects the results of this cycle for future sessions.
+## STEP 9 — Global State Synchronization (Hard Requirement — Terminal)
+
+Purpose: Final update of the root-level state pointer to reflect that this cycle is Published and sealed. This is the only step that sets `status = Published` in `.claude_current_state.json`. STEP 7's intermediate sync must have run first.
 
 Execution Rules:
-1. Update the root-level file .claude_current_state.json with the following:
-- active_cycle: set to the current <cycle_id>
-- status: set to Published
-- backlog_slice_path: set to claude/cycles/<cycle_id>/stage4_backlog_slice.md
-- last_sync_utc: current timestamp
-2. If the file does not exist, create it using the standard schema.
+1. Verify STEP 7 intermediate sync has completed (backlog_slice_path and active_cycle are already set).
+2. Update the root-level file `.claude_current_state.json`:
+   - active_cycle: `<cycle_id>` (confirm — already set at STEP 7)
+   - status: `Published`
+   - backlog_slice_path: `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (confirm)
+   - last_sync_utc: current timestamp
+3. If the file does not exist, create it using the standard schema.
+
+---
 
 ## STEP 10 — Stage, Commit & Push (Delegated Publication)
 Purpose: Publish the sealed cycle and updated state to the remote repository.
 
-GitHub Issue Automation:
-If --issues "gh" was invoked:
-1. For each EPIC-xx and ST-xx in stage4_backlog_slice.md:
-- Write the issue body to a temporary file: .gh_issue_body.tmp.
--  Execute: gh issue create --title "[ID] Title" --body-file .gh_issue_body.tmp --milestone "v2.7"
--  Delete the temporary file.
--  Note: This avoids shell errors caused by backticks in the markdown body.
+### 10.1 Issue Import Generation (`--issues import` or `gh` fallback)
+If `--issues import` was specified, or `gh` is unavailable and fallback applies:
+- Write `claude/cycles/<cycle_id>/issue_import.md` per the format specified in §10.1 of this document.
+- Update state.json: artifacts.issue_import = present.
 
+### 10.2 GitHub Issue Automation (`--issues gh`)
+If `--issues gh` was specified and `gh` CLI is available:
+
+For each EPIC-xx and ST-xx in `stage4_backlog_slice.md`:
+1. Write the issue body to a temporary file: `.gh_issue_body.tmp`.
+2. Execute: `gh issue create --title "[ID] Title" --body-file .gh_issue_body.tmp --milestone "vX.Y"`
+3. Delete the temporary file.
+
+Note: Temporary file avoids shell errors from backticks or special characters in markdown bodies.
+
+### 10.3 Commit
 Execution Commands:
-1. git add .claude_current_state.json
-2. git add claude/cycles/<cycle_id>/*
-3. git add claude/backlog/backlog.md
-4. git commit -m "[GOVERNANCE] Published Release Plan <cycle_id>"
-5. git push origin <current-branch>
+1. `git add .claude_current_state.json`
+2. `git add claude/cycles/<cycle_id>/*`
+3. `git add claude/backlog/backlog.md`
+4. `git add docs/product/scope/scope--{cycle_id}-{slug}.md`
+5. `git add docs/product/decisions/decisions--{cycle_id}.md`
+6. `git commit -m "[GOVERNANCE] Published Release Plan <cycle_id>"`
+7. `git push origin <current-branch>`
 
 ---
 
 # Publish Gate (Hard Constraint)
-The run may be marked Validated/Published only if:
-- open_escalations is empty, AND
-- every Deferred escalation has `Blocks execution: No`, AND
-- artifacts.stage4_5_capacity_check is pass OR warn (warn allowed only if mode=standard), AND
-- artifacts.stage5_5_cross_stage_integrity is pass, AND
-- artifacts.stage5_7_decision_record_integrity is pass OR not_applicable
-- artifacts.stage1_readiness = pass
-- artifacts.stage3_5_model_integrity = pass
-- attributes.plan_structured = true
-- attributes.plan_executable = true
-- attributes.backlog_committed = true
+The run may be marked Validated/Published only if ALL of the following are true:
 
-If any Deferred escalation has `Blocks execution: Yes`:
-- status MUST be Blocked (or remain non-Published)
+- `open_escalations` is empty, AND
+- every Deferred escalation has `Blocks execution: No`, AND
+- `deferred_execution_blockers` is empty (any deferred escalation with `Blocks execution: Yes` prevents publish), AND
+- `artifacts.stage4_5_capacity_check` is `pass` OR `warn` (warn allowed only if mode=standard), AND
+- `artifacts.stage5_5_cross_stage_integrity` is `pass`, AND
+- `artifacts.stage5_7_decision_record_integrity` is `pass` OR `not_applicable`, AND
+- `artifacts.stage1_readiness` = `pass`, AND
+- `artifacts.stage3_5_model_integrity` = `pass`, AND
+- `attributes.plan_structured` = `true`, AND
+- `attributes.plan_executable` = `true`, AND
+- `attributes.backlog_committed` = `true`
+
+If `deferred_execution_blockers` is non-empty:
+- status MUST be `Blocked` (or remain non-Published)
 - publish_eligible = false
 - HALT (do not mark Published)
 
 If Publish Gate passes:
-- status = Validated
+- status = `Validated`
 - publish_eligible = true
+
 Else:
 - publish_eligible = false
 
@@ -1093,6 +1259,7 @@ If any of the required tracked artifacts are missing at sealing time:
 - stage2_scope_extraction.md
 - stage3_execution_plan.md
 - stage4_backlog_slice.md
+
 Then:
 - HALT.
 - status remains Validated.
@@ -1175,10 +1342,24 @@ Require amendment cycle.
 ---
 
 # Completion Condition
-Run is complete only if:
+Run is complete only if ALL of the following are true:
 - Cycle folder exists
-- state.json valid
+- state.json valid and status = Published
 - publish_eligible = true
-- status = Published
-- Summary + Lessons exist
-- No open escalations
+- cycle_summary.md exists
+- lessons_learnt.md exists
+- No open escalations (open_escalations is empty)
+- deferred_execution_blockers is empty
+- locks.backlog_lock.status = "released"
+- locks.roadmap_lock.status = "released" OR "not_checked"
+- docs/product/scope/scope--{cycle_id}-{slug}.md exists
+- docs/product/decisions/decisions--{cycle_id}.md exists
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 2.9 | 2026-03-07 | Fixed STEP 3.9 lock acquisition — removed malformed XML-like template placeholders; replaced with plain text field descriptions. Wrote STEP 5 body — was postcondition-only; added full purpose, annotation content template, lock/transaction procedure, and idempotency rule. Clarified STEP 7 vs STEP 9 state sync — renamed STEP 7.1 as "Intermediate global state sync", added explicit note that only STEP 9 sets Published, added STEP 9 precondition to verify STEP 7 ran first. Fixed scope document supersession note — removed pre-populated TBD fields that implied known values at planning time; replaced with explicit [TBD] placeholders and "do not populate at planning time" instruction. Added decisions record creation to STEP 3 — new required output `docs/product/decisions/decisions--{cycle_id}.md` with minimum content template and supersession note. Fixed deferred_execution_blockers — added to Publish Gate as a blocking condition; added to Completion Condition. Added design_gate_status and amended_backlog_slice_path to state.json schema as reserved fields with ownership notes. Added §10.1 issue_import.md format specification. Added canonicalization rule for front matter (rule 6). Updated Write Scope Restriction (§7) to include docs/product/scope/* and docs/product/decisions/* for planning-time document creation. Updated STEP 10 commit to include scope and decisions record files. Updated Completion Condition to include lock state verification and presence checks for scope and decisions documents. |
+| 2.8 | 2026-03-06 | Prior version. |
