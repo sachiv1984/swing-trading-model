@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.2
+**Version:** 1.3
 **Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -50,6 +50,8 @@ Rules:
 - `--dry-run` optional: read all inputs and produce a planning preview without writing any artefacts or updating state. The pip-audit scan (STEP -1.8) still runs — it is a read-only operation.
 
 If invocation is not exact, do not run. Treat as conversational.
+
+Apply the Lifecycle Guard (valid from-states: `Design_Gate_Passed`; or `Release_Planning_Complete` when design gate is not required for this cycle) per `claude/system/shared_standards.md §10` before executing any step.
 
 **Who issues this command:** The PMO Lead persona, after Phase 1B has reached `Published` status and the Design Gate has passed (`design_gate_status = Passed`).
 

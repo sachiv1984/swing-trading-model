@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 3.0  
+**Version:** 3.1
 **Last Updated:** 2026-03-07  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -295,6 +295,31 @@ Each cycle progresses through up to six phases, with an optional Phase 0 for ide
 Phase 0 is **optional** — the roadmap engine notes its absence and continues. Phase 1 is **optional**. Phase 1M is **optional but strongly recommended** at both valid trigger windows (see §6M). Phase 1B may be invoked directly when a release is already approved. Phase 1.5 (Design Gate) is **required** unless all sprint items are classified Design Not Applicable. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
 
 **Phase 4 is a hard gate on the next cycle.** The Roadmap Rebalance and Release Planning engines will not run for a new cycle until `.claude_current_state.json` status is `Verified` or `Verified_with_deviations`. Post-Ship Closure must also be complete before the next cycle opens — `next_cycle_unblocked = true` is necessary but not sufficient.
+
+### 4.1 Lifecycle State Machine
+
+The lifecycle is a deterministic state machine. `.claude_current_state.json` (`status` field) is the single source of truth. State may only move forward along defined transitions; backward movement is prohibited except `Blocked` resolving to `prior_status`.
+
+**Allowed transitions:**
+
+| From | To | Engine | Entry condition |
+|------|----|--------|-----------------|
+| `Closed` | `Release_Planning_Complete` | Release Planning | `post_ship_complete = true` |
+| `Release_Planning_Complete` | `Design_Gate_Passed` | Design Gate | `design_gate_required = true` AND `sprint_sealed = false` |
+| `Release_Planning_Complete` | `Sprint_Planning_Complete` | Sprint Planning | design gate not required for cycle |
+| `Design_Gate_Passed` | `Sprint_Planning_Complete` | Sprint Planning | `design_gate_status = Passed` |
+| `Sprint_Planning_Complete` | `Executing` | Sprint Execution | `sprint_sealed = true` |
+| `Sprint_Planning_Complete` | `Amendment_In_Progress` | Amendment Cycle | `sprint_sealed = false` |
+| `Amendment_In_Progress` | `Sprint_Planning_Complete` | Amendment Cycle | two-authority ratification complete |
+| `Executing` | `Sprint_Complete` | Sprint Execution (STEP 8) | all EPICs merged or dispositioned |
+| `Sprint_Complete` | `Verified` | Delivery Verification | `execution_state.json sealed = true` |
+| `Sprint_Complete` | `Verified_with_deviations` | Delivery Verification | `execution_state.json sealed = true` |
+| `Verified` | `Closed` | Post-Ship Closure | DoQ sign-off + PO acceptance in `verification_report.md` |
+| `Verified_with_deviations` | `Closed` | Post-Ship Closure | DoQ sign-off + PO acceptance in `verification_report.md` |
+| Any | `Blocked` | Any (hard gate fires) | Hard gate condition not met — write `prior_status` before halting |
+| `Blocked` | `<prior_status>` | Resolving authority | Escalation resolved and recorded |
+
+**Guard enforcement:** Every engine applies the Lifecycle Guard (entry state check) before executing any step. An engine that cannot pass the entry check must halt with a Lifecycle hard gate report — see `claude/system/shared_standards.md §10`. The full machine definition is at `claude/system/lifecycle_schema.json`.
 
 ---
 

@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.2
+**Version:** 1.3
 **Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -54,6 +54,8 @@ Rules:
 - Invocation must start with `run post-ship` (case-insensitive match allowed)
 
 If invocation is not exact, do not run. Treat as conversational.
+
+Apply the Lifecycle Guard (valid from-states: `Verified`, `Verified_with_deviations`) per `claude/system/shared_standards.md §10` before executing any step.
 
 **Who issues this command:** The PMO Lead persona, immediately after Phase 4 completes with a passing status.
 

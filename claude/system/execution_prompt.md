@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.5
+**Version:** 1.6
 **Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -51,6 +51,8 @@ Rules:
 - `--dry-run` optional: plan execution without performing writes, commits, or GitHub operations. Produce a dry-run report only.
 
 If invocation is not exact, do not run. Treat as conversational.
+
+Apply the Lifecycle Guard (valid from-states: `Sprint_Planning_Complete`; `Executing` on resume) per `claude/system/shared_standards.md §10` before executing any step.
 
 No other user input may trigger this routine.
 

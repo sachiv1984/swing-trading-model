@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-03-04
+**Version:** 1.1
+**Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -39,6 +39,8 @@ Rules:
 - `--cycle` is required and must match an active cycle in `claude/cycles/`.
 - `--dry-run`: produces the classification table and gap list without writing any files, updating global state, or gating Sprint Planning. Output ends after the classification table and blocked items summary — no gate record, no state update, no commit.
 - If invocation is not exact, do not run. Treat as conversational.
+
+Apply the Lifecycle Guard (valid from-states: `Release_Planning_Complete`) per `claude/system/shared_standards.md §10` before executing any step.
 
 **Pre-condition (Hard Gate):** Phase 1B must be complete and `sprint_sealed = false` (Sprint Planning has not yet started). If Sprint Planning is already sealed, this engine may not run — the gate has been bypassed and must be flagged as a process deviation.
 

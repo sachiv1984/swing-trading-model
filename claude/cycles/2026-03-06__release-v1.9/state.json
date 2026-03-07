@@ -90,6 +90,9 @@
   "deferred_execution_blockers": [],
   "accepted_risk_escalations": [],
 
+  "lifecycle_phase": "Phase 2 — Sprint Planning Complete",
+  "lifecycle_schema_version": "1.0",
+
   "attributes": {
     "plan_structured": true,
     "plan_executable": true,

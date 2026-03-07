@@ -1,0 +1,165 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-03-07",
+  "description": "Canonical lifecycle state machine for swing-trading-model governance cycles. Source of truth for valid states, allowed transitions, and guard rules.",
+  "source_of_truth": ".claude_current_state.json (status field)",
+  "reference": "claude/system/shared_standards.md §10",
+
+  "states": {
+    "Closed": {
+      "description": "Post-Ship Closure complete. Cycle fully sealed. Ready for next cycle.",
+      "phase_completed": "Post-Ship"
+    },
+    "Release_Planning_Complete": {
+      "description": "Phase 1B publish gate passed. state.json status = Published. Design Gate or Sprint Planning may proceed.",
+      "phase_completed": "Phase 1B"
+    },
+    "Design_Gate_Passed": {
+      "description": "Phase 1.5 design gate cleared. Sprint Planning may proceed.",
+      "phase_completed": "Phase 1.5"
+    },
+    "Sprint_Planning_Complete": {
+      "description": "Phase 2 sprint backlog sealed. sprint_sealed = true. Sprint Execution may begin.",
+      "phase_completed": "Phase 2"
+    },
+    "Executing": {
+      "description": "Phase 3 Sprint Execution in progress.",
+      "phase_completed": "Phase 3 (in-progress)"
+    },
+    "Sprint_Complete": {
+      "description": "Phase 3 closed. All items have recorded outcomes. Delivery Verification may proceed.",
+      "phase_completed": "Phase 3"
+    },
+    "Verified": {
+      "description": "Phase 4 verification passed with no deviations. next_cycle_unblocked = true.",
+      "phase_completed": "Phase 4"
+    },
+    "Verified_with_deviations": {
+      "description": "Phase 4 verification passed with accepted deviations. next_cycle_unblocked = true.",
+      "phase_completed": "Phase 4"
+    },
+    "Blocked": {
+      "description": "Hard gate fired in any phase. Execution halted pending authority resolution. prior_status must be set at time of halt.",
+      "phase_completed": "Any"
+    },
+    "Amendment_In_Progress": {
+      "description": "Emergency amendment cycle in progress. Only valid before sprint_sealed = true.",
+      "phase_completed": "Amendment"
+    }
+  },
+
+  "transitions": [
+    {
+      "from": "Closed",
+      "to": "Release_Planning_Complete",
+      "engine": "Release Planning",
+      "command": "plan release --version <vX.Y>",
+      "entry_condition": "post_ship_complete = true AND no open hard-gate escalations",
+      "completion_signal": "state.json status = Published AND publish_eligible = true"
+    },
+    {
+      "from": "Release_Planning_Complete",
+      "to": "Design_Gate_Passed",
+      "engine": "Design Gate",
+      "command": "run design-gate --cycle <cycle_id>",
+      "entry_condition": "state.json status = Published AND sprint_sealed = false AND design_gate_required = true",
+      "completion_signal": "design_gate_status = Passed AND design_gate.md present"
+    },
+    {
+      "from": "Release_Planning_Complete",
+      "to": "Sprint_Planning_Complete",
+      "engine": "Sprint Planning",
+      "command": "plan sprint --cycle <cycle_id>",
+      "entry_condition": "design_gate_required = false OR all items classified Design_Not_Applicable",
+      "completion_signal": "sprint_sealed = true",
+      "note": "Only permitted when Design Gate is explicitly not required for this cycle"
+    },
+    {
+      "from": "Design_Gate_Passed",
+      "to": "Sprint_Planning_Complete",
+      "engine": "Sprint Planning",
+      "command": "plan sprint --cycle <cycle_id>",
+      "entry_condition": "design_gate_status = Passed AND sprint_sealed = false",
+      "completion_signal": "sprint_sealed = true"
+    },
+    {
+      "from": "Sprint_Planning_Complete",
+      "to": "Executing",
+      "engine": "Sprint Execution",
+      "command": "run sprint --cycle <cycle_id>",
+      "entry_condition": "sprint_sealed = true AND no open hard-gate escalations",
+      "completion_signal": "execution_state.json status = Executing"
+    },
+    {
+      "from": "Sprint_Planning_Complete",
+      "to": "Amendment_In_Progress",
+      "engine": "Amendment Cycle",
+      "command": "amend cycle --cycle <cycle_id> --reason <reason>",
+      "entry_condition": "sprint_sealed = false (amendment must precede seal)",
+      "completion_signal": "amendment ratification record present with two-authority sign-off"
+    },
+    {
+      "from": "Amendment_In_Progress",
+      "to": "Sprint_Planning_Complete",
+      "engine": "Amendment Cycle",
+      "command": "(auto — emitted when amendment is sealed)",
+      "entry_condition": "two-authority ratification complete",
+      "completion_signal": "sprint_sealed = true (re-sealed after amendment)"
+    },
+    {
+      "from": "Executing",
+      "to": "Sprint_Complete",
+      "engine": "Sprint Execution",
+      "command": "(auto — emitted at STEP 8 sprint close)",
+      "entry_condition": "all EPICs merged or explicitly dispositioned",
+      "completion_signal": "sprint_close.md present AND execution_state.json sealed = true"
+    },
+    {
+      "from": "Sprint_Complete",
+      "to": "Verified",
+      "engine": "Delivery Verification",
+      "command": "run delivery verification --cycle <cycle_id>",
+      "entry_condition": "sprint_close.md present AND execution_state.json sealed = true",
+      "completion_signal": "verification_report.md status = Verified"
+    },
+    {
+      "from": "Sprint_Complete",
+      "to": "Verified_with_deviations",
+      "engine": "Delivery Verification",
+      "command": "run delivery verification --cycle <cycle_id>",
+      "entry_condition": "sprint_close.md present AND execution_state.json sealed = true",
+      "completion_signal": "verification_report.md status = Verified_with_deviations"
+    },
+    {
+      "from": "Verified",
+      "to": "Closed",
+      "engine": "Post-Ship Closure",
+      "command": "run post-ship --cycle <cycle_id>",
+      "entry_condition": "verification_report.md has Director of Quality sign-off AND Product Owner acceptance",
+      "completion_signal": "closure_record.md closure_status = Closed OR Closed_with_actions"
+    },
+    {
+      "from": "Verified_with_deviations",
+      "to": "Closed",
+      "engine": "Post-Ship Closure",
+      "command": "run post-ship --cycle <cycle_id>",
+      "entry_condition": "verification_report.md has Director of Quality sign-off AND Product Owner acceptance",
+      "completion_signal": "closure_record.md closure_status = Closed OR Closed_with_actions"
+    }
+  ],
+
+  "guard_rules": {
+    "skip_prevention": "Before executing, every engine must read .claude_current_state.json and verify the current status is in its valid from-states. If not, halt with a Lifecycle hard gate (per shared_standards.md §10).",
+    "forward_only": "Status may only advance along defined transitions. Backward transitions are prohibited except: Blocked resolves to prior_status on authority clearance.",
+    "concurrent_write_prevention": "Before writing .claude_current_state.json status, confirm the status value has not changed since it was read at invocation. If it has changed, halt immediately with ESC-YYYYMMDD-nn (Lifecycle trigger) and do not overwrite.",
+    "blocked_state_protocol": "Any engine firing a hard gate must: (1) set prior_status = current status, (2) set status = Blocked, (3) write state, (4) output halt report. This write must complete before the halt message is emitted.",
+    "blocked_resolution": "Blocked resolves back to prior_status. Only the domain authority identified in the escalation record may clear the block. Resolution must be recorded in the escalation entry before status is restored."
+  },
+
+  "recovery_rule": {
+    "description": "Every engine is resumable. On re-invocation after a halt or session break, read state first, identify the current status, skip completed steps, resume from the first incomplete step. For Blocked state, re-evaluate unblock criteria before resuming.",
+    "reference": "claude/system/shared_standards.md §8"
+  },
+
+  "migration_note": "States Sprint_Planning_Complete, Executing, Sprint_Complete, Verified, Verified_with_deviations, Closed, and Blocked are pre-existing. States Release_Planning_Complete, Design_Gate_Passed, and Amendment_In_Progress are newly formalised in this schema. Existing cycles in any pre-existing state are valid under this schema without migration."
+}

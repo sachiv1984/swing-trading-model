@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-03-03
+**Version:** 1.1
+**Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -46,6 +46,8 @@ Rules:
   - `strict`: halt on any missing evidence, incomplete rationale, or unresolved authority confirmation
   - `standard` (default): proceed with flags on minor gaps; still halt on hard gates
 - If invocation is not exact, do not run. Treat as conversational.
+
+Apply the Lifecycle Guard (valid from-states: `Sprint_Planning_Complete` with `sprint_sealed = false`) per `claude/system/shared_standards.md §10` before executing any step.
 
 **Who issues this command:** The PMO Lead persona, after Phase 1B has published and before `sprint_sealed = true`.
 

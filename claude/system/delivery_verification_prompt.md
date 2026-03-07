@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.1
+**Version:** 1.2
 **Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -52,6 +52,8 @@ Rules:
 **Who issues this command:** The PMO Lead persona, after the Director of Quality has confirmed (via QA evidence sign-offs on `qa_evidence_EPIC-xx.md`) that the sprint evidence is ready for verification. The readiness gate (STEP -1) will fail fast if it is not.
 
 If invocation is not exact, do not run. Treat as conversational.
+
+Apply the Lifecycle Guard (valid from-states: `Sprint_Complete`) per `claude/system/shared_standards.md §10` before executing any step.
 
 **Tool call budget:** This routine typically requires 15–40 tool calls. Proceed through steps without asking for confirmation unless a hard gate fires.
 

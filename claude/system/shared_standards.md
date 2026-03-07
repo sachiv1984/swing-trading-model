@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-03-03
+**Version:** 1.2
+**Last Updated:** 2026-03-07
 
 # Shared Standards — All Governed Routines
 
@@ -247,9 +247,64 @@ A document without a complete header is non-compliant and must not be relied upo
 
 ---
 
+## 10. Lifecycle Validation Rules (Lifecycle Guard)
+
+All engines that write `.claude_current_state.json` status must apply this guard on every invocation, before executing any step.
+
+### 10.1 Allowed Entry States
+
+| Engine | Command | Valid from-states |
+|--------|---------|-------------------|
+| Release Planning | `plan release` | `Closed` |
+| Design Gate | `run design-gate` | `Release_Planning_Complete` |
+| Sprint Planning | `plan sprint` | `Release_Planning_Complete` (design N/A), `Design_Gate_Passed` |
+| Sprint Execution | `run sprint` | `Sprint_Planning_Complete`, `Executing` (resume) |
+| Delivery Verification | `run delivery verification` | `Sprint_Complete` |
+| Post-Ship Closure | `run post-ship` | `Verified`, `Verified_with_deviations` |
+| Amendment Cycle | `amend cycle` | `Sprint_Planning_Complete` (before sprint_sealed = true) |
+
+### 10.2 Guard Algorithm
+
+On engine invocation:
+
+1. Read `.claude_current_state.json` → record `current_status`
+2. Check `current_status` against the engine's valid from-states (table above)
+3. **If `current_status = Blocked`:** read `prior_status`. If `prior_status` is a valid from-state for this engine, proceed as if status = `prior_status`. Otherwise, halt — the block is in the wrong phase for this engine.
+4. **If `current_status` is not in valid from-states and is not `Blocked`:** halt immediately with a Lifecycle hard gate (§2 + §5 format). Write `status = Blocked` and `prior_status = <current_status>` to `.claude_current_state.json` before emitting the halt report.
+5. **If valid:** continue to engine steps.
+
+### 10.3 State Write Rules
+
+- An engine may only write a state value that is in its allowed `to` transitions (see `lifecycle_schema.json`).
+- Write `status` only at the defined completion signal step. Do not set an in-progress state at an earlier step unless the transition explicitly defines an intermediate state (e.g., `Executing` is a valid in-progress write for Sprint Execution).
+- Before writing `status`, confirm the value in `.claude_current_state.json` has not changed since step 1. If it has changed (concurrent write), halt with `ESC-YYYYMMDD-nn` (Lifecycle trigger) without overwriting.
+
+### 10.4 Blocked State Protocol
+
+When any hard gate fires during execution:
+
+1. Set `prior_status` = current `status` value in `.claude_current_state.json`
+2. Set `status` = `Blocked`
+3. Write `.claude_current_state.json` — this write must complete before the halt report is emitted
+4. Emit halt report (§5 format); include "State written: status = Blocked, prior_status = <value>"
+5. Wait for user — do not self-resolve
+
+To clear `Blocked`: the domain authority identified in the escalation record must resolve the block. On resolution, restore `status` from `prior_status` and clear `prior_status` to `null`.
+
+### 10.5 Phase Skip Rule
+
+Forward-only movement is enforced by the entry state check (§10.2). An engine that cannot pass the entry check must not execute, regardless of delivery pressure. No timeline instruction or user override may waive a Lifecycle hard gate.
+
+### 10.6 Full State Machine Reference
+
+See `claude/system/lifecycle_schema.json` for the complete machine definition: all valid states, all transitions with entry/completion conditions, and concurrent-write prevention rules.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-03-07 | Added §10 Lifecycle Validation Rules — transition guard algorithm, entry state table, blocked state protocol, phase skip rule, schema reference. |
 | 1.1 | 2026-03-03 | Updated "three governance prompts" to "five". Added `ESC-VERIF-YYYYMMDD-nn` and `ESC-CLOSE-YYYYMMDD-nn` to identifier standards. Added Delivery Verification and Post-Ship Closure to escalation file list, escalation entry routine field, and halt report routine field. Added `verification_escalations.md` to append-only file list. Added Post-Ship Closure resumability note to §8. |
 | 1.0 | 2026-03-02 | Initial version. |

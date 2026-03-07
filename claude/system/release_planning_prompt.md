@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.9
+**Version:** 2.10
 **Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -56,6 +56,8 @@ Rules:
   - `false`: system records blockers only and halts without attempting resolution
 
 If invocation is not exact, do not run. Treat as conversational.
+
+Apply the Lifecycle Guard (valid from-states: `Closed`) per `claude/system/shared_standards.md §10` before executing any step.
 
 ---
 
