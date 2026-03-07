@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.3
+**Version:** 1.4
 **Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -80,6 +80,7 @@ This routine may not override any of the above.
 
 | Input | Location | Required |
 |-------|----------|---------|
+| Closure state | `claude/cycles/<cycle_id>/closure_state.json` | Created at STEP 0; read on resume |
 | Global state | `.claude_current_state.json` | Hard gate |
 | Verification report | `claude/cycles/<cycle_id>/verification_report.md` | Hard gate |
 | Sprint close record | `claude/cycles/<cycle_id>/sprint_close.md` | Hard gate |
@@ -118,6 +119,7 @@ During this routine you may write only to:
 - Templates and prompt files where a lessons learnt action specifies an immediate fix (version bump required)
 - `claude/cycles/<cycle_id>/lessons_learnt_closure.md` (create via STEP 8.5)
 - `claude/cycles/<cycle_id>/closure_record.md` (create at close)
+- `claude/cycles/<cycle_id>/closure_state.json` (create at STEP 0; update at each step completion)
 - `.claude_current_state.json` (status update only)
 
 You must **not** modify:
@@ -198,7 +200,45 @@ If `--dry-run` is active: skip this check.
 
 ## STEP 0 — Load Release Context
 
-**Backlog slice resolution (first action):** Check `.claude_current_state.json` for `amended_backlog_slice_path`:
+**Closure state (first action — before any other reads):**
+
+Read `claude/cycles/<cycle_id>/closure_state.json` if it exists:
+- If it exists and `status = Closed`: this cycle is already closed — halt with message "Cycle already closed."
+- If it exists and `status = In_Progress`: this is a resume. Skip all steps whose `steps.*` value is `pass`. Resume from the first `not_started` or `fail` step.
+- If it does not exist: create it now with the schema below (fresh run).
+
+```json
+{
+  "cycle_id": "<cycle_id>",
+  "release": "<vX.Y>",
+  "status": "In_Progress",
+  "mode": "strict|standard",
+  "dry_run": false,
+  "started_utc": "<ISO-8601 UTC>",
+  "last_updated_utc": "<ISO-8601 UTC>",
+  "steps": {
+    "preflight": "pass",
+    "step_0_context": "not_started",
+    "step_1_changelog": "not_started",
+    "step_2_roadmap": "not_started",
+    "step_3_backlog": "not_started",
+    "step_4_scope_decisions": "not_started",
+    "step_5_deviation_compliance": "not_started",
+    "step_6_operational_docs": "not_started",
+    "step_7_specs_index": "not_started",
+    "step_8_lessons_learnt": "not_started",
+    "step_8_5_lessons_closure": "not_started",
+    "step_9_closure_record": "not_started",
+    "step_10_global_state": "not_started",
+    "step_11_commit": "not_started"
+  },
+  "closure_status": null
+}
+```
+
+If `closure_state.json` cannot be written: halt immediately.
+
+**Backlog slice resolution (second action):** Check `.claude_current_state.json` for `amended_backlog_slice_path`:
 - If present and non-empty: this is the authoritative backlog slice for this run. Verify the file exists — if not, halt.
 - If absent or empty: `stage4_backlog_slice.md` is the authoritative slice.
 
@@ -213,6 +253,8 @@ Extract from the verified inputs:
 5. From `backlog.md`: identify all items with this `cycle_id` added by Phase 4 (returned items, P2/P3 deviation items, test scenario gap items) — these must all be present before STEP 3 can pass.
 
 Confirm: release version, feature name, `cycle_id`, ship date (use today if not recorded elsewhere), and Product Owner sign-off date are all resolvable. If any cannot be determined: halt in `strict` mode; flag and proceed with `[UNKNOWN]` placeholder in `standard` mode.
+
+Update `closure_state.json`: `steps.step_0_context = pass`, `last_updated_utc = <now>`
 
 **If `--dry-run` is active:** After completing context load, produce the full closure plan (listing every step, every write that would be made, every flag) and end the routine. Do not proceed to STEP 1.
 
@@ -262,6 +304,8 @@ QA sign-off: Director of Quality — <date>
 
 **Failure condition:** If `docs/product/changelog.md` does not exist: create it with a standard header (Owner: PMO Lead, Class: Operational Record, Status: Active) and then add the entry. A ship without a changelog entry is not recorded — this is a hard gate.
 
+Update `closure_state.json`: `steps.step_1_changelog = pass`, `last_updated_utc = <now>`
+
 ---
 
 ## STEP 2 — Roadmap Update
@@ -277,6 +321,8 @@ Update `claude/roadmap/current_roadmap.md`:
 7. Update `Last Updated` to today's date.
 
 **Failure condition (hard gate in `strict` mode; flag in `standard`):** Roadmap entry still shows Planned or In Progress after this step. Stale roadmap status will cause Phase 1 (Roadmap Rebalance) to misread the current state.
+
+Update `closure_state.json`: `steps.step_2_roadmap = pass`, `last_updated_utc = <now>`
 
 ---
 
@@ -307,6 +353,8 @@ Items in `backlog.md` that have been assigned to the next release (per sprint cl
 Update `Last Updated` on `backlog.md` to today's date.
 
 **Failure condition:** Any shipped item still shown as open after this step. Any Phase 4 addition unaccounted for. Any item in the authoritative backlog slice with no traceable outcome in `backlog.md`.
+
+Update `closure_state.json`: `steps.step_3_backlog = pass`, `last_updated_utc = <now>`
 
 ---
 
@@ -346,6 +394,8 @@ If the decisions record cannot be located: same flag behaviour as scope document
 
 **N/A condition:** If no decisions document exists for this release AND no decisions with options analysis or accepted risk were made this cycle, mark STEP 4.2 as N/A — no decision record required. Document the rationale in the closure record (§6 Outstanding Actions or §5 Lessons Learnt Action Summary as appropriate). Do not flag as a missing artefact in this case.
 
+Update `closure_state.json`: `steps.step_4_scope_decisions = pass | not_applicable`, `last_updated_utc = <now>`
+
 ---
 
 ## STEP 5 — Canonical Spec Deviation Compliance Check
@@ -368,6 +418,8 @@ For each deviation listed in `sprint_close.md` "Deviations filed this sprint":
 
 **Failure condition (hard gate):** Any deviation entry in a canonical spec missing required fields after this step. Non-compliant deviation notes render the spec non-compliant.
 
+Update `closure_state.json`: `steps.step_5_deviation_compliance = pass`, `last_updated_utc = <now>`
+
 ---
 
 ## STEP 6 — Operational Documents Reconciliation
@@ -382,6 +434,8 @@ If other operational documents are referenced in `execution_state.json` spec ref
 Update `Last Updated` on any document that is modified.
 
 Record all corrections in the closure record. If a document is outside the write scope (e.g. a Class 1 spec that is not being corrected for deviation compliance): flag for the document owner rather than editing.
+
+Update `closure_state.json`: `steps.step_6_operational_docs = pass | not_applicable`, `last_updated_utc = <now>`
 
 ---
 
@@ -401,6 +455,8 @@ From `verification_report.md §6` (Test Coverage Assessment) and `qa_evidence_EP
 - Add each as a new entry in the appropriate section.
 
 Update `Last Updated` on `docs/specs/Specs_Index.md` to today's date if any changes were made.
+
+Update `closure_state.json`: `steps.step_7_specs_index = pass`, `last_updated_utc = <now>`
 
 ---
 
@@ -431,6 +487,8 @@ Produce a consolidated action summary:
 - Deferred to next cycle: `N` (list each: action, owner, target cycle)
 - Escalated for decision: `N` (list each: question, owner, 72-hour deadline from today)
 
+Update `closure_state.json`: `steps.step_8_lessons_learnt = pass`, `last_updated_utc = <now>`
+
 ---
 
 ## STEP 8.5 — Produce Lessons Learnt Closure Record
@@ -446,6 +504,8 @@ This record covers:
 - Carry-forward items for the next cycle
 
 Do not proceed to STEP 9 until `lessons_learnt_closure.md` exists and is non-empty. If the lessons learnt prompt cannot be invoked: produce the file directly using the structure from `lessons_learnt_prompt.md §3.5`, record the deviation in the closure record §6.
+
+Update `closure_state.json`: `steps.step_8_5_lessons_closure = pass`, `last_updated_utc = <now>`
 
 ---
 
@@ -507,6 +567,8 @@ Outstanding actions carried forward: <list or "none">
 Next cycle may now open.
 ```
 
+Update `closure_state.json`: `steps.step_9_closure_record = pass`, `last_updated_utc = <now>`
+
 ---
 
 ## STEP 10 — Global State Update (Hard Requirement)
@@ -526,6 +588,16 @@ Update `.claude_current_state.json`:
 Surface §7 Closure Confirmation to the user for communication to the Product Owner and Head of Specs Team.
 
 If any outstanding actions remain in §6: set `closure_status = Closed_with_actions`. The next cycle may still open — outstanding actions do not block it unless a hard gate condition is unmet.
+
+Update `closure_state.json`:
+```json
+{
+  "steps": { "step_10_global_state": "pass" },
+  "status": "Closed",
+  "closure_status": "Closed | Closed_with_actions",
+  "last_updated_utc": "<now>"
+}
+```
 
 ---
 
@@ -547,12 +619,15 @@ git add docs/specs/Specs_Index.md            (if modified)
 git add <any template or prompt files updated by lessons learnt actions>
 git add claude/cycles/<cycle_id>/lessons_learnt_closure.md
 git add claude/cycles/<cycle_id>/closure_record.md
+git add claude/cycles/<cycle_id>/closure_state.json
 git add .claude_current_state.json
 git commit -m "[GOVERNANCE] Post-ship closure complete: <cycle_id> — v<X.Y>"
 git push origin <current-branch>
 ```
 
 If git operations are unavailable: output the exact files to stage and the commit message. Mark as "Ready to commit."
+
+Update `closure_state.json`: `steps.step_11_commit = pass`, `last_updated_utc = <now>`
 
 ---
 
@@ -606,6 +681,8 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-03-07 | **IMP-01 — closure_state.json for reliable resumability.** Added `closure_state.json` to §4 Source-of-Truth inputs and §5 Write Scope. Added full STEP 0 initialization/resume logic with JSON schema (fresh run creates file; resume skips completed steps; already-Closed halts). Added `closure_state.json` update lines at the end of STEP 0 through STEP 11 (each step writes its completion flag and `last_updated_utc`). STEP 11 commit list: `closure_state.json` added. `next_cycle_unblocked` guard noted in STEP 10. Consistent with resumability model used by execution and release planning engines. |
+| 1.3 | 2026-03-07 | **Lifecycle Guard added.** Apply Lifecycle Guard per `shared_standards.md §10` (valid from-states: `Verified`, `Verified_with_deviations`) at §2 Invocation Rule. |
 | 1.2 | 2026-03-07 | **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. §5 must-not-modify: amended backlog slice added. STEP 0: `amended_backlog_slice_path` read from `.claude_current_state.json` as first action; cross-referenced against `execution_state.json.backlog_slice_source`; disagreement flagged before proceeding; authoritative path recorded in closure record §1. STEP 3 intro updated: reconciliation runs against the authoritative slice. STEP 3.3 failure condition expanded. `closure_record.md` §1 template: `Backlog slice source` field added. §9 invariant added. **`lessons_learnt_closure.md` creation formalised (STEP 8.5, new).** STEP 8.5 added: invokes `lessons_learnt_prompt.md §3.5` using STEP 8 consolidated action summary as input; produces `claude/cycles/<cycle_id>/lessons_learnt_closure.md`; hard gate before STEP 9. §5 write scope: `lessons_learnt_closure.md` creation entry updated to reference STEP 8.5 explicitly. §7 completion condition: `lessons_learnt_closure.md` condition updated to reference `lessons_learnt_prompt.md §3.5` structure. §9 closure record §2 table: STEP 8.5 row added. §6 outstanding actions: `lessons_learnt_prompt.md` invocation failure added as example. STEP 11 commit: order corrected (`lessons_learnt_closure.md` before `closure_record.md`). §1 Purpose updated to name STEP 8.5 explicitly. **Dry-run enforcement added throughout.** §2: dry-run definition tightened — closure plan is the deliverable; routine ends after producing it. §5: dry-run exception block added at top (no writes permitted). STEP -1.6: write permission test skipped in dry-run. STEP 0: dry-run exits here after producing closure plan. §7 completion condition: dry-run completion defined. §9 invariant added. |
 | 1.1 | 2026-03-06 | Added `decisions_record` N/A condition (STEP 4.2). Added push-before-pull rule (STEP 11). Clarified AR record exemption from Superseded status. |
 | 1.0 | 2026-03-03 | Initial version. |

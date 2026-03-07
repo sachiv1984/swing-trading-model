@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.2
+**Version:** 1.3
 **Last Updated:** 2026-03-07
 
 # Shared Standards — All Governed Routines
@@ -228,7 +228,7 @@ Every governed routine is resumable. On every invocation:
 
 If the state file does not exist: this is a fresh run. Proceed from STEP -1.
 
-**Post-Ship Closure resumability:** The closure engine does not maintain a separate state file. On re-invocation, it reads `closure_record.md` (if it exists) to determine which steps have produced output, and resumes from the first step whose document check has not yet passed. If `closure_record.md` does not exist, this is a fresh run.
+**Post-Ship Closure resumability:** The closure engine maintains `claude/cycles/<cycle_id>/closure_state.json`. On re-invocation, STEP 0 reads this file: if `status = Closed`, the cycle is already closed (halt); if `status = In_Progress`, resume from the first step with value `not_started` or `fail`; if the file does not exist, this is a fresh run. This follows the same resumability model as the execution and release planning engines.
 
 ---
 
@@ -305,6 +305,7 @@ See `claude/system/lifecycle_schema.json` for the complete machine definition: a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-03-07 | Updated §8 Post-Ship Closure resumability note — replaced `closure_record.md` prose-scan approach with `closure_state.json` structured file (IMP-01). |
 | 1.2 | 2026-03-07 | Added §10 Lifecycle Validation Rules — transition guard algorithm, entry state table, blocked state protocol, phase skip rule, schema reference. |
 | 1.1 | 2026-03-03 | Updated "three governance prompts" to "five". Added `ESC-VERIF-YYYYMMDD-nn` and `ESC-CLOSE-YYYYMMDD-nn` to identifier standards. Added Delivery Verification and Post-Ship Closure to escalation file list, escalation entry routine field, and halt report routine field. Added `verification_escalations.md` to append-only file list. Added Post-Ship Closure resumability note to §8. |
 | 1.0 | 2026-03-02 | Initial version. |

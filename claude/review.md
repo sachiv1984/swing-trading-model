@@ -133,13 +133,14 @@ The output should read like an **engineering improvement backlog for the lifecyc
 
 ---
 
-**IMP-01 — Post-Ship Closure has no state.json**
+**IMP-01 — Post-Ship Closure has no state.json** ✅ COMPLETE (2026-03-07)
 Area: State
 Problem: Resumability relies on `closure_record.md` content rather than a structured state file. Partial writes leave no reliable resume point; every other engine has `state.json`.
 Why it matters: A session crash mid-closure requires manual inspection of prose to determine what completed.
 Recommended change: Add `claude/cycles/<id>/closure_state.json` with step completion flags, mirroring the pattern used in release planning and execution.
 Expected benefit: Reliable resume, deterministic halts, consistent state model across all phases.
 Effort: Low
+Resolution: `post_ship_closure.md` v1.3→v1.4 — `closure_state.json` schema added to STEP 0 (create/resume/already-closed logic); step completion flags written after each of STEP 0–11; `closure_state.json` added to §4 inputs, §5 write scope, and STEP 11 commit list. `shared_standards.md` v1.2→v1.3 — §8 resumability note updated. `prompt_change_log.md` updated.
 
 ---
 
