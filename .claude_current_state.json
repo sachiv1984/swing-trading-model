@@ -23,6 +23,10 @@
   "last_rebalance_cycle": "2026-03-06__item-3.4",
   "last_rebalance_utc": "2026-03-06T00:00:00Z",
   "last_rebalance_outcome": "Add (backlog-level) — BLG-NEW-09 through BLG-NEW-12; roadmap confirmed (DL-007)",
+  "last_manage_roadmap_utc": null,
+  "last_manage_roadmap_outcome": null,
+  "last_groom_backlog_utc": null,
+  "last_groom_backlog_outcome": null,
   "v2_0_gates": {
     "gate_1_logging": true,
     "gate_2_api_versioning": true,

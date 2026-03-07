@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
+**Version:** 1.2
 **Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -88,6 +88,7 @@ During this routine you may write only to:
 - `claude/roadmap/current_roadmap.md` (retire completed items, update release summary, update status fields)
 - `claude/roadmap/roadmap_archive.md` (append retired items — create if absent)
 - `claude/roadmap/` folder (create archive file if absent)
+- `.claude_current_state.json` (Phase 1M state fields only: `last_manage_roadmap_utc`, `last_manage_roadmap_outcome`)
 
 You must **not** modify:
 - `claude/backlog/backlog.md` — use `groom backlog` engine for backlog changes
@@ -305,12 +306,21 @@ Ambiguous items resolved: <n>
 
 ---
 
-## STEP 6 — Commit
+## STEP 6 — Update Global State and Commit
+
+Update `.claude_current_state.json`:
+```json
+{
+  "last_manage_roadmap_utc": "<ISO-8601 UTC>",
+  "last_manage_roadmap_outcome": "<n> items retired, <n> flagged stale, <n> kept active"
+}
+```
 
 ```
 git add claude/roadmap/current_roadmap.md
 git add claude/roadmap/roadmap_archive.md
 git add claude/roadmap/manage_roadmap_log_<YYYYMMDD>.md
+git add .claude_current_state.json
 git commit -m "[GOVERNANCE] Roadmap management run <date> — <n> items retired, <n> flagged stale"
 git push origin <current-branch>
 ```
@@ -347,5 +357,6 @@ The run is complete when:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-03-07 | IMP-02: Added `last_manage_roadmap_utc` and `last_manage_roadmap_outcome` state write to STEP 6 (global state update). Added `.claude_current_state.json` to §5 write scope (Phase 1M state fields only) and to STEP 6 commit list. |
 | 1.1 | 2026-03-06 | Widened valid trigger windows to include pre-`run roadmap` invocation alongside Post-Ship Closure. Both windows now explicitly equal. Added known gap note for Phase 1 skipped path. Restructured §2 with explicit trigger window table for clarity. |
 | 1.0 | 2026-03-04 | Initial version. |

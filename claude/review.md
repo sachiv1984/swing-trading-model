@@ -144,12 +144,13 @@ Resolution: `post_ship_closure.md` v1.3→v1.4 — `closure_state.json` schema a
 
 ---
 
-**IMP-02 — Phase 1M has no lifecycle state value**
+**IMP-02 — Phase 1M has no lifecycle state value** ✅ COMPLETE (2026-03-07)
 Area: State | Lifecycle
 Problem: `manage roadmap` and `groom backlog` leave no trace in `.claude_current_state.json`. No field records whether Phase 1M ran or when.
 Why it matters: The playbook says Phase 1M is "strongly recommended" but there is no enforcement or auditability. Future agents cannot tell if it was skipped.
 Recommended change: Add `last_1m_utc` and `last_1m_outcome` fields to `.claude_current_state.json`, written by Phase 1M engines on completion.
 Effort: Low
+Resolution: Per-engine fields used (more granular than specified): `last_manage_roadmap_utc`/`last_manage_roadmap_outcome` and `last_groom_backlog_utc`/`last_groom_backlog_outcome`. Added to `.claude_current_state.json` (both null). `roadmap_management_prompt.md` v1.1→v1.2: state write added to STEP 6; `.claude_current_state.json` added to §5 write scope and commit list. `backlog_management_prompt.md` v1.1→v1.2: state write added to STEP 7; `.claude_current_state.json` added to §5 write scope and commit list.
 
 ---
 

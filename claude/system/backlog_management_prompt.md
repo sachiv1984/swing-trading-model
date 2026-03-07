@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
+**Version:** 1.2
 **Last Updated:** 2026-03-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -90,6 +90,7 @@ During this routine you may write only to:
 
 - `claude/backlog/backlog.md` (archive completed items, update status fields, add flags, reorder within sections — no content changes to item definitions)
 - `claude/backlog/backlog_archive.md` (append archived items — create if absent)
+- `.claude_current_state.json` (Phase 1M state fields only: `last_groom_backlog_utc`, `last_groom_backlog_outcome`)
 
 You must **not** modify:
 - `claude/roadmap/current_roadmap.md` — use `manage roadmap` for roadmap changes
@@ -345,14 +346,23 @@ Note: This list is advisory only. No items are added to the roadmap by this engi
 
 ---
 
-## STEP 7 — Release Lock and Commit
+## STEP 7 — Release Lock, Update Global State, and Commit
 
 Release `claude/backlog/.lock`.
+
+Update `.claude_current_state.json`:
+```json
+{
+  "last_groom_backlog_utc": "<ISO-8601 UTC>",
+  "last_groom_backlog_outcome": "<n> archived, <n> orphans flagged, <n> stale blockers flagged, <n> promote candidates"
+}
+```
 
 ```
 git add claude/backlog/backlog.md
 git add claude/backlog/backlog_archive.md
 git add claude/backlog/backlog_health_<YYYYMMDD>.md
+git add .claude_current_state.json
 git commit -m "[GOVERNANCE] Backlog grooming run <date> — <n> items archived, <n> orphans flagged"
 git push origin <current-branch>
 ```
@@ -390,5 +400,6 @@ The run is complete when:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-03-07 | IMP-02: Added `last_groom_backlog_utc` and `last_groom_backlog_outcome` state write to STEP 7 (global state update). Added `.claude_current_state.json` to §5 write scope (Phase 1M state fields only) and to STEP 7 commit list. |
 | 1.1 | 2026-03-06 | Widened valid trigger windows to include pre-`run roadmap` invocation alongside Post-Ship Closure. Both windows now explicitly equal. Added known gap note for Phase 1 skipped path. Added lock conflict guidance to §2. Expanded §6 classification table to include Blocked — Stale Blocker as a distinct classification. Added stale blocker row to STEP 5 change plan and STEP 6.2/6.3 outputs. Added promotion shortlist advisory note to §6 and health report template. |
 | 1.0 | 2026-03-04 | Initial version. |
