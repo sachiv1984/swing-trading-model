@@ -154,12 +154,13 @@ Resolution: Per-engine fields used (more granular than specified): `last_manage_
 
 ---
 
-**IMP-03 — Sealed hash key mismatch between schema versions**
+**IMP-03 — Sealed hash key mismatch between schema versions** ✅ COMPLETE (2026-03-07)
 Area: State | Governance
 Problem: The v1.9 `state.json` `sealed_hashes` contains keys `stage2_scope_extraction` and `stage3_execution_plan`. The updated prompt schema now uses `release_plan`. Future cycles will produce `sealed_hashes.release_plan` but drift detection compares against whatever keys exist — creating false drift or silent mismatch.
 Why it matters: Drift detection will behave differently for pre- and post-consolidation cycles with no transition guidance.
 Recommended change: Add `schema_version` to `state.json`. Document that drift detection uses the keys present in `sealed_hashes` for that cycle's schema version. Add migration note to `release_planning_prompt.md`.
 Effort: Low
+Resolution: `release_planning_prompt.md` v2.11→v2.12: (1) `prompt_schema_version: "v2"` added to state.json schema template — new cycles self-identify their schema; (2) §18.1 tracked artifact list corrected from old stage file names to `release_plan.md` (was the remaining stale reference after v2.11 consolidation); (3) Drift Detection section: schema migration table added — documents that drift uses `tracked_set` keys for each cycle's own schema version; absent `prompt_schema_version` = schema v1. Sealed v1.9 state.json not modified (immutability rule: Published state is immutable except drift fields).
 
 ---
 

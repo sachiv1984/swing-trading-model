@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.11
+**Version:** 2.12
 **Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -326,6 +326,7 @@ Then create or update:
   "mode": "strict|standard",
   "issues_mode": "none|import|gh",
   "auto_escalate": true,
+  "prompt_schema_version": "v2",
   "status": "Initialized",
   "publish_eligible": false,
   "last_transition_utc": "<ISO-8601 UTC>",
@@ -636,8 +637,17 @@ If lock removal fails: record blocker and HALT.
 ## Drift Detection
 Trigger: only when `status == Published`.
 
+**Schema version rule:** Drift detection uses the keys present in `state.sealed.sealed_hashes` for that cycle — not a fixed key list. Do not assume keys; read the `tracked_set` from `artifact_hashes.tracked_set`.
+
+| `prompt_schema_version` | `tracked_set` keys in `sealed_hashes` |
+|------------------------|---------------------------------------|
+| `v2` (prompt ≥ v2.11) | `release_plan`, `stage4_backlog_slice`, `escalations` |
+| `v1` or absent (prompt ≤ v2.10) | `stage2_scope_extraction`, `stage3_execution_plan`, `stage4_backlog_slice`, `escalations` |
+
+Never compare `sealed_hashes` keys across schema versions. Each cycle is self-contained.
+
 Recompute and compare:
-- sealed_hashes (tracked planning artifacts)
+- sealed_hashes (tracked planning artifacts — per schema version above)
 - sealed_assumptions (timebox/capacity)
 - state_snapshot_hash
 
@@ -1245,9 +1255,8 @@ If any lock remains acquired, prepared, or blocked:
 Before setting `status = Published`:
 
 ## 18.1 Recompute Canonical Hashes
-Recompute canonicalized SHA-256 hashes for:
-- stage2_scope_extraction.md
-- stage3_execution_plan.md
+Recompute canonicalized SHA-256 hashes for (prompt schema v2 tracked set):
+- release_plan.md
 - stage4_backlog_slice.md
 - escalations.md
 
@@ -1256,8 +1265,7 @@ If escalations.md does not exist:
 - Write that value into sealed.sealed_hashes.escalations.
 
 If any of the required tracked artifacts are missing at sealing time:
-- stage2_scope_extraction.md
-- stage3_execution_plan.md
+- release_plan.md
 - stage4_backlog_slice.md
 
 Then:
@@ -1361,5 +1369,8 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.12 | 2026-03-07 | IMP-03: Added `prompt_schema_version: "v2"` to state.json schema template. Fixed §18.1 tracked artifact list — updated from old stage file names (`stage2_scope_extraction.md`, `stage3_execution_plan.md`) to `release_plan.md` (schema v2). Added schema version migration table to Drift Detection section — documents that drift detection uses keys from `tracked_set` for the cycle's schema version; never compares across versions. |
+| 2.11 | 2026-03-07 | Intermediate Release Planning artefacts collapsed into `release_plan.md`. Steps 1, 2, 3, 3.5, 4.5, 5.5, 5.7 now write sections into a single consolidated file instead of separate stage files. Final outputs retained separately: scope document, decisions record, stage4_backlog_slice.md. Tracked set in state.json schema updated from `[stage2_scope_extraction, stage3_execution_plan, stage4_backlog_slice, escalations]` to `[release_plan, stage4_backlog_slice, escalations]`. |
+| 2.10 | 2026-03-07 | Added Lifecycle Guard (valid from-states: `Closed`) per `shared_standards.md §10`. |
 | 2.9 | 2026-03-07 | Fixed STEP 3.9 lock acquisition — removed malformed XML-like template placeholders; replaced with plain text field descriptions. Wrote STEP 5 body — was postcondition-only; added full purpose, annotation content template, lock/transaction procedure, and idempotency rule. Clarified STEP 7 vs STEP 9 state sync — renamed STEP 7.1 as "Intermediate global state sync", added explicit note that only STEP 9 sets Published, added STEP 9 precondition to verify STEP 7 ran first. Fixed scope document supersession note — removed pre-populated TBD fields that implied known values at planning time; replaced with explicit [TBD] placeholders and "do not populate at planning time" instruction. Added decisions record creation to STEP 3 — new required output `docs/product/decisions/decisions--{cycle_id}.md` with minimum content template and supersession note. Fixed deferred_execution_blockers — added to Publish Gate as a blocking condition; added to Completion Condition. Added design_gate_status and amended_backlog_slice_path to state.json schema as reserved fields with ownership notes. Added §10.1 issue_import.md format specification. Added canonicalization rule for front matter (rule 6). Updated Write Scope Restriction (§7) to include docs/product/scope/* and docs/product/decisions/* for planning-time document creation. Updated STEP 10 commit to include scope and decisions record files. Updated Completion Condition to include lock state verification and presence checks for scope and decisions documents. |
 | 2.8 | 2026-03-06 | Prior version. |
