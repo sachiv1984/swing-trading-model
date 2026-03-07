@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Active  
-**Version:** 2.4  
+**Version:** 2.5  
 **Last Updated:** 2026-03-06  
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -23,7 +23,7 @@ run ideas [--window-id "<id>"] [--mode "strict|standard"]
 run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"]
 run roadmap --reason "scheduled" [--date "YYYY-MM-DD"]
 
-# Phase 1M — Document Management (OPTIONAL — run after Post-Ship Closure)
+# Phase 1M — Document Management (OPTIONAL — run after Post-Ship Closure OR before run roadmap)
 manage roadmap [--dry-run]                        # retire completed items, flag stale
 groom backlog [--dry-run]                         # archive completed items, health check
 
@@ -76,7 +76,7 @@ State pointer:  .claude_current_state.json  (always check for active_cycle befor
 | Non-decision roles enforce process only — no decisions | All phases |
 | Strategy / Quality / Lifecycle risks may **never** be Accepted Risk | All phases |
 | Publish Gate must pass before a release plan is sealed | Phase 1B |
-| Backlog lock must be acquired before any backlog write | Phase 1B |
+| Backlog lock must be acquired before any backlog write | Phase 1B, 1M |
 | No sprint starts without signed-off backlog and acceptance criteria | Phase 2 |
 | No item enters the sprint without confirmed acceptance criteria and an explicit owner | Phase 2 |
 | No autonomous merge — QA sign-off and Product Owner acceptance always required | Phase 3 |
@@ -109,6 +109,17 @@ Phase 1 complete? (optional)
   ✅ All deferred patches have named owner and target date (or recorded as escalations)
   ✅ Meta-review conducted if due (every third cycle); meta_review.md filed if so
   ✅ Commit done (or commit manifest produced)
+
+Phase 1M complete? (optional)
+  ✅ roadmap_archive.md updated (if any items retired)
+  ✅ backlog_archive.md updated (if any items archived)
+  ✅ Stale items flagged in current_roadmap.md (if any identified)
+  ✅ Orphans and stale blockers flagged in backlog.md (if any identified)
+  ✅ Manage roadmap run log written
+  ✅ Backlog health report written
+  ✅ No ambiguous items left unresolved
+  ✅ Backlog lock released
+  ✅ Commits complete for both engines
 
 Phase 1B complete?
   ✅ state.json status = Published
@@ -172,16 +183,20 @@ Post-Ship Closure complete?
 2. [Roles & Authorities](#2-roles--authorities)
 3. [Document Classes Reference](#3-document-classes-reference)
 4. [Lifecycle Overview](#4-lifecycle-overview)
-5. [Phase 1 — Roadmap Rebalance (Optional)](#5-phase-1--roadmap-rebalance-optional)
-6. [Phase 1B — Release Planning](#6-phase-1b--release-planning)
-7. [Phase 2 — Sprint Planning](#7-phase-2--sprint-planning)
-8. [Phase 3 — Sprint Execution & Close](#8-phase-3--sprint-execution--close)
-9. [Phase 4 — Delivery Verification](#9-phase-4--delivery-verification)
-10. [Post-Ship Closure](#10-post-ship-closure)
-11. [Escalation & Accepted Risk Rules](#11-escalation--accepted-risk-rules)
-12. [Cycle Trigger & Flow Reference](#12-cycle-trigger--flow-reference)
-13. [Artefact Register](#13-artefact-register)
-14. [Playbook Governance](#14-playbook-governance)
+5. [Phase 0 — Idea Intake (Optional)](#5-phase-0--idea-intake-optional)
+6. [Phase 1 — Roadmap Rebalance (Optional)](#6-phase-1--roadmap-rebalance-optional)
+7. [Phase 1M — Document Management (Optional)](#6m-phase-1m--document-management-optional)
+8. [Phase 1.5 — Design Gate](#65-phase-15--design-gate-required)
+9. [Phase 1B — Release Planning](#6b-phase-1b--release-planning)
+   - [Amendment Cycle (Emergency Only)](#6b8-amendment-cycle-emergency-only)
+10. [Phase 2 — Sprint Planning](#7-phase-2--sprint-planning)
+11. [Phase 3 — Sprint Execution & Close](#8-phase-3--sprint-execution--close)
+12. [Phase 4 — Delivery Verification](#9-phase-4--delivery-verification)
+13. [Post-Ship Closure](#10-post-ship-closure)
+14. [Escalation & Accepted Risk Rules](#11-escalation--accepted-risk-rules)
+15. [Cycle Trigger & Flow Reference](#12-cycle-trigger--flow-reference)
+16. [Artefact Register](#13-artefact-register)
+17. [Playbook Governance](#14-playbook-governance)
 
 ---
 
@@ -265,7 +280,7 @@ Each cycle progresses through up to six phases, with an optional Phase 0 for ide
 |-------|------|---------|--------|
 | **Phase 0** | Idea Intake | Optional — before any roadmap run | Submitted idea files + window summary |
 | **Phase 1** | Roadmap Rebalance | Roadmap item completed OR scheduled review | Updated roadmap + decision log + prompt change log (if patches applied) |
-| **Phase 1M** | Document Management | After Post-Ship Closure (optional) | Clean roadmap + healthy backlog |
+| **Phase 1M** | Document Management | After Post-Ship Closure **or** immediately before `run roadmap` | Clean roadmap + healthy backlog |
 | **Phase 1B** | Release Planning | Phase 1 complete *or* direct invocation | Sequenced release plan + backlog slice |
 | **Phase 1.5** | Design Gate | After Phase 1B Publish Gate | Design artefacts approved + frontend specs updated |
 | **Phase 2** | Sprint Planning | Phase 1B Publish Gate passed | Sprint backlog + acceptance criteria |
@@ -274,7 +289,7 @@ Each cycle progresses through up to six phases, with an optional Phase 0 for ide
 | **Post-Ship** | Post-Ship Closure | Phase 4 complete (`Verified`) | Closed documents + applied lessons learnt |
 | **Amendment** | Amendment Cycle | Emergency post-publish (before Phase 2 sealed) | Amended backlog slice + ratification record |
 
-Phase 0 is **optional** — the roadmap engine notes its absence and continues. Phase 1 is **optional**. Phase 1M is **optional but strongly recommended** after every Post-Ship Closure. Phase 1B may be invoked directly when a release is already approved. Phase 1.5 (Design Gate) is **required** unless all sprint items are classified Design Not Applicable. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
+Phase 0 is **optional** — the roadmap engine notes its absence and continues. Phase 1 is **optional**. Phase 1M is **optional but strongly recommended** at both valid trigger windows (see §6M). Phase 1B may be invoked directly when a release is already approved. Phase 1.5 (Design Gate) is **required** unless all sprint items are classified Design Not Applicable. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
 
 **Phase 4 is a hard gate on the next cycle.** The Roadmap Rebalance and Release Planning engines will not run for a new cycle until `.claude_current_state.json` status is `Verified` or `Verified_with_deviations`. Post-Ship Closure must also be complete before the next cycle opens — `next_cycle_unblocked = true` is necessary but not sufficient.
 
@@ -426,11 +441,20 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.0), `claude/system/backlog_management_prompt.md` (v1.0)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.1), `claude/system/backlog_management_prompt.md` (v1.1)  
 **Owner:** PMO Lead / Product Owner  
-**Trigger:** Optional — recommended after every Post-Ship Closure and before any `run roadmap` invocation.
+**Trigger:** Optional — strongly recommended at either of the following windows:
 
-Two independent engines that manage the lifecycle of the two primary planning documents. They may be run independently or together. Neither makes product decisions — they enforce document hygiene only.
+| Window | Rationale |
+|--------|-----------|
+| After Post-Ship Closure is confirmed | Ensures planning documents reflect shipped state before any new cycle opens |
+| Immediately before `run roadmap` | Gives the Roadmap Rebalance Engine clean, accurate inputs |
+
+Both windows are equally valid. Either may be used independently. The two engines may also be run independently of each other.
+
+**Known gap:** If Phase 1 is skipped and `plan release` is invoked directly, neither engine will have run since the last Post-Ship Closure. In this case, both should be run before `plan release` is issued. This is not yet a formal trigger — teams skipping Phase 1 regularly should raise this for promotion to a full trigger window.
+
+Two independent engines that manage the lifecycle of the two primary planning documents. Neither makes product decisions — they enforce document hygiene only.
 
 ### 6M.1 Roadmap Management Engine (`manage roadmap`)
 
@@ -458,24 +482,31 @@ Keeps `claude/backlog/backlog.md` healthy and aligned with the roadmap.
 |-------------|-------------------|
 | Archives ✅ Complete and ❌ Killed items to `claude/backlog/backlog_archive.md` | Change priorities |
 | Flags orphaned items (no roadmap home, no cycle activity) | Add items to the roadmap |
-| Validates spec debt items (BLG-SPEC-*) against spec update status | Touch the roadmap document |
-| Produces a promotion shortlist for Product Owner consideration | Make promotion decisions |
-| Flags priority misalignments vs current roadmap | Change item definitions |
+| Flags blocked items with stale blockers (not updated in 2+ cycles) | Touch the roadmap document |
+| Validates spec debt items (BLG-SPEC-*) against spec update status | Make promotion decisions |
+| Produces a promotion shortlist for Product Owner consideration | Change item definitions |
+
+**Note on promotion shortlist:** The shortlist is advisory only. No items are added to the roadmap by this engine. The Product Owner decides which candidates (if any) to advance, and the Roadmap Rebalance Engine executes any additions.
+
+**Lock conflict:** `groom backlog` acquires `claude/backlog/.lock` during its run. If this lock is held by an active Phase 1B cycle, the engine will halt at preflight. Do not clear a live lock — wait for the owning cycle to release it, or confirm with the PMO Lead that the owning cycle is inactive before following the stale lock protocol.
 
 **Hard rules:**
-- Lock must be acquired before any write (`claude/backlog/.lock`)
+- Lock must be acquired before any write (`claude/backlog/.lock`) and released after commit
 - Archive is append-only
 - Promotion shortlist is advisory — Roadmap Rebalance Engine executes promotions
 - `--dry-run` is always safe
 
 ### 6M.3 Phase 1M Exit Criteria
 
-- `roadmap_archive.md` updated (if items retired)
-- `backlog_archive.md` updated (if items archived)
-- Run log written for roadmap management
-- Health report written for backlog grooming
-- No ambiguous items unresolved
-- Commits complete
+- `roadmap_archive.md` updated (if any items retired)
+- `backlog_archive.md` updated (if any items archived)
+- Stale items flagged in `current_roadmap.md` (if any identified)
+- Orphans and stale blockers flagged in `backlog.md` (if any identified)
+- Manage roadmap run log written (`claude/roadmap/manage_roadmap_log_<YYYYMMDD>.md`)
+- Backlog health report written (`claude/backlog/backlog_health_<YYYYMMDD>.md`)
+- No ambiguous items left unresolved
+- Backlog lock released
+- Commits complete for both engines
 
 ---
 
@@ -539,7 +570,9 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
 
-### 6.1 Invocation
+> **Amendment Cycle:** If an emergency is discovered after this phase publishes and before Phase 2 seals, use `amend cycle` — see §6B.8. Amendment cycles are emergency-only; delivery pressure never qualifies.
+
+### 6B.1 Invocation
 
 ```
 plan release --version "<vX.Y>" [--date "YYYY-MM-DD"] [--timebox "<text>"] \
@@ -562,7 +595,7 @@ run planning v<version>
 
 **Before invoking:** Check `.claude_current_state.json` for `active_cycle` and `status`. Do not invoke if status is `Blocked` without first resolving open escalations. Do not invoke if status is anything other than `Verified`, `Verified_with_deviations`, or a fresh cycle start — Phase 4 must complete before Phase 1B opens a new cycle.
 
-### 6.2 State Machine
+### 6B.2 State Machine
 
 All progress is recorded in `claude/cycles/<cycle_id>/state.json`. The routine is resumable from the last completed step.
 
@@ -577,7 +610,7 @@ All progress is recorded in `claude/cycles/<cycle_id>/state.json`. The routine i
 
 **Terminal state rule:** Once `Published`, the cycle folder is sealed. No step may re-run, no artefact may be modified, no escalation may be appended. Any post-publish backlog change requires an **Amendment Cycle** (`amend cycle --cycle "<cycle_id>" --reason "emergency-fix|hard-blocker"`). Amendment cycles are emergency-only and require two-authority ratification.
 
-### 6.3 Engine Steps
+### 6B.3 Engine Steps
 
 | Step | Name | Gate | Output |
 |------|------|------|--------|
@@ -598,7 +631,7 @@ All progress is recorded in `claude/cycles/<cycle_id>/state.json`. The routine i
 | STEP 9 | Global State Synchronization | **HARD** | `.claude_current_state.json` updated |
 | STEP 10 | Stage, Commit & Push | — | Git commit; issues if `--issues gh` |
 
-### 6.4 Identifier Standards
+### 6B.4 Identifier Standards
 
 All artefacts use stable IDs — missing IDs are a Process Integrity failure that halts execution.
 
@@ -612,7 +645,7 @@ All artefacts use stable IDs — missing IDs are a Process Integrity failure tha
 
 Every Stage 3 epic must declare `Maps to: S2-xx`. Every Stage 4 backlog slice must reference EPIC IDs exactly (no free-text epics).
 
-### 6.5 Backlog Concurrency Control
+### 6B.5 Backlog Concurrency Control
 
 Only one governed cycle may modify `claude/backlog/backlog.md` at a time.
 
@@ -620,7 +653,7 @@ Only one governed cycle may modify `claude/backlog/backlog.md` at a time.
 - If the lock exists and is owned by a different `cycle_id`: **halt** — no auto-delete, no override
 - Stale locks: PMO Lead must manually release under the stale protocol (timestamp threshold + evidence of inactive owning cycle); removal recorded in the current cycle's escalation record
 
-### 6.6 Publish Gate
+### 6B.6 Publish Gate
 
 The cycle may only be sealed `Published` if **all** of the following are true:
 
@@ -633,7 +666,7 @@ The cycle may only be sealed `Published` if **all** of the following are true:
 - `plan_structured = true`, `plan_executable = true`, `backlog_committed = true`
 - All locks are `released` or `not_checked` (none `acquired` or `prepared`)
 
-### 6.7 Phase 1B Exit Criteria
+### 6B.7 Phase 1B Exit Criteria
 
 - `state.json` status = `Published`, `publish_eligible = true`
 - `stage4_backlog_slice.md` committed to `backlog.md` with idempotency marker
@@ -642,7 +675,7 @@ The cycle may only be sealed `Published` if **all** of the following are true:
 - No open escalations
 - Backlog lock released
 
-### 6.8 Amendment Cycle (Emergency Only)
+### 6B.8 Amendment Cycle (Emergency Only)
 
 **Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.0)
 
@@ -1104,11 +1137,12 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 | Roadmap item completed | Phase 1 (optional) or direct Phase 1B | Product Owner |
 | Scheduled review due | Phase 1 (`run roadmap --reason "scheduled"`) | Product Owner |
 | Phase 1 exit criteria met | Phase 1B — Release Planning Engine | PMO Lead |
+| **Before `run roadmap` is issued** | **Phase 1M: `manage roadmap` + `groom backlog` (optional — strongly recommended)** | **PMO Lead / Product Owner** |
 | Phase 1B Publish Gate passed | Phase 1.5: Design Gate (`run design-gate`) | PMO Lead |
 | Phase 2 complete (`Sprint_Planning_Complete`) | Phase 3 — Sprint Execution (`run sprint`) | PMO Lead |
 | Phase 3 complete (`Sprint_Complete`) | Phase 4 — Delivery Verification | PMO Lead |
 | Phase 4 complete (`Verified`) | Post-Ship Closure | PMO Lead |
-| Post-Ship Closure confirmed | Phase 1M: `manage roadmap` + `groom backlog` (optional) | PMO Lead / Product Owner |
+| Post-Ship Closure confirmed | Phase 1M: `manage roadmap` + `groom backlog` (optional — strongly recommended) | PMO Lead / Product Owner |
 | Phase 1M complete (or skipped) | New Phase 1 (optional) or Phase 1B cycle | Product Owner |
 | Phase 1B Publish Gate passed | Phase 1.5: Design Gate (`run design-gate`) | PMO Lead |
 | Design Gate passed (`design_gate_status = Passed`) | Phase 2: Sprint Planning (`plan sprint`) | PMO Lead |
@@ -1121,6 +1155,8 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 > **Loop rule:** Phase 1 is only triggered when a roadmap item completes and a rebalance is warranted, or when a scheduled review is due. Sprint items that are backlog items (not roadmap items) never trigger a rebalance.
 
 > **Cycle gate:** Phase 1B (new cycle) may not open until Phase 4 of the previous cycle reaches `Verified` or `Verified_with_deviations` **and** Post-Ship Closure is confirmed complete.
+
+> **Known gap — Phase 1 skipped:** If Phase 1 is skipped and `plan release` is invoked directly, Phase 1M will not have run since the last Post-Ship Closure. Both `manage roadmap` and `groom backlog` should be run before `plan release` is issued. This is not yet a formal trigger row — teams skipping Phase 1 regularly should raise this for promotion.
 
 ---
 
@@ -1164,7 +1200,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Scored Initiatives | `claude/scoring/scored_initiatives.md` | 4 | Facilitator | 1 |
 | Run Manifest (Release) | `claude/cycles/<id>/run_manifest.md` | 3 | Infra & Ops Owner | 1B |
 | State File | `claude/cycles/<id>/state.json` | — | PMO Lead | 1B |
-| Backlog Lock | `claude/backlog/.lock` | — | PMO Lead | 1B |
+| Backlog Lock | `claude/backlog/.lock` | — | PMO Lead | 1B, 1M |
 | Backlog Transaction | `claude/cycles/<id>/backlog_txn.json` | — | PMO Lead | 1B |
 | Stage 1 Readiness | `claude/cycles/<id>/stage1_readiness.md` | 3 | PMO Lead | 1B |
 | Stage 2 Scope Extraction | `claude/cycles/<id>/stage2_scope_extraction.md` | 3 | PMO Lead | 1B |
@@ -1208,13 +1244,13 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 2.4 |
+| Version | 2.5 |
 | Last Updated | 2026-03-06 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
 | Idea Template | `claude/system/idea_template.md` |
-| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.0 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.0 |
+| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.1 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.1 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.7 |
@@ -1240,7 +1276,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
-| 2.4 | 2026-03-06 | Updated to reflect `roadmap_prompt.md` v2.0 and `lessons_learnt_prompt.md` v1.4. **Phase 1:** Updated source prompt version (v1.9 → v2.0). Added scheduled run invocation form (`--reason "scheduled"`) to Quick Reference commands and §6.1. Added prior cycle outstanding actions check to preflight checklist (§6.2). Updated engine steps table (§6.3) to reflect new STEP -1.5, STEP 4 stale idea expiry, STEP 6 effort banding, STEP 11 four-sub-step structure (lessons learnt + prompt change classification + prompt change log + meta-review), and STEP 12 `last_meta_review_cycle` state update. Updated Phase 1 exit criteria (§6.4) to include action-now patch requirements, deferred patch validity rules, and meta-review output. Updated Phase Gate Checklist (Quick Reference) to match. **Phase 0:** Updated idea lifecycle status table (§5.3) — `Parked` replaced with `Parked-cycle-<n>` with stale threshold note. **§2 Roles:** Added Head of Specs Team sign-off note for action-now prompt patches. **§4 Lifecycle Overview:** Added prompt change log to Phase 1 output column; added scheduled review to Phase 1 trigger column. **§12 Cycle Trigger table:** Added scheduled review row and meta-review trigger row. Updated loop rule note. **§13 Artefact Register:** Added Prompt Change Log and Meta-Review Record rows. **§14 Governance table:** Updated roadmap engine source to v2.0, lessons learnt prompt to v1.4, added Prompt Change Log entry. |
+| 2.5 | 2026-03-06 | **Phase 1M trigger windows widened.** Both `manage roadmap` and `groom backlog` are now valid at two equally-weighted trigger points: after Post-Ship Closure and immediately before `run roadmap`. Updated: Quick Reference engine commands comment; §4 Lifecycle Overview trigger column; §6M intro replaced single trigger with explicit trigger table; §12 Cycle Trigger table added pre-`run roadmap` row (bolded); known gap note added for Phase 1 skipped path in §6M, §12, and both prompt files. **Phase 1M gaps closed.** Added Phase 1M block to Phase Gate Checklist. Expanded §6M.3 exit criteria to match other phases (full checklist format). Added stale blocker classification to §6M.2 table. Added lock conflict note to §6M.2. Added promotion shortlist advisory note to §6M.2. **Hard Rules table** updated: backlog lock row now includes Phase 1M. **§6B subsection numbering fixed**: 6.1–6.8 collision with Phase 1 resolved — renamed to 6B.1–6B.8 throughout. **Amendment Cycle discoverability** improved: added callout block at top of §6B; added Amendment Cycle as named sub-entry in Table of Contents. **Backlog Lock artefact** phase column updated to include 1M. **§14 Governance table** updated: Roadmap Management Engine → v1.1, Backlog Management Engine → v1.1. |
+| 2.4 | 2026-03-06 | Updated to reflect `roadmap_prompt.md` v2.0 and `lessons_learnt_prompt.md` v1.4. Added scheduled run invocation, prior cycle outstanding actions check, engine steps updates, Phase 1 exit criteria updates, idea lifecycle status updates, roles update, lifecycle overview updates, cycle trigger table updates, artefact register updates, governance table updates. |
 | 2.3 | 2026-03-04 | Added Class 8 (Proof of Gate) to §3. Fixed broken row in §12. Updated Phase 1 source prompt to v1.9. |
 | 2.2 | 2026-03-04 | Added Phase 1M (Document Management) and Phase 1.5 (Design Gate). |
 | 2.1 | 2026-03-03 | Added Phase 0 Idea Intake engine. |
