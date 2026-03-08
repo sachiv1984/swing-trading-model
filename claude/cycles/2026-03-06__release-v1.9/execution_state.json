@@ -1,13 +1,12 @@
 {
   "cycle_id": "2026-03-06__release-v1.9",
   "sprint_number": 1,
-  "sprint_goal": "Fully resolve all Risk Dashboard deviations from v1.8, establish reproducible test infrastructure that closes the v1.8 scenario coverage gap, and complete the documentation hygiene backlog — leaving the codebase defect-free and documentation-complete as the foundation for the feature sprint.",
+  "sprint_goal": "Fully resolve all Risk Dashboard deviations from v1.8, establish reproducible test infrastructure that closes the v1.8 scenario coverage gap, and complete the documentation hygiene backlog \u2014 leaving the codebase defect-free and documentation-complete as the foundation for the feature sprint.",
   "backlog_slice_source": "claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md",
   "invoked_utc": "2026-03-08T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-08T01:00:00Z",
-
+  "last_updated_utc": "2026-03-08T22:00:00Z",
   "epics": {
     "EPIC-04": {
       "status": "in_progress",
@@ -16,7 +15,9 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-04.md",
-      "test_scenarios": ["docs/testing/risk_dashboard_scenarios.md"],
+      "test_scenarios": [
+        "docs/testing/risk_dashboard_scenarios.md"
+      ],
       "stories": {
         "ST-06": {
           "title": "Drawdown Data Source Spec Alignment",
@@ -31,7 +32,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-03-06T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/frontend/pages/risk_dashboard.md#§4.1"],
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a74.1"
+          ],
           "deviations_filed": true,
           "notes": "Pre-completed 2026-03-06. risk_dashboard.md updated to v0.1.7. DEV-ST03-08 resolved. BLG-RD-08 closed. No execution work required."
         },
@@ -48,7 +51,10 @@
           "unblock_criteria": "Commit [EPIC-04][ST-07] pushed to exec/2026-03-06__release-v1.9/EPIC-04; golden output CI passes",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/risk_dashboard.md#§4.1", "docs/specs/frontend/pages/risk_dashboard.md#§6.2"],
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a74.1",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.2"
+          ],
           "deviations_filed": false,
           "notes": "Key enabler for ST-08, ST-09 frontend fixes. Deploy before or provide mock for frontend work."
         },
@@ -65,9 +71,12 @@
           "unblock_criteria": "Commit [EPIC-04][ST-08] pushed to exec/2026-03-06__release-v1.9/EPIC-04; SC-RD-02 and SC-RD-03 verified by Director of Quality",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/risk_dashboard.md#§3", "docs/specs/frontend/pages/risk_dashboard.md#§5"],
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a73",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a75"
+          ],
           "deviations_filed": false,
-          "notes": "Soft dependency on ST-07 (deploy backend first or use mock). RISK-05 — entity store fallback approach to be confirmed at pre-alignment."
+          "notes": "Soft dependency on ST-07 (deploy backend first or use mock). RISK-05 \u2014 entity store fallback approach to be confirmed at pre-alignment."
         },
         "ST-09": {
           "title": "Risk Dashboard Frontend: Table and Column Fixes",
@@ -82,7 +91,12 @@
           "unblock_criteria": "Commit [EPIC-04][ST-09] pushed to exec/2026-03-06__release-v1.9/EPIC-04; SC-RD-04, SC-RD-05, SC-RD-07, SC-RD-08 verified by Director of Quality",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/risk_dashboard.md#§5.2", "docs/specs/frontend/pages/risk_dashboard.md#§6.2", "docs/specs/frontend/pages/risk_dashboard.md#§6.4", "docs/specs/frontend/pages/risk_dashboard.md#§7.5"],
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a75.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.4",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a77.5"
+          ],
           "deviations_filed": false,
           "notes": "Four independent column/sort/badge fixes; may be batched with ST-08 in a single Base44 session."
         },
@@ -99,13 +113,15 @@
           "unblock_criteria": "Commit [EPIC-04][ST-10] pushed to exec/2026-03-06__release-v1.9/EPIC-04; SC-RD-05, SC-RD-06 verified by Director of Quality",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/risk_dashboard.md#§3.2", "docs/specs/frontend/pages/risk_dashboard.md#§6.3"],
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a73.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.3"
+          ],
           "deviations_filed": false,
-          "notes": "Cosmetic only — no backend dependency. Can be delivered in Wave 1 alongside ST-07."
+          "notes": "Cosmetic only \u2014 no backend dependency. Can be delivered in Wave 1 alongside ST-07."
         }
       }
     },
-
     "EPIC-05": {
       "status": "in_progress",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
@@ -113,7 +129,9 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-05.md",
-      "test_scenarios": ["docs/testing/risk_dashboard_scenarios.md"],
+      "test_scenarios": [
+        "docs/testing/risk_dashboard_scenarios.md"
+      ],
       "stories": {
         "ST-11": {
           "title": "Canonical Test Scenario Library Phase 1 (Risk Dashboard)",
@@ -128,9 +146,11 @@
           "unblock_criteria": "All 17 NOT EXECUTED scenarios have recorded results in risk_dashboard_scenarios.md; Test Infrastructure Preconditions section present; Director of Quality confirms completeness",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/testing/risk_dashboard_scenarios.md"],
+          "spec_references": [
+            "docs/testing/risk_dashboard_scenarios.md"
+          ],
           "deviations_filed": false,
-          "notes": "RISK-07 — test infra approach (seeded DB vs mock layer) to be agreed at sprint start. Approach to be recorded in Test Infrastructure Preconditions section."
+          "notes": "RISK-07 \u2014 test infra approach (seeded DB vs mock layer) to be agreed at sprint start. Approach to be recorded in Test Infrastructure Preconditions section."
         },
         "ST-13": {
           "title": "Service Layer Test Coverage Standard",
@@ -145,13 +165,14 @@
           "unblock_criteria": "Commit [EPIC-05][ST-13] pushed to exec/2026-03-06__release-v1.9/EPIC-05; CI coverage step present and threshold named; backend_engineering_patterns.md version incremented; Director of Quality confirms CI step present",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/backend_engineering_patterns.md"],
+          "spec_references": [
+            "docs/specs/backend_engineering_patterns.md"
+          ],
           "deviations_filed": false,
           "notes": "Coverage threshold % to be agreed between Backend Engineering Patterns Owner and Head of Engineering at sprint start. BLG-NEW-01 prerequisite confirmed complete (v1.8 shipped)."
         }
       }
     },
-
     "EPIC-06": {
       "status": "done",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
@@ -174,7 +195,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-03-08T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/Specs_Index.md", "docs/reference/glossary.md"],
+          "spec_references": [
+            "docs/specs/Specs_Index.md",
+            "docs/reference/glossary.md"
+          ],
           "deviations_filed": true,
           "notes": "Glossary updated: lifecycle-compliant header (Class 2, v1.1), added portfolio heat, stop distance, cohort, journal completion rate, stop-based exit rate terms with Class 1 source references."
         },
@@ -191,7 +215,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-03-08T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/governance/ai_workflow_policy.md"],
+          "spec_references": [
+            "docs/governance/ai_workflow_policy.md"
+          ],
           "deviations_filed": true,
           "notes": "Policy created at docs/governance/ai_workflow_policy.md. Covers all 4 required areas: AI authority scope, mandatory human review checkpoints, escalation triggers, record-keeping obligations."
         },
@@ -208,9 +234,12 @@
           "unblock_criteria": null,
           "completed_utc": "2026-03-08T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/market_endpoints.md#§GET /market/status", "docs/reference/openapi.yaml"],
+          "spec_references": [
+            "docs/specs/api_contracts/market_endpoints.md#\u00a7GET /market/status",
+            "docs/reference/openapi.yaml"
+          ],
           "deviations_filed": true,
-          "notes": "market_endpoints.md v0.1 created. openapi.yaml description updated to reference canonical spec. Registered in Specs_Index.md §3.4."
+          "notes": "market_endpoints.md v0.1 created. openapi.yaml description updated to reference canonical spec. Registered in Specs_Index.md \u00a73.4."
         },
         "ST-17": {
           "title": "Create settings_model.md",
@@ -225,9 +254,12 @@
           "unblock_criteria": null,
           "completed_utc": "2026-03-08T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/data_model/settings_model.md", "docs/specs/api_contracts/settings_endpoints.md"],
+          "spec_references": [
+            "docs/specs/data_model/settings_model.md",
+            "docs/specs/api_contracts/settings_endpoints.md"
+          ],
           "deviations_filed": true,
-          "notes": "settings_model.md v0.1 created at docs/specs/data_model/. All 12 fields documented with types, constraints, defaults, semantics. Cross-referenced from settings_endpoints.md. Registered in Specs_Index.md §3.2."
+          "notes": "settings_model.md v0.1 created at docs/specs/data_model/. All 12 fields documented with types, constraints, defaults, semantics. Cross-referenced from settings_endpoints.md. Registered in Specs_Index.md \u00a73.2."
         },
         "ST-18": {
           "title": "Define Error Response Standard",
@@ -242,9 +274,11 @@
           "unblock_criteria": null,
           "completed_utc": "2026-03-08T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/conventions.md#§13"],
+          "spec_references": [
+            "docs/specs/api_contracts/conventions.md#\u00a713"
+          ],
           "deviations_filed": true,
-          "notes": "Error Response Standard added as §13 to conventions.md. Covers: standard error envelope (status, message), HTTP status code mapping (400/404/500), usage rules. All existing endpoint files reference conventions.md for errors — implicit reference to §13. Noted in README.md. API contracts version bumped to 1.9.0."
+          "notes": "Error Response Standard added as \u00a713 to conventions.md. Covers: standard error envelope (status, message), HTTP status code mapping (400/404/500), usage rules. All existing endpoint files reference conventions.md for errors \u2014 implicit reference to \u00a713. Noted in README.md. API contracts version bumped to 1.9.0."
         },
         "ST-19": {
           "title": "Spec/Doc Debt Small Fixes (7 items)",
@@ -253,7 +287,7 @@
           "assigned_to": "engine",
           "github_issue": 51,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
-          "commit_sha": "a267fe8",
+          "commit_sha": "5f8472be5c75b8ff481088eb29542a6496c0a142",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -269,23 +303,46 @@
             "docs/operations/validation_system.md"
           ],
           "deviations_filed": true,
-          "notes": "All 7 items complete. BLG-SPEC-D1: README.md header+version v1.9.0. BLG-SPEC-D4: GET /positions/search/tags added to position_endpoints.md. BLG-SPEC-D8: System_status_report.md lifecycle header added. BLG-SPEC-D9: claude/charter/document_lifecycle_guide.md reference in process_index.md and Specs_Index.md §5. BLG-SPEC-G3: already present in Specs_Index.md §3.5b (no change needed). BLG-SPEC-G4: ADR-002 copied to docs/product/decisions/; cross-reference in glossary updated. BLG-SPEC-G5: validation_system.md owner updated to Infrastructure & Operations Owner."
+          "notes": "All 7 BLG items resolved. CI fix commit also included: GET /positions/search/tags added to openapi.yaml; issues:write permission added to governance_sync.yml."
         }
       }
     }
   },
-
-  "blocked_items": ["ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-13"],
-  "delegated_items": ["ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-13"],
-  "completed_items": ["ST-06", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18", "ST-19"],
+  "blocked_items": [
+    "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-13"
+  ],
+  "delegated_items": [
+    "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-13"
+  ],
+  "completed_items": [
+    "ST-06",
+    "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17",
+    "ST-18",
+    "ST-19"
+  ],
   "open_escalations": [],
-
   "merge_gate": {
     "epics_merged": [],
-    "epics_pending": ["EPIC-04", "EPIC-05", "EPIC-06"],
+    "epics_pending": [
+      "EPIC-04",
+      "EPIC-05",
+      "EPIC-06"
+    ],
     "all_merged": false
   },
-
   "sealed": false,
   "sealed_utc": null
 }
