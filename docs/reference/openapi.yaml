@@ -505,8 +505,8 @@ paths:
       tags: [Market]
       summary: Get market regime status
       description: |
-        NOTE: This endpoint exists in the implementation but does not yet have a
-        canonical Markdown contract in docs/specs/api_contracts/.
+        Returns current market regime (SPY and FTSE vs 200-day MA) and live GBP/USD FX rate.
+        Canonical contract: docs/specs/api_contracts/market_endpoints.md v0.1
       responses:
         "200":
           $ref: "#/components/responses/OkMarketStatus"
