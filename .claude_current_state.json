@@ -8,7 +8,7 @@
   "sprint_backlog_path": "claude/cycles/2026-03-06__release-v1.9/sprint_backlog.md",
   "sprint_goal_path": "claude/cycles/2026-03-06__release-v1.9/sprint_goal.md",
   "sprint_capacity_path": "claude/cycles/2026-03-06__release-v1.9/sprint_capacity.md",
-  "last_sync_utc": "2026-03-06T01:30:00Z",
+  "last_sync_utc": "2026-03-08T22:00:00Z",
   "prior_cycle": "2026-03-04__release-v1.8",
   "sprint_sealed": true,
   "design_gate_required": true,
