@@ -292,6 +292,38 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /positions/search/tags:
+    get:
+      tags: [Positions]
+      summary: Search positions by tags
+      description: Search open and closed positions by one or more tags (OR match, case-insensitive).
+      parameters:
+        - in: query
+          name: tags
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of tags to search for.
+      responses:
+        "200":
+          description: Array of matching position objects.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Position"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /trades:
     get:
       tags: [Trades]
