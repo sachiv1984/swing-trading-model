@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-03-07
+**Version:** 1.4
+**Last Updated:** 2026-03-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -196,6 +196,16 @@ Read `design_gate_status` from `claude/cycles/<cycle_id>/state.json`:
 - If the field is absent: treat as `not_started` and halt. Record as a process deviation — the Release Planning Engine should have initialised this field.
 
 **Exception:** If every sprint item is confirmed `Design Not Applicable` by the Head of UX & Design and this is recorded explicitly in `state.json` or escalations, the PMO Lead may proceed with a recorded deviation. This is not a silent bypass — it must be documented.
+
+**Design gate bypass audit (IMP-04 — Hard Gate):** Determine the Lifecycle Guard entry state. If this engine was entered from `Release_Planning_Complete` (i.e., `Design_Gate_Passed` was never set, and the design gate was skipped entirely):
+
+- Read `.claude_current_state.json` for `design_gate_bypass_authority` and `design_gate_bypass_reason`.
+- If either field is absent or empty:
+  - In `strict` mode: halt — bypass authority and reason are required before Sprint Planning may proceed without a design gate. Write the fields to `.claude_current_state.json` once the Product Owner provides them, then resume.
+  - In `standard` mode: require the fields to be populated now (surface to Product Owner for immediate confirmation). Record the gap as an outstanding action. The sprint may not be sealed until both fields are present.
+- Write both fields to `.claude_current_state.json` under `design_gate_bypass_authority` (role name) and `design_gate_bypass_reason` (one sentence).
+
+If this engine was entered from `Design_Gate_Passed`: no bypass audit is required. Skip this check.
 
 ### -1.4 Backlog Slice Present
 
@@ -720,6 +730,8 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-03-08 | IMP-04: Added design gate bypass audit to STEP -1.3 — when entering from `Release_Planning_Complete` without `Design_Gate_Passed`, requires `design_gate_bypass_authority` and `design_gate_bypass_reason` to be written to `.claude_current_state.json`. Strict mode halts if absent; standard mode flags and blocks seal until present. |
+| 1.3 | 2026-03-07 | Added Lifecycle Guard per shared_standards.md §10. |
 | 1.2 | 2026-03-07 | **Design gate pre-condition enforced.** STEP -1.3 added: `design_gate_status` must be `Passed` before planning may proceed; `not_started` and `Blocked` both halt; absent field halts with process deviation note; Design Not Applicable exception documented. **Amendment slice handling added.** §5 backlog slice source-of-truth rule added: `amended_backlog_slice_path` checked at STEP -1.1; if present, used in place of `stage4_backlog_slice.md` throughout. STEP -1.1 extended to check and note the amendment path. STEP 0 load summary now names the backlog slice source. STEP 3.1, STEP 4.1, sprint_backlog.md header, and sprint_planning_notes.md all updated to reference the authoritative slice. §6 write scope: amended backlog slice added to must-not-modify list. §12 invariant added. **`deferred_execution_blockers` formally gated.** STEP -1.2 now explicitly checks this field: `strict` mode halts; `standard` mode requires Product Owner acceptance per blocker. STEP 6.1 sprint backlog template: Deferred Execution Blockers Accepted section added. STEP 6.2 sign-off gate: blocker acceptance added as a required condition. §10 completion condition updated. §12 invariant added. **`--dry-run` and pip-audit clarified.** §2 invocation rule: dry-run guarantee stated; pip-audit explicitly noted as running in dry-run (read-only). STEP -1.9 (was -1.8): dry-run note added. STEP numbering adjusted: -1.8 Write Permission Test, -1.9 Vulnerability Scan (previously -1.7 and -1.8). **Guide fix required:** §7 source prompt reference should be updated from v1.0 to v1.2. |
 | 1.1 | 2026-03-06 | Prior version. |
 | 1.0 | 2026-03-05 | Initial version. |

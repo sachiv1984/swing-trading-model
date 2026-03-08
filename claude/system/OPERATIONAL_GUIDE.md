@@ -1,9 +1,9 @@
 # Sprint Planning Operational Playbook
 
-**Owner:** Head of Specs Team  
-**Status:** Active  
-**Version:** 3.2
-**Last Updated:** 2026-03-07  
+**Owner:** Head of Specs Team
+**Status:** Active
+**Version:** 3.3
+**Last Updated:** 2026-03-08
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -85,6 +85,10 @@ State pointer:  .claude_current_state.json  (always check for active_cycle befor
 | Amendment cycles are emergency-only — delivery pressure never qualifies | Amendment |
 | Amendments require two-authority ratification — PMO Lead may never self-approve | Amendment |
 | Amendments are not permitted after Phase 2 seals (`sprint_sealed = true`) | Amendment |
+| Design gate bypass requires `design_gate_bypass_authority` + `design_gate_bypass_reason` in state | Phase 2 |
+| Release cycle may not open unless `post_ship_complete = true` and `next_cycle_unblocked = true` | Phase 1B |
+| Any prompt version increment must have a matching entry in `prompt_change_log.md` | All phases |
+| Backlog lock must be acquired before Amendment Cycle reads `sprint_sealed` | Amendment |
 
 ### Conflict Resolution — Who Wins What
 
@@ -1279,25 +1283,25 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.0 |
-| Last Updated | 2026-03-07 |
+| Version | 3.3 |
+| Last Updated | 2026-03-08 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
 | Idea Template | `claude/system/idea_template.md` |
-| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.1 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.1 |
+| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.2 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.2 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.11 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.3 |
-| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.1 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.13 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.4 |
+| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.2 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v1.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.3 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.4 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v1.2 |
+| Shared Standards | `claude/system/shared_standards.md` v1.4 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.4 |
-| Prompt Change Log | `claude/system/prompt_change_log.md` (created on first action-now patch) |
+| Prompt Change Log | `claude/system/prompt_change_log.md` |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
 | Team Charter | `claude/charter/team_charter.md` v1.4 |
 
@@ -1311,6 +1315,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.3 | 2026-03-08 | **IMP-04–10 governance hardening (review.md backlog).** Hard Rules table: 4 new rules added (design gate bypass audit, release cycle preconditions, prompt version log, amendment lock). §14 Governance table: engine versions updated — release_planning_prompt v2.13, sprint_planning_prompt v1.4, amendment_cycle_prompt v1.2, shared_standards v1.4, roadmap_management_prompt v1.2, backlog_management_prompt v1.2, post_ship_closure v1.4. Quick Reference phase gate checklist unchanged (changes are in prompts, not checklist items). |
 | 3.2 | 2026-03-07 | **Phase 1B artefacts consolidation.** §6B source prompt updated to v2.11. §6B.3 step table: Steps 1, 2, 3, 3.5, 4.5, 5.5, 5.7 now write sections into `release_plan.md` instead of separate stage files. §13 Artefact Register: Stage 1 Readiness, Stage 2 Scope Extraction, Stage 3 Execution Plan rows replaced with single `release_plan.md` (consolidated intermediate) row; Stage 4 Backlog Slice retained separately. §14 Governance table: all engine versions updated to current (release_planning_prompt v2.11, sprint_planning v1.3, amendment_cycle v1.1, execution v1.6, delivery_verification v1.2, post_ship_closure v1.3, shared_standards v1.2). |
 | 3.1 | 2026-03-07 | **Lifecycle state machine hardening.** Added §4.1 Lifecycle State Machine — allowed transition table with from/to/engine/entry condition. Lifecycle Guard enforcement paragraph added referencing `shared_standards.md §10` and `lifecycle_schema.json`. |
 | 3.0 | 2026-03-07 | **Aligned with `post_ship_closure_prompt.md` v1.2.** §10 source prompt updated to v1.2. §14 Post-Ship Closure Engine → v1.2. Key changes now documented in guide: `amended_backlog_slice_path` handling in closure (STEP 0 + STEP 3); `lessons_learnt_closure.md` created by explicit STEP 8.5 (invokes `lessons_learnt_prompt.md §3.5`); dry-run enforcement consistent with other engines in chain. |

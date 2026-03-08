@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-03-07
+**Version:** 1.4
+**Last Updated:** 2026-03-08
 
 # Shared Standards — All Governed Routines
 
@@ -253,15 +253,15 @@ All engines that write `.claude_current_state.json` status must apply this guard
 
 ### 10.1 Allowed Entry States
 
-| Engine | Command | Valid from-states |
-|--------|---------|-------------------|
-| Release Planning | `plan release` | `Closed` |
-| Design Gate | `run design-gate` | `Release_Planning_Complete` |
-| Sprint Planning | `plan sprint` | `Release_Planning_Complete` (design N/A), `Design_Gate_Passed` |
-| Sprint Execution | `run sprint` | `Sprint_Planning_Complete`, `Executing` (resume) |
-| Delivery Verification | `run delivery verification` | `Sprint_Complete` |
-| Post-Ship Closure | `run post-ship` | `Verified`, `Verified_with_deviations` |
-| Amendment Cycle | `amend cycle` | `Sprint_Planning_Complete` (before sprint_sealed = true) |
+| Engine | Command | Valid from-states | Additional preconditions |
+|--------|---------|-------------------|--------------------------|
+| Release Planning | `plan release` | `Closed` | `post_ship_complete = true` **and** `next_cycle_unblocked = true` must be present in `.claude_current_state.json` (checked at STEP -1.6) |
+| Design Gate | `run design-gate` | `Release_Planning_Complete` | — |
+| Sprint Planning | `plan sprint` | `Release_Planning_Complete` (design N/A), `Design_Gate_Passed` | When entering from `Release_Planning_Complete`: `design_gate_bypass_authority` + `design_gate_bypass_reason` required in state (STEP -1.3) |
+| Sprint Execution | `run sprint` | `Sprint_Planning_Complete`, `Executing` (resume) | — |
+| Delivery Verification | `run delivery verification` | `Sprint_Complete` | — |
+| Post-Ship Closure | `run post-ship` | `Verified`, `Verified_with_deviations` | — |
+| Amendment Cycle | `amend cycle` | `Sprint_Planning_Complete` (before sprint_sealed = true) | Acquire backlog lock before reading `sprint_sealed` (STEP -1.1) |
 
 ### 10.2 Guard Algorithm
 
@@ -301,10 +301,34 @@ See `claude/system/lifecycle_schema.json` for the complete machine definition: a
 
 ---
 
+## 11. Prompt Version Control (IMP-10)
+
+Any increment to a governance prompt version **must** be accompanied by an entry in `claude/system/prompt_change_log.md` in the same commit.
+
+**Rule:** A prompt whose version number is not recorded in `prompt_change_log.md` is considered non-compliant. During Release Planning STEP -1 (advisory check), the engine verifies that each governed prompt's current version appears in the change log.
+
+**Scope:** Applies to all Class 6 Governance Prompts in `claude/system/`:
+
+- `release_planning_prompt.md`
+- `sprint_planning_prompt.md`
+- `execution_prompt.md`
+- `delivery_verification_prompt.md`
+- `post_ship_closure.md`
+- `design_gate_prompt.md`
+- `amendment_cycle_prompt.md`
+- `roadmap_management_prompt.md`
+- `backlog_management_prompt.md`
+- `roadmap_prompt.md`
+
+**Enforcement:** STEP -1 of Release Planning (advisory, not hard gate) verifies the current version of each prompt appears in `prompt_change_log.md`. Missing entries are flagged as advisory warnings; the release planning engine may proceed but must record the gap as an outstanding action.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-03-08 | IMP-04: §10.1 updated — Release Planning row adds `post_ship_complete` + `next_cycle_unblocked` preconditions; Sprint Planning row adds design gate bypass audit requirement; Amendment Cycle row adds backlog lock precondition. IMP-06: Release Planning precondition added. IMP-10: §11 Prompt Version Control added. |
 | 1.3 | 2026-03-07 | Updated §8 Post-Ship Closure resumability note — replaced `closure_record.md` prose-scan approach with `closure_state.json` structured file (IMP-01). |
 | 1.2 | 2026-03-07 | Added §10 Lifecycle Validation Rules — transition guard algorithm, entry state table, blocked state protocol, phase skip rule, schema reference. |
 | 1.1 | 2026-03-03 | Updated "three governance prompts" to "five". Added `ESC-VERIF-YYYYMMDD-nn` and `ESC-CLOSE-YYYYMMDD-nn` to identifier standards. Added Delivery Verification and Post-Ship Closure to escalation file list, escalation entry routine field, and halt report routine field. Added `verification_escalations.md` to append-only file list. Added Post-Ship Closure resumability note to §8. |

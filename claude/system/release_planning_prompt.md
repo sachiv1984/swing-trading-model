@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.12
-**Last Updated:** 2026-03-07
+**Version:** 2.13
+**Last Updated:** 2026-03-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -292,6 +292,44 @@ If any missing/malformed: halt.
 ### -1.4 Write Permission Test (Non-Destructive)
 Create a temporary marker file under `claude/cycles/<cycle_id>/` and confirm it can be written.
 Remove it if possible; if not, keep it and record it in the run manifest.
+
+### -1.5 Prior Cycle Lessons Learnt Closure Check (Advisory — not a hard gate)
+
+Read `.claude_current_state.json` → `prior_cycle`. If `prior_cycle` is set, check:
+
+1. Does `claude/cycles/<prior_cycle>/lessons_learnt_closure.md` exist?
+2. If yes: extract all items marked `action: now` (or equivalent `action-now` marker).
+3. For each action-now item: verify an entry exists in `claude/system/prompt_change_log.md` referencing that item (by description or IMP reference).
+
+**If any action-now items have no corresponding `prompt_change_log.md` entry:**
+- Warn: "⚠ Advisory: [N] action-now item(s) from prior cycle lessons learnt have no matching change log entry." List each missing item.
+- Record as an outstanding action in the run manifest.
+- **Do not halt.** This is advisory — the release may proceed.
+
+If `prior_cycle` is absent or `lessons_learnt_closure.md` does not exist: skip silently (first cycle or prior cycle pre-dates this check).
+
+### -1.6 Post-Ship Precondition Check (Hard Gate)
+
+Read `.claude_current_state.json`:
+
+- `post_ship_complete` must be `true`. If absent or `false`: halt — prior cycle Post-Ship Closure has not completed. The next release cycle may not open until the prior cycle is fully closed. Run `run post-ship` first.
+- `next_cycle_unblocked` must be `true`. If absent or `false`: halt — the prior cycle's Delivery Verification did not set the cycle-unlock flag. This indicates an incomplete or bypassed verification. Resolve the prior cycle's verification state before opening a new release cycle.
+
+This check adds a second layer of safety beyond the lifecycle status guard (`status = Closed`): it ensures that `status = Closed` was set via the legitimate post-ship path, not via a partial write or session crash.
+
+**Exception:** If this is the very first cycle in this repository (no `prior_cycle` field in `.claude_current_state.json`), skip this check.
+
+### -1.7 Prompt Change Log Integrity Check (Advisory — not a hard gate)
+
+Per `shared_standards.md §11`, verify that each governed prompt's current version appears in `claude/system/prompt_change_log.md`:
+
+- For each Class 6 prompt listed in `shared_standards.md §11`: read its `**Version:**` header field.
+- Check that the change log contains at least one row with that prompt filename and version.
+
+**If any prompt version is not recorded:**
+- Warn: "⚠ Advisory: [prompt name] v[X.Y] has no change log entry." List each missing entry.
+- Record as an outstanding action in the run manifest.
+- **Do not halt.**
 
 ---
 
@@ -681,32 +719,9 @@ Escalations file rules:
   - Status: Active
   - Last Updated: <date>
 
-Each escalation entry must include:
-- Escalation ID: `ESC-YYYYMMDD-nn`
-- Raised by step
-- Trigger type: Lifecycle | Strategy | Quality | Workforce | Schedule/Delivery | Other
-- Owning authority role
-- Unblock criteria + required evidence
-- SLA due-by
-- Disposition: Open | Resolved | Accepted Risk | Deferred
-- Resolution summary + evidence links (required when closing)
+**Escalation entry format, SLAs, append-only rule, and Accepted Risk constraints:** follow `claude/system/shared_standards.md §4` exactly.
 
-Deferred must additionally include:
-- Deferred by: <role>
-- Deferred reason
-- Next trigger:
-  - Trigger type: date | event | dependency | decision
-  - Trigger condition: <concrete>
-  - Target date or target cycle: <value>
-- Blocks execution: Yes | No
-- Safe to proceed scope (required if Blocks execution = No): <what is safe to do>
-
-Default SLAs:
-- Lifecycle / Process Integrity: 24 hours
-- Strategy boundary: 72 hours
-- Quality: before execution begins
-- Workforce: next planning checkpoint
-- Schedule/Delivery: next planning checkpoint
+Engine-specific rules (additional to shared_standards.md §4):
 
 When escalations.md is created:
 - artifacts.escalations = present
@@ -715,10 +730,6 @@ When escalations.md is created:
 If status == Published:
 - escalations.md becomes read-only
 - Any modification (including append) → HALT
-
-### Accepted Risk Governance Constraint (Hard Gate)
-- Strategy/Quality/Lifecycle may NEVER be Accepted Risk.
-- Workforce/Schedule-Delivery may be Accepted Risk ONLY by Product Owner AND only with AR decision record.
 
 ### Deferred Governance Constraint (Hard Gate)
 - Only owning authority may mark Deferred (by domain).
@@ -817,6 +828,18 @@ Update state.json:
 ## STEP 3 — Execution Plan + Decisions Record
 
 Write: `## Execution Plan` section in `release_plan.md` (EPIC IDs + Maps to + RISK IDs required)
+
+**Format constraint (IMP-08 — token efficiency):** The `## Execution Plan` section must use a compact table format rather than narrative prose. Full acceptance criteria belong exclusively in `stage4_backlog_slice.md`. Target: the complete `release_plan.md` should remain under 200 lines.
+
+Required table format for each EPIC:
+
+```
+| EPIC-ID | Scope items | Owner | Key risk | Sequencing constraint |
+|---------|-------------|-------|----------|-----------------------|
+| EPIC-01 | S2-01, S2-02 | <role> | RISK-01 | After EPIC-02 |
+```
+
+If an EPIC has significant sequencing rationale or dependency notes that cannot fit in the table, append a brief note (2–3 lines maximum) below the table row, prefixed with the EPIC-ID. Full dependency maps belong in `sprint_planning_notes.md`.
 
 **Decisions record (required output):**
 
@@ -1369,6 +1392,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.13 | 2026-03-08 | IMP-05: Added STEP -1.5 advisory — reads prior cycle `lessons_learnt_closure.md`, checks all `action-now` items appear in `prompt_change_log.md`; warns if missing. IMP-06: Added STEP -1.6 hard gate — `post_ship_complete = true` and `next_cycle_unblocked = true` both required in `.claude_current_state.json` before new release cycle may open; exception for first cycle. IMP-07: Removed inline escalation entry format, SLA table, and Accepted Risk constraint from ESCALATION HANDLING SUBROUTINE; replaced with reference to `shared_standards.md §4`; retained engine-specific rules (Freeze Rule, Deferred constraint, Decision Record Controls, Mutation Rule, State update rules). IMP-08: Added compact table format requirement to STEP 3 `## Execution Plan` section; full acceptance criteria belong exclusively in `stage4_backlog_slice.md`; target <200 lines for full `release_plan.md`. IMP-10: Added STEP -1.7 advisory — checks that each governed prompt's current version appears in `prompt_change_log.md`; warns if missing. |
 | 2.12 | 2026-03-07 | IMP-03: Added `prompt_schema_version: "v2"` to state.json schema template. Fixed §18.1 tracked artifact list — updated from old stage file names (`stage2_scope_extraction.md`, `stage3_execution_plan.md`) to `release_plan.md` (schema v2). Added schema version migration table to Drift Detection section — documents that drift detection uses keys from `tracked_set` for the cycle's schema version; never compares across versions. |
 | 2.11 | 2026-03-07 | Intermediate Release Planning artefacts collapsed into `release_plan.md`. Steps 1, 2, 3, 3.5, 4.5, 5.5, 5.7 now write sections into a single consolidated file instead of separate stage files. Final outputs retained separately: scope document, decisions record, stage4_backlog_slice.md. Tracked set in state.json schema updated from `[stage2_scope_extraction, stage3_execution_plan, stage4_backlog_slice, escalations]` to `[release_plan, stage4_backlog_slice, escalations]`. |
 | 2.10 | 2026-03-07 | Added Lifecycle Guard (valid from-states: `Closed`) per `shared_standards.md §10`. |

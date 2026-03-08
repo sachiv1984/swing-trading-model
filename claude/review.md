@@ -164,67 +164,74 @@ Resolution: `release_planning_prompt.md` v2.11→v2.12: (1) `prompt_schema_versi
 
 ---
 
-**IMP-04 — Design gate bypass has no audit trail**
+**IMP-04 — Design gate bypass has no audit trail** ✅ COMPLETE (2026-03-08)
 Area: Governance | State
 Problem: `design_gate_required = false` and the `Release_Planning_Complete → Sprint_Planning_Complete` shortcut path have no recorded authority. Any agent can set `design_gate_required = false` without attribution.
 Why it matters: Silent bypass of a required gate with no accountability.
 Recommended change: Require `design_gate_bypass_authority` and `design_gate_bypass_reason` fields in `.claude_current_state.json` when the shortcut transition is taken. Sprint planning prompt checks for these fields if `design_gate_required = false`.
 Effort: Low
+Resolution: `sprint_planning_prompt.md` v1.3→v1.4: STEP -1.3 extended — when Lifecycle Guard entry state is `Release_Planning_Complete` (design gate skipped), requires `design_gate_bypass_authority` + `design_gate_bypass_reason` in `.claude_current_state.json`; strict mode halts if absent, standard mode flags and blocks seal. `shared_standards.md` v1.3→v1.4: §10.1 Sprint Planning row updated with bypass audit requirement. `prompt_change_log.md` updated.
 
 ---
 
-**IMP-05 — Lessons learnt action-now items not verified before next cycle**
+**IMP-05 — Lessons learnt action-now items not verified before next cycle** ✅ COMPLETE (2026-03-08)
 Area: Lifecycle | Governance
 Problem: No pre-flight check in Release Planning (STEP -1) confirms that action-now items from the prior cycle's `lessons_learnt_closure.md` were applied and appear in `prompt_change_log.md`.
 Why it matters: Process improvements silently skip when sessions are interrupted.
 Recommended change: Add STEP -1 advisory check in `release_planning_prompt.md`: read prior cycle `lessons_learnt_closure.md`, confirm all `action-now` items appear in `prompt_change_log.md`. Warn (not hard gate) if missing.
 Effort: Low
+Resolution: `release_planning_prompt.md` v2.12→v2.13: STEP -1.5 added — reads prior cycle `lessons_learnt_closure.md`, extracts action-now items, checks each against `prompt_change_log.md`; warns if missing (advisory, not halt); records gap as outstanding action in run manifest.
 
 ---
 
-**IMP-06 — `next_cycle_unblocked` not verified by Release Planning hard gate**
+**IMP-06 — `next_cycle_unblocked` not verified by Release Planning hard gate** ✅ COMPLETE (2026-03-08)
 Area: State | Lifecycle
 Problem: The lifecycle guard checks `status = Closed` but not `next_cycle_unblocked = true`. If post-ship sets `status = Closed` before `next_cycle_unblocked` is written (session crash), the gate silently passes on an incomplete prior cycle close.
 Why it matters: Next cycle opens on a corrupt prior cycle close.
 Recommended change: Add `next_cycle_unblocked = true` as an explicit condition in the Release Planning lifecycle guard alongside `post_ship_complete = true`.
 Effort: Low
+Resolution: `release_planning_prompt.md` v2.12→v2.13: STEP -1.6 added as a hard gate — checks `post_ship_complete = true` AND `next_cycle_unblocked = true` in `.claude_current_state.json`; either absent or false halts with clear message; exception for first cycle (no prior_cycle). `shared_standards.md` v1.3→v1.4: §10.1 Release Planning row updated with preconditions.
 
 ---
 
-**IMP-07 — Escalation subroutine duplicated across prompts**
+**IMP-07 — Escalation subroutine duplicated across prompts** ✅ COMPLETE (2026-03-08)
 Area: Token Efficiency | Governance
 Problem: Each engine prompt contains its own escalation format rules, SLA table, and freeze rules — duplicates of `shared_standards.md §4`. The subroutine in `release_planning_prompt.md` alone is ~60 lines.
 Why it matters: Maintenance drift risk; token cost on every engine load; updates must be replicated to 6 prompts.
 Recommended change: Remove inline escalation subroutines from individual prompts. Replace with: `Escalation handling: follow shared_standards.md §4 exactly.` Retain only engine-specific trigger conditions inline.
 Effort: Medium
+Resolution: `release_planning_prompt.md` v2.12→v2.13: ESCALATION HANDLING SUBROUTINE — inline entry format (~9 lines), SLA table (~5 lines), and Accepted Risk governance constraint (~2 lines) removed and replaced with single reference line to `shared_standards.md §4`. Engine-specific rules retained: Freeze Rule, Deferred Governance Constraint, Decision Record Controls, Escalation Mutation Rule, State update rules. Other prompts already referenced shared_standards.md §4 (execution_prompt.md, sprint_planning_prompt.md); no further changes required there.
 
 ---
 
-**IMP-08 — release_plan.md still generates excessive prose**
+**IMP-08 — release_plan.md still generates excessive prose** ✅ COMPLETE (2026-03-08)
 Area: Token Efficiency
 Problem: `release_plan.md` retains full narrative prose for all 30 scope items, full risk register narrative, and full dependency map — much of which is restated in `stage4_backlog_slice.md`.
 Why it matters: Token cost on every read; content duplicated between release_plan.md and the backlog slice.
 Recommended change: Replace EPIC narrative sections with table rows (EPIC-ID | scope items | owner | key risk | sequencing constraint). Move full acceptance criteria exclusively to `stage4_backlog_slice.md`. Target <200 lines for `release_plan.md`.
 Effort: Medium
+Resolution: `release_planning_prompt.md` v2.12→v2.13: STEP 3 (`## Execution Plan` section) — added compact table format requirement (`EPIC-ID | Scope items | Owner | Key risk | Sequencing constraint`); full acceptance criteria explicitly directed to `stage4_backlog_slice.md` only; target <200 lines for full `release_plan.md` stated. Detailed dependency rationale directed to `sprint_planning_notes.md`.
 
 ---
 
-**IMP-09 — Amendment cycle `sprint_sealed` guard is not atomic**
+**IMP-09 — Amendment cycle `sprint_sealed` guard is not atomic** ✅ COMPLETE (2026-03-08)
 Area: State | Failure Handling
 Problem: Amendment cycle checks `sprint_sealed = false` from `.claude_current_state.json` but Sprint Planning writes `sprint_sealed = true` to the same file. No lock prevents concurrent execution.
 Why it matters: Low probability but catastrophic — amended backlog slice and sealed sprint backlog could diverge silently.
 Recommended change: Amendment cycle acquires `claude/backlog/.lock` before writing. Sprint planning already acquires this lock. Makes the guard atomic via the existing lock protocol.
 Effort: Low
+Resolution: `amendment_cycle_prompt.md` v1.1→v1.2: STEP -1.1 — backlog lock acquired with marker `AMEND-CHECK:<original_cycle_id>` before `sprint_sealed` is read; lock held until STEP 5 completes (or any halt); no auto-delete of existing locks; halt if lock held by another process. Governance invariant added. `shared_standards.md` §10.1 Amendment Cycle row updated.
 
 ---
 
-**IMP-10 — No automated check that `prompt_change_log.md` is updated when prompts are versioned**
+**IMP-10 — No automated check that `prompt_change_log.md` is updated when prompts are versioned** ✅ COMPLETE (2026-03-08)
 Area: Governance | Automation
 Problem: `prompt_change_log.md` is manually maintained. Agents can increment prompt versions without adding an entry.
 Why it matters: Governance drift — version numbers increment but changes are not recorded.
 Recommended change: Add rule to `shared_standards.md`: any prompt version increment must be accompanied by a `prompt_change_log.md` entry. STEP -1 of release planning verifies log entries exist for current prompt versions.
 Effort: Low
+Resolution: `shared_standards.md` v1.3→v1.4: §11 Prompt Version Control added — defines the rule, lists in-scope prompts, specifies advisory enforcement. `release_planning_prompt.md` v2.12→v2.13: STEP -1.7 added — advisory check that each governed prompt's current version appears in `prompt_change_log.md`; warns if missing, records as outstanding action, does not halt.
 
 ---
 
-*Note: Findings derived from session audit against v3.2 (OPERATIONAL_GUIDE.md), v2.11 (release_planning_prompt.md), and all associated prompt/state files as modified 2026-03-07. Items 1–2, 4–6, 9–10 are structural gaps unaffected by today's changes. Item 3 is introduced by today's consolidation. Items 7–8 require verification against final prompt file state before actioning.*
+*Note: Findings derived from session audit against v3.2 (OPERATIONAL_GUIDE.md), v2.11 (release_planning_prompt.md), and all associated prompt/state files as modified 2026-03-07. All 10 items now complete as of 2026-03-08.*

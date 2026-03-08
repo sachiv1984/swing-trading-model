@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-03-07
+**Version:** 1.2
+**Last Updated:** 2026-03-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -173,9 +173,15 @@ Violation → halt.
 
 ### -1.1 Timing Gate
 
+**Atomicity guard — lock acquisition (Hard Gate):** Before reading `sprint_sealed`, acquire `claude/backlog/.lock`:
+
+- If `claude/backlog/.lock` exists and is **not** owned by this amendment (marker `AMEND-CHECK:<original_cycle_id>`): halt — do not auto-delete. Another operation is modifying the backlog. Report the lock contents and wait for manual resolution.
+- If the lock does not exist: create it with marker `AMEND-CHECK:<original_cycle_id>` and `acquired_utc`. This prevents a concurrent Sprint Planning seal from writing `sprint_sealed = true` between this check and the first amendment write.
+- Release this lock **after** STEP 5 completes (backlog update done) or on any halt path below. Do not hold the lock across human confirmation steps (STEP 3 ratification).
+
 Read `.claude_current_state.json`:
 - `sprint_sealed` must be absent or `false`
-- If `sprint_sealed = true`: halt immediately — the sprint is sealed; amendments are not permitted. Scope changes after Phase 2 are handled by the execution escalation model (`run sprint`).
+- If `sprint_sealed = true`: halt immediately — the sprint is sealed; amendments are not permitted. Scope changes after Phase 2 are handled by the execution escalation model (`run sprint`). Release the lock before halting.
 - `active_cycle` must match `--cycle` argument (or be set to it)
 
 ### -1.2 Original Cycle Sealed
@@ -587,3 +593,14 @@ If an amendment is opened but the emergency is resolved before ratification, or 
 - **Capacity ceiling holds.** An amendment may not increase total sprint effort above the confirmed capacity ceiling without explicit Product Owner acceptance recorded in the ratification record.
 - **Sprint Planning uses the amended slice.** Once sealed, `amended_backlog_slice_path` in `.claude_current_state.json` is the source of truth for Phase 2. The original slice remains the historical record.
 - **Delivery pressure never qualifies as an emergency.** Wanting to add a feature because a deadline moved is not an emergency. A CVE or a confirmed undeliverable item is.
+- **`sprint_sealed` check is atomic.** The backlog lock must be acquired before reading `sprint_sealed`. Do not check `sprint_sealed` without the lock — concurrent Sprint Planning seal would invalidate the result.
+
+---
+
+## Change Log
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.2 | 2026-03-08 | IMP-09: Added atomicity guard to STEP -1.1 — backlog lock acquired with marker `AMEND-CHECK:<cycle_id>` before `sprint_sealed` is read; lock released after STEP 5 or on any halt. Governance invariant added. |
+| 1.1 | 2026-03-07 | Added Lifecycle Guard (valid from-states: `Sprint_Planning_Complete` with `sprint_sealed = false`). |
+| 1.0 | 2026-03-07 | Initial version. |
