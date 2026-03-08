@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-03-06__release-v1.9",
   "cycle_name": "Sprint 1 Sealed — v1.9 User Value & Insight",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "engine": "execution",
   "next_release": "v1.9",
   "backlog_slice_path": "claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md",
   "sprint_backlog_path": "claude/cycles/2026-03-06__release-v1.9/sprint_backlog.md",
