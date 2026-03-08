@@ -124,6 +124,51 @@ Health endpoints do not use the standard `{ status, data }` response envelope.
 
 ---
 
+## 13. Error Response Standard (Canonical)
+
+This section defines the canonical error response standard for all API endpoints. It expands on the basic envelope in §2.2 to cover all required fields, HTTP status code mapping, and usage rules.
+
+### 13.1 Standard Error Envelope
+
+All non-health endpoint error responses **must** use the following shape:
+
+```json
+{
+  "status": "error",
+  "message": "Human-readable explanation of what went wrong"
+}
+```
+
+**Field definitions:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `status` | string | Yes | Always `"error"` for error responses |
+| `message` | string | Yes | Human-readable explanation. Must not expose internal stack traces or system internals in production. |
+
+### 13.2 HTTP Status Code Mapping (Canonical)
+
+| HTTP Status | Use case | Example |
+|-------------|----------|---------|
+| `400 Bad Request` | Validation error (invalid/missing input fields) | Negative commission value, missing required field |
+| `400 Bad Request` | Business rule violation (valid input, invalid system state) | Position already closed, stop would move downward |
+| `404 Not Found` | Resource does not exist | Position ID not found, settings record not found |
+| `500 Internal Server Error` | Backend failure | Database error, external API unavailable |
+
+### 13.3 Usage Rules
+
+- Error responses **must not** use HTTP 200 with an error body (except `POST /validate/calculations` which uses 200 with per-metric severity fields — this is a documented exception).
+- Error responses **must** use the `{ "status": "error", "message": "..." }` envelope.
+- Error `message` fields **must** be human-readable and actionable where possible.
+- `message` must not expose internal stack traces, SQL errors, or file paths in production.
+- Health endpoints (`/health`, `/health/detailed`, `/test/endpoints`) are exempt from this envelope per §11.
+
+### 13.4 Relationship to `openapi.yaml`
+
+`docs/reference/openapi.yaml` reusable components (`components/responses/BadRequest`, `components/responses/NotFound`, `components/responses/InternalError`) must align with this standard. If they diverge, this Markdown spec prevails.
+
+---
+
 ## 12. DELETE Response Convention
 
 Successful `DELETE` operations return HTTP 200 with the standard success envelope. The `data` object confirms the deletion:
