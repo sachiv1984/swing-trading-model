@@ -6,7 +6,7 @@
   "invoked_utc": "2026-03-08T22:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-09T10:00:00Z",
+  "last_updated_utc": "2026-03-09T10:05:00Z",
   "epics": {
     "EPIC-04": {
       "status": "done",
@@ -129,8 +129,8 @@
     "EPIC-05": {
       "status": "done",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 54,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-05.md",
       "test_scenarios": [
