@@ -86,14 +86,20 @@ async function mockProspectiveHeatError(page) {
 
 /** Navigate to the Risk Dashboard and wait for loading to resolve. */
 async function navigateToRiskDashboard(page) {
-  await page.goto('/risk');
-  // Wait for loading spinner to disappear
+  // HashRouter: routes are hash-based (/#/PageKey)
+  await page.goto('/#/RiskDashboard');
+  // Wait for the Risk Dashboard heading to confirm we're on the right page
+  await expect(page.locator('h1').filter({ hasText: 'Risk Dashboard' })).toBeVisible({ timeout: 15000 });
+  // Wait for loading spinner to disappear (portfolio data loaded)
   await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 15000 });
 }
 
-/** Get the center SVG text element that shows the gauge percentage. */
+/** Get the center SVG text element that shows the gauge percentage.
+ *  Scoped to the HeatGauge SVG via its viewBox to avoid matching any
+ *  other SVG text elements that may exist in the page layout.
+ */
 const gaugeValueText = (page) =>
-  page.locator('svg text[text-anchor="middle"]').first();
+  page.locator('svg[viewBox="20 25 160 90"] text').first();
 
 /** Expand the Prospective Heat panel. */
 async function expandProspectiveHeat(page) {
