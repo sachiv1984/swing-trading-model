@@ -1,0 +1,349 @@
+{
+  "cycle_id": "2026-03-06__release-v1.9",
+  "sprint_number": 1,
+  "sprint_goal": "Fully resolve all Risk Dashboard deviations from v1.8, establish reproducible test infrastructure that closes the v1.8 scenario coverage gap, and complete the documentation hygiene backlog \u2014 leaving the codebase defect-free and documentation-complete as the foundation for the feature sprint.",
+  "backlog_slice_source": "claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md",
+  "invoked_utc": "2026-03-08T22:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-03-09T09:00:00Z",
+  "epics": {
+    "EPIC-04": {
+      "status": "done",
+      "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "docs/testing/risk_dashboard_scenarios.md"
+      ],
+      "stories": {
+        "ST-06": {
+          "title": "Drawdown Data Source Spec Alignment",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 38,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-06T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a74.1"
+          ],
+          "deviations_filed": true,
+          "notes": "Pre-completed 2026-03-06. Head of Specs Team decision: current_drawdown_percent -> GET /portfolio confirmed; days_underwater -> GET /analytics/metrics confirmed. risk_dashboard.md \u00a74.1 updated to v0.1.7; DEV-ST03-08 resolved; BLG-RD-08 closed."
+        },
+        "ST-07": {
+          "title": "Risk Dashboard Backend: US Currency Conversion",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "human",
+          "github_issue": 39,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
+          "commit_sha": "b31536f",
+          "delegation_record_id": "DEL-20260308-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-09T08:55:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.4",
+            "docs/specs/api_contracts/portfolio_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Implemented: entry_price and current_stop GBP-converted for US positions using stored_fx_rate. Golden output CI passes (23 tests, 5 new FX vectors). Resolves DEV-ST03-11 and DEV-ST03-12. QA sign-off: Director of Quality 2026-03-09. QA-OBS-ST07-01 filed (non-blocking: live_fx_rate vs stored_fx_rate basis for Stop Distance display \u2014 pre-existing pattern)."
+        },
+        "ST-08": {
+          "title": "Risk Dashboard Frontend: Error States & Entity Fallback",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "human",
+          "github_issue": 40,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
+          "commit_sha": "20e688f",
+          "delegation_record_id": "DEL-20260308-02",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a73.4",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a74.3",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a75.5",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.5",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a77.6"
+          ],
+          "deviations_filed": true,
+          "notes": "All 5 components render independent error states. Entity fallback preserved; positionError suppressed during fallback. DEV-ST03-01 and DEV-ST03-02 resolved. QA sign-off: Director of Quality 2026-03-09 (static code analysis \u2014 TEST-GAP-EPIC-01 active)."
+        },
+        "ST-09": {
+          "title": "Risk Dashboard Frontend: Table and Column Fixes",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "human",
+          "github_issue": 41,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
+          "commit_sha": "20e688f",
+          "delegation_record_id": "DEL-20260308-03",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a75.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.4",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a77.5"
+          ],
+          "deviations_filed": true,
+          "notes": "PositionRiskTable: ascending sort (Infinity sentinel), Stop Price column. GracePeriodPanel: Days in Grace (holding_days). ProspectiveHeatPanel: threshold label badge. DEV-ST03-03, DEV-ST03-04, DEV-ST03-07, DEV-ST03-09 resolved. QA sign-off: Director of Quality 2026-03-09."
+        },
+        "ST-10": {
+          "title": "Risk Dashboard Frontend: HeatGauge and Cosmetic Fixes",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "human",
+          "github_issue": 42,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
+          "commit_sha": "20e688f",
+          "delegation_record_id": "DEL-20260308-04",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a73.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.3"
+          ],
+          "deviations_filed": true,
+          "notes": "GRACE badge blue (bg-blue-500/20 text-blue-400). HeatGauge: totalAtRisk from positionRisks[].position_risk_gbp, rendered as GBP text. DEV-ST03-05 and DEV-ST03-06 resolved. QA sign-off: Director of Quality 2026-03-09."
+        }
+      }
+    },
+    "EPIC-05": {
+      "status": "in_progress",
+      "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-05.md",
+      "test_scenarios": [
+        "docs/testing/risk_dashboard_scenarios.md"
+      ],
+      "stories": {
+        "ST-11": {
+          "title": "Canonical Test Scenario Library Phase 1 (Risk Dashboard)",
+          "classification": "delegated_qa",
+          "status": "blocked_qa",
+          "assigned_to": "qa",
+          "github_issue": 43,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260308-05",
+          "blocked_since_utc": "2026-03-08T22:00:00Z",
+          "unblock_criteria": "All 17 NOT EXECUTED Risk Dashboard scenarios (SC-RD-02\u201306, SC-RD-07\u201312, SC-RD-15, SC-RD-16\u201318, SC-RD-24\u201325) re-run against seeded environment; results recorded in risk_dashboard_scenarios.md; 'Test Infrastructure Preconditions' section present; Director of Quality confirms",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/testing/risk_dashboard_scenarios.md"
+          ],
+          "deviations_filed": false,
+          "notes": "RISK-07: test infra approach (seeded DB vs mock layer) to be agreed with Head of Engineering at sprint start. Commit format: [EPIC-05][ST-11]."
+        },
+        "ST-13": {
+          "title": "Service Layer Test Coverage Standard",
+          "classification": "delegated_backend",
+          "status": "blocked_backend",
+          "assigned_to": "human",
+          "github_issue": 45,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260308-06",
+          "blocked_since_utc": "2026-03-08T22:00:00Z",
+          "unblock_criteria": "Commit [EPIC-05][ST-13] pushed to exec/2026-03-06__release-v1.9/EPIC-05; backend_engineering_patterns.md version incremented with coverage standard; CI workflow step added running pytest-cov on backend/services/; Director of Quality confirms CI contains coverage step",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/backend_engineering_patterns.md"
+          ],
+          "deviations_filed": false,
+          "notes": "Coverage threshold % to be agreed between Backend Engineering Patterns Owner and Head of Engineering at sprint start. Two-phase: backend implementation first, then QA verification. BLG-NEW-01 prerequisite confirmed complete (v1.8 shipped)."
+        }
+      }
+    },
+    "EPIC-06": {
+      "status": "done",
+      "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
+      "pr_number": 52,
+      "pr_status": "merged",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-06.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-14": {
+          "title": "Canonical Terms Glossary",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 46,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
+          "commit_sha": "28e3e65d621dd6765450316a126d83f9126a4276",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-08T21:36:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/Specs_Index.md",
+            "docs/reference/glossary.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Glossary updated: lifecycle-compliant header (Class 2, v1.1), added portfolio heat, stop distance, cohort, journal completion rate, stop-based exit rate terms with Class 1 source references."
+        },
+        "ST-15": {
+          "title": "AI-Assisted Workflow Governance Policy",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 47,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
+          "commit_sha": "282ffd8de912ed3493b50dfd8b43113d52a9e6c0",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-08T21:36:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/governance/ai_workflow_policy.md"
+          ],
+          "deviations_filed": true,
+          "notes": "Policy created at docs/governance/ai_workflow_policy.md. Covers all 4 required areas: AI authority scope, mandatory human review checkpoints, escalation triggers, record-keeping obligations."
+        },
+        "ST-16": {
+          "title": "Document GET /market/status Endpoint",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 48,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
+          "commit_sha": "26dde6b0bec5caae298f186f47e7ea05c6f907c9",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-08T21:36:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/market_endpoints.md#\u00a7GET /market/status",
+            "docs/reference/openapi.yaml"
+          ],
+          "deviations_filed": true,
+          "notes": "market_endpoints.md v0.1 created. openapi.yaml description updated to reference canonical spec. Registered in Specs_Index.md \u00a73.4."
+        },
+        "ST-17": {
+          "title": "Create settings_model.md",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 49,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
+          "commit_sha": "94c38f8007d59239325eacff0daf5f2a592f9db7",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-08T21:36:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model/settings_model.md",
+            "docs/specs/api_contracts/settings_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "notes": "settings_model.md v0.1 created at docs/specs/data_model/. All 12 fields documented with types, constraints, defaults, semantics. Cross-referenced from settings_endpoints.md. Registered in Specs_Index.md \u00a73.2."
+        },
+        "ST-18": {
+          "title": "Define Error Response Standard",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 50,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
+          "commit_sha": "80d9ef6d74772b678b892bda9b4005736caf0343",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-08T21:36:19Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/conventions.md#\u00a713"
+          ],
+          "deviations_filed": true,
+          "notes": "Error Response Standard added as \u00a713 to conventions.md. Covers: standard error envelope (status, message), HTTP status code mapping (400/404/500), usage rules. All existing endpoint files reference conventions.md for errors \u2014 implicit reference to \u00a713. Noted in README.md. API contracts version bumped to 1.9.0."
+        },
+        "ST-19": {
+          "title": "Spec/Doc Debt Small Fixes (7 items)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 51,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
+          "commit_sha": "5f8472be5c75b8ff481088eb29542a6496c0a142",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-08T22:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/README.md",
+            "docs/specs/api_contracts/position_endpoints.md",
+            "docs/System_status_report.md",
+            "docs/governance/process_index.md",
+            "docs/specs/Specs_Index.md",
+            "docs/product/decisions/ADR-002-frontend-only-r-multiple.md",
+            "docs/operations/validation_system.md"
+          ],
+          "deviations_filed": true,
+          "notes": "All 7 BLG items resolved. CI fix commit also included: GET /positions/search/tags added to openapi.yaml; issues:write permission added to governance_sync.yml."
+        }
+      }
+    }
+  },
+  "blocked_items": [
+    "ST-11",
+    "ST-13"
+  ],
+  "delegated_items": [
+    "ST-11",
+    "ST-13"
+  ],
+  "completed_items": [
+    "ST-06",
+    "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17",
+    "ST-18",
+    "ST-19"
+  ],
+  "open_escalations": [],
+  "merge_gate": {
+    "epics_merged": [
+      "EPIC-06"
+    ],
+    "epics_pending": [
+      "EPIC-04",
+      "EPIC-05"
+    ],
+    "all_merged": false
+  },
+  "sealed": false,
+  "sealed_utc": null
+}
