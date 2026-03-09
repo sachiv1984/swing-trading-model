@@ -362,6 +362,32 @@ The system is ready for:
 
 ---
 
+## Sprint: 2026-03-06__release-v1.9 (Sprint 1 of 2)
+**Date:** 2026-03-09
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-04 | Risk Dashboard defect resolution — US currency conversion (entry_price, current_stop → GBP); all 5 components render independent error states; PositionRiskTable ascending sort + Stop Price column; GracePeriodPanel Days in Grace column; ProspectiveHeatPanel threshold label; HeatGauge GBP at risk text; GRACE badge blue | risk_dashboard.md §3.2, §3.4, §4.1, §4.3, §5.2, §5.5, §6.2–6.5, §7.5–7.6; portfolio_endpoints.md | None (11 prior DEV-ST03-xx resolved) |
+| EPIC-05 | Canonical test scenario library — 17 Playwright acceptance tests with mock layer, no live backend required; CI gate (playwright.yml); Service layer test coverage standard — 18 unit tests (grace_service 100%, drawdown_service 100%), 80% threshold CI gate (service-coverage.yml); backend_engineering_patterns_owner.md §11 | docs/testing/risk_dashboard_scenarios.md v1.1; backend_engineering_patterns_owner.md v1.1 | None |
+| EPIC-06 | Documentation hygiene — Canonical Terms Glossary (glossary.md v1.1); AI-Assisted Workflow Governance Policy (ai_workflow_policy.md); GET /market/status documented (market_endpoints.md v0.1); settings_model.md v0.1; Error Response Standard (conventions.md §13); 7 BLG spec debt items resolved | docs/reference/glossary.md; docs/governance/ai_workflow_policy.md; docs/specs/api_contracts/market_endpoints.md; docs/specs/data_model/settings_model.md; docs/specs/api_contracts/conventions.md §13 | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-01, ST-02, ST-03, ST-04, ST-05, ST-12 | Deferred to Sprint 2 (Product Owner decision — phased approach) | sprint_backlog.md §Sprint 2 deferred items |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md, qa_evidence_EPIC-06.md
+- Deviations filed: None new — 11 prior deviations resolved (DEV-ST03-01 through DEV-ST03-12 minus DEV-ST03-08 resolved at ST-06)
+- Test scenarios referenced: docs/testing/risk_dashboard_scenarios.md v1.1 (EPIC-04 and EPIC-05; 17/27 automated via Playwright mock layer)
+
+---
+
 ## Sprint: 2026-03-04__release-v1.8
 **Date:** 2026-03-06
 **Status:** Verified_with_deviations — Director of Quality sign-off 2026-03-06; Product Owner acceptance 2026-03-06

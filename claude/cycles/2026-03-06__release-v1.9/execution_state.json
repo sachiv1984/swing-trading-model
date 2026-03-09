@@ -1,18 +1,18 @@
 {
   "cycle_id": "2026-03-06__release-v1.9",
   "sprint_number": 1,
-  "sprint_goal": "Fully resolve all Risk Dashboard deviations from v1.8, establish reproducible test infrastructure that closes the v1.8 scenario coverage gap, and complete the documentation hygiene backlog \u2014 leaving the codebase defect-free and documentation-complete as the foundation for the feature sprint.",
+  "sprint_goal": "Fully resolve all Risk Dashboard deviations from v1.8, establish reproducible test infrastructure that closes the v1.8 scenario coverage gap, and complete the documentation hygiene backlog — leaving the codebase defect-free and documentation-complete as the foundation for the feature sprint.",
   "backlog_slice_source": "claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md",
   "invoked_utc": "2026-03-08T22:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-03-09T10:05:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-03-09T18:45:00Z",
   "epics": {
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 53,
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -33,10 +33,10 @@
           "completed_utc": "2026-03-06T00:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a74.1"
+            "docs/specs/frontend/pages/risk_dashboard.md#§4.1"
           ],
           "deviations_filed": true,
-          "notes": "Pre-completed 2026-03-06. Head of Specs Team decision: current_drawdown_percent -> GET /portfolio confirmed; days_underwater -> GET /analytics/metrics confirmed. risk_dashboard.md \u00a74.1 updated to v0.1.7; DEV-ST03-08 resolved; BLG-RD-08 closed."
+          "notes": "Pre-completed 2026-03-06. Head of Specs Team decision: current_drawdown_percent -> GET /portfolio confirmed; days_underwater -> GET /analytics/metrics confirmed. risk_dashboard.md §4.1 updated to v0.1.7; DEV-ST03-08 resolved; BLG-RD-08 closed."
         },
         "ST-07": {
           "title": "Risk Dashboard Backend: US Currency Conversion",
@@ -52,12 +52,12 @@
           "completed_utc": "2026-03-09T08:55:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.2",
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.4",
+            "docs/specs/frontend/pages/risk_dashboard.md#§6.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#§6.4",
             "docs/specs/api_contracts/portfolio_endpoints.md"
           ],
           "deviations_filed": true,
-          "notes": "Implemented: entry_price and current_stop GBP-converted for US positions using stored_fx_rate. Golden output CI passes (23 tests, 5 new FX vectors). Resolves DEV-ST03-11 and DEV-ST03-12. QA sign-off: Director of Quality 2026-03-09. QA-OBS-ST07-01 filed (non-blocking: live_fx_rate vs stored_fx_rate basis for Stop Distance display \u2014 pre-existing pattern)."
+          "notes": "Implemented: entry_price and current_stop GBP-converted for US positions using stored_fx_rate. Golden output CI passes (23 tests, 5 new FX vectors). Resolves DEV-ST03-11 and DEV-ST03-12. QA sign-off: Director of Quality 2026-03-09. QA-OBS-ST07-01 filed (non-blocking: live_fx_rate vs stored_fx_rate basis for Stop Distance display — pre-existing pattern)."
         },
         "ST-08": {
           "title": "Risk Dashboard Frontend: Error States & Entity Fallback",
@@ -73,14 +73,14 @@
           "completed_utc": "2026-03-09T00:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a73.4",
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a74.3",
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a75.5",
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.5",
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a77.6"
+            "docs/specs/frontend/pages/risk_dashboard.md#§3.4",
+            "docs/specs/frontend/pages/risk_dashboard.md#§4.3",
+            "docs/specs/frontend/pages/risk_dashboard.md#§5.5",
+            "docs/specs/frontend/pages/risk_dashboard.md#§6.5",
+            "docs/specs/frontend/pages/risk_dashboard.md#§7.6"
           ],
           "deviations_filed": true,
-          "notes": "All 5 components render independent error states. Entity fallback preserved; positionError suppressed during fallback. DEV-ST03-01 and DEV-ST03-02 resolved. QA sign-off: Director of Quality 2026-03-09 (static code analysis \u2014 TEST-GAP-EPIC-01 active)."
+          "notes": "All 5 components render independent error states. Entity fallback preserved; positionError suppressed during fallback. DEV-ST03-01 and DEV-ST03-02 resolved. QA sign-off: Director of Quality 2026-03-09 (static code analysis — TEST-GAP-EPIC-01 active)."
         },
         "ST-09": {
           "title": "Risk Dashboard Frontend: Table and Column Fixes",
@@ -96,10 +96,10 @@
           "completed_utc": "2026-03-09T00:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a75.2",
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.2",
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.4",
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a77.5"
+            "docs/specs/frontend/pages/risk_dashboard.md#§5.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#§6.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#§6.4",
+            "docs/specs/frontend/pages/risk_dashboard.md#§7.5"
           ],
           "deviations_filed": true,
           "notes": "PositionRiskTable: ascending sort (Infinity sentinel), Stop Price column. GracePeriodPanel: Days in Grace (holding_days). ProspectiveHeatPanel: threshold label badge. DEV-ST03-03, DEV-ST03-04, DEV-ST03-07, DEV-ST03-09 resolved. QA sign-off: Director of Quality 2026-03-09."
@@ -118,8 +118,8 @@
           "completed_utc": "2026-03-09T00:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a73.2",
-            "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.3"
+            "docs/specs/frontend/pages/risk_dashboard.md#§3.2",
+            "docs/specs/frontend/pages/risk_dashboard.md#§6.3"
           ],
           "deviations_filed": true,
           "notes": "GRACE badge blue (bg-blue-500/20 text-blue-400). HeatGauge: totalAtRisk from positionRisks[].position_risk_gbp, rendered as GBP text. DEV-ST03-05 and DEV-ST03-06 resolved. QA sign-off: Director of Quality 2026-03-09."
@@ -127,10 +127,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
       "pr_number": 54,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -173,7 +173,7 @@
             "docs/specs/backend_engineering_patterns.md"
           ],
           "deviations_filed": true,
-          "notes": "18 unit tests (9 grace_service, 9 drawdown_service). 100% coverage, threshold 80%. CI gate service-coverage.yml added. backend_engineering_patterns_owner.md v1.0->v1.1 with \u00a711 Service Test Coverage Standard. github issue #45 closed. QA sign-off: Director of Quality 2026-03-09."
+          "notes": "18 unit tests (9 grace_service, 9 drawdown_service). 100% coverage, threshold 80%. CI gate service-coverage.yml added. backend_engineering_patterns_owner.md v1.0->v1.1 with §11 Service Test Coverage Standard. github issue #45 closed. QA sign-off: Director of Quality 2026-03-09."
         }
       }
     },
@@ -239,11 +239,11 @@
           "completed_utc": "2026-03-08T21:36:19Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/market_endpoints.md#\u00a7GET /market/status",
+            "docs/specs/api_contracts/market_endpoints.md#§GET /market/status",
             "docs/reference/openapi.yaml"
           ],
           "deviations_filed": true,
-          "notes": "market_endpoints.md v0.1 created. openapi.yaml description updated to reference canonical spec. Registered in Specs_Index.md \u00a73.4."
+          "notes": "market_endpoints.md v0.1 created. openapi.yaml description updated to reference canonical spec. Registered in Specs_Index.md §3.4."
         },
         "ST-17": {
           "title": "Create settings_model.md",
@@ -263,7 +263,7 @@
             "docs/specs/api_contracts/settings_endpoints.md"
           ],
           "deviations_filed": true,
-          "notes": "settings_model.md v0.1 created at docs/specs/data_model/. All 12 fields documented with types, constraints, defaults, semantics. Cross-referenced from settings_endpoints.md. Registered in Specs_Index.md \u00a73.2."
+          "notes": "settings_model.md v0.1 created at docs/specs/data_model/. All 12 fields documented with types, constraints, defaults, semantics. Cross-referenced from settings_endpoints.md. Registered in Specs_Index.md §3.2."
         },
         "ST-18": {
           "title": "Define Error Response Standard",
@@ -279,10 +279,10 @@
           "completed_utc": "2026-03-08T21:36:19Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/conventions.md#\u00a713"
+            "docs/specs/api_contracts/conventions.md#§13"
           ],
           "deviations_filed": true,
-          "notes": "Error Response Standard added as \u00a713 to conventions.md. Covers: standard error envelope (status, message), HTTP status code mapping (400/404/500), usage rules. All existing endpoint files reference conventions.md for errors \u2014 implicit reference to \u00a713. Noted in README.md. API contracts version bumped to 1.9.0."
+          "notes": "Error Response Standard added as §13 to conventions.md. Covers: standard error envelope (status, message), HTTP status code mapping (400/404/500), usage rules. All existing endpoint files reference conventions.md for errors — implicit reference to §13. Noted in README.md. API contracts version bumped to 1.9.0."
         },
         "ST-19": {
           "title": "Spec/Doc Debt Small Fixes (7 items)",
@@ -332,14 +332,13 @@
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-06"
-    ],
-    "epics_pending": [
+      "EPIC-06",
       "EPIC-04",
       "EPIC-05"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-03-09T18:45:00Z"
 }
