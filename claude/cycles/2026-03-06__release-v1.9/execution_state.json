@@ -6,7 +6,7 @@
   "invoked_utc": "2026-03-08T22:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-09T09:30:00Z",
+  "last_updated_utc": "2026-03-09T10:00:00Z",
   "epics": {
     "EPIC-04": {
       "status": "done",
@@ -127,11 +127,11 @@
       }
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "docs/testing/risk_dashboard_scenarios.md"
@@ -159,21 +159,21 @@
         "ST-13": {
           "title": "Service Layer Test Coverage Standard",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 45,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "8c0108b",
           "delegation_record_id": "DEL-20260308-06",
-          "blocked_since_utc": "2026-03-08T22:00:00Z",
-          "unblock_criteria": "Commit [EPIC-05][ST-13] pushed to exec/2026-03-06__release-v1.9/EPIC-05; backend_engineering_patterns.md version incremented with coverage standard; CI workflow step added running pytest-cov on backend/services/; Director of Quality confirms CI contains coverage step",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-09T10:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/backend_engineering_patterns.md"
           ],
-          "deviations_filed": false,
-          "notes": "Coverage threshold % to be agreed between Backend Engineering Patterns Owner and Head of Engineering at sprint start. Two-phase: backend implementation first, then QA verification. BLG-NEW-01 prerequisite confirmed complete (v1.8 shipped)."
+          "deviations_filed": true,
+          "notes": "18 unit tests (9 grace_service, 9 drawdown_service). 100% coverage, threshold 80%. CI gate service-coverage.yml added. backend_engineering_patterns_owner.md v1.0->v1.1 with \u00a711 Service Test Coverage Standard. github issue #45 closed. QA sign-off: Director of Quality 2026-03-09."
         }
       }
     },
@@ -312,12 +312,8 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-13"
-  ],
-  "delegated_items": [
-    "ST-13"
-  ],
+  "blocked_items": [],
+  "delegated_items": [],
   "completed_items": [
     "ST-06",
     "ST-07",
@@ -330,7 +326,8 @@
     "ST-17",
     "ST-18",
     "ST-19",
-    "ST-11"
+    "ST-11",
+    "ST-13"
   ],
   "open_escalations": [],
   "merge_gate": {
