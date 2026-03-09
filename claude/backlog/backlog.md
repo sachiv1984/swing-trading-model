@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-06 (groom backlog — 8 items archived)
+**Last Updated:** 2026-03-09 (ST-11: TEST-GAP-EPIC-01 closed; BLG-API-01 added)
 **Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — DL-006)
 
 > ⚠️ Standing Notice
@@ -562,17 +562,13 @@ US position entry prices display in native USD ($) in the Risk Dashboard. Spec �
 **Source:** Delivery verification 2026-03-04__release-v1.8 — Director of Quality recommendation
 **Cycle added:** 2026-03-04__release-v1.8
 **Target release:** v1.9
+**Status:** CLOSED — resolved in v1.9 ST-11 (2026-03-09)
 
-17 of 27 Risk Dashboard acceptance scenarios (SC-RD-02–06, SC-RD-07–12, SC-RD-15, SC-RD-16–18, SC-RD-24–25) cannot be executed in the v1.8 environment due to the absence of a test data injection mechanism. All 17 require specific backend state (portfolio heat %, grace days, empty positions, or live prospective heat API call) that cannot be loaded without either a seeded test database, a mock/stub API layer, or a test data management UI.
+17 of 27 Risk Dashboard acceptance scenarios (SC-RD-02–06, SC-RD-07–12, SC-RD-15, SC-RD-16–18, SC-RD-24–25) cannot be executed in the v1.8 environment due to the absence of a test data injection mechanism.
 
-See verification_report.md §6 for full test coverage feedback record. See `docs/testing/risk_dashboard_scenarios.md` for scenario details.
+**Resolution:** Playwright mock layer delivered. All 17 scenarios automated in `tests/e2e/risk-dashboard.spec.js`. CI gate at `.github/workflows/playwright.yml`. Mock data in `tests/e2e/mocks/portfolio-mock-data.js`. Scenario document updated to v1.1.
 
-**Acceptance Criteria**
-- Test environment with seeded data capability created, covering: specific portfolio_heat_percent values, positions with specific grace_days_remaining, empty position state, and controlled prospective heat API responses
-- All 17 NOT EXECUTED scenarios re-run against seeded environment and results recorded in risk_dashboard_scenarios.md
-- Test infrastructure preconditions section added to risk_dashboard_scenarios.md documenting required setup per scenario group
-
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-09
 
 ---
 
@@ -684,6 +680,38 @@ The golden output baseline (BLG-NEW-01, COMPLETE) covers end-to-end calculation 
 - Active new items: 4 (BLG-NEW-09 through BLG-NEW-12)
 - P1: 2 (BLG-NEW-10, BLG-NEW-12)
 - P2: 2 (BLG-NEW-09, BLG-NEW-11)
+
+---
+
+## 12. New Backlog Items — Cycle 2026-03-06__release-v1.9
+
+Items raised during sprint execution. Decision authority: Director of Quality (QA infrastructure), Head of Engineering (technical scope).
+
+---
+
+### BLG-API-01 — Backend API integration tests (FastAPI TestClient)
+**Priority:** P2
+**Type:** QA Infrastructure
+**Owner:** QA & Testing Owner
+**Source:** ST-11 decision session 2026-03-09 — Head of Engineering and Director of Quality identified gap
+**Cycle added:** 2026-03-06__release-v1.9
+**Target release:** v1.10
+
+**Problem**
+The Playwright mock layer (ST-11) tests frontend rendering behaviour given known API payloads. It does not test whether the backend `GET /portfolio` and `GET /portfolio/prospective-heat` routers return correctly-shaped responses for real database rows. The golden output gate tests pure-math functions; it does not test the router-to-service pipeline end-to-end.
+
+**Scope**
+- Add FastAPI `TestClient` integration tests for `GET /portfolio` and `GET /portfolio/prospective-heat` endpoints
+- Use fixture data (no live DB required — inject via dependency override or in-memory SQLite)
+- Verify: response shape matches `portfolio_endpoints.md` contract, GBP conversion applies for US positions, heat formula produces correct output for known inputs
+- Add as a CI step in a new workflow or extend `golden-outputs.yml`
+
+**Acceptance Criteria**
+- `TestClient` tests present in `tests/` covering at minimum: portfolio endpoint response shape, US position GBP conversion, heat formula output, prospective-heat endpoint calculation
+- Tests are CI-safe (no live DB, no external calls)
+- Director of Quality confirms CI step present and passing
+
+**Last Updated:** 2026-03-09
 
 ---
 
