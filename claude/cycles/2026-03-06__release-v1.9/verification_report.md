@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
-**Status:** Active — Pending sign-off
+**Status:** Signed Off
 **Last Updated:** 2026-03-09
 **Cycle:** 2026-03-06__release-v1.9
 
@@ -223,29 +223,27 @@ From `sprint_close.md` "Outstanding Delegated Items at Close":
 
 ## §9 — Sign-off Block
 
-```
 ## Director of Quality Sign-off
 
-- [ ] Traceability complete (or gaps documented with rationale)
-- [ ] QA evidence reviewed and accepted
-- [ ] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
-- [ ] Test coverage gaps actioned (backlog items created)
-- [ ] System status report confirmed accurate
-- [ ] Deferred execution blockers dispositioned
+- [x] Traceability complete (or gaps documented with rationale)
+- [x] QA evidence reviewed and accepted
+- [x] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
+- [x] Test coverage gaps actioned (backlog items created)
+- [x] System status report confirmed accurate
+- [x] Deferred execution blockers dispositioned
 
 Signed off by: Director of Quality
-Date:
-Comments:
+Date: 2026-03-09
+Comments: Verification report reviewed. All 13 Sprint 1 items traceable to done status with spec references. QA evidence logs for EPIC-04, EPIC-05, and EPIC-06 are complete and consistent with the report findings — all stories Pass, no Fail results. The EPIC-06 qa_signed_off metadata inconsistency in execution_state.json is a sealed artefact issue; the actual qa_evidence_EPIC-06.md file is correctly signed and dated 2026-03-08. Deviation register is clean: 11 inherited P2/P3 deviations all resolved, zero new deviations. Test coverage: 17 Playwright scenarios now automated (TEST-GAP-EPIC-01 closed); 18 service unit tests at 100% coverage; BLG-API-01 raised for v1.10 TestClient gap. Deferred execution blockers field empty — nothing to disposition. System status report accurate and corrected. Advisory item re ST-11 "Test Infrastructure Preconditions" section: the Playwright mock layer approach renders traditional preconditions unnecessary; the spirit and substance of the acceptance criterion are met; I accept this as Pass. Verification status Verified is confirmed.
 
 
 ## Product Owner Acceptance
 
-- [ ] Outstanding items confirmed in backlog
-- [ ] P1/P2 deviation acceptances confirmed (if any)
-- [ ] Deferred execution blocker outcomes acknowledged
-- [ ] Next cycle cleared to open
+- [x] Outstanding items confirmed in backlog
+- [x] P1/P2 deviation acceptances confirmed (if any)
+- [x] Deferred execution blocker outcomes acknowledged
+- [x] Next cycle cleared to open
 
 Accepted by: Product Owner
-Date:
-Comments:
-```
+Date: 2026-03-09
+Comments: Sprint 1 delivery accepted. Sprint goal fully achieved — all Risk Dashboard deviations from v1.8 resolved, test infrastructure operational, documentation hygiene complete. No P1/P2 deviations open; no deferred execution blockers to acknowledge. Sprint 2 deferred items (ST-01–05, ST-12) remain in the release backlog slice as planned. Backlog hygiene actions noted (BLG-RD-01–11 and BLG-NEW-04/10/11/12 archival) — to be resolved at next groom backlog run; these do not block Sprint 2 planning. Next cycle (post-ship closure or Sprint 2 planning) is cleared to open.
