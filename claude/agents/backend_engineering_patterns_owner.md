@@ -5,8 +5,8 @@
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)
 **Scope:** Backend implementation patterns, conventions, and engineering standards for the FastAPI / PostgreSQL codebase
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-02-21
+**Version:** 1.1
+**Last Updated:** 2026-03-09
 
 ---
 
@@ -14,6 +14,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-03-09 | Added §11 Service Test Coverage Standard (ST-13, cycle 2026-03-06__release-v1.9). Defines Tier 1/Tier 2 classification, 80% line coverage threshold, CI gate, and promotion mechanism. |
 | 1.0 | 2026-02-21 | Version field, Last Updated field, and Change Log added to bring document into Class 1 compliance with `document_lifecycle_guide.md` v2.2. No content change. Identified as non-compliant via Head of Specs Team review during BLG-TECH-03 gate G1.4 (2026-02-21). Actioned by Head of Engineering per Director of Quality sign-off Condition 3. |
 
 ---
@@ -308,6 +309,62 @@ This document is doing its job when:
 - The spec is the source of truth — the code reflects it faithfully
 
 The backend becomes **predictable and safe to change**, not a source of surprises.
+
+---
+
+## 11. Service Test Coverage Standard
+
+### 11.1 Tier Classification
+
+Services are classified into two tiers for coverage purposes:
+
+**Tier 1 — Pure-Math Services**
+- Definition: services that contain calculations derived from canonical specifications and have **no database dependencies** (or whose DB dependencies are trivially mockable with a single `patch()`).
+- Coverage threshold: **≥80% line coverage** enforced by CI gate (`service-coverage.yml`, `--fail-under=80`).
+- Current Tier 1 scope (v1.9):
+  - `services/grace_service.py` — spec ref: `position_endpoints.md` v1.8.3
+  - `services/drawdown_service.py` — spec ref: `metrics_definitions.md` v1.5.8
+- Committed for v1.10 promotion: `services/sizing_service.py`
+
+**Tier 2 — Integration-Dependent Services**
+- Definition: services that require a live database or external HTTP call to function (e.g. `portfolio_service.py`, `trade_service.py`).
+- Coverage: not gated in CI. Covered via manual QA and the golden outputs regression gate.
+- Promotion path: if a Tier 2 service gains a pure-math inner function, extract it to a Tier 1 module and add coverage.
+
+### 11.2 Coverage Gate
+
+The CI gate is `.github/workflows/service-coverage.yml`. It runs on every PR to `main`/`develop` and every push to `exec/**`.
+
+Command (reproduced for local runs):
+```bash
+DATABASE_URL=postgresql://ci:ci@localhost:5432/ci \
+PYTHONPATH=backend \
+python -m pytest tests/test_service_coverage.py -v \
+  --cov=services.grace_service \
+  --cov=services.drawdown_service \
+  --cov-report=term-missing \
+  --cov-fail-under=80
+```
+
+### 11.3 Writing Tier 1 Tests
+
+- Test file: `tests/test_service_coverage.py`
+- All tests must be CI-safe: no live DB calls, no HTTP calls.
+- Mock DB dependencies with `unittest.mock.patch`:
+  ```python
+  with patch('services.drawdown_service.get_peak_portfolio_value', return_value=10000.0):
+      result = get_drawdown_fields(portfolio_id, current_total_value=9000.0)
+  ```
+- Tests must cover: boundary values, formula correctness (match canonical spec), clamping/guard rules, return type, and always-present fields.
+
+### 11.4 Promoting a Service to Tier 1
+
+To promote a service from Tier 2 to Tier 1:
+1. Confirm the service contains no un-mockable DB calls (or extract pure-math logic to a separate function).
+2. Add tests to `tests/test_service_coverage.py` covering ≥80% of lines.
+3. Add the service to the `--cov=` flags in `service-coverage.yml`.
+4. Update this section with the new scope entry and spec reference.
+5. Include the change in the sprint delivery for the relevant cycle.
 
 ---
 
