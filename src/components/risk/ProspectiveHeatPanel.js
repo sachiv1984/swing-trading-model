@@ -56,6 +56,14 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
     ? result.projected_heat_percent - currentHeat
     : null;
 
+  const heatThreshold = (pct) => {
+    if (pct >= 30) return { label: "Extreme", color: "text-rose-400 bg-rose-500/20 border-rose-500/40" };
+    if (pct >= 20) return { label: "High",    color: "text-orange-400 bg-orange-500/20 border-orange-500/40" };
+    if (pct >= 10) return { label: "Moderate", color: "text-amber-400 bg-amber-500/20 border-amber-500/40" };
+    return             { label: "Low",        color: "text-emerald-400 bg-emerald-500/20 border-emerald-500/40" };
+  };
+  const threshold = result?.projected_heat_percent != null ? heatThreshold(result.projected_heat_percent) : null;
+
   const field = (id, label, placeholder, type = "text") => (
     <div className="space-y-1">
       <Label htmlFor={id} className="text-xs text-slate-400">{label}</Label>
@@ -116,7 +124,14 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
                 <div className="flex items-center gap-4 text-sm">
                   <div>
                     <span className="text-slate-500 text-xs">Projected Heat</span>
-                    <p className="font-bold text-white">{result.projected_heat_percent?.toFixed(1)}%</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-white">{result.projected_heat_percent?.toFixed(1)}%</p>
+                      {threshold && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${threshold.color}`}>
+                          {threshold.label}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {delta !== null && (
                     <div>
