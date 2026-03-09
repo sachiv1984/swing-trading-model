@@ -393,12 +393,12 @@ test.describe('Group E — API Error States (partial)', () => {
     await page.fill('#stop_price', '14.00');
     await page.locator('button[type="submit"]').click();
 
-    // Inline error displayed (message or "Server error" text)
-    await expect(page.locator('[class*="text-rose"]').filter({ hasText: /error|Server error/i })).toBeVisible({ timeout: 10000 });
+    // Inline error displayed (apiError paragraph — className="text-sm text-rose-400")
+    await expect(page.locator('p.text-sm.text-rose-400')).toBeVisible({ timeout: 10000 });
     // No projected heat value shown
     await expect(page.locator('text=Projected Heat')).toHaveCount(0);
     // Page has not crashed — heading still visible
-    await expect(page.locator('text=Risk Dashboard')).toBeVisible();
+    await expect(page.locator('h1').filter({ hasText: 'Risk Dashboard' })).toBeVisible();
     // Input fields still accessible
     await expect(page.locator('#ticker')).toBeVisible();
   });
@@ -433,7 +433,7 @@ test.describe('Group F — Full Empty State', () => {
 
     // No console errors (verified separately via SC-RD-26)
     // No crash: page heading still present
-    await expect(page.locator('text=Risk Dashboard')).toBeVisible();
+    await expect(page.locator('h1').filter({ hasText: 'Risk Dashboard' })).toBeVisible();
   });
 
 });
