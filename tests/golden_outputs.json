@@ -145,6 +145,79 @@
     }
   ],
 
+  "portfolio_fx_conversion": [
+    {
+      "id": "FX-01",
+      "description": "US position entry_price converted from USD to GBP",
+      "spec_section": "risk_dashboard.md §6.2 — Entry Price column: GBP, 2 decimal places",
+      "inputs": {
+        "price_native": 200.00,
+        "fx_rate": 1.25,
+        "market": "US"
+      },
+      "derivation": "entry_price_gbp = price_native / fx_rate = 200.00 / 1.25 = 160.00",
+      "expected": {
+        "price_gbp": 160.00
+      }
+    },
+    {
+      "id": "FX-02",
+      "description": "US position current_stop converted from USD to GBP",
+      "spec_section": "risk_dashboard.md §6.2 — Stop Price column: GBP, 2 decimal places",
+      "inputs": {
+        "price_native": 190.00,
+        "fx_rate": 1.25,
+        "market": "US"
+      },
+      "derivation": "current_stop_gbp = price_native / fx_rate = 190.00 / 1.25 = 152.00",
+      "expected": {
+        "price_gbp": 152.00
+      }
+    },
+    {
+      "id": "FX-03",
+      "description": "US position with fx_rate 1.27 (default) — standard conversion",
+      "spec_section": "risk_dashboard.md §6.2; portfolio_service.py stored_fx_rate default",
+      "inputs": {
+        "price_native": 350.00,
+        "fx_rate": 1.27,
+        "market": "US"
+      },
+      "derivation": "price_gbp = 350.00 / 1.27 = 275.59 (rounded to 2dp)",
+      "expected": {
+        "price_gbp": 275.59
+      }
+    },
+    {
+      "id": "FX-04",
+      "description": "UK position entry_price — no FX conversion (already GBP)",
+      "spec_section": "risk_dashboard.md §6.2 — UK positions already in GBP",
+      "inputs": {
+        "price_native": 150.00,
+        "fx_rate": 1.0,
+        "market": "UK"
+      },
+      "derivation": "UK market: price_gbp = price_native (no conversion) = 150.00",
+      "expected": {
+        "price_gbp": 150.00
+      }
+    },
+    {
+      "id": "FX-05",
+      "description": "UK position current_stop — no FX conversion (already GBP)",
+      "spec_section": "risk_dashboard.md §6.2 — UK positions already in GBP",
+      "inputs": {
+        "price_native": 140.00,
+        "fx_rate": 1.0,
+        "market": "UK"
+      },
+      "derivation": "UK market: price_gbp = price_native (no conversion) = 140.00",
+      "expected": {
+        "price_gbp": 140.00
+      }
+    }
+  ],
+
   "stop_loss": [
     {
       "id": "SL-01",

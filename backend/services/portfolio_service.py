@@ -131,6 +131,16 @@ def get_portfolio_summary() -> Dict:
             pnl_gbp = pnl_native
         
         pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
+
+        # Convert entry_price and current_stop to GBP for display
+        # Spec: risk_dashboard.md §6.2 — all price columns in GBP
+        if market == 'US':
+            entry_price_gbp = round(entry_price / stored_fx_rate, 2)
+            current_stop_gbp = round(pos.get("current_stop", 0) / stored_fx_rate, 2)
+        else:
+            entry_price_gbp = round(entry_price, 2)
+            current_stop_gbp = round(pos.get("current_stop", 0), 2)
+
         holding_days = pos.get('holding_days', 0)
         
         if holding_days < 10:
@@ -172,13 +182,13 @@ def get_portfolio_summary() -> Dict:
             "ticker": pos["ticker"],
             "market": market,
             "entry_date": str(pos["entry_date"]),
-            "entry_price": round(entry_price, 2),
+            "entry_price": entry_price_gbp,
             "shares": shares,
             "current_price": round(current_price_gbp, 2),
             "current_value": round(current_value_gbp, 2),
             "pnl": round(pnl_gbp, 2),
             "pnl_pct": round(pnl_pct, 2),
-            "current_stop": round(pos.get("current_stop", 0), 2),
+            "current_stop": current_stop_gbp,
             "holding_days": holding_days,
             "status": "open",
             "display_status": display_status,
