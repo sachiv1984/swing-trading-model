@@ -364,7 +364,7 @@ The system is ready for:
 
 ## Sprint: 2026-03-06__release-v1.9 (Sprint 1 of 2)
 **Date:** 2026-03-09
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-03-09
 
 ### Capabilities now live (merged this sprint)
 
