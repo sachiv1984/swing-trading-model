@@ -51,14 +51,14 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-03-09T08:55:00Z",
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.2",
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.4",
             "docs/specs/api_contracts/portfolio_endpoints.md"
           ],
           "deviations_filed": true,
-          "notes": "Implemented: entry_price and current_stop GBP-converted for US positions using stored_fx_rate. Golden output CI passes (23 tests, 5 new FX vectors). Resolves DEV-ST03-11 and DEV-ST03-12. Acceptance verification pending Director of Quality."
+          "notes": "Implemented: entry_price and current_stop GBP-converted for US positions using stored_fx_rate. Golden output CI passes (23 tests, 5 new FX vectors). Resolves DEV-ST03-11 and DEV-ST03-12. QA sign-off: Director of Quality 2026-03-09. QA-OBS-ST07-01 filed (non-blocking: live_fx_rate vs stored_fx_rate basis for Stop Distance display — pre-existing pattern)."
         },
         "ST-08": {
           "title": "Risk Dashboard Frontend: Error States & Entity Fallback",
