@@ -1,4 +1,4 @@
-You are performing a full operational audit of the development lifecycle defined in this repository.
+lYou are performing a full operational audit of the development lifecycle defined in this repository.
 
 Primary document under review:
 Sprint Planning Operational Playbook
@@ -581,18 +581,32 @@ Effort: Low
 
 ---
 
-**IMP-18 — Sprint Planning goal confirmation step has no resumability guarantee**
+**IMP-18 — Sprint Planning goal confirmation has no state file; §11 partially addresses via file-based resume**
 Area: State | Failure Handling
-Problem: STEP 2 (sprint goal) is a hard gate requiring PO confirmation. `sprint_goal.md` existence
-is the only resume signal — the engine cannot distinguish "goal drafted" from "goal confirmed." A
-crash after drafting but before PO sign-off leaves the engine in an ambiguous state.
-Why it matters: Re-invocation may re-draft the goal (token waste) or skip confirmation (governance
-violation).
-Recommended change: Add `sprint_goal_status` field to a lightweight `sprint_plan_state.json` with
-values: `not_started | drafted | confirmed`. STEP 2 resumes only from `confirmed`; any earlier
-state re-runs the confirmation request.
-Expected benefit: Reliable resume for the most common human-in-the-loop sync point.
-Token impact: Saves — prevents full STEP 2 re-execution on recovery.
+Status: Confirmed from `sprint_planning_prompt.md` §11 Resumability — a three-condition resume
+check exists:
+- If `sprint_goal.md` exists with sign-off: STEP 2 complete, skip
+- If `sprint_goal.md` exists without sign-off: resume at STEP 2 sign-off gate
+- If `sprint_goal.md` absent: fresh run from STEP 2
+This is better than the playbook implied. File existence + sign-off presence is a reasonable
+proxy for `drafted | confirmed` state. The gap narrows to: if the engine crashes after creating
+`sprint_goal.md` but before populating the `[AWAITING SIGN-OFF]` fields, the file exists with
+incomplete content — the §11 check would branch to "exists without sign-off" and re-run STEP 2
+correctly. This is correct behaviour. The gap is effectively closed for normal crash-resume
+paths.
+One smaller gap remains: `.claude_current_state.json` confirmed from the live file has no
+`sprint_goal_status` field. The state file has `sprint_goal_path` pointing to the file, but no
+`confirmed`/`drafted` flag. If the state JSON is used as the source of truth by a downstream
+engine (e.g. a future dashboard or status query), it cannot determine whether the sprint goal
+is pending confirmation without reading the file.
+Recommended change (narrowed): No structural change required — §11 file-based resume is
+correct for the engine's own resume path. Add `sprint_goal_status: "confirmed"` to the
+`.claude_current_state.json` STEP 7 write block in `sprint_planning_prompt.md`. This provides
+a machine-readable confirmation signal for downstream consumers without requiring a separate
+state file. Values: `not_started | awaiting_po | confirmed`.
+Expected benefit: Machine-readable sprint goal status in global state. Downstream queries don't
+require reading `sprint_goal.md` to determine planning completeness.
+Token impact: Neutral — trivial field addition to an existing write.
 Effort: Low
 
 ---
@@ -837,22 +851,28 @@ structured input during the transition cycle.
 
 ---
 
-**IMP-30 — `design_gate_bypass_authority` has no named role and Head of UX & Design has no authority row**
+**IMP-30 — `design_gate_bypass_authority` has no named role; Head of UX & Design confirmed chartered** ⚠️ PARTIALLY RESOLVED
 Area: Governance | Role Charter Completeness
-Problem: Two role gaps identified in the playbook: (1) §1 Hard Rules require `design_gate_bypass_authority`
-to be recorded in `.claude_current_state.json` when the design gate is bypassed, but no role in §2
-Roles & Authorities is declared as holding this authority — any agent could self-assign it. (2) §6.5.1
-states "Head of UX & Design may downgrade" design classifications from Design Required, but this role
-has no row in the §2 authority table and no declared authority type, meaning its decisions have no
-governance backing.
-Why it matters: An authority field with no named authority holder is unenforceable. A role that acts
-without a charter entry has no defined boundary — it can neither be held accountable nor overruled
-by a defined mechanism.
-Recommended change: (1) Add `design_gate_bypass_authority` to §2 as an explicit authority held by
-a named role (Head of Specs Team or Product Owner — decision required). (2) Add Head of UX & Design
-to the §2 Roles & Authorities table with authority type: "Design classification decisions; design
-artefact approval; downgrade authority for Design Required items." Update team_charter.md to match.
-Expected benefit: Both authority gaps become enforceable and auditable.
+Status: Gap (2) confirmed resolved — `team_charter.md` v1.4 §3.3 includes Head of UX & Design
+with explicit authority scope: "Authority role in the Design Gate Engine (Phase 1.5)." The
+playbook §2 authority table was the source of the original finding — the actual charter is
+correct. No change needed to the charter for this role.
+Gap (1) confirmed open: `sprint_planning_prompt.md` STEP -1.3 design gate bypass audit requires
+`design_gate_bypass_authority` and `design_gate_bypass_reason` to be written to
+`.claude_current_state.json`. The team charter §3.1–§3.3 has no role designated as the holder
+of design gate bypass authority. The live `.claude_current_state.json` has `design_gate_required:
+true` and `design_gate_status: "Passed"` for the current cycle — the bypass path was not taken —
+so the gap has not yet been exercised. But if a cycle requires bypass, the engine halts waiting
+for `design_gate_bypass_authority` to be populated with no guidance on which role is authorised
+to do so.
+Why it matters: An authority field that no role is chartered to fill cannot be self-consistently
+enforced. Any agent could claim the authority, making the bypass audit meaningless.
+Recommended change: Add to `team_charter.md` §3.3 Head of UX & Design entry: "Holds design
+gate bypass authority for cycles where all sprint items are `Design Not Applicable`. Bypass must
+be co-confirmed by the Product Owner. Both names are recorded in `.claude_current_state.json`
+`design_gate_bypass_authority` field." Update Sprint Planning STEP -1.3 to reference this
+authority assignment explicitly.
+Expected benefit: Bypass authority is chartered and unambiguous. The audit becomes enforceable.
 Token impact: Neutral.
 Effort: Low
 
@@ -878,102 +898,118 @@ Dependency: IMP-17
 
 ---
 
-**IMP-32 — First-cycle guards missing across four engines**
+**IMP-32 — First-cycle guards missing across two engines; partially implemented in Release Planning**
 Area: State | Lifecycle | First-Cycle Correctness
-Problem: Four specific first-cycle failure points identified:
-(1) Release Planning STEP -1.5 reads `prior_cycle/lessons_learnt_closure.md` — this path does not
-    exist on cycle 1. No guard defined; engine will fail or skip silently.
-(2) Release Planning STEP -1.6 checks `next_cycle_unblocked = true` — this field does not exist in
-    `.claude_current_state.json` on cycle 1. The exception note says "exception for first cycle"
-    but does not define what the exception condition is or how the engine detects it.
-(3) IMP-29 meta-review reads `lessons_learnt_cycle.md` from the last 3 cycles — on cycle 1 there
+Problem: First-cycle handling is partially implemented. Release Planning STEP -1.5 has an explicit
+skip ("If `prior_cycle` is absent... skip silently") and STEP -1.6 has an explicit exception ("If
+this is the very first cycle... skip this check") — these are correctly guarded. Two gaps remain:
+(1) IMP-29 meta-review reads `lessons_learnt_cycle.md` from the last 3 cycles — on cycle 1 there
     are zero prior cycles; on cycle 2 there is one. No handling defined for sub-threshold cycle
-    counts. Meta-review either fires on insufficient data or the trigger condition fails silently.
-(4) Phase 1M state fields (`last_manage_roadmap_utc`, `last_groom_backlog_utc`) will be null on
+    counts. Meta-review trigger condition `completed_cycle_count % 3 == 0` would fire on cycle 0
+    (before any cycle completes) if the counter starts at 0. Trigger must be `completed_cycle_count
+    >= 3 AND completed_cycle_count % 3 == 0`.
+(2) Phase 1M state fields (`last_manage_roadmap_utc`, `last_groom_backlog_utc`) will be null on
     first invocation. Any downstream engine that reads these fields without a null guard will either
-    fail or treat null as "never run" — which is correct, but must be explicitly handled rather than
-    assumed.
+    fail or treat null as "never run" — correct semantically, but must be explicitly handled.
 Why it matters: First invocation is the highest-risk execution path. Silent failures or crashes on
 cycle 1 undermine trust in the entire system before any value is delivered.
-Recommended change: Define explicit first-cycle detection across all engines: a field
-`is_first_cycle` (bool) derived from `completed_cycle_count == 0` in `.claude_current_state.json`.
-Each guard that depends on prior cycle data checks `is_first_cycle` first and skips gracefully with
-a logged note rather than attempting to read a non-existent path. For IMP-29 meta-review: trigger
-only when `completed_cycle_count >= 3`; on cycles 1 and 2 log "meta-review pending — insufficient
-cycle history" and skip.
-Expected benefit: Eliminates all known first-cycle failure points. Single `is_first_cycle` field
-makes the guard pattern consistent and auditable.
-Token impact: Neutral — minimal additional field check per engine.
+Recommended change: (1) Update IMP-29 meta-review trigger to `completed_cycle_count >= 3 AND
+completed_cycle_count % 3 == 0`. Add explicit handling in Post-Ship Closure: if
+`completed_cycle_count < 3`, log "meta-review pending — insufficient cycle history" and skip.
+(2) Add null-guard documentation for Phase 1M fields to `shared_standards.md §10` or the Phase
+1M engine comments.
+Expected benefit: Eliminates remaining first-cycle failure points. Release Planning guards confirmed
+correct — no change needed there.
+Token impact: Neutral.
 Effort: Low
 
 ---
 
-**IMP-33 — Standard mode behaviour undefined or contradictory for three conditions**
+**IMP-33 — Mode parity: AC contradiction confirmed resolved; two gaps remain**
 Area: Governance | Prompt–Playbook Alignment | Mode Parity
-Problem: Three mode parity failures identified:
-(1) Sprint Planning §7.3 states "items without confirmed acceptance criteria may not enter the
-    sprint" (absolute prohibition), but also states "in standard mode they receive an [AC REQUIRED]
-    placeholder." These two statements directly contradict — the first is mode-independent, the
-    second makes it mode-dependent. The backlog cannot be sealed with [AC REQUIRED] placeholders
-    per §7.6 exit criteria, creating an irresolvable conflict in standard mode.
+Problem: Originally three mode parity failures. Gap (1) is confirmed resolved:
+(1) ✅ RESOLVED — Sprint Planning: `sprint_planning_prompt.md` §7 and STEP 6.2 are internally
+    consistent. Standard mode permits `[AC REQUIRED]` placeholders during planning but explicitly
+    blocks sealing until all are resolved ("The sprint backlog may not be signed off while any item
+    has an unresolved `[AC REQUIRED]` placeholder"). STEP 6.2 sign-off gate lists this as a required
+    condition. The contradiction described was between the playbook §7.3 summary and the prompt —
+    the prompt itself is correct. No change needed to the prompt.
+Two gaps remain:
 (2) Roadmap Engine STEP 5 zero-sum displacement rule ("no candidate advances without naming a
     displacement") has no mode variant defined. It is written as an absolute rule but lives in a
     prompt that accepts `--mode`. It is unclear whether standard mode relaxes or enforces this rule.
-(3) Execution Engine §8.2 defines `strict` as "halt on any ambiguity" but "ambiguity" is not
-    defined. Standard mode behaviour for ambiguous items is not specified — agents must infer it,
-    producing inconsistent behaviour across runs.
-Why it matters: Contradictory mode rules produce unpredictable engine behaviour. Agents will resolve
-contradictions differently on each invocation, making the system non-deterministic.
-Recommended change: (1) Resolve the AC contradiction: [AC REQUIRED] placeholders are permitted in
-standard mode as a draft state only — the backlog cannot be sealed until all are resolved, in both
-modes. Standard mode does not allow sealing with open placeholders; it only allows proceeding to
-the next planning step while flagging the gap. (2) Declare the zero-sum rule as mode-independent
-(hard rule) explicitly in the roadmap prompt. (3) Define "ambiguity" for the execution engine:
-list the specific conditions that constitute ambiguity (missing spec reference, missing owner,
-missing AC, unresolved dependency).
-Expected benefit: Deterministic mode behaviour. Agents resolve conditions consistently across runs.
+(3) Execution Engine STEP -1.5 and STEP 3 use `strict` vs `standard` behaviour distinctions. The
+    `execution_prompt.md` STEP -1.5 states: "In `strict` mode: halt and report which items are
+    missing criteria. In `standard` mode: flag as a blocker, classify the item as
+    `delegated_decision`, and continue." This is well-defined. However §2 Invocation Rule states
+    "`strict`: halt on any ambiguity" — "ambiguity" is still undefined. Section 5.1 classification
+    rules do provide guidance ("If classification is ambiguous: classify as `delegated_decision`")
+    but this is not a substitute for defining what constitutes ambiguity in the strict-mode halt
+    context. Agents in strict mode must make a judgment call about what constitutes an ambiguous item
+    beyond classification ambiguity.
+Why it matters: The zero-sum rule ambiguity (gap 2) makes the Roadmap Engine non-deterministic
+across modes. The "ambiguity" definition gap (gap 3) is less severe now that classification
+fallback is documented, but the strict-mode halt trigger remains underspecified.
+Recommended change: (2) Declare the zero-sum rule as mode-independent (hard rule regardless of
+`--mode` value) in the roadmap prompt. Add a note: "This rule applies in both strict and standard
+mode — it is a governance constraint, not a quality gate." (3) Add a definition block to
+`execution_prompt.md` §2 or §8: "Ambiguity: a condition in which the engine cannot determine with
+confidence which action to take from the acceptance criteria, spec, and execution state alone.
+Examples: missing spec reference for a `delegated_backend` item; AC field present but not
+testable; dependency chain that cannot be resolved from `execution_state.json`." This makes the
+strict-mode halt trigger explicit rather than judgment-dependent.
+Expected benefit: Deterministic mode behaviour for the two remaining gaps. Agents resolve
+conditions consistently across runs.
 Token impact: Neutral.
 Effort: Low
 
 ---
 
-**IMP-34 — Release Planning and Post-Ship Closure have no declared write scope lists**
+**IMP-34 — Post-Ship Closure write scope exists but Class 1 writes are not field-scoped** ⚠️ PARTIALLY RESOLVED
 Area: Governance | Write Scope Enforcement
-Problem: The Roadmap Engine STEP 9 explicitly restricts writes to an allowed list. Release Planning
-and Post-Ship Closure have no equivalent declared write scope. Audit of their steps reveals:
-Release Planning writes to: `backlog.md`, `state.json`, `.claude_current_state.json`,
-`release_plan.md`, `escalations.md`, `run_manifest.md`, `cycle_summary.md`, `lessons_learnt.md`,
-`backlog_txn.json`, `stage4_backlog_slice.md`, `stage4_issue_manifest.json` (IMP-24),
-`docs/product/scope/scope--*.md`, `docs/product/decisions/decisions--*.md`,
-`current_roadmap.md` (execution notes, STEP 5).
-Post-Ship Closure writes to: `changelog.md`, `current_roadmap.md`, `backlog.md`,
-scope document (status update), decisions record (status update), canonical spec files
-(deviation entries), `System_status_report.md`, `validation_system.md`, `Specs_Index.md`,
-`closure_record.md`, `closure_state.json`, `lessons_learnt_cycle.md` (IMP-28).
-Neither engine has a formal write scope declaration. `.claude_current_state.json` is written by
-Phase 1M engines outside the designated sync steps, with no declared scope entry for Phase 1M.
-Why it matters: Without a declared write scope, there is no governance check against an engine
-writing to a file it should not touch. Post-Ship Closure writing to `current_roadmap.md` and
-canonical spec files is high-risk — these are Class 1 documents with strict ownership rules.
-Recommended change: Add a `## Write Scope` section to each engine prompt listing every file the
-engine is permitted to write, grouped by step. Any write outside this list is a hard gate violation.
-For `.claude_current_state.json`: declare which fields each engine may write (not just that it may
-write the file). Post-Ship Closure writes to Class 1 documents must be explicitly scoped to
-specific fields/sections only (e.g. "roadmap entry status field only — no structural changes").
-Expected benefit: Write scope becomes auditable and enforceable. Eliminates the risk of an engine
-modifying a sealed or Class 1 artefact outside its authority.
+Status: `post_ship_closure.md` §5 Write Scope Restriction exists and is detailed — better than the
+playbook implied and on par with Release Planning §7 and Amendment §8. The following writes are
+explicitly permitted with constraints:
+- `docs/product/changelog.md` (append new version entry)
+- `claude/roadmap/current_roadmap.md` (status update + version headers only)
+- `claude/backlog/backlog.md` (mark shipped items complete; add missing Phase 4 items; no other changes)
+- Scope and decisions documents (status → Superseded only)
+- Canonical spec files (deviation note compliance fixes only)
+- Operational docs (reconciliation only)
+- `Specs_Index.md` (mark resolved items; add new gaps)
+The two remaining gaps:
+(1) `current_roadmap.md` write is scoped to "status update + version headers only" but does not
+    define which fields constitute "version headers." STEP 2 expands this to "mark ✅ Complete,
+    update Current Version header, update Next planned release header, update release summary table"
+    — the write scope is narrower than what STEP 2 actually does. The write scope says "version
+    headers only" but the step writes to summary tables and completion flags.
+(2) Canonical spec writes are scoped to "deviation note compliance fixes only — missing required
+    fields per §3 Known Deviation Standard." The scope restriction correctly excludes new spec
+    edits. However, STEP 5 "standard mode" permits adding missing fields — this is a write to
+    a canonical spec that was not present in the original Phase 3 deviation record. The authority
+    for Post-Ship Closure to add fields to canonical specs that were missed in Phase 3 is not
+    established in the team charter.
+Recommended change: (1) Expand the `current_roadmap.md` write scope entry to match STEP 2 exactly:
+"status update, ✅ Complete marker, version header updates, release summary table status column."
+Any write beyond this list is a violation. (2) Add a note to canonical spec write scope: "Deviation
+compliance corrections require Head of Specs Team awareness. In standard mode corrections: notify
+Head of Specs Team via sprint_escalations or closure record §6 — do not silently add fields."
+Expected benefit: Write scope and step behaviour are aligned. Class 1 document writes are
+transparent to the owning authority.
 Token impact: Neutral.
-Effort: Medium
+Effort: Low
 
 ---
 
-**IMP-35 — Idempotency guards absent or undefined for four write operations**
+**IMP-35 — Idempotency guards absent or undefined for three write operations (one confirmed resolved)**
 Area: State | Failure Handling | Idempotency
-Problem: Four idempotency gaps identified:
-(1) Backlog slice commit: the playbook references an "idempotency marker" but does not define its
-    format, where it lives, or whether it is checked before write (preventing duplicate) or after
-    write (detecting duplicate). A pre-write check is required for true idempotency; a post-write
-    check only detects the problem after corruption has occurred.
+Problem: Originally four idempotency gaps identified. Gap (1) is now confirmed resolved:
+(1) ✅ RESOLVED — Backlog slice commit: `release_planning_prompt.md` STEP 4 defines the marker
+    format explicitly (`<!-- release-plan-marker: RP:<release>:<cycle_id> -->`), performs a
+    pre-write check, and skips the write if the marker is already present. True idempotency
+    confirmed. Amendment STEP 5 follows the same pattern with its own marker. No change needed.
+Three gaps remain:
+(2) Lessons learnt append: the playbook references an "idempotency marker" but does not define its
 (2) Lessons learnt append (IMP-28 consolidated record): each phase appends a table section to
     `lessons_learnt_cycle.md` on completion. No guard defined for what happens if the phase step
     is re-run — the same friction items would be appended twice, producing duplicate rows.
@@ -987,15 +1023,13 @@ Problem: Four idempotency gaps identified:
 Why it matters: Resumability is a core system guarantee. Any write operation without an idempotency
 guard silently breaks that guarantee. Duplicate log entries and duplicate backlog items compound
 across cycles.
-Recommended change: (1) Define the backlog slice idempotency marker format explicitly: a comment
-line `<!-- committed: <cycle_id> <timestamp> -->` checked at STEP 3.9 before any write — halt if
-marker already present for this cycle_id. (2) Lessons learnt append: check for existing section
+Recommended change: (2) Lessons learnt append: check for existing section
 header `## Phase <X> — <cycle_id>` before appending; skip if present. (3) Prompt change log:
 check for existing entry with matching prompt name + version before appending; skip if present.
 (4) `sync gh`: use GitHub issue labels containing cycle_id as the idempotency key — check label
 before create; update if label exists.
-Expected benefit: All four write operations become safe to re-run. Resumability guarantee is
-restored for these paths.
+Expected benefit: All three remaining write operations become safe to re-run. Resumability
+guarantee is restored for these paths.
 Token impact: Costs slightly — one additional read check per write operation; negligible.
 Effort: Low
 
@@ -1033,69 +1067,55 @@ Effort: Low
 
 ---
 
-**IMP-37 — Amendment lessons learnt is a disconnected artefact**
+**IMP-37 — Amendment lessons learnt feeds a standalone file rather than the consolidated cycle record**
 Area: Lifecycle | Governance
-Problem: `amendment_lessons.md` is listed in the Artefact Register (§13, Class 3, Phase Amendment)
-but §6B.8 defines no step that produces it, no required format, and no connection to the lessons
-learnt feedback loop — consolidated (IMP-28) or otherwise. It is the only Class 3 artefact in the
-register with no producing step.
+Problem: STEP 8 of `amendment_cycle_prompt.md` exists and produces `amendment_lessons.md` —
+better than the playbook implied. However, it invokes `lessons_learnt_prompt.md §3` to produce a
+standalone file rather than appending to `lessons_learnt_cycle.md` (IMP-28 consolidated record).
+Amendment lessons are therefore invisible to the meta-review (IMP-29), which reads
+`lessons_learnt_cycle.md` from the last 3 cycles. Amendment friction — the highest-signal events
+in the lifecycle — never enters the improvement loop.
 Why it matters: Amendment cycles are emergency events — exactly the situations most likely to
-generate actionable process improvements. A lessons learnt record that is declared but never
-produced means amendment friction is never captured, never fed into the meta-review, and never
-improves the process.
-Recommended change: Add an explicit lessons learnt step to the amendment cycle engine
-(`amendment_cycle_prompt.md`), positioned after ratification and before commit. Format: append
-a `## Amendment — <AMD-id>` section to `lessons_learnt_cycle.md` (IMP-28 consolidated record)
-with fields: trigger reason, ratification friction, backlog slice change summary, time cost,
-recurrence risk (Y/N), recommended process change. If IMP-28 is not yet implemented, produce
-a standalone `amendment_lessons.md` using the same schema. Update the Artefact Register to
-reference the producing step.
-Expected benefit: Amendment friction enters the improvement loop for the first time. Meta-review
-(IMP-29) gains visibility into emergency cycle patterns.
+generate actionable process improvements. A standalone file that is not scanned by meta-review
+means amendment patterns (recurring blocker types, ratification delays, capacity ceiling
+violations) are never surfaced systemically.
+Recommended change: Update STEP 8 of `amendment_cycle_prompt.md`: after producing
+`amendment_lessons.md`, append a `## Amendment — <AMD-id>` section to
+`lessons_learnt_cycle.md` using the same structured table schema as other phases. If
+`lessons_learnt_cycle.md` does not yet exist for this cycle (IMP-28 not yet implemented):
+produce `amendment_lessons.md` as before. When IMP-28 is implemented, migrate to append-only.
+Expected benefit: Amendment friction enters the meta-review improvement loop. Amendment patterns
+become detectable across cycles.
 Token impact: Costs slightly — one additional structured append per amendment cycle.
 Effort: Low
+Dependency: IMP-28 (for full integration; partial value without it)
 
 ---
 
-**IMP-38 — Amendment cycle "one active at a time" rule has no machine enforcement**
+**IMP-38 — "One active amendment at a time" rule has no machine enforcement** ✅ RESOLVED (confirmed 2026-03-08)
 Area: State | Governance | Idempotency
-Problem: §6B.8 declares "one active amendment at a time — seal or withdraw before opening
-another." This is enforced entirely by the PMO Lead reading the instruction and self-complying.
-No engine check exists. The amendment engine has no step that reads `amendment_state.json` for
-existing active amendments before proceeding. A second `amend cycle` invocation could create a
-second amendment folder and begin writing before any conflict is detected.
-Why it matters: Two concurrent amendments to the same backlog slice would produce divergent
-`amended_backlog_slice.md` files with no merge path. The original cycle's Sprint Planning would
-have no defined source of truth.
-Recommended change: Add to amendment engine STEP -1: scan `claude/cycles/<original_cycle_id>/
-amendments/` for any `amendment_state.json` with status not in `{sealed, withdrawn}`. If found,
-halt with: "Active amendment <AMD-id> exists. Seal or withdraw before opening a new amendment."
-This is a hard gate in both modes.
-Expected benefit: Machine enforcement of the single-amendment rule. Eliminates concurrent
-amendment corruption risk.
-Token impact: Neutral — one directory scan at preflight.
-Effort: Low
+Resolution confirmed: `amendment_cycle_prompt.md` v1.2 STEP -1.3 explicitly checks
+`claude/cycles/<original_cycle_id>/amendments/` for any existing amendment with
+`amendment_state.json.status` not equal to `Sealed` or `Withdrawn`. This is a hard gate in
+both modes. No change required.
 
 ---
 
-**IMP-39 — Amendment withdrawal has no defined procedure, state transition, or record**
+**IMP-39 — Amendment withdrawal has no defined procedure, state transition, or record** ⚠️ PARTIALLY RESOLVED
 Area: Lifecycle | State | Failure Handling
-Problem: §6B.8 mentions "seal or withdraw" as the two terminal states for an amendment but
-defines no withdrawal procedure. There is no defined: state value for withdrawal in
-`amendment_state.json`, update to `.claude_current_state.json` on withdrawal, permanent record
-requirement, or effect on the backlog lock (which IMP-09 established is held during amendment).
-Why it matters: A withdrawn amendment leaves the system in an undefined state. If the backlog
-lock is held and the withdrawal procedure doesn't release it, the lock becomes stale. If
-`.claude_current_state.json` is not updated, Sprint Planning may still look for
-`amended_backlog_slice_path` and find a withdrawn artefact.
-Recommended change: Define the withdrawal procedure in `amendment_cycle_prompt.md` as an
-explicit command path (`amend cycle --withdraw --cycle <cycle_id> --amendment <AMD-id>`).
-Steps: (1) set `amendment_state.json` status = `withdrawn`, (2) clear
-`amended_backlog_slice_path` from `.claude_current_state.json`, (3) release backlog lock,
-(4) append withdrawal record to `amendment_lessons.md` (IMP-37), (5) commit. Withdrawal is a
-permanent record — `amendment_state.json` is retained, not deleted.
-Expected benefit: Withdrawal is deterministic and leaves no orphaned state. Backlog lock is
-always released on withdrawal.
+Status: `amendment_cycle_prompt.md` §10 Withdrawal section exists with an explicit procedure —
+better than the playbook implied. State transition, `.claude_current_state.json` update, and
+permanent record requirement are all defined. One gap remains unaddressed:
+If the amendment reached STEP 5 (backlog update) before withdrawal, `backlog.md` contains
+amendment changes that are no longer active. §10 defines no rollback of the backlog write.
+The original `stage4_backlog_slice.md` is stated as "the active source of truth" but `backlog.md`
+has been modified and the amendment marker is present. Sprint Planning reads `backlog.md` — it
+would see the withdrawn amendment's changes.
+Recommended change: Add to §10 Withdrawal: if `backlog_txn.json` state = `committed` (STEP 5
+completed), a backlog rollback step is required before withdrawal can complete. Rollback: remove
+the amendment marker section from `backlog.md` using the same lock/transaction protocol, then
+update `backlog_txn.json` state = `rolled_back`. The withdrawal procedure should be invoked via
+`amend cycle --withdraw` only after rollback completes.
 Token impact: Neutral.
 Effort: Low
 
@@ -1124,47 +1144,61 @@ Effort: Low
 
 ---
 
-**IMP-41 — Capacity feasibility `warn` state is never resolved or acknowledged after Phase 1B**
+**IMP-41 — Capacity `warn` acknowledged via `over_allocation_accepted` but no dedicated audit field** ⚠️ PARTIALLY RESOLVED
 Area: Lifecycle | Governance
-Problem: Release Planning STEP 4.5 produces a capacity feasibility check with possible result
-`warn`. The Publish Gate allows `warn` in standard mode. After Phase 1B publishes, nothing in
-Phase 2 (Sprint Planning), Phase 3, or Phase 4 requires the `warn` to be acknowledged, recorded
-as an accepted risk, or resolved. A `warn` representing significant over-allocation carries
-forward invisibly into sprint execution.
-Why it matters: A capacity `warn` is a signal that the sprint plan may be undeliverable. If it
-is never acknowledged, the team enters execution knowing (at the planning engine level) that
-capacity is strained, but with no formal record that this was accepted. When items are not
-delivered, there is no audit trail connecting the outcome to the known risk.
-Recommended change: Sprint Planning STEP -1 reads `stage4_5_capacity_check` from `state.json`.
-If value is `warn`: require explicit Product Owner acknowledgement before proceeding (standard
-mode) or halt (strict mode). Acknowledgement recorded in `sprint_planning_notes.md` and
-`.claude_current_state.json` as `capacity_warn_acknowledged = true`. This converts a silent
-carry-forward into a deliberate accepted risk with an audit trail.
-Expected benefit: Capacity warnings are always acknowledged before sprint execution begins.
-Creates an audit trail connecting capacity risk to delivery outcomes.
+Status: Confirmed from live `.claude_current_state.json` — the current cycle has:
+- `release_plan.capacity_check: "warn"` (set at Release Planning)
+- `sprint_planning.over_allocation_accepted: true` (set at Sprint Planning)
+The `warn` was acknowledged — the Product Owner accepted over-allocation, recorded in the sprint
+planning block. The practical risk described (entering execution without any acknowledgement) did
+not materialise in this cycle. The acknowledgement mechanism used was `over_allocation_accepted`
+rather than a dedicated `capacity_warn_acknowledged` field.
+Remaining gap: The two fields serve overlapping but distinct purposes. `over_allocation_accepted`
+confirms capacity was discussed and accepted. `capacity_check: "warn"` is the Release Planning
+engine's output before sprint scope was selected. After sprint scope selection, the actual
+utilisation may be lower than the warn threshold (e.g. if under-capacity items were deferred).
+The `over_allocation_accepted` flag tells you the PO accepted the scope, not that the warn was
+specifically reviewed and acknowledged as a known risk. No `capacity_warn_acknowledged` field
+exists in the state file — the distinction is not captured.
+The second gap: Sprint Planning STEP -1 has no check on `release_plan.capacity_check`. The
+`warn` is only surfaced in STEP 0 ("If the check result was `warn`: surface the warning to the
+user before proceeding") — advisory, not gated. In strict mode it should halt pending explicit
+PO acceptance; in standard mode it should require acknowledgement before seal.
+Recommended change (narrowed): Sprint Planning STEP -1 (or STEP 0) should read
+`release_plan.capacity_check` from `.claude_current_state.json` and, if `warn`, require the
+Product Owner to provide a one-line acknowledgement before proceeding to scope selection (not
+just before seal). Add `capacity_warn_acknowledged: true` to the STEP 7 state write when the
+PO acknowledgement is recorded. This separates the risk acknowledgement from the scope
+acceptance decision. The field already named in `sprint_planning_notes.md` structure should
+be the canonical capture point.
+Expected benefit: Clear audit trail distinguishing "capacity risk acknowledged" from "scope
+accepted." Downstream queries can identify which cycles entered execution with an unresolved
+capacity signal.
 Token impact: Neutral — one additional field read at Sprint Planning preflight.
 Effort: Low
 
 ---
 
-**IMP-42 — `execution_state.json sealed = true` is a single unverified boolean gate for Phase 4**
+**IMP-42 — Phase 4 corroborating checks confirmed; Post-Ship STEP -1 has one remaining gap** ⚠️ PARTIALLY RESOLVED
 Area: State | Failure Handling
-Problem: Phase 4 entry requires `.claude_current_state.json` status = `Sprint_Complete` and
-`execution_state.json sealed = true`. The sealed flag is a single boolean with no corroborating
-fields — it could be manually set to bypass Phase 3 completion without any of the Phase 3 exit
-criteria being met. Every other critical state transition has multiple corroborating checks.
-Why it matters: Phase 4 is the verification gate for the entire sprint. If it can be entered by
-manually setting a single boolean, the verification guarantee is meaningless. A compromised or
-mistaken flag produces a verification report against an incomplete sprint with no detection.
-Recommended change: Phase 4 STEP -1 adds corroborating checks beyond `sealed = true`:
-(1) `sprint_close.md` exists and contains a verification readiness statement,
-(2) at least one `qa_evidence_EPIC-xx.md` exists with a completed sign-off block,
-(3) all ST items in `execution_state.json` have a recorded outcome (not null).
-These three checks confirm that Phase 3 actually ran rather than being bypassed. None require
-reading large documents in full — they are existence and field checks only.
-Expected benefit: Phase 4 entry requires genuine Phase 3 completion. Manual bypass via single
-boolean is no longer sufficient.
-Token impact: Neutral — three lightweight existence/field checks at preflight.
+Status: `delivery_verification_prompt.md` STEP -1 provides strong corroborating checks — better
+than the playbook implied:
+- STEP -1 (first action): reads `execution_state.json`, confirms `sealed = true`
+- STEP -1.2: reads `sprint_close.md` verification readiness statement; halts if any of the three
+  fields (`spec references populated`, `deviations filed`, `QA evidence logs complete`) are `No`
+- STEP -1.3: confirms `qa_evidence_EPIC-xx.md` exists for every merged EPIC with DoQ sign-off
+These three checks precisely match the recommendations in this IMP. Phase 4 entry is
+well-governed — the corroborating checks exist and are hard gates. One narrower gap remains:
+`post_ship_closure.md` STEP -1.2 checks only `execution_state.json.sealed = true`. It does not
+verify the verification readiness statement within `sprint_close.md`. An execution record sealed
+against a close record with readiness gaps would pass Post-Ship preflight even though Phase 3
+documented an incomplete state.
+Recommended change: Add to `post_ship_closure.md` STEP -1 (after the sealed check):
+"Read `sprint_close.md` — verify the verification readiness statement: all three fields must be
+`Yes`. If any field is `No`: halt. A close record that documented readiness gaps should not
+proceed to Post-Ship Closure without a PMO Lead note explaining how they were resolved."
+Expected benefit: Post-Ship Closure only runs against cycles where Phase 3 confirmed readiness.
+Token impact: Neutral — one field check at preflight.
 Effort: Low
 
 ---
@@ -1193,87 +1227,777 @@ Effort: Low
 
 ---
 
-**IMP-44 — `run sprint` resume after EPIC merge has no defined state read pattern**
+**IMP-44 — `run sprint` resume algorithm is partially defined; sub-item resume not specified**
 Area: State | Failure Handling | Lifecycle
-Problem: §12 instructs "re-invoke `run sprint --cycle <cycle_id>` after each EPIC merge" but
-does not define how the engine determines which EPICs are complete and which to start next.
-`execution_state.json` presumably holds per-EPIC status, but this is implied rather than
-stated. If a session crashes mid-EPIC, it is undefined whether re-invocation resumes the
-current EPIC from the last completed ST item or restarts the EPIC from the beginning.
-Why it matters: Mid-EPIC crashes are the most common failure mode in a long-running execution.
-Without a defined resume pattern, re-invocation may duplicate work, skip completed items, or
-restart from an incorrect position — all of which produce inconsistent `execution_state.json`
-and `qa_evidence_EPIC-xx.md` records.
-Recommended change: Define in `execution_prompt.md` (and reference in §8): on invocation
-without `--epic` flag, engine reads `execution_state.json` and selects the first EPIC with
-status not in `{merged, returned_to_backlog}`. On invocation with `--epic` flag, engine reads
-the EPIC's ST item list from `execution_state.json` and resumes from the first ST item with
-status not in `{done, returned_to_backlog}`. Both paths are explicitly documented as the
-canonical resume algorithm. Add `last_completed_step` field to each ST item entry in
-`execution_state.json` to support sub-item resume.
-Expected benefit: Mid-EPIC crashes produce deterministic, correct resume. No work is
-duplicated or skipped.
-Token impact: Neutral — resume reads existing `execution_state.json` rather than re-reading
-full sprint backlog.
+Status: `execution_prompt.md` §10 Resumability and §10.1 Block Re-Evaluation define the resume
+pattern more explicitly than the playbook implied:
+- On invocation: reads `execution_state.json`, resumes from first item with status
+  `not_started`, `in_progress`, or `blocked_*`
+- Never re-executes items already marked `done` or `merged`
+- Block re-evaluation explicitly defined: checks unblock criteria on each resume
+- STEP -1 explicitly reads `execution_state.json` as first action and branches on whether
+  it exists (resume) or not (fresh run)
+This is substantially better than the playbook summary suggested. The EPIC-level resume pattern
+is handled by §10's item-status-based resume. One gap remains:
+The STEP 4 merge gate outputs a re-invocation reminder: "re-invoke `run sprint --cycle <cycle_id>`
+after each subsequent EPIC merge." On re-invocation, the engine resumes from the first item with
+status not in `{done, merged}`. This is correct for inter-EPIC resume. However, for mid-EPIC
+crash (engine fails mid-STEP-3 loop for a specific ST item), the resume is from the first ST item
+with status `in_progress`. The `in_progress` status is set at item start but there is no record
+of which sub-step within STEP 3.1 was last completed. If the crash occurred after commit but
+before `execution_state.json` update, the resume algorithm will re-attempt the commit — the
+idempotency is provided by the existing git commit format (`[EPIC-xx][ST-xx]`) but only if the
+issue and branch state can be re-read to determine whether the commit already exists.
+Why it matters: The most common crash point is between write-to-disk and state-file-update. The
+existing resume pattern handles this for items, not for the operations within an item execution.
+Recommended change: Narrow the IMP to the sub-item gap only. Add `last_completed_substep` field
+to each ST item entry in `execution_state.json` with values: `not_started | commit_pending |
+committed | issue_updated | done`. The resume algorithm for `in_progress` items reads this field
+to determine the safe re-entry point within STEP 3.1. This prevents duplicate commits and
+duplicate issue updates on crash recovery.
+Expected benefit: Mid-item crashes produce deterministic, correct resume. Existing EPIC-level and
+item-level resume confirmed correct — no change needed there.
+Token impact: Neutral — reads one additional field per `in_progress` item on resume.
 Effort: Low
 
 ---
 
-**IMP-45 — Dry-run behaviour is undefined and inconsistent across engines**
+**IMP-45 — Dry-run is defined in three engines but lacks a shared standard; execution dry-run has a state initialisation gap**
 Area: Governance | Failure Handling | Automation
-Problem: Five engines support `--dry-run` (Post-Ship Closure, Sprint Planning, Execution,
-`manage roadmap`, `groom backlog`) but no document defines what dry-run must and must not do.
-Specific gaps identified from the playbook:
-(1) Post-Ship Closure `--dry-run`: "Read all inputs and produce a closure plan without making
-    any writes or commits" — this is the only engine with an explicit dry-run definition, and
-    it is in the playbook body rather than a shared standard.
-(2) Sprint Planning `--dry-run`: "Preview only — no writes or state updates" — minimal
-    definition, does not address lock acquisition.
-(3) Execution `--dry-run`: "Plan only — no writes, commits, or GitHub operations" — does not
-    address `execution_state.json` initialisation, which may be required for the plan to be
-    produced.
-(4) Phase 1M engines: `--dry-run` described as "always safe — produces change plan without
-    writing" — does not address whether the backlog lock is acquired.
-No engine defines whether dry-run produces a structured output or free-form prose, what a
-downstream agent or human needs to see to validate the plan, or whether dry-run output is
-committed or ephemeral.
-Why it matters: Dry-run is the primary safety mechanism before committing destructive or
-irreversible operations (Post-Ship Closure writes to Class 1 documents; Execution writes
-code). An inconsistent or underspecified dry-run undermines this safety mechanism.
-Recommended change: Define a dry-run standard in `shared_standards.md` §12 (or new §13):
-(1) No writes to any file, (2) No lock acquisition, (3) No external API calls, (4) Reads all
-inputs required for the live run, (5) Produces a structured `dry_run_plan.md` in the cycle
-folder with: engine name, invocation timestamp, planned writes (file | operation | content
-summary), planned state transitions, estimated token cost, and a "SAFE TO PROCEED: Y/N"
-summary. Update each engine's dry-run description to reference this standard. Make
-`dry_run_plan.md` an entry in the Artefact Register (Class 4, ephemeral — not committed).
-Expected benefit: Dry-run becomes a reliable, consistent safety mechanism across all engines.
-Agents and humans can validate plans before execution with confidence.
-Token impact: Neutral — dry-run already reads all inputs; structured output replaces ad-hoc
-prose.
-Effort: Low (standard definition) / Medium (updating all five engine prompts)
+Status: Confirmed from actual prompt text — better than the playbook summary suggested:
+(1) ✅ Post-Ship Closure: §2 defines "read all inputs and produce a full closure plan — listing
+    every write that would be made, every step outcome, and any flags — without making any writes,
+    state updates, or commits. Dry-run output is the deliverable; the routine ends after producing
+    it." §5 adds "dry-run exception: none of the permitted writes below may be made." STEP 0
+    exits after producing the closure plan. STEP -1.6 skips the write test. §9 invariant: "dry-run
+    produces no side effects." This is a complete, well-defined dry-run implementation.
+(2) ✅ Sprint Planning: §2 defines "read all inputs and produce a planning preview without writing
+    any artefacts or updating state. The pip-audit scan (STEP -1.8) still runs — it is a read-only
+    operation." This is adequate — pip-audit exception is explicitly noted.
+(3) ✅ Sprint Execution: §2 defines "--dry-run optional: plan execution without performing writes,
+    commits, or GitHub operations. Produce a dry-run report only." Less detailed than Post-Ship
+    but functionally clear.
+One gap confirmed: Sprint Planning and Sprint Execution dry-run produce a "preview" or "report"
+(free-form prose implied), while Post-Ship produces a structured closure plan. There is no common
+output schema across the three. Additionally, the Sprint Execution dry-run says "no writes,
+commits, or GitHub operations" but does not address `execution_state.json` initialisation —
+the engine needs to know what items are in scope to produce the plan, which normally requires
+reading or creating the execution state. If execution_state.json does not exist, the dry-run
+cannot work without at least a read-only parse of the backlog slice.
+Recommended change: Add a dry-run standard to `shared_standards.md` §12 defining:
+(1) No writes to any governance, cycle, or source file. (2) No lock acquisition. (3) No
+external API calls (no `gh` CLI, no `git` writes). (4) Reads all inputs required for the live
+run. (5) Output schema: a structured `dry_run_plan.md` (or inline structured report) listing
+engine name, invocation timestamp, planned writes (file | step | content summary), planned
+state transitions, planned GitHub operations, and a SAFE TO PROCEED: Y/N summary. (6) For
+engines with state initialisation (Sprint Execution): dry-run parses the backlog slice
+read-only; it does not write execution_state.json. Update Sprint Execution §2 to note: "In
+dry-run mode, execution_state.json is not created — the plan is produced from the backlog slice
+directly." Update Sprint Planning §2 to reference §12 standard for output format.
+Expected benefit: Dry-run output becomes structured and machine-readable across all engines.
+The execution dry-run state initialisation gap is resolved.
+Token impact: Neutral — dry-run reads the same inputs; structured output replaces ad-hoc prose.
+Effort: Low (standard definition) / Low (updating the three affected prompts — all already have dry-run support)
 
 ---
 
-*Session notes:*
-*IMP-01–10: Complete as of 2026-03-08.*
-*IMP-11–20: Identified 2026-03-08 (v3.3 governance audit). IMP-19 superseded by IMP-29.*
-*IMP-21–29: Identified 2026-03-08 (token efficiency audit + lessons learnt architecture).*
-*IMP-30–36: Identified 2026-03-08 (six-dimension audit: role charters, first-cycle, mode*
-*parity, write scope, idempotency, version consistency).*
-*IMP-37–45: Identified 2026-03-08 (amendment sub-lifecycle, dry-run standard, and*
-*miscellaneous lifecycle gaps).*
-*Recommended implementation order:*
-*Tier 1 — Low effort, high correctness value, no dependencies:*
-*IMP-36 (version drift) → IMP-33 (mode parity) → IMP-35 (idempotency guards) →*
-*IMP-32 (first-cycle guards) → IMP-38 (amendment machine enforcement) →*
-*IMP-39 (amendment withdrawal) → IMP-40 (blocked SLA) → IMP-41 (capacity warn) →*
-*IMP-42 (execution_state corroboration) → IMP-44 (sprint resume algorithm) →*
-*IMP-45 (dry-run standard — definition only)*
-*Tier 2 — Medium effort, high token saving:*
-*IMP-24 → IMP-25 → IMP-26 (token savings, no dependencies) →*
-*IMP-28 (prerequisite for IMP-29) → IMP-23 → IMP-27 → IMP-34 (write scope)*
-*Tier 3 — Requires prior decisions or cross-cutting changes:*
-*IMP-29 (requires IMP-28 validated) → IMP-17 → IMP-30 → IMP-31 (requires IMP-17) →*
-*IMP-43 (spec debt) → IMP-37 (amendment lessons, requires IMP-28 or standalone) →*
-*IMP-22 (preflight scope — broad) → IMP-45 (engine updates)*
+---
+
+### Open — Direct prompt audit findings (2026-03-08)
+
+*Findings from release_planning_prompt.md v2.13, shared_standards.md v1.4, amendment_cycle_prompt.md v1.2.*
+
+---
+
+**IMP-46 — §10.1 issue_import references stale source for EPIC descriptions**
+Area: Prompt | Cross-Document Consistency
+Problem: `release_planning_prompt.md §10.1` states: "For EPIC descriptions, source from
+`release_plan.md ## Execution Plan` section." Since v2.11, STEP 3 writes compact table rows to
+`## Execution Plan` (per IMP-08) — not full descriptions. An issue import generated from §10.1
+would contain one-line table cell content as the issue body — insufficient for a useful GitHub
+issue. §10.2 (GitHub automation) iterates `stage4_backlog_slice.md` directly, which does contain
+full descriptions. The two issue generation paths are now inconsistent with each other and §10.1
+is stale relative to the v2.11 consolidation.
+Why it matters: Issue import produces low-quality, incomplete issue bodies. The agent following
+§10.1 faithfully will generate unusable content. Inconsistency between §10.1 and §10.2 means the
+two issue generation paths produce materially different outputs for the same sprint.
+Recommended change: Update §10.1: remove the line "For EPIC descriptions, source from
+`release_plan.md ## Execution Plan` section." Replace with: "For EPIC descriptions, source from
+`stage4_backlog_slice.md` (same source as §10.2 GitHub automation)." The backlog slice is the
+canonical source for all issue content regardless of generation path.
+Expected benefit: Both issue generation paths produce consistent, complete issue bodies.
+Token impact: Neutral.
+Effort: Low
+
+---
+
+**IMP-47 — STEP -1.4 temp file has no defined cleanup step and may leave an unclassed artefact**
+Area: Governance | Write Scope
+Problem: `release_planning_prompt.md` STEP -1.4 creates a temp file under `claude/cycles/<cycle_id>/`
+and states: "Remove it if possible; if not, keep it and record it in the run manifest." The Write
+Scope (§7) allows writes to `claude/cycles/<cycle_id>/*`, so the temp file is technically
+within scope. However if it cannot be removed it becomes a permanent unclassed artefact in the
+cycle folder — no document class, no header, no owner — non-compliant under the lifecycle guide.
+No defined cleanup step exists after STEP 0.
+Why it matters: A sealed cycle folder containing an unclassed file contaminates the historical
+record. Drift detection may flag unknown files in sealed cycles on future reads.
+Recommended change: Define a fixed temp filename: `.write_test` (hidden file, no class required).
+Add a cleanup obligation to STEP 0: "Delete `.write_test` if it exists in the cycle folder before
+proceeding. If deletion fails: halt — the environment is not safe to write to." This converts an
+ambiguous "remove if possible" into a deterministic pre-STEP 0 cleanup gate.
+Expected benefit: Cycle folders remain clean. Hidden file naming removes any class obligation.
+Token impact: Neutral.
+Effort: Low
+
+---
+
+**IMP-48 — `gh_issue_template.md` is referenced in shared_standards but ungoverned and unpreflight-checked**
+Area: Governance | Prompt–Playbook Alignment
+Problem: `shared_standards.md §6` states: "Use `claude/system/gh_issue_template.md` as the body
+template" for GitHub issue creation, with a full variable mapping table. This file is not listed
+in: the Artefact Register (§13 of the playbook), the Release Planning STEP -1.1 required files
+check, or any engine's preflight. No document class, owner, or version is assigned.
+If the file is missing: `--issues gh` silently produces malformed issue bodies or fails without
+a clear error path.
+Why it matters: A missing template causes silent failure of the most visible external output the
+system produces (GitHub issues). The file has no governance record and could drift from the
+shared_standards §6 variable mapping without detection.
+Recommended change: (1) Add `claude/system/gh_issue_template.md` to the Artefact Register as
+Class 6 (Governance Prompt), Owner: Head of Specs Team. (2) Add it to Release Planning STEP -1.1
+required files check when `--issues gh` or `--issues import` is specified (conditional preflight).
+(3) Add to `shared_standards.md §11` prompt version list so version drift is caught by STEP -1.7.
+Expected benefit: Missing template causes a clean preflight halt. Template is versioned,
+governed, and drift-detected.
+Token impact: Neutral.
+Effort: Low
+
+---
+
+**IMP-49 — Amendment STEP -1.4 requires `stage3_execution_plan.md` which no longer exists post-v2.11** ⚠️ BLOCKING
+Area: Lifecycle | Prompt–Playbook Alignment | Failure Handling
+Problem: `amendment_cycle_prompt.md` STEP -1.4 required files check includes:
+`claude/cycles/<original_cycle_id>/stage3_execution_plan.md`. Since `release_planning_prompt.md`
+v2.11, Stage 3 content is written as a section within the consolidated `release_plan.md` — the
+separate `stage3_execution_plan.md` file is no longer produced. Any amendment invoked against a
+cycle produced by release_planning_prompt v2.11+ will fail STEP -1.4 with "required file missing"
+even though the cycle is valid and complete. The amendment changelog shows v1.0 was released
+2026-03-07, the same day as release_planning_prompt v2.11 — this reference was already stale
+at initial release of the amendment engine.
+Why it matters: Every amendment cycle against any modern release plan will fail at preflight.
+This is a hard gate failure that blocks all amendment capability for the system's entire working
+history of cycles.
+Recommended change: Update amendment STEP -1.4 required files:
+- Remove: `claude/cycles/<original_cycle_id>/stage3_execution_plan.md`
+- Add: `claude/cycles/<original_cycle_id>/release_plan.md`
+- Add version detection: read `original_cycle state.json.prompt_schema_version`. If `v2`:
+  require `release_plan.md`. If `v1` or absent: require `stage3_execution_plan.md`.
+  This preserves backward compatibility with any pre-v2.11 cycle that may still be
+  referenced by an amendment.
+Similarly update the §4 amendment scope restriction ("may not change `stage3_execution_plan.md`")
+to reference `release_plan.md ## Execution Plan` section for schema v2 cycles.
+Expected benefit: Amendment cycles work against all modern release plans. Legacy cycles retained
+via version detection.
+Token impact: Neutral.
+Effort: Low
+
+---
+
+**IMP-50 — Closure escalations have an irreconcilable class conflict**
+Area: Governance | State
+Problem: `shared_standards.md §4` lists `claude/cycles/<cycle_id>/closure_record.md §6` as a
+file that receives escalation entries (append-only, Class 4 behaviour). `shared_standards.md §3`
+defines `ESC-CLOSE-YYYYMMDD-nn` identifiers for Post-Ship Closure escalations. However,
+`closure_record.md` is Class 3 (Operational Record) — the lifecycle guide defines Class 3 as
+"immutable after filing." Escalation entries by definition require appending after the initial
+filing (they are raised, then resolved). A document cannot be both immutable-after-filing and
+append-only-for-escalations.
+Why it matters: Post-Ship Closure that raises an escalation must either: (a) violate Class 3
+immutability by appending to `closure_record.md`, or (b) have no compliant place to record
+closure escalations. Either path is non-compliant. The conflict makes the current escalation
+routing for Post-Ship Closure formally unenforceable.
+Recommended change: Create `closure_escalations.md` (Class 4, append-only) as a distinct
+Post-Ship Closure escalation file, consistent with every other phase. Update `shared_standards.md
+§4` to replace `closure_record.md §6` with `claude/cycles/<cycle_id>/closure_escalations.md`.
+Remove the §6 escalation section from the `closure_record.md` template. `closure_record.md`
+documents the outcome; `closure_escalations.md` documents the process.
+Expected benefit: Class 3 immutability is preserved. Closure escalations have a proper Class 4
+home. Pattern is consistent with all phases.
+Token impact: Neutral.
+Effort: Low
+
+---
+
+**IMP-51 — Amendment backlog lock is held across human ratification wait with no release mechanism**
+Area: State | Failure Handling
+Problem: `amendment_cycle_prompt.md` STEP -1.1 acquires `claude/backlog/.lock` with marker
+`AMEND-CHECK:<original_cycle_id>` and states: "Release this lock after STEP 5 completes or on
+any halt path below. Do not hold the lock across human confirmation steps (STEP 3 ratification)."
+This is a parenthetical instruction — there is no procedural lock release step between STEP -1
+and STEP 3, and no mechanism by which the engine releases and re-acquires the lock around the
+ratification gap. The instruction cannot be self-enforced: the engine pauses awaiting human
+input, the lock file exists on disk, and there is no defined action that releases it mid-process
+without abandoning the amendment.
+Why it matters: Ratification may take hours or days. During this window, `claude/backlog/.lock`
+is held with no timeout, blocking Release Planning (STEP 3.9), any Phase 1M engine that needs
+the lock, and any future amendment attempt. Resolution requires manual lock deletion — a
+governance violation under the no-auto-delete rule.
+Recommended change: Add an explicit STEP 2.5 between STEP 2 (Proposed Changes) and STEP 3
+(Ratification):
+
+"**STEP 2.5 — Release Lock Before Ratification (Hard Requirement)**
+Release `claude/backlog/.lock` before invoking STEP 3. Update `amendment_state.json`:
+`backlog_lock_status = released_pending_ratification`. The lock will be re-acquired at
+STEP 5.1 under the standard protocol with marker `AMD:<release>:<original_cycle_id>:<amendment_id>`.
+Do not proceed to STEP 3 with the lock held."
+
+Update §11 governance invariants: "`sprint_sealed` check is atomic — but the full backlog lock
+is not held across human confirmation steps. Lock released at STEP 2.5, re-acquired at STEP 5.1."
+Expected benefit: Backlog lock is not held during ratification. Eliminates the soft deadlock
+risk for all other engines during the amendment ratification window.
+Token impact: Neutral.
+Effort: Low
+
+---
+
+---
+
+### Open — Second direct prompt audit findings (2026-03-08)
+
+*Findings from execution_prompt.md v1.6, post_ship_closure.md v1.4, sprint_planning_prompt.md v1.4.*
+
+---
+
+**IMP-52 — Sprint Planning reads `stage3_execution_plan.md` which no longer exists post-v2.11**
+Area: Lifecycle | Prompt–Playbook Alignment | Failure Handling
+Problem: `sprint_planning_prompt.md` §5 Source-of-Truth Planning Inputs lists
+`claude/cycles/<cycle_id>/stage3_execution_plan.md` as a Required input. Since
+`release_planning_prompt.md` v2.11, Stage 3 content is written as a section within the
+consolidated `release_plan.md` — `stage3_execution_plan.md` is no longer produced. This is the
+same class of defect as IMP-49 (amendment preflight). Sprint Planning STEP -1.5 would fail on
+`stage3_execution_plan.md` with "required file missing" for every modern cycle.
+Furthermore, STEP 0 reads "From `stage3_execution_plan.md`: sequencing dependencies, risk IDs
+associated with EPICs, estimated effort per EPIC." This data now lives in `release_plan.md ##
+Execution Plan` section.
+Why it matters: Same as IMP-49 — this blocks Sprint Planning for all cycles produced after
+v2.11. Sprint Planning and Amendment are both broken by the same v2.11 consolidation. This may
+have been caught already (sprint_planning_prompt.md was updated to v1.4 on 2026-03-08, same as
+today), but the §5 reference was not updated.
+Recommended change: Update `sprint_planning_prompt.md` §5 and STEP 0:
+- Remove `stage3_execution_plan.md` from required inputs
+- Add `release_plan.md` as a required input (already implicitly needed for scope data)
+- Add version detection: if `state.json.prompt_schema_version = "v2"`, read
+  `release_plan.md ## Execution Plan` for sequencing, risk IDs, and effort estimates.
+  If `v1` or absent, read `stage3_execution_plan.md`.
+Update STEP -1.5 required files check to match.
+Expected benefit: Sprint Planning works for all modern cycles. Legacy compatibility preserved.
+Token impact: Neutral.
+Effort: Low
+
+---
+
+**IMP-53 — Execution Engine write scope lists `lessons_learnt_execution.md` but IMP-28 retires it**
+Area: Lifecycle | Cross-Document Consistency
+Problem: `execution_prompt.md` §7 Write Scope Restriction permits creating
+`claude/cycles/<cycle_id>/lessons_learnt_execution.md`. STEP 5.4 writes it via the
+lessons_learnt_prompt. IMP-28 proposes retiring this file and replacing it with a phase-tagged
+section in `lessons_learnt_cycle.md`. If IMP-28 is implemented, STEP 5.4 and §7 need updating.
+Current gap: STEP 5.4 invokes `lessons_learnt_prompt.md §3.3` — this subsection reference is
+specific to the current Sprint Execution inputs. If the lessons learnt prompt is restructured as
+part of IMP-28, this reference will be stale.
+Why it matters: IMP-28 implementation without corresponding updates to execution_prompt.md will
+leave the engine writing a retired artefact to a retired path.
+Recommended change: Flag as an IMP-28 dependency. When IMP-28 is implemented: update
+`execution_prompt.md` STEP 5.4 to append to `lessons_learnt_cycle.md ## Phase 3` section
+instead of creating a separate file. Update §7 write scope: remove `lessons_learnt_execution.md`,
+add `lessons_learnt_cycle.md` (append-only, Phase 3 section only).
+Token impact: Saves slightly — one file append vs one file create; no change to read operations.
+Effort: Low
+Dependency: IMP-28
+
+---
+
+**IMP-54 — Post-Ship Closure reads three lessons learnt files; IMP-28 consolidates to one**
+Area: Token Efficiency | Cross-Document Consistency
+Problem: `post_ship_closure.md` §4 lists three separate required lessons learnt inputs:
+- `lessons_learnt.md` (Release Planning)
+- `lessons_learnt_execution.md` (Sprint Execution)
+- `lessons_learnt_verification.md` (Delivery Verification, "if produced")
+STEP 8 reads all three explicitly. IMP-28 proposes replacing these three with one
+`lessons_learnt_cycle.md` with phase-tagged sections. If IMP-28 is implemented, Post-Ship
+Closure STEP 8 and §4 need updating.
+Why it matters: This is the primary token saving from IMP-28 — the three-file read at Post-Ship
+Closure is the highest-cost lessons learnt operation in the system. IMP-28 without Post-Ship
+updates would produce the single file but still require reading the old three.
+Recommended change: Flag as an IMP-28 dependency. When IMP-28 is implemented: update §4 to list
+only `lessons_learnt_cycle.md` as required. Update STEP 8 to read the single structured file.
+Remove the three per-phase entries from §4 and the write scope (must-not-modify list). The
+consolidated file becomes the single source for STEP 8 review and STEP 8.5 closure record.
+Token impact: Saves — three full file reads replaced by one structured file read.
+Effort: Low
+Dependency: IMP-28
+
+---
+
+**IMP-55 — `next_cycle_unblocked` lifecycle confirmed correct; false positive resolved** ✅ RESOLVED
+Area: State | Lifecycle
+Resolution confirmed: `delivery_verification_prompt.md` STEP 9 explicitly sets
+`next_cycle_unblocked = true` for BOTH `Verified` AND `Verified_with_deviations` status outcomes.
+Only `Not_Verified` results in `next_cycle_unblocked = false`. The concern that
+`Verified_with_deviations` might produce `false` and block Post-Ship Closure was a false positive
+based on ambiguous playbook language — the actual prompt is unambiguous.
+The `post_ship_closure.md` STEP -1.1 check (`next_cycle_unblocked must be true`) is therefore
+correctly consistent with the delivery verification outcome. No change required to either prompt.
+The only remaining question — Post-Ship Closure has no defined path if `next_cycle_unblocked`
+is absent entirely (e.g. if Phase 4 was never run) — is covered by STEP -1.1's status check
+(`status must be Verified or Verified_with_deviations`) which would catch this case first.
+
+---
+
+**IMP-56 — Execution engine STEP -1.7 temp file has the same cleanup gap as IMP-47**
+Area: Governance | Write Scope
+Problem: `execution_prompt.md` STEP -1.7 (Write Permission Test) creates a temporary marker
+file in `claude/cycles/<cycle_id>/` with the same "Remove it. If write fails: halt." instruction
+as Release Planning STEP -1.4. The execution engine's write scope (§7) permits
+`claude/cycles/<cycle_id>/execution_state.json` and similar — a stray temp file has the same
+unclassed artefact risk as IMP-47. The sprint_planning_prompt.md STEP -1.8 has the same pattern.
+All three prompts share the same temp file gap — IMP-47's fix (fixed name `.write_test`, cleanup
+at STEP 0) should be applied uniformly.
+Recommended change: Apply IMP-47's fix to `execution_prompt.md` STEP -1.7 and
+`sprint_planning_prompt.md` STEP -1.8 simultaneously with the release_planning_prompt fix.
+Use `.write_test` as the consistent temp filename across all engines.
+Expected benefit: Consistent temp file handling across all three engines. No unclassed artefacts
+in cycle folders.
+Token impact: Neutral.
+Effort: Low (apply IMP-47 fix uniformly across three prompts)
+
+---
+
+**IMP-57 — Sprint Planning sources-of-truth table references `stage3_execution_plan.md` and not `release_plan.md`; `next_cycle_unblocked` not set by Sprint Planning** *(combined gap note)*
+Area: State | Lifecycle
+Problem: Two small gaps identified from sprint_planning_prompt.md:
+(1) §5 table lists `stage3_execution_plan.md` as a required input with no fallback for
+    schema v2 cycles. This is the same issue as IMP-52 — noting here as a linked reference.
+    IMP-52 covers the remediation.
+(2) Sprint Planning STEP 7 sets `sprint_sealed = true` in `.claude_current_state.json` but
+    does not set `next_cycle_unblocked`. `next_cycle_unblocked` is set by Delivery Verification
+    (Phase 4) and checked by Release Planning (Phase 1B STEP -1.6) and Post-Ship Closure STEP
+    -1.1. Sprint Planning correctly does not set this field. The lifecycle responsibility is
+    correctly scoped — noting here to confirm the chain is intact and no gap exists in Sprint
+    Planning for this field.
+This IMP documents the confirmation that Sprint Planning's state writes are correctly scoped.
+No change required to Sprint Planning for this field.
+Token impact: N/A.
+Effort: N/A — documentation only.
+
+---
+
+---
+
+### Open — Third direct prompt audit findings (2026-03-09)
+
+*Findings from delivery_verification_prompt.md v1.2, .claude_current_state.json (live), team_charter.md v1.4, prompt_change_log.md v1.0.*
+
+---
+
+**IMP-58 — `prompt_change_log.md` is missing entries for `execution_prompt.md` v1.4 and v1.5**
+Area: Governance | Cross-Document Version Consistency
+Problem: `prompt_change_log.md` records `execution_prompt.md` v1.5→v1.6 (Lifecycle Guard added,
+2026-03-07). There is no entry for v1.4→v1.5 or any prior version. `execution_prompt.md` v1.5
+introduced substantial changes (the prompt's own changelog shows: pre-condition status check
+corrected, sprint backlog sealed check added, `amended_backlog_slice_path` handling, `Executing`
+status documented, STEP numbering adjusted). These changes are not recorded in
+`prompt_change_log.md`. There is also no entry for any version before v1.5→v1.6. The
+`delivery_verification_prompt.md` v1.0→v1.1 entry IS present (2026-03-07), so the gap is
+specifically `execution_prompt.md` pre-v1.5 history.
+Why it matters: `prompt_change_log.md` is the authoritative record of all governance prompt
+changes per §11 of `shared_standards.md`. Missing entries mean IMP-10's version compliance
+check will not detect drift if someone manually reverts `execution_prompt.md` to a pre-v1.5
+state — the change log provides no baseline for comparison. The v1.5 changes were the most
+significant correctness-affecting changes in the execution prompt's history.
+Recommended change: Append the missing entries to `prompt_change_log.md` retroactively
+(append-only file — add entries at the end with historical dates and a note "retroactively
+recorded"):
+- `execution_prompt.md` v1.4→v1.5: list the five major changes from the prompt's internal
+  changelog (status check correction, sprint backlog sealed check, amended_backlog_slice_path,
+  Executing status, STEP renumbering).
+Add a standing rule to `shared_standards.md §11`: "Prompt change log entries must be created
+simultaneously with prompt file updates, not retrospectively. A prompt version with no change
+log entry is non-compliant until the entry is filed."
+Expected benefit: Audit completeness for the most change-dense period of prompt evolution.
+Change log becomes a reliable compliance baseline.
+Token impact: Neutral.
+Effort: Low
+
+---
+
+**IMP-59 — `completed_cycle_count` field does not exist in `.claude_current_state.json`; IMP-29 meta-review trigger has no data source**
+Area: State | Lifecycle
+Problem: IMP-29 (meta-review at Post-Ship Closure, triggered by `completed_cycle_count >= 3 AND
+completed_cycle_count % 3 == 0`) requires a field `completed_cycle_count` in
+`.claude_current_state.json`. The live state file has no such field — confirmed by reviewing
+every field in the current JSON. The state file has `prior_cycle` (pointer to the previous
+cycle ID) and `last_rebalance_cycle`, but no counter of completed cycles.
+No engine currently sets or increments this counter. Post-Ship Closure STEP 10 updates
+`status = Closed` and `post_ship_complete = true` but does not increment a cycle count.
+Why it matters: IMP-29 cannot be implemented without this field. More broadly, the system has
+no canonical record of how many cycles have been completed. Operations that depend on cycle
+history (meta-review, trend analysis, backlog health scoring over time) all lack a foundation.
+Recommended change: Add `completed_cycle_count` to the `post_ship_closure.md` STEP 10 global
+state update — increment by 1 each time Post-Ship Closure completes successfully. Initial
+value: if `prior_cycle` is absent, set to 1; if present but field has never existed, derive from
+the `prior_cycle` chain depth or start at 1 with a note. Add the field to `.claude_current_state.json`
+schema documentation in `shared_standards.md §10` or `lifecycle_schema.json` (if that file
+exists — see IMP-61). This is a prerequisite for IMP-29 implementation.
+Expected benefit: Provides the cycle counter required by IMP-29. Enables any future
+cycle-count-dependent operations. Establishes a canonical lifecycle completion record.
+Token impact: Neutral — one field increment at Post-Ship Closure STEP 10.
+Effort: Low
+Dependency: Required by IMP-29 before meta-review can be activated.
+
+---
+
+**IMP-60 — `v2_0_gates` in `.claude_current_state.json` has a manually-tracked condition with no automation**
+Area: State | Governance
+Problem: The live `.claude_current_state.json` contains:
+```json
+"v2_0_gates": {
+  "gate_1_logging": true,
+  "gate_2_api_versioning": true,
+  "gate_3_qa_planning": false,
+  "gate_3_auto_advance": "Once QA planning session for notification delivery documented — see DL-003"
+}
+```
+`gate_3_qa_planning` is `false` with an `auto_advance` condition expressed as a free-text string.
+No engine reads this block, evaluates the condition, or advances the gate. The condition references
+a document (`DL-003`) that is not in any reviewed prompt's required-files list. The gate block
+follows a naming convention (`v2_0_gates`) suggesting it governs v2.0 requirements, but no prompt
+references this block in its preflight checks.
+Why it matters: Gates that are not machine-enforced are not gates — they are reminders. A
+false-value gate with a text-only advance condition can remain `false` indefinitely with no
+enforcement. If v2.0 has a quality or release readiness dependency on QA planning for notification
+delivery, that dependency is invisible to every governed engine.
+Recommended change: Decision required: (1) If `v2_0_gates` is a legitimate release readiness
+gate, identify which engine should check it at preflight (likely Release Planning or Sprint
+Planning for the relevant cycle) and add the check. Define `DL-003` in the artefact register.
+(2) If the gate has already been superseded or is no longer relevant: remove the block from
+`.claude_current_state.json` and document the decision in the decisions record. Free-text
+`auto_advance` conditions must not remain in machine-read state files.
+Expected benefit: State file reflects only machine-enforceable governance conditions. No silent
+obligations carried invisibly across cycles.
+Token impact: Neutral.
+Effort: Low (decision) / Low (implementation once decided)
+
+---
+
+**IMP-61 — `lifecycle_schema.json` is referenced in `.claude_current_state.json` but not validated or documented**
+Area: State | Governance
+Problem: The live `.claude_current_state.json` contains:
+```json
+"lifecycle_schema": "claude/system/lifecycle_schema.json",
+"schema_version": "1.0"
+```
+No reviewed prompt reads `lifecycle_schema.json`, validates against it, or references it. It is
+not in any engine's required-files list or preflight check. `shared_standards.md §10` defines the
+Lifecycle Guard with a valid-from-states table, but does not reference `lifecycle_schema.json` as
+the source of truth for that table. If the file exists, it is orphaned from the governance stack.
+If it does not exist, the reference is a dangling pointer — a state file field that points to a
+non-existent document undermines the "no silent failures" guarantee.
+Why it matters: A schema file that is never validated provides no protection against state drift.
+A dangling pointer in the primary state file is a silent failure mode.
+Recommended change: (1) Verify whether `claude/system/lifecycle_schema.json` exists. (2) If it
+exists: add it to `shared_standards.md §10` as the machine-readable source for the Lifecycle
+Guard valid-from-states table. Add a preflight read to `shared_standards.md §10` Lifecycle Guard:
+"validate active_cycle status against lifecycle_schema.json valid_transitions before executing."
+(3) If it does not exist: create a minimal schema defining the valid status values and
+transitions, or remove the reference from `.claude_current_state.json` and document that the
+Lifecycle Guard is defined in `shared_standards.md §10` prose.
+Expected benefit: The lifecycle schema reference is either validated and enforced, or removed.
+No dangling pointer in the primary state file.
+Token impact: Neutral — schema validation is a one-read preflight check.
+Effort: Low
+
+---
+
+# Implementation Plan — Sprint Planning Operational Playbook
+**Generated:** 2026-03-09
+**Source:** review.md (IMP-11 through IMP-61, resolved items removed)
+**Principle:** Each file is touched exactly once. Batches are ordered by criticality × improvement value.
+
+---
+
+## How to read this plan
+
+Each batch names every file that will be edited and lists every IMP that edit satisfies. Work one batch at a time, version-bump every modified file, and add a single `prompt_change_log.md` entry per file per batch. Do not start Batch N+1 until Batch N is committed and pushed.
+
+Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IMP-57.
+
+---
+
+## BATCH 0 — Blocking defects (fix before the current sprint ends)
+
+**Rationale:** These two defects make the amendment cycle and sprint planning fail at preflight on every modern cycle. They share the same root cause (v2.11 artefact consolidation was not reflected in downstream prompts) and must be fixed together in a single atomic commit.
+
+**Files touched:** `amendment_cycle_prompt.md`, `sprint_planning_prompt.md`
+
+### `amendment_cycle_prompt.md` (→ v1.3)
+| IMP | Change |
+|-----|--------|
+| IMP-49 | STEP -1.4: remove `stage3_execution_plan.md` from required files. Add `release_plan.md`. Add version detection: read `state.json.prompt_schema_version`; if `v2`, require `release_plan.md`; if `v1`/absent, require `stage3_execution_plan.md`. Update §4 amendment scope restriction to reference `release_plan.md ## Execution Plan` for schema v2 cycles. |
+| IMP-51 | Add STEP 2.5 between STEP 2 and STEP 3: "Release `claude/backlog/.lock` before ratification. Set `amendment_state.json.backlog_lock_status = released_pending_ratification`. Re-acquire at STEP 5.1 with marker `AMD:<release>:<cycle_id>:<amendment_id>`." Add governance invariant: "Lock is not held across human confirmation steps." |
+
+### `sprint_planning_prompt.md` (→ v1.5)
+| IMP | Change |
+|-----|--------|
+| IMP-52 | §5 required inputs: remove `stage3_execution_plan.md`, add `release_plan.md`. STEP -1.5 required files check: same substitution. STEP 0 context load: read sequencing, risk IDs, and effort estimates from `release_plan.md ## Execution Plan` (schema v2) or `stage3_execution_plan.md` (schema v1). |
+
+---
+
+## BATCH 1 — State file hygiene and governance quick fixes (highest correctness gain, no dependencies)
+
+**Rationale:** All low-effort, no dependencies, high reliability improvement. Groups all changes to `shared_standards.md` together, then all changes that touch only `execution_prompt.md`, then small single-file fixes.
+
+### `shared_standards.md` (→ v1.5)
+| IMP | Change |
+|-----|--------|
+| IMP-45 | Add §12 Dry-Run Standard: (1) no writes to any file, (2) no lock acquisition, (3) no external API calls, (4) reads all live-run inputs, (5) output is a structured inline report listing engine, timestamp, planned writes (file\|step\|summary), planned state transitions, planned GitHub ops, SAFE TO PROCEED: Y/N. For state-initialising engines (Sprint Execution): parse backlog slice read-only; do not write execution_state.json. |
+| IMP-50 | §4: replace `closure_record.md §6` as escalation target with `claude/cycles/<cycle_id>/closure_escalations.md` (Class 4, append-only). Update ESC-CLOSE identifier routing to match. |
+| IMP-58 | §11 Prompt Version Control: add standing rule — "Entries must be created simultaneously with prompt file updates, not retrospectively. A prompt version with no change log entry is non-compliant until the entry is filed." |
+| IMP-61 | §10 Lifecycle Guard: add reference to `lifecycle_schema.json` as the machine-readable valid-states source. Add note: "If `lifecycle_schema.json` does not exist, create a minimal schema defining valid status values and transitions, then add it to the artefact register." |
+
+### `execution_prompt.md` (→ v1.7)
+| IMP | Change |
+|-----|--------|
+| IMP-20 | STEP 5 (Sprint Close): add check before writing `Sprint_Complete` — all entries in `delegation_log.md` must have a recorded outcome (`done | returned_to_backlog | pending_with_ETA | escalated`). If any entry lacks an outcome: flag in `sprint_close.md` outstanding items; do not block close but record explicitly. |
+| IMP-33 | §2 Invocation Rule or §13 Governance Invariants: add "Ambiguity" definition block — "A condition where the engine cannot determine the required action from AC, spec, and execution state alone. Examples: missing spec reference for a delegated_backend item; AC present but not testable; unresolvable dependency chain." This is the strict-mode halt trigger definition. |
+| IMP-44 | §9.1 schema: add `last_completed_substep` field to ST item entry with values `not_started | commit_pending | committed | issue_updated | done`. §10 Resumability: add sub-item resume rule — "For items with status `in_progress`, read `last_completed_substep` to determine re-entry point within STEP 3.1." |
+| IMP-47 / IMP-56 | STEP -1.7 Write Permission Test: change temp filename to `.write_test`. Add to STEP 0 first action: "Delete `.write_test` if present. If deletion fails: halt." |
+
+### `sprint_planning_prompt.md` (→ v1.6, amending v1.5 from Batch 0)
+
+> **Note:** If Batch 0 and Batch 1 are applied in the same session, merge these changes into the v1.5 edit and release as v1.5 directly. Only split if Batch 0 is committed separately first.
+
+| IMP | Change |
+|-----|--------|
+| IMP-18 | STEP 7 global state write: add `sprint_goal_status: "confirmed"` to the `.claude_current_state.json` block. Values: `not_started | awaiting_po | confirmed`. Set to `confirmed` only after STEP 6.2 sign-off gate passes. |
+| IMP-41 | STEP 0 context load (or STEP -1.2 after release plan sealed check): read `capacity_check` from `.claude_current_state.json → release_plan`. If `warn`: require Product Owner one-line acknowledgement before proceeding to scope selection. Record acknowledgement in `sprint_planning_notes.md`. Add `capacity_warn_acknowledged: true` to STEP 7 state write. In strict mode: halt if no acknowledgement; standard mode: block seal until acknowledged. |
+| IMP-47 / IMP-56 | STEP -1.8 Write Permission Test: same `.write_test` fix as execution_prompt. Add STEP 0 cleanup obligation. |
+
+### `release_planning_prompt.md` (→ v2.14)
+| IMP | Change |
+|-----|--------|
+| IMP-46 | §10.1 issue_import: replace "source from `release_plan.md ## Execution Plan`" with "source from `stage4_backlog_slice.md`." Add note: "This is the same source as §10.2 — both issue generation paths must use the backlog slice as the canonical content source." |
+| IMP-47 | STEP -1.4 Write Permission Test: same `.write_test` fix. Add STEP 0 cleanup obligation. |
+
+### `post_ship_closure.md` (→ v1.5)
+| IMP | Change |
+|-----|--------|
+| IMP-12 | §9 Closure Record template is already defined with 7 sections — confirm all required fields are present: cycle_id, ship_date, verification_status, steps_completed (§2 table), outstanding_actions (§6), lessons_learnt_summary (§5 counts), confirmed_by, confirmed_date. If any are absent from the template, add them. |
+| IMP-34 | §5 Write Scope — `current_roadmap.md` entry: expand from "status update + version headers only" to "status update, ✅ Complete marker, Current Version header, Next planned release header, release summary table status column. No other structural changes." — Canonical spec entry: add "Deviation compliance corrections: notify Head of Specs Team via closure record §6. Do not silently add missing fields without notification." |
+| IMP-42 | STEP -1 (after STEP -1.2 sealed check): add — "Read `sprint_close.md` verification readiness statement. All three fields must be `Yes`. If any is `No`: halt." |
+| IMP-50 | §5 Write Scope: add `claude/cycles/<cycle_id>/closure_escalations.md` as a permitted write (create or append, hard gate blockers only). §9 Closure Record §6: remove escalation routing from `closure_record.md`. |
+| IMP-59 | STEP 10 global state update: add `completed_cycle_count` increment — "Read current value (default 0 if absent); write `completed_cycle_count + 1`." Add to the state write JSON block. |
+| IMP-12 | Ensure `closure_record.md` template in §9 does not contain escalation section (consequence of IMP-50 — closure_record.md becomes immutable-only after IMP-50 fix). |
+
+---
+
+## BATCH 2 — Playbook-only edits (no prompt files touched)
+
+**Rationale:** The playbook is the only file changed. All three changes are cosmetic/governance-hygiene but the version-drift fix (IMP-36) has the highest agent-confusion risk. Do these together in one playbook edit.
+
+### `operational_playbook.md` (→ v3.4)
+| IMP | Change |
+|-----|--------|
+| IMP-36 | §6B source prompt header: update from v2.11 → v2.14. §7 source prompt header: update from v1.2 → v1.5 (or v1.6 if Batches 0–1 merged). §8 source prompt header: update from v1.5 → v1.7. Add standing rule to §14 Governance table: "When a prompt version is updated in §14, the corresponding phase section source prompt header must be updated in the same edit." |
+| IMP-13 | §1 Hard Rules: rule 2 "Decision log is append-only" — reclassify as governance convention (not hard rule enforced by engines) OR add enforcement note describing which engine verifies it. Rule 1 "no addition without displacement" — add note referencing Roadmap Engine §9 net-zero verification check (or flag as requiring Batch 4 addition to roadmap_prompt). |
+| IMP-17 | §3 Document Classes — Class 8 (Proof of Gate): add note "Reserved — not currently produced by any engine. Agents must not generate Class 8 documents unprompted. Activation requires a formal governance decision and versioned update to this playbook." |
+| IMP-33 | §6B (Roadmap Engine section): add note to zero-sum displacement rule — "This rule applies in both strict and standard mode. It is a governance constraint, not a quality gate, and is not relaxed by `--mode standard`." |
+
+---
+
+## BATCH 3 — Idempotency, GitHub, and state consistency fixes (medium complexity, high reliability value)
+
+**Rationale:** These changes touch multiple prompts but are logically cohesive. All address the "resumability guarantee." Group them to avoid a second pass over the same files.
+
+### `release_planning_prompt.md` (→ v2.15)
+| IMP | Change |
+|-----|--------|
+| IMP-24 | STEP 4: add `stage4_issue_manifest.json` production alongside `stage4_backlog_slice.md`. Schema: `[{id, title, epic, description, ac_summary, labels, assignee}]`. §10.2 `sync gh`: update to consume `stage4_issue_manifest.json` instead of parsing markdown. |
+| IMP-35 (gap 4) | §10.2 `sync gh`: add idempotency key — use GitHub issue label containing `cycle_id` as the check-before-create key. If label exists: update; do not create duplicate. |
+| IMP-48 | STEP -1.1 required files: add conditional check — "if `--issues gh` or `--issues import` is specified: verify `claude/system/gh_issue_template.md` exists. If missing: halt with 'gh_issue_template.md not found — issue creation will fail.'" |
+
+### `execution_prompt.md` (→ v1.8)
+| IMP | Change |
+|-----|--------|
+| IMP-35 (gap 2) | STEP 5.4 lessons learnt append (when IMP-28 implemented): add pre-write check — "Before appending Phase 3 section to `lessons_learnt_cycle.md`, check for existing section header `## Phase 3 — <cycle_id>`. If present: skip append." Note: this guard activates with IMP-28; current prose record is unaffected. |
+| IMP-40 | Add SLA tracking to escalation records in `execution_escalations.md`: maximum 72 hours before mandatory escalation to Product Owner regardless of type. At 72 hours: engine writes `BLOCKED_SLA_BREACH` notice and sets `.claude_current_state.json.blocked_sla_breached = true` on next invocation. Add `blocked_sla_breached` to STEP 6 global state write schema. |
+
+### `amendment_cycle_prompt.md` (→ v1.4)
+| IMP | Change |
+|-----|--------|
+| IMP-35 (gap 3) | Prompt change log append step (wherever action-now patches are applied): add pre-write check — "Before appending to `prompt_change_log.md`, check for existing entry with matching prompt name + version string. If present: skip." |
+| IMP-39 | §10 Withdrawal procedure: add backlog rollback instruction — "If STEP 5 (backlog update) completed before withdrawal: the `backlog.md` amendment marker introduced at STEP 5 must be explicitly reversed. Append a reversal entry to `backlog.md` noting the withdrawn AMD-id, original state, and date. Update `amendment_state.json.backlog_rollback_required = true` and `backlog_rollback_completed = <date>` once done." |
+
+### `shared_standards.md` (→ v1.6)
+| IMP | Change |
+|-----|--------|
+| IMP-40 | §4 Escalation format: add SLA breach rule — "Any escalation open for 72 hours without resolution triggers a mandatory `BLOCKED_SLA_BREACH` notice. Engine writes notice to active cycle escalations file and sets `blocked_sla_breached = true` in `.claude_current_state.json` on next invocation." |
+| IMP-48 | §11 Prompt Version Control: add `claude/system/gh_issue_template.md` to the governed prompt list with Owner: Head of Specs Team, Class: 6. |
+
+### `prompt_change_log.md` (→ append)
+| IMP | Change |
+|-----|--------|
+| IMP-58 | Append retroactive entries for `execution_prompt.md` v1.4→v1.5 (status check corrected, sprint backlog sealed check added, amended_backlog_slice_path, Executing status documented, STEP renumbering). Mark with note: "Retroactively recorded 2026-03-09." |
+
+---
+
+## BATCH 4 — Token efficiency (highest token savings, medium effort, no cross-dependencies within batch)
+
+**Rationale:** These changes are independent of each other and independent of Batches 0–3. Ordered by token saving magnitude. IMP-25 is a prerequisite for IMP-23 (if sprint_backlog becomes a reference-only document, the index is the bridge). Do IMP-25 → IMP-24 companion → IMP-23 → IMP-26 → IMP-27.
+
+### `release_planning_prompt.md` (→ v2.16)
+| IMP | Change |
+|-----|--------|
+| IMP-26 | STEP 3 risk register entries: add `escalation_ref` field (null or ESC-id). Update escalation subroutine reference to §4: "ESC entries store decision/status only; risk context lives in `release_plan.md` via escalation_ref." |
+
+### `sprint_planning_prompt.md` (→ v1.7)
+| IMP | Change |
+|-----|--------|
+| IMP-23 | STEP 6 `sprint_backlog.md` template: ST item Acceptance Criteria field becomes a reference — "AC: see `stage4_backlog_slice.md#ST-xx`" instead of full AC duplication. Sprint backlog is a sequencing and ownership document. Add note: "Execution engine reads AC from `stage4_backlog_slice.md` directly via `spec_references`." |
+| IMP-25 | STEP 6: alongside `sprint_backlog.md`, produce `sprint_backlog_index.json` — `{EPIC-xx: {st_items: [ST-xx,...], backlog_slice_refs: [...]}}`. Add to §6 Write Scope. |
+
+### `execution_prompt.md` (→ v1.9)
+| IMP | Change |
+|-----|--------|
+| IMP-25 | STEP -1 and STEP 0: add instruction — "Load `sprint_backlog_index.json` to identify which ST items belong to the scoped EPIC. Read only the relevant slice of `sprint_backlog.md` using the index line ranges, not the full document." |
+
+### `post_ship_closure.md` (→ v1.6)
+| IMP | Change |
+|-----|--------|
+| IMP-27 | For each step, add field-level read target: STEP 0 — `verification_report.md`: read `§1 verification_status` and `§4 deviation register` only. `sprint_close.md`: read verification readiness statement and deviations list. `execution_state.json`: read `epics` outcome map. STEP 8 — `lessons_learnt.md` files: read action item sections only (not full prose). Add explicit "read target" notes to each step that loads a large input document. |
+
+---
+
+## BATCH 5 — Lessons learnt consolidation (high impact, medium effort, must precede IMP-29 and IMP-37)
+
+**Rationale:** IMP-28 is the prerequisite for three other IMPs (IMP-29, IMP-37, IMP-53, IMP-54). It requires coordinated changes across four prompt files. Do it as a single atomic batch.
+
+### `lessons_learnt_prompt.md` (→ v_next)
+| IMP | Change |
+|-----|--------|
+| IMP-28 | Restructure as append-only phase-tagging prompt. Each phase section call appends a structured table block to `lessons_learnt_cycle.md` for the active cycle. Table schema: `friction_item | phase | type (A–E) | classification | action | owner | target_date`. Retire §3.3 (Sprint Execution standalone) and §3.4 (Delivery Verification standalone) section references. Retain §3.5 (Post-Ship Closure consolidation) as the meta-consumer of the structured file. Add §3.6 (Amendment): phase tag `## Amendment — <AMD-id>`. |
+| IMP-35 (gap 2) | Idempotency guard now built into the prompt's append logic (pre-write section header check). Replaces the guard added in Batch 3 execution_prompt change if IMP-28 is implemented before Batch 3 is applied. |
+
+### `execution_prompt.md` (→ v_next after IMP-28)
+| IMP | Change |
+|-----|--------|
+| IMP-53 | STEP 5.4: change from "invoke lessons_learnt_prompt.md §3.3 → lessons_learnt_execution.md" to "append Phase 3 section to `lessons_learnt_cycle.md` via lessons_learnt_prompt.md §3." §7 Write Scope: remove `lessons_learnt_execution.md`, add `lessons_learnt_cycle.md` (append-only, Phase 3 section). |
+
+### `delivery_verification_prompt.md` (→ v_next after IMP-28)
+| IMP | Change |
+|-----|--------|
+| IMP-54 | Lessons learnt step (wherever it exists): change to append Phase 4 section to `lessons_learnt_cycle.md`. |
+
+### `post_ship_closure.md` (→ v_next after IMP-28)
+| IMP | Change |
+|-----|--------|
+| IMP-54 | §4 required inputs: replace three per-phase lessons learnt files with single `lessons_learnt_cycle.md`. STEP 8: read single structured file instead of three separate documents. §5 must-not-modify: update accordingly. |
+
+### `amendment_cycle_prompt.md` (→ v_next after IMP-28)
+| IMP | Change |
+|-----|--------|
+| IMP-37 | STEP 8: after producing `amendment_lessons.md` (retained for backward compat), also append `## Amendment — <AMD-id>` section to `lessons_learnt_cycle.md` using the IMP-28 table schema. |
+
+---
+
+## BATCH 6 — Meta-review activation (depends on Batch 5 validated across one full cycle)
+
+**Rationale:** Do not activate until `lessons_learnt_cycle.md` has been produced for at least one complete cycle with IMP-28 in effect. Attempting to scan a structured file that doesn't yet exist produces a first-cycle failure.
+
+### `post_ship_closure.md` (→ v_next after one IMP-28 cycle)
+| IMP | Change |
+|-----|--------|
+| IMP-29 | STEP 10 global state update: add meta-review trigger check — "If `completed_cycle_count >= 3 AND completed_cycle_count % 3 == 0`: invoke meta-review subroutine before finalising STEP 10." Meta-review reads `lessons_learnt_cycle.md` from the last 3 cycles. Scope: all phases. Pattern detection: friction items appearing in 2 of 3 cycles = mandatory action-now. |
+| IMP-32 (gap 1) | Meta-review trigger: confirm trigger uses `completed_cycle_count >= 3 AND completed_cycle_count % 3 == 0` (not just `% 3 == 0`). Add explicit skip: "If `completed_cycle_count < 3`: log 'meta-review pending — insufficient cycle history' and skip." |
+
+### `shared_standards.md` (→ v_next)
+| IMP | Change |
+|-----|--------|
+| IMP-32 (gap 2) | §10 Lifecycle Guard or §10.1 first-cycle notes: add null-guard documentation for Phase 1M fields — "Fields `last_manage_roadmap_utc` and `last_groom_backlog_utc` will be null on first invocation. Engines reading these fields must treat null as 'never run' and continue without error." |
+
+---
+
+## BATCH 7 — Governance decisions required (cannot proceed without named-authority decision)
+
+**Rationale:** These IMPs require a human decision before implementation. Each is documented as a decision prompt — the output of the decision determines the implementation.
+
+### Decision 1: Class 8 / Proof of Gate (IMP-17, IMP-31)
+**Owner decision required:** Head of Specs Team + Product Owner
+**Question:** Activate Class 8 (Proof of Gate) documents, or formally defer?
+- If activate: name clearing authority per gate type → add to `team_charter.md` §3 authority table + relevant agent charters. Add production steps to relevant engines. Add to Artefact Register.
+- If defer: playbook §3 note already added in Batch 2 — no further action needed.
+
+### Decision 2: `v2_0_gates` block (IMP-60)
+**Owner decision required:** Product Owner + PMO Lead
+**Question:** Is `gate_3_qa_planning` still a live release readiness gate?
+- If active: identify which engine checks it; add preflight check; define DL-003 in artefact register.
+- If superseded: remove block from `.claude_current_state.json`; file a decisions record closing it.
+
+### Decision 3: Design gate bypass authority (IMP-30)
+**Owner decision required:** Head of Specs Team
+**Files (once decided):** `team_charter.md` §3.3 Head of UX & Design entry, `sprint_planning_prompt.md` STEP -1.3 note.
+**Change:** Name the role(s) authorised to populate `design_gate_bypass_authority`. Recommendation: Head of UX & Design (primary) + Product Owner (co-confirmation required). Add to §3.3 charter entry.
+
+---
+
+## BATCH 8 — Remaining governance and lifecycle completeness (no blocking dependencies)
+
+**Rationale:** All medium-complexity, independent improvements. Can be done in any order within this batch but grouped here as the final completeness sweep.
+
+### `shared_standards.md` (→ v_next)
+| IMP | Change |
+|-----|--------|
+| IMP-22 | Add `shared_preflight_fields` list specifying minimum field set required from `.claude_current_state.json` per engine type (e.g. Release Planning needs: `status, active_cycle, next_cycle_unblocked, post_ship_complete`; Execution needs: `status, active_cycle, amended_backlog_slice_path, sprint_sealed`). Add section-scoped read instruction: "Engines must read only the fields specified in their shared_preflight_fields entry from `.claude_current_state.json`, not the full file, unless a field outside the set is explicitly required by a named step." |
+| IMP-43 | Add §13 Spec Debt Item Lifecycle (or reference to `spec_debt_standard.md`): creation trigger, required fields (BLG-SPEC-* ID, spec file, section, description, canonical requirement, priority P0–P3, owner, target release), acceptance criteria for closure (spec updated, reviewed by Head of Specs Team), closing authority (Head of Specs Team sign-off). |
+
+### `release_planning_prompt.md` (→ v_next)
+| IMP | Change |
+|-----|--------|
+| IMP-11 | Lifecycle Guard (STEP -1 or Lifecycle Guard section): add `Amendment_In_Progress` to the explicit halt states. "If `status = Amendment_In_Progress`: halt — an amendment is in progress for the active cycle. Resolve the amendment before opening a new release plan." |
+| IMP-16 | STEP -1 or §15 Shared Standards reference: add stale lock protocol — "If `claude/backlog/.lock` exists from a prior cycle: (1) verify lock timestamp against stale threshold. (2) If stale (owning cycle closed or >72 hrs inactive): PMO Lead records removal in current cycle's escalation log with stale evidence, then removes the lock. (3) PMO Lead approval required before removal." Reference team_charter §6 Shared Write Concurrency Constraint. |
+
+### `delivery_verification_prompt.md` (→ v_next)
+| IMP | Change |
+|-----|--------|
+| IMP-14 | STEP 5 (Test Scenario Coverage): add `test_scenario_gaps` structured table to `verification_report.md` — fields: gap_id, EPIC, description, qualifying_reason, disposition (`backlog_item_created | not_applicable | deferred`). Add to Phase 4 exit criteria: "All test scenario gaps must have a disposition recorded." STEP 4.2 completion condition: all gaps have disposition. |
+| IMP-15 | Add stale idea detection note: "Items in the authoritative backlog slice with `status = parked` in 3 or more consecutive cycle backlog slices must be surfaced for mandatory PO disposition at Delivery Verification. Record in `verification_report.md` §5 as 'stale item requiring disposition.'" (Lightweight version: detection only; enforcement in backlog management engine.) |
+
+### `post_ship_closure.md` (→ v_next)
+| IMP | Change |
+|-----|--------|
+| IMP-15 | STEP 3 Backlog Reconciliation: add check — "Identify items in `backlog.md` marked `parked` with a `cycle_id` reference from 3 or more completed cycles. Surface these to the PMO Lead for mandatory PO disposition before the next release plan opens." Record in closure record §6 Outstanding Actions. |
+
+### `roadmap_prompt.md` (→ v_next)
+| IMP | Change |
+|-----|--------|
+| IMP-13 | STEP 9 (or equivalent net-zero verification step): add count check — "Count Add decisions vs. confirmed-Kill or confirmed-Defer decisions in this run. If additions > kills: halt and surface the displacement gap to the Product Owner. The net-zero rule is mode-independent." |
+| IMP-33 | Add note to zero-sum displacement rule section: "This rule applies in both strict and standard mode. It is a governance constraint, not relaxed by `--mode standard`." (Mirrors the playbook §6B note added in Batch 2.) |
+
+---
+
+## Summary table
+
+| Batch | Files touched | IMPs addressed | Priority basis |
+|-------|--------------|----------------|----------------|
+| 0 | `amendment_cycle_prompt.md`, `sprint_planning_prompt.md` | 49, 51, 52 | Hard blockers — system broken without these |
+| 1 | `shared_standards.md`, `execution_prompt.md`, `sprint_planning_prompt.md`, `release_planning_prompt.md`, `post_ship_closure.md` | 12, 18, 20, 33, 34, 40, 41, 42, 44, 45, 47, 50, 56, 58, 59, 61 | Correctness + state hygiene, low effort, high reliability gain |
+| 2 | `operational_playbook.md` | 13, 17, 33, 36 | Playbook-only; eliminates agent confusion on version drift |
+| 3 | `release_planning_prompt.md`, `execution_prompt.md`, `amendment_cycle_prompt.md`, `shared_standards.md`, `prompt_change_log.md` | 24, 35, 39, 40, 48, 58 | Idempotency + GitHub reliability; medium complexity |
+| 4 | `release_planning_prompt.md`, `sprint_planning_prompt.md`, `execution_prompt.md`, `post_ship_closure.md` | 23, 25, 26, 27 | Token savings — highest volume reduction in the system |
+| 5 | `lessons_learnt_prompt.md`, `execution_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `amendment_cycle_prompt.md` | 28, 37, 53, 54 | Structural — lessons learnt consolidation; prerequisite for Batch 6 |
+| 6 | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
+| 7 | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
+| 8 | `shared_standards.md`, `release_planning_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `roadmap_prompt.md` | 11, 13, 14, 15, 16, 22, 43 | Completeness sweep; no blocking dependencies |
+
+**Total open IMPs addressed: 51**
+**IMPs requiring human decision before implementation: 4 (Batch 7)**
+**Batches 0–4 can proceed immediately with no decision gates.**
