@@ -1,9 +1,16 @@
+**Owner:** Head of Specs Team
+**Class:** Supporting Document (Class 2)
+**Status:** Active
+**Version:** 1.1
+**Last Updated:** 2026-03-08
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
 # Glossary
 
-**Owner:** Head of Specs Team  
-**Scope:** Shared terminology across the specification system  
-**Authority:** Language only — canonical definitions live in domain specs  
-**Status:** Canonical (terminology)
+**Scope:** Shared terminology across the specification system
+**Authority:** Language only — canonical definitions live in domain specs
 
 This glossary defines shared terms used across specs. It does not introduce behavior or override domain specifications.  
 In case of conflict, the relevant **domain canonical spec prevails** (Strategy / Data Model / Metrics / API Contracts / Frontend).
@@ -48,6 +55,8 @@ Health endpoints may explicitly be exceptions.
 **Cash Flow**: Deposits and withdrawals. Used to distinguish portfolio performance from changes due to adding/removing capital.
 
 **Closed Trade**: A position that has been exited and recorded into trade history.
+
+**Cohort**: A group of trades segmented by the period in which positions were opened (e.g., monthly, quarterly, yearly). Used in cohort analysis to compare performance across entry time-windows. Canonical definition: `docs/specs/metrics_definitions.md`.
 
 **Contract-Affecting Change**: A change that alters endpoints, request/response shapes, status codes, defaults, validation rules, or user-visible API behavior. Requires OpenAPI alignment review (when applicable).
 
@@ -110,6 +119,10 @@ See **Metrics Definitions** for the exact calculation.
 
 **Holding Days**: Number of calendar days a position has been held (entry date to current date or exit date, inclusive as defined by system rules).
 
+**Portfolio Heat**: Aggregate portfolio risk expressed as a percentage of total portfolio value. Computed as the sum of all open position risks (GBP) divided by total portfolio value (GBP), multiplied by 100. Canonical formula: `docs/specs/metrics_definitions.md §Portfolio Heat`.
+
+**Portfolio Heat Thresholds**: Display categories based on heat percentage (Low < 10%, Moderate 10–20%, High 20–30%, Extreme ≥ 30%). Canonical thresholds: `docs/specs/metrics_definitions.md §Portfolio Heat Display Thresholds`.
+
 ---
 
 ## I
@@ -117,6 +130,12 @@ See **Metrics Definitions** for the exact calculation.
 **Idempotent**: Repeating a request has the same effect as calling it once (e.g., an upsert). `GET` is generally idempotent. Some `DELETE` operations may explicitly be non-idempotent.
 
 **Implementation (Non-Canonical)**: Code or artifacts that implement behavior. Implementation must conform to canonical specs.
+
+---
+
+## J
+
+**Journal Completion Rate**: Percentage of closed trades that have a non-empty trade journal entry (entry note, exit note, or structured reflection). Used as a compliance metric to measure trading discipline. Canonical definition: `docs/specs/metrics_definitions.md`.
 
 ---
 
@@ -182,9 +201,9 @@ See **Metrics Definitions** for the exact calculation.
 
 ## R
 
-**R-Multiple**: Ratio of actual profit/loss to initial risk.  
-Formula: `(Exit Price - Entry Price) / (Entry Price - Stop Price)`.  
-May be calculated frontend-only for visualization when explicitly documented. See ADRs where applicable.
+**R-Multiple**: Ratio of actual profit/loss to initial risk.
+Formula: `(Exit Price - Entry Price) / (Entry Price - Stop Price)`.
+May be calculated frontend-only for visualization when explicitly documented. See `docs/product/decisions/ADR-002-frontend-only-r-multiple.md`.
 
 **Rebalance Frequency**: How often positions are reviewed/selected in a systematic portfolio strategy (primarily relevant to backtest logic if used).
 
@@ -198,8 +217,12 @@ May be calculated frontend-only for visualization when explicitly documented. Se
 
 ## S
 
-**Sharpe Ratio**: Risk-adjusted return metric. Portfolio-based method preferred; trade-based fallback.  
+**Sharpe Ratio**: Risk-adjusted return metric. Portfolio-based method preferred; trade-based fallback.
 See **Metrics Definitions** for exact calculation and variance conventions.
+
+**Stop Distance**: The percentage gap between current price and stop price: `|(current_stop − current_price) / current_price × 100|`. Used for sorting positions by proximity to stop-out. Displayed on the Risk Dashboard. Purely presentational — the underlying values come from the backend. Canonical display rule: `docs/specs/frontend/pages/risk_dashboard.md §6.2`.
+
+**Stop-Based Exit Rate**: Percentage of closed trades where the actual exit price was at or below the stop price (i.e., the stop was triggered). Used as a discipline metric. Canonical definition: `docs/specs/metrics_definitions.md`.
 
 **Stop Price**: Price level at which position should be exited to limit loss. Stored and enforced in **native currency**.
 

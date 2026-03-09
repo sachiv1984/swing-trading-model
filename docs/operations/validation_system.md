@@ -1,7 +1,7 @@
 # Analytics Validation System - Operations Guide
 
 **Version:** 1.0.2
-**Owner:** Platform Team
+**Owner:** Infrastructure & Operations Owner
 **Last Updated:** 2026-03-04
 **Review Cycle:** Quarterly
 

@@ -5,6 +5,9 @@ on:
     branches:
       - 'exec/**' # Triggers when you push to your v1.7 execution branch
 
+permissions:
+  issues: write
+
 jobs:
   sync_state:
     runs-on: ubuntu-latest

@@ -2,9 +2,12 @@
 
 ## Momentum Trading Assistant — API Contracts
 
-**Status:** Complete & current
-**Last updated:** 2026-02-21
-**Contract version:** 1.8.2
+**Owner:** API Contracts & Documentation Owner
+**Class:** Supporting Document (Class 2)
+**Status:** Active
+**Version:** 1.9.0
+**Last Updated:** 2026-03-08
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This directory contains the **backend API contracts** for the *Momentum Trading Assistant* web application.
 
@@ -107,6 +110,9 @@ The API contracts are split by concern to support incremental review and clear o
 - **`health_endpoints.md`**
   Health checks, diagnostics, and endpoint test execution.
 
+- **`market_endpoints.md`**
+  Market regime status (`GET /market/status`): SPY and FTSE regime classification vs 200-day MA, plus live GBP/USD FX rate.
+
 Each endpoint file follows a consistent structure:
 - HTTP method and path
 - Purpose and behavior
@@ -119,9 +125,11 @@ Each endpoint file follows a consistent structure:
 
 ## Versioning
 
-- **Current contract version:** 1.8.4
-- **Change type:** QWB BLG-FEAT-07, decision D5.
-- **Previous version:** 1.8.3
+- **Current contract version:** 1.9.0
+- **Change type:** v1.9 Sprint 1 — ST-16 (market_endpoints.md created), ST-18 (Error Response Standard, conventions.md §13).
+- **Previous version:** 1.8.4
+
+**Error Response Standard:** Canonical error response rules are defined in `conventions.md §13`. All endpoint error sections reference this standard via their "Errors use the standard error envelope from conventions.md" clause.
 
 ### Changelog (Summary)
 
