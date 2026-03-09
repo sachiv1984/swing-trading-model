@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-03-06__release-v1.9",
-  "cycle_name": "Sprint 1 Sealed — v1.9 User Value & Insight",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "cycle_name": "Sprint 1 Sealed \u2014 v1.9 User Value & Insight",
+  "status": "Executing",
+  "engine": "execution",
   "next_release": "v1.9",
   "backlog_slice_path": "claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md",
   "sprint_backlog_path": "claude/cycles/2026-03-06__release-v1.9/sprint_backlog.md",
@@ -22,7 +22,7 @@
   "open_escalations": {},
   "last_rebalance_cycle": "2026-03-06__item-3.4",
   "last_rebalance_utc": "2026-03-06T00:00:00Z",
-  "last_rebalance_outcome": "Add (backlog-level) — BLG-NEW-09 through BLG-NEW-12; roadmap confirmed (DL-007)",
+  "last_rebalance_outcome": "Add (backlog-level) \u2014 BLG-NEW-09 through BLG-NEW-12; roadmap confirmed (DL-007)",
   "last_manage_roadmap_utc": null,
   "last_manage_roadmap_outcome": null,
   "last_groom_backlog_utc": null,
@@ -31,7 +31,7 @@
     "gate_1_logging": true,
     "gate_2_api_versioning": true,
     "gate_3_qa_planning": false,
-    "gate_3_auto_advance": "Once QA planning session for notification delivery documented — see DL-003"
+    "gate_3_auto_advance": "Once QA planning session for notification delivery documented \u2014 see DL-003"
   },
   "active_pog": {
     "POG-20260304-01": {
@@ -44,17 +44,24 @@
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
       "summary": "Settings endpoint method decision resolved",
-      "resolution": "Option (a) — update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
+      "resolution": "Option (a) \u2014 update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
       "resolved_by": "Product Owner",
       "resolved_utc": "2026-03-04T00:25:00Z",
-      "formal_capture": "Sprint Planning cycle — ST-09 acceptance criteria update"
+      "formal_capture": "Sprint Planning cycle \u2014 ST-09 acceptance criteria update"
     }
   },
   "release_plan": {
     "release_plan_path": "claude/cycles/2026-03-06__release-v1.9/release_plan.md",
     "cycle_id": "2026-03-06__release-v1.9",
     "published_utc": "2026-03-06T00:10:00Z",
-    "epics": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06"],
+    "epics": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04",
+      "EPIC-05",
+      "EPIC-06"
+    ],
     "story_items": 19,
     "scope_items": 30,
     "capacity_check": "warn",
@@ -80,11 +87,36 @@
     "mode": "standard",
     "sprint_number": 1,
     "total_sprints": 2,
-    "po_decision": "Option B — phased approach",
-    "sprint1_epics": ["EPIC-04", "EPIC-05-partial", "EPIC-06"],
-    "sprint1_items": ["ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18", "ST-19"],
+    "po_decision": "Option B \u2014 phased approach",
+    "sprint1_epics": [
+      "EPIC-04",
+      "EPIC-05-partial",
+      "EPIC-06"
+    ],
+    "sprint1_items": [
+      "ST-06",
+      "ST-07",
+      "ST-08",
+      "ST-09",
+      "ST-10",
+      "ST-11",
+      "ST-13",
+      "ST-14",
+      "ST-15",
+      "ST-16",
+      "ST-17",
+      "ST-18",
+      "ST-19"
+    ],
     "sprint1_effort_mid_hrs": 42,
-    "sprint2_deferred": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-12"],
+    "sprint2_deferred": [
+      "ST-01",
+      "ST-02",
+      "ST-03",
+      "ST-04",
+      "ST-05",
+      "ST-12"
+    ],
     "sprint2_effort_mid_hrs": 49,
     "pip_audit": "clean",
     "over_allocation_accepted": true,
