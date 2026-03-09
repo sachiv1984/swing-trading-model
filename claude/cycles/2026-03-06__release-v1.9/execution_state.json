@@ -42,23 +42,23 @@
         "ST-07": {
           "title": "Risk Dashboard Backend: US Currency Conversion",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 39,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "b31536f",
           "delegation_record_id": "DEL-20260308-01",
-          "blocked_since_utc": "2026-03-08T22:00:00Z",
-          "unblock_criteria": "Commit [EPIC-04][ST-07] pushed to exec/2026-03-06__release-v1.9/EPIC-04 with entry_price and current_stop converted to GBP for US positions; golden output CI passes",
-          "completed_utc": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-09T08:55:00Z",
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.2",
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.4",
             "docs/specs/api_contracts/portfolio_endpoints.md"
           ],
-          "deviations_filed": false,
-          "notes": "Key enabler for ST-08 and ST-09 frontend work."
+          "deviations_filed": true,
+          "notes": "Implemented: entry_price and current_stop GBP-converted for US positions using stored_fx_rate. Golden output CI passes (23 tests, 5 new FX vectors). Resolves DEV-ST03-11 and DEV-ST03-12. Acceptance verification pending Director of Quality."
         },
         "ST-08": {
           "title": "Risk Dashboard Frontend: Error States & Entity Fallback",
@@ -317,7 +317,6 @@
   },
 
   "blocked_items": [
-    "ST-07",
     "ST-08",
     "ST-09",
     "ST-10",
@@ -325,7 +324,6 @@
     "ST-13"
   ],
   "delegated_items": [
-    "ST-07",
     "ST-08",
     "ST-09",
     "ST-10",
@@ -334,6 +332,7 @@
   ],
   "completed_items": [
     "ST-06",
+    "ST-07",
     "ST-14",
     "ST-15",
     "ST-16",
