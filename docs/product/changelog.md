@@ -3,9 +3,72 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-09
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v1.9 — Risk Dashboard Fixes & Foundation — Sprint 1 of 2 (March 2026)
+
+**Shipped:** 2026-03-09
+**Cycle:** 2026-03-06__release-v1.9
+**Verified:** Verified
+**Verification report:** `claude/cycles/2026-03-06__release-v1.9/verification_report.md`
+**Director of Quality sign-off:** 2026-03-09
+**Product Owner acceptance:** 2026-03-09
+**Sprint:** 1 of 2 — Sprint 2 (user-facing features) pending execution
+
+Resolves all 10 Risk Dashboard deviations carried from v1.8, establishes reproducible Playwright test infrastructure that closes the v1.8 scenario coverage gap, and completes the full documentation hygiene backlog. User-facing features (Structured Trade Reflection Template, Compliance Metrics, Cohort Analysis, Dashboard Homepage, R-Multiple Distribution) are deferred to Sprint 2.
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-04 | Risk Dashboard: all 10 v1.8 deviations resolved — error states (HeatGauge, DrawdownSummary, GracePeriodPanel, PositionRiskTable, ProspectiveHeatPanel), sort direction (ascending), Stop Price column, Days in Grace column, GRACE badge colour (blue), GBP value at risk in HeatGauge, threshold label badge, US position GBP conversion for entry price and current stop | `docs/specs/frontend/pages/risk_dashboard.md` v0.1.7→v0.1.8 |
+| EPIC-05 (partial) | QA infrastructure: Playwright canonical test scenario library Phase 1 (17 Risk Dashboard scenarios automated, CI gate); Service Layer Test Coverage Standard authored and enforced via pytest-cov in CI | `docs/testing/risk_dashboard_scenarios.md` v1.0→v1.1; `docs/specs/backend_engineering_patterns.md` |
+| EPIC-06 | Documentation hygiene: Canonical Terms Glossary; AI-Assisted Workflow Governance Policy; `GET /market/status` endpoint spec; `settings_model.md` canonical spec; Error Response Standard in `conventions.md §13`; API Contracts README updated to v1.9.0; `GET /positions/search/tags` documented; `System_status_report.md` lifecycle header added; broken cross-references to `document_lifecycle_guide.md` fixed; `structured_logging_standards.md` registered in Specs Index; ADR-002 relocated; `validation_system.md` owner field corrected | Multiple spec documents (see Tech Backlog below) |
+
+### Deviations accepted
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| — | — | No deviations accepted this sprint — all 10 inherited v1.8 Risk Dashboard deviations resolved | — |
+
+### Tech backlog items shipped
+
+- [BLG-RD-01 / EPIC-04] Entity store fallback masks API error states — all 5 Risk Dashboard components now render independent error states; entity fallback suppresses positionError correctly
+- [BLG-RD-02 / EPIC-04] GracePeriodPanel empty vs error state — distinct error card rendered on API failure
+- [BLG-RD-03 / EPIC-04] PositionRiskTable sort direction — corrected to ascending (most at risk first)
+- [BLG-RD-04 / EPIC-04] Stop Price column absent — Stop Price column added to PositionRiskTable (GBP, 2 dp)
+- [BLG-RD-05 / EPIC-04] GRACE badge colour amber — corrected to blue per spec §6.3
+- [BLG-RD-06 / EPIC-04] GBP value at risk absent from HeatGauge — SVG text added below gauge percentage
+- [BLG-RD-07 / EPIC-04] Days in Grace column absent — `holding_days` column added to GracePeriodPanel
+- [BLG-RD-09 / EPIC-04] ProspectiveHeatPanel threshold label absent — threshold label badge added
+- [BLG-RD-10 / EPIC-04] US entry prices in USD — `portfolio_service.py` now converts `entry_price` to GBP for US positions using `stored_fx_rate`; 5 new golden output vectors (FX-01–FX-05)
+- [BLG-RD-11 / EPIC-04] `current_stop` in USD for US positions — `portfolio_service.py` converts `current_stop` to GBP for US positions; Stop Distance % now uses matching currencies
+- [BLG-NEW-10 Phase 1 / ST-11] Canonical Test Scenario Library Phase 1 — Playwright mock layer; 17 Risk Dashboard scenarios automated; CI gate `.github/workflows/playwright.yml`; mock data in `tests/e2e/mocks/portfolio-mock-data.js`
+- [BLG-NEW-12 / ST-13] Service Layer Test Coverage Standard — coverage threshold enforced via pytest-cov in CI; standard documented in `docs/specs/backend_engineering_patterns.md`
+- [BLG-NEW-04 / ST-15] AI-Assisted Workflow Governance Policy — policy document filed in `docs/governance/`
+- [BLG-NEW-11 / ST-14] Canonical Terms Glossary — `docs/reference/glossary.md` Class 2 Supporting v1.1; minimum terms defined with canonical source links; registered in Specs Index §3.6
+- [BLG-SPEC-D3 / ST-16] `GET /market/status` endpoint documented — `docs/specs/api_contracts/market_endpoints.md` Class 1 Canonical v0.1; openapi.yaml updated; registered in Specs Index §3.4
+- [BLG-SPEC-G1 / ST-17] `settings_model.md` created — `docs/specs/data_model/settings_model.md` Class 1 Canonical v0.1; registered in Specs Index §3.2
+- [BLG-SPEC-G2 / ST-18] Error Response Standard defined — `docs/specs/api_contracts/conventions.md` §13 added (canonical error envelope, HTTP status mapping)
+- [BLG-SPEC-D1, D4, D8, D9, G3, G4, G5 / ST-19] Remaining SPEC debt batch resolved — API Contracts README v1.9.0; `GET /positions/search/tags` documented; `System_status_report.md` lifecycle header added; cross-references fixed; `structured_logging_standards.md` registered in Specs Index §3.5b; ADR-002 relocated to `docs/product/decisions/`; `validation_system.md` owner field corrected to named role
+
+### Sprint 2 — pending
+
+| Item | Description | EPIC |
+|------|-------------|------|
+| ST-01 | Structured Trade Reflection Template | EPIC-01 |
+| ST-02 | Basic Compliance Metrics (pre-work gate for ST-01) | EPIC-01 |
+| ST-03 | Cohort Analysis | EPIC-02 |
+| ST-04 | Dashboard Homepage / Session Summary | EPIC-03 |
+| ST-05 | R-Multiple Distribution Report | EPIC-02 |
+| ST-12 | Canonical Test Scenario Library Phase 2 (feature scenarios for Sprint 2 deliveries) | EPIC-05 |
+
+Sign-off: Product Owner — 2026-03-09
+QA sign-off: Director of Quality — 2026-03-09
 
 ---
 

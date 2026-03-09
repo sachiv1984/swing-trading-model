@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-09 (ST-11: TEST-GAP-EPIC-01 closed; BLG-API-01 added)
+**Last Updated:** 2026-03-09 (v1.9 Sprint 1 post-ship: BLG-RD-01–07, 09–11, BLG-NEW-04, 10–12, BLG-SPEC-D1/D3/D4/D8/D9/G1–G5 marked COMPLETE)
 **Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — DL-006)
 
 > ⚠️ Standing Notice
@@ -151,6 +151,7 @@ Items are classified as **DRIFT** (spec and implementation/document diverged) or
 **Type:** Documentation Drift
 **Owner:** API Contracts & Documentation Owner
 **Raised:** 2026-03-03 — Head of Specs Team review
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-19)
 
 **Problem**
 `docs/specs/api_contracts/README.md` header and changelog list contract version as 1.8.4 / 1.8.2.
@@ -168,6 +169,7 @@ README.md was not updated.
 **Type:** Documentation Gap / Drift
 **Owner:** API Contracts & Documentation Owner
 **Raised:** 2026-03-03 — Head of Specs Team review
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-16)
 
 **Problem**
 `GET /market/status` is implemented in `backend/main.py` (router tag: `market`), called by the frontend MarketStatusBar component, and appears in `docs/System_status_report.md` test results.
@@ -190,6 +192,7 @@ No spec document exists. No entry in Specs_Index.md. No openapi.yaml path.
 **Type:** Documentation Gap
 **Owner:** API Contracts & Documentation Owner
 **Raised:** 2026-03-03 — Head of Specs Team review
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-19)
 
 **Problem**
 `GET /positions/search/tags` is implemented in `backend/main.py` (router: positions).
@@ -205,6 +208,7 @@ Not documented in `docs/specs/api_contracts/position_endpoints.md`.
 **Type:** Lifecycle Compliance Drift
 **Owner:** Director of Quality
 **Raised:** 2026-03-03 — Head of Specs Team review
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-19)
 
 **Problem**
 `docs/System_status_report.md` has no governance lifecycle header (Owner, Class, Status, Version, Last Updated).
@@ -222,6 +226,7 @@ Current document begins directly with `# System Status Verification Report` with
 **Type:** Documentation Drift / Broken Cross-Reference
 **Owner:** Head of Specs Team
 **Raised:** 2026-03-03 — Head of Specs Team review
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-19)
 
 **Problem**
 `docs/governance/process_index.md` references `docs/governance/document_lifecycle_guide.md`.
@@ -244,6 +249,7 @@ The docs/governance/ path does not exist.
 **Type:** Spec Gap
 **Owner:** Head of Specs Team
 **Raised:** Specs_Index §6.1, 2026-02-21 (carried forward to 2026-03-03 review)
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-17)
 
 **Problem**
 `docs/specs/data_model/settings_model.md` is listed as an open gap in Specs_Index.md §6.1 since 2026-02-21.
@@ -265,6 +271,7 @@ Resolution of BLG-SPEC-D2 (PUT vs PATCH method drift) should be decided first, a
 **Type:** Spec Gap
 **Owner:** API Contracts & Documentation Owner
 **Raised:** Specs_Index §6.2, 2026-02-21 (carried forward to 2026-03-03 review)
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-18)
 
 **Problem**
 No canonical Error Response Standard exists.
@@ -284,6 +291,7 @@ Without a standard, error shapes across endpoints are inconsistent and untestabl
 **Type:** Index Gap
 **Owner:** Head of Specs Team
 **Raised:** 2026-03-03 — Head of Specs Team review
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-19)
 
 **Problem**
 `docs/specs/structured_logging_standards.md` was created in EPIC-04 (2026-03-02) as a Class 1 Canonical Specification.
@@ -300,6 +308,7 @@ New canonical specs must be registered in Specs_Index.md per document_lifecycle_
 **Type:** Governance Organisation Gap
 **Owner:** Head of Specs Team
 **Raised:** 2026-03-03 — Head of Specs Team review
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-19)
 
 **Problem**
 ADR-002 (if it exists) is located in `docs/decisions/` rather than `docs/product/decisions/` where all other decision records are filed (e.g., SRB-v1.7-*.md, api-versioning-v1.7.md).
@@ -317,6 +326,7 @@ Inconsistent location breaks navigation and cross-reference from Specs_Index.md.
 **Type:** Lifecycle Compliance Gap
 **Owner:** Infrastructure & Operations Owner
 **Raised:** Specs_Index §7.1, 2026-02-21 (carried forward to 2026-03-03 review)
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-19)
 
 **Problem**
 `docs/specs/validation_system.md` lists owner as `Platform Team` — a team name, not a named role.
@@ -329,13 +339,11 @@ Per document_lifecycle_guide.md, Owner must be a named governance role (e.g., He
 
 ---
 
-**Review Summary (active items — updated 2026-03-06 groom)**
-- Active items: 5 DRIFT (D1, D3, D4, D8, D9), 5 GAP (G1–G5) = 10 total
-- Archived this run: D2 (✅ ST-09), D7 (✅ ST-10)
-- P2: 3 (D3, G1, G2)
-- P3: 7 (D1, D4, D8, D9, G3, G4, G5)
-- Oldest open items: G1, G2, G5 — open since 2026-02-21 (3 cycles; ⚠️ priority upgrade review recommended at v1.9 pre-alignment)
-- Recommended resolution order: G1 → D3 → G2
+**Review Summary (updated 2026-03-09 — v1.9 Sprint 1 post-ship)**
+- ✅ All 10 active items COMPLETE — D1, D3, D4, D8, D9, G1, G2, G3, G4, G5
+- All items resolved in v1.9 Sprint 1 (EPIC-06, ST-14 through ST-19)
+- No active spec debt items remaining
+- Archived (pending groom): all 10 completed items above
 
 ---
 
@@ -353,6 +361,7 @@ All items compete within v1.8 release capacity. Release planning engine determin
 **Source:** IW-20260304-01 (promoted 2026-03-04)
 **Cycle added:** 2026-03-04__item-3.4
 **Effort:** ~0.5 day
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-15)
 
 **Problem**
 The project uses AI-assisted workflows (Claude Code) for governed routines. There is no documented policy governing: which decisions may be taken by AI, which require human override, and how AI output is reviewed before it becomes a canonical record.
@@ -367,11 +376,11 @@ The project uses AI-assisted workflows (Claude Code) for governed routines. Ther
 
 ---
 
-**Section Summary (IW-20260304-01 active items — updated 2026-03-06 groom)**
-- Active: 1 (BLG-NEW-04)
-- P2: 1 (BLG-NEW-04)
-- Archived this run: BLG-NEW-01 (✅ ST-05), BLG-NEW-02 (✅ ST-06), BLG-NEW-03 (✅ ST-11), BLG-NEW-05 (✅ ST-07), BLG-NEW-07 (✅ ST-12), BLG-NEW-08 (✅ ST-08)
-- Archived prior: BLG-NEW-06 (merged into 4.1b — see backlog_archive.md)
+**Section Summary (IW-20260304-01 — updated 2026-03-09 v1.9 Sprint 1 post-ship)**
+- ✅ All items COMPLETE — BLG-NEW-04 shipped in v1.9 Sprint 1 (EPIC-06, ST-15)
+- Active: 0
+- Archived (pending groom): BLG-NEW-04
+- Previously archived: BLG-NEW-01–03, 05, 07, 08; BLG-NEW-06 (merged into 4.1b)
 
 ---
 
@@ -400,6 +409,7 @@ Deviation backlog items from EPIC-01 delivery. All accepted for v1.8 by Product 
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-01 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-08)
 
 When `GET /portfolio` fails, the Base44 entity store fallback (`base44.entities.Position/Portfolio`) activates and supplies stale data, preventing the error state from being rendered. The spec (§8) requires each component to render its own error state independently on API failure.
 
@@ -416,6 +426,7 @@ When `GET /portfolio` fails, the Base44 entity store fallback (`base44.entities.
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-02 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-08)
 
 On API failure, `positions` is `[]` and "No positions in grace period" is displayed — indistinguishable from a valid empty state. Spec §5.5 requires an error state when the API fails.
 
@@ -430,6 +441,7 @@ On API failure, `positions` is `[]` and "No positions in grace period" is displa
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-03 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-09)
 
 The PositionRiskTable is sorted by stop distance descending (largest first). Spec §6.4 requires ascending sort (tightest/smallest stop distance first = most at risk positions shown first).
 
@@ -444,6 +456,7 @@ The PositionRiskTable is sorted by stop distance descending (largest first). Spe
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-04 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-09)
 
 The Stop Price column (`current_stop`, GBP, 2 dp) required by spec §6.2 is absent. Stop Distance % is shown instead (presentational derivation only).
 
@@ -459,6 +472,7 @@ The Stop Price column (`current_stop`, GBP, 2 dp) required by spec §6.2 is abse
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-05 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-10)
 
 GRACE badge is rendered in amber. Spec §6.3 requires blue.
 
@@ -473,6 +487,7 @@ GRACE badge is rendered in amber. Spec §6.3 requires blue.
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-06 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-10)
 
 The "GBP value at risk" tertiary metric required by spec §3.2 is absent from the Heat Gauge.
 
@@ -487,6 +502,7 @@ The "GBP value at risk" tertiary metric required by spec §3.2 is absent from th
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-07 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-09)
 
 The "Days in Grace" (`holding_days`) column required by spec §5.2 is absent from the Grace Period table.
 
@@ -513,6 +529,7 @@ ST-06 investigation confirmed split-source data model: `current_drawdown_percent
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-09 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-09)
 
 `ProspectiveHeatPanel.js` renders projected heat % and delta only. The threshold label (which changes when hypothetical position crosses a boundary) required by spec §7.5 is absent.
 
@@ -527,6 +544,7 @@ ST-06 investigation confirmed split-source data model: `current_drawdown_percent
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-11 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-07)
 
 US position entry prices display in native USD ($) in the Risk Dashboard. Spec §6.2 requires GBP (£) for all positions. The backend returns `entry_price` in native currency without GBP conversion for US positions.
 
@@ -542,6 +560,7 @@ US position entry prices display in native USD ($) in the Risk Dashboard. Spec �
 **Owner:** Head of Engineering
 **Source:** DEV-ST03-12 — Delivery verification 2026-03-04__release-v1.8
 **Target:** v1.9
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-04, ST-07)
 
 `current_stop` is returned in native USD for US positions while `current_price` is in GBP. The Stop Distance % display derivation `(current_price − current_stop) / current_price × 100` therefore mixes currencies, producing an incorrect result for all US positions. (Related to BLG-RD-10 — same root cause: native USD not converted to GBP.)
 
@@ -609,6 +628,7 @@ No visualisation of R-multiple distribution exists. R-multiple (profit in units 
 **Source:** IDEA-qa-testing-20260304-01, IW-20260304-01
 **Cycle added:** 2026-03-06__item-3.4
 **Scope constraint:** Risk Dashboard components first (resolves TEST-GAP-EPIC-01 infrastructure dependency); new v1.9 feature scenarios added at release time; no retroactive full-coverage mandate
+**Status:** Phase 1 ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-05, ST-11). Phase 2 (feature scenarios for Sprint 2 deliveries) → Sprint 2 (ST-12)
 
 **Problem**
 Test scenarios are ad-hoc per feature. TEST-GAP-EPIC-01 identified that 17/27 Risk Dashboard scenarios cannot be executed without a seeded test infrastructure. A systematic canonical library with documented infrastructure preconditions prevents this gap recurring in every release.
@@ -633,6 +653,7 @@ Test scenarios are ad-hoc per feature. TEST-GAP-EPIC-01 identified that 17/27 Ri
 **Source:** IDEA-head-of-specs-20260304-01, IW-20260304-01
 **Cycle added:** 2026-03-06__item-3.4
 **Class constraint:** Document must be Class 2 (Supporting) — cross-reference index only; no new canonical rules
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-06, ST-14)
 
 **Problem**
 Terms like "portfolio heat", "grace period", "stop distance", "R-multiple" are used across multiple specs without a single cross-reference point. Term drift causes ambiguity (e.g., BLG-RD-08 — drawdown data source ambiguity).
@@ -659,6 +680,7 @@ Terms like "portfolio heat", "grace period", "stop distance", "R-multiple" are u
 **Cycle added:** 2026-03-06__item-3.4
 **Prerequisite:** BLG-NEW-01 (golden output baseline) — COMPLETE
 **CI constraint:** Standard must include a minimum coverage threshold enforceable via CI (pytest-cov or equivalent)
+**Status:** ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-05, ST-13)
 
 **Problem**
 The golden output baseline (BLG-NEW-01, COMPLETE) covers end-to-end calculation correctness. The service layer (portfolio_service.py, trade_service.py, analytics_service.py) has no documented test coverage standard. Logic errors at the service layer may not be caught by golden tests if they produce correct outputs on golden inputs.
@@ -676,10 +698,12 @@ The golden output baseline (BLG-NEW-01, COMPLETE) covers end-to-end calculation 
 
 ---
 
-**Section 11 Summary**
-- Active new items: 4 (BLG-NEW-09 through BLG-NEW-12)
-- P1: 2 (BLG-NEW-10, BLG-NEW-12)
-- P2: 2 (BLG-NEW-09, BLG-NEW-11)
+**Section 11 Summary (updated 2026-03-09 — v1.9 Sprint 1 post-ship)**
+- BLG-NEW-09: active (Sprint 2 deferred — R-Multiple Distribution Report)
+- BLG-NEW-10: Phase 1 complete (ST-11); Phase 2 Sprint 2 pending (ST-12)
+- BLG-NEW-11: ✅ COMPLETE (ST-14)
+- BLG-NEW-12: ✅ COMPLETE (ST-13)
+- Active: 1 full (BLG-NEW-09) + 1 partial (BLG-NEW-10 Phase 2)
 
 ---
 
@@ -721,6 +745,29 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| BLG-RD-01 | Entity store fallback masks API error states | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-08 |
+| BLG-RD-02 | GracePeriodPanel empty vs error state | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-08 |
+| BLG-RD-03 | PositionRiskTable sorted descending | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-09 |
+| BLG-RD-04 | Stop Price column absent | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-09 |
+| BLG-RD-05 | GRACE badge colour amber instead of blue | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-10 |
+| BLG-RD-06 | GBP value at risk absent from HeatGauge | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-10 |
+| BLG-RD-07 | Days in Grace column absent | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-09 |
+| BLG-RD-09 | ProspectiveHeatPanel missing threshold label | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-09 |
+| BLG-RD-10 | US entry prices in USD not GBP | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-07 |
+| BLG-RD-11 | current_stop in USD for US positions | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-07 |
+| BLG-NEW-04 | AI-Assisted Workflow Governance Policy | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-15 |
+| BLG-NEW-11 | Canonical Terms Glossary | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-14 |
+| BLG-NEW-12 | Service Layer Test Coverage Standard | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-13 |
+| BLG-SPEC-D1 | API Contracts README version frozen | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-19 |
+| BLG-SPEC-D3 | GET /market/status undocumented | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-16 |
+| BLG-SPEC-D4 | GET /positions/search/tags undocumented | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-19 |
+| BLG-SPEC-D8 | System_status_report.md missing header | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-19 |
+| BLG-SPEC-D9 | Broken cross-references to lifecycle guide | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-19 |
+| BLG-SPEC-G1 | settings_model.md missing | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-17 |
+| BLG-SPEC-G2 | Error Response Standard not defined | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-18 |
+| BLG-SPEC-G3 | structured_logging_standards.md not in Specs Index | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-19 |
+| BLG-SPEC-G4 | ADR-002 in wrong location | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-19 |
+| BLG-SPEC-G5 | validation_system.md owner field non-compliant | v1.9 Sprint 1 | 2026-03-06__release-v1.9 | ST-19 |
 | BLG-NEW-08 | Automated OpenAPI Drift Detection in CI | v1.8 | 2026-03-04__release-v1.8 | ST-08 |
 | BLG-NEW-07 | Running API Changelog Document | v1.8 | 2026-03-04__release-v1.8 | ST-12 |
 | BLG-NEW-05 | Dependency Vulnerability Scanning in CI | v1.8 | 2026-03-04__release-v1.8 | ST-07 |
@@ -742,4 +789,5 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 **Planned:** 2026-03-06
 **Backlog slice:** `claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md`
 
-Items in v1.9 sprint: EPIC-01 (ST-01–ST-02), EPIC-02 (ST-03–ST-04), EPIC-03 (ST-05), EPIC-04 (ST-06–ST-10), EPIC-05 (ST-11–ST-13), EPIC-06 (ST-14–ST-19)
+**Sprint 1 (✅ SHIPPED 2026-03-09):** EPIC-04 (ST-06–ST-10), EPIC-05 partial (ST-11, ST-13), EPIC-06 (ST-14–ST-19)
+**Sprint 2 (PENDING):** EPIC-01 (ST-01–ST-02), EPIC-02 (ST-03, ST-05), EPIC-03 (ST-04), EPIC-05 partial (ST-12)

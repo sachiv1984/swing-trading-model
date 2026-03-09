@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v1.9
 Cycle: 2026-03-06__release-v1.9
-Last Updated: 2026-03-06
+Last Updated: 2026-03-09
 
 ## Release Scope — v1.9 User Value & Insight
 
@@ -55,8 +55,10 @@ Last Updated: 2026-03-06
 | BLG-TECH-05 Prometheus endpoint | v2.1 | v2.1+ |
 | BLG-FEAT-03 Slippage Tracking | No confirmed v1.9 roadmap home | TBD |
 
-### Supersession note (to be completed at post-ship closure)
-Superseded by: v1.9 ship — [ship date]
-Changelog: docs/product/changelog.md#v1.9
+### Supersession note
+Superseded by: v1.9 Sprint 1 ship — 2026-03-09
+Changelog: docs/product/changelog.md#v19---risk-dashboard-fixes--foundation---sprint-1-of-2-march-2026
 Verification report: claude/cycles/2026-03-06__release-v1.9/verification_report.md
 Cycle: 2026-03-06__release-v1.9
+Sprint 1 scope (shipped): S2-05 through S2-30 (EPIC-04, EPIC-05 partial, EPIC-06)
+Sprint 2 scope (pending): S2-01 through S2-04, S2-17 Phase 2 (EPIC-01, EPIC-02, EPIC-03, EPIC-05 ST-12)

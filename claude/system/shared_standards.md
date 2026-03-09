@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-03-08
+**Version:** 1.5
+**Last Updated:** 2026-03-09
 
 # Shared Standards — All Governed Routines
 
@@ -324,10 +324,29 @@ Any increment to a governance prompt version **must** be accompanied by an entry
 
 ---
 
+---
+
+## 12. Parallel EPIC Branch Merge Sequencing
+
+When multiple EPIC branches are active simultaneously in the same sprint, `execution_state.json` merge conflicts are structurally inevitable — both branches modify the same governance file independently. Apply the following convention to prevent cascading conflict rounds.
+
+**Rule 1 — Merge sequence:** When multiple EPIC branches are ready for merge, merge them in dependency order (logical dependencies first; alphabetical by EPIC ID if no dependencies exist). Do not merge multiple EPIC branches to main simultaneously.
+
+**Rule 2 — Conflict resolution rule:** On a merge conflict in `execution_state.json`, keep the version from the more recently-merged EPIC branch (the EPIC with the later completion timestamp). The earlier EPIC's state additions are preserved in its QA evidence file and `sprint_close.md` and do not need to be in the merged state file.
+
+**Rule 3 — GOVERNANCE commit after each merge:** After each EPIC branch merges to main, update `execution_state.json` on main directly via a GOVERNANCE commit before the next EPIC branch opens a PR. This prevents the next EPIC's PR from showing a conflict on `execution_state.json` at open time.
+
+**Why this matters:** Without this convention, a 4-EPIC sprint with parallel branches requires 3 conflict resolution rounds, each triggering a CI re-run (~3–5 minutes each). Cumulative latency: 30–60 minutes per sprint close. With this convention, conflict rounds are eliminated.
+
+*Trigger: Friction Item 1, lessons_learnt_execution.md — cycle 2026-03-06__release-v1.9 Sprint 1. Confirmed by Head of Specs Team.*
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-03-09 | §12 added — Parallel EPIC Branch Merge Sequencing: merge ordering convention (dependency order), conflict resolution rule (keep more recent EPIC's version), GOVERNANCE commit after each merge. Triggered by Friction Item 1 in `claude/cycles/2026-03-06__release-v1.9/lessons_learnt_execution.md`. Immediate action — Head of Specs Team confirmed. |
 | 1.4 | 2026-03-08 | IMP-04: §10.1 updated — Release Planning row adds `post_ship_complete` + `next_cycle_unblocked` preconditions; Sprint Planning row adds design gate bypass audit requirement; Amendment Cycle row adds backlog lock precondition. IMP-06: Release Planning precondition added. IMP-10: §11 Prompt Version Control added. |
 | 1.3 | 2026-03-07 | Updated §8 Post-Ship Closure resumability note — replaced `closure_record.md` prose-scan approach with `closure_state.json` structured file (IMP-01). |
 | 1.2 | 2026-03-07 | Added §10 Lifecycle Validation Rules — transition guard algorithm, entry state table, blocked state protocol, phase skip rule, schema reference. |

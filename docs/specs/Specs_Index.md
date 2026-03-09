@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-09
 
 ---
 
@@ -212,30 +212,21 @@ This section tracks canonical spec gaps that have been identified but not yet fi
 
 ### 6.1 Settings Canonical Specification *(v1.6.1 pre-work gate)*
 
-**Status:** Not yet created — gap identified 2026-02-21; still open 2026-03-06
-**Backlog item:** BLG-SPEC-G1 (added 2026-03-03, Head of Specs review)
-**Blocks:** Any further settings-dependent features entering pre-alignment
-**Unblocked:** BLG-SPEC-D2 (settings endpoint method drift) resolved in v1.8 / ST-09 — PATCH /settings/{settings_id} and POST /settings are now the canonical interface (settings_endpoints.md v1.1.0). The pre-condition for §6.1 resolution is now met.
-**Required by:** v1.6.1 (roadmap pre-work item)
-**Assigned owner:** Head of Specs Team
+**Status:** RESOLVED — 2026-03-09 (v1.9 Sprint 1, ST-17). See §3.2 for registration.
+**Backlog item:** BLG-SPEC-G1 — COMPLETE
+**Resolved by:** `docs/specs/data_model/settings_model.md` Class 1 Canonical v0.1, Active — created 2026-03-08. All settings field names, types, validation rules, defaults, and semantics. Registered in §3.2 above. Cross-referenced from `settings_endpoints.md`.
 
-**Gap description:** Settings behaviour (`GET /settings`, `PUT /settings`, all fields and constraints) is currently defined only within `settings_endpoints.md` as part of the API contracts domain. There is no standalone canonical document that owns the settings model itself — its fields, defaults, constraints, and meaning — independently of the API layer. As settings-dependent features grow (v1.6 added `default_risk_percent`; v1.6.1 and beyond will add more), this gap creates drift risk.
-
-**Required output:** A new canonical document (tentatively `docs/specs/settings_model.md` or equivalent) that owns the settings domain: all fields, their types, defaults, constraints, and semantics. The API contract continues to own the request/response shape; the new document owns the model. Owner assignment to be confirmed by Head of Specs Team before v1.6.1 pre-alignment opens.
+~~Gap description: Settings behaviour was defined only within `settings_endpoints.md`. No standalone canonical document owned the settings model independently of the API layer.~~
 
 ---
 
 ### 6.2 Error Response Standard *(v1.6.1 pre-work gate)*
 
-**Status:** Not yet defined — gap identified 2026-02-21; still open 2026-03-03
-**Backlog item:** BLG-SPEC-G2 (added 2026-03-03, Head of Specs review)
-**Blocks:** Consistent error handling across all endpoints; required before v1.6.1 exits
-**Required by:** v1.6.1 (roadmap pre-work item)
-**Assigned owner:** API Contracts & Documentation Owner (spec definition) + Head of Engineering (implementation alignment)
+**Status:** RESOLVED — 2026-03-09 (v1.9 Sprint 1, ST-18). See §3.4 for registration.
+**Backlog item:** BLG-SPEC-G2 — COMPLETE
+**Resolved by:** `docs/specs/api_contracts/conventions.md` §13 Error Response Standard added — canonical error envelope shape, all error codes, HTTP status mapping, rule distinguishing HTTP 400 (malformed input) from HTTP 200 with `valid: false` (business rule failure). Registered in §3.4 above.
 
-**Gap description:** Error response shapes are partially covered by `conventions.md` (standard `{ status: error, message: string }` envelope) but canonical error shapes for specific failure modes — validation errors, business rule violations, not-found, and internal errors — are not fully defined or consistently applied across endpoints. `openapi.yaml` defines reusable error responses but these have not been audited for completeness or consistency against actual backend behaviour.
-
-**Required output:** A section in `conventions.md` (or a dedicated `error_responses.md`) that canonicalises: the full error envelope shape, all error codes, HTTP status mapping, and the rule distinguishing HTTP 400 (malformed input) from HTTP 200 with `valid: false` (business rule failure). `openapi.yaml` must then be reviewed for alignment in the same change.
+~~Gap description: Error response shapes were partially covered but not canonically defined for all failure modes.~~
 
 ---
 
@@ -248,13 +239,9 @@ This section records known lifecycle or governance compliance gaps that have bee
 ### 7.1 `docs/operations/validation_system.md` — Owner field non-compliant
 
 **Identified:** 2026-02-21
-**Status:** Still open 2026-03-03
-**Backlog item:** BLG-SPEC-G5 (added 2026-03-03, Head of Specs review)
-**Severity:** Advisory (does not block)
-**Current state:** `Owner: Platform Team` — a team name, not a named individual role
-**Required state:** A named role per `claude/charter/document_lifecycle_guide.md` §7
-**Resolution owner:** Infrastructure & Operations Documentation Owner
-**Action:** Update the owner field to the named role responsible for this document. Coordinate with Head of Engineering if the correct owner is unclear.
+**Status:** RESOLVED — 2026-03-09 (v1.9 Sprint 1, ST-19)
+**Backlog item:** BLG-SPEC-G5 — COMPLETE
+**Resolution:** `Owner: Platform Team` updated to a named governance role per `claude/charter/document_lifecycle_guide.md §7`. Resolved by Infrastructure & Operations Documentation Owner in ST-19.
 
 ---
 
