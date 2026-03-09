@@ -6,15 +6,14 @@
   "invoked_utc": "2026-03-08T22:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-08T22:00:00Z",
-
+  "last_updated_utc": "2026-03-09T09:00:00Z",
   "epics": {
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "docs/testing/risk_dashboard_scenarios.md"
@@ -37,7 +36,7 @@
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a74.1"
           ],
           "deviations_filed": true,
-          "notes": "Pre-completed 2026-03-06. Head of Specs Team decision: current_drawdown_percent -> GET /portfolio confirmed; days_underwater -> GET /analytics/metrics confirmed. risk_dashboard.md §4.1 updated to v0.1.7; DEV-ST03-08 resolved; BLG-RD-08 closed."
+          "notes": "Pre-completed 2026-03-06. Head of Specs Team decision: current_drawdown_percent -> GET /portfolio confirmed; days_underwater -> GET /analytics/metrics confirmed. risk_dashboard.md \u00a74.1 updated to v0.1.7; DEV-ST03-08 resolved; BLG-RD-08 closed."
         },
         "ST-07": {
           "title": "Risk Dashboard Backend: US Currency Conversion",
@@ -58,21 +57,21 @@
             "docs/specs/api_contracts/portfolio_endpoints.md"
           ],
           "deviations_filed": true,
-          "notes": "Implemented: entry_price and current_stop GBP-converted for US positions using stored_fx_rate. Golden output CI passes (23 tests, 5 new FX vectors). Resolves DEV-ST03-11 and DEV-ST03-12. QA sign-off: Director of Quality 2026-03-09. QA-OBS-ST07-01 filed (non-blocking: live_fx_rate vs stored_fx_rate basis for Stop Distance display — pre-existing pattern)."
+          "notes": "Implemented: entry_price and current_stop GBP-converted for US positions using stored_fx_rate. Golden output CI passes (23 tests, 5 new FX vectors). Resolves DEV-ST03-11 and DEV-ST03-12. QA sign-off: Director of Quality 2026-03-09. QA-OBS-ST07-01 filed (non-blocking: live_fx_rate vs stored_fx_rate basis for Stop Distance display \u2014 pre-existing pattern)."
         },
         "ST-08": {
           "title": "Risk Dashboard Frontend: Error States & Entity Fallback",
           "classification": "delegated_frontend",
-          "status": "blocked_frontend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 40,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "20e688f",
           "delegation_record_id": "DEL-20260308-02",
-          "blocked_since_utc": "2026-03-08T22:00:00Z",
-          "unblock_criteria": "Commit [EPIC-04][ST-08] pushed to exec/2026-03-06__release-v1.9/EPIC-04; all Risk Dashboard components render independent error states; SC-RD-02 and SC-RD-03 pass",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-09T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a73.4",
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a74.3",
@@ -80,54 +79,53 @@
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.5",
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a77.6"
           ],
-          "deviations_filed": false,
-          "notes": "Soft dependency on ST-07. RISK-05: Base44 entity store fallback approach to be confirmed with Base44 Frontend Prompt Owner."
+          "deviations_filed": true,
+          "notes": "All 5 components render independent error states. Entity fallback preserved; positionError suppressed during fallback. DEV-ST03-01 and DEV-ST03-02 resolved. QA sign-off: Director of Quality 2026-03-09 (static code analysis \u2014 TEST-GAP-EPIC-01 active)."
         },
         "ST-09": {
           "title": "Risk Dashboard Frontend: Table and Column Fixes",
           "classification": "delegated_frontend",
-          "status": "blocked_frontend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 41,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "20e688f",
           "delegation_record_id": "DEL-20260308-03",
-          "blocked_since_utc": "2026-03-08T22:00:00Z",
-          "unblock_criteria": "Commit [EPIC-04][ST-09] pushed to exec/2026-03-06__release-v1.9/EPIC-04; PositionRiskTable sorted ascending, Stop Price column present, Days in Grace column present, threshold label badge present; SC-RD-04/05/07/08 pass",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-09T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a75.2",
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.2",
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.4",
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a77.5"
           ],
-          "deviations_filed": false,
-          "notes": "Four independent fixes; can be batched with ST-08 in a single Base44 session."
+          "deviations_filed": true,
+          "notes": "PositionRiskTable: ascending sort (Infinity sentinel), Stop Price column. GracePeriodPanel: Days in Grace (holding_days). ProspectiveHeatPanel: threshold label badge. DEV-ST03-03, DEV-ST03-04, DEV-ST03-07, DEV-ST03-09 resolved. QA sign-off: Director of Quality 2026-03-09."
         },
         "ST-10": {
           "title": "Risk Dashboard Frontend: HeatGauge and Cosmetic Fixes",
           "classification": "delegated_frontend",
-          "status": "blocked_frontend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 42,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "20e688f",
           "delegation_record_id": "DEL-20260308-04",
-          "blocked_since_utc": "2026-03-08T22:00:00Z",
-          "unblock_criteria": "Commit [EPIC-04][ST-10] pushed to exec/2026-03-06__release-v1.9/EPIC-04; GRACE badge colour blue; GBP value at risk visible below gauge percentage; SC-RD-05/06 pass",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-09T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a73.2",
             "docs/specs/frontend/pages/risk_dashboard.md#\u00a76.3"
           ],
-          "deviations_filed": false,
-          "notes": "Cosmetic; no backend dependency. Wave 1 item."
+          "deviations_filed": true,
+          "notes": "GRACE badge blue (bg-blue-500/20 text-blue-400). HeatGauge: totalAtRisk from positionRisks[].position_risk_gbp, rendered as GBP text. DEV-ST03-05 and DEV-ST03-06 resolved. QA sign-off: Director of Quality 2026-03-09."
         }
       }
     },
-
     "EPIC-05": {
       "status": "in_progress",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
@@ -149,7 +147,7 @@
           "commit_sha": null,
           "delegation_record_id": "DEL-20260308-05",
           "blocked_since_utc": "2026-03-08T22:00:00Z",
-          "unblock_criteria": "All 17 NOT EXECUTED Risk Dashboard scenarios (SC-RD-02–06, SC-RD-07–12, SC-RD-15, SC-RD-16–18, SC-RD-24–25) re-run against seeded environment; results recorded in risk_dashboard_scenarios.md; 'Test Infrastructure Preconditions' section present; Director of Quality confirms",
+          "unblock_criteria": "All 17 NOT EXECUTED Risk Dashboard scenarios (SC-RD-02\u201306, SC-RD-07\u201312, SC-RD-15, SC-RD-16\u201318, SC-RD-24\u201325) re-run against seeded environment; results recorded in risk_dashboard_scenarios.md; 'Test Infrastructure Preconditions' section present; Director of Quality confirms",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -179,12 +177,11 @@
         }
       }
     },
-
     "EPIC-06": {
       "status": "done",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-06",
       "pr_number": 52,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
@@ -315,24 +312,20 @@
       }
     }
   },
-
   "blocked_items": [
-    "ST-08",
-    "ST-09",
-    "ST-10",
     "ST-11",
     "ST-13"
   ],
   "delegated_items": [
-    "ST-08",
-    "ST-09",
-    "ST-10",
     "ST-11",
     "ST-13"
   ],
   "completed_items": [
     "ST-06",
     "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10",
     "ST-14",
     "ST-15",
     "ST-16",
@@ -342,11 +335,12 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-06"
+    ],
     "epics_pending": [
       "EPIC-04",
-      "EPIC-05",
-      "EPIC-06"
+      "EPIC-05"
     ],
     "all_merged": false
   },

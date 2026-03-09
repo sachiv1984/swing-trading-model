@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { base44, api } from "../api/base44Client";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import PageHeader from "../components/ui/PageHeader";
 import HeatGauge from "../components/risk/HeatGauge";
 import DrawdownSummary from "../components/risk/DrawdownSummary";
@@ -8,20 +8,12 @@ import GracePeriodPanel from "../components/risk/GracePeriodPanel";
 import PositionRiskTable from "../components/risk/PositionRiskTable";
 import ProspectiveHeatPanel from "../components/risk/ProspectiveHeatPanel";
 
-function ErrorCard({ message }) {
-  return (
-    <div className="rounded-2xl bg-rose-900/20 border border-rose-500/30 p-6 flex items-center gap-3">
-      <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
-      <p className="text-sm text-rose-300">{message}</p>
-    </div>
-  );
-}
-
 export default function RiskDashboard() {
   const {
     data: portfolioData,
     isLoading: loadingPortfolio,
     error: portfolioError,
+    refetch,
   } = useQuery({
     queryKey: ["riskPortfolio"],
     queryFn: () => api.portfolio.get(),
@@ -36,7 +28,7 @@ export default function RiskDashboard() {
   } = useQuery({
     queryKey: ["riskEntityPositions"],
     queryFn: () => base44.entities.Position.filter({ status: "open" }),
-    enabled: !!portfolioError, // only if api fails
+    enabled: !!portfolioError,
   });
 
   const {
@@ -58,6 +50,9 @@ export default function RiskDashboard() {
   // Positions: prefer API response, fallback to entity store
   const positions = portfolioData?.positions ?? entityPositions ?? [];
 
+  // Only surface position error when entity fallback is not providing data
+  const positionError = usingEntityFallback ? null : portfolioError;
+
   const isLoading = loadingPortfolio || (usingEntityFallback && (loadingEntityPositions || loadingEntityPortfolio));
 
   return (
@@ -75,38 +70,30 @@ export default function RiskDashboard() {
         <div className="space-y-6">
           {/* Top row: Heat Gauge + Drawdown Summary */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Heat Gauge */}
-            <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm p-6 flex flex-col items-center justify-center">
-              {portfolioError && heatPercent === null ? (
-                <ErrorCard message="Could not load portfolio heat. Check API connection." />
-              ) : (
-                <>
-                  <HeatGauge heatPercent={heatPercent ?? 0} />
-                  {usingEntityFallback && (
-                    <p className="mt-2 text-xs text-amber-400">Live heat unavailable — showing entity data fallback.</p>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Drawdown Summary */}
-            {portfolioError && drawdownPercent === null ? (
-              <ErrorCard message="Could not load drawdown data. Check API connection." />
-            ) : (
-              <DrawdownSummary
-                drawdownPercent={drawdownPercent}
-                peakValue={peakValue}
-              />
-            )}
+            <HeatGauge
+              heatPercent={heatPercent}
+              positionRisks={portfolioData?.position_risks ?? []}
+              error={portfolioError}
+              onRetry={refetch}
+            />
+            <DrawdownSummary
+              drawdownPercent={drawdownPercent}
+              peakValue={peakValue}
+              error={portfolioError}
+            />
           </div>
 
+          {usingEntityFallback && (
+            <p className="text-xs text-amber-400">Live heat unavailable — showing entity data fallback.</p>
+          )}
+
           {/* Grace Period Panel */}
-          <GracePeriodPanel positions={positions} />
+          <GracePeriodPanel positions={positions} error={positionError} />
 
           {/* Position Risk Table */}
-          <PositionRiskTable positions={positions} />
+          <PositionRiskTable positions={positions} error={positionError} />
 
-          {/* Prospective Heat Calculator */}
+          {/* Prospective Heat Calculator — manages its own error state */}
           <ProspectiveHeatPanel currentHeat={heatPercent} />
         </div>
       )}
