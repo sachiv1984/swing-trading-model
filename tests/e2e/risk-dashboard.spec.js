@@ -421,8 +421,8 @@ test.describe('Group F — Full Empty State', () => {
     await expect(gaugeValueText(page)).toContainText('0.0%');
     await expect(gaugeValueText(page)).toHaveAttribute('fill', '#22c55e');
 
-    // Grace period panel: empty state
-    await expect(page.locator('text=No positions in grace period')).toBeVisible();
+    // Grace period panel: empty state (text updated in EPIC-04 ST-08)
+    await expect(page.locator('text=No positions currently in grace period')).toBeVisible();
 
     // Position risk table: empty state
     await expect(page.locator('text=No open positions to display')).toBeVisible();
