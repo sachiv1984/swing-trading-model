@@ -1,0 +1,61 @@
+name: Service Layer Coverage Gate
+
+# ST-13: Tier 1 Pure-Math Service Coverage
+# Runs pytest-cov against Tier 1 services (no DB calls — DB functions mocked).
+# Blocks merge if coverage on any Tier 1 service drops below 80%.
+#
+# Tier 1 scope (v1.9):
+#   - services/grace_service.py
+#   - services/drawdown_service.py
+#
+# Threshold: 80% line coverage (--fail-under=80)
+# Test file:  tests/test_service_coverage.py
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches:
+      - 'exec/**'
+      - main
+      - develop
+
+jobs:
+  service-coverage:
+    name: Service Layer Coverage (ST-13)
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run Tier 1 service coverage (ST-13)
+        run: |
+          python -m pytest tests/test_service_coverage.py -v \
+            --cov=services.grace_service \
+            --cov=services.drawdown_service \
+            --cov-report=term-missing \
+            --cov-fail-under=80
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Service layer coverage gate complete."
+          echo "  Tier 1: services/grace_service.py + services/drawdown_service.py"
+          echo "  Threshold: 80% line coverage"
+          echo "If the step failed, check tests/test_service_coverage.py against"
+          echo "  position_endpoints.md v1.8.3 (grace) and metrics_definitions.md v1.5.8 (drawdown)."
