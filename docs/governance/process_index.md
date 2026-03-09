@@ -81,11 +81,11 @@ Start here.
 
 | Question | Document | Owner |
 |----------|----------|-------|
-| What document class does this document belong to? | `docs/governance/document_lifecycle_guide.md` | Head of Specs Team |
-| What header fields are required for this document class? | `docs/governance/document_lifecycle_guide.md §2` | Head of Specs Team |
-| What lifecycle states are available? | `docs/governance/document_lifecycle_guide.md §3` | Head of Specs Team |
-| When do I need to increment a version? | `docs/governance/document_lifecycle_guide.md §5` | Head of Specs Team |
-| Who owns which documents? | `docs/governance/document_lifecycle_guide.md §7` | Head of Specs Team |
+| What document class does this document belong to? | `claude/charter/document_lifecycle_guide.md` | Head of Specs Team |
+| What header fields are required for this document class? | `claude/charter/document_lifecycle_guide.md §2` | Head of Specs Team |
+| What lifecycle states are available? | `claude/charter/document_lifecycle_guide.md §3` | Head of Specs Team |
+| When do I need to increment a version? | `claude/charter/document_lifecycle_guide.md §5` | Head of Specs Team |
+| Who owns which documents? | `claude/charter/document_lifecycle_guide.md §7` | Head of Specs Team |
 
 ---
 

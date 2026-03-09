@@ -63,6 +63,7 @@ It points to the **single canonical source**.
 
 **Canonical Documents**
 - `data_model.md`
+- `data_model/settings_model.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-17): all settings field names, types, validation rules, defaults, and semantics.
 
 **Owner**
 - Data Model & Domain Schema Owner
@@ -97,8 +98,9 @@ It points to the **single canonical source**.
 
 **Canonical Documents**
 - `README.md`
-- `conventions.md`
+- `conventions.md` — includes §13 Error Response Standard (canonical error envelope, HTTP status mapping)
 - `*_endpoints.md`
+- `market_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-16): GET /market/status
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**
@@ -161,7 +163,7 @@ It points to the **single canonical source**.
 - Canonical meanings of commonly referenced terms
 
 **Reference Document**
-- `docs/reference/glossary.md`
+- `docs/reference/glossary.md` — Class 2 Supporting, v1.1, Active (updated 2026-03-08, ST-14): lifecycle-compliant header; terms added: portfolio heat, stop distance, cohort, journal completion rate, stop-based exit rate
 
 **Authority**
 - Language only — canonical definitions, formulas, and rules live in domain specs
@@ -198,7 +200,7 @@ No downstream system may override upstream intent.
 - **Supporting reference artifacts must be reviewed inline with their canonical specs**
 - Silent divergence between specs and behavior is treated as a **system bug**
 - All documentation must comply with the lifecycle rules defined in:
-  - `/docs/governance/document_lifecycle_guide.md`
+  - `claude/charter/document_lifecycle_guide.md`
 
 ---
 

@@ -18,7 +18,7 @@
 - **GitHub Issue:** #39
 - **Branch:** exec/2026-03-06__release-v1.9/EPIC-04
 - **Target branch:** exec/2026-03-06__release-v1.9/EPIC-04
-- **Delegated at:** 2026-03-08T00:00:00Z
+- **Delegated at:** 2026-03-08T22:00:00Z
 - **What is needed:**
 
   In `backend/services/portfolio_service.py`, the `get_portfolio_summary()` function currently returns `entry_price` in native USD for US positions (line 175: `"entry_price": round(entry_price, 2)` — no FX conversion applied), and `current_stop` without FX conversion for any position (line 181: `"current_stop": round(pos.get("current_stop", 0), 2)`). This causes the Risk Dashboard to display US position entry and stop prices in USD rather than GBP, and makes Stop Distance % incorrect for US positions (mixing currencies).
@@ -54,7 +54,7 @@
 - **GitHub Issue:** #40
 - **Branch:** exec/2026-03-06__release-v1.9/EPIC-04
 - **Target branch:** exec/2026-03-06__release-v1.9/EPIC-04
-- **Delegated at:** 2026-03-08T00:00:00Z
+- **Delegated at:** 2026-03-08T22:00:00Z
 - **What is needed:**
 
   All five Risk Dashboard components (HeatGauge, DrawdownSummary, GracePeriodPanel, PositionRiskTable, ProspectiveHeatPanel) must render their own independent error states when `GET /portfolio` fails. The Base44 entity store fallback (`base44.entities`) must not silently mask API errors. GracePeriodPanel must render a distinct error card (not an empty/no-grace-positions state) when an API error is set.
@@ -166,7 +166,7 @@
 - **GitHub Issue:** #41
 - **Branch:** exec/2026-03-06__release-v1.9/EPIC-04
 - **Target branch:** exec/2026-03-06__release-v1.9/EPIC-04
-- **Delegated at:** 2026-03-08T00:00:00Z
+- **Delegated at:** 2026-03-08T22:00:00Z
 - **What is needed:**
 
   Four independent fixes to the Risk Dashboard table and column structure. Can be batched into a single Base44 prompt session alongside ST-08 if convenient, but each fix is independent.
@@ -273,7 +273,7 @@
 - **GitHub Issue:** #42
 - **Branch:** exec/2026-03-06__release-v1.9/EPIC-04
 - **Target branch:** exec/2026-03-06__release-v1.9/EPIC-04
-- **Delegated at:** 2026-03-08T00:00:00Z
+- **Delegated at:** 2026-03-08T22:00:00Z
 - **What is needed:**
 
   Two cosmetic fixes to HeatGauge component: (1) GRACE badge colour changed from amber to blue; (2) GBP value at risk displayed below the gauge percentage value.
@@ -366,7 +366,7 @@
 - **GitHub Issue:** #43
 - **Branch:** exec/2026-03-06__release-v1.9/EPIC-05
 - **Target branch:** exec/2026-03-06__release-v1.9/EPIC-05
-- **Delegated at:** 2026-03-08T00:00:00Z
+- **Delegated at:** 2026-03-08T22:00:00Z
 - **What is needed:**
 
   1. **Agree test infrastructure approach** with Head of Engineering at sprint start: seeded SQLite database, mock/stub API layer, or test fixture API. Record the chosen approach in a new "Test Infrastructure Preconditions" section of `docs/testing/risk_dashboard_scenarios.md` (this is also an outstanding action from the v1.8 closure record).
@@ -400,7 +400,7 @@
 - **GitHub Issue:** #45
 - **Branch:** exec/2026-03-06__release-v1.9/EPIC-05
 - **Target branch:** exec/2026-03-06__release-v1.9/EPIC-05
-- **Delegated at:** 2026-03-08T00:00:00Z
+- **Delegated at:** 2026-03-08T22:00:00Z
 - **What is needed:**
 
   1. **Agree coverage threshold %** between Backend Engineering Patterns Owner and Head of Engineering at sprint start. Record this threshold in the standard document.
@@ -424,6 +424,6 @@
 
 - **Spec reference:** `docs/specs/backend_engineering_patterns.md`
 - **Base44 prompt draft:** N/A — backend/CI work
-- **Unblock criteria:** Commit `[EPIC-05][ST-13]` pushed to `exec/2026-03-06__release-v1.9/EPIC-05`; CI coverage step visible in workflow YAML; threshold named in standard document; `backend_engineering_patterns.md` version incremented; Director of Quality confirms
+- **Unblock criteria:** Commit `[EPIC-05][ST-13]` pushed to `exec/2026-03-06__release-v1.9/EPIC-05`; CI coverage step visible in workflow YAML; threshold named in standard document; `backend_engineering_patterns.md` version incremented; Director of Quality confirms CI step present
 - **Commit format required:** `[EPIC-05][ST-13] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-05`
 - **Status:** Pending
