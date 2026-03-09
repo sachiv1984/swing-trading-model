@@ -184,6 +184,70 @@ class TestPositionSizingImplementation(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# Portfolio FX Conversion Tests (ST-07 — risk_dashboard.md §6.2)
+# ---------------------------------------------------------------------------
+
+def spec_price_to_gbp(price_native: float, market: str, fx_rate: float) -> float:
+    """risk_dashboard.md §6.2: entry_price and current_stop in GBP.
+    US positions: divide by stored_fx_rate. UK positions: no conversion."""
+    if market == 'US':
+        return round(price_native / fx_rate, 2)
+    return round(price_native, 2)
+
+
+class TestPortfolioFxConversion(unittest.TestCase):
+    """
+    Verify the price-to-GBP conversion formula used in get_portfolio_summary().
+    Resolves DEV-ST03-11 (entry_price in USD) and DEV-ST03-12 (current_stop in USD).
+    No database calls — formula only.
+    """
+
+    def _get(self, fx_id: str) -> dict:
+        return next(c for c in GOLDEN["portfolio_fx_conversion"] if c["id"] == fx_id)
+
+    def test_FX01_us_entry_price_to_gbp(self):
+        case = self._get("FX-01")
+        inp = case["inputs"]
+        result = spec_price_to_gbp(inp["price_native"], inp["market"], inp["fx_rate"])
+        self.assertAlmostEqual(result, case["expected"]["price_gbp"], places=2,
+                               msg="FX-01: US entry_price GBP conversion mismatch")
+
+    def test_FX02_us_current_stop_to_gbp(self):
+        case = self._get("FX-02")
+        inp = case["inputs"]
+        result = spec_price_to_gbp(inp["price_native"], inp["market"], inp["fx_rate"])
+        self.assertAlmostEqual(result, case["expected"]["price_gbp"], places=2,
+                               msg="FX-02: US current_stop GBP conversion mismatch")
+
+    def test_FX03_us_default_fx_rate(self):
+        case = self._get("FX-03")
+        inp = case["inputs"]
+        result = spec_price_to_gbp(inp["price_native"], inp["market"], inp["fx_rate"])
+        self.assertAlmostEqual(result, case["expected"]["price_gbp"], places=2,
+                               msg="FX-03: US price with fx_rate=1.27 mismatch")
+
+    def test_FX04_uk_entry_price_no_conversion(self):
+        """UK positions must NOT be converted — already in GBP."""
+        case = self._get("FX-04")
+        inp = case["inputs"]
+        result = spec_price_to_gbp(inp["price_native"], inp["market"], inp["fx_rate"])
+        self.assertAlmostEqual(result, case["expected"]["price_gbp"], places=2,
+                               msg="FX-04: UK entry_price should not be converted")
+        self.assertEqual(result, inp["price_native"],
+                         msg="FX-04: UK price must equal native (no conversion)")
+
+    def test_FX05_uk_current_stop_no_conversion(self):
+        """UK positions must NOT be converted — already in GBP."""
+        case = self._get("FX-05")
+        inp = case["inputs"]
+        result = spec_price_to_gbp(inp["price_native"], inp["market"], inp["fx_rate"])
+        self.assertAlmostEqual(result, case["expected"]["price_gbp"], places=2,
+                               msg="FX-05: UK current_stop should not be converted")
+        self.assertEqual(result, inp["price_native"],
+                         msg="FX-05: UK price must equal native (no conversion)")
+
+
+# ---------------------------------------------------------------------------
 # Stop-Loss Tests (ST-05 — §5, §7)
 # ---------------------------------------------------------------------------
 
@@ -261,10 +325,12 @@ class TestGoldenOutputsMetadata(unittest.TestCase):
     def test_golden_file_loads(self):
         self.assertIn("position_sizing", GOLDEN)
         self.assertIn("stop_loss", GOLDEN)
+        self.assertIn("portfolio_fx_conversion", GOLDEN)
 
     def test_expected_case_counts(self):
         self.assertEqual(len(GOLDEN["position_sizing"]), 5, "Expected 5 position sizing cases")
         self.assertEqual(len(GOLDEN["stop_loss"]), 7, "Expected 7 stop-loss cases")
+        self.assertEqual(len(GOLDEN["portfolio_fx_conversion"]), 5, "Expected 5 portfolio FX conversion cases")
 
     def test_canonical_parameters_present(self):
         params = GOLDEN["_metadata"]["canonical_parameters"]

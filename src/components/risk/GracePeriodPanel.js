@@ -1,4 +1,4 @@
-import { Clock, ShieldAlert } from "lucide-react";
+import { Clock, ShieldAlert, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "../../lib/utils";
 
@@ -8,7 +8,7 @@ function daysColor(days) {
   return "text-emerald-400 bg-emerald-500/10 border-emerald-500/30";
 }
 
-export default function GracePeriodPanel({ positions = [] }) {
+export default function GracePeriodPanel({ positions = [], error }) {
   const gracePosts = [...positions]
     .filter((p) => p.grace_period)
     .sort((a, b) => (a.grace_days_remaining ?? 999) - (b.grace_days_remaining ?? 999));
@@ -20,15 +20,20 @@ export default function GracePeriodPanel({ positions = [] }) {
           <ShieldAlert className="w-5 h-5 text-amber-400" />
         </div>
         <h3 className="text-sm font-medium text-slate-300">Grace Period</h3>
-        {gracePosts.length > 0 && (
+        {!error && gracePosts.length > 0 && (
           <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
             {gracePosts.length} position{gracePosts.length > 1 ? "s" : ""}
           </span>
         )}
       </div>
 
-      {gracePosts.length === 0 ? (
-        <p className="text-sm text-slate-500 italic">No positions in grace period.</p>
+      {error ? (
+        <div className="flex items-center gap-3 rounded-lg bg-rose-900/20 border border-rose-500/40 px-4 py-3">
+          <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+          <p className="text-sm text-rose-300">Unable to load position data</p>
+        </div>
+      ) : gracePosts.length === 0 ? (
+        <p className="text-sm text-slate-500 italic">No positions currently in grace period.</p>
       ) : (
         <div className="space-y-2">
           {gracePosts.map((p) => {
@@ -42,6 +47,9 @@ export default function GracePeriodPanel({ positions = [] }) {
                   <span className="font-semibold text-white">{p.ticker}</span>
                   <span className="text-xs text-slate-500">
                     {p.entry_date ? format(new Date(p.entry_date), "dd MMM yy") : "—"}
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    {p.holding_days != null ? `${p.holding_days}d in grace` : "—"}
                   </span>
                 </div>
                 <div className={cn("flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border", daysColor(days ?? 999))}>

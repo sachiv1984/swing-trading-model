@@ -1,11 +1,10 @@
 import { cn } from "../../lib/utils";
-import { format } from "date-fns";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, AlertCircle } from "lucide-react";
 
 const STATUS_ORDER = { GRACE: 0, LOSING: 1, PROFITABLE: 2 };
 
 const statusBadge = {
-  GRACE:      "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  GRACE:      "bg-blue-500/20 text-blue-400 border-blue-500/30",
   LOSING:     "bg-rose-500/20 text-rose-400 border-rose-500/30",
   PROFITABLE: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
 };
@@ -15,7 +14,7 @@ function stopDistancePct(pos) {
   return ((pos.current_price - pos.current_stop) / pos.current_price) * 100;
 }
 
-export default function PositionRiskTable({ positions = [] }) {
+export default function PositionRiskTable({ positions = [], error }) {
   const sorted = [...positions]
     .filter((p) => p.status === "open")
     .map((p) => ({ ...p, _stopDist: stopDistancePct(p) }))
@@ -23,11 +22,28 @@ export default function PositionRiskTable({ positions = [] }) {
       const sA = STATUS_ORDER[a.display_status] ?? 9;
       const sB = STATUS_ORDER[b.display_status] ?? 9;
       if (sA !== sB) return sA - sB;
-      // Within group: higher stop distance = more at risk first
-      return (b._stopDist ?? -Infinity) - (a._stopDist ?? -Infinity);
+      // ascending = smallest distance first = most at risk
+      return (a._stopDist ?? Infinity) - (b._stopDist ?? Infinity);
     });
 
   const currSym = (pos) => pos.market === "UK" ? "£" : "$";
+
+  if (error) {
+    return (
+      <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-700/50 flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30">
+            <ArrowDown className="w-5 h-5 text-violet-400" />
+          </div>
+          <h3 className="text-sm font-medium text-slate-300">Position Risk</h3>
+        </div>
+        <div className="p-6 flex items-center gap-3 rounded-b-2xl bg-rose-900/10 border-t border-rose-500/20">
+          <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+          <p className="text-sm text-rose-300">Unable to load position data</p>
+        </div>
+      </div>
+    );
+  }
 
   if (sorted.length === 0) {
     return (
@@ -50,7 +66,7 @@ export default function PositionRiskTable({ positions = [] }) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-700/30">
-              {["Ticker", "Status", "Entry Price", "Current (GBP)", "Stop Dist %", "Held"].map((h) => (
+              {["Ticker", "Status", "Entry Price", "Current (GBP)", "Stop Price", "Stop Dist %", "Held"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   {h}
                 </th>
@@ -81,6 +97,9 @@ export default function PositionRiskTable({ positions = [] }) {
                   </td>
                   <td className="px-4 py-3 text-slate-300 tabular-nums">
                     {pos.current_price != null ? `£${Number(pos.current_price).toFixed(2)}` : "—"}
+                  </td>
+                  <td className="px-4 py-3 text-slate-300 tabular-nums">
+                    {pos.current_stop ? `£${Number(pos.current_stop).toFixed(2)}` : "—"}
                   </td>
                   <td className={cn("px-4 py-3 tabular-nums font-medium", distColor)}>
                     {dist === null ? "—" : `${dist.toFixed(1)}%`}

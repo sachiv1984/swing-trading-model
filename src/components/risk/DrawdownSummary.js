@@ -1,6 +1,17 @@
-import { TrendingDown, Mountain } from "lucide-react";
+import { TrendingDown, Mountain, AlertCircle } from "lucide-react";
 
-export default function DrawdownSummary({ drawdownPercent, peakValue, currency = "£" }) {
+function ErrorCard() {
+  return (
+    <div className="rounded-2xl bg-rose-900/20 border border-rose-500/40 p-6 flex items-center gap-3">
+      <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
+      <p className="text-sm text-rose-300">Unable to load drawdown data</p>
+    </div>
+  );
+}
+
+export default function DrawdownSummary({ drawdownPercent, peakValue, error, currency = "£" }) {
+  if (error) return <ErrorCard />;
+
   const dd = drawdownPercent ?? null;
   const isAtPeak = dd === 0;
 
@@ -37,7 +48,9 @@ export default function DrawdownSummary({ drawdownPercent, peakValue, currency =
           <div className="flex items-center gap-1.5">
             <Mountain className="w-4 h-4 text-slate-400" />
             <p className="text-lg font-semibold text-slate-200">
-              {peakValue != null ? `${currency}${Number(peakValue).toLocaleString("en-GB", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "N/A"}
+              {peakValue != null
+                ? `${currency}${Number(peakValue).toLocaleString("en-GB", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+                : "N/A"}
             </p>
           </div>
         </div>
