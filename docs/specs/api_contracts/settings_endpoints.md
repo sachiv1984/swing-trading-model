@@ -5,6 +5,10 @@
 
 # settings_endpoints.md
 
+**Data Model Reference:** `docs/specs/data_model/settings_model.md` — canonical field definitions, types, defaults, constraints, and semantics for the settings domain.
+
+---
+
 ## Overview
 
 This document defines **Settings** domain endpoints:

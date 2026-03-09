@@ -27,6 +27,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 ## Endpoints
 
 - [GET /positions](#get-positions)
+- [GET /positions/search/tags](#get-positionssearchtags)
 - [GET /positions/analyze](#get-positionsanalyze)
 - [POST /positions/{position_id}/exit](#post-positionsposition_idexit)
 - [PATCH /positions/{position_id}/note](#patch-positionsposition_idnote)
@@ -485,3 +486,70 @@ Response uses the standard success envelope from **conventions.md**.
 ### Errors
 
 Errors use the standard error envelope from **conventions.md**.
+
+---
+
+## GET /positions/search/tags
+
+**Purpose**
+
+Search open and closed positions by one or more tags. Returns all positions that match **any** of the provided tags (OR match, not AND).
+
+**Method & Path**
+
+- `GET /positions/search/tags`
+
+**Idempotency**
+
+- Safe to repeat (read-only).
+
+### Request
+
+#### Query Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `tags` | string | Yes | Comma-separated list of tags to search for. Example: `momentum,breakout`. Each tag is matched case-insensitively. At least one tag is required. |
+
+#### Example
+
+```
+GET /positions/search/tags?tags=momentum,breakout
+```
+
+### Response (200)
+
+Response uses the standard success envelope from **conventions.md**.
+
+#### `data` schema
+
+Array of matching position objects. Each position object follows the same shape as positions returned by `GET /positions`.
+
+```json
+{
+  "status": "ok",
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "ticker": "AAPL",
+      "tags": ["momentum", "breakout"]
+    }
+  ]
+}
+```
+
+#### Matching rules
+
+- Positions are matched if any tag in the request matches any tag on the position (OR semantics).
+- Tag matching is case-insensitive.
+- Both open and closed positions are searched.
+- Returns an empty array if no positions match (not an error).
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `400` | `tags` query parameter is missing or empty after parsing |
+| `500` | Internal server error |
