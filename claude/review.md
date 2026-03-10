@@ -881,75 +881,6 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## ✅ BATCH 0 — COMPLETE (2026-03-10)
-
-**IMPs resolved:** IMP-49, IMP-51, IMP-52
-**Files updated:** `amendment_cycle_prompt.md` → v1.3, `sprint_planning_prompt.md` → v1.5
-**Verified by:** §14 governance table and §6B.8, §7 phase headers in playbook v3.5.
-
----
-
-## ✅ BATCH 1 — COMPLETE (2026-03-10)
-
-**IMPs resolved:** IMP-12, IMP-18, IMP-20, IMP-33 (gap 3), IMP-34, IMP-41, IMP-42, IMP-44, IMP-45, IMP-47, IMP-50, IMP-56, IMP-58, IMP-59, IMP-61
-**Files updated:** `shared_standards.md` → v1.7, `execution_prompt.md` → v1.7, `sprint_planning_prompt.md` → v1.5, `release_planning_prompt.md` → v2.15, `post_ship_closure.md` → v1.5
-**Verified by:** §14 governance table and §8 phase header in playbook v3.5.
-
-> ⚠️ **VERSION ANOMALY — read before starting Batch 3:** `shared_standards.md` reached v1.7 rather than the planned v1.5. Two extra minor bumps indicate IMP-40 (SLA breach rule) and IMP-48 (gh_issue_template governance) — both planned for Batch 3 — were implemented in the same pass. **Before touching `shared_standards.md` in Batch 3: verify IMP-40 and IMP-48 are already present in v1.7.** If confirmed, remove those two items from Batch 3 scope. Batch 3's `shared_standards.md` entry becomes a no-op and the file is not re-touched.
-
----
-
-## ✅ BATCH 2 — COMPLETE (2026-03-10)
-
-**IMPs resolved:** IMP-13, IMP-17, IMP-33 (gap 2), IMP-36 (§6B, §7, §8 headers reconciled)
-**File updated:** `operational_playbook.md` → v3.5
-**Verified by:** direct audit of playbook v3.5.
-
----
-
-## ✅ BATCH 2-PATCH — COMPLETE (2026-03-10)
-
-**IMPs resolved:** IMP-62 (1), IMP-62 (2), IMP-62 (3)
-**File updated:** `OPERATIONAL_GUIDE.md` → v3.6
-**Verified by:** §9 source prompt → v1.2; §10 source prompt → v1.5 (filename corrected); §14 standing rule appended; prompt_change_log.md entry appended.
-
----
-
-## ✅ BATCH 3 — COMPLETE (2026-03-10)
-
-**IMPs resolved:** IMP-24, IMP-35 (gaps 2, 3, 4), IMP-39, IMP-40, IMP-48, IMP-58
-**Files updated:** `release_planning_prompt.md` → v2.16, `execution_prompt.md` → v1.8, `amendment_cycle_prompt.md` → v1.4, `shared_standards.md` → v1.8, `prompt_change_log.md` (appended), `OPERATIONAL_GUIDE.md` → v3.7
-**Verified by:** Pre-emption check confirmed IMP-40 and IMP-48 absent from shared_standards v1.7; both applied to v1.8. IMP-58 retroactive entry added (execution_prompt v1.4→v1.5). Standing rule applied: §6B, §6B.8, §8 phase headers updated alongside §14 table.
-
----
-
-## BATCH 4 — Token efficiency (highest token savings, medium effort, no cross-dependencies within batch)
-
-**Rationale:** These changes are independent of each other and independent of Batches 0–3. Ordered by token saving magnitude. IMP-25 is a prerequisite for IMP-23 (if sprint_backlog becomes a reference-only document, the index is the bridge). Do IMP-25 → IMP-24 companion → IMP-23 → IMP-26 → IMP-27.
-
-### `release_planning_prompt.md` (→ v2.16)
-| IMP | Change |
-|-----|--------|
-| IMP-26 | STEP 3 risk register entries: add `escalation_ref` field (null or ESC-id). Update escalation subroutine reference to §4: "ESC entries store decision/status only; risk context lives in `release_plan.md` via escalation_ref." |
-
-### `sprint_planning_prompt.md` (→ v1.7)
-| IMP | Change |
-|-----|--------|
-| IMP-23 | STEP 6 `sprint_backlog.md` template: ST item Acceptance Criteria field becomes a reference — "AC: see `stage4_backlog_slice.md#ST-xx`" instead of full AC duplication. Sprint backlog is a sequencing and ownership document. Add note: "Execution engine reads AC from `stage4_backlog_slice.md` directly via `spec_references`." |
-| IMP-25 | STEP 6: alongside `sprint_backlog.md`, produce `sprint_backlog_index.json` — `{EPIC-xx: {st_items: [ST-xx,...], backlog_slice_refs: [...]}}`. Add to §6 Write Scope. |
-
-### `execution_prompt.md` (→ v1.9)
-| IMP | Change |
-|-----|--------|
-| IMP-25 | STEP -1 and STEP 0: add instruction — "Load `sprint_backlog_index.json` to identify which ST items belong to the scoped EPIC. Read only the relevant slice of `sprint_backlog.md` using the index line ranges, not the full document." |
-
-### `post_ship_closure.md` (→ v1.6)
-| IMP | Change |
-|-----|--------|
-| IMP-27 | For each step, add field-level read target: STEP 0 — `verification_report.md`: read `§1 verification_status` and `§4 deviation register` only. `sprint_close.md`: read verification readiness statement and deviations list. `execution_state.json`: read `epics` outcome map. STEP 8 — `lessons_learnt.md` files: read action item sections only (not full prose). Add explicit "read target" notes to each step that loads a large input document. |
-
----
-
 ## BATCH 5 — Lessons learnt consolidation (high impact, medium effort, must precede IMP-29 and IMP-37)
 
 **Rationale:** IMP-28 is the prerequisite for three other IMPs (IMP-29, IMP-37, IMP-53, IMP-54). It requires coordinated changes across four prompt files. Do it as a single atomic batch.
@@ -1061,12 +992,6 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 | Batch | Status | Files touched | IMPs addressed | Priority basis |
 |-------|--------|--------------|----------------|----------------|
-| 0 | ✅ COMPLETE | `amendment_cycle_prompt.md` v1.3, `sprint_planning_prompt.md` v1.5 | 49, 51, 52 | Hard blockers |
-| 1 | ✅ COMPLETE | `shared_standards.md` v1.7, `execution_prompt.md` v1.7, `sprint_planning_prompt.md` v1.5, `release_planning_prompt.md` v2.15, `post_ship_closure.md` v1.5 | 12, 18, 20, 33(gap3), 34, 40†, 41, 42, 44, 45, 47, 48†, 50, 56, 58, 59, 61 | Correctness + state hygiene |
-| 2 | ✅ COMPLETE | `operational_playbook.md` v3.5 | 13, 17, 33(gap2), 36(partial) | Playbook hygiene |
-| 2-PATCH | ✅ COMPLETE | `operational_playbook.md` v3.6 | 62 | IMP-36 residuals |
-| 3 | ✅ COMPLETE | `release_planning_prompt.md` v2.16, `execution_prompt.md` v1.8, `amendment_cycle_prompt.md` v1.4, `shared_standards.md` v1.8, `prompt_change_log.md`, `OPERATIONAL_GUIDE.md` v3.7 | 24, 35(gaps 2–4), 39, 40, 48, 58 | Idempotency + GitHub reliability |
-| 4 | ✅ COMPLETE | `release_planning_prompt.md` v2.17, `sprint_planning_prompt.md` v1.7, `execution_prompt.md` v1.9, `post_ship_closure.md` v1.6, `OPERATIONAL_GUIDE.md` v3.8, `prompt_change_log.md` | 23, 25, 26, 27 | Token savings — highest volume reduction |
 | 5 | — | `lessons_learnt_prompt.md`, `execution_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `amendment_cycle_prompt.md` | 28, 37, 53, 54 | Structural — lessons learnt consolidation; prerequisite for Batch 6 |
 | 6 | — | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
 | 7 | — | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
