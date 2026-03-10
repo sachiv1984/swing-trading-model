@@ -1570,8 +1570,8 @@ Effort: Low
 ---
 
 # Implementation Plan — Sprint Planning Operational Playbook
-**Generated:** 2026-03-09
-**Source:** review.md (IMP-11 through IMP-61, resolved items removed)
+**Generated:** 2026-03-09 | **Updated:** 2026-03-10
+**Source:** review.md (IMP-11 through IMP-62, resolved items removed)
 **Principle:** Each file is touched exactly once. Batches are ordered by criticality × improvement value.
 
 ---
@@ -1584,84 +1584,47 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## BATCH 0 — Blocking defects (fix before the current sprint ends) ✅ DONE 2026-03-10
+## ✅ BATCH 0 — COMPLETE (2026-03-10)
 
-**Rationale:** These two defects make the amendment cycle and sprint planning fail at preflight on every modern cycle. They share the same root cause (v2.11 artefact consolidation was not reflected in downstream prompts) and must be fixed together in a single atomic commit.
-
-**Files touched:** `amendment_cycle_prompt.md`, `sprint_planning_prompt.md`
-
-### `amendment_cycle_prompt.md` (→ v1.3)
-| IMP | Change |
-|-----|--------|
-| IMP-49 | STEP -1.4: remove `stage3_execution_plan.md` from required files. Add `release_plan.md`. Add version detection: read `state.json.prompt_schema_version`; if `v2`, require `release_plan.md`; if `v1`/absent, require `stage3_execution_plan.md`. Update §4 amendment scope restriction to reference `release_plan.md ## Execution Plan` for schema v2 cycles. |
-| IMP-51 | Add STEP 2.5 between STEP 2 and STEP 3: "Release `claude/backlog/.lock` before ratification. Set `amendment_state.json.backlog_lock_status = released_pending_ratification`. Re-acquire at STEP 5.1 with marker `AMD:<release>:<cycle_id>:<amendment_id>`." Add governance invariant: "Lock is not held across human confirmation steps." |
-
-### `sprint_planning_prompt.md` (→ v1.5)
-| IMP | Change |
-|-----|--------|
-| IMP-52 | §5 required inputs: remove `stage3_execution_plan.md`, add `release_plan.md`. STEP -1.5 required files check: same substitution. STEP 0 context load: read sequencing, risk IDs, and effort estimates from `release_plan.md ## Execution Plan` (schema v2) or `stage3_execution_plan.md` (schema v1). |
+**IMPs resolved:** IMP-49, IMP-51, IMP-52
+**Files updated:** `amendment_cycle_prompt.md` → v1.3, `sprint_planning_prompt.md` → v1.5
+**Verified by:** §14 governance table and §6B.8, §7 phase headers in playbook v3.5.
 
 ---
 
-## BATCH 1 — State file hygiene and governance quick fixes (highest correctness gain, no dependencies) ✅ DONE 2026-03-10
+## ✅ BATCH 1 — COMPLETE (2026-03-10)
 
-**Rationale:** All low-effort, no dependencies, high reliability improvement. Groups all changes to `shared_standards.md` together, then all changes that touch only `execution_prompt.md`, then small single-file fixes.
+**IMPs resolved:** IMP-12, IMP-18, IMP-20, IMP-33 (gap 3), IMP-34, IMP-41, IMP-42, IMP-44, IMP-45, IMP-47, IMP-50, IMP-56, IMP-58, IMP-59, IMP-61
+**Files updated:** `shared_standards.md` → v1.7, `execution_prompt.md` → v1.7, `sprint_planning_prompt.md` → v1.5, `release_planning_prompt.md` → v2.15, `post_ship_closure.md` → v1.5
+**Verified by:** §14 governance table and §8 phase header in playbook v3.5.
 
-### `shared_standards.md` (→ v1.5)
-| IMP | Change |
-|-----|--------|
-| IMP-45 | Add §12 Dry-Run Standard: (1) no writes to any file, (2) no lock acquisition, (3) no external API calls, (4) reads all live-run inputs, (5) output is a structured inline report listing engine, timestamp, planned writes (file\|step\|summary), planned state transitions, planned GitHub ops, SAFE TO PROCEED: Y/N. For state-initialising engines (Sprint Execution): parse backlog slice read-only; do not write execution_state.json. |
-| IMP-50 | §4: replace `closure_record.md §6` as escalation target with `claude/cycles/<cycle_id>/closure_escalations.md` (Class 4, append-only). Update ESC-CLOSE identifier routing to match. |
-| IMP-58 | §11 Prompt Version Control: add standing rule — "Entries must be created simultaneously with prompt file updates, not retrospectively. A prompt version with no change log entry is non-compliant until the entry is filed." |
-| IMP-61 | §10 Lifecycle Guard: add reference to `lifecycle_schema.json` as the machine-readable valid-states source. Add note: "If `lifecycle_schema.json` does not exist, create a minimal schema defining valid status values and transitions, then add it to the artefact register." |
-
-### `execution_prompt.md` (→ v1.7)
-| IMP | Change |
-|-----|--------|
-| IMP-20 | STEP 5 (Sprint Close): add check before writing `Sprint_Complete` — all entries in `delegation_log.md` must have a recorded outcome (`done | returned_to_backlog | pending_with_ETA | escalated`). If any entry lacks an outcome: flag in `sprint_close.md` outstanding items; do not block close but record explicitly. |
-| IMP-33 | §2 Invocation Rule or §13 Governance Invariants: add "Ambiguity" definition block — "A condition where the engine cannot determine the required action from AC, spec, and execution state alone. Examples: missing spec reference for a delegated_backend item; AC present but not testable; unresolvable dependency chain." This is the strict-mode halt trigger definition. |
-| IMP-44 | §9.1 schema: add `last_completed_substep` field to ST item entry with values `not_started | commit_pending | committed | issue_updated | done`. §10 Resumability: add sub-item resume rule — "For items with status `in_progress`, read `last_completed_substep` to determine re-entry point within STEP 3.1." |
-| IMP-47 / IMP-56 | STEP -1.7 Write Permission Test: change temp filename to `.write_test`. Add to STEP 0 first action: "Delete `.write_test` if present. If deletion fails: halt." |
-
-### `sprint_planning_prompt.md` (→ v1.6, amending v1.5 from Batch 0)
-
-> **Note:** If Batch 0 and Batch 1 are applied in the same session, merge these changes into the v1.5 edit and release as v1.5 directly. Only split if Batch 0 is committed separately first.
-
-| IMP | Change |
-|-----|--------|
-| IMP-18 | STEP 7 global state write: add `sprint_goal_status: "confirmed"` to the `.claude_current_state.json` block. Values: `not_started | awaiting_po | confirmed`. Set to `confirmed` only after STEP 6.2 sign-off gate passes. |
-| IMP-41 | STEP 0 context load (or STEP -1.2 after release plan sealed check): read `capacity_check` from `.claude_current_state.json → release_plan`. If `warn`: require Product Owner one-line acknowledgement before proceeding to scope selection. Record acknowledgement in `sprint_planning_notes.md`. Add `capacity_warn_acknowledged: true` to STEP 7 state write. In strict mode: halt if no acknowledgement; standard mode: block seal until acknowledged. |
-| IMP-47 / IMP-56 | STEP -1.8 Write Permission Test: same `.write_test` fix as execution_prompt. Add STEP 0 cleanup obligation. |
-
-### `release_planning_prompt.md` (→ v2.14)
-| IMP | Change |
-|-----|--------|
-| IMP-46 | §10.1 issue_import: replace "source from `release_plan.md ## Execution Plan`" with "source from `stage4_backlog_slice.md`." Add note: "This is the same source as §10.2 — both issue generation paths must use the backlog slice as the canonical content source." |
-| IMP-47 | STEP -1.4 Write Permission Test: same `.write_test` fix. Add STEP 0 cleanup obligation. |
-
-### `post_ship_closure.md` (→ v1.5)
-| IMP | Change |
-|-----|--------|
-| IMP-12 | §9 Closure Record template is already defined with 7 sections — confirm all required fields are present: cycle_id, ship_date, verification_status, steps_completed (§2 table), outstanding_actions (§6), lessons_learnt_summary (§5 counts), confirmed_by, confirmed_date. If any are absent from the template, add them. |
-| IMP-34 | §5 Write Scope — `current_roadmap.md` entry: expand from "status update + version headers only" to "status update, ✅ Complete marker, Current Version header, Next planned release header, release summary table status column. No other structural changes." — Canonical spec entry: add "Deviation compliance corrections: notify Head of Specs Team via closure record §6. Do not silently add missing fields without notification." |
-| IMP-42 | STEP -1 (after STEP -1.2 sealed check): add — "Read `sprint_close.md` verification readiness statement. All three fields must be `Yes`. If any is `No`: halt." |
-| IMP-50 | §5 Write Scope: add `claude/cycles/<cycle_id>/closure_escalations.md` as a permitted write (create or append, hard gate blockers only). §9 Closure Record §6: remove escalation routing from `closure_record.md`. |
-| IMP-59 | STEP 10 global state update: add `completed_cycle_count` increment — "Read current value (default 0 if absent); write `completed_cycle_count + 1`." Add to the state write JSON block. |
-| IMP-12 | Ensure `closure_record.md` template in §9 does not contain escalation section (consequence of IMP-50 — closure_record.md becomes immutable-only after IMP-50 fix). |
+> ⚠️ **VERSION ANOMALY — read before starting Batch 3:** `shared_standards.md` reached v1.7 rather than the planned v1.5. Two extra minor bumps indicate IMP-40 (SLA breach rule) and IMP-48 (gh_issue_template governance) — both planned for Batch 3 — were implemented in the same pass. **Before touching `shared_standards.md` in Batch 3: verify IMP-40 and IMP-48 are already present in v1.7.** If confirmed, remove those two items from Batch 3 scope. Batch 3's `shared_standards.md` entry becomes a no-op and the file is not re-touched.
 
 ---
 
-## BATCH 2 — Playbook-only edits (no prompt files touched) ✅ DONE 2026-03-10
+## ✅ BATCH 2 — COMPLETE (2026-03-10)
 
-**Rationale:** The playbook is the only file changed. All three changes are cosmetic/governance-hygiene but the version-drift fix (IMP-36) has the highest agent-confusion risk. Do these together in one playbook edit.
+**IMPs resolved:** IMP-13, IMP-17, IMP-33 (gap 2), IMP-36 (§6B, §7, §8 headers reconciled)
+**File updated:** `operational_playbook.md` → v3.5
+**Verified by:** direct audit of playbook v3.5.
 
-### `operational_playbook.md` (→ v3.4)
+> ⚠️ **THREE RESIDUAL GAPS — fix as pre-Batch-3 patch (see BATCH 2-PATCH below):** §9 and §10 source prompt headers were not updated; §14 standing rule was not added. IMP-62 captures all three. Apply as a single playbook edit before starting Batch 3.
+
+---
+
+## BATCH 2-PATCH — Playbook header drift and standing rule (apply before Batch 3)
+
+**Rationale:** Three items missed in Batch 2. Single-file playbook edit — low risk, low effort. Must be committed before Batch 3 so the standing rule is in place before the next prompt version bumps occur.
+
+**File:** `operational_playbook.md` (→ v3.6)
+
 | IMP | Change |
 |-----|--------|
-| IMP-36 | §6B source prompt header: update from v2.11 → v2.14. §7 source prompt header: update from v1.2 → v1.5 (or v1.6 if Batches 0–1 merged). §8 source prompt header: update from v1.5 → v1.7. Add standing rule to §14 Governance table: "When a prompt version is updated in §14, the corresponding phase section source prompt header must be updated in the same edit." |
-| IMP-13 | §1 Hard Rules: rule 2 "Decision log is append-only" — reclassify as governance convention (not hard rule enforced by engines) OR add enforcement note describing which engine verifies it. Rule 1 "no addition without displacement" — add note referencing Roadmap Engine §9 net-zero verification check (or flag as requiring Batch 4 addition to roadmap_prompt). |
-| IMP-17 | §3 Document Classes — Class 8 (Proof of Gate): add note "Reserved — not currently produced by any engine. Agents must not generate Class 8 documents unprompted. Activation requires a formal governance decision and versioned update to this playbook." |
-| IMP-33 | §6B (Roadmap Engine section): add note to zero-sum displacement rule — "This rule applies in both strict and standard mode. It is a governance constraint, not a quality gate, and is not relaxed by `--mode standard`." |
+| IMP-62 (1) | §14 version control paragraph: append — "**Standing rule:** whenever a prompt version is updated in the §14 governance table, the corresponding phase section source prompt header (§5–§10, §6B, §6B.8, §6M) must be updated in the same edit. A mismatch between a phase section header and §14 is a non-compliant state." |
+| IMP-62 (2) | §9 (Phase 4) source prompt header: `delivery_verification_prompt.md (v1.1)` → `(v1.2)` |
+| IMP-62 (3) | §10 (Post-Ship Closure) source prompt header: `post_ship_closure_prompt.md (v1.2)` → `(v1.5)` |
+
+**`prompt_change_log.md`** (→ append): single entry for `operational_playbook.md` v3.5→v3.6.
 
 ---
 
@@ -1669,7 +1632,11 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 **Rationale:** These changes touch multiple prompts but are logically cohesive. All address the "resumability guarantee." Group them to avoid a second pass over the same files.
 
-### `release_planning_prompt.md` (→ v2.15)
+> ⚠️ **PRE-EMPTION CHECK REQUIRED before starting Batch 3:**
+> - `shared_standards.md` is already at v1.7. IMP-40 and IMP-48 (the two Batch 3 shared_standards items) may already be implemented. **Read `shared_standards.md` v1.7 before touching it.** If IMP-40 (SLA breach rule in §4) and IMP-48 (gh_issue_template in §11 governed list) are present: skip the shared_standards section entirely — do not re-touch.
+> - `release_planning_prompt.md` is already at v2.15. The Batch 3 release_planning changes (IMP-24, IMP-35 gap 4, IMP-48) were planned for v2.15 but Batch 1 already consumed that version number. These changes must go to **v2.16**. The Batch 4 release_planning change (IMP-26) then goes to **v2.17**. Update version targets accordingly.
+
+### `release_planning_prompt.md` (→ v2.16, was planned as v2.15)
 | IMP | Change |
 |-----|--------|
 | IMP-24 | STEP 4: add `stage4_issue_manifest.json` production alongside `stage4_backlog_slice.md`. Schema: `[{id, title, epic, description, ac_summary, labels, assignee}]`. §10.2 `sync gh`: update to consume `stage4_issue_manifest.json` instead of parsing markdown. |
@@ -1688,16 +1655,16 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 | IMP-35 (gap 3) | Prompt change log append step (wherever action-now patches are applied): add pre-write check — "Before appending to `prompt_change_log.md`, check for existing entry with matching prompt name + version string. If present: skip." |
 | IMP-39 | §10 Withdrawal procedure: add backlog rollback instruction — "If STEP 5 (backlog update) completed before withdrawal: the `backlog.md` amendment marker introduced at STEP 5 must be explicitly reversed. Append a reversal entry to `backlog.md` noting the withdrawn AMD-id, original state, and date. Update `amendment_state.json.backlog_rollback_required = true` and `backlog_rollback_completed = <date>` once done." |
 
-### `shared_standards.md` (→ v1.6)
+### `shared_standards.md` (→ v1.8 if changes needed; skip entirely if IMP-40 + IMP-48 already present in v1.7)
 | IMP | Change |
 |-----|--------|
-| IMP-40 | §4 Escalation format: add SLA breach rule — "Any escalation open for 72 hours without resolution triggers a mandatory `BLOCKED_SLA_BREACH` notice. Engine writes notice to active cycle escalations file and sets `blocked_sla_breached = true` in `.claude_current_state.json` on next invocation." |
-| IMP-48 | §11 Prompt Version Control: add `claude/system/gh_issue_template.md` to the governed prompt list with Owner: Head of Specs Team, Class: 6. |
+| IMP-40 | §4 Escalation format: add SLA breach rule — "Any escalation open for 72 hours without resolution triggers a mandatory `BLOCKED_SLA_BREACH` notice. Engine writes notice to active cycle escalations file and sets `blocked_sla_breached = true` in `.claude_current_state.json` on next invocation." **Skip if already present in v1.7.** |
+| IMP-48 | §11 Prompt Version Control: add `claude/system/gh_issue_template.md` to the governed prompt list with Owner: Head of Specs Team, Class: 6. **Skip if already present in v1.7.** |
 
 ### `prompt_change_log.md` (→ append)
 | IMP | Change |
 |-----|--------|
-| IMP-58 | Append retroactive entries for `execution_prompt.md` v1.4→v1.5 (status check corrected, sprint backlog sealed check added, amended_backlog_slice_path, Executing status documented, STEP renumbering). Mark with note: "Retroactively recorded 2026-03-09." |
+| IMP-58 | Append retroactive entries for `execution_prompt.md` v1.4→v1.5 (status check corrected, sprint backlog sealed check added, amended_backlog_slice_path, Executing status documented, STEP renumbering). Mark with note: "Retroactively recorded 2026-03-09." **Skip if already present — check before appending (IMP-35 gap 3 idempotency rule applies here too).** |
 
 ---
 
@@ -1837,18 +1804,22 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ## Summary table
 
-| Batch | Files touched | IMPs addressed | Priority basis |
-|-------|--------------|----------------|----------------|
-| 0 | `amendment_cycle_prompt.md`, `sprint_planning_prompt.md` | 49, 51, 52 | Hard blockers — system broken without these |
-| 1 | `shared_standards.md`, `execution_prompt.md`, `sprint_planning_prompt.md`, `release_planning_prompt.md`, `post_ship_closure.md` | 12, 18, 20, 33, 34, 40, 41, 42, 44, 45, 47, 50, 56, 58, 59, 61 | Correctness + state hygiene, low effort, high reliability gain |
-| 2 | `operational_playbook.md` | 13, 17, 33, 36 | Playbook-only; eliminates agent confusion on version drift |
-| 3 | `release_planning_prompt.md`, `execution_prompt.md`, `amendment_cycle_prompt.md`, `shared_standards.md`, `prompt_change_log.md` | 24, 35, 39, 40, 48, 58 | Idempotency + GitHub reliability; medium complexity |
-| 4 | `release_planning_prompt.md`, `sprint_planning_prompt.md`, `execution_prompt.md`, `post_ship_closure.md` | 23, 25, 26, 27 | Token savings — highest volume reduction in the system |
-| 5 | `lessons_learnt_prompt.md`, `execution_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `amendment_cycle_prompt.md` | 28, 37, 53, 54 | Structural — lessons learnt consolidation; prerequisite for Batch 6 |
-| 6 | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
-| 7 | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
-| 8 | `shared_standards.md`, `release_planning_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `roadmap_prompt.md` | 11, 13, 14, 15, 16, 22, 43 | Completeness sweep; no blocking dependencies |
+| Batch | Status | Files touched | IMPs addressed | Priority basis |
+|-------|--------|--------------|----------------|----------------|
+| 0 | ✅ COMPLETE | `amendment_cycle_prompt.md` v1.3, `sprint_planning_prompt.md` v1.5 | 49, 51, 52 | Hard blockers |
+| 1 | ✅ COMPLETE | `shared_standards.md` v1.7, `execution_prompt.md` v1.7, `sprint_planning_prompt.md` v1.5, `release_planning_prompt.md` v2.15, `post_ship_closure.md` v1.5 | 12, 18, 20, 33(gap3), 34, 40†, 41, 42, 44, 45, 47, 48†, 50, 56, 58, 59, 61 | Correctness + state hygiene |
+| 2 | ✅ COMPLETE | `operational_playbook.md` v3.5 | 13, 17, 33(gap2), 36(partial) | Playbook hygiene |
+| 2-PATCH | **NEXT** | `operational_playbook.md` v3.6 | 62 | IMP-36 residuals |
+| 3 | — | `release_planning_prompt.md` v2.16, `execution_prompt.md` v1.8, `amendment_cycle_prompt.md` v1.4, `shared_standards.md` v1.8 (if needed), `prompt_change_log.md` | 24, 35(gaps 2–4), 39, 40†(verify), 48†(verify), 58(verify) | Idempotency + GitHub reliability |
+| 4 | — | `release_planning_prompt.md` v2.17, `sprint_planning_prompt.md` v1.7, `execution_prompt.md` v1.9, `post_ship_closure.md` v1.6 | 23, 25, 26, 27 | Token savings — highest volume reduction |
+| 5 | — | `lessons_learnt_prompt.md`, `execution_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `amendment_cycle_prompt.md` | 28, 37, 53, 54 | Structural — lessons learnt consolidation; prerequisite for Batch 6 |
+| 6 | — | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
+| 7 | — | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
+| 8 | — | `shared_standards.md`, `release_planning_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `roadmap_prompt.md` | 11, 13, 14, 15, 16, 22, 43 | Completeness sweep |
 
-**Total open IMPs addressed: 51**
+† IMP-40 and IMP-48 may already be present in `shared_standards.md` v1.7. Verify before re-applying in Batch 3.
+
+**Open IMPs remaining: 46** (including IMP-62)
 **IMPs requiring human decision before implementation: 4 (Batch 7)**
-**Batches 0–4 can proceed immediately with no decision gates.**
+**Batches 2-PATCH through 4 can proceed immediately with no decision gates.**
+
