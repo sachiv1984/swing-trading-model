@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-03-07
+**Version:** 1.7
+**Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -298,6 +298,7 @@ All per-item progress is recorded in:
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
+          "last_completed_substep": null,
           "notes": ""
         }
       }
@@ -352,6 +353,13 @@ On every resume, for each item in `blocked_items`:
 - Re-check the unblock criteria.
 - If the criteria are now met (e.g., human has pushed a commit, QA has signed off): transition the item to `in_progress` and continue.
 - If not met: keep blocked and report status to the user.
+
+### 10.2 Sub-Item Resume
+
+For items with `status = in_progress` and a non-null `last_completed_substep`:
+- Read `last_completed_substep` to identify the last completed sub-step within the ST item execution (e.g., `"3.1.A.commit"` for a committed autonomous item awaiting issue close verification).
+- Resume from the next sub-step. Do not re-execute the substep recorded in `last_completed_substep`.
+- Update `last_completed_substep` after each discrete sub-step completes, before any network or filesystem operation that could fail.
 
 ---
 
@@ -470,11 +478,13 @@ Verify agent files in `claude/agents/` for all required roles (Section 6). If an
 
 ### -1.7 Write Permission Test
 
-Create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can be written. Remove it. If write fails: halt.
+Create `claude/cycles/<cycle_id>/.write_test` and confirm it can be written. Remove it immediately. If write fails: halt. If not removed here, STEP 0 must clean it up before proceeding.
 
 ---
 
 ## STEP 0 — Initialise Execution State (Hard Requirement; first write)
+
+**Cleanup:** If `claude/cycles/<cycle_id>/.write_test` exists (left from STEP -1.7 on a previous interrupted run), delete it now before proceeding.
 
 Create `claude/cycles/<cycle_id>/execution_state.json` if it does not exist.
 
@@ -715,6 +725,20 @@ If any escalations remain `Open` with `Blocks execution: Yes`: set cycle status 
 
 Trigger: all EPICs in `execution_state.json.merge_gate.epics_pending` are empty (all merged).
 
+### 5.0 Delegation Log Outcome Check (Required before Sprint_Complete)
+
+Before writing `Sprint_Complete`, verify `claude/cycles/<cycle_id>/delegation_log.md`:
+- Every delegation entry (`DEL-YYYYMMDD-nn`) must have `Status` set to `Unblocked`, `Cancelled`, or an equivalent terminal state.
+- Entries still showing `Pending` or `In Progress` indicate delegated items with unrecorded outcomes.
+
+For each entry still `Pending` or `In Progress`:
+- Check `execution_state.json` for the item's current status.
+- If the item is `done` or `merged`: update the delegation log entry status to `Unblocked` (noting the commit SHA).
+- If the item is `returned_to_backlog`: update the delegation log entry status to `Cancelled` (noting the backlog return reason).
+- If the item is still blocked: record the outcome as `In Progress — carried to post-sprint` with a note.
+
+**Hard gate:** Do not proceed to STEP 5.1 if any delegation log entry has an unrecorded outcome for an item that reached a terminal sprint state. The sprint close record must faithfully account for every delegated item.
+
 ### 5.1 Acceptance Summary
 
 For each ST item: confirm `acceptance_verified = true`. If any are false and the item is `merged`: this is a quality gap — file an escalation.
@@ -856,6 +880,8 @@ The run is complete only if:
 
 ## 13. Governance Invariants
 
+**Ambiguity definition:** An item is *ambiguous* when its acceptance criteria, EPIC assignment, spec reference, or delegation classification cannot be determined without an authority decision. Ambiguous items must be classified `delegated_decision` and escalated — never silently assumed or guessed. This applies in both `strict` and `standard` modes. The only difference between modes is whether execution continues on other items (standard) or halts entirely (strict).
+
 - **No autonomous merge.** The engine never merges without QA sign-off and Product Owner acceptance.
 - **No scope change.** The backlog slice is sealed. The engine executes what is there.
 - **No strategy boundary decisions.** The Strategy Rules owner decides; the engine surfaces and parks.
@@ -872,5 +898,6 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-03-10 | IMP-47/56: STEP -1.7 — temp file renamed to `.write_test`; STEP 0 — cleanup obligation added. IMP-44: §9.1 schema — `last_completed_substep` field added to ST item; §10.2 Sub-Item Resume rule added. IMP-20: STEP 5.0 added — delegation log outcome check (all delegation entries must have terminal status) required before Sprint_Complete is written. IMP-33: §13 Governance Invariants — "Ambiguity" definition block added. |
 | 1.5 | 2026-03-07 | **Pre-condition status check corrected (STEP -1.2).** Was checking for Release Planning states (`Committed`, `Validated`, `Published`) — corrected to `Sprint_Planning_Complete` (fresh run) or `Executing` (resume); `sprint_sealed = true` added as required condition. **Sprint backlog sealed check added (STEP -1.3).** Verifies `sprint_backlog.md` status = `Sealed` and no `[AWAITING SIGN-OFF]` fields remain — was absent in prior version. **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. STEP -1.1 extended: checks `amended_backlog_slice_path`; if present, uses that file as the authoritative scope; records the authoritative path for use throughout the run. STEP 0 updated: parses the authoritative slice (not hardcoded `stage4_backlog_slice.md`); records `backlog_slice_source` in `execution_state.json`. §7 write scope: amended backlog slice added to must-not-modify list. §9.1 schema: `backlog_slice_source` field added. §13 invariant added. **`Executing` status documented.** STEP 0 note: `Executing` is a valid intermediate status between `Sprint_Planning_Complete` and `Sprint_Complete`; Phase 4 may not be invoked while `Executing`. Guide updated separately (§4 lifecycle table, §12 cycle trigger table, §13 artefact register). **STEP numbering adjusted:** -1.1 now includes backlog slice source check; -1.2 status check; -1.3 sprint backlog sealed (new); former -1.3/-1.4/-1.5/-1.6 renumbered to -1.4/-1.5/-1.6/-1.7. |
 | 1.4 | 2026-03-06 | Prior version. |

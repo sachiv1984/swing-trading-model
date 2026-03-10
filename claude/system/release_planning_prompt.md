@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.14
+**Version:** 2.15
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -205,7 +205,7 @@ Minimum required content per issue:
 
 One entry per EPIC-xx and ST-xx in `stage4_backlog_slice.md`, in backlog order. This file is the authoritative import source if `gh` CLI is unavailable or falls back.
 
-For EPIC descriptions, source from `release_plan.md ## Execution Plan` section.
+For EPIC descriptions, source from `stage4_backlog_slice.md` (the EPIC header and description there are the authoritative issue import source, as the backlog slice is the canonical scope record for Sprint Planning).
 
 ---
 
@@ -290,8 +290,7 @@ Verify agent files exist under `claude/agents/` for the minimum required roles l
 If any missing/malformed: halt.
 
 ### -1.4 Write Permission Test (Non-Destructive)
-Create a temporary marker file under `claude/cycles/<cycle_id>/` and confirm it can be written.
-Remove it if possible; if not, keep it and record it in the run manifest.
+Create `claude/cycles/<cycle_id>/.write_test` and confirm it can be written. Remove it immediately. If write fails: halt. If the file is not removed here (e.g. due to an unexpected error), STEP 0 must clean it up before proceeding — do not leave `.write_test` files in cycle folders.
 
 ### -1.5 Prior Cycle Lessons Learnt Closure Check (Advisory — not a hard gate)
 
@@ -334,6 +333,9 @@ Per `shared_standards.md §11`, verify that each governed prompt's current versi
 ---
 
 ## STEP 0 — Create Run Manifest + Initialize State (Hard Requirement; must be first write)
+
+**Cleanup:** If `claude/cycles/<cycle_id>/.write_test` exists (left from STEP -1.4 on a previous interrupted run), delete it now before proceeding.
+
 Create:
 - `claude/cycles/<cycle_id>/run_manifest.md`
 
@@ -1442,6 +1444,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.15 | 2026-03-10 | IMP-46: §10.1 — EPIC description source for issue import corrected from `release_plan.md ## Execution Plan` to `stage4_backlog_slice.md` (canonical scope record). IMP-47: STEP -1.4 — write permission test temp file renamed to `.write_test`; must be removed immediately; STEP 0 cleanup obligation added. |
 | 2.14 | 2026-03-10 | LL-v1.9-01: Added STEP 1.1 Backlog Age Advisory — scans backlog for spec/documentation debt items aged 2+ cycles without story assignment; emits advisory warning and recommendation to promote to sprint stories. LL-v1.9-02: Added STEP 4.5 Phasing Recommendation — when capacity check outcome is WARN, a `### Phasing Recommendation` subsection is now required in `release_plan.md §Capacity Check`; lists concrete phase 1/phase 2 EPIC groupings with effort estimates and ordering rationale. LL-v1.9-03: Added STEP 7 Pre-sprint Planning Required Decisions — when any High-priority risk carries "must resolve before sprint planning seal" disposition, a `## Pre-sprint Planning Required Decisions` checklist section is required in `cycle_summary.md` for Sprint Planning Engine consumption. All three triggered by lessons_learnt.md 2026-03-06__release-v1.9 per closure_record §6 Actions #3–5. |
 | 2.13 | 2026-03-08 | IMP-05: Added STEP -1.5 advisory — reads prior cycle `lessons_learnt_closure.md`, checks all `action-now` items appear in `prompt_change_log.md`; warns if missing. IMP-06: Added STEP -1.6 hard gate — `post_ship_complete = true` and `next_cycle_unblocked = true` both required in `.claude_current_state.json` before new release cycle may open; exception for first cycle. IMP-07: Removed inline escalation entry format, SLA table, and Accepted Risk constraint from ESCALATION HANDLING SUBROUTINE; replaced with reference to `shared_standards.md §4`; retained engine-specific rules (Freeze Rule, Deferred constraint, Decision Record Controls, Mutation Rule, State update rules). IMP-08: Added compact table format requirement to STEP 3 `## Execution Plan` section; full acceptance criteria belong exclusively in `stage4_backlog_slice.md`; target <200 lines for full `release_plan.md`. IMP-10: Added STEP -1.7 advisory — checks that each governed prompt's current version appears in `prompt_change_log.md`; warns if missing. |
 | 2.12 | 2026-03-07 | IMP-03: Added `prompt_schema_version: "v2"` to state.json schema template. Fixed §18.1 tracked artifact list — updated from old stage file names (`stage2_scope_extraction.md`, `stage3_execution_plan.md`) to `release_plan.md` (schema v2). Added schema version migration table to Drift Detection section — documents that drift detection uses keys from `tracked_set` for the cycle's schema version; never compares across versions. |

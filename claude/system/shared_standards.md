@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.6
+**Version:** 1.7
 **Last Updated:** 2026-03-10
 
 # Shared Standards — All Governed Routines
@@ -60,7 +60,7 @@ Used in:
 - `claude/cycles/<cycle_id>/escalations.md` (Release Planning)
 - `claude/cycles/<cycle_id>/execution_escalations.md` (Sprint Execution)
 - `claude/cycles/<cycle_id>/verification_escalations.md` (Delivery Verification)
-- `claude/cycles/<cycle_id>/closure_record.md` §6 (Post-Ship Closure)
+- `claude/cycles/<cycle_id>/closure_escalations.md` (Post-Ship Closure)
 
 These files are **append-only**. Never edit a previous entry.
 
@@ -297,7 +297,7 @@ Forward-only movement is enforced by the entry state check (§10.2). An engine t
 
 ### 10.6 Full State Machine Reference
 
-See `claude/system/lifecycle_schema.json` for the complete machine definition: all valid states, all transitions with entry/completion conditions, and concurrent-write prevention rules.
+`claude/system/lifecycle_schema.json` is the **machine-readable source of truth** for all valid states and transitions. The table in §10.1 is a human-readable summary; in any conflict, `lifecycle_schema.json` prevails. Every engine must read `lifecycle_schema.json` to validate transitions rather than relying solely on the §10.1 table. The schema includes: all valid states, all transitions with entry conditions and completion signals, and concurrent-write prevention rules.
 
 ---
 
@@ -319,6 +319,8 @@ Any increment to a governance prompt version **must** be accompanied by an entry
 - `roadmap_management_prompt.md`
 - `backlog_management_prompt.md`
 - `roadmap_prompt.md`
+
+**Simultaneity rule:** A `prompt_change_log.md` entry must be created in the **same commit** as the prompt version increment it records. An entry created after the fact (in a separate commit) is non-compliant. When applying prompt patches, stage both the modified prompt file and the updated `prompt_change_log.md` in the same `git add` + `git commit` sequence.
 
 **Enforcement:** STEP -1 of Release Planning (advisory, not hard gate) verifies the current version of each prompt appears in `prompt_change_log.md`. Missing entries are flagged as advisory warnings; the release planning engine may proceed but must record the gap as an outstanding action.
 
@@ -342,10 +344,31 @@ When multiple EPIC branches are active simultaneously in the same sprint, `execu
 
 ---
 
+## 13. Dry-Run Standard
+
+The following engines support `--dry-run`. The guarantee is identical in all cases:
+
+**Dry-run guarantee:** No writes to any file. No state updates to `.claude_current_state.json`. No git commits. No GitHub operations (issues, PRs, branch creation). The output is a plan or preview only.
+
+| Engine | `--dry-run` produces |
+|--------|---------------------|
+| `plan sprint` | Sprint planning preview — capacity, scope, AC gaps, sequencing, pip-audit result |
+| `run sprint` | Dry-run execution report — item classification, delegation targets, spec references, anticipated blockers |
+| `run post-ship` | Closure plan — every step listed, every write that would be made, every flag |
+| `manage roadmap` | Change plan — items to retire, items to flag |
+| `groom backlog` | Change plan — items to archive, items to flag |
+
+**Scope of read operations:** Read operations (file reads, git queries, pip-audit scans) are always permitted in dry-run mode. A dry-run that cannot read required inputs should halt with a standard halt report, not silently produce an empty plan.
+
+**Re-invocation after dry-run:** A dry-run does not advance lifecycle state. After reviewing the dry-run output, re-invoke without `--dry-run` to execute.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-03-10 | IMP-45: §13 Dry-Run Standard added — defines guarantee, engine coverage table, read-operation scope, and re-invocation note. IMP-50: §4 Post-Ship Closure escalation target updated from `closure_record.md §6` to `closure_escalations.md`. IMP-58: §11 Prompt Version Control — simultaneity rule added (prompt_change_log.md entry must be in the same commit as the version increment). IMP-61: §10.6 Full State Machine Reference — strengthened: `lifecycle_schema.json` declared as machine-readable source of truth that prevails over §10.1 table in any conflict. |
 | 1.6 | 2026-03-10 | §10.1 Sprint Execution row updated — added `Closed` (multi-sprint exception) as valid from-state when `sprint_planning.sprint2_deferred` non-empty and `sprint_sealed = true` and `post_ship_complete = true`. Formalises the Sprint N+1 re-entry path for multi-sprint cycles. Triggered by closure_record §6 Action #2, 2026-03-06__release-v1.9. |
 | 1.5 | 2026-03-09 | §12 added — Parallel EPIC Branch Merge Sequencing: merge ordering convention (dependency order), conflict resolution rule (keep more recent EPIC's version), GOVERNANCE commit after each merge. Triggered by Friction Item 1 in `claude/cycles/2026-03-06__release-v1.9/lessons_learnt_execution.md`. Immediate action — Head of Specs Team confirmed. |
 | 1.4 | 2026-03-08 | IMP-04: §10.1 updated — Release Planning row adds `post_ship_complete` + `next_cycle_unblocked` preconditions; Sprint Planning row adds design gate bypass audit requirement; Amendment Cycle row adds backlog lock precondition. IMP-06: Release Planning precondition added. IMP-10: §11 Prompt Version Control added. |

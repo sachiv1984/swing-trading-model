@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-03-07
+**Version:** 1.5
+**Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -108,11 +108,12 @@ This routine may not override any of the above.
 During this routine you may write only to:
 
 - `docs/product/changelog.md` (append new version entry)
-- `claude/roadmap/current_roadmap.md` (status update + version headers only)
+- `claude/roadmap/current_roadmap.md` (status update, version headers, ✅ Complete annotation with ship date and `cycle_id`, release summary table update — all per STEP 2)
 - `claude/backlog/backlog.md` (mark shipped items complete; add missing Phase 4 items; no other changes)
 - Scope document at `docs/product/scope/scope--{id}-{slug}.md` (status → Superseded only)
 - Decisions record at `docs/product/decisions/{id}-{slug}.md` (status → Superseded only)
-- Canonical spec files (deviation note compliance fixes only — missing required fields per §3 Known Deviation Standard; no other spec edits permitted)
+- Canonical spec files (deviation note compliance fixes only — missing required fields per §3 Known Deviation Standard; no other spec edits permitted; the document owner must be notified of any fields added to their spec by this routine — record in closure record §6)
+- `claude/cycles/<cycle_id>/closure_escalations.md` (create if escalations raised during closure — format per `shared_standards.md §4`; ID prefix `ESC-CLOSE-YYYYMMDD-nn`)
 - `docs/System_status_report.md` (reconciliation only — correct stale notes)
 - `docs/operations/validation_system.md` (reconciliation only — correct stale notes)
 - `docs/specs/Specs_Index.md` (mark resolved items; add new gaps identified during delivery)
@@ -173,6 +174,16 @@ Read `.claude_current_state.json`:
 Read `claude/cycles/<cycle_id>/execution_state.json`:
 - `sealed` must be `true`
 - If not sealed: halt — the execution record is not closed.
+
+### -1.2A Sprint Close Readiness Statement (Hard Gate)
+
+Read `claude/cycles/<cycle_id>/sprint_close.md`:
+- Locate the **Verification readiness statement** (required field per execution_prompt.md §5.3).
+- All three readiness fields must be `Yes`:
+  - `All spec references populated: Yes`
+  - `All deviations filed: Yes`
+  - `QA evidence logs complete: Yes`
+- If any field is `No` or absent: halt — the sprint is not ready for post-ship closure. Surface the failing field(s) to the PMO Lead and request resolution before re-invoking.
 
 ### -1.3 Verification Report Present and Signed
 
@@ -555,7 +566,13 @@ Closure run: <ISO-8601 UTC>
 
 **§5 — Lessons Learnt Action Summary** — from STEP 8. Full three-way breakdown (immediate / deferred / decision_required) with detail per item. References all records reviewed (Release Planning, Execution, Verification).
 
-**§6 — Outstanding Actions** — any items that could not be completed by this routine (e.g. scope document not found, document owner unresponsive, lessons_learnt_prompt.md could not be invoked). For each: description, owner, deadline, escalation path.
+**§6 — Outstanding Actions** — any items that could not be completed by this routine (e.g. scope document not found, document owner unresponsive, lessons_learnt_prompt.md could not be invoked). Required table format:
+
+| # | Description | Owner | Deadline | Escalation path | Resolution |
+|---|-------------|-------|----------|-----------------|------------|
+| 1 | \<description\> | \<role\> | \<date or "Before next cycle"\> | \<escalation path\> | *(complete when resolved)* |
+
+If there are no outstanding actions: write "None — all steps completed."
 
 **§7 — Closure Confirmation**
 ```
@@ -581,9 +598,12 @@ Update `.claude_current_state.json`:
   "closure_record": "claude/cycles/<cycle_id>/closure_record.md",
   "closure_status": "Closed | Closed_with_actions",
   "post_ship_complete": true,
+  "completed_cycle_count": "<prior value + 1>",
   "last_sync_utc": "<now>"
 }
 ```
+
+**`completed_cycle_count` rule:** Read the current value from `.claude_current_state.json`. If absent, treat as `0`. Write the value incremented by 1. This counter tracks the total number of fully closed cycles for meta-review cadence tracking (Phase 1 STEP 11 triggers meta-review every third completed cycle).
 
 Surface §7 Closure Confirmation to the user for communication to the Product Owner and Head of Specs Team.
 
@@ -681,6 +701,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-03-10 | IMP-42: STEP -1.2A added — sprint_close.md verification readiness statement check (all three `Yes` fields required before proceeding). IMP-34: §5 Write Scope — `current_roadmap.md` entry expanded to list all STEP 2 write actions; canonical spec entry updated to add document owner notification requirement; `closure_escalations.md` added as permitted write. IMP-50: `closure_escalations.md` added to §5 write scope (escalations during closure use this file, not `closure_record.md §6`). IMP-59: STEP 10 — `completed_cycle_count` increment added to global state write; rule documented (default 0 if absent; used for meta-review cadence tracking). IMP-12: STEP 9 §6 Outstanding Actions template — required table format added with named columns (Description, Owner, Deadline, Escalation path, Resolution); "None" path documented. |
 | 1.4 | 2026-03-07 | **IMP-01 — closure_state.json for reliable resumability.** Added `closure_state.json` to §4 Source-of-Truth inputs and §5 Write Scope. Added full STEP 0 initialization/resume logic with JSON schema (fresh run creates file; resume skips completed steps; already-Closed halts). Added `closure_state.json` update lines at the end of STEP 0 through STEP 11 (each step writes its completion flag and `last_updated_utc`). STEP 11 commit list: `closure_state.json` added. `next_cycle_unblocked` guard noted in STEP 10. Consistent with resumability model used by execution and release planning engines. |
 | 1.3 | 2026-03-07 | **Lifecycle Guard added.** Apply Lifecycle Guard per `shared_standards.md §10` (valid from-states: `Verified`, `Verified_with_deviations`) at §2 Invocation Rule. |
 | 1.2 | 2026-03-07 | **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. §5 must-not-modify: amended backlog slice added. STEP 0: `amended_backlog_slice_path` read from `.claude_current_state.json` as first action; cross-referenced against `execution_state.json.backlog_slice_source`; disagreement flagged before proceeding; authoritative path recorded in closure record §1. STEP 3 intro updated: reconciliation runs against the authoritative slice. STEP 3.3 failure condition expanded. `closure_record.md` §1 template: `Backlog slice source` field added. §9 invariant added. **`lessons_learnt_closure.md` creation formalised (STEP 8.5, new).** STEP 8.5 added: invokes `lessons_learnt_prompt.md §3.5` using STEP 8 consolidated action summary as input; produces `claude/cycles/<cycle_id>/lessons_learnt_closure.md`; hard gate before STEP 9. §5 write scope: `lessons_learnt_closure.md` creation entry updated to reference STEP 8.5 explicitly. §7 completion condition: `lessons_learnt_closure.md` condition updated to reference `lessons_learnt_prompt.md §3.5` structure. §9 closure record §2 table: STEP 8.5 row added. §6 outstanding actions: `lessons_learnt_prompt.md` invocation failure added as example. STEP 11 commit: order corrected (`lessons_learnt_closure.md` before `closure_record.md`). §1 Purpose updated to name STEP 8.5 explicitly. **Dry-run enforcement added throughout.** §2: dry-run definition tightened — closure plan is the deliverable; routine ends after producing it. §5: dry-run exception block added at top (no writes permitted). STEP -1.6: write permission test skipped in dry-run. STEP 0: dry-run exits here after producing closure plan. §7 completion condition: dry-run completion defined. §9 invariant added. |

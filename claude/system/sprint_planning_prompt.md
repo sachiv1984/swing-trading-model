@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-03-08
+**Version:** 1.5
+**Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -96,7 +96,7 @@ Verify: each role has an agent file in `claude/agents/` containing `**Role:** <R
 | Release plan state | `claude/cycles/<cycle_id>/state.json` | Hard gate |
 | Backlog slice | See note below — may be amended | Hard gate |
 | Committed backlog | `claude/backlog/backlog.md` | Required |
-| Execution plan (EPICs) | `claude/cycles/<cycle_id>/stage3_execution_plan.md` | Required |
+| Execution plan (EPICs) | `claude/cycles/<cycle_id>/release_plan.md ## Execution Plan` (schema v2 — v2.11+) or `claude/cycles/<cycle_id>/stage3_execution_plan.md` (pre-v2.11) | Required |
 | Capacity check | `claude/cycles/<cycle_id>/stage4_5_capacity_check.md` | Required |
 | Cycle summary | `claude/cycles/<cycle_id>/cycle_summary.md` | Required |
 | Workforce capacity | `claude/roadmap/workforce_capacity.md` | Required (if present) |
@@ -227,7 +227,7 @@ Confirm `claude/system/lessons_learnt_prompt.md` exists. If missing: halt.
 
 ### -1.8 Write Permission Test
 
-Create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can be written. Remove it. If write fails: halt.
+Create `claude/cycles/<cycle_id>/.write_test` and confirm it can be written. Remove it immediately. If write fails: halt. If the file is not removed here (e.g. due to an unexpected error), STEP 0 must clean it up before proceeding.
 
 ### -1.9 Dependency Health Check (Pre-Sprint Vulnerability Scan)
 
@@ -252,11 +252,13 @@ This step is advisory — it does not block sprint planning. Its purpose is to s
 
 ## STEP 0 — Load Release Context
 
+**Cleanup:** If `claude/cycles/<cycle_id>/.write_test` exists (left from STEP -1.8 on a previous interrupted run), delete it now before proceeding.
+
 Extract from the backlog slice and execution plan:
 
 1. From the authoritative backlog slice (per §5 and STEP -1.1): all EPICs with their EPIC IDs, descriptions, and ST items. Note any items already marked as deferred or blocked. If an amendment file is in use, note this explicitly in the load summary.
-2. From `stage3_execution_plan.md`: sequencing dependencies, risk IDs associated with EPICs, estimated effort per EPIC.
-3. From `stage4_5_capacity_check.md`: confirmed available capacity (FTE, skills, duration). If the check result was `warn`: surface the warning to the user before proceeding.
+2. From `release_plan.md ## Execution Plan` (schema v2 — v2.11+) or `stage3_execution_plan.md` (pre-v2.11): sequencing dependencies, risk IDs associated with EPICs, estimated effort per EPIC.
+3. From `release_plan.md ## Capacity Check` (schema v2) or `stage4_5_capacity_check.md` (pre-v2.11): confirmed available capacity (FTE, skills, duration). If the `capacity_check` outcome field is `warn`: record the warning and require Product Owner acknowledgement before proceeding to scope selection (see STEP 0 note below).
 4. From `cycle_summary.md`: the sprint goal candidate (if the release planning engine proposed one), any outstanding escalations deferred to execution.
 5. From `workforce_capacity.md` (if present): skill availability constraints.
 
@@ -266,6 +268,8 @@ Produce a load summary confirming:
 - Confirmed capacity (FTE and duration)
 - Backlog slice source (original or amended — name the file)
 - Any deferred execution blockers from the release plan escalations file (cross-check against `deferred_execution_blockers` field verified in STEP -1.2)
+
+**Capacity WARN acknowledgement (IMP-41):** If the capacity check outcome is `warn`, surface this to the Product Owner before proceeding. The Product Owner must explicitly acknowledge the over-capacity risk before scope selection begins. Record their acknowledgement in `sprint_planning_notes.md` and set `capacity_warn_acknowledged = true` in the STEP 7 state write. Do not silently proceed past a WARN — unacknowledged capacity risk compounds at execution.
 
 ---
 
@@ -286,7 +290,7 @@ Skill constraints:  <list any scarce or role-locked skills>
 
 ### 1.2 Item Effort Mapping
 
-For each EPIC and its ST items, record the effort estimate from `stage3_execution_plan.md`. If an ST item has no effort estimate:
+For each EPIC and its ST items, record the effort estimate from `release_plan.md ## Execution Plan` (schema v2) or `stage3_execution_plan.md` (pre-v2.11). If an ST item has no effort estimate:
 - In `strict` mode: halt — all items must have estimates.
 - In `standard` mode: flag as `[ESTIMATE REQUIRED]` and record as an outstanding action. The sprint cannot be sealed until all estimates are present.
 
@@ -401,7 +405,7 @@ For every `include` item, confirm acceptance criteria against the standard in Se
 
 Acceptance criteria may come from:
 - The authoritative backlog slice (if defined during release planning or amendment)
-- `stage3_execution_plan.md` (if defined at EPIC level)
+- `release_plan.md ## Execution Plan` (schema v2) or `stage3_execution_plan.md` (pre-v2.11) (if defined at EPIC level)
 - Drafted during this step (if not yet defined)
 
 ### 4.2 Drafting Criteria
@@ -447,7 +451,7 @@ If a circular dependency is detected: halt and surface to PMO Lead and Head of S
 
 ### 5.3 Risk Flags
 
-From `stage3_execution_plan.md` risk register: confirm which risk IDs are associated with `include` items. For each:
+From `release_plan.md ## Execution Plan` (schema v2) or `stage3_execution_plan.md` (pre-v2.11) risk register: confirm which risk IDs are associated with `include` items. For each:
 - Confirm the risk mitigation approach is still valid
 - Flag any risk that has materialised since release planning (if known) as an escalation item
 
@@ -626,9 +630,15 @@ Update `.claude_current_state.json`:
   "sprint_backlog_path": "claude/cycles/<cycle_id>/sprint_backlog.md",
   "sprint_capacity_path": "claude/cycles/<cycle_id>/sprint_capacity.md",
   "sprint_sealed": true,
+  "sprint_goal_status": "confirmed",
+  "capacity_warn_acknowledged": true,
   "last_sync_utc": "<ISO-8601 UTC>"
 }
 ```
+
+**Field notes:**
+- `sprint_goal_status`: always `"confirmed"` when the sprint is sealed (Product Owner sign-off gate passed).
+- `capacity_warn_acknowledged`: set to `true` if capacity check outcome was `warn` and Product Owner explicitly acknowledged it in STEP 0; omit (or set `false`) if capacity check was `pass`.
 
 `sprint_sealed` must only be set to `true` when the sign-off gate in STEP 6.2 has passed. If the sign-off gate has not passed:
 - Set `sprint_sealed: false`
@@ -730,6 +740,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-03-10 | IMP-52: §5 table, STEP 0, STEP 1.2, STEP 4.1, STEP 5.3 — replaced `stage3_execution_plan.md` with `release_plan.md ## Execution Plan` (schema v2 — v2.11+) with backward compatibility note for pre-v2.11 cycles. STEP 0 capacity source updated to `release_plan.md ## Capacity Check`. IMP-18: STEP 7 state write — added `sprint_goal_status: "confirmed"` field. IMP-41: STEP 0 — capacity WARN acknowledgement protocol added; STEP 7 — `capacity_warn_acknowledged` field added. IMP-47/56: STEP -1.8 — temp file renamed to `.write_test`; STEP 0 — cleanup obligation added. |
 | 1.4 | 2026-03-08 | IMP-04: Added design gate bypass audit to STEP -1.3 — when entering from `Release_Planning_Complete` without `Design_Gate_Passed`, requires `design_gate_bypass_authority` and `design_gate_bypass_reason` to be written to `.claude_current_state.json`. Strict mode halts if absent; standard mode flags and blocks seal until present. |
 | 1.3 | 2026-03-07 | Added Lifecycle Guard per shared_standards.md §10. |
 | 1.2 | 2026-03-07 | **Design gate pre-condition enforced.** STEP -1.3 added: `design_gate_status` must be `Passed` before planning may proceed; `not_started` and `Blocked` both halt; absent field halts with process deviation note; Design Not Applicable exception documented. **Amendment slice handling added.** §5 backlog slice source-of-truth rule added: `amended_backlog_slice_path` checked at STEP -1.1; if present, used in place of `stage4_backlog_slice.md` throughout. STEP -1.1 extended to check and note the amendment path. STEP 0 load summary now names the backlog slice source. STEP 3.1, STEP 4.1, sprint_backlog.md header, and sprint_planning_notes.md all updated to reference the authoritative slice. §6 write scope: amended backlog slice added to must-not-modify list. §12 invariant added. **`deferred_execution_blockers` formally gated.** STEP -1.2 now explicitly checks this field: `strict` mode halts; `standard` mode requires Product Owner acceptance per blocker. STEP 6.1 sprint backlog template: Deferred Execution Blockers Accepted section added. STEP 6.2 sign-off gate: blocker acceptance added as a required condition. §10 completion condition updated. §12 invariant added. **`--dry-run` and pip-audit clarified.** §2 invocation rule: dry-run guarantee stated; pip-audit explicitly noted as running in dry-run (read-only). STEP -1.9 (was -1.8): dry-run note added. STEP numbering adjusted: -1.8 Write Permission Test, -1.9 Vulnerability Scan (previously -1.7 and -1.8). **Guide fix required:** §7 source prompt reference should be updated from v1.0 to v1.2. |

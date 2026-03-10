@@ -69,9 +69,9 @@ State pointer:  .claude_current_state.json  (always check for active_cycle befor
 
 | Rule | Applies To |
 |------|-----------|
-| No roadmap addition without an equal or greater stop | Phase 1 |
+| No roadmap addition without an equal or greater stop (net-zero or net-negative initiative count enforced by Roadmap Engine STEP 5 — applies in both `strict` and `standard` modes) | Phase 1 |
 | Delivery pressure never redefines strategy intent | All phases |
-| Decision log is append-only | Phase 1 |
+| Decision log (`claude/roadmap/decision_log.md`) is append-only — governance convention, not a hard gate; deletions or edits to prior entries are process violations | Phase 1 |
 | Authority boundaries are absolute — no role merging | All phases |
 | Non-decision roles enforce process only — no decisions | All phases |
 | Strategy / Quality / Lifecycle risks may **never** be Accepted Risk | All phases |
@@ -263,7 +263,7 @@ All artefacts in this system belong to exactly one class, which determines requi
 | **4** | Planning Document | Product Owner | Pre-canonical; may not be cited as canonical intent |
 | **5** | Role Charter | Head of Specs Team / functional lead | Every decision-authority role must have one |
 | **6** | Governance Prompt | Head of Specs Team | Stored in `claude/system/`; defines invocation, write scope, governance steps |
-| **8** | Proof of Gate | Clearing authority role | Immutable once issued; status field only may change to Superseded; permanent governance record |
+| **8** | Proof of Gate | Clearing authority role | Immutable once issued; status field only may change to Superseded; permanent governance record. *Reserved — not currently produced by any engine in this cycle.* |
 
 **Required header fields — quick reference:**
 
@@ -452,7 +452,7 @@ Any other input is treated as conversational — the Engine will not run.
 | STEP 12 | Stage & Commit (incl. `last_meta_review_cycle` state update) | **HARD** | Git commit or commit manifest |
 
 **Key constraints:**
-- STEP 5: No candidate advances without naming a displacement. No name = cannot proceed.
+- STEP 5: No candidate advances without naming a displacement. No name = cannot proceed. **This rule is mode-independent** — it applies in both `strict` and `standard` modes. A named displacement that does not currently exist in the roadmap is not valid — displacement must be a real in-scope initiative. The Facilitator enforces this; the Challenger may demand evidence.
 - STEP 8.6: At least one candidate per run must be Parked or Rejected. If all advance, Pivot Loop runs once. If all still advance, execution halts.
 - STEP 9 write scope is restricted — no files outside the allowed list may be modified.
 - STEP 11: Every friction item patch must be classified as action-now or defer. Action-now patches require Head of Specs Team sign-off and produce a `prompt_change_log.md` entry. Deferred patches without a named owner and target date are escalations, not valid outstanding actions.
@@ -598,7 +598,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.11)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.15)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -716,7 +716,7 @@ The cycle may only be sealed `Published` if **all** of the following are true:
 
 ### 6B.8 Amendment Cycle (Emergency Only)
 
-**Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.0)
+**Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.3)
 
 An amendment cycle may be opened after Phase 1B publishes and before Phase 2 seals (`sprint_sealed = true`). It is the only permitted mechanism for changing the backlog slice after the release plan is sealed.
 
@@ -741,7 +741,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v1.2)  
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v1.5)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -825,7 +825,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v1.5)
+**Source prompt:** `claude/system/execution_prompt.md` (v1.7)
 
 ### 8.1 Invocation
 
@@ -1284,8 +1284,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.3 |
-| Last Updated | 2026-03-08 |
+| Version | 3.5 |
+| Last Updated | 2026-03-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1293,14 +1293,14 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.2 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.13 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.4 |
-| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.2 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v1.6 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.15 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.5 |
+| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.3 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v1.7 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.4 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.5 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v1.6 |
+| Shared Standards | `claude/system/shared_standards.md` v1.7 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.4 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
@@ -1316,6 +1316,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.5 | 2026-03-10 | **Batch 0+1+2 review.md process gaps.** IMP-36: §6B source prompt → v2.15; §7 source prompt → v1.5; §8 source prompt → v1.7; §6B.8 amendment engine → v1.3; §14 governance table versions updated (release_planning_prompt v2.15, sprint_planning_prompt v1.5, amendment_cycle_prompt v1.3, execution_prompt v1.7, post_ship_closure v1.5, shared_standards v1.7). IMP-13: Hard Rules table — Rule 1 (net-zero) expanded with mode-independence note and enforcement agent; "Decision log" row clarified as governance convention with explicit violation note. IMP-17: §3 Document Classes — Class 8 row annotated "Reserved — not currently produced". IMP-33: §6.3 STEP 5 constraint — displacement rule explicitly stated as mode-independent; enforcement agents named. |
 | 3.4 | 2026-03-10 | **Multi-sprint lifecycle exception.** §4.1 Lifecycle State Machine transition table: added `Closed` → `Executing` row (multi-sprint exception — valid only when `sprint_planning.sprint2_deferred` non-empty AND `sprint_sealed = true` AND `post_ship_complete = true`, same cycle_id continued across sprints). §14 Governance table: `shared_standards.md` → v1.6, `lifecycle_schema.json` → last_updated 2026-03-10. Triggered by closure_record §6 Actions #1 and #2, 2026-03-06__release-v1.9. |
 | 3.3 | 2026-03-08 | **IMP-04–10 governance hardening (review.md backlog).** Hard Rules table: 4 new rules added (design gate bypass audit, release cycle preconditions, prompt version log, amendment lock). §14 Governance table: engine versions updated — release_planning_prompt v2.13, sprint_planning_prompt v1.4, amendment_cycle_prompt v1.2, shared_standards v1.4, roadmap_management_prompt v1.2, backlog_management_prompt v1.2, post_ship_closure v1.4. Quick Reference phase gate checklist unchanged (changes are in prompts, not checklist items). |
 | 3.2 | 2026-03-07 | **Phase 1B artefacts consolidation.** §6B source prompt updated to v2.11. §6B.3 step table: Steps 1, 2, 3, 3.5, 4.5, 5.5, 5.7 now write sections into `release_plan.md` instead of separate stage files. §13 Artefact Register: Stage 1 Readiness, Stage 2 Scope Extraction, Stage 3 Execution Plan rows replaced with single `release_plan.md` (consolidated intermediate) row; Stage 4 Backlog Slice retained separately. §14 Governance table: all engine versions updated to current (release_planning_prompt v2.11, sprint_planning v1.3, amendment_cycle v1.1, execution v1.6, delivery_verification v1.2, post_ship_closure v1.3, shared_standards v1.2). |

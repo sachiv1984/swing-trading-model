@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-03-08
+**Version:** 1.3
+**Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -80,7 +80,7 @@ An amendment may only modify the **backlog slice** — specifically:
 
 An amendment may **not** change:
 - Acceptance criteria for existing items (use the execution engine's escalation model)
-- EPIC structure or EPIC-to-scope mappings (these are sealed in `stage3_execution_plan.md`)
+- EPIC structure or EPIC-to-scope mappings (these are sealed in `release_plan.md ## Execution Plan` for schema v2 cycles; in `stage3_execution_plan.md` for pre-v2.11 cycles)
 - Capacity assumptions or timebox (these are sealed in `stage4_5_capacity_check.md`)
 - `stage2_scope_extraction.md`, `stage3_execution_plan.md`, or any other sealed stage artefact
 - The original `state.json` or any artefact in `claude/cycles/<original_cycle_id>/`
@@ -90,7 +90,7 @@ An amendment may **not** change:
 If an `emergency-fix` amendment adds an item that does not map to any existing EPIC, a new emergency EPIC may be created **only** if:
 - The Director of Quality confirms the item cannot be subordinated to an existing EPIC without distorting its scope
 - The new EPIC is assigned an `EPIC-xx` ID continuing the existing sequence
-- The new EPIC is recorded in the amendment artefacts only — it does not modify `stage3_execution_plan.md`
+- The new EPIC is recorded in the amendment artefacts only — it does not modify the release plan Execution Plan section or any sealed cycle artefact
 - Its addition is explicitly noted in the amendment ratification record as an out-of-band EPIC
 
 ---
@@ -177,7 +177,7 @@ Violation → halt.
 
 - If `claude/backlog/.lock` exists and is **not** owned by this amendment (marker `AMEND-CHECK:<original_cycle_id>`): halt — do not auto-delete. Another operation is modifying the backlog. Report the lock contents and wait for manual resolution.
 - If the lock does not exist: create it with marker `AMEND-CHECK:<original_cycle_id>` and `acquired_utc`. This prevents a concurrent Sprint Planning seal from writing `sprint_sealed = true` between this check and the first amendment write.
-- Release this lock **after** STEP 5 completes (backlog update done) or on any halt path below. Do not hold the lock across human confirmation steps (STEP 3 ratification).
+- Release this lock at **STEP 2.5** (before human ratification begins — STEP 2.5 is the procedural release step). Re-acquire at STEP 5.1 when the backlog write begins. On any halt path before STEP 2.5: release the lock before halting.
 
 Read `.claude_current_state.json`:
 - `sprint_sealed` must be absent or `false`
@@ -201,8 +201,8 @@ Check `claude/cycles/<original_cycle_id>/amendments/` for any existing amendment
 Verify all of the following exist:
 - `claude/cycles/<original_cycle_id>/state.json`
 - `claude/cycles/<original_cycle_id>/stage4_backlog_slice.md`
-- `claude/cycles/<original_cycle_id>/stage3_execution_plan.md`
-- `claude/cycles/<original_cycle_id>/stage4_5_capacity_check.md`
+- `claude/cycles/<original_cycle_id>/release_plan.md` (schema v2 — `release_planning_prompt.md` v2.11+; `state.json` `prompt_schema_version = "v2"`) **or** `claude/cycles/<original_cycle_id>/stage3_execution_plan.md` (pre-v2.11 cycles only). Check `state.json` to determine which applies; the Execution Plan section in `release_plan.md` is the schema v2 equivalent.
+- `claude/cycles/<original_cycle_id>/stage4_5_capacity_check.md` (pre-v2.11) or `release_plan.md ## Capacity Check` section (schema v2)
 - `claude/backlog/backlog.md`
 - `claude/system/shared_standards.md`
 
@@ -352,6 +352,20 @@ For each proposed removal: confirm no remaining in-scope item has a declared dep
 - Record the resolution in the change record
 
 For each proposed addition: identify any items the new item depends on and confirm they are either already in scope or the dependency is explicitly noted as external.
+
+---
+
+## STEP 2.5 — Release Backlog Lock Before Ratification (Hard Requirement)
+
+**Release the backlog lock NOW** — before human ratification begins (STEP 3). Ratification is a human coordination step that may take hours or days. The lock must not be held across it.
+
+Release `claude/backlog/.lock` (if owned by this amendment):
+- Delete the lock file.
+- Update `amendment_state.json`: `backlog_lock_status = "released_before_ratification"`.
+
+**Lock re-acquisition at STEP 5.1:** When ratification is confirmed and backlog update begins, re-acquire the lock per STEP 5.1 protocol.
+
+**If the lock cannot be released:** halt and report. Do not proceed to STEP 3 while the lock is held.
 
 ---
 
@@ -594,6 +608,7 @@ If an amendment is opened but the emergency is resolved before ratification, or 
 - **Sprint Planning uses the amended slice.** Once sealed, `amended_backlog_slice_path` in `.claude_current_state.json` is the source of truth for Phase 2. The original slice remains the historical record.
 - **Delivery pressure never qualifies as an emergency.** Wanting to add a feature because a deadline moved is not an emergency. A CVE or a confirmed undeliverable item is.
 - **`sprint_sealed` check is atomic.** The backlog lock must be acquired before reading `sprint_sealed`. Do not check `sprint_sealed` without the lock — concurrent Sprint Planning seal would invalidate the result.
+- **Lock release before ratification is required.** The backlog lock is released at STEP 2.5 before human ratification begins. It is re-acquired at STEP 5.1 when the backlog write runs. Never hold the lock across a human confirmation step — ratification may take hours or days.
 
 ---
 
@@ -601,6 +616,7 @@ If an amendment is opened but the emergency is resolved before ratification, or 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-03-10 | IMP-49: STEP -1.4 — `stage3_execution_plan.md` replaced with `release_plan.md` (schema v2 detection via `state.json.prompt_schema_version`); backward compatibility note for pre-v2.11 cycles. §4 and §4.1 references updated to match. IMP-51: STEP 2.5 added — explicit procedural step to release backlog lock before STEP 3 human ratification begins; lock re-acquired at STEP 5.1. STEP -1.1 parenthetical updated to reference STEP 2.5. Governance invariant added. |
 | 1.2 | 2026-03-08 | IMP-09: Added atomicity guard to STEP -1.1 — backlog lock acquired with marker `AMEND-CHECK:<cycle_id>` before `sprint_sealed` is read; lock released after STEP 5 or on any halt. Governance invariant added. |
 | 1.1 | 2026-03-07 | Added Lifecycle Guard (valid from-states: `Sprint_Planning_Complete` with `sprint_sealed = false`). |
 | 1.0 | 2026-03-07 | Initial version. |

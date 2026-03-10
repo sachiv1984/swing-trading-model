@@ -1584,7 +1584,7 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## BATCH 0 — Blocking defects (fix before the current sprint ends)
+## BATCH 0 — Blocking defects (fix before the current sprint ends) ✅ DONE 2026-03-10
 
 **Rationale:** These two defects make the amendment cycle and sprint planning fail at preflight on every modern cycle. They share the same root cause (v2.11 artefact consolidation was not reflected in downstream prompts) and must be fixed together in a single atomic commit.
 
@@ -1603,7 +1603,7 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## BATCH 1 — State file hygiene and governance quick fixes (highest correctness gain, no dependencies)
+## BATCH 1 — State file hygiene and governance quick fixes (highest correctness gain, no dependencies) ✅ DONE 2026-03-10
 
 **Rationale:** All low-effort, no dependencies, high reliability improvement. Groups all changes to `shared_standards.md` together, then all changes that touch only `execution_prompt.md`, then small single-file fixes.
 
@@ -1651,7 +1651,7 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## BATCH 2 — Playbook-only edits (no prompt files touched)
+## BATCH 2 — Playbook-only edits (no prompt files touched) ✅ DONE 2026-03-10
 
 **Rationale:** The playbook is the only file changed. All three changes are cosmetic/governance-hygiene but the version-drift fix (IMP-36) has the highest agent-confusion risk. Do these together in one playbook edit.
 
