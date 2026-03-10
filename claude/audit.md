@@ -1,71 +1,116 @@
 # =========================
-# CLAUDE LIFECYCLE AUDIT PACKAGE
+# CLAUDE LIFECYCLE AUDIT PACKAGE — NEXT-GEN
 # =========================
 
-# 1. ULTRA-MINIMAL AUDIT PROMPT
-PROMPT = """
-Audit the Sprint Planning Operational Playbook and all referenced prompts, charters, strategies, agent definitions, and shared standards for lifecycle completeness, token efficiency, document compression, single source of truth, reusable prompts, and enforceable Manus logic. Cover all stages: Idea → Roadmap → Release Planning → Backlog Slice → Sprint Planning → Execution → Verification → Closure → Next Cycle. Identify: missing coverage, unclear transitions, redundant/unused artefacts, overprocessing, repeated logic, narrative replaceable by structured outputs, first-cycle/zero-state issues, idempotency risks, preflight duplication, dry-run consistency, lessons learnt/meta-review gaps, role/authority misalignment, hard gate violations, strict/standard mode parity, amendment cycle correctness, GitHub issue sync gaps. For each improvement, return: Title, Area (Lifecycle | Prompt | State | Governance | Token Efficiency | Automation | Manus Logic), Problem, Evidence (file + step/section), Why it matters, Recommended change, Expected benefit, Token impact (Saves | Neutral | Costs), Implementation effort (Low | Medium | High), Best Practice Alignment (Yes | Partially | No). Prioritize by token savings, lifecycle simplification, artefact/prompt redundancy, governance preservation. Max 20 improvements. No commentary or praise.
-"""
+# -------------------------
+# CONFIG
+# -------------------------
+SCOPE = "claude/"  # set scope for context loading: "claude/" or "all"
+MAX_IMPROVEMENTS = 20
 
-# 2. TOKEN-EFFICIENT STAGE CHECKLIST
+# -------------------------
+# TOKEN-EFFICIENT TIPS
+# -------------------------
+TOKEN_TIPS = {
+    1: "Lazy-load context per stage",
+    2: "Field-level reads for state files & artefacts",
+    3: "Shared preflight results for downstream engines",
+    4: "Replace duplicate content with canonical references",
+    5: "Dry-run: load only relevant files; no writes/locks",
+    6: "Prompt modules: reference canonical logic instead of embedding",
+    7: "Structured outputs (tables/JSON) instead of narrative prose"
+}
+
+# -------------------------
+# STAGE CHECKLIST WITH TIGHT FILE LOADS
+# -------------------------
 STAGE_CHECKLIST = [
     {
         "stage": "1. Lifecycle Mapping",
-        "load": ["Playbook"],
+        "load": ["Sprint_Planning_Operational_Playbook.md"],
         "check": "Map stages, engines, inputs/outputs, artefacts, gates",
-        "note": "Summary only"
+        "tips": [1,2]
     },
     {
-        "stage": "2. Waste & Token",
-        "load": ["Phase artefacts"],
-        "check": "Redundant artefacts, full-doc reads, repeated info",
-        "note": "Load full artefacts only if verifying duplicates"
+        "stage": "2. Waste & Token Efficiency",
+        "load": ["release_plan.md", "backlog_slice.md", "sprint_backlog.md"],
+        "check": "Detect redundant artefacts, repeated info, overprocessing",
+        "tips": [1,2,4]
     },
     {
-        "stage": "3. Governance",
-        "load": [".claude_current_state.json", "charters", "agent definitions", "playbook"],
+        "stage": "3. Governance Integrity",
+        "load": [".claude_current_state.json", "claude/charter/*", "claude/agents/*", "Sprint_Planning_Operational_Playbook.md"],
         "check": "Role alignment, authority boundaries, first-cycle handling, ghost roles",
-        "note": "Field-level reads"
+        "tips": [2]
     },
     {
         "stage": "4. Lifecycle Reliability",
-        "load": ["State files", "preflight logs"],
+        "load": ["cycle_state.json", "preflight_logs/*"],
         "check": "Deadlocks, halts, escalations, manual recovery",
-        "note": "Field-level reads"
+        "tips": [2,3]
     },
     {
         "stage": "5. Document Compression / Single Source",
-        "load": ["All artefacts"],
-        "check": "Duplicates, narrative→structured, canonical references",
-        "note": "Load metadata/sections only"
+        "load": ["release_plan.md", "backlog_slice.md", "sprint_backlog.md"],
+        "check": "Identify duplicates, replace narrative with structured outputs, canonical references",
+        "tips": [4,7]
     },
     {
         "stage": "6. Known Design Areas",
-        "load": ["Playbook sections", "amendment artefacts", "lessons learnt", "stage4_issue_manifest.json"],
+        "load": ["amendment_state.json", "lessons_learnt_cycle.md", "stage4_issue_manifest.json"],
         "check": "Phase 1M gaps, amendment constraints, gate timing, backlog locks, lessons/meta, GitHub sync",
-        "note": "Only referenced files"
+        "tips": [1,4,5]
     },
     {
-        "stage": "7. Common Prompts",
-        "load": ["Engine prompts"],
-        "check": "Repeated logic/structured outputs, recommend canonical prompts",
-        "note": "Load once per engine"
+        "stage": "7. Common Prompt Identification",
+        "load": ["claude/system/*"],
+        "check": "Detect repeated logic, structured outputs, recommend canonical prompts",
+        "tips": [6]
     },
     {
-        "stage": "8. Manus Logic",
-        "load": ["Playbook", "prompts", "state files"],
+        "stage": "8. Manus Logic / Rule Centralization",
+        "load": ["Sprint_Planning_Operational_Playbook.md", "claude/system/*", ".claude_current_state.json"],
         "check": "Hard rules, valid transitions, repeated checks → centralize in manus_rules.json",
-        "note": "Load rule-relevant sections only"
+        "tips": [2,4]
     },
     {
         "stage": "9. Best Practices",
-        "load": ["Artefacts", "prompts", "state files", "lessons/meta"],
+        "load": ["release_plan.md", "backlog_slice.md", "sprint_backlog.md", "lessons_learnt_cycle.md", "claude/system/*"],
         "check": "Artefact structure, modular prompts, state ops, idempotency, dry-run, audit logs, consolidation, automation, token efficiency",
-        "note": "Minimal field-level content"
+        "tips": [1,2,5,7]
     }
 ]
 
-# 3. STRUCTURED OUTPUT TEMPLATE
+# -------------------------
+# ULTRA-MINIMAL PER-STAGE PROMPT
+# -------------------------
+PROMPT = f"""
+Priority: Return up to {MAX_IMPROVEMENTS} improvements, ordered by token savings → lifecycle simplification → artefact/prompt redundancy → governance preservation.
+
+Scope: {SCOPE}
+
+For each stage in the checklist, audit the artefacts/prompts listed in "load" and the concerns listed in "check". Apply token-efficient behavior guided by tips in "tips". Identify: missing coverage, unclear transitions, redundant/unused artefacts, overprocessing, repeated logic, narrative replaceable by structured outputs, first-cycle/zero-state issues, idempotency risks, preflight duplication, dry-run consistency, lessons learnt/meta-review gaps, role/authority misalignment, hard gate violations, strict/standard mode parity, amendment cycle correctness, GitHub issue sync gaps.
+
+For each improvement, return in structured format:
+
+### Improvement #<number>
+**Title:** <Short title>
+**Area:** Lifecycle | Prompt | State | Governance | Token Efficiency | Automation | Manus Logic
+**Problem:** <Concise issue description>
+**Evidence:** <File(s) + step/section>
+**Why it matters:** <Impact on efficiency, governance, token usage, reliability>
+**Recommended change:** <Actionable change>
+**Expected benefit:** <Efficiency, token, reliability, governance improvement>
+**Token impact:** Saves | Neutral | Costs (brief justification)
+**Implementation effort:** Low | Medium | High
+**Best Practice Alignment:** Yes | Partially | No
+
+Do not include commentary or praise. Max {MAX_IMPROVEMENTS} improvements.
+"""
+
+# -------------------------
+# STRUCTURED OUTPUT TEMPLATE
+# -------------------------
 OUTPUT_TEMPLATE = """
 ### Improvement #<number>
 
@@ -80,16 +125,3 @@ OUTPUT_TEMPLATE = """
 **Implementation effort:** Low | Medium | High  
 **Best Practice Alignment:** Yes | Partially | No
 """
-
-# =========================
-# TOKEN-SAVING TIPS (Optional Reference)
-# =========================
-TOKEN_TIPS = [
-    "Lazy-load context per stage",
-    "Field-level reads for state files & artefacts",
-    "Shared preflight results for downstream engines",
-    "Replace duplicate content with canonical references",
-    "Dry-run: load only relevant files; no writes/locks",
-    "Prompt modules: reference canonical logic instead of embedding",
-    "Structured outputs (tables/JSON) instead of narrative prose"
-]
