@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
+**Version:** 1.9
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -436,6 +436,8 @@ Check `amended_backlog_slice_path` in `.claude_current_state.json`:
 - If present and non-empty: this is the authoritative backlog slice. Verify the file exists — if not, halt and report. Record this path for use throughout this run.
 - If absent or empty: verify `claude/cycles/<cycle_id>/stage4_backlog_slice.md` exists — if not, halt and report. Record this path for use throughout this run.
 
+**Sprint backlog index (IMP-25):** Load `claude/cycles/<cycle_id>/sprint_backlog_index.json` if it exists. When `--epic` is specified, use the index to identify which ST items belong to the scoped EPIC and their `backlog_slice_refs` — read only those items from `sprint_backlog.md` rather than the full document. If the index does not exist: fall back to reading the full `sprint_backlog.md`.
+
 If any required file is missing: halt and report exactly which.
 
 ### -1.2 Active Cycle Status Check (Hard Gate)
@@ -487,6 +489,8 @@ Create `claude/cycles/<cycle_id>/.write_test` and confirm it can be written. Rem
 **Cleanup:** If `claude/cycles/<cycle_id>/.write_test` exists (left from STEP -1.7 on a previous interrupted run), delete it now before proceeding.
 
 Create `claude/cycles/<cycle_id>/execution_state.json` if it does not exist.
+
+**Index-guided load (IMP-25):** If `sprint_backlog_index.json` was loaded in STEP -1.1 and `--epic` is scoped: use the index `backlog_slice_refs` for the scoped EPIC to read only the relevant AC entries from `stage4_backlog_slice.md`. Do not load the full backlog slice when the index provides the exact section anchors needed.
 
 1. Parse the authoritative backlog slice (identified in STEP -1.1) to extract all EPIC and ST items in dependency order.
 2. Record `backlog_slice_source` in `execution_state.json` — the exact file path used.
@@ -903,6 +907,7 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-03-10 | IMP-25: STEP -1.1 — load `sprint_backlog_index.json` if present; when `--epic` scoped, use index `st_items` and `backlog_slice_refs` to read only the relevant EPIC slice rather than full document. STEP 0 — index-guided load note added; when index provides exact `backlog_slice_refs`, read only those AC sections from `stage4_backlog_slice.md`. Fall-back to full document read when index absent. |
 | 1.8 | 2026-03-10 | IMP-40: §3.1.D SLA breach tracking note added — 72-hour breach check on each re-invocation; `blocked_sla_breached = true` written at STEP 6 if any escalation exceeds SLA; references `shared_standards.md §4` SLA Breach Rule. STEP 6 state write schema: `blocked_sla_breached` field added. IMP-35 (gap 2): STEP 5.4 — future IMP-28 idempotency guard documented (inactive until IMP-28 implemented); pre-write check for `## Phase 3 — <cycle_id>` header in `lessons_learnt_cycle.md` before appending. |
 | 1.7 | 2026-03-10 | IMP-47/56: STEP -1.7 — temp file renamed to `.write_test`; STEP 0 — cleanup obligation added. IMP-44: §9.1 schema — `last_completed_substep` field added to ST item; §10.2 Sub-Item Resume rule added. IMP-20: STEP 5.0 added — delegation log outcome check (all delegation entries must have terminal status) required before Sprint_Complete is written. IMP-33: §13 Governance Invariants — "Ambiguity" definition block added. |
 | 1.5 | 2026-03-07 | **Pre-condition status check corrected (STEP -1.2).** Was checking for Release Planning states (`Committed`, `Validated`, `Published`) — corrected to `Sprint_Planning_Complete` (fresh run) or `Executing` (resume); `sprint_sealed = true` added as required condition. **Sprint backlog sealed check added (STEP -1.3).** Verifies `sprint_backlog.md` status = `Sealed` and no `[AWAITING SIGN-OFF]` fields remain — was absent in prior version. **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. STEP -1.1 extended: checks `amended_backlog_slice_path`; if present, uses that file as the authoritative scope; records the authoritative path for use throughout the run. STEP 0 updated: parses the authoritative slice (not hardcoded `stage4_backlog_slice.md`); records `backlog_slice_source` in `execution_state.json`. §7 write scope: amended backlog slice added to must-not-modify list. §9.1 schema: `backlog_slice_source` field added. §13 invariant added. **`Executing` status documented.** STEP 0 note: `Executing` is a valid intermediate status between `Sprint_Planning_Complete` and `Sprint_Complete`; Phase 4 may not be invoked while `Executing`. Guide updated separately (§4 lifecycle table, §12 cycle trigger table, §13 artefact register). **STEP numbering adjusted:** -1.1 now includes backlog slice source check; -1.2 status check; -1.3 sprint backlog sealed (new); former -1.3/-1.4/-1.5/-1.6 renumbered to -1.4/-1.5/-1.6/-1.7. |

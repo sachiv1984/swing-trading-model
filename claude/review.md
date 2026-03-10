@@ -1182,7 +1182,7 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 | 2 | ✅ COMPLETE | `operational_playbook.md` v3.5 | 13, 17, 33(gap2), 36(partial) | Playbook hygiene |
 | 2-PATCH | ✅ COMPLETE | `operational_playbook.md` v3.6 | 62 | IMP-36 residuals |
 | 3 | ✅ COMPLETE | `release_planning_prompt.md` v2.16, `execution_prompt.md` v1.8, `amendment_cycle_prompt.md` v1.4, `shared_standards.md` v1.8, `prompt_change_log.md`, `OPERATIONAL_GUIDE.md` v3.7 | 24, 35(gaps 2–4), 39, 40, 48, 58 | Idempotency + GitHub reliability |
-| 4 | — | `release_planning_prompt.md` v2.17, `sprint_planning_prompt.md` v1.7, `execution_prompt.md` v1.9, `post_ship_closure.md` v1.6 | 23, 25, 26, 27 | Token savings — highest volume reduction |
+| 4 | ✅ COMPLETE | `release_planning_prompt.md` v2.17, `sprint_planning_prompt.md` v1.7, `execution_prompt.md` v1.9, `post_ship_closure.md` v1.6, `OPERATIONAL_GUIDE.md` v3.8, `prompt_change_log.md` | 23, 25, 26, 27 | Token savings — highest volume reduction |
 | 5 | — | `lessons_learnt_prompt.md`, `execution_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `amendment_cycle_prompt.md` | 28, 37, 53, 54 | Structural — lessons learnt consolidation; prerequisite for Batch 6 |
 | 6 | — | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
 | 7 | — | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
@@ -1190,7 +1190,7 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 † IMP-40 and IMP-48 may already be present in `shared_standards.md` v1.7. Verify before re-applying in Batch 3.
 
-**Open IMPs remaining: 46** (including IMP-62)
+**Open IMPs remaining: 42** (including IMP-62; Batch 4 closed: IMP-23, 25, 26, 27)
 **IMPs requiring human decision before implementation: 4 (Batch 7)**
-**Batches 2-PATCH through 4 can proceed immediately with no decision gates.**
+**Batch 5 is next — no blocking dependencies.**
 

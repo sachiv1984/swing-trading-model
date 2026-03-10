@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.16
+**Version:** 2.17
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -725,6 +725,8 @@ Escalations file rules:
 
 **Escalation entry format, SLAs, append-only rule, and Accepted Risk constraints:** follow `claude/system/shared_standards.md §4` exactly.
 
+**ESC entry scope:** ESC entries in `escalations.md` store decision/status only — do not duplicate risk description or context in the ESC entry. Full risk context lives in `release_plan.md §Execution Plan` via the `escalation_ref` field on each RISK-ID row. When creating an ESC entry for a risk, set `escalation_ref` on the corresponding RISK row to the ESC-id.
+
 Engine-specific rules (additional to shared_standards.md §4):
 
 When escalations.md is created:
@@ -860,6 +862,19 @@ Required table format for each EPIC:
 ```
 
 If an EPIC has significant sequencing rationale or dependency notes that cannot fit in the table, append a brief note (2–3 lines maximum) below the table row, prefixed with the EPIC-ID. Full dependency maps belong in `sprint_planning_notes.md`.
+
+**Risk register format (required alongside EPIC table):**
+
+After the EPIC table, write a `### Risk Register Summary` subsection. Each RISK-ID referenced in the EPIC table must appear as a row:
+
+```
+| RISK-ID | Relates to | Description | Priority | Mitigation | escalation_ref |
+|---------|------------|-------------|----------|------------|----------------|
+| RISK-01 | EPIC-01 | <description> | High/Medium/Low | <mitigation action> | null |
+| RISK-02 | EPIC-01 | <description> | Low | <mitigation action> | ESC-YYYYMMDD-nn |
+```
+
+`escalation_ref`: set to `null` if no escalation has been raised for this risk. Set to the ESC-id if an escalation was raised. This keeps ESC entries lean — they store decision/status only; the full risk context lives here via the back-link.
 
 **Decisions record (required output):**
 
@@ -1477,6 +1492,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.17 | 2026-03-10 | IMP-26: STEP 3 — `### Risk Register Summary` subsection added alongside EPIC table; each RISK-ID entry now requires `escalation_ref` field (null or ESC-id). Escalation subroutine reference updated: ESC entries store decision/status only; full risk context lives in `release_plan.md` via `escalation_ref` back-link. |
 | 2.16 | 2026-03-10 | IMP-48: STEP -1.1 — conditional `gh_issue_template.md` existence check added; halt if missing when `--issues gh` or `--issues import` specified. IMP-24: STEP 4 — `stage4_issue_manifest.json` produced alongside `stage4_backlog_slice.md`; schema `[{id, title, epic, description, ac_summary, labels, assignee}]`; `cycle:<cycle_id>` label is idempotency key; `artifacts.stage4_issue_manifest` added to state.json schema. §10.2 updated — consumes `stage4_issue_manifest.json` (not markdown parsing); idempotency check added (IMP-35 gap 4); `cycle:<cycle_id>` label check-before-create; creation procedure uses manifest fields. |
 | 2.15 | 2026-03-10 | IMP-46: §10.1 — EPIC description source for issue import corrected from `release_plan.md ## Execution Plan` to `stage4_backlog_slice.md` (canonical scope record). IMP-47: STEP -1.4 — write permission test temp file renamed to `.write_test`; must be removed immediately; STEP 0 cleanup obligation added. |
 | 2.14 | 2026-03-10 | LL-v1.9-01: Added STEP 1.1 Backlog Age Advisory — scans backlog for spec/documentation debt items aged 2+ cycles without story assignment; emits advisory warning and recommendation to promote to sprint stories. LL-v1.9-02: Added STEP 4.5 Phasing Recommendation — when capacity check outcome is WARN, a `### Phasing Recommendation` subsection is now required in `release_plan.md §Capacity Check`; lists concrete phase 1/phase 2 EPIC groupings with effort estimates and ordering rationale. LL-v1.9-03: Added STEP 7 Pre-sprint Planning Required Decisions — when any High-priority risk carries "must resolve before sprint planning seal" disposition, a `## Pre-sprint Planning Required Decisions` checklist section is required in `cycle_summary.md` for Sprint Planning Engine consumption. All three triggered by lessons_learnt.md 2026-03-06__release-v1.9 per closure_record §6 Actions #3–5. |

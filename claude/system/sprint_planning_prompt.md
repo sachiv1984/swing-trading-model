@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.5
+**Version:** 1.7
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -111,6 +111,7 @@ During this routine you may write only to:
 
 - `claude/cycles/<cycle_id>/sprint_goal.md` (create)
 - `claude/cycles/<cycle_id>/sprint_backlog.md` (create)
+- `claude/cycles/<cycle_id>/sprint_backlog_index.json` (create alongside sprint_backlog.md — STEP 6)
 - `claude/cycles/<cycle_id>/sprint_capacity.md` (create)
 - `claude/cycles/<cycle_id>/sprint_planning_notes.md` (create — dependency map and sequencing rationale)
 - `claude/cycles/<cycle_id>/sprint_escalations.md` (create if escalations raised during planning)
@@ -507,7 +508,7 @@ Original / Amended — <file path used>
 
 ## STEP 6 — Sprint Backlog Production
 
-Write: `claude/cycles/<cycle_id>/sprint_backlog.md`
+Write: `claude/cycles/<cycle_id>/sprint_backlog.md` and `claude/cycles/<cycle_id>/sprint_backlog_index.json`
 
 ### 6.1 Sprint Backlog Structure
 
@@ -541,14 +542,9 @@ Write: `claude/cycles/<cycle_id>/sprint_backlog.md`
 **Estimated effort:** <N>
 **Delegation class:** autonomous | delegated_backend | delegated_frontend | delegated_qa | delegated_decision
 
-**Acceptance Criteria:**
+**Acceptance Criteria:** see `stage4_backlog_slice.md#ST-xx`
 
-| Dimension | Criteria |
-|-----------|---------|
-| Technical | <observable behaviour> |
-| Quality | <specific test scenario> |
-| Security | <check required> / N/A — <justification> |
-| Verification | <how Director of Quality confirms done> |
+*(The Execution Engine reads AC from `stage4_backlog_slice.md` directly via `spec_references`. Do not duplicate the full AC table here — the sprint backlog is a sequencing and ownership document.)*
 
 **Dependencies:** ST-yy (must complete first) / None
 
@@ -600,6 +596,29 @@ Write: `claude/cycles/<cycle_id>/sprint_backlog.md`
 **Signed off by:** Product Owner
 **Date:** [AWAITING SIGN-OFF]
 ```
+
+### 6.1A Sprint Backlog Index (Required — produce alongside sprint_backlog.md)
+
+Write: `claude/cycles/<cycle_id>/sprint_backlog_index.json`
+
+This index enables the Execution Engine to read only the relevant slice of `sprint_backlog.md` per EPIC, without loading the full document.
+
+Required schema:
+
+```json
+{
+  "cycle_id": "<cycle_id>",
+  "generated_utc": "<ISO-8601 UTC>",
+  "epics": {
+    "EPIC-xx": {
+      "st_items": ["ST-xx", "ST-yy"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-xx", "stage4_backlog_slice.md#ST-yy"]
+    }
+  }
+}
+```
+
+One entry per EPIC in sprint scope. `backlog_slice_refs` lists the canonical section anchors in `stage4_backlog_slice.md` for each ST item — Execution Engine uses these to load AC without reading the full backlog slice.
 
 ### 6.2 Sign-Off Gate (Hard Gate)
 
@@ -740,6 +759,8 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-03-10 | IMP-23: STEP 6.1 — ST item `Acceptance Criteria` field replaced with reference "AC: see `stage4_backlog_slice.md#ST-xx`"; note added that Execution Engine reads AC from `stage4_backlog_slice.md` via `spec_references`; sprint backlog is a sequencing and ownership document only. |
+| 1.6 | 2026-03-10 | IMP-25: §6 Write Scope — `sprint_backlog_index.json` added. STEP 6.1A added — produce `sprint_backlog_index.json` alongside `sprint_backlog.md`; schema `{cycle_id, generated_utc, epics: {EPIC-xx: {st_items, backlog_slice_refs}}}`; enables Execution Engine to load per-EPIC ST items and AC refs without full document read. |
 | 1.5 | 2026-03-10 | IMP-52: §5 table, STEP 0, STEP 1.2, STEP 4.1, STEP 5.3 — replaced `stage3_execution_plan.md` with `release_plan.md ## Execution Plan` (schema v2 — v2.11+) with backward compatibility note for pre-v2.11 cycles. STEP 0 capacity source updated to `release_plan.md ## Capacity Check`. IMP-18: STEP 7 state write — added `sprint_goal_status: "confirmed"` field. IMP-41: STEP 0 — capacity WARN acknowledgement protocol added; STEP 7 — `capacity_warn_acknowledged` field added. IMP-47/56: STEP -1.8 — temp file renamed to `.write_test`; STEP 0 — cleanup obligation added. |
 | 1.4 | 2026-03-08 | IMP-04: Added design gate bypass audit to STEP -1.3 — when entering from `Release_Planning_Complete` without `Design_Gate_Passed`, requires `design_gate_bypass_authority` and `design_gate_bypass_reason` to be written to `.claude_current_state.json`. Strict mode halts if absent; standard mode flags and blocks seal until present. |
 | 1.3 | 2026-03-07 | Added Lifecycle Guard per shared_standards.md §10. |

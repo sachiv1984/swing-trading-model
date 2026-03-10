@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.5
+**Version:** 1.6
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -255,11 +255,11 @@ If `closure_state.json` cannot be written: halt immediately.
 
 Cross-reference the identified path against `execution_state.json.backlog_slice_source`. If they disagree: flag to PMO Lead before proceeding. Record the authoritative path as `backlog_slice_source` in the closure record §1.
 
-Extract from the verified inputs:
+Extract from the verified inputs (read targets — load only the specified sections, not the full document):
 
-1. From `verification_report.md`: release version (`vX.Y`), verification status (`Verified` / `Verified_with_deviations`), deviation register, QA summary.
-2. From `execution_state.json`: merged EPICs (with EPIC IDs and descriptions), all ST items with `spec_references`, `deviations_filed` flags, returned-to-backlog items, `backlog_slice_source`.
-3. From `sprint_close.md`: sprint goal, deviations filed list, outstanding delegated items, verification readiness statement.
+1. From `verification_report.md` — **read: `§1 verification_status` and `§4 deviation register` only.** Extract: release version (`vX.Y`), verification status (`Verified` / `Verified_with_deviations`), deviation register, QA summary.
+2. From `execution_state.json` — **read: `epics` outcome map only** (not full state schema). Extract: merged EPICs (with EPIC IDs and descriptions), all ST items with `spec_references`, `deviations_filed` flags, returned-to-backlog items, `backlog_slice_source`.
+3. From `sprint_close.md` — **read: verification readiness statement and deviations list only** (not full narrative sections). Extract: sprint goal, deviations filed list, outstanding delegated items, verification readiness statement.
 4. From `current_roadmap.md`: the roadmap item ID and feature name for this release.
 5. From `backlog.md`: identify all items with this `cycle_id` added by Phase 4 (returned items, P2/P3 deviation items, test scenario gap items) — these must all be present before STEP 3 can pass.
 
@@ -473,13 +473,13 @@ Update `closure_state.json`: `steps.step_7_specs_index = pass`, `last_updated_ut
 
 ## STEP 8 — Lessons Learnt Review and Application
 
-Read all available lessons learnt records for this cycle:
+Read all available lessons learnt records for this cycle — **read action item sections only (not full prose)**:
 
-| Record | Location |
-|--------|----------|
-| Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` |
-| Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` |
-| Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` (if present) |
+| Record | Location | Read target |
+|--------|----------|-------------|
+| Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Action items section / classification table only |
+| Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Action items section / classification table only |
+| Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` (if present) | Action items section / classification table only |
 
 For each action item in all records, classify it:
 
@@ -701,6 +701,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6 | 2026-03-10 | IMP-27: STEP 0 — field-level read targets added for `verification_report.md` (§1 verification_status + §4 deviation register only), `execution_state.json` (epics outcome map only), `sprint_close.md` (verification readiness statement + deviations list only). STEP 8 — `lessons_learnt` files: read action items section / classification table only (not full prose). |
 | 1.5 | 2026-03-10 | IMP-42: STEP -1.2A added — sprint_close.md verification readiness statement check (all three `Yes` fields required before proceeding). IMP-34: §5 Write Scope — `current_roadmap.md` entry expanded to list all STEP 2 write actions; canonical spec entry updated to add document owner notification requirement; `closure_escalations.md` added as permitted write. IMP-50: `closure_escalations.md` added to §5 write scope (escalations during closure use this file, not `closure_record.md §6`). IMP-59: STEP 10 — `completed_cycle_count` increment added to global state write; rule documented (default 0 if absent; used for meta-review cadence tracking). IMP-12: STEP 9 §6 Outstanding Actions template — required table format added with named columns (Description, Owner, Deadline, Escalation path, Resolution); "None" path documented. |
 | 1.4 | 2026-03-07 | **IMP-01 — closure_state.json for reliable resumability.** Added `closure_state.json` to §4 Source-of-Truth inputs and §5 Write Scope. Added full STEP 0 initialization/resume logic with JSON schema (fresh run creates file; resume skips completed steps; already-Closed halts). Added `closure_state.json` update lines at the end of STEP 0 through STEP 11 (each step writes its completion flag and `last_updated_utc`). STEP 11 commit list: `closure_state.json` added. `next_cycle_unblocked` guard noted in STEP 10. Consistent with resumability model used by execution and release planning engines. |
 | 1.3 | 2026-03-07 | **Lifecycle Guard added.** Apply Lifecycle Guard per `shared_standards.md §10` (valid from-states: `Verified`, `Verified_with_deviations`) at §2 Invocation Rule. |

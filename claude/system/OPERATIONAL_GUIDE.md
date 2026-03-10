@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.7
+**Version:** 3.8
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -598,7 +598,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.16)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.17)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -741,7 +741,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v1.5)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v1.7)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -825,7 +825,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v1.8)
+**Source prompt:** `claude/system/execution_prompt.md` (v1.9)
 
 ### 8.1 Invocation
 
@@ -996,7 +996,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v1.5)  
+**Source prompt:** `claude/system/post_ship_closure.md` (v1.6)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)  
 **Owner:** PMO Lead  
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1284,7 +1284,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.7 |
+| Version | 3.8 |
 | Last Updated | 2026-03-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
@@ -1293,12 +1293,12 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.2 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.16 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.5 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.17 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.7 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.4 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v1.8 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v1.9 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.5 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.6 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v1.8 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.4 |
@@ -1318,6 +1318,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.8 | 2026-03-10 | **Batch 4 review.md token efficiency.** §6B source prompt → `release_planning_prompt.md` (v2.17). §7 source prompt → `sprint_planning_prompt.md` (v1.7). §8 source prompt → `execution_prompt.md` (v1.9). §10 source prompt → `post_ship_closure.md` (v1.6). §14 governance table versions updated accordingly. IMPs applied: IMP-26 (release_planning STEP 3 risk register `escalation_ref` field + ESC entry scope note), IMP-23 (sprint_planning AC reference in backlog template), IMP-25 (sprint_backlog_index.json produced at Phase 2; consumed at Phase 3 STEP -1/0), IMP-27 (post_ship_closure STEP 0 and STEP 8 field-level read targets). |
 | 3.7 | 2026-03-10 | **Batch 3 review.md process gaps.** §6B source prompt → `release_planning_prompt.md` (v2.16). §6B.8 source prompt → `amendment_cycle_prompt.md` (v1.4). §8 source prompt → `execution_prompt.md` (v1.8). §14 governance table versions updated: release_planning_prompt v2.16, amendment_cycle_prompt v1.4, execution_prompt v1.8, shared_standards v1.8. |
 | 3.6 | 2026-03-10 | **BATCH 2-PATCH: Playbook header drift and standing rule.** IMP-62 (1): §14 version control — standing rule added requiring phase section source prompt headers and §14 governance table to be updated in the same edit. IMP-62 (2): §9 source prompt → `delivery_verification_prompt.md` (v1.2). IMP-62 (3): §10 source prompt → `post_ship_closure.md` (v1.5); filename corrected (removed `_prompt` suffix). |
 | 3.5 | 2026-03-10 | **Batch 0+1+2 review.md process gaps.** IMP-36: §6B source prompt → v2.15; §7 source prompt → v1.5; §8 source prompt → v1.7; §6B.8 amendment engine → v1.3; §14 governance table versions updated (release_planning_prompt v2.15, sprint_planning_prompt v1.5, amendment_cycle_prompt v1.3, execution_prompt v1.7, post_ship_closure v1.5, shared_standards v1.7). IMP-13: Hard Rules table — Rule 1 (net-zero) expanded with mode-independence note and enforcement agent; "Decision log" row clarified as governance convention with explicit violation note. IMP-17: §3 Document Classes — Class 8 row annotated "Reserved — not currently produced". IMP-33: §6.3 STEP 5 constraint — displacement rule explicitly stated as mode-independent; enforcement agents named. |
