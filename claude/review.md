@@ -1287,8 +1287,8 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 | 0 | ✅ COMPLETE | `amendment_cycle_prompt.md` v1.3, `sprint_planning_prompt.md` v1.5 | 49, 51, 52 | Hard blockers |
 | 1 | ✅ COMPLETE | `shared_standards.md` v1.7, `execution_prompt.md` v1.7, `sprint_planning_prompt.md` v1.5, `release_planning_prompt.md` v2.15, `post_ship_closure.md` v1.5 | 12, 18, 20, 33(gap3), 34, 40†, 41, 42, 44, 45, 47, 48†, 50, 56, 58, 59, 61 | Correctness + state hygiene |
 | 2 | ✅ COMPLETE | `operational_playbook.md` v3.5 | 13, 17, 33(gap2), 36(partial) | Playbook hygiene |
-| 2-PATCH | **NEXT** | `operational_playbook.md` v3.6 | 62 | IMP-36 residuals |
-| 3 | — | `release_planning_prompt.md` v2.16, `execution_prompt.md` v1.8, `amendment_cycle_prompt.md` v1.4, `shared_standards.md` v1.8 (if needed), `prompt_change_log.md` | 24, 35(gaps 2–4), 39, 40†(verify), 48†(verify), 58(verify) | Idempotency + GitHub reliability |
+| 2-PATCH | ✅ COMPLETE | `operational_playbook.md` v3.6 | 62 | IMP-36 residuals |
+| 3 | **NEXT** | `release_planning_prompt.md` v2.16, `execution_prompt.md` v1.8, `amendment_cycle_prompt.md` v1.4, `shared_standards.md` v1.8 (if needed), `prompt_change_log.md` | 24, 35(gaps 2–4), 39, 40†(verify), 48†(verify), 58(verify) | Idempotency + GitHub reliability |
 | 4 | — | `release_planning_prompt.md` v2.17, `sprint_planning_prompt.md` v1.7, `execution_prompt.md` v1.9, `post_ship_closure.md` v1.6 | 23, 25, 26, 27 | Token savings — highest volume reduction |
 | 5 | — | `lessons_learnt_prompt.md`, `execution_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `amendment_cycle_prompt.md` | 28, 37, 53, 54 | Structural — lessons learnt consolidation; prerequisite for Batch 6 |
 | 6 | — | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
