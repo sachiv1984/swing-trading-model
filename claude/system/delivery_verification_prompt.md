@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-03-07
+**Version:** 1.3
+**Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -98,6 +98,7 @@ During this routine you may write only to:
 
 - `claude/cycles/<cycle_id>/verification_report.md` (create)
 - `claude/cycles/<cycle_id>/verification_escalations.md` (create or append — hard gate blockers only)
+- `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (append-only — Phase 4 section; create if absent)
 - `docs/System_status_report.md` (update — reconciliation only)
 - `claude/backlog/backlog.md` (append-only — outstanding items and test scenario gaps only)
 - `.claude_current_state.json` (status update only)
@@ -456,6 +457,20 @@ Comments:
 
 ---
 
+## STEP 8.5 — Lessons Learnt (Phase 4 Append)
+
+Invoke: `claude/system/lessons_learnt_prompt.md` (§3.4 — Delivery Verification Phase 4 Append)
+
+Output path: `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (Phase 4 section append — create file if absent)
+
+The shared prompt governs the structured table block format (§4.2), idempotency guard, action rules, and completion conditions. Phase 4 friction areas to focus on: gate sequencing, deviation severity call consistency, test scenario coverage gaps, sign-off coordination friction.
+
+**Idempotency guard (built into `lessons_learnt_prompt.md §3.4`):** Pre-write check for `## Phase 4 — <cycle_id>` header in `lessons_learnt_cycle.md`. If present: skip append.
+
+Do not proceed to STEP 9 until the Phase 4 section has been appended to `lessons_learnt_cycle.md`. If the lessons learnt prompt cannot be invoked: produce the Phase 4 section directly using the §4.2 structured table format and record the deviation in `verification_report.md §8`.
+
+---
+
 ## STEP 9 — Global State Update (Hard Requirement)
 
 ### If status = `Verified` or `Verified_with_deviations`:
@@ -508,6 +523,7 @@ Commit all artefacts created or modified by this routine:
 ```
 git add claude/cycles/<cycle_id>/verification_report.md
 git add claude/cycles/<cycle_id>/verification_escalations.md  (if created)
+git add claude/cycles/<cycle_id>/lessons_learnt_cycle.md  (if created or appended)
 git add docs/System_status_report.md
 git add claude/backlog/backlog.md  (if modified)
 git add .claude_current_state.json
@@ -525,6 +541,7 @@ The run is complete only if:
 
 - `verification_report.md` exists with all 9 sections (§8 only if `Not_Verified`)
 - Verification status is one of: `Verified`, `Verified_with_deviations`, `Not_Verified`
+- Phase 4 section appended to `lessons_learnt_cycle.md` (STEP 8.5 complete)
 - All `returned_to_backlog` items have confirmed backlog entries
 - All P2/P3 deviations have backlog items
 - All test coverage gaps have backlog items for QA & Testing Owner
@@ -553,5 +570,6 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-03-10 | IMP-54: §5 Write Scope — `lessons_learnt_cycle.md` added (append-only, Phase 4 section; create if absent). STEP 8.5 added — lessons learnt Phase 4 append via `lessons_learnt_prompt.md §3.4`; output: `lessons_learnt_cycle.md` Phase 4 section; idempotency guard built into prompt §3.4; hard gate before STEP 9. STEP 10 commit: `lessons_learnt_cycle.md` added. §8 completion condition: Phase 4 section appended condition added. |
 | 1.1 | 2026-03-07 | **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. STEP -1.1 extended: checks `amended_backlog_slice_path` in `.claude_current_state.json`; cross-references against `execution_state.json.backlog_slice_source`; flags disagreement before proceeding. STEP 1 updated: iterates over the authoritative slice (not hardcoded `stage4_backlog_slice.md`). §5 write scope: amended backlog slice added to must-not-modify list. `verification_report.md` §1 template: `Backlog slice source` field added. §9 invariant added. **`Verification_Failed` status corrected to `Not_Verified`.** STEP 9 `Not_Verified` path: `status` field in `.claude_current_state.json` changed from `Verification_Failed` to `Not_Verified`, consistent with guide §9.4 state machine and lifecycle table. **Deferred execution blockers acknowledged (STEP 4.2, new).** STEP 4 split into §4.1 (outstanding items, unchanged) and §4.2 (deferred execution blockers). §4.2 reads `deferred_execution_blockers` from `state.json`, dispositions each blocker, and records outcomes in `verification_report.md` §5. Informational only — does not block verification status. Sign-off blocks in `verification_report.md` §9 updated: DoQ checklist and PO checklist each add a deferred blocker acknowledgement line. §8 completion condition updated. §9 invariant updated. **Escalation subroutine added.** `verification_escalations.md` added to §5 write scope. Escalation subroutine added (callable, ID prefix `ESC-VER-YYYYMMDD-nn`). STEP 3: P0 deviation now files escalation record. STEP 9 Not_Verified path: references escalation records in halt report. STEP 10 commit: `verification_escalations.md` added. §8 completion condition updated. **Guide fix required:** §9 source prompt v1.0 → v1.1; §14 Verification Engine Source → v1.1; `Not_Verified` confirmed as the canonical status string (not `Verification_Failed`). |
 | 1.0 | 2026-03-03 | Initial version. |

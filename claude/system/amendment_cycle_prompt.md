@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.4
+**Version:** 1.5
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -543,11 +543,15 @@ Update `.claude_current_state.json`:
 
 ## STEP 8 — Amendment Lessons
 
-Invoke `claude/system/lessons_learnt_prompt.md` (§3 — use the closest applicable routine inputs from the amendment manifest and ratification record).
+Invoke `claude/system/lessons_learnt_prompt.md` (§3.6 — Amendment Section Append).
 
-Output: `claude/cycles/<original_cycle_id>/amendments/<amendment_id>/amendment_lessons.md`
+**Primary output (IMP-37):** Append `## Amendment — <AMD-id>` section to `claude/cycles/<original_cycle_id>/lessons_learnt_cycle.md` using the structured table block format (`lessons_learnt_prompt.md §4.2`).
 
-Record:
+**Secondary output (backward compat):** Also produce `claude/cycles/<original_cycle_id>/amendments/<amendment_id>/amendment_lessons.md` — standalone record for the amendment sub-folder.
+
+**Idempotency guard (built into `lessons_learnt_prompt.md §3.6`):** Before appending to `lessons_learnt_cycle.md`, check for existing header `## Amendment — <AMD-id>`. If present: skip append.
+
+Record in both outputs:
 - What caused the emergency that forced the amendment
 - Whether the amendment process was proportionate and efficient
 - Any process improvements for earlier detection of hard blockers or emergencies
@@ -561,6 +565,7 @@ Record:
 
 ```
 git add claude/cycles/<original_cycle_id>/amendments/<amendment_id>/
+git add claude/cycles/<original_cycle_id>/lessons_learnt_cycle.md  (if created or appended)
 git add claude/backlog/backlog.md
 git add .claude_current_state.json
 git commit -m "[GOVERNANCE] Amendment sealed: <amendment_id> on <original_cycle_id> — <reason>"
@@ -581,7 +586,8 @@ The run is complete only if:
 - `amendment_state.json` status = `Sealed`
 - `backlog.md` updated with amendment marker present
 - Backlog lock released
-- `amendment_lessons.md` filed
+- `amendment_lessons.md` filed (standalone, in amendment sub-folder)
+- `lessons_learnt_cycle.md` Amendment section appended (idempotency guard applied)
 - `.claude_current_state.json` updated with `amended_backlog_slice_path` and `amendment_status = Sealed`
 - STEP 9 commit complete (or commit manifest produced)
 
@@ -626,6 +632,7 @@ If an amendment is opened but the emergency is resolved before ratification, or 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-03-10 | IMP-37: STEP 8 — primary output changed to append `## Amendment — <AMD-id>` section to `claude/cycles/<original_cycle_id>/lessons_learnt_cycle.md` via `lessons_learnt_prompt.md §3.6`; idempotency guard built into prompt §3.6. Secondary output `amendment_lessons.md` retained for backward compat. STEP 9 commit: `lessons_learnt_cycle.md` added. §9 completion condition: `lessons_learnt_cycle.md` Amendment section appended condition added. |
 | 1.4 | 2026-03-10 | IMP-35 (gap 3): STEP 8 — prompt change log idempotency guard added; before appending to `prompt_change_log.md` for any action-now patch, check for existing entry with matching prompt filename + version string; if present: skip. IMP-39: §10 Withdrawal — backlog rollback instruction added; if STEP 5 completed before withdrawal, `backlog.md` amendment marker must be reversed; `amendment_state.json.backlog_rollback_required` and `backlog_rollback_completed` fields defined. |
 | 1.3 | 2026-03-10 | IMP-49: STEP -1.4 — `stage3_execution_plan.md` replaced with `release_plan.md` (schema v2 detection via `state.json.prompt_schema_version`); backward compatibility note for pre-v2.11 cycles. §4 and §4.1 references updated to match. IMP-51: STEP 2.5 added — explicit procedural step to release backlog lock before STEP 3 human ratification begins; lock re-acquired at STEP 5.1. STEP -1.1 parenthetical updated to reference STEP 2.5. Governance invariant added. |
 | 1.2 | 2026-03-08 | IMP-09: Added atomicity guard to STEP -1.1 — backlog lock acquired with marker `AMEND-CHECK:<cycle_id>` before `sprint_sealed` is read; lock released after STEP 5 or on any halt. Governance invariant added. |

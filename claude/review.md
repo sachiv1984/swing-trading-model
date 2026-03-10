@@ -881,7 +881,40 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## BATCH 5 — Lessons learnt consolidation (high impact, medium effort, must precede IMP-29 and IMP-37)
+## ✅ BATCH 5 — COMPLETE (2026-03-10)
+
+**IMPs resolved:** IMP-28, IMP-35 (gap 2), IMP-37, IMP-53, IMP-54
+**Files updated:** `lessons_learnt_prompt.md` → v1.5, `execution_prompt.md` → v2.0, `delivery_verification_prompt.md` → v1.3, `post_ship_closure.md` → v1.7, `amendment_cycle_prompt.md` → v1.5, `OPERATIONAL_GUIDE.md` → v3.9, `prompt_change_log.md` (appended)
+**Verified by:** §14 governance table and §6B.8, §8, §9, §10 phase headers in playbook v3.9.
+
+### `lessons_learnt_prompt.md` (→ v_next)
+| IMP | Change |
+|-----|--------|
+| IMP-26 | STEP 3 risk register entries: add `escalation_ref` field (null or ESC-id). Update escalation subroutine reference to §4: "ESC entries store decision/status only; risk context lives in `release_plan.md` via escalation_ref." |
+
+### `sprint_planning_prompt.md` (→ v1.7)
+| IMP | Change |
+|-----|--------|
+| IMP-23 | STEP 6 `sprint_backlog.md` template: ST item Acceptance Criteria field becomes a reference — "AC: see `stage4_backlog_slice.md#ST-xx`" instead of full AC duplication. Sprint backlog is a sequencing and ownership document. Add note: "Execution engine reads AC from `stage4_backlog_slice.md` directly via `spec_references`." |
+| IMP-25 | STEP 6: alongside `sprint_backlog.md`, produce `sprint_backlog_index.json` — `{EPIC-xx: {st_items: [ST-xx,...], backlog_slice_refs: [...]}}`. Add to §6 Write Scope. |
+
+### `execution_prompt.md` (→ v1.9)
+| IMP | Change |
+|-----|--------|
+| IMP-25 | STEP -1 and STEP 0: add instruction — "Load `sprint_backlog_index.json` to identify which ST items belong to the scoped EPIC. Read only the relevant slice of `sprint_backlog.md` using the index line ranges, not the full document." |
+
+### `post_ship_closure.md` (→ v1.6)
+| IMP | Change |
+|-----|--------|
+| IMP-27 | For each step, add field-level read target: STEP 0 — `verification_report.md`: read `§1 verification_status` and `§4 deviation register` only. `sprint_close.md`: read verification readiness statement and deviations list. `execution_state.json`: read `epics` outcome map. STEP 8 — `lessons_learnt.md` files: read action item sections only (not full prose). Add explicit "read target" notes to each step that loads a large input document. |
+
+---
+
+## ✅ BATCH 5 — COMPLETE (2026-03-10)
+
+**IMPs resolved:** IMP-28, IMP-35 (gap 2), IMP-37, IMP-53, IMP-54
+**Files updated:** `lessons_learnt_prompt.md` → v1.5, `execution_prompt.md` → v2.0, `delivery_verification_prompt.md` → v1.3, `post_ship_closure.md` → v1.7, `amendment_cycle_prompt.md` → v1.5, `OPERATIONAL_GUIDE.md` → v3.9, `prompt_change_log.md` (appended)
+**Verified by:** §14 governance table and §6B.8, §8, §9, §10 phase headers in playbook v3.9.
 
 **Rationale:** IMP-28 is the prerequisite for three other IMPs (IMP-29, IMP-37, IMP-53, IMP-54). It requires coordinated changes across four prompt files. Do it as a single atomic batch.
 
@@ -992,14 +1025,14 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 | Batch | Status | Files touched | IMPs addressed | Priority basis |
 |-------|--------|--------------|----------------|----------------|
-| 5 | — | `lessons_learnt_prompt.md`, `execution_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `amendment_cycle_prompt.md` | 28, 37, 53, 54 | Structural — lessons learnt consolidation; prerequisite for Batch 6 |
+| 5 | ✅ COMPLETE | `lessons_learnt_prompt.md` v1.5, `execution_prompt.md` v2.0, `delivery_verification_prompt.md` v1.3, `post_ship_closure.md` v1.7, `amendment_cycle_prompt.md` v1.5, `OPERATIONAL_GUIDE.md` v3.9, `prompt_change_log.md` | 28, 35(gap2), 37, 53, 54 | Structural — lessons learnt consolidation; prerequisite for Batch 6 |
 | 6 | — | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
 | 7 | — | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
 | 8 | — | `shared_standards.md`, `release_planning_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `roadmap_prompt.md` | 11, 13, 14, 15, 16, 22, 43 | Completeness sweep |
 
 † IMP-40 and IMP-48 may already be present in `shared_standards.md` v1.7. Verify before re-applying in Batch 3.
 
-**Open IMPs remaining: 42** (including IMP-62; Batch 4 closed: IMP-23, 25, 26, 27)
+**Open IMPs remaining: 37** (Batch 5 closed: IMP-28, 35(gap2), 37, 53, 54)
 **IMPs requiring human decision before implementation: 4 (Batch 7)**
-**Batch 5 is next — no blocking dependencies.**
+**Batch 6 is next — gated on one full Batch 5 cycle (first `lessons_learnt_cycle.md` produced).**
 

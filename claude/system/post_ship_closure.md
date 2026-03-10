@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.6
+**Version:** 1.7
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -87,8 +87,7 @@ This routine may not override any of the above.
 | Execution state (sealed) | `claude/cycles/<cycle_id>/execution_state.json` | Hard gate |
 | Backlog slice (sealed) | See note below — may be amended | Hard gate |
 | Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Required |
-| Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Required |
-| Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` | Required (if produced) |
+| Sprint Execution + Verification + Amendment lessons | `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` | Required (Phase 3 and Phase 4 sections; Amendment sections if any) — replaces standalone `lessons_learnt_execution.md` and `lessons_learnt_verification.md` |
 | QA evidence logs | `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per merged EPIC) | Required |
 | System status report | `docs/System_status_report.md` | Required |
 | Roadmap | `claude/roadmap/current_roadmap.md` | Required |
@@ -131,8 +130,7 @@ You must **not** modify:
 - `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
 - `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed)
 - `claude/cycles/<cycle_id>/lessons_learnt.md` (read-only — do not edit, only apply)
-- `claude/cycles/<cycle_id>/lessons_learnt_execution.md` (read-only — do not edit, only apply)
-- `claude/cycles/<cycle_id>/lessons_learnt_verification.md` (read-only — do not edit, only apply)
+- `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (read-only — do not edit, only apply; replaces `lessons_learnt_execution.md` and `lessons_learnt_verification.md`)
 - `claude/strategy/strategy_rules.md`
 - Any governance document not listed in the permitted write scope above
 
@@ -478,8 +476,7 @@ Read all available lessons learnt records for this cycle — **read action item 
 | Record | Location | Read target |
 |--------|----------|-------------|
 | Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Action items section / classification table only |
-| Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Action items section / classification table only |
-| Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` (if present) | Action items section / classification table only |
+| Sprint Execution + Verification + Amendment lessons | `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` | All phase sections (Phase 3, Phase 4, and any Amendment sections) — structured table read (`lessons_learnt_prompt.md §4.2` format) |
 
 For each action item in all records, classify it:
 
@@ -701,6 +698,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-03-10 | IMP-54: §4 Source-of-Truth inputs — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` rows replaced with single `lessons_learnt_cycle.md` row (Phase 3 + Phase 4 + Amendment sections). §5 must-not-modify — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` lines replaced with `lessons_learnt_cycle.md` (read-only). STEP 8 lessons learnt table — two rows replaced with single `lessons_learnt_cycle.md` row (all phase sections, structured table read). |
 | 1.6 | 2026-03-10 | IMP-27: STEP 0 — field-level read targets added for `verification_report.md` (§1 verification_status + §4 deviation register only), `execution_state.json` (epics outcome map only), `sprint_close.md` (verification readiness statement + deviations list only). STEP 8 — `lessons_learnt` files: read action items section / classification table only (not full prose). |
 | 1.5 | 2026-03-10 | IMP-42: STEP -1.2A added — sprint_close.md verification readiness statement check (all three `Yes` fields required before proceeding). IMP-34: §5 Write Scope — `current_roadmap.md` entry expanded to list all STEP 2 write actions; canonical spec entry updated to add document owner notification requirement; `closure_escalations.md` added as permitted write. IMP-50: `closure_escalations.md` added to §5 write scope (escalations during closure use this file, not `closure_record.md §6`). IMP-59: STEP 10 — `completed_cycle_count` increment added to global state write; rule documented (default 0 if absent; used for meta-review cadence tracking). IMP-12: STEP 9 §6 Outstanding Actions template — required table format added with named columns (Description, Owner, Deadline, Escalation path, Resolution); "None" path documented. |
 | 1.4 | 2026-03-07 | **IMP-01 — closure_state.json for reliable resumability.** Added `closure_state.json` to §4 Source-of-Truth inputs and §5 Write Scope. Added full STEP 0 initialization/resume logic with JSON schema (fresh run creates file; resume skips completed steps; already-Closed halts). Added `closure_state.json` update lines at the end of STEP 0 through STEP 11 (each step writes its completion flag and `last_updated_utc`). STEP 11 commit list: `closure_state.json` added. `next_cycle_unblocked` guard noted in STEP 10. Consistent with resumability model used by execution and release planning engines. |

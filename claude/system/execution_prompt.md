@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.9
+**Version:** 2.0
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -172,7 +172,7 @@ During this routine you may write only to:
 - `claude/cycles/<cycle_id>/execution_escalations.md` (append-only)
 - `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per EPIC, created at EPIC completion)
 - `claude/cycles/<cycle_id>/sprint_close.md` (create at close only)
-- `claude/cycles/<cycle_id>/lessons_learnt_execution.md` (create at close only)
+- `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (append-only — Phase 3 section; create if absent)
 - Source files required by ST items (within repo, outside governance folders)
 - Canonical spec files (deviation documentation only — §9 Known Deviation Standard; no other spec edits permitted)
 - `.claude_current_state.json` (status updates only)
@@ -804,11 +804,11 @@ If `docs/System_status_report.md` does not exist: create it with this sprint's s
 
 ### 5.4 Lessons Learnt
 
-Invoke: `claude/system/lessons_learnt_prompt.md` (§3.3 — Sprint Execution inputs)
+Invoke: `claude/system/lessons_learnt_prompt.md` (§3.3 — Sprint Execution Phase 3 Append)
 
-Output path: `claude/cycles/<cycle_id>/lessons_learnt_execution.md`
+Output path: `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (Phase 3 section append — create file if absent)
 
-The shared prompt governs structure, action rules, lifecycle compliance, and completion conditions. The execution-specific friction areas to focus on:
+The shared prompt governs the structured table block format (§4.2), idempotency guard, action rules, and completion conditions. The execution-specific friction areas to focus on:
 - Delegation patterns (which classification kept needing humans — could any become autonomous?)
 - GitHub integration friction (CI behaviour, issue/PR lifecycle)
 - Acceptance criteria gaps (items that lacked criteria and had to be parked as `delegated_decision`)
@@ -816,7 +816,7 @@ The shared prompt governs structure, action rules, lifecycle compliance, and com
 
 The prompt's §6.2 rule applies: if any friction can be resolved by updating a template or prompt during this run, apply it immediately and record it.
 
-**IMP-35 gap 2 — Future idempotency guard (inactive until IMP-28 is implemented):** When IMP-28 is implemented and this step writes to `lessons_learnt_cycle.md` instead of `lessons_learnt_execution.md`, apply this pre-write check before appending the Phase 3 section: check for existing section header `## Phase 3 — <cycle_id>`. If present: skip append (idempotency guard). Current prose record (`lessons_learnt_execution.md`) is unaffected — this guard activates only with IMP-28.
+**Idempotency guard (IMP-35 gap 2 — now active):** Before appending, check for existing section header `## Phase 3 — <cycle_id>` in `lessons_learnt_cycle.md`. If present: skip append (already complete for this cycle).
 
 ---
 
@@ -858,7 +858,7 @@ git add claude/cycles/<cycle_id>/delegation_log.md
 git add claude/cycles/<cycle_id>/execution_escalations.md  (if created)
 git add claude/cycles/<cycle_id>/qa_evidence_EPIC-*.md
 git add claude/cycles/<cycle_id>/sprint_close.md
-git add claude/cycles/<cycle_id>/lessons_learnt_execution.md
+git add claude/cycles/<cycle_id>/lessons_learnt_cycle.md
 git add docs/System_status_report.md
 git add .claude_current_state.json
 git commit -m "[GOVERNANCE] Sprint execution closed: <cycle_id>"
@@ -880,7 +880,7 @@ The run is complete only if:
 - One `qa_evidence_EPIC-xx.md` exists per merged EPIC, with consolidation block complete
 - `docs/System_status_report.md` updated with this sprint's section
 - `sprint_close.md` exists, is lifecycle-compliant, and includes verification readiness statement
-- `lessons_learnt_execution.md` exists
+- `lessons_learnt_cycle.md` Phase 3 section appended (idempotency guard applied)
 - `.claude_current_state.json` updated to `Sprint_Complete`
 - No open escalations with `Blocks execution: Yes`
 - STEP 8 commit complete (or commit manifest produced)
@@ -907,6 +907,7 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.0 | 2026-03-10 | IMP-53: §7 Write Scope — `lessons_learnt_execution.md` replaced with `lessons_learnt_cycle.md` (append-only, Phase 3 section; create if absent). STEP 5.4 — invocation updated from `§3.3` to `§3.3 — Sprint Execution Phase 3 Append`; output path changed to `lessons_learnt_cycle.md`; IMP-35 gap 2 idempotency guard activated (was marked inactive until IMP-28 — now active). STEP 8 commit list: `lessons_learnt_execution.md` → `lessons_learnt_cycle.md`. §12 completion condition: `lessons_learnt_execution.md exists` → `lessons_learnt_cycle.md Phase 3 section appended`. |
 | 1.9 | 2026-03-10 | IMP-25: STEP -1.1 — load `sprint_backlog_index.json` if present; when `--epic` scoped, use index `st_items` and `backlog_slice_refs` to read only the relevant EPIC slice rather than full document. STEP 0 — index-guided load note added; when index provides exact `backlog_slice_refs`, read only those AC sections from `stage4_backlog_slice.md`. Fall-back to full document read when index absent. |
 | 1.8 | 2026-03-10 | IMP-40: §3.1.D SLA breach tracking note added — 72-hour breach check on each re-invocation; `blocked_sla_breached = true` written at STEP 6 if any escalation exceeds SLA; references `shared_standards.md §4` SLA Breach Rule. STEP 6 state write schema: `blocked_sla_breached` field added. IMP-35 (gap 2): STEP 5.4 — future IMP-28 idempotency guard documented (inactive until IMP-28 implemented); pre-write check for `## Phase 3 — <cycle_id>` header in `lessons_learnt_cycle.md` before appending. |
 | 1.7 | 2026-03-10 | IMP-47/56: STEP -1.7 — temp file renamed to `.write_test`; STEP 0 — cleanup obligation added. IMP-44: §9.1 schema — `last_completed_substep` field added to ST item; §10.2 Sub-Item Resume rule added. IMP-20: STEP 5.0 added — delegation log outcome check (all delegation entries must have terminal status) required before Sprint_Complete is written. IMP-33: §13 Governance Invariants — "Ambiguity" definition block added. |

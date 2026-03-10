@@ -716,7 +716,7 @@ The cycle may only be sealed `Published` if **all** of the following are true:
 
 ### 6B.8 Amendment Cycle (Emergency Only)
 
-**Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.4)
+**Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.5)
 
 An amendment cycle may be opened after Phase 1B publishes and before Phase 2 seals (`sprint_sealed = true`). It is the only permitted mechanism for changing the backlog slice after the release plan is sealed.
 
@@ -825,7 +825,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v1.9)
+**Source prompt:** `claude/system/execution_prompt.md` (v2.0)
 
 ### 8.1 Invocation
 
@@ -910,7 +910,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.2)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.3)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -996,7 +996,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v1.6)
+**Source prompt:** `claude/system/post_ship_closure.md` (v1.7)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)  
 **Owner:** PMO Lead  
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1026,8 +1026,7 @@ run post-ship [--cycle "<cycle_id>"] [--mode "strict|standard"] [--dry-run]
 - `claude/cycles/<cycle_id>/sprint_close.md`
 - `claude/cycles/<cycle_id>/execution_state.json` (sealed)
 - `claude/cycles/<cycle_id>/lessons_learnt.md` (Phase 1B)
-- `claude/cycles/<cycle_id>/lessons_learnt_execution.md` (Phase 3)
-- `claude/cycles/<cycle_id>/lessons_learnt_verification.md` (Phase 4, if produced)
+- `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (Phase 3 + Phase 4 + Amendments — consolidated file)
 - `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (one per merged EPIC)
 - `docs/System_status_report.md`
 
@@ -1043,7 +1042,7 @@ run post-ship [--cycle "<cycle_id>"] [--mode "strict|standard"] [--dry-run]
 | 6 | Canonical specs | Confirm all deviation entries have required fields: description, canonical requirement, priority (P0–P3), target resolution release, owner, backlog reference | Deviation note missing required fields — spec non-compliant |
 | 7 | `docs/System_status_report.md`, `docs/operations/validation_system.md` | Confirm current; update any stale "planned" or "backlog" notes | Operational docs reference superseded behaviour |
 | 8 | `docs/specs/Specs_Index.md` | Mark resolved items closed with date and `cycle_id`; add new gaps identified during delivery | Index not reconciled with delivery |
-| 9 | Lessons learnt (both records) | Review all action items; apply immediate process improvements (bump template/prompt versions); schedule deferred actions; escalate decisions to named owners | Lessons learnt filed but not reviewed — process debt compounds |
+| 9 | Lessons learnt (`lessons_learnt.md` + `lessons_learnt_cycle.md`) | Review all action items from both files; apply immediate process improvements (bump template/prompt versions); schedule deferred actions; escalate decisions to named owners | Lessons learnt filed but not reviewed — process debt compounds |
 
 ### 10.4 Changelog Entry Structure
 
@@ -1284,7 +1283,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.8 |
+| Version | 3.9 |
 | Last Updated | 2026-03-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
@@ -1295,13 +1294,13 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.17 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.7 |
-| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.4 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v1.9 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.6 |
+| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.5 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v2.0 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.3 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.7 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v1.8 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.4 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.5 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
 | Team Charter | `claude/charter/team_charter.md` v1.4 |
@@ -1318,6 +1317,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.9 | 2026-03-10 | **Batch 5 review.md lessons learnt consolidation.** §6B.8 source prompt → `amendment_cycle_prompt.md` (v1.5). §8 source prompt → `execution_prompt.md` (v2.0). §9 source prompt → `delivery_verification_prompt.md` (v1.3). §10 source prompt → `post_ship_closure.md` (v1.7). §14 governance table versions updated accordingly. §14 Lessons Learnt Prompt → v1.5. §10.2 inputs: `lessons_learnt_execution.md` and `lessons_learnt_verification.md` replaced with `lessons_learnt_cycle.md` (consolidated). §10.3 row 9: lessons learnt input updated to name both files. IMPs applied: IMP-28 (lessons_learnt_prompt restructured as append-only phase-tagging; Sprint Execution and Delivery Verification now append to `lessons_learnt_cycle.md`), IMP-35 gap 2 (idempotency guard now active in execution_prompt STEP 5.4), IMP-37 (amendment_cycle_prompt STEP 8 appends to `lessons_learnt_cycle.md`), IMP-53 (execution_prompt §7 write scope + STEP 5.4 updated), IMP-54 (delivery_verification_prompt STEP 8.5 added; post_ship_closure §4 and STEP 8 updated). |
 | 3.8 | 2026-03-10 | **Batch 4 review.md token efficiency.** §6B source prompt → `release_planning_prompt.md` (v2.17). §7 source prompt → `sprint_planning_prompt.md` (v1.7). §8 source prompt → `execution_prompt.md` (v1.9). §10 source prompt → `post_ship_closure.md` (v1.6). §14 governance table versions updated accordingly. IMPs applied: IMP-26 (release_planning STEP 3 risk register `escalation_ref` field + ESC entry scope note), IMP-23 (sprint_planning AC reference in backlog template), IMP-25 (sprint_backlog_index.json produced at Phase 2; consumed at Phase 3 STEP -1/0), IMP-27 (post_ship_closure STEP 0 and STEP 8 field-level read targets). |
 | 3.7 | 2026-03-10 | **Batch 3 review.md process gaps.** §6B source prompt → `release_planning_prompt.md` (v2.16). §6B.8 source prompt → `amendment_cycle_prompt.md` (v1.4). §8 source prompt → `execution_prompt.md` (v1.8). §14 governance table versions updated: release_planning_prompt v2.16, amendment_cycle_prompt v1.4, execution_prompt v1.8, shared_standards v1.8. |
 | 3.6 | 2026-03-10 | **BATCH 2-PATCH: Playbook header drift and standing rule.** IMP-62 (1): §14 version control — standing rule added requiring phase section source prompt headers and §14 governance table to be updated in the same edit. IMP-62 (2): §9 source prompt → `delivery_verification_prompt.md` (v1.2). IMP-62 (3): §10 source prompt → `post_ship_closure.md` (v1.5); filename corrected (removed `_prompt` suffix). |
