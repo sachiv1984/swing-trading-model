@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.5
+**Version:** 1.6
 **Last Updated:** 2026-03-10
 
 ---
@@ -61,16 +61,11 @@ Read the inputs appropriate to the invoking routine:
 
 ### 3.2 Release Planning inputs
 
-- `claude/cycles/<cycle_id>/run_manifest.md`
-- `claude/cycles/<cycle_id>/stage1_readiness.md`
-- `claude/cycles/<cycle_id>/stage2_scope_extraction.md`
-- `claude/cycles/<cycle_id>/stage3_execution_plan.md`
-- `claude/cycles/<cycle_id>/stage3_5_model_integrity.md`
+- `claude/cycles/<cycle_id>/release_plan.md` (consolidated intermediate — contains readiness, scope extraction, execution plan, model integrity, and capacity check sections; replaces pre-v2.11 stage files)
 - `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
-- `claude/cycles/<cycle_id>/stage4_5_capacity_check.md`
-- `claude/cycles/<cycle_id>/stage5_5_cross_stage_integrity.md`
 - `claude/cycles/<cycle_id>/escalations.md` (if present)
 - `claude/cycles/<cycle_id>/cycle_summary.md`
+- `claude/cycles/<cycle_id>/run_manifest.md` (if present)
 
 ### 3.3 Sprint Execution — Phase 3 Append (IMP-28)
 
@@ -476,6 +471,7 @@ This prompt completes only when:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6 | 2026-03-10 | **§3.2 Release Planning inputs alignment.** Old stage file list (`stage1_readiness.md`, `stage2_scope_extraction.md`, `stage3_execution_plan.md`, `stage3_5_model_integrity.md`, `stage4_5_capacity_check.md`, `stage5_5_cross_stage_integrity.md`) replaced with `release_plan.md` (consolidated intermediate, aligned with `release_planning_prompt.md` v2.11+ artefact consolidation). `stage4_backlog_slice.md`, `escalations.md`, `cycle_summary.md`, and `run_manifest.md` retained. |
 | 1.5 | 2026-03-10 | **IMP-28 lessons learnt consolidation + IMP-37 amendment append.** §3.3 (Sprint Execution) and §3.4 (Delivery Verification) restructured as append-only phase-tagging sections: output target changed from standalone files (`lessons_learnt_execution.md`, `lessons_learnt_verification.md`) to `lessons_learnt_cycle.md` phase sections; idempotency guards added (pre-write header check). §3.5 (Post-Ship Closure) updated: `lessons_learnt_execution.md` replaced with `lessons_learnt_cycle.md` in inputs. §3.6 added (IMP-37 Amendment): appends `## Amendment — <AMD-id>` section to `lessons_learnt_cycle.md`; idempotency guard included; `amendment_lessons.md` retained for backward compat. Old §3.6 Cross-Cycle Recurrence Check renumbered §3.7; table rows for Sprint Execution and Delivery Verification updated to reference `lessons_learnt_cycle.md` phase sections; Amendment row added. §4.1 output path table updated: Sprint Execution and Delivery Verification rows point to `lessons_learnt_cycle.md`; Amendment row added; Notes column added. §4.2 Structured Table Block Format added (new): defines section structure, lifecycle header creation rule, and column rules for `lessons_learnt_cycle.md` appends; schema: `friction_item | phase | type | classification | action | owner | target_date`. Old §4.2 Header block renumbered §4.3; old §4.3 Prompt Change Log renumbered §4.4. §5 Record Structure: scope note added (standalone files only; Phase 3/4/Amendment use §4.2). **IMP-35 (gap 2):** idempotency guard now built into §3.3 append logic (activates the "inactive until IMP-28" placeholder in `execution_prompt.md` STEP 5.4). |
 | 1.4 | 2026-03-06 | **Continuous improvement additions.** Added prompt change classification requirement: every process patch must be classified as action-now or defer; action-now requires Head of Specs Team explicit confirmation; deferred patches without a named owner or target date are escalations, not valid deferred patches. Added prompt change log as a required output (§4.3): every action-now patch must produce an entry in `claude/system/prompt_change_log.md` linking the prompt version to its triggering friction item; log is append-only. Updated §3.6 cross-cycle recurrence check to also check whether deferred patches have corresponding prompt_change_log entries — patches carried 2+ cycles without a log entry become recurrence escalations. Updated §5 record structure: immediate patch template gains "Confirmed by" and "Prompt change log entry" fields; deferred patch template gains explicit invalid-state warning for missing owner/date; process improvements actioned table gains "Prompt change log entry" column; outstanding deferred patches table gains validity rule; escalations table gains new trigger types (missing owner, missing target, 2+ cycles without log entry). Updated §6.2, §6.3, §6.4 action rules to enforce owner/date requirement, sign-off requirement, and log entry requirement. Updated §8 completion condition to require prompt change log entries and valid deferred patch fields. |
 | 1.3 | 2026-03-04 | Added §3.6 Cross-Cycle Recurrence Check. Added Friction Classification system (Type A–E). Added Blast Radius Analysis. Added Process Patch requirement. Added Type E — Authority Gap. Rewrote §5 record structure. Added Recurrence Escalations section. Added Outstanding Deferred Patches table. Rewrote §6 action rules. Updated completion condition (§8). |

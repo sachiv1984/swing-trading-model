@@ -1071,13 +1071,12 @@ QA sign-off: Director of Quality — <date>
 
 ### 10.5 Lessons Learnt Application
 
-This release produces two lessons learnt records that must both be reviewed:
+This release produces two lessons learnt files that must both be reviewed:
 
 | Record | Location | Covers |
 |--------|----------|--------|
 | Release Planning lessons | `claude/cycles/<cycle_id>/lessons_learnt.md` | Phase 1B planning friction, escalation patterns, backlog quality |
-| Sprint Execution lessons | `claude/cycles/<cycle_id>/lessons_learnt_execution.md` | Delegation patterns, GitHub integration, acceptance criteria gaps, gate friction |
-| Delivery Verification lessons | `claude/cycles/<cycle_id>/lessons_learnt_verification.md` | Gate sequencing, deviation severity patterns, test coverage gaps, sign-off coordination |
+| Sprint Execution + Verification + Amendment lessons | `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` | Phase 3 (delegation, GitHub integration, acceptance criteria gaps, gate friction), Phase 4 (gate sequencing, deviation severity patterns, test coverage gaps, sign-off coordination), Amendment sections if any |
 
 For each record: actions that can be resolved by updating a template or prompt must be applied immediately with a version bump. Actions requiring a role decision must be surfaced to the relevant owner with a deadline. Filing without reviewing is equivalent to skipping.
 
@@ -1260,8 +1259,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Delegation Log | `claude/cycles/<id>/delegation_log.md` | 4 | PMO Lead | 3 |
 | Escalations (Execution) | `claude/cycles/<id>/execution_escalations.md` | 4 | PMO Lead | 3 |
 | Sprint Close Summary | `claude/cycles/<id>/sprint_close.md` | 3 | PMO Lead | 3 |
-| Lessons Learnt (Execution) | `claude/cycles/<id>/lessons_learnt_execution.md` | 3 | PMO Lead | 3 |
-| Lessons Learnt (Verification) | `claude/cycles/<id>/lessons_learnt_verification.md` | 3 | PMO Lead | 4 |
+| Lessons Learnt (Cycle — Phase 3, 4, Amendment) | `claude/cycles/<id>/lessons_learnt_cycle.md` | 3 | PMO Lead | 3, 4, Amendment |
 | Lessons Learnt (Closure) | `claude/cycles/<id>/lessons_learnt_closure.md` | 3 | PMO Lead | Post-Ship |
 | System Status Report | `docs/System_status_report.md` | 3 | Director of Quality | 3, 4 |
 | Verification Report | `claude/cycles/<id>/verification_report.md` | 3 | Director of Quality | 4 |
@@ -1283,7 +1281,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.9 |
+| Version | 3.10 |
 | Last Updated | 2026-03-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
@@ -1300,7 +1298,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.7 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v1.8 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.5 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.6 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
 | Team Charter | `claude/charter/team_charter.md` v1.4 |
@@ -1317,6 +1315,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.10 | 2026-03-10 | **Batch 5 alignment fixes.** §10.5 Lessons Learnt Application: table updated — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` rows replaced with single `lessons_learnt_cycle.md` row (Phase 3 + Phase 4 + Amendment); section description updated to "two lessons learnt files". §13 Artefact Register: `Lessons Learnt (Execution)` and `Lessons Learnt (Verification)` rows replaced with single `Lessons Learnt (Cycle — Phase 3, 4, Amendment)` row pointing to `lessons_learnt_cycle.md`. |
 | 3.9 | 2026-03-10 | **Batch 5 review.md lessons learnt consolidation.** §6B.8 source prompt → `amendment_cycle_prompt.md` (v1.5). §8 source prompt → `execution_prompt.md` (v2.0). §9 source prompt → `delivery_verification_prompt.md` (v1.3). §10 source prompt → `post_ship_closure.md` (v1.7). §14 governance table versions updated accordingly. §14 Lessons Learnt Prompt → v1.5. §10.2 inputs: `lessons_learnt_execution.md` and `lessons_learnt_verification.md` replaced with `lessons_learnt_cycle.md` (consolidated). §10.3 row 9: lessons learnt input updated to name both files. IMPs applied: IMP-28 (lessons_learnt_prompt restructured as append-only phase-tagging; Sprint Execution and Delivery Verification now append to `lessons_learnt_cycle.md`), IMP-35 gap 2 (idempotency guard now active in execution_prompt STEP 5.4), IMP-37 (amendment_cycle_prompt STEP 8 appends to `lessons_learnt_cycle.md`), IMP-53 (execution_prompt §7 write scope + STEP 5.4 updated), IMP-54 (delivery_verification_prompt STEP 8.5 added; post_ship_closure §4 and STEP 8 updated). |
 | 3.8 | 2026-03-10 | **Batch 4 review.md token efficiency.** §6B source prompt → `release_planning_prompt.md` (v2.17). §7 source prompt → `sprint_planning_prompt.md` (v1.7). §8 source prompt → `execution_prompt.md` (v1.9). §10 source prompt → `post_ship_closure.md` (v1.6). §14 governance table versions updated accordingly. IMPs applied: IMP-26 (release_planning STEP 3 risk register `escalation_ref` field + ESC entry scope note), IMP-23 (sprint_planning AC reference in backlog template), IMP-25 (sprint_backlog_index.json produced at Phase 2; consumed at Phase 3 STEP -1/0), IMP-27 (post_ship_closure STEP 0 and STEP 8 field-level read targets). |
 | 3.7 | 2026-03-10 | **Batch 3 review.md process gaps.** §6B source prompt → `release_planning_prompt.md` (v2.16). §6B.8 source prompt → `amendment_cycle_prompt.md` (v1.4). §8 source prompt → `execution_prompt.md` (v1.8). §14 governance table versions updated: release_planning_prompt v2.16, amendment_cycle_prompt v1.4, execution_prompt v1.8, shared_standards v1.8. |
