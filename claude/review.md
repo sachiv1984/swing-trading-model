@@ -1608,23 +1608,13 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 **File updated:** `operational_playbook.md` → v3.5
 **Verified by:** direct audit of playbook v3.5.
 
-> ⚠️ **THREE RESIDUAL GAPS — fix as pre-Batch-3 patch (see BATCH 2-PATCH below):** §9 and §10 source prompt headers were not updated; §14 standing rule was not added. IMP-62 captures all three. Apply as a single playbook edit before starting Batch 3.
-
 ---
 
-## BATCH 2-PATCH — Playbook header drift and standing rule (apply before Batch 3)
+## ✅ BATCH 2-PATCH — COMPLETE (2026-03-10)
 
-**Rationale:** Three items missed in Batch 2. Single-file playbook edit — low risk, low effort. Must be committed before Batch 3 so the standing rule is in place before the next prompt version bumps occur.
-
-**File:** `operational_playbook.md` (→ v3.6)
-
-| IMP | Change |
-|-----|--------|
-| IMP-62 (1) | §14 version control paragraph: append — "**Standing rule:** whenever a prompt version is updated in the §14 governance table, the corresponding phase section source prompt header (§5–§10, §6B, §6B.8, §6M) must be updated in the same edit. A mismatch between a phase section header and §14 is a non-compliant state." |
-| IMP-62 (2) | §9 (Phase 4) source prompt header: `delivery_verification_prompt.md (v1.1)` → `(v1.2)` |
-| IMP-62 (3) | §10 (Post-Ship Closure) source prompt header: `post_ship_closure_prompt.md (v1.2)` → `(v1.5)` |
-
-**`prompt_change_log.md`** (→ append): single entry for `operational_playbook.md` v3.5→v3.6.
+**IMPs resolved:** IMP-62 (1), IMP-62 (2), IMP-62 (3)
+**File updated:** `OPERATIONAL_GUIDE.md` → v3.6
+**Verified by:** §9 source prompt → v1.2; §10 source prompt → v1.5 (filename corrected); §14 standing rule appended; prompt_change_log.md entry appended.
 
 ---
 
