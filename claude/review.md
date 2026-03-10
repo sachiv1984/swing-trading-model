@@ -489,22 +489,6 @@ Effort: Medium
 
 ---
 
-**IMP-24 — `sync gh` parses markdown rather than consuming structured output**
-Area: Token Efficiency | Automation
-Problem: `sync gh` parses `stage4_backlog_slice.md` (markdown) to extract issue fields. Markdown
-parsing by an LLM is fragile and token-expensive. Phase 1B already has all item data in structured
-form at generation time.
-Why it matters: Parse failures cause silent issue mismatches. Token cost is higher than necessary.
-Recommended change: Phase 1B STEP 4 produces a companion `stage4_issue_manifest.json` alongside
-`stage4_backlog_slice.md`. Fields: `[{id, title, epic, description, ac_summary, labels, assignee}]`.
-`sync gh` consumes the JSON directly. Markdown backlog slice retained for human readability only.
-Expected benefit: Reliable issue sync with no parse ambiguity. Lower token cost for sync operation.
-Token impact: Saves — JSON consumption vs. full markdown parse; small additional cost at Phase 1B
-to produce the JSON (net positive overall).
-Effort: Low
-
----
-
 **IMP-25 — Sprint backlog loaded in full on every EPIC invocation during Phase 3**
 Area: Token Efficiency | State File Efficiency
 Problem: `run sprint --epic EPIC-xx` loads `sprint_backlog.md` in full to extract items for the
@@ -712,40 +696,6 @@ Effort: Low
 
 ---
 
-**IMP-35 — Idempotency guards absent or undefined for three write operations (one confirmed resolved)**
-Area: State | Failure Handling | Idempotency
-Problem: Originally four idempotency gaps identified. Gap (1) is now confirmed resolved:
-(1) ✅ RESOLVED — Backlog slice commit: `release_planning_prompt.md` STEP 4 defines the marker
-    format explicitly (`<!-- release-plan-marker: RP:<release>:<cycle_id> -->`), performs a
-    pre-write check, and skips the write if the marker is already present. True idempotency
-    confirmed. Amendment STEP 5 follows the same pattern with its own marker. No change needed.
-Three gaps remain:
-(2) Lessons learnt append: the playbook references an "idempotency marker" but does not define its
-(2) Lessons learnt append (IMP-28 consolidated record): each phase appends a table section to
-    `lessons_learnt_cycle.md` on completion. No guard defined for what happens if the phase step
-    is re-run — the same friction items would be appended twice, producing duplicate rows.
-(3) `prompt_change_log.md` entries: action-now patches write entries to this log. No guard against
-    a duplicate entry if the patch step is re-run during resume. Duplicate entries would cause
-    IMP-10's version check to find multiple matches and potentially misreport compliance.
-(4) `sync gh` issue creation: declared as "creates/updates" but no defined behaviour for partial
-    runs. If `sync gh` creates 8 of 12 issues then fails, re-invocation must update the 8 already
-    created and create the remaining 4. If the create/update distinction relies on issue existence
-    checks, a race condition between check and create could produce duplicates.
-Why it matters: Resumability is a core system guarantee. Any write operation without an idempotency
-guard silently breaks that guarantee. Duplicate log entries and duplicate backlog items compound
-across cycles.
-Recommended change: (2) Lessons learnt append: check for existing section
-header `## Phase <X> — <cycle_id>` before appending; skip if present. (3) Prompt change log:
-check for existing entry with matching prompt name + version before appending; skip if present.
-(4) `sync gh`: use GitHub issue labels containing cycle_id as the idempotency key — check label
-before create; update if label exists.
-Expected benefit: All three remaining write operations become safe to re-run. Resumability
-guarantee is restored for these paths.
-Token impact: Costs slightly — one additional read check per write operation; negligible.
-Effort: Low
-
----
-
 **IMP-36 — Playbook body version references lag §14 governance table**
 Area: Governance | Cross-Document Version Consistency
 Problem: Three internal version inconsistencies identified within the playbook itself (visible
@@ -812,49 +762,6 @@ both modes. No change required.
 
 ---
 
-**IMP-39 — Amendment withdrawal has no defined procedure, state transition, or record** ⚠️ PARTIALLY RESOLVED
-Area: Lifecycle | State | Failure Handling
-Status: `amendment_cycle_prompt.md` §10 Withdrawal section exists with an explicit procedure —
-better than the playbook implied. State transition, `.claude_current_state.json` update, and
-permanent record requirement are all defined. One gap remains unaddressed:
-If the amendment reached STEP 5 (backlog update) before withdrawal, `backlog.md` contains
-amendment changes that are no longer active. §10 defines no rollback of the backlog write.
-The original `stage4_backlog_slice.md` is stated as "the active source of truth" but `backlog.md`
-has been modified and the amendment marker is present. Sprint Planning reads `backlog.md` — it
-would see the withdrawn amendment's changes.
-Recommended change: Add to §10 Withdrawal: if `backlog_txn.json` state = `committed` (STEP 5
-completed), a backlog rollback step is required before withdrawal can complete. Rollback: remove
-the amendment marker section from `backlog.md` using the same lock/transaction protocol, then
-update `backlog_txn.json` state = `rolled_back`. The withdrawal procedure should be invoked via
-`amend cycle --withdraw` only after rollback completes.
-Token impact: Neutral.
-Effort: Low
-
----
-
-**IMP-40 — `Blocked` state has no maximum duration, SLA, or auto-escalation path**
-Area: Lifecycle | Failure Handling
-Problem: §4.1 defines `Blocked → prior_status` as a valid transition when an escalation is
-resolved. However, nothing defines what happens if a blocked state is never resolved. There is
-no maximum duration, no SLA, no auto-escalation to a higher authority, and no mechanism to
-prevent a cycle from sitting in `Blocked` indefinitely. The escalation SLA table in §11.2
-covers escalations by type, not the blocked state itself.
-Why it matters: A permanently blocked cycle is an invisible system failure. No downstream phase
-can run, no new cycle can open, and the system silently stalls. Without a timeout or escalation
-path, detection relies entirely on a human noticing that nothing has progressed.
-Recommended change: Add a `blocked_since_utc` field to `.claude_current_state.json`, written
-when status transitions to `Blocked`. Define a `Blocked` SLA in `shared_standards.md`: 72
-hours maximum before mandatory escalation to Product Owner regardless of escalation type. At
-72 hours: engine writes a `BLOCKED_SLA_BREACH` notice to the active cycle's escalations file
-and flags `.claude_current_state.json` with `blocked_sla_breached = true`. Post-Ship Closure
-checks this field and requires resolution note before proceeding.
-Expected benefit: Blocked cycles are surfaced within 72 hours. Eliminates the silent stall
-failure mode.
-Token impact: Neutral.
-Effort: Low
-
----
-
 **IMP-43 — Spec debt item lifecycle is undefined in the playbook**
 Area: Lifecycle | Governance
 Problem: §6M.2 states the backlog management engine "validates spec debt items (BLG-SPEC-*)
@@ -904,28 +811,6 @@ Recommended change: Update §10.1: remove the line "For EPIC descriptions, sourc
 `stage4_backlog_slice.md` (same source as §10.2 GitHub automation)." The backlog slice is the
 canonical source for all issue content regardless of generation path.
 Expected benefit: Both issue generation paths produce consistent, complete issue bodies.
-Token impact: Neutral.
-Effort: Low
-
----
-
-**IMP-48 — `gh_issue_template.md` is referenced in shared_standards but ungoverned and unpreflight-checked**
-Area: Governance | Prompt–Playbook Alignment
-Problem: `shared_standards.md §6` states: "Use `claude/system/gh_issue_template.md` as the body
-template" for GitHub issue creation, with a full variable mapping table. This file is not listed
-in: the Artefact Register (§13 of the playbook), the Release Planning STEP -1.1 required files
-check, or any engine's preflight. No document class, owner, or version is assigned.
-If the file is missing: `--issues gh` silently produces malformed issue bodies or fails without
-a clear error path.
-Why it matters: A missing template causes silent failure of the most visible external output the
-system produces (GitHub issues). The file has no governance record and could drift from the
-shared_standards §6 variable mapping without detection.
-Recommended change: (1) Add `claude/system/gh_issue_template.md` to the Artefact Register as
-Class 6 (Governance Prompt), Owner: Head of Specs Team. (2) Add it to Release Planning STEP -1.1
-required files check when `--issues gh` or `--issues import` is specified (conditional preflight).
-(3) Add to `shared_standards.md §11` prompt version list so version drift is caught by STEP -1.7.
-Expected benefit: Missing template causes a clean preflight halt. Template is versioned,
-governed, and drift-detected.
 Token impact: Neutral.
 Effort: Low
 
