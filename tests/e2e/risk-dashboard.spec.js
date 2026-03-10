@@ -17,6 +17,15 @@
  *
  * Decision record: 2026-03-09 session — Facilitator/Challenger/DoQ agreed
  * mock layer approach (RISK-07 resolution).
+ *
+ * -------------------------------------------------------------------------
+ * ROUTING NOTE (Friction 3 — 2026-03-06__release-v1.9 Sprint 1):
+ * This app uses HashRouter. ALL navigation must use page.goto('/#/PageKey')
+ * — NOT page.goto('/path'). Path-based navigation silently loads the wrong
+ * page (the main Dashboard) without a 404 error. Page keys are defined in
+ * src/pages.config.js. This comment must be preserved in all future
+ * Playwright spec files added to this suite.
+ * -------------------------------------------------------------------------
  */
 
 'use strict';

@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-03-09
+Last Updated: 2026-03-10
 Cycle: 2026-03-06__release-v1.9
 
 ---
@@ -107,18 +107,18 @@ See `claude/cycles/2026-03-06__release-v1.9/lessons_learnt_closure.md` for full 
 
 ## §6 — Outstanding Actions
 
-| # | Description | Owner | Deadline | Escalation path |
-|---|-------------|-------|----------|-----------------|
-| 1 | **Sprint 2 lifecycle re-entry:** Post-ship sets `status = Closed` which blocks `run sprint` lifecycle guard (requires `Sprint_Planning_Complete`). Before Sprint 2 execution begins, either: (a) manually set `status = Sprint_Planning_Complete` in `.claude_current_state.json` with a note that Sprint 1 is closed and Sprint 2 is the active sprint, OR (b) wait for the lifecycle schema patch (outstanding deferred patch above). Sprint 2 items confirmed in `sprint2_deferred`: ST-01, ST-02, ST-03, ST-04, ST-05, ST-12. | Head of Specs Team / PMO Lead | Before Sprint 2 execution | Escalate to PMO Lead if not resolved before `run sprint` |
-| 2 | **Lifecycle schema patch:** Add `Closed` (with multi-sprint condition) as a valid from-state for Sprint Execution in `lifecycle_schema.json` and `shared_standards.md §10.1` | Head of Specs Team | Before Sprint 2 execution | Head of Specs Team owns |
-| 3 | **LL-v1.9-01:** Release planning prompt backlog age check — deferred | Head of Specs Team | Next release planning prompt revision | Head of Specs Team |
-| 4 | **LL-v1.9-02:** Capacity WARN phasing recommendation — deferred | PMO Lead | Next prompt version | PMO Lead |
-| 5 | **LL-v1.9-03:** Pre-sprint decisions checklist — deferred | PMO Lead | cycle_summary.md template | PMO Lead |
-| 6 | **Friction 2:** Playwright test maintenance protocol in risk_dashboard_scenarios.md — deferred | Director of Quality | Before Sprint 2 Playwright test additions | Director of Quality |
-| 7 | **Friction 3:** HashRouter comment in test files — deferred | Director of Quality | Before Sprint 2 Playwright test additions | Director of Quality |
-| 8 | **EPIC-06 metadata inconsistency (sealed):** `execution_state.json` shows `qa_signed_off: false` for EPIC-06. Sealed artefact — cannot be corrected. Advisory noted in `verification_report.md §9` and `lessons_learnt_closure.md`. No action possible; noted for awareness. | — | N/A (sealed) | N/A |
+| # | Description | Owner | Deadline | Escalation path | Resolution |
+|---|-------------|-------|----------|-----------------|------------|
+| 1 | **Sprint 2 lifecycle re-entry:** Post-ship sets `status = Closed` which blocks `run sprint` lifecycle guard (requires `Sprint_Planning_Complete`). Before Sprint 2 execution begins, either: (a) manually set `status = Sprint_Planning_Complete` in `.claude_current_state.json` with a note that Sprint 1 is closed and Sprint 2 is the active sprint, OR (b) wait for the lifecycle schema patch (outstanding deferred patch above). Sprint 2 items confirmed in `sprint2_deferred`: ST-01, ST-02, ST-03, ST-04, ST-05, ST-12. | Head of Specs Team / PMO Lead | Before Sprint 2 execution | Escalate to PMO Lead if not resolved before `run sprint` | ✅ **RESOLVED 2026-03-10** — `.claude_current_state.json` `status` set to `Sprint_Planning_Complete`; `multi_sprint_note` field added documenting the Sprint 1 closed / Sprint 2 pending context. |
+| 2 | **Lifecycle schema patch:** Add `Closed` (with multi-sprint condition) as a valid from-state for Sprint Execution in `lifecycle_schema.json` and `shared_standards.md §10.1` | Head of Specs Team | Before Sprint 2 execution | Head of Specs Team owns | ✅ **RESOLVED 2026-03-10** — `lifecycle_schema.json` new transition added (`Closed` → `Executing`, multi-sprint condition); `shared_standards.md §10.1` Sprint Execution row updated (v1.5→v1.6); `OPERATIONAL_GUIDE.md §4.1` transition table updated (v3.3→v3.4). `prompt_change_log.md` entries appended. |
+| 3 | **LL-v1.9-01:** Release planning prompt backlog age check — deferred | Head of Specs Team | Next release planning prompt revision | Head of Specs Team | ✅ **RESOLVED 2026-03-10** — `release_planning_prompt.md` STEP 1.1 Backlog Age Advisory added (v2.13→v2.14). Advisory warns when spec/documentation debt items have been in backlog 2+ cycles without story assignment. `prompt_change_log.md` entry appended. |
+| 4 | **LL-v1.9-02:** Capacity WARN phasing recommendation — deferred | PMO Lead | Next prompt version | PMO Lead | ✅ **RESOLVED 2026-03-10** — `release_planning_prompt.md` STEP 4.5 Phasing Recommendation subsection added (v2.13→v2.14). When capacity check outcome = WARN, a `### Phasing Recommendation` section is now required in `release_plan.md §Capacity Check`. `prompt_change_log.md` entry appended. |
+| 5 | **LL-v1.9-03:** Pre-sprint decisions checklist — deferred | PMO Lead | cycle_summary.md template | PMO Lead | ✅ **RESOLVED 2026-03-10** — `release_planning_prompt.md` STEP 7 updated (v2.13→v2.14): when High-priority risks carry "must resolve before sprint planning seal" disposition, a `## Pre-sprint Planning Required Decisions` checklist section is now required in `cycle_summary.md`. `prompt_change_log.md` entry appended. |
+| 6 | **Friction 2:** Playwright test maintenance protocol in risk_dashboard_scenarios.md — deferred | Director of Quality | Before Sprint 2 Playwright test additions | Director of Quality | ✅ **RESOLVED 2026-03-10** — `docs/testing/risk_dashboard_scenarios.md` §5.5 Playwright Test Maintenance Protocol added (v1.1→v1.2). Documents cross-EPIC microcopy change audit obligation; prior §5.5 renumbered to §5.6. |
+| 7 | **Friction 3:** HashRouter comment in test files — deferred | Director of Quality | Before Sprint 2 Playwright test additions | Director of Quality | ✅ **RESOLVED 2026-03-10** — `tests/e2e/risk-dashboard.spec.js` file header updated with ROUTING NOTE block: "This app uses HashRouter. ALL navigation must use `page.goto('/#/PageKey')` — NOT `page.goto('/path')`." Comment includes instruction to preserve in all future spec files. |
+| 8 | **EPIC-06 metadata inconsistency (sealed):** `execution_state.json` shows `qa_signed_off: false` for EPIC-06. Sealed artefact — cannot be corrected. Advisory noted in `verification_report.md §9` and `lessons_learnt_closure.md`. No action possible; noted for awareness. | — | N/A (sealed) | N/A | N/A — sealed artefact, no action possible. |
 
-**Actions #1 and #2 are critical path** — they must be resolved before Sprint 2 can be executed under the governance lifecycle guard.
+**All actioned actions resolved 2026-03-10.** Sprint 2 execution is now unblocked — run `run sprint --cycle 2026-03-06__release-v1.9` to begin Sprint 2.
 
 ---
 
@@ -132,4 +132,8 @@ Sprint scope:             Sprint 1 of 2 (13 ST items shipped; 6 ST items deferre
 Lessons learnt applied:   1 immediate | 5 deferred | 0 escalated
 Outstanding actions:      8 carried forward (2 critical path for Sprint 2 entry; 6 advisory)
 Next cycle may now open.  Sprint 2 of v1.9 or new release cycle — subject to §6 Outstanding Action #1 resolution.
+
+Actions resolved — 2026-03-10:
+  All 7 actioned items resolved (see §6 above). Action #8 N/A (sealed artefact).
+  Sprint 2 execution unblocked. Command: run sprint --cycle 2026-03-06__release-v1.9
 ```

@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-03-09
+**Version:** 1.2
+**Last Updated:** 2026-03-10
 **Derived from:** `docs/specs/frontend/pages/risk_dashboard.md` v0.1.1; `docs/specs/metrics_definitions.md` v1.6.0
 **Sprint:** 2026-03-04__release-v1.8 — ST-04
 **Roadmap item:** §3.4 — Risk Dashboard
@@ -319,9 +319,29 @@ The mock layer tests frontend rendering behavior. Backend-to-API coverage (does 
 
 ---
 
-### 5.5 Backlog Reference
+### 5.5 Playwright Test Maintenance Protocol
+
+**Cross-EPIC microcopy change obligation (Friction 2 — 2026-03-06__release-v1.9 Sprint 1):**
+
+When any frontend delivery (in any EPIC branch) changes a component's UI microcopy — including empty state messages, error text, placeholder text, or any string asserted in a Playwright test — the following obligation applies:
+
+1. **Identify:** The delivering engineer (or governance engine acting as frontend agent) must audit all `SC-RD-*` Playwright tests in `tests/e2e/risk-dashboard.spec.js` for string assertions (`toContainText`, `toHaveText`, `locator('text=...')`) that reference that component's microcopy.
+2. **Update:** Any affected locator must be updated to match the new string **in the same PR** as the microcopy change, or in a follow-on commit that is merged before the EPIC branch closes its PR.
+3. **Verify:** CI must pass (Playwright suite green) before the EPIC branch merge gate is opened.
+
+**Why this matters:** UI microcopy changes that are not co-ordinated with Playwright test updates silently break adjacent EPIC branches when they rebase against main. The resulting CI failure is easy to fix but requires an unplanned commit and additional CI run, adding session overhead.
+
+**Routing:** If the delivering engineer is not the test author, the obligation must be flagged explicitly in the EPIC's sprint backlog acceptance criteria or delegation record.
+
+*Trigger: Friction Item 2, lessons_learnt_execution.md — cycle 2026-03-06__release-v1.9 Sprint 1. Implemented 2026-03-10.*
+
+---
+
+### 5.6 Backlog Reference
 
 TEST-GAP-EPIC-01 resolved in v1.9 (ST-11). Mock layer infrastructure delivered; all 17 blocked scenarios automated. See `claude/backlog/backlog.md §10`.
+
+---
 
 ---
 
@@ -890,6 +910,7 @@ The following must be confirmed before marking ST-04 done and opening EPIC-01 me
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-03-10 | Friction 2 deferred patch: added §5.5 Playwright Test Maintenance Protocol — cross-EPIC microcopy change obligation documented. When a component's UI microcopy is changed in a frontend delivery, Playwright tests for that component must be audited and updated in the same PR or a follow-on commit before the EPIC merges. §5.6 (backlog reference) renumbered from §5.5. |
 | 1.1 | 2026-03-09 | ST-11 delivery: §5 Test Infrastructure Preconditions updated to reflect Playwright mock layer approach (RISK-07 resolved). §5.1 updated for automated + manual execution paths. §5.2 table updated: all 17 previously-blocked scenario groups now "Available". §5.3 Automated Coverage Summary table added (17 scenarios). §5.4 Backend API gap noted (BLG-API-01 raised). §5.5 replaces prior §5.4 backlog reference. TEST-GAP-EPIC-01 resolved. |
 | 1.0.1 | 2026-03-06 | Added §5 Test Infrastructure Preconditions: documents which scenario groups require test data injection (Groups A–C and most of F — 17/27 scenarios), which are executable without injection (Groups D, E, G — 10/27 scenarios), environment requirements, and backlog reference TEST-GAP-EPIC-01. Renumbered prior §5–§7 to §6–§8. Applied from EX-LL Friction Item 3 deferred patch. |
 | 1.0.0 | 2026-03-05 | Initial version. 27 scenarios covering heat thresholds, grace period, position risk table, prospective heat, API error states, empty states, and non-functional requirements. Derived from risk_dashboard.md v0.1.1 and metrics_definitions.md v1.6.0. Known deviations DEV-ST03-01 through DEV-ST03-05 documented in §2. |

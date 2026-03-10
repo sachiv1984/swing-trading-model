@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.13
-**Last Updated:** 2026-03-08
+**Version:** 2.14
+**Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -767,6 +767,22 @@ If any Open escalations remain:
 
 Write: `## Readiness` section in `release_plan.md` (create the file if this is the first step; append the section if resuming)
 
+### 1.1 Backlog Age Advisory (Advisory — not a hard gate)
+
+After writing the Readiness section, scan `claude/backlog/backlog.md` for spec/documentation debt items (items classified as spec debt, documentation debt, or equivalent) that appear in the active backlog slice for this release.
+
+For each such item, check how many prior release cycles it has appeared in without receiving a story assignment (i.e., no `ST-xx` in the sprint_backlog of any prior cycle). A cycle count of ≥ 2 without a story assignment triggers a warning.
+
+**If any spec/documentation debt item has been in the backlog for 2+ cycles without a story assignment:**
+- Warn: "⚠ Advisory: [N] spec/documentation debt item(s) aged 2+ cycles without story assignment: [list items]."
+- Recommendation: These items should be promoted to sprint stories (assigned an `ST-xx` ID and added to `stage4_backlog_slice.md`) if the release scope permits. Items not assigned a story ID will not enter sprint planning.
+- Record as an advisory note in the run manifest.
+- **Do not halt.** This is advisory only — the release may proceed.
+
+If no such items are found, or backlog cannot be dated reliably: skip silently.
+
+*Trigger: LL-v1.9-01 — lessons_learnt.md cycle 2026-03-06__release-v1.9. Implemented 2026-03-10.*
+
 Update state.json:
 
 - artifacts.stage1_readiness = pass|fail|blocked
@@ -1071,6 +1087,20 @@ Classification: Conditional Gate (halts only if escalation remains Open / blocki
 
 Write: `## Capacity Check` section in `release_plan.md`
 
+### When outcome is WARN — Phasing Recommendation (Required)
+
+When `artifacts.stage4_5_capacity_check = warn` (total estimated effort exceeds available capacity but the release is not infeasible), the `## Capacity Check` section of `release_plan.md` **must** include a `### Phasing Recommendation` subsection. This subsection must:
+
+1. State the estimated total effort (mid-point hours) and available capacity (hours).
+2. Propose a concrete phasing approach for sprint planning — for example:
+   - `Phase 1 (Sprint 1): EPIC-xx, EPIC-yy — estimated N hrs (within capacity)`
+   - `Phase 2 (Sprint 2): EPIC-aa, EPIC-bb — estimated M hrs (within capacity)`
+3. Note the ordering rationale (dependencies, risk, user value).
+
+This makes the WARN actionable: sprint planning can adopt the phasing recommendation directly rather than discovering over-allocation at sprint planning time.
+
+*Trigger: LL-v1.9-02 — lessons_learnt.md cycle 2026-03-06__release-v1.9. Implemented 2026-03-10.*
+
 Update state.json:
 
 - artifacts.stage4_5_capacity_check = pass|warn|fail|blocked
@@ -1154,6 +1184,26 @@ Update state.json:
 ## STEP 7 — Cycle Summary
 
 Write: `cycle_summary.md`
+
+### Pre-sprint Planning Required Decisions (Conditional — include when applicable)
+
+Before writing `cycle_summary.md`, review all risks in `release_plan.md §Execution Plan` (STEP 3 output). For any risk classified as **High priority** with a disposition of "must resolve before sprint planning seal" (or equivalent — the risk explicitly blocks sprint planning):
+
+Include a `## Pre-sprint Planning Required Decisions` section in `cycle_summary.md` with a checklist entry for each such risk. Format:
+
+```markdown
+## Pre-sprint Planning Required Decisions
+
+The following High-priority decisions must be resolved before sprint planning seals (i.e., before `sprint_sealed = true`). Sprint Planning Engine STEP -1 must consume this checklist.
+
+- [ ] [RISK-xx] <Risk title> — <Required decision / resolution path> — Owner: <role>
+```
+
+If no High-priority risks have a "must resolve before sprint planning seal" disposition: omit this section (do not write an empty section).
+
+This checklist is designed to be consumed by the Sprint Planning Engine at its preflight step — making explicit what must be decided before the sprint plan can be sealed.
+
+*Trigger: LL-v1.9-03 — lessons_learnt.md cycle 2026-03-06__release-v1.9. Implemented 2026-03-10.*
 
 **Intermediate global state sync (required before writing cycle_summary.md):**
 
@@ -1392,6 +1442,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.14 | 2026-03-10 | LL-v1.9-01: Added STEP 1.1 Backlog Age Advisory — scans backlog for spec/documentation debt items aged 2+ cycles without story assignment; emits advisory warning and recommendation to promote to sprint stories. LL-v1.9-02: Added STEP 4.5 Phasing Recommendation — when capacity check outcome is WARN, a `### Phasing Recommendation` subsection is now required in `release_plan.md §Capacity Check`; lists concrete phase 1/phase 2 EPIC groupings with effort estimates and ordering rationale. LL-v1.9-03: Added STEP 7 Pre-sprint Planning Required Decisions — when any High-priority risk carries "must resolve before sprint planning seal" disposition, a `## Pre-sprint Planning Required Decisions` checklist section is required in `cycle_summary.md` for Sprint Planning Engine consumption. All three triggered by lessons_learnt.md 2026-03-06__release-v1.9 per closure_record §6 Actions #3–5. |
 | 2.13 | 2026-03-08 | IMP-05: Added STEP -1.5 advisory — reads prior cycle `lessons_learnt_closure.md`, checks all `action-now` items appear in `prompt_change_log.md`; warns if missing. IMP-06: Added STEP -1.6 hard gate — `post_ship_complete = true` and `next_cycle_unblocked = true` both required in `.claude_current_state.json` before new release cycle may open; exception for first cycle. IMP-07: Removed inline escalation entry format, SLA table, and Accepted Risk constraint from ESCALATION HANDLING SUBROUTINE; replaced with reference to `shared_standards.md §4`; retained engine-specific rules (Freeze Rule, Deferred constraint, Decision Record Controls, Mutation Rule, State update rules). IMP-08: Added compact table format requirement to STEP 3 `## Execution Plan` section; full acceptance criteria belong exclusively in `stage4_backlog_slice.md`; target <200 lines for full `release_plan.md`. IMP-10: Added STEP -1.7 advisory — checks that each governed prompt's current version appears in `prompt_change_log.md`; warns if missing. |
 | 2.12 | 2026-03-07 | IMP-03: Added `prompt_schema_version: "v2"` to state.json schema template. Fixed §18.1 tracked artifact list — updated from old stage file names (`stage2_scope_extraction.md`, `stage3_execution_plan.md`) to `release_plan.md` (schema v2). Added schema version migration table to Drift Detection section — documents that drift detection uses keys from `tracked_set` for the cycle's schema version; never compares across versions. |
 | 2.11 | 2026-03-07 | Intermediate Release Planning artefacts collapsed into `release_plan.md`. Steps 1, 2, 3, 3.5, 4.5, 5.5, 5.7 now write sections into a single consolidated file instead of separate stage files. Final outputs retained separately: scope document, decisions record, stage4_backlog_slice.md. Tracked set in state.json schema updated from `[stage2_scope_extraction, stage3_execution_plan, stage4_backlog_slice, escalations]` to `[release_plan, stage4_backlog_slice, escalations]`. |

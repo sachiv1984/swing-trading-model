@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.5
-**Last Updated:** 2026-03-09
+**Version:** 1.6
+**Last Updated:** 2026-03-10
 
 # Shared Standards — All Governed Routines
 
@@ -258,7 +258,7 @@ All engines that write `.claude_current_state.json` status must apply this guard
 | Release Planning | `plan release` | `Closed` | `post_ship_complete = true` **and** `next_cycle_unblocked = true` must be present in `.claude_current_state.json` (checked at STEP -1.6) |
 | Design Gate | `run design-gate` | `Release_Planning_Complete` | — |
 | Sprint Planning | `plan sprint` | `Release_Planning_Complete` (design N/A), `Design_Gate_Passed` | When entering from `Release_Planning_Complete`: `design_gate_bypass_authority` + `design_gate_bypass_reason` required in state (STEP -1.3) |
-| Sprint Execution | `run sprint` | `Sprint_Planning_Complete`, `Executing` (resume) | — |
+| Sprint Execution | `run sprint` | `Sprint_Planning_Complete`, `Executing` (resume), `Closed` (multi-sprint only: `sprint_planning.sprint2_deferred` non-empty AND `sprint_sealed = true` AND `post_ship_complete = true`) | Multi-sprint exception: `Closed` is valid only when the same `cycle_id` is being continued across sprints (Sprint N closed, Sprint N+1 resuming). See `lifecycle_schema.json` for full entry condition. |
 | Delivery Verification | `run delivery verification` | `Sprint_Complete` | — |
 | Post-Ship Closure | `run post-ship` | `Verified`, `Verified_with_deviations` | — |
 | Amendment Cycle | `amend cycle` | `Sprint_Planning_Complete` (before sprint_sealed = true) | Acquire backlog lock before reading `sprint_sealed` (STEP -1.1) |
@@ -346,6 +346,7 @@ When multiple EPIC branches are active simultaneously in the same sprint, `execu
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6 | 2026-03-10 | §10.1 Sprint Execution row updated — added `Closed` (multi-sprint exception) as valid from-state when `sprint_planning.sprint2_deferred` non-empty and `sprint_sealed = true` and `post_ship_complete = true`. Formalises the Sprint N+1 re-entry path for multi-sprint cycles. Triggered by closure_record §6 Action #2, 2026-03-06__release-v1.9. |
 | 1.5 | 2026-03-09 | §12 added — Parallel EPIC Branch Merge Sequencing: merge ordering convention (dependency order), conflict resolution rule (keep more recent EPIC's version), GOVERNANCE commit after each merge. Triggered by Friction Item 1 in `claude/cycles/2026-03-06__release-v1.9/lessons_learnt_execution.md`. Immediate action — Head of Specs Team confirmed. |
 | 1.4 | 2026-03-08 | IMP-04: §10.1 updated — Release Planning row adds `post_ship_complete` + `next_cycle_unblocked` preconditions; Sprint Planning row adds design gate bypass audit requirement; Amendment Cycle row adds backlog lock precondition. IMP-06: Release Planning precondition added. IMP-10: §11 Prompt Version Control added. |
 | 1.3 | 2026-03-07 | Updated §8 Post-Ship Closure resumability note — replaced `closure_record.md` prose-scan approach with `closure_state.json` structured file (IMP-01). |

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "last_updated": "2026-03-07",
+  "last_updated": "2026-03-10",
   "description": "Canonical lifecycle state machine for swing-trading-model governance cycles. Source of truth for valid states, allowed transitions, and guard rules.",
   "source_of_truth": ".claude_current_state.json (status field)",
   "reference": "claude/system/shared_standards.md §10",
@@ -89,6 +89,15 @@
       "command": "run sprint --cycle <cycle_id>",
       "entry_condition": "sprint_sealed = true AND no open hard-gate escalations",
       "completion_signal": "execution_state.json status = Executing"
+    },
+    {
+      "from": "Closed",
+      "to": "Executing",
+      "engine": "Sprint Execution",
+      "command": "run sprint --cycle <cycle_id>",
+      "entry_condition": "multi-sprint cycle: sprint_planning.sprint2_deferred non-empty AND sprint_sealed = true from prior sprint planning AND post_ship_complete = true (Sprint N closed; Sprint N+1 execution resuming same cycle)",
+      "completion_signal": "execution_state.json status = Executing",
+      "note": "Multi-sprint exception only. Added 2026-03-10 per closure_record §6 Action #2 (2026-03-06__release-v1.9). The normal path from Closed is Release_Planning_Complete (new release cycle). This path is valid only when the same cycle_id is being continued across sprints."
     },
     {
       "from": "Sprint_Planning_Complete",

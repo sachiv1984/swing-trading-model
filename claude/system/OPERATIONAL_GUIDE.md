@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.3
-**Last Updated:** 2026-03-08
+**Version:** 3.4
+**Last Updated:** 2026-03-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -313,6 +313,7 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 | `Release_Planning_Complete` | `Sprint_Planning_Complete` | Sprint Planning | design gate not required for cycle |
 | `Design_Gate_Passed` | `Sprint_Planning_Complete` | Sprint Planning | `design_gate_status = Passed` |
 | `Sprint_Planning_Complete` | `Executing` | Sprint Execution | `sprint_sealed = true` |
+| `Closed` | `Executing` | Sprint Execution | **Multi-sprint exception only:** `sprint_planning.sprint2_deferred` non-empty AND `sprint_sealed = true` (from prior sprint) AND `post_ship_complete = true`. Same `cycle_id` continued across sprints. |
 | `Sprint_Planning_Complete` | `Amendment_In_Progress` | Amendment Cycle | `sprint_sealed = false` |
 | `Amendment_In_Progress` | `Sprint_Planning_Complete` | Amendment Cycle | two-authority ratification complete |
 | `Executing` | `Sprint_Complete` | Sprint Execution (STEP 8) | all EPICs merged or dispositioned |
@@ -1299,7 +1300,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.4 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v1.4 |
+| Shared Standards | `claude/system/shared_standards.md` v1.6 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.4 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
@@ -1315,6 +1316,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.4 | 2026-03-10 | **Multi-sprint lifecycle exception.** §4.1 Lifecycle State Machine transition table: added `Closed` → `Executing` row (multi-sprint exception — valid only when `sprint_planning.sprint2_deferred` non-empty AND `sprint_sealed = true` AND `post_ship_complete = true`, same cycle_id continued across sprints). §14 Governance table: `shared_standards.md` → v1.6, `lifecycle_schema.json` → last_updated 2026-03-10. Triggered by closure_record §6 Actions #1 and #2, 2026-03-06__release-v1.9. |
 | 3.3 | 2026-03-08 | **IMP-04–10 governance hardening (review.md backlog).** Hard Rules table: 4 new rules added (design gate bypass audit, release cycle preconditions, prompt version log, amendment lock). §14 Governance table: engine versions updated — release_planning_prompt v2.13, sprint_planning_prompt v1.4, amendment_cycle_prompt v1.2, shared_standards v1.4, roadmap_management_prompt v1.2, backlog_management_prompt v1.2, post_ship_closure v1.4. Quick Reference phase gate checklist unchanged (changes are in prompts, not checklist items). |
 | 3.2 | 2026-03-07 | **Phase 1B artefacts consolidation.** §6B source prompt updated to v2.11. §6B.3 step table: Steps 1, 2, 3, 3.5, 4.5, 5.5, 5.7 now write sections into `release_plan.md` instead of separate stage files. §13 Artefact Register: Stage 1 Readiness, Stage 2 Scope Extraction, Stage 3 Execution Plan rows replaced with single `release_plan.md` (consolidated intermediate) row; Stage 4 Backlog Slice retained separately. §14 Governance table: all engine versions updated to current (release_planning_prompt v2.11, sprint_planning v1.3, amendment_cycle v1.1, execution v1.6, delivery_verification v1.2, post_ship_closure v1.3, shared_standards v1.2). |
 | 3.1 | 2026-03-07 | **Lifecycle state machine hardening.** Added §4.1 Lifecycle State Machine — allowed transition table with from/to/engine/entry condition. Lifecycle Guard enforcement paragraph added referencing `shared_standards.md §10` and `lifecycle_schema.json`. |
