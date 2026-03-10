@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.8
+**Version:** 3.11
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -154,7 +154,7 @@ Phase 3 complete?
   ✅ One qa_evidence_EPIC-xx.md per merged EPIC, consolidation block complete
   ✅ Sprint close summary filed with verification readiness statement
   ✅ docs/System_status_report.md updated with this sprint's section
-  ✅ lessons_learnt_execution.md filed
+  ✅ lessons_learnt_cycle.md Phase 3 section appended (idempotency guard applied)
   ✅ execution_state.json sealed
   ✅ .claude_current_state.json status = Sprint_Complete
   ✅ STEP 8 commit complete
@@ -879,7 +879,7 @@ Delegated items are tracked in `delegation_log.md`. Nothing is silently skipped.
 | Delegation log | `claude/cycles/<id>/delegation_log.md` | All delegated task records |
 | Sprint close record | `claude/cycles/<id>/sprint_close.md` | Outcomes, deviations filed, verification readiness statement |
 | System status report | `docs/System_status_report.md` | Capabilities now live (updated at close) |
-| Lessons learnt | `claude/cycles/<id>/lessons_learnt_execution.md` | Execution friction and improvement actions |
+| Lessons learnt | `claude/cycles/<id>/lessons_learnt_cycle.md` | Phase 3 section append — execution friction and improvement actions |
 
 ### 8.5 Merge Gate (Per EPIC — Hard Gate)
 
@@ -901,7 +901,7 @@ A PR may only be merged when all of the following are true:
 - One `qa_evidence_EPIC-xx.md` per merged EPIC, consolidation block complete
 - `sprint_close.md` filed with verification readiness statement
 - `docs/System_status_report.md` updated with this sprint's section
-- `lessons_learnt_execution.md` filed
+- `lessons_learnt_cycle.md` Phase 3 section appended (idempotency guard applied)
 - `execution_state.json` sealed
 - `.claude_current_state.json` status = `Sprint_Complete`
 - STEP 8 commit complete
@@ -1315,6 +1315,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.11 | 2026-03-10 | **Phase 3 lessons learnt stale references fixed.** §8 Quick Reference checklist (line ~157): `lessons_learnt_execution.md filed` → `lessons_learnt_cycle.md Phase 3 section appended`. §8.4 Key Artefacts table: `lessons_learnt_execution.md` → `lessons_learnt_cycle.md` (Phase 3 section append). §8.6 Phase 3 Exit Criteria: `lessons_learnt_execution.md filed` → `lessons_learnt_cycle.md Phase 3 section appended (idempotency guard applied)`. |
 | 3.10 | 2026-03-10 | **Batch 5 alignment fixes.** §10.5 Lessons Learnt Application: table updated — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` rows replaced with single `lessons_learnt_cycle.md` row (Phase 3 + Phase 4 + Amendment); section description updated to "two lessons learnt files". §13 Artefact Register: `Lessons Learnt (Execution)` and `Lessons Learnt (Verification)` rows replaced with single `Lessons Learnt (Cycle — Phase 3, 4, Amendment)` row pointing to `lessons_learnt_cycle.md`. |
 | 3.9 | 2026-03-10 | **Batch 5 review.md lessons learnt consolidation.** §6B.8 source prompt → `amendment_cycle_prompt.md` (v1.5). §8 source prompt → `execution_prompt.md` (v2.0). §9 source prompt → `delivery_verification_prompt.md` (v1.3). §10 source prompt → `post_ship_closure.md` (v1.7). §14 governance table versions updated accordingly. §14 Lessons Learnt Prompt → v1.5. §10.2 inputs: `lessons_learnt_execution.md` and `lessons_learnt_verification.md` replaced with `lessons_learnt_cycle.md` (consolidated). §10.3 row 9: lessons learnt input updated to name both files. IMPs applied: IMP-28 (lessons_learnt_prompt restructured as append-only phase-tagging; Sprint Execution and Delivery Verification now append to `lessons_learnt_cycle.md`), IMP-35 gap 2 (idempotency guard now active in execution_prompt STEP 5.4), IMP-37 (amendment_cycle_prompt STEP 8 appends to `lessons_learnt_cycle.md`), IMP-53 (execution_prompt §7 write scope + STEP 5.4 updated), IMP-54 (delivery_verification_prompt STEP 8.5 added; post_ship_closure §4 and STEP 8 updated). |
 | 3.8 | 2026-03-10 | **Batch 4 review.md token efficiency.** §6B source prompt → `release_planning_prompt.md` (v2.17). §7 source prompt → `sprint_planning_prompt.md` (v1.7). §8 source prompt → `execution_prompt.md` (v1.9). §10 source prompt → `post_ship_closure.md` (v1.6). §14 governance table versions updated accordingly. IMPs applied: IMP-26 (release_planning STEP 3 risk register `escalation_ref` field + ESC entry scope note), IMP-23 (sprint_planning AC reference in backlog template), IMP-25 (sprint_backlog_index.json produced at Phase 2; consumed at Phase 3 STEP -1/0), IMP-27 (post_ship_closure STEP 0 and STEP 8 field-level read targets). |
