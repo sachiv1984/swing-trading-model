@@ -95,7 +95,20 @@ Do not close issues here — issue closure is handled automatically by `governan
 
 ---
 
-## 6. Governance Source Hierarchy (Reference)
+## 6. Governance File Edit Checklist (Always Active)
+
+Whenever any governance prompt or the OPERATIONAL_GUIDE is modified, the following steps are **mandatory** in the same commit:
+
+1. **Bump the version** in the file's own header (`**Version:**`).
+2. **Update `OPERATIONAL_GUIDE.md` §14 governance table** — set the file's version to the new version.
+3. **Update the corresponding phase section source prompt header** (§5–§10, §6B, §6B.8, §6M) in OPERATIONAL_GUIDE.md to match the new version — this is the standing rule from §14.
+4. **Append an entry to `claude/system/prompt_change_log.md`** — one row per file changed, format: `| date | filename | vOLD→vNEW | summary | authority |`
+
+Skipping any of these steps is a non-compliant state. Do not commit without all four complete.
+
+---
+
+## 7. Governance Source Hierarchy (Reference)
 
 1. `claude/charter/team_charter.md`
 2. `claude/charter/document_lifecycle_guide.md`
