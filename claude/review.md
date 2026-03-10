@@ -923,46 +923,6 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## BATCH 3 — Idempotency, GitHub, and state consistency fixes (medium complexity, high reliability value)
-
-**Rationale:** These changes touch multiple prompts but are logically cohesive. All address the "resumability guarantee." Group them to avoid a second pass over the same files.
-
-> ⚠️ **PRE-EMPTION CHECK REQUIRED before starting Batch 3:**
-> - `shared_standards.md` is already at v1.7. IMP-40 and IMP-48 (the two Batch 3 shared_standards items) may already be implemented. **Read `shared_standards.md` v1.7 before touching it.** If IMP-40 (SLA breach rule in §4) and IMP-48 (gh_issue_template in §11 governed list) are present: skip the shared_standards section entirely — do not re-touch.
-> - `release_planning_prompt.md` is already at v2.15. The Batch 3 release_planning changes (IMP-24, IMP-35 gap 4, IMP-48) were planned for v2.15 but Batch 1 already consumed that version number. These changes must go to **v2.16**. The Batch 4 release_planning change (IMP-26) then goes to **v2.17**. Update version targets accordingly.
-
-### `release_planning_prompt.md` (→ v2.16, was planned as v2.15)
-| IMP | Change |
-|-----|--------|
-| IMP-24 | STEP 4: add `stage4_issue_manifest.json` production alongside `stage4_backlog_slice.md`. Schema: `[{id, title, epic, description, ac_summary, labels, assignee}]`. §10.2 `sync gh`: update to consume `stage4_issue_manifest.json` instead of parsing markdown. |
-| IMP-35 (gap 4) | §10.2 `sync gh`: add idempotency key — use GitHub issue label containing `cycle_id` as the check-before-create key. If label exists: update; do not create duplicate. |
-| IMP-48 | STEP -1.1 required files: add conditional check — "if `--issues gh` or `--issues import` is specified: verify `claude/system/gh_issue_template.md` exists. If missing: halt with 'gh_issue_template.md not found — issue creation will fail.'" |
-
-### `execution_prompt.md` (→ v1.8)
-| IMP | Change |
-|-----|--------|
-| IMP-35 (gap 2) | STEP 5.4 lessons learnt append (when IMP-28 implemented): add pre-write check — "Before appending Phase 3 section to `lessons_learnt_cycle.md`, check for existing section header `## Phase 3 — <cycle_id>`. If present: skip append." Note: this guard activates with IMP-28; current prose record is unaffected. |
-| IMP-40 | Add SLA tracking to escalation records in `execution_escalations.md`: maximum 72 hours before mandatory escalation to Product Owner regardless of type. At 72 hours: engine writes `BLOCKED_SLA_BREACH` notice and sets `.claude_current_state.json.blocked_sla_breached = true` on next invocation. Add `blocked_sla_breached` to STEP 6 global state write schema. |
-
-### `amendment_cycle_prompt.md` (→ v1.4)
-| IMP | Change |
-|-----|--------|
-| IMP-35 (gap 3) | Prompt change log append step (wherever action-now patches are applied): add pre-write check — "Before appending to `prompt_change_log.md`, check for existing entry with matching prompt name + version string. If present: skip." |
-| IMP-39 | §10 Withdrawal procedure: add backlog rollback instruction — "If STEP 5 (backlog update) completed before withdrawal: the `backlog.md` amendment marker introduced at STEP 5 must be explicitly reversed. Append a reversal entry to `backlog.md` noting the withdrawn AMD-id, original state, and date. Update `amendment_state.json.backlog_rollback_required = true` and `backlog_rollback_completed = <date>` once done." |
-
-### `shared_standards.md` (→ v1.8 if changes needed; skip entirely if IMP-40 + IMP-48 already present in v1.7)
-| IMP | Change |
-|-----|--------|
-| IMP-40 | §4 Escalation format: add SLA breach rule — "Any escalation open for 72 hours without resolution triggers a mandatory `BLOCKED_SLA_BREACH` notice. Engine writes notice to active cycle escalations file and sets `blocked_sla_breached = true` in `.claude_current_state.json` on next invocation." **Skip if already present in v1.7.** |
-| IMP-48 | §11 Prompt Version Control: add `claude/system/gh_issue_template.md` to the governed prompt list with Owner: Head of Specs Team, Class: 6. **Skip if already present in v1.7.** |
-
-### `prompt_change_log.md` (→ append)
-| IMP | Change |
-|-----|--------|
-| IMP-58 | Append retroactive entries for `execution_prompt.md` v1.4→v1.5 (status check corrected, sprint backlog sealed check added, amended_backlog_slice_path, Executing status documented, STEP renumbering). Mark with note: "Retroactively recorded 2026-03-09." **Skip if already present — check before appending (IMP-35 gap 3 idempotency rule applies here too).** |
-
----
-
 ## BATCH 4 — Token efficiency (highest token savings, medium effort, no cross-dependencies within batch)
 
 **Rationale:** These changes are independent of each other and independent of Batches 0–3. Ordered by token saving magnitude. IMP-25 is a prerequisite for IMP-23 (if sprint_backlog becomes a reference-only document, the index is the bridge). Do IMP-25 → IMP-24 companion → IMP-23 → IMP-26 → IMP-27.
