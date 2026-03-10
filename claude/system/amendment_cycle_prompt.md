@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.3
+**Version:** 1.4
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -553,6 +553,8 @@ Record:
 - Any process improvements for earlier detection of hard blockers or emergencies
 - Any improvements to the release planning engine's readiness checks that could catch this class of issue earlier
 
+**IMP-35 gap 3 — Prompt change log idempotency:** If any action-now patch is applied during this step (or via the invoked lessons learnt prompt), and that patch appends an entry to `claude/system/prompt_change_log.md`: before appending, check for an existing entry with matching prompt filename + version string. If a matching entry is present: skip — do not create a duplicate entry.
+
 ---
 
 ## STEP 9 — Commit
@@ -595,6 +597,14 @@ If an amendment is opened but the emergency is resolved before ratification, or 
 - The original `stage4_backlog_slice.md` remains the active source of truth
 - Do not delete the amendment folder — it is a permanent governance record
 
+**Backlog rollback required if STEP 5 completed (IMP-39):** If STEP 5 (Backlog Update) completed before withdrawal:
+1. The `backlog.md` amendment marker (`<!-- amendment-marker: AMD:<release>:<original_cycle_id>:<amendment_id> -->`) introduced at STEP 5 must be explicitly reversed.
+2. Append a reversal entry to `backlog.md` with: withdrawn AMD-id, original state description, reversal date.
+3. Update `amendment_state.json`:
+   - `backlog_rollback_required = true`
+   - `backlog_rollback_completed = <ISO-8601 date>` (set once the reversal write completes)
+4. The backlog must be returned to its pre-amendment state before the original `stage4_backlog_slice.md` can be considered the unambiguous source of truth.
+
 ---
 
 ## 11. Governance Invariants
@@ -616,6 +626,7 @@ If an amendment is opened but the emergency is resolved before ratification, or 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-03-10 | IMP-35 (gap 3): STEP 8 — prompt change log idempotency guard added; before appending to `prompt_change_log.md` for any action-now patch, check for existing entry with matching prompt filename + version string; if present: skip. IMP-39: §10 Withdrawal — backlog rollback instruction added; if STEP 5 completed before withdrawal, `backlog.md` amendment marker must be reversed; `amendment_state.json.backlog_rollback_required` and `backlog_rollback_completed` fields defined. |
 | 1.3 | 2026-03-10 | IMP-49: STEP -1.4 — `stage3_execution_plan.md` replaced with `release_plan.md` (schema v2 detection via `state.json.prompt_schema_version`); backward compatibility note for pre-v2.11 cycles. §4 and §4.1 references updated to match. IMP-51: STEP 2.5 added — explicit procedural step to release backlog lock before STEP 3 human ratification begins; lock re-acquired at STEP 5.1. STEP -1.1 parenthetical updated to reference STEP 2.5. Governance invariant added. |
 | 1.2 | 2026-03-08 | IMP-09: Added atomicity guard to STEP -1.1 — backlog lock acquired with marker `AMEND-CHECK:<cycle_id>` before `sprint_sealed` is read; lock released after STEP 5 or on any halt. Governance invariant added. |
 | 1.1 | 2026-03-07 | Added Lifecycle Guard (valid from-states: `Sprint_Planning_Complete` with `sprint_sealed = false`). |

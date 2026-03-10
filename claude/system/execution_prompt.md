@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.7
+**Version:** 1.8
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -615,6 +615,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
    - The SLA (default: 24 hours for lifecycle; 72 hours for strategy)
 4. Continue to next item.
 
+**SLA breach tracking (IMP-40):** On each re-invocation, check the open escalation timestamp against the current time. If any escalation has been open for 72 hours or more without resolution, the SLA Breach Rule in `shared_standards.md §4` applies — write `BLOCKED_SLA_BREACH` notice and set `blocked_sla_breached = true` at STEP 6 before halting.
+
 **Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume.
 
 ### 3.2 EPIC Completion
@@ -810,6 +812,8 @@ The shared prompt governs structure, action rules, lifecycle compliance, and com
 
 The prompt's §6.2 rule applies: if any friction can be resolved by updating a template or prompt during this run, apply it immediately and record it.
 
+**IMP-35 gap 2 — Future idempotency guard (inactive until IMP-28 is implemented):** When IMP-28 is implemented and this step writes to `lessons_learnt_cycle.md` instead of `lessons_learnt_execution.md`, apply this pre-write check before appending the Phase 3 section: check for existing section header `## Phase 3 — <cycle_id>`. If present: skip append (idempotency guard). Current prose record (`lessons_learnt_execution.md`) is unaffected — this guard activates only with IMP-28.
+
 ---
 
 ## STEP 6 — Global State Update (Hard Requirement)
@@ -819,6 +823,7 @@ After sprint close:
 Update `.claude_current_state.json`:
 - `status` → `Sprint_Complete`
 - `last_sync_utc` → now
+- **`blocked_sla_breached`** → `true` if any entry in `execution_escalations.md` has been open for 72 hours or more without resolution (per `shared_standards.md §4` SLA Breach Rule); otherwise omit or set `false`.
 
 If all roadmap items for this release are complete:
 - Flag `release_complete: true` in `.claude_current_state.json`.
@@ -898,6 +903,7 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-03-10 | IMP-40: §3.1.D SLA breach tracking note added — 72-hour breach check on each re-invocation; `blocked_sla_breached = true` written at STEP 6 if any escalation exceeds SLA; references `shared_standards.md §4` SLA Breach Rule. STEP 6 state write schema: `blocked_sla_breached` field added. IMP-35 (gap 2): STEP 5.4 — future IMP-28 idempotency guard documented (inactive until IMP-28 implemented); pre-write check for `## Phase 3 — <cycle_id>` header in `lessons_learnt_cycle.md` before appending. |
 | 1.7 | 2026-03-10 | IMP-47/56: STEP -1.7 — temp file renamed to `.write_test`; STEP 0 — cleanup obligation added. IMP-44: §9.1 schema — `last_completed_substep` field added to ST item; §10.2 Sub-Item Resume rule added. IMP-20: STEP 5.0 added — delegation log outcome check (all delegation entries must have terminal status) required before Sprint_Complete is written. IMP-33: §13 Governance Invariants — "Ambiguity" definition block added. |
 | 1.5 | 2026-03-07 | **Pre-condition status check corrected (STEP -1.2).** Was checking for Release Planning states (`Committed`, `Validated`, `Published`) — corrected to `Sprint_Planning_Complete` (fresh run) or `Executing` (resume); `sprint_sealed = true` added as required condition. **Sprint backlog sealed check added (STEP -1.3).** Verifies `sprint_backlog.md` status = `Sealed` and no `[AWAITING SIGN-OFF]` fields remain — was absent in prior version. **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. STEP -1.1 extended: checks `amended_backlog_slice_path`; if present, uses that file as the authoritative scope; records the authoritative path for use throughout the run. STEP 0 updated: parses the authoritative slice (not hardcoded `stage4_backlog_slice.md`); records `backlog_slice_source` in `execution_state.json`. §7 write scope: amended backlog slice added to must-not-modify list. §9.1 schema: `backlog_slice_source` field added. §13 invariant added. **`Executing` status documented.** STEP 0 note: `Executing` is a valid intermediate status between `Sprint_Planning_Complete` and `Sprint_Complete`; Phase 4 may not be invoked while `Executing`. Guide updated separately (§4 lifecycle table, §12 cycle trigger table, §13 artefact register). **STEP numbering adjusted:** -1.1 now includes backlog slice source check; -1.2 status check; -1.3 sprint backlog sealed (new); former -1.3/-1.4/-1.5/-1.6 renumbered to -1.4/-1.5/-1.6/-1.7. |
 | 1.4 | 2026-03-06 | Prior version. |

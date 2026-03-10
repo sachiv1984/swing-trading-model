@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.7
+**Version:** 1.8
 **Last Updated:** 2026-03-10
 
 # Shared Standards — All Governed Routines
@@ -104,6 +104,16 @@ Last Updated: <date>
 | Schedule / Delivery | Next planning checkpoint | Yes — Product Owner only |
 
 Strategy, Quality, and Lifecycle escalations may never be marked Accepted Risk. Attempting to do so is a governance violation requiring a routine halt.
+
+### SLA Breach Rule (IMP-40)
+
+Any escalation open for 72 hours without resolution triggers a mandatory `BLOCKED_SLA_BREACH` notice. On the next invocation after the 72-hour threshold is crossed:
+
+- The engine writes a `BLOCKED_SLA_BREACH` notice to the active cycle escalations file (same §5 halt report format, gate name: `SLA_BREACH`).
+- The engine sets `blocked_sla_breached = true` in `.claude_current_state.json`.
+- The engine halts — no step may proceed until the breach is resolved by the owning authority named in the escalation record.
+
+The 72-hour clock applies regardless of escalation trigger type (overrides the type-specific SLA in the table above). The owning authority must either resolve the escalation or formally accept risk (where permitted) before the engine may resume.
 
 ---
 
@@ -319,6 +329,7 @@ Any increment to a governance prompt version **must** be accompanied by an entry
 - `roadmap_management_prompt.md`
 - `backlog_management_prompt.md`
 - `roadmap_prompt.md`
+- `gh_issue_template.md` (Owner: Head of Specs Team, Class: 6)
 
 **Simultaneity rule:** A `prompt_change_log.md` entry must be created in the **same commit** as the prompt version increment it records. An entry created after the fact (in a separate commit) is non-compliant. When applying prompt patches, stage both the modified prompt file and the updated `prompt_change_log.md` in the same `git add` + `git commit` sequence.
 
@@ -368,6 +379,7 @@ The following engines support `--dry-run`. The guarantee is identical in all cas
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-03-10 | IMP-40: §4 SLA Breach Rule added — 72-hour mandatory `BLOCKED_SLA_BREACH` notice; `blocked_sla_breached` flag in `.claude_current_state.json`. IMP-48: §11 Prompt Version Control — `gh_issue_template.md` added to governed prompt list (Owner: Head of Specs Team, Class: 6). |
 | 1.7 | 2026-03-10 | IMP-45: §13 Dry-Run Standard added — defines guarantee, engine coverage table, read-operation scope, and re-invocation note. IMP-50: §4 Post-Ship Closure escalation target updated from `closure_record.md §6` to `closure_escalations.md`. IMP-58: §11 Prompt Version Control — simultaneity rule added (prompt_change_log.md entry must be in the same commit as the version increment). IMP-61: §10.6 Full State Machine Reference — strengthened: `lifecycle_schema.json` declared as machine-readable source of truth that prevails over §10.1 table in any conflict. |
 | 1.6 | 2026-03-10 | §10.1 Sprint Execution row updated — added `Closed` (multi-sprint exception) as valid from-state when `sprint_planning.sprint2_deferred` non-empty and `sprint_sealed = true` and `post_ship_complete = true`. Formalises the Sprint N+1 re-entry path for multi-sprint cycles. Triggered by closure_record §6 Action #2, 2026-03-06__release-v1.9. |
 | 1.5 | 2026-03-09 | §12 added — Parallel EPIC Branch Merge Sequencing: merge ordering convention (dependency order), conflict resolution rule (keep more recent EPIC's version), GOVERNANCE commit after each merge. Triggered by Friction Item 1 in `claude/cycles/2026-03-06__release-v1.9/lessons_learnt_execution.md`. Immediate action — Head of Specs Team confirmed. |

@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.15
+**Version:** 2.16
 **Last Updated:** 2026-03-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -279,6 +279,8 @@ Verify these exist:
 - claude/backlog/backlog.md
 
 If any are missing: halt and report exactly which.
+
+**Issue creation prerequisite (IMP-48):** If `--issues gh` or `--issues import` is specified: verify `claude/system/gh_issue_template.md` exists. If missing: halt — "gh_issue_template.md not found — issue creation will fail."
 
 ### -1.2 Verify Release Exists on the Roadmap
 Open `claude/roadmap/current_roadmap.md` and confirm the requested `--version` exists as a planned release section.
@@ -1061,9 +1063,31 @@ Update `state.json`:
 - locks.backlog_lock.txn_state = "committed"
 - artifacts.backlog_txn = "committed"
 
+**Issue Manifest (IMP-24):** After `stage4_backlog_slice.md` is written, also produce:
+
+`claude/cycles/<cycle_id>/stage4_issue_manifest.json`
+
+Schema:
+```json
+[
+  {
+    "id": "ST-xx",
+    "title": "<story title>",
+    "epic": "EPIC-xx",
+    "description": "<one-line description from backlog slice>",
+    "ac_summary": "<concise summary of acceptance criteria>",
+    "labels": ["sprint", "EPIC-xx", "cycle:<cycle_id>"],
+    "assignee": null
+  }
+]
+```
+
+One entry per ST item in `stage4_backlog_slice.md`. The `cycle:<cycle_id>` label is the idempotency key for GitHub issue creation (§10.2).
+
 Update state.json (Step 4 outcome):
 
 - artifacts.stage4_backlog_slice = pass|fail|blocked
+- artifacts.stage4_issue_manifest = pass|fail|blocked
 - attributes.backlog_committed = true on pass
 - status = Committed on pass
 
@@ -1253,9 +1277,18 @@ If `--issues import` was specified, or `gh` is unavailable and fallback applies:
 ### 10.2 GitHub Issue Automation (`--issues gh`)
 If `--issues gh` was specified and `gh` CLI is available:
 
-For each EPIC-xx and ST-xx in `stage4_backlog_slice.md`:
-1. Write the issue body to a temporary file: `.gh_issue_body.tmp`.
-2. Execute: `gh issue create --title "[ID] Title" --body-file .gh_issue_body.tmp --milestone "vX.Y"`
+**Source:** Consume `claude/cycles/<cycle_id>/stage4_issue_manifest.json` (produced at STEP 4). Do not parse `stage4_backlog_slice.md` directly — the manifest is the authoritative structured source for issue creation (IMP-24).
+
+**Idempotency check (IMP-35 gap 4):** Before creating any issue, check whether a GitHub issue already exists for this ST item in this cycle by searching for the label `cycle:<cycle_id>` combined with the ST-id in the title. Use:
+```bash
+gh issue list --search "[ST-xx] label:cycle:<cycle_id>" --json number,title,state
+```
+- If a matching issue exists: update labels/body if changed; do not create a duplicate.
+- If no matching issue exists: create.
+
+**Creation procedure:** For each entry in `stage4_issue_manifest.json`:
+1. Write the issue body to a temporary file: `.gh_issue_body.tmp` (use `gh_issue_template.md` populated with manifest fields).
+2. Execute: `gh issue create --title "[ST-xx] <title>" --body-file .gh_issue_body.tmp --label "sprint" --label "EPIC-xx" --label "cycle:<cycle_id>"`
 3. Delete the temporary file.
 
 Note: Temporary file avoids shell errors from backticks or special characters in markdown bodies.
@@ -1444,6 +1477,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.16 | 2026-03-10 | IMP-48: STEP -1.1 — conditional `gh_issue_template.md` existence check added; halt if missing when `--issues gh` or `--issues import` specified. IMP-24: STEP 4 — `stage4_issue_manifest.json` produced alongside `stage4_backlog_slice.md`; schema `[{id, title, epic, description, ac_summary, labels, assignee}]`; `cycle:<cycle_id>` label is idempotency key; `artifacts.stage4_issue_manifest` added to state.json schema. §10.2 updated — consumes `stage4_issue_manifest.json` (not markdown parsing); idempotency check added (IMP-35 gap 4); `cycle:<cycle_id>` label check-before-create; creation procedure uses manifest fields. |
 | 2.15 | 2026-03-10 | IMP-46: §10.1 — EPIC description source for issue import corrected from `release_plan.md ## Execution Plan` to `stage4_backlog_slice.md` (canonical scope record). IMP-47: STEP -1.4 — write permission test temp file renamed to `.write_test`; must be removed immediately; STEP 0 cleanup obligation added. |
 | 2.14 | 2026-03-10 | LL-v1.9-01: Added STEP 1.1 Backlog Age Advisory — scans backlog for spec/documentation debt items aged 2+ cycles without story assignment; emits advisory warning and recommendation to promote to sprint stories. LL-v1.9-02: Added STEP 4.5 Phasing Recommendation — when capacity check outcome is WARN, a `### Phasing Recommendation` subsection is now required in `release_plan.md §Capacity Check`; lists concrete phase 1/phase 2 EPIC groupings with effort estimates and ordering rationale. LL-v1.9-03: Added STEP 7 Pre-sprint Planning Required Decisions — when any High-priority risk carries "must resolve before sprint planning seal" disposition, a `## Pre-sprint Planning Required Decisions` checklist section is required in `cycle_summary.md` for Sprint Planning Engine consumption. All three triggered by lessons_learnt.md 2026-03-06__release-v1.9 per closure_record §6 Actions #3–5. |
 | 2.13 | 2026-03-08 | IMP-05: Added STEP -1.5 advisory — reads prior cycle `lessons_learnt_closure.md`, checks all `action-now` items appear in `prompt_change_log.md`; warns if missing. IMP-06: Added STEP -1.6 hard gate — `post_ship_complete = true` and `next_cycle_unblocked = true` both required in `.claude_current_state.json` before new release cycle may open; exception for first cycle. IMP-07: Removed inline escalation entry format, SLA table, and Accepted Risk constraint from ESCALATION HANDLING SUBROUTINE; replaced with reference to `shared_standards.md §4`; retained engine-specific rules (Freeze Rule, Deferred constraint, Decision Record Controls, Mutation Rule, State update rules). IMP-08: Added compact table format requirement to STEP 3 `## Execution Plan` section; full acceptance criteria belong exclusively in `stage4_backlog_slice.md`; target <200 lines for full `release_plan.md`. IMP-10: Added STEP -1.7 advisory — checks that each governed prompt's current version appears in `prompt_change_log.md`; warns if missing. |
