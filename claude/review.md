@@ -474,34 +474,6 @@ Effort: Medium
 
 ---
 
-**IMP-28 — Consolidate per-phase lessons learnt into a single structured cycle record**
-Area: Token Efficiency | Lifecycle
-Problem: Three separate narrative lessons learnt documents are produced per cycle (Phase 1B,
-Phase 3, Phase 4) plus a closure record. All written in full prose, filed independently, read
-separately by Post-Ship Closure and meta-review. The same friction pattern can appear across five
-consecutive cycles with no systemic detection. Post-Ship Closure reads three full documents where
-one structured file would suffice.
-Why it matters: Highest sustained token cost in the lessons learnt system. Prose format makes
-cross-cycle pattern detection intractable. Four separate file reads at closure when one suffices.
-Recommended change: Replace the three per-phase records with a single `lessons_learnt_cycle.md`
-with phase-tagged sections (## Phase 1B | ## Phase 3 | ## Phase 4 | ## Post-Ship). Each phase
-appends a structured table on completion rather than generating a new document. Table schema:
-`friction_item | phase | type (A–E) | classification (action-now/defer) | action | owner |
-target_date`. Post-Ship Closure and meta-review read one file. Existing per-phase prompts
-(release_planning_prompt.md, execution_prompt.md, delivery_verification_prompt.md,
-post_ship_closure_prompt.md) updated to append to the shared record. Legacy records
-(`lessons_learnt_execution.md`, `lessons_learnt_verification.md`) retired from the Artefact
-Register.
-Expected benefit: 40–60% reduction in lessons learnt write and read tokens per cycle. Single read
-at Post-Ship Closure. Structured format makes meta-review pattern scanning tractable without full
-document summarisation.
-Token impact: Saves significantly — one structured file vs. three prose files; single read at
-closure.
-Effort: Medium
-Hard prerequisite for: IMP-29
-
----
-
 **IMP-29 — Move meta-review to cycle level at Post-Ship Closure; trigger every 3rd completed cycle across all phases**
 Area: Lifecycle | Governance | Token Efficiency
 Problem: Meta-review currently lives inside Roadmap Engine STEP 11 and only fires during Phase 1
@@ -652,31 +624,6 @@ Effort: Low
 
 ---
 
-**IMP-37 — Amendment lessons learnt feeds a standalone file rather than the consolidated cycle record**
-Area: Lifecycle | Governance
-Problem: STEP 8 of `amendment_cycle_prompt.md` exists and produces `amendment_lessons.md` —
-better than the playbook implied. However, it invokes `lessons_learnt_prompt.md §3` to produce a
-standalone file rather than appending to `lessons_learnt_cycle.md` (IMP-28 consolidated record).
-Amendment lessons are therefore invisible to the meta-review (IMP-29), which reads
-`lessons_learnt_cycle.md` from the last 3 cycles. Amendment friction — the highest-signal events
-in the lifecycle — never enters the improvement loop.
-Why it matters: Amendment cycles are emergency events — exactly the situations most likely to
-generate actionable process improvements. A standalone file that is not scanned by meta-review
-means amendment patterns (recurring blocker types, ratification delays, capacity ceiling
-violations) are never surfaced systemically.
-Recommended change: Update STEP 8 of `amendment_cycle_prompt.md`: after producing
-`amendment_lessons.md`, append a `## Amendment — <AMD-id>` section to
-`lessons_learnt_cycle.md` using the same structured table schema as other phases. If
-`lessons_learnt_cycle.md` does not yet exist for this cycle (IMP-28 not yet implemented):
-produce `amendment_lessons.md` as before. When IMP-28 is implemented, migrate to append-only.
-Expected benefit: Amendment friction enters the meta-review improvement loop. Amendment patterns
-become detectable across cycles.
-Token impact: Costs slightly — one additional structured append per amendment cycle.
-Effort: Low
-Dependency: IMP-28 (for full integration; partial value without it)
-
----
-
 **IMP-38 — "One active amendment at a time" rule has no machine enforcement** ✅ RESOLVED (confirmed 2026-03-08)
 Area: State | Governance | Idempotency
 Resolution confirmed: `amendment_cycle_prompt.md` v1.2 STEP -1.3 explicitly checks
@@ -745,49 +692,6 @@ Effort: Low
 ### Open — Second direct prompt audit findings (2026-03-08)
 
 *Findings from execution_prompt.md v1.6, post_ship_closure.md v1.4, sprint_planning_prompt.md v1.4.*
-
----
-
-**IMP-53 — Execution Engine write scope lists `lessons_learnt_execution.md` but IMP-28 retires it**
-Area: Lifecycle | Cross-Document Consistency
-Problem: `execution_prompt.md` §7 Write Scope Restriction permits creating
-`claude/cycles/<cycle_id>/lessons_learnt_execution.md`. STEP 5.4 writes it via the
-lessons_learnt_prompt. IMP-28 proposes retiring this file and replacing it with a phase-tagged
-section in `lessons_learnt_cycle.md`. If IMP-28 is implemented, STEP 5.4 and §7 need updating.
-Current gap: STEP 5.4 invokes `lessons_learnt_prompt.md §3.3` — this subsection reference is
-specific to the current Sprint Execution inputs. If the lessons learnt prompt is restructured as
-part of IMP-28, this reference will be stale.
-Why it matters: IMP-28 implementation without corresponding updates to execution_prompt.md will
-leave the engine writing a retired artefact to a retired path.
-Recommended change: Flag as an IMP-28 dependency. When IMP-28 is implemented: update
-`execution_prompt.md` STEP 5.4 to append to `lessons_learnt_cycle.md ## Phase 3` section
-instead of creating a separate file. Update §7 write scope: remove `lessons_learnt_execution.md`,
-add `lessons_learnt_cycle.md` (append-only, Phase 3 section only).
-Token impact: Saves slightly — one file append vs one file create; no change to read operations.
-Effort: Low
-Dependency: IMP-28
-
----
-
-**IMP-54 — Post-Ship Closure reads three lessons learnt files; IMP-28 consolidates to one**
-Area: Token Efficiency | Cross-Document Consistency
-Problem: `post_ship_closure.md` §4 lists three separate required lessons learnt inputs:
-- `lessons_learnt.md` (Release Planning)
-- `lessons_learnt_execution.md` (Sprint Execution)
-- `lessons_learnt_verification.md` (Delivery Verification, "if produced")
-STEP 8 reads all three explicitly. IMP-28 proposes replacing these three with one
-`lessons_learnt_cycle.md` with phase-tagged sections. If IMP-28 is implemented, Post-Ship
-Closure STEP 8 and §4 need updating.
-Why it matters: This is the primary token saving from IMP-28 — the three-file read at Post-Ship
-Closure is the highest-cost lessons learnt operation in the system. IMP-28 without Post-Ship
-updates would produce the single file but still require reading the old three.
-Recommended change: Flag as an IMP-28 dependency. When IMP-28 is implemented: update §4 to list
-only `lessons_learnt_cycle.md` as required. Update STEP 8 to read the single structured file.
-Remove the three per-phase entries from §4 and the write scope (must-not-modify list). The
-consolidated file becomes the single source for STEP 8 review and STEP 8.5 closure record.
-Token impact: Saves — three full file reads replaced by one structured file read.
-Effort: Low
-Dependency: IMP-28
 
 ---
 
@@ -910,42 +814,6 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## ✅ BATCH 5 — COMPLETE (2026-03-10)
-
-**IMPs resolved:** IMP-28, IMP-35 (gap 2), IMP-37, IMP-53, IMP-54
-**Files updated:** `lessons_learnt_prompt.md` → v1.5, `execution_prompt.md` → v2.0, `delivery_verification_prompt.md` → v1.3, `post_ship_closure.md` → v1.7, `amendment_cycle_prompt.md` → v1.5, `OPERATIONAL_GUIDE.md` → v3.9, `prompt_change_log.md` (appended)
-**Verified by:** §14 governance table and §6B.8, §8, §9, §10 phase headers in playbook v3.9.
-
-**Rationale:** IMP-28 is the prerequisite for three other IMPs (IMP-29, IMP-37, IMP-53, IMP-54). It requires coordinated changes across four prompt files. Do it as a single atomic batch.
-
-### `lessons_learnt_prompt.md` (→ v_next)
-| IMP | Change |
-|-----|--------|
-| IMP-28 | Restructure as append-only phase-tagging prompt. Each phase section call appends a structured table block to `lessons_learnt_cycle.md` for the active cycle. Table schema: `friction_item | phase | type (A–E) | classification | action | owner | target_date`. Retire §3.3 (Sprint Execution standalone) and §3.4 (Delivery Verification standalone) section references. Retain §3.5 (Post-Ship Closure consolidation) as the meta-consumer of the structured file. Add §3.6 (Amendment): phase tag `## Amendment — <AMD-id>`. |
-| IMP-35 (gap 2) | Idempotency guard now built into the prompt's append logic (pre-write section header check). Replaces the guard added in Batch 3 execution_prompt change if IMP-28 is implemented before Batch 3 is applied. |
-
-### `execution_prompt.md` (→ v_next after IMP-28)
-| IMP | Change |
-|-----|--------|
-| IMP-53 | STEP 5.4: change from "invoke lessons_learnt_prompt.md §3.3 → lessons_learnt_execution.md" to "append Phase 3 section to `lessons_learnt_cycle.md` via lessons_learnt_prompt.md §3." §7 Write Scope: remove `lessons_learnt_execution.md`, add `lessons_learnt_cycle.md` (append-only, Phase 3 section). |
-
-### `delivery_verification_prompt.md` (→ v_next after IMP-28)
-| IMP | Change |
-|-----|--------|
-| IMP-54 | Lessons learnt step (wherever it exists): change to append Phase 4 section to `lessons_learnt_cycle.md`. |
-
-### `post_ship_closure.md` (→ v_next after IMP-28)
-| IMP | Change |
-|-----|--------|
-| IMP-54 | §4 required inputs: replace three per-phase lessons learnt files with single `lessons_learnt_cycle.md`. STEP 8: read single structured file instead of three separate documents. §5 must-not-modify: update accordingly. |
-
-### `amendment_cycle_prompt.md` (→ v_next after IMP-28)
-| IMP | Change |
-|-----|--------|
-| IMP-37 | STEP 8: after producing `amendment_lessons.md` (retained for backward compat), also append `## Amendment — <AMD-id>` section to `lessons_learnt_cycle.md` using the IMP-28 table schema. |
-
----
-
 ## BATCH 6 — Meta-review activation (depends on Batch 5 validated across one full cycle)
 
 **Rationale:** Do not activate until `lessons_learnt_cycle.md` has been produced for at least one complete cycle with IMP-28 in effect. Attempting to scan a structured file that doesn't yet exist produces a first-cycle failure.
@@ -1025,7 +893,6 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 | Batch | Status | Files touched | IMPs addressed | Priority basis |
 |-------|--------|--------------|----------------|----------------|
-| 5 | ✅ COMPLETE | `lessons_learnt_prompt.md` v1.5, `execution_prompt.md` v2.0, `delivery_verification_prompt.md` v1.3, `post_ship_closure.md` v1.7, `amendment_cycle_prompt.md` v1.5, `OPERATIONAL_GUIDE.md` v3.9, `prompt_change_log.md` | 28, 35(gap2), 37, 53, 54 | Structural — lessons learnt consolidation; prerequisite for Batch 6 |
 | 6 | — | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
 | 7 | — | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
 | 8 | — | `shared_standards.md`, `release_planning_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `roadmap_prompt.md` | 11, 13, 14, 15, 16, 22, 43 | Completeness sweep |
