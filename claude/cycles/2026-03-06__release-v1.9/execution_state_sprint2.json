@@ -8,7 +8,7 @@
   "invoked_utc": "2026-03-11T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-11T12:00:00Z",
+  "last_updated_utc": "2026-03-11T13:00:00Z",
 
   "multi_sprint_note": "Sprint 2 of 2. Sprint 1 execution_state.json is sealed at claude/cycles/2026-03-06__release-v1.9/execution_state.json. This file covers Sprint 2 scope only (EPIC-01, EPIC-02, EPIC-03, EPIC-05 partial).",
 
@@ -53,15 +53,16 @@
           "commit_sha": null,
           "delegation_record_id": "DEL-20260311-02",
           "blocked_since_utc": "2026-03-11T00:00:00Z",
-          "unblock_criteria": "Commit matching [EPIC-01][ST-02] pushed to exec/2026-03-06__release-v1.9/EPIC-01 AND Data Model owner schema confirmed",
+          "unblock_criteria": "Commit matching [EPIC-01][ST-02] pushed to exec/2026-03-06__release-v1.9/EPIC-01",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/trade_reflection.md"
+            "docs/specs/frontend/pages/trade_reflection.md",
+            "docs/specs/data_model.md#v1.8 Trade Reflections"
           ],
           "deviations_filed": false,
           "last_completed_substep": "3.1.B.delegated",
-          "notes": "Depends on ST-01 complete (metrics canonical). Pre-condition: Data Model & Domain Schema Owner must confirm trade_reflections schema before backend begins. Frontend spec locked: trade_reflection.md v0.1."
+          "notes": "ST-01 complete (pre-condition cleared). Data Model schema confirmed 2026-03-11: trade_reflections table in data_model.md v1.8. All pre-conditions cleared. Awaiting Head of Engineering backend implementation + Base44 frontend. Spec: trade_reflection.md v0.1."
         }
       }
     },
