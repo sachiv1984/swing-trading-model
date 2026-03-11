@@ -409,6 +409,11 @@ export const api = {
 
   trades: {
     list: async () => doFetch('/trades'),
+    getReflection: async (tradeId) => doFetch(`/trades/${tradeId}/reflection`),
+    saveReflection: async (tradeId, data) => doFetch(`/trades/${tradeId}/reflection`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   },
 
   settings: {

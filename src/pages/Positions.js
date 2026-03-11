@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
+import { base44, api } from "../api/base44Client";
 import {
   Loader2,
   LayoutGrid,
@@ -18,6 +18,7 @@ import PositionCard from "../components/positions/PositionCard";
 import PositionModal from "../components/positions/PositionModal";
 import ExitModal from "../components/positions/ExitModal";
 import JournalView from "../components/positions/JournalView";
+import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import {
   DataTable,
   TableHeader,
@@ -35,6 +36,7 @@ export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
   const [editingPosition, setEditingPosition] = useState(null);
   const [exitingPosition, setExitingPosition] = useState(null);
+  const [reflectionTrade, setReflectionTrade] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -66,7 +68,7 @@ export default function Positions() {
       // Pass the entire exitData object - base44Client handles it
       return base44.entities.Position.exit(exitData);
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log("Exit successful:", data);
 
       // Aggressive cache invalidation
@@ -79,6 +81,17 @@ export default function Positions() {
       queryClient.refetchQueries({ queryKey: ["portfolio"] });
 
       setExitingPosition(null);
+
+      // Trigger reflection modal: fetch the most recent trade to get trade ID and backend data
+      try {
+        const tradesResult = await api.trades.list();
+        const trades = tradesResult?.trades || [];
+        if (trades.length > 0) {
+          setReflectionTrade(trades[0]);
+        }
+      } catch (e) {
+        // Non-critical — skip reflection modal if trade fetch fails
+      }
     },
     onError: (error) => {
       console.error("Exit failed:", error);
@@ -361,6 +374,12 @@ export default function Positions() {
         open={!!exitingPosition}
         onClose={() => setExitingPosition(null)}
         onConfirm={handleExit}
+      />
+
+      <TradeReflectionModal
+        trade={reflectionTrade}
+        open={!!reflectionTrade}
+        onClose={() => setReflectionTrade(null)}
       />
     </div>
   );
