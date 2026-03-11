@@ -1,0 +1,34 @@
+{
+  "cycle_id": "2026-03-06__release-v1.9",
+  "sprint": 2,
+  "generated_utc": "2026-03-11T00:00:00Z",
+  "backlog_slice": "claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md",
+  "epics": {
+    "EPIC-01": {
+      "st_items": ["ST-01", "ST-02"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-01",
+        "stage4_backlog_slice.md#ST-02"
+      ]
+    },
+    "EPIC-02": {
+      "st_items": ["ST-03", "ST-04"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-03",
+        "stage4_backlog_slice.md#ST-04"
+      ]
+    },
+    "EPIC-03": {
+      "st_items": ["ST-05"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-05"
+      ]
+    },
+    "EPIC-05": {
+      "st_items": ["ST-12"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-12"
+      ]
+    }
+  }
+}
