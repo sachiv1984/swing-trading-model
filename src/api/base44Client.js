@@ -435,6 +435,11 @@ export const api = {
       doFetch(`/cash/transactions?order=${order}`),
     getSummary: async () => doFetch('/cash/summary'),
   },
+
+  analytics: {
+    complianceMetrics: async (period) =>
+      doFetch(`/analytics/compliance-metrics?period=${encodeURIComponent(period)}`),
+  },
 };
 
 export const Signal = base44.entities.Signal;
