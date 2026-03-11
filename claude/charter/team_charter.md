@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Canonical  
-**Version:** 1.4
-**Last Updated:** 2026-03-04  
+**Version:** 1.5
+**Last Updated:** 2026-03-11  
 
 ---
 
@@ -11,6 +11,7 @@
 
 | Version | Date       | Change |
 |--------:|------------|--------|
+| 1.5     | 2026-03-11 | IMP-30: Head of UX & Design entry — design gate bypass authority paragraph added. Bypass requires co-confirmation by Head of UX & Design (primary) + Product Owner; both recorded in `design_gate_bypass_authority` field. |
 | 1.4     | 2026-03-04 | **Added §3.3 Specialist & Supporting Roles.** All agent file roles not previously listed in §3 now have a charter entry with domain, reporting line, and authority scope. Added entries for: Head of Engineering, Head of UX & Design, QA & Testing Owner, QA Lead, API Contracts & Documentation Owner, Metrics Definitions & Analytics Owner, Data Model & Domain Schema Owner, Frontend Specifications & UX Documentation Owner, Backend Engineering Patterns Owner, Base44 Frontend Prompt Owner, Strategy Rules & System Intent Owner (note — also in §3.1), AI Compliance & Governance Officer, Cybersecurity & Trust Lead, Financial Reporting & Records Owner, Director of HR. Added Design Gate Engine to §7 Governing Routines. |
 | 1.3     | 2026-03-02 | Added Shared Write Concurrency Constraint. Only one governed cycle may modify the shared backlog file at a time. |
 | 1.2 | 2026-03-02 | Added Formal Authority Escalation Protocol (Section 9). Added Accepted Risk Governance Constraint (Section 10). |
@@ -258,6 +259,8 @@ Owns engineering execution and delivery outcomes. Implementation must conform to
 **Charter:** `claude/agents/head_of_ux_&_design.md`
 
 Owns experience quality and design consistency. Produces and approves design artefacts. Partners with Frontend Specs & UX Documentation Owner to translate designs into canonical specifications. Does not redefine product intent or override canonical specifications. Authority role in the Design Gate Engine (Phase 1.5).
+
+**Design gate bypass authority (IMP-30):** Holds design gate bypass authority for cycles where all sprint items are confirmed `Design Not Applicable`. Bypass must be co-confirmed by the Product Owner. Both the Head of UX & Design and the Product Owner must be recorded in `.claude_current_state.json` `design_gate_bypass_authority` field before Sprint Planning may proceed from `Release_Planning_Complete` without a passed Design Gate. Bypass without co-confirmation is a governance violation.
 
 ---
 

@@ -831,7 +831,18 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## BATCH 7 — Governance decisions required (cannot proceed without named-authority decision) ⏳ AWAITING DECISIONS
+## ✅ BATCH 7 — COMPLETE (2026-03-11)
+
+**Decisions made and implemented:** IMP-17/31, IMP-30, IMP-60
+**Files updated:** `team_charter.md` → v1.5, `sprint_planning_prompt.md` → v1.8, `OPERATIONAL_GUIDE.md` → v3.13, `prompt_change_log.md` (appended), `.claude_current_state.json` (v2_0_gates removed)
+
+**Decision 1 — Class 8 / Proof of Gate (IMP-17, IMP-31):** DEFERRED. §3 "Reserved" annotation in OPERATIONAL_GUIDE.md confirmed in place from Batch 2. No activation. Decision authority: Head of Specs Team + Product Owner.
+
+**Decision 2 — v2_0_gates block (IMP-60):** SUPERSEDED. `v2_0_gates` block removed from `.claude_current_state.json`. The `gate_3_qa_planning` condition was never machine-enforced; DL-003 was never defined; block served only as a reminder. If QA planning for notification delivery requires a gate in future, it must be defined as a proper backlog item or release readiness check in the relevant engine preflight. Decision authority: Product Owner + PMO Lead.
+
+**Decision 3 — Design gate bypass authority (IMP-30):** ACTIVATED. Authority: **Head of UX & Design (primary) + Product Owner (co-confirmation)**. `team_charter.md §3.3` Head of UX & Design entry updated with bypass authority paragraph. `sprint_planning_prompt.md STEP -1.3` updated to require both role names in `design_gate_bypass_authority` field. Decision authority: Head of Specs Team.
+
+## Batch 7 — Governance decisions required (cannot proceed without named-authority decision)
 
 **Rationale:** These IMPs require a human decision before implementation. Each is documented as a decision prompt — the output of the decision determines the implementation.
 
@@ -900,7 +911,7 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 | Batch | Status | Files touched | IMPs addressed | Priority basis |
 |-------|--------|--------------|----------------|----------------|
 | 6 | — | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
-| 7 | ⏳ Awaiting decisions | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
+| 7 | ✅ Complete (2026-03-11) | `team_charter.md`, `sprint_planning_prompt.md`, `.claude_current_state.json` | 17, 30, 31, 60 | All decisions made and implemented |
 | 8 | ✅ Complete (2026-03-11) | `shared_standards.md`, `release_planning_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `roadmap_prompt.md` | 11, 13, 14, 15, 16, 22, 43 | Completeness sweep |
 
 † IMP-40 and IMP-48 may already be present in `shared_standards.md` v1.7. Verify before re-applying in Batch 3.

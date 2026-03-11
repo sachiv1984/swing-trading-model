@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-03-10
+**Version:** 1.8
+**Last Updated:** 2026-03-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -205,6 +205,8 @@ Read `design_gate_status` from `claude/cycles/<cycle_id>/state.json`:
   - In `strict` mode: halt — bypass authority and reason are required before Sprint Planning may proceed without a design gate. Write the fields to `.claude_current_state.json` once the Product Owner provides them, then resume.
   - In `standard` mode: require the fields to be populated now (surface to Product Owner for immediate confirmation). Record the gap as an outstanding action. The sprint may not be sealed until both fields are present.
 - Write both fields to `.claude_current_state.json` under `design_gate_bypass_authority` (role name) and `design_gate_bypass_reason` (one sentence).
+
+**Bypass authority (IMP-30):** Per `team_charter.md §3.3` Head of UX & Design entry: bypass authority requires **Head of UX & Design (primary) + Product Owner (co-confirmation)**. The `design_gate_bypass_authority` field must record both role names (e.g., `"Head of UX & Design + Product Owner"`). A bypass populated with only one role name is non-compliant and must halt in strict mode, or flag and block seal in standard mode.
 
 If this engine was entered from `Design_Gate_Passed`: no bypass audit is required. Skip this check.
 
@@ -759,6 +761,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-03-11 | IMP-30: STEP -1.3 bypass authority reference added — `design_gate_bypass_authority` must contain both "Head of UX & Design + Product Owner"; single-role bypass is non-compliant; references `team_charter.md §3.3`. |
 | 1.7 | 2026-03-10 | IMP-23: STEP 6.1 — ST item `Acceptance Criteria` field replaced with reference "AC: see `stage4_backlog_slice.md#ST-xx`"; note added that Execution Engine reads AC from `stage4_backlog_slice.md` via `spec_references`; sprint backlog is a sequencing and ownership document only. |
 | 1.6 | 2026-03-10 | IMP-25: §6 Write Scope — `sprint_backlog_index.json` added. STEP 6.1A added — produce `sprint_backlog_index.json` alongside `sprint_backlog.md`; schema `{cycle_id, generated_utc, epics: {EPIC-xx: {st_items, backlog_slice_refs}}}`; enables Execution Engine to load per-EPIC ST items and AC refs without full document read. |
 | 1.5 | 2026-03-10 | IMP-52: §5 table, STEP 0, STEP 1.2, STEP 4.1, STEP 5.3 — replaced `stage3_execution_plan.md` with `release_plan.md ## Execution Plan` (schema v2 — v2.11+) with backward compatibility note for pre-v2.11 cycles. STEP 0 capacity source updated to `release_plan.md ## Capacity Check`. IMP-18: STEP 7 state write — added `sprint_goal_status: "confirmed"` field. IMP-41: STEP 0 — capacity WARN acknowledgement protocol added; STEP 7 — `capacity_warn_acknowledged` field added. IMP-47/56: STEP -1.8 — temp file renamed to `.write_test`; STEP 0 — cleanup obligation added. |

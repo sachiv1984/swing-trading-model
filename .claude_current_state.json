@@ -34,12 +34,6 @@
   "last_manage_roadmap_outcome": null,
   "last_groom_backlog_utc": null,
   "last_groom_backlog_outcome": null,
-  "v2_0_gates": {
-    "gate_1_logging": true,
-    "gate_2_api_versioning": true,
-    "gate_3_qa_planning": false,
-    "gate_3_auto_advance": "Once QA planning session for notification delivery documented — see DL-003"
-  },
   "active_pog": {
     "POG-20260304-01": {
       "initiative": "4.3 Signal Exposure Enhancement",
