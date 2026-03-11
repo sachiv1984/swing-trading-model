@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-03-10
+**Version:** 1.9
+**Last Updated:** 2026-03-11
 
 # Shared Standards — All Governed Routines
 
@@ -375,10 +375,78 @@ The following engines support `--dry-run`. The guarantee is identical in all cas
 
 ---
 
+## 14. Preflight Field Scope (IMP-22)
+
+To reduce repeated full-file reads of `.claude_current_state.json` across consecutive engine preflights, each engine must read only the field set listed below at preflight (STEP -1 / STEP 0), unless a specific later step explicitly requires an unlisted field.
+
+**Section-scoped read rule:** "Engines must read only the fields specified in their `shared_preflight_fields` entry from `.claude_current_state.json`, not the full file, unless a field outside the set is explicitly required by a named step."
+
+| Engine | Minimum preflight fields |
+|--------|--------------------------|
+| Release Planning (`plan release`) | `status`, `active_cycle`, `prior_cycle`, `post_ship_complete`, `next_cycle_unblocked` |
+| Design Gate (`run design-gate`) | `status`, `active_cycle`, `design_gate_required` |
+| Sprint Planning (`plan sprint`) | `status`, `active_cycle`, `design_gate_status`, `design_gate_bypass_authority`, `design_gate_bypass_reason`, `sprint_sealed` |
+| Sprint Execution (`run sprint`) | `status`, `active_cycle`, `amended_backlog_slice_path`, `sprint_sealed`, `sprint_planning` |
+| Delivery Verification (`run delivery verification`) | `status`, `active_cycle`, `amended_backlog_slice_path` |
+| Post-Ship Closure (`run post-ship`) | `status`, `active_cycle`, `verification_status`, `next_cycle_unblocked` |
+| Amendment Cycle (`amend cycle`) | `status`, `active_cycle`, `sprint_sealed` |
+| Roadmap Rebalance (`run roadmap`) | `status`, `active_cycle` |
+
+Fields not in this list may be read when a specific named step requires them. Full-file reads remain acceptable for engines with fewer than three tool calls budgeted for state loading.
+
+---
+
+## 15. Spec Debt Item Lifecycle (IMP-43)
+
+**Spec debt items** (identified by prefix `BLG-SPEC-*`) represent deviations between what was built and the canonical spec, where the spec itself must be updated to reflect the agreed authoritative requirement.
+
+### 15.1 Creation trigger
+
+A spec debt item is created when:
+- A deviation is noted during Phase 3 execution (STEP 5.3 in `execution_prompt.md`) or Phase 4 verification (STEP 3) AND
+- The resolution requires a spec update (not just a backlog implementation item)
+
+### 15.2 Required fields
+
+Each `BLG-SPEC-*` entry in `backlog.md` must contain:
+
+| Field | Description |
+|-------|-------------|
+| `BLG-SPEC-*` ID | Stable, unique, never renumbered |
+| Affected spec file | Full path to the spec file that must be updated |
+| Section | The specific section or table within the spec |
+| Deviation description | What the implementation does vs. what the spec says |
+| Canonical requirement | The authoritative requirement as it should read after correction |
+| Priority | P0–P3 (same scale as deviation register) |
+| Owner | Role responsible for the spec update |
+| Target release | Release in which the spec update is expected |
+
+### 15.3 Acceptance criteria for closure
+
+A `BLG-SPEC-*` item is closed when:
+1. The affected spec file has been updated to reflect the canonical requirement
+2. The update has been reviewed by the Head of Specs Team
+3. The Head of Specs Team has recorded sign-off (inline comment or PR review)
+
+### 15.4 Closing authority
+
+**Head of Specs Team sign-off is required** to mark a `BLG-SPEC-*` item as complete. No other role may close a spec debt item.
+
+### 15.5 Validation rule (Phase 1M — Backlog Management)
+
+The Backlog Management Engine (`groom backlog`) validates spec debt items against their `spec_update_status`:
+- `open`: spec file not yet updated — item remains in backlog
+- `in_progress`: spec file update in a live PR — flag for tracking
+- `review_pending`: update merged but Head of Specs Team sign-off not yet recorded — flag
+- `closed`: Head of Specs Team sign-off confirmed — mark item complete and archive
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-03-11 | IMP-22: §14 Preflight Field Scope added — `shared_preflight_fields` table specifying minimum `.claude_current_state.json` fields per engine; section-scoped read rule. IMP-43: §15 Spec Debt Item Lifecycle added — creation trigger, required fields, acceptance criteria, closing authority (Head of Specs Team), Phase 1M validation rule. |
 | 1.8 | 2026-03-10 | IMP-40: §4 SLA Breach Rule added — 72-hour mandatory `BLOCKED_SLA_BREACH` notice; `blocked_sla_breached` flag in `.claude_current_state.json`. IMP-48: §11 Prompt Version Control — `gh_issue_template.md` added to governed prompt list (Owner: Head of Specs Team, Class: 6). |
 | 1.7 | 2026-03-10 | IMP-45: §13 Dry-Run Standard added — defines guarantee, engine coverage table, read-operation scope, and re-invocation note. IMP-50: §4 Post-Ship Closure escalation target updated from `closure_record.md §6` to `closure_escalations.md`. IMP-58: §11 Prompt Version Control — simultaneity rule added (prompt_change_log.md entry must be in the same commit as the version increment). IMP-61: §10.6 Full State Machine Reference — strengthened: `lifecycle_schema.json` declared as machine-readable source of truth that prevails over §10.1 table in any conflict. |
 | 1.6 | 2026-03-10 | §10.1 Sprint Execution row updated — added `Closed` (multi-sprint exception) as valid from-state when `sprint_planning.sprint2_deferred` non-empty and `sprint_sealed = true` and `post_ship_complete = true`. Formalises the Sprint N+1 re-entry path for multi-sprint cycles. Triggered by closure_record §6 Action #2, 2026-03-06__release-v1.9. |

@@ -831,7 +831,7 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## BATCH 7 — Governance decisions required (cannot proceed without named-authority decision)
+## BATCH 7 — Governance decisions required (cannot proceed without named-authority decision) ⏳ AWAITING DECISIONS
 
 **Rationale:** These IMPs require a human decision before implementation. Each is documented as a decision prompt — the output of the decision determines the implementation.
 
@@ -854,7 +854,13 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 
 ---
 
-## BATCH 8 — Remaining governance and lifecycle completeness (no blocking dependencies)
+## ✅ BATCH 8 — COMPLETE (2026-03-11)
+
+**IMPs resolved:** IMP-11, IMP-13, IMP-14, IMP-15, IMP-16, IMP-22, IMP-33, IMP-43
+**Files updated:** `shared_standards.md` → v1.9, `release_planning_prompt.md` → v2.18, `delivery_verification_prompt.md` → v1.4, `post_ship_closure.md` → v1.8, `roadmap_prompt.md` → v2.1, `OPERATIONAL_GUIDE.md` → v3.12, `prompt_change_log.md` (appended)
+**Verified by:** §14 governance table and §6, §6B, §9, §10 phase headers in playbook v3.12.
+
+## Batch 8 — Remaining governance and lifecycle completeness (no blocking dependencies)
 
 **Rationale:** All medium-complexity, independent improvements. Can be done in any order within this batch but grouped here as the final completeness sweep.
 
@@ -894,8 +900,8 @@ Resolved items excluded: IMP-01–10, IMP-19, IMP-30 gap (2), IMP-38, IMP-55, IM
 | Batch | Status | Files touched | IMPs addressed | Priority basis |
 |-------|--------|--------------|----------------|----------------|
 | 6 | — | `post_ship_closure.md`, `shared_standards.md` | 29, 32 | Meta-review; gated on one full Batch 5 cycle |
-| 7 | — | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
-| 8 | — | `shared_standards.md`, `release_planning_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `roadmap_prompt.md` | 11, 13, 14, 15, 16, 22, 43 | Completeness sweep |
+| 7 | ⏳ Awaiting decisions | `team_charter.md` + various (post-decision) | 17, 30, 31, 60 | Decision-gated; human input required |
+| 8 | ✅ Complete (2026-03-11) | `shared_standards.md`, `release_planning_prompt.md`, `delivery_verification_prompt.md`, `post_ship_closure.md`, `roadmap_prompt.md` | 11, 13, 14, 15, 16, 22, 43 | Completeness sweep |
 
 † IMP-40 and IMP-48 may already be present in `shared_standards.md` v1.7. Verify before re-applying in Batch 3.
 

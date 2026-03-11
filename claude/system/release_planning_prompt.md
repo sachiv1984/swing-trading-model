@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.17
-**Last Updated:** 2026-03-10
+**Version:** 2.18
+**Last Updated:** 2026-03-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -331,6 +331,47 @@ Per `shared_standards.md §11`, verify that each governed prompt's current versi
 - Warn: "⚠ Advisory: [prompt name] v[X.Y] has no change log entry." List each missing entry.
 - Record as an outstanding action in the run manifest.
 - **Do not halt.**
+
+### -1.8 Amendment In Progress Guard (Hard Gate — IMP-11)
+
+Read `.claude_current_state.json` → `status`.
+
+If `status = Amendment_In_Progress`: halt immediately.
+
+```
+🛑 HALT — Amendment_In_Progress
+
+An amendment is currently in progress for the active cycle.
+Release Planning may not open a new cycle while an amendment is unsealed.
+
+To resume:
+  (1) Seal the amendment: re-invoke `amend cycle` until ratification is complete and
+      amendment_state.json.status = Sealed.
+  (2) Or withdraw the amendment and restore the prior state.
+  (3) Then re-invoke: plan release --version "<vX.Y>"
+```
+
+This guard is mode-independent. `--mode standard` does not relax it.
+
+### -1.9 Stale Backlog Lock Preflight Check (Advisory — IMP-16)
+
+Check whether `claude/backlog/.lock` exists before the routine begins. An existing lock from a prior cycle is a signal that a previous Release Planning or Amendment Cycle run did not release the lock cleanly.
+
+**If `claude/backlog/.lock` exists and `owner_cycle_id` ≠ `<this cycle_id>`:**
+
+1. Read the lock file — record `owner_cycle_id`, `acquired_utc`, `acquired_by`.
+2. Determine staleness:
+   - **Stale condition:** owning cycle is in `Closed` or `post_ship_complete = true` state in `.claude_current_state.json`, **or** `acquired_utc` is more than 72 hours prior to now with no recorded active session.
+3. **If stale:**
+   - Set `locks.backlog_lock.status = "stale_detected"` in this cycle's `state.json` (if it exists).
+   - Surface to PMO Lead: "⚠ Stale backlog lock detected from cycle `<owner_cycle_id>` — acquired `<acquired_utc>`. Owning cycle appears closed. PMO Lead must confirm staleness evidence and manually remove `claude/backlog/.lock` before backlog write steps can proceed."
+   - Record the stale detection in this cycle's escalation log (`escalations.md`) as a Lifecycle trigger (advisory — not a hard block at this stage, becomes a hard gate at STEP 4 Precondition).
+   - Do not delete the lock automatically.
+4. **If not stale (active owning cycle):**
+   - Surface to PMO Lead: "⚠ Backlog lock held by active cycle `<owner_cycle_id>`. This cycle will block at STEP 4 unless the lock is released before then."
+   - Do not halt here — STEP 4 Precondition will enforce the hard gate.
+
+Reference: `claude/charter/team_charter.md` §6 Shared Write Concurrency Constraint.
 
 ---
 
@@ -1492,6 +1533,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.18 | 2026-03-11 | IMP-11: STEP -1.8 Amendment In Progress Guard added — explicit halt when `status = Amendment_In_Progress`; mode-independent; message guides user to seal or withdraw before opening new release plan. IMP-16: STEP -1.9 Stale Backlog Lock Preflight Check added — detects locks from prior cycles; determines staleness (owning cycle closed or >72 hrs inactive); surfaces to PMO Lead for manual removal; records advisory in escalations.md; references team_charter §6. |
 | 2.17 | 2026-03-10 | IMP-26: STEP 3 — `### Risk Register Summary` subsection added alongside EPIC table; each RISK-ID entry now requires `escalation_ref` field (null or ESC-id). Escalation subroutine reference updated: ESC entries store decision/status only; full risk context lives in `release_plan.md` via `escalation_ref` back-link. |
 | 2.16 | 2026-03-10 | IMP-48: STEP -1.1 — conditional `gh_issue_template.md` existence check added; halt if missing when `--issues gh` or `--issues import` specified. IMP-24: STEP 4 — `stage4_issue_manifest.json` produced alongside `stage4_backlog_slice.md`; schema `[{id, title, epic, description, ac_summary, labels, assignee}]`; `cycle:<cycle_id>` label is idempotency key; `artifacts.stage4_issue_manifest` added to state.json schema. §10.2 updated — consumes `stage4_issue_manifest.json` (not markdown parsing); idempotency check added (IMP-35 gap 4); `cycle:<cycle_id>` label check-before-create; creation procedure uses manifest fields. |
 | 2.15 | 2026-03-10 | IMP-46: §10.1 — EPIC description source for issue import corrected from `release_plan.md ## Execution Plan` to `stage4_backlog_slice.md` (canonical scope record). IMP-47: STEP -1.4 — write permission test temp file renamed to `.write_test`; must be removed immediately; STEP 0 cleanup obligation added. |

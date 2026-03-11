@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.0
-**Last Updated:** 2026-03-06
+**Version:** 2.1
+**Last Updated:** 2026-03-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -659,6 +659,8 @@ For each candidate idea (and each ⚠ initiative under reconsideration), require
 Hard rule:
 - If no displacement is named, the item cannot advance.
 
+**Mode-independence rule (IMP-33):** This zero-sum displacement rule applies in **both strict and standard mode**. It is a governance constraint, not a UX preference, and is not relaxed by `--mode standard`. An item that advances without naming a displacement is a hard governance violation regardless of mode.
+
 #### 5.1 Challenger Counter‑Argument (Mandatory, Evidence-Based)
 
 For every candidate that is proposed to ✅ Advance, the Challenger must provide exactly ONE specific reason it should be 🅿 Parked or ❌ Rejected.
@@ -1027,6 +1029,43 @@ Precondition:
 - STEP 9 may only modify files explicitly listed in the verified write plan.
 - Any deviation requires returning to STEP 8.5.
 
+#### STEP 9.0 — Net-Zero Displacement Verification (Hard Gate — IMP-13)
+
+Before writing any output, count the decisions made in STEP 8:
+
+- **Additions:** count of items classified ✅ Advance (to be added to the roadmap this run)
+- **Removals:** count of items classified ❌ Rejected (confirmed kill) **plus** items classified as permanently killed or stopped (not merely parked or deferred)
+
+**Net-zero rule:** Additions must not exceed confirmed kills. If `additions > kills`:
+
+```
+🛑 HALT — Net-Zero Displacement Gap
+
+Routine:     Roadmap Rebalance
+Step:        STEP 9.0
+Gate:        Net-Zero Displacement
+
+What failed:
+  [N] items are proposed to advance; only [M] confirmed kills recorded.
+  Net displacement shortfall: [N - M] item(s) have no named stop.
+
+Evidence found:
+  Advancing: <list of ✅ Advance items>
+  Confirmed kills: <list of ❌ Rejected / killed items>
+
+Evidence missing:
+  A confirmed-kill or confirmed-stop decision for each advance above the kill count.
+
+To resume:
+  The Product Owner must name an additional displacement for each unmatched advance,
+  or downgrade [N - M] advancing item(s) to Park or Reject.
+  Then re-invoke STEP 8 with the updated decisions before proceeding to STEP 9.
+```
+
+This gate is mode-independent. `--mode standard` does not relax it.
+
+If `additions ≤ kills`: record the net displacement count in the STEP 9 Write Plan and proceed.
+
 Update (or create-if-missing) the following Class 4 Planning Documents with lifecycle‑compliant headers:
 - `claude/roadmap/current_roadmap.md` (FINAL REQUIRED OUTPUT)
 - `claude/roadmap/initiative_register.md` (create if needed — include displacement candidate flags from STEP 8)
@@ -1390,6 +1429,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-03-11 | IMP-13: STEP 9.0 net-zero displacement verification added — hard gate before any write; counts additions vs confirmed kills; halts if additions > kills with displacement gap report; mode-independent. IMP-33: STEP 5.0 displacement rule — mode-independence note added ("applies in both strict and standard mode; governance constraint, not relaxed by --mode standard"). |
 | 2.0 | 2026-03-06 | **Six governance improvements plus continuous improvement loop.** (1) Added STEP -1.5: Prior Cycle Outstanding Actions Check. (2) Added Parked Idea Expiry Rule (§4.5). (3) Displacement candidate flag moved to initiative_register.md exclusively. (4) Added scheduled run trigger. (5) Added absolute CPS alert threshold (>2.5). (6) Added effort banding (S/M/L). **Continuous improvement additions:** Expanded STEP 11 into four sub-steps: 11.1 lessons learnt invocation (unchanged), 11.2 prompt change classification (action-now vs defer — Head of Specs Team sign-off required for action-now), 11.3 prompt change log (`claude/system/prompt_change_log.md` — append-only, traceable from every prompt version to its triggering friction item), 11.4 meta-review trigger (every third cycle — aggregates friction patterns across cycles and produces candidate prompt changes). Added `claude/system/*` and `claude/system/prompt_change_log.md` to write scope (§5). Added `prompt_change_log.md` to optional artifact list (§6). Added `last_meta_review_cycle` key to `.claude_current_state.json` (§12.1). Updated commit scope, write plan integrity checks, and completion condition accordingly. Also incorporated two tooling notes from cycle 2 lessons learnt: bash heredoc pattern for new files (§6); bash sed pattern for bulk idea updates (§4.2). Added hard gate marking rule to STEP 9 and §9 invariants. |
 | 1.9 | 2026-03-04 | **Six governance improvements.** (1) Added Class 8 — Proof of Gate (PoG). (2) Added Strategy Proximity Score (1–5) in STEP 2.1. (3) Added Cycle Proximity Score aggregate and trend check in STEP 2.2. (4) Added Skill-Silo Alert in STEP 7.1. (5) Proximity score added to STEP 6 scoring matrix. (6) Added PoG validity and CPS to completion condition (§10). |
 | 1.8 | 2026-03-03 | Removed displacement as an advancement gate in STEP 4.1. |

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-03-10
+**Version:** 1.8
+**Last Updated:** 2026-03-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -361,6 +361,24 @@ Items in `backlog.md` that have been assigned to the next release (per sprint cl
 
 Update `Last Updated` on `backlog.md` to today's date.
 
+### 3.4 Stale Parked Items Disposition Check (IMP-15)
+
+Identify all items in `backlog.md` marked `parked` that carry a `cycle_id` reference from 3 or more completed cycles (i.e. the item was parked in this cycle's authoritative backlog slice, and also appeared as parked in the 2 prior completed cycles' backlog slices).
+
+For each stale parked item identified:
+1. Record in the closure record §6 Outstanding Actions:
+   ```
+   Outstanding action: [ST-xx / BLG-xx] "<title>" has been parked for 3+ consecutive cycles.
+   PMO Lead must obtain explicit Product Owner disposition (Advance, Reject, or explicit re-park
+   with written rationale) before the next release plan opens.
+   Owner: PMO Lead / Product Owner
+   Deadline: Before `plan release` for next cycle
+   ```
+2. Add a note to `backlog.md` on the parked item: `[STALE — PO disposition required before next release plan]`.
+3. Do not remove or resolve the item here — disposition is a Product Owner decision.
+
+If no stale parked items are found: note "No stale parked items" in the closure record and continue.
+
 **Failure condition:** Any shipped item still shown as open after this step. Any Phase 4 addition unaccounted for. Any item in the authoritative backlog slice with no traceable outcome in `backlog.md`.
 
 Update `closure_state.json`: `steps.step_3_backlog = pass`, `last_updated_utc = <now>`
@@ -698,6 +716,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-03-11 | IMP-15: STEP 3.4 added — stale parked items disposition check; identifies `backlog.md` items parked in 3+ consecutive completed cycles; records mandatory PO disposition requirement in closure record §6 Outstanding Actions; adds `[STALE — PO disposition required]` note to backlog item; does not resolve item. |
 | 1.7 | 2026-03-10 | IMP-54: §4 Source-of-Truth inputs — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` rows replaced with single `lessons_learnt_cycle.md` row (Phase 3 + Phase 4 + Amendment sections). §5 must-not-modify — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` lines replaced with `lessons_learnt_cycle.md` (read-only). STEP 8 lessons learnt table — two rows replaced with single `lessons_learnt_cycle.md` row (all phase sections, structured table read). |
 | 1.6 | 2026-03-10 | IMP-27: STEP 0 — field-level read targets added for `verification_report.md` (§1 verification_status + §4 deviation register only), `execution_state.json` (epics outcome map only), `sprint_close.md` (verification readiness statement + deviations list only). STEP 8 — `lessons_learnt` files: read action items section / classification table only (not full prose). |
 | 1.5 | 2026-03-10 | IMP-42: STEP -1.2A added — sprint_close.md verification readiness statement check (all three `Yes` fields required before proceeding). IMP-34: §5 Write Scope — `current_roadmap.md` entry expanded to list all STEP 2 write actions; canonical spec entry updated to add document owner notification requirement; `closure_escalations.md` added as permitted write. IMP-50: `closure_escalations.md` added to §5 write scope (escalations during closure use this file, not `closure_record.md §6`). IMP-59: STEP 10 — `completed_cycle_count` increment added to global state write; rule documented (default 0 if absent; used for meta-review cadence tracking). IMP-12: STEP 9 §6 Outstanding Actions template — required table format added with named columns (Description, Owner, Deadline, Escalation path, Resolution); "None" path documented. |

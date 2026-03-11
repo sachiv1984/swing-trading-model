@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-03-10
+**Version:** 1.4
+**Last Updated:** 2026-03-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -316,6 +316,24 @@ If `deferred_execution_blockers` is empty or field is absent: note "No deferred 
 
 This step is informational — deferred execution blockers do not block verification status (the Product Owner accepted them at planning time). Their purpose here is audit closure: every blocker accepted at planning must be traceable to an outcome at verification.
 
+### 4.3 Stale Parked Items Detection (IMP-15)
+
+Scan the authoritative backlog slice for items with `status = parked`.
+
+For each parked item, check whether the same item appeared as `parked` in the backlog slices from the 2 prior completed cycles (by searching for the same ST item ID in `claude/cycles/<prior_cycle_id>/stage4_backlog_slice.md` — where available).
+
+**If an item has been `parked` in 3 or more consecutive cycle backlog slices:**
+- Flag as stale parked item.
+- Record in `verification_report.md §5` under sub-section "Stale Parked Items Requiring PO Disposition":
+  ```
+  | ST Item | Title | Parked cycles | Action required |
+  |---------|-------|---------------|-----------------|
+  | ST-xx | <title> | [cycle_id_1, cycle_id_2, cycle_id_3] | Mandatory PO disposition before next release plan |
+  ```
+- Surface to PMO Lead: these items must receive an explicit Product Owner decision (Advance, Reject, or explicitly defer with written rationale) before the next `plan release` run.
+
+This step is detection only — it does not block verification status. Enforcement is at Post-Ship Closure STEP 3.4 and at backlog management grooming.
+
 ---
 
 ## STEP 5 — Test Scenario Coverage Assessment
@@ -356,6 +374,27 @@ Add backlog item:
 ```
 
 The engine does not create scenario files. It produces a complete specification for what needs to be created, with enough detail that the QA & Testing Owner can act without further clarification.
+
+### 5.3 Test Scenario Gaps Table (IMP-14)
+
+After producing all gap feedback records in STEP 5.2, produce a structured `test_scenario_gaps` table in `verification_report.md §6`:
+
+```
+### Test Scenario Gaps — Structured Register
+
+| gap_id | EPIC | Description | Qualifying reason | Disposition |
+|--------|------|-------------|-------------------|-------------|
+| TSG-<cycle_short>-01 | EPIC-xx | <one-line gap description> | <why this qualifies: core user journey / no scenario coverage / spec section uncovered> | backlog_item_created | not_applicable | deferred |
+```
+
+**Disposition values:**
+- `backlog_item_created` — a `TEST-GAP-EPIC-xx` backlog item has been added to `backlog.md` (link the item ID).
+- `not_applicable` — gap does not cover a core user journey; no backlog item required (record rationale).
+- `deferred` — gap is acknowledged but backlog item creation deferred to a named future release (record rationale and target release).
+
+**Phase 4 exit criterion:** All identified test scenario gaps must have a disposition recorded in this table before `verification_report.md` may be sealed. A row with no disposition is an open item that blocks STEP 8.5.
+
+If no test scenario gaps were identified this run: record "No test scenario gaps identified" in `verification_report.md §6` and mark the table as N/A.
 
 ---
 
@@ -544,7 +583,7 @@ The run is complete only if:
 - Phase 4 section appended to `lessons_learnt_cycle.md` (STEP 8.5 complete)
 - All `returned_to_backlog` items have confirmed backlog entries
 - All P2/P3 deviations have backlog items
-- All test coverage gaps have backlog items for QA & Testing Owner
+- All test coverage gaps have a disposition recorded in the `test_scenario_gaps` table (STEP 5.3) — `backlog_item_created`, `not_applicable`, or `deferred`
 - All deferred execution blockers have a recorded disposition in `verification_report.md` §5
 - `docs/System_status_report.md` confirmed accurate for this cycle
 - `verification_escalations.md` filed for any hard gate blockers that required escalation (if applicable)
@@ -570,6 +609,7 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-03-11 | IMP-14: STEP 5.3 added — `test_scenario_gaps` structured table in `verification_report.md §6`; fields: gap_id, EPIC, description, qualifying_reason, disposition (backlog_item_created | not_applicable | deferred); all gaps must have a disposition before report seals (Phase 4 exit criterion). §8 completion condition updated. IMP-15: STEP 4.3 added — stale parked items detection; items parked in 3+ consecutive cycle backlog slices surfaced for mandatory PO disposition; recorded in `verification_report.md §5`; detection only — does not block verification status. |
 | 1.3 | 2026-03-10 | IMP-54: §5 Write Scope — `lessons_learnt_cycle.md` added (append-only, Phase 4 section; create if absent). STEP 8.5 added — lessons learnt Phase 4 append via `lessons_learnt_prompt.md §3.4`; output: `lessons_learnt_cycle.md` Phase 4 section; idempotency guard built into prompt §3.4; hard gate before STEP 9. STEP 10 commit: `lessons_learnt_cycle.md` added. §8 completion condition: Phase 4 section appended condition added. |
 | 1.1 | 2026-03-07 | **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. STEP -1.1 extended: checks `amended_backlog_slice_path` in `.claude_current_state.json`; cross-references against `execution_state.json.backlog_slice_source`; flags disagreement before proceeding. STEP 1 updated: iterates over the authoritative slice (not hardcoded `stage4_backlog_slice.md`). §5 write scope: amended backlog slice added to must-not-modify list. `verification_report.md` §1 template: `Backlog slice source` field added. §9 invariant added. **`Verification_Failed` status corrected to `Not_Verified`.** STEP 9 `Not_Verified` path: `status` field in `.claude_current_state.json` changed from `Verification_Failed` to `Not_Verified`, consistent with guide §9.4 state machine and lifecycle table. **Deferred execution blockers acknowledged (STEP 4.2, new).** STEP 4 split into §4.1 (outstanding items, unchanged) and §4.2 (deferred execution blockers). §4.2 reads `deferred_execution_blockers` from `state.json`, dispositions each blocker, and records outcomes in `verification_report.md` §5. Informational only — does not block verification status. Sign-off blocks in `verification_report.md` §9 updated: DoQ checklist and PO checklist each add a deferred blocker acknowledgement line. §8 completion condition updated. §9 invariant updated. **Escalation subroutine added.** `verification_escalations.md` added to §5 write scope. Escalation subroutine added (callable, ID prefix `ESC-VER-YYYYMMDD-nn`). STEP 3: P0 deviation now files escalation record. STEP 9 Not_Verified path: references escalation records in halt report. STEP 10 commit: `verification_escalations.md` added. §8 completion condition updated. **Guide fix required:** §9 source prompt v1.0 → v1.1; §14 Verification Engine Source → v1.1; `Not_Verified` confirmed as the canonical status string (not `Verification_Failed`). |
 | 1.0 | 2026-03-03 | Initial version. |
