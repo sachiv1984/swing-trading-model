@@ -46,6 +46,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Trade History", icon: History, page: "TradeHistory" },
     { name: "Reports", icon: FileBarChart, page: "Reports" },
     { name: "Analytics", icon: TrendingUp, page: "PerformanceAnalytics" },
+    { name: "Reflections", icon: FileBarChart, page: "TradeReflection" },
     { name: "Risk Dashboard", icon: ShieldAlert, page: "RiskDashboard" },
     { name: "System Status", icon: Activity, page: "SystemStatus" },
     { name: "Settings", icon: Settings, page: "Settings" },
