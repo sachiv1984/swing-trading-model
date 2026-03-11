@@ -8,7 +8,7 @@
   "invoked_utc": "2026-03-11T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-11T00:00:00Z",
+  "last_updated_utc": "2026-03-11T01:00:00Z",
 
   "multi_sprint_note": "Sprint 2 of 2. Sprint 1 execution_state.json is sealed at claude/cycles/2026-03-06__release-v1.9/execution_state.json. This file covers Sprint 2 scope only (EPIC-01, EPIC-02, EPIC-03, EPIC-05 partial).",
 
@@ -25,23 +25,23 @@
         "ST-01": {
           "title": "Canonicalise Basic Compliance Metrics",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
-          "assigned_to": "human",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 33,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "c57ed6f",
           "delegation_record_id": "DEL-20260311-01",
           "blocked_since_utc": "2026-03-11T00:00:00Z",
           "unblock_criteria": "Commit matching [EPIC-01][ST-01] pushed to exec/2026-03-06__release-v1.9/EPIC-01",
-          "completed_utc": null,
+          "completed_utc": "2026-03-11T00:00:00Z",
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/metrics_definitions.md",
             "docs/specs/frontend/pages/analytics.md#§17"
           ],
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
-          "notes": "metrics_definitions.md v1.6.0 → must increment to v1.7.0 with journal completion rate, stop-based exit rate, average position size formulas. Backend: GET /analytics/compliance-metrics endpoint. Frontend: analytics.md §17 Discipline & Compliance panel."
+          "last_completed_substep": "3.3.done",
+          "notes": "metrics_definitions.md v1.6.0 → v1.7.0 with journal completion rate, stop-based exit rate, average position size formulas plus batched cohort (ST-03) and R-multiple (ST-04) metric definitions. Backend: GET /analytics/compliance-metrics endpoint implemented. Frontend: analytics.md §17 Discipline & Compliance panel — requires Base44 prompt (engine cannot generate frontend code). Deviations: none. AC backend complete; frontend delegation still pending."
         },
         "ST-02": {
           "title": "Structured Trade Reflection Template",
@@ -184,9 +184,9 @@
     }
   },
 
-  "blocked_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-12"],
-  "delegated_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-12"],
-  "completed_items": [],
+  "blocked_items": ["ST-02", "ST-03", "ST-04", "ST-05", "ST-12"],
+  "delegated_items": ["ST-02", "ST-03", "ST-04", "ST-05", "ST-12"],
+  "completed_items": ["ST-01"],
   "open_escalations": [],
 
   "merge_gate": {

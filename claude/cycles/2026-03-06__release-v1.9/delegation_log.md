@@ -455,7 +455,7 @@
 - **Base44 prompt draft:** See DEL-20260311-01-FE below (frontend component only; backend must deploy first or mock must be available)
 - **Unblock criteria:** Commit `[EPIC-01][ST-01] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-01` containing: metrics_definitions.md update + backend endpoint + frontend panel. Acceptance criteria in `stage4_backlog_slice.md#ST-01` verified by Director of Quality.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-01`
-- **Status:** Pending
+- **Status:** Backend Unblocked — commit c57ed6f pushed 2026-03-11. Frontend delegation still open (Base44 prompt below). QA acceptance pending.
 
 ### DEL-20260311-01-FE — Base44 Prompt Draft (ST-01 Frontend)
 
