@@ -455,7 +455,7 @@
 - **Base44 prompt draft:** See DEL-20260311-01-FE below (frontend component only; backend must deploy first or mock must be available)
 - **Unblock criteria:** Commit `[EPIC-01][ST-01] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-01` containing: metrics_definitions.md update + backend endpoint + frontend panel. Acceptance criteria in `stage4_backlog_slice.md#ST-01` verified by Director of Quality.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-01`
-- **Status:** Backend Unblocked — commit c57ed6f pushed 2026-03-11. Frontend delegation still open (Base44 prompt below). QA acceptance pending.
+- **Status:** Unblocked — backend c57ed6f (2026-03-11) + frontend c978dba (2026-03-11). Base44 components staged in claude/Front_end_B44/ST01/ then integrated with corrections (field name, value scaling, import paths, sub-labels). DisciplineComplianceSection.js at src/components/analytics/. All AC met. QA gate at EPIC level.
 
 ### DEL-20260311-01-FE — Base44 Prompt Draft (ST-01 Frontend)
 

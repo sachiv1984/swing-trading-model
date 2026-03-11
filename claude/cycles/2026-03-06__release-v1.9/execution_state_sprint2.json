@@ -8,7 +8,7 @@
   "invoked_utc": "2026-03-11T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-11T01:00:00Z",
+  "last_updated_utc": "2026-03-11T12:00:00Z",
 
   "multi_sprint_note": "Sprint 2 of 2. Sprint 1 execution_state.json is sealed at claude/cycles/2026-03-06__release-v1.9/execution_state.json. This file covers Sprint 2 scope only (EPIC-01, EPIC-02, EPIC-03, EPIC-05 partial).",
 
@@ -29,19 +29,19 @@
           "assigned_to": "engine",
           "github_issue": 33,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-01",
-          "commit_sha": "c57ed6f",
+          "commit_sha": "c978dba",
           "delegation_record_id": "DEL-20260311-01",
-          "blocked_since_utc": "2026-03-11T00:00:00Z",
-          "unblock_criteria": "Commit matching [EPIC-01][ST-01] pushed to exec/2026-03-06__release-v1.9/EPIC-01",
-          "completed_utc": "2026-03-11T00:00:00Z",
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-11T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/metrics_definitions.md",
+            "docs/specs/metrics_definitions.md#Discipline & Compliance Metrics",
             "docs/specs/frontend/pages/analytics.md#§17"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "3.3.done",
-          "notes": "metrics_definitions.md v1.6.0 → v1.7.0 with journal completion rate, stop-based exit rate, average position size formulas plus batched cohort (ST-03) and R-multiple (ST-04) metric definitions. Backend: GET /analytics/compliance-metrics endpoint implemented. Frontend: analytics.md §17 Discipline & Compliance panel — requires Base44 prompt (engine cannot generate frontend code). Deviations: none. AC backend complete; frontend delegation still pending."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "notes": "Backend (c57ed6f): metrics_definitions.md v1.6.0→v1.7.0, GET /analytics/compliance-metrics endpoint. Frontend (c978dba): DisciplineComplianceSection.js + api.analytics.complianceMetrics in base44Client.js + PerformanceAnalytics.js §17 integration. Integration corrections vs staged code: stop_exit_rate field name (staged had stop_based_exit_rate), value scaling as 0-100 pct (staged applied ×100 incorrectly), relative imports (staged used @/ aliases), sub-labels added per spec §17 using trade_count. No canonical spec deviations. All AC met."
         },
         "ST-02": {
           "title": "Structured Trade Reflection Template",
