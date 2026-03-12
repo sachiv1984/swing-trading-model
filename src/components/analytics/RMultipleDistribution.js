@@ -53,18 +53,30 @@ export default function RMultipleDistribution() {
 
         {!isLoading && !error && data?.buckets?.length > 0 && (
           <div className="space-y-6">
-            {/* Stat cards */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Stat cards — fields: median_r, pct_above_1r, avg_winner_r, avg_loser_r */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
-                <div className="text-xs text-slate-500 mb-1">Mean R</div>
-                <div className={`text-2xl font-bold ${(data.mean ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                  {data.mean != null ? `${data.mean >= 0 ? "+" : ""}${data.mean.toFixed(2)}R` : "—"}
+                <div className="text-xs text-slate-500 mb-1">Median R</div>
+                <div className={`text-2xl font-bold ${(data.median_r ?? 0) >= 0 ? "text-cyan-400" : "text-rose-400"}`}>
+                  {data.median_r != null ? `${data.median_r >= 0 ? "+" : ""}${data.median_r.toFixed(2)}R` : "—"}
                 </div>
               </div>
               <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
-                <div className="text-xs text-slate-500 mb-1">Median R</div>
-                <div className={`text-2xl font-bold ${(data.median ?? 0) >= 0 ? "text-cyan-400" : "text-rose-400"}`}>
-                  {data.median != null ? `${data.median >= 0 ? "+" : ""}${data.median.toFixed(2)}R` : "—"}
+                <div className="text-xs text-slate-500 mb-1">% &gt; 1R</div>
+                <div className="text-2xl font-bold text-emerald-400">
+                  {data.pct_above_1r != null ? `${data.pct_above_1r.toFixed(1)}%` : "—"}
+                </div>
+              </div>
+              <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
+                <div className="text-xs text-slate-500 mb-1">Avg Winner</div>
+                <div className="text-2xl font-bold text-emerald-400">
+                  {data.avg_winner_r != null ? `+${data.avg_winner_r.toFixed(2)}R` : "—"}
+                </div>
+              </div>
+              <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
+                <div className="text-xs text-slate-500 mb-1">Avg Loser</div>
+                <div className="text-2xl font-bold text-rose-400">
+                  {data.avg_loser_r != null ? `${data.avg_loser_r.toFixed(2)}R` : "—"}
                 </div>
               </div>
             </div>
