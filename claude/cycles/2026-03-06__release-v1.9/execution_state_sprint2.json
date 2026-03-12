@@ -8,7 +8,7 @@
   "invoked_utc": "2026-03-11T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-12T00:00:00Z",
+  "last_updated_utc": "2026-03-12T12:00:00Z",
 
   "multi_sprint_note": "Sprint 2 of 2. Sprint 1 execution_state.json is sealed at claude/cycles/2026-03-06__release-v1.9/execution_state.json. This file covers Sprint 2 scope only (EPIC-01, EPIC-02, EPIC-03, EPIC-05 partial).",
 
@@ -69,7 +69,7 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -80,44 +80,46 @@
         "ST-03": {
           "title": "Cohort Analysis",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
-          "assigned_to": "human",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 35,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3c91e7b",
           "delegation_record_id": "DEL-20260311-03",
-          "blocked_since_utc": "2026-03-11T00:00:00Z",
-          "unblock_criteria": "Commit matching [EPIC-02][ST-03] pushed to exec/2026-03-06__release-v1.9/EPIC-02",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-12T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/metrics_definitions.md",
-            "docs/specs/frontend/pages/analytics.md#§15"
+            "docs/specs/metrics_definitions.md#Cohort Metrics",
+            "docs/specs/frontend/pages/analytics.md#§15",
+            "docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
-          "notes": "Advisory dependency on ST-01 for cohort metric defs — batch into same metrics_definitions.md version increment where possible. Backend: GET /analytics/cohort?period={month|quarter|year}. Frontend: analytics.md §15 Cohort Analysis panel."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "notes": "metrics_definitions.md v1.6.0→v1.7.0: Cohort Metrics section + R-Multiple Canonical Server-Side section. Backend (3c91e7b): AnalyticsService.calculate_cohort(), GET /analytics/cohort?period={month|quarter|year}. Frontend (3c91e7b): CohortAnalysis.js — period toggle (Month/Quarter/Year), table (period, trades, win rate, avg R, P&L), loading/error/insufficient states. Integrated into PerformanceAnalytics.js §15. analytics_endpoints.md v1.9.0→v1.9.2. openapi.yaml: /analytics/cohort path added. base44Client.js: api.analytics.cohort(). No canonical spec deviations. All AC met."
         },
         "ST-04": {
           "title": "R-Multiple Distribution Report",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
-          "assigned_to": "human",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 36,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3633150",
           "delegation_record_id": "DEL-20260311-04",
-          "blocked_since_utc": "2026-03-11T00:00:00Z",
-          "unblock_criteria": "Commit matching [EPIC-02][ST-04] pushed to exec/2026-03-06__release-v1.9/EPIC-02",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-12T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/metrics_definitions.md",
-            "docs/specs/frontend/pages/analytics.md#§16"
+            "docs/specs/metrics_definitions.md#R-Multiple (Canonical Server-Side)",
+            "docs/specs/frontend/pages/analytics.md#§16",
+            "docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/r-multiple-distribution"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
-          "notes": "Depends on ST-01 for R-multiple formula canonical in metrics_definitions.md. Backend: GET /analytics/r-multiple-distribution. Frontend: analytics.md §16 R-Multiple Distribution Backend panel."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "notes": "Backend (3633150): AnalyticsService.calculate_r_multiple_distribution(), GET /analytics/r-multiple-distribution. Formula: R=(exit_price-entry_price)/(entry_price-initial_stop_price). 7 buckets, median_r, pct_above_1r, avg_winner_r, avg_loser_r. Min 5 qualifying trades. Frontend (3633150): RMultipleDistributionBackend.js — bar chart (green positive, red negative), 4-stat summary row. Integrated into PerformanceAnalytics.js §16. openapi.yaml: /analytics/r-multiple-distribution path. base44Client.js: api.analytics.rMultipleDistribution(). Hard rule: no client-side R computation in §16. No canonical spec deviations. All AC met."
         }
       }
     },
@@ -187,9 +189,9 @@
     }
   },
 
-  "blocked_items": ["ST-03", "ST-04", "ST-05", "ST-12"],
-  "delegated_items": ["ST-03", "ST-04", "ST-05", "ST-12"],
-  "completed_items": ["ST-01", "ST-02"],
+  "blocked_items": ["ST-05", "ST-12"],
+  "delegated_items": ["ST-05", "ST-12"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04"],
   "open_escalations": [],
 
   "merge_gate": {

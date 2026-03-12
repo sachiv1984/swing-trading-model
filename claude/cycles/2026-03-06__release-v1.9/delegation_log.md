@@ -562,7 +562,8 @@
 - **Base44 prompt draft:** See DEL-20260311-03-FE below
 - **Unblock criteria:** Commit `[EPIC-02][ST-03] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-02`. All AC in `stage4_backlog_slice.md#ST-03` met.
 - **Commit format required:** `[EPIC-02][ST-03] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-02`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Outcome:** Delivered 2026-03-12 by Head of Engineering. Commit `3c91e7b` on `exec/2026-03-06__release-v1.9/EPIC-02`. Backend: `AnalyticsService.calculate_cohort()`, `GET /analytics/cohort?period={month|quarter|year}`, analytics_endpoints.md v1.9.2, openapi.yaml updated. Frontend: `CohortAnalysis.js` — period toggle (Month/Quarter/Year), table (period, trades, win rate, avg R, P&L), loading/error/insufficient states, integrated into `PerformanceAnalytics.js §15`. `api.analytics.cohort()` added to base44Client.js. All AC met. metrics_definitions.md updated to v1.7.0 with Cohort Metrics section.
 
 ### DEL-20260311-03-FE — Base44 Prompt Draft (ST-03 Frontend)
 
@@ -609,7 +610,8 @@
 - **Base44 prompt draft:** See DEL-20260311-04-FE below
 - **Unblock criteria:** Commit `[EPIC-02][ST-04] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-02`. All AC in `stage4_backlog_slice.md#ST-04` met.
 - **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-02`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Outcome:** Delivered 2026-03-12 by Head of Engineering. Commit `3633150` on `exec/2026-03-06__release-v1.9/EPIC-02`. Backend: `AnalyticsService.calculate_r_multiple_distribution()`, `GET /analytics/r-multiple-distribution`, 7 fixed buckets, median_r/pct_above_1r/avg_winner_r/avg_loser_r summary stats. Formula: R=(exit_price−entry_price)/(entry_price−initial_stop_price), server-side only. Min 5 qualifying trades. Frontend: `RMultipleDistributionBackend.js` — bar chart (green positive, red negative), 4-stat summary row, integrated into `PerformanceAnalytics.js §16`. `api.analytics.rMultipleDistribution()` added to base44Client.js. Hard rule enforced: no client-side R computation. All AC met.
 
 ### DEL-20260311-04-FE — Base44 Prompt Draft (ST-04 Frontend)
 
