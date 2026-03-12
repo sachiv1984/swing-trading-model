@@ -552,6 +552,128 @@ Aggregated counts per severity tier. Always present with all four keys, even if 
 
 ---
 
+---
+
+## GET /analytics/cohort
+
+Groups all closed trades by entry period and returns per-cohort performance metrics.
+
+### Request
+
+```
+GET /analytics/cohort?period={month|quarter|year}
+```
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `period` | string | No | `month` | Cohort granularity: `month`, `quarter`, or `year` |
+
+### Response — 200 OK
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "period": "month",
+    "has_enough_data": true,
+    "cohorts": [
+      {
+        "period_label": "Mar 2026",
+        "trade_count": 5,
+        "win_rate": 60.0,
+        "avg_r_multiple": 0.80,
+        "total_pnl": 320.50
+      }
+    ]
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `period` | string | Echoes the requested period granularity |
+| `has_enough_data` | boolean | `true` if ≥3 distinct cohort periods exist |
+| `cohorts` | array | Per-cohort rows, sorted descending by period |
+| `cohorts[].period_label` | string | Human-readable label ("Mar 2026", "Q1 2026", "2026") |
+| `cohorts[].trade_count` | integer | Count of closed trades with entry_date in this period |
+| `cohorts[].win_rate` | float | Percentage of trades with pnl > 0 (1dp) |
+| `cohorts[].avg_r_multiple` | float \| null | Mean R-multiple for qualifying trades; null if no stop_price data |
+| `cohorts[].total_pnl` | float | Net P&L in GBP for all trades in cohort (2dp) |
+
+**Insufficient history:** `has_enough_data: false` when fewer than 3 distinct cohort periods exist. Frontend shows: "Not enough closed trades to show [period] cohorts".
+
+**Canonical formulas:** `metrics_definitions.md v1.7.0 §Cohort Metrics`.
+
+**R-multiple dependency:** `avg_r_multiple` requires `positions.initial_stop` via LEFT JOIN (`trade_history.position_id → positions.id`). Returns `null` per trade if migration not run or stop not stored.
+
+### Error Responses
+
+- `400 Bad Request`: invalid `period` value (not `month`/`quarter`/`year`)
+- `500 Internal Server Error`: database or computation error
+
+---
+
+## GET /analytics/r-multiple-distribution
+
+Returns canonical server-side R-multiple distribution across all closed trades.
+
+### Request
+
+```
+GET /analytics/r-multiple-distribution
+```
+
+No query parameters. Uses all closed trades (all-time).
+
+### Response — 200 OK
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "has_enough_data": true,
+    "total_qualifying_trades": 12,
+    "buckets": [
+      {"range": "< -2R",      "count": 1},
+      {"range": "-2R to -1R", "count": 2},
+      {"range": "-1R to 0R",  "count": 3},
+      {"range": "0R to 1R",   "count": 4},
+      {"range": "1R to 2R",   "count": 1},
+      {"range": "2R to 3R",   "count": 1},
+      {"range": "> 3R",       "count": 0}
+    ],
+    "median_r": 0.30,
+    "pct_above_1r": 16.7,
+    "avg_winner_r": 1.40,
+    "avg_loser_r": -0.80
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `has_enough_data` | boolean | `true` if ≥5 qualifying trades exist |
+| `total_qualifying_trades` | integer | Count of trades with valid stop_price and entry_price > stop_price |
+| `buckets` | array | 7 fixed R-multiple range buckets with trade counts |
+| `median_r` | float \| null | Median R-multiple across qualifying trades (2dp) |
+| `pct_above_1r` | float \| null | % of qualifying trades with R > 1 (1dp) |
+| `avg_winner_r` | float \| null | Mean R-multiple for trades with R > 0 (2dp); null if none |
+| `avg_loser_r` | float \| null | Mean R-multiple for trades with R ≤ 0 (2dp); null if none |
+
+**Insufficient data:** `has_enough_data: false` when fewer than 5 qualifying trades. Frontend shows: "Close at least 5 trades to see R-multiple distribution."
+
+**Canonical formula:** `R = (exit_price − entry_price) / (entry_price − initial_stop_price)` per `metrics_definitions.md v1.7.0 §R-Multiple (Canonical Server-Side)`.
+
+**Stop dependency:** Requires `positions.initial_stop` via LEFT JOIN. Trades without `initial_stop` or where `initial_stop ≥ entry_price` are excluded from qualifying trades.
+
+**Hard rule:** This endpoint returns server-side computed values only. No client-side R-multiple computation is permitted in the §16 frontend component.
+
+### Error Responses
+
+- `500 Internal Server Error`: database or computation error
+
+---
+
 ## Known limitations & backlog
 
 - **`total_return_pct`** is not yet returned by `GET /analytics/metrics`. When implemented, the canonical formula is `total_pnl / net_cash_flow × 100`.
@@ -567,4 +689,5 @@ Aggregated counts per severity tier. Always present with all four keys, even if 
 | 1.5.0 | 2026-02-17 | Initial rewrite: unified endpoint, validation endpoint, known limitations recorded |
 | 1.7.0 | 2026-02-17 | Added `entry_price`, `exit_price`, `stop_price` to `trades_for_charts`; R-multiple note added |
 | 1.8.1 | 2026-02-21 | BLG-TECH-02 contract: added `severity` field to each validation result object; added `by_severity` aggregation to `summary`; added severity model table; updated metrics validated table to include severity column and `capital_efficiency` row; updated response example; removed resolved known limitation entries for Sharpe variance and capital efficiency currency basis (resolved via BLG-TECH-01). API Contracts Owner. |
+| 1.9.2 | 2026-03-12 | ST-03 (EPIC-02 v1.9): Add GET /analytics/cohort endpoint spec — cohort period grouping, response schema, has_enough_data threshold (≥3 periods), avg_r_multiple null rule for missing stop data. ST-04 (EPIC-02 v1.9): Add GET /analytics/r-multiple-distribution endpoint spec — 7 fixed buckets, summary stats (median_r, pct_above_1r, avg_winner_r, avg_loser_r), has_enough_data threshold (≥5 qualifying trades), stop dependency note, hard rule against client-side computation. API Contracts & Documentation Owner. |
 | 1.9.0 | 2026-03-02 | BLG-TECH-06 (EPIC-06/S2-06): Add `sharpe_ratio_trade_method` to validated metrics table (severity: critical, formula: Avg Ann Return / Sample StdDev — trade method, tolerance ±0.01). Update response example summary total from 13 → 14 and `by_severity.critical.total` from 3 → 4. Update severity model table critical tier. OBS-01 formally resolved. TASK-21 through TASK-24 complete. API Contracts & Documentation Owner sign-off granted 2026-03-02 (Delegated Authority). |

@@ -18,6 +18,8 @@ import UnderwaterChart from "../components/analytics/UnderwaterChart";
 import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
 import BestWorstTrades from "../components/analytics/BestWorstTrades";
 import WinRateByMonth  from "../components/analytics/WinRateByMonth";
+import CohortAnalysis from "../components/analytics/CohortAnalysis";
+import RMultipleDistributionBackend from "../components/analytics/RMultipleDistributionBackend";
 
 
  // ✅ Helper to convert snake_case to camelCase recursively
@@ -418,6 +420,16 @@ export default function PerformanceAnalytics() {
      <WinRateByMonth monthlyData={analyticsData?.monthlyData || []} />
      <ConsistencyMetrics metrics={analyticsData?.consistencyMetrics || {}} />
       <TagPerformance trades={analyticsData?.tradesForCharts || []} />
+
+     {/* Component 15 — v1.9 ST-03: Cohort Analysis
+         Source: GET /analytics/cohort?period={month|quarter|year}
+         Spec: analytics.md §15. All values backend-computed. */}
+     <CohortAnalysis />
+
+     {/* Component 16 — v1.9 ST-04: R-Multiple Distribution (Backend)
+         Source: GET /analytics/r-multiple-distribution
+         Spec: analytics.md §16. Canonical server-side formula. No client-side derivation. */}
+     <RMultipleDistributionBackend />
     </div>
   );
 }
