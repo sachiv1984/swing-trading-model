@@ -23,9 +23,9 @@ Last Updated: 2026-03-11
 - Known deviations filed: None
 
 **QA sign-off block:** (Director of Quality completes this)
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-12
+- Comments: ST-01 verified — DisciplineComplianceSection.js confirmed using api.analytics.complianceMetrics() via doFetch; complianceMetrics method present in base44Client.js analytics namespace; GET /analytics/compliance-metrics endpoint confirmed in backend router. ST-02 verified — TradeReflectionModal.js at src/components/trades/ confirmed; api.trades.getReflection and saveReflection present in base44Client.js; GET+POST /trades/{trade_id}/reflection endpoints confirmed in backend. r_multiple and exit_state '—' display is correct application of spec §4 null rule — not a deviation. EPIC-01 approved for merge.
