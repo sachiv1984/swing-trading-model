@@ -1,0 +1,205 @@
+{
+  "cycle_id": "2026-03-06__release-v1.9",
+  "sprint_number": 2,
+  "sprint_goal": "Deliver the v1.9 user value features — canonicalise compliance metrics definitions and surface them in the frontend, implement the structured trade reflection form, add cohort analysis and R-multiple distribution to the analytics page, and launch the dashboard homepage — completing the full v1.9 release scope.",
+  "backlog_slice_source": "claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md",
+  "sprint_backlog_source": "claude/cycles/2026-03-06__release-v1.9/sprint_backlog_sprint2.md",
+  "sprint_backlog_index": "claude/cycles/2026-03-06__release-v1.9/sprint_backlog_index_sprint2.json",
+  "invoked_utc": "2026-03-11T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-03-12T12:00:00Z",
+
+  "multi_sprint_note": "Sprint 2 of 2. Sprint 1 execution_state.json is sealed at claude/cycles/2026-03-06__release-v1.9/execution_state.json. This file covers Sprint 2 scope only (EPIC-01, EPIC-02, EPIC-03, EPIC-05 partial).",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-03-06__release-v1.9/EPIC-01",
+      "pr_number": 55,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "Canonicalise Basic Compliance Metrics",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 33,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-01",
+          "commit_sha": "c978dba",
+          "delegation_record_id": "DEL-20260311-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-11T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Discipline & Compliance Metrics",
+            "docs/specs/frontend/pages/analytics.md#§17"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "notes": "Backend (c57ed6f): metrics_definitions.md v1.6.0→v1.7.0, GET /analytics/compliance-metrics endpoint. Frontend (c978dba): DisciplineComplianceSection.js + api.analytics.complianceMetrics in base44Client.js + PerformanceAnalytics.js §17 integration. Integration corrections vs staged code: stop_exit_rate field name (staged had stop_based_exit_rate), value scaling as 0-100 pct (staged applied ×100 incorrectly), relative imports (staged used @/ aliases), sub-labels added per spec §17 using trade_count. No canonical spec deviations. All AC met."
+        },
+        "ST-02": {
+          "title": "Structured Trade Reflection Template",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 34,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-01",
+          "commit_sha": "d629ed9",
+          "delegation_record_id": "DEL-20260311-02",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-11T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_reflection.md",
+            "docs/specs/data_model.md#v1.8 Trade Reflections",
+            "docs/specs/api_contracts/trade_endpoints.md#GET /trades/{trade_id}/reflection",
+            "docs/specs/api_contracts/trade_endpoints.md#POST /trades/{trade_id}/reflection"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "notes": "Backend (d987c09): GET+POST /trades/{id}/reflection, database.py, trade_service.py, trade_endpoints.md v2.0.0, openapi.yaml v1.9.1. Frontend (0c22062): TradeReflectionModal.js — 5 fields, 8 trade-summary fields (backend-sourced), skip/save, char counter, states, aria-label. api.trades.getReflection+saveReflection added to base44Client.js. Trigger: Positions.js exitMutation.onSuccess fetches GET /trades and shows modal. r_multiple and exit_state display — per spec §4 null rule (GET /trades does not return these fields). TradeReflection.js browsing page not integrated — no backend listing endpoint; out of ST-02 scope. Additional commit (d629ed9): TradeReflection page, nav item, and routing added — extends frontend browsing capability beyond modal trigger. State updated 2026-03-12 to record latest commit SHA."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "done",
+      "branch": "exec/2026-03-06__release-v1.9/EPIC-02",
+      "pr_number": 56,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-03": {
+          "title": "Cohort Analysis",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 35,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-02",
+          "commit_sha": "3c91e7b",
+          "delegation_record_id": "DEL-20260311-03",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-12T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Cohort Metrics",
+            "docs/specs/frontend/pages/analytics.md#§15",
+            "docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "notes": "metrics_definitions.md v1.6.0→v1.7.0: Cohort Metrics section + R-Multiple Canonical Server-Side section. Backend (3c91e7b): AnalyticsService.calculate_cohort(), GET /analytics/cohort?period={month|quarter|year}. Frontend (3c91e7b): CohortAnalysis.js — period toggle (Month/Quarter/Year), table (period, trades, win rate, avg R, P&L), loading/error/insufficient states. Integrated into PerformanceAnalytics.js §15. analytics_endpoints.md v1.9.0→v1.9.2. openapi.yaml: /analytics/cohort path added. base44Client.js: api.analytics.cohort(). No canonical spec deviations. All AC met."
+        },
+        "ST-04": {
+          "title": "R-Multiple Distribution Report",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 36,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-02",
+          "commit_sha": "3633150",
+          "delegation_record_id": "DEL-20260311-04",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-12T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#R-Multiple (Canonical Server-Side)",
+            "docs/specs/frontend/pages/analytics.md#§16",
+            "docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/r-multiple-distribution"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "notes": "Backend (3633150): AnalyticsService.calculate_r_multiple_distribution(), GET /analytics/r-multiple-distribution. Formula: R=(exit_price-entry_price)/(entry_price-initial_stop_price). 7 buckets, median_r, pct_above_1r, avg_winner_r, avg_loser_r. Min 5 qualifying trades. Frontend (3633150): RMultipleDistributionBackend.js — bar chart (green positive, red negative), 4-stat summary row. Integrated into PerformanceAnalytics.js §16. openapi.yaml: /analytics/r-multiple-distribution path. base44Client.js: api.analytics.rMultipleDistribution(). Hard rule: no client-side R computation in §16. No canonical spec deviations. All AC met."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "in_progress",
+      "branch": "exec/2026-03-06__release-v1.9/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-05": {
+          "title": "Dashboard Homepage / Session Summary",
+          "classification": "delegated_frontend",
+          "status": "blocked_frontend",
+          "assigned_to": "human",
+          "github_issue": 37,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260311-05",
+          "blocked_since_utc": "2026-03-11T00:00:00Z",
+          "unblock_criteria": "Commit matching [EPIC-03][ST-05] pushed to exec/2026-03-06__release-v1.9/EPIC-03",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/dashboard.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.B.delegated",
+          "notes": "Independent. Frontend spec locked: dashboard.md v2.0 (route: / root). All data from existing endpoints. Composite endpoint GET /dashboard/summary is engineering's optional decision — if added must be documented in API contracts + openapi.yaml."
+        }
+      }
+    },
+    "EPIC-05": {
+      "status": "in_progress",
+      "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-05-sprint2.md",
+      "test_scenarios": [
+        "docs/testing/risk_dashboard_scenarios.md"
+      ],
+      "stories": {
+        "ST-12": {
+          "title": "Canonical Test Scenario Library Phase 2 (v1.9 Features)",
+          "classification": "delegated_qa",
+          "status": "blocked_qa",
+          "assigned_to": "qa",
+          "github_issue": 44,
+          "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260311-06",
+          "blocked_since_utc": "2026-03-11T00:00:00Z",
+          "unblock_criteria": "All feature EPICs (EPIC-01, EPIC-02, EPIC-03) done; Director of Quality confirms scenarios authored per AC",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/testing/risk_dashboard_scenarios.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.C.delegated",
+          "notes": "Distributed authoring — scenarios for each feature authored as that feature's EPIC completes. Playwright test maintenance protocol applies (risk_dashboard_scenarios.md §5.5). HashRouter routing note applies (tests/e2e header comment)."
+        }
+      }
+    }
+  },
+
+  "blocked_items": ["ST-05", "ST-12"],
+  "delegated_items": ["ST-05", "ST-12"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-05"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
