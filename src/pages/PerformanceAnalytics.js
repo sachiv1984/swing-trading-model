@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
+import { api } from "../api/base44Client";
 import PageHeader from "../components/ui/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { AlertCircle, Loader2, Download } from "lucide-react";
@@ -40,20 +40,19 @@ const toCamelCase = (obj) => {
 export default function PerformanceAnalytics() {
   const [timePeriod, setTimePeriod] = useState("last_month");
 
-  const { data: settings } = useQuery({
+  const { data: settingsRaw } = useQuery({
     queryKey: ["settings"],
-    queryFn: () => base44.entities.Settings.list(),
+    queryFn: () => api.settings.list(),
     initialData: [],
   });
 
-  const { data: positions, isLoading } = useQuery({
-    queryKey: ["positions"],
-    queryFn: () => base44.entities.Position.list("-exit_date"),
-    initialData: [],
+  const { data: tradesData, isLoading } = useQuery({
+    queryKey: ["trades"],
+    queryFn: () => api.trades.list(),
   });
 
-  const settingsData = settings?.[0] || { min_trades_for_analytics: 10 };
-  const closedTrades = positions.filter(p => p.status === "closed");
+  const settingsData = (Array.isArray(settingsRaw) ? settingsRaw[0] : settingsRaw?.data?.[0]) || { min_trades_for_analytics: 10 };
+  const closedTrades = tradesData?.trades ?? (Array.isArray(tradesData) ? tradesData : []);
 
   // Filter by time period
   const getFilteredTrades = () => {
