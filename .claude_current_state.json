@@ -36,8 +36,8 @@
   "last_rebalance_outcome": "Add (backlog-level) — BLG-NEW-09 through BLG-NEW-12; roadmap confirmed (DL-007)",
   "last_manage_roadmap_utc": null,
   "last_manage_roadmap_outcome": null,
-  "last_groom_backlog_utc": null,
-  "last_groom_backlog_outcome": null,
+  "last_groom_backlog_utc": "2026-03-13T00:00:00Z",
+  "last_groom_backlog_outcome": "GROOM-20260313-01: 27 archived, 10 active, 0 new orphans (2 pre-existing maintained), 0 spec debt remaining, 1 promotion candidate (BLG-OPS-01)",
   "active_pog": {
     "POG-20260304-01": {
       "initiative": "4.3 Signal Exposure Enhancement",
