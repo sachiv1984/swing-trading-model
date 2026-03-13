@@ -427,3 +427,25 @@
 - **Unblock criteria:** Commit `[EPIC-05][ST-13]` pushed to `exec/2026-03-06__release-v1.9/EPIC-05`; CI coverage step visible in workflow YAML; threshold named in standard document; `backend_engineering_patterns.md` version incremented; Director of Quality confirms CI step present
 - **Commit format required:** `[EPIC-05][ST-13] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-05`
 - **Status:** Pending
+
+---
+
+## DEL-20260311-05 — Sprint 2 Status Update
+
+*Note: DEL-20260311-05 (ST-05 Dashboard Homepage) was appended to this log on main during Sprint 2 execution (2026-03-11). This EPIC-03 branch diverged before that entry was written. Correction note appended here per §7 append-only rule.*
+
+- **ST Item:** ST-05 — Dashboard Homepage / Session Summary
+- **EPIC:** EPIC-03
+- **Classification:** delegated_frontend
+- **Status:** Unblocked — commit `0d1e5fa` pushed to `exec/2026-03-06__release-v1.9/EPIC-03` on 2026-03-13. Base44 delivery integrated. QA evidence log created. EPIC-03 status: done, awaiting QA sign-off.
+
+---
+
+## DEL-20260311-06 — Sprint 2 Status Update (ST-12)
+
+*Note: DEL-20260311-06 (ST-12) was appended to this log on main during Sprint 2 execution (2026-03-11). Status as of 2026-03-13: all feature EPICs (EPIC-01, EPIC-02, EPIC-03) done. Unblock condition 1 met. Awaiting Director of Quality confirmation scenarios authored.*
+
+- **ST Item:** ST-12 — Canonical Test Scenario Library Phase 2
+- **EPIC:** EPIC-05
+- **Classification:** delegated_qa
+- **Status:** Pending — feature EPICs complete; awaiting QA authoring confirmation
