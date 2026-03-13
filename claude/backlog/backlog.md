@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-13 (v1.9 Sprint 2: BLG-TECH-06 added — DEV-EPIC02-ST03-01 carry-forward for v1.10)
+**Last Updated:** 2026-03-13 (v1.9 Sprint 2: BLG-TECH-06 added; BLG-OPS-01 added — no dev environment gap)
 **Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — DL-006)
 
 > ⚠️ Standing Notice
@@ -53,6 +53,33 @@ Numerical output is currently correct (same formula), but divergence risk exists
 - No client-side R-multiple or cohort aggregation computation
 - analytics.md §15 hard rule fully satisfied
 - Regression: existing period toggle and table display unchanged
+
+---
+
+### BLG-OPS-01 — Provision development environment
+**Priority:** P1 (High — blocks safe QA workflow)
+**Type:** Operations / Infrastructure
+**Origin:** v1.9 Sprint 2 post-merge QA — raised 2026-03-13
+**Target release:** v1.10 (prerequisite before Sprint 1 begins)
+
+The project has no development environment. All QA must currently be performed against the production (`main`) deployment, which means:
+- Bug fixes cannot be tested before they land in production
+- The merge gate condition "QA sign-off on live app" forces merging to main before a human can test
+- Post-merge bug discovery (as occurred in v1.9 Sprint 2) is the only available feedback loop
+
+This creates a structural governance gap: the human Director of Quality sign-off rule requires testing a live running application, but there is no non-production environment to test against.
+
+**Scope**
+- Provision a staging/dev environment that tracks `main` (or a designated `staging` branch)
+- Environment must run both frontend and backend with real (or seeded) data
+- CI/CD pipeline should deploy to staging automatically on merge to `main`
+- QA sign-off process updated to use staging URL, not production
+
+**Acceptance Criteria**
+- Staging environment accessible via a stable URL
+- Deploys automatically when `main` is updated
+- Governance process updated: QA sign-off block references staging URL
+- Production is not the first place bugs are discovered
 
 ---
 
