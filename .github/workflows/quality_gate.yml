@@ -12,9 +12,10 @@ jobs:
     steps:
       - name: Check PR Title for ID
         run: |
-          # Ensures the PR title includes an EPIC or ST ID
-          if [[ ! "${{ github.event.pull_request.title }}" =~ \[(EPIC|ST)-[0-9]+\] ]]; then
-            echo "Error: PR title must include a Governance ID (e.g., [EPIC-01])."
+          # Ensures the PR title includes an EPIC/ST ID or [GOVERNANCE] prefix
+          if [[ ! "${{ github.event.pull_request.title }}" =~ \[(EPIC|ST)-[0-9]+\] ]] && \
+             [[ ! "${{ github.event.pull_request.title }}" =~ ^\[GOVERNANCE\] ]]; then
+            echo "Error: PR title must include a Governance ID (e.g., [EPIC-01]) or start with [GOVERNANCE]."
             exit 1
           fi
 
