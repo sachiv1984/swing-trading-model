@@ -743,3 +743,85 @@ def get_all_closed_trades_for_csv_export(portfolio_id: str) -> list:
             )
             rows = cur.fetchall()
             return [dict(row) for row in rows]
+
+
+# ---------------------------------------------------------------------------
+# Trade reflections — ST-02, EPIC-01, v1.9
+# Spec: docs/specs/frontend/pages/trade_reflection.md §7
+# Schema: docs/specs/data_model.md §v1.8
+# ---------------------------------------------------------------------------
+
+def get_trade_reflection(trade_id: str) -> Optional[Dict]:
+    """
+    Retrieve an existing reflection for a closed trade.
+
+    Returns:
+        dict with reflection fields, or None if no reflection saved yet.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, trade_id, trade_rationale, what_worked,
+                       what_didnt_work, discipline_assessment, key_takeaway,
+                       created_at, updated_at
+                FROM trade_reflections
+                WHERE trade_id = %s
+                """,
+                (trade_id,),
+            )
+            row = cur.fetchone()
+            return dict(row) if row else None
+
+
+def upsert_trade_reflection(trade_id: str, data: Dict) -> Dict:
+    """
+    Create or update a trade reflection (upsert on trade_id unique constraint).
+
+    Args:
+        trade_id: UUID of the trade_history record.
+        data: dict with any subset of the five reflection text fields.
+
+    Returns:
+        The full reflection row after upsert.
+
+    Raises:
+        ValueError: if trade_id does not exist in trade_history.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            # Guard: confirm the trade record exists before writing reflection
+            cur.execute(
+                "SELECT id FROM trade_history WHERE id = %s",
+                (trade_id,),
+            )
+            if cur.fetchone() is None:
+                raise ValueError(f"Trade '{trade_id}' not found in trade_history")
+
+            cur.execute(
+                """
+                INSERT INTO trade_reflections (
+                    trade_id, trade_rationale, what_worked, what_didnt_work,
+                    discipline_assessment, key_takeaway
+                ) VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT (trade_id) DO UPDATE SET
+                    trade_rationale       = EXCLUDED.trade_rationale,
+                    what_worked           = EXCLUDED.what_worked,
+                    what_didnt_work       = EXCLUDED.what_didnt_work,
+                    discipline_assessment = EXCLUDED.discipline_assessment,
+                    key_takeaway          = EXCLUDED.key_takeaway,
+                    updated_at            = NOW()
+                RETURNING id, trade_id, trade_rationale, what_worked,
+                          what_didnt_work, discipline_assessment, key_takeaway,
+                          created_at, updated_at
+                """,
+                (
+                    trade_id,
+                    data.get("trade_rationale"),
+                    data.get("what_worked"),
+                    data.get("what_didnt_work"),
+                    data.get("discipline_assessment"),
+                    data.get("key_takeaway"),
+                ),
+            )
+            return dict(cur.fetchone())

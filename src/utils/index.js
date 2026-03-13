@@ -11,6 +11,7 @@ export const createPageUrl = (pageName) => {
     SystemStatus: '/SystemStatus',
     PerformanceAnalytics: '/PerformanceAnalytics',
     RiskDashboard: '/RiskDashboard',
+    TradeReflection: '/TradeReflection',
   };
   return routes[pageName] || '/';
 };

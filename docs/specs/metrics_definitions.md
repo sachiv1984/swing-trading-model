@@ -1,7 +1,7 @@
 # Metrics Definitions – Canonical Specification
-**Version:** 1.6.0
+**Version:** 1.7.0
 **Owner:** Analytics Team
-**Last Updated:** 2026-03-02
+**Last Updated:** 2026-03-12
 **Review Cycle:** Monthly
 
 ---
@@ -283,6 +283,133 @@ Client-side only for visualisation (not part of `GET /analytics/metrics`).
 
 ---
 
+## R-Multiple (Canonical Server-Side)
+### Definition
+The canonical R-multiple computation performed server-side using stored position initial stop prices. This is the authoritative R-multiple for distribution reporting and analytics. The `GET /analytics/r-multiple-distribution` endpoint uses this formula.
+
+### Canonical Formula
+```text
+R = (exit_price - entry_price) / (entry_price - initial_stop_price)
+```
+
+Where:
+- `exit_price` — the price at which the trade was closed (from `trade_history.exit_price`)
+- `entry_price` — the price at which the position was entered (from `trade_history.entry_price`)
+- `initial_stop_price` — the initial stop loss set at position entry (from `positions.initial_stop`)
+
+### Qualifying Conditions
+A trade qualifies for server-side R-multiple computation only if:
+1. `initial_stop_price` is non-null (positions.initial_stop is populated)
+2. `entry_price > initial_stop_price` (denominator > 0; short-side and lock-in stops above entry are excluded)
+3. `exit_price` is non-null
+
+Trades that do not qualify are excluded from distribution calculations; they do not contribute to bucket counts or summary statistics.
+
+### Sign Convention
+- Positive R: trade exited above entry price (profit)
+- Negative R: trade exited below entry price (loss)
+- Zero: trade exited at exactly entry price (break-even)
+
+### Data Sources
+- `trade_history.entry_price` — native currency
+- `trade_history.exit_price` — native currency
+- `positions.initial_stop` — native currency (joined via `trade_history.position_id → positions.id`)
+
+### Response Format
+Served via `GET /analytics/r-multiple-distribution`:
+```json
+{
+  "has_enough_data": true,
+  "total_qualifying_trades": 12,
+  "buckets": [
+    {"range": "< -2R", "count": 1},
+    {"range": "-2R to -1R", "count": 2},
+    {"range": "-1R to 0R", "count": 3},
+    {"range": "0R to 1R", "count": 4},
+    {"range": "1R to 2R", "count": 1},
+    {"range": "2R to 3R", "count": 1},
+    {"> 3R", "count": 0}
+  ],
+  "median_r": 0.3,
+  "pct_above_1r": 16.7,
+  "avg_winner_r": 1.4,
+  "avg_loser_r": -0.8
+}
+```
+
+### Minimum Data Requirement
+5 qualifying trades required. Below threshold: `has_enough_data: false`.
+
+### Failure Behaviour
+- No positions.initial_stop data (migration not run): all trades non-qualifying; returns `has_enough_data: false`.
+- Fewer than 5 qualifying trades: `has_enough_data: false`.
+
+---
+
+## Cohort Metrics
+### Definition
+Per-cohort aggregated trading performance, grouping closed trades by their entry period. Cohort period granularity: month, quarter, or year.
+
+### Canonical Formulas
+```text
+# Trade count per cohort
+cohort_trade_count = count(trades where entry_date falls in cohort period)
+
+# Win rate per cohort (same formula as overall win rate)
+cohort_win_rate = (count(pnl > 0) / cohort_trade_count) × 100
+
+# Total net P&L per cohort
+cohort_total_pnl = sum(trade.pnl) for trades in cohort  # GBP
+
+# Average R-multiple per cohort (server-side canonical formula, qualifying trades only)
+cohort_avg_r_multiple = mean(R) for qualifying trades in cohort
+  where R = (exit_price - entry_price) / (entry_price - initial_stop_price)
+  and entry_price > initial_stop_price
+  Returns null if no qualifying trades in cohort.
+```
+
+### Period Definitions
+| Granularity | Grouping Key | Period Label Format |
+|-------------|-------------|---------------------|
+| `month` | `entry_date` truncated to YYYY-MM | "Mar 2026" |
+| `quarter` | `entry_date` year + quarter number | "Q1 2026" |
+| `year` | `entry_date` year | "2026" |
+
+Rows sorted descending by period key (most recent first).
+
+### Insufficient History
+Fewer than 3 distinct cohort periods available: `has_enough_data: false`. Frontend shows: "Not enough closed trades to show [period] cohorts".
+
+### Response Format
+Served via `GET /analytics/cohort?period={month|quarter|year}`:
+```json
+{
+  "period": "month",
+  "has_enough_data": true,
+  "cohorts": [
+    {
+      "period_label": "Mar 2026",
+      "trade_count": 5,
+      "win_rate": 60.0,
+      "avg_r_multiple": 0.8,
+      "total_pnl": 320.50
+    }
+  ]
+}
+```
+
+### Data Sources
+- `trade_history.entry_date` — for cohort period grouping
+- `trade_history.pnl` — GBP
+- `trade_history.entry_price`, `trade_history.exit_price` — for R-multiple
+- `positions.initial_stop` — joined via `trade_history.position_id`
+
+### Failure Behaviour
+- No closed trades: empty `cohorts` array, `has_enough_data: false`.
+- No `initial_stop` data: `avg_r_multiple: null` for all cohorts; other metrics unaffected.
+
+---
+
 # Tier 2 Metrics
 
 ## Win Rate
@@ -559,6 +686,217 @@ Portfolio Heat is a live metric and is **not** included in `POST /validate/calcu
 
 ---
 
+---
+
+# Discipline & Compliance Metrics
+
+Served via `GET /analytics/compliance-metrics`. These metrics measure adherence to the trading plan's journalling and risk management rules. No period filter — computed across all closed trades. The response includes `trade_count` (the denominator) so the frontend can render "last N trades" sub-labels.
+
+## Journal Completion Rate
+
+### Definition
+Percentage of closed trades where the trader recorded at least one journal note (entry note or exit note).
+
+### Canonical Formula
+
+```text
+trades_with_notes = count(trades where entry_note IS NOT NULL AND entry_note != ''
+                           OR exit_note IS NOT NULL AND exit_note != '')
+journal_completion_rate = (trades_with_notes / total_trades) × 100
+if total_trades = 0: return 0.0
+```
+
+### Data Sources
+- `trade_history.entry_note` (TEXT, nullable)
+- `trade_history.exit_note` (TEXT, nullable)
+
+### Response Format
+Returned in `GET /analytics/compliance-metrics` data object:
+```json
+{ "journal_completion_rate": 72.5, "trade_count": 40 }
+```
+
+### Failure Behaviour
+- No trades: `journal_completion_rate = 0.0`, `trade_count = 0`.
+
+---
+
+## Stop-Based Exit Rate
+
+### Definition
+Percentage of closed trades where the exit was triggered by a stop-loss or trailing-stop mechanism (i.e., the trader did not exit manually).
+
+### Canonical Formula
+
+```text
+stop_exits = count(trades where exit_reason IN ('Stop Loss Hit', 'Trailing Stop'))
+stop_exit_rate = (stop_exits / total_trades) × 100
+if total_trades = 0: return 0.0
+```
+
+### Data Sources
+- `trade_history.exit_reason` — canonical values per data_model.md §3 Exit Reason Values.
+
+### Response Format
+```json
+{ "stop_exit_rate": 55.0, "trade_count": 40 }
+```
+
+### Failure Behaviour
+- No trades: `stop_exit_rate = 0.0`.
+- Null `exit_reason` values are treated as non-stop exits (they map to `"Manual Exit"`).
+
+---
+
+## Average Position Size (% of Portfolio)
+
+### Definition
+Average size of a closed trade as a percentage of the portfolio value at the time of trade entry. Answers: "On average, how large a fraction of the portfolio did each trade represent at entry?"
+
+### Canonical Formula
+
+```text
+For each closed trade t:
+  portfolio_value_at_entry(t) = total_value from portfolio_history
+                                 where snapshot_date <= t.entry_date
+                                 ORDER BY snapshot_date DESC LIMIT 1
+
+  position_size_pct(t) = (t.total_cost / portfolio_value_at_entry(t)) × 100
+
+avg_position_size_pct = mean(position_size_pct(t))
+                        computed only over trades where portfolio_value_at_entry(t) > 0
+```
+
+### Data Sources
+- `trade_history.total_cost` — GBP entry cost
+- `trade_history.entry_date`
+- `portfolio_history.total_value`, `portfolio_history.snapshot_date`
+
+### Response Format
+```json
+{ "avg_position_size_pct": 4.82, "trade_count": 40 }
+```
+
+### Failure Behaviour
+- No trades: `avg_position_size_pct = 0.0`.
+- No portfolio snapshots (or no snapshot on or before any trade entry): `avg_position_size_pct = 0.0`.
+- Trades with no matching snapshot are excluded from the average; if all trades are excluded, returns `0.0`.
+
+---
+
+# Cohort Analysis Metrics
+
+Served via `GET /analytics/cohort?period={month|quarter|year}`. Groups closed trades by entry period and returns aggregate performance per cohort.
+
+## Cohort Metric Definitions
+
+### Period Grouping
+
+```text
+period = "month":   group by date_trunc('month', entry_date)
+                    label format: "MMM YYYY"  (e.g. "Mar 2026")
+
+period = "quarter": group by date_trunc('quarter', entry_date)
+                    label format: "QN YYYY"   (e.g. "Q1 2026")
+
+period = "year":    group by date_trunc('year', entry_date)
+                    label format: "YYYY"      (e.g. "2026")
+```
+
+### Per-Cohort Fields
+
+| Field | Formula |
+|-------|---------|
+| `period_label` | Formatted period string (see above) |
+| `trade_count` | `count(*)` for trades in that period |
+| `win_rate` | `count(pnl > 0) / trade_count × 100`, rounded to 1dp |
+| `avg_r_multiple` | Mean R-multiple for trades with a valid stop price (see R-Multiple formula below); `null` if no stop-price data available |
+| `total_pnl` | `sum(pnl)` GBP, rounded to 2dp |
+
+### Minimum Data Threshold
+If fewer than 3 periods are available, the endpoint returns `{ "has_enough_data": false, "cohorts": [] }`.
+
+### Ordering
+Rows ordered descending by period (most recent first).
+
+---
+
+# R-Multiple Distribution (Backend)
+
+Served via `GET /analytics/r-multiple-distribution`. Computes server-side R-multiple for each closed trade (using the canonical formula below), then buckets the distribution.
+
+## Canonical R-Multiple Formula (Backend)
+
+```text
+R(t) = (exit_price(t) - entry_price(t)) / (entry_price(t) - stop_price(t))
+
+where:
+  stop_price(t) = positions.initial_stop for the originating position
+                  (joined via trade_history.position_id → positions.id)
+  entry_price(t) = trade_history.entry_price (native currency)
+  exit_price(t)  = trade_history.exit_price  (native currency)
+
+Constraint: if stop_price IS NULL OR stop_price >= entry_price: trade excluded from distribution.
+Constraint: prices must be in the same native currency before applying the formula.
+```
+
+**Note:** This is the same formula as the Tier 1 R-Multiple (Visualisation-Only) entry above. This section provides the backend-canonical definition for server-side computation and validation.
+
+## Distribution Buckets
+
+Eight fixed buckets:
+
+| Bucket label | Range |
+|---|---|
+| `< -3R` | R < -3.0 |
+| `-3R to -2R` | -3.0 ≤ R < -2.0 |
+| `-2R to -1R` | -2.0 ≤ R < -1.0 |
+| `-1R to 0R` | -1.0 ≤ R < 0.0 |
+| `0R to 1R` | 0.0 ≤ R < 1.0 |
+| `1R to 2R` | 1.0 ≤ R < 2.0 |
+| `2R to 3R` | 2.0 ≤ R < 3.0 |
+| `> 3R` | R ≥ 3.0 |
+
+## Summary Statistics
+
+| Field | Formula |
+|-------|---------|
+| `median_r` | Median R across all trades with valid R, rounded to 2dp |
+| `pct_above_1r` | `count(R ≥ 1.0) / count(valid R trades) × 100`, rounded to 1dp |
+| `avg_winner_r` | Mean R for trades with R > 0, rounded to 2dp; `null` if none |
+| `avg_loser_r` | Mean R for trades with R < 0, rounded to 2dp; `null` if none |
+
+## Response Format
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "has_enough_data": true,
+    "trade_count": 28,
+    "buckets": [
+      { "label": "< -3R",     "count": 1 },
+      { "label": "-3R to -2R","count": 2 },
+      { "label": "-2R to -1R","count": 4 },
+      { "label": "-1R to 0R", "count": 6 },
+      { "label": "0R to 1R",  "count": 5 },
+      { "label": "1R to 2R",  "count": 7 },
+      { "label": "2R to 3R",  "count": 2 },
+      { "label": "> 3R",      "count": 1 }
+    ],
+    "median_r": 0.72,
+    "pct_above_1r": 35.7,
+    "avg_winner_r": 1.54,
+    "avg_loser_r": -0.91
+  }
+}
+```
+
+## Minimum Data Threshold
+Requires ≥ 5 trades with a valid stop price. Below threshold: `has_enough_data: false`, `buckets: []`, summary stats `null`.
+
+---
+
 ## Appendix A: Data Lineage (Referential)
 
 This Metrics Definitions document is the canonical source for **metric semantics and formulas**.
@@ -574,6 +912,11 @@ Any future lineage changes MUST be made in those documents and referenced here.
 ## Appendix B — API Schema Coverage (Quick Audit Checklist)
 The `GET /analytics/metrics` response contains the following top-level fields and MUST remain in sync with this spec:
 - `summary`, `executive_metrics`, `advanced_metrics`, `market_comparison`, `exit_reasons`, `monthly_data`, `day_of_week`, `holding_periods`, `top_performers`, `consistency_metrics`, `trades_for_charts`.
+
+Additional endpoints introduced in v1.7.0:
+- `GET /analytics/compliance-metrics` — `journal_completion_rate`, `stop_exit_rate`, `avg_position_size_pct`, `trade_count`
+- `GET /analytics/cohort?period={month|quarter|year}` — `has_enough_data`, `cohorts[]` (period_label, trade_count, win_rate, avg_r_multiple, total_pnl)
+- `GET /analytics/r-multiple-distribution` — `has_enough_data`, `trade_count`, `buckets[]`, `median_r`, `pct_above_1r`, `avg_winner_r`, `avg_loser_r`
 
 ---
 
@@ -609,7 +952,9 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 | 2026-02-17 | 1.5.6 | ADVISORY-MD-D: Remove drift-prone lineage appendix; reference `data_model.md` and `analytics_endpoints.md` as lineage sources | Analytics Team |
 | 2026-02-21 | 1.5.7 | BLG-TECH-01 resolution: mark Appendix E Backlog Items 1 and 2 as resolved. Update inline conformance notes in Sharpe Ratio and Capital Efficiency sections. Update Capital Efficiency response format example value to 0.22. Validation confirmed 13/13 pass at 2026-02-21T00:24:41Z. Canonical Owner sign-off granted. | Metrics Definitions & Analytics Canonical Owner |
 | 2026-02-25 | 1.5.8 | BLG-FEAT-01: Add Current Drawdown section. Defines current_drawdown_percent formula, data sources (GET /portfolio new fields), relationship to days_underwater and max_drawdown metrics, failure behaviour, and implementation notes. QWB pre-alignment D1. | Metrics Definitions owner |
+| 2026-03-12 | 1.7.0 | ST-03 (EPIC-02 v1.9): Add Cohort Metrics section — canonical formulas for cohort trade count, win rate, avg R-multiple, total P&L; period definitions (month/quarter/year); response format for GET /analytics/cohort. ST-04 (EPIC-02 v1.9): Add R-Multiple (Canonical Server-Side) section — server-side formula, qualifying conditions, sign convention, distribution bucket format for GET /analytics/r-multiple-distribution; minimum 5 qualifying trades. Analytics Team.
 | 2026-03-02 | 1.6.0 | EPIC-03 (v1.7): Add Portfolio Risk Metrics section — canonical Position Risk formula (GBP-adjusted, FX handling for US positions, pence conversion for UK), Portfolio Heat formula (sum of position risks / portfolio value × 100), and explicit display threshold bands (Low <10%, Moderate 10–20%, High 20–30%, Extreme ≥30%) with canonical hex colour codes. TASK-06 through TASK-10 complete. Head of Specs Team lifecycle sign-off granted 2026-03-02 (Delegated Authority). v1.8 pre-alignment gate cleared. | Metrics Definitions & Analytics Owner + Head of Specs Team |
+| 2026-03-11 | 1.7.0 | EPIC-01/02 (v1.9): Add Discipline & Compliance Metrics section (ST-01) — Journal Completion Rate, Stop-Based Exit Rate, Average Position Size % formulas for GET /analytics/compliance-metrics. Add Cohort Analysis Metrics section (ST-03 batch) — period grouping, per-cohort field definitions, minimum data threshold. Add R-Multiple Distribution (Backend) section (ST-04 batch) — canonical server-side R-multiple formula, 8 fixed buckets, summary statistics. Appendix B updated to list all three new endpoints. Metrics Definitions & Analytics Owner + Head of Engineering sign-off granted 2026-03-11 (EPIC-01 ST-01 delivery). | Metrics Definitions & Analytics Owner + Head of Engineering |
 
 ---
 
