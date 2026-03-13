@@ -452,6 +452,14 @@ export const api = {
       doFetch('/analytics/r-multiple-distribution'),
   },
 
+  market: {
+    getStatus: async () => doFetch('/market/status'),
+  },
+
+  signals: {
+    list: async () => doFetch('/signals', { raw: true }),
+  },
+
   settings: {
     list: async () => doFetch('/settings'),
     create: async (settingsData) =>

@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Dashboard from './pages/Dashboard';
+import DashboardHome from './pages/DashboardHome';
 import Positions from './pages/Positions';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
@@ -62,6 +63,7 @@ import __Layout from './Layout.js';
 
 
 export const PAGES = {
+    "DashboardHome": DashboardHome,
     "Dashboard": Dashboard,
     "Positions": Positions,
     "Reports": Reports,
@@ -76,7 +78,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "Dashboard",
+    mainPage: "DashboardHome",
     Pages: PAGES,
     Layout: __Layout,
 };

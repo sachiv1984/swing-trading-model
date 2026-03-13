@@ -682,7 +682,7 @@
 
 - **Unblock criteria:** Commit `[EPIC-03][ST-05] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-03`. All AC in `stage4_backlog_slice.md#ST-05` met.
 - **Commit format required:** `[EPIC-03][ST-05] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked — commit `0d1e5fa` pushed 2026-03-13. DashboardHome.js + 5 card components integrated. QA signed off (2026-03-13). P3 deviation DEV-EPIC03-ST05-01 accepted.
 
 ---
 
@@ -704,5 +704,5 @@
 - **Spec reference:** `docs/testing/risk_dashboard_scenarios.md` (pattern and maintenance protocol §5.5)
 - **Unblock criteria:** Director of Quality confirms all scenarios in AC authored and have recorded results (PASS/FAIL/BLOCKED) in scenario files. Commit `[EPIC-05][ST-12] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-05`.
 - **Commit format required:** `[EPIC-05][ST-12] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-05`
-- **Status:** Pending
+- **Status:** Unblocked — commit `7a277cc` pushed 2026-03-13. 25 scenarios authored in risk_dashboard_scenarios.md v1.3 (SC-CM-01–04, SC-TR-01–07, SC-CA-01–04, SC-RM-01–04, SC-DH-01–10). Director of Quality sign-off confirmed 2026-03-13.
 
