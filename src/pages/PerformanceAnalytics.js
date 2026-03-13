@@ -23,6 +23,20 @@ import WinRateByMonth from "@/components/analytics/WinRateByMonth";
 import CohortAnalysis from "@/components/analytics/CohortAnalysis";
 import RMultipleDistribution from "@/components/analytics/RMultipleDistribution";
 
+// Helper to convert snake_case to camelCase recursively
+const toCamelCase = (obj) => {
+  if (Array.isArray(obj)) {
+    return obj.map(v => toCamelCase(v));
+  } else if (obj !== null && obj !== undefined && obj.constructor === Object) {
+    return Object.keys(obj).reduce((result, key) => {
+      const camelKey = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+      result[camelKey] = toCamelCase(obj[key]);
+      return result;
+    }, {});
+  }
+  return obj;
+};
+
 export default function PerformanceAnalytics() {
   const [timePeriod, setTimePeriod] = useState("last_month");
 
@@ -649,6 +663,9 @@ export default function PerformanceAnalytics() {
       <ConsistencyMetrics metrics={getConsistencyMetrics()} />
       <TagPerformance trades={filteredTrades} />
       <CohortAnalysis trades={filteredTrades} />
+      {/* Component 17 — v1.9 ST-01: Discipline & Compliance
+          Source: GET /analytics/compliance-metrics. Spec: analytics.md §17.
+          Metrics canonical per metrics_definitions.md v1.7.0. */}
       <DisciplineComplianceSection period={timePeriod} />
     </div>
   );

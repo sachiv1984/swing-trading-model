@@ -48,7 +48,9 @@ from .sizing_service import size_position
 
 # Trade service
 from .trade_service import (
-    get_trade_history_with_stats
+    get_trade_history_with_stats,
+    get_reflection,
+    save_reflection,
 )
 
 # Cash service
@@ -101,6 +103,8 @@ __all__ = [
     'size_position',
     # Trade service
     'get_trade_history_with_stats',
+    'get_reflection',
+    'save_reflection',
     # Cash service
     'create_transaction',
     'get_transaction_history',

@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 1.9.0
+  version: 1.9.1
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -332,6 +332,58 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OkTrades"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /trades/{trade_id}/reflection:
+    get:
+      tags: [Trades]
+      summary: Get trade reflection
+      description: "Retrieve saved reflection for a closed trade. Returns 404 if no reflection saved yet. Spec: trade_reflection.md §7."
+      parameters:
+        - name: trade_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Reflection retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkReflection"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Trades]
+      summary: Save trade reflection
+      description: "Create or update (upsert) the reflection for a closed trade. All fields optional. Idempotent. Spec: trade_reflection.md §7."
+      parameters:
+        - name: trade_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReflectionRequest"
+      responses:
+        "200":
+          description: Reflection saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkReflection"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -767,6 +819,71 @@ components:
         data:
           description: Payload varies by endpoint.
           type: object
+
+    ReflectionRequest:
+      type: object
+      description: "Upsert payload for a trade reflection. All fields optional (500-char max each)."
+      properties:
+        trade_rationale:
+          type: string
+          nullable: true
+          maxLength: 500
+        what_worked:
+          type: string
+          nullable: true
+          maxLength: 500
+        what_didnt_work:
+          type: string
+          nullable: true
+          maxLength: 500
+        discipline_assessment:
+          type: string
+          nullable: true
+          maxLength: 500
+        key_takeaway:
+          type: string
+          nullable: true
+          maxLength: 500
+
+    ReflectionData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        trade_id:
+          type: string
+          format: uuid
+        trade_rationale:
+          type: string
+          nullable: true
+        what_worked:
+          type: string
+          nullable: true
+        what_didnt_work:
+          type: string
+          nullable: true
+        discipline_assessment:
+          type: string
+          nullable: true
+        key_takeaway:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    OkReflection:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        data:
+          $ref: "#/components/schemas/ReflectionData"
 
     ApiError:
       type: object
