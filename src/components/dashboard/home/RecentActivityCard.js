@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { api } from "@/api/base44Client";
+import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
 
 function activityLabel(t) {

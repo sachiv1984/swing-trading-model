@@ -39,7 +39,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navItems = [
-    { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
+    { name: "Dashboard", icon: LayoutDashboard, page: "DashboardHome" },
     { name: "Positions", icon: Briefcase, page: "Positions" },
     { name: "Signals", icon: Zap, page: "Signals" },
     { name: "Trade Entry", icon: PlusCircle, page: "TradeEntry" },

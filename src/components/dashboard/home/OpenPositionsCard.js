@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/api/base44Client";
+import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
 
 export default function OpenPositionsCard() {

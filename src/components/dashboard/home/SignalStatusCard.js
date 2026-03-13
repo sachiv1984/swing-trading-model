@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { api } from "@/api/base44Client";
+import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
 
 function RegimeRow({ market, status }) {

@@ -7,8 +7,8 @@
   "sprint_backlog_index": "claude/cycles/2026-03-06__release-v1.9/sprint_backlog_index_sprint2.json",
   "invoked_utc": "2026-03-11T00:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-03-13T14:00:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-03-13T15:20:00Z",
 
   "multi_sprint_note": "Sprint 2 of 2. Sprint 1 execution_state.json is sealed at claude/cycles/2026-03-06__release-v1.9/execution_state.json. This file covers Sprint 2 scope only (EPIC-01, EPIC-02, EPIC-03, EPIC-05 partial).",
 
@@ -128,11 +128,11 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-03",
-      "pr_number": null,
-      "pr_status": "pending_manual_creation",
-      "pr_note": "gh CLI not available in environment. PR must be created manually: exec/2026-03-06__release-v1.9/EPIC-03 → main, title: [EPIC-03] Add Dashboard Homepage. See §8.4 for body requirements. Update pr_number and pr_status after creation.",
+      "pr_number": 57,
+      "pr_status": "merged",
+      "merged_utc": "2026-03-13T15:15:07Z",
       "qa_signed_off": true,
       "qa_signed_off_utc": "2026-03-13T13:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-03.md",
@@ -161,11 +161,11 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
-      "pr_number": null,
-      "pr_status": "pending_manual_creation",
-      "pr_note": "gh CLI not available. PR must be created manually: exec/2026-03-06__release-v1.9/EPIC-05 → main, title: [EPIC-05] Add v1.9 canonical test scenarios (Phase 2). Update pr_number after creation.",
+      "pr_number": 58,
+      "pr_status": "merged",
+      "merged_utc": "2026-03-13T15:15:30Z",
       "qa_signed_off": true,
       "qa_signed_off_utc": "2026-03-13T13:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-05-sprint2.md",
@@ -203,11 +203,13 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-02"],
-    "epics_pending": ["EPIC-03", "EPIC-05"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-05"],
+    "epics_pending": [],
+    "all_merged": true,
+    "all_merged_utc": "2026-03-13T15:15:30Z"
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "status": "Sealed",
+  "sealed": true,
+  "sealed_utc": "2026-03-13T15:20:00Z"
 }
