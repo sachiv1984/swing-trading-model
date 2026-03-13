@@ -455,7 +455,7 @@ The system is ready for:
 
 ## Sprint: 2026-03-06__release-v1.9 Sprint 2
 **Date:** 2026-03-13
-**Status:** Verified_with_deviations — Director of Quality sign-off pending; Product Owner acceptance pending
+**Status:** Verified_with_deviations — Director of Quality sign-off 2026-03-13; Product Owner acceptance 2026-03-13
 
 ### Capabilities now live (merged this sprint)
 
