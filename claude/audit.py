@@ -575,6 +575,72 @@ STAGE_CHECKLIST = [
         ),
         "tips": [2, 3, 6]
     },
+    # -------------------------------------------------
+    # STAGE 12: ROUTINE CONSOLIDATION ANALYSIS
+    # -------------------------------------------------
+    {
+        "stage": "Stage 12 — Routine Consolidation Analysis",
+        "load": [
+            "claude/system/OPERATIONAL_GUIDE.md",          # §4 phase table, §6M known gaps, §12 trigger table
+            "claude/system/shared_standards.md",           # §13 dry-run table
+            "claude/system/roadmap_prompt.md",             # STEP 4 idea intake sub-steps — field-level
+            "claude/system/post_ship_closure.md",          # §4 inputs, STEP list — field-level
+            "claude/system/execution_prompt.md",           # STEP list line count — field-level
+        ],
+        "check": (
+            "PURPOSE: Identify governed routines that could be collapsed into a calling engine as a\n"
+            "mandatory step sequence, reducing lifecycle friction and closing known skippable gaps.\n"
+            "This is NOT a token efficiency check — it is a lifecycle architecture check.\n"
+            "\n"
+            "CONSOLIDATION CRITERIA (score each engine against all 5):\n"
+            "C1 — SINGLE TRIGGER: engine only ever runs at one fixed lifecycle point\n"
+            "C2 — NO AUTHORITY SEPARATION: invoking role identical to the calling phase role\n"
+            "C3 — SINGLE DOWNSTREAM CONSUMER: output consumed only by the immediately following engine\n"
+            "C4 — NO INDEPENDENT GATE NEED: failure can be advisory/inline halt; no own state entry needed\n"
+            "C5 — OPTIONAL OR SKIPPABLE: documented optional/recommended — skipping creates a known gap\n"
+            "\n"
+            "VERDICT RULES:\n"
+            "  CONSOLIDATE — C1+C2+C3+C4 all met. C5 (skippable with known gap) auto-elevates\n"
+            "                to CONSOLIDATE even if only 3 of C1-C4 met.\n"
+            "  REVIEW      — meets C1+C2 but fails C3 or C4; warrants discussion\n"
+            "  BOUNDARY    — fails C1 or C2; must remain a separate governed routine\n"
+            "\n"
+            "KEEP-SEPARATE OVERRIDES (any one forces BOUNDARY regardless of criteria):\n"
+            "  - Engine has its own --dry-run support\n"
+            "  - Engine has its own lifecycle_schema.json state entry other engines check\n"
+            "  - Engine is invoked by more than one calling engine\n"
+            "  - Collapsing it would push the receiving engine above 500 lines or 15 STEPs\n"
+            "\n"
+            "ENGINES TO EVALUATE:\n"
+            "  manage roadmap (Phase 1M), groom backlog (Phase 1M), run ideas (Phase 0),\n"
+            "  run design-gate (Phase 1.5), run delivery verification (Phase 4)\n"
+            "  Note: roadmap rebalance, release planning, sprint planning, sprint execution,\n"
+            "  post-ship closure, amendment cycle are NOT candidates — mandatory phase engines\n"
+            "  with independent authority or multi-consumer outputs.\n"
+            "\n"
+            "TABLE 1 — Consolidation scoring:\n"
+            "| Engine | C1 | C2 | C3 | C4 | C5 | dry-run? | own state? | multi-caller? | recv overload? | VERDICT |\n"
+            "Mark each: checkmark (supports) | x (blocks) | ~ (partial)\n"
+            "\n"
+            "TABLE 2 — CONSOLIDATE/REVIEW verdicts only:\n"
+            "| Engine | Verdict | Absorbing engine | As which STEP | Known gap closed |"
+            " Token saving (prompt lines x 8) | Receiving engine line delta | Net |\n"
+            "\n"
+            "TABLE 3 — Known gaps closed by consolidation:\n"
+            "| Known gap (cite OPERATIONAL_GUIDE section) | Currently caused by |"
+            " Closed if consolidated into | Residual risk |\n"
+            "\n"
+            "COST/BENEFIT RULE:\n"
+            "If consolidation saves S tokens/cycle but adds L lines to receiving engine:\n"
+            "  Receiving engine would exceed 500 lines post-consolidation: verdict -> REVIEW,\n"
+            "  note line budget constraint. Otherwise: net saving = S - (L x 8 x invocations/cycle).\n"
+            "  Report net saving in TABLE 2.\n"
+            "\n"
+            "End with one bullet list: recommended consolidation actions in priority order.\n"
+            "No prose paragraphs."
+        ),
+        "tips": [1, 2, 6]
+    },
 
 ]
 
@@ -711,7 +777,7 @@ EXECUTION ORDER
 1. RESOLVED SINCE LAST AUDIT
 2. HEALTH SCORECARD  (table only; arithmetic → appendix)
 3. GAP REGISTER
-4. STAGE FINDINGS  (Stages 1–11; tables/bullets only)
+4. STAGE FINDINGS  (Stages 1–12; tables/bullets only)
 5. IMPROVEMENTS LIST
    5a. AUDIT_INDEX JSON block  ← Claude Code parses this first
    5b. Individual improvements (sorted weight desc; each with PATCH block)
@@ -782,6 +848,18 @@ OUTPUT_SECTIONS = [
     "## 2. Health Scorecard",
     "## 3. Gap Register",
     "## 4. Stage Findings",
+    "###  Stage 1 — Lifecycle Mapping",
+    "###  Stage 2 — Behavioural Audit",
+    "###  Stage 3 — Governance Integrity",
+    "###  Stage 4 — Lifecycle Reliability",
+    "###  Stage 5 — Token Budget Analysis",
+    "###  Stage 6 — Engine Handoff Integrity",
+    "###  Stage 7 — Prompt Architecture & Compression",
+    "###  Stage 8 — Amendment Cycle Completeness",
+    "###  Stage 9 — Single Source of Truth",
+    "###  Stage 10 — Known Design Gaps & Deferred Patches",
+    "###  Stage 11 — Best Practices Compliance",
+    "###  Stage 12 — Routine Consolidation Analysis",
     "## 5. Improvements List",
     "###  5a. AUDIT_INDEX (JSON — Claude Code entry point)",
     "###  5b. Individual improvements (AUD-ID order, weight desc)",
