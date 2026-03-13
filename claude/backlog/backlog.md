@@ -764,6 +764,31 @@ Items raised during sprint execution. Decision authority: Director of Quality (Q
 
 ---
 
+### BLG-FE-01 — Dashboard full-page error + Retry overlay (DEV-EPIC03-ST05-01)
+**Priority:** P3 (Low — v1.10 enhancement)
+**Type:** Frontend Enhancement
+**Owner:** Head of Engineering
+**Source:** DEV-EPIC03-ST05-01 filed in docs/specs/frontend/pages/dashboard.md during v1.9 Sprint 2 QA
+**Cycle added:** 2026-03-06__release-v1.9
+**Target release:** v1.10
+
+When all 5 dashboard endpoint queries fail simultaneously, `DashboardHome.js` shows 5 individual card error states rather than a unified full-page overlay with a prominent Retry button as required by spec §5 "All endpoints failed" state. The `handleRetry()` function exists (correctly invalidates all 5 query keys), but all-failed state detection and overlay rendering are not implemented.
+
+**Scope**
+- Add all-failed state detection at `DashboardHome.js` level (e.g., all 5 `isError` flags true)
+- Render full-page error overlay with Retry button when all-failed state is detected
+- Retry button calls `handleRetry()` (already implemented)
+
+**Acceptance Criteria**
+- When all 5 dashboard card queries fail, a full-page error overlay with a Retry button is displayed
+- Retry button invalidates all 5 query keys and triggers re-fetch
+- Individual card error states still render when only some cards fail
+- dashboard.md §5 "All endpoints failed" state fully satisfied
+
+---
+
+---
+
 ### BLG-API-01 — Backend API integration tests (FastAPI TestClient)
 **Priority:** P2
 **Type:** QA Infrastructure
@@ -787,6 +812,73 @@ The Playwright mock layer (ST-11) tests frontend rendering behaviour given known
 - Director of Quality confirms CI step present and passing
 
 **Last Updated:** 2026-03-09
+
+---
+
+## 13. Test Coverage Gaps (from 2026-03-06__release-v1.9 Sprint 2)
+
+Scenarios for v1.9 Sprint 2 features were authored in ST-12 (risk_dashboard_scenarios.md v1.3). They have not yet been executed against the live application — manual acceptance review (code inspection) was used for QA sign-off. These items track formal scenario execution.
+
+---
+
+### TEST-GAP-EPIC-01-v1.9 — Execute v1.9 compliance metrics and trade reflection scenarios
+**Priority:** P2
+**Type:** QA — scenario execution
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-03-06__release-v1.9 Sprint 2 — STEP 5 coverage gap
+**Cycle added:** 2026-03-06__release-v1.9
+**Target release:** v1.10 (before next sprint touching analytics or trade reflection domain)
+
+11 scenarios authored in risk_dashboard_scenarios.md v1.3 for EPIC-01 features:
+- SC-CM-01–04: Compliance metrics (DisciplineComplianceSection display, loading, error states)
+- SC-TR-01–07: Trade reflection modal (open, fill, save, pre-populate, skip, char limit)
+
+These scenarios exist but were not run during Sprint 2 QA. QA sign-off was code-inspection only.
+
+**Acceptance Criteria**
+- All 11 scenarios (SC-CM-01–04, SC-TR-01–07) executed against live or staging environment
+- Results recorded in risk_dashboard_scenarios.md §6 execution log
+- Any failures raised as defects before next sprint on these domains
+
+---
+
+### TEST-GAP-EPIC-02-v1.9 — Execute v1.9 cohort analysis and R-multiple distribution scenarios
+**Priority:** P2
+**Type:** QA — scenario execution
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-03-06__release-v1.9 Sprint 2 — STEP 5 coverage gap
+**Cycle added:** 2026-03-06__release-v1.9
+**Target release:** v1.10 (before next sprint touching analytics domain)
+
+8 scenarios authored in risk_dashboard_scenarios.md v1.3 for EPIC-02 features:
+- SC-CA-01–04: Cohort analysis (period toggle, table display, insufficient-data state)
+- SC-RM-01–04: R-multiple distribution (bar chart, stat cards, minimum-trades threshold)
+
+Note: DEV-EPIC02-ST03-01 (P2 — client-side cohort computation) affects SC-CA-01–04 test expectations — expected to pass numerically but source-layer verification requires BLG-TECH-06 fix.
+
+**Acceptance Criteria**
+- All 8 scenarios (SC-CA-01–04, SC-RM-01–04) executed against live or staging environment
+- SC-CA scenarios note DEV-EPIC02-ST03-01 caveat in results
+- Results recorded in risk_dashboard_scenarios.md §6 execution log
+
+---
+
+### TEST-GAP-EPIC-03-v1.9 — Execute v1.9 dashboard homepage scenarios
+**Priority:** P2
+**Type:** QA — scenario execution
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-03-06__release-v1.9 Sprint 2 — STEP 5 coverage gap
+**Cycle added:** 2026-03-06__release-v1.9
+**Target release:** v1.10 (before next sprint touching dashboard domain)
+
+10 scenarios authored in risk_dashboard_scenarios.md v1.3 for EPIC-03 features:
+- SC-DH-01–10: Dashboard homepage (card layout, data display, error isolation, navigation, responsive)
+
+Note: SC-DH-07 (all-failed full-page retry) will fail until BLG-FE-01 is resolved.
+
+**Acceptance Criteria**
+- Scenarios SC-DH-01–06, SC-DH-08–10 executed against live or staging environment (SC-DH-07 deferred until BLG-FE-01 fix)
+- Results recorded in risk_dashboard_scenarios.md §6 execution log
 
 ---
 
