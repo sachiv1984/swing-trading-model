@@ -3,9 +3,50 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-09
+**Last Updated:** 2026-03-13
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v1.9 — User Value & Insight — Sprint 2 of 2 (March 2026)
+
+**Shipped:** 2026-03-13
+**Cycle:** 2026-03-06__release-v1.9
+**Verified:** Verified_with_deviations
+**Verification report:** `claude/cycles/2026-03-06__release-v1.9/verification_report_sprint2.md`
+**Director of Quality sign-off:** 2026-03-13
+**Product Owner acceptance:** 2026-03-13
+**Sprint:** 2 of 2 — all v1.9 user-facing features complete
+
+Delivers the core user-facing features deferred from Sprint 1: structured trade reflection template, basic compliance metrics, cohort analysis, R-multiple distribution report, and dashboard homepage session summary. Sprint 2 also completes the canonical test scenario library with 25 new feature scenarios. Two deviations accepted — both low-impact with backlog resolution items targeting v1.10.
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Structured Trade Reflection Template — post-trade reflection modal at position close; pre-populated with trade data (hold time, R-multiple, exit reason); 5 structured reflection questions; saves to trade record | `docs/specs/frontend/pages/trade_reflection.md` v0.1 (new) |
+| EPIC-01 | Basic Compliance Metrics — `DisciplineComplianceSection` component showing journal completion rate, stop-based exit rate, avg position size % of portfolio; thresholds hardcoded (see DEV-EPIC01-ST02-01) | `docs/specs/frontend/pages/analytics.md` v1.3→v1.4 (§17 added) |
+| EPIC-02 | Cohort Analysis — cohort performance table grouped by month/quarter/year with period toggle; avg R-multiple and win rate per cohort; deviation DEV-EPIC02-ST03-01 filed (P2 — client-side computation instead of `GET /analytics/cohort`) | `docs/specs/frontend/pages/analytics.md` v1.3→v1.4 (§15 added) |
+| EPIC-02 | R-Multiple Distribution Report — bar chart showing R-multiple distribution across closed trades; stat cards for median and average R; `GET /analytics/r-distribution` endpoint | `docs/specs/frontend/pages/analytics.md` v1.3→v1.4 (§16 added) |
+| EPIC-03 | Dashboard Homepage — 5-card session summary (Open Positions, Portfolio Heat, In Grace Today, Signal Status, Recent Activity); deviation DEV-EPIC03-ST05-01 filed (P3 — full-page error/Retry overlay not implemented) | `docs/specs/frontend/pages/dashboard.md` v2.0 |
+| EPIC-05 (Phase 2) | Canonical Test Scenario Library Phase 2 — 25 new feature scenarios for Sprint 2 deliveries authored in `docs/testing/risk_dashboard_scenarios.md` v1.3 (SC-CM-01–04, SC-TR-01–07, SC-CA-01–04, SC-RM-01–04, SC-DH-01–10); scenarios not yet executed (see TEST-GAP items in backlog §13) | `docs/testing/risk_dashboard_scenarios.md` v1.2→v1.3 |
+
+### Deviations accepted
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-EPIC02-ST03-01 | P2 | `CohortAnalysis.js` uses client-side cohort computation via `buildCohorts()` instead of calling `GET /analytics/cohort`. Values numerically correct; architectural violation of analytics.md §15 hard rule. Backlog: BLG-TECH-06. Target: v1.10 | Product Owner + Director of Quality — 2026-03-13 |
+| DEV-EPIC03-ST05-01 | P3 | Dashboard all-failed full-page error overlay with Retry button not implemented; individual card error states render correctly. Backlog: BLG-FE-01. Target: v1.10 | Product Owner + Director of Quality — 2026-03-13 |
+
+### Tech backlog items shipped
+
+- [BLG-FEAT-08 / ST-02] Basic Compliance Metrics — definitions canonicalised in `metrics_definitions.md`; `DisciplineComplianceSection.js` implemented; metrics: journal completion rate, stop-based exit rate, avg position size %
+- [BLG-NEW-09 / ST-05] R-Multiple Distribution Report — `RMultipleDistribution.js` component; bar chart; `GET /analytics/r-distribution` endpoint; stat cards: median R, average R
+- [BLG-NEW-10 Phase 2 / ST-12] Canonical Test Scenario Library Phase 2 — 25 feature scenarios for v1.9 Sprint 2 deliveries authored in `docs/testing/risk_dashboard_scenarios.md` v1.3; scenarios not yet executed (see TEST-GAP-EPIC-01/02/03-v1.9 in backlog §13)
+
+Sign-off: Product Owner — 2026-03-13
+QA sign-off: Director of Quality — 2026-03-13
 
 ---
 
@@ -56,19 +97,12 @@ Resolves all 10 Risk Dashboard deviations carried from v1.8, establishes reprodu
 - [BLG-SPEC-G2 / ST-18] Error Response Standard defined — `docs/specs/api_contracts/conventions.md` §13 added (canonical error envelope, HTTP status mapping)
 - [BLG-SPEC-D1, D4, D8, D9, G3, G4, G5 / ST-19] Remaining SPEC debt batch resolved — API Contracts README v1.9.0; `GET /positions/search/tags` documented; `System_status_report.md` lifecycle header added; cross-references fixed; `structured_logging_standards.md` registered in Specs Index §3.5b; ADR-002 relocated to `docs/product/decisions/`; `validation_system.md` owner field corrected to named role
 
-### Sprint 2 — pending
+### Sprint 2 — ✅ Shipped 2026-03-13
 
-| Item | Description | EPIC |
-|------|-------------|------|
-| ST-01 | Structured Trade Reflection Template | EPIC-01 |
-| ST-02 | Basic Compliance Metrics (pre-work gate for ST-01) | EPIC-01 |
-| ST-03 | Cohort Analysis | EPIC-02 |
-| ST-04 | Dashboard Homepage / Session Summary | EPIC-03 |
-| ST-05 | R-Multiple Distribution Report | EPIC-02 |
-| ST-12 | Canonical Test Scenario Library Phase 2 (feature scenarios for Sprint 2 deliveries) | EPIC-05 |
+All 6 Sprint 2 items delivered. See **v1.9 — User Value & Insight — Sprint 2 of 2** section above.
 
-Sign-off: Product Owner — 2026-03-09
-QA sign-off: Director of Quality — 2026-03-09
+Sign-off (Sprint 1): Product Owner — 2026-03-09
+QA sign-off (Sprint 1): Director of Quality — 2026-03-09
 
 ---
 

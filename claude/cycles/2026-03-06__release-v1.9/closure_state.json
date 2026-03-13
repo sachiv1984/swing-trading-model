@@ -1,11 +1,13 @@
 {
   "cycle_id": "2026-03-06__release-v1.9",
   "release": "v1.9",
+  "sprint": "Sprint 2 of 2",
   "status": "Closed",
   "mode": "standard",
   "dry_run": false,
-  "started_utc": "2026-03-09T20:00:00Z",
-  "last_updated_utc": "2026-03-09T20:00:00Z",
+  "started_utc": "2026-03-13T00:00:00Z",
+  "last_updated_utc": "2026-03-13T00:00:00Z",
+  "note": "Sprint 1 post-ship closure completed 2026-03-09 (see closure_record.md §1–§7). This run covers Sprint 2 of 2. closure_state.json reset from Closed to In_Progress for Sprint 2 pass.",
   "steps": {
     "preflight": "pass",
     "step_0_context": "pass",
@@ -20,7 +22,7 @@
     "step_8_5_lessons_closure": "pass",
     "step_9_closure_record": "pass",
     "step_10_global_state": "pass",
-    "step_11_commit": "pass"
+    "step_11_commit": "in_progress"
   },
   "closure_status": "Closed_with_actions"
 }

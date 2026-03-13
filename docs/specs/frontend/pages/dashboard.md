@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.0
-**Last Updated:** 2026-03-06
+**Version:** 2.1
+**Last Updated:** 2026-03-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v1.9
 **EPIC:** EPIC-03
@@ -145,9 +145,25 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 ---
 
+## 6. Known Deviations
+
+### DEV-EPIC03-ST05-01 — Dashboard: full-page error overlay with Retry button not implemented
+
+**Story:** ST-05 — Dashboard Homepage
+**Description:** When all 5 dashboard endpoint queries fail simultaneously, `DashboardHome.js` shows 5 individual card error states rather than a unified full-page overlay with a prominent Retry button. The `handleRetry()` function exists and correctly invalidates all 5 query keys, but the all-failed state detection and overlay rendering are not implemented.
+**Canonical requirement:** dashboard.md §5 "All endpoints failed" state — "Full page error with 'Retry' button". Individual card errors correctly render per the "Individual card error" state.
+**Priority:** P3 — individual card error states work correctly; the all-failed unified overlay is a UX enhancement. No data loss or incorrect display.
+**Impact:** When all 5 endpoints fail, user sees 5 separate "Unable to load" card messages rather than a single consolidated error overlay. Retry function is accessible via individual card retry actions.
+**Target resolution release:** v1.10
+**Owner:** Head of Engineering
+**Backlog reference:** BLG-FE-01 — Dashboard full-page error + Retry overlay (DEV-EPIC03-ST05-01)
+
+---
+
 ## 7. Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-03-13 | Post-ship closure STEP 5: Known Deviations §6 added — DEV-EPIC03-ST05-01 (P3, full-page error overlay not implemented, BLG-FE-01). |
 | 2.0 | 2026-03-06 | Full rewrite for v1.9 EPIC-03 (ST-05). Dashboard Homepage session summary with 5 data cards. Governance header upgraded to Class 1 compliant format. Design source: docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md. |
 | 1.0 | 2026-02-18 | Initial version (pre-governance, general portfolio overview). |

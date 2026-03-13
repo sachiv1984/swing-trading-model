@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-09
+**Last Updated:** 2026-03-13
 
 ---
 
@@ -133,6 +133,7 @@ It points to the **single canonical source**.
 - `frontend/README.md`
 - `frontend/design_system.md`
 - Page, component, and pattern specifications
+- `frontend/pages/trade_reflection.md` — Class 1 Canonical, v0.1, Active (created 2026-03-06, EPIC-01, ST-01): Structured Trade Reflection Template — post-trade reflection form presented at position close; pre-populated with trade data; 5 structured reflection questions; saves to trade record.
 
 **Owner**
 - Frontend Specifications & UX Documentation Owner

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-13 (v1.9 Sprint 2: BLG-TECH-06 added; BLG-OPS-01 added — no dev environment gap)
+**Last Updated:** 2026-03-13 (v1.9 Sprint 2 post-ship closure: BLG-FEAT-08, BLG-NEW-09, BLG-NEW-10 Phase 2 marked COMPLETE; BLG-TECH-06, BLG-OPS-01 added in verification)
 **Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — DL-006)
 
 > ⚠️ Standing Notice
@@ -127,6 +127,7 @@ Requires data model update.
 **Priority:** P2
 **Effort:** ~1 day
 **Target release:** v1.9 (pre-work gate for Structured Trade Reflection Template)
+**Status:** ✅ COMPLETE — 2026-03-13 (v1.9 Sprint 2, EPIC-01, ST-02)
 
 Lightweight discipline metrics:
 - Journal completion rate
@@ -656,6 +657,7 @@ Release planning engine determines v1.9 backlog slice.
 **Source:** IDEA-metrics-analytics-20260304-01, IW-20260304-01
 **Cycle added:** 2026-03-06__item-3.4
 **Sequence constraint:** After BLG-FEAT-08 metrics definitions (Metrics Definitions owner capacity — LL-05 check applies)
+**Status:** ✅ COMPLETE — 2026-03-13 (v1.9 Sprint 2, EPIC-02, ST-05)
 
 **Problem**
 No visualisation of R-multiple distribution exists. R-multiple (profit in units of initial risk) is the canonical trade quality measure in this strategy — users cannot see whether trades are systematically achieving R > 1 on winners or not.
@@ -679,7 +681,7 @@ No visualisation of R-multiple distribution exists. R-multiple (profit in units 
 **Source:** IDEA-qa-testing-20260304-01, IW-20260304-01
 **Cycle added:** 2026-03-06__item-3.4
 **Scope constraint:** Risk Dashboard components first (resolves TEST-GAP-EPIC-01 infrastructure dependency); new v1.9 feature scenarios added at release time; no retroactive full-coverage mandate
-**Status:** Phase 1 ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-05, ST-11). Phase 2 (feature scenarios for Sprint 2 deliveries) → Sprint 2 (ST-12)
+**Status:** Phase 1 ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-05, ST-11). Phase 2 ✅ COMPLETE — 2026-03-13 (v1.9 Sprint 2, EPIC-05, ST-12). Full item complete.
 
 **Problem**
 Test scenarios are ad-hoc per feature. TEST-GAP-EPIC-01 identified that 17/27 Risk Dashboard scenarios cannot be executed without a seeded test infrastructure. A systematic canonical library with documented infrastructure preconditions prevents this gap recurring in every release.
@@ -749,12 +751,12 @@ The golden output baseline (BLG-NEW-01, COMPLETE) covers end-to-end calculation 
 
 ---
 
-**Section 11 Summary (updated 2026-03-09 — v1.9 Sprint 1 post-ship)**
-- BLG-NEW-09: active (Sprint 2 deferred — R-Multiple Distribution Report)
-- BLG-NEW-10: Phase 1 complete (ST-11); Phase 2 Sprint 2 pending (ST-12)
+**Section 11 Summary (updated 2026-03-13 — v1.9 Sprint 2 post-ship)**
+- BLG-NEW-09: ✅ COMPLETE (ST-05, Sprint 2 — R-Multiple Distribution Report)
+- BLG-NEW-10: ✅ COMPLETE — Phase 1 (ST-11, Sprint 1) + Phase 2 (ST-12, Sprint 2)
 - BLG-NEW-11: ✅ COMPLETE (ST-14)
 - BLG-NEW-12: ✅ COMPLETE (ST-13)
-- Active: 1 full (BLG-NEW-09) + 1 partial (BLG-NEW-10 Phase 2)
+- Active: 0 — all §11 items complete
 
 ---
 

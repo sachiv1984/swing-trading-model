@@ -137,3 +137,111 @@ Actions resolved — 2026-03-10:
   All 7 actioned items resolved (see §6 above). Action #8 N/A (sealed artefact).
   Sprint 2 execution unblocked. Command: run sprint --cycle 2026-03-06__release-v1.9
 ```
+
+---
+
+---
+
+## §8 — Sprint 2 Closure (2026-03-13)
+
+**Multi-sprint note:** This section covers the Sprint 2 post-ship closure pass for cycle `2026-03-06__release-v1.9`. Sprint 1 closure is recorded in §1–§7 above. Sprint 2 ships the user-facing features deferred from Sprint 1 (ST-01–05, ST-12).
+
+---
+
+### §8.1 — Closure Status
+
+```
+Status:               Closed_with_actions
+Release:              v1.9 — User Value & Insight (Sprint 2 of 2)
+Ship date:            2026-03-13
+Cycle:                2026-03-06__release-v1.9
+Verification status:  Verified_with_deviations
+Verification report:  claude/cycles/2026-03-06__release-v1.9/verification_report_sprint2.md
+Closure run:          2026-03-13T00:00:00Z
+Sprint scope:         Sprint 2 of 2 — 6 ST items shipped (ST-01–05, ST-12); 0 returned to backlog
+Deviations accepted:  2 (DEV-EPIC02-ST03-01 P2; DEV-EPIC03-ST05-01 P3) — both targeting v1.10
+```
+
+---
+
+### §8.2 — Documents Updated
+
+| Step | Document | Action Taken | Status |
+|------|----------|--------------|--------|
+| 1 | `docs/product/changelog.md` | v1.9 Sprint 2 entry written; Sprint 1 "pending" subsection updated to "✅ Shipped"; Last Updated → 2026-03-13 | ✅ |
+| 2 | `claude/roadmap/current_roadmap.md` | §1 Current Version updated to fully shipped; v1.9 entry annotated Sprint 2 ✅ Shipped; §8 release summary table updated; Last Updated → 2026-03-13 | ✅ |
+| 3 | `claude/backlog/backlog.md` | BLG-FEAT-08, BLG-NEW-09, BLG-NEW-10 Phase 2 marked COMPLETE; §11 Summary updated (all items complete); Last Updated → 2026-03-13 | ✅ |
+| 4 | Scope doc / decisions | N/A — scope doc already Superseded in Sprint 1 closure; no new formal decision records required for Sprint 2 | N/A |
+| 5a | `docs/specs/frontend/pages/analytics.md` | DEV-EPIC02-ST03-01 backlog reference updated from "BLG to be raised" to BLG-TECH-06; version 1.4→1.5; Change Log entry added | ✅ |
+| 5b | `docs/specs/frontend/pages/dashboard.md` | Known Deviations §6 added — DEV-EPIC03-ST05-01 (P3, BLG-FE-01); version 2.0→2.1; Change Log entry added | ✅ |
+| 6 | `docs/operations/validation_system.md` | Stale governance note removed (owner field corrected Sprint 1; note not cleaned up at the time) | ✅ |
+| 7 | `docs/specs/Specs_Index.md` | `trade_reflection.md` (Class 1 Canonical, v0.1, EPIC-01, ST-01) registered in §3.5 Canonical Documents; Last Updated → 2026-03-13 | ✅ |
+| 8.5 | `claude/cycles/2026-03-06__release-v1.9/lessons_learnt_closure_sprint2.md` | Created — Sprint 2 post-ship closure lessons artefact | ✅ |
+
+---
+
+### §8.3 — Backlog Additions This Run
+
+Phase 4 additions confirmed present (raised during delivery verification 2026-03-13):
+- BLG-TECH-06 (P2, v1.10): CohortAnalysis client-side computation fix ✅ present in §1
+- BLG-OPS-01 (P1, v1.10): Provision development/staging environment ✅ present in §1
+- BLG-FE-01 (P3, v1.10): Dashboard full-page error + Retry overlay ✅ present in §12
+- TEST-GAP-EPIC-01-v1.9, TEST-GAP-EPIC-02-v1.9, TEST-GAP-EPIC-03-v1.9: scenario execution gaps ✅ present in §13
+
+No additional backlog items raised during post-ship closure.
+
+---
+
+### §8.4 — Deviation Compliance Summary
+
+| Ref | Canonical spec | Fields pre-closure | Action taken | Status |
+|-----|---------------|-------------------|--------------|--------|
+| DEV-EPIC02-ST03-01 | analytics.md | All required fields present; backlog reference was "BLG to be raised" — incomplete | Updated to BLG-TECH-06 | ✅ Compliant |
+| DEV-EPIC03-ST05-01 | dashboard.md | Entry entirely absent from spec | Known Deviations §6 added to dashboard.md v2.0→v2.1 with all required fields | ✅ Compliant |
+
+Both deviation entries now fully compliant. Zero fields missing. analytics.md §Known Deviations and dashboard.md §6 are spec-compliant.
+
+---
+
+### §8.5 — Lessons Learnt Action Summary
+
+See `claude/cycles/2026-03-06__release-v1.9/lessons_learnt_closure_sprint2.md` for full breakdown.
+
+**Records reviewed:**
+1. Delivery Verification: `claude/cycles/2026-03-06__release-v1.9/lessons_learnt_cycle.md` Phase 4 section — 4 items reviewed
+2. Sprint Execution (Sprint 2): No Phase 3 section in `lessons_learnt_cycle.md` for Sprint 2 (execution prompt did not append — gap noted as deferred patch)
+3. Sprint 1 deferred patches: all 4 resolved 2026-03-10 ✅
+
+**Summary:**
+- Immediate actions applied: 1 (analytics.md backlog ref; dashboard.md Known Deviations added)
+- Deferred to v1.10: 3 (BLG-OPS-01 infrastructure; test_scenarios back-populate; execution_prompt.md Sprint 2 lessons append)
+- Escalated for decision: 0
+- Informational: 1 (Phase 4 recurrence check baseline established)
+
+---
+
+### §8.6 — Outstanding Actions
+
+| # | Description | Owner | Target | Status |
+|---|-------------|-------|--------|--------|
+| 1 | Execute TEST-GAP-EPIC-01/02/03-v1.9 scenarios (25 scenarios) against live/staging environment | QA & Testing Owner | v1.10 (before next sprint on these domains) | Open |
+| 2 | Provision staging environment (BLG-OPS-01) — enables live-app QA before production merge | Product Owner (infrastructure decision) | v1.10 prerequisite | Open |
+| 3 | Fix BLG-TECH-06 (CohortAnalysis client-side computation) | Head of Engineering + Base44 Frontend Prompt Owner | v1.10 | Open |
+| 4 | Fix BLG-FE-01 (Dashboard full-page error/Retry overlay) | Head of Engineering | v1.10 | Open |
+| 5 | Update execution_prompt.md — Sprint 2+ lessons append obligation | Head of Specs Team | Before v1.10 sprint execution | Open |
+
+---
+
+### §8.7 — Closure Confirmation (Sprint 2)
+
+```
+Post-ship closure complete — 2026-03-06__release-v1.9 — 2026-03-13 (Sprint 2)
+Release:                  v1.9 — User Value & Insight — FULLY SHIPPED (both sprints)
+Verification status:      Verified_with_deviations
+Sprint scope:             Sprint 2 of 2 (6 ST items shipped; 0 returned to backlog)
+Deviations accepted:      2 (DEV-EPIC02-ST03-01 P2; DEV-EPIC03-ST05-01 P3)
+Lessons learnt applied:   1 immediate | 3 deferred | 0 escalated
+Outstanding actions:      5 open items (non-blocking; all targeting v1.10)
+Cycle status:             Closed_with_actions
+Next release:             v2.0
+```
