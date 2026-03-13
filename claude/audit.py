@@ -582,6 +582,37 @@ STAGE_CHECKLIST = [
 # IMPROVEMENT FORMAT
 # =========================
 
+AUDIT_INDEX_FORMAT = """
+At the TOP of section 5 (Improvements List), before any individual improvement,
+output a single JSON block with this exact structure and comment marker:
+
+```json
+// AUDIT_INDEX
+[
+  {
+    "id": "AUD-YYYY-MM-DD-NNN",
+    "title": "<max 8 words>",
+    "weight": <int>,
+    "tier": <1|2|3>,
+    "effort": "Low|Medium|High",
+    "patches": <int — number of PATCH blocks in this improvement>,
+    "files": ["<exact path>", ...],
+    "depends_on": ["AUD-...", ...] or []
+  },
+  ...
+]
+```
+
+Rules:
+- One entry per improvement, sorted by weight descending (same order as improvements list).
+- `patches` = exact count of PATCH blocks in that improvement (0 if improvement only adds to audit.py config).
+- `files` = every file that any PATCH block in this improvement touches.
+- `depends_on` = AUD-IDs that must be applied before this one (empty array if none).
+- This block must be valid JSON. No trailing commas. No comments inside the array.
+- The `// AUDIT_INDEX` comment is the anchor Claude Code uses to locate this block.
+- Do not repeat this block anywhere else in the document.
+"""
+
 IMPROVEMENT_FORMAT = """
 ### AUD-[DATE]-[NNN]
 **Title:** <max 12 words>
@@ -619,6 +650,13 @@ MANDATORY OUTPUT FORMAT RULES (v6):
    - anchor must be an exact string that appears once in the target file (for str_replace)
    - If the change requires creating a new file: operation = CREATE_FILE, anchor = N/A
    - If the change requires multiple edits: produce multiple numbered PATCH blocks (PATCH 1, PATCH 2)
+4b. AUDIT_INDEX JSON BLOCK: output at the TOP of section 5 (Improvements List), before any improvement.
+   - Anchor comment on first line: // AUDIT_INDEX
+   - One entry per improvement, sorted weight descending (same order as list)
+   - Fields: id, title (≤8 words), weight, tier, effort, patches (count of PATCH blocks), files (all
+     files any PATCH touches), depends_on (AUD-IDs that must precede; [] if none)
+   - Must be valid JSON — no trailing commas, no comments inside the array
+   - Claude Code uses the // AUDIT_INDEX anchor to locate and parse this block
 5. No "Why it matters" field — absorbed into Problem (2 sentences = what + why).
 6. AUDIT SUMMARY: 3 sentences only. Then SLA block. Then CONFIG UPDATE block.
 7. CONFIG UPDATE BLOCK (mandatory — produce at end of every audit):
@@ -655,6 +693,9 @@ STRICT EXECUTION RULES
 2. Scorecard arithmetic → SCORECARD APPENDIX at end (not inline).
 3. Confirmed counts only. Unknown counts → ~N [ESTIMATED]. 2+ estimated inputs → [LOW CONFIDENCE].
 4. Every improvement must have a PATCH block with: operation, file, anchor (exact string), content.
+4b. AUDIT_INDEX: output the JSON index block at the very top of section 5, before any improvement.
+    Anchor line: // AUDIT_INDEX  Fields: id, title, weight, tier, effort, patches, files, depends_on.
+    Must be valid JSON. Claude Code parses this to build its execution plan without reading full doc.
 5. B4 compliance: if COMPLETED_CYCLES < 3 → "INSUFFICIENT HISTORY (need ≥3 cycles)" not N/A.
 6. §14 drift check: CONDITIONAL — report only if drift detected. Do not recommend persistent advisories.
 7. Tier placement: Blast Radius ≥ 4 + Medium effort + no deps → Tier 2 (not Tier 3).
@@ -671,7 +712,9 @@ EXECUTION ORDER
 2. HEALTH SCORECARD  (table only; arithmetic → appendix)
 3. GAP REGISTER
 4. STAGE FINDINGS  (Stages 1–11; tables/bullets only)
-5. IMPROVEMENTS LIST  (sorted by priority weight desc; each with PATCH block)
+5. IMPROVEMENTS LIST
+   5a. AUDIT_INDEX JSON block  ← Claude Code parses this first
+   5b. Individual improvements (sorted weight desc; each with PATCH block)
 6. CROSS-IMPROVEMENT MAP  (dependencies + conflicts)
 7. IMPLEMENTATION TIERS  (Tier 1/2/3 per tier placement rules)
 8. AUDIT SUMMARY  (3 sentences)
@@ -697,6 +740,12 @@ IMPROVEMENT FORMAT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 {IMPROVEMENT_FORMAT}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AUDIT_INDEX FORMAT (top of section 5)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{AUDIT_INDEX_FORMAT}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT FORMAT RULES
@@ -734,6 +783,8 @@ OUTPUT_SECTIONS = [
     "## 3. Gap Register",
     "## 4. Stage Findings",
     "## 5. Improvements List",
+    "###  5a. AUDIT_INDEX (JSON — Claude Code entry point)",
+    "###  5b. Individual improvements (AUD-ID order, weight desc)",
     "## 6. Cross-Improvement Map",
     "## 7. Implementation Tiers",
     "## 8. Audit Summary",
