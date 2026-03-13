@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Loader2, CalendarRange } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { cn } from "../../lib/utils";
 
 function getPeriodLabel(dateStr, period) {
   const d = new Date(dateStr);

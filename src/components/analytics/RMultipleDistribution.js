@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Cell } from "recharts";
 import { TrendingUp, Loader2, AlertCircle } from "lucide-react";
-import { api } from "@/api/base44Client";
+import { api } from "../../api/base44Client";
 
 const getBarColor = (range) => {
   if (!range) return "#64748b";

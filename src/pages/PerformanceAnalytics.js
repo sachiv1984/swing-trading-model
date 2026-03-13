@@ -1,27 +1,27 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
-import PageHeader from "@/components/ui/PageHeader";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { base44 } from "../api/base44Client";
+import PageHeader from "../components/ui/PageHeader";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { AlertCircle, Loader2, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import ExecutiveSummaryCards from "@/components/analytics/ExecutiveSummaryCards";
-import KeyInsightsCard from "@/components/analytics/KeyInsightsCard";
-import AdvancedMetricsGrid from "@/components/analytics/AdvancedMetricsGrid";
-import MonthlyHeatmap from "@/components/analytics/MonthlyHeatmap";
-import MarketComparison from "@/components/analytics/MarketComparison";
-import ExitReasonTable from "@/components/analytics/ExitReasonTable";
-import TimeBasedCharts from "@/components/analytics/TimeBasedCharts";
-import TopPerformers from "@/components/analytics/TopPerformers";
-import ConsistencyMetrics from "@/components/analytics/ConsistencyMetrics";
-import TagPerformance from "@/components/analytics/TagPerformance";
-import DisciplineComplianceSection from "@/components/analytics/DisciplineComplianceSection";
-import UnderwaterChart from "@/components/analytics/UnderwaterChart";
-import RMultipleAnalysis from "@/components/analytics/RMultipleAnalysis";
-import BestWorstTrades from "@/components/analytics/BestWorstTrades";
-import WinRateByMonth from "@/components/analytics/WinRateByMonth";
-import CohortAnalysis from "@/components/analytics/CohortAnalysis";
-import RMultipleDistribution from "@/components/analytics/RMultipleDistribution";
+import { Button } from "../components/ui/button";
+import ExecutiveSummaryCards from "../components/analytics/ExecutiveSummaryCards";
+import KeyInsightsCard from "../components/analytics/KeyInsightsCard";
+import AdvancedMetricsGrid from "../components/analytics/AdvancedMetricsGrid";
+import MonthlyHeatmap from "../components/analytics/MonthlyHeatmap";
+import MarketComparison from "../components/analytics/MarketComparison";
+import ExitReasonTable from "../components/analytics/ExitReasonTable";
+import TimeBasedCharts from "../components/analytics/TimeBasedCharts";
+import TopPerformers from "../components/analytics/TopPerformers";
+import ConsistencyMetrics from "../components/analytics/ConsistencyMetrics";
+import TagPerformance from "../components/analytics/TagPerformance";
+import DisciplineComplianceSection from "../components/analytics/DisciplineComplianceSection";
+import UnderwaterChart from "../components/analytics/UnderwaterChart";
+import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
+import BestWorstTrades from "../components/analytics/BestWorstTrades";
+import WinRateByMonth from "../components/analytics/WinRateByMonth";
+import CohortAnalysis from "../components/analytics/CohortAnalysis";
+import RMultipleDistribution from "../components/analytics/RMultipleDistribution";
 
 // Helper to convert snake_case to camelCase recursively
 const toCamelCase = (obj) => {

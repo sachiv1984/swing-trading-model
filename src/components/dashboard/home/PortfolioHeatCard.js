@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
-import { api } from "@/api/base44Client";
+import { cn } from "../../../lib/utils";
+import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
 
 function heatColor(pct) {
