@@ -8,7 +8,7 @@
   "invoked_utc": "2026-03-11T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-13T00:00:00Z",
+  "last_updated_utc": "2026-03-13T12:00:00Z",
 
   "multi_sprint_note": "Sprint 2 of 2. Sprint 1 execution_state.json is sealed at claude/cycles/2026-03-06__release-v1.9/execution_state.json. This file covers Sprint 2 scope only (EPIC-01, EPIC-02, EPIC-03, EPIC-05 partial).",
 
@@ -18,7 +18,8 @@
       "branch": "exec/2026-03-06__release-v1.9/EPIC-01",
       "pr_number": 55,
       "pr_status": "open",
-      "qa_signed_off": true,
+      "qa_signed_off": false,
+      "qa_evidence_note": "qa_evidence_EPIC-01.md created 2026-03-13 (retroactively — file was missing from prior session). QA sign-off block pending Director of Quality review.",
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
@@ -73,7 +74,8 @@
       "branch": "exec/2026-03-06__release-v1.9/EPIC-02",
       "pr_number": 56,
       "pr_status": "open",
-      "qa_signed_off": true,
+      "qa_signed_off": false,
+      "qa_evidence_note": "qa_evidence_EPIC-02.md created 2026-03-13 (retroactively — file was missing from prior session). QA sign-off block pending Director of Quality review.",
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
@@ -127,7 +129,8 @@
       "status": "done",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-03",
       "pr_number": null,
-      "pr_status": "none",
+      "pr_status": "pending_manual_creation",
+      "pr_note": "gh CLI not available in environment. PR must be created manually: exec/2026-03-06__release-v1.9/EPIC-03 → main, title: [EPIC-03] Add Dashboard Homepage. See §8.4 for body requirements. Update pr_number and pr_status after creation.",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
