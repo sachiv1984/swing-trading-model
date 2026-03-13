@@ -1,9 +1,9 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-03-10
-**Derived from:** `docs/specs/frontend/pages/risk_dashboard.md` v0.1.1; `docs/specs/metrics_definitions.md` v1.6.0
+**Version:** 1.3
+**Last Updated:** 2026-03-13
+**Derived from:** `docs/specs/frontend/pages/risk_dashboard.md` v0.1.1; `docs/specs/metrics_definitions.md` v1.6.0; `docs/specs/frontend/pages/analytics.md` v1.4; `docs/specs/frontend/pages/trade_reflection.md` v0.1; `docs/specs/frontend/pages/dashboard.md` v2.0
 **Sprint:** 2026-03-04__release-v1.8 — ST-04
 **Roadmap item:** §3.4 — Risk Dashboard
 
@@ -342,6 +342,469 @@ When any frontend delivery (in any EPIC branch) changes a component's UI microco
 TEST-GAP-EPIC-01 resolved in v1.9 (ST-11). Mock layer infrastructure delivered; all 17 blocked scenarios automated. See `claude/backlog/backlog.md §10`.
 
 ---
+
+---
+
+## 6. v1.9 Feature Scenarios (ST-12 Phase 2)
+
+**Added:** 2026-03-13 | **Sprint:** 2026-03-06__release-v1.9 Sprint 2 | **ST:** ST-12
+
+These scenarios cover the v1.9 Sprint 2 feature delivery: EPIC-01 (compliance metrics, trade reflection), EPIC-02 (cohort analysis, R-multiple distribution), and EPIC-03 (dashboard homepage). All scenarios are manual acceptance unless marked `[AUTO]`.
+
+**Known deviations affecting v1.9 test execution:**
+
+| Ref | Priority | Affect on test execution |
+|-----|----------|--------------------------|
+| DEV-EPIC02-ST03-01 | P2 | CohortAnalysis.js computes cohort values client-side from trade data, not from GET /analytics/cohort. The displayed cohort table values are correct but sourced from client-side aggregation. QA Lead should verify displayed values match expected cohort calculation but cannot verify they came from the backend endpoint via frontend code inspection alone — use network tab to confirm no GET /analytics/cohort call is made (this is the documented deviation). |
+| DEV-EPIC03-ST05-01 | P3 | When all 5 dashboard endpoints fail, the page shows 5 individual card errors rather than a full-page overlay with Retry. Scenarios SC-DH-10 reflects this accepted behaviour. |
+
+---
+
+### 6.1 Compliance Metrics Scenarios (ST-01 — analytics.md §17)
+
+**Source spec:** `docs/specs/frontend/pages/analytics.md §17`
+**Endpoint:** `GET /analytics/compliance-metrics`
+**Component:** `src/components/analytics/DisciplineComplianceSection.js`
+
+---
+
+#### SC-CM-01 — Compliance metrics panel renders on Performance Analytics page
+
+**Precondition:** Backend returns valid compliance metrics response
+**Steps:**
+1. Navigate to the Performance Analytics page (`/PerformanceAnalytics`)
+2. Scroll to the Discipline & Compliance section
+
+**Expected result:** Panel renders with three metric cards:
+- "Journal Completion Rate" (percentage, 1 decimal place)
+- "Stop-Based Exit Rate" (percentage, 1 decimal place)
+- "Average Position Size" (percentage, 2 decimal places)
+- Each card shows a sub-label "last N trades" where N = trade_count from API response
+
+**Pass criteria:** All three cards visible; values match API response; sub-labels reflect trade_count.
+
+---
+
+#### SC-CM-02 — Compliance metric values match canonical formulas
+
+**Precondition:** Known trade dataset with pre-calculated expected values
+**Steps:**
+1. Inject or confirm trade data where:
+   - 8 of 10 trades have journal notes → journal_completion_rate = 80.0%
+   - 6 of 10 trades exited via stop → stop_exit_rate = 60.0%
+   - Average total_cost / portfolio_value = 5.25% → avg_position_size_pct = 5.25%
+2. Navigate to Performance Analytics, locate Discipline & Compliance section
+
+**Expected result:**
+- Journal Completion Rate: 80.0%
+- Stop-Based Exit Rate: 60.0%
+- Average Position Size: 5.25%
+
+**Pass criteria:** Values exactly match canonical formula output per `metrics_definitions.md §Discipline & Compliance Metrics`.
+
+---
+
+#### SC-CM-03 — Zero trades: all cards show "—"
+
+**Precondition:** Backend returns `{ "trade_count": 0, "journal_completion_rate": 0.0, "stop_exit_rate": 0.0, "avg_position_size_pct": 0.0 }`
+**Steps:** Navigate to Performance Analytics, locate Discipline & Compliance section
+
+**Expected result:** All three cards show "—" (em-dash). No sub-label shown (trade_count = 0).
+
+**Pass criteria:** No numeric values displayed when denominator is zero.
+
+---
+
+#### SC-CM-04 — API error: cards show error state
+
+**Precondition:** `GET /analytics/compliance-metrics` returns 500
+**Steps:**
+1. Mock or block the endpoint to return an error
+2. Navigate to Performance Analytics, scroll to Discipline & Compliance
+
+**Expected result:** Each card shows an error icon (AlertCircle) and "Unable to load" message. No numeric values shown. Other analytics sections unaffected.
+
+**Pass criteria:** Error is contained to the compliance section; page does not crash.
+
+---
+
+### 6.2 Trade Reflection Scenarios (ST-02 — trade_reflection.md v0.1)
+
+**Source spec:** `docs/specs/frontend/pages/trade_reflection.md`
+**Endpoints:** `GET /trades/{trade_id}/reflection`, `POST /trades/{trade_id}/reflection`
+**Component:** `src/components/trades/TradeReflectionModal.js`
+
+---
+
+#### SC-TR-01 — Reflection modal opens on trade exit
+
+**Precondition:** At least one open position visible on Positions page
+**Steps:**
+1. Navigate to Positions page (`/Positions`)
+2. Exit a position (trigger trade close)
+
+**Expected result:** TradeReflectionModal opens automatically after the exit mutation completes. Modal title shows "Trade Reflection — {TICKER}". Trade summary block visible (ticker, entry price, exit price, hold time, exit reason, exit date).
+
+**Pass criteria:** Modal opens post-exit without additional user action.
+
+---
+
+#### SC-TR-02 — Reflection form contains exactly 5 structured prompts
+
+**Precondition:** TradeReflectionModal open
+**Steps:** Inspect the modal contents
+
+**Expected result:** Five textarea fields labelled (per spec §3):
+1. "Why did you enter this trade? What was the setup?"
+2. "What did the trade do well? Was the setup validated?"
+3. "What went wrong or was unexpected?"
+4. "Did you follow your rules? Any impulse decisions?"
+5. "One lesson from this trade."
+
+Each field is optional (placeholder text visible).
+
+**Pass criteria:** Exactly 5 fields present; labels match spec.
+
+---
+
+#### SC-TR-03 — Character counter enforces 500-char limit per field
+
+**Precondition:** TradeReflectionModal open
+**Steps:**
+1. Type exactly 500 characters into any reflection field
+2. Attempt to type a 501st character
+
+**Expected result:** Field accepts 500 characters. 501st character is not accepted. Counter shows "500/500" and changes to amber colouring near the limit.
+
+**Pass criteria:** Hard 500-char limit enforced; counter visible.
+
+---
+
+#### SC-TR-04 — Skip button closes modal without saving
+
+**Precondition:** TradeReflectionModal open with content typed in a field
+**Steps:**
+1. Type text into a reflection field
+2. Click "Skip"
+
+**Expected result:** Modal closes. No API call is made to `POST /trades/{id}/reflection`.
+
+**Pass criteria:** Modal closed; no save request sent (verify via network tab).
+
+---
+
+#### SC-TR-05 — Save button persists reflection via POST
+
+**Precondition:** TradeReflectionModal open
+**Steps:**
+1. Enter text in one or more reflection fields
+2. Click "Save Reflection"
+
+**Expected result:** Loading state shown during save. On success, modal shows "Saved!" state and closes after ~1.2 seconds. Network tab shows `POST /trades/{trade_id}/reflection` with the entered field values.
+
+**Pass criteria:** Reflection saved to backend; modal closes on success.
+
+---
+
+#### SC-TR-06 — Existing reflection pre-populates on re-open
+
+**Precondition:** A reflection has been previously saved for a trade
+**Steps:**
+1. Open the TradeReflection browsing page (`/TradeReflection`)
+2. Locate the trade and open its reflection (or re-trigger the modal for a trade with a saved reflection)
+
+**Expected result:** The five reflection fields are pre-populated with the previously saved values. Fields are editable.
+
+**Pass criteria:** `GET /trades/{trade_id}/reflection` is called; previously saved text populates the fields.
+
+---
+
+#### SC-TR-07 — Trade summary values are backend-sourced (no client-side derivation)
+
+**Precondition:** TradeReflectionModal open for a closed trade
+**Steps:** Inspect the Trade Summary block in the modal
+
+**Expected result:** All 8 summary fields (ticker, entry price, exit price, hold time, R-multiple, exit reason, exit state, exit date) display values from the GET /trades response. R-multiple: if `null`, shows "—" (spec §4 null rule — GET /trades may not return r_multiple). No client-side R computation performed.
+
+**Pass criteria:** r_multiple shown as backend value or "—". No calculated value appears if backend returns null.
+
+---
+
+### 6.3 Cohort Analysis Scenarios (ST-03 — analytics.md §15)
+
+**Source spec:** `docs/specs/frontend/pages/analytics.md §15`
+**Note:** DEV-EPIC02-ST03-01 applies — values are correct but computed client-side from trade data prop, not from GET /analytics/cohort. Verify values match expected cohort calculation; do not expect a GET /analytics/cohort network call.
+**Component:** `src/components/analytics/CohortAnalysis.js`
+
+---
+
+#### SC-CA-01 — Cohort analysis panel renders on Performance Analytics page
+
+**Precondition:** Trade history contains at least 3 different entry months
+**Steps:** Navigate to Performance Analytics; scroll to Cohort Analysis section (§15)
+
+**Expected result:** Panel renders with period toggle (Month/Quarter/Year) defaulting to "Month". Table shows columns: Period, Trades, Win Rate, Avg R, Net P&L. Rows sorted descending by period (most recent first).
+
+**Pass criteria:** Panel visible; table present; default period = Month.
+
+---
+
+#### SC-CA-02 — Period toggle changes cohort grouping
+
+**Precondition:** Trade history spans multiple quarters and years
+**Steps:**
+1. Select "Quarter" from the period toggle
+2. Verify table updates
+3. Select "Year" from the period toggle
+4. Verify table updates
+
+**Expected result:** Rows re-group to show quarterly (Q1 2025, Q4 2024 etc.) or yearly (2025, 2024) cohorts. Trade counts change to reflect new grouping. Period labels match format: "Q1 2025" for quarter, "2025" for year.
+
+**Pass criteria:** Toggle changes grouping; labels and counts update correctly.
+
+---
+
+#### SC-CA-03 — Insufficient data state: fewer than 3 periods
+
+**Precondition:** Trade history spans fewer than 3 distinct entry periods for the selected period type
+**Steps:** Navigate to Performance Analytics with minimal trade data; view Cohort Analysis
+
+**Expected result:** Panel shows message: "Not enough closed trades to show [month/quarter/year] cohorts" (per spec §15).
+
+**Pass criteria:** Insufficient-data message shown; no table rendered.
+
+---
+
+#### SC-CA-04 — Win rate and P&L values are numerically correct
+
+**Precondition:** Known trade dataset:
+- March 2025: 4 trades, 3 winning → win_rate = 75.0%; total P&L = £800
+- February 2025: 2 trades, 1 winning → win_rate = 50.0%; total P&L = −£100
+**Steps:** Navigate to Performance Analytics; locate March 2025 and February 2025 cohort rows
+
+**Expected result:** March 2025 row: Trades=4, Win Rate=75.0%, Net P&L=£800. February 2025 row: Trades=2, Win Rate=50.0%, Net P&L=−£100.
+
+**Pass criteria:** Values match expected calculation.
+
+---
+
+### 6.4 R-Multiple Distribution Scenarios (ST-04 — analytics.md §16)
+
+**Source spec:** `docs/specs/frontend/pages/analytics.md §16`
+**Endpoint:** `GET /analytics/r-multiple-distribution`
+**Component:** `src/components/analytics/RMultipleDistributionBackend.js`
+
+---
+
+#### SC-RM-01 — R-multiple distribution panel renders on Performance Analytics page
+
+**Precondition:** At least 5 closed trades with stop prices available
+**Steps:** Navigate to Performance Analytics; scroll to R-Multiple Distribution section (§16)
+
+**Expected result:** Panel renders with a bar chart showing frequency distribution across 7 R-multiple buckets. Positive buckets (>0R): green bars. Negative buckets (<0R): red bars. Summary row below chart shows 4 stats: Median R, % > 1R, Avg Winner, Avg Loser.
+
+**Pass criteria:** Chart visible; colour coding correct; 4 stat cards below chart.
+
+---
+
+#### SC-RM-02 — Values are backend-sourced (no client-side R computation)
+
+**Precondition:** Developer tools available
+**Steps:**
+1. Navigate to Performance Analytics with at least 5 qualifying trades
+2. Open Network tab in developer tools
+3. Inspect the GET /analytics/r-multiple-distribution response
+4. Compare the displayed chart and stat values with the response payload
+
+**Expected result:** The displayed bucket distribution, median_r, pct_above_1r, avg_winner_r, avg_loser_r exactly match the API response. No R-multiple is computed in the frontend code.
+
+**Pass criteria:** Displayed values match API response 1:1. Hard rule: no client-side R derivation in §16 component.
+
+---
+
+#### SC-RM-03 — Insufficient data state: fewer than 5 qualifying trades
+
+**Precondition:** Fewer than 5 closed trades with stop price data
+**Steps:** Navigate to Performance Analytics; view R-Multiple Distribution section
+
+**Expected result:** Panel shows message: "Close at least 5 trades to see R-multiple distribution." (per spec §16). No chart rendered.
+
+**Pass criteria:** Threshold message shown; chart absent.
+
+---
+
+#### SC-RM-04 — R-multiple formula matches canonical spec
+
+**Precondition:** Known trade: entry_price=£10.00, exit_price=£13.00, initial_stop_price=£8.00 → expected R = (13-10)/(10-8) = 1.5R
+**Steps:**
+1. Ensure the above trade exists in trade history with stop data
+2. View R-Multiple Distribution; check which bucket the trade falls in (expected: "+1R to +2R")
+3. Verify summary stats reflect this trade's R value
+
+**Expected result:** Trade falls in the "+1R to +2R" bucket. Median R and avg_winner_r reflect 1.5 if this is the only qualifying trade. Backend formula used (no client-side computation).
+
+**Pass criteria:** Trade lands in correct bucket; R value = 1.5.
+
+---
+
+### 6.5 Dashboard Homepage Scenarios (ST-05 — dashboard.md v2.0)
+
+**Source spec:** `docs/specs/frontend/pages/dashboard.md` v2.0
+**Component:** `src/pages/DashboardHome.js`; `src/components/dashboard/home/`
+
+---
+
+#### SC-DH-01 — Dashboard is the landing page (route `/`)
+
+**Precondition:** Application loaded fresh
+**Steps:** Navigate to application root (`/` or app entry URL)
+
+**Expected result:** DashboardHome page renders. URL is `/` or the app root. Page title shows "Dashboard" heading.
+
+**Pass criteria:** DashboardHome renders at app entry; no redirect to another page.
+
+---
+
+#### SC-DH-02 — All 5 data cards render with live data
+
+**Precondition:** All backend endpoints reachable; at least one open position and recent signal
+**Steps:** Navigate to Dashboard; wait for data to load
+
+**Expected result:** Five cards visible:
+1. Open Positions — shows open position count with profitable/losing/grace breakdown
+2. Portfolio Heat — shows heat percentage with colour coding (green <15%, amber 15–25%, red >25%)
+3. In Grace Today — shows count of positions in grace period
+4. Signal Status — shows today's signal status
+5. Recent Activity — shows recent trade activity
+
+**Pass criteria:** All 5 cards loaded with data; loading spinners resolved.
+
+---
+
+#### SC-DH-03 — Cards fetch independently (no shared endpoint)
+
+**Precondition:** Developer tools available
+**Steps:**
+1. Navigate to Dashboard
+2. Open Network tab; observe API calls made on load
+
+**Expected result:** At minimum, the following endpoints are called independently:
+- `GET /positions` (Open Positions card)
+- `GET /portfolio` (Portfolio Heat card)
+- One endpoint for signals
+- No composite `GET /dashboard/summary` endpoint called (engineering decision: individual calls only per PR notes)
+
+**Pass criteria:** Individual endpoint calls observed; no composite endpoint.
+
+---
+
+#### SC-DH-04 — Individual card error does not break other cards
+
+**Precondition:** One endpoint (e.g. `GET /positions`) blocked to return 500
+**Steps:**
+1. Mock or block `GET /positions` to return an error
+2. Navigate to Dashboard
+3. Observe all 5 cards
+
+**Expected result:** Open Positions card shows an error state ("Unable to load" or equivalent from DashboardCard). All other 4 cards load normally with data.
+
+**Pass criteria:** Error is isolated to the affected card; remaining cards unaffected.
+
+---
+
+#### SC-DH-05 — Portfolio Heat card colour coding
+
+**Precondition:** Backend returns known heat values
+**Steps:**
+1. Set portfolio_heat_percent = 8% (expected: green, "Heat within safe range")
+2. Set portfolio_heat_percent = 20% (expected: amber, "Heat elevated — monitor closely")
+3. Set portfolio_heat_percent = 30% (expected: red, "Heat critical — review positions")
+
+**Expected result per step:** Correct colour applied (emerald-400 / amber-400 / rose-400) and correct descriptive text.
+
+**Pass criteria:** Three heat bands displayed correctly per spec.
+
+---
+
+#### SC-DH-06 — Click navigation: Open Positions card links to Positions page
+
+**Precondition:** Dashboard loaded with data
+**Steps:** Click the Open Positions card
+
+**Expected result:** Browser navigates to the Positions page (`/Positions`).
+
+**Pass criteria:** Navigation occurs; Positions page renders.
+
+---
+
+#### SC-DH-07 — Click navigation: Portfolio Heat card links to Risk Dashboard
+
+**Precondition:** Dashboard loaded with data
+**Steps:** Click the Portfolio Heat card
+
+**Expected result:** Browser navigates to the Risk Dashboard page (`/RiskDashboard`).
+
+**Pass criteria:** Navigation occurs; Risk Dashboard page renders.
+
+---
+
+#### SC-DH-08 — Responsive layout: 3-card row + 2-card row
+
+**Precondition:** Browser at desktop width (≥768px)
+**Steps:** Navigate to Dashboard; observe card layout
+
+**Expected result:** Top row: 3 cards (Open Positions, Portfolio Heat, In Grace Today). Bottom row: 2 cards (Signal Status, Recent Activity). Cards fill available width.
+
+**Pass criteria:** 3+2 card grid layout at desktop width.
+
+---
+
+#### SC-DH-09 — All API calls go through api.* (no direct fetch)
+
+**Precondition:** Source code inspection
+**Steps:** Review src/pages/DashboardHome.js and src/components/dashboard/home/*.js
+
+**Expected result:** All API calls use `api.*` methods from base44Client.js (which routes through `doFetch`). No direct `fetch()` or `axios` calls in dashboard components.
+
+**Pass criteria:** api.* pattern confirmed in all 5 card components.
+
+---
+
+#### SC-DH-10 — All endpoints failed: 5 individual card errors shown (DEV-EPIC03-ST05-01)
+
+**Precondition:** All 5 dashboard endpoints blocked to return errors
+**Steps:**
+1. Mock all dashboard endpoints to return 500
+2. Navigate to Dashboard
+
+**Expected result:** Each of the 5 cards shows its individual error state. A "Retry" button is present in the page (per implementation: hidden in `<div className="hidden">`; not a full-page overlay). This is the accepted P3 behaviour per DEV-EPIC03-ST05-01.
+
+**Note:** Spec §5 canonical requirement is a full-page error overlay with prominent Retry button. The hidden retry implementation is an accepted P3 deviation for v1.9. Scenario passes against implemented (not canonical) behaviour.
+
+**Pass criteria:** 5 individual card errors visible; no full-page overlay (expected per deviation). Retry handler present in DOM.
+
+---
+
+### 5.7 v1.9 Automated Coverage Plan
+
+The following v1.9 scenarios are candidates for Playwright automation in a future sprint (extending `tests/e2e/`):
+
+| Scenario | Automation status | Notes |
+|----------|------------------|-------|
+| SC-CM-01 | Candidate | Requires analytics page mock for compliance-metrics endpoint |
+| SC-CM-03 | Candidate | Mock empty response |
+| SC-CM-04 | Candidate | Mock 500 error |
+| SC-TR-01 | Candidate | Requires Positions page + exitMutation trigger |
+| SC-TR-04 | Candidate | Simple: open modal, click Skip, verify no POST |
+| SC-DH-01 | Candidate | Simple: navigate to `/`, assert heading |
+| SC-DH-04 | Candidate | Mock one endpoint error, assert others load |
+| SC-DH-10 | Candidate | Mock all errors, assert 5 card errors |
+
+Manual-only (business logic verification):
+- SC-CM-02, SC-TR-02, SC-TR-03, SC-TR-05, SC-TR-06, SC-TR-07 (require real trade data or complex form interaction)
+- SC-CA-01 through SC-CA-04 (client-side cohort calculation — values depend on trade data)
+- SC-RM-01 through SC-RM-04 (R-multiple values — backend numeric verification)
+- SC-DH-02, SC-DH-05, SC-DH-06, SC-DH-07, SC-DH-08, SC-DH-09
 
 ---
 
