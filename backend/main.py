@@ -83,6 +83,8 @@ from services import (
     get_performance_history,
     # Trade service
     get_trade_history_with_stats,
+    get_reflection,
+    save_reflection,
     # Cash service
     create_transaction,
     get_transaction_history,
@@ -362,6 +364,65 @@ def get_trades_endpoint():
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+
+# ---------------------------------------------------------------------------
+# Trade reflection endpoints — ST-02, EPIC-01, v1.9
+# Spec: docs/specs/frontend/pages/trade_reflection.md §7
+# Data model: docs/specs/data_model.md §v1.8
+# ---------------------------------------------------------------------------
+
+class ReflectionRequest(BaseModel):
+    trade_rationale: Optional[str] = None
+    what_worked: Optional[str] = None
+    what_didnt_work: Optional[str] = None
+    discipline_assessment: Optional[str] = None
+    key_takeaway: Optional[str] = None
+
+
+@app.get("/trades/{trade_id}/reflection")
+def get_trade_reflection_endpoint(trade_id: str):
+    """
+    GET /trades/{trade_id}/reflection
+
+    Retrieve the saved reflection for a closed trade.
+    Returns 404 if no reflection has been saved yet.
+    Spec: trade_reflection.md §7
+    """
+    try:
+        reflection = get_reflection(trade_id)
+        if reflection is None:
+            raise HTTPException(status_code=404, detail="No reflection found for this trade")
+        return {"status": "ok", "data": reflection}
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/trades/{trade_id}/reflection")
+def save_trade_reflection_endpoint(trade_id: str, request: ReflectionRequest):
+    """
+    POST /trades/{trade_id}/reflection
+
+    Create or update (upsert) the reflection for a closed trade.
+    All five fields are optional — any subset (including all null) is valid.
+    Returns 404 if trade_id does not exist in trade_history.
+    Spec: trade_reflection.md §7
+    """
+    try:
+        data = request.model_dump()
+        reflection = save_reflection(trade_id, data)
+        return {"status": "ok", "data": reflection}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/signals/generate")
 def generate_signals_endpoint(

@@ -374,6 +374,35 @@ export const base44 = {
           method: 'POST',
         }),
     },
+
+    // TradeReflection: lists closed trades (for browsing page); filter loads per-trade reflection
+    TradeReflection: {
+      list: async () => {
+        const result = await doFetch('/trades');
+        const trades = result?.trades || [];
+        return trades.map((t) => ({
+          id: t.id,
+          trade_id: t.id,
+          ticker: t.ticker,
+          market: t.market,
+          entry_price: t.entry_price,
+          exit_price: t.exit_price,
+          exit_reason: t.exit_reason,
+          exit_date: t.exit_date,
+          hold_days: t.holding_days,
+          r_multiple: t.r_multiple ?? null,
+          pnl: t.pnl,
+        }));
+      },
+      filter: async ({ trade_id }) => {
+        try {
+          const data = await doFetch(`/trades/${trade_id}/reflection`);
+          return data ? [{ ...data, id: trade_id }] : [];
+        } catch {
+          return [];
+        }
+      },
+    },
   },
 };
 
@@ -409,6 +438,11 @@ export const api = {
 
   trades: {
     list: async () => doFetch('/trades'),
+    getReflection: async (tradeId) => doFetch(`/trades/${tradeId}/reflection`),
+    saveReflection: async (tradeId, data) => doFetch(`/trades/${tradeId}/reflection`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   },
 
   settings: {
@@ -434,6 +468,11 @@ export const api = {
     getTransactions: async (order = 'DESC') =>
       doFetch(`/cash/transactions?order=${order}`),
     getSummary: async () => doFetch('/cash/summary'),
+  },
+
+  analytics: {
+    complianceMetrics: async (period) =>
+      doFetch(`/analytics/compliance-metrics?period=${encodeURIComponent(period)}`),
   },
 };
 

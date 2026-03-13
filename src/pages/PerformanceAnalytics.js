@@ -18,6 +18,7 @@ import UnderwaterChart from "../components/analytics/UnderwaterChart";
 import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
 import BestWorstTrades from "../components/analytics/BestWorstTrades";
 import WinRateByMonth  from "../components/analytics/WinRateByMonth";
+import DisciplineComplianceSection from "../components/analytics/DisciplineComplianceSection";
 
 
  // ✅ Helper to convert snake_case to camelCase recursively
@@ -418,6 +419,11 @@ export default function PerformanceAnalytics() {
      <WinRateByMonth monthlyData={analyticsData?.monthlyData || []} />
      <ConsistencyMetrics metrics={analyticsData?.consistencyMetrics || {}} />
       <TagPerformance trades={analyticsData?.tradesForCharts || []} />
+
+     {/* Component 17 — v1.9 ST-01: Discipline & Compliance
+         Source: GET /analytics/compliance-metrics. Spec: analytics.md §17.
+         Metrics canonical per metrics_definitions.md v1.7.0. */}
+     <DisciplineComplianceSection period={timePeriod} />
     </div>
   );
 }
