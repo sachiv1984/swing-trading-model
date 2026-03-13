@@ -2,6 +2,7 @@ export const createPageUrl = (pageName) => {
   // Routes must match the keys in pages.config.js exactly
   const routes = {
     Dashboard: '/',
+    DashboardHome: '/',
     Positions: '/Positions',
     Signals: '/Signals',  
     TradeEntry: '/TradeEntry',

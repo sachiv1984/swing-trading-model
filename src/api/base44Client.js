@@ -450,6 +450,8 @@ export const api = {
       doFetch(`/analytics/cohort?period=${encodeURIComponent(period)}`),
     rMultipleDistribution: async () =>
       doFetch('/analytics/r-multiple-distribution'),
+    complianceMetrics: async () =>
+      doFetch('/analytics/compliance-metrics'),
   },
 
   market: {
@@ -483,11 +485,6 @@ export const api = {
     getTransactions: async (order = 'DESC') =>
       doFetch(`/cash/transactions?order=${order}`),
     getSummary: async () => doFetch('/cash/summary'),
-  },
-
-  analytics: {
-    complianceMetrics: async (period) =>
-      doFetch(`/analytics/compliance-metrics?period=${encodeURIComponent(period)}`),
   },
 };
 
