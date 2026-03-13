@@ -9,8 +9,8 @@ All functions are independent of FastAPI for maximum testability.
 import csv
 import io
 
-from typing import Dict, List
-from database import get_portfolio, get_trade_history
+from typing import Dict, List, Optional
+from database import get_portfolio, get_trade_history, get_trade_reflection, upsert_trade_reflection
 from utils.formatting import decimal_to_float
 
 
@@ -136,3 +136,69 @@ def build_trade_history_csv(portfolio_id: str) -> str:
         writer.writerow(row)
 
     return output.getvalue()
+
+
+# ---------------------------------------------------------------------------
+# Trade reflection service — ST-02, EPIC-01, v1.9
+# Spec: docs/specs/frontend/pages/trade_reflection.md §7
+# ---------------------------------------------------------------------------
+
+MAX_REFLECTION_FIELD_LENGTH = 500  # per trade_reflection.md §5
+
+
+def _validate_reflection_fields(data: Dict) -> None:
+    """Raise ValueError if any reflection text field exceeds the 500-char limit."""
+    fields = ("trade_rationale", "what_worked", "what_didnt_work",
+              "discipline_assessment", "key_takeaway")
+    for field in fields:
+        value = data.get(field)
+        if value and len(value) > MAX_REFLECTION_FIELD_LENGTH:
+            raise ValueError(
+                f"Field '{field}' exceeds {MAX_REFLECTION_FIELD_LENGTH} characters "
+                f"({len(value)} provided)."
+            )
+
+
+def _serialise_reflection(row: Dict) -> Dict:
+    """Convert DB row to API-safe dict (stringify UUIDs and datetimes)."""
+    return {
+        "id": str(row["id"]),
+        "trade_id": str(row["trade_id"]),
+        "trade_rationale": row.get("trade_rationale"),
+        "what_worked": row.get("what_worked"),
+        "what_didnt_work": row.get("what_didnt_work"),
+        "discipline_assessment": row.get("discipline_assessment"),
+        "key_takeaway": row.get("key_takeaway"),
+        "created_at": str(row["created_at"]) if row.get("created_at") else None,
+        "updated_at": str(row["updated_at"]) if row.get("updated_at") else None,
+    }
+
+
+def get_reflection(trade_id: str) -> Optional[Dict]:
+    """
+    Return the saved reflection for a trade, or None if none exists.
+
+    Raises:
+        ValueError: never — absence of a reflection is not an error at this layer.
+    """
+    row = get_trade_reflection(trade_id)
+    return _serialise_reflection(row) if row else None
+
+
+def save_reflection(trade_id: str, data: Dict) -> Dict:
+    """
+    Create or update the reflection for a closed trade (upsert).
+
+    Args:
+        trade_id: UUID of the trade_history record.
+        data: dict with any subset of the five reflection text fields.
+
+    Returns:
+        Serialised reflection dict.
+
+    Raises:
+        ValueError: if trade not found, or a field exceeds 500 chars.
+    """
+    _validate_reflection_fields(data)
+    row = upsert_trade_reflection(trade_id, data)
+    return _serialise_reflection(row)

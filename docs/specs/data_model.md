@@ -498,7 +498,59 @@ FROM settings;
 
 ## Planned Future Schema Changes
 
-### v1.8 — Alerts (Planned)
+### v1.8 — Trade Reflections (v1.9, EPIC-01 ST-02)
+
+One reflection record per closed trade. Upsert model — a reflection may be saved once and updated; skip leaves no record. Linked to `trade_history` by UUID.
+
+```sql
+CREATE TABLE trade_reflections (
+    id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    trade_id              UUID NOT NULL REFERENCES trade_history(id) ON DELETE CASCADE,
+    trade_rationale       TEXT,
+    what_worked           TEXT,
+    what_didnt_work       TEXT,
+    discipline_assessment TEXT,
+    key_takeaway          TEXT,
+    created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_trade_reflections_trade UNIQUE (trade_id)
+);
+
+CREATE INDEX idx_trade_reflections_trade ON trade_reflections(trade_id);
+```
+
+#### Field definitions
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| trade_id | UUID | NO | FK to `trade_history.id`. Unique — one reflection per trade. |
+| trade_rationale | TEXT | YES | "Why did you enter this trade? What was the setup?" |
+| what_worked | TEXT | YES | "What did the trade do well?" |
+| what_didnt_work | TEXT | YES | "What went wrong or was unexpected?" |
+| discipline_assessment | TEXT | YES | "Did you follow your rules?" |
+| key_takeaway | TEXT | YES | "One lesson from this trade." |
+| created_at | TIMESTAMP | NO | First save timestamp |
+| updated_at | TIMESTAMP | NO | Last save timestamp (equals created_at on first save) |
+
+#### Design decisions
+
+- **1:1 via UNIQUE constraint** — `UNIQUE (trade_id)` enforces one reflection per trade at the DB level. Backend should use `INSERT … ON CONFLICT (trade_id) DO UPDATE SET …, updated_at = NOW()`.
+- **All five reflection fields nullable** — spec §6 permits submission with any subset, including all empty.
+- **No portfolio FK** — derivable via `trade_history.portfolio_id`; omitted to keep the table lean.
+- **`ON DELETE CASCADE`** — if the trade history record is deleted, its reflection is deleted with it.
+- **Max lengths not enforced at DB level** — spec §5 states 500 chars per field; enforce at API validation layer to avoid migration overhead if limits change.
+
+#### Required endpoints (to be documented in `docs/specs/api_contracts/trade_endpoints.md`)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/trades/{trade_id}/reflection` | Create or update reflection (upsert). |
+| GET | `/trades/{trade_id}/reflection` | Retrieve existing reflection. Returns 404 if none saved yet. |
+
+---
+
+### v1.9 — Alerts (Planned)
 
 ```sql
 CREATE TABLE alerts (
@@ -527,6 +579,6 @@ ALTER TABLE portfolios ADD COLUMN user_id UUID REFERENCES users(id);
 
 ---
 
-**Document Version:** 1.7
+**Document Version:** 1.8
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-02-19
+**Last Review:** 2026-03-11

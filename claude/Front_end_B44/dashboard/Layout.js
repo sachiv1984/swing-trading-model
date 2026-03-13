@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { createPageUrl } from "./utils";
+import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LayoutDashboard, 
@@ -19,8 +19,8 @@ import {
   Activity,
   ShieldAlert
 } from "lucide-react";
-import { Button } from "./components/ui/button";
-import { cn } from "./lib/utils";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navItems = [
-    { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
+    { name: "Dashboard", icon: LayoutDashboard, page: "DashboardHome" },
     { name: "Positions", icon: Briefcase, page: "Positions" },
     { name: "Signals", icon: Zap, page: "Signals" },
     { name: "Trade Entry", icon: PlusCircle, page: "TradeEntry" },

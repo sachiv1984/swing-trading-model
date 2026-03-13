@@ -15,6 +15,8 @@ Global response envelopes, error shape, and conventions are defined in **convent
 
 - [GET /trades](#get-trades)
 - [GET /trades/export/csv](#get-tradesexportcsv)
+- [GET /trades/{trade_id}/reflection](#get-tradestrade_idreflection)
+- [POST /trades/{trade_id}/reflection](#post-tradestrade_idreflection)
 
 ---
 
@@ -171,9 +173,89 @@ Errors use the standard error envelope from **conventions.md**. Note: on error, 
 
 ---
 
+## GET /trades/{trade_id}/reflection
+
+**Purpose:** Retrieve an existing reflection for a closed trade. Used to pre-populate the reflection modal when a user re-opens it.
+
+**Method & Path:** `GET /trades/{trade_id}/reflection`
+
+### Path parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| trade_id | UUID string | Yes | `id` from `trade_history` |
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "id": "uuid",
+    "trade_id": "uuid",
+    "trade_rationale": "string | null",
+    "what_worked": "string | null",
+    "what_didnt_work": "string | null",
+    "discipline_assessment": "string | null",
+    "key_takeaway": "string | null",
+    "created_at": "ISO-8601 string",
+    "updated_at": "ISO-8601 string"
+  }
+}
+```
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 404 | No reflection saved for this trade, or trade_id not found |
+| 500 | Database error |
+
+---
+
+## POST /trades/{trade_id}/reflection
+
+**Purpose:** Create or update (upsert) the reflection for a closed trade. All five reflection fields are optional — any subset, including all null, is accepted. Idempotent — repeated calls update the existing record.
+
+**Method & Path:** `POST /trades/{trade_id}/reflection`
+
+### Path parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| trade_id | UUID string | Yes | `id` from `trade_history` |
+
+### Request body
+
+```json
+{
+  "trade_rationale": "string | null",
+  "what_worked": "string | null",
+  "what_didnt_work": "string | null",
+  "discipline_assessment": "string | null",
+  "key_takeaway": "string | null"
+}
+```
+
+All fields optional. Max 500 characters each (validated at API layer; error 422 if exceeded via standard validation, or 404 ValueError path).
+
+### Response (200)
+
+Same shape as GET response — returns the full saved reflection after upsert.
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 404 | trade_id not found in trade_history |
+| 500 | Database error |
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
 | 1.8.4 | 2026-02-17 | Initial spec — GET /trades, GET /trades/export/csv. Both `pnl_pct` and `pnl_percent` fields documented for backward compatibility |
 | 1.9.0 | 2026-03-02 | S2-08 (EPIC-06/BLG-TECH-09): Backend fix — `holding_days` added to `formatted_trades` dict in `trade_service.py` (was present in DB and spec but absent from API response). `GET /trades` now returns `holding_days` per spec. OBS-QWB-R3-01 resolved. TASK-28/29/30 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |
+| 2.0.0 | 2026-03-11 | ST-02 (EPIC-01, v1.9): Add GET /trades/{trade_id}/reflection and POST /trades/{trade_id}/reflection. Schema: trade_reflections table (data_model.md v1.8). Spec: trade_reflection.md §7. |

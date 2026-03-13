@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-03-06
+**Version:** 1.4
+**Last Updated:** 2026-03-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.9 additions):** docs/design/2026-03-06__release-v1.9/
 
@@ -515,10 +515,26 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 ---
 
+## Known Deviations
+
+### DEV-EPIC02-ST03-01 — Cohort Analysis: client-side cohort computation instead of GET /analytics/cohort
+
+**Story:** ST-03 — Cohort Analysis
+**Description:** `CohortAnalysis.js` receives a `trades` prop from `PerformanceAnalytics.js` and computes cohort groupings, win rates, avg R-multiple, and net P&L entirely client-side via `buildCohorts()`. The component does not call `GET /analytics/cohort?period=` despite that endpoint being implemented and wired in `base44Client.js`.
+**Canonical requirement:** analytics.md §15 hard rule — "All values sourced from backend. No client-side R-multiple computation in this component." API Dependency section lists `GET /analytics/cohort?period={month|quarter|year}` as the source for §15.
+**Priority:** P2 — spec hard-rule violation. Values are numerically correct (same formula); the deviation is architectural (wrong computation layer).
+**Impact:** avg_r_multiple in the cohort table uses client-side R computation from `stop_price`, which may be `null` for trades without stop data (returns `null` avg R). Backend endpoint uses `initial_stop` via LEFT JOIN and has the same null-return behaviour, so displayed values are consistent. Regression risk if trade data shape changes server-side and frontend isn't updated.
+**Target resolution release:** v1.10
+**Owner:** Head of Engineering + Base44 Frontend Prompt Owner
+**Backlog reference:** BLG to be raised at next roadmap rebalance — CohortAnalysis.js should call api.analytics.cohort(period) and render the backend response directly.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.4 | 2026-03-13 | QA review (v1.9 Sprint 2): File deviation DEV-EPIC02-ST03-01 — CohortAnalysis.js uses client-side computation instead of GET /analytics/cohort. P2. Director of Quality sign-off. |
 | 1.3 | 2026-03-06 | v1.9 additions: §15 Cohort Analysis (ST-03), §16 R-Multiple Distribution Backend (ST-04), §17 Discipline & Compliance (ST-01). Updated API Dependency section to list additional endpoints. Updated Purpose & User Goals. Updated Component Rendering Order to items 15–17. Governance header upgraded to Class 1 compliant format. Design sources: docs/design/2026-03-06__release-v1.9/. |
 | 1.2 | 2026-02-26 | F-02 fix: correct Win Rate by Month tooltip field name from `total_trades` to `trade_count` to match `analytics_endpoints.md` monthly_data schema. QA finding A-QA-01. |
 | 1.1 | 2026-02-25 | BLG-FEAT-04: Add Best / Worst Trades component spec (R-multiple ranking, top 3 / bottom 3, trades_for_charts source). BLG-FEAT-05: Add Win Rate by Month bar chart spec (monthly_data source, 50% reference line, colour-coded bars). Components inserted at positions 11 and 12 in rendering order. QWB D3. |

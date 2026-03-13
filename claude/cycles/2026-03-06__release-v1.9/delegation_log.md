@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-11
 
 ---
 
@@ -430,22 +430,279 @@
 
 ---
 
-## DEL-20260311-05 — Sprint 2 Status Update
+# Sprint 2 Delegations — 2026-03-11
 
-*Note: DEL-20260311-05 (ST-05 Dashboard Homepage) was appended to this log on main during Sprint 2 execution (2026-03-11). This EPIC-03 branch diverged before that entry was written. Correction note appended here per §7 append-only rule.*
+---
+
+## DEL-20260311-01
+
+- **ST Item:** ST-01 — Canonicalise Basic Compliance Metrics
+- **EPIC:** EPIC-01
+- **Classification:** delegated_backend
+- **Assigned to:** Metrics Definitions & Analytics Owner (spec); Head of Engineering (backend + frontend)
+- **GitHub Issue:** #33
+- **Branch:** exec/2026-03-06__release-v1.9/EPIC-01
+- **Delegated at:** 2026-03-11T00:00:00Z
+- **What is needed:**
+  1. **Spec (Metrics Definitions & Analytics Owner):** Update `docs/specs/metrics_definitions.md` (v1.6.0 → v1.7.0) to add canonical definitions for:
+     - **Journal completion rate:** formula, denominator (trades closed in period), time window
+     - **Stop-based exit rate:** formula, classification rules (what counts as a stop-based exit)
+     - **Average position size as % of portfolio:** formula, snapshot basis (entry day or average?)
+     - **Batch opportunity:** include cohort metric definitions (for ST-03) and R-multiple formula (for ST-04) in the same v1.7.0 increment to avoid multiple version bumps.
+  2. **Backend (Head of Engineering):** Implement `GET /analytics/compliance-metrics` endpoint returning the three scalar metrics. All values computed server-side per `metrics_definitions.md` canonical formulas. Documented in `docs/specs/api_contracts/` and added to `docs/reference/openapi.yaml`.
+  3. **Frontend (Base44 Frontend Prompt Owner):** Implement the Discipline & Compliance panel per `analytics.md §17` — three stat cards sourced from `GET /analytics/compliance-metrics`. Route: Performance Analytics page, section §17.
+- **Spec reference:** `docs/specs/metrics_definitions.md` (all three metric formulas); `docs/specs/frontend/pages/analytics.md#§17` (frontend component spec); `docs/specs/api_contracts/` (endpoint contract)
+- **Base44 prompt draft:** See DEL-20260311-01-FE below (frontend component only; backend must deploy first or mock must be available)
+- **Unblock criteria:** Commit `[EPIC-01][ST-01] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-01` containing: metrics_definitions.md update + backend endpoint + frontend panel. Acceptance criteria in `stage4_backlog_slice.md#ST-01` verified by Director of Quality.
+- **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-01`
+- **Status:** Unblocked — backend c57ed6f (2026-03-11) + frontend c978dba (2026-03-11). Base44 components staged in claude/Front_end_B44/ST01/ then integrated with corrections (field name, value scaling, import paths, sub-labels). DisciplineComplianceSection.js at src/components/analytics/. All AC met. QA gate at EPIC level.
+
+### DEL-20260311-01-FE — Base44 Prompt Draft (ST-01 Frontend)
+
+**Context:** The Performance Analytics page (`src/pages/PerformanceAnalytics.js` or equivalent) currently shows analytics from `GET /analytics/metrics`. A new section, Discipline & Compliance (§17), is being added to display three compliance scalar metrics sourced from a new backend endpoint.
+
+**The change:** Add a new section "Discipline & Compliance" to the Performance Analytics page. This section contains three stat cards:
+1. **Journal Completion Rate** — % of closed trades with a completed trade reflection entry (formatted as `X%`)
+2. **Stop-Based Exit Rate** — % of closed trades exited via stop loss (formatted as `X%`)
+3. **Average Position Size** — average position size as % of portfolio (formatted as `X%`)
+
+**API contract:**
+- Endpoint: `GET /analytics/compliance-metrics` (query param: `?period={period}` — same period as the page-level filter)
+- Response shape (canonical per `metrics_definitions.md v1.7.0`):
+  ```json
+  { "status": "ok", "data": { "journal_completion_rate": 0.72, "stop_based_exit_rate": 0.55, "avg_position_size_pct": 0.043 } }
+  ```
+- Values are decimals (0–1 or small float); display as percentages with 1 decimal place
+- Error: standard error envelope from `docs/specs/api_contracts/conventions.md §13`
+
+**Behaviour rules:**
+- Section renders below existing analytics content on the Performance Analytics page
+- Section title: "Discipline & Compliance"
+- Three stat cards side-by-side (or stacked on mobile): label + formatted value
+- If API returns `has_enough_data: false`: show "Not enough data" message in place of values
+- If API call fails: show per-card error state — do not block other page sections
+- Page-level period filter applies to this section (pass `period` param)
+- No client-side calculation — all values from backend
+
+**Non-functional rules:**
+- API call uses `api.*` or `doFetch` from `src/api/base44Client.js` — never raw fetch
+- Consistent styling with existing analytics stat cards on the page
+- No new routes; no navigation changes
+
+**Expected outcome:** Performance Analytics page has a "Discipline & Compliance" section at the bottom showing journal completion rate, stop-based exit rate, and average position size as stat cards. Values update when the period selector changes.
+
+---
+
+## DEL-20260311-02
+
+- **ST Item:** ST-02 — Structured Trade Reflection Template
+- **EPIC:** EPIC-01
+- **Classification:** delegated_backend
+- **Assigned to:** Head of Engineering (backend data model + API); Base44 Frontend Prompt Owner (frontend form — after backend)
+- **GitHub Issue:** #34
+- **Branch:** exec/2026-03-06__release-v1.9/EPIC-01
+- **Delegated at:** 2026-03-11T00:00:00Z
+- **What is needed:**
+  1. **Pre-condition:** ST-01 must be complete (metrics_definitions.md canonical) before implementation begins. Data Model & Domain Schema Owner must confirm `trade_reflections` data model schema before backend work begins — confirm field names, types, storage model (linked to trade record by trade ID).
+  2. **Backend (Head of Engineering):** New data model and endpoint for storing/retrieving trade reflections per `docs/specs/frontend/pages/trade_reflection.md`. Required: a POST endpoint to submit a reflection (linked to trade_id) and a GET endpoint to retrieve a reflection for a trade. All new endpoints documented in `docs/specs/api_contracts/` and added to `docs/reference/openapi.yaml`.
+  3. **Frontend (Base44 Frontend Prompt Owner):** Implement the trade reflection modal per `docs/specs/frontend/pages/trade_reflection.md v0.1` — full spec is locked. Backend must be deployed or mock available before frontend implementation begins.
+- **Spec reference:** `docs/specs/frontend/pages/trade_reflection.md` (complete locked spec v0.1); data model schema (to be confirmed by Data Model owner)
+- **Base44 prompt draft:** See DEL-20260311-02-FE below
+- **Unblock criteria:** Commit `[EPIC-01][ST-02] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-01`. All acceptance criteria in `stage4_backlog_slice.md#ST-02` met. Data model owner schema confirmed before backend begins.
+- **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-01`
+- **Status:** Unblocked — backend d987c09 (2026-03-11) + frontend 0c22062 (2026-03-11). Backend: GET+POST /trades/{id}/reflection, database.py, trade_service.py, trade_endpoints.md v2.0.0, openapi.yaml v1.9.1. Frontend: TradeReflectionModal.js integrated with corrections vs B44 output (removed frontend R-multiple calc, removed frontend hold_days calc, added Exit State field, replaced base44.entities calls with api.trades methods). All AC met. QA gate at EPIC level (PR #55).
+
+### DEL-20260311-02-FE — Base44 Prompt Draft (ST-02 Frontend)
+
+**Context:** The application allows users to close trades (exit positions). After a trade close is confirmed server-side, a structured reflection modal should automatically appear. The full frontend spec is at `docs/specs/frontend/pages/trade_reflection.md v0.1` — implement exactly per spec.
+
+**The change:** After any trade close confirmation (anywhere in the app — Trade History, Risk Dashboard, Positions page), trigger a modal overlay presenting the structured trade reflection form. The form is pre-populated with trade data and contains five reflection prompt fields. Submission stores the reflection server-side. The modal can be skipped.
+
+**API contract:**
+- POST endpoint (to be confirmed by Head of Engineering — store reflection linked to trade_id):
+  ```json
+  POST /trades/{trade_id}/reflection
+  Body: { "what_worked": "...", "what_didnt": "...", "rationale": "...", "discipline": "...", "lesson": "..." }
+  ```
+- GET endpoint: `GET /trades/{trade_id}/reflection` — retrieve existing reflection for pre-population on re-open
+- Pre-populate from trade record: hold time (exit_date − entry_date), R-multiple (if available), exit reason, position state history
+- Error: standard error envelope
+
+**Behaviour rules (per trade_reflection.md v0.1):**
+- Modal opens automatically after trade close success response
+- Five structured reflection fields (per spec §4 — exact labels from spec)
+- Pre-populated fields read-only; reflection prompts are free-text inputs
+- "Save Reflection" submits to backend; "Skip" closes without saving
+- If backend POST fails: show inline error but do not close the modal — allow retry
+- If reflection already exists for this trade: pre-populate reflection fields too
+
+**Non-functional rules:**
+- Modal overlay — no page navigation, no route change
+- API calls via `api.*` or `doFetch` from `src/api/base44Client.js`
+- Consistent modal styling with existing modals in the app
+
+**Expected outcome:** After any trade close, a reflection modal appears pre-populated with trade details, offers five reflection prompts, and submits to the backend on save or dismisses on skip.
+
+---
+
+## DEL-20260311-03
+
+- **ST Item:** ST-03 — Cohort Analysis
+- **EPIC:** EPIC-02
+- **Classification:** delegated_backend
+- **Assigned to:** Head of Engineering (backend query + frontend); Base44 Frontend Prompt Owner (frontend chart)
+- **GitHub Issue:** #35
+- **Branch:** exec/2026-03-06__release-v1.9/EPIC-02
+- **Delegated at:** 2026-03-11T00:00:00Z
+- **What is needed:**
+  1. **Spec batch (with ST-01):** Cohort metric definitions (trade count, win rate, P&L per cohort period) to be added to `metrics_definitions.md` — ideally in the same v1.7.0 increment as ST-01. Metrics Definitions owner to include.
+  2. **Backend (Head of Engineering):** Implement `GET /analytics/cohort?period={month|quarter|year}` endpoint grouping closed trades by entry period. Returns cohort rows per `analytics.md §15` schema. Documented in `docs/specs/api_contracts/` and added to `docs/reference/openapi.yaml`.
+  3. **Frontend (Base44 Frontend Prompt Owner):** Implement Cohort Analysis panel per `analytics.md §15` on the Performance Analytics page. Period selector drives `period` query parameter.
+- **Spec reference:** `docs/specs/frontend/pages/analytics.md#§15` (frontend component spec); `docs/specs/metrics_definitions.md` (cohort metric formulas)
+- **Base44 prompt draft:** See DEL-20260311-03-FE below
+- **Unblock criteria:** Commit `[EPIC-02][ST-03] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-02`. All AC in `stage4_backlog_slice.md#ST-03` met.
+- **Commit format required:** `[EPIC-02][ST-03] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-02`
+- **Status:** Unblocked
+- **Outcome:** Delivered 2026-03-12 by Head of Engineering. Commit `3c91e7b` on `exec/2026-03-06__release-v1.9/EPIC-02`. Backend: `AnalyticsService.calculate_cohort()`, `GET /analytics/cohort?period={month|quarter|year}`, analytics_endpoints.md v1.9.2, openapi.yaml updated. Frontend: `CohortAnalysis.js` — period toggle (Month/Quarter/Year), table (period, trades, win rate, avg R, P&L), loading/error/insufficient states, integrated into `PerformanceAnalytics.js §15`. `api.analytics.cohort()` added to base44Client.js. All AC met. metrics_definitions.md updated to v1.7.0 with Cohort Metrics section.
+
+### DEL-20260311-03-FE — Base44 Prompt Draft (ST-03 Frontend)
+
+**Context:** The Performance Analytics page is being extended with new panels for v1.9. The Cohort Analysis panel (analytics.md §15) groups closed trade performance by entry period (month/quarter/year) so the user can see how performance varies across time cohorts.
+
+**The change:** Add a Cohort Analysis section to the Performance Analytics page. The section shows a table (or grouped display) of closed trade performance grouped by entry cohort period (month, quarter, or year). A period selector (month/quarter/year) controls the grouping. Data sourced from `GET /analytics/cohort?period={month|quarter|year}`.
+
+**API contract:**
+- Endpoint: `GET /analytics/cohort?period={month|quarter|year}`
+- Response shape (per `analytics.md §15`): array of cohort rows, each with: period label, trade count, win rate, avg R-multiple, net P&L (GBP)
+- Rows sorted descending by period (most recent first)
+- Error: standard error envelope
+
+**Behaviour rules (per analytics.md §15):**
+- Period selector: month / quarter / year (distinct from page-level period filter — this controls cohort granularity)
+- Table columns: Period, Trades, Win Rate, Avg R-Multiple, Net P&L (GBP)
+- Insufficient history: show "Not enough closed trades to show [period] cohorts" if fewer than 3 periods available
+- Loading state while fetching
+- No client-side calculation — all values from backend
+
+**Non-functional rules:**
+- API call via `api.*` or `doFetch` — never raw fetch
+- Consistent table styling with existing analytics tables
+- No new routes
+
+**Expected outcome:** Performance Analytics page has a Cohort Analysis section with a period selector (month/quarter/year) and a table showing closed trade performance grouped by entry cohort. Values update when cohort period selector changes.
+
+---
+
+## DEL-20260311-04
+
+- **ST Item:** ST-04 — R-Multiple Distribution Report
+- **EPIC:** EPIC-02
+- **Classification:** delegated_backend
+- **Assigned to:** Metrics Definitions & Analytics Owner (R-multiple formula — batch with ST-01); Head of Engineering (backend endpoint + frontend)
+- **GitHub Issue:** #36
+- **Branch:** exec/2026-03-06__release-v1.9/EPIC-02
+- **Delegated at:** 2026-03-11T00:00:00Z
+- **What is needed:**
+  1. **Spec (with ST-01 batch):** R-multiple formula to be canonicalised in `metrics_definitions.md v1.7.0` (batch with ST-01 increment). Formula: R-multiple = (exit_price − entry_price) / (entry_price − stop_price). Sign: positive for wins, negative for losses.
+  2. **Backend (Head of Engineering):** Implement `GET /analytics/r-multiple-distribution` endpoint. Computes R-multiple per closed trade from existing trade data using the canonical formula from `metrics_definitions.md`. Returns distribution data per `analytics.md §16`. Documented in `docs/specs/api_contracts/` and `docs/reference/openapi.yaml`.
+  3. **Frontend (Base44 Frontend Prompt Owner):** Implement R-Multiple Distribution Backend panel per `analytics.md §16` on Performance Analytics page. Note: existing §9 R-multiple visualisation remains; this is the new canonical server-side version (§16).
+- **Spec reference:** `docs/specs/frontend/pages/analytics.md#§16`; `docs/specs/metrics_definitions.md` (R-multiple formula)
+- **Base44 prompt draft:** See DEL-20260311-04-FE below
+- **Unblock criteria:** Commit `[EPIC-02][ST-04] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-02`. All AC in `stage4_backlog_slice.md#ST-04` met.
+- **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-02`
+- **Status:** Unblocked
+- **Outcome:** Delivered 2026-03-12 by Head of Engineering. Commit `3633150` on `exec/2026-03-06__release-v1.9/EPIC-02`. Backend: `AnalyticsService.calculate_r_multiple_distribution()`, `GET /analytics/r-multiple-distribution`, 7 fixed buckets, median_r/pct_above_1r/avg_winner_r/avg_loser_r summary stats. Formula: R=(exit_price−entry_price)/(entry_price−initial_stop_price), server-side only. Min 5 qualifying trades. Frontend: `RMultipleDistributionBackend.js` — bar chart (green positive, red negative), 4-stat summary row, integrated into `PerformanceAnalytics.js §16`. `api.analytics.rMultipleDistribution()` added to base44Client.js. Hard rule enforced: no client-side R computation. All AC met.
+
+### DEL-20260311-04-FE — Base44 Prompt Draft (ST-04 Frontend)
+
+**Context:** The Performance Analytics page has an existing §9 R-Multiple Analysis component that uses client-side calculation. A new §16 R-Multiple Distribution Backend panel is being added using server-side computed values from a dedicated endpoint — this is the canonical version.
+
+**The change:** Add a new "R-Multiple Distribution" section (§16) to the Performance Analytics page. This is a distribution chart/histogram showing the frequency of R-multiple values across all closed trades, using values computed server-side. Source: `GET /analytics/r-multiple-distribution`.
+
+**API contract:**
+- Endpoint: `GET /analytics/r-multiple-distribution`
+- Response shape (per `analytics.md §16`): distribution buckets, e.g. `{ "buckets": [{ "range": "-2 to -1", "count": 5 }, ...], "mean": 0.4, "median": 0.3 }`
+- Error: standard error envelope
+
+**Behaviour rules (per analytics.md §16):**
+- Display as a bar chart or histogram with R-multiple on x-axis, frequency on y-axis
+- Show mean and median as annotations or stat cards alongside the chart
+- Note distinction from §9: §16 uses server-side canonical values; §9 remains as a visualisation aid
+- If insufficient data: show "Not enough closed trades for R-multiple distribution"
+- No client-side recalculation
+
+**Non-functional rules:**
+- API call via `api.*` or `doFetch` — never raw fetch
+- Section label: "R-Multiple Distribution" (canonical metric — server-side)
+- Consistent chart styling with existing analytics charts
+
+**Expected outcome:** Performance Analytics page has a new "R-Multiple Distribution" section (§16) with a distribution chart of R-multiple values from server-side computation. The existing §9 visualisation remains untouched.
+
+---
+
+## DEL-20260311-05
 
 - **ST Item:** ST-05 — Dashboard Homepage / Session Summary
 - **EPIC:** EPIC-03
 - **Classification:** delegated_frontend
-- **Status:** Unblocked — commit `0d1e5fa` pushed to `exec/2026-03-06__release-v1.9/EPIC-03` on 2026-03-13. Base44 delivery integrated. QA evidence log created. EPIC-03 status: done, awaiting QA sign-off.
+- **Assigned to:** Base44 Frontend Prompt Owner
+- **GitHub Issue:** #37
+- **Branch:** exec/2026-03-06__release-v1.9/EPIC-03
+- **Delegated at:** 2026-03-11T00:00:00Z
+- **What is needed:** Implement the Dashboard Homepage per `docs/specs/frontend/pages/dashboard.md v2.0`. This is the root `/` route — the primary entry point. Full spec is locked. Implement five data cards: open positions, portfolio heat, grace period status, market signals, recent trade activity.
+- **Spec reference:** `docs/specs/frontend/pages/dashboard.md` (complete locked spec v2.0)
+- **Base44 prompt draft:**
+
+**Context:** The application currently lands on some default page. The v1.9 Dashboard Homepage (spec: `docs/specs/frontend/pages/dashboard.md v2.0`) is a new root (`/`) page that serves as the primary session summary entry point. Target branch: `exec/2026-03-06__release-v1.9/EPIC-03`.
+
+**The change:** Create the Dashboard Homepage at route `/` (root/home). The page shows five data cards providing an at-a-glance session summary. Each card fetches its data independently. Implement exactly per `dashboard.md v2.0`.
+
+**API contract:**
+- Card 1 — Open Positions: `GET /positions` → count of open positions by state (ACTIVE, GRACE, etc.)
+- Card 2 — Portfolio Heat: `GET /portfolio` → `portfolio_heat_percent` field
+- Card 3 — Grace Period: `GET /portfolio` → positions in grace (grace_days_remaining > 0), next expiry
+- Card 4 — Market Signals: `GET /market/status` → SPY/FTSE regime; `GET /signals` (or market status) → today's signal count
+- Card 5 — Recent Activity: `GET /trades` → last 3–5 trade events (closes, opens, stop updates)
+- Optional composite endpoint `GET /dashboard/summary`: Head of Engineering's decision. If implemented, document in API contracts and openapi.yaml. Must aggregate only — no new computations.
+- All monetary values in GBP.
+
+**Behaviour rules (per dashboard.md v2.0):**
+- Each card fetches its data independently — individual card failure must not break other cards
+- Individual card error state: show error within that card only
+- All endpoints failed: full page error with "Retry" button
+- All loaded: all 5 cards render with live data
+- Page loads on app entry (`/` route)
+
+**Non-functional rules:**
+- API calls via `api.*` or `doFetch` from `src/api/base44Client.js` — never raw fetch
+- Route: `/` (root — home page, replace or update existing landing)
+- Consistent card styling with other pages
+
+**Expected outcome:** Navigating to the app root shows the Dashboard Homepage with 5 data cards. Each card independently shows its live data or an error state. The page is the primary session entry point.
+
+- **Unblock criteria:** Commit `[EPIC-03][ST-05] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-03`. All AC in `stage4_backlog_slice.md#ST-05` met.
+- **Commit format required:** `[EPIC-03][ST-05] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-03`
+- **Status:** Unblocked — commit `0d1e5fa` pushed 2026-03-13. DashboardHome.js + 5 card components integrated. QA signed off (2026-03-13). P3 deviation DEV-EPIC03-ST05-01 accepted.
 
 ---
 
-## DEL-20260311-06 — Sprint 2 Status Update (ST-12)
+## DEL-20260311-06
 
-*Note: DEL-20260311-06 (ST-12) was appended to this log on main during Sprint 2 execution (2026-03-11). Status as of 2026-03-13: all feature EPICs (EPIC-01, EPIC-02, EPIC-03) done. Unblock condition 1 met. Awaiting Director of Quality confirmation scenarios authored.*
-
-- **ST Item:** ST-12 — Canonical Test Scenario Library Phase 2
+- **ST Item:** ST-12 — Canonical Test Scenario Library Phase 2 (v1.9 Features)
 - **EPIC:** EPIC-05
 - **Classification:** delegated_qa
-- **Status:** Pending — feature EPICs complete; awaiting QA authoring confirmation
+- **Assigned to:** Director of Quality
+- **GitHub Issue:** #44
+- **Branch:** exec/2026-03-06__release-v1.9/EPIC-05
+- **Delegated at:** 2026-03-11T00:00:00Z
+- **What is needed:** Author Playwright test scenarios for each v1.9 feature as it is delivered — distributed authoring, one scenario file or section added per EPIC as it merges:
+  - **EPIC-01 scenarios** (after EPIC-01 merges): compliance metrics panel display, journal completion rate value, trade reflection modal trigger + submission, trade reflection skip behaviour
+  - **EPIC-02 scenarios** (after EPIC-02 merges): cohort analysis period selector, R-multiple distribution chart renders, values sourced from backend (not client)
+  - **EPIC-03 scenarios** (after EPIC-03 merges): dashboard homepage loads 5 cards, individual card error state, all-failed state, portfolio heat card value
+  - Playwright test maintenance protocol: `docs/testing/risk_dashboard_scenarios.md §5.5` applies to all new spec files — cross-EPIC microcopy audit obligation documented
+  - HashRouter routing note: all navigation via `page.goto('/#/PageKey')` — NOT `page.goto('/path')`. Preserve header comment in all new spec files.
+- **Spec reference:** `docs/testing/risk_dashboard_scenarios.md` (pattern and maintenance protocol §5.5)
+- **Unblock criteria:** Director of Quality confirms all scenarios in AC authored and have recorded results (PASS/FAIL/BLOCKED) in scenario files. Commit `[EPIC-05][ST-12] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-05`.
+- **Commit format required:** `[EPIC-05][ST-12] <description>` pushed to `exec/2026-03-06__release-v1.9/EPIC-05`
+- **Status:** Unblocked — commit `7a277cc` pushed 2026-03-13. 25 scenarios authored in risk_dashboard_scenarios.md v1.3 (SC-CM-01–04, SC-TR-01–07, SC-CA-01–04, SC-RM-01–04, SC-DH-01–10). Director of Quality sign-off confirmed 2026-03-13.
+

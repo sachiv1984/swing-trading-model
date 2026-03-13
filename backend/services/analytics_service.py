@@ -22,6 +22,7 @@ from collections import Counter, defaultdict
 from datetime import date, timedelta
 from typing import Dict, List, Optional
 import math
+import statistics
 
 
 def _period_to_since_date(period: str) -> Optional[date]:
@@ -437,6 +438,142 @@ class AnalyticsService:
     # ----------------------------------------------------------------
     # consistency_metrics  — derived from monthly_data
     # ----------------------------------------------------------------
+
+    # ----------------------------------------------------------------
+    # calculate_cohort  — groups trades by entry period, computes stats
+    # per metrics_definitions.md v1.7.0 Cohort Metrics section
+    # ----------------------------------------------------------------
+
+    def calculate_cohort(self, trades_with_stop: List[Dict], cohort_period: str) -> Dict:
+        def _cohort_key(entry_date_str):
+            if not entry_date_str:
+                return None
+            try:
+                d = date.fromisoformat(str(entry_date_str)[:10])
+            except (ValueError, TypeError):
+                return None
+            if cohort_period == "month":
+                return f"{d.year}-{d.month:02d}"
+            elif cohort_period == "quarter":
+                q = (d.month - 1) // 3 + 1
+                return f"{d.year}-Q{q:01d}"
+            else:
+                return str(d.year)
+
+        def _period_label(key):
+            if cohort_period == "month":
+                y, m = key.split("-")
+                month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                return f"{month_names[int(m) - 1]} {y}"
+            elif cohort_period == "quarter":
+                y, q = key.split("-")
+                return f"{q} {y}"
+            else:
+                return key
+
+        def _r_multiple(t):
+            ep = t.get("entry_price") or 0
+            sp = t.get("stop_price")
+            xp = t.get("exit_price") or 0
+            if sp is None or ep <= sp:
+                return None
+            denom = ep - sp
+            if denom <= 0:
+                return None
+            return (xp - ep) / denom
+
+        buckets: Dict[str, list] = defaultdict(list)
+        for t in trades_with_stop:
+            key = _cohort_key(t.get("entry_date"))
+            if key:
+                buckets[key].append(t)
+
+        cohorts = []
+        for key in sorted(buckets.keys(), reverse=True):
+            group = buckets[key]
+            wins = [t for t in group if t.get("pnl", 0) > 0]
+            r_vals = [r for t in group for r in [_r_multiple(t)] if r is not None]
+            cohorts.append({
+                "period_label": _period_label(key),
+                "trade_count": len(group),
+                "win_rate": round(len(wins) / len(group) * 100, 1) if group else 0.0,
+                "avg_r_multiple": round(sum(r_vals) / len(r_vals), 2) if r_vals else None,
+                "total_pnl": round(sum(t.get("pnl", 0) for t in group), 2),
+            })
+
+        return {
+            "period": cohort_period,
+            "cohorts": cohorts,
+            "has_enough_data": len(cohorts) >= 3,
+        }
+
+    # ----------------------------------------------------------------
+    # calculate_r_multiple_distribution
+    # per metrics_definitions.md v1.7.0 R-Multiple (Canonical Server-Side)
+    # ----------------------------------------------------------------
+
+    def calculate_r_multiple_distribution(self, trades_with_stop: List[Dict]) -> Dict:
+        def _r_multiple(t):
+            ep = t.get("entry_price") or 0
+            sp = t.get("stop_price")
+            xp = t.get("exit_price") or 0
+            if sp is None or ep <= sp:
+                return None
+            denom = ep - sp
+            if denom <= 0:
+                return None
+            return (xp - ep) / denom
+
+        r_values = [r for t in trades_with_stop for r in [_r_multiple(t)] if r is not None]
+        n = len(r_values)
+
+        if n < 5:
+            return {
+                "has_enough_data": False,
+                "total_qualifying_trades": n,
+                "buckets": [],
+                "median_r": None,
+                "pct_above_1r": None,
+                "avg_winner_r": None,
+                "avg_loser_r": None,
+            }
+
+        bucket_defs = [
+            ("< -2R",      None, -2),
+            ("-2R to -1R",   -2, -1),
+            ("-1R to 0R",    -1,  0),
+            ("0R to 1R",      0,  1),
+            ("1R to 2R",      1,  2),
+            ("2R to 3R",      2,  3),
+            ("> 3R",          3, None),
+        ]
+        buckets = []
+        for label, lo, hi in bucket_defs:
+            count = sum(
+                1 for r in r_values
+                if (lo is None or r >= lo) and (hi is None or r < hi)
+            )
+            buckets.append({"range": label, "count": count})
+
+        sorted_r = sorted(r_values)
+        mid = n // 2
+        median_r = round(
+            (sorted_r[mid - 1] + sorted_r[mid]) / 2 if n % 2 == 0 else sorted_r[mid], 2
+        )
+
+        winners = [r for r in r_values if r > 0]
+        losers  = [r for r in r_values if r <= 0]
+
+        return {
+            "has_enough_data": True,
+            "total_qualifying_trades": n,
+            "buckets": buckets,
+            "median_r": median_r,
+            "pct_above_1r": round(sum(1 for r in r_values if r > 1) / n * 100, 1),
+            "avg_winner_r": round(sum(winners) / len(winners), 2) if winners else None,
+            "avg_loser_r":  round(sum(losers)  / len(losers),  2) if losers  else None,
+        }
 
     def _build_consistency_metrics(self, monthly_data):
         if not monthly_data:
