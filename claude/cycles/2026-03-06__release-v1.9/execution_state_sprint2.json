@@ -8,7 +8,7 @@
   "invoked_utc": "2026-03-11T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-13T12:00:00Z",
+  "last_updated_utc": "2026-03-13T14:00:00Z",
 
   "multi_sprint_note": "Sprint 2 of 2. Sprint 1 execution_state.json is sealed at claude/cycles/2026-03-06__release-v1.9/execution_state.json. This file covers Sprint 2 scope only (EPIC-01, EPIC-02, EPIC-03, EPIC-05 partial).",
 
@@ -18,8 +18,8 @@
       "branch": "exec/2026-03-06__release-v1.9/EPIC-01",
       "pr_number": 55,
       "pr_status": "open",
-      "qa_signed_off": false,
-      "qa_evidence_note": "qa_evidence_EPIC-01.md created 2026-03-13 (retroactively — file was missing from prior session). QA sign-off block pending Director of Quality review.",
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-13T13:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
@@ -42,7 +42,7 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
-          "notes": "Backend (c57ed6f): metrics_definitions.md v1.6.0→v1.7.0, GET /analytics/compliance-metrics endpoint. Frontend (c978dba): DisciplineComplianceSection.js + api.analytics.complianceMetrics in base44Client.js + PerformanceAnalytics.js §17 integration. Integration corrections vs staged code: stop_exit_rate field name (staged had stop_based_exit_rate), value scaling as 0-100 pct (staged applied ×100 incorrectly), relative imports (staged used @/ aliases), sub-labels added per spec §17 using trade_count. No canonical spec deviations. All AC met."
+          "notes": "Backend (c57ed6f): metrics_definitions.md v1.6.0→v1.7.0, GET /analytics/compliance-metrics endpoint. Frontend (c978dba): DisciplineComplianceSection.js + api.analytics.complianceMetrics in base44Client.js + PerformanceAnalytics.js §17 integration. Integration corrections vs staged code: stop_exit_rate field name (staged had stop_based_exit_rate), value scaling as 0-100 pct (staged applied ×100 incorrectly), relative imports (staged used @/ aliases), sub-labels added per spec §17 using trade_count. No canonical spec deviations. All AC met. QA sign-off: Pass (2026-03-13)."
         },
         "ST-02": {
           "title": "Structured Trade Reflection Template",
@@ -65,7 +65,7 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
-          "notes": "Backend (d987c09): GET+POST /trades/{id}/reflection, database.py, trade_service.py, trade_endpoints.md v2.0.0, openapi.yaml v1.9.1. Frontend (0c22062): TradeReflectionModal.js — 5 fields, 8 trade-summary fields (backend-sourced), skip/save, char counter, states, aria-label. api.trades.getReflection+saveReflection added to base44Client.js. Trigger: Positions.js exitMutation.onSuccess fetches GET /trades and shows modal. r_multiple and exit_state display — per spec §4 null rule (GET /trades does not return these fields). TradeReflection.js browsing page not integrated — no backend listing endpoint; out of ST-02 scope. Additional commit (d629ed9): TradeReflection page, nav item, and routing added — extends frontend browsing capability beyond modal trigger. State updated 2026-03-12 to record latest commit SHA."
+          "notes": "Backend (d987c09): GET+POST /trades/{id}/reflection, database.py, trade_service.py, trade_endpoints.md v2.0.0, openapi.yaml v1.9.1. Frontend (0c22062): TradeReflectionModal.js — 5 fields, 8 trade-summary fields (backend-sourced), skip/save, char counter, states, aria-label. api.trades.getReflection+saveReflection added to base44Client.js. Trigger: Positions.js exitMutation.onSuccess fetches GET /trades and shows modal. r_multiple and exit_state display — per spec §4 null rule (GET /trades does not return these fields). TradeReflection.js browsing page not integrated — no backend listing endpoint; out of ST-02 scope. Additional commit (d629ed9): TradeReflection page, nav item, and routing added — extends frontend browsing capability beyond modal trigger. QA sign-off: Pass (2026-03-13)."
         }
       }
     },
@@ -74,8 +74,8 @@
       "branch": "exec/2026-03-06__release-v1.9/EPIC-02",
       "pr_number": 56,
       "pr_status": "open",
-      "qa_signed_off": false,
-      "qa_evidence_note": "qa_evidence_EPIC-02.md created 2026-03-13 (retroactively — file was missing from prior session). QA sign-off block pending Director of Quality review.",
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-13T13:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
@@ -86,7 +86,7 @@
           "assigned_to": "engine",
           "github_issue": 35,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-02",
-          "commit_sha": "3c91e7b",
+          "commit_sha": "dd9d6dc",
           "delegation_record_id": "DEL-20260311-03",
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -99,7 +99,7 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
-          "notes": "metrics_definitions.md v1.6.0→v1.7.0: Cohort Metrics section + R-Multiple Canonical Server-Side section. Backend (3c91e7b): AnalyticsService.calculate_cohort(), GET /analytics/cohort?period={month|quarter|year}. Frontend (3c91e7b): CohortAnalysis.js — period toggle (Month/Quarter/Year), table (period, trades, win rate, avg R, P&L), loading/error/insufficient states. Integrated into PerformanceAnalytics.js §15. analytics_endpoints.md v1.9.0→v1.9.2. openapi.yaml: /analytics/cohort path added. base44Client.js: api.analytics.cohort(). No canonical spec deviations. All AC met."
+          "notes": "metrics_definitions.md v1.6.0→v1.7.0: Cohort Metrics section + R-Multiple Canonical Server-Side section. Backend (3c91e7b): AnalyticsService.calculate_cohort(), GET /analytics/cohort?period={month|quarter|year}. Frontend (3c91e7b): CohortAnalysis.js — period toggle (Month/Quarter/Year), table (period, trades, win rate, avg R, P&L), loading/error/insufficient states. Integrated into PerformanceAnalytics.js §15. analytics_endpoints.md v1.9.0→v1.9.2. openapi.yaml: /analytics/cohort path added. base44Client.js: api.analytics.cohort(). QA deviation DEV-EPIC02-ST03-01 (P2) filed in analytics.md v1.4 (commit dd9d6dc on EPIC-02): CohortAnalysis.js uses client-side cohort computation instead of GET /analytics/cohort. Backend endpoint exists and is wired; frontend component uses trades prop instead. Non-blocking (P2). QA sign-off: Pass with P2 deviation (2026-03-13)."
         },
         "ST-04": {
           "title": "R-Multiple Distribution Report",
@@ -121,7 +121,7 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.done",
-          "notes": "Backend (3633150): AnalyticsService.calculate_r_multiple_distribution(), GET /analytics/r-multiple-distribution. Formula: R=(exit_price-entry_price)/(entry_price-initial_stop_price). 7 buckets, median_r, pct_above_1r, avg_winner_r, avg_loser_r. Min 5 qualifying trades. Frontend (3633150): RMultipleDistributionBackend.js — bar chart (green positive, red negative), 4-stat summary row. Integrated into PerformanceAnalytics.js §16. openapi.yaml: /analytics/r-multiple-distribution path. base44Client.js: api.analytics.rMultipleDistribution(). Hard rule: no client-side R computation in §16. No canonical spec deviations. All AC met."
+          "notes": "Backend (3633150): AnalyticsService.calculate_r_multiple_distribution(), GET /analytics/r-multiple-distribution. Formula: R=(exit_price-entry_price)/(entry_price-initial_stop_price). 7 buckets, median_r, pct_above_1r, avg_winner_r, avg_loser_r. Min 5 qualifying trades. Frontend (3633150): RMultipleDistributionBackend.js — bar chart (green positive, red negative), 4-stat summary row. Integrated into PerformanceAnalytics.js §16. openapi.yaml: /analytics/r-multiple-distribution path. base44Client.js: api.analytics.rMultipleDistribution(). Hard rule confirmed: no client-side R computation in §16. No canonical spec deviations. All AC met. QA sign-off: Pass (2026-03-13)."
         }
       }
     },
@@ -131,7 +131,8 @@
       "pr_number": null,
       "pr_status": "pending_manual_creation",
       "pr_note": "gh CLI not available in environment. PR must be created manually: exec/2026-03-06__release-v1.9/EPIC-03 → main, title: [EPIC-03] Add Dashboard Homepage. See §8.4 for body requirements. Update pr_number and pr_status after creation.",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-13T13:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
@@ -153,16 +154,18 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.B.done",
-          "notes": "Base44 delivery staged in claude/Front_end_B44/dashboard/ (commits 690f67b–5a871d2 on main). Engine integrated: DashboardHome.js page + 5 card components in src/components/dashboard/home/. All API calls via api.* (doFetch). pages.config.js mainPage set to 'DashboardHome'. No composite endpoint added (engineering decision: individual calls sufficient). P3 deviation DEV-EPIC03-ST05-01 filed: all-endpoints-failed retry button not auto-surfaced as full-page overlay — Retry handler present but card-level errors show individually."
+          "notes": "Base44 delivery staged in claude/Front_end_B44/dashboard/ (commits 690f67b–5a871d2 on main). Engine integrated: DashboardHome.js page + 5 card components in src/components/dashboard/home/. All API calls via api.* (doFetch). pages.config.js mainPage set to 'DashboardHome'. No composite endpoint added (engineering decision: individual calls sufficient). P3 deviation DEV-EPIC03-ST05-01 filed: all-endpoints-failed retry button not auto-surfaced as full-page overlay — Retry handler present but card-level errors show individually. QA sign-off: Pass with P3 deviation accepted (2026-03-13)."
         }
       }
     },
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
       "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_status": "pending_manual_creation",
+      "pr_note": "gh CLI not available. PR must be created manually: exec/2026-03-06__release-v1.9/EPIC-05 → main, title: [EPIC-05] Add v1.9 canonical test scenarios (Phase 2). Update pr_number after creation.",
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-13T13:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-06__release-v1.9/qa_evidence_EPIC-05-sprint2.md",
       "test_scenarios": [
         "docs/testing/risk_dashboard_scenarios.md"
@@ -171,30 +174,30 @@
         "ST-12": {
           "title": "Canonical Test Scenario Library Phase 2 (v1.9 Features)",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "qa",
           "github_issue": 44,
           "branch": "exec/2026-03-06__release-v1.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "7a277cc",
           "delegation_record_id": "DEL-20260311-06",
-          "blocked_since_utc": "2026-03-11T00:00:00Z",
-          "unblock_criteria": "All feature EPICs (EPIC-01, EPIC-02, EPIC-03) done; Director of Quality confirms scenarios authored per AC",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-13T13:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/testing/risk_dashboard_scenarios.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.C.delegated",
-          "notes": "EPIC-01 done 2026-03-12. EPIC-02 done 2026-03-12. EPIC-03 done 2026-03-13. All feature EPICs complete — unblock condition 1 met. Awaiting Director of Quality confirmation scenarios authored."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.C.done",
+          "notes": "25 scenarios authored in risk_dashboard_scenarios.md v1.3 (commit 7a277cc on EPIC-05): SC-CM-01–04 (compliance metrics), SC-TR-01–07 (trade reflection), SC-CA-01–04 (cohort analysis), SC-RM-01–04 (R-multiple distribution), SC-DH-01–10 (dashboard homepage). Known deviations DEV-EPIC02-ST03-01 and DEV-EPIC03-ST05-01 documented in §6 header. §5.7 automation candidates identified. QA sign-off: Pass (2026-03-13)."
         }
       }
     }
   },
 
-  "blocked_items": ["ST-12"],
-  "delegated_items": ["ST-12"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05"],
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-12"],
   "open_escalations": [],
 
   "merge_gate": {
