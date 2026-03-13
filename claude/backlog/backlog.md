@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-09 (v1.9 Sprint 1 post-ship: BLG-RD-01–07, 09–11, BLG-NEW-04, 10–12, BLG-SPEC-D1/D3/D4/D8/D9/G1–G5 marked COMPLETE)
+**Last Updated:** 2026-03-13 (v1.9 Sprint 2: BLG-TECH-06 added — DEV-EPIC02-ST03-01 carry-forward for v1.10)
 **Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — DL-006)
 
 > ⚠️ Standing Notice
@@ -29,6 +29,30 @@
 
 These items ensure analytical correctness, validation integrity, and operational safety.
 They are not user-facing, but they directly affect trust in outputs and release confidence.
+
+---
+
+### BLG-TECH-06 — Fix CohortAnalysis client-side computation (DEV-EPIC02-ST03-01)
+**Priority:** P2 (Medium — regression risk)
+**Type:** Technical debt / Architecture
+**Origin:** DEV-EPIC02-ST03-01 filed in analytics.md v1.4 during v1.9 QA
+**Target release:** v1.10
+
+`CohortAnalysis.js` computes cohort groupings and `avg_r` client-side via `buildCohorts()` from a `filteredTrades` prop, instead of calling the canonical `GET /analytics/cohort` endpoint that was implemented in EPIC-02/ST-03. This violates the analytics.md §15 hard rule: all values sourced from backend.
+
+Numerical output is currently correct (same formula), but divergence risk exists if trade data shape changes server-side.
+
+**Scope**
+- Refactor `CohortAnalysis.js` to call `api.analytics.cohort(period)` via `useQuery`
+- Remove `buildCohorts()` client-side computation logic
+- Remove `trades`/`filteredTrades` prop dependency for computation
+- Verify rendered output matches backend response field names
+
+**Acceptance Criteria**
+- `CohortAnalysis.js` sources all values from `GET /analytics/cohort`
+- No client-side R-multiple or cohort aggregation computation
+- analytics.md §15 hard rule fully satisfied
+- Regression: existing period toggle and table display unchanged
 
 ---
 
