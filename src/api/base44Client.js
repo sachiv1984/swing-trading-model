@@ -411,6 +411,14 @@ export const api = {
     list: async () => doFetch('/trades'),
   },
 
+  market: {
+    getStatus: async () => doFetch('/market/status'),
+  },
+
+  signals: {
+    list: async () => doFetch('/signals', { raw: true }),
+  },
+
   settings: {
     list: async () => doFetch('/settings'),
     create: async (settingsData) =>
