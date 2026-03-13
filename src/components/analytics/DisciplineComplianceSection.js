@@ -42,7 +42,7 @@ export default function DisciplineComplianceSection({ period }) {
     retry: 1,
   });
 
-  const metrics = data?.data;
+  const metrics = data;
   const tradeCount = metrics?.trade_count ?? 0;
   const noData = tradeCount === 0;
 
