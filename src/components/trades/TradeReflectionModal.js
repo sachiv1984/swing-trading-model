@@ -121,7 +121,7 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
           </p>
         </DialogHeader>
 
-        <div className="overflow-y-auto flex-1 space-y-6 pr-1">
+        <div className="overflow-y-auto space-y-6 pr-1" style={{ maxHeight: "calc(90vh - 200px)" }}>
           {/* Trade Summary — read-only; all values backend-sourced (spec §4) */}
           <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
