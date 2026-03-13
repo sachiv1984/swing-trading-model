@@ -445,6 +445,13 @@ export const api = {
     }),
   },
 
+  analytics: {
+    cohort: async (period = 'month') =>
+      doFetch(`/analytics/cohort?period=${encodeURIComponent(period)}`),
+    rMultipleDistribution: async () =>
+      doFetch('/analytics/r-multiple-distribution'),
+  },
+
   settings: {
     list: async () => doFetch('/settings'),
     create: async (settingsData) =>

@@ -2,6 +2,8 @@
 Analytics Router
 
 GET /analytics/metrics — Comprehensive portfolio analytics for a given period.
+GET /analytics/cohort  — Trade performance grouped by entry cohort period.
+GET /analytics/r-multiple-distribution — Canonical server-side R-multiple distribution.
 GET /analytics/compliance-metrics — Discipline & compliance scalars (ST-01, v1.9).
 
 BLG-TECH-07 fix: trades_for_charts attempts to source stop_price from
@@ -12,7 +14,7 @@ If the position_id column does not yet exist in the live trade_history table
 null for all trades, analytics loads normally, and no 500 error is raised.
 Run migration_add_position_id.sql to enable the JOIN fully.
 
-Contract: docs/specs/api_contracts/analytics_endpoints.md v1.8.1
+Contract: docs/specs/api_contracts/analytics_endpoints.md v1.9.2
 """
 
 from fastapi import APIRouter, Query, HTTPException
@@ -308,6 +310,89 @@ async def get_analytics_metrics(
         )
 
 
+@router.get("/cohort")
+async def get_cohort_analysis(
+    period: str = Query(
+        "month",
+        regex="^(month|quarter|year)$"
+    )
+):
+    """
+    Get trade performance grouped by entry cohort period.
+
+    Groups all closed trades by entry_date (month/quarter/year) and computes
+    per-cohort trade count, win rate, avg R-multiple, and total P&L.
+
+    R-multiple uses canonical server-side formula from metrics_definitions.md v1.7.0
+    (requires positions.initial_stop via LEFT JOIN — null if migration not run).
+
+    Contract: docs/specs/api_contracts/analytics_endpoints.md §GET /analytics/cohort
+    """
+    try:
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise Exception("DATABASE_URL not configured")
+
+        conn = psycopg2.connect(database_url)
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            trades_with_stop = _build_trades_for_charts_with_join(cursor, None)
+        finally:
+            cursor.close()
+            conn.close()
+
+        service = AnalyticsService()
+        result = service.calculate_cohort(trades_with_stop, period)
+        return {"status": "ok", "data": result}
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Cohort analysis failed: {str(e)}"
+        )
+
+
+@router.get("/r-multiple-distribution")
+async def get_r_multiple_distribution():
+    """
+    Get canonical server-side R-multiple distribution across all closed trades.
+
+    Uses formula: R = (exit_price - entry_price) / (entry_price - initial_stop_price)
+    per metrics_definitions.md v1.7.0. Requires positions.initial_stop via LEFT JOIN.
+
+    Returns 7-bucket distribution plus summary stats (median_r, pct_above_1r,
+    avg_winner_r, avg_loser_r). Minimum 5 qualifying trades required.
+
+    Contract: docs/specs/api_contracts/analytics_endpoints.md §GET /analytics/r-multiple-distribution
+    """
+    try:
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise Exception("DATABASE_URL not configured")
+
+        conn = psycopg2.connect(database_url)
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            trades_with_stop = _build_trades_for_charts_with_join(cursor, None)
+        finally:
+            cursor.close()
+            conn.close()
+
+        service = AnalyticsService()
+        result = service.calculate_r_multiple_distribution(trades_with_stop)
+        return {"status": "ok", "data": result}
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"R-multiple distribution failed: {str(e)}"
+        )
+
+
 @router.get("/compliance-metrics")
 async def get_compliance_metrics():
     """
@@ -411,3 +496,4 @@ async def get_compliance_metrics():
             status_code=500,
             detail=f"Compliance metrics calculation failed: {str(e)}"
         )
+

@@ -568,6 +568,123 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /analytics/cohort:
+    get:
+      tags: [Analytics]
+      summary: Get cohort analysis
+      description: |
+        Groups all closed trades by entry period (month/quarter/year) and returns
+        per-cohort performance metrics: trade count, win rate, avg R-multiple (server-side),
+        and total P&L in GBP. Fewer than 3 distinct periods returns has_enough_data=false.
+        Canonical contract: docs/specs/api_contracts/analytics_endpoints.md §GET /analytics/cohort
+      parameters:
+        - in: query
+          name: period
+          required: false
+          schema:
+            type: string
+            enum: [month, quarter, year]
+            default: month
+      responses:
+        "200":
+          description: Cohort analysis data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        type: string
+                        example: month
+                      has_enough_data:
+                        type: boolean
+                      cohorts:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            period_label:
+                              type: string
+                              example: "Mar 2026"
+                            trade_count:
+                              type: integer
+                            win_rate:
+                              type: number
+                              format: float
+                            avg_r_multiple:
+                              type: number
+                              format: float
+                              nullable: true
+                            total_pnl:
+                              type: number
+                              format: float
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /analytics/r-multiple-distribution:
+    get:
+      tags: [Analytics]
+      summary: Get canonical R-multiple distribution
+      description: |
+        Returns server-side R-multiple distribution across all closed trades.
+        Formula: R = (exit_price - entry_price) / (entry_price - initial_stop_price).
+        Requires positions.initial_stop via LEFT JOIN. Minimum 5 qualifying trades.
+        Canonical contract: docs/specs/api_contracts/analytics_endpoints.md §GET /analytics/r-multiple-distribution
+      responses:
+        "200":
+          description: R-multiple distribution data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      has_enough_data:
+                        type: boolean
+                      total_qualifying_trades:
+                        type: integer
+                      buckets:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            range:
+                              type: string
+                              example: "0R to 1R"
+                            count:
+                              type: integer
+                      median_r:
+                        type: number
+                        format: float
+                        nullable: true
+                      pct_above_1r:
+                        type: number
+                        format: float
+                        nullable: true
+                      avg_winner_r:
+                        type: number
+                        format: float
+                        nullable: true
+                      avg_loser_r:
+                        type: number
+                        format: float
+                        nullable: true
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /validate/calculations:
     post:
       tags: [Analytics]
