@@ -158,3 +158,18 @@ None applied this run — all patches target files outside the execution engine'
 ## Escalations
 
 None.
+
+---
+
+## Phase 3 — 2026-03-06__release-v1.9 Sprint 2 Execution
+
+**Sprint closed:** 2026-03-13
+
+| # | Area | Observation | Action |
+|---|------|-------------|--------|
+| EX-LL-S2-01 | Delegation pattern | All 6 items were delegated (backend/frontend/QA) — none autonomous. This sprint had zero autonomous items, meaning every item required human delivery. Classification was correct but execution was entirely human-dependent. | Consider whether any future compliance metrics or QA scenario items could be scaffolded autonomously (spec update + endpoint stub) to reduce delegation load. |
+| EX-LL-S2-02 | Merge gate friction | EPIC-01 and EPIC-02 had merge conflicts after EPIC-03 branch diverged from main. Each PR required a local merge/rebase before gh pr merge could run. The second EPIC-02 merge attempt also encountered compound conflicts from EPIC-01 landing. | For future sprints: merge EPICs in strict dependency order and immediately update downstream branches. Consider a rebase-before-PR policy on long-lived branches. |
+| EX-LL-S2-03 | gh CLI availability | Previous execution noted gh CLI not available — had to flag PRs as "pending manual creation". gh CLI was installed this session, removing that blocker permanently. | gh CLI installed and authenticated (sachiv1984). No further delegation of PR creation needed. |
+| EX-LL-S2-04 | Deviation DEV-EPIC02-ST03-01 (P2) | CohortAnalysis.js uses client-side computation instead of GET /analytics/cohort. Backend endpoint is wired and correct. This is an architectural layer violation that passed QA because values are numerically correct. | BLG-TECH-06 logged. v1.10 fix: refactor CohortAnalysis.js to call api.analytics.cohort(). Add acceptance criterion to next cycle's QA checklist: "component sources all values from API endpoint, not from props computation". |
+| EX-LL-S2-05 | State re-sync after merge | execution_state_sprint2.json was not updated automatically when PRs merged on GitHub. On session resume, state showed pr_status: open for EPIC-01/02 when they were already merged. | Add to session start checklist: re-check PR statuses via gh pr view for any EPICs still showing pr_status: open. Reconcile before proceeding. |
+| EX-LL-S2-06 | QA evidence on wrong branch | qa_evidence_EPIC-03.md and qa_evidence_EPIC-05-sprint2.md were authored on the EPIC-03 branch but not on their respective feature branches. Had to cherry-pick the evidence file to the EPIC-05 branch via git show. | QA evidence files should be authored on the EPIC's own branch before PR creation. Document in the execution engine: "write qa_evidence_EPIC-xx.md to the EPIC branch, not the governance branch". |

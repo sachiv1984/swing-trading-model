@@ -450,3 +450,32 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md, qa_evidence_EPIC-06.md
 - Deviations filed: None
 - Test scenarios referenced: docs/testing/QWB-quick-wins-bundle-test-scenarios.md (EPIC-06)
+
+---
+
+## Sprint: 2026-03-06__release-v1.9 Sprint 2
+**Date:** 2026-03-13
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Compliance Metrics: journal_completion_rate, stop_exit_rate, avg_position_size_pct — backend endpoint GET /analytics/compliance-metrics + DisciplineComplianceSection.js §17 analytics panel | docs/specs/metrics_definitions.md#Discipline & Compliance Metrics; docs/specs/frontend/pages/analytics.md#§17 | None |
+| EPIC-01 | Trade Reflection: POST-trade structured reflection modal (5 prompts, 500-char limit), GET/POST /trades/{id}/reflection, TradeReflection.js browsing page | docs/specs/frontend/pages/trade_reflection.md; docs/specs/api_contracts/trade_endpoints.md#reflection; docs/specs/data_model.md#v1.8 | None |
+| EPIC-02 | Cohort Analysis: GET /analytics/cohort?period={month\|quarter\|year}, CohortAnalysis.js §15 with period toggle and table | docs/specs/metrics_definitions.md#Cohort Metrics; docs/specs/frontend/pages/analytics.md#§15 | DEV-EPIC02-ST03-01 (P2 — client-side cohort computation; v1.10 fix: BLG-TECH-06) |
+| EPIC-02 | R-Multiple Distribution: GET /analytics/r-multiple-distribution, 7-bucket chart + 4 stat cards, hard rule: no client-side R computation | docs/specs/metrics_definitions.md#R-Multiple (Canonical Server-Side); docs/specs/frontend/pages/analytics.md#§16 | None |
+| EPIC-03 | Dashboard Homepage: root `/` landing page with 5 independent data cards (Open Positions, Portfolio Heat, Grace Period, Market Signals, Recent Activity) | docs/specs/frontend/pages/dashboard.md v2.0 | DEV-EPIC03-ST05-01 (P3 — hidden full-page retry overlay; v1.10 enhancement) |
+| EPIC-05 | Canonical Test Scenario Library Phase 2: 25 scenarios for v1.9 features (SC-CM-01–04, SC-TR-01–07, SC-CA-01–04, SC-RM-01–04, SC-DH-01–10) in risk_dashboard_scenarios.md v1.3 | docs/testing/risk_dashboard_scenarios.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| (none) | All 6 Sprint 2 items completed and merged | N/A |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-05-sprint2.md
+- Deviations filed: DEV-EPIC02-ST03-01 (P2, analytics.md v1.4); DEV-EPIC03-ST05-01 (P3, dashboard.md)
+- Test scenarios referenced: docs/testing/risk_dashboard_scenarios.md v1.3 (25 scenarios)
