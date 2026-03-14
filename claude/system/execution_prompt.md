@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.0
-**Last Updated:** 2026-03-10
+**Version:** 2.1
+**Last Updated:** 2026-03-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -892,6 +892,7 @@ The run is complete only if:
 **Ambiguity definition:** An item is *ambiguous* when its acceptance criteria, EPIC assignment, spec reference, or delegation classification cannot be determined without an authority decision. Ambiguous items must be classified `delegated_decision` and escalated — never silently assumed or guessed. This applies in both `strict` and `standard` modes. The only difference between modes is whether execution continues on other items (standard) or halts entirely (strict).
 
 - **No autonomous merge.** The engine never merges without QA sign-off and Product Owner acceptance.
+- **Gate evidence requirement.** Any hard gate status change in `current_roadmap.md` (marking a gate as "complete") must reference the evidence artefact that cleared it (PoG Gate ID, decision record path, or verifiable session output reference). A gate may not be marked complete without an evidence reference. If no artefact exists: gate remains "pending". Record in escalations.md.
 - **No scope change.** The backlog slice is sealed. The engine executes what is there.
 - **No strategy boundary decisions.** The Strategy Rules owner decides; the engine surfaces and parks.
 - **Delegation is explicit and tracked.** No silent assumptions about human completion.
@@ -907,6 +908,7 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-03-14 | AUD-2026-03-13-001 (PATCH 5): Gate evidence requirement added to §9 invariants — hard gate status changes in current_roadmap.md must reference an evidence artefact; gate remains pending without one. |
 | 2.0 | 2026-03-10 | IMP-53: §7 Write Scope — `lessons_learnt_execution.md` replaced with `lessons_learnt_cycle.md` (append-only, Phase 3 section; create if absent). STEP 5.4 — invocation updated from `§3.3` to `§3.3 — Sprint Execution Phase 3 Append`; output path changed to `lessons_learnt_cycle.md`; IMP-35 gap 2 idempotency guard activated (was marked inactive until IMP-28 — now active). STEP 8 commit list: `lessons_learnt_execution.md` → `lessons_learnt_cycle.md`. §12 completion condition: `lessons_learnt_execution.md exists` → `lessons_learnt_cycle.md Phase 3 section appended`. |
 | 1.9 | 2026-03-10 | IMP-25: STEP -1.1 — load `sprint_backlog_index.json` if present; when `--epic` scoped, use index `st_items` and `backlog_slice_refs` to read only the relevant EPIC slice rather than full document. STEP 0 — index-guided load note added; when index provides exact `backlog_slice_refs`, read only those AC sections from `stage4_backlog_slice.md`. Fall-back to full document read when index absent. |
 | 1.8 | 2026-03-10 | IMP-40: §3.1.D SLA breach tracking note added — 72-hour breach check on each re-invocation; `blocked_sla_breached = true` written at STEP 6 if any escalation exceeds SLA; references `shared_standards.md §4` SLA Breach Rule. STEP 6 state write schema: `blocked_sla_breached` field added. IMP-35 (gap 2): STEP 5.4 — future IMP-28 idempotency guard documented (inactive until IMP-28 implemented); pre-write check for `## Phase 3 — <cycle_id>` header in `lessons_learnt_cycle.md` before appending. |

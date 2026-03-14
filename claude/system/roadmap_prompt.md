@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.1
-**Last Updated:** 2026-03-11
+**Version:** 2.2
+**Last Updated:** 2026-03-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -328,6 +328,13 @@ If any outstanding action is unresolved and cannot be carried forward with a nam
 
 If all preflight checks pass (including outstanding actions resolved or formally carried forward): proceed to STEP 0.
 
+**Prompt patch confirmation (B7 auto-escalation):** In addition to the general outstanding actions above, load the deferred patches table from the prior cycle's `lessons_learnt.md`. For each deferred patch targeting a prompt file:
+- Read the target file section and verify the change is present.
+- If present: record as applied in run_manifest.md.
+- If absent and this is the **second consecutive cycle** carrying the same patch: classify as **OVERDUE**. Escalate immediately to Head of Specs Team. Do not carry forward as a new deferred patch. A run may not proceed past STEP -1.5 with any OVERDUE patch unresolved.
+
+**State age advisory:** Read `.claude_current_state.json` `last_updated_utc` field. If absent or >30 days before today: surface advisory — "State file not updated in >30 days — confirm active_cycle is current before proceeding." Record in run_manifest.md. Advisory only — do not halt.
+
 ---
 
 ### STEP 0 — Load and Validate Inputs (Hard Gate)
@@ -629,6 +636,8 @@ Rules:
 
 ### STEP 5 — Structured Debate (Zero‑Sum)
 Authorities: Product Owner (chair) + Challenger (non‑decision challenge)
+
+**Challenger failure rule (per `team_charter.md §3.2`):** If the Challenger cannot produce an evidence-based counter-argument for any advancing candidate: this is a process failure. Halt. Record in lessons_learnt as Type E — Authority Gap. Do not proceed to STEP 6 until the Challenger provides a substantive counter-argument or formally records inability with a written reason. Neither silence nor "no objection" satisfies the Challenger's obligation.
 
 Before STEP 5, re-read:
 - Section 2 (Strategy Source of Truth)
@@ -1126,10 +1135,17 @@ Traceability:
 - STEP 8 decision(s): `<list>`
 Delta summary:
 - Append entries for: `<Add / Replace / Defer / Kill | No‑change>`
-Append‑only enforcement:
-- Confirm no edits to existing entries
+Append-only enforcement (structural):
+- Before writing: count existing entries in `decision_log.md`. Record count as N.
+- After writing: re-read file. Confirm entry count = N + (entries added this run).
+- If count decreased: halt. Decision log integrity violation — do not commit.
+- If any existing entry text differs from pre-write read: halt. Treat as corruption.
+Both checks must pass before STEP 9 commit proceeds.
+
 Duplicate decision check:
 - Confirm identical decision not already logged
+
+**Header formatting rule:** All Class 4 document headers written or updated in STEP 9 must use bold field labels: `**Owner:**`, `**Status:**`, `**Class:**`, `**Last Updated:**`. Non-bold headers are non-compliant and will fail next preflight STEP -1.2.
 
 ---
 
@@ -1429,6 +1445,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2 | 2026-03-14 | AUD-2026-03-13 audit improvements: (1) STEP -1.5 extended — B7 auto-escalation rule added for deferred patches carried two consecutive cycles; prompt patch confirmation check; state age advisory (>30 days). (2) STEP 5 — Challenger failure halt instruction added per team_charter.md §3.2. (3) STEP 9 — Decision log append-only enforcement upgraded from assertion to structural (pre/post count check + corruption detection). (4) STEP 9 — Header formatting rule added (bold field labels required for Class 4 headers). |
 | 2.1 | 2026-03-11 | IMP-13: STEP 9.0 net-zero displacement verification added — hard gate before any write; counts additions vs confirmed kills; halts if additions > kills with displacement gap report; mode-independent. IMP-33: STEP 5.0 displacement rule — mode-independence note added ("applies in both strict and standard mode; governance constraint, not relaxed by --mode standard"). |
 | 2.0 | 2026-03-06 | **Six governance improvements plus continuous improvement loop.** (1) Added STEP -1.5: Prior Cycle Outstanding Actions Check. (2) Added Parked Idea Expiry Rule (§4.5). (3) Displacement candidate flag moved to initiative_register.md exclusively. (4) Added scheduled run trigger. (5) Added absolute CPS alert threshold (>2.5). (6) Added effort banding (S/M/L). **Continuous improvement additions:** Expanded STEP 11 into four sub-steps: 11.1 lessons learnt invocation (unchanged), 11.2 prompt change classification (action-now vs defer — Head of Specs Team sign-off required for action-now), 11.3 prompt change log (`claude/system/prompt_change_log.md` — append-only, traceable from every prompt version to its triggering friction item), 11.4 meta-review trigger (every third cycle — aggregates friction patterns across cycles and produces candidate prompt changes). Added `claude/system/*` and `claude/system/prompt_change_log.md` to write scope (§5). Added `prompt_change_log.md` to optional artifact list (§6). Added `last_meta_review_cycle` key to `.claude_current_state.json` (§12.1). Updated commit scope, write plan integrity checks, and completion condition accordingly. Also incorporated two tooling notes from cycle 2 lessons learnt: bash heredoc pattern for new files (§6); bash sed pattern for bulk idea updates (§4.2). Added hard gate marking rule to STEP 9 and §9 invariants. |
 | 1.9 | 2026-03-04 | **Six governance improvements.** (1) Added Class 8 — Proof of Gate (PoG). (2) Added Strategy Proximity Score (1–5) in STEP 2.1. (3) Added Cycle Proximity Score aggregate and trend check in STEP 2.2. (4) Added Skill-Silo Alert in STEP 7.1. (5) Proximity score added to STEP 6 scoring matrix. (6) Added PoG validity and CPS to completion condition (§10). |

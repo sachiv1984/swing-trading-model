@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-03-11
+**Version:** 1.9
+**Last Updated:** 2026-03-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -52,6 +52,8 @@ Rules:
 If invocation is not exact, do not run. Treat as conversational.
 
 Apply the Lifecycle Guard (valid from-states: `Design_Gate_Passed`; or `Release_Planning_Complete` when design gate is not required for this cycle) per `claude/system/shared_standards.md §10` before executing any step.
+
+**Amendment_In_Progress guard (Hard Gate):** Before proceeding, check `.claude_current_state.json` status. If status = `Amendment_In_Progress`: halt immediately. Sprint Planning may not proceed while an amendment is active. Seal or withdraw the amendment before issuing `plan sprint`. Output halt report per `shared_standards.md §5`.
 
 **Who issues this command:** The PMO Lead persona, after Phase 1B has reached `Published` status and the Design Gate has passed (`design_gate_status = Passed`).
 
@@ -761,6 +763,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-03-14 | AUD-2026-03-13-011: Amendment_In_Progress hard gate added — sprint planning halts if status = Amendment_In_Progress; matches Release Planning parity (IMP-11). |
 | 1.8 | 2026-03-11 | IMP-30: STEP -1.3 bypass authority reference added — `design_gate_bypass_authority` must contain both "Head of UX & Design + Product Owner"; single-role bypass is non-compliant; references `team_charter.md §3.3`. |
 | 1.7 | 2026-03-10 | IMP-23: STEP 6.1 — ST item `Acceptance Criteria` field replaced with reference "AC: see `stage4_backlog_slice.md#ST-xx`"; note added that Execution Engine reads AC from `stage4_backlog_slice.md` via `spec_references`; sprint backlog is a sequencing and ownership document only. |
 | 1.6 | 2026-03-10 | IMP-25: §6 Write Scope — `sprint_backlog_index.json` added. STEP 6.1A added — produce `sprint_backlog_index.json` alongside `sprint_backlog.md`; schema `{cycle_id, generated_utc, epics: {EPIC-xx: {st_items, backlog_slice_refs}}}`; enables Execution Engine to load per-EPIC ST items and AC refs without full document read. |
