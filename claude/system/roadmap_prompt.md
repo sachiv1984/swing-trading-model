@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.3
+**Version:** 2.4
 **Last Updated:** 2026-03-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -14,13 +14,13 @@
 This governance routine executes ONLY when the user issues the explicit command:
 
 ```
-run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"]
+run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"] [--dry-run]
 ```
 
 or the scheduled form:
 
 ```
-run roadmap --reason "scheduled" [--date "YYYY-MM-DD"]
+run roadmap --reason "scheduled" [--date "YYYY-MM-DD"] [--dry-run]
 ```
 
 Rules:
@@ -28,6 +28,7 @@ Rules:
 - **Completion-triggered runs:** `--item-id` and `--item-name` are required (e.g., `3.2`). `--item-name` must uniquely match a roadmap item in `claude/roadmap/current_roadmap.md`.
 - **Scheduled runs:** `--reason "scheduled"` replaces `--item-id` and `--item-name`. No completion event is required. STEP 1.2 (Capacity Release Registration) is skipped and recorded as "N/A — scheduled run" in the run manifest.
 - `--date` is optional in both forms (defaults to today in YYYY-MM-DD).
+- **`--dry-run`:** Produces a rebalance preview — capacity analysis, displacement candidates, scoring matrix, backlog impact — without writing any files, updating state, or committing. Exits after STEP 8 (decisions recorded in output only). No writes. No commit. Output is sufficient to validate the run before issuing live.
 - If invocation is not exact, do not run. Treat the input as conversational.
 
 No other user input may trigger execution of this routine.
@@ -1465,6 +1466,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4 | 2026-03-14 | AUD-2026-03-13-002: `--dry-run` flag added to both invocation forms (completion-triggered and scheduled). Dry-run exits after STEP 8 — no writes, no commit; output sufficient to validate before live run. CLAUDE.md command table updated to show `[--dry-run]`. |
 | 2.3 | 2026-03-14 | AUD-2026-03-13-021 (PATCH 1): STEP 11 lessons_learnt.md output must end with machine-readable `// ARTEFACT_STATUS` JSON terminal block — enables post_ship_closure.md STEP 8 to grep for counts without full document read. |
 | 2.2 | 2026-03-14 | AUD-2026-03-13 audit improvements: (1) STEP -1.5 extended — B7 auto-escalation rule added for deferred patches carried two consecutive cycles; prompt patch confirmation check; state age advisory (>30 days). (2) STEP 5 — Challenger failure halt instruction added per team_charter.md §3.2. (3) STEP 9 — Decision log append-only enforcement upgraded from assertion to structural (pre/post count check + corruption detection). (4) STEP 9 — Header formatting rule added (bold field labels required for Class 4 headers). |
 | 2.1 | 2026-03-11 | IMP-13: STEP 9.0 net-zero displacement verification added — hard gate before any write; counts additions vs confirmed kills; halts if additions > kills with displacement gap report; mode-independent. IMP-33: STEP 5.0 displacement rule — mode-independence note added ("applies in both strict and standard mode; governance constraint, not relaxed by --mode standard"). |

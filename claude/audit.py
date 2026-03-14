@@ -26,15 +26,14 @@ AUDIT_VERSION = "6"
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-03-13"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    # Deferred — Medium effort or dependencies not yet resolved
-    "AUD-2026-03-13-002",  # run roadmap --dry-run support (Medium effort)
-    "AUD-2026-03-13-003",  # run ideas consolidate into run roadmap STEP -1.6 (Medium)
-    "AUD-2026-03-13-004",  # manage roadmap + groom backlog mandatory post-ship (Medium)
+    # Deferred — remaining items require significant effort or new file creation
+    "AUD-2026-03-13-003",  # run ideas consolidate into run roadmap STEP -1.6 (Medium — behavioral change)
     "AUD-2026-03-13-005",  # halt blocks inline extract to shared_standards (6 files)
-    "AUD-2026-03-13-006",  # create invariants.md consolidate 3 docs (new file + 3 edits)
-    "AUD-2026-03-13-017",  # execution_prompt extract schemas (High effort; dep AUD-009 now closed, AUD-006 still open)
+    "AUD-2026-03-13-006",  # create invariants.md + consolidate 3 docs (new file; team_charter.md restricted)
+    "AUD-2026-03-13-017",  # execution_prompt extract schemas (High effort; dep AUD-006 still open)
     # Closed in 2026-03-14 session 1: AUD-001, AUD-011, AUD-012, AUD-013, AUD-014, AUD-015, AUD-016, AUD-020
     # Closed in 2026-03-14 session 2: AUD-007, AUD-009, AUD-018, AUD-021, AUD-022
+    # Closed in 2026-03-14 session 3: AUD-002, AUD-004
     # False positives (no action): AUD-008, AUD-010, AUD-019
 ]
 

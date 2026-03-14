@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-03-11
+**Version:** 1.9
+**Last Updated:** 2026-03-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -239,7 +239,9 @@ Read `claude/cycles/<cycle_id>/closure_state.json` if it exists:
     "step_8_5_lessons_closure": "not_started",
     "step_9_closure_record": "not_started",
     "step_10_global_state": "not_started",
-    "step_11_commit": "not_started"
+    "step_11_manage_roadmap": "not_started",
+    "step_12_groom_backlog": "not_started",
+    "step_13_commit": "not_started"
   },
   "closure_status": null
 }
@@ -636,7 +638,25 @@ Update `closure_state.json`:
 
 ---
 
-## STEP 11 — Commit
+## STEP 11 — Roadmap Document Management (Mandatory)
+
+Invoke `claude/system/roadmap_management_prompt.md` inline.
+Pass through `--dry-run` if `run post-ship` was invoked with `--dry-run`.
+Output: manage_roadmap run log at `claude/cycles/<cycle_id>/manage_roadmap_<YYYYMMDD>.md`.
+On completion: confirm `last_manage_roadmap_utc` written to `.claude_current_state.json`.
+Update `closure_state.json`: `{"step_11_manage_roadmap": "complete", "last_updated_utc": "<now>"}`.
+
+## STEP 12 — Backlog Document Management (Mandatory)
+
+Invoke `claude/system/backlog_management_prompt.md` inline.
+Pass through `--dry-run` if `run post-ship` was invoked with `--dry-run`.
+Output: backlog health report at `claude/backlog/backlog_health_<YYYYMMDD>.md`.
+On completion: confirm `last_groom_backlog_utc` written to `.claude_current_state.json`.
+Update `closure_state.json`: `{"step_12_groom_backlog": "complete", "last_updated_utc": "<now>"}`.
+
+---
+
+## STEP 13 — Commit
 
 **Push-before-pull rule (required):** Do NOT perform a `git pull` or `git merge` from the remote branch before pushing. Push local governance commits first. If the push is rejected due to divergent history, investigate the cause — do not run `git pull` automatically, as a remote merge commit may overwrite or reorder governance commits. Resolve divergence manually with PMO Lead approval before retrying the push.
 
@@ -662,7 +682,7 @@ git push origin <current-branch>
 
 If git operations are unavailable: output the exact files to stage and the commit message. Mark as "Ready to commit."
 
-Update `closure_state.json`: `steps.step_11_commit = pass`, `last_updated_utc = <now>`
+Update `closure_state.json`: `steps.step_13_commit = pass`, `last_updated_utc = <now>`
 
 ---
 
@@ -681,7 +701,7 @@ The run is complete only if:
 - Specs Index reviewed and updated
 - All lessons learnt records reviewed; every action item has a disposition
 - `.claude_current_state.json` updated with `post_ship_complete = true` and `status = Closed`
-- STEP 11 commit complete (or commit manifest produced)
+- STEP 13 commit complete (or commit manifest produced)
 
 **Dry-run:** Run is complete when the closure plan is produced after STEP 0. No files written, no state updated, no commit.
 
@@ -716,6 +736,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-03-14 | AUD-2026-03-13-004: STEP 11 (Roadmap Document Management — mandatory) and STEP 12 (Backlog Document Management — mandatory) added. Both invoke their respective management prompts inline and pass through --dry-run. Closes Phase 1M skip gap — manage roadmap + groom backlog now run every cycle regardless of whether Phase 1 was executed. Former STEP 11 (Commit) renumbered STEP 13. closure_state.json schema updated: step_11_manage_roadmap, step_12_groom_backlog, step_13_commit. |
 | 1.8 | 2026-03-11 | IMP-15: STEP 3.4 added — stale parked items disposition check; identifies `backlog.md` items parked in 3+ consecutive completed cycles; records mandatory PO disposition requirement in closure record §6 Outstanding Actions; adds `[STALE — PO disposition required]` note to backlog item; does not resolve item. |
 | 1.7 | 2026-03-10 | IMP-54: §4 Source-of-Truth inputs — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` rows replaced with single `lessons_learnt_cycle.md` row (Phase 3 + Phase 4 + Amendment sections). §5 must-not-modify — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` lines replaced with `lessons_learnt_cycle.md` (read-only). STEP 8 lessons learnt table — two rows replaced with single `lessons_learnt_cycle.md` row (all phase sections, structured table read). |
 | 1.6 | 2026-03-10 | IMP-27: STEP 0 — field-level read targets added for `verification_report.md` (§1 verification_status + §4 deviation register only), `execution_state.json` (epics outcome map only), `sprint_close.md` (verification readiness statement + deviations list only). STEP 8 — `lessons_learnt` files: read action items section / classification table only (not full prose). |

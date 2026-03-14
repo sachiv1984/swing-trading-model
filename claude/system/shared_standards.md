@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.0
+**Version:** 2.1
 **Last Updated:** 2026-03-14
 
 # Shared Standards — All Governed Routines
@@ -365,9 +365,11 @@ The following engines support `--dry-run`. The guarantee is identical in all cas
 |--------|---------------------|
 | `plan sprint` | Sprint planning preview — capacity, scope, AC gaps, sequencing, pip-audit result |
 | `run sprint` | Dry-run execution report — item classification, delegation targets, spec references, anticipated blockers |
-| `run post-ship` | Closure plan — every step listed, every write that would be made, every flag |
+| `run post-ship` | Closure plan — every step listed, every write that would be made, every flag. Note: STEP 11 (`manage roadmap`) and STEP 12 (`groom backlog`) also pass through `--dry-run`. |
 | `manage roadmap` | Change plan — items to retire, items to flag |
 | `groom backlog` | Change plan — items to archive, items to flag |
+| `run roadmap` | Rebalance preview — capacity analysis, displacement candidates, scoring matrix, backlog impact |
+| `run ideas` | Submission window summary — counts per agent, ideas available for STEP 4 |
 
 **Scope of read operations:** Read operations (file reads, git queries, pip-audit scans) are always permitted in dry-run mode. A dry-run that cannot read required inputs should halt with a standard halt report, not silently produce an empty plan.
 
@@ -478,6 +480,7 @@ Consumed by: `sync gh` inline handler
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-03-14 | AUD-2026-03-13-002 (PATCH 2): §13 dry-run table — `run roadmap` and `run ideas` rows added. AUD-2026-03-13-004 (PATCH 3): `run post-ship --dry-run` note added — STEP 11/12 pass through `--dry-run` flag. |
 | 2.0 | 2026-03-14 | AUD-2026-03-13-009: §16 Governed JSON Schemas added — canonical home for sprint_backlog_index.json schema (§16.1) and stage4_issue_manifest.json placeholder (§16.2). Engine prompts must reference §16 rather than duplicating schemas inline. |
 | 1.9 | 2026-03-11 | IMP-22: §14 Preflight Field Scope added — `shared_preflight_fields` table specifying minimum `.claude_current_state.json` fields per engine; section-scoped read rule. IMP-43: §15 Spec Debt Item Lifecycle added — creation trigger, required fields, acceptance criteria, closing authority (Head of Specs Team), Phase 1M validation rule. |
 | 1.8 | 2026-03-10 | IMP-40: §4 SLA Breach Rule added — 72-hour mandatory `BLOCKED_SLA_BREACH` notice; `blocked_sla_breached` flag in `.claude_current_state.json`. IMP-48: §11 Prompt Version Control — `gh_issue_template.md` added to governed prompt list (Owner: Head of Specs Team, Class: 6). |
