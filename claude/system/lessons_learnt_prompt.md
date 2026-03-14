@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-03-10
+**Version:** 1.7
+**Last Updated:** 2026-03-14
 
 ---
 
@@ -29,6 +29,22 @@ Generate a structured, filed lessons learnt record that:
 - Detects recurrence against the prior cycle's lessons learnt
 
 This is governance learning, not a retrospective. Value is measured by the patches actioned and logged, not the observations recorded.
+
+---
+
+## 1.1 Required Invocation Context (Hard Gate)
+
+This prompt must be invoked with a structured context block. If context is absent: halt and output: "LESSONS LEARNT INVOCATION ERROR — missing context. Invoking engine must supply structured block."
+
+Required context fields:
+```
+invoking_routine: <engine name — e.g. "roadmap_prompt.md">
+cycle_id: <active cycle_id>
+phase: <Phase 3 | Phase 4 | Post-Ship | Amendment | Roadmap | Release>
+prior_cycle_id: <prior cycle_id or "none — first cycle">
+```
+
+If any field is absent: output error listing missing fields. Do not proceed. Calling engines must pass all four fields explicitly at invocation.
 
 ---
 
@@ -71,7 +87,7 @@ Read the inputs appropriate to the invoking routine:
 
 **Output target:** Append to `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (Phase 3 section). The standalone `lessons_learnt_execution.md` file is retired.
 
-**Idempotency guard:** Before appending, check for existing section header `## Phase 3 — <cycle_id>` in `lessons_learnt_cycle.md`. If present: skip append (already complete for this cycle).
+**Idempotency guard:** Before appending, check for a `## Phase 3` section with `**Cycle:** <cycle_id>` field in `lessons_learnt_cycle.md`. If present: skip append (already complete for this cycle).
 
 **Inputs to read:**
 - `claude/cycles/<cycle_id>/sprint_goal.md`
@@ -87,13 +103,13 @@ Read the inputs appropriate to the invoking routine:
 - Acceptance criteria gaps (items that lacked criteria and had to be parked as `delegated_decision`)
 - Governance process friction (gates that fired unexpectedly, SLA misses)
 
-**Output format:** Append a Phase 3 section to `lessons_learnt_cycle.md` using the structured table block format (§4.2). Use phase tag `## Phase 3 — <cycle_id>`.
+**Output format:** Append a Phase 3 section to `lessons_learnt_cycle.md` using the structured table block format (§4.2). Use stable header `## Phase 3` with `**Cycle:** <cycle_id>` as a metadata field (not in the header).
 
 ### 3.4 Delivery Verification — Phase 4 Append (IMP-28)
 
 **Output target:** Append to `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (Phase 4 section). The standalone `lessons_learnt_verification.md` file is retired.
 
-**Idempotency guard:** Before appending, check for existing section header `## Phase 4 — <cycle_id>` in `lessons_learnt_cycle.md`. If present: skip append (already complete for this cycle).
+**Idempotency guard:** Before appending, check for a `## Phase 4` section with `**Cycle:** <cycle_id>` field in `lessons_learnt_cycle.md`. If present: skip append (already complete for this cycle).
 
 **Inputs to read:**
 - `claude/cycles/<cycle_id>/verification_report.md`
@@ -104,7 +120,7 @@ Read the inputs appropriate to the invoking routine:
 
 **Phase 4 focus areas:** gate sequencing friction (was QA evidence ready when needed?), deviation severity assessment patterns (were P0/P1/P2 calls contested?), test scenario coverage gaps (recurring or systemic?), sign-off coordination friction between Director of Quality and Product Owner.
 
-**Output format:** Append a Phase 4 section to `lessons_learnt_cycle.md` using the structured table block format (§4.2). Use phase tag `## Phase 4 — <cycle_id>`.
+**Output format:** Append a Phase 4 section to `lessons_learnt_cycle.md` using the structured table block format (§4.2). Use stable header `## Phase 4` with `**Cycle:** <cycle_id>` as a metadata field (not in the header).
 
 ### 3.5 Post-Ship Closure inputs
 
@@ -142,8 +158,8 @@ Before writing the output record, load the previous cycle's lessons learnt file 
 |-----------------|--------------------------|
 | Roadmap Rebalance | `claude/cycles/<prior_cycle_id>/lessons_learnt.md` |
 | Release Planning | `claude/cycles/<prior_cycle_id>/lessons_learnt.md` |
-| Sprint Execution | `claude/cycles/<prior_cycle_id>/lessons_learnt_cycle.md` (`## Phase 3 — <prior_cycle_id>` section) |
-| Delivery Verification | `claude/cycles/<prior_cycle_id>/lessons_learnt_cycle.md` (`## Phase 4 — <prior_cycle_id>` section) |
+| Sprint Execution | `claude/cycles/<prior_cycle_id>/lessons_learnt_cycle.md` (`## Phase 3` section where `**Cycle:** <prior_cycle_id>`) |
+| Delivery Verification | `claude/cycles/<prior_cycle_id>/lessons_learnt_cycle.md` (`## Phase 4` section where `**Cycle:** <prior_cycle_id>`) |
 | Amendment | `claude/cycles/<prior_cycle_id>/lessons_learnt_cycle.md` (`## Amendment — <AMD-id>` section(s), if amendments occurred in prior cycle) |
 | Post-Ship Closure | `claude/cycles/<prior_cycle_id>/lessons_learnt_closure.md` |
 
@@ -169,8 +185,8 @@ The output path depends on the invoking routine:
 |-----------|-------------|-------|
 | Roadmap Rebalance (STEP 11) | `claude/cycles/<cycle_id>/lessons_learnt.md` | Standalone prose file (§5 record structure) |
 | Release Planning (STEP 8) | `claude/cycles/<cycle_id>/lessons_learnt.md` | Standalone prose file (§5 record structure) |
-| Sprint Execution (STEP 5.4) | `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` — append `## Phase 3 — <cycle_id>` | Structured table append (§4.2); idempotency guard required |
-| Delivery Verification (STEP 8.5) | `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` — append `## Phase 4 — <cycle_id>` | Structured table append (§4.2); idempotency guard required |
+| Sprint Execution (STEP 5.4) | `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` — append `## Phase 3` section | Structured table append (§4.2); idempotency guard required; cycle_id as field |
+| Delivery Verification (STEP 8.5) | `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` — append `## Phase 4` section | Structured table append (§4.2); idempotency guard required; cycle_id as field |
 | Amendment Cycle (STEP 8) | `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` — append `## Amendment — <AMD-id>`; AND `amendments/<amendment_id>/amendment_lessons.md` | Both outputs required; `amendment_lessons.md` retained for backward compat |
 | Post-Ship Closure | `claude/cycles/<cycle_id>/lessons_learnt_closure.md` | Standalone prose file (§5 record structure); meta-consumer of `lessons_learnt_cycle.md` |
 
@@ -193,10 +209,13 @@ Cycle: <cycle_id>
 Each phase append uses this structure:
 
 ```
-## Phase 3 — <cycle_id>        ← (or ## Phase 4 — <cycle_id>, or ## Amendment — <AMD-id>)
+## Phase 3
+
+*(or ## Phase 4, or ## Amendment — <AMD-id>)*
 
 **Phase:** Sprint Execution | Delivery Verification | Amendment
 **Cycle:** <cycle_id>
+**Section anchor:** `## Phase 3` (stable — cycle_id in field above, not in header)
 **Filed:** <today>
 **Reviewed by:** PMO Lead
 
@@ -471,6 +490,7 @@ This prompt completes only when:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-03-14 | AUD-2026-03-13-007: §1.1 Required Invocation Context added — hard gate requiring 4 structured fields (invoking_routine, cycle_id, phase, prior_cycle_id); halts on absent context. AUD-2026-03-13-022: lessons_learnt_cycle.md section headers normalised — Phase 3/4 headers changed from `## Phase 3 — <cycle_id>` to stable `## Phase 3` with cycle_id as metadata field; idempotency guards updated to two-part check (header + Cycle field); §4.2 template, 4.1 output table, and 3.7 recurrence table all updated for consistency. |
 | 1.6 | 2026-03-10 | **§3.2 Release Planning inputs alignment.** Old stage file list (`stage1_readiness.md`, `stage2_scope_extraction.md`, `stage3_execution_plan.md`, `stage3_5_model_integrity.md`, `stage4_5_capacity_check.md`, `stage5_5_cross_stage_integrity.md`) replaced with `release_plan.md` (consolidated intermediate, aligned with `release_planning_prompt.md` v2.11+ artefact consolidation). `stage4_backlog_slice.md`, `escalations.md`, `cycle_summary.md`, and `run_manifest.md` retained. |
 | 1.5 | 2026-03-10 | **IMP-28 lessons learnt consolidation + IMP-37 amendment append.** §3.3 (Sprint Execution) and §3.4 (Delivery Verification) restructured as append-only phase-tagging sections: output target changed from standalone files (`lessons_learnt_execution.md`, `lessons_learnt_verification.md`) to `lessons_learnt_cycle.md` phase sections; idempotency guards added (pre-write header check). §3.5 (Post-Ship Closure) updated: `lessons_learnt_execution.md` replaced with `lessons_learnt_cycle.md` in inputs. §3.6 added (IMP-37 Amendment): appends `## Amendment — <AMD-id>` section to `lessons_learnt_cycle.md`; idempotency guard included; `amendment_lessons.md` retained for backward compat. Old §3.6 Cross-Cycle Recurrence Check renumbered §3.7; table rows for Sprint Execution and Delivery Verification updated to reference `lessons_learnt_cycle.md` phase sections; Amendment row added. §4.1 output path table updated: Sprint Execution and Delivery Verification rows point to `lessons_learnt_cycle.md`; Amendment row added; Notes column added. §4.2 Structured Table Block Format added (new): defines section structure, lifecycle header creation rule, and column rules for `lessons_learnt_cycle.md` appends; schema: `friction_item | phase | type | classification | action | owner | target_date`. Old §4.2 Header block renumbered §4.3; old §4.3 Prompt Change Log renumbered §4.4. §5 Record Structure: scope note added (standalone files only; Phase 3/4/Amendment use §4.2). **IMP-35 (gap 2):** idempotency guard now built into §3.3 append logic (activates the "inactive until IMP-28" placeholder in `execution_prompt.md` STEP 5.4). |
 | 1.4 | 2026-03-06 | **Continuous improvement additions.** Added prompt change classification requirement: every process patch must be classified as action-now or defer; action-now requires Head of Specs Team explicit confirmation; deferred patches without a named owner or target date are escalations, not valid deferred patches. Added prompt change log as a required output (§4.3): every action-now patch must produce an entry in `claude/system/prompt_change_log.md` linking the prompt version to its triggering friction item; log is append-only. Updated §3.6 cross-cycle recurrence check to also check whether deferred patches have corresponding prompt_change_log entries — patches carried 2+ cycles without a log entry become recurrence escalations. Updated §5 record structure: immediate patch template gains "Confirmed by" and "Prompt change log entry" fields; deferred patch template gains explicit invalid-state warning for missing owner/date; process improvements actioned table gains "Prompt change log entry" column; outstanding deferred patches table gains validity rule; escalations table gains new trigger types (missing owner, missing target, 2+ cycles without log entry). Updated §6.2, §6.3, §6.4 action rules to enforce owner/date requirement, sign-off requirement, and log entry requirement. Updated §8 completion condition to require prompt change log entries and valid deferred patch fields. |

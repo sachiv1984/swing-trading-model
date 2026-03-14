@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.14
+**Version:** 3.15
 **Last Updated:** 2026-03-14
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -330,7 +330,7 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 
 ## 5. Phase 0 — Idea Intake (Optional)
 
-**Source prompt:** `claude/system/idea_intake_prompt.md` (v1.1)  
+**Source prompt:** `claude/system/idea_intake_prompt.md` (v1.3)  
 **Template:** `claude/system/idea_template.md`  
 **Owner:** PMO Lead  
 **Trigger:** Optional — PMO Lead invokes before issuing `run roadmap`. Not required; the roadmap engine notes its absence and continues.
@@ -395,7 +395,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v2.2)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v2.3)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -598,7 +598,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.18)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.19)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -741,7 +741,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v1.9)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.0)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1284,21 +1284,21 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Version | 3.11 |
 | Last Updated | 2026-03-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.1 |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.3 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.2 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.2 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.2 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.18 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v1.9 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.3 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.19 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.0 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v2.1 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.4 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.8 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v1.9 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.6 |
+| Shared Standards | `claude/system/shared_standards.md` v2.0 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.7 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
 | Team Charter | `claude/charter/team_charter.md` v1.5 |
@@ -1315,6 +1315,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.15 | 2026-03-14 | **AUD-2026-03-13 second batch applied.** §5 (idea intake) → v1.3. §6 source prompt → roadmap_prompt.md (v2.3). §6B source prompt → release_planning_prompt.md (v2.19). §7 source prompt → sprint_planning_prompt.md (v2.0). §14 governance table: shared_standards v2.0, lessons_learnt_prompt v1.7, idea_intake_prompt v1.3. Changes: lessons_learnt_prompt §1.1 invocation context hard gate; Phase 3/4 headers normalised to stable anchors; shared_standards §16 JSON schemas section added; sprint_planning inline schema replaced with §16.1 reference; roadmap + release planning lessons_learnt.md ARTEFACT_STATUS terminal block requirement; idea_intake per_agent_submission_count field. |
 | 3.14 | 2026-03-14 | **AUD-2026-03-13 audit improvements applied.** §6 source prompt → `roadmap_prompt.md` (v2.2). §7 source prompt → `sprint_planning_prompt.md` (v1.9). §6B.8 source prompt → `amendment_cycle_prompt.md` (v1.6). §8 source prompt → `execution_prompt.md` (v2.1). §14 governance table versions updated accordingly. Changes: roadmap STEP -1.5 B7 auto-escalation + patch confirmation + state age advisory; STEP 5 Challenger failure halt; STEP 9 structural decision log enforcement + header formatting rule. Execution STEP 9 gate evidence requirement. Sprint Planning Amendment_In_Progress hard gate. Amendment cycle amendment_lessons.md deprecation notice. `run audit` added to CLAUDE.md command table. |
 | 3.13 | 2026-03-11 | **Batch 7 governance decisions resolved.** §7 source prompt → `sprint_planning_prompt.md` (v1.8). §14 governance table: `sprint_planning_prompt.md` v1.8, `team_charter.md` v1.5. IMPs applied: IMP-30 (design gate bypass authority named — Head of UX & Design + Product Owner co-confirmation; charter updated; sprint planning STEP -1.3 reference added), IMP-17/31 (Class 8 deferred — no further action; Reserved annotation confirmed), IMP-60 (`v2_0_gates` block superseded — removed from `.claude_current_state.json`; decision recorded). |
 | 3.12 | 2026-03-11 | **Batch 8 review.md governance and lifecycle completeness sweep.** §6 source prompt → `roadmap_prompt.md` (v2.1). §6B source prompt → `release_planning_prompt.md` (v2.18). §9 source prompt → `delivery_verification_prompt.md` (v1.4). §10 source prompt → `post_ship_closure.md` (v1.8). §14 governance table versions updated accordingly (shared_standards v1.9). IMPs applied: IMP-13 (roadmap STEP 9.0 net-zero gate), IMP-33 (roadmap STEP 5.0 mode-independence note), IMP-11 (release planning STEP -1.8 Amendment_In_Progress hard gate), IMP-16 (release planning STEP -1.9 stale lock preflight), IMP-22 (shared_standards §14 preflight field scope), IMP-43 (shared_standards §15 spec debt lifecycle), IMP-14 (delivery verification STEP 5.3 test_scenario_gaps table), IMP-15 (delivery verification STEP 4.3 stale parked detection; post_ship_closure STEP 3.4 stale parked disposition check). |

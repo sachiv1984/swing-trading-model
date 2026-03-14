@@ -26,19 +26,15 @@ AUDIT_VERSION = "6"
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-03-13"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    # Deferred to next cycle (Tier 2 Medium / Tier 3 / dependency chains)
-    "AUD-2026-03-13-002",  # run roadmap --dry-run support
-    "AUD-2026-03-13-003",  # run ideas consolidate into run roadmap STEP -1.6
-    "AUD-2026-03-13-004",  # manage roadmap + groom backlog mandatory post-ship
-    "AUD-2026-03-13-005",  # halt blocks inline extract to shared_standards
-    "AUD-2026-03-13-006",  # create invariants.md consolidate 3 docs
-    "AUD-2026-03-13-007",  # lessons_learnt invocation guard structural (dep AUD-001 now closed)
-    "AUD-2026-03-13-009",  # add shared_standards §16 JSON schemas
-    "AUD-2026-03-13-017",  # execution_prompt extract schemas (dep AUD-009, AUD-006)
-    "AUD-2026-03-13-018",  # ideas_window.json per_agent_submission_count field
-    "AUD-2026-03-13-021",  # lessons_learnt.md standalone ARTEFACT_STATUS terminal block
-    "AUD-2026-03-13-022",  # lessons_learnt_cycle.md normalise variable section headers
-    # Closed in 2026-03-14 session: AUD-001, AUD-011, AUD-012, AUD-013, AUD-014, AUD-015, AUD-016, AUD-020
+    # Deferred — Medium effort or dependencies not yet resolved
+    "AUD-2026-03-13-002",  # run roadmap --dry-run support (Medium effort)
+    "AUD-2026-03-13-003",  # run ideas consolidate into run roadmap STEP -1.6 (Medium)
+    "AUD-2026-03-13-004",  # manage roadmap + groom backlog mandatory post-ship (Medium)
+    "AUD-2026-03-13-005",  # halt blocks inline extract to shared_standards (6 files)
+    "AUD-2026-03-13-006",  # create invariants.md consolidate 3 docs (new file + 3 edits)
+    "AUD-2026-03-13-017",  # execution_prompt extract schemas (High effort; dep AUD-009 now closed, AUD-006 still open)
+    # Closed in 2026-03-14 session 1: AUD-001, AUD-011, AUD-012, AUD-013, AUD-014, AUD-015, AUD-016, AUD-020
+    # Closed in 2026-03-14 session 2: AUD-007, AUD-009, AUD-018, AUD-021, AUD-022
     # False positives (no action): AUD-008, AUD-010, AUD-019
 ]
 

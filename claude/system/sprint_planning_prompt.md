@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.9
+**Version:** 2.0
 **Last Updated:** 2026-03-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -607,20 +607,7 @@ Write: `claude/cycles/<cycle_id>/sprint_backlog_index.json`
 
 This index enables the Execution Engine to read only the relevant slice of `sprint_backlog.md` per EPIC, without loading the full document.
 
-Required schema:
-
-```json
-{
-  "cycle_id": "<cycle_id>",
-  "generated_utc": "<ISO-8601 UTC>",
-  "epics": {
-    "EPIC-xx": {
-      "st_items": ["ST-xx", "ST-yy"],
-      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-xx", "stage4_backlog_slice.md#ST-yy"]
-    }
-  }
-}
-```
+Required schema: per `claude/system/shared_standards.md §16.1`
 
 One entry per EPIC in sprint scope. `backlog_slice_refs` lists the canonical section anchors in `stage4_backlog_slice.md` for each ST item — Execution Engine uses these to load AC without reading the full backlog slice.
 
@@ -763,6 +750,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.0 | 2026-03-14 | AUD-2026-03-13-009 (PATCH 2): STEP 6.1A sprint_backlog_index.json inline schema replaced with reference to shared_standards.md §16.1. |
 | 1.9 | 2026-03-14 | AUD-2026-03-13-011: Amendment_In_Progress hard gate added — sprint planning halts if status = Amendment_In_Progress; matches Release Planning parity (IMP-11). |
 | 1.8 | 2026-03-11 | IMP-30: STEP -1.3 bypass authority reference added — `design_gate_bypass_authority` must contain both "Head of UX & Design + Product Owner"; single-role bypass is non-compliant; references `team_charter.md §3.3`. |
 | 1.7 | 2026-03-10 | IMP-23: STEP 6.1 — ST item `Acceptance Criteria` field replaced with reference "AC: see `stage4_backlog_slice.md#ST-xx`"; note added that Execution Engine reads AC from `stage4_backlog_slice.md` via `spec_references`; sprint backlog is a sequencing and ownership document only. |

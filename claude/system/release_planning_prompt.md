@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.18
-**Last Updated:** 2026-03-11
+**Version:** 2.19
+**Last Updated:** 2026-03-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -1305,6 +1305,8 @@ STEP 9 (Global State Synchronization) is the terminal sync and is the only step 
 
 Write: `lessons_learnt.md`
 
+The lessons learnt file must end with an `// ARTEFACT_STATUS` JSON terminal block. Schema: per `claude/system/roadmap_prompt.md` §11 — use `"phase": "Release"`.
+
 ---
 
 ## STEP 9 — Global State Synchronization (Hard Requirement — Terminal)
@@ -1533,6 +1535,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.19 | 2026-03-14 | AUD-2026-03-13-021 (PATCH 2): STEP 8 lessons_learnt.md output must end with `// ARTEFACT_STATUS` JSON terminal block (phase = "Release") per roadmap_prompt.md §11 schema. |
 | 2.18 | 2026-03-11 | IMP-11: STEP -1.8 Amendment In Progress Guard added — explicit halt when `status = Amendment_In_Progress`; mode-independent; message guides user to seal or withdraw before opening new release plan. IMP-16: STEP -1.9 Stale Backlog Lock Preflight Check added — detects locks from prior cycles; determines staleness (owning cycle closed or >72 hrs inactive); surfaces to PMO Lead for manual removal; records advisory in escalations.md; references team_charter §6. |
 | 2.17 | 2026-03-10 | IMP-26: STEP 3 — `### Risk Register Summary` subsection added alongside EPIC table; each RISK-ID entry now requires `escalation_ref` field (null or ESC-id). Escalation subroutine reference updated: ESC entries store decision/status only; full risk context lives in `release_plan.md` via `escalation_ref` back-link. |
 | 2.16 | 2026-03-10 | IMP-48: STEP -1.1 — conditional `gh_issue_template.md` existence check added; halt if missing when `--issues gh` or `--issues import` specified. IMP-24: STEP 4 — `stage4_issue_manifest.json` produced alongside `stage4_backlog_slice.md`; schema `[{id, title, epic, description, ac_summary, labels, assignee}]`; `cycle:<cycle_id>` label is idempotency key; `artifacts.stage4_issue_manifest` added to state.json schema. §10.2 updated — consumes `stage4_issue_manifest.json` (not markdown parsing); idempotency check added (IMP-35 gap 4); `cycle:<cycle_id>` label check-before-create; creation procedure uses manifest fields. |

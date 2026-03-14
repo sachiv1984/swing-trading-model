@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.2
+**Version:** 2.3
 **Last Updated:** 2026-03-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -1266,6 +1266,26 @@ This prompt is a hard requirement. If it is missing: halt and report — do not 
 
 Output: `claude/cycles/<cycle_id>/lessons_learnt.md`
 
+The lessons learnt file must end with the following machine-readable terminal block:
+
+```json
+// ARTEFACT_STATUS
+{
+  "file": "lessons_learnt.md",
+  "cycle_id": "<cycle_id>",
+  "phase": "Roadmap",
+  "filed_utc": "<ISO-8601 UTC>",
+  "friction_item_count": 0,
+  "action_now_count": 0,
+  "deferred_count": 0,
+  "escalation_count": 0,
+  "overdue_patches": 0,
+  "status": "Complete"
+}
+```
+
+`post_ship_closure.md` STEP 8 may locate this block by grepping for `// ARTEFACT_STATUS` to extract counts without reading the full prose document.
+
 The lessons learnt file must follow the structure defined in `lessons_learnt_prompt.md §5` exactly. Every friction item must have a classification (Type A–E), blast radius analysis, and a process patch (immediate or deferred). A deferred patch without a named owner and target date is not valid — it must be escalated to the Head of Specs Team and recorded under Escalations, not in the outstanding actions table.
 
 #### 11.2 Prompt Change Classification (Mandatory)
@@ -1445,6 +1465,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3 | 2026-03-14 | AUD-2026-03-13-021 (PATCH 1): STEP 11 lessons_learnt.md output must end with machine-readable `// ARTEFACT_STATUS` JSON terminal block — enables post_ship_closure.md STEP 8 to grep for counts without full document read. |
 | 2.2 | 2026-03-14 | AUD-2026-03-13 audit improvements: (1) STEP -1.5 extended — B7 auto-escalation rule added for deferred patches carried two consecutive cycles; prompt patch confirmation check; state age advisory (>30 days). (2) STEP 5 — Challenger failure halt instruction added per team_charter.md §3.2. (3) STEP 9 — Decision log append-only enforcement upgraded from assertion to structural (pre/post count check + corruption detection). (4) STEP 9 — Header formatting rule added (bold field labels required for Class 4 headers). |
 | 2.1 | 2026-03-11 | IMP-13: STEP 9.0 net-zero displacement verification added — hard gate before any write; counts additions vs confirmed kills; halts if additions > kills with displacement gap report; mode-independent. IMP-33: STEP 5.0 displacement rule — mode-independence note added ("applies in both strict and standard mode; governance constraint, not relaxed by --mode standard"). |
 | 2.0 | 2026-03-06 | **Six governance improvements plus continuous improvement loop.** (1) Added STEP -1.5: Prior Cycle Outstanding Actions Check. (2) Added Parked Idea Expiry Rule (§4.5). (3) Displacement candidate flag moved to initiative_register.md exclusively. (4) Added scheduled run trigger. (5) Added absolute CPS alert threshold (>2.5). (6) Added effort banding (S/M/L). **Continuous improvement additions:** Expanded STEP 11 into four sub-steps: 11.1 lessons learnt invocation (unchanged), 11.2 prompt change classification (action-now vs defer — Head of Specs Team sign-off required for action-now), 11.3 prompt change log (`claude/system/prompt_change_log.md` — append-only, traceable from every prompt version to its triggering friction item), 11.4 meta-review trigger (every third cycle — aggregates friction patterns across cycles and produces candidate prompt changes). Added `claude/system/*` and `claude/system/prompt_change_log.md` to write scope (§5). Added `prompt_change_log.md` to optional artifact list (§6). Added `last_meta_review_cycle` key to `.claude_current_state.json` (§12.1). Updated commit scope, write plan integrity checks, and completion condition accordingly. Also incorporated two tooling notes from cycle 2 lessons learnt: bash heredoc pattern for new files (§6); bash sed pattern for bulk idea updates (§4.2). Added hard gate marking rule to STEP 9 and §9 invariants. |

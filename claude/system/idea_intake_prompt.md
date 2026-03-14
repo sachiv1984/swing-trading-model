@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-03-06
+**Version:** 1.3
+**Last Updated:** 2026-03-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -264,6 +264,7 @@ Update `claude/ideas/ideas_window.json`:
   "total_submissions": <n>,
   "agents_submitted": [<list of agent slugs that submitted>],
   "agents_not_submitted": [<list of agent slugs with 0 submissions>],
+  "per_agent_submission_count": {"<agent-slug>": <int>, ...},
   "parked_ideas_carried": <n>,
   "new_submissions": <n>
 }
@@ -376,6 +377,7 @@ The submissions folder is never bulk-cleared. Document state is managed item by 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-03-14 | AUD-2026-03-13-018: STEP 3 ideas_window.json schema — added `per_agent_submission_count` map field. Enables roadmap STEP 4 to read per-agent counts directly without re-scanning submission files. |
 | 1.2 | 2026-03-06 | Updated all `Status: Parked` references to `Parked-cycle-<n>` to align with roadmap_prompt.md v2.0 stale idea expiry logic. STEP 1 read instruction, STEP 0 window announcement, §9 lifecycle table, and §10 governance invariants updated. Added `Parked Cycle` column to window summary Parked Ideas table. Added explicit governance invariant documenting the cycle count as authoritative for stale idea expiry. |
 | 1.1 | 2026-03-03 | Removed "Proposed Displacement" as a required submission field. Replaced with "What Would You Stop?" as a non-binding thinking prompt — "No view — leave to debate" is a valid answer. Displacement is now determined in STEP 5 of the roadmap engine. Updated required fields table, submission quality check, and governance invariants accordingly. Updated idea_template.md to match. |
 | 1.0 | 2026-03-03 | Initial version. |

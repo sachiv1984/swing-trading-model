@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.9
-**Last Updated:** 2026-03-11
+**Version:** 2.0
+**Last Updated:** 2026-03-14
 
 # Shared Standards — All Governed Routines
 
@@ -442,10 +442,43 @@ The Backlog Management Engine (`groom backlog`) validates spec debt items agains
 
 ---
 
+## 16. Governed JSON Schemas
+
+Inline JSON schemas in engine prompts must be replaced with a reference to this section.
+Format for reference: "Schema: per `shared_standards.md §16.N`"
+
+### 16.1 sprint_backlog_index.json
+
+Produced by: `sprint_planning_prompt.md` STEP 6.1A
+Consumed by: `execution_prompt.md` STEP -1.1
+
+```json
+{
+  "cycle_id": "<cycle_id>",
+  "generated_utc": "<ISO-8601 UTC>",
+  "epics": {
+    "EPIC-xx": {
+      "st_items": ["ST-xx", "ST-yy"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-xx", "stage4_backlog_slice.md#ST-yy"]
+    }
+  }
+}
+```
+
+### 16.2 stage4_issue_manifest.json
+
+Produced by: `sprint_planning_prompt.md` STEP 6.1A (companion to sprint_backlog_index)
+Consumed by: `sync gh` inline handler
+
+[Schema to be moved from sprint_planning_prompt.md STEP 6.1A by Head of Specs Team]
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.0 | 2026-03-14 | AUD-2026-03-13-009: §16 Governed JSON Schemas added — canonical home for sprint_backlog_index.json schema (§16.1) and stage4_issue_manifest.json placeholder (§16.2). Engine prompts must reference §16 rather than duplicating schemas inline. |
 | 1.9 | 2026-03-11 | IMP-22: §14 Preflight Field Scope added — `shared_preflight_fields` table specifying minimum `.claude_current_state.json` fields per engine; section-scoped read rule. IMP-43: §15 Spec Debt Item Lifecycle added — creation trigger, required fields, acceptance criteria, closing authority (Head of Specs Team), Phase 1M validation rule. |
 | 1.8 | 2026-03-10 | IMP-40: §4 SLA Breach Rule added — 72-hour mandatory `BLOCKED_SLA_BREACH` notice; `blocked_sla_breached` flag in `.claude_current_state.json`. IMP-48: §11 Prompt Version Control — `gh_issue_template.md` added to governed prompt list (Owner: Head of Specs Team, Class: 6). |
 | 1.7 | 2026-03-10 | IMP-45: §13 Dry-Run Standard added — defines guarantee, engine coverage table, read-operation scope, and re-invocation note. IMP-50: §4 Post-Ship Closure escalation target updated from `closure_record.md §6` to `closure_escalations.md`. IMP-58: §11 Prompt Version Control — simultaneity rule added (prompt_change_log.md entry must be in the same commit as the version increment). IMP-61: §10.6 Full State Machine Reference — strengthened: `lifecycle_schema.json` declared as machine-readable source of truth that prevails over §10.1 table in any conflict. |
