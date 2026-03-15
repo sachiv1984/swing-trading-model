@@ -1,0 +1,65 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Provision staging environment infrastructure",
+    "epic": "EPIC-01",
+    "description": "Provision a stable staging/dev environment (frontend + backend) accessible via a stable URL, using real or seeded data",
+    "ac_summary": "Staging URL accessible; frontend+backend running; approach documented; accessible to Director of Quality",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-03-15__release-v1.10"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Configure CI/CD auto-deploy to staging",
+    "epic": "EPIC-01",
+    "description": "CI/CD pipeline deploys to staging automatically on every merge to main",
+    "ac_summary": "Auto-deploy triggers on main merge; staging reflects latest within 15 mins; deployment status visible",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-03-15__release-v1.10"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Update QA sign-off governance process to reference staging",
+    "epic": "EPIC-01",
+    "description": "Update Director of Quality sign-off block to reference staging URL, not production",
+    "ac_summary": "Governance doc updated; QA sign-off no longer requires production as primary environment; DoQ confirms process",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-03-15__release-v1.10"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Refactor CohortAnalysis.js to use GET /analytics/cohort endpoint",
+    "epic": "EPIC-02",
+    "description": "Remove buildCohorts() client-side computation; replace with api.analytics.cohort(period) via useQuery",
+    "ac_summary": "CohortAnalysis.js sources all values from backend endpoint; buildCohorts() removed; regression verified by DoQ",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-15__release-v1.10"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "FastAPI TestClient integration tests for portfolio endpoints",
+    "epic": "EPIC-03",
+    "description": "TestClient integration tests for GET /portfolio and GET /portfolio/prospective-heat; CI-safe (no live DB)",
+    "ac_summary": "Tests cover: response shape, GBP conversion for US positions, heat formula, prospective-heat calculation; CI-safe",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-03-15__release-v1.10"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Add integration test CI step to GitHub Actions",
+    "epic": "EPIC-03",
+    "description": "CI step runs TestClient integration tests on every PR and main push; build fails on test failure",
+    "ac_summary": "CI step present and passing; integrated into existing workflows; DoQ confirms CI step present",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-03-15__release-v1.10"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Author v1.7 missing QA test scenarios (BLG-QA-01)",
+    "epic": "EPIC-03",
+    "description": "Author 3 test scenarios from verification_report.md §6: sharpe_ratio_trade_method, portfolio field alignment, holding_days",
+    "ac_summary": "3 scenarios authored in canonical format; registered in test scenario library; BLG-QA-01 ID assigned; orphan resolved",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-03-15__release-v1.10"],
+    "assignee": null
+  }
+]

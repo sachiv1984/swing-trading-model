@@ -280,5 +280,20 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 ---
 
+---
+
+## v1.10 Release Slice — 2026-03-15
+
+<!-- release-plan-marker: RP:v1.10:2026-03-15__release-v1.10 -->
+
+**Cycle:** 2026-03-15__release-v1.10
+**Release:** v1.10 — Operations & Quality Foundation
+**Planned:** 2026-03-15
+**Backlog slice:** `claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md`
+
+Items in v1.10 sprint: EPIC-01 (ST-01–ST-03), EPIC-02 (ST-04), EPIC-03 (ST-05–ST-07)
+
+---
+
 *For delivery history, see `docs/product/changelog.md`.*
 *For the active roadmap, see `claude/roadmap/current_roadmap.md`.*

@@ -49,6 +49,15 @@ These may be revisited in future versions without any canonical spec change:
 
 ### v1.10 — Operations & Quality Foundation *(next)*
 
+<!-- roadmap-annotation-marker: RA:v1.10:2026-03-15__release-v1.10 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-15__release-v1.10
+- Plan published: 2026-03-15
+- Cycle folder: claude/cycles/2026-03-15__release-v1.10/
+- Backlog slice: claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md
+- Status at annotation: Validated
+
 #### BLG-OPS-01 — Development Environment *(elevated from backlog — P1)*
 **Status:** Planned — P1 prerequisite
 **Effort:** Low–Medium (CI/CD pipeline + staging environment provisioning)
