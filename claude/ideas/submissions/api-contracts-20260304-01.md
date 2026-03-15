@@ -1,6 +1,6 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Planning Document (Class 4)
-**Status:** Advancing
+**Status:** Promoted-Added
 **Submitted by:** API Contracts & Documentation Owner
 **Submitted at:** 2026-03-04
 **Window ID:** IW-20260304-01

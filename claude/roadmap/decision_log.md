@@ -179,3 +179,28 @@ Each decision entry must include:
 **Workforce impact:** No change to roadmap-level workforce allocations.
 
 **Rationale:** All roadmap initiatives were re-validated in STEP 2. No initiative merits Kill, Replace, or Defer beyond the standing DL-003 status for 3.5 Alerts. The roadmap is correctly balanced for the v1.9 → v2.0 delivery sequence. v1.9 scope is confirmed: 5.1, BLG-FEAT-08, 5.2, 5.3, BLG-RD deviation bundle, TEST-GAP-EPIC-01. No roadmap-level changes are required at this time. Roadmap updated with Last Updated date per lifecycle compliance requirement.
+
+---
+
+### DL-008 — 2026-03-15
+
+**Decision type:** Kill + Add (net-zero — 1 Kill, 1 Add)
+**Cycle:** 2026-03-15__item-5.3
+**Date:** 2026-03-15
+**Decision owner:** Product Owner
+
+**Initiatives affected:**
+- ❌ **Kill:** 4.1c — Server-Side PDF Report
+- ➕ **Add:** BLG-OPS-01 — Development Environment (v1.10)
+
+**Displacement:** 4.1c killed to create roadmap slot for BLG-OPS-01. Net-zero: 1 Kill + 1 Add ✅.
+
+**Workforce impact:** 4.1c had no active workforce allocation (v2.0 planning not yet open). BLG-OPS-01 enters v1.10 as P1 — Infrastructure & Operations Owner is the primary delivery lead.
+
+**Rationale — Kill 4.1c:**
+Server-Side PDF Report was the lowest-value active roadmap item, documented as the standing displacement candidate since DL-005 (2026-03-04). The problem it solves — browser-print PDF inconsistency — is a UX inconvenience. Browser-print remains functional. With a P1 infrastructure gap (BLG-OPS-01) now demanding roadmap capacity, 4.1c is the correct item to displace. The §2 single-user product boundary limits the urgency of a polished PDF export further.
+
+**Rationale — Add BLG-OPS-01:**
+The absence of a development/staging environment is a structural governance failure. The Director of Quality sign-off workflow requires testing a live application before acceptance, but the only live application is production. This forced a merge-before-test workflow in v1.9 Sprint 2, which led to post-merge bug discovery (BLG-TECH-06). BLG-OPS-01 was raised as P1 in the backlog (2026-03-13) and is elevated to roadmap to guarantee capacity commitment in v1.10 planning. Without dedicated roadmap inclusion, infrastructure items are consistently squeezed out by feature work.
+
+**Challenger debate summary:** Both the Kill and Add were challenged during STEP 4 structured debate. All challenges were answered satisfactorily and withdrawn. Motion approved unanimously.

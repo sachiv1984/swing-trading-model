@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-04
+**Last Updated:** 2026-03-15 (roadmap rebalance — cycle 2026-03-15__item-5.3)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -19,21 +19,9 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 | ID | Initiative | Release | Status | Decision log ref |
 |----|-----------|---------|--------|-----------------|
-| 3.4 | Risk Dashboard | v1.8 | Planned — pre-req gate cleared (v1.7) | — |
-| BLG-NEW-01 | Golden Output Regression Baseline for CI | v1.8 | Backlog — P1 | DL-005 |
-| BLG-NEW-02 | Backtest vs Live Stop Reconciliation Report | v1.8 | Backlog — P1 (after BLG-NEW-01) | DL-005 |
-| BLG-NEW-03 | Define and Document Unavailability Failure Mode | v1.8 | Backlog — P1 | DL-005 |
-| BLG-NEW-04 | AI-Assisted Workflow Governance Policy | v1.8 | Backlog — P2 | DL-005 |
-| BLG-NEW-05 | Dependency Vulnerability Scanning in CI | v1.8 | Backlog — P1 | DL-005 |
-| BLG-NEW-07 | Running API Changelog Document | v1.8 | Backlog — P1 | DL-005 |
-| BLG-NEW-08 | Automated OpenAPI Drift Detection in CI | v1.8 | Backlog — P1 | DL-005 |
-| BLG-FEAT-08 | Basic Compliance Metrics | v1.9 | Planned — pre-req gate for 5.1 | — |
-| 5.1 | Structured Trade Reflection Template | v1.9 | Planned — pre-req: BLG-FEAT-08 | — |
-| 5.2 | Cohort Analysis | v1.9 | Planned | — |
-| 5.3 | Dashboard Homepage / Session Summary | v1.9 | Planned | — |
+| BLG-OPS-01 | Development Environment | v1.10 | Planned — P1 infrastructure gap; no dev environment for QA | DL-008 |
 | 3.5 | Alerts & Notifications | v2.0 | Deferred — QA gate pending; auto-advance trigger set (DL-003) | DL-002, DL-003 |
 | 4.1b | Tax-Year P&L Statement | v2.0 | Planned — BLG-NEW-06 P&L labelling pre-work merged into scope | — |
-| 4.1c | Server-Side PDF Report | v2.0 | Planned — lowest-value item; displacement candidate | — |
 | 4.3 | Signal Exposure Enhancement | v2.0 | Active planning — §13 gate cleared (PoG POG-20260304-01) | DL-004 |
 
 ---
@@ -77,6 +65,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 | ID | Initiative | Date | Decision | Decision log ref |
 |----|-----------|------|----------|-----------------|
 | 4.1a | CSV Export of Trade History | 2026-03-01 | Superseded by BLG-FEAT-07 (shipped v1.6.1) | DL-001 |
+| 4.1c | Server-Side PDF Report | 2026-03-15 | Displaced by BLG-OPS-01 (Dev Environment). Standing displacement candidate since DL-005. Browser-print functional; structural QA gap is higher priority. | DL-008 |
 
 ---
 
@@ -103,3 +92,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 | BLG-TECH-06 | Canonicalise sharpe_ratio_trade_method | 2026-03-03 | v1.7 |
 | BLG-TECH-08 | Align portfolio_endpoints.md positions summary | 2026-03-03 | v1.7 |
 | BLG-TECH-09 | Add holding_days to GET /trades | 2026-03-03 | v1.7 |
+| BLG-FEAT-08 | Basic Compliance Metrics | 2026-03-13 | v1.9 Sprint 2 |
+| 5.1 | Structured Trade Reflection Template | 2026-03-13 | v1.9 Sprint 2 |
+| 5.2 | Cohort Analysis | 2026-03-13 | v1.9 Sprint 2 |
+| 5.3 | Dashboard Homepage / Session Summary | 2026-03-13 | v1.9 Sprint 2 |

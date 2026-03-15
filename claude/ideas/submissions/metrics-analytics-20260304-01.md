@@ -1,6 +1,6 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Planning Document (Class 4)
-**Status:** Advancing
+**Status:** Promoted-Added
 **Submitted by:** Metrics Definitions & Analytics Canonical Owner
 **Submitted at:** 2026-03-04
 **Window ID:** IW-20260304-01

@@ -1,6 +1,6 @@
 **Owner:** AI Compliance & Governance Officer
 **Class:** Planning Document (Class 4)
-**Status:** Advancing
+**Status:** Promoted-Added
 **Submitted by:** AI Compliance & Governance Officer
 **Submitted at:** 2026-03-04
 **Window ID:** IW-20260304-01

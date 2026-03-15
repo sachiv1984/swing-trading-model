@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-13 (v1.9 Sprint 2: BLG-TECH-06 added; BLG-OPS-01 added — no dev environment gap)
-**Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — DL-006)
+**Last Updated:** 2026-03-15 (roadmap rebalance — cycle 2026-03-15__item-5.3: BLG-NEW-13 added from idea pool; BLG-OPS-01 elevated to roadmap)
+**Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — DL-008)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -841,4 +841,37 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 **Backlog slice:** `claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md`
 
 **Sprint 1 (✅ SHIPPED 2026-03-09):** EPIC-04 (ST-06–ST-10), EPIC-05 partial (ST-11, ST-13), EPIC-06 (ST-14–ST-19)
-**Sprint 2 (PENDING):** EPIC-01 (ST-01–ST-02), EPIC-02 (ST-03, ST-05), EPIC-03 (ST-04), EPIC-05 partial (ST-12)
+**Sprint 2 (✅ SHIPPED 2026-03-13):** EPIC-01 (ST-01–ST-02), EPIC-02 (ST-03, ST-05), EPIC-03 (ST-04), EPIC-05 partial (ST-12)
+
+---
+
+## 10. New Backlog Items — Cycle 2026-03-15__item-5.3
+
+Items promoted to backlog from idea pool during roadmap rebalance cycle 2026-03-15__item-5.3.
+
+---
+
+### BLG-NEW-13 — Spec Coverage Inventory
+**Priority:** P2 (Medium)
+**Type:** Governance / Spec
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260304-02 (IW-20260304-01 — promoted 2026-03-15)
+**Cycle added:** 2026-03-15__item-5.3
+**Effort:** ~1–2 days (analysis + documentation)
+**Target release:** v2.0 (or v1.10 if capacity allows)
+
+Systematic audit of all canonical spec sections (docs/specs/) against implementation coverage. Produces a living inventory identifying which spec sections are tested, which are partially covered, and which have no coverage or implementation verification. Complements BLG-NEW-11 (Canonical Terms Glossary). Creates an actionable gap list for future backlog prioritisation.
+
+**Scope**
+- Review all docs/specs/ sections against live implementation and test coverage
+- Rate each section: covered / partial / gap
+- Cross-reference open backlog items against identified gaps
+- Define a review cadence (e.g. per audit cycle or per major release)
+- Output: a structured Coverage Inventory document (Class 2 Supporting document)
+
+**Acceptance Criteria**
+- Coverage Inventory document produced covering all docs/specs/ sections
+- Each spec section rated: covered / partial / gap
+- Gap items cross-referenced against open backlog items where possible
+- Review cadence defined
+- Registered in Specs_Index.md

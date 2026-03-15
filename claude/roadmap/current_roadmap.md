@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-09 (post-ship closure — v1.9 Sprint 1 shipped)
-**Last rebalance:** 2026-03-06 (cycle 2026-03-06__item-3.4 — v1.8 completion event)
+**Last Updated:** 2026-03-15 (roadmap rebalance — v1.9 Sprint 2 completion event)
+**Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — item 5.3 / v1.9 Sprint 2 completion event)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v1.9** — Risk Dashboard Fixes & Foundation (Sprint 1) — Shipped 2026-03-09
-**Next planned release:** **v1.9 Sprint 2** (then v2.0)
+**v1.9** — User Value & Insight — Fully Shipped 2026-03-13
+**Next planned release:** **v1.10** (Development Environment — BLG-OPS-01) → **v2.0**
 
 ---
 
@@ -55,47 +55,35 @@ Delivered via a unified GET /analytics/metrics?period= endpoint. Includes a POST
 
 ---
 
-### v1.9 — User Value & Insight *(Sprint 1 ✅ Shipped 2026-03-09 — Sprint 2 pending)*
+### v1.9 — User Value & Insight *(✅ Fully Shipped 2026-03-13)*
 
-Three closely related user-facing features that build on existing data and the existing journal system. Delivered together as a cohesive release.
+Sprint 1 (2026-03-09): Risk Dashboard deviation fixes (EPIC-04), Playwright test infrastructure + Service Layer Test Coverage Standard (EPIC-05 partial), documentation hygiene (EPIC-06). Sprint 2 (2026-03-13): BLG-FEAT-08, 5.1, 5.2, 5.3, R-Multiple Distribution, Canonical Test Scenario Library Phase 2. All items verified.
 
-> **v1.9 Sprint 1 shipped (2026-03-09):** Risk Dashboard deviations (EPIC-04), Playwright test infrastructure + Service Layer Test Coverage Standard (EPIC-05 partial), and full documentation hygiene backlog (EPIC-06) — 13 ST items complete. Sprint 2 (ST-01–05, ST-12: user-facing features) pending execution. Cycle: `2026-03-06__release-v1.9`.
+#### 5.1 Structured Trade Reflection Template
+**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-01/ST-02)
 
-> **v1.9 scope note (2026-03-06):** In addition to the user value features below, v1.9 will include resolution of Risk Dashboard deviation backlog items (BLG-RD-01 through BLG-RD-11) and TEST-GAP-EPIC-01 (scenario execution infrastructure). Release planning engine will determine the v1.9 backlog slice across all items.
+#### BLG-FEAT-08 — Basic Compliance Metrics
+**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-03/ST-01)
 
-#### 5.1 Structured Trade Reflection Template *(new)*
-**Status:** Planned
-**Effort:** Low–Medium (1–2 days)
-**Value:** High — daily discipline and learning reinforcement
-**Pre-requisite:** BLG-FEAT-08 (Basic Compliance Metrics definitions must be canonical — they inform the reflection prompts)
+#### 5.2 Cohort Analysis
+**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-02/ST-03)
+> Note: BLG-TECH-06 (CohortAnalysis.js client-side computation residue) filed in backlog at P2 for v1.10.
 
-A structured post-trade reflection form presented at trade close, built on top of the existing v1.4 notes and journal system. Pre-populated from the trade record: hold time, R-multiple, exit reason, position state history. Prompts the user with structured reflection questions (trade rationale, what worked, what didn't, discipline assessment). No AI — fully deterministic and testable.
+#### 5.3 Dashboard Homepage / Session Summary
+**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-03/ST-05)
 
-> This is distinct from AI Journal Summarisation, which requires a §13 boundary decision before it can enter the roadmap. See Section 6 (Gated Features).
+---
 
-#### BLG-FEAT-08 — Basic Compliance Metrics *(promoted from backlog)*
-**Status:** Planned — pre-work gate for 5.1
-**Effort:** ~1 day
-**Value:** Discipline visibility
+### v1.10 — Operations & Quality Foundation *(next)*
 
-Lightweight compliance metrics: journal completion rate, stop-based exit rate, average position size as a percentage of portfolio. Definitions must be canonicalised in `metrics_definitions.md` before implementation. These metrics also feed the reflection template prompts.
+#### BLG-OPS-01 — Development Environment *(elevated from backlog — P1)*
+**Status:** Planned — P1 prerequisite
+**Effort:** Low–Medium (CI/CD pipeline + staging environment provisioning)
+**Value:** Critical — structural QA gap. No non-production environment exists; all QA runs against production.
 
-> ⚠️ **Capacity check required at v1.9 pre-alignment:** The Metrics Definitions & Analytics Owner was committed to EPIC-03 (v1.7). Before BLG-FEAT-08 enters pre-alignment, the FinOps & Resource Architect must confirm the Metrics Definitions owner is available and EPIC-03 deliverables are stable. Do not open v1.9 pre-alignment without this confirmation. *(LL-05, v1.7 Release Planning Lessons — 2026-03-02)*
+Provision a staging/dev environment tracking `main`. CI/CD auto-deploys to staging on merge. QA sign-off process updated to use staging URL, not production. Prerequisite for safe pre-merge quality validation.
 
-#### 5.2 Cohort Analysis *(new — from roadmap review session)*
-**Status:** Planned
-**Effort:** Low–Medium (1–2 days)
-**Value:** High — performance insight over time
-**Pre-requisite:** Cohort metric definitions must be added to `metrics_definitions.md`
-
-Group closed trade performance by entry period (month, quarter, year). Derivable entirely from existing trade data — no new data dependencies. Extends the Performance Analytics page with a cohort analysis tab or panel. Backend: new query or analytics endpoint extension. Frontend: new chart component.
-
-#### 5.3 Dashboard Homepage / Session Summary *(new — from roadmap review session)*
-**Status:** Planned
-**Effort:** Low–Medium (1–2 days)
-**Value:** High — makes the product feel complete for daily use
-
-A proper home page for the product. On load: open positions count, total portfolio heat, any positions in grace period today, today's signal status, recent trade activity summary. All data sourced from existing endpoints — `GET /portfolio`, `GET /positions`, `GET /signals`. A composite endpoint may be introduced to reduce page-load request count; this is an engineering decision to be confirmed in pre-alignment.
+> **Elevated from backlog (DL-008, 2026-03-15):** BLG-OPS-01 elevated to roadmap — displaces 4.1c (Server-Side PDF, killed). The absence of a development environment is a structural governance failure: Director of Quality sign-off requires testing a live application, but no non-production environment exists for pre-merge testing. See DL-008.
 
 ---
 
@@ -126,12 +114,10 @@ A structured, server-side generated tax-year P&L statement. GBP-adjusted, fee-in
 
 > **Scope note (2026-03-04):** Realised vs Unrealised P&L display labelling (originally submitted as BLG-NEW-06) is pre-work for this item. The P&L statement must clearly distinguish realised and unrealised amounts per trade. BLG-NEW-06 is merged into 4.1b pre-work scope — not a standalone backlog item.
 
-#### 4.1c — Server-Side PDF Report *(new sub-item)*
-**Status:** Planned
-**Effort:** Low–Medium (1–2 days)
-**Value:** Medium — replaces brittle browser-print approach
+#### ~~4.1c — Server-Side PDF Report~~ *(killed — DL-008, 2026-03-15)*
+**Status:** ❌ Killed — displaced by BLG-OPS-01 (Development Environment)
 
-Replaces the current client-side browser-print PDF export on the analytics page. Server-side generation using a library (WeasyPrint or equivalent). Output: a consistently formatted, printable performance report. Covers executive summary, key insights, and advanced metrics. Removes dependency on browser print behaviour.
+Standing displacement candidate since DL-005 (2026-03-04). BLG-OPS-01 (P1 infrastructure gap — no dev environment for QA) is categorically higher priority. Browser-print PDF remains functional; UX inconvenience does not outweigh structural QA governance gap.
 
 #### 4.3 — Signal Exposure Enhancement *(new — narrow scope)*
 **Status:** Planned — active v2.0 planning *(§13 gate cleared; PoG POG-20260304-01 issued 2026-03-04)*
@@ -220,8 +206,9 @@ When evaluating new features:
 | **v1.6.1** | Correctness & Quick Wins | Quick Wins Bundle (6 features) — ✅ Shipped 2026-03-01 |
 | **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision — ✅ Shipped 2026-03-03 |
 | **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk — ✅ Shipped 2026-03-06 |
-| **v1.9** | User Value & Insight | Sprint 1 ✅ Shipped 2026-03-09: Risk Dashboard fixes, test infrastructure, docs hygiene. Sprint 2 pending: trade reflection template, compliance metrics, cohort analysis, dashboard homepage |
-| **v2.0** | Reporting & Alerts | Alerts & notifications (QA gate pending), tax-year statement, server-side PDF, signal parameter exposure (gate cleared — active planning) |
+| **v1.9** | User Value & Insight | Sprint 1 ✅ Shipped 2026-03-09: Risk Dashboard fixes, test infrastructure, docs hygiene. Sprint 2 ✅ Shipped 2026-03-13: trade reflection template, compliance metrics, cohort analysis, dashboard homepage, R-multiple distribution, test scenario library |
+| **v1.10** | Operations & Quality | BLG-OPS-01 Development Environment (P1) |
+| **v2.0** | Reporting & Alerts | Alerts & notifications (QA gate pending), tax-year statement, signal parameter exposure (gate cleared — active planning) |
 | **v2.1+** | Enhancements | Watchlists, chart interactivity, Prometheus |
 
 ---
