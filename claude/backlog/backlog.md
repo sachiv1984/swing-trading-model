@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-15 (roadmap rebalance — cycle 2026-03-15__item-5.3: BLG-NEW-13 added from idea pool; BLG-OPS-01 elevated to roadmap)
+**Last Updated:** 2026-03-15 (BLG-FEAT-03 orphan resolved — assigned to v2.1)
 **Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — DL-008)
 
 > ⚠️ Standing Notice
@@ -109,17 +109,18 @@ This creates a structural governance gap: the human Director of Quality sign-off
 
 ### BLG-FEAT-03 — Slippage Tracking
 **Priority:** P2
-**Effort:** 1-2 hours
+**Target release:** v2.1
+**Effort:** Low–Medium (data model update required — schema migration + trade entry capture logic + display)
 
-> ⚠️ **Orphan Notice:** No roadmap home or cycle activity detected. Review at next Roadmap Rebalance.
-
-Track and display trade slippage and average slippage summary.
+Track and display trade slippage per trade and as a portfolio average.
 
 **Indicative Formula**
 
 `(Fill Price - Market Price) / Market Price`
 
-Requires data model update.
+Requires data model update — Fill Price must be captured at trade entry (not currently stored). This is the primary pre-work gate: `data_model.md` must define the Fill Price field and migration path before implementation begins.
+
+> **Disposition (2026-03-15 — Product Owner):** Assigned to v2.1 alongside Chart Interactivity and Watchlists. No displacement required — v2.1 is not yet planned. Pull into v2.1 release planning when capacity is available. Orphan status resolved.
 
 ---
 
