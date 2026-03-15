@@ -20,6 +20,7 @@ These prompts are **not** always-on context. They are loaded by Claude Code when
 | Command | Prompt File | Phase / Trigger |
 |---------|-------------|-----------------|
 | `run ideas [--window-id <id>] [--mode strict\|standard]` | `claude/system/idea_intake_prompt.md` | Phase 0 — Idea intake (optional, before rebalance) |
+| *(auto)* | `claude/system/idea_intake_prompt.md` | Invoked as STEP -1.6 of `run roadmap` when open window detected. Standalone `run ideas` remains supported for explicit window control. |
 | `run roadmap --item-id <id> --item-name <n> [--date YYYY-MM-DD] [--dry-run]` | `claude/system/roadmap_prompt.md` | Phase 1 — Roadmap rebalance (roadmap item completed) |
 | `run roadmap --reason "scheduled" [--date YYYY-MM-DD] [--dry-run]` | `claude/system/roadmap_prompt.md` | Phase 1 — Roadmap rebalance (scheduled review, no completion event required) |
 | `manage roadmap [--dry-run]` | `claude/system/roadmap_management_prompt.md` | Phase 1M — Retire completed items, flag stale |

@@ -27,13 +27,13 @@ AUDIT_VERSION = "6"
 PRIOR_AUDIT_ID = "AUD-2026-03-13"
 PRIOR_AUDIT_OPEN_ITEMS = [
     # Deferred — remaining items require significant effort or new file creation
-    "AUD-2026-03-13-003",  # run ideas consolidate into run roadmap STEP -1.6 (Medium — behavioral change)
     "AUD-2026-03-13-005",  # halt blocks inline extract to shared_standards (6 files)
     "AUD-2026-03-13-006",  # create invariants.md + consolidate 3 docs (new file; team_charter.md restricted)
     "AUD-2026-03-13-017",  # execution_prompt extract schemas (High effort; dep AUD-006 still open)
     # Closed in 2026-03-14 session 1: AUD-001, AUD-011, AUD-012, AUD-013, AUD-014, AUD-015, AUD-016, AUD-020
     # Closed in 2026-03-14 session 2: AUD-007, AUD-009, AUD-018, AUD-021, AUD-022
     # Closed in 2026-03-14 session 3: AUD-002, AUD-004
+    # Closed in 2026-03-15 session 1: AUD-003
     # False positives (no action): AUD-008, AUD-010, AUD-019
 ]
 
