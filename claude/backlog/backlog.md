@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-15 (BLG-FEAT-03 orphan resolved — assigned to v2.1)
+**Last Updated:** 2026-03-15 (target release fields added to all open items; Sprint 2 statuses updated)
 **Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — DL-008)
 
 > ⚠️ Standing Notice
@@ -84,8 +84,9 @@ This creates a structural governance gap: the human Director of Quality sign-off
 ---
 
 ### BLG-TECH-05 — Prometheus metrics endpoint
-**Priority:** P3 (Low — v2.1 candidate)
+**Priority:** P3 (Low)
 **Type:** Observability
+**Target release:** v2.1 (or when system becomes multi-user)
 
 **Scope**
 - Add `GET /metrics` Prometheus endpoint exposing:
@@ -97,9 +98,6 @@ This creates a structural governance gap: the human Director of Quality sign-off
 **Acceptance Criteria**
 - Metrics scrape successfully in Prometheus format.
 - Counters and histograms are correct.
-
-**Target**
-- v2.1 or when system becomes multi-user.
 
 ---
 
@@ -128,6 +126,7 @@ Requires data model update — Fill Price must be captured at trade entry (not c
 **Priority:** P2
 **Effort:** ~1 day
 **Target release:** v1.9 (pre-work gate for Structured Trade Reflection Template)
+**Status:** ✅ COMPLETE — 2026-03-13 (v1.9 Sprint 2, EPIC-03/ST-01)
 
 Lightweight discipline metrics:
 - Journal completion rate
@@ -179,9 +178,9 @@ These are deliberate product decisions, not deferrals:
 
 ## 6. Test Coverage Gaps (from Delivery Verification)
 
-> ⚠️ **Orphan Notice:** No BLG-ID assigned; no explicit roadmap home or cycle activity. Assign a BLG-ID and roadmap home at next Roadmap Rebalance, or close if addressed.
+> ⚠️ **Orphan Notice:** No BLG-ID assigned. Assign BLG-ID and target release at v1.10 sprint planning.
 
-- [TEST-GAP-EPIC-06] Test scenario coverage gap from 2026-03-02__release-v1.7: QA & Testing Owner to create scenarios per verification_report.md §6 (Test Coverage Assessment). Gaps: no scenarios asserting sharpe_ratio_trade_method presence in /validate/calculations response (14 metrics); no scenario asserting portfolio_endpoints.md field alignment; no scenario asserting holding_days in GET /trades. Target: pre-next sprint on analytics, portfolio, or trade endpoint domains.
+- [TEST-GAP-EPIC-06] Test scenario coverage gap from 2026-03-02__release-v1.7: QA & Testing Owner to create scenarios per verification_report.md §6 (Test Coverage Assessment). Gaps: no scenarios asserting sharpe_ratio_trade_method presence in /validate/calculations response (14 metrics); no scenario asserting portfolio_endpoints.md field alignment; no scenario asserting holding_days in GET /trades. **Target release: v1.10** — assign BLG-ID at v1.10 sprint planning.
 
 ---
 
@@ -656,6 +655,8 @@ Release planning engine determines v1.9 backlog slice.
 **Owner:** Metrics Definitions & Analytics Owner
 **Source:** IDEA-metrics-analytics-20260304-01, IW-20260304-01
 **Cycle added:** 2026-03-06__item-3.4
+**Target release:** v1.9 Sprint 2
+**Status:** ✅ COMPLETE — 2026-03-13 (v1.9 Sprint 2, EPIC-02/ST-04)
 **Sequence constraint:** After BLG-FEAT-08 metrics definitions (Metrics Definitions owner capacity — LL-05 check applies)
 
 **Problem**
@@ -679,8 +680,9 @@ No visualisation of R-multiple distribution exists. R-multiple (profit in units 
 **Owner:** QA & Testing Owner
 **Source:** IDEA-qa-testing-20260304-01, IW-20260304-01
 **Cycle added:** 2026-03-06__item-3.4
+**Target release:** v1.9
+**Status:** ✅ COMPLETE — Phase 1: 2026-03-09 (v1.9 Sprint 1, EPIC-05/ST-11). Phase 2: 2026-03-13 (v1.9 Sprint 2, EPIC-05/ST-12)
 **Scope constraint:** Risk Dashboard components first (resolves TEST-GAP-EPIC-01 infrastructure dependency); new v1.9 feature scenarios added at release time; no retroactive full-coverage mandate
-**Status:** Phase 1 ✅ COMPLETE — 2026-03-09 (v1.9 Sprint 1, EPIC-05, ST-11). Phase 2 (feature scenarios for Sprint 2 deliveries) → Sprint 2 (ST-12)
 
 **Problem**
 Test scenarios are ad-hoc per feature. TEST-GAP-EPIC-01 identified that 17/27 Risk Dashboard scenarios cannot be executed without a seeded test infrastructure. A systematic canonical library with documented infrastructure preconditions prevents this gap recurring in every release.
@@ -750,12 +752,12 @@ The golden output baseline (BLG-NEW-01, COMPLETE) covers end-to-end calculation 
 
 ---
 
-**Section 11 Summary (updated 2026-03-09 — v1.9 Sprint 1 post-ship)**
-- BLG-NEW-09: active (Sprint 2 deferred — R-Multiple Distribution Report)
-- BLG-NEW-10: Phase 1 complete (ST-11); Phase 2 Sprint 2 pending (ST-12)
-- BLG-NEW-11: ✅ COMPLETE (ST-14)
-- BLG-NEW-12: ✅ COMPLETE (ST-13)
-- Active: 1 full (BLG-NEW-09) + 1 partial (BLG-NEW-10 Phase 2)
+**Section 11 Summary (updated 2026-03-15 — v1.9 Sprint 2 post-ship)**
+- BLG-NEW-09: ✅ COMPLETE — 2026-03-13 (v1.9 Sprint 2, ST-04)
+- BLG-NEW-10: ✅ COMPLETE — Phase 1: ST-11; Phase 2: ST-12
+- BLG-NEW-11: ✅ COMPLETE — ST-14
+- BLG-NEW-12: ✅ COMPLETE — ST-13
+- Active: 0 — all items complete; archived (pending groom)
 
 ---
 
