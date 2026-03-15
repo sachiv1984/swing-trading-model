@@ -1,13 +1,86 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-15
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v1.9 — User Value & Insight (5.1, BLG-FEAT-08, 5.2, 5.3)
+
+**Original roadmap location:** §3 Delivery Plan — v1.9 section
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-15
+**Shipped version:** v1.9 (Sprint 1: 2026-03-09; Sprint 2: 2026-03-13)
+**Cycle reference:** 2026-03-06__release-v1.9
+**Verification report:** `claude/cycles/2026-03-06__release-v1.9/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** Product Owner
+
+### Original Roadmap Entry
+
+### v1.9 — User Value & Insight *(✅ Fully Shipped 2026-03-13)*
+
+Sprint 1 (2026-03-09): Risk Dashboard deviation fixes (EPIC-04), Playwright test infrastructure + Service Layer Test Coverage Standard (EPIC-05 partial), documentation hygiene (EPIC-06). Sprint 2 (2026-03-13): BLG-FEAT-08, 5.1, 5.2, 5.3, R-Multiple Distribution, Canonical Test Scenario Library Phase 2. All items verified.
+
+#### 5.1 Structured Trade Reflection Template
+**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-01/ST-02)
+
+#### BLG-FEAT-08 — Basic Compliance Metrics
+**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-03/ST-01)
+
+#### 5.2 Cohort Analysis
+**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-02/ST-03)
+> Note: BLG-TECH-06 (CohortAnalysis.js client-side computation residue) filed in backlog at P2 for v1.10.
+
+#### 5.3 Dashboard Homepage / Session Summary
+**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-03/ST-05)
+
+---
+
+## 4.1c — Server-Side PDF Report
+
+**Original roadmap location:** §3 Delivery Plan — v2.0 section
+**Status at retirement:** ❌ Killed
+**Retired from active roadmap:** 2026-03-15
+**Shipped version:** N/A — killed
+**Cycle reference:** 2026-03-15__item-5.3
+**Verification report:** N/A
+**Decision log reference:** DL-008 (2026-03-15)
+**Retirement confirmed by:** Product Owner
+
+### Original Roadmap Entry
+
+#### ~~4.1c — Server-Side PDF Report~~ *(killed — DL-008, 2026-03-15)*
+**Status:** ❌ Killed — displaced by BLG-OPS-01 (Development Environment)
+
+Standing displacement candidate since DL-005 (2026-03-04). BLG-OPS-01 (P1 infrastructure gap — no dev environment for QA) is categorically higher priority. Browser-print PDF remains functional; UX inconvenience does not outweigh structural QA governance gap.
+
+---
+
+## 3.1 — Performance Analytics Page
+
+**Original roadmap location:** §3 Delivery Plan — §3.1
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-15
+**Shipped version:** v1.5
+**Cycle reference:** N/A (predates governance)
+**Verification report:** N/A (predates governance — no formal verification report exists)
+**Decision log reference:** N/A (predates formal logging)
+**Retirement confirmed by:** Product Owner — explicit confirmation 2026-03-15 (`manage roadmap` run): "item is complete, shipped v1.5, PO confirms retirement; no formal verification report exists as it predates governance"
+
+### Original Roadmap Entry
+
+**3.1 Performance Analytics Page**
+**Status:** ✅ Complete (shipped v1.5)
+Delivered via a unified GET /analytics/metrics?period= endpoint. Includes a POST /validate/calculations endpoint for smoke-testing metric correctness against a known dataset.
+
+> ⚠️ **Product Owner Action Required:** No verification report path or decision log entry exists for this item (predates governance). Please provide a verification reference or decision log entry before the next `manage roadmap` run so this item can be retired to the archive.
 
 ---
 

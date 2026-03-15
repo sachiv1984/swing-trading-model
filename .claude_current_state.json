@@ -33,8 +33,8 @@
   "last_rebalance_cycle": "2026-03-15__item-5.3",
   "last_rebalance_utc": "2026-03-15T00:00:00Z",
   "last_rebalance_outcome": "Kill 4.1c (Server-Side PDF) + Add BLG-OPS-01 (Dev Environment, v1.10) — net-zero (DL-008); BLG-NEW-13 added to backlog; v1.9 Sprint 2 fully shipped",
-  "last_manage_roadmap_utc": null,
-  "last_manage_roadmap_outcome": null,
+  "last_manage_roadmap_utc": "2026-03-15T00:00:00Z",
+  "last_manage_roadmap_outcome": "6 items retired (5.1, BLG-FEAT-08, 5.2, 5.3, 4.1c, 3.1); 0 flagged stale; 6 kept active",
   "last_groom_backlog_utc": null,
   "last_groom_backlog_outcome": null,
   "active_pog": {

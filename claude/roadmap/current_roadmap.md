@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-15 (roadmap rebalance — v1.9 Sprint 2 completion event)
+**Last Updated:** 2026-03-15 (manage roadmap — 6 items retired; 4.1c killed; 3.1 PO-confirmed)
 **Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — item 5.3 / v1.9 Sprint 2 completion event)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -47,33 +47,6 @@ These may be revisited in future versions without any canonical spec change:
 
 ---
 
-**3.1 Performance Analytics Page**
-**Status:** ✅ Complete (shipped v1.5)
-Delivered via a unified GET /analytics/metrics?period= endpoint. Includes a POST /validate/calculations endpoint for smoke-testing metric correctness against a known dataset.
-
-> ⚠️ **Product Owner Action Required:** No verification report path or decision log entry exists for this item (predates governance). Please provide a verification reference or decision log entry before the next `manage roadmap` run so this item can be retired to the archive.
-
----
-
-### v1.9 — User Value & Insight *(✅ Fully Shipped 2026-03-13)*
-
-Sprint 1 (2026-03-09): Risk Dashboard deviation fixes (EPIC-04), Playwright test infrastructure + Service Layer Test Coverage Standard (EPIC-05 partial), documentation hygiene (EPIC-06). Sprint 2 (2026-03-13): BLG-FEAT-08, 5.1, 5.2, 5.3, R-Multiple Distribution, Canonical Test Scenario Library Phase 2. All items verified.
-
-#### 5.1 Structured Trade Reflection Template
-**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-01/ST-02)
-
-#### BLG-FEAT-08 — Basic Compliance Metrics
-**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-03/ST-01)
-
-#### 5.2 Cohort Analysis
-**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-02/ST-03)
-> Note: BLG-TECH-06 (CohortAnalysis.js client-side computation residue) filed in backlog at P2 for v1.10.
-
-#### 5.3 Dashboard Homepage / Session Summary
-**Status:** ✅ Complete — Shipped 2026-03-13 (v1.9 Sprint 2, EPIC-03/ST-05)
-
----
-
 ### v1.10 — Operations & Quality Foundation *(next)*
 
 #### BLG-OPS-01 — Development Environment *(elevated from backlog — P1)*
@@ -113,11 +86,6 @@ Email alerts for: stop loss approach, grace period ending (days 8–9 warning), 
 A structured, server-side generated tax-year P&L statement. GBP-adjusted, fee-inclusive, covering all realised gains and losses in a given tax year. This is a financial record, not an analytics view — it requires its own canonical specification separate from the analytics endpoint. Dedicated report endpoint required.
 
 > **Scope note (2026-03-04):** Realised vs Unrealised P&L display labelling (originally submitted as BLG-NEW-06) is pre-work for this item. The P&L statement must clearly distinguish realised and unrealised amounts per trade. BLG-NEW-06 is merged into 4.1b pre-work scope — not a standalone backlog item.
-
-#### ~~4.1c — Server-Side PDF Report~~ *(killed — DL-008, 2026-03-15)*
-**Status:** ❌ Killed — displaced by BLG-OPS-01 (Development Environment)
-
-Standing displacement candidate since DL-005 (2026-03-04). BLG-OPS-01 (P1 infrastructure gap — no dev environment for QA) is categorically higher priority. Browser-print PDF remains functional; UX inconvenience does not outweigh structural QA governance gap.
 
 #### 4.3 — Signal Exposure Enhancement *(new — narrow scope)*
 **Status:** Planned — active v2.0 planning *(§13 gate cleared; PoG POG-20260304-01 issued 2026-03-04)*
@@ -201,13 +169,13 @@ When evaluating new features:
 
 | Release | Theme | Key deliveries |
 |---------|-------|----------------|
-| **v1.5** | Performance Analytics | Unified analytics endpoint, validation endpoint — ✅ Shipped |
+| **v1.5** | Performance Analytics | Unified analytics endpoint, validation endpoint — ✅ Shipped *(retired to archive 2026-03-15)* |
 | **v1.6** | Position Sizing | Calculator, settings default risk % — ✅ Shipped |
 | **v1.6.1** | Correctness & Quick Wins | Quick Wins Bundle (6 features) — ✅ Shipped 2026-03-01 |
 | **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision — ✅ Shipped 2026-03-03 |
 | **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk — ✅ Shipped 2026-03-06 |
-| **v1.9** | User Value & Insight | Sprint 1 ✅ Shipped 2026-03-09: Risk Dashboard fixes, test infrastructure, docs hygiene. Sprint 2 ✅ Shipped 2026-03-13: trade reflection template, compliance metrics, cohort analysis, dashboard homepage, R-multiple distribution, test scenario library |
-| **v1.10** | Operations & Quality | BLG-OPS-01 Development Environment (P1) |
+| **v1.9** | User Value & Insight | ✅ Fully Shipped 2026-03-13 — all items retired to archive |
+| **v1.10** | Operations & Quality | BLG-OPS-01 Development Environment (P1) — planning next |
 | **v2.0** | Reporting & Alerts | Alerts & notifications (QA gate pending), tax-year statement, signal parameter exposure (gate cleared — active planning) |
 | **v2.1+** | Enhancements | Watchlists, chart interactivity, Prometheus |
 
