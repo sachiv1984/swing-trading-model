@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.5
+**Version:** 2.6
 **Last Updated:** 2026-03-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -334,17 +334,20 @@ If all preflight checks pass (including outstanding actions resolved or formally
 - If present: record as applied in run_manifest.md.
 - If absent and this is the **second consecutive cycle** carrying the same patch: classify as **OVERDUE**. Escalate immediately to Head of Specs Team. Do not carry forward as a new deferred patch. A run may not proceed past STEP -1.5 with any OVERDUE patch unresolved.
 
-### STEP -1.6 — Idea Window Check (Conditional)
+### STEP -1.6 — Idea Intake (Conditional)
 
-Check `claude/ideas/ideas_window.json`:
-- If `status = "Open"`: invoke `claude/system/idea_intake_prompt.md` inline.
-  Close the window, produce window summary. Proceed to STEP 0 with ideas available.
-- If `status = "Closed"` and closed this session: proceed — ideas available.
-- If file absent or `status = "Closed"` from a prior session: note absence and proceed.
-  Roadmap STEP 4 handles absent submissions — do not halt.
+Read `claude/ideas/submissions/`. Count files where `**Status:**` is `Submitted` or
+`Parked-cycle-<n>` (exclude `Promoted-Added`, `Promoted-Rejected`, `Rejected`,
+`Rejected-Strong`, `Withdrawn`, and `window_summary_*.md` files).
+
+- If **fewer than 20 open ideas** (or `claude/ideas/submissions/` is absent/empty):
+  invoke `claude/system/idea_intake_prompt.md` inline — open a new window, collect all
+  agent submissions, close the window. Proceed to STEP 0 with new submissions available.
+- If **20 or more open ideas**: note the count, skip intake — sufficient ideas exist for
+  STEP 4. Proceed to STEP 0.
 
 Note: `run ideas` may still be invoked standalone before `run roadmap` for explicit
-window control. This step handles the common inline case only.
+window control. If run in this session, those submissions count toward the 20-idea threshold.
 
 **State age advisory:** Read `.claude_current_state.json` `last_updated_utc` field. If absent or >30 days before today: surface advisory — "State file not updated in >30 days — confirm active_cycle is current before proceeding." Record in run_manifest.md. Advisory only — do not halt.
 

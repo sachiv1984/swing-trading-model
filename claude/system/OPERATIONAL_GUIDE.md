@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.17
+**Version:** 3.18
 **Last Updated:** 2026-03-15
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -16,10 +16,9 @@
 ### Engine Commands & Aliases
 
 ```bash
-# Phase 0 — Idea Intake (OPTIONAL — run before roadmap rebalance)
-run ideas [--window-id "<id>"] [--mode "strict|standard"]
-
 # Phase 1 — Roadmap Rebalance (OPTIONAL — triggers on completed roadmap item OR scheduled)
+# Idea intake runs automatically as STEP -1.6 when open idea count < 20.
+# Standalone intake (run ideas) remains supported for explicit window control.
 run roadmap --item-id "<id>" --item-name "<name>" [--date "YYYY-MM-DD"]
 run roadmap --reason "scheduled" [--date "YYYY-MM-DD"]
 
@@ -190,7 +189,7 @@ Post-Ship Closure complete?
 2. [Roles & Authorities](#2-roles--authorities)
 3. [Document Classes Reference](#3-document-classes-reference)
 4. [Lifecycle Overview](#4-lifecycle-overview)
-5. [Phase 0 — Idea Intake (Optional)](#5-phase-0--idea-intake-optional)
+5. [Idea Intake (Integrated — Phase 1 STEP -1.6)](#5-idea-intake-integrated--phase-1-step--16)
 6. [Phase 1 — Roadmap Rebalance (Optional)](#6-phase-1--roadmap-rebalance-optional)
 7. [Phase 1M — Document Management (Optional)](#6m-phase-1m--document-management-optional)
 8. [Phase 1.5 — Design Gate](#65-phase-15--design-gate-required)
@@ -281,12 +280,11 @@ A document without a complete header is non-compliant and must not be treated as
 
 ## 4. Lifecycle Overview
 
-Each cycle progresses through up to six phases, with an optional Phase 0 for idea collection:
+Each cycle progresses through up to six phases. Idea intake is integrated into Phase 1 (STEP -1.6) and runs automatically when fewer than 20 open ideas exist:
 
 | Phase | Name | Trigger | Output |
 |-------|------|---------|--------|
-| **Phase 0** | Idea Intake | Optional — before any roadmap run | Submitted idea files + window summary |
-| **Phase 1** | Roadmap Rebalance | Roadmap item completed OR scheduled review | Updated roadmap + decision log + prompt change log (if patches applied) |
+| **Phase 1** | Roadmap Rebalance (incl. idea intake at STEP -1.6) | Roadmap item completed OR scheduled review | Updated roadmap + decision log + prompt change log (if patches applied) |
 | **Phase 1M** | Document Management | After Post-Ship Closure **or** immediately before `run roadmap` | Clean roadmap + healthy backlog |
 | **Phase 1B** | Release Planning | Phase 1 complete *or* direct invocation | Sequenced release plan + backlog slice |
 | **Phase 1.5** | Design Gate | After Phase 1B Publish Gate | Design artefacts approved + frontend specs updated |
@@ -296,7 +294,7 @@ Each cycle progresses through up to six phases, with an optional Phase 0 for ide
 | **Post-Ship** | Post-Ship Closure | Phase 4 complete (`Verified`) | Closed documents + applied lessons learnt |
 | **Amendment** | Amendment Cycle | Emergency post-publish (before Phase 2 sealed) | Amended backlog slice + ratification record |
 
-Phase 0 is **optional** — the roadmap engine notes its absence and continues. Phase 1 is **optional**. Phase 1M is **optional but strongly recommended** at both valid trigger windows (see §6M). Phase 1B may be invoked directly when a release is already approved. Phase 1.5 (Design Gate) is **required** unless all sprint items are classified Design Not Applicable. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
+Phase 1 is **optional**. Idea intake (STEP -1.6) runs automatically within Phase 1 when fewer than 20 open ideas exist; it may also be invoked standalone via `run ideas` for explicit window control. Phase 1M is **optional but strongly recommended** at both valid trigger windows (see §6M). Phase 1B may be invoked directly when a release is already approved. Phase 1.5 (Design Gate) is **required** unless all sprint items are classified Design Not Applicable. Phases 2, 3, and 4 are always required. Each phase must fully exit before the next begins.
 
 **Phase 4 is a hard gate on the next cycle.** The Roadmap Rebalance and Release Planning engines will not run for a new cycle until `.claude_current_state.json` status is `Verified` or `Verified_with_deviations`. Post-Ship Closure must also be complete before the next cycle opens — `next_cycle_unblocked = true` is necessary but not sufficient.
 
@@ -328,14 +326,14 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 
 ---
 
-## 5. Phase 0 — Idea Intake (Optional)
+## 5. Idea Intake (Integrated — Phase 1 STEP -1.6)
 
-**Source prompt:** `claude/system/idea_intake_prompt.md` (v1.3)  
-**Template:** `claude/system/idea_template.md`  
-**Owner:** PMO Lead  
-**Trigger:** Optional — PMO Lead invokes before issuing `run roadmap`. Not required; the roadmap engine notes its absence and continues.
+**Source prompt:** `claude/system/idea_intake_prompt.md` (v1.3)
+**Template:** `claude/system/idea_template.md`
+**Owner:** PMO Lead
+**Trigger:** Automatic — runs as STEP -1.6 of `run roadmap` when fewer than 20 open ideas (status `Submitted` or `Parked-cycle-<n>`) exist in `claude/ideas/submissions/`. Also invocable standalone via `run ideas` for explicit window control.
 
-Phase 0 opens a submission window, solicits structured idea submissions from all agent roles, saves them to `claude/ideas/submissions/`, and closes the window. It does not evaluate, score, or debate ideas — that is STEP 4 and STEP 5 of the roadmap engine.
+Idea intake opens a submission window, solicits structured idea submissions from all agent roles, saves them to `claude/ideas/submissions/`, and closes the window. It does not evaluate, score, or debate ideas — that is STEP 4 and STEP 5 of the roadmap engine.
 
 ### 5.1 Invocation
 
@@ -348,7 +346,7 @@ run ideas [--window-id "<id>"] [--mode "strict|standard"]
 | `--window-id` | Optional — auto-generated as `IW-<YYYYMMDD>-<nn>` if omitted |
 | `--mode` | `strict`: halt if any agent fails minimum submissions; `standard` (default): note gaps and proceed |
 
-**Order:** Run `run ideas` before `run roadmap`. Ideas submitted after `run roadmap` begins are not eligible for the current run.
+**Order:** Idea intake runs automatically at STEP -1.6 before STEP 0 of `run roadmap`. If invoked standalone, run `run ideas` before `run roadmap`. Ideas submitted after STEP 0 begins are not eligible for the current run.
 
 ### 5.2 Who Submits
 
@@ -360,14 +358,14 @@ Each idea is one file per agent per submission in `claude/ideas/submissions/`, n
 
 | Status | Set by | Meaning |
 |--------|--------|---------|
-| `Submitted` | Phase 0 engine | Filed during open window; awaiting STEP 4 review |
+| `Submitted` | Idea intake engine | Filed during open window; awaiting STEP 4 review |
 | `Parked-cycle-<n>` | Roadmap STEP 4 | Not ready; `<n>` = consecutive cycles parked. At 3+ cycles, Product Owner must make an active disposition — silent re-park not permitted |
 | `Advancing` | Roadmap STEP 4 | Progressing to STEP 5 debate |
 | `Promoted-Added` | Roadmap STEP 9 | Promoted in debate and added to roadmap |
 | `Promoted-Rejected` | Roadmap STEP 5 | Promoted to debate but lost |
 | `Rejected` | Roadmap STEP 4 | Not viable; file retained as record |
 | `Rejected-Strong` | Roadmap STEP 4 | Rejected but strong; core content appended to `rejected_but_strong.md` |
-| `Withdrawn` | Agent or Phase 0 engine | Withdrawn by submitter |
+| `Withdrawn` | Agent or idea intake engine | Withdrawn by submitter |
 
 Parked ideas carry forward with an incrementing cycle count. At 3 or more consecutive cycles parked, the idea is considered stale and requires an active Product Owner disposition. All terminal-status files are retained as permanent records.
 
@@ -375,7 +373,7 @@ Parked ideas carry forward with an incrementing cycle count. At 3 or more consec
 
 The idea template includes a "What Would You Stop?" field as a thinking prompt — not a required decision. An answer of "No view — leave to debate" is valid. Displacement is determined in STEP 5 of the roadmap engine (§6.3) where all candidates and constraints are visible simultaneously.
 
-### 5.5 Phase 0 Artefacts
+### 5.5 Artefacts
 
 | Artefact | Location | Owner | Required? |
 |----------|----------|-------|-----------|
@@ -384,7 +382,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 | Window summary | `claude/ideas/submissions/window_summary_<IW-id>.md` | PMO Lead | Yes |
 | Rejected-but-strong register | `claude/ideas/rejected_but_strong.md` | PMO Lead | Created if needed by roadmap STEP 4 |
 
-### 5.6 Phase 0 Exit Criteria
+### 5.6 Exit Criteria
 
 - `ideas_window.json` status = `Closed`
 - All agent submissions saved (or gaps recorded)
@@ -395,7 +393,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v2.5)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v2.6)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1289,7 +1287,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.2 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.2 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.5 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.6 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.19 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.0 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
@@ -1315,6 +1313,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.18 | 2026-03-15 | **AUD-2026-03-13-003 corrected — STEP -1.6 count-based trigger.** §5 renamed from "Phase 0 — Idea Intake" to "Idea Intake (Integrated — Phase 1 STEP -1.6)". Phase 0 removed from lifecycle table and quick-reference block. §4 narrative updated. STEP -1.6 now triggers on open idea count < 20 (not open window status). §14 roadmap_prompt → v2.6. |
 | 3.17 | 2026-03-15 | **AUD-2026-03-13-003 applied.** §6 source prompt → roadmap_prompt.md (v2.5). §14 Roadmap Engine Source → v2.5. Change: STEP -1.6 Idea Window Check (conditional) added to roadmap_prompt.md — detects open ideas_window.json and invokes idea_intake_prompt.md inline; CLAUDE.md command table updated with *(auto)* row for STEP -1.6. |
 | 3.16 | 2026-03-14 | **AUD-2026-03-13 third batch applied.** §6 source prompt → roadmap_prompt.md (v2.4). §10 source prompt → post_ship_closure.md (v1.9). §14 governance table: roadmap_prompt v2.4, shared_standards v2.1, post_ship_closure v1.9. AUD-002: run roadmap --dry-run added; §13 table updated. AUD-004: post_ship_closure STEP 11 (manage roadmap) + STEP 12 (groom backlog) added as mandatory; old STEP 11 (Commit) renumbered STEP 13; closure_state.json schema updated; §6M Known gap replaced with enforcement note. |
 | 3.15 | 2026-03-14 | **AUD-2026-03-13 second batch applied.** §5 (idea intake) → v1.3. §6 source prompt → roadmap_prompt.md (v2.3). §6B source prompt → release_planning_prompt.md (v2.19). §7 source prompt → sprint_planning_prompt.md (v2.0). §14 governance table: shared_standards v2.0, lessons_learnt_prompt v1.7, idea_intake_prompt v1.3. Changes: lessons_learnt_prompt §1.1 invocation context hard gate; Phase 3/4 headers normalised to stable anchors; shared_standards §16 JSON schemas section added; sprint_planning inline schema replaced with §16.1 reference; roadmap + release planning lessons_learnt.md ARTEFACT_STATUS terminal block requirement; idea_intake per_agent_submission_count field. |
