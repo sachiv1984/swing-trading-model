@@ -35,8 +35,8 @@
   "last_rebalance_outcome": "Kill 4.1c (Server-Side PDF) + Add BLG-OPS-01 (Dev Environment, v1.10) — net-zero (DL-008); BLG-NEW-13 added to backlog; v1.9 Sprint 2 fully shipped",
   "last_manage_roadmap_utc": "2026-03-15T00:00:00Z",
   "last_manage_roadmap_outcome": "6 items retired (5.1, BLG-FEAT-08, 5.2, 5.3, 4.1c, 3.1); 0 flagged stale; 6 kept active",
-  "last_groom_backlog_utc": null,
-  "last_groom_backlog_outcome": null,
+  "last_groom_backlog_utc": "2026-03-15T00:00:00Z",
+  "last_groom_backlog_outcome": "30 items archived (BLG-FEAT-08, BLG-NEW-09/10/11/12, BLG-NEW-04, BLG-RD-01–11, TEST-GAP-EPIC-01, BLG-SPEC-D1/D3/D4/D8/D9, BLG-SPEC-G1–G5, v1.8+v1.9 release slices); 7 retained; duplicate §10 fixed",
   "active_pog": {
     "POG-20260304-01": {
       "initiative": "4.3 Signal Exposure Enhancement",

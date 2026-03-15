@@ -1,11 +1,568 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-15
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### v1.9 Release Slice — 2026-03-06__release-v1.9
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** N/A (release tracking section)
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 — User Value & Insight
+**Evidence:** Sprint 1 shipped 2026-03-09; Sprint 2 shipped 2026-03-13; `claude/cycles/2026-03-06__release-v1.9/verification_report.md`
+
+<!-- release-plan-marker: RP:v1.9:2026-03-06__release-v1.9 -->
+
+**Cycle:** 2026-03-06__release-v1.9
+**Release:** v1.9 — User Value & Insight
+**Planned:** 2026-03-06
+**Backlog slice:** `claude/cycles/2026-03-06__release-v1.9/stage4_backlog_slice.md`
+
+**Sprint 1 (✅ SHIPPED 2026-03-09):** EPIC-04 (ST-06–ST-10), EPIC-05 partial (ST-11, ST-13), EPIC-06 (ST-14–ST-19)
+**Sprint 2 (✅ SHIPPED 2026-03-13):** EPIC-01 (ST-01–ST-02), EPIC-02 (ST-03, ST-05), EPIC-03 (ST-04), EPIC-05 partial (ST-12)
+
+---
+
+### v1.8 Release Slice — 2026-03-04__release-v1.8
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** N/A (release tracking section)
+**Retired:** 2026-03-15
+**Shipped in:** v1.8 — Risk Dashboard
+**Evidence:** All EPICs shipped 2026-03-05; `claude/cycles/2026-03-04__release-v1.8/closure_record.md`
+
+<!-- release-plan-marker: RP:v1.8:2026-03-04__release-v1.8 -->
+
+**Cycle:** 2026-03-04__release-v1.8
+**Release:** v1.8 — Risk Dashboard
+**Planned:** 2026-03-04
+**Backlog slice:** `claude/cycles/2026-03-04__release-v1.8/stage4_backlog_slice.md`
+
+Items in v1.8 sprint: EPIC-01 (ST-01–ST-04), EPIC-02 (ST-05–ST-08), EPIC-03 (ST-09–ST-10), EPIC-04 (ST-11–ST-12)
+
+---
+
+### BLG-FEAT-08 — Basic Compliance Metrics
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 2
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-03/ST-01
+
+### BLG-FEAT-08 — Basic Compliance Metrics ✅ COMPLETE
+**Priority:** P2
+**Effort:** ~1 day
+**Target release:** v1.9 (pre-work gate for Structured Trade Reflection Template)
+**Closed:** 2026-03-13 | Cycle: 2026-03-06__release-v1.9 | EPIC-03/ST-01
+
+Lightweight discipline metrics: journal completion rate, stop-based exit rate, average position size (% of portfolio). Definitions canonicalised in `metrics_definitions.md` first.
+
+---
+
+### BLG-NEW-09 — R-Multiple Distribution Report
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 2
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-02/ST-04
+
+### BLG-NEW-09 — R-Multiple Distribution Report ✅ COMPLETE
+**Priority:** P2 (Medium)
+**Type:** Analytics / User Value
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** IDEA-metrics-analytics-20260304-01, IW-20260304-01
+**Cycle added:** 2026-03-06__item-3.4
+**Closed:** 2026-03-13 | Cycle: 2026-03-06__release-v1.9 | EPIC-02/ST-04
+
+**Problem**
+No visualisation of R-multiple distribution existed. R-multiple is the canonical trade quality measure — users could not see whether trades were systematically achieving R > 1.
+
+**Acceptance Criteria met**
+- R-multiple formula defined and canonicalised in metrics_definitions.md
+- Distribution visualisation present on analytics page
+- Values computed from canonical backend formula; no client-side derivation
+
+---
+
+### BLG-NEW-10 — Canonical Test Scenario Library
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 (Phase 1: Sprint 1; Phase 2: Sprint 2)
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-05/ST-11 (Phase 1), EPIC-05/ST-12 (Phase 2)
+
+### BLG-NEW-10 — Canonical Test Scenario Library ✅ COMPLETE
+**Priority:** P1 (High)
+**Type:** QA Infrastructure
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260304-01, IW-20260304-01
+**Cycle added:** 2026-03-06__item-3.4
+**Closed:** Phase 1: 2026-03-09 | Phase 2: 2026-03-13 | Cycle: 2026-03-06__release-v1.9
+
+Both phases delivered: seeded test infrastructure + TEST-GAP-EPIC-01 resolution (Phase 1); v1.9 feature scenarios added at delivery (Phase 2).
+
+---
+
+### BLG-NEW-11 — Canonical Terms Glossary
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-14
+
+### BLG-NEW-11 — Canonical Terms Glossary ✅ COMPLETE
+**Priority:** P2 (Medium)
+**Type:** Governance / Spec Quality
+**Owner:** Head of Specs Team
+**Cycle added:** 2026-03-06__item-3.4
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-14
+
+Canonical terms glossary created as Class 2 Supporting document. All key trading and system terms defined with canonical source links. Registered in Specs_Index.md.
+
+---
+
+### BLG-NEW-12 — Service Layer Test Coverage Standard
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-05/ST-13
+
+### BLG-NEW-12 — Service Layer Test Coverage Standard ✅ COMPLETE
+**Priority:** P1 (High)
+**Type:** Engineering Quality / CI
+**Owner:** Backend Engineering Patterns Owner
+**Cycle added:** 2026-03-06__item-3.4
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-05/ST-13
+
+Service Layer Test Coverage Standard authored. CI step enforces coverage threshold on services/ directory. Standard integrated with backend_engineering_patterns.md.
+
+---
+
+### BLG-NEW-04 — AI-Assisted Workflow Governance Policy
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-15
+
+### BLG-NEW-04 — AI-Assisted Workflow Governance Policy ✅ COMPLETE
+**Priority:** P2 (Medium)
+**Type:** Governance
+**Owner:** Product Owner
+**Source:** IW-20260304-01 (promoted 2026-03-04)
+**Cycle added:** 2026-03-04__item-3.4
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-15
+
+AI-Assisted Workflow Governance Policy document authored and filed. Covers: scope of AI authority, mandatory human review checkpoints, escalation triggers, record-keeping obligations.
+
+---
+
+### BLG-RD-01 — Entity store fallback masks API error states
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-08
+
+### BLG-RD-01 — Entity store fallback masks API error states ✅ COMPLETE
+**Priority:** P2
+**Type:** Frontend Defect — Error State Coverage
+**Source:** DEV-ST03-01 — Delivery verification 2026-03-04__release-v1.8
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-08
+
+Each Risk Dashboard component now renders its own error state when GET /portfolio fails. Entity fallback no longer silently masks failure.
+
+---
+
+### BLG-RD-02 — GracePeriodPanel empty vs error state indistinguishable
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-08
+
+### BLG-RD-02 — GracePeriodPanel empty vs error state ✅ COMPLETE
+**Priority:** P3
+**Type:** Frontend Defect — Error State UX
+**Source:** DEV-ST03-02 — Delivery verification 2026-03-04__release-v1.8
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-08
+
+GracePeriodPanel now renders a visible error card when portfolioError is set, distinct from the empty state.
+
+---
+
+### BLG-RD-03 — PositionRiskTable sorted descending
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-09
+
+### BLG-RD-03 — PositionRiskTable sorted descending ✅ COMPLETE
+**Priority:** P2
+**Type:** Frontend Defect — Sort Direction
+**Source:** DEV-ST03-03
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-09
+
+PositionRiskTable now sorts by stop distance ascending (tightest stop first) per spec §6.4.
+
+---
+
+### BLG-RD-04 — Stop Price column absent from PositionRiskTable
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-09
+
+### BLG-RD-04 — Stop Price column absent ✅ COMPLETE
+**Priority:** P2
+**Type:** Frontend Defect — Missing Column
+**Source:** DEV-ST03-04
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-09
+
+Stop Price column (current_stop, GBP, 2dp) now present in PositionRiskTable per spec §6.2.
+
+---
+
+### BLG-RD-05 — GRACE badge colour amber instead of blue
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-10
+
+### BLG-RD-05 — GRACE badge colour ✅ COMPLETE
+**Priority:** P3
+**Type:** Frontend Defect — Cosmetic
+**Source:** DEV-ST03-05
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-10
+
+GRACE state badge now rendered in blue per spec §6.3.
+
+---
+
+### BLG-RD-06 — GBP value at risk absent from HeatGauge
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-10
+
+### BLG-RD-06 — GBP value at risk absent from HeatGauge ✅ COMPLETE
+**Priority:** P3
+**Type:** Frontend Defect — Missing Metric
+**Source:** DEV-ST03-06
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-10
+
+GBP value at risk now displayed below gauge value per spec §3.2.
+
+---
+
+### BLG-RD-07 — Days in Grace column absent from GracePeriodPanel
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-09
+
+### BLG-RD-07 — Days in Grace column absent ✅ COMPLETE
+**Priority:** P3
+**Type:** Frontend Defect — Missing Column
+**Source:** DEV-ST03-07
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-09
+
+Days in Grace (holding_days) column now present in Grace Period table per spec §5.2.
+
+---
+
+### BLG-RD-08 — Drawdown data source Head of Specs Team verification
+
+**Status at retirement:** ✅ Resolved
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1 (resolved 2026-03-06 via ST-06 investigation)
+**Evidence:** risk_dashboard.md §4.1 updated to v0.1.7; Head of Specs Team decision 2026-03-06
+
+### BLG-RD-08 — Drawdown data source resolved ✅ RESOLVED
+**Priority:** P2
+**Type:** Spec Alignment — Owner Decision
+**Source:** DEV-ST03-08
+**Closed:** 2026-03-06 | ST-06 investigation
+
+Split-source data model confirmed: current_drawdown_percent from GET /portfolio (drawdown_service.py); days_underwater from GET /analytics/metrics (analytics_service.py). risk_dashboard.md §4.1 updated to v0.1.7 to reflect correct split sources.
+
+---
+
+### BLG-RD-09 — ProspectiveHeatPanel missing threshold label
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-09
+
+### BLG-RD-09 — ProspectiveHeatPanel missing threshold label ✅ COMPLETE
+**Priority:** P3
+**Type:** Frontend Defect — Missing Display Element
+**Source:** DEV-ST03-09
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-09
+
+Threshold label badge now present in prospective heat result row, updating when boundary is crossed per §7.5.
+
+---
+
+### BLG-RD-10 — US entry prices in USD not GBP
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-07
+
+### BLG-RD-10 — US entry prices in USD not GBP ✅ COMPLETE
+**Priority:** P2
+**Type:** Backend + Frontend Defect — Currency Conversion
+**Source:** DEV-ST03-11
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-07
+
+portfolio_service.py now converts entry_price to GBP for US positions. Risk Dashboard displays entry prices in GBP for all positions per §6.2.
+
+---
+
+### BLG-RD-11 — current_stop in USD for US positions
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-04/ST-07
+
+### BLG-RD-11 — current_stop in USD for US positions ✅ COMPLETE
+**Priority:** P2
+**Type:** Backend + Frontend Defect — Currency Conversion
+**Source:** DEV-ST03-12
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-04/ST-07
+
+portfolio_service.py now converts current_stop to GBP for US positions. Stop Distance % calculation uses matching currencies per §6.2.
+
+---
+
+### TEST-GAP-EPIC-01 — Risk Dashboard scenario execution infrastructure gap
+
+**Status at retirement:** ✅ Closed
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | ST-11
+
+### TEST-GAP-EPIC-01 — Risk Dashboard scenario infrastructure gap ✅ CLOSED
+**Priority:** P2
+**Type:** QA Infrastructure
+**Source:** Delivery verification 2026-03-04__release-v1.8
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | ST-11
+
+Playwright mock layer delivered. All 17 unexecuted scenarios automated in tests/e2e/risk-dashboard.spec.js. CI gate at .github/workflows/playwright.yml. Mock data in tests/e2e/mocks/portfolio-mock-data.js. Scenario document updated to v1.1.
+
+---
+
+### BLG-SPEC-D1 — API Contracts README version frozen
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+### BLG-SPEC-D1 — API Contracts README.md version frozen at v1.8.4 ✅ COMPLETE
+**Priority:** P3 (Low)
+**Type:** Documentation Drift
+**Owner:** API Contracts & Documentation Owner
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+README.md version header updated to v1.9.0. Changelog includes v1.9.0 entry referencing EPIC-06 changes.
+
+---
+
+### BLG-SPEC-D3 — GET /market/status undocumented
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-16
+
+### BLG-SPEC-D3 — GET /market/status completely undocumented ✅ COMPLETE
+**Priority:** P2 (Medium)
+**Type:** Documentation Gap / Drift
+**Owner:** API Contracts & Documentation Owner
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-16
+
+docs/specs/api_contracts/market_endpoints.md created. Endpoint documented, registered in Specs_Index.md, added to openapi.yaml.
+
+---
+
+### BLG-SPEC-D4 — GET /positions/search/tags undocumented
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+### BLG-SPEC-D4 — GET /positions/search/tags undocumented ✅ COMPLETE
+**Priority:** P3 (Low)
+**Type:** Documentation Gap
+**Owner:** API Contracts & Documentation Owner
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+position_endpoints.md now includes GET /positions/search/tags with request parameters and response schema.
+
+---
+
+### BLG-SPEC-D8 — docs/System_status_report.md missing governance header
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+### BLG-SPEC-D8 — System_status_report.md missing lifecycle header ✅ COMPLETE
+**Priority:** P3 (Low)
+**Type:** Lifecycle Compliance Drift
+**Owner:** Director of Quality
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+Lifecycle header added to docs/System_status_report.md. Class and Status assigned per document_lifecycle_guide.md.
+
+---
+
+### BLG-SPEC-D9 — Broken cross-references to lifecycle guide
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+### BLG-SPEC-D9 — process_index.md and Specs_Index.md wrong path for lifecycle guide ✅ COMPLETE
+**Priority:** P3 (Low)
+**Type:** Documentation Drift / Broken Cross-Reference
+**Owner:** Head of Specs Team
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+Both process_index.md and Specs_Index.md §5 updated to reference claude/charter/document_lifecycle_guide.md.
+
+---
+
+### BLG-SPEC-G1 — settings_model.md missing
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-17
+
+### BLG-SPEC-G1 — settings_model.md missing ✅ COMPLETE
+**Priority:** P2 (Medium)
+**Type:** Spec Gap
+**Owner:** Head of Specs Team
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-17
+
+settings_model.md created in docs/specs/data_model/. Registered in Specs_Index.md §3. Cross-referenced from settings_endpoints.md.
+
+---
+
+### BLG-SPEC-G2 — Error Response Standard not defined
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-18
+
+### BLG-SPEC-G2 — Error Response Standard not defined ✅ COMPLETE
+**Priority:** P2 (Medium)
+**Type:** Spec Gap
+**Owner:** API Contracts & Documentation Owner
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-18
+
+Error Response Standard document created. Standard error envelope shape, required fields, HTTP status code mapping defined. All existing API contract docs reference the standard. Registered in Specs_Index.md.
+
+---
+
+### BLG-SPEC-G3 — structured_logging_standards.md not registered in Specs_Index
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+### BLG-SPEC-G3 — structured_logging_standards.md not in Specs_Index ✅ COMPLETE
+**Priority:** P3 (Low)
+**Type:** Index Gap
+**Owner:** Head of Specs Team
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+Specs_Index.md §3 updated to include structured_logging_standards.md with Owner, Class, Status, Version.
+
+---
+
+### BLG-SPEC-G4 — ADR-002 in wrong location
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+### BLG-SPEC-G4 — ADR-002 in wrong location ✅ COMPLETE
+**Priority:** P3 (Low)
+**Type:** Governance Organisation Gap
+**Owner:** Head of Specs Team
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+ADR-002 moved to docs/product/decisions/. Cross-references updated.
+
+---
+
+### BLG-SPEC-G5 — validation_system.md owner field non-compliant
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-03-15
+**Shipped in:** v1.9 Sprint 1
+**Evidence:** Cycle 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+### BLG-SPEC-G5 — validation_system.md owner non-compliant ✅ COMPLETE
+**Priority:** P3 (Low)
+**Type:** Lifecycle Compliance Gap
+**Owner:** Infrastructure & Operations Owner
+**Closed:** 2026-03-09 | Cycle: 2026-03-06__release-v1.9 | EPIC-06/ST-19
+
+validation_system.md owner field updated to a named governance role. Specs_Index.md §7.1 notation updated to reflect resolved.
 
 ---
 
