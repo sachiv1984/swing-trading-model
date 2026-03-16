@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-16T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-16T00:05:00Z",
+  "last_updated_utc": "2026-03-16T00:30:00Z",
   "epic_scope": "EPIC-01",
 
   "epics": {
@@ -26,16 +26,16 @@
           "assigned_to": "human",
           "github_issue": 63,
           "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "1bcd489",
           "delegation_record_id": "DEL-20260316-01",
           "blocked_since_utc": "2026-03-16T00:05:00Z",
-          "unblock_criteria": "Commit pushed to exec/2026-03-15__release-v1.10/EPIC-01 with format [EPIC-01][ST-01] <description>, AND staging environment accessible at stable URL. Staging URL must be included in commit message or PR body.",
+          "unblock_criteria": "Human confirms staging environment accessible at https://trading-assistant-staging.onrender.com AND staging API healthy at https://trading-assistant-api-staging.onrender.com/health. Requires: (1) Supabase staging project created and schema applied, (2) Render Blueprint deployed, (3) DATABASE_URL secret set on API service.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md#ST-01"],
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
-          "notes": "[standard-mode flag] No locked API/architecture spec file for this infrastructure item. Governing document is the backlog slice AC. Sprint backlog declares delegated_backend with PO sign-off. Pre-condition: Infrastructure & Operations Owner must document hosting approach decision before implementation begins (RISK-01 mitigation)."
+          "last_completed_substep": "3.1.B.engine_work_committed",
+          "notes": "Engine work complete (commit 1bcd489): hosting decision documented (Render + Supabase, same-platform approach per RISK-01), render.yaml Blueprint created, staging_setup.md runbook created, .env.staging template created, CORS updated in config.py. PENDING HUMAN ACTION: see docs/infrastructure/staging_setup.md for Supabase and Render dashboard steps."
         },
         "ST-02": {
           "title": "Configure CI/CD auto-deploy to staging",
@@ -47,13 +47,13 @@
           "commit_sha": null,
           "delegation_record_id": "DEL-20260316-02",
           "blocked_since_utc": "2026-03-16T00:05:00Z",
-          "unblock_criteria": "ST-01 done AND commit pushed to exec/2026-03-15__release-v1.10/EPIC-01 with format [EPIC-01][ST-02] <description>, AND CI/CD demonstrably auto-deploys to staging on merge to main.",
+          "unblock_criteria": "ST-01 done AND Render auto-deploy confirmed working (push to main triggers deploy to staging, visible in Render dashboard, staging URL reflects main within 15 minutes).",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md#ST-02"],
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegated",
-          "notes": "[standard-mode flag] No locked API/architecture spec file for this CI/CD item. Governing document is the backlog slice AC. Depends on ST-01."
+          "last_completed_substep": null,
+          "notes": "ST-02 is satisfied by Render's built-in auto-deploy on merge to main — no separate CI step needed beyond enabling auto-deploy in the Render dashboard for both staging services. See staging_setup.md §2.2. Blocked on ST-01 completion."
         },
         "ST-03": {
           "title": "Update QA sign-off governance process",
@@ -70,8 +70,8 @@
           "acceptance_verified": false,
           "spec_references": ["claude/system/OPERATIONAL_GUIDE.md"],
           "deviations_filed": false,
-          "last_completed_substep": "3.1.C.delegated",
-          "notes": "Autonomous work (editing OPERATIONAL_GUIDE.md) cannot proceed until ST-01+ST-02 complete and staging URL is known. Sequentially blocked on ST-01+ST-02 dependency."
+          "last_completed_substep": null,
+          "notes": "Autonomous work (editing OPERATIONAL_GUIDE.md) cannot proceed until ST-01+ST-02 complete and staging URL is confirmed live. Sequentially blocked on ST-01+ST-02 dependency."
         }
       }
     }

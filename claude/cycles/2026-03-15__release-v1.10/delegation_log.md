@@ -25,7 +25,14 @@ Last Updated: 2026-03-16
 - **Spec reference:** `claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md#ST-01` — full acceptance criteria defined there. No separate API spec file governs this infrastructure item (standard-mode flag applied at classification; sprint backlog declares delegated_backend with PO sign-off).
 - **Unblock criteria:** Commit pushed to `exec/2026-03-15__release-v1.10/EPIC-01` with format `[EPIC-01][ST-01] <description>`, AND staging environment is accessible at a stable URL. Provide the staging URL in the commit message or PR body so ST-03 can reference it.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-03-15__release-v1.10/EPIC-01`
-- **Status:** Pending
+- **Status:** In Progress
+- **Engine work committed:** 2026-03-16 — commit `1bcd489` on `exec/2026-03-15__release-v1.10/EPIC-01`
+  - Hosting approach decided: Render (API Web Service + Static Site) + Supabase (separate project). Same platform, simplest viable approach (RISK-01).
+  - `render.yaml` Blueprint created — defines both staging services
+  - `docs/infrastructure/staging_setup.md` human runbook created — full Supabase + Render setup steps, schema copy instructions, DATABASE_URL configuration, verification checklist
+  - `.env.staging` template created
+  - `backend/config.py` CORS updated — staging frontend URL added to ALLOWED_ORIGINS
+  - **Remaining human actions:** (1) Create Supabase staging project and copy schema via pg_dump, (2) Deploy render.yaml Blueprint in Render dashboard, (3) Set DATABASE_URL secret on staging API service, (4) Verify staging accessible and isolated from production. See `docs/infrastructure/staging_setup.md`.
 
 ---
 
