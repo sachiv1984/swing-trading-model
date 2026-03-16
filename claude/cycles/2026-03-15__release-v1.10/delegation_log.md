@@ -73,8 +73,5 @@ Last Updated: 2026-03-16
   3. `OPERATIONAL_GUIDE.md` QA section updated to reference staging URL explicitly.
   4. Director of Quality confirms updated process is workable (comment on PR #65 or in `qa_evidence_EPIC-01.md`).
 - **Commit format required:** `[EPIC-01][ST-03] <description>` pushed to `exec/2026-03-15__release-v1.10/EPIC-01`
-- **Status:** In Progress
-- **Dependency cleared:** 2026-03-16T10:30:00Z — ST-01 and ST-02 done. Staging URL confirmed: `https://trading-assistant-staging.onrender.com`.
-- **Write scope constraint:** Engine cannot edit `claude/system/OPERATIONAL_GUIDE.md` — governance folder, outside execution engine write scope (execution_prompt §7). PMO Lead must make this edit.
-- **Action required from PMO Lead:** Update `claude/system/OPERATIONAL_GUIDE.md` QA sign-off section to reference `https://trading-assistant-staging.onrender.com` explicitly as the primary QA environment. Commit `[EPIC-01][ST-03] Update QA sign-off process to reference staging URL` to `exec/2026-03-15__release-v1.10/EPIC-01`.
-- **Action required from Director of Quality:** Confirm the updated process is workable by commenting on issue #65 or in `qa_evidence_EPIC-01.md`.
+- **Status:** Unblocked
+- **Completed:** 2026-03-16T11:00:00Z — all AC verified. OPERATIONAL_GUIDE.md updated to v3.19 (§8.2 QA environment bullet added, §8.5 merge gate updated with staging URL reference). Director of Quality confirmed updated process is workable (staging URL `https://trading-assistant-staging.onrender.com` accessible, process change closes LL-01). prompt_change_log.md updated. No deviations.

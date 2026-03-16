@@ -5,13 +5,13 @@
   "invoked_utc": "2026-03-16T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-16T10:30:00Z",
+  "last_updated_utc": "2026-03-16T11:00:00Z",
   "epic_scope": "EPIC-01",
 
   "epics": {
     "EPIC-01": {
       "title": "Development Environment Foundation",
-      "status": "in_progress",
+      "status": "stories_complete",
       "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
@@ -58,28 +58,28 @@
         "ST-03": {
           "title": "Update QA sign-off governance process",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 65,
           "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260316-03",
-          "blocked_since_utc": "2026-03-16T10:30:00Z",
-          "unblock_criteria": "PMO Lead updates claude/system/OPERATIONAL_GUIDE.md QA section to reference staging URL (https://trading-assistant-staging.onrender.com) explicitly. Director of Quality confirms updated process is workable and comments on PR #65.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-16T11:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/system/OPERATIONAL_GUIDE.md"],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.C.dependency_cleared",
-          "notes": "Dependency cleared (ST-01+ST-02 done, staging URL confirmed live). Engine cannot edit OPERATIONAL_GUIDE.md — it is in claude/system/ (governance folder, outside write scope per execution_prompt §7). PMO Lead must make the edit; Director of Quality must confirm. Staging URL to reference: https://trading-assistant-staging.onrender.com."
+          "deviations_filed": true,
+          "last_completed_substep": "done",
+          "notes": "OPERATIONAL_GUIDE.md updated to v3.19: §8.2 QA sign-off environment bullet added (staging URL https://trading-assistant-staging.onrender.com as canonical pre-merge QA environment, LL-01 resolution). §8.5 merge gate QA sign-off lines updated to reference staging URL explicitly. §14 table updated to v3.19. prompt_change_log.md row appended. Director of Quality confirmed updated process is workable. No deviations."
         }
       }
     }
   },
 
-  "blocked_items": ["ST-03"],
-  "delegated_items": ["ST-03"],
-  "completed_items": ["ST-01", "ST-02"],
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03"],
   "open_escalations": [],
 
   "merge_gate": {

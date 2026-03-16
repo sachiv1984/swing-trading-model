@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.18
-**Last Updated:** 2026-03-15
+**Version:** 3.19
+**Last Updated:** 2026-03-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -846,6 +846,7 @@ run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mod
 - Scope is frozen at sprint start. New items require explicit Product Owner approval and a recorded decision.
 - Blockers escalated same-day via escalation record (`ESC-EXEC-YYYYMMDD-nn`).
 - Director of Quality QA gates apply to all EPICs before merge.
+- **QA sign-off environment (v1.10+):** Director of Quality must review and test against the staging environment at `https://trading-assistant-staging.onrender.com` — not production. Staging is the canonical pre-merge QA environment as of v1.10 (LL-01 resolution, 2026-03-16).
 - Partial completion does not count — items must satisfy all acceptance criteria.
 - The engine is fully resumable — re-invoke with the same command to resume from last state.
 - **No autonomous merge.** QA sign-off and Product Owner acceptance are always required.
@@ -885,8 +886,8 @@ A PR may only be merged when all of the following are true:
 
 - All ST items in EPIC: `done`
 - `spec_references` populated for all `done` items
-- `qa_evidence_EPIC-xx.md` exists and sign-off block complete (Director of Quality)
-- QA sign-off comment on PR from Director of Quality
+- `qa_evidence_EPIC-xx.md` exists and sign-off block complete (Director of Quality — review conducted against staging: `https://trading-assistant-staging.onrender.com`)
+- QA sign-off comment on PR from Director of Quality (must reference staging sign-off)
 - Product Owner acceptance recorded
 - `quality_gate.yml` CI passed
 - No open escalations for items in this EPIC
@@ -1279,8 +1280,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.11 |
-| Last Updated | 2026-03-10 |
+| Version | 3.19 |
+| Last Updated | 2026-03-16 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.3 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1313,6 +1314,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.19 | 2026-03-16 | **ST-03 (v1.10 EPIC-01): staging environment documented as canonical pre-merge QA environment.** §8.2 QA sign-off environment bullet added — Director of Quality must test against `https://trading-assistant-staging.onrender.com`, not production (LL-01 resolution). §8.5 merge gate QA sign-off lines updated to reference staging URL explicitly. Closes governance gap LL-01. |
 | 3.18 | 2026-03-15 | **AUD-2026-03-13-003 corrected — STEP -1.6 count-based trigger.** §5 renamed from "Phase 0 — Idea Intake" to "Idea Intake (Integrated — Phase 1 STEP -1.6)". Phase 0 removed from lifecycle table and quick-reference block. §4 narrative updated. STEP -1.6 now triggers on open idea count < 20 (not open window status). §14 roadmap_prompt → v2.6. |
 | 3.17 | 2026-03-15 | **AUD-2026-03-13-003 applied.** §6 source prompt → roadmap_prompt.md (v2.5). §14 Roadmap Engine Source → v2.5. Change: STEP -1.6 Idea Window Check (conditional) added to roadmap_prompt.md — detects open ideas_window.json and invokes idea_intake_prompt.md inline; CLAUDE.md command table updated with *(auto)* row for STEP -1.6. |
 | 3.16 | 2026-03-14 | **AUD-2026-03-13 third batch applied.** §6 source prompt → roadmap_prompt.md (v2.4). §10 source prompt → post_ship_closure.md (v1.9). §14 governance table: roadmap_prompt v2.4, shared_standards v2.1, post_ship_closure v1.9. AUD-002: run roadmap --dry-run added; §13 table updated. AUD-004: post_ship_closure STEP 11 (manage roadmap) + STEP 12 (groom backlog) added as mandatory; old STEP 11 (Commit) renumbered STEP 13; closure_state.json schema updated; §6M Known gap replaced with enforcement note. |
