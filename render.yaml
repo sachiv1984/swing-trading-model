@@ -10,7 +10,7 @@
 # NOTE: Render service names must be globally unique. If 'trading-assistant-api-staging'
 # or 'trading-assistant-staging' are taken, choose alternative names and update:
 #   - backend/config.py ALLOWED_ORIGINS (replace the staging frontend URL)
-#   - This file (update the service names and fromService references)
+#   - This file (update both service names and the REACT_APP_API_URL value)
 
 services:
 
@@ -38,13 +38,9 @@ services:
     runtime: static
     buildCommand: CI=false npm run build
     staticPublishPath: ./build
-    plan: free
     envVars:
       - key: REACT_APP_API_URL
-        fromService:
-          type: web
-          name: trading-assistant-api-staging
-          property: url        # Render injects the API's public HTTPS URL at build time
+        value: https://trading-assistant-api-staging.onrender.com
       - key: REACT_APP_APP_ID
         value: staging-app-id
       - key: REACT_APP_DEV_FAKE_AUTH
