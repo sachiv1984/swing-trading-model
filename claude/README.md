@@ -1,7 +1,7 @@
 Owner: Head of Specs Team
 Status: Supporting  
 Canonical Source: /charter/team_charter.md  
-Last Updated: 2026-02-23  
+Last Updated: 2026-03-16  
 
 ---
 
@@ -36,14 +36,7 @@ If any routine, document, or output conflicts with these authorities,
 
 ## 3. Core Invariants (Apply to All Routines)
 
-The following invariants are enforced system-wide:
-
-- Authority is explicit and role-bound
-- One owner exists per decision domain
-- All documents comply with lifecycle rules
-- Workforce capacity is finite and explicit
-- No initiative exists without opportunity cost
-- Delivery pressure never redefines intent or truth
+See `claude/system/invariants.md` for the canonical list.
 
 Any routine that violates these invariants is invalid.
 

@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.2
+**Version:** 2.3
 **Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -372,42 +372,7 @@ All delegated tasks must be recorded in:
 
 This file is append-only. Do not edit previous entries.
 
-### 11.1 Header (create on first write)
-
-```
-Owner: PMO Lead
-Class: Planning Document (Class 4)
-Status: Active
-Last Updated: <date>
-```
-
-### 11.2 Delegation Record Format
-
-Each entry must include:
-
-```
-## DEL-<YYYYMMDD>-<nn>
-
-- **ST Item:** ST-xx — <title>
-- **EPIC:** EPIC-xx
-- **Classification:** delegated_backend | delegated_frontend | delegated_qa | delegated_decision
-- **Assigned to:** Head of Engineering | Base44 Frontend Prompt Owner | Director of Quality | <named role>
-- **GitHub Issue:** #<number>
-- **Branch:** exec/<cycle_id>/EPIC-xx
-- **Delegated at:** <ISO-8601 UTC>
-- **What is needed:** <specific, actionable description — not generic>
-- **Spec reference:** <path to locked canonical spec that governs this item>  [backend/frontend items only]
-- **Base44 prompt draft:** <attached or linked>  [delegated_frontend items only]
-- **Unblock criteria:** <what must be true / what evidence is required>
-- **Commit format required:** `[EPIC-xx][ST-xx] <description>` pushed to `exec/<cycle_id>/EPIC-xx`
-- **Status:** Pending | In Progress | Unblocked | Cancelled
-```
-
-The "What is needed" field must be specific enough that the assignee can act without further clarification. Vague delegations are non-compliant.
-
-For `delegated_backend` items: "What is needed" must reference the specific layer(s) required (router / service / database) and the canonical spec section that governs the behaviour.
-
-For `delegated_frontend` items: the Base44 prompt draft field is mandatory. An incomplete prompt is non-compliant — it must cover all six required sections (context, change, API contract, behaviour rules, non-functional rules, expected outcome).
+Schema: per `claude/system/shared_standards.md §16.3` (header format, delegation record format, compliance rules).
 
 ---
 
@@ -621,7 +586,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
    - The SLA (default: 24 hours for lifecycle; 72 hours for strategy)
 4. Continue to next item.
 
-**SLA breach tracking (IMP-40):** On each re-invocation, check the open escalation timestamp against the current time. If any escalation has been open for 72 hours or more without resolution, the SLA Breach Rule in `shared_standards.md §4` applies — write `BLOCKED_SLA_BREACH` notice and set `blocked_sla_breached = true` at STEP 6 before halting.
+**SLA breach tracking:** Per `claude/system/shared_standards.md §16.4`.
 
 **Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume.
 
@@ -892,6 +857,8 @@ The run is complete only if:
 
 ## 13. Governance Invariants
 
+System-wide invariants: per `claude/system/invariants.md`. Execution-engine-specific invariants below.
+
 **Ambiguity definition:** An item is *ambiguous* when its acceptance criteria, EPIC assignment, spec reference, or delegation classification cannot be determined without an authority decision. Ambiguous items must be classified `delegated_decision` and escalated — never silently assumed or guessed. This applies in both `strict` and `standard` modes. The only difference between modes is whether execution continues on other items (standard) or halts entirely (strict).
 
 - **No autonomous merge.** The engine never merges without QA sign-off and Product Owner acceptance.
@@ -911,6 +878,8 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3 | 2026-03-16 | AUD-2026-03-13-017: §11 delegation log schema replaced with reference to `shared_standards.md §16.3`; SLA breach tracking note in STEP 3.1.D replaced with reference to `shared_standards.md §16.4`; §13 cross-reference to `claude/system/invariants.md` added. |
+| 2.2 | 2026-03-16 | LL-v1.10-P3-3: §5.1 autonomous candidate pattern note added (refactor with no UX change + existing API method → autonomous). LL-v1.10-P4-2: §3.1.A step 10 deviation type distinction added (absent from spec → qa_evidence + backlog; differs from spec → canonical spec). LL-v1.10-P4-1: qa_evidence sign-off block template authoring note added. |
 | 2.1 | 2026-03-14 | AUD-2026-03-13-001 (PATCH 5): Gate evidence requirement added to §9 invariants — hard gate status changes in current_roadmap.md must reference an evidence artefact; gate remains pending without one. |
 | 2.0 | 2026-03-10 | IMP-53: §7 Write Scope — `lessons_learnt_execution.md` replaced with `lessons_learnt_cycle.md` (append-only, Phase 3 section; create if absent). STEP 5.4 — invocation updated from `§3.3` to `§3.3 — Sprint Execution Phase 3 Append`; output path changed to `lessons_learnt_cycle.md`; IMP-35 gap 2 idempotency guard activated (was marked inactive until IMP-28 — now active). STEP 8 commit list: `lessons_learnt_execution.md` → `lessons_learnt_cycle.md`. §12 completion condition: `lessons_learnt_execution.md exists` → `lessons_learnt_cycle.md Phase 3 section appended`. |
 | 1.9 | 2026-03-10 | IMP-25: STEP -1.1 — load `sprint_backlog_index.json` if present; when `--epic` scoped, use index `st_items` and `backlog_slice_refs` to read only the relevant EPIC slice rather than full document. STEP 0 — index-guided load note added; when index provides exact `backlog_slice_refs`, read only those AC sections from `stage4_backlog_slice.md`. Fall-back to full document read when index absent. |

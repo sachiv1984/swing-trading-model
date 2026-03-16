@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Canonical  
-**Version:** 1.5
-**Last Updated:** 2026-03-11  
+**Version:** 1.6
+**Last Updated:** 2026-03-16  
 
 ---
 
@@ -11,6 +11,7 @@
 
 | Version | Date       | Change |
 |--------:|------------|--------|
+| 1.6     | 2026-03-16 | AUD-2026-03-13-006: §6 forward reference note added — `claude/system/invariants.md` is the consolidated cross-reference derived from this section; engine prompts reference `invariants.md` rather than duplicating inline. Charter content unchanged. |
 | 1.5     | 2026-03-11 | IMP-30: Head of UX & Design entry — design gate bypass authority paragraph added. Bypass requires co-confirmation by Head of UX & Design (primary) + Product Owner; both recorded in `design_gate_bypass_authority` field. |
 | 1.4     | 2026-03-04 | **Added §3.3 Specialist & Supporting Roles.** All agent file roles not previously listed in §3 now have a charter entry with domain, reporting line, and authority scope. Added entries for: Head of Engineering, Head of UX & Design, QA & Testing Owner, QA Lead, API Contracts & Documentation Owner, Metrics Definitions & Analytics Owner, Data Model & Domain Schema Owner, Frontend Specifications & UX Documentation Owner, Backend Engineering Patterns Owner, Base44 Frontend Prompt Owner, Strategy Rules & System Intent Owner (note — also in §3.1), AI Compliance & Governance Officer, Cybersecurity & Trust Lead, Financial Reporting & Records Owner, Director of HR. Added Design Gate Engine to §7 Governing Routines. |
 | 1.3     | 2026-03-02 | Added Shared Write Concurrency Constraint. Only one governed cycle may modify the shared backlog file at a time. |
@@ -461,6 +462,8 @@ If Facilitator halts a governed routine:
 ---
 
 ## 6. Hard Constraints (Non-Negotiable in All Governed Routines)
+
+> Consolidated cross-reference: `claude/system/invariants.md` — canonical list derived from this section and two other sources. Engine prompts reference `invariants.md` rather than duplicating this list inline.
 
 The following constraints apply in every governed routine regardless of role hierarchy or Product Owner instruction:
 

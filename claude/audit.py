@@ -25,17 +25,14 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-03-13"
-PRIOR_AUDIT_OPEN_ITEMS = [
-    # Deferred — remaining items require significant effort or new file creation
-    "AUD-2026-03-13-005",  # halt blocks inline extract to shared_standards (6 files)
-    "AUD-2026-03-13-006",  # create invariants.md + consolidate 3 docs (new file; team_charter.md restricted)
-    "AUD-2026-03-13-017",  # execution_prompt extract schemas (High effort; dep AUD-006 still open)
-    # Closed in 2026-03-14 session 1: AUD-001, AUD-011, AUD-012, AUD-013, AUD-014, AUD-015, AUD-016, AUD-020
-    # Closed in 2026-03-14 session 2: AUD-007, AUD-009, AUD-018, AUD-021, AUD-022
-    # Closed in 2026-03-14 session 3: AUD-002, AUD-004
-    # Closed in 2026-03-15 session 1: AUD-003
-    # False positives (no action): AUD-008, AUD-010, AUD-019
-]
+PRIOR_AUDIT_OPEN_ITEMS = []
+# All AUD-2026-03-13 items closed:
+# Closed in 2026-03-14 session 1: AUD-001, AUD-011, AUD-012, AUD-013, AUD-014, AUD-015, AUD-016, AUD-020
+# Closed in 2026-03-14 session 2: AUD-007, AUD-009, AUD-018, AUD-021, AUD-022
+# Closed in 2026-03-14 session 3: AUD-002, AUD-004
+# Closed in 2026-03-15 session 1: AUD-003
+# Closed in 2026-03-16 session 1: AUD-005, AUD-006, AUD-017
+# False positives (no action): AUD-008, AUD-010, AUD-019
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
@@ -49,7 +46,7 @@ PRIOR_SCORES = {
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 2  # v1.8 (2026-03-04__release-v1.8) + v1.9 (2026-03-06__release-v1.9)
+COMPLETED_CYCLES = 3  # v1.8 (2026-03-04__release-v1.8) + v1.9 (2026-03-06__release-v1.9) + v1.10 (2026-03-15__release-v1.10)
 
 # -------------------------
 # MISSING FILE RULE
@@ -757,6 +754,15 @@ MANDATORY OUTPUT FORMAT RULES (v6):
 # FULL AUDIT PROMPT
 # =========================
 
+_STAGE_CHECKLIST_TEXT = "\n".join(
+    "=" * 50 + "\n"
+    f"STAGE: {s['stage']}\n"
+    f"LOAD: {s['load']}\n"
+    f"TIPS: {s.get('tips', [])}\n"
+    f"CHECK:\n{s['check']}\n"
+    for s in STAGE_CHECKLIST
+)
+
 PROMPT = f"""
 You are running the Claude Lifecycle Audit v{AUDIT_VERSION} against: {SCOPE}
 
@@ -803,14 +809,7 @@ EXECUTION ORDER
 STAGE CHECKLIST
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-{chr(10).join(
-    f"{'='*50}\\n"
-    f"STAGE: {s['stage']}\\n"
-    f"LOAD: {s['load']}\\n"
-    f"TIPS: {s.get('tips', [])}\\n"
-    f"CHECK:\\n{s['check']}\\n"
-    for s in STAGE_CHECKLIST
-)}
+{_STAGE_CHECKLIST_TEXT}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 IMPROVEMENT FORMAT

@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.7
+**Version:** 2.8
 **Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -1067,29 +1067,7 @@ Before writing any output, count the decisions made in STEP 8:
 
 **Net-zero rule:** Additions must not exceed confirmed kills. If `additions > kills`:
 
-```
-🛑 HALT — Net-Zero Displacement Gap
-
-Routine:     Roadmap Rebalance
-Step:        STEP 9.0
-Gate:        Net-Zero Displacement
-
-What failed:
-  [N] items are proposed to advance; only [M] confirmed kills recorded.
-  Net displacement shortfall: [N - M] item(s) have no named stop.
-
-Evidence found:
-  Advancing: <list of ✅ Advance items>
-  Confirmed kills: <list of ❌ Rejected / killed items>
-
-Evidence missing:
-  A confirmed-kill or confirmed-stop decision for each advance above the kill count.
-
-To resume:
-  The Product Owner must name an additional displacement for each unmatched advance,
-  or downgrade [N - M] advancing item(s) to Park or Reject.
-  Then re-invoke STEP 8 with the updated decisions before proceeding to STEP 9.
-```
+Output halt report per `claude/system/shared_standards.md §5` (gate: `Net-Zero Displacement Gap`, step: `STEP 9.0`). State what failed: count of advancing items vs confirmed kills and net shortfall. List advancing items and confirmed kills as evidence. Resolution: Product Owner must name additional displacement(s) for each unmatched advance, or downgrade advancing items to Park/Reject; then re-invoke STEP 8.
 
 This gate is mode-independent. `--mode standard` does not relax it.
 
@@ -1438,14 +1416,7 @@ Execution note:
 
 ## 9. Invariants You Must Enforce
 
-- Authority boundaries are absolute
-- Lifecycle rules are absolute
-- No initiative exists without workforce justification
-- No addition without displacement
-- No decision without a recorded owner
-- Canonical truth overrides convenience
-- Delivery pressure never redefines intent
-- Hard gates may not be marked complete without a referenced evidence artefact
+See `claude/system/invariants.md` for canonical list.
 
 Violation → halt.
 
@@ -1485,6 +1456,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.8 | 2026-03-16 | AUD-2026-03-13-005: §9.0 Net-Zero Displacement Gap inline halt block replaced with prose reference to `shared_standards.md §5` — saves ~80 tokens/cycle, SST improved. AUD-2026-03-13-006: §9 Invariants list replaced with reference to `claude/system/invariants.md` (new canonical file). |
 | 2.7 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 8.5.B: item 4 added — idea file status verification (LL-02-patch): for each idea file set to `Advancing` in §4.2, verify STEP 9 write plan includes terminal status update (`Promoted-Added` or `Promoted-Rejected`); governance record gap if any `Advancing` idea file unaccounted for at end of run. |
 | 2.6 | 2026-03-15 | STEP -1.6 corrected: trigger changed from open-window status check (unreachable in normal flow) to open idea count < 20 — counts Submitted + Parked-cycle-N files in claude/ideas/submissions/; invokes idea intake inline if below threshold, skips if 20+. |
 | 2.5 | 2026-03-15 | AUD-2026-03-13-003: STEP -1.6 Idea Window Check (conditional) added — checks ideas_window.json status; invokes idea_intake_prompt.md inline if open; proceeds gracefully if absent or closed. |

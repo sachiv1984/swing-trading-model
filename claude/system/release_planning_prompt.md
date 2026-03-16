@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.19
-**Last Updated:** 2026-03-14
+**Version:** 2.20
+**Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -336,22 +336,7 @@ Per `shared_standards.md §11`, verify that each governed prompt's current versi
 
 Read `.claude_current_state.json` → `status`.
 
-If `status = Amendment_In_Progress`: halt immediately.
-
-```
-🛑 HALT — Amendment_In_Progress
-
-An amendment is currently in progress for the active cycle.
-Release Planning may not open a new cycle while an amendment is unsealed.
-
-To resume:
-  (1) Seal the amendment: re-invoke `amend cycle` until ratification is complete and
-      amendment_state.json.status = Sealed.
-  (2) Or withdraw the amendment and restore the prior state.
-  (3) Then re-invoke: plan release --version "<vX.Y>"
-```
-
-This guard is mode-independent. `--mode standard` does not relax it.
+If `status = Amendment_In_Progress`: halt immediately. Output halt report per `claude/system/shared_standards.md §5` (gate: `Amendment_In_Progress`). Resolution: (1) Seal the amendment — re-invoke `amend cycle` until `amendment_state.json.status = Sealed`; (2) or withdraw the amendment and restore the prior state; (3) then re-invoke `plan release --version "<vX.Y>"`. This guard is mode-independent. `--mode standard` does not relax it.
 
 ### -1.9 Stale Backlog Lock Preflight Check (Advisory — IMP-16)
 
@@ -1535,6 +1520,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.20 | 2026-03-16 | AUD-2026-03-13-005: STEP -1.8 Amendment_In_Progress inline halt block replaced with prose reference to `shared_standards.md §5` — saves ~80 tokens/cycle, SST improved. |
 | 2.19 | 2026-03-14 | AUD-2026-03-13-021 (PATCH 2): STEP 8 lessons_learnt.md output must end with `// ARTEFACT_STATUS` JSON terminal block (phase = "Release") per roadmap_prompt.md §11 schema. |
 | 2.18 | 2026-03-11 | IMP-11: STEP -1.8 Amendment In Progress Guard added — explicit halt when `status = Amendment_In_Progress`; mode-independent; message guides user to seal or withdraw before opening new release plan. IMP-16: STEP -1.9 Stale Backlog Lock Preflight Check added — detects locks from prior cycles; determines staleness (owning cycle closed or >72 hrs inactive); surfaces to PMO Lead for manual removal; records advisory in escalations.md; references team_charter §6. |
 | 2.17 | 2026-03-10 | IMP-26: STEP 3 — `### Risk Register Summary` subsection added alongside EPIC table; each RISK-ID entry now requires `escalation_ref` field (null or ESC-id). Escalation subroutine reference updated: ESC entries store decision/status only; full risk context lives in `release_plan.md` via `escalation_ref` back-link. |

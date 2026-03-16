@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.1
+**Version:** 2.2
 **Last Updated:** 2026-03-14
 
 # Shared Standards — All Governed Routines
@@ -474,12 +474,62 @@ Consumed by: `sync gh` inline handler
 
 [Schema to be moved from sprint_planning_prompt.md STEP 6.1A by Head of Specs Team]
 
+### 16.3 Delegation Log Schema
+
+Produced by: `execution_prompt.md` — append on every delegated item
+Consumed by: `execution_prompt.md` STEP 5.0 (outcome check), `post_ship_closure.md`
+
+**Header (create on first write):**
+
+```
+Owner: PMO Lead
+Class: Planning Document (Class 4)
+Status: Active
+Last Updated: <date>
+```
+
+**Delegation Record Format** (`DEL-<YYYYMMDD>-<nn>`):
+
+```
+## DEL-<YYYYMMDD>-<nn>
+
+- **ST Item:** ST-xx — <title>
+- **EPIC:** EPIC-xx
+- **Classification:** delegated_backend | delegated_frontend | delegated_qa | delegated_decision
+- **Assigned to:** Head of Engineering | Base44 Frontend Prompt Owner | Director of Quality | <named role>
+- **GitHub Issue:** #<number>
+- **Branch:** exec/<cycle_id>/EPIC-xx
+- **Delegated at:** <ISO-8601 UTC>
+- **What is needed:** <specific, actionable description — not generic>
+- **Spec reference:** <path to locked canonical spec that governs this item>  [backend/frontend items only]
+- **Base44 prompt draft:** <attached or linked>  [delegated_frontend items only]
+- **Unblock criteria:** <what must be true / what evidence is required>
+- **Commit format required:** `[EPIC-xx][ST-xx] <description>` pushed to `exec/<cycle_id>/EPIC-xx`
+- **Status:** Pending | In Progress | Unblocked | Cancelled
+```
+
+**Compliance rules:**
+- "What is needed" must be specific enough that the assignee can act without further clarification. Vague delegations are non-compliant.
+- For `delegated_backend`: "What is needed" must reference the specific layer(s) required (router / service / database) and the canonical spec section.
+- For `delegated_frontend`: the Base44 prompt draft field is mandatory, covering all six required sections (context, change, API contract, behaviour rules, non-functional rules, expected outcome).
+
+### 16.4 SLA Breach Tracking (Execution Engine)
+
+On each re-invocation of the execution engine, check all open escalation timestamps against the current time. If any escalation has been open for **72 hours or more** without resolution, the SLA Breach Rule in `shared_standards.md §4` applies:
+
+1. Write `BLOCKED_SLA_BREACH` notice to `execution_escalations.md` (same §5 halt report format, gate name: `SLA_BREACH`).
+2. Set `blocked_sla_breached = true` in `.claude_current_state.json`.
+3. Halt — no step may proceed until the breach is resolved by the owning authority.
+
+Reference: `execution_prompt.md` STEP 3.1.D (delegated_decision items) and STEP 5.1 (Sprint_Complete state write).
+
 ---
 
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2 | 2026-03-16 | AUD-2026-03-13-017: §16.3 Delegation Log Schema added — extracted from `execution_prompt.md §11`; §16.4 SLA Breach Tracking (Execution Engine) added — extracted from `execution_prompt.md` STEP 3.1.D. Engine prompts reference §16.3/§16.4 rather than duplicating inline. |
 | 2.1 | 2026-03-14 | AUD-2026-03-13-002 (PATCH 2): §13 dry-run table — `run roadmap` and `run ideas` rows added. AUD-2026-03-13-004 (PATCH 3): `run post-ship --dry-run` note added — STEP 11/12 pass through `--dry-run` flag. |
 | 2.0 | 2026-03-14 | AUD-2026-03-13-009: §16 Governed JSON Schemas added — canonical home for sprint_backlog_index.json schema (§16.1) and stage4_issue_manifest.json placeholder (§16.2). Engine prompts must reference §16 rather than duplicating schemas inline. |
 | 1.9 | 2026-03-11 | IMP-22: §14 Preflight Field Scope added — `shared_preflight_fields` table specifying minimum `.claude_current_state.json` fields per engine; section-scoped read rule. IMP-43: §15 Spec Debt Item Lifecycle added — creation trigger, required fields, acceptance criteria, closing authority (Head of Specs Team), Phase 1M validation rule. |

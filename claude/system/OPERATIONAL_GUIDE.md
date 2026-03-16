@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.21
+**Version:** 3.22
 **Last Updated:** 2026-03-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -393,7 +393,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v2.7)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v2.8)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -596,7 +596,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.19)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.20)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -823,7 +823,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v2.2)
+**Source prompt:** `claude/system/execution_prompt.md` (v2.3)
 
 ### 8.1 Invocation
 
@@ -1214,6 +1214,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Amendment Cycle Prompt | `claude/system/amendment_cycle_prompt.md` | 6 | Head of Specs Team | Governance |
 | Delivery Verification Prompt | `claude/system/delivery_verification_prompt.md` | 6 | Head of Specs Team | Governance |
 | Shared Standards | `claude/system/shared_standards.md` | 6 | Head of Specs Team | Governance |
+| Governance Invariants | `claude/system/invariants.md` | 6 | Head of Specs Team | Governance |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` | 6 | Head of Specs Team | Governance |
 | Prompt Change Log | `claude/system/prompt_change_log.md` | 6 | Head of Specs Team | Governance |
 | Current Roadmap | `claude/roadmap/current_roadmap.md` | 4 | Product Owner | 1 |
@@ -1289,15 +1290,16 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.2 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.3 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.7 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.19 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v2.8 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.20 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.1 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v2.2 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v2.3 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.5 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.0 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v2.1 |
+| Shared Standards | `claude/system/shared_standards.md` v2.2 |
+| Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.7 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
@@ -1316,6 +1318,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 | Version | Date | Change Summary |
 |---------|------|----------------|
 | 3.20 | 2026-03-16 | **v1.10 post-ship lessons learnt applied (LL-v1.10-P3-1, P3-3, P4-1, P4-2, P4-3).** §8.2 staging test data prerequisite bullet added (LL-P4-3). §8 + §14 source prompt versions updated: execution_prompt v2.1→v2.2, delivery_verification_prompt v1.4→v1.5. See prompt_change_log.md for full detail per prompt. |
+| 3.22 | 2026-03-16 | **AUD-2026-03-13-005, 006, 017 applied.** §6 roadmap_prompt.md v2.7→v2.8 (AUD-005 Net-Zero halt block → prose ref; AUD-006 §9 invariants → reference). §6B release_planning_prompt.md v2.19→v2.20 (AUD-005 Amendment halt block → prose ref). §8 execution_prompt.md v2.2→v2.3 (AUD-017 §11 schema → §16.3 ref; SLA tracking → §16.4 ref; §13 invariants cross-ref). §14 shared_standards.md v2.1→v2.2 (AUD-017 §16.3+§16.4 added). New file: `claude/system/invariants.md` v1.0 (AUD-006 canonical invariants). §14 governance table: 5 version entries updated; Governance Invariants row added. |
 | 3.21 | 2026-03-16 | **Post-ship closure v1.10 deferred patches applied.** §6 roadmap_prompt.md v2.6→v2.7 (STEP 8.5.B idea file status verification). §6M backlog_management_prompt.md v1.1→v1.3 (STEP 4 endpoint reference check); roadmap_management_prompt.md v1.1→v1.2 (already in §14). §7 sprint_planning_prompt.md v2.0→v2.1 (STEP -1.10 pre-sprint required decisions check; STEP 3.1 delegation class assignment note). §10 post_ship_closure.md v1.9→v2.0 (STEP 8.5 sequencing clarification). §14 governance table: 4 version entries updated. |
 | 3.20 | 2026-03-16 | **ST-03 (v1.10 EPIC-01): staging environment documented as canonical pre-merge QA environment.** §8.2 QA sign-off environment bullet added — Director of Quality must test against `https://trading-assistant-staging.onrender.com`, not production (LL-01 resolution). §8.5 merge gate QA sign-off lines updated to reference staging URL explicitly. Closes governance gap LL-01. |
 | 3.18 | 2026-03-15 | **AUD-2026-03-13-003 corrected — STEP -1.6 count-based trigger.** §5 renamed from "Phase 0 — Idea Intake" to "Idea Intake (Integrated — Phase 1 STEP -1.6)". Phase 0 removed from lifecycle table and quick-reference block. §4 narrative updated. STEP -1.6 now triggers on open idea count < 20 (not open window status). §14 roadmap_prompt → v2.6. |
