@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-16 (groom backlog GROOM-20260316-01 — 4 items + 1 release slice archived)
+**Last Updated:** 2026-03-16 (governance session — BLG-GOV-01, BLG-GOV-02 added)
 **Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — DL-008)
 
 > ⚠️ Standing Notice
@@ -254,6 +254,48 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 | BLG-SPEC-D7 | openapi.yaml frozen at v1.8.1 | v1.8 | 2026-03-04__release-v1.8 | ST-10 |
 | BLG-SPEC-D2 | settings_endpoints.md spec/implementation mismatch | v1.8 | 2026-03-04__release-v1.8 | ST-09 |
 | BLG-NEW-06 | Realised vs Unrealised P&L Labelling | N/A | 2026-03-04__item-3.4 | Merged into 4.1b |
+
+---
+
+### BLG-GOV-01 — Roadmap stage document consolidation
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Roadmap process reflection 2026-03-16
+**Cycle added:** 2026-03-16 (governance improvement session)
+**Effort:** M (2–3 days — prompt rewrite + template updates)
+**Target release:** v2.0 (governance prep)
+
+Currently Standard and Extended roadmap runs produce 5–8 separate stage files per cycle (`stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, `stage5_rebalance.md`, `run_manifest.md`, `cycle_summary.md`, `lessons_learnt.md`). The Lightweight tier (added v3.0) already consolidates STEP 2–7 output into a single `cycle_record.md`. This item extends that consolidation to Standard and Extended runs — collapsing the 5 working-paper stage files into sections of `cycle_record.md` while keeping `run_manifest.md`, `cycle_summary.md`, and `lessons_learnt.md` as separate files.
+
+**Acceptance Criteria**
+- `roadmap_prompt.md` updated: STEP 2–7 write targets changed to sections of `cycle_record.md` for all tiers
+- Write scope restriction (§5) updated accordingly
+- STEP 9 Write Plan template updated to reference `cycle_record.md`
+- STEP 10 completion condition updated
+- `OPERATIONAL_GUIDE.md` §6 artefact list updated
+- At least one `run roadmap` cycle validated against the new format before sealing
+
+---
+
+### BLG-GOV-02 — Ideas register (replace per-file idea submissions)
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Roadmap process reflection 2026-03-16
+**Cycle added:** 2026-03-16 (governance improvement session)
+**Effort:** M (2–3 days — prompt rewrite + migration)
+**Target release:** v2.0 (governance prep)
+
+The current idea intake model produces one file per idea per agent per window (44+ files from a single intake window). Status tracking requires bulk `sed` updates across dozens of files. This item replaces the per-file model with a single `claude/ideas/ideas_register.md` — a structured table with one row per idea containing: ID, agent, title, status, effort band, submission date, last-actioned date, and park rationale. The window summary (`window_summary_<window_id>.md`) is retained as the per-window record. Individual historical submission files are archived but not deleted.
+
+**Acceptance Criteria**
+- `idea_intake_prompt.md` updated: submissions write to `ideas_register.md` (append/update row) instead of individual files
+- `roadmap_prompt.md` STEP 4 updated: reads from `ideas_register.md` table instead of scanning individual files
+- `ideas_register.md` schema defined in `shared_standards.md` §16 (new entry)
+- Migration script or instruction provided to convert existing `claude/ideas/submissions/` files into register rows
+- Prior submission files moved to `claude/ideas/submissions/archive/`
+- `OPERATIONAL_GUIDE.md` updated to reflect new artefact
 
 ---
 
