@@ -1,4 +1,5 @@
 Owner: PMO Lead
+Last Updated: 2026-03-16
 Class: Planning Document (Class 4)
 Status: Active
 Last Updated: 2026-03-16
@@ -75,3 +76,123 @@ Last Updated: 2026-03-16
 - **Commit format required:** `[EPIC-01][ST-03] <description>` pushed to `exec/2026-03-15__release-v1.10/EPIC-01`
 - **Status:** Unblocked
 - **Completed:** 2026-03-16T11:00:00Z — all AC verified. OPERATIONAL_GUIDE.md updated to v3.19 (§8.2 QA environment bullet added, §8.5 merge gate updated with staging URL reference). Director of Quality confirmed updated process is workable (staging URL `https://trading-assistant-staging.onrender.com` accessible, process change closes LL-01). prompt_change_log.md updated. No deviations.
+
+---
+
+## DEL-20260316-04
+
+- **ST Item:** ST-04 — Refactor CohortAnalysis.js to use backend endpoint
+- **EPIC:** EPIC-02
+- **Classification:** delegated_frontend
+- **Assigned to:** Base44 Frontend Prompt Owner
+- **GitHub Issue:** #66
+- **Branch:** exec/2026-03-15__release-v1.10/EPIC-02
+- **Delegated at:** 2026-03-16T11:30:00Z
+- **Spec reference:** `docs/specs/frontend/pages/analytics.md#§15 Cohort Analysis` and `docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort`
+- **What is needed:** Replace client-side `buildCohorts()` computation in `CohortAnalysis.js` with a `useQuery` call to `api.analytics.cohort(period)`. Required layers: frontend component (`src/components/analytics/CohortAnalysis.js`) and parent call-site update (`src/pages/PerformanceAnalytics.js` line 664). Specifically:
+  1. Remove `buildCohorts()`, `getPeriodLabel()`, and `getPeriodKey()` functions entirely.
+  2. Remove the `trades` prop from the component signature.
+  3. Add `useQuery` import from `@tanstack/react-query` and `api` import from `../../api/base44Client`.
+  4. Call `api.analytics.cohort(period)` via `useQuery` with queryKey `["cohort-analysis", period]` so the query re-fetches when period changes.
+  5. Map backend response fields to the table: `period_label` → Period, `trade_count` → Trades, `win_rate` → Win Rate (already a percentage float, format to 1dp), `avg_r_multiple` → Avg R-Multiple (null-safe, format as `+0.00R`), `total_pnl` → Net P&L GBP.
+  6. Use `has_enough_data: false` from the API response for the insufficient data warning (instead of `cohorts.length < 3`).
+  7. Add Loading state (show `Loader2` spinner — already imported) and Error state.
+  8. In `PerformanceAnalytics.js` line 664: remove the `trades={filteredTrades}` prop from `<CohortAnalysis />`.
+- **Base44 prompt draft:**
+
+---
+
+### Base44 Prompt — ST-04: Refactor CohortAnalysis to Backend Endpoint
+
+**Section 1 — Context**
+
+The Performance Analytics page (`src/pages/PerformanceAnalytics.js`) renders a `CohortAnalysis` component that groups closed trade performance by entry period (month / quarter / year). The current implementation computes all cohort values client-side using a `buildCohorts()` function that reads a `trades` prop. This violates `analytics.md §15` hard rule ("no client-side R-multiple or cohort aggregation") and is flagged as deviation DEV-EPIC02-ST03-01 (P2).
+
+The backend already exposes a canonical endpoint: `GET /analytics/cohort?period={month|quarter|year}` which returns pre-computed cohort data. The `api.analytics.cohort(period)` client method already exists in `src/api/base44Client.js`. The `RMultipleDistribution.js` component is an identical pattern (useQuery + api.analytics call, no props) and should be used as the implementation reference.
+
+**Section 2 — The Change**
+
+Refactor `src/components/analytics/CohortAnalysis.js`:
+
+1. **Remove** `buildCohorts()`, `getPeriodLabel()`, `getPeriodKey()` functions (lines 6–58).
+2. **Remove** the `trades` prop from the component signature.
+3. **Add imports:** `useQuery` from `@tanstack/react-query`; `api` from `../../api/base44Client`.
+4. **Replace** `buildCohorts(trades, period)` call with:
+   ```js
+   const { data, isLoading, error } = useQuery({
+     queryKey: ["cohort-analysis", period],
+     queryFn: () => api.analytics.cohort(period),
+     retry: 1,
+   });
+   ```
+5. **Loading state:** if `isLoading`, render a centred `<Loader2 className="w-5 h-5 animate-spin text-slate-400" />` inside the card body (consistent with other analytics components).
+6. **Error state:** if `error`, render a `text-rose-400` error message inside the card body.
+7. **Data mapping:** use `data.cohorts` array where each item has:
+   - `period_label` (string) → Period column
+   - `trade_count` (integer) → Trades column
+   - `win_rate` (float, already a percentage e.g. 62.5) → format `{win_rate.toFixed(1)}%`
+   - `avg_r_multiple` (float | null) → format `+0.00R` if non-null; `—` if null
+   - `total_pnl` (float) → format `+£0.00` with sign prefix
+8. **Insufficient data:** use `data.has_enough_data === false` to show the amber warning (not `cohorts.length < 3`). Message: `"Not enough closed trades to show {period} cohorts (need at least 3 periods)."` — unchanged.
+9. **Header, period selector, table structure, colour coding** — preserve exactly. Do not change className, layout, icons, or colour logic.
+
+Also update `src/pages/PerformanceAnalytics.js` **line 664**: change `<CohortAnalysis trades={filteredTrades} />` to `<CohortAnalysis />`.
+
+**Section 3 — API Contract**
+
+Endpoint: `GET /analytics/cohort?period={month|quarter|year}`
+
+Client method (already exists — do not modify `base44Client.js`): `api.analytics.cohort(period)` where `period` is the state value (`"month"` | `"quarter"` | `"year"`).
+
+Response shape:
+```json
+{
+  "period": "month",
+  "has_enough_data": true,
+  "cohorts": [
+    {
+      "period_label": "Mar 2026",
+      "trade_count": 12,
+      "win_rate": 58.3,
+      "avg_r_multiple": 1.24,
+      "total_pnl": 847.50
+    }
+  ]
+}
+```
+Cohorts are sorted descending by period (most recent first) — backend handles sort order; do not re-sort on the frontend.
+
+**Section 4 — Behaviour Rules**
+
+- `period` state remains local to `CohortAnalysis` — the `Select` still controls it.
+- queryKey must include `period` as the second element so React Query re-fetches automatically when period changes: `["cohort-analysis", period]`.
+- Do NOT pass `staleTime` or `cacheTime` — use React Query defaults.
+- `retry: 1` — same as `RMultipleDistribution`.
+- If `data` is undefined (loading/error), do not attempt to access `data.cohorts` — guard with `isLoading` / `error` checks first.
+- `avg_r_multiple` can be `null` if no stop prices are available — handle null exactly as the existing code does (colour: `text-slate-500`, display: `—`).
+- The colour thresholds for `avg_r_multiple` are unchanged: ≥1 → `text-emerald-400`; ≥0.5 → `text-amber-400`; <0.5 → `text-rose-400`; null → `text-slate-500`.
+
+**Section 5 — Non-Functional Rules**
+
+- No new dependencies. `useQuery` and `api` are already used project-wide.
+- Component must remain a default export named `CohortAnalysis`.
+- Do not add PropTypes declarations.
+- Do not add comments or JSDoc.
+- The card wrapper, header layout, period Select, table structure, and all `className` strings must remain byte-for-byte identical to the current implementation — only the data-fetching and data-mapping logic changes.
+
+**Section 6 — Expected Outcome**
+
+After the change:
+- `CohortAnalysis.js` has no `buildCohorts`, `getPeriodLabel`, or `getPeriodKey` functions.
+- The component signature is `export default function CohortAnalysis()` (no props).
+- The period selector still works and changing it triggers a fresh API call.
+- The table renders identical columns and colour coding using backend-provided values.
+- Loading and error states are handled.
+- `PerformanceAnalytics.js` renders `<CohortAnalysis />` with no props.
+- `analytics.md §15` hard rule is satisfied: no client-side aggregation.
+
+---
+
+- **Unblock criteria:** Commit pushed to `exec/2026-03-15__release-v1.10/EPIC-02` with format `[EPIC-02][ST-04] <description>`. `CohortAnalysis.js` must: (a) call `api.analytics.cohort(period)` via `useQuery`, (b) have `buildCohorts()` removed, (c) have no `trades` prop, (d) match rendered output — Director of Quality regression sign-off required.
+- **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-03-15__release-v1.10/EPIC-02`
+- **Status:** Pending

@@ -5,8 +5,8 @@
   "invoked_utc": "2026-03-16T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-16T11:00:00Z",
-  "epic_scope": "EPIC-01",
+  "last_updated_utc": "2026-03-16T11:30:00Z",
+  "epic_scope": "EPIC-02",
 
   "epics": {
     "EPIC-01": {
@@ -74,18 +74,51 @@
           "notes": "OPERATIONAL_GUIDE.md updated to v3.19: §8.2 QA sign-off environment bullet added (staging URL https://trading-assistant-staging.onrender.com as canonical pre-merge QA environment, LL-01 resolution). §8.5 merge gate QA sign-off lines updated to reference staging URL explicitly. §14 table updated to v3.19. prompt_change_log.md row appended. Director of Quality confirmed updated process is workable. No deviations."
         }
       }
+    },
+    "EPIC-02": {
+      "title": "Analytics Architecture Correctness",
+      "status": "in_progress",
+      "branch": "exec/2026-03-15__release-v1.10/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-03-15__release-v1.10/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Refactor CohortAnalysis.js to use backend endpoint",
+          "classification": "delegated_frontend",
+          "status": "blocked_frontend",
+          "assigned_to": "human",
+          "github_issue": 66,
+          "branch": "exec/2026-03-15__release-v1.10/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260316-04",
+          "blocked_since_utc": "2026-03-16T11:30:00Z",
+          "unblock_criteria": "Commit pushed to exec/2026-03-15__release-v1.10/EPIC-02 with format [EPIC-02][ST-04] <description>. CohortAnalysis.js must: call GET /analytics/cohort via useQuery, remove buildCohorts(), remove trades/filteredTrades prop dependency, match rendered output and pass DoQ regression sign-off.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/analytics.md#15-cohort-analysis",
+            "docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.B.delegated",
+          "notes": "delegated_frontend — Base44 prompt draft produced. DEL-20260316-04 created. Issue #66 open."
+        }
+      }
     }
   },
 
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": ["ST-04"],
+  "delegated_items": ["ST-04"],
   "completed_items": ["ST-01", "ST-02", "ST-03"],
   "open_escalations": [],
 
   "merge_gate": {
     "epics_merged": ["EPIC-01"],
-    "epics_pending": [],
-    "all_merged": true
+    "epics_pending": ["EPIC-02"],
+    "all_merged": false
   },
 
   "sealed": false,
