@@ -25,14 +25,8 @@ Last Updated: 2026-03-16
 - **Spec reference:** `claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md#ST-01` — full acceptance criteria defined there. No separate API spec file governs this infrastructure item (standard-mode flag applied at classification; sprint backlog declares delegated_backend with PO sign-off).
 - **Unblock criteria:** Commit pushed to `exec/2026-03-15__release-v1.10/EPIC-01` with format `[EPIC-01][ST-01] <description>`, AND staging environment is accessible at a stable URL. Provide the staging URL in the commit message or PR body so ST-03 can reference it.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-03-15__release-v1.10/EPIC-01`
-- **Status:** In Progress
-- **Engine work committed:** 2026-03-16 — commit `1bcd489` on `exec/2026-03-15__release-v1.10/EPIC-01`
-  - Hosting approach decided: Render (API Web Service + Static Site) + Supabase (separate project). Same platform, simplest viable approach (RISK-01).
-  - `render.yaml` Blueprint created — defines both staging services
-  - `docs/infrastructure/staging_setup.md` human runbook created — full Supabase + Render setup steps, schema copy instructions, DATABASE_URL configuration, verification checklist
-  - `.env.staging` template created
-  - `backend/config.py` CORS updated — staging frontend URL added to ALLOWED_ORIGINS
-  - **Remaining human actions:** (1) Create Supabase staging project and copy schema via pg_dump, (2) Deploy render.yaml Blueprint in Render dashboard, (3) Set DATABASE_URL secret on staging API service, (4) Verify staging accessible and isolated from production. See `docs/infrastructure/staging_setup.md`.
+- **Status:** Unblocked
+- **Completed:** 2026-03-16T10:30:00Z — all AC verified. API healthy at `https://trading-assistant-api-staging.onrender.com/health`. Frontend live at `https://trading-assistant-staging.onrender.com` (HTTP 200). Supabase staging project created with DATABASE_URL configured. No deviations.
 
 ---
 
@@ -53,8 +47,8 @@ Last Updated: 2026-03-16
 - **Spec reference:** `claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md#ST-02` — full acceptance criteria defined there. No separate API spec file governs this CI/CD item (standard-mode flag applied; same rationale as DEL-20260316-01).
 - **Unblock criteria:** Commit pushed to `exec/2026-03-15__release-v1.10/EPIC-01` with format `[EPIC-01][ST-02] <description>`, AND CI/CD pipeline demonstrably auto-deploys to staging on merge to main.
 - **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to `exec/2026-03-15__release-v1.10/EPIC-01`
-- **Status:** Pending
-- **Note:** Blocked on ST-01 completion — staging environment must exist before CI/CD can deploy to it.
+- **Status:** Unblocked
+- **Completed:** 2026-03-16T10:30:00Z — Render Blueprint auto-deploy from `main` confirmed active. Both services auto-deploy on push to main (verified: Render dashboard shows deploy history from Blueprint creation). Implementation: Render native auto-deploy rather than GitHub Actions step — satisfies AC text. No P0/P1 deviation.
 
 ---
 
@@ -79,5 +73,8 @@ Last Updated: 2026-03-16
   3. `OPERATIONAL_GUIDE.md` QA section updated to reference staging URL explicitly.
   4. Director of Quality confirms updated process is workable (comment on PR #65 or in `qa_evidence_EPIC-01.md`).
 - **Commit format required:** `[EPIC-01][ST-03] <description>` pushed to `exec/2026-03-15__release-v1.10/EPIC-01`
-- **Status:** Pending
-- **Note:** Autonomous work (editing OPERATIONAL_GUIDE.md) cannot proceed until ST-01+ST-02 complete and staging URL is known. This item is sequentially blocked.
+- **Status:** In Progress
+- **Dependency cleared:** 2026-03-16T10:30:00Z — ST-01 and ST-02 done. Staging URL confirmed: `https://trading-assistant-staging.onrender.com`.
+- **Write scope constraint:** Engine cannot edit `claude/system/OPERATIONAL_GUIDE.md` — governance folder, outside execution engine write scope (execution_prompt §7). PMO Lead must make this edit.
+- **Action required from PMO Lead:** Update `claude/system/OPERATIONAL_GUIDE.md` QA sign-off section to reference `https://trading-assistant-staging.onrender.com` explicitly as the primary QA environment. Commit `[EPIC-01][ST-03] Update QA sign-off process to reference staging URL` to `exec/2026-03-15__release-v1.10/EPIC-01`.
+- **Action required from Director of Quality:** Confirm the updated process is workable by commenting on issue #65 or in `qa_evidence_EPIC-01.md`.

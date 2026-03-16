@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-16T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-16T00:30:00Z",
+  "last_updated_utc": "2026-03-16T10:30:00Z",
   "epic_scope": "EPIC-01",
 
   "epics": {
@@ -22,64 +22,64 @@
         "ST-01": {
           "title": "Provision staging environment infrastructure",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 63,
           "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
           "commit_sha": "1bcd489",
           "delegation_record_id": "DEL-20260316-01",
-          "blocked_since_utc": "2026-03-16T00:05:00Z",
-          "unblock_criteria": "Human confirms staging environment accessible at https://trading-assistant-staging.onrender.com AND staging API healthy at https://trading-assistant-api-staging.onrender.com/health. Requires: (1) Supabase staging project created and schema applied, (2) Render Blueprint deployed, (3) DATABASE_URL secret set on API service.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-16T10:30:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md#ST-01"],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.B.engine_work_committed",
-          "notes": "Engine work complete (commit 1bcd489): hosting decision documented (Render + Supabase, same-platform approach per RISK-01), render.yaml Blueprint created, staging_setup.md runbook created, .env.staging template created, CORS updated in config.py. PENDING HUMAN ACTION: see docs/infrastructure/staging_setup.md for Supabase and Render dashboard steps."
+          "deviations_filed": true,
+          "last_completed_substep": "done",
+          "notes": "Staging live. API: https://trading-assistant-api-staging.onrender.com (health: healthy). Frontend: https://trading-assistant-staging.onrender.com (HTTP 200). Approach: Render Blueprint (Web Service + Static Site) + Supabase staging project. All AC verified. No deviations."
         },
         "ST-02": {
           "title": "Configure CI/CD auto-deploy to staging",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 64,
           "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260316-02",
-          "blocked_since_utc": "2026-03-16T00:05:00Z",
-          "unblock_criteria": "ST-01 done AND Render auto-deploy confirmed working (push to main triggers deploy to staging, visible in Render dashboard, staging URL reflects main within 15 minutes).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-16T10:30:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md#ST-02"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "ST-02 is satisfied by Render's built-in auto-deploy on merge to main — no separate CI step needed beyond enabling auto-deploy in the Render dashboard for both staging services. See staging_setup.md §2.2. Blocked on ST-01 completion."
+          "deviations_filed": true,
+          "last_completed_substep": "done",
+          "notes": "Render Blueprint auto-deploy from main configured. AC satisfied: automated trigger on merge, no manual intervention, visible in Render dashboard, deploy time ~2-5 min. Implementation note: Render native auto-deploy used rather than a GitHub Actions workflow step — satisfies 'CI/CD dashboard or GitHub Actions output' AC text. No P0/P1 deviation."
         },
         "ST-03": {
           "title": "Update QA sign-off governance process",
           "classification": "delegated_qa",
-          "status": "blocked_backend",
+          "status": "blocked_qa",
           "assigned_to": "human",
           "github_issue": 65,
           "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260316-03",
-          "blocked_since_utc": "2026-03-16T00:05:00Z",
-          "unblock_criteria": "ST-01 and ST-02 both done, staging URL known and stable, OPERATIONAL_GUIDE.md QA section updated to reference staging URL explicitly, Director of Quality confirms updated process is workable.",
+          "blocked_since_utc": "2026-03-16T10:30:00Z",
+          "unblock_criteria": "PMO Lead updates claude/system/OPERATIONAL_GUIDE.md QA section to reference staging URL (https://trading-assistant-staging.onrender.com) explicitly. Director of Quality confirms updated process is workable and comments on PR #65.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["claude/system/OPERATIONAL_GUIDE.md"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Autonomous work (editing OPERATIONAL_GUIDE.md) cannot proceed until ST-01+ST-02 complete and staging URL is confirmed live. Sequentially blocked on ST-01+ST-02 dependency."
+          "last_completed_substep": "3.1.C.dependency_cleared",
+          "notes": "Dependency cleared (ST-01+ST-02 done, staging URL confirmed live). Engine cannot edit OPERATIONAL_GUIDE.md — it is in claude/system/ (governance folder, outside write scope per execution_prompt §7). PMO Lead must make the edit; Director of Quality must confirm. Staging URL to reference: https://trading-assistant-staging.onrender.com."
         }
       }
     }
   },
 
-  "blocked_items": ["ST-01", "ST-02", "ST-03"],
-  "delegated_items": ["ST-01", "ST-02", "ST-03"],
-  "completed_items": [],
+  "blocked_items": ["ST-03"],
+  "delegated_items": ["ST-03"],
+  "completed_items": ["ST-01", "ST-02"],
   "open_escalations": [],
 
   "merge_gate": {
