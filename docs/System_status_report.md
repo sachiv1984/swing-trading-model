@@ -362,6 +362,39 @@ The system is ready for:
 
 ---
 
+## Sprint: 2026-03-15__release-v1.10
+**Date:** 2026-03-16
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Staging environment — Render Blueprint (Web Service + Static Site) + Supabase staging project; frontend at https://trading-assistant-staging.onrender.com, API at https://trading-assistant-api-staging.onrender.com; CI/CD auto-deploy from main via Render Blueprint; OPERATIONAL_GUIDE.md v3.19 — staging URL as canonical pre-merge QA environment (§8.2 + §8.5) | stage4_backlog_slice.md#ST-01, #ST-02, #ST-03; claude/system/OPERATIONAL_GUIDE.md §8.2, §8.5 | None |
+| EPIC-02 | CohortAnalysis architecture correction — CohortAnalysis.js refactored from client-side buildCohorts() to useQuery + api.analytics.cohort(period); PerformanceAnalytics.js call-site updated; DEV-EPIC02-ST03-01 (P2, v1.9 Sprint 2) closed | docs/specs/frontend/pages/analytics.md §15; docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort | None (prior P2 resolved) |
+| EPIC-03 | QA infrastructure — tests/test_portfolio_integration.py (15 FastAPI TestClient tests for GET /portfolio: shape, GBP conversion, heat, grace period); .github/workflows/integration-tests.yml (CI gate blocks merge on test failure); docs/testing/v1.7-qa-scenario-gaps.md (4 QA scenarios GAP-01 through GAP-04 closing TEST-GAP-EPIC-06 / BLG-QA-01) | docs/specs/api_contracts/portfolio_endpoints.md; docs/testing/v1.7-qa-scenario-gaps.md | DEV-ST05-01 (P3 — GET /portfolio/prospective-heat tests skipped; endpoint not in spec) |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| — | All 7 stories delivered | N/A |
+
+### Known findings from this sprint
+
+| Finding | Priority | Backlog item |
+|---------|----------|-------------|
+| GET /portfolio missing `initial_value`, `net_deposits`, `current_drawdown_percent`, `peak_portfolio_value` — spec since v1.8.2 but absent from API response | P1 | BLG-BE-01 (v1.11) |
+| GAP-04 (holding_days on GET /trades) could not be verified on staging — no closed trades in staging environment | Informational | Scenario retained in docs/testing/v1.7-qa-scenario-gaps.md |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md
+- Deviations filed: DEV-ST05-01 (P3, portfolio_endpoints.md prospective-heat); DEV-EPIC02-ST03-01 (P2, analytics.md v1.4) — resolved this sprint
+- Test scenarios referenced: docs/testing/v1.7-qa-scenario-gaps.md (4 new scenarios)
+
+---
+
 ## Sprint: 2026-03-06__release-v1.9 (Sprint 1 of 2)
 **Date:** 2026-03-09
 **Status:** Verified — 2026-03-09
