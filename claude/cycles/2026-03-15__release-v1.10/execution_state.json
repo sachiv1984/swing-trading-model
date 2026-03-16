@@ -14,7 +14,7 @@
       "status": "stories_complete",
       "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
       "pr_number": 70,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-15__release-v1.10/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -83,9 +83,9 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
   "sealed": false,
