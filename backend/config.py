@@ -12,6 +12,7 @@ API_VERSION = "1.2.0"
 ALLOWED_ORIGINS = [
     "https://sachiv1984.github.io",
     "https://trading-assistant-api-c0f9.onrender.com",
+    "https://trading-assistant-staging.onrender.com",  # Staging frontend (render.yaml)
     "http://localhost:3000"
 ]
 
