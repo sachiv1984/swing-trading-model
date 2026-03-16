@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-15 (manage roadmap — 6 items retired; 4.1c killed; 3.1 PO-confirmed)
+**Last Updated:** 2026-03-16 (manage roadmap — v1.10 retired to archive)
 **Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — item 5.3 / v1.9 Sprint 2 completion event)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v1.9** — User Value & Insight — Fully Shipped 2026-03-13
-**Next planned release:** **v1.10** (Development Environment — BLG-OPS-01) → **v2.0**
+**v1.10** — Operations & Quality Foundation — Shipped 2026-03-16
+**Next planned release:** **v2.0** (Reporting & Alerts)
 
 ---
 
@@ -44,28 +44,6 @@ These may be revisited in future versions without any canonical spec change:
 ---
 
 ## 3. Delivery Plan
-
----
-
-### v1.10 — Operations & Quality Foundation *(next)*
-
-<!-- roadmap-annotation-marker: RA:v1.10:2026-03-15__release-v1.10 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-03-15__release-v1.10
-- Plan published: 2026-03-15
-- Cycle folder: claude/cycles/2026-03-15__release-v1.10/
-- Backlog slice: claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md
-- Status at annotation: Validated
-
-#### BLG-OPS-01 — Development Environment *(elevated from backlog — P1)*
-**Status:** Planned — P1 prerequisite
-**Effort:** Low–Medium (CI/CD pipeline + staging environment provisioning)
-**Value:** Critical — structural QA gap. No non-production environment exists; all QA runs against production.
-
-Provision a staging/dev environment tracking `main`. CI/CD auto-deploys to staging on merge. QA sign-off process updated to use staging URL, not production. Prerequisite for safe pre-merge quality validation.
-
-> **Elevated from backlog (DL-008, 2026-03-15):** BLG-OPS-01 elevated to roadmap — displaces 4.1c (Server-Side PDF, killed). The absence of a development environment is a structural governance failure: Director of Quality sign-off requires testing a live application, but no non-production environment exists for pre-merge testing. See DL-008.
 
 ---
 
@@ -184,7 +162,7 @@ When evaluating new features:
 | **v1.7** | Foundation | CI/CD gate, §13 boundary review, metrics definitions, observability, API versioning decision — ✅ Shipped 2026-03-03 |
 | **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk — ✅ Shipped 2026-03-06 |
 | **v1.9** | User Value & Insight | ✅ Fully Shipped 2026-03-13 — all items retired to archive |
-| **v1.10** | Operations & Quality | BLG-OPS-01 Development Environment (P1) — planning next |
+| **v1.10** | Operations & Quality | Staging environment, CI/CD auto-deploy, CohortAnalysis refactor, integration tests, v1.7 QA scenario gaps — ✅ Shipped 2026-03-16 *(retired to archive 2026-03-16)* |
 | **v2.0** | Reporting & Alerts | Alerts & notifications (QA gate pending), tax-year statement, signal parameter exposure (gate cleared — active planning) |
 | **v2.1+** | Enhancements | Watchlists, chart interactivity, Prometheus |
 

@@ -364,7 +364,7 @@ The system is ready for:
 
 ## Sprint: 2026-03-15__release-v1.10
 **Date:** 2026-03-16
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — Director of Quality sign-off 2026-03-16; Product Owner acceptance 2026-03-16
 
 ### Capabilities now live (merged this sprint)
 
@@ -390,7 +390,7 @@ The system is ready for:
 ### Verification inputs ready
 
 - QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md
-- Deviations filed: DEV-ST05-01 (P3, portfolio_endpoints.md prospective-heat); DEV-EPIC02-ST03-01 (P2, analytics.md v1.4) — resolved this sprint
+- Deviations filed: DEV-ST05-01 (P3, qa_evidence_EPIC-03.md — prospective-heat endpoint absent from spec; BLG-BE-02 filed); DEV-EPIC02-ST03-01 (P2, analytics.md v1.4) — resolved this sprint by ST-04
 - Test scenarios referenced: docs/testing/v1.7-qa-scenario-gaps.md (4 new scenarios)
 
 ---

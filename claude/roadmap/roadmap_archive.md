@@ -1,13 +1,54 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-15
+**Last Updated:** 2026-03-16
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v1.10 — Operations & Quality Foundation
+
+**Original roadmap location:** §3 Delivery Plan — v1.10 section
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-16
+**Shipped version:** v1.10 (2026-03-16)
+**Cycle reference:** 2026-03-15__release-v1.10
+**Verification report:** `claude/cycles/2026-03-15__release-v1.10/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** Product Owner
+
+### Original Roadmap Entry
+
+### v1.10 — Operations & Quality Foundation ✅ Complete — 2026-03-16
+
+<!-- roadmap-annotation-marker: RA:v1.10:2026-03-15__release-v1.10 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-15__release-v1.10
+- Plan published: 2026-03-15
+- Cycle folder: claude/cycles/2026-03-15__release-v1.10/
+- Backlog slice: claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md
+- Status at annotation: Validated
+
+**Closure notes (added by Post-Ship Closure Engine):**
+- Shipped: 2026-03-16
+- Verification status: Verified_with_deviations
+- Changelog: docs/product/changelog.md#v1.10
+- Closure record: claude/cycles/2026-03-15__release-v1.10/closure_record.md
+
+#### BLG-OPS-01 — Development Environment *(elevated from backlog — P1)*
+**Status:** ✅ Complete — Shipped 2026-03-16 (cycle 2026-03-15__release-v1.10)
+**Effort:** Low–Medium (CI/CD pipeline + staging environment provisioning)
+**Value:** Critical — structural QA gap. No non-production environment exists; all QA runs against production.
+
+Provision a staging/dev environment tracking `main`. CI/CD auto-deploys to staging on merge. QA sign-off process updated to use staging URL, not production. Prerequisite for safe pre-merge quality validation.
+
+> **Elevated from backlog (DL-008, 2026-03-15):** BLG-OPS-01 elevated to roadmap — displaces 4.1c (Server-Side PDF, killed). The absence of a development environment is a structural governance failure: Director of Quality sign-off requires testing a live application, but no non-production environment exists for pre-merge testing. See DL-008.
 
 ---
 

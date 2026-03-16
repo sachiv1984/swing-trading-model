@@ -3,9 +3,54 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-09
+**Last Updated:** 2026-03-16
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v1.10 — Operations & Quality Foundation — 2026-03-16
+
+Cycle: 2026-03-15__release-v1.10
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-03-15__release-v1.10/verification_report.md
+
+Establishes staging as the canonical pre-merge QA environment, closes the CohortAnalysis architecture violation carried since v1.9, delivers FastAPI TestClient integration tests for portfolio endpoints with a CI merge gate, and formally closes the v1.7 QA scenario gaps (BLG-QA-01) — executing 4 scenarios against staging. Resolves prior P2 deviation DEV-EPIC02-ST03-01.
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Development Environment Foundation: staging environment provisioned (Render Blueprint — API + Static Site + Supabase staging project); CI/CD auto-deploy from `main` via Render native auto-deploy; QA sign-off governance updated — `OPERATIONAL_GUIDE.md` v3.19 now mandates staging URL as canonical pre-merge QA environment | `claude/system/OPERATIONAL_GUIDE.md` v3.18→v3.19 |
+| EPIC-02 | Analytics Architecture Correctness: `CohortAnalysis.js` refactored to call `GET /analytics/cohort` via `useQuery` + `api.analytics.cohort(period)`; `buildCohorts()`, `getPeriodLabel()`, `getPeriodKey()` removed; `trades` prop removed from call site; resolves analytics.md §15 hard rule and closes DEV-EPIC02-ST03-01 (P2, carried since v1.9) | `docs/specs/frontend/pages/analytics.md` §15; `docs/specs/api_contracts/analytics_endpoints.md` #GET /analytics/cohort |
+| EPIC-03 | QA Infrastructure & Coverage: 15 FastAPI TestClient integration tests for `GET /portfolio` (response shape, GBP conversion, portfolio heat, grace period/display_status); `.github/workflows/integration-tests.yml` CI step blocks merge on failure; 4 v1.7 scenario gaps (GAP-01–GAP-04) authored and executed in `docs/testing/v1.7-qa-scenario-gaps.md`; BLG-QA-01 closed; TEST-GAP-EPIC-06 retired | `docs/specs/api_contracts/portfolio_endpoints.md`; `docs/testing/v1.7-qa-scenario-gaps.md` (new) |
+
+### Deviations accepted
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| 1 minor deviation (DEV-ST05-01) | P3 | `GET /portfolio/prospective-heat` endpoint not defined in `portfolio_endpoints.md` and not implemented in backend — TestClient tests skipped with `@unittest.skip`; BLG-BE-02 filed for v2.0 — see verification_report.md §4 | PO — 2026-03-16 |
+
+**Prior-cycle deviation resolved this sprint:**
+- DEV-EPIC02-ST03-01 (P2, v1.9 Sprint 2) — CohortAnalysis client-side cohort computation — resolved by ST-04 (EPIC-02).
+
+### Tech backlog items shipped
+
+- [BLG-OPS-01 / ST-01] Provision staging environment infrastructure — Render Blueprint (Web Service + Static Site); Supabase staging project; staging live at https://trading-assistant-staging.onrender.com and https://trading-assistant-api-staging.onrender.com
+- [BLG-OPS-01 / ST-02] Configure CI/CD auto-deploy to staging — Render native auto-deploy from `main`; deploy time ~2–5 min; no manual intervention required
+- [ST-03] Update QA sign-off governance process — `OPERATIONAL_GUIDE.md` v3.19; staging URL referenced in §8.2 and §8.5; LL-01 governance gap closed
+- [ST-04] Refactor CohortAnalysis.js to use backend endpoint — architecture violation closed; DEV-EPIC02-ST03-01 (P2) resolved
+- [ST-05] FastAPI TestClient integration tests for portfolio endpoints — 15 tests; `tests/test_portfolio_integration.py`; all CI checks green
+- [ST-06] Add integration test CI step — `.github/workflows/integration-tests.yml`; PR #72 CI check visible and named
+- [BLG-QA-01 / ST-07] Author v1.7 missing QA test scenarios — 4 scenarios (GAP-01–GAP-04) in `docs/testing/v1.7-qa-scenario-gaps.md`; GAP-01 PASS, GAP-02 PASS, GAP-03 FAIL (BLG-BE-01 P1 filed — see Known Issues), GAP-04 BLOCKED (no closed trades in staging — deferred)
+
+### Known issues carried forward
+
+- **BLG-BE-01 (P1):** `GET /portfolio` response missing 4 required fields (`initial_value`, `net_deposits`, `current_drawdown_percent`, `peak_portfolio_value`) per `portfolio_endpoints.md` v1.9.0. Discovered via GAP-03 staging execution. Targeted for v1.11.
+- **GAP-04** (staging data gap): scenario valid but not executable — no closed trades in staging environment. Deferred.
+
+Sign-off: Product Owner — 2026-03-16
+QA sign-off: Director of Quality — 2026-03-16
 
 ---
 

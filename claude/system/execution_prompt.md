@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.1
-**Last Updated:** 2026-03-14
+**Version:** 2.2
+**Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -114,6 +114,7 @@ Every ST item must be classified on load:
 - Spec, documentation, configuration, or scaffolding with unambiguous acceptance criteria: `autonomous`
 - Items requiring QA verification of behavioural conformance: `delegated_qa` (after any `delegated_backend` or `delegated_frontend` work completes)
 - Items with unresolved authority or scope questions: `delegated_decision`
+- **Autonomous candidate pattern (LL-v1.10-P3-3):** If the item description is "refactor component X to call backend endpoint Y" with no UX change, and the API method already exists client-side (e.g. in `api.js`), classify as `autonomous` — this is a pure data-fetching swap with no delegation risk. Confirm with Product Owner if scope ambiguity exists.
 
 If classification is ambiguous: classify as `delegated_decision` and flag for the Product Owner.
 
@@ -563,6 +564,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 10. Deviation check: compare implementation against canonical spec.
     - If no deviation: set `deviations_filed = true` (meaning "deviation check completed; none found").
     - If a deviation exists: document it in the canonical spec per `claude/charter/document_lifecycle_guide.md` §9 (description, canonical requirement, priority P0–P3, target resolution release, owner, backlog reference). Set `deviations_filed = true` once filed. A P0 deviation blocks the merge gate — escalate immediately.
+    - **Deviation type distinction (LL-v1.10-P4-2):** If the deviation is "endpoint/feature absent from spec" (the spec does not define this thing at all), file in `qa_evidence_EPIC-xx.md` and backlog only — the canonical spec is not the right home for an absence note. If the deviation is "implementation differs from what the spec requires" (the spec defines it, but the implementation diverges), file in the canonical spec as above.
 
 #### 3.1.B If `delegated_backend` or `delegated_frontend`:
 
@@ -661,6 +663,7 @@ The consolidation block must include:
 - Known deviations filed: <list deviation refs or "None">
 
 **QA sign-off block:** (Director of Quality completes this)
+> **Authoring note (LL-v1.10-P4-1):** When completing the sign-off block, update all AC table rows from "Pending"/"Awaiting QA" to "Pass" or "Pass with notes" in the same edit. Sign-off block and AC table must be consistent — leaving rows as "Pending" after signing off creates a documentation inconsistency.
 - [ ] All acceptance criteria verified against canonical spec
 - [ ] No unresolved P0 or P1 deviations
 - [ ] Regression areas checked

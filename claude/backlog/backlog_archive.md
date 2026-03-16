@@ -1,11 +1,146 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-15
+**Last Updated:** 2026-03-16
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### v1.10 Release Slice — 2026-03-15__release-v1.10
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** N/A (release tracking section)
+**Retired:** 2026-03-16
+**Shipped in:** v1.10 — Operations & Quality Foundation
+**Evidence:** All EPICs shipped 2026-03-16; `claude/cycles/2026-03-15__release-v1.10/closure_record.md`
+
+<!-- release-plan-marker: RP:v1.10:2026-03-15__release-v1.10 -->
+
+**Cycle:** 2026-03-15__release-v1.10
+**Release:** v1.10 — Operations & Quality Foundation
+**Planned:** 2026-03-15
+**Backlog slice:** `claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md`
+
+Items in v1.10 sprint: EPIC-01 (ST-01–ST-03), EPIC-02 (ST-04), EPIC-03 (ST-05–ST-07)
+
+---
+
+### BLG-OPS-01 — Provision development environment
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-03-16
+**Shipped in:** v1.10 — Operations & Quality Foundation
+**Evidence:** `claude/cycles/2026-03-15__release-v1.10/verification_report.md`; EPIC-01/ST-01–ST-03
+
+### BLG-OPS-01 — Provision development environment
+**Status:** ✅ COMPLETE — 2026-03-16 (cycle 2026-03-15__release-v1.10 / EPIC-01 ST-01–ST-03)
+**Priority:** P1 (High — blocks safe QA workflow)
+**Type:** Operations / Infrastructure
+**Origin:** v1.9 Sprint 2 post-merge QA — raised 2026-03-13
+**Target release:** v1.10 (prerequisite before Sprint 1 begins)
+
+The project has no development environment. All QA must currently be performed against the production (`main`) deployment, which means:
+- Bug fixes cannot be tested before they land in production
+- The merge gate condition "QA sign-off on live app" forces merging to main before a human can test
+- Post-merge bug discovery (as occurred in v1.9 Sprint 2) is the only available feedback loop
+
+This creates a structural governance gap: the human Director of Quality sign-off rule requires testing a live running application, but there is no non-production environment to test against.
+
+**Scope**
+- Provision a staging/dev environment that tracks `main` (or a designated `staging` branch)
+- Environment must run both frontend and backend with real (or seeded) data
+- CI/CD pipeline should deploy to staging automatically on merge to `main`
+- QA sign-off process updated to use staging URL, not production
+
+**Acceptance Criteria**
+- Staging environment accessible via a stable URL
+- Deploys automatically when `main` is updated
+- Governance process updated: QA sign-off block references staging URL
+- Production is not the first place bugs are discovered
+
+---
+
+### BLG-TECH-06 — Fix CohortAnalysis client-side computation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-16
+**Shipped in:** v1.10 — Operations & Quality Foundation
+**Evidence:** `claude/cycles/2026-03-15__release-v1.10/verification_report.md`; EPIC-02/ST-04
+
+### BLG-TECH-06 — Fix CohortAnalysis client-side computation (DEV-EPIC02-ST03-01)
+**Status:** ✅ COMPLETE — 2026-03-16 (cycle 2026-03-15__release-v1.10 / EPIC-02 ST-04)
+**Priority:** P2 (Medium — regression risk)
+**Type:** Technical debt / Architecture
+**Origin:** DEV-EPIC02-ST03-01 filed in analytics.md v1.4 during v1.9 QA
+**Target release:** v1.10
+
+`CohortAnalysis.js` computes cohort groupings and `avg_r` client-side via `buildCohorts()` from a `filteredTrades` prop, instead of calling the canonical `GET /analytics/cohort` endpoint that was implemented in EPIC-02/ST-03. This violates the analytics.md §15 hard rule: all values sourced from backend.
+
+Numerical output is currently correct (same formula), but divergence risk exists if trade data shape changes server-side.
+
+**Scope**
+- Refactor `CohortAnalysis.js` to call `api.analytics.cohort(period)` via `useQuery`
+- Remove `buildCohorts()` client-side computation logic
+- Remove `trades`/`filteredTrades` prop dependency for computation
+- Verify rendered output matches backend response field names
+
+**Acceptance Criteria**
+- `CohortAnalysis.js` sources all values from `GET /analytics/cohort`
+- No client-side R-multiple or cohort aggregation computation
+- analytics.md §15 hard rule fully satisfied
+- Regression: existing period toggle and table display unchanged
+
+---
+
+### BLG-API-01 — Backend API integration tests (FastAPI TestClient)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-16
+**Shipped in:** v1.10 — Operations & Quality Foundation
+**Evidence:** `claude/cycles/2026-03-15__release-v1.10/verification_report.md`; EPIC-03/ST-05–ST-06; P3 deviation DEV-ST05-01 (BLG-BE-02 filed)
+
+### BLG-API-01 — Backend API integration tests (FastAPI TestClient)
+**Status:** ✅ COMPLETE — 2026-03-16 (cycle 2026-03-15__release-v1.10 / EPIC-03 ST-05–ST-06; P3 deviation DEV-ST05-01 for prospective-heat — BLG-BE-02 filed)
+**Priority:** P2
+**Type:** QA Infrastructure
+**Owner:** QA & Testing Owner
+**Source:** ST-11 decision session 2026-03-09 — Head of Engineering and Director of Quality identified gap
+**Cycle added:** 2026-03-06__release-v1.9
+**Target release:** v1.10
+
+**Problem**
+The Playwright mock layer (ST-11) tests frontend rendering behaviour given known API payloads. It does not test whether the backend `GET /portfolio` and `GET /portfolio/prospective-heat` routers return correctly-shaped responses for real database rows. The golden output gate tests pure-math functions; it does not test the router-to-service pipeline end-to-end.
+
+**Scope**
+- Add FastAPI `TestClient` integration tests for `GET /portfolio` and `GET /portfolio/prospective-heat` endpoints
+- Use fixture data (no live DB required — inject via dependency override or in-memory SQLite)
+- Verify: response shape matches `portfolio_endpoints.md` contract, GBP conversion applies for US positions, heat formula produces correct output for known inputs
+- Add as a CI step in a new workflow or extend `golden-outputs.yml`
+
+**Acceptance Criteria**
+- `TestClient` tests present in `tests/` covering at minimum: portfolio endpoint response shape, US position GBP conversion, heat formula output, prospective-heat endpoint calculation
+- Tests are CI-safe (no live DB, no external calls)
+- Director of Quality confirms CI step present and passing
+
+**Last Updated:** 2026-03-09
+
+---
+
+### TEST-GAP-EPIC-06 — v1.7 test scenario coverage gap (BLG-QA-01)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-03-16
+**Shipped in:** v1.10 — Operations & Quality Foundation
+**Evidence:** `claude/cycles/2026-03-15__release-v1.10/verification_report.md`; EPIC-03/ST-07
+
+✅ COMPLETE — [TEST-GAP-EPIC-06] — 2026-03-16 (cycle 2026-03-15__release-v1.10 / EPIC-03 ST-07 / BLG-QA-01): 4 v1.7 QA scenario gaps authored and executed as GAP-01–GAP-04 in `docs/testing/v1.7-qa-scenario-gaps.md`. GAP-01 PASS, GAP-02 PASS, GAP-03 FAIL (new finding BLG-BE-01 P1 filed), GAP-04 BLOCKED (no closed trades in staging — deferred). BLG-QA-01 closed. Item retired.
 
 ---
 

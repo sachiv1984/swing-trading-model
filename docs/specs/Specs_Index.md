@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-09
+**Last Updated:** 2026-03-16
 
 ---
 
@@ -230,6 +230,21 @@ This section tracks canonical spec gaps that have been identified but not yet fi
 
 ---
 
+### 6.3 GET /portfolio/prospective-heat endpoint — spec and implementation gap
+
+**Status:** Open — 2026-03-16
+**Deviation:** DEV-ST05-01 (P3) — v1.10 sprint execution
+**Backlog item:** BLG-BE-02 (P3) — target v2.0
+**Owner:** Head of Engineering + Head of Specs Team
+
+`GET /portfolio/prospective-heat` endpoint is not defined in `docs/specs/api_contracts/portfolio_endpoints.md` and has no backend implementation. Referenced by the ProspectiveHeatPanel frontend component. Integration tests written in `tests/test_portfolio_integration.py` are currently skipped (`@unittest.skip`) pending spec authoring.
+
+This item blocks removing the `@unittest.skip` from `TestProspectiveHeat` and blocks frontend contract alignment for ProspectiveHeatPanel. Resolution requires: spec authoring in `portfolio_endpoints.md` → backend implementation → test enablement.
+
+**Gap blocks:** `tests/test_portfolio_integration.py::TestProspectiveHeat` (currently skipped). Does not block current production functionality.
+
+---
+
 ## 7. Open Compliance Issues
 
 This section records known lifecycle or governance compliance gaps that have been identified and are pending resolution. Items here do not block current work but must be resolved by the owner before the document is next updated.
@@ -242,6 +257,21 @@ This section records known lifecycle or governance compliance gaps that have bee
 **Status:** RESOLVED — 2026-03-09 (v1.9 Sprint 1, ST-19)
 **Backlog item:** BLG-SPEC-G5 — COMPLETE
 **Resolution:** `Owner: Platform Team` updated to a named governance role per `claude/charter/document_lifecycle_guide.md §7`. Resolved by Infrastructure & Operations Documentation Owner in ST-19.
+
+---
+
+### 7.2 `GET /portfolio` — 4 required fields missing from API response vs `portfolio_endpoints.md`
+
+**Identified:** 2026-03-16 (GAP-03 staging execution — v1.10 sprint QA)
+**Status:** Open
+**Backlog item:** BLG-BE-01 (P1) — target v1.11
+**Owner:** Head of Engineering
+
+`GET /portfolio` does not return `initial_value`, `net_deposits`, `current_drawdown_percent`, or `peak_portfolio_value` in the staging API response. These 4 fields are required by `portfolio_endpoints.md` v1.9.0 (added at v1.8.2). Backend implementation is diverged from spec.
+
+**Impact:** P1 — these fields support portfolio-level analytics (drawdown widget, return tracking). `current_drawdown_percent` and `peak_portfolio_value` were confirmed as required in the v1.6.1 changelog. GAP-03 test scenario in `docs/testing/v1.7-qa-scenario-gaps.md` will remain FAIL until resolved.
+
+**Gap blocks:** GAP-03 scenario pass; ST-05 integration test assertions for these fields; drawdown analytics accuracy.
 
 ---
 

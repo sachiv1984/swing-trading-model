@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.19
+**Version:** 3.20
 **Last Updated:** 2026-03-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -823,7 +823,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v2.1)
+**Source prompt:** `claude/system/execution_prompt.md` (v2.2)
 
 ### 8.1 Invocation
 
@@ -847,6 +847,7 @@ run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mod
 - Blockers escalated same-day via escalation record (`ESC-EXEC-YYYYMMDD-nn`).
 - Director of Quality QA gates apply to all EPICs before merge.
 - **QA sign-off environment (v1.10+):** Director of Quality must review and test against the staging environment at `https://trading-assistant-staging.onrender.com` — not production. Staging is the canonical pre-merge QA environment as of v1.10 (LL-01 resolution, 2026-03-16).
+- **Staging test data prerequisite for data-dependent scenarios (LL-v1.10-P4-3):** Before executing QA scenarios that require backend data records (e.g. scenarios involving closed trades, open positions, or portfolio history), confirm the staging database has at least one closed trade and at least one open position. If the staging DB lacks qualifying data, the scenario result is BLOCKED (not FAIL) — record the data gap as a friction item in the `qa_evidence_EPIC-xx.md` sign-off block.
 - Partial completion does not count — items must satisfy all acceptance criteria.
 - The engine is fully resumable — re-invoke with the same command to resume from last state.
 - **No autonomous merge.** QA sign-off and Product Owner acceptance are always required.
@@ -909,7 +910,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.4)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.5)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1292,8 +1293,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.19 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.0 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v2.1 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.4 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v2.2 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.5 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v1.9 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v2.1 |
@@ -1314,6 +1315,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.20 | 2026-03-16 | **v1.10 post-ship lessons learnt applied (LL-v1.10-P3-1, P3-3, P4-1, P4-2, P4-3).** §8.2 staging test data prerequisite bullet added (LL-P4-3). §8 + §14 source prompt versions updated: execution_prompt v2.1→v2.2, delivery_verification_prompt v1.4→v1.5. See prompt_change_log.md for full detail per prompt. |
 | 3.19 | 2026-03-16 | **ST-03 (v1.10 EPIC-01): staging environment documented as canonical pre-merge QA environment.** §8.2 QA sign-off environment bullet added — Director of Quality must test against `https://trading-assistant-staging.onrender.com`, not production (LL-01 resolution). §8.5 merge gate QA sign-off lines updated to reference staging URL explicitly. Closes governance gap LL-01. |
 | 3.18 | 2026-03-15 | **AUD-2026-03-13-003 corrected — STEP -1.6 count-based trigger.** §5 renamed from "Phase 0 — Idea Intake" to "Idea Intake (Integrated — Phase 1 STEP -1.6)". Phase 0 removed from lifecycle table and quick-reference block. §4 narrative updated. STEP -1.6 now triggers on open idea count < 20 (not open window status). §14 roadmap_prompt → v2.6. |
 | 3.17 | 2026-03-15 | **AUD-2026-03-13-003 applied.** §6 source prompt → roadmap_prompt.md (v2.5). §14 Roadmap Engine Source → v2.5. Change: STEP -1.6 Idea Window Check (conditional) added to roadmap_prompt.md — detects open ideas_window.json and invokes idea_intake_prompt.md inline; CLAUDE.md command table updated with *(auto)* row for STEP -1.6. |

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-03-10
+**Last Updated:** 2026-03-16
 
 # Prompt Change Log
 
@@ -91,3 +91,6 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 | 2026-03-15 | `roadmap_prompt.md` | v2.5→v2.6 | STEP -1.6 corrected: trigger changed from open-window status check (unreachable in normal flow) to open idea count < 20 — counts Submitted + Parked-cycle-N files in claude/ideas/submissions/; invokes idea intake inline if below threshold, skips if 20+. | Head of Specs Team |
 | 2026-03-15 | `OPERATIONAL_GUIDE.md` | v3.17→v3.18 | Phase 0 removed as a discrete phase. §5 renamed to "Idea Intake (Integrated — Phase 1 STEP -1.6)". Quick-reference block, §4 lifecycle table, §4 narrative, §5.3 status table, §5.5, §5.6 updated to remove Phase 0 references. §14 roadmap_prompt → v2.6. | Head of Specs Team |
 | 2026-03-16 | `OPERATIONAL_GUIDE.md` | v3.18→v3.19 | ST-03 (v1.10 EPIC-01): §8.2 QA sign-off environment bullet added — Director of Quality must test against `https://trading-assistant-staging.onrender.com`, not production (LL-01 resolution). §8.5 merge gate QA sign-off lines updated to reference staging URL explicitly. Closes governance gap LL-01. | PMO Lead |
+| 2026-03-16 | `delivery_verification_prompt.md` | v1.4→v1.5 | LL-v1.10-P3-1 (post-ship closure — immediate): STEP -1 halt output when `sealed = false` updated to include explicit resolution path — issue `run sprint --cycle <cycle_id>` to trigger STEP 5 sprint close. STEP -1.1 `Executing`/`Blocked` halt also updated with resolution path. Closes recurrence of EX-LL-04 (v1.8) — prior v1.6 patch (re-invocation reminder in STEP 4) was insufficient. | PMO Lead |
+| 2026-03-16 | `execution_prompt.md` | v2.1→v2.2 | LL-v1.10-P3-3 (post-ship closure — immediate): §5.1 classification rules — autonomous candidate pattern note added: "refactor component X to call backend endpoint Y with no UX change and API method already exists client-side → classify as autonomous". LL-v1.10-P4-2 (post-ship closure — immediate): §3.1.A step 10 — deviation type distinction rule added: "endpoint/feature absent from spec → file in qa_evidence + backlog only; implementation differs from spec → file in canonical spec". LL-v1.10-P4-1 (post-ship closure — immediate): qa_evidence sign-off block template — authoring note added: update AC table rows from Pending/Awaiting to Pass when completing sign-off block. | PMO Lead |
+| 2026-03-16 | `OPERATIONAL_GUIDE.md` | v3.19→v3.20 | LL-v1.10-P4-3 (post-ship closure — immediate): §8.2 staging test data prerequisite bullet added — confirm staging DB has at least one closed trade and open position before executing data-dependent QA scenarios. §8 + §14 source prompt versions updated: execution_prompt v2.1→v2.2, delivery_verification_prompt v1.4→v1.5. Changelog entry v3.20 added. | PMO Lead |

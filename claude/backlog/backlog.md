@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-15 (groom backlog GROOM-20260315-01 — 30 items archived; 7 retained)
+**Last Updated:** 2026-03-16 (groom backlog GROOM-20260316-01 — 4 items + 1 release slice archived)
 **Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — DL-008)
 
 > ⚠️ Standing Notice
@@ -29,57 +29,6 @@
 
 These items ensure analytical correctness, validation integrity, and operational safety.
 They are not user-facing, but they directly affect trust in outputs and release confidence.
-
----
-
-### BLG-OPS-01 — Provision development environment
-**Priority:** P1 (High — blocks safe QA workflow)
-**Type:** Operations / Infrastructure
-**Origin:** v1.9 Sprint 2 post-merge QA — raised 2026-03-13
-**Target release:** v1.10 (prerequisite before Sprint 1 begins)
-
-The project has no development environment. All QA must currently be performed against the production (`main`) deployment, which means:
-- Bug fixes cannot be tested before they land in production
-- The merge gate condition "QA sign-off on live app" forces merging to main before a human can test
-- Post-merge bug discovery (as occurred in v1.9 Sprint 2) is the only available feedback loop
-
-This creates a structural governance gap: the human Director of Quality sign-off rule requires testing a live running application, but there is no non-production environment to test against.
-
-**Scope**
-- Provision a staging/dev environment that tracks `main` (or a designated `staging` branch)
-- Environment must run both frontend and backend with real (or seeded) data
-- CI/CD pipeline should deploy to staging automatically on merge to `main`
-- QA sign-off process updated to use staging URL, not production
-
-**Acceptance Criteria**
-- Staging environment accessible via a stable URL
-- Deploys automatically when `main` is updated
-- Governance process updated: QA sign-off block references staging URL
-- Production is not the first place bugs are discovered
-
----
-
-### BLG-TECH-06 — Fix CohortAnalysis client-side computation (DEV-EPIC02-ST03-01)
-**Priority:** P2 (Medium — regression risk)
-**Type:** Technical debt / Architecture
-**Origin:** DEV-EPIC02-ST03-01 filed in analytics.md v1.4 during v1.9 QA
-**Target release:** v1.10
-
-`CohortAnalysis.js` computes cohort groupings and `avg_r` client-side via `buildCohorts()` from a `filteredTrades` prop, instead of calling the canonical `GET /analytics/cohort` endpoint that was implemented in EPIC-02/ST-03. This violates the analytics.md §15 hard rule: all values sourced from backend.
-
-Numerical output is currently correct (same formula), but divergence risk exists if trade data shape changes server-side.
-
-**Scope**
-- Refactor `CohortAnalysis.js` to call `api.analytics.cohort(period)` via `useQuery`
-- Remove `buildCohorts()` client-side computation logic
-- Remove `trades`/`filteredTrades` prop dependency for computation
-- Verify rendered output matches backend response field names
-
-**Acceptance Criteria**
-- `CohortAnalysis.js` sources all values from `GET /analytics/cohort`
-- No client-side R-multiple or cohort aggregation computation
-- analytics.md §15 hard rule fully satisfied
-- Regression: existing period toggle and table display unchanged
 
 ---
 
@@ -161,49 +110,9 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-## 6. Test Coverage Gaps (from Delivery Verification)
+## 6. New Backlog Items — Cycle 2026-03-15__item-5.3 and Later
 
-> ⚠️ **Orphan Notice:** No BLG-ID assigned. Assign BLG-ID and target release at v1.10 sprint planning.
-
-- [TEST-GAP-EPIC-06] Test scenario coverage gap from 2026-03-02__release-v1.7: QA & Testing Owner to create scenarios per verification_report.md §6 (Test Coverage Assessment). Gaps: no scenarios asserting sharpe_ratio_trade_method presence in /validate/calculations response (14 metrics); no scenario asserting portfolio_endpoints.md field alignment; no scenario asserting holding_days in GET /trades. **Target release: v1.10** — assign BLG-ID at v1.10 sprint planning.
-
----
-
-## 7. New Backlog Items — Cycle 2026-03-06__release-v1.9
-
-Items raised during sprint execution. Decision authority: Director of Quality (QA infrastructure), Head of Engineering (technical scope).
-
----
-
-### BLG-API-01 — Backend API integration tests (FastAPI TestClient)
-**Priority:** P2
-**Type:** QA Infrastructure
-**Owner:** QA & Testing Owner
-**Source:** ST-11 decision session 2026-03-09 — Head of Engineering and Director of Quality identified gap
-**Cycle added:** 2026-03-06__release-v1.9
-**Target release:** v1.10
-
-**Problem**
-The Playwright mock layer (ST-11) tests frontend rendering behaviour given known API payloads. It does not test whether the backend `GET /portfolio` and `GET /portfolio/prospective-heat` routers return correctly-shaped responses for real database rows. The golden output gate tests pure-math functions; it does not test the router-to-service pipeline end-to-end.
-
-**Scope**
-- Add FastAPI `TestClient` integration tests for `GET /portfolio` and `GET /portfolio/prospective-heat` endpoints
-- Use fixture data (no live DB required — inject via dependency override or in-memory SQLite)
-- Verify: response shape matches `portfolio_endpoints.md` contract, GBP conversion applies for US positions, heat formula produces correct output for known inputs
-- Add as a CI step in a new workflow or extend `golden-outputs.yml`
-
-**Acceptance Criteria**
-- `TestClient` tests present in `tests/` covering at minimum: portfolio endpoint response shape, US position GBP conversion, heat formula output, prospective-heat endpoint calculation
-- Tests are CI-safe (no live DB, no external calls)
-- Director of Quality confirms CI step present and passing
-
-**Last Updated:** 2026-03-09
-
----
-
-## 8. New Backlog Items — Cycle 2026-03-15__item-5.3
-
-Items promoted to backlog from idea pool during roadmap rebalance cycle 2026-03-15__item-5.3.
+Items promoted to backlog from idea pool during roadmap rebalance cycle 2026-03-15__item-5.3, and items raised during v1.10 sprint execution and QA sign-off.
 
 ---
 
@@ -231,12 +140,6 @@ Systematic audit of all canonical spec sections (docs/specs/) against implementa
 - Gap items cross-referenced against open backlog items where possible
 - Review cadence defined
 - Registered in Specs_Index.md
-
----
-
-## 9. New Backlog Items — Cycle 2026-03-15__release-v1.10
-
-Items raised during v1.10 sprint execution and QA sign-off.
 
 ---
 
@@ -310,6 +213,10 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| BLG-OPS-01 | Provision development environment | v1.10 | 2026-03-15__release-v1.10 | EPIC-01/ST-01–ST-03 |
+| BLG-TECH-06 | Fix CohortAnalysis client-side computation | v1.10 | 2026-03-15__release-v1.10 | EPIC-02/ST-04 |
+| BLG-API-01 | Backend API integration tests (FastAPI TestClient) | v1.10 | 2026-03-15__release-v1.10 | EPIC-03/ST-05–ST-06 |
+| TEST-GAP-EPIC-06 | v1.7 test scenario coverage gap (BLG-QA-01) | v1.10 | 2026-03-15__release-v1.10 | EPIC-03/ST-07 |
 | BLG-FEAT-08 | Basic Compliance Metrics | v1.9 Sprint 2 | 2026-03-06__release-v1.9 | EPIC-03/ST-01 |
 | BLG-NEW-09 | R-Multiple Distribution Report | v1.9 Sprint 2 | 2026-03-06__release-v1.9 | EPIC-02/ST-04 |
 | BLG-NEW-10 | Canonical Test Scenario Library | v1.9 | 2026-03-06__release-v1.9 | EPIC-05/ST-11, ST-12 |
@@ -347,21 +254,6 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 | BLG-SPEC-D7 | openapi.yaml frozen at v1.8.1 | v1.8 | 2026-03-04__release-v1.8 | ST-10 |
 | BLG-SPEC-D2 | settings_endpoints.md spec/implementation mismatch | v1.8 | 2026-03-04__release-v1.8 | ST-09 |
 | BLG-NEW-06 | Realised vs Unrealised P&L Labelling | N/A | 2026-03-04__item-3.4 | Merged into 4.1b |
-
----
-
----
-
-## v1.10 Release Slice — 2026-03-15
-
-<!-- release-plan-marker: RP:v1.10:2026-03-15__release-v1.10 -->
-
-**Cycle:** 2026-03-15__release-v1.10
-**Release:** v1.10 — Operations & Quality Foundation
-**Planned:** 2026-03-15
-**Backlog slice:** `claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md`
-
-Items in v1.10 sprint: EPIC-01 (ST-01–ST-03), EPIC-02 (ST-04), EPIC-03 (ST-05–ST-07)
 
 ---
 

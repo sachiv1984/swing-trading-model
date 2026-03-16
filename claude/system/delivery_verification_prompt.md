@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-03-11
+**Version:** 1.5
+**Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -168,7 +168,7 @@ This subroutine does not change the verification status — a P0 that is escalat
 
 ## STEP -1 — Preflight Gate (Hard Gate)
 
-**First action:** Read `claude/cycles/<cycle_id>/execution_state.json`. Confirm `sealed = true`. If not sealed: halt — the sprint execution record is not closed. The execution engine must complete and seal before verification can run.
+**First action:** Read `claude/cycles/<cycle_id>/execution_state.json`. Confirm `sealed = true`. If not sealed: halt — the sprint execution record is not closed. **Resolution path:** Issue `run sprint --cycle <cycle_id>` — if all EPICs are already merged (all `pr_status = merged` in `execution_state.json`), the execution engine will detect this and execute STEP 5 (Sprint Close) directly, sealing the record and setting status to `Sprint_Complete`. Once sealed, re-invoke `run delivery verification --cycle <cycle_id>`.
 
 Shared standards (escalation format, halt report format, gh CLI commands, identifier conventions): `claude/system/shared_standards.md`.
 
@@ -176,7 +176,7 @@ Shared standards (escalation format, halt report format, gh CLI commands, identi
 
 Read `.claude_current_state.json`:
 - `status` must be `Sprint_Complete`.
-- If `status` is `Executing` or `Blocked`: halt — sprint is not closed. The execution engine must complete all EPICs, seal the execution record, and set status to `Sprint_Complete` before verification can proceed.
+- If `status` is `Executing` or `Blocked`: halt — sprint is not closed. **Resolution path:** Issue `run sprint --cycle <cycle_id>`. If all EPICs are already merged, the execution engine will detect this and execute STEP 5 (Sprint Close) directly, sealing the record. Once `Sprint_Complete`, re-invoke `run delivery verification --cycle <cycle_id>`.
 - If `status` is `Verified` or `Not_Verified`: confirm with the user whether they are re-running verification for this cycle. If yes: proceed. If a prior `verification_report.md` exists, archive it by appending `_prev_<timestamp>` to the filename before creating a new one.
 
 Check `amended_backlog_slice_path`:
