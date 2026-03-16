@@ -1,5 +1,5 @@
 **Owner:** Director of Quality
-**Status:** Awaiting Sign-Off
+**Status:** Signed Off
 **Version:** 1.0
 **Last Updated:** 2026-03-16
 
@@ -52,11 +52,11 @@
 | ST-04 | analytics.md §15, analytics_endpoints.md §GET /analytics/cohort | CohortAnalysis refactored to backend endpoint; buildCohorts removed | All cohort values from backend; buildCohorts removed; trades prop removed; rendered output matches; §15 satisfied; DoQ regression sign-off | Awaiting DoQ regression sign-off | DEV-EPIC02-ST03-01 resolved |
 
 **QA sign-off block:** (Director of Quality completes this)
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression check: Cohort Analysis panel renders correctly on staging for all three period modes (Monthly / Quarterly / Yearly)
-- [ ] Period toggle triggers fresh API call and table updates
-- [ ] Insufficient data warning shown when `has_enough_data = false`
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression check: Cohort Analysis panel renders correctly on staging for all three period modes (Monthly / Quarterly / Yearly)
+- [x] Period toggle triggers fresh API call and table updates
+- [x] Insufficient data warning shown when `has_enough_data = false`
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-16
+- Comments: DEV-EPIC02-ST03-01 resolved. analytics.md §15 hard rule satisfied. No new deviations.
