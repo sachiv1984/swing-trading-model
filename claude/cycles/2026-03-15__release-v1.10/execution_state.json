@@ -5,8 +5,8 @@
   "invoked_utc": "2026-03-16T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-16T11:45:00Z",
-  "epic_scope": "EPIC-02",
+  "last_updated_utc": "2026-03-16T12:45:00Z",
+  "epic_scope": "EPIC-03",
 
   "epics": {
     "EPIC-01": {
@@ -79,6 +79,7 @@
       "title": "Analytics Architecture Correctness",
       "status": "merged",
       "branch": "exec/2026-03-15__release-v1.10/EPIC-02",
+
       "pr_number": 71,
       "pr_status": "merged",
       "qa_signed_off": true,
@@ -107,12 +108,81 @@
           "notes": "Reclassified autonomous on PO authority (no UX change — pure data-fetching swap). buildCohorts/getPeriodLabel/getPeriodKey removed. trades prop removed. useQuery + api.analytics.cohort(period) implemented. PerformanceAnalytics.js call-site updated. Deviation check: implementation matches analytics.md §15 and analytics_endpoints.md GET /analytics/cohort. DEV-EPIC02-ST03-01 (P2) resolved by this change. No new deviations."
         }
       }
+    },
+    "EPIC-03": {
+      "title": "QA Infrastructure & Coverage",
+      "status": "stories_complete",
+      "branch": "exec/2026-03-15__release-v1.10/EPIC-03",
+      "pr_number": 72,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-15__release-v1.10/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-05": {
+          "title": "FastAPI TestClient integration tests for portfolio endpoints",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 67,
+          "branch": "exec/2026-03-15__release-v1.10/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-16T12:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/api_contracts/portfolio_endpoints.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "done",
+          "notes": "tests/test_portfolio_integration.py created. Covers: GET /portfolio response shape, GBP conversion (UK+US positions), portfolio heat calculation, grace period/display_status. Deviation DEV-ST05-01 (P3): GET /portfolio/prospective-heat not in portfolio_endpoints.md and not implemented in backend — tests skipped with @unittest.skip. No P0/P1 deviations."
+        },
+        "ST-06": {
+          "title": "Add integration test CI step",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 68,
+          "branch": "exec/2026-03-15__release-v1.10/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-16T12:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/api_contracts/portfolio_endpoints.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "done",
+          "notes": ".github/workflows/integration-tests.yml created. Runs test_portfolio_integration on every PR and push to main/exec/**. Build fails if any test fails. Step named clearly. No deviations."
+        },
+        "ST-07": {
+          "title": "Author v1.7 missing QA test scenarios (BLG-QA-01)",
+          "classification": "delegated_qa",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 69,
+          "branch": "exec/2026-03-15__release-v1.10/EPIC-03",
+          "commit_sha": "e01d658",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-16T12:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-03-02__release-v1.7/verification_report.md#6",
+            "docs/testing/v1.7-qa-scenario-gaps.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "done",
+          "notes": "DoQ sign-off 2026-03-16. GAP-01 PASS (sharpe_ratio_trade_method present). GAP-02 PASS (14 metrics). GAP-03 FAIL — 4 GET /portfolio fields missing from backend (initial_value, net_deposits, current_drawdown_percent, peak_portfolio_value); filed BLG-BE-01 (P1) for v1.11. GAP-04 BLOCKED — no closed trades in staging; scenario valid, deferred. TEST-GAP-EPIC-06 retired. BLG-QA-01 closed."
+        }
+      }
     }
   },
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07"],
   "open_escalations": [],
 
   "merge_gate": {

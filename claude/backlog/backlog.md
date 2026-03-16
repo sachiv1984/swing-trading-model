@@ -234,6 +234,43 @@ Systematic audit of all canonical spec sections (docs/specs/) against implementa
 
 ---
 
+## 9. New Backlog Items — Cycle 2026-03-15__release-v1.10
+
+Items raised during v1.10 sprint execution and QA sign-off.
+
+---
+
+### BLG-BE-01 — GET /portfolio missing 4 required fields (GAP-03 finding)
+**Priority:** P1
+**Type:** Backend Bug
+**Owner:** Head of Engineering
+**Source:** GAP-03 staging execution — DoQ sign-off 2026-03-16 (EPIC-03 ST-07)
+**Cycle added:** 2026-03-15__release-v1.10
+**Target release:** v1.11
+
+**Problem**
+`GET /portfolio` does not return `initial_value`, `net_deposits`, `current_drawdown_percent`, or `peak_portfolio_value` in the staging API response. These 4 fields are required by `portfolio_endpoints.md` v1.9.0 (added at v1.8.2 per changelog). The backend implementation is diverged from the spec.
+
+**Evidence**
+Staging response (`2026-03-16`) contained only: `cash`, `cash_balance`, `total_value`, `open_positions_value`, `total_pnl`, `last_updated`, `live_fx_rate`, `portfolio_heat_percent`, `position_risks`, `positions`. The 4 fields above were absent.
+
+**Scope**
+- Add `initial_value` (portfolio initial capital value in GBP)
+- Add `net_deposits` (total deposits minus total withdrawals — cost basis for portfolio-level return)
+- Add `current_drawdown_percent` (current value vs all-time peak; default `0.0` when no history)
+- Add `peak_portfolio_value` (all-time high of portfolio_history.total_value; default `0.0` when no history)
+- Per `portfolio_endpoints.md` §GET /portfolio and §Field Derivation Notes
+- Update ST-05 integration tests (`tests/test_portfolio_integration.py`) to assert these 4 fields
+
+**Acceptance Criteria**
+- `GET /portfolio` response includes all 4 fields with correct values
+- `current_drawdown_percent` and `peak_portfolio_value` default to `0.0` when no portfolio_history exists
+- `net_deposits` equals total deposits minus total withdrawals
+- ST-05 integration tests extended to assert these fields
+- GAP-03 scenario (`docs/testing/v1.7-qa-scenario-gaps.md`) passes on staging
+
+---
+
 ## Closed Items
 
 Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
