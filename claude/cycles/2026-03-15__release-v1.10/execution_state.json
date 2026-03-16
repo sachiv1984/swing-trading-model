@@ -15,7 +15,7 @@
       "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
       "pr_number": 70,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-15__release-v1.10/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
