@@ -661,7 +661,7 @@ export default function PerformanceAnalytics() {
       <BestWorstTrades trades={filteredTrades} />
       <ConsistencyMetrics metrics={getConsistencyMetrics()} />
       <TagPerformance trades={filteredTrades} />
-      <CohortAnalysis trades={filteredTrades} />
+      <CohortAnalysis />
       {/* Component 17 — v1.9 ST-01: Discipline & Compliance
           Source: GET /analytics/compliance-metrics. Spec: analytics.md §17.
           Metrics canonical per metrics_definitions.md v1.7.0. */}

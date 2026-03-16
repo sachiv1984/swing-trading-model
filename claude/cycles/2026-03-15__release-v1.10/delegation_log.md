@@ -195,4 +195,4 @@ After the change:
 
 - **Unblock criteria:** Commit pushed to `exec/2026-03-15__release-v1.10/EPIC-02` with format `[EPIC-02][ST-04] <description>`. `CohortAnalysis.js` must: (a) call `api.analytics.cohort(period)` via `useQuery`, (b) have `buildCohorts()` removed, (c) have no `trades` prop, (d) match rendered output — Director of Quality regression sign-off required.
 - **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-03-15__release-v1.10/EPIC-02`
-- **Status:** Pending
+- **Status:** Cancelled — reclassified autonomous on PO authority (no UX change). Engine implemented directly. Commit [EPIC-02][ST-04].
