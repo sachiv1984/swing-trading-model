@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.8
+**Version:** 3.0
 **Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -417,6 +417,40 @@ If the Product Owner and Head of Specs Team disagree during STEP 0:
   - Record the disagreement as an "Open Decision" in the run manifest.
   - Continue to STEP 5 (debate) and STEP 8 (final rebalance) where Product Owner decides within constraints.
 
+#### Step 0.C — Run Tier Determination (System-Determined)
+
+The system classifies every run into one of three tiers based on objective criteria evaluated at this step. The tier is not set by the PMO Lead — it is derived from the evidence. Record the determined tier in the run manifest (STEP 1.1).
+
+**Tier classification — evaluate in order:**
+
+**Lightweight — ALL of the following must be true:**
+1. Run type is completion-triggered (not scheduled).
+2. Zero idea files have `Status: Submitted` in `claude/ideas/submissions/` (no new ideas entering debate this cycle).
+3. No initiative is classified ⚠ Re-evaluate or ❌ Consider stopping in STEP 2.
+4. The only proposed roadmap change involves a displacement that was pre-noted in `claude/roadmap/initiative_register.md` as `Displacement candidate: Yes` — the displacement decision is not new to this run.
+
+**Extended — ANY of the following must be true:**
+1. CPS computed in STEP 2.2 is ≥ 2.5 in absolute terms (strategy drift absolute threshold).
+2. CPS delta vs prior cycle is ≥ 0.5 (strategy drift delta threshold).
+3. Run type is scheduled AND more than 90 days have elapsed since the last scheduled run (key `last_scheduled_rebalance_utc` in `.claude_current_state.json`; if absent, treat as never run).
+
+**Standard:** All runs not classified as Lightweight or Extended.
+
+**Tier effects on process:**
+
+| | Lightweight | Standard | Extended |
+|-|-------------|----------|----------|
+| Stage outputs (STEP 2–7) | All working content written as sections of a single `cycle_record.md` (see §6.1) | Separate stage files (current behaviour) | Separate stage files |
+| Workforce economics (STEP 7) | Condensed: if no new FTE allocation required, record "No new FTE allocation required" and proceed | Full | Full |
+| Horizon Review (STEP 2.3) | Performed | Performed | Performed — plus explicit Now→Next promotion check required |
+| Idea debate (STEP 4–5) | Skipped if zero advancing candidates; Challenger obligation does not apply to items not in debate | Full | Full |
+| Governance invariants | All apply | All apply | All apply |
+| Hard gates | All apply | All apply | All apply |
+
+**Lightweight output format (§6.1):** When classified as Lightweight, STEPS 2–7 write all working content as clearly labelled sections (`## STEP 2 — Re-Validation`, `## STEP 3 — Backlog Health`, `## STEP 4 — Ideas`, etc.) within a single file: `claude/cycles/<cycle_id>/cycle_record.md`. The `run_manifest.md`, `cycle_summary.md`, and `lessons_learnt.md` remain as separate files. Where STEP 9 Write Plan references `stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, or `stage5_rebalance.md`, substitute `cycle_record.md` for Lightweight runs.
+
+**Ambiguous cases:** If any classification criterion is unclear (e.g. a pre-noted displacement exists but a new idea is also advancing), classify as Standard.
+
 ---
 
 ### STEP 1 — Run Manifest & Capacity Release Registration
@@ -514,6 +548,33 @@ Record all scores, the CPS, and the trend in `stage1_validation.md`.
 Write results:
 - `claude/cycles/<cycle_id>/stage1_validation.md`
 
+### 2.3 Horizon Review (Always Active — Every Run)
+
+After completing the strategy proximity scoring, perform a standing horizon review. This runs at every tier on every rebalance cycle.
+
+**Horizon structure:** `claude/roadmap/current_roadmap.md` must organise planned initiatives into three horizons:
+
+- **Now** — Current release cycle: committed delivery scope.
+- **Next** — 1–3 releases out: planned in principle, not yet committed.
+- **Later** — 3+ releases out, or strategic intent only: no scoped commitment.
+
+If the roadmap does not yet use this structure, record it as a required lifecycle update in the STEP 9 Write Plan. Map existing items into the structure without changing their content — this is a Head of Specs Team responsibility at STEP 9.
+
+**Review questions — for each item in "Later":**
+- Has context changed (completed items, new lessons learnt, backlog evidence) since this item was placed here?
+- Is there a case for promoting it to "Next"?
+
+**Review questions — for each item in "Next":**
+- Is it still correctly placed, or has new information made it more urgent (promote to "Now") or less relevant (demote to "Later")?
+
+Record the outcome under a `## Horizon Review` section in `stage1_validation.md` (Standard/Extended) or in the corresponding section of `cycle_record.md` (Lightweight). Valid outcomes:
+- "No movements recommended — [brief reason]"
+- List of specific recommended promotions/demotions with rationale
+
+Horizon movements are informational at this stage. They become candidates in STEP 5 only if they represent a new commitment, and are subject to the same zero-sum displacement rules as all other changes.
+
+---
+
 Any initiative marked ⚠ Re‑evaluate must, by STEP 8, be either:
 - Re‑committed (🔥) with explicit justification, or
 - Replaced, deferred, or killed.
@@ -555,7 +616,7 @@ Do **not** generate new ideas during this step. The intake engine (`run ideas`) 
 For each loaded idea, the Facilitator presents it and the Product Owner classifies it as one of:
 
 - ✅ **Advance** — enters STEP 5 debate as a candidate
-- 🅿 **Park** — not ready; keep in submissions for next cycle
+- 🅿 **Park** — not ready; keep in submissions for next cycle. **The Product Owner must provide a one-line written rationale for every park.** "Not yet" or "not ready" without specifics is not valid — the rationale must name the specific reason (e.g. "depends on X landing first", "scope too broad — needs narrowing", "timing: revisit after Y").
 - ❌ **Reject** — not viable; remove from active consideration
 
 Classification rules:
@@ -571,7 +632,7 @@ After all ideas are classified, apply the following document actions **before pr
 | Classification | Document Action |
 |----------------|----------------|
 | ✅ Advance | Update file: `**Status:** Advancing` |
-| 🅿 Park (fresh or re-park with rationale) | Update file: `**Status:** Parked-cycle-<n>` where `<n>` is the number of consecutive cycles parked (increment from prior value, or set to 1 if first park) |
+| 🅿 Park (any park — first or re-park) | Update file: `**Status:** Parked-cycle-<n>` (set to 1 if first park; increment from prior value on re-park). Add or update a `**Park Rationale:**` field in the idea file with the PO's one-line rationale. A park without a recorded rationale is treated as Reject — not strong. |
 | ❌ Reject — strong | Update file: `**Status:** Rejected`; copy core content to `claude/ideas/rejected_but_strong.md` (append, create if needed) |
 | ❌ Reject — not strong | Update file: `**Status:** Rejected` |
 
@@ -688,7 +749,13 @@ Hard rule:
 
 #### 5.1 Challenger Counter‑Argument (Mandatory, Evidence-Based)
 
-For every candidate that is proposed to ✅ Advance, the Challenger must provide exactly ONE specific reason it should be 🅿 Parked or ❌ Rejected.
+For every candidate proposed to ✅ Advance, the Challenger must produce exactly ONE of:
+
+**(A) A counter-argument** — one specific, evidence-based reason the item should be 🅿 Parked or ❌ Rejected, in the format below.
+
+**(B) A Clearance Statement** — an affirmative declaration that the Challenger has assessed the candidate against governance constraints and found no grounds for challenge. Format: *"Cleared — [one sentence naming the specific `strategy_rules.md` sections and economic constraints considered and explaining why none are engaged by this item]."* Generic clearances ("no objection", "looks fine") are not valid — the clearance must name the sections reviewed and explain why they don't apply.
+
+A Clearance Statement is a governed output, not a rubber stamp. The Challenger is on record that the item raises no governance concern. A Clearance Statement does not skip the STEP 5.2 Product Owner response — the PO must still state ✅ Advance with their own confirmation.
 
 Constraints on the counter‑argument:
 - It must cite a specific constraint, intent, or boundary from `strategy_rules.md` (or other canonical governance constraints).
@@ -704,7 +771,7 @@ Format (must be used):
 - Reason: one paragraph
 - Consequence: what happens if we proceed anyway
 
-If the Challenger cannot produce an evidence-based counter‑argument:
+If the Challenger produces neither a counter-argument nor a valid Clearance Statement:
 - Treat this as a process failure.
 - Halt execution and record the gap in lessons learnt.
 
@@ -972,12 +1039,15 @@ Purpose:
 - Detect cognitive convergence or fatigue across the run.
 - Prevent "everything passes" outcomes caused by late‑stage agreement bias.
 
-Rule:
-- Across all candidates evaluated in this run, at least one must be either:
-  - 🅿 Parked, or
-  - ❌ Rejected.
+Rule — the guardrail passes if ANY of the following is true:
 
-If all candidates are marked ✅ Advance:
+1. At least one candidate was classified 🅿 Parked or ❌ Rejected during this run.
+2. The Challenger issued a substantive counter-argument (type A per STEP 5.1 — not a Clearance Statement) for at least one candidate, even if the Product Owner overrode it with a valid rebut and advanced the item.
+3. Only one candidate was in the pool (single-candidate runs are inherently zero-sum — one item advancing means one pre-noted displacement confirmed).
+
+The guardrail fails only when: more than one candidate was evaluated, all candidates advanced, AND the Challenger issued only Clearance Statements across all of them. This pattern indicates convergence or inadequate challenge diversity.
+
+If the guardrail fails:
 - Do not proceed to STEP 9.
 - Trigger the Pivot Loop (STEP 8.7) exactly once.
 - After STEP 8.7 completes, re-evaluate this guardrail.
