@@ -1,0 +1,56 @@
+name: Portfolio Integration Tests
+
+# [EPIC-03][ST-05][ST-06] — FastAPI TestClient integration tests for portfolio endpoints.
+# Runs GET /portfolio tests with mocked database and pricing calls (CI-safe, no live DB).
+# Blocks merge if any integration test fails.
+#
+# Cycle: 2026-03-15__release-v1.10
+# Spec: docs/specs/api_contracts/portfolio_endpoints.md
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches:
+      - 'exec/**'
+      - main
+      - develop
+
+jobs:
+  portfolio-integration:
+    name: Portfolio Integration Tests (ST-05)
+    runs-on: ubuntu-latest
+
+    env:
+      # DATABASE_URL required at import time by database.py.
+      # Tests mock all DB calls — no live Postgres required.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run portfolio integration tests (ST-05)
+        run: |
+          python -m unittest tests.test_portfolio_integration -v
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Portfolio integration tests complete."
+          echo "  tests/test_portfolio_integration.py"
+          echo "  Covers: GET /portfolio response shape, GBP conversion (UK + US),"
+          echo "          portfolio heat calculation, grace period / display_status."
+          echo "  Deviation DEV-ST05-01: GET /portfolio/prospective-heat skipped"
+          echo "  (endpoint not in portfolio_endpoints.md)."
