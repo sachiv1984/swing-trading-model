@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.6
-**Last Updated:** 2026-03-15
+**Version:** 2.7
+**Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -919,6 +919,10 @@ Before executing STEP 9, you must perform a stateless verification:
 1. Re-read Section 5 (Write Scope Restriction) verbatim.
 2. Re-read Section 10 (Completion Condition) verbatim.
 3. Construct a complete "write plan" listing every file you intend to create or modify in STEP 9.
+4. **Idea file status verification (LL-02-patch):** For each idea file that was set to `**Status:** Advancing` in §4.2 (Document Management), verify that the STEP 9 write plan includes an update to a terminal status:
+   - `**Status:** Promoted-Added` — if the idea was accepted and added to the roadmap in STEP 8
+   - `**Status:** Promoted-Rejected` — if the idea was debated but ultimately not added
+   If any `Advancing` idea file is not accounted for in the write plan: add it explicitly. An idea file in `Advancing` status at the end of the run is a governance record gap.
 
 Write plan must include, for each file:
 - file path
@@ -1481,6 +1485,9 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.7 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 8.5.B: item 4 added — idea file status verification (LL-02-patch): for each idea file set to `Advancing` in §4.2, verify STEP 9 write plan includes terminal status update (`Promoted-Added` or `Promoted-Rejected`); governance record gap if any `Advancing` idea file unaccounted for at end of run. |
+| 2.6 | 2026-03-15 | STEP -1.6 corrected: trigger changed from open-window status check (unreachable in normal flow) to open idea count < 20 — counts Submitted + Parked-cycle-N files in claude/ideas/submissions/; invokes idea intake inline if below threshold, skips if 20+. |
+| 2.5 | 2026-03-15 | AUD-2026-03-13-003: STEP -1.6 Idea Window Check (conditional) added — checks ideas_window.json status; invokes idea_intake_prompt.md inline if open; proceeds gracefully if absent or closed. |
 | 2.4 | 2026-03-14 | AUD-2026-03-13-002: `--dry-run` flag added to both invocation forms (completion-triggered and scheduled). Dry-run exits after STEP 8 — no writes, no commit; output sufficient to validate before live run. CLAUDE.md command table updated to show `[--dry-run]`. |
 | 2.3 | 2026-03-14 | AUD-2026-03-13-021 (PATCH 1): STEP 11 lessons_learnt.md output must end with machine-readable `// ARTEFACT_STATUS` JSON terminal block — enables post_ship_closure.md STEP 8 to grep for counts without full document read. |
 | 2.2 | 2026-03-14 | AUD-2026-03-13 audit improvements: (1) STEP -1.5 extended — B7 auto-escalation rule added for deferred patches carried two consecutive cycles; prompt patch confirmation check; state age advisory (>30 days). (2) STEP 5 — Challenger failure halt instruction added per team_charter.md §3.2. (3) STEP 9 — Decision log append-only enforcement upgraded from assertion to structural (pre/post count check + corruption detection). (4) STEP 9 — Header formatting rule added (bold field labels required for Class 4 headers). |

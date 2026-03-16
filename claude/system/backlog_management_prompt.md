@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-03-06
+**Version:** 1.3
+**Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -214,6 +214,12 @@ Produce a shortlist for Product Owner review:
 
 This is advisory only. No items are added to the roadmap by this engine. The Product Owner decides which (if any) to advance to the Roadmap Rebalance Engine.
 
+**Endpoint reference check (LL-v1.10-P3-2):** Before listing an item as a Promote Candidate, scan the item's acceptance criteria for endpoint references (e.g., `GET /path/endpoint`). For each referenced endpoint, verify it exists in the canonical spec file (e.g., `portfolio_endpoints.md`, `analytics_endpoints.md`, or whichever spec covers that endpoint). If any referenced endpoint cannot be found in the canonical spec:
+- Add a note to the item in `backlog.md`: `> ⚠️ **Spec gap:** AC references \`<endpoint>\` which does not exist in the canonical spec. Resolve before promoting to sprint scope.`
+- Do not include the item in the Promote Candidate shortlist until the spec gap is resolved or the AC is corrected.
+
+This check prevents backlog items with unresolvable acceptance criteria from reaching sprint scope, where they would cause mid-sprint deviations (as occurred with BLG-API-01 → DEV-ST05-01 in cycle 2026-03-15__release-v1.10).
+
 ---
 
 ## STEP 5 — Produce Health Summary and Change Plan
@@ -400,6 +406,7 @@ The run is complete when:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 4 (Promotion Shortlist): endpoint reference check added (LL-v1.10-P3-2) — before listing any item as a Promote Candidate, verify all endpoint references in the item's AC exist in the canonical spec file; if gap found, add spec-gap notice to backlog.md and exclude item from shortlist until resolved. Prevents mid-sprint deviations from unresolvable AC. |
 | 1.2 | 2026-03-07 | IMP-02: Added `last_groom_backlog_utc` and `last_groom_backlog_outcome` state write to STEP 7 (global state update). Added `.claude_current_state.json` to §5 write scope (Phase 1M state fields only) and to STEP 7 commit list. |
 | 1.1 | 2026-03-06 | Widened valid trigger windows to include pre-`run roadmap` invocation alongside Post-Ship Closure. Both windows now explicitly equal. Added known gap note for Phase 1 skipped path. Added lock conflict guidance to §2. Expanded §6 classification table to include Blocked — Stale Blocker as a distinct classification. Added stale blocker row to STEP 5 change plan and STEP 6.2/6.3 outputs. Added promotion shortlist advisory note to §6 and health report template. |
 | 1.0 | 2026-03-04 | Initial version. |

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.0
-**Last Updated:** 2026-03-14
+**Version:** 2.1
+**Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -234,7 +234,27 @@ Confirm `claude/system/lessons_learnt_prompt.md` exists. If missing: halt.
 
 Create `claude/cycles/<cycle_id>/.write_test` and confirm it can be written. Remove it immediately. If write fails: halt. If the file is not removed here (e.g. due to an unexpected error), STEP 0 must clean it up before proceeding.
 
+### -1.10 Pre-Sprint Required Decisions Check
+
+Read `claude/cycles/<cycle_id>/cycle_summary.md` and locate the `## Pre-sprint Planning Required Decisions` section (if present).
+
+For each decision listed in that section:
+- Determine whether it is resolved: it must have a recorded answer, a decision log reference, or explicit sign-off from the required authority.
+- If unresolved: the sprint backlog cannot be sealed (STEP 6.2) until it is resolved.
+
+If any required decisions remain unresolved:
+- In `strict` mode: halt immediately. Output the unresolved decision list per `shared_standards.md §5`. Do not proceed until all decisions are resolved.
+- In `standard` mode: record each unresolved decision as an outstanding action in `sprint_planning_notes.md` with `Blocker? Yes`. The sprint may proceed through planning but the sign-off gate (STEP 6.2) must not be passed while any required decision is unresolved.
+
+If no `## Pre-sprint Planning Required Decisions` section exists in `cycle_summary.md`, or if all decisions are confirmed resolved: proceed.
+
+> **Rationale (LL-01, cycle 2026-03-15__release-v1.10):** RISK-01 (staging hosting approach) required a pre-sprint decision from the Infrastructure & Operations Owner but the planning preflight had no mechanism to enforce this. The decision was made informally during sprint execution rather than before sprint seal, which is the correct governance point.
+
+---
+
 ### -1.9 Dependency Health Check (Pre-Sprint Vulnerability Scan)
+
+
 
 Run `pip-audit` against `backend/requirements.txt`:
 
@@ -381,6 +401,12 @@ Classify each item:
 - `include` — within capacity, owned, can be AC-confirmed
 - `defer` — over-capacity or blocked; return to backlog slice for next sprint
 - `flag` — has an issue that must be resolved before it can be included (missing owner, missing estimate, deferred execution blocker)
+
+**Delegation class assignment (set at planning time — §12 invariant):** For every `include` item, determine the delegation class for the sprint backlog:
+- `autonomous` — fully implementable by the execution engine; no UX change; no human decision or mid-task sign-off required
+- `delegated_backend` / `delegated_frontend` / `delegated_qa` / `delegated_decision` — requires human review, decision, or execution at a specific step
+
+**Classification pattern (LL-v1.10-P3-3):** If an item is "refactor component X to call backend endpoint Y" with no UX change and the required API method already exists client-side, it qualifies as `autonomous`. Conservative classification (`delegated_frontend`) is valid but should be explicitly justified when the autonomous criteria above are met — over-conservative classification adds unnecessary human handoff steps to straightforward refactors.
 
 ### 3.2 Capacity Gate
 
@@ -750,6 +776,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-03-16 | Post-ship closure v1.10 deferred patches applied. STEP -1.10 added: Pre-Sprint Required Decisions Check — reads `cycle_summary.md ## Pre-sprint Planning Required Decisions`; strict mode halts on unresolved decisions; standard mode records as Blocker? Yes outstanding action; sign-off gate (STEP 6.2) blocked until resolved (LL-01). STEP 3.1 Candidate Item Review: delegation class assignment guidance added — `autonomous` vs delegated class criteria; pattern note for pure data-fetching refactors with no UX change (LL-v1.10-P3-3). |
 | 2.0 | 2026-03-14 | AUD-2026-03-13-009 (PATCH 2): STEP 6.1A sprint_backlog_index.json inline schema replaced with reference to shared_standards.md §16.1. |
 | 1.9 | 2026-03-14 | AUD-2026-03-13-011: Amendment_In_Progress hard gate added — sprint planning halts if status = Amendment_In_Progress; matches Release Planning parity (IMP-11). |
 | 1.8 | 2026-03-11 | IMP-30: STEP -1.3 bypass authority reference added — `design_gate_bypass_authority` must contain both "Head of UX & Design + Product Owner"; single-role bypass is non-compliant; references `team_charter.md §3.3`. |

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.9
-**Last Updated:** 2026-03-14
+**Version:** 2.0
+**Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -523,6 +523,8 @@ Update `closure_state.json`: `steps.step_8_lessons_learnt = pass`, `last_updated
 
 Invoke `lessons_learnt_prompt.md §3.5` using the consolidated action summary produced in STEP 8 as input.
 
+> **Note (sequencing):** `closure_record.md` is produced in STEP 9 — it does not yet exist at the time STEP 8.5 executes. The input to `lessons_learnt_prompt.md §3.5` is the STEP 8 consolidated action summary (immediate actions applied, deferred items list, and any escalations). The §6 Outstanding Actions table in `closure_record.md` is derived from the same deferred items list. Do not wait for `closure_record.md` before producing `lessons_learnt_closure.md`.
+
 The lessons learnt prompt will create: `claude/cycles/<cycle_id>/lessons_learnt_closure.md`
 
 This record covers:
@@ -736,6 +738,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.0 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 8.5: sequencing clarification note added — `closure_record.md` is produced in STEP 9 and is not available at STEP 8.5 execution time; `lessons_learnt_closure.md` must be produced from STEP 8 consolidated action summary context; §6 Outstanding Actions in `closure_record.md` is derived from the same deferred items list. Prevents incorrect sequencing where STEP 8.5 waits for STEP 9 output. |
 | 1.9 | 2026-03-14 | AUD-2026-03-13-004: STEP 11 (Roadmap Document Management — mandatory) and STEP 12 (Backlog Document Management — mandatory) added. Both invoke their respective management prompts inline and pass through --dry-run. Closes Phase 1M skip gap — manage roadmap + groom backlog now run every cycle regardless of whether Phase 1 was executed. Former STEP 11 (Commit) renumbered STEP 13. closure_state.json schema updated: step_11_manage_roadmap, step_12_groom_backlog, step_13_commit. |
 | 1.8 | 2026-03-11 | IMP-15: STEP 3.4 added — stale parked items disposition check; identifies `backlog.md` items parked in 3+ consecutive completed cycles; records mandatory PO disposition requirement in closure record §6 Outstanding Actions; adds `[STALE — PO disposition required]` note to backlog item; does not resolve item. |
 | 1.7 | 2026-03-10 | IMP-54: §4 Source-of-Truth inputs — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` rows replaced with single `lessons_learnt_cycle.md` row (Phase 3 + Phase 4 + Amendment sections). §5 must-not-modify — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` lines replaced with `lessons_learnt_cycle.md` (read-only). STEP 8 lessons learnt table — two rows replaced with single `lessons_learnt_cycle.md` row (all phase sections, structured table read). |
