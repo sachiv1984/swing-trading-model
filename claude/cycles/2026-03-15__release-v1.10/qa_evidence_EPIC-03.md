@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
-**Status:** Awaiting Sign-Off (ST-07)
-**Version:** 1.0
+**Status:** Signed Off (with findings — see ST-07 notes)
+**Version:** 1.1
 **Last Updated:** 2026-03-16
 
 ---
@@ -77,10 +77,10 @@ Scenarios follow canonical format (scenario ID, setup, steps, expected result). 
 |---|---|---|
 | 3 gap scenarios authored (4 created — gap 1 split) | Pass | GAP-01 through GAP-04 |
 | Canonical scenario format followed | Pass | Setup / Steps / Expected result / Notes |
-| Scenarios executable against staging | Pending | DoQ must execute on staging |
+| Scenarios executable against staging | Pass | All 4 executed 2026-03-16 |
 | Registered in canonical test scenario library | Pass | docs/testing/v1.7-qa-scenario-gaps.md |
-| BLG-QA-01 assigned; TEST-GAP-EPIC-06 resolved | Pass | Header of scenario doc |
-| Director of Quality sign-off | Pending | Sign-off block in scenario doc |
+| BLG-QA-01 assigned; TEST-GAP-EPIC-06 resolved | Pass | TEST-GAP-EPIC-06 retired in sign-off |
+| Director of Quality sign-off | Pass | Signed 2026-03-16 — see findings below |
 
 ---
 
@@ -88,19 +88,19 @@ Scenarios follow canonical format (scenario ID, setup, steps, expected result). 
 
 | ST Item | Spec Reference | What was built | Result | Deviations |
 |---|---|---|---|---|
-| ST-05 | portfolio_endpoints.md | 15 TestClient integration tests for GET /portfolio | Pass (code) | DEV-ST05-01 P3 — prospective-heat skipped |
-| ST-06 | portfolio_endpoints.md | integration-tests.yml CI workflow | Pass (code) | None |
-| ST-07 | verification_report v1.7 §6 | 4 QA scenarios (GAP-01 through GAP-04) | Awaiting DoQ staging execution | None |
+| ST-05 | portfolio_endpoints.md | 15 TestClient integration tests for GET /portfolio | Pass — CI green | DEV-ST05-01 P3 — prospective-heat skipped |
+| ST-06 | portfolio_endpoints.md | integration-tests.yml CI workflow | Pass — CI step visible, named correctly | None |
+| ST-07 | verification_report v1.7 §6 | 4 QA scenarios (GAP-01 through GAP-04) | Signed off with findings — see sign-off block | BLG-BE-01 filed (GAP-03 finding) |
 
-**QA sign-off block:** (Director of Quality completes this)
-- [ ] ST-05 integration tests verified: CI step runs and all 15 tests pass on this PR
-- [ ] ST-06 verified: CI step visible in PR checks and named correctly
-- [ ] ST-07 GAP-01 executed on staging and passed
-- [ ] ST-07 GAP-02 executed on staging and passed
-- [ ] ST-07 GAP-03 executed on staging and passed
-- [ ] ST-07 GAP-04 executed on staging and passed
-- [ ] TEST-GAP-EPIC-06 retired — all 3 original gaps addressed
-- [ ] DEV-ST05-01 (P3) acknowledged — prospective-heat deferred, no P0/P1 impact
+**QA sign-off block:** (Director of Quality)
+- [x] ST-05 integration tests verified: CI step "Portfolio Integration Tests (ST-05)" ran and all 15 tests passed on PR #72
+- [x] ST-06 verified: CI step visible in PR checks, named "Portfolio Integration Tests (ST-05)"
+- [x] ST-07 GAP-01 executed on staging and passed — `sharpe_ratio_trade_method` confirmed present in POST /validate/calculations response
+- [x] ST-07 GAP-02 executed on staging and passed — exactly 14 validated metrics returned
+- [ ] ST-07 GAP-03 — **FAIL** — GET /portfolio does not return `initial_value`, `net_deposits`, `current_drawdown_percent`, `peak_portfolio_value`. Fields in spec since v1.8.2 but absent from response. Filed as BLG-BE-01. Test coverage gap closed; implementation gap tracked separately.
+- [ ] ST-07 GAP-04 — **BLOCKED** — staging has 0 closed trades; `holding_days` cannot be verified on GET /trades. Scenario valid and retained. Accepted as staging test data gap.
+- [x] TEST-GAP-EPIC-06 retired — test coverage gaps closed as formal scenarios; implementation findings (GAP-03) filed as BLG-BE-01
+- [x] DEV-ST05-01 (P3) acknowledged — prospective-heat deferred, no P0/P1 impact
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-16
+- Comments: ST-05 and ST-06 fully verified via CI. ST-07 scenarios authored and executed — GAP-01/02 pass, GAP-03 reveals backend bug (BLG-BE-01), GAP-04 blocked by staging data. EPIC-03 objectives met: staging is canonical QA env, integration tests in CI, v1.7 test gaps closed as scenarios. BLG-BE-01 requires attention in next sprint.

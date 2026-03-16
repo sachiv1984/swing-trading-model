@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-16T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-16T12:30:00Z",
+  "last_updated_utc": "2026-03-16T12:45:00Z",
   "epic_scope": "EPIC-03",
 
   "epics": {
@@ -111,11 +111,11 @@
     },
     "EPIC-03": {
       "title": "QA Infrastructure & Coverage",
-      "status": "in_progress",
+      "status": "stories_complete",
       "branch": "exec/2026-03-15__release-v1.10/EPIC-03",
       "pr_number": 72,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-15__release-v1.10/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
@@ -158,31 +158,31 @@
         "ST-07": {
           "title": "Author v1.7 missing QA test scenarios (BLG-QA-01)",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 69,
           "branch": "exec/2026-03-15__release-v1.10/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "e01d658",
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-03-16T12:30:00Z",
-          "unblock_criteria": "Director of Quality executes all 4 scenarios (GAP-01 through GAP-04) on staging and completes the sign-off block in docs/testing/v1.7-qa-scenario-gaps.md.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-16T12:45:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/cycles/2026-03-02__release-v1.7/verification_report.md#6",
             "docs/testing/v1.7-qa-scenario-gaps.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.C.authored",
-          "notes": "docs/testing/v1.7-qa-scenario-gaps.md created with 4 scenarios: GAP-01 (sharpe_ratio_trade_method presence), GAP-02 (14 metrics count), GAP-03 (GET /portfolio field alignment), GAP-04 (holding_days in GET /trades). Awaiting DoQ sign-off on staging."
+          "deviations_filed": true,
+          "last_completed_substep": "done",
+          "notes": "DoQ sign-off 2026-03-16. GAP-01 PASS (sharpe_ratio_trade_method present). GAP-02 PASS (14 metrics). GAP-03 FAIL — 4 GET /portfolio fields missing from backend (initial_value, net_deposits, current_drawdown_percent, peak_portfolio_value); filed BLG-BE-01 (P1) for v1.11. GAP-04 BLOCKED — no closed trades in staging; scenario valid, deferred. TEST-GAP-EPIC-06 retired. BLG-QA-01 closed."
         }
       }
     }
   },
 
-  "blocked_items": ["ST-07"],
+  "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07"],
   "open_escalations": [],
 
   "merge_gate": {
