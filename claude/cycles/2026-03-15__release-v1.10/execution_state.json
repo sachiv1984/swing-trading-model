@@ -1,0 +1,93 @@
+{
+  "cycle_id": "2026-03-15__release-v1.10",
+  "sprint_goal": "Establish staging as the canonical pre-merge QA environment and close the CohortAnalysis architecture violation, backend integration test gap, and v1.7 QA scenario gaps that have been carried since v1.7–v1.9.",
+  "backlog_slice_source": "claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md",
+  "invoked_utc": "2026-03-16T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-03-16T00:05:00Z",
+  "epic_scope": "EPIC-01",
+
+  "epics": {
+    "EPIC-01": {
+      "title": "Development Environment Foundation",
+      "status": "in_progress",
+      "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-03-15__release-v1.10/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "Provision staging environment infrastructure",
+          "classification": "delegated_backend",
+          "status": "blocked_backend",
+          "assigned_to": "human",
+          "github_issue": 63,
+          "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260316-01",
+          "blocked_since_utc": "2026-03-16T00:05:00Z",
+          "unblock_criteria": "Commit pushed to exec/2026-03-15__release-v1.10/EPIC-01 with format [EPIC-01][ST-01] <description>, AND staging environment accessible at stable URL. Staging URL must be included in commit message or PR body.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md#ST-01"],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.B.delegated",
+          "notes": "[standard-mode flag] No locked API/architecture spec file for this infrastructure item. Governing document is the backlog slice AC. Sprint backlog declares delegated_backend with PO sign-off. Pre-condition: Infrastructure & Operations Owner must document hosting approach decision before implementation begins (RISK-01 mitigation)."
+        },
+        "ST-02": {
+          "title": "Configure CI/CD auto-deploy to staging",
+          "classification": "delegated_backend",
+          "status": "blocked_backend",
+          "assigned_to": "human",
+          "github_issue": 64,
+          "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260316-02",
+          "blocked_since_utc": "2026-03-16T00:05:00Z",
+          "unblock_criteria": "ST-01 done AND commit pushed to exec/2026-03-15__release-v1.10/EPIC-01 with format [EPIC-01][ST-02] <description>, AND CI/CD demonstrably auto-deploys to staging on merge to main.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-03-15__release-v1.10/stage4_backlog_slice.md#ST-02"],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.B.delegated",
+          "notes": "[standard-mode flag] No locked API/architecture spec file for this CI/CD item. Governing document is the backlog slice AC. Depends on ST-01."
+        },
+        "ST-03": {
+          "title": "Update QA sign-off governance process",
+          "classification": "delegated_qa",
+          "status": "blocked_backend",
+          "assigned_to": "human",
+          "github_issue": 65,
+          "branch": "exec/2026-03-15__release-v1.10/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260316-03",
+          "blocked_since_utc": "2026-03-16T00:05:00Z",
+          "unblock_criteria": "ST-01 and ST-02 both done, staging URL known and stable, OPERATIONAL_GUIDE.md QA section updated to reference staging URL explicitly, Director of Quality confirms updated process is workable.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/system/OPERATIONAL_GUIDE.md"],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.C.delegated",
+          "notes": "Autonomous work (editing OPERATIONAL_GUIDE.md) cannot proceed until ST-01+ST-02 complete and staging URL is known. Sequentially blocked on ST-01+ST-02 dependency."
+        }
+      }
+    }
+  },
+
+  "blocked_items": ["ST-01", "ST-02", "ST-03"],
+  "delegated_items": ["ST-01", "ST-02", "ST-03"],
+  "completed_items": [],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
