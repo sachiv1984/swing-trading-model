@@ -269,6 +269,39 @@ Staging response (`2026-03-16`) contained only: `cash`, `cash_balance`, `total_v
 - ST-05 integration tests extended to assert these fields
 - GAP-03 scenario (`docs/testing/v1.7-qa-scenario-gaps.md`) passes on staging
 
+### TEST-GAP-EPIC-02 — CohortAnalysis backend integration regression scenario
+**Priority:** P3
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** TSG-V110-01 — verification_report.md §6, cycle 2026-03-15__release-v1.10
+**Cycle added:** 2026-03-15__release-v1.10
+**Target release:** before next sprint touching analytics components
+
+Test scenario coverage gap from 2026-03-15__release-v1.10: QA & Testing Owner to author CohortAnalysis backend integration regression scenario (`SC-CA-BACKEND-01`) covering: period toggle (Monthly / Quarterly / Yearly) triggers API refetch and table updates; `has_enough_data = false` shows insufficient data warning; column values match `GET /analytics/cohort` response fields. Spec references: `docs/specs/frontend/pages/analytics.md §15`; `docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort`. Register in `docs/testing/risk_dashboard_scenarios.md` or new `analytics_scenarios.md`.
+
+---
+
+### BLG-BE-02 — Spec and implement GET /portfolio/prospective-heat endpoint
+**Priority:** P3
+**Type:** Backend + Spec
+**Owner:** Head of Engineering + Head of Specs Team
+**Source:** DEV-ST05-01 — ST-05 (v1.10 EPIC-03) integration tests could not cover this endpoint because it is absent from `portfolio_endpoints.md` and not implemented in `backend/main.py`. Discovered during sprint execution 2026-03-16.
+**Cycle added:** 2026-03-15__release-v1.10
+**Target release:** v2.0 (or earlier if ProspectiveHeatPanel becomes a priority)
+
+**Problem**
+The ProspectiveHeatPanel frontend component exists and makes reference to portfolio heat projection, but `GET /portfolio/prospective-heat` (a prospective heat calculation endpoint) is not defined in `portfolio_endpoints.md` and has no backend implementation. BLG-API-01 acceptance criteria referenced this endpoint, resulting in DEV-ST05-01 (P3) when integration tests could not be written for it.
+
+**Scope**
+- Author `GET /portfolio/prospective-heat` spec in `portfolio_endpoints.md` (response shape, calculation definition)
+- Implement the endpoint in `backend/main.py`
+- Add TestClient integration tests in `tests/test_portfolio_integration.py` (currently skipped with `@unittest.skip` per DEV-ST05-01)
+
+**Acceptance Criteria**
+- `GET /portfolio/prospective-heat` defined in `portfolio_endpoints.md`
+- Endpoint implemented and returning correct prospective heat calculation
+- `@unittest.skip` removed from `TestProspectiveHeat` in `tests/test_portfolio_integration.py`; tests pass
+
 ---
 
 ## Closed Items
