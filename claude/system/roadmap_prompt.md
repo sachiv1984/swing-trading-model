@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.0
+**Version:** 4.1
 **Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -603,9 +603,9 @@ Do not delete or rewrite backlog items at this stage.
 ### STEP 4 — Idea Review and Document Management
 Authority: Facilitator (review), Product Owner (classification decisions)
 
-Load all idea submissions from `claude/ideas/submissions/` with `**Status:** Submitted`, `**Status:** Parked`, or `**Status:** Parked-cycle-<n>` (stale cycle tracking — see §4.5).
+Load all idea rows from `claude/ideas/ideas_register.md` with `Status: Submitted`, `Status: Parked`, or `Status: Parked-cycle-<n>` (stale cycle tracking — see §4.5). Schema: per `shared_standards.md §16.5`.
 
-If the submissions folder is absent or contains no eligible ideas:
+If `ideas_register.md` is absent or contains no eligible rows:
 - Record "No ideas available this cycle" in the `## STEP 4 — Ideas` section of `cycle_record.md`
 - Continue to STEP 5 (only ⚠ re-evaluate initiatives from STEP 2 will enter debate)
 
@@ -627,22 +627,22 @@ Classification rules:
 
 ### 4.2 Document Management (Required — Run in Order)
 
-After all ideas are classified, apply the following document actions **before proceeding to STEP 5**:
+After all ideas are classified, apply the following register row updates **before proceeding to STEP 5**:
 
-| Classification | Document Action |
-|----------------|----------------|
-| ✅ Advance | Update file: `**Status:** Advancing` |
-| 🅿 Park (any park — first or re-park) | Update file: `**Status:** Parked-cycle-<n>` (set to 1 if first park; increment from prior value on re-park). Add or update a `**Park Rationale:**` field in the idea file with the PO's one-line rationale. A park without a recorded rationale is treated as Reject — not strong. |
-| ❌ Reject — strong | Update file: `**Status:** Rejected`; copy core content to `claude/ideas/rejected_but_strong.md` (append, create if needed) |
-| ❌ Reject — not strong | Update file: `**Status:** Rejected` |
+| Classification | Register Row Action |
+|----------------|---------------------|
+| ✅ Advance | Update row: `Status → Advancing` |
+| 🅿 Park (any park — first or re-park) | Update row: `Status → Parked-cycle-<n>` (set Park Count to 1 if first park; increment from prior value on re-park). Update `Park Rationale` with the PO's one-line rationale. A park without a recorded rationale is treated as Reject — not strong. |
+| ❌ Reject — strong | Update row: `Status → Rejected`; copy core content to `claude/ideas/rejected_but_strong.md` (append, create if needed) |
+| ❌ Reject — not strong | Update row: `Status → Rejected` |
 
-**Rejected files are not deleted.** They remain in `claude/ideas/submissions/` as a permanent record with `Status: Rejected`.
+**Rejected rows are not deleted.** They remain in `ideas_register.md` as a permanent record.
 
-**Bulk status updates (>5 files):** Use bash `sed` rather than the Write/Edit tool to avoid the prior-read constraint. Pattern: `sed -i 's/**Status:** Submitted/**Status:** Parked-cycle-1/' file.md`. This is appropriate for uniform field replacement across submission files.
+**Bulk row updates:** Use the Edit tool with `replace_all: false` for individual row updates, or construct a targeted `sed` command for uniform field replacement across multiple rows. Pattern: `sed -i 's/| Submitted |/| Parked-cycle-1 |/' claude/ideas/ideas_register.md` — use with care; verify the replacement is precise before running.
 
 ### 4.3 Idea Participation Check
 
-Count submissions per agent from the window summary (`window_summary_<window_id>.md` if present).
+Count submissions per agent from the window summary (`claude/ideas/window_summary_<window_id>.md` if present), or by counting register rows with this window's Window ID.
 
 If any agent submitted fewer than 2 net-new ideas:
 - Record the gap in the `## STEP 4 — Ideas` section of `cycle_record.md` as an innovation debt note
@@ -1540,6 +1540,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.1 | 2026-03-17 | ST-19 (EPIC-06): STEP 4 updated to read from `claude/ideas/ideas_register.md` (single register) instead of scanning per-file submissions. §4.2 Document Management updated: actions now update register rows (Status, Park Count, Park Rationale) instead of individual files. §4.3 window summary path updated. Schema: `shared_standards.md §16.5`. |
 | 4.0 | 2026-03-17 | ST-18 (EPIC-06): Extended `cycle_record.md` single-file pattern to all three tiers (Lightweight/Standard/Extended). STEPS 2, 3, 4, 5, 8 write targets changed from separate stage files (`stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, `stage5_rebalance.md`) to labelled sections within a single `cycle_record.md`. Stage file references in §5 hard gates, §5.3 PoG issuance, §7 Skill-Silo / Capacity Floor rules, §10 Completion Condition, and STEP 0.C tier table all updated accordingly. Note in STEP 0.C explains mapping for any residual stage-file references. |
 | 3.0 | 2026-03-17 | Five governance improvements applied at post-ship closure v1.10 (BLG-GOV-01, BLG-GOV-02 actions): (1) Tier table added to STEP 0.C classifying run weight; (2) Stage output format note established `cycle_record.md` as Lightweight output target; (3) STEP 2 and STEP 3 write targets standardised to `cycle_record.md` sections for Lightweight; (4) STEP -1.5 prior cycle actions check updated; (5) Minor structural clarifications. |
 | 2.8 | 2026-03-16 | AUD-2026-03-13-005: §9.0 Net-Zero Displacement Gap inline halt block replaced with prose reference to `shared_standards.md §5` — saves ~80 tokens/cycle, SST improved. AUD-2026-03-13-006: §9 Invariants list replaced with reference to `claude/system/invariants.md` (new canonical file). |

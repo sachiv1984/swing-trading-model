@@ -199,7 +199,7 @@ The following items were completed before sprint seal and do not require executi
 
 ---
 
-#### ST-19 — Ideas register (BLG-GOV-02)
+#### ST-19 — Ideas register (BLG-GOV-02) ✅ DONE
 
 **Owner:** Head of Specs Team
 **Estimated effort:** ~20 hrs mid
@@ -207,6 +207,7 @@ The following items were completed before sprint seal and do not require executi
 **Acceptance Criteria:** see `stage4_backlog_slice.md#ST-19`
 **Dependencies:** None
 **Notes:** Replace per-file idea submission model with ideas_register.md. Migration instruction required. CLAUDE.md §6 checklist mandatory.
+**Completed:** 2026-03-17 — `idea_intake_prompt.md` v2.0; `roadmap_prompt.md` v4.1; `shared_standards.md` §16.5 added (v2.3); `ideas_register.md` created (44 rows migrated); 45 submission files archived to `submissions/archive/`; `OPERATIONAL_GUIDE.md` v3.25.
 
 ---
 
