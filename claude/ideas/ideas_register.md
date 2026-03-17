@@ -56,3 +56,5 @@ Schema: per `shared_standards.md §16.5`
 | IDEA-qa-testing-20260304-02 | Test Automation Readiness Assessment | QA & Testing Owner | IW-20260304-01 | 2026-03-04 | Parked-cycle-3 | 3 | Readiness assessment before automation investment makes sense | 🅿 Parked | — |
 | IDEA-strategy-owner-20260304-01 | Backtest vs Live Stop Reconciliation Report | Strategy Rules & System Intent Owner | IW-20260304-01 | 2026-03-04 | Promoted-Added | — | — | ✅ Advancing | ✅ Advance — promoted to backlog (dependency: after golden baseline) |
 | IDEA-strategy-owner-20260304-02 | ATR Parameter Sensitivity Analysis | Strategy Rules & System Intent Owner | IW-20260304-01 | 2026-03-04 | Rejected | — | — | 🅿 Parked | — |
+| IDEA-financial-reporting-20260317-01 | Tax Year P&L Report — PDF Export | Financial Reporting Owner | IW-20260317-01 | 2026-03-17 | Submitted | — | — | — | — |
+| IDEA-financial-reporting-20260317-02 | Tax Year P&L Report — CSV Table Export | Financial Reporting Owner | IW-20260317-01 | 2026-03-17 | Submitted | — | — | — | — |
