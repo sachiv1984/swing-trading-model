@@ -125,7 +125,7 @@ The following items were completed before sprint seal and do not require executi
 
 ---
 
-#### ST-17 — Spec Coverage Inventory
+#### ST-17 — Spec Coverage Inventory ✅ DONE
 
 **Owner:** Head of Specs Team
 **Estimated effort:** ~12 hrs mid
@@ -133,6 +133,7 @@ The following items were completed before sprint seal and do not require executi
 **Acceptance Criteria:** see `stage4_backlog_slice.md#ST-17`
 **Dependencies:** None
 **Notes:** Large item (~1–2 days). Begin early; run in parallel with product EPICs.
+**Completed:** 2026-03-17 — commit `8ce92ba` — `docs/specs/spec_coverage_inventory.md` created (Class 3, v1.0). 38 documents audited; 7 actions identified.
 
 ---
 
@@ -186,7 +187,7 @@ The following items were completed before sprint seal and do not require executi
 **Execution sequence:** Parallel (not blocked by or blocking any product EPIC)
 **Note:** EPIC-06 runs as a parallel governance track alongside the sprint. Changes take effect at the next `run roadmap` invocation after v2.0 ships. All CLAUDE.md §6 governance edit checklist requirements apply to ST-18 and ST-19.
 
-#### ST-18 — Roadmap stage document consolidation (BLG-GOV-01)
+#### ST-18 — Roadmap stage document consolidation (BLG-GOV-01) ✅ DONE
 
 **Owner:** Head of Specs Team
 **Estimated effort:** ~20 hrs mid
@@ -194,6 +195,7 @@ The following items were completed before sprint seal and do not require executi
 **Acceptance Criteria:** see `stage4_backlog_slice.md#ST-18`
 **Dependencies:** None
 **Notes:** Large governance rewrite. Validate against one `run roadmap` cycle before sealing. CLAUDE.md §6 checklist mandatory.
+**Completed:** 2026-03-17 — commit `03e0060` — `roadmap_prompt.md` v3.0→v4.0; `OPERATIONAL_GUIDE.md` v3.23→v3.24; `prompt_change_log.md` updated. Dry-run structural validation passed (no residual stage file references outside explanatory notes).
 
 ---
 
