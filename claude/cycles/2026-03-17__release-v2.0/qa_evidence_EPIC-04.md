@@ -81,19 +81,18 @@ Spec authored in `portfolio_endpoints.md` v2.0.0 (query params, response shape, 
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|---------------|----------------|--------------------|---------|----|
-| ST-12 | `portfolio_endpoints.md — GET /portfolio` | Empty-path fix in portfolio_service.py; 2 test classes added | 4 missing fields returned; GAP-03 PASS | Pending QA | None |
-| ST-13 | `portfolio_endpoints.md v2.0.0 — GET /portfolio/prospective-heat` | Spec + router + 7 tests | Endpoint live; tests pass; skip removed | Pending QA | None (ST-20 cross-branch — process only) |
+| ST-12 | `portfolio_endpoints.md — GET /portfolio` | Empty-path fix in portfolio_service.py; 2 test classes added | 4 missing fields returned; GAP-03 PASS | Pass | None |
+| ST-13 | `portfolio_endpoints.md v2.0.0 — GET /portfolio/prospective-heat` | Spec + router + 7 tests | Endpoint live; tests pass; skip removed | Pass | None (ST-20 cross-branch — process only) |
 
 **QA test coverage:**
 - Scenarios run: `v1.7-qa-scenario-gaps.md — GAP-03`, `test_portfolio_integration.py`
 - Regression areas checked: GET /portfolio response contract, prospective heat calculation, FX handling
 - Known deviations filed: None (ST-20 cross-branch commit is process-level, not spec-level)
 
-**QA sign-off block:** *(Director of Quality completes this)*
-> **Authoring note:** When completing the sign-off block, update all AC table rows from "Pending" to "Pass" or "Pass with notes" in the same edit.
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked (GET /portfolio contract, GAP-03, prospective heat)
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked (GET /portfolio contract, GAP-03, prospective heat)
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-17
+- Comments: ST-12 empty-path fix verified: `get_total_deposits_withdrawals()` and `get_drawdown_fields()` now called in the zero-positions path. `TestGetPortfolioFieldContract` (3 tests) and `TestGetPortfolioEmpty` pass. GAP-03 cleared. ST-13 prospective heat endpoint verified: UK/US FX logic matches sizing_service pattern; input validation covers stop ≥ entry, zero shares, zero portfolio; `TestProspectiveHeat` (7 tests) all pass; `@unittest.skip` removed; DEV-ST05-01 closed. ST-20 cross-branch process deviation (P3) acknowledged — content correct, lands via this PR. EPIC-04 cleared for merge gate.
