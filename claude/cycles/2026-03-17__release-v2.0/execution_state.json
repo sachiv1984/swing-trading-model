@@ -8,7 +8,7 @@
   "sprint_goal": "Ship the v2.0 core product scope: fix the P1 portfolio response defect, deliver the UK tax-year P&L report endpoint and frontend view, and expose the signal exposure controls — making all three production-ready in a single sprint.",
   "mode": "standard",
   "initialized_utc": "2026-03-17T04:00:00Z",
-  "last_updated_utc": "2026-03-17T12:30:00Z",
+  "last_updated_utc": "2026-03-17T14:00:00Z",
 
   "merge_gate": {
     "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-04", "EPIC-05", "EPIC-06"],
@@ -22,7 +22,8 @@
       "branch": "exec/2026-03-17__release-v2.0/EPIC-04",
       "pr_status": "open",
       "pr_number": 86,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-17T14:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "docs/testing/v1.7-qa-scenario-gaps.md — GAP-03",
@@ -79,7 +80,8 @@
       "branch": "exec/2026-03-17__release-v2.0/EPIC-01",
       "pr_status": "open",
       "pr_number": 87,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-17T14:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
@@ -232,7 +234,8 @@
       "branch": "exec/2026-03-17__release-v2.0/EPIC-02",
       "pr_status": "open",
       "pr_number": 88,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-17T14:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
@@ -280,7 +283,8 @@
       "branch": "exec/2026-03-17__release-v2.0/EPIC-06",
       "pr_status": "open",
       "pr_number": 89,
-      "qa_signed_off": false,
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-17T14:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
       "note": "Parallel governance track — does not block product EPICs",
