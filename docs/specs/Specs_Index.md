@@ -233,16 +233,12 @@ This section tracks canonical spec gaps that have been identified but not yet fi
 
 ### 6.3 GET /portfolio/prospective-heat endpoint — spec and implementation gap
 
-**Status:** Open — 2026-03-16
-**Deviation:** DEV-ST05-01 (P3) — v1.10 sprint execution
-**Backlog item:** BLG-BE-02 (P3) — target v2.0
+**Status:** RESOLVED — 2026-03-17 (ST-13, v2.0)
+**Deviation:** DEV-ST05-01 — closed
+**Backlog item:** BLG-BE-02 — COMPLETE
 **Owner:** Head of Engineering + Head of Specs Team
 
-`GET /portfolio/prospective-heat` endpoint is not defined in `docs/specs/api_contracts/portfolio_endpoints.md` and has no backend implementation. Referenced by the ProspectiveHeatPanel frontend component. Integration tests written in `tests/test_portfolio_integration.py` are currently skipped (`@unittest.skip`) pending spec authoring.
-
-This item blocks removing the `@unittest.skip` from `TestProspectiveHeat` and blocks frontend contract alignment for ProspectiveHeatPanel. Resolution requires: spec authoring in `portfolio_endpoints.md` → backend implementation → test enablement.
-
-**Gap blocks:** `tests/test_portfolio_integration.py::TestProspectiveHeat` (currently skipped). Does not block current production functionality.
+**Resolved by:** `portfolio_endpoints.md` v2.0.0 — `GET /portfolio/prospective-heat` spec authored (query params, response shape, calculation rules, business rule failures). Backend implemented in `backend/routers/prospective_heat.py`. `@unittest.skip` removed from `TestProspectiveHeat`; 7 tests pass.
 
 ---
 

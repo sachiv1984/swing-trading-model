@@ -11,7 +11,7 @@ from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
 from pydantic import BaseModel
-from routers import validation, analytics, test, portfolio_size, trades_export
+from routers import validation, analytics, test, portfolio_size, trades_export, prospective_heat
 
 
 
@@ -113,6 +113,7 @@ app.include_router(validation.router)
 app.include_router(analytics.router)
 app.include_router(test.router)
 app.include_router(portfolio_size.router)
+app.include_router(prospective_heat.router)
 app.include_router(trades_export.router)
 
 
