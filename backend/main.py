@@ -97,7 +97,9 @@ from services import (
     # Health service
     get_basic_health,
     get_detailed_health,
-    test_all_endpoints
+    test_all_endpoints,
+    # Reports service
+    get_tax_year_report,
 )
 app = FastAPI(title=API_TITLE)
 
@@ -362,6 +364,41 @@ def get_trades_endpoint():
         }
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
+# ---------------------------------------------------------------------------
+# Reports endpoints — ST-04, EPIC-02, v2.0
+# Spec: docs/specs/api_contracts/reports_endpoints.md v0.1
+# ---------------------------------------------------------------------------
+
+@app.get("/reports/tax-year")
+def get_tax_year_report_endpoint(year: Optional[int] = None):
+    """
+    GET /reports/tax-year?year=YYYY
+
+    Returns a UK tax-year P&L statement for all closed trades whose
+    exit_date falls within the specified tax year (6 April to 5 April).
+    Spec: reports_endpoints.md v0.1
+    """
+    from fastapi.responses import JSONResponse
+    if year is None:
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "year parameter is required"})
+    if year < 1000 or year > 9999:
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "year must be a valid four-digit integer"})
+    try:
+        data = get_tax_year_report(year)
+        return {"status": "ok", "data": data}
+    except ValueError as e:
+        msg = str(e)
+        if "not started yet" in msg:
+            return JSONResponse(status_code=400,
+                content={"status": "error", "message": "tax year has not started yet"})
+        return JSONResponse(status_code=404,
+            content={"status": "error", "message": msg})
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
