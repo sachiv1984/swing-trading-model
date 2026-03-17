@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "../api/base44Client";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,9 @@ import { Zap, RefreshCw, Filter, TrendingUp, DollarSign, Target } from "lucide-r
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 
+const TOP_N_DEFAULT = 5;
+const LOOKBACK_DAYS_DEFAULT = 252;
+
 export default function SignalsPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -21,10 +24,52 @@ export default function SignalsPage() {
   const [showDismissed, setShowDismissed] = useState(false);
   const [selectedSignal, setSelectedSignal] = useState(null);
 
-  // Fetch signals with auto-refresh every minute
+  // top_n and lookback_days controls with debounce
+  const [topNInput, setTopNInput] = useState(String(TOP_N_DEFAULT));
+  const [lookbackDaysInput, setLookbackDaysInput] = useState(String(LOOKBACK_DAYS_DEFAULT));
+  const [topN, setTopN] = useState(TOP_N_DEFAULT);
+  const [lookbackDays, setLookbackDays] = useState(LOOKBACK_DAYS_DEFAULT);
+  const topNTimer = useRef(null);
+  const lookbackTimer = useRef(null);
+
+  const handleTopNChange = (val) => {
+    setTopNInput(val);
+    clearTimeout(topNTimer.current);
+    topNTimer.current = setTimeout(() => {
+      const parsed = parseInt(val, 10);
+      if (!isNaN(parsed) && parsed >= 1) {
+        setTopN(parsed);
+      } else {
+        setTopNInput(String(TOP_N_DEFAULT));
+        setTopN(TOP_N_DEFAULT);
+      }
+    }, 500);
+  };
+
+  const handleLookbackDaysChange = (val) => {
+    setLookbackDaysInput(val);
+    clearTimeout(lookbackTimer.current);
+    lookbackTimer.current = setTimeout(() => {
+      const parsed = parseInt(val, 10);
+      if (!isNaN(parsed) && parsed >= 1) {
+        setLookbackDays(parsed);
+      } else {
+        setLookbackDaysInput(String(LOOKBACK_DAYS_DEFAULT));
+        setLookbackDays(LOOKBACK_DAYS_DEFAULT);
+      }
+    }, 500);
+  };
+
+  // Fetch signals directly from GET /signals?top_n=N&lookback_days=N
   const { data: signals = [], isLoading } = useQuery({
-    queryKey: ["signals"],
-    queryFn: () => base44.entities.Signal.list("-signal_date"),
+    queryKey: ["signals", topN, lookbackDays],
+    queryFn: async () => {
+      const response = await fetch(
+        `${base44.baseUrl}/signals?top_n=${topN}&lookback_days=${lookbackDays}`
+      );
+      const result = await response.json();
+      return result.data || [];
+    },
     refetchInterval: 60000 // Auto-refresh every 60 seconds
   });
 
@@ -38,7 +83,7 @@ export default function SignalsPage() {
     queryFn: () => base44.entities.Portfolio.list(),
   });
 
-  // ✅ FIX: Fetch live market status
+  // Fetch live market status
   const { data: marketStatus } = useQuery({
     queryKey: ["marketStatus"],
     queryFn: async () => {
@@ -92,7 +137,7 @@ export default function SignalsPage() {
 
   // Filter signals
   let filteredSignals = signalsWithStatus;
-  
+
   if (marketFilter !== "all") {
     filteredSignals = filteredSignals.filter(s => s.market === marketFilter);
   }
@@ -109,7 +154,7 @@ export default function SignalsPage() {
     return 0;
   });
 
-  // ✅ FIX: Calculate stats only for NEW signals
+  // Calculate stats only for NEW signals
   const newSignals = filteredSignals.filter(s => s.status === "new");
   const totalCapital = newSignals.reduce((sum, s) => sum + (s.total_cost || 0), 0);
   const avgMomentum = filteredSignals.length > 0
@@ -121,7 +166,7 @@ export default function SignalsPage() {
   const portfolio = portfolios[0] || { cash_balance: 0 };
   const currentMonth = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
-  // ✅ FIX: Format date properly
+  // Format date properly
   const latestSignalDate = signals.length > 0 && signals[0].signal_date
     ? new Date(signals[0].signal_date).toLocaleString("en-GB", {
         weekday: "short",
@@ -162,20 +207,19 @@ export default function SignalsPage() {
         }
       />
 
-      {/* ✅ FIX: Use live market status */}
+      {/* Use live market status */}
       <MarketStatusBar
-  spyStatus={{
-    isRiskOn: marketStatus?.spy?.is_risk_on, // Map API snake_case to Component camelCase
-    price: marketStatus?.spy?.price || 0
-  }}
-  ftseStatus={{
-    isRiskOn: marketStatus?.ftse?.is_risk_on, 
-    price: marketStatus?.ftse?.price || 0
-  }}
-  fxRate={marketStatus?.fx_rate || 1.3611}
-  availableCash={portfolio.cash_balance}
-/>
-
+        spyStatus={{
+          isRiskOn: marketStatus?.spy?.is_risk_on,
+          price: marketStatus?.spy?.price || 0
+        }}
+        ftseStatus={{
+          isRiskOn: marketStatus?.ftse?.is_risk_on,
+          price: marketStatus?.ftse?.price || 0
+        }}
+        fxRate={marketStatus?.fx_rate || 1.3611}
+        availableCash={portfolio.cash_balance}
+      />
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -274,6 +318,28 @@ export default function SignalsPage() {
           </SelectContent>
         </Select>
 
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-slate-400 whitespace-nowrap">Top N</label>
+          <input
+            type="number"
+            min="1"
+            value={topNInput}
+            onChange={(e) => handleTopNChange(e.target.value)}
+            className="w-20 h-9 bg-slate-800/50 border border-slate-700 rounded-md text-white text-sm px-2 focus:outline-none focus:border-cyan-500"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-slate-400 whitespace-nowrap">Lookback Days</label>
+          <input
+            type="number"
+            min="1"
+            value={lookbackDaysInput}
+            onChange={(e) => handleLookbackDaysChange(e.target.value)}
+            className="w-24 h-9 bg-slate-800/50 border border-slate-700 rounded-md text-white text-sm px-2 focus:outline-none focus:border-cyan-500"
+          />
+        </div>
+
         <Button
           variant="outline"
           size="sm"
@@ -300,7 +366,7 @@ export default function SignalsPage() {
           className="text-center py-12 px-6 rounded-xl bg-slate-800/50 border border-slate-700/50"
         >
           <Zap className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">No signals available</h3>
+          <h3 className="text-xl font-semibold text-white mb-2">No signals found for the selected parameters.</h3>
           <p className="text-slate-400 mb-4">
             Signals are generated daily at 4 PM UTC weekdays
           </p>
