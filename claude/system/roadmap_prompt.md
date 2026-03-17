@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.0
-**Last Updated:** 2026-03-16
+**Version:** 4.0
+**Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -440,14 +440,14 @@ The system classifies every run into one of three tiers based on objective crite
 
 | | Lightweight | Standard | Extended |
 |-|-------------|----------|----------|
-| Stage outputs (STEP 2–7) | All working content written as sections of a single `cycle_record.md` (see §6.1) | Separate stage files (current behaviour) | Separate stage files |
+| Stage outputs (STEP 2–7) | All working content written as sections of a single `cycle_record.md` | All working content written as sections of a single `cycle_record.md` | All working content written as sections of a single `cycle_record.md` |
 | Workforce economics (STEP 7) | Condensed: if no new FTE allocation required, record "No new FTE allocation required" and proceed | Full | Full |
 | Horizon Review (STEP 2.3) | Performed | Performed | Performed — plus explicit Now→Next promotion check required |
 | Idea debate (STEP 4–5) | Skipped if zero advancing candidates; Challenger obligation does not apply to items not in debate | Full | Full |
 | Governance invariants | All apply | All apply | All apply |
 | Hard gates | All apply | All apply | All apply |
 
-**Lightweight output format (§6.1):** When classified as Lightweight, STEPS 2–7 write all working content as clearly labelled sections (`## STEP 2 — Re-Validation`, `## STEP 3 — Backlog Health`, `## STEP 4 — Ideas`, etc.) within a single file: `claude/cycles/<cycle_id>/cycle_record.md`. The `run_manifest.md`, `cycle_summary.md`, and `lessons_learnt.md` remain as separate files. Where STEP 9 Write Plan references `stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, or `stage5_rebalance.md`, substitute `cycle_record.md` for Lightweight runs.
+**Stage output format (all tiers):** STEPS 2–7 write all working content as clearly labelled sections (`## STEP 2 — Re-Validation`, `## STEP 3 — Backlog Health`, `## STEP 4 — Ideas`, `## STEP 5 — Debate`, `## STEP 8 — Rebalance Decision`, etc.) within a single file: `claude/cycles/<cycle_id>/cycle_record.md`. The `run_manifest.md`, `cycle_summary.md`, and `lessons_learnt.md` remain as separate files. All references in these steps to named stage files (`stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, `stage5_rebalance.md`) refer to their corresponding section within `cycle_record.md`.
 
 **Ambiguous cases:** If any classification criterion is unclear (e.g. a pre-noted displacement exists but a new idea is also advancing), classify as Standard.
 
@@ -534,19 +534,19 @@ For every active initiative — including those classified 🔥 Must continue �
 After scoring all initiatives, compute:
 
 - **Cycle proximity score (CPS):** arithmetic mean of all active initiative scores, rounded to one decimal place
-- **Prior cycle CPS:** load from `claude/cycles/<prior_cycle_id>/stage1_validation.md` if present; record "No prior cycle" if absent
+- **Prior cycle CPS:** load from the `## STEP 2 — Re-Validation` section of `claude/cycles/<prior_cycle_id>/cycle_record.md` if present; record "No prior cycle" if absent
 - **Trend:** CPS delta vs prior cycle (e.g. +0.3, −0.1, or "No prior baseline")
 
 **Trend alert rules:**
-- **Delta alert:** If CPS has increased by 0.5 or more compared to the prior cycle, the Facilitator must add a Strategy Drift Alert to `stage1_validation.md` and surface it explicitly at the start of STEP 5.
+- **Delta alert:** If CPS has increased by 0.5 or more compared to the prior cycle, the Facilitator must add a Strategy Drift Alert to the `## STEP 2 — Re-Validation` section of `cycle_record.md` and surface it explicitly at the start of STEP 5.
 - **Absolute alert:** If CPS exceeds 2.5 in absolute terms — regardless of delta from prior cycle — the Facilitator must also add a Strategy Drift Alert. This catches gradual upward drift across multiple small increments that individually fall below the delta threshold.
 
 A Strategy Drift Alert does not halt the routine but requires the Strategy Rules & System Intent Owner to acknowledge it before STEP 5 proceeds.
 
-Record all scores, the CPS, and the trend in `stage1_validation.md`.
+Record all scores, the CPS, and the trend in the `## STEP 2 — Re-Validation` section of `cycle_record.md`.
 
-Write results:
-- `claude/cycles/<cycle_id>/stage1_validation.md`
+Write to:
+- `## STEP 2 — Re-Validation` section of `claude/cycles/<cycle_id>/cycle_record.md`
 
 ### 2.3 Horizon Review (Always Active — Every Run)
 
@@ -567,7 +567,7 @@ If the roadmap does not yet use this structure, record it as a required lifecycl
 **Review questions — for each item in "Next":**
 - Is it still correctly placed, or has new information made it more urgent (promote to "Now") or less relevant (demote to "Later")?
 
-Record the outcome under a `## Horizon Review` section in `stage1_validation.md` (Standard/Extended) or in the corresponding section of `cycle_record.md` (Lightweight). Valid outcomes:
+Record the outcome under a `## Horizon Review` subsection within the `## STEP 2 — Re-Validation` section of `cycle_record.md`. Valid outcomes:
 - "No movements recommended — [brief reason]"
 - List of specific recommended promotions/demotions with rationale
 
@@ -593,8 +593,8 @@ Review backlog items and tag:
 - Quick wins being ignored?
 - Technical debt accumulating?
 
-Write results:
-- `claude/cycles/<cycle_id>/stage2_backlog_health.md`
+Write to:
+- `## STEP 3 — Backlog Health` section of `claude/cycles/<cycle_id>/cycle_record.md`
 
 Do not delete or rewrite backlog items at this stage.
 
@@ -606,7 +606,7 @@ Authority: Facilitator (review), Product Owner (classification decisions)
 Load all idea submissions from `claude/ideas/submissions/` with `**Status:** Submitted`, `**Status:** Parked`, or `**Status:** Parked-cycle-<n>` (stale cycle tracking — see §4.5).
 
 If the submissions folder is absent or contains no eligible ideas:
-- Record "No ideas available this cycle" in `stage3_ideas.md`
+- Record "No ideas available this cycle" in the `## STEP 4 — Ideas` section of `cycle_record.md`
 - Continue to STEP 5 (only ⚠ re-evaluate initiatives from STEP 2 will enter debate)
 
 Do **not** generate new ideas during this step. The intake engine (`run ideas`) is the only governed mechanism for idea collection.
@@ -645,16 +645,16 @@ After all ideas are classified, apply the following document actions **before pr
 Count submissions per agent from the window summary (`window_summary_<window_id>.md` if present).
 
 If any agent submitted fewer than 2 net-new ideas:
-- Record the gap in `stage3_ideas.md` as an innovation debt note
+- Record the gap in the `## STEP 4 — Ideas` section of `cycle_record.md` as an innovation debt note
 - Do not halt — this is informational only at this stage
 
 If no window summary exists (i.e. `run ideas` was not run before this roadmap run):
-- Record "Idea intake engine was not run this cycle" in `stage3_ideas.md`
+- Record "Idea intake engine was not run this cycle" in the `## STEP 4 — Ideas` section of `cycle_record.md`
 - Continue
 
 ### 4.4 Write Summary
 
-Write: `claude/cycles/<cycle_id>/stage3_ideas.md`
+Write to: `## STEP 4 — Ideas` section of `claude/cycles/<cycle_id>/cycle_record.md`
 
 ```markdown
 # Idea Intake Summary — <cycle_id>
@@ -730,7 +730,7 @@ Before debate begins, the Facilitator must perform two checks:
 - The PoG document is present and readable
 - The versioned document referenced in the PoG has not been incremented since the PoG was issued
 
-If a referenced document has been incremented: the PoG is **stale**. The item may not advance until the PoG is re-issued against the current document version. Record the stale PoG as a blocker in `stage4_debate.md` and halt that item's debate pending re-issuance.
+If a referenced document has been incremented: the PoG is **stale**. The item may not advance until the PoG is re-issued against the current document version. Record the stale PoG as a blocker in the `## STEP 5 — Debate` section of `cycle_record.md` and halt that item's debate pending re-issuance.
 
 **B) Score-5 presence check:** If any candidate in this debate round has a Strategy Proximity Score of 5 (assigned in STEP 2.1), confirm that the Strategy Rules & System Intent Owner is active for this STEP. If the Score-5 item was not identified in STEP 2 (e.g. it is a new idea added via STEP 4), assign a proximity score now before proceeding.
 
@@ -788,7 +788,7 @@ The Product Owner response must:
 - address the evidence cited
 - state the final outcome (Advance | Park | Reject)
 
-**Score-5 items — Strategy Rules & System Intent Owner veto check:** After the Product Owner states ✅ Advance on a Score-5 item, the Strategy Rules & System Intent Owner must explicitly confirm or veto. Silence is not confirmation. If the Strategy Rules & System Intent Owner vetoes: the item is immediately downgraded to ❌ Reject and may not be advanced without a formal, versioned amendment to `strategy_rules.md`. Record the veto and the specific §13 basis in `stage4_debate.md`.
+**Score-5 items — Strategy Rules & System Intent Owner veto check:** After the Product Owner states ✅ Advance on a Score-5 item, the Strategy Rules & System Intent Owner must explicitly confirm or veto. Silence is not confirmation. If the Strategy Rules & System Intent Owner vetoes: the item is immediately downgraded to ❌ Reject and may not be advanced without a formal, versioned amendment to `strategy_rules.md`. Record the veto and the specific §13 basis in the `## STEP 5 — Debate` section of `cycle_record.md`.
 
 If the Product Owner does not explicitly address the counter-argument:
 - The item cannot proceed to scoring.
@@ -799,17 +799,16 @@ Outcomes per item:
 - 🅿 Park
 - ❌ Reject
 
-Record:
-- `claude/cycles/<cycle_id>/stage4_debate.md`
+Write to: `## STEP 5 — Debate` section of `claude/cycles/<cycle_id>/cycle_record.md`
 
 Update rejected‑but‑strong ideas where applicable:
 - `claude/ideas/rejected_but_strong.md` (create if needed)
 
 #### 5.3 Proof of Gate (PoG) Issuance (Hard Gate — Required for Hard-Gated Items)
 
-A **Proof of Gate (PoG)** document is required whenever an advancing item carries a hard gate that must be cleared before the item can enter STEP 6 scoring. Hard gates are defined in `stage4_debate.md` as explicit blocking conditions (e.g. "API versioning sign-off required", "§13 boundary confirmation required").
+A **Proof of Gate (PoG)** document is required whenever an advancing item carries a hard gate that must be cleared before the item can enter STEP 6 scoring. Hard gates are defined in the `## STEP 5 — Debate` section of `cycle_record.md` as explicit blocking conditions (e.g. "API versioning sign-off required", "§13 boundary confirmation required").
 
-**PoG is not required for items with no hard gates.** It is required for every item where `stage4_debate.md` records a hard gate condition.
+**PoG is not required for items with no hard gates.** It is required for every item where the `## STEP 5 — Debate` section of `cycle_record.md` records a hard gate condition.
 
 **PoG document specification:**
 - Location: `claude/evidence/gates/<gate-slug>_<YYYYMMDD>.md`
@@ -840,7 +839,7 @@ A **Proof of Gate (PoG)** document is required whenever an advancing item carrie
 - Not subject to the planning document grooming lifecycle — PoG documents are permanent governance records
 - Supersession does not delete; the superseded document remains as an audit trail
 
-An item with an uncleared hard gate may not advance to STEP 6. If a required PoG cannot be produced in this run (e.g. the clearing authority is unavailable): park the item and record the blocker in `stage4_debate.md`.
+An item with an uncleared hard gate may not advance to STEP 6. If a required PoG cannot be produced in this run (e.g. the clearing authority is unavailable): park the item and record the blocker in the `## STEP 5 — Debate` section of `cycle_record.md`.
 
 ---
 
@@ -905,13 +904,13 @@ Compute:
 - Has no outstanding blockers
 - Is within available capacity after current governance commitments
 
-If such an item exists, present it as a **pull-forward candidate** to the Product Owner for consideration. The Product Owner decides whether to include it. This is advisory — the product owner is not required to accept it — but the check is mandatory and the result must be recorded in `stage5_rebalance.md`.
+If such an item exists, present it as a **pull-forward candidate** to the Product Owner for consideration. The Product Owner decides whether to include it. This is advisory — the product owner is not required to accept it — but the check is mandatory and the result must be recorded in the `## STEP 8 — Final Rebalance Decision` section of `cycle_record.md`.
 
 **Lower bound rule (Sign-Off Capacity Floor — 20%):** If governance load falls below 20% of total cycle FTE load, the FinOps & Resource Architect must verify that:
 - The Product Owner has confirmed sufficient review and sign-off capacity for the planned execution volume
 - No critical spec approvals or decision records are deferred to a future cycle without explicit acknowledgement
 
-If the Product Owner cannot confirm adequate sign-off capacity, record this as a governance capacity risk in `stage5_rebalance.md`. This does not halt the routine but must appear in lessons learnt.
+If the Product Owner cannot confirm adequate sign-off capacity, record this as a governance capacity risk in the `## STEP 8 — Final Rebalance Decision` section of `cycle_record.md`. This does not halt the routine but must appear in lessons learnt.
 
 Write economics:
 - `claude/roadmap/workforce_capacity.md` (create if needed)
@@ -935,10 +934,9 @@ Hard rules:
 - Quality / Security / Financial Records may block within their domains per Team Charter
 
 **Initiative register — displacement candidate flag:**
-If any initiative is identified as the natural displacement candidate (i.e. it is the lowest-value active item and would be the first stop if a future Add requires displacement), record this in `claude/roadmap/initiative_register.md` as a field on that initiative's entry: `Displacement candidate: Yes — <brief rationale> — <date>`. Do **not** record this flag in `stage5_rebalance.md` or `current_roadmap.md`. The rebalance document records only actual decisions; the initiative register is the appropriate home for forward-looking planning flags.
+If any initiative is identified as the natural displacement candidate (i.e. it is the lowest-value active item and would be the first stop if a future Add requires displacement), record this in `claude/roadmap/initiative_register.md` as a field on that initiative's entry: `Displacement candidate: Yes — <brief rationale> — <date>`. Do **not** record this flag in the rebalance section of `cycle_record.md` or in `current_roadmap.md`. The rebalance document records only actual decisions; the initiative register is the appropriate home for forward-looking planning flags.
 
-Write:
-- `claude/cycles/<cycle_id>/stage5_rebalance.md`
+Write to: `## STEP 8 — Final Rebalance Decision` section of `claude/cycles/<cycle_id>/cycle_record.md`
 
 It is a valid outcome of this routine that no initiatives are added, replaced, deferred, or killed.
 
@@ -1278,6 +1276,22 @@ Constraints:
 
 ---
 
+#### 6) File: `claude/cycles/<cycle_id>/cycle_record.md`
+Action: create | modify
+Reason:
+- Contains all STEP 2–8 working content as labelled sections.
+Sections present:
+- `## STEP 2 — Re-Validation` (Strategy Proximity Scores, CPS, horizon review)
+- `## STEP 3 — Backlog Health`
+- `## STEP 4 — Ideas`
+- `## STEP 5 — Debate` (advancing/parked/rejected items, PoG conditions, veto records)
+- `## STEP 8 — Final Rebalance Decision` (Skill-Silo check, capacity floor risk, per-initiative decisions)
+Constraints:
+- Sections must be written in step order
+- Do not write this file if all steps produced no output (e.g. zero advancing ideas, no debate required) — record "No output" within the relevant section instead
+
+---
+
 ### Write Plan Integrity Checks (Must Pass)
 
 - All files are within Section 5 write scope: Yes / No
@@ -1501,14 +1515,14 @@ The run is incomplete unless:
 - Decisions are recorded (cycle outputs + decision_log)
 - Stopped work is explicit
 - Workforce implications are explicit
-- Strategy Proximity Scores recorded for all active initiatives in `stage1_validation.md`
-- Cycle Proximity Score (CPS) and trend recorded in `stage1_validation.md`
-- Skill-Silo check completed and result recorded in `stage5_rebalance.md`
+- Strategy Proximity Scores recorded for all active initiatives in the `## STEP 2 — Re-Validation` section of `cycle_record.md`
+- Cycle Proximity Score (CPS) and trend recorded in the `## STEP 2 — Re-Validation` section of `cycle_record.md`
+- Skill-Silo check completed and result recorded in the `## STEP 8 — Final Rebalance Decision` section of `cycle_record.md`
 - All hard-gated advancing items have a valid PoG document in `claude/evidence/gates/`
 - All hard gate status changes in `current_roadmap.md` are backed by a referenced evidence artefact
 - Displacement candidate flags (if any) are recorded in `claude/roadmap/initiative_register.md` only
 - Effort bands recorded for all new or updated roadmap/backlog items in `claude/scoring/scored_initiatives.md`
-- Stale idea dispositions recorded in `stage3_ideas.md`
+- Stale idea dispositions recorded in the `## STEP 4 — Ideas` section of `cycle_record.md`
 - Prior cycle outstanding actions resolved or formally carried forward (named owner + target date) — recorded in run manifest
 - Lessons learnt record filed at `claude/cycles/<cycle_id>/lessons_learnt.md` using the structure from `lessons_learnt_prompt.md §5` — all friction items have classification, blast radius, and process patch
 - All action-now prompt patches applied, version-incremented, and recorded in `claude/system/prompt_change_log.md`
@@ -1526,6 +1540,8 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.0 | 2026-03-17 | ST-18 (EPIC-06): Extended `cycle_record.md` single-file pattern to all three tiers (Lightweight/Standard/Extended). STEPS 2, 3, 4, 5, 8 write targets changed from separate stage files (`stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, `stage5_rebalance.md`) to labelled sections within a single `cycle_record.md`. Stage file references in §5 hard gates, §5.3 PoG issuance, §7 Skill-Silo / Capacity Floor rules, §10 Completion Condition, and STEP 0.C tier table all updated accordingly. Note in STEP 0.C explains mapping for any residual stage-file references. |
+| 3.0 | 2026-03-17 | Five governance improvements applied at post-ship closure v1.10 (BLG-GOV-01, BLG-GOV-02 actions): (1) Tier table added to STEP 0.C classifying run weight; (2) Stage output format note established `cycle_record.md` as Lightweight output target; (3) STEP 2 and STEP 3 write targets standardised to `cycle_record.md` sections for Lightweight; (4) STEP -1.5 prior cycle actions check updated; (5) Minor structural clarifications. |
 | 2.8 | 2026-03-16 | AUD-2026-03-13-005: §9.0 Net-Zero Displacement Gap inline halt block replaced with prose reference to `shared_standards.md §5` — saves ~80 tokens/cycle, SST improved. AUD-2026-03-13-006: §9 Invariants list replaced with reference to `claude/system/invariants.md` (new canonical file). |
 | 2.7 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 8.5.B: item 4 added — idea file status verification (LL-02-patch): for each idea file set to `Advancing` in §4.2, verify STEP 9 write plan includes terminal status update (`Promoted-Added` or `Promoted-Rejected`); governance record gap if any `Advancing` idea file unaccounted for at end of run. |
 | 2.6 | 2026-03-15 | STEP -1.6 corrected: trigger changed from open-window status check (unreachable in normal flow) to open idea count < 20 — counts Submitted + Parked-cycle-N files in claude/ideas/submissions/; invokes idea intake inline if below threshold, skips if 20+. |

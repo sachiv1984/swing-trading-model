@@ -393,7 +393,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v3.0)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v4.0)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -435,13 +435,13 @@ Any other input is treated as conversational — the Engine will not run.
 | STEP -1 | Preflight (incl. prior cycle outstanding actions check) | **HARD** | Pass / Halt |
 | STEP 0 | Load & Validate Inputs | **HARD** | Validated inputs; `cycle_id` defined |
 | STEP 1 | Run Manifest & Capacity Release | — | `run_manifest.md` (capacity skipped for scheduled runs) |
-| STEP 2 | Roadmap Re-Validation (incl. Strategy Proximity Scores + CPS) | — | `stage1_validation.md` |
-| STEP 3 | Backlog Health Review | — | `stage2_backlog_health.md` |
-| STEP 4 | Idea Review & Document Management (incl. stale idea expiry) | — | `stage3_ideas.md` |
-| STEP 5 | Structured Debate (Zero-Sum) | — | `stage4_debate.md` |
+| STEP 2 | Roadmap Re-Validation (incl. Strategy Proximity Scores + CPS) | — | `cycle_record.md` §STEP 2 section |
+| STEP 3 | Backlog Health Review | — | `cycle_record.md` §STEP 3 section |
+| STEP 4 | Idea Review & Document Management (incl. stale idea expiry) | — | `cycle_record.md` §STEP 4 section |
+| STEP 5 | Structured Debate (Zero-Sum) | — | `cycle_record.md` §STEP 5 section |
 | STEP 6 | Scoring Matrix Overlay (incl. effort banding S/M/L) | — | `scored_initiatives.md` |
 | STEP 7 | Workforce Economics Gate (incl. Skill-Silo Alert) | **HARD** | `workforce_capacity.md` |
-| STEP 8 | Final Rebalance Decision | — | `stage5_rebalance.md` |
+| STEP 8 | Final Rebalance Decision | — | `cycle_record.md` §STEP 8 section |
 | STEP 8.5 | Stateless Write Safety Gate | **HARD** | Verified write plan |
 | STEP 8.6/8.7 | Fatigue Detection + Pivot Loop | **HARD** | Guardrail check |
 | STEP 9 | Canonical Write | — | Updated roadmap, backlog, decision log, initiative register |
@@ -1282,15 +1282,15 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.19 |
-| Last Updated | 2026-03-16 |
+| Version | 3.24 |
+| Last Updated | 2026-03-17 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.3 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.2 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.3 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v3.0 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.20 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.1 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
@@ -1317,6 +1317,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.24 | 2026-03-17 | **ST-18 (EPIC-06): roadmap_prompt.md v3.0→v4.0 — `cycle_record.md` single-file pattern extended to all tiers.** §6 source prompt v3.0→v4.0. §6.3 Engine Steps table: STEP 2/3/4/5/8 output column updated from stage file names to `cycle_record.md` section references. §14 Roadmap Engine Source → v4.0. |
 | 3.23 | 2026-03-16 | **Roadmap process governance improvements (v3.0).** §6 + §14 roadmap_prompt.md v2.8→v3.0. Five changes: STEP 0.C auto-tier determination (Lightweight/Standard/Extended, system-derived from objective criteria); STEP 2.3 horizon review always-on every run; STEP 4.1/4.2 first-park rationale required; STEP 5.1 Challenger clearance model; STEP 8.6 guardrail logic corrected. |
 | 3.20 | 2026-03-16 | **v1.10 post-ship lessons learnt applied (LL-v1.10-P3-1, P3-3, P4-1, P4-2, P4-3).** §8.2 staging test data prerequisite bullet added (LL-P4-3). §8 + §14 source prompt versions updated: execution_prompt v2.1→v2.2, delivery_verification_prompt v1.4→v1.5. See prompt_change_log.md for full detail per prompt. |
 | 3.22 | 2026-03-16 | **AUD-2026-03-13-005, 006, 017 applied.** §6 roadmap_prompt.md v2.7→v2.8 (AUD-005 Net-Zero halt block → prose ref; AUD-006 §9 invariants → reference). §6B release_planning_prompt.md v2.19→v2.20 (AUD-005 Amendment halt block → prose ref). §8 execution_prompt.md v2.2→v2.3 (AUD-017 §11 schema → §16.3 ref; SLA tracking → §16.4 ref; §13 invariants cross-ref). §14 shared_standards.md v2.1→v2.2 (AUD-017 §16.3+§16.4 added). New file: `claude/system/invariants.md` v1.0 (AUD-006 canonical invariants). §14 governance table: 5 version entries updated; Governance Invariants row added. |
