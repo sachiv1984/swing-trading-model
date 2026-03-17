@@ -85,6 +85,7 @@ async function getPublicSettingsById(appId) {
 
 // ---------- Auth ----------
 export const base44 = {
+  baseUrl: API_BASE_URL,
   auth: {
     /**
      * If you're using an OAuth/OIDC provider, you'll be redirected back with a token or a code.
