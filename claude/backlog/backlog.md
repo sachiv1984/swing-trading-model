@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-17 (roadmap rebalance — cycle 2026-03-17__item-v1.10 — DL-009 — 3 items added)
+**Last Updated:** 2026-03-17 (ST-17 audit output — 5 items added: BLG-SPEC-G6, BLG-SPEC-D10–D13; 5 v2.0 items closed)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
@@ -114,144 +114,9 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-### BLG-OPS-02 — Production Deployment Runbook
-**Priority:** P2 (Medium)
-**Type:** Operations / Documentation
-**Owner:** Infrastructure & Operations Owner
-**Source:** IDEA-infra-ops-20260304-01 (IW-20260304-01 — promoted 2026-03-17)
-**Cycle added:** 2026-03-17__item-v1.10
-**Effort:** S (~0.5–1 day)
-**Target release:** v2.0
-
-**Problem**
-v1.10 shipped the staging environment (BLG-OPS-01), but there is no documented procedure for deploying to production. The deployment process is informal — no runbook, no rollback procedure, no checkpoint list. With staging now separate from production, an undocumented deployment workflow is an operational risk.
-
-**Scope**
-- Document the production deployment procedure: steps from staging-verified build to production push
-- Include: pre-deployment checklist, deployment steps, post-deployment verification, rollback procedure
-- Cross-reference staging environment configuration (BLG-OPS-01 output)
-- Store as `docs/ops/production_deployment_runbook.md` (Class 2 Supporting document)
-
-**Acceptance Criteria**
-- Production deployment runbook exists at `docs/ops/production_deployment_runbook.md`
-- Runbook includes: pre-deployment checklist, deployment steps, verification steps, rollback procedure
-- Reviewed and signed off by Head of Engineering
-
----
-
-### BLG-DATA-01 — Positions Table Data Dictionary
-**Priority:** P2 (Medium)
-**Type:** Data Documentation / Spec
-**Owner:** Data Model Domain & Schema Owner
-**Source:** IDEA-data-model-owner-20260304-01 (IW-20260304-01 — promoted 2026-03-17)
-**Cycle added:** 2026-03-17__item-v1.10
-**Effort:** S (~0.5–1 day)
-**Target release:** v2.0
-**Scope constraint:** Positions table only (not all tables). Complements BLG-NEW-13 (Spec Coverage Inventory) — distinct scope: this is field-level semantics documentation, not coverage mapping.
-
-**Problem**
-The positions table has no formal data dictionary. BLG-BE-01 (GET /portfolio missing 4 fields) surfaced the risk — field semantics are under-documented, making spec/implementation divergence hard to detect. A data dictionary provides the authoritative reference for field naming, types, constraints, and derivation rules.
-
-**Scope**
-- Document each field in the `positions` table: name, type, nullable, description, derivation rule where applicable
-- Cross-reference `portfolio_endpoints.md` and `data_model.md` for existing definitions
-- Store as a Class 2 Supporting document under `docs/specs/data_model_positions_dictionary.md`
-- Flag any fields without canonical definitions as gaps for follow-up
-
-**Acceptance Criteria**
-- Data dictionary covers all fields in the `positions` table
-- Each field documented: name, type, nullable, description, derivation (where applicable)
-- Cross-references to canonical spec sections where definitions exist
-- Gap list produced for any undocumented fields
-- Registered in `docs/specs/Specs_Index.md`
-
----
-
-### BLG-TECH-07 — Database Migration Governance Standard
-**Priority:** P2 (Medium)
-**Type:** Engineering Governance / Process
-**Owner:** Backend Engineering Patterns Owner + Head of Engineering
-**Source:** IDEA-backend-engineering-20260304-02 (IW-20260304-01 — promoted 2026-03-17)
-**Cycle added:** 2026-03-17__item-v1.10
-**Effort:** S (~0.5–1 day)
-**Target release:** v2.0
-
-**Problem**
-No documented process exists for how database schema migrations are created, reviewed, applied, and rolled back. v2.0 will introduce schema changes (4.1b Tax-Year P&L will require a new report table or schema update). An undocumented migration process is an operational risk — if a migration partially applies, there is no documented recovery path.
-
-**Scope**
-- Define migration naming convention
-- Define required migration file fields: description, reversibility assessment, rollback SQL
-- Define review requirements: second-engineer review, schema owner sign-off for structural changes
-- Define production application procedure: transaction where possible, staging-tested first
-- Define incident procedure if migration fails mid-apply
-- Store as `docs/ops/database_migration_governance.md` (Class 2 Supporting; reference from `backend_engineering_patterns.md`)
-
-**Acceptance Criteria**
-- Migration governance standard exists at `docs/ops/database_migration_governance.md`
-- Covers: naming convention, required fields, review requirements, application procedure, incident procedure
-- Cross-referenced from `backend_engineering_patterns.md` as new §N
-- Head of Engineering sign-off obtained
-
 Items promoted to backlog from idea pool during roadmap rebalance cycle 2026-03-15__item-5.3, and items raised during v1.10 sprint execution and QA sign-off.
 
 ---
-
-### BLG-NEW-13 — Spec Coverage Inventory
-**Priority:** P2 (Medium)
-**Type:** Governance / Spec
-**Owner:** Head of Specs Team
-**Source:** IDEA-head-of-specs-20260304-02 (IW-20260304-01 — promoted 2026-03-15)
-**Cycle added:** 2026-03-15__item-5.3
-**Effort:** ~1–2 days (analysis + documentation)
-**Target release:** v2.0 (or v1.10 if capacity allows)
-
-Systematic audit of all canonical spec sections (docs/specs/) against implementation coverage. Produces a living inventory identifying which spec sections are tested, which are partially covered, and which have no coverage or implementation verification. Complements BLG-NEW-11 (Canonical Terms Glossary). Creates an actionable gap list for future backlog prioritisation.
-
-**Scope**
-- Review all docs/specs/ sections against live implementation and test coverage
-- Rate each section: covered / partial / gap
-- Cross-reference open backlog items against identified gaps
-- Define a review cadence (e.g. per audit cycle or per major release)
-- Output: a structured Coverage Inventory document (Class 2 Supporting document)
-
-**Acceptance Criteria**
-- Coverage Inventory document produced covering all docs/specs/ sections
-- Each spec section rated: covered / partial / gap
-- Gap items cross-referenced against open backlog items where possible
-- Review cadence defined
-- Registered in Specs_Index.md
-
----
-
-### BLG-BE-01 — GET /portfolio missing 4 required fields (GAP-03 finding)
-**Priority:** P1
-**Type:** Backend Bug
-**Owner:** Head of Engineering
-**Source:** GAP-03 staging execution — DoQ sign-off 2026-03-16 (EPIC-03 ST-07)
-**Cycle added:** 2026-03-15__release-v1.10
-**Target release:** v1.11
-
-**Problem**
-`GET /portfolio` does not return `initial_value`, `net_deposits`, `current_drawdown_percent`, or `peak_portfolio_value` in the staging API response. These 4 fields are required by `portfolio_endpoints.md` v1.9.0 (added at v1.8.2 per changelog). The backend implementation is diverged from the spec.
-
-**Evidence**
-Staging response (`2026-03-16`) contained only: `cash`, `cash_balance`, `total_value`, `open_positions_value`, `total_pnl`, `last_updated`, `live_fx_rate`, `portfolio_heat_percent`, `position_risks`, `positions`. The 4 fields above were absent.
-
-**Scope**
-- Add `initial_value` (portfolio initial capital value in GBP)
-- Add `net_deposits` (total deposits minus total withdrawals — cost basis for portfolio-level return)
-- Add `current_drawdown_percent` (current value vs all-time peak; default `0.0` when no history)
-- Add `peak_portfolio_value` (all-time high of portfolio_history.total_value; default `0.0` when no history)
-- Per `portfolio_endpoints.md` §GET /portfolio and §Field Derivation Notes
-- Update ST-05 integration tests (`tests/test_portfolio_integration.py`) to assert these 4 fields
-
-**Acceptance Criteria**
-- `GET /portfolio` response includes all 4 fields with correct values
-- `current_drawdown_percent` and `peak_portfolio_value` default to `0.0` when no portfolio_history exists
-- `net_deposits` equals total deposits minus total withdrawals
-- ST-05 integration tests extended to assert these fields
-- GAP-03 scenario (`docs/testing/v1.7-qa-scenario-gaps.md`) passes on staging
 
 ### TEST-GAP-EPIC-02 — CohortAnalysis backend integration regression scenario
 **Priority:** P3
@@ -288,12 +153,109 @@ The ProspectiveHeatPanel frontend component exists and makes reference to portfo
 
 ---
 
+### BLG-SPEC-G6 — `total_return_pct` not returned by GET /analytics/metrics
+**Priority:** P3 (Low)
+**Type:** Backend / Spec Gap
+**Owner:** Head of Engineering + Metrics Definitions & Analytics Canonical Owner
+**Source:** ST-17 Spec Coverage Inventory — A-01 (2026-03-17)
+**Cycle added:** 2026-03-17__release-v2.0
+**Target release:** v2.1
+
+`analytics_endpoints.md` explicitly notes: "`total_return_pct` is not yet returned by `GET /analytics/metrics`." The canonical formula is documented (`total_pnl / net_cash_flow × 100`) but the field is absent from the API response. This creates a spec-to-implementation gap.
+
+**Scope**
+- Implement `total_return_pct` in `GET /analytics/metrics` response per documented formula
+- Remove the "not yet returned" note from `analytics_endpoints.md` once implemented
+
+**Acceptance Criteria**
+- `GET /analytics/metrics` returns `total_return_pct` matching the canonical formula
+- `analytics_endpoints.md` updated to reflect field as implemented
+
+---
+
+### BLG-SPEC-D10 — `api_dependencies.md` does not reflect v2.0 additions
+**Priority:** P3 (Low)
+**Type:** Spec Document Maintenance
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-17 Spec Coverage Inventory — A-02 (2026-03-17)
+**Cycle added:** 2026-03-17__release-v2.0
+**Target release:** v2.0 post-ship
+
+`docs/specs/frontend/patterns/api_dependencies.md` (v1.1, 2026-02-19) maps surfaces to endpoints. The v2.0 additions (Reports page — `GET /reports/tax-year`; Signals controls — `GET /signals?top_n=&lookback_days=`) are not yet reflected.
+
+**Acceptance Criteria**
+- `api_dependencies.md` updated to include Reports page and updated Signals page endpoint mappings
+- Version bumped; `Last Updated` set
+
+---
+
+### BLG-SPEC-D11 — `data_model.md` §501 trade_reflections section not updated to complete
+**Priority:** P3 (Low)
+**Type:** Spec Document Maintenance
+**Owner:** Data Model & Domain Schema Owner
+**Source:** ST-17 Spec Coverage Inventory — A-03 (2026-03-17)
+**Cycle added:** 2026-03-17__release-v2.0
+**Target release:** v2.1
+
+`data_model.md §501 "Planned Future Schema Changes"` still shows the trade_reflections table as a planned v1.9 change. It was implemented in v1.9 Sprint 1. The section should be updated to mark this as complete (or the entire entry moved/removed).
+
+**Acceptance Criteria**
+- `data_model.md §501` trade_reflections entry updated to reflect implemented status
+- Version bumped
+
+---
+
+### BLG-SPEC-D12 — Bulk lifecycle header remediation — 28 non-compliant spec documents
+**Priority:** P2 (Medium)
+**Type:** Governance / Spec Compliance
+**Owner:** Head of Specs Team
+**Source:** ST-17 Spec Coverage Inventory — A-04 (2026-03-17)
+**Cycle added:** 2026-03-17__release-v2.0
+**Target release:** v2.1
+
+28 of 38 spec documents (74%) are missing `Class` and/or `Lifecycle Guide` header fields per `document_lifecycle_guide.md v2.6`. All non-compliant documents pre-date lifecycle guide adoption. A bulk update pass is required.
+
+Full list in `docs/specs/spec_coverage_inventory.md §9`. Most affected: `api_contracts/*.md` (8 files), `frontend/components/*.md` (5 files), `frontend/patterns/*.md` (2 files), `frontend/pages/*.md` (4 files), `data_model.md`, `metrics_definitions.md`.
+
+**Scope**
+- Add `Class: [Canonical Specification (Class 1) | Supporting (Class 2)]` to each document per its domain
+- Add `**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md` to each document
+- Bump version on each document modified
+- No content changes — header compliance only
+
+**Acceptance Criteria**
+- All 28 listed documents carry compliant lifecycle headers
+- `spec_coverage_inventory.md §9` compliance count updated to 38/38
+
+---
+
+### BLG-SPEC-D13 — `metrics_definitions.md` Owner field lists team name, not governance role
+**Priority:** P2 (Medium)
+**Type:** Governance / Spec Compliance
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** ST-17 Spec Coverage Inventory — A-05 (2026-03-17)
+**Cycle added:** 2026-03-17__release-v2.0
+**Target release:** v2.1
+
+`metrics_definitions.md` lists `Owner: Analytics Team`. Per `document_lifecycle_guide.md §7`, the Owner field must be a named governance role, not a team name. The correct role is `Metrics Definitions & Analytics Canonical Owner`.
+
+**Acceptance Criteria**
+- `metrics_definitions.md` `Owner` updated to `Metrics Definitions & Analytics Canonical Owner`
+- Version bumped
+
+---
+
 ## Closed Items
 
 Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| BLG-NEW-13 | Spec Coverage Inventory | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-17 |
+| BLG-BE-01 | GET /portfolio missing 4 required fields (GAP-03) | v2.0 | 2026-03-17__release-v2.0 | EPIC-04/ST-12 |
+| BLG-OPS-02 | Production Deployment Runbook | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-14 |
+| BLG-DATA-01 | Positions Table Data Dictionary | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-15 |
+| BLG-TECH-07 | Database Migration Governance Standard | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-16 |
 | BLG-OPS-01 | Provision development environment | v1.10 | 2026-03-15__release-v1.10 | EPIC-01/ST-01–ST-03 |
 | BLG-TECH-06 | Fix CohortAnalysis client-side computation | v1.10 | 2026-03-15__release-v1.10 | EPIC-02/ST-04 |
 | BLG-API-01 | Backend API integration tests (FastAPI TestClient) | v1.10 | 2026-03-15__release-v1.10 | EPIC-03/ST-05–ST-06 |
