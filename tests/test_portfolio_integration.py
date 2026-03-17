@@ -104,27 +104,58 @@ class TestGetPortfolioEmpty(unittest.TestCase):
 
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
     @patch(PATCH_GET_POSITIONS, return_value=[])
-    def test_status_ok(self, _pos, _port):
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_status_ok(self, _dd, _dep, _fx, _pos, _port):
         resp = CLIENT.get("/portfolio")
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["status"], "ok")
 
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
     @patch(PATCH_GET_POSITIONS, return_value=[])
-    def test_required_fields_present(self, _pos, _port):
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_required_fields_present(self, _dd, _dep, _fx, _pos, _port):
         data = CLIENT.get("/portfolio").json()["data"]
         for field in ("cash", "cash_balance", "total_value", "open_positions_value",
-                      "total_pnl", "live_fx_rate", "portfolio_heat_percent",
+                      "total_pnl", "initial_value", "net_deposits",
+                      "live_fx_rate", "portfolio_heat_percent",
+                      "current_drawdown_percent", "peak_portfolio_value",
                       "positions", "position_risks"):
             self.assertIn(field, data, f"Missing field: {field}")
 
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
     @patch(PATCH_GET_POSITIONS, return_value=[])
-    def test_empty_positions_list(self, _pos, _port):
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_empty_positions_list(self, _dd, _dep, _fx, _pos, _port):
         data = CLIENT.get("/portfolio").json()["data"]
         self.assertEqual(data["positions"], [])
         self.assertEqual(data["portfolio_heat_percent"], 0.0)
         self.assertEqual(data["open_positions_value"], 0)
+
+    @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
+    @patch(PATCH_GET_POSITIONS, return_value=[])
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_drawdown_fields_present_when_empty(self, _dd, _dep, _fx, _pos, _port):
+        data = CLIENT.get("/portfolio").json()["data"]
+        self.assertEqual(data["current_drawdown_percent"], 0.0)
+        self.assertEqual(data["peak_portfolio_value"], 10000.0)
+
+    @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
+    @patch(PATCH_GET_POSITIONS, return_value=[])
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_net_deposits_and_initial_value_present_when_empty(self, _dd, _dep, _fx, _pos, _port):
+        data = CLIENT.get("/portfolio").json()["data"]
+        self.assertEqual(data["net_deposits"], 10000.0)
+        self.assertEqual(data["initial_value"], 10000.0)
 
     @patch(PATCH_GET_PORTFOLIO, return_value=None)
     def test_portfolio_not_found_returns_error(self, _port):
@@ -270,7 +301,10 @@ class TestPortfolioHeat(unittest.TestCase):
 
     def test_heat_zero_when_no_positions(self):
         with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
-             patch(PATCH_GET_POSITIONS, return_value=[]):
+             patch(PATCH_GET_POSITIONS, return_value=[]), \
+             patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27), \
+             patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY), \
+             patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN):
             data = CLIENT.get("/portfolio").json()["data"]
         self.assertEqual(data["portfolio_heat_percent"], 0.0)
 
@@ -321,7 +355,52 @@ class TestDisplayStatus(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# 6. Skipped: GET /portfolio/prospective-heat
+# 6. Portfolio-level field contract — non-empty path (GAP-03)
+# ---------------------------------------------------------------------------
+
+class TestGetPortfolioFieldContract(unittest.TestCase):
+    """
+    Asserts all required portfolio-level fields are present in the non-empty
+    path response. Covers GAP-03 from docs/testing/v1.7-qa-scenario-gaps.md.
+    Canonical field list: portfolio_endpoints.md §GET /portfolio data schema.
+    """
+
+    def _call(self):
+        pos = _uk_position(entry_price=5.00, fill_price=5.00, shares=100,
+                           initial_stop=4.50, current_stop=4.50, holding_days=15)
+        with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
+             patch(PATCH_GET_POSITIONS, return_value=[pos]), \
+             patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27), \
+             patch(PATCH_GET_CURRENT_PRICE, return_value=5.00), \
+             patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY), \
+             patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN):
+            return CLIENT.get("/portfolio").json()
+
+    def test_all_portfolio_level_fields_present(self):
+        data = self._call()["data"]
+        required = (
+            "cash", "cash_balance", "total_value", "open_positions_value",
+            "total_pnl", "initial_value", "net_deposits", "live_fx_rate",
+            "last_updated", "current_drawdown_percent", "peak_portfolio_value",
+            "portfolio_heat_percent", "position_risks", "positions",
+        )
+        for field in required:
+            self.assertIn(field, data, f"GAP-03: missing portfolio-level field: {field}")
+
+    def test_drawdown_fields_correct_type(self):
+        data = self._call()["data"]
+        self.assertIsInstance(data["current_drawdown_percent"], float)
+        self.assertIsInstance(data["peak_portfolio_value"], float)
+        self.assertLessEqual(data["current_drawdown_percent"], 0.0)
+
+    def test_net_deposits_and_initial_value_correct_type(self):
+        data = self._call()["data"]
+        self.assertIsInstance(data["net_deposits"], (int, float))
+        self.assertIsInstance(data["initial_value"], (int, float))
+
+
+# ---------------------------------------------------------------------------
+# 7. Skipped: GET /portfolio/prospective-heat
 #    DEV-ST05-01 (P3): Endpoint not defined in portfolio_endpoints.md and
 #    not implemented in backend/main.py. Tests cannot pass without a spec
 #    update and backend implementation. Deferred to a future spec cycle.

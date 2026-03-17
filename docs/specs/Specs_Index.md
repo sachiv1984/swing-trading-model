@@ -264,15 +264,11 @@ This section records known lifecycle or governance compliance gaps that have bee
 ### 7.2 `GET /portfolio` — 4 required fields missing from API response vs `portfolio_endpoints.md`
 
 **Identified:** 2026-03-16 (GAP-03 staging execution — v1.10 sprint QA)
-**Status:** Open
-**Backlog item:** BLG-BE-01 (P1) — target v1.11
+**Status:** RESOLVED — 2026-03-17 (ST-12, v2.0 sprint)
+**Backlog item:** BLG-BE-01 — COMPLETE
 **Owner:** Head of Engineering
 
-`GET /portfolio` does not return `initial_value`, `net_deposits`, `current_drawdown_percent`, or `peak_portfolio_value` in the staging API response. These 4 fields are required by `portfolio_endpoints.md` v1.9.0 (added at v1.8.2). Backend implementation is diverged from spec.
-
-**Impact:** P1 — these fields support portfolio-level analytics (drawdown widget, return tracking). `current_drawdown_percent` and `peak_portfolio_value` were confirmed as required in the v1.6.1 changelog. GAP-03 test scenario in `docs/testing/v1.7-qa-scenario-gaps.md` will remain FAIL until resolved.
-
-**Gap blocks:** GAP-03 scenario pass; ST-05 integration test assertions for these fields; drawdown analytics accuracy.
+Root cause: `portfolio_service.py` empty-positions early-return path omitted `initial_value`, `net_deposits`, `current_drawdown_percent`, and `peak_portfolio_value`. Fixed by calling `get_total_deposits_withdrawals()` and `get_drawdown_fields()` in the empty path. Integration tests updated with full field-contract assertions (`TestGetPortfolioEmpty`, `TestGetPortfolioFieldContract`). GAP-03 scenario updated to PASS. Requires staging re-verification after v2.0 deployment.
 
 ---
 
