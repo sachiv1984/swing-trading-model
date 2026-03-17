@@ -512,3 +512,36 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-05-sprint2.md
 - Deviations filed: DEV-EPIC02-ST03-01 (P2, analytics.md v1.4); DEV-EPIC03-ST05-01 (P3, dashboard.md)
 - Test scenarios referenced: docs/testing/risk_dashboard_scenarios.md v1.3 (25 scenarios)
+
+---
+
+## Sprint: 2026-03-17__release-v2.0
+**Date:** 2026-03-17
+**Status:** Sprint_Complete — all EPICs merged; DoQ sign-off complete 2026-03-17; hotfix bb66b69 applied post-merge
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-04 | P1 fix: GET /portfolio — 4 missing fields (initial_value, net_deposits, current_drawdown_percent, peak_portfolio_value); empty-positions early-return path fixed | docs/specs/api_contracts/portfolio_endpoints.md v2.0.0; docs/testing/v1.7-qa-scenario-gaps.md GAP-03 | None |
+| EPIC-04 | GET /portfolio/prospective-heat — stretch: prospective risk preview for entry sizing (ticker, shares, entry_price, stop_price → heat_pct, position_risk_gbp, within_limit) | docs/specs/api_contracts/portfolio_endpoints.md v2.0.0 §GET /portfolio/prospective-heat | None |
+| EPIC-01 | Signals page spec + top_n / lookback_days controls with 500ms debounce re-fetch | docs/specs/frontend/pages/signals.md v0.1; docs/specs/api_contracts/signal_endpoints.md | None |
+| EPIC-02 | GET /reports/tax-year endpoint — UK tax-year (6 Apr–5 Apr) P&L summary: 29 integration tests pass | docs/specs/api_contracts/reports_endpoints.md v0.1; docs/specs/data_model.md §3 | None |
+| EPIC-02 | Tax Year P&L Report frontend view — Reports page tab, year selector, summary cards (Total P&L, Realised Trades, Win Rate, Best/Worst Trade) | docs/specs/frontend/pages/reports.md v0.1 | P1 hotfix bb66b69: base44.baseUrl undefined on production — fixed post-merge |
+| EPIC-05 | Production Deployment Runbook, Positions Table Data Dictionary, Database Migration Governance Standard, Spec Coverage Inventory — operational and governance documentation | docs/ops/production_deployment_runbook.md; docs/specs/data_model_positions_dictionary.md; docs/ops/database_migration_governance.md; docs/specs/spec_coverage_inventory.md | None |
+| EPIC-05 | CohortAnalysis backend integration regression scenarios (stretch) — 3 backend scenarios (SC-CA-BACKEND-01–03) | docs/testing/analytics_scenarios.md v1.0 | P3 cross-branch: committed on EPIC-04 branch |
+| EPIC-06 | Roadmap stage document consolidation — roadmap_prompt.md v4.0 (cycle_record.md pattern all tiers) | claude/system/roadmap_prompt.md v4.0; OPERATIONAL_GUIDE.md v3.24 | None |
+| EPIC-06 | Ideas register migration — idea_intake_prompt.md v2.0, ideas_register.md (44 ideas migrated from per-file model) | claude/system/idea_intake_prompt.md v2.0; claude/ideas/ideas_register.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-06 through ST-10 (EPIC-03 — notification delivery) | No async notification infrastructure; BLG-TECH-08 prerequisite required before v2.1 sprint planning | BLG-TECH-08 (v2.1 prerequisite) |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md, qa_evidence_EPIC-06.md (all DoQ sign-off 2026-03-17)
+- Deviations filed: ST-20 cross-branch commit P3 (content correct); base44.baseUrl P1 production defect (fixed bb66b69 2026-03-17)
+- Post-merge hotfix: bb66b69 — base44.baseUrl undefined on production (src/api/base44Client.js)
+- Test scenarios referenced: docs/testing/analytics_scenarios.md v1.0 (3 scenarios, ST-20); test_reports_integration.py (29 tests, ST-04)

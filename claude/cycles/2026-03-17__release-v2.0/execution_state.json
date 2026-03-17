@@ -1,26 +1,27 @@
 {
   "cycle_id": "2026-03-17__release-v2.0",
   "release": "v2.0",
-  "status": "Executing",
-  "sealed": false,
-  "sealed_utc": null,
+  "status": "Sealed",
+  "sealed": true,
+  "sealed_utc": "2026-03-17T22:30:00Z",
   "backlog_slice_source": "claude/cycles/2026-03-17__release-v2.0/stage4_backlog_slice.md",
   "sprint_goal": "Ship the v2.0 core product scope: fix the P1 portfolio response defect, deliver the UK tax-year P&L report endpoint and frontend view, and expose the signal exposure controls — making all three production-ready in a single sprint.",
   "mode": "standard",
   "initialized_utc": "2026-03-17T04:00:00Z",
-  "last_updated_utc": "2026-03-17T14:00:00Z",
+  "last_updated_utc": "2026-03-17T22:00:00Z",
 
   "merge_gate": {
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-04", "EPIC-05", "EPIC-06"],
-    "epics_merged": [],
-    "all_merged": false
+    "epics_pending": [],
+    "epics_merged": ["EPIC-04", "EPIC-01", "EPIC-02", "EPIC-06", "EPIC-05"],
+    "all_merged": true,
+    "all_merged_utc": "2026-03-17T21:02:21Z"
   },
 
   "epics": {
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-04",
-      "pr_status": "open",
+      "pr_status": "merged",
       "pr_number": 86,
       "qa_signed_off": true,
       "qa_signed_off_utc": "2026-03-17T14:00:00Z",
@@ -78,7 +79,7 @@
     "EPIC-01": {
       "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-01",
-      "pr_status": "open",
+      "pr_status": "merged",
       "pr_number": 87,
       "qa_signed_off": true,
       "qa_signed_off_utc": "2026-03-17T14:00:00Z",
@@ -133,7 +134,7 @@
     "EPIC-05": {
       "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-05",
-      "pr_status": "open",
+      "pr_status": "merged",
       "pr_number": 90,
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-05.md",
@@ -232,7 +233,7 @@
     "EPIC-02": {
       "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-02",
-      "pr_status": "open",
+      "pr_status": "merged",
       "pr_number": 88,
       "qa_signed_off": true,
       "qa_signed_off_utc": "2026-03-17T14:00:00Z",
@@ -281,7 +282,7 @@
     "EPIC-06": {
       "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-06",
-      "pr_status": "open",
+      "pr_status": "merged",
       "pr_number": 89,
       "qa_signed_off": true,
       "qa_signed_off_utc": "2026-03-17T14:00:00Z",
