@@ -8,7 +8,7 @@
   "sprint_goal": "Ship the v2.0 core product scope: fix the P1 portfolio response defect, deliver the UK tax-year P&L report endpoint and frontend view, and expose the signal exposure controls — making all three production-ready in a single sprint.",
   "mode": "standard",
   "initialized_utc": "2026-03-17T04:00:00Z",
-  "last_updated_utc": "2026-03-17T11:00:00Z",
+  "last_updated_utc": "2026-03-17T12:00:00Z",
 
   "merge_gate": {
     "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-04", "EPIC-05", "EPIC-06"],
@@ -20,8 +20,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-04",
-      "pr_status": "not_created",
-      "pr_number": null,
+      "pr_status": "open",
+      "pr_number": 86,
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -77,8 +77,8 @@
     "EPIC-01": {
       "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-01",
-      "pr_status": "not_created",
-      "pr_number": null,
+      "pr_status": "open",
+      "pr_number": 87,
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -230,8 +230,8 @@
     "EPIC-02": {
       "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-02",
-      "pr_status": "not_created",
-      "pr_number": null,
+      "pr_status": "open",
+      "pr_number": 88,
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -278,8 +278,8 @@
     "EPIC-06": {
       "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-06",
-      "pr_status": "not_created",
-      "pr_number": null,
+      "pr_status": "open",
+      "pr_number": 89,
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
