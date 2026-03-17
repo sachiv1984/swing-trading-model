@@ -407,6 +407,32 @@ The current idea intake model produces one file per idea per agent per window (4
 
 ---
 
+### BLG-OPS-03 — Pre-merge preview environments (Render PR previews)
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** DoQ sign-off session — 2026-03-17 (identified during v2.0 staging verification gap)
+**Cycle added:** 2026-03-17__release-v2.0
+**Effort:** S (~0.5 day)
+**Target release:** v2.1
+
+**Problem**
+Staging auto-deploys from `main`, so feature branch changes can only be verified on staging after merging. During v2.0 sign-off, the Director of Quality could not verify frontend behaviour (ST-02 Signals controls, ST-05 Tax Year view) on a deployed environment without merging first. This is a process gap: the merge gate should be verifiable before merge, not after.
+
+**Scope**
+- Enable Render Preview Environments on the existing Render Blueprint (one-click in Render dashboard)
+- Each PR automatically gets a unique preview URL (`https://trading-assistant-api-pr-{N}.onrender.com`)
+- Preview environments share the staging Supabase DB (acceptable at current scale)
+- Document the preview URL pattern in `OPERATIONAL_GUIDE.md §8` and add to DoQ sign-off checklist
+
+**Acceptance Criteria**
+- Opening a PR against `main` automatically provisions a Render preview environment
+- Preview URL is accessible and points to the PR branch's backend code
+- `OPERATIONAL_GUIDE.md §8` documents the preview URL pattern
+- DoQ can verify frontend behaviour on the preview URL before approving merge
+
+---
+
 <!-- release-plan-marker: RP:v2.0:2026-03-17__release-v2.0 -->
 
 ---
