@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.2
-**Last Updated:** 2026-03-14
+**Version:** 2.3
+**Last Updated:** 2026-03-17
 
 # Shared Standards — All Governed Routines
 
@@ -523,12 +523,58 @@ On each re-invocation of the execution engine, check all open escalation timesta
 
 Reference: `execution_prompt.md` STEP 3.1.D (delegated_decision items) and STEP 5.1 (Sprint_Complete state write).
 
+### 16.5 ideas_register.md Schema
+
+**File:** `claude/ideas/ideas_register.md`
+**Produced by:** `idea_intake_prompt.md` STEP 2 (append row) and STEP 4 (update row status)
+**Consumed by:** `roadmap_prompt.md` STEP 4 (idea classification and document management)
+
+**File header (create on first write):**
+
+```markdown
+**Owner:** PMO Lead
+**Class:** Planning Document (Class 4)
+**Status:** Active
+**Version:** 1.0
+**Last Updated:** <date>
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+# Ideas Register
+```
+
+**Register table (append new rows; update existing rows in-place):**
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+
+**Column definitions:**
+
+| Column | Type | Required | Description |
+|--------|------|----------|-------------|
+| Idea ID | string | Yes | Unique identifier: `IDEA-<agent-slug>-<YYYYMMDD>-<nn>` |
+| Title | string | Yes | Short idea title |
+| Submitter | string | Yes | Full role name of submitting agent |
+| Window | string | Yes | Window ID (e.g. `IW-20260304-01`) |
+| Submitted At | date | Yes | ISO date (YYYY-MM-DD) |
+| Status | enum | Yes | One of: `Submitted`, `Advancing`, `Parked-cycle-<n>`, `Rejected`, `Promoted-Added`, `Promoted-Rejected`, `Withdrawn` |
+| Park Count | integer | Conditional | Number of consecutive cycles parked; required when Status = `Parked-cycle-<n>`; `—` otherwise |
+| Park Rationale | string | Conditional | PO one-line rationale; required on every park action; `—` if never parked |
+| Step 4 | string | Conditional | Product Owner classification from most recent roadmap run; `—` if no roadmap run yet |
+| Step 5 | string | Conditional | Debate outcome from most recent roadmap run; `—` if not advanced to debate |
+
+**Compliance rules:**
+- Rows are append-only for new ideas; never deleted
+- Status field is the only column updated after initial row creation (except Park Count, Park Rationale, Step 4, Step 5 — updated on each roadmap run)
+- A park action without a written Park Rationale is treated as Reject-not-strong by the roadmap engine
+- `Status: Parked-cycle-<n>` where n ≥ 3 triggers stale idea surfacing in roadmap STEP 4.5
+
 ---
 
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3 | 2026-03-17 | ST-19 (EPIC-06): §16.5 ideas_register.md schema added — defines register table format, column definitions, and compliance rules for the single-file idea register replacing the per-file submission model. |
 | 2.2 | 2026-03-16 | AUD-2026-03-13-017: §16.3 Delegation Log Schema added — extracted from `execution_prompt.md §11`; §16.4 SLA Breach Tracking (Execution Engine) added — extracted from `execution_prompt.md` STEP 3.1.D. Engine prompts reference §16.3/§16.4 rather than duplicating inline. |
 | 2.1 | 2026-03-14 | AUD-2026-03-13-002 (PATCH 2): §13 dry-run table — `run roadmap` and `run ideas` rows added. AUD-2026-03-13-004 (PATCH 3): `run post-ship --dry-run` note added — STEP 11/12 pass through `--dry-run` flag. |
 | 2.0 | 2026-03-14 | AUD-2026-03-13-009: §16 Governed JSON Schemas added — canonical home for sprint_backlog_index.json schema (§16.1) and stage4_issue_manifest.json placeholder (§16.2). Engine prompts must reference §16 rather than duplicating schemas inline. |

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-03-14
+**Version:** 2.0
+**Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -15,7 +15,7 @@
 
 ## 1. Purpose
 
-Collect structured idea submissions from all agent roles before a Roadmap Rebalance run, save them to `claude/ideas/submissions/`, and close the window cleanly so the roadmap engine's STEP 4 has a governed, consistent set of inputs to work from.
+Collect structured idea submissions from all agent roles before a Roadmap Rebalance run, append/update rows in `claude/ideas/ideas_register.md`, and close the window cleanly so the roadmap engine's STEP 4 has a governed, consistent set of inputs to work from.
 
 This engine does **NOT**:
 - Evaluate, score, or debate ideas — that is STEP 4 and STEP 5 of the roadmap engine
@@ -86,7 +86,7 @@ A resubmitted parked idea counts as 1 net-new idea only if it has been materiall
 
 During this routine you may write only to:
 
-- `claude/ideas/submissions/` (create or update individual idea files)
+- `claude/ideas/ideas_register.md` (append new rows; update status fields on re-submitted parked ideas)
 - `claude/ideas/ideas_window.json` (window state file)
 - `claude/ideas/` folder (create if absent)
 
@@ -94,31 +94,33 @@ You must **not** modify:
 - `claude/roadmap/current_roadmap.md`
 - `claude/backlog/backlog.md`
 - `claude/ideas/rejected_but_strong.md` (managed by roadmap STEP 4/5 only)
+- `claude/ideas/submissions/` or `claude/ideas/submissions/archive/` — these are read-only archives
 - Any cycle artefact, governance document, or canonical spec
 
 Violation → halt.
 
 ---
 
-## 6. Submission File Naming and Location
+## 6. Idea ID Convention and Register Location
 
-Each idea is saved as a separate file:
+All ideas are stored as rows in `claude/ideas/ideas_register.md` (schema: per `shared_standards.md §16.5`).
+
+Each new idea is assigned an Idea ID:
 
 ```
-claude/ideas/submissions/<agent-slug>-<YYYYMMDD>-<nn>.md
+IDEA-<agent-slug>-<YYYYMMDD>-<nn>
 ```
 
 Where:
-- `<agent-slug>` is the role slug (e.g., `product-owner`, `head-of-specs`, `pmo-lead`, `director-of-quality`, `strategy-owner`, `finops`, `infra-ops`, `facilitator`, `challenger`)
+- `<agent-slug>` is the role slug (e.g., `product-owner`, `head-of-specs`, `pmo-lead`)
 - `<YYYYMMDD>` is today's date
 - `<nn>` is a two-digit sequence number per agent per window (e.g., `01`, `02`)
 
 Examples:
-- `claude/ideas/submissions/product-owner-20260303-01.md`
-- `claude/ideas/submissions/challenger-20260303-01.md`
-- `claude/ideas/submissions/challenger-20260303-02.md`
+- `IDEA-product-owner-20260303-01`
+- `IDEA-challenger-20260303-02`
 
-Parked ideas from a prior window that are being carried forward **keep their original filename** — they are not renamed.
+**Parked ideas from a prior window** are already rows in `ideas_register.md` — they are not renamed or re-entered. The intake engine surfaces them for agent review and updates their status if resubmitted.
 
 ---
 
@@ -188,14 +190,14 @@ Create or update `claude/ideas/ideas_window.json`:
   "mode": "strict | standard",
   "eligible_agents": [],
   "submissions_received": [],
-  "submissions_path": "claude/ideas/submissions/",
+  "register_path": "claude/ideas/ideas_register.md",
   "closed_utc": ""
 }
 ```
 
 Populate `eligible_agents` by reading all agent files in `claude/agents/` and extracting the role names.
 
-Create `claude/ideas/submissions/` folder if it does not exist.
+Create `claude/ideas/ideas_register.md` if it does not exist (use the header from `shared_standards.md §16.5`).
 
 Announce the open window to the user:
 ```
@@ -203,21 +205,21 @@ Submission window <window_id> is open.
 Eligible agents: <list>
 Minimum submissions per agent: 2 net-new ideas
 Template: claude/system/idea_template.md
-Submit to: claude/ideas/submissions/
+Register: claude/ideas/ideas_register.md
 
-Parked ideas from prior windows are available for resubmission. Review claude/ideas/submissions/ for any files with Status: Parked-cycle-<n>.
+Parked ideas from prior windows are available for resubmission. Review claude/ideas/ideas_register.md for any rows with Status: Parked-cycle-<n>.
 ```
 
 ---
 
 ## STEP 1 — Load Prior Parked Ideas
 
-Read `claude/ideas/submissions/` for any files with `**Status:** Parked-cycle-<n>` (where `<n>` is any positive integer).
+Read `claude/ideas/ideas_register.md` for any rows with `Status: Parked-cycle-<n>` (where `<n>` is any positive integer).
 
 For each parked idea:
 - Surface it to the submitting agent as a candidate for resubmission
-- Note the original submission date, window ID, and current cycle count
-- The agent may: resubmit with updates (file updated, status reset to `Submitted`), leave it parked (no action — cycle count will increment in STEP 4 of the next roadmap run), or withdraw it (file updated, status set to `Withdrawn`)
+- Note the original submission date, window ID, and current park count
+- The agent may: resubmit with updates (register row updated: Status reset to `Submitted`, Park Rationale updated), leave it parked (no action — cycle count will increment in STEP 4 of the next roadmap run), or withdraw it (register row updated: Status set to `Withdrawn`)
 
 Record the count of parked ideas surfaced in `ideas_window.json`.
 
@@ -232,9 +234,9 @@ For each eligible agent role (in the order they appear in `eligible_agents`), in
 For each agent:
 1. Switch to that agent's perspective (per the delegation model in the roadmap prompt §4)
 2. Generate a minimum of 2 net-new idea submissions for that agent
-3. Each submission must fully complete all required template fields
-4. Save each submission to `claude/ideas/submissions/` using the naming convention in §6
-5. Update `ideas_window.json.submissions_received` with the filename
+3. Each submission must fully complete all required template fields (per §7)
+4. Append a new row to `claude/ideas/ideas_register.md` using the Idea ID convention in §6 and the schema from `shared_standards.md §16.5`. Set Status to `Submitted`.
+5. Update `ideas_window.json.submissions_received` with the Idea ID
 
 ### 2.2 Submission Quality Check
 
@@ -249,7 +251,7 @@ After generating each submission, verify:
 
 If an agent role exists in `claude/agents/` but produces no submissions (e.g. their charter indicates a very narrow domain):
 - In `strict` mode: halt and report which agent failed to submit the minimum.
-- In `standard` mode: record in `ideas_window.json` as `submitted: 0` and note the gap. Continue.
+- In `standard` mode: record in `ideas_window.json` as `submitted: 0` and note the gap. No register rows are added for non-submitting agents. Continue.
 
 ---
 
@@ -274,7 +276,7 @@ Update `claude/ideas/ideas_window.json`:
 
 ## STEP 4 — Produce Window Summary
 
-Write: `claude/ideas/submissions/window_summary_<window_id>.md`
+Write: `claude/ideas/window_summary_<window_id>.md`
 
 ```markdown
 **Owner:** PMO Lead
@@ -325,8 +327,9 @@ Closed: <date/time>
 ## STEP 5 — Commit
 
 ```
-git add claude/ideas/submissions/
+git add claude/ideas/ideas_register.md
 git add claude/ideas/ideas_window.json
+git add claude/ideas/window_summary_<window_id>.md
 git commit -m "[GOVERNANCE] Idea intake window closed: <window_id> — <n> submissions"
 git push origin <current-branch>
 ```
@@ -340,24 +343,25 @@ If git operations unavailable: output exact files and commit message. Mark as "R
 The run is complete when:
 
 - `ideas_window.json` status = `Closed`
-- All agent submissions are saved to `claude/ideas/submissions/` (or gaps are recorded)
-- `window_summary_<window_id>.md` exists
+- All agent submissions are appended as rows in `claude/ideas/ideas_register.md` (or gaps are recorded)
+- `claude/ideas/window_summary_<window_id>.md` exists
 - STEP 5 commit complete (or commit manifest produced)
 
 ---
 
-## 9. Document Lifecycle — Post-Roadmap Run
+## 9. Register Row Lifecycle — Post-Roadmap Run
 
-The roadmap engine's STEP 4 is responsible for managing idea documents after a roadmap run. The intake engine does not handle post-run cleanup. For reference, the expected outcomes are:
+The roadmap engine's STEP 4 is responsible for managing idea register rows after a roadmap run. The intake engine does not handle post-run status updates. For reference, the expected outcomes are:
 
-| Idea outcome in roadmap STEP 4/5 | Document action |
-|----------------------------------|-----------------|
-| ✅ Promoted to roadmap (Add decision in STEP 8) | Status updated to `Promoted` — file remains as historical record |
-| ❌ Rejected | Status updated to `Rejected`; if strong, copied to `claude/ideas/rejected_but_strong.md` |
-| 🅿 Parked | Status updated to `Parked-cycle-1` on first park; incremented to `Parked-cycle-<n+1>` on each subsequent roadmap run where the idea remains parked. Ideas at `Parked-cycle-3` or above require active Product Owner disposition — silent re-park is not permitted |
-| Withdrawn by agent | Status updated to `Withdrawn` — file remains as record |
+| Idea outcome in roadmap STEP 4/5 | Register row action |
+|----------------------------------|---------------------|
+| ✅ Promoted to roadmap (Add decision in STEP 8) | Status updated to `Promoted-Added` — row remains as permanent record |
+| ❌ Rejected — strong | Status updated to `Rejected`; core content copied to `claude/ideas/rejected_but_strong.md` |
+| ❌ Rejected — not strong | Status updated to `Rejected` |
+| 🅿 Parked | Status updated to `Parked-cycle-1` on first park; Park Count incremented; Park Rationale updated. Ideas at `Parked-cycle-3` or above require active Product Owner disposition — silent re-park is not permitted |
+| Withdrawn by agent | Status updated to `Withdrawn` — row remains as record |
 
-The submissions folder is never bulk-cleared. Document state is managed item by item.
+Register rows are never deleted. Status is managed in-place.
 
 ---
 
@@ -366,8 +370,8 @@ The submissions folder is never bulk-cleared. Document state is managed item by 
 - **Window-controlled only.** No submissions are accepted outside an open window managed by this engine.
 - **Template compliance is mandatory.** An incomplete submission is either discarded (strict) or flagged (standard) — it is never silently accepted.
 - **No decisions made here.** The intake engine collects and structures. The roadmap engine decides.
-- **Parked ideas persist.** A parked idea is never deleted by the intake engine. It stays until the roadmap engine or the submitting agent withdraws it.
-- **Parked cycle count is authoritative.** The `Parked-cycle-<n>` suffix in the Status field is the single source of truth for how many consecutive roadmap runs an idea has remained parked. The roadmap engine's stale idea expiry logic keys on this value.
+- **Parked ideas persist.** A parked idea row is never deleted by the intake engine. It stays until the roadmap engine or the submitting agent withdraws it.
+- **Parked cycle count is authoritative.** The `Parked-cycle-<n>` Status and the Park Count column in `ideas_register.md` are the single sources of truth for how many consecutive roadmap runs an idea has remained parked. The roadmap engine's stale idea expiry logic keys on these values.
 - **Displacement is not required at submission time.** The "What Would You Stop?" field invites thinking — it is not a gate. Displacement is determined in STEP 5 of the roadmap engine where all candidates and constraints are visible simultaneously.
 - **All agent roles submit.** Domain breadth matters — a narrow domain does not exempt an agent from the minimum. If no net-new ideas exist, the agent records that explicitly rather than submitting nothing.
 
@@ -377,6 +381,7 @@ The submissions folder is never bulk-cleared. Document state is managed item by 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.0 | 2026-03-17 | ST-19 (EPIC-06): Replaced per-file submission model with single `ideas_register.md` register. §1 purpose, §5 write scope, §6 naming (→ Idea ID + register location), §9 lifecycle table, and §10 invariants updated. STEP 0 creates register if absent; STEP 1 reads parked rows from register; STEP 2.1 appends register rows; STEP 4 window summary path updated; STEP 5 commit updated. Schema: `shared_standards.md §16.5`. |
 | 1.3 | 2026-03-14 | AUD-2026-03-13-018: STEP 3 ideas_window.json schema — added `per_agent_submission_count` map field. Enables roadmap STEP 4 to read per-agent counts directly without re-scanning submission files. |
 | 1.2 | 2026-03-06 | Updated all `Status: Parked` references to `Parked-cycle-<n>` to align with roadmap_prompt.md v2.0 stale idea expiry logic. STEP 1 read instruction, STEP 0 window announcement, §9 lifecycle table, and §10 governance invariants updated. Added `Parked Cycle` column to window summary Parked Ideas table. Added explicit governance invariant documenting the cycle count as authoritative for stale idea expiry. |
 | 1.1 | 2026-03-03 | Removed "Proposed Displacement" as a required submission field. Replaced with "What Would You Stop?" as a non-binding thinking prompt — "No view — leave to debate" is a valid answer. Displacement is now determined in STEP 5 of the roadmap engine. Updated required fields table, submission quality check, and governance invariants accordingly. Updated idea_template.md to match. |

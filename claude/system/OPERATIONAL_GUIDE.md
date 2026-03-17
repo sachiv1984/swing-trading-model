@@ -328,12 +328,12 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 
 ## 5. Idea Intake (Integrated — Phase 1 STEP -1.6)
 
-**Source prompt:** `claude/system/idea_intake_prompt.md` (v1.3)
+**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.0)
 **Template:** `claude/system/idea_template.md`
 **Owner:** PMO Lead
-**Trigger:** Automatic — runs as STEP -1.6 of `run roadmap` when fewer than 20 open ideas (status `Submitted` or `Parked-cycle-<n>`) exist in `claude/ideas/submissions/`. Also invocable standalone via `run ideas` for explicit window control.
+**Trigger:** Automatic — runs as STEP -1.6 of `run roadmap` when fewer than 20 open ideas (status `Submitted` or `Parked-cycle-<n>`) exist in `claude/ideas/ideas_register.md`. Also invocable standalone via `run ideas` for explicit window control.
 
-Idea intake opens a submission window, solicits structured idea submissions from all agent roles, saves them to `claude/ideas/submissions/`, and closes the window. It does not evaluate, score, or debate ideas — that is STEP 4 and STEP 5 of the roadmap engine.
+Idea intake opens a submission window, solicits structured idea submissions from all agent roles, appends/updates rows in `claude/ideas/ideas_register.md`, and closes the window. It does not evaluate, score, or debate ideas — that is STEP 4 and STEP 5 of the roadmap engine.
 
 ### 5.1 Invocation
 
@@ -354,7 +354,7 @@ All agent roles defined in `claude/agents/` — including Facilitator and Challe
 
 ### 5.3 Idea Lifecycle
 
-Each idea is one file per agent per submission in `claude/ideas/submissions/`, named `<agent-slug>-<YYYYMMDD>-<nn>.md`.
+Each idea is one row in `claude/ideas/ideas_register.md`, identified by Idea ID: `IDEA-<agent-slug>-<YYYYMMDD>-<nn>`. Schema: per `shared_standards.md §16.5`.
 
 | Status | Set by | Meaning |
 |--------|--------|---------|
@@ -367,7 +367,7 @@ Each idea is one file per agent per submission in `claude/ideas/submissions/`, n
 | `Rejected-Strong` | Roadmap STEP 4 | Rejected but strong; core content appended to `rejected_but_strong.md` |
 | `Withdrawn` | Agent or idea intake engine | Withdrawn by submitter |
 
-Parked ideas carry forward with an incrementing cycle count. At 3 or more consecutive cycles parked, the idea is considered stale and requires an active Product Owner disposition. All terminal-status files are retained as permanent records.
+Parked ideas carry forward with an incrementing cycle count. At 3 or more consecutive cycles parked, the idea is considered stale and requires an active Product Owner disposition. All terminal-status rows are retained as permanent records in the register.
 
 ### 5.4 Displacement
 
@@ -378,14 +378,15 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 | Artefact | Location | Owner | Required? |
 |----------|----------|-------|-----------|
 | Window state | `claude/ideas/ideas_window.json` | PMO Lead | Yes — opened and closed by engine |
-| Idea submissions | `claude/ideas/submissions/<agent-slug>-<YYYYMMDD>-<nn>.md` | Submitting agent | Yes — one file per idea |
-| Window summary | `claude/ideas/submissions/window_summary_<IW-id>.md` | PMO Lead | Yes |
+| Ideas register | `claude/ideas/ideas_register.md` | PMO Lead | Yes — single register; rows appended per submission |
+| Window summary | `claude/ideas/window_summary_<IW-id>.md` | PMO Lead | Yes |
 | Rejected-but-strong register | `claude/ideas/rejected_but_strong.md` | PMO Lead | Created if needed by roadmap STEP 4 |
+| Archived submissions | `claude/ideas/submissions/archive/*.md` | PMO Lead | Read-only — prior per-file submissions migrated 2026-03-17 |
 
 ### 5.6 Exit Criteria
 
 - `ideas_window.json` status = `Closed`
-- All agent submissions saved (or gaps recorded)
+- All agent submission rows appended to `ideas_register.md` (or gaps recorded)
 - `window_summary_<window_id>.md` exists
 - Commit complete
 
@@ -393,7 +394,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v3.0)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v4.0)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -435,13 +436,13 @@ Any other input is treated as conversational — the Engine will not run.
 | STEP -1 | Preflight (incl. prior cycle outstanding actions check) | **HARD** | Pass / Halt |
 | STEP 0 | Load & Validate Inputs | **HARD** | Validated inputs; `cycle_id` defined |
 | STEP 1 | Run Manifest & Capacity Release | — | `run_manifest.md` (capacity skipped for scheduled runs) |
-| STEP 2 | Roadmap Re-Validation (incl. Strategy Proximity Scores + CPS) | — | `stage1_validation.md` |
-| STEP 3 | Backlog Health Review | — | `stage2_backlog_health.md` |
-| STEP 4 | Idea Review & Document Management (incl. stale idea expiry) | — | `stage3_ideas.md` |
-| STEP 5 | Structured Debate (Zero-Sum) | — | `stage4_debate.md` |
+| STEP 2 | Roadmap Re-Validation (incl. Strategy Proximity Scores + CPS) | — | `cycle_record.md` §STEP 2 section |
+| STEP 3 | Backlog Health Review | — | `cycle_record.md` §STEP 3 section |
+| STEP 4 | Idea Review & Document Management (incl. stale idea expiry) | — | `cycle_record.md` §STEP 4 section |
+| STEP 5 | Structured Debate (Zero-Sum) | — | `cycle_record.md` §STEP 5 section |
 | STEP 6 | Scoring Matrix Overlay (incl. effort banding S/M/L) | — | `scored_initiatives.md` |
 | STEP 7 | Workforce Economics Gate (incl. Skill-Silo Alert) | **HARD** | `workforce_capacity.md` |
-| STEP 8 | Final Rebalance Decision | — | `stage5_rebalance.md` |
+| STEP 8 | Final Rebalance Decision | — | `cycle_record.md` §STEP 8 section |
 | STEP 8.5 | Stateless Write Safety Gate | **HARD** | Verified write plan |
 | STEP 8.6/8.7 | Fatigue Detection + Pivot Loop | **HARD** | Guardrail check |
 | STEP 9 | Canonical Write | — | Updated roadmap, backlog, decision log, initiative register |
@@ -1223,8 +1224,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Workforce Capacity | `claude/roadmap/workforce_capacity.md` | 4 | FinOps & Resource Architect | 1 |
 | Decision Log | `claude/roadmap/decision_log.md` | 4 | PMO Lead | 1 |
 | Ideas Window State | `claude/ideas/ideas_window.json` | — | PMO Lead | 0 |
-| Idea Submission | `claude/ideas/submissions/<agent-slug>-<date>-<nn>.md` | 4 | Submitting agent | 0 |
-| Window Summary | `claude/ideas/submissions/window_summary_<IW-id>.md` | 4 | PMO Lead | 0 |
+| Ideas Register | `claude/ideas/ideas_register.md` | 4 | PMO Lead | 0 |
+| Window Summary | `claude/ideas/window_summary_<IW-id>.md` | 4 | PMO Lead | 0 |
 | Rejected-but-Strong Register | `claude/ideas/rejected_but_strong.md` | 4 | PMO Lead | 0, 1 |
 | Roadmap Archive | `claude/roadmap/roadmap_archive.md` | 4 | Product Owner | 1M |
 | Roadmap Management Log | `claude/roadmap/manage_roadmap_log_<date>.md` | 4 | PMO Lead | 1M |
@@ -1282,15 +1283,15 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.19 |
-| Last Updated | 2026-03-16 |
+| Version | 3.25 |
+| Last Updated | 2026-03-17 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v1.3 |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.0 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.2 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.3 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v3.0 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.1 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.20 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.1 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
@@ -1298,7 +1299,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.5 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.0 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v2.2 |
+| Shared Standards | `claude/system/shared_standards.md` v2.3 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.7 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1317,6 +1318,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.25 | 2026-03-17 | **ST-19 (EPIC-06): Ideas register model.** §5 source prompt v1.3→v2.0; §5 trigger condition updated (count from `ideas_register.md`); §5.3 lifecycle updated (per-file → register rows); §5.5 artefacts table updated (Idea Submissions → Ideas Register; window summary path updated; archive entry added); §5.6 exit criteria updated. Artefact register: Idea Submissions → Ideas Register (`ideas_register.md`). §14: idea_intake_prompt v2.0; roadmap_prompt v4.1; shared_standards v2.3. |
+| 3.24 | 2026-03-17 | **ST-18 (EPIC-06): roadmap_prompt.md v3.0→v4.0 — `cycle_record.md` single-file pattern extended to all tiers.** §6 source prompt v3.0→v4.0. §6.3 Engine Steps table: STEP 2/3/4/5/8 output column updated from stage file names to `cycle_record.md` section references. §14 Roadmap Engine Source → v4.0. |
 | 3.23 | 2026-03-16 | **Roadmap process governance improvements (v3.0).** §6 + §14 roadmap_prompt.md v2.8→v3.0. Five changes: STEP 0.C auto-tier determination (Lightweight/Standard/Extended, system-derived from objective criteria); STEP 2.3 horizon review always-on every run; STEP 4.1/4.2 first-park rationale required; STEP 5.1 Challenger clearance model; STEP 8.6 guardrail logic corrected. |
 | 3.20 | 2026-03-16 | **v1.10 post-ship lessons learnt applied (LL-v1.10-P3-1, P3-3, P4-1, P4-2, P4-3).** §8.2 staging test data prerequisite bullet added (LL-P4-3). §8 + §14 source prompt versions updated: execution_prompt v2.1→v2.2, delivery_verification_prompt v1.4→v1.5. See prompt_change_log.md for full detail per prompt. |
 | 3.22 | 2026-03-16 | **AUD-2026-03-13-005, 006, 017 applied.** §6 roadmap_prompt.md v2.7→v2.8 (AUD-005 Net-Zero halt block → prose ref; AUD-006 §9 invariants → reference). §6B release_planning_prompt.md v2.19→v2.20 (AUD-005 Amendment halt block → prose ref). §8 execution_prompt.md v2.2→v2.3 (AUD-017 §11 schema → §16.3 ref; SLA tracking → §16.4 ref; §13 invariants cross-ref). §14 shared_standards.md v2.1→v2.2 (AUD-017 §16.3+§16.4 added). New file: `claude/system/invariants.md` v1.0 (AUD-006 canonical invariants). §14 governance table: 5 version entries updated; Governance Invariants row added. |
