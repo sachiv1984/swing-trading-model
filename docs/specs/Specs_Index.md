@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-16
+**Last Updated:** 2026-03-17
 
 ---
 
@@ -101,6 +101,7 @@ It points to the **single canonical source**.
 - `conventions.md` — includes §13 Error Response Standard (canonical error envelope, HTTP status mapping)
 - `*_endpoints.md`
 - `market_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-16): GET /market/status
+- `reports_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-17, ST-03): GET /reports/tax-year — UK tax-year P&L statement. Dual sign-off: Head of Specs Team + Financial Reporting & Records Owner (2026-03-17).
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**

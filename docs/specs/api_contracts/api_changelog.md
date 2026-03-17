@@ -1,9 +1,27 @@
 **Owner:** API Contracts & Documentation Owner
 **Status:** Canonical
-**Version:** 1.0.0
-**Last Updated:** 2026-03-05
+**Version:** 1.1.0
+**Last Updated:** 2026-03-17
 
 # API Changelog
+
+## v2.0.0 (2026-03-17 — Release v2.0)
+
+### reports_endpoints.md — v0.1 (new file)
+
+**EPIC:** EPIC-02 (4.1b Tax-Year P&L)
+**ST:** ST-03
+
+| Change | Details |
+|--------|---------|
+| New endpoint: `GET /reports/tax-year` | Tax-year P&L statement for UK tax years. Attribution by `exit_date`. `year` query parameter = start year of UK tax year (e.g. `year=2025` = 6 Apr 2025 to 5 Apr 2026). |
+| Response shape | Top-level: `tax_year_start`, `tax_year_end`, `tax_year_label`, `generated_at`. Summary: `total_realised_pnl`, `total_gross_profit`, `total_gross_loss`, `win_count`, `loss_count`, `win_rate`, `estimated_unrealised_pnl`, `unrealised_note`. Trades array: full per-trade breakdown including FX rates, GBP costs/proceeds, tags. |
+| Validation | Future year returns 400. Absent or non-integer `year` returns 400. Empty tax year returns 200 with zero summary and empty trades array. |
+| Scope | UK-based accounts only (6 April to 5 April boundary). Not a substitute for qualified tax advice. |
+
+**Sign-off:** Head of Specs Team + Financial Reporting & Records Owner — 2026-03-17
+
+---
 
 ## Purpose
 

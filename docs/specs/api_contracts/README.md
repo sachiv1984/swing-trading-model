@@ -5,8 +5,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.9.0
-**Last Updated:** 2026-03-08
+**Version:** 2.0.0
+**Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This directory contains the **backend API contracts** for the *Momentum Trading Assistant* web application.
@@ -113,6 +113,9 @@ The API contracts are split by concern to support incremental review and clear o
 - **`market_endpoints.md`**
   Market regime status (`GET /market/status`): SPY and FTSE regime classification vs 200-day MA, plus live GBP/USD FX rate.
 
+- **`reports_endpoints.md`**
+  Tax-year P&L statement (`GET /reports/tax-year`): structured financial record of all realised gains and losses within a specified UK tax year (6 April to 5 April). Includes per-trade breakdown, summary totals, and indicative unrealised P&L. For UK-based accounts only. Not a substitute for qualified tax advice.
+
 Each endpoint file follows a consistent structure:
 - HTTP method and path
 - Purpose and behavior
@@ -125,13 +128,17 @@ Each endpoint file follows a consistent structure:
 
 ## Versioning
 
-- **Current contract version:** 1.9.0
-- **Change type:** v1.9 Sprint 1 — ST-16 (market_endpoints.md created), ST-18 (Error Response Standard, conventions.md §13).
-- **Previous version:** 1.8.4
+- **Current contract version:** 2.0.0
+- **Change type:** v2.0 Sprint — ST-03 (reports_endpoints.md created — GET /reports/tax-year).
+- **Previous version:** 1.9.0
 
 **Error Response Standard:** Canonical error response rules are defined in `conventions.md §13`. All endpoint error sections reference this standard via their "Errors use the standard error envelope from conventions.md" clause.
 
 ### Changelog (Summary)
+
+- **2.0.0 (2026-03-17)**
+- reports_endpoints.md: created — `GET /reports/tax-year` endpoint. Tax-year P&L statement for UK tax years (6 April to 5 April). Attribution by `exit_date`. Response includes `tax_year_start`, `tax_year_end`, `tax_year_label`, `generated_at`, summary totals (realised P&L, gross profit/loss, win/loss counts, win rate, estimated unrealised P&L), and full per-trade breakdown. Future year returns 400. UK-only scope. ST-03 — v2.0 release planning cycle 2026-03-17__release-v2.0.
+
 
 - **1.8.4 (2026-02-25)**
 - trade_endpoints.md: added GET /trades/export/csv endpoint. Returns full closed trade history as text/csv attachment. 14 columns confirmed in decisions record D5. No request parameters in v1.6.1. openapi.yaml updated in same PR. QWB BLG-FEAT-07, decision D5.
