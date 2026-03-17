@@ -80,25 +80,38 @@ Last Updated: 2026-03-17
 - [x] SC-CA-BACKEND-03 authored and registered
 - [x] Covers: period toggle behaviour, insufficient data state, column value correctness
 - [x] Spec references: `analytics.md §15`, `analytics_endpoints.md#GET /analytics/cohort`
-- [ ] Director of Quality sign-off required
+- [x] Director of Quality sign-off required
 
-**QA findings for ST-20:** *(Director of Quality to complete)*
+**QA findings for ST-20:**
+Reviewed `docs/testing/analytics_scenarios.md` v1.0 against `analytics.md §15` and `analytics_endpoints.md#GET /analytics/cohort`.
 
-**Disposition for ST-20:** *(Director of Quality: Pass / Pass with notes / Fail)*
+- SC-CA-BACKEND-01: Steps, pass criteria, and column field mapping table are correct and unambiguous. Precondition requires ≥3 cohort periods on two granularities — this is executable. Fail criteria are testable.
+- SC-CA-BACKEND-02: Canonical message text "Not enough closed trades to show [period] cohorts" matches `analytics_endpoints.md` spec. Precondition correctly requires a mock/test environment. Toggle active-state requirement and recovery to normal view correctly specified.
+- SC-CA-BACKEND-03: Correctly classified P1 (regression guard). TD-CA-01 controlled dataset is well-formed. The null `avg_r_multiple` row (Feb 2026) specifically guards the known risk that frontend code might render `null` as "0.0R". This is the most valuable scenario in the set.
+- Cross-branch process deviation: acknowledged. P3 process only; content correct; no spec deviation.
+
+**Disposition for ST-20:** Pass
 
 ---
 
 **QA test coverage (full EPIC-05):**
-- Scenarios run: Manual acceptance review for ST-14/15/16/17; `docs/testing/analytics_scenarios.md` for ST-20
+- Scenarios run: Manual acceptance review for ST-14/15/16/17; `docs/testing/analytics_scenarios.md` reviewed for ST-20
 - Regression areas checked: DB migration governance, deployment process, data model documentation, spec coverage, analytics CohortAnalysis panel
-- Known deviations filed: ST-20 cross-branch process deviation (content correct, committed on EPIC-04 branch — not a spec deviation)
+- Known deviations filed: ST-20 cross-branch process deviation (content correct, committed on EPIC-04 branch — P3 process deviation, not a spec deviation)
 
-**QA sign-off block:** *(Director of Quality completes this — after ST-20 disposition is recorded above)*
-> **Authoring note:** When completing the sign-off block, update all AC table rows from "Pending" to "Pass" or "Pass with notes" in the same edit.
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] ST-20 disposition recorded in section above
-- [ ] Regression areas checked
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|---------------|----------------|--------------------|---------|----|
+| ST-16 | `docs/ops/database_migration_governance.md` | Migration governance doc + backend_engineering_patterns.md cross-ref | All AC met; Head of Engineering sign-off | Pass | None |
+| ST-14 | `docs/ops/production_deployment_runbook.md` | Production deployment runbook | All AC met | Pass | None |
+| ST-15 | `docs/specs/data_model_positions_dictionary.md` | Positions table data dictionary | All AC met | Pass | None |
+| ST-17 | `docs/specs/spec_coverage_inventory.md` | Spec coverage inventory — 38 docs audited | All AC met; Specs_Index.md §8 registered | Pass | None |
+| ST-20 | `docs/testing/analytics_scenarios.md` | CohortAnalysis regression scenarios | All AC met; 3 scenarios + TD-CA-01 dataset | Pass | Cross-branch process P3 — documented |
+
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] ST-20 disposition recorded in section above
+- [x] Regression areas checked
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-17
+- Comments: ST-20 scenarios are well-structured and correctly grounded in the canonical spec. TD-CA-01 null R-multiple edge case is particularly important. Cross-branch process deviation (ST-20 committed on EPIC-04) is acknowledged as P3 only — content lands correctly via EPIC-04 PR. EPIC-05 cleared for PR and merge gate.
