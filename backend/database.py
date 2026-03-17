@@ -172,6 +172,24 @@ def get_trade_history(portfolio_id: str) -> List[Dict]:
             return cur.fetchall()
 
 
+def get_trade_history_by_tax_year(portfolio_id: str, year_start, year_end) -> List[Dict]:
+    """Get trade history filtered to trades whose exit_date falls within [year_start, year_end] inclusive.
+
+    Used by GET /reports/tax-year.
+    Spec: docs/specs/api_contracts/reports_endpoints.md §Tax year attribution.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT * FROM trade_history
+                   WHERE portfolio_id = %s
+                   AND exit_date BETWEEN %s AND %s
+                   ORDER BY exit_date ASC""",
+                (portfolio_id, year_start, year_end)
+            )
+            return cur.fetchall()
+
+
 def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
     """Add a trade to history"""
     with get_db() as conn:

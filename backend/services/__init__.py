@@ -82,6 +82,7 @@ from .analytics_service import AnalyticsService
 from .validation_service import ValidationService
 
 from services.drawdown_service import get_drawdown_fields
+from services.reports_service import get_tax_year_report
 from services.grace_service import compute_grace_days_remaining
 from services.trade_csv_service import build_trade_history_csv
 
