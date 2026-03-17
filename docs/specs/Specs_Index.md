@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-17 (ST-01 — v2.0 sprint)
+**Last Updated:** 2026-03-17
 
 ---
 
@@ -134,8 +134,6 @@ It points to the **single canonical source**.
 - `frontend/README.md`
 - `frontend/design_system.md`
 - Page, component, and pattern specifications
-- `signals.md` — Class 2 Supporting, v0.1, Active (created 2026-03-17, ST-01): signals page with top_n / lookback_days user-facing controls. Head of Specs Team sign-off: 2026-03-17.
-- `reports.md` — Class 2 Supporting, v0.1, Active (created 2026-03-17, design gate / ST-05): tax-year P&L report view.
 
 **Owner**
 - Frontend Specifications & UX Documentation Owner
@@ -235,12 +233,16 @@ This section tracks canonical spec gaps that have been identified but not yet fi
 
 ### 6.3 GET /portfolio/prospective-heat endpoint — spec and implementation gap
 
-**Status:** RESOLVED — 2026-03-17 (ST-13, v2.0)
-**Deviation:** DEV-ST05-01 — closed
-**Backlog item:** BLG-BE-02 — COMPLETE
+**Status:** Open — 2026-03-16
+**Deviation:** DEV-ST05-01 (P3) — v1.10 sprint execution
+**Backlog item:** BLG-BE-02 (P3) — target v2.0
 **Owner:** Head of Engineering + Head of Specs Team
 
-**Resolved by:** `portfolio_endpoints.md` v2.0.0 — `GET /portfolio/prospective-heat` spec authored (query params, response shape, calculation rules, business rule failures). Backend implemented in `backend/routers/prospective_heat.py`. `@unittest.skip` removed from `TestProspectiveHeat`; 7 tests pass.
+`GET /portfolio/prospective-heat` endpoint is not defined in `docs/specs/api_contracts/portfolio_endpoints.md` and has no backend implementation. Referenced by the ProspectiveHeatPanel frontend component. Integration tests written in `tests/test_portfolio_integration.py` are currently skipped (`@unittest.skip`) pending spec authoring.
+
+This item blocks removing the `@unittest.skip` from `TestProspectiveHeat` and blocks frontend contract alignment for ProspectiveHeatPanel. Resolution requires: spec authoring in `portfolio_endpoints.md` → backend implementation → test enablement.
+
+**Gap blocks:** `tests/test_portfolio_integration.py::TestProspectiveHeat` (currently skipped). Does not block current production functionality.
 
 ---
 
@@ -262,15 +264,22 @@ This section records known lifecycle or governance compliance gaps that have bee
 ### 7.2 `GET /portfolio` — 4 required fields missing from API response vs `portfolio_endpoints.md`
 
 **Identified:** 2026-03-16 (GAP-03 staging execution — v1.10 sprint QA)
-**Status:** RESOLVED — 2026-03-17 (ST-12, v2.0 sprint)
-**Backlog item:** BLG-BE-01 — COMPLETE
+**Status:** RESOLVED — 2026-03-17 (v2.0 Sprint, ST-12)
+**Backlog item:** BLG-BE-01 (P1) — COMPLETE
 **Owner:** Head of Engineering
-
-Root cause: `portfolio_service.py` empty-positions early-return path omitted `initial_value`, `net_deposits`, `current_drawdown_percent`, and `peak_portfolio_value`. Fixed by calling `get_total_deposits_withdrawals()` and `get_drawdown_fields()` in the empty path. Integration tests updated with full field-contract assertions (`TestGetPortfolioEmpty`, `TestGetPortfolioFieldContract`). GAP-03 scenario updated to PASS. Requires staging re-verification after v2.0 deployment.
+**Resolution:** ST-12 (v2.0) added `initial_value`, `net_deposits`, `current_drawdown_percent`, `peak_portfolio_value` to `GET /portfolio` response. GAP-03 scenario passes. Commit 04ed5e8.
 
 ---
 
-## 8. Guiding Principle
+## 8. Coverage Inventory
+
+The Coverage Inventory is the authoritative cross-domain record of spec-to-implementation coverage, lifecycle compliance status, and open documentation gaps. It is refreshed every 3 cycles (at `run audit`) and at the start of each major release.
+
+- `docs/specs/spec_coverage_inventory.md` — Class 3 Operational Record, v1.0, Filed 2026-03-17 (ST-17, EPIC-05). 38 documents audited; 7 actions identified.
+
+---
+
+## 9. Guiding Principle
 
 > Specs explain decisions.
 > This index ensures those decisions form a coherent system.
