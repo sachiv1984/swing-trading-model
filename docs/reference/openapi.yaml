@@ -159,6 +159,126 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /portfolio/prospective-heat:
+    get:
+      tags: [Portfolio]
+      summary: Calculate prospective portfolio heat
+      description: >
+        Returns current and prospective portfolio heat percentages given a potential new position.
+        Canonical contract: docs/specs/api_contracts/portfolio_endpoints.md v2.0.0.
+      parameters:
+        - in: query
+          name: ticker
+          required: true
+          schema:
+            type: string
+          description: Ticker symbol (e.g. AAPL, BARC.L)
+        - in: query
+          name: shares
+          required: true
+          schema:
+            type: number
+          description: Number of shares for the prospective position
+        - in: query
+          name: entry_price
+          required: true
+          schema:
+            type: number
+          description: Proposed entry price
+        - in: query
+          name: stop_price
+          required: true
+          schema:
+            type: number
+          description: Proposed initial stop price
+        - in: query
+          name: fx_rate
+          required: false
+          schema:
+            type: number
+          description: Override FX rate (USD→GBP); omit to use live rate
+      responses:
+        "200":
+          description: Prospective heat calculation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  current_heat_percent:
+                    type: number
+                  prospective_heat_percent:
+                    type: number
+                  incremental_heat_percent:
+                    type: number
+                  prospective_risk_gbp:
+                    type: number
+                  portfolio_value_gbp:
+                    type: number
+                  ticker:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /reports/tax-year:
+    get:
+      tags: [Reports]
+      summary: Get UK tax-year P&L report
+      description: >
+        Returns realised P&L for a UK tax year (6 Apr YYYY to 5 Apr YYYY+1),
+        including closed trades, summary totals, and estimated unrealised P&L on open positions.
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.1.
+      parameters:
+        - in: query
+          name: year
+          required: true
+          schema:
+            type: integer
+            minimum: 2000
+            maximum: 2099
+          description: Tax year start year (e.g. 2025 for 2025/26 tax year)
+      responses:
+        "200":
+          description: Tax-year P&L report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      tax_year_label:
+                        type: string
+                        example: "2025/26"
+                      tax_year_start:
+                        type: string
+                        format: date
+                      tax_year_end:
+                        type: string
+                        format: date
+                      summary:
+                        type: object
+                      trades:
+                        type: array
+                        items:
+                          type: object
+                      estimated_unrealised_pnl:
+                        type: number
+                      unrealised_note:
+                        type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /positions:
     get:
       tags: [Positions]

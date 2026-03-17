@@ -44,7 +44,7 @@ The following items were completed before sprint seal and do not require executi
 
 ---
 
-#### ST-13 — Spec + implement GET /portfolio/prospective-heat (BLG-BE-02 stretch)
+#### ST-13 — Spec + implement GET /portfolio/prospective-heat (BLG-BE-02 stretch) ✅ DONE
 
 **Owner:** Head of Engineering + Head of Specs Team
 **Estimated effort:** ~6 hrs mid
@@ -53,6 +53,7 @@ The following items were completed before sprint seal and do not require executi
 **Acceptance Criteria:** see `stage4_backlog_slice.md#ST-13`
 **Dependencies:** None
 **Notes:** ProspectiveHeatPanel frontend component already exists; this story adds the backend endpoint and removes `@unittest.skip`.
+**Completion:** 2026-03-17 — `portfolio_endpoints.md` v2.0.0 spec authored; `routers/prospective_heat.py` implemented; `@unittest.skip` removed; 7 tests pass + 3 field-contract tests pass (10 total). DEV-ST05-01 closed. BLG-BE-02 COMPLETE. Director of Quality sign-off required before staging verification.
 
 ---
 
@@ -136,7 +137,7 @@ The following items were completed before sprint seal and do not require executi
 
 ---
 
-#### ST-20 — CohortAnalysis backend integration regression scenario (stretch)
+#### ST-20 — CohortAnalysis backend integration regression scenario (stretch) ✅ DONE
 
 **Owner:** QA & Testing Owner
 **Estimated effort:** ~1.5 hrs mid
@@ -144,6 +145,7 @@ The following items were completed before sprint seal and do not require executi
 **Priority:** P3 — stretch
 **Acceptance Criteria:** see `stage4_backlog_slice.md#ST-20`
 **Dependencies:** None
+**Completion:** 2026-03-17 — `docs/testing/analytics_scenarios.md` created (Class 1 Canonical). SC-CA-BACKEND-01 (period toggle refetch), SC-CA-BACKEND-02 (insufficient history state), SC-CA-BACKEND-03 (column value regression) authored and registered. TD-CA-01 test data defined. Spec refs: `analytics.md §15`, `analytics_endpoints.md#GET /analytics/cohort`.
 
 ---
 

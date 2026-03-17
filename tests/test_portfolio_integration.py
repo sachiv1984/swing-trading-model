@@ -8,10 +8,8 @@ CI-safe: all database and pricing calls are mocked via unittest.mock.patch.
 No live DB or network connections are made.
 Tests are independent — no ordering dependencies.
 
-Deviation filed: GET /portfolio/prospective-heat is not defined in
-portfolio_endpoints.md and does not exist in the backend. Tests for
-that endpoint are skipped (DEV-ST05-01). See delegation_log.md
-DEL-20260316-04 notes.
+ST-13 (EPIC-04): GET /portfolio/prospective-heat spec authored and endpoint
+implemented. DEV-ST05-01 deviation resolved. TestProspectiveHeat unskipped.
 """
 
 import unittest
@@ -104,27 +102,58 @@ class TestGetPortfolioEmpty(unittest.TestCase):
 
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
     @patch(PATCH_GET_POSITIONS, return_value=[])
-    def test_status_ok(self, _pos, _port):
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_status_ok(self, _dd, _dep, _fx, _pos, _port):
         resp = CLIENT.get("/portfolio")
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["status"], "ok")
 
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
     @patch(PATCH_GET_POSITIONS, return_value=[])
-    def test_required_fields_present(self, _pos, _port):
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_required_fields_present(self, _dd, _dep, _fx, _pos, _port):
         data = CLIENT.get("/portfolio").json()["data"]
         for field in ("cash", "cash_balance", "total_value", "open_positions_value",
-                      "total_pnl", "live_fx_rate", "portfolio_heat_percent",
+                      "total_pnl", "initial_value", "net_deposits",
+                      "live_fx_rate", "portfolio_heat_percent",
+                      "current_drawdown_percent", "peak_portfolio_value",
                       "positions", "position_risks"):
             self.assertIn(field, data, f"Missing field: {field}")
 
     @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
     @patch(PATCH_GET_POSITIONS, return_value=[])
-    def test_empty_positions_list(self, _pos, _port):
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_empty_positions_list(self, _dd, _dep, _fx, _pos, _port):
         data = CLIENT.get("/portfolio").json()["data"]
         self.assertEqual(data["positions"], [])
         self.assertEqual(data["portfolio_heat_percent"], 0.0)
         self.assertEqual(data["open_positions_value"], 0)
+
+    @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
+    @patch(PATCH_GET_POSITIONS, return_value=[])
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_drawdown_fields_present_when_empty(self, _dd, _dep, _fx, _pos, _port):
+        data = CLIENT.get("/portfolio").json()["data"]
+        self.assertEqual(data["current_drawdown_percent"], 0.0)
+        self.assertEqual(data["peak_portfolio_value"], 10000.0)
+
+    @patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO)
+    @patch(PATCH_GET_POSITIONS, return_value=[])
+    @patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27)
+    @patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY)
+    @patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN)
+    def test_net_deposits_and_initial_value_present_when_empty(self, _dd, _dep, _fx, _pos, _port):
+        data = CLIENT.get("/portfolio").json()["data"]
+        self.assertEqual(data["net_deposits"], 10000.0)
+        self.assertEqual(data["initial_value"], 10000.0)
 
     @patch(PATCH_GET_PORTFOLIO, return_value=None)
     def test_portfolio_not_found_returns_error(self, _port):
@@ -270,7 +299,10 @@ class TestPortfolioHeat(unittest.TestCase):
 
     def test_heat_zero_when_no_positions(self):
         with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
-             patch(PATCH_GET_POSITIONS, return_value=[]):
+             patch(PATCH_GET_POSITIONS, return_value=[]), \
+             patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27), \
+             patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY), \
+             patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN):
             data = CLIENT.get("/portfolio").json()["data"]
         self.assertEqual(data["portfolio_heat_percent"], 0.0)
 
@@ -321,20 +353,171 @@ class TestDisplayStatus(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# 6. Skipped: GET /portfolio/prospective-heat
-#    DEV-ST05-01 (P3): Endpoint not defined in portfolio_endpoints.md and
-#    not implemented in backend/main.py. Tests cannot pass without a spec
-#    update and backend implementation. Deferred to a future spec cycle.
+# 6. Portfolio-level field contract — non-empty path (GAP-03)
 # ---------------------------------------------------------------------------
 
-@unittest.skip(
-    "DEV-ST05-01: GET /portfolio/prospective-heat is not defined in "
-    "portfolio_endpoints.md and does not exist in backend/main.py. "
-    "Tests skipped pending spec authoring and backend implementation."
-)
+class TestGetPortfolioFieldContract(unittest.TestCase):
+    """
+    Asserts all required portfolio-level fields are present in the non-empty
+    path response. Covers GAP-03 from docs/testing/v1.7-qa-scenario-gaps.md.
+    Canonical field list: portfolio_endpoints.md §GET /portfolio data schema.
+    """
+
+    def _call(self):
+        pos = _uk_position(entry_price=5.00, fill_price=5.00, shares=100,
+                           initial_stop=4.50, current_stop=4.50, holding_days=15)
+        with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
+             patch(PATCH_GET_POSITIONS, return_value=[pos]), \
+             patch(PATCH_GET_LIVE_FX_RATE, return_value=1.27), \
+             patch(PATCH_GET_CURRENT_PRICE, return_value=5.00), \
+             patch(PATCH_GET_DEPOSITS, return_value=MOCK_CASH_SUMMARY), \
+             patch(PATCH_GET_DRAWDOWN, return_value=MOCK_DRAWDOWN):
+            return CLIENT.get("/portfolio").json()
+
+    def test_all_portfolio_level_fields_present(self):
+        data = self._call()["data"]
+        required = (
+            "cash", "cash_balance", "total_value", "open_positions_value",
+            "total_pnl", "initial_value", "net_deposits", "live_fx_rate",
+            "last_updated", "current_drawdown_percent", "peak_portfolio_value",
+            "portfolio_heat_percent", "position_risks", "positions",
+        )
+        for field in required:
+            self.assertIn(field, data, f"GAP-03: missing portfolio-level field: {field}")
+
+    def test_drawdown_fields_correct_type(self):
+        data = self._call()["data"]
+        self.assertIsInstance(data["current_drawdown_percent"], float)
+        self.assertIsInstance(data["peak_portfolio_value"], float)
+        self.assertLessEqual(data["current_drawdown_percent"], 0.0)
+
+    def test_net_deposits_and_initial_value_correct_type(self):
+        data = self._call()["data"]
+        self.assertIsInstance(data["net_deposits"], (int, float))
+        self.assertIsInstance(data["initial_value"], (int, float))
+
+
+# ---------------------------------------------------------------------------
+# 7. GET /portfolio/prospective-heat
+#    ST-13 (EPIC-04): Spec authored in portfolio_endpoints.md v2.0.0.
+#    Endpoint implemented in routers/prospective_heat.py.
+# ---------------------------------------------------------------------------
+
+PATCH_PROSPECTIVE_SUMMARY  = "routers.prospective_heat.get_portfolio_summary"
+PATCH_PROSPECTIVE_FX_RATE  = "routers.prospective_heat.get_live_fx_rate"
+
+# Summary with one UK position risking £20 out of £10,000 portfolio (0.20% heat)
+MOCK_SUMMARY_WITH_RISK = {
+    "total_value": 10000.0,
+    "position_risks": [{"ticker": "VOD", "position_risk_gbp": 20.0}],
+}
+
+MOCK_SUMMARY_EMPTY = {
+    "total_value": 10000.0,
+    "position_risks": [],
+}
+
+MOCK_SUMMARY_ZERO_VALUE = {
+    "total_value": 0.0,
+    "position_risks": [],
+}
+
+
 class TestProspectiveHeat(unittest.TestCase):
-    def test_placeholder(self):
-        pass
+
+    # --- Valid UK position ---
+
+    @patch(PATCH_PROSPECTIVE_SUMMARY, return_value=MOCK_SUMMARY_EMPTY)
+    def test_uk_valid_basic(self, _summary):
+        # shares=10, entry=100, stop=90 → risk=100 GBP, heat=1.00%
+        resp = CLIENT.get(
+            "/portfolio/prospective-heat"
+            "?ticker=VOD&shares=10&entry_price=100&stop_price=90&market=UK"
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()["data"]
+        self.assertTrue(data["valid"])
+        self.assertEqual(data["ticker"], "VOD")
+        self.assertEqual(data["prospective_risk_gbp"], 100.0)
+        self.assertEqual(data["current_heat_percent"], 0.0)
+        self.assertEqual(data["prospective_heat_percent"], 1.0)
+        self.assertEqual(data["incremental_heat_percent"], 1.0)
+
+    @patch(PATCH_PROSPECTIVE_SUMMARY, return_value=MOCK_SUMMARY_WITH_RISK)
+    def test_uk_adds_to_existing_heat(self, _summary):
+        # Existing risk = 20 GBP (0.20%). Adding 10 shares, risk=100 GBP → total 120 GBP = 1.20%
+        resp = CLIENT.get(
+            "/portfolio/prospective-heat"
+            "?ticker=VOD&shares=10&entry_price=100&stop_price=90&market=UK"
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()["data"]
+        self.assertTrue(data["valid"])
+        self.assertEqual(data["current_heat_percent"], 0.2)
+        self.assertEqual(data["prospective_heat_percent"], 1.2)
+        self.assertEqual(data["incremental_heat_percent"], 1.0)
+
+    # --- Valid US position ---
+
+    @patch(PATCH_PROSPECTIVE_FX_RATE, return_value=2.0)
+    @patch(PATCH_PROSPECTIVE_SUMMARY, return_value=MOCK_SUMMARY_EMPTY)
+    def test_us_uses_live_fx(self, _summary, _fx):
+        # shares=10, entry=100 USD, stop=90 USD, fx=2.0 → risk = 100/2 = 50 GBP = 0.50%
+        resp = CLIENT.get(
+            "/portfolio/prospective-heat"
+            "?ticker=AAPL&shares=10&entry_price=100&stop_price=90&market=US"
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()["data"]
+        self.assertTrue(data["valid"])
+        self.assertEqual(data["prospective_risk_gbp"], 50.0)
+        self.assertEqual(data["prospective_heat_percent"], 0.5)
+
+    @patch(PATCH_PROSPECTIVE_SUMMARY, return_value=MOCK_SUMMARY_EMPTY)
+    def test_us_fx_override(self, _summary):
+        # Explicit fx_rate=4.0 → risk = 100/4 = 25 GBP = 0.25%
+        resp = CLIENT.get(
+            "/portfolio/prospective-heat"
+            "?ticker=AAPL&shares=10&entry_price=100&stop_price=90&market=US&fx_rate=4.0"
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()["data"]
+        self.assertTrue(data["valid"])
+        self.assertEqual(data["prospective_risk_gbp"], 25.0)
+
+    # --- Business rule failures (valid: false) ---
+
+    @patch(PATCH_PROSPECTIVE_SUMMARY, return_value=MOCK_SUMMARY_EMPTY)
+    def test_stop_above_entry_invalid(self, _summary):
+        resp = CLIENT.get(
+            "/portfolio/prospective-heat"
+            "?ticker=VOD&shares=10&entry_price=90&stop_price=100&market=UK"
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()["data"]
+        self.assertFalse(data["valid"])
+        self.assertIn("stop_price", data["error"])
+
+    @patch(PATCH_PROSPECTIVE_SUMMARY, return_value=MOCK_SUMMARY_EMPTY)
+    def test_zero_shares_invalid(self, _summary):
+        resp = CLIENT.get(
+            "/portfolio/prospective-heat"
+            "?ticker=VOD&shares=0&entry_price=100&stop_price=90&market=UK"
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()["data"]
+        self.assertFalse(data["valid"])
+
+    @patch(PATCH_PROSPECTIVE_SUMMARY, return_value=MOCK_SUMMARY_ZERO_VALUE)
+    def test_zero_portfolio_value_invalid(self, _summary):
+        resp = CLIENT.get(
+            "/portfolio/prospective-heat"
+            "?ticker=VOD&shares=10&entry_price=100&stop_price=90&market=UK"
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()["data"]
+        self.assertFalse(data["valid"])
+        self.assertIn("zero", data["error"])
 
 
 if __name__ == "__main__":

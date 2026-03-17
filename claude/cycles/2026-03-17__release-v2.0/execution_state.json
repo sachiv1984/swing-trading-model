@@ -1,0 +1,359 @@
+{
+  "cycle_id": "2026-03-17__release-v2.0",
+  "release": "v2.0",
+  "status": "Executing",
+  "sealed": false,
+  "sealed_utc": null,
+  "backlog_slice_source": "claude/cycles/2026-03-17__release-v2.0/stage4_backlog_slice.md",
+  "sprint_goal": "Ship the v2.0 core product scope: fix the P1 portfolio response defect, deliver the UK tax-year P&L report endpoint and frontend view, and expose the signal exposure controls — making all three production-ready in a single sprint.",
+  "mode": "standard",
+  "initialized_utc": "2026-03-17T04:00:00Z",
+  "last_updated_utc": "2026-03-17T14:00:00Z",
+
+  "merge_gate": {
+    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-04", "EPIC-05", "EPIC-06"],
+    "epics_merged": [],
+    "all_merged": false
+  },
+
+  "epics": {
+    "EPIC-04": {
+      "status": "done",
+      "branch": "exec/2026-03-17__release-v2.0/EPIC-04",
+      "pr_status": "open",
+      "pr_number": 86,
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-17T14:00:00Z",
+      "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "docs/testing/v1.7-qa-scenario-gaps.md — GAP-03",
+        "docs/testing/risk_dashboard_scenarios.md"
+      ],
+      "stories": {
+        "ST-12": {
+          "title": "Fix GET /portfolio missing 4 fields (BLG-BE-01 P1)",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 73,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-04",
+          "commit_sha": "04ed5e8",
+          "delegation_record_id": "DEL-ST-12",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-17T07:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md — GET /portfolio response schema (fields: initial_value, net_deposits, current_drawdown_percent, peak_portfolio_value)",
+            "docs/testing/v1.7-qa-scenario-gaps.md — GAP-03"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "deviation_check",
+          "notes": "Empty-positions early-return path fixed in portfolio_service.py. TestGetPortfolioEmpty + TestGetPortfolioFieldContract pass. GAP-03 marked PASS. No deviations vs spec."
+        },
+        "ST-13": {
+          "title": "Spec + implement GET /portfolio/prospective-heat (BLG-BE-02 stretch)",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Head of Engineering + Head of Specs Team",
+          "github_issue": 83,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-04",
+          "commit_sha": "279e832",
+          "delegation_record_id": "DEL-ST-13",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-17T11:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md v2.0.0 — GET /portfolio/prospective-heat",
+            "docs/specs/Specs_Index.md §6.3 — DEV-ST05-01 closed"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "deviation_check",
+          "notes": "Spec authored (portfolio_endpoints.md v2.0.0) and endpoint implemented in routers/prospective_heat.py. 7 tests pass. @unittest.skip removed. DEV-ST05-01 closed. No deviations — spec and implementation authored together in this item. Note: ST-20 commit (analytics_scenarios.md) was also made on this branch as a convenience — cross-branch process deviation recorded in qa_evidence_EPIC-04.md."
+        }
+      }
+    },
+
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-03-17__release-v2.0/EPIC-01",
+      "pr_status": "open",
+      "pr_number": 87,
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-17T14:00:00Z",
+      "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "Author signals page frontend spec",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 74,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-01",
+          "commit_sha": "5483f84",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-17T08:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/signals.md v0.1 (created at design gate)",
+            "docs/specs/Specs_Index.md §3.5 (registered)"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "deviation_check",
+          "notes": "signals.md v0.1 authored at design gate. ST-01 execution: registered in Specs_Index.md §3.5 + Head of Specs Team formal sign-off confirmed. No deviations."
+        },
+        "ST-02": {
+          "title": "Implement top_n and lookback_days controls on signals page",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "Base44 Frontend Prompt Owner",
+          "github_issue": 75,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-01",
+          "commit_sha": "3ef82f7",
+          "delegation_record_id": "DEL-ST-02",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-17T09:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/signals.md v0.1",
+            "docs/specs/api_contracts/signal_endpoints.md — top_n, lookback_days parameters"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "deviation_check",
+          "notes": "top_n and lookback_days controls added. 500ms debounce re-fetch implemented. No deviations flagged during implementation."
+        }
+      }
+    },
+
+    "EPIC-05": {
+      "status": "done",
+      "branch": "exec/2026-03-17__release-v2.0/EPIC-05",
+      "pr_status": "open",
+      "pr_number": 90,
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-05.md",
+      "test_scenarios": [
+        "docs/testing/analytics_scenarios.md — ST-20"
+      ],
+      "stories": {
+        "ST-16": {
+          "title": "Database Migration Governance Standard",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Backend Engineering Patterns Owner + Head of Engineering",
+          "github_issue": 76,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-05",
+          "commit_sha": "b411a06",
+          "delegation_record_id": null,
+          "completed_utc": "2026-03-17T08:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/database_migration_governance.md"],
+          "deviations_filed": true,
+          "notes": "docs/ops/database_migration_governance.md created. Cross-referenced from backend_engineering_patterns.md. Head of Engineering sign-off recorded. No deviations."
+        },
+        "ST-14": {
+          "title": "Production Deployment Runbook",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 77,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-05",
+          "commit_sha": "b59d551",
+          "delegation_record_id": null,
+          "completed_utc": "2026-03-17T08:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/production_deployment_runbook.md"],
+          "deviations_filed": true,
+          "notes": "Production deployment runbook created. No deviations."
+        },
+        "ST-15": {
+          "title": "Positions Table Data Dictionary",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Data Model Domain & Schema Owner",
+          "github_issue": 78,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-05",
+          "commit_sha": "923f7c8",
+          "delegation_record_id": null,
+          "completed_utc": "2026-03-17T08:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model_positions_dictionary.md",
+            "docs/specs/data_model.md §2 — positions table"
+          ],
+          "deviations_filed": true,
+          "notes": "Positions table data dictionary created. No deviations."
+        },
+        "ST-17": {
+          "title": "Spec Coverage Inventory",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 79,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-05",
+          "commit_sha": "8ce92ba",
+          "delegation_record_id": "DEL-ST-17",
+          "completed_utc": "2026-03-17T10:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/spec_coverage_inventory.md"],
+          "deviations_filed": true,
+          "notes": "Coverage Inventory produced: 38 docs audited, 7 actions identified. Registered in Specs_Index.md §8. No deviations."
+        },
+        "ST-20": {
+          "title": "CohortAnalysis backend integration regression scenario (stretch)",
+          "classification": "delegated_qa",
+          "status": "done",
+          "assigned_to": "QA & Testing Owner",
+          "github_issue": 80,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-04",
+          "commit_sha": "4adbe21",
+          "delegation_record_id": "DEL-ST-20",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-17T12:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/analytics.md §15",
+            "docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort",
+            "docs/testing/analytics_scenarios.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "qa_signed_off",
+          "notes": "Scenarios authored: SC-CA-BACKEND-01, SC-CA-BACKEND-02, SC-CA-BACKEND-03. analytics_scenarios.md created. Note: committed on EPIC-04 branch as cross-branch process deviation — work belongs to EPIC-05 but was committed on current branch EPIC-04. Content correct; governance inconsistency documented."
+        }
+      }
+    },
+
+    "EPIC-02": {
+      "status": "done",
+      "branch": "exec/2026-03-17__release-v2.0/EPIC-02",
+      "pr_status": "open",
+      "pr_number": 88,
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-17T14:00:00Z",
+      "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Implement GET /reports/tax-year endpoint",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 81,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-02",
+          "commit_sha": "dde5664",
+          "delegation_record_id": "DEL-ST-04",
+          "completed_utc": "2026-03-17T09:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/reports_endpoints.md v0.1 — GET /reports/tax-year",
+            "docs/specs/data_model.md §3 — trade_history table"
+          ],
+          "deviations_filed": true,
+          "notes": "GET /reports/tax-year implemented. Integration tests pass. No deviations flagged."
+        },
+        "ST-05": {
+          "title": "Frontend: tax-year P&L report view",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "Base44 Frontend Prompt Owner",
+          "github_issue": 82,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-02",
+          "commit_sha": "04b765f",
+          "delegation_record_id": "DEL-ST-05",
+          "completed_utc": "2026-03-17T10:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/reports.md v0.1",
+            "docs/specs/api_contracts/reports_endpoints.md v0.1"
+          ],
+          "deviations_filed": true,
+          "notes": "Tax Year P&L view added to Reports page. No deviations flagged."
+        }
+      }
+    },
+
+    "EPIC-06": {
+      "status": "done",
+      "branch": "exec/2026-03-17__release-v2.0/EPIC-06",
+      "pr_status": "open",
+      "pr_number": 89,
+      "qa_signed_off": true,
+      "qa_signed_off_utc": "2026-03-17T14:00:00Z",
+      "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-06.md",
+      "test_scenarios": [],
+      "note": "Parallel governance track — does not block product EPICs",
+      "stories": {
+        "ST-18": {
+          "title": "Roadmap stage document consolidation (BLG-GOV-01)",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 84,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-06",
+          "commit_sha": "7858d91",
+          "delegation_record_id": "DEL-ST-18",
+          "completed_utc": "2026-03-17T10:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md v4.0 (rewritten — cycle_record.md pattern all tiers)",
+            "claude/system/OPERATIONAL_GUIDE.md v3.24 (updated)",
+            "claude/system/prompt_change_log.md (entries appended)"
+          ],
+          "deviations_filed": true,
+          "notes": "roadmap_prompt.md v3.0→v4.0: all stage file references → cycle_record.md sections. STEP 9 write plan template updated. CLAUDE.md §6 checklist completed. No deviations."
+        },
+        "ST-19": {
+          "title": "Ideas register (BLG-GOV-02)",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 85,
+          "branch": "exec/2026-03-17__release-v2.0/EPIC-06",
+          "commit_sha": "a236678",
+          "delegation_record_id": "DEL-ST-19",
+          "completed_utc": "2026-03-17T10:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/idea_intake_prompt.md v2.0 (rewritten — register model)",
+            "claude/system/shared_standards.md v2.3 (§16.5 ideas_register schema)",
+            "claude/ideas/ideas_register.md (created — 44 ideas migrated)"
+          ],
+          "deviations_filed": true,
+          "notes": "idea_intake_prompt.md v1.3→v2.0: per-file model → ideas_register.md. 44 ideas migrated. 45 prior files archived. CLAUDE.md §6 checklist completed. No deviations."
+        }
+      }
+    }
+  },
+
+  "pre_completed": {
+    "ST-03": {
+      "title": "Author tax-year P&L report spec",
+      "completed_utc": "2026-03-17T01:30:00Z",
+      "evidence": "docs/specs/api_contracts/reports_endpoints.md v0.1 — signed off, committed"
+    },
+    "ST-11": {
+      "title": "QA: notification delivery test scenarios and infrastructure",
+      "completed_utc": "2026-03-17T01:00:00Z",
+      "evidence": "claude/cycles/2026-03-17__release-v2.0/qa_notification_planning.md — EPIC-03 deferred to v2.1"
+    }
+  },
+
+  "deferred_to_v21": {
+    "ST-06": "EPIC-03 deferred — no async notification infrastructure",
+    "ST-07": "EPIC-03 deferred",
+    "ST-08": "EPIC-03 deferred",
+    "ST-09": "EPIC-03 deferred",
+    "ST-10": "EPIC-03 deferred"
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["ST-12", "ST-13", "ST-01", "ST-02", "ST-14", "ST-15", "ST-16", "ST-17", "ST-04", "ST-05", "ST-18", "ST-19", "ST-20"],
+  "open_escalations": []
+}

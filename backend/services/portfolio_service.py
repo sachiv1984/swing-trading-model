@@ -61,14 +61,25 @@ def get_portfolio_summary() -> Dict:
     cash = float(portfolio['cash'])
     
     if not positions:
+        live_fx_rate = get_live_fx_rate()
+        cash_summary = get_total_deposits_withdrawals(portfolio_id)
+        net_cash_flow = cash_summary['net_cash_flow']
+        drawdown_fields = get_drawdown_fields(
+            portfolio_id=portfolio_id,
+            current_total_value=cash,
+        )
         return {
             "cash": cash,
             "cash_balance": cash,
             "total_value": cash,
             "open_positions_value": 0,
             "total_pnl": 0,
+            "initial_value": net_cash_flow,
+            "net_deposits": net_cash_flow,
             "last_updated": str(portfolio['last_updated']),
-            "live_fx_rate": 1.27,
+            "live_fx_rate": live_fx_rate,
+            "current_drawdown_percent": drawdown_fields["current_drawdown_percent"],
+            "peak_portfolio_value": drawdown_fields["peak_portfolio_value"],
             "portfolio_heat_percent": 0.0,
             "position_risks": [],
             "positions": [],

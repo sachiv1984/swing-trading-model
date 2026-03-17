@@ -19,6 +19,7 @@ Global response envelopes, error shape, defaults, and multi-currency rules are d
 - [GET /portfolio](#get-portfolio)
 - [POST /portfolio/position](#post-portfolioposition)
 - [POST /portfolio/size](#post-portfoliosize)
+- [GET /portfolio/prospective-heat](#get-portfolioprospective-heat)
 - [POST /portfolio/snapshot](#post-portfoliosnapshot)
 - [GET /portfolio/history](#get-portfoliohistory)
 
@@ -455,6 +456,112 @@ Errors use the standard error envelope from **conventions.md**.
 
 ---
 
+## GET /portfolio/prospective-heat
+
+**Purpose**
+
+Calculate what the portfolio heat percentage would be if a prospective new position were added. Returns the current heat plus the incremental heat from the proposed trade. Does not create a position or mutate any state.
+
+Calculation rules: `docs/specs/metrics_definitions.md §Portfolio Heat`.
+
+**Method & Path**
+
+- `GET /portfolio/prospective-heat`
+
+**Idempotency**
+
+- Read-only. Safe to call repeatedly, including on debounced keystrokes. Does not mutate portfolio state, cash balances, or position records.
+
+### Request
+
+#### Query Parameters
+
+| Parameter | Type | Required | Constraint | Description |
+|-----------|------|----------|------------|-------------|
+| `ticker` | string | Yes | Non-empty | Instrument ticker (informational only — used for the response label) |
+| `shares` | number | Yes | > 0 | Number of shares in the prospective position |
+| `entry_price` | number | Yes | > 0 | Prospective entry price in the instrument's native currency |
+| `stop_price` | number | Yes | > 0 | Prospective stop price in the instrument's native currency |
+| `market` | string | No | `"UK"` or `"US"` | Default: `"UK"`. Used for FX conversion |
+| `fx_rate` | number | No | > 0 | FX rate override for US positions. If omitted for US, the system live rate is used |
+
+**Example:**
+```
+GET /portfolio/prospective-heat?ticker=AAPL&shares=10&entry_price=185.00&stop_price=175.00&market=US
+```
+
+### Response (200) — Valid result
+
+Response uses the standard success envelope from **conventions.md**.
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "valid": true,
+    "current_heat_percent": 8.4,
+    "prospective_heat_percent": 10.1,
+    "incremental_heat_percent": 1.7,
+    "prospective_risk_gbp": 85.00,
+    "portfolio_value_gbp": 5000.00,
+    "ticker": "AAPL"
+  }
+}
+```
+
+#### Response fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `valid` | boolean | `true` if all inputs are valid and calculation succeeded |
+| `current_heat_percent` | number | Current portfolio heat before adding the prospective position (2 dp) |
+| `prospective_heat_percent` | number | Portfolio heat if the prospective position were added (2 dp) |
+| `incremental_heat_percent` | number | Difference: `prospective_heat_percent − current_heat_percent` (2 dp) |
+| `prospective_risk_gbp` | number | GBP risk of the prospective position: `(entry_price − stop_price) × shares / fx_rate_used` |
+| `portfolio_value_gbp` | number | Current portfolio value used as the denominator (from `GET /portfolio`) |
+| `ticker` | string | Echo of the `ticker` query parameter |
+
+### Response (200) — Invalid inputs
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "valid": false,
+    "error": "stop_price must be less than entry_price"
+  }
+}
+```
+
+**Business rule failures that return `valid: false`:**
+- `stop_price >= entry_price` (stop must be below entry)
+- `shares <= 0`
+- `entry_price <= 0` or `stop_price <= 0`
+- Portfolio value is zero (cannot calculate heat percentage)
+
+### Calculation
+
+```text
+prospective_risk_gbp    = (entry_price − stop_price) × shares / fx_rate_used
+current_risk_gbp        = Sum(position_risk_gbp) for all open positions  [from portfolio_service]
+total_risk_gbp          = current_risk_gbp + prospective_risk_gbp
+prospective_heat_pct    = total_risk_gbp / portfolio_value_gbp × 100
+current_heat_pct        = current_risk_gbp / portfolio_value_gbp × 100
+incremental_heat_pct    = prospective_heat_pct − current_heat_pct
+
+fx_rate_used:
+  market = "UK"  → 1.0 (GBP instruments; no conversion needed)
+  market = "US"  → fx_rate parameter if provided, else system live rate
+```
+
+All results are rounded to 2 decimal places.
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
@@ -462,3 +569,4 @@ Errors use the standard error envelope from **conventions.md**.
 | 1.0.0 | 2026-02-17 | Initial spec — GET /portfolio, POST /portfolio/position, POST /portfolio/size, POST /portfolio/snapshot, GET /portfolio/history |
 | 1.8.2 | 2026-02-25 | BLG-FEAT-01: Added `current_drawdown_percent` and `peak_portfolio_value` fields to GET /portfolio portfolio-level response (QWB pre-alignment D1) |
 | 1.9.0 | 2026-03-02 | S2-07 (EPIC-06/BLG-TECH-08): Spec updated to match live `portfolio_service.py` implementation. Position object example and field notes corrected — removed stale fields (`current_price_native`, `stop_price`, `stop_price_native`, `pnl_percent`); added live fields (`current_value`, `pnl_pct`, `current_stop`, `fx_rate`, `grace_days_remaining`, `live_fx_rate`). Key omissions table corrected (fx_rate/live_fx_rate ARE returned by this endpoint). pnl_pct note corrected. OBS-QWB-R1-01 resolved. TASK-25/26/27 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |
+| 2.0.0 | 2026-03-17 | ST-13 (EPIC-04): GET /portfolio/prospective-heat added — calculates portfolio heat including a prospective new position. Response shape, query parameters, calculation rules, and business rule failures defined. |
