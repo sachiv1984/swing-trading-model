@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-16 (manage roadmap — v1.10 retired to archive)
-**Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — item 5.3 / v1.9 Sprint 2 completion event)
+**Last Updated:** 2026-03-17 (roadmap rebalance — cycle 2026-03-17__item-v1.10 — v1.10 completion event)
+**Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — v1.10 Operations & Quality Foundation completion event)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -43,7 +43,9 @@ These may be revisited in future versions without any canonical spec change:
 
 ---
 
-## 3. Delivery Plan
+## 3. Delivery Plan — Horizon: Now
+
+*Items in this section are committed for the current or next release cycle. v2.0 is the active delivery horizon.*
 
 ---
 
@@ -57,7 +59,7 @@ These may be revisited in future versions without any canonical spec change:
 > ⛔ **Hard gates — v2.0 pre-alignment may not open until ALL THREE are confirmed:**
 > 1. Structured logging / observability standards (v1.7) — **complete**
 > 2. API versioning strategy decision record (v1.7) — **complete**
-> 3. QA planning session for notification delivery — **pending** *(uncleared as of 2026-03-04)*
+> 3. QA planning session for notification delivery — **pending** *(uncleared as of 2026-03-17)*
 
 > 🔄 **Auto-advance trigger (DL-003, 2026-03-04):** Once the QA planning session for notification delivery is completed and documented, 3.5 Alerts auto-advances to active v2.0 planning without requiring a new rebalance cycle. The session output must specify: test types required, notification delivery modes to be tested, expected test infrastructure.
 
@@ -87,7 +89,7 @@ Expose the existing `top_n` and `lookback_days` signal generation parameters as 
 
 ---
 
-## 4. Priority 2 — Next Phase (post v2.0)
+## 4. Priority 2 — Horizon: Next (post v2.0)
 
 #### 4.2 Watchlists & Screening
 **Status:** Planned — do not pull forward
@@ -107,7 +109,7 @@ Add interactivity to existing analytics page charts: hover tooltips, zoom, drill
 
 ---
 
-## 5. Priority 3 — Deferred (v2.1 / v3.0)
+## 5. Priority 3 — Horizon: Later (v2.1 / v3.0)
 
 | Feature | Effort | Rationale for deferral |
 |---------|--------|------------------------|

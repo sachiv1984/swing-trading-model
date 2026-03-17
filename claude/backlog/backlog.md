@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-16 (governance session — BLG-GOV-01, BLG-GOV-02 added)
-**Last rebalance:** 2026-03-15 (cycle 2026-03-15__item-5.3 — DL-008)
+**Last Updated:** 2026-03-17 (roadmap rebalance — cycle 2026-03-17__item-v1.10 — DL-009 — 3 items added)
+**Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -111,6 +111,87 @@ These are deliberate product decisions, not deferrals:
 ---
 
 ## 6. New Backlog Items — Cycle 2026-03-15__item-5.3 and Later
+
+---
+
+### BLG-OPS-02 — Production Deployment Runbook
+**Priority:** P2 (Medium)
+**Type:** Operations / Documentation
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260304-01 (IW-20260304-01 — promoted 2026-03-17)
+**Cycle added:** 2026-03-17__item-v1.10
+**Effort:** S (~0.5–1 day)
+**Target release:** v2.0
+
+**Problem**
+v1.10 shipped the staging environment (BLG-OPS-01), but there is no documented procedure for deploying to production. The deployment process is informal — no runbook, no rollback procedure, no checkpoint list. With staging now separate from production, an undocumented deployment workflow is an operational risk.
+
+**Scope**
+- Document the production deployment procedure: steps from staging-verified build to production push
+- Include: pre-deployment checklist, deployment steps, post-deployment verification, rollback procedure
+- Cross-reference staging environment configuration (BLG-OPS-01 output)
+- Store as `docs/ops/production_deployment_runbook.md` (Class 2 Supporting document)
+
+**Acceptance Criteria**
+- Production deployment runbook exists at `docs/ops/production_deployment_runbook.md`
+- Runbook includes: pre-deployment checklist, deployment steps, verification steps, rollback procedure
+- Reviewed and signed off by Head of Engineering
+
+---
+
+### BLG-DATA-01 — Positions Table Data Dictionary
+**Priority:** P2 (Medium)
+**Type:** Data Documentation / Spec
+**Owner:** Data Model Domain & Schema Owner
+**Source:** IDEA-data-model-owner-20260304-01 (IW-20260304-01 — promoted 2026-03-17)
+**Cycle added:** 2026-03-17__item-v1.10
+**Effort:** S (~0.5–1 day)
+**Target release:** v2.0
+**Scope constraint:** Positions table only (not all tables). Complements BLG-NEW-13 (Spec Coverage Inventory) — distinct scope: this is field-level semantics documentation, not coverage mapping.
+
+**Problem**
+The positions table has no formal data dictionary. BLG-BE-01 (GET /portfolio missing 4 fields) surfaced the risk — field semantics are under-documented, making spec/implementation divergence hard to detect. A data dictionary provides the authoritative reference for field naming, types, constraints, and derivation rules.
+
+**Scope**
+- Document each field in the `positions` table: name, type, nullable, description, derivation rule where applicable
+- Cross-reference `portfolio_endpoints.md` and `data_model.md` for existing definitions
+- Store as a Class 2 Supporting document under `docs/specs/data_model_positions_dictionary.md`
+- Flag any fields without canonical definitions as gaps for follow-up
+
+**Acceptance Criteria**
+- Data dictionary covers all fields in the `positions` table
+- Each field documented: name, type, nullable, description, derivation (where applicable)
+- Cross-references to canonical spec sections where definitions exist
+- Gap list produced for any undocumented fields
+- Registered in `docs/specs/Specs_Index.md`
+
+---
+
+### BLG-TECH-07 — Database Migration Governance Standard
+**Priority:** P2 (Medium)
+**Type:** Engineering Governance / Process
+**Owner:** Backend Engineering Patterns Owner + Head of Engineering
+**Source:** IDEA-backend-engineering-20260304-02 (IW-20260304-01 — promoted 2026-03-17)
+**Cycle added:** 2026-03-17__item-v1.10
+**Effort:** S (~0.5–1 day)
+**Target release:** v2.0
+
+**Problem**
+No documented process exists for how database schema migrations are created, reviewed, applied, and rolled back. v2.0 will introduce schema changes (4.1b Tax-Year P&L will require a new report table or schema update). An undocumented migration process is an operational risk — if a migration partially applies, there is no documented recovery path.
+
+**Scope**
+- Define migration naming convention
+- Define required migration file fields: description, reversibility assessment, rollback SQL
+- Define review requirements: second-engineer review, schema owner sign-off for structural changes
+- Define production application procedure: transaction where possible, staging-tested first
+- Define incident procedure if migration fails mid-apply
+- Store as `docs/ops/database_migration_governance.md` (Class 2 Supporting; reference from `backend_engineering_patterns.md`)
+
+**Acceptance Criteria**
+- Migration governance standard exists at `docs/ops/database_migration_governance.md`
+- Covers: naming convention, required fields, review requirements, application procedure, incident procedure
+- Cross-referenced from `backend_engineering_patterns.md` as new §N
+- Head of Engineering sign-off obtained
 
 Items promoted to backlog from idea pool during roadmap rebalance cycle 2026-03-15__item-5.3, and items raised during v1.10 sprint execution and QA sign-off.
 

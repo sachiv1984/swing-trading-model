@@ -204,3 +204,38 @@ Server-Side PDF Report was the lowest-value active roadmap item, documented as t
 The absence of a development/staging environment is a structural governance failure. The Director of Quality sign-off workflow requires testing a live application before acceptance, but the only live application is production. This forced a merge-before-test workflow in v1.9 Sprint 2, which led to post-merge bug discovery (BLG-TECH-06). BLG-OPS-01 was raised as P1 in the backlog (2026-03-13) and is elevated to roadmap to guarantee capacity commitment in v1.10 planning. Without dedicated roadmap inclusion, infrastructure items are consistently squeezed out by feature work.
 
 **Challenger debate summary:** Both the Kill and Add were challenged during STEP 4 structured debate. All challenges were answered satisfactorily and withdrawn. Motion approved unanimously.
+
+---
+
+### DL-009 — 2026-03-17
+
+**Decision type:** No-change (roadmap-level confirm) + Add (backlog-level — 3 items)
+**Cycle:** 2026-03-17__item-v1.10
+**Date:** 2026-03-17
+**Decision owner:** Product Owner
+
+**Initiatives affected (roadmap-level):**
+All active roadmap initiatives reviewed and confirmed. No roadmap-level Add, Replace, Defer, or Kill decisions required.
+
+**Completion recorded:**
+- ✅ **Complete:** BLG-OPS-01 — Development Environment (v1.10, shipped 2026-03-16). Moved to Completed in initiative register.
+
+**Displacement:** N/A — no roadmap-level Adds. Net-zero: 0 Adds ≤ 0 Kills ✅.
+
+**Workforce impact:** v1.10 capacity released (~15–20 days). Immediately available for v2.0 pre-alignment. No scarce skill conflicts identified for v2.0 scope (4.1b: backend + financial spec; 4.3: frontend only).
+
+**Rationale — Roadmap No-Change:**
+All five active roadmap initiatives (3.5 Alerts, 4.1b Tax-Year P&L, 4.3 Signal Exposure, 4.2 Watchlists, Chart Interactivity Enhancements) were re-validated in STEP 2. No initiative merits Kill, Replace, or Defer. The roadmap is correctly balanced for the v2.0 delivery sequence. CPS = 2.40 (prior: 2.17 post-rebalance). No Strategy Drift Alert required. PoG POG-20260304-01 (item 4.3) remains valid — strategy_rules.md v1.3 unchanged. Horizon structure (Now/Next/Later) added to roadmap as lifecycle compliance update.
+
+**New backlog items (from STEP 5 debate — IW-20260304-01 idea pool):**
+1. BLG-OPS-02 — Production Deployment Runbook (P2; Infrastructure & Operations Owner; v2.0)
+2. BLG-DATA-01 — Positions Table Data Dictionary (P2; Data Model Domain & Schema Owner; v2.0; positions table fields only; Class 2 Supporting)
+3. BLG-TECH-07 — Database Migration Governance Standard (P2; Backend Engineering Patterns Owner + Head of Engineering; v2.0)
+
+**Displacement (backlog-level):** None at roadmap level. Backlog-level items only. 3 Adds ≥ 0 roadmap Stops ✅ (per DL-005/DL-006 precedent).
+
+**Skill-Silo check:** Governance load ~0% for v2.0 execution scope. Below 20% floor. Product Owner sign-off capacity confirmed. No Skill-Silo Alert issued.
+
+**Displacement candidate noted (initiative register — forward-looking):** Chart Interactivity Enhancements (CHART-IX) flagged as the natural displacement candidate if a future roadmap-level Add requires stops. Lowest strategic urgency relative to impact; smallest scope (S effort). Recorded in initiative_register.md only.
+
+**Challenger debate summary:** Three ideas advanced to STEP 5 debate; Challenger issued two clearances and one counter-argument (Positions Table Data Dictionary overlap with BLG-NEW-13). Product Owner rebutted the overlap argument with scope distinction. One idea (Lessons Learnt Action Item Register) was parked at STEP 5 when PO accepted Challenger's overlap argument with BLG-GOV-01/02. STEP 8.6 guardrail passed (one candidate parked).

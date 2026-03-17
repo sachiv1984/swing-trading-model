@@ -1,6 +1,6 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Planning Document (Class 4)
-**Status:** Parked-cycle-2
+**Status:** Promoted-Added
 **Submitted by:** Data Model & Domain Schema Owner
 **Submitted at:** 2026-03-04
 **Window ID:** IW-20260304-01
