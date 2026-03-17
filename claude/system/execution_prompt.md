@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.3
-**Last Updated:** 2026-03-16
+**Version:** 2.4
+**Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -632,6 +632,7 @@ The consolidation block must include:
 - [ ] All acceptance criteria verified against canonical spec
 - [ ] No unresolved P0 or P1 deviations
 - [ ] Regression areas checked
+- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object **(LL-v2.0-P3-4)**
 - Signed off by: Director of Quality
 - Date:
 - Comments:
@@ -678,6 +679,8 @@ If any condition fails: do not merge. Record which condition is unmet. If QA or 
 
 > **Rationale for re-invocation reminder (lessons learnt — 2026-03-04__release-v1.8 / EX-LL Friction Item 4):** A session ended after recording EPIC-02 QA sign-off but before the PR merge was reported. The user then merged the PR on GitHub without re-invoking `run sprint`. `sprint_close.md` was never created, `execution_state.json` remained unsealed, and `run delivery verification` failed preflight. The reminder makes the re-invocation requirement visible at the moment the user receives merge gate output.
 
+> **Merge order note (LL-v2.0-P3-5):** If more than one EPIC branch modifies a shared governance file (e.g. `execution_state.json`, `.claude_current_state.json`, `backlog.md`, `delegation_log.md`), establish a merge order at the start of STEP 3. Later EPIC branches **must rebase onto `main`** after the first EPIC merges — before running their final QA review and opening a PR. This prevents merge conflicts at the merge gate and avoids the need to rebase mid-merge-sequence.
+
 ---
 
 ## ESCALATION HANDLING SUBROUTINE (Callable)
@@ -716,6 +719,8 @@ For each entry still `Pending` or `In Progress`:
 ### 5.1 Acceptance Summary
 
 For each ST item: confirm `acceptance_verified = true`. If any are false and the item is `merged`: this is a quality gap — file an escalation.
+
+**QA Evidence Persistence Check (LL-v2.0-P4-1):** For each EPIC with `qa_signed_off: true` in `execution_state.json`, read the corresponding `qa_evidence_EPIC-xx.md` file and confirm the sign-off block `Date:` field is non-blank. If blank: the sign-off was not persisted during sprint execution — re-apply the sign-off block immediately (Director of Quality authority required). Do not proceed to STEP 5.3 until all sign-off blocks are confirmed non-blank.
 
 ### 5.2 Items Returned to Backlog
 
@@ -878,6 +883,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4 | 2026-03-17 | Post-ship closure v2.0 lessons learnt patches applied. LL-v2.0-P3-4: qa_evidence sign-off block template — DoQ URL construction check added (for direct URL construction not via api.* wrapper, confirm base URL variable is exposed on imported object). LL-v2.0-P3-5: STEP 4 merge gate — merge order note added for multi-EPIC sprints where >1 EPIC modifies shared governance files; later branches must rebase onto main after first EPIC merges before final QA. LL-v2.0-P4-1: STEP 5.1 — QA Evidence Persistence Check added; after qa_signed_off: true, confirm qa_evidence Date: field is non-blank; if blank, re-apply sign-off before STEP 5.3. |
 | 2.3 | 2026-03-16 | AUD-2026-03-13-017: §11 delegation log schema replaced with reference to `shared_standards.md §16.3`; SLA breach tracking note in STEP 3.1.D replaced with reference to `shared_standards.md §16.4`; §13 cross-reference to `claude/system/invariants.md` added. |
 | 2.2 | 2026-03-16 | LL-v1.10-P3-3: §5.1 autonomous candidate pattern note added (refactor with no UX change + existing API method → autonomous). LL-v1.10-P4-2: §3.1.A step 10 deviation type distinction added (absent from spec → qa_evidence + backlog; differs from spec → canonical spec). LL-v1.10-P4-1: qa_evidence sign-off block template authoring note added. |
 | 2.1 | 2026-03-14 | AUD-2026-03-13-001 (PATCH 5): Gate evidence requirement added to §9 invariants — hard gate status changes in current_roadmap.md must reference an evidence artefact; gate remains pending without one. |

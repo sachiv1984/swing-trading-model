@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.23
-**Last Updated:** 2026-03-16
+**Version:** 3.25
+**Last Updated:** 2026-03-17
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -740,7 +740,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.1)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.2)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v2.3)
+**Source prompt:** `claude/system/execution_prompt.md` (v2.4)
 
 ### 8.1 Invocation
 
@@ -1293,9 +1293,9 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.1 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.20 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.1 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.2 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v2.3 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v2.4 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.5 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.0 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1319,6 +1319,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 | Version | Date | Change Summary |
 |---------|------|----------------|
 | 3.25 | 2026-03-17 | **ST-19 (EPIC-06): Ideas register model.** §5 source prompt v1.3→v2.0; §5 trigger condition updated (count from `ideas_register.md`); §5.3 lifecycle updated (per-file → register rows); §5.5 artefacts table updated (Idea Submissions → Ideas Register; window summary path updated; archive entry added); §5.6 exit criteria updated. Artefact register: Idea Submissions → Ideas Register (`ideas_register.md`). §14: idea_intake_prompt v2.0; roadmap_prompt v4.1; shared_standards v2.3. |
+| 3.25 | 2026-03-17 | **v2.0 post-ship lessons learnt applied.** §7 source prompt sprint_planning_prompt.md v2.1→v2.2. §8 source prompt execution_prompt.md v2.3→v2.4. §14 Sprint Planning Engine → v2.2; Execution Engine Source → v2.4. |
 | 3.24 | 2026-03-17 | **ST-18 (EPIC-06): roadmap_prompt.md v3.0→v4.0 — `cycle_record.md` single-file pattern extended to all tiers.** §6 source prompt v3.0→v4.0. §6.3 Engine Steps table: STEP 2/3/4/5/8 output column updated from stage file names to `cycle_record.md` section references. §14 Roadmap Engine Source → v4.0. |
 | 3.23 | 2026-03-16 | **Roadmap process governance improvements (v3.0).** §6 + §14 roadmap_prompt.md v2.8→v3.0. Five changes: STEP 0.C auto-tier determination (Lightweight/Standard/Extended, system-derived from objective criteria); STEP 2.3 horizon review always-on every run; STEP 4.1/4.2 first-park rationale required; STEP 5.1 Challenger clearance model; STEP 8.6 guardrail logic corrected. |
 | 3.20 | 2026-03-16 | **v1.10 post-ship lessons learnt applied (LL-v1.10-P3-1, P3-3, P4-1, P4-2, P4-3).** §8.2 staging test data prerequisite bullet added (LL-P4-3). §8 + §14 source prompt versions updated: execution_prompt v2.1→v2.2, delivery_verification_prompt v1.4→v1.5. See prompt_change_log.md for full detail per prompt. |

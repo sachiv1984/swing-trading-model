@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-03-16
+**Last Updated:** 2026-03-17
 
 # Prompt Change Log
 
@@ -13,6 +13,9 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-03-17 | `execution_prompt.md` | v2.3→v2.4 | Post-ship closure v2.0 lessons learnt applied. LL-v2.0-P3-4: qa_evidence sign-off block — DoQ URL construction check added (confirm base URL variable is exposed on imported object for direct URL construction). LL-v2.0-P3-5: STEP 4 merge gate — merge order note added for shared governance file conflicts. LL-v2.0-P4-1: STEP 5.1 — QA Evidence Persistence Check added (confirm Date: non-blank after qa_signed_off: true). | PMO Lead (post-ship closure authority) |
+| 2026-03-17 | `sprint_planning_prompt.md` | v2.1→v2.2 | Post-ship closure v2.0 lessons learnt applied. LL-v2.0-P4-2: STEP 3.1 — test scenario gap flag added for delegated_frontend items introducing new pages/controls. | PMO Lead (post-ship closure authority) |
+| 2026-03-17 | `OPERATIONAL_GUIDE.md` | v3.23→v3.25 | §7 sprint_planning_prompt.md v2.1→v2.2; §8 execution_prompt.md v2.3→v2.4; §14 Sprint Planning Engine → v2.2; Execution Engine Source → v2.4. Note: v3.24 was applied 2026-03-17 (ST-18 EPIC-06 roadmap_prompt.md v4.0); header was stale at v3.23 — corrected to v3.25 in this entry. | PMO Lead (post-ship closure authority) |
 | 2026-03-11 | `OPERATIONAL_GUIDE.md` | v3.12→v3.13 | Batch 7: §7 source prompt → sprint_planning_prompt.md v1.8; §14 team_charter v1.5, sprint_planning_prompt v1.8. IMP-30 (bypass authority named), IMP-17/31 (Class 8 deferred), IMP-60 (v2_0_gates superseded). | Head of Specs Team (delegated authority) |
 | 2026-03-11 | `team_charter.md` | v1.4→v1.5 | IMP-30: Head of UX & Design §3.3 entry — design gate bypass authority paragraph added. Bypass requires Head of UX & Design (primary) + Product Owner (co-confirmation); both recorded in `design_gate_bypass_authority` field; single-role bypass is a governance violation. Authority: Head of Specs Team (delegated authority). | Head of Specs Team (delegated authority) |
 | 2026-03-11 | `sprint_planning_prompt.md` | v1.7→v1.8 | IMP-30: STEP -1.3 — bypass authority note added referencing `team_charter.md §3.3`; `design_gate_bypass_authority` must record both "Head of UX & Design + Product Owner"; single-role bypass is non-compliant. | Head of Specs Team (delegated authority) |

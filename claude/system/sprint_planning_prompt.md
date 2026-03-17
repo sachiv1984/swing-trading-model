@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.1
-**Last Updated:** 2026-03-16
+**Version:** 2.2
+**Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -408,6 +408,8 @@ Classify each item:
 
 **Classification pattern (LL-v1.10-P3-3):** If an item is "refactor component X to call backend endpoint Y" with no UX change and the required API method already exists client-side, it qualifies as `autonomous`. Conservative classification (`delegated_frontend`) is valid but should be explicitly justified when the autonomous criteria above are met — over-conservative classification adds unnecessary human handoff steps to straightforward refactors.
 
+**Test scenario gap flag (LL-v2.0-P4-2):** For every item classified `delegated_frontend` that introduces a **new page or new user-facing controls** (not a refactor of existing UI), flag the EPIC's `test_scenarios` field in `execution_state.json` as `pending — QA & Testing Owner to author before next sprint on this domain`. Record this flag in `sprint_planning_notes.md`. This surfaces the coverage gap at planning time rather than at delivery verification, allowing QA to prepare scenario files before the sprint closes.
+
 ### 3.2 Capacity Gate
 
 The selected `include` items must not exceed confirmed capacity.
@@ -776,6 +778,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2 | 2026-03-17 | Post-ship closure v2.0 lessons learnt patch applied. LL-v2.0-P4-2: STEP 3.1 delegation class assignment — test scenario gap flag added; for every `delegated_frontend` item introducing a new page or new user-facing controls (not refactor), flag EPIC test_scenarios as "pending — QA & Testing Owner to author before next sprint on this domain" in execution_state.json and sprint_planning_notes.md; surfaces gap at planning time rather than delivery verification. |
 | 2.1 | 2026-03-16 | Post-ship closure v1.10 deferred patches applied. STEP -1.10 added: Pre-Sprint Required Decisions Check — reads `cycle_summary.md ## Pre-sprint Planning Required Decisions`; strict mode halts on unresolved decisions; standard mode records as Blocker? Yes outstanding action; sign-off gate (STEP 6.2) blocked until resolved (LL-01). STEP 3.1 Candidate Item Review: delegation class assignment guidance added — `autonomous` vs delegated class criteria; pattern note for pure data-fetching refactors with no UX change (LL-v1.10-P3-3). |
 | 2.0 | 2026-03-14 | AUD-2026-03-13-009 (PATCH 2): STEP 6.1A sprint_backlog_index.json inline schema replaced with reference to shared_standards.md §16.1. |
 | 1.9 | 2026-03-14 | AUD-2026-03-13-011: Amendment_In_Progress hard gate added — sprint planning halts if status = Amendment_In_Progress; matches Release Planning parity (IMP-11). |

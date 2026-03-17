@@ -2,7 +2,7 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 1.5
-**Last Updated:** 2026-03-16
+**Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -517,7 +517,7 @@ The system is ready for:
 
 ## Sprint: 2026-03-17__release-v2.0
 **Date:** 2026-03-17
-**Status:** Sprint_Complete — all EPICs merged; DoQ sign-off complete 2026-03-17; hotfix bb66b69 applied post-merge
+**Status:** Verified_with_deviations — Post-ship closure complete 2026-03-17
 
 ### Capabilities now live (merged this sprint)
 

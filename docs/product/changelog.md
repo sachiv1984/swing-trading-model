@@ -3,9 +3,53 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-16
+**Last Updated:** 2026-03-17
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.0 — Reporting & Alerts — 2026-03-17
+
+Cycle: 2026-03-17__release-v2.0
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-03-17__release-v2.0/verification_report.md
+
+Fixes the P1 portfolio response defect (BLG-BE-01), delivers the UK tax-year P&L report endpoint and frontend view, and exposes the signal exposure controls (`top_n` and `lookback_days`) — making all three production-ready in a single sprint. Prospective heat endpoint (BLG-BE-02) shipped as stretch. EPIC-03 (Alerts & Notifications) deferred to v2.1 pending BLG-TECH-08 (async notification architecture ADR).
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-04 | Portfolio fix + prospective heat: `GET /portfolio` extended with 4 missing fields (`initial_value`, `net_deposits`, `current_drawdown_percent`, `peak_portfolio_value`) — P1 BLG-BE-01 resolved. `GET /portfolio/prospective-heat` spec authored and implemented (ST-13 stretch — BLG-BE-02 closed). Tax-year P&L spec pre-completed (ST-03). | `docs/specs/api_contracts/portfolio_endpoints.md v2.0.0`; `docs/specs/api_contracts/reports_endpoints.md v0.1`; `docs/testing/v1.7-qa-scenario-gaps.md — GAP-03 PASS` |
+| EPIC-01 | Signal Exposure Enhancement: signals page frontend spec authored; `top_n` and `lookback_days` controls implemented with 500ms debounce, invalid-input reset, and empty-state handling. | `docs/specs/frontend/pages/signals.md v0.1`; `docs/specs/api_contracts/signal_endpoints.md` |
+| EPIC-02 | Tax-Year P&L Statement: `GET /reports/tax-year` endpoint implemented with UK 6 April tax-year boundary logic; frontend report view with year selector, P&L summary bar, trades table, disclaimer banner. Post-merge P1 hotfix bb66b69 (base44.baseUrl undefined on production — resolved same day). | `docs/specs/api_contracts/reports_endpoints.md v0.1`; `docs/specs/frontend/pages/reports.md v0.1` |
+| EPIC-05 | Documentation & Standards Pack: Production Deployment Runbook; Positions Table Data Dictionary; Database Migration Governance Standard; Spec Coverage Inventory (38 documents, 7 actions); CohortAnalysis backend regression scenarios (stretch — ST-20). | `docs/ops/production_deployment_runbook.md`; `docs/specs/data_model_positions_dictionary.md`; `docs/ops/database_migration_governance.md`; `docs/specs/spec_coverage_inventory.md`; `docs/testing/analytics_scenarios.md v1.0` |
+| EPIC-06 | Governance Tooling (parallel track): `roadmap_prompt.md` v3.0→v4.0 — all stage file references replaced with `cycle_record.md` sections for all tiers. `idea_intake_prompt.md` v1.3→v2.0 — per-file model replaced with `ideas_register.md`; 44 ideas migrated. | `claude/system/roadmap_prompt.md v4.0`; `claude/system/idea_intake_prompt.md v2.0`; `claude/ideas/ideas_register.md` |
+
+### Deviations accepted
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| — | — | No deviations accepted. DEV-v2.0-02 (P1, base44.baseUrl) resolved by hotfix bb66b69 before verification — not an open deviation. 1 minor P3 deviation (DEV-v2.0-01 — ST-20 cross-branch process commit, CLAUDE.md §2 patch applied, BLG-PROC-01 filed). See verification_report.md §4. | — |
+
+### Tech backlog items shipped
+
+- [BLG-BE-01 / ST-12] GET /portfolio missing 4 fields (P1) — `initial_value`, `net_deposits`, `current_drawdown_percent`, `peak_portfolio_value` added; GAP-03 passes; 10/10 integration tests pass
+- [BLG-BE-02 / ST-13] GET /portfolio/prospective-heat spec and implementation — endpoint specified and implemented; `@unittest.skip` removed; tests pass
+- [BLG-OPS-02 / ST-14] Production Deployment Runbook — `docs/ops/production_deployment_runbook.md` created
+- [BLG-DATA-01 / ST-15] Positions Table Data Dictionary — `docs/specs/data_model_positions_dictionary.md` created
+- [BLG-TECH-07 / ST-16] Database Migration Governance Standard — `docs/ops/database_migration_governance.md` created
+- [BLG-NEW-13 / ST-17] Spec Coverage Inventory — `docs/specs/spec_coverage_inventory.md` v1.0; 38 documents audited; 7 actions identified
+- [BLG-GOV-01 / ST-18] Roadmap stage document consolidation — `roadmap_prompt.md` v4.0; all tiers use `cycle_record.md` sections
+- [BLG-GOV-02 / ST-19] Ideas register — `idea_intake_prompt.md` v2.0; `ideas_register.md` created; 44 ideas migrated; 45 prior submissions archived
+
+### Deferred items
+
+- EPIC-03 (3.5 Alerts & Notifications — ST-06–ST-10) deferred to v2.1. No async notification infrastructure present. BLG-TECH-08 (ADR) required before v2.1 sprint planning may seal.
+
+Sign-off: Product Owner — 2026-03-17
+QA sign-off: Director of Quality — 2026-03-17
 
 ---
 

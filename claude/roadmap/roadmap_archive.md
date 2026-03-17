@@ -1,13 +1,63 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-16
+**Last Updated:** 2026-03-17
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## 4.1b — Tax-Year P&L Statement
+
+**Original roadmap location:** §3 Delivery Plan — v2.0 section
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-17
+**Shipped version:** v2.0 (2026-03-17)
+**Cycle reference:** 2026-03-17__release-v2.0
+**Verification report:** `claude/cycles/2026-03-17__release-v2.0/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** Product Owner
+
+### Original Roadmap Entry
+
+#### 4.1b — Tax-Year P&L Statement *(new sub-item)*
+**Status:** ✅ Complete — Shipped v2.0 (2026-03-17, cycle 2026-03-17__release-v2.0, EPIC-02/ST-04, ST-05)
+**Effort:** Low–Medium (1–2 days)
+**Value:** High (formal financial record for tax purposes)
+
+A structured, server-side generated tax-year P&L statement. GBP-adjusted, fee-inclusive, covering all realised gains and losses in a given tax year. This is a financial record, not an analytics view — it requires its own canonical specification separate from the analytics endpoint. Dedicated report endpoint required.
+
+> **Scope note (2026-03-04):** Realised vs Unrealised P&L display labelling (originally submitted as BLG-NEW-06) is pre-work for this item. The P&L statement must clearly distinguish realised and unrealised amounts per trade. BLG-NEW-06 is merged into 4.1b pre-work scope — not a standalone backlog item.
+
+---
+
+## 4.3 — Signal Exposure Enhancement
+
+**Original roadmap location:** §3 Delivery Plan — v2.0 section
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-17
+**Shipped version:** v2.0 (2026-03-17)
+**Cycle reference:** 2026-03-17__release-v2.0
+**Verification report:** `claude/cycles/2026-03-17__release-v2.0/verification_report.md`
+**Decision log reference:** DL-004 (2026-03-04) — §13 gate cleared by PoG POG-20260304-01
+**Retirement confirmed by:** Product Owner
+
+### Original Roadmap Entry
+
+#### 4.3 — Signal Exposure Enhancement *(new — narrow scope)*
+**Status:** ✅ Complete — Shipped v2.0 (2026-03-17, cycle 2026-03-17__release-v2.0, EPIC-01/ST-01, ST-02)
+**Effort:** Low (frontend only — backend already supports these parameters)
+**Value:** Medium
+
+Expose the existing `top_n` and `lookback_days` signal generation parameters as user-facing controls on the signals page. The backend already supports these parameters — this is a frontend and spec task, not an engineering one.
+
+> **Gate clearance (DL-004, 2026-03-04):** The v1.7 SRB (EPIC-02) confirmed that `top_n` and `lookback_days` are display/query-scope controls, not strategy execution parameters, and their exposure does not violate §13.2. PoG: `claude/evidence/gates/signal-exposure-4.3_20260304.md` (POG-20260304-01). Referenced document: `strategy_rules.md` v1.3.
+
+> **Scope constraint (immutable):** Only `top_n` and `lookback_days` are cleared by this PoG. Any parameter beyond these two — including signal weights, scoring logic, or ranking methodology — requires a new §13 review before it may enter pre-alignment. This PoG is automatically stale if `strategy_rules.md` is incremented.
 
 ---
 

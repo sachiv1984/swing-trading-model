@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-17 (roadmap rebalance — cycle 2026-03-17__item-v1.10 — v1.10 completion event)
+**Last Updated:** 2026-03-17 (post-ship closure — cycle 2026-03-17__release-v2.0 — v2.0 shipped)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — v1.10 Operations & Quality Foundation completion event)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v1.10** — Operations & Quality Foundation — Shipped 2026-03-16
-**Next planned release:** **v2.0** (Reporting & Alerts)
+**v2.0** — Reporting & Alerts — Shipped 2026-03-17
+**Next planned release:** **v2.1** (TBD)
 
 ---
 
@@ -45,7 +45,7 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*Items in this section are committed for the current or next release cycle. v2.0 is the active delivery horizon.*
+*Items in this section are committed for the current or next release cycle. v2.1 is the next delivery horizon — v2.0 shipped 2026-03-17.*
 
 ---
 
@@ -56,12 +56,12 @@ These may be revisited in future versions without any canonical spec change:
 - Plan published: 2026-03-17
 - Cycle folder: claude/cycles/2026-03-17__release-v2.0/
 - Backlog slice: claude/cycles/2026-03-17__release-v2.0/stage4_backlog_slice.md
-- Status at annotation: Planning
+- Status at annotation: Shipped — 2026-03-17 (cycle 2026-03-17__release-v2.0) ✅ Complete
 
-### v2.0 — Reporting & Alerts *(consolidated)*
+### v2.0 — Reporting & Alerts *(consolidated)* ✅ Complete — Shipped 2026-03-17
 
 #### 3.5 Alerts & Notifications
-**Status:** Planned
+**Status:** Deferred to v2.1 — BLG-TECH-08 (async notification ADR) required before spec may be authored
 **Effort:** Medium–High (4–5 days)
 **Value:** High
 
@@ -76,29 +76,11 @@ Email alerts for: stop loss approach, grace period ending (days 8–9 warning), 
 
 > **Before implementation:** Database schema must be defined in `docs/specs/data_model.md`. API endpoints must be specified in `docs/specs/api_contracts/`. Notification preference model must be specced before frontend work begins.
 
-#### 4.1b — Tax-Year P&L Statement *(new sub-item)*
-**Status:** Planned
-**Effort:** Low–Medium (1–2 days)
-**Value:** High (formal financial record for tax purposes)
-
-A structured, server-side generated tax-year P&L statement. GBP-adjusted, fee-inclusive, covering all realised gains and losses in a given tax year. This is a financial record, not an analytics view — it requires its own canonical specification separate from the analytics endpoint. Dedicated report endpoint required.
-
-> **Scope note (2026-03-04):** Realised vs Unrealised P&L display labelling (originally submitted as BLG-NEW-06) is pre-work for this item. The P&L statement must clearly distinguish realised and unrealised amounts per trade. BLG-NEW-06 is merged into 4.1b pre-work scope — not a standalone backlog item.
-
-#### 4.3 — Signal Exposure Enhancement *(new — narrow scope)*
-**Status:** Planned — active v2.0 planning *(§13 gate cleared; PoG POG-20260304-01 issued 2026-03-04)*
-**Effort:** Low (frontend only — backend already supports these parameters)
-**Value:** Medium
-
-Expose the existing `top_n` and `lookback_days` signal generation parameters as user-facing controls on the signals page. The backend already supports these parameters — this is a frontend and spec task, not an engineering one.
-
-> **Gate clearance (DL-004, 2026-03-04):** The v1.7 SRB (EPIC-02) confirmed that `top_n` and `lookback_days` are display/query-scope controls, not strategy execution parameters, and their exposure does not violate §13.2. PoG: `claude/evidence/gates/signal-exposure-4.3_20260304.md` (POG-20260304-01). Referenced document: `strategy_rules.md` v1.3.
-
-> **Scope constraint (immutable):** Only `top_n` and `lookback_days` are cleared by this PoG. Any parameter beyond these two — including signal weights, scoring logic, or ranking methodology — requires a new §13 review before it may enter pre-alignment. This PoG is automatically stale if `strategy_rules.md` is incremented.
+*4.1b Tax-Year P&L Statement and 4.3 Signal Exposure Enhancement retired to `claude/roadmap/roadmap_archive.md` on 2026-03-17 — both shipped in v2.0.*
 
 ---
 
-## 4. Priority 2 — Horizon: Next (post v2.0)
+## 4. Priority 2 — Horizon: Next (v2.1)
 
 #### 4.2 Watchlists & Screening
 **Status:** Planned — do not pull forward
@@ -174,7 +156,7 @@ When evaluating new features:
 | **v1.8** | Risk Dashboard | Full risk page — heat, drawdown, grace period, position-level risk — ✅ Shipped 2026-03-06 |
 | **v1.9** | User Value & Insight | ✅ Fully Shipped 2026-03-13 — all items retired to archive |
 | **v1.10** | Operations & Quality | Staging environment, CI/CD auto-deploy, CohortAnalysis refactor, integration tests, v1.7 QA scenario gaps — ✅ Shipped 2026-03-16 *(retired to archive 2026-03-16)* |
-| **v2.0** | Reporting & Alerts | Alerts & notifications (QA gate pending), tax-year statement, signal parameter exposure (gate cleared — active planning) |
+| **v2.0** | Reporting & Alerts | Tax-year P&L statement, signal exposure controls (top_n, lookback_days) — ✅ Shipped 2026-03-17. Alerts & notifications deferred to v2.1 (pending BLG-TECH-08 ADR). |
 | **v2.1+** | Enhancements | Watchlists, chart interactivity, Prometheus |
 
 ---

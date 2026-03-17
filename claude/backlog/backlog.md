@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-17 (v2.0 delivery verification — 3 items added: TEST-GAP-SIG-01, TEST-GAP-TAX-01, BLG-PROC-01; 2 v2.0 items closed: TEST-GAP-EPIC-02, BLG-BE-02)
+**Last Updated:** 2026-03-17 (backlog grooming — TEST-GAP-EPIC-02, BLG-BE-02, BLG-GOV-01, BLG-GOV-02 archived; BLG-SPEC-D10 re-targeted to v2.1)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
@@ -118,41 +118,6 @@ Items promoted to backlog from idea pool during roadmap rebalance cycle 2026-03-
 
 ---
 
-### TEST-GAP-EPIC-02 — CohortAnalysis backend integration regression scenario
-**Priority:** P3
-**Type:** QA / Test Coverage
-**Owner:** QA & Testing Owner
-**Source:** TSG-V110-01 — verification_report.md §6, cycle 2026-03-15__release-v1.10
-**Cycle added:** 2026-03-15__release-v1.10
-**Target release:** before next sprint touching analytics components
-
-Test scenario coverage gap from 2026-03-15__release-v1.10: QA & Testing Owner to author CohortAnalysis backend integration regression scenario (`SC-CA-BACKEND-01`) covering: period toggle (Monthly / Quarterly / Yearly) triggers API refetch and table updates; `has_enough_data = false` shows insufficient data warning; column values match `GET /analytics/cohort` response fields. Spec references: `docs/specs/frontend/pages/analytics.md §15`; `docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort`. Register in `docs/testing/risk_dashboard_scenarios.md` or new `analytics_scenarios.md`.
-
----
-
-### BLG-BE-02 — Spec and implement GET /portfolio/prospective-heat endpoint
-**Priority:** P3
-**Type:** Backend + Spec
-**Owner:** Head of Engineering + Head of Specs Team
-**Source:** DEV-ST05-01 — ST-05 (v1.10 EPIC-03) integration tests could not cover this endpoint because it is absent from `portfolio_endpoints.md` and not implemented in `backend/main.py`. Discovered during sprint execution 2026-03-16.
-**Cycle added:** 2026-03-15__release-v1.10
-**Target release:** v2.0 (or earlier if ProspectiveHeatPanel becomes a priority)
-
-**Problem**
-The ProspectiveHeatPanel frontend component exists and makes reference to portfolio heat projection, but `GET /portfolio/prospective-heat` (a prospective heat calculation endpoint) is not defined in `portfolio_endpoints.md` and has no backend implementation. BLG-API-01 acceptance criteria referenced this endpoint, resulting in DEV-ST05-01 (P3) when integration tests could not be written for it.
-
-**Scope**
-- Author `GET /portfolio/prospective-heat` spec in `portfolio_endpoints.md` (response shape, calculation definition)
-- Implement the endpoint in `backend/main.py`
-- Add TestClient integration tests in `tests/test_portfolio_integration.py` (currently skipped with `@unittest.skip` per DEV-ST05-01)
-
-**Acceptance Criteria**
-- `GET /portfolio/prospective-heat` defined in `portfolio_endpoints.md`
-- Endpoint implemented and returning correct prospective heat calculation
-- `@unittest.skip` removed from `TestProspectiveHeat` in `tests/test_portfolio_integration.py`; tests pass
-
----
-
 ### BLG-SPEC-G6 — `total_return_pct` not returned by GET /analytics/metrics
 **Priority:** P3 (Low)
 **Type:** Backend / Spec Gap
@@ -179,7 +144,7 @@ The ProspectiveHeatPanel frontend component exists and makes reference to portfo
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** ST-17 Spec Coverage Inventory — A-02 (2026-03-17)
 **Cycle added:** 2026-03-17__release-v2.0
-**Target release:** v2.0 post-ship
+**Target release:** v2.1
 
 `docs/specs/frontend/patterns/api_dependencies.md` (v1.1, 2026-02-19) maps surfaces to endpoints. The v2.0 additions (Reports page — `GET /reports/tax-year`; Signals controls — `GET /signals?top_n=&lookback_days=`) are not yet reflected.
 
@@ -296,6 +261,8 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| BLG-GOV-01 | Roadmap stage document consolidation | v2.0 | 2026-03-17__release-v2.0 | EPIC-06/ST-18 |
+| BLG-GOV-02 | Ideas register (replace per-file idea submissions) | v2.0 | 2026-03-17__release-v2.0 | EPIC-06/ST-19 |
 | TEST-GAP-EPIC-02 | CohortAnalysis backend integration regression scenario | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-20 |
 | BLG-BE-02 | Spec and implement GET /portfolio/prospective-heat | v2.0 | 2026-03-17__release-v2.0 | EPIC-04/ST-13 |
 | BLG-NEW-13 | Spec Coverage Inventory | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-17 |
@@ -371,48 +338,6 @@ Before 3.5 Alerts (EPIC-03) can be specced or implemented, an architectural deci
 - If async decided: spike or proof of concept for worker setup confirmed feasible in staging
 - Head of Engineering sign-off obtained
 - Sprint Planning Engine must verify this item is Complete before sealing v2.1 sprint backlog containing any EPIC-03 story
-
----
-
-### BLG-GOV-01 — Roadmap stage document consolidation
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Roadmap process reflection 2026-03-16
-**Cycle added:** 2026-03-16 (governance improvement session)
-**Effort:** M (2–3 days — prompt rewrite + template updates)
-**Target release:** v2.0 (governance prep)
-
-Currently Standard and Extended roadmap runs produce 5–8 separate stage files per cycle (`stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, `stage5_rebalance.md`, `run_manifest.md`, `cycle_summary.md`, `lessons_learnt.md`). The Lightweight tier (added v3.0) already consolidates STEP 2–7 output into a single `cycle_record.md`. This item extends that consolidation to Standard and Extended runs — collapsing the 5 working-paper stage files into sections of `cycle_record.md` while keeping `run_manifest.md`, `cycle_summary.md`, and `lessons_learnt.md` as separate files.
-
-**Acceptance Criteria**
-- `roadmap_prompt.md` updated: STEP 2–7 write targets changed to sections of `cycle_record.md` for all tiers
-- Write scope restriction (§5) updated accordingly
-- STEP 9 Write Plan template updated to reference `cycle_record.md`
-- STEP 10 completion condition updated
-- `OPERATIONAL_GUIDE.md` §6 artefact list updated
-- At least one `run roadmap` cycle validated against the new format before sealing
-
----
-
-### BLG-GOV-02 — Ideas register (replace per-file idea submissions)
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Roadmap process reflection 2026-03-16
-**Cycle added:** 2026-03-16 (governance improvement session)
-**Effort:** M (2–3 days — prompt rewrite + migration)
-**Target release:** v2.0 (governance prep)
-
-The current idea intake model produces one file per idea per agent per window (44+ files from a single intake window). Status tracking requires bulk `sed` updates across dozens of files. This item replaces the per-file model with a single `claude/ideas/ideas_register.md` — a structured table with one row per idea containing: ID, agent, title, status, effort band, submission date, last-actioned date, and park rationale. The window summary (`window_summary_<window_id>.md`) is retained as the per-window record. Individual historical submission files are archived but not deleted.
-
-**Acceptance Criteria**
-- `idea_intake_prompt.md` updated: submissions write to `ideas_register.md` (append/update row) instead of individual files
-- `roadmap_prompt.md` STEP 4 updated: reads from `ideas_register.md` table instead of scanning individual files
-- `ideas_register.md` schema defined in `shared_standards.md` §16 (new entry)
-- Migration script or instruction provided to convert existing `claude/ideas/submissions/` files into register rows
-- Prior submission files moved to `claude/ideas/submissions/archive/`
-- `OPERATIONAL_GUIDE.md` updated to reflect new artefact
 
 ---
 
