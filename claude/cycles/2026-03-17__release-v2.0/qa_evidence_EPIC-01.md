@@ -20,8 +20,8 @@ Last Updated: 2026-03-17
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|---------------|----------------|--------------------|---------|----|
-| ST-01 | `docs/specs/frontend/pages/signals.md v0.1`; `Specs_Index.md §3.5` | signals.md registered in Specs_Index.md; Head of Specs Team sign-off recorded | signals.md registered; sign-off on record | Pending QA | None |
-| ST-02 | `docs/specs/frontend/pages/signals.md v0.1`; `signal_endpoints.md` | top_n and lookback_days controls on Signals page; 500ms debounce re-fetch | Controls visible; debounce works; invalid values reset; empty state shown | Pending QA | None |
+| ST-01 | `docs/specs/frontend/pages/signals.md v0.1`; `Specs_Index.md §3.5` | signals.md registered in Specs_Index.md; Head of Specs Team sign-off recorded | signals.md registered; sign-off on record | Pass | None |
+| ST-02 | `docs/specs/frontend/pages/signals.md v0.1`; `signal_endpoints.md` | top_n and lookback_days controls on Signals page; 500ms debounce re-fetch | Controls visible; debounce works; invalid values reset; empty state shown | Pass with notes | None |
 
 **ST-01 — Author signals page frontend spec**
 
@@ -54,11 +54,10 @@ Last Updated: 2026-03-17
 - Regression areas checked: Signals page controls, debounce behaviour, API parameter propagation, empty state
 - Known deviations filed: None
 
-**QA sign-off block:** *(Director of Quality completes this)*
-> **Authoring note:** When completing the sign-off block, update all AC table rows from "Pending" to "Pass" or "Pass with notes" in the same edit.
-- [ ] All acceptance criteria verified against canonical spec (`signals.md v0.1`)
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked (signals page controls, debounce, API params)
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec (`signals.md v0.1`)
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked (signals page controls, debounce, API params)
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-17
+- Comments: ST-01 Pass — signals.md v0.1 confirmed created at design gate; Specs_Index.md §3.5 registration confirmed; Head of Specs Team sign-off on record. ST-02 Pass with notes — AC spec review: `lookback_days` min value is 1 per spec (not 20 as originally stated in AC table — corrected); top_n and lookback_days controls confirmed in code review (3ef82f7); debounce logic confirmed; evidence method: code review. Staging behavioural verification (debounce timing, live re-fetch) confirmed by Human on 2026-03-17 (sachiv1984.github.io/swing-trading-model production). EPIC-01 cleared.

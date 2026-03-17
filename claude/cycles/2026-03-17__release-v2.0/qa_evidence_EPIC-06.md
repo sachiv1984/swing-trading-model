@@ -22,8 +22,8 @@ Last Updated: 2026-03-17
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|---------------|----------------|--------------------|---------|----|
-| ST-18 | `claude/system/roadmap_prompt.md v4.0`; `OPERATIONAL_GUIDE.md v3.24` | roadmap_prompt.md v3.0→v4.0: cycle_record.md pattern all tiers; CLAUDE.md §6 checklist | All AC met; prompt change log updated | Pending QA | None |
-| ST-19 | `claude/system/idea_intake_prompt.md v2.0`; `shared_standards.md v2.3` | idea_intake_prompt.md v1.3→v2.0; ideas_register.md created; 44 ideas migrated | All AC met; CLAUDE.md §6 checklist | Pending QA | None |
+| ST-18 | `claude/system/roadmap_prompt.md v4.0`; `OPERATIONAL_GUIDE.md v3.24` | roadmap_prompt.md v3.0→v4.0: cycle_record.md pattern all tiers; CLAUDE.md §6 checklist | All AC met; prompt change log updated | Pass | None |
+| ST-19 | `claude/system/idea_intake_prompt.md v2.0`; `shared_standards.md v2.3` | idea_intake_prompt.md v1.3→v2.0; ideas_register.md created; 44 ideas migrated | All AC met; CLAUDE.md §6 checklist | Pass | None |
 
 **ST-18 — Roadmap Stage Document Consolidation (BLG-GOV-01)**
 
@@ -59,11 +59,10 @@ Last Updated: 2026-03-17
 - Regression areas checked: roadmap_prompt.md tier coverage; idea_intake_prompt.md register model; OPERATIONAL_GUIDE.md consistency
 - Known deviations filed: None
 
-**QA sign-off block:** *(Director of Quality completes this)*
-> **Authoring note:** When completing the sign-off block, update all AC table rows from "Pending" to "Pass" or "Pass with notes" in the same edit.
-- [ ] All acceptance criteria verified (governance prompt changes reviewed)
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Note: functional verification of prompt changes occurs at next `run roadmap` invocation
+**QA sign-off block:**
+- [x] All acceptance criteria verified (governance prompt changes reviewed via commits 03e0060, 7858d91, a236678)
+- [x] No unresolved P0 or P1 deviations
+- [x] Note: functional verification of prompt changes deferred to next `run roadmap` invocation — accepted as deferred outstanding action
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-17
+- Comments: ST-18 Pass — roadmap_prompt.md v4.0 reviewed; all stage file references replaced with cycle_record.md section references across all three tiers; STEP 9 template updated; OPERATIONAL_GUIDE.md §6 and §14 updated; prompt_change_log entries confirmed. ST-19 Pass — idea_intake_prompt.md v2.0 reviewed; ideas_register.md schema confirmed in shared_standards.md §16.5; 44 ideas confirmed migrated; prior files archived; CLAUDE.md §6 checklist completed. Functional regression at next `run roadmap` is deferred outstanding action — accepted. EPIC-06 cleared.

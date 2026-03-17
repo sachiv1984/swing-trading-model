@@ -32,3 +32,27 @@ Cycle: 2026-03-17__release-v2.0
 - **Friction items 2–3 (cross-branch commits, DoQ evidence method):** No prior recurrence found.
 - **Friction item 4 (base44.baseUrl):** New pattern — no prior occurrence. Root cause: frontend components that bypass the api.* abstraction layer and construct URLs directly are not covered by current QA checklist.
 - **Friction item 5 (shared governance file merge conflicts):** Predictable in any multi-EPIC sprint where shared state files are modified per-EPIC. No prior formal record; pattern expected to recur.
+
+---
+
+## Phase 4 — 2026-03-17__release-v2.0
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-03-17__release-v2.0
+**Section anchor:** `## Phase 4 — 2026-03-17__release-v2.0`
+**Filed:** 2026-03-17
+**Reviewed by:** PMO Lead
+
+**Recurrence check:** Prior cycle Phase 4 file: `claude/cycles/2026-03-15__release-v1.10/lessons_learnt_cycle.md §Phase 4` — loaded. Prior outstanding deferred patches reviewed:
+- Phase 4 friction item 1 (QA evidence AC table not updated in sync with sign-off block) — deferred patch not yet applied.
+- Phase 4 friction item 2 (deviation type distinction) — deferred patch not yet applied.
+- Phase 4 friction item 3 (staging test data checklist) — deferred patch not yet applied.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| QA evidence sign-off blocks for EPIC-01, EPIC-02, and EPIC-06 were blank at delivery verification preflight (STEP -1.3 hard gate). The execution engine had set `qa_signed_off: true` in the sealed execution_state.json and sprint_close.md showed ✅, but the edit tool calls that should have updated the qa_evidence files did not persist. Sign-offs had to be retrospectively completed by DoQ at delivery verification time. | Phase 4 | A | defer | Recurrence of v1.10 Phase 4 friction item 1. The authoring note added to the qa_evidence template is passive — add an active file-content check to execution_prompt.md STEP 5.2: after setting `qa_signed_off: true` in execution_state.json, confirm the qa_evidence file's sign-off block `Date:` field is non-blank. If blank: re-apply sign-off before sealing. | PMO Lead | next `run sprint` run |
+| EPIC-01 and EPIC-02 had `test_scenarios: []` but both introduced new user-facing features (signals controls, tax year report). Gaps TSG-v20-01 and TSG-v20-02 were discovered at delivery verification STEP 5 — requiring TEST-GAP-SIG-01 and TEST-GAP-TAX-01 backlog items to be created post-facto. | Phase 4 | C | defer | Sprint planning engine STEP 5: when a story is `delegated_frontend` and introduces a new page or controls (not a refactor), flag EPIC `test_scenarios` as `pending — QA & Testing Owner to author before next sprint on this domain`. Surfaces gap at planning, not at verification. Add to sprint_planning_prompt.md §5 classification or execution_prompt.md §qa_evidence template. | PMO Lead | next sprint planning or `run sprint` run touching new frontend features |
+
+**Recurrence Notes:**
+- **Friction item 1 (qa_evidence file persistence):** Recurrence of v1.10 Phase 4 friction item 1. The v1.10 authoring-note patch was insufficient — the gap recurred. New deferred patch targets an active check in execution_prompt.md, not a passive reminder.
+- **Friction item 2 (test scenario gaps for new frontend features):** No prior recurrence found — new pattern from v2.0 first sprint with novel frontend surfaces.

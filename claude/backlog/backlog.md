@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-17 (ST-17 audit output — 5 items added: BLG-SPEC-G6, BLG-SPEC-D10–D13; 5 v2.0 items closed)
+**Last Updated:** 2026-03-17 (v2.0 delivery verification — 3 items added: TEST-GAP-SIG-01, TEST-GAP-TAX-01, BLG-PROC-01; 2 v2.0 items closed: TEST-GAP-EPIC-02, BLG-BE-02)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
@@ -245,12 +245,59 @@ Full list in `docs/specs/spec_coverage_inventory.md §9`. Most affected: `api_co
 
 ---
 
+### TEST-GAP-SIG-01 — Test scenario coverage gap: Signals page controls (v2.0)
+**Priority:** P3
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** TSG-v20-01 — verification_report.md §6, cycle 2026-03-17__release-v2.0
+**Cycle added:** 2026-03-17__release-v2.0
+**Target release:** before next sprint touching signals page
+
+Test scenario coverage gap from 2026-03-17__release-v2.0: QA & Testing Owner to author scenarios for signals page controls (ST-02). Create `docs/testing/signals_scenarios.md` covering:
+- SC-SIG-01: Controls render with correct defaults (top_n=5, lookback_days=252); changing either fires GET /signals with updated params after 500ms debounce
+- SC-SIG-02: Invalid input (0 or negative) resets to default; no API call made
+- SC-SIG-03: Empty state when API returns no signals; controls remain active
+Spec references: `docs/specs/frontend/pages/signals.md v0.1 §Controls/§Validation/§Empty State`
+
+---
+
+### TEST-GAP-TAX-01 — Test scenario coverage gap: Tax Year P&L report (v2.0)
+**Priority:** P3
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** TSG-v20-02 — verification_report.md §6, cycle 2026-03-17__release-v2.0
+**Cycle added:** 2026-03-17__release-v2.0
+**Target release:** before next sprint touching reports or tax year functionality
+
+Test scenario coverage gap from 2026-03-17__release-v2.0: QA & Testing Owner to author scenarios for the Tax Year P&L report frontend and boundary. Create `docs/testing/reports_scenarios.md` covering:
+- SC-TAX-01: Year selector defaults to current tax year; changing year triggers API re-fetch; summary bar updates
+- SC-TAX-02: Empty state when no closed trades in selected year
+- SC-TAX-03: Tax year boundary — trade exited 5 Apr YYYY → year YYYY-1; trade exited 6 Apr YYYY → year YYYY
+Note: 29 backend integration tests exist in `tests/test_reports_integration.py` (these need not be duplicated).
+Spec references: `docs/specs/frontend/pages/reports.md v0.1`; `docs/specs/api_contracts/reports_endpoints.md v0.1 §Tax Year Boundary`
+
+---
+
+### BLG-PROC-01 — Process adherence: cross-EPIC branch commits (v2.0 deviation follow-up)
+**Priority:** P3
+**Type:** Process / Governance
+**Owner:** PMO Lead
+**Source:** DEV-v2.0-01 — ST-20 cross-branch process deviation, cycle 2026-03-17__release-v2.0
+**Cycle added:** 2026-03-17__release-v2.0
+**Target release:** v2.1 sprint retrospective
+
+CLAUDE.md §2 action-now patch applied ("Story commits must land on the branch matching their EPIC prefix"). This item tracks compliance at next sprint execution. At the next sprint close, PMO Lead to confirm: (a) no cross-EPIC commits occurred, or (b) any occurring were escalated and documented. If 3+ sprints pass with zero recurrence, this item may be closed as pattern established.
+
+---
+
 ## Closed Items
 
 Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| TEST-GAP-EPIC-02 | CohortAnalysis backend integration regression scenario | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-20 |
+| BLG-BE-02 | Spec and implement GET /portfolio/prospective-heat | v2.0 | 2026-03-17__release-v2.0 | EPIC-04/ST-13 |
 | BLG-NEW-13 | Spec Coverage Inventory | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-17 |
 | BLG-BE-01 | GET /portfolio missing 4 required fields (GAP-03) | v2.0 | 2026-03-17__release-v2.0 | EPIC-04/ST-12 |
 | BLG-OPS-02 | Production Deployment Runbook | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-14 |

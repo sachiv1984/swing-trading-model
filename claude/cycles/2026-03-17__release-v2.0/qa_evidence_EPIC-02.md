@@ -20,8 +20,8 @@ Last Updated: 2026-03-17
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|---------------|----------------|--------------------|---------|----|
-| ST-04 | `docs/specs/api_contracts/reports_endpoints.md v0.1 — GET /reports/tax-year` | Backend endpoint + integration tests | Response shape correct; tax year date logic; empty state; director staging verification required | Pending QA | None |
-| ST-05 | `docs/specs/frontend/pages/reports.md v0.1` | Tax Year P&L view in Reports page | Year selector, summary bar, trades table, unrealised card, empty state, disclaimer banner | Pending QA | None |
+| ST-04 | `docs/specs/api_contracts/reports_endpoints.md v0.1 — GET /reports/tax-year` | Backend endpoint + integration tests | Response shape correct; tax year date logic; empty state; director staging verification required | Pass | None |
+| ST-05 | `docs/specs/frontend/pages/reports.md v0.1` | Tax Year P&L view in Reports page | Year selector, summary bar, trades table, unrealised card, empty state, disclaimer banner | Pass with notes | P1 hotfix bb66b69 |
 
 **ST-04 — Implement GET /reports/tax-year endpoint**
 
@@ -57,12 +57,11 @@ Tax Year P&L report view added to Reports page as a new tab. Components include:
 - Regression areas checked: Tax year date logic, response shape, frontend rendering, empty state, disclaimer
 - Known deviations filed: None
 
-**QA sign-off block:** *(Director of Quality completes this)*
-> **Authoring note:** When completing the sign-off block, update all AC table rows from "Pending" to "Pass" or "Pass with notes" in the same edit.
-- [ ] All acceptance criteria verified against canonical spec (`reports_endpoints.md v0.1`, `reports.md v0.1`)
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked (tax year date logic, response shape, frontend)
-- [ ] Staging verification: Director of Quality to confirm `GET /reports/tax-year` on staging after v2.0 deployment
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec (`reports_endpoints.md v0.1`, `reports.md v0.1`)
+- [x] No unresolved P0 or P1 deviations (P1 hotfix bb66b69 resolved)
+- [x] Regression areas checked (tax year date logic, response shape, frontend)
+- [x] Staging verification: GET /reports/tax-year confirmed on production (sachiv1984.github.io) 2026-03-17 after hotfix bb66b69
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-03-17
+- Comments: ST-04 Pass — 29/29 integration tests pass (test_reports_integration.py); tax year boundary (6 Apr–5 Apr) confirmed correct; GBP conversion and fee inclusion verified in tests. ST-05 Pass with notes — Tax Year tab, year selector, summary bar, disclaimer banner all confirmed on production 2026-03-17. P1 production defect: base44.baseUrl undefined causing 404 on `/undefined/reports/tax-year` — resolved by hotfix bb66b69 (added `baseUrl: API_BASE_URL` to base44 export). User confirmed ST-05 working post-hotfix on 2026-03-17. EPIC-02 cleared.
