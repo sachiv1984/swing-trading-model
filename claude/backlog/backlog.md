@@ -338,6 +338,33 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 ---
 
+### BLG-TECH-08 — Async notification delivery architecture decision record
+**Priority:** P2 (Medium)
+**Type:** Architecture / Engineering Decision
+**Owner:** Head of Engineering + Backend Engineering Patterns Owner
+**Source:** QA notification planning session 2026-03-17 (qa_notification_planning.md — DL-003 session output)
+**Cycle added:** 2026-03-17__release-v2.0 (post-planning session)
+**Effort:** S (~0.5–1 day)
+**Target release:** v2.1 (prerequisite — must be completed before v2.1 sprint planning seals for EPIC-03)
+
+**Problem**
+Before 3.5 Alerts (EPIC-03) can be specced or implemented, an architectural decision must be made on notification delivery: (a) synchronous inline delivery (email sent on the API response that triggers the alert — simpler, no infrastructure change), or (b) asynchronous delivery via a background worker + task queue (Celery + Redis or equivalent — more scalable but requires adding worker infrastructure to the current synchronous FastAPI application). Without this decision, the notification spec (ST-06) cannot be written to a stable baseline.
+
+**Scope**
+- Document trade-offs of sync vs. async notification delivery for current single-user deployment
+- Produce an Architecture Decision Record (ADR) capturing: options considered, decision, rationale, consequences
+- File as `docs/adr/ADR-NNN-notification-delivery-architecture.md`
+- Update `backend_engineering_patterns.md` with the decision reference
+
+**Acceptance Criteria**
+- ADR produced covering: sync inline email vs. async worker + queue
+- Decision recorded with rationale appropriate to current scale (single-user, self-hosted)
+- If async decided: spike or proof of concept for worker setup confirmed feasible in staging
+- Head of Engineering sign-off obtained
+- Sprint Planning Engine must verify this item is Complete before sealing v2.1 sprint backlog containing any EPIC-03 story
+
+---
+
 ### BLG-GOV-01 — Roadmap stage document consolidation
 **Priority:** P2 (Medium)
 **Type:** Governance Process
@@ -395,12 +422,12 @@ The current idea intake model produces one file per idea per agent per window (4
 | EPIC-02 | ST-03 | Author tax-year P&L report spec | P2 | S–M | No |
 | EPIC-02 | ST-04 | Implement GET /reports/tax-year endpoint | P2 | M | No |
 | EPIC-02 | ST-05 | Frontend: tax-year P&L report view | P2 | M | No |
-| EPIC-03 | ST-06 | Spec: alerts endpoint + notification preference model | P2 | M | Yes — QA gate 3 (DL-003) |
-| EPIC-03 | ST-07 | Backend: alert rules engine | P2 | M–H | Yes — QA gate 3 |
-| EPIC-03 | ST-08 | Backend: notification delivery (email) | P2 | M | Yes — QA gate 3 |
-| EPIC-03 | ST-09 | Frontend: notification preferences page | P2 | S–M | Yes — QA gate 3 |
-| EPIC-03 | ST-10 | Frontend: in-app notification feed | P2 | S–M | Yes — QA gate 3 |
-| EPIC-03 | ST-11 | QA: notification delivery test scenarios (DL-003 gate clearance) | P2 | S | Yes — QA gate 3 |
+| ~~EPIC-03~~ | ~~ST-06~~ | ~~Spec: alerts endpoint + notification preference model~~ | ~~P2~~ | ~~M~~ | **Deferred to v2.1** (DoQ session 2026-03-17) |
+| ~~EPIC-03~~ | ~~ST-07~~ | ~~Backend: alert rules engine~~ | ~~P2~~ | ~~M–H~~ | **Deferred to v2.1** |
+| ~~EPIC-03~~ | ~~ST-08~~ | ~~Backend: notification delivery (email)~~ | ~~P2~~ | ~~M~~ | **Deferred to v2.1** |
+| ~~EPIC-03~~ | ~~ST-09~~ | ~~Frontend: notification preferences page~~ | ~~P2~~ | ~~S–M~~ | **Deferred to v2.1** |
+| ~~EPIC-03~~ | ~~ST-10~~ | ~~Frontend: in-app notification feed~~ | ~~P2~~ | ~~S–M~~ | **Deferred to v2.1** |
+| ~~EPIC-03~~ | ~~ST-11~~ | ~~QA: notification delivery test scenarios~~ | ~~P2~~ | ~~S~~ | **Deferred to v2.1** — DL-003 session complete; gate documented; prerequisite BLG-TECH-08 required |
 | EPIC-04 | ST-12 | Fix GET /portfolio missing 4 fields (BLG-BE-01 P1) — **Sprint 1 item 1** | P1 | S | No |
 | EPIC-04 | ST-13 | Spec + implement GET /portfolio/prospective-heat (BLG-BE-02 stretch) | P3 | M | No (stretch) |
 | EPIC-05 | ST-14 | BLG-OPS-02: Production Deployment Runbook | P2 | S | No |
