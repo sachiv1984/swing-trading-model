@@ -380,5 +380,40 @@ The current idea intake model produces one file per idea per agent per window (4
 
 ---
 
+<!-- release-plan-marker: RP:v2.0:2026-03-17__release-v2.0 -->
+
+---
+
+## 7. v2.0 Release Slice — Reporting & Alerts
+
+*Planned: 2026-03-17 | Cycle: 2026-03-17__release-v2.0 | Backlog slice: claude/cycles/2026-03-17__release-v2.0/stage4_backlog_slice.md*
+
+| EPIC | Story | Title | Priority | Effort | Conditional |
+|------|-------|-------|----------|--------|-------------|
+| EPIC-01 | ST-01 | Author signals page frontend spec | P2 | S | No |
+| EPIC-01 | ST-02 | Implement top_n + lookback_days controls on signals page | P2 | S | No |
+| EPIC-02 | ST-03 | Author tax-year P&L report spec | P2 | S–M | No |
+| EPIC-02 | ST-04 | Implement GET /reports/tax-year endpoint | P2 | M | No |
+| EPIC-02 | ST-05 | Frontend: tax-year P&L report view | P2 | M | No |
+| EPIC-03 | ST-06 | Spec: alerts endpoint + notification preference model | P2 | M | Yes — QA gate 3 (DL-003) |
+| EPIC-03 | ST-07 | Backend: alert rules engine | P2 | M–H | Yes — QA gate 3 |
+| EPIC-03 | ST-08 | Backend: notification delivery (email) | P2 | M | Yes — QA gate 3 |
+| EPIC-03 | ST-09 | Frontend: notification preferences page | P2 | S–M | Yes — QA gate 3 |
+| EPIC-03 | ST-10 | Frontend: in-app notification feed | P2 | S–M | Yes — QA gate 3 |
+| EPIC-03 | ST-11 | QA: notification delivery test scenarios (DL-003 gate clearance) | P2 | S | Yes — QA gate 3 |
+| EPIC-04 | ST-12 | Fix GET /portfolio missing 4 fields (BLG-BE-01 P1) — **Sprint 1 item 1** | P1 | S | No |
+| EPIC-04 | ST-13 | Spec + implement GET /portfolio/prospective-heat (BLG-BE-02 stretch) | P3 | M | No (stretch) |
+| EPIC-05 | ST-14 | BLG-OPS-02: Production Deployment Runbook | P2 | S | No |
+| EPIC-05 | ST-15 | BLG-DATA-01: Positions Table Data Dictionary | P2 | S | No |
+| EPIC-05 | ST-16 | BLG-TECH-07: Database Migration Governance Standard | P2 | S | No |
+| EPIC-05 | ST-17 | BLG-NEW-13: Spec Coverage Inventory | P2 | M | No |
+| EPIC-06 | ST-18 | BLG-GOV-01: Roadmap stage document consolidation | P2 | M | No |
+| EPIC-06 | ST-19 | BLG-GOV-02: Ideas register | P2 | M | No |
+| EPIC-05 | ST-20 | TEST-GAP-EPIC-02: CohortAnalysis regression scenario (stretch) | P3 | S | No (stretch) |
+
+*Full acceptance criteria in stage4_backlog_slice.md.*
+
+---
+
 *For delivery history, see `docs/product/changelog.md`.*
 *For the active roadmap, see `claude/roadmap/current_roadmap.md`.*

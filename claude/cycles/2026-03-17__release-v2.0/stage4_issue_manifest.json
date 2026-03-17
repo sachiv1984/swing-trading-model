@@ -1,0 +1,182 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Author signals page frontend spec",
+    "epic": "EPIC-01",
+    "description": "Create docs/specs/frontend/pages/signals.md defining top_n and lookback_days UI controls on signals page",
+    "ac_summary": "signals.md created with control specs; registered in Specs_Index; Head of Specs Team sign-off",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Implement top_n and lookback_days controls on signals page",
+    "epic": "EPIC-01",
+    "description": "Implement controls from ST-01 spec on signals page; pass as query params to GET /signals",
+    "ac_summary": "Controls render with correct defaults; re-fetch on change; invalid inputs handled; DoQ sign-off",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Author tax-year P&L report spec",
+    "epic": "EPIC-02",
+    "description": "Create reports_endpoints.md with GET /reports/tax-year spec; GBP-adjusted, fee-inclusive, realised/unrealised distinction",
+    "ac_summary": "reports_endpoints.md created; endpoint defined; tax-year boundary defined; Head of Specs Team + FinRep Owner sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Implement GET /reports/tax-year endpoint",
+    "epic": "EPIC-02",
+    "description": "Implement tax-year P&L backend endpoint per ST-03 spec; integration tests in test_reports_integration.py",
+    "ac_summary": "Endpoint returns correct trades, GBP conversion, fees, realised/unrealised; 400 for invalid year; DoQ sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Frontend: tax-year P&L report view",
+    "epic": "EPIC-02",
+    "description": "Implement tax-year P&L report view in Base44 frontend; year selector, trade table, summary row",
+    "ac_summary": "Report page accessible; year selector; trades table; summary; empty state; DoQ sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Spec: alerts endpoint + notification preference model",
+    "epic": "EPIC-03",
+    "description": "Author alerts_endpoints.md; define 5 alert types, preference model, database schema for notification preferences",
+    "ac_summary": "alerts_endpoints.md created; 5 alert types defined; preference model specced; data_model.md updated; conditional on QA gate",
+    "labels": ["sprint", "EPIC-03", "conditional", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Backend: alert rules engine",
+    "epic": "EPIC-03",
+    "description": "Implement alert rules engine; trigger logic for all 5 alert types; respects user preferences",
+    "ac_summary": "5 alert types implemented; preferences respected; alert history stored; integration tests; conditional on QA gate",
+    "labels": ["sprint", "EPIC-03", "conditional", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Backend: notification delivery (email)",
+    "epic": "EPIC-03",
+    "description": "Implement email notification delivery; retry logic; email templates per alert type; conditional on QA gate",
+    "ac_summary": "Email delivery for all alert types; failure logging; retry; DoQ sign-off; conditional on QA gate",
+    "labels": ["sprint", "EPIC-03", "conditional", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Frontend: notification preferences page",
+    "epic": "EPIC-03",
+    "description": "Notification preferences page with per-alert-type toggles; accessible from settings; conditional on QA gate",
+    "ac_summary": "Preferences page in settings; per-alert toggles; email field; persisted; DoQ sign-off; conditional on QA gate",
+    "labels": ["sprint", "EPIC-03", "conditional", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Frontend: in-app notification feed",
+    "epic": "EPIC-03",
+    "description": "In-app notification feed (bell icon); recent alerts; unread badge; mark as read; conditional on QA gate",
+    "ac_summary": "Notification feed in UI; unread count; mark-as-read; DoQ sign-off; conditional on QA gate",
+    "labels": ["sprint", "EPIC-03", "conditional", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "QA: notification delivery test scenarios and infrastructure",
+    "epic": "EPIC-03",
+    "description": "Run QA planning session for notification delivery (DL-003 gate clearance output); document test types, delivery modes, infrastructure",
+    "ac_summary": "QA session output documented; qa_notification_planning.md filed; DL-003 cleared; DoQ sign-off; conditional on QA gate",
+    "labels": ["sprint", "EPIC-03", "conditional", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "Fix GET /portfolio missing 4 fields (BLG-BE-01 P1)",
+    "epic": "EPIC-04",
+    "description": "Add initial_value, net_deposits, current_drawdown_percent, peak_portfolio_value to GET /portfolio response; closes GAP-03",
+    "ac_summary": "All 4 fields present; defaults 0.0 when no history; integration tests extended; GAP-03 passes staging; DoQ sign-off",
+    "labels": ["sprint", "EPIC-04", "P1", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "Spec + implement GET /portfolio/prospective-heat (BLG-BE-02 stretch)",
+    "epic": "EPIC-04",
+    "description": "Author prospective-heat endpoint spec; implement endpoint; remove @unittest.skip from TestProspectiveHeat",
+    "ac_summary": "Endpoint specced and implemented; skip removed; tests pass; DoQ sign-off; P3 stretch",
+    "labels": ["sprint", "EPIC-04", "stretch", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-14",
+    "title": "BLG-OPS-02: Production Deployment Runbook",
+    "epic": "EPIC-05",
+    "description": "Create docs/ops/production_deployment_runbook.md; pre-deployment checklist, steps, verification, rollback",
+    "ac_summary": "Runbook created; checklist, steps, verification, rollback present; Head of Engineering sign-off",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-15",
+    "title": "BLG-DATA-01: Positions Table Data Dictionary",
+    "epic": "EPIC-05",
+    "description": "Create docs/specs/data_model_positions_dictionary.md; document all positions table fields; flag gaps",
+    "ac_summary": "Data dictionary covers all positions fields; gaps flagged; registered in Specs_Index",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-16",
+    "title": "BLG-TECH-07: Database Migration Governance Standard",
+    "epic": "EPIC-05",
+    "description": "Create docs/ops/database_migration_governance.md; naming, fields, review, application, incident procedure",
+    "ac_summary": "Migration governance doc created; cross-referenced from backend_engineering_patterns.md; Head of Engineering sign-off",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-17",
+    "title": "BLG-NEW-13: Spec Coverage Inventory",
+    "epic": "EPIC-05",
+    "description": "Audit all docs/specs/ sections; rate covered/partial/gap; cross-reference backlog; define review cadence",
+    "ac_summary": "Coverage Inventory doc produced; all specs rated; gaps cross-referenced; cadence defined; registered in Specs_Index",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-18",
+    "title": "BLG-GOV-01: Roadmap stage document consolidation",
+    "epic": "EPIC-06",
+    "description": "Rewrite roadmap_prompt.md to consolidate STEP 2-7 outputs into cycle_record.md for Standard/Extended tiers",
+    "ac_summary": "roadmap_prompt.md updated; OPERATIONAL_GUIDE.md §6/§14 updated; CLAUDE.md §6 checklist satisfied; validated by one roadmap run",
+    "labels": ["sprint", "EPIC-06", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-19",
+    "title": "BLG-GOV-02: Ideas register",
+    "epic": "EPIC-06",
+    "description": "Replace per-file idea submission model with ideas_register.md; update idea_intake_prompt.md and roadmap_prompt.md",
+    "ac_summary": "ideas_register.md schema defined; intake + roadmap prompts updated; migration provided; archive prior files; CLAUDE.md §6 checklist satisfied",
+    "labels": ["sprint", "EPIC-06", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-20",
+    "title": "TEST-GAP-EPIC-02: CohortAnalysis backend integration regression scenario (stretch)",
+    "epic": "EPIC-05",
+    "description": "Author SC-CA-BACKEND-01 scenario; period toggle, insufficient data state, column value correctness",
+    "ac_summary": "SC-CA-BACKEND-01 registered; covers period toggle, has_enough_data false, column values; P3 stretch",
+    "labels": ["sprint", "EPIC-05", "stretch", "cycle:2026-03-17__release-v2.0"],
+    "assignee": null
+  }
+]

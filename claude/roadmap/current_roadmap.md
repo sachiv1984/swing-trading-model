@@ -49,6 +49,15 @@ These may be revisited in future versions without any canonical spec change:
 
 ---
 
+<!-- roadmap-annotation-marker: RA:v2.0:2026-03-17__release-v2.0 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-17__release-v2.0
+- Plan published: 2026-03-17
+- Cycle folder: claude/cycles/2026-03-17__release-v2.0/
+- Backlog slice: claude/cycles/2026-03-17__release-v2.0/stage4_backlog_slice.md
+- Status at annotation: Planning
+
 ### v2.0 — Reporting & Alerts *(consolidated)*
 
 #### 3.5 Alerts & Notifications
