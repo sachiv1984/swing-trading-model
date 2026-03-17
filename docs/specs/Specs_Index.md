@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-17
+**Last Updated:** 2026-03-17 (ST-01 — v2.0 sprint)
 
 ---
 
@@ -134,6 +134,8 @@ It points to the **single canonical source**.
 - `frontend/README.md`
 - `frontend/design_system.md`
 - Page, component, and pattern specifications
+- `signals.md` — Class 2 Supporting, v0.1, Active (created 2026-03-17, ST-01): signals page with top_n / lookback_days user-facing controls. Head of Specs Team sign-off: 2026-03-17.
+- `reports.md` — Class 2 Supporting, v0.1, Active (created 2026-03-17, design gate / ST-05): tax-year P&L report view.
 
 **Owner**
 - Frontend Specifications & UX Documentation Owner
