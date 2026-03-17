@@ -8,7 +8,7 @@
   "sprint_goal": "Ship the v2.0 core product scope: fix the P1 portfolio response defect, deliver the UK tax-year P&L report endpoint and frontend view, and expose the signal exposure controls — making all three production-ready in a single sprint.",
   "mode": "standard",
   "initialized_utc": "2026-03-17T04:00:00Z",
-  "last_updated_utc": "2026-03-17T12:00:00Z",
+  "last_updated_utc": "2026-03-17T12:30:00Z",
 
   "merge_gate": {
     "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-04", "EPIC-05", "EPIC-06"],
@@ -129,11 +129,11 @@
     },
 
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-17__release-v2.0/EPIC-05",
-      "pr_status": "not_created",
-      "pr_number": null,
-      "qa_signed_off": false,
+      "pr_status": "open",
+      "pr_number": 90,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-17__release-v2.0/qa_evidence_EPIC-05.md",
       "test_scenarios": [
         "docs/testing/analytics_scenarios.md — ST-20"
@@ -205,23 +205,23 @@
         "ST-20": {
           "title": "CohortAnalysis backend integration regression scenario (stretch)",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "QA & Testing Owner",
           "github_issue": 80,
           "branch": "exec/2026-03-17__release-v2.0/EPIC-04",
           "commit_sha": "4adbe21",
           "delegation_record_id": "DEL-ST-20",
-          "blocked_since_utc": "2026-03-17T11:00:00Z",
-          "unblock_criteria": "Director of Quality sign-off on qa_evidence_EPIC-05.md ST-20 section + PR comment",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-17T12:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/analytics.md §15",
             "docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort",
             "docs/testing/analytics_scenarios.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "commit",
+          "deviations_filed": true,
+          "last_completed_substep": "qa_signed_off",
           "notes": "Scenarios authored: SC-CA-BACKEND-01, SC-CA-BACKEND-02, SC-CA-BACKEND-03. analytics_scenarios.md created. Note: committed on EPIC-04 branch as cross-branch process deviation — work belongs to EPIC-05 but was committed on current branch EPIC-04. Content correct; governance inconsistency documented."
         }
       }
@@ -348,8 +348,8 @@
     "ST-10": "EPIC-03 deferred"
   },
 
-  "blocked_items": ["ST-20"],
+  "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-12", "ST-13", "ST-01", "ST-02", "ST-14", "ST-15", "ST-16", "ST-17", "ST-04", "ST-05", "ST-18", "ST-19"],
+  "completed_items": ["ST-12", "ST-13", "ST-01", "ST-02", "ST-14", "ST-15", "ST-16", "ST-17", "ST-04", "ST-05", "ST-18", "ST-19", "ST-20"],
   "open_escalations": []
 }
