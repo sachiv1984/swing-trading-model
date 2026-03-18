@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-17 (backlog grooming — TEST-GAP-EPIC-02, BLG-BE-02, BLG-GOV-01, BLG-GOV-02 archived; BLG-SPEC-D10 re-targeted to v2.1)
+**Last Updated:** 2026-03-18 (direct session — BLG-GOV-03/04/05/06 added: governance process improvements identified in architectural review)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
@@ -364,6 +364,98 @@ Staging auto-deploys from `main`, so feature branch changes can only be verified
 - Preview URL is accessible and points to the PR branch's backend code
 - `OPERATIONAL_GUIDE.md §8` documents the preview URL pattern
 - DoQ can verify frontend behaviour on the preview URL before approving merge
+
+---
+
+### BLG-GOV-03 — Simplify cycle artefact sealing (remove SHA-256, retain sealed flag)
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Direct session architectural review — 2026-03-18
+**Target release:** v2.2
+
+**Problem**
+The current release planning engine computes and verifies SHA-256 hashes for sealed artefacts on every run. For a 2-person team, the primary threat (accidental writes by Claude) is already covered by write scope restrictions in STEP 5. Hash recomputation adds schema complexity and verification overhead for a failure mode that `git diff` would catch anyway.
+
+**Proposed change**
+- Remove `sealed_hashes` and `artifact_hashes` fields from `state.json` schema
+- Remove hash computation and drift detection steps from the release planning engine
+- Retain the `sealed: true` flag as the sole sealing mechanism — write gate checks this flag before any modification
+- Retain `state_snapshot_hash` on `state.json` only (single lightweight checksum)
+
+**Acceptance Criteria**
+- Release planning engine no longer computes or verifies per-artefact SHA-256 hashes
+- `state.json` schema updated; `sealed_hashes` and `artifact_hashes` blocks removed
+- `sealed: true` flag check remains and is enforced as a hard gate
+- All references to hash drift detection removed from prompt and shared_standards
+
+---
+
+### BLG-GOV-04 — Roadmap engine writes Provisional-Target at backlog promotion
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Direct session architectural review — 2026-03-18
+**Target release:** v2.2
+
+**Problem**
+When the roadmap engine promotes an idea to the backlog (STEP 8/9), it has full scoring context — horizon (Now/Next/Later), effort band, CPS alignment. None of this flows to the backlog item as a provisional release target. Release planning then evaluates candidates without this signal, duplicating capacity reasoning from scratch.
+
+**Proposed change**
+- Roadmap engine STEP 9: when writing a promoted item to `backlog.md`, include a `**Provisional-Target:**` field derived from the item's horizon placement (Now → next planned release, Next → +1 release, Later → unscheduled)
+- This is a signal, not a commitment — release planning may override it during STEP 4 capacity check
+- Addresses the capacity reasoning duplication problem together with BLG-GOV-05
+
+**Acceptance Criteria**
+- `roadmap_prompt.md` STEP 9 write instructions include `Provisional-Target` field on new backlog items
+- Field format documented in `shared_standards.md`
+- Release planning STEP 1 reads `Provisional-Target` as a candidate prioritisation input
+
+---
+
+### BLG-GOV-05 — Release planning loads scored_initiatives.md for effort band handoff
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Direct session architectural review — 2026-03-18
+**Target release:** v2.2
+
+**Problem**
+`roadmap_prompt.md` (line 864) explicitly states that effort bands in `scored_initiatives.md` are recorded "to provide the release planning engine with sizing signal." However, release planning's STEP 0 load list includes `initiative_register.md` but not `scored_initiatives.md`. The sizing signal is never consumed. Together with BLG-GOV-04 this is the root cause of capacity reasoning being duplicated across the two engines.
+
+**Proposed change**
+- Add `claude/roadmap/scored_initiatives.md` to release planning STEP 0 load list
+- Release planning STEP 4 capacity check references the effort band from this file rather than re-deriving sizing
+- If `scored_initiatives.md` is absent or an item has no entry: fall back to STEP 4 estimate as today
+
+**Acceptance Criteria**
+- `release_planning_prompt.md` STEP 0 loads `scored_initiatives.md`
+- STEP 4 capacity check references effort bands from the file where available
+- `shared_standards.md` documents the handoff contract between the two engines
+
+---
+
+### BLG-GOV-06 — Structured lessons learnt carry-forward block across all engines
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Direct session architectural review — 2026-03-18
+**Target release:** v2.2
+
+**Problem**
+Lessons learnt from post-ship closure currently produce either (a) deferred patches applied ad-hoc at the next roadmap STEP -1.5, or (b) advisory items that sit in `lessons_learnt_closure.md` and are only consulted if someone remembers to look. No engine reads lessons as a substantive planning input. Carry-forward of learnings is effectively lost after one cycle.
+
+**Proposed change**
+- Standardise a `## Carry-Forward` section in `lessons_learnt_closure.md` (3–5 items max, structured as: observation, implication, which engine should act)
+- All engines (roadmap, release planning, sprint planning) read this section at STEP 0 and surface it to the operator before proceeding
+- Items in Carry-Forward are acknowledged (ticked off) when the relevant engine acts on them, or explicitly deferred with rationale
+- Post-ship closure engine writes the Carry-Forward section as part of its STEP output
+
+**Acceptance Criteria**
+- `lessons_learnt_closure.md` schema includes `## Carry-Forward` section (documented in `shared_standards.md`)
+- `roadmap_prompt.md`, `release_planning_prompt.md`, `sprint_planning_prompt.md` STEP 0 each include a Carry-Forward read-and-acknowledge step
+- `post_ship_closure.md` writes the Carry-Forward section as a mandatory STEP output
+- At least one carry-forward item from a prior cycle demonstrably influences the next cycle's planning
 
 ---
 
