@@ -1,9 +1,9 @@
 # Data Model - Momentum Trading Assistant
 
-**Version:** 1.7
+**Version:** 1.8
 **Status:** Canonical
 **Owner:** Data Model & Domain Schema Owner
-**Last Updated:** 2026-02-19
+**Last Updated:** 2026-03-18
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
 
@@ -498,7 +498,7 @@ FROM settings;
 
 ## Planned Future Schema Changes
 
-### v1.8 — Trade Reflections (v1.9, EPIC-01 ST-02)
+### v1.8 — Trade Reflections (implemented — v1.9 Sprint 1)
 
 One reflection record per closed trade. Upsert model — a reflection may be saved once and updated; skip leaves no record. Linked to `trade_history` by UUID.
 
