@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.29
+**Version:** 3.30
 **Last Updated:** 2026-03-18
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -849,7 +849,7 @@ run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mod
 - Director of Quality QA gates apply to all EPICs before merge.
 - **QA sign-off environment (v1.10+):** Director of Quality must review and test against the staging environment at `https://trading-assistant-staging.onrender.com` — not production. Staging is the canonical pre-merge QA environment as of v1.10 (LL-01 resolution, 2026-03-16).
 - **Staging test data prerequisite for data-dependent scenarios (LL-v1.10-P4-3):** Before executing QA scenarios that require backend data records (e.g. scenarios involving closed trades, open positions, or portfolio history), confirm the staging database has at least one closed trade and at least one open position. If the staging DB lacks qualifying data, the scenario result is BLOCKED (not FAIL) — record the data gap as a friction item in the `qa_evidence_EPIC-xx.md` sign-off block.
-- **PR preview environments (v2.1+, ST-15):** For EPICs with frontend changes, Render provisions a preview environment at `https://trading-assistant-api-pr-{N}.onrender.com` (where `{N}` is the PR number). Preview environments use **manual mode** — they are only created when the PR has the `render-preview` label applied. When raising a PR for an EPIC with frontend changes, add the `render-preview` label so the preview environment is provisioned. Director of Quality may use the preview URL as the staging evidence method for frontend-interactive AC (hover behaviour, animations, zoom/pan, modal interactions) before merge.
+- **PR preview environments (v2.1+, ST-15):** For EPICs with frontend changes, Render provisions a preview environment at `https://trading-assistant-api-staging-pr-{N}.onrender.com` (where `{N}` is the PR number). Preview environments use **manual mode** — they are only created when the PR has the `render-preview` label applied. When raising a PR for an EPIC with frontend changes, add the `render-preview` label so the preview environment is provisioned. Director of Quality may use the preview URL as the staging evidence method for frontend-interactive AC (hover behaviour, animations, zoom/pan, modal interactions) before merge.
 - Partial completion does not count — items must satisfy all acceptance criteria.
 - The engine is fully resumable — re-invoke with the same command to resume from last state.
 - **No autonomous merge.** QA sign-off and Product Owner acceptance are always required.
@@ -889,7 +889,7 @@ A PR may only be merged when all of the following are true:
 
 - All ST items in EPIC: `done`
 - `spec_references` populated for all `done` items
-- `qa_evidence_EPIC-xx.md` exists and sign-off block complete (Director of Quality — review conducted against staging: `https://trading-assistant-staging.onrender.com` or PR preview URL `https://trading-assistant-api-pr-{N}.onrender.com` for frontend-interactive AC)
+- `qa_evidence_EPIC-xx.md` exists and sign-off block complete (Director of Quality — review conducted against staging: `https://trading-assistant-staging.onrender.com` or PR preview URL `https://trading-assistant-api-staging-pr-{N}.onrender.com` for frontend-interactive AC)
 - QA sign-off comment on PR from Director of Quality (must reference staging sign-off)
 - Product Owner acceptance recorded
 - `quality_gate.yml` CI passed
@@ -1284,7 +1284,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.29 |
+| Version | 3.30 |
 | Last Updated | 2026-03-18 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.1 |
@@ -1319,8 +1319,9 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.30 | 2026-03-18 | **Correct preview URL pattern.** §8.2 and §8.5: `trading-assistant-api-pr-{N}` → `trading-assistant-api-staging-pr-{N}` (confirmed from live Render deployment). §14 version 3.30. |
 | 3.29 | 2026-03-18 | **ST-15 sign-off: preview environment mode clarified to manual + `render-preview` label.** §8.2 bullet updated — automatic provisioning corrected to manual mode; `render-preview` label required on PRs for EPICs with frontend changes. Infrastructure & Operations Owner sign-off recorded (enabled 2026-03-18). |
-| 3.28 | 2026-03-18 | **ST-15 (EPIC-05): Render PR preview environments documented.** §8.2 preview environment bullet added — Render provisions `https://trading-assistant-api-pr-{N}.onrender.com` per PR; Director of Quality may use preview URL as staging evidence method for frontend-interactive AC. §8.5 merge gate QA sign-off line updated to reference preview URL option alongside staging URL. §14 version 3.25→3.28, Last Updated updated to 2026-03-18. |
+| 3.28 | 2026-03-18 | **ST-15 (EPIC-05): Render PR preview environments documented.** §8.2 preview environment bullet added — Render provisions `https://trading-assistant-api-staging-pr-{N}.onrender.com` per PR; Director of Quality may use preview URL as staging evidence method for frontend-interactive AC. §8.5 merge gate QA sign-off line updated to reference preview URL option alongside staging URL. §14 version 3.25→3.28, Last Updated updated to 2026-03-18. |
 | 3.27 | 2026-03-18 | **idea_intake_prompt.md v2.0→v2.1 — stale warning horizon check added.** §5 source prompt v2.0→v2.1; §14 Idea Intake Engine v2.0→v2.1. STEP -0.5 added: before opening intake window, Facilitator checks `ideas_register.md` for Parked-cycle-2 rows; if ≥15, surfaces stale warning advisory. Register-model-correct replacement for LL-01-patch (cycle 2026-03-18__item-4.3). |
 | 3.26 | 2026-03-18 | **roadmap_prompt.md v4.1→v4.2 — register model consistency fixes.** §6 source prompt v4.0→v4.2; §14 Roadmap Engine Source → v4.2. Changes: STEP -1.6 count source updated from `submissions/` file scan to `ideas_register.md` row count; STEP 0.C Lightweight criterion 2 updated to register rows; STEP 8.5.B item 4 "idea file" language updated to "register row". |
 | 3.25 | 2026-03-17 | **ST-19 (EPIC-06): Ideas register model.** §5 source prompt v1.3→v2.0; §5 trigger condition updated (count from `ideas_register.md`); §5.3 lifecycle updated (per-file → register rows); §5.5 artefacts table updated (Idea Submissions → Ideas Register; window summary path updated; archive entry added); §5.6 exit criteria updated. Artefact register: Idea Submissions → Ideas Register (`ideas_register.md`). §14: idea_intake_prompt v2.0; roadmap_prompt v4.1; shared_standards v2.3. |
