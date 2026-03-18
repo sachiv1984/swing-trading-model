@@ -24,20 +24,20 @@ jobs:
 
       - name: Wait for preview to be healthy
         id: wait
-        timeout-minutes: 10
+        timeout-minutes: 20
         run: |
           URL="${{ steps.url.outputs.base }}/health"
           echo "Polling $URL ..."
-          for i in $(seq 1 40); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$URL" || echo "000")
+          for i in $(seq 1 60); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$URL")
             echo "Attempt $i: HTTP $STATUS"
             if [ "$STATUS" = "200" ]; then
               echo "Preview is healthy."
               exit 0
             fi
-            sleep 15
+            sleep 20
           done
-          echo "Preview did not become healthy within 10 minutes."
+          echo "Preview did not become healthy within 20 minutes."
           exit 1
 
       - name: Set up Python
@@ -72,7 +72,7 @@ jobs:
               '',
               `**Preview URL:** ${previewUrl}`,
               '',
-              '**Analytics page:** ' + previewUrl.replace('api-pr', 'pr') + '/performance-analytics',
+              '**Analytics page:** ' + previewUrl + '/performance-analytics',
               '',
               '<details>',
               '<summary>Seed script output</summary>',
