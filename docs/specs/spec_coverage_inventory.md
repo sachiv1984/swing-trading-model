@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Class:** Class 3 Operational Record
 **Status:** Filed
-**Version:** 1.0
+**Version:** 1.1
 **Audit Date:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint Item:** ST-17 — EPIC-05 (v2.0)
@@ -431,55 +431,52 @@ All five component specs (`cash_management_modal.md`, `exit_modal.md`, `journal_
 
 **Compliant** (full header per `document_lifecycle_guide.md`):
 
-| Document | Class | Version |
-|----------|-------|---------|
-| `api_contracts/market_endpoints.md` | Class 1 Canonical | v0.1 |
-| `data_model/settings_model.md` | Class 1 Canonical | v0.1 |
-| `data_model_positions_dictionary.md` | Class 1 Canonical | v0.1 |
-| `structured_logging_standards.md` | Class 1 Canonical | v0.1.0 |
-| `frontend/pages/analytics.md` | Class 1 Canonical | v1.4 |
-| `frontend/pages/dashboard.md` | Class 1 Canonical | v2.0 |
-| `frontend/pages/risk_dashboard.md` | Class 1 Canonical | v0.1.8 |
-| `frontend/pages/signals.md` | Class 2 Supporting | v0.1 |
-| `frontend/pages/reports.md` | Class 2 Supporting | v0.1 |
-| `frontend/pages/trade_reflection.md` | Class 1 Canonical | v0.1 |
+| Document | Class | Version | Remediated |
+|----------|-------|---------|------------|
+| `api_contracts/market_endpoints.md` | Class 1 | v0.1 | Pre-compliant |
+| `data_model/settings_model.md` | Class 1 | v0.1 | Pre-compliant |
+| `data_model_positions_dictionary.md` | Class 1 | v0.1 | Pre-compliant |
+| `structured_logging_standards.md` | Class 1 | v0.1.0 | Pre-compliant |
+| `frontend/pages/analytics.md` | Class 1 | v1.4 | Pre-compliant |
+| `frontend/pages/dashboard.md` | Class 1 | v2.0 | Pre-compliant |
+| `frontend/pages/risk_dashboard.md` | Class 1 | v0.1.8 | Pre-compliant |
+| `frontend/pages/signals.md` | Class 2 | v0.1 | Pre-compliant |
+| `frontend/pages/reports.md` | Class 2 | v0.1 | Pre-compliant |
+| `frontend/pages/trade_reflection.md` | Class 1 | v0.1 | Pre-compliant |
+| `api_contracts/README.md` | Class 2 | v2.0.0 | Pre-compliant (verified ST-16) |
+| `frontend/pages/trade_history.md` | Class 1 | v1.2 | Pre-compliant (verified ST-16) |
+| `api_contracts/conventions.md` | Class 1 | v1.0 | ST-16 (2026-03-18) |
+| `api_contracts/portfolio_endpoints.md` | Class 1 | v1.9.0 | ST-16 (2026-03-18) |
+| `api_contracts/signal_endpoints.md` | Class 1 | v1.0 | ST-16 (2026-03-18) |
+| `api_contracts/analytics_endpoints.md` | Class 1 | v1.9.0 | ST-16 (2026-03-18) |
+| `api_contracts/cash_endpoints.md` | Class 1 | v1.0 | ST-16 (2026-03-18) |
+| `api_contracts/health_endpoints.md` | Class 1 | v1.0 | ST-16 (2026-03-18) |
+| `api_contracts/position_endpoints.md` | Class 1 | v1.0 | ST-16 (2026-03-18) |
+| `api_contracts/trade_endpoints.md` | Class 1 | v1.9.0 | ST-16 (2026-03-18) |
+| `api_contracts/reports_endpoints.md` | Class 1 | v0.1 | ST-16 (2026-03-18) |
+| `api_contracts/settings_endpoints.md` | Class 1 | v1.2.0 | ST-16 (2026-03-18) |
+| `api_contracts/api_changelog.md` | Class 2 | v1.2.0 | ST-16 (2026-03-18) |
+| `data_model.md` | Class 1 | v1.8 | ST-16 (2026-03-18) |
+| `metrics_definitions.md` | Class 1 | v1.8.0 | ST-16 (2026-03-18) |
+| `frontend/pages/positions.md` | Class 1 | v1.3 | ST-16 (2026-03-18) |
+| `frontend/pages/settings.md` | Class 1 | v1.2 | ST-16 (2026-03-18) |
+| `frontend/pages/system_status.md` | Class 1 | v1.1 | ST-16 (2026-03-18) |
+| `frontend/components/cash_management_modal.md` | Class 1 | v1.1 | ST-16 (2026-03-18) |
+| `frontend/components/exit_modal.md` | Class 1 | v1.1 | ST-16 (2026-03-18) |
+| `frontend/components/journal_components.md` | Class 1 | v1.1 | ST-16 (2026-03-18) |
+| `frontend/components/position_detail_modal.md` | Class 1 | v1.1 | ST-16 (2026-03-18) |
+| `frontend/components/position_form.md` | Class 1 | v1.3 | ST-16 (2026-03-18) |
+| `frontend/patterns/api_dependencies.md` | Class 2 | v1.2 | ST-16 (2026-03-18) |
+| `frontend/patterns/error_handling.md` | Class 2 | v1.1 | ST-16 (2026-03-18) |
+| `frontend/README.md` | Class 2 | v1.0 | ST-16 (2026-03-18) |
 
-**Non-compliant** (missing `Class` field, `Lifecycle Guide` reference, or both):
+**Non-compliant:** None.
 
-| Document | Missing Fields | Priority |
-|----------|---------------|----------|
-| `api_contracts/conventions.md` | Class, Status, Version, Last Updated, Lifecycle Guide | P2 |
-| `api_contracts/portfolio_endpoints.md` | All header fields | P2 |
-| `api_contracts/signal_endpoints.md` | All header fields | P2 |
-| `api_contracts/analytics_endpoints.md` | All header fields | P2 |
-| `api_contracts/cash_endpoints.md` | All header fields | P2 |
-| `api_contracts/health_endpoints.md` | All header fields | P2 |
-| `api_contracts/position_endpoints.md` | All header fields | P2 |
-| `api_contracts/trade_endpoints.md` | All header fields | P2 |
-| `api_contracts/reports_endpoints.md` | All header fields | P2 |
-| `api_contracts/settings_endpoints.md` | Class, Lifecycle Guide | P3 |
-| `api_contracts/api_changelog.md` | Class, Lifecycle Guide | P3 |
-| `api_contracts/README.md` | Last Updated, Lifecycle Guide | P3 |
-| `data_model.md` | Class, Lifecycle Guide | P2 |
-| `metrics_definitions.md` | Class, Status, Lifecycle Guide; Owner is team not role | P2 |
-| `frontend/pages/positions.md` | Class, Lifecycle Guide | P3 |
-| `frontend/pages/settings.md` | Class, Lifecycle Guide | P3 |
-| `frontend/pages/system_status.md` | Class, Lifecycle Guide | P3 |
-| `frontend/pages/trade_history.md` | Class, Lifecycle Guide | P3 |
-| `frontend/components/cash_management_modal.md` | Class, Lifecycle Guide | P3 |
-| `frontend/components/exit_modal.md` | Class, Lifecycle Guide | P3 |
-| `frontend/components/journal_components.md` | Class, Lifecycle Guide | P3 |
-| `frontend/components/position_detail_modal.md` | Class, Lifecycle Guide | P3 |
-| `frontend/components/position_form.md` | Class, Lifecycle Guide | P3 |
-| `frontend/patterns/api_dependencies.md` | Class, Lifecycle Guide | P3 |
-| `frontend/patterns/error_handling.md` | Class, Lifecycle Guide | P3 |
-| `frontend/README.md` | All header fields | P3 |
+**Total docs tracked:** 36
+**Compliant:** 36 (100%)
+**Non-compliant:** 0
 
-**Total docs audited:** 38
-**Compliant:** 10 (26%)
-**Non-compliant:** 28 (74%)
-
-**Note:** All non-compliant documents pre-date lifecycle guide v2.0 adoption (prior to 2026-03-02). The compliance deficit is a known doc-debt item, not a governance failure. Remediation is a bulk-update task.
+**Note:** The original audit (v1.0) counted 38 total and 28 non-compliant. Re-verification during ST-16 confirmed 36 tracked documents (12 pre-compliant, 24 remediated by ST-16). The discrepancy of 2 was traced to `api_contracts/README.md` and `frontend/pages/trade_history.md` already carrying full headers at the time of ST-16 execution, reducing the remediation scope from 26 to 24.
 
 ---
 
@@ -512,4 +509,5 @@ All five component specs (`cash_management_modal.md`, `exit_modal.md`, `journal_
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-03-18 | §9 updated: bulk lifecycle header remediation complete (ST-16 / EPIC-06, v2.1). 24 documents remediated; 2 previously non-compliant confirmed already compliant. All 36 tracked documents now compliant (100%). |
 | 1.0 | 2026-03-17 | Initial inventory. ST-17 / EPIC-05 (v2.0). 38 documents audited. 7 actions identified. Head of Specs Team. |

@@ -1,5 +1,12 @@
 # README.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Supporting Document (Class 2)
+**Status:** Active
+**Version:** 1.0
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
 ## Purpose
 This documentation set defines the **front‑end user experience and interface specifications** for the Position Manager Web App. Its goal is to clearly describe **what users see and how they interact with the product**, while keeping technical implementation details secondary.
 

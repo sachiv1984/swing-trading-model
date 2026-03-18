@@ -1,9 +1,11 @@
 # cash_management_modal.md
 
-**Owner:** Frontend Specifications & UX Documentation Owner  
-**Status:** Canonical  
-**Version:** 1.0
-**Last Updated:** February 18, 2026
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 1
+**Status:** Canonical
+**Version:** 1.1
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & Usage Context
 The Cash Management Modal allows users to record **deposits and withdrawals** so that portfolio cash and P&L remain accurate over time.  

@@ -1,9 +1,11 @@
 # api_dependencies.md
 
 **Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 2
 **Status:** Canonical
 **Version:** 1.2
 **Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose
 This document maps every **surface** (page, modal, or component) to the **API endpoints** it directly calls. It exists to make change impact visible — when an endpoint changes, this document tells you which surfaces are affected.

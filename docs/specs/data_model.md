@@ -1,9 +1,11 @@
 # Data Model - Momentum Trading Assistant
 
-**Version:** 1.8
-**Status:** Canonical
 **Owner:** Data Model & Domain Schema Owner
+**Class:** Class 1
+**Status:** Canonical
+**Version:** 1.8
 **Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
 
