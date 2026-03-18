@@ -178,22 +178,46 @@ def post(path, body):
     return resp.json()
 
 
+DEFAULT_SETTINGS = {
+    "min_hold_days": 5,
+    "atr_multiplier_initial": 2.0,
+    "atr_multiplier_trailing": 3.0,
+    "atr_period": 14,
+    "default_currency": "GBP",
+    "uk_commission": 11.95,
+    "us_commission": 0.0,
+    "stamp_duty_rate": 0.5,
+    "fx_fee_rate": 0.5,
+    "min_trades_for_analytics": 10,
+    "default_risk_percent": 1.0,
+}
+
 def preflight():
     """Check the environment is ready before seeding."""
     print(f"  Preflight checks...")
+
     # Portfolio must exist
     r = requests.get(BASE_URL + "/portfolio", timeout=15)
     if not r.ok:
         print(f"  ✗ GET /portfolio → HTTP {r.status_code}: {r.text[:200]}")
-        print(f"  The environment may not be fully configured. Set up the app first.")
         raise SystemExit(1)
     print(f"  ✓ Portfolio exists")
-    # Settings must exist
+
+    # Settings — create defaults if missing
     r = requests.get(BASE_URL + "/settings", timeout=15)
     if not r.ok:
         print(f"  ✗ GET /settings → HTTP {r.status_code}: {r.text[:200]}")
         raise SystemExit(1)
-    print(f"  ✓ Settings exist")
+    settings_data = r.json().get("data", [])
+    if not settings_data:
+        print(f"  ⚠ No settings found — creating defaults...")
+        r2 = requests.post(BASE_URL + "/settings", json=DEFAULT_SETTINGS, timeout=15)
+        if not r2.ok:
+            print(f"  ✗ POST /settings → HTTP {r2.status_code}: {r2.text[:200]}")
+            raise SystemExit(1)
+        print(f"  ✓ Default settings created")
+    else:
+        print(f"  ✓ Settings exist")
     print()
 
 
