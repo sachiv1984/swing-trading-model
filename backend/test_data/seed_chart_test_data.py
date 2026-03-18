@@ -173,8 +173,28 @@ TRADES = [
 def post(path, body):
     url = BASE_URL + path
     resp = requests.post(url, json=body, timeout=30)
-    resp.raise_for_status()
+    if not resp.ok:
+        raise RuntimeError(f"HTTP {resp.status_code} — {resp.text[:300]}")
     return resp.json()
+
+
+def preflight():
+    """Check the environment is ready before seeding."""
+    print(f"  Preflight checks...")
+    # Portfolio must exist
+    r = requests.get(BASE_URL + "/portfolio", timeout=15)
+    if not r.ok:
+        print(f"  ✗ GET /portfolio → HTTP {r.status_code}: {r.text[:200]}")
+        print(f"  The environment may not be fully configured. Set up the app first.")
+        raise SystemExit(1)
+    print(f"  ✓ Portfolio exists")
+    # Settings must exist
+    r = requests.get(BASE_URL + "/settings", timeout=15)
+    if not r.ok:
+        print(f"  ✗ GET /settings → HTTP {r.status_code}: {r.text[:200]}")
+        raise SystemExit(1)
+    print(f"  ✓ Settings exist")
+    print()
 
 
 def create_and_close(trade):
@@ -214,6 +234,7 @@ def main():
     print(f"  Target: {BASE_URL}")
     print(f"{'='*65}\n")
 
+    preflight()
     created = []
     for i, trade in enumerate(TRADES, 1):
         label = f"{trade['ticker']:<5}  {trade['_month']}  {trade['_r']:>7}  [{trade['_bucket']}]"
