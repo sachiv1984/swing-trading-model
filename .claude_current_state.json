@@ -40,21 +40,16 @@
   "schema_version": "1.0",
   "prior_status": null,
   "open_escalations": {},
-  "last_rebalance_cycle": "2026-03-17__item-v1.10",
-  "last_rebalance_utc": "2026-03-17T00:00:00Z",
-  "last_rebalance_outcome": "No-change roadmap (DL-009 confirm) + 3 backlog adds (BLG-OPS-02, BLG-DATA-01, BLG-TECH-07) + BLG-OPS-01 completed + CHART-IX displacement candidate flagged",
+  "last_rebalance_cycle": "2026-03-18__item-4.3",
+  "last_rebalance_utc": "2026-03-18T00:00:00Z",
+  "last_rebalance_outcome": "No-change roadmap (DL-010 confirm) + 2 backlog adds (BLG-FR-01 PDF Export, BLG-FR-02 CSV Export) + 4.1b + 4.3 completed + 19 stale ideas disposed (8 rejected, 11 re-parked) + idea_intake_prompt v2.1 (STEP -0.5 stale warning)",
   "last_meta_review_cycle": "none — initialised cycle 2026-03-17__item-v1.10",
+  "rebalance_cycles_since_meta_review": 1,
   "last_manage_roadmap_utc": "2026-03-17T23:59:00Z",
   "last_manage_roadmap_outcome": "2 items retired (4.1b Tax-Year P&L, 4.3 Signal Exposure); 0 flagged stale; 16 kept active",
   "last_groom_backlog_utc": "2026-03-17T23:59:00Z",
   "last_groom_backlog_outcome": "4 items archived (TEST-GAP-EPIC-02, BLG-BE-02, BLG-GOV-01, BLG-GOV-02); 0 orphans flagged; 0 stale blockers; 2 promotion candidates (BLG-TECH-08, BLG-SPEC-D12)",
-  "active_pog": {
-    "POG-20260304-01": {
-      "initiative": "4.3 Signal Exposure Enhancement",
-      "file": "claude/evidence/gates/signal-exposure-4.3_20260304.md",
-      "stale_if": "strategy_rules.md incremented past v1.3"
-    }
-  },
+  "active_pog": {},
   "resolved_pre_sprint": {
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",

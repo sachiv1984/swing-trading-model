@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-18 (direct session — BLG-GOV-03/04/05/06 added: governance process improvements identified in architectural review)
+**Last Updated:** 2026-03-18 (roadmap rebalance — cycle 2026-03-18__item-4.3 — BLG-FR-01/02 added from staging feedback; stale idea dispositions recorded)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
@@ -364,6 +364,52 @@ Staging auto-deploys from `main`, so feature branch changes can only be verified
 - Preview URL is accessible and points to the PR branch's backend code
 - `OPERATIONAL_GUIDE.md §8` documents the preview URL pattern
 - DoQ can verify frontend behaviour on the preview URL before approving merge
+
+---
+
+### BLG-FR-01 — Tax Year P&L Report PDF Export
+**Priority:** P2 (Medium)
+**Type:** Feature — Financial Reporting
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260317-01 — v2.0 staging feedback (IW-20260317-01)
+**Cycle added:** 2026-03-18__item-4.3
+**Target release:** v2.1
+
+**Problem**
+The tax year P&L report (shipped v2.0) is browser-only. Browser-print produces inconsistent formatting across browsers — table layouts, page breaks, and number formatting vary. For a statutory financial record intended for HMRC filing or sharing with an accountant, formatting reliability matters. This is a compliance document, not a display convenience.
+
+**Proposed solution**
+Server-side PDF generation of the tax year P&L report with consistent formatting: table layout, page breaks, number precision, and report metadata (tax year, generation date).
+
+**Acceptance Criteria**
+- `GET /reports/tax-year?format=pdf` returns a PDF with consistent formatting
+- All data fields in the PDF match the JSON response exactly (no client-side re-derivation)
+- PDF includes: report title, tax year period, generation timestamp
+- Browser-print remains available as fallback
+
+**Scope constraint:** This covers the tax year P&L report only. Not a generic PDF export framework. Any expansion to other reports requires a new backlog item.
+
+---
+
+### BLG-FR-02 — Tax Year P&L Report CSV Table Export
+**Priority:** P2 (Medium)
+**Type:** Feature — Financial Reporting
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260317-02 — v2.0 staging feedback (IW-20260317-01)
+**Cycle added:** 2026-03-18__item-4.3
+**Target release:** v2.1
+
+**Problem**
+The tax year P&L report has no machine-readable export. Accountants and tax software may require structured data rather than a rendered document.
+
+**Proposed solution**
+CSV export of the tax year P&L report — a format conversion of the existing endpoint response. Minimal infrastructure; immediate value.
+
+**Acceptance Criteria**
+- `GET /reports/tax-year?format=csv` returns a well-formed CSV with headers
+- All data fields match the JSON response exactly
+- CSV column headers are human-readable (not internal field names)
+- No schema migration required
 
 ---
 

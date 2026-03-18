@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.25
+**Version:** 3.27
 **Last Updated:** 2026-03-17
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -394,7 +394,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v4.0)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v4.2)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1286,12 +1286,12 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Version | 3.25 |
 | Last Updated | 2026-03-17 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.0 |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.1 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.2 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.3 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.1 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.2 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.20 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.2 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
@@ -1318,6 +1318,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.27 | 2026-03-18 | **idea_intake_prompt.md v2.0→v2.1 — stale warning horizon check added.** §5 source prompt v2.0→v2.1; §14 Idea Intake Engine v2.0→v2.1. STEP -0.5 added: before opening intake window, Facilitator checks `ideas_register.md` for Parked-cycle-2 rows; if ≥15, surfaces stale warning advisory. Register-model-correct replacement for LL-01-patch (cycle 2026-03-18__item-4.3). |
+| 3.26 | 2026-03-18 | **roadmap_prompt.md v4.1→v4.2 — register model consistency fixes.** §6 source prompt v4.0→v4.2; §14 Roadmap Engine Source → v4.2. Changes: STEP -1.6 count source updated from `submissions/` file scan to `ideas_register.md` row count; STEP 0.C Lightweight criterion 2 updated to register rows; STEP 8.5.B item 4 "idea file" language updated to "register row". |
 | 3.25 | 2026-03-17 | **ST-19 (EPIC-06): Ideas register model.** §5 source prompt v1.3→v2.0; §5 trigger condition updated (count from `ideas_register.md`); §5.3 lifecycle updated (per-file → register rows); §5.5 artefacts table updated (Idea Submissions → Ideas Register; window summary path updated; archive entry added); §5.6 exit criteria updated. Artefact register: Idea Submissions → Ideas Register (`ideas_register.md`). §14: idea_intake_prompt v2.0; roadmap_prompt v4.1; shared_standards v2.3. |
 | 3.25 | 2026-03-17 | **v2.0 post-ship lessons learnt applied.** §7 source prompt sprint_planning_prompt.md v2.1→v2.2. §8 source prompt execution_prompt.md v2.3→v2.4. §14 Sprint Planning Engine → v2.2; Execution Engine Source → v2.4. |
 | 3.24 | 2026-03-17 | **ST-18 (EPIC-06): roadmap_prompt.md v3.0→v4.0 — `cycle_record.md` single-file pattern extended to all tiers.** §6 source prompt v3.0→v4.0. §6.3 Engine Steps table: STEP 2/3/4/5/8 output column updated from stage file names to `cycle_record.md` section references. §14 Roadmap Engine Source → v4.0. |

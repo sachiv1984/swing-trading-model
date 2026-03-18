@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.0
-**Last Updated:** 2026-03-17
+**Version:** 2.1
+**Last Updated:** 2026-03-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -174,6 +174,21 @@ If any missing: halt and report.
 ### -1.3 Write Permission Test
 
 Create a temporary marker in `claude/ideas/` and confirm it can be written. Remove it. If fails: halt.
+
+---
+
+## STEP -0.5 — Stale Idea Horizon Check (Advisory)
+
+Before opening the window, the Facilitator must check `claude/ideas/ideas_register.md` for rows with `Status: Parked-cycle-2`.
+
+- Count all rows with `Status: Parked-cycle-2`.
+- If **15 or more rows** are at `Parked-cycle-2`: surface the following advisory in the window announcement and in the window summary (STEP 4):
+
+  > ⚠️ **Stale warning:** {n} ideas are currently at Parked-cycle-2. At the next roadmap rebalance run, all of these will reach the stale threshold (Parked-cycle-3) and require mandatory active Product Owner disposition per §4.5. To reduce the STEP 4 burden at that run, the PO may wish to pre-emptively review and withdraw any ideas that are clearly no longer relevant before the roadmap run.
+
+- If fewer than 15 rows are at `Parked-cycle-2`: no advisory. Proceed to STEP 0.
+
+This check is advisory only — it does not halt the window or change classification logic.
 
 ---
 
@@ -381,6 +396,7 @@ Register rows are never deleted. Status is managed in-place.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-03-18 | LL-01-patch (cycle 2026-03-18__item-4.3): STEP -0.5 added — stale idea horizon check. Before opening a window, Facilitator checks `ideas_register.md` for rows at Parked-cycle-2; if ≥15 rows, surfaces stale warning advisory in window announcement and summary. Register-model-correct version of the LL-01-patch originally filed in cycle 2026-03-17__item-v1.10 (which referenced the now-retired submissions folder model). |
 | 2.0 | 2026-03-17 | ST-19 (EPIC-06): Replaced per-file submission model with single `ideas_register.md` register. §1 purpose, §5 write scope, §6 naming (→ Idea ID + register location), §9 lifecycle table, and §10 invariants updated. STEP 0 creates register if absent; STEP 1 reads parked rows from register; STEP 2.1 appends register rows; STEP 4 window summary path updated; STEP 5 commit updated. Schema: `shared_standards.md §16.5`. |
 | 1.3 | 2026-03-14 | AUD-2026-03-13-018: STEP 3 ideas_window.json schema — added `per_agent_submission_count` map field. Enables roadmap STEP 4 to read per-agent counts directly without re-scanning submission files. |
 | 1.2 | 2026-03-06 | Updated all `Status: Parked` references to `Parked-cycle-<n>` to align with roadmap_prompt.md v2.0 stale idea expiry logic. STEP 1 read instruction, STEP 0 window announcement, §9 lifecycle table, and §10 governance invariants updated. Added `Parked Cycle` column to window summary Parked Ideas table. Added explicit governance invariant documenting the cycle count as authoritative for stale idea expiry. |

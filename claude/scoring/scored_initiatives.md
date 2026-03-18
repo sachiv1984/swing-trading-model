@@ -88,3 +88,36 @@ All new backlog items from this cycle are S-effort governance/documentation item
 Current displacement candidate: CHART-IX (Chart Interactivity) — SPS=2, S effort, lowest strategic urgency. No change required from prior scoring.
 
 SPS=4 note: 4.3 Signal Exposure PoG POG-20260304-01 remains valid at strategy_rules.md v1.3. Scope constraint immutable: only `top_n` and `lookback_days` are cleared.
+
+---
+
+## Cycle 2026-03-18__item-4.3 — Active Initiatives
+
+**Last Updated:** 2026-03-18
+
+*4.1b and 4.3 shipped in v2.0 and removed from active pool. Active initiatives: 3.5 Alerts, 4.2 Watchlists, CHART-IX.*
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 3.5 Alerts & Notifications | 5 | 4 | 2 | 1 | 2 | 3 | 3 | L |
+| 4.2 Watchlists (P2 — hold) | 3 | 3 | 2 | 2 | 3 | 4 | 2 | M |
+| CHART-IX (P2 — hold) | 3 | 2 | 2 | 3 | 4 | 5 | 2 | S |
+
+**CPS:** 2.33 (3 items; prior: 2.40 — decrease reflects removal of SPS=4 item 4.3 and SPS=1 item 4.1b from active pool)
+
+---
+
+## New Items — Promoted to Backlog (STEP 5 Advance — cycle 2026-03-18__item-4.3)
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| BLG-FR-01 Tax Year P&L PDF Export | 4 | 5 | 2 | 3 | 4 | 4 | 1 | S |
+| BLG-FR-02 Tax Year P&L CSV Export | 4 | 5 | 2 | 4 | 5 | 5 | 1 | S |
+
+---
+
+## Facilitator Observations (cycle 2026-03-18__item-4.3)
+
+Both new backlog items (BLG-FR-01/02) are S-effort financial reporting enhancements from v2.0 staging feedback. High financial value score (5) reflects statutory filing use case. Minimal risk (SPS=1 — no strategy boundary contact). CSV export (BLG-FR-02) is highest TTV (immediate — format conversion only).
+
+Current displacement candidate: CHART-IX (Chart Interactivity) — SPS=2, S effort, lowest strategic urgency in active pool. No change from DL-009.

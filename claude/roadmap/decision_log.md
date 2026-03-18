@@ -239,3 +239,36 @@ All five active roadmap initiatives (3.5 Alerts, 4.1b Tax-Year P&L, 4.3 Signal E
 **Displacement candidate noted (initiative register — forward-looking):** Chart Interactivity Enhancements (CHART-IX) flagged as the natural displacement candidate if a future roadmap-level Add requires stops. Lowest strategic urgency relative to impact; smallest scope (S effort). Recorded in initiative_register.md only.
 
 **Challenger debate summary:** Three ideas advanced to STEP 5 debate; Challenger issued two clearances and one counter-argument (Positions Table Data Dictionary overlap with BLG-NEW-13). Product Owner rebutted the overlap argument with scope distinction. One idea (Lessons Learnt Action Item Register) was parked at STEP 5 when PO accepted Challenger's overlap argument with BLG-GOV-01/02. STEP 8.6 guardrail passed (one candidate parked).
+
+---
+
+### DL-010 — 2026-03-18
+
+**Decision type:** No-change (roadmap-level confirm) + Add (backlog-level — 2 items) + Completion recorded
+**Cycle:** 2026-03-18__item-4.3
+**Date:** 2026-03-18
+**Decision owner:** Product Owner
+
+**Completion recorded:**
+- ✅ **Complete:** 4.3 — Signal Exposure Enhancement (v2.0, shipped 2026-03-17). Moved to Completed in initiative register.
+- ✅ **Complete:** 4.1b — Tax-Year P&L Statement (v2.0, shipped 2026-03-17). Moved to Completed in initiative register. *(Note: 4.1b completion recorded in this cycle for initiative register hygiene; the primary completion event for this run is item 4.3.)*
+
+**Initiatives affected (roadmap-level):**
+All active roadmap initiatives reviewed and confirmed. No roadmap-level Add, Replace, Defer, or Kill decisions required.
+
+**Displacement:** N/A — no roadmap-level Adds. Net-zero: 0 Adds ≤ 0 Kills ✅.
+
+**Workforce impact:** v2.0 capacity fully released. Available for v2.1 pre-work. Primary blocker is BLG-TECH-08 (async notification ADR) for 3.5 Alerts. CPS = 2.33 (prior: 2.40) — slight decrease as SPS=4 item (4.3) and SPS=1 item (4.1b) exit the active pool.
+
+**Rationale — Roadmap No-Change:**
+Three active roadmap initiatives (3.5 Alerts, 4.2 Watchlists, CHART-IX) were re-validated in STEP 2. No initiative merits Kill, Replace, or Defer beyond the standing DL-003 defer status for 3.5 Alerts. 3.5 Alerts updated to v2.1 target in initiative register (was v2.0 — corrected for accuracy post-v2.0 ship). The roadmap is correctly balanced for the v2.1 delivery sequence.
+
+**New backlog items (from STEP 5 debate — IW-20260317-01 ideas):**
+1. BLG-FR-01 — Tax Year P&L Report PDF Export (P2; Financial Reporting Owner; v2.1; S effort)
+2. BLG-FR-02 — Tax Year P&L Report CSV Table Export (P2; Financial Reporting Owner; v2.1; S effort)
+
+Both items originated from v2.0 staging feedback. Challenger issued a Type A counter-argument for PDF Export (DL-008 consistency concern); PO rebutted on grounds that DL-008 was a capacity-kill, not a value-kill, and the statutory filing use case distinguishes the tax year P&L report from 4.1c. STEP 8.6 guardrail passed (Challenger issued one Type A counter-argument).
+
+**Stale idea dispositions:** 19 ideas at Parked-cycle-3 received mandatory active PO disposition — 8 rejected, 11 re-parked with written rationale. Recorded in ideas_register.md.
+
+**Displacement (backlog-level):** None required. Backlog-level items only per DL-005 precedent. 2 Adds ≥ 0 roadmap Stops ✅.
