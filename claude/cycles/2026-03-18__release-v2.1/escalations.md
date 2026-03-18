@@ -16,7 +16,7 @@
 **Raised:** 2026-03-18
 **Raised by:** Design Gate Engine (PMO Lead)
 **Severity:** Gate Blocker
-**Status:** Open
+**Status:** Resolved
 
 **Summary:** The Design Gate run for cycle 2026-03-18__release-v2.1 completed with status BLOCKED. Sprint Planning (`plan sprint`) is blocked until all 6 Design Required items have approved design artefacts and updated frontend specs.
 
@@ -40,4 +40,4 @@
 
 **Required by:** Before `plan sprint` is issued.
 
-**Resolution:** Open
+**Resolution:** Resolved — all 6 Design Required items cleared on 2026-03-18. Design gate status updated to Passed. Sprint Planning is now unblocked.

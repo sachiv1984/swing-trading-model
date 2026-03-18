@@ -1,9 +1,12 @@
 # trade_history.md
 
-**Owner:** Frontend Specifications & UX Documentation Owner  
-**Status:** Canonical  
-**Version:** 1.1
-**Last Updated:** February 22, 2026
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Canonical Specification (Class 1)
+**Status:** Canonical
+**Version:** 1.2
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v2.1 slippage):** docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md
 
 ## Purpose & User Goals
 The Trade History page provides a complete record of all **closed trades**, allowing users to review past performance, analyze decisions, and learn from journal entries.
@@ -22,13 +25,25 @@ Users should be able to:
 
 ### Summary Stats
 A row of key metrics:
-- Total trades  
-- Win rate (%)  
-- Total P&L (GBP)  
-- Average winner  
-- Average loser  
+- Total trades
+- Win rate (%)
+- Total P&L (GBP)
+- Average winner
+- Average loser
+- **Avg Slippage** (new — v2.1, ST-14)
 
 These values give the user an instant overview of performance quality.
+
+#### Avg Slippage (Summary Stat)
+
+| Property | Value |
+|----------|-------|
+| Label | **Avg Slippage** |
+| Source | Backend-provided `avg_slippage_pct` (computed across all trades with Fill Price captured) |
+| Format | Signed percentage to 2dp: e.g. `–0.05%`, `+0.12%`, `0.00%` |
+| Colour | Negative (favourable) = green tone; Positive (unfavourable) = red tone; Zero = neutral |
+| Null / no data | Display `—`; tooltip: `"No Fill Price data available yet."` |
+| Placement | Rightmost stat in the summary row; wraps to a second row on narrow screens |
 
 ---
 
@@ -53,18 +68,42 @@ When no trades have tags, the tag filter does not appear.
 The main content area displays all closed trades in a table format.  
 Columns include:
 
-- Ticker  
-- Market flag  
-- Entry date  
-- Exit date  
-- Shares (fractional display)  
-- Entry price (native currency)  
-- Exit price (native currency)  
-- P&L (GBP)  
+- Ticker
+- Market flag
+- Entry date
+- Exit date
+- Shares (fractional display)
+- Entry price (native currency)
+- Exit price (native currency)
+- P&L (GBP)
 - P&L %
 - R-Multiple
-- Days held  
+- **Slippage** (new — v2.1, ST-14; positioned after P&L %)
+- Days held
 - Exit reason
+
+#### Slippage Column
+
+**Formula (canonical):** `Slippage = (Fill Price − Market Price) / Market Price`
+
+**Source field:** Backend-provided `slippage_pct` per trade (computed from Fill Price and Market Price at entry). The frontend does not calculate slippage.
+
+**Display format:** Signed percentage to 2dp:
+- `–0.08%` — filled below market (favourable, green tone per design system)
+- `+0.12%` — filled above market (unfavourable, red tone per design system)
+- `0.00%` — neutral (no colour treatment)
+
+**Null handling:** If `slippage_pct` is null (Fill Price not captured — applicable to trades entered before v2.1): display `—` (em dash, muted, no colour).
+
+**Column header tooltip:** An info icon (ⓘ) adjacent to the "Slippage" header. Hover:
+> `"Slippage = (Fill Price − Market Price) / Market Price"`
+> `"Negative slippage = filled below market price (favourable). Positive = above (unfavourable)."`
+
+**Sortable:** Yes — ascending and descending. Null values sort to end.
+
+**Historical trades:** Pre-v2.1 trades without Fill Price show `—`. The column is still rendered; it is not hidden when historical trades are present.
+
+---
 
 #### R-Multiple Column
 
@@ -171,5 +210,6 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.2 | 2026-03-18 | v2.1 slippage tracking (ST-14, BLG-FEAT-03): Slippage column added to trade history table (after P&L %, before R-Multiple). Avg Slippage stat added to summary stats bar. Column header info tooltip specced. Null handling for pre-v2.1 trades (show `—`). Lifecycle headers upgraded to Class 1 compliant format. Design source: docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
 | 1.1 | 2026-02-25 | BLG-FEAT-02: Add R-Multiple column specification. Frontend-only calculation from trades_for_charts. Null handling for missing stop_price. Display format with signed R suffix and profit/loss colour. QWB D2, D2a. |
 | 1.0 | 2026-02-18 | Initial version. |
