@@ -1,44 +1,14 @@
 {
-  "active_cycle": "2026-03-17__release-v2.0",
-  "cycle_name": "Release Planning — v2.0 Reporting & Alerts",
-  "status": "Closed",
-  "closure_status": "Closed_with_actions",
-  "multi_sprint_note": "Sprint 2 of v1.9 planned 2026-03-11. Sprint 1 closed 2026-03-09. Sprint 2 items: ST-01–05, ST-12. Sprint 2 sprint_backlog sealed with PO sign-off 2026-03-11.",
-  "post_ship_complete": true,
-  "closure_record": "claude/cycles/2026-03-17__release-v2.0/closure_record.md",
+  "active_cycle": "2026-03-18__release-v2.1",
+  "cycle_name": "Release Planning — v2.1 Alerts, Watchlists & Enhancements",
+  "status": "Published",
   "engine": "release_planning",
-  "next_release": "v2.0",
-  "backlog_slice_path": "claude/cycles/2026-03-17__release-v2.0/stage4_backlog_slice.md",
-  "sprint_backlog_path": "claude/cycles/2026-03-17__release-v2.0/sprint_backlog.md",
-  "sprint_goal_path": "claude/cycles/2026-03-17__release-v2.0/sprint_goal.md",
-  "sprint_capacity_path": "claude/cycles/2026-03-17__release-v2.0/sprint_capacity.md",
-  "sprint_backlog_index_path": "claude/cycles/2026-03-17__release-v2.0/sprint_backlog_index.json",
-  "verification_report": "claude/cycles/2026-03-17__release-v2.0/verification_report.md",
-  "verification_status": "Verified_with_deviations",
-  "next_cycle_unblocked": true,
-  "last_sync_utc": "2026-03-17T23:59:00Z",
-  "dl003_session_utc": "2026-03-17T01:00:00Z",
-  "dl003_outcome": "Session complete — EPIC-03 deferred to v2.1. No async notification infrastructure present; architectural decision required before spec can be authored. BLG-TECH-08 added as v2.1 prerequisite. v2.0 confirmed single sprint.",
-  "epic03_status": "Deferred to v2.1 — requires BLG-TECH-08 (architecture ADR) before v2.1 sprint planning seals",
-  "completed_cycle_count": 5,
-  "prior_cycle": "2026-03-06__release-v1.9",
-  "sprint_sealed": true,
-  "sprint_goal_status": "confirmed",
-  "capacity_warn_acknowledged": true,
-  "design_gate_required": true,
-  "design_gate_status": "Passed",
-  "design_gate_record": "claude/cycles/2026-03-17__release-v2.0/design_gate.md",
-  "sprint_planning_pre_condition": true,
-  "execution_state_sprint2_path": "claude/cycles/2026-03-06__release-v1.9/execution_state_sprint2.json",
-  "next_command": "await delegated item completion — see claude/cycles/2026-03-17__release-v2.0/delegation_log.md",
-  "execution_state_path": "claude/cycles/2026-03-17__release-v2.0/execution_state.json",
-  "delegation_log_path": "claude/cycles/2026-03-17__release-v2.0/delegation_log.md",
-  "items_done": ["ST-03", "ST-11", "ST-01", "ST-16", "ST-14", "ST-15"],
-  "items_blocked": ["ST-12", "ST-02", "ST-04", "ST-05", "ST-17", "ST-20", "ST-13", "ST-18", "ST-19"],
-  "sprint2_closed_utc": "2026-03-13T15:20:00Z",
+  "next_release": "v2.1",
+  "backlog_slice_path": "claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md",
+  "prior_cycle": "2026-03-17__release-v2.0",
+  "last_sync_utc": "2026-03-18T00:00:00Z",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
-  "prior_status": null,
   "open_escalations": {},
   "last_rebalance_cycle": "2026-03-18__item-4.3",
   "last_rebalance_utc": "2026-03-18T00:00:00Z",
@@ -50,6 +20,7 @@
   "last_groom_backlog_utc": "2026-03-17T23:59:00Z",
   "last_groom_backlog_outcome": "4 items archived (TEST-GAP-EPIC-02, BLG-BE-02, BLG-GOV-01, BLG-GOV-02); 0 orphans flagged; 0 stale blockers; 2 promotion candidates (BLG-TECH-08, BLG-SPEC-D12)",
   "active_pog": {},
+  "completed_cycle_count": 5,
   "resolved_pre_sprint": {
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
@@ -61,9 +32,9 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-03-17__release-v2.0/release_plan.md",
-    "cycle_id": "2026-03-17__release-v2.0",
-    "published_utc": "2026-03-17T00:30:00Z",
+    "release_plan_path": "claude/cycles/2026-03-18__release-v2.1/release_plan.md",
+    "cycle_id": "2026-03-18__release-v2.1",
+    "published_utc": "2026-03-18T00:00:00Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
@@ -72,45 +43,16 @@
       "EPIC-05",
       "EPIC-06"
     ],
-    "story_items": 20,
+    "story_items": 19,
     "scope_items": 6,
     "capacity_check": "warn",
-    "state_json": "claude/cycles/2026-03-17__release-v2.0/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-03-17__release-v2.0-reporting-alerts.md"
+    "capacity_warn_sprints": 3,
+    "state_json": "claude/cycles/2026-03-18__release-v2.1/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-03-18__release-v2.1-alerts-watchlists.md"
   },
-  "design_gate": {
-    "completed_utc": "2026-03-06T00:15:00Z",
-    "items_classified": 19,
-    "design_required": 5,
-    "design_pre_approved": 4,
-    "design_not_applicable": 10,
-    "blocked": 0,
-    "frontend_specs_updated": [
-      "docs/specs/frontend/pages/analytics.md v1.3",
-      "docs/specs/frontend/pages/trade_reflection.md v0.1 (new)",
-      "docs/specs/frontend/pages/dashboard.md v2.0"
-    ]
-  },
-  "sprint_planning": {
-    "started_utc": "2026-03-17T03:00:00Z",
-    "sealed_utc": "2026-03-17T03:00:00Z",
-    "mode": "standard",
-    "sprint_number": 1,
-    "total_sprints": 1,
-    "sprint_items_core": [
-      "ST-01", "ST-02", "ST-04", "ST-05",
-      "ST-12", "ST-14", "ST-15", "ST-16", "ST-17"
-    ],
-    "sprint_items_stretch": ["ST-13", "ST-20"],
-    "sprint_items_parallel": ["ST-18", "ST-19"],
-    "sprint_items_pre_completed": ["ST-03", "ST-11"],
-    "sprint_items_deferred_v21": ["ST-06", "ST-07", "ST-08", "ST-09", "ST-10"],
-    "core_effort_mid_hrs": 31,
-    "core_plus_stretch_effort_mid_hrs": 38,
-    "epic06_parallel_effort_mid_hrs": 40,
-    "pip_audit": "not_available",
-    "over_allocation_accepted": false,
-    "capacity_warn_acknowledged": true,
-    "epic03_deferred": true
+  "prior_release_plan": {
+    "release_plan_path": "claude/cycles/2026-03-17__release-v2.0/release_plan.md",
+    "cycle_id": "2026-03-17__release-v2.0",
+    "published_utc": "2026-03-17T00:30:00Z"
   }
 }

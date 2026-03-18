@@ -80,6 +80,15 @@ Email alerts for: stop loss approach, grace period ending (days 8–9 warning), 
 
 ---
 
+<!-- roadmap-annotation-marker: RA:v2.1:2026-03-18__release-v2.1 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-18__release-v2.1
+- Plan published: 2026-03-18
+- Cycle folder: claude/cycles/2026-03-18__release-v2.1/
+- Backlog slice: claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md
+- Status at annotation: Published — 2026-03-18 (cycle 2026-03-18__release-v2.1)
+
 ## 4. Priority 2 — Horizon: Next (v2.1)
 
 #### 4.2 Watchlists & Screening
