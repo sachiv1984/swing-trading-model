@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-18 (roadmap rebalance — cycle 2026-03-18__item-4.3 — BLG-FR-01/02 added from staging feedback; stale idea dispositions recorded)
+**Last Updated:** 2026-03-18 (BLG-TECH-08 closed — ADR-003 authored, Head of Engineering sign-off; pre-sprint resolution of v2.1 EPIC-01/ST-01)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
@@ -261,6 +261,7 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| BLG-TECH-08 | Async notification delivery ADR | v2.1 (pre-sprint) | 2026-03-18__release-v2.1 | EPIC-01/ST-01 |
 | BLG-GOV-01 | Roadmap stage document consolidation | v2.0 | 2026-03-17__release-v2.0 | EPIC-06/ST-18 |
 | BLG-GOV-02 | Ideas register (replace per-file idea submissions) | v2.0 | 2026-03-17__release-v2.0 | EPIC-06/ST-19 |
 | TEST-GAP-EPIC-02 | CohortAnalysis backend integration regression scenario | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-20 |
@@ -311,33 +312,6 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 | BLG-SPEC-D7 | openapi.yaml frozen at v1.8.1 | v1.8 | 2026-03-04__release-v1.8 | ST-10 |
 | BLG-SPEC-D2 | settings_endpoints.md spec/implementation mismatch | v1.8 | 2026-03-04__release-v1.8 | ST-09 |
 | BLG-NEW-06 | Realised vs Unrealised P&L Labelling | N/A | 2026-03-04__item-3.4 | Merged into 4.1b |
-
----
-
-### BLG-TECH-08 — Async notification delivery architecture decision record
-**Priority:** P2 (Medium)
-**Type:** Architecture / Engineering Decision
-**Owner:** Head of Engineering + Backend Engineering Patterns Owner
-**Source:** QA notification planning session 2026-03-17 (qa_notification_planning.md — DL-003 session output)
-**Cycle added:** 2026-03-17__release-v2.0 (post-planning session)
-**Effort:** S (~0.5–1 day)
-**Target release:** v2.1 (prerequisite — must be completed before v2.1 sprint planning seals for EPIC-03)
-
-**Problem**
-Before 3.5 Alerts (EPIC-03) can be specced or implemented, an architectural decision must be made on notification delivery: (a) synchronous inline delivery (email sent on the API response that triggers the alert — simpler, no infrastructure change), or (b) asynchronous delivery via a background worker + task queue (Celery + Redis or equivalent — more scalable but requires adding worker infrastructure to the current synchronous FastAPI application). Without this decision, the notification spec (ST-06) cannot be written to a stable baseline.
-
-**Scope**
-- Document trade-offs of sync vs. async notification delivery for current single-user deployment
-- Produce an Architecture Decision Record (ADR) capturing: options considered, decision, rationale, consequences
-- File as `docs/adr/ADR-NNN-notification-delivery-architecture.md`
-- Update `backend_engineering_patterns.md` with the decision reference
-
-**Acceptance Criteria**
-- ADR produced covering: sync inline email vs. async worker + queue
-- Decision recorded with rationale appropriate to current scale (single-user, self-hosted)
-- If async decided: spike or proof of concept for worker setup confirmed feasible in staging
-- Head of Engineering sign-off obtained
-- Sprint Planning Engine must verify this item is Complete before sealing v2.1 sprint backlog containing any EPIC-03 story
 
 ---
 
