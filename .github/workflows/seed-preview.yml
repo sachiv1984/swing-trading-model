@@ -20,7 +20,7 @@ jobs:
         id: url
         run: |
           PR="${{ github.event.pull_request.number }}"
-          echo "base=https://trading-assistant-api-pr-${PR}.onrender.com" >> "$GITHUB_OUTPUT"
+          echo "base=https://trading-assistant-api-staging-pr-${PR}.onrender.com" >> "$GITHUB_OUTPUT"
 
       - name: Wait for preview to be healthy
         id: wait
