@@ -1,0 +1,75 @@
+{
+  "cycle_id": "2026-03-18__release-v2.1",
+  "generated_utc": "2026-03-18T00:00:00Z",
+  "backlog_slice_source": "claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md",
+  "epics": {
+    "EPIC-01": {
+      "sprint": 1,
+      "st_items": ["ST-01"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-01"
+      ],
+      "condition": null
+    },
+    "EPIC-02": {
+      "sprint": "2-3",
+      "st_items": ["ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-02",
+        "stage4_backlog_slice.md#ST-03",
+        "stage4_backlog_slice.md#ST-04",
+        "stage4_backlog_slice.md#ST-05",
+        "stage4_backlog_slice.md#ST-06",
+        "stage4_backlog_slice.md#ST-07"
+      ],
+      "condition": "ST-01 must be Complete with Head of Engineering sign-off before any EPIC-02 story is sealed"
+    },
+    "EPIC-03": {
+      "sprint": 3,
+      "st_items": ["ST-08", "ST-09", "ST-10"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-08",
+        "stage4_backlog_slice.md#ST-09",
+        "stage4_backlog_slice.md#ST-10"
+      ],
+      "condition": null,
+      "stretch_items": ["ST-10"]
+    },
+    "EPIC-04": {
+      "sprint": 1,
+      "st_items": ["ST-11"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-11"
+      ],
+      "condition": null
+    },
+    "EPIC-05": {
+      "sprint": "1-2",
+      "st_items": ["ST-12", "ST-13", "ST-14", "ST-15"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-12",
+        "stage4_backlog_slice.md#ST-13",
+        "stage4_backlog_slice.md#ST-14",
+        "stage4_backlog_slice.md#ST-15"
+      ],
+      "condition": null,
+      "sprint_allocation": {
+        "ST-12": 1,
+        "ST-13": 2,
+        "ST-14": 2,
+        "ST-15": 2
+      }
+    },
+    "EPIC-06": {
+      "sprint": 1,
+      "st_items": ["ST-16", "ST-17", "ST-18", "ST-19"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-16",
+        "stage4_backlog_slice.md#ST-17",
+        "stage4_backlog_slice.md#ST-18",
+        "stage4_backlog_slice.md#ST-19"
+      ],
+      "condition": null
+    }
+  }
+}
