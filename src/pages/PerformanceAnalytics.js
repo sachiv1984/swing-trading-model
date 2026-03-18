@@ -641,7 +641,7 @@ export default function PerformanceAnalytics() {
       <ExecutiveSummaryCards metrics={metrics} />
       <KeyInsightsCard metrics={metrics} winRate={winRate} />
       <AdvancedMetricsGrid metrics={metrics} />
-      <MonthlyHeatmap monthlyData={getMonthlyData()} />
+      <MonthlyHeatmap monthlyData={getMonthlyData()} trades={filteredTrades} />
       <UnderwaterChart trades={filteredTrades} />
       <MarketComparison
         ukMetrics={getMarketMetrics("UK")}
