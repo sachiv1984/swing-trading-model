@@ -1,0 +1,80 @@
+name: Seed Staging Database
+
+on:
+  workflow_dispatch:
+
+# Seeds the canonical staging database with 12 closed trades for ST-11 DoQ sign-off.
+# Uses psql directly against the Supabase staging database — bypasses the API layer.
+#
+# Prerequisites:
+#   - STAGING_DATABASE_URL must be set as a GitHub Actions repository secret
+#     (Supabase staging project → Settings → Database → Connection string → URI)
+#   - The staging schema must already exist (run staging_setup.md runbook first)
+#   - At least one portfolio record must exist in the staging database
+#
+# Idempotency: skips if [SEED] records already exist in trade_history.
+# Re-seeding: remove existing [SEED] rows manually via psql, then re-run.
+#
+# DoQ test target after seeding:
+#   https://trading-assistant-staging.onrender.com/performance-analytics
+#   Scenarios: docs/testing/chart_interactivity_scenarios.md (SC-CHART-IX-01 through SC-CHART-IX-06)
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install psql
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Check for existing seed data
+        id: guard
+        env:
+          STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          PGSSLMODE: require
+        run: |
+          COUNT=$(psql "$STAGING_DATABASE_URL" -t -c \
+            "SELECT COUNT(*) FROM trade_history WHERE exit_note LIKE '%[SEED]%';" \
+            | tr -d ' \n')
+          echo "existing_count=$COUNT" >> "$GITHUB_OUTPUT"
+          if [ "$COUNT" -gt "0" ]; then
+            echo "skipped=true" >> "$GITHUB_OUTPUT"
+            echo "Seed data already present ($COUNT records in trade_history). Skipping."
+          else
+            echo "skipped=false" >> "$GITHUB_OUTPUT"
+            echo "No seed data found. Proceeding."
+          fi
+
+      - name: Seed database
+        if: steps.guard.outputs.skipped == 'false'
+        env:
+          STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          PGSSLMODE: require
+        run: |
+          psql "$STAGING_DATABASE_URL" -f backend/test_data/seed_chart_test_data.sql
+
+      - name: Report result
+        run: |
+          if [ "${{ steps.guard.outputs.skipped }}" == "true" ]; then
+            echo "========================================================="
+            echo "  SKIPPED — seed data already present"
+            echo "  Existing [SEED] records: ${{ steps.guard.outputs.existing_count }}"
+            echo ""
+            echo "  To re-seed: delete existing [SEED] rows via psql, then"
+            echo "  re-run this workflow."
+            echo "========================================================="
+          else
+            echo "========================================================="
+            echo "  SEEDED — 12 trades inserted"
+            echo "  Jan×4 / Feb×6 / Mar×2 / Apr=0 (zero-tile)"
+            echo "  All 7 R-multiple buckets populated."
+            echo ""
+            echo "  DoQ test target:"
+            echo "  https://trading-assistant-staging.onrender.com/performance-analytics"
+            echo ""
+            echo "  Scenarios: docs/testing/chart_interactivity_scenarios.md"
+            echo "========================================================="
+          fi

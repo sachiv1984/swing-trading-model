@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-03-17
+**Version:** 0.2
+**Last Updated:** 2026-03-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v2.1 PDF export):** docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md
 
 ---
 
@@ -25,6 +26,30 @@ Users should be able to:
 ---
 
 ## Page Layout
+
+### Page Header Controls
+
+The page header contains two controls, right-aligned:
+
+1. **Year Selector** (left) — dropdown for selecting the UK tax year (see Year Selector section below)
+2. **"Download PDF"** button (right) — secondary button style; triggers server-side PDF generation
+
+Layout (left to right): `[Year Selector ▼]  [Download PDF]`
+
+On narrow screens: stacked vertically — year selector above, Download PDF button below (full width).
+
+#### Download PDF Button States
+
+| State | Label | Behaviour |
+|-------|-------|-----------|
+| Idle | **"Download PDF"** (with download icon) | Enabled when page loaded successfully |
+| Generating | **"Generating…"** (spinner replaces icon) | Button disabled; fires `GET /reports/tax-year?format=pdf&year=YYYY` |
+| Success | Returns to Idle | Browser file download begins; no success toast required |
+| Error | Returns to Idle | Toast notification: `"PDF generation failed. Please try again."` (auto-dismiss 5s) |
+
+The PDF is valid for empty years (zero closed trades). The button is always enabled once the page loads.
+
+---
 
 ### Disclaimer Banner
 
@@ -118,7 +143,9 @@ A note at the bottom of the page:
 
 ## API Reference
 
-- **Endpoint:** `GET /reports/tax-year?year=YYYY`
+- **Endpoint:** `GET /reports/tax-year?year=YYYY` — page data
+- **PDF export:** `GET /reports/tax-year?format=pdf&year=YYYY` — server-side PDF download (`Content-Disposition: attachment`)
+- **CSV export:** `GET /reports/tax-year?format=csv&year=YYYY` — CSV download (ST-13; no UI control beyond API — URL parameter only; no button on this page)
 - **Canonical contract:** `docs/specs/api_contracts/reports_endpoints.md`
 
 All values displayed on this page are sourced from the API response. The frontend must not recalculate P&L, FX conversions, or fee adjustments.
@@ -129,4 +156,5 @@ All values displayed on this page are sourced from the API response. The fronten
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-03-18 | v2.1 PDF export (ST-12, BLG-FR-01): Page Header Controls section added with Download PDF button spec (idle, generating, success, error states). API Reference updated to include PDF and CSV export endpoints. Design source: docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
 | 0.1 | 2026-03-17 | Initial spec. ST-05 — EPIC-02 (4.1b Tax-Year P&L Statement). Design gate: 2026-03-17__release-v2.0. Approved by Head of UX & Design + Product Owner. |

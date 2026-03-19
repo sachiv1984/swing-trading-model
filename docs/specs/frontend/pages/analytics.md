@@ -3,10 +3,11 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-03-13
+**Version:** 1.5
+**Last Updated:** 2026-03-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.9 additions):** docs/design/2026-03-06__release-v1.9/
+**Design Source (v2.1 additions):** docs/design/2026-03-18__release-v2.1/chart-interactivity/ux_spec.md
 
 ## Purpose & User Goals
 The Performance Analytics page provides deep insight into closed trade performance, risk metrics, and strategy effectiveness. It connects directly to the backend analytics system and is data-driven throughout — no values are calculated or derived on the frontend.
@@ -190,6 +191,23 @@ Tile colour is determined by P&L magnitude:
 
 Hover shows a tooltip with full detail (month, P&L, trades, win rate).
 
+#### Drill-Down: Click Tile → Monthly Trade View
+
+Clicking a heatmap tile (with at least 1 trade) opens a **Monthly Trades modal** showing the trades from that month.
+
+**Modal contents:**
+- Title: `"Trades — [Month YYYY]"` (e.g. `"Trades — Jan 2026"`)
+- A table of trades from that month sourced from `trades_for_charts`, filtered by `exit_date` month.
+- Columns: Ticker, Exit Date, P&L (GBP, signed, colour-coded), R-Multiple (if available), Exit Reason.
+- Summary line at top: `"[n] trades · Total P&L: £X.XX"`
+- Close button (X) in modal header. Also closes on backdrop click or Escape key.
+
+**Tile selected state:** While the modal is open, the originating tile receives a 2px inset ring in the design system focus/accent colour.
+
+**Tile with 0 trades:** Not clickable; cursor: default; no modal opens.
+
+**Data source:** `trades_for_charts` (already loaded on the analytics page). No additional API call. Month attribution uses `exit_date`.
+
 ---
 
 ### 5. Underwater Equity Curve
@@ -201,6 +219,22 @@ An area chart showing drawdown percentage below peak equity over time, calculate
 - Y axis: drawdown % (always ≤ 0)
 - The maximum drawdown point is marked with a red dot labelled "Max DD"
 - A tooltip shows: date, drawdown %, current equity, peak equity
+- Tooltip positioning: follows cursor within chart bounds; flips to left side if cursor is in the right 30% of the chart.
+
+#### Zoom
+
+**Trigger:** Scroll wheel over the chart, or pinch on touch. Desktop fallback: `+` / `−` buttons in the chart's top-right corner.
+
+**Behaviour:**
+- Time-axis (x-axis) zoom only. Y-axis auto-scales to the zoomed range.
+- Minimum zoom: 4 data points.
+- Maximum zoom: full data range (default state).
+- Scroll/pinch zooms centred on the cursor position.
+- **Pan:** When zoomed in, click-drag pans left/right within the zoomed range.
+- **Reset button:** Appears in the chart top-right only when zoomed in. Label: "Reset". Clicking restores the full range and hides the Reset button.
+- A muted "Scroll to zoom" hint label may appear on first interaction and fade after 3s.
+
+No additional API call for zoom/pan — all interaction is over the already-loaded `trades_for_charts` data series.
 
 Empty state: shown if fewer than 3 trades available.
 
@@ -275,6 +309,8 @@ Displays:
 - Bar chart of R-multiple distribution across 7 buckets (< -2R, -2R to -1R, -1R to 0R, 0R to 1R, 1R to 2R, 2R to 3R, > 3R)
 - Statistics grid: Avg R, Max R (best trade), Max loss (worst trade), Win rate, Avg winner R, Avg loser R
 - Expandable section: R-Multiple by Tag table (sortable by Avg R, count, win rate)
+
+**Tooltip (per bar):** On hover: R-multiple range (e.g. `"1.0R – 2.0R"`), trade count (e.g. `"4 trades"`), percentage of total closed trades (e.g. `"22%"`). Percentage computed from the distribution data already present in the chart (total count is available from the same `trades_for_charts` set). Tooltip positioning: follows cursor; flips if near chart edge.
 
 ---
 
@@ -534,6 +570,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.5 | 2026-03-18 | v2.1 chart interactivity (ST-11, CHART-IX): §4 heatmap — tile click drill-down to Monthly Trades modal. §5 equity curve — zoom (scroll/pinch/buttons), pan (click-drag), Reset button. §9 R-Multiple Analysis — hover tooltip per bar (range, count, % of total). Design source: docs/design/2026-03-18__release-v2.1/chart-interactivity/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
 | 1.4 | 2026-03-13 | QA review (v1.9 Sprint 2): File deviation DEV-EPIC02-ST03-01 — CohortAnalysis.js uses client-side computation instead of GET /analytics/cohort. P2. Director of Quality sign-off. |
 | 1.3 | 2026-03-06 | v1.9 additions: §15 Cohort Analysis (ST-03), §16 R-Multiple Distribution Backend (ST-04), §17 Discipline & Compliance (ST-01). Updated API Dependency section to list additional endpoints. Updated Purpose & User Goals. Updated Component Rendering Order to items 15–17. Governance header upgraded to Class 1 compliant format. Design sources: docs/design/2026-03-06__release-v1.9/. |
 | 1.2 | 2026-02-26 | F-02 fix: correct Win Rate by Month tooltip field name from `total_trades` to `trade_count` to match `analytics_endpoints.md` monthly_data schema. QA finding A-QA-01. |

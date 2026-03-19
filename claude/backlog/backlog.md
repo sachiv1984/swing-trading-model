@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-17 (backlog grooming — TEST-GAP-EPIC-02, BLG-BE-02, BLG-GOV-01, BLG-GOV-02 archived; BLG-SPEC-D10 re-targeted to v2.1)
+**Last Updated:** 2026-03-18 (BLG-TECH-08 closed — ADR-003 authored, Head of Engineering sign-off; pre-sprint resolution of v2.1 EPIC-01/ST-01)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
@@ -261,6 +261,7 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| BLG-TECH-08 | Async notification delivery ADR | v2.1 (pre-sprint) | 2026-03-18__release-v2.1 | EPIC-01/ST-01 |
 | BLG-GOV-01 | Roadmap stage document consolidation | v2.0 | 2026-03-17__release-v2.0 | EPIC-06/ST-18 |
 | BLG-GOV-02 | Ideas register (replace per-file idea submissions) | v2.0 | 2026-03-17__release-v2.0 | EPIC-06/ST-19 |
 | TEST-GAP-EPIC-02 | CohortAnalysis backend integration regression scenario | v2.0 | 2026-03-17__release-v2.0 | EPIC-05/ST-20 |
@@ -314,33 +315,6 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 ---
 
-### BLG-TECH-08 — Async notification delivery architecture decision record
-**Priority:** P2 (Medium)
-**Type:** Architecture / Engineering Decision
-**Owner:** Head of Engineering + Backend Engineering Patterns Owner
-**Source:** QA notification planning session 2026-03-17 (qa_notification_planning.md — DL-003 session output)
-**Cycle added:** 2026-03-17__release-v2.0 (post-planning session)
-**Effort:** S (~0.5–1 day)
-**Target release:** v2.1 (prerequisite — must be completed before v2.1 sprint planning seals for EPIC-03)
-
-**Problem**
-Before 3.5 Alerts (EPIC-03) can be specced or implemented, an architectural decision must be made on notification delivery: (a) synchronous inline delivery (email sent on the API response that triggers the alert — simpler, no infrastructure change), or (b) asynchronous delivery via a background worker + task queue (Celery + Redis or equivalent — more scalable but requires adding worker infrastructure to the current synchronous FastAPI application). Without this decision, the notification spec (ST-06) cannot be written to a stable baseline.
-
-**Scope**
-- Document trade-offs of sync vs. async notification delivery for current single-user deployment
-- Produce an Architecture Decision Record (ADR) capturing: options considered, decision, rationale, consequences
-- File as `docs/adr/ADR-NNN-notification-delivery-architecture.md`
-- Update `backend_engineering_patterns.md` with the decision reference
-
-**Acceptance Criteria**
-- ADR produced covering: sync inline email vs. async worker + queue
-- Decision recorded with rationale appropriate to current scale (single-user, self-hosted)
-- If async decided: spike or proof of concept for worker setup confirmed feasible in staging
-- Head of Engineering sign-off obtained
-- Sprint Planning Engine must verify this item is Complete before sealing v2.1 sprint backlog containing any EPIC-03 story
-
----
-
 ### BLG-OPS-03 — Pre-merge preview environments (Render PR previews)
 **Priority:** P2 (Medium)
 **Type:** Operations / Infrastructure
@@ -364,6 +338,178 @@ Staging auto-deploys from `main`, so feature branch changes can only be verified
 - Preview URL is accessible and points to the PR branch's backend code
 - `OPERATIONAL_GUIDE.md §8` documents the preview URL pattern
 - DoQ can verify frontend behaviour on the preview URL before approving merge
+
+---
+
+### BLG-FR-01 — Tax Year P&L Report PDF Export
+**Priority:** P2 (Medium)
+**Type:** Feature — Financial Reporting
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260317-01 — v2.0 staging feedback (IW-20260317-01)
+**Cycle added:** 2026-03-18__item-4.3
+**Target release:** v2.1
+
+**Problem**
+The tax year P&L report (shipped v2.0) is browser-only. Browser-print produces inconsistent formatting across browsers — table layouts, page breaks, and number formatting vary. For a statutory financial record intended for HMRC filing or sharing with an accountant, formatting reliability matters. This is a compliance document, not a display convenience.
+
+**Proposed solution**
+Server-side PDF generation of the tax year P&L report with consistent formatting: table layout, page breaks, number precision, and report metadata (tax year, generation date).
+
+**Acceptance Criteria**
+- `GET /reports/tax-year?format=pdf` returns a PDF with consistent formatting
+- All data fields in the PDF match the JSON response exactly (no client-side re-derivation)
+- PDF includes: report title, tax year period, generation timestamp
+- Browser-print remains available as fallback
+
+**Scope constraint:** This covers the tax year P&L report only. Not a generic PDF export framework. Any expansion to other reports requires a new backlog item.
+
+---
+
+### BLG-FR-02 — Tax Year P&L Report CSV Table Export
+**Priority:** P2 (Medium)
+**Type:** Feature — Financial Reporting
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260317-02 — v2.0 staging feedback (IW-20260317-01)
+**Cycle added:** 2026-03-18__item-4.3
+**Target release:** v2.1
+
+**Problem**
+The tax year P&L report has no machine-readable export. Accountants and tax software may require structured data rather than a rendered document.
+
+**Proposed solution**
+CSV export of the tax year P&L report — a format conversion of the existing endpoint response. Minimal infrastructure; immediate value.
+
+**Acceptance Criteria**
+- `GET /reports/tax-year?format=csv` returns a well-formed CSV with headers
+- All data fields match the JSON response exactly
+- CSV column headers are human-readable (not internal field names)
+- No schema migration required
+
+---
+
+### BLG-GOV-03 — Simplify cycle artefact sealing (remove SHA-256, retain sealed flag)
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Direct session architectural review — 2026-03-18
+**Target release:** v2.2
+
+**Problem**
+The current release planning engine computes and verifies SHA-256 hashes for sealed artefacts on every run. For a 2-person team, the primary threat (accidental writes by Claude) is already covered by write scope restrictions in STEP 5. Hash recomputation adds schema complexity and verification overhead for a failure mode that `git diff` would catch anyway.
+
+**Proposed change**
+- Remove `sealed_hashes` and `artifact_hashes` fields from `state.json` schema
+- Remove hash computation and drift detection steps from the release planning engine
+- Retain the `sealed: true` flag as the sole sealing mechanism — write gate checks this flag before any modification
+- Retain `state_snapshot_hash` on `state.json` only (single lightweight checksum)
+
+**Acceptance Criteria**
+- Release planning engine no longer computes or verifies per-artefact SHA-256 hashes
+- `state.json` schema updated; `sealed_hashes` and `artifact_hashes` blocks removed
+- `sealed: true` flag check remains and is enforced as a hard gate
+- All references to hash drift detection removed from prompt and shared_standards
+
+---
+
+### BLG-GOV-04 — Roadmap engine writes Provisional-Target at backlog promotion
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Direct session architectural review — 2026-03-18
+**Target release:** v2.2
+
+**Problem**
+When the roadmap engine promotes an idea to the backlog (STEP 8/9), it has full scoring context — horizon (Now/Next/Later), effort band, CPS alignment. None of this flows to the backlog item as a provisional release target. Release planning then evaluates candidates without this signal, duplicating capacity reasoning from scratch.
+
+**Proposed change**
+- Roadmap engine STEP 9: when writing a promoted item to `backlog.md`, include a `**Provisional-Target:**` field derived from the item's horizon placement (Now → next planned release, Next → +1 release, Later → unscheduled)
+- This is a signal, not a commitment — release planning may override it during STEP 4 capacity check
+- Addresses the capacity reasoning duplication problem together with BLG-GOV-05
+
+**Acceptance Criteria**
+- `roadmap_prompt.md` STEP 9 write instructions include `Provisional-Target` field on new backlog items
+- Field format documented in `shared_standards.md`
+- Release planning STEP 1 reads `Provisional-Target` as a candidate prioritisation input
+
+---
+
+### BLG-GOV-05 — Release planning loads scored_initiatives.md for effort band handoff
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Direct session architectural review — 2026-03-18
+**Target release:** v2.2
+
+**Problem**
+`roadmap_prompt.md` (line 864) explicitly states that effort bands in `scored_initiatives.md` are recorded "to provide the release planning engine with sizing signal." However, release planning's STEP 0 load list includes `initiative_register.md` but not `scored_initiatives.md`. The sizing signal is never consumed. Together with BLG-GOV-04 this is the root cause of capacity reasoning being duplicated across the two engines.
+
+**Proposed change**
+- Add `claude/roadmap/scored_initiatives.md` to release planning STEP 0 load list
+- Release planning STEP 4 capacity check references the effort band from this file rather than re-deriving sizing
+- If `scored_initiatives.md` is absent or an item has no entry: fall back to STEP 4 estimate as today
+
+**Acceptance Criteria**
+- `release_planning_prompt.md` STEP 0 loads `scored_initiatives.md`
+- STEP 4 capacity check references effort bands from the file where available
+- `shared_standards.md` documents the handoff contract between the two engines
+
+---
+
+### BLG-GOV-06 — Structured lessons learnt carry-forward block across all engines
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Direct session architectural review — 2026-03-18
+**Target release:** v2.2
+
+**Problem**
+Lessons learnt from post-ship closure currently produce either (a) deferred patches applied ad-hoc at the next roadmap STEP -1.5, or (b) advisory items that sit in `lessons_learnt_closure.md` and are only consulted if someone remembers to look. No engine reads lessons as a substantive planning input. Carry-forward of learnings is effectively lost after one cycle.
+
+**Proposed change**
+- Standardise a `## Carry-Forward` section in `lessons_learnt_closure.md` (3–5 items max, structured as: observation, implication, which engine should act)
+- All engines (roadmap, release planning, sprint planning) read this section at STEP 0 and surface it to the operator before proceeding
+- Items in Carry-Forward are acknowledged (ticked off) when the relevant engine acts on them, or explicitly deferred with rationale
+- Post-ship closure engine writes the Carry-Forward section as part of its STEP output
+
+**Acceptance Criteria**
+- `lessons_learnt_closure.md` schema includes `## Carry-Forward` section (documented in `shared_standards.md`)
+- `roadmap_prompt.md`, `release_planning_prompt.md`, `sprint_planning_prompt.md` STEP 0 each include a Carry-Forward read-and-acknowledge step
+- `post_ship_closure.md` writes the Carry-Forward section as a mandatory STEP output
+- At least one carry-forward item from a prior cycle demonstrably influences the next cycle's planning
+
+---
+
+<!-- release-plan-marker: RP:v2.1:2026-03-18__release-v2.1 -->
+
+---
+
+## 8. v2.1 Release Slice — Alerts, Watchlists & Enhancements
+
+*Planned: 2026-03-18 | Cycle: 2026-03-18__release-v2.1 | Backlog slice: claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md*
+
+| EPIC | Story | Title | Priority | Effort | Conditional |
+|------|-------|-------|----------|--------|-------------|
+| EPIC-01 | ST-01 | Author async notification delivery ADR (BLG-TECH-08) | P2 | S | No — Sprint 1 item 1 |
+| EPIC-02 | ST-02 | Spec: alerts endpoint + notification preference model | P2 | M | Yes — gated on ST-01 complete |
+| EPIC-02 | ST-03 | Backend: alert rules engine | P2 | M–H | Yes — gated on ST-02 |
+| EPIC-02 | ST-04 | Backend: notification delivery (email) | P2 | M | Yes — gated on ST-02 + ST-01 ADR |
+| EPIC-02 | ST-05 | Frontend: notification preferences page | P2 | S–M | Yes — gated on ST-02 |
+| EPIC-02 | ST-06 | Frontend: in-app notification feed | P2 | S–M | Yes — gated on ST-02 |
+| EPIC-02 | ST-07 | QA: notification delivery test scenarios | P2 | S | Yes — gated on ST-02 |
+| EPIC-03 | ST-08 | Spec: watchlist data model + API endpoints | P2 | S–M | No |
+| EPIC-03 | ST-09 | Backend: watchlist implementation | P2 | M | No (gated on ST-08) |
+| EPIC-03 | ST-10 | Frontend: watchlist UI | P2 | M | No (gated on ST-08/09) |
+| EPIC-04 | ST-11 | Implement chart interactivity enhancements (CHART-IX) | P2 | S–M | No |
+| EPIC-05 | ST-12 | BLG-FR-01: Tax Year P&L PDF Export | P2 | M | No |
+| EPIC-05 | ST-13 | BLG-FR-02: Tax Year P&L CSV Export | P2 | S | No |
+| EPIC-05 | ST-14 | BLG-FEAT-03: Slippage Tracking | P2 | S–M | No (internal data model gate) |
+| EPIC-05 | ST-15 | BLG-OPS-03: Render PR Preview Environments | P2 | S | No |
+| EPIC-06 | ST-16 | BLG-SPEC-D12: Bulk lifecycle header remediation (28 docs) | P2 | S–M | No |
+| EPIC-06 | ST-17 | Spec maintenance batch (D13 + G6 + D10 + D11) | P2–P3 | S | No |
+| EPIC-06 | ST-18 | Author missing test scenario documents (SIG-01 + TAX-01) | P3 | S | No |
+| EPIC-06 | ST-19 | BLG-PROC-01: Cross-EPIC process compliance check | P3 | S | No |
+
+*Full acceptance criteria in stage4_backlog_slice.md.*
 
 ---
 

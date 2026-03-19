@@ -144,6 +144,19 @@ export default function RMultipleAnalysis({ trades }) {
     return "text-slate-400";
   };
 
+  const CustomBarTooltip = ({ active, payload, label, total }) => {
+    if (!active || !payload?.length) return null;
+    const count = payload[0].value;
+    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+    return (
+      <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-xl">
+        <p className="text-sm font-semibold text-white mb-1">{label}</p>
+        <p className="text-sm text-slate-300">{count} trade{count !== 1 ? "s" : ""}</p>
+        <p className="text-xs text-slate-400">{pct}% of closed trades</p>
+      </div>
+    );
+  };
+
   return (
     <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
       <div className="p-6 border-b border-slate-700/50">
@@ -177,10 +190,7 @@ export default function RMultipleAnalysis({ trades }) {
                 stroke="#64748b"
                 tick={{ fill: '#94a3b8', fontSize: 12 }}
               />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
-                labelStyle={{ color: '#e2e8f0' }}
-              />
+              <Tooltip content={<CustomBarTooltip total={tradesWithR.length} />} />
               <Bar dataKey="count" label={{ position: 'top', fill: '#94a3b8', fontSize: 11 }}>
                 {buckets.map((entry, index) => (
                   <Cell key={index} fill={getBarColor(entry.label)} />

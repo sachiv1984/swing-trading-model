@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-17 (roadmap rebalance — cycle 2026-03-17__item-v1.10)
+**Last Updated:** 2026-03-18 (roadmap rebalance — cycle 2026-03-18__item-4.3)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -19,9 +19,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 | ID | Initiative | Release | Status | Decision log ref |
 |----|-----------|---------|--------|-----------------|
-| 3.5 | Alerts & Notifications | v2.0 | Deferred — QA gate pending; auto-advance trigger set (DL-003) | DL-002, DL-003 |
-| 4.1b | Tax-Year P&L Statement | v2.0 | Planned — BLG-NEW-06 P&L labelling pre-work merged into scope | — |
-| 4.3 | Signal Exposure Enhancement | v2.0 | Active planning — §13 gate cleared (PoG POG-20260304-01) | DL-004 |
+| 3.5 | Alerts & Notifications | v2.1 | Deferred — BLG-TECH-08 (async notification ADR) required; auto-advance trigger set (DL-003) | DL-002, DL-003 |
 | 4.2 | Watchlists & Screening | v2.1+ | Planned — do not pull forward; Priority 2 | — |
 | CHART-IX | Chart Interactivity Enhancements | v2.1+ | Planned — do not pull forward; Priority 2. **Displacement candidate: Yes — lowest strategic urgency relative to impact in Priority 2; S effort; natural stop if future roadmap-level Add requires displacement — 2026-03-17** | DL-009 |
 
@@ -74,6 +72,8 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 | ID | Initiative | Shipped | Release |
 |----|-----------|---------|---------|
+| 4.1b | Tax-Year P&L Statement | 2026-03-17 | v2.0 |
+| 4.3 | Signal Exposure Enhancement | 2026-03-17 | v2.0 |
 | BLG-OPS-01 | Development Environment (staging) | 2026-03-16 | v1.10 |
 | 3.1 | Performance Analytics Page | — | v1.5 |
 | 3.2 | Position Sizing Calculator | 2026-02-20 | v1.6 |

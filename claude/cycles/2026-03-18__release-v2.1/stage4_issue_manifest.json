@@ -1,0 +1,173 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Author async notification delivery ADR (BLG-TECH-08)",
+    "epic": "EPIC-01",
+    "description": "Author the Architecture Decision Record for notification delivery: sync vs async. Decision controls EPIC-02 spec.",
+    "ac_summary": "ADR created at docs/adr/ADR-003; covers sync vs async options; decision + rationale recorded; Head of Engineering sign-off; sprint planning must verify Complete before sealing EPIC-02 stories",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Spec: alerts endpoint + notification preference model",
+    "epic": "EPIC-02",
+    "description": "Author alerts endpoint spec and notification preference model (gated on ST-01 complete).",
+    "ac_summary": "alerts_endpoints.md created; notification preference model defined; data_model.md updated; openapi.yaml updated; Head of Specs Team sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-18__release-v2.1", "conditional"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Backend: alert rules engine",
+    "epic": "EPIC-02",
+    "description": "Implement alert rules evaluation engine for all 4 alert types (gated on ST-02).",
+    "ac_summary": "4 alert types implemented; unit tests passing; Head of Engineering sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-18__release-v2.1", "conditional"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Backend: notification delivery (email)",
+    "epic": "EPIC-02",
+    "description": "Implement email notification delivery per ADR architecture decision (sync or async).",
+    "ac_summary": "Email delivery for all 4 alert types; implementation follows ADR architecture; confirmed in staging; Director of Quality sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-18__release-v2.1", "conditional"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Frontend: notification preferences page",
+    "epic": "EPIC-02",
+    "description": "Implement notification preferences page (gated on ST-02 spec).",
+    "ac_summary": "Preferences page implemented per spec; per-user per-type toggles; settings persisted; Director of Quality sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-18__release-v2.1", "conditional"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Frontend: in-app notification feed",
+    "epic": "EPIC-02",
+    "description": "Implement in-app notification feed with mark-as-read (gated on ST-02 spec).",
+    "ac_summary": "Notification feed rendered per spec; mark-as-read functional; empty state handled; Director of Quality sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-18__release-v2.1", "conditional"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "QA: notification delivery test scenarios",
+    "epic": "EPIC-02",
+    "description": "Author test scenarios for notifications feature (all 4 alert types, preferences, delivery, feed).",
+    "ac_summary": "notifications_scenarios.md created; all 4 alert types + preferences + delivery + feed covered; Director of Quality sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-18__release-v2.1", "conditional"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Spec: watchlist data model + API endpoints",
+    "epic": "EPIC-03",
+    "description": "Author watchlist spec: data model tables, endpoint definitions, signal integration contract.",
+    "ac_summary": "watchlist_endpoints.md created; data_model.md updated with tables; openapi.yaml updated; Head of Specs Team + Data Model Owner sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Backend: watchlist implementation",
+    "epic": "EPIC-03",
+    "description": "Implement watchlist CRUD endpoints, database tables, and signal status integration (gated on ST-08).",
+    "ac_summary": "GET/POST/PATCH/DELETE /watchlist implemented; migration authored; signal integration functional; integration tests passing; Head of Engineering sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Frontend: watchlist UI",
+    "epic": "EPIC-03",
+    "description": "Implement watchlist page: ticker list with signals, target entry/stop, quick-add from position entry modal.",
+    "ac_summary": "Watchlist page implemented per spec; entry signal status, target entry, stop fields shown; quick-add functional; Director of Quality sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "Implement chart interactivity enhancements (CHART-IX)",
+    "epic": "EPIC-04",
+    "description": "Add hover tooltips, zoom, and drill-down to 3 analytics page charts. No new indicators, no client-side re-derivation.",
+    "ac_summary": "Hover tooltips on all 3 charts; zoom on equity curve; drill-down on monthly heatmap; values match backend exactly; Director of Quality sign-off with evidence method stated",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "BLG-FR-01: Tax Year P&L PDF Export",
+    "epic": "EPIC-05",
+    "description": "Server-side PDF generation for tax year P&L report via GET /reports/tax-year?format=pdf.",
+    "ac_summary": "PDF endpoint returns consistent-format report; all data matches JSON response; includes title/year/timestamp; openapi.yaml updated; Financial Reporting Owner + DoQ sign-off",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "BLG-FR-02: Tax Year P&L CSV Export",
+    "epic": "EPIC-05",
+    "description": "CSV export for tax year P&L report via GET /reports/tax-year?format=csv.",
+    "ac_summary": "CSV with human-readable headers; all data matches JSON response; no schema migration; openapi.yaml updated; Head of Engineering sign-off",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-14",
+    "title": "BLG-FEAT-03: Slippage Tracking",
+    "epic": "EPIC-05",
+    "description": "Add Fill Price capture at trade entry; compute and display slippage per trade and portfolio average.",
+    "ac_summary": "data_model.md updated with Fill Price; migration authored; slippage computed per trade and shown as portfolio average; Data Model Owner + DoQ sign-off",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-15",
+    "title": "BLG-OPS-03: Render PR Preview Environments",
+    "epic": "EPIC-05",
+    "description": "Enable Render Preview Environments on existing Blueprint for PR-based preview URLs.",
+    "ac_summary": "Preview environments enabled; PRs auto-provision preview URL; OPERATIONAL_GUIDE.md §8 updated; Infrastructure Owner sign-off",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-16",
+    "title": "BLG-SPEC-D12: Bulk lifecycle header remediation (28 spec documents)",
+    "epic": "EPIC-06",
+    "description": "Add Class + Lifecycle Guide headers to all 28 non-compliant spec documents. Header-only, no content changes.",
+    "ac_summary": "All 28 documents carry compliant headers; versions bumped; spec_coverage_inventory.md §9 updated to 38/38; Head of Specs Team sign-off",
+    "labels": ["sprint", "EPIC-06", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-17",
+    "title": "Spec maintenance batch (BLG-SPEC-D13 + BLG-SPEC-G6 + BLG-SPEC-D10 + BLG-SPEC-D11)",
+    "epic": "EPIC-06",
+    "description": "4-item spec maintenance batch: metrics_definitions.md Owner, total_return_pct implementation, api_dependencies.md update, data_model.md §501 update.",
+    "ac_summary": "All 4 items resolved; versions bumped; openapi.yaml updated for G6; Head of Specs Team + Head of Engineering sign-off",
+    "labels": ["sprint", "EPIC-06", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-18",
+    "title": "Author missing test scenario documents (TEST-GAP-SIG-01 + TEST-GAP-TAX-01)",
+    "epic": "EPIC-06",
+    "description": "Author signals_scenarios.md (SC-SIG-01/02/03) and reports_scenarios.md (SC-TAX-01/02/03).",
+    "ac_summary": "Both scenario documents created per backlog spec; QA & Testing Owner + Director of Quality sign-off",
+    "labels": ["sprint", "EPIC-06", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-19",
+    "title": "BLG-PROC-01: Cross-EPIC branch process compliance check",
+    "epic": "EPIC-06",
+    "description": "At sprint close, PMO Lead verifies no cross-EPIC branch commits occurred (or any deviations escalated).",
+    "ac_summary": "Outcome recorded in qa_evidence; zero recurrence → item closeable; PMO Lead sign-off",
+    "labels": ["sprint", "EPIC-06", "cycle:2026-03-18__release-v2.1"],
+    "assignee": null
+  }
+]

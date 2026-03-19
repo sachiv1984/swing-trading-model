@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.1
+**Version:** 4.2
 **Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -336,18 +336,19 @@ If all preflight checks pass (including outstanding actions resolved or formally
 
 ### STEP -1.6 — Idea Intake (Conditional)
 
-Read `claude/ideas/submissions/`. Count files where `**Status:**` is `Submitted` or
+Read `claude/ideas/ideas_register.md`. Count rows where `Status` is `Submitted` or
 `Parked-cycle-<n>` (exclude `Promoted-Added`, `Promoted-Rejected`, `Rejected`,
-`Rejected-Strong`, `Withdrawn`, and `window_summary_*.md` files).
+`Rejected-Strong`, and `Withdrawn` rows). If `ideas_register.md` is absent or contains
+no eligible rows, treat the count as 0.
 
-- If **fewer than 20 open ideas** (or `claude/ideas/submissions/` is absent/empty):
+- If **fewer than 20 open ideas** (or `ideas_register.md` is absent/empty):
   invoke `claude/system/idea_intake_prompt.md` inline — open a new window, collect all
   agent submissions, close the window. Proceed to STEP 0 with new submissions available.
 - If **20 or more open ideas**: note the count, skip intake — sufficient ideas exist for
   STEP 4. Proceed to STEP 0.
 
 Note: `run ideas` may still be invoked standalone before `run roadmap` for explicit
-window control. If run in this session, those submissions count toward the 20-idea threshold.
+window control. If run in this session, those register rows count toward the 20-idea threshold.
 
 **State age advisory:** Read `.claude_current_state.json` `last_updated_utc` field. If absent or >30 days before today: surface advisory — "State file not updated in >30 days — confirm active_cycle is current before proceeding." Record in run_manifest.md. Advisory only — do not halt.
 
@@ -425,7 +426,7 @@ The system classifies every run into one of three tiers based on objective crite
 
 **Lightweight — ALL of the following must be true:**
 1. Run type is completion-triggered (not scheduled).
-2. Zero idea files have `Status: Submitted` in `claude/ideas/submissions/` (no new ideas entering debate this cycle).
+2. Zero rows have `Status: Submitted` in `claude/ideas/ideas_register.md` (no new ideas entering debate this cycle).
 3. No initiative is classified ⚠ Re-evaluate or ❌ Consider stopping in STEP 2.
 4. The only proposed roadmap change involves a displacement that was pre-noted in `claude/roadmap/initiative_register.md` as `Displacement candidate: Yes` — the displacement decision is not new to this run.
 
@@ -984,10 +985,10 @@ Before executing STEP 9, you must perform a stateless verification:
 1. Re-read Section 5 (Write Scope Restriction) verbatim.
 2. Re-read Section 10 (Completion Condition) verbatim.
 3. Construct a complete "write plan" listing every file you intend to create or modify in STEP 9.
-4. **Idea file status verification (LL-02-patch):** For each idea file that was set to `**Status:** Advancing` in §4.2 (Document Management), verify that the STEP 9 write plan includes an update to a terminal status:
-   - `**Status:** Promoted-Added` — if the idea was accepted and added to the roadmap in STEP 8
-   - `**Status:** Promoted-Rejected` — if the idea was debated but ultimately not added
-   If any `Advancing` idea file is not accounted for in the write plan: add it explicitly. An idea file in `Advancing` status at the end of the run is a governance record gap.
+4. **Register row status verification (LL-02-patch):** For each register row that was set to `Status: Advancing` in §4.2 (Document Management), verify that the STEP 9 write plan includes an update to a terminal status:
+   - `Status: Promoted-Added` — if the idea was accepted and added to the roadmap in STEP 8
+   - `Status: Promoted-Rejected` — if the idea was debated but ultimately not added
+   If any `Advancing` register row is not accounted for in the write plan: add it explicitly. A register row in `Advancing` status at the end of the run is a governance record gap.
 
 Write plan must include, for each file:
 - file path
@@ -1540,6 +1541,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.2 | 2026-03-18 | STEP -1.6 corrected: count source changed from `claude/ideas/submissions/` file scan to `claude/ideas/ideas_register.md` row count (consistent with register model). STEP 0.C Lightweight criterion 2 updated to reference register rows. STEP 8.5.B item 4 language updated: "idea file" → "register row" throughout (LL-02-patch language now register-model consistent). |
 | 4.1 | 2026-03-17 | ST-19 (EPIC-06): STEP 4 updated to read from `claude/ideas/ideas_register.md` (single register) instead of scanning per-file submissions. §4.2 Document Management updated: actions now update register rows (Status, Park Count, Park Rationale) instead of individual files. §4.3 window summary path updated. Schema: `shared_standards.md §16.5`. |
 | 4.0 | 2026-03-17 | ST-18 (EPIC-06): Extended `cycle_record.md` single-file pattern to all three tiers (Lightweight/Standard/Extended). STEPS 2, 3, 4, 5, 8 write targets changed from separate stage files (`stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, `stage5_rebalance.md`) to labelled sections within a single `cycle_record.md`. Stage file references in §5 hard gates, §5.3 PoG issuance, §7 Skill-Silo / Capacity Floor rules, §10 Completion Condition, and STEP 0.C tier table all updated accordingly. Note in STEP 0.C explains mapping for any residual stage-file references. |
 | 3.0 | 2026-03-17 | Five governance improvements applied at post-ship closure v1.10 (BLG-GOV-01, BLG-GOV-02 actions): (1) Tier table added to STEP 0.C classifying run weight; (2) Stage output format note established `cycle_record.md` as Lightweight output target; (3) STEP 2 and STEP 3 write targets standardised to `cycle_record.md` sections for Lightweight; (4) STEP -1.5 prior cycle actions check updated; (5) Minor structural clarifications. |
