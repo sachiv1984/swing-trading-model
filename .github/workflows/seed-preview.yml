@@ -1,97 +1,80 @@
-name: Seed Preview Environment
+name: Seed Staging Database
 
 on:
-  pull_request:
-    types: [labeled]
+  workflow_dispatch:
+
+# Seeds the canonical staging database with 12 closed trades for ST-11 DoQ sign-off.
+# Uses psql directly against the Supabase staging database — bypasses the API layer.
+#
+# Prerequisites:
+#   - STAGING_DATABASE_URL must be set as a GitHub Actions repository secret
+#     (Supabase staging project → Settings → Database → Connection string → URI)
+#   - The staging schema must already exist (run staging_setup.md runbook first)
+#   - At least one portfolio record must exist in the staging database
+#
+# Idempotency: skips if [SEED] records already exist in trade_history.
+# Re-seeding: remove existing [SEED] rows manually via psql, then re-run.
+#
+# DoQ test target after seeding:
+#   https://trading-assistant-staging.onrender.com/performance-analytics
+#   Scenarios: docs/testing/chart_interactivity_scenarios.md (SC-CHART-IX-01 through SC-CHART-IX-06)
 
 jobs:
   seed:
-    # Only run when the render-preview label is applied
-    if: github.event.label.name == 'render-preview'
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set preview URL
-        id: url
+      - name: Install psql
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Check for existing seed data
+        id: guard
+        env:
+          STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          PGSSLMODE: require
         run: |
-          PR="${{ github.event.pull_request.number }}"
-          echo "base=https://trading-assistant-api-staging-pr-${PR}.onrender.com" >> "$GITHUB_OUTPUT"
+          COUNT=$(psql "$STAGING_DATABASE_URL" -t -c \
+            "SELECT COUNT(*) FROM trade_history WHERE exit_note LIKE '%[SEED]%';" \
+            | tr -d ' \n')
+          echo "existing_count=$COUNT" >> "$GITHUB_OUTPUT"
+          if [ "$COUNT" -gt "0" ]; then
+            echo "skipped=true" >> "$GITHUB_OUTPUT"
+            echo "Seed data already present ($COUNT records in trade_history). Skipping."
+          else
+            echo "skipped=false" >> "$GITHUB_OUTPUT"
+            echo "No seed data found. Proceeding."
+          fi
 
-      - name: Wait for preview to be healthy
-        id: wait
-        timeout-minutes: 20
+      - name: Seed database
+        if: steps.guard.outputs.skipped == 'false'
+        env:
+          STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          PGSSLMODE: require
         run: |
-          URL="${{ steps.url.outputs.base }}/health"
-          echo "Polling $URL ..."
-          for i in $(seq 1 60); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$URL" || true)
-            echo "Attempt $i: HTTP $STATUS"
-            if [ "$STATUS" = "200" ]; then
-              echo "Preview is healthy."
-              exit 0
-            fi
-            sleep 20
-          done
-          echo "Preview did not become healthy within 20 minutes."
-          exit 1
+          psql "$STAGING_DATABASE_URL" -f backend/test_data/seed_chart_test_data.sql
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install requests
-
-      - name: Seed test data
-        id: seed
+      - name: Report result
         run: |
-          python backend/test_data/seed_chart_test_data.py "${{ steps.url.outputs.base }}" 2>&1 | tee seed_output.txt
-          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
-
-      - name: Post PR comment
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const output = fs.readFileSync('seed_output.txt', 'utf8');
-            const previewUrl = '${{ steps.url.outputs.base }}';
-            const success = '${{ steps.seed.outputs.exit_code }}' === '0';
-
-            const status = success
-              ? '✅ Test data seeded successfully'
-              : '⚠️ Seeding completed with errors — check output below';
-
-            const body = [
-              `### ${status}`,
-              '',
-              `**Preview URL:** ${previewUrl}`,
-              '',
-              '**Analytics page:** ' + previewUrl + '/performance-analytics',
-              '',
-              '<details>',
-              '<summary>Seed script output</summary>',
-              '',
-              '```',
-              output.trim(),
-              '```',
-              '</details>',
-              '',
-              '**Test scenarios:** `docs/testing/chart_interactivity_scenarios.md`',
-              '',
-              success
-                ? '_12 trades seeded: Jan×4 / Feb×6 / Mar×2 / Apr=0 (zero-tile). All 7 R-multiple buckets populated._'
-                : '_Check the seed output above. Re-run by removing and re-adding the `render-preview` label._',
-            ].join('\n');
-
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body,
-            });
+          if [ "${{ steps.guard.outputs.skipped }}" == "true" ]; then
+            echo "========================================================="
+            echo "  SKIPPED — seed data already present"
+            echo "  Existing [SEED] records: ${{ steps.guard.outputs.existing_count }}"
+            echo ""
+            echo "  To re-seed: delete existing [SEED] rows via psql, then"
+            echo "  re-run this workflow."
+            echo "========================================================="
+          else
+            echo "========================================================="
+            echo "  SEEDED — 12 trades inserted"
+            echo "  Jan×4 / Feb×6 / Mar×2 / Apr=0 (zero-tile)"
+            echo "  All 7 R-multiple buckets populated."
+            echo ""
+            echo "  DoQ test target:"
+            echo "  https://trading-assistant-staging.onrender.com/performance-analytics"
+            echo ""
+            echo "  Scenarios: docs/testing/chart_interactivity_scenarios.md"
+            echo "========================================================="
+          fi

@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.27
-**Last Updated:** 2026-03-17
+**Version:** 3.28
+**Last Updated:** 2026-03-19
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -849,6 +849,7 @@ run sprint [--cycle "<cycle_id>"] [--epic "<EPIC-xx>"] [--item "<ST-xx>"] [--mod
 - Director of Quality QA gates apply to all EPICs before merge.
 - **QA sign-off environment (v1.10+):** Director of Quality must review and test against the staging environment at `https://trading-assistant-staging.onrender.com` — not production. Staging is the canonical pre-merge QA environment as of v1.10 (LL-01 resolution, 2026-03-16).
 - **Staging test data prerequisite for data-dependent scenarios (LL-v1.10-P4-3):** Before executing QA scenarios that require backend data records (e.g. scenarios involving closed trades, open positions, or portfolio history), confirm the staging database has at least one closed trade and at least one open position. If the staging DB lacks qualifying data, the scenario result is BLOCKED (not FAIL) — record the data gap as a friction item in the `qa_evidence_EPIC-xx.md` sign-off block.
+- **Staging test data seeding — chart interactivity scenarios (ST-11+):** For scenarios requiring specific closed-trade data (e.g. `SC-CHART-IX-*`), run the **Seed Staging Database** workflow via GitHub Actions → Actions → `Seed Staging Database` → Run workflow. This executes `backend/test_data/seed_chart_test_data.sql` directly against the staging Supabase database via `psql`, inserting 12 closed trades (Jan×4 / Feb×6 / Mar×2, all 7 R-multiple buckets). An idempotency guard skips the run if `[SEED]` records already exist — safe to trigger multiple times. Prerequisite: `STAGING_DATABASE_URL` repository secret must be set (Supabase staging project → Settings → Database → Connection string → URI). DoQ runs scenarios against `https://trading-assistant-staging.onrender.com` after seeding. Note: PR preview environments are not used for data-dependent QA — the canonical staging environment is always the test target (LL-01, 2026-03-16; updated approach 2026-03-19).
 - Partial completion does not count — items must satisfy all acceptance criteria.
 - The engine is fully resumable — re-invoke with the same command to resume from last state.
 - **No autonomous merge.** QA sign-off and Product Owner acceptance are always required.
@@ -1318,6 +1319,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.28 | 2026-03-19 | **ST-11 staging seed workflow updated to psql-based approach.** §8.2 staging test data seeding bullet added: `seed-preview.yml` workflow renamed to `Seed Staging Database`, trigger changed from `render-preview` label to `workflow_dispatch`, seeding mechanism changed from Python API script to `psql` against `STAGING_DATABASE_URL` secret, idempotency guard added. Documents that PR preview environments are not used for data-dependent QA — canonical staging is always the test target. |
 | 3.27 | 2026-03-18 | **idea_intake_prompt.md v2.0→v2.1 — stale warning horizon check added.** §5 source prompt v2.0→v2.1; §14 Idea Intake Engine v2.0→v2.1. STEP -0.5 added: before opening intake window, Facilitator checks `ideas_register.md` for Parked-cycle-2 rows; if ≥15, surfaces stale warning advisory. Register-model-correct replacement for LL-01-patch (cycle 2026-03-18__item-4.3). |
 | 3.26 | 2026-03-18 | **roadmap_prompt.md v4.1→v4.2 — register model consistency fixes.** §6 source prompt v4.0→v4.2; §14 Roadmap Engine Source → v4.2. Changes: STEP -1.6 count source updated from `submissions/` file scan to `ideas_register.md` row count; STEP 0.C Lightweight criterion 2 updated to register rows; STEP 8.5.B item 4 "idea file" language updated to "register row". |
 | 3.25 | 2026-03-17 | **ST-19 (EPIC-06): Ideas register model.** §5 source prompt v1.3→v2.0; §5 trigger condition updated (count from `ideas_register.md`); §5.3 lifecycle updated (per-file → register rows); §5.5 artefacts table updated (Idea Submissions → Ideas Register; window summary path updated; archive entry added); §5.6 exit criteria updated. Artefact register: Idea Submissions → Ideas Register (`ideas_register.md`). §14: idea_intake_prompt v2.0; roadmap_prompt v4.1; shared_standards v2.3. |
