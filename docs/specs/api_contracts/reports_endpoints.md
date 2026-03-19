@@ -50,6 +50,7 @@ Returns a structured P&L statement for all **closed trades** whose `exit_date` f
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `year` | integer | Yes | The start year of the UK tax year. `year=2025` returns the 2025/26 tax year (6 April 2025 to 5 April 2026). Must be a four-digit integer. |
+| `format` | string | No | Response format. Omit for JSON (default). Pass `format=pdf` to receive a PDF file download. Accepted values: `pdf`. |
 
 #### Validation rules
 
@@ -58,10 +59,11 @@ Returns a structured P&L statement for all **closed trades** whose `exit_date` f
 - If `year` is absent: return `400` — "year parameter is required."
 - If `year` is invalid: return `400` — "year must be a valid four-digit integer."
 - If `year` is in the future: return `400` — "tax year has not started yet."
+- If `format` is present and not `pdf`: behaviour is unspecified (implementation may ignore or return `400`).
 
 ---
 
-### Response (200)
+### Response (200 — JSON, default)
 
 Response uses the standard success envelope from **conventions.md**.
 
@@ -155,6 +157,30 @@ Response uses the standard success envelope from **conventions.md**.
 
 ---
 
+### Response (200 — PDF, `format=pdf`)
+
+When `format=pdf` is supplied, the endpoint returns a PDF document instead of the standard JSON envelope.
+
+**Response headers:**
+
+| Header | Value |
+|--------|-------|
+| `Content-Type` | `application/pdf` |
+| `Content-Disposition` | `attachment; filename="tax-year-{year}-pnl.pdf"` |
+
+**PDF content (sourced entirely from the existing JSON response — no new data):**
+
+- Report title: `"Tax Year P&L — {tax_year_label}"`
+- Generation timestamp (UTC)
+- Summary bar: `total_realised_pnl`, `total_gross_profit`, `total_gross_loss`, `win_rate`, `total_closed_trades`
+- Trades table: all columns from `trades[]` array (ticker, market, dates, prices, FX rates, shares, cost/proceeds/P&L in GBP, currency, tags)
+- Disclaimer text verbatim (see Overview section)
+- Empty year is valid — PDF renders with summary zeros and no trade rows
+
+**Library:** `reportlab` (pure Python; no system-level dependencies).
+
+---
+
 ### Derivation Notes
 
 **Tax year attribution**
@@ -186,10 +212,11 @@ Errors use the standard error envelope from **conventions.md §13**.
 
 ---
 
-### Example Request
+### Example Requests
 
 ```
 GET /reports/tax-year?year=2025
+GET /reports/tax-year?year=2025&format=pdf
 ```
 
 ### Example Response (200 — trades present)
@@ -279,4 +306,5 @@ GET /reports/tax-year?year=2025
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-03-19 | Add `format=pdf` query parameter to GET /reports/tax-year. PDF response schema documented. ST-12 — v2.1 release planning cycle 2026-03-18__release-v2.1. |
 | 0.1 | 2026-03-17 | Initial version. GET /reports/tax-year. ST-03 — v2.0 release planning cycle 2026-03-17__release-v2.0. |

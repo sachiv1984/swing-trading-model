@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "../api/base44Client";
+import { useToast } from "../components/ui/use-toast";
 import {
   FileText,
   Download,
@@ -56,6 +57,33 @@ function TaxYearReport() {
   const [selectedYear, setSelectedYear] = useState(currentTaxYear);
   const [sortField, setSortField] = useState("exit_date");
   const [sortDir, setSortDir] = useState("asc");
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+  const { toast } = useToast();
+
+  const handlePdfDownload = async () => {
+    setPdfGenerating(true);
+    try {
+      const response = await fetch(
+        `${base44.baseUrl}/reports/tax-year?format=pdf&year=${selectedYear}`
+      );
+      if (!response.ok) throw new Error("PDF generation failed");
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `tax-year-${selectedYear}-pnl.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast({
+        description: "PDF generation failed. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    } finally {
+      setPdfGenerating(false);
+    }
+  };
 
   const { data: reportData, isLoading, isError, error } = useQuery({
     queryKey: ["taxYearReport", selectedYear],
@@ -115,25 +143,45 @@ function TaxYearReport() {
         </p>
       </div>
 
-      {/* Year Selector */}
-      <div className="flex items-center gap-3">
-        <Calendar className="w-4 h-4 text-slate-400" />
-        <span className="text-sm text-slate-400">Tax Year</span>
-        <Select
-          value={String(selectedYear)}
-          onValueChange={(v) => setSelectedYear(Number(v))}
+      {/* Year Selector + Download PDF */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Calendar className="w-4 h-4 text-slate-400" />
+          <span className="text-sm text-slate-400">Tax Year</span>
+          <Select
+            value={String(selectedYear)}
+            onValueChange={(v) => setSelectedYear(Number(v))}
+          >
+            <SelectTrigger className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 border-slate-700">
+              {yearOptions.map((y) => (
+                <SelectItem key={y} value={String(y)}>
+                  {y}/{String(y + 1).slice(2)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button
+          onClick={handlePdfDownload}
+          disabled={pdfGenerating}
+          variant="outline"
+          className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9"
         >
-          <SelectTrigger className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className="bg-slate-800 border-slate-700">
-            {yearOptions.map((y) => (
-              <SelectItem key={y} value={String(y)}>
-                {y}/{String(y + 1).slice(2)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          {pdfGenerating ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Generating…
+            </>
+          ) : (
+            <>
+              <FileDown className="w-4 h-4 mr-2" />
+              Download PDF
+            </>
+          )}
+        </Button>
       </div>
 
       {isLoading ? (

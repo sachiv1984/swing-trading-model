@@ -3,7 +3,7 @@ Reports Service
 
 Business logic for the tax-year P&L report.
 
-Spec: docs/specs/api_contracts/reports_endpoints.md v0.1
+Spec: docs/specs/api_contracts/reports_endpoints.md v0.2
 Data model: docs/specs/data_model.md §3 (trade_history), §2 (positions)
 
 Schema note: trade_history stores exit value as net_proceeds (exit proceeds
@@ -13,6 +13,7 @@ so net_proceeds is the correct value.
 """
 
 from datetime import date, datetime, timezone
+from io import BytesIO
 from typing import Dict
 
 from database import (
@@ -120,3 +121,177 @@ def get_tax_year_report(year: int) -> Dict:
         },
         "trades": trades_out,
     }
+
+
+_DISCLAIMER = (
+    "Disclaimer: The tax-year P&L report is provided for user reference only. "
+    "It is not a substitute for qualified tax advice. Users are responsible for "
+    "verifying the figures against their broker records and obtaining appropriate "
+    "professional advice before submitting any tax return."
+)
+
+
+def build_tax_year_pdf(report_data: dict) -> bytes:
+    """
+    Render a tax-year P&L report dict as a PDF document (bytes).
+
+    Args:
+        report_data: Dict returned by get_tax_year_report().
+
+    Returns:
+        Raw PDF bytes suitable for streaming as application/pdf.
+    """
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+    from reportlab.lib.units import mm
+    from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=landscape(A4),
+        rightMargin=15 * mm,
+        leftMargin=15 * mm,
+        topMargin=15 * mm,
+        bottomMargin=15 * mm,
+    )
+    styles = getSampleStyleSheet()
+    story = []
+
+    # --- Title ---
+    title_style = ParagraphStyle(
+        "ReportTitle", parent=styles["Heading1"], fontSize=16, spaceAfter=4
+    )
+    story.append(
+        Paragraph(f"Tax Year P&L — {report_data['tax_year_label']}", title_style)
+    )
+    sub_style = ParagraphStyle(
+        "ReportSub", parent=styles["Normal"], fontSize=9, textColor=colors.grey
+    )
+    story.append(
+        Paragraph(f"Generated: {report_data['generated_at']} (UTC)", sub_style)
+    )
+    story.append(Spacer(1, 6 * mm))
+
+    # --- Summary bar ---
+    summary = report_data["summary"]
+    _DARK = colors.HexColor("#1e293b")
+    _LIGHT = colors.HexColor("#f8fafc")
+
+    summary_data = [
+        ["Total Realised P&L", "Gross Profit", "Gross Loss", "Win Rate", "Total Trades"],
+        [
+            f"£{summary['total_realised_pnl']:,.2f}",
+            f"£{summary['total_gross_profit']:,.2f}",
+            f"£{summary['total_gross_loss']:,.2f}",
+            f"{summary['win_rate']}%",
+            str(summary["total_closed_trades"]),
+        ],
+    ]
+    col_w = 52 * mm
+    summary_table = Table(summary_data, colWidths=[col_w] * 5)
+    summary_table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), _DARK),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, 0), 9),
+                ("FONTSIZE", (0, 1), (-1, 1), 12),
+                ("FONTNAME", (0, 1), (-1, 1), "Helvetica-Bold"),
+                ("BACKGROUND", (0, 1), (-1, 1), _LIGHT),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                ("TOPPADDING", (0, 0), (-1, -1), 5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ]
+        )
+    )
+    story.append(summary_table)
+    story.append(Spacer(1, 6 * mm))
+
+    # --- Trades table ---
+    trades = report_data.get("trades", [])
+    if trades:
+        headers = [
+            "Ticker", "Mkt", "Entry Date", "Exit Date", "Days",
+            "Entry Price", "Exit Price", "Shares",
+            "Cost GBP", "Proceeds GBP", "P&L GBP", "P&L %",
+            "FX In", "FX Out", "CCY", "Tags",
+        ]
+        rows = [headers]
+        for t in trades:
+            tags = ", ".join(t.get("tags") or [])
+            fx_in = f"{t['entry_fx_rate']:.4f}" if t.get("entry_fx_rate") else "—"
+            fx_out = f"{t['exit_fx_rate']:.4f}" if t.get("exit_fx_rate") else "—"
+            rows.append(
+                [
+                    t["ticker"],
+                    t["market"],
+                    t["entry_date"],
+                    t["exit_date"],
+                    str(t["holding_days"]),
+                    f"{t['entry_price_native']:,.4f}",
+                    f"{t['exit_price_native']:,.4f}",
+                    f"{t['shares']:.2f}",
+                    f"£{t['total_cost_gbp']:,.2f}",
+                    f"£{t['exit_proceeds_gbp']:,.2f}",
+                    f"£{t['realised_pnl_gbp']:,.2f}",
+                    f"{t['pnl_pct']:.2f}%",
+                    fx_in,
+                    fx_out,
+                    t["currency"],
+                    tags,
+                ]
+            )
+
+        # Landscape A4 usable width ≈ 267mm
+        col_widths = [
+            16, 8, 20, 20, 10,   # ticker, mkt, entry_date, exit_date, days
+            22, 22, 14,           # entry_price, exit_price, shares
+            24, 26, 22, 14,       # cost, proceeds, pnl, pnl%
+            14, 14, 10, 21,       # fx_in, fx_out, ccy, tags
+        ]
+        col_widths = [w * mm for w in col_widths]
+
+        trade_table = Table(rows, colWidths=col_widths, repeatRows=1)
+        pnl_col_idx = 10  # "P&L GBP" column (0-indexed)
+        cell_style = [
+            ("BACKGROUND", (0, 0), (-1, 0), _DARK),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, -1), 7),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("GRID", (0, 0), (-1, -1), 0.25, colors.grey),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, _LIGHT]),
+            ("TOPPADDING", (0, 0), (-1, -1), 2),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+        ]
+        for i, t in enumerate(trades, start=1):
+            pnl = t["realised_pnl_gbp"]
+            if pnl > 0:
+                cell_style.append(
+                    ("TEXTCOLOR", (pnl_col_idx, i), (pnl_col_idx, i), colors.HexColor("#16a34a"))
+                )
+            elif pnl < 0:
+                cell_style.append(
+                    ("TEXTCOLOR", (pnl_col_idx, i), (pnl_col_idx, i), colors.HexColor("#dc2626"))
+                )
+        trade_table.setStyle(TableStyle(cell_style))
+        story.append(trade_table)
+    else:
+        story.append(Paragraph("No trades recorded in this tax year.", styles["Normal"]))
+
+    story.append(Spacer(1, 6 * mm))
+
+    # --- Disclaimer ---
+    disclaimer_style = ParagraphStyle(
+        "Disclaimer", parent=styles["Normal"], fontSize=7, textColor=colors.grey
+    )
+    story.append(Paragraph(_DISCLAIMER, disclaimer_style))
+
+    doc.build(story)
+    return buffer.getvalue()
