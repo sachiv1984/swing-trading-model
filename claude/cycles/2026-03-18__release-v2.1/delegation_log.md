@@ -166,7 +166,7 @@ This file is append-only. Do not edit previous entries.
 
 ---
 
-## DEL-20260319-01 — ST-12: Tax Year P&L PDF Export
+## DEL-20260319-01 — ST-12: Tax Year P&L PDF Export (Sprint 1)
 
 **Date:** 2026-03-19
 **Item:** EPIC-05 / ST-12
@@ -224,6 +224,124 @@ Add "Download PDF" button to the Reports page header per `docs/specs/frontend/pa
 **Status:** Unblocked
 **Resolved:** 2026-03-19T00:00:00Z
 **Commit SHAs:** 511f4a4 (frontend), 569d231 (backend)
-**Resolution:** Both frontend and backend implemented on EPIC-05 branch. Frontend: Download PDF button with 4 states (idle/generating/success/error) using useToast. Backend: GET /reports/tax-year?format=pdf returning reportlab-generated PDF; reports_endpoints.md v0.2 and openapi.yaml updated in same commit as backend. Awaiting QA sign-off and Financial Reporting & Records Owner acceptance.
+**Resolution:** Both frontend and backend implemented on EPIC-05 branch. Frontend: Download PDF button with 4 states (idle/generating/success/error) using useToast. Backend: GET /reports/tax-year?format=pdf returning reportlab-generated PDF; reports_endpoints.md v0.2 and openapi.yaml updated in same commit as backend. QA signed off (qa_evidence_EPIC-05.md). Merged via PR #115.
+
+---
+
+## DEL-20260319-02 — ST-02: Spec: alerts endpoint + notification preference model
+
+- **ST Item:** ST-02 — Spec: alerts endpoint + notification preference model
+- **EPIC:** EPIC-02
+- **Classification:** delegated_decision
+- **Assigned to:** Head of Specs Team + Head of Engineering
+- **GitHub Issue:** #93
+- **Branch:** exec/2026-03-18__release-v2.1/EPIC-02
+- **Delegated at:** 2026-03-19T00:00:00Z
+- **What is needed:**
+
+  Author the alerts endpoint spec (`docs/specs/api_contracts/alerts_endpoints.md`) and update the notification preference model. This spec gates ST-03 (backend alert rules engine), ST-04 (email delivery), and ST-05 (frontend preferences page) — nothing downstream may be delegated until this is signed off.
+
+  **Architecture context:** ST-01 ADR-003 decided sync-style delivery via FastAPI BackgroundTasks (no Redis/Celery). All endpoint patterns must reflect this.
+
+  **Required outputs in a single commit to `exec/2026-03-18__release-v2.1/EPIC-02`:**
+
+  1. **`docs/specs/api_contracts/alerts_endpoints.md`** (create) — must define:
+     - Alert rule types: (a) stop loss approach — trigger when current stop ≤ N% of price; (b) grace period warning — trigger on days 8–9; (c) market regime change — trigger on risk-off transition; (d) daily portfolio summary — scheduled daily trigger
+     - CRUD endpoints for alert rules: GET/POST/PATCH/DELETE `/alert-rules`
+     - Notification preference schema (per-user, per-alert-type on/off, email flag): GET `/notifications/preferences` + PATCH `/notifications/preferences`
+     - Notifications feed endpoints: GET `/notifications`, PATCH `/notifications/{id}` (mark read), POST `/notifications/mark-all-read`
+     - Database schema extensions: `alert_rules` table, `notification_preferences` table, `notifications` table
+     - Response schemas for all endpoints (exact field names, types, nullable flags)
+
+  2. **`docs/specs/data_model.md`** — add alert_rules, notification_preferences, and notifications table definitions
+
+  3. **`docs/reference/openapi.yaml`** — add all new endpoints from alerts_endpoints.md in same commit
+
+  4. **`docs/specs/Specs_Index.md`** — register alerts_endpoints.md
+
+- **Spec reference:** docs/adr/ADR-003-notification-delivery-architecture.md (architecture decision to reflect), docs/specs/frontend/pages/notifications.md v0.1 (frontend spec already drafted — API contract must be compatible)
+- **Unblock criteria:** alerts_endpoints.md created and signed off by Head of Specs Team; openapi.yaml updated in same commit; Specs_Index.md updated; data_model.md updated; ADR-003 sync architecture reflected throughout
+- **Commit format required:** `[EPIC-02][ST-02] Author alerts endpoints spec and notification preference model` pushed to `exec/2026-03-18__release-v2.1/EPIC-02`
+- **Status:** Pending
+
+**On completion:** Re-invoke `run sprint --cycle 2026-03-18__release-v2.1` so the engine can detect ST-02 is done and create delegation records for ST-03 (backend), ST-04 (email delivery), and ST-05 (frontend preferences — Base44 prompt will be issued at that point with exact API field names).
+
+---
+
+## DEL-20260319-03 — ST-13: Tax Year P&L CSV Export (Sprint 2)
+
+- **ST Item:** ST-13 — BLG-FR-02: Tax Year P&L CSV Export
+- **EPIC:** EPIC-05
+- **Classification:** delegated_backend
+- **Assigned to:** Head of Engineering
+- **GitHub Issue:** #101
+- **Branch:** exec/2026-03-18__release-v2.1/EPIC-05
+- **Delegated at:** 2026-03-19T00:00:00Z
+- **What is needed:**
+
+  Extend `GET /reports/tax-year` to support `format=csv` — a CSV export of the same data already returned by the JSON endpoint. Pattern is identical to the `format=pdf` extension implemented in ST-12.
+
+  **⚠ Branch setup required first:** The EPIC-05 branch (`exec/2026-03-18__release-v2.1/EPIC-05`) is currently behind main (last commit was the pre-PR-#115 state). Before committing, run:
+  ```
+  git checkout exec/2026-03-18__release-v2.1/EPIC-05
+  git merge main   # (or git rebase main)
+  git push origin exec/2026-03-18__release-v2.1/EPIC-05
+  ```
+
+  **Implementation — router layer (`backend/main.py` or equivalent):**
+  - Extend `GET /reports/tax-year` with `format=csv` support alongside existing `format=pdf`
+  - `format=csv` → call new `build_tax_year_csv(report_data: dict) -> str` service function
+  - Return: `Response(content=csv_str, media_type="text/csv", headers={"Content-Disposition": 'attachment; filename="tax-year-{year}-pnl.csv"'})`
+
+  **Implementation — service layer (`backend/services/reports_service.py`):**
+  - Add `build_tax_year_csv(report_data: dict) -> str`
+  - CSV must have human-readable column headers (not internal field names)
+  - All `trades[]` fields exported: ticker, market, entry_date, exit_date, holding_days, entry_price_native, exit_price_native, entry_fx_rate, exit_fx_rate, shares, total_cost_gbp, exit_proceeds_gbp, realised_pnl_gbp, pnl_pct, currency, tags
+  - Empty year: valid — exports header row only (no data rows)
+  - No new library needed (use Python's built-in `csv` module)
+  - No schema migration required
+
+  **Spec updates in same commit:**
+  - `docs/specs/api_contracts/reports_endpoints.md` — update `format` parameter to `enum: [pdf, csv]`; add CSV response schema (200 — Content-Type: text/csv)
+  - `docs/reference/openapi.yaml` — add `csv` to `format` enum; add `text/csv` 200 response alongside existing `application/json` and `application/pdf` responses
+
+- **Spec reference:** docs/specs/api_contracts/reports_endpoints.md v0.2 (reports_endpoints.md#GET-/reports/tax-year — extend format param)
+- **Unblock criteria:** GET /reports/tax-year?format=csv returns valid CSV with human-readable headers for populated and empty years; reports_endpoints.md + openapi.yaml updated in same commit; Head of Engineering sign-off; commit on exec/2026-03-18__release-v2.1/EPIC-05
+- **Commit format required:** `[EPIC-05][ST-13] Implement GET /reports/tax-year?format=csv` pushed to `exec/2026-03-18__release-v2.1/EPIC-05`
+- **Status:** Pending
+
+---
+
+## DEL-20260319-04 — ST-14: Slippage Tracking — Data Model Gate
+
+- **ST Item:** ST-14 — BLG-FEAT-03: Slippage Tracking
+- **EPIC:** EPIC-05
+- **Classification:** delegated_decision (data model gate — must resolve before backend implementation is delegated)
+- **Assigned to:** Data Model & Domain Schema Owner + Head of Specs Team
+- **GitHub Issue:** #106
+- **Branch:** exec/2026-03-18__release-v2.1/EPIC-05
+- **Delegated at:** 2026-03-19T00:00:00Z
+- **What is needed:**
+
+  ST-14 requires a Fill Price field to be added to the trade data model. This field does not currently exist. Before any backend implementation begins, Data Model & Domain Schema Owner and Head of Specs Team must sign off on the field definition and migration path.
+
+  **Required output — update `docs/specs/data_model.md`:**
+  - Define `fill_price` field on the `trade_history` (or equivalent) table:
+    - Type: float, nullable
+    - Description: The actual price at which the trade was filled (may differ from the ordered entry_price due to slippage)
+    - Nullable: Yes (null for historical trades where fill price was not captured)
+  - Document migration path: ALTER TABLE to add `fill_price` column (nullable), default null for existing rows
+  - Note: slippage formula is `(fill_price - entry_price_native) / entry_price_native` — both fields required in the service layer
+
+  **On sign-off:**
+  - Commit the data_model.md update to `exec/2026-03-18__release-v2.1/EPIC-05`
+  - Then re-invoke `run sprint --cycle 2026-03-18__release-v2.1` — the engine will detect the gate is resolved, re-classify ST-14 to `delegated_backend`, and create the full implementation delegation record for Head of Engineering
+
+  **Commit format for data model gate commit:** `[EPIC-05][ST-14] Spec Fill Price field in data_model.md — slippage tracking data model gate`
+
+- **Spec reference:** docs/specs/data_model.md (section to update), docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md (display context)
+- **Unblock criteria:** data_model.md updated with Fill Price field definition and migration path; Data Model & Domain Schema Owner sign-off; Head of Specs Team sign-off; commit on EPIC-05 branch
+- **Commit format required:** `[EPIC-05][ST-14] Spec Fill Price field in data_model.md — slippage tracking data model gate` pushed to `exec/2026-03-18__release-v2.1/EPIC-05`
+- **Status:** Pending
 
 ---
