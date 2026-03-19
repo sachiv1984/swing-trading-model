@@ -1,9 +1,11 @@
 # position_form.md
 
 **Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 1
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-02-19
+**Version:** 1.3
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & Usage Context
 The Position Form is used to manually create a new position in the portfolio.

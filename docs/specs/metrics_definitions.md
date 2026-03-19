@@ -1,8 +1,11 @@
 # Metrics Definitions – Canonical Specification
-**Version:** 1.7.0
-**Owner:** Analytics Team
-**Last Updated:** 2026-03-12
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Class:** Class 1
+**Status:** Canonical
+**Version:** 1.8.0
+**Last Updated:** 2026-03-18
 **Review Cycle:** Monthly
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 

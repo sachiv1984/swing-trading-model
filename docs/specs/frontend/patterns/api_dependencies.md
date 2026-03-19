@@ -1,9 +1,11 @@
 # api_dependencies.md
 
 **Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 2
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-02-19
+**Version:** 1.2
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose
 This document maps every **surface** (page, modal, or component) to the **API endpoints** it directly calls. It exists to make change impact visible — when an endpoint changes, this document tells you which surfaces are affected.
@@ -154,6 +156,23 @@ Triggered continuously as the user types. Not form submissions — these calls a
 **UX note**
 - This is a single-endpoint page. All charts and metrics on the page are derived from one response. Period filter changes re-fetch the full response.
 - The page gates all output behind `summary.has_enough_data`. When `false`, only the period selector and a "not enough data" message are shown.
+
+---
+
+### Signals Page
+**Reads**
+- `GET /signals` (list signals, optionally filtered by status)
+
+**Writes**
+- `POST /signals/generate` (generate momentum signals for current portfolio)
+- `PATCH /signals/{signal_id}` (update signal status — e.g., mark entered)
+- `DELETE /signals/{signal_id}` (remove a signal)
+
+---
+
+### Reports Page
+**Reads**
+- `GET /reports/tax-year` (tax year P&L report — JSON by default; `?format=pdf` for PDF export, `?format=csv` for CSV export)
 
 ---
 

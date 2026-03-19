@@ -1,9 +1,11 @@
 # position_detail_modal.md
 
-**Owner:** Frontend Specifications & UX Documentation Owner  
-**Status:** Canonical  
-**Version:** 1.0
-**Last Updated:** February 18, 2026
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 1
+**Status:** Canonical
+**Version:** 1.1
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & Usage Context
 The Position Detail Modal provides a focused view of a single position's key stats and entry context, plus lightweight journaling tools (entry note + tags). It helps users quickly review the position and capture/adjust their thinking without navigating away from the current workflow.

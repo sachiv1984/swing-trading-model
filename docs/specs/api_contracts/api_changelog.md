@@ -1,7 +1,9 @@
 **Owner:** API Contracts & Documentation Owner
+**Class:** Class 2
 **Status:** Canonical
-**Version:** 1.1.0
-**Last Updated:** 2026-03-17
+**Version:** 1.2.0
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
 

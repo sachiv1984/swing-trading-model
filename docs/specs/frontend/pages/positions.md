@@ -1,9 +1,11 @@
 # positions.md
 
 **Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 1
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-02-26
+**Version:** 1.3
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 

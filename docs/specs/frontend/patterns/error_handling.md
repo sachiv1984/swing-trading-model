@@ -1,9 +1,11 @@
 # error_handling.md
 
-**Owner:** Frontend Specifications & UX Documentation Owner  
-**Status:** Canonical  
-**Version:** 1.0
-**Last Updated:** February 18, 2026
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 2
+**Status:** Canonical
+**Version:** 1.1
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose
 The Error Handling pattern defines how the application communicates failures, validation issues, and unexpected conditions to users.  

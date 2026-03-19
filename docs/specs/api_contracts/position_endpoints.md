@@ -1,5 +1,12 @@
 # position_endpoints.md
 
+**Owner:** API Contracts & Documentation Owner
+**Class:** Canonical Specification (Class 1)
+**Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
 ## Overview
 
 This document defines **Position** domain endpoints:
