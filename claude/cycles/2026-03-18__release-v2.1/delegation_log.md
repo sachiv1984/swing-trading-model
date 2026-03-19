@@ -1,0 +1,229 @@
+**Owner:** PMO Lead
+**Class:** Planning Document (Class 4)
+**Status:** Active
+**Last Updated:** 2026-03-19
+**Cycle:** 2026-03-18__release-v2.1
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+# Delegation Log — 2026-03-18__release-v2.1
+
+This file is append-only. Do not edit previous entries.
+
+---
+
+## DEL-20260318-01 — ST-01: Author async notification delivery ADR
+
+**Date:** 2026-03-18
+**Item:** EPIC-01 / ST-01
+**Classification:** delegated_decision
+**Assigned to:** Head of Engineering + Backend Engineering Patterns Owner
+**GitHub issue:** #91
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-01
+
+**What was delegated:** Author ADR-003 evaluating sync vs async notification delivery. Decision gates EPIC-02 spec authoring.
+
+**Spec reference:** docs/specs/api_contracts/backend_engineering_patterns.md
+
+**Unblock criteria:** Head of Engineering sign-off on ADR decision; ADR committed.
+
+**Status:** Unblocked
+**Resolved:** 2026-03-18T11:04:06Z
+**Commit SHA:** 9ce7f86
+**Resolution:** Decision taken — FastAPI BackgroundTasks (sync post-response). No Redis/Celery required. ADR-003 committed to main as governance action pre-sprint. Issue #91 closed automatically.
+
+---
+
+## DEL-20260318-02 — ST-11: Chart interactivity implementation
+
+**Date:** 2026-03-18
+**Item:** EPIC-04 / ST-11
+**Classification:** delegated_frontend
+**Assigned to:** Base44 Frontend
+**GitHub issue:** #103
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-04
+
+**What was delegated:** Implement chart interactivity on 3 analytics charts: MonthlyHeatmap drill-down modal, UnderwaterChart zoom/pan, RMultipleDistribution custom tooltip.
+
+**Spec reference:** docs/specs/frontend/pages/analytics.md, docs/design/2026-03-18__release-v2.1/chart-interactivity/ux_spec.md
+
+**Unblock criteria:** All AC met; Director of Quality sign-off; Product Owner acceptance.
+
+**Status:** Unblocked
+**Resolved:** 2026-03-19T00:00:00Z
+**Commit SHA:** 4b78867 (final; PRs #111, #112, #113 all merged)
+**Resolution:** Implementation complete. All 16 SC-CHART-IX sub-scenarios verified on staging 2026-03-19. Two post-merge bugs fixed (PR #112 zoom-out edge, PR #113 tooltip % of total). DoQ and PO signed off.
+
+---
+
+## DEL-20260318-03 — ST-15: Render PR Preview Environments
+
+**Date:** 2026-03-18
+**Item:** EPIC-05 / ST-15
+**Classification:** delegated_decision
+**Assigned to:** Infrastructure & Operations Owner
+**GitHub issue:** #110 (also #105 — duplicate; #110 closed by governance_sync)
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-05
+
+**What was delegated:** Document Render PR preview environment setup in OPERATIONAL_GUIDE.md §8. Infrastructure configuration.
+
+**Spec reference:** claude/system/OPERATIONAL_GUIDE.md#8
+
+**Unblock criteria:** OPERATIONAL_GUIDE.md §8 updated; Infrastructure & Operations Owner sign-off.
+
+**Status:** Unblocked
+**Resolved:** 2026-03-18T21:18:06Z
+**Commit SHA:** b478600
+**Resolution:** OPERATIONAL_GUIDE.md §8 updated with PR preview URL pattern and limitation note (CRA build-time env var prevents per-PR frontend preview). Issue #110 closed. Sprint 2 item — implemented early alongside EPIC-04 work.
+
+---
+
+## DEL-20260318-04 — ST-16: Bulk lifecycle header remediation
+
+**Date:** 2026-03-18
+**Item:** EPIC-06 / ST-16
+**Classification:** delegated_decision
+**Assigned to:** Head of Specs Team
+**GitHub issue:** #104
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-06
+
+**What was delegated:** Add compliant lifecycle headers (Class + Lifecycle Guide) to 28 non-compliant spec documents.
+
+**Spec reference:** docs/specs/spec_coverage_inventory.md#Section 9
+
+**Unblock criteria:** All 28 listed documents updated; spec_coverage_inventory.md §9 count updated; Head of Specs Team sign-off.
+
+**Status:** Unblocked
+**Resolved:** 2026-03-18T20:37:07Z
+**Commit SHA:** 143c5df
+**Resolution:** 24 documents updated; 2 found already compliant. spec_coverage_inventory.md updated to 36/36 (100%). Note: AC specified 38/38 target but inventory reconciled to 36/36 — deviation documented in qa_evidence_EPIC-06.md. Issue #104 closed.
+
+---
+
+## DEL-20260318-05 — ST-17: Spec maintenance batch
+
+**Date:** 2026-03-18
+**Item:** EPIC-06 / ST-17
+**Classification:** delegated_decision
+**Assigned to:** Head of Specs Team + Metrics Definitions & Analytics Canonical Owner + Head of Engineering
+**GitHub issue:** #109
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-06
+
+**What was delegated:** 4-item spec maintenance batch: D13 (metrics owner field), G6 (total_return_pct active), D10 (api_dependencies.md), D11 (trade_reflections status).
+
+**Spec references:** docs/specs/api_contracts/analytics_endpoints.md, docs/specs/frontend/patterns/api_dependencies.md, docs/specs/data_model.md#501, docs/specs/metrics_definitions.md
+
+**Unblock criteria:** All 4 items resolved; openapi.yaml updated for G6; Head of Specs Team + Head of Engineering sign-off.
+
+**Status:** Unblocked
+**Resolved:** 2026-03-18T20:14:12Z
+**Commit SHA:** 7f961f0
+**Resolution:** All 4 items complete. openapi.yaml updated for G6. Issue #109 closed.
+
+---
+
+## DEL-20260318-06 — ST-18: Author missing test scenario documents
+
+**Date:** 2026-03-18
+**Item:** EPIC-06 / ST-18
+**Classification:** delegated_qa
+**Assigned to:** QA & Testing Owner
+**GitHub issue:** #108
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-06
+
+**What was delegated:** Author signals_scenarios.md (SC-SIG-01/02/03) and reports_scenarios.md (SC-TAX-01/02/03).
+
+**Spec references:** docs/testing/signals_scenarios.md, docs/testing/reports_scenarios.md
+
+**Unblock criteria:** Both scenario docs created; QA & Testing Owner sign-off; Director of Quality review.
+
+**Status:** Unblocked (pending formal DoQ acceptance_verified)
+**Resolved:** 2026-03-18T20:22:17Z
+**Commit SHA:** 62fcf03
+**Resolution:** signals_scenarios.md and reports_scenarios.md created on EPIC-06 branch. Issue #108 closed. Director of Quality formal review captured in qa_evidence_EPIC-06.md.
+
+---
+
+## DEL-20260318-07 — ST-19: Cross-EPIC branch process compliance check
+
+**Date:** 2026-03-18
+**Item:** EPIC-06 / ST-19
+**Classification:** delegated_decision
+**Assigned to:** PMO Lead
+**GitHub issue:** #107
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-06
+
+**What was delegated:** PMO Lead reviews v2.1 Sprint 1 commit history for cross-EPIC violations. Outcome recorded in qa_evidence_EPIC-06.md.
+
+**Spec reference:** CLAUDE.md §2 (cross-EPIC branch rule), qa_evidence_EPIC-06.md
+
+**Unblock criteria:** PMO Lead reviews commit history at Sprint 1 close; records outcome (zero violations or list of deviations + escalation refs); PMO Lead sign-off.
+
+**Status:** Unblocked
+**Resolved:** 2026-03-19T00:00:00Z
+**Resolution:** PMO Lead reviewed commit history. Zero cross-EPIC violations across all Sprint 1 branches (EPIC-01, EPIC-04, EPIC-05, EPIC-06). One observation noted (BLG-OPS-03 backlog touch on EPIC-04 branch — compliant with CLAUDE.md §2 rule). Pattern established. PMO Lead signed off.
+
+---
+
+## DEL-20260319-01 — ST-12: Tax Year P&L PDF Export
+
+**Date:** 2026-03-19
+**Item:** EPIC-05 / ST-12
+**Classification:** delegated_backend (primary) + delegated_frontend (Download PDF button UX)
+**Assigned to:** Head of Engineering (backend) + Base44 Frontend (button UX)
+**GitHub issue:** #102
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-05
+
+**What is needed:**
+
+### Backend — Head of Engineering
+
+Extend `GET /reports/tax-year` to support a `format` query parameter:
+
+- `format=pdf` → server-side PDF generation; `Content-Type: application/pdf`, `Content-Disposition: attachment; filename="tax-year-{year}-pnl.pdf"`
+- Default (omitted) → existing JSON response unchanged
+
+**PDF content (all sourced from existing endpoint — no new data):**
+- Report title: `"Tax Year P&L — {tax_year_label}"`
+- Generation timestamp (UTC)
+- Summary bar values (total_realised_pnl, gross_profit, gross_loss, win_rate, total_closed_trades)
+- Trades table: all columns from `trades[]` array
+- Disclaimer text verbatim
+- Empty year is valid — PDF renders with summary zeros and no trade rows
+
+Suggested library: `reportlab` or `weasyprint` (Head of Engineering's choice).
+
+**Spec updates required in same commit:**
+- `docs/specs/api_contracts/reports_endpoints.md` — add `format` query parameter + PDF response schema
+- `docs/reference/openapi.yaml` — add `format` enum `[pdf]` to `GET /reports/tax-year`; add `application/pdf` 200 response
+
+**Commit format:** `[EPIC-05][ST-12] Implement GET /reports/tax-year?format=pdf`
+
+### Frontend — Base44 Frontend
+
+Add "Download PDF" button to the Reports page header per `docs/specs/frontend/pages/reports.md` v0.2 and `docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md`.
+
+- Secondary button, right-aligned in header alongside year selector
+- On click: fires `GET /reports/tax-year?format=pdf&year={currentYear}`
+- States: Idle → "Generating…" (spinner, disabled) → Success (download begins, idle) → Error (toast: "PDF generation failed. Please try again.", 5s auto-dismiss)
+- Button enabled for empty years
+
+**Commit format:** `[EPIC-05][ST-12] Add Download PDF button to Reports page`
+
+**Spec references:**
+- `docs/specs/api_contracts/reports_endpoints.md` (extend with format param)
+- `docs/specs/frontend/pages/reports.md` v0.2
+- `docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md`
+- `docs/reference/openapi.yaml` (must update in same commit as backend)
+
+**Unblock criteria:**
+- `GET /reports/tax-year?format=pdf` returns valid PDF for populated and empty years; reports_endpoints.md + openapi.yaml updated in same commit; Financial Reporting & Records Owner sign-off; Director of Quality staging sign-off
+- Download PDF button functional per all 4 states; Director of Quality sign-off
+
+**Status:** Unblocked
+**Resolved:** 2026-03-19T00:00:00Z
+**Commit SHAs:** 511f4a4 (frontend), 569d231 (backend)
+**Resolution:** Both frontend and backend implemented on EPIC-05 branch. Frontend: Download PDF button with 4 states (idle/generating/success/error) using useToast. Backend: GET /reports/tax-year?format=pdf returning reportlab-generated PDF; reports_endpoints.md v0.2 and openapi.yaml updated in same commit as backend. Awaiting QA sign-off and Financial Reporting & Records Owner acceptance.
+
+---

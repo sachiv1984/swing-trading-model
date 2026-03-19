@@ -1,0 +1,506 @@
+{
+  "cycle_id": "2026-03-18__release-v2.1",
+  "sprint_goal": "Deliver v2.1 Alerts, Watchlists & Enhancements: author the notification delivery architecture decision, implement the full alerts and notification system, add watchlist monitoring capability, enhance chart interactivity and financial reporting exports, and close all spec debt and QA coverage gaps — across three planned sprints.",
+  "backlog_slice_source": "claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md",
+  "invoked_utc": "2026-03-19T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-03-19T00:00:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "merged",
+      "branch": "exec/2026-03-18__release-v2.1/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": true,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "notes": "ST-01 completed pre-sprint as governance action. ADR-003 authored and merged to main via commit 9ce7f86. No separate EPIC-01 PR — branch is at same state as main. Head of Engineering sign-off recorded in commit. Issue #91 closed.",
+      "stories": {
+        "ST-01": {
+          "title": "Author async notification delivery ADR (BLG-TECH-08)",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Head of Engineering + Backend Engineering Patterns Owner",
+          "github_issue": 91,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-01",
+          "commit_sha": "9ce7f86",
+          "delegation_record_id": "DEL-20260318-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-18T11:04:06Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/adr/ADR-003-notification-delivery-architecture.md",
+            "docs/specs/api_contracts/backend_engineering_patterns.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "merged",
+          "notes": "Decision: FastAPI BackgroundTasks (sync-style post-response) — no Redis/Celery. Unblocks EPIC-02. Pre-sprint governance commit on main."
+        }
+      }
+    },
+
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "notes": "Sprint 2 items. Conditional on ST-01 Complete (now satisfied). Not started — awaiting Sprint 2 invocation.",
+      "stories": {
+        "ST-02": {
+          "title": "Spec: alerts endpoint + notification preference model",
+          "classification": "delegated_decision",
+          "status": "not_started",
+          "assigned_to": "Head of Specs Team + Head of Engineering",
+          "github_issue": 93,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-01 Complete with Head of Engineering sign-off (SATISFIED)",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 2. Condition satisfied (ST-01 done)."
+        },
+        "ST-03": {
+          "title": "Backend: alert rules engine",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 94,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-02 spec signed off",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 2. Depends on ST-02."
+        },
+        "ST-04": {
+          "title": "Backend: notification delivery (email)",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 92,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-01 + ST-02 complete",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 2 stretch / Sprint 3."
+        },
+        "ST-05": {
+          "title": "Frontend: notification preferences page",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "Base44 Frontend",
+          "github_issue": 97,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-01 + ST-02 complete",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/notifications.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 2 stretch / Sprint 3."
+        },
+        "ST-06": {
+          "title": "Frontend: in-app notification feed",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "Base44 Frontend",
+          "github_issue": 96,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-01 + ST-02 + ST-04 complete",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/notifications.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 3."
+        },
+        "ST-07": {
+          "title": "QA: notification delivery test scenarios",
+          "classification": "delegated_qa",
+          "status": "not_started",
+          "assigned_to": "QA & Testing Owner + Director of Quality",
+          "github_issue": 95,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-03/04/05/06 at minimum in-progress",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 3."
+        }
+      }
+    },
+
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "notes": "Sprint 3 items. Not started.",
+      "stories": {
+        "ST-08": {
+          "title": "Spec: watchlist data model + API endpoints",
+          "classification": "delegated_decision",
+          "status": "not_started",
+          "assigned_to": "Head of Specs Team + Data Model & Domain Schema Owner",
+          "github_issue": 98,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 3."
+        },
+        "ST-09": {
+          "title": "Backend: watchlist implementation",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 100,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-08 spec signed off",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 3."
+        },
+        "ST-10": {
+          "title": "Frontend: watchlist UI [STRETCH]",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "Base44 Frontend",
+          "github_issue": 99,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-08 spec + ST-09 backend live in staging",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/watchlist.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 3 STRETCH."
+        }
+      }
+    },
+
+    "EPIC-04": {
+      "status": "merged",
+      "branch": "exec/2026-03-18__release-v2.1/EPIC-04",
+      "pr_number": 111,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "docs/testing/chart_interactivity_scenarios.md"
+      ],
+      "notes": "PRs #111 (main), #112 (zoom-out fix), #113 (tooltip % of total) all merged. All 16 SC-CHART-IX sub-scenarios verified on staging 2026-03-19. DoQ + PO signed off.",
+      "stories": {
+        "ST-11": {
+          "title": "Implement chart interactivity (CHART-IX)",
+          "classification": "delegated_frontend",
+          "status": "merged",
+          "assigned_to": "Base44 Frontend",
+          "github_issue": 103,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-04",
+          "commit_sha": "4b78867",
+          "delegation_record_id": "DEL-20260318-02",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-19T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/analytics.md",
+            "docs/design/2026-03-18__release-v2.1/chart-interactivity/ux_spec.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "merged",
+          "notes": "All 16 SC-CHART-IX sub-scenarios verified staging 2026-03-19. Two post-merge bugs fixed (PR #112 zoom-out, PR #113 tooltip %). BLG-BE-02 filed (stop price gap in RMultipleAnalysis — pre-existing, not ST-11 regression)."
+        }
+      }
+    },
+
+    "EPIC-05": {
+      "status": "pr_open",
+      "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
+      "pr_number": null,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-05.md",
+      "test_scenarios": [
+        "docs/testing/reports_scenarios.md"
+      ],
+      "notes": "ST-12 implementation complete (frontend 511f4a4 + backend 569d231). ST-15 committed (Sprint 2 item, implemented early). ST-13/14 Sprint 2. QA evidence pending.",
+      "stories": {
+        "ST-12": {
+          "title": "BLG-FR-01: Tax Year P&L PDF Export",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Head of Engineering + Base44 Frontend + Financial Reporting & Records Owner",
+          "github_issue": 102,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
+          "commit_sha": "569d231",
+          "delegation_record_id": "DEL-20260319-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-19T00:00:00Z",
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/reports_endpoints.md",
+            "docs/specs/frontend/pages/reports.md",
+            "docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": "backend_commit_569d231",
+          "notes": "Frontend done (commit 511f4a4): Download PDF button, 4 states, useToast error toast. Backend done (commit 569d231): GET /reports/tax-year?format=pdf, reportlab PDF generation, reports_endpoints.md v0.2, openapi.yaml updated. Awaiting QA sign-off."
+        },
+        "ST-13": {
+          "title": "BLG-FR-02: Tax Year P&L CSV Export",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 101,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/reports_endpoints.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 2."
+        },
+        "ST-14": {
+          "title": "BLG-FEAT-03: Slippage Tracking",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "Head of Engineering + Data Model & Domain Schema Owner + Base44 Frontend",
+          "github_issue": 106,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "data_model.md Fill Price spec signed off (Data Model Owner + Head of Specs Team) before implementation begins",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/data_model.md",
+            "docs/specs/frontend/pages/trade_history.md",
+            "docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "notes": "Sprint 2. Embedded data model gate — Fill Price field spec required before code."
+        },
+        "ST-15": {
+          "title": "BLG-OPS-03: Render PR Preview Environments",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 110,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
+          "commit_sha": "b478600",
+          "delegation_record_id": "DEL-20260318-03",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-18T21:18:06Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/OPERATIONAL_GUIDE.md#8"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "commit",
+          "notes": "OPERATIONAL_GUIDE.md §8 updated documenting Render PR preview pattern and limitations (CRA build-time env var constraint). Issue #110 closed. Note: issue #105 also exists as duplicate — created at sync gh; #110 closed by governance_sync. Infrastructure & Operations Owner sign-off implied by commit. Sprint 2 item, implemented early alongside EPIC-04 work."
+        }
+      }
+    },
+
+    "EPIC-06": {
+      "status": "merged",
+      "branch": "exec/2026-03-18__release-v2.1/EPIC-06",
+      "pr_number": 114,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-06.md",
+      "test_scenarios": [],
+      "notes": "ST-16/17/18 committed. ST-19 blocked pending PMO Lead review at sprint close.",
+      "stories": {
+        "ST-16": {
+          "title": "BLG-SPEC-D12: Bulk lifecycle header remediation",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Head of Specs Team",
+          "github_issue": 104,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-06",
+          "commit_sha": "143c5df",
+          "delegation_record_id": "DEL-20260318-04",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-18T20:37:07Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/spec_coverage_inventory.md#Section 9"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "commit",
+          "notes": "24 documents updated, 2 found already compliant. spec_coverage_inventory.md updated to 36/36 compliant. DEVIATION: AC specified 38/38 but inventory reconciled to 36/36 (2 documents fewer than planned count). AC also specified 28 documents but only 24 needed updates (2 already compliant, 2 count discrepancy). Requires DoQ acknowledgement in QA evidence."
+        },
+        "ST-17": {
+          "title": "Spec maintenance batch (BLG-SPEC-D13 + BLG-SPEC-G6 + BLG-SPEC-D10 + BLG-SPEC-D11)",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Head of Specs Team + Metrics Definitions & Analytics Canonical Owner + Head of Engineering",
+          "github_issue": 109,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-06",
+          "commit_sha": "7f961f0",
+          "delegation_record_id": "DEL-20260318-05",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-18T20:14:12Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md",
+            "docs/specs/frontend/patterns/api_dependencies.md",
+            "docs/specs/data_model.md#501",
+            "docs/specs/metrics_definitions.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "commit",
+          "notes": "All 4 items (D13, G6, D10, D11) completed. openapi.yaml updated for G6. No deviations from spec."
+        },
+        "ST-18": {
+          "title": "Author missing test scenario documents (TEST-GAP-SIG-01 + TEST-GAP-TAX-01)",
+          "classification": "delegated_qa",
+          "status": "done",
+          "assigned_to": "QA & Testing Owner",
+          "github_issue": 108,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-06",
+          "commit_sha": "62fcf03",
+          "delegation_record_id": "DEL-20260318-06",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-18T20:22:17Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/signals_scenarios.md",
+            "docs/testing/reports_scenarios.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "commit",
+          "notes": "signals_scenarios.md (SC-SIG-01/02/03) and reports_scenarios.md (SC-TAX-01/02/03) created. QA & Testing Owner sign-off implied. Director of Quality review required before acceptance_verified = true."
+        },
+        "ST-19": {
+          "title": "BLG-PROC-01: Cross-EPIC branch process compliance check",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "PMO Lead",
+          "github_issue": 107,
+          "branch": "exec/2026-03-18__release-v2.1/EPIC-06",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260318-07",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-19T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "last_completed_substep": "pmo_signed_off",
+          "notes": "Zero cross-EPIC violations across all Sprint 1 branches. PMO Lead signed off 2026-03-19. One observation noted (BLG-OPS-03 backlog touch on EPIC-04 branch) — compliant with CLAUDE.md §2. Pattern established."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [
+    "EPIC-05/ST-12",
+    "EPIC-02/ST-02",
+    "EPIC-02/ST-03",
+    "EPIC-02/ST-04",
+    "EPIC-02/ST-05",
+    "EPIC-02/ST-06",
+    "EPIC-02/ST-07",
+    "EPIC-03/ST-08",
+    "EPIC-03/ST-09",
+    "EPIC-03/ST-10",
+    "EPIC-05/ST-12",
+    "EPIC-05/ST-13",
+    "EPIC-05/ST-14"
+  ],
+  "completed_items": [
+    "EPIC-01/ST-01",
+    "EPIC-04/ST-11",
+    "EPIC-05/ST-12",
+    "EPIC-05/ST-15",
+    "EPIC-06/ST-16",
+    "EPIC-06/ST-17",
+    "EPIC-06/ST-18",
+    "EPIC-06/ST-19"
+  ],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": ["EPIC-04", "EPIC-06"],
+    "epics_pending": ["EPIC-01", "EPIC-05"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}

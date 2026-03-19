@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-03-18__release-v2.1",
   "cycle_name": "Release Planning — v2.1 Alerts, Watchlists & Enhancements",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "engine": "sprint_execution",
   "next_release": "v2.1",
   "backlog_slice_path": "claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md",
   "prior_cycle": "2026-03-17__release-v2.0",
