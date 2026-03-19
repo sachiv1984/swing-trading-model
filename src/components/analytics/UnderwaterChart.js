@@ -63,8 +63,12 @@ export default function UnderwaterChart({ trades }) {
       ? Math.max(MIN_POINTS, currentLen - delta)
       : Math.min(total, currentLen + delta);
     const center = Math.round((s + e) / 2);
-    const newS = Math.max(0, center - Math.floor(newLen / 2));
-    const newE = Math.min(total, newS + newLen);
+    let newS = Math.max(0, center - Math.floor(newLen / 2));
+    let newE = Math.min(total, newS + newLen);
+    // If end-capped (near right edge), shift start left to fill the intended window
+    if (newE - newS < newLen) {
+      newS = Math.max(0, newE - newLen);
+    }
     if (newLen >= total) {
       setZoomRange(null);
     } else {

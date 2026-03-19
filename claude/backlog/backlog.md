@@ -210,6 +210,64 @@ Full list in `docs/specs/spec_coverage_inventory.md §9`. Most affected: `api_co
 
 ---
 
+### BLG-QA-01 — Playwright E2E automation for chart interactivity scenarios
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner + Infrastructure & Operations Owner
+**Source:** ST-11 post-merge staging sign-off — 2026-03-19 (two bugs found manually that Playwright would have caught automatically)
+**Cycle added:** 2026-03-18__release-v2.1
+**Effort:** M (~1–2 days)
+**Target release:** v2.2
+**Depends on:** BLG-OPS-03 (per-PR preview environment — Playwright needs a stable URL to run against)
+
+**Problem**
+Post-merge staging sign-off for ST-11 found two bugs manually (zoom-out stuck at right edge; tooltip % of total missing). Both were fully automatable — they would have been caught pre-merge if Playwright tests existed. Manual DoQ testing is slow and error-prone for interaction-heavy UI (tooltips, zoom, drag, modals).
+
+**Scope**
+- Add Playwright to the repo (`npm install --save-dev @playwright/test`)
+- Author E2E tests covering `docs/testing/chart_interactivity_scenarios.md` (SC-CHART-IX-01 through SC-CHART-IX-06):
+  - Heatmap tile click → modal content assertions (trade count, P&L)
+  - Zoom in/out via scroll and buttons → assert full range is restorable
+  - Drag pan → assert window shifts
+  - R-Multiple tooltip → assert all three fields (R range, count, % of total)
+- Wire into CI as a new workflow step running against the per-PR preview URL
+- Seed data prerequisite: same `seed_chart_test_data.sql` approach
+
+**Acceptance Criteria**
+- Playwright test suite covers all 16 SC-CHART-IX sub-scenarios
+- CI runs tests against the per-PR preview environment on every PR
+- Both ST-11 bugs (zoom-out edge, tooltip %) would be caught by the suite
+- Test run time < 5 minutes
+- DoQ can rely on Playwright pass as primary evidence for non-visual AC; visual AC (colours, ring) remain manual
+
+---
+
+### BLG-BE-02 — R-Multiple Analysis: stop price unavailable from trade_history
+**Priority:** P3 (Low)
+**Type:** Backend / Data
+**Owner:** Head of Engineering
+**Source:** ST-11 post-merge staging sign-off — 2026-03-19
+**Cycle added:** 2026-03-18__release-v2.1
+**Effort:** S (~2–3 hrs)
+**Target release:** v2.2
+
+**Problem**
+`RMultipleAnalysis.js` filters trades using `t.stop_price`. The analytics page passes trades from `trade_history`, which does not carry `initial_stop` (stop price lives on `positions`). Result: the R-Multiple Analysis section shows "R-Multiple requires stop prices to be defined for all trades" even when all positions had stop prices set at entry. The R-Multiple Distribution histogram (which renders inside the same component) only shows when `tradesWithR.length >= 10`.
+
+**Scope**
+- Extend the analytics endpoint (or trade history endpoint) to JOIN `positions.initial_stop` into the `trade_history` response
+- OR expose `initial_stop` as `stop_price` on the closed trade objects returned to the frontend
+- Update `RMultipleAnalysis.js` filter if the field name changes
+- Update `docs/specs/api_contracts/analytics_endpoints.md` and `openapi.yaml` if response shape changes
+
+**Acceptance Criteria**
+- Closed trades returned to the analytics page include a `stop_price` (or `initial_stop`) field where available
+- R-Multiple Analysis section renders correctly for trades where stop prices were set at entry
+- `RMultipleAnalysis.js` filter produces correct `tradesWithR` count
+- `openapi.yaml` updated in same commit if response shape changes
+
+---
+
 ### TEST-GAP-SIG-01 — Test scenario coverage gap: Signals page controls (v2.0)
 **Priority:** P3
 **Type:** QA / Test Coverage
