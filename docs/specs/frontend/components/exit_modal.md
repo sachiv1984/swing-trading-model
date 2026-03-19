@@ -1,9 +1,11 @@
 # exit_modal.md
 
-**Owner:** Frontend Specifications & UX Documentation Owner  
-**Status:** Canonical  
-**Version:** 1.0
-**Last Updated:** February 18, 2026
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 1
+**Status:** Canonical
+**Version:** 1.1
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & Usage Context
 The Exit Modal allows users to **close a position**, either fully or partially.  

@@ -1295,6 +1295,9 @@ components:
       description: |
         Intentionally broad to avoid drift. Canonical nested field definitions live in:
         docs/specs/api_contracts/analytics_endpoints.md
+        BLG-SPEC-G6 (v2.1): total_return_pct is now returned.
+        Formula: total_pnl / net_cash_flow × 100,
+        where net_cash_flow = total_deposits − total_withdrawals.
       additionalProperties: true
 
     ValidationResponse:

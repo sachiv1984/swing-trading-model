@@ -210,6 +210,64 @@ Full list in `docs/specs/spec_coverage_inventory.md §9`. Most affected: `api_co
 
 ---
 
+### BLG-QA-01 — Playwright E2E automation for chart interactivity scenarios
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner + Infrastructure & Operations Owner
+**Source:** ST-11 post-merge staging sign-off — 2026-03-19 (two bugs found manually that Playwright would have caught automatically)
+**Cycle added:** 2026-03-18__release-v2.1
+**Effort:** M (~1–2 days)
+**Target release:** v2.2
+**Depends on:** BLG-OPS-03 (per-PR preview environment — Playwright needs a stable URL to run against)
+
+**Problem**
+Post-merge staging sign-off for ST-11 found two bugs manually (zoom-out stuck at right edge; tooltip % of total missing). Both were fully automatable — they would have been caught pre-merge if Playwright tests existed. Manual DoQ testing is slow and error-prone for interaction-heavy UI (tooltips, zoom, drag, modals).
+
+**Scope**
+- Add Playwright to the repo (`npm install --save-dev @playwright/test`)
+- Author E2E tests covering `docs/testing/chart_interactivity_scenarios.md` (SC-CHART-IX-01 through SC-CHART-IX-06):
+  - Heatmap tile click → modal content assertions (trade count, P&L)
+  - Zoom in/out via scroll and buttons → assert full range is restorable
+  - Drag pan → assert window shifts
+  - R-Multiple tooltip → assert all three fields (R range, count, % of total)
+- Wire into CI as a new workflow step running against the per-PR preview URL
+- Seed data prerequisite: same `seed_chart_test_data.sql` approach
+
+**Acceptance Criteria**
+- Playwright test suite covers all 16 SC-CHART-IX sub-scenarios
+- CI runs tests against the per-PR preview environment on every PR
+- Both ST-11 bugs (zoom-out edge, tooltip %) would be caught by the suite
+- Test run time < 5 minutes
+- DoQ can rely on Playwright pass as primary evidence for non-visual AC; visual AC (colours, ring) remain manual
+
+---
+
+### BLG-BE-02 — R-Multiple Analysis: stop price unavailable from trade_history
+**Priority:** P3 (Low)
+**Type:** Backend / Data
+**Owner:** Head of Engineering
+**Source:** ST-11 post-merge staging sign-off — 2026-03-19
+**Cycle added:** 2026-03-18__release-v2.1
+**Effort:** S (~2–3 hrs)
+**Target release:** v2.2
+
+**Problem**
+`RMultipleAnalysis.js` filters trades using `t.stop_price`. The analytics page passes trades from `trade_history`, which does not carry `initial_stop` (stop price lives on `positions`). Result: the R-Multiple Analysis section shows "R-Multiple requires stop prices to be defined for all trades" even when all positions had stop prices set at entry. The R-Multiple Distribution histogram (which renders inside the same component) only shows when `tradesWithR.length >= 10`.
+
+**Scope**
+- Extend the analytics endpoint (or trade history endpoint) to JOIN `positions.initial_stop` into the `trade_history` response
+- OR expose `initial_stop` as `stop_price` on the closed trade objects returned to the frontend
+- Update `RMultipleAnalysis.js` filter if the field name changes
+- Update `docs/specs/api_contracts/analytics_endpoints.md` and `openapi.yaml` if response shape changes
+
+**Acceptance Criteria**
+- Closed trades returned to the analytics page include a `stop_price` (or `initial_stop`) field where available
+- R-Multiple Analysis section renders correctly for trades where stop prices were set at entry
+- `RMultipleAnalysis.js` filter produces correct `tradesWithR` count
+- `openapi.yaml` updated in same commit if response shape changes
+
+---
+
 ### TEST-GAP-SIG-01 — Test scenario coverage gap: Signals page controls (v2.0)
 **Priority:** P3
 **Type:** QA / Test Coverage
@@ -315,29 +373,38 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 ---
 
-### BLG-OPS-03 — Pre-merge preview environments (Render PR previews)
+### BLG-OPS-03 — Pre-merge frontend preview environments
 **Priority:** P2 (Medium)
 **Type:** Operations / Infrastructure
 **Owner:** Infrastructure & Operations Owner
 **Source:** DoQ sign-off session — 2026-03-17 (identified during v2.0 staging verification gap)
 **Cycle added:** 2026-03-17__release-v2.0
-**Effort:** S (~0.5 day)
-**Target release:** v2.1
+**Effort:** M (~1–2 days)
+**Target release:** v2.2
 
 **Problem**
-Staging auto-deploys from `main`, so feature branch changes can only be verified on staging after merging. During v2.0 sign-off, the Director of Quality could not verify frontend behaviour (ST-02 Signals controls, ST-05 Tax Year view) on a deployed environment without merging first. This is a process gap: the merge gate should be verifiable before merge, not after.
+Staging auto-deploys from `main`, so frontend changes can only be verified on a deployed environment after merging. This has now affected two cycles (v2.0 ST-02/ST-05; v2.1 ST-11). The merge gate should be verifiable before merge, not after.
 
-**Scope**
-- Enable Render Preview Environments on the existing Render Blueprint (one-click in Render dashboard)
-- Each PR automatically gets a unique preview URL (`https://trading-assistant-api-pr-{N}.onrender.com`)
-- Preview environments share the staging Supabase DB (acceptable at current scale)
-- Document the preview URL pattern in `OPERATIONAL_GUIDE.md §8` and add to DoQ sign-off checklist
+**What ST-11 (v2.1) revealed — updated understanding:**
+The problem has three distinct layers:
+1. **Backend preview:** ✓ Already working — Render creates a per-PR API at `trading-assistant-api-staging-pr-{N}.onrender.com` automatically.
+2. **Data seeding:** ✓ Solved (v2.1) — `seed-preview.yml` now uses `psql` + `STAGING_DATABASE_URL` secret with idempotency guard, bypassing the API layer. Seeds go to the shared staging Supabase DB.
+3. **Frontend preview:** ✗ Blocked — the React static site uses `REACT_APP_API_URL` baked in at build time (CRA). A Render static site PR preview would still point to the main staging API, not the PR-specific API — making it useless for pre-merge frontend testing.
+
+**Root cause of the frontend blocker:**
+CRA bakes `REACT_APP_*` env vars at `npm run build` time. Render static site previews inherit the same env vars as the base service, so `REACT_APP_API_URL` cannot be dynamically set per PR without changing the hosting approach or adding a runtime config mechanism.
+
+**Scope — solution options to evaluate:**
+- **Option A (preferred):** Switch frontend hosting to **Netlify** or **Vercel** — both support per-PR preview deployments with per-PR env var injection (e.g. `REACT_APP_API_URL=https://trading-assistant-api-staging-pr-{N}.onrender.com`). Backend stays on Render.
+- **Option B:** Introduce a runtime config file (`public/config.json`) served statically and fetched at app startup — allows `REACT_APP_API_URL` to be overridden without a rebuild. Render static site preview would serve a PR-specific `config.json`.
+- **Option C:** Keep current process (post-merge staging) but formalise as an accepted deviation with explicit post-merge DoQ sign-off checklist.
 
 **Acceptance Criteria**
-- Opening a PR against `main` automatically provisions a Render preview environment
-- Preview URL is accessible and points to the PR branch's backend code
-- `OPERATIONAL_GUIDE.md §8` documents the preview URL pattern
-- DoQ can verify frontend behaviour on the preview URL before approving merge
+- A PR against `main` with frontend changes can be reviewed by DoQ on a deployed frontend environment **before** merging
+- The frontend preview points to the PR-specific backend API (not the main staging API)
+- Data seeding works against the preview environment (already solved — psql approach)
+- `OPERATIONAL_GUIDE.md §8` documents the updated pre-merge verification workflow
+- DoQ can complete all scenario types (including interactive UI) before merge gate
 
 ---
 

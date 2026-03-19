@@ -1,9 +1,11 @@
 # settings.md
 
 **Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 1
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-02-19
+**Version:** 1.2
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & User Goals
 The Settings page allows users to configure **strategy parameters**, **trading fees**, **UI preferences**, and **analytics thresholds** that control how the Position Manager Web App behaves and calculates results.

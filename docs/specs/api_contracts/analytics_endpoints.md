@@ -1,5 +1,12 @@
 # analytics_endpoints.md
 
+**Owner:** API Contracts & Documentation Owner
+**Class:** Canonical Specification (Class 1)
+**Status:** Canonical
+**Version:** 1.9.0
+**Last Updated:** 2026-03-18
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
 ## Overview
 
 This document defines the **Analytics** domain endpoints.
@@ -137,7 +144,7 @@ Present when `has_enough_data` is `true`. Returns `{}` otherwise.
 - **Trade method** (fallback, requires 10+ trades): annualises each trade's percentage return by holding period, then applies the same formula. Uses sample variance (÷ n−1).
 - If neither threshold is met, returns `0.0` with `sharpe_method: "insufficient_data"`.
 
-**`total_return_pct` note:** This field is not currently returned by the implementation. When added, the canonical definition is `total_pnl / net_cash_flow × 100`, where `net_cash_flow = total_deposits − total_withdrawals`. This matches the portfolio-level P&L basis used throughout the system.
+**`total_return_pct`:** `total_pnl / net_cash_flow × 100`, where `net_cash_flow = total_deposits − total_withdrawals`. Matches the portfolio-level P&L basis used throughout the system.
 
 ---
 
@@ -676,7 +683,6 @@ No query parameters. Uses all closed trades (all-time).
 
 ## Known limitations & backlog
 
-- **`total_return_pct`** is not yet returned by `GET /analytics/metrics`. When implemented, the canonical formula is `total_pnl / net_cash_flow × 100`.
 - **ValidationService** (`services/validation_service.py`) is a stub and not invoked. Active validation logic lives in `routers/validation.py`. This is tracked as BLG-TECH-03 (consolidate into service layer, deliver alongside BLG-TECH-02).
 - **No portfolio_id filter** in the analytics router database queries. Will produce incorrect results in multi-portfolio configurations.
 
