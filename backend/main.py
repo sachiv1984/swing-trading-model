@@ -100,6 +100,7 @@ from services import (
     test_all_endpoints,
     # Reports service
     get_tax_year_report,
+    build_tax_year_pdf,
 )
 app = FastAPI(title=API_TITLE)
 
@@ -370,20 +371,21 @@ def get_trades_endpoint():
 
 
 # ---------------------------------------------------------------------------
-# Reports endpoints — ST-04, EPIC-02, v2.0
-# Spec: docs/specs/api_contracts/reports_endpoints.md v0.1
+# Reports endpoints — ST-04, EPIC-02, v2.0 / ST-12 PDF export, EPIC-05, v2.1
+# Spec: docs/specs/api_contracts/reports_endpoints.md v0.2
 # ---------------------------------------------------------------------------
 
 @app.get("/reports/tax-year")
-def get_tax_year_report_endpoint(year: Optional[int] = None):
+def get_tax_year_report_endpoint(year: Optional[int] = None, format: Optional[str] = None):
     """
-    GET /reports/tax-year?year=YYYY
+    GET /reports/tax-year?year=YYYY[&format=pdf]
 
     Returns a UK tax-year P&L statement for all closed trades whose
     exit_date falls within the specified tax year (6 April to 5 April).
-    Spec: reports_endpoints.md v0.1
+    When format=pdf, returns a PDF file download instead of JSON.
+    Spec: reports_endpoints.md v0.2
     """
-    from fastapi.responses import JSONResponse
+    from fastapi.responses import JSONResponse, Response
     if year is None:
         return JSONResponse(status_code=400,
             content={"status": "error", "message": "year parameter is required"})
@@ -392,6 +394,15 @@ def get_tax_year_report_endpoint(year: Optional[int] = None):
             content={"status": "error", "message": "year must be a valid four-digit integer"})
     try:
         data = get_tax_year_report(year)
+        if format == "pdf":
+            pdf_bytes = build_tax_year_pdf(data)
+            return Response(
+                content=pdf_bytes,
+                media_type="application/pdf",
+                headers={
+                    "Content-Disposition": f'attachment; filename="tax-year-{year}-pnl.pdf"'
+                },
+            )
         return {"status": "ok", "data": data}
     except ValueError as e:
         msg = str(e)
