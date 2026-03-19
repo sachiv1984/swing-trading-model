@@ -190,7 +190,7 @@ export default function RMultipleAnalysis({ trades }) {
                 stroke="#64748b"
                 tick={{ fill: '#94a3b8', fontSize: 12 }}
               />
-              <Tooltip content={<CustomBarTooltip total={tradesWithR.length} />} />
+              <Tooltip content={(props) => <CustomBarTooltip {...props} total={tradesWithR.length} />} />
               <Bar dataKey="count" label={{ position: 'top', fill: '#94a3b8', fontSize: 11 }}>
                 {buckets.map((entry, index) => (
                   <Cell key={index} fill={getBarColor(entry.label)} />
