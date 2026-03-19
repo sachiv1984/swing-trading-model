@@ -99,12 +99,21 @@ export default function RMultipleDistribution() {
                   allowDecimals={false}
                   label={{ value: "Frequency", angle: -90, position: "insideLeft", fill: "#64748b", fontSize: 11 }}
                 />
-                <Tooltip
-                  contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "8px" }}
-                  labelStyle={{ color: "#e2e8f0" }}
-                  itemStyle={{ color: "#94a3b8" }}
-                  formatter={(v) => [v, "Trades"]}
-                />
+                <Tooltip content={(() => {
+                  const total = data.buckets.reduce((sum, b) => sum + b.count, 0);
+                  return ({ active, payload, label }) => {
+                    if (!active || !payload?.length) return null;
+                    const count = payload[0].value;
+                    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                    return (
+                      <div style={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "8px", padding: "12px" }}>
+                        <p style={{ color: "#e2e8f0", fontWeight: 600, marginBottom: 4 }}>{label}</p>
+                        <p style={{ color: "#cbd5e1", fontSize: 14 }}>{count} trade{count !== 1 ? "s" : ""}</p>
+                        <p style={{ color: "#94a3b8", fontSize: 12 }}>{pct}% of closed trades</p>
+                      </div>
+                    );
+                  };
+                })()}  />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                   {data.buckets.map((entry, i) => (
                     <Cell key={i} fill={getBarColor(entry.range)} />
