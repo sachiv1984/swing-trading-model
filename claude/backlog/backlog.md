@@ -315,29 +315,38 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 ---
 
-### BLG-OPS-03 — Pre-merge preview environments (Render PR previews)
+### BLG-OPS-03 — Pre-merge frontend preview environments
 **Priority:** P2 (Medium)
 **Type:** Operations / Infrastructure
 **Owner:** Infrastructure & Operations Owner
 **Source:** DoQ sign-off session — 2026-03-17 (identified during v2.0 staging verification gap)
 **Cycle added:** 2026-03-17__release-v2.0
-**Effort:** S (~0.5 day)
-**Target release:** v2.1
+**Effort:** M (~1–2 days)
+**Target release:** v2.2
 
 **Problem**
-Staging auto-deploys from `main`, so feature branch changes can only be verified on staging after merging. During v2.0 sign-off, the Director of Quality could not verify frontend behaviour (ST-02 Signals controls, ST-05 Tax Year view) on a deployed environment without merging first. This is a process gap: the merge gate should be verifiable before merge, not after.
+Staging auto-deploys from `main`, so frontend changes can only be verified on a deployed environment after merging. This has now affected two cycles (v2.0 ST-02/ST-05; v2.1 ST-11). The merge gate should be verifiable before merge, not after.
 
-**Scope**
-- Enable Render Preview Environments on the existing Render Blueprint (one-click in Render dashboard)
-- Each PR automatically gets a unique preview URL (`https://trading-assistant-api-pr-{N}.onrender.com`)
-- Preview environments share the staging Supabase DB (acceptable at current scale)
-- Document the preview URL pattern in `OPERATIONAL_GUIDE.md §8` and add to DoQ sign-off checklist
+**What ST-11 (v2.1) revealed — updated understanding:**
+The problem has three distinct layers:
+1. **Backend preview:** ✓ Already working — Render creates a per-PR API at `trading-assistant-api-staging-pr-{N}.onrender.com` automatically.
+2. **Data seeding:** ✓ Solved (v2.1) — `seed-preview.yml` now uses `psql` + `STAGING_DATABASE_URL` secret with idempotency guard, bypassing the API layer. Seeds go to the shared staging Supabase DB.
+3. **Frontend preview:** ✗ Blocked — the React static site uses `REACT_APP_API_URL` baked in at build time (CRA). A Render static site PR preview would still point to the main staging API, not the PR-specific API — making it useless for pre-merge frontend testing.
+
+**Root cause of the frontend blocker:**
+CRA bakes `REACT_APP_*` env vars at `npm run build` time. Render static site previews inherit the same env vars as the base service, so `REACT_APP_API_URL` cannot be dynamically set per PR without changing the hosting approach or adding a runtime config mechanism.
+
+**Scope — solution options to evaluate:**
+- **Option A (preferred):** Switch frontend hosting to **Netlify** or **Vercel** — both support per-PR preview deployments with per-PR env var injection (e.g. `REACT_APP_API_URL=https://trading-assistant-api-staging-pr-{N}.onrender.com`). Backend stays on Render.
+- **Option B:** Introduce a runtime config file (`public/config.json`) served statically and fetched at app startup — allows `REACT_APP_API_URL` to be overridden without a rebuild. Render static site preview would serve a PR-specific `config.json`.
+- **Option C:** Keep current process (post-merge staging) but formalise as an accepted deviation with explicit post-merge DoQ sign-off checklist.
 
 **Acceptance Criteria**
-- Opening a PR against `main` automatically provisions a Render preview environment
-- Preview URL is accessible and points to the PR branch's backend code
-- `OPERATIONAL_GUIDE.md §8` documents the preview URL pattern
-- DoQ can verify frontend behaviour on the preview URL before approving merge
+- A PR against `main` with frontend changes can be reviewed by DoQ on a deployed frontend environment **before** merging
+- The frontend preview points to the PR-specific backend API (not the main staging API)
+- Data seeding works against the preview environment (already solved — psql approach)
+- `OPERATIONAL_GUIDE.md §8` documents the updated pre-merge verification workflow
+- DoQ can complete all scenario types (including interactive UI) before merge gate
 
 ---
 
