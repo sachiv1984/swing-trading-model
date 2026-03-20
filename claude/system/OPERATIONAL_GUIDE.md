@@ -1285,8 +1285,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.30 |
-| Last Updated | 2026-03-18 |
+| Version | 3.33 |
+| Last Updated | 2026-03-20 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.1 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1320,6 +1320,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.33 | 2026-03-20 | **CLAUDE.md §8 — Cross-EPIC Merge Conflict Resolution added.** New section documents the sequential merge procedure for concurrent EPIC branches with shared-file conflicts: merge simpler EPIC first → merge updated main into remaining EPIC branch → resolve per-file rules (execution_state.json never revert done→blocked; openapi.yaml union + highest version; api_changelog.md combine descending; data_model.md all migrations ascending + highest version footer) → commit, push, confirm MERGEABLE, merge. §14 version 3.33. |
 | 3.31 | 2026-03-19 | **Correct preview URL pattern.** §8.2 and §8.5: `trading-assistant-api-pr-{N}` → `trading-assistant-api-staging-pr-{N}` (confirmed from live Render deployment). §14 version 3.31. Merge conflict resolution: renumbered v3.28→3.29→3.30→3.31 to accommodate main's v3.28 (ST-11 staging seed). |
 | 3.30 | 2026-03-18 | **ST-15 sign-off: preview environment mode clarified to manual + `render-preview` label.** §8.2 bullet updated — automatic provisioning corrected to manual mode; `render-preview` label required on PRs for EPICs with frontend changes. Infrastructure & Operations Owner sign-off recorded (enabled 2026-03-18). |
 | 3.32 | 2026-03-20 | **execution_prompt.md v2.4→v2.5 — agent-mediated sign-off.** §8 source prompt v2.4→v2.5. §14 Execution Engine Source → v2.5. Change: §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file, engine invokes a subagent acting in that role before surfacing to user; §3.1.A step 11 added; §9.1 `sign_off_record` field added to ST item schema. Always-human gates (Product Owner, merge gate) unchanged. |

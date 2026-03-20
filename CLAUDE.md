@@ -113,6 +113,23 @@ Skipping any of these steps is a non-compliant state. Do not commit without all 
 
 ---
 
+## 8. Cross-EPIC Merge Conflict Resolution
+
+When two or more EPIC PRs modify shared files (`execution_state.json`, `openapi.yaml`, `api_changelog.md`, `data_model.md`, etc.) and GitHub reports `CONFLICTING / DIRTY`:
+
+1. **Merge the simpler EPIC first** (fewest shared-file changes) via local `git merge` into main, resolve any conflicts, push to `origin/main`.
+2. **Checkout the remaining EPIC branch.** Run `git merge origin/main --no-commit --no-edit` to pull in the now-merged changes.
+3. **Resolve each conflict** — always take the most-complete/most-current state:
+   - `execution_state.json`: accept story completion data (status: done, commit_sha, acceptance_verified: true) from the branch; never revert a story from `done` → `blocked`.
+   - `openapi.yaml`: union of all path additions; take the highest version number.
+   - `api_changelog.md`: combine all version entries in descending order (newest first).
+   - `data_model.md`: keep all migration blocks in ascending version order; take highest version number in the footer.
+4. **Commit the resolution** on the EPIC branch: `[EPIC-xx] Merge main (<description>) into EPIC-xx — conflict resolution`.
+5. **Push** and confirm `"mergeable":"MERGEABLE"` via `gh pr view <n> --json mergeable,mergeStateStatus`.
+6. **Merge** via `gh pr merge <n> --merge`.
+
+---
+
 ## 7. Governance Source Hierarchy (Reference)
 
 1. `claude/charter/team_charter.md`
