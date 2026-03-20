@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from uuid import uuid4
 
-from config import DEFAULT_MIN_HOLD_DAYS, RESEND_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL
+from config import DEFAULT_MIN_HOLD_DAYS, GMAIL_USER, GMAIL_APP_PASSWORD, ALERT_TO_EMAIL
 from database import get_db, get_portfolio, get_positions
 from utils.pricing import check_market_regime
 
@@ -510,9 +510,9 @@ def deliver_notification(notification_id: str) -> None:
                     logger.warning("deliver_notification: notification %s not found", notification_id)
                     return
 
-                if not RESEND_API_KEY or not ALERT_TO_EMAIL:
+                if not GMAIL_USER or not GMAIL_APP_PASSWORD or not ALERT_TO_EMAIL:
                     logger.warning(
-                        "deliver_notification: RESEND_API_KEY or ALERT_TO_EMAIL not set — "
+                        "deliver_notification: GMAIL_USER, GMAIL_APP_PASSWORD or ALERT_TO_EMAIL not set — "
                         "marking delivered without sending. notification_id=%s", notification_id
                     )
                     cur.execute("""
@@ -526,7 +526,7 @@ def deliver_notification(notification_id: str) -> None:
                     return
 
                 subject, html_body = _build_email(notif)
-                _send_via_resend(subject, html_body)
+                _send_via_gmail(subject, html_body)
 
                 cur.execute("""
                     UPDATE notifications
@@ -557,16 +557,23 @@ def deliver_notification(notification_id: str) -> None:
             pass
 
 
-def _send_via_resend(subject: str, html_body: str) -> None:
-    """Send an email via the Resend HTTP API."""
-    import resend
-    resend.api_key = RESEND_API_KEY
-    resend.Emails.send({
-        "from": ALERT_FROM_EMAIL,
-        "to": [ALERT_TO_EMAIL],
-        "subject": subject,
-        "html": html_body,
-    })
+def _send_via_gmail(subject: str, html_body: str) -> None:
+    """Send an email via Gmail SMTP using an App Password."""
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = GMAIL_USER
+    msg["To"] = ALERT_TO_EMAIL
+    msg.attach(MIMEText(html_body, "html"))
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+        smtp.sendmail(GMAIL_USER, ALERT_TO_EMAIL, msg.as_string())
 
 
 def _build_email(notif) -> tuple:

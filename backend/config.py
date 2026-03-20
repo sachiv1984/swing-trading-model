@@ -49,11 +49,15 @@ DEFAULT_FX_RATE = 1.27  # GBP/USD fallback if API fails
 # Price Conversion
 PENCE_TO_POUNDS_THRESHOLD = 1000  # UK prices above this are in pence
 
-# Email delivery (Resend) — ST-04
-# Set these env vars on Render: RESEND_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL
+# Email delivery (Gmail SMTP) — ST-04
+# Set these env vars on Render: GMAIL_USER, GMAIL_APP_PASSWORD, ALERT_TO_EMAIL
+# GMAIL_USER: your Gmail address (e.g. you@gmail.com)
+# GMAIL_APP_PASSWORD: 16-char App Password from Google Account → Security → App Passwords
+#   (requires 2FA enabled on the Gmail account)
+# ALERT_TO_EMAIL: address to receive alerts (can be the same Gmail)
 import os
-RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-ALERT_FROM_EMAIL = os.getenv("ALERT_FROM_EMAIL", "alerts@yourdomain.com")
+GMAIL_USER = os.getenv("GMAIL_USER", "")
+GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
 ALERT_TO_EMAIL = os.getenv("ALERT_TO_EMAIL", "")
 
 # API Delays (rate limiting)
