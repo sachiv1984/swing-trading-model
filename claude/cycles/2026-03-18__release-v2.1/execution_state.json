@@ -329,15 +329,15 @@
         "ST-14": {
           "title": "BLG-FEAT-03: Slippage Tracking",
           "classification": "delegated_backend",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Head of Engineering",
           "github_issue": 106,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "5daa3db",
           "delegation_record_id": "DEL-20260319-04",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-03-20T00:00:00Z",
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/data_model.md",
@@ -345,8 +345,8 @@
             "docs/specs/frontend/pages/trade_history.md",
             "docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "data_model_gate_cleared",
+          "deviations_filed": true,
+          "last_completed_substep": "commit",
           "data_model_gate": {
             "status": "cleared",
             "cleared_utc": "2026-03-20T00:00:00Z",
@@ -354,7 +354,7 @@
             "host_countersign": "COUNTERSIGNED — APPROVED — all Data Model Owner findings verified against data_model.md v1.8. No spec ambiguity blocking backend implementation.",
             "fill_price_column": "positions.fill_price DECIMAL(10,4) nullable — added in migration v1.1→v1.2"
           },
-          "notes": "Sprint 2. Data model gate cleared 2026-03-20 (fill_price pre-existing in data_model.md v1.2). API contract updated: trade_endpoints.md v2.1.0 adds fill_price, slippage_pct per trade and avg_slippage_pct summary. Reclassified to delegated_backend, delegated to Head of Engineering for implementation."
+          "notes": "Implemented 2026-03-20. Backend: positions.user_fill_price (new column), trade_history.fill_price (new column), data_model.md v2.0 migration. AddPositionRequest.fill_price optional. slippage_pct + avg_slippage_pct in GET /trades. Frontend: Fill Price input in TradeEntry.js, Slippage column (sortable, colour-coded, nulls show —) in TradeHistoryTable.js, Avg Slippage StatsCard in TradeHistory.js. DEVIATION: Avg Slippage null-state uses cyan gradient (StatsCard has no slate gradient key). Director of Quality sign-off pending."
         },
         "ST-15": {
           "title": "BLG-OPS-03: Render PR Preview Environments",
