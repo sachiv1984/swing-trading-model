@@ -22,7 +22,7 @@
 | `format` validation tightened | Unknown `format` values now return `400 — "format must be one of: pdf, csv"`. Previously unspecified. |
 | No schema migration | Pure format conversion of existing endpoint data. |
 
-**Sign-off:** Head of Engineering (implementation) — pending
+**Sign-off:** Head of Engineering (implementation) — 2026-03-20
 
 ---
 

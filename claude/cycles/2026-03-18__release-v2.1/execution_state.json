@@ -43,32 +43,37 @@
     },
 
     "EPIC-02": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
-      "qa_evidence_log": null,
+      "pr_number": 116,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
-      "notes": "Sprint 2 items. Conditional on ST-01 Complete (now satisfied). Not started — awaiting Sprint 2 invocation.",
+      "notes": "Sprint 2. ST-02 spec authored and signed off (Head of Specs Team 2026-03-20). PR #116 open. ST-03/04/05/06/07 gated on ST-02 merge.",
       "stories": {
         "ST-02": {
           "title": "Spec: alerts endpoint + notification preference model",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Specs Team + Head of Engineering",
           "github_issue": 93,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "2b93a36",
+          "delegation_record_id": "DEL-20260319-02",
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 Complete with Head of Engineering sign-off (SATISFIED)",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 2. Condition satisfied (ST-01 done)."
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-20T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md",
+            "docs/specs/data_model.md",
+            "docs/reference/openapi.yaml",
+            "docs/adr/ADR-003-notification-delivery-architecture.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "commit",
+          "notes": "Spec complete. alerts_endpoints.md v0.1 (10 endpoints), data_model.md v1.9 (3 tables), openapi.yaml updated, Specs_Index.md registered. HoST sign-off 2026-03-20. PO acceptance 2026-03-20. P3 deviation: api_changelog.md commit includes cross-EPIC ST-13 entry (DEV-EPIC02-01)."
         },
         "ST-03": {
           "title": "Backend: alert rules engine",
