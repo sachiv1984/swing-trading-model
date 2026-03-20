@@ -39,6 +39,9 @@ sys.modules["database"] = _db_stub
 
 _config_stub = types.ModuleType("config")
 _config_stub.DEFAULT_MIN_HOLD_DAYS = 10
+_config_stub.RESEND_API_KEY = ""
+_config_stub.ALERT_FROM_EMAIL = "alerts@test.com"
+_config_stub.ALERT_TO_EMAIL = "user@test.com"
 sys.modules["config"] = _config_stub
 
 _pricing_stub = types.ModuleType("utils.pricing")

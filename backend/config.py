@@ -49,6 +49,13 @@ DEFAULT_FX_RATE = 1.27  # GBP/USD fallback if API fails
 # Price Conversion
 PENCE_TO_POUNDS_THRESHOLD = 1000  # UK prices above this are in pence
 
+# Email delivery (Resend) — ST-04
+# Set these env vars on Render: RESEND_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL
+import os
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
+ALERT_FROM_EMAIL = os.getenv("ALERT_FROM_EMAIL", "alerts@yourdomain.com")
+ALERT_TO_EMAIL = os.getenv("ALERT_TO_EMAIL", "")
+
 # API Delays (rate limiting)
 PRICE_FETCH_DELAY_SECONDS = 0.3
 FX_RATE_FETCH_DELAY_SECONDS = 0.2

@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from uuid import uuid4
 
-from config import DEFAULT_MIN_HOLD_DAYS
+from config import DEFAULT_MIN_HOLD_DAYS, RESEND_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL
 from database import get_db, get_portfolio, get_positions
 from utils.pricing import check_market_regime
 
@@ -487,13 +487,16 @@ def _insert_notification(cur, portfolio_id: str, alert_type: str,
 
 def deliver_notification(notification_id: str) -> None:
     """
-    Background task: attempt email delivery for a notification.
+    Background task: deliver email notification via Resend.
 
-    ST-04 will wire real SMTP/email sending. For now this stub marks the
-    notification as delivered=true, recording the attempt.
+    Runs after the API response is returned (FastAPI BackgroundTasks, per ADR-003).
+    Increments delivery_attempts on every call. Sets delivered=True on success,
+    records delivery_error on failure. evaluate_alerts will re-enqueue if
+    delivered=False and delivery_attempts < 3.
 
-    ADR-003 retry model: delivery_attempts is incremented on each call.
-    If delivery_attempts >= 3, re-delivery is no longer enqueued by evaluate_alerts.
+    Required env vars: RESEND_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL.
+    If any are unset, the notification is logged and marked delivered to avoid
+    infinite retry loops on misconfigured deployments.
     """
     try:
         with get_db() as conn:
@@ -507,11 +510,23 @@ def deliver_notification(notification_id: str) -> None:
                     logger.warning("deliver_notification: notification %s not found", notification_id)
                     return
 
-                # ST-04 will replace this stub with real email sending
-                logger.info(
-                    "ALERT DELIVERY [stub] type=%s title=%r notification_id=%s",
-                    notif["alert_type"], notif["title"], notification_id
-                )
+                if not RESEND_API_KEY or not ALERT_TO_EMAIL:
+                    logger.warning(
+                        "deliver_notification: RESEND_API_KEY or ALERT_TO_EMAIL not set — "
+                        "marking delivered without sending. notification_id=%s", notification_id
+                    )
+                    cur.execute("""
+                        UPDATE notifications
+                        SET delivered = TRUE,
+                            delivery_attempted_at = NOW(),
+                            delivery_attempts = delivery_attempts + 1,
+                            delivery_error = 'email not configured'
+                        WHERE id = %s
+                    """, (notification_id,))
+                    return
+
+                subject, html_body = _build_email(notif)
+                _send_via_resend(subject, html_body)
 
                 cur.execute("""
                     UPDATE notifications
@@ -521,6 +536,10 @@ def deliver_notification(notification_id: str) -> None:
                         delivery_error = NULL
                     WHERE id = %s
                 """, (notification_id,))
+                logger.info(
+                    "deliver_notification: sent type=%s notification_id=%s",
+                    notif["alert_type"], notification_id
+                )
 
     except Exception as e:
         logger.error("deliver_notification failed for %s: %s", notification_id, e)
@@ -533,9 +552,64 @@ def deliver_notification(notification_id: str) -> None:
                             delivery_attempts = delivery_attempts + 1,
                             delivery_error = %s
                         WHERE id = %s
-                    """, (str(e), notification_id))
+                    """, (str(e)[:500], notification_id))
         except Exception:
             pass
+
+
+def _send_via_resend(subject: str, html_body: str) -> None:
+    """Send an email via the Resend HTTP API."""
+    import resend
+    resend.api_key = RESEND_API_KEY
+    resend.Emails.send({
+        "from": ALERT_FROM_EMAIL,
+        "to": [ALERT_TO_EMAIL],
+        "subject": subject,
+        "html": html_body,
+    })
+
+
+def _build_email(notif) -> tuple:
+    """
+    Build (subject, html_body) for a notification row.
+    Returns a clear subject and user-readable HTML body per ST-04 AC.
+    """
+    alert_type = notif["alert_type"]
+    title = notif["title"]
+    message = notif["message"]
+    created_at = notif["created_at"]
+    if hasattr(created_at, "strftime"):
+        created_str = created_at.strftime("%Y-%m-%d %H:%M UTC")
+    else:
+        created_str = str(created_at)
+
+    subject = f"[Trading Alert] {title}"
+
+    type_labels = {
+        "stop_loss_approach":      "Stop Loss Approach",
+        "grace_period_warning":    "Grace Period Warning",
+        "market_regime_change":    "Market Regime Change",
+        "daily_portfolio_summary": "Daily Portfolio Summary",
+    }
+    type_label = type_labels.get(alert_type, alert_type)
+
+    html_body = f"""
+<html>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+  <div style="border-left: 4px solid #e85d04; padding-left: 16px; margin-bottom: 24px;">
+    <h2 style="margin: 0 0 8px 0; color: #e85d04;">{title}</h2>
+    <p style="margin: 0; font-size: 13px; color: #888;">{type_label} &mdash; {created_str}</p>
+  </div>
+  <p style="font-size: 16px; line-height: 1.6;">{message}</p>
+  <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
+  <p style="font-size: 12px; color: #aaa;">
+    Swing Trading Model &mdash; automated alert.<br>
+    Manage your notification preferences in the app.
+  </p>
+</body>
+</html>
+"""
+    return subject, html_body
 
 
 # ---------------------------------------------------------------------------
