@@ -229,27 +229,11 @@ def mark_all_read_endpoint():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.patch("/notifications/{notification_id}")
-def mark_notification_read_endpoint(notification_id: str):
-    """
-    Mark a single notification as read. Idempotent.
-    Contract: alerts_endpoints.md §PATCH /notifications/{id}
-    """
-    try:
-        portfolio_id = _get_portfolio_id()
-        notif = mark_notification_read(portfolio_id, notification_id)
-        return {"status": "ok", "data": notif}
-    except HTTPException:
-        raise
-    except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 # ---------------------------------------------------------------------------
 # Notification Preferences
+# NOTE: Both preferences routes must be declared before PATCH /notifications/{id}
+#       so that the literal path segment "preferences" is not swallowed by the
+#       {notification_id} wildcard.
 # ---------------------------------------------------------------------------
 
 @router.get("/notifications/preferences")
@@ -275,6 +259,7 @@ def update_preferences_endpoint(request: Dict[str, Any] = Body(...)):
     Partial update of notification preferences.
     Body: {alert_type: {"email_enabled": bool}, ...}
     Contract: alerts_endpoints.md §PATCH /notifications/preferences
+    NOTE: Must be declared before PATCH /notifications/{id} in this file.
     """
     try:
         portfolio_id = _get_portfolio_id()
@@ -286,6 +271,25 @@ def update_preferences_endpoint(request: Dict[str, Any] = Body(...)):
         raise
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.patch("/notifications/{notification_id}")
+def mark_notification_read_endpoint(notification_id: str):
+    """
+    Mark a single notification as read. Idempotent.
+    Contract: alerts_endpoints.md §PATCH /notifications/{id}
+    """
+    try:
+        portfolio_id = _get_portfolio_id()
+        notif = mark_notification_read(portfolio_id, notification_id)
+        return {"status": "ok", "data": notif}
+    except HTTPException:
+        raise
+    except LookupError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         import traceback; traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
