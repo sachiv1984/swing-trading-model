@@ -124,7 +124,11 @@ app.include_router(trades_export.router)
 app.include_router(alerts.router)
 
 # Bootstrap alert tables on startup (idempotent CREATE IF NOT EXISTS)
-ensure_alerts_tables()
+try:
+    ensure_alerts_tables()
+except Exception as _e:
+    import logging as _logging
+    _logging.getLogger(__name__).warning("ensure_alerts_tables skipped at startup: %s", _e)
 
 
 @app.get("/")
