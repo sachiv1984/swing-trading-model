@@ -469,6 +469,31 @@ Email is the only delivery channel for v2.1. Do not render SMS or any other chan
 - Loading and error states implemented
 - Director of Quality sign-off
 
-**Status:** Pending
+**Status:** Resolved
+**Resolved:** 2026-03-20
+**Commit SHA:** 9c4813d (integration); post-fix commits 17d5e26, 2804f5f, 2d63ef9
+**Resolution:** Page integrated from Base44 files. Three post-commit fixes required: Body(...) annotation on PATCH, route ordering (preferences before wildcard), and startup race (ensure_alerts_tables). DoQ sign-off 2026-03-20: toggle saves, Saved confirmation visible, Feed tab no longer 404s.
+
+---
+
+## DEL-20260320-02 — ST-06: In-App Notification Feed
+
+**Date:** 2026-03-20
+**Item:** EPIC-02 / ST-06
+**Classification:** delegated_frontend
+**Assigned to:** Base44 Frontend
+**GitHub issue:** #96
+**Branch:** main
+
+**What was delegated:** Implement the in-app notification feed page per `docs/specs/frontend/pages/notifications.md` v0.1. Feed at `/notifications` displaying recent notifications with mark-as-read and load more.
+
+**Spec reference:** docs/specs/frontend/pages/notifications.md, docs/specs/api_contracts/alerts_endpoints.md
+
+**Unblock criteria:** Feed renders at `/notifications`; mark-as-read (per-item + mark all) functional; empty state handled; nav highlights on both feed and preferences; Director of Quality staging sign-off.
+
+**Status:** Resolved
+**Resolved:** 2026-03-20
+**Commit SHA:** 47efe4b
+**Resolution:** NotificationRow.js (row component) provided by Base44; Notifications.js (feed page) built from spec. All AC verified in staging 2026-03-20: feed shows in staging, empty state visible in live, nav item highlights on both tabs. Director of Quality sign-off 2026-03-20.
 
 ---

@@ -151,22 +151,22 @@
         "ST-06": {
           "title": "Frontend: in-app notification feed",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Base44 Frontend",
           "github_issue": 96,
-          "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "branch": "main",
+          "commit_sha": "47efe4b",
+          "delegation_record_id": "DEL-20260320-02",
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-02 spec signed off; ST-04 backend live in staging",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-20T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/notifications.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 3. Depends on ST-02 + ST-04."
+          "last_completed_substep": "accepted",
+          "notes": "Implemented 2026-03-20. Notifications.js (feed page: GET/PATCH/POST wiring, optimistic mark-as-read per-item + mark all, load more pagination, skeleton, empty state, error state), NotificationRow.js (type icons, relative timestamp, unread cyan border, mark-as-read button), App.js (/notifications route), Layout.js (nav item links to feed, isActive highlights on both feed and preferences). Director of Quality sign-off 2026-03-20: feed shows in staging, empty state in live, nav highlights on both tabs."
         },
         "ST-07": {
           "title": "QA: notification delivery test scenarios",
@@ -517,6 +517,7 @@
     "EPIC-02/ST-03",
     "EPIC-02/ST-04",
     "EPIC-02/ST-05",
+    "EPIC-02/ST-06",
     "EPIC-04/ST-11",
     "EPIC-05/ST-12",
     "EPIC-05/ST-13",
