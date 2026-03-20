@@ -171,20 +171,22 @@
         "ST-07": {
           "title": "QA: notification delivery test scenarios",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "QA & Testing Owner + Director of Quality",
           "github_issue": 95,
-          "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
+          "branch": "main",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-03/04/05/06 at minimum in-progress",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-20T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/notifications_scenarios.md"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 3."
+          "last_completed_substep": "accepted",
+          "notes": "notifications_scenarios.md authored 2026-03-20. 8 scenarios (SC-NOTIF-01 through SC-NOTIF-08) covering: alert evaluation + Telegram delivery, feed display + unread indicators, mark-as-read (per-item + mark all), empty state, preferences load, toggle persistence, all-4-types coverage. BLG-OPS-04 scheduling gap documented as out of scope. Director of Quality sign-off 2026-03-20."
         }
       }
     },
@@ -518,6 +520,7 @@
     "EPIC-02/ST-04",
     "EPIC-02/ST-05",
     "EPIC-02/ST-06",
+    "EPIC-02/ST-07",
     "EPIC-04/ST-11",
     "EPIC-05/ST-12",
     "EPIC-05/ST-13",
