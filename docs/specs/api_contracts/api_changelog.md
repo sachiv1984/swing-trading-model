@@ -1,7 +1,7 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.3.0
+**Version:** 1.4.0
 **Last Updated:** 2026-03-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -22,6 +22,25 @@
 | Data model gate | `fill_price` was pre-existing in `data_model.md` v1.2 (`positions` table, nullable `DECIMAL(10,4)`). Gate cleared: Data Model & Domain Schema Owner + Head of Specs Team countersigned 2026-03-20. |
 
 **Sign-off:** Data Model & Domain Schema Owner + Head of Specs Team (gate) — 2026-03-20
+
+---
+
+## v2.1.1 (2026-03-20 — Release v2.1)
+
+### reports_endpoints.md — v0.3
+
+**EPIC:** EPIC-05 (Financial Reporting Exports & Enhancements)
+**ST:** ST-13
+
+| Change | Details |
+|--------|---------|
+| New format: `GET /reports/tax-year?format=csv` | CSV download of tax-year P&L report. `Content-Type: text/csv`. `Content-Disposition: attachment; filename="tax-year-{year}-pnl.csv"`. |
+| CSV structure | 5-row metadata block (Tax Year, Generated At, Total Realised P&L, Total Closed Trades, Win Rate %), blank row, 17-column trades table with human-readable headers. |
+| Column headers | Trade ID, Ticker, Market, Entry Date, Exit Date, Holding Days, Entry Price (Native), Exit Price (Native), Entry FX Rate (GBP/USD), Exit FX Rate (GBP/USD), Shares, Total Cost (GBP), Exit Proceeds (GBP), Realised P&L (GBP), P&L %, Currency, Tags. |
+| `format` validation tightened | Unknown `format` values now return `400 — "format must be one of: pdf, csv"`. Previously unspecified. |
+| No schema migration | Pure format conversion of existing endpoint data. |
+
+**Sign-off:** Head of Engineering (implementation) — 2026-03-20
 
 ---
 

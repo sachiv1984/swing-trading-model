@@ -232,7 +232,8 @@ paths:
         Returns realised P&L for a UK tax year (6 Apr YYYY to 5 Apr YYYY+1),
         including closed trades, summary totals, and estimated unrealised P&L on open positions.
         Pass format=pdf to receive a PDF file download instead of JSON.
-        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.2.
+        Pass format=csv to receive a CSV file download instead of JSON.
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.3.
       parameters:
         - in: query
           name: year
@@ -247,8 +248,8 @@ paths:
           required: false
           schema:
             type: string
-            enum: [pdf]
-          description: Response format. Omit for JSON (default). Pass pdf to receive a PDF download.
+            enum: [pdf, csv]
+          description: Response format. Omit for JSON (default). Pass pdf for PDF download. Pass csv for CSV download.
       responses:
         "200":
           description: Tax-year P&L report (JSON) or PDF download
@@ -290,6 +291,13 @@ paths:
                   PDF document containing the tax-year P&L report.
                   Returned when format=pdf query parameter is supplied.
                   Content-Disposition header set to attachment with filename tax-year-{year}-pnl.pdf.
+            text/csv:
+              schema:
+                type: string
+                description: >
+                  CSV file containing the tax-year P&L report.
+                  Returned when format=csv query parameter is supplied.
+                  Content-Disposition header set to attachment with filename tax-year-{year}-pnl.csv.
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
