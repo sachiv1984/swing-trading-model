@@ -48,6 +48,25 @@ function rColour(r) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Slippage helpers
+// Spec: ST-14 — slippage_pct = (fill_price − entry_price) / entry_price * 100
+// Negative = filled below market (favourable).
+// ─────────────────────────────────────────────────────────────────────────────
+
+function formatSlippage(pct) {
+  if (pct === null || pct === undefined) return "—";
+  const sign = pct > 0 ? "+" : "";
+  return `${sign}${pct.toFixed(2)}%`;
+}
+
+function slippageColour(pct) {
+  if (pct === null || pct === undefined) return "text-slate-500";
+  if (pct < 0) return "text-emerald-400";
+  if (pct > 0) return "text-rose-400";
+  return "text-slate-300";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const SORT_NONE = "none";
 const SORT_ASC  = "asc";
@@ -82,6 +101,7 @@ const exitReasonColors = {
 export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [rSort, setRSort] = useState(SORT_NONE);
+  const [slippageSort, setSlippageSort] = useState(SORT_NONE);
 
   // Build a lookup map: trade id → R-multiple value (or null)
   // Joined by trade id, as spec requires (D2a).
@@ -109,20 +129,43 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     );
   };
 
-  // Apply R-multiple sort.
+  const cycleSlippageSort = () => {
+    setSlippageSort(prev =>
+      prev === SORT_NONE ? SORT_ASC :
+      prev === SORT_ASC  ? SORT_DESC :
+      SORT_NONE
+    );
+  };
+
+  // Apply R-multiple sort, then slippage sort.
   // Spec (F-12): "—" values sort to the end in both directions.
   const displayTrades = useMemo(() => {
-    if (rSort === SORT_NONE) return trades;
-    return [...trades].sort((a, b) => {
-      const ra = rMap.get(String(a.id ?? ""));
-      const rb = rMap.get(String(b.id ?? ""));
-      // Nulls always go to end
-      if (ra === null && rb === null) return 0;
-      if (ra === null) return 1;
-      if (rb === null) return -1;
-      return rSort === SORT_ASC ? ra - rb : rb - ra;
-    });
-  }, [trades, rSort, rMap]);
+    let result = trades;
+
+    if (rSort !== SORT_NONE) {
+      result = [...result].sort((a, b) => {
+        const ra = rMap.get(String(a.id ?? ""));
+        const rb = rMap.get(String(b.id ?? ""));
+        if (ra === null && rb === null) return 0;
+        if (ra === null) return 1;
+        if (rb === null) return -1;
+        return rSort === SORT_ASC ? ra - rb : rb - ra;
+      });
+    }
+
+    if (slippageSort !== SORT_NONE) {
+      result = [...result].sort((a, b) => {
+        const sa = a.slippage_pct ?? null;
+        const sb = b.slippage_pct ?? null;
+        if (sa === null && sb === null) return 0;
+        if (sa === null) return 1;
+        if (sb === null) return -1;
+        return slippageSort === SORT_ASC ? sa - sb : sb - sa;
+      });
+    }
+
+    return result;
+  }, [trades, rSort, rMap, slippageSort]);
 
   if (!trades || trades.length === 0) {
     return (
@@ -132,10 +175,16 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     );
   }
 
-  // Sort icon helper
+  // Sort icon helpers
   const RSortIcon = () => {
     if (rSort === SORT_ASC)  return <ArrowUp   className="w-3 h-3 ml-1 inline text-cyan-400" />;
     if (rSort === SORT_DESC) return <ArrowDown  className="w-3 h-3 ml-1 inline text-cyan-400" />;
+    return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
+  };
+
+  const SlippageSortIcon = () => {
+    if (slippageSort === SORT_ASC)  return <ArrowUp   className="w-3 h-3 ml-1 inline text-cyan-400" />;
+    if (slippageSort === SORT_DESC) return <ArrowDown  className="w-3 h-3 ml-1 inline text-cyan-400" />;
     return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
   };
 
@@ -147,6 +196,14 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         <TableHead>Exit Date</TableHead>
         <TableHead className="text-right">P&L</TableHead>
         <TableHead className="text-right">% P&L</TableHead>
+        {/* ST-14: Slippage column — sortable, "—" to end */}
+        <TableHead
+          className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
+          onClick={cycleSlippageSort}
+          title="Slippage = (Fill Price − Market Price) / Market Price. Negative = filled below market (favourable)."
+        >
+          Slippage <SlippageSortIcon />
+        </TableHead>
         {/* BLG-FEAT-02: R-Multiple column — sortable, "—" to end */}
         <TableHead
           className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
@@ -221,6 +278,13 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                   </span>
                 </TableCell>
 
+                {/* Slippage — ST-14 */}
+                <TableCell className="text-right">
+                  <span className={cn("font-medium tabular-nums", slippageColour(trade.slippage_pct))}>
+                    {formatSlippage(trade.slippage_pct)}
+                  </span>
+                </TableCell>
+
                 {/* R-Multiple — BLG-FEAT-02 */}
                 <TableCell className="text-right">
                   <span className={cn("font-medium tabular-nums", rClass)}>
@@ -242,7 +306,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
               {/* Expanded journal row — colSpan bumped to 7 */}
               {isExpanded && hasExpandableContent && (
                 <TableRow key={`${tradeId}-details`} className="bg-slate-900/50 border-t-2 border-slate-700/50">
-                  <TableCell colSpan={7} className="!p-0">
+                  <TableCell colSpan={8} className="!p-0">
                     <div className="w-full px-6 py-5 space-y-5">
                       <div className="flex items-center gap-2 pb-3 border-b border-slate-700/50">
                         <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />

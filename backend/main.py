@@ -227,6 +227,7 @@ def add_position_endpoint(request: AddPositionRequest):
             entry_date=request.entry_date,
             shares=request.shares,
             entry_price=request.entry_price,
+            fill_price=request.fill_price,
             fx_rate=request.fx_rate,
             atr_value=request.atr_value,
             stop_price=request.stop_price,

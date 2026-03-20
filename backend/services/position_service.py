@@ -488,7 +488,8 @@ def add_position(
     atr_value: Optional[float] = None,
     stop_price: Optional[float] = None,
     entry_note: Optional[str] = None,
-    tags: Optional[List[str]] = None
+    tags: Optional[List[str]] = None,
+    fill_price: Optional[float] = None
 ) -> Dict:
     """
     Add a new position to the portfolio with automatic fee calculation
@@ -630,7 +631,8 @@ def add_position(
         'pnl_pct': 0,
         'status': 'open',
         'entry_note': entry_note,
-        'tags': tags
+        'tags': tags,
+        'user_fill_price': fill_price,
     }
     
     # Create position in database
@@ -843,7 +845,8 @@ def exit_position(
         'exit_fx_rate': fx_rate_to_use,
         'entry_note': position.get('entry_note'),
         'exit_note': exit_note,
-        'tags': position.get('tags')
+        'tags': position.get('tags'),
+        'fill_price': position.get('user_fill_price'),
     }
     
     print(f"   💾 Creating trade history record...")

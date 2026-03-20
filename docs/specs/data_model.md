@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-03-18
+**Version:** 2.0
+**Last Updated:** 2026-03-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -83,6 +83,7 @@ CREATE TABLE positions (
     entry_note TEXT,
     exit_note TEXT,
     tags TEXT[],
+    user_fill_price DECIMAL(10, 4),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -124,6 +125,7 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | entry_note | TEXT | YES | Journal note at entry |
 | exit_note | TEXT | YES | Journal note at exit |
 | tags | TEXT[] | YES | Strategy/classification tags |
+| user_fill_price | DECIMAL(10,4) | YES | User-provided actual broker fill price in native currency (optional). Used to compute slippage. Null when not provided (pre-v2.1 trades). |
 | created_at | TIMESTAMP | NO | Record creation timestamp |
 | updated_at | TIMESTAMP | NO | Last update timestamp |
 
@@ -156,6 +158,7 @@ CREATE TABLE trade_history (
     entry_note TEXT,
     exit_note TEXT,
     tags TEXT[],
+    fill_price DECIMAL(10, 4),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -190,6 +193,7 @@ CREATE INDEX idx_trade_history_tags ON trade_history USING GIN(tags);
 | entry_note | TEXT | YES | Journal note copied from position at exit time |
 | exit_note | TEXT | YES | Journal note entered at exit |
 | tags | TEXT[] | YES | Tags copied from position at exit time |
+| fill_price | DECIMAL(10,4) | YES | Actual broker fill price copied from `positions.user_fill_price` at exit time. Null for pre-v2.1 trades or when user did not provide a fill price. Used to compute `slippage_pct` in the API response. |
 | created_at | TIMESTAMP | NO | Record creation time |
 
 ### Exit Reason Values
@@ -494,6 +498,19 @@ COMMIT;
 SELECT id, default_risk_percent
 FROM settings;
 -- Expected: all rows show 1.00
+```
+
+### Migration from v1.9 to v2.0
+
+**Purpose:** Add slippage tracking. `positions.user_fill_price` captures the user's actual broker fill at entry time (optional). `trade_history.fill_price` is copied from `user_fill_price` at exit and used to compute `slippage_pct` in the API response.
+
+**Safety:** Both columns are nullable — no existing row will violate any constraint. Safe to apply without downtime.
+
+```sql
+BEGIN;
+ALTER TABLE positions ADD COLUMN user_fill_price DECIMAL(10, 4);
+ALTER TABLE trade_history ADD COLUMN fill_price DECIMAL(10, 4);
+COMMIT;
 ```
 
 ---

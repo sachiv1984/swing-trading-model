@@ -41,6 +41,7 @@ def get_trade_history_with_stats() -> Dict:
             "total_trades": 0,
             "win_rate": 0,
             "total_pnl": 0,
+            "avg_slippage_pct": None,
             "trades": []
         }
     
@@ -52,6 +53,13 @@ def get_trade_history_with_stats() -> Dict:
     # Format trades for frontend
     formatted_trades = []
     for t in trades:
+        fill_price = t.get('fill_price')
+        entry_price_val = float(t.get('entry_price', 0))
+        if fill_price is not None and entry_price_val != 0:
+            slippage_pct = round((float(fill_price) - entry_price_val) / entry_price_val * 100, 2)
+        else:
+            slippage_pct = None
+
         formatted_trades.append({
             "id": str(t.get('id', '')),
             "ticker": t['ticker'],
@@ -68,13 +76,19 @@ def get_trade_history_with_stats() -> Dict:
             "exit_reason": t.get('exit_reason', 'Unknown'),
             "entry_note": t.get('entry_note'),
             "exit_note": t.get('exit_note'),
-            "tags": t.get('tags', [])
+            "tags": t.get('tags', []),
+            "fill_price": float(fill_price) if fill_price is not None else None,
+            "slippage_pct": slippage_pct,
         })
-    
+
+    slippage_values = [t['slippage_pct'] for t in formatted_trades if t['slippage_pct'] is not None]
+    avg_slippage_pct = round(sum(slippage_values) / len(slippage_values), 2) if slippage_values else None
+
     return {
         "total_trades": len(trades),
         "win_rate": round(win_rate, 1),
         "total_pnl": round(total_pnl, 2),
+        "avg_slippage_pct": avg_slippage_pct,
         "trades": formatted_trades
     }
 
