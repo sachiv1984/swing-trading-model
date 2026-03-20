@@ -50,11 +50,15 @@ export default function Layout({ children, currentPageName }) {
     { name: "Reflections", icon: FileBarChart, page: "TradeReflection" },
     { name: "Risk Dashboard", icon: ShieldAlert, page: "RiskDashboard" },
     { name: "System Status", icon: Activity, page: "SystemStatus" },
-    { name: "Notifications", icon: Bell, page: "NotificationPreferences" },
+    { name: "Notifications", icon: Bell, page: "notifications" },
     { name: "Settings", icon: Settings, page: "Settings" },
   ];
 
-  const isActive = (pageName) => currentPageName === pageName;
+  const NOTIFICATIONS_PAGES = ["notifications", "NotificationPreferences"];
+  const isActive = (pageName) =>
+    pageName === "notifications"
+      ? NOTIFICATIONS_PAGES.includes(currentPageName)
+      : currentPageName === pageName;
 
   const isDark = theme === "dark";
 
