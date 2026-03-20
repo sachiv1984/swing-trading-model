@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.1
-**Last Updated:** 2026-03-18
+**Version:** 0.3
+**Last Updated:** 2026-03-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -50,7 +50,7 @@ Returns a structured P&L statement for all **closed trades** whose `exit_date` f
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `year` | integer | Yes | The start year of the UK tax year. `year=2025` returns the 2025/26 tax year (6 April 2025 to 5 April 2026). Must be a four-digit integer. |
-| `format` | string | No | Response format. Omit for JSON (default). Pass `format=pdf` to receive a PDF file download. Accepted values: `pdf`. |
+| `format` | string | No | Response format. Omit for JSON (default). Pass `format=pdf` for a PDF download. Pass `format=csv` for a CSV download. Accepted values: `pdf`, `csv`. |
 
 #### Validation rules
 
@@ -59,7 +59,7 @@ Returns a structured P&L statement for all **closed trades** whose `exit_date` f
 - If `year` is absent: return `400` — "year parameter is required."
 - If `year` is invalid: return `400` — "year must be a valid four-digit integer."
 - If `year` is in the future: return `400` — "tax year has not started yet."
-- If `format` is present and not `pdf`: behaviour is unspecified (implementation may ignore or return `400`).
+- If `format` is present and not `pdf` or `csv`: return `400` — "format must be one of: pdf, csv."
 
 ---
 
@@ -178,6 +178,84 @@ When `format=pdf` is supplied, the endpoint returns a PDF document instead of th
 - Empty year is valid — PDF renders with summary zeros and no trade rows
 
 **Library:** `reportlab` (pure Python; no system-level dependencies).
+
+---
+
+### Response (200 — CSV, `format=csv`)
+
+When `format=csv` is supplied, the endpoint returns a CSV file instead of the standard JSON envelope.
+
+**Response headers:**
+
+| Header | Value |
+|--------|-------|
+| `Content-Type` | `text/csv` |
+| `Content-Disposition` | `attachment; filename="tax-year-{year}-pnl.csv"` |
+
+**CSV structure:**
+
+The file has two sections separated by a blank row: a metadata header block and a trades table.
+
+**Section 1 — Metadata (rows 1–5):**
+
+```
+Tax Year,2025/26
+Generated At,2026-03-20T10:00:00Z
+Total Realised P&L (GBP),3240.50
+Total Closed Trades,18
+Win Rate (%),66.7
+```
+
+Each row is a key/value pair. Five rows, always present. Numeric values use the same precision as the JSON response.
+
+**Section 2 — Trades table (from row 7 onward, after one blank row):**
+
+Row 6 is blank. Row 7 is the column header row. Rows 8+ are trade data rows.
+
+**Column headers and source mapping:**
+
+| CSV Column Header | JSON field | Notes |
+|-------------------|-----------|-------|
+| `Trade ID` | `id` | UUID |
+| `Ticker` | `ticker` | |
+| `Market` | `market` | `UK` or `US` |
+| `Entry Date` | `entry_date` | `YYYY-MM-DD` |
+| `Exit Date` | `exit_date` | `YYYY-MM-DD` |
+| `Holding Days` | `holding_days` | integer |
+| `Entry Price (Native)` | `entry_price_native` | |
+| `Exit Price (Native)` | `exit_price_native` | |
+| `Entry FX Rate (GBP/USD)` | `entry_fx_rate` | empty for UK stocks |
+| `Exit FX Rate (GBP/USD)` | `exit_fx_rate` | empty for UK stocks |
+| `Shares` | `shares` | |
+| `Total Cost (GBP)` | `total_cost_gbp` | |
+| `Exit Proceeds (GBP)` | `exit_proceeds_gbp` | |
+| `Realised P&L (GBP)` | `realised_pnl_gbp` | |
+| `P&L %` | `pnl_pct` | |
+| `Currency` | `currency` | `GBP` or `USD` |
+| `Tags` | `tags` | semicolon-separated if multiple; empty if none |
+
+**Rules:**
+- Column order is fixed as listed above.
+- All 17 columns always present regardless of market.
+- Null / empty values render as empty string (no quotes, no `null` text).
+- Numeric values are unquoted. String values containing commas are quoted.
+- Tags with multiple values are joined with `; ` (semicolon + space): e.g. `momentum; tech`.
+- Empty year is valid — metadata section renders with zero summary values; no trade rows follow the header.
+- No trailing newline after the last data row.
+
+**Example (2 trades):**
+
+```
+Tax Year,2025/26
+Generated At,2026-03-20T10:00:00Z
+Total Realised P&L (GBP),3240.50
+Total Closed Trades,2
+Win Rate (%),100.0
+
+Trade ID,Ticker,Market,Entry Date,Exit Date,Holding Days,Entry Price (Native),Exit Price (Native),Entry FX Rate (GBP/USD),Exit FX Rate (GBP/USD),Shares,Total Cost (GBP),Exit Proceeds (GBP),Realised P&L (GBP),P&L %,Currency,Tags
+750e8400-e29b-41d4-a716-446655440000,NVDA,US,2025-05-12,2025-08-03,83,622.00,710.50,1.2650,1.2830,10.5,5162.45,5817.80,655.35,12.69,USD,momentum
+880e8400-e29b-41d4-a716-446655440001,FRES.L,UK,2025-06-01,2025-09-15,106,8.20,9.45,,,,1025.00,1178.75,153.75,15.00,GBP,
+```
 
 ---
 
@@ -306,5 +384,6 @@ GET /reports/tax-year?year=2025&format=pdf
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-03-20 | Add `format=csv` to GET /reports/tax-year. CSV response schema documented: metadata block (5 rows) + trades table (17 human-readable columns). `format` validation rule tightened — unknown values now return 400. ST-13 — v2.1 release planning cycle 2026-03-18__release-v2.1. |
 | 0.2 | 2026-03-19 | Add `format=pdf` query parameter to GET /reports/tax-year. PDF response schema documented. ST-12 — v2.1 release planning cycle 2026-03-18__release-v2.1. |
 | 0.1 | 2026-03-17 | Initial version. GET /reports/tax-year. ST-03 — v2.0 release planning cycle 2026-03-17__release-v2.0. |
