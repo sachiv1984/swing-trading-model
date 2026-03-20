@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-03-18
+**Version:** 1.9
+**Last Updated:** 2026-03-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -365,6 +365,168 @@ CREATE INDEX IF NOT EXISTS idx_signals_ticker
 
 ---
 
+## 8. Alert Rules Table
+
+Configurable alert rule settings per portfolio. One row per alert type. Seeded automatically on first `GET /alerts/rules` call.
+
+```sql
+CREATE TABLE alert_rules (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    type VARCHAR(50) NOT NULL CHECK (type IN (
+        'stop_loss_approach',
+        'grace_period_warning',
+        'market_regime_change',
+        'daily_portfolio_summary'
+    )),
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    threshold_percent DECIMAL(5, 2),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_alert_rules_portfolio_type UNIQUE (portfolio_id, type)
+);
+
+CREATE INDEX idx_alert_rules_portfolio ON alert_rules(portfolio_id);
+```
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| portfolio_id | UUID | NO | FK to portfolios |
+| type | VARCHAR(50) | NO | Alert type key. One of the four valid values. |
+| enabled | BOOLEAN | NO | Whether this rule is evaluated during alert evaluation. Default `true`. |
+| threshold_percent | DECIMAL(5,2) | YES | Trigger threshold for `stop_loss_approach` only — fire when stop is within this % of current price. `null` for all other types. |
+| created_at | TIMESTAMPTZ | NO | Rule creation timestamp |
+| updated_at | TIMESTAMPTZ | NO | Last update timestamp |
+
+### Constraints
+
+- `UNIQUE (portfolio_id, type)` — one rule per type per portfolio.
+- `threshold_percent` is not constrained at the DB level; the API layer validates `> 0 AND ≤ 100`.
+
+### Default seeded values
+
+| Type | enabled | threshold_percent |
+|------|---------|-------------------|
+| `stop_loss_approach` | `true` | `5.0` |
+| `grace_period_warning` | `true` | `null` |
+| `market_regime_change` | `true` | `null` |
+| `daily_portfolio_summary` | `true` | `null` |
+
+---
+
+## 9. Notifications Table
+
+Log of triggered alert instances. Written by `POST /alerts/evaluate`. Includes delivery tracking fields per ADR-003 retry model.
+
+```sql
+CREATE TABLE notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    alert_type VARCHAR(50) NOT NULL CHECK (alert_type IN (
+        'stop_loss_approach',
+        'grace_period_warning',
+        'market_regime_change',
+        'daily_portfolio_summary'
+    )),
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    context JSONB,
+    read BOOLEAN NOT NULL DEFAULT FALSE,
+    delivered BOOLEAN NOT NULL DEFAULT FALSE,
+    delivery_attempted_at TIMESTAMPTZ,
+    delivery_attempts INTEGER NOT NULL DEFAULT 0,
+    delivery_error TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_notifications_portfolio ON notifications(portfolio_id);
+CREATE INDEX idx_notifications_created ON notifications(created_at DESC);
+CREATE INDEX idx_notifications_read ON notifications(portfolio_id, read);
+```
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| portfolio_id | UUID | NO | FK to portfolios |
+| alert_type | VARCHAR(50) | NO | Alert type key |
+| title | string | NO | Human-readable alert title (e.g. `"Stop Loss Approach — AAPL"`) |
+| message | TEXT | NO | One-line description of the event |
+| context | JSONB | YES | Supplemental structured data (e.g. `{"ticker": "AAPL", "stop_price": 210.00, "current_price": 219.05, "proximity_percent": 4.2}`). Shape varies by alert type. |
+| read | BOOLEAN | NO | `false` until marked read via API. |
+| delivered | BOOLEAN | NO | `true` after successful email delivery. |
+| delivery_attempted_at | TIMESTAMPTZ | YES | Timestamp of most recent delivery attempt. |
+| delivery_attempts | INTEGER | NO | Count of delivery attempts (success or failure). Incremented on each attempt. |
+| delivery_error | TEXT | YES | Error message from last failed delivery attempt. Cleared on success. |
+| created_at | TIMESTAMPTZ | NO | Notification creation timestamp |
+| updated_at | TIMESTAMPTZ | NO | Last update timestamp |
+
+### Delivery retry model (ADR-003)
+
+- On each `POST /alerts/evaluate`: notifications with `delivered = false` and `delivery_attempts < 3` have delivery re-enqueued.
+- After 3 failed attempts: no further retries. `delivery_error` reflects the last failure reason.
+- `daily_portfolio_summary`: at most one notification per `portfolio_id` per calendar day (UTC). Evaluation must not create a duplicate same-day summary.
+
+### `context` field shapes by type
+
+| Type | Context keys |
+|------|-------------|
+| `stop_loss_approach` | `ticker`, `stop_price`, `current_price`, `proximity_percent` |
+| `grace_period_warning` | `ticker`, `holding_days`, `grace_days_remaining` |
+| `market_regime_change` | `regime` (value: `"risk_off"`) |
+| `daily_portfolio_summary` | `portfolio_value_gbp`, `open_position_count`, `unrealised_pnl_gbp` |
+
+---
+
+## 10. Notification Preferences Table
+
+Per-alert-type email delivery preferences. One row per alert type per portfolio. Seeded automatically on first `GET /notifications/preferences` call.
+
+```sql
+CREATE TABLE notification_preferences (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    alert_type VARCHAR(50) NOT NULL CHECK (alert_type IN (
+        'stop_loss_approach',
+        'grace_period_warning',
+        'market_regime_change',
+        'daily_portfolio_summary'
+    )),
+    email_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_notification_preferences_portfolio_type UNIQUE (portfolio_id, alert_type)
+);
+
+CREATE INDEX idx_notification_preferences_portfolio ON notification_preferences(portfolio_id);
+```
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| portfolio_id | UUID | NO | FK to portfolios |
+| alert_type | VARCHAR(50) | NO | Alert type key |
+| email_enabled | BOOLEAN | NO | `true` = send email when this type triggers. Default `true`. |
+| created_at | TIMESTAMPTZ | NO | Record creation timestamp |
+| updated_at | TIMESTAMPTZ | NO | Last update timestamp |
+
+### Constraints
+
+- `UNIQUE (portfolio_id, alert_type)` — one preference row per type per portfolio.
+
+### Channel scope (v2.1)
+
+Email is the only delivery channel in v2.1. SMS is not implemented. The schema supports future channel columns (e.g. `sms_enabled`) without migration impact.
+
+---
+
 ## Migration History
 
 ### Migration from v1.1 to v1.2
@@ -552,20 +714,6 @@ CREATE INDEX idx_trade_reflections_trade ON trade_reflections(trade_id);
 
 ---
 
-### v1.9 — Alerts (Planned)
-
-```sql
-CREATE TABLE alerts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    portfolio_id UUID REFERENCES portfolios(id),
-    type VARCHAR(50),
-    message TEXT,
-    is_read BOOLEAN DEFAULT false,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
-```
-
 ### v2.0 — Multi-User (Planned)
 
 ```sql
@@ -581,6 +729,89 @@ ALTER TABLE portfolios ADD COLUMN user_id UUID REFERENCES users(id);
 
 ---
 
-**Document Version:** 1.8
+### Migration from v1.8 to v1.9
+
+**Purpose:** Introduce alert rules, notifications, and notification preferences tables for EPIC-02 Alerts & Notifications (v2.1). Replaces the placeholder v1.9 planned schema.
+
+**Safety:** Safe to apply without downtime. All new tables — no changes to existing tables.
+
+```sql
+BEGIN;
+
+CREATE TABLE alert_rules (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    type VARCHAR(50) NOT NULL CHECK (type IN (
+        'stop_loss_approach',
+        'grace_period_warning',
+        'market_regime_change',
+        'daily_portfolio_summary'
+    )),
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    threshold_percent DECIMAL(5, 2),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_alert_rules_portfolio_type UNIQUE (portfolio_id, type)
+);
+
+CREATE INDEX idx_alert_rules_portfolio ON alert_rules(portfolio_id);
+
+CREATE TABLE notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    alert_type VARCHAR(50) NOT NULL CHECK (alert_type IN (
+        'stop_loss_approach',
+        'grace_period_warning',
+        'market_regime_change',
+        'daily_portfolio_summary'
+    )),
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    context JSONB,
+    read BOOLEAN NOT NULL DEFAULT FALSE,
+    delivered BOOLEAN NOT NULL DEFAULT FALSE,
+    delivery_attempted_at TIMESTAMPTZ,
+    delivery_attempts INTEGER NOT NULL DEFAULT 0,
+    delivery_error TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_notifications_portfolio ON notifications(portfolio_id);
+CREATE INDEX idx_notifications_created ON notifications(created_at DESC);
+CREATE INDEX idx_notifications_read ON notifications(portfolio_id, read);
+
+CREATE TABLE notification_preferences (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    alert_type VARCHAR(50) NOT NULL CHECK (alert_type IN (
+        'stop_loss_approach',
+        'grace_period_warning',
+        'market_regime_change',
+        'daily_portfolio_summary'
+    )),
+    email_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_notification_preferences_portfolio_type UNIQUE (portfolio_id, alert_type)
+);
+
+CREATE INDEX idx_notification_preferences_portfolio ON notification_preferences(portfolio_id);
+
+COMMIT;
+```
+
+**Verification query (run after migration):**
+
+```sql
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND table_name IN ('alert_rules', 'notifications', 'notification_preferences');
+-- Expected: 3 rows
+```
+
+---
+
+**Document Version:** 1.9
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-03-11
+**Last Review:** 2026-03-20
