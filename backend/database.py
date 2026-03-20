@@ -72,11 +72,11 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                     fill_price, fill_currency, fx_rate, shares, total_cost,
                     fees_paid, fee_type, initial_stop, current_stop, current_price,
                     atr, holding_days, pnl, pnl_pct, status,
-                    entry_note, tags  -- 
+                    entry_note, tags, user_fill_price
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s  --
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s
                 )
                 RETURNING *
             """, (
@@ -101,7 +101,8 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                 position_data.get('pnl_pct', 0),
                 position_data.get('status', 'open'),
                 position_data.get('entry_note'),
-                position_data.get('tags')
+                position_data.get('tags'),
+                position_data.get('user_fill_price')
             ))
             return cur.fetchone()
 
@@ -200,11 +201,11 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                     shares, entry_price, exit_price, total_cost, gross_proceeds,
                     net_proceeds, entry_fees, exit_fees, pnl, pnl_pct,
                     holding_days, exit_reason, entry_fx_rate, exit_fx_rate,
-                    entry_note, exit_note, tags
+                    entry_note, exit_note, tags, fill_price
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s
+                    %s, %s, %s, %s
                 )
                 RETURNING *
             """, (
@@ -230,7 +231,8 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                 trade_data.get('exit_fx_rate'),
                 trade_data.get('entry_note'),
                 trade_data.get('exit_note'),
-                trade_data.get('tags')
+                trade_data.get('tags'),
+                trade_data.get('fill_price')
             ))
             return cur.fetchone()
 

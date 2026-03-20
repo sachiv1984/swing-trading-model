@@ -25,6 +25,7 @@ export default function TradeEntry() {
     entry_date: new Date().toISOString().split("T")[0],
     shares: "",
     entry_price: "",
+    fill_price: "",
     stop_price: "",
     fx_rate: "1",
     atr_value: "",
@@ -190,6 +191,7 @@ export default function TradeEntry() {
       entry_date: formData.entry_date,
       shares: parseFloat(formData.shares),
       entry_price: parseFloat(formData.entry_price),
+      fill_price: formData.fill_price ? parseFloat(formData.fill_price) : undefined,
       current_price: parseFloat(formData.entry_price),
       fx_rate: parseFloat(formData.fx_rate),
       atr_value: parseFloat(formData.atr_value) || null,
@@ -269,6 +271,19 @@ export default function TradeEntry() {
               value={formData.entry_price}
               onChange={(e) => handleChange("entry_price", e.target.value)}
               placeholder="0.00"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+            />
+          </div>
+
+          {/* Fill Price (optional) */}
+          <div className="space-y-2">
+            <Label className="text-slate-400">Fill Price (optional)</Label>
+            <Input
+              type="number"
+              step="0.01"
+              value={formData.fill_price}
+              onChange={(e) => handleChange("fill_price", e.target.value)}
+              placeholder="Actual broker fill price"
               className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
             />
           </div>

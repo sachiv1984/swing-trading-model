@@ -16,6 +16,7 @@ class AddPositionRequest(BaseModel):
     entry_date: str
     shares: float  # Supports fractional shares
     entry_price: float  # Native currency (USD for US, GBP for UK)
+    fill_price: Optional[float] = None  # User's actual broker fill price in native currency (optional)
     current_price: Optional[float] = None
     fx_rate: Optional[float] = None
     atr_value: Optional[float] = None

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-18 (BLG-TECH-08 closed — ADR-003 authored, Head of Engineering sign-off; pre-sprint resolution of v2.1 EPIC-01/ST-01)
+**Last Updated:** 2026-03-20 (BLG-FEAT-03 closed — ST-14 Slippage Tracking shipped v2.1; BLG-FR-02 closed — ST-13 Tax Year CSV Export shipped v2.1; BLG-FE-01 + BLG-BE-03 filed from ST-14 DoQ observations)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
@@ -51,23 +51,6 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ---
 
 ## 2. Product Feature Backlog (User-Facing)
-
----
-
-### BLG-FEAT-03 — Slippage Tracking
-**Priority:** P2
-**Target release:** v2.1
-**Effort:** Low–Medium (data model update required — schema migration + trade entry capture logic + display)
-
-Track and display trade slippage per trade and as a portfolio average.
-
-**Indicative Formula**
-
-`(Fill Price - Market Price) / Market Price`
-
-Requires data model update — Fill Price must be captured at trade entry (not currently stored). This is the primary pre-work gate: `data_model.md` must define the Fill Price field and migration path before implementation begins.
-
-> **Disposition (2026-03-15 — Product Owner):** Assigned to v2.1 alongside Chart Interactivity and Watchlists. No displacement required — v2.1 is not yet planned. Pull into v2.1 release planning when capacity is available. Orphan status resolved.
 
 ---
 
@@ -313,12 +296,53 @@ CLAUDE.md §2 action-now patch applied ("Story commits must land on the branch m
 
 ---
 
+### BLG-FE-01 — Slippage StatsCard uses unsupported gradient key (cosmetic)
+**Priority:** P3 (Low)
+**Type:** Frontend / Cosmetic
+**Owner:** Base44 Frontend
+**Source:** ST-14 DoQ review observation — 2026-03-20
+**Cycle added:** 2026-03-18__release-v2.1
+**Effort:** XS (<30 min)
+**Target release:** v2.2
+
+**Problem**
+`TradeHistory.js` passes `color="cyan"` to the Avg Slippage `StatsCard`. The `StatsCard` gradient map has no `"cyan"` key — the card renders without the expected gradient background. All non-null slippage states (negative/emerald, positive/rose) use colour-coded values in the cell, so this is a cosmetic regression on the summary card only.
+
+**Acceptance Criteria**
+- Avg Slippage StatsCard renders with a supported gradient key (e.g. `"slate"` or `"violet"`) when slippage is null/zero
+- No regression to the cell-level colour coding (emerald/rose) in `TradeHistoryTable.js`
+
+---
+
+### BLG-BE-03 — Latent CSV export import bug: wrong function name in trade_service.py
+**Priority:** P2 (Medium)
+**Type:** Backend / Defect
+**Owner:** Head of Engineering
+**Source:** ST-14 DoQ review observation — 2026-03-20
+**Cycle added:** 2026-03-18__release-v2.1
+**Effort:** XS (<15 min)
+**Target release:** v2.1 (or earliest opportunity)
+
+**Problem**
+`backend/services/trade_service.py` imports `get_all_trade_history` from `database`, but the actual function in `database.py` is `get_all_closed_trades_for_csv_export`. The import will raise `ImportError` at runtime if the CSV export path (`GET /trades/export/csv`) is exercised. The bug is latent — the endpoint is defined but this code path is not covered by any current automated test.
+
+This was introduced when BLG-FEAT-07 (CSV Export of Trade History) was shipped. It went undetected because the import error only fires when the function is called, not at module load time (the import is inside `trade_csv_service.py`).
+
+**Acceptance Criteria**
+- `trade_service.py` (or whichever service handles `/trades/export/csv`) imports the correct function name from `database.py`
+- `GET /trades/export/csv` returns a valid CSV without error
+- Regression confirmed: the incorrect import name is present before the fix
+
+---
+
 ## Closed Items
 
 Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| BLG-FEAT-03 | Slippage Tracking | v2.1 | 2026-03-18__release-v2.1 | EPIC-05/ST-14 |
+| BLG-FR-02 | Tax Year P&L Report CSV Export | v2.1 | 2026-03-18__release-v2.1 | EPIC-05/ST-13 |
 | BLG-TECH-08 | Async notification delivery ADR | v2.1 (pre-sprint) | 2026-03-18__release-v2.1 | EPIC-01/ST-01 |
 | BLG-GOV-01 | Roadmap stage document consolidation | v2.0 | 2026-03-17__release-v2.0 | EPIC-06/ST-18 |
 | BLG-GOV-02 | Ideas register (replace per-file idea submissions) | v2.0 | 2026-03-17__release-v2.0 | EPIC-06/ST-19 |
@@ -429,28 +453,6 @@ Server-side PDF generation of the tax year P&L report with consistent formatting
 - Browser-print remains available as fallback
 
 **Scope constraint:** This covers the tax year P&L report only. Not a generic PDF export framework. Any expansion to other reports requires a new backlog item.
-
----
-
-### BLG-FR-02 — Tax Year P&L Report CSV Table Export
-**Priority:** P2 (Medium)
-**Type:** Feature — Financial Reporting
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260317-02 — v2.0 staging feedback (IW-20260317-01)
-**Cycle added:** 2026-03-18__item-4.3
-**Target release:** v2.1
-
-**Problem**
-The tax year P&L report has no machine-readable export. Accountants and tax software may require structured data rather than a rendered document.
-
-**Proposed solution**
-CSV export of the tax year P&L report — a format conversion of the existing endpoint response. Minimal infrastructure; immediate value.
-
-**Acceptance Criteria**
-- `GET /reports/tax-year?format=csv` returns a well-formed CSV with headers
-- All data fields match the JSON response exactly
-- CSV column headers are human-readable (not internal field names)
-- No schema migration required
 
 ---
 

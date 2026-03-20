@@ -5,7 +5,7 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 2.1.1
+**Version:** 2.1.2
 **Last Updated:** 2026-03-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -131,13 +131,16 @@ Each endpoint file follows a consistent structure:
 
 ## Versioning
 
-- **Current contract version:** 2.1.1
-- **Change type:** v2.1 Sprint — ST-13 (reports_endpoints.md v0.3 — format=csv added to GET /reports/tax-year).
-- **Previous version:** 2.1.0
+- **Current contract version:** 2.1.2
+- **Change type:** v2.1 Sprint — ST-14 (trade_endpoints.md v2.1.0 — fill_price, slippage_pct per trade; avg_slippage_pct summary).
+- **Previous version:** 2.1.1
 
 **Error Response Standard:** Canonical error response rules are defined in `conventions.md §13`. All endpoint error sections reference this standard via their "Errors use the standard error envelope from conventions.md" clause.
 
 ### Changelog (Summary)
+
+- **2.1.2 (2026-03-20)**
+- trade_endpoints.md v2.1.0: `fill_price` (float|null) and `slippage_pct` (float|null) added per trade in `GET /trades` response. `avg_slippage_pct` (float|null) added to top-level summary. Data model gate cleared (fill_price pre-existing in data_model.md v1.2, countersigned 2026-03-20). ST-14 — v2.1 release planning cycle 2026-03-18__release-v2.1.
 
 - **2.1.1 (2026-03-20)**
 - reports_endpoints.md v0.3: `format=csv` added to `GET /reports/tax-year`. 5-row metadata block + 17-column trades table. `format` validation tightened (unknown value → 400). ST-13 — v2.1 release planning cycle 2026-03-18__release-v2.1.

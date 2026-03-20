@@ -101,6 +101,7 @@ from services import (
     # Reports service
     get_tax_year_report,
     build_tax_year_pdf,
+    build_tax_year_csv,
 )
 app = FastAPI(title=API_TITLE)
 
@@ -227,6 +228,7 @@ def add_position_endpoint(request: AddPositionRequest):
             entry_date=request.entry_date,
             shares=request.shares,
             entry_price=request.entry_price,
+            fill_price=request.fill_price,
             fx_rate=request.fx_rate,
             atr_value=request.atr_value,
             stop_price=request.stop_price,
@@ -372,18 +374,19 @@ def get_trades_endpoint():
 
 # ---------------------------------------------------------------------------
 # Reports endpoints — ST-04, EPIC-02, v2.0 / ST-12 PDF export, EPIC-05, v2.1
-# Spec: docs/specs/api_contracts/reports_endpoints.md v0.2
+# Spec: docs/specs/api_contracts/reports_endpoints.md v0.3
 # ---------------------------------------------------------------------------
 
 @app.get("/reports/tax-year")
 def get_tax_year_report_endpoint(year: Optional[int] = None, format: Optional[str] = None):
     """
-    GET /reports/tax-year?year=YYYY[&format=pdf]
+    GET /reports/tax-year?year=YYYY[&format=pdf|csv]
 
     Returns a UK tax-year P&L statement for all closed trades whose
     exit_date falls within the specified tax year (6 April to 5 April).
     When format=pdf, returns a PDF file download instead of JSON.
-    Spec: reports_endpoints.md v0.2
+    When format=csv, returns a CSV file download instead of JSON.
+    Spec: reports_endpoints.md v0.3
     """
     from fastapi.responses import JSONResponse, Response
     if year is None:
@@ -392,6 +395,9 @@ def get_tax_year_report_endpoint(year: Optional[int] = None, format: Optional[st
     if year < 1000 or year > 9999:
         return JSONResponse(status_code=400,
             content={"status": "error", "message": "year must be a valid four-digit integer"})
+    if format is not None and format not in ("pdf", "csv"):
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "format must be one of: pdf, csv"})
     try:
         data = get_tax_year_report(year)
         if format == "pdf":
@@ -401,6 +407,15 @@ def get_tax_year_report_endpoint(year: Optional[int] = None, format: Optional[st
                 media_type="application/pdf",
                 headers={
                     "Content-Disposition": f'attachment; filename="tax-year-{year}-pnl.pdf"'
+                },
+            )
+        if format == "csv":
+            csv_text = build_tax_year_csv(data)
+            return Response(
+                content=csv_text.encode("utf-8"),
+                media_type="text/csv",
+                headers={
+                    "Content-Disposition": f'attachment; filename="tax-year-{year}-pnl.csv"'
                 },
             )
         return {"status": "ok", "data": data}

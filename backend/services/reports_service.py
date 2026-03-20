@@ -3,7 +3,7 @@ Reports Service
 
 Business logic for the tax-year P&L report.
 
-Spec: docs/specs/api_contracts/reports_endpoints.md v0.2
+Spec: docs/specs/api_contracts/reports_endpoints.md v0.3
 Data model: docs/specs/data_model.md §3 (trade_history), §2 (positions)
 
 Schema note: trade_history stores exit value as net_proceeds (exit proceeds
@@ -12,6 +12,8 @@ exit_proceeds_gbp maps to net_proceeds. fees are deductible for tax purposes,
 so net_proceeds is the correct value.
 """
 
+import csv
+import io
 from datetime import date, datetime, timezone
 from io import BytesIO
 from typing import Dict
@@ -295,3 +297,69 @@ def build_tax_year_pdf(report_data: dict) -> bytes:
 
     doc.build(story)
     return buffer.getvalue()
+
+
+def build_tax_year_csv(report_data: dict) -> str:
+    """
+    Render a tax-year P&L report dict as a CSV string.
+
+    Structure per spec reports_endpoints.md v0.3:
+      - Section 1: 5-row metadata block (key/value pairs)
+      - Row 6: blank
+      - Row 7: column header row (17 columns)
+      - Rows 8+: trade data rows
+
+    Args:
+        report_data: Dict returned by get_tax_year_report().
+
+    Returns:
+        UTF-8 CSV string.
+    """
+    output = io.StringIO()
+    writer = csv.writer(output, lineterminator="\n")
+
+    summary = report_data["summary"]
+
+    # Section 1 — Metadata (5 rows)
+    writer.writerow(["Tax Year", report_data["tax_year_label"]])
+    writer.writerow(["Generated At", report_data["generated_at"]])
+    writer.writerow(["Total Realised P&L (GBP)", summary["total_realised_pnl"]])
+    writer.writerow(["Total Closed Trades", summary["total_closed_trades"]])
+    writer.writerow(["Win Rate (%)", summary["win_rate"]])
+
+    # Blank row
+    writer.writerow([])
+
+    # Section 2 — Trades table
+    headers = [
+        "Trade ID", "Ticker", "Market", "Entry Date", "Exit Date",
+        "Holding Days", "Entry Price (Native)", "Exit Price (Native)",
+        "Entry FX Rate (GBP/USD)", "Exit FX Rate (GBP/USD)", "Shares",
+        "Total Cost (GBP)", "Exit Proceeds (GBP)", "Realised P&L (GBP)",
+        "P&L %", "Currency", "Tags",
+    ]
+    writer.writerow(headers)
+
+    for t in report_data.get("trades", []):
+        tags = "; ".join(t.get("tags") or [])
+        writer.writerow([
+            t["id"],
+            t["ticker"],
+            t["market"],
+            t["entry_date"],
+            t["exit_date"],
+            t["holding_days"],
+            t["entry_price_native"],
+            t["exit_price_native"],
+            t["entry_fx_rate"] if t.get("entry_fx_rate") is not None else "",
+            t["exit_fx_rate"] if t.get("exit_fx_rate") is not None else "",
+            t["shares"],
+            t["total_cost_gbp"],
+            t["exit_proceeds_gbp"],
+            t["realised_pnl_gbp"],
+            t["pnl_pct"],
+            t["currency"],
+            tags,
+        ])
+
+    return output.getvalue()

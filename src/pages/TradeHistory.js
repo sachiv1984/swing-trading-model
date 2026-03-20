@@ -174,7 +174,7 @@ export default function TradeHistory() {
       ) : (
         <>
           {/* Summary stats row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <StatsCard
               title="Total P&L"
               value={`${totalPnL >= 0 ? "+" : ""}£${totalPnL.toFixed(2)}`}
@@ -203,6 +203,17 @@ export default function TradeHistory() {
               trend="down"
               icon={TrendingDown}
               gradient="rose"
+            />
+            <StatsCard
+              title="Avg Slippage"
+              value={
+                tradesData?.avg_slippage_pct != null
+                  ? `${tradesData.avg_slippage_pct > 0 ? "+" : ""}${tradesData.avg_slippage_pct.toFixed(2)}%`
+                  : "—"
+              }
+              trend={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "up" : "down") : "neutral"}
+              icon={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? TrendingUp : TrendingDown) : TrendingUp}
+              gradient={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "emerald" : "rose") : "cyan"}
             />
           </div>
 

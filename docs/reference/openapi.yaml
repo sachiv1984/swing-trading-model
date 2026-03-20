@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 2.1.1
+  version: 2.1.2
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -237,7 +237,8 @@ paths:
       description: >
         Returns realised P&L for a UK tax year (6 Apr YYYY to 5 Apr YYYY+1),
         including closed trades, summary totals, and estimated unrealised P&L on open positions.
-        Pass format=pdf for a PDF download or format=csv for a CSV download instead of JSON.
+        Pass format=pdf to receive a PDF file download instead of JSON.
+        Pass format=csv to receive a CSV file download instead of JSON.
         Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.3.
       parameters:
         - in: query
@@ -1671,12 +1672,46 @@ components:
     TradeHistoryResponse:
       type: object
       description: |
-        Intentionally broad to avoid drift. Canonical nested field definitions live in:
-        docs/specs/api_contracts/trade_endpoints.md
-        v1.9.0: trade objects include holding_days (integer, calendar days from
-        entry_date to exit_date inclusive). Both pnl_pct and pnl_percent are
-        returned for backward compatibility.
-      additionalProperties: true
+        Canonical nested field definitions: docs/specs/api_contracts/trade_endpoints.md
+        v1.9.0: trade objects include holding_days; both pnl_pct and pnl_percent returned for compatibility.
+        v2.1.0 (ST-14): avg_slippage_pct added to top-level summary; fill_price and slippage_pct added per trade.
+      properties:
+        total_trades: { type: integer }
+        win_rate: { type: number }
+        total_pnl: { type: number }
+        avg_slippage_pct:
+          type: number
+          nullable: true
+          description: "Mean slippage across all trades with fill_price recorded. null when no trades have fill_price."
+        trades:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: uuid }
+              ticker: { type: string }
+              market: { type: string, enum: [US, UK] }
+              entry_date: { type: string, format: date }
+              exit_date: { type: string, format: date }
+              shares: { type: number }
+              entry_price: { type: number }
+              exit_price: { type: number }
+              fill_price:
+                type: number
+                nullable: true
+                description: "Actual fill price in native currency. null for trades entered before v2.1."
+              slippage_pct:
+                type: number
+                nullable: true
+                description: "(fill_price − entry_price) / entry_price * 100. Negative = favourable. null when fill_price is null."
+              pnl: { type: number }
+              pnl_pct: { type: number }
+              pnl_percent: { type: number, description: "Alias of pnl_pct for backward compatibility" }
+              holding_days: { type: integer }
+              exit_reason: { type: string, nullable: true }
+              entry_note: { type: string, nullable: true }
+              exit_note: { type: string, nullable: true }
+              tags: { type: array, items: { type: string } }
 
     CashTransactionRequest:
       type: object

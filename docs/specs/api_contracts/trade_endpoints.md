@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.9.0
-**Last Updated:** 2026-03-18
+**Version:** 2.1.0
+**Last Updated:** 2026-03-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -59,6 +59,7 @@ Response uses the standard success envelope from **conventions.md**.
   "total_trades": 42,
   "win_rate": 58.5,
   "total_pnl": 5200.00,
+  "avg_slippage_pct": -0.05,
   "trades": [
     {
       "id": "750e8400-e29b-41d4-a716-446655440000",
@@ -69,6 +70,8 @@ Response uses the standard success envelope from **conventions.md**.
       "shares": 10.5,
       "entry_price": 622.00,
       "exit_price": 920.00,
+      "fill_price": 621.25,
+      "slippage_pct": -0.12,
       "pnl": 3200.00,
       "pnl_pct": 35.8,
       "pnl_percent": 35.8,
@@ -87,6 +90,9 @@ Response uses the standard success envelope from **conventions.md**.
 | Field | Notes |
 |-------|-------|
 | `trades` | Closed trades only. Empty array if no closed trades exist |
+| `avg_slippage_pct` | Portfolio average slippage across all trades where `fill_price` is present. Computed server-side as the mean of per-trade `slippage_pct`. `null` when no trades have `fill_price` recorded |
+| `fill_price` | Actual fill price in native currency at entry. `null` for trades entered before v2.1 (Fill Price capture not yet active) |
+| `slippage_pct` | Per-trade slippage as a percentage: `(fill_price − entry_price) / entry_price * 100`. Negative = favourable (filled below market). Positive = unfavourable (filled above market). `null` when `fill_price` is `null`. Rounded to 2 decimal places |
 | `pnl_pct` and `pnl_percent` | Both fields are returned with the same value for compatibility |
 | `holding_days` | Number of calendar days from `entry_date` to `exit_date` inclusive |
 | `exit_reason` | The reason recorded at exit. `null` values are normalised to `"Manual Exit"` in the analytics service but stored as-is here |
@@ -266,3 +272,4 @@ Same shape as GET response — returns the full saved reflection after upsert.
 | 1.8.4 | 2026-02-17 | Initial spec — GET /trades, GET /trades/export/csv. Both `pnl_pct` and `pnl_percent` fields documented for backward compatibility |
 | 1.9.0 | 2026-03-02 | S2-08 (EPIC-06/BLG-TECH-09): Backend fix — `holding_days` added to `formatted_trades` dict in `trade_service.py` (was present in DB and spec but absent from API response). `GET /trades` now returns `holding_days` per spec. OBS-QWB-R3-01 resolved. TASK-28/29/30 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |
 | 2.0.0 | 2026-03-11 | ST-02 (EPIC-01, v1.9): Add GET /trades/{trade_id}/reflection and POST /trades/{trade_id}/reflection. Schema: trade_reflections table (data_model.md v1.8). Spec: trade_reflection.md §7. |
+| 2.1.0 | 2026-03-20 | ST-14 (EPIC-05, v2.1): Add `fill_price` (float\|null) and `slippage_pct` (float\|null) per trade; add `avg_slippage_pct` (float\|null) to top-level summary. Data model gate cleared: Data Model & Domain Schema Owner + Head of Specs Team countersigned 2026-03-20. |
