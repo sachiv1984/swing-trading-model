@@ -78,20 +78,23 @@
         "ST-03": {
           "title": "Backend: alert rules engine",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Engineering",
           "github_issue": 94,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "c64d074",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-02 spec signed off by Head of Specs Team; alerts_endpoints.md locked before delegation proceeds",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-20T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md",
+            "docs/adr/ADR-003-notification-delivery-architecture.md"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 2. Cannot delegate until ST-02 spec is locked. Re-invoke run sprint after ST-02 signs off to create delegation record."
+          "last_completed_substep": "commit",
+          "notes": "Implemented 2026-03-20. backend/services/alerts_service.py (evaluation engine, CRUD, delivery stub), backend/routers/alerts.py (10 endpoints), main.py wired. 34 unit tests passing. Tables bootstrapped via ensure_alerts_tables() on app startup (CREATE IF NOT EXISTS). Email delivery is a stub — ST-04 will wire real SMTP. Head of Engineering sign-off 2026-03-20."
         },
         "ST-04": {
           "title": "Backend: notification delivery (email)",
@@ -480,11 +483,7 @@
     }
   },
 
-  "blocked_items": [
-    "EPIC-02/ST-02",
-    "EPIC-05/ST-13",
-    "EPIC-05/ST-14"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "EPIC-01/ST-01",
     "EPIC-02/ST-02",
@@ -500,8 +499,12 @@
   ],
   "completed_items": [
     "EPIC-01/ST-01",
+    "EPIC-02/ST-02",
+    "EPIC-02/ST-03",
     "EPIC-04/ST-11",
     "EPIC-05/ST-12",
+    "EPIC-05/ST-13",
+    "EPIC-05/ST-14",
     "EPIC-05/ST-15",
     "EPIC-06/ST-16",
     "EPIC-06/ST-17",
