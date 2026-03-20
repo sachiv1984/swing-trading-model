@@ -139,14 +139,14 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-03-20T22:36:48Z",
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/notifications.md",
             "docs/specs/api_contracts/alerts_endpoints.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": "commit",
-          "notes": "Implemented 2026-03-20. NotificationPreferences.js (GET/PATCH wiring, optimistic toggle, 150ms debounce, Saved fade, error revert, skeleton, error state), NotificationTabBar.js (Feed/Preferences sub-nav), PreferenceRow.js (animated Saved label), Layout.js (Notifications nav item), App.js (dual routes), utils/index.js (NotificationPreferences route). Pending: Director of Quality staging sign-off."
+          "last_completed_substep": "accepted",
+          "notes": "Implemented 2026-03-20. NotificationPreferences.js (GET/PATCH wiring, optimistic toggle, 150ms debounce, Saved fade, error revert, skeleton, error state), NotificationTabBar.js (Feed/Preferences sub-nav), PreferenceRow.js (animated Saved label), Layout.js (Notifications nav item), App.js (dual routes), utils/index.js (NotificationPreferences route). Three post-commit fixes: (1) Body(...) annotation on PATCH, (2) route ordering — preferences before wildcard PATCH /notifications/{id}, (3) startup race — ensure_alerts_tables() moved to @app.on_event('startup') + lazy call in get_preferences/update_preferences. Director of Quality sign-off 2026-03-20: toggle saves correctly in staging, 'Saved' confirmation visible, Feed tab no longer 404s."
         },
         "ST-06": {
           "title": "Frontend: in-app notification feed",
