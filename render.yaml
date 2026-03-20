@@ -27,6 +27,12 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false          # Human must set this in Render dashboard — see runbook §3
+      - key: RESEND_API_KEY
+        sync: false          # Human must set — obtain from resend.com dashboard
+      - key: ALERT_FROM_EMAIL
+        sync: false          # Human must set — verified sender in Resend (e.g. alerts@yourdomain.com)
+      - key: ALERT_TO_EMAIL
+        sync: false          # Human must set — your email address to receive alerts
       - key: PYTHON_VERSION
         value: "3.11.0"
 
