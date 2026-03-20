@@ -7,6 +7,53 @@
 
 # API Changelog
 
+## v2.1.1 (2026-03-20 — Release v2.1)
+
+### reports_endpoints.md — v0.3
+
+**EPIC:** EPIC-05 (Financial Reporting Exports & Enhancements)
+**ST:** ST-13
+
+| Change | Details |
+|--------|---------|
+| New format: `GET /reports/tax-year?format=csv` | CSV download of tax-year P&L report. `Content-Type: text/csv`. `Content-Disposition: attachment; filename="tax-year-{year}-pnl.csv"`. |
+| CSV structure | 5-row metadata block (Tax Year, Generated At, Total Realised P&L, Total Closed Trades, Win Rate %), blank row, 17-column trades table with human-readable headers. |
+| Column headers | Trade ID, Ticker, Market, Entry Date, Exit Date, Holding Days, Entry Price (Native), Exit Price (Native), Entry FX Rate (GBP/USD), Exit FX Rate (GBP/USD), Shares, Total Cost (GBP), Exit Proceeds (GBP), Realised P&L (GBP), P&L %, Currency, Tags. |
+| `format` validation tightened | Unknown `format` values now return `400 — "format must be one of: pdf, csv"`. Previously unspecified. |
+| No schema migration | Pure format conversion of existing endpoint data. |
+
+**Sign-off:** Head of Engineering (implementation) — pending
+
+---
+
+## v2.1.0 (2026-03-20 — Release v2.1)
+
+### alerts_endpoints.md — v0.1 (new file)
+
+**EPIC:** EPIC-02 (Alerts & Notifications)
+**ST:** ST-02
+**ADR:** ADR-003 (FastAPI BackgroundTasks delivery architecture)
+
+| Change | Details |
+|--------|---------|
+| New endpoint: `GET /alerts/rules` | List alert rules for portfolio. Seeds 4 defaults on first call. Returns array with `id`, `type`, `enabled`, `threshold_percent`. |
+| New endpoint: `POST /alerts/rules` | Create alert rule (used to restore after deletion). Returns `400` if type already exists. |
+| New endpoint: `PATCH /alerts/rules/{rule_id}` | Update rule `enabled` or `threshold_percent`. |
+| New endpoint: `DELETE /alerts/rules/{rule_id}` | Delete alert rule. Standard DELETE envelope. |
+| New endpoint: `POST /alerts/evaluate` | Evaluate all enabled rules against current portfolio state. Enqueues email delivery as FastAPI BackgroundTask. Returns `notifications_created`, `delivery_tasks_enqueued`, `redelivery_tasks_enqueued`. |
+| New endpoint: `GET /notifications` | Notification feed, newest first. Page-based pagination (50/page). Returns `notifications[]`, `total`, `page`, `per_page`, `has_more`. |
+| New endpoint: `PATCH /notifications/{id}` | Mark one notification as read. Idempotent. |
+| New endpoint: `POST /notifications/mark-all-read` | Mark all unread as read. Returns `marked_read_count`. |
+| New endpoint: `GET /notifications/preferences` | Per-type email preferences. Seeds defaults on first call. |
+| New endpoint: `PATCH /notifications/preferences` | Update preferences for one or more alert types. Map body: `{ alert_type_key: { email_enabled: bool } }`. |
+| Architecture | Delivery via FastAPI `BackgroundTasks` — no Redis/Celery. Retry: re-enqueue on next evaluation if `delivered = false` and `delivery_attempts < 3`. |
+
+**Data model:** `data_model.md` v1.9 — 3 new tables: `alert_rules`, `notifications` (with delivery tracking), `notification_preferences`.
+
+**Sign-off:** Head of Specs Team — 2026-03-20
+
+---
+
 ## v2.0.0 (2026-03-17 — Release v2.0)
 
 ### reports_endpoints.md — v0.1 (new file)

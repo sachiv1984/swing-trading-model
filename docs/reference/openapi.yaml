@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 1.9.1
+  version: 2.1.1
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -50,6 +50,12 @@ tags:
     description: Strategy configuration
   - name: Journal
     description: Trade journaling and notes
+  - name: Reports
+    description: Financial reporting (tax-year P&L)
+  - name: Alerts
+    description: Alert rules configuration and evaluation
+  - name: Notifications
+    description: Notification feed and delivery preferences
 
 paths:
   /portfolio:
@@ -231,8 +237,8 @@ paths:
       description: >
         Returns realised P&L for a UK tax year (6 Apr YYYY to 5 Apr YYYY+1),
         including closed trades, summary totals, and estimated unrealised P&L on open positions.
-        Pass format=pdf to receive a PDF file download instead of JSON.
-        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.2.
+        Pass format=pdf for a PDF download or format=csv for a CSV download instead of JSON.
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.3.
       parameters:
         - in: query
           name: year
@@ -247,8 +253,8 @@ paths:
           required: false
           schema:
             type: string
-            enum: [pdf]
-          description: Response format. Omit for JSON (default). Pass pdf to receive a PDF download.
+            enum: [pdf, csv]
+          description: Response format. Omit for JSON (default). Pass pdf for PDF download. Pass csv for CSV download.
       responses:
         "200":
           description: Tax-year P&L report (JSON) or PDF download
@@ -290,6 +296,306 @@ paths:
                   PDF document containing the tax-year P&L report.
                   Returned when format=pdf query parameter is supplied.
                   Content-Disposition header set to attachment with filename tax-year-{year}-pnl.pdf.
+            text/csv:
+              schema:
+                type: string
+                description: >
+                  CSV file containing the tax-year P&L report.
+                  Returned when format=csv query parameter is supplied.
+                  Structure: 5-row metadata block, blank row, 17-column trades table with human-readable headers.
+                  Content-Disposition set to attachment with filename tax-year-{year}-pnl.csv.
+                  Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.3.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /alerts/rules:
+    get:
+      tags: [Alerts]
+      summary: List alert rules
+      description: >
+        Return all alert rules for the portfolio. Seeds default rules for all four alert types on first call.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      responses:
+        "200":
+          description: Alert rules list
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/AlertRule"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Alerts]
+      summary: Create alert rule
+      description: >
+        Create an alert rule. Returns 400 if a rule for this type already exists.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAlertRuleRequest"
+      responses:
+        "200":
+          description: Alert rule created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/AlertRule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /alerts/rules/{rule_id}:
+    patch:
+      tags: [Alerts]
+      summary: Update alert rule
+      description: >
+        Update enabled state or threshold_percent for an alert rule. Partial update.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAlertRuleRequest"
+      responses:
+        "200":
+          description: Alert rule updated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/AlertRule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Alerts]
+      summary: Delete alert rule
+      description: >
+        Delete an alert rule. May be recreated via POST /alerts/rules.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Alert rule deleted
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deleted:
+                            type: boolean
+                            example: true
+                          id:
+                            type: string
+                            format: uuid
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /alerts/evaluate:
+    post:
+      tags: [Alerts]
+      summary: Trigger alert evaluation
+      description: >
+        Evaluate all enabled alert rules against current portfolio state. Writes notification records
+        and enqueues email delivery as FastAPI BackgroundTasks (ADR-003). Response is immediate.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      responses:
+        "200":
+          description: Evaluation complete
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/AlertEvaluationResult"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: Get notification feed
+      description: >
+        Return notifications newest first. Page-based pagination, 50 items per page.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number (1-indexed)
+      responses:
+        "200":
+          description: Notification feed
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/NotificationFeedResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /notifications/{id}:
+    patch:
+      tags: [Notifications]
+      summary: Mark notification as read
+      description: >
+        Mark a single notification as read. Idempotent.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Notification marked read
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/NotificationItem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /notifications/mark-all-read:
+    post:
+      tags: [Notifications]
+      summary: Mark all notifications as read
+      description: >
+        Mark all unread notifications as read. Idempotent.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      responses:
+        "200":
+          description: All notifications marked read
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          marked_read_count:
+                            type: integer
+                            example: 12
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /notifications/preferences:
+    get:
+      tags: [Notifications]
+      summary: Get notification preferences
+      description: >
+        Return per-type email delivery preferences. Seeds defaults on first call.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      responses:
+        "200":
+          description: Notification preferences
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/NotificationPreferencesResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags: [Notifications]
+      summary: Update notification preferences
+      description: >
+        Update email preferences for one or more alert types. Partial update.
+        Body is a map of alert_type keys to preference objects.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNotificationPreferencesRequest"
+      responses:
+        "200":
+          description: Preferences updated — returns full updated preferences list
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/NotificationPreferencesResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -955,6 +1261,131 @@ components:
         data:
           description: Payload varies by endpoint.
           type: object
+
+    AlertRule:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary]
+        enabled:
+          type: boolean
+        threshold_percent:
+          type: number
+          nullable: true
+          description: Only for stop_loss_approach. null for other types.
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateAlertRuleRequest:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary]
+        enabled:
+          type: boolean
+          default: true
+        threshold_percent:
+          type: number
+          description: Required for stop_loss_approach. Must be > 0 and <= 100.
+          nullable: true
+
+    UpdateAlertRuleRequest:
+      type: object
+      description: At least one field required.
+      properties:
+        enabled:
+          type: boolean
+        threshold_percent:
+          type: number
+          nullable: true
+          description: Only applicable for stop_loss_approach. Must be > 0 and <= 100.
+
+    AlertEvaluationResult:
+      type: object
+      properties:
+        rules_evaluated:
+          type: integer
+        notifications_created:
+          type: integer
+        delivery_tasks_enqueued:
+          type: integer
+        redelivery_tasks_enqueued:
+          type: integer
+
+    NotificationItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        alert_type:
+          type: string
+          enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary]
+        title:
+          type: string
+          example: "Stop Loss Approach — AAPL"
+        message:
+          type: string
+        read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    NotificationFeedResponse:
+      type: object
+      properties:
+        notifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/NotificationItem"
+        total:
+          type: integer
+        page:
+          type: integer
+        per_page:
+          type: integer
+          example: 50
+        has_more:
+          type: boolean
+
+    NotificationPreferenceItem:
+      type: object
+      properties:
+        alert_type:
+          type: string
+          enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary]
+        email_enabled:
+          type: boolean
+
+    NotificationPreferencesResponse:
+      type: object
+      properties:
+        preferences:
+          type: array
+          items:
+            $ref: "#/components/schemas/NotificationPreferenceItem"
+
+    UpdateNotificationPreferencesRequest:
+      type: object
+      description: >
+        Map of alert_type keys to preference updates. Include only types to change.
+        Example: { "stop_loss_approach": { "email_enabled": false } }
+      additionalProperties:
+        type: object
+        properties:
+          email_enabled:
+            type: boolean
 
     ReflectionRequest:
       type: object

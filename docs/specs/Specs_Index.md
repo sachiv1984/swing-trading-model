@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-17
+**Last Updated:** 2026-03-20
 
 ---
 
@@ -102,6 +102,7 @@ It points to the **single canonical source**.
 - `*_endpoints.md`
 - `market_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-16): GET /market/status
 - `reports_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-17, ST-03): GET /reports/tax-year — UK tax-year P&L statement. Dual sign-off: Head of Specs Team + Financial Reporting & Records Owner (2026-03-17).
+- `alerts_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-20, ST-02): Alert rules CRUD, alert evaluation, notification feed, notification preferences. Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**
