@@ -329,24 +329,32 @@
         "ST-14": {
           "title": "BLG-FEAT-03: Slippage Tracking",
           "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "Head of Engineering + Data Model & Domain Schema Owner + Base44 Frontend",
+          "status": "in_progress",
+          "assigned_to": "Head of Engineering",
           "github_issue": 106,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
           "commit_sha": null,
-          "delegation_record_id": null,
+          "delegation_record_id": "DEL-20260319-04",
           "blocked_since_utc": null,
-          "unblock_criteria": "data_model.md Fill Price spec signed off (Data Model Owner + Head of Specs Team) before implementation begins",
+          "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/data_model.md",
+            "docs/specs/api_contracts/trade_endpoints.md",
             "docs/specs/frontend/pages/trade_history.md",
             "docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 2. Embedded data model gate — Fill Price field spec required before code."
+          "last_completed_substep": "data_model_gate_cleared",
+          "data_model_gate": {
+            "status": "cleared",
+            "cleared_utc": "2026-03-20T00:00:00Z",
+            "data_model_owner_sign_off": "APPROVED — fill_price DECIMAL(10,4) present in positions DDL, fields table, and v1.1→v1.2 migration. Formula computable without type/currency issues.",
+            "host_countersign": "COUNTERSIGNED — APPROVED — all Data Model Owner findings verified against data_model.md v1.8. No spec ambiguity blocking backend implementation.",
+            "fill_price_column": "positions.fill_price DECIMAL(10,4) nullable — added in migration v1.1→v1.2"
+          },
+          "notes": "Sprint 2. Data model gate cleared 2026-03-20 (fill_price pre-existing in data_model.md v1.2). API contract updated: trade_endpoints.md v2.1.0 adds fill_price, slippage_pct per trade and avg_slippage_pct summary. Reclassified to delegated_backend, delegated to Head of Engineering for implementation."
         },
         "ST-15": {
           "title": "BLG-OPS-03: Render PR Preview Environments",

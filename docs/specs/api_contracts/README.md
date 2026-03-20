@@ -5,8 +5,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 2.0.0
-**Last Updated:** 2026-03-17
+**Version:** 2.1.2
+**Last Updated:** 2026-03-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This directory contains the **backend API contracts** for the *Momentum Trading Assistant* web application.
@@ -128,13 +128,16 @@ Each endpoint file follows a consistent structure:
 
 ## Versioning
 
-- **Current contract version:** 2.0.0
-- **Change type:** v2.0 Sprint — ST-03 (reports_endpoints.md created — GET /reports/tax-year).
-- **Previous version:** 1.9.0
+- **Current contract version:** 2.1.2
+- **Change type:** v2.1 Sprint — ST-14 (trade_endpoints.md v2.1.0 — fill_price, slippage_pct per trade; avg_slippage_pct summary).
+- **Previous version:** 2.1.1
 
 **Error Response Standard:** Canonical error response rules are defined in `conventions.md §13`. All endpoint error sections reference this standard via their "Errors use the standard error envelope from conventions.md" clause.
 
 ### Changelog (Summary)
+
+- **2.1.2 (2026-03-20)**
+- trade_endpoints.md v2.1.0: `fill_price` (float|null) and `slippage_pct` (float|null) added per trade in `GET /trades` response. `avg_slippage_pct` (float|null) added to top-level summary. Data model gate cleared (fill_price pre-existing in data_model.md v1.2, countersigned 2026-03-20). ST-14 — v2.1 release planning cycle 2026-03-18__release-v2.1.
 
 - **2.0.0 (2026-03-17)**
 - reports_endpoints.md: created — `GET /reports/tax-year` endpoint. Tax-year P&L statement for UK tax years (6 April to 5 April). Attribution by `exit_date`. Response includes `tax_year_start`, `tax_year_end`, `tax_year_label`, `generated_at`, summary totals (realised P&L, gross profit/loss, win/loss counts, win rate, estimated unrealised P&L), and full per-trade breakdown. Future year returns 400. UK-only scope. ST-03 — v2.0 release planning cycle 2026-03-17__release-v2.0.

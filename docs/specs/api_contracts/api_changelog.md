@@ -1,11 +1,29 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.2.0
-**Last Updated:** 2026-03-18
+**Version:** 1.3.0
+**Last Updated:** 2026-03-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## v2.1.2 (2026-03-20 — Release v2.1)
+
+### trade_endpoints.md — v2.1.0
+
+**EPIC:** EPIC-05 (Financial Reporting Exports & Enhancements)
+**ST:** ST-14
+
+| Change | Details |
+|--------|---------|
+| New field: `fill_price` per trade | Actual fill price in native currency. `null` for trades entered before v2.1 (Fill Price capture not yet active). Source: `positions.fill_price`. |
+| New field: `slippage_pct` per trade | Computed server-side: `(fill_price − entry_price) / entry_price * 100`. Negative = favourable (filled below market). Positive = unfavourable. `null` when `fill_price` is `null`. Rounded to 2dp. |
+| New field: `avg_slippage_pct` (top-level) | Portfolio average slippage across all trades with `fill_price` recorded. `null` when no trades have `fill_price`. |
+| Data model gate | `fill_price` was pre-existing in `data_model.md` v1.2 (`positions` table, nullable `DECIMAL(10,4)`). Gate cleared: Data Model & Domain Schema Owner + Head of Specs Team countersigned 2026-03-20. |
+
+**Sign-off:** Data Model & Domain Schema Owner + Head of Specs Team (gate) — 2026-03-20
+
+---
 
 ## v2.0.0 (2026-03-17 — Release v2.0)
 
