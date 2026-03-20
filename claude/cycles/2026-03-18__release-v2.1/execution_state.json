@@ -130,22 +130,23 @@
         "ST-05": {
           "title": "Frontend: notification preferences page",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "Base44 Frontend",
           "github_issue": 97,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
+          "delegation_record_id": "DEL-20260320-01",
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-02 spec signed off; alerts_endpoints.md locked with preference model endpoint schema; Base44 prompt to be authored with exact API field names",
+          "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/notifications.md"
+            "docs/specs/frontend/pages/notifications.md",
+            "docs/specs/api_contracts/alerts_endpoints.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 2 stretch / Sprint 3. Cannot issue final Base44 prompt until ST-02 defines exact API field names for /notifications/preferences endpoints."
+          "last_completed_substep": "delegated",
+          "notes": "Base44 prompt issued 2026-03-20 (DEL-20260320-01). Implements /notifications/preferences route with GET/PATCH wiring, 4 alert type toggles, sub-nav, loading/error states."
         },
         "ST-06": {
           "title": "Frontend: in-app notification feed",

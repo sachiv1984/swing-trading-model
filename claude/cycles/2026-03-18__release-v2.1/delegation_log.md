@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-19
+**Last Updated:** 2026-03-20
 **Cycle:** 2026-03-18__release-v2.1
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -343,5 +343,132 @@ Add "Download PDF" button to the Reports page header per `docs/specs/frontend/pa
 - **Unblock criteria:** data_model.md updated with Fill Price field definition and migration path; Data Model & Domain Schema Owner sign-off; Head of Specs Team sign-off; commit on EPIC-05 branch
 - **Commit format required:** `[EPIC-05][ST-14] Spec Fill Price field in data_model.md — slippage tracking data model gate` pushed to `exec/2026-03-18__release-v2.1/EPIC-05`
 - **Status:** Pending
+
+---
+
+## DEL-20260320-01 — ST-05: Notification Preferences Page
+
+**Date:** 2026-03-20
+**Item:** EPIC-02 / ST-05
+**Classification:** delegated_frontend
+**Assigned to:** Base44 Frontend
+**GitHub issue:** #97
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-02
+
+**What is needed:**
+
+### Frontend — Base44 Frontend
+
+Implement the **Notification Preferences** page per `docs/specs/frontend/pages/notifications.md` v0.1.
+
+---
+
+#### Route
+
+`/notifications/preferences`
+
+---
+
+#### Sub-navigation
+
+Both `/notifications` and `/notifications/preferences` share a tab bar immediately below the page header:
+
+| Tab | Route | Active? |
+|-----|-------|---------|
+| Feed | `/notifications` | No (on this page) |
+| Preferences | `/notifications/preferences` | Yes |
+
+---
+
+#### Page header
+
+- H1: **"Notification Preferences"**
+- Subtitle: `"Configure which alerts you receive."`
+
+---
+
+#### Preferences list
+
+On page load: call `GET /notifications/preferences`.
+
+Response shape:
+```json
+{
+  "status": "ok",
+  "data": {
+    "preferences": [
+      { "alert_type": "stop_loss_approach", "email_enabled": true },
+      { "alert_type": "grace_period_warning", "email_enabled": true },
+      { "alert_type": "market_regime_change", "email_enabled": true },
+      { "alert_type": "daily_portfolio_summary", "email_enabled": true }
+    ]
+  }
+}
+```
+
+Render one row per alert type with a toggle switch for `email_enabled`:
+
+| Alert Type key | Display label | Description |
+|----------------|---------------|-------------|
+| `stop_loss_approach` | Stop Loss Approach | Notify when current stop is within threshold % of price |
+| `grace_period_warning` | Grace Period Warning | Notify on days 8–9 of the grace period |
+| `market_regime_change` | Market Regime Change | Notify when market regime transitions to risk-off |
+| `daily_portfolio_summary` | Daily Portfolio Summary | Receive a daily digest of portfolio status |
+
+---
+
+#### Toggle behaviour
+
+No Save button — each toggle persists immediately.
+
+On toggle:
+1. Optimistic update: flip the toggle immediately.
+2. Fire `PATCH /notifications/preferences` with 150ms debounce.
+
+Request body (send only the toggled type):
+```json
+{ "stop_loss_approach": { "email_enabled": false } }
+```
+
+3. On success: show brief inline **"Saved"** label adjacent to the toggle (fade out after 2s).
+4. On error: revert toggle to prior state + inline error `"Failed to save preference. Please try again."` below the row.
+
+---
+
+#### Loading state
+
+Skeleton rows (4 rows at preference-row height) while `GET /notifications/preferences` resolves.
+
+#### Error state (load failure)
+
+Inline error panel: `"Unable to load preferences. Please refresh."`
+
+---
+
+#### Channel scope
+
+Email is the only delivery channel for v2.1. Do not render SMS or any other channel toggle.
+
+---
+
+#### Commit format
+
+`[EPIC-02][ST-05] Implement notification preferences page`
+
+**Spec references:**
+- `docs/specs/frontend/pages/notifications.md` v0.1 — Page 2 (Notification Preferences)
+- `docs/specs/api_contracts/alerts_endpoints.md` — `GET /notifications/preferences`, `PATCH /notifications/preferences`
+
+**Staging API:** `https://trading-assistant-api-staging.onrender.com`
+
+**Unblock criteria:**
+- Preferences page renders at `/notifications/preferences`
+- Sub-navigation tab bar present and correct on both `/notifications` and `/notifications/preferences`
+- All 4 alert types listed with correct display labels and descriptions
+- Toggle persists via `PATCH /notifications/preferences` (confirmed in staging)
+- Loading and error states implemented
+- Director of Quality sign-off
+
+**Status:** Pending
 
 ---
