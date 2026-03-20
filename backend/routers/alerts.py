@@ -10,9 +10,9 @@ IMPORTANT — router ordering constraint (spec §Router ordering constraint):
 Contract: docs/specs/api_contracts/alerts_endpoints.md v0.1
 """
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Body, HTTPException
 from pydantic import BaseModel, field_validator
-from typing import Optional
+from typing import Any, Dict, Optional
 from database import get_portfolio
 from services.alerts_service import (
     get_alert_rules,
@@ -270,7 +270,7 @@ def get_preferences_endpoint():
 
 
 @router.patch("/notifications/preferences")
-def update_preferences_endpoint(request: dict):
+def update_preferences_endpoint(request: Dict[str, Any] = Body(...)):
     """
     Partial update of notification preferences.
     Body: {alert_type: {"email_enabled": bool}, ...}
