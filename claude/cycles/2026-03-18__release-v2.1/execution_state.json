@@ -275,7 +275,7 @@
     "EPIC-05": {
       "status": "pr_open",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
-      "pr_number": null,
+      "pr_number": 117,
       "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-05.md",
@@ -318,13 +318,13 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-03-20T00:00:00Z",
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/reports_endpoints.md"
           ],
           "deviations_filed": false,
           "last_completed_substep": "commit",
-          "notes": "Sprint 2. Spec committed 9c017f4 (reports_endpoints.md v0.3). Implementation: build_tax_year_csv() in reports_service.py; format=csv branch in main.py; Download CSV button in Reports.js. Head of Engineering sign-off pending DoQ review."
+          "notes": "Sprint 2. Spec committed 9c017f4 (reports_endpoints.md v0.3). Implementation: build_tax_year_csv() in reports_service.py; format=csv branch in main.py; Download CSV button in Reports.js. openapi.yaml csv gap fixed commit 208ca49. Director of Quality sign-off 2026-03-20. Product Owner acceptance 2026-03-20."
         },
         "ST-14": {
           "title": "BLG-FEAT-03: Slippage Tracking",
