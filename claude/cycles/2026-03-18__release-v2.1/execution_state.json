@@ -309,22 +309,22 @@
         "ST-13": {
           "title": "BLG-FR-02: Tax Year P&L CSV Export",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Engineering",
           "github_issue": 101,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
           "commit_sha": null,
-          "delegation_record_id": null,
+          "delegation_record_id": "DEL-20260319-03",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-03-20T00:00:00Z",
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/api_contracts/reports_endpoints.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 2."
+          "last_completed_substep": "commit",
+          "notes": "Sprint 2. Spec committed 9c017f4 (reports_endpoints.md v0.3). Implementation: build_tax_year_csv() in reports_service.py; format=csv branch in main.py; Download CSV button in Reports.js. Head of Engineering sign-off pending DoQ review."
         },
         "ST-14": {
           "title": "BLG-FEAT-03: Slippage Tracking",

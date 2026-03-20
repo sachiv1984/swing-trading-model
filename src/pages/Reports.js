@@ -58,6 +58,7 @@ function TaxYearReport() {
   const [sortField, setSortField] = useState("exit_date");
   const [sortDir, setSortDir] = useState("asc");
   const [pdfGenerating, setPdfGenerating] = useState(false);
+  const [csvGenerating, setCsvGenerating] = useState(false);
   const { toast } = useToast();
 
   const handlePdfDownload = async () => {
@@ -82,6 +83,31 @@ function TaxYearReport() {
       });
     } finally {
       setPdfGenerating(false);
+    }
+  };
+
+  const handleCsvDownload = async () => {
+    setCsvGenerating(true);
+    try {
+      const response = await fetch(
+        `${base44.baseUrl}/reports/tax-year?format=csv&year=${selectedYear}`
+      );
+      if (!response.ok) throw new Error("CSV generation failed");
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `tax-year-${selectedYear}-pnl.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast({
+        description: "CSV generation failed. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    } finally {
+      setCsvGenerating(false);
     }
   };
 
@@ -143,7 +169,7 @@ function TaxYearReport() {
         </p>
       </div>
 
-      {/* Year Selector + Download PDF */}
+      {/* Year Selector + Download buttons */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Calendar className="w-4 h-4 text-slate-400" />
@@ -164,24 +190,44 @@ function TaxYearReport() {
             </SelectContent>
           </Select>
         </div>
-        <Button
-          onClick={handlePdfDownload}
-          disabled={pdfGenerating}
-          variant="outline"
-          className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9"
-        >
-          {pdfGenerating ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Generating…
-            </>
-          ) : (
-            <>
-              <FileDown className="w-4 h-4 mr-2" />
-              Download PDF
-            </>
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handleCsvDownload}
+            disabled={csvGenerating}
+            variant="outline"
+            className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9"
+          >
+            {csvGenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generating…
+              </>
+            ) : (
+              <>
+                <FileDown className="w-4 h-4 mr-2" />
+                Download CSV
+              </>
+            )}
+          </Button>
+          <Button
+            onClick={handlePdfDownload}
+            disabled={pdfGenerating}
+            variant="outline"
+            className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9"
+          >
+            {pdfGenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generating…
+              </>
+            ) : (
+              <>
+                <FileDown className="w-4 h-4 mr-2" />
+                Download PDF
+              </>
+            )}
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
