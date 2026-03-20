@@ -50,7 +50,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Reflections", icon: FileBarChart, page: "TradeReflection" },
     { name: "Risk Dashboard", icon: ShieldAlert, page: "RiskDashboard" },
     { name: "System Status", icon: Activity, page: "SystemStatus" },
-    { name: "Notifications", icon: Bell, page: "NotificationPreferences" },
+    { name: "Notifications", icon: Bell, page: "notifications" },
     { name: "Settings", icon: Settings, page: "Settings" },
   ];
 
