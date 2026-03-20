@@ -11,7 +11,7 @@ from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
 from pydantic import BaseModel
-from routers import validation, analytics, test, portfolio_size, trades_export, prospective_heat
+from routers import validation, analytics, test, portfolio_size, trades_export, prospective_heat, alerts
 
 
 
@@ -67,6 +67,8 @@ from utils.calculations import (
     calculate_holding_days
 )
 
+from services.alerts_service import ensure_alerts_tables
+
 from services import (
     # Position service
     get_positions_with_prices,
@@ -119,6 +121,10 @@ app.include_router(test.router)
 app.include_router(portfolio_size.router)
 app.include_router(prospective_heat.router)
 app.include_router(trades_export.router)
+app.include_router(alerts.router)
+
+# Bootstrap alert tables on startup (idempotent CREATE IF NOT EXISTS)
+ensure_alerts_tables()
 
 
 @app.get("/")

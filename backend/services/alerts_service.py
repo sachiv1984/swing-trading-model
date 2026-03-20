@@ -1,0 +1,692 @@
+"""
+Alerts Service
+
+Business logic for alert rules, evaluation engine, and notification management.
+
+Alert types:
+  - stop_loss_approach: fires when stop is within threshold_percent of current price
+  - grace_period_warning: fires on last 2 days of grace period (days 8+9 with default 10-day hold)
+  - market_regime_change: fires on transition to risk_off (state change, not sustained state)
+  - daily_portfolio_summary: fires once per portfolio per UTC calendar day
+
+Delivery: FastAPI BackgroundTasks per ADR-003. Email delivery is a post-response background task.
+Re-delivery: on each evaluate call, notifications with delivered=false and delivery_attempts<3
+are re-enqueued.
+
+Contract: docs/specs/api_contracts/alerts_endpoints.md v0.1
+"""
+
+import logging
+from datetime import datetime, timezone
+from typing import Dict, List, Optional
+from uuid import uuid4
+
+from config import DEFAULT_MIN_HOLD_DAYS
+from database import get_db, get_portfolio, get_positions
+from utils.pricing import check_market_regime
+
+logger = logging.getLogger(__name__)
+
+ALERT_TYPES = [
+    "stop_loss_approach",
+    "grace_period_warning",
+    "market_regime_change",
+    "daily_portfolio_summary",
+]
+
+DEFAULT_RULES = [
+    {"type": "stop_loss_approach",      "enabled": True,  "threshold_percent": 5.0},
+    {"type": "grace_period_warning",    "enabled": True,  "threshold_percent": None},
+    {"type": "market_regime_change",    "enabled": True,  "threshold_percent": None},
+    {"type": "daily_portfolio_summary", "enabled": True,  "threshold_percent": None},
+]
+
+# Module-level last-known regime tracker keyed by portfolio_id.
+# Persists across requests within a process lifetime.
+_last_known_regime: Dict[str, bool] = {}
+
+
+# ---------------------------------------------------------------------------
+# Table bootstrap
+# ---------------------------------------------------------------------------
+
+def ensure_alerts_tables():
+    """Create alert tables if they do not yet exist (idempotent)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS alert_rules (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+                    type VARCHAR(50) NOT NULL
+                        CHECK (type IN (
+                            'stop_loss_approach', 'grace_period_warning',
+                            'market_regime_change', 'daily_portfolio_summary'
+                        )),
+                    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+                    threshold_percent DECIMAL(5,2),
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    CONSTRAINT uq_alert_rules_portfolio_type UNIQUE (portfolio_id, type)
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_alert_rules_portfolio
+                    ON alert_rules(portfolio_id)
+            """)
+
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS notifications (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+                    alert_type VARCHAR(50) NOT NULL
+                        CHECK (alert_type IN (
+                            'stop_loss_approach', 'grace_period_warning',
+                            'market_regime_change', 'daily_portfolio_summary'
+                        )),
+                    title TEXT NOT NULL,
+                    message TEXT NOT NULL,
+                    context JSONB,
+                    read BOOLEAN NOT NULL DEFAULT FALSE,
+                    delivered BOOLEAN NOT NULL DEFAULT FALSE,
+                    delivery_attempted_at TIMESTAMPTZ,
+                    delivery_attempts INTEGER NOT NULL DEFAULT 0,
+                    delivery_error TEXT,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_notifications_portfolio
+                    ON notifications(portfolio_id)
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_notifications_created
+                    ON notifications(created_at DESC)
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_notifications_read
+                    ON notifications(portfolio_id, read)
+            """)
+
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS notification_preferences (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+                    alert_type VARCHAR(50) NOT NULL
+                        CHECK (alert_type IN (
+                            'stop_loss_approach', 'grace_period_warning',
+                            'market_regime_change', 'daily_portfolio_summary'
+                        )),
+                    email_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    CONSTRAINT uq_notification_preferences_portfolio_type
+                        UNIQUE (portfolio_id, alert_type)
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_notification_preferences_portfolio
+                    ON notification_preferences(portfolio_id)
+            """)
+
+
+# ---------------------------------------------------------------------------
+# Alert Rules
+# ---------------------------------------------------------------------------
+
+def _seed_alert_rules(portfolio_id: str, cur) -> None:
+    """Insert default rules for all four types (skips types that already exist)."""
+    for rule in DEFAULT_RULES:
+        cur.execute("""
+            INSERT INTO alert_rules (portfolio_id, type, enabled, threshold_percent)
+            VALUES (%s, %s, %s, %s)
+            ON CONFLICT (portfolio_id, type) DO NOTHING
+        """, (portfolio_id, rule["type"], rule["enabled"], rule["threshold_percent"]))
+
+
+def get_alert_rules(portfolio_id: str) -> List[Dict]:
+    """Return all alert rules, seeding defaults on first use."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT COUNT(*) AS cnt FROM alert_rules WHERE portfolio_id = %s",
+                (portfolio_id,)
+            )
+            if cur.fetchone()["cnt"] == 0:
+                _seed_alert_rules(portfolio_id, cur)
+
+            cur.execute(
+                "SELECT * FROM alert_rules WHERE portfolio_id = %s ORDER BY type",
+                (portfolio_id,)
+            )
+            return [_rule_row(r) for r in cur.fetchall()]
+
+
+def create_alert_rule(portfolio_id: str, data: Dict) -> Dict:
+    """
+    Create an alert rule. Returns 400 if the type already exists.
+    Primarily used to restore a deleted rule.
+    """
+    rule_type = data["type"]
+    enabled = data.get("enabled", True)
+    threshold_percent = data.get("threshold_percent")
+
+    if rule_type not in ALERT_TYPES:
+        raise ValueError(f"Invalid alert type: {rule_type}")
+    if rule_type == "stop_loss_approach":
+        if threshold_percent is None:
+            raise ValueError("threshold_percent is required for stop_loss_approach")
+        if not (0 < threshold_percent <= 100):
+            raise ValueError("threshold_percent must be > 0 and <= 100")
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT id FROM alert_rules WHERE portfolio_id = %s AND type = %s",
+                (portfolio_id, rule_type)
+            )
+            if cur.fetchone():
+                raise ValueError(f"Rule for type '{rule_type}' already exists")
+
+            cur.execute("""
+                INSERT INTO alert_rules (portfolio_id, type, enabled, threshold_percent)
+                VALUES (%s, %s, %s, %s)
+                RETURNING *
+            """, (portfolio_id, rule_type, enabled, threshold_percent))
+            return _rule_row(cur.fetchone())
+
+
+def update_alert_rule(portfolio_id: str, rule_id: str, data: Dict) -> Dict:
+    """Partial update of an alert rule."""
+    allowed = {"enabled", "threshold_percent"}
+    updates = {k: v for k, v in data.items() if k in allowed and v is not None}
+    if not updates:
+        raise ValueError("No updatable fields provided")
+
+    if "threshold_percent" in updates:
+        tp = updates["threshold_percent"]
+        if not (0 < tp <= 100):
+            raise ValueError("threshold_percent must be > 0 and <= 100")
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT * FROM alert_rules WHERE id = %s AND portfolio_id = %s",
+                (rule_id, portfolio_id)
+            )
+            row = cur.fetchone()
+            if not row:
+                raise LookupError(f"Rule {rule_id} not found")
+
+            set_parts = ", ".join(f"{k} = %s" for k in updates)
+            values = list(updates.values()) + [rule_id]
+            cur.execute(
+                f"UPDATE alert_rules SET {set_parts}, updated_at = NOW() WHERE id = %s RETURNING *",
+                values
+            )
+            return _rule_row(cur.fetchone())
+
+
+def delete_alert_rule(portfolio_id: str, rule_id: str) -> Dict:
+    """Delete an alert rule."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "DELETE FROM alert_rules WHERE id = %s AND portfolio_id = %s RETURNING id",
+                (rule_id, portfolio_id)
+            )
+            row = cur.fetchone()
+            if not row:
+                raise LookupError(f"Rule {rule_id} not found")
+            return {"deleted": True, "id": str(row["id"])}
+
+
+# ---------------------------------------------------------------------------
+# Alert Evaluation Engine
+# ---------------------------------------------------------------------------
+
+def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
+    """
+    Evaluate all enabled alert rules against current portfolio state.
+
+    For each triggered rule, a notification is written and email delivery is
+    enqueued via the provided enqueue_delivery callback (FastAPI BackgroundTasks).
+
+    Also re-enqueues delivery for prior notifications where
+    delivered=false and delivery_attempts<3.
+
+    Args:
+        portfolio_id: Portfolio to evaluate.
+        enqueue_delivery: Callable(notification_id) that schedules background delivery.
+
+    Returns:
+        Summary dict per spec.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            # Load enabled rules
+            cur.execute(
+                "SELECT * FROM alert_rules WHERE portfolio_id = %s AND enabled = TRUE",
+                (portfolio_id,)
+            )
+            rules = {r["type"]: r for r in cur.fetchall()}
+
+            # Load open positions with current_stop and current_price
+            cur.execute("""
+                SELECT id, ticker, holding_days, current_stop, current_price,
+                       entry_date, status
+                FROM positions
+                WHERE portfolio_id = %s AND status = 'open'
+            """, (portfolio_id,))
+            positions = cur.fetchall()
+
+            # Load settings for min_hold_days
+            cur.execute(
+                "SELECT min_hold_days FROM settings WHERE portfolio_id = %s LIMIT 1",
+                (portfolio_id,)
+            )
+            settings_row = cur.fetchone()
+            min_hold_days = (
+                int(settings_row["min_hold_days"])
+                if settings_row and settings_row.get("min_hold_days")
+                else DEFAULT_MIN_HOLD_DAYS
+            )
+
+            # Load notification preferences
+            cur.execute(
+                "SELECT alert_type, email_enabled FROM notification_preferences WHERE portfolio_id = %s",
+                (portfolio_id,)
+            )
+            pref_rows = cur.fetchall()
+            prefs = {r["alert_type"]: r["email_enabled"] for r in pref_rows}
+            # Default to email enabled if no preference row yet
+            for t in ALERT_TYPES:
+                prefs.setdefault(t, True)
+
+            notifications_created = 0
+            delivery_tasks_enqueued = 0
+
+            # --- stop_loss_approach ---
+            if "stop_loss_approach" in rules:
+                threshold = float(rules["stop_loss_approach"]["threshold_percent"] or 5.0)
+                for pos in positions:
+                    if pos["current_stop"] is None or pos["current_price"] is None:
+                        continue
+                    current_price = float(pos["current_price"])
+                    current_stop = float(pos["current_stop"])
+                    if current_price <= 0:
+                        continue
+                    proximity_pct = (current_price - current_stop) / current_price * 100
+                    if proximity_pct <= threshold:
+                        ticker = pos["ticker"]
+                        title = f"Stop Loss Approach — {ticker}"
+                        message = (
+                            f"{ticker} stop ({current_stop:.2f}) is within "
+                            f"{proximity_pct:.1f}% of current price ({current_price:.2f}). "
+                            f"Consider reviewing your stop."
+                        )
+                        context = {
+                            "ticker": ticker,
+                            "stop_price": current_stop,
+                            "current_price": current_price,
+                            "proximity_percent": round(proximity_pct, 2),
+                        }
+                        notif_id = _insert_notification(
+                            cur, portfolio_id, "stop_loss_approach", title, message, context
+                        )
+                        notifications_created += 1
+                        if prefs.get("stop_loss_approach"):
+                            enqueue_delivery(str(notif_id))
+                            delivery_tasks_enqueued += 1
+
+            # --- grace_period_warning ---
+            if "grace_period_warning" in rules:
+                for pos in positions:
+                    holding_days = pos["holding_days"] or 0
+                    if (holding_days >= min_hold_days - 2) and (holding_days < min_hold_days):
+                        ticker = pos["ticker"]
+                        days_remaining = min_hold_days - holding_days
+                        title = f"Grace Period Warning — {ticker}"
+                        message = (
+                            f"{ticker} has {days_remaining} day(s) remaining in the "
+                            f"{min_hold_days}-day grace period (day {holding_days} of {min_hold_days})."
+                        )
+                        context = {
+                            "ticker": ticker,
+                            "holding_days": holding_days,
+                            "min_hold_days": min_hold_days,
+                            "days_remaining": days_remaining,
+                        }
+                        notif_id = _insert_notification(
+                            cur, portfolio_id, "grace_period_warning", title, message, context
+                        )
+                        notifications_created += 1
+                        if prefs.get("grace_period_warning"):
+                            enqueue_delivery(str(notif_id))
+                            delivery_tasks_enqueued += 1
+
+            # --- market_regime_change ---
+            if "market_regime_change" in rules:
+                regime_notif = _check_regime_change(portfolio_id)
+                if regime_notif:
+                    notif_id = _insert_notification(
+                        cur, portfolio_id,
+                        "market_regime_change",
+                        regime_notif["title"],
+                        regime_notif["message"],
+                        regime_notif["context"],
+                    )
+                    notifications_created += 1
+                    if prefs.get("market_regime_change"):
+                        enqueue_delivery(str(notif_id))
+                        delivery_tasks_enqueued += 1
+
+            # --- daily_portfolio_summary ---
+            if "daily_portfolio_summary" in rules:
+                if not _daily_summary_exists_today(cur, portfolio_id):
+                    open_count = len(positions)
+                    title = "Daily Portfolio Summary"
+                    message = f"Daily summary: {open_count} open position(s) as of today."
+                    context = {"open_positions": open_count}
+                    notif_id = _insert_notification(
+                        cur, portfolio_id,
+                        "daily_portfolio_summary", title, message, context
+                    )
+                    notifications_created += 1
+                    if prefs.get("daily_portfolio_summary"):
+                        enqueue_delivery(str(notif_id))
+                        delivery_tasks_enqueued += 1
+
+            # --- Re-delivery for failed prior notifications ---
+            redelivery_tasks_enqueued = 0
+            cur.execute("""
+                SELECT id, alert_type FROM notifications
+                WHERE portfolio_id = %s
+                  AND delivered = FALSE
+                  AND delivery_attempts < 3
+                  AND created_at < NOW() - INTERVAL '10 seconds'
+            """, (portfolio_id,))
+            stale = cur.fetchall()
+            for row in stale:
+                if prefs.get(row["alert_type"], True):
+                    enqueue_delivery(str(row["id"]))
+                    redelivery_tasks_enqueued += 1
+
+            return {
+                "rules_evaluated": len(rules),
+                "notifications_created": notifications_created,
+                "delivery_tasks_enqueued": delivery_tasks_enqueued,
+                "redelivery_tasks_enqueued": redelivery_tasks_enqueued,
+            }
+
+
+def _check_regime_change(portfolio_id: str) -> Optional[Dict]:
+    """
+    Return a notification payload if the market regime has transitioned to risk_off
+    since last check. Updates _last_known_regime in-place.
+    Overall regime: risk_on only when BOTH SPY and FTSE are risk_on.
+    """
+    try:
+        regime = check_market_regime()
+    except Exception as e:
+        logger.warning("Could not fetch market regime for change detection: %s", e)
+        return None
+
+    currently_risk_on = bool(regime.get("spy_risk_on")) and bool(regime.get("ftse_risk_on"))
+    prev_risk_on = _last_known_regime.get(portfolio_id)
+    _last_known_regime[portfolio_id] = currently_risk_on
+
+    if prev_risk_on is None:
+        # First call — record state, do not fire
+        return None
+
+    if prev_risk_on and not currently_risk_on:
+        # Transition: risk_on → risk_off
+        return {
+            "title": "Market Regime Change — Risk Off",
+            "message": (
+                "The market regime has transitioned to risk-off. "
+                "SPY and/or FTSE 100 is now below its 200-day moving average."
+            ),
+            "context": {
+                "spy_risk_on": regime.get("spy_risk_on"),
+                "ftse_risk_on": regime.get("ftse_risk_on"),
+            },
+        }
+    return None
+
+
+def _daily_summary_exists_today(cur, portfolio_id: str) -> bool:
+    """Return True if a daily_portfolio_summary notification already exists for today (UTC)."""
+    cur.execute("""
+        SELECT 1 FROM notifications
+        WHERE portfolio_id = %s
+          AND alert_type = 'daily_portfolio_summary'
+          AND created_at::date = CURRENT_DATE
+        LIMIT 1
+    """, (portfolio_id,))
+    return cur.fetchone() is not None
+
+
+def _insert_notification(cur, portfolio_id: str, alert_type: str,
+                         title: str, message: str, context: Dict) -> str:
+    """Insert a notification row and return its id."""
+    import json
+    cur.execute("""
+        INSERT INTO notifications
+            (portfolio_id, alert_type, title, message, context)
+        VALUES (%s, %s, %s, %s, %s)
+        RETURNING id
+    """, (portfolio_id, alert_type, title, message, json.dumps(context)))
+    return cur.fetchone()["id"]
+
+
+# ---------------------------------------------------------------------------
+# Notification delivery background task
+# ---------------------------------------------------------------------------
+
+def deliver_notification(notification_id: str) -> None:
+    """
+    Background task: attempt email delivery for a notification.
+
+    ST-04 will wire real SMTP/email sending. For now this stub marks the
+    notification as delivered=true, recording the attempt.
+
+    ADR-003 retry model: delivery_attempts is incremented on each call.
+    If delivery_attempts >= 3, re-delivery is no longer enqueued by evaluate_alerts.
+    """
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT * FROM notifications WHERE id = %s",
+                    (notification_id,)
+                )
+                notif = cur.fetchone()
+                if not notif:
+                    logger.warning("deliver_notification: notification %s not found", notification_id)
+                    return
+
+                # ST-04 will replace this stub with real email sending
+                logger.info(
+                    "ALERT DELIVERY [stub] type=%s title=%r notification_id=%s",
+                    notif["alert_type"], notif["title"], notification_id
+                )
+
+                cur.execute("""
+                    UPDATE notifications
+                    SET delivered = TRUE,
+                        delivery_attempted_at = NOW(),
+                        delivery_attempts = delivery_attempts + 1,
+                        delivery_error = NULL
+                    WHERE id = %s
+                """, (notification_id,))
+
+    except Exception as e:
+        logger.error("deliver_notification failed for %s: %s", notification_id, e)
+        try:
+            with get_db() as conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        UPDATE notifications
+                        SET delivery_attempted_at = NOW(),
+                            delivery_attempts = delivery_attempts + 1,
+                            delivery_error = %s
+                        WHERE id = %s
+                    """, (str(e), notification_id))
+        except Exception:
+            pass
+
+
+# ---------------------------------------------------------------------------
+# Notification feed
+# ---------------------------------------------------------------------------
+
+def get_notifications(portfolio_id: str, page: int = 1) -> Dict:
+    """Return paginated notification feed, newest first."""
+    per_page = 50
+    offset = (page - 1) * per_page
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT COUNT(*) AS cnt FROM notifications WHERE portfolio_id = %s",
+                (portfolio_id,)
+            )
+            total = cur.fetchone()["cnt"]
+
+            cur.execute("""
+                SELECT id, alert_type, title, message, read, created_at
+                FROM notifications
+                WHERE portfolio_id = %s
+                ORDER BY created_at DESC
+                LIMIT %s OFFSET %s
+            """, (portfolio_id, per_page, offset))
+            rows = cur.fetchall()
+
+    notifications = [_notif_row(r) for r in rows]
+    return {
+        "notifications": notifications,
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "has_more": (offset + per_page) < total,
+    }
+
+
+def mark_notification_read(portfolio_id: str, notification_id: str) -> Dict:
+    """Mark a single notification as read. Idempotent."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE notifications
+                SET read = TRUE
+                WHERE id = %s AND portfolio_id = %s
+                RETURNING id, alert_type, title, message, read, created_at
+            """, (notification_id, portfolio_id))
+            row = cur.fetchone()
+            if not row:
+                raise LookupError(f"Notification {notification_id} not found")
+            return _notif_row(row)
+
+
+def mark_all_notifications_read(portfolio_id: str) -> Dict:
+    """Mark all unread notifications as read."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE notifications
+                SET read = TRUE
+                WHERE portfolio_id = %s AND read = FALSE
+            """, (portfolio_id,))
+            return {"marked_read_count": cur.rowcount}
+
+
+# ---------------------------------------------------------------------------
+# Notification Preferences
+# ---------------------------------------------------------------------------
+
+def _seed_preferences(portfolio_id: str, cur) -> None:
+    """Insert default preferences (all email enabled) for all four types."""
+    for alert_type in ALERT_TYPES:
+        cur.execute("""
+            INSERT INTO notification_preferences (portfolio_id, alert_type, email_enabled)
+            VALUES (%s, %s, TRUE)
+            ON CONFLICT (portfolio_id, alert_type) DO NOTHING
+        """, (portfolio_id, alert_type))
+
+
+def get_preferences(portfolio_id: str) -> Dict:
+    """Return notification preferences, seeding defaults on first use."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT COUNT(*) AS cnt FROM notification_preferences WHERE portfolio_id = %s",
+                (portfolio_id,)
+            )
+            if cur.fetchone()["cnt"] == 0:
+                _seed_preferences(portfolio_id, cur)
+
+            cur.execute(
+                "SELECT alert_type, email_enabled FROM notification_preferences WHERE portfolio_id = %s ORDER BY alert_type",
+                (portfolio_id,)
+            )
+            rows = cur.fetchall()
+            return {"preferences": [{"alert_type": r["alert_type"], "email_enabled": r["email_enabled"]} for r in rows]}
+
+
+def update_preferences(portfolio_id: str, updates: Dict) -> Dict:
+    """
+    Partial update of notification preferences.
+    updates: {alert_type: {"email_enabled": bool}, ...}
+    """
+    invalid = [k for k in updates if k not in ALERT_TYPES]
+    if invalid:
+        raise ValueError(f"Unknown alert type key(s): {invalid}")
+    if not updates:
+        raise ValueError("No alert type keys provided")
+    for key, val in updates.items():
+        if not isinstance(val.get("email_enabled"), bool):
+            raise ValueError(f"email_enabled must be a boolean for type '{key}'")
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            for alert_type, prefs in updates.items():
+                cur.execute("""
+                    INSERT INTO notification_preferences (portfolio_id, alert_type, email_enabled)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (portfolio_id, alert_type)
+                    DO UPDATE SET email_enabled = EXCLUDED.email_enabled, updated_at = NOW()
+                """, (portfolio_id, alert_type, prefs["email_enabled"]))
+
+            cur.execute(
+                "SELECT alert_type, email_enabled FROM notification_preferences WHERE portfolio_id = %s ORDER BY alert_type",
+                (portfolio_id,)
+            )
+            rows = cur.fetchall()
+            return {"preferences": [{"alert_type": r["alert_type"], "email_enabled": r["email_enabled"]} for r in rows]}
+
+
+# ---------------------------------------------------------------------------
+# Row serialisers
+# ---------------------------------------------------------------------------
+
+def _rule_row(r) -> Dict:
+    return {
+        "id": str(r["id"]),
+        "type": r["type"],
+        "enabled": r["enabled"],
+        "threshold_percent": float(r["threshold_percent"]) if r["threshold_percent"] is not None else None,
+        "created_at": r["created_at"].isoformat() if hasattr(r["created_at"], "isoformat") else str(r["created_at"]),
+        "updated_at": r["updated_at"].isoformat() if hasattr(r["updated_at"], "isoformat") else str(r["updated_at"]),
+    }
+
+
+def _notif_row(r) -> Dict:
+    return {
+        "id": str(r["id"]),
+        "alert_type": r["alert_type"],
+        "title": r["title"],
+        "message": r["message"],
+        "read": r["read"],
+        "created_at": r["created_at"].isoformat() if hasattr(r["created_at"], "isoformat") else str(r["created_at"]),
+    }
