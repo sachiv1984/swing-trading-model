@@ -77,7 +77,7 @@ Global response envelopes, error shape, and conventions are defined in **convent
 
 ## Alert Rules
 
-### GET /alerts/rules
+## GET /alerts/rules
 
 **Purpose**
 
@@ -150,7 +150,7 @@ Response uses the standard success envelope from **conventions.md**.
 
 ---
 
-### POST /alerts/rules
+## POST /alerts/rules
 
 **Purpose**
 
@@ -210,7 +210,7 @@ Create an alert rule. Primarily used to restore a rule after deletion. Under nor
 
 ---
 
-### PATCH /alerts/rules/{rule_id}
+## PATCH /alerts/rules/{rule_id}
 
 **Purpose**
 
@@ -263,7 +263,7 @@ Returns the updated alert rule object (same shape as `GET /alerts/rules` items).
 
 ---
 
-### DELETE /alerts/rules/{rule_id}
+## DELETE /alerts/rules/{rule_id}
 
 **Purpose**
 
@@ -304,7 +304,7 @@ Uses the standard DELETE envelope from **conventions.md §12**:
 
 ## Alert Evaluation
 
-### POST /alerts/evaluate
+## POST /alerts/evaluate
 
 **Purpose**
 
@@ -365,7 +365,7 @@ No body required.
 
 ## Notifications
 
-### GET /notifications
+## GET /notifications
 
 **Purpose**
 
@@ -443,7 +443,7 @@ Return the notification feed for the portfolio, newest first. Supports page-base
 
 ---
 
-### PATCH /notifications/{id}
+## PATCH /notifications/{id}
 
 **Purpose**
 
@@ -490,7 +490,7 @@ Returns the updated notification object (same shape as items in `GET /notificati
 
 ---
 
-### POST /notifications/mark-all-read
+## POST /notifications/mark-all-read
 
 **Purpose**
 
@@ -529,7 +529,7 @@ No body required.
 
 ## Notification Preferences
 
-### GET /notifications/preferences
+## GET /notifications/preferences
 
 **Purpose**
 
@@ -591,7 +591,7 @@ No parameters.
 
 ---
 
-### PATCH /notifications/preferences
+## PATCH /notifications/preferences
 
 **Purpose**
 
