@@ -39,7 +39,10 @@ jobs:
           EPIC_ID="${{ steps.parse.outputs.epic_id }}"
 
           # 1. Look up numeric issue number for this ST item, then close it
-          ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}]" --state open --json number --jq '.[0].number // empty')
+          # Use exact title prefix match to prevent fuzzy search returning wrong issues
+          # (e.g. a second [ST-14] commit must not close [ST-10] when [ST-14] is already closed)
+          ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}] in:title" --state open --json number,title \
+            --jq "[.[] | select(.title | startswith(\"[${ST_ID}]\"))] | .[0].number // empty")
           if [ -n "$ISSUE_NUMBER" ]; then
             gh issue close "$ISSUE_NUMBER"
             echo "Closed issue #${ISSUE_NUMBER} for ${ST_ID}"
