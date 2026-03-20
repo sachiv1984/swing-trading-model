@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.4
-**Last Updated:** 2026-03-17
+**Version:** 2.5
+**Last Updated:** 2026-03-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -121,6 +121,45 @@ If classification is ambiguous: classify as `delegated_decision` and flag for th
 **Backend delegation note:** The engine must confirm a canonical spec is locked before delegating a backend item (`claude/agents/backend_engineering_patterns_owner.md` §4 Step 1). If the spec is in draft, raise to Head of Specs Team before delegating to Head of Engineering.
 
 **Frontend delegation note:** The engine must produce a complete Base44 prompt draft as part of the delegation record, covering all required sections per `claude/agents/base44_frontend_prompt_owner.md` §3 (context, the change, API contract, behaviour rules, non-functional rules, expected outcome). The Base44 Frontend Prompt Owner submits the prompt; the engine provides the structure.
+
+### 5.3 Agent-Mediated Sign-Off
+
+When an ST item's seal condition or acceptance criteria require sign-off from a named role, the engine must attempt agent-mediated sign-off before surfacing to the user.
+
+**Protocol:**
+
+1. Identify the required role from the seal condition in `sprint_backlog.md`.
+2. Locate the agent file: `claude/agents/<role_slug>.md` (e.g. "Head of Specs Team" → `head_of_specs_team.md`).
+3. If the agent file exists: invoke a general-purpose subagent with the role's charter and the artefact(s) to review. The subagent evaluates against the role's §5 (quality bar) and any domain-specific standards in the charter.
+4. The subagent returns: `Approved` or `Blocked` + findings list.
+5. If `Approved`: record sign-off in `execution_state.json` `sign_off_record` for the item; proceed.
+6. If `Blocked`: apply the findings in-session, re-invoke the sign-off agent. Maximum 2 retries.
+7. If still `Blocked` after 2 retries, or if no agent file exists: surface to the user as a `delegated_decision` block with the outstanding findings listed explicitly.
+
+**Always-human gates (never agent-mediated):**
+- Product Owner — sprint scope, goal, and acceptance of sprint close are always human decisions.
+- Merge gate — QA sign-off and Product Owner acceptance on PRs are always human.
+
+**Agent-mediated sign-off is appropriate for:**
+- Spec sign-offs: Head of Specs Team, API Contracts & Documentation Owner, Data Model & Domain Schema Owner
+- Architecture sign-offs where the ADR is already written and the review is against documented criteria
+- Any named authority with an agent file where the decision is reviewable against criteria in the role charter
+
+**Sign-off record schema** (added to `execution_state.json` per-story):
+
+```json
+"sign_off_record": {
+  "required_by": "Head of Specs Team",
+  "method": "agent_mediated",
+  "status": "cleared",
+  "findings_applied": ["list of findings addressed"],
+  "cleared_utc": "ISO-8601"
+}
+```
+
+`method` is `"agent_mediated"` when this protocol ran, or `"human"` when surfaced to and resolved by the user.
+
+---
 
 ### 5.2 What the Engine May Do Autonomously
 
@@ -300,6 +339,7 @@ All per-item progress is recorded in:
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
+          "sign_off_record": null,
           "notes": ""
         }
       }
@@ -530,6 +570,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
     - If no deviation: set `deviations_filed = true` (meaning "deviation check completed; none found").
     - If a deviation exists: document it in the canonical spec per `claude/charter/document_lifecycle_guide.md` §9 (description, canonical requirement, priority P0–P3, target resolution release, owner, backlog reference). Set `deviations_filed = true` once filed. A P0 deviation blocks the merge gate — escalate immediately.
     - **Deviation type distinction (LL-v1.10-P4-2):** If the deviation is "endpoint/feature absent from spec" (the spec does not define this thing at all), file in `qa_evidence_EPIC-xx.md` and backlog only — the canonical spec is not the right home for an absence note. If the deviation is "implementation differs from what the spec requires" (the spec defines it, but the implementation diverges), file in the canonical spec as above.
+
+11. **Sign-off gate:** If the item's seal condition in `sprint_backlog.md` names a required sign-off role: invoke agent-mediated sign-off per §5.3. Do not mark `acceptance_verified = true` until `sign_off_record.status = "cleared"`. Record outcome in `sign_off_record` in `execution_state.json`.
 
 #### 3.1.B If `delegated_backend` or `delegated_frontend`:
 
@@ -883,6 +925,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5 | 2026-03-20 | §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file in `claude/agents/`, invoke a subagent acting in that role to perform the review before surfacing to the user. Always-human gates (Product Owner, merge gate) unchanged. §3.1.A step 11 added — sign-off gate check after deviation check. §9.1 schema — `sign_off_record` field added to ST item. Authority: Head of Specs Team. |
 | 2.4 | 2026-03-17 | Post-ship closure v2.0 lessons learnt patches applied. LL-v2.0-P3-4: qa_evidence sign-off block template — DoQ URL construction check added (for direct URL construction not via api.* wrapper, confirm base URL variable is exposed on imported object). LL-v2.0-P3-5: STEP 4 merge gate — merge order note added for multi-EPIC sprints where >1 EPIC modifies shared governance files; later branches must rebase onto main after first EPIC merges before final QA. LL-v2.0-P4-1: STEP 5.1 — QA Evidence Persistence Check added; after qa_signed_off: true, confirm qa_evidence Date: field is non-blank; if blank, re-apply sign-off before STEP 5.3. |
 | 2.3 | 2026-03-16 | AUD-2026-03-13-017: §11 delegation log schema replaced with reference to `shared_standards.md §16.3`; SLA breach tracking note in STEP 3.1.D replaced with reference to `shared_standards.md §16.4`; §13 cross-reference to `claude/system/invariants.md` added. |
 | 2.2 | 2026-03-16 | LL-v1.10-P3-3: §5.1 autonomous candidate pattern note added (refactor with no UX change + existing API method → autonomous). LL-v1.10-P4-2: §3.1.A step 10 deviation type distinction added (absent from spec → qa_evidence + backlog; differs from spec → canonical spec). LL-v1.10-P4-1: qa_evidence sign-off block template authoring note added. |

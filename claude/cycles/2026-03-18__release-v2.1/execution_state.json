@@ -43,32 +43,37 @@
     },
 
     "EPIC-02": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
-      "qa_evidence_log": null,
+      "pr_number": 116,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
-      "notes": "Sprint 2 items. Conditional on ST-01 Complete (now satisfied). Not started — awaiting Sprint 2 invocation.",
+      "notes": "Sprint 2. ST-02 spec authored and signed off (Head of Specs Team 2026-03-20). PR #116 open. ST-03/04/05/06/07 gated on ST-02 merge.",
       "stories": {
         "ST-02": {
           "title": "Spec: alerts endpoint + notification preference model",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Specs Team + Head of Engineering",
           "github_issue": 93,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "2b93a36",
+          "delegation_record_id": "DEL-20260319-02",
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 Complete with Head of Engineering sign-off (SATISFIED)",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 2. Condition satisfied (ST-01 done)."
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-20T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md",
+            "docs/specs/data_model.md",
+            "docs/reference/openapi.yaml",
+            "docs/adr/ADR-003-notification-delivery-architecture.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "commit",
+          "notes": "Spec complete. alerts_endpoints.md v0.1 (10 endpoints), data_model.md v1.9 (3 tables), openapi.yaml updated, Specs_Index.md registered. HoST sign-off 2026-03-20. PO acceptance 2026-03-20. P3 deviation: api_changelog.md commit includes cross-EPIC ST-13 entry (DEV-EPIC02-01)."
         },
         "ST-03": {
           "title": "Backend: alert rules engine",
@@ -80,13 +85,13 @@
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-02 spec signed off",
+          "unblock_criteria": "ST-02 spec signed off by Head of Specs Team; alerts_endpoints.md locked before delegation proceeds",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "notes": "Sprint 2. Depends on ST-02."
+          "notes": "Sprint 2. Cannot delegate until ST-02 spec is locked. Re-invoke run sprint after ST-02 signs off to create delegation record."
         },
         "ST-04": {
           "title": "Backend: notification delivery (email)",
@@ -98,13 +103,13 @@
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 + ST-02 complete",
+          "unblock_criteria": "ST-02 spec signed off; alerts_endpoints.md locked",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "notes": "Sprint 2 stretch / Sprint 3."
+          "notes": "Sprint 2 stretch / Sprint 3. Cannot delegate until ST-02 spec is locked."
         },
         "ST-05": {
           "title": "Frontend: notification preferences page",
@@ -116,7 +121,7 @@
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 + ST-02 complete",
+          "unblock_criteria": "ST-02 spec signed off; alerts_endpoints.md locked with preference model endpoint schema; Base44 prompt to be authored with exact API field names",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -124,7 +129,7 @@
           ],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "notes": "Sprint 2 stretch / Sprint 3."
+          "notes": "Sprint 2 stretch / Sprint 3. Cannot issue final Base44 prompt until ST-02 defines exact API field names for /notifications/preferences endpoints."
         },
         "ST-06": {
           "title": "Frontend: in-app notification feed",
@@ -136,7 +141,7 @@
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 + ST-02 + ST-04 complete",
+          "unblock_criteria": "ST-02 spec signed off; ST-04 backend live in staging",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -144,7 +149,7 @@
           ],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "notes": "Sprint 3."
+          "notes": "Sprint 3. Depends on ST-02 + ST-04."
         },
         "ST-07": {
           "title": "QA: notification delivery test scenarios",
@@ -273,7 +278,7 @@
     },
 
     "EPIC-05": {
-      "status": "pr_open",
+      "status": "in_progress",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
       "pr_number": 117,
       "pr_status": "open",
@@ -282,7 +287,7 @@
       "test_scenarios": [
         "docs/testing/reports_scenarios.md"
       ],
-      "notes": "ST-12 implementation complete (frontend 511f4a4 + backend 569d231). ST-15 committed (Sprint 2 item, implemented early). ST-13/14 Sprint 2. QA evidence pending.",
+      "notes": "Sprint 1 items (ST-12, ST-15) completed and merged via PR #115. Sprint 2 items (ST-13, ST-14) delegated 2026-03-19. EPIC-05 branch needs to be rebased from main before Sprint 2 commits (branch currently at e6f379f behind main). A new PR will be opened for Sprint 2 items once complete.",
       "stories": {
         "ST-12": {
           "title": "BLG-FR-01: Tax Year P&L PDF Export",
@@ -296,15 +301,15 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-03-19T00:00:00Z",
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/reports_endpoints.md",
             "docs/specs/frontend/pages/reports.md",
             "docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "backend_commit_569d231",
-          "notes": "Frontend done (commit 511f4a4): Download PDF button, 4 states, useToast error toast. Backend done (commit 569d231): GET /reports/tax-year?format=pdf, reportlab PDF generation, reports_endpoints.md v0.2, openapi.yaml updated. Awaiting QA sign-off."
+          "deviations_filed": true,
+          "last_completed_substep": "merged",
+          "notes": "Frontend done (commit 511f4a4): Download PDF button, 4 states, useToast error toast. Backend done (commit 569d231): GET /reports/tax-year?format=pdf, reportlab PDF generation, reports_endpoints.md v0.2, openapi.yaml updated. QA signed off (qa_evidence_EPIC-05.md). Merged via PR #115."
         },
         "ST-13": {
           "title": "BLG-FR-02: Tax Year P&L CSV Export",
@@ -374,7 +379,7 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "commit",
-          "notes": "OPERATIONAL_GUIDE.md §8 updated documenting Render PR preview pattern and limitations (CRA build-time env var constraint). Issue #110 closed. Note: issue #105 also exists as duplicate — created at sync gh; #110 closed by governance_sync. Infrastructure & Operations Owner sign-off implied by commit. Sprint 2 item, implemented early alongside EPIC-04 work."
+          "notes": "OPERATIONAL_GUIDE.md §8 updated documenting Render PR preview pattern and limitations (CRA build-time env var constraint). Issue #110 closed. Note: issue #105 also exists as duplicate — created at sync gh; #110 closed by governance_sync. Sprint 2 item, implemented early alongside EPIC-04 work. Merged via PR #115."
         }
       }
     },
@@ -387,7 +392,7 @@
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
-      "notes": "ST-16/17/18 committed. ST-19 blocked pending PMO Lead review at sprint close.",
+      "notes": "ST-16/17/18/19 all done. PR #114 merged. PMO Lead signed off ST-19 2026-03-19.",
       "stories": {
         "ST-16": {
           "title": "BLG-SPEC-D12: Bulk lifecycle header remediation",
@@ -407,7 +412,7 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "commit",
-          "notes": "24 documents updated, 2 found already compliant. spec_coverage_inventory.md updated to 36/36 compliant. DEVIATION: AC specified 38/38 but inventory reconciled to 36/36 (2 documents fewer than planned count). AC also specified 28 documents but only 24 needed updates (2 already compliant, 2 count discrepancy). Requires DoQ acknowledgement in QA evidence."
+          "notes": "24 documents updated, 2 found already compliant. spec_coverage_inventory.md updated to 36/36 compliant. DEVIATION: AC specified 38/38 but inventory reconciled to 36/36. DoQ acknowledged in QA evidence."
         },
         "ST-17": {
           "title": "Spec maintenance batch (BLG-SPEC-D13 + BLG-SPEC-G6 + BLG-SPEC-D10 + BLG-SPEC-D11)",
@@ -451,7 +456,7 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "commit",
-          "notes": "signals_scenarios.md (SC-SIG-01/02/03) and reports_scenarios.md (SC-TAX-01/02/03) created. QA & Testing Owner sign-off implied. Director of Quality review required before acceptance_verified = true."
+          "notes": "signals_scenarios.md (SC-SIG-01/02/03) and reports_scenarios.md (SC-TAX-01/02/03) created. Director of Quality formal review captured in qa_evidence_EPIC-06.md."
         },
         "ST-19": {
           "title": "BLG-PROC-01: Cross-EPIC branch process compliance check",
@@ -469,27 +474,29 @@
           "spec_references": [],
           "deviations_filed": true,
           "last_completed_substep": "pmo_signed_off",
-          "notes": "Zero cross-EPIC violations across all Sprint 1 branches. PMO Lead signed off 2026-03-19. One observation noted (BLG-OPS-03 backlog touch on EPIC-04 branch) — compliant with CLAUDE.md §2. Pattern established."
+          "notes": "Zero cross-EPIC violations across all Sprint 1 branches. PMO Lead signed off 2026-03-19. One observation noted (BLG-OPS-03 backlog touch on EPIC-04 branch) — compliant with CLAUDE.md §2. Pattern established. Note: no commit for ST-19 (process verification item — no code); GitHub issue #107 remains open (governance_sync requires [EPIC-06][ST-19] commit to auto-close; close manually if desired)."
         }
       }
     }
   },
 
-  "blocked_items": [],
-  "delegated_items": [
-    "EPIC-05/ST-12",
+  "blocked_items": [
     "EPIC-02/ST-02",
-    "EPIC-02/ST-03",
-    "EPIC-02/ST-04",
-    "EPIC-02/ST-05",
-    "EPIC-02/ST-06",
-    "EPIC-02/ST-07",
-    "EPIC-03/ST-08",
-    "EPIC-03/ST-09",
-    "EPIC-03/ST-10",
-    "EPIC-05/ST-12",
     "EPIC-05/ST-13",
     "EPIC-05/ST-14"
+  ],
+  "delegated_items": [
+    "EPIC-01/ST-01",
+    "EPIC-02/ST-02",
+    "EPIC-04/ST-11",
+    "EPIC-05/ST-12",
+    "EPIC-05/ST-13",
+    "EPIC-05/ST-14",
+    "EPIC-05/ST-15",
+    "EPIC-06/ST-16",
+    "EPIC-06/ST-17",
+    "EPIC-06/ST-18",
+    "EPIC-06/ST-19"
   ],
   "completed_items": [
     "EPIC-01/ST-01",
@@ -504,8 +511,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-04", "EPIC-06"],
-    "epics_pending": ["EPIC-01", "EPIC-05"],
+    "epics_merged": ["EPIC-01", "EPIC-04", "EPIC-06"],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-05"],
     "all_merged": false
   },
 

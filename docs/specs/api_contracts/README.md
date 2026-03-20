@@ -116,6 +116,9 @@ The API contracts are split by concern to support incremental review and clear o
 - **`reports_endpoints.md`**
   Tax-year P&L statement (`GET /reports/tax-year`): structured financial record of all realised gains and losses within a specified UK tax year (6 April to 5 April). Includes per-trade breakdown, summary totals, and indicative unrealised P&L. For UK-based accounts only. Not a substitute for qualified tax advice.
 
+- **`alerts_endpoints.md`**
+  Alerts & Notifications domain. Alert rules CRUD (`GET/POST/PATCH/DELETE /alerts/rules`); alert evaluation engine trigger (`POST /alerts/evaluate`); notification feed (`GET /notifications`, `PATCH /notifications/{id}`, `POST /notifications/mark-all-read`); notification preferences (`GET/PATCH /notifications/preferences`). Delivery via FastAPI BackgroundTasks per ADR-003.
+
 Each endpoint file follows a consistent structure:
 - HTTP method and path
 - Purpose and behavior
@@ -138,6 +141,12 @@ Each endpoint file follows a consistent structure:
 
 - **2.1.2 (2026-03-20)**
 - trade_endpoints.md v2.1.0: `fill_price` (float|null) and `slippage_pct` (float|null) added per trade in `GET /trades` response. `avg_slippage_pct` (float|null) added to top-level summary. Data model gate cleared (fill_price pre-existing in data_model.md v1.2, countersigned 2026-03-20). ST-14 — v2.1 release planning cycle 2026-03-18__release-v2.1.
+
+- **2.1.1 (2026-03-20)**
+- reports_endpoints.md v0.3: `format=csv` added to `GET /reports/tax-year`. 5-row metadata block + 17-column trades table. `format` validation tightened (unknown value → 400). ST-13 — v2.1 release planning cycle 2026-03-18__release-v2.1.
+
+- **2.1.0 (2026-03-20)**
+- alerts_endpoints.md: created — full Alerts & Notifications domain. Alert rules CRUD, alert evaluation, notification feed (paginated), mark-read, notification preferences. Delivery via FastAPI BackgroundTasks per ADR-003. Data model: `data_model.md` v1.9 (3 new tables). ST-02 — v2.1 release planning cycle 2026-03-18__release-v2.1.
 
 - **2.0.0 (2026-03-17)**
 - reports_endpoints.md: created — `GET /reports/tax-year` endpoint. Tax-year P&L statement for UK tax years (6 April to 5 April). Attribution by `exit_date`. Response includes `tax_year_start`, `tax_year_end`, `tax_year_label`, `generated_at`, summary totals (realised P&L, gross profit/loss, win/loss counts, win rate, estimated unrealised P&L), and full per-trade breakdown. Future year returns 400. UK-only scope. ST-03 — v2.0 release planning cycle 2026-03-17__release-v2.0.
