@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from uuid import uuid4
 
-from config import DEFAULT_MIN_HOLD_DAYS, GMAIL_USER, GMAIL_APP_PASSWORD, ALERT_TO_EMAIL
+from config import DEFAULT_MIN_HOLD_DAYS, BREVO_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL
 from database import get_db, get_portfolio, get_positions, get_settings
 from utils.pricing import check_market_regime
 
@@ -484,14 +484,14 @@ def _insert_notification(cur, portfolio_id: str, alert_type: str,
 
 def deliver_notification(notification_id: str) -> None:
     """
-    Background task: deliver email notification via Resend.
+    Background task: deliver email notification via Brevo HTTP API.
 
     Runs after the API response is returned (FastAPI BackgroundTasks, per ADR-003).
     Increments delivery_attempts on every call. Sets delivered=True on success,
     records delivery_error on failure. evaluate_alerts will re-enqueue if
     delivered=False and delivery_attempts < 3.
 
-    Required env vars: RESEND_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL.
+    Required env vars: BREVO_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL.
     If any are unset, the notification is logged and marked delivered to avoid
     infinite retry loops on misconfigured deployments.
     """
@@ -507,9 +507,9 @@ def deliver_notification(notification_id: str) -> None:
                     logger.warning("deliver_notification: notification %s not found", notification_id)
                     return
 
-                if not GMAIL_USER or not GMAIL_APP_PASSWORD or not ALERT_TO_EMAIL:
+                if not BREVO_API_KEY or not ALERT_FROM_EMAIL or not ALERT_TO_EMAIL:
                     logger.warning(
-                        "deliver_notification: GMAIL_USER, GMAIL_APP_PASSWORD or ALERT_TO_EMAIL not set — "
+                        "deliver_notification: BREVO_API_KEY, ALERT_FROM_EMAIL or ALERT_TO_EMAIL not set — "
                         "marking delivered without sending. notification_id=%s", notification_id
                     )
                     cur.execute("""
@@ -523,7 +523,7 @@ def deliver_notification(notification_id: str) -> None:
                     return
 
                 subject, html_body = _build_email(notif)
-                _send_via_gmail(subject, html_body)
+                _send_via_brevo(subject, html_body)
 
                 cur.execute("""
                     UPDATE notifications
@@ -554,23 +554,31 @@ def deliver_notification(notification_id: str) -> None:
             pass
 
 
-def _send_via_gmail(subject: str, html_body: str) -> None:
-    """Send an email via Gmail SMTP using an App Password."""
-    import smtplib
-    from email.mime.multipart import MIMEMultipart
-    from email.mime.text import MIMEText
+def _send_via_brevo(subject: str, html_body: str) -> None:
+    """Send an email via Brevo HTTP API (port 443 — Render-free-tier compatible)."""
+    import urllib.request
+    import json
 
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"] = GMAIL_USER
-    msg["To"] = ALERT_TO_EMAIL
-    msg.attach(MIMEText(html_body, "html"))
+    payload = json.dumps({
+        "sender": {"email": ALERT_FROM_EMAIL},
+        "to": [{"email": ALERT_TO_EMAIL}],
+        "subject": subject,
+        "htmlContent": html_body,
+    }).encode()
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
-        smtp.ehlo()
-        smtp.starttls()
-        smtp.login(GMAIL_USER, GMAIL_APP_PASSWORD)
-        smtp.sendmail(GMAIL_USER, ALERT_TO_EMAIL, msg.as_string())
+    req = urllib.request.Request(
+        "https://api.brevo.com/v3/smtp/email",
+        data=payload,
+        headers={
+            "accept": "application/json",
+            "content-type": "application/json",
+            "api-key": BREVO_API_KEY,
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(req) as resp:
+        if resp.status not in (200, 201):
+            raise RuntimeError(f"Brevo API returned {resp.status}")
 
 
 def _build_email(notif) -> tuple:

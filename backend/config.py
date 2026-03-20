@@ -49,15 +49,14 @@ DEFAULT_FX_RATE = 1.27  # GBP/USD fallback if API fails
 # Price Conversion
 PENCE_TO_POUNDS_THRESHOLD = 1000  # UK prices above this are in pence
 
-# Email delivery (Gmail SMTP) — ST-04
-# Set these env vars on Render: GMAIL_USER, GMAIL_APP_PASSWORD, ALERT_TO_EMAIL
-# GMAIL_USER: your Gmail address (e.g. you@gmail.com)
-# GMAIL_APP_PASSWORD: 16-char App Password from Google Account → Security → App Passwords
-#   (requires 2FA enabled on the Gmail account)
-# ALERT_TO_EMAIL: address to receive alerts (can be the same Gmail)
+# Email delivery (Brevo HTTP API) — ST-04
+# Set these env vars on Render: BREVO_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL
+# BREVO_API_KEY: API key from Brevo dashboard → SMTP & API → API Keys
+# ALERT_FROM_EMAIL: verified sender address in Brevo
+# ALERT_TO_EMAIL: address to receive alerts
 import os
-GMAIL_USER = os.getenv("GMAIL_USER", "")
-GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
+BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
+ALERT_FROM_EMAIL = os.getenv("ALERT_FROM_EMAIL", "")
 ALERT_TO_EMAIL = os.getenv("ALERT_TO_EMAIL", "")
 
 # API Delays (rate limiting)
