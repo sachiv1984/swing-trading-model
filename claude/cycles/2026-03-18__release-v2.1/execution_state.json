@@ -313,7 +313,7 @@
           "assigned_to": "Head of Engineering",
           "github_issue": 101,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "9d75c96",
           "delegation_record_id": "DEL-20260319-03",
           "blocked_since_utc": null,
           "unblock_criteria": null,
