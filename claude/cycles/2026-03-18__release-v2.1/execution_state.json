@@ -130,23 +130,23 @@
         "ST-05": {
           "title": "Frontend: notification preferences page",
           "classification": "delegated_frontend",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Base44 Frontend",
           "github_issue": 97,
-          "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
-          "commit_sha": null,
+          "branch": "main",
+          "commit_sha": "9c4813d",
           "delegation_record_id": "DEL-20260320-01",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-03-20T22:36:48Z",
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/frontend/pages/notifications.md",
             "docs/specs/api_contracts/alerts_endpoints.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": "delegated",
-          "notes": "Base44 prompt issued 2026-03-20 (DEL-20260320-01). Implements /notifications/preferences route with GET/PATCH wiring, 4 alert type toggles, sub-nav, loading/error states."
+          "last_completed_substep": "commit",
+          "notes": "Implemented 2026-03-20. NotificationPreferences.js (GET/PATCH wiring, optimistic toggle, 150ms debounce, Saved fade, error revert, skeleton, error state), NotificationTabBar.js (Feed/Preferences sub-nav), PreferenceRow.js (animated Saved label), Layout.js (Notifications nav item), App.js (dual routes), utils/index.js (NotificationPreferences route). Pending: Director of Quality staging sign-off."
         },
         "ST-06": {
           "title": "Frontend: in-app notification feed",
