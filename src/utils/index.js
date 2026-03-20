@@ -13,6 +13,7 @@ export const createPageUrl = (pageName) => {
     PerformanceAnalytics: '/PerformanceAnalytics',
     RiskDashboard: '/RiskDashboard',
     TradeReflection: '/TradeReflection',
+    NotificationPreferences: '/notifications/preferences',
   };
   return routes[pageName] || '/';
 };
