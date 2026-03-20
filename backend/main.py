@@ -123,12 +123,17 @@ app.include_router(prospective_heat.router)
 app.include_router(trades_export.router)
 app.include_router(alerts.router)
 
-# Bootstrap alert tables on startup (idempotent CREATE IF NOT EXISTS)
-try:
-    ensure_alerts_tables()
-except Exception as _e:
+
+@app.on_event("startup")
+def on_startup():
+    """Bootstrap alert tables after the ASGI app is ready (idempotent CREATE IF NOT EXISTS)."""
     import logging as _logging
-    _logging.getLogger(__name__).warning("ensure_alerts_tables skipped at startup: %s", _e)
+    _log = _logging.getLogger(__name__)
+    try:
+        ensure_alerts_tables()
+        _log.info("ensure_alerts_tables: OK")
+    except Exception as _e:
+        _log.error("ensure_alerts_tables FAILED at startup — alert endpoints will return 500 until fixed: %s", _e)
 
 
 @app.get("/")

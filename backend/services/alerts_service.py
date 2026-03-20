@@ -695,6 +695,7 @@ def _seed_preferences(portfolio_id: str, cur) -> None:
 
 def get_preferences(portfolio_id: str) -> Dict:
     """Return notification preferences, seeding defaults on first use."""
+    ensure_alerts_tables()
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -717,6 +718,7 @@ def update_preferences(portfolio_id: str, updates: Dict) -> Dict:
     Partial update of notification preferences.
     updates: {alert_type: {"email_enabled": bool}, ...}
     """
+    ensure_alerts_tables()
     invalid = [k for k in updates if k not in ALERT_TYPES]
     if invalid:
         raise ValueError(f"Unknown alert type key(s): {invalid}")
