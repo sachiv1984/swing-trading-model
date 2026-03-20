@@ -22,7 +22,7 @@ from typing import Dict, List, Optional
 from uuid import uuid4
 
 from config import DEFAULT_MIN_HOLD_DAYS, GMAIL_USER, GMAIL_APP_PASSWORD, ALERT_TO_EMAIL
-from database import get_db, get_portfolio, get_positions
+from database import get_db, get_portfolio, get_positions, get_settings
 from utils.pricing import check_market_regime
 
 logger = logging.getLogger(__name__)
@@ -281,11 +281,8 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
             positions = cur.fetchall()
 
             # Load settings for min_hold_days
-            cur.execute(
-                "SELECT min_hold_days FROM settings WHERE portfolio_id = %s LIMIT 1",
-                (portfolio_id,)
-            )
-            settings_row = cur.fetchone()
+            settings_list = get_settings()
+            settings_row = settings_list[0] if settings_list else None
             min_hold_days = (
                 int(settings_row["min_hold_days"])
                 if settings_row and settings_row.get("min_hold_days")
