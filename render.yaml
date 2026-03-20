@@ -27,12 +27,10 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false          # Human must set this in Render dashboard — see runbook §3
-      - key: BREVO_API_KEY
-        sync: false          # Human must set — API key from Brevo dashboard → SMTP & API → API Keys
-      - key: ALERT_FROM_EMAIL
-        sync: false          # Human must set — verified sender address in Brevo
-      - key: ALERT_TO_EMAIL
-        sync: false          # Human must set — email address to receive alerts
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false          # Human must set — token from @BotFather
+      - key: TELEGRAM_CHAT_ID
+        sync: false          # Human must set — your Telegram chat ID (from getUpdates)
       - key: PYTHON_VERSION
         value: "3.11.0"
 

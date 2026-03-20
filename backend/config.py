@@ -49,15 +49,13 @@ DEFAULT_FX_RATE = 1.27  # GBP/USD fallback if API fails
 # Price Conversion
 PENCE_TO_POUNDS_THRESHOLD = 1000  # UK prices above this are in pence
 
-# Email delivery (Brevo HTTP API) — ST-04
-# Set these env vars on Render: BREVO_API_KEY, ALERT_FROM_EMAIL, ALERT_TO_EMAIL
-# BREVO_API_KEY: API key from Brevo dashboard → SMTP & API → API Keys
-# ALERT_FROM_EMAIL: verified sender address in Brevo
-# ALERT_TO_EMAIL: address to receive alerts
+# Alert delivery (Telegram Bot API) — ST-04
+# Set these env vars on Render: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# TELEGRAM_BOT_TOKEN: token from @BotFather
+# TELEGRAM_CHAT_ID: your chat ID (from getUpdates)
 import os
-BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
-ALERT_FROM_EMAIL = os.getenv("ALERT_FROM_EMAIL", "")
-ALERT_TO_EMAIL = os.getenv("ALERT_TO_EMAIL", "")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
 # API Delays (rate limiting)
 PRICE_FETCH_DELAY_SECONDS = 0.3
