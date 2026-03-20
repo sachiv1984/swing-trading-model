@@ -598,6 +598,6 @@ ALTER TABLE portfolios ADD COLUMN user_id UUID REFERENCES users(id);
 
 ---
 
-**Document Version:** 1.8
+**Document Version:** 2.0
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-03-11
+**Last Review:** 2026-03-20
