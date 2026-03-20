@@ -548,6 +548,27 @@ Lessons learnt from post-ship closure currently produce either (a) deferred patc
 
 ---
 
+### BLG-OPS-04 — Alert evaluation scheduling: trigger mechanism and rule behaviour design
+**Priority:** P1 (High)
+**Type:** Product Design Gap
+**Owner:** Product Owner
+**Source:** Post-delivery review — 2026-03-20
+**Target release:** v2.2
+
+**Problem**
+`POST /alerts/evaluate` must be called explicitly to evaluate rules and fire notifications. There is no scheduler — alerts are dormant unless manually triggered. Additionally, the behaviour of each alert rule under real conditions (e.g. frequency, cooldown, what constitutes a `market_regime_change` trigger in practice) has not been fully designed. Without a trigger mechanism and clear rule behaviour, the alert system cannot operate autonomously.
+
+**Outstanding questions for Product Owner**
+- How often should evaluation run? (e.g. daily at market close, intraday, on-demand only?)
+- Should `stop_loss_approach` and `grace_period_warning` have a cooldown to avoid repeat notifications on consecutive evaluations?
+- What is the source of truth for `market_regime_change`? (currently reads `GET /market/status` — is this sufficient?)
+- Trigger mechanism preference: external cron (e.g. cron-job.org hitting the staging URL), Render cron job (paid), or a scheduled task within the app?
+
+**Proposed next step**
+Product Owner to answer outstanding questions above. Engineering to then spec and implement the scheduler and any cooldown logic as a follow-on story.
+
+---
+
 <!-- release-plan-marker: RP:v2.1:2026-03-18__release-v2.1 -->
 
 ---
