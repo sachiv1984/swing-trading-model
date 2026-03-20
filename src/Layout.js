@@ -17,7 +17,8 @@ import {
   FileBarChart,
   Zap,
   Activity,
-  ShieldAlert
+  ShieldAlert,
+  Bell
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -49,6 +50,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Reflections", icon: FileBarChart, page: "TradeReflection" },
     { name: "Risk Dashboard", icon: ShieldAlert, page: "RiskDashboard" },
     { name: "System Status", icon: Activity, page: "SystemStatus" },
+    { name: "Notifications", icon: Bell, page: "NotificationPreferences" },
     { name: "Settings", icon: Settings, page: "Settings" },
   ];
 

@@ -1,4 +1,5 @@
 import { Toaster } from "./components/ui/toaster"
+import NotificationPreferences from "./pages/NotificationPreferences"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from './lib/query-client'
 import NavigationTracker from './lib/NavigationTracker'
@@ -58,6 +59,16 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/NotificationPreferences" element={
+        <LayoutWrapper currentPageName="NotificationPreferences">
+          <NotificationPreferences />
+        </LayoutWrapper>
+      } />
+      <Route path="/notifications/preferences" element={
+        <LayoutWrapper currentPageName="NotificationPreferences">
+          <NotificationPreferences />
+        </LayoutWrapper>
+      } />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
