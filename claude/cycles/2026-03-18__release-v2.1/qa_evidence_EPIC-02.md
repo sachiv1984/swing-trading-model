@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
 **Status:** Signed Off — complete
-**Version:** 1.0
-**Last Updated:** 2026-03-20
+**Version:** 2.0
+**Last Updated:** 2026-03-21
 
 ---
 
@@ -62,20 +62,180 @@ ST-02 is a spec-only story. All AC verification is by code/document review. No i
 
 ---
 
+## ST-03 — Backend: Alert Rules Engine
+
+**Classification:** delegated_backend
+**Commit:** c64d074
+**Spec references:**
+- `docs/specs/api_contracts/alerts_endpoints.md` v0.1
+- `docs/adr/ADR-003-notification-delivery-architecture.md`
+
+### What was built
+
+- `backend/services/alerts_service.py` — alert evaluation engine (4 rule types), CRUD for alert rules, notification creation, Telegram delivery stub
+- `backend/routers/alerts.py` — 10 endpoints wired per spec
+- `main.py` — router registered; `ensure_alerts_tables()` called on startup
+- 34 unit tests passing
+
+### Acceptance criteria verification
+
+| AC | Status | Evidence method | Notes |
+|----|--------|-----------------|-------|
+| Alert rules CRUD endpoints implemented (GET/POST/PATCH/DELETE) | Pass | Code review c64d074 | All 4 CRUD endpoints present in routers/alerts.py |
+| Alert evaluation endpoint (`POST /alerts/evaluate`) implemented | Pass | Code review | Evaluates all 4 rule types; returns rules_evaluated, notifications_created counts |
+| Notification feed endpoints (GET, PATCH, POST mark-all-read) implemented | Pass | Code review | 3 notification endpoints per spec |
+| Notification preferences endpoints (GET, PATCH) implemented | Pass | Code review | Seeds defaults on first use per spec |
+| Database tables bootstrapped on startup | Pass | Code review | `ensure_alerts_tables()` uses CREATE IF NOT EXISTS; called on startup and lazily in preferences |
+| 34 unit tests passing | Pass | Head of Engineering sign-off 2026-03-20 | All unit tests green |
+| Email delivery stubbed pending ST-04 | Pass | Code review | Stub in place; wired by ST-04 |
+
+**DoQ evidence method:** Code review. Backend — no UI behaviour. Unit test count verified by Head of Engineering sign-off.
+
+**Deviations:** None.
+
+---
+
+## ST-04 — Backend: Notification Delivery (Email → Telegram)
+
+**Classification:** delegated_backend
+**Commit:** fb87043
+**Spec references:**
+- `docs/specs/api_contracts/alerts_endpoints.md` v0.1
+- `docs/adr/ADR-003-notification-delivery-architecture.md`
+
+### What was built
+
+- `_send_via_telegram()` in `alerts_service.py` — Telegram Bot API delivery via urllib (no extra dependencies)
+- Environment variables: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`
+- Delivery confirmed in staging: Telegram message received for `daily_portfolio_summary` rule 2026-03-20
+- Implementation path: Resend (a5e0911) → Gmail SMTP (c858bb0) → Brevo (a0d4d61) → Telegram (fb87043)
+
+### Acceptance criteria verification
+
+| AC | Status | Evidence method | Notes |
+|----|--------|-----------------|-------|
+| Notification delivered for triggered alert types | Conditional Pass | Staging — Telegram message received 2026-03-20 | `daily_portfolio_summary` confirmed. Remaining 3 types require open positions; delivery path is identical |
+| Delivery fires via BackgroundTasks post-response (ADR-003) | Pass | Code review | Consistent with ADR-003 Option C |
+
+**DoQ evidence method:** Staging verification — Telegram message received. Director of Quality sign-off 2026-03-20.
+
+**Deviations:**
+- **DEV-ST04-01 (P2):** Delivery channel changed from email to Telegram Bot API. Gmail SMTP (port 587) blocked on Render free tier (errno 101). Brevo requires paid domain verification. Telegram Bot API operates over HTTPS port 443 — Render-compatible and free. AC met in spirit: delivery confirmed for `daily_portfolio_summary`; remaining 3 types share identical delivery path. BLG-OPS-04 filed (scheduling gap). **ACCEPTED** — Director of Quality sign-off 2026-03-20.
+
+---
+
+## ST-05 — Frontend: Notification Preferences Page
+
+**Classification:** delegated_frontend
+**Delegation record:** DEL-20260320-01
+**Commit:** 9c4813d
+**Spec references:**
+- `docs/specs/frontend/pages/notifications.md`
+- `docs/specs/api_contracts/alerts_endpoints.md`
+
+### What was built
+
+- `NotificationPreferences.js` — GET/PATCH wiring, optimistic toggle, 150ms debounce, "Saved" fade, error revert, skeleton, error state
+- `NotificationTabBar.js` — Feed/Preferences sub-nav
+- `PreferenceRow.js` — animated "Saved" label
+- `Layout.js` / `App.js` — Notifications nav item; dual routes (`/notifications`, `/notifications/preferences`)
+- Post-commit fixes: Body annotation on PATCH; route ordering (preferences before wildcard); startup race (ensure_alerts_tables on @app.on_event('startup'))
+
+### Acceptance criteria verification
+
+| AC | Status | Evidence method | Notes |
+|----|--------|-----------------|-------|
+| Preferences page renders all 4 alert types with toggles | Pass | Staging — DoQ 2026-03-20 | All 4 rows visible with label, description, toggle |
+| Toggle saves with optimistic update and "Saved" confirmation | Pass | Staging — DoQ 2026-03-20 | Toggle flips immediately; "Saved" label fades |
+| Error reverts toggle to prior state | Pass | Code review | Revert logic present in error handler |
+| Tab bar sub-navigation (Feed / Preferences) present | Pass | Staging — DoQ 2026-03-20 | Both tabs navigate correctly |
+| Sidebar nav item highlights on both routes | Pass | Staging — DoQ 2026-03-20 | isActive correct on `/notifications` and `/notifications/preferences` |
+
+**DoQ evidence method:** Staging verification — toggle saves, "Saved" confirmation visible, Feed tab no longer 404s. Director of Quality sign-off 2026-03-20.
+
+**Deviations:** None.
+
+---
+
+## ST-06 — Frontend: In-App Notification Feed
+
+**Classification:** delegated_frontend
+**Delegation record:** DEL-20260320-02
+**Commit:** 47efe4b
+**Spec references:**
+- `docs/specs/frontend/pages/notifications.md`
+
+### What was built
+
+- `Notifications.js` — feed page: GET/PATCH/POST wiring, optimistic mark-as-read per-item and mark-all, load-more pagination, skeleton, empty state, error state
+- `NotificationRow.js` — type icons, relative timestamp, unread cyan border, mark-as-read button
+- `App.js` — `/notifications` route; `Layout.js` — nav item links to feed, isActive on both sub-routes
+
+### Acceptance criteria verification
+
+| AC | Status | Evidence method | Notes |
+|----|--------|-----------------|-------|
+| Feed renders with unread indicators (cyan left border) | Pass | Staging — DoQ 2026-03-20 | Confirmed in staging |
+| Alert type icon displayed per row | Pass | Staging — DoQ 2026-03-20 | Confirmed |
+| Mark-as-read per-item (optimistic, persisted) | Pass | Staging — DoQ 2026-03-20 | Confirmed |
+| Mark-all-as-read (optimistic, header button hidden) | Pass | Staging — DoQ 2026-03-20 | Confirmed |
+| Empty state renders with Bell icon and correct strings | Pass | Staging (live) — DoQ 2026-03-20 | Confirmed in live environment |
+| Sidebar nav item active on both routes | Pass | Staging — DoQ 2026-03-20 | Confirmed |
+
+**DoQ evidence method:** Staging verification — feed shows, empty state in live, nav highlights on both tabs. Director of Quality sign-off 2026-03-20.
+
+**Deviations:** None.
+
+---
+
+## ST-07 — QA: Notification Delivery Test Scenarios — Live Execution
+
+**Classification:** delegated_qa
+**Spec reference:** `docs/testing/notifications_scenarios.md`
+**Execution date:** 2026-03-21
+**Executed by:** Director of Quality (live run)
+
+### Test execution results
+
+| Scenario | Result | Notes |
+|----------|--------|-------|
+| SC-NOTIF-01 — Alert evaluation creates notification and delivers via Telegram | **Pass** | `POST /alerts/evaluate` returned 200; notification created; Telegram message received |
+| SC-NOTIF-02 — Notification feed displays correctly; unread indicator present | **Pass** | Feed rendered correctly with unread indicator. Only `daily_portfolio_summary` type observed — lack of test data (no open positions) for the other 3 alert types. All 3 remaining types are covered by the identical delivery path verified in SC-NOTIF-01 |
+| SC-NOTIF-03 — Mark single notification as read; optimistic update | **Pass** | Optimistic update confirmed; persisted after reload |
+| SC-NOTIF-04 — Mark all as read; header button hidden | **Conditional Pass** | Lack of test data: only one notification existed in the system. "Mark all as read" button was visible before marking, absent after the single notification was read — button visibility behaviour confirmed correct. Bulk mark-all operation could not be exercised with multiple unread items. See DEV-EPIC02-02 |
+| SC-NOTIF-05 — Empty state displayed when no notifications exist | **Pass** | Tested in live environment; empty state rendered correctly |
+| SC-NOTIF-06 — Notification preferences page loads; all four alert types displayed | **Pass** | All 4 rows, tab bar, and nav item confirmed |
+| SC-NOTIF-07 — Preference toggle persists; "Saved" confirmation shown | **Pass** | Tested in live; toggle persists, "Saved" label visible |
+| SC-NOTIF-08 — All four alert types can be individually toggled | **Pass** | All 4 types toggled independently; each PATCH fires correctly |
+
+### Deviations
+
+- **DEV-EPIC02-02 (P3 — test data):** SC-NOTIF-04 could not be fully exercised. Only one notification existed during the test run; the bulk "mark all as read" operation requires ≥2 unread notifications. The button visibility behaviour (visible when unread items exist, hidden when none remain) was confirmed correct. The bulk POST endpoint is covered by unit tests (ST-03). Full scenario re-execution is recommended when positions data is seeded for EPIC-02 regression testing.
+- **DEV-EPIC02-03 (P3 — data coverage):** SC-NOTIF-02 observed only the `daily_portfolio_summary` alert type due to absence of open positions. The remaining 3 types (`stop_loss_approach`, `grace_period_warning`, `market_regime_change`) require open positions within trigger thresholds. The frontend rendering path (icon, border, timestamp) is identical across types; all 3 are out of scope per `notifications_scenarios.md §4` for this reason.
+
+---
+
 ## EPIC-level Consolidation
 
 | ST Item | Sprint | Spec Reference | What was built | Result | Deviations |
 |---------|--------|---------------|----------------|--------|------------|
 | ST-02 | Sprint 2 | alerts_endpoints.md v0.1, data_model.md v1.9, openapi.yaml | Alerts & Notifications full domain spec: 10 endpoints, 3 DB tables, openapi coverage | Pass | DEV-EPIC02-01 (P3, process — cross-EPIC changelog entry; non-functional) |
+| ST-03 | Sprint 2 | alerts_endpoints.md v0.1, ADR-003 | Backend alert rules engine: evaluation, CRUD, notification creation, 10 endpoints, 34 unit tests | Pass | None |
+| ST-04 | Sprint 2 | alerts_endpoints.md v0.1, ADR-003 | Telegram notification delivery; env vars TELEGRAM_BOT_TOKEN/CHAT_ID; delivery confirmed staging | Conditional Pass | DEV-ST04-01 (P2 — email→Telegram; Render SMTP blocked; accepted) |
+| ST-05 | Sprint 2 | notifications.md, alerts_endpoints.md | Notification preferences page: 4 types, toggles, "Saved" feedback, tab nav, dual routes | Pass | None |
+| ST-06 | Sprint 2 | notifications.md | In-app notification feed: unread indicators, type icons, mark-as-read, mark-all, empty state | Pass | None |
+| ST-07 | Sprint 2 | notifications_scenarios.md | 8 SC-NOTIF scenarios executed live 2026-03-21; 7 Pass, 1 Conditional Pass (SC-NOTIF-04 — test data gap) | Pass | DEV-EPIC02-02 (P3 — SC-NOTIF-04 test data), DEV-EPIC02-03 (P3 — SC-NOTIF-02 data coverage) |
 
 ---
 
-## QA Sign-off Block
+## QA Sign-off Block (v2.0 — updated 2026-03-21)
 
-**Verified by Director of Quality review (2026-03-20):**
+**Verified by Director of Quality (original sign-off 2026-03-20; updated 2026-03-21 with live SC-NOTIF execution results):**
+
+ST-02:
 - [x] `alerts_endpoints.md` created with all 10 endpoint definitions, field tables, error codes
 - [x] 4 alert types defined per roadmap description
-- [x] 3 data model tables (alert_rules, notifications, notification_preferences) with DDL, field tables, constraints
+- [x] 3 data model tables with DDL, field tables, constraints
 - [x] Notification preference model: per-type email_enabled; GET/PATCH endpoints; seeding behaviour
 - [x] `openapi.yaml` updated in same commit: 7 paths + schemas
 - [x] `Specs_Index.md` registration confirmed
@@ -84,9 +244,26 @@ ST-02 is a spec-only story. All AC verification is by code/document review. No i
 - [x] Router ordering constraint documented (mark-all-read before /{id})
 - [x] No unresolved P0 or P1 deviations
 
+ST-03 through ST-06 (staging verification 2026-03-20):
+- [x] Alert rules engine: 10 endpoints, 34 unit tests, startup bootstrapping — Head of Engineering sign-off
+- [x] Telegram delivery: confirmed in staging (daily_portfolio_summary); DEV-ST04-01 (P2) accepted
+- [x] Preferences page: 4 types, optimistic toggle, "Saved" label, tab nav — staging confirmed
+- [x] Notification feed: unread indicators, type icons, mark-as-read, empty state — staging + live confirmed
+
+ST-07 (SC-NOTIF live execution 2026-03-21):
+- [x] SC-NOTIF-01: Pass — alert evaluation + Telegram delivery confirmed
+- [x] SC-NOTIF-02: Pass — feed display and unread indicator confirmed (daily_portfolio_summary type; other 3 types data-limited, P3 deviation filed)
+- [x] SC-NOTIF-03: Pass — per-item mark-as-read, optimistic update, persistence confirmed
+- [x] SC-NOTIF-04: Conditional Pass — button visibility confirmed; bulk operation not testable with single notification (P3 deviation filed)
+- [x] SC-NOTIF-05: Pass — empty state confirmed in live
+- [x] SC-NOTIF-06: Pass — preferences page, all 4 types, tab nav, sidebar active state confirmed
+- [x] SC-NOTIF-07: Pass — toggle persistence, "Saved" label confirmed in live
+- [x] SC-NOTIF-08: Pass — all 4 types individually toggleable, correct PATCH keys confirmed
+- [x] No unresolved P0 or P1 deviations across EPIC-02
+
 - Signed off by: Director of Quality
-- Date: 2026-03-20
-- Comments: ST-02 spec is complete and sign-off-ready. All 7 ACs pass. The alerts domain spec is coherent with ADR-003, covers all 4 alert types from the roadmap, includes a comprehensive data model, and has full openapi.yaml coverage. One P3 process deviation (cross-EPIC changelog entry) noted — non-functional, non-blocking.
+- Date: 2026-03-21
+- Comments: EPIC-02 QA evidence updated with live SC-NOTIF execution results (2026-03-21). All 6 stories verified. 7 of 8 scenarios Pass; SC-NOTIF-04 is Conditional Pass due to test data constraint (P3, non-blocking). Two P3 deviations filed (DEV-EPIC02-02, DEV-EPIC02-03) — both are data-coverage observations, not functional failures. No P0 or P1 deviations exist across EPIC-02. EPIC-02 is QA sign-off-ready for PR merge.
 
 ---
 

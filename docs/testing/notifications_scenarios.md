@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-03-20
+**Version:** 1.1
+**Last Updated:** 2026-03-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Derived from:** `docs/specs/frontend/pages/notifications.md` v0.1; `docs/specs/api_contracts/alerts_endpoints.md` v0.1
 **Sprint:** 2026-03-18__release-v2.1 — ST-07 (closes EPIC-02 test scenario gap)
@@ -272,6 +272,12 @@ These scenarios verify the Notifications feature against the canonical specifica
 
 ## 5. Director of Quality Sign-Off
 
-**SC-NOTIF-01:** Verified 2026-03-20 — `POST /alerts/evaluate` returned `rules_evaluated: 4`, `notifications_created: 1` (daily_portfolio_summary); Telegram message received.
-**SC-NOTIF-02 through SC-NOTIF-08:** Verified 2026-03-20 — feed renders in staging with unread indicators; empty state confirmed in live; preferences page loads all 4 types; toggle saves with "Saved" confirmation; nav highlights on both routes.
-**Director of Quality sign-off:** 2026-03-20
+**SC-NOTIF-01:** Pass — 2026-03-21 live run. `POST /alerts/evaluate` returned 200; notification created; Telegram message received.
+**SC-NOTIF-02:** Pass — 2026-03-21 live run. Feed rendered correctly; unread indicator (cyan border) present. Only `daily_portfolio_summary` type observed due to lack of open positions; other 3 alert type icons not exercised (data limitation, not a functional failure — P3 deviation DEV-EPIC02-03 filed in qa_evidence_EPIC-02.md).
+**SC-NOTIF-03:** Pass — 2026-03-21 live run. Per-item mark-as-read confirmed; optimistic update immediate; persisted after reload.
+**SC-NOTIF-04:** Conditional Pass — 2026-03-21 live run. Only one notification existed in the system. "Mark all as read" button correctly visible before read; correctly absent after notification was read. Bulk operation with multiple unread items not testable due to test data constraint (P3 deviation DEV-EPIC02-02 filed in qa_evidence_EPIC-02.md).
+**SC-NOTIF-05:** Pass — 2026-03-21 live run. Empty state confirmed in live environment.
+**SC-NOTIF-06:** Pass — 2026-03-21 live run. All 4 alert types rendered; tab bar and sidebar nav active state confirmed.
+**SC-NOTIF-07:** Pass — 2026-03-21 live run (live environment). Toggle persistence confirmed; "Saved" label visible.
+**SC-NOTIF-08:** Pass — 2026-03-21 live run. All 4 types independently toggleable; correct PATCH keys confirmed.
+**Director of Quality sign-off:** 2026-03-21
