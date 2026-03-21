@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-03-18__release-v2.1",
-  "cycle_name": "Release Planning — v2.1 Alerts, Watchlists & Enhancements",
-  "status": "Sprint_Complete",
+  "cycle_name": "Release Planning \u2014 v2.1 Alerts, Watchlists & Enhancements",
+  "status": "Verified",
   "engine": "sprint_execution",
   "next_release": "v2.1",
   "backlog_slice_path": "claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md",
@@ -19,7 +19,7 @@
   "last_rebalance_cycle": "2026-03-18__item-4.3",
   "last_rebalance_utc": "2026-03-18T00:00:00Z",
   "last_rebalance_outcome": "No-change roadmap (DL-010 confirm) + 2 backlog adds (BLG-FR-01 PDF Export, BLG-FR-02 CSV Export) + 4.1b + 4.3 completed + 19 stale ideas disposed (8 rejected, 11 re-parked) + idea_intake_prompt v2.1 (STEP -0.5 stale warning)",
-  "last_meta_review_cycle": "none — initialised cycle 2026-03-17__item-v1.10",
+  "last_meta_review_cycle": "none \u2014 initialised cycle 2026-03-17__item-v1.10",
   "rebalance_cycles_since_meta_review": 1,
   "last_manage_roadmap_utc": "2026-03-17T23:59:00Z",
   "last_manage_roadmap_outcome": "2 items retired (4.1b Tax-Year P&L, 4.3 Signal Exposure); 0 flagged stale; 16 kept active",
@@ -31,10 +31,10 @@
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
       "summary": "Settings endpoint method decision resolved",
-      "resolution": "Option (a) — update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
+      "resolution": "Option (a) \u2014 update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
       "resolved_by": "Product Owner",
       "resolved_utc": "2026-03-04T00:25:00Z",
-      "formal_capture": "Sprint Planning cycle — ST-09 acceptance criteria update"
+      "formal_capture": "Sprint Planning cycle \u2014 ST-09 acceptance criteria update"
     }
   },
   "release_plan": {
@@ -60,5 +60,8 @@
     "release_plan_path": "claude/cycles/2026-03-17__release-v2.0/release_plan.md",
     "cycle_id": "2026-03-17__release-v2.0",
     "published_utc": "2026-03-17T00:30:00Z"
-  }
+  },
+  "verification_report": "claude/cycles/2026-03-18__release-v2.1/verification_report.md",
+  "verification_status": "Verified_with_deviations",
+  "next_cycle_unblocked": true
 }

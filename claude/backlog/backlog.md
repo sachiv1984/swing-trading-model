@@ -569,6 +569,39 @@ Product Owner to decide preferred grouping/pattern. Engineering to spec and impl
 
 ---
 
+### TEST-GAP-EPIC-02 — Watchlist test scenarios: formally execute notifications_scenarios.md on staging
+**Priority:** P2 (Medium)
+**Type:** QA Coverage
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-03-18__release-v2.1 — TSG-v21-01
+**Target release:** v2.2 (before next sprint touching notifications domain)
+
+SC-NOTIF-01 through SC-NOTIF-08 exist in `docs/testing/notifications_scenarios.md` but were not formally executed and referenced in qa_evidence_EPIC-02.md. QA & Testing Owner to execute on staging and record results. Remaining 3 alert types (stop_loss_approach, grace_period_warning, market_regime_change) require open positions to trigger — test data setup needed.
+
+---
+
+### TEST-GAP-EPIC-03 — Create watchlist test scenarios
+**Priority:** P2 (Medium)
+**Type:** QA Coverage
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-03-18__release-v2.1 — TSG-v21-02
+**Target release:** v2.2
+
+No test scenario file exists for the watchlist feature. QA & Testing Owner to create `docs/testing/watchlist_scenarios.md` covering: SC-WATCH-01 (add), SC-WATCH-02 (edit), SC-WATCH-03 (delete), SC-WATCH-04 (Add to Position removes from watchlist), SC-WATCH-05 (duplicate 409), SC-WATCH-06 (sort order with mixed signal statuses). SC-WATCH-06 also satisfies deferred AC-6 from ST-10 DoQ sign-off.
+
+---
+
+### TEST-GAP-EPIC-05-SLIP — Create slippage tracking test scenarios
+**Priority:** P3 (Low)
+**Type:** QA Coverage
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-03-18__release-v2.1 — TSG-v21-03
+**Target release:** v2.2
+
+No scenario file covers slippage tracking (ST-14). QA & Testing Owner to add SC-SLIP-01 through SC-SLIP-04 covering: fill price input on trade entry, slippage % column display (colour-coded), avg slippage StatsCard update, null fill price shows "—". May be added to `docs/testing/reports_scenarios.md` or a new `slippage_scenarios.md`.
+
+---
+
 ### BLG-OPS-04 — Alert evaluation scheduling: trigger mechanism and rule behaviour design
 **Priority:** P1 (High)
 **Type:** Product Design Gap
