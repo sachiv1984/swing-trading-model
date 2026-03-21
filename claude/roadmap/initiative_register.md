@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-18 (roadmap rebalance — cycle 2026-03-18__item-4.3)
+**Last Updated:** 2026-03-21 (roadmap rebalance — cycle 2026-03-21__item-3.5 — 3.5/4.2/CHART-IX moved to Completed)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -17,11 +17,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 ## Active Initiatives
 
-| ID | Initiative | Release | Status | Decision log ref |
-|----|-----------|---------|--------|-----------------|
-| 3.5 | Alerts & Notifications | v2.1 | Deferred — BLG-TECH-08 (async notification ADR) required; auto-advance trigger set (DL-003) | DL-002, DL-003 |
-| 4.2 | Watchlists & Screening | v2.1+ | Planned — do not pull forward; Priority 2 | — |
-| CHART-IX | Chart Interactivity Enhancements | v2.1+ | Planned — do not pull forward; Priority 2. **Displacement candidate: Yes — lowest strategic urgency relative to impact in Priority 2; S effort; natural stop if future roadmap-level Add requires displacement — 2026-03-17** | DL-009 |
+*No active initiatives as of 2026-03-21. All v2.1 items shipped. v2.2 scope TBD — pending release planning.*
 
 ---
 
@@ -36,12 +32,9 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 ---
 
-## Priority 2 — Next Phase (post v2.0)
+## Priority 2 — Next Phase (post v2.1)
 
-| ID | Initiative | Status |
-|----|-----------|--------|
-| 4.2 | Watchlists & Screening | Planned — do not pull forward |
-| CHART-IX | Chart Interactivity Enhancements | Planned — do not pull forward |
+*No items currently in Next Phase. v2.2 scope will be determined by release planning engine from enriched backlog.*
 
 ---
 
@@ -72,6 +65,9 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 | ID | Initiative | Shipped | Release |
 |----|-----------|---------|---------|
+| 3.5 | Alerts & Notifications | 2026-03-21 | v2.1 |
+| 4.2 | Watchlists & Screening | 2026-03-21 | v2.1 |
+| CHART-IX | Chart Interactivity Enhancements | 2026-03-21 | v2.1 |
 | 4.1b | Tax-Year P&L Statement | 2026-03-17 | v2.0 |
 | 4.3 | Signal Exposure Enhancement | 2026-03-17 | v2.0 |
 | BLG-OPS-01 | Development Environment (staging) | 2026-03-16 | v1.10 |

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-17 (roadmap rebalance — cycle 2026-03-17__item-v1.10)
+**Last Updated:** 2026-03-21 (roadmap rebalance — cycle 2026-03-21__item-3.5)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -163,3 +163,39 @@ Scarce skill note: Metrics Definitions owner is required for both v1.7 (heat for
 **Skill-Silo check (v2.0 scope, this cycle):** Governance load ~0% (all v2.0 items are execution-heavy: 4.1b spec+implementation, 4.3 frontend spec+implementation). Below 20% floor. Product Owner sign-off capacity confirmed. No Skill-Silo Alert issued. Sign-off capacity: adequate — v2.0 scope well-defined with clear spec ownership (4.1b: Financial Reporting Records Owner; 4.3: Frontend UX spec + Strategy Rules owner for scope enforcement).
 
 **Assessment:** v2.0 is the lowest-overhead delivery candidate to date: 4.3 is frontend-only (~0.5 day), 4.1b is low-medium effort. The largest item (3.5 Alerts) remains gated. With v1.10 capacity freed, engineering and ops capacity is available. No workforce constraint violation for v2.0 scope.
+
+---
+
+## Capacity Released — Cycle 2026-03-21__item-3.5
+
+### Completed items: v2.1 — Alerts, Watchlists & Enhancements (shipped 2026-03-21)
+
+| Field | Value |
+|-------|-------|
+| Estimated effort released | ~12–16 days (6 EPICs: ADR-003, Alerts, Watchlists, Chart Interactivity, Tax/Slippage, Spec Debt & QA) |
+| Skills released | Backend async (Telegram/email), Frontend (Alerts UI, Watchlists, Chart Interactivity), QA & Testing (scenario authoring + execution), API Contracts, Spec authoring, PMO coordination |
+| Duration freed | Immediately available for v2.2 pre-alignment |
+| Constraints | OA-01–OA-05 deferred actions from post-ship closure carry into v2.2 capacity planning |
+
+### New Backlog Items Added (from IW-20260321-01 and stale idea clearing — cycle 2026-03-21__item-3.5)
+
+| Item | Est. Effort | Skills | Priority |
+|------|------------|--------|---------|
+| BLG-SEC-01 API Key Authentication | ~1 day | Backend Engineering + Frontend | P1 |
+| BLG-FEAT-12 Alert History Table | ~2–3 days | Backend Engineering + Frontend + Data Model | P2 |
+| BLG-FEAT-10 Alert Threshold Customisation | ~2–3 days | Backend Engineering + Frontend | P2 |
+| BLG-FEAT-11 Strategy Compliance Score (SPS=4, display-only) | ~3–5 days | Backend Engineering + Frontend + Strategy Rules | P2 |
+| BLG-SPEC-T01 Spec-to-Test Traceability Matrix | ~1–2 days | Director of Quality + Head of Specs Team | P2 |
+| BLG-FEAT-09 Metrics Staleness Indicator | ~1–2 days | Backend Engineering + Frontend | P2 |
+| BLG-QA-02 Test Automation Readiness Assessment | ~0.5–1 day | QA & Testing Owner + Director of Quality | P2 |
+| BLG-FE-02 Loading State Standardisation | ~1–2 days | Frontend | P3 |
+| BLG-FE-03 User-Facing Error Message Mapping | ~1–2 days | Frontend | P3 |
+| BLG-OPS-05 API Performance Baseline | ~0.5–1 day | Head of Engineering | P3 |
+| BLG-OPS-06 Health Check Endpoint | <1 hour | Backend Engineering | P3 |
+| BLG-SEC-02 Content Security Policy Headers | <1 hour | Frontend + Cybersecurity | P3 |
+
+**Total new backlog additions:** ~13–24 days estimated effort (4.6–8.6 sprints at 3-day sprint cadence)
+
+**Skill-Silo check (cycle additions):** Governance load ~15% (BLG-SPEC-T01 + BLG-QA-02 are documentation/process items; remainder is execution). Within 15–60% bounds. No Skill-Silo Alert triggered. Product Owner sign-off capacity confirmed.
+
+**Assessment:** v2.1 freed substantial multi-skill capacity (Backend, Frontend, QA, Spec). The new backlog is front-loaded with P1 security (BLG-SEC-01) and P2 feature enhancements. BLG-FEAT-11 (SPS=4) is the only boundary-adjacent item and requires Strategy Rules owner involvement — this is the primary capacity constraint for v2.2. Sequencing recommendation: BLG-SEC-01 first (P1 security gap), then BLG-QA-02 + BLG-SPEC-T01 (quality foundations), then alert enhancements (BLG-FEAT-10/12) after BLG-OPS-04 alert scheduling design completes. BLG-OPS-06 and BLG-SEC-02 are XS items appropriate for any sprint as fast-follow tasks. No workforce constraint violation identified for the projected v2.2 scope.

@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-21 (post-ship closure 2026-03-18__release-v2.1 — 10 backlog items closed; BLG-TECH-05 target updated to v2.2)
-**Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
+**Last Updated:** 2026-03-21 (roadmap rebalance — cycle 2026-03-21__item-3.5 — 12 new backlog items added from DL-011 + BLG-FE-03)
+**Last rebalance:** 2026-03-21 (cycle 2026-03-21__item-3.5 — DL-011)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -446,6 +446,332 @@ No scenario file covers slippage tracking (ST-14). QA & Testing Owner to add SC-
 
 **Proposed next step**
 Product Owner to answer outstanding questions above. Engineering to then spec and implement the scheduler and any cooldown logic as a follow-on story.
+
+---
+
+## 7. New Backlog Items — Cycle 2026-03-21__item-3.5
+
+*Added from roadmap rebalance cycle 2026-03-21__item-3.5 (completion event: 3.5 Alerts & Notifications). Ideas window IW-20260321-01 and stale idea clearing.*
+
+---
+
+### BLG-SEC-01 — API Key Authentication for Render Deployment
+**Priority:** P1 (High)
+**Type:** Security
+**Owner:** Backend Engineering Patterns Owner
+**Source:** IW-20260321-01 (IDEA-backend-engineering-20260321-01 + IDEA-cybersecurity-20260321-02)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** M (~1 day)
+**Target release:** v2.2
+
+**Problem**
+The system is deployed on Render with publicly accessible URLs. There is no authentication on the API. Financial data (portfolio, trades, P&L, tax reports) is readable by anyone who knows the Render URL. HTTPS + unguessable URL is obscurity, not security.
+
+**Scope**
+- Add `X-API-Key` header requirement to all non-public API endpoints
+- Single hard-coded API key (environment variable) for single-user system
+- Return 401 on missing or invalid key
+- Document in `docs/specs/api_contracts/` (note: this must follow the OpenAPI Drift Detection rules — all endpoints must remain in openapi.yaml)
+- Frontend must include the API key in all requests (environment config)
+
+**Acceptance Criteria**
+- All endpoints require a valid X-API-Key header
+- Missing or invalid key returns HTTP 401
+- Frontend includes key from environment variable on all API calls
+- No regression to existing functionality
+
+---
+
+### BLG-FEAT-12 — Alert History Table
+**Priority:** P2 (Medium)
+**Type:** Feature / Data Model
+**Owner:** Data Model & Domain Schema Owner + Backend Engineering
+**Source:** IW-20260321-01 (IDEA-data-model-owner-20260321-01)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** M (~2–3 days)
+**Target release:** v2.2
+**Depends on:** BLG-OPS-04 (alert scheduling design — best sequenced together)
+
+**Problem**
+Alert evaluation results are transient. There is no record of which rules fired, what values triggered them, when they fired, or whether a notification was sent. Users cannot review alert history, debug misconfigurations, or trust that the system behaved correctly while they were away.
+
+**Scope**
+- New `alert_evaluations` table: stores evaluation timestamp, rule type, symbol, triggered (bool), values compared, notification_sent (bool)
+- `GET /alerts/history` endpoint returning recent evaluation records (last N days or N records)
+- Frontend: alert history view (table or list, sortable by date/symbol)
+- Schema migration with appropriate index on timestamp + rule_type
+- Update `docs/specs/api_contracts/alerts_endpoints.md` + `openapi.yaml`
+
+**Acceptance Criteria**
+- Every `POST /alerts/evaluate` call persists a record per rule evaluated
+- `GET /alerts/history` returns records with: timestamp, rule type, symbol, triggered flag, notification sent flag
+- Frontend displays history; records are sortable and filterable by rule type
+- Schema migration is reversible (down migration documented)
+- openapi.yaml updated in same commit
+
+---
+
+### BLG-FEAT-10 — Alert Threshold Customisation
+**Priority:** P2 (Medium)
+**Type:** Feature
+**Owner:** Product Owner + Backend Engineering Patterns Owner
+**Source:** IW-20260321-01 (IDEA-product-owner-20260321-01)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** M (~2–3 days)
+**Target release:** v2.2
+
+**Problem**
+Alert rules use fixed hardcoded thresholds (e.g. stop_loss_approach % trigger). A user monitoring a low-volatility stock needs different thresholds than one monitoring high-volatility stocks. No per-rule or per-symbol threshold customisation exists.
+
+**Scope**
+- User-configurable numeric thresholds per alert rule type (e.g. stop_loss_approach: notify when within N% of stop)
+- Store thresholds in user settings or alert rule record
+- Frontend: threshold input fields on alert creation/edit UI
+- Backend: evaluation logic reads threshold from rule record, not hardcoded constant
+- Update `docs/specs/api_contracts/alerts_endpoints.md` + `openapi.yaml` if schema changes
+
+**Acceptance Criteria**
+- User can set a custom threshold when creating or editing an alert rule
+- Alert evaluation uses the per-rule threshold
+- Default threshold (current hardcoded value) applies when no custom value is set
+- Threshold visible on alert list view
+- openapi.yaml updated if response/request shape changes
+
+---
+
+### BLG-FEAT-11 — Strategy Compliance Score (Display-Only)
+**Priority:** P2 (Medium)
+**Type:** Feature (boundary-adjacent — SPS=4)
+**Owner:** Strategy Rules & System Intent Owner + Backend Engineering + Base44 Frontend
+**Source:** IW-20260321-01 (IDEA-strategy-owner-20260321-01)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** M–L (~3–5 days)
+**Target release:** v2.2
+
+> ⚠️ **Scope constraint (from STEP 5 debate):** This item is display-only. No automated enforcement, no alerts generated by the score, no blocking behaviour. The score surfaces raw ATR/stop data in a compliance-framed summary. Any extension toward automated enforcement or notifications requires a new SPS≥4 review and explicit §13.3 sign-off from Strategy Rules & System Intent Owner.
+
+**Problem**
+Users have no dashboard view showing whether their open positions respect ATR-based stop discipline rules. A compliance panel could surface: positions where stop distance exceeds ATR ratio, stops not updated within N days, position sizes that deviate significantly from ATR-derived recommendations.
+
+**Scope**
+- Display-only compliance summary panel on the portfolio or positions page
+- Per-position scores: stop distance vs ATR, stop update recency, position size vs ATR recommendation
+- No automated actions — user reads score and decides
+- Backend: new computation endpoint or extend existing positions endpoint
+- Update strategy_rules.md cross-reference if new derived fields are introduced
+
+**Acceptance Criteria**
+- Compliance panel visible on portfolio/positions page
+- Per-position breakdown shows: ATR-based stop compliance flag, days since last stop update, size deviation from ATR recommendation
+- No automated notification, alert, or action generated by this panel
+- Strategy Rules & System Intent Owner DoQ sign-off required (SPS=4 item) at delivery verification
+- §13.3 scope constraint documented in AC and reflected in implementation
+
+---
+
+### BLG-SPEC-T01 — Spec-to-Test Traceability Matrix
+**Priority:** P2 (Medium)
+**Type:** Quality / Documentation
+**Owner:** Director of Quality + Head of Specs Team
+**Source:** IW-20260321-01 (IDEA-director-of-quality-20260304-01 — gate cleared: ST-17 shipped v2.1)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** M (~1–2 days)
+**Target release:** v2.2
+**Depends on:** ST-17 (Spec Coverage Inventory — ✅ shipped v2.1)
+
+**Problem**
+DoQ sign-offs cite test scenarios but there is no formal mapping from canonical spec ACs to specific test scenario IDs. AC coverage gaps are invisible — a scenario may exist that is not tied to any AC, or an AC may have no scenario covering it.
+
+**Scope**
+- For each canonical spec with test scenarios, create a traceability mapping: AC → scenario ID(s)
+- Start with high-value specs: alert rules, portfolio, positions, trade history
+- Document in `docs/testing/` as a reference alongside existing scenario files
+- Review against Specs_Index.md §9 (Test Coverage Gaps — v2.1) to confirm gaps are tracked
+
+**Acceptance Criteria**
+- Traceability matrix exists for at least 3 canonical specs
+- Each AC in covered specs maps to ≥1 scenario ID or is explicitly flagged as "No scenario — gap"
+- Gaps are added to TEST-GAP tracking
+
+---
+
+### BLG-FEAT-09 — Metrics Staleness Indicator
+**Priority:** P2 (Medium)
+**Type:** Feature / UX
+**Owner:** Metrics Definitions & Analytics Canonical Owner + Base44 Frontend
+**Source:** IW-20260321-01 (IDEA-metrics-analytics-20260304-02 — gate cleared: BLG-FEAT-03 slippage tracking shipped)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** S–M (~1–2 days)
+**Target release:** v2.2
+
+**Problem**
+Analytics metrics can be based on stale data (last portfolio/trade sync may be hours old). No indicator shows the user when data was last refreshed — they may be making decisions based on outdated P&L figures.
+
+**Scope**
+- Add "data as of: <timestamp>" indicator to analytics and portfolio pages
+- Backend: expose `last_sync_at` or similar field on relevant endpoints
+- Frontend: display indicator with relative time ("Updated 2h ago") and absolute time on hover
+- Configurable staleness threshold: warn visually if data is >N hours old
+
+**Acceptance Criteria**
+- Data freshness indicator visible on analytics and portfolio pages
+- Shows relative time (e.g. "Updated 2h ago") and absolute time on hover
+- Visual warning (amber) if data is stale beyond a configurable threshold
+- openapi.yaml updated if new field added to response
+
+---
+
+### BLG-QA-02 — Test Automation Readiness Assessment
+**Priority:** P2 (Medium)
+**Type:** QA Process / Scoping
+**Owner:** QA & Testing Owner + Director of Quality
+**Source:** IW-20260321-01 (IDEA-qa-testing-20260304-02 — gate cleared: CI automation exists post-v1.10)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** XS–S (~0.5–1 day)
+**Target release:** v2.2
+**Sequencing:** Should precede BLG-QA-01 (Playwright E2E) to confirm scope
+
+**Problem**
+Before investing in broad test automation (Playwright, integration test suite expansion), a readiness assessment should confirm: what infrastructure exists, what gaps remain, what is the optimal sequencing and tooling. Without this, automation investment may be misdirected.
+
+**Scope**
+- Review current test infrastructure (pytest integration tests, golden output tests, existing Playwright setup if any)
+- Map to BLG-QA-01 (Playwright E2E) and TEST-GAP items — confirm sequencing
+- Produce a short readiness report (1–2 pages) with: current state, recommended investments, priority order
+- Output: recommended scope for BLG-QA-01
+
+**Acceptance Criteria**
+- Readiness assessment document produced
+- Current automation coverage quantified (% endpoints with integration tests)
+- Recommended sequencing for BLG-QA-01 and other automation investments confirmed
+- Director of Quality sign-off
+
+---
+
+### BLG-FE-02 — Loading State Standardisation
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IW-20260321-01 (IDEA-base44-frontend-20260304-01 — gate cleared: BLG-TECH-08 async ADR shipped v2.1)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** M (~1–2 days)
+**Target release:** v2.2
+
+**Problem**
+API-backed interactions (portfolio load, watchlist load, alert evaluation) show inconsistent loading states — some show a spinner, some flash an empty state, some silently error. Users cannot reliably distinguish "loading" from "empty" from "error".
+
+**Scope**
+- Audit all API-backed component interactions for loading, empty, and error state handling
+- Establish a standard pattern: loading spinner, empty-state message, error-state message
+- Apply pattern consistently across: portfolio, positions, watchlist, alerts, analytics pages
+- Document the pattern in the frontend specs
+
+**Acceptance Criteria**
+- All API-backed components have consistent loading, empty, and error states
+- Spinner shown while awaiting API response on all listed pages
+- Empty-state message shown when API returns empty data (distinct from error)
+- Error-state message shown on API failure (distinct from empty)
+- No regression to existing page layouts
+
+---
+
+### BLG-OPS-05 — API Endpoint Performance Baseline
+**Priority:** P3 (Low)
+**Type:** Operational / Observability
+**Owner:** Head of Engineering + Infrastructure & Operations Owner
+**Source:** IW-20260321-01 (IDEA-head-of-engineering-20260304-02 — gate cleared: API surface stable post-v2.1)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** S (~0.5–1 day)
+**Target release:** v2.2
+
+**Problem**
+No baseline exists for endpoint response times. As features are added (alert evaluation, chart queries), performance regressions cannot be detected. The alert evaluation endpoint and analytics queries are the most likely candidates for slowdown.
+
+**Scope**
+- Instrument and document p50/p95 response times for all currently active API endpoints
+- Use existing integration test infrastructure or a simple timing script
+- Produce a baseline document in `docs/` or as a test artefact
+- Identify any endpoint already outside acceptable thresholds
+
+**Acceptance Criteria**
+- Response time baseline documented for all endpoints defined in openapi.yaml
+- p50 and p95 values recorded
+- Any endpoint with p95 > 500ms flagged for investigation
+
+---
+
+### BLG-OPS-06 — Health Check Endpoint
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** Infrastructure & Operations Owner + Backend Engineering
+**Source:** IW-20260321-01 (IDEA-infra-ops-20260321-01 — direct backlog routing)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** XS (<1 hour)
+**Target release:** v2.2
+
+**Problem**
+No `GET /health` endpoint exists. Monitoring tools, uptime checks, and alert schedulers have no way to verify system availability without parsing business logic responses.
+
+**Scope**
+- Add `GET /health` endpoint returning: HTTP 200, JSON with `{"status": "ok", "db": "connected" | "error", "last_market_status_check": "<ISO>", "last_alert_evaluation": "<ISO or null>"}`
+- Add to openapi.yaml
+- Wire into any future alert scheduler as a pre-flight check
+
+**Acceptance Criteria**
+- `GET /health` returns 200 with above JSON when system is healthy
+- `db` field reflects actual DB connectivity
+- openapi.yaml updated in same commit
+
+---
+
+### BLG-SEC-02 — Content Security Policy (CSP) Headers
+**Priority:** P3 (Low)
+**Type:** Security / Frontend
+**Owner:** Cybersecurity & Trust Lead + Base44 Frontend
+**Source:** IW-20260321-01 (IDEA-cybersecurity-20260321-01 — direct backlog routing)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** XS (<1 hour)
+**Target release:** v2.2
+
+**Problem**
+The React frontend has no Content Security Policy (CSP) headers configured. CSP is a standard defence against XSS attacks that restricts which scripts, styles, and resources can be loaded by the browser.
+
+**Scope**
+- Configure CSP headers on the frontend (via meta tag or Render headers configuration)
+- Appropriate policy: restrict scripts to same-origin + CDN sources used by the app; no inline scripts (or nonce-based if required)
+- Verify no regression — ensure all current resources load correctly under the policy
+
+**Acceptance Criteria**
+- CSP header present on all frontend pages
+- Browser console shows no CSP violations for normal application use
+- No regression to existing page functionality
+
+---
+
+### BLG-FE-03 — User-Facing Error Message Mapping Layer
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IW-20260304-01 (IDEA-base44-frontend-20260304-02 — gate cleared: BLG-SPEC-G2 Error Response Standard shipped v2.1)
+**Cycle added:** 2026-03-21__item-3.5
+**Effort:** S–M (~1–2 days)
+**Target release:** v2.2
+**Depends on:** BLG-SPEC-G2 (✅ shipped v2.1)
+
+**Problem**
+Backend API errors surface as raw status codes or technical error messages in the UI. Users see "500" or "undefined" instead of actionable guidance. The Error Response Standard (BLG-SPEC-G2) defines the error envelope — this item consumes it on the frontend.
+
+**Scope**
+- Create a frontend error mapping layer: HTTP status code + error code → user-readable message
+- Cover all known error codes defined in BLG-SPEC-G2 Error Response Standard
+- Apply consistently across all API-consuming components
+- Log raw error details to console for debugging; surface friendly message to user
+
+**Acceptance Criteria**
+- API errors display a user-readable message rather than a raw code or "undefined"
+- Error mapping covers all error codes defined in the Error Response Standard
+- Raw technical details logged to console (not shown to user)
+- No regression to existing error display behaviour
 
 ---
 
