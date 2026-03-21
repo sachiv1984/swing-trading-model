@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.32
-**Last Updated:** 2026-03-19
+**Version:** 3.33
+**Last Updated:** 2026-03-21
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v2.5)
+**Source prompt:** `claude/system/execution_prompt.md` (v2.6)
 
 ### 8.1 Invocation
 
@@ -1297,7 +1297,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.20 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.2 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v2.5 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v2.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.5 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.0 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1323,6 +1323,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 | 3.33 | 2026-03-20 | **CLAUDE.md §8 — Cross-EPIC Merge Conflict Resolution added.** New section documents the sequential merge procedure for concurrent EPIC branches with shared-file conflicts: merge simpler EPIC first → merge updated main into remaining EPIC branch → resolve per-file rules (execution_state.json never revert done→blocked; openapi.yaml union + highest version; api_changelog.md combine descending; data_model.md all migrations ascending + highest version footer) → commit, push, confirm MERGEABLE, merge. §14 version 3.33. |
 | 3.31 | 2026-03-19 | **Correct preview URL pattern.** §8.2 and §8.5: `trading-assistant-api-pr-{N}` → `trading-assistant-api-staging-pr-{N}` (confirmed from live Render deployment). §14 version 3.31. Merge conflict resolution: renumbered v3.28→3.29→3.30→3.31 to accommodate main's v3.28 (ST-11 staging seed). |
 | 3.30 | 2026-03-18 | **ST-15 sign-off: preview environment mode clarified to manual + `render-preview` label.** §8.2 bullet updated — automatic provisioning corrected to manual mode; `render-preview` label required on PRs for EPICs with frontend changes. Infrastructure & Operations Owner sign-off recorded (enabled 2026-03-18). |
+| 3.33 | 2026-03-21 | **execution_prompt.md v2.5→v2.6 — LL-v2.1-P4-3 guard.** §8 source prompt v2.5→v2.6. §14 Execution Engine Source → v2.6. Change: STEP 6 guard note added — do not emit `Sprint_Complete` until `execution_state.json.sealed = true`. Prevents Phase 4 preflight failure where sprint close completes but STEP 7 (seal) was not executed. |
 | 3.32 | 2026-03-20 | **execution_prompt.md v2.4→v2.5 — agent-mediated sign-off.** §8 source prompt v2.4→v2.5. §14 Execution Engine Source → v2.5. Change: §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file, engine invokes a subagent acting in that role before surfacing to user; §3.1.A step 11 added; §9.1 `sign_off_record` field added to ST item schema. Always-human gates (Product Owner, merge gate) unchanged. |
 | 3.29 | 2026-03-18 | **ST-15 (EPIC-05): Render PR preview environments documented.** §8.2 preview environment bullet added — Render provisions `https://trading-assistant-api-staging-pr-{N}.onrender.com` per PR; Director of Quality may use preview URL as staging evidence method for frontend-interactive AC. §8.5 merge gate QA sign-off line updated to reference preview URL option alongside staging URL. |
 | 3.28 | 2026-03-19 | **ST-11 staging seed workflow updated to psql-based approach.** §8.2 staging test data seeding bullet added: `seed-preview.yml` workflow renamed to `Seed Staging Database`, trigger changed from `render-preview` label to `workflow_dispatch`, seeding mechanism changed from Python API script to `psql` against `STAGING_DATABASE_URL` secret, idempotency guard added. Documents that PR preview environments are not used for data-dependent QA — canonical staging is always the test target. |

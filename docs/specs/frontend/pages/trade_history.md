@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-03-18
+**Version:** 1.3
+**Last Updated:** 2026-03-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.1 slippage):** docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md
 
@@ -206,10 +206,25 @@ Displays:
 
 ---
 
+## Known Deviations
+
+### DEV-ST14-01 — Avg Slippage StatsCard renders without gradient (cosmetic)
+
+- **Description:** `TradeHistory.js` passes `color="cyan"` to the Avg Slippage `StatsCard`. The `StatsCard` gradient map has no `"cyan"` key — the card renders without the expected gradient background. All non-null slippage states (negative/emerald, positive/rose) use colour-coded values at cell level, so this is a cosmetic regression on the summary card only.
+- **Canonical requirement:** Avg Slippage `StatsCard` renders with a gradient background consistent with other stat cards on the page.
+- **Priority:** P3
+- **Target resolution release:** v2.2
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** BLG-FE-01 — Slippage StatsCard uses unsupported gradient key (cosmetic)
+- **Acceptance record:** Director of Quality 2026-03-20 — P3 cosmetic only; slippage logic, values, and sorting correct.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.3 | 2026-03-21 | Post-ship closure: Known Deviations section added. DEV-ST14-01 (StatsCard gradient cosmetic) filed per post_ship_closure STEP 5 — deviation compliance. |
 | 1.2 | 2026-03-18 | v2.1 slippage tracking (ST-14, BLG-FEAT-03): Slippage column added to trade history table (after P&L %, before R-Multiple). Avg Slippage stat added to summary stats bar. Column header info tooltip specced. Null handling for pre-v2.1 trades (show `—`). Lifecycle headers upgraded to Class 1 compliant format. Design source: docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
 | 1.1 | 2026-02-25 | BLG-FEAT-02: Add R-Multiple column specification. Frontend-only calculation from trades_for_charts. Null handling for missing stop_price. Display format with signed R suffix and profit/loss colour. QWB D2, D2a. |
 | 1.0 | 2026-02-18 | Initial version. |

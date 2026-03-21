@@ -3,9 +3,51 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-17
+**Last Updated:** 2026-03-21
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.1 — Alerts, Watchlists & Enhancements — 2026-03-21
+
+Cycle: 2026-03-18__release-v2.1
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-03-18__release-v2.1/verification_report.md
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Async notification delivery ADR — architecture decision: FastAPI BackgroundTasks (no Redis/Celery) | docs/adr/ADR-003-notification-delivery-architecture.md |
+| EPIC-02 | Alerts & Notifications full stack — rules engine (4 alert types), Telegram delivery, notification preferences UI, in-app notification feed, QA scenarios | docs/specs/api_contracts/alerts_endpoints.md, docs/specs/frontend/pages/notifications.md, docs/testing/notifications_scenarios.md |
+| EPIC-03 | Watchlist monitoring — spec, backend (4 endpoints, signal status join-on-read), frontend (add/edit/delete/Add-to-Position) | docs/specs/api_contracts/watchlist_endpoints.md, docs/specs/frontend/pages/watchlist.md |
+| EPIC-04 | Chart interactivity — tooltips, zoom/pan, heatmap drill-down (all 16 SC-CHART-IX sub-scenarios verified) | docs/specs/frontend/pages/analytics.md |
+| EPIC-05 | Tax Year P&L PDF + CSV exports; slippage tracking (fill price, slippage %, avg slippage); Render PR preview environments | docs/specs/api_contracts/reports_endpoints.md, docs/specs/frontend/pages/trade_history.md |
+| EPIC-06 | Spec debt cleared — lifecycle headers, spec coverage inventory, chart QA scenarios, zero cross-EPIC process violations | docs/specs/spec_coverage_inventory.md, docs/testing/chart_interactivity_scenarios.md, docs/testing/reports_scenarios.md, docs/testing/signals_scenarios.md |
+
+### Deviations accepted
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-ST04-01 | P2 | Notification delivery via Telegram instead of email — Gmail SMTP and Brevo blocked/unavailable on Render free tier | PO + DoQ 2026-03-20 |
+| EPIC-03 cherry-pick | P2 | EPIC-03 delivered via cherry-pick to main (not branch PR) — branch divergence would have reverted EPIC-02/05/06 work | PO + DoQ 2026-03-21 |
+
+1 minor deviation (P3): DEV-ST14-01 — StatsCard cosmetic null-state colour. See verification_report.md.
+
+### Tech backlog items shipped
+
+- [ST-12] Tax Year P&L PDF Export (BLG-FR-01)
+- [ST-13] Tax Year P&L CSV Export (BLG-FR-02)
+- [ST-14] Slippage Tracking (BLG-FEAT-03)
+- [ST-15] Render PR Preview Environments (BLG-OPS-03)
+- [ST-16] Bulk lifecycle header remediation (BLG-SPEC-D12)
+- [ST-17] Spec maintenance batch (BLG-SPEC-D13, BLG-SPEC-G6, BLG-SPEC-D10, BLG-SPEC-D11)
+- [ST-18] Missing test scenario documents (TEST-GAP-SIG-01, TEST-GAP-TAX-01)
+- [ST-19] Cross-EPIC process compliance check (BLG-PROC-01)
+
+Sign-off: Product Owner — 2026-03-21
+QA sign-off: Director of Quality — 2026-03-21
 
 ---
 

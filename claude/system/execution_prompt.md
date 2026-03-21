@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.5
-**Last Updated:** 2026-03-20
+**Version:** 2.6
+**Last Updated:** 2026-03-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -837,6 +837,8 @@ The prompt's §6.2 rule applies: if any friction can be resolved by updating a t
 
 ## STEP 6 — Global State Update (Hard Requirement)
 
+> **LL-v2.1-P4-3 guard:** Before setting `status → Sprint_Complete` in `.claude_current_state.json`, confirm that STEP 7 (Seal Execution Record) will execute in the same session. Do not emit `Sprint_Complete` if `execution_state.json.sealed` is still `false`. The delivery verification preflight hard-gates on `sealed: true` — an unsealed execution record will block Phase 4.
+
 After sprint close:
 
 Update `.claude_current_state.json`:
@@ -925,6 +927,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6 | 2026-03-21 | LL-v2.1-P4-3: STEP 6 guard note added — do not emit `Sprint_Complete` in `.claude_current_state.json` if `execution_state.json.sealed` is still `false`. Ensures STEP 7 (Seal Execution Record) executes in the same session as sprint close before the delivery verification preflight can proceed. Authority: Head of Specs Team (post-ship closure immediate action). |
 | 2.5 | 2026-03-20 | §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file in `claude/agents/`, invoke a subagent acting in that role to perform the review before surfacing to the user. Always-human gates (Product Owner, merge gate) unchanged. §3.1.A step 11 added — sign-off gate check after deviation check. §9.1 schema — `sign_off_record` field added to ST item. Authority: Head of Specs Team. |
 | 2.4 | 2026-03-17 | Post-ship closure v2.0 lessons learnt patches applied. LL-v2.0-P3-4: qa_evidence sign-off block template — DoQ URL construction check added (for direct URL construction not via api.* wrapper, confirm base URL variable is exposed on imported object). LL-v2.0-P3-5: STEP 4 merge gate — merge order note added for multi-EPIC sprints where >1 EPIC modifies shared governance files; later branches must rebase onto main after first EPIC merges before final QA. LL-v2.0-P4-1: STEP 5.1 — QA Evidence Persistence Check added; after qa_signed_off: true, confirm qa_evidence Date: field is non-blank; if blank, re-apply sign-off before STEP 5.3. |
 | 2.3 | 2026-03-16 | AUD-2026-03-13-017: §11 delegation log schema replaced with reference to `shared_standards.md §16.3`; SLA breach tracking note in STEP 3.1.D replaced with reference to `shared_standards.md §16.4`; §13 cross-reference to `claude/system/invariants.md` added. |

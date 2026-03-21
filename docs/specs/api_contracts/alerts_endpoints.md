@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.1
-**Last Updated:** 2026-03-20
+**Version:** 0.2
+**Last Updated:** 2026-03-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -661,8 +661,23 @@ Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_a
 
 ---
 
+## Known Deviations
+
+### DEV-ST04-01 — Notification delivery channel: Telegram instead of email
+
+- **Description:** Notification delivery is implemented via Telegram Bot API. The spec and ADR-003 specify email delivery (Gmail SMTP). Email delivery is not active on Render free tier due to SMTP blocking (Gmail) and paid domain requirement (Brevo).
+- **Canonical requirement:** `POST /alerts/evaluate` triggers email delivery via SMTP when a rule fires.
+- **Priority:** P2
+- **Target resolution release:** v2.2 (pending paid infrastructure)
+- **Owner:** Head of Engineering + Infrastructure & Operations Owner
+- **Backlog reference:** BLG-OPS-04 — Alert evaluation scheduling: trigger mechanism and rule behaviour design
+- **Acceptance record:** Product Owner 2026-03-20; Director of Quality 2026-03-20. Core delivery behaviour confirmed on staging. Channel deviation accepted given Render free-tier constraint.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-03-21 | Post-ship closure: Known Deviations section added. DEV-ST04-01 (Telegram delivery) filed per post_ship_closure STEP 5 — deviation compliance. |
 | 0.1 | 2026-03-20 | Initial version. Full endpoint spec for EPIC-02 Alerts & Notifications. ST-02 — v2.1 release planning cycle 2026-03-18__release-v2.1. Architecture: FastAPI BackgroundTasks per ADR-003. HoST sign-off 2026-03-20: 4 review findings addressed (router ordering, grace period formula, proximity formula, table naming note). |

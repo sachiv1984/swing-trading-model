@@ -373,3 +373,52 @@ Always-visible widget inside the position entry form, directly above the shares 
 **Status:** ❌ Killed — superseded by BLG-FEAT-07 (shipped v1.6.1, 2026-03-01)
 
 BLG-FEAT-07 (CSV Export) was delivered as part of the QWB Quick Wins Bundle and shipped in v1.6.1. This planning item is closed. Decision log: 2026-03-01__item-3.2.
+
+---
+
+## 3.5 — Alerts & Notifications
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (v2.0 section)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-21
+**Shipped version:** v2.1
+**Cycle reference:** 2026-03-18__release-v2.1 (EPIC-01 ST-01, EPIC-02 ST-02 through ST-07)
+**Verification report:** claude/cycles/2026-03-18__release-v2.1/verification_report.md
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-03-21
+
+### Original Roadmap Entry
+
+Alert rules engine for 4 alert types (stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary). Notification delivery via Telegram Bot API (email deferred — Gmail SMTP blocked on Render free tier; revisit v2.2, BLG-OPS-04). In-app notification feed with read/unread state. Configurable per-user preferences. ADR-003 (async notification delivery architecture) authored as EPIC-01 prerequisite. Spec: docs/specs/api_contracts/alerts_endpoints.md. Deviation DEV-ST04-01 (P2) accepted.
+
+---
+
+## 4.2 — Watchlists & Screening
+
+**Original roadmap location:** §4 Priority 2 — Horizon: Next (v2.1)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-21
+**Shipped version:** v2.1
+**Cycle reference:** 2026-03-18__release-v2.1 (EPIC-03 ST-08, ST-09, ST-10)
+**Verification report:** claude/cycles/2026-03-18__release-v2.1/verification_report.md
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-03-21
+
+### Original Roadmap Entry
+
+Monitor tickers for entry signals. Target entry and stop price fields. Quick-add to position entry modal. New watchlist data model tables, REST endpoints. Signal status integration via LEFT JOIN LATERAL. Spec: docs/specs/api_contracts/watchlist_endpoints.md; docs/specs/frontend/pages/watchlist.md. AC-6 sort order (Active→Watch→No Signal→alpha) deferred — TEST-GAP-EPIC-03.
+
+---
+
+## Chart Interactivity Enhancements
+
+**Original roadmap location:** §4 Priority 2 — Horizon: Next (v2.1)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-21
+**Shipped version:** v2.1
+**Cycle reference:** 2026-03-18__release-v2.1 (EPIC-04 ST-11)
+**Verification report:** claude/cycles/2026-03-18__release-v2.1/verification_report.md
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-03-21
+
+### Original Roadmap Entry
+
+Hover tooltips, zoom, drill-down on analytics page charts (underwater equity curve, monthly heatmap, R-multiple distribution). No new indicators, no client-side re-derivation. All 16 SC-CHART-IX sub-scenarios verified on staging. Spec: docs/specs/frontend/pages/analytics.md.
+

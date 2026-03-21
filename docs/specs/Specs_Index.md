@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-21
 
 ---
 
@@ -277,7 +277,40 @@ The Coverage Inventory is the authoritative cross-domain record of spec-to-imple
 
 ---
 
-## 9. Guiding Principle
+## 9. Test Coverage Gaps — v2.1 (2026-03-18__release-v2.1)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v21-01 through TSG-v21-03). All three gaps have backlog items and are tracked for resolution before the next sprint touching the relevant domain.
+
+### 9.1 TSG-v21-01 — EPIC-02: notifications_scenarios.md not formally executed
+
+**Identified:** 2026-03-21 (delivery verification 2026-03-18__release-v2.1)
+**Status:** Open — backlog item TEST-GAP-EPIC-02
+**Owner:** QA & Testing Owner
+**Gap:** `docs/testing/notifications_scenarios.md` (SC-NOTIF-01 through SC-NOTIF-08) exists but was not formally executed and referenced in `qa_evidence_EPIC-02.md`. Remaining 3 alert types require test data with open positions.
+**Required action:** Execute SC-NOTIF-01 through SC-NOTIF-08 on staging; record results in `qa_evidence_EPIC-02.md`.
+**Resolution target:** Before next sprint touching notifications domain.
+
+### 9.2 TSG-v21-02 — EPIC-03: no watchlist test scenario file exists
+
+**Identified:** 2026-03-21 (delivery verification 2026-03-18__release-v2.1)
+**Status:** Open — backlog item TEST-GAP-EPIC-03
+**Owner:** QA & Testing Owner
+**Gap:** No test scenario file exists for the watchlist feature (EPIC-03, ST-08/09/10). Spec refs: `docs/specs/api_contracts/watchlist_endpoints.md`, `docs/specs/frontend/pages/watchlist.md`.
+**Required action:** Create `docs/testing/watchlist_scenarios.md` covering SC-WATCH-01 through SC-WATCH-06.
+**Resolution target:** v2.2 (before next sprint touching watchlist domain). SC-WATCH-06 also satisfies deferred ST-10 AC-6 sort order.
+
+### 9.3 TSG-v21-03 — EPIC-05: no slippage tracking test scenarios exist
+
+**Identified:** 2026-03-21 (delivery verification 2026-03-18__release-v2.1)
+**Status:** Open — backlog item TEST-GAP-EPIC-05-SLIP
+**Owner:** QA & Testing Owner
+**Gap:** No scenario file covers slippage tracking (ST-14). Spec ref: `docs/specs/frontend/pages/trade_history.md`.
+**Required action:** Author SC-SLIP-01 through SC-SLIP-04 in `docs/testing/reports_scenarios.md` or a new `slippage_scenarios.md`.
+**Resolution target:** v2.2 (before next sprint touching trade history / slippage).
+
+---
+
+## 10. Guiding Principle
 
 > Specs explain decisions.
 > This index ensures those decisions form a coherent system.

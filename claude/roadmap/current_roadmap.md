@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-18 (roadmap rebalance — cycle 2026-03-18__item-4.3 — Signal Exposure Enhancement completion event)
+**Last Updated:** 2026-03-21 (post-ship closure — cycle 2026-03-18__release-v2.1 — v2.1 shipped)
 **Last rebalance:** 2026-03-18 (cycle 2026-03-18__item-4.3 — 4.3 Signal Exposure Enhancement completion event)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v2.0** — Reporting & Alerts — Shipped 2026-03-17
-**Next planned release:** **v2.1** (TBD)
+**v2.1** — Alerts, Watchlists & Enhancements — Shipped 2026-03-21
+**Next planned release:** **v2.2** (TBD)
 
 ---
 
@@ -45,7 +45,7 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*Items in this section are committed for the current or next release cycle. v2.1 is the next delivery horizon — v2.0 shipped 2026-03-17.*
+*Items in this section are committed for the current or next release cycle. v2.1 shipped 2026-03-21. v2.2 is the next delivery horizon.*
 
 ---
 
@@ -60,22 +60,7 @@ These may be revisited in future versions without any canonical spec change:
 
 ### v2.0 — Reporting & Alerts *(consolidated)* ✅ Complete — Shipped 2026-03-17
 
-#### 3.5 Alerts & Notifications
-**Status:** Deferred to v2.1 — BLG-TECH-08 (async notification ADR) required before spec may be authored
-**Effort:** Medium–High (4–5 days)
-**Value:** High
-
-> ⛔ **Hard gates — v2.0 pre-alignment may not open until ALL THREE are confirmed:**
-> 1. Structured logging / observability standards (v1.7) — **complete**
-> 2. API versioning strategy decision record (v1.7) — **complete**
-> 3. QA planning session for notification delivery — **pending** *(uncleared as of 2026-03-17)*
-
-> 🔄 **Auto-advance trigger (DL-003, 2026-03-04):** Once the QA planning session for notification delivery is completed and documented, 3.5 Alerts auto-advances to active v2.0 planning without requiring a new rebalance cycle. The session output must specify: test types required, notification delivery modes to be tested, expected test infrastructure.
-
-Email alerts for: stop loss approach, grace period ending (days 8–9 warning), market regime change to risk-off, daily portfolio summary. Optional SMS. In-app notification feed. Configurable per-user preferences.
-
-> **Before implementation:** Database schema must be defined in `docs/specs/data_model.md`. API endpoints must be specified in `docs/specs/api_contracts/`. Notification preference model must be specced before frontend work begins.
-
+*3.5 Alerts & Notifications retired to `claude/roadmap/roadmap_archive.md` on 2026-03-21 — shipped in v2.1 (EPIC-01/EPIC-02, cycle 2026-03-18__release-v2.1).*
 *4.1b Tax-Year P&L Statement and 4.3 Signal Exposure Enhancement retired to `claude/roadmap/roadmap_archive.md` on 2026-03-17 — both shipped in v2.0.*
 
 ---
@@ -87,25 +72,9 @@ Email alerts for: stop loss approach, grace period ending (days 8–9 warning), 
 - Plan published: 2026-03-18
 - Cycle folder: claude/cycles/2026-03-18__release-v2.1/
 - Backlog slice: claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md
-- Status at annotation: Published — 2026-03-18 (cycle 2026-03-18__release-v2.1)
+- Status at annotation: Shipped — 2026-03-21 (cycle 2026-03-18__release-v2.1) ✅ Complete
 
-## 4. Priority 2 — Horizon: Next (v2.1)
-
-#### 4.2 Watchlists & Screening
-**Status:** Planned — do not pull forward
-**Effort:** Medium (3–4 days)
-**Value:** Medium
-
-Monitor tickers for entry signals. Target entry and stop fields. Quick-add to position entry modal. Requires new data model tables, new endpoints, and integration with signal status. Keep at this priority; do not accelerate ahead of v2.0 items.
-
-#### Chart Interactivity Enhancements *(new — from roadmap review session)*
-**Status:** Planned
-**Effort:** Low–Medium (1–2 days)
-**Value:** Medium — UX improvement on existing analytics
-
-Add interactivity to existing analytics page charts: hover tooltips, zoom, drill-down. Applies to the underwater equity curve, monthly heatmap, and R-multiple distribution chart. No new indicators, no new data, no recalculation on the frontend. All values must remain consistent with the canonical backend response — no client-side re-derivation.
-
-> **Scope boundary:** New technical indicators (RSI, MACD, Bollinger Bands, etc.) require a strategy rules review before they can be added. They are not in scope for this item.
+*4.2 Watchlists & Screening and Chart Interactivity Enhancements retired to `claude/roadmap/roadmap_archive.md` on 2026-03-21 — both shipped in v2.1 (cycle 2026-03-18__release-v2.1).*
 
 ---
 
@@ -166,7 +135,8 @@ When evaluating new features:
 | **v1.9** | User Value & Insight | ✅ Fully Shipped 2026-03-13 — all items retired to archive |
 | **v1.10** | Operations & Quality | Staging environment, CI/CD auto-deploy, CohortAnalysis refactor, integration tests, v1.7 QA scenario gaps — ✅ Shipped 2026-03-16 *(retired to archive 2026-03-16)* |
 | **v2.0** | Reporting & Alerts | Tax-year P&L statement, signal exposure controls (top_n, lookback_days) — ✅ Shipped 2026-03-17. Alerts & notifications deferred to v2.1 (pending BLG-TECH-08 ADR). |
-| **v2.1+** | Enhancements | Watchlists, chart interactivity, Prometheus |
+| **v2.1** | Alerts, Watchlists & Enhancements | ADR-003 (async notification), Alerts & Notifications (Telegram delivery), Watchlists & Screening, Chart Interactivity, Tax-Year PDF/CSV Export, Slippage Tracking, Spec Debt & QA Coverage — ✅ Shipped 2026-03-21 |
+| **v2.2** | TBD | Next planned release — scope TBD |
 
 ---
 

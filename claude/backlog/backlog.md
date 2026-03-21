@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-20 (BLG-FEAT-03 closed — ST-14 Slippage Tracking shipped v2.1; BLG-FR-02 closed — ST-13 Tax Year CSV Export shipped v2.1; BLG-FE-01 + BLG-BE-03 filed from ST-14 DoQ observations)
+**Last Updated:** 2026-03-21 (post-ship closure 2026-03-18__release-v2.1 — 10 backlog items closed; BLG-TECH-05 target updated to v2.2)
 **Last rebalance:** 2026-03-17 (cycle 2026-03-17__item-v1.10 — DL-009)
 
 > ⚠️ Standing Notice
@@ -35,7 +35,7 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ### BLG-TECH-05 — Prometheus metrics endpoint
 **Priority:** P3 (Low)
 **Type:** Observability
-**Target release:** v2.1 (or when system becomes multi-user)
+**Target release:** v2.2 (or when system becomes multi-user)
 
 **Scope**
 - Add `GET /metrics` Prometheus endpoint exposing:
@@ -101,95 +101,7 @@ Items promoted to backlog from idea pool during roadmap rebalance cycle 2026-03-
 
 ---
 
-### BLG-SPEC-G6 — `total_return_pct` not returned by GET /analytics/metrics
-**Priority:** P3 (Low)
-**Type:** Backend / Spec Gap
-**Owner:** Head of Engineering + Metrics Definitions & Analytics Canonical Owner
-**Source:** ST-17 Spec Coverage Inventory — A-01 (2026-03-17)
-**Cycle added:** 2026-03-17__release-v2.0
-**Target release:** v2.1
-
-`analytics_endpoints.md` explicitly notes: "`total_return_pct` is not yet returned by `GET /analytics/metrics`." The canonical formula is documented (`total_pnl / net_cash_flow × 100`) but the field is absent from the API response. This creates a spec-to-implementation gap.
-
-**Scope**
-- Implement `total_return_pct` in `GET /analytics/metrics` response per documented formula
-- Remove the "not yet returned" note from `analytics_endpoints.md` once implemented
-
-**Acceptance Criteria**
-- `GET /analytics/metrics` returns `total_return_pct` matching the canonical formula
-- `analytics_endpoints.md` updated to reflect field as implemented
-
----
-
-### BLG-SPEC-D10 — `api_dependencies.md` does not reflect v2.0 additions
-**Priority:** P3 (Low)
-**Type:** Spec Document Maintenance
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** ST-17 Spec Coverage Inventory — A-02 (2026-03-17)
-**Cycle added:** 2026-03-17__release-v2.0
-**Target release:** v2.1
-
-`docs/specs/frontend/patterns/api_dependencies.md` (v1.1, 2026-02-19) maps surfaces to endpoints. The v2.0 additions (Reports page — `GET /reports/tax-year`; Signals controls — `GET /signals?top_n=&lookback_days=`) are not yet reflected.
-
-**Acceptance Criteria**
-- `api_dependencies.md` updated to include Reports page and updated Signals page endpoint mappings
-- Version bumped; `Last Updated` set
-
----
-
-### BLG-SPEC-D11 — `data_model.md` §501 trade_reflections section not updated to complete
-**Priority:** P3 (Low)
-**Type:** Spec Document Maintenance
-**Owner:** Data Model & Domain Schema Owner
-**Source:** ST-17 Spec Coverage Inventory — A-03 (2026-03-17)
-**Cycle added:** 2026-03-17__release-v2.0
-**Target release:** v2.1
-
-`data_model.md §501 "Planned Future Schema Changes"` still shows the trade_reflections table as a planned v1.9 change. It was implemented in v1.9 Sprint 1. The section should be updated to mark this as complete (or the entire entry moved/removed).
-
-**Acceptance Criteria**
-- `data_model.md §501` trade_reflections entry updated to reflect implemented status
-- Version bumped
-
----
-
-### BLG-SPEC-D12 — Bulk lifecycle header remediation — 28 non-compliant spec documents
-**Priority:** P2 (Medium)
-**Type:** Governance / Spec Compliance
-**Owner:** Head of Specs Team
-**Source:** ST-17 Spec Coverage Inventory — A-04 (2026-03-17)
-**Cycle added:** 2026-03-17__release-v2.0
-**Target release:** v2.1
-
-28 of 38 spec documents (74%) are missing `Class` and/or `Lifecycle Guide` header fields per `document_lifecycle_guide.md v2.6`. All non-compliant documents pre-date lifecycle guide adoption. A bulk update pass is required.
-
-Full list in `docs/specs/spec_coverage_inventory.md §9`. Most affected: `api_contracts/*.md` (8 files), `frontend/components/*.md` (5 files), `frontend/patterns/*.md` (2 files), `frontend/pages/*.md` (4 files), `data_model.md`, `metrics_definitions.md`.
-
-**Scope**
-- Add `Class: [Canonical Specification (Class 1) | Supporting (Class 2)]` to each document per its domain
-- Add `**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md` to each document
-- Bump version on each document modified
-- No content changes — header compliance only
-
-**Acceptance Criteria**
-- All 28 listed documents carry compliant lifecycle headers
-- `spec_coverage_inventory.md §9` compliance count updated to 38/38
-
----
-
-### BLG-SPEC-D13 — `metrics_definitions.md` Owner field lists team name, not governance role
-**Priority:** P2 (Medium)
-**Type:** Governance / Spec Compliance
-**Owner:** Metrics Definitions & Analytics Canonical Owner
-**Source:** ST-17 Spec Coverage Inventory — A-05 (2026-03-17)
-**Cycle added:** 2026-03-17__release-v2.0
-**Target release:** v2.1
-
-`metrics_definitions.md` lists `Owner: Analytics Team`. Per `document_lifecycle_guide.md §7`, the Owner field must be a named governance role, not a team name. The correct role is `Metrics Definitions & Analytics Canonical Owner`.
-
-**Acceptance Criteria**
-- `metrics_definitions.md` `Owner` updated to `Metrics Definitions & Analytics Canonical Owner`
-- Version bumped
+*BLG-SPEC-G6, BLG-SPEC-D10, BLG-SPEC-D11, BLG-SPEC-D12, BLG-SPEC-D13 — all shipped v2.1 (ST-16/ST-17) — retired to `claude/backlog/backlog_archive.md` 2026-03-21.*
 
 ---
 
@@ -251,48 +163,7 @@ Post-merge staging sign-off for ST-11 found two bugs manually (zoom-out stuck at
 
 ---
 
-### TEST-GAP-SIG-01 — Test scenario coverage gap: Signals page controls (v2.0)
-**Priority:** P3
-**Type:** QA / Test Coverage
-**Owner:** QA & Testing Owner
-**Source:** TSG-v20-01 — verification_report.md §6, cycle 2026-03-17__release-v2.0
-**Cycle added:** 2026-03-17__release-v2.0
-**Target release:** before next sprint touching signals page
-
-Test scenario coverage gap from 2026-03-17__release-v2.0: QA & Testing Owner to author scenarios for signals page controls (ST-02). Create `docs/testing/signals_scenarios.md` covering:
-- SC-SIG-01: Controls render with correct defaults (top_n=5, lookback_days=252); changing either fires GET /signals with updated params after 500ms debounce
-- SC-SIG-02: Invalid input (0 or negative) resets to default; no API call made
-- SC-SIG-03: Empty state when API returns no signals; controls remain active
-Spec references: `docs/specs/frontend/pages/signals.md v0.1 §Controls/§Validation/§Empty State`
-
----
-
-### TEST-GAP-TAX-01 — Test scenario coverage gap: Tax Year P&L report (v2.0)
-**Priority:** P3
-**Type:** QA / Test Coverage
-**Owner:** QA & Testing Owner
-**Source:** TSG-v20-02 — verification_report.md §6, cycle 2026-03-17__release-v2.0
-**Cycle added:** 2026-03-17__release-v2.0
-**Target release:** before next sprint touching reports or tax year functionality
-
-Test scenario coverage gap from 2026-03-17__release-v2.0: QA & Testing Owner to author scenarios for the Tax Year P&L report frontend and boundary. Create `docs/testing/reports_scenarios.md` covering:
-- SC-TAX-01: Year selector defaults to current tax year; changing year triggers API re-fetch; summary bar updates
-- SC-TAX-02: Empty state when no closed trades in selected year
-- SC-TAX-03: Tax year boundary — trade exited 5 Apr YYYY → year YYYY-1; trade exited 6 Apr YYYY → year YYYY
-Note: 29 backend integration tests exist in `tests/test_reports_integration.py` (these need not be duplicated).
-Spec references: `docs/specs/frontend/pages/reports.md v0.1`; `docs/specs/api_contracts/reports_endpoints.md v0.1 §Tax Year Boundary`
-
----
-
-### BLG-PROC-01 — Process adherence: cross-EPIC branch commits (v2.0 deviation follow-up)
-**Priority:** P3
-**Type:** Process / Governance
-**Owner:** PMO Lead
-**Source:** DEV-v2.0-01 — ST-20 cross-branch process deviation, cycle 2026-03-17__release-v2.0
-**Cycle added:** 2026-03-17__release-v2.0
-**Target release:** v2.1 sprint retrospective
-
-CLAUDE.md §2 action-now patch applied ("Story commits must land on the branch matching their EPIC prefix"). This item tracks compliance at next sprint execution. At the next sprint close, PMO Lead to confirm: (a) no cross-EPIC commits occurred, or (b) any occurring were escalated and documented. If 3+ sprints pass with zero recurrence, this item may be closed as pattern established.
+*TEST-GAP-SIG-01, TEST-GAP-TAX-01, BLG-PROC-01 — all shipped v2.1 (ST-18/ST-19) — retired to `claude/backlog/backlog_archive.md` 2026-03-21.*
 
 ---
 
@@ -341,6 +212,16 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| BLG-PROC-01 | Cross-EPIC process compliance check | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-19 |
+| TEST-GAP-TAX-01 | Tax Year P&L report test scenarios | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-18 |
+| TEST-GAP-SIG-01 | Signals page controls test scenarios | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-18 |
+| BLG-SPEC-D11 | data_model.md §501 trade_reflections section | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-17 |
+| BLG-SPEC-D10 | api_dependencies.md v2.0 additions | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-17 |
+| BLG-SPEC-G6 | total_return_pct not returned by GET /analytics/metrics | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-17 |
+| BLG-SPEC-D13 | metrics_definitions.md Owner field non-compliant | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-17 |
+| BLG-SPEC-D12 | Bulk lifecycle header remediation (28 docs) | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-16 |
+| BLG-OPS-03 | Pre-merge frontend preview environments | v2.1 | 2026-03-18__release-v2.1 | EPIC-05/ST-15 |
+| BLG-FR-01 | Tax Year P&L Report PDF Export | v2.1 | 2026-03-18__release-v2.1 | EPIC-05/ST-12 |
 | BLG-FEAT-03 | Slippage Tracking | v2.1 | 2026-03-18__release-v2.1 | EPIC-05/ST-14 |
 | BLG-FR-02 | Tax Year P&L Report CSV Export | v2.1 | 2026-03-18__release-v2.1 | EPIC-05/ST-13 |
 | BLG-TECH-08 | Async notification delivery ADR | v2.1 (pre-sprint) | 2026-03-18__release-v2.1 | EPIC-01/ST-01 |
@@ -397,62 +278,7 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 ---
 
-### BLG-OPS-03 — Pre-merge frontend preview environments
-**Priority:** P2 (Medium)
-**Type:** Operations / Infrastructure
-**Owner:** Infrastructure & Operations Owner
-**Source:** DoQ sign-off session — 2026-03-17 (identified during v2.0 staging verification gap)
-**Cycle added:** 2026-03-17__release-v2.0
-**Effort:** M (~1–2 days)
-**Target release:** v2.2
-
-**Problem**
-Staging auto-deploys from `main`, so frontend changes can only be verified on a deployed environment after merging. This has now affected two cycles (v2.0 ST-02/ST-05; v2.1 ST-11). The merge gate should be verifiable before merge, not after.
-
-**What ST-11 (v2.1) revealed — updated understanding:**
-The problem has three distinct layers:
-1. **Backend preview:** ✓ Already working — Render creates a per-PR API at `trading-assistant-api-staging-pr-{N}.onrender.com` automatically.
-2. **Data seeding:** ✓ Solved (v2.1) — `seed-preview.yml` now uses `psql` + `STAGING_DATABASE_URL` secret with idempotency guard, bypassing the API layer. Seeds go to the shared staging Supabase DB.
-3. **Frontend preview:** ✗ Blocked — the React static site uses `REACT_APP_API_URL` baked in at build time (CRA). A Render static site PR preview would still point to the main staging API, not the PR-specific API — making it useless for pre-merge frontend testing.
-
-**Root cause of the frontend blocker:**
-CRA bakes `REACT_APP_*` env vars at `npm run build` time. Render static site previews inherit the same env vars as the base service, so `REACT_APP_API_URL` cannot be dynamically set per PR without changing the hosting approach or adding a runtime config mechanism.
-
-**Scope — solution options to evaluate:**
-- **Option A (preferred):** Switch frontend hosting to **Netlify** or **Vercel** — both support per-PR preview deployments with per-PR env var injection (e.g. `REACT_APP_API_URL=https://trading-assistant-api-staging-pr-{N}.onrender.com`). Backend stays on Render.
-- **Option B:** Introduce a runtime config file (`public/config.json`) served statically and fetched at app startup — allows `REACT_APP_API_URL` to be overridden without a rebuild. Render static site preview would serve a PR-specific `config.json`.
-- **Option C:** Keep current process (post-merge staging) but formalise as an accepted deviation with explicit post-merge DoQ sign-off checklist.
-
-**Acceptance Criteria**
-- A PR against `main` with frontend changes can be reviewed by DoQ on a deployed frontend environment **before** merging
-- The frontend preview points to the PR-specific backend API (not the main staging API)
-- Data seeding works against the preview environment (already solved — psql approach)
-- `OPERATIONAL_GUIDE.md §8` documents the updated pre-merge verification workflow
-- DoQ can complete all scenario types (including interactive UI) before merge gate
-
----
-
-### BLG-FR-01 — Tax Year P&L Report PDF Export
-**Priority:** P2 (Medium)
-**Type:** Feature — Financial Reporting
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260317-01 — v2.0 staging feedback (IW-20260317-01)
-**Cycle added:** 2026-03-18__item-4.3
-**Target release:** v2.1
-
-**Problem**
-The tax year P&L report (shipped v2.0) is browser-only. Browser-print produces inconsistent formatting across browsers — table layouts, page breaks, and number formatting vary. For a statutory financial record intended for HMRC filing or sharing with an accountant, formatting reliability matters. This is a compliance document, not a display convenience.
-
-**Proposed solution**
-Server-side PDF generation of the tax year P&L report with consistent formatting: table layout, page breaks, number precision, and report metadata (tax year, generation date).
-
-**Acceptance Criteria**
-- `GET /reports/tax-year?format=pdf` returns a PDF with consistent formatting
-- All data fields in the PDF match the JSON response exactly (no client-side re-derivation)
-- PDF includes: report title, tax year period, generation timestamp
-- Browser-print remains available as fallback
-
-**Scope constraint:** This covers the tax year P&L report only. Not a generic PDF export framework. Any expansion to other reports requires a new backlog item.
+*BLG-OPS-03, BLG-FR-01 — shipped v2.1 (ST-15/ST-12) — retired to `claude/backlog/backlog_archive.md` 2026-03-21.*
 
 ---
 
@@ -627,9 +453,10 @@ Product Owner to answer outstanding questions above. Engineering to then spec an
 
 ---
 
-## 8. v2.1 Release Slice — Alerts, Watchlists & Enhancements
+## 8. v2.1 Release Slice — Alerts, Watchlists & Enhancements ✅ Shipped 2026-03-21
 
-*Planned: 2026-03-18 | Cycle: 2026-03-18__release-v2.1 | Backlog slice: claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md*
+*Planned: 2026-03-18 | Shipped: 2026-03-21 | Cycle: 2026-03-18__release-v2.1 | Backlog slice: claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md*
+*All 19 items delivered. Verification: Verified_with_deviations. See verification_report.md for full traceability.*
 
 | EPIC | Story | Title | Priority | Effort | Conditional |
 |------|-------|-------|----------|--------|-------------|

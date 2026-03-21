@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-17
+**Last Updated:** 2026-03-21
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -1522,3 +1522,26 @@ The current idea intake model produces one file per idea per agent per window (4
 - Migration script or instruction provided to convert existing `claude/ideas/submissions/` files into register rows
 - Prior submission files moved to `claude/ideas/submissions/archive/`
 - `OPERATIONAL_GUIDE.md` updated to reflect new artefact
+
+---
+
+### v2.1 Backlog Items — 2026-03-18__release-v2.1
+
+**Status at retirement:** ✅ Complete
+**Retired:** 2026-03-21
+**Shipped in:** v2.1 — Alerts, Watchlists & Enhancements
+**Evidence:** `claude/cycles/2026-03-18__release-v2.1/verification_report.md` — all 19 items delivered
+
+| Item ID | Title | Story | Notes |
+|---------|-------|-------|-------|
+| BLG-SPEC-G6 | total_return_pct not returned by GET /analytics/metrics | ST-17 | Spec updated; implementation shipped |
+| BLG-SPEC-D10 | api_dependencies.md v2.0 additions | ST-17 | Spec updated to include Reports + Signals mappings |
+| BLG-SPEC-D11 | data_model.md §501 trade_reflections section | ST-17 | Section updated to reflect implemented status |
+| BLG-SPEC-D12 | Bulk lifecycle header remediation (28 docs) | ST-16 | All 28 docs updated to Class 1/2 headers |
+| BLG-SPEC-D13 | metrics_definitions.md Owner field non-compliant | ST-17 | Owner field corrected to governance role |
+| TEST-GAP-SIG-01 | Signals page controls test scenarios | ST-18 | signals_scenarios.md authored |
+| TEST-GAP-TAX-01 | Tax Year P&L report test scenarios | ST-18 | reports_scenarios.md authored |
+| BLG-PROC-01 | Cross-EPIC process compliance check | ST-19 | v2.1 sprint compliance confirmed; EPIC-03 cherry-pick deviation documented |
+| BLG-OPS-03 | Pre-merge frontend preview environments | ST-15 | seed-preview.yml psql approach shipped; frontend preview blocker documented |
+| BLG-FR-01 | Tax Year P&L Report PDF Export | ST-12 | GET /reports/tax-year?format=pdf implemented with server-side PDF generation |
+

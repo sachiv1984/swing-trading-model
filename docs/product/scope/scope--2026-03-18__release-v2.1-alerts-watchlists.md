@@ -1,9 +1,10 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
+Superseded: 2026-03-21 (post-ship closure — v2.1 shipped, cycle closed)
 Release: v2.1
 Cycle: 2026-03-18__release-v2.1
-Last Updated: 2026-03-18
+Last Updated: 2026-03-21
 
 ## Release Scope — v2.1 Alerts, Watchlists & Enhancements
 
