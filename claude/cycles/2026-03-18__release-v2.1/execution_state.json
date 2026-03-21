@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-19T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-21T01:00:00Z",
+  "last_updated_utc": "2026-03-21T11:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -247,22 +247,23 @@
         "ST-10": {
           "title": "Frontend: watchlist UI [STRETCH]",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "Base44 Frontend",
           "github_issue": 99,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "ef3072d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-08 spec + ST-09 backend live in staging",
+          "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/watchlist.md"
+            "docs/specs/frontend/pages/watchlist.md",
+            "docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 3 STRETCH."
+          "last_completed_substep": "commit",
+          "notes": "Sprint 3 STRETCH. Implemented 2026-03-21. Watchlist.js (new page: table with signal/market badges, add modal POST, edit modal PATCH, inline remove confirmation, Add to Position navigation, skeleton/empty/error states, row fade-out animation). TradeEntry.js patched to read location.state.watchlist_prefill and DELETE /watchlist/{id} on success. Layout.js Watchlist nav item, pages.config.js registered, utils/index.js route added. Awaiting DoQ sign-off against staging."
         }
       }
     },
