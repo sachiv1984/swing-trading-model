@@ -60,3 +60,15 @@ None.
   "status": "Complete"
 }
 ```
+
+---
+
+## Phase 3 — 2026-03-18__release-v2.1 (Sprint Execution)
+
+| # | Area | Friction / Observation | Recommendation | Priority | Action taken this run |
+|---|------|----------------------|----------------|----------|-----------------------|
+| LL-v2.1-P3-1 | Branch strategy | EPIC-03 branch diverged far from main before all its content was needed on staging. Cherry-pick was required because the branch would have reverted EPIC-02/05/06 work on merge. | For future cycles where staging deployment is needed mid-sprint, consider committing directly to main on a feature flag, or ensuring EPIC branches are regularly rebased onto main after each EPIC merges. | P2 | Deviation recorded in execution_state; BLG-UX-01 filed as a staging observation. |
+| LL-v2.1-P3-2 | Frontend tooling | Base44 used `@/` alias imports which do not resolve in this project. Every generated file required manual import path correction before integration. | Add a note to the Base44 prompt template requiring relative imports. Alternatively, if Base44 is retired, this friction disappears. | P2 | Frontend development guide created at docs/development/frontend_development_guide.md §3. |
+| LL-v2.1-P3-3 | Delegation — frontend | Base44 was the delegated frontend tool. For ST-10 (watchlist UI), the engine implemented directly rather than generating a Base44 prompt first. User had to correct the process. | The `delegated_frontend` classification requires a Base44 prompt to be produced, not a direct implementation. Rule is in execution_prompt.md §5.1. Re-enforce on every frontend classification. | P2 | No prompt change needed — rule already documented. Engine should self-check on frontend classification. |
+| LL-v2.1-P3-4 | Backend table creation | Watchlist backend (ST-09) was not included in the main branch cherry-pick that landed the frontend (ST-10). This caused staging to show "Unable to load watchlist" until manually identified and fixed. | When cherry-picking a frontend commit that depends on a backend commit, always cherry-pick both in the same operation. Add a dependency check to the cherry-pick workflow. | P2 | Fixed in session — cherry-picked dc856c1 to main. |
+| LL-v2.1-P3-5 | Delegation log hygiene | Three delegation entries (ST-02, ST-13, ST-14) remained as `Pending` at sprint close despite the items being done. Sprint close was blocked until they were manually updated. | The execution engine should update delegation log status to `Unblocked` at the same time it marks an item `done` in execution_state. | P3 | Updated at STEP 5.0 of sprint close. |

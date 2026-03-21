@@ -262,7 +262,7 @@ Add "Download PDF" button to the Reports page header per `docs/specs/frontend/pa
 - **Spec reference:** docs/adr/ADR-003-notification-delivery-architecture.md (architecture decision to reflect), docs/specs/frontend/pages/notifications.md v0.1 (frontend spec already drafted — API contract must be compatible)
 - **Unblock criteria:** alerts_endpoints.md created and signed off by Head of Specs Team; openapi.yaml updated in same commit; Specs_Index.md updated; data_model.md updated; ADR-003 sync architecture reflected throughout
 - **Commit format required:** `[EPIC-02][ST-02] Author alerts endpoints spec and notification preference model` pushed to `exec/2026-03-18__release-v2.1/EPIC-02`
-- **Status:** Pending
+- **Status:** Unblocked — commit 2b93a36 on 2026-03-20. ST-02 done.
 
 **On completion:** Re-invoke `run sprint --cycle 2026-03-18__release-v2.1` so the engine can detect ST-02 is done and create delegation records for ST-03 (backend), ST-04 (email delivery), and ST-05 (frontend preferences — Base44 prompt will be issued at that point with exact API field names).
 
@@ -308,7 +308,7 @@ Add "Download PDF" button to the Reports page header per `docs/specs/frontend/pa
 - **Spec reference:** docs/specs/api_contracts/reports_endpoints.md v0.2 (reports_endpoints.md#GET-/reports/tax-year — extend format param)
 - **Unblock criteria:** GET /reports/tax-year?format=csv returns valid CSV with human-readable headers for populated and empty years; reports_endpoints.md + openapi.yaml updated in same commit; Head of Engineering sign-off; commit on exec/2026-03-18__release-v2.1/EPIC-05
 - **Commit format required:** `[EPIC-05][ST-13] Implement GET /reports/tax-year?format=csv` pushed to `exec/2026-03-18__release-v2.1/EPIC-05`
-- **Status:** Pending
+- **Status:** Unblocked — commit 9d75c96. ST-13 done. PR #117 merged 2026-03-20.
 
 ---
 
@@ -342,7 +342,7 @@ Add "Download PDF" button to the Reports page header per `docs/specs/frontend/pa
 - **Spec reference:** docs/specs/data_model.md (section to update), docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md (display context)
 - **Unblock criteria:** data_model.md updated with Fill Price field definition and migration path; Data Model & Domain Schema Owner sign-off; Head of Specs Team sign-off; commit on EPIC-05 branch
 - **Commit format required:** `[EPIC-05][ST-14] Spec Fill Price field in data_model.md — slippage tracking data model gate` pushed to `exec/2026-03-18__release-v2.1/EPIC-05`
-- **Status:** Pending
+- **Status:** Unblocked — data model gate cleared; commit a202d07. ST-14 done. PR #117 merged 2026-03-20.
 
 ---
 

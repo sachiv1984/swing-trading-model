@@ -1,9 +1,36 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 1.5
-**Last Updated:** 2026-03-17
+**Version:** 1.6
+**Last Updated:** 2026-03-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-03-18__release-v2.1
+**Date:** 2026-03-21
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Async notification delivery ADR | docs/adr/ADR-003 | None |
+| EPIC-02 | Alerts & Notifications — full stack (rules engine, Telegram delivery, preferences UI, notification feed) | docs/specs/api_contracts/alerts_endpoints.md, docs/specs/frontend/pages/notifications.md | DEV-ST04-01: Telegram delivery (email blocked on Render free tier) |
+| EPIC-03 | Watchlist monitoring — spec, backend, frontend | docs/specs/api_contracts/watchlist_endpoints.md, docs/specs/frontend/pages/watchlist.md | Branch deviation (cherry-pick) |
+| EPIC-04 | Chart interactivity — tooltips, zoom/pan, heatmap drill-down | docs/specs/frontend/pages/analytics.md | None |
+| EPIC-05 | Tax Year P&L PDF + CSV exports; slippage tracking; Render PR preview environments | docs/specs/api_contracts/reports_endpoints.md, docs/specs/frontend/pages/trade_history.md | DEV-ST14-01: cosmetic null-state colour (P3) |
+| EPIC-06 | Spec debt cleared; spec coverage inventory; chart QA scenarios; zero cross-EPIC process violations | docs/specs/spec_coverage_inventory.md, docs/testing/chart_interactivity_scenarios.md | None |
+
+### Capabilities deferred or returned
+
+None — all 19 sprint items delivered.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md, qa_evidence_EPIC-06.md
+- Deviations filed: DEV-ST04-01 (P2), DEV-ST14-01 (P3)
+- Test scenarios referenced: docs/testing/notifications_scenarios.md, docs/testing/chart_interactivity_scenarios.md
 
 ---
 
