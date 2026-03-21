@@ -91,7 +91,13 @@ At the start of this run, `initiative_register.md` showed 3.5, 4.2, and CHART-IX
 
 ## Process Improvements Actioned This Run
 
-None applied this run. (No action-now prompt patches issued — both friction items have deferred patches; Friction Item 2 is an escalation.)
+Applied post-cycle by explicit user instruction (2026-03-21):
+
+| File | Section | Change | Version | Prompt change log entry |
+|------|---------|--------|---------|------------------------|
+| `claude/system/roadmap_management_prompt.md` | §5 Write Scope + STEP 5.4 (new) + STEP 6 commit | STEP 5.4 added: retirement step now also updates initiative_register.md (move Active→Completed with ship date + release); initiative_register.md added to write scope and commit. Resolves LL-01-patch-4.3 recurrence escalation. | v1.2→v1.3 | Yes — appended to prompt_change_log.md |
+| `claude/system/roadmap_prompt.md` | STEP 4.4 Write Summary + STEP 5 preflight | STEP 5 Debate Queue table added to STEP 4.4 output template; STEP 5 preflight reads queue and verifies debate coverage before proceeding. Resolves Friction Item 1. | v4.2→v4.3 | Yes — appended to prompt_change_log.md |
+| `claude/system/OPERATIONAL_GUIDE.md` | §6, §6M, §14, changelog | Source prompt versions updated: roadmap_prompt v4.2→v4.3, roadmap_management_prompt v1.2→v1.3. §14 table and changelog entry updated. | v3.33→v3.34 | Yes — appended to prompt_change_log.md |
 
 ---
 
@@ -110,17 +116,15 @@ None applied this run. (No action-now prompt patches issued — both friction it
 
 ## Outstanding Deferred Patches
 
-| File | Section | Change required | Owner | Target |
-|------|---------|----------------|-------|--------|
-| `claude/system/roadmap_prompt.md` | STEP 4 advancing idea classification output | Add explicit "STEP 5 debate queue" to cycle_record.md — engine must append IDEA IDs of Advancing items and STEP 5 must read and validate queue before authoring debates | Head of Specs Team | Before next roadmap rebalance run |
+None. Both patches actioned post-cycle by explicit user instruction (2026-03-21). See Process Improvements Actioned table above.
 
 ---
 
 ## Escalations
 
-| Issue | Type | Escalated to | Reason |
-|-------|------|-------------|--------|
-| LL-01-patch-4.3 carried forward 2 cycles without prompt_change_log entry — `roadmap_management_prompt.md` retirement step does not update initiative_register.md Active→Completed | Recurrence / Missing patch_change_log entry (2+ cycles) | Head of Specs Team | §6.4: deferred patch carried 2+ cycles without corresponding prompt_change_log entry is an automatic recurrence escalation. Owner was named (Head of Specs Team), target was set (before next `manage roadmap` run), but the patch was not applied and no log entry exists. Requires Head of Specs Team to apply the patch or formally close it with documented rationale. |
+| Issue | Type | Escalated to | Reason | Resolution |
+|-------|------|-------------|--------|------------|
+| LL-01-patch-4.3 carried forward 2 cycles without prompt_change_log entry — `roadmap_management_prompt.md` retirement step does not update initiative_register.md Active→Completed | Recurrence / Missing patch_change_log entry (2+ cycles) | Head of Specs Team | §6.4: deferred patch carried 2+ cycles without corresponding prompt_change_log entry is an automatic recurrence escalation. | **Resolved 2026-03-21** — patch applied (roadmap_management_prompt.md v1.3, STEP 5.4 added); prompt_change_log.md updated. ESC-LL01-4.3-RECUR closed. |
 
 ---
 
@@ -132,11 +136,11 @@ None applied this run. (No action-now prompt patches issued — both friction it
   "phase": "Roadmap",
   "filed_utc": "2026-03-21T00:00:00Z",
   "friction_item_count": 2,
-  "action_now_count": 0,
-  "deferred_count": 1,
-  "escalation_count": 1,
+  "action_now_count": 2,
+  "deferred_count": 0,
+  "escalation_count": 0,
   "recurrence_escalations": 1,
-  "overdue_patches": 1,
-  "status": "Complete"
+  "overdue_patches": 0,
+  "status": "Complete — all patches applied 2026-03-21 by explicit user instruction"
 }
 ```

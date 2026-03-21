@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-03-06
+**Version:** 1.3
+**Last Updated:** 2026-03-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -87,6 +87,7 @@ During this routine you may write only to:
 
 - `claude/roadmap/current_roadmap.md` (retire completed items, update release summary, update status fields)
 - `claude/roadmap/roadmap_archive.md` (append retired items — create if absent)
+- `claude/roadmap/initiative_register.md` (move retired items from Active Initiatives to Completed table — STEP 5.4 only)
 - `claude/roadmap/` folder (create archive file if absent)
 - `.claude_current_state.json` (Phase 1M state fields only: `last_manage_roadmap_utc`, `last_manage_roadmap_outcome`)
 
@@ -260,6 +261,26 @@ Append each archive entry prepared in STEP 3.
 - Update the `**Last Updated:**` header field
 - Do not change any other content — no rewording, no scope changes, no priority reordering
 
+### 5.4 Update `claude/roadmap/initiative_register.md`
+
+For every item classified as **Complete — Retire** or **Killed — Retire**, update the `initiative_register.md`:
+
+1. **Load** the Active Initiatives table in `initiative_register.md`.
+2. **Find** the row for the retiring item by ID or name (match against the row's Initiative ID or Initiative name column).
+3. **Remove** the row from the Active Initiatives table.
+4. **Append** a new row to the Completed table:
+
+   | ID | Initiative | Shipped | Release |
+   |----|-----------|---------|---------|
+   | `<id>` | `<name>` | `<ship date>` | `<version>` |
+
+   - `Shipped`: use the verified ship date from the cycle reference or the roadmap item's delivery date
+   - `Release`: use the version string from the roadmap (e.g. `v2.1`)
+5. If the Active Initiatives table has no remaining rows after removal, replace its contents with a placeholder: `*No active initiatives as of <date>. [v2.2] scope TBD.*` (adjust version as appropriate).
+6. Update the `**Last Updated:**` field in `initiative_register.md`.
+
+**Hard rule:** Do not skip this step. If a completed item exists in `current_roadmap.md` but has no row in `initiative_register.md`, record the gap in the run log (STEP 5.3) and continue — do not halt.
+
 ### 5.3 Write run log
 
 Write: `claude/roadmap/manage_roadmap_log_<YYYYMMDD>.md`
@@ -319,6 +340,7 @@ Update `.claude_current_state.json`:
 ```
 git add claude/roadmap/current_roadmap.md
 git add claude/roadmap/roadmap_archive.md
+git add claude/roadmap/initiative_register.md
 git add claude/roadmap/manage_roadmap_log_<YYYYMMDD>.md
 git add .claude_current_state.json
 git commit -m "[GOVERNANCE] Roadmap management run <date> — <n> items retired, <n> flagged stale"
@@ -357,6 +379,7 @@ The run is complete when:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-03-21 | LL-01-patch-4.3 (recurrence escalation, 2 cycles): STEP 5.4 added — when retiring a completed item, also update `initiative_register.md` (remove from Active Initiatives, append to Completed table with ship date and release). `initiative_register.md` added to §5 write scope. STEP 6 commit updated to include `initiative_register.md`. Resolves the register staleness pattern that recurred in cycles 2026-03-18__item-4.3 and 2026-03-21__item-3.5. |
 | 1.2 | 2026-03-07 | IMP-02: Added `last_manage_roadmap_utc` and `last_manage_roadmap_outcome` state write to STEP 6 (global state update). Added `.claude_current_state.json` to §5 write scope (Phase 1M state fields only) and to STEP 6 commit list. |
 | 1.1 | 2026-03-06 | Widened valid trigger windows to include pre-`run roadmap` invocation alongside Post-Ship Closure. Both windows now explicitly equal. Added known gap note for Phase 1 skipped path. Restructured §2 with explicit trigger window table for clarity. |
 | 1.0 | 2026-03-04 | Initial version. |

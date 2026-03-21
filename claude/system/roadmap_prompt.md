@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.2
+**Version:** 4.3
 **Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -697,7 +697,17 @@ Stale ideas closed this cycle: <n>
 
 <List any agents below minimum submissions, or "None">
 <Note if intake engine was not run>
+
+## STEP 5 Debate Queue
+
+**Purpose:** This section is a machine-checkable list of all idea IDs classified as ✅ Advancing. STEP 5 reads this queue to verify that every queued idea has a corresponding debate entry before proceeding. An idea classified as Advancing in STEP 4 but absent from this queue is a process failure.
+
+| IDEA ID | Title | Source (stale / new) |
+|---------|-------|---------------------|
+| <id> | <title> | stale / new |
 ```
+
+**Mandatory:** After writing STEP 4, verify the queue row count equals the "Advancing to STEP 5" count in the summary header. If they differ: correct the queue before proceeding to STEP 5.
 
 ### 4.5 Parked Idea Expiry Rule
 
@@ -716,6 +726,16 @@ Rules:
 Authorities: Product Owner (chair) + Challenger (non‑decision challenge)
 
 **Challenger failure rule (per `team_charter.md §3.2`):** If the Challenger cannot produce an evidence-based counter-argument for any advancing candidate: this is a process failure. Halt. Record in lessons_learnt as Type E — Authority Gap. Do not proceed to STEP 6 until the Challenger provides a substantive counter-argument or formally records inability with a written reason. Neither silence nor "no objection" satisfies the Challenger's obligation.
+
+**STEP 5 Debate Queue preflight (mandatory before first debate):**
+
+1. Read the `## STEP 5 Debate Queue` table from `cycle_record.md` (written in STEP 4.4).
+2. List all IDEA IDs in the queue.
+3. For each queued IDEA ID, confirm a debate entry will be authored in this STEP before writing the STEP 5 section of `cycle_record.md`.
+4. If any queued IDEA ID is missing from the debate entries when STEP 5 is complete: this is a process failure. Do not write the STEP 5 section as complete. Add the missing debate entry before proceeding to STEP 6.
+5. If the queue is empty (no advancing ideas): record "Queue empty — no debates required" and continue to STEP 6.
+
+This preflight makes omissions detectable rather than silent. A queue mismatch caught here has zero propagation cost; the same gap uncaught propagates to a non-terminal register row that corrupts the next cycle's stale idea review.
 
 Before STEP 5, re-read:
 - Section 2 (Strategy Source of Truth)
@@ -1541,6 +1561,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.3 | 2026-03-21 | Friction Item 1 (cycle 2026-03-21__item-3.5): STEP 4.4 Write Summary extended — `## STEP 5 Debate Queue` table added to cycle_record.md output template; lists all Advancing IDEA IDs with title and source (stale/new); mandatory count-match check before proceeding to STEP 5. STEP 5 preflight check added — reads queue, verifies one debate entry per queued IDEA ID before writing STEP 5 section as complete; detects omissions before they propagate to non-terminal register rows. |
 | 4.2 | 2026-03-18 | STEP -1.6 corrected: count source changed from `claude/ideas/submissions/` file scan to `claude/ideas/ideas_register.md` row count (consistent with register model). STEP 0.C Lightweight criterion 2 updated to reference register rows. STEP 8.5.B item 4 language updated: "idea file" → "register row" throughout (LL-02-patch language now register-model consistent). |
 | 4.1 | 2026-03-17 | ST-19 (EPIC-06): STEP 4 updated to read from `claude/ideas/ideas_register.md` (single register) instead of scanning per-file submissions. §4.2 Document Management updated: actions now update register rows (Status, Park Count, Park Rationale) instead of individual files. §4.3 window summary path updated. Schema: `shared_standards.md §16.5`. |
 | 4.0 | 2026-03-17 | ST-18 (EPIC-06): Extended `cycle_record.md` single-file pattern to all three tiers (Lightweight/Standard/Extended). STEPS 2, 3, 4, 5, 8 write targets changed from separate stage files (`stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, `stage5_rebalance.md`) to labelled sections within a single `cycle_record.md`. Stage file references in §5 hard gates, §5.3 PoG issuance, §7 Skill-Silo / Capacity Floor rules, §10 Completion Condition, and STEP 0.C tier table all updated accordingly. Note in STEP 0.C explains mapping for any residual stage-file references. |
