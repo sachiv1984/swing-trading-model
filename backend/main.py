@@ -12,6 +12,8 @@ from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
 from pydantic import BaseModel
 from routers import validation, analytics, test, portfolio_size, trades_export, prospective_heat, alerts
+from routers import watchlist as watchlist_router
+from services.watchlist_service import ensure_watchlist_table
 
 
 
@@ -122,11 +124,12 @@ app.include_router(portfolio_size.router)
 app.include_router(prospective_heat.router)
 app.include_router(trades_export.router)
 app.include_router(alerts.router)
+app.include_router(watchlist_router.router)
 
 
 @app.on_event("startup")
 def on_startup():
-    """Bootstrap alert tables after the ASGI app is ready (idempotent CREATE IF NOT EXISTS)."""
+    """Bootstrap tables after the ASGI app is ready (idempotent CREATE IF NOT EXISTS)."""
     import logging as _logging
     _log = _logging.getLogger(__name__)
     try:
@@ -134,6 +137,11 @@ def on_startup():
         _log.info("ensure_alerts_tables: OK")
     except Exception as _e:
         _log.error("ensure_alerts_tables FAILED at startup — alert endpoints will return 500 until fixed: %s", _e)
+    try:
+        ensure_watchlist_table()
+        _log.info("ensure_watchlist_table: OK")
+    except Exception as _e:
+        _log.error("ensure_watchlist_table FAILED at startup: %s", _e)
 
 
 @app.get("/")
