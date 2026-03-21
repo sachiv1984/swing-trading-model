@@ -247,23 +247,23 @@
         "ST-10": {
           "title": "Frontend: watchlist UI [STRETCH]",
           "classification": "delegated_frontend",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Base44 Frontend",
           "github_issue": 99,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
-          "commit_sha": "ef3072d",
+          "commit_sha": "942e61a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-21T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/watchlist.md",
             "docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": "commit",
-          "notes": "Sprint 3 STRETCH. Implemented 2026-03-21. Watchlist.js (new page: table with signal/market badges, add modal POST, edit modal PATCH, inline remove confirmation, Add to Position navigation, skeleton/empty/error states, row fade-out animation). TradeEntry.js patched to read location.state.watchlist_prefill and DELETE /watchlist/{id} on success. Layout.js Watchlist nav item, pages.config.js registered, utils/index.js route added. Awaiting DoQ sign-off against staging."
+          "last_completed_substep": "doq_signoff",
+          "notes": "Sprint 3 STRETCH. Implemented 2026-03-21. Watchlist.js (new page: table with signal/market badges, add modal POST, edit modal PATCH, inline remove confirmation, Add to Position navigation, skeleton/empty/error states, row fade-out animation). TradeEntry.js patched to read location.state.watchlist_prefill and DELETE /watchlist/{id} on success. Layout.js Watchlist nav item, pages.config.js registered, utils/index.js route added. Backend cherry-picked to main (1f10d75) — watchlist table auto-created on startup. DoQ sign-off 2026-03-21: AC 1-5 pass on staging. AC-6 (sort order) deferred — verified by code review; full live test requires mixed-signal test data (post-merge action). BLG-UX-01 raised: sidebar nav overflow."
         }
       }
     },

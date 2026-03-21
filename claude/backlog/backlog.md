@@ -548,6 +548,27 @@ Lessons learnt from post-ship closure currently produce either (a) deferred patc
 
 ---
 
+### BLG-UX-01 — Sidebar navigation overflow: too many items to reach comfortably
+**Priority:** P2 (Medium)
+**Type:** UX / Frontend
+**Owner:** Product Owner
+**Source:** ST-10 DoQ staging sign-off — 2026-03-21
+**Target release:** v2.2
+
+**Problem**
+The left sidebar now has 13 navigation items. On shorter screens items near the bottom (Settings, Notifications) are hard to reach without scrolling. As the product grows this will worsen.
+
+**Options to consider**
+- Group items into collapsible sections (e.g. Trading, Analytics, System)
+- Move low-frequency items (System Status, Settings) to a footer strip or icon-only secondary nav
+- Sticky scroll within the nav with a visible scrollbar
+- Collapse sidebar to icon-only mode on smaller desktop viewports
+
+**Proposed next step**
+Product Owner to decide preferred grouping/pattern. Engineering to spec and implement.
+
+---
+
 ### BLG-OPS-04 — Alert evaluation scheduling: trigger mechanism and rule behaviour design
 **Priority:** P1 (High)
 **Type:** Product Design Gap
