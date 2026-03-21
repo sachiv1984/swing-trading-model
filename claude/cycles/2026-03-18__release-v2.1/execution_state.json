@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-19T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-21T00:00:00Z",
+  "last_updated_utc": "2026-03-21T01:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -199,7 +199,7 @@
       "qa_signed_off": false,
       "qa_evidence_log": null,
       "test_scenarios": [],
-      "notes": "Sprint 3. ST-08 spec complete (commit e6eb45f). ST-09 unblocked — gated on ST-08 merge. ST-10 stretch.",
+      "notes": "Sprint 3. ST-08 spec complete (commit e6eb45f). ST-09 backend complete (commit dc856c1). ST-10 stretch — gated on ST-09 staging confirmation.",
       "stories": {
         "ST-08": {
           "title": "Spec: watchlist data model + API endpoints",
@@ -226,20 +226,23 @@
         "ST-09": {
           "title": "Backend: watchlist implementation",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Engineering",
           "github_issue": 100,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "dc856c1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-08 spec signed off",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-21T01:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/watchlist_endpoints.md",
+            "docs/specs/data_model.md"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 3."
+          "last_completed_substep": "commit",
+          "notes": "Implemented 2026-03-21. watchlist_service.py (ensure_watchlist_table CREATE IF NOT EXISTS, get_watchlist with LEFT JOIN LATERAL signal status, create/update/delete). routers/watchlist.py (4 endpoints). main.py wired (router + startup bootstrap). 19 unit tests passing. Head of Engineering sign-off 2026-03-21. ST-10 now unblocked pending staging deployment."
         },
         "ST-10": {
           "title": "Frontend: watchlist UI [STRETCH]",
@@ -526,6 +529,7 @@
     "EPIC-02/ST-06",
     "EPIC-02/ST-07",
     "EPIC-03/ST-08",
+    "EPIC-03/ST-09",
     "EPIC-04/ST-11",
     "EPIC-05/ST-12",
     "EPIC-05/ST-13",
