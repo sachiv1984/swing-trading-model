@@ -1,0 +1,137 @@
+[
+  {
+    "id": "ST-01",
+    "title": "API Key Authentication for Render Deployment",
+    "epic": "EPIC-01",
+    "description": "Add X-API-Key header requirement to all non-public API endpoints; frontend reads key from env var and includes on all API calls",
+    "ac_summary": "All endpoints require valid X-API-Key; missing/invalid returns 401; frontend wired via env var; openapi.yaml updated; no regression",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Content Security Policy Headers",
+    "epic": "EPIC-01",
+    "description": "Configure CSP headers on React frontend restricting scripts to same-origin and used CDN sources",
+    "ac_summary": "CSP header present on all pages; no CSP violations in browser console; no regression",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Alert Scheduling: Define Trigger Mechanism and Rule Behaviour",
+    "epic": "EPIC-02",
+    "description": "Product Owner decision task: document alert evaluation frequency, cooldown policy, market_regime_change source, and preferred trigger mechanism; spec updates",
+    "ac_summary": "All 4 scheduling questions answered and documented; spec/decisions updated; openapi.yaml updated if new endpoints; gates ST-04 and ST-05",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Alert Threshold Customisation",
+    "epic": "EPIC-02",
+    "description": "User-configurable numeric thresholds per alert rule type; backend evaluates per-rule threshold; frontend threshold input fields; backward compatible defaults",
+    "ac_summary": "User can set/edit custom threshold per rule; evaluation uses per-rule value; default applied when absent; visible on list view; openapi.yaml updated if schema changes",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Alert History Table",
+    "epic": "EPIC-02",
+    "description": "New alert_evaluations table; GET /alerts/history endpoint; frontend history view (sortable, filterable by rule type)",
+    "ac_summary": "Every evaluate call persists a record; GET /alerts/history returns timestamp/rule/symbol/triggered/notification_sent; frontend sortable+filterable; down migration exists; openapi.yaml updated",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Fix CSV Export Function Name Import Bug",
+    "epic": "EPIC-03",
+    "description": "Fix incorrect import of get_all_trade_history → get_all_closed_trades_for_csv_export in trade_csv_service.py",
+    "ac_summary": "Incorrect import confirmed before fix; corrected import; GET /trades/export/csv returns valid CSV; regression confirmed by test",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Fix Slippage StatsCard Gradient Key",
+    "epic": "EPIC-03",
+    "description": "Replace unsupported color='cyan' with a supported gradient key (e.g. 'slate') on Avg Slippage StatsCard in TradeHistory.js",
+    "ac_summary": "StatsCard renders with supported gradient key; no regression to cell-level emerald/rose colour coding",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Health Check Endpoint",
+    "epic": "EPIC-03",
+    "description": "Add GET /health returning HTTP 200 with status, db connectivity, last_market_status_check, last_alert_evaluation",
+    "ac_summary": "GET /health returns 200 with JSON schema; db field reflects actual connectivity; openapi.yaml updated",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Execute Notification Scenarios on Staging",
+    "epic": "EPIC-04",
+    "description": "Formally execute SC-NOTIF-01 through SC-NOTIF-08 from notifications_scenarios.md on staging; record results",
+    "ac_summary": "SC-NOTIF-01 to SC-NOTIF-08 executed; results recorded; data-dependent scenarios documented; DoQ sign-off",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Create Watchlist Test Scenarios",
+    "epic": "EPIC-04",
+    "description": "Create docs/testing/watchlist_scenarios.md with SC-WATCH-01 through SC-WATCH-06",
+    "ac_summary": "watchlist_scenarios.md created with 6 scenarios; SC-WATCH-06 references deferred AC-6 from v2.1 ST-10; DoQ sign-off",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "Test Automation Readiness Assessment",
+    "epic": "EPIC-04",
+    "description": "Assess current test infrastructure; quantify automation coverage; recommend sequencing for Playwright E2E (BLG-QA-01, v2.3)",
+    "ac_summary": "Readiness assessment document produced; automation coverage quantified; Playwright sequencing confirmed; DoQ sign-off",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "Spec-to-Test Traceability Matrix",
+    "epic": "EPIC-04",
+    "description": "Create spec-to-test AC→scenario ID mapping for at least 3 canonical specs (alert rules, portfolio, positions)",
+    "ac_summary": "Traceability matrix for ≥3 specs; each AC maps to scenario IDs or flagged as gap; gaps added to TEST-GAP tracking; DoQ + HoST sign-off",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "Roadmap Engine: Provisional-Target Field at Backlog Promotion",
+    "epic": "EPIC-05",
+    "description": "Add Provisional-Target field to roadmap_prompt.md STEP 9 write instructions; document in shared_standards.md; update release planning STEP 1",
+    "ac_summary": "roadmap_prompt.md STEP 9 includes Provisional-Target; shared_standards.md documents format; release_planning_prompt.md STEP 1 reads it; §6 checklist applied to all modified files",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-14",
+    "title": "Release Planning: Load scored_initiatives.md for Effort Band Handoff",
+    "epic": "EPIC-05",
+    "description": "Add scored_initiatives.md to release planning STEP 0 load list; STEP 4 capacity check references effort bands from file",
+    "ac_summary": "release_planning_prompt.md STEP 0 includes scored_initiatives.md; STEP 4 uses effort bands; fallback documented; shared_standards.md handoff contract; §6 checklist applied",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-15",
+    "title": "Structured Lessons Learnt Carry-Forward Block",
+    "epic": "EPIC-05",
+    "description": "Standardise ## Carry-Forward section in lessons_learnt_closure.md; all three engines read it at STEP 0; post_ship_closure.md writes it",
+    "ac_summary": "lessons_learnt_closure.md schema has ## Carry-Forward; roadmap/release/sprint planning STEP 0 read it; post_ship_closure writes it; §6 checklist applied",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-03-21__release-v2.2"],
+    "assignee": null
+  }
+]

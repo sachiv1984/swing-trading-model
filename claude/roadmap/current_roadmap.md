@@ -47,6 +47,15 @@ These may be revisited in future versions without any canonical spec change:
 
 *Items in this section are committed for the current or next release cycle. v2.1 shipped 2026-03-21. v2.2 is the next delivery horizon.*
 
+<!-- roadmap-annotation-marker: RA:v2.2:2026-03-21__release-v2.2 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-21__release-v2.2
+- Plan published: 2026-03-21
+- Cycle folder: claude/cycles/2026-03-21__release-v2.2/
+- Backlog slice: claude/cycles/2026-03-21__release-v2.2/stage4_backlog_slice.md
+- Status at annotation: Validated
+
 ---
 
 <!-- roadmap-annotation-marker: RA:v2.0:2026-03-17__release-v2.0 -->
@@ -136,7 +145,7 @@ When evaluating new features:
 | **v1.10** | Operations & Quality | Staging environment, CI/CD auto-deploy, CohortAnalysis refactor, integration tests, v1.7 QA scenario gaps — ✅ Shipped 2026-03-16 *(retired to archive 2026-03-16)* |
 | **v2.0** | Reporting & Alerts | Tax-year P&L statement, signal exposure controls (top_n, lookback_days) — ✅ Shipped 2026-03-17. Alerts & notifications deferred to v2.1 (pending BLG-TECH-08 ADR). |
 | **v2.1** | Alerts, Watchlists & Enhancements | ADR-003 (async notification), Alerts & Notifications (Telegram delivery), Watchlists & Screening, Chart Interactivity, Tax-Year PDF/CSV Export, Slippage Tracking, Spec Debt & QA Coverage — ✅ Shipped 2026-03-21 |
-| **v2.2** | TBD | Next planned release — scope TBD |
+| **v2.2** | Security, Alert Maturity & Quality | Security hardening (API Key Auth, CSP), Alert system maturity (scheduling, thresholds, history), Bug fixes & operational quick wins, QA coverage, Governance process enhancements — 15 stories, 5 EPICs |
 
 ---
 

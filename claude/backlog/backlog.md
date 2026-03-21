@@ -775,6 +775,36 @@ Backend API errors surface as raw status codes or technical error messages in th
 
 ---
 
+<!-- release-plan-marker: RP:v2.2:2026-03-21__release-v2.2 -->
+
+---
+
+## 9. v2.2 Release Slice — Security, Alert Maturity & Quality
+
+*Planned: 2026-03-21 | Cycle: 2026-03-21__release-v2.2 | Backlog slice: claude/cycles/2026-03-21__release-v2.2/stage4_backlog_slice.md*
+
+| EPIC | Story | Title | Priority | Effort | Conditional |
+|------|-------|-------|----------|--------|-------------|
+| EPIC-01 | ST-01 | BLG-SEC-01: API Key Authentication for Render Deployment | P1 | M | No — Sprint 1 priority #1 |
+| EPIC-01 | ST-02 | BLG-SEC-02: Content Security Policy Headers | P3 | XS | No — bundle with ST-01 |
+| EPIC-02 | ST-03 | BLG-OPS-04: Alert scheduling — define trigger mechanism and rule behaviour | P1 | S | No — Sprint 1 design task; gates ST-04/ST-05 |
+| EPIC-02 | ST-04 | BLG-FEAT-10: Alert Threshold Customisation | P2 | M | Yes — gated on ST-03 complete |
+| EPIC-02 | ST-05 | BLG-FEAT-12: Alert History Table | P2 | M | Yes — gated on ST-03 complete |
+| EPIC-03 | ST-06 | BLG-BE-03: Fix CSV export function name import bug | P2 | XS | No — bundle as quick wins PR |
+| EPIC-03 | ST-07 | BLG-FE-01: Fix Slippage StatsCard gradient key | P3 | XS | No — bundle as quick wins PR |
+| EPIC-03 | ST-08 | BLG-OPS-06: Health Check Endpoint | P3 | XS | No — bundle as quick wins PR |
+| EPIC-04 | ST-09 | TEST-GAP-EPIC-02: Execute notifications_scenarios.md on staging | P2 | S | No |
+| EPIC-04 | ST-10 | TEST-GAP-EPIC-03: Create watchlist test scenarios | P2 | S–M | No |
+| EPIC-04 | ST-11 | BLG-QA-02: Test Automation Readiness Assessment | P2 | XS–S | No |
+| EPIC-04 | ST-12 | BLG-SPEC-T01: Spec-to-Test Traceability Matrix | P2 | M | Yes — after ST-11 |
+| EPIC-05 | ST-13 | BLG-GOV-04: Roadmap engine Provisional-Target field | P2 | M | No |
+| EPIC-05 | ST-14 | BLG-GOV-05: Release planning loads scored_initiatives.md | P2 | M | No |
+| EPIC-05 | ST-15 | BLG-GOV-06: Structured lessons learnt carry-forward block | P2 | M | No |
+
+*Full acceptance criteria in stage4_backlog_slice.md. Capacity: WARN (~16 days estimated; 3 sprints phased). See release_plan.md §Capacity Check §Phasing Recommendation.*
+
+---
+
 <!-- release-plan-marker: RP:v2.1:2026-03-18__release-v2.1 -->
 
 ---
