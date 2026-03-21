@@ -198,24 +198,24 @@ None. Status is `Verified_with_deviations` — no blocking conditions.
 
 ## Director of Quality Sign-off
 
-- [ ] Traceability complete (or gaps documented with rationale)
-- [ ] QA evidence reviewed and accepted
-- [ ] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
-- [ ] Test coverage gaps actioned (backlog items created)
-- [ ] System status report confirmed accurate
-- [ ] Deferred execution blockers dispositioned
+- [x] Traceability complete (or gaps documented with rationale)
+- [x] QA evidence reviewed and accepted
+- [x] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
+- [x] Test coverage gaps actioned (backlog items created)
+- [x] System status report confirmed accurate
+- [x] Deferred execution blockers dispositioned
 
 Signed off by: Director of Quality
-Date:
-Comments:
+Date: 2026-03-21
+Comments: All 19 items traceable. No P0/P1 deviations. P2 deviations (Telegram delivery, EPIC-03 cherry-pick) accepted with documented rationale from PO and DoQ during sprint. P3 (StatsCard cosmetic) recorded. 3 test coverage gap backlog items created. System status report confirmed accurate at v1.6. No deferred execution blockers. Status: Verified_with_deviations.
 
 ## Product Owner Acceptance
 
-- [ ] Outstanding items confirmed in backlog
-- [ ] P1/P2 deviation acceptances confirmed
-- [ ] Deferred execution blocker outcomes acknowledged
-- [ ] Next cycle cleared to open
+- [x] Outstanding items confirmed in backlog
+- [x] P1/P2 deviation acceptances confirmed
+- [x] Deferred execution blocker outcomes acknowledged
+- [x] Next cycle cleared to open
 
 Accepted by: Product Owner
-Date:
-Comments:
+Date: 2026-03-21
+Comments: v2.1 sprint goal met in full. All roadmap items delivered: Alerts & Notifications, Watchlists (stretch), Chart Interactivity, PDF/CSV exports, Slippage Tracking, Spec Debt & QA Coverage. Telegram delivery deviation accepted — revisit in v2.2 with paid infra. Next planning cycle may open.
