@@ -19,7 +19,7 @@ import {
   Activity,
   ShieldAlert,
   Bell,
-  Bookmark,
+  Eye,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -44,13 +44,13 @@ export default function Layout({ children, currentPageName }) {
     { name: "Dashboard", icon: LayoutDashboard, page: "DashboardHome" },
     { name: "Positions", icon: Briefcase, page: "Positions" },
     { name: "Signals", icon: Zap, page: "Signals" },
+    { name: "Watchlist", icon: Eye, page: "Watchlist" },
     { name: "Trade Entry", icon: PlusCircle, page: "TradeEntry" },
     { name: "Trade History", icon: History, page: "TradeHistory" },
     { name: "Reports", icon: FileBarChart, page: "Reports" },
     { name: "Analytics", icon: TrendingUp, page: "PerformanceAnalytics" },
     { name: "Reflections", icon: FileBarChart, page: "TradeReflection" },
     { name: "Risk Dashboard", icon: ShieldAlert, page: "RiskDashboard" },
-    { name: "Watchlist", icon: Bookmark, page: "Watchlist" },
     { name: "System Status", icon: Activity, page: "SystemStatus" },
     { name: "Notifications", icon: Bell, page: "notifications" },
     { name: "Settings", icon: Settings, page: "Settings" },
