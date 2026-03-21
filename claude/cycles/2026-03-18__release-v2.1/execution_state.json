@@ -1,12 +1,11 @@
 {
   "cycle_id": "2026-03-18__release-v2.1",
-  "sprint_goal": "Deliver v2.1 Alerts, Watchlists & Enhancements: author the notification delivery architecture decision, implement the full alerts and notification system, add watchlist monitoring capability, enhance chart interactivity and financial reporting exports, and close all spec debt and QA coverage gaps — across three planned sprints.",
+  "sprint_goal": "Deliver v2.1 Alerts, Watchlists & Enhancements: author the notification delivery architecture decision, implement the full alerts and notification system, add watchlist monitoring capability, enhance chart interactivity and financial reporting exports, and close all spec debt and QA coverage gaps \u2014 across three planned sprints.",
   "backlog_slice_source": "claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md",
   "invoked_utc": "2026-03-19T00:00:00Z",
   "mode": "standard",
   "status": "Running",
   "last_updated_utc": "2026-03-21T11:00:00Z",
-
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -16,7 +15,7 @@
       "qa_signed_off": true,
       "qa_evidence_log": null,
       "test_scenarios": [],
-      "notes": "ST-01 completed pre-sprint as governance action. ADR-003 authored and merged to main via commit 9ce7f86. No separate EPIC-01 PR — branch is at same state as main. Head of Engineering sign-off recorded in commit. Issue #91 closed.",
+      "notes": "ST-01 completed pre-sprint as governance action. ADR-003 authored and merged to main via commit 9ce7f86. No separate EPIC-01 PR \u2014 branch is at same state as main. Head of Engineering sign-off recorded in commit. Issue #91 closed.",
       "stories": {
         "ST-01": {
           "title": "Author async notification delivery ADR (BLG-TECH-08)",
@@ -37,16 +36,15 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "merged",
-          "notes": "Decision: FastAPI BackgroundTasks (sync-style post-response) — no Redis/Celery. Unblocks EPIC-02. Pre-sprint governance commit on main."
+          "notes": "Decision: FastAPI BackgroundTasks (sync-style post-response) \u2014 no Redis/Celery. Unblocks EPIC-02. Pre-sprint governance commit on main."
         }
       }
     },
-
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-02",
       "pr_number": 116,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -94,7 +92,7 @@
           ],
           "deviations_filed": false,
           "last_completed_substep": "commit",
-          "notes": "Implemented 2026-03-20. backend/services/alerts_service.py (evaluation engine, CRUD, delivery stub), backend/routers/alerts.py (10 endpoints), main.py wired. 34 unit tests passing. Tables bootstrapped via ensure_alerts_tables() on app startup (CREATE IF NOT EXISTS). Email delivery is a stub — ST-04 will wire real SMTP. Head of Engineering sign-off 2026-03-20."
+          "notes": "Implemented 2026-03-20. backend/services/alerts_service.py (evaluation engine, CRUD, delivery stub), backend/routers/alerts.py (10 endpoints), main.py wired. 34 unit tests passing. Tables bootstrapped via ensure_alerts_tables() on app startup (CREATE IF NOT EXISTS). Email delivery is a stub \u2014 ST-04 will wire real SMTP. Head of Engineering sign-off 2026-03-20."
         },
         "ST-04": {
           "title": "Backend: notification delivery (email)",
@@ -120,12 +118,12 @@
               "id": "DEV-ST04-01",
               "severity": "P2",
               "description": "Delivery channel changed from email to Telegram Bot API. Story title and AC specify 'email'; implementation uses Telegram sendMessage over HTTPS.",
-              "rationale": "Gmail SMTP (port 587) blocked on Render free tier (errno 101 — network unreachable). Brevo HTTP API attempted but requires paid domain verification. Telegram Bot API is free, permanent, and operates over port 443 (HTTPS) — compatible with Render free tier.",
-              "ac_impact": "AC 'Email notification delivered for each of the 4 alert types' is met in spirit — Telegram message delivered for daily_portfolio_summary alert type, confirmed in staging 2026-03-20. Remaining 3 types (stop_loss_approach, grace_period_warning, market_regime_change) fire when open positions exist; delivery path is identical.",
-              "doq_sign_off": "ACCEPTED — delivery channel deviation approved. Telegram confirmed working in staging. Infrastructure constraint on Render free tier is a valid rationale. Scheduling gap (BLG-OPS-04) logged for v2.2. Director of Quality sign-off 2026-03-20."
+              "rationale": "Gmail SMTP (port 587) blocked on Render free tier (errno 101 \u2014 network unreachable). Brevo HTTP API attempted but requires paid domain verification. Telegram Bot API is free, permanent, and operates over port 443 (HTTPS) \u2014 compatible with Render free tier.",
+              "ac_impact": "AC 'Email notification delivered for each of the 4 alert types' is met in spirit \u2014 Telegram message delivered for daily_portfolio_summary alert type, confirmed in staging 2026-03-20. Remaining 3 types (stop_loss_approach, grace_period_warning, market_regime_change) fire when open positions exist; delivery path is identical.",
+              "doq_sign_off": "ACCEPTED \u2014 delivery channel deviation approved. Telegram confirmed working in staging. Infrastructure constraint on Render free tier is a valid rationale. Scheduling gap (BLG-OPS-04) logged for v2.2. Director of Quality sign-off 2026-03-20."
             }
           ],
-          "notes": "Implemented via three commits on main: Resend (a5e0911) → Gmail SMTP (c858bb0) → Brevo (a0d4d61) → Telegram (fb87043). Final implementation: _send_via_telegram() in alerts_service.py using urllib (no extra dependencies). Env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID. Delivery confirmed in staging — Telegram message received 2026-03-20. BLG-OPS-04 filed: alert evaluation scheduling gap (no scheduler; requires PO input for v2.2). Director of Quality sign-off 2026-03-20."
+          "notes": "Implemented via three commits on main: Resend (a5e0911) \u2192 Gmail SMTP (c858bb0) \u2192 Brevo (a0d4d61) \u2192 Telegram (fb87043). Final implementation: _send_via_telegram() in alerts_service.py using urllib (no extra dependencies). Env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID. Delivery confirmed in staging \u2014 Telegram message received 2026-03-20. BLG-OPS-04 filed: alert evaluation scheduling gap (no scheduler; requires PO input for v2.2). Director of Quality sign-off 2026-03-20."
         },
         "ST-05": {
           "title": "Frontend: notification preferences page",
@@ -146,7 +144,7 @@
           ],
           "deviations_filed": false,
           "last_completed_substep": "accepted",
-          "notes": "Implemented 2026-03-20. NotificationPreferences.js (GET/PATCH wiring, optimistic toggle, 150ms debounce, Saved fade, error revert, skeleton, error state), NotificationTabBar.js (Feed/Preferences sub-nav), PreferenceRow.js (animated Saved label), Layout.js (Notifications nav item), App.js (dual routes), utils/index.js (NotificationPreferences route). Three post-commit fixes: (1) Body(...) annotation on PATCH, (2) route ordering — preferences before wildcard PATCH /notifications/{id}, (3) startup race — ensure_alerts_tables() moved to @app.on_event('startup') + lazy call in get_preferences/update_preferences. Director of Quality sign-off 2026-03-20: toggle saves correctly in staging, 'Saved' confirmation visible, Feed tab no longer 404s."
+          "notes": "Implemented 2026-03-20. NotificationPreferences.js (GET/PATCH wiring, optimistic toggle, 150ms debounce, Saved fade, error revert, skeleton, error state), NotificationTabBar.js (Feed/Preferences sub-nav), PreferenceRow.js (animated Saved label), Layout.js (Notifications nav item), App.js (dual routes), utils/index.js (NotificationPreferences route). Three post-commit fixes: (1) Body(...) annotation on PATCH, (2) route ordering \u2014 preferences before wildcard PATCH /notifications/{id}, (3) startup race \u2014 ensure_alerts_tables() moved to @app.on_event('startup') + lazy call in get_preferences/update_preferences. Director of Quality sign-off 2026-03-20: toggle saves correctly in staging, 'Saved' confirmation visible, Feed tab no longer 404s."
         },
         "ST-06": {
           "title": "Frontend: in-app notification feed",
@@ -190,7 +188,6 @@
         }
       }
     },
-
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
@@ -199,7 +196,7 @@
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
-      "notes": "All stories done. Delivered via cherry-pick to main (staging deployment required code on main before branch PR was viable). ST-08 commit e6eb45f, ST-09 commit 1f10d75, ST-10 commit 942e61a. Branch not merged — would revert EPIC-02/05/06 work that landed on main after branch diverged. Deviation recorded here.",
+      "notes": "All stories done. Delivered via cherry-pick to main (staging deployment required code on main before branch PR was viable). ST-08 commit e6eb45f, ST-09 commit 1f10d75, ST-10 commit 942e61a. Branch not merged \u2014 would revert EPIC-02/05/06 work that landed on main after branch diverged. Deviation recorded here.",
       "stories": {
         "ST-08": {
           "title": "Spec: watchlist data model + API endpoints",
@@ -221,7 +218,7 @@
           ],
           "deviations_filed": false,
           "last_completed_substep": "commit",
-          "notes": "watchlist_endpoints.md v0.1 authored 2026-03-21. 4 endpoints (GET/POST/PATCH/DELETE /watchlist). Signal status join-on-read via LEFT JOIN LATERAL on signals table — no stored column. data_model.md v2.1 (watchlist table + migration v2.0→v2.1). openapi.yaml v2.2.0 (4 paths, 3 schemas). Specs_Index.md registered. Dual sign-off: Head of Specs Team + Data Model & Domain Schema Owner 2026-03-21. ST-09 now unblocked."
+          "notes": "watchlist_endpoints.md v0.1 authored 2026-03-21. 4 endpoints (GET/POST/PATCH/DELETE /watchlist). Signal status join-on-read via LEFT JOIN LATERAL on signals table \u2014 no stored column. data_model.md v2.1 (watchlist table + migration v2.0\u2192v2.1). openapi.yaml v2.2.0 (4 paths, 3 schemas). Specs_Index.md registered. Dual sign-off: Head of Specs Team + Data Model & Domain Schema Owner 2026-03-21. ST-09 now unblocked."
         },
         "ST-09": {
           "title": "Backend: watchlist implementation",
@@ -263,11 +260,10 @@
           ],
           "deviations_filed": false,
           "last_completed_substep": "doq_signoff",
-          "notes": "Sprint 3 STRETCH. Implemented 2026-03-21. Watchlist.js (new page: table with signal/market badges, add modal POST, edit modal PATCH, inline remove confirmation, Add to Position navigation, skeleton/empty/error states, row fade-out animation). TradeEntry.js patched to read location.state.watchlist_prefill and DELETE /watchlist/{id} on success. Layout.js Watchlist nav item, pages.config.js registered, utils/index.js route added. Backend cherry-picked to main (1f10d75) — watchlist table auto-created on startup. DoQ sign-off 2026-03-21: AC 1-5 pass on staging. AC-6 (sort order) deferred — verified by code review; full live test requires mixed-signal test data (post-merge action). BLG-UX-01 raised: sidebar nav overflow."
+          "notes": "Sprint 3 STRETCH. Implemented 2026-03-21. Watchlist.js (new page: table with signal/market badges, add modal POST, edit modal PATCH, inline remove confirmation, Add to Position navigation, skeleton/empty/error states, row fade-out animation). TradeEntry.js patched to read location.state.watchlist_prefill and DELETE /watchlist/{id} on success. Layout.js Watchlist nav item, pages.config.js registered, utils/index.js route added. Backend cherry-picked to main (1f10d75) \u2014 watchlist table auto-created on startup. DoQ sign-off 2026-03-21: AC 1-5 pass on staging. AC-6 (sort order) deferred \u2014 verified by code review; full live test requires mixed-signal test data (post-merge action). BLG-UX-01 raised: sidebar nav overflow."
         }
       }
     },
-
     "EPIC-04": {
       "status": "merged",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-04",
@@ -299,16 +295,15 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "merged",
-          "notes": "All 16 SC-CHART-IX sub-scenarios verified staging 2026-03-19. Two post-merge bugs fixed (PR #112 zoom-out, PR #113 tooltip %). BLG-BE-02 filed (stop price gap in RMultipleAnalysis — pre-existing, not ST-11 regression)."
+          "notes": "All 16 SC-CHART-IX sub-scenarios verified staging 2026-03-19. Two post-merge bugs fixed (PR #112 zoom-out, PR #113 tooltip %). BLG-BE-02 filed (stop price gap in RMultipleAnalysis \u2014 pre-existing, not ST-11 regression)."
         }
       }
     },
-
     "EPIC-05": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-05",
       "pr_number": 117,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-18__release-v2.1/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -382,11 +377,11 @@
           "data_model_gate": {
             "status": "cleared",
             "cleared_utc": "2026-03-20T00:00:00Z",
-            "data_model_owner_sign_off": "APPROVED — fill_price DECIMAL(10,4) present in positions DDL, fields table, and v1.1→v1.2 migration. Formula computable without type/currency issues.",
-            "host_countersign": "COUNTERSIGNED — APPROVED — all Data Model Owner findings verified against data_model.md v1.8. No spec ambiguity blocking backend implementation.",
-            "fill_price_column": "positions.fill_price DECIMAL(10,4) nullable — added in migration v1.1→v1.2"
+            "data_model_owner_sign_off": "APPROVED \u2014 fill_price DECIMAL(10,4) present in positions DDL, fields table, and v1.1\u2192v1.2 migration. Formula computable without type/currency issues.",
+            "host_countersign": "COUNTERSIGNED \u2014 APPROVED \u2014 all Data Model Owner findings verified against data_model.md v1.8. No spec ambiguity blocking backend implementation.",
+            "fill_price_column": "positions.fill_price DECIMAL(10,4) nullable \u2014 added in migration v1.1\u2192v1.2"
           },
-          "notes": "Implemented 2026-03-20. Backend: positions.user_fill_price (new column), trade_history.fill_price (new column), data_model.md v2.0 migration. AddPositionRequest.fill_price optional. slippage_pct + avg_slippage_pct in GET /trades. Frontend: Fill Price input in TradeEntry.js, Slippage column (sortable, colour-coded, nulls show —) in TradeHistoryTable.js, Avg Slippage StatsCard in TradeHistory.js. DEVIATION: Avg Slippage null-state uses cyan gradient (StatsCard has no slate gradient key). Director of Quality sign-off pending."
+          "notes": "Implemented 2026-03-20. Backend: positions.user_fill_price (new column), trade_history.fill_price (new column), data_model.md v2.0 migration. AddPositionRequest.fill_price optional. slippage_pct + avg_slippage_pct in GET /trades. Frontend: Fill Price input in TradeEntry.js, Slippage column (sortable, colour-coded, nulls show \u2014) in TradeHistoryTable.js, Avg Slippage StatsCard in TradeHistory.js. DEVIATION: Avg Slippage null-state uses cyan gradient (StatsCard has no slate gradient key). Director of Quality sign-off pending."
         },
         "ST-15": {
           "title": "BLG-OPS-03: Render PR Preview Environments",
@@ -406,11 +401,10 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "commit",
-          "notes": "OPERATIONAL_GUIDE.md §8 updated documenting Render PR preview pattern and limitations (CRA build-time env var constraint). Issue #110 closed. Note: issue #105 also exists as duplicate — created at sync gh; #110 closed by governance_sync. Sprint 2 item, implemented early alongside EPIC-04 work. Merged via PR #115."
+          "notes": "OPERATIONAL_GUIDE.md \u00a78 updated documenting Render PR preview pattern and limitations (CRA build-time env var constraint). Issue #110 closed. Note: issue #105 also exists as duplicate \u2014 created at sync gh; #110 closed by governance_sync. Sprint 2 item, implemented early alongside EPIC-04 work. Merged via PR #115."
         }
       }
     },
-
     "EPIC-06": {
       "status": "merged",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-06",
@@ -501,12 +495,11 @@
           "spec_references": [],
           "deviations_filed": true,
           "last_completed_substep": "pmo_signed_off",
-          "notes": "Zero cross-EPIC violations across all Sprint 1 branches. PMO Lead signed off 2026-03-19. One observation noted (BLG-OPS-03 backlog touch on EPIC-04 branch) — compliant with CLAUDE.md §2. Pattern established. Note: no commit for ST-19 (process verification item — no code); GitHub issue #107 remains open (governance_sync requires [EPIC-06][ST-19] commit to auto-close; close manually if desired)."
+          "notes": "Zero cross-EPIC violations across all Sprint 1 branches. PMO Lead signed off 2026-03-19. One observation noted (BLG-OPS-03 backlog touch on EPIC-04 branch) \u2014 compliant with CLAUDE.md \u00a72. Pattern established. Note: no commit for ST-19 (process verification item \u2014 no code); GitHub issue #107 remains open (governance_sync requires [EPIC-06][ST-19] commit to auto-close; close manually if desired)."
         }
       }
     }
   },
-
   "blocked_items": [],
   "delegated_items": [
     "EPIC-01/ST-01",
@@ -542,13 +535,18 @@
     "EPIC-06/ST-19"
   ],
   "open_escalations": [],
-
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-04", "EPIC-06"],
-    "epics_pending": ["EPIC-02", "EPIC-05"],
-    "all_merged": false
+    "epics_merged": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04",
+      "EPIC-05",
+      "EPIC-06"
+    ],
+    "epics_pending": [],
+    "all_merged": true
   },
-
   "sealed": false,
   "sealed_utc": null
 }
