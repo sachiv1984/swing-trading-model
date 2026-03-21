@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-21
 **Cycle:** 2026-03-18__release-v2.1
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -495,5 +495,27 @@ Email is the only delivery channel for v2.1. Do not render SMS or any other chan
 **Resolved:** 2026-03-20
 **Commit SHA:** 47efe4b
 **Resolution:** NotificationRow.js (row component) provided by Base44; Notifications.js (feed page) built from spec. All AC verified in staging 2026-03-20: feed shows in staging, empty state visible in live, nav item highlights on both tabs. Director of Quality sign-off 2026-03-20.
+
+---
+
+## DEL-20260321-01 — ST-08: Watchlist spec — data model + API endpoints
+
+**Date:** 2026-03-21
+**Item:** EPIC-03 / ST-08
+**Classification:** delegated_decision
+**Assigned to:** Head of Specs Team + Data Model & Domain Schema Owner
+**GitHub issue:** #98
+**Branch:** exec/2026-03-18__release-v2.1/EPIC-03
+
+**What was delegated:** Author the watchlist spec. Define: watchlist data model table, API endpoints (GET/POST/PATCH/DELETE /watchlist), signal status derivation (join-on-read from signals table), and the "Add to Position" integration contract. Gates ST-09 (backend) and ST-10 (frontend).
+
+**Spec reference:** docs/specs/api_contracts/watchlist_endpoints.md, docs/specs/data_model.md, docs/reference/openapi.yaml
+
+**Unblock criteria:** watchlist_endpoints.md created with full endpoint definitions; data_model.md updated with watchlist table and migration v2.0→v2.1; openapi.yaml updated in same commit; Specs_Index.md registered; Head of Specs Team + Data Model & Domain Schema Owner sign-off.
+
+**Status:** Resolved
+**Resolved:** 2026-03-21
+**Commit SHA:** e6eb45f
+**Resolution:** watchlist_endpoints.md v0.1 authored (4 endpoints). Signal status architecture: join-on-read via LEFT JOIN LATERAL on signals table — no stored signal_status column. data_model.md v2.1 (watchlist table + migration v2.0→v2.1). openapi.yaml v2.2.0 (Watchlist tag, 4 paths, 3 schemas). Specs_Index.md registered. api_changelog.md v2.2.0 entry. Dual sign-off: Head of Specs Team + Data Model & Domain Schema Owner 2026-03-21.
 
 ---

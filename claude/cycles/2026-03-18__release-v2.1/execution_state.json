@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-19T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-20T22:10:00Z",
+  "last_updated_utc": "2026-03-21T00:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -192,32 +192,36 @@
     },
 
     "EPIC-03": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": null,
       "test_scenarios": [],
-      "notes": "Sprint 3 items. Not started.",
+      "notes": "Sprint 3. ST-08 spec complete (commit e6eb45f). ST-09 unblocked — gated on ST-08 merge. ST-10 stretch.",
       "stories": {
         "ST-08": {
           "title": "Spec: watchlist data model + API endpoints",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Specs Team + Data Model & Domain Schema Owner",
           "github_issue": 98,
           "branch": "exec/2026-03-18__release-v2.1/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "e6eb45f",
+          "delegation_record_id": "DEL-20260321-01",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-03-21T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/watchlist_endpoints.md",
+            "docs/specs/data_model.md",
+            "docs/reference/openapi.yaml"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "notes": "Sprint 3."
+          "last_completed_substep": "commit",
+          "notes": "watchlist_endpoints.md v0.1 authored 2026-03-21. 4 endpoints (GET/POST/PATCH/DELETE /watchlist). Signal status join-on-read via LEFT JOIN LATERAL on signals table — no stored column. data_model.md v2.1 (watchlist table + migration v2.0→v2.1). openapi.yaml v2.2.0 (4 paths, 3 schemas). Specs_Index.md registered. Dual sign-off: Head of Specs Team + Data Model & Domain Schema Owner 2026-03-21. ST-09 now unblocked."
         },
         "ST-09": {
           "title": "Backend: watchlist implementation",
@@ -521,6 +525,7 @@
     "EPIC-02/ST-05",
     "EPIC-02/ST-06",
     "EPIC-02/ST-07",
+    "EPIC-03/ST-08",
     "EPIC-04/ST-11",
     "EPIC-05/ST-12",
     "EPIC-05/ST-13",
