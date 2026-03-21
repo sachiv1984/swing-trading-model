@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { base44 } from "../api/base44Client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
@@ -15,19 +15,25 @@ import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
 import PositionSizingWidget from '../components/trades/PositionSizingWidget';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
 export default function TradeEntry() {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
 
+  // Pre-populate from watchlist "Add to Position" if state was passed
+  const prefill = location.state?.watchlist_prefill || null;
+
   const [formData, setFormData] = useState({
-    ticker: "",
-    market: "UK",
+    ticker: prefill?.ticker || "",
+    market: prefill?.market || "UK",
     entry_date: new Date().toISOString().split("T")[0],
     shares: "",
-    entry_price: "",
+    entry_price: prefill?.entry_price || "",
     fill_price: "",
-    stop_price: "",
-    fx_rate: "1",
+    stop_price: prefill?.stop_price || "",
+    fx_rate: prefill?.market === "US" ? "1.27" : "1",
     atr_value: "",
     entry_note: "",
     tags: [],
@@ -65,7 +71,14 @@ export default function TradeEntry() {
     mutationFn: (data) => base44.entities.Position.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["positions"] });
-      navigate(createPageUrl("Positions"));
+      // If opened from watchlist, delete the watchlist entry then go to Positions
+      if (prefill?.id) {
+        fetch(`${API_BASE_URL}/watchlist/${prefill.id}`, { method: "DELETE" })
+          .catch(() => {}) // non-blocking — position was created successfully
+          .finally(() => navigate(createPageUrl("Positions")));
+      } else {
+        navigate(createPageUrl("Positions"));
+      }
     },
   });
 

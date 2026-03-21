@@ -59,6 +59,7 @@ import SystemStatus from './pages/SystemStatus';
 import PerformanceAnalytics from './pages/PerformanceAnalytics';
 import RiskDashboard from './pages/RiskDashboard';
 import TradeReflection from './pages/TradeReflection';
+import Watchlist from './pages/Watchlist';
 import __Layout from './Layout.js';
 
 
@@ -75,6 +76,7 @@ export const PAGES = {
     "PerformanceAnalytics": PerformanceAnalytics,
     "RiskDashboard": RiskDashboard,
     "TradeReflection": TradeReflection,
+    "Watchlist": Watchlist,
 }
 
 export const pagesConfig = {

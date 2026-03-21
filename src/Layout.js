@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  PlusCircle, 
-  History, 
+import {
+  LayoutDashboard,
+  Briefcase,
+  PlusCircle,
+  History,
   Settings,
   Menu,
   X,
@@ -18,7 +18,8 @@ import {
   Zap,
   Activity,
   ShieldAlert,
-  Bell
+  Bell,
+  Bookmark,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -49,6 +50,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Analytics", icon: TrendingUp, page: "PerformanceAnalytics" },
     { name: "Reflections", icon: FileBarChart, page: "TradeReflection" },
     { name: "Risk Dashboard", icon: ShieldAlert, page: "RiskDashboard" },
+    { name: "Watchlist", icon: Bookmark, page: "Watchlist" },
     { name: "System Status", icon: Activity, page: "SystemStatus" },
     { name: "Notifications", icon: Bell, page: "notifications" },
     { name: "Settings", icon: Settings, page: "Settings" },

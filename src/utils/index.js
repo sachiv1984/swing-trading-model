@@ -14,6 +14,7 @@ export const createPageUrl = (pageName) => {
     RiskDashboard: '/RiskDashboard',
     TradeReflection: '/TradeReflection',
     NotificationPreferences: '/notifications/preferences',
+    Watchlist: '/Watchlist',
   };
   return routes[pageName] || '/';
 };
