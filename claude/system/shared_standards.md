@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.3
-**Last Updated:** 2026-03-17
+**Version:** 2.4
+**Last Updated:** 2026-03-22
 
 # Shared Standards — All Governed Routines
 
@@ -469,10 +469,24 @@ Consumed by: `execution_prompt.md` STEP -1.1
 
 ### 16.2 stage4_issue_manifest.json
 
-Produced by: `sprint_planning_prompt.md` STEP 6.1A (companion to sprint_backlog_index)
+Produced by: `release_planning_prompt.md` STEP 4 (IMP-24)
 Consumed by: `sync gh` inline handler
 
-[Schema to be moved from sprint_planning_prompt.md STEP 6.1A by Head of Specs Team]
+```json
+[
+  {
+    "id": "ST-xx",
+    "title": "<story title>",
+    "epic": "EPIC-xx",
+    "description": "<one-line description from backlog slice>",
+    "ac_summary": "<concise summary of acceptance criteria>",
+    "labels": ["sprint", "EPIC-xx", "cycle:<cycle_id>"],
+    "assignee": null
+  }
+]
+```
+
+One entry per ST item in `stage4_backlog_slice.md`. The `cycle:<cycle_id>` label is the idempotency key for GitHub issue creation (CLAUDE.md §4 / `sync gh` handler).
 
 ### 16.3 Delegation Log Schema
 
@@ -574,6 +588,7 @@ Reference: `execution_prompt.md` STEP 3.1.D (delegated_decision items) and STEP 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4 | 2026-03-22 | AUD-2026-03-21-004: §16.2 stage4_issue_manifest.json schema populated — replaced placeholder with canonical schema (moved from `release_planning_prompt.md` STEP 4 IMP-24 inline block). "Produced by" corrected to `release_planning_prompt.md` STEP 4. Engine prompts must reference §16.2 rather than duplicating schema inline. |
 | 2.3 | 2026-03-17 | ST-19 (EPIC-06): §16.5 ideas_register.md schema added — defines register table format, column definitions, and compliance rules for the single-file idea register replacing the per-file submission model. |
 | 2.2 | 2026-03-16 | AUD-2026-03-13-017: §16.3 Delegation Log Schema added — extracted from `execution_prompt.md §11`; §16.4 SLA Breach Tracking (Execution Engine) added — extracted from `execution_prompt.md` STEP 3.1.D. Engine prompts reference §16.3/§16.4 rather than duplicating inline. |
 | 2.1 | 2026-03-14 | AUD-2026-03-13-002 (PATCH 2): §13 dry-run table — `run roadmap` and `run ideas` rows added. AUD-2026-03-13-004 (PATCH 3): `run post-ship --dry-run` note added — STEP 11/12 pass through `--dry-run` flag. |

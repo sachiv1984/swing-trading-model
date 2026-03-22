@@ -28,12 +28,12 @@ PRIOR_AUDIT_ID = "AUD-2026-03-21"
 PRIOR_AUDIT_OPEN_ITEMS = [
     "AUD-2026-03-21-001",  # per_agent_submission_count missing from ideas_window.json
     "AUD-2026-03-21-002",  # run audit has no structural cadence trigger in post-ship
-    "AUD-2026-03-21-004",  # stage4_issue_manifest.json schema not moved to §16.2
-    "AUD-2026-03-21-005",  # LL-RP-v22-01 backlog ID uniqueness scan not applied
-    "AUD-2026-03-21-006",  # closure_state.json absent from OPERATIONAL_GUIDE §13
-    "AUD-2026-03-21-007",  # README.md §4 references stale engine path
 ]
 # AUD-2026-03-21-003 closed immediately — COMPLETED_CYCLES updated below.
+# AUD-2026-03-21-004 closed 2026-03-22 — §16.2 schema populated; release_planning inline schema removed.
+# AUD-2026-03-21-005 closed 2026-03-22 — backlog_management_prompt.md STEP 4.5 added.
+# AUD-2026-03-21-006 closed 2026-03-22 — closure_state.json added to OPERATIONAL_GUIDE §13.
+# AUD-2026-03-21-007 closed 2026-03-22 — README.md §4 path corrected to roadmap_prompt.md.
 # All AUD-2026-03-13 items closed before this audit run (confirmed Phase 0).
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking

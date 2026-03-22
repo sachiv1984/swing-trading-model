@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.20
-**Last Updated:** 2026-03-16
+**Version:** 2.21
+**Last Updated:** 2026-03-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -1108,20 +1108,7 @@ Update `state.json`:
 
 `claude/cycles/<cycle_id>/stage4_issue_manifest.json`
 
-Schema:
-```json
-[
-  {
-    "id": "ST-xx",
-    "title": "<story title>",
-    "epic": "EPIC-xx",
-    "description": "<one-line description from backlog slice>",
-    "ac_summary": "<concise summary of acceptance criteria>",
-    "labels": ["sprint", "EPIC-xx", "cycle:<cycle_id>"],
-    "assignee": null
-  }
-]
-```
+Schema: see `claude/system/shared_standards.md §16.2`.
 
 One entry per ST item in `stage4_backlog_slice.md`. The `cycle:<cycle_id>` label is the idempotency key for GitHub issue creation (§10.2).
 
@@ -1520,6 +1507,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.21 | 2026-03-22 | AUD-2026-03-21-004: STEP 4 stage4_issue_manifest.json inline schema removed — replaced with reference to `shared_standards.md §16.2` (canonical schema home). Saves ~200 tokens/cycle; SST compliance restored. |
 | 2.20 | 2026-03-16 | AUD-2026-03-13-005: STEP -1.8 Amendment_In_Progress inline halt block replaced with prose reference to `shared_standards.md §5` — saves ~80 tokens/cycle, SST improved. |
 | 2.19 | 2026-03-14 | AUD-2026-03-13-021 (PATCH 2): STEP 8 lessons_learnt.md output must end with `// ARTEFACT_STATUS` JSON terminal block (phase = "Release") per roadmap_prompt.md §11 schema. |
 | 2.18 | 2026-03-11 | IMP-11: STEP -1.8 Amendment In Progress Guard added — explicit halt when `status = Amendment_In_Progress`; mode-independent; message guides user to seal or withdraw before opening new release plan. IMP-16: STEP -1.9 Stale Backlog Lock Preflight Check added — detects locks from prior cycles; determines staleness (owning cycle closed or >72 hrs inactive); surfaces to PMO Lead for manual removal; records advisory in escalations.md; references team_charter §6. |
