@@ -243,3 +243,23 @@ No request body.
 
 - Health endpoints may be restricted or protected in production environments.
 - Detailed diagnostics should not be exposed publicly without access controls.
+
+---
+
+## Known Deviations
+
+### DEV-HEALTH-001 — GET /health schema updated in v2.2
+
+**Canonical requirement:** `GET /health` returns `{"status": "healthy", "timestamp": "<ISO>", "version": "<string>"}` per this spec v1.0.
+
+**v2.2 implementation (ST-08):** `GET /health` now returns `{"status": "ok"|"error", "db": "connected"|"error", "last_market_status_check": "<ISO or null>", "last_alert_evaluation": "<ISO or null>"}`.
+
+**Deviation type:** Implementation differs from spec requirement.
+
+**Priority:** P2
+
+**Target resolution:** Update this spec to v1.1 reflecting the new schema (backlog item: BLG-OPS-06 follow-up).
+
+**Owner:** API Contracts & Documentation Owner
+
+**Backlog reference:** BLG-OPS-06 (ST-08, cycle 2026-03-21__release-v2.2)

@@ -1222,11 +1222,14 @@ paths:
   /health:
     get:
       tags: [Health]
-      summary: Basic health check
+      summary: Operational health check (v2.2)
+      description: |
+        Returns DB connectivity and timestamps of last market status check and
+        last alert evaluation. Schema updated in v2.2 (ST-08).
       security: []
       responses:
         "200":
-          $ref: "#/components/responses/OkHealth"
+          $ref: "#/components/responses/OkOperationalHealth"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -1807,6 +1810,28 @@ components:
         See docs/specs/api_contracts/position_endpoints.md for the analyze response shape.
       additionalProperties: true
 
+    OperationalHealthResponse:
+      type: object
+      description: |
+        Operational health response for GET /health (v2.2, ST-08).
+        Returns DB status and last operation timestamps.
+      required: [status, db]
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        db:
+          type: string
+          enum: [connected, error]
+        last_market_status_check:
+          type: string
+          format: date-time
+          nullable: true
+        last_alert_evaluation:
+          type: string
+          format: date-time
+          nullable: true
+
     HealthResponse:
       type: object
       required: [status, timestamp, version]
@@ -2158,8 +2183,15 @@ components:
                   data:
                     $ref: "#/components/schemas/Settings"
 
+    OkOperationalHealth:
+      description: Operational health check response (v2.2, ST-08)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OperationalHealthResponse"
+
     OkHealth:
-      description: Health check passed
+      description: Health check passed (legacy — see OkOperationalHealth for v2.2 schema)
       content:
         application/json:
           schema:

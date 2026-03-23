@@ -103,6 +103,8 @@ from services import (
     # Health service
     get_basic_health,
     get_detailed_health,
+    get_operational_health,
+    record_market_status_check,
     test_all_endpoints,
     # Reports service
     get_tax_year_report,
@@ -577,7 +579,8 @@ def get_market_status():
         
         # Reuse existing check_market_regime() function
         market_regime = check_market_regime()
-        
+        record_market_status_check()
+
         # Get live FX rate
         fx_rate = get_live_fx_rate()
         
@@ -652,15 +655,17 @@ def delete_signal_endpoint(signal_id: str):
 @app.get("/health")
 def health_check():
     """
-    Basic health check - fast response for load balancers
+    Operational health check (v2.2).
+
+    Returns DB connectivity, and timestamps of last market status check
+    and last alert evaluation. Schema per ST-08 / health_endpoints.md.
     """
     try:
-        result = get_basic_health()
-        return result
+        return get_operational_health()
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "db": "error", "last_market_status_check": None, "last_alert_evaluation": None}
 
 
 @app.get("/health/detailed")

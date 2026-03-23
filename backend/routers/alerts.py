@@ -14,6 +14,7 @@ from fastapi import APIRouter, BackgroundTasks, Body, HTTPException
 from pydantic import BaseModel, field_validator
 from typing import Any, Dict, Optional
 from database import get_portfolio
+from services.health_service import record_alert_evaluation
 from services.alerts_service import (
     get_alert_rules,
     create_alert_rule,
@@ -179,6 +180,7 @@ def evaluate_alerts_endpoint(background_tasks: BackgroundTasks):
             background_tasks.add_task(deliver_notification, notification_id)
 
         result = evaluate_alerts(portfolio_id, enqueue)
+        record_alert_evaluation()
         return {"status": "ok", "data": result}
     except HTTPException:
         raise

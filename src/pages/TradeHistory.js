@@ -213,7 +213,7 @@ export default function TradeHistory() {
               }
               trend={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "up" : "down") : "neutral"}
               icon={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? TrendingUp : TrendingDown) : TrendingUp}
-              gradient={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "emerald" : "rose") : "cyan"}
+              gradient={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "emerald" : "rose") : "violet"}
             />
           </div>
 
