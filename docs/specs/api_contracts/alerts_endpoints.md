@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.2
-**Last Updated:** 2026-03-21
+**Version:** 0.3
+**Last Updated:** 2026-03-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -647,6 +647,73 @@ Returns the full updated preferences list (same shape as `GET /notifications/pre
 
 ---
 
+## GET /alerts/history
+
+Return alert evaluation history — the audit log of every rule evaluated by `POST /alerts/evaluate`.
+
+**Query parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `last_n_days` | integer | No | Return evaluations from the last N calendar days. Default: 30. |
+| `last_n_records` | integer | No | Return the last N records regardless of date. Takes precedence over `last_n_days` when both supplied. |
+
+**Response (200):**
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "evaluations": [
+      {
+        "id": "uuid",
+        "evaluation_timestamp": "2026-03-23T21:00:00Z",
+        "rule_type": "stop_loss_approach",
+        "symbol": "AAPL",
+        "triggered": true,
+        "notification_sent": true,
+        "values_compared": {
+          "stop_price": 42.10,
+          "current_price": 43.50,
+          "gap_pct": 3.3,
+          "threshold_pct": 5.0
+        }
+      }
+    ],
+    "total": 47
+  }
+}
+```
+
+**Field descriptions:**
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | UUID | Evaluation record ID |
+| `evaluation_timestamp` | ISO 8601 | UTC timestamp of the evaluation |
+| `rule_type` | string | One of the four alert type keys |
+| `symbol` | string \| null | Position ticker for position-specific rules; `null` for `market_regime_change` and `daily_portfolio_summary` |
+| `triggered` | boolean | Whether a new notification was created in this evaluation |
+| `notification_sent` | boolean | Whether delivery was enqueued (false if triggered=false, or preference disabled, or calendar-day dedup applied) |
+| `values_compared` | object | Key-value map of comparison values used in the evaluation. Schema varies by rule type (see below). |
+
+**`values_compared` by rule type:**
+
+| Rule type | Keys |
+|-----------|------|
+| `stop_loss_approach` | `stop_price`, `current_price`, `gap_pct`, `threshold_pct` |
+| `grace_period_warning` | `holding_days`, `min_hold_days`, `days_remaining` |
+| `market_regime_change` | `spy_risk_on`, `ftse_risk_on` (present only when triggered) |
+| `daily_portfolio_summary` | `open_positions` |
+
+**Error responses:**
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `500` | Internal server error |
+
+---
+
 ## Data Model Cross-Reference
 
 All tables defined below are specified in full in `docs/specs/data_model.md §8`.
@@ -656,6 +723,7 @@ All tables defined below are specified in full in `docs/specs/data_model.md §8`
 | `alert_rules` | Per-type rule configuration (enabled, threshold) |
 | `notifications` | Triggered alert instances with delivery tracking |
 | `notification_preferences` | Per-type email delivery preferences |
+| `alert_evaluations` | Audit log of every rule evaluation (v0.3) |
 
 Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_at`, `delivery_attempts`, `delivery_error`) implement the retry model specified in ADR-003.
 
@@ -679,5 +747,6 @@ Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-03-23 | ST-05 (v2.2): Added `## GET /alerts/history` endpoint. Added `alert_evaluations` table to Data Model Cross-Reference. `POST /alerts/evaluate` now persists one evaluation record per rule/position evaluated (calendar-day dedup applied to stop_loss_approach and grace_period_warning). |
 | 0.2 | 2026-03-21 | Post-ship closure: Known Deviations section added. DEV-ST04-01 (Telegram delivery) filed per post_ship_closure STEP 5 — deviation compliance. |
 | 0.1 | 2026-03-20 | Initial version. Full endpoint spec for EPIC-02 Alerts & Notifications. ST-02 — v2.1 release planning cycle 2026-03-18__release-v2.1. Architecture: FastAPI BackgroundTasks per ADR-003. HoST sign-off 2026-03-20: 4 review findings addressed (router ordering, grace period formula, proximity formula, table naming note). |

@@ -461,6 +461,44 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /alerts/history:
+    get:
+      tags: [Alerts]
+      summary: Get alert evaluation history
+      description: >
+        Return audit log of every alert rule evaluation, newest first.
+        Supports last_n_days (default 30) or last_n_records filtering.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.3.
+      parameters:
+        - in: query
+          name: last_n_days
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: Return evaluations from the last N days (default 30)
+        - in: query
+          name: last_n_records
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: Return the last N records regardless of date (takes precedence over last_n_days)
+      responses:
+        "200":
+          description: Alert evaluation history
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/AlertHistoryResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /notifications:
     get:
       tags: [Notifications]
@@ -1326,6 +1364,43 @@ components:
           type: integer
         redelivery_tasks_enqueued:
           type: integer
+        evaluations_persisted:
+          type: integer
+
+    AlertEvaluationRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        evaluation_timestamp:
+          type: string
+          format: date-time
+        rule_type:
+          type: string
+          enum: [stop_loss_approach, grace_period_warning, market_regime_change, daily_portfolio_summary]
+        symbol:
+          type: string
+          nullable: true
+          example: "AAPL"
+        triggered:
+          type: boolean
+        notification_sent:
+          type: boolean
+        values_compared:
+          type: object
+          additionalProperties: true
+
+    AlertHistoryResponse:
+      type: object
+      properties:
+        evaluations:
+          type: array
+          items:
+            $ref: "#/components/schemas/AlertEvaluationRecord"
+        total:
+          type: integer
+          description: Total number of records matching the query
 
     NotificationItem:
       type: object

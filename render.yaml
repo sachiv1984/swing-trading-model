@@ -35,6 +35,30 @@ services:
         value: "3.11.0"
 
   # ──────────────────────────────────────────────────────────
+  # Alert Evaluation Cron — daily at 21:00 UTC Mon–Fri
+  # Calls POST /alerts/evaluate with X-API-Key header.
+  # ST-03 Decision D: render.yaml cron is the trigger mechanism.
+  # NOTE: Production cron must be configured in the Render dashboard
+  # (production services are not managed by this blueprint).
+  # ──────────────────────────────────────────────────────────
+  - type: cron
+    name: alert-evaluator-cron-staging
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    schedule: "0 21 * * 1-5"
+    startCommand: >-
+      python -c "import urllib.request,os;
+      req=urllib.request.Request(os.environ['ALERTS_EVALUATE_URL'],method='POST');
+      req.add_header('X-API-Key',os.environ['API_KEY']);
+      print(urllib.request.urlopen(req).read())"
+    envVars:
+      - key: API_KEY
+        sync: false
+      - key: ALERTS_EVALUATE_URL
+        value: https://trading-assistant-api-staging.onrender.com/alerts/evaluate
+
+  # ──────────────────────────────────────────────────────────
   # Staging Frontend — React static site on Render
   # ──────────────────────────────────────────────────────────
   - type: web
