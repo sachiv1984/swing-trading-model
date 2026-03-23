@@ -263,3 +263,363 @@ CLAUDE.md §6 checklist required for ALL modified files (largest change set in E
 **Commit format:** `[EPIC-05][ST-15] Add structured lessons learnt carry-forward block to all engines`
 **Unblock criteria:** All changes per AC 1–3; §6 checklist applied to each modified file; Head of Specs Team sign-off.
 **SLA:** 72 hours (governance content decision)
+
+---
+
+## DEL-20260323-02 — ST-04: Alert Threshold Customisation
+
+**Date:** 2026-03-23
+**Assigned To:** Base44 Frontend Prompt Owner
+**Classification:** delegated_frontend
+**GitHub Issue:** #121
+**Branch:** exec/2026-03-21__release-v2.2/EPIC-02
+**Target branch:** `exec/2026-03-21__release-v2.2/EPIC-02`
+**Status:** Pending
+
+**Gate cleared:** ST-03 complete (2026-03-23). ST-04 and ST-05 are now unblocked.
+
+**Locked specs:**
+- Frontend: `docs/specs/frontend/pages/notifications.md` v0.2 §Section 2 (Alert Rule Thresholds)
+- Backend contract: `docs/specs/api_contracts/alerts_endpoints.md` v0.2 (PATCH /alerts/rules/{rule_id} exists; GET /alerts/rules exists)
+
+---
+
+### Base44 Prompt Draft — ST-04: Alert Threshold Customisation
+
+---
+
+**1. Context — what component is being changed**
+
+The file is `src/components/Notifications.js` (or the component that renders `/notifications/preferences`). This component currently renders two things: (1) a sub-navigation tab bar with "Feed" and "Preferences" tabs, and (2) the Notification Preferences page at `/notifications/preferences`. The Preferences page currently has one section: **Section 1 — Email Preferences**, which shows per-alert-type email toggles persisted via `PATCH /notifications/preferences`.
+
+We are adding a new **Section 2 — Alert Thresholds** below Section 1, and also adding a "History" tab to the sub-nav (the History tab itself links to `/notifications/history` — that page is a separate story; add the tab/link only, not the page content).
+
+---
+
+**2. The change — what needs to be added**
+
+Add the following to the `/notifications/preferences` page (rendered below the existing email preferences section):
+
+**Section heading:** "Alert Thresholds" (sub-heading `h2` or equivalent section header in the design system)
+
+On mount, call `GET /alerts/rules` to load the configured alert rules. Display one row per rule returned.
+
+**Alert Rule List row layout:**
+- Bold alert type name (mapped from API value to display label — see mapping below)
+- Muted secondary text below name:
+  - For `stop_loss_approach` with `threshold_percent = 5.0` (the default): `"Within 5% of stop (default)"`
+  - For `stop_loss_approach` with a custom `threshold_percent` value: `"Within N% of stop"` (where N is the actual value)
+  - For all other types (`grace_period_warning`, `market_regime_change`, `daily_portfolio_summary`): do **not** show any threshold text — these types have no configurable threshold
+- **Edit button** (inline, right-aligned): only shown for `stop_loss_approach`
+
+**Alert type display labels:**
+
+| API value | Display label |
+|-----------|--------------|
+| `stop_loss_approach` | Stop Loss Approach |
+| `grace_period_warning` | Grace Period Warning |
+| `market_regime_change` | Market Regime Change |
+| `daily_portfolio_summary` | Daily Portfolio Summary |
+
+**Empty state (if `GET /alerts/rules` returns an empty array):**
+- Icon: bell with plus
+- Heading: "No alert rules configured."
+- Body: "Add an alert rule to receive notifications."
+- CTA button: "Add alert rule" — opens the create form (see form spec below)
+
+**Edit / Create form:**
+
+Clicking "Edit" on a `stop_loss_approach` row, or "Add alert rule" on the empty state, opens an **inline expanded form** below the row (or section, if empty state). The form does **not** navigate away.
+
+Form fields:
+- **Alert type** (display only when editing — shows the alert type name; select dropdown when creating with options: Stop Loss Approach, Grace Period Warning, Market Regime Change, Daily Portfolio Summary)
+- **Threshold** (rendered only for `stop_loss_approach`):
+  - Label: `"Notify when within ___ % of stop"`
+  - Input type: number, decimal (1 decimal place precision)
+  - Placeholder: current default value (e.g. `"5"`)
+  - Help text below input: `"Leave blank to use the default (5%)."`
+  - Pre-filled with the existing `threshold_percent` value when editing
+
+**Threshold input validation (inline, on change):**
+
+| Condition | Error message |
+|-----------|--------------|
+| Non-numeric value | "Please enter a valid number." |
+| Value ≤ 0 | "Threshold must be greater than 0." |
+| Value > 50 | "Threshold cannot exceed 50%." |
+| Blank / empty | No error — treated as "use default" (5%) |
+
+Display the error message directly below the input field. The Save button is disabled while validation errors are present.
+
+Form actions:
+- **Save** button: calls `PATCH /alerts/rules/{rule_id}` with `{ "threshold_percent": <value or 5.0 if blank> }`
+  - On success: close the inline form; refresh the rules list; updated threshold shows in the list row
+  - On error: inline error above Save button: `"Failed to save alert rule. Please try again."`
+- **Cancel** button: closes the form without saving; no API call
+
+---
+
+**3. API contract**
+
+**GET /alerts/rules**
+- Method: `GET`
+- Path: `/alerts/rules`
+- No query parameters
+- Response (200): `{ "status": "ok", "data": [ { "id": "<uuid>", "type": "stop_loss_approach" | "grace_period_warning" | "market_regime_change" | "daily_portfolio_summary", "enabled": true|false, "threshold_percent": <float or null>, "created_at": "<ISO>", "updated_at": "<ISO>" } ] }`
+- `threshold_percent`: float for `stop_loss_approach`, `null` for all other types
+- Default values on first use (seeded by backend): `stop_loss_approach` enabled=true threshold_percent=5.0; all others enabled=true threshold_percent=null
+
+**PATCH /alerts/rules/{rule_id}**
+- Method: `PATCH`
+- Path: `/alerts/rules/{rule_id}` — `rule_id` is the UUID `id` field from the GET response
+- Request body: `{ "threshold_percent": <float> }` — at least one field must be present
+- `threshold_percent` must be > 0 and ≤ 100 (frontend validates ≤ 50 per spec)
+- Response (200): updated alert rule object (same shape as GET response items)
+- Error (400): threshold out of range or no fields provided
+- Error (404): rule_id not found
+
+Use the `apiFetch` wrapper (imported from `src/api/base44Client.js`) for all API calls. This wrapper automatically adds the `X-API-Key` header. Do not call `fetch` directly.
+
+---
+
+**4. Behaviour rules**
+
+- Load `GET /alerts/rules` on component mount (alongside the existing `GET /notifications/preferences` call; both can load in parallel with `Promise.all`).
+- Loading state for the thresholds section: show 4 skeleton rows at standard row height while the rules load.
+- Error state (load failure): inline error panel below the "Alert Thresholds" heading: `"Unable to load alert rules. Please refresh."`
+- Only one edit form should be open at a time. Opening one form closes any other open form.
+- The form pre-fills the existing `threshold_percent` when editing. If the existing value equals the backend default (5.0) the pre-fill still shows 5.0 (not blank).
+- A blank threshold field is accepted as "use default (5%)" — on submit, pass `threshold_percent: 5.0` to the API.
+- After a successful save, re-call `GET /alerts/rules` to refresh the displayed values (do not update locally without re-fetch).
+- The threshold display in the list should reflect the current API value, not a locally-tracked state.
+
+---
+
+**5. Non-functional rules**
+
+- Do NOT modify the existing email preferences section (Section 1). Its behaviour, layout, and state management must remain identical.
+- Do NOT implement the `/notifications/history` page content. The History tab in the sub-nav should appear as a navigation link only (pointing to `/notifications/history`). The page rendering for that route is a separate story.
+- Do NOT change the routing logic — only add the History tab to the existing sub-nav component.
+- The existing `GET /notifications` feed functionality must not be affected.
+- All API calls must use the shared `apiFetch` wrapper from `src/api/base44Client.js`.
+- Do not hardcode API base URLs.
+
+---
+
+**6. Expected outcome**
+
+Return the complete updated `Notifications.js` (or whichever file(s) implement the `/notifications/preferences` page and sub-nav) with:
+1. "Alert Thresholds" section added below email preferences on the Preferences tab
+2. Alert rule list with per-row threshold display and edit button (for `stop_loss_approach`)
+3. Inline edit/create form with validation
+4. Loading, empty, and error states for the thresholds section
+5. "History" tab added to the sub-nav (link only — no page content)
+
+---
+
+**Commit format when complete:** `[EPIC-02][ST-04] Add alert threshold customisation to preferences page`
+**Unblock criteria:** All 6 AC from stage4_backlog_slice.md ST-04 verified; threshold customisation confirmed functional; DoQ sign-off.
+**SLA:** 72 hours
+
+---
+
+## DEL-20260323-03 — ST-05: Alert History Table
+
+**Date:** 2026-03-23
+**Assigned To:** Base44 Frontend Prompt Owner (frontend) + Head of Engineering (backend: alert_evaluations table + GET /alerts/history endpoint)
+**Classification:** delegated_frontend
+**GitHub Issue:** #122
+**Branch:** exec/2026-03-21__release-v2.2/EPIC-02
+**Target branch:** `exec/2026-03-21__release-v2.2/EPIC-02`
+**Status:** Pending
+
+**Gate cleared:** ST-03 complete (2026-03-23). ST-04 and ST-05 are now unblocked.
+
+**Backend prerequisite (Head of Engineering — same commit):**
+
+Before the frontend can be implemented, the backend must:
+1. Create the `alert_evaluations` table (migration with down migration):
+   - `id` UUID PK
+   - `evaluation_timestamp` ISO 8601 timestamp
+   - `rule_type` string (one of the four alert type keys)
+   - `symbol` string nullable (null for non-position-specific types)
+   - `triggered` boolean
+   - `notification_sent` boolean
+   - `values_compared` JSONB (key-value map of the comparison values used)
+2. Persist a record per rule evaluated in `POST /alerts/evaluate`
+3. Implement `GET /alerts/history` endpoint (contract below)
+4. Update `docs/specs/api_contracts/alerts_endpoints.md` with `GET /alerts/history` section in the same commit
+5. Update `docs/reference/openapi.yaml` with the new endpoint in the same commit
+
+**Locked specs:**
+- Frontend: `docs/specs/frontend/pages/notifications.md` v0.2 §Page 3 (Alert History)
+- Backend contract (to be authored by Head of Engineering per AC-5): `docs/specs/api_contracts/alerts_endpoints.md` — add `GET /alerts/history` section
+- Data model: ST-05 AC-1 fields (see above)
+
+---
+
+### Base44 Prompt Draft — ST-05: Alert History Table
+
+---
+
+**1. Context — what component is being changed**
+
+The file is `src/components/Notifications.js` (or the component rendering the `/notifications` routes). This component renders:
+- Sub-navigation with tabs: "Feed" (`/notifications`) and "Preferences" (`/notifications/preferences`)
+- The notification feed page at `/notifications`
+- The preferences page at `/notifications/preferences`
+
+We are adding a third tab and page: **"History"** at `/notifications/history`. This page shows a table of all alert rule evaluations recorded by the system.
+
+Note: If ST-04 has already been implemented (adding the "History" tab link to the sub-nav), the link already exists — do not duplicate it. If not yet present, add it.
+
+---
+
+**2. The change — what needs to be added**
+
+Add a new page at `/notifications/history` (the "Alert History" page) with the following structure:
+
+**Page header:**
+- H1: `"Alert History"`
+- Subtitle: `"A log of every alert rule evaluation by the system."`
+
+**Controls (above the table):**
+- Right-aligned: filter dropdown
+  - Label: `"Filter by type:"`
+  - Options: `All types` (default), `Stop Loss Approach`, `Grace Period Warning`, `Market Regime Change`, `Daily Portfolio Summary`
+  - Selecting an option filters the table rows to only show that rule type
+  - Selecting "All types" clears the filter
+
+**Alert History Table columns:**
+
+| Column header | Source field | Format |
+|--------------|-------------|--------|
+| Date / Time | `evaluation_timestamp` | `YYYY-MM-DD HH:mm` in local time; full ISO 8601 on hover |
+| Alert Type | `rule_type` | Mapped to display label (see mapping) |
+| Symbol | `symbol` | Uppercase ticker string; `—` (em dash) if null |
+| Triggered | `triggered` | `true` → amber badge with text "Yes"; `false` → grey badge with text "No" |
+| Notified | `notification_sent` | `true` → green badge with text "Yes"; `false` → grey badge with text "No" |
+| Values | `values_compared` | Compact one-line summary of the key-value map (truncated if long) |
+
+**Rule type display labels:**
+
+| API value | Display label |
+|-----------|--------------|
+| `stop_loss_approach` | Stop Loss Approach |
+| `grace_period_warning` | Grace Period Warning |
+| `market_regime_change` | Market Regime Change |
+| `daily_portfolio_summary` | Daily Portfolio Summary |
+| Unknown value | Show the raw API value as fallback |
+
+**Row expand:**
+Clicking any table row expands it inline (not a modal) to show the full `values_compared` map as a formatted key–value list. The expanded values replace the truncated "Values" cell display. Example format:
+```
+stop_price:        $42.10
+current_price:     $43.50
+gap_pct:           3.3%
+threshold_pct:     5.0%
+triggered:         Yes
+notification_sent: Yes
+```
+Clicking the row again collapses it.
+
+**Sort:**
+- Default: newest first (descending `evaluation_timestamp`)
+- The "Date / Time" column header is clickable to toggle sort direction (ascending / descending)
+- Active sort direction indicated by an up/down arrow icon on the column header
+
+**Pagination:**
+- Initial load: call `GET /alerts/history?last_n_days=30` (last 30 days)
+- If more records may exist: show a **"Load more"** button below the table
+- "Load more" calls `GET /alerts/history?last_n_records=200` (or an offset approach if the API supports it)
+- No infinite scroll — button only
+
+**"History" tab in sub-nav:**
+Add `"History"` as the third tab in the notifications sub-nav, pointing to `/notifications/history`. If ST-04 already added this tab, it should already be present — check before adding.
+
+---
+
+**3. API contract**
+
+**GET /alerts/history**
+- Method: `GET`
+- Path: `/alerts/history`
+- Query parameters:
+  - `last_n_days` (integer, optional): return records from the last N days
+  - `last_n_records` (integer, optional): return the last N records regardless of date
+  - Default if neither provided: last 30 days
+- Response (200):
+```json
+{
+  "status": "ok",
+  "data": {
+    "evaluations": [
+      {
+        "id": "<uuid>",
+        "evaluation_timestamp": "2026-03-21T16:30:00Z",
+        "rule_type": "stop_loss_approach",
+        "symbol": "AAPL",
+        "triggered": true,
+        "notification_sent": true,
+        "values_compared": {
+          "stop_price": 42.10,
+          "current_price": 43.50,
+          "gap_pct": 3.3,
+          "threshold_pct": 5.0
+        }
+      }
+    ],
+    "total": 47
+  }
+}
+```
+- `symbol` is nullable (null for types not tied to a specific position)
+- `values_compared` is a JSON object with arbitrary key–value pairs (backend-defined per rule type)
+- `total` is the total number of records matching the query (used to determine whether "Load more" is available)
+
+Use the `apiFetch` wrapper (imported from `src/api/base44Client.js`) for all API calls.
+
+---
+
+**4. Behaviour rules**
+
+- Load `GET /alerts/history?last_n_days=30` on mount.
+- Loading state: show 5 skeleton rows at standard table-row height.
+- Empty state (no records, no filter applied):
+  - Heading: `"No alert history yet."`
+  - Body: `"Alert evaluations will appear here once the system has run."`
+- Empty state (filter applied but no matches):
+  - Body: `"No evaluations found for the selected alert type."`
+  - "Clear filter" link that resets the dropdown to "All types"
+- Error state (API failure): full-width error panel: `"Unable to load alert history. Please refresh."`
+- "Load more" button is shown when `total > evaluations.length` (i.e. there may be more records). Hidden when all records are already loaded.
+- The filter is applied client-side to the loaded records. It does not re-call the API.
+- Row expand: only one row can be expanded at a time. Expanding a row collapses any previously expanded row.
+- Format `evaluation_timestamp` in the user's local timezone for display; show full ISO 8601 on hover.
+
+---
+
+**5. Non-functional rules**
+
+- Do NOT modify the notification feed page or preferences page.
+- Do NOT change the existing sub-nav tabs "Feed" and "Preferences".
+- All API calls must use `apiFetch` from `src/api/base44Client.js`.
+- Do not hardcode API base URLs.
+- The table is read-only — no delete, edit, or bulk actions.
+
+---
+
+**6. Expected outcome**
+
+Return the complete updated `Notifications.js` (or separate page component `NotificationsHistory.js` if the routing structure benefits from it) with:
+1. New `/notifications/history` route rendering the Alert History page
+2. Alert history table with all columns, sort, filter, and row expand
+3. "Load more" pagination
+4. Loading, empty (both variants), and error states
+5. "History" tab added to sub-nav (if not already added by ST-04)
+
+---
+
+**Commit format when complete:** `[EPIC-02][ST-05] Add alert history table and GET /alerts/history endpoint`
+**Unblock criteria:** All 6 AC from stage4_backlog_slice.md ST-05 verified; history persists across evaluate calls; migration runs cleanly with down migration; DoQ sign-off.
+**SLA:** 72 hours

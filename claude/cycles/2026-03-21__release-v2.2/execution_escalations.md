@@ -40,4 +40,6 @@ Suggested location: update `conventions.md` §1 to define the auth scheme, or cr
 
 **Unblock criteria:** Spec section authored and marked Canonical; spec_references updated in execution_state.json; ST-01 re-classified to `delegated_backend`; Head of Engineering assigned.
 
-**Disposition:** Pending
+**Disposition:** Resolved — 2026-03-23
+
+**Resolution:** conventions.md §1 authored by Head of Specs Team (v1.1, Canonical) via agent-mediated sign-off. ST-01 re-classified to `delegated_backend` and assigned to Head of Engineering (DEL-20260323-01). Implementation committed (43be2ef). EPIC-01 merged (PR #134, merge commit e5e9bd9). All unblock criteria met. This escalation is closed.
