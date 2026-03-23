@@ -126,7 +126,9 @@ async def api_key_middleware(request: Request, call_next):
     if not api_key:
         # API_KEY not set — skip auth (local dev)
         return await call_next(request)
-    # Exempt GET /health
+    # Exempt OPTIONS (CORS preflight) and GET /health
+    if request.method == "OPTIONS":
+        return await call_next(request)
     if request.method == "GET" and request.url.path == "/health":
         return await call_next(request)
     # Validate X-API-Key header
