@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-22T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-23T00:00:00Z",
+  "last_updated_utc": "2026-03-23T01:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -82,21 +82,38 @@
         "ST-03": {
           "title": "Alert Scheduling: Define Trigger Mechanism and Rule Behaviour",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Product Owner",
           "github_issue": 120,
           "branch": "exec/2026-03-21__release-v2.2/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260322-02",
-          "blocked_since_utc": "2026-03-22T00:00:00Z",
-          "unblock_criteria": "Product Owner documents: (a) evaluation frequency; (b) cooldown policy; (c) market_regime_change source of truth; (d) preferred trigger mechanism. All AC 1-4 complete. ST-04 and ST-05 may not begin until this item is unblocked.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/api_contracts/alerts_endpoints.md"],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md",
+            "docs/product/decisions/decisions--2026-03-21__release-v2.2.md#st-03-execution-decisions"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Design + spec story. PO decision gates ST-04 and ST-05. SLA: 72 hours (strategy decision)."
+          "last_completed_substep": "decision_document_authored",
+          "sign_off_record": {
+            "required_by": "Product Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "Challenge 1: Intraday scope boundary explicitly stated — out of scope for v2.2",
+              "Challenge 2: Cooldown restated as calendar-day deduplication intent; mechanism delegated to HoST",
+              "Challenge 3: render.yaml modification confirmed as implementation-story artefact; cron auth via env var acknowledged",
+              "Challenge 4: Cold-start DB persistence converted from risk note to mandatory pre-condition for HoST",
+              "Challenge 5: Auth framing corrected — Render env-var, simpler not absent",
+              "Challenge 6: Schema-level dedup key retracted; PO states intent only",
+              "Challenge 7: Lock-in trade-off explicitly acknowledged"
+            ],
+            "cleared_utc": "2026-03-23T00:00:00Z"
+          },
+          "notes": "All 4 AC decisions documented in docs/product/decisions/decisions--2026-03-21__release-v2.2.md §ST-03 Execution Decisions. Challenger review completed — 4 must-answer challenges resolved, 3 worth-noting items acknowledged. ST-04 and ST-05 are now unblocked. HoST must encode 5 mandatory pre-conditions as named ACs in ST-04/ST-05 implementation spec before delegation to engineering."
         },
         "ST-04": {
           "title": "Alert Threshold Customisation",
@@ -384,9 +401,9 @@
     }
   },
 
-  "blocked_items": ["ST-03", "ST-13", "ST-14", "ST-15"],
+  "blocked_items": ["ST-13", "ST-14", "ST-15"],
   "delegated_items": ["ST-01", "ST-09", "ST-10", "ST-11", "ST-12"],
-  "completed_items": ["ST-02", "ST-06", "ST-07", "ST-08"],
+  "completed_items": ["ST-02", "ST-03", "ST-06", "ST-07", "ST-08"],
 
   "open_escalations": [
     "ESC-EXEC-20260322-01"

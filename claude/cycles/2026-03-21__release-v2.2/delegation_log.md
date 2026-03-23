@@ -89,7 +89,9 @@ Implement X-API-Key authentication per `conventions.md §1`. The spec is now loc
 **Classification:** delegated_decision
 **GitHub Issue:** #120
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-02
-**Status:** Pending
+**Status:** Resolved — 2026-03-23
+
+**Resolution:** Product Owner made all four decisions (A–D). Challenger review completed: 4 must-answer challenges resolved, 3 worth-noting items acknowledged and recorded. Decision document authored at `docs/product/decisions/decisions--2026-03-21__release-v2.2.md §ST-03 Execution Decisions`. ST-04 and ST-05 are now unblocked.
 
 **Decision required:**
 Product Owner must document the following alert scheduling decisions:
