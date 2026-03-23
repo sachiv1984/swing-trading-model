@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-03-23
+**Version:** 1.2
+**Last Updated:** 2026-03-23 (v1.2)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## 1. Authentication & Authorization
@@ -57,6 +57,7 @@ The following endpoints are exempt from the `X-API-Key` requirement:
 | Endpoint | Reason |
 |----------|--------|
 | `GET /health` | Public health check for infrastructure monitoring |
+| `OPTIONS *` | Browser CORS preflight — method-level exemption, not an endpoint. No data returned; actual request that follows is still authenticated. |
 
 Any new exemption requires an explicit entry in this table and must be approved by the Head of Specs Team.
 
