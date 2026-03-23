@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import PageHeader from "../components/ui/PageHeader";
-import NotificationTabBar from "../components/notifications/NotificationTabBar";
-import PreferenceRow from "../components/notifications/PreferenceRow";
-import AlertThresholdsSection from "../components/notifications/AlertThresholdsSection";
-import { apiFetch } from "../api/base44Client";
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+import { Link, useLocation } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
+import { cn } from "@/lib/utils";
+import PageHeader from "@/components/ui/PageHeader";
+import NotificationTabBar from "@/components/notifications/NotificationTabBar";
+import PreferenceRow from "@/components/notifications/PreferenceRow";
+import AlertThresholdsSection from "@/components/notifications/AlertThresholdsSection";
 
 const ALERT_META = {
   stop_loss_approach: {
@@ -30,11 +30,11 @@ export default function NotificationPreferences() {
   const [preferences, setPreferences] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-  const [rowState, setRowState] = useState({});
+  const [rowState, setRowState] = useState({}); // { alert_type: { saved: bool, error: string|null } }
   const debounceTimers = useRef({});
 
   useEffect(() => {
-    apiFetch(`${API_BASE_URL}/notifications/preferences`)
+    fetch("/notifications/preferences")
       .then((r) => {
         if (!r.ok) throw new Error();
         return r.json();
@@ -50,6 +50,7 @@ export default function NotificationPreferences() {
   }, []);
 
   const handleToggle = (alertType, newValue) => {
+    // Optimistic update
     setPreferences((prev) =>
       prev.map((p) =>
         p.alert_type === alertType ? { ...p, email_enabled: newValue } : p
@@ -57,11 +58,12 @@ export default function NotificationPreferences() {
     );
     setRowState((prev) => ({ ...prev, [alertType]: { saved: false, error: null } }));
 
+    // Debounce PATCH
     if (debounceTimers.current[alertType]) {
       clearTimeout(debounceTimers.current[alertType]);
     }
     debounceTimers.current[alertType] = setTimeout(() => {
-      apiFetch(`${API_BASE_URL}/notifications/preferences`, {
+      fetch("/notifications/preferences", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [alertType]: { email_enabled: newValue } }),
@@ -74,6 +76,7 @@ export default function NotificationPreferences() {
           }, 2000);
         })
         .catch(() => {
+          // Revert
           setPreferences((prev) =>
             prev.map((p) =>
               p.alert_type === alertType ? { ...p, email_enabled: !newValue } : p
@@ -91,7 +94,7 @@ export default function NotificationPreferences() {
     <div className="space-y-6">
       <PageHeader
         title="Notification Preferences"
-        description="Configure which alerts you receive by email, and set custom thresholds."
+        description="Configure which alerts you receive."
       />
 
       <NotificationTabBar />

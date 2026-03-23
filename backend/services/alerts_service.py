@@ -129,6 +129,28 @@ def ensure_alerts_tables():
                     ON notification_preferences(portfolio_id)
             """)
 
+            # Down migration: DROP TABLE IF EXISTS alert_evaluations;
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS alert_evaluations (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+                    evaluation_timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    rule_type VARCHAR(50) NOT NULL
+                        CHECK (rule_type IN (
+                            'stop_loss_approach', 'grace_period_warning',
+                            'market_regime_change', 'daily_portfolio_summary'
+                        )),
+                    symbol VARCHAR(20),
+                    triggered BOOLEAN NOT NULL,
+                    notification_sent BOOLEAN NOT NULL,
+                    values_compared JSONB NOT NULL DEFAULT '{}'
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_alert_evaluations_portfolio_time
+                    ON alert_evaluations(portfolio_id, evaluation_timestamp DESC)
+            """)
+
 
 # ---------------------------------------------------------------------------
 # Alert Rules
@@ -262,8 +284,21 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
     Returns:
         Summary dict per spec.
     """
+    # Ensure all tables exist (idempotent — safe on cold production DB).
+    ensure_alerts_tables()
+
     with get_db() as conn:
         with conn.cursor() as cur:
+            # Seed default rules on first evaluate call if none exist yet
+            # (mirrors get_alert_rules seeding — evaluate may be called before
+            # the preferences page is ever visited).
+            cur.execute(
+                "SELECT COUNT(*) AS cnt FROM alert_rules WHERE portfolio_id = %s",
+                (portfolio_id,)
+            )
+            if cur.fetchone()["cnt"] == 0:
+                _seed_alert_rules(portfolio_id, cur)
+
             # Load enabled rules
             cur.execute(
                 "SELECT * FROM alert_rules WHERE portfolio_id = %s AND enabled = TRUE",
@@ -303,6 +338,8 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
             notifications_created = 0
             delivery_tasks_enqueued = 0
 
+            evaluations_persisted = 0
+
             # --- stop_loss_approach ---
             if "stop_loss_approach" in rules:
                 threshold = float(rules["stop_loss_approach"]["threshold_percent"] or 5.0)
@@ -313,9 +350,19 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                     current_stop = float(pos["current_stop"])
                     if current_price <= 0:
                         continue
+                    ticker = pos["ticker"]
                     proximity_pct = (current_price - current_stop) / current_price * 100
-                    if proximity_pct <= threshold:
-                        ticker = pos["ticker"]
+                    condition_met = proximity_pct <= threshold
+                    triggered = False
+                    notification_sent = False
+                    values = {
+                        "stop_price": round(current_stop, 2),
+                        "current_price": round(current_price, 2),
+                        "gap_pct": round(proximity_pct, 2),
+                        "threshold_pct": threshold,
+                    }
+                    if condition_met and not _notif_exists_today_for_ticker(
+                            cur, portfolio_id, "stop_loss_approach", ticker):
                         title = f"Stop Loss Approach — {ticker}"
                         message = (
                             f"{ticker} stop ({current_stop:.2f}) is within "
@@ -332,16 +379,30 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                             cur, portfolio_id, "stop_loss_approach", title, message, context
                         )
                         notifications_created += 1
+                        triggered = True
                         if prefs.get("stop_loss_approach"):
                             enqueue_delivery(str(notif_id))
                             delivery_tasks_enqueued += 1
+                            notification_sent = True
+                    _insert_evaluation(cur, portfolio_id, "stop_loss_approach",
+                                       ticker, triggered, notification_sent, values)
+                    evaluations_persisted += 1
 
             # --- grace_period_warning ---
             if "grace_period_warning" in rules:
                 for pos in positions:
                     holding_days = pos["holding_days"] or 0
-                    if (holding_days >= min_hold_days - 2) and (holding_days < min_hold_days):
-                        ticker = pos["ticker"]
+                    ticker = pos["ticker"]
+                    condition_met = (holding_days >= min_hold_days - 2) and (holding_days < min_hold_days)
+                    triggered = False
+                    notification_sent = False
+                    values = {
+                        "holding_days": holding_days,
+                        "min_hold_days": min_hold_days,
+                        "days_remaining": min_hold_days - holding_days,
+                    }
+                    if condition_met and not _notif_exists_today_for_ticker(
+                            cur, portfolio_id, "grace_period_warning", ticker):
                         days_remaining = min_hold_days - holding_days
                         title = f"Grace Period Warning — {ticker}"
                         message = (
@@ -358,14 +419,22 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                             cur, portfolio_id, "grace_period_warning", title, message, context
                         )
                         notifications_created += 1
+                        triggered = True
                         if prefs.get("grace_period_warning"):
                             enqueue_delivery(str(notif_id))
                             delivery_tasks_enqueued += 1
+                            notification_sent = True
+                    _insert_evaluation(cur, portfolio_id, "grace_period_warning",
+                                       ticker, triggered, notification_sent, values)
+                    evaluations_persisted += 1
 
             # --- market_regime_change ---
             if "market_regime_change" in rules:
                 regime_notif = _check_regime_change(portfolio_id)
-                if regime_notif:
+                triggered = regime_notif is not None
+                notification_sent = False
+                regime_values = regime_notif["context"] if regime_notif else {}
+                if triggered:
                     notif_id = _insert_notification(
                         cur, portfolio_id,
                         "market_regime_change",
@@ -377,22 +446,34 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                     if prefs.get("market_regime_change"):
                         enqueue_delivery(str(notif_id))
                         delivery_tasks_enqueued += 1
+                        notification_sent = True
+                _insert_evaluation(cur, portfolio_id, "market_regime_change",
+                                   None, triggered, notification_sent, regime_values)
+                evaluations_persisted += 1
 
             # --- daily_portfolio_summary ---
             if "daily_portfolio_summary" in rules:
-                if not _daily_summary_exists_today(cur, portfolio_id):
-                    open_count = len(positions)
+                already_done = _daily_summary_exists_today(cur, portfolio_id)
+                triggered = False
+                notification_sent = False
+                open_count = len(positions)
+                summary_values = {"open_positions": open_count}
+                if not already_done:
                     title = "Daily Portfolio Summary"
                     message = f"Daily summary: {open_count} open position(s) as of today."
-                    context = {"open_positions": open_count}
                     notif_id = _insert_notification(
                         cur, portfolio_id,
-                        "daily_portfolio_summary", title, message, context
+                        "daily_portfolio_summary", title, message, summary_values
                     )
                     notifications_created += 1
+                    triggered = True
                     if prefs.get("daily_portfolio_summary"):
                         enqueue_delivery(str(notif_id))
                         delivery_tasks_enqueued += 1
+                        notification_sent = True
+                _insert_evaluation(cur, portfolio_id, "daily_portfolio_summary",
+                                   None, triggered, notification_sent, summary_values)
+                evaluations_persisted += 1
 
             # --- Re-delivery for failed prior notifications ---
             redelivery_tasks_enqueued = 0
@@ -414,6 +495,7 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                 "notifications_created": notifications_created,
                 "delivery_tasks_enqueued": delivery_tasks_enqueued,
                 "redelivery_tasks_enqueued": redelivery_tasks_enqueued,
+                "evaluations_persisted": evaluations_persisted,
             }
 
 
@@ -434,7 +516,10 @@ def _check_regime_change(portfolio_id: str) -> Optional[Dict]:
     _last_known_regime[portfolio_id] = currently_risk_on
 
     if prev_risk_on is None:
-        # First call — record state, do not fire
+        # First call after startup — record current state, do not fire.
+        # This satisfies ST-03 pre-condition #3: cold start must not trigger a spurious
+        # market_regime_change alert. On restart, the first evaluate call re-establishes
+        # the baseline; any genuine transition fires on the following call.
         return None
 
     if prev_risk_on and not currently_risk_on:
@@ -463,6 +548,33 @@ def _daily_summary_exists_today(cur, portfolio_id: str) -> bool:
         LIMIT 1
     """, (portfolio_id,))
     return cur.fetchone() is not None
+
+
+def _notif_exists_today_for_ticker(cur, portfolio_id: str, alert_type: str, ticker: str) -> bool:
+    """Return True if a notification for this (portfolio, type, ticker) already exists today (UTC).
+    Used for calendar-day deduplication on position-specific alert types per ST-03 Decision B.
+    """
+    cur.execute("""
+        SELECT 1 FROM notifications
+        WHERE portfolio_id = %s
+          AND alert_type = %s
+          AND context->>'ticker' = %s
+          AND created_at::date = CURRENT_DATE
+        LIMIT 1
+    """, (portfolio_id, alert_type, ticker))
+    return cur.fetchone() is not None
+
+
+def _insert_evaluation(cur, portfolio_id: str, rule_type: str, symbol: Optional[str],
+                       triggered: bool, notification_sent: bool, values_compared: Dict) -> None:
+    """Persist one alert_evaluations row per rule/position evaluated."""
+    import json
+    cur.execute("""
+        INSERT INTO alert_evaluations
+            (portfolio_id, rule_type, symbol, triggered, notification_sent, values_compared)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (portfolio_id, rule_type, symbol, triggered, notification_sent,
+          json.dumps(values_compared)))
 
 
 def _insert_notification(cur, portfolio_id: str, alert_type: str,
@@ -769,4 +881,67 @@ def _notif_row(r) -> Dict:
         "message": r["message"],
         "read": r["read"],
         "created_at": r["created_at"].isoformat() if hasattr(r["created_at"], "isoformat") else str(r["created_at"]),
+    }
+
+
+def _eval_row(r) -> Dict:
+    return {
+        "id": str(r["id"]),
+        "evaluation_timestamp": r["evaluation_timestamp"].isoformat() if hasattr(r["evaluation_timestamp"], "isoformat") else str(r["evaluation_timestamp"]),
+        "rule_type": r["rule_type"],
+        "symbol": r["symbol"],
+        "triggered": r["triggered"],
+        "notification_sent": r["notification_sent"],
+        "values_compared": r["values_compared"] if isinstance(r["values_compared"], dict) else {},
+    }
+
+
+# ---------------------------------------------------------------------------
+# Alert History
+# ---------------------------------------------------------------------------
+
+def get_alert_history(portfolio_id: str, last_n_days: int = None, last_n_records: int = None) -> Dict:
+    """
+    Return alert evaluation history.
+    - last_n_records takes precedence over last_n_days when both are supplied.
+    - Default: last 30 days.
+    Contract: docs/specs/api_contracts/alerts_endpoints.md v0.3 §GET /alerts/history
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            if last_n_records:
+                cur.execute("""
+                    SELECT id, evaluation_timestamp, rule_type, symbol,
+                           triggered, notification_sent, values_compared
+                    FROM alert_evaluations
+                    WHERE portfolio_id = %s
+                    ORDER BY evaluation_timestamp DESC
+                    LIMIT %s
+                """, (portfolio_id, last_n_records))
+                rows = cur.fetchall()
+                cur.execute(
+                    "SELECT COUNT(*) AS cnt FROM alert_evaluations WHERE portfolio_id = %s",
+                    (portfolio_id,)
+                )
+            else:
+                days = last_n_days or 30
+                cur.execute("""
+                    SELECT id, evaluation_timestamp, rule_type, symbol,
+                           triggered, notification_sent, values_compared
+                    FROM alert_evaluations
+                    WHERE portfolio_id = %s
+                      AND evaluation_timestamp >= NOW() - (%s * INTERVAL '1 day')
+                    ORDER BY evaluation_timestamp DESC
+                """, (portfolio_id, days))
+                rows = cur.fetchall()
+                cur.execute("""
+                    SELECT COUNT(*) AS cnt FROM alert_evaluations
+                    WHERE portfolio_id = %s
+                      AND evaluation_timestamp >= NOW() - (%s * INTERVAL '1 day')
+                """, (portfolio_id, days))
+            total = cur.fetchone()["cnt"]
+
+    return {
+        "evaluations": [_eval_row(r) for r in rows],
+        "total": total,
     }

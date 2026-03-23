@@ -1,0 +1,26 @@
+# .github/workflows/alert-evaluation.yml
+# Daily alert evaluation — runs after US market close (21:30 UTC / 16:30 ET) Mon–Fri.
+# ST-03 Decision D: trigger mechanism is an external cron calling POST /alerts/evaluate.
+# Uses GitHub Actions schedule (free tier) instead of Render cron (paid).
+# Required secrets: API_URL, API_KEY (same as daily-snapshot.yml).
+name: Daily Alert Evaluation
+
+on:
+  schedule:
+    - cron: '30 21 * * 1-5'  # 21:30 UTC weekdays (16:30 ET — after US market close)
+  workflow_dispatch:           # Allow manual trigger for testing
+
+jobs:
+  evaluate-alerts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger alert evaluation
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Running alert evaluation at $(date -u)..."
+          curl -f -X POST "${API_URL}/alerts/evaluate" \
+            -H "X-API-Key: ${API_KEY}" \
+            -H "Content-Type: application/json"
+          echo "Alert evaluation complete."

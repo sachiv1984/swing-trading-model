@@ -10,12 +10,56 @@ All functions are independent of FastAPI for maximum testability.
 """
 
 from typing import Dict, List
-from datetime import datetime
+from datetime import datetime, timezone
 import time
 import requests
 
 from database import get_portfolio, get_settings
 from utils.pricing import get_live_fx_rate
+
+
+# Module-level tracking (in-memory; resets on process restart)
+_health_state: Dict = {
+    "last_market_status_check": None,
+    "last_alert_evaluation": None,
+}
+
+
+def record_market_status_check() -> None:
+    """Record the timestamp of the most recent market status check."""
+    _health_state["last_market_status_check"] = datetime.now(timezone.utc).isoformat()
+
+
+def record_alert_evaluation() -> None:
+    """Record the timestamp of the most recent alert evaluation."""
+    _health_state["last_alert_evaluation"] = datetime.now(timezone.utc).isoformat()
+
+
+def get_operational_health() -> Dict:
+    """
+    Operational health check per ST-08 AC (v2.2).
+
+    Returns:
+        Dictionary with:
+            - status: "ok" | "error"
+            - db: "connected" | "error"
+            - last_market_status_check: ISO-8601 string or null
+            - last_alert_evaluation: ISO-8601 string or null
+    """
+    try:
+        get_portfolio()
+        db_status = "connected"
+        overall = "ok"
+    except Exception:
+        db_status = "error"
+        overall = "error"
+
+    return {
+        "status": overall,
+        "db": db_status,
+        "last_market_status_check": _health_state["last_market_status_check"],
+        "last_alert_evaluation": _health_state["last_alert_evaluation"],
+    }
 
 
 def get_basic_health() -> Dict:

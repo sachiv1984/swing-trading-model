@@ -72,7 +72,9 @@ from .signal_service import (
 from .health_service import (
     get_basic_health,
     get_detailed_health,
-    test_all_endpoints
+    get_operational_health,
+    record_market_status_check,
+    test_all_endpoints,
 )
 
 # Analytics service
@@ -118,6 +120,8 @@ __all__ = [
     # Health service
     'get_basic_health',
     'get_detailed_health',
+    'get_operational_health',
+    'record_market_status_check',
     'test_all_endpoints',
     # Analytics service
     'AnalyticsService',

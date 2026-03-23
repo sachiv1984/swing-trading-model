@@ -14,12 +14,14 @@ from fastapi import APIRouter, BackgroundTasks, Body, HTTPException
 from pydantic import BaseModel, field_validator
 from typing import Any, Dict, Optional
 from database import get_portfolio
+from services.health_service import record_alert_evaluation
 from services.alerts_service import (
     get_alert_rules,
     create_alert_rule,
     update_alert_rule,
     delete_alert_rule,
     evaluate_alerts,
+    get_alert_history,
     get_notifications,
     mark_notification_read,
     mark_all_notifications_read,
@@ -179,7 +181,25 @@ def evaluate_alerts_endpoint(background_tasks: BackgroundTasks):
             background_tasks.add_task(deliver_notification, notification_id)
 
         result = evaluate_alerts(portfolio_id, enqueue)
+        record_alert_evaluation()
         return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/alerts/history")
+def get_alert_history_endpoint(last_n_days: Optional[int] = None, last_n_records: Optional[int] = None):
+    """
+    Return alert evaluation history, newest first.
+    Contract: alerts_endpoints.md §GET /alerts/history
+    """
+    try:
+        portfolio_id = _get_portfolio_id()
+        data = get_alert_history(portfolio_id, last_n_days=last_n_days, last_n_records=last_n_records)
+        return {"status": "ok", "data": data}
     except HTTPException:
         raise
     except Exception as e:

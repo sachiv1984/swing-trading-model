@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
+import { base44, apiFetch } from "../api/base44Client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
@@ -64,7 +64,7 @@ export default function SignalsPage() {
   const { data: signals = [], isLoading } = useQuery({
     queryKey: ["signals", topN, lookbackDays],
     queryFn: async () => {
-      const response = await fetch(
+      const response = await apiFetch(
         `${base44.baseUrl}/signals?top_n=${topN}&lookback_days=${lookbackDays}`
       );
       const result = await response.json();
@@ -87,7 +87,7 @@ export default function SignalsPage() {
   const { data: marketStatus } = useQuery({
     queryKey: ["marketStatus"],
     queryFn: async () => {
-      const response = await fetch(`${base44.baseUrl}/market/status`);
+      const response = await apiFetch(`${base44.baseUrl}/market/status`);
       const result = await response.json();
       return result.data;
     },

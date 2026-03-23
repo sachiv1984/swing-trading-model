@@ -35,6 +35,13 @@ services:
         value: "3.11.0"
 
   # ──────────────────────────────────────────────────────────
+  # Alert Evaluation Cron — NOT defined here (Render cron requires paid tier).
+  # Trigger mechanism: GitHub Actions scheduled workflow.
+  # See .github/workflows/alert-evaluation.yml — runs 21:30 UTC Mon–Fri.
+  # ST-03 Decision D satisfied via GitHub Actions free tier.
+  # ──────────────────────────────────────────────────────────
+
+  # ──────────────────────────────────────────────────────────
   # Staging Frontend — React static site on Render
   # ──────────────────────────────────────────────────────────
   - type: web

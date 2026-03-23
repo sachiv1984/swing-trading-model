@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 const tabs = [
   { label: "Feed", path: "/notifications" },
@@ -9,13 +9,11 @@ const tabs = [
 
 export default function NotificationTabBar() {
   const { pathname } = useLocation();
-  // HashRouter uses hash — strip leading # and query
-  const currentPath = pathname;
 
   return (
     <div className="flex gap-1 border-b border-slate-700/50">
       {tabs.map((tab) => {
-        const isActive = currentPath === tab.path;
+        const isActive = pathname === tab.path;
         return (
           <Link
             key={tab.path}

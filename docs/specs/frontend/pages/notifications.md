@@ -309,6 +309,19 @@ Click again to collapse.
 
 ---
 
+## Known Deviations
+
+### DEV-EPIC02-ST04-01 — Alert Thresholds empty state: missing "Add alert rule" CTA button
+
+- **Description:** The v2.2 implementation of `AlertThresholdsSection` renders the empty state icon, heading ("No alert rules configured."), and body text but omits the "Add alert rule" CTA button specified in §Section 2. In practice this state is effectively unreachable — `GET /alerts/rules` auto-seeds rules on first use, so the empty state is only reachable if all rules have been manually deleted.
+- **Canonical requirement:** §Section 2 Empty state must include a CTA button labelled "Add alert rule".
+- **Priority:** P3
+- **Target resolution release:** v2.3
+- **Owner:** Base44 Frontend Prompt Owner
+- **Backlog reference:** To be filed as BLG-FE item at next roadmap rebalance.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |

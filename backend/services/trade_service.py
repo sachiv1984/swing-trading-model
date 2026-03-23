@@ -114,7 +114,7 @@ def build_trade_history_csv(portfolio_id: str) -> str:
         str: complete CSV content including header row.
              If no trades exist, returns header row only.
     """
-    from database import get_all_trade_history
+    from database import get_all_closed_trades_for_csv_export
 
     COLUMNS = [
         "ticker", "market", "entry_date", "exit_date", "shares",
@@ -122,7 +122,7 @@ def build_trade_history_csv(portfolio_id: str) -> str:
         "exit_reason", "tags", "entry_note", "exit_note",
     ]
 
-    rows = get_all_trade_history(portfolio_id)
+    rows = get_all_closed_trades_for_csv_export(portfolio_id)
 
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=COLUMNS, extrasaction="ignore")

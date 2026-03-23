@@ -1,10 +1,12 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
 from datetime import timedelta
 import time
+import os
 import requests
 from config import API_TITLE
 from config import ALLOWED_ORIGINS
@@ -101,6 +103,8 @@ from services import (
     # Health service
     get_basic_health,
     get_detailed_health,
+    get_operational_health,
+    record_market_status_check,
     test_all_endpoints,
     # Reports service
     get_tax_year_report,
@@ -116,6 +120,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def api_key_middleware(request: Request, call_next):
+    api_key = os.environ.get("API_KEY")
+    if not api_key:
+        # API_KEY not set — skip auth (local dev)
+        return await call_next(request)
+    # Exempt OPTIONS (CORS preflight) and GET /health
+    if request.method == "OPTIONS":
+        return await call_next(request)
+    if request.method == "GET" and request.url.path == "/health":
+        return await call_next(request)
+    # Validate X-API-Key header
+    provided_key = request.headers.get("X-API-Key")
+    if not provided_key or provided_key != api_key:
+        return JSONResponse(
+            status_code=401,
+            content={"status": "error", "message": "Unauthorized"},
+        )
+    return await call_next(request)
+
 
 app.include_router(validation.router)
 app.include_router(analytics.router)
@@ -553,7 +579,8 @@ def get_market_status():
         
         # Reuse existing check_market_regime() function
         market_regime = check_market_regime()
-        
+        record_market_status_check()
+
         # Get live FX rate
         fx_rate = get_live_fx_rate()
         
@@ -628,15 +655,17 @@ def delete_signal_endpoint(signal_id: str):
 @app.get("/health")
 def health_check():
     """
-    Basic health check - fast response for load balancers
+    Operational health check (v2.2).
+
+    Returns DB connectivity, and timestamps of last market status check
+    and last alert evaluation. Schema per ST-08 / health_endpoints.md.
     """
     try:
-        result = get_basic_health()
-        return result
+        return get_operational_health()
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "db": "error", "last_market_status_check": None, "last_alert_evaluation": None}
 
 
 @app.get("/health/detailed")

@@ -3,19 +3,67 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-03-18
+**Version:** 1.2
+**Last Updated:** 2026-03-23 (v1.2)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## 1. Authentication & Authorization
 
-Authentication and authorization mechanisms are **not defined** in the current API contract.
+All API endpoints **must** require a valid `X-API-Key` header, except those listed in §1.4 (Exempt Endpoints).
 
-- No OAuth, JWT, API key, or session-based scheme is specified.
-- Authentication is assumed to be handled by environment or infrastructure controls.
-- All endpoints described in this contract assume an already-authenticated context.
+### 1.1 Scheme
 
-Until explicitly defined, authentication behavior is considered **out of scope** for these contracts.
+| Property | Value |
+|----------|-------|
+| Header name | `X-API-Key` |
+| Type | API key (static, per-environment) |
+| Storage — server | Environment variable `API_KEY` |
+| Storage — client | Environment variable `REACT_APP_API_KEY` |
+| Scope | All non-exempt endpoints (see §1.4) |
+
+### 1.2 Request Requirement
+
+Every request to a protected endpoint **must** include:
+
+```
+X-API-Key: <value of API_KEY environment variable>
+```
+
+- The key is read server-side from the `API_KEY` environment variable.
+- The frontend reads the key from `REACT_APP_API_KEY` and includes it on all API calls via a **shared API wrapper** — not duplicated per component.
+- The key value must not be hard-coded in source files.
+
+### 1.3 Failure Response
+
+A missing or invalid `X-API-Key` must return:
+
+```
+HTTP 401 Unauthorized
+```
+
+```json
+{
+  "status": "error",
+  "message": "Unauthorized"
+}
+```
+
+This follows the standard error envelope defined in §13.
+
+### 1.4 Exempt Endpoints
+
+The following endpoints are exempt from the `X-API-Key` requirement:
+
+| Endpoint | Reason |
+|----------|--------|
+| `GET /health` | Public health check for infrastructure monitoring |
+| `OPTIONS *` | Browser CORS preflight — method-level exemption, not an endpoint. No data returned; actual request that follows is still authenticated. |
+
+Any new exemption requires an explicit entry in this table and must be approved by the Head of Specs Team.
+
+### 1.5 OpenAPI Security Reference
+
+The `ApiKey` security scheme in `docs/reference/openapi.yaml` (`components/securitySchemes/ApiKey`) defines this scheme. The global `security:` block in `openapi.yaml` must apply this scheme to all paths. Exempt endpoints must declare `security: []` at the path level to override the global requirement.
 
 ---
 
