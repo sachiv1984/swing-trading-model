@@ -13,21 +13,24 @@ jobs:
       - name: Run Position Analysis
         env:
           API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
         run: |
           echo "Running position analysis..."
-          curl -X GET "${API_URL}/positions/analyze"
-          
+          curl -X GET "${API_URL}/positions/analyze" -H "X-API-Key: ${API_KEY}"
+
       - name: Create Portfolio Snapshot
         env:
           API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
         run: |
           echo "Creating portfolio snapshot..."
-          curl -X POST "${API_URL}/portfolio/snapshot"
-          
+          curl -X POST "${API_URL}/portfolio/snapshot" -H "X-API-Key: ${API_KEY}"
+
       - name: Generate Signals
         env:
           API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
         run: |
           echo "Generating Signals..."
-          curl -X POST "${API_URL}/signals/generate"
+          curl -X POST "${API_URL}/signals/generate" -H "X-API-Key: ${API_KEY}"
 

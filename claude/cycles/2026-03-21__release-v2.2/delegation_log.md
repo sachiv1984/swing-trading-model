@@ -50,12 +50,24 @@ Once spec is locked and marked Canonical, re-classify ST-01 to `delegated_backen
 **Classification:** delegated_backend
 **GitHub Issue:** #118
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-01
-**Status:** Pending
+**Status:** Implementation complete — pending DoQ sign-off
 **Supersedes:** DEL-20260322-01 (spec phase — resolved)
 
 **Locked spec:** `docs/specs/api_contracts/conventions.md §1` (v1.1, Canonical)
 
-**What is needed:**
+**Implementation commit:** `43be2ef` — 2026-03-23
+
+**Work completed:**
+- FastAPI middleware added to `backend/main.py`: validates `X-API-Key` against `API_KEY` env var; returns `401 {"status":"error","message":"Unauthorized"}` on missing/invalid; exempts `GET /health`
+- `src/api/base44Client.js` `doFetch` updated: `X-API-Key` header added from `REACT_APP_API_KEY` env var
+- `apiFetch()` helper exported from `base44Client.js` for pages/components using raw `fetch()` calls
+- All raw `fetch()` calls migrated to `apiFetch()`: `Dashboard.js` (3), `TradeHistory.js` (2), `Signals.js` (2), `Watchlist.js` (1), `WatchlistModal.js` (3), `SystemStatus.js` (3), `Reports.js` (3)
+- `openapi.yaml`: `ApiKey` description cleaned; `GET /health` `security: []` exemption added; global `security:` block confirmed present
+- All existing tests pass (19 passed, 13 pre-existing skips)
+
+**Pending:** DoQ sign-off: (a) 401 path tested on staging; (b) `REACT_APP_API_KEY` env var set in Render dashboard confirmed; (c) no endpoint left unprotected
+
+**Original scope (for reference):**
 
 Implement X-API-Key authentication per `conventions.md §1`. The spec is now locked.
 

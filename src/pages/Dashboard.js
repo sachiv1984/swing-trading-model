@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CashManagementModal from "../components/cash/CashManagementModal";
-import { base44 } from "../api/base44Client";
+import { base44, apiFetch } from "../api/base44Client";
 import { Loader2, Settings2, Plus, RotateCcw, Check } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "../components/ui/button";
@@ -47,7 +47,7 @@ export default function Dashboard() {
     queryKey: ["portfolioApi"],
     queryFn: async () => {
       try {
-        const response = await fetch(`${API_URL}/portfolio`);
+        const response = await apiFetch(`${API_URL}/portfolio`);
         if (!response.ok) {
           console.warn('Portfolio API not available:', response.status);
           return null;
@@ -82,7 +82,7 @@ export default function Dashboard() {
     queryKey: ["cashTransactions"],
     queryFn: async () => {
       try {
-        const response = await fetch(`${API_URL}/cash/transactions?order=DESC`);
+        const response = await apiFetch(`${API_URL}/cash/transactions?order=DESC`);
         if (!response.ok) return [];
         const result = await response.json();
         return result.data || [];
@@ -99,7 +99,7 @@ export default function Dashboard() {
     queryKey: ["portfolioHistory"],
     queryFn: async () => {
       try {
-        const response = await fetch(`${API_URL}/portfolio/history?days=365`);
+        const response = await apiFetch(`${API_URL}/portfolio/history?days=365`);
         if (!response.ok) {
           console.warn('Portfolio history not available:', response.status);
           return [];

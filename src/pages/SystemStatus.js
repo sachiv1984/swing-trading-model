@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Switch } from "../components/ui/switch";
@@ -83,7 +84,7 @@ export default function SystemStatus() {
     queryKey: ['systemHealth'],
     queryFn: async () => {
       console.log(`Fetching: ${API_URL}/health/detailed`);
-      const response = await fetch(`${API_URL}/health/detailed`, {
+      const response = await apiFetch(`${API_URL}/health/detailed`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -112,7 +113,7 @@ export default function SystemStatus() {
   const { data: testData, isLoading: testLoading, error: testError, mutate: runTests } = useMutation({
     mutationFn: async () => {
       console.log(`Posting to: ${API_URL}/test/endpoints`);
-      const response = await fetch(`${API_URL}/test/endpoints`, {
+      const response = await apiFetch(`${API_URL}/test/endpoints`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -139,7 +140,7 @@ export default function SystemStatus() {
   const { data: validationData, isLoading: validationLoading, error: validationError, mutate: runValidation } = useMutation({
     mutationFn: async () => {
       console.log(`Posting to: ${API_URL}/validate/calculations`);
-      const response = await fetch(`${API_URL}/validate/calculations`, {
+      const response = await apiFetch(`${API_URL}/validate/calculations`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
