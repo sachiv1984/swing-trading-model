@@ -25,10 +25,21 @@ function formatTimestamp(iso) {
   }
 }
 
+function formatValue(key, value) {
+  if (value === null || value === undefined) return "—";
+  const k = key.toLowerCase();
+  if (typeof value === "number") {
+    if (k.includes("_price") || k === "price") return `$${value.toFixed(2)}`;
+    if (k.includes("_pct") || k.endsWith("pct")) return `${parseFloat(value.toFixed(2))}%`;
+  }
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  return String(value);
+}
+
 function compactValues(obj) {
   if (!obj || typeof obj !== "object") return "—";
   return Object.entries(obj)
-    .map(([k, v]) => `${k}: ${v}`)
+    .map(([k, v]) => `${k}: ${formatValue(k, v)}`)
     .join(" · ");
 }
 
@@ -37,7 +48,7 @@ function formatValuesExpanded(obj) {
   const keyWidth = Math.max(...Object.keys(obj).map((k) => k.length));
   return Object.entries(obj).map(([k, v]) => ({
     key: k.padEnd(keyWidth, " "),
-    value: typeof v === "number" ? v : String(v),
+    value: formatValue(k, v),
   }));
 }
 
