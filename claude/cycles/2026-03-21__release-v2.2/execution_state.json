@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-22T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-23T20:00:00Z",
+  "last_updated_utc": "2026-03-23T21:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -374,7 +374,7 @@
         "ST-12": {
           "title": "Spec-to-Test Traceability Matrix",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Director of Quality",
           "github_issue": 129,
           "branch": "exec/2026-03-21__release-v2.2/EPIC-04",
@@ -382,13 +382,23 @@
           "delegation_record_id": "DEL-20260322-06",
           "blocked_since_utc": null,
           "unblock_criteria": "Traceability matrix covering alert rules, portfolio, positions specs; each AC maps to scenario ID or flagged as gap; gap entries in TEST-GAP tracking; Director of Quality + Head of Specs Team sign-off.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-23T20:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/api_contracts/alerts_endpoints.md", "docs/specs/api_contracts/portfolio_endpoints.md", "docs/specs/api_contracts/position_endpoints.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sprint 3 (after ST-11). Gated on ST-11 complete. Minimum 3 canonical specs: alert rules, portfolio, positions."
+          "deviations_filed": true,
+          "last_completed_substep": "doq_signed_off",
+          "sign_off_record": {
+            "required_by": "Director of Quality + Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "54 ACs mapped: 26 covered (48%), 22 TEST-GAP entries registered (TEST-GAP-001 to TEST-GAP-022)",
+              "TEST-GAP-007 (P1): GET /alerts/history absent from alerts_endpoints.md v0.2 and openapi.yaml — HoST action accepted for v2.3",
+              "6 P1 gaps in core transaction endpoints aligned to BLG-QA-01 Phase 1 and Phase 4"
+            ],
+            "cleared_utc": "2026-03-23T20:00:00Z"
+          },
+          "notes": "Output: docs/testing/spec_to_test_traceability_matrix.md. TEST-GAP-007 requires HoST spec patch (alerts_endpoints.md v0.3 + openapi.yaml) in v2.3 Sprint 1."
         }
       }
     },
@@ -464,8 +474,8 @@
   },
 
   "blocked_items": ["ST-13", "ST-14", "ST-15"],
-  "delegated_items": ["ST-12"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11"],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
   "merged_epics": ["EPIC-01", "EPIC-02", "EPIC-03"],
 
   "open_escalations": [],
@@ -476,7 +486,7 @@
     "epics_pending": ["EPIC-04", "EPIC-05"],
     "epics_pr_open": [],
     "all_merged": false,
-    "notes": "EPIC-01 merged (PR #134, e5e9bd9, 2026-03-23). EPIC-02 merged (PR #135, 93c62aa, 2026-03-23). EPIC-03 merged (PR #133, eecb941, 2026-03-23). EPIC-04 in_progress — ST-09/ST-10/ST-11 done (2026-03-23); ST-12 pending (delegated DoQ). EPIC-05 pending — ST-13 through ST-15 blocked_decision awaiting Head of Specs Team."
+    "notes": "EPIC-01 merged (PR #134, e5e9bd9, 2026-03-23). EPIC-02 merged (PR #135, 93c62aa, 2026-03-23). EPIC-03 merged (PR #133, eecb941, 2026-03-23). EPIC-04 in_progress — ST-09 through ST-12 all done (2026-03-23); 22 TEST-GAPs registered (TEST-GAP-007 P1 spec drift actioned to HoST v2.3). EPIC-05 pending — ST-13 through ST-15 blocked_decision awaiting Head of Specs Team."
   },
 
   "sealed": false,

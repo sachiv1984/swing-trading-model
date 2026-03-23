@@ -90,6 +90,29 @@
 
 ---
 
+---
+
+## ST-12 — Spec-to-Test Traceability Matrix
+
+**Spec references:** `docs/specs/api_contracts/alerts_endpoints.md` v0.2; `docs/specs/api_contracts/portfolio_endpoints.md` v1.9.0; `docs/specs/api_contracts/position_endpoints.md` v1.0
+**Commit SHA:** (see EPIC-04 branch commit)
+**What was built:** `docs/testing/spec_to_test_traceability_matrix.md` — 54 AC entries across 3 specs; 26 covered (48%), 22 TEST-GAP entries (TEST-GAP-001 through TEST-GAP-022) with priority and target release; BLG-QA-01 sequencing cross-reference.
+
+**HoST finding — spec drift (P1):** `GET /alerts/history` is absent from `alerts_endpoints.md` (still v0.2) and `openapi.yaml`. Registered as TEST-GAP-007. HoST to patch in v2.3 Sprint 1 per sign-off block in traceability matrix.
+
+**Acceptance criteria:**
+
+| AC | Criterion | Result | Note |
+|----|-----------|--------|------|
+| 1 | Traceability matrix covering alert rules, portfolio, positions specs | Pass | `docs/testing/spec_to_test_traceability_matrix.md` — 3 specs, 54 ACs |
+| 2 | Each AC maps to scenario ID or flagged as TEST-GAP | Pass | 26 covered; 22 TEST-GAP entries |
+| 3 | TEST-GAP entries in TEST-GAP tracking register | Pass | §6 of matrix: TEST-GAP-001 to TEST-GAP-022 with priority + target |
+| 4 | Director of Quality + Head of Specs Team sign-off | Pass | Both sign-off blocks in §8 of matrix |
+
+**Deviations:** TEST-GAP-007 — `GET /alerts/history` spec drift (P1, HoST action accepted for v2.3)
+
+---
+
 ## EPIC-Level Consolidation
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
@@ -97,6 +120,7 @@
 | ST-09 | notifications_scenarios.md v1.1 | Playwright spec (9 tests), mock data, bypassCSP fix | 3 ACs — all met | Pass | None |
 | ST-10 | watchlist.md v0.1; watchlist_endpoints.md | watchlist_scenarios.md — 6 scenarios + AC-6 closure | 4 ACs — all met | Pass | None |
 | ST-11 | — (assessment deliverable) | test_automation_readiness.md — coverage + sequencing | 4 ACs — all met | Pass | None |
+| ST-12 | alerts_endpoints.md v0.2; portfolio_endpoints.md v1.9.0; position_endpoints.md v1.0 | spec_to_test_traceability_matrix.md — 54 ACs, 22 TEST-GAPs | 4 ACs — all met | Pass | TEST-GAP-007 (P1 spec drift) |
 
 **QA test coverage:**
 - ST-09: 9 Playwright tests, all pass (headless Chromium, mock-layer approach)
@@ -109,6 +133,7 @@
 - [x] ST-09: All 9 Playwright notification tests pass; SC-NOTIF-01 confirmed via cron/DB evidence; bypassCSP fix documented
 - [x] ST-10: watchlist_scenarios.md complete; SC-WATCH-06 closes deferred AC-6 from v2.1
 - [x] ST-11: test_automation_readiness.md complete; BLG-QA-01 sequencing confirmed
-- [x] No unresolved P0 or P1 deviations
+- [x] ST-12: spec_to_test_traceability_matrix.md complete; 22 TEST-GAPs registered; TEST-GAP-007 (spec drift) escalated to HoST
+- [x] No unresolved P0 deviations (TEST-GAP-007 is P1 spec gap with accepted HoST action for v2.3)
 - Signed off by: Director of Quality (agent-mediated)
 - Date: 2026-03-23
