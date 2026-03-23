@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-22T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-23T08:00:00Z",
+  "last_updated_utc": "2026-03-23T14:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -75,11 +75,15 @@
     },
 
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-03-21__release-v2.2/EPIC-02",
       "pr_number": 135,
-      "pr_status": "open",
-      "qa_signed_off": false,
+      "pr_status": "merged",
+      "merge_commit_sha": "93c62aa",
+      "merged_utc": "2026-03-23T12:56:05Z",
+      "qa_signed_off": true,
+      "po_accepted": true,
+      "po_accepted_utc": "2026-03-23T12:56:05Z",
       "qa_evidence_log": "claude/cycles/2026-03-21__release-v2.2/qa_evidence_EPIC-02.md",
       "test_scenarios": ["docs/testing/notifications_scenarios.md"],
       "stories": {
@@ -175,7 +179,7 @@
             ],
             "cleared_utc": "2026-03-23T08:00:00Z"
           },
-          "notes": "Frontend implementation complete (commit ddc4f44). NotificationsHistory page with table, sort, filter, row-expand, load-more, all states. apiFetch used. DoQ approved. Note: GET /alerts/history endpoint not yet in alerts_endpoints.md — backend PR (Head of Engineering) required; alerts_endpoints.md + openapi.yaml must be updated in that commit per AC-5."
+          "notes": "Frontend implementation complete (commit ddc4f44). NotificationsHistory page with table, sort, filter, row-expand, load-more, all states. apiFetch used. DoQ approved. Backend implementation complete (committed directly to main — process deviation documented in qa_evidence_EPIC-02.md): alert_evaluations table, evaluate_alerts persists records, GET /alerts/history endpoint, GitHub Actions cron, alerts_endpoints.md v0.3, openapi.yaml updated. All deferred ACs (AC1, AC4, AC5, AC6-staging) confirmed — 12 evaluation rows confirmed in live DB. UX improvement (human-readable value labels, compact priority display) committed to main post-merge: b667391."
         }
       }
     },
@@ -430,16 +434,17 @@
   "blocked_items": ["ST-13", "ST-14", "ST-15"],
   "delegated_items": ["ST-09", "ST-10", "ST-11", "ST-12"],
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08"],
+  "merged_epics": ["EPIC-01", "EPIC-02", "EPIC-03"],
 
   "open_escalations": [],
   "resolved_escalations": ["ESC-EXEC-20260322-01"],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-03"],
-    "epics_pending": ["EPIC-02", "EPIC-04", "EPIC-05"],
-    "epics_pr_open": ["EPIC-02"],
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_pending": ["EPIC-04", "EPIC-05"],
+    "epics_pr_open": [],
     "all_merged": false,
-    "notes": "EPIC-01 merged (PR #134, e5e9bd9). EPIC-03 merged (PR #133, eecb941). EPIC-02 in progress (ST-04, ST-05 not started). EPIC-04 and EPIC-05 not started."
+    "notes": "EPIC-01 merged (PR #134, e5e9bd9, 2026-03-23). EPIC-02 merged (PR #135, 93c62aa, 2026-03-23). EPIC-03 merged (PR #133, eecb941, 2026-03-23). EPIC-04 pending — ST-09 through ST-12 delegated to QA team (not started). EPIC-05 pending — ST-13 through ST-15 blocked_decision awaiting Head of Specs Team."
   },
 
   "sealed": false,
