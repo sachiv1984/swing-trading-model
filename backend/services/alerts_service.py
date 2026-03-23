@@ -284,8 +284,21 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
     Returns:
         Summary dict per spec.
     """
+    # Ensure all tables exist (idempotent — safe on cold production DB).
+    ensure_alerts_tables()
+
     with get_db() as conn:
         with conn.cursor() as cur:
+            # Seed default rules on first evaluate call if none exist yet
+            # (mirrors get_alert_rules seeding — evaluate may be called before
+            # the preferences page is ever visited).
+            cur.execute(
+                "SELECT COUNT(*) AS cnt FROM alert_rules WHERE portfolio_id = %s",
+                (portfolio_id,)
+            )
+            if cur.fetchone()["cnt"] == 0:
+                _seed_alert_rules(portfolio_id, cur)
+
             # Load enabled rules
             cur.execute(
                 "SELECT * FROM alert_rules WHERE portfolio_id = %s AND enabled = TRUE",
