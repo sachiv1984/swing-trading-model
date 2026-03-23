@@ -274,11 +274,15 @@
     },
 
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-03-21__release-v2.2/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 136,
+      "pr_status": "merged",
+      "merge_commit_sha": "b5a7017",
+      "merged_utc": "2026-03-23T21:30:00Z",
+      "qa_signed_off": true,
+      "po_accepted": true,
+      "po_accepted_utc": "2026-03-23T21:30:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-21__release-v2.2/qa_evidence_EPIC-04.md",
       "test_scenarios": ["docs/testing/notifications_scenarios.md", "docs/testing/watchlist_scenarios.md"],
       "stories": {
