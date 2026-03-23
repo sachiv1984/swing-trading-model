@@ -155,9 +155,21 @@ Policy reviewed and assessed as correctly scoped for this SPA. Post-merge stagin
 **Finding:** Both ST-01 and ST-02 meet all acceptance criteria. No defects identified. No deviations from spec.
 
 **Post-merge actions recommended (non-blocking):**
-1. ST-01: Hit any endpoint on staging without `X-API-Key` header — confirm 401 response
-2. ST-02: Open app in browser on staging — confirm browser console is CSP-violation-free
+1. ST-01: Hit any endpoint on staging without `X-API-Key` header — confirm 401 response ✅ Done
+2. ST-02: Open app in browser on staging — confirm browser console is CSP-violation-free ✅ Done
 
 **QA sign-off: CLEARED** ✅
 
 EPIC-01 is approved for Product Owner acceptance and merge.
+
+---
+
+## Post-Merge Smoke Test — 2026-03-23
+
+**Result: PASSED**
+
+- Live API: 401 confirmed on unauthenticated requests ✅
+- Live frontend (GitHub Pages): loading correctly with key baked in via GitHub Actions ✅
+- Staging frontend (`trading-assistant-staging.onrender.com`): working after `REACT_APP_API_KEY` added to Render env ✅
+
+**Post-merge defect caught and fixed:** CORS preflight (`OPTIONS`) requests were rejected by the auth middleware before `CORSMiddleware` could add `Access-Control-Allow-Origin` headers. Fixed by exempting `OPTIONS` from the key check (commit `a439e5f`). `conventions.md §1.4` updated to v1.2 to document the exemption. Staging `REACT_APP_API_KEY` env var set manually in Render dashboard (not in render.yaml — Render static site env vars are set in dashboard).
