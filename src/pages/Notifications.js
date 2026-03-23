@@ -4,6 +4,7 @@ import PageHeader from "../components/ui/PageHeader";
 import NotificationTabBar from "../components/notifications/NotificationTabBar";
 import NotificationRow from "../components/notifications/NotificationRow";
 import { useToast } from "../components/ui/use-toast";
+import { apiFetch } from "../api/base44Client";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -17,7 +18,7 @@ export default function Notifications() {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/notifications?page=1`)
+    apiFetch(`${API_BASE_URL}/notifications?page=1`)
       .then((r) => {
         if (!r.ok) throw new Error();
         return r.json();
@@ -37,7 +38,7 @@ export default function Notifications() {
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setLoadingMore(true);
-    fetch(`${API_BASE_URL}/notifications?page=${nextPage}`)
+    apiFetch(`${API_BASE_URL}/notifications?page=${nextPage}`)
       .then((r) => {
         if (!r.ok) throw new Error();
         return r.json();
@@ -58,7 +59,7 @@ export default function Notifications() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true, _error: false } : n))
     );
-    fetch(`${API_BASE_URL}/notifications/${id}`, { method: "PATCH" })
+    apiFetch(`${API_BASE_URL}/notifications/${id}`, { method: "PATCH" })
       .then((r) => {
         if (!r.ok) throw new Error();
       })
@@ -80,7 +81,7 @@ export default function Notifications() {
     const prior = notifications.map((n) => ({ id: n.id, read: n.read }));
     // Optimistic update
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-    fetch(`${API_BASE_URL}/notifications/mark-all-read`, { method: "POST" })
+    apiFetch(`${API_BASE_URL}/notifications/mark-all-read`, { method: "POST" })
       .then((r) => {
         if (!r.ok) throw new Error();
       })
