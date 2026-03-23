@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import { BellPlus, Edit2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { apiFetch } from "../../api/base44Client";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
