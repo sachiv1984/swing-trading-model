@@ -17,6 +17,34 @@ const TYPE_LABELS = {
   daily_portfolio_summary: "Daily Portfolio Summary",
 };
 
+// Human-readable labels for values_compared keys
+const VALUE_LABELS = {
+  stop_price:        "Stop Price",
+  current_price:     "Current Price",
+  gap_pct:           "Gap to Stop",
+  threshold_pct:     "Threshold",
+  days_remaining:    "Days Left",
+  grace_period_days: "Grace Period",
+  regime:            "Regime",
+  previous_regime:   "Previous Regime",
+  positions_count:   "Positions",
+  total_pnl:         "Total P&L",
+};
+
+// Keys to show in the compact cell, per rule type (max 3)
+const COMPACT_PRIORITY = {
+  stop_loss_approach:      ["current_price", "stop_price", "gap_pct"],
+  grace_period_warning:    ["days_remaining", "grace_period_days"],
+  market_regime_change:    ["regime", "previous_regime"],
+  daily_portfolio_summary: ["positions_count", "total_pnl"],
+};
+
+function labelFor(key) {
+  if (VALUE_LABELS[key]) return VALUE_LABELS[key];
+  // Fallback: title-case the snake_case key
+  return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 function formatTimestamp(iso) {
   try {
     return format(parseISO(iso), "yyyy-MM-dd HH:mm");
@@ -29,26 +57,31 @@ function formatValue(key, value) {
   if (value === null || value === undefined) return "—";
   const k = key.toLowerCase();
   if (typeof value === "number") {
-    if (k.includes("_price") || k === "price") return `$${value.toFixed(2)}`;
+    if (k.includes("_price") || k === "price" || k === "total_pnl") return `$${value.toFixed(2)}`;
     if (k.includes("_pct") || k.endsWith("pct")) return `${parseFloat(value.toFixed(2))}%`;
   }
   if (typeof value === "boolean") return value ? "Yes" : "No";
   return String(value);
 }
 
-function compactValues(obj) {
+function compactValues(obj, ruleType) {
   if (!obj || typeof obj !== "object") return "—";
-  return Object.entries(obj)
-    .map(([k, v]) => `${k}: ${formatValue(k, v)}`)
+  const keys = Object.keys(obj);
+  const priority = COMPACT_PRIORITY[ruleType] || keys.slice(0, 3);
+  const selected = priority.filter((k) => k in obj);
+  const display = selected.length > 0 ? selected : keys.slice(0, 3);
+  return display
+    .map((k) => `${labelFor(k)} ${formatValue(k, obj[k])}`)
     .join(" · ");
 }
 
 function formatValuesExpanded(obj) {
   if (!obj || typeof obj !== "object") return [];
-  const keyWidth = Math.max(...Object.keys(obj).map((k) => k.length));
+  const labelWidth = Math.max(...Object.keys(obj).map((k) => labelFor(k).length));
   return Object.entries(obj).map(([k, v]) => ({
-    key: k.padEnd(keyWidth, " "),
+    label: labelFor(k).padEnd(labelWidth, " "),
     value: formatValue(k, v),
+    isNegative: k === "gap_pct" && typeof v === "number" && v < 0,
   }));
 }
 
@@ -270,7 +303,7 @@ export default function NotificationsHistory() {
                             <NotifiedBadge value={ev.notification_sent} />
                           </td>
                           <td className="px-5 py-4 text-sm text-slate-400 max-w-xs truncate">
-                            {isExpanded ? null : compactValues(ev.values_compared)}
+                            {isExpanded ? null : compactValues(ev.values_compared, ev.rule_type)}
                           </td>
                         </tr>
 
@@ -279,10 +312,10 @@ export default function NotificationsHistory() {
                           <tr key={`${ev.id}-expanded`} className="bg-slate-800/60">
                             <td colSpan={6} className="px-8 pb-5 pt-0">
                               <div className="font-mono text-xs text-slate-300 space-y-1 pt-1">
-                                {formatValuesExpanded(ev.values_compared).map(({ key, value }) => (
-                                  <div key={key} className="flex gap-3">
-                                    <span className="text-slate-500 whitespace-pre">{key}</span>
-                                    <span>{String(value)}</span>
+                                {formatValuesExpanded(ev.values_compared).map(({ label, value, isNegative }) => (
+                                  <div key={label} className="flex gap-3">
+                                    <span className="text-slate-500 whitespace-pre">{label}</span>
+                                    <span className={isNegative ? "text-amber-400" : undefined}>{String(value)}</span>
                                   </div>
                                 ))}
                               </div>
