@@ -16,6 +16,10 @@ module.exports = defineConfig({
     viewport: { width: 1280, height: 900 },
     // API calls go to API_BASE_URL (localhost:8000 by default).
     // Tests intercept these via page.route() — no live backend required.
+    // bypassCSP: public/index.html has connect-src 'self' https: which blocks
+    // http://localhost:8000 (cross-port, non-https). Playwright must bypass CSP
+    // so page.route() interceptors can fulfill API requests in tests.
+    bypassCSP: true,
   },
 
   projects: [
