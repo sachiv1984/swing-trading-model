@@ -1226,6 +1226,7 @@ paths:
       description: |
         Returns DB connectivity and timestamps of last market status check and
         last alert evaluation. Schema updated in v2.2 (ST-08).
+      security: []
       responses:
         "200":
           $ref: "#/components/responses/OkOperationalHealth"
@@ -1866,7 +1867,7 @@ components:
       type: apiKey
       in: header
       name: X-API-Key
-      description: API key for authentication (future use)
+      description: API key authentication via X-API-Key header
 
   responses:
     BadRequest:

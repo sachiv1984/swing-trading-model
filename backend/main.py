@@ -1,10 +1,12 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
 from datetime import timedelta
 import time
+import os
 import requests
 from config import API_TITLE
 from config import ALLOWED_ORIGINS
@@ -118,6 +120,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def api_key_middleware(request: Request, call_next):
+    api_key = os.environ.get("API_KEY")
+    if not api_key:
+        # API_KEY not set — skip auth (local dev)
+        return await call_next(request)
+    # Exempt OPTIONS (CORS preflight) and GET /health
+    if request.method == "OPTIONS":
+        return await call_next(request)
+    if request.method == "GET" and request.url.path == "/health":
+        return await call_next(request)
+    # Validate X-API-Key header
+    provided_key = request.headers.get("X-API-Key")
+    if not provided_key or provided_key != api_key:
+        return JSONResponse(
+            status_code=401,
+            content={"status": "error", "message": "Unauthorized"},
+        )
+    return await call_next(request)
+
 
 app.include_router(validation.router)
 app.include_router(analytics.router)

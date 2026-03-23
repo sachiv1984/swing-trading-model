@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
+import { base44, apiFetch } from "../api/base44Client";
 import { useToast } from "../components/ui/use-toast";
 import {
   FileText,
@@ -64,7 +64,7 @@ function TaxYearReport() {
   const handlePdfDownload = async () => {
     setPdfGenerating(true);
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${base44.baseUrl}/reports/tax-year?format=pdf&year=${selectedYear}`
       );
       if (!response.ok) throw new Error("PDF generation failed");
@@ -89,7 +89,7 @@ function TaxYearReport() {
   const handleCsvDownload = async () => {
     setCsvGenerating(true);
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${base44.baseUrl}/reports/tax-year?format=csv&year=${selectedYear}`
       );
       if (!response.ok) throw new Error("CSV generation failed");
@@ -114,7 +114,7 @@ function TaxYearReport() {
   const { data: reportData, isLoading, isError, error } = useQuery({
     queryKey: ["taxYearReport", selectedYear],
     queryFn: async () => {
-      const response = await fetch(
+      const response = await apiFetch(
         `${base44.baseUrl}/reports/tax-year?year=${selectedYear}`
       );
       const result = await response.json();
