@@ -448,46 +448,66 @@
         "ST-14": {
           "title": "Release Planning: Load scored_initiatives.md for Effort Band Handoff",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "in_progress",
           "assigned_to": "Head of Specs Team",
           "github_issue": 131,
           "branch": "exec/2026-03-21__release-v2.2/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260322-08",
-          "blocked_since_utc": "2026-03-22T00:00:00Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "Head of Specs Team adds scored_initiatives.md to release_planning_prompt.md STEP 0, updates STEP 4 capacity check, documents handoff contract in shared_standards.md per AC 1-3. All CLAUDE.md §6 checklist steps applied.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["claude/system/release_planning_prompt.md", "claude/system/shared_standards.md"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sprint 3. Logically paired with ST-13. §6 checklist required for all modified governance files."
+          "last_completed_substep": "decision_document_authored",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team + Challenger",
+            "method": "agent_mediated",
+            "status": "design_cleared",
+            "findings_applied": [
+              "C1 resolved: STEP 0 load is read-only — §7 write scope unchanged",
+              "C2 resolved: shared_standards.md §16.7 is cross-engine contract authority; roadmap_prompt.md unchanged",
+              "C3 resolved: advisory warning added for missing effort band entries (tier 2 fallback)"
+            ],
+            "cleared_utc": "2026-03-23T22:00:00Z"
+          },
+          "notes": "Sprint 3. Design decided — HoST + Challenger clearance issued 2026-03-23. Decision recorded in docs/product/decisions/decisions--2026-03-21__release-v2.2.md §ST-14. Implementation: shared_standards.md §16.7 (effort band handoff contract), release_planning_prompt.md STEP 0 (read-only scored_initiatives.md load), STEP 4.5 (effort band priority lookup + advisory)."
         },
         "ST-15": {
           "title": "Structured Lessons Learnt Carry-Forward Block",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "in_progress",
           "assigned_to": "Head of Specs Team",
           "github_issue": 132,
           "branch": "exec/2026-03-21__release-v2.2/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260322-09",
-          "blocked_since_utc": "2026-03-22T00:00:00Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "Head of Specs Team: adds Carry-Forward section to lessons_learnt_closure.md schema + shared_standards.md; adds carry-forward read step to roadmap_prompt.md, release_planning_prompt.md, sprint_planning_prompt.md STEP 0; adds carry-forward write step to post_ship_closure.md. All §6 checklist steps applied to all modified files.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["claude/system/roadmap_prompt.md", "claude/system/release_planning_prompt.md", "claude/system/sprint_planning_prompt.md", "claude/system/post_ship_closure.md", "claude/system/shared_standards.md"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sprint 3. Logically paired with ST-13 and ST-14. Largest file change set in EPIC-05. §6 checklist required for each modified file."
+          "last_completed_substep": "decision_document_authored",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team + Challenger",
+            "method": "agent_mediated",
+            "status": "design_cleared",
+            "findings_applied": [
+              "C1 resolved: most recently completed cycle determined by highest YYYY-MM-DD cycle ID with post_ship_complete=true",
+              "C2 resolved: lessons_learnt_prompt.md modification is required by design; §6 applies as 6th modified file",
+              "C3 resolved: advisory surfacing = session output text + run manifest entry (N items from cycle <id>)"
+            ],
+            "cleared_utc": "2026-03-23T22:00:00Z"
+          },
+          "notes": "Sprint 3. Design decided — HoST + Challenger clearance issued 2026-03-23. Decision recorded in docs/product/decisions/decisions--2026-03-21__release-v2.2.md §ST-15. Implementation: shared_standards.md §16.8, roadmap_prompt.md STEP 0, release_planning_prompt.md STEP 0, sprint_planning_prompt.md STEP 0, post_ship_closure.md STEP 8.5, lessons_learnt_prompt.md §3.5. 6 files + OPERATIONAL_GUIDE in one commit."
         }
       }
     }
   },
 
-  "blocked_items": ["ST-14", "ST-15"],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
   "merged_epics": ["EPIC-01", "EPIC-02", "EPIC-03"],
