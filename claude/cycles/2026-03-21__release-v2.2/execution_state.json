@@ -419,21 +419,31 @@
         "ST-13": {
           "title": "Roadmap Engine: Provisional-Target Field at Backlog Promotion",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "in_progress",
           "assigned_to": "Head of Specs Team",
           "github_issue": 130,
           "branch": "exec/2026-03-21__release-v2.2/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260322-07",
-          "blocked_since_utc": "2026-03-22T00:00:00Z",
+          "blocked_since_utc": null,
           "unblock_criteria": "Head of Specs Team authors spec changes to roadmap_prompt.md STEP 9, shared_standards.md (Provisional-Target field format), and release_planning_prompt.md STEP 1 per AC 1-3. All CLAUDE.md §6 checklist steps applied to each file. External DoQ review of checklist compliance.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["claude/system/roadmap_prompt.md", "claude/system/shared_standards.md", "claude/system/release_planning_prompt.md"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sprint 3. Governance prompt edits require CLAUDE.md §6 checklist: (a) version bump; (b) OPERATIONAL_GUIDE §14 update; (c) phase section source prompt header update; (d) prompt_change_log.md entry. All four in same commit per file."
+          "last_completed_substep": "decision_document_authored",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team + Challenger",
+            "method": "agent_mediated",
+            "status": "design_cleared",
+            "findings_applied": [
+              "C1 resolved: STEP 1.2 is advisory-only — count advisory, no halt, no scope selection authority",
+              "C2 resolved: TBD fallback when horizon tier has no release label — field never blank",
+              "C3 confirmed: 3 files × 4 §6 checklist items; OPERATIONAL_GUIDE v3.35→v3.36 in same commit"
+            ],
+            "cleared_utc": "2026-03-23T22:00:00Z"
+          },
+          "notes": "Sprint 3. Design decided — HoST + Challenger clearance issued 2026-03-23. Decision recorded in docs/product/decisions/decisions--2026-03-21__release-v2.2.md §ST-13. Implementation: shared_standards.md §16.6 (Provisional-Target field), roadmap_prompt.md STEP 9 Write Plan §3, release_planning_prompt.md STEP 1.2. All §6 checklist steps required in same commit."
         },
         "ST-14": {
           "title": "Release Planning: Load scored_initiatives.md for Effort Band Handoff",
@@ -477,7 +487,7 @@
     }
   },
 
-  "blocked_items": ["ST-13", "ST-14", "ST-15"],
+  "blocked_items": ["ST-14", "ST-15"],
   "delegated_items": [],
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
   "merged_epics": ["EPIC-01", "EPIC-02", "EPIC-03"],

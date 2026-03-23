@@ -99,6 +99,89 @@ The Head of Specs Team must encode the following as named acceptance criteria in
 
 ---
 
+### ST-13 Design Decisions — Roadmap Engine: Provisional-Target Field
+
+**Roles:** Head of Specs Team (HoST — design authority), Challenger
+**Date:** 2026-03-23
+**Story:** ST-13 — Roadmap Engine: Provisional-Target Field at Backlog Promotion (EPIC-05)
+**Status:** Decided — Challenger clearance issued
+
+---
+
+#### HoST Design Proposal
+
+**Problem statement:** When the roadmap engine promotes an item to `backlog.md` at STEP 9, the horizon signal (Now / Next / Later) is lost. Release planning must re-derive prioritisation context from scratch. This creates repeated manual work and risks horizon-aligned items being de-prioritised silently.
+
+**Decision 1 — `Provisional-Target` field format** (to be documented in `shared_standards.md §16.6`)
+
+Field syntax:
+```
+**Provisional-Target:** v<X.Y> | TBD | Unscheduled
+```
+
+Horizon-to-release mapping rules (resolved from `current_roadmap.md` at promotion time):
+- `Now` → next planned release label in `current_roadmap.md` Now horizon (e.g. `v2.3`)
+- `Next` → the release label in the Next horizon (e.g. `v2.4`)
+- `Later` → `Unscheduled`
+- If no release label is available for the horizon tier, write `TBD` (not blank — field must be present)
+
+The field is a signal, not a commitment. Release planning may include or exclude the item with explicit PO rationale regardless of `Provisional-Target` value.
+
+**Decision 2 — `roadmap_prompt.md` STEP 9 write rule**
+
+In STEP 9 Write Plan §3 (`backlog.md`), under "Allowed changes only", add:
+> When adding a newly promoted item to `backlog.md`, include `**Provisional-Target:**` field. Derive from horizon placement per `shared_standards.md §16.6`. Write `TBD` if horizon mapping is ambiguous or no release label exists.
+
+**Decision 3 — `release_planning_prompt.md` STEP 1 consumption**
+
+Add a new **STEP 1.2 — Provisional-Target Advisory (Advisory — not a hard gate)** after existing STEP 1.1 (Backlog Age Advisory):
+
+After loading backlog candidates for this release:
+- Count items with `Provisional-Target: v<current_release>` (horizon-matched to this release)
+- Count items with `Provisional-Target: TBD` or field absent (no horizon signal)
+- Emit advisory: "N item(s) carry `Provisional-Target: <current>` — horizon-planned for this release. M item(s) have no Provisional-Target signal."
+- Do not halt. Scope selection authority remains at STEP 2.
+
+---
+
+#### Challenger Review
+
+**Challenger issued 3 challenges before clearance:**
+
+**C1 — Scope creep risk:** STEP 1 is a readiness validation step; adding Provisional-Target reading there conflates readiness with scope selection. Is the intent advisory signal only, or does it affect candidate ranking?
+
+*HoST response:* Advisory only — the intent is to surface horizon-alignment information for the operator before STEP 2 scope extraction. No automatic inclusion. STEP 1.2 emits an informational count only, matching the advisory pattern established by STEP 1.1. Challenger satisfied.
+
+**C2 — Horizon-to-release mapping brittleness:** If `current_roadmap.md` lacks a release label for a given horizon tier, the engine has no resolution rule and may write a blank field.
+
+*HoST response:* Accepted. `TBD` is the explicit fallback — never blank. The `shared_standards.md §16.6` mapping rules will state: "if no release label exists for the horizon tier, write `TBD`." Challenger satisfied.
+
+**C3 — §6 checklist scope:** Three files changed × four checklist items = twelve mandatory sub-actions in one commit. Confirm this scope is understood and the commit will include `OPERATIONAL_GUIDE.md` update.
+
+*HoST response:* Understood. The implementation commit will update:
+- `roadmap_prompt.md` → v4.4 (+ OPERATIONAL_GUIDE §6 source prompt header)
+- `shared_standards.md` → v2.5 (+ OPERATIONAL_GUIDE §14 + §6 header)
+- `release_planning_prompt.md` → v2.22 (+ OPERATIONAL_GUIDE §6B source prompt header)
+- `OPERATIONAL_GUIDE.md` → v3.36 (§14 table + §6, §6B phase section headers updated)
+- `prompt_change_log.md` → 3 entries added (one per modified governance file)
+All in one commit. Challenger satisfied.
+
+**Challenger clearance issued:** All three challenges resolved. Design is coherent, advisory-only scope for STEP 1 is correct, TBD fallback eliminates blank-field risk, §6 checklist scope confirmed. Implementation may proceed.
+
+---
+
+#### Mandatory Pre-conditions for Implementation (HoST)
+
+| # | Pre-condition | Owner |
+|---|---------------|-------|
+| 1 | `shared_standards.md §16.6` written — Provisional-Target field syntax + mapping rules + fallback | Head of Specs Team |
+| 2 | `roadmap_prompt.md` STEP 9 Write Plan §3 updated — Provisional-Target field requirement on newly promoted items | Head of Specs Team |
+| 3 | `release_planning_prompt.md` STEP 1.2 added — Provisional-Target Advisory (advisory only, no halt) | Head of Specs Team |
+| 4 | All four §6 checklist steps applied to all 3 modified governance files in one commit | Head of Specs Team |
+| 5 | DoQ signs off §6 checklist compliance | Director of Quality |
+
+---
+
 ### Supersession note
 *To be completed at Post-Ship Closure — do not populate at planning time.*
 
