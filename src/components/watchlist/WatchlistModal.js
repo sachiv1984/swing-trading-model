@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiFetch } from "../../api/base44Client";
 import {
   Dialog,
   DialogContent,
@@ -54,7 +55,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
     setSubmitting(true);
     try {
       if (isEdit) {
-        const res = await fetch(`${API_BASE}/watchlist/${entry.id}`, {
+        const res = await apiFetch(`${API_BASE}/watchlist/${entry.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -63,7 +64,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
         const json = await res.json();
         onUpdated(json.data);
       } else {
-        const res = await fetch(`${API_BASE}/watchlist`, {
+        const res = await apiFetch(`${API_BASE}/watchlist`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ticker: form.ticker, market: form.market, ...body }),
@@ -87,7 +88,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await fetch(`${API_BASE}/watchlist/${entry.id}`, { method: "DELETE" });
+      await apiFetch(`${API_BASE}/watchlist/${entry.id}`, { method: "DELETE" });
       onDeleted(entry.id);
     } catch {
       setDeleting(false);

@@ -1,7 +1,7 @@
 Owner: Head of Specs Team
 Status: Supporting  
 Canonical Source: /charter/team_charter.md  
-Last Updated: 2026-03-16  
+Last Updated: 2026-03-22  
 
 ---
 
@@ -70,7 +70,7 @@ This routine performs a full integrity sweep:
 - Add / Replace / Defer / Kill decisions
 
 Execution logic is defined in:
-- `/system/claude_system_prompt.md`
+- `claude/system/roadmap_prompt.md`
 
 ---
 

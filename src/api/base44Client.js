@@ -31,9 +31,11 @@ export const appParams = {
 // ---------- Fetch helpers ----------
 async function doFetch(path, { method = 'GET', headers = {}, body, raw = false } = {}) {
   const token = getToken();
+  const API_KEY = process.env.REACT_APP_API_KEY || '';
   const mergedHeaders = {
     ...(body ? { 'Content-Type': 'application/json' } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(API_KEY ? { 'X-API-Key': API_KEY } : {}),
     ...headers,
   };
 
@@ -491,3 +493,15 @@ export const api = {
 
 export const Signal = base44.entities.Signal;
 export const Position = base44.entities.Position;
+
+// ---------- apiFetch — raw fetch() with X-API-Key header ----------
+// Use this instead of raw fetch() in pages/components so that the API key
+// is forwarded automatically, matching the behaviour of doFetch / api.*.
+export async function apiFetch(url, options = {}) {
+  const API_KEY = process.env.REACT_APP_API_KEY || '';
+  const headers = {
+    ...(options.headers || {}),
+    ...(API_KEY ? { 'X-API-Key': API_KEY } : {}),
+  };
+  return fetch(url, { ...options, headers });
+}

@@ -79,14 +79,22 @@ When the user runs `sync gh`:
 
 1. Read `.claude_current_state.json` → get `backlog_slice_path`
 2. Read the backlog slice at that path
-3. For each ST item not yet in GitHub Issues:
+3. Read `claude/cycles/<cycle_id>/sprint_backlog.md` to determine the sprint number (1, 2, 3…) for each ST item — sprint assignment is defined by the Sprint section headers in that file
+4. Ensure sprint-specific labels exist (create if absent):
+   ```
+   gh label create "sprint-1" --color "0075ca" --description "Sprint 1 items" 2>/dev/null || true
+   gh label create "sprint-2" --color "0052cc" --description "Sprint 2 items" 2>/dev/null || true
+   gh label create "sprint-3" --color "003a8c" --description "Sprint 3 items" 2>/dev/null || true
+   ```
+5. For each ST item not yet in GitHub Issues:
    ```
    gh issue create --title "[ST-xx] <title>" \
      --body "<acceptance criteria from sprint_backlog.md>" \
-     --label "sprint" --label "<EPIC-xx>"
+     --label "sprint" --label "sprint-N" --label "<EPIC-xx>"
    ```
-4. For items already in GitHub Issues: update labels/body if changed
-5. Report: issues created, issues updated, issues already current
+   where `sprint-N` is the sprint number from step 3.
+6. For items already in GitHub Issues: update labels/body if changed
+7. Report: issues created, issues updated, issues already current
 
 Do not close issues here — issue closure is handled automatically by `governance_sync.yml` on push.
 

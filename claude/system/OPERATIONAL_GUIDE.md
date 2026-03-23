@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.34
-**Last Updated:** 2026-03-21
+**Version:** 3.35
+**Last Updated:** 2026-03-22
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -473,7 +473,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.3), `claude/system/backlog_management_prompt.md` (v1.3)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.3), `claude/system/backlog_management_prompt.md` (v1.4)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -597,7 +597,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.20)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.21)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1271,6 +1271,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Changelog | `docs/product/changelog.md` | 3 | PMO Lead | Post-Ship |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` | 1 | PMO Lead | Post-Ship |
 | Closure Record | `claude/cycles/<id>/closure_record.md` | 3 | PMO Lead | Post-Ship |
+| Closure State | `claude/cycles/<id>/closure_state.json` | — | PMO Lead | Post-Ship |
 | Amendment Manifest | `claude/cycles/<id>/amendments/<AMD-id>/amendment_manifest.md` | 3 | PMO Lead | Amendment |
 | Amendment State | `claude/cycles/<id>/amendments/<AMD-id>/amendment_state.json` | — | PMO Lead | Amendment |
 | Amendment Ratification | `claude/cycles/<id>/amendments/<AMD-id>/amendment_ratification.md` | 4 | PMO Lead | Amendment |
@@ -1291,17 +1292,17 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.1 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.3 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.3 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.4 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.3 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.20 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.21 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.2 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v2.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.5 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.0 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v2.3 |
+| Shared Standards | `claude/system/shared_standards.md` v2.4 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.7 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1327,6 +1328,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 | 3.32 | 2026-03-20 | **execution_prompt.md v2.4→v2.5 — agent-mediated sign-off.** §8 source prompt v2.4→v2.5. §14 Execution Engine Source → v2.5. Change: §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file, engine invokes a subagent acting in that role before surfacing to user; §3.1.A step 11 added; §9.1 `sign_off_record` field added to ST item schema. Always-human gates (Product Owner, merge gate) unchanged. |
 | 3.29 | 2026-03-18 | **ST-15 (EPIC-05): Render PR preview environments documented.** §8.2 preview environment bullet added — Render provisions `https://trading-assistant-api-staging-pr-{N}.onrender.com` per PR; Director of Quality may use preview URL as staging evidence method for frontend-interactive AC. §8.5 merge gate QA sign-off line updated to reference preview URL option alongside staging URL. |
 | 3.28 | 2026-03-19 | **ST-11 staging seed workflow updated to psql-based approach.** §8.2 staging test data seeding bullet added: `seed-preview.yml` workflow renamed to `Seed Staging Database`, trigger changed from `render-preview` label to `workflow_dispatch`, seeding mechanism changed from Python API script to `psql` against `STAGING_DATABASE_URL` secret, idempotency guard added. Documents that PR preview environments are not used for data-dependent QA — canonical staging is always the test target. |
+| 3.35 | 2026-03-22 | **AUD-2026-03-21 tier 1 fixes applied.** §13 Artefact Register: `closure_state.json` row added (Post-Ship, Class —, Owner PMO Lead). §6B source prompt release_planning_prompt.md v2.20→v2.21. §6M source prompt backlog_management_prompt.md v1.3→v1.4. §14 governance table: release_planning_prompt v2.21, backlog_management_prompt v1.4, shared_standards v2.4. |
 | 3.34 | 2026-03-21 | **Lessons learnt patches applied (cycle 2026-03-21__item-3.5).** §6 source prompt roadmap_prompt.md v4.2→v4.3; §6M source prompt roadmap_management_prompt.md v1.2→v1.3; §14 Roadmap Engine Source → v4.3; Roadmap Management Engine → v1.3. Two patches: (1) roadmap_management_prompt.md v1.3: STEP 5.4 added — retirement step now also updates initiative_register.md (resolves LL-01-patch-4.3 recurrence escalation); (2) roadmap_prompt.md v4.3: STEP 4.4 debate queue + STEP 5 preflight check (resolves Friction Item 1 cycle 2026-03-21__item-3.5). |
 | 3.27 | 2026-03-18 | **idea_intake_prompt.md v2.0→v2.1 — stale warning horizon check added.** §5 source prompt v2.0→v2.1; §14 Idea Intake Engine v2.0→v2.1. STEP -0.5 added: before opening intake window, Facilitator checks `ideas_register.md` for Parked-cycle-2 rows; if ≥15, surfaces stale warning advisory. Register-model-correct replacement for LL-01-patch (cycle 2026-03-18__item-4.3). |
 | 3.26 | 2026-03-18 | **roadmap_prompt.md v4.1→v4.2 — register model consistency fixes.** §6 source prompt v4.0→v4.2; §14 Roadmap Engine Source → v4.2. Changes: STEP -1.6 count source updated from `submissions/` file scan to `ideas_register.md` row count; STEP 0.C Lightweight criterion 2 updated to register rows; STEP 8.5.B item 4 "idea file" language updated to "register row". |

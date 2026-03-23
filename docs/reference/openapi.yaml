@@ -1223,6 +1223,7 @@ paths:
     get:
       tags: [Health]
       summary: Basic health check
+      security: []
       responses:
         "200":
           $ref: "#/components/responses/OkHealth"
@@ -1841,7 +1842,7 @@ components:
       type: apiKey
       in: header
       name: X-API-Key
-      description: API key for authentication (future use)
+      description: API key authentication via X-API-Key header
 
   responses:
     BadRequest:

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-03-16
+**Version:** 1.4
+**Last Updated:** 2026-03-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -222,6 +222,23 @@ This check prevents backlog items with unresolvable acceptance criteria from rea
 
 ---
 
+## STEP 4.5 — ID Uniqueness Scan (LL-RP-v22-01)
+
+Before producing the health summary, scan for duplicate item IDs across the closed items table (`## Closed Items` section in `backlog.md`) and the backlog archive (`backlog_archive.md`):
+
+1. Collect all item IDs from `## Closed Items` in `backlog.md`
+2. Collect all item IDs from `backlog_archive.md`
+3. Identify any ID that appears more than once across either list
+
+For each duplicate found:
+- Record it in the health summary under a **Duplicate IDs** subsection
+- Flag it in the change plan with action: `Investigate — duplicate ID in closed items`
+- Do not archive further copies of a duplicated item without Product Owner confirmation
+
+If no duplicates found: note "ID uniqueness: PASS" in the health summary.
+
+---
+
 ## STEP 5 — Produce Health Summary and Change Plan
 
 Write an internal health summary:
@@ -406,6 +423,7 @@ The run is complete when:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-03-22 | AUD-2026-03-21-005 (LL-RP-v22-01): STEP 4.5 added — ID uniqueness scan across closed items table and archive before health summary is produced. Detects duplicate item IDs in `## Closed Items` section and `backlog_archive.md`; records duplicates in health summary with "Investigate" flag; blocks further archiving of duplicated IDs without Product Owner confirmation. |
 | 1.3 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 4 (Promotion Shortlist): endpoint reference check added (LL-v1.10-P3-2) — before listing any item as a Promote Candidate, verify all endpoint references in the item's AC exist in the canonical spec file; if gap found, add spec-gap notice to backlog.md and exclude item from shortlist until resolved. Prevents mid-sprint deviations from unresolvable AC. |
 | 1.2 | 2026-03-07 | IMP-02: Added `last_groom_backlog_utc` and `last_groom_backlog_outcome` state write to STEP 7 (global state update). Added `.claude_current_state.json` to §5 write scope (Phase 1M state fields only) and to STEP 7 commit list. |
 | 1.1 | 2026-03-06 | Widened valid trigger windows to include pre-`run roadmap` invocation alongside Post-Ship Closure. Both windows now explicitly equal. Added known gap note for Phase 1 skipped path. Added lock conflict guidance to §2. Expanded §6 classification table to include Blocked — Stale Blocker as a distinct classification. Added stale blocker row to STEP 5 change plan and STEP 6.2/6.3 outputs. Added promotion shortlist advisory note to §6 and health report template. |

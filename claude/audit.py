@@ -24,29 +24,30 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-03-13"
-PRIOR_AUDIT_OPEN_ITEMS = []
-# All AUD-2026-03-13 items closed:
-# Closed in 2026-03-14 session 1: AUD-001, AUD-011, AUD-012, AUD-013, AUD-014, AUD-015, AUD-016, AUD-020
-# Closed in 2026-03-14 session 2: AUD-007, AUD-009, AUD-018, AUD-021, AUD-022
-# Closed in 2026-03-14 session 3: AUD-002, AUD-004
-# Closed in 2026-03-15 session 1: AUD-003
-# Closed in 2026-03-16 session 1: AUD-005, AUD-006, AUD-017
-# False positives (no action): AUD-008, AUD-010, AUD-019
+PRIOR_AUDIT_ID = "AUD-2026-03-21"
+PRIOR_AUDIT_OPEN_ITEMS = [
+    "AUD-2026-03-21-001",  # per_agent_submission_count missing from ideas_window.json
+    "AUD-2026-03-21-002",  # run audit has no structural cadence trigger in post-ship
+]
+# AUD-2026-03-21-003 closed immediately — COMPLETED_CYCLES updated below.
+# AUD-2026-03-21-004 closed 2026-03-22 — §16.2 schema populated; release_planning inline schema removed.
+# AUD-2026-03-21-005 closed 2026-03-22 — backlog_management_prompt.md STEP 4.5 added.
+# AUD-2026-03-21-006 closed 2026-03-22 — closure_state.json added to OPERATIONAL_GUIDE §13.
+# AUD-2026-03-21-007 closed 2026-03-22 — README.md §4 path corrected to roadmap_prompt.md.
+# All AUD-2026-03-13 items closed before this audit run (confirmed Phase 0).
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":       59,   # LOW CONFIDENCE — confirm with actual line counts
-    "governance_integrity":   74,
-    "execution_reliability":  66,
-    "friction_load":          72,
-    "document_hygiene":       79,
-    "machine_friendliness":   52,
+    "token_efficiency":      82,   # LOW CONFIDENCE — estimated; inline block scan incomplete
+    "governance_integrity":  90,   # LOW CONFIDENCE — closure_state.json gap confirmed; rest estimated
+    "execution_reliability": 84,   # LOW CONFIDENCE — ideas_window.json guard type estimated
+    "friction_load":         65,   # LOW CONFIDENCE — friction type counts estimated across all cycles
+    "document_hygiene":      77,   # LOW CONFIDENCE — broken path confirmed; agent header issues partially estimated
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 3  # v1.8 (2026-03-04__release-v1.8) + v1.9 (2026-03-06__release-v1.9) + v1.10 (2026-03-15__release-v1.10)
+COMPLETED_CYCLES = 6  # v1.8 + v1.9 + v1.10 + v2.0 + v2.1 (completed) + v2.2 (Release_Planning_Complete 2026-03-21)
 
 # -------------------------
 # MISSING FILE RULE
