@@ -32,9 +32,9 @@ Assess the current state of test automation, quantify coverage gaps, identify th
 | `tests/test_service_coverage.py` | pytest / unittest | Unit — grace/drawdown service logic | ~20 | ⚠️ Collection error (`update_position` import) |
 | `tests/test_golden_outputs.py` | pytest | Golden output — position sizing formulas | ~7 | ⚠️ Collection error (DATABASE_URL required) |
 | `tests/e2e/risk-dashboard.spec.js` | Playwright | E2E — Risk Dashboard (17 scenarios) | 17 | ✅ Passes (mock layer) |
-| `tests/e2e/notifications.spec.js` | Playwright | E2E — Notifications (SC-NOTIF-02 to 08) | 9 | 🆕 Added v2.2 |
+| `tests/e2e/notifications.spec.js` | Playwright | E2E — Notifications (SC-NOTIF-02 to 08) | 9 | ✅ Passes (mock layer) |
 
-**Totals:** ~166 pytest tests defined; 37 pass cleanly; 4 test files have collection errors; 26 Playwright tests across 2 spec files.
+**Totals:** ~166 pytest tests defined; 37 pass cleanly; 4 test files have collection errors; 26 Playwright tests across 2 spec files (both specs pass cleanly).
 
 ### 2.2 CI Pipeline
 
@@ -88,7 +88,7 @@ Assess the current state of test automation, quantify coverage gaps, identify th
 | Reports | ⚠️ Not covered |
 | Settings | ⚠️ Not covered |
 
-**Frontend Playwright coverage: ~20%** (2 of ~10 pages/flows covered)
+**Frontend Playwright coverage: ~20%** (2 of ~10 pages/flows covered; 26 tests, all passing)
 
 ---
 
