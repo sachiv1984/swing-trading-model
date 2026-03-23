@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-22
+**Last Updated:** 2026-03-23
 **Cycle:** 2026-03-21__release-v2.2
 
 ---
@@ -12,14 +12,16 @@
 
 ---
 
-## DEL-20260322-01 — ST-01: API Key Authentication for Render Deployment
+## DEL-20260322-01 — ST-01: API Key Authentication for Render Deployment (Spec Phase)
 
 **Date:** 2026-03-22
 **Assigned To:** Head of Specs Team
 **Classification:** delegated_decision (reclassified from delegated_backend)
 **GitHub Issue:** #118
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-01
-**Status:** Pending
+**Status:** Resolved — 2026-03-23
+
+**Resolution:** conventions.md §1 authored (v1.1) and approved by Head of Specs Team (agent-mediated sign-off). ST-01 reclassified to delegated_backend and reassigned to Head of Engineering via DEL-20260323-01.
 
 **Reason for delegation:**
 conventions.md §1 explicitly states authentication is "out of scope" — no lockable spec exists for X-API-Key auth. Per execution_prompt §5 rule, a delegated_backend item with no lockable spec must be reclassified to delegated_decision and surfaced to Head of Specs Team.
@@ -38,6 +40,45 @@ Once spec is locked and marked Canonical, re-classify ST-01 to `delegated_backen
 
 **Commit format when complete:** `[EPIC-01][ST-01] <description>`
 **SLA:** 24 hours (lifecycle decision)
+
+---
+
+## DEL-20260323-01 — ST-01: API Key Authentication for Render Deployment (Implementation)
+
+**Date:** 2026-03-23
+**Assigned To:** Head of Engineering
+**Classification:** delegated_backend
+**GitHub Issue:** #118
+**Branch:** exec/2026-03-21__release-v2.2/EPIC-01
+**Status:** Pending
+**Supersedes:** DEL-20260322-01 (spec phase — resolved)
+
+**Locked spec:** `docs/specs/api_contracts/conventions.md §1` (v1.1, Canonical)
+
+**What is needed:**
+
+Implement X-API-Key authentication per `conventions.md §1`. The spec is now locked.
+
+**Backend tasks:**
+1. Add FastAPI middleware (or dependency injection) that reads `API_KEY` from environment and validates the `X-API-Key` request header on all incoming requests.
+2. Return HTTP 401 with `{"status": "error", "message": "Unauthorized"}` on missing or invalid key — per conventions.md §1.3 and §13.
+3. Exempt `GET /health` — no auth check required for that path.
+4. All existing tests must pass (AC-4).
+
+**Frontend tasks:**
+5. Read `REACT_APP_API_KEY` from environment and include as `X-API-Key` header on all API calls via the shared API wrapper (not per-component — per conventions.md §1.2).
+
+**OpenAPI tasks (same commit as implementation):**
+6. Add `security: []` path-level override on `GET /health` in `docs/reference/openapi.yaml` to mark it exempt.
+7. Remove `description: "API key for authentication (future use)"` from the `ApiKey` securityScheme — replace with `"API key required for all non-exempt endpoints. Passed as X-API-Key header."`.
+
+**DoQ requirements (AC-6):**
+- (a) 401 path tested (unit or integration test)
+- (b) Frontend env-var wiring confirmed via code review
+- (c) No endpoint left unprotected (code review or automated check)
+
+**Commit format:** `[EPIC-01][ST-01] Add X-API-Key authentication middleware and frontend env-var wiring`
+**Unblock criteria:** All 7 tasks complete; AC-1 through AC-6 verified; DoQ sign-off obtained.
 
 ---
 
