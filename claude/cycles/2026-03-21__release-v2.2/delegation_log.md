@@ -623,3 +623,131 @@ Return the complete updated `Notifications.js` (or separate page component `Noti
 **Commit format when complete:** `[EPIC-02][ST-05] Add alert history table and GET /alerts/history endpoint`
 **Unblock criteria:** All 6 AC from stage4_backlog_slice.md ST-05 verified; history persists across evaluate calls; migration runs cleanly with down migration; DoQ sign-off.
 **SLA:** 72 hours
+
+---
+
+## DEL-20260323-04 — ST-05: Alert History Table (Backend — Head of Engineering)
+
+**Date:** 2026-03-23
+**Assigned To:** Head of Engineering
+**Classification:** delegated_backend
+**GitHub Issue:** #122
+**Branch:** exec/2026-03-21__release-v2.2/EPIC-02
+**Status:** Pending
+
+**Context:** ST-05 frontend is complete and deployed (commit ddc4f44, PR #135 merged). The `/notifications/history` page renders correctly but calls `GET /alerts/history` which does not yet exist — the page shows an error state until this backend work ships. All three remaining open ACs (AC-1, AC-4, AC-5) are backend-only.
+
+**What is needed — all in one PR on `exec/2026-03-21__release-v2.2/EPIC-02`:**
+
+---
+
+### Task 1 — `alert_evaluations` table migration
+
+Create the `alert_evaluations` table using `CREATE TABLE IF NOT EXISTS` inside the existing `_ensure_schema()` function in `backend/services/alerts_service.py` (consistent with how `alert_rules`, `notifications`, and `notification_preferences` tables are created).
+
+Columns required:
+- `id` UUID PRIMARY KEY DEFAULT gen_random_uuid()
+- `portfolio_id` UUID NOT NULL REFERENCES portfolios(id)
+- `evaluation_timestamp` TIMESTAMPTZ NOT NULL DEFAULT NOW()
+- `rule_type` VARCHAR(50) NOT NULL CHECK (rule_type IN ('stop_loss_approach','grace_period_warning','market_regime_change','daily_portfolio_summary'))
+- `symbol` VARCHAR(20) (nullable — null for non-position-specific types)
+- `triggered` BOOLEAN NOT NULL
+- `notification_sent` BOOLEAN NOT NULL
+- `values_compared` JSONB NOT NULL DEFAULT '{}'
+
+Indexes: `idx_alert_evaluations_portfolio_time ON alert_evaluations(portfolio_id, evaluation_timestamp DESC)`
+
+**Down migration:** document a DROP TABLE statement in a comment directly above the CREATE TABLE block, clearly labelled `-- Down migration:`. This satisfies AC-4.
+
+---
+
+### Task 2 — Persist a record per rule evaluated in `POST /alerts/evaluate`
+
+In `backend/services/alerts_service.py`, inside the `evaluate_alerts()` function, after each rule is evaluated (stop_loss_approach per position, grace_period_warning per position, market_regime_change, daily_portfolio_summary), insert a row into `alert_evaluations` with:
+- `portfolio_id` — the portfolio being evaluated
+- `evaluation_timestamp` — NOW()
+- `rule_type` — the rule type key string
+- `symbol` — ticker symbol for position-specific rules; NULL for market_regime_change and daily_portfolio_summary
+- `triggered` — whether the rule fired (notification created)
+- `notification_sent` — whether a delivery was enqueued
+- `values_compared` — a JSON object of the key values used in the evaluation decision (e.g. for stop_loss_approach: `{"stop_price": X, "current_price": Y, "gap_pct": Z, "threshold_pct": T}`)
+
+This satisfies AC-1.
+
+---
+
+### Task 3 — `GET /alerts/history` endpoint
+
+Add to `backend/routers/alerts.py`:
+
+```
+@router.get("/alerts/history")
+def get_alert_history_endpoint(last_n_days: int = None, last_n_records: int = None):
+```
+
+Logic:
+- If `last_n_days` provided: return evaluations from the last N days (filter by `evaluation_timestamp >= NOW() - INTERVAL 'N days'`)
+- If `last_n_records` provided: return the last N records ordered by `evaluation_timestamp DESC`
+- If neither provided: default to last 30 days
+- Order: `evaluation_timestamp DESC`
+- Response envelope:
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "evaluations": [ { "id": "...", "evaluation_timestamp": "...", "rule_type": "...", "symbol": "..." | null, "triggered": true|false, "notification_sent": true|false, "values_compared": {...} } ],
+    "total": <int>
+  }
+}
+```
+
+This satisfies AC-2.
+
+---
+
+### Task 4 — Update `alerts_endpoints.md` and `openapi.yaml` in the same commit
+
+**`docs/specs/api_contracts/alerts_endpoints.md`** — add a new `## GET /alerts/history` section (must be `##` level per CLAUDE.md governance rule). Include: path, method, query params (`last_n_days`, `last_n_records`), response shape, field descriptions. Bump version to 0.3 and update `**Last Updated**`.
+
+**`docs/reference/openapi.yaml`** — add the `/alerts/history` GET path with `last_n_days` and `last_n_records` query parameters and the AlertHistory response schema.
+
+**This is mandatory in the same commit** — the OpenAPI Drift Detection gate blocks all PRs if a new `## METHOD /path` heading in a contract file has no corresponding entry in openapi.yaml.
+
+This satisfies AC-5.
+
+---
+
+### Task 5 — `render.yaml` cron job (ST-03 mandatory pre-condition #5)
+
+Add (or confirm present) the Render cron job in `render.yaml` calling `POST /alerts/evaluate` at `0 21 * * 1-5` (21:00 UTC Mon–Fri). The cron service must pass `X-API-Key: $API_KEY` as a header (per ST-03 Decision D).
+
+**Must land in the same PR as the `POST /alerts/evaluate` persistence work** — do not merge the schedule without the endpoint being ready (ST-03 pre-condition #5).
+
+---
+
+### Task 6 — Cold-start market regime persistence (ST-03 mandatory pre-condition #3)
+
+Confirm that the last-known market regime is persisted to the database, not held only in module-level memory. On service restart, `evaluate_alerts()` must read the persisted regime state from the DB before comparing — a cold start must not trigger a spurious `market_regime_change` alert.
+
+If this is already implemented (check `alerts_service.py` for DB-backed regime storage), confirm and note in the PR. If not, implement it.
+
+---
+
+### Task 7 — Calendar-day deduplication (ST-03 mandatory pre-condition #4)
+
+Confirm that the one-notification-per-(position, rule_type)-per-UTC-calendar-day deduplication is implemented in `evaluate_alerts()`. The guard should check `notifications` table for an existing record with the same `portfolio_id`, `alert_type`, `symbol` (or null), and a `created_at` within the current UTC calendar day before inserting.
+
+If already implemented, confirm and note in the PR. If not, implement it.
+
+---
+
+**Acceptance criteria being completed by this PR:**
+- AC-1: Every `POST /alerts/evaluate` persists a record per rule evaluated ✓
+- AC-4: Schema migration includes down migration ✓
+- AC-5: `alerts_endpoints.md` + `openapi.yaml` updated in same commit ✓
+- AC-6 (staging): DoQ to confirm history persists across evaluate calls and migration runs cleanly
+
+**Commit format:** `[EPIC-02][ST-05] Add alert_evaluations table, GET /alerts/history endpoint, and render.yaml cron`
+**Unblock criteria:** All 7 tasks complete; AC-1, AC-4, AC-5 verified; DoQ sign-off on staging (history table populated after evaluate run).
+**SLA:** 72 hours
