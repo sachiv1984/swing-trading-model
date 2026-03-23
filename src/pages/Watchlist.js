@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import { Plus, Trash2, Eye } from "lucide-react";
@@ -112,7 +113,7 @@ export default function Watchlist() {
     setLoadError(false);
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/watchlist`);
+      const res = await apiFetch(`${API_BASE}/watchlist`);
       if (!res.ok) throw new Error();
       const json = await res.json();
       setEntries(sortEntries(json.data));

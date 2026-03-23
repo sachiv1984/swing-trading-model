@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "../api/base44Client";
+import { api, apiFetch } from "../api/base44Client";
 import { Loader2, Filter, TrendingUp, TrendingDown, Calendar, Tag, X, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Input } from "../components/ui/input";
@@ -38,7 +38,7 @@ export default function TradeHistory() {
     queryKey: ["analyticsMetrics"],
     queryFn: async () => {
       try {
-        const response = await fetch(`${API_URL}/analytics/metrics`);
+        const response = await apiFetch(`${API_URL}/analytics/metrics`);
         if (!response.ok) {
           console.warn("Analytics metrics unavailable for R-multiple column:", response.status);
           return null;
@@ -111,7 +111,7 @@ export default function TradeHistory() {
     if (csvExporting) return;
     setCsvExporting(true);
     try {
-      const response = await fetch(`${API_URL}/trades/export/csv`, {
+      const response = await apiFetch(`${API_URL}/trades/export/csv`, {
         method: "GET",
         headers: { Accept: "text/csv" },
       });
