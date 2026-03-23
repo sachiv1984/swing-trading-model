@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-22T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-23T03:00:00Z",
+  "last_updated_utc": "2026-03-23T04:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -14,6 +14,8 @@
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": true,
+      "po_accepted": true,
+      "po_accepted_utc": "2026-03-23T04:00:00Z",
       "qa_evidence_log": "claude/cycles/2026-03-21__release-v2.2/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
