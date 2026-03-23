@@ -5,14 +5,16 @@
   "invoked_utc": "2026-03-22T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-23T04:00:00Z",
+  "last_updated_utc": "2026-03-23T05:00:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-03-21__release-v2.2/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 134,
+      "pr_status": "merged",
+      "merge_commit_sha": "e5e9bd9",
+      "merged_utc": "2026-03-23T05:00:00Z",
       "qa_signed_off": true,
       "po_accepted": true,
       "po_accepted_utc": "2026-03-23T04:00:00Z",
@@ -412,10 +414,10 @@
   ],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
     "all_merged": false,
-    "notes": "EPIC-03 PR #133 open — awaiting QA sign-off and Product Owner acceptance before merge"
+    "notes": "EPIC-01 merged (PR #134, e5e9bd9). EPIC-03 PR #133 open — awaiting QA sign-off and Product Owner acceptance before merge."
   },
 
   "sealed": false,
