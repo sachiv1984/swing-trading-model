@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-22T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-23T05:00:00Z",
+  "last_updated_utc": "2026-03-23T06:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -161,10 +161,12 @@
     },
 
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-03-21__release-v2.2/EPIC-03",
       "pr_number": 133,
-      "pr_status": "open",
+      "pr_status": "merged",
+      "merge_commit_sha": "eecb941",
+      "merged_utc": "2026-03-23T06:00:00Z",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-21__release-v2.2/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -414,10 +416,10 @@
   ],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01", "EPIC-03"],
+    "epics_pending": ["EPIC-02", "EPIC-04", "EPIC-05"],
     "all_merged": false,
-    "notes": "EPIC-01 merged (PR #134, e5e9bd9). EPIC-03 PR #133 open — awaiting QA sign-off and Product Owner acceptance before merge."
+    "notes": "EPIC-01 merged (PR #134, e5e9bd9). EPIC-03 merged (PR #133, eecb941). EPIC-02 in progress (ST-04, ST-05 not started). EPIC-04 and EPIC-05 not started."
   },
 
   "sealed": false,
