@@ -4,6 +4,7 @@ import { cn } from "../../lib/utils";
 const tabs = [
   { label: "Feed", path: "/notifications" },
   { label: "Preferences", path: "/notifications/preferences" },
+  { label: "History", path: "/notifications/history" },
 ];
 
 export default function NotificationTabBar() {

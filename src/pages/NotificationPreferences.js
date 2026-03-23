@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import PageHeader from "../components/ui/PageHeader";
 import NotificationTabBar from "../components/notifications/NotificationTabBar";
 import PreferenceRow from "../components/notifications/PreferenceRow";
+import AlertThresholdsSection from "../components/notifications/AlertThresholdsSection";
+import { apiFetch } from "../api/base44Client";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -32,7 +34,7 @@ export default function NotificationPreferences() {
   const debounceTimers = useRef({});
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/notifications/preferences`)
+    apiFetch(`${API_BASE_URL}/notifications/preferences`)
       .then((r) => {
         if (!r.ok) throw new Error();
         return r.json();
@@ -59,7 +61,7 @@ export default function NotificationPreferences() {
       clearTimeout(debounceTimers.current[alertType]);
     }
     debounceTimers.current[alertType] = setTimeout(() => {
-      fetch(`${API_BASE_URL}/notifications/preferences`, {
+      apiFetch(`${API_BASE_URL}/notifications/preferences`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [alertType]: { email_enabled: newValue } }),
@@ -89,7 +91,7 @@ export default function NotificationPreferences() {
     <div className="space-y-6">
       <PageHeader
         title="Notification Preferences"
-        description="Configure which alerts you receive."
+        description="Configure which alerts you receive by email, and set custom thresholds."
       />
 
       <NotificationTabBar />
@@ -127,6 +129,8 @@ export default function NotificationPreferences() {
           })
         )}
       </div>
+
+      <AlertThresholdsSection />
     </div>
   );
 }
