@@ -1,9 +1,35 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-03-21
+**Version:** 1.7
+**Last Updated:** 2026-03-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-03-21__release-v2.2
+**Date:** 2026-03-24
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | X-API-Key authentication middleware (all endpoints except GET /health); Content Security Policy meta tag | docs/specs/api_contracts/conventions.md §1 v1.1; public/index.html CSP | None / CSP no prior spec (absence note only) |
+| EPIC-02 | Alert Scheduling design decisions (trigger mechanism, cooldown, data source, cron mechanism); Alert Threshold Customisation UI (inline edit, validation, PATCH /alerts/rules/{rule_id}); Alert History Table (evaluation log, sort, filter, row-expand, load-more); backend alert_evaluations table + GET /alerts/history + GitHub Actions cron | docs/specs/frontend/pages/notifications.md §2 + §Page 3; docs/specs/api_contracts/alerts_endpoints.md v0.3; docs/product/decisions/decisions--2026-03-21__release-v2.2.md §ST-03 | DEV-EPIC02-ST04-01 (P3), DEV-EPIC02-ST05-01 (obs), DEV-EPIC02-ST05-02 (P2) |
+| EPIC-03 | CSV export function name bug fix (get_all_trade_history → get_all_closed_trades_for_csv_export); Slippage StatsCard gradient key fix (cyan → violet); Operational health check endpoint (db check, last_alert_evaluation, last_market_status_check) | docs/specs/api_contracts/trade_endpoints.md#GET /trades/export/csv; docs/specs/frontend/pages/trade_history.md#Avg Slippage StatsCard; docs/specs/api_contracts/health_endpoints.md#GET /health | DEV-HEALTH-001 (P2) |
+| EPIC-04 | Notification scenario execution (SC-NOTIF-01–08, 9 Playwright tests pass); Watchlist test scenarios created (SC-WATCH-01–06); Test automation readiness assessment (4-phase plan aligned to BLG-QA-01); Spec-to-test traceability matrix (54 ACs, 22 TEST-GAP entries) | docs/testing/notifications_scenarios.md; docs/testing/watchlist_scenarios.md; docs/testing/test_automation_readiness.md; docs/testing/spec_to_test_traceability_matrix.md | TEST-GAP-007 (P1, HoST v2.3 action) |
+| EPIC-05 | Provisional-Target field at backlog promotion (roadmap STEP 9 + §16.6); scored_initiatives.md effort band handoff for release planning (STEP 0 + STEP 4.5 + §16.7); structured lessons learnt carry-forward block in all engines (§16.8, post_ship STEP 8.5, engine STEP 0 advisories) | claude/system/roadmap_prompt.md v4.5; claude/system/release_planning_prompt.md v2.24; claude/system/sprint_planning_prompt.md v2.3; claude/system/post_ship_closure.md v2.1; claude/system/shared_standards.md v2.7; claude/system/lessons_learnt_prompt.md v1.8 | None |
+
+### Capabilities deferred or returned
+
+None — all 15 sprint items delivered.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md
+- Deviations filed: DEV-EPIC02-ST04-01 (P3), DEV-EPIC02-ST05-02 (P2), DEV-HEALTH-001 (P2), TEST-GAP-007 (P1)
+- Test scenarios referenced: docs/testing/notifications_scenarios.md (SC-NOTIF-01–08), docs/testing/watchlist_scenarios.md (SC-WATCH-01–06)
 
 ---
 

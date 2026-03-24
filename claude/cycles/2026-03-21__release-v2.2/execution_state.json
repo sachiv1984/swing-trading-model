@@ -530,6 +530,7 @@
     "notes": "EPIC-01 merged (PR #134, e5e9bd9, 2026-03-23). EPIC-02 merged (PR #135, 93c62aa, 2026-03-23). EPIC-03 merged (PR #133, eecb941, 2026-03-23). EPIC-04 merged (PR #136, b5a7017, 2026-03-23). EPIC-05 merged (PR #137, 0f25ffb, 2026-03-24) — ST-13/14/15 all done; §6 checklist complete across 6 governance files. All 5 EPICs merged. Cycle complete — ready for delivery verification."
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-03-24T00:00:00Z",
+  "status": "Sealed"
 }

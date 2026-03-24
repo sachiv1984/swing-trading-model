@@ -50,7 +50,7 @@ Once spec is locked and marked Canonical, re-classify ST-01 to `delegated_backen
 **Classification:** delegated_backend
 **GitHub Issue:** #118
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-01
-**Status:** Implementation complete — pending DoQ sign-off
+**Status:** Unblocked — 2026-03-23 (DoQ sign-off complete — commit 43be2ef; EPIC-01 merged PR #134)
 **Supersedes:** DEL-20260322-01 (spec phase — resolved)
 
 **Locked spec:** `docs/specs/api_contracts/conventions.md §1` (v1.1, Canonical)
@@ -126,7 +126,9 @@ Decisions must be recorded in `docs/product/decisions/` or as a spec update in `
 **Classification:** delegated_qa
 **GitHub Issue:** #126
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-04
-**Status:** Pending
+**Status:** Unblocked — 2026-03-23 (ST-09 done — 9 Playwright tests pass; SC-NOTIF-01 confirmed via GitHub Actions cron + 12 evaluation rows in live DB; DoQ signed off; EPIC-04 merged PR #136)
+
+**Resolution:** All 8 notification scenarios executed. SC-NOTIF-02 through SC-NOTIF-08 + SC-NOTIF-06b regression pass via Playwright (tests/e2e/notifications.spec.js). SC-NOTIF-01 confirmed by cron evidence. DoQ sign-off complete 2026-03-23.
 
 **What is needed:**
 Execute SC-NOTIF-01 through SC-NOTIF-08 from `docs/testing/notifications_scenarios.md` on staging. Record pass/fail results in `claude/cycles/2026-03-21__release-v2.2/qa_evidence_EPIC-04.md`.
@@ -145,7 +147,9 @@ Execute SC-NOTIF-01 through SC-NOTIF-08 from `docs/testing/notifications_scenari
 **Classification:** delegated_qa
 **GitHub Issue:** #127
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-04
-**Status:** Pending
+**Status:** Unblocked — 2026-03-23 (ST-10 done — docs/testing/watchlist_scenarios.md created with SC-WATCH-01 through SC-WATCH-06; DoQ signed off; EPIC-04 merged PR #136)
+
+**Resolution:** watchlist_scenarios.md authored. All 6 scenarios complete with preconditions, steps, expected results. SC-WATCH-06 closes deferred AC-6 from v2.1. DoQ sign-off complete 2026-03-23.
 
 **What is needed:**
 Create `docs/testing/watchlist_scenarios.md` covering SC-WATCH-01 through SC-WATCH-06. Each scenario must include: preconditions, steps, expected result.
@@ -164,7 +168,9 @@ SC-WATCH-06 must explicitly reference the deferred AC-6 from ST-10 (v2.1) DoQ si
 **Classification:** delegated_qa
 **GitHub Issue:** #128
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-04
-**Status:** Pending
+**Status:** Unblocked — 2026-03-23 (ST-11 done — docs/testing/test_automation_readiness.md produced; 4-phase sequencing plan aligned to BLG-QA-01; DoQ signed off; EPIC-04 merged PR #136)
+
+**Resolution:** Readiness assessment complete. Coverage quantified: 0% runnable integration tests, ~25% unit logic, ~20% frontend Playwright. 4 collection errors identified with fix recommendations. DoQ sign-off complete 2026-03-23.
 
 **What is needed:**
 Produce a readiness assessment document in `docs/testing/` covering:
@@ -184,7 +190,9 @@ Produce a readiness assessment document in `docs/testing/` covering:
 **Classification:** delegated_qa
 **GitHub Issue:** #129
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-04
-**Status:** Pending
+**Status:** Unblocked — 2026-03-23 (ST-12 done — docs/testing/spec_to_test_traceability_matrix.md produced; 54 ACs mapped, 22 TEST-GAP entries; DoQ + HoST signed off; EPIC-04 merged PR #136)
+
+**Resolution:** Traceability matrix complete: 54 ACs mapped across 3 specs (alerts, portfolio, positions). 26 covered (48%), 22 gaps (TEST-GAP-001–022). TEST-GAP-007 (P1) assigned to HoST for v2.3. DoQ + HoST co-sign complete 2026-03-23.
 
 **What is needed:**
 Create a spec-to-test traceability matrix for at least 3 canonical specs (alert rules, portfolio, positions recommended). For each AC in covered specs: map to ≥1 scenario ID, or flag as "No scenario — gap." Gap entries must be added to TEST-GAP tracking.
@@ -203,7 +211,9 @@ Gated on ST-11 completion. Target: Sprint 3.
 **Classification:** delegated_decision
 **GitHub Issue:** #130
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-05
-**Status:** Pending
+**Status:** Unblocked — 2026-03-24 (ST-13 done — HoST design + Challenger clearance complete; shared_standards §16.6, roadmap_prompt v4.5 STEP 9, release_planning_prompt v2.24 STEP 1.2; §6 checklist applied; DoQ signed off; EPIC-05 merged PR #137)
+
+**Resolution:** Design decision authored by HoST; 2 Challenger challenges resolved; clearance issued 2026-03-23. Implementation complete in EPIC-05 commit. §6 checklist: all 4 steps applied across 3 files + OPERATIONAL_GUIDE.
 
 **What is needed:**
 Modify the following files per AC 1–3:
@@ -227,7 +237,9 @@ Modify the following files per AC 1–3:
 **Classification:** delegated_decision
 **GitHub Issue:** #131
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-05
-**Status:** Pending
+**Status:** Unblocked — 2026-03-24 (ST-14 done — HoST design + Challenger clearance complete; shared_standards §16.7, release_planning_prompt v2.24 STEP 0 + STEP 4.5; §6 checklist applied; DoQ signed off; EPIC-05 merged PR #137)
+
+**Resolution:** Design decision authored by HoST; 3 Challenger challenges resolved; clearance issued 2026-03-23. Implementation complete in EPIC-05 commit. §6 checklist: all 4 steps applied (covered by ST-13/ST-15 combined commit scope).
 
 **What is needed:**
 Modify per AC 1–3:
@@ -250,7 +262,9 @@ CLAUDE.md §6 checklist required for all modified files.
 **Classification:** delegated_decision
 **GitHub Issue:** #132
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-05
-**Status:** Pending
+**Status:** Unblocked — 2026-03-24 (ST-15 done — HoST design + Challenger clearance complete; 6 governance files updated; §6 checklist applied to all; DoQ signed off; EPIC-05 merged PR #137)
+
+**Resolution:** Design decision authored by HoST; 3 Challenger challenges resolved (incl. C2: lessons_learnt_prompt as 6th file confirmed in scope); clearance issued 2026-03-23. Implementation complete in EPIC-05 commit. §6 checklist: shared_standards §16.8, roadmap/release/sprint STEP 0, post_ship_closure STEP 8.5, lessons_learnt_prompt §3.5+§5.
 
 **What is needed:**
 Modify per AC 1–3:
@@ -274,7 +288,9 @@ CLAUDE.md §6 checklist required for ALL modified files (largest change set in E
 **GitHub Issue:** #121
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-02
 **Target branch:** `exec/2026-03-21__release-v2.2/EPIC-02`
-**Status:** Pending
+**Status:** Unblocked — 2026-03-23 (ST-04 done — commit ddc4f44; AlertThresholdsSection implemented; DoQ signed off; EPIC-02 merged PR #135)
+
+**Resolution:** Frontend implementation complete (commit ddc4f44). AlertThresholdsSection with rule list, inline edit form, validation, apiFetch. P3 deviation DEV-EPIC02-ST04-01 filed. DoQ sign-off 2026-03-23.
 
 **Gate cleared:** ST-03 complete (2026-03-23). ST-04 and ST-05 are now unblocked.
 
@@ -431,7 +447,9 @@ Return the complete updated `Notifications.js` (or whichever file(s) implement t
 **GitHub Issue:** #122
 **Branch:** exec/2026-03-21__release-v2.2/EPIC-02
 **Target branch:** `exec/2026-03-21__release-v2.2/EPIC-02`
-**Status:** Pending
+**Status:** Unblocked — 2026-03-23 (ST-05 done — commit ddc4f44; frontend + backend complete; 12 evaluation rows in live DB; DoQ signed off; EPIC-02 merged PR #135)
+
+**Resolution:** Frontend (NotificationsHistory page, table, sort, filter, row-expand, load-more) + backend (alert_evaluations table, evaluate_alerts persistence, GET /alerts/history, GitHub Actions cron) both complete. alerts_endpoints.md v0.3, openapi.yaml updated. DoQ sign-off 2026-03-23.
 
 **Gate cleared:** ST-03 complete (2026-03-23). ST-04 and ST-05 are now unblocked.
 
