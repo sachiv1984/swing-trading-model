@@ -775,6 +775,62 @@ Backend API errors surface as raw status codes or technical error messages in th
 
 ---
 
+### BLG-SPEC-D14 — Update health_endpoints.md to document actual GET /health response schema
+**Priority:** P2 (Medium)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** DEV-HEALTH-001 — ST-08 (v2.2) implementation diverged from spec v1.0 schema
+**Cycle added:** 2026-03-21__release-v2.2 (verification run 2026-03-24)
+**Effort:** XS (< 1 hour)
+**Target release:** v2.3 Sprint 1
+
+**Problem**
+`docs/specs/api_contracts/health_endpoints.md` v1.0 specifies `GET /health` returns `{"status": "healthy", "timestamp": "<ISO>", "version": "<string>"}`. The v2.2 ST-08 implementation returns `{"status": "ok"|"error", "db": "connected"|"error", "last_market_status_check": "<ISO or null>", "last_alert_evaluation": "<ISO or null>"}`. The spec must be updated to document the actual canonical schema.
+
+**Acceptance Criteria**
+- `health_endpoints.md` updated to v1.1 documenting the current response schema from ST-08
+- openapi.yaml OperationalHealthResponse schema matches v1.1 spec
+- No functional changes required
+
+---
+
+### BLG-FE-04 — Alert Thresholds empty state: add "Add alert rule" CTA button
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** DEV-EPIC02-ST04-01 — ST-04 (v2.2) omitted CTA button from AlertThresholdsSection empty state
+**Cycle added:** 2026-03-21__release-v2.2 (verification run 2026-03-24)
+**Effort:** XS (< 1 hour)
+**Target release:** v2.3
+
+**Problem**
+`AlertThresholdsSection` renders empty state icon, heading, and body text but omits the "Add alert rule" CTA button specified in `notifications.md §Section 2`. State is effectively unreachable in production (rules are auto-seeded), but spec compliance requires the button.
+
+**Acceptance Criteria**
+- "Add alert rule" CTA button present in empty state
+- Button opens create form on click (per §Section 2 form spec)
+- No regression to populated state
+
+---
+
+### BLG-GOV-07 — Reinforce backend branch discipline in execution prompt
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** DEV-EPIC02-ST05-02 — ST-05 (v2.2) backend commits landed on main rather than EPIC-02 branch
+**Cycle added:** 2026-03-21__release-v2.2 (verification run 2026-03-24)
+**Effort:** XS
+**Target release:** v2.3 (governance update)
+
+**Problem**
+When a delegated_frontend story requires backend implementation (new DB migration + endpoint), the backend commits should land on the EPIC branch alongside the frontend, not directly on main. This creates a process deviation (P2) even when functionality is correct. execution_prompt §9 invariants should be reinforced with explicit guidance.
+
+**Acceptance Criteria**
+- execution_prompt.md §9 invariants updated to note: "Backend commits tightly coupled to a delegated_frontend story must land on the same EPIC branch unless explicitly authorised as direct-to-main by PMO Lead"
+- §6 checklist applied per CLAUDE.md
+
+---
+
 <!-- release-plan-marker: RP:v2.2:2026-03-21__release-v2.2 -->
 
 ---

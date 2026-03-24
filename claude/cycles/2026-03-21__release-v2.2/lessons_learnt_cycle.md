@@ -24,3 +24,23 @@ Cycle: 2026-03-21__release-v2.2
 | DEV-EPIC02-ST05-02: ST-05 backend commits landed on main rather than EPIC-02 branch — P2 process deviation, no functional impact but indicates merge-order discipline gap | Phase 3 | A | defer | Reinforce branch discipline note in execution_prompt.md §3.1.A or §9 invariants: delegated_backend commits that are tightly coupled to a delegated_frontend item should be coordinated on the same EPIC branch unless specifically authorised as a direct-to-main commit | Head of Specs Team | 2026-03-21__release-v2.3 |
 
 **Recurrence Notes:** None. No prior cycle file — recurrence check not possible.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-03-21__release-v2.2
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-03-24
+**Reviewed by:** PMO Lead
+
+**Cross-cycle recurrence check:** Prior cycle `2026-03-18__release-v2.1` lessons_learnt_cycle.md — no file found. Recurrence check not possible.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| TEST-GAP-007 P1 flag in qa_evidence (ST-12) was already resolved by ST-05 by sprint close — the traceability matrix was authored before ST-05 backend was complete, creating a timing gap in evidence | Phase 4 | B | defer | Add advisory note in execution_prompt.md STEP 3.1.A: when a test gap is identified in a delegated_qa item and the corresponding implementation story is not yet done, the QA evidence should note "pending ST-xx completion" rather than flagging as a P1 gap — this prevents false P1s at delivery verification | Head of Specs Team | 2026-03-21__release-v2.3 |
+| ST-02 and ST-11 spec_references fields empty (traceability gaps) — for autonomous items that produce no spec reference (CSP, readiness doc), traceability check fires a flag even when expected | Phase 4 | A | defer | Add note to execution_prompt.md §9.1 schema: for delegated_qa documentation artefacts and autonomous infrastructure items with no prior spec, spec_references may be left empty with a note field value of "no prior spec applicable" — this prevents traceability gap flags for expected cases | Head of Specs Team | 2026-03-21__release-v2.3 |
+| DEV-EPIC02-ST05-02 (P2 process deviation): backend commits for a delegated_frontend story went directly to main — required P2 acceptance and backlog item at verification | Phase 4 | A | defer | BLG-GOV-07 filed: reinforce branch discipline in execution_prompt.md §9 invariants (see lessons_learnt Phase 3 row 4) | Head of Specs Team | 2026-03-21__release-v2.3 |
+
+**Recurrence Notes:** None. No prior cycle Phase 4 file — recurrence check not possible.
