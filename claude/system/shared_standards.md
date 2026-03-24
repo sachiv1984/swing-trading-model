@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.4
+**Version:** 2.7
 **Last Updated:** 2026-03-22
 
 # Shared Standards — All Governed Routines
@@ -584,10 +584,101 @@ Reference: `execution_prompt.md` STEP 3.1.D (delegated_decision items) and STEP 
 
 ---
 
+## §16.6 Backlog Item Provisional-Target Field
+
+**Used by:** Roadmap Engine (write at STEP 9), Release Planning Engine (read at STEP 1.2)
+
+### Field syntax
+
+```
+**Provisional-Target:** v<X.Y> | TBD | Unscheduled
+```
+
+### Horizon-to-release mapping rules
+
+| Roadmap horizon | Provisional-Target value |
+|-----------------|--------------------------|
+| `Now` | Next planned release label in `current_roadmap.md` Now horizon (e.g. `v2.3`) |
+| `Next` | Release label in the Next horizon of `current_roadmap.md` (e.g. `v2.4`) |
+| `Later` | `Unscheduled` |
+| Horizon tier has no release label | `TBD` |
+| Horizon structure absent from roadmap | `TBD` |
+
+**Rules:**
+- The field must be present on every newly promoted item written to `backlog.md` at STEP 9.
+- `TBD` is the explicit fallback when no release label can be resolved — the field is **never blank**.
+- The field is a signal, not a commitment. Release planning may include or exclude items regardless of `Provisional-Target` value; deviation requires explicit PO rationale.
+
+---
+
+## §16.7 scored_initiatives.md Effort Band Column and Handoff Contract
+
+**Used by:** Roadmap Engine (write at STEP 9), Release Planning Engine (read at STEP 0 / STEP 4.5)
+
+### Effort band column
+
+`claude/scoring/scored_initiatives.md` must carry an `Effort Band` column for all active roadmap initiatives:
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort Band |
+|---|---|---|---|---|---|---|---|---|
+| Initiative name | ... | ... | ... | ... | ... | ... | ... | S \| M \| L \| XS |
+
+Effort band is assigned by the Roadmap Engine at promotion time.
+
+### Three-tier resolution rule for STEP 4.5
+
+| Tier | Condition | Action |
+|------|-----------|--------|
+| 1 | Row present in `scored_initiatives.md` AND `Effort Band` value present | Use effort band as primary sizing input; note "from scored_initiatives.md" |
+| 2 | Row present BUT `Effort Band` cell empty or absent | Use STEP 4 estimate; emit advisory: "⚠ [N] EPIC(s) have no effort band in scored_initiatives.md — falling back to inline estimate." |
+| 3 | No matching row in `scored_initiatives.md` | Use STEP 4 estimate; no advisory required |
+
+### Handoff contract
+
+- The Roadmap Engine writes; the Release Planning Engine reads. No other engine writes to this field.
+- The Release Planning Engine must not modify `claude/scoring/scored_initiatives.md` — STEP 0 load is read-only.
+- If `scored_initiatives.md` is absent from the filesystem: record "scored_initiatives.md: not present" in the STEP 0 load summary and proceed with STEP 4 estimates only.
+
+---
+
+## §16.8 lessons_learnt_closure.md Carry-Forward Section Schema
+
+**Used by:** Post-Ship Closure Engine (write at STEP 8.5), Roadmap Engine / Release Planning Engine / Sprint Planning Engine (read at STEP 0)
+
+### Section schema
+
+```markdown
+## Carry-Forward
+Items: N
+
+| # | Observation | Implication | Engine |
+|---|-------------|-------------|--------|
+| 1 | <one-sentence observation from this cycle> | <what the engine should do differently next cycle> | Roadmap \| Release Planning \| Sprint Planning \| All |
+```
+
+**Rules:**
+- Absence of the `## Carry-Forward` section OR zero rows is valid — means no carry-forwards for this cycle.
+- Maximum 5 items. Fewer is better — only include items with a clear, engine-actionable implication.
+- Engine values: `Roadmap`, `Release Planning`, `Sprint Planning`, `All`.
+- Items must be specific and actionable — not general observations.
+
+### STEP 0 read protocol (for Roadmap, Release Planning, Sprint Planning engines)
+
+1. Identify the most recently completed cycle: highest YYYY-MM-DD cycle ID where `post_ship_complete = true` in `.claude_current_state.json`.
+2. Read `claude/cycles/<most_recent_cycle_id>/lessons_learnt_closure.md`.
+3. If `## Carry-Forward` section is present and non-empty: surface each item as an advisory in session output; record in the run manifest as "Carry-forward items reviewed: N items from cycle `<cycle_id>`."
+4. If section absent or has zero rows: record "No carry-forward items from prior cycle `<cycle_id>`" in run manifest and proceed.
+5. Do not halt on absence. This step is advisory only.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.7 | 2026-03-23 | ST-15 (EPIC-05): §16.8 lessons_learnt_closure.md Carry-Forward Section Schema added — section syntax, 0–5 item rule, Engine enum, absence rules, STEP 0 read protocol for three engines. |
+| 2.6 | 2026-03-23 | ST-14 (EPIC-05): §16.7 scored_initiatives.md Effort Band Column and Handoff Contract added — effort band column format, three-tier resolution rule for STEP 4.5, handoff contract (read-only for release planning). |
+| 2.5 | 2026-03-23 | ST-13 (EPIC-05): §16.6 Backlog Item Provisional-Target Field added — field syntax, horizon-to-release mapping rules, TBD fallback, advisory-only role in release planning. |
 | 2.4 | 2026-03-22 | AUD-2026-03-21-004: §16.2 stage4_issue_manifest.json schema populated — replaced placeholder with canonical schema (moved from `release_planning_prompt.md` STEP 4 IMP-24 inline block). "Produced by" corrected to `release_planning_prompt.md` STEP 4. Engine prompts must reference §16.2 rather than duplicating schema inline. |
 | 2.3 | 2026-03-17 | ST-19 (EPIC-06): §16.5 ideas_register.md schema added — defines register table format, column definitions, and compliance rules for the single-file idea register replacing the per-file submission model. |
 | 2.2 | 2026-03-16 | AUD-2026-03-13-017: §16.3 Delegation Log Schema added — extracted from `execution_prompt.md §11`; §16.4 SLA Breach Tracking (Execution Engine) added — extracted from `execution_prompt.md` STEP 3.1.D. Engine prompts reference §16.3/§16.4 rather than duplicating inline. |

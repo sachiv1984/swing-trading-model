@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.0
+**Version:** 2.1
 **Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -532,6 +532,9 @@ This record covers:
 - The consolidated action summary from STEP 8 (all three records reviewed, classified, and applied)
 - Any process improvements applied immediately during this run (with document refs and version bumps)
 - Carry-forward items for the next cycle
+
+**Carry-Forward section required (ST-15 — per `shared_standards.md §16.8`):**
+`lessons_learnt_closure.md` must include a `## Carry-Forward` section. The section may have zero rows if no carry-forward items are warranted — absence of rows is valid; absence of the section is not. Use the schema in `shared_standards.md §16.8`. The carry-forward write is the responsibility of the `lessons_learnt_prompt.md §3.5` invocation; if direct production is required (per the fallback note below), include the `## Carry-Forward` section with at least zero rows.
 
 Do not proceed to STEP 9 until `lessons_learnt_closure.md` exists and is non-empty. If the lessons learnt prompt cannot be invoked: produce the file directly using the structure from `lessons_learnt_prompt.md §3.5`, record the deviation in the closure record §6.
 

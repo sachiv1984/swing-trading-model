@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.3
+**Version:** 4.5
 **Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -364,6 +364,9 @@ Load and validate lifecycle compliance of:
 Planning inputs:
 - `claude/roadmap/current_roadmap.md`
 - `claude/backlog/backlog.md`
+
+**Carry-Forward Advisory (ST-15 — per `shared_standards.md §16.8`):**
+After loading planning inputs, check the most recently completed cycle's `lessons_learnt_closure.md` for a `## Carry-Forward` section. "Most recently completed" = highest YYYY-MM-DD cycle ID with `post_ship_complete = true` in `.claude_current_state.json`. If the section is present and non-empty: surface each item as an advisory in session output; record in `run_manifest.md` as "Carry-forward items reviewed: N items from cycle `<cycle_id>`." If absent or zero rows: record "No carry-forward items from prior cycle `<cycle_id>`." Do not halt on absence — this step is advisory only.
 
 If `claude/roadmap/current_roadmap.md` is missing:
 - Create it as Class 4 Planning Document owned by Product Owner, Status: Active, Last Updated: today.
@@ -1248,6 +1251,7 @@ Allowed changes only:
 - Add one‑line status notes referencing decision log + date
 - Add minimal section headings if needed
 - Update parked idea status fields to `Parked-cycle-<n>` per §4.2
+- When adding a newly promoted item to `backlog.md`: include `**Provisional-Target:**` field. Derive from horizon placement per `shared_standards.md §16.6`. Write `TBD` if horizon mapping is ambiguous or no release label exists for the horizon tier.
 Delta summary:
 - Promoted to Roadmap: `<count + list>`
 - Deferred / Parked: `<count + list + conditions>`
