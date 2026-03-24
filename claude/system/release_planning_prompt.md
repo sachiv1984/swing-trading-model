@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.21
+**Version:** 2.24
 **Last Updated:** 2026-03-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -363,6 +363,12 @@ Reference: `claude/charter/team_charter.md` §6 Shared Write Concurrency Constra
 ## STEP 0 — Create Run Manifest + Initialize State (Hard Requirement; must be first write)
 
 **Cleanup:** If `claude/cycles/<cycle_id>/.write_test` exists (left from STEP -1.4 on a previous interrupted run), delete it now before proceeding.
+
+**Carry-Forward Advisory (ST-15 — per `shared_standards.md §16.8`):**
+Before creating the run manifest, check the most recently completed cycle's `lessons_learnt_closure.md` for a `## Carry-Forward` section. "Most recently completed" = highest YYYY-MM-DD cycle ID with `post_ship_complete = true` in `.claude_current_state.json`. If the section is present and non-empty: surface each item as an advisory in session output; record in `run_manifest.md` as "Carry-forward items reviewed: N items from cycle `<cycle_id>`." If absent or zero rows: record "No carry-forward items from prior cycle `<cycle_id>`." Do not halt — advisory only.
+
+**scored_initiatives.md Load (ST-14 — per `shared_standards.md §16.7`):**
+Load `claude/scoring/scored_initiatives.md` if it exists. Extract `Effort Band` values for initiatives matching the current release scope items. Record in `run_manifest.md` as "scored_initiatives.md: N matching items with effort band / not present or no matching items." This is a read-only load — no write to `claude/scoring/*` at this step.
 
 Create:
 - `claude/cycles/<cycle_id>/run_manifest.md`
@@ -815,6 +821,18 @@ If no such items are found, or backlog cannot be dated reliably: skip silently.
 
 *Trigger: LL-v1.9-01 — lessons_learnt.md cycle 2026-03-06__release-v1.9. Implemented 2026-03-10.*
 
+### 1.2 Provisional-Target Advisory (Advisory — not a hard gate)
+
+After writing the Readiness section, scan backlog candidates for this release for the `**Provisional-Target:**` field (per `shared_standards.md §16.6`).
+
+- Count items with `Provisional-Target: v<current_release>` (horizon-planned for this release).
+- Count items with `Provisional-Target: TBD`, `Provisional-Target: Unscheduled`, or field absent.
+- Emit advisory: "ℹ N item(s) carry `Provisional-Target: <current_release>` — horizon-planned for this release. M item(s) have no matching Provisional-Target signal."
+- Record as an advisory note in the run manifest.
+- **Do not halt.** Scope selection authority remains at STEP 2.
+
+*Trigger: ST-13 (EPIC-05) — v2.2 cycle. Implemented 2026-03-23.*
+
 Update state.json:
 
 - artifacts.stage1_readiness = pass|fail|blocked
@@ -1140,6 +1158,12 @@ If the environment does not permit removing the lock file:
 Classification: Conditional Gate (halts only if escalation remains Open / blocking)
 
 Write: `## Capacity Check` section in `release_plan.md`
+
+**Effort Band Lookup (ST-14 — per `shared_standards.md §16.7`):**
+For each EPIC in scope, apply the three-tier resolution rule before deriving effort estimates:
+1. If a pre-assigned `Effort Band` was loaded from `scored_initiatives.md` at STEP 0 for this EPIC: use it as the primary sizing input; note "from scored_initiatives.md".
+2. If the initiative has a row in `scored_initiatives.md` but no `Effort Band` value: emit advisory "⚠ [N] EPIC(s) have no effort band in scored_initiatives.md — falling back to inline estimate." Use STEP 4 estimate.
+3. If no matching row in `scored_initiatives.md`: use STEP 4 estimate; no advisory required.
 
 ### When outcome is WARN — Phasing Recommendation (Required)
 

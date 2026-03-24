@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.7
+**Version:** 1.8
 **Last Updated:** 2026-03-14
 
 ---
@@ -131,6 +131,8 @@ Read the inputs appropriate to the invoking routine:
 - `docs/specs/Specs_Index.md` (confirm open items were reconciled)
 
 Focus areas: document closure friction (which documents were hardest to locate or update?), lessons learnt action application rate (how many immediate actions were actually applied vs deferred?), whether any closure steps revealed gaps that should have been caught earlier.
+
+**Output requirement (ST-15):** The `lessons_learnt_closure.md` produced by this section must include a `## Carry-Forward` section per `shared_standards.md §16.8`. Zero rows is valid; absence of the section is not.
 
 ### 3.6 Amendment — Amendment Section Append (IMP-37)
 
@@ -412,6 +414,20 @@ If none: "None."
 | <description> | Governance gap / Authority ambiguity / Recurrence / Missing owner / Missing target | Head of Specs Team / Product Owner | <one sentence> |
 
 If none: "None."
+
+---
+
+## Carry-Forward
+
+Items: N
+
+[List 0–5 items with clear engine-actionable implications for the next cycle. Fewer is better. Zero rows is valid. See `shared_standards.md §16.8` for schema and rules.]
+
+| # | Observation | Implication | Engine |
+|---|-------------|-------------|--------|
+| <n> | <one-sentence observation from this cycle> | <what the engine should do differently next cycle> | Roadmap \| Release Planning \| Sprint Planning \| All |
+
+If none: leave table empty (0 rows) — do not omit the section.
 ```
 
 ---

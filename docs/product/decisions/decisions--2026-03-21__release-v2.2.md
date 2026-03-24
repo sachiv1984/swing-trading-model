@@ -182,6 +182,151 @@ All in one commit. Challenger satisfied.
 
 ---
 
+### ST-14 Design Decisions — Release Planning: Load scored_initiatives.md for Effort Band Handoff
+
+**Roles:** Head of Specs Team (HoST — design authority), Challenger
+**Date:** 2026-03-23
+**Story:** ST-14 — Release Planning: Load scored_initiatives.md for Effort Band Handoff (EPIC-05)
+**Status:** Decided — Challenger clearance issued
+
+---
+
+#### HoST Design Proposal
+
+**Problem statement:** Release planning STEP 4.5 (Capacity Feasibility Sense Check) derives EPIC effort estimates informally from story descriptions and scope. The roadmap engine already assigns effort bands (S / M / L) to promoted initiatives in `claude/scoring/scored_initiatives.md` (per `roadmap_prompt.md` line ~878), but release planning never reads this file. The result: each release planning run re-derives sizing from scratch, ignoring the roadmap engine's sizing signal.
+
+**Decision 1 — scored_initiatives.md effort band schema and handoff contract** (to be documented in `shared_standards.md §16.7`)
+
+The `scored_initiatives.md` file must carry an `Effort Band` column for all active roadmap initiatives. Format:
+
+| Initiative | ... (scoring cols) ... | Effort Band |
+|---|---|---|
+| Initiative name | ... | S \| M \| L \| XS |
+
+Handoff contract:
+- Effort band is assigned by the roadmap engine at promotion time (already required by `roadmap_prompt.md`)
+- Release planning engine reads the effort band at STEP 0 as a sizing input
+- Three-tier resolution rule for STEP 4.5: (1) row present with effort band value → use it; (2) row present but no effort band → use STEP 4 estimate; (3) no row (initiative not in scored_initiatives.md) → use STEP 4 estimate
+
+**Decision 2 — release_planning_prompt.md STEP 0 load**
+
+In STEP 0 (after existing context loads), add:
+> Load `claude/scoring/scored_initiatives.md` if it exists. Extract `Effort Band` values for initiatives matching the current release scope items. If file absent or no matching items: record "scored_initiatives.md: not present or no matching items" in the load summary and proceed with STEP 4 estimates only. This is a read-only load — no write to `claude/scoring/*` at STEP 0.
+
+**Decision 3 — release_planning_prompt.md STEP 4.5 effort band reference**
+
+In STEP 4.5, before deriving effort estimates from story description and scope, add:
+> For each EPIC in scope, check if a pre-assigned effort band was loaded from `scored_initiatives.md` (per STEP 0 load summary). If present: use as the primary sizing input and note "from scored_initiatives.md". If absent: derive from story description and EPIC scope as before and note "estimated — no scored_initiatives.md entry".
+
+---
+
+#### Challenger Review
+
+**C1 — Write scope conflict:** `release_planning_prompt.md §7` lists `claude/scoring/*` as writable only "if explicitly requested by Product Owner for sequencing support." The STEP 0 load is read-only — no write scope change is needed. Confirm this is read-only.
+
+*HoST response:* Confirmed explicitly in Decision 2: "This is a read-only load — no write to `claude/scoring/*` at STEP 0." Write scope §7 remains unchanged. Challenger satisfied.
+
+**C2 — scored_initiatives.md schema change authority:** The effort band column requirement is already in `roadmap_prompt.md` (line ~878) but not in the scored_initiatives.md file itself. Adding a column to an existing file owned by the roadmap engine is a schema change — who has authority?
+
+*HoST response:* The handoff contract in `shared_standards.md §16.7` is cross-engine canonical authority. It documents the expected column (not invents it — the roadmap engine already requires it). The shared_standards.md §16.7 entry formalises the contract between the two engines. No roadmap_prompt.md change required for this — the column requirement already exists there. Challenger satisfied.
+
+**C3 — Three-tier fallback needs a "warn" signal:** If an initiative is in scope and in scored_initiatives.md but has no effort band value, the current STEP 4.5 will silently fall back to estimation. Should the operator be warned that an effort band is missing?
+
+*HoST response:* Accepted. Add to the STEP 4.5 instruction: "If tier 2 applies (row present but no effort band), emit an advisory: '⚠ [N] EPIC(s) have no effort band in scored_initiatives.md — falling back to inline estimate.'" This keeps it advisory, not a halt. Challenger satisfied.
+
+**Challenger clearance issued:** All three challenges resolved. Read-only load confirmed, schema authority clarified via shared_standards.md, advisory warning added for missing effort band. Implementation may proceed.
+
+---
+
+#### Mandatory Pre-conditions for Implementation (HoST)
+
+| # | Pre-condition | Owner |
+|---|---------------|-------|
+| 1 | `shared_standards.md §16.7` written — scored_initiatives.md effort band column format + three-tier resolution rule + advisory warning rule | Head of Specs Team |
+| 2 | `release_planning_prompt.md` STEP 0 updated — read-only load of `scored_initiatives.md`, extract effort bands, note absence in load summary | Head of Specs Team |
+| 3 | `release_planning_prompt.md` STEP 4.5 updated — effort band priority lookup + fallback + advisory warning for missing entries | Head of Specs Team |
+| 4 | All §6 checklist steps applied to all modified governance files in one commit | Head of Specs Team |
+| 5 | DoQ sign-off on §6 checklist compliance | Director of Quality |
+
+---
+
+### ST-15 Design Decisions — Structured Lessons Learnt Carry-Forward Block
+
+**Roles:** Head of Specs Team (HoST — design authority), Challenger
+**Date:** 2026-03-23
+**Story:** ST-15 — Structured Lessons Learnt Carry-Forward Block (EPIC-05)
+**Status:** Decided — Challenger clearance issued
+
+---
+
+#### HoST Design Proposal
+
+**Problem statement:** Process improvements discovered during post-ship closure (observations, friction items, actionable implications) are recorded in `lessons_learnt_closure.md` but not formally surfaced to the next cycle's engines. Each new cycle starts without visibility into prior-cycle carry-forward signals — operators must manually search `lessons_learnt_closure.md` files. This causes recurring friction items to go unacknowledged.
+
+**Decision 1 — Carry-Forward section schema** (to be documented in `shared_standards.md §16.8`)
+
+`lessons_learnt_closure.md` must include a `## Carry-Forward` section. Schema:
+
+```markdown
+## Carry-Forward
+Items: N (0–5; fewer is better — only items with clear engine-actionable implication)
+
+| # | Observation | Implication | Engine |
+|---|-------------|-------------|--------|
+| 1 | <one-sentence observation> | <what the engine should do differently> | Roadmap \| Release Planning \| Sprint Planning \| All |
+```
+
+Rules: absence of the section OR zero rows is valid (no carry-forwards). Maximum 5 items. Engine values: `Roadmap`, `Release Planning`, `Sprint Planning`, `All`.
+
+**Decision 2 — STEP 0 read-and-acknowledge in three engines**
+
+Each of `roadmap_prompt.md`, `release_planning_prompt.md`, `sprint_planning_prompt.md` adds to STEP 0:
+
+> Check `claude/scoring/` — no, wrong path. Check the most recently completed cycle's `lessons_learnt_closure.md` for a `## Carry-Forward` section. "Most recently completed" = highest cycle ID (YYYY-MM-DD sort) with `post_ship_complete = true` in `.claude_current_state.json`. If present and non-empty: surface each item as an advisory; record in the run manifest as "Carry-forward items reviewed: N items from cycle <cycle_id>". If absent or section has zero rows: record "No carry-forward items from prior cycle" and proceed. Do not halt on absence.
+
+**Decision 3 — post_ship_closure.md STEP 8.5 carry-forward write**
+
+STEP 8.5 currently creates `lessons_learnt_closure.md` via `lessons_learnt_prompt.md §3.5`. Add to the production requirement: the file must include a `## Carry-Forward` section (per `shared_standards.md §16.8`). Sections may have zero rows (valid).
+
+**Decision 4 — lessons_learnt_prompt.md §3.5 schema update**
+
+`lessons_learnt_prompt.md §3.5` defines the `lessons_learnt_closure.md` structure. Add the `## Carry-Forward` section to the schema. This is a governance file change requiring §6 checklist treatment (lessons_learnt_prompt.md v1.7 → v1.8).
+
+---
+
+#### Challenger Review
+
+**C1 — "Most recently completed cycle" is ambiguous in multi-sprint cycles:** If a cycle spans multiple sprints and closes mid-year, is it the "most recently completed" by date or by some other field?
+
+*HoST response:* Resolved by definition: "highest cycle ID (YYYY-MM-DD sort) where `post_ship_complete = true`". Cycle IDs are YYYY-MM-DD prefixed and sortable. `post_ship_complete` is the explicit completion signal. No ambiguity. Challenger satisfied.
+
+**C2 — lessons_learnt_prompt.md is a sixth file requiring §6 treatment, increasing commit scope beyond AC statement:** The AC says "all four steps applied to all modified files." Adding `lessons_learnt_prompt.md` as a sixth file was not explicit in the original AC. Is this in scope?
+
+*HoST response:* Yes — CLAUSE.md §6 applies to any governance prompt that is modified. If ST-15 requires `lessons_learnt_prompt.md §3.5` to carry the Carry-Forward section schema, then that file must be modified, and §6 applies to it. The AC's "all modified files" is correct — the set of modified files has grown because the design requires it. Six files × 4 checklist items is still one commit. Challenger satisfied.
+
+**C3 — Advisory surfacing model for STEP 0:** Three engines add "surface each item as an advisory." What does "surface" mean concretely — print to console, write to run manifest, or both?
+
+*HoST response:* Both: (1) emit advisory text in the session output (like other advisory patterns in the engines — see STEP 1.1 backlog age advisory), and (2) record in the run manifest as "Carry-forward items reviewed: N items from cycle <cycle_id>." This ensures the advisory is machine-readable in the artefact and human-readable in the session. Challenger satisfied.
+
+**Challenger clearance issued:** All three challenges resolved. Cycle-ID sort is deterministic, lessons_learnt_prompt.md inclusion is required and within scope, advisory pattern is concrete (output + manifest). Implementation may proceed.
+
+---
+
+#### Mandatory Pre-conditions for Implementation (HoST)
+
+| # | Pre-condition | Owner |
+|---|---------------|-------|
+| 1 | `shared_standards.md §16.8` written — Carry-Forward section schema, 0–5 item rule, Engine enum, absence rules | Head of Specs Team |
+| 2 | `roadmap_prompt.md` STEP 0 — Carry-Forward read-and-acknowledge step added | Head of Specs Team |
+| 3 | `release_planning_prompt.md` STEP 0 — Carry-Forward read-and-acknowledge step added | Head of Specs Team |
+| 4 | `sprint_planning_prompt.md` STEP 0 — Carry-Forward read-and-acknowledge step added | Head of Specs Team |
+| 5 | `post_ship_closure.md` STEP 8.5 — Carry-Forward section required in `lessons_learnt_closure.md` | Head of Specs Team |
+| 6 | `lessons_learnt_prompt.md §3.5` schema updated — Carry-Forward section added | Head of Specs Team |
+| 7 | All §6 checklist steps applied to all 6 modified governance files + OPERATIONAL_GUIDE in one commit | Head of Specs Team |
+| 8 | DoQ sign-off on §6 checklist compliance | Director of Quality |
+
+---
+
 ### Supersession note
 *To be completed at Post-Ship Closure — do not populate at planning time.*
 

@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.2
+**Version:** 2.3
 **Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -278,6 +278,9 @@ This step is advisory — it does not block sprint planning. Its purpose is to s
 ## STEP 0 — Load Release Context
 
 **Cleanup:** If `claude/cycles/<cycle_id>/.write_test` exists (left from STEP -1.8 on a previous interrupted run), delete it now before proceeding.
+
+**Carry-Forward Advisory (ST-15 — per `shared_standards.md §16.8`):**
+Before loading release context, check the most recently completed cycle's `lessons_learnt_closure.md` for a `## Carry-Forward` section. "Most recently completed" = highest YYYY-MM-DD cycle ID with `post_ship_complete = true` in `.claude_current_state.json`. If the section is present and non-empty: surface each item as an advisory in session output; record in `sprint_planning_notes.md` as "Carry-forward items reviewed: N items from cycle `<cycle_id>`." If absent or zero rows: record "No carry-forward items from prior cycle." Do not halt — advisory only.
 
 Extract from the backlog slice and execution plan:
 
