@@ -166,3 +166,34 @@ Highest-value items from this cycle: BLG-SEC-01 (API Key Auth — highest risk r
 BLG-FEAT-11 (Strategy Compliance Score) carries SPS=4 due to §13.3 proximity. Scope is display-only — no automated enforcement. STEP 5 debate cleared after scope constraint was accepted. This constraint must be re-verified at pre-alignment before any implementation work begins.
 
 Natural v2.2 sequencing: BLG-SEC-01 (P1) → BLG-QA-02 + BLG-SPEC-T01 (quality foundations) → BLG-FEAT-10/12 (alert enhancements, after BLG-OPS-04 alert scheduling design) → BLG-FEAT-09/11 (user-facing metrics). BLG-OPS-05/06 and BLG-SEC-02 are small-enough to slot into any sprint as fast-follow items.
+
+---
+
+## New Items — Promoted to Backlog (STEP 5 Advance — cycle 2026-03-24__scheduled)
+
+**Last Updated:** 2026-03-24
+
+*Active initiatives pool remains empty post-v2.2 ship. CPS = 0.0 (0 active initiatives). No active initiative scoring required this cycle.*
+
+*Scoring scale: 1 (low/poor) → 5 (high/excellent). WF Intensity: 1=high effort, 5=hours only. TTV: 1=slow, 5=immediate.*
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| BLG-OPS-07 System Health Check Playbook | 2 | 2 | 3 | 5 | 5 | 5 | 1 | S |
+| BLG-QA-03 Canonical Test Execution Report Template | 2 | 2 | 3 | 5 | 5 | 5 | 1 | S |
+| BLG-QA-04 Integration Test Coverage Report | 3 | 2 | 4 | 4 | 4 | 5 | 1 | M |
+| BLG-QA-05 Critical-path Smoke Test (Playwright) | 4 | 2 | 4 | 3 | 4 | 4 | 1 | M |
+| BLG-OPS-08 Staging Data Reset Script | 3 | 2 | 4 | 5 | 5 | 5 | 1 | S |
+| BLG-OPS-09 Database Size Monitoring Alert | 3 | 3 | 5 | 5 | 5 | 5 | 1 | S |
+| BLG-FE-05 Alert Notification Badge | 3 | 3 | 2 | 5 | 4 | 5 | 2 | S |
+| BLG-QA-06 Test Data Seed Script Library | 3 | 2 | 4 | 4 | 4 | 5 | 1 | S–M |
+
+---
+
+## Facilitator Observations (cycle 2026-03-24__scheduled)
+
+Highest-value items: BLG-OPS-09 (data safety, risk=5 — active data-loss risk on Render free tier), BLG-QA-05 (critical-path quality safety net, strat=4 — follows BLG-QA-01 Playwright investment), BLG-QA-04 (coverage visibility — makes DoQ sign-off better-informed).
+
+All 8 items are SPS=1 or SPS=2 — no §13 boundary proximity. All are S or M effort — quick wins at v2.3. All items high reversibility (rev=5). BLG-QA-05 has an explicit §3 scope constraint: Playwright pass is supporting evidence for non-visual AC only — not a DoQ gate replacement. BLG-OPS-08 (staging reset) should be sequenced before BLG-QA-05 and BLG-QA-04 as a prerequisite.
+
+**CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-03-21__item-3.5). Delta: 0.0.

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-21 (roadmap rebalance — cycle 2026-03-21__item-3.5 — 3.5/4.2/CHART-IX moved to Completed)
+**Last Updated:** 2026-03-24 (roadmap rebalance — cycle 2026-03-24__scheduled — no-change confirm; v2.2 shipped; active initiatives remain zero; gated items remain gated)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -17,7 +17,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 ## Active Initiatives
 
-*No active initiatives as of 2026-03-21. All v2.1 items shipped. v2.2 scope TBD — pending release planning.*
+*No active initiatives as of 2026-03-24. All v2.2 items shipped 2026-03-24. v2.3 scope TBD — pending release planning. Extended-tier horizon review (cycle 2026-03-24__scheduled) confirmed no movements warranted for any Later or Gated item.*
 
 ---
 

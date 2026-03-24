@@ -199,3 +199,29 @@ Scarce skill note: Metrics Definitions owner is required for both v1.7 (heat for
 **Skill-Silo check (cycle additions):** Governance load ~15% (BLG-SPEC-T01 + BLG-QA-02 are documentation/process items; remainder is execution). Within 15–60% bounds. No Skill-Silo Alert triggered. Product Owner sign-off capacity confirmed.
 
 **Assessment:** v2.1 freed substantial multi-skill capacity (Backend, Frontend, QA, Spec). The new backlog is front-loaded with P1 security (BLG-SEC-01) and P2 feature enhancements. BLG-FEAT-11 (SPS=4) is the only boundary-adjacent item and requires Strategy Rules owner involvement — this is the primary capacity constraint for v2.2. Sequencing recommendation: BLG-SEC-01 first (P1 security gap), then BLG-QA-02 + BLG-SPEC-T01 (quality foundations), then alert enhancements (BLG-FEAT-10/12) after BLG-OPS-04 alert scheduling design completes. BLG-OPS-06 and BLG-SEC-02 are XS items appropriate for any sprint as fast-follow tasks. No workforce constraint violation identified for the projected v2.2 scope.
+
+---
+
+## New Backlog Items Added — Cycle 2026-03-24__scheduled (Scheduled Rebalance)
+
+*Source: roadmap rebalance cycle 2026-03-24__scheduled — 8 new backlog items from ideas pool review (BLG-OPS-07/08/09, BLG-QA-03/04/05/06, BLG-FE-05). v2.2 shipped; v2.3 pool now 23 items.*
+
+### New Items (cycle 2026-03-24__scheduled)
+
+| Item | Est. Effort | Skills | Priority |
+|------|------------|--------|---------|
+| BLG-OPS-07 System Health Check Playbook | ~0.5 day | Infrastructure & Operations Owner (documentation) | P3 |
+| BLG-QA-03 Canonical Test Execution Report Template | ~0.5 day | QA Lead (process governance) | P3 |
+| BLG-QA-04 Integration Test Coverage Report | ~1.0 day | QA & Testing Owner + CI Engineering | P3 |
+| BLG-QA-05 Critical-path Smoke Test (Playwright) | ~2.0 days | QA & Testing Owner + Frontend (Playwright) | P2 |
+| BLG-OPS-08 Staging Data Reset Script | ~0.5 day | Infrastructure & Operations Owner + Backend Engineering | P3 |
+| BLG-OPS-09 Database Size Monitoring Alert | ~0.5 day | FinOps & Resource Architect + Backend Engineering | P2 |
+| BLG-FE-05 Alert Notification Badge | ~0.5 day | Base44 Frontend Prompt Owner | P3 |
+| BLG-QA-06 Test Data Seed Script Library | ~1.0 day | QA & Testing Owner + Backend Engineering | P2 |
+| **Total new** | **~6.5 days** | Mixed — QA dominant | — |
+
+**Combined v2.3 pool estimate:** ~37–47 days total (23 items). Release planning will scope a 2–3 sprint plan from this pool. No scarce skill conflicts identified. QA automation domain is dominant in new additions (4 items, ~4.5 days) — already represented by existing BLG-QA-01.
+
+**Skill-Silo check (cycle additions):** Governance load 0% (all new items are execution-heavy: QA, infrastructure, frontend). Below 20% floor. Product Owner sign-off capacity confirmed (v2.3 will be scoped by release planning). No Skill-Silo Alert issued.
+
+**Sequencing note:** BLG-OPS-08 (staging reset) is a prerequisite for BLG-QA-05 (smoke test) and BLG-QA-04 (coverage report) — schedule BLG-OPS-08 first in whatever sprint targets QA automation. BLG-QA-06 (seed scripts) is a companion prerequisite for BLG-QA-05.

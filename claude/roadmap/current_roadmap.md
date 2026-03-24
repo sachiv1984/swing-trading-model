@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-24 (post-ship closure — cycle 2026-03-21__release-v2.2 — v2.2 shipped)
-**Last rebalance:** 2026-03-21 (cycle 2026-03-21__item-3.5 — 3.5 Alerts & Notifications completion event)
+**Last Updated:** 2026-03-24 (roadmap rebalance — cycle 2026-03-24__scheduled — scheduled run; 8 backlog adds; no roadmap-level changes)
+**Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — scheduled run; Extended tier; DL-012)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -48,6 +48,8 @@ These may be revisited in future versions without any canonical spec change:
 *Items in this section are committed for the current or next release cycle. v2.2 shipped 2026-03-24. v2.3 is the next delivery horizon.*
 
 *v2.2 (RA:v2.2), v2.0 (RA:v2.0), and v2.1 (RA:v2.1) annotation blocks retired to `claude/roadmap/roadmap_archive.md` on 2026-03-24 — all shipped. Delivery Plan section clear for v2.3 planning.*
+
+**v2.3 horizon (Provisional — pending release planning):** Active backlog pool: 23 items (~37–47 days estimated). Key candidates: BLG-FEAT-11 (Strategy Compliance Score, SPS=4, M–L), BLG-FEAT-09 (Metrics Staleness Indicator, P2, S–M), BLG-SPEC-D14 (Quick win, XS), BLG-QA-05 (Critical-path Smoke Test, M), BLG-OPS-09 (DB Size Alert, S). Release planning will scope from the full 23-item pool. v2.3 scope not committed until release planning engine run.
 
 ---
 

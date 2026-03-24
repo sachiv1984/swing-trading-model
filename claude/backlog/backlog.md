@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-24 (AUD-2026-03-21 tier 3: BLG-GOV-08 engine prompt compression added; tier 2 patches applied to idea_intake_prompt and post_ship_closure)
-**Last rebalance:** 2026-03-21 (cycle 2026-03-21__item-3.5 — DL-011)
+**Last Updated:** 2026-03-24 (roadmap rebalance — cycle 2026-03-24__scheduled — 8 new items added: BLG-OPS-07/08/09, BLG-QA-03/04/05/06, BLG-FE-05; BLG-TECH-05 target updated to v2.3)
+**Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -35,7 +35,7 @@ They are not user-facing, but they directly affect trust in outputs and release 
 ### BLG-TECH-05 — Prometheus metrics endpoint
 **Priority:** P3 (Low)
 **Type:** Observability
-**Target release:** v2.2 (or when system becomes multi-user)
+**Target release:** v2.3 (or when system becomes multi-user; updated from v2.2 — STEP 3 backlog health scan, cycle 2026-03-24__scheduled)
 
 **Scope**
 - Add `GET /metrics` Prometheus endpoint exposing:
@@ -592,6 +592,235 @@ When a delegated_frontend story requires backend implementation (new DB migratio
 - Any extracted schemas or reference material moved to `shared_standards.md` with cross-reference added in-engine
 - §6 checklist applied per CLAUDE.md for both files
 - OPERATIONAL_GUIDE §14 and §6/§6B source prompt headers updated accordingly
+
+---
+
+---
+
+## 10. New Backlog Items — Cycle 2026-03-24__scheduled
+
+*Added from roadmap rebalance cycle 2026-03-24__scheduled (scheduled run, Extended tier). 8 items promoted from ideas pool. Decision log: DL-012.*
+
+---
+
+### BLG-OPS-07 — System Health Check Playbook
+**Priority:** P3 (Low)
+**Type:** Operational Documentation
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260304-02 (IW-20260304-01 — stale cycle-5; gate cleared: BLG-OPS-06 health endpoint shipped v2.2)
+**Cycle added:** 2026-03-24__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.3
+
+**Problem**
+`GET /health` endpoint (BLG-OPS-06) shipped in v2.2 and provides DB connectivity, last market check, and last alert evaluation signals. No operational runbook documents how to respond to those signals — what to do when DB connectivity is "error", how to diagnose and recover, who to contact and what to check. Operators cannot act on monitoring output without documented procedures.
+
+**Scope**
+- Document: how to interpret each health signal (`status`, `db`, `last_market_status_check`, `last_alert_evaluation`)
+- Provide diagnosis steps for each failure mode (DB error, alert evaluation stalled, market status stale)
+- Cover recovery actions for each failure mode
+- Reference `GET /health` response schema (health_endpoints.md v1.1)
+
+**Acceptance Criteria**
+- Playbook document present in `docs/` covering all health signals from the `GET /health` response
+- Each failure mode has a diagnosis + recovery path documented
+- Document references health_endpoints.md v1.1 schema
+
+---
+
+### BLG-QA-03 — Canonical Test Execution Report Template
+**Priority:** P3 (Low)
+**Type:** QA Process Governance
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260304-01 (IW-20260304-01 — stale cycle-5; gate cleared: BLG-QA-02 automation readiness assessment shipped v2.2)
+**Cycle added:** 2026-03-24__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.3
+
+**Problem**
+BLG-QA-02 (Test Automation Readiness Assessment) shipped in v2.2 and established a quality baseline, but there is no standard structure for reporting test execution results. Each sprint produces ad-hoc QA notes. A canonical template ensures consistent, comparable QA evidence across cycles and makes DoQ sign-off against it straightforward.
+
+**Scope**
+- Define a standard test execution report template covering: sprint/cycle reference, test scenarios run, pass/fail counts, deviations, coverage gaps, DoQ sign-off block
+- Template should be usable for both manual and automated test runs
+- Template stored in `docs/testing/` or `docs/governance/`
+
+**Acceptance Criteria**
+- Template document present and usable
+- Template includes all mandatory fields (scenario list, pass/fail, deviation notes, DoQ block)
+- Template referenced in QA governance documentation
+
+---
+
+### BLG-QA-04 — Integration Test Coverage Report
+**Priority:** P3 (Low)
+**Type:** QA / CI Engineering
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260321-01 (IW-20260321-01 — gate cleared: BLG-QA-02 shipped v2.2)
+**Cycle added:** 2026-03-24__scheduled
+**Effort:** M (~1 day)
+**Provisional-Target:** v2.3
+**Displacement:** BLG-FE-03 deprioritised in priority queue (broader governance value over error message polish)
+
+**Problem**
+The CI pipeline runs integration tests but produces no report showing which API endpoints have coverage vs. which are untested. As endpoints are added, coverage gaps accumulate silently. The DoQ sign-off is made with partial visibility — reviewers cannot see at a glance what is and is not covered.
+
+**Scope**
+- Generate a coverage report (or annotated list) showing: each endpoint in openapi.yaml, whether an integration test exists covering it, and test file reference
+- Output should be produced by CI on every PR and viewable as a CI artefact or in the test results
+- May leverage the existing integration test infrastructure (FastAPI TestClient)
+
+**Acceptance Criteria**
+- CI produces an endpoint coverage report on every PR
+- Report shows each endpoint with covered / not-covered status
+- Coverage gaps are visible to DoQ during sign-off
+- Report format machine-readable or human-readable (either acceptable)
+
+---
+
+### BLG-QA-05 — Critical-path Smoke Test (Playwright)
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260321-02 (IW-20260321-01 — gate cleared: BLG-QA-02 shipped v2.2)
+**Cycle added:** 2026-03-24__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** v2.3
+**Depends on:** BLG-OPS-08 (staging reset — prerequisite for reproducible Playwright runs), BLG-QA-06 (seed scripts)
+**Displacement:** BLG-FE-02 deprioritised in priority queue (quality safety net over UX polish)
+
+> ⚠️ **§3 Scope constraint (from STEP 5 debate):** Playwright pass is supporting evidence for non-visual AC only — not a replacement for DoQ human sign-off. Flaky test failures (infrastructure outage, missing seed data) must not block human review. Visual AC (colours, ring indicators) remain manual. This scope constraint must be reflected in the AC and implementation.
+
+**Problem**
+BLG-QA-02 identified that three critical paths (add trade, view portfolio, view alerts) have no automated test coverage. Manual testing on every PR is slow and error-prone. BLG-QA-01 (Playwright for chart scenarios) is already in the backlog; this item adds coverage for the three most-used non-chart flows.
+
+**Scope**
+- Critical path 1: Add a trade (navigate to add trade form → fill required fields → submit → verify trade appears in portfolio)
+- Critical path 2: View portfolio (load portfolio page → assert positions visible, key stats present)
+- Critical path 3: View alerts (load alerts page → assert alert rules visible, history table present)
+- Run in CI against the staging environment (or per-PR preview if available)
+- Seed data: requires BLG-OPS-08 reset script and BLG-QA-06 seed scripts
+
+**Acceptance Criteria**
+- Playwright test suite covers all 3 critical paths
+- Tests run in CI on every PR
+- Run time < 2 minutes for smoke test suite
+- Playwright pass is recorded as supporting evidence for non-visual AC — explicit in DoQ sign-off template
+- Visual AC (colours, badges, chart rendering) remain DoQ manual review items
+- Flaky test failures must not block the PR or human review — failures are advisory
+
+---
+
+### BLG-OPS-08 — Staging Data Reset Script
+**Priority:** P3 (Low)
+**Type:** Infrastructure / DevOps
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260321-02 (IW-20260321-01 — gate cleared: BLG-QA-02 shipped v2.2)
+**Cycle added:** 2026-03-24__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.3
+**Displacement:** TEST-GAP-EPIC-05-SLIP deprioritised in priority queue
+
+**Problem**
+Staging DB accumulates state between QA runs, causing test pollution where one session's data affects the next. BLG-QA-02 specifically identified reproducible test execution as a gap. Without a reset script, QA runs on staging produce inconsistent results and DoQ sign-off is less reliable. This item is a prerequisite for BLG-QA-05 (smoke test) and BLG-QA-04 (coverage report).
+
+**Scope**
+- Create a script (SQL or shell) that resets the staging DB to a known seed state
+- Script idempotent — safe to run multiple times
+- Documents minimum required seed data for smoke test scenarios (add trade, view portfolio, view alerts)
+- Integration with staging environment Render deployment (manual invocation; not auto-run)
+
+**Acceptance Criteria**
+- Script present in repo (`scripts/` or `tools/`)
+- Script resets staging DB to reproducible baseline
+- Script is documented with usage instructions
+- Smoke test scenarios in BLG-QA-05 can be run reliably after executing the reset script
+
+---
+
+### BLG-OPS-09 — Database Size Monitoring Alert
+**Priority:** P2 (Medium)
+**Type:** Infrastructure / Operational Safety
+**Owner:** FinOps & Resource Architect + Backend Engineering
+**Source:** IDEA-finops-20260321-02 (IW-20260321-01 — gate cleared: BLG-OPS-06 health endpoint shipped v2.2)
+**Cycle added:** 2026-03-24__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.3
+**Displacement:** BLG-TECH-05 deprioritised in priority queue (active data safety risk over deferred observability)
+
+**Problem**
+The system runs on Render free tier with a Postgres DB size limit. Without monitoring, the DB could silently fill to the limit, causing data loss with no warning. BLG-OPS-06 (health endpoint) shipped in v2.2 and provides a monitoring hook; this item adds DB size alerting to the existing monitoring infrastructure. Per §3: the alert surfaces a risk condition for human action — no automated response is triggered.
+
+**Scope**
+- Add DB size check to the health endpoint or as a separate scheduled check
+- Alert mechanism: warning email or Telegram notification when DB size exceeds N% of limit
+- Alert threshold configurable (e.g. 80% of Render free tier limit)
+- Display current DB size in `GET /health` response or a dedicated admin endpoint
+
+**Acceptance Criteria**
+- DB size monitoring configured and active
+- Alert sent to user when DB exceeds configured threshold
+- Alert is notification-only — no automated cleanup or action triggered (§3 compliance)
+- Current DB size queryable (via health endpoint or admin endpoint)
+
+---
+
+### BLG-FE-05 — Alert Notification Badge in Nav
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260321-02 (IW-20260321-01 — gate cleared: BLG-FEAT-12 alert history table shipped v2.2)
+**Cycle added:** 2026-03-24__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.3
+**Displacement:** BLG-FE-04 deprioritised in priority queue (higher daily-use value)
+
+**Problem**
+BLG-FEAT-12 (alert history table) shipped in v2.2 — the system now persists a record of all fired alerts. Without a visible nav badge, users must actively navigate to the Alerts page to discover unacknowledged alerts. A persistent badge provides ambient awareness without requiring proactive navigation. Per §3: the badge displays existing alert state to the human — no automated action is triggered.
+
+**Scope**
+- Add a badge/counter to the Alerts nav item showing unacknowledged alert count
+- Badge shows count of alerts since last visit to Alerts page (or all unacknowledged alerts)
+- Badge disappears or resets when user navigates to Alerts page
+- Reads from the alert history data (BLG-FEAT-12 backend — already available)
+
+**Acceptance Criteria**
+- Badge visible on Alerts nav item when unacknowledged alerts exist
+- Badge count accurate (reflects unacknowledged alert count)
+- Badge clears on navigation to Alerts page
+- No automated action triggered by badge — display only
+- No regression to existing nav layout
+
+---
+
+### BLG-QA-06 — Test Data Seed Script Library
+**Priority:** P2 (Medium)
+**Type:** QA Infrastructure
+**Owner:** QA & Testing Owner + Backend Engineering
+**Source:** IDEA-director-of-quality-20260321-02 (IW-20260321-01 — gate cleared: BLG-QA-02 shipped v2.2)
+**Cycle added:** 2026-03-24__scheduled
+**Effort:** S–M (~1 day)
+**Provisional-Target:** v2.3
+**Depends on:** BLG-OPS-08 (staging reset — prerequisite; seed scripts are invoked post-reset)
+**Displacement:** BLG-OPS-05 deprioritised in priority queue (seed scripts prerequisite for smoke test work)
+
+**Problem**
+BLG-QA-02 (automation readiness assessment) identified test data reproducibility as a prerequisite for any automation investment. Ad-hoc seed data in each test author's environment means tests cannot be run by others or in CI without environment-specific setup. BLG-QA-05 (smoke test) and BLG-QA-04 (coverage report) both depend on a reliable shared seed state.
+
+**Scope**
+- Versioned collection of SQL seed scripts per test domain:
+  - Alerts domain: seed alert rules + evaluation history
+  - Watchlists domain: seed watchlist + symbols
+  - Portfolio/trades domain: seed positions + trade history (for critical-path smoke test)
+- Scripts scoped to three domains; not unbounded QA infrastructure investment
+- Scripts compatible with the BLG-OPS-08 reset workflow
+- Stored in `scripts/seeds/` or similar
+
+**Acceptance Criteria**
+- Seed scripts present for all three domains (alerts, watchlists, portfolio/trades)
+- Scripts runnable independently for each domain
+- Compatible with BLG-OPS-08 staging reset workflow
+- BLG-QA-05 smoke test scenarios can run end-to-end after executing relevant seed scripts
 
 ---
 
