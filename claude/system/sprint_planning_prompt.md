@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.3
+**Version:** 2.4
 **Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -413,6 +413,8 @@ Classify each item:
 
 **Test scenario gap flag (LL-v2.0-P4-2):** For every item classified `delegated_frontend` that introduces a **new page or new user-facing controls** (not a refactor of existing UI), flag the EPIC's `test_scenarios` field in `execution_state.json` as `pending — QA & Testing Owner to author before next sprint on this domain`. Record this flag in `sprint_planning_notes.md`. This surfaces the coverage gap at planning time rather than at delivery verification, allowing QA to prepare scenario files before the sprint closes.
 
+**Blocked-decision advisory (LL-v2.2-SP-01):** For every item classified `delegated_decision` (i.e. `blocked_decision` status in the backlog slice, or carried over from a prior cycle with no design artefact), check whether a HoST design session or equivalent design artefact has been authored. If none exists: surface the following advisory in session output and record in `sprint_planning_notes.md` — "No design artefact found for [item]. A HoST design session should be scheduled before sprint start to reduce mid-sprint overhead and avoid full design sessions during execution." Advisory only — does not block sprint planning or scope selection.
+
 ### 3.2 Capacity Gate
 
 The selected `include` items must not exceed confirmed capacity.
@@ -781,6 +783,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4 | 2026-03-24 | Post-ship closure v2.2 lessons learnt applied. LL-v2.2-SP-01: STEP 3.1 — blocked-decision advisory added. When an `include` item is `delegated_decision` with no HoST design artefact, surface advisory: "HoST design session should be scheduled before sprint start"; record in `sprint_planning_notes.md`. Advisory only — does not block planning. Authority: Head of Specs Team (post-ship closure 2026-03-21__release-v2.2). |
 | 2.2 | 2026-03-17 | Post-ship closure v2.0 lessons learnt patch applied. LL-v2.0-P4-2: STEP 3.1 delegation class assignment — test scenario gap flag added; for every `delegated_frontend` item introducing a new page or new user-facing controls (not refactor), flag EPIC test_scenarios as "pending — QA & Testing Owner to author before next sprint on this domain" in execution_state.json and sprint_planning_notes.md; surfaces gap at planning time rather than delivery verification. |
 | 2.1 | 2026-03-16 | Post-ship closure v1.10 deferred patches applied. STEP -1.10 added: Pre-Sprint Required Decisions Check — reads `cycle_summary.md ## Pre-sprint Planning Required Decisions`; strict mode halts on unresolved decisions; standard mode records as Blocker? Yes outstanding action; sign-off gate (STEP 6.2) blocked until resolved (LL-01). STEP 3.1 Candidate Item Review: delegation class assignment guidance added — `autonomous` vs delegated class criteria; pattern note for pure data-fetching refactors with no UX change (LL-v1.10-P3-3). |
 | 2.0 | 2026-03-14 | AUD-2026-03-13-009 (PATCH 2): STEP 6.1A sprint_backlog_index.json inline schema replaced with reference to shared_standards.md §16.1. |

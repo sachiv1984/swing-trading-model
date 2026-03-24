@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.36
-**Last Updated:** 2026-03-22
+**Version:** 3.37
+**Last Updated:** 2026-03-24
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -740,7 +740,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.3)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.4)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v2.6)
+**Source prompt:** `claude/system/execution_prompt.md` (v2.7)
 
 ### 8.1 Invocation
 
@@ -913,7 +913,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.5)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.6)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1296,10 +1296,10 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.5 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.24 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.3 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.4 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v2.6 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.5 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v2.7 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.6 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.1 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v2.7 |
@@ -1328,6 +1328,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 | 3.32 | 2026-03-20 | **execution_prompt.md v2.4→v2.5 — agent-mediated sign-off.** §8 source prompt v2.4→v2.5. §14 Execution Engine Source → v2.5. Change: §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file, engine invokes a subagent acting in that role before surfacing to user; §3.1.A step 11 added; §9.1 `sign_off_record` field added to ST item schema. Always-human gates (Product Owner, merge gate) unchanged. |
 | 3.29 | 2026-03-18 | **ST-15 (EPIC-05): Render PR preview environments documented.** §8.2 preview environment bullet added — Render provisions `https://trading-assistant-api-staging-pr-{N}.onrender.com` per PR; Director of Quality may use preview URL as staging evidence method for frontend-interactive AC. §8.5 merge gate QA sign-off line updated to reference preview URL option alongside staging URL. |
 | 3.28 | 2026-03-19 | **ST-11 staging seed workflow updated to psql-based approach.** §8.2 staging test data seeding bullet added: `seed-preview.yml` workflow renamed to `Seed Staging Database`, trigger changed from `render-preview` label to `workflow_dispatch`, seeding mechanism changed from Python API script to `psql` against `STAGING_DATABASE_URL` secret, idempotency guard added. Documents that PR preview environments are not used for data-dependent QA — canonical staging is always the test target. |
+| 3.37 | 2026-03-24 | **v2.2 post-ship lessons learnt applied.** §7 source prompt sprint_planning_prompt.md v2.3→v2.4; §8 source prompt execution_prompt.md v2.6→v2.7; §9 source prompt delivery_verification_prompt.md v1.5→v1.6. §14 table: sprint_planning_prompt v2.4, execution_prompt v2.7, delivery_verification_prompt v1.6. Patches: (sprint_planning) LL-v2.2-SP-01 blocked-decision advisory; (execution) LL-v2.2-EX-01–05 delegation log in-flight, all_merged advisory, backend branch invariant, spec_references schema note, QA evidence pending note; (delivery_verification) LL-CL-v22-01 backlog reference synchronisation at deviation filing. |
 | 3.36 | 2026-03-23 | **ST-13/14/15 (EPIC-05): governance process enhancements.** §6 source prompt roadmap_prompt.md v4.3→v4.5; §6B source prompt release_planning_prompt.md v2.21→v2.24; §7 source prompt sprint_planning_prompt.md v2.2→v2.3; §10 source prompt post_ship_closure.md v2.0→v2.1; §14 table: roadmap_prompt v4.5, release_planning_prompt v2.24, sprint_planning_prompt v2.3, post_ship_closure v2.1, lessons_learnt_prompt v1.8, shared_standards v2.7. Changes: (ST-13) Provisional-Target field on backlog promotion (shared_standards §16.6, roadmap_prompt STEP 9, release_planning_prompt STEP 1.2); (ST-14) scored_initiatives.md effort band handoff contract (shared_standards §16.7, release_planning_prompt STEP 0 load + STEP 4.5 lookup); (ST-15) Carry-Forward block in lessons_learnt_closure.md (shared_standards §16.8, roadmap/release/sprint planning STEP 0 read advisory, post_ship_closure STEP 8.5 write requirement, lessons_learnt_prompt §3.5 + §5 schema). |
 | 3.35 | 2026-03-22 | **AUD-2026-03-21 tier 1 fixes applied.** §13 Artefact Register: `closure_state.json` row added (Post-Ship, Class —, Owner PMO Lead). §6B source prompt release_planning_prompt.md v2.20→v2.21. §6M source prompt backlog_management_prompt.md v1.3→v1.4. §14 governance table: release_planning_prompt v2.21, backlog_management_prompt v1.4, shared_standards v2.4. |
 | 3.34 | 2026-03-21 | **Lessons learnt patches applied (cycle 2026-03-21__item-3.5).** §6 source prompt roadmap_prompt.md v4.2→v4.3; §6M source prompt roadmap_management_prompt.md v1.2→v1.3; §14 Roadmap Engine Source → v4.3; Roadmap Management Engine → v1.3. Two patches: (1) roadmap_management_prompt.md v1.3: STEP 5.4 added — retirement step now also updates initiative_register.md (resolves LL-01-patch-4.3 recurrence escalation); (2) roadmap_prompt.md v4.3: STEP 4.4 debate queue + STEP 5 preflight check (resolves Friction Item 1 cycle 2026-03-21__item-3.5). |

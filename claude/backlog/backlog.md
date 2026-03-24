@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-24 (post-ship closure — cycle 2026-03-21__release-v2.2 — 15 items shipped and tombstoned; 3 Phase 4 items confirmed present)
+**Last Updated:** 2026-03-24 (outstanding actions applied: BLG-BE-02 renumbered to BLG-BE-04; TEST-GAP-EPIC-02 v2.2 entry renamed to TEST-GAP-NOTIF-01; BLG-QA-01 blocker resolved; active target releases updated v2.2→v2.3)
 **Last rebalance:** 2026-03-21 (cycle 2026-03-21__item-3.5 — DL-011)
 
 > ⚠️ Standing Notice
@@ -112,8 +112,8 @@ Items promoted to backlog from idea pool during roadmap rebalance cycle 2026-03-
 **Source:** ST-11 post-merge staging sign-off — 2026-03-19 (two bugs found manually that Playwright would have caught automatically)
 **Cycle added:** 2026-03-18__release-v2.1
 **Effort:** M (~1–2 days)
-**Target release:** v2.2
-**Depends on:** BLG-OPS-03 (per-PR preview environment — Playwright needs a stable URL to run against)
+**Target release:** v2.3
+**Depends on:** ~~BLG-OPS-03~~ — resolved: BLG-OPS-03 (per-PR preview environments) shipped in v2.1 (ST-15). No outstanding blockers.
 
 **Problem**
 Post-merge staging sign-off for ST-11 found two bugs manually (zoom-out stuck at right edge; tooltip % of total missing). Both were fully automatable — they would have been caught pre-merge if Playwright tests existed. Manual DoQ testing is slow and error-prone for interaction-heavy UI (tooltips, zoom, drag, modals).
@@ -137,14 +137,15 @@ Post-merge staging sign-off for ST-11 found two bugs manually (zoom-out stuck at
 
 ---
 
-### BLG-BE-02 — R-Multiple Analysis: stop price unavailable from trade_history
+### BLG-BE-04 — R-Multiple Analysis: stop price unavailable from trade_history
 **Priority:** P3 (Low)
 **Type:** Backend / Data
 **Owner:** Head of Engineering
 **Source:** ST-11 post-merge staging sign-off — 2026-03-19
 **Cycle added:** 2026-03-18__release-v2.1
 **Effort:** S (~2–3 hrs)
-**Target release:** v2.2
+**Target release:** v2.3
+**ID note:** Renumbered from BLG-BE-02 (2026-03-24 — duplicate ID with v2.0 closed item "Spec and implement GET /portfolio/prospective-heat" per backlog health scan GROOM-20260324-01)
 
 **Problem**
 `RMultipleAnalysis.js` filters trades using `t.stop_price`. The analytics page passes trades from `trade_history`, which does not carry `initial_stop` (stop price lives on `positions`). Result: the R-Multiple Analysis section shows "R-Multiple requires stop prices to be defined for all trades" even when all positions had stop prices set at entry. The R-Multiple Distribution histogram (which renders inside the same component) only shows when `tradesWithR.length >= 10`.
@@ -190,7 +191,7 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 | BLG-SPEC-T01 | Spec-to-Test Traceability Matrix | v2.2 | 2026-03-21__release-v2.2 | EPIC-04/ST-12 |
 | BLG-QA-02 | Test Automation Readiness Assessment | v2.2 | 2026-03-21__release-v2.2 | EPIC-04/ST-11 |
 | TEST-GAP-EPIC-03 | Create watchlist test scenarios | v2.2 | 2026-03-21__release-v2.2 | EPIC-04/ST-10 |
-| TEST-GAP-EPIC-02 | Execute notifications_scenarios.md on staging | v2.2 | 2026-03-21__release-v2.2 | EPIC-04/ST-09 |
+| TEST-GAP-NOTIF-01 | Execute notifications_scenarios.md on staging | v2.2 | 2026-03-21__release-v2.2 | EPIC-04/ST-09 |
 | BLG-OPS-06 | Health Check Endpoint | v2.2 | 2026-03-21__release-v2.2 | EPIC-03/ST-08 |
 | BLG-FE-01 | Slippage StatsCard gradient key fix | v2.2 | 2026-03-21__release-v2.2 | EPIC-03/ST-07 |
 | BLG-BE-03 | CSV export function name import bug fix | v2.2 | 2026-03-21__release-v2.2 | EPIC-03/ST-06 |
@@ -274,7 +275,7 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 **Type:** Governance Process
 **Owner:** Head of Specs Team
 **Source:** Direct session architectural review — 2026-03-18
-**Target release:** v2.2
+**Target release:** v2.3
 
 **Problem**
 The current release planning engine computes and verifies SHA-256 hashes for sealed artefacts on every run. For a 2-person team, the primary threat (accidental writes by Claude) is already covered by write scope restrictions in STEP 5. Hash recomputation adds schema complexity and verification overhead for a failure mode that `git diff` would catch anyway.
@@ -310,7 +311,7 @@ The current release planning engine computes and verifies SHA-256 hashes for sea
 **Type:** UX / Frontend
 **Owner:** Product Owner
 **Source:** ST-10 DoQ staging sign-off — 2026-03-21
-**Target release:** v2.2
+**Target release:** v2.3
 
 **Problem**
 The left sidebar now has 13 navigation items. On shorter screens items near the bottom (Settings, Notifications) are hard to reach without scrolling. As the product grows this will worsen.
@@ -326,7 +327,7 @@ Product Owner to decide preferred grouping/pattern. Engineering to spec and impl
 
 ---
 
-*TEST-GAP-EPIC-02 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-09 — Retired to `claude/backlog/backlog_archive.md`*
+*TEST-GAP-NOTIF-01 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-09 — Retired to `claude/backlog/backlog_archive.md` — (ID note: renumbered from TEST-GAP-EPIC-02 per GROOM-20260324-01 duplicate scan — original TEST-GAP-EPIC-02 is v2.0 item "CohortAnalysis backend integration regression scenario")*
 
 ---
 
@@ -339,7 +340,7 @@ Product Owner to decide preferred grouping/pattern. Engineering to spec and impl
 **Type:** QA Coverage
 **Owner:** QA & Testing Owner
 **Source:** Delivery verification 2026-03-18__release-v2.1 — TSG-v21-03
-**Target release:** v2.2
+**Target release:** v2.3
 
 No scenario file covers slippage tracking (ST-14). QA & Testing Owner to add SC-SLIP-01 through SC-SLIP-04 covering: fill price input on trade entry, slippage % column display (colour-coded), avg slippage StatsCard update, null fill price shows "—". May be added to `docs/testing/reports_scenarios.md` or a new `slippage_scenarios.md`.
 
@@ -374,7 +375,7 @@ No scenario file covers slippage tracking (ST-14). QA & Testing Owner to add SC-
 **Source:** IW-20260321-01 (IDEA-strategy-owner-20260321-01)
 **Cycle added:** 2026-03-21__item-3.5
 **Effort:** M–L (~3–5 days)
-**Target release:** v2.2
+**Target release:** v2.3
 
 > ⚠️ **Scope constraint (from STEP 5 debate):** This item is display-only. No automated enforcement, no alerts generated by the score, no blocking behaviour. The score surfaces raw ATR/stop data in a compliance-framed summary. Any extension toward automated enforcement or notifications requires a new SPS≥4 review and explicit §13.3 sign-off from Strategy Rules & System Intent Owner.
 
@@ -408,7 +409,7 @@ Users have no dashboard view showing whether their open positions respect ATR-ba
 **Source:** IW-20260321-01 (IDEA-metrics-analytics-20260304-02 — gate cleared: BLG-FEAT-03 slippage tracking shipped)
 **Cycle added:** 2026-03-21__item-3.5
 **Effort:** S–M (~1–2 days)
-**Target release:** v2.2
+**Target release:** v2.3
 
 **Problem**
 Analytics metrics can be based on stale data (last portfolio/trade sync may be hours old). No indicator shows the user when data was last refreshed — they may be making decisions based on outdated P&L figures.
@@ -438,7 +439,7 @@ Analytics metrics can be based on stale data (last portfolio/trade sync may be h
 **Source:** IW-20260321-01 (IDEA-base44-frontend-20260304-01 — gate cleared: BLG-TECH-08 async ADR shipped v2.1)
 **Cycle added:** 2026-03-21__item-3.5
 **Effort:** M (~1–2 days)
-**Target release:** v2.2
+**Target release:** v2.3
 
 **Problem**
 API-backed interactions (portfolio load, watchlist load, alert evaluation) show inconsistent loading states — some show a spinner, some flash an empty state, some silently error. Users cannot reliably distinguish "loading" from "empty" from "error".
@@ -465,7 +466,7 @@ API-backed interactions (portfolio load, watchlist load, alert evaluation) show 
 **Source:** IW-20260321-01 (IDEA-head-of-engineering-20260304-02 — gate cleared: API surface stable post-v2.1)
 **Cycle added:** 2026-03-21__item-3.5
 **Effort:** S (~0.5–1 day)
-**Target release:** v2.2
+**Target release:** v2.3
 
 **Problem**
 No baseline exists for endpoint response times. As features are added (alert evaluation, chart queries), performance regressions cannot be detected. The alert evaluation endpoint and analytics queries are the most likely candidates for slowdown.
@@ -498,7 +499,7 @@ No baseline exists for endpoint response times. As features are added (alert eva
 **Source:** IW-20260304-01 (IDEA-base44-frontend-20260304-02 — gate cleared: BLG-SPEC-G2 Error Response Standard shipped v2.1)
 **Cycle added:** 2026-03-21__item-3.5
 **Effort:** S–M (~1–2 days)
-**Target release:** v2.2
+**Target release:** v2.3
 **Depends on:** BLG-SPEC-G2 (✅ shipped v2.1)
 
 **Problem**

@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.6
+**Version:** 2.7
 **Last Updated:** 2026-03-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -341,6 +341,11 @@ All per-item progress is recorded in:
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": ""
+          // spec_references note (LL-v2.2-EX-04): for delegated_qa documentation
+          // artefacts (e.g. test scenario files, readiness assessments) and autonomous
+          // infrastructure items with no prior canonical spec, spec_references may be
+          // left empty — set notes to "no prior spec applicable" to satisfy the
+          // completion condition check.
         }
       }
     }
@@ -593,6 +598,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 - If yes: transition item to `done`, verify acceptance criteria, update state.
   - Confirm `spec_references` is populated (fill now if missing — ask the assignee which spec section was implemented).
   - Check for deviations: if implementation diverges from the spec, file the deviation in the canonical spec before setting `deviations_filed = true`.
+  - **Update the delegation log entry** (per `shared_standards.md §16.3`) — set status to `Unblocked` and note the commit SHA. Do not wait until STEP 5.0 to record this; in-flight updates prevent bulk rework at sprint close (LL-v2.2-EX-01).
 - If no: keep blocked and report status to user.
 
 #### 3.1.C If `delegated_qa`:
@@ -610,6 +616,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
    - Test scenarios to execute: list any from `execution_state.json.epics.EPIC-xx.test_scenarios`; if none, derive from spec + acceptance criteria
    - Open section for QA findings (Director of Quality fills this)
    - Open section for disposition (Pass / Pass with notes / Fail)
+   - **Pending implementation note (LL-v2.2-EX-05):** If a test gap is identified in this delegated_qa item and the corresponding implementation story (e.g. the backend endpoint being tested) is not yet `done`, note "pending ST-xx completion" in the test scenarios field rather than flagging as a P1 gap. A test gap against an undelivered feature is expected — it is not a deviation; it becomes actionable once the implementation story ships.
 6. Surface to Director of Quality:
    - Link to `qa_evidence_EPIC-xx.md`
    - The specific section for this ST item
@@ -714,6 +721,8 @@ If all conditions pass:
 4. **Output the following user-facing re-invocation reminder:**
 
 > ✅ EPIC-xx merged. If there are remaining EPICs pending, re-invoke `run sprint --cycle <cycle_id>` after each subsequent EPIC merge so the engine can update state and check for sprint close readiness. Do not proceed to `run delivery verification` until all EPICs are merged and `run sprint` has been invoked after the final merge.
+
+> **Advisory (LL-v2.2-EX-02):** When `merge_gate.all_merged = true`, STEP 5 (Sprint Close) must execute in the same session. Do not end the session after the final merge without completing sprint close. If a session ends after the final merge but before STEP 5, re-invoke `run sprint --cycle <cycle_id>` — the engine detects `all_merged = true` and executes STEP 5 directly.
 
 If any condition fails: do not merge. Record which condition is unmet. If QA or Product Owner has not responded within their SLA: file an escalation record.
 
@@ -920,6 +929,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 - **Every block is recorded.** Nothing is silently skipped. Blocked items are documented in `execution_state.json` and surfaced to the user.
 - **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, it is used exclusively. Executing from the original slice when an amendment has sealed is a process integrity failure.
 - **Delivery pressure does not override quality gates.** Director of Quality sign-off is required on every EPIC before merge, regardless of timeline.
+- **Backend commits for delegated_frontend items must land on the EPIC branch.** Backend commits tightly coupled to a `delegated_frontend` story (e.g. new DB migration + endpoint required by the frontend) must be committed to that story's EPIC branch, not directly to `main`, unless the PMO Lead explicitly authorises a direct-to-main path in writing. Violation is a process deviation and must be documented in the QA evidence log for the affected EPIC (and any other EPIC whose merge window was impacted). Reference: DEV-EPIC02-ST05-02 (LL-v2.2-EX-03).
 
 ---
 
@@ -927,6 +937,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.7 | 2026-03-24 | Post-ship closure v2.2 lessons learnt applied. LL-v2.2-EX-01: STEP 3.1.B unblock detection — delegation log entry updated to `Unblocked` in-flight (not batched at STEP 5.0). LL-v2.2-EX-02: STEP 4 merge gate — advisory added: when `all_merged=true`, STEP 5 Sprint Close must execute in same session. LL-v2.2-EX-03: §13 invariants — backend branch discipline note added (delegated_frontend backend commits must land on EPIC branch). LL-v2.2-EX-04: §9.1 schema — spec_references may be empty for delegated_qa doc artefacts and autonomous infra items with no prior spec; notes field: "no prior spec applicable". LL-v2.2-EX-05: STEP 3.1.C — test gap against undelivered feature should be noted "pending ST-xx completion", not flagged P1. Authority: Head of Specs Team (post-ship closure 2026-03-21__release-v2.2). |
 | 2.6 | 2026-03-21 | LL-v2.1-P4-3: STEP 6 guard note added — do not emit `Sprint_Complete` in `.claude_current_state.json` if `execution_state.json.sealed` is still `false`. Ensures STEP 7 (Seal Execution Record) executes in the same session as sprint close before the delivery verification preflight can proceed. Authority: Head of Specs Team (post-ship closure immediate action). |
 | 2.5 | 2026-03-20 | §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file in `claude/agents/`, invoke a subagent acting in that role to perform the review before surfacing to the user. Always-human gates (Product Owner, merge gate) unchanged. §3.1.A step 11 added — sign-off gate check after deviation check. §9.1 schema — `sign_off_record` field added to ST item. Authority: Head of Specs Team. |
 | 2.4 | 2026-03-17 | Post-ship closure v2.0 lessons learnt patches applied. LL-v2.0-P3-4: qa_evidence sign-off block template — DoQ URL construction check added (for direct URL construction not via api.* wrapper, confirm base URL variable is exposed on imported object). LL-v2.0-P3-5: STEP 4 merge gate — merge order note added for multi-EPIC sprints where >1 EPIC modifies shared governance files; later branches must rebase onto main after first EPIC merges before final QA. LL-v2.0-P4-1: STEP 5.1 — QA Evidence Persistence Check added; after qa_signed_off: true, confirm qa_evidence Date: field is non-blank; if blank, re-apply sign-off before STEP 5.3. |

@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.5
+**Version:** 1.6
 **Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -283,6 +283,8 @@ For each deviation:
 | Deviation Ref | ST Item | Priority | Description | Disposition | Backlog Item |
 |---------------|---------|----------|-------------|-------------|-------------|
 | DEV-ref | ST-xx | P0–P3 | <one line> | Blocks / Accepted / Recorded | BL-ref |
+
+> **Backlog reference synchronisation (LL-CL-v22-01):** When a new backlog item is created for a deviation in this step (P2 requires backlog item; P3 confirms or creates one), also update the `Backlog reference:` field in the corresponding canonical spec deviation note to reference the correct backlog item ID. Do this in the same session — this prevents stale placeholder references (e.g. "to be filed at next rebalance") from persisting into post-ship closure, where they require correction at STEP 5.
 
 ---
 
@@ -609,6 +611,7 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6 | 2026-03-24 | LL-CL-v22-01: STEP 3 deviation register — backlog reference synchronisation note added. When a new backlog item is created for a deviation, the canonical spec deviation note `Backlog reference:` field must be updated to the new item ID in the same session. Prevents stale references at post-ship closure. Authority: Head of Specs Team (lessons learnt closure 2026-03-21__release-v2.2). |
 | 1.4 | 2026-03-11 | IMP-14: STEP 5.3 added — `test_scenario_gaps` structured table in `verification_report.md §6`; fields: gap_id, EPIC, description, qualifying_reason, disposition (backlog_item_created | not_applicable | deferred); all gaps must have a disposition before report seals (Phase 4 exit criterion). §8 completion condition updated. IMP-15: STEP 4.3 added — stale parked items detection; items parked in 3+ consecutive cycle backlog slices surfaced for mandatory PO disposition; recorded in `verification_report.md §5`; detection only — does not block verification status. |
 | 1.3 | 2026-03-10 | IMP-54: §5 Write Scope — `lessons_learnt_cycle.md` added (append-only, Phase 4 section; create if absent). STEP 8.5 added — lessons learnt Phase 4 append via `lessons_learnt_prompt.md §3.4`; output: `lessons_learnt_cycle.md` Phase 4 section; idempotency guard built into prompt §3.4; hard gate before STEP 9. STEP 10 commit: `lessons_learnt_cycle.md` added. §8 completion condition: Phase 4 section appended condition added. |
 | 1.1 | 2026-03-07 | **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. STEP -1.1 extended: checks `amended_backlog_slice_path` in `.claude_current_state.json`; cross-references against `execution_state.json.backlog_slice_source`; flags disagreement before proceeding. STEP 1 updated: iterates over the authoritative slice (not hardcoded `stage4_backlog_slice.md`). §5 write scope: amended backlog slice added to must-not-modify list. `verification_report.md` §1 template: `Backlog slice source` field added. §9 invariant added. **`Verification_Failed` status corrected to `Not_Verified`.** STEP 9 `Not_Verified` path: `status` field in `.claude_current_state.json` changed from `Verification_Failed` to `Not_Verified`, consistent with guide §9.4 state machine and lifecycle table. **Deferred execution blockers acknowledged (STEP 4.2, new).** STEP 4 split into §4.1 (outstanding items, unchanged) and §4.2 (deferred execution blockers). §4.2 reads `deferred_execution_blockers` from `state.json`, dispositions each blocker, and records outcomes in `verification_report.md` §5. Informational only — does not block verification status. Sign-off blocks in `verification_report.md` §9 updated: DoQ checklist and PO checklist each add a deferred blocker acknowledgement line. §8 completion condition updated. §9 invariant updated. **Escalation subroutine added.** `verification_escalations.md` added to §5 write scope. Escalation subroutine added (callable, ID prefix `ESC-VER-YYYYMMDD-nn`). STEP 3: P0 deviation now files escalation record. STEP 9 Not_Verified path: references escalation records in halt report. STEP 10 commit: `verification_escalations.md` added. §8 completion condition updated. **Guide fix required:** §9 source prompt v1.0 → v1.1; §14 Verification Engine Source → v1.1; `Not_Verified` confirmed as the canonical status string (not `Verification_Failed`). |
