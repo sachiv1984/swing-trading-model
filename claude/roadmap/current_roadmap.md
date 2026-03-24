@@ -51,6 +51,16 @@ These may be revisited in future versions without any canonical spec change:
 
 **v2.3 horizon (Provisional — pending release planning):** Active backlog pool: 23 items (~37–47 days estimated). Key candidates: BLG-FEAT-11 (Strategy Compliance Score, SPS=4, M–L), BLG-FEAT-09 (Metrics Staleness Indicator, P2, S–M), BLG-SPEC-D14 (Quick win, XS), BLG-QA-05 (Critical-path Smoke Test, M), BLG-OPS-09 (DB Size Alert, S). Release planning will scope from the full 23-item pool. v2.3 scope not committed until release planning engine run.
 
+<!-- roadmap-annotation-marker: RA:v2.3:2026-03-24__release-v2.3 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-24__release-v2.3
+- Plan published: 2026-03-24
+- Cycle folder: claude/cycles/2026-03-24__release-v2.3/
+- Backlog slice: claude/cycles/2026-03-24__release-v2.3/stage4_backlog_slice.md
+- Status at annotation: Planning → Published
+- Theme: Quality Automation & User Insight — 17 stories across 5 EPICs; 6 items deferred to v2.4
+
 ---
 
 ## 5. Priority 3 — Horizon: Later (v2.1 / v3.0)

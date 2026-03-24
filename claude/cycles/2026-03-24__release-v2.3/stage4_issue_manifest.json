@@ -1,0 +1,177 @@
+{
+  "cycle_id": "2026-03-24__release-v2.3",
+  "release": "v2.3",
+  "generated_utc": "2026-03-24T08:25:00Z",
+  "items": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "BLG-FEAT-11: Strategy Compliance Score (Display-Only)",
+      "priority": "P2",
+      "effort": "M-L",
+      "labels": ["sprint", "EPIC-01", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-FEAT-11"
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "BLG-FEAT-09: Metrics Staleness Indicator",
+      "priority": "P2",
+      "effort": "S-M",
+      "labels": ["sprint", "EPIC-01", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-FEAT-09"
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-02",
+      "title": "BLG-OPS-08: Staging Data Reset Script",
+      "priority": "P3",
+      "effort": "S",
+      "labels": ["sprint", "EPIC-02", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-OPS-08"
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "title": "BLG-QA-06: Test Data Seed Script Library",
+      "priority": "P2",
+      "effort": "S-M",
+      "labels": ["sprint", "EPIC-02", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-QA-06"
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "title": "BLG-QA-05: Critical-Path Smoke Test (Playwright)",
+      "priority": "P2",
+      "effort": "M",
+      "labels": ["sprint", "EPIC-02", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-QA-05"
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-02",
+      "title": "BLG-QA-01: Playwright E2E Chart Interactivity",
+      "priority": "P2",
+      "effort": "M",
+      "labels": ["sprint", "EPIC-02", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-QA-01"
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "title": "BLG-SPEC-D14: Update health_endpoints.md to v1.1",
+      "priority": "P2",
+      "effort": "XS",
+      "labels": ["sprint", "EPIC-03", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-SPEC-D14"
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "title": "BLG-OPS-09: Database Size Monitoring Alert",
+      "priority": "P2",
+      "effort": "S",
+      "labels": ["sprint", "EPIC-03", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-OPS-09"
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-03",
+      "title": "BLG-OPS-07: System Health Check Playbook",
+      "priority": "P3",
+      "effort": "S",
+      "labels": ["sprint", "EPIC-03", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-OPS-07"
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-04",
+      "title": "BLG-FE-05: Alert Notification Badge in Nav",
+      "priority": "P3",
+      "effort": "S",
+      "labels": ["sprint", "EPIC-04", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-FE-05"
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-04",
+      "title": "BLG-FE-04: Alert Thresholds Empty State CTA Button",
+      "priority": "P3",
+      "effort": "XS",
+      "labels": ["sprint", "EPIC-04", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-FE-04"
+    },
+    {
+      "st_id": "ST-12",
+      "epic_id": "EPIC-04",
+      "title": "BLG-FE-02: Loading State Standardisation",
+      "priority": "P3",
+      "effort": "M",
+      "labels": ["sprint", "EPIC-04", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-FE-02"
+    },
+    {
+      "st_id": "ST-13",
+      "epic_id": "EPIC-04",
+      "title": "BLG-UX-01: Sidebar Navigation Overflow",
+      "priority": "P2",
+      "effort": "M",
+      "labels": ["sprint", "EPIC-04", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-UX-01"
+    },
+    {
+      "st_id": "ST-14",
+      "epic_id": "EPIC-05",
+      "title": "BLG-GOV-07: Reinforce Backend Branch Discipline",
+      "priority": "P3",
+      "effort": "XS",
+      "labels": ["sprint", "EPIC-05", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-GOV-07"
+    },
+    {
+      "st_id": "ST-15",
+      "epic_id": "EPIC-05",
+      "title": "BLG-QA-03: Canonical Test Execution Report Template",
+      "priority": "P3",
+      "effort": "S",
+      "labels": ["sprint", "EPIC-05", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-QA-03"
+    },
+    {
+      "st_id": "ST-16",
+      "epic_id": "EPIC-05",
+      "title": "BLG-QA-04: Integration Test Coverage Report",
+      "priority": "P3",
+      "effort": "M",
+      "labels": ["sprint", "EPIC-05", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-QA-04"
+    },
+    {
+      "st_id": "ST-17",
+      "epic_id": "EPIC-05",
+      "title": "BLG-GOV-08: Engine Prompt Compression (Conditional)",
+      "priority": "P3",
+      "effort": "L",
+      "labels": ["sprint", "EPIC-05", "cycle:2026-03-24__release-v2.3"],
+      "milestone": "v2.3",
+      "backlog_ref": "BLG-GOV-08"
+    }
+  ]
+}

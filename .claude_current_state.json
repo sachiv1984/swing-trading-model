@@ -1,25 +1,12 @@
 {
-  "active_cycle": "2026-03-21__release-v2.2",
-  "cycle_name": "Release Planning — v2.2 Security, Alert Maturity & Quality",
-  "status": "Closed",
-  "closure_record": "claude/cycles/2026-03-21__release-v2.2/closure_record.md",
-  "closure_status": "Closed_with_actions",
-  "verification_status": "Verified_with_deviations",
-  "verification_report": "claude/cycles/2026-03-21__release-v2.2/verification_report.md",
-  "next_cycle_unblocked": true,
-  "post_ship_complete": true,
-  "engine": "post_ship_closure",
-  "sprint_goal_path": "claude/cycles/2026-03-21__release-v2.2/sprint_goal.md",
-  "sprint_backlog_path": "claude/cycles/2026-03-21__release-v2.2/sprint_backlog.md",
-  "sprint_capacity_path": "claude/cycles/2026-03-21__release-v2.2/sprint_capacity.md",
-  "sprint_sealed": true,
-  "sprint_goal_status": "confirmed",
-  "capacity_warn_acknowledged": true,
-  "last_sync_utc": "2026-03-24T02:30:00Z",
+  "active_cycle": "2026-03-24__release-v2.3",
+  "cycle_name": "Release Planning — v2.3 Quality Automation & User Insight",
+  "status": "Published",
+  "engine": "release_planning",
+  "backlog_slice_path": "claude/cycles/2026-03-24__release-v2.3/stage4_backlog_slice.md",
+  "last_sync_utc": "2026-03-24T09:00:00Z",
   "next_release": "v2.3",
-  "backlog_slice_path": "claude/cycles/2026-03-21__release-v2.2/stage4_backlog_slice.md",
-  "prior_cycle": "2026-03-18__release-v2.1",
-  "last_sync_utc": "2026-03-21T14:00:00Z",
+  "prior_cycle": "2026-03-21__release-v2.2",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
   "open_escalations": {},
@@ -46,9 +33,9 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-03-21__release-v2.2/release_plan.md",
-    "cycle_id": "2026-03-21__release-v2.2",
-    "published_utc": "2026-03-21T14:00:00Z",
+    "release_plan_path": "claude/cycles/2026-03-24__release-v2.3/release_plan.md",
+    "cycle_id": "2026-03-24__release-v2.3",
+    "published_utc": "2026-03-24T09:00:00Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
@@ -56,16 +43,16 @@
       "EPIC-04",
       "EPIC-05"
     ],
-    "story_items": 15,
+    "story_items": 17,
     "scope_items": 5,
     "capacity_check": "warn",
     "capacity_warn_sprints": 3,
-    "state_json": "claude/cycles/2026-03-21__release-v2.2/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-03-21__release-v2.2-security-alert-maturity-quality.md"
+    "state_json": "claude/cycles/2026-03-24__release-v2.3/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-03-24__release-v2.3-quality-automation-user-insight.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-03-18__release-v2.1/release_plan.md",
-    "cycle_id": "2026-03-18__release-v2.1",
-    "published_utc": "2026-03-18T00:00:00Z"
+    "release_plan_path": "claude/cycles/2026-03-21__release-v2.2/release_plan.md",
+    "cycle_id": "2026-03-21__release-v2.2",
+    "published_utc": "2026-03-21T14:00:00Z"
   }
 }

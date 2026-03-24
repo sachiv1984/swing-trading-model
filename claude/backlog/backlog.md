@@ -824,6 +824,38 @@ BLG-QA-02 (automation readiness assessment) identified test data reproducibility
 
 ---
 
+<!-- release-plan-marker: RP:v2.3:2026-03-24__release-v2.3 -->
+
+---
+
+## 11. v2.3 Release Slice — Quality Automation & User Insight
+
+*Planned: 2026-03-24 | Cycle: 2026-03-24__release-v2.3 | Backlog slice: claude/cycles/2026-03-24__release-v2.3/stage4_backlog_slice.md*
+
+| EPIC | Story | Title | Priority | Effort | Conditional |
+|------|-------|-------|----------|--------|-------------|
+| EPIC-01 | ST-01 | BLG-FEAT-11: Strategy Compliance Score (Display-Only) | P2 | M–L | No — Sprint 2; SPS=4 sign-off required |
+| EPIC-01 | ST-02 | BLG-FEAT-09: Metrics Staleness Indicator | P2 | S–M | No |
+| EPIC-02 | ST-03 | BLG-OPS-08: Staging Data Reset Script | P3 | S | No — Sprint 1 prerequisite; gates ST-04/05 |
+| EPIC-02 | ST-04 | BLG-QA-06: Test Data Seed Script Library | P2 | S–M | Yes — gated on ST-03 |
+| EPIC-02 | ST-05 | BLG-QA-05: Critical-Path Smoke Test (Playwright) | P2 | M | Yes — gated on ST-03 + ST-04 |
+| EPIC-02 | ST-06 | BLG-QA-01: Playwright E2E Chart Interactivity | P2 | M | No (independent) |
+| EPIC-03 | ST-07 | BLG-SPEC-D14: Update health_endpoints.md to v1.1 | P2 | XS | No — Sprint 1; gates ST-09 |
+| EPIC-03 | ST-08 | BLG-OPS-09: Database Size Monitoring Alert | P2 | S | No |
+| EPIC-03 | ST-09 | BLG-OPS-07: System Health Check Playbook | P3 | S | Yes — after ST-07 |
+| EPIC-04 | ST-10 | BLG-FE-05: Alert Notification Badge in Nav | P3 | S | No |
+| EPIC-04 | ST-11 | BLG-FE-04: Alert Thresholds Empty State CTA Button | P3 | XS | No |
+| EPIC-04 | ST-12 | BLG-FE-02: Loading State Standardisation | P3 | M | No |
+| EPIC-04 | ST-13 | BLG-UX-01: Sidebar Navigation Overflow | P2 | M | Yes — Product Owner design decision required |
+| EPIC-05 | ST-14 | BLG-GOV-07: Reinforce Backend Branch Discipline | P3 | XS | No — Sprint 1 governance quick win |
+| EPIC-05 | ST-15 | BLG-QA-03: Canonical Test Execution Report Template | P3 | S | No |
+| EPIC-05 | ST-16 | BLG-QA-04: Integration Test Coverage Report | P3 | M | No |
+| EPIC-05 | ST-17 | BLG-GOV-08: Engine Prompt Compression | P3 | L | Yes — conditional/stretch Sprint 3 |
+
+*Full acceptance criteria in stage4_backlog_slice.md. Capacity: WARN (~15–26 days estimated; 3 sprints phased). See release_plan.md §Capacity Check §Phasing Recommendation.*
+
+---
+
 <!-- release-plan-marker: RP:v2.2:2026-03-21__release-v2.2 -->
 
 ---
