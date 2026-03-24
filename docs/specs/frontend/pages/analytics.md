@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.5
-**Last Updated:** 2026-03-18
+**Version:** 1.6
+**Last Updated:** 2026-03-24
+**Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.9 additions):** docs/design/2026-03-06__release-v1.9/
 **Design Source (v2.1 additions):** docs/design/2026-03-18__release-v2.1/chart-interactivity/ux_spec.md
@@ -22,6 +23,7 @@ Users can:
 - View R-multiple distribution computed canonically from backend
 - Monitor discipline and compliance metrics
 - Export a PDF summary report
+- See data freshness indicator (v2.3)
 
 ---
 
@@ -39,6 +41,31 @@ All core analytics data is sourced from this call. The frontend transforms the s
 The page must never recalculate, derive, or override values returned by the backend.
 
 > **Note on §9 R-Multiple Analysis:** The existing §9 component performs client-side R-multiple calculation from `trades_for_charts` data as an intentional exception. The new §16 component (R-Multiple Distribution Backend) uses server-side computed values from a dedicated endpoint. Both may coexist; §16 is the canonical metric; §9 remains a visualisation aid.
+
+---
+
+## Metrics Staleness Indicator (v2.3 — ST-02 BLG-FEAT-09)
+
+**Design source:** docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md
+
+### Placement
+
+Below the page title, above the period selector.
+
+### Display
+
+- Normal: `Data as of N mins ago` (grey, secondary typography)
+- Stale (≥4h): `⚠ Data as of Nh ago — may be outdated` (amber)
+- Hover tooltip: absolute ISO timestamp (e.g. `Updated: 2026-03-24 09:41 UTC`)
+- If `last_sync_at` absent or null: indicator hidden
+
+### Relative time rules
+
+< 1 min → "just now" | 1–59 min → "N mins ago" | 1–23 h → "Nh ago" | ≥24 h → "N days ago"
+
+### Data source
+
+Backend exposes `last_sync_at` field on `GET /analytics/metrics` response (or a separate endpoint). If the field is absent, the indicator is omitted entirely. openapi.yaml must be updated if field is added to the response schema.
 
 ---
 
@@ -570,6 +597,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.6 | 2026-03-24 | ST-02 (BLG-FEAT-09, v2.3): §Metrics Staleness Indicator — "data as of" timestamp below page title; amber badge when stale (≥4h default); hover shows absolute ISO timestamp. Design source: docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
 | 1.5 | 2026-03-18 | v2.1 chart interactivity (ST-11, CHART-IX): §4 heatmap — tile click drill-down to Monthly Trades modal. §5 equity curve — zoom (scroll/pinch/buttons), pan (click-drag), Reset button. §9 R-Multiple Analysis — hover tooltip per bar (range, count, % of total). Design source: docs/design/2026-03-18__release-v2.1/chart-interactivity/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
 | 1.4 | 2026-03-13 | QA review (v1.9 Sprint 2): File deviation DEV-EPIC02-ST03-01 — CohortAnalysis.js uses client-side computation instead of GET /analytics/cohort. P2. Director of Quality sign-off. |
 | 1.3 | 2026-03-06 | v1.9 additions: §15 Cohort Analysis (ST-03), §16 R-Multiple Distribution Backend (ST-04), §17 Discipline & Compliance (ST-01). Updated API Dependency section to list additional endpoints. Updated Purpose & User Goals. Updated Component Rendering Order to items 15–17. Governance header upgraded to Class 1 compliant format. Design sources: docs/design/2026-03-06__release-v1.9/. |

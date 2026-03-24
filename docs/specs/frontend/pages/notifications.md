@@ -1,10 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-03-22
+**Version:** 0.3
+**Last Updated:** 2026-03-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md
+**Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md
 
 ---
 
@@ -322,9 +322,38 @@ Click again to collapse.
 
 ---
 
+## Nav Alert Badge (v2.3 — ST-10 BLG-FE-05)
+
+**Design source:** docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md
+
+A badge overlaid on the Alerts sidebar nav item showing unacknowledged alert count.
+
+### Display
+
+- Red filled circle with white count number, top-right of nav item
+- Count: alerts since last visit to Alerts page
+- Max display: "99+" if count > 99
+- Hidden when count = 0
+
+### Clear behaviour
+
+- Count resets when user navigates to the Alerts page
+- State managed in frontend (sessionStorage); no backend acknowledged/unacknowledged API required
+
+### Badge visibility with collapsible nav groups (ST-13)
+
+When the Tools nav group is collapsed, the badge count propagates to the group header row ("Tools ▶ [2]") so the user can see unacknowledged alerts even without expanding the group.
+
+### Data source
+
+`GET /alerts/history` — count of records since last visit timestamp (stored in sessionStorage).
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-03-24 | ST-10 (BLG-FE-05, v2.3): §Nav Alert Badge — unacknowledged alert count badge on Alerts nav item; clears on Alerts page navigation; badge visible on collapsed Tools group header. Design source: docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
 | 0.2 | 2026-03-22 | v2.2 additions: Section 2 (Alert Rule Thresholds — ST-04) and Page 3 (Alert History — ST-05). Sub-nav extended with "History" tab. Purpose & Goals, routes, and constraints updated. Design sources: `docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md` and `docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md`. Approved by Product Owner 2026-03-22. Confirmed compliant by Head of Specs Team. |
 | 0.1 | 2026-03-18 | Initial spec. ST-05 (notification preferences page) + ST-06 (in-app notification feed). Design gate: 2026-03-18__release-v2.1. Design source: UX specs approved by Product Owner 2026-03-18. |
