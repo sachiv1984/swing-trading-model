@@ -3,9 +3,57 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-21
+**Last Updated:** 2026-03-24
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.2 — Security, Alert Maturity & Quality — 2026-03-24
+
+Cycle: 2026-03-21__release-v2.2
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-03-21__release-v2.2/verification_report.md
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | X-API-Key authentication middleware (all non-health endpoints); Content Security Policy meta tag | docs/specs/api_contracts/conventions.md §1 v1.1; public/index.html |
+| EPIC-02 | Alert scheduling design (trigger mechanism, cooldown, cron); Alert Threshold Customisation UI (inline edit/validation); Alert History Table (evaluation log + backend: alert_evaluations table, GET /alerts/history, GitHub Actions cron) | docs/specs/api_contracts/alerts_endpoints.md v0.3; docs/specs/frontend/pages/notifications.md v0.2 §2 + §Page 3; docs/product/decisions/decisions--2026-03-21__release-v2.2.md §ST-03 |
+| EPIC-03 | CSV export function name bug fix; Slippage StatsCard gradient key fix; Operational health check endpoint (db status, last evaluation timestamps) | docs/specs/api_contracts/trade_endpoints.md; docs/specs/frontend/pages/trade_history.md; docs/specs/api_contracts/health_endpoints.md |
+| EPIC-04 | Notification scenario execution (SC-NOTIF-01–08, 9 Playwright tests); Watchlist test scenarios (SC-WATCH-01–06); Test automation readiness assessment; Spec-to-test traceability matrix (54 ACs, 22 TEST-GAP entries) | docs/testing/notifications_scenarios.md; docs/testing/watchlist_scenarios.md; docs/testing/test_automation_readiness.md; docs/testing/spec_to_test_traceability_matrix.md |
+| EPIC-05 | Provisional-Target field at backlog promotion; scored_initiatives.md effort band handoff for release planning; Structured lessons learnt carry-forward block across all engines | claude/system/roadmap_prompt.md v4.5; claude/system/release_planning_prompt.md v2.24; claude/system/sprint_planning_prompt.md v2.3; claude/system/post_ship_closure.md v2.1; claude/system/shared_standards.md v2.7; claude/system/lessons_learnt_prompt.md v1.8 |
+
+### Deviations accepted
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-HEALTH-001 | P2 | GET /health implementation schema differs from spec v1.0 — more informative schema; BLG-SPEC-D14 created for spec update | PO + DoQ 2026-03-24 |
+| DEV-EPIC02-ST05-02 | P2 | ST-05 backend commits landed on main rather than EPIC-02 branch — process deviation, no functional impact; BLG-GOV-07 created | PO + DoQ 2026-03-24 |
+
+2 minor deviations (P3/observation): DEV-EPIC02-ST04-01 (missing CTA in empty state — BLG-FE-04 created), DEV-EPIC02-ST05-01 (React fragment key — observation only). See verification_report.md.
+
+### Tech backlog items shipped
+
+- [ST-01] API Key Authentication for Render Deployment (BLG-SEC-01)
+- [ST-02] Content Security Policy Headers (BLG-SEC-02)
+- [ST-03] Alert Scheduling Design (BLG-OPS-04)
+- [ST-04] Alert Threshold Customisation (BLG-FEAT-10)
+- [ST-05] Alert History Table (BLG-FEAT-12)
+- [ST-06] Fix CSV Export Import Bug (BLG-BE-03)
+- [ST-07] Fix Slippage StatsCard Gradient Key (BLG-FE-01)
+- [ST-08] Health Check Endpoint (BLG-OPS-06)
+- [ST-09] Execute Notification Scenarios on Staging (TEST-GAP-EPIC-02)
+- [ST-10] Create Watchlist Test Scenarios (TEST-GAP-EPIC-03)
+- [ST-11] Test Automation Readiness Assessment (BLG-QA-02)
+- [ST-12] Spec-to-Test Traceability Matrix (BLG-SPEC-T01)
+- [ST-13] Roadmap Engine: Provisional-Target Field (BLG-GOV-04)
+- [ST-14] Release Planning: Load scored_initiatives.md (BLG-GOV-05)
+- [ST-15] Structured Lessons Learnt Carry-Forward Block (BLG-GOV-06)
+
+Sign-off: Product Owner — 2026-03-24
+QA sign-off: Director of Quality — 2026-03-24
 
 ---
 

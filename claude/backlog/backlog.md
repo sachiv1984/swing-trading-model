@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-21 (roadmap rebalance — cycle 2026-03-21__item-3.5 — 12 new backlog items added from DL-011 + BLG-FE-03)
+**Last Updated:** 2026-03-24 (post-ship closure — cycle 2026-03-21__release-v2.2 — 15 items shipped and tombstoned; 3 Phase 4 items confirmed present)
 **Last rebalance:** 2026-03-21 (cycle 2026-03-21__item-3.5 — DL-011)
 
 > ⚠️ Standing Notice
@@ -167,42 +167,11 @@ Post-merge staging sign-off for ST-11 found two bugs manually (zoom-out stuck at
 
 ---
 
-### BLG-FE-01 — Slippage StatsCard uses unsupported gradient key (cosmetic)
-**Priority:** P3 (Low)
-**Type:** Frontend / Cosmetic
-**Owner:** Base44 Frontend
-**Source:** ST-14 DoQ review observation — 2026-03-20
-**Cycle added:** 2026-03-18__release-v2.1
-**Effort:** XS (<30 min)
-**Target release:** v2.2
-
-**Problem**
-`TradeHistory.js` passes `color="cyan"` to the Avg Slippage `StatsCard`. The `StatsCard` gradient map has no `"cyan"` key — the card renders without the expected gradient background. All non-null slippage states (negative/emerald, positive/rose) use colour-coded values in the cell, so this is a cosmetic regression on the summary card only.
-
-**Acceptance Criteria**
-- Avg Slippage StatsCard renders with a supported gradient key (e.g. `"slate"` or `"violet"`) when slippage is null/zero
-- No regression to the cell-level colour coding (emerald/rose) in `TradeHistoryTable.js`
+*BLG-FE-01 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-07 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
-### BLG-BE-03 — Latent CSV export import bug: wrong function name in trade_service.py
-**Priority:** P2 (Medium)
-**Type:** Backend / Defect
-**Owner:** Head of Engineering
-**Source:** ST-14 DoQ review observation — 2026-03-20
-**Cycle added:** 2026-03-18__release-v2.1
-**Effort:** XS (<15 min)
-**Target release:** v2.1 (or earliest opportunity)
-
-**Problem**
-`backend/services/trade_service.py` imports `get_all_trade_history` from `database`, but the actual function in `database.py` is `get_all_closed_trades_for_csv_export`. The import will raise `ImportError` at runtime if the CSV export path (`GET /trades/export/csv`) is exercised. The bug is latent — the endpoint is defined but this code path is not covered by any current automated test.
-
-This was introduced when BLG-FEAT-07 (CSV Export of Trade History) was shipped. It went undetected because the import error only fires when the function is called, not at module load time (the import is inside `trade_csv_service.py`).
-
-**Acceptance Criteria**
-- `trade_service.py` (or whichever service handles `/trades/export/csv`) imports the correct function name from `database.py`
-- `GET /trades/export/csv` returns a valid CSV without error
-- Regression confirmed: the incorrect import name is present before the fix
+*BLG-BE-03 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-06 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
@@ -212,6 +181,24 @@ Items archived in `claude/backlog/backlog_archive.md`. Listed most recent first.
 
 | Item ID | Title | Shipped | Cycle | Story |
 |---------|-------|---------|-------|-------|
+| BLG-GOV-07 | Reinforce backend branch discipline in execution prompt | v2.3 target | 2026-03-21__release-v2.2 (filed) | — |
+| BLG-FE-04 | Alert Thresholds empty state: add "Add alert rule" CTA button | v2.3 target | 2026-03-21__release-v2.2 (filed) | — |
+| BLG-SPEC-D14 | Update health_endpoints.md to document actual GET /health response schema | v2.3 Sprint 1 | 2026-03-21__release-v2.2 (filed) | — |
+| BLG-GOV-06 | Structured lessons learnt carry-forward block | v2.2 | 2026-03-21__release-v2.2 | EPIC-05/ST-15 |
+| BLG-GOV-05 | Release planning loads scored_initiatives.md | v2.2 | 2026-03-21__release-v2.2 | EPIC-05/ST-14 |
+| BLG-GOV-04 | Roadmap engine Provisional-Target field | v2.2 | 2026-03-21__release-v2.2 | EPIC-05/ST-13 |
+| BLG-SPEC-T01 | Spec-to-Test Traceability Matrix | v2.2 | 2026-03-21__release-v2.2 | EPIC-04/ST-12 |
+| BLG-QA-02 | Test Automation Readiness Assessment | v2.2 | 2026-03-21__release-v2.2 | EPIC-04/ST-11 |
+| TEST-GAP-EPIC-03 | Create watchlist test scenarios | v2.2 | 2026-03-21__release-v2.2 | EPIC-04/ST-10 |
+| TEST-GAP-EPIC-02 | Execute notifications_scenarios.md on staging | v2.2 | 2026-03-21__release-v2.2 | EPIC-04/ST-09 |
+| BLG-OPS-06 | Health Check Endpoint | v2.2 | 2026-03-21__release-v2.2 | EPIC-03/ST-08 |
+| BLG-FE-01 | Slippage StatsCard gradient key fix | v2.2 | 2026-03-21__release-v2.2 | EPIC-03/ST-07 |
+| BLG-BE-03 | CSV export function name import bug fix | v2.2 | 2026-03-21__release-v2.2 | EPIC-03/ST-06 |
+| BLG-FEAT-12 | Alert History Table | v2.2 | 2026-03-21__release-v2.2 | EPIC-02/ST-05 |
+| BLG-FEAT-10 | Alert Threshold Customisation | v2.2 | 2026-03-21__release-v2.2 | EPIC-02/ST-04 |
+| BLG-OPS-04 | Alert scheduling design | v2.2 | 2026-03-21__release-v2.2 | EPIC-02/ST-03 |
+| BLG-SEC-02 | Content Security Policy Headers | v2.2 | 2026-03-21__release-v2.2 | EPIC-01/ST-02 |
+| BLG-SEC-01 | API Key Authentication for Render Deployment | v2.2 | 2026-03-21__release-v2.2 | EPIC-01/ST-01 |
 | BLG-PROC-01 | Cross-EPIC process compliance check | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-19 |
 | TEST-GAP-TAX-01 | Tax Year P&L report test scenarios | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-18 |
 | TEST-GAP-SIG-01 | Signals page controls test scenarios | v2.1 | 2026-03-18__release-v2.1 | EPIC-06/ST-18 |
@@ -306,71 +293,15 @@ The current release planning engine computes and verifies SHA-256 hashes for sea
 
 ---
 
-### BLG-GOV-04 — Roadmap engine writes Provisional-Target at backlog promotion
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Direct session architectural review — 2026-03-18
-**Target release:** v2.2
-
-**Problem**
-When the roadmap engine promotes an idea to the backlog (STEP 8/9), it has full scoring context — horizon (Now/Next/Later), effort band, CPS alignment. None of this flows to the backlog item as a provisional release target. Release planning then evaluates candidates without this signal, duplicating capacity reasoning from scratch.
-
-**Proposed change**
-- Roadmap engine STEP 9: when writing a promoted item to `backlog.md`, include a `**Provisional-Target:**` field derived from the item's horizon placement (Now → next planned release, Next → +1 release, Later → unscheduled)
-- This is a signal, not a commitment — release planning may override it during STEP 4 capacity check
-- Addresses the capacity reasoning duplication problem together with BLG-GOV-05
-
-**Acceptance Criteria**
-- `roadmap_prompt.md` STEP 9 write instructions include `Provisional-Target` field on new backlog items
-- Field format documented in `shared_standards.md`
-- Release planning STEP 1 reads `Provisional-Target` as a candidate prioritisation input
+*BLG-GOV-04 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-13 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
-### BLG-GOV-05 — Release planning loads scored_initiatives.md for effort band handoff
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Direct session architectural review — 2026-03-18
-**Target release:** v2.2
-
-**Problem**
-`roadmap_prompt.md` (line 864) explicitly states that effort bands in `scored_initiatives.md` are recorded "to provide the release planning engine with sizing signal." However, release planning's STEP 0 load list includes `initiative_register.md` but not `scored_initiatives.md`. The sizing signal is never consumed. Together with BLG-GOV-04 this is the root cause of capacity reasoning being duplicated across the two engines.
-
-**Proposed change**
-- Add `claude/roadmap/scored_initiatives.md` to release planning STEP 0 load list
-- Release planning STEP 4 capacity check references the effort band from this file rather than re-deriving sizing
-- If `scored_initiatives.md` is absent or an item has no entry: fall back to STEP 4 estimate as today
-
-**Acceptance Criteria**
-- `release_planning_prompt.md` STEP 0 loads `scored_initiatives.md`
-- STEP 4 capacity check references effort bands from the file where available
-- `shared_standards.md` documents the handoff contract between the two engines
+*BLG-GOV-05 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-14 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
-### BLG-GOV-06 — Structured lessons learnt carry-forward block across all engines
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Direct session architectural review — 2026-03-18
-**Target release:** v2.2
-
-**Problem**
-Lessons learnt from post-ship closure currently produce either (a) deferred patches applied ad-hoc at the next roadmap STEP -1.5, or (b) advisory items that sit in `lessons_learnt_closure.md` and are only consulted if someone remembers to look. No engine reads lessons as a substantive planning input. Carry-forward of learnings is effectively lost after one cycle.
-
-**Proposed change**
-- Standardise a `## Carry-Forward` section in `lessons_learnt_closure.md` (3–5 items max, structured as: observation, implication, which engine should act)
-- All engines (roadmap, release planning, sprint planning) read this section at STEP 0 and surface it to the operator before proceeding
-- Items in Carry-Forward are acknowledged (ticked off) when the relevant engine acts on them, or explicitly deferred with rationale
-- Post-ship closure engine writes the Carry-Forward section as part of its STEP output
-
-**Acceptance Criteria**
-- `lessons_learnt_closure.md` schema includes `## Carry-Forward` section (documented in `shared_standards.md`)
-- `roadmap_prompt.md`, `release_planning_prompt.md`, `sprint_planning_prompt.md` STEP 0 each include a Carry-Forward read-and-acknowledge step
-- `post_ship_closure.md` writes the Carry-Forward section as a mandatory STEP output
-- At least one carry-forward item from a prior cycle demonstrably influences the next cycle's planning
+*BLG-GOV-06 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-15 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
@@ -395,25 +326,11 @@ Product Owner to decide preferred grouping/pattern. Engineering to spec and impl
 
 ---
 
-### TEST-GAP-EPIC-02 — Watchlist test scenarios: formally execute notifications_scenarios.md on staging
-**Priority:** P2 (Medium)
-**Type:** QA Coverage
-**Owner:** QA & Testing Owner
-**Source:** Delivery verification 2026-03-18__release-v2.1 — TSG-v21-01
-**Target release:** v2.2 (before next sprint touching notifications domain)
-
-SC-NOTIF-01 through SC-NOTIF-08 exist in `docs/testing/notifications_scenarios.md` but were not formally executed and referenced in qa_evidence_EPIC-02.md. QA & Testing Owner to execute on staging and record results. Remaining 3 alert types (stop_loss_approach, grace_period_warning, market_regime_change) require open positions to trigger — test data setup needed.
+*TEST-GAP-EPIC-02 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-09 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
-### TEST-GAP-EPIC-03 — Create watchlist test scenarios
-**Priority:** P2 (Medium)
-**Type:** QA Coverage
-**Owner:** QA & Testing Owner
-**Source:** Delivery verification 2026-03-18__release-v2.1 — TSG-v21-02
-**Target release:** v2.2
-
-No test scenario file exists for the watchlist feature. QA & Testing Owner to create `docs/testing/watchlist_scenarios.md` covering: SC-WATCH-01 (add), SC-WATCH-02 (edit), SC-WATCH-03 (delete), SC-WATCH-04 (Add to Position removes from watchlist), SC-WATCH-05 (duplicate 409), SC-WATCH-06 (sort order with mixed signal statuses). SC-WATCH-06 also satisfies deferred AC-6 from ST-10 DoQ sign-off.
+*TEST-GAP-EPIC-03 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-10 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
@@ -428,24 +345,7 @@ No scenario file covers slippage tracking (ST-14). QA & Testing Owner to add SC-
 
 ---
 
-### BLG-OPS-04 — Alert evaluation scheduling: trigger mechanism and rule behaviour design
-**Priority:** P1 (High)
-**Type:** Product Design Gap
-**Owner:** Product Owner
-**Source:** Post-delivery review — 2026-03-20
-**Target release:** v2.2
-
-**Problem**
-`POST /alerts/evaluate` must be called explicitly to evaluate rules and fire notifications. There is no scheduler — alerts are dormant unless manually triggered. Additionally, the behaviour of each alert rule under real conditions (e.g. frequency, cooldown, what constitutes a `market_regime_change` trigger in practice) has not been fully designed. Without a trigger mechanism and clear rule behaviour, the alert system cannot operate autonomously.
-
-**Outstanding questions for Product Owner**
-- How often should evaluation run? (e.g. daily at market close, intraday, on-demand only?)
-- Should `stop_loss_approach` and `grace_period_warning` have a cooldown to avoid repeat notifications on consecutive evaluations?
-- What is the source of truth for `market_regime_change`? (currently reads `GET /market/status` — is this sufficient?)
-- Trigger mechanism preference: external cron (e.g. cron-job.org hitting the staging URL), Render cron job (paid), or a scheduled task within the app?
-
-**Proposed next step**
-Product Owner to answer outstanding questions above. Engineering to then spec and implement the scheduler and any cooldown logic as a follow-on story.
+*BLG-OPS-04 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-03 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
@@ -455,87 +355,15 @@ Product Owner to answer outstanding questions above. Engineering to then spec an
 
 ---
 
-### BLG-SEC-01 — API Key Authentication for Render Deployment
-**Priority:** P1 (High)
-**Type:** Security
-**Owner:** Backend Engineering Patterns Owner
-**Source:** IW-20260321-01 (IDEA-backend-engineering-20260321-01 + IDEA-cybersecurity-20260321-02)
-**Cycle added:** 2026-03-21__item-3.5
-**Effort:** M (~1 day)
-**Target release:** v2.2
-
-**Problem**
-The system is deployed on Render with publicly accessible URLs. There is no authentication on the API. Financial data (portfolio, trades, P&L, tax reports) is readable by anyone who knows the Render URL. HTTPS + unguessable URL is obscurity, not security.
-
-**Scope**
-- Add `X-API-Key` header requirement to all non-public API endpoints
-- Single hard-coded API key (environment variable) for single-user system
-- Return 401 on missing or invalid key
-- Document in `docs/specs/api_contracts/` (note: this must follow the OpenAPI Drift Detection rules — all endpoints must remain in openapi.yaml)
-- Frontend must include the API key in all requests (environment config)
-
-**Acceptance Criteria**
-- All endpoints require a valid X-API-Key header
-- Missing or invalid key returns HTTP 401
-- Frontend includes key from environment variable on all API calls
-- No regression to existing functionality
+*BLG-SEC-01 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-01 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
-### BLG-FEAT-12 — Alert History Table
-**Priority:** P2 (Medium)
-**Type:** Feature / Data Model
-**Owner:** Data Model & Domain Schema Owner + Backend Engineering
-**Source:** IW-20260321-01 (IDEA-data-model-owner-20260321-01)
-**Cycle added:** 2026-03-21__item-3.5
-**Effort:** M (~2–3 days)
-**Target release:** v2.2
-**Depends on:** BLG-OPS-04 (alert scheduling design — best sequenced together)
-
-**Problem**
-Alert evaluation results are transient. There is no record of which rules fired, what values triggered them, when they fired, or whether a notification was sent. Users cannot review alert history, debug misconfigurations, or trust that the system behaved correctly while they were away.
-
-**Scope**
-- New `alert_evaluations` table: stores evaluation timestamp, rule type, symbol, triggered (bool), values compared, notification_sent (bool)
-- `GET /alerts/history` endpoint returning recent evaluation records (last N days or N records)
-- Frontend: alert history view (table or list, sortable by date/symbol)
-- Schema migration with appropriate index on timestamp + rule_type
-- Update `docs/specs/api_contracts/alerts_endpoints.md` + `openapi.yaml`
-
-**Acceptance Criteria**
-- Every `POST /alerts/evaluate` call persists a record per rule evaluated
-- `GET /alerts/history` returns records with: timestamp, rule type, symbol, triggered flag, notification sent flag
-- Frontend displays history; records are sortable and filterable by rule type
-- Schema migration is reversible (down migration documented)
-- openapi.yaml updated in same commit
+*BLG-FEAT-12 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-05 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
-### BLG-FEAT-10 — Alert Threshold Customisation
-**Priority:** P2 (Medium)
-**Type:** Feature
-**Owner:** Product Owner + Backend Engineering Patterns Owner
-**Source:** IW-20260321-01 (IDEA-product-owner-20260321-01)
-**Cycle added:** 2026-03-21__item-3.5
-**Effort:** M (~2–3 days)
-**Target release:** v2.2
-
-**Problem**
-Alert rules use fixed hardcoded thresholds (e.g. stop_loss_approach % trigger). A user monitoring a low-volatility stock needs different thresholds than one monitoring high-volatility stocks. No per-rule or per-symbol threshold customisation exists.
-
-**Scope**
-- User-configurable numeric thresholds per alert rule type (e.g. stop_loss_approach: notify when within N% of stop)
-- Store thresholds in user settings or alert rule record
-- Frontend: threshold input fields on alert creation/edit UI
-- Backend: evaluation logic reads threshold from rule record, not hardcoded constant
-- Update `docs/specs/api_contracts/alerts_endpoints.md` + `openapi.yaml` if schema changes
-
-**Acceptance Criteria**
-- User can set a custom threshold when creating or editing an alert rule
-- Alert evaluation uses the per-rule threshold
-- Default threshold (current hardcoded value) applies when no custom value is set
-- Threshold visible on alert list view
-- openapi.yaml updated if response/request shape changes
+*BLG-FEAT-10 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-04 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
@@ -569,29 +397,7 @@ Users have no dashboard view showing whether their open positions respect ATR-ba
 
 ---
 
-### BLG-SPEC-T01 — Spec-to-Test Traceability Matrix
-**Priority:** P2 (Medium)
-**Type:** Quality / Documentation
-**Owner:** Director of Quality + Head of Specs Team
-**Source:** IW-20260321-01 (IDEA-director-of-quality-20260304-01 — gate cleared: ST-17 shipped v2.1)
-**Cycle added:** 2026-03-21__item-3.5
-**Effort:** M (~1–2 days)
-**Target release:** v2.2
-**Depends on:** ST-17 (Spec Coverage Inventory — ✅ shipped v2.1)
-
-**Problem**
-DoQ sign-offs cite test scenarios but there is no formal mapping from canonical spec ACs to specific test scenario IDs. AC coverage gaps are invisible — a scenario may exist that is not tied to any AC, or an AC may have no scenario covering it.
-
-**Scope**
-- For each canonical spec with test scenarios, create a traceability mapping: AC → scenario ID(s)
-- Start with high-value specs: alert rules, portfolio, positions, trade history
-- Document in `docs/testing/` as a reference alongside existing scenario files
-- Review against Specs_Index.md §9 (Test Coverage Gaps — v2.1) to confirm gaps are tracked
-
-**Acceptance Criteria**
-- Traceability matrix exists for at least 3 canonical specs
-- Each AC in covered specs maps to ≥1 scenario ID or is explicitly flagged as "No scenario — gap"
-- Gaps are added to TEST-GAP tracking
+*BLG-SPEC-T01 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-12 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
@@ -621,30 +427,7 @@ Analytics metrics can be based on stale data (last portfolio/trade sync may be h
 
 ---
 
-### BLG-QA-02 — Test Automation Readiness Assessment
-**Priority:** P2 (Medium)
-**Type:** QA Process / Scoping
-**Owner:** QA & Testing Owner + Director of Quality
-**Source:** IW-20260321-01 (IDEA-qa-testing-20260304-02 — gate cleared: CI automation exists post-v1.10)
-**Cycle added:** 2026-03-21__item-3.5
-**Effort:** XS–S (~0.5–1 day)
-**Target release:** v2.2
-**Sequencing:** Should precede BLG-QA-01 (Playwright E2E) to confirm scope
-
-**Problem**
-Before investing in broad test automation (Playwright, integration test suite expansion), a readiness assessment should confirm: what infrastructure exists, what gaps remain, what is the optimal sequencing and tooling. Without this, automation investment may be misdirected.
-
-**Scope**
-- Review current test infrastructure (pytest integration tests, golden output tests, existing Playwright setup if any)
-- Map to BLG-QA-01 (Playwright E2E) and TEST-GAP items — confirm sequencing
-- Produce a short readiness report (1–2 pages) with: current state, recommended investments, priority order
-- Output: recommended scope for BLG-QA-01
-
-**Acceptance Criteria**
-- Readiness assessment document produced
-- Current automation coverage quantified (% endpoints with integration tests)
-- Recommended sequencing for BLG-QA-01 and other automation investments confirmed
-- Director of Quality sign-off
+*BLG-QA-02 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-11 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
@@ -700,51 +483,11 @@ No baseline exists for endpoint response times. As features are added (alert eva
 
 ---
 
-### BLG-OPS-06 — Health Check Endpoint
-**Priority:** P3 (Low)
-**Type:** Operational / Infrastructure
-**Owner:** Infrastructure & Operations Owner + Backend Engineering
-**Source:** IW-20260321-01 (IDEA-infra-ops-20260321-01 — direct backlog routing)
-**Cycle added:** 2026-03-21__item-3.5
-**Effort:** XS (<1 hour)
-**Target release:** v2.2
-
-**Problem**
-No `GET /health` endpoint exists. Monitoring tools, uptime checks, and alert schedulers have no way to verify system availability without parsing business logic responses.
-
-**Scope**
-- Add `GET /health` endpoint returning: HTTP 200, JSON with `{"status": "ok", "db": "connected" | "error", "last_market_status_check": "<ISO>", "last_alert_evaluation": "<ISO or null>"}`
-- Add to openapi.yaml
-- Wire into any future alert scheduler as a pre-flight check
-
-**Acceptance Criteria**
-- `GET /health` returns 200 with above JSON when system is healthy
-- `db` field reflects actual DB connectivity
-- openapi.yaml updated in same commit
+*BLG-OPS-06 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-08 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
-### BLG-SEC-02 — Content Security Policy (CSP) Headers
-**Priority:** P3 (Low)
-**Type:** Security / Frontend
-**Owner:** Cybersecurity & Trust Lead + Base44 Frontend
-**Source:** IW-20260321-01 (IDEA-cybersecurity-20260321-01 — direct backlog routing)
-**Cycle added:** 2026-03-21__item-3.5
-**Effort:** XS (<1 hour)
-**Target release:** v2.2
-
-**Problem**
-The React frontend has no Content Security Policy (CSP) headers configured. CSP is a standard defence against XSS attacks that restricts which scripts, styles, and resources can be loaded by the browser.
-
-**Scope**
-- Configure CSP headers on the frontend (via meta tag or Render headers configuration)
-- Appropriate policy: restrict scripts to same-origin + CDN sources used by the app; no inline scripts (or nonce-based if required)
-- Verify no regression — ensure all current resources load correctly under the policy
-
-**Acceptance Criteria**
-- CSP header present on all frontend pages
-- Browser console shows no CSP violations for normal application use
-- No regression to existing page functionality
+*BLG-SEC-02 — ✅ COMPLETE — Shipped v2.2 — 2026-03-24 — Cycle: 2026-03-21__release-v2.2 — Story: ST-02 — Retired to `claude/backlog/backlog_archive.md`*
 
 ---
 
@@ -835,9 +578,10 @@ When a delegated_frontend story requires backend implementation (new DB migratio
 
 ---
 
-## 9. v2.2 Release Slice — Security, Alert Maturity & Quality
+## 9. v2.2 Release Slice — Security, Alert Maturity & Quality ✅ Shipped 2026-03-24
 
-*Planned: 2026-03-21 | Cycle: 2026-03-21__release-v2.2 | Backlog slice: claude/cycles/2026-03-21__release-v2.2/stage4_backlog_slice.md*
+*Planned: 2026-03-21 | Shipped: 2026-03-24 | Cycle: 2026-03-21__release-v2.2 | Backlog slice: claude/cycles/2026-03-21__release-v2.2/stage4_backlog_slice.md*
+*All 15 items delivered. Verification: Verified_with_deviations. See verification_report.md for full traceability.*
 
 | EPIC | Story | Title | Priority | Effort | Conditional |
 |------|-------|-------|----------|--------|-------------|

@@ -258,8 +258,8 @@ No request body.
 
 **Priority:** P2
 
-**Target resolution:** Update this spec to v1.1 reflecting the new schema (backlog item: BLG-OPS-06 follow-up).
+**Target resolution:** Update this spec to v1.1 reflecting the new schema — backlog item BLG-SPEC-D14.
 
 **Owner:** API Contracts & Documentation Owner
 
-**Backlog reference:** BLG-OPS-06 (ST-08, cycle 2026-03-21__release-v2.2)
+**Backlog reference:** BLG-SPEC-D14 (filed delivery verification 2026-03-24, cycle 2026-03-21__release-v2.2)

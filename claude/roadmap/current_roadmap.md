@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-21 (roadmap rebalance — cycle 2026-03-21__item-3.5 — 3.5 Alerts & Notifications completion event)
+**Last Updated:** 2026-03-24 (post-ship closure — cycle 2026-03-21__release-v2.2 — v2.2 shipped)
 **Last rebalance:** 2026-03-21 (cycle 2026-03-21__item-3.5 — 3.5 Alerts & Notifications completion event)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v2.1** — Alerts, Watchlists & Enhancements — Shipped 2026-03-21
-**Next planned release:** **v2.2** (TBD)
+**v2.2** — Security, Alert Maturity & Quality — Shipped 2026-03-24
+**Next planned release:** **v2.3** (TBD)
 
 ---
 
@@ -45,45 +45,9 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*Items in this section are committed for the current or next release cycle. v2.1 shipped 2026-03-21. v2.2 is the next delivery horizon.*
+*Items in this section are committed for the current or next release cycle. v2.2 shipped 2026-03-24. v2.3 is the next delivery horizon.*
 
-<!-- roadmap-annotation-marker: RA:v2.2:2026-03-21__release-v2.2 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-03-21__release-v2.2
-- Plan published: 2026-03-21
-- Cycle folder: claude/cycles/2026-03-21__release-v2.2/
-- Backlog slice: claude/cycles/2026-03-21__release-v2.2/stage4_backlog_slice.md
-- Status at annotation: Validated
-
----
-
-<!-- roadmap-annotation-marker: RA:v2.0:2026-03-17__release-v2.0 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-03-17__release-v2.0
-- Plan published: 2026-03-17
-- Cycle folder: claude/cycles/2026-03-17__release-v2.0/
-- Backlog slice: claude/cycles/2026-03-17__release-v2.0/stage4_backlog_slice.md
-- Status at annotation: Shipped — 2026-03-17 (cycle 2026-03-17__release-v2.0) ✅ Complete
-
-### v2.0 — Reporting & Alerts *(consolidated)* ✅ Complete — Shipped 2026-03-17
-
-*3.5 Alerts & Notifications retired to `claude/roadmap/roadmap_archive.md` on 2026-03-21 — shipped in v2.1 (EPIC-01/EPIC-02, cycle 2026-03-18__release-v2.1).*
-*4.1b Tax-Year P&L Statement and 4.3 Signal Exposure Enhancement retired to `claude/roadmap/roadmap_archive.md` on 2026-03-17 — both shipped in v2.0.*
-
----
-
-<!-- roadmap-annotation-marker: RA:v2.1:2026-03-18__release-v2.1 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-03-18__release-v2.1
-- Plan published: 2026-03-18
-- Cycle folder: claude/cycles/2026-03-18__release-v2.1/
-- Backlog slice: claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md
-- Status at annotation: Shipped — 2026-03-21 (cycle 2026-03-18__release-v2.1) ✅ Complete
-
-*4.2 Watchlists & Screening and Chart Interactivity Enhancements retired to `claude/roadmap/roadmap_archive.md` on 2026-03-21 — both shipped in v2.1 (cycle 2026-03-18__release-v2.1).*
+*v2.2 (RA:v2.2), v2.0 (RA:v2.0), and v2.1 (RA:v2.1) annotation blocks retired to `claude/roadmap/roadmap_archive.md` on 2026-03-24 — all shipped. Delivery Plan section clear for v2.3 planning.*
 
 ---
 
@@ -145,7 +109,7 @@ When evaluating new features:
 | **v1.10** | Operations & Quality | Staging environment, CI/CD auto-deploy, CohortAnalysis refactor, integration tests, v1.7 QA scenario gaps — ✅ Shipped 2026-03-16 *(retired to archive 2026-03-16)* |
 | **v2.0** | Reporting & Alerts | Tax-year P&L statement, signal exposure controls (top_n, lookback_days) — ✅ Shipped 2026-03-17. Alerts & notifications deferred to v2.1 (pending BLG-TECH-08 ADR). |
 | **v2.1** | Alerts, Watchlists & Enhancements | ADR-003 (async notification), Alerts & Notifications (Telegram delivery), Watchlists & Screening, Chart Interactivity, Tax-Year PDF/CSV Export, Slippage Tracking, Spec Debt & QA Coverage — ✅ Shipped 2026-03-21 |
-| **v2.2** | Security, Alert Maturity & Quality | Security hardening (API Key Auth, CSP), Alert system maturity (scheduling, thresholds, history), Bug fixes & operational quick wins, QA coverage, Governance process enhancements — 15 stories, 5 EPICs |
+| **v2.2** | Security, Alert Maturity & Quality | Security hardening (API Key Auth, CSP), Alert system maturity (scheduling, thresholds, history), Bug fixes & operational quick wins, QA coverage, Governance process enhancements — ✅ Shipped 2026-03-24 |
 
 ---
 

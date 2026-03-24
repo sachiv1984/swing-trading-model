@@ -1,13 +1,92 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-17
+**Last Updated:** 2026-03-24
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v2.2 — Security, Alert Maturity & Quality (RA:v2.2)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (annotation block RA:v2.2)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-24
+**Shipped version:** v2.2 (2026-03-24)
+**Cycle reference:** 2026-03-21__release-v2.2
+**Verification report:** `claude/cycles/2026-03-21__release-v2.2/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-03-24
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.2:2026-03-21__release-v2.2 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-21__release-v2.2
+- Plan published: 2026-03-21
+- Cycle folder: claude/cycles/2026-03-21__release-v2.2/
+- Backlog slice: claude/cycles/2026-03-21__release-v2.2/stage4_backlog_slice.md
+- Status at annotation: Shipped — 2026-03-24 (cycle 2026-03-21__release-v2.2) ✅ Complete
+
+---
+
+## v2.0 — Reporting & Alerts Annotation Block (RA:v2.0)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (annotation block RA:v2.0)
+**Status at retirement:** ✅ Complete (underlying items 4.1b and 4.3 retired 2026-03-17; annotation block tombstone retired 2026-03-24)
+**Retired from active roadmap:** 2026-03-24
+**Shipped version:** v2.0 (2026-03-17)
+**Cycle reference:** 2026-03-17__release-v2.0
+**Verification report:** `claude/cycles/2026-03-17__release-v2.0/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-03-24
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.0:2026-03-17__release-v2.0 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-17__release-v2.0
+- Plan published: 2026-03-17
+- Cycle folder: claude/cycles/2026-03-17__release-v2.0/
+- Backlog slice: claude/cycles/2026-03-17__release-v2.0/stage4_backlog_slice.md
+- Status at annotation: Shipped — 2026-03-17 (cycle 2026-03-17__release-v2.0) ✅ Complete
+
+### v2.0 — Reporting & Alerts *(consolidated)* ✅ Complete — Shipped 2026-03-17
+
+*3.5 Alerts & Notifications retired to `claude/roadmap/roadmap_archive.md` on 2026-03-21 — shipped in v2.1 (EPIC-01/EPIC-02, cycle 2026-03-18__release-v2.1).*
+*4.1b Tax-Year P&L Statement and 4.3 Signal Exposure Enhancement retired to `claude/roadmap/roadmap_archive.md` on 2026-03-17 — both shipped in v2.0.*
+
+---
+
+## v2.1 — Alerts, Watchlists & Enhancements Annotation Block (RA:v2.1)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (annotation block RA:v2.1)
+**Status at retirement:** ✅ Complete (underlying items 3.5, 4.2, CHART-IX retired 2026-03-21; annotation block tombstone retired 2026-03-24)
+**Retired from active roadmap:** 2026-03-24
+**Shipped version:** v2.1 (2026-03-21)
+**Cycle reference:** 2026-03-18__release-v2.1
+**Verification report:** `claude/cycles/2026-03-18__release-v2.1/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-03-24
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.1:2026-03-18__release-v2.1 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-18__release-v2.1
+- Plan published: 2026-03-18
+- Cycle folder: claude/cycles/2026-03-18__release-v2.1/
+- Backlog slice: claude/cycles/2026-03-18__release-v2.1/stage4_backlog_slice.md
+- Status at annotation: Shipped — 2026-03-21 (cycle 2026-03-18__release-v2.1) ✅ Complete
+
+*4.2 Watchlists & Screening and Chart Interactivity Enhancements retired to `claude/roadmap/roadmap_archive.md` on 2026-03-21 — both shipped in v2.1 (cycle 2026-03-18__release-v2.1).*
 
 ---
 

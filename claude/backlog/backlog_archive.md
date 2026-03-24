@@ -1,11 +1,34 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-21
+**Last Updated:** 2026-03-24
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### v2.2 Release Slice — 2026-03-21__release-v2.2
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** N/A (release tracking section)
+**Retired:** 2026-03-24
+**Shipped in:** v2.2 — Security, Alert Maturity & Quality
+**Evidence:** All 15 items shipped; `claude/cycles/2026-03-21__release-v2.2/closure_record.md`
+
+<!-- release-plan-marker: RP:v2.2:2026-03-21__release-v2.2 -->
+
+**Cycle:** 2026-03-21__release-v2.2
+**Release:** v2.2 — Security, Alert Maturity & Quality
+**Planned:** 2026-03-21
+**Shipped:** 2026-03-24
+**Verification:** Verified_with_deviations
+**Backlog slice:** `claude/cycles/2026-03-21__release-v2.2/stage4_backlog_slice.md`
+
+Items in v2.2 sprint: EPIC-01 (ST-01 BLG-SEC-01, ST-02 BLG-SEC-02), EPIC-02 (ST-03 BLG-OPS-04, ST-04 BLG-FEAT-10, ST-05 BLG-FEAT-12), EPIC-03 (ST-06 BLG-BE-03, ST-07 BLG-FE-01, ST-08 BLG-OPS-06), EPIC-04 (ST-09 TEST-GAP-EPIC-02, ST-10 TEST-GAP-EPIC-03, ST-11 BLG-QA-02, ST-12 BLG-SPEC-T01), EPIC-05 (ST-13 BLG-GOV-04, ST-14 BLG-GOV-05, ST-15 BLG-GOV-06)
+
+Full item definitions: in `claude/cycles/2026-03-21__release-v2.2/stage4_backlog_slice.md` and in `backlog.md` body (tombstoned in place per groom backlog 2026-03-24).
 
 ---
 

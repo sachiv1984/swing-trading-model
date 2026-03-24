@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-21
+**Last Updated:** 2026-03-24
 
 ---
 
@@ -102,7 +102,8 @@ It points to the **single canonical source**.
 - `*_endpoints.md`
 - `market_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-16): GET /market/status
 - `reports_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-17, ST-03): GET /reports/tax-year — UK tax-year P&L statement. Dual sign-off: Head of Specs Team + Financial Reporting & Records Owner (2026-03-17).
-- `alerts_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-20, ST-02): Alert rules CRUD, alert evaluation, notification feed, notification preferences. Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
+- `alerts_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-03-20, ST-02; updated v0.3 2026-03-24, ST-05): Alert rules CRUD, alert evaluation, notification feed, notification preferences, alert history (GET /alerts/history). Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
+- `health_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-03-18; spec update to v1.1 deferred to v2.3, BLG-SPEC-D14 — DEV-HEALTH-001 deviation accepted 2026-03-24): GET /health operational health check endpoint. Note: implementation schema differs from v1.0 spec; v1.1 update pending.
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**
@@ -284,20 +285,18 @@ Identified during delivery verification (verification_report.md §6 — TSG-v21-
 ### 9.1 TSG-v21-01 — EPIC-02: notifications_scenarios.md not formally executed
 
 **Identified:** 2026-03-21 (delivery verification 2026-03-18__release-v2.1)
-**Status:** Open — backlog item TEST-GAP-EPIC-02
+**Status:** RESOLVED — 2026-03-24 (v2.2, ST-09, cycle 2026-03-21__release-v2.2)
 **Owner:** QA & Testing Owner
 **Gap:** `docs/testing/notifications_scenarios.md` (SC-NOTIF-01 through SC-NOTIF-08) exists but was not formally executed and referenced in `qa_evidence_EPIC-02.md`. Remaining 3 alert types require test data with open positions.
-**Required action:** Execute SC-NOTIF-01 through SC-NOTIF-08 on staging; record results in `qa_evidence_EPIC-02.md`.
-**Resolution target:** Before next sprint touching notifications domain.
+**Resolution:** SC-NOTIF-01 through SC-NOTIF-08 executed on staging; 9 Playwright tests pass; results recorded in `qa_evidence_EPIC-04.md` (ST-09). Backlog item TEST-GAP-EPIC-02 closed.
 
 ### 9.2 TSG-v21-02 — EPIC-03: no watchlist test scenario file exists
 
 **Identified:** 2026-03-21 (delivery verification 2026-03-18__release-v2.1)
-**Status:** Open — backlog item TEST-GAP-EPIC-03
+**Status:** RESOLVED — 2026-03-24 (v2.2, ST-10, cycle 2026-03-21__release-v2.2)
 **Owner:** QA & Testing Owner
 **Gap:** No test scenario file exists for the watchlist feature (EPIC-03, ST-08/09/10). Spec refs: `docs/specs/api_contracts/watchlist_endpoints.md`, `docs/specs/frontend/pages/watchlist.md`.
-**Required action:** Create `docs/testing/watchlist_scenarios.md` covering SC-WATCH-01 through SC-WATCH-06.
-**Resolution target:** v2.2 (before next sprint touching watchlist domain). SC-WATCH-06 also satisfies deferred ST-10 AC-6 sort order.
+**Resolution:** `docs/testing/watchlist_scenarios.md` created covering SC-WATCH-01 through SC-WATCH-06 (including deferred ST-10 AC-6 sort order). Backlog item TEST-GAP-EPIC-03 closed.
 
 ### 9.3 TSG-v21-03 — EPIC-05: no slippage tracking test scenarios exist
 
@@ -306,11 +305,35 @@ Identified during delivery verification (verification_report.md §6 — TSG-v21-
 **Owner:** QA & Testing Owner
 **Gap:** No scenario file covers slippage tracking (ST-14). Spec ref: `docs/specs/frontend/pages/trade_history.md`.
 **Required action:** Author SC-SLIP-01 through SC-SLIP-04 in `docs/testing/reports_scenarios.md` or a new `slippage_scenarios.md`.
-**Resolution target:** v2.2 (before next sprint touching trade history / slippage).
+**Resolution target:** v2.3 (slippage scenarios not included in v2.2 sprint; TEST-GAP-EPIC-05-SLIP remains open).
 
 ---
 
-## 10. Guiding Principle
+## 10. Test Coverage Gaps — v2.2 (2026-03-21__release-v2.2)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v22-01 through TSG-v22-03). Gaps are tracked for resolution per stated disposition.
+
+### 10.1 TSG-v22-01 — EPIC-01: no scenario for API key authentication
+
+**Identified:** 2026-03-24 (delivery verification 2026-03-21__release-v2.2)
+**Status:** Open — backlog item BLG-QA-01 Phase 4
+**Owner:** QA & Testing Owner + Infrastructure & Operations Owner
+**Gap:** No automated test scenario covers X-API-Key authentication (401 path, frontend header injection, exempt endpoints). Core security control; zero scenario coverage. Manual acceptance only at ship.
+**Required action:** Add API auth integration tests (401 path, valid key, exempt endpoints) to CI as part of BLG-QA-01 Phase 4.
+**Resolution target:** BLG-QA-01 Phase 4 (Playwright E2E automation cycle)
+
+### 10.2 TSG-v22-02 — EPIC-03: no scenario for GET /health operational health response schema
+
+**Identified:** 2026-03-24 (delivery verification 2026-03-21__release-v2.2)
+**Status:** Open — deferred to v2.3 Sprint 1 alongside BLG-SPEC-D14 spec update
+**Owner:** QA & Testing Owner + Infrastructure & Operations Owner
+**Gap:** New endpoint; response schema not validated by any automated test (status, db, last_* fields). Manual code review only at ship.
+**Required action:** Add SC-HEALTH-01 scenario validating operational health response fields in v2.3 Sprint 1.
+**Resolution target:** v2.3 Sprint 1 (aligned with BLG-SPEC-D14 spec update)
+
+---
+
+## 11. Guiding Principle
 
 > Specs explain decisions.
 > This index ensures those decisions form a coherent system.

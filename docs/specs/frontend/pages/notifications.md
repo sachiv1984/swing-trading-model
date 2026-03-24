@@ -318,7 +318,7 @@ Click again to collapse.
 - **Priority:** P3
 - **Target resolution release:** v2.3
 - **Owner:** Base44 Frontend Prompt Owner
-- **Backlog reference:** To be filed as BLG-FE item at next roadmap rebalance.
+- **Backlog reference:** BLG-FE-04 (filed delivery verification 2026-03-24, cycle 2026-03-21__release-v2.2)
 
 ---
 
