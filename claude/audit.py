@@ -25,10 +25,9 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-03-21"
-PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-03-21-001",  # per_agent_submission_count missing from ideas_window.json
-    "AUD-2026-03-21-002",  # run audit has no structural cadence trigger in post-ship
-]
+PRIOR_AUDIT_OPEN_ITEMS = []
+# AUD-2026-03-21-001 closed 2026-03-24 — idea_intake_prompt.md v2.2: STEP 3 per_agent_submission_count computation instruction added.
+# AUD-2026-03-21-002 closed 2026-03-24 — post_ship_closure.md v2.2: STEP 0 Audit Cadence Check block added; OPERATIONAL_GUIDE §10 audit cadence documented.
 # AUD-2026-03-21-003 closed immediately — COMPLETED_CYCLES updated below.
 # AUD-2026-03-21-004 closed 2026-03-22 — §16.2 schema populated; release_planning inline schema removed.
 # AUD-2026-03-21-005 closed 2026-03-22 — backlog_management_prompt.md STEP 4.5 added.

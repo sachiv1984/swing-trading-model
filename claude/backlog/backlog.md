@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-24 (outstanding actions applied: BLG-BE-02 renumbered to BLG-BE-04; TEST-GAP-EPIC-02 v2.2 entry renamed to TEST-GAP-NOTIF-01; BLG-QA-01 blocker resolved; active target releases updated v2.2→v2.3)
+**Last Updated:** 2026-03-24 (AUD-2026-03-21 tier 3: BLG-GOV-08 engine prompt compression added; tier 2 patches applied to idea_intake_prompt and post_ship_closure)
 **Last rebalance:** 2026-03-21 (cycle 2026-03-21__item-3.5 — DL-011)
 
 > ⚠️ Standing Notice
@@ -572,6 +572,26 @@ When a delegated_frontend story requires backend implementation (new DB migratio
 **Acceptance Criteria**
 - execution_prompt.md §9 invariants updated to note: "Backend commits tightly coupled to a delegated_frontend story must land on the same EPIC branch unless explicitly authorised as direct-to-main by PMO Lead"
 - §6 checklist applied per CLAUDE.md
+
+---
+
+### BLG-GOV-08 — Engine prompt compression: roadmap_prompt and release_planning_prompt
+**Priority:** P3 (Low)
+**Type:** Governance Process / Technical Debt
+**Owner:** Head of Specs Team
+**Source:** AUD-2026-03-21 Tier 3 — engine prompt compression deferred (roadmap_prompt 1,581 lines; release_planning_prompt 1,534 lines)
+**Cycle added:** 2026-03-24
+**Effort:** L
+**Target release:** v2.3
+
+**Problem**
+`claude/system/roadmap_prompt.md` (1,581 lines) and `claude/system/release_planning_prompt.md` (1,534 lines) are the two largest engine prompts in the governance system. Audit AUD-2026-03-21 flagged both as candidates for compression to reduce per-run token cost. Current inline schemas, repeated examples, and verbose explanatory prose are opportunities for extraction to `shared_standards.md` or for prose tightening without removing instructional precision.
+
+**Acceptance Criteria**
+- Both files reduced by at least 10% in line count without removing governance intent or hard gate logic
+- Any extracted schemas or reference material moved to `shared_standards.md` with cross-reference added in-engine
+- §6 checklist applied per CLAUDE.md for both files
+- OPERATIONAL_GUIDE §14 and §6/§6B source prompt headers updated accordingly
 
 ---
 

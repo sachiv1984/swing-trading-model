@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.37
+**Version:** 3.38
 **Last Updated:** 2026-03-24
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -328,7 +328,7 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 
 ## 5. Idea Intake (Integrated — Phase 1 STEP -1.6)
 
-**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.0)
+**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.2)
 **Template:** `claude/system/idea_template.md`
 **Owner:** PMO Lead
 **Trigger:** Automatic — runs as STEP -1.6 of `run roadmap` when fewer than 20 open ideas (status `Submitted` or `Parked-cycle-<n>`) exist in `claude/ideas/ideas_register.md`. Also invocable standalone via `run ideas` for explicit window control.
@@ -999,14 +999,16 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.1)
-**Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)  
-**Owner:** PMO Lead  
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.2)
+**Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
+**Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
 
 Post-Ship Closure is the mandatory bridge between a verified sprint and a clean next cycle. It ensures all planning, operational, and governance documents reflect the shipped state before the next Phase 1 or Phase 1B is invoked.
 
 > `next_cycle_unblocked = true` is a necessary but not sufficient condition for opening the next cycle. Post-Ship Closure must also be complete.
+
+**Audit cadence:** `run audit` is due every 3 completed cycles. Post-Ship Closure STEP 0 surfaces an advisory when `completed_cycle_count % 3 == 0`. The audit is non-blocking but must complete before the next Phase 1B `plan release` invocation when the advisory fires.
 
 ### 10.1 Invocation
 
@@ -1286,10 +1288,10 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.34 |
-| Last Updated | 2026-03-21 |
+| Version | 3.38 |
+| Last Updated | 2026-03-24 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.1 |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.3 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.4 |
@@ -1300,7 +1302,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v2.7 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.6 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.1 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.2 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v2.7 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1328,6 +1330,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 | 3.32 | 2026-03-20 | **execution_prompt.md v2.4→v2.5 — agent-mediated sign-off.** §8 source prompt v2.4→v2.5. §14 Execution Engine Source → v2.5. Change: §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file, engine invokes a subagent acting in that role before surfacing to user; §3.1.A step 11 added; §9.1 `sign_off_record` field added to ST item schema. Always-human gates (Product Owner, merge gate) unchanged. |
 | 3.29 | 2026-03-18 | **ST-15 (EPIC-05): Render PR preview environments documented.** §8.2 preview environment bullet added — Render provisions `https://trading-assistant-api-staging-pr-{N}.onrender.com` per PR; Director of Quality may use preview URL as staging evidence method for frontend-interactive AC. §8.5 merge gate QA sign-off line updated to reference preview URL option alongside staging URL. |
 | 3.28 | 2026-03-19 | **ST-11 staging seed workflow updated to psql-based approach.** §8.2 staging test data seeding bullet added: `seed-preview.yml` workflow renamed to `Seed Staging Database`, trigger changed from `render-preview` label to `workflow_dispatch`, seeding mechanism changed from Python API script to `psql` against `STAGING_DATABASE_URL` secret, idempotency guard added. Documents that PR preview environments are not used for data-dependent QA — canonical staging is always the test target. |
+| 3.38 | 2026-03-24 | **AUD-2026-03-21 tier 2 fixes applied.** §5 source prompt idea_intake_prompt.md v2.0→v2.2; §10 source prompt post_ship_closure.md v2.1→v2.2; §14 table: idea_intake_prompt v2.2, post_ship_closure v2.2. §10 audit cadence advisory added (non-blocking; fires when `completed_cycle_count % 3 == 0`). Patches: (AUD-001) idea_intake_prompt STEP 3 `per_agent_submission_count` computation instruction added; (AUD-002) post_ship_closure STEP 0 Audit Cadence Check block added + §10 audit cadence documented. |
 | 3.37 | 2026-03-24 | **v2.2 post-ship lessons learnt applied.** §7 source prompt sprint_planning_prompt.md v2.3→v2.4; §8 source prompt execution_prompt.md v2.6→v2.7; §9 source prompt delivery_verification_prompt.md v1.5→v1.6. §14 table: sprint_planning_prompt v2.4, execution_prompt v2.7, delivery_verification_prompt v1.6. Patches: (sprint_planning) LL-v2.2-SP-01 blocked-decision advisory; (execution) LL-v2.2-EX-01–05 delegation log in-flight, all_merged advisory, backend branch invariant, spec_references schema note, QA evidence pending note; (delivery_verification) LL-CL-v22-01 backlog reference synchronisation at deviation filing. |
 | 3.36 | 2026-03-23 | **ST-13/14/15 (EPIC-05): governance process enhancements.** §6 source prompt roadmap_prompt.md v4.3→v4.5; §6B source prompt release_planning_prompt.md v2.21→v2.24; §7 source prompt sprint_planning_prompt.md v2.2→v2.3; §10 source prompt post_ship_closure.md v2.0→v2.1; §14 table: roadmap_prompt v4.5, release_planning_prompt v2.24, sprint_planning_prompt v2.3, post_ship_closure v2.1, lessons_learnt_prompt v1.8, shared_standards v2.7. Changes: (ST-13) Provisional-Target field on backlog promotion (shared_standards §16.6, roadmap_prompt STEP 9, release_planning_prompt STEP 1.2); (ST-14) scored_initiatives.md effort band handoff contract (shared_standards §16.7, release_planning_prompt STEP 0 load + STEP 4.5 lookup); (ST-15) Carry-Forward block in lessons_learnt_closure.md (shared_standards §16.8, roadmap/release/sprint planning STEP 0 read advisory, post_ship_closure STEP 8.5 write requirement, lessons_learnt_prompt §3.5 + §5 schema). |
 | 3.35 | 2026-03-22 | **AUD-2026-03-21 tier 1 fixes applied.** §13 Artefact Register: `closure_state.json` row added (Post-Ship, Class —, Owner PMO Lead). §6B source prompt release_planning_prompt.md v2.20→v2.21. §6M source prompt backlog_management_prompt.md v1.3→v1.4. §14 governance table: release_planning_prompt v2.21, backlog_management_prompt v1.4, shared_standards v2.4. |

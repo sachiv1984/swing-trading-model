@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.1
-**Last Updated:** 2026-03-16
+**Version:** 2.2
+**Last Updated:** 2026-03-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -266,6 +266,13 @@ Extract from the verified inputs (read targets — load only the specified secti
 Confirm: release version, feature name, `cycle_id`, ship date (use today if not recorded elsewhere), and Product Owner sign-off date are all resolvable. If any cannot be determined: halt in `strict` mode; flag and proceed with `[UNKNOWN]` placeholder in `standard` mode.
 
 Update `closure_state.json`: `steps.step_0_context = pass`, `last_updated_utc = <now>`
+
+**Audit Cadence Check (advisory — non-blocking):**
+Read `completed_cycle_count` from `.claude_current_state.json`.
+If `completed_cycle_count % 3 == 0` (i.e., a multiple of 3):
+  Output advisory: "⚠ AUDIT DUE — completed_cycle_count = N. Run `run audit` before next Phase 1B opens. File output at `claude/cycles/<cycle_id>/audit_report_AUD-<date>.md`."
+  Record in run manifest under Advisory Findings.
+This check is non-blocking — post-ship closure proceeds regardless.
 
 **If `--dry-run` is active:** After completing context load, produce the full closure plan (listing every step, every write that would be made, every flag) and end the routine. Do not proceed to STEP 1.
 
@@ -741,6 +748,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2 | 2026-03-24 | AUD-2026-03-21-002: STEP 0 — added Audit Cadence Check advisory block. Reads `completed_cycle_count` from `.claude_current_state.json`; if `% 3 == 0`, surfaces "⚠ AUDIT DUE" advisory and records in run manifest. Non-blocking. Eliminates manual audit tracking and prevents overdue audit accumulation. |
 | 2.0 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 8.5: sequencing clarification note added — `closure_record.md` is produced in STEP 9 and is not available at STEP 8.5 execution time; `lessons_learnt_closure.md` must be produced from STEP 8 consolidated action summary context; §6 Outstanding Actions in `closure_record.md` is derived from the same deferred items list. Prevents incorrect sequencing where STEP 8.5 waits for STEP 9 output. |
 | 1.9 | 2026-03-14 | AUD-2026-03-13-004: STEP 11 (Roadmap Document Management — mandatory) and STEP 12 (Backlog Document Management — mandatory) added. Both invoke their respective management prompts inline and pass through --dry-run. Closes Phase 1M skip gap — manage roadmap + groom backlog now run every cycle regardless of whether Phase 1 was executed. Former STEP 11 (Commit) renumbered STEP 13. closure_state.json schema updated: step_11_manage_roadmap, step_12_groom_backlog, step_13_commit. |
 | 1.8 | 2026-03-11 | IMP-15: STEP 3.4 added — stale parked items disposition check; identifies `backlog.md` items parked in 3+ consecutive completed cycles; records mandatory PO disposition requirement in closure record §6 Outstanding Actions; adds `[STALE — PO disposition required]` note to backlog item; does not resolve item. |

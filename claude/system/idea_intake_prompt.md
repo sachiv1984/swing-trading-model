@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.1
-**Last Updated:** 2026-03-18
+**Version:** 2.2
+**Last Updated:** 2026-03-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -274,6 +274,8 @@ If an agent role exists in `claude/agents/` but produces no submissions (e.g. th
 
 Update `claude/ideas/ideas_window.json`:
 
+Compute `per_agent_submission_count` before writing: for each agent slug in `eligible_agents`, count the number of Idea IDs in `submissions_received` whose value contains that agent's slug. Write the resulting map alongside `agents_submitted`.
+
 ```json
 {
   "status": "Closed",
@@ -396,6 +398,7 @@ Register rows are never deleted. Status is managed in-place.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2 | 2026-03-24 | AUD-2026-03-21-001: STEP 3 — added explicit `per_agent_submission_count` computation instruction. Field existed in JSON schema since v1.3 but lacked derivation rule; IW-20260321-01 was produced without the field. Computation: for each agent slug in `eligible_agents`, count Idea IDs in `submissions_received` containing that slug. |
 | 2.1 | 2026-03-18 | LL-01-patch (cycle 2026-03-18__item-4.3): STEP -0.5 added — stale idea horizon check. Before opening a window, Facilitator checks `ideas_register.md` for rows at Parked-cycle-2; if ≥15 rows, surfaces stale warning advisory in window announcement and summary. Register-model-correct version of the LL-01-patch originally filed in cycle 2026-03-17__item-v1.10 (which referenced the now-retired submissions folder model). |
 | 2.0 | 2026-03-17 | ST-19 (EPIC-06): Replaced per-file submission model with single `ideas_register.md` register. §1 purpose, §5 write scope, §6 naming (→ Idea ID + register location), §9 lifecycle table, and §10 invariants updated. STEP 0 creates register if absent; STEP 1 reads parked rows from register; STEP 2.1 appends register rows; STEP 4 window summary path updated; STEP 5 commit updated. Schema: `shared_standards.md §16.5`. |
 | 1.3 | 2026-03-14 | AUD-2026-03-13-018: STEP 3 ideas_window.json schema — added `per_agent_submission_count` map field. Enables roadmap STEP 4 to read per-agent counts directly without re-scanning submission files. |
