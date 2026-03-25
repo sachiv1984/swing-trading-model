@@ -5,8 +5,8 @@
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)
 **Scope:** Test strategy, acceptance criteria, regression coverage, and testing documentation
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-02-20
+**Version:** 1.2
+**Last Updated:** 2026-03-25
 
 ---
 
@@ -14,6 +14,7 @@
 
 | Version | Change |
 |---------|--------|
+| 1.2 | Section 5.7 added: live schema validation rule for seed scripts and test DML SQL — prompted by ST-04 seed failures caused by spec/DB divergence. |
 | 1.1 | Section 8 (Lifecycle & Versioning Compliance) updated: test scenario documents formally classified as Class 1 Canonical, with governed location, naming convention, and version increment rule. Version and Last Updated fields added to header to bring charter into full Class 5 compliance. |
 | 1.0 | Initial version. |
 
@@ -126,6 +127,20 @@ When a specification is ambiguous, internally inconsistent, or not practically t
 - Documents the issue clearly
 - References the affected spec sections
 - Raises it to the relevant canonical owner for resolution before writing scenarios against it
+
+### 5.7 Live Schema Validation for Seed Scripts and Test DML SQL
+
+Before committing any seed script or DML SQL (INSERT, UPDATE, DELETE) that targets application tables, the QA & Testing Owner must validate every column name against the **live staging schema** — not against `data_model.md`.
+
+**Required validation step:** Run `\d tablename` (or equivalent) against the live staging database and confirm that every column referenced in the SQL exists with the exact name used.
+
+**Rationale:** `data_model.md` is a specification document. It may lag the deployed schema due to migrations, hotfixes, or spec debt. Seed scripts written against a stale spec will fail silently if `ON_ERROR_STOP=1` is not set, or fail noisily at QA time if it is. Either outcome wastes a QA cycle.
+
+**Rules:**
+- Do not trust the spec as a substitute for live schema inspection
+- If a column name cannot be confirmed against the live DB, do not assume it exists
+- Any divergence found between `data_model.md` and the live schema must be filed as a BLG-SPEC-D item before proceeding
+- Seed scripts must include `ON_ERROR_STOP=1` in all psql invocations so that column errors surface immediately rather than leaving the DB in a partially-seeded state
 
 ---
 
