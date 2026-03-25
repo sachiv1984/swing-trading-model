@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-03-18
+**Version:** 1.2
+**Last Updated:** 2026-03-25
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -25,6 +25,7 @@ These endpoints are used for:
 
 - [GET /health](#get-health)
 - [GET /health/detailed](#get-healthdetailed)
+- [GET /health/database](#get-healthdatabase)
 - [POST /test/endpoints](#post-testendpoints)
 
 ---
@@ -33,12 +34,13 @@ These endpoints are used for:
 
 **Purpose**
 
-Provide a lightweight health check indicating overall service status and version.
+Provide a lightweight operational health check indicating overall service status, database connectivity, and last operation timestamps.
 
 Typically used by:
 - Load balancers
 - Uptime monitors
 - Deployment verification
+- Operational health check playbook (see `docs/operations/health_check_playbook.md`)
 
 **Method & Path**
 
@@ -56,26 +58,30 @@ No parameters.
 
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2026-02-17T10:30:00Z",
-  "version": "1.5.0"
+  "status": "ok",
+  "db": "connected",
+  "last_market_status_check": "2026-03-25T09:00:00Z",
+  "last_alert_evaluation": "2026-03-25T09:01:00Z"
 }
 ```
 
 #### Field notes
 
-- `version` reflects the deployed backend version and advances with each release. Treat as informational; do not use for contract compatibility checks.
+- `status`: overall service health — `"ok"` when all subsystems are nominal; `"error"` when one or more are failing.
+- `db`: database connectivity — `"connected"` when the database is reachable; `"error"` otherwise.
+- `last_market_status_check`: ISO 8601 timestamp of the most recent market status check, or `null` if none has run since startup.
+- `last_alert_evaluation`: ISO 8601 timestamp of the most recent alert evaluation run, or `null` if none has run since startup.
 
 ### Status values
 
-- `healthy`: all systems operational
-- `degraded`: partial issues, service still functional
-- `unhealthy`: critical failure
+- `"ok"`: all subsystems operational
+- `"error"`: one or more subsystems failing (see `db` field and `GET /health/detailed` for diagnostics)
 
 ### Notes
 
 - This endpoint is intentionally fast and lightweight.
-- No dependency-level detail is included.
+- Timestamp fields (`last_market_status_check`, `last_alert_evaluation`) may be `null` after a cold start before any background jobs have executed.
+- For dependency-level detail use `GET /health/detailed`.
 
 ---
 
@@ -153,6 +159,88 @@ No parameters.
 
 - Returns `"degraded"` overall status if any component is unhealthy.
 - Use for post-deployment verification.
+
+---
+
+## GET /health/database
+
+**Purpose**
+
+Return current database size, percentage of the Render free tier limit used, and the configured alert threshold. Triggers a Telegram notification if usage is at or above the threshold.
+
+Used for:
+- Operational size monitoring
+- FinOps visibility (Render free tier limit: 256 MB)
+- Manual admin checks
+
+**Method & Path**
+
+- `GET /health/database`
+
+**Idempotency**
+
+- Safe to refresh (read-only with respect to data). May trigger a Telegram notification as a side effect if the threshold is exceeded and the alert cooldown (1 hour) has elapsed.
+
+### Request
+
+No parameters.
+
+### Configuration
+
+| Environment variable | Default | Description |
+|---|---|---|
+| `DB_SIZE_ALERT_THRESHOLD_PERCENT` | `80` | Percentage of the 256 MB limit at which a Telegram notification is sent |
+
+### Response (200)
+
+```json
+{
+  "size_bytes": 52428800,
+  "size_mb": 50.0,
+  "limit_bytes": 268435456,
+  "limit_mb": 256.0,
+  "used_percent": 19.53,
+  "threshold_percent": 80.0,
+  "status": "ok"
+}
+```
+
+On query failure:
+
+```json
+{
+  "size_bytes": null,
+  "size_mb": null,
+  "limit_bytes": 268435456,
+  "limit_mb": 256.0,
+  "used_percent": null,
+  "threshold_percent": 80.0,
+  "status": "error",
+  "error": "<error message>"
+}
+```
+
+#### Field notes
+
+- `size_bytes`: raw database size in bytes as reported by `pg_database_size()`.
+- `size_mb`: `size_bytes` converted to megabytes (2 d.p.).
+- `limit_bytes`: Render free tier PostgreSQL limit — 268,435,456 bytes (256 MB). Fixed constant.
+- `limit_mb`: `limit_bytes` in megabytes — always 256.0.
+- `used_percent`: `size_bytes / limit_bytes × 100` (2 d.p.).
+- `threshold_percent`: value of `DB_SIZE_ALERT_THRESHOLD_PERCENT` env var (default 80).
+- `status`: `"ok"` when `used_percent < threshold_percent`; `"warning"` when at or above; `"error"` when the size query failed.
+
+### Status values
+
+- `"ok"`: usage below configured threshold — no action needed.
+- `"warning"`: usage at or above threshold — Telegram notification sent (if credentials configured and cooldown elapsed). Notification-only; no automated cleanup.
+- `"error"`: database size query failed — check database connectivity.
+
+### Notes
+
+- Alert delivery is **notification-only** — no automated data cleanup or deletion is triggered (§3 compliance).
+- Alert cooldown prevents duplicate notifications within a 1-hour window (module-level state; resets on process restart).
+- Requires `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` environment variables for Telegram delivery. If absent, the status is still returned but no notification is sent.
 
 ---
 
@@ -248,18 +336,16 @@ No request body.
 
 ## Known Deviations
 
-### DEV-HEALTH-001 — GET /health schema updated in v2.2
+None — all known deviations resolved as of v1.1 (BLG-SPEC-D14, 2026-03-25).
 
-**Canonical requirement:** `GET /health` returns `{"status": "healthy", "timestamp": "<ISO>", "version": "<string>"}` per this spec v1.0.
+> **Note:** DEV-HEALTH-001 was filed during v2.2 delivery verification. It documented that the `GET /health` implementation in v2.2 diverged from the v1.0 spec schema. This spec was updated to v1.1 in the v2.3 sprint (ST-07, EPIC-03) to document the correct v2.2+ schema. DEV-HEALTH-001 is now closed.
 
-**v2.2 implementation (ST-08):** `GET /health` now returns `{"status": "ok"|"error", "db": "connected"|"error", "last_market_status_check": "<ISO or null>", "last_alert_evaluation": "<ISO or null>"}`.
+---
 
-**Deviation type:** Implementation differs from spec requirement.
+## Changelog
 
-**Priority:** P2
-
-**Target resolution:** Update this spec to v1.1 reflecting the new schema — backlog item BLG-SPEC-D14.
-
-**Owner:** API Contracts & Documentation Owner
-
-**Backlog reference:** BLG-SPEC-D14 (filed delivery verification 2026-03-24, cycle 2026-03-21__release-v2.2)
+| Version | Date | Change |
+|---------|------|--------|
+| 1.2 | 2026-03-25 | ST-08 (BLG-OPS-09): Added `GET /health/database` — database size monitoring endpoint with configurable alert threshold and Telegram notification. Authority: Head of Engineering + FinOps & Resource Architect. |
+| 1.1 | 2026-03-25 | ST-07 (BLG-SPEC-D14): `GET /health` section updated to document actual v2.2 schema — `status: ok\|error`, `db: connected\|error`, `last_market_status_check`, `last_alert_evaluation`. DEV-HEALTH-001 closed. Authority: API Contracts & Documentation Owner. |
+| 1.0 | 2026-03-18 | Initial spec. |

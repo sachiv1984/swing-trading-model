@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 2.1.2
+  version: 2.2.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1281,6 +1281,21 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /health/database:
+    get:
+      tags: [Health]
+      summary: Database size monitoring (BLG-OPS-09)
+      description: |
+        Returns current database size, percentage of Render free tier limit (256 MB) used,
+        and configured alert threshold. Triggers a Telegram notification (notification-only,
+        no automated cleanup) if usage is at or above the threshold.
+        Contract: docs/specs/api_contracts/health_endpoints.md v1.2
+      responses:
+        "200":
+          $ref: "#/components/responses/OkDatabaseSize"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /test/endpoints:
     post:
       tags: [Health]
@@ -1907,6 +1922,47 @@ components:
           format: date-time
           nullable: true
 
+    DatabaseSizeResponse:
+      type: object
+      description: |
+        Database size monitoring response for GET /health/database (v2.3, ST-08 BLG-OPS-09).
+        Returns current DB size, percentage of Render free tier limit (256 MB) used,
+        and configured alert threshold. Alert is notification-only (no automated cleanup).
+        Contract: docs/specs/api_contracts/health_endpoints.md v1.2
+      required: [status, limit_bytes, limit_mb, threshold_percent]
+      properties:
+        size_bytes:
+          type: integer
+          nullable: true
+          description: Raw database size in bytes (null if query failed).
+        size_mb:
+          type: number
+          nullable: true
+          description: Database size in megabytes, 2 d.p. (null if query failed).
+        limit_bytes:
+          type: integer
+          description: Render free tier limit — 268,435,456 bytes (256 MB). Fixed constant.
+        limit_mb:
+          type: number
+          description: Render free tier limit in megabytes — always 256.0.
+        used_percent:
+          type: number
+          nullable: true
+          description: Percentage of limit used (2 d.p.). Null if query failed.
+        threshold_percent:
+          type: number
+          description: Alert threshold from DB_SIZE_ALERT_THRESHOLD_PERCENT env var (default 80).
+        status:
+          type: string
+          enum: [ok, warning, error]
+          description: |
+            "ok" — below threshold.
+            "warning" — at or above threshold; Telegram notification sent if credentials configured.
+            "error" — database size query failed.
+        error:
+          type: string
+          description: Error message when status is "error". Omitted otherwise.
+
     HealthResponse:
       type: object
       required: [status, timestamp, version]
@@ -2264,6 +2320,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/OperationalHealthResponse"
+
+    OkDatabaseSize:
+      description: Database size monitoring response (v2.3, BLG-OPS-09)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DatabaseSizeResponse"
 
     OkHealth:
       description: Health check passed (legacy — see OkOperationalHealth for v2.2 schema)
