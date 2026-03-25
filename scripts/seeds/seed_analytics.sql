@@ -45,14 +45,6 @@
 BEGIN;
 
 -- ── Idempotency: clear this seed's tickers from trade_history ─────────────
-DELETE FROM trade_reflections
-WHERE trade_id IN (
-    SELECT id FROM trade_history
-    WHERE portfolio_id = (SELECT id FROM portfolios LIMIT 1)
-      AND ticker IN ('AAAA','BBBB','CCCC','DDDD','EEEE','FFFF',
-                     'GGGG','HHHH','IIII','JJJJ','KKKK','LLLL')
-);
-
 DELETE FROM trade_history
 WHERE portfolio_id = (SELECT id FROM portfolios LIMIT 1)
   AND ticker IN ('AAAA','BBBB','CCCC','DDDD','EEEE','FFFF',
