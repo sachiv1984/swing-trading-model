@@ -183,18 +183,24 @@ Scroll to the **Underwater Equity Curve** section.
 ### V-CHART-04a — Tooltip appears and shows all four fields
 
 **Scenario ref:** SC-CHART-IX-04a
+
+**Important:** Most data points sit at all-time-high equity, so the drawdown at those points is `0.00%`. To see a meaningful negative drawdown in the tooltip, you must hover a **loss-trade exit point** — a visible trough in the chart. With the seed data, the clearest trough is the **JJJJ exit** (approximately the 10th point from the left, exiting around 07/03/2026 — a noticeable dip before the final KKKK peak).
+
 **Action:**
-1. Hover slowly over different data points on the Underwater Equity Curve.
-2. When a tooltip appears, observe its content.
+1. Identify a visible downward dip in the chart (a trough below the 0% reference line).
+2. Hover slowly over that trough point until the tooltip appears.
+3. Observe all four fields in the tooltip panel.
 
 **Expected:** Tooltip panel shows all four fields:
-- **Date** — formatted as a readable date (e.g. "12/03/2026" in en-GB)
-- **Drawdown %** — a signed percentage (e.g. "–8.30%" in rose/red colour)
-- **Current:** — cumulative equity in GBP (e.g. "Current: £450")
-- **Peak:** — peak equity in GBP (e.g. "Peak: £600")
+- **Date** — locale-formatted date (e.g. `07/03/2026` in en-GB or `3/7/2026` in en-US — format depends on browser locale)
+- **Drawdown %** — a **negative** percentage in **rose/red** text (e.g. `-8.70%` at the JJJJ trough; exact value depends on same-date trade sort order, expect approximately `-8%` to `-10%`)
+- **Current:** — cumulative P&L in GBP (e.g. `Current: £787`)
+- **Peak:** — peak cumulative P&L in GBP (e.g. `Peak: £862`)
 
-**Pass:** All four fields visible with correct labelling and formatting.
-**Fail:** Tooltip missing one or more fields, or fields show incorrect labels (e.g. raw key names like `drawdown`, `equity`).
+**Note:** The equity values are cumulative P&L from closed trades starting at £0 — not total portfolio value. Final peak in the seed data is approximately £967.
+
+**Pass:** All four fields visible with correct labelling and formatting; drawdown field shows a negative % in rose/red at a trough point.
+**Fail:** Tooltip missing one or more fields, or fields show incorrect labels (e.g. raw key names like `drawdown`, `equity`), or drawdown shows a positive value at a trough.
 **Result:** [ ] PASS  [ ] FAIL  **Notes:** ___
 
 ---
