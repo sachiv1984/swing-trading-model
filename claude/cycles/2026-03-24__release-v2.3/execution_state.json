@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-25T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-25T09:00:00Z",
+  "last_updated_utc": "2026-03-25T11:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -187,23 +187,23 @@
         "ST-08": {
           "title": "BLG-OPS-09: Database Size Monitoring Alert",
           "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "human",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 145,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "3c60852",
+          "delegation_record_id": "DEL-20260325-01",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-25T11:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/notifications.md#Nav Alert Badge"
+            "docs/specs/api_contracts/health_endpoints.md#GET /health/database"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "§3 compliance: notification-only, no automated cleanup. Backend only — no frontend spec beyond notification delivery pattern."
+          "notes": "GET /health/database implemented. DB size via pg_database_size(). Telegram alert on threshold breach (default 80% of Render 256 MB limit). 1-hour cooldown. §3 compliance: notification-only, no automated cleanup. health_endpoints.md v1.1→v1.2; openapi.yaml v2.1.2→v2.2.0."
         },
         "ST-09": {
           "title": "BLG-OPS-07: System Health Check Playbook",
@@ -419,7 +419,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": ["ST-08"],
   "open_escalations": [],
 
   "merge_gate": {
