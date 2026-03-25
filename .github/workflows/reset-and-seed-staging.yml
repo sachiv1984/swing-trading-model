@@ -121,7 +121,7 @@ jobs:
             UNION ALL
             SELECT 'alert_rules'            , COUNT(*)::text        FROM alert_rules
             UNION ALL
-            SELECT 'notifications (unread)' , COUNT(*)::text        FROM notifications WHERE is_read = false;
+            SELECT 'notifications (unread)' , COUNT(*)::text        FROM notifications WHERE read = false;
           "
           echo ""
           echo "Expected: portfolios=1, cash=15006.10, positions(open)=2,"
