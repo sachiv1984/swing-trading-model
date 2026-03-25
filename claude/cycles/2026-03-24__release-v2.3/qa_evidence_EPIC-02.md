@@ -243,7 +243,25 @@ The following non-visual AC are supported by Playwright pass as primary evidence
 - Percentage sum formula validated at 99–101% (SC-CHART-IX-05c — ST-11 regression) ✓
 - Modal P&L matches tile P&L (both sourced from same data — SC-CHART-IX-06a) ✓
 
-**Visual AC:** Deferred to staging verification. See above.
+**Visual AC — Staging results (2026-03-25):**
+
+| Check | Result | Notes |
+|-------|--------|-------|
+| V-CHART-01a (tile selection ring) | ✅ PASS | Ring visible on clicked tile while modal open |
+| V-CHART-01b (ring removed on close) | ✅ PASS | Ring clears on modal dismiss |
+| V-CHART-01c (pointer cursor on tile) | ✅ PASS | Pointer cursor on clickable tile confirmed |
+| V-CHART-01d (P&L colour coding) | ✅ PASS | Green/red colouring correct in modal table |
+| V-CHART-02a (scroll-to-zoom hint) | ✅ PASS | Hint appears and fades on first hover |
+| V-CHART-02b (grab cursor while zoomed) | ✅ PASS | Grab cursor visible in container padding area |
+| V-CHART-02c (grabbing cursor on drag) | ❌ FAIL → FIXED | Grab/grabbing cursor not showing inside Recharts SVG plot area (only in padding). Root cause: Recharts `<svg>` has `cursor: auto` overriding parent div. Fixed in commit cfb676f: added `style={{ cursor: "inherit" }}` to `AreaChart`. **Re-test required after deploy.** |
+| V-CHART-04a (tooltip 4 fields) | ✅ PASS | All four fields present at loss-trade trough |
+| V-CHART-04b (tooltip flip at right edge) | ✅ PASS | Tooltip repositions correctly at right edge |
+| V-CHART-05a (R-multiple bar tooltip) | ⛔ STAGING-BLOCKED | `stop_price` absent from `/trades` API — R-Multiple chart empty on staging. See BLG-BE-04. |
+| V-CHART-05b (zero-count bar tooltip) | ⛔ STAGING-BLOCKED | Same blocker as V-CHART-05a |
+| V-CHART-05c (tooltip edge clipping) | ⛔ STAGING-BLOCKED | Same blocker as V-CHART-05a |
+| V-CHART-06b (no API calls on interaction) | ✅ PASS | Network tab confirmed zero calls during all interactions |
+
+**Visual sign-off status:** Provisionally granted for all non-blocked checks. V-CHART-02c fix deployed in cfb676f — re-test required before final sign-off. V-CHART-05a/b/c staging-blocked pending BLG-BE-04 (out of scope for this story).
 
 **Findings:**
 - `page.route()` catch-all fallback pattern prevents unmocked endpoint timeouts. ✓
@@ -251,5 +269,6 @@ The following non-visual AC are supported by Playwright pass as primary evidence
 - `bypassCSP: true` in `playwright.config.js` already set — no config change needed. ✓
 - SC-CHART-IX-01c implementation note documented: `MonthlyHeatmap` does not render tiles for zero-trade months. Test verifies `cursor-pointer` class on trade tiles and confirms only 3 tiles rendered — correct behaviour. No deviation filed (implementation is spec-compliant; spec scenario applies to an edge case this component doesn't expose). ✓
 - CI job `playwright-chart-interactivity` is independent from `playwright-risk-dashboard` — parallel execution, separate artifact upload. ✓
+- seed_analytics.sql required two fixes post-delivery: (1) removed `DELETE FROM trade_reflections` which failed on staging instances without that table; (2) commits 959e8f0/64bbe59 corrected. ✓
 
-**No deviations filed.**
+**Deviation filed:** None. V-CHART-02c cursor bug fixed directly in cfb676f (1-line change, no spec deviation — root cause was CSS inheritance gap with Recharts SVG, not a spec misunderstanding).
