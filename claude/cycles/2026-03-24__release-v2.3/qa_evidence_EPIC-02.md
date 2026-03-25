@@ -74,8 +74,35 @@ _Pending — DoQ to verify at EPIC-02 PR review._
 
 ## ST-05 — BLG-QA-05: Critical-Path Smoke Test (Playwright)
 
-**Status:** Pending (blocked on ST-03 + ST-04)
-_Evidence to be added when ST-05 is implemented._
+**Status:** Done
+**Commit:** ba46dcb
+**Completed:** 2026-03-25
+**Implemented by:** QA & Testing Owner (engine — Director of Quality oversight)
+
+### Acceptance Criteria Verification
+
+| AC | Verification | Result |
+|----|-------------|--------|
+| Playwright test suite covers all 3 critical paths (add trade, view portfolio, view alerts) | Code review — `tests/e2e/smoke-critical-paths.spec.js` contains PATH-1 (add trade), PATH-2 (view portfolio), PATH-3 (view alerts). Each test navigates to the relevant page, fills/loads required data via mocks, and asserts the critical interaction succeeded. | PASS |
+| Tests run in CI on every PR | Code review — `.github/workflows/smoke-tests.yml` triggers on push/PR to `main` and `exec/**` with no path filter. Runs on every PR. | PASS |
+| Run time < 2 minutes for smoke test suite | Structural — 3 tests, mock layer (no live backend), Chromium only, single worker in CI. Estimated run time ~30–60s. Each test has `waitForResponse` timeouts of ≤10s with mock fulfillment. Suite well within 2-minute budget. | PASS (structural) |
+| Playwright pass recorded as supporting evidence for non-visual AC — explicit in DoQ sign-off template | Code review — spec header and each test include scope constraint comment: "Playwright PASS is supporting evidence for non-visual AC only. Visual AC remain DoQ manual review." This constraint is also in `smoke-tests.yml` header comment. | PASS |
+| Visual AC (colours, badges, chart rendering) remain DoQ manual review items | Code review — no test asserts on CSS colour classes, badge styling, or chart rendering. All assertions are on text content, button state, and HTTP request shape. | PASS |
+| Flaky test failures must not block the PR or human review — failures are advisory | Code review — `smoke-tests.yml` has `continue-on-error: true` on the test step with explicit comment: "flaky failures are advisory and MUST NOT block the PR." Report uploaded via `if: always()` so DoQ can review even on failure. | PASS |
+
+### Scope Notes
+
+- PATH-1 (add trade): verifies form renders, POST /portfolio/position fires with correct ticker + entry_price, app navigates to Positions on success. PositionSizingWidget auto-fills shares via mocked POST /portfolio/size.
+- PATH-2 (view portfolio): verifies LGEN and BARC positions render by ticker name. Uses SMOKE_POSITIONS mock matching seed_portfolio_trades.sql data.
+- PATH-3 (view alerts): verifies unread notification renders and "Mark as read" / "Mark all as read" buttons appear. Uses SMOKE_NOTIFICATIONS mock matching seed_alerts.sql data.
+- Mock data in `tests/e2e/mocks/smoke-mock-data.js` is aligned with the seed scripts from ST-04.
+- `mockFallback()` helper prevents unmocked endpoints from hanging tests in CI.
+
+### DoQ Sign-Off
+
+_Pending — DoQ to verify at EPIC-02 PR review._
+
+**DoQ verification method required:** Code review (spec + workflow) + local run to confirm PATH-1 POST assertion and PATH-3 unread indicator. PATH-2 view portfolio is code-review-sufficient. Visual AC (button gradient, P&L colour coding, notification border colour) remain unverified by Playwright — DoQ manual review required at staging._
 
 ---
 
