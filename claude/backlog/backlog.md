@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-24 (roadmap rebalance — cycle 2026-03-24__scheduled — 8 new items added: BLG-OPS-07/08/09, BLG-QA-03/04/05/06, BLG-FE-05; BLG-TECH-05 target updated to v2.3)
+**Last Updated:** 2026-03-25 (session — 1 new item added: BLG-BE-05)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -821,6 +821,34 @@ BLG-QA-02 (automation readiness assessment) identified test data reproducibility
 - Scripts runnable independently for each domain
 - Compatible with BLG-OPS-08 staging reset workflow
 - BLG-QA-05 smoke test scenarios can run end-to-end after executing relevant seed scripts
+
+---
+
+## 12. New Backlog Items — Session 2026-03-25
+
+*User-raised items from session review. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
+
+---
+
+### BLG-BE-05 — Fix ATR pence→GBP conversion for all UK (.L) tickers
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Bug Fix
+**Owner:** Head of Engineering
+**Source:** V-PATH1-04 staging test failure — server log ATR=-48.69 for LGEN at £2.45 — 2026-03-25
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.4
+
+**Problem**
+`calculate_atr()` in `backend/utils/pricing.py` applies the pence→GBP conversion (`atr / 100`) only when `atr > 100`, but Yahoo Finance returns ATR in pence for all LSE `.L` tickers regardless of magnitude. For most UK stocks (ATR typically 5–30p), the guard is never triggered, leaving ATR in pence while all other price values are in GBP. This causes `calculate_initial_stop()` (multiplier=5.0) to produce deeply negative stop prices (e.g. -48.69 for LGEN at £2.45, ATR=10.23p), which the backend rejects and the position creation call fails.
+
+**Scope**
+- In `backend/utils/pricing.py` `calculate_atr()`, remove the `> 100` guard and always divide by 100 for `.L` tickers
+- Verify `calculate_initial_stop()` produces a sane positive stop for LGEN (£2.45 entry, expected stop ≈ £1.94 at 5× ATR of ~10p)
+
+**Acceptance Criteria**
+- `calculate_atr('LGEN.L', ...)` returns ATR in GBP (e.g. ~0.10) not pence (e.g. ~10.23)
+- `calculate_initial_stop(2.45, atr)` returns a positive value in the range £1.80–£2.40 for LGEN
+- No regression: existing unit tests for ATR pass; high-ATR stocks (e.g. TSLA) are unaffected
 
 ---
 

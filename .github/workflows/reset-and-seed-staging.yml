@@ -1,0 +1,112 @@
+name: Reset and Seed Staging Database
+
+# Manual trigger — run before any QA session against staging.
+#
+# Steps:
+#   1. Reset — TRUNCATE all domain tables + re-insert baseline portfolio + settings
+#   2. Migrate — apply any schema migrations that aren't yet on staging (idempotent)
+#   3. Seed — insert QA test data (positions, watchlist, alerts/notifications)
+#
+# Prerequisites:
+#   - STAGING_DATABASE_URL must be set as a GitHub Actions repository secret
+#     (repo Settings → Secrets and variables → Actions → New repository secret)
+#   - The staging schema must already exist (tables must be present)
+#
+# The workflow uses STAGING_DATABASE_URL (never DATABASE_URL) and rejects URLs
+# containing "production" or "/prod" — same guard as the local shell scripts.
+
+on:
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: 'Run seed scripts after reset? (uncheck for bare reset only)'
+        type: boolean
+        required: false
+        default: true
+
+jobs:
+  reset-and-seed:
+    name: Reset staging DB and seed QA data
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+      PGSSLMODE: require
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install psql
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Validate STAGING_DATABASE_URL is set
+        run: |
+          if [[ -z "${STAGING_DATABASE_URL:-}" ]]; then
+            echo "ERROR: STAGING_DATABASE_URL secret is not set."
+            echo "Add it at: repo Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+          if [[ "$STAGING_DATABASE_URL" == *"production"* ]] || \
+             [[ "$STAGING_DATABASE_URL" == *"/prod"* ]]; then
+            echo "ERROR: STAGING_DATABASE_URL appears to point at production. Aborting."
+            exit 1
+          fi
+          DB_HOST=$(echo "$STAGING_DATABASE_URL" | sed -E 's|.*@([^:/]+).*|\1|')
+          echo "Target staging host: $DB_HOST"
+
+      # ── Step 1: Reset ─────────────────────────────────────────────────────
+      - name: Reset staging database to baseline
+        run: |
+          echo "=== RESET ==="
+          psql "$STAGING_DATABASE_URL" \
+            --no-psqlrc \
+            --single-transaction \
+            -f scripts/reset_staging_db.sql
+          echo "Reset complete — baseline portfolio + settings inserted."
+
+      # ── Step 2: Migrate ───────────────────────────────────────────────────
+      # Applies pending schema changes that staging may not have yet.
+      # All statements use IF NOT EXISTS — safe to run repeatedly.
+      - name: Apply pending schema migrations
+        run: |
+          echo "=== MIGRATE ==="
+          psql "$STAGING_DATABASE_URL" --no-psqlrc -c "
+          BEGIN;
+
+          -- v1.9 → v2.0: user_fill_price and trade_history fill_price
+          ALTER TABLE positions
+            ADD COLUMN IF NOT EXISTS user_fill_price DECIMAL(10, 4);
+          ALTER TABLE trade_history
+            ADD COLUMN IF NOT EXISTS fill_price DECIMAL(10, 4);
+
+          COMMIT;
+          "
+          echo "Migrations applied."
+
+      # ── Step 3: Seed (optional) ───────────────────────────────────────────
+      - name: Seed QA test data
+        if: ${{ inputs.seed == true }}
+        run: |
+          echo "=== SEED ==="
+          chmod +x scripts/seeds/seed_all.sh
+          ./scripts/seeds/seed_all.sh
+
+      - name: Summary
+        run: |
+          SEEDED="${{ inputs.seed }}"
+          echo "========================================================"
+          echo "  Staging DB reset complete"
+          echo ""
+          echo "  Reset:   ✅ all domain tables cleared, baseline inserted"
+          echo "  Migrate: ✅ schema up to date (v2.0)"
+          if [[ "$SEEDED" == "true" ]]; then
+            echo "  Seed:    ✅ QA data inserted:"
+            echo "             portfolio/trades : 2 open positions (LGEN, BARC)"
+            echo "             watchlist        : 4 entries"
+            echo "             alerts           : 4 rules + 2 unread notifications"
+          else
+            echo "  Seed:    ⏭  skipped (bare reset only)"
+          fi
+          echo "========================================================"
