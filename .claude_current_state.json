@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-03-24__release-v2.3",
   "cycle_name": "Release Planning — v2.3 Quality Automation & User Insight",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "engine": "execution",
   "backlog_slice_path": "claude/cycles/2026-03-24__release-v2.3/stage4_backlog_slice.md",
   "sprint_goal_path": "claude/cycles/2026-03-24__release-v2.3/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-03-24__release-v2.3/sprint_backlog.md",
