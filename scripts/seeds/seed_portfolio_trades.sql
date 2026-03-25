@@ -127,7 +127,8 @@ INSERT INTO trade_history (
     ticker, market,
     entry_date, exit_date,
     shares, entry_price, exit_price,
-    total_cost, exit_proceeds,
+    total_cost, gross_proceeds, net_proceeds,
+    entry_fees, exit_fees,
     pnl, pnl_pct, holding_days,
     exit_reason, entry_note, exit_note, tags
 )
@@ -142,7 +143,10 @@ SELECT
     t.entry_price,
     t.exit_price,
     t.total_cost,
-    t.exit_proceeds,
+    t.gross_proceeds,
+    t.net_proceeds,
+    t.entry_fees,
+    t.exit_fees,
     t.pnl,
     t.pnl_pct,
     t.holding_days,
@@ -152,13 +156,16 @@ SELECT
     t.tags::text[]
 FROM portfolio p
 CROSS JOIN (VALUES
-    -- ticker  mkt   entry_date    exit_date     shares entry_p exit_p total_cost exit_proc  pnl     pnl_pct hdays exit_reason      entry_note              exit_note                   tags
-    ('ULVR', 'UK', '2026-01-15', '2026-02-20', 80.0,  23.80,  27.80, 1915.95,   2212.05,   296.10, 15.45,  36,   'Trailing Stop', 'Breakout above 200 DMA', 'Trailing stop triggered.', '{momentum}'),
-    ('VOD',  'UK', '2026-02-01', '2026-03-05', 500.0,  0.70,   0.67,  361.95,    338.05,   -23.90, -6.60,  32,   'Stop Loss Hit', 'Reversal attempt',       'Stop triggered on gap down.', '{mean_reversion}')
+    -- ticker  mkt   entry_date    exit_date     shares entry_p exit_p  total_cost gross_proc net_proc   entry_f exit_f  pnl     pnl_pct hdays exit_reason      entry_note                exit_note                    tags
+    -- ULVR: gross=80×27.80=2224.00, exit_fee=11.95, net=2224.00-11.95=2212.05, pnl=2212.05-1915.95=296.10
+    ('ULVR', 'UK', '2026-01-15', '2026-02-20', 80.0,  23.80,  27.80,  1915.95,   2224.00,   2212.05,   11.95,  11.95,  296.10, 15.45,  36,   'Trailing Stop', 'Breakout above 200 DMA', 'Trailing stop triggered.',  '{momentum}'),
+    -- VOD:  gross=500×0.70=350.00, exit_fee=11.95, net=350.00-11.95=338.05, pnl=338.05-361.95=-23.90
+    ('VOD',  'UK', '2026-02-01', '2026-03-05', 500.0,  0.70,   0.70,   361.95,    350.00,    338.05,    11.95,  11.95,  -23.90, -6.60,  32,   'Stop Loss Hit', 'Reversal attempt',       'Stop triggered on gap down.', '{mean_reversion}')
 ) AS t(
     ticker, market, entry_date, exit_date,
     shares, entry_price, exit_price,
-    total_cost, exit_proceeds,
+    total_cost, gross_proceeds, net_proceeds,
+    entry_fees, exit_fees,
     pnl, pnl_pct, holding_days,
     exit_reason, entry_note, exit_note, tags
 );

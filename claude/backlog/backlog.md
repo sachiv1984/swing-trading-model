@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-25 (session — 1 new item added: BLG-BE-05)
+**Last Updated:** 2026-03-25 (session — 3 new items added: BLG-BE-05, BLG-SPEC-D15, BLG-SPEC-D16)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -849,6 +849,57 @@ BLG-QA-02 (automation readiness assessment) identified test data reproducibility
 - `calculate_atr('LGEN.L', ...)` returns ATR in GBP (e.g. ~0.10) not pence (e.g. ~10.23)
 - `calculate_initial_stop(2.45, atr)` returns a positive value in the range £1.80–£2.40 for LGEN
 - No regression: existing unit tests for ATR pass; high-ATR stocks (e.g. TSLA) are unaffected
+
+### BLG-SPEC-D15 — Reconcile data_model.md portfolios table with actual deployed schema
+**Priority:** P2 (Medium)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-04 seed script failure — reset_staging_db.sql INSERT rejected `initial_cash` column — 2026-03-25
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.4
+
+**Problem**
+`data_model.md` documents the `portfolios` table with columns `id`, `cash`, `initial_cash`, `created_at`, `last_updated`. The actual deployed DB has `id`, `cash`, `created_date`, `last_updated` — `initial_cash` does not exist and `created_at` is `created_date`. Any seed script, migration, or integration test written against the spec will fail silently or with a column-not-found error. This mismatch was not caught before ST-04 shipped because seeds were reviewed against the spec, not the live schema.
+
+**Scope**
+- Run `\d portfolios` against the live staging DB to confirm actual column names and types
+- Update `data_model.md` §1 Portfolios Table CREATE TABLE statement and Fields table to match actual schema
+- Remove `initial_cash` from the spec or add a migration to create it if it is genuinely required
+- Bump `data_model.md` version and apply §6 checklist
+
+**Acceptance Criteria**
+- `data_model.md` portfolios CREATE TABLE matches the output of `\d portfolios` on staging
+- `initial_cash` either removed from spec or present in DB — no divergence
+- `created_date` vs `created_at` discrepancy resolved
+- `data_model.md` version bumped; §6 checklist applied
+
+---
+
+### BLG-SPEC-D16 — Reconcile data_model.md trade_history table with database.py column names
+**Priority:** P2 (Medium)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner + Head of Engineering
+**Source:** ST-04 seed script / database.py divergence discovered 2026-03-25
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.4
+
+**Problem**
+`data_model.md` documents `trade_history` with a single exit value column `exit_proceeds DECIMAL(12,2) NOT NULL`. `database.py:create_trade_history()` inserts into `gross_proceeds`, `net_proceeds`, `entry_fees`, `exit_fees` — none of which appear in the spec. It is unknown which is canonical: if the spec is right, `database.py` is broken and live trade closures fail; if `database.py` is right, the spec is wrong and seed scripts using `exit_proceeds` will be rejected. Until resolved, any new seed, test, or analytics query against `trade_history` exit values carries column name uncertainty.
+
+**Scope**
+- Run `\d trade_history` against the live staging DB to confirm actual column names
+- Determine canonical set: `exit_proceeds` (spec) vs `gross_proceeds`/`net_proceeds`/`entry_fees`/`exit_fees` (code)
+- Update `data_model.md` §3 trade_history table to match actual schema
+- If DB has `exit_proceeds` only: update `database.py:create_trade_history()` to use it
+- If DB has `gross_proceeds`/`net_proceeds`: update `data_model.md` to match and remove `exit_proceeds`
+- Update seed scripts (`seed_portfolio_trades.sql`) to use confirmed column names
+- Bump `data_model.md` version; apply §6 checklist
+
+**Acceptance Criteria**
+- `data_model.md` trade_history CREATE TABLE matches `\d trade_history` on staging
+- `database.py:create_trade_history()` column list matches the spec
+- `seed_portfolio_trades.sql` trade_history INSERT uses confirmed column names and succeeds without error
+- `data_model.md` version bumped; §6 checklist applied
 
 ---
 
