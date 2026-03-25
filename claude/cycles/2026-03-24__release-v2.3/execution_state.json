@@ -155,7 +155,7 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
@@ -166,7 +166,7 @@
         "ST-07": {
           "title": "BLG-SPEC-D14: Update health_endpoints.md to v1.1",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 144,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
@@ -174,15 +174,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-25T09:45:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/health_endpoints.md"
+            "docs/specs/api_contracts/health_endpoints.md#GET /health"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Gates ST-09 (OPS-07). Closes DEV-HEALTH-001 deviation."
+          "notes": "health_endpoints.md updated v1.0→v1.1. DEV-HEALTH-001 closed — spec now documents actual v2.2 schema. openapi.yaml OperationalHealthResponse already correct (no changes required). No new deviations."
         },
         "ST-08": {
           "title": "BLG-OPS-09: Database Size Monitoring Alert",
