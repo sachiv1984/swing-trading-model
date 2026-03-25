@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-25T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-25T10:00:00Z",
+  "last_updated_utc": "2026-03-25T10:30:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -157,8 +157,8 @@
     "EPIC-03": {
       "status": "in_progress",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 155,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -330,8 +330,8 @@
     "EPIC-05": {
       "status": "in_progress",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 156,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
