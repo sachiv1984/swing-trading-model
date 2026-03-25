@@ -29,43 +29,20 @@ It must be executed against the **staging environment** (or a local dev server w
 
 ### 2. Seed data state
 
-The Analytics page requires at least **10 closed trades** to render (default `min_trades_for_analytics` setting). The standard seed scripts do not provide enough trades. Before running this script, apply the analytics supplement seed:
+The Analytics page requires at least **10 closed trades** to render (default `min_trades_for_analytics` setting). The standard seed scripts do not provide enough trades. Before running this script, apply the analytics seed:
 
-```sql
--- Run against staging DB (requires STAGING_DATABASE_URL)
--- Inserts 12 additional closed trades across Jan–Mar 2026 to reach analytics threshold
--- Assumes seed_portfolio_trades.sql has already been run (portfolio row exists)
-
-DO $$
-DECLARE v_portfolio_id UUID;
-BEGIN
-  SELECT id INTO v_portfolio_id FROM portfolios LIMIT 1;
-
-  INSERT INTO trade_history
-    (portfolio_id, ticker, market, entry_date, exit_date,
-     entry_price, exit_price, stop_price, shares,
-     gross_proceeds, net_proceeds, pnl, exit_reason)
-  VALUES
-    (v_portfolio_id, 'AAAA', 'UK', '2026-01-05', '2026-01-12', 100.00, 115.00,  90.00, 10, 1150.00, 1150.00,  150.00, 'target'),
-    (v_portfolio_id, 'BBBB', 'UK', '2026-01-10', '2026-01-20',  50.00,  42.00,  44.00, 10,  420.00,  420.00,  -80.00, 'stop_hit'),
-    (v_portfolio_id, 'CCCC', 'UK', '2026-01-15', '2026-01-28',  80.00, 105.00,  72.00,  8,  840.00,  840.00,  200.00, 'target'),
-    (v_portfolio_id, 'DDDD', 'UK', '2026-02-02', '2026-02-10',  60.00,  72.00,  54.00, 10,  720.00,  720.00,  120.00, 'target'),
-    (v_portfolio_id, 'EEEE', 'US', '2026-02-05', '2026-02-12',  40.00,  35.00,  36.00, 20,  700.00,  700.00, -100.00, 'stop_hit'),
-    (v_portfolio_id, 'FFFF', 'UK', '2026-02-08', '2026-02-15',  90.00,  99.00,  81.00, 10,  990.00,  990.00,   90.00, 'manual'),
-    (v_portfolio_id, 'GGGG', 'UK', '2026-02-14', '2026-02-20', 120.00, 108.00, 108.00,  5,  540.00,  540.00,  -60.00, 'stop_hit'),
-    (v_portfolio_id, 'HHHH', 'US', '2026-02-18', '2026-02-25', 200.00, 230.00, 180.00,  5, 1150.00, 1150.00,  150.00, 'target'),
-    (v_portfolio_id, 'IIII', 'UK', '2026-03-01', '2026-03-05',  50.00,  62.00,  45.00, 10,  620.00,  620.00,  120.00, 'target'),
-    (v_portfolio_id, 'JJJJ', 'UK', '2026-03-03', '2026-03-07',  75.00,  67.50,  67.50, 10,  675.00,  675.00,  -75.00, 'stop_hit'),
-    (v_portfolio_id, 'KKKK', 'US', '2026-03-06', '2026-03-10', 300.00, 336.00, 270.00,  5, 1680.00, 1680.00,  180.00, 'target'),
-    (v_portfolio_id, 'LLLL', 'UK', '2026-03-10', '2026-03-14',  40.00,  36.00,  36.00, 15,  540.00,  540.00,  -60.00, 'stop_hit');
-END $$;
-```
-
-To run:
 ```bash
-export STAGING_DATABASE_URL="postgresql://..."
-psql "$STAGING_DATABASE_URL" -c "<paste SQL above>"
+export STAGING_DATABASE_URL="postgresql://user:pass@host:5432/db"
+
+# Option A — run all seeds (recommended after a fresh reset):
+./scripts/seeds/seed_all.sh
+
+# Option B — run analytics seed only (if portfolio/watchlist/alerts already seeded):
+psql "$STAGING_DATABASE_URL" --no-psqlrc --single-transaction \
+    -f scripts/seeds/seed_analytics.sql
 ```
+
+`seed_analytics.sql` inserts 12 closed trades (AAAA–LLLL) across Jan–Mar 2026. It is idempotent — safe to re-run.
 
 After seeding, navigate to Analytics page → switch time period to **"All Time"** → confirm charts render (not the "Not Enough Data" empty state).
 
@@ -241,56 +218,43 @@ Scroll to the **Underwater Equity Curve** section.
 
 ## Section 4 — R-Multiple Analysis: Tooltip Visual AC
 
+> **STAGING BLOCKED — V-CHART-05a, V-CHART-05b, V-CHART-05c**
+>
+> The `trade_history` table has no `stop_price` column. The `/trades` API response therefore never includes `stop_price`. `RMultipleAnalysis.js` filters trades with `trades.filter(t => t.stop_price && ...)`, so the R-Multiple chart will render as empty (no bars) on staging regardless of how many trades exist in the database.
+>
+> These three checks **cannot be executed on staging** until `stop_price` is added to the API response. Skip all three and record them as staging-blocked in the sign-off record.
+>
+> **Backlog tracking:** A backlog item for adding `stop_price` to the `/trades` API response has been filed during ST-06 delivery.
+
 Scroll to the **R-Multiple Analysis** section.
 
 ### V-CHART-05a — Bar tooltip shows all three fields
 
 **Scenario ref:** SC-CHART-IX-05a
-**Action:**
-1. Hover over any bar in the R-Multiple Distribution histogram (left panel, "Distribution" subheading).
-2. When a tooltip appears, observe its content.
 
-**Expected:** Tooltip shows:
-- **Bucket label** — e.g. `"1R to 2R"` or `"-1R to 0R"` (bold text at top of tooltip)
-- **Trade count** — e.g. `"3 trades"` or `"1 trade"` (singular/plural correct)
-- **% of closed trades** — e.g. `"20% of closed trades"` (rounded integer %)
+> **STAGING BLOCKED** — R-Multiple chart will not render. `stop_price` is absent from the `/trades` API response. Skip until the API gap is resolved.
 
-**Pass:** All three fields visible with correct labels and formatting.
-**Fail:** Any field missing, or labels show raw keys (e.g. `"count"`, `"value"`), or percentage is absent.
-**Result:** [ ] PASS  [ ] FAIL  **Notes:** ___
+**Result:** [ ] STAGING-BLOCKED  **Notes:** ___
 
 ---
 
 ### V-CHART-05b — Zero-count bar tooltip shows "0 trades, 0%"
 
 **Scenario ref:** SC-CHART-IX-05b
-**Action:**
-1. Identify a bar with height = 0 in the distribution chart. With 12 trades, the `-3R+`, `2R to 3R`, and `3R+` buckets are likely to be empty (0 count) depending on the actual trade data.
-2. Hover over a zero-height bar (click the chart area at the appropriate bucket position on the X-axis — look for bars that appear flat at the baseline).
 
-**Expected:** Tooltip shows: bucket label, `"0 trades"`, `"0% of closed trades"`.
+> **STAGING BLOCKED** — R-Multiple chart will not render. `stop_price` is absent from the `/trades` API response. Skip until the API gap is resolved.
 
-**Note:** Zero-height Recharts bars may be difficult to hover. If the bar is not hoverable, note this and skip — this is a known Recharts constraint with zero-height bars.
-
-**Pass:** Tooltip shows "0 trades" and "0% of closed trades" when hovering a zero-count bucket.
-**Fail:** Tooltip shows non-zero values for an empty bucket, or shows nothing (which is acceptable — see note).
-**Result:** [ ] PASS  [ ] FAIL  [ ] SKIP — zero-height bars not hoverable in Recharts  **Notes:** ___
+**Result:** [ ] STAGING-BLOCKED  **Notes:** ___
 
 ---
 
 ### V-CHART-05c — Tooltip cursor repositioning near chart edges
 
 **Scenario ref:** SC-CHART-IX-05a (tooltip positioning)
-**Action:**
-1. Hover over the **leftmost bar** (`-3R+`) in the distribution chart.
-2. Hover over the **rightmost bar** (`3R+`).
-3. Observe whether the tooltip flips or adjusts to avoid clipping.
 
-**Expected:** Tooltip does not overflow the visible chart boundary at either edge.
+> **STAGING BLOCKED** — R-Multiple chart will not render. `stop_price` is absent from the `/trades` API response. Skip until the API gap is resolved.
 
-**Pass:** Tooltip fully visible and within the chart/page bounds at both edges.
-**Fail:** Tooltip clips or overflows the chart boundary at either edge.
-**Result:** [ ] PASS  [ ] FAIL  **Notes:** ___
+**Result:** [ ] STAGING-BLOCKED  **Notes:** ___
 
 ---
 
@@ -326,7 +290,7 @@ Complete this block and append to `claude/cycles/2026-03-24__release-v2.3/qa_evi
 Visual staging test completed by: _______________
 Date: _______________
 Environment: [ ] Local dev  [ ] Staging
-Seed state confirmed: [ ] reset run  [ ] seed_all.sh run  [ ] analytics supplement SQL run
+Seed state confirmed: [ ] reset run  [ ] seed_all.sh run (includes seed_analytics.sql)
 Analytics threshold check: [ ] confirmed — "All Time" shows charts (not empty state)
 
 Section 1 — Monthly Heatmap:
@@ -344,10 +308,10 @@ Section 3 — Tooltip visual:
   V-CHART-04a (tooltip 4 fields):        [ ] PASS  [ ] FAIL
   V-CHART-04b (tooltip flip at right):   [ ] PASS  [ ] FAIL  [ ] UNABLE
 
-Section 4 — R-Multiple tooltip:
-  V-CHART-05a (bar tooltip 3 fields):    [ ] PASS  [ ] FAIL
-  V-CHART-05b (zero-count bar):          [ ] PASS  [ ] FAIL  [ ] SKIP
-  V-CHART-05c (tooltip edge clipping):   [ ] PASS  [ ] FAIL
+Section 4 — R-Multiple tooltip (STAGING BLOCKED — stop_price not in /trades API):
+  V-CHART-05a (bar tooltip 3 fields):    [ ] STAGING-BLOCKED
+  V-CHART-05b (zero-count bar):          [ ] STAGING-BLOCKED
+  V-CHART-05c (tooltip edge clipping):   [ ] STAGING-BLOCKED
 
 Section 5 — Network:
   V-CHART-06b (no API calls):            [ ] PASS  [ ] FAIL
