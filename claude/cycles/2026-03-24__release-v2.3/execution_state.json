@@ -6,7 +6,6 @@
   "mode": "standard",
   "status": "Running",
   "last_updated_utc": "2026-03-25T10:00:00Z",
-
   "epics": {
     "EPIC-01": {
       "status": "not_started",
@@ -37,7 +36,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "SPS=4 — Strategy Rules & System Intent Owner DoQ sign-off required at delivery verification. §13.3 display-only constraint must be in implementation."
+          "notes": "SPS=4 \u2014 Strategy Rules & System Intent Owner DoQ sign-off required at delivery verification. \u00a713.3 display-only constraint must be in implementation."
         },
         "ST-02": {
           "title": "BLG-FEAT-09: Metrics Staleness Indicator",
@@ -59,7 +58,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Test scenario gap flag: EPIC-01 test_scenarios pending — QA & Testing Owner to author before next sprint."
+          "notes": "Test scenario gap flag: EPIC-01 test_scenarios pending \u2014 QA & Testing Owner to author before next sprint."
         }
       }
     },
@@ -91,7 +90,7 @@
           "deviations_filed": false,
           "last_completed_substep": "commit",
           "sign_off_record": "qa_evidence_EPIC-02.md",
-          "notes": "Implemented directly (not delegated). scripts/reset_staging_db.sql + .sh committed. Gates ST-04 (QA-06) and ST-05 (QA-05) — unblocked."
+          "notes": "Implemented directly (not delegated). scripts/reset_staging_db.sql + .sh committed. Gates ST-04 (QA-06) and ST-05 (QA-05) \u2014 unblocked."
         },
         "ST-04": {
           "title": "BLG-QA-06: Test Data Seed Script Library",
@@ -110,7 +109,7 @@
           "deviations_filed": false,
           "last_completed_substep": "commit",
           "sign_off_record": "qa_evidence_EPIC-02.md",
-          "notes": "Implemented directly (not delegated). scripts/seeds/: seed_alerts.sql, seed_watchlist.sql, seed_portfolio_trades.sql, seed_all.sh committed. Gates ST-05 (QA-05) — unblocked."
+          "notes": "Implemented directly (not delegated). scripts/seeds/: seed_alerts.sql, seed_watchlist.sql, seed_portfolio_trades.sql, seed_all.sh committed. Gates ST-05 (QA-05) \u2014 unblocked."
         },
         "ST-05": {
           "title": "BLG-QA-05: Critical-Path Smoke Test (Playwright)",
@@ -126,7 +125,7 @@
           "completed_utc": "2026-03-25T12:00:00Z",
           "acceptance_verified": true,
           "spec_references": [],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "commit",
           "sign_off_record": "qa_evidence_EPIC-02.md",
           "notes": "Implemented directly (not delegated). tests/e2e/smoke-critical-paths.spec.js + mocks/smoke-mock-data.js + .github/workflows/smoke-tests.yml committed. continue-on-error:true enforces advisory-only failures. Visual AC remain DoQ manual review."
@@ -203,7 +202,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "§3 compliance: notification-only, no automated cleanup. Backend only — no frontend spec beyond notification delivery pattern."
+          "notes": "\u00a73 compliance: notification-only, no automated cleanup. Backend only \u2014 no frontend spec beyond notification delivery pattern."
         },
         "ST-09": {
           "title": "BLG-OPS-07: System Health Check Playbook",
@@ -300,7 +299,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Refactor of existing components — no new page. Sequence before ST-13 to avoid nav refactor conflict."
+          "notes": "Refactor of existing components \u2014 no new page. Sequence before ST-13 to avoid nav refactor conflict."
         },
         "ST-13": {
           "title": "BLG-UX-01: Sidebar Navigation Overflow",
@@ -354,7 +353,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Guidance already present in execution_prompt.md v2.7 §13 (LL-v2.2-EX-03). Task: apply §6 checklist — add missing prompt_change_log.md entry for v2.6→v2.7."
+          "notes": "Guidance already present in execution_prompt.md v2.7 \u00a713 (LL-v2.2-EX-03). Task: apply \u00a76 checklist \u2014 add missing prompt_change_log.md entry for v2.6\u2192v2.7."
         },
         "ST-15": {
           "title": "BLG-QA-03: Canonical Test Execution Report Template",
@@ -416,18 +415,21 @@
       }
     }
   },
-
   "blocked_items": [],
   "delegated_items": [],
   "completed_items": [],
   "open_escalations": [],
-
   "merge_gate": {
     "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_pending": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04",
+      "EPIC-05"
+    ],
     "all_merged": false
   },
-
   "sealed": false,
   "sealed_utc": null
 }

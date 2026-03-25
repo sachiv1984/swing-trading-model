@@ -156,6 +156,15 @@ The following elements require human staging verification. See the Human Staging
 **Visual AC sign-off status:** DEFERRED — pending human completion of staging test script.
 Full EPIC-02 sign-off is also deferred until ST-06 is complete and visual items are confirmed.
 
+### DEV-EPIC02-ST05-03
+**Priority:** P2
+**Story:** ST-05
+**AC:** Visual AC — PATH-2 (V-PATH2-01): "Positive P&L renders in green — £70.05 (LGEN) and £96.05 (BARC) values appear in green text" (`staging_visual_test_script_EPIC-02.md`)
+**Expected:** Positions Table View displays both "P&L (GBP)" and "P&L %" as separate columns (positions.md v1.4, Table View column list). Absolute GBP P&L values (£70.05, £96.05) are visible and rendered in green for positive positions.
+**Actual:** Positions page shows % uplift in green for both LGEN and BARC. Absolute £ P&L values are not displayed — the P&L (GBP) column is absent or not rendering. All other PATH-2 checks (V-PATH2-02, V-PATH2-03) passed.
+**Impact:** Users cannot see their absolute monetary P&L on the Positions page — only % is visible. The colour rendering is correct (green for positive); the missing data is the GBP value. No workflow is blocked, but this is a visible functional gap against the canonical spec.
+**Backlog action:** BLG-FE item to be filed — fix P&L (GBP) column display on Positions page.
+
 ---
 
 ## ST-06 — BLG-QA-01: Playwright E2E for Chart Interactivity

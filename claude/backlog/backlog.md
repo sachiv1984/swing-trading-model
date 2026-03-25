@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-25 (session — 3 new items added: BLG-BE-05, BLG-SPEC-D15, BLG-SPEC-D16)
+**Last Updated:** 2026-03-25 (session — 4 new items added: BLG-BE-05, BLG-SPEC-D15, BLG-SPEC-D16, BLG-FE-06)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -900,6 +900,31 @@ BLG-QA-02 (automation readiness assessment) identified test data reproducibility
 - `database.py:create_trade_history()` column list matches the spec
 - `seed_portfolio_trades.sql` trade_history INSERT uses confirmed column names and succeeds without error
 - `data_model.md` version bumped; §6 checklist applied
+
+---
+
+### BLG-FE-06 — Fix missing P&L (GBP) column on Positions page
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Owner
+**Source:** DEV-EPIC02-ST05-03 — V-PATH2-01 staging QA — 2026-03-25
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.4
+
+**Problem**
+The Positions page Table View does not display the "P&L (GBP)" absolute value column. `positions.md` v1.4 explicitly lists both "P&L (GBP)" and "P&L %" as separate columns in the Table View. During EPIC-02 staging QA (2026-03-25), only % uplift was visible — the absolute £ values (£70.05 for LGEN, £96.05 for BARC) were absent. Colour rendering works correctly (% shown in green for positive positions), confirming the issue is the missing GBP column rather than a colour bug. Users cannot see their monetary P&L on the primary portfolio view.
+
+**Scope**
+- Investigate whether the P&L (GBP) column is missing from the component or rendered but hidden
+- Add or unhide the P&L (GBP) column in the Positions Table View component
+- Ensure the GBP value is colour-coded correctly (green for positive, red for negative) per `positions.md`
+- Verify both "P&L (GBP)" and "P&L %" columns are visible side by side in the default Table View at staging
+
+**Acceptance Criteria**
+- Positions Table View displays a P&L column showing the absolute GBP value (e.g. £70.05 for LGEN, £96.05 for BARC from seed data)
+- Positive GBP P&L values render in green; negative values render in red
+- P&L % column remains present alongside the GBP column
+- V-PATH2-01 passes on staging: £70.05 and £96.05 visible in green after seeding
 
 ---
 
