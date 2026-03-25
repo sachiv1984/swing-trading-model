@@ -36,8 +36,39 @@ _Pending — DoQ to verify at EPIC-02 PR review._
 
 ## ST-04 — BLG-QA-06: Test Data Seed Script Library
 
-**Status:** Pending (unblocked by ST-03)
-_Evidence to be added when ST-04 is implemented._
+**Status:** Done
+**Commit:** f90dd58
+**Completed:** 2026-03-25
+**Implemented by:** QA & Testing Owner (engine — Director of Quality oversight)
+
+### Acceptance Criteria Verification
+
+| AC | Verification | Result |
+|----|-------------|--------|
+| Seed scripts present for all three domains (alerts, watchlists, portfolio/trades) | Code review — `scripts/seeds/seed_alerts.sql`, `scripts/seeds/seed_watchlist.sql`, `scripts/seeds/seed_portfolio_trades.sql` present at commit f90dd58 | PASS |
+| Scripts runnable independently for each domain | Code review — each SQL file is self-contained with its own `BEGIN`/`COMMIT` block, prerequisite comments, and `\echo` completion output. Each can be run standalone via `psql "$STAGING_DATABASE_URL" -f scripts/seeds/<file>.sql` | PASS |
+| Compatible with ST-03 staging reset workflow | Code review — all scripts use `STAGING_DATABASE_URL` (same guard pattern as reset_staging_db.sh). `seed_all.sh` propagates the same env var guard and production URL rejection. Scripts resolve the portfolio via `SELECT id FROM portfolios LIMIT 1` — compatible with the single-row baseline created by reset_staging_db.sql. | PASS |
+| ST-05 smoke test scenarios can run end-to-end after executing relevant seed scripts | Structural — after reset + seeds: (1) "add trade": portfolio + settings exist from reset; (2) "view portfolio": 2 open positions seeded (LGEN, BARC) via seed_portfolio_trades.sql; (3) "view alerts": 2 unread notifications seeded via seed_alerts.sql. All 3 ST-05 critical paths have required data state. | PASS (structural) |
+| Scripts stored in `scripts/seeds/` or equivalent | Code review — all files in `scripts/seeds/` ✓ | PASS |
+
+### Seed Contents Summary
+
+| Script | Domain | Contents |
+|--------|--------|----------|
+| `seed_portfolio_trades.sql` | portfolio/trades | 1 initial deposit (£20,000), 2 open positions (LGEN 1000 shares, BARC 1200 shares), 2 closed trades (ULVR +£296.10, VOD -£23.90), portfolio.cash updated to reflect position costs |
+| `seed_watchlist.sql` | watchlist | 4 entries: AAPL, MSFT (US), LGEN, BARC (UK) with target entry and stop prices |
+| `seed_alerts.sql` | alerts | 4 alert rules (all types, all enabled; stop_loss threshold=5%), 4 notification preferences (email enabled), 2 unread notifications |
+| `seed_all.sh` | all domains | Orchestration wrapper: runs all three seeds in sequence with STAGING_DATABASE_URL guard and production URL rejection |
+
+### Idempotency
+
+- `seed_alerts.sql`: `ON CONFLICT DO UPDATE` for rules/preferences; DELETE + INSERT for notifications (deterministic count)
+- `seed_watchlist.sql`: `ON CONFLICT (portfolio_id, ticker) DO UPDATE`
+- `seed_portfolio_trades.sql`: DELETE domain tables then re-insert (deterministic after reset)
+
+### DoQ Sign-Off
+
+_Pending — DoQ to verify at EPIC-02 PR review._
 
 ---
 
