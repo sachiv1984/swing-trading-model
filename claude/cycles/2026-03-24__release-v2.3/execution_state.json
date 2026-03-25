@@ -208,23 +208,23 @@
         "ST-09": {
           "title": "BLG-OPS-07: System Health Check Playbook",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 146,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-07 (BLG-SPEC-D14) must be done first",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-25T09:50:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/health_endpoints.md#GET /health"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Documentation only. References health_endpoints.md v1.1 schema."
+          "notes": "Playbook created at docs/operations/health_check_playbook.md. Covers all 3 failure modes (DB error, market status stale, alert evaluation stalled). References health_endpoints.md v1.1. No deviations."
         }
       }
     },
