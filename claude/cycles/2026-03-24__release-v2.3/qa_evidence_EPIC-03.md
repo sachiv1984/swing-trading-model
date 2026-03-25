@@ -51,9 +51,9 @@ Last Updated: 2026-03-25
 - [x] Current DB size queryable — `GET /health/database` returns `size_bytes`, `size_mb`, `used_percent`. **Verified by code review.**
 - [x] openapi.yaml updated — `/health/database` path and `DatabaseSizeResponse` schema added in same commit as contract. **Verified by code review.**
 
-**Test scenarios:** Tier 2 service (DB-dependent). No Tier 1 unit tests added. Manual verification at delivery verification: call `GET /health/database`, confirm response shape matches spec.
+**Test scenarios:** 18 CI-safe unit tests in `tests/test_db_monitoring.py` (all passing). Manual smoke test: `scripts/smoke_test_db_alert.py` for DoQ runtime verification of Telegram delivery post-merge.
 
-**Evidence method:** Code review. AC requiring observable runtime behaviour (Telegram alert, threshold trigger) — post-merge manual verification action for DoQ.
+**Evidence method:** Code review + unit tests. Telegram alert delivery — post-merge manual verification by DoQ using smoke test script.
 
 **Deviations:** None. DoQ to confirm at delivery verification.
 
