@@ -63,7 +63,6 @@ jobs:
           echo "=== RESET ==="
           psql "$STAGING_DATABASE_URL" \
             --no-psqlrc \
-            --single-transaction \
             --set ON_ERROR_STOP=1 \
             -f scripts/reset_staging_db.sql
           echo "Reset complete."
