@@ -60,11 +60,8 @@ jobs:
       - name: Reset staging database to baseline
         run: |
           echo "=== RESET ==="
-          psql "$STAGING_DATABASE_URL" \
-            --no-psqlrc \
-            --single-transaction \
-            -f scripts/reset_staging_db.sql
-          echo "Reset complete — baseline portfolio + settings inserted."
+          chmod +x scripts/reset_staging_db.sh
+          bash scripts/reset_staging_db.sh
 
       # ── Step 2: Migrate ───────────────────────────────────────────────────
       # Applies pending schema changes that staging may not have yet.
@@ -74,13 +71,8 @@ jobs:
           echo "=== MIGRATE ==="
           psql "$STAGING_DATABASE_URL" --no-psqlrc -c "
           BEGIN;
-
-          -- v1.9 → v2.0: user_fill_price and trade_history fill_price
-          ALTER TABLE positions
-            ADD COLUMN IF NOT EXISTS user_fill_price DECIMAL(10, 4);
-          ALTER TABLE trade_history
-            ADD COLUMN IF NOT EXISTS fill_price DECIMAL(10, 4);
-
+          ALTER TABLE positions ADD COLUMN IF NOT EXISTS user_fill_price DECIMAL(10, 4);
+          ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS fill_price DECIMAL(10, 4);
           COMMIT;
           "
           echo "Migrations applied."
@@ -91,7 +83,7 @@ jobs:
         run: |
           echo "=== SEED ==="
           chmod +x scripts/seeds/seed_all.sh
-          ./scripts/seeds/seed_all.sh
+          bash scripts/seeds/seed_all.sh
 
       - name: Summary
         run: |
