@@ -109,7 +109,7 @@ jobs:
           psql "$STAGING_DATABASE_URL" --no-psqlrc -c "
             SELECT 'portfolios'             AS tbl, COUNT(*)::text AS rows FROM portfolios
             UNION ALL
-            SELECT 'portfolio.cash'         , cash::text            FROM portfolios LIMIT 1
+            SELECT 'portfolio.cash'         , (SELECT cash::text FROM portfolios LIMIT 1)
             UNION ALL
             SELECT 'positions (open)'       , COUNT(*)::text        FROM positions WHERE status = 'open'
             UNION ALL
