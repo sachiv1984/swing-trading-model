@@ -75,6 +75,8 @@ from .health_service import (
     get_operational_health,
     record_market_status_check,
     test_all_endpoints,
+    get_db_size_info,
+    send_db_size_alert_if_needed,
 )
 
 # Analytics service
@@ -123,6 +125,8 @@ __all__ = [
     'get_operational_health',
     'record_market_status_check',
     'test_all_endpoints',
+    'get_db_size_info',
+    'send_db_size_alert_if_needed',
     # Analytics service
     'AnalyticsService',
     # Validation service

@@ -106,6 +106,8 @@ from services import (
     get_operational_health,
     record_market_status_check,
     test_all_endpoints,
+    get_db_size_info,
+    send_db_size_alert_if_needed,
     # Reports service
     get_tax_year_report,
     build_tax_year_pdf,
@@ -686,6 +688,27 @@ def detailed_health_check():
         import traceback
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
+
+@app.get("/health/database")
+def database_size_check():
+    """
+    Database size monitoring endpoint (BLG-OPS-09).
+
+    Returns current database size, percentage of Render free tier limit used,
+    and configured alert threshold. Triggers a Telegram notification if usage
+    is at or above the threshold (notification-only — no automated cleanup).
+
+    Contract: docs/specs/api_contracts/health_endpoints.md v1.2
+    """
+    try:
+        info = get_db_size_info()
+        send_db_size_alert_if_needed(info)
+        return info
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
 
 @app.post("/test/endpoints")
 def test_endpoints(request: Request):
