@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/swing-trading-model/static/css/main.7561437e.css",
-    "main.js": "/swing-trading-model/static/js/main.8fb0ba13.js",
+    "main.css": "/swing-trading-model/static/css/main.cc573747.css",
+    "main.js": "/swing-trading-model/static/js/main.3f2fe9c3.js",
     "index.html": "/swing-trading-model/index.html",
-    "main.7561437e.css.map": "/swing-trading-model/static/css/main.7561437e.css.map",
-    "main.8fb0ba13.js.map": "/swing-trading-model/static/js/main.8fb0ba13.js.map"
+    "main.cc573747.css.map": "/swing-trading-model/static/css/main.cc573747.css.map",
+    "main.3f2fe9c3.js.map": "/swing-trading-model/static/js/main.3f2fe9c3.js.map"
   },
   "entrypoints": [
-    "static/css/main.7561437e.css",
-    "static/js/main.8fb0ba13.js"
+    "static/css/main.cc573747.css",
+    "static/js/main.3f2fe9c3.js"
   ]
 }
