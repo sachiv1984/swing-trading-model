@@ -287,19 +287,19 @@
           "assigned_to": "engine",
           "github_issue": 149,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
-          "commit_sha": "67a7fbc",
+          "commit_sha": "f6aa41b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-03-26T00:00:00Z",
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/patterns/loading_states.md",
             "docs/design/2026-03-24__release-v2.3/loading-states/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": "commit",
-          "sign_off_record": null,
+          "last_completed_substep": "doq_signed_off",
+          "sign_off_record": "DoQ staging review 2026-03-26 — all 13 visual sub-scenarios passed. SC-LS-VIS-01a required spinner alignment fix (f6aa41b); all others passed first run. Playwright SC-LS-01–13 all passing.",
           "notes": "DataState component created at src/components/ui/DataState.js. Applied to all 5 pages: Portfolio (Dashboard.js), Positions, Watchlist, Alerts (Notifications.js), Analytics (PerformanceAnalytics.js). Skeleton loaders replaced with spinner. Error states added to Positions and Analytics. DoQ visual verification required before sign-off."
         },
         "ST-13": {

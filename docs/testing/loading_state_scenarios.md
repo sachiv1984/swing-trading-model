@@ -246,8 +246,8 @@ The following Playwright scenarios run in CI and cover non-visual AC. A passing 
 
 | Role | Sign-Off | Date | Evidence Method |
 |------|----------|------|-----------------|
-| QA & Testing Owner | Pending | — | Authoring review |
-| Director of Quality | Pending | — | Staging run required |
+| QA & Testing Owner | Granted | 2026-03-26 | Authoring review |
+| Director of Quality | Granted | 2026-03-26 | Staging run — all 13 visual sub-scenarios passed; SC-LS-VIS-01a re-run after spinner alignment fix (f6aa41b) |
 
 ---
 
@@ -256,3 +256,4 @@ The following Playwright scenarios run in CI and cover non-visual AC. A passing 
 | Version | Date | Change |
 |---------|------|--------|
 | 0.1 | 2026-03-26 | Initial scenarios. ST-12 / EPIC-04 (v2.3). 5 scenario groups, 13 visual sub-scenarios. Automated reference: SC-LS-01–13 (Playwright). |
+| 0.2 | 2026-03-26 | DoQ sign-off granted. SC-LS-VIS-01a required one fix (spinner alignment — DashboardCard left-aligned, Positions upper-centre); resolved in f6aa41b and re-verified on staging. All other scenarios passed first run. |
