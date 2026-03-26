@@ -6,6 +6,7 @@ import PageHeader from "../components/ui/PageHeader";
 import { Plus, Trash2, Eye } from "lucide-react";
 import { cn } from "../lib/utils";
 import WatchlistModal from "../components/watchlist/WatchlistModal";
+import DataState from "../components/ui/DataState";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -63,43 +64,6 @@ function priceDisplay(value, market) {
   return `${sym}${Number(value).toFixed(2)}`;
 }
 
-function SkeletonTable() {
-  return (
-    <div className="divide-y divide-slate-700/30">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="flex gap-6 px-5 py-4">
-          <div className="h-4 w-16 bg-slate-700 rounded animate-pulse" />
-          <div className="h-4 w-12 bg-slate-700 rounded animate-pulse" />
-          <div className="h-4 w-20 bg-slate-700 rounded animate-pulse" />
-          <div className="h-4 w-16 bg-slate-800 rounded animate-pulse" />
-          <div className="h-4 w-16 bg-slate-800 rounded animate-pulse" />
-          <div className="h-4 w-16 bg-slate-800 rounded animate-pulse" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function EmptyState({ onAdd }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 text-center px-6">
-      <Eye className="w-12 h-12 text-slate-600 mb-4" />
-      <h3 className="text-lg font-semibold text-white mb-2">
-        Your watchlist is empty.
-      </h3>
-      <p className="text-sm text-slate-400 mb-6">
-        Add tickers you're monitoring for entry opportunities.
-      </p>
-      <Button
-        onClick={onAdd}
-        className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25"
-      >
-        <Plus className="w-4 h-4 mr-2" />
-        Add Ticker
-      </Button>
-    </div>
-  );
-}
 
 export default function Watchlist() {
   const navigate = useNavigate();
@@ -197,25 +161,24 @@ export default function Watchlist() {
       />
 
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 overflow-hidden">
-        {loadError ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-4">
-            <p className="text-rose-400 text-sm">
-              Unable to load watchlist. Please refresh.
-            </p>
+        <DataState
+          loading={loading}
+          error={loadError}
+          onRetry={fetchEntries}
+          empty={!loading && !loadError && entries.length === 0}
+          emptyIcon={<Eye className="w-10 h-10 text-slate-600" />}
+          emptyHeading="Your watchlist is empty"
+          emptyBody="Add tickers you're monitoring for entry opportunities."
+          emptyAction={
             <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchEntries}
-              className="bg-slate-800/50 border-slate-700 text-slate-300 hover:text-white"
+              onClick={() => setModal({ mode: "add" })}
+              className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 shadow-lg shadow-violet-500/25"
             >
-              Retry
+              <Plus className="w-4 h-4 mr-2" />
+              Add Ticker
             </Button>
-          </div>
-        ) : loading ? (
-          <SkeletonTable />
-        ) : entries.length === 0 ? (
-          <EmptyState onAdd={() => setModal({ mode: "add" })} />
-        ) : (
+          }
+        >
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -297,7 +260,7 @@ export default function Watchlist() {
               </tbody>
             </table>
           </div>
-        )}
+        </DataState>
       </div>
 
       {modal && (

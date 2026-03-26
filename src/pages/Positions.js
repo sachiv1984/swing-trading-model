@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44, api } from "../api/base44Client";
 import {
-  Loader2,
   LayoutGrid,
   List,
   BookOpen,
@@ -11,7 +10,9 @@ import {
   LogOut,
   TrendingUp,
   TrendingDown,
+  FolderOpen,
 } from "lucide-react";
+import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import PositionCard from "../components/positions/PositionCard";
@@ -40,7 +41,7 @@ export default function Positions() {
 
   const queryClient = useQueryClient();
 
-  const { data: positions, isLoading } = useQuery({
+  const { data: positions, isLoading, isError, refetch } = useQuery({
     queryKey: ["positions"],
     queryFn: async () => {
       const result = await base44.entities.Position.list("-entry_date");
@@ -209,23 +210,26 @@ export default function Positions() {
         }
       />
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
-        </div>
-      ) : viewMode === "journal" ? (
-        <JournalView positions={allPositions} availableTags={availableTags} />
-      ) : openPositions.length === 0 ? (
-        <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-12 text-center">
-          <p className="text-slate-500 mb-4">No open positions</p>
+      <DataState
+        loading={isLoading}
+        error={isError}
+        onRetry={refetch}
+        empty={!isLoading && !isError && viewMode !== "journal" && openPositions.length === 0}
+        emptyIcon={<FolderOpen className="w-10 h-10 text-slate-600" />}
+        emptyHeading="No open positions"
+        emptyBody="Enter a trade to see your positions here."
+        emptyAction={
           <Link to={createPageUrl("TradeEntry")}>
-            <Button className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white">
+            <Button className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0">
               <Plus className="w-4 h-4 mr-2" />
               Enter First Position
             </Button>
           </Link>
-        </div>
-      ) : viewMode === "grid" ? (
+        }
+      >
+        {viewMode === "journal" ? (
+          <JournalView positions={allPositions} availableTags={availableTags} />
+        ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {openPositions.map((position) => (
             <PositionCard
@@ -361,6 +365,7 @@ export default function Positions() {
           </TableBody>
         </DataTable>
       )}
+      </DataState>
 
       <PositionModal
         position={editingPosition}

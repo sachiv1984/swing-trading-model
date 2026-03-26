@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api/base44Client";
 import PageHeader from "../components/ui/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { AlertCircle, Loader2, Download } from "lucide-react";
+import { Download, BarChart2 } from "lucide-react";
+import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
 import ExecutiveSummaryCards from "../components/analytics/ExecutiveSummaryCards";
 import KeyInsightsCard from "../components/analytics/KeyInsightsCard";
@@ -46,7 +47,7 @@ export default function PerformanceAnalytics() {
     initialData: [],
   });
 
-  const { data: tradesData, isLoading } = useQuery({
+  const { data: tradesData, isLoading, isError, refetch } = useQuery({
     queryKey: ["trades"],
     queryFn: () => api.trades.list(),
   });
@@ -352,16 +353,19 @@ export default function PerformanceAnalytics() {
     }, 250);
   };
 
-  if (isLoading) {
+  if (isLoading || isError) {
     return (
       <div>
         <PageHeader
           title="Performance Analytics"
           description="Deep dive into your trading performance and strategy effectiveness"
         />
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
-        </div>
+        <DataState
+          loading={isLoading}
+          error={isError}
+          onRetry={refetch}
+          className="min-h-[400px]"
+        />
       </div>
     );
   }
@@ -588,20 +592,13 @@ export default function PerformanceAnalytics() {
             </div>
           }
         />
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="p-4 rounded-full bg-slate-800/50 border border-slate-700">
-                <AlertCircle className="w-12 h-12 text-slate-500" />
-              </div>
-            </div>
-            <h3 className="text-xl font-semibold text-white mb-2">Not Enough Data</h3>
-            <p className="text-slate-400 max-w-md">
-              Need at least {settingsData.min_trades_for_analytics} closed trades to show analytics.
-              You currently have {filteredTrades.length} trade{filteredTrades.length !== 1 ? 's' : ''} in the selected period.
-            </p>
-          </div>
-        </div>
+        <DataState
+          empty
+          emptyIcon={<BarChart2 className="w-10 h-10 text-slate-600" />}
+          emptyHeading="Not enough trades"
+          emptyBody={`Need at least ${settingsData.min_trades_for_analytics} closed trades to show analytics. You currently have ${filteredTrades.length} trade${filteredTrades.length !== 1 ? 's' : ''} in the selected period.`}
+          className="min-h-[400px]"
+        />
       </div>
     );
   }
