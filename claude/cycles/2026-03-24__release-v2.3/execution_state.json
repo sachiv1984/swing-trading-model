@@ -282,25 +282,25 @@
         },
         "ST-12": {
           "title": "BLG-FE-02: Loading State Standardisation",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 149,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "67a7fbc",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-03-26T00:00:00Z",
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/frontend/patterns/loading_states.md",
             "docs/design/2026-03-24__release-v2.3/loading-states/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "commit",
           "sign_off_record": null,
-          "notes": "Refactor of existing components — no new page. Sequence before ST-13 to avoid nav refactor conflict."
+          "notes": "DataState component created at src/components/ui/DataState.js. Applied to all 5 pages: Portfolio (Dashboard.js), Positions, Watchlist, Alerts (Notifications.js), Analytics (PerformanceAnalytics.js). Skeleton loaders replaced with spinner. Error states added to Positions and Analytics. DoQ visual verification required before sign-off."
         },
         "ST-13": {
           "title": "BLG-UX-01: Sidebar Navigation Overflow",
