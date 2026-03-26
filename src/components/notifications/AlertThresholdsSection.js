@@ -114,14 +114,14 @@ function CreateForm({ onSave, onCancel }) {
             Notify when within ___ % of stop
           </Label>
           <Input
-            type="number"
-            step="0.1"
+            type="text"
+            inputMode="decimal"
             value={threshold}
             onChange={(e) => handleThresholdChange(e.target.value)}
             placeholder="5"
             className={cn(
               'bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9 w-40',
-              validationError && 'border-rose-500/60'
+              validationError && '!border-rose-500/60'
             )}
           />
           {validationError ? (
@@ -205,14 +205,14 @@ function EditForm({ rule, onSave, onCancel }) {
             Notify when within ___ % of stop
           </Label>
           <Input
-            type="number"
-            step="0.1"
+            type="text"
+            inputMode="decimal"
             value={threshold}
             onChange={(e) => handleThresholdChange(e.target.value)}
             placeholder="5"
             className={cn(
               "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9 w-40",
-              validationError && "border-rose-500/60"
+              validationError && "!border-rose-500/60"
             )}
           />
           {validationError ? (

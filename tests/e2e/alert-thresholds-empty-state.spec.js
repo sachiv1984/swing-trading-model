@@ -184,18 +184,40 @@ test('SC-ATS-04b: threshold input hidden when non-threshold type selected', asyn
 
 // ---------------------------------------------------------------------------
 // SC-ATS-05 — Threshold validation: non-numeric value
-//
-// NOTE: Browsers coerce input[type=number] values to "" when set to a
-// non-numeric string, so this validation path cannot be triggered by
-// Playwright UI interaction. Verification is DoQ manual only (code review
-// confirms validateThreshold('abc') returns "Please enter a valid number.").
+// Previously skipped when input was type=number (browser coercion).
+// Now testable: input changed to type=text so JS validation runs on raw value.
 // ---------------------------------------------------------------------------
 
-test.skip('SC-ATS-05: threshold validation rejects non-numeric input (DoQ manual — browser coerces type=number)', () => {
-  // Cannot be tested via Playwright: input[type=number] coerces non-numeric
-  // values to empty string at the DOM level, preventing the NaN code path
-  // from being reached via simulated keyboard/fill interaction.
-  // validateThreshold() is verified correct by code review.
+test('SC-ATS-05: threshold validation rejects non-numeric input', async ({ page }) => {
+  await mockFeed(page);
+  await mockPrefs(page);
+  await mockRulesEmpty(page);
+
+  await gotoPreferences(page);
+  await page.getByRole('button', { name: 'Add alert rule' }).click();
+
+  await page.getByPlaceholder('5').fill('abc');
+
+  await expect(page.getByText('Please enter a valid number.')).toBeVisible({ timeout: 2000 });
+  await expect(page.getByRole('button', { name: 'Save' })).toBeDisabled();
+});
+
+// ---------------------------------------------------------------------------
+// SC-ATS-05b — Threshold validation: "e" input (previously bypassed type=number)
+// ---------------------------------------------------------------------------
+
+test('SC-ATS-05b: threshold validation rejects "e" input', async ({ page }) => {
+  await mockFeed(page);
+  await mockPrefs(page);
+  await mockRulesEmpty(page);
+
+  await gotoPreferences(page);
+  await page.getByRole('button', { name: 'Add alert rule' }).click();
+
+  await page.getByPlaceholder('5').fill('e');
+
+  await expect(page.getByText('Please enter a valid number.')).toBeVisible({ timeout: 2000 });
+  await expect(page.getByRole('button', { name: 'Save' })).toBeDisabled();
 });
 
 // ---------------------------------------------------------------------------
