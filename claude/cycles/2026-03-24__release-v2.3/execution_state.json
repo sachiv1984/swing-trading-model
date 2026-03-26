@@ -271,13 +271,13 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-03-26T00:00:00Z",
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/notifications.md#Section 2: Alert Rule Thresholds"
           ],
           "deviations_filed": false,
-          "last_completed_substep": "commit",
-          "sign_off_record": null,
+          "last_completed_substep": "doq_signed_off",
+          "sign_off_record": "DoQ staging review 2026-03-26 — SC-ATS-VIS-04 (border colour) and SC-ATS-VIS-05 (e validation) both passed after fixes. SC-ATS-VIS-06 (populated state regression) passed. SC-ATS-VIS-01/02/03 (empty state) verified by Playwright mock only — unreachable on staging due to backend auto-seeding (accepted per DEV-EPIC02-ST04-01). Playwright 13/13 passing. All AC met.",
           "notes": "Closes DEV-EPIC02-ST04-01. CreateForm component added to AlertThresholdsSection: alert type selector + conditional threshold input (stop_loss_approach only) + POST /alerts/rules. threshold input changed to type=text/inputMode=decimal (fixes 'e' bypass); !border-rose-500/60 fixes border colour (cn=clsx only, no tailwind-merge). Playwright SC-ATS-01–05b, 06–11 (13/13 pass). Visual scenarios SC-ATS-VIS-01–06 in docs/testing/alert_thresholds_empty_state_scenarios.md. SC-ATS-VIS-01/02/03 verified by Playwright mock only — empty state unreachable on staging due to backend auto-seeding (documented DEV-EPIC02-ST04-01). DoQ sign-off required before merge."
         },
         "ST-12": {
