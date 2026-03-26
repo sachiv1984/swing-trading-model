@@ -261,24 +261,24 @@
         },
         "ST-11": {
           "title": "BLG-FE-04: Alert Thresholds Empty State CTA Button",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 148,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "33ef1bc",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-03-26T00:00:00Z",
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/frontend/pages/notifications.md#Section 2: Alert Rule Thresholds"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "commit",
           "sign_off_record": null,
-          "notes": "Closes DEV-EPIC02-ST04-01 deviation."
+          "notes": "Closes DEV-EPIC02-ST04-01. CreateForm component added to AlertThresholdsSection: alert type selector + conditional threshold input (stop_loss_approach only) + POST /alerts/rules. Playwright SC-ATS-01–11 (11 pass, 1 skipped — SC-ATS-05 DoQ manual). Visual scenarios SC-ATS-VIS-01–06 in docs/testing/alert_thresholds_empty_state_scenarios.md. DoQ sign-off required before merge."
         },
         "ST-12": {
           "title": "BLG-FE-02: Loading State Standardisation",
