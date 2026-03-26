@@ -153,7 +153,7 @@ export default function Layout({ children, currentPageName }) {
   const alertCount = 0;
 
   const renderNavGroups = (onItemClick) => (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {NAV_GROUPS.map((group) => {
         const isCollapsed = groupCollapse[group.key];
         const isActiveGroup = group.key === getActiveGroupKey(currentPageName);
@@ -166,7 +166,7 @@ export default function Layout({ children, currentPageName }) {
               onClick={() => toggleGroup(group.key)}
               disabled={isActiveGroup}
               className={cn(
-                "w-full flex items-center justify-between px-4 py-1.5 rounded-lg transition-all",
+                "w-full flex items-center justify-between px-4 py-2 mt-2 rounded-lg transition-all",
                 isActiveGroup
                   ? "cursor-default"
                   : isDark
@@ -225,14 +225,14 @@ export default function Layout({ children, currentPageName }) {
                           to={createPageUrl(item.page)}
                           onClick={onItemClick}
                           className={cn(
-                            "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ml-2",
+                            "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ml-3 border-l-2",
                             active
                               ? isDark
-                                ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400 border border-cyan-500/30 shadow-sm shadow-cyan-500/10"
-                                : "bg-gradient-to-r from-cyan-500/10 to-violet-500/10 text-cyan-600 border border-cyan-500/20"
+                                ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400 border-l-cyan-500/60 shadow-sm shadow-cyan-500/10"
+                                : "bg-gradient-to-r from-cyan-500/10 to-violet-500/10 text-cyan-600 border-l-cyan-500/40"
                               : isDark
-                                ? "text-slate-400 hover:text-white hover:bg-slate-800/50"
-                                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                                ? "text-slate-400 hover:text-white hover:bg-slate-800/50 border-l-slate-700/40"
+                                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 border-l-slate-200"
                           )}
                         >
                           <Icon className="w-4 h-4 shrink-0" />
