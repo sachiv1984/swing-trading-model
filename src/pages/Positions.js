@@ -214,6 +214,7 @@ export default function Positions() {
         loading={isLoading}
         error={isError}
         onRetry={refetch}
+        className="min-h-[300px]"
         empty={!isLoading && !isError && viewMode !== "journal" && openPositions.length === 0}
         emptyIcon={<FolderOpen className="w-10 h-10 text-slate-600" />}
         emptyHeading="No open positions"
