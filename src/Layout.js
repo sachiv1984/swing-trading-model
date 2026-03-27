@@ -24,6 +24,9 @@ import {
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
+import { apiFetch } from "./api/base44Client";
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const NOTIFICATIONS_PAGES = ["notifications", "NotificationPreferences"];
 
@@ -53,8 +56,8 @@ const NAV_GROUPS = [
     label: "Tools",
     key: "tools",
     items: [
-      { name: "Watchlist", icon: Eye, page: "Watchlist" },
-      // Alerts item added by ST-10 (BLG-FE-05)
+      { name: "Watchlist", icon: Eye,  page: "Watchlist" },
+      { name: "Alerts",    icon: Bell, page: "notifications", alertBadge: true },
     ],
   },
   {
@@ -69,12 +72,15 @@ const NAV_GROUPS = [
 ];
 
 function getActiveGroupKey(pageName) {
+  // alertBadge items are shortcut badges — they don't anchor the active group
   for (const group of NAV_GROUPS) {
     if (
       group.items.some(
         (item) =>
-          item.page === pageName ||
-          (item.page === "notifications" && NOTIFICATIONS_PAGES.includes(pageName))
+          !item.alertBadge && (
+            item.page === pageName ||
+            (item.page === "notifications" && NOTIFICATIONS_PAGES.includes(pageName))
+          )
       )
     ) {
       return group.key;
@@ -149,8 +155,31 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const isDark = theme === "dark";
-  // alertCount — wired up by ST-10 (BLG-FE-05); badge propagates to Tools header when collapsed
-  const alertCount = 0;
+
+  // ST-10 (BLG-FE-05): unacknowledged alert count — fetched once on mount, cleared on Alerts page visit
+  const [alertCount, setAlertCount] = useState(0);
+
+  useEffect(() => {
+    const lastVisit = sessionStorage.getItem("alerts-last-visit");
+    apiFetch(`${API_BASE_URL}/alerts/history`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (!json?.data?.evaluations) return;
+        const evals = json.data.evaluations;
+        const count = lastVisit
+          ? evals.filter((e) => e.evaluation_timestamp > lastVisit).length
+          : evals.length;
+        setAlertCount(count);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (NOTIFICATIONS_PAGES.includes(currentPageName)) {
+      sessionStorage.setItem("alerts-last-visit", new Date().toISOString());
+      setAlertCount(0);
+    }
+  }, [currentPageName]);
 
   const renderNavGroups = (onItemClick) => (
     <div className="space-y-1">
@@ -186,8 +215,8 @@ export default function Layout({ children, currentPageName }) {
                   {group.label}
                 </span>
                 {showBadge && (
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-cyan-500 text-white text-[9px] font-bold leading-none">
-                    {alertCount}
+                  <span className="inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold leading-none">
+                    {alertCount > 99 ? "99+" : alertCount}
                   </span>
                 )}
               </div>
@@ -218,10 +247,12 @@ export default function Layout({ children, currentPageName }) {
                   <div className="mt-0.5 space-y-0.5 pb-1">
                     {group.items.map((item) => {
                       const Icon = item.icon;
-                      const active = isActive(item.page);
+                      // alertBadge items are badge carriers — suppress active state to avoid dual-highlight
+                      const active = !item.alertBadge && isActive(item.page);
+                      const showItemBadge = item.alertBadge && alertCount > 0;
                       return (
                         <Link
-                          key={item.page}
+                          key={item.name}
                           to={createPageUrl(item.page)}
                           onClick={onItemClick}
                           className={cn(
@@ -235,7 +266,14 @@ export default function Layout({ children, currentPageName }) {
                                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 border-l-slate-200"
                           )}
                         >
-                          <Icon className="w-4 h-4 shrink-0" />
+                          <span className="relative shrink-0">
+                            <Icon className="w-4 h-4" />
+                            {showItemBadge && (
+                              <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-red-500 text-white text-[8px] font-bold leading-[14px] text-center">
+                                {alertCount > 99 ? "99+" : alertCount}
+                              </span>
+                            )}
+                          </span>
                           {item.name}
                         </Link>
                       );
