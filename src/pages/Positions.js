@@ -31,6 +31,7 @@ import { cn } from "../lib/utils";
 import { differenceInDays } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
+import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
 
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
@@ -208,6 +209,9 @@ export default function Positions() {
           </div>
         }
       />
+
+      {/* ST-02 (BLG-FEAT-09): Metrics staleness indicator — below title, inline with view controls */}
+      <MetricsStalenessIndicator />
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">

@@ -1843,6 +1843,9 @@ components:
         BLG-SPEC-G6 (v2.1): total_return_pct is now returned.
         Formula: total_pnl / net_cash_flow × 100,
         where net_cash_flow = total_deposits − total_withdrawals.
+        ST-02 (v2.3): last_sync_at (string, ISO 8601 UTC) added — timestamp of metrics
+        computation time. Used by frontend Metrics Staleness Indicator (4h threshold).
+        See analytics_endpoints.md v2.0.0 §last_sync_at.
       additionalProperties: true
 
     ValidationResponse:
