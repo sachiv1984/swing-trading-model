@@ -103,6 +103,63 @@ CROSS JOIN (VALUES
     )
 ) AS n(alert_type, title, message, context);
 
+-- ── alert_evaluations ─────────────────────────────────────────────────────
+-- Clear and re-insert for deterministic count (5 evaluations for ST-10 badge).
+-- The nav badge (ST-10) reads GET /alerts/history which queries alert_evaluations.
+-- All 5 rows are recent (within last 24 h) so the badge count = 5 after clearing
+-- sessionStorage key "alerts-last-visit" in DevTools.
+DELETE FROM alert_evaluations
+WHERE portfolio_id = (SELECT id FROM portfolios LIMIT 1);
+
+WITH portfolio AS (
+    SELECT id FROM portfolios LIMIT 1
+)
+INSERT INTO alert_evaluations (
+    portfolio_id, evaluation_timestamp, rule_type, symbol,
+    triggered, notification_sent, values_compared
+)
+SELECT
+    p.id,
+    e.ts,
+    e.rule_type,
+    e.symbol,
+    TRUE,   -- triggered
+    TRUE,   -- notification_sent
+    e.values_compared::jsonb
+FROM portfolio p
+CROSS JOIN (VALUES
+    (
+        NOW() - INTERVAL '20 hours',
+        'stop_loss_approach',
+        'LGEN',
+        '{"stop_price":2.20,"current_price":2.25,"gap_pct":2.2,"threshold_pct":5.0}'
+    ),
+    (
+        NOW() - INTERVAL '16 hours',
+        'grace_period_warning',
+        'BARC',
+        '{"days_remaining":2,"grace_period_days":7}'
+    ),
+    (
+        NOW() - INTERVAL '12 hours',
+        'market_regime_change',
+        NULL,
+        '{"regime":"bearish","previous_regime":"neutral"}'
+    ),
+    (
+        NOW() - INTERVAL '6 hours',
+        'daily_portfolio_summary',
+        NULL,
+        '{"positions_count":2,"total_pnl":536.20}'
+    ),
+    (
+        NOW() - INTERVAL '1 hour',
+        'stop_loss_approach',
+        'LGEN',
+        '{"stop_price":2.20,"current_price":2.23,"gap_pct":1.3,"threshold_pct":5.0}'
+    )
+) AS e(ts, rule_type, symbol, values_compared);
+
 COMMIT;
 
 \echo ''
@@ -110,3 +167,4 @@ COMMIT;
 \echo '  alert_rules: 4 rules seeded (all types, all enabled; stop_loss threshold=5%)'
 \echo '  notification_preferences: 4 preferences seeded (all types, email enabled)'
 \echo '  notifications: 2 unread notifications inserted'
+\echo '  alert_evaluations: 5 rows inserted (all within last 24h — clears sessionStorage to see badge)'
