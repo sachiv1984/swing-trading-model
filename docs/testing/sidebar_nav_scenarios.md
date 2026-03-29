@@ -1,7 +1,7 @@
 **Owner:** QA & Testing Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 0.1
+**Version:** 0.2
 **Last Updated:** 2026-03-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint Item:** ST-13 — EPIC-04 (v2.3)
@@ -16,7 +16,9 @@
 
 Test scenarios covering the collapsible group sidebar navigation introduced in ST-13 (BLG-UX-01, v2.3). Groups organise nav items into labelled, collapsible sections with active-group auto-expansion and sessionStorage persistence.
 
-**Visual scenarios SC-SNV-VIS-01 through SC-SNV-VIS-08** require DoQ manual staging or local-run review. Group collapse animation, chevron rendering, typography, sessionStorage persistence, and badge propagation to collapsed group headers cannot be asserted by automated tests alone.
+**Automated coverage:** SC-SNV-01 through SC-SNV-08 (Playwright) cover non-visual AC — default collapse state, expand/collapse behaviour, active group enforcement, sessionStorage persistence, and nav regression. See `tests/e2e/sidebar-nav-groups.spec.js`.
+
+**Visual scenario SC-SNV-VIS-02** requires DoQ manual staging or local-run review. Chevron colour, group label typography, and animation smoothness cannot be asserted by Playwright alone. All other visual behaviours are fully covered by the automated suite.
 
 ---
 
@@ -172,7 +174,7 @@ Dashboard sits ungrouped at the top.
 
 ## Coverage Gap Addressed
 
-This document addresses the ST-13 test scenario gap flagged at sprint planning seal (2026-03-24) and noted in the ST-13 `execution_state.json` entry. The visual test scenarios cover the primary AC in `docs/specs/frontend/pages/navigation.md` (collapse behaviour, group header design, active group enforcement, sessionStorage persistence, regression).
+This document addresses the ST-13 test scenario gap flagged at sprint planning seal (2026-03-24) and noted in the ST-13 `execution_state.json` entry. SC-SNV-01 through SC-SNV-08 are fully automated; only SC-SNV-VIS-02 (colour/typography) requires manual DoQ review.
 
 Badge propagation to a collapsed Tools group header (spec §Alert Badge Integration) is covered visually by **SC-ANB-VIS-04** in `docs/testing/alert_nav_badge_scenarios.md` — not duplicated here.
 
@@ -182,4 +184,5 @@ Badge propagation to a collapsed Tools group header (spec §Alert Badge Integrat
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-03-29 | Automated scenarios SC-SNV-01–08 added (Playwright, 8/8 passing). SC-SNV-VIS-02 retained for manual DoQ review (colour/typography). All other VIS scenarios superseded by automated equivalents. |
 | 0.1 | 2026-03-29 | Initial version. ST-13 (BLG-UX-01, v2.3): visual scenarios SC-SNV-VIS-01–08 covering group structure, collapse behaviour, header design, sessionStorage persistence, and nav regression. Addresses EPIC-04 test scenario gap. |
