@@ -13,7 +13,7 @@
       "branch": "exec/2026-03-24__release-v2.3/EPIC-01",
       "pr_number": 157,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
@@ -73,7 +73,7 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -86,14 +86,14 @@
         "ST-03": {
           "title": "BLG-OPS-08: Staging Data Reset Script",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 140,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260325-02",
+          "blocked_since_utc": "2026-03-25T10:00:00Z",
+          "unblock_criteria": "Script committed to EPIC-02 branch; staging reset verified working",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -105,32 +105,32 @@
         "ST-04": {
           "title": "BLG-QA-06: Test Data Seed Script Library",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "blocked_qa",
           "assigned_to": "human",
           "github_issue": 141,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "ST-03 (BLG-OPS-08) must be merged first",
+          "delegation_record_id": "DEL-20260325-03",
+          "blocked_since_utc": "2026-03-25T10:00:00Z",
+          "unblock_criteria": "ST-03 (BLG-OPS-08) must be merged first; then seeds authored and committed",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "no prior spec applicable. Gated on ST-03."
+          "notes": "no prior spec applicable. Gated on ST-03. Blocked until OPS-08 staging reset script is merged."
         },
         "ST-05": {
           "title": "BLG-QA-05: Critical-Path Smoke Test (Playwright)",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "blocked_qa",
           "assigned_to": "human",
           "github_issue": 142,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "delegation_record_id": "DEL-20260325-04",
+          "blocked_since_utc": "2026-03-25T10:00:00Z",
           "unblock_criteria": "ST-03 (BLG-OPS-08) AND ST-04 (BLG-QA-06) must be merged first",
           "completed_utc": null,
           "acceptance_verified": false,
@@ -138,19 +138,19 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "no prior spec applicable. Playwright pass = supporting evidence for non-visual AC only. Flaky failures advisory."
+          "notes": "no prior spec applicable. Blocked pending ST-03 + ST-04. Playwright pass = supporting evidence for non-visual AC only. Flaky failures advisory."
         },
         "ST-06": {
           "title": "BLG-QA-01: Playwright E2E for Chart Interactivity",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "blocked_qa",
           "assigned_to": "human",
           "github_issue": 143,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260325-05",
+          "blocked_since_utc": "2026-03-25T10:00:00Z",
+          "unblock_criteria": "QA & Testing Owner authors Playwright tests covering all 16 sub-scenarios and wires to CI",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -164,10 +164,10 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 155,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -175,70 +175,70 @@
         "ST-07": {
           "title": "BLG-SPEC-D14: Update health_endpoints.md to v1.1",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 144,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b4d4c88",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-25T09:45:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/health_endpoints.md"
+            "docs/specs/api_contracts/health_endpoints.md#GET /health"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Gates ST-09 (OPS-07). Closes DEV-HEALTH-001 deviation."
+          "notes": "health_endpoints.md updated v1.0→v1.1. DEV-HEALTH-001 closed — spec now documents actual v2.2 schema. openapi.yaml OperationalHealthResponse already correct (no changes required). No new deviations."
         },
         "ST-08": {
           "title": "BLG-OPS-09: Database Size Monitoring Alert",
           "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "human",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 145,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "3c60852",
+          "delegation_record_id": "DEL-20260325-01",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-25T11:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/notifications.md#Nav Alert Badge"
+            "docs/specs/api_contracts/health_endpoints.md#GET /health/database"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "§3 compliance: notification-only, no automated cleanup. Backend only — no frontend spec beyond notification delivery pattern."
+          "notes": "GET /health/database implemented. DB size via pg_database_size(). Telegram alert on threshold breach (default 80% of Render 256 MB limit). 1-hour cooldown. §3 compliance: notification-only, no automated cleanup. health_endpoints.md v1.1→v1.2; openapi.yaml v2.1.2→v2.2.0."
         },
         "ST-09": {
           "title": "BLG-OPS-07: System Health Check Playbook",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 146,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "d93f05c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-07 (BLG-SPEC-D14) must be done first",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-25T09:50:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/health_endpoints.md#GET /health"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Documentation only. References health_endpoints.md v1.1 schema."
+          "notes": "Playbook created at docs/operations/health_check_playbook.md. Covers all 3 failure modes (DB error, market status stale, alert evaluation stalled). References health_endpoints.md v1.1. No deviations."
         }
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
@@ -249,14 +249,14 @@
         "ST-10": {
           "title": "BLG-FE-05: Alert Notification Badge in Nav",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "human",
           "github_issue": 147,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260325-09",
+          "blocked_since_utc": "2026-03-25T10:00:00Z",
+          "unblock_criteria": "Base44 Frontend Prompt Owner submits and delivers badge implementation; DoQ visual verification",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -266,19 +266,19 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Badge propagates to collapsed Tools group header (integrates with ST-13)."
+          "notes": "Badge propagates to collapsed Tools group header (integrates with ST-13). Test scenario gap flag: EPIC-04 test_scenarios pending."
         },
         "ST-11": {
           "title": "BLG-FE-04: Alert Thresholds Empty State CTA Button",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "human",
           "github_issue": 148,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260325-08",
+          "blocked_since_utc": "2026-03-25T10:00:00Z",
+          "unblock_criteria": "Base44 Frontend Prompt Owner delivers CTA button in empty state; DoQ visual verification",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -292,14 +292,14 @@
         "ST-12": {
           "title": "BLG-FE-02: Loading State Standardisation",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "human",
           "github_issue": 149,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260325-10",
+          "blocked_since_utc": "2026-03-25T10:00:00Z",
+          "unblock_criteria": "Base44 Frontend Prompt Owner delivers loading/empty/error states on all 5 pages; DoQ visual verification",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -314,14 +314,14 @@
         "ST-13": {
           "title": "BLG-UX-01: Sidebar Navigation Overflow",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "human",
           "github_issue": 150,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260325-11",
+          "blocked_since_utc": "2026-03-25T10:00:00Z",
+          "unblock_criteria": "Base44 Frontend Prompt Owner delivers collapsible nav groups; badge propagation from ST-10 verified; DoQ visual verification",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -331,15 +331,15 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Design decision resolved (collapsible groups, 4 groups). Test scenario gap flag: EPIC-04 test_scenarios pending."
+          "notes": "Design decision resolved (collapsible groups, 4 groups). Test scenario gap flag: EPIC-04 test_scenarios pending. Sequence after ST-10 for badge integration."
         }
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 156,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
@@ -347,80 +347,86 @@
         "ST-14": {
           "title": "BLG-GOV-07: Reinforce Backend Branch Discipline",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 151,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "c7397cd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-25T09:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/system/execution_prompt.md#13. Governance Invariants"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Guidance already present in execution_prompt.md v2.7 §13 (LL-v2.2-EX-03). Task: apply §6 checklist — add missing prompt_change_log.md entry for v2.6→v2.7."
+          "notes": "Pre-completed by commit c7397cd (v2.2 post-ship closure). All AC verified: execution_prompt.md v2.7 §13 contains backend branch discipline invariant (LL-v2.2-EX-03); OPERATIONAL_GUIDE §14 shows v2.7; prompt_change_log.md entry present (2026-03-24 row). No new changes required. No deviations. EPIC-05 branch commit 5820d29 records this."
         },
         "ST-15": {
           "title": "BLG-QA-03: Canonical Test Execution Report Template",
           "classification": "delegated_qa",
-          "status": "not_started",
-          "assigned_to": "human",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 152,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-03-25T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/test_execution_report_template.md",
+            "docs/team_skills/quality/defect_lifecycle.md"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable. Engine will draft the template; QA Lead sign-off required."
+          "last_completed_substep": "commit",
+          "sign_off_record": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-05.md",
+          "notes": "Template created at docs/testing/test_execution_report_template.md. defect_lifecycle.md updated to v1.1 with §10 cross-reference. DoQ sign-off granted — all 4 AC pass by code review."
         },
         "ST-16": {
           "title": "BLG-QA-04: Integration Test Coverage Report",
           "classification": "delegated_qa",
-          "status": "not_started",
-          "assigned_to": "human",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 153,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-03-25T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/endpoint-coverage.yml",
+            "docs/reference/openapi.yaml"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable. CI tooling required."
+          "last_completed_substep": "commit",
+          "sign_off_record": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-05.md",
+          "notes": "CI workflow created: .github/workflows/endpoint-coverage.yml. Advisory-only — never blocks merge. Validated: 3 covered, 6 E2E-only, 38 not-covered of 47 total. DoQ sign-off granted — all 4 AC pass by code review + local validation."
         },
         "ST-17": {
           "title": "BLG-GOV-08: Engine Prompt Compression (Conditional)",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "human",
           "github_issue": 154,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "ST-13 + ST-16 complete AND Sprint 3 residual capacity confirmed by PMO Lead",
+          "blocked_since_utc": "2026-03-25T10:00:00Z",
+          "unblock_criteria": "ST-13 + ST-16 complete AND Sprint 3 residual capacity confirmed by PMO Lead AND HoST design session completed",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Conditional stretch. HoST design session recommended before Sprint 3. Does not block v2.3 release gate."
+          "notes": "Conditional stretch. ESC-EXEC-20260325-01 filed. HoST design session required before Sprint 3. Does not block v2.3 release gate."
         }
       }
     }
@@ -428,7 +434,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02"],
+  "completed_items": ["ST-01", "ST-02", "ST-07", "ST-08", "ST-09", "ST-14", "ST-15", "ST-16"],
   "open_escalations": [],
 
   "merge_gate": {

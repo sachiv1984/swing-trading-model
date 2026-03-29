@@ -1,0 +1,168 @@
+---
+name: commit-check
+description: Run a pre-commit checklist to catch process violations before they become documented deviations. Use this skill before every git commit on an exec branch, whenever the user says "check before committing", "is this ready to commit?", "pre-commit check", or "commit check". Also use proactively whenever you are about to commit changes that touch API contracts, governance files, or involve a new endpoint — those are the highest-risk areas for silent process violations.
+---
+
+# Commit Check
+
+Runs the project's mandatory pre-commit checklist and either clears the commit or surfaces what needs fixing first.
+
+## Step 0 — Load lessons
+
+Read `.claude/skills/lessons_learnt.md`. Look for entries tagged `[commit-check]` and apply them. If the file doesn't exist, continue.
+
+## Step 1 — Get current context
+
+Run these commands in parallel:
+
+```bash
+git branch --show-current                          # current branch name
+git diff --cached --name-only                      # staged files
+git diff --cached --stat                           # staged summary
+git log --oneline -1                               # last commit (for context)
+```
+
+## Step 2 — Determine commit type
+
+From the branch name, determine whether this is:
+
+| Branch pattern | Commit type |
+|----------------|-------------|
+| `exec/<cycle>/<epic>` | **Sprint execution** — format: `[EPIC-xx][ST-xx] <description>` |
+| `main` | **Direct-to-main** — only permitted for governance commits: `[GOVERNANCE] <description>` |
+| Anything else | Flag as unexpected — confirm with user before proceeding |
+
+## Step 3 — Run the checklist
+
+Run every check. Do not skip any. Mark each PASS ✅, FAIL ❌, or N/A —.
+
+---
+
+### Check 1 — Branch matches EPIC
+
+The commit must land on the branch corresponding to its EPIC.
+
+- Get the EPIC of the story being committed (from staged file paths or ask the user)
+- Confirm the branch name ends in the correct EPIC: `exec/<cycle>/EPIC-xx`
+- **FAIL if:** EPIC-03 work is being committed on the EPIC-02 branch, or any cross-EPIC commit is about to happen
+
+---
+
+### Check 2 — Commit message format
+
+The commit message must follow the canonical format exactly.
+
+For sprint execution commits:
+```
+[EPIC-xx][ST-xx] <imperative description starting with a capital letter>
+```
+
+For governance commits (on main or governance branches):
+```
+[GOVERNANCE] <imperative description>
+```
+
+**FAIL if:** Missing brackets, wrong prefix, lowercase start, missing story ID, or any other format deviation.
+
+If no commit message has been composed yet, draft the correct one for the user.
+
+---
+
+### Check 3 — OpenAPI drift detection
+
+If any of the staged files match `docs/specs/api_contracts/**`:
+
+1. Check whether the staged file contains a new or modified `## METHOD /path` heading (at exactly `##` level — not `###`)
+2. If yes: confirm that `docs/reference/openapi.yaml` is also staged
+3. **FAIL if:** A `## METHOD /path` heading was added or changed but openapi.yaml is not staged
+
+Also check: if `docs/reference/openapi.yaml` is staged, confirm the version number was bumped.
+
+Note: This is a hard gate — PRs will be blocked by `OpenAPI Drift Detection` CI if this is missed.
+
+---
+
+### Check 4 — Governance file §6 checklist
+
+If any of the staged files are in `claude/system/`, `claude/charter/`, or `claude/strategy/`:
+
+Confirm all four §6 steps are complete in this commit:
+- [ ] Version bumped in the file's own header (`**Version:**`)
+- [ ] `docs/ops/OPERATIONAL_GUIDE.md` §14 governance table updated to the new version
+- [ ] Corresponding phase section in OPERATIONAL_GUIDE.md (§5–§10) source prompt header updated
+- [ ] Entry appended to `claude/system/prompt_change_log.md`
+
+**FAIL if:** Any of the four steps are missing. The §6 checklist is non-negotiable.
+
+---
+
+### Check 5 — No direct commits to main for sprint work
+
+**FAIL if:** The current branch is `main` and the staged files include implementation code (backend Python files, frontend JS/JSX, SQL migrations). Direct-to-main is only for governance, documentation, and CLAUDE.md-class changes.
+
+---
+
+### Check 6 — No sealed artefacts modified
+
+Check `.claude_current_state.json` for `sealed: true` flags and check `claude/cycles/{cycle_id}/state.json` for sealed artefact paths.
+
+**FAIL if:** Any staged file is in the sealed artefacts list.
+
+---
+
+## Step 4 — Render the result
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMMIT CHECK — {branch} — {date}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Staged files ({n}):
+  {list each staged file}
+
+  ✅ Check 1 — Branch matches EPIC
+  ✅ Check 2 — Commit message format
+     Suggested: [EPIC-03][ST-07] Update health_endpoints.md to v1.1
+  ❌ Check 3 — OpenAPI drift detection
+     REASON: docs/specs/api_contracts/alerts_endpoints.md staged with new ## POST /alerts/rules
+     but docs/reference/openapi.yaml is NOT staged.
+     ACTION: Stage openapi.yaml before committing.
+  ✅ Check 4 — Governance §6 checklist (N/A — no governance files staged)
+  ✅ Check 5 — No direct commits to main for sprint work
+  ✅ Check 6 — No sealed artefacts modified
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESULT: ❌ NOT READY — 1 check failed
+Fix Check 3 before committing.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+If all checks pass:
+```
+RESULT: ✅ READY TO COMMIT
+Suggested message: [EPIC-03][ST-07] Update health_endpoints.md to v1.1
+```
+
+## Step 5 — On failure, help fix it
+
+Don't just report failures — help resolve them:
+
+- **Check 3 fail (OpenAPI):** Stage the openapi.yaml changes or prompt the user to add the missing path entry
+- **Check 4 fail (§6):** Identify exactly which of the four steps is missing and action it
+- **Check 2 fail (message):** Draft the correct commit message
+- **Check 1 fail (branch):** Explain the correct branch and how to move the changes there
+
+Re-run the checklist after fixes are applied to confirm the commit is clean.
+
+## Error handling and lessons learnt
+
+If a check produced a false result (passed something it should have caught, or flagged something that was fine), append to `.claude/skills/lessons_learnt.md`:
+
+```
+| {YYYY-MM-DD} | commit-check | {check name} — {what was wrong with the check result} | {how to correctly evaluate this check} |
+```
+
+Common mistakes to watch for:
+- Missing `##`-level vs `###`-level distinction when scanning api_contracts files for new endpoints
+- Assuming openapi.yaml is already staged without actually checking `git diff --cached --name-only`
+- Skipping Check 4 when governance files are staged alongside implementation files (both must pass)

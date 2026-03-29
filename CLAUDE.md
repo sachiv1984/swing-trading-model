@@ -131,10 +131,11 @@ When two or more EPIC PRs modify shared files (`execution_state.json`, `openapi.
 1. **Merge the simpler EPIC first** (fewest shared-file changes) via local `git merge` into main, resolve any conflicts, push to `origin/main`.
 2. **Checkout the remaining EPIC branch.** Run `git merge origin/main --no-commit --no-edit` to pull in the now-merged changes.
 3. **Resolve each conflict** — always take the most-complete/most-current state:
-   - `execution_state.json`: accept story completion data (status: done, commit_sha, acceptance_verified: true) from the branch; never revert a story from `done` → `blocked`.
+   - `execution_state.json`: accept story completion data (status: done, commit_sha, acceptance_verified: true) from the branch; never revert a story from `done` → `blocked`. For summary arrays (`completed_items`, `blocked_items`, `delegated_items`): take the union of completed items from both sides; take the branch's (not main's) blocked/delegated lists as those reflect the more current state.
    - `openapi.yaml`: union of all path additions; take the highest version number.
    - `api_changelog.md`: combine all version entries in descending order (newest first).
    - `data_model.md`: keep all migration blocks in ascending version order; take highest version number in the footer.
+   - `qa_evidence_EPIC-*.md` (`add/add` conflict): take the completed DoQ sign-off blocks from the branch over any pending placeholders from main. Retain the full header metadata block (Owner, Class, Status) from whichever side has it. Keep all ST sections — combine rather than choose. Update any consolidation block rows from "Pending" → "Pass" where the branch has sign-off evidence.
 4. **Commit the resolution** on the EPIC branch: `[EPIC-xx] Merge main (<description>) into EPIC-xx — conflict resolution`.
 5. **Push** and confirm `"mergeable":"MERGEABLE"` via `gh pr view <n> --json mergeable,mergeStateStatus`.
 6. **Merge** via `gh pr merge <n> --merge`.

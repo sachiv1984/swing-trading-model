@@ -3,8 +3,8 @@
 **Owner:** Director of Quality
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-02-20
+**Version:** 1.1
+**Last Updated:** 2026-03-25
 
 ---
 
@@ -12,6 +12,7 @@
 
 | Version | Change |
 |---------|--------|
+| 1.1 | Added §10 cross-reference to canonical test execution report template (ST-15 / BLG-QA-03). No process rules changed. |
 | 1.0 | Initial version. Authored following 3.2 delivery — defect management was handled ad hoc during verification. Covers full defect arc from raise to close, Director of Quality sign-off process, and cross-domain escalation path. |
 
 ---
@@ -214,3 +215,13 @@ The verification report maintains two registers:
 ```
 
 All Open counts must be zero before Director of Quality sign-off is granted.
+
+---
+
+## 10. Test Execution Report Template
+
+The canonical template for all test execution reports — covering scenario results, pass/fail counts, defect records, observations, coverage gaps, deviation notes, and the DoQ sign-off block — is located at:
+
+`docs/testing/test_execution_report_template.md`
+
+This template is the standard record format for Phase 5 verification. All reports submitted for DoQ sign-off must conform to this template. The template is usable for both manual test runs and automated runs (Playwright, pytest, CI).

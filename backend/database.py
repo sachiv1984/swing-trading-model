@@ -845,3 +845,16 @@ def upsert_trade_reflection(trade_id: str, data: Dict) -> Dict:
                 ),
             )
             return dict(cur.fetchone())
+
+
+def get_database_size_bytes() -> int:
+    """Return the current database size in bytes.
+
+    Uses PostgreSQL's pg_database_size() to query the size of the current
+    database. Called by the DB size monitoring service (BLG-OPS-09).
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT pg_database_size(current_database()) AS size_bytes")
+            row = cur.fetchone()
+            return int(row["size_bytes"])
