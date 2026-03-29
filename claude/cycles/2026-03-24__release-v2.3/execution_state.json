@@ -5,7 +5,7 @@
   "invoked_utc": "2026-03-25T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-25T09:00:00Z",
+  "last_updated_utc": "2026-03-29T10:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -41,25 +41,25 @@
         },
         "ST-02": {
           "title": "BLG-FEAT-09: Metrics Staleness Indicator",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 139,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "07bb1b1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-29T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/analytics.md#Metrics Staleness Indicator",
             "docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Test scenario gap flag: EPIC-01 test_scenarios pending — QA & Testing Owner to author before next sprint."
+          "last_completed_substep": "commit",
+          "sign_off_record": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-01.md",
+          "notes": "MetricsStalenessIndicator component created. last_sync_at added to GET /analytics/metrics backend. analytics_endpoints.md bumped to v2.0.0. openapi.yaml description updated. Rendered on PerformanceAnalytics and Positions pages. All 4 AC pass by code review. Reclassified delegated_frontend → autonomous per 2026-03-26 frontend delegation decision. Test scenario gap flag: EPIC-01 test_scenarios pending — QA & Testing Owner to author before next sprint."
         }
       }
     },
@@ -419,7 +419,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": ["ST-02"],
   "open_escalations": [],
 
   "merge_gate": {
