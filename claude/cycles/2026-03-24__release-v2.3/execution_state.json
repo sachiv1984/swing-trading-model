@@ -312,20 +312,20 @@
           "assigned_to": "engine",
           "github_issue": 150,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
-          "commit_sha": "a74e1f8",
+          "commit_sha": "22e77f8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": "2026-03-26T00:00:00Z",
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-29T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/navigation.md",
             "docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": "commit",
-          "sign_off_record": null,
-          "notes": "Collapsible groups implemented in src/Layout.js. 4 groups: Trading, Analytics, Tools, System. sessionStorage persistence. Active group auto-expand. Badge propagation hook ready for ST-10 (alertCount=0). Dashboard ungrouped at top. Test scenario gap flag: EPIC-04 test_scenarios pending — DoQ sign-off required."
+          "last_completed_substep": "doq_signed_off",
+          "sign_off_record": "DoQ staging review 2026-03-29 against commit 22e77f8 — SC-SNV-VIS-02 (1) group labels muted grey uppercase small-caps pass, (2) chevron direction collapsed/expanded pass. Playwright SC-SNV-01–08 all passing (8/8). Evidence method: staging visual run for SC-SNV-VIS-02; Playwright for all other AC.",
+          "notes": "Collapsible groups implemented in src/Layout.js. 4 groups: Trading, Analytics, Tools, System. sessionStorage persistence. Active group auto-expand. Badge propagation hook ready for ST-10. Dashboard ungrouped at top. Playwright SC-SNV-01–08 in tests/e2e/sidebar-nav-groups.spec.js. Visual scenarios in docs/testing/sidebar_nav_scenarios.md v0.2."
         }
       }
     },
