@@ -55,7 +55,7 @@ jobs:
             echo "No seed data found. Proceeding."
           fi
 
-      - name: Seed database
+      - name: Seed trades (chart interactivity)
         if: steps.guard.outputs.skipped == 'false'
         env:
           STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
@@ -63,32 +63,68 @@ jobs:
         run: |
           psql "$STAGING_DATABASE_URL" -f backend/test_data/seed_chart_test_data.sql
 
+      - name: Check for existing alert evaluations
+        id: eval_guard
+        env:
+          STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          PGSSLMODE: require
+        run: |
+          COUNT=$(psql "$STAGING_DATABASE_URL" -t -c \
+            "SELECT COUNT(*) FROM alert_evaluations;" \
+            | tr -d ' \n')
+          echo "eval_count=$COUNT" >> "$GITHUB_OUTPUT"
+          if [ "$COUNT" -gt "0" ]; then
+            echo "eval_skipped=true" >> "$GITHUB_OUTPUT"
+            echo "alert_evaluations already present ($COUNT rows). Skipping eval seed."
+          else
+            echo "eval_skipped=false" >> "$GITHUB_OUTPUT"
+            echo "No alert_evaluations found. Seeding."
+          fi
+
+      - name: Seed alert evaluations (nav badge)
+        if: steps.eval_guard.outputs.eval_skipped == 'false'
+        env:
+          STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          PGSSLMODE: require
+        run: |
+          psql "$STAGING_DATABASE_URL" <<'SQL'
+          DO $$
+          DECLARE v_portfolio_id UUID;
+          BEGIN
+            SELECT id INTO v_portfolio_id FROM portfolios LIMIT 1;
+            IF v_portfolio_id IS NULL THEN
+              RAISE EXCEPTION 'No portfolio found.';
+            END IF;
+            INSERT INTO alert_evaluations
+              (portfolio_id, evaluation_timestamp, rule_type, symbol, triggered, notification_sent, values_compared)
+            VALUES
+              (v_portfolio_id, NOW() - INTERVAL '20 hours', 'stop_loss_approach',      'AZN',  true, true, '{"stop_price": 11000, "current_price": 11400, "gap_pct": 3.5, "threshold_pct": 5.0}'),
+              (v_portfolio_id, NOW() - INTERVAL '16 hours', 'grace_period_warning',    'HSBA', true, true, '{"days_remaining": 2, "grace_period_days": 7}'),
+              (v_portfolio_id, NOW() - INTERVAL '12 hours', 'market_regime_change',    NULL,   true, true, '{"regime": "bearish", "previous_regime": "neutral"}'),
+              (v_portfolio_id, NOW() - INTERVAL '6 hours',  'daily_portfolio_summary', NULL,   true, true, '{"positions_count": 3, "total_pnl": -45.50}'),
+              (v_portfolio_id, NOW() - INTERVAL '1 hour',   'stop_loss_approach',      'MKS',  true, true, '{"stop_price": 340, "current_price": 355, "gap_pct": 4.2, "threshold_pct": 5.0}');
+            RAISE NOTICE 'Seeded 5 alert_evaluations rows.';
+          END $$;
+          SQL
+
       - name: Report result
         run: |
+          echo "========================================================="
           if [ "${{ steps.guard.outputs.skipped }}" == "true" ]; then
-            echo "========================================================="
-            echo "  SKIPPED — seed data already present"
-            echo "  Existing [SEED] records: ${{ steps.guard.outputs.existing_count }}"
-            echo ""
-            echo "  To re-seed: delete existing [SEED] rows via psql, then"
-            echo "  re-run this workflow."
-            echo "========================================================="
+            echo "  Trades:            SKIPPED (${{ steps.guard.outputs.existing_count }} [SEED] rows already present)"
           else
-            echo "========================================================="
-            echo "  SEEDED"
-            echo ""
-            echo "  Trades: 12 inserted"
-            echo "  Jan×4 / Feb×6 / Mar×2 / Apr=0 (zero-tile)"
-            echo "  All 7 R-multiple buckets populated."
-            echo ""
-            echo "  Alert evaluations: 5 inserted (ST-10 nav badge)"
-            echo ""
-            echo "  DoQ test targets:"
-            echo "  Analytics: .../PerformanceAnalytics"
-            echo "  Scenarios: docs/testing/chart_interactivity_scenarios.md"
-            echo ""
-            echo "  Nav badge: any non-Alerts page"
-            echo "  (clear alerts-last-visit from sessionStorage first)"
-            echo "  Scenarios: docs/testing/alert_nav_badge_scenarios.md"
-            echo "========================================================="
+            echo "  Trades:            SEEDED  (12 inserted — Jan×4 / Feb×6 / Mar×2)"
           fi
+          if [ "${{ steps.eval_guard.outputs.eval_skipped }}" == "true" ]; then
+            echo "  Alert evaluations: SKIPPED (${{ steps.eval_guard.outputs.eval_count }} rows already present)"
+          else
+            echo "  Alert evaluations: SEEDED  (5 inserted)"
+          fi
+          echo ""
+          echo "  DoQ test targets:"
+          echo "  Analytics : .../PerformanceAnalytics"
+          echo "              docs/testing/chart_interactivity_scenarios.md"
+          echo "  Nav badge : any non-Alerts page"
+          echo "              clear 'alerts-last-visit' from sessionStorage first"
+          echo "              docs/testing/alert_nav_badge_scenarios.md"
+          echo "========================================================="

@@ -129,38 +129,6 @@ BEGIN
     INSERT INTO trade_history (portfolio_id, position_id, ticker, market, entry_date, exit_date, shares, entry_price, exit_price, total_cost, pnl, pnl_pct, holding_days, exit_reason, exit_note)
     VALUES (v_portfolio_id, v_position_id, 'BATS', 'UK', '2026-03-04', '2026-03-18', 40, 2700, 2400, 1080.00, -120.00, -11.11, 14, 'stop_hit', '[SEED]');
 
-    -- ────────────────────────────────────────────────────────────────────
-    -- Alert evaluations — ST-10 nav badge (SC-ANB-VIS-01 through VIS-05)
-    --
-    -- 5 rows with timestamps spread over the last 24 hours.
-    -- Badge reads from GET /alerts/history → alert_evaluations.
-    -- All seeded trades are closed so POST /alerts/evaluate would produce
-    -- 0 evaluations — seed directly instead.
-    --
-    -- SC-ANB-VIS-01 / VIS-04 / VIS-05: clear alerts-last-visit in
-    --   sessionStorage (DevTools → Application), then navigate to any
-    --   non-Alerts page — badge shows "5".
-    -- SC-ANB-VIS-02: navigate to Alerts page first to set last-visit,
-    --   then navigate away — badge hidden.
-    -- SC-ANB-VIS-03 (99+ display): re-run with additional inserts or use
-    --   scripts/seeds/seed_alert_evaluations.py --count 101.
-    -- ────────────────────────────────────────────────────────────────────
-
-    INSERT INTO alert_evaluations
-        (portfolio_id, evaluation_timestamp, rule_type, symbol, triggered, notification_sent, values_compared)
-    VALUES
-        (v_portfolio_id, NOW() - INTERVAL '20 hours', 'stop_loss_approach',      'AZN',  true,  true,
-         '{"stop_price": 11000, "current_price": 11400, "gap_pct": 3.5, "threshold_pct": 5.0}'),
-        (v_portfolio_id, NOW() - INTERVAL '16 hours', 'grace_period_warning',    'HSBA', true,  true,
-         '{"days_remaining": 2, "grace_period_days": 7}'),
-        (v_portfolio_id, NOW() - INTERVAL '12 hours', 'market_regime_change',    NULL,   true,  true,
-         '{"regime": "bearish", "previous_regime": "neutral"}'),
-        (v_portfolio_id, NOW() - INTERVAL '6 hours',  'daily_portfolio_summary', NULL,   true,  true,
-         '{"positions_count": 3, "total_pnl": -45.50}'),
-        (v_portfolio_id, NOW() - INTERVAL '1 hour',   'stop_loss_approach',      'MKS',  true,  true,
-         '{"stop_price": 340, "current_price": 355, "gap_pct": 4.2, "threshold_pct": 5.0}');
-
     RAISE NOTICE 'Seeded 12 trades (Jan×4 / Feb×6 / Mar×2). All 7 R-multiple buckets populated.';
-    RAISE NOTICE 'Seeded 5 alert_evaluations rows (ST-10 nav badge — SC-ANB-VIS-01 through VIS-05).';
 
 END $$;
