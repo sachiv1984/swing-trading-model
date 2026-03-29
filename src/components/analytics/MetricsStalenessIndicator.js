@@ -15,6 +15,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, Clock } from "lucide-react";
+import { apiFetch } from "../../api/base44Client";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 const STALE_THRESHOLD_MS = 4 * 60 * 60 * 1000; // 4 hours
@@ -60,9 +61,7 @@ export default function MetricsStalenessIndicator() {
     queryKey: ["analyticsLastSyncAt"],
     queryFn: async () => {
       try {
-        const response = await fetch(`${API_URL}/analytics/metrics`, {
-          credentials: "include",
-        });
+        const response = await apiFetch(`${API_URL}/analytics/metrics`);
         if (!response.ok) return null;
         const result = await response.json();
         return result?.data?.last_sync_at ?? null;

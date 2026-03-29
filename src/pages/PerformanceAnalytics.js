@@ -589,6 +589,7 @@ export default function PerformanceAnalytics() {
             </div>
           }
         />
+        <MetricsStalenessIndicator />
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="flex justify-center mb-4">
