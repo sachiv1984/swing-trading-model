@@ -9,12 +9,17 @@ Business logic for system health monitoring including:
 All functions are independent of FastAPI for maximum testability.
 """
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 from datetime import datetime, timezone
 import time
 import requests
 
-from database import get_portfolio, get_settings
+import os
+import urllib.parse
+import urllib.request
+import json
+
+from database import get_portfolio, get_settings, get_database_size_bytes
 from utils.pricing import get_live_fx_rate
 
 
@@ -23,6 +28,15 @@ _health_state: Dict = {
     "last_market_status_check": None,
     "last_alert_evaluation": None,
 }
+
+# Render free tier PostgreSQL limit (256 MB)
+_RENDER_DB_LIMIT_BYTES: int = 268_435_456
+
+# Rate-limit: suppress duplicate DB size alerts within this window (seconds)
+_DB_ALERT_COOLDOWN_SECONDS: int = 3600
+
+# Last DB size alert timestamp (module-level; resets on process restart)
+_last_db_size_alert_utc: Optional[datetime] = None
 
 
 def record_market_status_check() -> None:
@@ -279,3 +293,115 @@ def test_all_endpoints(base_url: str = None) -> Dict:
     },
     "results": test_results
 }
+
+
+def get_db_size_info() -> Dict:
+    """
+    Query current database size and return monitoring data.
+
+    Returns:
+        Dictionary with:
+            - size_bytes: raw database size in bytes
+            - size_mb: size in megabytes (2 d.p.)
+            - limit_bytes: Render free tier limit (268,435,456 = 256 MB)
+            - limit_mb: limit in megabytes
+            - used_percent: percentage of limit used (2 d.p.)
+            - threshold_percent: alert threshold (from DB_SIZE_ALERT_THRESHOLD_PERCENT env var, default 80)
+            - status: "ok" | "warning" | "error"
+                  "ok"      — below threshold
+                  "warning" — at or above threshold
+                  "error"   — could not query size
+
+    Implements BLG-OPS-09. Alert is notification-only per §3 compliance.
+    """
+    threshold_percent = float(os.getenv("DB_SIZE_ALERT_THRESHOLD_PERCENT", "80"))
+    try:
+        size_bytes = get_database_size_bytes()
+        size_mb = round(size_bytes / (1024 * 1024), 2)
+        limit_mb = round(_RENDER_DB_LIMIT_BYTES / (1024 * 1024), 2)
+        used_percent = round(size_bytes / _RENDER_DB_LIMIT_BYTES * 100, 2)
+        status = "warning" if used_percent >= threshold_percent else "ok"
+        return {
+            "size_bytes": size_bytes,
+            "size_mb": size_mb,
+            "limit_bytes": _RENDER_DB_LIMIT_BYTES,
+            "limit_mb": limit_mb,
+            "used_percent": used_percent,
+            "threshold_percent": threshold_percent,
+            "status": status,
+        }
+    except Exception as e:
+        return {
+            "size_bytes": None,
+            "size_mb": None,
+            "limit_bytes": _RENDER_DB_LIMIT_BYTES,
+            "limit_mb": round(_RENDER_DB_LIMIT_BYTES / (1024 * 1024), 2),
+            "used_percent": None,
+            "threshold_percent": threshold_percent,
+            "status": "error",
+            "error": str(e),
+        }
+
+
+def send_db_size_alert_if_needed(db_info: Dict) -> bool:
+    """
+    Send a Telegram alert if DB usage is at or above the configured threshold.
+
+    Rate-limited: suppresses duplicate alerts within _DB_ALERT_COOLDOWN_SECONDS.
+    Alert is notification-only — no automated cleanup (§3 compliance).
+
+    Args:
+        db_info: Dictionary returned by get_db_size_info()
+
+    Returns:
+        True if an alert was sent, False otherwise.
+    """
+    global _last_db_size_alert_utc
+
+    if db_info.get("status") != "warning":
+        return False
+
+    now = datetime.now(timezone.utc)
+    if _last_db_size_alert_utc is not None:
+        elapsed = (now - _last_db_size_alert_utc).total_seconds()
+        if elapsed < _DB_ALERT_COOLDOWN_SECONDS:
+            return False
+
+    telegram_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
+    if not telegram_token or not telegram_chat_id:
+        return False
+
+    used_pct = db_info.get("used_percent", 0)
+    size_mb = db_info.get("size_mb", 0)
+    limit_mb = db_info.get("limit_mb", 256)
+    threshold_pct = db_info.get("threshold_percent", 80)
+
+    title = "⚠️ Database Size Warning"
+    message = (
+        f"Database is {used_pct:.1f}% full "
+        f"({size_mb:.1f} MB of {limit_mb:.0f} MB used). "
+        f"Alert threshold: {threshold_pct:.0f}%. "
+        f"No automated action taken — manual review recommended."
+    )
+    text = f"*{title}*\n{message}"
+
+    try:
+        params = urllib.parse.urlencode({
+            "chat_id": telegram_chat_id,
+            "text": text,
+            "parse_mode": "Markdown",
+        })
+        url = f"https://api.telegram.org/bot{telegram_token}/sendMessage?{params}"
+        req = urllib.request.Request(url, method="GET")
+        with urllib.request.urlopen(req) as resp:
+            body = json.loads(resp.read())
+            if not body.get("ok"):
+                raise RuntimeError(f"Telegram API error: {body}")
+        _last_db_size_alert_utc = now
+        return True
+    except Exception as e:
+        # Log and suppress — never raise from a monitoring side-effect
+        import logging
+        logging.getLogger(__name__).error("send_db_size_alert_if_needed failed: %s", e)
+        return False
