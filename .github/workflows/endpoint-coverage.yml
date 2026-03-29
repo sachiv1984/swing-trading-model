@@ -1,0 +1,320 @@
+name: Endpoint Coverage Report
+
+# [EPIC-05][ST-16][BLG-QA-04] — CI-generated coverage report showing each endpoint
+# in docs/reference/openapi.yaml with covered / not-covered status.
+#
+# Approach:
+#   1. Parse docs/reference/openapi.yaml for all METHOD+PATH pairs.
+#   2. Scan pytest test files for TestClient endpoint calls (CLIENT.get/post/etc.)
+#   3. Scan Playwright spec files for page.route() intercept patterns.
+#   4. Match test paths against OpenAPI paths (with {param} normalization).
+#   5. Report: covered, partial (Playwright-only or pytest-only), not-covered.
+#
+# Advisory only — this workflow never blocks merge.
+# Its purpose is to make coverage gaps visible to the DoQ during sign-off.
+#
+# Cycle: 2026-03-24__release-v2.3
+# Maps to: ST-16 (BLG-QA-04: Integration Test Coverage Report)
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches:
+      - 'exec/**'
+      - main
+      - develop
+
+jobs:
+  endpoint-coverage:
+    name: Endpoint Coverage Report (ST-16)
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate coverage report
+        id: coverage
+        run: |
+          python3 - <<'PYEOF'
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          # ── Config ────────────────────────────────────────────────────────────
+          OPENAPI_PATH  = Path("docs/reference/openapi.yaml")
+          TESTS_DIR     = Path("tests")
+          HTTP_METHODS  = {"GET", "POST", "PUT", "PATCH", "DELETE"}
+
+          # ── Parse openapi.yaml (same regex approach as openapi-drift.yml) ────
+          openapi_text = OPENAPI_PATH.read_text()
+
+          PATH_RE   = re.compile(r"^  (/[^\s:]+)\s*:", re.MULTILINE)
+          METHOD_RE = re.compile(r"^    (get|post|put|patch|delete|head|options)\s*:", re.MULTILINE)
+
+          # List of (METHOD, /path) tuples in declaration order
+          openapi_endpoints = []
+          path_spans = [(m.group(1), m.start(), m.end()) for m in PATH_RE.finditer(openapi_text)]
+
+          for i, (path, start, end) in enumerate(path_spans):
+              next_start = path_spans[i + 1][1] if i + 1 < len(path_spans) else len(openapi_text)
+              block = openapi_text[end:next_start]
+              for mm in METHOD_RE.finditer(block):
+                  openapi_endpoints.append((mm.group(1).upper(), path))
+
+          def path_to_regex(openapi_path: str) -> re.Pattern:
+              """
+              Convert an OpenAPI path like /positions/{position_id}/exit
+              to a regex that matches concrete paths like /positions/pos-001/exit.
+              Also matches the path itself (for exact match case like /portfolio).
+              """
+              # Escape dots, replace {param} with a non-slash segment matcher
+              pattern = re.sub(r"\{[^}]+\}", r"[^/?#]+", re.escape(openapi_path))
+              # Allow optional trailing query string
+              return re.compile(r"^" + pattern + r"(?:[?#].*)?$")
+
+          # Pre-compile patterns
+          openapi_patterns = {
+              (method, path): path_to_regex(path)
+              for method, path in openapi_endpoints
+          }
+
+          # ── Scan pytest files for TestClient endpoint calls ────────────────
+          # Matches: CLIENT.get("/portfolio"), client.post("/alerts/rules"), etc.
+          # Also matches f-strings: CLIENT.get(f"/positions/{pos_id}") — normalise to /positions/VAR
+          PYTEST_CALL_RE = re.compile(
+              r'\b(?:CLIENT|client|self\.client)\s*\.\s*(get|post|put|patch|delete)\s*\(\s*[fF]?["\']([^"\']+)["\']',
+              re.IGNORECASE,
+          )
+
+          pytest_hits: dict[tuple[str, str], list[str]] = {}  # (METHOD, openapi_path) → [test files]
+
+          for py_file in TESTS_DIR.rglob("*.py"):
+              if "__pycache__" in py_file.parts:
+                  continue
+              text = py_file.read_text(errors="replace")
+              for m in PYTEST_CALL_RE.finditer(text):
+                  method = m.group(1).upper()
+                  raw_path = m.group(2)
+                  # Strip query string and normalize f-string variable segments
+                  raw_path = raw_path.split("?")[0].split("#")[0]
+                  # Replace Python f-string {variable} with a literal segment so regex can match
+                  raw_path = re.sub(r"\{[^}]+\}", "PARAM", raw_path)
+
+                  for (ep_method, ep_path), pattern in openapi_patterns.items():
+                      if ep_method == method and pattern.match(raw_path):
+                          key = (ep_method, ep_path)
+                          pytest_hits.setdefault(key, [])
+                          rel = str(py_file.relative_to(TESTS_DIR))
+                          if rel not in pytest_hits[key]:
+                              pytest_hits[key].append(rel)
+
+          # ── Scan Playwright spec files for page.route() intercept patterns ──
+          # Detect two forms:
+          #   1. Template literal:  page.route(`${API_BASE}/portfolio`, ...)
+          #      → extract the path segment after API_BASE
+          #   2. Regex literal:     page.route(/\/notifications\/mark-all-read/, ...)
+          #      → extract the path from the regex (escaped slashes)
+
+          PLAYWRIGHT_TMPL_RE = re.compile(
+              r'page\.route\s*\(\s*`[^`]*?\$\{[A-Z_]+\}([^`*?\s]+)\*?`',
+          )
+          PLAYWRIGHT_REGEX_RE = re.compile(
+              r'page\.route\s*\(\s*/\\/([\w/{}\\-]+)/',
+          )
+
+          playwright_hits: dict[tuple[str, str], list[str]] = {}
+
+          for js_file in TESTS_DIR.rglob("*.spec.js"):
+              text = js_file.read_text(errors="replace")
+              rel = str(js_file.relative_to(TESTS_DIR))
+
+              # Template literal routes — no method info, assume GET (most common)
+              # but we also check the route handler for .method() checks
+              for m in PLAYWRIGHT_TMPL_RE.finditer(text):
+                  raw_path = m.group(1).split("?")[0].split("#")[0]
+                  # Determine method from surrounding context (look for method() check nearby)
+                  # For simplicity: mark as covering any method that matches the path in openapi
+                  for (ep_method, ep_path), pattern in openapi_patterns.items():
+                      if pattern.match(raw_path):
+                          key = (ep_method, ep_path)
+                          playwright_hits.setdefault(key, [])
+                          if rel not in playwright_hits[key]:
+                              playwright_hits[key].append(rel)
+
+              # Regex literal routes
+              for m in PLAYWRIGHT_REGEX_RE.finditer(text):
+                  # Un-escape: \/notifications\/mark-all-read → /notifications/mark-all-read
+                  raw_path = "/" + m.group(1).replace("\\/", "/").replace("\\", "")
+                  raw_path = raw_path.split("?")[0]
+                  for (ep_method, ep_path), pattern in openapi_patterns.items():
+                      if pattern.match(raw_path):
+                          key = (ep_method, ep_path)
+                          playwright_hits.setdefault(key, [])
+                          if rel not in playwright_hits[key]:
+                              playwright_hits[key].append(rel)
+
+          # ── Build coverage table ───────────────────────────────────────────
+          covered          = 0
+          not_covered      = 0
+          playwright_only  = 0
+
+          rows = []
+          for method, path in openapi_endpoints:
+              key = (method, path)
+              has_pytest     = key in pytest_hits
+              has_playwright = key in playwright_hits
+
+              if has_pytest:
+                  status = "✅ Covered"
+                  files  = ", ".join(f"`{f}`" for f in pytest_hits[key])
+                  if has_playwright:
+                      pw_files = ", ".join(f"`{f}`" for f in playwright_hits[key])
+                      files += f" + {pw_files} (E2E)"
+                  covered += 1
+              elif has_playwright:
+                  status = "⚠️ E2E only"
+                  files  = ", ".join(f"`{f}`" for f in playwright_hits[key]) + " (E2E route mock)"
+                  playwright_only += 1
+              else:
+                  status = "❌ Not covered"
+                  files  = "—"
+                  not_covered += 1
+
+              rows.append((method, path, status, files))
+
+          total = len(openapi_endpoints)
+
+          # ── Render report ──────────────────────────────────────────────────
+          lines = [
+              "## Endpoint Coverage Report",
+              "",
+              f"**Spec:** `docs/reference/openapi.yaml`  |  **Cycle:** `2026-03-24__release-v2.3`  |  **Gate:** `[EPIC-05][ST-16]`",
+              "",
+              f"Scanned {total} endpoint(s) across {len(path_spans)} path(s).",
+              "",
+              "| Status | Count |",
+              "|--------|-------|",
+              f"| ✅ Covered (integration test) | {covered} |",
+              f"| ⚠️ E2E only (Playwright route mock, no integration test) | {playwright_only} |",
+              f"| ❌ Not covered | {not_covered} |",
+              f"| **Total** | **{total}** |",
+              "",
+              "> **Advisory only** — this report never blocks merge.",
+              "> Coverage gaps are surfaced here for DoQ visibility during sign-off.",
+              "",
+              "---",
+              "",
+              "### Coverage Detail",
+              "",
+              "| Method | Path | Coverage | Test File(s) |",
+              "|--------|------|----------|-------------|",
+          ]
+
+          for method, path, status, files in rows:
+              lines.append(f"| `{method}` | `{path}` | {status} | {files} |")
+
+          lines += [
+              "",
+              "---",
+              "",
+              "### Coverage Gap Summary",
+              "",
+          ]
+
+          gaps = [(m, p) for m, p, s, _ in rows if "Not covered" in s]
+          e2e_only = [(m, p) for m, p, s, _ in rows if "E2E only" in s]
+
+          if not gaps and not e2e_only:
+              lines.append("No coverage gaps. All endpoints have at least one integration test.")
+          else:
+              if gaps:
+                  lines += [
+                      f"**{len(gaps)} endpoint(s) with no test coverage:**",
+                      "",
+                  ]
+                  for m, p in gaps:
+                      lines.append(f"- `{m} {p}`")
+                  lines.append("")
+
+              if e2e_only:
+                  lines += [
+                      f"**{len(e2e_only)} endpoint(s) covered by Playwright route mock only (no integration test):**",
+                      "",
+                  ]
+                  for m, p in e2e_only:
+                      lines.append(f"- `{m} {p}`")
+                  lines.append("")
+
+              lines += [
+                  "> Integration tests (pytest + TestClient) provide stronger coverage signal than",
+                  "> Playwright route mocks. Route mocks verify frontend behaviour, not backend correctness.",
+              ]
+
+          report = "\n".join(lines)
+          print(report)
+
+          with open("coverage_report.md", "w") as fh:
+              fh.write(report)
+
+          # Write summary outputs
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"covered={covered}\n")
+              fh.write(f"not_covered={not_covered}\n")
+              fh.write(f"e2e_only={playwright_only}\n")
+              fh.write(f"total={total}\n")
+          PYEOF
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs     = require('fs');
+            const body   = fs.readFileSync('coverage_report.md', 'utf8');
+            const marker = 'Endpoint Coverage Report';
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner:      context.repo.owner,
+                repo:       context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Print coverage summary
+        run: |
+          echo "Endpoint Coverage Summary:"
+          echo "  Covered (integration): ${{ steps.coverage.outputs.covered }}"
+          echo "  E2E only (Playwright): ${{ steps.coverage.outputs.e2e_only }}"
+          echo "  Not covered:           ${{ steps.coverage.outputs.not_covered }}"
+          echo "  Total endpoints:       ${{ steps.coverage.outputs.total }}"
+          echo ""
+          echo "Full report posted as PR comment (on pull_request events)."
+          echo "Advisory only — this job does not block merge."
+          cat coverage_report.md
