@@ -91,3 +91,35 @@ New `GET /positions/compliance` backend endpoint (`compliance_service.py`) compu
 **Sign-off:** Granted.
 **Signed by:** Product Owner (staging verification) + Engine (code review)
 **Date:** 2026-03-29
+
+---
+
+## EPIC-01 Consolidation
+
+**Owner:** Director of Quality
+**Class:** QA Evidence Log (Class 3)
+**Status:** Pending QA Sign-Off
+**Last Updated:** 2026-03-29
+
+**EPIC:** EPIC-01 — User Features: Compliance & Metrics
+**Cycle:** 2026-03-24__release-v2.3
+**Sprint goal:** Establish a reproducible QA automation layer, deliver user-facing compliance and metrics features, and resolve all outstanding frontend polish and operational spec debt for v2.3.
+**Test scenarios used:** Derived from spec + AC (no scenario file authored yet — QA & Testing Owner to author before next sprint on this domain, per sprint planning outstanding action)
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|---------------|----------------|---------------------|--------|------------|
+| ST-01 BLG-FEAT-11 | positions.md §Strategy Compliance Panel; position_endpoints.md v2.0.0 | GET /positions/compliance backend + StrategyCompliancePanel frontend, display-only collapsible panel | Panel visible in Table View; per-position ATR flags; no automated actions; §13.3 enforced; openapi.yaml updated | ✅ Pass (code review + agent sign-off) | None |
+| ST-02 BLG-FEAT-09 | analytics.md §Metrics Staleness Indicator; analytics_endpoints.md v2.0.0 | MetricsStalenessIndicator on Analytics + Positions pages; last_sync_at from backend | Freshness indicator visible; relative + absolute time; amber stale badge | ✅ Pass (code review + staging) | None |
+
+**QA Sign-Off Block** *(Director of Quality to complete)*
+
+Verification method: [ ] Code review [ ] Staging [ ] Both
+
+| Item | Status |
+|------|--------|
+| ST-01 visual rendering on staging | Pending — post-merge Product Owner verification required |
+| ST-02 amber stale badge | Pending — requires 4h elapsed or forced override |
+
+Disposition: [ ] Pass [ ] Pass with notes [ ] Fail
+
+Signed by: ___________________  Date: ___________
