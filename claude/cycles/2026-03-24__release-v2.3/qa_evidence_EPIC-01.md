@@ -12,8 +12,44 @@
 
 ## ST-01 — BLG-FEAT-11: Strategy Compliance Score (Display-Only)
 
-**Status:** Pending — blocked_frontend (delegation DEL-20260325-06)
-**DoQ Sign-Off:** Not yet granted
+**Status:** Done
+**Commit:** `b6b6958`
+**Completed UTC:** 2026-03-29T11:30:00Z
+**Delegation class:** autonomous (engine — reclassified per 2026-03-26 frontend delegation decision)
+
+### Spec References
+
+- `docs/specs/frontend/pages/positions.md#Strategy Compliance Panel`
+- `docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md`
+- `docs/specs/api_contracts/position_endpoints.md#GET /positions/compliance`
+
+### What Was Built
+
+New `GET /positions/compliance` backend endpoint (`compliance_service.py`) computing per-position ATR-based flags: `stop_compliant` (stop_distance/ATR ≤ 2.5), `stop_age_days` (holding_days proxy), and `size_compliant` (entry risk vs risk_percent × portfolio_value). New `StrategyCompliancePanel` React component rendered below the Table View only — collapsible, display-only, §13.3 constraint enforced at every layer. `position_endpoints.md` bumped to v2.0.0; `openapi.yaml` bumped to v2.2.0. `positions.md` API Dependencies table updated.
+
+### Acceptance Criteria Verification
+
+| AC | Criterion | Result | Method |
+|----|-----------|--------|--------|
+| 1 | Compliance panel visible on positions page | ✅ Pass | Code review — `StrategyCompliancePanel` imported and rendered in `Positions.js` line 372; gated on `viewMode === "table" && openPositions.length > 0` |
+| 2 | Per-position: ATR-based stop compliance, stop age, size compliance | ✅ Pass | Code review — `compliance_service.py` computes all three flags per position |
+| 3 | No automated notification, alert, or action | ✅ Pass | Code review + agent-mediated sign-off — §13.3 enforced at service, router, OpenAPI, frontend component, and spec layers |
+| 4 | Strategy Rules & System Intent Owner DoQ sign-off (SPS=4) | ✅ Pass | Agent-mediated sign-off cleared 2026-03-29 — all §5 quality bar criteria passed |
+| 5 | §13.3 scope constraint documented and reflected in implementation | ✅ Pass | Code review — constraint documented in compliance_service.py header, main.py docstring, openapi.yaml, positions.md, ux_spec.md, and component file comment |
+| 6 | openapi.yaml updated in same commit | ✅ Pass | Code review — `GET /positions/compliance` added to openapi.yaml v2.2.0 in commit `b6b6958` |
+
+### Strategy Rules & System Intent Owner Sign-Off
+
+**Method:** Agent-mediated (§5.3)
+**Decision:** Approved
+**Findings applied:** 1 (positions.md API Dependencies table updated — non-blocking)
+**Cleared UTC:** 2026-03-29T11:30:00Z
+
+### DoQ Sign-Off Block
+
+**Verification method:** Code review + agent-mediated sign-off
+**Unverified AC (post-merge actions):** Visual rendering of compliance panel (expand/collapse states, amber/green/red badge colours) requires staging verification. Logic verified by code review and agent sign-off.
+**Post-merge action:** Product Owner to verify panel renders in Table View on staging at next deployment.
 
 ---
 
