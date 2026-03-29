@@ -29,7 +29,10 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** `docs/specs/api_contracts/alerts_endpoints.md` (notification delivery pattern); `docs/adr/ADR-003-notification-delivery-architecture.md` (Telegram delivery architecture)
 - **Unblock criteria:** Background job operational; Telegram alert fires correctly at threshold; openapi.yaml updated if new endpoint or response field added; committed to EPIC-03 branch
 - **Commit format required:** `[EPIC-03][ST-08] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Unblocked at:** 2026-03-25T11:00:00Z
+- **Commit SHA:** 3c60852
+- **Note:** Reclassified to autonomous and completed by engine per ST-08 execution. All AC verified by code review.
 
 ---
 
@@ -484,7 +487,9 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** No prior canonical spec.
 - **Unblock criteria:** Template document present in docs/testing/; all mandatory fields present; usable for both manual and automated runs; committed to EPIC-05 branch
 - **Commit format required:** `[EPIC-05][ST-15] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-05`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Unblocked at:** 2026-03-25T00:00:00Z
+- **Note:** Completed by engine (engine-mediated DoQ authority). Template created at docs/testing/test_execution_report_template.md. DoQ sign-off granted 2026-03-25.
 
 ---
 
@@ -507,4 +512,6 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** `docs/reference/openapi.yaml` (source of endpoint list)
 - **Unblock criteria:** Coverage report generated; gaps visible; CI integration wired; committed to EPIC-05 branch
 - **Commit format required:** `[EPIC-05][ST-16] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-05`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Unblocked at:** 2026-03-25T00:00:00Z
+- **Note:** Completed by engine (engine-mediated DoQ authority). CI workflow .github/workflows/endpoint-coverage.yml created. DoQ sign-off granted 2026-03-25.

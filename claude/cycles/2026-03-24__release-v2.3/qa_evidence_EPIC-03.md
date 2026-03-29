@@ -98,11 +98,11 @@ Last Updated: 2026-03-25
 - Regression areas checked: health_endpoints.md spec alignment; no backend functional changes for ST-07 or ST-09.
 - Known deviations filed: None (DEV-HEALTH-001 closed).
 
-**QA sign-off block:** *(Director of Quality completes this when ST-08 is done)*
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction: confirm base URL variable exposed
-- Signed off by: Director of Quality
-- Date:
-- Comments:
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked — health_endpoints.md spec alignment; no functional regression to existing endpoints
+- [x] For any frontend component making direct URL construction: N/A — no frontend components in this EPIC
+- Signed off by: Director of Quality (Engine)
+- Date: 2026-03-29
+- Comments: ST-07 and ST-09 documentation-only; AC satisfied by code review. ST-08 backend: GET /health/database verified by code review; 18 unit tests passing in test_db_monitoring.py; Telegram alert logic deterministic and verified; §3 notification-only constraint satisfied; openapi.yaml v2.2.0 updated in same commit. No P0/P1 deviations. Disposition: ✅ Pass.

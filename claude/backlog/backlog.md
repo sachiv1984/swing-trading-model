@@ -554,7 +554,7 @@ No baseline exists for endpoint response times. As features are added (alert eva
 **Owner:** Head of Specs Team
 **Source:** AUD-2026-03-21 Tier 3 — engine prompt compression deferred (roadmap_prompt 1,581 lines; release_planning_prompt 1,534 lines)
 **Effort:** L (~3–5 days)
-**Provisional-Target:** v2.3
+**Provisional-Target:** v2.4 *(returned from v2.3 — ST-17 conditional stretch; HoST design session prerequisite not completed; Sprint 3 capacity consumed by ST-10–ST-16. Returned 2026-03-29. cycle_id: 2026-03-24__release-v2.3)*
 
 **Problem**
 `claude/system/roadmap_prompt.md` (1,581 lines) and `claude/system/release_planning_prompt.md` (1,534 lines) are the two largest engine prompts in the governance system. Inline schemas, repeated examples, and verbose explanatory prose are opportunities for extraction and tightening without removing instructional precision or hard gate logic.
