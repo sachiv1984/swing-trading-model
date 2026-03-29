@@ -88,6 +88,9 @@ from services.reports_service import get_tax_year_report, build_tax_year_pdf, bu
 from services.grace_service import compute_grace_days_remaining
 from services.trade_csv_service import build_trade_history_csv
 
+# Compliance service — ST-01 (BLG-FEAT-11, v2.3)
+from services.compliance_service import get_position_compliance
+
 __all__ = [
     # Position service
     'get_positions_with_prices',

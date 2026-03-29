@@ -32,6 +32,7 @@ import { differenceInDays } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
+import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
 
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
@@ -364,6 +365,11 @@ export default function Positions() {
             })}
           </TableBody>
         </DataTable>
+      )}
+
+      {/* ST-01 (BLG-FEAT-11): Strategy Compliance Panel — Table View only; display-only §13.3 */}
+      {viewMode === "table" && openPositions.length > 0 && (
+        <StrategyCompliancePanel />
       )}
 
       <PositionModal
