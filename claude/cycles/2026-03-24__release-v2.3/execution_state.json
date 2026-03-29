@@ -5,61 +5,70 @@
   "invoked_utc": "2026-03-25T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-03-29T00:00:00Z",
+  "last_updated_utc": "2026-03-29T11:45:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 157,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
         "ST-01": {
           "title": "BLG-FEAT-11: Strategy Compliance Score (Display-Only)",
-          "classification": "delegated_frontend",
-          "status": "blocked_frontend",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 138,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-01",
-          "commit_sha": null,
-          "delegation_record_id": "DEL-20260325-06",
-          "blocked_since_utc": "2026-03-25T10:00:00Z",
-          "unblock_criteria": "Base44 Frontend Prompt Owner submits prompt; backend compliance fields added to GET /positions; frontend panel delivered and acceptance verified",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "commit_sha": "b6b6958",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-29T11:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/positions.md#Strategy Compliance Panel",
-            "docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md"
+            "docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md",
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions/compliance"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "SPS=4 — Strategy Rules & System Intent Owner DoQ sign-off required at delivery verification. §13.3 display-only constraint must be in implementation. Backend engineering must add compliance fields to GET /positions response."
+          "deviations_filed": true,
+          "last_completed_substep": "commit",
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "positions.md API Dependencies table updated to include GET /positions/compliance (non-blocking finding from sign-off review)"
+            ],
+            "cleared_utc": "2026-03-29T11:30:00Z"
+          },
+          "notes": "Reclassified delegated_frontend → autonomous per 2026-03-26 frontend delegation decision. compliance_service.py (ATR_STOP_THRESHOLD=2.5, SIZE_TOLERANCE=1.10) + StrategyCompliancePanel.js. position_endpoints.md v2.0.0. openapi.yaml v2.2.0. §13.3 display-only enforced at all layers. Agent-mediated sign-off cleared 2026-03-29."
         },
         "ST-02": {
           "title": "BLG-FEAT-09: Metrics Staleness Indicator",
-          "classification": "delegated_frontend",
-          "status": "blocked_frontend",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 139,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-01",
-          "commit_sha": null,
-          "delegation_record_id": "DEL-20260325-07",
-          "blocked_since_utc": "2026-03-25T10:00:00Z",
-          "unblock_criteria": "Base44 Frontend Prompt Owner submits prompt; backend last_sync_at field confirmed on analytics/portfolio responses; frontend indicator delivered",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "commit_sha": "07bb1b1",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-03-29T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/analytics.md#Metrics Staleness Indicator",
             "docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Test scenario gap flag: EPIC-01 test_scenarios pending — QA & Testing Owner to author before next sprint."
+          "last_completed_substep": "commit",
+          "sign_off_record": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-01.md",
+          "notes": "MetricsStalenessIndicator component created. last_sync_at added to GET /analytics/metrics backend. analytics_endpoints.md bumped to v2.0.0. openapi.yaml description updated. Rendered on PerformanceAnalytics and Positions pages. All 4 AC pass by code review. Reclassified delegated_frontend → autonomous per 2026-03-26 frontend delegation decision. Test scenario gap flag: EPIC-01 test_scenarios pending — QA & Testing Owner to author before next sprint."
         }
       }
     },
@@ -425,7 +434,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-07", "ST-08", "ST-09", "ST-14", "ST-15", "ST-16"],
+  "completed_items": ["ST-01", "ST-02", "ST-07", "ST-08", "ST-09", "ST-14", "ST-15", "ST-16"],
   "open_escalations": [],
 
   "merge_gate": {

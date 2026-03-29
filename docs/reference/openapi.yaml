@@ -653,6 +653,63 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /positions/compliance:
+    get:
+      tags: [Positions]
+      summary: Get per-position strategy compliance flags
+      description: |
+        Returns ATR-based stop compliance, stop age, and size compliance flags
+        for all open positions. Display-only — no automated action generated
+        (§13.3 constraint). Strategy Rules & System Intent Owner DoQ sign-off
+        required at delivery verification (SPS=4, ST-01 BLG-FEAT-11 v2.3).
+      responses:
+        "200":
+          description: Compliance data returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      overall_status:
+                        type: string
+                        enum: [Compliant, "Needs Attention", "Review Required"]
+                      compliant_count:
+                        type: integer
+                      total_count:
+                        type: integer
+                      positions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            position_id:
+                              type: string
+                              format: uuid
+                            ticker:
+                              type: string
+                            market:
+                              type: string
+                              enum: [UK, US]
+                            stop_compliant:
+                              type: boolean
+                              nullable: true
+                            stop_age_days:
+                              type: integer
+                              nullable: true
+                            size_compliant:
+                              type: boolean
+                              nullable: true
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /positions/analyze:
     get:
       tags: [Positions]
@@ -1858,6 +1915,9 @@ components:
         BLG-SPEC-G6 (v2.1): total_return_pct is now returned.
         Formula: total_pnl / net_cash_flow × 100,
         where net_cash_flow = total_deposits − total_withdrawals.
+        ST-02 (v2.3): last_sync_at (string, ISO 8601 UTC) added — timestamp of metrics
+        computation time. Used by frontend Metrics Staleness Indicator (4h threshold).
+        See analytics_endpoints.md v2.0.0 §last_sync_at.
       additionalProperties: true
 
     ValidationResponse:

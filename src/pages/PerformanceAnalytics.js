@@ -22,6 +22,7 @@ import BestWorstTrades from "../components/analytics/BestWorstTrades";
 import WinRateByMonth from "../components/analytics/WinRateByMonth";
 import CohortAnalysis from "../components/analytics/CohortAnalysis";
 import RMultipleDistribution from "../components/analytics/RMultipleDistribution";
+import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
 
 // Helper to convert snake_case to camelCase recursively
 const toCamelCase = (obj) => {
@@ -588,6 +589,7 @@ export default function PerformanceAnalytics() {
             </div>
           }
         />
+        <MetricsStalenessIndicator />
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="flex justify-center mb-4">
@@ -637,6 +639,9 @@ export default function PerformanceAnalytics() {
           </div>
         }
       />
+
+      {/* ST-02 (BLG-FEAT-09): Metrics staleness indicator — below title, above content */}
+      <MetricsStalenessIndicator />
 
       <ExecutiveSummaryCards metrics={metrics} />
       <KeyInsightsCard metrics={metrics} winRate={winRate} />

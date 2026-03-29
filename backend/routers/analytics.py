@@ -19,7 +19,7 @@ Contract: docs/specs/api_contracts/analytics_endpoints.md v1.9.2
 
 from fastapi import APIRouter, Query, HTTPException
 from services.analytics_service import AnalyticsService
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime, timezone
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -298,6 +298,9 @@ async def get_analytics_metrics(
 
         # Override trades_for_charts with the JOIN result (or fallback)
         metrics["trades_for_charts"] = trades_for_charts
+
+        # ST-02 (BLG-FEAT-09): data freshness — UTC timestamp of this computation
+        metrics["last_sync_at"] = datetime.now(timezone.utc).isoformat()
 
         return {"status": "ok", "data": metrics}
 
