@@ -45,11 +45,30 @@ New `GET /positions/compliance` backend endpoint (`compliance_service.py`) compu
 **Findings applied:** 1 (positions.md API Dependencies table updated — non-blocking)
 **Cleared UTC:** 2026-03-29T11:30:00Z
 
+### Staging Verification Record
+
+**Commit verified:** `058e933`
+**Verified by:** Product Owner
+**Date:** 2026-03-29
+
+| Visual item | Result |
+|-------------|--------|
+| Panel visible in Table View | ✅ Pass |
+| Panel absent in Grid View | ✅ Pass |
+| Status badge correct (Needs Attention — amber) | ✅ Pass |
+| Summary text correct ("N of M positions fully compliant") | ✅ Pass |
+| ⚠️ in correct column for non-compliant flag | ✅ Pass |
+| Per-position table columns (Ticker, Stop Compliance, Stop Age, Size Compliance) | ✅ Pass |
+| Playwright SC-COMP-01–07 all pass | ✅ Pass |
+
 ### DoQ Sign-Off Block
 
-**Verification method:** Code review + agent-mediated sign-off
-**Unverified AC (post-merge actions):** Visual rendering of compliance panel (expand/collapse states, amber/green/red badge colours) requires staging verification. Logic verified by code review and agent sign-off.
-**Post-merge action:** Product Owner to verify panel renders in Table View on staging at next deployment.
+**Verification method:** Code review + agent-mediated sign-off + staging verification
+**Unverified AC (post-merge actions):** None — all AC verified.
+
+**Sign-off:** Granted.
+**Signed by:** Product Owner (staging verification) + Engine (code review + Playwright)
+**Date:** 2026-03-29
 
 ---
 
@@ -117,7 +136,7 @@ Verification method: [ ] Code review [ ] Staging [ ] Both
 
 | Item | Status |
 |------|--------|
-| ST-01 visual rendering on staging | Pending — post-merge Product Owner verification required |
+| ST-01 visual rendering on staging | ✅ Pass — Product Owner verified 2026-03-29 |
 | ST-02 amber stale badge | Pending — requires 4h elapsed or forced override |
 
 Disposition: [ ] Pass [ ] Pass with notes [ ] Fail
