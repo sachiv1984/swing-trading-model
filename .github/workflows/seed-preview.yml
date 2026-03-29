@@ -3,8 +3,13 @@ name: Seed Staging Database
 on:
   workflow_dispatch:
 
-# Seeds the canonical staging database with 12 closed trades for ST-11 DoQ sign-off.
+# Seeds the canonical staging database for v2.3 DoQ sign-off.
 # Uses psql directly against the Supabase staging database — bypasses the API layer.
+#
+# What is seeded:
+#   - 12 closed trades (positions + trade_history) — chart interactivity (SC-CHART-IX-*)
+#   - settings record (if missing)
+#   - 5 alert_evaluations rows — nav badge (SC-ANB-VIS-01 through VIS-05, ST-10)
 #
 # Prerequisites:
 #   - STAGING_DATABASE_URL must be set as a GitHub Actions repository secret
@@ -13,11 +18,13 @@ on:
 #   - At least one portfolio record must exist in the staging database
 #
 # Idempotency: skips if [SEED] records already exist in trade_history.
-# Re-seeding: remove existing [SEED] rows manually via psql, then re-run.
+# Re-seeding: delete [SEED] rows from trade_history and alert_evaluations via psql, then re-run.
 #
-# DoQ test target after seeding:
-#   https://trading-assistant-staging.onrender.com/performance-analytics
-#   Scenarios: docs/testing/chart_interactivity_scenarios.md (SC-CHART-IX-01 through SC-CHART-IX-06)
+# DoQ test targets after seeding:
+#   Analytics:  https://trading-assistant-staging.onrender.com/PerformanceAnalytics
+#               Scenarios: docs/testing/chart_interactivity_scenarios.md (SC-CHART-IX-*)
+#   Nav badge:  any non-Alerts page — clear alerts-last-visit from sessionStorage first
+#               Scenarios: docs/testing/alert_nav_badge_scenarios.md (SC-ANB-VIS-01–05)
 
 jobs:
   seed:
@@ -68,13 +75,20 @@ jobs:
             echo "========================================================="
           else
             echo "========================================================="
-            echo "  SEEDED — 12 trades inserted"
+            echo "  SEEDED"
+            echo ""
+            echo "  Trades: 12 inserted"
             echo "  Jan×4 / Feb×6 / Mar×2 / Apr=0 (zero-tile)"
             echo "  All 7 R-multiple buckets populated."
             echo ""
-            echo "  DoQ test target:"
-            echo "  https://trading-assistant-staging.onrender.com/performance-analytics"
+            echo "  Alert evaluations: 5 inserted (ST-10 nav badge)"
             echo ""
+            echo "  DoQ test targets:"
+            echo "  Analytics: .../PerformanceAnalytics"
             echo "  Scenarios: docs/testing/chart_interactivity_scenarios.md"
+            echo ""
+            echo "  Nav badge: any non-Alerts page"
+            echo "  (clear alerts-last-visit from sessionStorage first)"
+            echo "  Scenarios: docs/testing/alert_nav_badge_scenarios.md"
             echo "========================================================="
           fi
