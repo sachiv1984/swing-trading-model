@@ -242,24 +242,24 @@
         "ST-10": {
           "title": "BLG-FE-05: Alert Notification Badge in Nav",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 147,
           "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "cbe0848",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-03-29T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/notifications.md#Nav Alert Badge",
             "docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": "implementation",
-          "sign_off_record": null,
-          "notes": "Alerts item added to Tools nav group. alertBadge prop suppresses active-state dual-highlight. alertCount fetched from GET /alerts/history vs sessionStorage alerts-last-visit. Badge clears on NOTIFICATIONS_PAGES navigation. Tools header badge color updated to red-500. Playwright SC-ANB-01–08 + visual SC-ANB-VIS-01–05 filed in docs/testing/alert_nav_badge_scenarios.md. DoQ visual verification required before sign-off."
+          "last_completed_substep": "doq_signed_off",
+          "sign_off_record": "DoQ staging review 2026-03-29 — SC-ANB-VIS-01 pass (badge shows 5 after session storage cleared), SC-ANB-VIS-02 pass (badge absent when count=0), SC-ANB-VIS-04 pass (badge clears on Alerts nav), SC-ANB-VIS-05 pass (badge persists across non-Alerts nav). SC-ANB-VIS-03 (99+ cap) not verified on staging — requires 101+ alert_evaluations rows; verified by code review only (count > 99 renders '99+'). Playwright SC-ANB-01–08 automated. Evidence method: staging visual run + code review for SC-ANB-VIS-03.",
+          "notes": "Alerts item added to Tools nav group. alertBadge prop suppresses active-state dual-highlight. alertCount fetched from GET /alerts/history vs sessionStorage alerts-last-visit. Badge clears on NOTIFICATIONS_PAGES navigation. Tools header badge color updated to red-500. Playwright SC-ANB-01–08 + visual SC-ANB-VIS-01–05 filed in docs/testing/alert_nav_badge_scenarios.md. seed_alerts.sql patched on main (commit 1ab04d8) to seed 5 alert_evaluations rows for staging test precondition."
         },
         "ST-11": {
           "title": "BLG-FE-04: Alert Thresholds Empty State CTA Button",
