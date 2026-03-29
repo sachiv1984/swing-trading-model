@@ -205,7 +205,7 @@ test('SC-STALE-04: positions page shows staleness indicator', async ({ page }) =
 // SC-STALE-05 — Hover tooltip shows absolute UTC timestamp
 // ---------------------------------------------------------------------------
 
-test('SC-STALE-05: hover tooltip shows absolute UTC timestamp', async ({ page }) => {
+test('SC-STALE-05: indicator carries absolute UTC timestamp as title attribute', async ({ page }) => {
   await setupAnalyticsPage(page, ANALYTICS_FIXED_TS);
 
   await page.goto('/#/PerformanceAnalytics');
@@ -215,11 +215,8 @@ test('SC-STALE-05: hover tooltip shows absolute UTC timestamp', async ({ page })
   const indicator = page.getByText(/Data as of/i).first();
   await expect(indicator).toBeVisible({ timeout: 5000 });
 
-  // Hover over the indicator to trigger tooltip
-  await indicator.hover();
-
-  // Tooltip must contain the absolute timestamp
+  // Tooltip is delivered via native title attribute — assert its value.
   // FIXED_SYNC_AT = '2026-03-29T09:41:00.000000+00:00' → "Updated: 2026-03-29 09:41 UTC"
-  const tooltip = page.getByText(/Updated: 2026-03-29 09:41 UTC/i);
-  await expect(tooltip).toBeVisible({ timeout: 3000 });
+  const titleValue = await indicator.getAttribute('title');
+  expect(titleValue).toBe('Updated: 2026-03-29 09:41 UTC');
 });

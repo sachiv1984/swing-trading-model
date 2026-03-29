@@ -15,12 +15,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, Clock } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 const STALE_THRESHOLD_MS = 4 * 60 * 60 * 1000; // 4 hours
@@ -87,29 +81,21 @@ export default function MetricsStalenessIndicator() {
   const relativeTime = formatRelativeTime(lastSyncAt);
   const absoluteTime = formatAbsoluteTime(lastSyncAt);
 
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {isStale ? (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-medium cursor-default select-none">
-              <AlertTriangle className="w-3 h-3 shrink-0" />
-              Data as of {relativeTime} — may be outdated
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 text-slate-400 text-xs cursor-default select-none">
-              <Clock className="w-3 h-3 shrink-0 text-slate-500" />
-              Data as of {relativeTime}
-            </span>
-          )}
-        </TooltipTrigger>
-        <TooltipContent
-          side="bottom"
-          className="bg-slate-800 border-slate-700 text-slate-200 text-xs"
-        >
-          {absoluteTime}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+  return isStale ? (
+    <span
+      title={absoluteTime}
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-medium cursor-default select-none"
+    >
+      <AlertTriangle className="w-3 h-3 shrink-0" />
+      Data as of {relativeTime} — may be outdated
+    </span>
+  ) : (
+    <span
+      title={absoluteTime}
+      className="inline-flex items-center gap-1.5 text-slate-400 text-xs cursor-default select-none"
+    >
+      <Clock className="w-3 h-3 shrink-0 text-slate-500" />
+      Data as of {relativeTime}
+    </span>
   );
 }
