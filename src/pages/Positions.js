@@ -31,6 +31,8 @@ import { cn } from "../lib/utils";
 import { differenceInDays } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
+import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
+import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
 
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
@@ -209,6 +211,9 @@ export default function Positions() {
         }
       />
 
+      {/* ST-02 (BLG-FEAT-09): Metrics staleness indicator — below title, inline with view controls */}
+      <MetricsStalenessIndicator />
+
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
@@ -360,6 +365,11 @@ export default function Positions() {
             })}
           </TableBody>
         </DataTable>
+      )}
+
+      {/* ST-01 (BLG-FEAT-11): Strategy Compliance Panel — Table View only; display-only §13.3 */}
+      {viewMode === "table" && openPositions.length > 0 && (
+        <StrategyCompliancePanel />
       )}
 
       <PositionModal

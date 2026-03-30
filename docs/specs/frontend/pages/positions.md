@@ -205,6 +205,7 @@ For Journal View empty states, see the Journal View section above.
 |----------|---------|
 | `GET /positions` | Primary data source for all three views. Returns open positions with live pricing, journal fields, and `grace_days_remaining`. |
 | `GET /positions/tags` | Tag autocomplete source for the Journal View filter dropdown and for the Position Detail Modal's tag editor |
+| `GET /positions/compliance` | *(v2.3 — ST-01)* Strategy Compliance Panel data source. Returns ATR-based per-position stop compliance, stop age, and size compliance flags. Display-only; §13.3 constraint applies. |
 
 > For full dependency behaviour rules, see `patterns/api_dependencies.md`.
 
