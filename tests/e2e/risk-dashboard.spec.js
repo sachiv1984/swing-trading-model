@@ -188,7 +188,7 @@ test.describe('Group B — Grace Period Panel', () => {
     await navigateToRiskDashboard(page);
 
     // Panel shows 3 rows (INDI has grace_period=false — excluded)
-    const graceRows = page.locator('[class*="bg-slate-800/40"]');
+    const graceRows = page.locator('[data-testid="grace-period-row"]');
     await expect(graceRows).toHaveCount(3);
 
     // Row 1 — FOXT (1d remaining) — red badge
@@ -219,7 +219,7 @@ test.describe('Group B — Grace Period Panel', () => {
     await mockPortfolio(page, TD_07);
     await navigateToRiskDashboard(page);
 
-    const foxtRow = page.locator('[class*="bg-slate-800/40"]').filter({ hasText: 'FOXT' });
+    const foxtRow = page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'FOXT' });
     await expect(foxtRow).toBeVisible();
     await expect(foxtRow).toContainText('1d remaining');
     await expect(foxtRow.locator('[class*="text-rose-400"]')).toBeVisible();
@@ -235,7 +235,7 @@ test.describe('Group B — Grace Period Panel', () => {
     await mockPortfolio(page, td);
     await navigateToRiskDashboard(page);
 
-    const row = page.locator('[class*="bg-slate-800/40"]').filter({ hasText: 'TEST2' });
+    const row = page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'TEST2' });
     await expect(row).toContainText('2d remaining');
     await expect(row.locator('[class*="text-amber-400"]')).toBeVisible();
   });
@@ -246,7 +246,7 @@ test.describe('Group B — Grace Period Panel', () => {
     await mockPortfolio(page, TD_07);
     await navigateToRiskDashboard(page);
 
-    const golfRow = page.locator('[class*="bg-slate-800/40"]').filter({ hasText: 'GOLF' });
+    const golfRow = page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'GOLF' });
     await expect(golfRow).toContainText('4d remaining');
     await expect(golfRow.locator('[class*="text-amber-400"]')).toBeVisible();
     // Must NOT be green
@@ -259,7 +259,7 @@ test.describe('Group B — Grace Period Panel', () => {
     await mockPortfolio(page, TD_07);
     await navigateToRiskDashboard(page);
 
-    const hotlRow = page.locator('[class*="bg-slate-800/40"]').filter({ hasText: 'HOTL' });
+    const hotlRow = page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'HOTL' });
     await expect(hotlRow).toContainText('5d remaining');
     await expect(hotlRow.locator('[class*="text-emerald-400"]')).toBeVisible();
     // Must NOT be amber
@@ -272,11 +272,11 @@ test.describe('Group B — Grace Period Panel', () => {
     await navigateToRiskDashboard(page);
 
     // JULIET (grace_period=true, 10d) appears
-    await expect(page.locator('[class*="bg-slate-800/40"]').filter({ hasText: 'JULIET' })).toBeVisible();
+    await expect(page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'JULIET' })).toBeVisible();
     await expect(page.locator('text=10d remaining')).toBeVisible();
 
     // KILO (grace_period=false) does NOT appear
-    await expect(page.locator('[class*="bg-slate-800/40"]').filter({ hasText: 'KILO' })).toHaveCount(0);
+    await expect(page.locator('[data-testid="grace-period-row"]').filter({ hasText: 'KILO' })).toHaveCount(0);
 
     // Count badge: "1 position"
     await expect(page.locator('text=1 position')).toBeVisible();
