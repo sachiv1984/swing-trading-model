@@ -167,7 +167,7 @@
       "status": "done",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-03",
       "pr_number": 155,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -342,7 +342,7 @@
       "status": "done",
       "branch": "exec/2026-03-24__release-v2.3/EPIC-05",
       "pr_number": 156,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
@@ -441,8 +441,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01", "EPIC-03", "EPIC-05"],
+    "epics_pending": ["EPIC-02", "EPIC-04"],
     "all_merged": false
   },
 
