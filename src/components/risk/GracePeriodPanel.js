@@ -41,6 +41,7 @@ export default function GracePeriodPanel({ positions = [], error }) {
             return (
               <div
                 key={p.id}
+                data-testid="grace-period-row"
                 className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-800/40 border border-slate-700/30"
               >
                 <div className="flex items-center gap-3">
