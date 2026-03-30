@@ -119,7 +119,7 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
     await expect(page.locator('h2').filter({ hasText: 'Jan 2026' })).toBeVisible();
 
     // Summary line contains trade count and Total P&L
-    await expect(page.locator('text=3')).toBeVisible();
+    await expect(page.locator('p').filter({ hasText: /3 trade/ })).toBeVisible();
     await expect(page.locator('text=Total P&L')).toBeVisible();
   });
 
@@ -133,7 +133,7 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toBeVisible({ timeout: 5000 });
 
     // Click X button in modal header
-    await page.locator('button').filter({ has: page.locator('svg') }).last().click();
+    await page.locator('[data-testid="heatmap-modal-close"]').click();
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toHaveCount(0, { timeout: 5000 });
   });
 
@@ -159,8 +159,8 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
     await tile.click();
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toBeVisible({ timeout: 5000 });
 
-    // Click the fixed backdrop overlay (bg-black/60)
-    await page.locator('[class*="fixed"][class*="inset-0"]').click({ position: { x: 10, y: 10 }, force: true });
+    // Click the fixed backdrop overlay (bg-black/60) — .first() because MetricsStalenessIndicator may add another fixed overlay
+    await page.locator('[class*="fixed"][class*="inset-0"]').first().click({ position: { x: 10, y: 10 }, force: true });
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toHaveCount(0, { timeout: 5000 });
   });
 
@@ -197,8 +197,8 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
     const rows = page.locator('table tbody tr');
     await expect(rows).toHaveCount(JAN_2026_EXPECTED.tradeCount, { timeout: 5000 });
 
-    // Summary total P&L = +£270.00
-    await expect(page.locator('text=£270.00')).toBeVisible();
+    // Summary total P&L = +£270.00 — .first() guards against duplicate occurrences in other panels
+    await expect(page.locator('text=£270.00').first()).toBeVisible();
 
     // All 3 Jan trade tickers appear in the table
     await expect(page.locator('td').filter({ hasText: 'AAAA' })).toBeVisible();
@@ -228,7 +228,7 @@ test.describe('SC-CHART-IX-02 — Underwater Equity Curve: Zoom', () => {
     await switchToAllTime(page);
 
     // Locate the underwater chart container
-    const chartContainer = page.locator('[class*="select-none"]').first();
+    const chartContainer = page.locator('[data-testid="underwater-chart"]');
     await expect(chartContainer).toBeVisible({ timeout: 10000 });
 
     const box = await chartContainer.boundingBox();
@@ -329,7 +329,7 @@ test.describe('SC-CHART-IX-03 — Underwater Equity Curve: Pan', () => {
     await page.waitForTimeout(200);
     await expect(page.locator('button').filter({ hasText: 'Reset' })).toBeVisible();
 
-    const chartContainer = page.locator('[class*="select-none"]').first();
+    const chartContainer = page.locator('[data-testid="underwater-chart"]');
     const box = await chartContainer.boundingBox();
     const startX = box.x + box.width * 0.5;
     const startY = box.y + box.height * 0.5;
@@ -354,7 +354,7 @@ test.describe('SC-CHART-IX-03 — Underwater Equity Curve: Pan', () => {
     // Confirm not zoomed
     await expect(page.locator('button').filter({ hasText: 'Reset' })).toHaveCount(0);
 
-    const chartContainer = page.locator('[class*="select-none"]').first();
+    const chartContainer = page.locator('[data-testid="underwater-chart"]');
     const box = await chartContainer.boundingBox();
     const startX = box.x + box.width * 0.5;
     const startY = box.y + box.height * 0.5;
@@ -383,7 +383,7 @@ test.describe('SC-CHART-IX-04 — Underwater Equity Curve: Hover Tooltip', () =>
     await setupAnalytics(page);
     await switchToAllTime(page);
 
-    const chartContainer = page.locator('[class*="select-none"]').first();
+    const chartContainer = page.locator('[data-testid="underwater-chart"]');
     await expect(chartContainer).toBeVisible({ timeout: 10000 });
     const box = await chartContainer.boundingBox();
 
@@ -413,7 +413,7 @@ test.describe('SC-CHART-IX-04 — Underwater Equity Curve: Hover Tooltip', () =>
     await page.locator('button[title="Zoom in"]').click();
     await page.waitForTimeout(200);
 
-    const chartContainer = page.locator('[class*="select-none"]').first();
+    const chartContainer = page.locator('[data-testid="underwater-chart"]');
     const box = await chartContainer.boundingBox();
     const y = box.y + box.height * 0.5;
 
@@ -459,7 +459,7 @@ test.describe('SC-CHART-IX-05 — R-Multiple Analysis: Bar Hover Tooltip', () =>
     // Non-visual: verify component renders correctly with expected structure
     // "% of closed trades" text appears in CustomBarTooltip
     // We check the section is fully rendered with stats
-    await expect(rMultipleSection.locator('text=Distribution')).toBeVisible();
+    await expect(rMultipleSection.locator('text=Distribution').first()).toBeVisible();
     await expect(rMultipleSection.locator('text=Statistics')).toBeVisible();
   });
 
@@ -550,8 +550,8 @@ test.describe('SC-CHART-IX-06 — Cross-Chart Data Integrity', () => {
     await tile.click();
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toBeVisible({ timeout: 5000 });
 
-    // Modal summary also shows £270.00 — same source data
-    await expect(page.locator('text=£270.00')).toBeVisible();
+    // Modal summary also shows £270.00 — same source data; .first() guards against tile also showing £270
+    await expect(page.locator('text=£270.00').first()).toBeVisible();
   });
 
   // SC-CHART-IX-06b — No new network requests on interactivity
@@ -609,7 +609,7 @@ test.describe('SC-CHART-IX-06 — Cross-Chart Data Integrity', () => {
     }
 
     // Hover over chart areas
-    const chartContainer = page.locator('[class*="select-none"]').first();
+    const chartContainer = page.locator('[data-testid="underwater-chart"]');
     if (await chartContainer.isVisible()) {
       const box = await chartContainer.boundingBox();
       await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.5);

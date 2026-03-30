@@ -145,6 +145,7 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                 Trades — {formatMonthTitle(selectedMonth.month)}
               </h2>
               <button
+                data-testid="heatmap-modal-close"
                 onClick={() => setSelectedMonth(null)}
                 className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
               >

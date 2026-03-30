@@ -237,6 +237,7 @@ export default function UnderwaterChart({ trades }) {
 
       <div
         ref={containerRef}
+        data-testid="underwater-chart"
         className="p-6 select-none"
         style={{ cursor: isZoomed ? (dragState ? "grabbing" : "grab") : "default" }}
         onMouseDown={handleMouseDown}
