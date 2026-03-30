@@ -27,3 +27,26 @@ Cycle: 2026-03-24__release-v2.3
 
 **Recurrence Notes:**
 - Friction items 1 and 2 are direct recurrences of v2.2 Phase 3 rows (originally deferred to v2.3 target date). Both deferred actions were not applied in the v2.3 cycle. Second recurrence — owner (Head of Specs Team) should prioritise these for action-now in the next available engine patch window, ideally before v2.4 sprint planning.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-03-24__release-v2.3
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-03-30
+**Reviewed by:** PMO Lead
+
+**Cross-cycle recurrence check:** Prior cycle `2026-03-21__release-v2.2` `## Phase 4` read. One recurrence identified (marked below).
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| [RECURRENCE] spec_references = [] for operational/QA tooling items (ST-03 staging reset, ST-04 seed scripts, ST-05 smoke tests) — same pattern as v2.2 (ST-02 CSP meta tag, ST-11 readiness doc). Deferred action from v2.2 not yet applied. Three traceability gap flags fired at STEP 1. | Phase 4 | A | defer | Apply the v2.2 deferred action: add note to execution_prompt.md §9.1 schema: for operational tooling items and autonomous infrastructure items with no prior canonical spec, spec_references may be left empty with a note field value of "no prior spec applicable." Second recurrence — owner should prioritise for action-now. | Head of Specs Team | v2.4 |
+| EPIC-01 test_scenarios field empty in execution_state.json despite Playwright spec files existing (compliance-panel.spec.js SC-COMP-01–07, staleness-indicator.spec.js SC-STALE-01–05). Scenarios ran and passed — field registration was missed. | Phase 4 | B | defer | Add prompt note to execution_prompt.md STEP 3.1.A: when Playwright spec file is created for a story, populate test_scenarios field in execution_state.json with the scenario file path at the same time. This is a registration gap, not a coverage gap. | Head of Specs Team | v2.4 |
+| P2 deviation acceptance (DEV-EPIC02-ST05-03) was implicit at verification rather than explicit — Product Owner acceptance was inferred from `run delivery verification` invocation rather than a recorded acceptance in QA evidence. | Phase 4 | C | defer | For P2 deviations filed during execution, add an advisory note in execution_prompt.md STEP 3.1.A deviation filing step: request PO to provide a brief explicit acceptance note in the relevant qa_evidence file at the time of filing, rather than deferring to delivery verification invocation. This makes P2 acceptance explicit and auditable. | Head of Specs Team | v2.4 |
+| Post-sign-off CI selector fixes (3 commits on EPIC-02 branch after DoQ sign-off) required a post-sign-off maintenance note to be appended to qa_evidence_EPIC-02.md. The sign-off was not reopened but the maintenance note protocol was ad hoc. | Phase 4 | B | defer | Formalise post-sign-off CI maintenance note protocol in delivery_verification_prompt.md or execution_prompt.md: define when a maintenance note is sufficient (selector/infrastructure fix, no functional change) vs. when a DoQ re-review is required (functional AC change). Current ad hoc approach works but lacks a canonical decision rule. | Head of Specs Team | v2.4 |
+
+**Recurrence Notes:**
+- Friction item 1 is a direct recurrence of v2.2 Phase 4 row 2 ("ST-02 and ST-11 spec_references fields empty"). The deferred action was not applied in v2.3. Second recurrence — owner (Head of Specs Team) should prioritise this for action-now in the next available engine patch window.
+- v2.2 Phase 4 row 3 (branch discipline / BLG-GOV-07) was resolved: ST-14 in this cycle applied the branch discipline invariant to execution_prompt.md §13. Not a recurrence.
