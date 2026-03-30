@@ -272,3 +272,32 @@ The following non-visual AC are supported by Playwright pass as primary evidence
 - seed_analytics.sql required two fixes post-delivery: (1) removed `DELETE FROM trade_reflections` which failed on staging instances without that table; (2) commits 959e8f0/64bbe59 corrected. ✓
 
 **Deviation filed:** None. V-CHART-02c cursor bug fixed directly in cfb676f (1-line change, no spec deviation — root cause was CSS inheritance gap with Recharts SVG, not a spec misunderstanding).
+
+---
+
+## EPIC-02 Consolidation Block
+
+**EPIC:** EPIC-02 — QA Automation Foundation
+**Cycle:** 2026-03-24__release-v2.3
+
+| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
+|---------|---------------|----------------|--------------------|---------|----|
+| ST-03 | N/A | Staging reset script: reset_staging_db.sql + .sh (0130abd) | Idempotent reset, documented, STAGING_DATABASE_URL guard | ✅ Pass | None |
+| ST-04 | N/A | Seed scripts: seed_alerts.sql, seed_watchlist.sql, seed_portfolio_trades.sql, seed_all.sh (f90dd58) | 3-domain seeds, idempotent, BLG-OPS-08 compatible | ✅ Pass | None |
+| ST-05 | N/A | Smoke test suite: smoke-critical-paths.spec.js + smoke-tests.yml (ba46dcb) | 3 critical paths, CI advisory-only, visual AC deferred | ✅ Pass | DEV-EPIC02-ST05-03 (V-PATH2-01 P&L column) |
+| ST-06 | chart_interactivity_scenarios.md | Playwright E2E: chart-interactivity.spec.js (bdb2734) + cfb676f (grab cursor fix) | 16 sub-scenarios, both ST-11 regressions caught, visual QA 9/12 PASS | ✅ Pass | V-CHART-05a/b/c staging-blocked (BLG-BE-04, out of scope) |
+
+**Regression areas checked:**
+- All seed scripts use STAGING_DATABASE_URL guard — no production risk
+- ST-05 smoke tests are advisory-only (continue-on-error: true) — no PR blocking
+- ST-06 chart-interactivity tests run independently of ST-05 smoke suite
+- V-CHART-02c (grab cursor) fixed in cfb676f before final sign-off
+
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec (or N/A for no-spec items)
+- [x] No unresolved P0 or P1 deviations — DEV-EPIC02-ST05-03 is P2 (BLG-FE item filed); V-CHART-05a/b/c are staging-blocked P2 (BLG-BE-04, independent of v2.3)
+- [x] Regression areas checked — no live API calls from tests, advisory-only CI integration, no page functional regressions
+- [x] For any frontend component making direct URL construction: N/A — no frontend components in this EPIC
+- Signed off by: Director of Quality (Engine)
+- Date: 2026-03-30
+- Comments: ST-03/04 pure backend/ops — all AC code-review verified. ST-05/06 Playwright suites operational, CI wired, advisory-only constraints satisfied. V-CHART-02c cursor bug fixed before sign-off. V-CHART-05a/b/c staging-blocked by BLG-BE-04 (stop_price absent from /trades API) — accepted as out-of-scope for ST-06 delivery. DEV-EPIC02-ST05-03 (V-PATH2-01: P&L GBP column absent on Positions) filed as P2 BLG-FE item. Disposition: ✅ Pass.
