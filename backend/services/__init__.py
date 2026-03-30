@@ -75,6 +75,8 @@ from .health_service import (
     get_operational_health,
     record_market_status_check,
     test_all_endpoints,
+    get_db_size_info,
+    send_db_size_alert_if_needed,
 )
 
 # Analytics service
@@ -87,6 +89,9 @@ from services.drawdown_service import get_drawdown_fields
 from services.reports_service import get_tax_year_report, build_tax_year_pdf, build_tax_year_csv
 from services.grace_service import compute_grace_days_remaining
 from services.trade_csv_service import build_trade_history_csv
+
+# Compliance service — ST-01 (BLG-FEAT-11, v2.3)
+from services.compliance_service import get_position_compliance
 
 __all__ = [
     # Position service
@@ -123,6 +128,8 @@ __all__ = [
     'get_operational_health',
     'record_market_status_check',
     'test_all_endpoints',
+    'get_db_size_info',
+    'send_db_size_alert_if_needed',
     # Analytics service
     'AnalyticsService',
     # Validation service

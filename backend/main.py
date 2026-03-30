@@ -72,6 +72,7 @@ from utils.calculations import (
 )
 
 from services.alerts_service import ensure_alerts_tables
+from services.compliance_service import get_position_compliance
 
 from services import (
     # Position service
@@ -106,6 +107,8 @@ from services import (
     get_operational_health,
     record_market_status_check,
     test_all_endpoints,
+    get_db_size_info,
+    send_db_size_alert_if_needed,
     # Reports service
     get_tax_year_report,
     build_tax_year_pdf,
@@ -687,6 +690,27 @@ def detailed_health_check():
         traceback.print_exc()
         return {"status": "error", "message": str(e)}
 
+@app.get("/health/database")
+def database_size_check():
+    """
+    Database size monitoring endpoint (BLG-OPS-09).
+
+    Returns current database size, percentage of Render free tier limit used,
+    and configured alert threshold. Triggers a Telegram notification if usage
+    is at or above the threshold (notification-only — no automated cleanup).
+
+    Contract: docs/specs/api_contracts/health_endpoints.md v1.2
+    """
+    try:
+        info = get_db_size_info()
+        send_db_size_alert_if_needed(info)
+        return info
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+
 @app.post("/test/endpoints")
 def test_endpoints(request: Request):
     """
@@ -752,6 +776,32 @@ def update_position_tags_endpoint(position_id: str, request: UpdateTagsRequest):
         return {"status": "ok", "data": result}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/positions/compliance")
+def get_positions_compliance_endpoint():
+    """
+    GET /positions/compliance
+
+    Returns ATR-based strategy compliance flags for all open positions.
+
+    Per-position fields:
+      - stop_compliant: bool | null — stop within 2.5× ATR of entry; null in grace period
+      - stop_age_days: int | null — approximate days since stop was set; null in grace period
+      - size_compliant: bool | null — risk amount within strategy limit; null if no snapshot
+
+    Scope constraint §13.3: Display-only. No automated action generated.
+    Spec: docs/specs/api_contracts/position_endpoints.md §GET /positions/compliance
+    """
+    try:
+        result = get_position_compliance()
+        return {"status": "ok", "data": result}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         import traceback
         traceback.print_exc()

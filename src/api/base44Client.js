@@ -437,6 +437,8 @@ export const api = {
       // IMPORTANT: /positions returns array directly (raw)
       doFetch('/positions', { raw: true }),
     analyze: async () => doFetch('/positions/analyze'),
+    // ST-01 (BLG-FEAT-11, v2.3): ATR-based per-position compliance flags
+    positionCompliance: async () => doFetch('/positions/compliance'),
   },
 
   trades: {

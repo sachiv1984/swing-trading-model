@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.9.0
-**Last Updated:** 2026-03-18
+**Version:** 2.0.0
+**Last Updated:** 2026-03-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -78,9 +78,20 @@ Response uses the standard success envelope from **conventions.md**.
   "holding_periods": [ ... ],
   "top_performers": { ... },
   "consistency_metrics": { ... },
-  "trades_for_charts": [ ... ]
+  "trades_for_charts": [ ... ],
+  "last_sync_at": "2026-03-29T09:41:00.000000+00:00"
 }
 ```
+
+#### `last_sync_at` field (v2.0.0 — ST-02 BLG-FEAT-09)
+
+UTC ISO 8601 timestamp of when this metrics computation was performed. Used by the frontend to display a data freshness indicator on the Analytics and Portfolio/Positions pages.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `last_sync_at` | string (ISO 8601 UTC) | Timestamp of this API computation. Always present. |
+
+Frontend staleness threshold: 4 hours (default, non-configurable in v2.3). If the field is absent or null, the frontend omits the indicator entirely.
 
 ---
 
@@ -692,6 +703,7 @@ No query parameters. Uses all closed trades (all-time).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.0.0 | 2026-03-29 | ST-02 (BLG-FEAT-09, v2.3): Add `last_sync_at` field to `GET /analytics/metrics` response — UTC ISO 8601 timestamp of metrics computation time. Frontend uses this for the Metrics Staleness Indicator (4h default threshold, amber badge when stale). API Contracts & Documentation Owner. |
 | 1.5.0 | 2026-02-17 | Initial rewrite: unified endpoint, validation endpoint, known limitations recorded |
 | 1.7.0 | 2026-02-17 | Added `entry_price`, `exit_price`, `stop_price` to `trades_for_charts`; R-multiple note added |
 | 1.8.1 | 2026-02-21 | BLG-TECH-02 contract: added `severity` field to each validation result object; added `by_severity` aggregation to `summary`; added severity model table; updated metrics validated table to include severity column and `capital_efficiency` row; updated response example; removed resolved known limitation entries for Sharpe variance and capital efficiency currency basis (resolved via BLG-TECH-01). API Contracts Owner. |
