@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CashManagementModal from "../components/cash/CashManagementModal";
 import { base44, apiFetch } from "../api/base44Client";
-import { Loader2, Settings2, Plus, RotateCcw, Check } from "lucide-react";
+import { Loader2, Settings2, Plus, RotateCcw, Check, LayoutDashboard } from "lucide-react";
+import DataState from "../components/ui/DataState";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "../components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -63,7 +64,7 @@ export default function Dashboard() {
     staleTime: 60 * 1000,
   });
 
-  const { data: positions, isLoading: loadingPositions } = useQuery({
+  const { data: positions, isLoading: loadingPositions, isError: positionsError, refetch: refetchPositions } = useQuery({
     queryKey: ["positions"],
     queryFn: () => base44.entities.Position.filter({ status: "open" }),
   });
@@ -130,6 +131,7 @@ export default function Dashboard() {
   const totalPnL = portfolio?.total_pnl || 0;  // ✅ Use portfolio's pre-calculated P&L
 
   const isLoading = loadingPortfolio || loadingPositions || loadingRegimes || !isLoaded;
+  const isError = positionsError;
 
   const handleExitPositions = async (positionsToExit) => {
     for (const position of positionsToExit) {
@@ -485,11 +487,11 @@ export default function Dashboard() {
         }
       />
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
-        </div>
-      ) : (
+      <DataState
+        loading={isLoading}
+        error={isError}
+        onRetry={refetchPositions}
+      >
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="dashboard" direction="vertical">
             {(provided) => (
@@ -569,7 +571,7 @@ export default function Dashboard() {
             )}
           </Droppable>
         </DragDropContext>
-      )}
+      </DataState>
 
       <WidgetLibrary
         open={libraryOpen}

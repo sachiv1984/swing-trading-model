@@ -252,6 +252,24 @@ def create_and_close(trade):
     return position_id
 
 
+def run_alert_evaluate():
+    """
+    Call POST /alerts/evaluate to populate alert_evaluations from seeded positions.
+    Required for nav badge (ST-10 SC-ANB-VIS-01) — badge reads from alert history.
+    Returns evaluations_persisted count, or None on failure.
+    """
+    try:
+        resp = requests.post(BASE_URL + "/alerts/evaluate", timeout=30)
+        if not resp.ok:
+            print(f"  ⚠ POST /alerts/evaluate → HTTP {resp.status_code}: {resp.text[:200]}")
+            return None
+        data = resp.json().get("data", {})
+        return data.get("evaluations_persisted", 0)
+    except Exception as exc:
+        print(f"  ⚠ POST /alerts/evaluate failed: {exc}")
+        return None
+
+
 def main():
     print(f"\n{'='*65}")
     print(f"  Seeding chart test data")
@@ -293,6 +311,26 @@ def main():
 
         wins = sum(1 for t in created if float(t["_r"].replace("R", "")) > 0)
         print(f"\n  Win rate: {wins}/{len(created)} = {wins/len(created)*100:.0f}%")
+
+    # -- Alert evaluation step (ST-10 nav badge seed) -------------------------
+    print(f"\n{'='*65}")
+    print(f"  Running alert evaluation (seeds alert_evaluations for nav badge)...")
+    evals = run_alert_evaluate()
+    if evals is not None:
+        print(f"  ✓ POST /alerts/evaluate — {evals} evaluation(s) persisted")
+        if evals == 0:
+            print(f"  ℹ  0 evaluations: alert rules may not be configured, or no")
+            print(f"     open positions matched any enabled rule. Configure alert")
+            print(f"     rules via /notifications/preferences, then re-run evaluate.")
+        else:
+            print(f"  ℹ  To test the nav badge (SC-ANB-VIS-01):")
+            print(f"     1. Open the app in your browser")
+            print(f"     2. DevTools → Application → Session Storage → delete 'alerts-last-visit'")
+            print(f"     3. Navigate to any non-Alerts page — badge should show on Alerts (Tools group)")
+    else:
+        print(f"  ⚠ Alert evaluation skipped — badge seed incomplete.")
+        print(f"     Run manually: POST {BASE_URL}/alerts/evaluate")
+    # -------------------------------------------------------------------------
 
     print(f"\n{'='*65}")
     if len(created) == 12:
