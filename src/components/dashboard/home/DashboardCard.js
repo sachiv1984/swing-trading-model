@@ -11,9 +11,8 @@ export default function DashboardCard({ title, to, isLoading, error, children, c
       <p className="text-xs text-slate-400 uppercase tracking-wider mb-3">{title}</p>
 
       {isLoading && (
-        <div className="flex items-center gap-2 text-slate-500">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          <span className="text-sm">Loading…</span>
+        <div className="flex justify-center py-4">
+          <Loader2 className="w-5 h-5 animate-spin text-slate-500" />
         </div>
       )}
 
