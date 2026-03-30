@@ -270,3 +270,16 @@ Backend must provide compliance flags per position (new endpoint or extension to
 - The user should be able to switch between views without losing filtering or scroll position
 - Data should update smoothly after exits or journal edits
 - The Journal View is a **reading and reflection experience**, not a live monitoring surface. Layout and density decisions should reflect this: more vertical space per entry, no live price indicators, no stop-level warnings
+
+---
+
+## Known Deviations
+
+### DEV-EPIC02-ST05-03 — Positions Table View: P&L (GBP) column absent
+
+- **Description:** The v2.3 implementation of the Positions Table View renders "P&L %" (percentage uplift) in green for positive positions but does not display the "P&L (GBP)" absolute value column. Only % is visible; the absolute £ value is absent.
+- **Canonical requirement:** §Table View column list specifies both "P&L (GBP)" and "P&L %" as separate columns in the Table View.
+- **Priority:** P2
+- **Target resolution release:** v2.4
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** BLG-FE-06 (filed delivery verification 2026-03-30, cycle 2026-03-24__release-v2.3)

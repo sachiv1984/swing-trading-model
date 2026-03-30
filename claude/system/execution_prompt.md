@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.7
-**Last Updated:** 2026-03-21
+**Version:** 2.8
+**Last Updated:** 2026-03-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -121,6 +121,12 @@ If classification is ambiguous: classify as `delegated_decision` and flag for th
 **Backend delegation note:** The engine must confirm a canonical spec is locked before delegating a backend item (`claude/agents/backend_engineering_patterns_owner.md` §4 Step 1). If the spec is in draft, raise to Head of Specs Team before delegating to Head of Engineering.
 
 **Frontend delegation note:** The engine must produce a complete Base44 prompt draft as part of the delegation record, covering all required sections per `claude/agents/base44_frontend_prompt_owner.md` §3 (context, the change, API contract, behaviour rules, non-functional rules, expected outcome). The Base44 Frontend Prompt Owner submits the prompt; the engine provides the structure.
+
+**Mid-sprint reclassification (LL-v2.3-EX-02):** If a story's classification changes after a delegation record has already been created (e.g., `delegated_frontend` → `autonomous` because the frontend delivery model changed, or `delegated_backend` → `autonomous` because spec ambiguity was resolved), update the delegation log entry **immediately**:
+- Set the entry's `Status` to `Cancelled` with a note stating the reclassification reason and new classification (e.g., "Reclassified to autonomous — frontend delivery model switched to engine per Product Owner authority 2026-03-26").
+- Update `execution_state.json` classification for the item.
+- Do **not** wait until STEP 5.0 to record this — in-flight updates prevent bulk rework at sprint close (same principle as LL-v2.2-EX-01).
+- If a new delegation record is created for the same item under the new classification, cross-reference the cancelled entry.
 
 ### 5.3 Agent-Mediated Sign-Off
 
@@ -678,12 +684,13 @@ The consolidation block must include:
 
 **QA sign-off block:** (Director of Quality completes this)
 > **Authoring note (LL-v1.10-P4-1):** When completing the sign-off block, update all AC table rows from "Pending"/"Awaiting QA" to "Pass" or "Pass with notes" in the same edit. Sign-off block and AC table must be consistent — leaving rows as "Pending" after signing off creates a documentation inconsistency.
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object **(LL-v2.0-P3-4)**
+> **Date field requirement (LL-v2.3-EX-01):** The `Date:` field must be non-blank before the merge gate runs. A sign-off block with a blank Date: field is incomplete — Sprint Close STEP 5.1 (LL-v2.0-P4-1) will block on this. Fill in the date when signing off, not at sprint close.
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object **(LL-v2.0-P3-4)**
 - Signed off by: Director of Quality
-- Date:
+- Date: <fill in — must be non-blank (LL-v2.3-EX-01)>
 - Comments:
 
 This file is the evidence backing `qa_signed_off = true` in `execution_state.json`. A PR comment alone is not sufficient — this file must exist and the sign-off block must be complete before the merge gate runs.

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-24 (roadmap rebalance — cycle 2026-03-24__scheduled — no-change confirm; v2.2 shipped; active initiatives remain zero; gated items remain gated)
+**Last Updated:** 2026-03-30 (manage roadmap — post-ship closure v2.3; RA:v2.3 retired to archive; active initiatives remain zero; no initiative rows to move — v2.3 was backlog-driven)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 

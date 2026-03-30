@@ -3,9 +3,46 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-03-30
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.3 — Quality Automation & User Insight — 2026-03-30
+
+Cycle: 2026-03-24__release-v2.3
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-03-24__release-v2.3/verification_report.md
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | StrategyCompliancePanel (display-only; per-position stop compliance, stop age, size compliance; collapsible; auto-expands on violation); MetricsStalenessIndicator (data-freshness badge, staleness age, per-metric tooltip) | docs/specs/frontend/pages/positions.md#Strategy Compliance Panel; docs/specs/frontend/pages/analytics.md#Metrics Staleness Indicator; docs/specs/api_contracts/position_endpoints.md#GET /positions/compliance |
+| EPIC-02 | UnderwaterChart zoom/pan; MonthlyHeatmap tile drill-down modal (per-trade table, R-Multiple, exit reason); R-Multiple Distribution histogram; critical-path smoke tests (3 paths, CI advisory); staging data reset script; test data seed scripts | docs/testing/chart_interactivity_scenarios.md |
+| EPIC-03 | GET /health/database endpoint (DB size monitor, Telegram alert); health_endpoints.md v1.2; system health check playbook (3 failure modes); DEV-HEALTH-001 closed | docs/specs/api_contracts/health_endpoints.md v1.2 |
+| EPIC-04 | Alert notification badge on Alerts nav item; Alert Thresholds empty state CTA form (closes DEV-EPIC02-ST04-01); loading state standardisation (5 pages); collapsible sidebar navigation groups (4 groups, sessionStorage persist, badge integration) | docs/specs/frontend/pages/notifications.md; docs/specs/frontend/patterns/loading_states.md; docs/specs/frontend/pages/navigation.md |
+| EPIC-05 | Backend branch discipline invariant (execution_prompt.md §13); canonical test execution report template; integration test coverage CI report | claude/system/execution_prompt.md; docs/testing/test_execution_report_template.md; docs/reference/openapi.yaml |
+
+### Deviations accepted
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-EPIC02-ST05-03 | P2 | P&L (GBP) column absent on Positions page — % uplift shown, absolute £ not rendered. BLG-FE-06 filed. | PO + DoQ |
+| V-CHART-05a/b/c | P2 | R-Multiple chart visual AC staging-blocked by BLG-BE-04 (stop_price absent from /trades API). BLG-BE-04 existing item. | PO + DoQ |
+
+### Tech backlog items shipped
+
+- [ST-03] BLG-OPS-08: Staging data reset script
+- [ST-04] BLG-QA-06: Test data seed script library
+- [ST-05] BLG-QA-05: Critical-path smoke test (Playwright, advisory-only CI)
+- [ST-14] BLG-GOV-07: Backend branch discipline invariant in execution_prompt.md §13
+- [ST-15] BLG-QA-03: Canonical test execution report template
+- [ST-16] BLG-QA-04: Integration test coverage CI report
+
+Sign-off: Product Owner — 2026-03-30
+QA sign-off: Director of Quality — 2026-03-30
 
 ---
 

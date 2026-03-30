@@ -9,7 +9,7 @@
 
 ## Sprint: 2026-03-24__release-v2.3
 **Date:** 2026-03-30
-**Status:** Sprint_Complete — pending delivery verification
+**Status:** Verified_with_deviations — post-ship closure complete 2026-03-30
 
 ### Capabilities now live (merged this sprint)
 
