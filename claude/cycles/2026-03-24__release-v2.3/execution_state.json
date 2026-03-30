@@ -242,7 +242,7 @@
       "branch": "exec/2026-03-24__release-v2.3/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-24__release-v2.3/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "docs/testing/alert_nav_badge_scenarios.md",
