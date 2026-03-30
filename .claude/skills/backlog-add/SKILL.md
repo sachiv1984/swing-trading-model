@@ -18,8 +18,7 @@ Read `claude/backlog/backlog.md` in full. For every ID namespace, record the hig
 | Namespace | Covers | Example |
 |-----------|--------|---------|
 | BLG-GOV-xx | Governance process items | BLG-GOV-09 |
-| BLG-FE-xx | Frontend component, page, UX interaction | BLG-FE-07 |
-| BLG-UX-xx | UX / navigation / layout (no functional component change) | BLG-UX-02 |
+| BLG-FE-xx | Frontend / UX items | BLG-FE-07 |
 | BLG-QA-xx | QA and test automation | BLG-QA-06 |
 | BLG-OPS-xx | Operational / infrastructure | BLG-OPS-09 |
 | BLG-SPEC-Dxx | Spec debt (sequential, not padded) | BLG-SPEC-D15 |
@@ -35,8 +34,7 @@ Assign each new item ID = highest in its namespace + 1. Never reuse an ID even i
 
 Use this guide:
 - Governance process, prompt changes, workflow policy → **BLG-GOV**
-- Frontend component, page, or interaction (button, form, modal, data display) → **BLG-FE**
-- Navigation structure, sidebar layout, information architecture, viewport behaviour with no new functional component → **BLG-UX**
+- Frontend component, page, UX interaction → **BLG-FE** (or **BLG-UX** for pure navigation/layout)
 - QA infrastructure, test automation, test tooling → **BLG-QA**
 - Operational runbook, CI/CD, infrastructure, monitoring → **BLG-OPS**
 - Spec debt — missing, wrong, or outdated documentation → **BLG-SPEC-D**
@@ -44,8 +42,6 @@ Use this guide:
 - Backend endpoint, service, data model → **BLG-BE**
 - Net-new user-facing product feature → **BLG-FEAT**
 - Test scenario coverage gap → **TEST-GAP**
-
-**BLG-FE vs BLG-UX:** Use BLG-FE when a component needs to be built or changed. Use BLG-UX when the work is primarily about layout, navigation grouping, or information architecture — i.e. how things are arranged rather than what they do.
 
 When in doubt, ask the user which namespace fits best.
 
@@ -71,22 +67,7 @@ Draft the full item and show it to the user for confirmation before writing to t
 
 ## Step 4 — Find the insertion point
 
-The backlog is organised into numbered domain sections. New items go into a **session section** appended at the bottom of the active items area (before the first `<!-- release-plan-marker -->` comment) — do not insert items directly into a domain section.
-
-The domain sections and their namespaces are:
-
-| Section | Title | Namespaces |
-|---------|-------|------------|
-| §1 | Platform & Validation Governance | BLG-TECH |
-| §2 | Product Feature Backlog (User-Facing) | BLG-FEAT |
-| §3 | Frontend & UX | BLG-FE, BLG-UX |
-| §4 | Backend & Data | BLG-BE |
-| §5 | QA & Test Automation | BLG-QA, TEST-GAP |
-| §6 | Operations & Infrastructure | BLG-OPS |
-| §7 | Spec Debt | BLG-SPEC-D |
-| §8 | Governance | BLG-GOV |
-
-These sections are for reference (so you can orient the user and correctly categorise items). All new items are still appended to a session section — not inserted mid-file into a domain section.
+New items go into a **session section** at the bottom of the active items area (before the first `<!-- release-plan-marker -->` comment).
 
 - If a session section already exists for today's date (e.g. `## N. New Backlog Items — Session 2026-03-25`), append to it.
 - If no session section exists for today, create a new one. Number it sequentially (next integer after the highest section number currently in the file):

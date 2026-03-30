@@ -51,8 +51,8 @@ BEGIN
 END $$;
 
 -- ── Step 2: Re-insert baseline portfolio (£20,000 cash) ──────────────────
-INSERT INTO portfolios (cash, last_updated)
-VALUES (20000.00, NOW());
+INSERT INTO portfolios (cash, initial_cash, last_updated)
+VALUES (20000.00, 20000.00, NOW());
 
 -- ── Step 3: Re-insert default settings ───────────────────────────────────
 INSERT INTO settings (
@@ -85,5 +85,5 @@ COMMIT;
 
 \echo ''
 \echo 'Staging DB reset complete.'
-\echo 'Baseline: 1 portfolio (cash=£20,000) + default settings.'
+\echo 'Baseline: 1 portfolio (cash=£20,000, initial_cash=£20,000) + default settings.'
 \echo 'All positions, trades, watchlist, alerts, signals, notifications cleared.'

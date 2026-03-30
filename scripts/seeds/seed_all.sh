@@ -6,6 +6,7 @@
 #   1. seed_portfolio_trades.sql — open positions, trade history, cash tx
 #   2. seed_watchlist.sql        — watchlist entries
 #   3. seed_alerts.sql           — alert rules, preferences, notifications
+#   4. seed_analytics.sql        — 12 closed trades for analytics chart QA
 #
 # Prerequisites:
 #   - psql installed and on $PATH
@@ -63,6 +64,7 @@ SEEDS=(
     "seed_portfolio_trades.sql"
     "seed_watchlist.sql"
     "seed_alerts.sql"
+    "seed_analytics.sql"
 )
 
 for seed in "${SEEDS[@]}"; do
@@ -82,3 +84,4 @@ echo "State summary:"
 echo "  portfolio/trades : 2 open positions (LGEN, BARC) + 2 closed trades"
 echo "  watchlist        : 4 entries (AAPL, MSFT, LGEN, BARC)"
 echo "  alerts           : 4 rules + 4 preferences + 2 unread notifications"
+echo "  analytics        : 12 closed trades across Jan-Mar 2026 (analytics charts enabled)"

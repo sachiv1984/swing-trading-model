@@ -3,7 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-25 (standardisation pass — shipped items and closed release slices removed; all active items normalised to skill template)
+**Last Updated:** 2026-03-25 (standardisation pass + session additions: BLG-BE-05, BLG-SPEC-D15, BLG-SPEC-D16, BLG-FE-06)
+**Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -290,33 +291,111 @@ BLG-QA-02 identified test data reproducibility as a prerequisite for any automat
 
 ---
 
-### BLG-QA-05 — Critical-path smoke test (Playwright)
-**Priority:** P2 (Medium)
-**Type:** QA / Test Automation
-**Owner:** QA & Testing Owner
-**Source:** IDEA-qa-testing-20260321-02 (IW-20260321-01 — gate cleared: BLG-QA-02 shipped v2.2)
-**Effort:** M (~2 days)
-**Provisional-Target:** v2.3
-**Depends on:** BLG-OPS-08 (staging reset), BLG-QA-06 (seed scripts)
+## 12. New Backlog Items — Session 2026-03-25
 
-> ⚠️ **§3 Scope constraint:** Playwright pass is supporting evidence for non-visual AC only — not a replacement for DoQ human sign-off. Flaky test failures must not block human review. Visual AC (colours, ring indicators) remain manual.
+*User-raised items from session review. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
+
+---
+
+### BLG-BE-05 — Fix ATR pence→GBP conversion for all UK (.L) tickers
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Bug Fix
+**Owner:** Head of Engineering
+**Source:** V-PATH1-04 staging test failure — server log ATR=-48.69 for LGEN at £2.45 — 2026-03-25
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.4
 
 **Problem**
-BLG-QA-02 identified that three critical paths (add trade, view portfolio, view alerts) have no automated test coverage. Manual testing on every PR is slow and error-prone. BLG-QA-01 covers chart scenarios; this item adds the three most-used non-chart flows.
+`calculate_atr()` in `backend/utils/pricing.py` applies the pence→GBP conversion (`atr / 100`) only when `atr > 100`, but Yahoo Finance returns ATR in pence for all LSE `.L` tickers regardless of magnitude. For most UK stocks (ATR typically 5–30p), the guard is never triggered, leaving ATR in pence while all other price values are in GBP. This causes `calculate_initial_stop()` (multiplier=5.0) to produce deeply negative stop prices (e.g. -48.69 for LGEN at £2.45, ATR=10.23p), which the backend rejects and the position creation call fails.
 
 **Scope**
-- Critical path 1: Add a trade (navigate to form → fill required fields → submit → verify trade appears in portfolio)
-- Critical path 2: View portfolio (load page → assert positions visible, key stats present)
-- Critical path 3: View alerts (load page → assert alert rules visible, history table present)
-- Run in CI against staging environment (or per-PR preview if available)
+- In `backend/utils/pricing.py` `calculate_atr()`, remove the `> 100` guard and always divide by 100 for `.L` tickers
+- Verify `calculate_initial_stop()` produces a sane positive stop for LGEN (£2.45 entry, expected stop ≈ £1.94 at 5× ATR of ~10p)
 
 **Acceptance Criteria**
-- Playwright test suite covers all 3 critical paths
-- Tests run in CI on every PR
-- Run time < 2 minutes for smoke test suite
-- Playwright pass recorded as supporting evidence for non-visual AC in DoQ sign-off template
-- Visual AC (colours, badges, chart rendering) remain DoQ manual review items
-- Flaky test failures must not block the PR or human review — failures are advisory
+- `calculate_atr('LGEN.L', ...)` returns ATR in GBP (e.g. ~0.10) not pence (e.g. ~10.23)
+- `calculate_initial_stop(2.45, atr)` returns a positive value in the range £1.80–£2.40 for LGEN
+- No regression: existing unit tests for ATR pass; high-ATR stocks (e.g. TSLA) are unaffected
+
+### BLG-SPEC-D15 — Reconcile data_model.md portfolios table with actual deployed schema
+**Priority:** P2 (Medium)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-04 seed script failure — reset_staging_db.sql INSERT rejected `initial_cash` column — 2026-03-25
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.4
+
+**Problem**
+`data_model.md` documents the `portfolios` table with columns `id`, `cash`, `initial_cash`, `created_at`, `last_updated`. The actual deployed DB has `id`, `cash`, `created_date`, `last_updated` — `initial_cash` does not exist and `created_at` is `created_date`. Any seed script, migration, or integration test written against the spec will fail silently or with a column-not-found error. This mismatch was not caught before ST-04 shipped because seeds were reviewed against the spec, not the live schema.
+
+**Scope**
+- Run `\d portfolios` against the live staging DB to confirm actual column names and types
+- Update `data_model.md` §1 Portfolios Table CREATE TABLE statement and Fields table to match actual schema
+- Remove `initial_cash` from the spec or add a migration to create it if it is genuinely required
+- Bump `data_model.md` version and apply §6 checklist
+
+**Acceptance Criteria**
+- `data_model.md` portfolios CREATE TABLE matches the output of `\d portfolios` on staging
+- `initial_cash` either removed from spec or present in DB — no divergence
+- `created_date` vs `created_at` discrepancy resolved
+- `data_model.md` version bumped; §6 checklist applied
+
+---
+
+### BLG-SPEC-D16 — Reconcile data_model.md trade_history table with database.py column names
+**Priority:** P2 (Medium)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner + Head of Engineering
+**Source:** ST-04 seed script / database.py divergence discovered 2026-03-25
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.4
+
+**Problem**
+`data_model.md` documents `trade_history` with a single exit value column `exit_proceeds DECIMAL(12,2) NOT NULL`. `database.py:create_trade_history()` inserts into `gross_proceeds`, `net_proceeds`, `entry_fees`, `exit_fees` — none of which appear in the spec. It is unknown which is canonical: if the spec is right, `database.py` is broken and live trade closures fail; if `database.py` is right, the spec is wrong and seed scripts using `exit_proceeds` will be rejected. Until resolved, any new seed, test, or analytics query against `trade_history` exit values carries column name uncertainty.
+
+**Scope**
+- Run `\d trade_history` against the live staging DB to confirm actual column names
+- Determine canonical set: `exit_proceeds` (spec) vs `gross_proceeds`/`net_proceeds`/`entry_fees`/`exit_fees` (code)
+- Update `data_model.md` §3 trade_history table to match actual schema
+- If DB has `exit_proceeds` only: update `database.py:create_trade_history()` to use it
+- If DB has `gross_proceeds`/`net_proceeds`: update `data_model.md` to match and remove `exit_proceeds`
+- Update seed scripts (`seed_portfolio_trades.sql`) to use confirmed column names
+- Bump `data_model.md` version; apply §6 checklist
+
+**Acceptance Criteria**
+- `data_model.md` trade_history CREATE TABLE matches `\d trade_history` on staging
+- `database.py:create_trade_history()` column list matches the spec
+- `seed_portfolio_trades.sql` trade_history INSERT uses confirmed column names and succeeds without error
+- `data_model.md` version bumped; §6 checklist applied
+
+---
+
+### BLG-FE-06 — Fix missing P&L (GBP) column on Positions page
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Owner
+**Source:** DEV-EPIC02-ST05-03 — V-PATH2-01 staging QA — 2026-03-25
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.4
+
+**Problem**
+The Positions page Table View does not display the "P&L (GBP)" absolute value column. `positions.md` v1.4 explicitly lists both "P&L (GBP)" and "P&L %" as separate columns in the Table View. During EPIC-02 staging QA (2026-03-25), only % uplift was visible — the absolute £ values (£70.05 for LGEN, £96.05 for BARC) were absent. Colour rendering works correctly (% shown in green for positive positions), confirming the issue is the missing GBP column rather than a colour bug. Users cannot see their monetary P&L on the primary portfolio view.
+
+**Scope**
+- Investigate whether the P&L (GBP) column is missing from the component or rendered but hidden
+- Add or unhide the P&L (GBP) column in the Positions Table View component
+- Ensure the GBP value is colour-coded correctly (green for positive, red for negative) per `positions.md`
+- Verify both "P&L (GBP)" and "P&L %" columns are visible side by side in the default Table View at staging
+
+**Acceptance Criteria**
+- Positions Table View displays a P&L column showing the absolute GBP value (e.g. £70.05 for LGEN, £96.05 for BARC from seed data)
+- Positive GBP P&L values render in green; negative values render in red
+- P&L % column remains present alongside the GBP column
+- V-PATH2-01 passes on staging: £70.05 and £96.05 visible in green after seeding
+
+---
+
+<!-- release-plan-marker: RP:v2.3:2026-03-24__release-v2.3 -->
 
 ---
 

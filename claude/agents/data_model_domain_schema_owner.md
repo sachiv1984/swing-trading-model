@@ -158,6 +158,8 @@ header block, and versioning rules defined in:
   - Analytics validation
   - Incident investigation
   - Feature design
+- Any divergence between `data_model.md` column definitions and the live deployed schema is a **P2 spec debt item** (BLG-SPEC-D) that must be filed and scheduled for reconciliation — it is not acceptable for the spec to silently drift from the actual DB
+- The Data Model & Domain Schema Owner must be **consulted before sign-off** whenever seed scripts, database migrations, or integration tests are written against domain tables — and must confirm that the live schema matches the spec before approving. If confirmation cannot be given (e.g. spec is known to lag the DB), a BLG-SPEC-D item must be filed before the dependent work proceeds
 
 ---
 

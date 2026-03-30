@@ -1,0 +1,63 @@
+name: Critical-Path Smoke Tests (Playwright)
+
+# ST-05: BLG-QA-05 — 3 critical-path smoke tests (add trade, view portfolio, view alerts)
+#
+# SCOPE CONSTRAINT: Playwright PASS is supporting evidence for non-visual AC only.
+# Visual AC (colours, badges, chart rendering) require DoQ manual review.
+# Flaky failures are ADVISORY — they do NOT block the PR.
+# This workflow does not replace DoQ sign-off.
+#
+# Runs on every push/PR to main and exec/** branches.
+# No path filter — these smoke tests cover the critical application paths
+# and must run on every change, not just changes to specific files.
+
+on:
+  push:
+    branches:
+      - main
+      - 'exec/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  smoke:
+    name: Playwright Smoke Tests — 3 Critical Paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run critical-path smoke tests
+        # continue-on-error: true — flaky failures are advisory and MUST NOT block the PR.
+        # See ST-05 AC: "Flaky test failures must not block the PR or human review — failures are advisory."
+        # DoQ must review the uploaded report artifact even when this step is green.
+        continue-on-error: true
+        run: npx playwright test tests/e2e/smoke-critical-paths.spec.js
+        env:
+          CI: true
+          REACT_APP_API_URL: http://localhost:8000
+          REACT_APP_DEV_FAKE_AUTH: 'true'
+          BROWSER: none
+
+      - name: Upload Playwright smoke test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test-report
+          path: playwright-report/
+          retention-days: 14

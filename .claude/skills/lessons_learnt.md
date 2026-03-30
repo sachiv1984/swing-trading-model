@@ -40,3 +40,15 @@ The goal is a compounding improvement: each mistake makes the next run of that s
 
 ### commit-check
 *(No lessons recorded yet)*
+
+### record-visual-qa
+*(No lessons recorded yet)*
+
+---
+
+## Cross-skill lessons (general patterns)
+
+| Date | Skill | What went wrong | Correct approach |
+|------|-------|-----------------|-----------------|
+| 2026-03-25 | general — seed scripts | Seed script `DELETE FROM trade_reflections` caused silent transaction rollback on staging instances where that table doesn't exist. The entire seed was silently no-oped with no error visible to the caller. | Idempotency DELETE statements in seed scripts must only reference tables guaranteed to exist on all target environments. If the delete is guarded by a FK relationship that handles it via CASCADE on reset, omit the explicit DELETE entirely. |
+| 2026-03-25 | general — Recharts cursor | Setting `cursor: grab/grabbing` on a div containing a Recharts chart only applies to the padding area. The Recharts `<svg>` element has `cursor: auto` by default, which overrides the inherited cursor and reverts to the browser default (arrow) inside the chart plot area. | When applying interactive cursor styles to Recharts charts, also set `style={{ cursor: "inherit" }}` on the chart component itself (e.g. `<AreaChart style={{ cursor: "inherit" }}>`). This makes the SVG and its overlay rect inherit the correct cursor from the parent div. |

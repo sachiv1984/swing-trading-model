@@ -237,6 +237,7 @@ export default function UnderwaterChart({ trades }) {
 
       <div
         ref={containerRef}
+        data-testid="underwater-chart"
         className="p-6 select-none"
         style={{ cursor: isZoomed ? (dragState ? "grabbing" : "grab") : "default" }}
         onMouseDown={handleMouseDown}
@@ -251,7 +252,7 @@ export default function UnderwaterChart({ trades }) {
           </p>
         )}
         <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={displayData}>
+          <AreaChart data={displayData} style={{ cursor: "inherit" }}>
             <defs>
               <linearGradient id="drawdownGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#dc2626" stopOpacity={0.1} />
