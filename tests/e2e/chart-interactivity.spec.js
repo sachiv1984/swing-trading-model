@@ -118,9 +118,9 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toBeVisible({ timeout: 5000 });
     await expect(page.locator('h2').filter({ hasText: 'Jan 2026' })).toBeVisible();
 
-    // Summary line contains trade count and Total P&L
-    await expect(page.locator('p').filter({ hasText: /3 trade/ })).toBeVisible();
-    await expect(page.locator('text=Total P&L')).toBeVisible();
+    // Summary line contains trade count and Total P&L — scoped to modal to avoid strict-mode violation
+    await expect(page.locator('[data-testid="heatmap-modal"]').locator('p').filter({ hasText: /3 trade/ })).toBeVisible();
+    await expect(page.locator('[data-testid="heatmap-modal"]').locator('text=Total P&L')).toBeVisible();
   });
 
   // SC-CHART-IX-01b — Modal close: X button
@@ -159,8 +159,8 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
     await tile.click();
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toBeVisible({ timeout: 5000 });
 
-    // Click the fixed backdrop overlay (bg-black/60) — .first() because MetricsStalenessIndicator may add another fixed overlay
-    await page.locator('[class*="fixed"][class*="inset-0"]').first().click({ position: { x: 10, y: 10 }, force: true });
+    // Click the fixed backdrop overlay using stable data-testid
+    await page.locator('[data-testid="heatmap-backdrop"]').click({ position: { x: 10, y: 10 }, force: true });
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toHaveCount(0, { timeout: 5000 });
   });
 
@@ -193,12 +193,13 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
     await tile.click();
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toBeVisible({ timeout: 5000 });
 
-    // Row count = 3
-    const rows = page.locator('table tbody tr');
+    // Row count = 3 — scoped to modal to avoid matching positions table rows
+    const modal = page.locator('[data-testid="heatmap-modal"]');
+    const rows = modal.locator('table tbody tr');
     await expect(rows).toHaveCount(JAN_2026_EXPECTED.tradeCount, { timeout: 5000 });
 
-    // Summary total P&L = +£270.00 — .first() guards against duplicate occurrences in other panels
-    await expect(page.locator('text=£270.00').first()).toBeVisible();
+    // Summary total P&L = +£270.00 — scoped to modal (hidden duplicate exists outside modal)
+    await expect(modal.locator('text=£270.00')).toBeVisible();
 
     // All 3 Jan trade tickers appear in the table
     await expect(page.locator('td').filter({ hasText: 'AAAA' })).toBeVisible();
@@ -231,13 +232,9 @@ test.describe('SC-CHART-IX-02 — Underwater Equity Curve: Zoom', () => {
     const chartContainer = page.locator('[data-testid="underwater-chart"]');
     await expect(chartContainer).toBeVisible({ timeout: 10000 });
 
-    const box = await chartContainer.boundingBox();
-    const cx = box.x + box.width / 2;
-    const cy = box.y + box.height / 2;
-
     // Scroll up (zoom in) — deltaY negative = zoom in per component code
-    await page.mouse.move(cx, cy);
-    await page.mouse.wheel(0, -200);
+    // Use dispatchEvent directly on the container for CI reliability (mouse.wheel is flaky in headless)
+    await chartContainer.dispatchEvent('wheel', { deltaY: -200, bubbles: true, cancelable: true });
     await page.waitForTimeout(300);
 
     // Reset button should appear after zooming
@@ -476,8 +473,10 @@ test.describe('SC-CHART-IX-05 — R-Multiple Analysis: Bar Hover Tooltip', () =>
 
     // Spot-check two boundary buckets that are likely to have 0 count
     // Their labels still appear on the X axis
-    const svgArea = rMultipleSection.locator('svg').first();
-    await expect(svgArea).toBeVisible();
+    // Scope to the Distribution div to avoid matching the TrendingUp lucide icon SVG
+    const distributionDiv = rMultipleSection.locator('div').filter({ has: page.locator('h4').filter({ hasText: 'Distribution' }) }).first();
+    const svgArea = distributionDiv.locator('svg').first();
+    await expect(svgArea).toBeVisible({ timeout: 10000 });
     // 7 bars / tick labels — verify SVG is present and rendered
     const rects = svgArea.locator('rect');
     const rectCount = await rects.count();
@@ -550,8 +549,8 @@ test.describe('SC-CHART-IX-06 — Cross-Chart Data Integrity', () => {
     await tile.click();
     await expect(page.locator('h2').filter({ hasText: /Trades\s*—/ })).toBeVisible({ timeout: 5000 });
 
-    // Modal summary also shows £270.00 — same source data; .first() guards against tile also showing £270
-    await expect(page.locator('text=£270.00').first()).toBeVisible();
+    // Modal summary also shows £270.00 — scoped to modal (hidden duplicate p exists outside modal)
+    await expect(page.locator('[data-testid="heatmap-modal"]').locator('text=£270.00')).toBeVisible();
   });
 
   // SC-CHART-IX-06b — No new network requests on interactivity

@@ -132,10 +132,12 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
       {/* Monthly Trades Modal */}
       {selectedMonth && (
         <div
+          data-testid="heatmap-backdrop"
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedMonth(null)}
         >
           <div
+            data-testid="heatmap-modal"
             className="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden shadow-2xl flex flex-col"
             onClick={e => e.stopPropagation()}
           >
