@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-31 (roadmap rebalance cycle 2026-03-31__scheduled — 4 new items added: BLG-FEAT-14, BLG-OPS-10, BLG-BE-06, BLG-GOV-09; BLG-FEAT-12 renamed BLG-FEAT-13)
+**Last Updated:** 2026-03-31 (release planning 2026-03-31__release-v2.4 — v2.4 release slice published; 17 stories across 6 EPICs)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -358,9 +358,24 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-## 12. Active Release Slice
+## 12. Active Release Slice — v2.4 Correctness, Insight & Governance Hardening
 
-*v2.3 shipped 2026-03-30. v2.3 release slice archived. v2.4 scope TBD — pending roadmap rebalance and release planning.*
+<!-- release-plan-marker: RP:v2.4:2026-03-31__release-v2.4 -->
+
+**Cycle:** 2026-03-31__release-v2.4
+**Published:** 2026-03-31
+**Backlog slice:** claude/cycles/2026-03-31__release-v2.4/stage4_backlog_slice.md
+
+| EPIC-ID | Scope | Sprint |
+|---------|-------|--------|
+| EPIC-01 | Backend Correctness & Alert Reliability (ST-01, ST-02, ST-03) | Sprint 2 |
+| EPIC-02 | Frontend & UX Polish (ST-04, ST-05) | Sprint 2 |
+| EPIC-03 | Spec Debt Resolution (ST-06, ST-07) | Sprint 1 |
+| EPIC-04 | Weekly Trading Digest (ST-08, ST-09) | Sprint 3 |
+| EPIC-05 | Operational Readiness (ST-10, ST-11, ST-12, ST-13) | Sprint 1/2 |
+| EPIC-06 | Governance Engine Maintenance (ST-14, ST-15, ST-16, ST-17) | Sprint 1 |
+
+**Deferred from v2.4:** BLG-GOV-08 (prompt compression, L effort → v2.5); BLG-FEAT-13 (gated rollout → v2.5); BLG-TECH-05 (Prometheus → conditional)
 
 ---
 

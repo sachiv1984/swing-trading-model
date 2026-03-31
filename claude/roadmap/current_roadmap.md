@@ -45,7 +45,16 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*v2.3 shipped 2026-03-30. v2.4 is the next delivery horizon — rebalanced 2026-03-31 (DL-013 to DL-016; 4 new backlog items added). Pending release planning.*
+*v2.3 shipped 2026-03-30. v2.4 release plan published 2026-03-31 — 17 stories across 6 EPICs (Correctness, Insight & Governance Hardening). Sprint planning pending.*
+
+<!-- roadmap-annotation-marker: RA:v2.4:2026-03-31__release-v2.4 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-31__release-v2.4
+- Plan published: 2026-03-31
+- Cycle folder: claude/cycles/2026-03-31__release-v2.4/
+- Backlog slice: claude/cycles/2026-03-31__release-v2.4/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 ---
 

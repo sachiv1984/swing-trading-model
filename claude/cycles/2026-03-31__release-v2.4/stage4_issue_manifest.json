@@ -1,0 +1,161 @@
+{
+  "cycle_id": "2026-03-31__release-v2.4",
+  "release": "v2.4",
+  "generated_utc": "2026-03-31T00:06:00Z",
+  "issues_mode": "none",
+  "items": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "Fix ATR pence→GBP conversion for UK (.L) tickers",
+      "backlog_ref": "BLG-BE-05",
+      "sprint": 2,
+      "effort": "XS",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-01", "sprint-2", "v2.4"]
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "Add notification dispatch deduplication for alert evaluation",
+      "backlog_ref": "BLG-BE-06",
+      "sprint": 2,
+      "effort": "M",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-01", "sprint-2", "v2.4"]
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "title": "Expose initial stop price on analytics trade endpoint",
+      "backlog_ref": "BLG-BE-04",
+      "sprint": 2,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-01", "sprint-2", "v2.4"]
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "title": "Fix missing P&L (GBP) column on Positions page",
+      "backlog_ref": "BLG-FE-06",
+      "sprint": 2,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-02", "sprint-2", "v2.4"]
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "title": "Add user-facing error message mapping layer",
+      "backlog_ref": "BLG-FE-03",
+      "sprint": 2,
+      "effort": "S-M",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-02", "sprint-2", "v2.4"]
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-03",
+      "title": "Reconcile portfolios table schema in data_model.md",
+      "backlog_ref": "BLG-SPEC-D15",
+      "sprint": 1,
+      "effort": "XS",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-03", "sprint-1", "v2.4"]
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "title": "Reconcile trade_history table schema in data_model.md",
+      "backlog_ref": "BLG-SPEC-D16",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-03", "sprint-1", "v2.4"]
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-04",
+      "title": "Implement weekly digest backend endpoint",
+      "backlog_ref": "BLG-FEAT-14",
+      "sprint": 3,
+      "effort": "M",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-04", "sprint-3", "v2.4"]
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-04",
+      "title": "Add weekly digest frontend component",
+      "backlog_ref": "BLG-FEAT-14",
+      "sprint": 3,
+      "effort": "M",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-04", "sprint-3", "v2.4"]
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-05",
+      "title": "Render hosting tier review and decision record",
+      "backlog_ref": "BLG-OPS-10",
+      "sprint": 1,
+      "effort": "XS",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-05", "sprint-1", "v2.4"]
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-05",
+      "title": "Document API endpoint performance baseline",
+      "backlog_ref": "BLG-OPS-05",
+      "sprint": 2,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-05", "sprint-2", "v2.4"]
+    },
+    {
+      "st_id": "ST-12",
+      "epic_id": "EPIC-05",
+      "title": "Create slippage tracking test scenario file",
+      "backlog_ref": "TEST-GAP-EPIC-05-SLIP",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-05", "sprint-1", "v2.4"]
+    },
+    {
+      "st_id": "ST-13",
+      "epic_id": "EPIC-05",
+      "title": "Define cycle velocity metric and backfill 6 cycles",
+      "backlog_ref": "BLG-GOV-09",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-05", "sprint-1", "v2.4"]
+    },
+    {
+      "st_id": "ST-14",
+      "epic_id": "EPIC-06",
+      "title": "Apply action-now execution_prompt.md patches (second recurrences LL-v2.2-EX-01/02/04)",
+      "backlog_ref": "v2.3 lessons_learnt_closure.md — action-now priority",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-06", "sprint-1", "v2.4"]
+    },
+    {
+      "st_id": "ST-15",
+      "epic_id": "EPIC-06",
+      "title": "Apply delivery_verification_prompt.md deviation compliance patch",
+      "backlog_ref": "v2.3 lessons_learnt_closure.md Friction Item 1",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-06", "sprint-1", "v2.4"]
+    },
+    {
+      "st_id": "ST-16",
+      "epic_id": "EPIC-06",
+      "title": "Update execution_prompt.md delegation model and add delegation log line count check",
+      "backlog_ref": "v2.3 lessons_learnt_closure.md Friction Item 2 + CF-2",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-06", "sprint-1", "v2.4"]
+    },
+    {
+      "st_id": "ST-17",
+      "epic_id": "EPIC-06",
+      "title": "Simplify release planning cycle artefact sealing (remove SHA-256)",
+      "backlog_ref": "BLG-GOV-03",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["cycle:2026-03-31__release-v2.4", "EPIC-06", "sprint-1", "v2.4"]
+    }
+  ]
+}
