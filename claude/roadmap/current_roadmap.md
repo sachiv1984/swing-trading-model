@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-30 (manage roadmap — v2.3 RA:v2.3 retired to archive)
-**Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — scheduled run; Extended tier; DL-012)
+**Last Updated:** 2026-03-31 (roadmap rebalance — cycle 2026-03-31__scheduled — scheduled run; Standard tier; DL-013 to DL-016)
+**Last rebalance:** 2026-03-31 (cycle 2026-03-31__scheduled — scheduled run; Standard tier; DL-013 to DL-016)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -45,7 +45,7 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*v2.3 shipped 2026-03-30 (RA:v2.3 retired to archive 2026-03-30). v2.4 is the next delivery horizon — pending roadmap rebalance and release planning.*
+*v2.3 shipped 2026-03-30. v2.4 is the next delivery horizon — rebalanced 2026-03-31 (DL-013 to DL-016; 4 new backlog items added). Pending release planning.*
 
 ---
 

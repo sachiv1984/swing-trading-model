@@ -12,6 +12,7 @@ This file is read at the start of every skill run. Each entry records a mistake 
 | Date | Skill | What went wrong | Correct approach |
 |------|-------|-----------------|-----------------|
 | *(entries added here as mistakes occur)* | | | |
+| 2026-03-31 | backlog-add | Assigned BLG-FEAT-12 to new item "Add gated feature rollout capability" without checking backlog_archive.md. BLG-FEAT-12 was already used by "Alert history table" (shipped v2.2, archived). Duplicate ID violation detected at roadmap rebalance STEP 3. | Step 1 ID scan must include BOTH backlog.md AND backlog_archive.md. Search `### BLG-{NAMESPACE}-` in both files and take the maximum across both. The SKILL.md Step 1 instruction has been updated to make this explicit. |
 
 ---
 

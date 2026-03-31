@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-31 (session — 1 new item added: BLG-FEAT-12)
+**Last Updated:** 2026-03-31 (roadmap rebalance cycle 2026-03-31__scheduled — 4 new items added: BLG-FEAT-14, BLG-OPS-10, BLG-BE-06, BLG-GOV-09; BLG-FEAT-12 renamed BLG-FEAT-13)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -364,13 +364,13 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-## 13. New Backlog Items — Session 2026-03-31
+## 13. New Backlog Items — Roadmap Rebalance 2026-03-31
 
-*User-raised items from session review. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
+*Items from roadmap rebalance cycle 2026-03-31__scheduled (DL-013 to DL-016) and prior session addition (BLG-FEAT-13). Target releases are indicative.*
 
 ---
 
-### BLG-FEAT-12 — Add gated feature rollout capability
+### BLG-FEAT-13 — Add gated feature rollout capability
 **Priority:** P3 (Low)
 **Type:** Product Feature / Platform
 **Owner:** Head of Engineering + Product Owner
@@ -392,5 +392,105 @@ The application has no mechanism to roll out new features to a subset of users o
 - Flag state is auditable (logged at startup or accessible via a lightweight admin check)
 - At least one shipped feature uses a gate as proof-of-concept
 - Gating pattern documented for use in future story authoring
+
+---
+### BLG-FEAT-14 — Weekly trading review digest
+**Priority:** P2 (Medium)
+**Type:** Product Feature
+**Owner:** Backend Engineering Patterns Owner + Frontend Specs & UX Documentation Owner
+**Source:** Roadmap rebalance cycle 2026-03-31__scheduled (IDEA-product-owner-20260321-02 advancing) — 2026-03-31
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.4
+
+**Problem**
+The user must manually navigate to multiple pages (positions, alerts, compliance score) to perform a weekly portfolio review. There is no structured summary endpoint or view that aggregates the past 7 days of P&L, alert activity, and compliance metrics in one place. Following the v2.3 launch of BLG-FEAT-11 (compliance score) and BLG-FEAT-09 (staleness indicator), sufficient data exists to produce a meaningful weekly digest with no additional data collection.
+
+**Scope**
+- New backend endpoint returning: 7-day realised P&L, unrealised P&L delta, alerts fired vs dismissed count, compliance score (current + 7-day trend), staleness indicator summary
+- Frontend digest component rendering the above as a structured data table (no generated text or interpretive commentary)
+- Spec: define response schema in api_contracts
+
+**Acceptance Criteria**
+- Endpoint returns all specified fields for the past 7 days
+- Response contains raw numeric/boolean fields only — no generated text, narrative, or interpretation
+- Frontend renders digest as a data table (not commentary format)
+- AC explicitly confirmed: no generated text or interpretation present in any response field
+- Spec entry added to relevant api_contracts document
+
+---
+
+### BLG-OPS-10 — Render hosting tier review
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** FinOps & Resource Architect + Infrastructure & Operations Owner
+**Source:** Roadmap rebalance cycle 2026-03-31__scheduled (IDEA-finops-20260321-01 advancing) — 2026-03-31
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.4
+
+**Problem**
+BLG-OPS-04 (cron alert scheduling) has been running in production since v2.2 (2026-03-24). A full sprint cycle (v2.3) of alert scheduling has now elapsed. There is no documented assessment of whether the daily scheduling workload fits within Render's free tier limits (CPU minutes, bandwidth, DB connections). Without a review, cost/capacity issues may surface without warning.
+
+**Scope**
+- Document current Render plan tier and free tier limits (CPU minutes, bandwidth, sleep/wake behaviour)
+- Review BLG-OPS-04 cron workload: evaluate actual daily execution against limits
+- Record a decision: free tier sufficient | paid tier warranted now | monitor for N sprints before deciding
+- File as an operational record (Class 3) in `docs/` or `claude/cycles/`
+
+**Acceptance Criteria**
+- Review document exists and records: current tier, limit values, observed scheduling workload, and a documented decision
+- Decision is signed off by FinOps & Resource Architect and Infrastructure & Operations Owner
+- If paid tier is warranted: a follow-up backlog item is created (not part of this scope)
+
+---
+
+### BLG-BE-06 — Alert evaluation idempotency
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Roadmap rebalance cycle 2026-03-31__scheduled (IDEA-backend-engineering-20260321-02 advancing) — 2026-03-31
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.4
+
+**Problem**
+BLG-OPS-04 (cron scheduling) runs the alert evaluation endpoint daily. If the scheduler retries, misfires, or is manually triggered on a day already evaluated, users receive duplicate alert notifications. There is no deduplication mechanism on the notification dispatch layer to prevent a second notification being sent for the same rule on the same trading day.
+
+**Scope**
+- Add a deduplication key (rule_id + trading_day) on the notification dispatch layer only
+- Before sending a notification, check: was a notification for this rule already dispatched today?
+- If yes: skip dispatch (log as deduplicated); if no: send and record
+- The evaluation pipeline itself is NOT affected — evaluation continues to run regardless
+- Scope is strictly notification dispatch deduplication, not evaluation suppression
+
+**Acceptance Criteria**
+- If alert evaluation runs twice on the same trading day, only one notification is sent per rule per day
+- The evaluation pipeline executes both times (no evaluation is suppressed)
+- Deduplication is logged (identifiable in logs that a dispatch was skipped as duplicate)
+- Explicitly confirmed: evaluation pipeline is not locked or suppressed by this change
+- Spec: deduplication behaviour documented in alert evaluation spec
+
+---
+
+### BLG-GOV-09 — Cycle velocity metric
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead + Head of Engineering
+**Source:** Roadmap rebalance cycle 2026-03-31__scheduled (IDEA-pmo-lead-20260321-01 advancing) — 2026-03-31
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.4
+
+**Problem**
+The roadmap and release planning engines lack longitudinal throughput data. Each release planning cycle estimates capacity from scratch without reference to historical story completion rates. v2.3 triggered a capacity warn that an earlier baseline might have predicted. Without a velocity metric, recurring over-planning patterns are invisible until they manifest as sprint slippage.
+
+**Scope**
+- Define a simple velocity metric: stories completed / stories planned per sprint, per cycle
+- Back-fill metric values for the last 6 cycles from existing cycle artefacts (run manifests, execution_state.json)
+- Add a "Cycle Velocity" section to the run_manifest.md template (update roadmap_prompt.md STEP 1.1)
+- Surface the last 3 cycles' velocity figures as context at the start of each roadmap rebalance run manifest
+
+**Acceptance Criteria**
+- Velocity metric is defined and documented (stories completed / planned per sprint)
+- Last 6 cycles' velocity figures are recorded in a persistent document or manifest section
+- run_manifest.md template includes a velocity section populated at each rebalance run
+- Release planning can reference velocity data without re-deriving it from cycle artefacts each time
 
 ---

@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.40
+**Version:** 3.41
 **Last Updated:** 2026-03-31
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -394,7 +394,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v4.5)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v4.6)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1288,7 +1288,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.40 |
+| Version | 3.41 |
 | Last Updated | 2026-03-31 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
@@ -1296,7 +1296,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.3 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.4 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.5 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.6 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.24 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.4 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
@@ -1330,6 +1330,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 | 3.32 | 2026-03-20 | **execution_prompt.md v2.4→v2.5 — agent-mediated sign-off.** §8 source prompt v2.4→v2.5. §14 Execution Engine Source → v2.5. Change: §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file, engine invokes a subagent acting in that role before surfacing to user; §3.1.A step 11 added; §9.1 `sign_off_record` field added to ST item schema. Always-human gates (Product Owner, merge gate) unchanged. |
 | 3.29 | 2026-03-18 | **ST-15 (EPIC-05): Render PR preview environments documented.** §8.2 preview environment bullet added — Render provisions `https://trading-assistant-api-staging-pr-{N}.onrender.com` per PR; Director of Quality may use preview URL as staging evidence method for frontend-interactive AC. §8.5 merge gate QA sign-off line updated to reference preview URL option alongside staging URL. |
 | 3.28 | 2026-03-19 | **ST-11 staging seed workflow updated to psql-based approach.** §8.2 staging test data seeding bullet added: `seed-preview.yml` workflow renamed to `Seed Staging Database`, trigger changed from `render-preview` label to `workflow_dispatch`, seeding mechanism changed from Python API script to `psql` against `STAGING_DATABASE_URL` secret, idempotency guard added. Documents that PR preview environments are not used for data-dependent QA — canonical staging is always the test target. |
+| 3.41 | 2026-03-31 | **Roadmap rebalance 2026-03-31__scheduled — OVERDUE patch applied.** §6 source prompt roadmap_prompt.md v4.5→v4.6. §14 Roadmap Engine Source → v4.6. Patch: (LL-v2.3-RP-01 — OVERDUE B7 escalation) roadmap_prompt.md STEP 8.5 — Extended-tier session advisory added: for Extended-tier runs (40+ ideas), confirm STEP 8.5.B write plan is complete in cycle_record.md before closing session; write plan is the resumption artefact for STEP 9. |
 | 3.40 | 2026-03-31 | **v2.3 post-ship deferred lessons learnt applied.** §8 source prompt execution_prompt.md v2.8→v2.9; §9 source prompt delivery_verification_prompt.md v1.6→v1.7. §14 Execution Engine Source → v2.9; Verification Engine Source → v1.7. Patches: (LL-v2.3-CL-01) execution_prompt §5.1 delegated_frontend — Base44 model removed; autonomous default; classification rule + delegation note updated. (LL-v2.2-EX-01 2nd recurrence) execution_prompt STEP 3.1.A — delegation log update upgraded from advisory to hard gate: atomic with item done transition. (LL-v2.2-EX-02 2nd recurrence) execution_prompt STEP 4 — all_merged advisory upgraded to hard gate. (LL-v2.2-EX-04 2nd recurrence) execution_prompt §9.1 + §12 — "no prior spec applicable" named as exemption token; completion condition explicit. (LL-v2.3-CL-02) execution_prompt STEP 7 — delegation_log.md pre-seal line count check added. (LL-v2.3-CL-03) delivery_verification_prompt STEP 3 — canonical spec Known Deviations sync note added. |
 | 3.39 | 2026-03-30 | **execution_prompt.md v2.7→v2.8 — LL-v2.3-EX-01/02 applied.** §8 source prompt v2.7→v2.8. §14 Execution Engine Source → v2.8. Two immediate-action patches from v2.3 post-ship lessons: (LL-v2.3-EX-01) Date field requirement note added to QA sign-off block template — Date must be non-blank when sign-off is completed, not at sprint close; checkboxes pre-checked in template. (LL-v2.3-EX-02) Mid-sprint reclassification guidance added to §5.1 — when a story's classification changes after a delegation record exists, cancel the delegation log entry immediately rather than waiting until STEP 5.0. |
 | 3.38 | 2026-03-24 | **AUD-2026-03-21 tier 2 fixes applied.** §5 source prompt idea_intake_prompt.md v2.0→v2.2; §10 source prompt post_ship_closure.md v2.1→v2.2; §14 table: idea_intake_prompt v2.2, post_ship_closure v2.2. §10 audit cadence advisory added (non-blocking; fires when `completed_cycle_count % 3 == 0`). Patches: (AUD-001) idea_intake_prompt STEP 3 `per_agent_submission_count` computation instruction added; (AUD-002) post_ship_closure STEP 0 Audit Cadence Check block added + §10 audit cadence documented. |
