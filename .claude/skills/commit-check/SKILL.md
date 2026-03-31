@@ -110,6 +110,28 @@ Check `.claude_current_state.json` for `sealed: true` flags and check `claude/cy
 
 ---
 
+### Check 7 — E2E coverage declaration for frontend stories
+
+This check fires when **any** of the staged files are frontend implementation files (e.g. `src/**/*.js`, `src/**/*.jsx`, `src/**/*.ts`, `src/**/*.tsx`).
+
+1. Identify the ST story ID from the commit message or staged context.
+2. Look for a corresponding E2E coverage declaration. This can be in any of:
+   - The QA evidence file for the active EPIC (`claude/cycles/{cycle_id}/qa_evidence_EPIC-xx.md`) — look for a row or note under the story's DoQ sign-off block
+   - A comment block in the staged spec file (`tests/e2e/*.spec.js`) referencing the story ID
+   - An explicit note in the commit message body (e.g. `E2E: SC-XX-01–05 in tests/e2e/foo.spec.js`)
+3. **PASS if** any of the following are true:
+   - One or more Playwright scenario IDs (e.g. `SC-*`) are referenced and a corresponding `tests/e2e/*.spec.js` file exists or is staged
+   - The story is explicitly marked `E2E: N/A — visual-only AC` in the QA evidence or commit message (visual-only means no interaction, API call, or state-transition AC exists)
+4. **FAIL if** neither condition is met — frontend code is being committed with no E2E declaration at all.
+
+On FAIL, prompt the user to either:
+- Identify which scenario IDs are covered and confirm the spec file exists, or
+- Explicitly state `E2E: N/A — visual-only AC` if no testable interactions exist
+
+This check is advisory for stories with `delegated_qa` status that have not yet had their E2E spec authored — flag it but do not block if the delegation log shows E2E authoring is a pending follow-up action.
+
+---
+
 ## Step 4 — Render the result
 
 ```
@@ -130,6 +152,7 @@ Staged files ({n}):
   ✅ Check 4 — Governance §6 checklist (N/A — no governance files staged)
   ✅ Check 5 — No direct commits to main for sprint work
   ✅ Check 6 — No sealed artefacts modified
+  ✅ Check 7 — E2E coverage declaration (N/A — no frontend files staged)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 RESULT: ❌ NOT READY — 1 check failed
@@ -151,6 +174,7 @@ Don't just report failures — help resolve them:
 - **Check 4 fail (§6):** Identify exactly which of the four steps is missing and action it
 - **Check 2 fail (message):** Draft the correct commit message
 - **Check 1 fail (branch):** Explain the correct branch and how to move the changes there
+- **Check 7 fail (E2E):** Ask whether the story has interaction/API-call AC (if yes, identify which scenario IDs need spec coverage and whether a spec file exists or needs creating); if all AC is visual-only, add `E2E: N/A — visual-only AC` to the commit message body
 
 Re-run the checklist after fixes are applied to confirm the commit is clean.
 

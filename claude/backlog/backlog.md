@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-30 (groom backlog — post-ship closure v2.3; 15 items archived; Provisional-Targets updated for unshipped v2.3 items)
+**Last Updated:** 2026-03-31 (session — 1 new item added: BLG-FEAT-12)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -361,3 +361,36 @@ These are deliberate product decisions, not deferrals:
 ## 12. Active Release Slice
 
 *v2.3 shipped 2026-03-30. v2.3 release slice archived. v2.4 scope TBD — pending roadmap rebalance and release planning.*
+
+---
+
+## 13. New Backlog Items — Session 2026-03-31
+
+*User-raised items from session review. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
+
+---
+
+### BLG-FEAT-12 — Add gated feature rollout capability
+**Priority:** P3 (Low)
+**Type:** Product Feature / Platform
+**Owner:** Head of Engineering + Product Owner
+**Source:** User request — 2026-03-31
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+
+**Problem**
+The application has no mechanism to roll out new features to a subset of users or environments. Any new capability ships immediately to all users with no ability to stage a rollout, run a controlled trial, or roll back a single feature without reverting the entire deployment. As the product grows this creates risk for experimental features and makes it impossible to validate new UI flows with a limited audience before full release.
+
+**Scope**
+- Define a feature flag schema (flag name, enabled boolean, optional env/user scope)
+- Implement a lightweight flag evaluation mechanism driven by config file or environment variables — no external service dependency required at first
+- Wrap at least one new feature behind a flag as a proof-of-concept on first use
+- Document the gating pattern in a spec file or OPERATIONAL_GUIDE
+
+**Acceptance Criteria**
+- A feature can be toggled on/off without a code change (env var or config file)
+- Flag state is auditable (logged at startup or accessible via a lightweight admin check)
+- At least one shipped feature uses a gate as proof-of-concept
+- Gating pattern documented for use in future story authoring
+
+---
