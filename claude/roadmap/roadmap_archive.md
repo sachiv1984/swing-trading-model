@@ -1,13 +1,38 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-03-30
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v2.3 — Quality Automation & User Insight (RA:v2.3)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (annotation block RA:v2.3)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-03-30
+**Shipped version:** v2.3 (2026-03-30)
+**Cycle reference:** 2026-03-24__release-v2.3
+**Verification report:** `claude/cycles/2026-03-24__release-v2.3/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-03-30
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.3:2026-03-24__release-v2.3 -->
+
+✅ **Complete — v2.3 — Quality Automation & User Insight — Shipped 2026-03-30**
+- Cycle: 2026-03-24__release-v2.3
+- Plan published: 2026-03-24 | Shipped: 2026-03-30
+- Verification: Verified_with_deviations
+- Cycle folder: claude/cycles/2026-03-24__release-v2.3/
+- Theme: Quality Automation & User Insight — 16/17 stories delivered; 5 EPICs merged; 1 item returned to backlog (BLG-GOV-08)
+- Changelog: docs/product/changelog.md#v2.3
 
 ---
 

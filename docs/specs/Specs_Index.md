@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-03-30
 
 ---
 
@@ -103,7 +103,7 @@ It points to the **single canonical source**.
 - `market_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-16): GET /market/status
 - `reports_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-17, ST-03): GET /reports/tax-year — UK tax-year P&L statement. Dual sign-off: Head of Specs Team + Financial Reporting & Records Owner (2026-03-17).
 - `alerts_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-03-20, ST-02; updated v0.3 2026-03-24, ST-05): Alert rules CRUD, alert evaluation, notification feed, notification preferences, alert history (GET /alerts/history). Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
-- `health_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-03-18; spec update to v1.1 deferred to v2.3, BLG-SPEC-D14 — DEV-HEALTH-001 deviation accepted 2026-03-24): GET /health operational health check endpoint. Note: implementation schema differs from v1.0 spec; v1.1 update pending.
+- `health_endpoints.md` — Class 1 Canonical, v1.2, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3 — DEV-HEALTH-001 closed; updated v1.2 by ST-08 adding GET /health/database): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.2, 2026-03-30).
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**
@@ -325,11 +325,20 @@ Identified during delivery verification (verification_report.md §6 — TSG-v22-
 ### 10.2 TSG-v22-02 — EPIC-03: no scenario for GET /health operational health response schema
 
 **Identified:** 2026-03-24 (delivery verification 2026-03-21__release-v2.2)
-**Status:** Open — deferred to v2.3 Sprint 1 alongside BLG-SPEC-D14 spec update
+**Status:** Partially resolved — health_endpoints.md updated to v1.2 (ST-07/ST-08, cycle 2026-03-24__release-v2.3). Automated test scenario SC-HEALTH-01 not yet created. Gap remains for schema validation.
 **Owner:** QA & Testing Owner + Infrastructure & Operations Owner
-**Gap:** New endpoint; response schema not validated by any automated test (status, db, last_* fields). Manual code review only at ship.
-**Required action:** Add SC-HEALTH-01 scenario validating operational health response fields in v2.3 Sprint 1.
-**Resolution target:** v2.3 Sprint 1 (aligned with BLG-SPEC-D14 spec update)
+**Gap:** Automated test for GET /health and GET /health/database response schemas not yet in CI.
+**Required action:** Add SC-HEALTH-01 scenario in a future cycle.
+**Resolution target:** v2.4
+
+### 10.3 TSG-v23-01 — EPIC-02: R-Multiple chart visual scenarios staging-blocked (BLG-BE-04)
+
+**Identified:** 2026-03-30 (delivery verification 2026-03-24__release-v2.3)
+**Status:** Open — deferred pending BLG-BE-04 resolution
+**Owner:** QA & Testing Owner
+**Gap:** V-CHART-05a/b/c scenarios require `stop_price` field in `/trades` API response. BLG-BE-04 (stop_price absent from trade_history) blocks these 3 R-Multiple visual scenarios. Core analytics user journey (R-Multiple analysis).
+**Required action:** Scenarios will be executable once BLG-BE-04 is resolved. QA & Testing Owner to re-run V-CHART-05a/b/c when BLG-BE-04 is scheduled.
+**Resolution target:** Cycle where BLG-BE-04 is scheduled
 
 ---
 

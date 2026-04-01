@@ -1,9 +1,38 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-03-24
+**Version:** 1.8
+**Last Updated:** 2026-03-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-03-24__release-v2.3
+**Date:** 2026-03-30
+**Status:** Verified_with_deviations — post-ship closure complete 2026-03-30
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | StrategyCompliancePanel (display-only, per-position stop/size compliance, collapsible, auto-expands on violation); MetricsStalenessIndicator (data-freshness badge, staleness age, per-metric tooltip) | docs/specs/frontend/components/strategy_compliance_panel.md; docs/specs/frontend/components/metrics_staleness_indicator.md | None |
+| EPIC-02 | UnderwaterChart zoom/pan (wheel zoom, drag pan, reset); MonthlyHeatmap tile drill-down modal (per-trade table, R-multiple, exit reason); R-Multiple Distribution histogram | docs/specs/frontend/pages/analytics.md §3, §4, §5 | None material; Playwright selector fragility fixes post-merge (CI only, no functional regression) |
+| EPIC-03 | GET /health/database endpoint (DB size monitor, Telegram alert at threshold); health_endpoints.md v1.2; health_check_playbook.md (3 failure modes) | docs/specs/api_contracts/health_endpoints.md v1.2 | DEV-HEALTH-001 (P2, closed) |
+| EPIC-04 | Sidebar navigation groups + collapsible sections; responsive layout improvements; lucide-react icon polish; nav keyboard accessibility | docs/specs/frontend/pages/layout.md | None |
+| EPIC-05 | Monthly performance calendar widget; lessons learnt carry-forward; backlog slice health gate (BLG-HEALTH-01–03) | claude/system/ prompt updates | None; ST-17 (engine prompt compression) returned to backlog |
+
+### Capabilities deferred or returned
+
+| Item | Backlog entry | Reason |
+|------|--------------|--------|
+| ST-17 — Engine prompt compression | BLG-GOV-08 | Stretch goal; Sprint 3 capacity exhausted. Returned to backlog at P3. |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-05.md — all signed off
+- Deviations filed: none new this sprint (DEV-HEALTH-001 closed in EPIC-03)
+- Test scenarios referenced: tests/e2e/chart-interactivity.spec.js (SC-CHART-IX-01a–06b); tests/e2e/ staleness indicator scenarios (SC-STALE-01–05)
+- Delegation log: all 13 entries terminal (1 Unblocked, 12 Cancelled per 2026-03-26 autonomous reclassification)
 
 ---
 

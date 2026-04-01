@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.5
+**Version:** 4.6
 **Last Updated:** 2026-03-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -1052,6 +1052,8 @@ If any violation is detected:
 - Halt execution.
 
 Only if the write plan passes verification may STEP 9 proceed.
+
+> **Extended-tier session advisory (LL-v2.3-RP-01 — applied cycle 2026-03-31__scheduled):** For Extended-tier scheduled runs (40+ ideas), STEP 9 write volume (~13 files) may require a new session due to context window pressure. Before closing the session after STEP 8.5 completes: confirm the STEP 8.5.B write plan is complete and recorded in `cycle_record.md`. The write plan is the resumption artefact — a new session can execute STEP 9 by reading `cycle_record.md` §8.5.B directly without re-running STEP 2–8. Standard-tier runs (~4 ideas, ~15 files) are unaffected.
 
 ---
 

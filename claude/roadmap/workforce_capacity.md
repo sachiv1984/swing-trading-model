@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-21 (roadmap rebalance — cycle 2026-03-21__item-3.5)
+**Last Updated:** 2026-03-31 (roadmap rebalance — cycle 2026-03-31__scheduled)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -225,3 +225,27 @@ Scarce skill note: Metrics Definitions owner is required for both v1.7 (heat for
 **Skill-Silo check (cycle additions):** Governance load 0% (all new items are execution-heavy: QA, infrastructure, frontend). Below 20% floor. Product Owner sign-off capacity confirmed (v2.3 will be scoped by release planning). No Skill-Silo Alert issued.
 
 **Sequencing note:** BLG-OPS-08 (staging reset) is a prerequisite for BLG-QA-05 (smoke test) and BLG-QA-04 (coverage report) — schedule BLG-OPS-08 first in whatever sprint targets QA automation. BLG-QA-06 (seed scripts) is a companion prerequisite for BLG-QA-05.
+
+---
+
+## v2.4 — Candidate Pool Economics (Roadmap Rebalance 2026-03-31__scheduled)
+
+*New items added to v2.4 candidate pool. Final allocation determined at release planning.*
+
+| Initiative | Estimated FTE effort | Skills required | Duration | Opportunity cost |
+|-----------|---------------------|-----------------|----------|-----------------|
+| BLG-FEAT-14 — Weekly trading review digest | ~2–3 days | Backend (endpoint), Frontend (digest component) | 1 sprint | Medium — competes with BLG-BE-05, BLG-FE-06 bug fix priority |
+| BLG-OPS-10 — Render hosting tier review | ~0.25 day | FinOps, Infrastructure | 1 session | Very low — document only |
+| BLG-BE-06 — Alert evaluation idempotency | ~1–2 days | Backend Engineering | 1 sprint | Low — backend-only, no frontend |
+| BLG-GOV-09 — Cycle velocity metric | ~0.5 day | PMO Lead, Head of Engineering | 1 session | Low — documentation task |
+| **4-item total (new)** | **~4–6 days** | Backend, Frontend, FinOps, PMO | — | — |
+
+**Combined v2.4 backlog pool** (11 existing + 4 new = 15 items): ~40–55 days estimated effort across all 15 items.
+
+**Skill constraints for release planning:**
+- Backend Engineering is the primary capacity ceiling — sequencing BLG-BE-05, BLG-BE-06, BLG-FEAT-14 endpoint work, and BLG-SPEC-D15/D16 backend touches will be critical.
+- Governance load (BLG-GOV-09, BLG-OPS-10, BLG-GOV-08, BLG-GOV-03) is ~15% of total — below 20% floor. Release planner must schedule governance items alongside execution items to maintain Product Owner sign-off capacity.
+- No scarce skill conflicts at backlog level — conflicts will surface at release planning as sprint allocation is finalised.
+
+**Assessment:** Pool is healthy and well-balanced. No workforce constraint violations at rebalance time. Release planning should sequence P2 bug fixes (BLG-BE-05, BLG-FE-06, BLG-SPEC-D16) early to clear technical debt, then layer in new feature work.
+

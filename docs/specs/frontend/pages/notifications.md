@@ -319,6 +319,7 @@ Click again to collapse.
 - **Target resolution release:** v2.3
 - **Owner:** Base44 Frontend Prompt Owner
 - **Backlog reference:** BLG-FE-04 (filed delivery verification 2026-03-24, cycle 2026-03-21__release-v2.2)
+- **Resolution:** ✅ Resolved — ST-11 in cycle 2026-03-24__release-v2.3 delivered the CTA button (commit fe91153). BLG-FE-04 shipped. Closed 2026-03-30.
 
 ---
 

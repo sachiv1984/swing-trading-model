@@ -366,3 +366,80 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Skill-Silo check:** Governance load 0% for new additions. Below 20% floor. Product Owner sign-off capacity confirmed. No Skill-Silo Alert issued.
 
 **Meta-review:** Due (3rd rebalance cycle since initialisation). Conducted. No new prompt patches warranted. Dominant pattern: Type D cognitive fatigue (3/4 friction items across 2 cycles). All identified patterns from prior meta-review already resolved. See `claude/cycles/2026-03-24__scheduled/meta_review.md`.
+
+---
+
+### DL-013 — 2026-03-31
+
+**Decision type:** Add (backlog-level)
+**Cycle:** 2026-03-31__scheduled
+**Date:** 2026-03-31
+**Decision owner:** Product Owner
+
+**Initiative:** BLG-FEAT-14 — Weekly trading review digest
+
+**Gate cleared:** BLG-FEAT-11 (strategy compliance score) and BLG-FEAT-09 (staleness indicator) shipped in v2.3 — prior park rationale "defer until land and usage patterns clearer" satisfied.
+
+**Displacement:** BLG-FE-03 (user-facing error mapping layer, P3) deprioritised in v2.4 planning queue.
+
+**Workforce impact:** M effort (~2–3 days). Backend (new endpoint) + Frontend (digest component). No scarce skill conflicts at backlog level.
+
+**Rationale:** v2.3 analytics investments now provide sufficient data for a meaningful weekly digest. Scope explicitly constrained to raw data aggregation only — no generated text or interpretation. Challenger raised §3 boundary concern (soft automated reporting); PO accepted scope constraint. SPS = 2. Zero-sum satisfied: 1 Add, 1 displacement named.
+
+---
+
+### DL-014 — 2026-03-31
+
+**Decision type:** Add (backlog-level)
+**Cycle:** 2026-03-31__scheduled
+**Date:** 2026-03-31
+**Decision owner:** Product Owner
+
+**Initiative:** BLG-OPS-10 — Render hosting tier review
+
+**Gate cleared:** BLG-OPS-04 (cron alert scheduling) shipped v2.2; one full sprint cycle (v2.3) of scheduling observed — prior park rationale "observe for one sprint" satisfied.
+
+**Displacement:** BLG-TECH-05 (Prometheus metrics endpoint, P3) deprioritised in v2.4 planning queue.
+
+**Workforce impact:** XS effort (<1 hour). FinOps + Infrastructure Owner only. Negligible engineering cost.
+
+**Rationale:** Operational hygiene — documenting hosting cost decisions before issues surface silently. Challenger cleared with no counter-argument (SPS=1, pure operational). Zero-sum satisfied: 1 Add, 1 displacement named.
+
+---
+
+### DL-015 — 2026-03-31
+
+**Decision type:** Add (backlog-level)
+**Cycle:** 2026-03-31__scheduled
+**Date:** 2026-03-31
+**Decision owner:** Product Owner
+
+**Initiative:** BLG-BE-06 — Alert evaluation idempotency
+
+**Gate cleared:** BLG-OPS-04 (cron alert scheduling) shipped v2.2; one full sprint (v2.3) of scheduling behaviour observed — prior park rationale "observe for one sprint first" satisfied.
+
+**Displacement:** BLG-BE-04 (R-Multiple stop price fix, P3) deprioritised in v2.4 planning queue.
+
+**Workforce impact:** M effort (~1–2 days). Backend engineering only. No frontend dependency.
+
+**Rationale:** Duplicate alert notifications on scheduler retry/misfire are a real risk that degrades user trust. Challenger raised §3 boundary concern (evaluation suppression risk); PO accepted scope constraint (notification dispatch deduplication only, not evaluation suppression). SPS = 2. Zero-sum satisfied: 1 Add, 1 displacement named.
+
+---
+
+### DL-016 — 2026-03-31
+
+**Decision type:** Add (backlog-level)
+**Cycle:** 2026-03-31__scheduled
+**Date:** 2026-03-31
+**Decision owner:** Product Owner
+
+**Initiative:** BLG-GOV-09 — Cycle velocity metric
+
+**Gate cleared:** v2.3 shipped; capacity freed from BLG-GOV-07 (shipped) and BLG-GOV-08 (returned to backlog at P3) — prior park rationale "capacity constrained with GOV-07/08 in v2.3" resolved.
+
+**Displacement:** BLG-GOV-03 (simplify cycle artefact sealing, P3) deprioritised in v2.4 planning queue.
+
+**Workforce impact:** S effort (~0.5 day). PMO Lead + Head of Engineering documentation task.
+
+**Rationale:** v2.3 triggered a capacity warn that historical throughput data might have predicted. Velocity metric directly addresses recurring over-planning pattern. Challenger cleared with no counter-argument (SPS=1, pure governance tooling). Zero-sum satisfied: 1 Add, 1 displacement named.
+

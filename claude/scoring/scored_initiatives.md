@@ -1,7 +1,7 @@
 **Owner:** Facilitator
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-04
+**Last Updated:** 2026-03-31
 
 ---
 
@@ -197,3 +197,19 @@ Highest-value items: BLG-OPS-09 (data safety, risk=5 — active data-loss risk o
 All 8 items are SPS=1 or SPS=2 — no §13 boundary proximity. All are S or M effort — quick wins at v2.3. All items high reversibility (rev=5). BLG-QA-05 has an explicit §3 scope constraint: Playwright pass is supporting evidence for non-visual AC only — not a DoQ gate replacement. BLG-OPS-08 (staging reset) should be sequenced before BLG-QA-05 and BLG-QA-04 as a prerequisite.
 
 **CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-03-21__item-3.5). Delta: 0.0.
+
+---
+
+## Cycle 2026-03-31__scheduled — New Backlog Items
+
+*Standard-tier run. Zero active roadmap initiatives. 4 new backlog items scored as STEP 6 output.*
+
+| Initiative | Strat | Fin | Risk | WF Int | TTV | Rev | SPS | Effort |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| BLG-FEAT-14 — Weekly trading review digest | 4 | 3 | 2 | 3 | 3 | 4 | 2 | M |
+| BLG-OPS-10 — Render hosting tier review | 3 | 4 | 4 | 5 | 5 | 5 | 1 | XS |
+| BLG-BE-06 — Alert evaluation idempotency | 4 | 2 | 5 | 3 | 3 | 3 | 2 | M |
+| BLG-GOV-09 — Cycle velocity metric | 3 | 2 | 3 | 4 | 4 | 5 | 1 | S |
+
+*Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score (carried from STEP 5 debate). Scale: 1–5.*
+

@@ -13,7 +13,7 @@ Read `.claude/skills/lessons_learnt.md` before doing anything else. Look for ent
 
 ## Step 1 — Scan existing IDs
 
-Read `claude/backlog/backlog.md` in full. For every ID namespace, record the highest number currently in use (search both active items AND the Closed Items table — archived items still consume their ID):
+Read `claude/backlog/backlog.md` in full **and** `claude/backlog/backlog_archive.md` in full. For every ID namespace, record the highest number currently in use across **both files** — archived items still consume their ID and must never be reused. Search for `### BLG-{NAMESPACE}-` in both files; take the maximum across both.
 
 | Namespace | Covers | Example |
 |-----------|--------|---------|

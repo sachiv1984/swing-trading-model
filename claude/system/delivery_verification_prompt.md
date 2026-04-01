@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.6
+**Version:** 1.7
 **Last Updated:** 2026-03-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -285,6 +285,8 @@ For each deviation:
 | DEV-ref | ST-xx | P0–P3 | <one line> | Blocks / Accepted / Recorded | BL-ref |
 
 > **Backlog reference synchronisation (LL-CL-v22-01):** When a new backlog item is created for a deviation in this step (P2 requires backlog item; P3 confirms or creates one), also update the `Backlog reference:` field in the corresponding canonical spec deviation note to reference the correct backlog item ID. Do this in the same session — this prevents stale placeholder references (e.g. "to be filed at next rebalance") from persisting into post-ship closure, where they require correction at STEP 5.
+
+> **Canonical spec Known Deviations sync (LL-v2.3-CL-03):** After confirming or creating a backlog item for any deviation (P1–P3), verify that the canonical spec named in the deviation record has a Known Deviations section with an entry for this deviation. If absent: create the section and entry in the same session using the standard fields (description, canonical requirement, priority P0–P3, target resolution release, owner, backlog reference). This prevents the post-ship closure STEP 5 from being the first gate to enforce canonical spec propagation — it happened twice (v2.2 stale backlog refs, v2.3 missing Known Deviations section).
 
 ---
 
@@ -611,6 +613,7 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-03-31 | LL-v2.3-CL-03: STEP 3 — canonical spec Known Deviations sync note added. After creating a backlog item for any P1–P3 deviation, verify the canonical spec has a Known Deviations section entry for this deviation; create if absent. Prevents post-ship closure STEP 5 from being the first propagation gate (recurred v2.2 and v2.3). Authority: Head of Specs Team (post-ship closure 2026-03-24__release-v2.3). |
 | 1.6 | 2026-03-24 | LL-CL-v22-01: STEP 3 deviation register — backlog reference synchronisation note added. When a new backlog item is created for a deviation, the canonical spec deviation note `Backlog reference:` field must be updated to the new item ID in the same session. Prevents stale references at post-ship closure. Authority: Head of Specs Team (lessons learnt closure 2026-03-21__release-v2.2). |
 | 1.4 | 2026-03-11 | IMP-14: STEP 5.3 added — `test_scenario_gaps` structured table in `verification_report.md §6`; fields: gap_id, EPIC, description, qualifying_reason, disposition (backlog_item_created | not_applicable | deferred); all gaps must have a disposition before report seals (Phase 4 exit criterion). §8 completion condition updated. IMP-15: STEP 4.3 added — stale parked items detection; items parked in 3+ consecutive cycle backlog slices surfaced for mandatory PO disposition; recorded in `verification_report.md §5`; detection only — does not block verification status. |
 | 1.3 | 2026-03-10 | IMP-54: §5 Write Scope — `lessons_learnt_cycle.md` added (append-only, Phase 4 section; create if absent). STEP 8.5 added — lessons learnt Phase 4 append via `lessons_learnt_prompt.md §3.4`; output: `lessons_learnt_cycle.md` Phase 4 section; idempotency guard built into prompt §3.4; hard gate before STEP 9. STEP 10 commit: `lessons_learnt_cycle.md` added. §8 completion condition: Phase 4 section appended condition added. |

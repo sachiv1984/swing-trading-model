@@ -19,6 +19,7 @@ Cycle: 2026-03-24__release-v2.3
 - **GitHub Issue:** #145
 - **Branch:** exec/2026-03-24__release-v2.3/EPIC-03
 - **Delegated at:** 2026-03-25T10:00:00Z
+- **Outcome recorded:** 2026-03-30 — Unblocked. ST-08 completed autonomously by engine (commit 3c60852). Reclassified delegated_backend → autonomous per 2026-03-26 frontend delegation decision. Item done; EPIC-03 merged (PR #155, 2026-03-25).
 - **What is needed:**
   1. Implement a background job that queries the PostgreSQL database size (e.g. using `pg_database_size()` or `pg_total_relation_size()`).
   2. Compare the size against a configurable threshold (expressed as a percentage of the Render free tier PostgreSQL limit — 256 MB default).
@@ -29,7 +30,7 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** `docs/specs/api_contracts/alerts_endpoints.md` (notification delivery pattern); `docs/adr/ADR-003-notification-delivery-architecture.md` (Telegram delivery architecture)
 - **Unblock criteria:** Background job operational; Telegram alert fires correctly at threshold; openapi.yaml updated if new endpoint or response field added; committed to EPIC-03 branch
 - **Commit format required:** `[EPIC-03][ST-08] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked
 
 ---
 
@@ -55,7 +56,8 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** No prior canonical spec. Script must not mutate production — staging environment only.
 - **Unblock criteria:** Script tested against staging; idempotency verified; committed to EPIC-02 branch
 - **Commit format required:** `[EPIC-02][ST-03] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-02`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-03 completed by engine (commit 0130abd); EPIC-02, PR #159 merged 2026-03-30.
+- **Status:** Cancelled
 
 ---
 
@@ -77,7 +79,8 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** No prior canonical spec.
 - **Unblock criteria:** ST-03 merged first; seeds run successfully on clean staging DB; committed to EPIC-02 branch
 - **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-02`
-- **Status:** Pending (blocked on ST-03)
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-04 completed by engine (commit f90dd58); EPIC-02, PR #159 merged 2026-03-30.
+- **Status:** Cancelled (blocked on ST-03)
 
 ---
 
@@ -99,7 +102,8 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** No prior canonical spec.
 - **Unblock criteria:** ST-03 + ST-04 merged first; all 3 smoke tests pass on staging; CI integration wired; committed to EPIC-02 branch
 - **Commit format required:** `[EPIC-02][ST-05] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-02`
-- **Status:** Pending (blocked on ST-03 + ST-04)
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-05 completed by engine (commit d7bad14); EPIC-02, PR #159 merged 2026-03-30.
+- **Status:** Cancelled (blocked on ST-03 + ST-04)
 
 ---
 
@@ -122,7 +126,8 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** `docs/testing/chart_interactivity_scenarios.md`
 - **Unblock criteria:** All 16 sub-scenarios covered; CI wired; run time < 5 min; committed to EPIC-02 branch
 - **Commit format required:** `[EPIC-02][ST-06] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-02`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-06 completed by engine (commit bdb2734); EPIC-02, PR #159 merged 2026-03-30.
+- **Status:** Cancelled
 
 ---
 
@@ -185,7 +190,8 @@ Cycle: 2026-03-24__release-v2.3
 
 - **Unblock criteria:** Backend compliance fields in GET /positions response; frontend panel renders in Table View; all AC from sprint_backlog.md#ST-01 met; DoQ visual verification + Strategy Rules owner sign-off at delivery verification
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-01`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-01 completed by engine (commit b6b6958); EPIC-01, PR #157 merged 2026-03-30.
+- **Status:** Cancelled
 
 ---
 
@@ -239,7 +245,8 @@ Cycle: 2026-03-24__release-v2.3
 
 - **Unblock criteria:** `last_sync_at` in analytics and portfolio API responses; indicator renders on both pages with correct states; all AC from sprint_backlog.md#ST-02 met
 - **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-01`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-02 completed by engine (commit 07bb1b1); EPIC-01, PR #157 merged 2026-03-30.
+- **Status:** Cancelled
 
 ---
 
@@ -284,7 +291,8 @@ Cycle: 2026-03-24__release-v2.3
 
 - **Unblock criteria:** CTA button present in Alert Thresholds empty state; clicking navigates to creation flow; DEV-EPIC02-ST04-01 resolved; DoQ visual verification
 - **Commit format required:** `[EPIC-04][ST-11] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-04`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-11 completed by engine (commit fe91153); EPIC-04, PR #158 merged 2026-03-30.
+- **Status:** Cancelled
 
 ---
 
@@ -334,7 +342,8 @@ Cycle: 2026-03-24__release-v2.3
 
 - **Unblock criteria:** Badge visible on Alerts nav item; count accurate; badge clears on Alerts visit; DoQ visual verification + badge propagation confirmed for ST-13
 - **Commit format required:** `[EPIC-04][ST-10] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-04`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-10 completed by engine (commit cbe0848); EPIC-04, PR #158 merged 2026-03-30.
+- **Status:** Cancelled
 
 ---
 
@@ -395,7 +404,8 @@ Cycle: 2026-03-24__release-v2.3
 
 - **Unblock criteria:** Three-state pattern consistent across all 5 pages; empty and error states visually distinct; retry button functions; DoQ visual verification on all pages
 - **Commit format required:** `[EPIC-04][ST-12] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-04`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-12 completed by engine (commit f6aa41b); EPIC-04, PR #158 merged 2026-03-30.
+- **Status:** Cancelled
 
 ---
 
@@ -459,7 +469,8 @@ Cycle: 2026-03-24__release-v2.3
 
 - **Unblock criteria:** 4 groups implemented; collapse/expand works; badge propagation from ST-10 confirmed; no nav regression; DoQ visual verification
 - **Commit format required:** `[EPIC-04][ST-13] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-04`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-13 completed by engine (commit 22e77f8); EPIC-04, PR #158 merged 2026-03-30.
+- **Status:** Cancelled
 
 ---
 
@@ -484,7 +495,8 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** No prior canonical spec.
 - **Unblock criteria:** Template document present in docs/testing/; all mandatory fields present; usable for both manual and automated runs; committed to EPIC-05 branch
 - **Commit format required:** `[EPIC-05][ST-15] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-05`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-15 completed by engine (commit f55178a); EPIC-05, PR #156 merged 2026-03-30.
+- **Status:** Cancelled
 
 ---
 
@@ -507,4 +519,6 @@ Cycle: 2026-03-24__release-v2.3
 - **Spec reference:** `docs/reference/openapi.yaml` (source of endpoint list)
 - **Unblock criteria:** Coverage report generated; gaps visible; CI integration wired; committed to EPIC-05 branch
 - **Commit format required:** `[EPIC-05][ST-16] <description>` pushed to `exec/2026-03-24__release-v2.3/EPIC-05`
-- **Status:** Pending
+- **Outcome recorded:** 2026-03-30 — Cancelled. Delegation superseded by 2026-03-26 autonomous reclassification decision. ST-16 completed by engine (commit 5dc1c1d); EPIC-05, PR #156 merged 2026-03-30.
+- **Status:** Cancelled
+

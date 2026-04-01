@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-24 (roadmap rebalance — cycle 2026-03-24__scheduled — scheduled run; 8 backlog adds; no roadmap-level changes)
-**Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — scheduled run; Extended tier; DL-012)
+**Last Updated:** 2026-03-31 (roadmap rebalance — cycle 2026-03-31__scheduled — scheduled run; Standard tier; DL-013 to DL-016)
+**Last rebalance:** 2026-03-31 (cycle 2026-03-31__scheduled — scheduled run; Standard tier; DL-013 to DL-016)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v2.2** — Security, Alert Maturity & Quality — Shipped 2026-03-24
-**Next planned release:** **v2.3** (TBD)
+**v2.3** — Quality Automation & User Insight — Shipped 2026-03-30
+**Next planned release:** **v2.4** (TBD)
 
 ---
 
@@ -45,21 +45,16 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*Items in this section are committed for the current or next release cycle. v2.2 shipped 2026-03-24. v2.3 is the next delivery horizon.*
+*v2.3 shipped 2026-03-30. v2.4 release plan published 2026-03-31 — 17 stories across 6 EPICs (Correctness, Insight & Governance Hardening). Sprint planning pending.*
 
-*v2.2 (RA:v2.2), v2.0 (RA:v2.0), and v2.1 (RA:v2.1) annotation blocks retired to `claude/roadmap/roadmap_archive.md` on 2026-03-24 — all shipped. Delivery Plan section clear for v2.3 planning.*
-
-**v2.3 horizon (Provisional — pending release planning):** Active backlog pool: 23 items (~37–47 days estimated). Key candidates: BLG-FEAT-11 (Strategy Compliance Score, SPS=4, M–L), BLG-FEAT-09 (Metrics Staleness Indicator, P2, S–M), BLG-SPEC-D14 (Quick win, XS), BLG-QA-05 (Critical-path Smoke Test, M), BLG-OPS-09 (DB Size Alert, S). Release planning will scope from the full 23-item pool. v2.3 scope not committed until release planning engine run.
-
-<!-- roadmap-annotation-marker: RA:v2.3:2026-03-24__release-v2.3 -->
+<!-- roadmap-annotation-marker: RA:v2.4:2026-03-31__release-v2.4 -->
 
 **Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-03-24__release-v2.3
-- Plan published: 2026-03-24
-- Cycle folder: claude/cycles/2026-03-24__release-v2.3/
-- Backlog slice: claude/cycles/2026-03-24__release-v2.3/stage4_backlog_slice.md
-- Status at annotation: Planning → Published
-- Theme: Quality Automation & User Insight — 17 stories across 5 EPICs; 6 items deferred to v2.4
+- Cycle: 2026-03-31__release-v2.4
+- Plan published: 2026-03-31
+- Cycle folder: claude/cycles/2026-03-31__release-v2.4/
+- Backlog slice: claude/cycles/2026-03-31__release-v2.4/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 ---
 
@@ -122,6 +117,7 @@ When evaluating new features:
 | **v2.0** | Reporting & Alerts | Tax-year P&L statement, signal exposure controls (top_n, lookback_days) — ✅ Shipped 2026-03-17. Alerts & notifications deferred to v2.1 (pending BLG-TECH-08 ADR). |
 | **v2.1** | Alerts, Watchlists & Enhancements | ADR-003 (async notification), Alerts & Notifications (Telegram delivery), Watchlists & Screening, Chart Interactivity, Tax-Year PDF/CSV Export, Slippage Tracking, Spec Debt & QA Coverage — ✅ Shipped 2026-03-21 |
 | **v2.2** | Security, Alert Maturity & Quality | Security hardening (API Key Auth, CSP), Alert system maturity (scheduling, thresholds, history), Bug fixes & operational quick wins, QA coverage, Governance process enhancements — ✅ Shipped 2026-03-24 |
+| **v2.3** | Quality Automation & User Insight | Strategy Compliance Panel, Metrics Staleness Indicator, Alert Nav Badge, Health Database endpoint, QA automation, Governance tooling — ✅ Shipped 2026-03-30 (Verified_with_deviations) |
 
 ---
 
