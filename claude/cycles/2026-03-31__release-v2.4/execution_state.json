@@ -425,7 +425,7 @@
         "ST-09": {
           "title": "Add weekly digest frontend component",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 177,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-04",
@@ -433,10 +433,11 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-01T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/digest.md"
+            "src/pages/WeeklyDigest.js",
+            "tests/e2e/weekly-digest.spec.js"
           ],
           "deviations_filed": false,
           "last_completed_substep": null,
