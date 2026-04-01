@@ -391,7 +391,7 @@
       }
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-31__release-v2.4/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
@@ -429,7 +429,7 @@
           "assigned_to": "engine",
           "github_issue": 177,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6a9d98d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
