@@ -81,7 +81,7 @@ Spec reference: `docs/specs/frontend/pages/trade_history.md` §Slippage Column a
 - Column header shows "Slippage" with ⓘ info icon
 - Hovering the ⓘ icon displays tooltip: `"Slippage = (Fill Price − Market Price) / Market Price"` and sign convention explanation
 
-**Automation:** Playwright candidate — column presence and colour class assertion
+**Automation:** Automated — `tests/e2e/slippage-tracking.spec.js` SC-SLIP-02a (header), SC-SLIP-02b (emerald), SC-SLIP-02c (rose), SC-SLIP-02d (tooltip title)
 
 ---
 
@@ -100,7 +100,7 @@ Spec reference: `docs/specs/frontend/pages/trade_history.md` §Slippage Column a
 - Value is consistent with API response `avg_slippage_pct` field
 - When no trades have fill price: stat card displays `—` with tooltip: `"No Fill Price data available yet."`
 
-**Automation:** Playwright candidate — stat card value assertion against API response
+**Automation:** Automated — `tests/e2e/slippage-tracking.spec.js` SC-SLIP-03a (value from API), SC-SLIP-03b (null shows "—")
 
 ---
 
@@ -119,7 +119,7 @@ Spec reference: `docs/specs/frontend/pages/trade_history.md` §Slippage Column a
 - No error or blank cell — exactly `—` is rendered
 - Other trades in the same table that have fill prices continue to show their slippage values correctly
 
-**Automation:** Playwright candidate — cell content assertion for null-slippage row
+**Automation:** Automated — `tests/e2e/slippage-tracking.spec.js` SC-SLIP-04a (em dash in null row), SC-SLIP-04b (other rows unaffected)
 
 ---
 
@@ -139,7 +139,7 @@ Spec reference: `docs/specs/frontend/pages/trade_history.md` §Slippage Column a
 
 | Scenario ID | Description | Spec | Automation | Status |
 |-------------|-------------|------|-----------|--------|
-| SC-SLIP-01 | Fill price input captured and stored on trade entry | trade_history.md, data_model.md | Manual (staging) | Active |
-| SC-SLIP-02 | Slippage % column displays colour-coded values | trade_history.md §Slippage Column | Playwright candidate | Active |
-| SC-SLIP-03 | Avg slippage StatsCard updates when trades have fill prices | trade_history.md §Avg Slippage | Playwright candidate | Active |
-| SC-SLIP-04 | Null fill price shows em dash for trades without fill price | trade_history.md §Null handling | Playwright candidate | Active |
+| SC-SLIP-01 | Fill price input captured and stored on trade entry | trade_history.md, data_model.md | Manual — see `docs/testing/slippage_manual_runbook.md` | Active |
+| SC-SLIP-02 | Slippage % column displays colour-coded values | trade_history.md §Slippage Column | Automated — `tests/e2e/slippage-tracking.spec.js` (SC-SLIP-02a–02d) | Active |
+| SC-SLIP-03 | Avg slippage StatsCard updates when trades have fill prices | trade_history.md §Avg Slippage | Automated — `tests/e2e/slippage-tracking.spec.js` (SC-SLIP-03a–03b) | Active |
+| SC-SLIP-04 | Null fill price shows em dash for trades without fill price | trade_history.md §Null handling | Automated — `tests/e2e/slippage-tracking.spec.js` (SC-SLIP-04a–04b) | Active |
