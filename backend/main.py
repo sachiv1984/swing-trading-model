@@ -15,6 +15,7 @@ from utils.formatting import decimal_to_float
 from pydantic import BaseModel
 from routers import validation, analytics, test, portfolio_size, trades_export, prospective_heat, alerts
 from routers import watchlist as watchlist_router
+from routers import digest as digest_router
 from services.watchlist_service import ensure_watchlist_table
 
 
@@ -154,6 +155,7 @@ app.include_router(prospective_heat.router)
 app.include_router(trades_export.router)
 app.include_router(alerts.router)
 app.include_router(watchlist_router.router)
+app.include_router(digest_router.router)
 
 
 @app.on_event("startup")
