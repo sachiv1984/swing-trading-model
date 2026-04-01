@@ -273,7 +273,7 @@
           "assigned_to": "engine",
           "github_issue": 170,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-01",
-          "commit_sha": "pending-ST-01",
+          "commit_sha": "9c8fa2d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
