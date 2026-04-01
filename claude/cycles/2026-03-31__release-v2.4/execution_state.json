@@ -5,7 +5,7 @@
   "invoked_utc": "2026-04-01T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-01T00:06:00Z",
+  "last_updated_utc": "2026-04-01T00:20:00Z",
 
   "merge_order": ["EPIC-06", "EPIC-03", "EPIC-05", "EPIC-01", "EPIC-02", "EPIC-04"],
 
@@ -64,7 +64,7 @@
           "assigned_to": "engine",
           "github_issue": 163,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-06",
-          "commit_sha": "pending-ST-16",
+          "commit_sha": "2850836",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -79,21 +79,21 @@
         "ST-17": {
           "title": "Simplify release planning cycle artefact sealing",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 164,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "pending-ST-17",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-01T00:20:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/system/release_planning_prompt.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "SHA-256 per-artefact hashes removed. sealed_hashes and artifact_hashes blocks removed from state.json schema. sealed: true flag retained. state_snapshot_hash retained (git commit SHA). §6 checklist applied: OPERATIONAL_GUIDE v3.41→v3.42, prompt_change_log appended."
         }
       }
     },

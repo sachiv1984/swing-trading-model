@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.24
-**Last Updated:** 2026-03-22
+**Version:** 2.25
+**Last Updated:** 2026-04-01
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -9,7 +9,7 @@
 
 # Release Planning Engine — Governance Prompt
 
-(Cycle-Based, Reusable, Escalation-Aware, State-Driven, Mutation-Safe, Concurrency-Safe, Terminal-Sealed, Assumption-Frozen, Tamper-Evident)
+(Cycle-Based, Reusable, Escalation-Aware, State-Driven, Mutation-Safe, Concurrency-Safe, Terminal-Sealed, Assumption-Frozen)
 
 ## 1. Purpose
 Translate an already-approved roadmap release (e.g., v1.7, v1.8) into an execution-ready plan:
@@ -209,18 +209,11 @@ For EPIC descriptions, source from `stage4_backlog_slice.md` (the EPIC header an
 
 ---
 
-## 11. Canonicalization Rules (Hashing — Hard Requirement)
-For markdown planning artefacts:
-1. Normalize line endings to LF (`\n`)
-2. Strip trailing whitespace on each line
-3. Collapse runs of >2 blank lines to exactly 2
-4. Trim leading/trailing blank lines
-5. Do NOT reorder or otherwise transform content
-6. Front matter (YAML or HTML comment headers) is included in the hash — do not strip it
+## 11. Sealing Mechanism
 
-Hash method: SHA-256
+Per-artefact SHA-256 hash computation has been removed (ST-17, v2.4). Sealing uses `sealed: true` flag as the sole sealing mechanism. `state_snapshot_hash` is retained as a single lightweight tamper indicator — record the git commit SHA at publish time. Filesystem timestamps are forbidden.
 
-Filesystem timestamps are forbidden.
+`git diff main` is the authoritative drift detection method for Published cycles.
 
 ---
 
@@ -407,11 +400,6 @@ Then create or update:
 
   "sealed": {
     "sealed_utc": "",
-    "sealed_hashes": {
-      "release_plan": "",
-      "stage4_backlog_slice": "",
-      "escalations": ""
-    },
     "sealed_assumptions": {
       "timebox": "",
       "capacity": ""
@@ -419,26 +407,10 @@ Then create or update:
     "state_snapshot_hash": ""
   },
 
-  "drift_detected": false,
-  "drift_notes": [],
-
   "mutation_seq": 0,
   "assumptions": {
     "timebox": "<text or empty>",
     "capacity": "<text or empty>"
-  },
-
-  "artifact_hashes": {
-    "method": "sha256",
-    "canonicalization": "md-v1",
-    "tracked_set": [
-      "release_plan",
-      "stage4_backlog_slice",
-      "escalations"
-    ],
-    "release_plan": "<sha256 or empty>",
-    "stage4_backlog_slice": "<sha256 or empty>",
-    "escalations": "<sha256 or empty>"
   },
 
   "locks": {
@@ -561,34 +533,15 @@ If `state.json.status == "Published"`:
 - Do NOT change assumptions (timebox/capacity).
 - Do NOT acquire locks (backlog/roadmap) or perform lock/txn steps.
 
-#### Artifact Hash Freeze Rule (Hard Gate)
-If `status == Published`:
-- `state.json.artifact_hashes.*` must not change.
-- Any recomputed hash that differs from `state.json.sealed.sealed_hashes.*` triggers drift detection.
-- `state.json.artifact_hashes.*` must remain aligned with `state.json.sealed.sealed_hashes.*`.
-
-### Sealed Hash Authority Rule (Hard Gate)
-
-If status == Published:
-
-- sealed.sealed_hashes.* is the single source of truth.
-- artifact_hashes.* must equal sealed.sealed_hashes.*.
-- If artifact_hashes differs from sealed_hashes:
-  - Treat as drift.
-  - Do NOT attempt to reconcile.
-
 #### State File Immutability Rule (Hard Gate)
 If `status == Published`:
-- `state.json` may not be modified except for:
-  - `drift_detected`
-  - `drift_notes`
-- Any other modification constitutes drift.
+- `state.json` may not be modified.
 - open_escalations must not change
 - deferred_escalations must not change
 - accepted_risk_escalations must not change
 - deferred_execution_blockers must not change
 
-Perform drift detection only (see Drift Detection).
+Drift detection: use `git diff main` to verify no files in the cycle folder have been modified after the publish commit.
 
 If drift found: HALT with instruction:
 - "Published cycle has drift. Do not modify this cycle. Create a new amendment cycle and reference this published cycle_id."
@@ -602,18 +555,16 @@ Prevent stale "pass" stamps after any mutation to assumptions or tracked artifac
 - immediately after resolving any escalation that changes assumptions or artifacts.
 
 ### Tracked items
-- release_plan.md (consolidated intermediate artefact — covers Scope, Execution Plan, and Integrity Validation content)
+- release_plan.md
 - stage4_backlog_slice.md
 - escalations.md
 - assumptions: timebox, capacity
 
 ### Detection
-1. Recompute current hashes for tracked items (canonicalization rules apply).
-2. Compare to `state.json.artifact_hashes` and `state.json.assumptions`.
-3. If any differ, record a mutation:
-   - mutation_seq += 1
-   - append to `mutations[]`: timestamp, changed_keys, reason
-   - update hashes and assumptions in state.json.
+Compare current assumptions in state.json to stored sealed_assumptions. If changed, record a mutation:
+- mutation_seq += 1
+- append to `mutations[]`: timestamp, changed_keys, reason
+- update assumptions in state.json.
 
 ### Invalidation map
 If a tracked item changes, invalidate dependent steps by setting their artifact status to `not_started` and recording them in `invalidated_steps[]`.
@@ -632,7 +583,7 @@ Safety policy (required):
 Implementation: set `artifacts.stage4_5_capacity_check = not_started` and `attributes.capacity_feasible = not_started`.
 
 Efficiency policy (required):
-- Re-run STEP 5.5 only if Stage 2/3/4 changed (hash-based).
+- Re-run STEP 5.5 if Stage 2/3/4 artefacts have changed (check via git status or assumption change).
 
 Resume position:
 - Resume from the earliest invalidated step (lowest numbered step). If no invalidations exist: continue normal resume rule.
@@ -711,29 +662,10 @@ If lock removal fails: record blocker and HALT.
 ## Drift Detection
 Trigger: only when `status == Published`.
 
-**Schema version rule:** Drift detection uses the keys present in `state.sealed.sealed_hashes` for that cycle — not a fixed key list. Do not assume keys; read the `tracked_set` from `artifact_hashes.tracked_set`.
+Per-artefact hash comparison removed (ST-17, v2.4). Drift detection for Published cycles uses `git diff main` — any modified files in the cycle folder after the publish commit constitute drift.
 
-| `prompt_schema_version` | `tracked_set` keys in `sealed_hashes` |
-|------------------------|---------------------------------------|
-| `v2` (prompt ≥ v2.11) | `release_plan`, `stage4_backlog_slice`, `escalations` |
-| `v1` or absent (prompt ≤ v2.10) | `stage2_scope_extraction`, `stage3_execution_plan`, `stage4_backlog_slice`, `escalations` |
-
-Never compare `sealed_hashes` keys across schema versions. Each cycle is self-contained.
-
-Recompute and compare:
-- sealed_hashes (tracked planning artifacts — per schema version above)
-- sealed_assumptions (timebox/capacity)
-- state_snapshot_hash
-
-If mismatch:
-- state.drift_detected = true
-- Append drift_notes:
-  - timestamp
-  - changed component
-  - old value
-  - new value
-- HALT with instruction:
-  - "Published cycle has drift. Create amendment cycle."
+If drift found:
+- HALT with instruction: "Published cycle has drift. Create amendment cycle."
 
 No repair allowed in published cycle.
 
@@ -784,7 +716,7 @@ If status == Published:
 
 ### Escalation Mutation Rule (Hard Gate)
 If resolving an escalation modifies assumptions or Stage 2/3/4 artifacts or decision records:
-- Update hashes/assumptions in state.json
+- Update assumptions in state.json
 - Execute RESUME PRECHECK invalidation map
 - Do not proceed until required invalidated steps are re-run
 
@@ -1244,7 +1176,7 @@ Update state.json:
 - artifacts.stage5_5_cross_stage_integrity = pass|fail|blocked
 - attributes.cross_stage_integrity = pass|fail|blocked
 
-*(NOTE: rerun only if Stage 2/3/4 changed, hash-based)*
+*(NOTE: rerun only if Stage 2/3/4 artefacts changed)*
 
 ---
 
@@ -1416,26 +1348,14 @@ If any lock remains acquired, prepared, or blocked:
 # Publish Sealing
 Before setting `status = Published`:
 
-## 18.1 Recompute Canonical Hashes
-Recompute canonicalized SHA-256 hashes for (prompt schema v2 tracked set):
-- release_plan.md
-- stage4_backlog_slice.md
-- escalations.md
-
-If escalations.md does not exist:
-- Treat its canonical hash as SHA-256 of empty string.
-- Write that value into sealed.sealed_hashes.escalations.
-
-If any of the required tracked artifacts are missing at sealing time:
+## 18.1 Verify Required Artefacts Present
+Confirm the following required artefacts exist at sealing time:
 - release_plan.md
 - stage4_backlog_slice.md
 
-Then:
+If either is missing:
 - HALT.
 - status remains Validated.
-
-Write them into:
-- state.sealed.sealed_hashes
 
 ## 18.2 Seal Assumptions
 Capture:
@@ -1452,29 +1372,8 @@ Write into:
 
 These become immutable.
 
-## 18.3 Seal Canonical State Snapshot (Tamper-Evident)
-Create canonical JSON excluding:
-- last_transition_utc
-- Drift flags
-- locks.*
-- Dynamic artefact lock states
-
-Include:
-- cycle_id
-- release
-- date
-- mode
-- assumptions
-- artifact_hashes
-- mutation_seq
-- escalation lists
-- attributes
-- sealed_hashes
-- sealed_assumptions
-
-Canonicalize key order.
-
-Hash using SHA-256.
+## 18.3 Record State Snapshot Reference
+Record the current git commit SHA as `state.sealed.state_snapshot_hash`. This provides a lightweight, git-native tamper indicator for the sealed state.
 
 Write into:
 - state.sealed.state_snapshot_hash

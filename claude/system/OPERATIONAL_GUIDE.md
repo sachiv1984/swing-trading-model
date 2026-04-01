@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.41
+**Version:** 3.42
 **Last Updated:** 2026-03-31
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -597,7 +597,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.24)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.25)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1297,7 +1297,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.4 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.6 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.24 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.25 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.4 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v2.9 |
