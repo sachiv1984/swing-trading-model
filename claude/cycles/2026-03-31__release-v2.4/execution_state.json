@@ -5,7 +5,7 @@
   "invoked_utc": "2026-04-01T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-01T00:00:00Z",
+  "last_updated_utc": "2026-04-01T00:06:00Z",
 
   "merge_order": ["EPIC-06", "EPIC-03", "EPIC-05", "EPIC-01", "EPIC-02", "EPIC-04"],
 
@@ -26,7 +26,7 @@
           "assigned_to": "engine",
           "github_issue": 161,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-06",
-          "commit_sha": "pending",
+          "commit_sha": "8e01ef98e25ec2e1bbfc5a472f3f55f8b3f287ed",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
