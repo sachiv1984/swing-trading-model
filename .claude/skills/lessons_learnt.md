@@ -12,6 +12,7 @@ This file is read at the start of every skill run. Each entry records a mistake 
 | Date | Skill | What went wrong | Correct approach |
 |------|-------|-----------------|-----------------|
 | *(entries added here as mistakes occur)* | | | |
+| 2026-04-02 | commit-check | ST-06 schema reconciliation: accepted code inference (`reset_staging_db.sql` inserting `initial_cash`) as proof the column existed in the Supabase DB. Actual DB had no `initial_cash` — the script itself was stale. Signed off AC as Pass when schema was still wrong. | For any story whose AC requires `\d table` or schema confirmation, code inference is insufficient. Scripts referencing a column do not prove the column exists — the script may itself be wrong. Always require direct DB output (provided by the user) before signing off schema reconciliation AC-1. |
 | 2026-03-31 | backlog-add | Assigned BLG-FEAT-12 to new item "Add gated feature rollout capability" without checking backlog_archive.md. BLG-FEAT-12 was already used by "Alert history table" (shipped v2.2, archived). Duplicate ID violation detected at roadmap rebalance STEP 3. | Step 1 ID scan must include BOTH backlog.md AND backlog_archive.md. Search `### BLG-{NAMESPACE}-` in both files and take the maximum across both. The SKILL.md Step 1 instruction has been updated to make this explicit. |
 
 ---
