@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-04-01
+**Version:** 1.1
+**Last Updated:** 2026-04-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Derived from:** `docs/specs/frontend/pages/trade_history.md` v1.2; `docs/specs/api_contracts/trade_endpoints.md` v2.1.0; `docs/specs/data_model.md` v1.4+
 **Sprint:** 2026-03-31__release-v2.4 — ST-12 (closes TEST-GAP-EPIC-05-SLIP)
@@ -48,19 +48,23 @@ Spec reference: `docs/specs/frontend/pages/trade_history.md` §Slippage Column a
 
 ### SC-SLIP-01 — Fill price input captured and stored on trade entry
 
-**Precondition:** User is on the trade entry form (close position or add trade) and fill price field is visible.
+**Scope note (2026-04-02):** The fill price field exists on the **Trade Entry form** (`/TradeEntry`), not the Exit modal. The Exit modal only accepts exit price. SC-SLIP-01 tests entry fill price capture — the "entry deviation" metric (`fill_price − entry_price`). See `docs/testing/slippage_manual_runbook.md` v1.1 for the corrected runbook.
+
+**Precondition:** User is on the Trade Entry form (`/TradeEntry`). The optional Fill Price field is visible below Entry Price.
 
 **Steps:**
-1. Navigate to position entry/exit form
-2. Enter a fill price value that differs from the market price (e.g. entry at 100.00, fill price at 100.25)
-3. Submit the trade
+1. Navigate to **Trade Entry** page
+2. Enter a new position: ticker, market, entry price (e.g. 100.00), shares, stop price, entry date
+3. In the **Fill Price (optional)** field: enter a value that differs from entry price (e.g. 100.25 — filled 25p above limit)
+4. Submit the trade entry form
 
 **Expected result:**
-- Trade is saved with `fill_price` captured
-- `slippage_pct` is non-null for the new trade: `(fill_price − entry_price) / entry_price * 100` = +0.25%
-- Trade appears in trade history with slippage value populated
+- Position is saved with `user_fill_price = 100.25` stored against the position
+- When the position is subsequently exited, `trade_history.fill_price = 100.25` is written
+- Trade appears in Trade History with **Entry Dev.** column showing `+0.25%` (`(100.25 − 100.00) / 100.00 × 100`)
+- If fill price is omitted at entry, Trade History shows `—` in the Entry Dev. column for that trade
 
-**Automation:** Manual (staging) — fill price input interaction
+**Automation:** Manual (staging) — fill price field on TradeEntry form, then exit the position and verify Trade History display
 
 ---
 
@@ -139,7 +143,7 @@ Spec reference: `docs/specs/frontend/pages/trade_history.md` §Slippage Column a
 
 | Scenario ID | Description | Spec | Automation | Status |
 |-------------|-------------|------|-----------|--------|
-| SC-SLIP-01 | Fill price input captured and stored on trade entry | trade_history.md, data_model.md | Manual — see `docs/testing/slippage_manual_runbook.md` | Active |
+| SC-SLIP-01 | Fill price input captured on Trade Entry form; entry deviation shown in Trade History | trade_history.md, data_model.md | Manual — see `docs/testing/slippage_manual_runbook.md` v1.1 | Active |
 | SC-SLIP-02 | Slippage % column displays colour-coded values | trade_history.md §Slippage Column | Automated — `tests/e2e/slippage-tracking.spec.js` (SC-SLIP-02a–02d) | Active |
 | SC-SLIP-03 | Avg slippage StatsCard updates when trades have fill prices | trade_history.md §Avg Slippage | Automated — `tests/e2e/slippage-tracking.spec.js` (SC-SLIP-03a–03b) | Active |
 | SC-SLIP-04 | Null fill price shows em dash for trades without fill price | trade_history.md §Null handling | Automated — `tests/e2e/slippage-tracking.spec.js` (SC-SLIP-04a–04b) | Active |

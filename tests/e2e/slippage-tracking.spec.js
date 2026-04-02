@@ -161,11 +161,11 @@ test.describe('SC-SLIP-02 — Slippage column colour-coded values', () => {
     await expect(slippageCell).toBeVisible();
   });
 
-  test('SC-SLIP-02d: Slippage column header has tooltip describing sign convention', async ({ page }) => {
+  test('SC-SLIP-02d: Slippage column header has tooltip describing entry deviation', async ({ page }) => {
     const slippageBtn = page.getByRole('button', { name: /slippage/i });
     const titleAttr = await slippageBtn.getAttribute('title');
-    expect(titleAttr).toContain('Fill Price');
-    expect(titleAttr).toContain('Market Price');
+    expect(titleAttr).toContain('fill price');
+    expect(titleAttr).toContain('limit price');
   });
 });
 
@@ -180,7 +180,7 @@ test.describe('SC-SLIP-03 — Avg Slippage StatsCard', () => {
     await page.waitForSelector('table', { timeout: 10000 });
 
     // avg_slippage_pct: 0.125 → formatted as "+0.13%"
-    const statsSection = page.locator('text=Avg Slippage').locator('..');
+    const statsSection = page.locator('text=Avg Entry Dev.').locator('..');
     await expect(statsSection).toBeVisible();
     // The value "+0.13%" should be present somewhere in the stats bar
     await expect(page.locator('text=+0.13%')).toBeVisible();
@@ -192,9 +192,9 @@ test.describe('SC-SLIP-03 — Avg Slippage StatsCard', () => {
     await page.waitForSelector('table', { timeout: 10000 });
 
     // When avg_slippage_pct is null, value renders as "—"
-    // The StatsCard for "Avg Slippage" should contain "—"
-    const avgSlippageCard = page.locator('text=Avg Slippage').locator('../..');
-    await expect(avgSlippageCard.locator('text=—')).toBeVisible();
+    // The StatsCard for "Avg Entry Dev." should contain "—"
+    const avgEntryDevCard = page.locator('text=Avg Entry Dev.').locator('../..');
+    await expect(avgEntryDevCard.locator('text=—')).toBeVisible();
   });
 });
 
