@@ -310,8 +310,9 @@ def calculate_atr(ticker: str, period: int = 14) -> Optional[float]:
                     if len(true_ranges) >= period:
                         atr = sum(true_ranges[-period:]) / period
                         
-                        # Fix UK stocks: Yahoo returns pence, need to convert to pounds
-                        if ticker.endswith('.L') and atr > 100:
+                        # Fix UK stocks: Yahoo returns ATR in pence for all .L tickers
+                        # regardless of magnitude — always divide by 100
+                        if ticker.endswith('.L'):
                             atr = atr / 100
                             print(f"   📊 Calculated ATR for {ticker}: {atr:.2f} (converted from pence)")
                         else:

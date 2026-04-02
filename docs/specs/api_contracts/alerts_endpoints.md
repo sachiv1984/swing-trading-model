@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.3
-**Last Updated:** 2026-03-23
+**Version:** 0.4
+**Last Updated:** 2026-04-01
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -325,9 +325,9 @@ Re-delivery: on each evaluation, if a prior notification has `delivered = false`
 
 | Type | Rule |
 |------|------|
-| `stop_loss_approach` | For each open position where `current_stop IS NOT NULL` and `current_price IS NOT NULL`: fire if `(current_price − current_stop) / current_price × 100 ≤ threshold_percent`. One notification per position per evaluation (no deduplication across evaluations — ST-03 may implement a cooldown). |
-| `grace_period_warning` | For each open position: fire if `holding_days >= settings.min_hold_days − 2` AND `holding_days < settings.min_hold_days`. With default `min_hold_days = 10`: fires on days 8 and 9. |
-| `market_regime_change` | Fire when `GET /market/status` regime transitions to `risk_off` (state change, not sustained state). Implementation should track last-known regime in application state or a dedicated column. |
+| `stop_loss_approach` | For each open position where `current_stop IS NOT NULL` and `current_price IS NOT NULL`: fire if `(current_price − current_stop) / current_price × 100 ≤ threshold_percent`. **Calendar-day deduplication:** one notification per position per alert type per UTC calendar day. If evaluation runs multiple times on the same day, only the first dispatch is sent; subsequent evaluations for the same (portfolio, type, ticker, date) are logged and skipped. |
+| `grace_period_warning` | For each open position: fire if `holding_days >= settings.min_hold_days − 2` AND `holding_days < settings.min_hold_days`. With default `min_hold_days = 10`: fires on days 8 and 9. **Calendar-day deduplication:** same (portfolio, type, ticker, date) key as `stop_loss_approach`. Duplicate dispatches are logged and skipped. |
+| `market_regime_change` | Fire when regime transitions to `risk_off` (state change only, not sustained state). Deduplication via in-process last-known regime state — cold start does not fire; only genuine transitions fire. |
 | `daily_portfolio_summary` | Fire once per calendar day (UTC) per portfolio. Deduplication: check for existing `daily_portfolio_summary` notification with `created_at::date = CURRENT_DATE` before inserting. |
 
 #### Request
@@ -747,6 +747,7 @@ Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-04-01 | ST-02 (v2.4): Trigger evaluation rules table updated — deduplication behaviour documented for all four alert types. `stop_loss_approach` and `grace_period_warning` dedup logging added (log and skip on second evaluation same UTC day). Calendar-day dedup key: (portfolio, type, ticker, date). |
 | 0.3 | 2026-03-23 | ST-05 (v2.2): Added `## GET /alerts/history` endpoint. Added `alert_evaluations` table to Data Model Cross-Reference. `POST /alerts/evaluate` now persists one evaluation record per rule/position evaluated (calendar-day dedup applied to stop_loss_approach and grace_period_warning). |
 | 0.2 | 2026-03-21 | Post-ship closure: Known Deviations section added. DEV-ST04-01 (Telegram delivery) filed per post_ship_closure STEP 5 — deviation compliance. |
 | 0.1 | 2026-03-20 | Initial version. Full endpoint spec for EPIC-02 Alerts & Notifications. ST-02 — v2.1 release planning cycle 2026-03-18__release-v2.1. Architecture: FastAPI BackgroundTasks per ADR-003. HoST sign-off 2026-03-20: 4 review findings addressed (router ordering, grace period formula, proximity formula, table naming note). |
