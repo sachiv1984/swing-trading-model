@@ -205,7 +205,7 @@ export default function TradeHistory() {
               gradient="rose"
             />
             <StatsCard
-              title="Avg Slippage"
+              title="Avg Entry Dev."
               value={
                 tradesData?.avg_slippage_pct != null
                   ? `${tradesData.avg_slippage_pct > 0 ? "+" : ""}${tradesData.avg_slippage_pct.toFixed(2)}%`

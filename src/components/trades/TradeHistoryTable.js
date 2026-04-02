@@ -200,7 +200,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         <TableHead
           className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
           onClick={cycleSlippageSort}
-          title="Slippage = (Fill Price − Market Price) / Market Price. Negative = filled below market (favourable)."
+          title="Entry deviation: fill price vs limit price at entry. Null when fill price not recorded."
         >
           Slippage <SlippageSortIcon />
         </TableHead>
