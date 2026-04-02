@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 2.2.0
+  version: 2.4.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1220,6 +1220,64 @@ paths:
                         type: number
                         format: float
                         nullable: true
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /digest/weekly:
+    get:
+      tags: [Digest]
+      summary: Get 7-day weekly trading digest
+      description: |
+        Returns a 7-day summary of realised P&L, unrealised P&L delta, alert counts,
+        compliance score (current and 7-day baseline), and data staleness.
+        All fields are raw numeric or boolean values — no generated text or interpretation.
+        Canonical contract: docs/specs/api_contracts/digest_endpoints.md v0.1
+      responses:
+        "200":
+          description: Weekly digest data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      realised_pnl_7d:
+                        type: number
+                        format: float
+                        description: Sum of P&L for trades closed in the last 7 days (GBP)
+                      unrealised_pnl_delta_7d:
+                        type: number
+                        format: float
+                        nullable: true
+                        description: Change in unrealised P&L over 7 days from portfolio snapshots
+                      alerts_fired_7d:
+                        type: integer
+                        description: Count of notifications created in the last 7 days
+                      alerts_dismissed_7d:
+                        type: integer
+                        description: Count of notifications marked read in the last 7 days
+                      compliance_score_current:
+                        type: number
+                        format: float
+                        description: Journal completion rate across all closed trades (0-100)
+                      compliance_score_7d_ago:
+                        type: number
+                        format: float
+                        description: Journal completion rate for trades closed before the 7-day window (0-100)
+                      staleness_hours:
+                        type: number
+                        format: float
+                        nullable: true
+                        description: Hours since last portfolio snapshot; null if no snapshots
+                      as_of_utc:
+                        type: string
+                        format: date-time
+                        description: UTC timestamp this response was computed
         "500":
           $ref: "#/components/responses/InternalError"
 

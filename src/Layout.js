@@ -20,6 +20,7 @@ import {
   ShieldAlert,
   Bell,
   Eye,
+  CalendarDays,
   ChevronRight,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
@@ -46,10 +47,11 @@ const NAV_GROUPS = [
     label: "Analytics",
     key: "analytics",
     items: [
-      { name: "Analytics",      icon: TrendingUp,  page: "PerformanceAnalytics" },
-      { name: "Risk Dashboard", icon: ShieldAlert, page: "RiskDashboard" },
-      { name: "Signals",        icon: Zap,         page: "Signals" },
-      { name: "Reports",        icon: FileBarChart, page: "Reports" },
+      { name: "Analytics",      icon: TrendingUp,   page: "PerformanceAnalytics" },
+      { name: "Risk Dashboard", icon: ShieldAlert,  page: "RiskDashboard" },
+      { name: "Signals",        icon: Zap,          page: "Signals" },
+      { name: "Reports",        icon: FileBarChart,  page: "Reports" },
+      { name: "Weekly Digest",  icon: CalendarDays, page: "WeeklyDigest" },
     ],
   },
   {

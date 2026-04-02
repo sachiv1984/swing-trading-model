@@ -509,3 +509,40 @@ The roadmap and release planning engines lack longitudinal throughput data. Each
 - Release planning can reference velocity data without re-deriving it from cycle artefacts each time
 
 ---
+
+---
+
+### BLG-FEAT-15 — Fee drag metric on Trade History
+**Priority:** P3 (Low)
+**Type:** Feature — Analytics
+**Owner:** Metrics Definitions & Analytics Owner + Head of Engineering
+**Source:** PO/Challenger debate 2026-04-02 — action A3 from slippage metric re-scope decision
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v2.5
+
+**Problem**
+The current "entry deviation" metric (fill price vs limit price at entry) is null for most trades because the fill price field is optional and only available at entry. There is no always-available metric that captures the friction cost of executing a trade. Traders cannot see how much of their proceeds are consumed by broker fees (commission, stamp duty, FX fee) without manually inspecting individual trade records.
+
+**Scope**
+- Add a **Fee Drag %** metric: `exit_fees / gross_proceeds × 100` — the percentage of gross exit proceeds consumed by transaction costs at exit
+- Surface as a new StatsCard on Trade History ("Avg Fee Drag") — distinct from existing Avg Entry Dev. card
+- Surface as a new column in TradeHistoryTable ("Fee Drag %") — always populated (exit_fees and gross_proceeds always stored)
+- Avg Fee Drag: mean of fee_drag_pct across all trades with non-zero gross_proceeds
+- Update `docs/specs/metrics_definitions.md` to define the formula canonically
+- Update `docs/specs/frontend/pages/trade_history.md` to spec the new column and StatsCard
+- Update `docs/specs/api_contracts/trade_endpoints.md` to add `fee_drag_pct` and `avg_fee_drag_pct` response fields
+- Update `docs/reference/openapi.yaml` for the new fields
+- No data model migration required — `exit_fees` and `gross_proceeds` already stored on `trade_history`
+
+**Acceptance Criteria**
+- `fee_drag_pct` field returned per trade in GET /trades response: `exit_fees / gross_proceeds × 100`, rounded to 2 dp
+- `avg_fee_drag_pct` field returned at response envelope level: mean across all trades with gross_proceeds > 0
+- "Avg Fee Drag" StatsCard visible on Trade History; displays `avg_fee_drag_pct` formatted as `+X.XX%`
+- Fee Drag % column present in TradeHistoryTable; always populated (no `—` for missing data)
+- `docs/specs/metrics_definitions.md` contains canonical definition of fee_drag_pct formula
+- Metric is labelled clearly as "Fee Drag %" throughout — never called "slippage"
+
+**Out of scope**
+- Entry-side fee drag (entry_fees / total_cost) — defer to future item
+- Round-trip friction (entry + exit fees combined) — defer to future item
+- Any change to existing entry deviation / slippage_pct metric

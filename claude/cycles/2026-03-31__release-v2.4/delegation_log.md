@@ -82,3 +82,39 @@ This log records all delegated items (delegated_backend, delegated_frontend, del
 **Layer(s) required:** Database schema spec (data_model.md) + database layer (database.py) + seed data (SQL)
 
 ---
+
+## DEL-20260401-03
+
+**ID:** DEL-20260401-03
+**Date:** 2026-04-01
+**Story:** ST-10 — Render hosting tier review and decision record
+**EPIC:** EPIC-05
+**Classification:** delegated_decision
+**Assigned to:** FinOps & Resource Architect + Infrastructure & Operations Owner
+**Status:** Pending
+
+**Spec reference:** None (decision record to be authored)
+
+**Context:**
+The application is hosted on Render. The current tier (free or paid) has not been formally reviewed against the scheduling workload required by the weekly trading digest feature (ST-08). A decision record is required before ST-08 can be released to production.
+
+**Decision required:**
+1. Confirm current Render hosting tier (free / Starter / Standard / etc.)
+2. Review free tier limits relevant to scheduled jobs (spin-down, cold start, cron frequency)
+3. Assess whether the weekly digest cron job (weekly cadence) is compatible with the free tier
+4. Record decision: **free tier is sufficient** | **paid tier is warranted** | **monitor after launch**
+5. If paid tier warranted: record estimated cost and approval path
+
+**Branch:** `exec/2026-03-31__release-v2.4/EPIC-05`
+**Required commit format:** `[EPIC-05][ST-10] Document Render tier decision record`
+**GitHub issue:** #167
+**Unblock criteria:** FinOps & Resource Architect + Infrastructure & Operations Owner sign-off on decision record committed to branch
+
+**Acceptance criteria (from sprint backlog):**
+- Decision record documents current Render tier
+- Free tier limits recorded (spin-down delay, cron frequency limit, RAM/CPU for scheduler)
+- Decision rationale recorded: free sufficient | paid warranted | monitor
+- Both FinOps and InfraOps sign-off captured in the decision record
+- Committed to `exec/2026-03-31__release-v2.4/EPIC-05` branch
+
+---

@@ -29,6 +29,7 @@ import {
   TableCell,
 } from "../components/ui/DataTable";
 import { cn } from "../lib/utils";
+import { friendlyErrorMessage } from "../lib/apiError";
 import { differenceInDays } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
@@ -98,7 +99,7 @@ export default function Positions() {
     },
     onError: (error) => {
       console.error("Exit failed:", error);
-      alert(`Failed to exit position: ${error.message}`);
+      alert(`Failed to exit position: ${friendlyErrorMessage(error)}`);
     },
   });
 
@@ -116,7 +117,7 @@ export default function Positions() {
       setEditingPosition(null);
     } catch (error) {
       console.error("Failed to save position:", error);
-      alert(`Failed to save changes: ${error.message}`);
+      alert(`Failed to save changes: ${friendlyErrorMessage(error)}`);
     }
   };
 
@@ -255,7 +256,8 @@ export default function Positions() {
             <TableHead>Current Price</TableHead>
             <TableHead>Stop</TableHead>
             <TableHead>Shares</TableHead>
-            <TableHead className="text-right">P&amp;L</TableHead>
+            <TableHead className="text-right">P&amp;L (GBP)</TableHead>
+            <TableHead className="text-right">P&amp;L %</TableHead>
             <TableHead>Days</TableHead>
             <TableHead>Grace</TableHead>
             <TableHead>Actions</TableHead>
@@ -325,10 +327,18 @@ export default function Positions() {
                         <TrendingDown className="w-4 h-4" />
                       )}
                       £{Math.abs(pnl).toFixed(2)}
-                      <span className="text-xs opacity-70">
-                        ({pnlPercent.toFixed(1)}%)
-                      </span>
                     </div>
+                  </TableCell>
+
+                  <TableCell className="text-right">
+                    <span
+                      className={cn(
+                        "text-sm font-medium",
+                        isProfit ? "text-emerald-400" : "text-rose-400"
+                      )}
+                    >
+                      {isProfit ? "+" : ""}{pnlPercent.toFixed(1)}%
+                    </span>
                   </TableCell>
 
                   <TableCell className="text-slate-400">{daysHeld}</TableCell>
