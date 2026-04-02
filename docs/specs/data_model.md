@@ -3,7 +3,7 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.1
+**Version:** 2.2
 **Last Updated:** 2026-04-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -24,32 +24,30 @@ This document describes the complete database schema and data structures used in
 Primary portfolio container. Currently supports single portfolio per user.
 
 ```sql
-CREATE TABLE portfolios (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    cash DECIMAL(12, 2) NOT NULL DEFAULT 0,
-    initial_cash DECIMAL(12, 2) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE public.portfolios (
+    id UUID NOT NULL DEFAULT gen_random_uuid(),
+    cash NUMERIC(12, 2) NOT NULL DEFAULT 20000.00,
+    created_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    last_updated TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
+    CONSTRAINT portfolios_pkey PRIMARY KEY (id)
 );
 ```
 
 ### Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary key |
-| cash | DECIMAL(12,2) | Current cash balance (GBP) |
-| initial_cash | DECIMAL(12,2) | Starting cash (**deprecated** — use `cash_transactions` table) |
-| created_at | TIMESTAMP | Portfolio creation date |
-| last_updated | TIMESTAMP | Last update timestamp |
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| cash | NUMERIC(12,2) | NO | Current cash balance (GBP). Default 20000.00. |
+| created_date | DATE | NO | Portfolio creation date |
+| last_updated | TIMESTAMP | NO | Last update timestamp |
 
 ### Notes
-- `cash` is always in GBP.
-- Updated on every position entry/exit.
-- `initial_cash` is deprecated in favour of the `cash_transactions` table. Do not use for P&L calculations. The column is retained in the DB for backward compatibility — it is not dropped. `scripts/reset_staging_db.sql` still inserts it.
-- `created_at` is the SQL column name. The string `"created_date"` in `backend/portfolio_setup.py` is a key in the legacy file-based JSON portfolio system, not a DB column — it has no bearing on the SQL schema.
+- `cash` is always in GBP. Updated on every position entry/exit.
+- `initial_cash` does **not** exist in the deployed schema. Historical migration scripts (v1.2→v1.3) and earlier versions of `reset_staging_db.sql` referenced it — these are outdated. Do not add this column.
+- `created_date` is a `DATE` (not `TIMESTAMP`). Earlier spec versions documented `created_at TIMESTAMP` which does not exist in the deployed DB.
 
-**Schema verification (v2.1, 2026-04-02):** Verified against code evidence — `scripts/reset_staging_db.sql` (line 54 inserts `initial_cash`) and data migration v1.2→v1.3 (`SELECT initial_cash, created_at::date FROM portfolios`). No `\d portfolios` discrepancy found. Spec matches deployed schema.
+**Schema verification (v2.2, 2026-04-02):** Confirmed against actual Supabase DB output (`CREATE TABLE public.portfolios` — provided by Product Owner 2026-04-02). Previous v2.1 note based on code inference was incorrect — direct DB confirmation supersedes it.
 
 ---
 
