@@ -3,7 +3,7 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.2
+**Version:** 2.3
 **Last Updated:** 2026-04-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -137,36 +137,43 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 Immutable record of closed trades. Written at exit time; never updated.
 
 ```sql
-CREATE TABLE trade_history (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
-    position_id UUID REFERENCES positions(id),
+CREATE TABLE public.trade_history (
+    id UUID NOT NULL DEFAULT gen_random_uuid(),
+    portfolio_id UUID NULL REFERENCES portfolios(id) ON DELETE CASCADE,
     ticker VARCHAR(20) NOT NULL,
-    market VARCHAR(5) NOT NULL,
+    market VARCHAR(5) NULL,
     entry_date DATE NOT NULL,
     exit_date DATE NOT NULL,
-    shares DECIMAL(10, 4) NOT NULL,
-    entry_price DECIMAL(10, 4) NOT NULL,
-    exit_price DECIMAL(10, 4) NOT NULL,
-    total_cost DECIMAL(12, 2) NOT NULL,
-    exit_proceeds DECIMAL(12, 2) NOT NULL,
-    pnl DECIMAL(12, 2) NOT NULL,
-    pnl_pct DECIMAL(10, 2) NOT NULL,
-    holding_days INTEGER NOT NULL,
-    exit_reason VARCHAR(50),
-    entry_fx_rate DECIMAL(10, 6),
-    exit_fx_rate DECIMAL(10, 6),
-    entry_note TEXT,
-    exit_note TEXT,
-    tags TEXT[],
-    fill_price DECIMAL(10, 4),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    shares NUMERIC(10, 4) NOT NULL,
+    entry_price NUMERIC(10, 4) NOT NULL,
+    exit_price NUMERIC(10, 4) NOT NULL,
+    total_cost NUMERIC(12, 2) NULL,
+    gross_proceeds NUMERIC(12, 2) NULL,
+    net_proceeds NUMERIC(12, 2) NULL,
+    entry_fees NUMERIC(10, 2) NULL,
+    exit_fees NUMERIC(10, 2) NULL,
+    pnl NUMERIC(12, 2) NULL,
+    pnl_pct NUMERIC(10, 2) NULL,
+    holding_days INTEGER NULL,
+    exit_reason VARCHAR(100) NULL,
+    entry_fx_rate NUMERIC(10, 4) NULL,
+    exit_fx_rate NUMERIC(10, 4) NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NULL DEFAULT now(),
+    entry_note TEXT NULL,
+    exit_note TEXT NULL,
+    tags TEXT[] NULL,
+    position_id UUID NULL REFERENCES positions(id),
+    CONSTRAINT trade_history_pkey PRIMARY KEY (id)
 );
 
-CREATE INDEX idx_trade_history_portfolio ON trade_history(portfolio_id);
-CREATE INDEX idx_trade_history_ticker ON trade_history(ticker);
-CREATE INDEX idx_trade_history_exit_date ON trade_history(exit_date DESC);
-CREATE INDEX idx_trade_history_tags ON trade_history USING GIN(tags);
+-- fill_price NUMERIC(10,4) NULL — added by v1.9→v2.0 migration (ALTER TABLE ADD COLUMN).
+-- Not present in base table. Required for slippage tracking (trade_service.py).
+-- Apply migration before using slippage features: ALTER TABLE trade_history ADD COLUMN fill_price NUMERIC(10, 4);
+
+CREATE INDEX idx_trade_history_portfolio ON public.trade_history USING btree (portfolio_id);
+CREATE INDEX idx_trade_history_ticker ON public.trade_history USING btree (ticker);
+CREATE INDEX idx_trade_history_tags ON public.trade_history USING gin (tags);
+CREATE INDEX idx_trade_history_position_id ON public.trade_history USING btree (position_id);
 ```
 
 ### Fields
@@ -174,28 +181,31 @@ CREATE INDEX idx_trade_history_tags ON trade_history USING GIN(tags);
 | Field | Type | Nullable | Description |
 |-------|------|----------|-------------|
 | id | UUID | NO | Primary key |
-| portfolio_id | UUID | NO | FK to portfolios |
-| position_id | UUID | YES | FK to originating position |
+| portfolio_id | UUID | YES | FK to portfolios (ON DELETE CASCADE) |
 | ticker | VARCHAR(20) | NO | Stock symbol |
-| market | VARCHAR(5) | NO | "US" or "UK" |
+| market | VARCHAR(5) | YES | "US" or "UK" |
 | entry_date | DATE | NO | Original position entry date |
 | exit_date | DATE | NO | Exit date |
-| shares | DECIMAL(10,4) | NO | Shares exited |
-| entry_price | DECIMAL(10,4) | NO | Entry price in native currency |
-| exit_price | DECIMAL(10,4) | NO | Exit price in native currency |
-| total_cost | DECIMAL(12,2) | NO | Entry cost in GBP (including fees) |
-| exit_proceeds | DECIMAL(12,2) | NO | Exit value in GBP (after fees) |
-| pnl | DECIMAL(12,2) | NO | Realised P&L in GBP |
-| pnl_pct | DECIMAL(10,2) | NO | P&L as percentage of entry cost. API also returns as `pnl_percent` for compatibility |
-| holding_days | INTEGER | NO | Calendar days from entry_date to exit_date inclusive |
-| exit_reason | VARCHAR(50) | YES | Reason for exit. `null` normalised to `"Manual Exit"` by analytics service at read time |
-| entry_fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at entry (US stocks only) |
-| exit_fx_rate | DECIMAL(10,6) | YES | GBP/USD rate at exit (US stocks only) |
+| shares | NUMERIC(10,4) | NO | Shares exited |
+| entry_price | NUMERIC(10,4) | NO | Entry price in native currency |
+| exit_price | NUMERIC(10,4) | NO | Exit price in native currency |
+| total_cost | NUMERIC(12,2) | YES | Entry cost in GBP (including fees) |
+| gross_proceeds | NUMERIC(12,2) | YES | Exit value before fees in GBP |
+| net_proceeds | NUMERIC(12,2) | YES | Exit value after exit fees in GBP |
+| entry_fees | NUMERIC(10,2) | YES | Brokerage fees paid at entry (GBP) |
+| exit_fees | NUMERIC(10,2) | YES | Brokerage fees paid at exit (GBP) |
+| pnl | NUMERIC(12,2) | YES | Realised P&L in GBP (`net_proceeds − total_cost`) |
+| pnl_pct | NUMERIC(10,2) | YES | P&L as percentage of entry cost. API also returns as `pnl_percent` for compatibility |
+| holding_days | INTEGER | YES | Calendar days from entry_date to exit_date inclusive |
+| exit_reason | VARCHAR(100) | YES | Reason for exit. `null` normalised to `"Manual Exit"` by analytics service at read time |
+| entry_fx_rate | NUMERIC(10,4) | YES | GBP/USD rate at entry (US stocks only) |
+| exit_fx_rate | NUMERIC(10,4) | YES | GBP/USD rate at exit (US stocks only) |
+| created_at | TIMESTAMP | YES | Record creation time (defaults to now()) |
 | entry_note | TEXT | YES | Journal note copied from position at exit time |
 | exit_note | TEXT | YES | Journal note entered at exit |
 | tags | TEXT[] | YES | Tags copied from position at exit time |
-| fill_price | DECIMAL(10,4) | YES | Actual broker fill price copied from `positions.user_fill_price` at exit time. Null for pre-v2.1 trades or when user did not provide a fill price. Used to compute `slippage_pct` in the API response. |
-| created_at | TIMESTAMP | NO | Record creation time |
+| position_id | UUID | YES | FK to originating position |
+| fill_price | NUMERIC(10,4) | YES | **Migration-added** (v1.9→v2.0). Actual broker fill price copied from `positions.user_fill_price` at exit. Used to compute `slippage_pct` in the API. Not present until migration applied. |
 
 ### Exit Reason Values
 
