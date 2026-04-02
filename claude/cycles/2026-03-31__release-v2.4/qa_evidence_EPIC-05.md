@@ -19,12 +19,21 @@
 ### ST-10 — Render hosting tier review and decision record
 
 **Classification:** delegated_decision
-**Status:** blocked_decision — awaiting FinOps & Resource Architect + Infrastructure & Operations Owner sign-off
+**Status:** done
 **Delegation record:** DEL-20260401-03
+**Decision record:** `claude/cycles/2026-03-31__release-v2.4/render_tier_decision_ST10.md`
 
-**DoQ assessment:** Not verifiable this cycle. Story blocked pending human decision sign-off. AC cannot be met until decision record is authored and signed.
+**AC verification:**
 
-**Result:** Delegated — blocked_decision
+| AC | Requirement | Evidence | Result |
+|----|-------------|----------|--------|
+| 1 | Review document records: current tier, limit values, observed scheduling workload, decision | `render_tier_decision_ST10.md` §2–§4 | ✅ Pass |
+| 2 | Decision signed off by FinOps & Resource Architect and Infrastructure & Operations Owner | FinOps signed 2026-04-02. InfraOps signed 2026-04-02. Both sign-off blocks complete in `render_tier_decision_ST10.md` §5 | ✅ Pass |
+| 3 | If paid tier warranted: follow-up backlog item created | Decision: free tier sufficient. No backlog item required. BLG-OPS-11 filed for operational improvement (curl timeout). | ✅ Pass (N/A) |
+
+**Key finding:** Render cron is not in use — alert evaluation runs on GitHub Actions (< 1% of free tier minutes). Weekly digest is on-demand. Decision: free tier sufficient.
+
+**Result:** Both sign-offs complete. ST-10 closed.
 
 ---
 
@@ -115,12 +124,12 @@ Executed by: Product Owner on staging — 2026-04-02. Runbook signed off in `doc
 
 | Story | Classification | Result | Deviations |
 |-------|---------------|--------|------------|
-| ST-10 | delegated_decision | Blocked (delegated) | None |
+| ST-10 | delegated_decision | Pass | None |
 | ST-11 | delegated_backend | Blocked (delegated) | None |
 | ST-12 | autonomous | Pass | DEV-ST14-01 (P3, cosmetic, pre-accepted) |
 | ST-13 | autonomous | Pass | None |
 
-**EPIC-05 QA summary:** 2 autonomous stories complete (Pass — both after DoQ review remediation). 2 delegated stories blocked pending human action. No new deviations raised. One inherited P3 cosmetic deviation (DEV-ST14-01) noted and accepted.
+**EPIC-05 QA summary:** 2 autonomous stories complete (Pass — both after DoQ review remediation). 1 delegated decision story complete (ST-10 Pass — both sign-offs obtained 2026-04-02). 1 delegated backend story blocked pending human action (ST-11). No new deviations raised. One inherited P3 cosmetic deviation (DEV-ST14-01) noted and accepted.
 
 **DoQ review findings (2026-04-01):**
 1. `velocity_metrics.md` was committed empty — **remediated**: file now contains 6-cycle backfill data

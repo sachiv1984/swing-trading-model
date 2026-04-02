@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-03-31 (release planning 2026-03-31__release-v2.4 — v2.4 release slice published; 17 stories across 6 EPICs)
+**Last Updated:** 2026-04-02 (session — 1 new item(s) added: BLG-OPS-11)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -546,3 +546,34 @@ The current "entry deviation" metric (fill price vs limit price at entry) is nul
 - Entry-side fee drag (entry_fees / total_cost) — defer to future item
 - Round-trip friction (entry + exit fees combined) — defer to future item
 - Any change to existing entry deviation / slippage_pct metric
+
+---
+
+## 14. New Backlog Items — Session 2026-04-02
+
+*User-raised items from session review. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
+
+---
+
+### BLG-OPS-11 — Add `--max-time` to GitHub Actions cron curl calls
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** InfraOps review of ST-10 Render tier decision record — 2026-04-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v2.5
+
+**Problem**
+`alert-evaluation.yml` and `daily-snapshot.yml` both invoke `curl` with no `--max-time` flag. On Render free tier, the web service spins down after 15 minutes of inactivity. When the GitHub Actions cron fires and the service is cold, the curl call stalls silently for ~50–60 seconds before the cold start completes and the request is served. This is not a failure — the request eventually succeeds — but it creates confusing workflow logs with no visible progress and unpredictable job duration.
+
+**Scope**
+- Add `--max-time 120` to every `curl` call in `.github/workflows/alert-evaluation.yml`
+- Add `--max-time 120` to every `curl` call in `.github/workflows/daily-snapshot.yml`
+- No other changes required
+
+**Acceptance Criteria**
+- Both workflow files have `--max-time 120` on all curl invocations
+- The flag gives curl a 120-second hard ceiling — accommodating the worst-case cold start (~60s) plus endpoint execution time, with margin
+- If the service fails to respond within 120s the workflow step fails with a non-zero exit code rather than hanging indefinitely
+
+---
