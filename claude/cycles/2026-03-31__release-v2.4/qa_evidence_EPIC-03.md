@@ -91,8 +91,8 @@ CREATE TABLE public.portfolios (
 | Index `idx_trade_history_exit_date` | In spec | **Not in DB** | Removed |
 | Index `idx_trade_history_position_id` | Not in spec | Present | Added |
 
-**`fill_price` flag (not a divergence — migration-dependent):**
-`fill_price` is not in the base table DDL. It is added by the v1.9→v2.0 migration (`ALTER TABLE trade_history ADD COLUMN fill_price NUMERIC(10, 4)`). `database.py:create_trade_history()` includes `fill_price` in its INSERT — this will fail if the migration has not been applied to the target DB. SC-SLIP-01 passed on staging (2026-04-02), suggesting the migration IS applied to staging; however the Supabase base schema provided does not include it. **Action required:** confirm v1.9→v2.0 migration has been applied to Supabase production DB; if not, apply `ALTER TABLE trade_history ADD COLUMN fill_price NUMERIC(10, 4);`.
+**`fill_price` — confirmed present (2026-04-02):**
+`fill_price` was not visible in the base DDL (added via ALTER TABLE by the v1.9→v2.0 migration). Confirmed present in Supabase DB via `information_schema.columns` query — column exists. Spec updated to include `fill_price` in the main CREATE TABLE definition. No action required.
 
 **Acceptance Criteria:**
 

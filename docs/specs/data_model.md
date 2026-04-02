@@ -163,12 +163,9 @@ CREATE TABLE public.trade_history (
     exit_note TEXT NULL,
     tags TEXT[] NULL,
     position_id UUID NULL REFERENCES positions(id),
+    fill_price NUMERIC(10, 4) NULL,
     CONSTRAINT trade_history_pkey PRIMARY KEY (id)
 );
-
--- fill_price NUMERIC(10,4) NULL — added by v1.9→v2.0 migration (ALTER TABLE ADD COLUMN).
--- Not present in base table. Required for slippage tracking (trade_service.py).
--- Apply migration before using slippage features: ALTER TABLE trade_history ADD COLUMN fill_price NUMERIC(10, 4);
 
 CREATE INDEX idx_trade_history_portfolio ON public.trade_history USING btree (portfolio_id);
 CREATE INDEX idx_trade_history_ticker ON public.trade_history USING btree (ticker);
@@ -205,7 +202,7 @@ CREATE INDEX idx_trade_history_position_id ON public.trade_history USING btree (
 | exit_note | TEXT | YES | Journal note entered at exit |
 | tags | TEXT[] | YES | Tags copied from position at exit time |
 | position_id | UUID | YES | FK to originating position |
-| fill_price | NUMERIC(10,4) | YES | **Migration-added** (v1.9→v2.0). Actual broker fill price copied from `positions.user_fill_price` at exit. Used to compute `slippage_pct` in the API. Not present until migration applied. |
+| fill_price | NUMERIC(10,4) | YES | Actual broker fill price copied from `positions.user_fill_price` at exit. Null when user did not provide a fill price at entry. Used to compute `slippage_pct` in the API response. Added by v1.9→v2.0 migration — confirmed present in Supabase DB (2026-04-02). |
 
 ### Exit Reason Values
 
