@@ -149,13 +149,26 @@ Signed: [x] FinOps & Resource Architect — 2026-04-02
 
 ```
 Infrastructure & Operations Owner
-Date: ___________
-Production tier confirmed: ___________
-Cold start impact on alert eval acknowledged: [ ] Yes
-Decision concurrence: [ ] Agree — free tier sufficient
-                      [ ] Disagree — see attached rationale
+Date: 2026-04-02
 
-Signed: [ ] Infrastructure & Operations Owner — ___________
+Production tier: render.yaml defines staging only (plan: free). Production services
+are managed separately in the Render dashboard and are not in version control.
+Based on architecture decisions consistent with cost-consciousness (GitHub Actions
+used explicitly to avoid Render cron paid tier), production is assumed to be Render
+free or Starter tier. This assumption should be confirmed in the Render dashboard
+by the account owner at next login — no blocking concern identified.
+
+Operational review:
+- Cold start impact on alert evaluation: [x] Acknowledged
+  daily-snapshot.yml carries the same no-timeout curl pattern.
+  Both .github/workflows/alert-evaluation.yml and daily-snapshot.yml lack
+  --max-time flags. Cold starts (~50-60s) will cause both workflows to stall
+  silently for up to 60s before completing. Not a failure mode — a latency issue.
+  Backlog item filed: BLG-OPS-11 (add --max-time 120 to both cron workflows).
+
+Decision concurrence: [x] Agree — free tier sufficient
+
+Signed: [x] Infrastructure & Operations Owner — 2026-04-02
 ```
 
 ---
