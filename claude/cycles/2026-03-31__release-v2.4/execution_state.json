@@ -1,21 +1,26 @@
 {
   "cycle_id": "2026-03-31__release-v2.4",
-  "sprint_goal": "Ship v2.4 — resolve backend alert correctness defects and P&L display gaps, deliver the weekly trading digest, and eliminate second-recurrence governance debt by patching all three action-now execution_prompt items in Sprint 1.",
+  "sprint_goal": "Ship v2.4 \u2014 resolve backend alert correctness defects and P&L display gaps, deliver the weekly trading digest, and eliminate second-recurrence governance debt by patching all three action-now execution_prompt items in Sprint 1.",
   "backlog_slice_source": "claude/cycles/2026-03-31__release-v2.4/stage4_backlog_slice.md",
   "invoked_utc": "2026-04-01T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-01T00:20:00Z",
-
-  "merge_order": ["EPIC-06", "EPIC-03", "EPIC-05", "EPIC-01", "EPIC-02", "EPIC-04"],
-
+  "last_updated_utc": "2026-04-01T00:50:00Z",
+  "merge_order": [
+    "EPIC-06",
+    "EPIC-03",
+    "EPIC-05",
+    "EPIC-01",
+    "EPIC-02",
+    "EPIC-04"
+  ],
   "epics": {
     "EPIC-06": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-03-31__release-v2.4/EPIC-06",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 178,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-31__release-v2.4/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
       "stories": {
@@ -32,11 +37,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T00:05:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md"],
+          "spec_references": [
+            "claude/system/execution_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "AC pre-met on main — patches LL-v2.2-EX-01/02/04 applied in v2.3 sprint (PR#160, execution_prompt.md v2.9). No deviation — all three AC items verified present. No governance intent removed."
+          "notes": "AC pre-met on main \u2014 patches LL-v2.2-EX-01/02/04 applied in v2.3 sprint (PR#160, execution_prompt.md v2.9). No deviation \u2014 all three AC items verified present. No governance intent removed."
         },
         "ST-15": {
           "title": "Apply delivery_verification_prompt.md deviation compliance patch",
@@ -51,11 +58,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T00:05:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/delivery_verification_prompt.md"],
+          "spec_references": [
+            "claude/system/delivery_verification_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "AC pre-met on main — LL-v2.3-CL-03 canonical spec Known Deviations sync applied in v2.3 sprint (PR#160, delivery_verification_prompt.md v1.7). OPERATIONAL_GUIDE + prompt_change_log updated in that sprint."
+          "notes": "AC pre-met on main \u2014 LL-v2.3-CL-03 canonical spec Known Deviations sync applied in v2.3 sprint (PR#160, delivery_verification_prompt.md v1.7). OPERATIONAL_GUIDE + prompt_change_log updated in that sprint."
         },
         "ST-16": {
           "title": "Update execution_prompt.md delegation model and add delegation log line count check",
@@ -70,11 +79,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T00:05:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md"],
+          "spec_references": [
+            "claude/system/execution_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "AC pre-met on main — STEP 7 LL-v2.3-CL-02 delegation_log line count check + §5.1 autonomous delegated_frontend model update applied in v2.3 sprint (PR#160, execution_prompt.md v2.9)."
+          "notes": "AC pre-met on main \u2014 STEP 7 LL-v2.3-CL-02 delegation_log line count check + \u00a75.1 autonomous delegated_frontend model update applied in v2.3 sprint (PR#160, execution_prompt.md v2.9)."
         },
         "ST-17": {
           "title": "Simplify release planning cycle artefact sealing",
@@ -89,37 +100,43 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T00:20:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/release_planning_prompt.md"],
+          "spec_references": [
+            "claude/system/release_planning_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "SHA-256 per-artefact hashes removed. sealed_hashes and artifact_hashes blocks removed from state.json schema. sealed: true flag retained. state_snapshot_hash retained (git commit SHA). §6 checklist applied: OPERATIONAL_GUIDE v3.41→v3.42, prompt_change_log appended."
+          "notes": "SHA-256 per-artefact hashes removed. sealed_hashes and artifact_hashes blocks removed from state.json schema. sealed: true flag retained. state_snapshot_hash retained (git commit SHA). \u00a76 checklist applied: OPERATIONAL_GUIDE v3.41\u2192v3.42, prompt_change_log appended."
         }
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-31__release-v2.4/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-31__release-v2.4/qa_evidence_EPIC-03.md",
-      "test_scenarios": ["docs/testing/staging_visual_test_script_ST-06.md"],
+      "test_scenarios": [
+        "docs/testing/staging_visual_test_script_ST-06.md"
+      ],
       "stories": {
         "ST-06": {
           "title": "Reconcile portfolios table schema in data_model.md",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 165,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-03",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "delegation_record_id": "DEL-20260401-01",
+          "blocked_since_utc": "2026-04-01T00:30:00Z",
           "unblock_criteria": "Commit [EPIC-03][ST-06] pushed to branch by Head of Engineering",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/data_model.md#portfolios"],
+          "spec_references": [
+            "docs/specs/data_model.md#portfolios"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -128,17 +145,19 @@
         "ST-07": {
           "title": "Reconcile trade_history table schema in data_model.md",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "blocked_backend",
           "assigned_to": "human",
           "github_issue": 166,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-03",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "delegation_record_id": "DEL-20260401-02",
+          "blocked_since_utc": "2026-04-01T00:30:00Z",
           "unblock_criteria": "Commit [EPIC-03][ST-07] pushed to branch by Head of Engineering",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/data_model.md#trade_history"],
+          "spec_references": [
+            "docs/specs/data_model.md#trade_history"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -147,7 +166,7 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-03-31__release-v2.4/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
@@ -158,13 +177,13 @@
         "ST-10": {
           "title": "Render hosting tier review and decision record",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "human",
           "github_issue": 167,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-05",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "delegation_record_id": "DEL-20260401-03",
+          "blocked_since_utc": "2026-04-01T00:40:00Z",
           "unblock_criteria": "FinOps & Resource Architect + Infrastructure & Operations Owner sign-off on decision record; commit [EPIC-05][ST-10] pushed to branch",
           "completed_utc": null,
           "acceptance_verified": false,
@@ -177,40 +196,45 @@
         "ST-12": {
           "title": "Create slippage tracking test scenario file",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 168,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "d514271",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-04-01T00:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/slippage_scenarios.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "no prior spec applicable"
+          "notes": "no prior spec applicable \u2014 SC-SLIP-01 through SC-SLIP-04 authored in docs/testing/slippage_scenarios.md. Referenced in scenario index."
         },
         "ST-13": {
           "title": "Define cycle velocity metric and backfill 6 cycles",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 169,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "c89bff0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["claude/system/roadmap_prompt.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-04-01T00:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md",
+            "claude/cycles/velocity_metrics.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "velocity_metrics.md created with 6-cycle backfill. roadmap_prompt.md v4.6\u2192v4.7 (STEP 1.1 Cycle Velocity field). OPERATIONAL_GUIDE \u00a714 updated. prompt_change_log appended."
         },
         "ST-11": {
           "title": "Document API endpoint performance baseline",
@@ -243,7 +267,7 @@
       "test_scenarios": [],
       "stories": {
         "ST-01": {
-          "title": "Fix ATR pence→GBP conversion for UK (.L) tickers",
+          "title": "Fix ATR pence\u2192GBP conversion for UK (.L) tickers",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -274,7 +298,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/api_contracts/alerts_endpoints.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/alerts_endpoints.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -293,7 +319,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/reference/openapi.yaml"],
+          "spec_references": [
+            "docs/reference/openapi.yaml"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -308,7 +336,9 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-31__release-v2.4/qa_evidence_EPIC-02.md",
-      "test_scenarios": ["docs/testing/staging_visual_test_script_EPIC-02.md"],
+      "test_scenarios": [
+        "docs/testing/staging_visual_test_script_EPIC-02.md"
+      ],
       "stories": {
         "ST-04": {
           "title": "Fix missing P&L (GBP) column on Positions page",
@@ -323,7 +353,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/positions.md"],
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -342,7 +374,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/api_contracts/error_response_standard.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/error_response_standard.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -372,7 +406,10 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/api_contracts/digest_endpoints.md", "docs/reference/openapi.yaml"],
+          "spec_references": [
+            "docs/specs/api_contracts/digest_endpoints.md",
+            "docs/reference/openapi.yaml"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -391,7 +428,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/digest.md"],
+          "spec_references": [
+            "docs/specs/frontend/pages/digest.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -400,18 +439,33 @@
       }
     }
   },
-
-  "blocked_items": [],
-  "delegated_items": [],
-  "completed_items": [],
+  "blocked_items": [
+    "ST-06",
+    "ST-07"
+  ],
+  "delegated_items": [
+    "ST-06",
+    "ST-07"
+  ],
+  "completed_items": [
+    "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17"
+  ],
   "open_escalations": [],
-
   "merge_gate": {
     "epics_merged": [],
-    "epics_pending": ["EPIC-06", "EPIC-03", "EPIC-05", "EPIC-01", "EPIC-02", "EPIC-04"],
+    "epics_pending": [
+      "EPIC-06",
+      "EPIC-03",
+      "EPIC-05",
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-04"
+    ],
     "all_merged": false
   },
-
   "sealed": false,
   "sealed_utc": null
 }
