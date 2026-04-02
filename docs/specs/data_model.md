@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.0
-**Last Updated:** 2026-03-20
+**Version:** 2.1
+**Last Updated:** 2026-04-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -46,7 +46,10 @@ CREATE TABLE portfolios (
 ### Notes
 - `cash` is always in GBP.
 - Updated on every position entry/exit.
-- `initial_cash` is deprecated in favour of the `cash_transactions` table. Do not use for P&L calculations.
+- `initial_cash` is deprecated in favour of the `cash_transactions` table. Do not use for P&L calculations. The column is retained in the DB for backward compatibility — it is not dropped. `scripts/reset_staging_db.sql` still inserts it.
+- `created_at` is the SQL column name. The string `"created_date"` in `backend/portfolio_setup.py` is a key in the legacy file-based JSON portfolio system, not a DB column — it has no bearing on the SQL schema.
+
+**Schema verification (v2.1, 2026-04-02):** Verified against code evidence — `scripts/reset_staging_db.sql` (line 54 inserts `initial_cash`) and data migration v1.2→v1.3 (`SELECT initial_cash, created_at::date FROM portfolios`). No `\d portfolios` discrepancy found. Spec matches deployed schema.
 
 ---
 
