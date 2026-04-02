@@ -65,8 +65,22 @@
 | SC-SLIP-01 had no human runbook — steps inline only | `docs/testing/slippage_manual_runbook.md` created with pass/fail checklist and sign-off block | Resolved |
 | Scenario index showed stale "Playwright candidate" status | `slippage_scenarios.md` §6 index updated with spec file references and sub-scenario IDs | Resolved |
 
+**SC-SLIP-01 staging execution (2026-04-02):**
+
+| Check | Result |
+|-------|--------|
+| SC-SLIP-01-A: Fill Price field present on TradeEntry | Pass |
+| SC-SLIP-01-B: Trade History shows +0.25% for 50p above limit fill | Pass |
+| SC-SLIP-01-C: Rose/red colour for positive (unfavourable) deviation | Pass |
+| SC-SLIP-01-D: Avg Entry Dev. StatsCard updates | Pass |
+| SC-SLIP-01-E: Trade without fill price shows "—" | Pass |
+| SC-SLIP-01-F: StatsCard average excludes null-slippage trade | Pass |
+
+Executed by: Product Owner on staging — 2026-04-02. Runbook signed off in `docs/testing/slippage_manual_runbook.md` v1.1.
+
 **DoQ sign-off:**
-- [x] Director of Quality — 2026-04-01 (code review + E2E spec review; SC-SLIP-01 runbook ready for staging execution)
+- [x] Director of Quality — 2026-04-01 (code review + E2E spec review)
+- [x] SC-SLIP-01 staging execution complete — 2026-04-02 — all 6 checks Pass
 
 ---
 

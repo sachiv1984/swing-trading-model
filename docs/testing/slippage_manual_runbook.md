@@ -109,7 +109,10 @@ Backlog item raised: ___________
 ## Sign-off
 
 ```
-Tester: _______________________   Date: ___________
-Result: [ ] Pass  [ ] Pass with notes  [ ] Fail
-Notes: _________________________________________________
+Tester: Product Owner (staging execution)   Date: 2026-04-02
+Result: [x] Pass
+Notes: SC-SLIP-01-A Pass. SC-SLIP-01-B Pass (+0.25% displayed correctly).
+       SC-SLIP-01-C Pass (rose/red colour for unfavourable fill above limit).
+       SC-SLIP-01-D Pass. SC-SLIP-01-E Pass. SC-SLIP-01-F Pass.
+       All 6 checks passed on staging. No defects found.
 ```

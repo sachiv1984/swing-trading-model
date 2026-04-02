@@ -143,7 +143,7 @@ Spec reference: `docs/specs/frontend/pages/trade_history.md` §Slippage Column a
 
 | Scenario ID | Description | Spec | Automation | Status |
 |-------------|-------------|------|-----------|--------|
-| SC-SLIP-01 | Fill price input captured on Trade Entry form; entry deviation shown in Trade History | trade_history.md, data_model.md | Manual — see `docs/testing/slippage_manual_runbook.md` v1.1 | Active |
+| SC-SLIP-01 | Fill price input captured on Trade Entry form; entry deviation shown in Trade History | trade_history.md, data_model.md | Manual — `docs/testing/slippage_manual_runbook.md` v1.1 — **Executed Pass 2026-04-02** | Active |
 | SC-SLIP-02 | Slippage % column displays colour-coded values | trade_history.md §Slippage Column | Automated — `tests/e2e/slippage-tracking.spec.js` (SC-SLIP-02a–02d) | Active |
 | SC-SLIP-03 | Avg slippage StatsCard updates when trades have fill prices | trade_history.md §Avg Slippage | Automated — `tests/e2e/slippage-tracking.spec.js` (SC-SLIP-03a–03b) | Active |
 | SC-SLIP-04 | Null fill price shows em dash for trades without fill price | trade_history.md §Null handling | Automated — `tests/e2e/slippage-tracking.spec.js` (SC-SLIP-04a–04b) | Active |
