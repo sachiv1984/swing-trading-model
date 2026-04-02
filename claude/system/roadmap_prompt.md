@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.6
-**Last Updated:** 2026-03-17
+**Version:** 4.7
+**Last Updated:** 2026-04-01
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -475,6 +475,7 @@ The run manifest must record:
 - Decision authorities activated
 - Non‑decision roles activated (Facilitator, Challenger)
 - **Prior Cycle Outstanding Actions** — outcome for each action from prior lessons learnt (resolved / carried forward with new owner + date / escalated)
+- **Cycle Velocity** — read `claude/cycles/velocity_metrics.md`; record the most recently completed cycle's velocity and the rolling 6-cycle average. Format: `Velocity (last cycle): X.XX | Rolling avg (6 cycles): X.XX`. If velocity_metrics.md does not exist: record "velocity_metrics.md not found — no backfill data available."
 
 If the run manifest cannot be written in a lifecycle‑compliant way:
 - Halt execution immediately.
