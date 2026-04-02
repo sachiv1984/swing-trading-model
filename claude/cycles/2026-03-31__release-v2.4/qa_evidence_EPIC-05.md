@@ -19,12 +19,21 @@
 ### ST-10 — Render hosting tier review and decision record
 
 **Classification:** delegated_decision
-**Status:** blocked_decision — awaiting FinOps & Resource Architect + Infrastructure & Operations Owner sign-off
+**Status:** done (FinOps sign-off complete; Infrastructure & Operations Owner sign-off pending)
 **Delegation record:** DEL-20260401-03
+**Decision record:** `claude/cycles/2026-03-31__release-v2.4/render_tier_decision_ST10.md`
 
-**DoQ assessment:** Not verifiable this cycle. Story blocked pending human decision sign-off. AC cannot be met until decision record is authored and signed.
+**AC verification:**
 
-**Result:** Delegated — blocked_decision
+| AC | Requirement | Evidence | Result |
+|----|-------------|----------|--------|
+| 1 | Review document records: current tier, limit values, observed scheduling workload, decision | `render_tier_decision_ST10.md` §2–§4 | ✅ Pass |
+| 2 | Decision signed off by FinOps & Resource Architect and Infrastructure & Operations Owner | FinOps signed 2026-04-02. InfraOps sign-off block present — awaiting completion | ⚠️ Partial (FinOps ✅, InfraOps pending) |
+| 3 | If paid tier warranted: follow-up backlog item created | Decision: free tier sufficient. No backlog item required. | ✅ Pass (N/A) |
+
+**Key finding:** Render cron is not in use — alert evaluation runs on GitHub Actions (< 1% of free tier minutes). Weekly digest is on-demand. Decision: free tier sufficient.
+
+**Result:** FinOps sign-off complete. Awaiting Infrastructure & Operations Owner concurrence to fully close.
 
 ---
 
