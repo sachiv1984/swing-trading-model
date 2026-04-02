@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 2.3.0
+  version: 2.4.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -317,7 +317,7 @@ paths:
       summary: List alert rules
       description: >
         Return all alert rules for the portfolio. Seeds default rules for all four alert types on first call.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       responses:
         "200":
           description: Alert rules list
@@ -339,7 +339,7 @@ paths:
       summary: Create alert rule
       description: >
         Create an alert rule. Returns 400 if a rule for this type already exists.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       requestBody:
         required: true
         content:
@@ -369,7 +369,7 @@ paths:
       summary: Update alert rule
       description: >
         Update enabled state or threshold_percent for an alert rule. Partial update.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       parameters:
         - in: path
           name: rule_id
@@ -406,7 +406,7 @@ paths:
       summary: Delete alert rule
       description: >
         Delete an alert rule. May be recreated via POST /alerts/rules.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       parameters:
         - in: path
           name: rule_id
@@ -445,7 +445,7 @@ paths:
       description: >
         Evaluate all enabled alert rules against current portfolio state. Writes notification records
         and enqueues email delivery as FastAPI BackgroundTasks (ADR-003). Response is immediate.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       responses:
         "200":
           description: Evaluation complete
@@ -468,7 +468,7 @@ paths:
       description: >
         Return audit log of every alert rule evaluation, newest first.
         Supports last_n_days (default 30) or last_n_records filtering.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.3.
       parameters:
         - in: query
           name: last_n_days
@@ -505,7 +505,7 @@ paths:
       summary: Get notification feed
       description: >
         Return notifications newest first. Page-based pagination, 50 items per page.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       parameters:
         - in: query
           name: page
@@ -538,7 +538,7 @@ paths:
       summary: Mark notification as read
       description: >
         Mark a single notification as read. Idempotent.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       parameters:
         - in: path
           name: id
@@ -569,7 +569,7 @@ paths:
       summary: Mark all notifications as read
       description: >
         Mark all unread notifications as read. Idempotent.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       responses:
         "200":
           description: All notifications marked read
@@ -595,7 +595,7 @@ paths:
       summary: Get notification preferences
       description: >
         Return per-type email delivery preferences. Seeds defaults on first call.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       responses:
         "200":
           description: Notification preferences
@@ -616,7 +616,7 @@ paths:
       description: >
         Update email preferences for one or more alert types. Partial update.
         Body is a map of alert_type keys to preference objects.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.4.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
       requestBody:
         required: true
         content:
@@ -1220,6 +1220,64 @@ paths:
                         type: number
                         format: float
                         nullable: true
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /digest/weekly:
+    get:
+      tags: [Digest]
+      summary: Get 7-day weekly trading digest
+      description: |
+        Returns a 7-day summary of realised P&L, unrealised P&L delta, alert counts,
+        compliance score (current and 7-day baseline), and data staleness.
+        All fields are raw numeric or boolean values — no generated text or interpretation.
+        Canonical contract: docs/specs/api_contracts/digest_endpoints.md v0.1
+      responses:
+        "200":
+          description: Weekly digest data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      realised_pnl_7d:
+                        type: number
+                        format: float
+                        description: Sum of P&L for trades closed in the last 7 days (GBP)
+                      unrealised_pnl_delta_7d:
+                        type: number
+                        format: float
+                        nullable: true
+                        description: Change in unrealised P&L over 7 days from portfolio snapshots
+                      alerts_fired_7d:
+                        type: integer
+                        description: Count of notifications created in the last 7 days
+                      alerts_dismissed_7d:
+                        type: integer
+                        description: Count of notifications marked read in the last 7 days
+                      compliance_score_current:
+                        type: number
+                        format: float
+                        description: Journal completion rate across all closed trades (0-100)
+                      compliance_score_7d_ago:
+                        type: number
+                        format: float
+                        description: Journal completion rate for trades closed before the 7-day window (0-100)
+                      staleness_hours:
+                        type: number
+                        format: float
+                        nullable: true
+                        description: Hours since last portfolio snapshot; null if no snapshots
+                      as_of_utc:
+                        type: string
+                        format: date-time
+                        description: UTC timestamp this response was computed
         "500":
           $ref: "#/components/responses/InternalError"
 

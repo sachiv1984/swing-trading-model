@@ -5,7 +5,7 @@
   "invoked_utc": "2026-04-01T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-02T15:55:00Z",
+  "last_updated_utc": "2026-04-02T16:00:00Z",
   "merge_order": [
     "EPIC-06",
     "EPIC-03",
@@ -337,7 +337,7 @@
       "status": "done",
       "branch": "exec/2026-03-31__release-v2.4/EPIC-02",
       "pr_number": 181,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-31__release-v2.4/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -391,56 +391,58 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-03-31__release-v2.4/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 182,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-31__release-v2.4/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
         "ST-08": {
           "title": "Implement weekly digest backend endpoint",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 176,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "pending-ST-08",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-01T03:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
+            "backend/routers/digest.py",
             "docs/specs/api_contracts/digest_endpoints.md",
             "docs/reference/openapi.yaml"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "GET /digest/weekly implemented. All 8 fields returned. digest_endpoints.md v0.1 authored. openapi.yaml v2.2.0\u2192v2.4.0."
         },
         "ST-09": {
           "title": "Add weekly digest frontend component",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 177,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6a9d98d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-01T03:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/digest.md"
+            "src/pages/WeeklyDigest.js",
+            "tests/e2e/weekly-digest.spec.js"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "WeeklyDigest.js page created. Layout.js nav entry added. pages.config.js registered. E2E: SC-DIG-01\u201305 in tests/e2e/weekly-digest.spec.js."
         }
       }
     }
@@ -468,18 +470,20 @@
     "ST-02",
     "ST-03",
     "ST-04",
-    "ST-05"
+    "ST-05",
+    "ST-08",
+    "ST-09"
   ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-06",
       "EPIC-05",
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-02"
     ],
     "epics_pending": [
       "EPIC-03",
-      "EPIC-02",
       "EPIC-04"
     ],
     "all_merged": false
