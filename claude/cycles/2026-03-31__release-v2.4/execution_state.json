@@ -1,11 +1,11 @@
 {
   "cycle_id": "2026-03-31__release-v2.4",
-  "sprint_goal": "Ship v2.4 — resolve backend alert correctness defects and P&L display gaps, deliver the weekly trading digest, and eliminate second-recurrence governance debt by patching all three action-now execution_prompt items in Sprint 1.",
+  "sprint_goal": "Ship v2.4 \u2014 resolve backend alert correctness defects and P&L display gaps, deliver the weekly trading digest, and eliminate second-recurrence governance debt by patching all three action-now execution_prompt items in Sprint 1.",
   "backlog_slice_source": "claude/cycles/2026-03-31__release-v2.4/stage4_backlog_slice.md",
   "invoked_utc": "2026-04-01T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-02T15:30:00Z",
+  "last_updated_utc": "2026-04-02T15:55:00Z",
   "merge_order": [
     "EPIC-06",
     "EPIC-03",
@@ -37,11 +37,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T00:05:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md"],
+          "spec_references": [
+            "claude/system/execution_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "AC pre-met on main — patches LL-v2.2-EX-01/02/04 applied in v2.3 sprint (PR#160, execution_prompt.md v2.9). No deviation — all three AC items verified present. No governance intent removed."
+          "notes": "AC pre-met on main \u2014 patches LL-v2.2-EX-01/02/04 applied in v2.3 sprint (PR#160, execution_prompt.md v2.9). No deviation \u2014 all three AC items verified present. No governance intent removed."
         },
         "ST-15": {
           "title": "Apply delivery_verification_prompt.md deviation compliance patch",
@@ -56,11 +58,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T00:05:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/delivery_verification_prompt.md"],
+          "spec_references": [
+            "claude/system/delivery_verification_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "AC pre-met on main — LL-v2.3-CL-03 canonical spec Known Deviations sync applied in v2.3 sprint (PR#160, delivery_verification_prompt.md v1.7)."
+          "notes": "AC pre-met on main \u2014 LL-v2.3-CL-03 canonical spec Known Deviations sync applied in v2.3 sprint (PR#160, delivery_verification_prompt.md v1.7)."
         },
         "ST-16": {
           "title": "Update execution_prompt.md delegation model and add delegation log line count check",
@@ -75,11 +79,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T00:05:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md"],
+          "spec_references": [
+            "claude/system/execution_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "AC pre-met on main — STEP 7 LL-v2.3-CL-02 delegation_log line count check + §5.1 autonomous delegated_frontend model update applied in v2.3 sprint."
+          "notes": "AC pre-met on main \u2014 STEP 7 LL-v2.3-CL-02 delegation_log line count check + \u00a75.1 autonomous delegated_frontend model update applied in v2.3 sprint."
         },
         "ST-17": {
           "title": "Simplify release planning cycle artefact sealing",
@@ -94,11 +100,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T00:20:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/release_planning_prompt.md"],
+          "spec_references": [
+            "claude/system/release_planning_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "SHA-256 per-artefact hashes removed. sealed_hashes and artifact_hashes blocks removed from state.json schema. sealed: true flag retained. state_snapshot_hash retained (git commit SHA). §6 checklist applied: OPERATIONAL_GUIDE v3.41→v3.42, prompt_change_log appended."
+          "notes": "SHA-256 per-artefact hashes removed. sealed_hashes and artifact_hashes blocks removed from state.json schema. sealed: true flag retained. state_snapshot_hash retained (git commit SHA). \u00a76 checklist applied: OPERATIONAL_GUIDE v3.41\u2192v3.42, prompt_change_log appended."
         }
       }
     },
@@ -109,7 +117,9 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-03-31__release-v2.4/qa_evidence_EPIC-03.md",
-      "test_scenarios": ["docs/testing/staging_visual_test_script_ST-06.md"],
+      "test_scenarios": [
+        "docs/testing/staging_visual_test_script_ST-06.md"
+      ],
       "stories": {
         "ST-06": {
           "title": "Reconcile portfolios table schema in data_model.md",
@@ -124,7 +134,9 @@
           "unblock_criteria": "Commit [EPIC-03][ST-06] pushed to branch by Head of Engineering",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/data_model.md#portfolios"],
+          "spec_references": [
+            "docs/specs/data_model.md#portfolios"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -143,7 +155,9 @@
           "unblock_criteria": "Commit [EPIC-03][ST-07] pushed to branch by Head of Engineering",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/data_model.md#trade_history"],
+          "spec_references": [
+            "docs/specs/data_model.md#trade_history"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -211,11 +225,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T00:40:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/testing/slippage_scenarios.md"],
+          "spec_references": [
+            "docs/testing/slippage_scenarios.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "SC-SLIP-01 through SC-SLIP-04 authored in docs/testing/slippage_scenarios.md. Referenced in scenario index. SC-SLIP-01 staging execution 2026-04-02 — all 6 checks Pass."
+          "notes": "SC-SLIP-01 through SC-SLIP-04 authored in docs/testing/slippage_scenarios.md. Referenced in scenario index. SC-SLIP-01 staging execution 2026-04-02 \u2014 all 6 checks Pass."
         },
         "ST-13": {
           "title": "Define cycle velocity metric and backfill 6 cycles",
@@ -237,7 +253,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "velocity_metrics.md created with 6-cycle backfill. roadmap_prompt.md v4.6→v4.7 (STEP 1.1 Cycle Velocity field). OPERATIONAL_GUIDE §14 updated. prompt_change_log appended."
+          "notes": "velocity_metrics.md created with 6-cycle backfill. roadmap_prompt.md v4.6\u2192v4.7 (STEP 1.1 Cycle Velocity field). OPERATIONAL_GUIDE \u00a714 updated. prompt_change_log appended."
         }
       }
     },
@@ -245,13 +261,13 @@
       "status": "done",
       "branch": "exec/2026-03-31__release-v2.4/EPIC-01",
       "pr_number": 180,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-31__release-v2.4/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
         "ST-01": {
-          "title": "Fix ATR pence→GBP conversion for UK (.L) tickers",
+          "title": "Fix ATR pence\u2192GBP conversion for UK (.L) tickers",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -263,11 +279,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-01T01:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["backend/utils/pricing.py"],
+          "spec_references": [
+            "backend/utils/pricing.py"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Removed atr > 100 guard — Yahoo Finance returns ATR in pence for all .L tickers regardless of magnitude. Always divide by 100 for .L tickers."
+          "notes": "Removed atr > 100 guard \u2014 Yahoo Finance returns ATR in pence for all .L tickers regardless of magnitude. Always divide by 100 for .L tickers."
         },
         "ST-02": {
           "title": "Add notification dispatch deduplication for alert evaluation",
@@ -289,7 +307,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Calendar-day dedup logging added for stop_loss_approach and grace_period_warning. alerts_endpoints.md v0.3→v0.4 — trigger evaluation rules table updated. openapi.yaml v2.2.0→v2.3.0."
+          "notes": "Calendar-day dedup logging added for stop_loss_approach and grace_period_warning. alerts_endpoints.md v0.3\u2192v0.4 \u2014 trigger evaluation rules table updated. openapi.yaml v2.2.0\u2192v2.3.0."
         },
         "ST-03": {
           "title": "Expose initial stop price on analytics trade endpoint",
@@ -316,51 +334,59 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-03-31__release-v2.4/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 181,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-03-31__release-v2.4/qa_evidence_EPIC-02.md",
-      "test_scenarios": ["docs/testing/staging_visual_test_script_EPIC-02.md"],
+      "test_scenarios": [
+        "docs/testing/staging_visual_test_script_EPIC-02.md"
+      ],
       "stories": {
         "ST-04": {
           "title": "Fix missing P&L (GBP) column on Positions page",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 173,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "cb6b9b3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/positions.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-04-01T02:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md",
+            "src/pages/Positions.js"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Split combined P&L cell into separate P&L (GBP) and P&L % columns. Both colour-coded (emerald/rose). Resolves DEV-EPIC02-ST05-03."
         },
         "ST-05": {
           "title": "Add user-facing error message mapping layer",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 174,
           "branch": "exec/2026-03-31__release-v2.4/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "0ce8e98",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/api_contracts/error_response_standard.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-04-01T02:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "src/lib/apiError.js",
+            "src/pages/Positions.js"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Created src/lib/apiError.js with friendlyErrorMessage(error) utility. Maps HTTP 400/404/500 to user-readable messages."
         }
       }
     },
@@ -408,7 +434,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/digest.md"],
+          "spec_references": [
+            "docs/specs/frontend/pages/digest.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -417,17 +445,43 @@
       }
     }
   },
-  "blocked_items": ["ST-06", "ST-07", "ST-10", "ST-11"],
-  "delegated_items": ["ST-06", "ST-07", "ST-10", "ST-11"],
+  "blocked_items": [
+    "ST-06",
+    "ST-07",
+    "ST-10",
+    "ST-11"
+  ],
+  "delegated_items": [
+    "ST-06",
+    "ST-07",
+    "ST-10",
+    "ST-11"
+  ],
   "completed_items": [
-    "ST-14", "ST-15", "ST-16", "ST-17",
-    "ST-12", "ST-13",
-    "ST-01", "ST-02", "ST-03"
+    "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17",
+    "ST-12",
+    "ST-13",
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05"
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": ["EPIC-06", "EPIC-05"],
-    "epics_pending": ["EPIC-03", "EPIC-01", "EPIC-02", "EPIC-04"],
+    "epics_merged": [
+      "EPIC-06",
+      "EPIC-05",
+      "EPIC-01"
+    ],
+    "epics_pending": [
+      "EPIC-03",
+      "EPIC-02",
+      "EPIC-04"
+    ],
     "all_merged": false
   },
   "sealed": false,
