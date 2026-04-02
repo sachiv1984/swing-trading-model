@@ -361,8 +361,13 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                         "gap_pct": round(proximity_pct, 2),
                         "threshold_pct": threshold,
                     }
-                    if condition_met and not _notif_exists_today_for_ticker(
+                    if condition_met and _notif_exists_today_for_ticker(
                             cur, portfolio_id, "stop_loss_approach", ticker):
+                        logger.info(
+                            "Dedup: stop_loss_approach for %s already dispatched today — skipping",
+                            ticker,
+                        )
+                    elif condition_met:
                         title = f"Stop Loss Approach — {ticker}"
                         message = (
                             f"{ticker} stop ({current_stop:.2f}) is within "
@@ -401,8 +406,13 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                         "min_hold_days": min_hold_days,
                         "days_remaining": min_hold_days - holding_days,
                     }
-                    if condition_met and not _notif_exists_today_for_ticker(
+                    if condition_met and _notif_exists_today_for_ticker(
                             cur, portfolio_id, "grace_period_warning", ticker):
+                        logger.info(
+                            "Dedup: grace_period_warning for %s already dispatched today — skipping",
+                            ticker,
+                        )
+                    elif condition_met:
                         days_remaining = min_hold_days - holding_days
                         title = f"Grace Period Warning — {ticker}"
                         message = (
