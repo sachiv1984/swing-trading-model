@@ -33,7 +33,7 @@
 **Verification note:** AC 2 verified by code review. Local staging run required to verify exact LGEN.L values against live Yahoo Finance data. Marked Pass with post-merge staging verification recommended.
 
 **DoQ sign-off:**
-- [ ] Director of Quality — pending
+- [x] Director of Quality — 2026-04-03 (code review: guard condition removal and always-on conversion confirmed correct; staging verification recommended post-merge per verification note)
 
 ---
 
@@ -54,7 +54,7 @@
 | 5 | Spec: deduplication behaviour documented in alert evaluation spec | `alerts_endpoints.md` v0.3→v0.4 — trigger evaluation rules table updated for all four alert types ✓ | Pass |
 
 **DoQ sign-off:**
-- [ ] Director of Quality — pending
+- [x] Director of Quality — 2026-04-03 (code review: all four alert types verified deduplicated; dedup logging confirmed; evaluation pipeline unconditionally executes; spec v0.4 updated)
 
 ---
 
@@ -78,7 +78,7 @@
 **Dependency note:** `stop_price` population depends on `trade_history.position_id` FK being populated for each trade. New trades (post-v2.1) have position_id; pre-v2.1 trades return null stop_price. This is expected and documented in the spec.
 
 **DoQ sign-off:**
-- [ ] Director of Quality — pending
+- [x] Director of Quality — 2026-04-03 (code review: JOIN confirmed in analytics.py; pre-met by BLG-TECH-07; null stop_price behaviour documented and expected)
 
 ---
 
@@ -92,6 +92,6 @@
 
 **EPIC-01 QA summary:** All 3 autonomous stories complete (Pass). No deviations. ST-03 AC pre-met by prior BLG-TECH-07 implementation.
 
-**Director of Quality sign-off:** Pending
+**Director of Quality sign-off:** [x] 2026-04-03
 
 ---

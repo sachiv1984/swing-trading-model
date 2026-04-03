@@ -20,7 +20,8 @@ This log records all delegated items (delegated_backend, delegated_frontend, del
 **EPIC:** EPIC-03
 **Classification:** delegated_backend
 **Assigned to:** Head of Engineering
-**Status:** Pending
+**Status:** Unblocked
+**Unblocked commit:** b70b9ca ([EPIC-03][ST-06] Correct portfolios schema against actual Supabase DB) — 2026-04-02
 
 **Spec reference:** `docs/specs/data_model.md` — portfolios table (CREATE TABLE portfolios, line ~27)
 
@@ -54,7 +55,8 @@ This log records all delegated items (delegated_backend, delegated_frontend, del
 **EPIC:** EPIC-03
 **Classification:** delegated_backend
 **Assigned to:** Head of Engineering + API Contracts & Documentation Owner
-**Status:** Pending
+**Status:** Unblocked
+**Unblocked commit:** e9820c4 ([EPIC-03][ST-07] Confirm fill_price present in Supabase DB — update spec) — 2026-04-02
 
 **Spec reference:** `docs/specs/data_model.md` — trade_history table (CREATE TABLE trade_history, line ~139)
 
@@ -91,7 +93,8 @@ This log records all delegated items (delegated_backend, delegated_frontend, del
 **EPIC:** EPIC-05
 **Classification:** delegated_decision
 **Assigned to:** FinOps & Resource Architect + Infrastructure & Operations Owner
-**Status:** Pending
+**Status:** Unblocked
+**Unblocked commit:** 49e6ba5 ([EPIC-05][ST-10] Complete InfraOps sign-off on Render tier decision and add BLG-OPS-11 to backlog) — 2026-04-02
 
 **Spec reference:** None (decision record to be authored)
 

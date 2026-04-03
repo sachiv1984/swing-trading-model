@@ -35,7 +35,7 @@
 **Verification note:** AC 4 requires staging run with seed data. Code review confirms correct data binding (`pnl` from `position.pnl`, `pnlPercent` from `position.pnl_percent`). Marked Pass with staging verification as post-merge action.
 
 **DoQ sign-off:**
-- [ ] Director of Quality — pending
+- [x] Director of Quality — 2026-04-03 (code review: column split confirmed, colour coding verified; AC 4 V-PATH2-01 staging verification deferred as post-merge action per verification note)
 
 ---
 
@@ -57,7 +57,7 @@
 **Applied in:** `src/pages/Positions.js` exit and save error handlers. `src/lib/apiError.js` utility available for all future consumers.
 
 **DoQ sign-off:**
-- [ ] Director of Quality — pending
+- [x] Director of Quality — 2026-04-03 (code review: friendlyErrorMessage utility verified; STATUS_MESSAGES covers all Error Response Standard codes; console.error logging confirmed; no regression to existing message display)
 
 ---
 
@@ -70,6 +70,6 @@
 
 **EPIC-02 QA summary:** 2 autonomous stories complete (Pass). ST-04 resolves P2 deviation DEV-EPIC02-ST05-03. ST-04 V-PATH2-01 staging verification pending post-merge.
 
-**Director of Quality sign-off:** Pending
+**Director of Quality sign-off:** [x] 2026-04-03
 
 ---

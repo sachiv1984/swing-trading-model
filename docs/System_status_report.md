@@ -1,9 +1,49 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-03-30
+**Version:** 1.9
+**Last Updated:** 2026-04-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-03-31__release-v2.4
+**Date:** 2026-04-03
+**Status:** Sprint_Complete — delivery verification pending
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | ATR pence→GBP conversion fix for UK (.L) tickers (always-on, guard removed); notification dispatch deduplication for all four alert types (calendar-day dedup, logged); initial stop price exposed on analytics trade endpoint via positions LEFT JOIN | backend/utils/pricing.py; backend/services/alerts_service.py; docs/specs/api_contracts/alerts_endpoints.md v0.4 | None |
+| EPIC-02 | P&L (GBP) column added to Positions table (separate from P&L % column, colour-coded); user-facing error message mapping layer (friendlyErrorMessage utility, HTTP 400/404/500 mapped to readable messages) | src/pages/Positions.js; src/lib/apiError.js | Resolves DEV-EPIC02-ST05-03 (P2) |
+| EPIC-03 | portfolios and trade_history table schemas reconciled against actual Supabase DB (direct DB confirmation); 13 divergences corrected across both tables; data_model.md v2.0→v2.3 | docs/specs/data_model.md v2.3 | None |
+| EPIC-04 | GET /digest/weekly backend endpoint (7-day realised P&L, unrealised delta, alerts, compliance, staleness); WeeklyDigest frontend page (DataTable, null handling, nav registered); digest_endpoints.md v0.1; openapi.yaml v2.4.0 | docs/specs/api_contracts/digest_endpoints.md v0.1; src/pages/WeeklyDigest.js; tests/e2e/weekly-digest.spec.js | None |
+| EPIC-05 | Render hosting tier decision record (free tier sufficient; GitHub Actions <1% utilisation); API endpoint performance baseline (21 GET endpoints measured, p50/p95 documented; Supabase free tier overhead identified; 4 backlog items filed); slippage tracking test scenario file (SC-SLIP-01–04, Playwright spec, manual runbook); cycle velocity metric defined and backfilled 6 cycles | claude/cycles/2026-03-31__release-v2.4/render_tier_decision_ST10.md; docs/ops/api_performance_baseline.md v1.0; docs/testing/slippage_scenarios.md; claude/cycles/velocity_metrics.md | DEV-ST14-01 (P3 cosmetic, pre-accepted) |
+| EPIC-06 | Action-now execution_prompt.md patches (LL-v2.2-EX-01/02/04 — second recurrences resolved); delivery_verification_prompt.md deviation compliance sync; execution_prompt.md delegation model update + delegation log line count check; release planning artefact sealing simplified (SHA-256 hashes removed) | claude/system/execution_prompt.md v2.9; claude/system/delivery_verification_prompt.md v1.7; claude/system/release_planning_prompt.md | None |
+
+### Capabilities deferred or returned
+
+None. All 17 planned stories delivered (velocity 1.00).
+
+### Known issues at close (backlog items filed)
+
+| ID | Title | Priority |
+|----|-------|----------|
+| BLG-OPS-11 | Add --max-time 120 to GitHub Actions cron curl calls | P4 |
+| BLG-OPS-12 | Fix auth forwarding in POST /test/endpoints internal calls | P2 |
+| BLG-OPS-13 | Keep endpoint test list in sync with openapi.yaml | P3 |
+| BLG-BE-07 | Investigate high external baseline latency on DB-backed endpoints | P2 |
+| BLG-FE-07 | Fix System Status endpoint categorisation for v2.3/v2.4 routes | P4 |
+| BLG-GOV-10 | Fix governance_sync.yml batch push (closes only last commit's issue) | P2 |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-05.md — all signed off (EPIC-01/02 DoQ 2026-04-03; EPIC-03 HoE 2026-04-02; EPIC-04 QA Lead 2026-04-01; EPIC-05 DoQ 2026-04-01/03)
+- Deviations filed: DEV-EPIC02-ST05-03 resolved by ST-04; DEV-ST14-01 (P3 cosmetic, pre-accepted)
+- Test scenarios referenced: tests/e2e/weekly-digest.spec.js (SC-DIG-01–05); tests/e2e/slippage-tracking.spec.js (SC-SLIP-02a–02d, 03a–03b, 04a–04b); docs/testing/slippage_manual_runbook.md (SC-SLIP-01)
+- Delegation log: all 3 entries terminal (Unblocked — DEL-20260401-01/02/03)
+- Performance baseline: docs/ops/api_performance_baseline.md v1.0 — 21 GET endpoints measured
 
 ---
 

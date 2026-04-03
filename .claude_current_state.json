@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-03-31__release-v2.4",
   "cycle_name": "Release Planning — v2.4 Correctness, Insight & Governance Hardening",
-  "status": "Executing",
+  "status": "Sprint_Complete",
   "engine": "sprint_execution",
   "backlog_slice_path": "claude/cycles/2026-03-31__release-v2.4/stage4_backlog_slice.md",
   "sprint_goal_path": "claude/cycles/2026-03-31__release-v2.4/sprint_goal.md",
@@ -14,7 +14,7 @@
   "verification_status": "",
   "next_cycle_unblocked": false,
   "post_ship_complete": false,
-  "last_sync_utc": "2026-04-01T00:00:00Z",
+  "last_sync_utc": "2026-04-03T14:45:00Z",
   "next_release": "v2.4",
   "prior_cycle": "2026-03-24__release-v2.3",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
