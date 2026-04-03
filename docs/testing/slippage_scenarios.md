@@ -134,7 +134,7 @@ Spec reference: `docs/specs/frontend/pages/trade_history.md` §Slippage Column a
 - **Description:** `StatsCard` component receives `color="cyan"` for Avg Slippage but the gradient map has no `"cyan"` key — card renders without gradient background.
 - **Priority:** P3 (cosmetic only)
 - **Impact on SC-SLIP-03:** SC-SLIP-03 passes functionally; gradient background rendering is a cosmetic failure. Mark as "Pass with notes" for P3 deviation.
-- **Backlog reference:** BLG-FE-01
+- **Backlog reference:** BLG-FE-08 (supersedes stale BLG-FE-01 — that ID was archived v2.2; BLG-FE-08 filed at delivery verification 2026-03-31__release-v2.4 per LL-CL-v22-01)
 - **Acceptance record:** Director of Quality 2026-03-20
 
 ---

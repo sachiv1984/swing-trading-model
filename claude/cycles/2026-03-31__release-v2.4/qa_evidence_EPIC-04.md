@@ -74,3 +74,6 @@
 | ST-09 | Pass | 6a9d98d | Frontend page — 6 AC pass; E2E SC-DIG-01–05 staged |
 
 **EPIC-04 DoQ:** All stories done. No delegated items. No blocked items. Ready for merge gate.
+
+**Director of Quality sign-off:** [x] 2026-04-03
+DoQ review note: ST-08 — all 9 AC verified by code review; pure DB aggregation endpoint, no UI interaction required. ST-09 — AC-2/AC-3/AC-4 rendering verified by E2E spec (SC-DIG-01–05); post-merge staging layout confirmation deferred (same pattern as ST-04). No deviations. QA Lead sign-off (2026-04-01) accepted as primary review; DoQ sign-off appended 2026-04-03 at delivery verification preflight.

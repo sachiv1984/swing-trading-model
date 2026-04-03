@@ -39,7 +39,7 @@ None. All 17 planned stories delivered (velocity 1.00).
 
 ### Verification inputs ready
 
-- QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-05.md — all signed off (EPIC-01/02 DoQ 2026-04-03; EPIC-03 HoE 2026-04-02; EPIC-04 QA Lead 2026-04-01; EPIC-05 DoQ 2026-04-01/03)
+- QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-06.md — all signed off (EPIC-01/02/05 DoQ 2026-04-03; EPIC-03 HoE + DoQ 2026-04-02/03; EPIC-04 QA Lead + DoQ 2026-04-01/03; EPIC-06 DoQ 2026-04-03 — filed at delivery verification preflight)
 - Deviations filed: DEV-EPIC02-ST05-03 resolved by ST-04; DEV-ST14-01 (P3 cosmetic, pre-accepted)
 - Test scenarios referenced: tests/e2e/weekly-digest.spec.js (SC-DIG-01–05); tests/e2e/slippage-tracking.spec.js (SC-SLIP-02a–02d, 03a–03b, 04a–04b); docs/testing/slippage_manual_runbook.md (SC-SLIP-01)
 - Delegation log: all 3 entries terminal (Unblocked — DEL-20260401-01/02/03)

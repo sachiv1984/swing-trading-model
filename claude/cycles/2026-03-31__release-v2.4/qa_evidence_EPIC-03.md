@@ -115,3 +115,6 @@ CREATE TABLE public.portfolios (
 | ST-07 | Done | pending-ST-07 | HoE schema audit 2026-04-02 — direct DB confirmation. 8 divergences corrected. fill_price migration flag raised. |
 
 **EPIC-03 DoQ:** Both stories complete. fill_price migration status flagged for PO follow-up (confirm v1.9→v2.0 migration applied to Supabase prod). Ready for PR and merge.
+
+**Director of Quality sign-off:** [x] 2026-04-03
+DoQ review note: ST-06 and ST-07 verified against direct Supabase DB schema provided by Product Owner 2026-04-02. Head of Engineering sign-off on both stories accepted as the domain authority for schema correctness (direct DB access required). All AC confirmed Pass by DB evidence. fill_price migration flag is a post-merge tracking item (not a deviation). DoQ sign-off appended 2026-04-03 at delivery verification preflight — HoE sign-off was the primary authority for schema reconciliation stories; DoQ review confirms evidence quality and AC coverage are sufficient.

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-03 (session — 4 new items added: BLG-OPS-12, BLG-OPS-13, BLG-BE-07, BLG-FE-07)
+**Last Updated:** 2026-04-03 (delivery verification 2026-03-31__release-v2.4 — 3 items added: BLG-FE-08, BLG-GOV-10, TEST-GAP-EPIC-01-v24; prior session 4 items: BLG-OPS-12, BLG-OPS-13, BLG-BE-07, BLG-FE-07)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -692,5 +692,76 @@ The ST-11 performance baseline shows all DB-backed endpoints have p50 response t
 - Notification endpoints appear under "Notifications" category
 - Digest endpoints appear under "Digest" category
 - No endpoints fall into "Other" except `/` (root) and any future unclassified additions
+
+---
+
+### BLG-FE-08 — Fix Avg Slippage StatsCard gradient rendering
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Owner
+**Source:** DEV-ST14-01 — delivery verification 2026-03-31__release-v2.4 — 2026-04-03
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.5
+**Deviation ref:** DEV-ST14-01 (P3 cosmetic — pre-accepted by Director of Quality 2026-03-20)
+
+**Problem**
+The Avg Slippage StatsCard on the Reports/Slippage Tracking page renders without a gradient background. The functional value is correct and colour-coded. The cosmetic deviation (gradient missing) was accepted as P3 by Director of Quality 2026-03-20 and recorded in `docs/testing/slippage_scenarios.md §5`. Note: prior reference BLG-FE-01 in the deviation note was stale (BLG-FE-01 is an archived v2.2 item). This item supersedes that reference.
+
+**Scope**
+- Apply the correct Tailwind gradient class to the Avg Slippage StatsCard component
+- Confirm rendering matches other StatsCard components on the Reports page
+
+**Acceptance Criteria**
+- Avg Slippage StatsCard renders with gradient background matching other StatsCard components
+- No regression to functional slippage value display or colour coding
+
+---
+
+### BLG-GOV-10 — Fix governance_sync.yml batch push issue closure
+**Priority:** P2 (Medium)
+**Type:** Governance Process / DevOps
+**Owner:** DevOps
+**Source:** EPIC-06 merge observation — delivery verification 2026-03-31__release-v2.4 — 2026-04-03
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.5
+
+**Problem**
+`governance_sync.yml` uses `git log -1` to extract the issue number from a push event, so only the most recent commit's GitHub issue is closed automatically. When EPIC-06 was pushed as a 4-commit batch (ST-14, ST-15, ST-16, ST-17), only ST-17's issue (#164) was closed. Issues #161/162/163 remained open and required manual closure with explanatory comments. Any multi-commit push to an exec branch will silently leave earlier issues unclosed.
+
+**Scope**
+- Update `governance_sync.yml` to extract all commit messages in the push using `git log $BEFORE..$AFTER` (not `git log -1`)
+- Close every issue referenced in the push range, not just the last
+
+**Acceptance Criteria**
+- Multi-commit batch push to an exec branch closes all referenced GitHub issues
+- Single-commit push behaviour unchanged
+- Tested with a 2+ commit push on a test branch
+
+---
+
+### TEST-GAP-EPIC-01-v24 — Create test scenarios for EPIC-01 backend correctness fixes
+**Priority:** P2 (Medium)
+**Type:** QA Coverage
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-03-31__release-v2.4 — TSG-v24-01 — 2026-04-03
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.5
+
+**Problem**
+EPIC-01 shipped three backend correctness fixes (ST-01 ATR conversion, ST-02 notification deduplication, ST-03 initial stop price join) with no automated test scenarios. These are correctness-critical behaviours — ATR calculation errors caused the original BLG-BE-05 defect, and deduplication logic is invisible to manual review. Without scenarios, regressions in these areas will only be caught at staging observation or by user reports.
+
+**Scope**
+- Author test scenarios covering:
+  - SC-ATR-01: ATR pence→GBP conversion for .L tickers (always-on, no guard)
+  - SC-DEDUP-01: Notification dispatch deduplication (same rule, same day)
+  - SC-DEDUP-02: Evaluation pipeline not suppressed when dedup fires
+  - SC-STOP-01: stop_price field present on analytics endpoint response for trades with a known initial_stop
+- Add to appropriate scenario file(s) in `docs/testing/`
+- Reference in test scenario index
+
+**Acceptance Criteria**
+- Scenario file(s) present covering all four scenarios
+- Each scenario specifiable as executable against staging or unit test suite
+- Referenced in test scenario index
 
 ---
