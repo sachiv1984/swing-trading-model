@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-02 (session — 1 new item(s) added: BLG-OPS-11)
+**Last Updated:** 2026-04-03 (session — 4 new items added: BLG-OPS-12, BLG-OPS-13, BLG-BE-07, BLG-FE-07)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -575,5 +575,122 @@ The current "entry deviation" metric (fill price vs limit price at entry) is nul
 - Both workflow files have `--max-time 120` on all curl invocations
 - The flag gives curl a 120-second hard ceiling — accommodating the worst-case cold start (~60s) plus endpoint execution time, with margin
 - If the service fails to respond within 120s the workflow step fails with a non-zero exit code rather than hanging indefinitely
+
+---
+
+---
+
+## 15. New Backlog Items — Session 2026-04-03
+
+*Items raised from ST-11 performance baseline and System Status page review. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
+
+---
+
+### BLG-OPS-12 — Fix auth forwarding in POST /test/endpoints internal calls
+**Priority:** P2 (High)
+**Type:** Operational / Infrastructure
+**Owner:** Head of Engineering + Infrastructure & Operations Owner
+**Source:** ST-11 performance baseline review — 2026-04-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v2.5
+
+**Problem**
+`backend/services/health_service.py` `test_all_endpoints()` makes internal HTTP calls to each endpoint without forwarding the `X-API-Key` header. All auth-protected endpoints return 401 and are reported as "fail". The System Status page "Run Tests" button currently shows 1/17 pass rate, making the system appear critically broken when all endpoints are in fact operational. This makes the monitoring tool unreliable and misleading.
+
+**Scope**
+- Modify `test_all_endpoints()` to accept and forward the API key in internal calls (e.g. accept `api_key: str = None` parameter, add `X-API-Key` header when provided)
+- Update `POST /test/endpoints` route in `main.py` to extract the `X-API-Key` from the incoming request and pass it through
+- Alternatively: add a middleware bypass for server-internal calls (e.g. `X-Internal: true` header checked before auth)
+
+**Acceptance Criteria**
+- `POST /test/endpoints` returns pass/fail based on actual endpoint response, not auth rejection
+- All correctly implemented endpoints report "pass" when the system is healthy
+- Success rate shown on System Status page reflects actual endpoint health
+
+---
+
+### BLG-OPS-13 — Keep endpoint test list in sync with openapi.yaml
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-11 performance baseline review — 2026-04-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v2.5
+
+**Problem**
+The endpoint test list in `backend/services/health_service.py` `test_all_endpoints()` was last updated for v2.2 (12 endpoints). Endpoints added in v2.3 (`/positions/compliance`, `/alerts/rules`, `/alerts/history`, `/notifications`, `/notifications/preferences`) and v2.4 (`/digest/weekly`, analytics endpoints) are not being tested. This coverage gap will worsen each sprint if not addressed structurally.
+
+**Scope**
+- Add all missing parameterless GET endpoints to the test list in `test_all_endpoints()`:
+  - `/positions/compliance`
+  - `/alerts/rules`
+  - `/alerts/history`
+  - `/notifications`
+  - `/notifications/preferences`
+  - `/digest/weekly`
+  - `/analytics/cohort?period=month`
+  - `/analytics/r-multiple-distribution`
+  - `/analytics/compliance-metrics`
+  - `/health/detailed`
+- Add a comment block above the list referencing `docs/reference/openapi.yaml` as the source of truth
+- Update the System Status page placeholder text ("Tests 17 endpoints") to match actual count
+
+**Acceptance Criteria**
+- All parameterless GET endpoints in `openapi.yaml` are present in the test list
+- A comment in `health_service.py` documents the sync obligation (update when endpoints are added)
+- System Status page "Run Tests" button tests the complete current endpoint set
+
+---
+
+### BLG-BE-07 — Investigate high external baseline latency on DB-backed endpoints
+**Priority:** P2 (High)
+**Type:** Backend / Infrastructure
+**Owner:** Head of Engineering
+**Source:** ST-11 performance baseline — 2026-04-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+
+**Problem**
+The ST-11 performance baseline shows all DB-backed endpoints have p50 response times of 1.2–6.0 seconds when measured from an external client against staging. The consistent latency floor of ~1,100ms across unrelated endpoints suggests this is Supabase free tier DB connection establishment overhead (no persistent pool), not query-level slowness. Two outliers warrant query-level investigation: `GET /portfolio` (p50=5,979ms) and `GET /notifications/preferences` (p50=4,631ms) are significantly slower than peers with similar expected query complexity.
+
+**Scope**
+- Profile `GET /portfolio` to identify why it is ~2× slower than other multi-query endpoints — likely involves ATR calculation or multiple sequential DB round-trips; optimise or parallelise
+- Profile `GET /notifications/preferences` to identify why a single-row lookup takes 4.6s — check for N+1 queries or missing index
+- Investigate Supabase connection pooling options for Render free tier (e.g. PgBouncer on Supabase, SQLAlchemy `pool_size`/`pool_pre_ping` settings)
+- Re-run the performance baseline after any fixes and update `docs/ops/api_performance_baseline.md`
+
+**Acceptance Criteria**
+- Root cause of `GET /portfolio` and `GET /notifications/preferences` outlier latency identified and documented
+- Either a fix is applied that brings the outliers within 2× of peer endpoint latency, OR a documented architectural constraint explains why optimisation is not feasible on free tier
+- Updated baseline document filed if connection pooling or query optimisation changes are made
+
+---
+
+### BLG-FE-07 — Fix System Status endpoint categorisation for v2.3/v2.4 routes
+**Priority:** P4 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Engineer
+**Source:** System Status page review — 2026-04-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v2.5
+
+**Problem**
+`src/pages/SystemStatus.js` `categorizeEndpoint()` does not cover routes added in v2.3/v2.4. Endpoints matching `/alerts`, `/notifications`, and `/digest` all fall through to the "Other" category instead of being correctly grouped. When BLG-OPS-12 and BLG-OPS-13 are resolved and the test runner covers these endpoints, they will appear under a generic "Other" group rather than meaningful categories.
+
+**Scope**
+- Add categorisation rules to `categorizeEndpoint()` in `SystemStatus.js`:
+  - `/alerts` → "Alerts"
+  - `/notifications` → "Notifications"
+  - `/digest` → "Digest"
+  - `/health` → "Core" (already covered but verify `/health/detailed` maps correctly)
+  - `/validate` → should map to "Validation" (already covered)
+  - `/analytics` → "Analytics" (already covered — verify)
+- Add matching `categoryConfig` entries for "Alerts" and "Notifications" with appropriate icons and colours
+
+**Acceptance Criteria**
+- Alert endpoints appear under "Alerts" category in System Status Endpoint Tests panel
+- Notification endpoints appear under "Notifications" category
+- Digest endpoints appear under "Digest" category
+- No endpoints fall into "Other" except `/` (root) and any future unclassified additions
 
 ---
