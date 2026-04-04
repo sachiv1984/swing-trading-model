@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-04 (groom backlog — 13 items archived (v2.4 shipped); 16 active items retained; v2.4 release slice archived)
+**Last Updated:** 2026-04-04 (session — 1 new item added: BLG-GOV-13)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -537,5 +537,36 @@ EPIC-01 shipped three backend correctness fixes (ST-01 ATR conversion, ST-02 not
 - Scenario file(s) present covering all four scenarios
 - Each scenario specifiable as executable against staging or unit test suite
 - Referenced in test scenario index
+
+---
+
+## 16. New Backlog Items — Session 2026-04-04
+
+*Items raised from v2.4 post-ship closure. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
+
+---
+
+### BLG-GOV-13 — Deduplicate backlog_archive.md duplicate item headers
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead
+**Source:** Groom backlog v2.4 post-ship (2026-04-04) — ID uniqueness scan FAIL
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.5
+
+**Problem**
+`claude/backlog/backlog_archive.md` contains 50 duplicate `###` item headers — items that were archived in multiple separate grooming passes across prior cycles. The ID uniqueness scan in `backlog_management_prompt.md §4.5` flags this as FAIL every run. Duplicate headers create ambiguity about which archived entry is authoritative and make the archive unreliable as a historical record. Product Owner confirmation is required before deduplication can proceed (per the health report outstanding action).
+
+**Scope**
+- Product Owner to confirm deduplication approach: retain most recent entry per ID, or leave as historical record
+- If deduplication approved: for each duplicated ID, retain the most recent (lowest in the file = latest archived) entry and remove earlier copies
+- Validate that no active IDs are present in the archive after deduplication
+- Run ID uniqueness scan post-deduplication and confirm PASS
+- Update `backlog_archive.md` Last Updated header
+
+**Acceptance Criteria**
+- `backlog_archive.md` contains no duplicate `###` item headers
+- ID uniqueness scan in next groom backlog run returns PASS
+- Product Owner has confirmed the deduplication approach prior to execution
 
 ---
