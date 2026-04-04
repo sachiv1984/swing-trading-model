@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-04 (session — 2 new items added: BLG-GOV-13, BLG-FEAT-16)
+**Last Updated:** 2026-04-04 (session — 3 new items added: BLG-GOV-13, BLG-FEAT-16, BLG-BE-10)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -597,5 +597,41 @@ Trade journals accumulate over time and users must scroll through individual ent
 - [ ] Strategy Rules owner has reviewed and confirmed the implementation does not integrate AI output into any signal pipeline (sign-off required before merge)
 - [ ] Any future scope expansion beyond read-only display triggers a new §13 review before pre-alignment (documented in AC of that story)
 - [ ] External LLM API key and configuration are managed via environment variable; no secrets in code
+
+---
+
+### BLG-BE-10 — Add supplementary indicator fields to signal generation
+**Priority:** P3 (Low)
+**Type:** Backend Engineering + Frontend / UX
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** Initiative TECH-IND — gate cleared by Strategy Rules owner 2026-04-04
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+**§13 Status:** COMPLIANT (display-only scope) — SRB-v1.7 Feature 3. Scoring changes are explicitly out of scope and require a new §13 review + strategy_rules.md version bump before pre-alignment.
+
+**Problem**
+The current signal response provides `momentum_percent` (absolute price change over lookback), `atr_value`, and `volatility` for each signal. Users have no context for whether a signal's momentum is genuine outperformance vs. market drift, whether the stock is trading near meaningful price levels, or whether volume supports the move. These display-only additions serve the user's entry decision without altering the deterministic signal ranking.
+
+**Scope**
+Backend (`POST /signals/generate` response — new fields per signal):
+- `relative_strength_pct`: stock `momentum_percent` minus the benchmark index momentum over the same `lookback_days` period (US stocks vs SPY; UK stocks vs FTSE). Positive = outperforming. Informational only — does not affect `rank`.
+- `week52_high_proximity_pct`: how close the current price is to its 52-week high, as a percentage: `(current_price / 52_week_high - 1) * 100`. Negative means below high; 0 means at high.
+- `avg_daily_volume_20d`: 20-day average daily volume for the stock. Liquidity context.
+- `price_vs_50d_ma`: `"above"` or `"below"` — whether current price is above or below the 50-day moving average.
+
+Frontend (Signals page):
+- Display the four new fields as supplementary context columns or an expanded detail row on each signal card
+- Label `relative_strength_pct` explicitly as "vs. benchmark (informational)" — it does not represent the signal's rank
+- No UI shall allow the user to sort or filter by these fields in a way that reorders signals (rank is canonical)
+
+**Acceptance Criteria**
+- [ ] `POST /signals/generate` response includes all four new fields per signal object
+- [ ] `relative_strength_pct` is computed as stock momentum minus benchmark momentum over the same `lookback_days`; US stocks benchmark SPY, UK stocks benchmark FTSE
+- [ ] `relative_strength_pct` is labelled "vs. benchmark (informational)" in the UI and does not affect the `rank` field or signal ordering
+- [ ] `week52_high_proximity_pct`, `avg_daily_volume_20d`, and `price_vs_50d_ma` are displayed as supplementary context; their display does not alter signal rank
+- [ ] `signal_endpoints.md` updated to document the four new response fields
+- [ ] `openapi.yaml` updated in the same commit as the contract change
+- [ ] Strategy Rules owner confirms no scoring logic was modified (sign-off in QA evidence before merge)
+- [ ] Any future proposal to incorporate any of these fields into signal ranking requires a new §13 review and strategy_rules.md version bump before pre-alignment — this constraint is documented in the QA evidence log
 
 ---

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-04 (Product Owner gate clearance — AI-SUM: §13 gate cleared per SRB-v1.7; moved from Gated → Priority 2 Next Phase; BLG-FEAT-16 filed)
+**Last Updated:** 2026-04-04 (Strategy Rules owner gate clearance — TECH-IND: display-only scope confirmed; moved Gated → Priority 2 Next Phase; BLG-BE-10 filed)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -27,7 +27,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 |----|-----------|---------------|------------|
 | ~~4.3~~ | ~~Signal Exposure Enhancement~~ | ~~Gate cleared 2026-03-04 (PoG POG-20260304-01)~~ | ~~Strategy Rules owner + Product Owner~~ |
 | ~~AI-SUM~~ | ~~AI Journal Summarisation~~ | ~~Gate cleared 2026-04-04 — SRB-v1.7 (2026-03-02): CONDITIONALLY COMPLIANT. Backlog item BLG-FEAT-16 filed. Moved to Priority 2 — Next Phase.~~ | ~~Product Owner + Strategy Rules owner~~ |
-| TECH-IND | New Technical Indicators | Strategy rules review confirms which indicators are in scope | Strategy Rules owner |
+| ~~TECH-IND~~ | ~~New Technical Indicators~~ | ~~Gate cleared 2026-04-04 — Strategy Rules owner scoping decision: display-only scope approved (52-week high %, volume, price vs 50-day MA flag, relative strength field). No scoring changes. No strategy_rules.md bump required. Backlog item BLG-BE-10 filed. Moved to Priority 2 — Next Phase.~~ | ~~Strategy Rules owner~~ |
 | MKT-COR | Market Correlation Analysis | External data pipeline decision (SPY/FTSE ingestion) | Product Owner + Head of Engineering |
 
 ---
@@ -37,6 +37,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 | ID | Initiative | Gate status | Backlog item | Notes |
 |----|-----------|-------------|--------------|-------|
 | AI-SUM | AI Journal Summarisation | Gate cleared 2026-04-04 (SRB-v1.7) | BLG-FEAT-16 | UX convenience display only. 4 mandatory conditions from SRB-v1.7 must appear in AC. Strategy Rules owner sign-off required before any signal pipeline integration. |
+| TECH-IND | New Technical Indicators | Gate cleared 2026-04-04 (Strategy Rules owner scoping decision) | BLG-BE-10 | Display-only scope only: 52-week high %, 20-day avg volume, price vs 50-day MA flag, relative strength vs benchmark (informational field — does not affect ranking). Any scoring promotion requires new §13 review + strategy_rules.md version bump before pre-alignment. |
 
 ---
 
