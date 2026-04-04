@@ -55,6 +55,7 @@ These rules apply in every session regardless of which engine is running:
 - **API contract endpoint headings must be `##` (not `###` or deeper).** The OpenAPI Drift Detection gate scans contract files for `## METHOD /path` at exactly the `##` level. Using `###` causes the endpoint to be invisible to the gate, reporting it as missing from the contract even if documented.
 - **Story commits must land on the branch matching their EPIC prefix.** An `[EPIC-05]` commit on an `exec/.../EPIC-04` branch is a process deviation and must be documented in the QA evidence log for both EPICs.
 - **Frontend DoQ verification must state its evidence method explicitly.** AC that requires observable UI behaviour (interactions, debounce timing, colour rendering) cannot be verified by code review alone. The DoQ sign-off block must record whether verification was by code review, local run, or staging — and name any AC that remains unverified as a post-merge action.
+- **Verify role ownership before acting on outstanding actions or clearing gates.** When asked to act as a role to action an OA, clear a gated initiative, or review a governance item, always check the Owner field of that item first. If the invoked role does not match the owner, flag the mismatch explicitly and ask for confirmation before taking any action. Do not proceed in the wrong role.
 
 Shared standards (escalation format, identifier conventions, halt output format) are defined in:
 `claude/system/shared_standards.md` — read this when any prompt references "per shared_standards".
@@ -113,7 +114,7 @@ Do not close issues here — issue closure is handled automatically by `governan
 
 ## 6. Governance File Edit Checklist (Always Active)
 
-Whenever any governance prompt or the OPERATIONAL_GUIDE is modified, the following steps are **mandatory** in the same commit:
+Whenever any governance prompt or the OPERATIONAL_GUIDE is modified — **including changes made as part of sprint story execution** — the following steps are **mandatory** in the same commit:
 
 1. **Bump the version** in the file's own header (`**Version:**`).
 2. **Update `OPERATIONAL_GUIDE.md` §14 governance table** — set the file's version to the new version.

@@ -67,20 +67,24 @@ Draft the full item and show it to the user for confirmation before writing to t
 
 ## Step 4 — Find the insertion point
 
-New items go into a **session section** at the bottom of the active items area (before the first `<!-- release-plan-marker -->` comment).
+New items go under the **correct existing type section** in the active items area. The backlog is organised by type — never create a new numbered session section.
 
-- If a session section already exists for today's date (e.g. `## N. New Backlog Items — Session 2026-03-25`), append to it.
-- If no session section exists for today, create a new one. Number it sequentially (next integer after the highest section number currently in the file):
+Read the top of `backlog.md` for the Placement Rule if present. Type sections are:
 
-```markdown
-## {N}. New Backlog Items — Session {YYYY-MM-DD}
+| Type | Section |
+|------|---------|
+| Platform / technical debt | §1 (BLG-TECH) |
+| Product features | §2 (BLG-FEAT) |
+| Frontend / UX | §3 (BLG-FE, BLG-UX) |
+| Backend engineering | §4 (BLG-BE) |
+| QA / test automation | §5 (BLG-QA, TEST-GAP) |
+| Operations / infrastructure | §6 (BLG-OPS) |
+| Spec debt | §7 (BLG-SPEC-D) |
+| Governance process | §8 (BLG-GOV) |
 
-*User-raised items from session review. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
+Append the new item at the **bottom of the matching type section**, before the next `##` heading or `<!-- release-plan-marker -->` comment.
 
----
-```
-
-Never insert items inside a release slice section, a closed items table, or before existing active sections.
+Never insert items inside a release slice section, a closed items table, or before existing active sections. Never create a new `## N. New Backlog Items — Session YYYY-MM-DD` section — this pattern was retired (lessons_learnt.md 2026-04-03).
 
 ## Step 5 — Write the item
 
