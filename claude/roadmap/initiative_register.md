@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-31 (roadmap rebalance — cycle 2026-03-31__scheduled; active initiatives remain zero; no Now-horizon initiatives added; 4 backlog items added (DL-013 to DL-016))
+**Last Updated:** 2026-04-03 (manage roadmap — v2.4 shipped 2026-04-03; active initiatives remain zero; v2.4 was backlog-driven; no initiative rows to move)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -17,7 +17,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 ## Active Initiatives
 
-*No active initiatives as of 2026-03-31. v2.3 shipped 2026-03-30. v2.4 scope TBD — pending release planning. Standard-tier horizon review (cycle 2026-03-31__scheduled) confirmed no movements warranted for any Later or Gated item. 4 new items added to backlog candidate pool (BLG-FEAT-14, BLG-OPS-10, BLG-BE-06, BLG-GOV-09).*
+*No active initiatives as of 2026-04-03. v2.4 shipped 2026-04-03 (Verified_with_deviations). v2.5 scope TBD — release planning not yet started. v2.4 was backlog-driven (no initiative rows required). Standard-tier horizon review (cycle 2026-03-31__scheduled) confirmed no movements warranted for any Later or Gated item.*
 
 ---
 
