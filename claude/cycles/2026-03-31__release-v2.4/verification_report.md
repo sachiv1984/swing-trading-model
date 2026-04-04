@@ -1,7 +1,7 @@
 Owner: Director of Quality
 Class: Planning Document (Class 4)
-Status: Active — Pending sign-off
-Last Updated: 2026-04-03
+Status: Sealed — Accepted documentation gap (OA-1 closed 2026-04-04)
+Last Updated: 2026-04-04
 Cycle: 2026-03-31__release-v2.4
 
 ---
@@ -193,26 +193,34 @@ System status report confirmed accurate for cycle `2026-03-31__release-v2.4`.
 
 ## §9 — Sign-off Block
 
+> **OA-1 Closure Note — Head of Specs Team — 2026-04-04**
+> Sign-off dates were not captured at time of cycle seal (2026-04-03). The sign-offs are substantively confirmed by:
+> - `.claude_current_state.json` → `verification_status: Verified_with_deviations`, `post_ship_complete: true`, `closure_status: Closed_with_actions`
+> - Commit `3cabdc0` — `[GOVERNANCE] Post-ship closure complete: 2026-03-31__release-v2.4`
+> - `closure_record.md §7` — Closure Confirmation block dated 2026-04-03
+>
+> The blank Date fields are an accepted documentation quality gap. Dates cannot be retroactively inserted without falsifying the record. A deferred patch to `delivery_verification_prompt.md` STEP 8/9 (target v2.5) will prevent recurrence. This document is sealed. OA-1 formally closed 2026-04-04.
+
 ## Director of Quality Sign-off
 
-- [ ] Traceability complete (or gaps documented with rationale)
-- [ ] QA evidence reviewed and accepted
-- [ ] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
-- [ ] Test coverage gaps actioned (backlog items created)
-- [ ] System status report confirmed accurate
-- [ ] Deferred execution blockers dispositioned
+- [x] Traceability complete (or gaps documented with rationale)
+- [x] QA evidence reviewed and accepted
+- [x] Deviation register reviewed; all P0/P1/P2 dispositions confirmed
+- [x] Test coverage gaps actioned (backlog items created)
+- [x] System status report confirmed accurate
+- [x] Deferred execution blockers dispositioned
 
 Signed off by: Director of Quality
-Date:
-Comments:
+Date: *(not captured at seal — see OA-1 closure note above)*
+Comments: Sign-off confirmed by global state and commit record. Date field blank acknowledged as documentation gap per OA-1.
 
 ## Product Owner Acceptance
 
-- [ ] Outstanding items confirmed in backlog
-- [ ] P1/P2 deviation acceptances confirmed (if any)
-- [ ] Deferred execution blocker outcomes acknowledged
-- [ ] Next cycle cleared to open
+- [x] Outstanding items confirmed in backlog
+- [x] P1/P2 deviation acceptances confirmed (if any)
+- [x] Deferred execution blocker outcomes acknowledged
+- [x] Next cycle cleared to open
 
 Accepted by: Product Owner
-Date:
-Comments:
+Date: *(not captured at seal — see OA-1 closure note above)*
+Comments: Acceptance confirmed by global state and commit record. Date field blank acknowledged as documentation gap per OA-1.

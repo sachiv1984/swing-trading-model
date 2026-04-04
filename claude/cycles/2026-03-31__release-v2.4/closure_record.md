@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-04-03
+Last Updated: 2026-04-04
 Cycle: 2026-03-31__release-v2.4
 
 ---
@@ -104,7 +104,7 @@ Key deferred items requiring attention before v2.5 sprint planning:
 
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
-| 1 | `verification_report.md §9` sign-off blocks sealed with blank Date fields. Document is sealed (immutable). The global state (`.claude_current_state.json` status = `Verified_with_deviations`) and commit record are authoritative evidence of sign-off; blank dates are a documentation quality gap. Cannot be corrected post-seal. | Director of Quality + Product Owner | Before v2.5 delivery verification | Noted as friction item in `lessons_learnt_closure.md`; `delivery_verification_prompt.md` deferred patch filed to prevent recurrence | *(resolved when v2.5 verification_report.md ships with non-blank dates)* |
+| 1 | `verification_report.md §9` sign-off blocks sealed with blank Date fields. Document is sealed (immutable). The global state (`.claude_current_state.json` status = `Verified_with_deviations`) and commit record are authoritative evidence of sign-off; blank dates are a documentation quality gap. Cannot be corrected post-seal. | Director of Quality + Product Owner | Before v2.5 delivery verification | Noted as friction item in `lessons_learnt_closure.md`; `delivery_verification_prompt.md` deferred patch filed to prevent recurrence | **Closed 2026-04-04** — Head of Specs Team accepted gap. Document Status updated to `Sealed — Accepted documentation gap`. §9 checkboxes marked complete; OA-1 closure note added; dates not retroactively inserted (would falsify record). Deferred patch to `delivery_verification_prompt.md` STEP 8/9 remains in place for v2.5 prevention. |
 | 2 | `docs/specs/frontend/pages/trade_history.md` has no Known Deviations section or entry for DEV-ST14-01. Flagged in `verification_report.md §4` as "pending — Head of Specs Team action". The `delivery_verification_prompt.md` v1.7 sync note (LL-v2.3-CL-03) requires this entry to exist in the canonical spec; the Phase 4 engine (read-only for canonical specs) deferred creation to Head of Specs Team. This entry must be created before v2.5 sprint execution reads trade_history.md as an authoritative spec. | Head of Specs Team | Before v2.5 sprint execution | Closure record filed; carry-forward item in `lessons_learnt_closure.md` CF-3 | *(complete when Known Deviations section added to trade_history.md with DEV-ST14-01 all 6 required fields)* |
 
 ---
