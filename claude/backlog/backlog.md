@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-04 (session — 3 new items added: BLG-GOV-13, BLG-FEAT-16, BLG-BE-10)
+**Last Updated:** 2026-04-04 (session — 4 new items added: BLG-GOV-13, BLG-FEAT-16, BLG-BE-10, BLG-FEAT-17)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -633,5 +633,41 @@ Frontend (Signals page):
 - [ ] `openapi.yaml` updated in the same commit as the contract change
 - [ ] Strategy Rules owner confirms no scoring logic was modified (sign-off in QA evidence before merge)
 - [ ] Any future proposal to incorporate any of these fields into signal ranking requires a new §13 review and strategy_rules.md version bump before pre-alignment — this constraint is documented in the QA evidence log
+
+---
+
+### BLG-FEAT-17 — Market Correlation Analysis
+**Priority:** P3 (Low)
+**Type:** Product Feature
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** Initiative MKT-COR — gate cleared by Product Owner + Head of Engineering 2026-04-04
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+**Pipeline decision:** Yahoo Finance (existing pipeline) confirmed sufficient — `backend/utils/pricing.py` already ingests SPY/FTSE via `check_market_regime()`; extend to `range: "2y"` for correlation lookback. No new vendor or API key required.
+
+**Problem**
+Users have no visibility into how correlated their open positions or overall portfolio are with the broader market (SPY for US, FTSE for UK). Without this, a user with 8 US tech positions may believe they are diversified when their portfolio moves almost identically to SPY — the system shows individual position performance but not market-driven vs. stock-specific attribution. Market correlation analysis addresses this gap.
+
+**Scope**
+Backend:
+- New analytics endpoint (e.g. `GET /analytics/market-correlation`) returning per-position and portfolio-level correlation coefficients vs. the relevant benchmark (SPY for US positions, FTSE for UK positions) over a configurable lookback (default 252 days)
+- Fetch historical OHLC for each position ticker and its benchmark via Yahoo Finance (`range: "2y"` to cover the default lookback plus buffer); compute Pearson correlation coefficient over the overlapping date range for each position held during that period
+- Response must be cached: TTL-based cache with minimum trading-day boundary (recalculate at most once per trading day). Correlation data changes slowly; recomputing on every page load is not acceptable.
+- On-demand computation only — no SPY/FTSE time-series stored in the database
+
+Frontend:
+- Display correlation metrics on the Analytics/Reports page: per-position correlation badge and portfolio-weighted average correlation vs. benchmark
+- Correlation scale: −1.0 (inverse) to +1.0 (perfect). Display as a signed decimal to 2dp with a colour indicator (e.g. >0.7 = high correlation warning, 0.3–0.7 = moderate, <0.3 = low)
+
+**Acceptance Criteria**
+- [ ] `GET /analytics/market-correlation` (or equivalent path) returns correlation coefficients for all open positions vs. their relevant benchmark (SPY/FTSE)
+- [ ] Portfolio-level weighted average correlation is included in the response
+- [ ] Correlation is computed as Pearson coefficient over the default 252-day lookback (or available history if shorter); lookback is a query parameter
+- [ ] Response is cached with a TTL of at minimum one trading day — repeated calls within the same trading day return the cached result without re-fetching Yahoo Finance
+- [ ] SPY/FTSE historical data is fetched on-demand; no index time-series is persisted to the database
+- [ ] Frontend displays per-position correlation and portfolio average on the Analytics page with colour-coded severity (high/moderate/low)
+- [ ] `openapi.yaml` updated in the same commit as the new endpoint
+- [ ] If Yahoo Finance is unavailable, the endpoint returns a graceful error (not a 500 that breaks the page); cached data is served if available
+- [ ] Engineer notes in QA evidence: if Yahoo Finance reliability becomes a problem, a formal data source review is required before any further correlation-dependent features
 
 ---
