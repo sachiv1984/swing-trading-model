@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-04 (session — 1 new item added: BLG-GOV-13)
+**Last Updated:** 2026-04-04 (session — 2 new items added: BLG-GOV-13, BLG-FEAT-16)
 **Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
 
 > ⚠️ Standing Notice
@@ -568,5 +568,34 @@ EPIC-01 shipped three backend correctness fixes (ST-01 ATR conversion, ST-02 not
 - `backlog_archive.md` contains no duplicate `###` item headers
 - ID uniqueness scan in next groom backlog run returns PASS
 - Product Owner has confirmed the deduplication approach prior to execution
+
+---
+
+### BLG-FEAT-16 — AI Journal Summarisation
+**Priority:** P3 (Low)
+**Type:** Product Feature
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** Initiative AI-SUM — gate cleared by Product Owner 2026-04-04 (SRB-v1.7)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+**§13 Status:** CONDITIONALLY COMPLIANT — SRB-v1.7 (2026-03-02). Mandatory conditions below are non-negotiable and must appear in AC verbatim.
+**Depends on:** Strategy Rules owner sign-off before any signal pipeline integration (SRB-v1.7 condition 3)
+
+**Problem**
+Trade journals accumulate over time and users must scroll through individual entries to extract patterns or themes from their past trading behaviour. A read-only AI-generated summary of a user's journal entries would reduce that effort and surface recurring themes or reflections without replacing the raw journal record. This is a UX convenience feature only — it does not affect the signal pipeline or any trading calculation.
+
+**Scope**
+- Backend: call an external LLM API to summarise a user's journal entries (entry/exit notes from closed trades); return summarised text
+- Frontend: display the AI summary alongside (not instead of) the raw journal content on the Trade History page or a dedicated summary view
+- Display an explicit disclaimer label per SRB-v1.7 condition 2 (see AC)
+- AI summary output must not be persisted as a canonical record or used as a calculation input
+
+**Acceptance Criteria**
+- [ ] AI summary is displayed as a UX convenience view only — raw journal entries remain the source of truth and are visible alongside or accessible from the summary view
+- [ ] AI summary output is NOT used as input to any signal, scoring, compliance, or recommendation calculation
+- [ ] UI displays label: *"AI-generated summary — for reference only. Not a trading recommendation."* — label must be visible whenever the summary is shown, without requiring user interaction
+- [ ] Strategy Rules owner has reviewed and confirmed the implementation does not integrate AI output into any signal pipeline (sign-off required before merge)
+- [ ] Any future scope expansion beyond read-only display triggers a new §13 review before pre-alignment (documented in AC of that story)
+- [ ] External LLM API key and configuration are managed via environment variable; no secrets in code
 
 ---

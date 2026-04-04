@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-03 (manage roadmap — v2.4 shipped 2026-04-03; active initiatives remain zero; v2.4 was backlog-driven; no initiative rows to move)
+**Last Updated:** 2026-04-04 (Product Owner gate clearance — AI-SUM: §13 gate cleared per SRB-v1.7; moved from Gated → Priority 2 Next Phase; BLG-FEAT-16 filed)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -26,15 +26,17 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 | ID | Initiative | Gate condition | Gate owner |
 |----|-----------|---------------|------------|
 | ~~4.3~~ | ~~Signal Exposure Enhancement~~ | ~~Gate cleared 2026-03-04 (PoG POG-20260304-01)~~ | ~~Strategy Rules owner + Product Owner~~ |
-| AI-SUM | AI Journal Summarisation | §13 boundary decision: non-deterministic AI vs determinism principle | Product Owner + Strategy Rules owner |
+| ~~AI-SUM~~ | ~~AI Journal Summarisation~~ | ~~Gate cleared 2026-04-04 — SRB-v1.7 (2026-03-02): CONDITIONALLY COMPLIANT. Backlog item BLG-FEAT-16 filed. Moved to Priority 2 — Next Phase.~~ | ~~Product Owner + Strategy Rules owner~~ |
 | TECH-IND | New Technical Indicators | Strategy rules review confirms which indicators are in scope | Strategy Rules owner |
 | MKT-COR | Market Correlation Analysis | External data pipeline decision (SPY/FTSE ingestion) | Product Owner + Head of Engineering |
 
 ---
 
-## Priority 2 — Next Phase (post v2.1)
+## Priority 2 — Next Phase
 
-*No items currently in Next Phase. v2.2 scope will be determined by release planning engine from enriched backlog.*
+| ID | Initiative | Gate status | Backlog item | Notes |
+|----|-----------|-------------|--------------|-------|
+| AI-SUM | AI Journal Summarisation | Gate cleared 2026-04-04 (SRB-v1.7) | BLG-FEAT-16 | UX convenience display only. 4 mandatory conditions from SRB-v1.7 must appear in AC. Strategy Rules owner sign-off required before any signal pipeline integration. |
 
 ---
 
