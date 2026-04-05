@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.4
-**Last Updated:** 2026-03-17
+**Version:** 2.5
+**Last Updated:** 2026-04-05
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -272,6 +272,23 @@ Report findings before sprint scope is sealed:
 This step is advisory — it does not block sprint planning. Its purpose is to surface the vulnerability landscape before scope is sealed, so mid-sprint CVE discoveries do not block merge gates unexpectedly.
 
 > **Rationale (lessons learnt — 2026-03-04__release-v1.8 / EX-LL Friction Item 5):** A pre-existing CVE in `requests` was discovered reactively during ST-07 (pip-audit CI gate). Had the scan CI gate been active from a prior sprint, a different EPIC's merge could have been blocked unexpectedly. Pre-sprint scanning makes the vulnerability landscape visible before scope locks.
+
+### -1.11 Prompt Change Log Hygiene Advisory
+
+**Advisory only — does not block planning.**
+
+Scan `claude/system/prompt_change_log.md` for the last logged version of each Class 6 governed prompt. Compare against the current `**Version:**` header in each prompt file.
+
+For any prompt where the current version is higher than the last entry visible in the log:
+- Surface as an advisory: "⚠ Prompt change log gap detected: `<filename>` current v<X.Y> — last log entry v<A.B>. Log entry should be added as a PREPENDED row (after the header row)."
+- Record in `sprint_planning_notes.md` as a governance hygiene note.
+- **Do not halt.** Sprint planning may proceed.
+
+**Scan order note:** The change log is append-only but entries may have been added at the bottom of the table by prior execution commits. A top-first scan will miss these. Read the **entire** `## Changes` table to find the most recent version for each file before comparing.
+
+**Enforcement reminder:** Per `CLAUDE.md §6`, any governance prompt edited during sprint execution must have a change log entry added as a PREPENDED row (inserted immediately after the `| Date | Prompt | Version | Change | Authority |` header row). Appending to the bottom of the table causes this advisory to fire falsely in the next release planning cycle.
+
+*Trigger: OA-01 (v2.5 cycle carry-forward). Applied 2026-04-05.*
 
 ---
 
@@ -783,6 +800,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5 | 2026-04-05 | OA-01 (v2.5 cycle carry-forward): STEP -1.11 added — Prompt Change Log Hygiene Advisory. Scans the full change log table (not just top-first) for version gaps between current prompt headers and last logged entries; surfaces as advisory with prepend-order reminder; advisory only, does not block planning. Root cause fix: entries appended to bottom of table by execution engines were missed by release_planning_prompt STEP -1.7 top-first scan. Authority: Head of Specs Team (OA-01 closure 2026-04-05). |
 | 2.4 | 2026-03-24 | Post-ship closure v2.2 lessons learnt applied. LL-v2.2-SP-01: STEP 3.1 — blocked-decision advisory added. When an `include` item is `delegated_decision` with no HoST design artefact, surface advisory: "HoST design session should be scheduled before sprint start"; record in `sprint_planning_notes.md`. Advisory only — does not block planning. Authority: Head of Specs Team (post-ship closure 2026-03-21__release-v2.2). |
 | 2.2 | 2026-03-17 | Post-ship closure v2.0 lessons learnt patch applied. LL-v2.0-P4-2: STEP 3.1 delegation class assignment — test scenario gap flag added; for every `delegated_frontend` item introducing a new page or new user-facing controls (not refactor), flag EPIC test_scenarios as "pending — QA & Testing Owner to author before next sprint on this domain" in execution_state.json and sprint_planning_notes.md; surfaces gap at planning time rather than delivery verification. |
 | 2.1 | 2026-03-16 | Post-ship closure v1.10 deferred patches applied. STEP -1.10 added: Pre-Sprint Required Decisions Check — reads `cycle_summary.md ## Pre-sprint Planning Required Decisions`; strict mode halts on unresolved decisions; standard mode records as Blocker? Yes outstanding action; sign-off gate (STEP 6.2) blocked until resolved (LL-01). STEP 3.1 Candidate Item Review: delegation class assignment guidance added — `autonomous` vs delegated class criteria; pattern note for pure data-fetching refactors with no UX change (LL-v1.10-P3-3). |

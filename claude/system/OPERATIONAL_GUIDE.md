@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.44
-**Last Updated:** 2026-04-03
+**Version:** 3.45
+**Last Updated:** 2026-04-05
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -740,7 +740,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.4)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.5)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1298,7 +1298,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.1 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.7 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.25 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.4 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.5 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.0 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.7 |
@@ -1330,6 +1330,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 | 3.32 | 2026-03-20 | **execution_prompt.md v2.4→v2.5 — agent-mediated sign-off.** §8 source prompt v2.4→v2.5. §14 Execution Engine Source → v2.5. Change: §5.3 Agent-Mediated Sign-Off added — when a seal condition names a role with an agent file, engine invokes a subagent acting in that role before surfacing to user; §3.1.A step 11 added; §9.1 `sign_off_record` field added to ST item schema. Always-human gates (Product Owner, merge gate) unchanged. |
 | 3.29 | 2026-03-18 | **ST-15 (EPIC-05): Render PR preview environments documented.** §8.2 preview environment bullet added — Render provisions `https://trading-assistant-api-staging-pr-{N}.onrender.com` per PR; Director of Quality may use preview URL as staging evidence method for frontend-interactive AC. §8.5 merge gate QA sign-off line updated to reference preview URL option alongside staging URL. |
 | 3.28 | 2026-03-19 | **ST-11 staging seed workflow updated to psql-based approach.** §8.2 staging test data seeding bullet added: `seed-preview.yml` workflow renamed to `Seed Staging Database`, trigger changed from `render-preview` label to `workflow_dispatch`, seeding mechanism changed from Python API script to `psql` against `STAGING_DATABASE_URL` secret, idempotency guard added. Documents that PR preview environments are not used for data-dependent QA — canonical staging is always the test target. |
+| 3.45 | 2026-04-05 | **OA-01 (v2.5) closure — sprint_planning_prompt.md v2.4→v2.5.** §7 source prompt v2.4→v2.5. §14 Sprint Planning Engine → v2.5. Patch: STEP -1.11 added — Prompt Change Log Hygiene Advisory: scans full change log table (not top-first) for version gaps; surfaces as advisory with prepend-order reminder; advisory only, does not halt. Root cause addressed: execution engines were appending entries to bottom of change log table, causing release_planning_prompt STEP -1.7 top-first scan to report false gaps. Authority: Head of Specs Team (OA-01 closure 2026-04-05). |
 | 3.44 | 2026-04-03 | **execution_prompt.md v2.9→v3.0 — v2.4 post-ship action-now patches.** §8 source prompt v2.9→v3.0. §14 Execution Engine Source → v3.0. Patches: (LL-v2.4-EX-01 third recurrence) §3.1.D delegated_decision unblock detection — hard gate added: update delegation log entry to Unblocked atomically with item status=done; applies equally to delegated_decision as to delegated_backend/frontend. (LL-v2.4-P4-01 second recurrence) STEP 5.1 — QA Evidence File Existence Check added: verify qa_evidence_EPIC-xx.md exists for every merged EPIC before sign-off date check; missing file is hard gate at sprint close. (LL-v2.4-P4-02) §3.1.A pre-met path — explicit note added: pre-met items still require qa_evidence entry with DoQ sign-off confirming verification; pre-met ≠ unverified. Authority: Head of Specs Team (post-ship closure 2026-03-31__release-v2.4). |
 | 3.41 | 2026-03-31 | **Roadmap rebalance 2026-03-31__scheduled — OVERDUE patch applied.** §6 source prompt roadmap_prompt.md v4.5→v4.6. §14 Roadmap Engine Source → v4.6. Patch: (LL-v2.3-RP-01 — OVERDUE B7 escalation) roadmap_prompt.md STEP 8.5 — Extended-tier session advisory added: for Extended-tier runs (40+ ideas), confirm STEP 8.5.B write plan is complete in cycle_record.md before closing session; write plan is the resumption artefact for STEP 9. |
 | 3.40 | 2026-03-31 | **v2.3 post-ship deferred lessons learnt applied.** §8 source prompt execution_prompt.md v2.8→v2.9; §9 source prompt delivery_verification_prompt.md v1.6→v1.7. §14 Execution Engine Source → v2.9; Verification Engine Source → v1.7. Patches: (LL-v2.3-CL-01) execution_prompt §5.1 delegated_frontend — Base44 model removed; autonomous default; classification rule + delegation note updated. (LL-v2.2-EX-01 2nd recurrence) execution_prompt STEP 3.1.A — delegation log update upgraded from advisory to hard gate: atomic with item done transition. (LL-v2.2-EX-02 2nd recurrence) execution_prompt STEP 4 — all_merged advisory upgraded to hard gate. (LL-v2.2-EX-04 2nd recurrence) execution_prompt §9.1 + §12 — "no prior spec applicable" named as exemption token; completion condition explicit. (LL-v2.3-CL-02) execution_prompt STEP 7 — delegation_log.md pre-seal line count check added. (LL-v2.3-CL-03) delivery_verification_prompt STEP 3 — canonical spec Known Deviations sync note added. |
