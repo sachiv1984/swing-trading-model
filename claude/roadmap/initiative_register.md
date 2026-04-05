@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-04 (PO + HoE gate clearance — MKT-COR: Yahoo Finance pipeline confirmed sufficient; moved Gated → Priority 2 Next Phase; BLG-FEAT-17 filed)
+**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — Standard tier; no active initiative changes; gated items AI-SUM/TECH-IND/MKT-COR remain in Priority 2 Next Phase; active initiatives pool remains empty; DL-017 to DL-019)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 

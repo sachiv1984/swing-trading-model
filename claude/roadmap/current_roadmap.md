@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-03 (manage roadmap — RA:v2.4 retired to archive; §3 updated for v2.5 horizon)
-**Last rebalance:** 2026-03-31 (cycle 2026-03-31__scheduled — scheduled run; Standard tier; DL-013 to DL-016)
+**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — Standard tier; no roadmap initiative changes; DL-017 to DL-019; horizon review: no movements; gated items AI-SUM/TECH-IND/MKT-COR moved to Priority 2 Next Phase in session 2026-04-04)
+**Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — scheduled run; Standard tier; DL-017 to DL-019)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -61,9 +61,9 @@ These may be revisited in future versions without any canonical spec change:
 | Mobile App | Very High | Web experience sufficient |
 | Full Compliance Scoring | High | Requires more trade history; lightweight version ships in v1.9 |
 | BLG-TECH-05 — Prometheus metrics endpoint | Low–Medium | Defer until operational need or multi-user |
-| Market Correlation Analysis | High | Blocked: requires external benchmark data pipeline (SPY, FTSE daily prices). Revisit when/if that pipeline is introduced |
-| AI Journal Summarisation | Unknown | Blocked: requires §13 boundary decision (determinism principle). Not on active roadmap until that decision is documented |
-| New Technical Indicators | Low–Medium | Blocked: requires strategy rules review. Not in scope without formal §13 confirmation |
+| Market Correlation Analysis | High | Gate cleared 2026-04-04 — Yahoo Finance pipeline confirmed sufficient (PO + HoE). Backlog item BLG-FEAT-17 filed. See Priority 2 — Next Phase in `initiative_register.md`. |
+| AI Journal Summarisation | Medium | Gate cleared 2026-04-04 — SRB-v1.7 CONDITIONALLY COMPLIANT (PO). Backlog item BLG-FEAT-16 filed. See Priority 2 — Next Phase in `initiative_register.md`. |
+| New Technical Indicators | Low–Medium | Gate cleared 2026-04-04 — display-only scope approved by Strategy Rules owner. Backlog item BLG-BE-10 filed. See Priority 2 — Next Phase in `initiative_register.md`. |
 | Customisable Dashboard Layout | High | High build cost, low current priority. Defer indefinitely at current scale |
 
 ---

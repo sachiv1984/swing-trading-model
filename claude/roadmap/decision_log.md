@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-04-05
 
 ---
 
@@ -443,3 +443,60 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 
 **Rationale:** v2.3 triggered a capacity warn that historical throughput data might have predicted. Velocity metric directly addresses recurring over-planning pattern. Challenger cleared with no counter-argument (SPS=1, pure governance tooling). Zero-sum satisfied: 1 Add, 1 displacement named.
 
+
+---
+
+### DL-017 — 2026-04-05
+
+**Decision type:** Add (backlog-level)
+**Cycle:** 2026-04-05__scheduled
+**Date:** 2026-04-05
+**Decision owner:** Product Owner
+
+**Initiative:** BLG-FE-09 — Frontend Performance Budget
+
+**Gate cleared:** BLG-OPS-05 (API performance baseline) shipped v2.4 — prior park rationale "BLG-OPS-05 still active" now resolved. Frontend budget can now be aligned to the documented backend latency floor.
+
+**Displacement:** BLG-GOV-08 (engine prompt compression, P3, L effort) deprioritised in v2.5 planning queue.
+
+**Workforce impact:** S effort (~0.5 day). Frontend Specifications & UX Documentation Owner — spec document only, no code change.
+
+**Rationale:** BLG-OPS-05 shipping created a natural alignment point for a companion frontend performance budget. Challenger cleared (SPS=2, pure documentation). Zero-sum satisfied: 1 Add, 1 displacement named.
+
+---
+
+### DL-018 — 2026-04-05
+
+**Decision type:** Add (backlog-level)
+**Cycle:** 2026-04-05__scheduled
+**Date:** 2026-04-05
+**Decision owner:** Product Owner
+
+**Initiative:** BLG-SPEC-D17 — Spec Dependency Map
+
+**Gate cleared:** BLG-SPEC-T01 shipped v2.2; BLG-SPEC-D15/D16 shipped v2.4 — prior park rationale "spec debt items higher priority" resolved. Canonical spec library now stable enough that a dependency map provides real impact-analysis value.
+
+**Displacement:** BLG-FE-03 (error message mapping layer, P3, M effort) deprioritised in v2.5 planning queue.
+
+**Workforce impact:** M effort (~1–2 days). Head of Specs Team — read-only reference document (scope constrained: not a CI-checked index).
+
+**Rationale:** Challenger issued Type A counter-argument (maintenance risk for a living document). PO accepted scope constraint: read-only reference with explicit staleness acknowledgement — eliminates the maintenance risk while preserving impact-analysis value. Zero-sum satisfied: 1 Add, 1 displacement named.
+
+---
+
+### DL-019 — 2026-04-05
+
+**Decision type:** Add (backlog-level)
+**Cycle:** 2026-04-05__scheduled
+**Date:** 2026-04-05
+**Decision owner:** Product Owner
+
+**Initiative:** BLG-GOV-14 — Governance Health Score
+
+**Gate cleared:** BLG-GOV-09 (cycle velocity metric, companion idea IDEA-pmo-lead-20260321-01) shipped v2.4 — prior park rationale "revisit once IDEA-pmo-lead-20260321-01 advances" satisfied.
+
+**Displacement:** BLG-GOV-11 (cycle artefact inventory, P3, M effort) deprioritised in v2.5 planning queue.
+
+**Workforce impact:** M effort (~1–2 days). PMO Lead + Head of Specs Team — advisory indicator implementation; formula must be documented in AC before implementation.
+
+**Rationale:** Natural companion to BLG-GOV-09 (velocity). Challenger cleared (SPS=1, pure governance tooling) with formula-completeness note — formula explicitly included in backlog AC. Advisory only, not a gate. Zero-sum satisfied: 1 Add, 1 displacement named.

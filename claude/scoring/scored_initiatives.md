@@ -213,3 +213,23 @@ All 8 items are SPS=1 or SPS=2 — no §13 boundary proximity. All are S or M ef
 
 *Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score (carried from STEP 5 debate). Scale: 1–5.*
 
+---
+
+## Cycle 2026-04-05__scheduled — New Backlog Items
+
+*Standard-tier run. Zero active roadmap initiatives. 3 new backlog items from stale ideas advancing after v2.4 gate clearance. CPS = 0.0 (unchanged).*
+
+| Initiative | Strat | Fin | Risk | WF Int | TTV | Rev | SPS | Effort |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| BLG-FE-09 — Define Frontend Performance Budget | 2 | 1 | 2 | 5 | 4 | 5 | 1 | S |
+| BLG-SPEC-D17 — Spec Dependency Map | 3 | 1 | 3 | 4 | 3 | 5 | 1 | M |
+| BLG-GOV-14 — Governance Health Score | 3 | 1 | 3 | 4 | 3 | 5 | 1 | M |
+
+*Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score (carried from STEP 5 debate). Scale: 1–5.*
+
+**CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-03-31__scheduled). Delta: 0.0.
+
+**Facilitator observations (cycle 2026-04-05__scheduled):** All 3 items are P3 / S–M effort governance or spec-debt items with low financial impact (Fin=1) but meaningful risk-reduction potential (Risk=2–3). High reversibility (Rev=5) across the board. BLG-FE-09 scope constraint: documentation and budget definition only — no implementation work included. BLG-SPEC-D17 scope constraint: initial map covers priority specs only (API contracts, data model, strategy rules) — full coverage is a stretch goal. Skill-Silo Alert fired this cycle (100% governance-heavy additions). Pull-forward candidate BLG-OPS-12 confirmed already in backlog at P2 — no action required.
+
+**Last Updated:** 2026-04-05
+

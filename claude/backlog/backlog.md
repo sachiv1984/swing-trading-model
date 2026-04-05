@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-04 (session — 4 new items added: BLG-GOV-13, BLG-FEAT-16, BLG-BE-10, BLG-FEAT-17)
-**Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
+**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — 3 new items: BLG-FE-09, BLG-SPEC-D17, BLG-GOV-14; 2 stale targets updated)
+**Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -38,7 +38,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Source:** Original backlog — target updated to v2.3 per backlog health scan GROOM-20260324-01
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.4 (or when system becomes multi-user)
+**Provisional-Target:** v2.5 (or when system becomes multi-user)
 
 **Problem**
 No Prometheus-compatible metrics endpoint exists. As the system grows toward multi-user operation, there is no way to monitor validation run counts, failure rates, or duration without instrumenting the application directly. Observability cannot be added retroactively without significant rework.
@@ -61,6 +61,31 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 
 ---
 
+### BLG-FE-09 — Define Frontend Performance Budget
+**Priority:** P3 (Low)
+**Type:** Frontend Specification
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-ux-20260321-01 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-017)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.5
+
+**Problem**
+No documented frontend performance targets exist for the application (page load time, JS bundle size). BLG-OPS-05 shipped in v2.4 establishing an API latency baseline (p50/p95 per endpoint). Without a companion frontend performance budget, new feature additions in v2.5 and beyond may silently compound bundle size and page load time with no detection mechanism or documented targets for the DoQ to reference when evaluating frontend PRs.
+
+**Scope**
+- Define maximum acceptable page load time targets (initial load, route transition)
+- Define maximum JS bundle size target (main bundle, code-split chunks)
+- Align targets with BLG-OPS-05 API latency baseline — frontend budget must account for the known backend latency floor
+- Document measurement methodology (reproducible baseline approach — e.g. Lighthouse, browser dev tools)
+- Produce spec document at `docs/specs/frontend/performance_budget.md`
+
+**Acceptance Criteria**
+- Spec document exists at `docs/specs/frontend/performance_budget.md` defining page load and bundle size targets
+- Targets aligned to BLG-OPS-05 API latency floor (total acceptable load time includes backend latency + frontend rendering overhead)
+- Measurement methodology documented (reproducible baseline approach stated)
+- Scope is documentation only — no code instrumentation required in this item
+
+---
 
 ## 4. Backend & Data Backlog
 
@@ -129,6 +154,31 @@ The Signals page is not fully integrated with the backend. Some sections may be 
 
 ---
 
+### BLG-SPEC-D17 — Spec Dependency Map
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Governance Documentation
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260321-01 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-018)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+
+**Problem**
+The canonical specification library has grown to ~22 documents with cross-references (e.g. `trade_history.md` references `metrics_definitions.md`; `signal_endpoints.md` references `strategy_rules.md`). When any canonical spec changes, cascade impacts on dependent specs are tracked informally. Without a dependency map, the DoQ cannot efficiently determine which specs require review when a canonical spec is updated — this weakens sign-off quality on spec-change PRs.
+
+**Scope**
+- Map all canonical spec dependencies: for each spec, list which other canonical specs it references or depends on
+- Produce a read-only reference document at `docs/specs/spec_dependency_map.md`
+- Include an explicit header note: "Point-in-time reference — last updated [date]. Accuracy not guaranteed after spec creation/revision without a manual update."
+- Spec owners update the map when creating or significantly revising a canonical spec (courtesy update, not a governed obligation)
+- Scope is read-only reference only — no CI enforcement or automated checking
+
+**Acceptance Criteria**
+- Reference document exists at `docs/specs/spec_dependency_map.md` listing all canonical specs and their known dependencies
+- Document labelled as read-only reference with staleness acknowledgement
+- All currently known cross-spec dependencies captured at time of authoring
+- Head of Specs Team sign-off on completeness at authoring time
+
+---
 
 ## 8. Governance Backlog
 
@@ -140,7 +190,7 @@ The Signals page is not fully integrated with the backend. Some sections may be 
 **Owner:** Head of Specs Team
 **Source:** AUD-2026-03-21 Tier 3 — engine prompt compression deferred (roadmap_prompt 1,581 lines; release_planning_prompt 1,534 lines)
 **Effort:** L (~3–5 days)
-**Provisional-Target:** v2.4
+**Provisional-Target:** v2.5 (deprioritised in v2.5 planning queue by BLG-FE-09 — 2026-04-05)
 
 **Problem**
 `claude/system/roadmap_prompt.md` (1,581 lines) and `claude/system/release_planning_prompt.md` (1,534 lines) are the two largest engine prompts in the governance system. Inline schemas, repeated examples, and verbose explanatory prose are opportunities for extraction and tightening without removing instructional precision or hard gate logic.
@@ -206,6 +256,31 @@ New backlog items have been added to new numbered session sections (`## N. New B
 - `lessons_learnt.md` has an entry for `backlog-add` recording the placement rule
 - Future backlog-add runs append to the correct type section
 - Placement rule is visible at the top of `backlog.md`
+
+---
+
+### BLG-GOV-14 — Governance Health Score
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead + Head of Specs Team
+**Source:** IDEA-pmo-lead-20260321-02 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-019)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+
+**Problem**
+BLG-GOV-09 (cycle velocity metric) shipped in v2.4 tracking story completion rate. However, governance health across other dimensions — header compliance rates, deferred patch accumulation, and outstanding action age — is assessed informally at each rebalance run. Without a structured indicator, governance drift accumulates invisibly between cycles and is typically discovered at post-ship closure rather than at planning time.
+
+**Scope**
+- Define governance health score formula: (a) header compliance % = Class 4/5 docs with compliant headers / total checked; (b) deferred patch indicator = count of open deferred patches by age band (<1 cycle / 1–2 cycles / >2 cycles); (c) outstanding action count
+- Document the formula canonically in `claude/system/OPERATIONAL_GUIDE.md` or a dedicated governance health spec
+- Implement as a lightweight advisory check at STEP -1 of each roadmap rebalance (output: advisory indicator, not a gate)
+- Score is advisory only — does not halt or gate the routine
+
+**Acceptance Criteria**
+- Governance health score formula documented canonically with all three components defined
+- Score is computed and surfaced at STEP -1 of each roadmap rebalance as an advisory indicator
+- Score labelled as advisory — cannot halt or gate the routine
+- Head of Specs Team sign-off on formula definition before implementation
 
 ---
 

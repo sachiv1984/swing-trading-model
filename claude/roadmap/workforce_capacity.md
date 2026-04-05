@@ -249,3 +249,22 @@ Scarce skill note: Metrics Definitions owner is required for both v1.7 (heat for
 
 **Assessment:** Pool is healthy and well-balanced. No workforce constraint violations at rebalance time. Release planning should sequence P2 bug fixes (BLG-BE-05, BLG-FE-06, BLG-SPEC-D16) early to clear technical debt, then layer in new feature work.
 
+---
+
+## v2.5 — Candidate Pool Economics (Roadmap Rebalance 2026-04-05__scheduled)
+
+*New items added to v2.5 candidate pool from ideas advancing in this cycle. Final allocation determined at release planning (v2.5 planning not yet started).*
+
+| Initiative | Estimated FTE effort | Skills required | Duration | Opportunity cost |
+|-----------|---------------------|-----------------|----------|-----------------|
+| BLG-FE-09 — Define Frontend Performance Budget | ~0.5 day | Frontend + Head of Engineering | 1 session | Very low — documentation/spec only; no implementation |
+| BLG-SPEC-D17 — Spec Dependency Map | ~1–2 days | Head of Specs Team + PMO Lead | 1–2 sessions | Low — governance documentation |
+| BLG-GOV-14 — Governance Health Score | ~1–2 days | PMO Lead + Governance Facilitator | 1 sprint | Low — lightweight metric + tracking |
+| **3-item total (new this cycle)** | **~2.5–4.5 days** | Frontend spec, Spec governance, PMO governance | — | — |
+
+**Skill-Silo check (cycle additions):** Governance/documentation load 100% (all 3 new items are governance, spec debt, or documentation — no execution items added this cycle). Skill-Silo Alert TRIGGERED (threshold >80% governance). Pull-forward candidate BLG-OPS-12 (Alerting Dependencies Runbook, P2) was surfaced; Product Owner confirmed it is already in the backlog at appropriate priority. No further pull-forward required. Alert acknowledged.
+
+**Combined v2.5 backlog pool** (existing items + 3 new = approximately 23 total items post-v2.4 ship): Exact pool count determined at release planning. No scarce skill conflicts at backlog level.
+
+**Assessment:** The 3 new items are all P3 / low-effort governance, spec debt, and documentation work. No workforce constraint violations at rebalance time. Release planning for v2.5 should ensure governance-heavy items are balanced against execution items when selecting the sprint scope — the Skill-Silo Alert from this cycle is a direct input to that decision.
+
