@@ -1,0 +1,119 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Fix auth forwarding in POST /test/endpoints",
+    "epic": "EPIC-01",
+    "description": "Forward X-API-Key in health_service.py internal calls so System Status shows real endpoint health",
+    "ac_summary": "All auth-protected endpoints report pass when healthy; POST /test/endpoints forwards API key; no middleware bypass",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Sync endpoint test list with openapi.yaml",
+    "epic": "EPIC-01",
+    "description": "Add all v2.3/v2.4 endpoints to health_service.py test list; add openapi.yaml reference comment",
+    "ac_summary": "All parameterless GET endpoints in openapi.yaml present in test list; comment references openapi.yaml; placeholder text updated",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Fix System Status endpoint categorisation for v2.3/v2.4 routes",
+    "epic": "EPIC-01",
+    "description": "Update categorizeEndpoint() in SystemStatus.js to cover /alerts, /notifications, /digest routes",
+    "ac_summary": "Alert/notification/digest endpoints in correct categories; no endpoints fall into Other except root; categoryConfig entries added",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Review and document Reports page backend integration",
+    "epic": "EPIC-02",
+    "description": "Map each Reports page section to its backend endpoint or flag missing connections; propose improvements",
+    "ac_summary": "Review document exists mapping each section to endpoint or gap; gaps have follow-up items filed; improvement proposals recorded",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Review and document Signals page backend integration",
+    "epic": "EPIC-02",
+    "description": "Map each Signals page section to its backend endpoint or flag missing connections; propose improvements",
+    "ac_summary": "Review document exists mapping each section to endpoint or gap; gaps have follow-up items filed; improvement proposals recorded",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Investigate high external baseline latency on DB-backed endpoints",
+    "epic": "EPIC-02",
+    "description": "Root cause GET /portfolio and GET /notifications/preferences outlier latency; evaluate connection pooling options",
+    "ac_summary": "Root cause identified for both outliers; fix or architectural constraint documented; connection pooling options evaluated; baseline updated if changes made",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Add --max-time to GitHub Actions curl calls",
+    "epic": "EPIC-03",
+    "description": "Add --max-time 120 to all curl calls in alert-evaluation.yml and daily-snapshot.yml",
+    "ac_summary": "Both workflow files have --max-time 120 on all curl invocations; step fails on timeout instead of hanging",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Fix Avg Slippage StatsCard gradient rendering",
+    "epic": "EPIC-03",
+    "description": "Apply correct Tailwind gradient class to Avg Slippage StatsCard; resolve DEV-ST14-01 cosmetic deviation",
+    "ac_summary": "StatsCard renders with gradient matching other cards; no regression; DEV-ST14-01 noted as resolved in slippage_scenarios.md",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Fee drag metric on Trade History",
+    "epic": "EPIC-03",
+    "description": "Add fee_drag_pct field and Avg Fee Drag StatsCard/column to Trade History; update 4 canonical specs",
+    "ac_summary": "fee_drag_pct in GET /trades; avg_fee_drag_pct in envelope; StatsCard and column displayed; 4 canonical specs updated; openapi.yaml updated in same commit",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Fix governance_sync.yml batch push issue closure",
+    "epic": "EPIC-04",
+    "description": "Update governance_sync.yml to close all issues in a batch push (git log $BEFORE..$AFTER), not just the last",
+    "ac_summary": "Multi-commit batch push closes all referenced GitHub issues; single-commit push unchanged; tested with 2+ commit push",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "Formalise backlog entry placement standard",
+    "epic": "EPIC-04",
+    "description": "Add backlog-add skill lessons_learnt entry and placement rule note in backlog.md top",
+    "ac_summary": "lessons_learnt.md has backlog-add entry; placement rule visible in backlog.md; future runs append to type sections",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "Apply v2.4 deferred governance prompt patches",
+    "epic": "EPIC-04",
+    "description": "Apply execution_prompt.md STEP 8 governance reminder + delivery_verification_prompt.md verification_report Date gate",
+    "ac_summary": "Both prompts patched; both version-bumped; OPERATIONAL_GUIDE updated; prompt_change_log entries added; CF-2 resolved",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "Create test scenarios for EPIC-01 correctness fixes",
+    "epic": "EPIC-04",
+    "description": "Author SC-ATR-01, SC-DEDUP-01, SC-DEDUP-02, SC-STOP-01 test scenarios for v2.4 EPIC-01 correctness fixes",
+    "ac_summary": "All 4 scenarios authored and filed in canonical test scenario library; cross-referenced in QA evidence",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-05__release-v2.5"],
+    "assignee": null
+  }
+]

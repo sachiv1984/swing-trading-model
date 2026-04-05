@@ -47,7 +47,14 @@ These may be revisited in future versions without any canonical spec change:
 
 *v2.4 shipped 2026-04-03 (Verified_with_deviations). Cycle annotation RA:v2.4 retired to roadmap_archive.md 2026-04-03. Next release v2.5 — planning not yet started.*
 
-*No active delivery cycle. Awaiting `plan release --version v2.5`.*
+<!-- roadmap-annotation-marker: RA:v2.5:2026-04-05__release-v2.5 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-04-05__release-v2.5
+- Plan published: 2026-04-05
+- Cycle folder: claude/cycles/2026-04-05__release-v2.5/
+- Backlog slice: claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md
+- Status at annotation: Published
 
 ---
 

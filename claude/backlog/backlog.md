@@ -325,7 +325,23 @@ These are deliberate product decisions, not deferrals:
 **Cycle:** 2026-03-31__release-v2.4 | **Shipped:** 2026-04-03 | **Status:** Verified_with_deviations
 **Archived to:** `claude/backlog/backlog_archive.md` — v2.4 Release Slice entry
 
-*No active release slice. Awaiting `plan release --version v2.5`.*
+---
+
+## Active Release Slice — v2.5
+
+<!-- release-plan-marker: RP:v2.5:2026-04-05__release-v2.5 -->
+
+**Cycle:** 2026-04-05__release-v2.5 | **Status:** Planning | **Published:** 2026-04-05
+**Backlog slice:** `claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md`
+
+**Theme:** Integration Baseline, Quick Wins & Governance Debt
+
+| EPIC | Sprint | Stories | Theme |
+|------|--------|---------|-------|
+| EPIC-01 | Sprint 1 | ST-01, ST-02, ST-03 | System Status Reliability |
+| EPIC-02 | Sprint 2 | ST-04, ST-05, ST-06 | Backend Integration & Performance |
+| EPIC-03 | Sprint 2 | ST-07, ST-08, ST-09 | Frontend & Operations Quick Wins |
+| EPIC-04 | Sprint 1 | ST-10, ST-11, ST-12, ST-13 | Governance, Process & QA Hardening |
 
 ---
 
