@@ -17,38 +17,40 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Parse Commit for Governance
+      - name: Parse Commits for Governance
         id: parse
         run: |
-          # Extracts [EPIC-XX][ST-XX] from the latest commit message
-          COMMIT_MSG=$(git log -1 --pretty=%B)
-          if [[ $COMMIT_MSG =~ \[(EPIC-[0-9]+)\]\[(ST-[0-9]+)\] ]]; then
-            echo "epic_id=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
-            echo "st_id=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
+          # Extract all [EPIC-XX][ST-XX] patterns from all commits in the push range
+          # Uses $BEFORE..$AFTER to cover every commit in a batch push (not just the last)
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+          ALL_MSGS=$(git log "$BEFORE".."$AFTER" --pretty=%B)
+          ST_IDS=$(echo "$ALL_MSGS" | grep -oE '\[(ST-[0-9]+)\]' | tr -d '[]' | sort -u | tr '\n' ' ')
+          if [ -n "$ST_IDS" ]; then
+            echo "st_ids=$ST_IDS" >> $GITHUB_OUTPUT
             echo "found=true" >> $GITHUB_OUTPUT
           else
             echo "found=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Update State and Close Issue
+      - name: Update State and Close Issues
         if: steps.parse.outputs.found == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ST_ID="${{ steps.parse.outputs.st_id }}"
-          EPIC_ID="${{ steps.parse.outputs.epic_id }}"
-
-          # 1. Look up numeric issue number for this ST item, then close it
-          # Use exact title prefix match to prevent fuzzy search returning wrong issues
-          # (e.g. a second [ST-14] commit must not close [ST-10] when [ST-14] is already closed)
-          ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}] in:title" --state open --json number,title \
-            --jq "[.[] | select(.title | startswith(\"[${ST_ID}]\"))] | .[0].number // empty")
-          if [ -n "$ISSUE_NUMBER" ]; then
-            gh issue close "$ISSUE_NUMBER"
-            echo "Closed issue #${ISSUE_NUMBER} for ${ST_ID}"
-          else
-            echo "No open issue found for ${ST_ID} — may already be closed or never created"
-          fi
+          # Close all issues referenced in the push range (handles batch pushes)
+          for ST_ID in ${{ steps.parse.outputs.st_ids }}; do
+            # Use exact title prefix match to prevent fuzzy search returning wrong issues
+            # (e.g. a second [ST-14] commit must not close [ST-10] when [ST-14] is already closed)
+            ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}] in:title" --state open --json number,title \
+              --jq "[.[] | select(.title | startswith(\"[${ST_ID}]\"))] | .[0].number // empty")
+            if [ -n "$ISSUE_NUMBER" ]; then
+              gh issue close "$ISSUE_NUMBER"
+              echo "Closed issue #${ISSUE_NUMBER} for ${ST_ID}"
+            else
+              echo "No open issue found for ${ST_ID} — may already be closed or never created"
+            fi
+          done
 
           # 2. Update the local state.json (Optional: can be done by Claude locally)
-          echo "Syncing state for ${ST_ID}..."
+          echo "Syncing state for all referenced ST items..."
