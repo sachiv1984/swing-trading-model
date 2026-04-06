@@ -199,19 +199,20 @@ def get_detailed_health() -> Dict:
     }
 
 
-def test_all_endpoints(base_url: str = None) -> Dict:
+def test_all_endpoints(base_url: str = None, api_key: str = None) -> Dict:
     """
     Test all API endpoints
-    
+
     Args:
         base_url: Base URL of the API (if None, uses localhost:8000)
-    
+        api_key: X-API-Key value to forward to auth-protected endpoints (ST-01)
+
     Returns:
         Dictionary with:
             - timestamp: Test timestamp
             - summary: Summary statistics (total, passed, failed, errors, success_rate)
             - results: List of test results for each endpoint
-    
+
     Note:
         - Tests all GET endpoints that don't require parameters
         - Returns pass/fail status for each
@@ -222,16 +223,25 @@ def test_all_endpoints(base_url: str = None) -> Dict:
     # If no base_url provided, use localhost (for local testing)
     if base_url is None:
         base_url = "http://localhost:8000"
-    
+
     # Remove trailing slash if present
     base_url = base_url.rstrip('/')
-    
-    # Define endpoints to test
+
+    # Build forwarded headers — include API key if present (ST-01)
+    headers = {}
+    if api_key:
+        headers["X-API-Key"] = api_key
+
+    # Endpoint list — source of truth: docs/reference/openapi.yaml (ST-02)
+    # All parameterless GET endpoints included. Update when openapi.yaml adds new routes.
     endpoints = [
         {"method": "GET", "path": "/", "expected_status": 200},
         {"method": "GET", "path": "/health", "expected_status": 200},
+        {"method": "GET", "path": "/health/detailed", "expected_status": 200},
         {"method": "GET", "path": "/settings", "expected_status": 200},
         {"method": "GET", "path": "/positions", "expected_status": 200},
+        {"method": "GET", "path": "/positions/tags", "expected_status": 200},
+        {"method": "GET", "path": "/positions/compliance", "expected_status": 200},
         {"method": "GET", "path": "/portfolio", "expected_status": 200},
         {"method": "GET", "path": "/trades", "expected_status": 200},
         {"method": "GET", "path": "/cash/transactions", "expected_status": 200},
@@ -239,18 +249,26 @@ def test_all_endpoints(base_url: str = None) -> Dict:
         {"method": "GET", "path": "/signals", "expected_status": 200},
         {"method": "GET", "path": "/market/status", "expected_status": 200},
         {"method": "GET", "path": "/portfolio/history?days=7", "expected_status": 200},
-        {"method": "GET", "path": "/positions/tags", "expected_status": 200},
-        ]
-    
+        {"method": "GET", "path": "/alerts/rules", "expected_status": 200},
+        {"method": "GET", "path": "/alerts/history", "expected_status": 200},
+        {"method": "GET", "path": "/notifications", "expected_status": 200},
+        {"method": "GET", "path": "/notifications/preferences", "expected_status": 200},
+        {"method": "GET", "path": "/digest/weekly", "expected_status": 200},
+        {"method": "GET", "path": "/analytics/cohort?period=month", "expected_status": 200},
+        {"method": "GET", "path": "/analytics/r-multiple-distribution", "expected_status": 200},
+        {"method": "GET", "path": "/analytics/compliance-metrics", "expected_status": 200},
+    ]
+
     test_results = []
-    
+
     for endpoint in endpoints:
         try:
             start = time.time()
-            
+
             if endpoint["method"] == "GET":
                 response = requests.get(
                     f"{base_url}{endpoint['path']}",
+                    headers=headers,
                     timeout=10
                 )
             
