@@ -67,6 +67,17 @@ function slippageColour(pct) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Fee Drag helpers
+// Spec: ST-09 — fee_drag_pct = exit_fees / gross_proceeds * 100
+// Always non-negative. Amber tone — fee drag is always a cost.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function formatFeeDrag(pct) {
+  if (pct === null || pct === undefined) return "—";
+  return `+${pct.toFixed(2)}%`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const SORT_NONE = "none";
 const SORT_ASC  = "asc";
@@ -102,6 +113,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [rSort, setRSort] = useState(SORT_NONE);
   const [slippageSort, setSlippageSort] = useState(SORT_NONE);
+  const [feeDragSort, setFeeDragSort] = useState(SORT_NONE);
 
   // Build a lookup map: trade id → R-multiple value (or null)
   // Joined by trade id, as spec requires (D2a).
@@ -137,6 +149,14 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     );
   };
 
+  const cycleFeeSort = () => {
+    setFeeDragSort(prev =>
+      prev === SORT_NONE ? SORT_ASC :
+      prev === SORT_ASC  ? SORT_DESC :
+      SORT_NONE
+    );
+  };
+
   // Apply R-multiple sort, then slippage sort.
   // Spec (F-12): "—" values sort to the end in both directions.
   const displayTrades = useMemo(() => {
@@ -164,8 +184,19 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
       });
     }
 
+    if (feeDragSort !== SORT_NONE) {
+      result = [...result].sort((a, b) => {
+        const fa = a.fee_drag_pct ?? null;
+        const fb = b.fee_drag_pct ?? null;
+        if (fa === null && fb === null) return 0;
+        if (fa === null) return 1;
+        if (fb === null) return -1;
+        return feeDragSort === SORT_ASC ? fa - fb : fb - fa;
+      });
+    }
+
     return result;
-  }, [trades, rSort, rMap, slippageSort]);
+  }, [trades, rSort, rMap, slippageSort, feeDragSort]);
 
   if (!trades || trades.length === 0) {
     return (
@@ -188,6 +219,12 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
   };
 
+  const FeeDragSortIcon = () => {
+    if (feeDragSort === SORT_ASC)  return <ArrowUp   className="w-3 h-3 ml-1 inline text-amber-400" />;
+    if (feeDragSort === SORT_DESC) return <ArrowDown  className="w-3 h-3 ml-1 inline text-amber-400" />;
+    return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
+  };
+
   return (
     <DataTable>
       <TableHeader>
@@ -203,6 +240,14 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
           title="Entry deviation: fill price vs limit price at entry. Null when fill price not recorded."
         >
           Slippage <SlippageSortIcon />
+        </TableHead>
+        {/* ST-09: Fee Drag % column — sortable, ascending = lowest fee drag first */}
+        <TableHead
+          className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
+          onClick={cycleFeeSort}
+          title="Fee Drag % = Exit fees / Gross proceeds × 100. Measures the proportion of gross sale proceeds consumed by broker exit fees."
+        >
+          Fee Drag % <FeeDragSortIcon />
         </TableHead>
         {/* BLG-FEAT-02: R-Multiple column — sortable, "—" to end */}
         <TableHead
@@ -285,6 +330,16 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                   </span>
                 </TableCell>
 
+                {/* Fee Drag % — ST-09 */}
+                <TableCell className="text-right">
+                  <span className={cn(
+                    "font-medium tabular-nums",
+                    trade.fee_drag_pct != null ? "text-amber-400" : "text-slate-500"
+                  )}>
+                    {formatFeeDrag(trade.fee_drag_pct)}
+                  </span>
+                </TableCell>
+
                 {/* R-Multiple — BLG-FEAT-02 */}
                 <TableCell className="text-right">
                   <span className={cn("font-medium tabular-nums", rClass)}>
@@ -303,10 +358,10 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 </TableCell>
               </TableRow>
 
-              {/* Expanded journal row — colSpan bumped to 7 */}
+              {/* Expanded journal row — colSpan bumped to 9 (ST-09 added Fee Drag % column) */}
               {isExpanded && hasExpandableContent && (
                 <TableRow key={`${tradeId}-details`} className="bg-slate-900/50 border-t-2 border-slate-700/50">
-                  <TableCell colSpan={8} className="!p-0">
+                  <TableCell colSpan={9} className="!p-0">
                     <div className="w-full px-6 py-5 space-y-5">
                       <div className="flex items-center gap-2 pb-3 border-b border-slate-700/50">
                         <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />

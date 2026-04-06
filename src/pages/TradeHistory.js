@@ -174,7 +174,7 @@ export default function TradeHistory() {
       ) : (
         <>
           {/* Summary stats row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             <StatsCard
               title="Total P&L"
               value={`${totalPnL >= 0 ? "+" : ""}£${totalPnL.toFixed(2)}`}
@@ -214,6 +214,17 @@ export default function TradeHistory() {
               trend={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "up" : "down") : "neutral"}
               icon={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? TrendingUp : TrendingDown) : TrendingUp}
               gradient={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "emerald" : "rose") : "violet"}
+            />
+            <StatsCard
+              title="Avg Fee Drag"
+              value={
+                tradesData?.avg_fee_drag_pct != null
+                  ? `+${tradesData.avg_fee_drag_pct.toFixed(2)}%`
+                  : "—"
+              }
+              subtitle="Exit fees / gross proceeds"
+              icon={TrendingDown}
+              gradient="amber"
             />
           </div>
 

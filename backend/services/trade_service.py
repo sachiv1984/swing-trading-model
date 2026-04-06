@@ -42,6 +42,7 @@ def get_trade_history_with_stats() -> Dict:
             "win_rate": 0,
             "total_pnl": 0,
             "avg_slippage_pct": None,
+            "avg_fee_drag_pct": None,
             "trades": []
         }
     
@@ -59,6 +60,13 @@ def get_trade_history_with_stats() -> Dict:
             slippage_pct = round((float(fill_price) - entry_price_val) / entry_price_val * 100, 2)
         else:
             slippage_pct = None
+
+        exit_fees = t.get('exit_fees')
+        gross_proceeds = t.get('gross_proceeds')
+        if exit_fees is not None and gross_proceeds is not None and float(gross_proceeds) > 0:
+            fee_drag_pct = round(float(exit_fees) / float(gross_proceeds) * 100, 2)
+        else:
+            fee_drag_pct = None
 
         formatted_trades.append({
             "id": str(t.get('id', '')),
@@ -79,16 +87,21 @@ def get_trade_history_with_stats() -> Dict:
             "tags": t.get('tags', []),
             "fill_price": float(fill_price) if fill_price is not None else None,
             "slippage_pct": slippage_pct,
+            "fee_drag_pct": fee_drag_pct,
         })
 
     slippage_values = [t['slippage_pct'] for t in formatted_trades if t['slippage_pct'] is not None]
     avg_slippage_pct = round(sum(slippage_values) / len(slippage_values), 2) if slippage_values else None
+
+    fee_drag_values = [t['fee_drag_pct'] for t in formatted_trades if t['fee_drag_pct'] is not None]
+    avg_fee_drag_pct = round(sum(fee_drag_values) / len(fee_drag_values), 2) if fee_drag_values else None
 
     return {
         "total_trades": len(trades),
         "win_rate": round(win_rate, 1),
         "total_pnl": round(total_pnl, 2),
         "avg_slippage_pct": avg_slippage_pct,
+        "avg_fee_drag_pct": avg_fee_drag_pct,
         "trades": formatted_trades
     }
 

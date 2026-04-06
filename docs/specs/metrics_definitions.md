@@ -2,7 +2,7 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.8.0
+**Version:** 1.9.0
 **Last Updated:** 2026-03-18
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -900,6 +900,60 @@ Requires ≥ 5 trades with a valid stop price. Below threshold: `has_enough_data
 
 ---
 
+## Fee Drag
+
+**Added:** v1.9.0 — ST-09 (EPIC-03, v2.5)
+
+Fee drag measures the proportion of gross sale proceeds consumed by broker exit fees. It is a per-trade cost metric and portfolio aggregate.
+
+### Canonical Formula
+
+```
+fee_drag_pct = exit_fees / gross_proceeds × 100
+```
+
+Where:
+- `exit_fees` — total broker exit fees in GBP (commission + platform charges at exit, as recorded in `trade_history.exit_fees`)
+- `gross_proceeds` — gross sale proceeds in GBP before exit fees (`trade_history.gross_proceeds`)
+
+**Qualifying condition:** `gross_proceeds > 0`. If `gross_proceeds` is null or zero, `fee_drag_pct` is `null` for that trade.
+
+**Sign convention:** Always non-negative. Fee drag is always a cost; green/red colour treatment is not applicable. Amber/neutral tone is used in the UI.
+
+**Precision:** Rounded to 2 decimal places.
+
+### Portfolio Average
+
+```
+avg_fee_drag_pct = mean(fee_drag_pct) across all trades where fee_drag_pct is not null
+```
+
+Computed server-side as a simple arithmetic mean. Returned as `avg_fee_drag_pct` in the `GET /trades` response envelope. `null` when no qualifying trades exist.
+
+### Data Source
+
+| Field | Source |
+|-------|--------|
+| `fee_drag_pct` (per trade) | `GET /trades` → `trades[].fee_drag_pct` |
+| `avg_fee_drag_pct` | `GET /trades` → top-level `avg_fee_drag_pct` |
+
+Computed in `backend/services/trade_service.py` from `trade_history.exit_fees` and `trade_history.gross_proceeds`. No schema change required — these columns already exist.
+
+### Display
+
+- **Trade History table:** "Fee Drag %" column (after Slippage column). Format: `+X.XX%`. Amber colour. Sortable ascending/descending.
+- **Trade History summary bar:** "Avg Fee Drag" StatsCard. Format: `+X.XX%`. Amber gradient. Always rendered (no null state once trades exist).
+
+### Relationship to Other Metrics
+
+Fee drag is distinct from slippage:
+- **Slippage** = entry-side execution cost (fill price vs limit price)
+- **Fee drag** = exit-side cost (fees as a proportion of sale proceeds)
+
+Both are logged per trade. Neither is included in P&L calculations — they are analytical overlays only.
+
+---
+
 ## Appendix A: Data Lineage (Referential)
 
 This Metrics Definitions document is the canonical source for **metric semantics and formulas**.
@@ -958,6 +1012,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 | 2026-03-12 | 1.7.0 | ST-03 (EPIC-02 v1.9): Add Cohort Metrics section — canonical formulas for cohort trade count, win rate, avg R-multiple, total P&L; period definitions (month/quarter/year); response format for GET /analytics/cohort. ST-04 (EPIC-02 v1.9): Add R-Multiple (Canonical Server-Side) section — server-side formula, qualifying conditions, sign convention, distribution bucket format for GET /analytics/r-multiple-distribution; minimum 5 qualifying trades. Analytics Team.
 | 2026-03-02 | 1.6.0 | EPIC-03 (v1.7): Add Portfolio Risk Metrics section — canonical Position Risk formula (GBP-adjusted, FX handling for US positions, pence conversion for UK), Portfolio Heat formula (sum of position risks / portfolio value × 100), and explicit display threshold bands (Low <10%, Moderate 10–20%, High 20–30%, Extreme ≥30%) with canonical hex colour codes. TASK-06 through TASK-10 complete. Head of Specs Team lifecycle sign-off granted 2026-03-02 (Delegated Authority). v1.8 pre-alignment gate cleared. | Metrics Definitions & Analytics Owner + Head of Specs Team |
 | 2026-03-11 | 1.7.0 | EPIC-01/02 (v1.9): Add Discipline & Compliance Metrics section (ST-01) — Journal Completion Rate, Stop-Based Exit Rate, Average Position Size % formulas for GET /analytics/compliance-metrics. Add Cohort Analysis Metrics section (ST-03 batch) — period grouping, per-cohort field definitions, minimum data threshold. Add R-Multiple Distribution (Backend) section (ST-04 batch) — canonical server-side R-multiple formula, 8 fixed buckets, summary statistics. Appendix B updated to list all three new endpoints. Metrics Definitions & Analytics Owner + Head of Engineering sign-off granted 2026-03-11 (EPIC-01 ST-01 delivery). | Metrics Definitions & Analytics Owner + Head of Engineering |
+| 2026-04-06 | 1.9.0 | ST-09 (EPIC-03, v2.5): Add Fee Drag section — canonical formula (`exit_fees / gross_proceeds × 100`), portfolio average (`avg_fee_drag_pct`), qualifying conditions, sign convention, data source (existing columns, no schema change), display spec. Head of Specs Team co-authorship confirmed (ST-09 design gate cleared). | Metrics Definitions & Analytics Owner + Head of Specs Team |
 
 ---
 
