@@ -5,13 +5,13 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Switch } from "../components/ui/switch";
 import { Label } from "../components/ui/label";
-import { 
-  Activity, 
-  RefreshCw, 
-  Play, 
-  CheckCircle2, 
-  AlertTriangle, 
-  XCircle, 
+import {
+  Activity,
+  RefreshCw,
+  Play,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
   HelpCircle,
   ChevronDown,
   Database,
@@ -23,7 +23,10 @@ import {
   Calculator,
   Download,
   BarChart3,
-  Shield
+  Shield,
+  Bell,
+  BellRing,
+  Mail
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -43,6 +46,9 @@ export default function SystemStatus() {
     // Check more specific patterns first
     if (endpointName.includes('/analytics')) return 'Analytics';
     if (endpointName.includes('/validate')) return 'Validation';
+    if (endpointName.includes('/alerts')) return 'Alerts';
+    if (endpointName.includes('/notifications')) return 'Notifications';
+    if (endpointName.includes('/digest')) return 'Digest';
     if (endpointName.includes('/position') || endpointName.includes('/portfolio')) return 'Portfolio';
     if (endpointName.includes('/trades')) return 'Trading';
     if (endpointName.includes('/cash')) return 'Cash Management';
@@ -76,6 +82,9 @@ export default function SystemStatus() {
     'Market Data': { icon: Globe, color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/30' },
     'Analytics': { icon: BarChart3, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/30' },
     'Validation': { icon: Shield, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
+    'Alerts': { icon: Bell, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
+    'Notifications': { icon: BellRing, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
+    'Digest': { icon: Mail, color: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/30' },
     'Other': { icon: HelpCircle, color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/30' }
   };
 
@@ -514,7 +523,7 @@ export default function SystemStatus() {
             <div className="text-center">
               <Play className="w-10 h-10 text-slate-400 mx-auto mb-3" />
               <p className="text-slate-400">Click 'Run Tests' to verify all endpoints</p>
-              <p className="text-slate-500 text-sm mt-1">Tests {totalTests || '17'} endpoints</p>
+              <p className="text-slate-500 text-sm mt-1">Tests {totalTests || '26'} endpoints</p>
             </div>
           </div>
         ) : (
