@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-04-04
+**Version:** 1.5
+**Last Updated:** 2026-04-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.1 slippage):** docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md
 
@@ -31,6 +31,7 @@ A row of key metrics:
 - Average winner
 - Average loser
 - **Avg Slippage** (new — v2.1, ST-14)
+- **Avg Fee Drag** (new — v2.5, ST-09)
 
 These values give the user an instant overview of performance quality.
 
@@ -43,7 +44,21 @@ These values give the user an instant overview of performance quality.
 | Format | Signed percentage to 2dp: e.g. `–0.05%`, `+0.12%`, `0.00%` |
 | Colour | Negative (favourable) = green tone; Positive (unfavourable) = red tone; Zero = neutral |
 | Null / no data | Display `—`; tooltip: `"No Fill Price data available yet."` |
-| Placement | Rightmost stat in the summary row; wraps to a second row on narrow screens |
+| Placement | Second-rightmost stat in the summary row (Avg Fee Drag follows); wraps to second row on narrow screens |
+
+#### Avg Fee Drag (Summary Stat — new v2.5, ST-09)
+
+| Property | Value |
+|----------|-------|
+| Label | **Avg Fee Drag** |
+| Source | Backend-provided `avg_fee_drag_pct` from GET /trades response envelope (mean of `fee_drag_pct` across all trades with `gross_proceeds > 0`) |
+| Format | Always-positive percentage with `+` prefix: `+X.XX%` (e.g. `+0.42%`) |
+| Colour | Amber/orange tone — fee drag is always a cost; not binary green/red |
+| Null / no data | Not applicable — always populated when trades exist |
+| Tooltip (ⓘ) | "Average Fee Drag = Total exit fees / Gross proceeds × 100" / "Higher % means a greater proportion of gross proceeds consumed by fees." |
+| Placement | Rightmost stat in the summary row (after Avg Slippage); wraps to second row on narrow screens |
+| Naming constraint | Label is "Avg Fee Drag" or "Fee Drag" — never "slippage" |
+| Design source | `docs/design/2026-04-05__release-v2.5/fee-drag/ux_spec.md` |
 
 ---
 
@@ -79,6 +94,7 @@ Columns include:
 - P&L %
 - R-Multiple
 - **Slippage** (new — v2.1, ST-14; positioned after P&L %)
+- **Fee Drag %** (new — v2.5, ST-09; positioned after Slippage)
 - Days held
 - Exit reason
 
@@ -102,6 +118,32 @@ Columns include:
 **Sortable:** Yes — ascending and descending. Null values sort to end.
 
 **Historical trades:** Pre-v2.1 trades without Fill Price show `—`. The column is still rendered; it is not hidden when historical trades are present.
+
+---
+
+#### Fee Drag % Column (new — v2.5, ST-09)
+
+**Formula (canonical):** `Fee Drag % = exit_fees / gross_proceeds × 100` (rounded to 2dp)
+
+**Source field:** Backend-provided `fee_drag_pct` per trade from GET /trades response. The frontend does not calculate fee drag.
+
+**Display format:** Always-positive percentage with `+` prefix:
+- `+0.38%`, `+1.20%`, `+0.05%`
+- Decimal precision: 2dp
+
+**Colour treatment:** Amber/neutral tone — fee drag is always a cost; do NOT use green/red (reserved for P&L direction). Consistent with Avg Fee Drag StatsCard.
+
+**Column header tooltip:** An info icon (ⓘ) adjacent to the "Fee Drag %" header. Hover:
+> `"Fee Drag % = Exit fees / Gross proceeds × 100"`
+> `"Measures the proportion of gross sale proceeds consumed by broker exit fees."`
+
+**Null handling:** Not applicable — always populated for closed trades. No `—` state.
+
+**Sortable:** Yes — ascending and descending. Ascending = lowest fee drag first.
+
+**Naming constraint:** Column header is "Fee Drag %" — never "slippage".
+
+**Design source:** `docs/design/2026-04-05__release-v2.5/fee-drag/ux_spec.md`
 
 ---
 
@@ -224,6 +266,7 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.5 | 2026-04-06 | v2.5 design gate (ST-09): Avg Fee Drag StatsCard added to Summary Stats section (after Avg Slippage). Fee Drag % column added to Trade History Table columns list (after Slippage). Fee Drag % Column spec section added. Design source: `docs/design/2026-04-05__release-v2.5/fee-drag/ux_spec.md`. Head of Specs Team confirmed compliant. |
 | 1.4 | 2026-04-04 | OA-2 closure (v2.4): DEV-ST14-01 entry updated — Target resolution release v2.2→v2.5 (not resolved in v2.2/v2.3/v2.4; carried forward as delegated_frontend constraint); backlog reference BLG-FE-01→BLG-FE-08; DoQ acceptance reconfirmed at v2.4 verification. Head of Specs Team action per verification_report.md §5 and closure_record.md OA-2. |
 | 1.3 | 2026-03-21 | Post-ship closure: Known Deviations section added. DEV-ST14-01 (StatsCard gradient cosmetic) filed per post_ship_closure STEP 5 — deviation compliance. |
 | 1.2 | 2026-03-18 | v2.1 slippage tracking (ST-14, BLG-FEAT-03): Slippage column added to trade history table (after P&L %, before R-Multiple). Avg Slippage stat added to summary stats bar. Column header info tooltip specced. Null handling for pre-v2.1 trades (show `—`). Lifecycle headers upgraded to Class 1 compliant format. Design source: docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |

@@ -1,6 +1,6 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
-**Status:** Active
+**Status:** Sealed
 **Last Updated:** 2026-04-06
 **Cycle:** 2026-04-05__release-v2.5
 **Release:** v2.5
@@ -338,20 +338,18 @@
 
 ## Outstanding Actions at Planning Seal
 
-| Action | Owner | Blocker? |
-|--------|-------|---------|
-| Provide `design_gate_bypass_authority` and `design_gate_bypass_reason` → write to `.claude_current_state.json`; authority must be `"Head of UX & Design + Product Owner"` per IMP-30 | Head of UX & Design + Product Owner | **Yes** |
-| Confirm sprint goal in `sprint_goal.md` | Product Owner | **Yes** |
-| Confirm sprint scope (this document) | Product Owner | **Yes** |
-| Backfill `prompt_change_log.md` version gaps (4 prompts) | Head of Specs Team | No |
+| Action | Owner | Blocker? | Status |
+|--------|-------|---------|--------|
+| Design gate bypass (IMP-04) | Head of UX & Design + Product Owner | Was: Yes | Resolved — design gate run 2026-04-06; gate_status=Passed |
+| Backfill `prompt_change_log.md` version gaps (4 prompts) | Head of Specs Team | No | Open (advisory) |
 
 ---
 
 ## Product Owner Sign-Off
 
-**Sprint goal confirmed:** [AWAITING SIGN-OFF]
-**Scope confirmed:** [AWAITING SIGN-OFF]
-**Capacity confirmed:** [AWAITING SIGN-OFF]
+**Sprint goal confirmed:** Confirmed
+**Scope confirmed:** Confirmed — 13 stories, 4 EPICs, Sprint 1 (EPIC-04 + EPIC-01) + Sprint 2 (EPIC-02 + EPIC-03)
+**Capacity confirmed:** Confirmed — ~7 days estimated across 2 sprints, PASS
 **Deferred execution blockers accepted:** N/A
 **Signed off by:** Product Owner
-**Date:** [AWAITING SIGN-OFF]
+**Date:** 2026-04-06

@@ -151,7 +151,7 @@ No items classified `delegated_decision` in this sprint. Advisory not applicable
 
 | Action | Owner | Required Before Seal? | Status |
 |--------|-------|----------------------|--------|
-| Provide `design_gate_bypass_authority` (value: `"Head of UX & Design + Product Owner"`) and `design_gate_bypass_reason` (one sentence) — write to `.claude_current_state.json` | Head of UX & Design (primary) + Product Owner (co-confirmation) | **Yes** — IMP-04, IMP-30 | Open |
-| Confirm sprint goal in `sprint_goal.md` | Product Owner | **Yes** | Open |
-| Confirm sprint scope in `sprint_backlog.md` | Product Owner | **Yes** | Open |
+| Design gate bypass (IMP-04, IMP-30) | Head of UX & Design + Product Owner | Was: Yes | **Resolved** — design gate run 2026-04-06; gate_status=Passed; no bypass required |
+| Confirm sprint goal in `sprint_goal.md` | Product Owner | Was: Yes | **Resolved** — confirmed 2026-04-06 |
+| Confirm sprint scope in `sprint_backlog.md` | Product Owner | Was: Yes | **Resolved** — confirmed 2026-04-06 |
 | Backfill `prompt_change_log.md` entries for release_planning_prompt.md, design_gate_prompt.md, amendment_cycle_prompt.md, roadmap_prompt.md version gaps | Head of Specs Team | No (advisory) | Open |
