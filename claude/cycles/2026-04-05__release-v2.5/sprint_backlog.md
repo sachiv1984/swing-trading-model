@@ -341,7 +341,7 @@
 | Action | Owner | Blocker? | Status |
 |--------|-------|---------|--------|
 | Design gate bypass (IMP-04) | Head of UX & Design + Product Owner | Was: Yes | Resolved — design gate run 2026-04-06; gate_status=Passed |
-| Backfill `prompt_change_log.md` version gaps (4 prompts) | Head of Specs Team | No | Open (advisory) |
+| Backfill `prompt_change_log.md` version gaps (4 prompts) | Head of Specs Team | No | **Resolved** — 7 entries prepended 2026-04-06 |
 
 ---
 
