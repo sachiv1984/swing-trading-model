@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.0
-**Last Updated:** 2026-04-03
+**Version:** 3.1
+**Last Updated:** 2026-04-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -899,6 +899,8 @@ Before sealing, verify `delegation_log.md` line count is consistent with delegat
 ---
 
 ## STEP 8 — Commit & Push Cycle Artefacts
+
+**Governance file edit check (ST-12 / CF-2):** Before committing, check whether any §6-governed file (listed in `claude/system/OPERATIONAL_GUIDE.md` §14) was modified during this sprint execution run — including changes applied as part of ST items (e.g. deferred prompt patches). If any were modified: append one entry per file to `claude/system/prompt_change_log.md` in the same session as the edit, using the format `| date | filename | vOLD→vNEW | summary | authority |`. This step must complete before the STEP 8 commit is pushed.
 
 Stage and commit all cycle artefacts created or modified by this routine:
 

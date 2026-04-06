@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-03-16
+**Version:** 1.8
+**Last Updated:** 2026-04-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -497,6 +497,12 @@ Accepted by: Product Owner
 Date:
 Comments:
 ```
+
+**Pre-seal gate (LL-v2.4-DV-01):** Before proceeding to STEP 8.5, read the §9 sign-off block in `verification_report.md`. Verify that:
+- Director of Quality `Date:` field is non-blank.
+- Product Owner `Date:` field is non-blank.
+
+If either `Date:` field is blank: do not proceed to STEP 8.5. Surface to the relevant authority (Director of Quality or Product Owner) with the current `verification_report.md` §9 block and request that the Date field be completed. Do not seal `verification_report.md` until both Date fields are filled. Once both are non-blank: continue to STEP 8.5.
 
 ---
 
