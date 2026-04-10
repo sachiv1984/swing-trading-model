@@ -1,11 +1,382 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-03
+**Last Updated:** 2026-04-10
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### v2.5 Release Slice — 2026-04-05__release-v2.5
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** N/A (release tracking section)
+**Retired:** 2026-04-10
+**Shipped in:** v2.5 — Integration Baseline, Quick Wins & Governance Debt
+**Evidence:** 13/13 items shipped; 12 backlog items completed; `claude/cycles/2026-04-05__release-v2.5/closure_record.md`
+
+| ID | Title | Type | Sprint | Evidence |
+|----|-------|------|--------|----------|
+| BLG-OPS-12 | Fix auth forwarding in POST /test/endpoints | Ops | Sprint 1 | ST-01 commit 230643b |
+| BLG-OPS-13 | Keep endpoint test list in sync with openapi.yaml | Ops | Sprint 1 | ST-02 commit a6a74c0 |
+| BLG-FE-07 | Fix System Status endpoint categorisation | Frontend | Sprint 1 | ST-03 commit a6a74c0 |
+| BLG-BE-08 | Review and document Reports page backend integration | Backend | Sprint 2 | ST-04 commit 3a645e3 |
+| BLG-BE-09 | Review and document Signals page backend integration | Backend | Sprint 2 | ST-05 commit 3a645e3 |
+| BLG-BE-07 | Investigate high external baseline latency | Backend | Sprint 2 | ST-06 commit 3f31b1d |
+| BLG-OPS-11 | Add --max-time to GitHub Actions curl calls | Ops | Sprint 2 | ST-07 commit ce3775a |
+| BLG-FE-08 | Fix Avg Slippage StatsCard gradient rendering | Frontend | Sprint 2 | ST-08 commit ce3775a |
+| BLG-FEAT-15 | Fee drag metric on Trade History | Feature | Sprint 2 | ST-09 commit ce3775a |
+| BLG-GOV-10 | Fix governance_sync.yml batch push issue closure | Gov | Sprint 1 | ST-10 commit 01f5e9c |
+| BLG-GOV-12 | Formalise backlog entry placement standard | Gov | Sprint 1 | ST-11 commit dbb4551 |
+| TEST-GAP-EPIC-01-v24 | Create test scenarios for EPIC-01 correctness fixes | QA | Sprint 1 | ST-13 commit aacbb50 |
+
+---
+
+### BLG-OPS-12 — Fix auth forwarding in POST /test/endpoints internal calls
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-01, commit 230643b; `claude/cycles/2026-04-05__release-v2.5/verification_report.md`
+
+### BLG-OPS-12 — Fix auth forwarding in POST /test/endpoints internal calls
+**Priority:** P2 (High)
+**Type:** Operational / Infrastructure
+**Owner:** Head of Engineering + Infrastructure & Operations Owner
+**Source:** ST-11 performance baseline review — 2026-04-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-01) — 2026-04-10 — cycle 2026-04-05__release-v2.5
+
+**Problem**
+`backend/services/health_service.py` `test_all_endpoints()` makes internal HTTP calls to each endpoint without forwarding the `X-API-Key` header. All auth-protected endpoints return 401 and are reported as "fail". The System Status page "Run Tests" button currently shows 1/17 pass rate, making the system appear critically broken when all endpoints are in fact operational. This makes the monitoring tool unreliable and misleading.
+
+**Scope**
+- Modify `test_all_endpoints()` to accept and forward the API key in internal calls (e.g. accept `api_key: str = None` parameter, add `X-API-Key` header when provided)
+- Update `POST /test/endpoints` route in `main.py` to extract the `X-API-Key` from the incoming request and pass it through
+- Alternatively: add a middleware bypass for server-internal calls (e.g. `X-Internal: true` header checked before auth)
+
+**Acceptance Criteria**
+- `POST /test/endpoints` returns pass/fail based on actual endpoint response, not auth rejection
+- All correctly implemented endpoints report "pass" when the system is healthy
+- Success rate shown on System Status page reflects actual endpoint health
+
+---
+
+### BLG-OPS-13 — Keep endpoint test list in sync with openapi.yaml
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-02, commit a6a74c0; `claude/cycles/2026-04-05__release-v2.5/verification_report.md`
+
+### BLG-OPS-13 — Keep endpoint test list in sync with openapi.yaml
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-11 performance baseline review — 2026-04-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-02) — 2026-04-10 — cycle 2026-04-05__release-v2.5
+
+**Problem**
+The endpoint test list in `backend/services/health_service.py` `test_all_endpoints()` was last updated for v2.2 (12 endpoints). Endpoints added in v2.3/v2.4 are not being tested. This coverage gap will worsen each sprint if not addressed structurally.
+
+**Scope**
+- Add all missing parameterless GET endpoints to the test list in `test_all_endpoints()`
+- Add a comment block above the list referencing `docs/reference/openapi.yaml` as the source of truth
+- Update the System Status page placeholder text to match actual endpoint count
+
+**Acceptance Criteria**
+- All parameterless GET endpoints in `openapi.yaml` are present in the test list
+- A comment in `health_service.py` documents the sync obligation
+- System Status page "Run Tests" button tests the complete current endpoint set
+
+---
+
+### BLG-FE-07 — Fix System Status endpoint categorisation for v2.3/v2.4 routes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P4
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-03, commit a6a74c0; `claude/cycles/2026-04-05__release-v2.5/verification_report.md`
+
+### BLG-FE-07 — Fix System Status endpoint categorisation for v2.3/v2.4 routes
+**Priority:** P4 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Engineer
+**Source:** System Status page review — 2026-04-03
+**Effort:** XS (<1h)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-03) — 2026-04-10 — cycle 2026-04-05__release-v2.5
+
+**Problem**
+`src/pages/SystemStatus.js` `categorizeEndpoint()` does not cover routes added in v2.3/v2.4. Endpoints matching `/alerts`, `/notifications`, and `/digest` fall through to "Other" category.
+
+**Scope**
+- Add categorisation rules for Alerts, Notifications, Digest, verify Health/Analytics/Validation
+- Add `categoryConfig` entries for "Alerts" and "Notifications"
+
+**Acceptance Criteria**
+- Alert endpoints appear under "Alerts" category
+- Notification endpoints appear under "Notifications" category
+- Digest endpoints appear under "Digest" category
+- No endpoints fall into "Other" except `/`
+
+---
+
+### BLG-BE-08 — Review and document Reports page backend integration
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-04, commit 3a645e3; `docs/ops/reports_integration_review.md`
+
+### BLG-BE-08 — Review and document Reports page backend integration
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Frontend Integration
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** User session review — 2026-04-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-04) — 2026-04-10 — cycle 2026-04-05__release-v2.5 — see `docs/ops/reports_integration_review.md`
+
+**Problem**
+The Reports page is not fully integrated with the backend. No documentation mapping which Reports components are wired to which backend endpoints.
+
+**Acceptance Criteria**
+- A review document exists mapping each Reports page section to its backend endpoint
+- All identified gaps have follow-up backlog items or are addressed
+- Improvement proposals recorded for roadmap input
+
+---
+
+### BLG-BE-09 — Review and document Signals page backend integration
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-05, commit 3a645e3; `docs/ops/signals_integration_review.md`
+
+### BLG-BE-09 — Review and document Signals page backend integration
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Frontend Integration
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** User session review — 2026-04-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-05) — 2026-04-10 — cycle 2026-04-05__release-v2.5 — see `docs/ops/signals_integration_review.md`
+
+**Problem**
+The Signals page integration state is undocumented. Some sections may render without live data.
+
+**Acceptance Criteria**
+- A review document exists mapping each Signals page section to its backend endpoint
+- All identified gaps have follow-up backlog items
+- Improvement proposals recorded for roadmap input
+
+---
+
+### BLG-BE-07 — Investigate high external baseline latency on DB-backed endpoints
+
+**Status at retirement:** ✅ Complete (Closed — investigation complete)
+**Priority at retirement:** P2
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-06, commit 3f31b1d; `docs/ops/api_performance_baseline.md` §6
+
+### BLG-BE-07 — Investigate high external baseline latency on DB-backed endpoints
+**Priority:** P2 (High)
+**Type:** Backend / Infrastructure
+**Owner:** Head of Engineering
+**Source:** ST-11 performance baseline — 2026-04-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+**Status:** Closed — investigation complete (ST-06, v2.5). See `docs/ops/api_performance_baseline.md` §6. Follow-up items: BLG-OPS-14 (Supavisor), BLG-BE-07-FIX (portfolio connection refactor).
+
+**Problem**
+All DB-backed endpoints have p50 response times of 1.2–6.0 seconds. Root cause: Supabase free tier connection overhead. GET /portfolio and GET /notifications/preferences were outliers.
+
+**Acceptance Criteria**
+- Root cause identified and documented
+- Fix applied or architectural constraint documented
+- Updated baseline document filed
+
+---
+
+### BLG-OPS-11 — Add `--max-time` to GitHub Actions cron curl calls
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-07, commit ce3775a
+
+### BLG-OPS-11 — Add `--max-time` to GitHub Actions cron curl calls
+**Priority:** P3 (Low)
+**Type:** Operational / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** InfraOps review of ST-10 Render tier decision record — 2026-04-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-07) — 2026-04-10 — cycle 2026-04-05__release-v2.5
+
+**Problem**
+`alert-evaluation.yml` and `daily-snapshot.yml` invoke `curl` with no `--max-time` flag. Cold starts cause silent stall periods on Render free tier.
+
+**Scope**
+- Add `--max-time 120` to every `curl` call in both workflow files
+
+**Acceptance Criteria**
+- Both workflow files have `--max-time 120` on all curl invocations
+- If service fails to respond within 120s workflow step fails with non-zero exit code
+
+---
+
+### BLG-FE-08 — Fix Avg Slippage StatsCard gradient rendering
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-08, commit ce3775a; DEV-ST14-01 RESOLVED in `docs/testing/slippage_scenarios.md §5`
+
+### BLG-FE-08 — Fix Avg Slippage StatsCard gradient rendering
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Owner
+**Source:** DEV-ST14-01 — delivery verification 2026-03-31__release-v2.4 — 2026-04-03
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.5
+**Deviation ref:** DEV-ST14-01 (P3 cosmetic — pre-accepted by Director of Quality 2026-03-20)
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-08) — 2026-04-10 — cycle 2026-04-05__release-v2.5
+
+**Problem**
+Avg Slippage StatsCard renders without gradient background. DEV-ST14-01 cosmetic deviation.
+
+**Acceptance Criteria**
+- Avg Slippage StatsCard renders with gradient background matching other StatsCards
+- No regression to slippage value display or colour coding
+
+---
+
+### BLG-FEAT-15 — Fee drag metric on Trade History
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-09, commit ce3775a; `docs/specs/metrics_definitions.md` v1.9.0
+
+### BLG-FEAT-15 — Fee drag metric on Trade History
+**Priority:** P3 (Low)
+**Type:** Feature — Analytics
+**Owner:** Metrics Definitions & Analytics Owner + Head of Engineering
+**Source:** PO/Challenger debate 2026-04-02 — action A3 from slippage metric re-scope decision
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-09) — 2026-04-10 — cycle 2026-04-05__release-v2.5
+
+**Problem**
+No always-available metric capturing friction cost of executing a trade. Fee drag = exit_fees / gross_proceeds × 100.
+
+**Acceptance Criteria**
+- `fee_drag_pct` field returned per trade; `avg_fee_drag_pct` at response envelope
+- "Avg Fee Drag" StatsCard visible on Trade History
+- Fee Drag % column present in TradeHistoryTable
+- `docs/specs/metrics_definitions.md` contains canonical definition
+
+---
+
+### BLG-GOV-10 — Fix governance_sync.yml batch push issue closure
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-10, commit 01f5e9c
+
+### BLG-GOV-10 — Fix governance_sync.yml batch push issue closure
+**Priority:** P2 (Medium)
+**Type:** Governance Process / DevOps
+**Owner:** DevOps
+**Source:** EPIC-06 merge observation — delivery verification 2026-03-31__release-v2.4 — 2026-04-03
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-10) — 2026-04-10 — cycle 2026-04-05__release-v2.5
+
+**Problem**
+`governance_sync.yml` uses `git log -1` — only closes the last commit's GitHub issue in a batch push.
+
+**Scope**
+- Update to `git log $BEFORE..$AFTER` to close all issues in push range
+
+**Acceptance Criteria**
+- Multi-commit batch push closes all referenced GitHub issues
+- Single-commit push behaviour unchanged
+
+---
+
+### BLG-GOV-12 — Formalise backlog entry placement standard
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-11, commit dbb4551
+
+### BLG-GOV-12 — Formalise backlog entry placement standard
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** User session review — 2026-04-03
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-11) — 2026-04-10 — cycle 2026-04-05__release-v2.5
+
+**Problem**
+New backlog items were added to session sections instead of type-based sections. Fragments backlog structure.
+
+**Acceptance Criteria**
+- `lessons_learnt.md` has backlog-add placement rule entry
+- Placement rule visible at top of `backlog.md`
+
+---
+
+### TEST-GAP-EPIC-01-v24 — Create test scenarios for EPIC-01 backend correctness fixes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-04-10
+**Shipped in:** v2.5
+**Evidence:** ST-13, commit aacbb50; docs/testing/atr_scenarios.md, dedup_scenarios.md, stop_price_scenarios.md
+
+### TEST-GAP-EPIC-01-v24 — Create test scenarios for EPIC-01 backend correctness fixes
+**Priority:** P2 (Medium)
+**Type:** QA Coverage
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-03-31__release-v2.4 — TSG-v24-01 — 2026-04-03
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.5
+**Status:** ✅ COMPLETE — Shipped v2.5 (ST-13) — 2026-04-10 — cycle 2026-04-05__release-v2.5
+
+**Problem**
+EPIC-01 v2.4 shipped three correctness-critical fixes with no automated test scenarios.
+
+**Scope**
+- Author SC-ATR-01, SC-DEDUP-01/02, SC-STOP-01 in `docs/testing/`
+
+**Acceptance Criteria**
+- Scenario files present covering all four scenarios
+- Each scenario executable against staging or unit test suite
+- Referenced in test scenario index
 
 ---
 

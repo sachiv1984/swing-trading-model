@@ -3,9 +3,51 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-03
+**Last Updated:** 2026-04-10
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.5 — Integration Baseline, Quick Wins & Governance Debt — 2026-04-10
+
+Cycle: 2026-04-05__release-v2.5
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-04-05__release-v2.5/verification_report.md
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | System Status reliability: auth forwarding fixed in POST /test/endpoints (API key forwarded to all internal calls); endpoint test list synced to 26 endpoints (matches openapi.yaml); Alerts, Notifications, Digest categories added to SystemStatus.js categorisation | backend/services/health_service.py; backend/routers/test.py; src/pages/SystemStatus.js |
+| EPIC-02 | Backend integration documentation: Reports page and Signals page integration status mapped (gaps, SDK usage, follow-up items); GET /notifications/preferences outlier latency fixed (redundant ensure_alerts_tables() removed); GET /portfolio architectural constraint documented; Supavisor pooling recommendation filed | docs/ops/reports_integration_review.md; docs/ops/signals_integration_review.md; docs/ops/api_performance_baseline.md v1.1; backend/services/alerts_service.py |
+| EPIC-03 | Frontend & operations quick wins: GitHub Actions curl calls hardened with --max-time 120; Avg Slippage StatsCard gradient deviation DEV-ST14-01 closed; Fee Drag % metric delivered end-to-end (backend fee_drag_pct + avg_fee_drag_pct, API contract v2.2.0, openapi.yaml v2.5.0, Trade History table amber column + sortable, Avg Fee Drag StatsCard); DataTable.js TableHead onClick bug fixed | docs/specs/api_contracts/trade_endpoints.md v2.2.0; docs/specs/metrics_definitions.md v1.9.0; docs/reference/openapi.yaml v2.5.0; src/pages/TradeHistory.js; src/components/trades/TradeHistoryTable.js; src/components/ui/DataTable.js; docs/testing/slippage_scenarios.md v1.2 |
+| EPIC-04 | Governance hardening: execution_prompt.md STEP 8 governance file edit check (CF-2); delivery_verification_prompt.md pre-seal Date gate (CF-2); governance_sync.yml batch push fix (git log range, all commit messages parsed); backlog entry placement rule formalised; test scenarios SC-ATR-01, SC-DEDUP-01/02, SC-STOP-01 created | claude/system/execution_prompt.md v3.1; claude/system/delivery_verification_prompt.md v1.8; .github/workflows/governance_sync.yml; docs/testing/atr_scenarios.md; docs/testing/dedup_scenarios.md; docs/testing/stop_price_scenarios.md |
+
+### Deviations accepted
+
+4 minor P3 deviations — see verification_report.md §4 for full detail. Backlog items filed: BLG-FE-11 (card layout), BLG-FE-12 (header styling), BLG-FE-13 (flexible sort), BLG-BE-07-FIX (portfolio connection refactor).
+
+No P1/P2 deviations. DataTable.js TableHead onClick (P2) fixed in-sprint before merge.
+
+### Tech backlog items shipped
+
+- [ST-01] BLG-OPS-12: Fix auth forwarding in POST /test/endpoints
+- [ST-02] BLG-OPS-13: Sync endpoint test list with openapi.yaml
+- [ST-03] BLG-FE-07: Fix System Status endpoint categorisation for v2.3/v2.4 routes
+- [ST-04] BLG-BE-08: Review and document Reports page backend integration
+- [ST-05] BLG-BE-09: Review and document Signals page backend integration
+- [ST-06] BLG-BE-07: Investigate high external baseline latency on DB-backed endpoints
+- [ST-07] BLG-OPS-11: Add --max-time to GitHub Actions curl calls
+- [ST-08] DEV-ST14-01 closure: Fix Avg Slippage StatsCard gradient rendering (documentation close)
+- [ST-09] BLG-FEAT-15: Fee drag metric on Trade History (backend + API + frontend)
+- [ST-10] BLG-GOV-12: Fix governance_sync.yml batch push issue closure
+- [ST-11] BLG-GOV-13: Formalise backlog entry placement standard
+- [ST-12] BLG-GOV-11 (CF-2): Apply v2.4 deferred governance prompt patches
+- [ST-13] TEST-GAP-EPIC-01: Create test scenarios for EPIC-01 correctness fixes
+
+Sign-off: Product Owner — 2026-04-10
+QA sign-off: Director of Quality — 2026-04-10
 
 ---
 

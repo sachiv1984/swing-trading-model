@@ -1,13 +1,37 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-03
+**Last Updated:** 2026-04-10
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v2.5 — Integration Baseline, Quick Wins & Governance Debt (RA:v2.5)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (annotation block RA:v2.5)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-10
+**Shipped version:** v2.5 (2026-04-10)
+**Cycle reference:** 2026-04-05__release-v2.5
+**Verification report:** `claude/cycles/2026-04-05__release-v2.5/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-10
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.5:2026-04-05__release-v2.5 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-04-05__release-v2.5
+- Plan published: 2026-04-05
+- Cycle folder: claude/cycles/2026-04-05__release-v2.5/
+- Backlog slice: claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md
+- Status at annotation: ✅ Complete — Shipped 2026-04-10 (Verified_with_deviations)
 
 ---
 

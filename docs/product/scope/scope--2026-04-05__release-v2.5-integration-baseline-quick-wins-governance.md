@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v2.5
 Cycle: 2026-04-05__release-v2.5
-Last Updated: 2026-04-05
+Last Updated: 2026-04-10
+
+Superseded by: v2.5 ship — 2026-04-10
+Changelog: docs/product/changelog.md#v25
+Verification report: claude/cycles/2026-04-05__release-v2.5/verification_report.md
+Cycle: 2026-04-05__release-v2.5
 
 ## Release Scope — v2.5 Integration Baseline, Quick Wins & Governance Debt
 

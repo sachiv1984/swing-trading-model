@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — Standard tier; no roadmap initiative changes; DL-017 to DL-019; horizon review: no movements; gated items AI-SUM/TECH-IND/MKT-COR moved to Priority 2 Next Phase in session 2026-04-04)
+**Last Updated:** 2026-04-10 (manage_roadmap post-ship closure 2026-04-05__release-v2.5 — RA:v2.5 annotation retired to roadmap_archive.md; §3 updated; no stale items flagged; no active initiatives)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — scheduled run; Standard tier; DL-017 to DL-019)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v2.4** — Correctness, Insight & Governance Hardening — Shipped 2026-04-03
-**Next planned release:** **v2.5** (TBD)
+**v2.5** — Integration Baseline, Quick Wins & Governance Debt — Shipped 2026-04-10
+**Next planned release:** **v2.6** (TBD)
 
 ---
 
@@ -45,16 +45,7 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*v2.4 shipped 2026-04-03 (Verified_with_deviations). Cycle annotation RA:v2.4 retired to roadmap_archive.md 2026-04-03. Next release v2.5 — planning not yet started.*
-
-<!-- roadmap-annotation-marker: RA:v2.5:2026-04-05__release-v2.5 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-04-05__release-v2.5
-- Plan published: 2026-04-05
-- Cycle folder: claude/cycles/2026-04-05__release-v2.5/
-- Backlog slice: claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md
-- Status at annotation: Published
+*v2.5 shipped 2026-04-10 (Verified_with_deviations). RA:v2.5 annotation retired to roadmap_archive.md 2026-04-10. Next release v2.6 — planning not yet started.*
 
 ---
 
@@ -119,6 +110,7 @@ When evaluating new features:
 | **v2.2** | Security, Alert Maturity & Quality | Security hardening (API Key Auth, CSP), Alert system maturity (scheduling, thresholds, history), Bug fixes & operational quick wins, QA coverage, Governance process enhancements — ✅ Shipped 2026-03-24 |
 | **v2.3** | Quality Automation & User Insight | Strategy Compliance Panel, Metrics Staleness Indicator, Alert Nav Badge, Health Database endpoint, QA automation, Governance tooling — ✅ Shipped 2026-03-30 (Verified_with_deviations) |
 | **v2.4** | Correctness, Insight & Governance Hardening | ATR fix, alert deduplication, stop price join, P&L GBP column, error mapping, data model reconciliation, weekly digest, operational readiness, governance patches — ✅ Shipped 2026-04-03 (Verified_with_deviations) |
+| **v2.5** | Integration Baseline, Quick Wins & Governance Debt | System Status reliability (26 endpoints, auth fix, categories), backend integration docs, latency investigation, Fee Drag % metric, governance prompt patches (CF-2), governance_sync.yml fix, test scenarios — ✅ Shipped 2026-04-10 (Verified_with_deviations) |
 
 ---
 

@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-04-03
+**Last Updated:** 2026-04-10
 
 ---
 
@@ -329,7 +329,7 @@ Identified during delivery verification (verification_report.md §6 — TSG-v22-
 **Owner:** QA & Testing Owner + Infrastructure & Operations Owner
 **Gap:** Automated test for GET /health and GET /health/database response schemas not yet in CI.
 **Required action:** Add SC-HEALTH-01 scenario in a future cycle.
-**Resolution target:** v2.4
+**Resolution target:** v2.6 (not addressed in v2.4 or v2.5)
 
 ### 10.3 TSG-v23-01 — EPIC-02: R-Multiple chart visual scenarios staging-blocked (BLG-BE-04)
 
@@ -338,20 +338,43 @@ Identified during delivery verification (verification_report.md §6 — TSG-v22-
 **Owner:** QA & Testing Owner
 **Gap:** V-CHART-05a/b/c scenarios require `stop_price` field in `/trades` API response. BLG-BE-04 (stop_price absent from trade_history) blocked these 3 R-Multiple visual scenarios.
 **Update (2026-04-03):** BLG-BE-04 resolved by ST-03 in cycle 2026-03-31__release-v2.4. `stop_price` field now present on analytics trade endpoint response. V-CHART-05a/b/c are now executable against staging. QA & Testing Owner to schedule execution in v2.5 cycle.
-**Required action:** QA & Testing Owner to execute V-CHART-05a/b/c on staging against v2.4 deployment.
+**Update (2026-04-10):** V-CHART-05a/b/c not executed in v2.5 — no story scheduled for this in the v2.5 backlog slice. Gap carries forward.
+**Required action:** QA & Testing Owner to execute V-CHART-05a/b/c on staging against live deployment.
+**Resolution target:** v2.6
 
 ### 10.4 TSG-v24-01 — EPIC-01: no test scenarios for backend correctness fixes
 
 **Identified:** 2026-04-03 (delivery verification 2026-03-31__release-v2.4)
-**Status:** Open — backlog item TEST-GAP-EPIC-01-v24
+**Status:** RESOLVED — 2026-04-10 (v2.5, ST-13, cycle 2026-04-05__release-v2.5)
 **Owner:** QA & Testing Owner
 **Gap:** EPIC-01 shipped three backend correctness fixes (ST-01 ATR conversion, ST-02 notification deduplication, ST-03 stop_price join) with no automated test scenarios. These are correctness-critical behaviours.
-**Required action:** Author SC-ATR-01, SC-DEDUP-01, SC-DEDUP-02, SC-STOP-01 — see verification_report.md §6 for full scenario descriptions. File in `docs/testing/`.
-**Resolution target:** v2.5
+**Resolution:** SC-ATR-01, SC-DEDUP-01, SC-DEDUP-02, SC-STOP-01 authored and filed in `docs/testing/atr_scenarios.md`, `docs/testing/dedup_scenarios.md`, `docs/testing/stop_price_scenarios.md`. Backlog item TEST-GAP-EPIC-01-v24 closed.
 
 ---
 
-## 11. Guiding Principle
+## 11. Test Coverage Gaps — v2.5 (2026-04-05__release-v2.5)
+
+Identified during delivery verification (verification_report.md §6 — TSG-V25-01 through TSG-V25-02).
+
+### 11.1 TSG-V25-01 — EPIC-01 test scenarios listed but not applicable to EPIC-01 v2.5 AC
+
+**Identified:** 2026-04-10 (delivery verification 2026-04-05__release-v2.5)
+**Status:** Closed — not_applicable
+**Owner:** QA & Testing Owner
+**Assessment:** ATR/dedup/stop_price scenarios (SC-ATR-01, SC-DEDUP-01/02, SC-STOP-01) were listed under EPIC-01 test_scenarios in execution_state.json but cover v2.4 algorithmic correctness AC, not v2.5 endpoint availability AC. Correctly classified not_applicable at verification. No gap.
+
+### 11.2 TSG-V25-02 — Fee drag Playwright spec not authored for v2.5 Trade History
+
+**Identified:** 2026-04-10 (delivery verification 2026-04-05__release-v2.5)
+**Status:** Open — backlog item BLG-QA-07
+**Owner:** QA & Testing Owner
+**Gap:** ST-09 delivered the fee drag metric (column + StatsCard) on Trade History. No Playwright spec exists for SC-FEE-01 through SC-FEE-04 (`docs/testing/fee-drag-scenarios.md`). Trade History has `slippage-tracking.spec.js` as a model.
+**Required action:** Author `tests/e2e/fee-drag-trade-history.spec.js` covering SC-FEE-01–SC-FEE-04. See BLG-QA-07 for scope.
+**Resolution target:** v2.6
+
+---
+
+## 12. Guiding Principle
 
 > Specs explain decisions.
 > This index ensures those decisions form a coherent system.

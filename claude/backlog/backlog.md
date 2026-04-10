@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-10 (ST-06 investigation — BLG-BE-07 closed; BLG-OPS-14 + BLG-BE-07-FIX filed; BLG-BE-08/09 shipped; gap items BLG-BE-08-GAP-01, BLG-BE-09-GAP-01/02, BLG-FE-11, BLG-FE-12, BLG-FE-13 filed)
+**Last Updated:** 2026-04-10 (groom backlog — v2.5 post-ship closure: 12 items archived to backlog_archive.md; 10 stale v2.5 provisional targets updated to v2.6; 25 active items retained)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
@@ -38,7 +38,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Source:** Original backlog — target updated to v2.3 per backlog health scan GROOM-20260324-01
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5 (or when system becomes multi-user)
+**Provisional-Target:** v2.6 (or when system becomes multi-user)
 
 **Problem**
 No Prometheus-compatible metrics endpoint exists. As the system grows toward multi-user operation, there is no way to monitor validation run counts, failure rates, or duration without instrumenting the application directly. Observability cannot be added retroactively without significant rework.
@@ -151,7 +151,7 @@ Currently only Slippage, Fee Drag %, and R-Multiple columns are sortable in the 
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** IDEA-frontend-ux-20260321-01 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-017)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v2.5
+**Provisional-Target:** v2.6
 
 **Problem**
 No documented frontend performance targets exist for the application (page load time, JS bundle size). BLG-OPS-05 shipped in v2.4 establishing an API latency baseline (p50/p95 per endpoint). Without a companion frontend performance budget, new feature additions in v2.5 and beyond may silently compound bundle size and page load time with no detection mechanism or documented targets for the DoQ to reference when evaluating frontend PRs.
@@ -176,55 +176,7 @@ No documented frontend performance targets exist for the application (page load 
 ---
 
 
-### BLG-BE-08 — Review and document Reports page backend integration
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering / Frontend Integration
-**Owner:** Head of Engineering + Frontend Specifications & UX Owner
-**Source:** User session review — 2026-04-03
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
-**Status:** Shipped v2.5 (ST-04) — see `docs/ops/reports_integration_review.md`
-
-**Problem**
-The Reports page is not fully integrated with the backend. Some sections may be using placeholder or hardcoded data rather than live API calls. There is no documentation mapping which Reports components are wired to which backend endpoints, making it impossible to assess coverage, diagnose gaps, or plan improvements systematically.
-
-**Scope**
-- Review each section of the Reports page to confirm which data is sourced live from the backend vs. placeholder/hardcoded
-- Document the current integration state: endpoint used per section, data flow, any missing connections
-- Identify any Reports sections not connected to a backend endpoint and define what is needed
-- Propose improvements (additional endpoints, data quality improvements, UI enhancements) as a prioritised list
-
-**Acceptance Criteria**
-- A review document exists mapping each Reports page section to its backend endpoint (or flagging a missing connection)
-- All identified gaps have either a follow-up backlog item filed or are addressed within this scope
-- Improvement proposals are recorded and available for roadmap input
-
----
-
-### BLG-BE-09 — Review and document Signals page backend integration
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering / Frontend Integration
-**Owner:** Head of Engineering + Frontend Specifications & UX Owner
-**Source:** User session review — 2026-04-03
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
-**Status:** Shipped v2.5 (ST-05) — see `docs/ops/signals_integration_review.md`
-
-**Problem**
-The Signals page is not fully integrated with the backend. Some sections may be rendering without live data, and there is no documentation of which signals components are wired to which endpoints. Without this review, integration gaps are invisible until a user encounters incorrect or missing data.
-
-**Scope**
-- Review each section of the Signals page to confirm which data is sourced live from the backend vs. placeholder/hardcoded
-- Document current integration state: endpoint per section, data flow, missing connections
-- Identify any Signals sections not connected to a backend endpoint and define what endpoint/data is needed
-- Propose improvements as a prioritised list
-
-**Acceptance Criteria**
-- A review document exists mapping each Signals page section to its backend endpoint (or flagging a missing connection)
-- All identified gaps have a follow-up backlog item filed or are addressed within this scope
-- Improvement proposals are recorded and available for roadmap input
-
----
+<!-- BLG-BE-08 and BLG-BE-09 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
 
 ### BLG-BE-08-GAP-01 — Migrate Reports Performance tab to FastAPI backend
 **Priority:** P1 (High)
@@ -447,7 +399,7 @@ ST-02 added 10 missing endpoints to the health service and updated the SystemSta
 **Owner:** Head of Specs Team
 **Source:** IDEA-head-of-specs-20260321-01 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-018)
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
+**Provisional-Target:** v2.6
 
 **Problem**
 The canonical specification library has grown to ~22 documents with cross-references (e.g. `trade_history.md` references `metrics_definitions.md`; `signal_endpoints.md` references `strategy_rules.md`). When any canonical spec changes, cascade impacts on dependent specs are tracked informally. Without a dependency map, the DoQ cannot efficiently determine which specs require review when a canonical spec is updated — this weakens sign-off quality on spec-change PRs.
@@ -477,7 +429,7 @@ The canonical specification library has grown to ~22 documents with cross-refere
 **Owner:** Head of Specs Team
 **Source:** AUD-2026-03-21 Tier 3 — engine prompt compression deferred (roadmap_prompt 1,581 lines; release_planning_prompt 1,534 lines)
 **Effort:** L (~3–5 days)
-**Provisional-Target:** v2.5 (deprioritised in v2.5 planning queue by BLG-FE-09 — 2026-04-05)
+**Provisional-Target:** v2.6 (deprioritised in v2.5 planning queue by BLG-FE-09 — 2026-04-05)
 
 **Problem**
 `claude/system/roadmap_prompt.md` (1,581 lines) and `claude/system/release_planning_prompt.md` (1,534 lines) are the two largest engine prompts in the governance system. Inline schemas, repeated examples, and verbose explanatory prose are opportunities for extraction and tightening without removing instructional precision or hard gate logic.
@@ -503,7 +455,7 @@ The canonical specification library has grown to ~22 documents with cross-refere
 **Owner:** PMO Lead + Head of Specs Team
 **Source:** User session review — 2026-04-03
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
+**Provisional-Target:** v2.6
 
 **Problem**
 As cycles accumulate, documents are created in each cycle directory but there is no consolidated inventory of what exists across all closed cycles, nor a documented lifecycle for each artefact type (maintained vs. point-in-time). Without this review it is impossible to audit historical artefacts, identify stale documents, or enforce consistent maintenance practices going forward.
@@ -523,28 +475,7 @@ As cycles accumulate, documents are created in each cycle directory but there is
 
 ---
 
-### BLG-GOV-12 — Formalise backlog entry placement standard
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** User session review ��� 2026-04-03
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v2.5
-
-**Problem**
-New backlog items have been added to new numbered session sections (`## N. New Backlog Items — Session YYYY-MM-DD`) instead of under the existing type-based sections (§1–§8). This fragments the backlog, makes it hard to see all items of a given type, and creates unnecessary heading proliferation. The intended structure is one section per item type, not one section per session.
-
-**Scope**
-- Update `backlog-add` skill (via `lessons_learnt.md`) to enforce the rule: new items must be appended to the correct existing type section, not a new session section
-- Add a placement rule note to the top of `backlog.md` (below the standing notice)
-- No structural changes to existing session sections required (they remain as-is)
-
-**Acceptance Criteria**
-- `lessons_learnt.md` has an entry for `backlog-add` recording the placement rule
-- Future backlog-add runs append to the correct type section
-- Placement rule is visible at the top of `backlog.md`
-
----
+<!-- BLG-GOV-12 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
 
 ### BLG-GOV-14 — Governance Health Score
 **Priority:** P3 (Low)
@@ -552,7 +483,7 @@ New backlog items have been added to new numbered session sections (`## N. New B
 **Owner:** PMO Lead + Head of Specs Team
 **Source:** IDEA-pmo-lead-20260321-02 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-019)
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
+**Provisional-Target:** v2.6
 
 **Problem**
 BLG-GOV-09 (cycle velocity metric) shipped in v2.4 tracking story completion rate. However, governance health across other dimensions — header compliance rates, deferred patch accumulation, and outstanding action age — is assessed informally at each rebalance run. Without a structured indicator, governance drift accumulates invisibly between cycles and is typically discovered at post-ship closure rather than at planning time.
@@ -644,7 +575,7 @@ These are deliberate product decisions, not deferrals:
 **Owner:** Head of Engineering + Product Owner
 **Source:** User request — 2026-03-31
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
+**Provisional-Target:** v2.6
 
 **Problem**
 The application has no mechanism to roll out new features to a subset of users or environments. Any new capability ships immediately to all users with no ability to stage a rollout, run a controlled trial, or roll back a single feature without reverting the entire deployment. As the product grows this creates risk for experimental features and makes it impossible to validate new UI flows with a limited audience before full release.
@@ -664,42 +595,7 @@ The application has no mechanism to roll out new features to a subset of users o
 ---
 ---
 
-### BLG-FEAT-15 — Fee drag metric on Trade History
-**Priority:** P3 (Low)
-**Type:** Feature — Analytics
-**Owner:** Metrics Definitions & Analytics Owner + Head of Engineering
-**Source:** PO/Challenger debate 2026-04-02 — action A3 from slippage metric re-scope decision
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v2.5
-
-**Problem**
-The current "entry deviation" metric (fill price vs limit price at entry) is null for most trades because the fill price field is optional and only available at entry. There is no always-available metric that captures the friction cost of executing a trade. Traders cannot see how much of their proceeds are consumed by broker fees (commission, stamp duty, FX fee) without manually inspecting individual trade records.
-
-**Scope**
-- Add a **Fee Drag %** metric: `exit_fees / gross_proceeds × 100` — the percentage of gross exit proceeds consumed by transaction costs at exit
-- Surface as a new StatsCard on Trade History ("Avg Fee Drag") — distinct from existing Avg Entry Dev. card
-- Surface as a new column in TradeHistoryTable ("Fee Drag %") — always populated (exit_fees and gross_proceeds always stored)
-- Avg Fee Drag: mean of fee_drag_pct across all trades with non-zero gross_proceeds
-- Update `docs/specs/metrics_definitions.md` to define the formula canonically
-- Update `docs/specs/frontend/pages/trade_history.md` to spec the new column and StatsCard
-- Update `docs/specs/api_contracts/trade_endpoints.md` to add `fee_drag_pct` and `avg_fee_drag_pct` response fields
-- Update `docs/reference/openapi.yaml` for the new fields
-- No data model migration required — `exit_fees` and `gross_proceeds` already stored on `trade_history`
-
-**Acceptance Criteria**
-- `fee_drag_pct` field returned per trade in GET /trades response: `exit_fees / gross_proceeds × 100`, rounded to 2 dp
-- `avg_fee_drag_pct` field returned at response envelope level: mean across all trades with gross_proceeds > 0
-- "Avg Fee Drag" StatsCard visible on Trade History; displays `avg_fee_drag_pct` formatted as `+X.XX%`
-- Fee Drag % column present in TradeHistoryTable; always populated (no `—` for missing data)
-- `docs/specs/metrics_definitions.md` contains canonical definition of fee_drag_pct formula
-- Metric is labelled clearly as "Fee Drag %" throughout — never called "slippage"
-
-**Out of scope**
-- Entry-side fee drag (entry_fees / total_cost) — defer to future item
-- Round-trip friction (entry + exit fees combined) — defer to future item
-- Any change to existing entry deviation / slippage_pct metric
-
----
+<!-- BLG-FEAT-15 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
 
 ## 14. New Backlog Items — Session 2026-04-02
 
@@ -707,28 +603,7 @@ The current "entry deviation" metric (fill price vs limit price at entry) is nul
 
 ---
 
-### BLG-OPS-11 — Add `--max-time` to GitHub Actions cron curl calls
-**Priority:** P3 (Low)
-**Type:** Operational / Infrastructure
-**Owner:** Infrastructure & Operations Owner
-**Source:** InfraOps review of ST-10 Render tier decision record — 2026-04-02
-**Effort:** XS (<1h)
-**Provisional-Target:** v2.5
-
-**Problem**
-`alert-evaluation.yml` and `daily-snapshot.yml` both invoke `curl` with no `--max-time` flag. On Render free tier, the web service spins down after 15 minutes of inactivity. When the GitHub Actions cron fires and the service is cold, the curl call stalls silently for ~50–60 seconds before the cold start completes and the request is served. This is not a failure — the request eventually succeeds — but it creates confusing workflow logs with no visible progress and unpredictable job duration.
-
-**Scope**
-- Add `--max-time 120` to every `curl` call in `.github/workflows/alert-evaluation.yml`
-- Add `--max-time 120` to every `curl` call in `.github/workflows/daily-snapshot.yml`
-- No other changes required
-
-**Acceptance Criteria**
-- Both workflow files have `--max-time 120` on all curl invocations
-- The flag gives curl a 120-second hard ceiling — accommodating the worst-case cold start (~60s) plus endpoint execution time, with margin
-- If the service fails to respond within 120s the workflow step fails with a non-zero exit code rather than hanging indefinitely
-
----
+<!-- BLG-OPS-11 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
 
 ---
 
@@ -738,86 +613,7 @@ The current "entry deviation" metric (fill price vs limit price at entry) is nul
 
 ---
 
-### BLG-OPS-12 — Fix auth forwarding in POST /test/endpoints internal calls
-**Priority:** P2 (High)
-**Type:** Operational / Infrastructure
-**Owner:** Head of Engineering + Infrastructure & Operations Owner
-**Source:** ST-11 performance baseline review — 2026-04-03
-**Effort:** XS (<1h)
-**Provisional-Target:** v2.5
-
-**Problem**
-`backend/services/health_service.py` `test_all_endpoints()` makes internal HTTP calls to each endpoint without forwarding the `X-API-Key` header. All auth-protected endpoints return 401 and are reported as "fail". The System Status page "Run Tests" button currently shows 1/17 pass rate, making the system appear critically broken when all endpoints are in fact operational. This makes the monitoring tool unreliable and misleading.
-
-**Scope**
-- Modify `test_all_endpoints()` to accept and forward the API key in internal calls (e.g. accept `api_key: str = None` parameter, add `X-API-Key` header when provided)
-- Update `POST /test/endpoints` route in `main.py` to extract the `X-API-Key` from the incoming request and pass it through
-- Alternatively: add a middleware bypass for server-internal calls (e.g. `X-Internal: true` header checked before auth)
-
-**Acceptance Criteria**
-- `POST /test/endpoints` returns pass/fail based on actual endpoint response, not auth rejection
-- All correctly implemented endpoints report "pass" when the system is healthy
-- Success rate shown on System Status page reflects actual endpoint health
-
----
-
-### BLG-OPS-13 — Keep endpoint test list in sync with openapi.yaml
-**Priority:** P3 (Low)
-**Type:** Operational / Infrastructure
-**Owner:** Infrastructure & Operations Owner
-**Source:** ST-11 performance baseline review — 2026-04-03
-**Effort:** XS (<1h)
-**Provisional-Target:** v2.5
-
-**Problem**
-The endpoint test list in `backend/services/health_service.py` `test_all_endpoints()` was last updated for v2.2 (12 endpoints). Endpoints added in v2.3 (`/positions/compliance`, `/alerts/rules`, `/alerts/history`, `/notifications`, `/notifications/preferences`) and v2.4 (`/digest/weekly`, analytics endpoints) are not being tested. This coverage gap will worsen each sprint if not addressed structurally.
-
-**Scope**
-- Add all missing parameterless GET endpoints to the test list in `test_all_endpoints()`:
-  - `/positions/compliance`
-  - `/alerts/rules`
-  - `/alerts/history`
-  - `/notifications`
-  - `/notifications/preferences`
-  - `/digest/weekly`
-  - `/analytics/cohort?period=month`
-  - `/analytics/r-multiple-distribution`
-  - `/analytics/compliance-metrics`
-  - `/health/detailed`
-- Add a comment block above the list referencing `docs/reference/openapi.yaml` as the source of truth
-- Update the System Status page placeholder text ("Tests 17 endpoints") to match actual count
-
-**Acceptance Criteria**
-- All parameterless GET endpoints in `openapi.yaml` are present in the test list
-- A comment in `health_service.py` documents the sync obligation (update when endpoints are added)
-- System Status page "Run Tests" button tests the complete current endpoint set
-
----
-
-### BLG-BE-07 — Investigate high external baseline latency on DB-backed endpoints
-**Priority:** P2 (High)
-**Type:** Backend / Infrastructure
-**Owner:** Head of Engineering
-**Source:** ST-11 performance baseline — 2026-04-03
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
-**Status:** Closed — investigation complete (ST-06, v2.5). See `docs/ops/api_performance_baseline.md` §6. Follow-up items: BLG-OPS-14 (Supavisor), BLG-BE-07-FIX (portfolio connection refactor).
-
-**Problem**
-The ST-11 performance baseline shows all DB-backed endpoints have p50 response times of 1.2–6.0 seconds when measured from an external client against staging. The consistent latency floor of ~1,100ms across unrelated endpoints suggests this is Supabase free tier DB connection establishment overhead (no persistent pool), not query-level slowness. Two outliers warrant query-level investigation: `GET /portfolio` (p50=5,979ms) and `GET /notifications/preferences` (p50=4,631ms) are significantly slower than peers with similar expected query complexity.
-
-**Scope**
-- Profile `GET /portfolio` to identify why it is ~2× slower than other multi-query endpoints — likely involves ATR calculation or multiple sequential DB round-trips; optimise or parallelise
-- Profile `GET /notifications/preferences` to identify why a single-row lookup takes 4.6s — check for N+1 queries or missing index
-- Investigate Supabase connection pooling options for Render free tier (e.g. PgBouncer on Supabase, SQLAlchemy `pool_size`/`pool_pre_ping` settings)
-- Re-run the performance baseline after any fixes and update `docs/ops/api_performance_baseline.md`
-
-**Acceptance Criteria**
-- Root cause of `GET /portfolio` and `GET /notifications/preferences` outlier latency identified and documented
-- Either a fix is applied that brings the outliers within 2× of peer endpoint latency, OR a documented architectural constraint explains why optimisation is not feasible on free tier
-- Updated baseline document filed if connection pooling or query optimisation changes are made
-
----
+<!-- BLG-OPS-12, BLG-OPS-13, BLG-BE-07 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
 
 ### BLG-OPS-14 — Enable Supabase Supavisor connection pooling on staging and production
 **Priority:** P1 (High)
@@ -865,103 +661,7 @@ All DB-backed endpoints have p50 latency of 1.1–6s when measured externally be
 
 ---
 
-### BLG-FE-07 — Fix System Status endpoint categorisation for v2.3/v2.4 routes
-**Priority:** P4 (Low)
-**Type:** Frontend / UX
-**Owner:** Frontend Engineer
-**Source:** System Status page review — 2026-04-03
-**Effort:** XS (<1h)
-**Provisional-Target:** v2.5
-
-**Problem**
-`src/pages/SystemStatus.js` `categorizeEndpoint()` does not cover routes added in v2.3/v2.4. Endpoints matching `/alerts`, `/notifications`, and `/digest` all fall through to the "Other" category instead of being correctly grouped. When BLG-OPS-12 and BLG-OPS-13 are resolved and the test runner covers these endpoints, they will appear under a generic "Other" group rather than meaningful categories.
-
-**Scope**
-- Add categorisation rules to `categorizeEndpoint()` in `SystemStatus.js`:
-  - `/alerts` → "Alerts"
-  - `/notifications` → "Notifications"
-  - `/digest` → "Digest"
-  - `/health` → "Core" (already covered but verify `/health/detailed` maps correctly)
-  - `/validate` → should map to "Validation" (already covered)
-  - `/analytics` → "Analytics" (already covered — verify)
-- Add matching `categoryConfig` entries for "Alerts" and "Notifications" with appropriate icons and colours
-
-**Acceptance Criteria**
-- Alert endpoints appear under "Alerts" category in System Status Endpoint Tests panel
-- Notification endpoints appear under "Notifications" category
-- Digest endpoints appear under "Digest" category
-- No endpoints fall into "Other" except `/` (root) and any future unclassified additions
-
----
-
-### BLG-FE-08 — Fix Avg Slippage StatsCard gradient rendering
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Frontend Specifications & UX Owner
-**Source:** DEV-ST14-01 — delivery verification 2026-03-31__release-v2.4 — 2026-04-03
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v2.5
-**Deviation ref:** DEV-ST14-01 (P3 cosmetic — pre-accepted by Director of Quality 2026-03-20)
-
-**Problem**
-The Avg Slippage StatsCard on the Reports/Slippage Tracking page renders without a gradient background. The functional value is correct and colour-coded. The cosmetic deviation (gradient missing) was accepted as P3 by Director of Quality 2026-03-20 and recorded in `docs/testing/slippage_scenarios.md §5`. Note: prior reference BLG-FE-01 in the deviation note was stale (BLG-FE-01 is an archived v2.2 item). This item supersedes that reference.
-
-**Scope**
-- Apply the correct Tailwind gradient class to the Avg Slippage StatsCard component
-- Confirm rendering matches other StatsCard components on the Reports page
-
-**Acceptance Criteria**
-- Avg Slippage StatsCard renders with gradient background matching other StatsCard components
-- No regression to functional slippage value display or colour coding
-
----
-
-### BLG-GOV-10 — Fix governance_sync.yml batch push issue closure
-**Priority:** P2 (Medium)
-**Type:** Governance Process / DevOps
-**Owner:** DevOps
-**Source:** EPIC-06 merge observation — delivery verification 2026-03-31__release-v2.4 — 2026-04-03
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v2.5
-
-**Problem**
-`governance_sync.yml` uses `git log -1` to extract the issue number from a push event, so only the most recent commit's GitHub issue is closed automatically. When EPIC-06 was pushed as a 4-commit batch (ST-14, ST-15, ST-16, ST-17), only ST-17's issue (#164) was closed. Issues #161/162/163 remained open and required manual closure with explanatory comments. Any multi-commit push to an exec branch will silently leave earlier issues unclosed.
-
-**Scope**
-- Update `governance_sync.yml` to extract all commit messages in the push using `git log $BEFORE..$AFTER` (not `git log -1`)
-- Close every issue referenced in the push range, not just the last
-
-**Acceptance Criteria**
-- Multi-commit batch push to an exec branch closes all referenced GitHub issues
-- Single-commit push behaviour unchanged
-- Tested with a 2+ commit push on a test branch
-
----
-
-### TEST-GAP-EPIC-01-v24 — Create test scenarios for EPIC-01 backend correctness fixes
-**Priority:** P2 (Medium)
-**Type:** QA Coverage
-**Owner:** QA & Testing Owner
-**Source:** Delivery verification 2026-03-31__release-v2.4 — TSG-v24-01 — 2026-04-03
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v2.5
-
-**Problem**
-EPIC-01 shipped three backend correctness fixes (ST-01 ATR conversion, ST-02 notification deduplication, ST-03 initial stop price join) with no automated test scenarios. These are correctness-critical behaviours — ATR calculation errors caused the original BLG-BE-05 defect, and deduplication logic is invisible to manual review. Without scenarios, regressions in these areas will only be caught at staging observation or by user reports.
-
-**Scope**
-- Author test scenarios covering:
-  - SC-ATR-01: ATR pence→GBP conversion for .L tickers (always-on, no guard)
-  - SC-DEDUP-01: Notification dispatch deduplication (same rule, same day)
-  - SC-DEDUP-02: Evaluation pipeline not suppressed when dedup fires
-  - SC-STOP-01: stop_price field present on analytics endpoint response for trades with a known initial_stop
-- Add to appropriate scenario file(s) in `docs/testing/`
-- Reference in test scenario index
-
-**Acceptance Criteria**
-- Scenario file(s) present covering all four scenarios
-- Each scenario specifiable as executable against staging or unit test suite
-- Referenced in test scenario index
+<!-- BLG-FE-07, BLG-FE-08, BLG-GOV-10, TEST-GAP-EPIC-01-v24 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
 
 ---
 
@@ -977,7 +677,7 @@ EPIC-01 shipped three backend correctness fixes (ST-01 ATR conversion, ST-02 not
 **Owner:** PMO Lead
 **Source:** Groom backlog v2.4 post-ship (2026-04-04) — ID uniqueness scan FAIL
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v2.5
+**Provisional-Target:** v2.6
 
 **Problem**
 `claude/backlog/backlog_archive.md` contains 50 duplicate `###` item headers — items that were archived in multiple separate grooming passes across prior cycles. The ID uniqueness scan in `backlog_management_prompt.md §4.5` flags this as FAIL every run. Duplicate headers create ambiguity about which archived entry is authoritative and make the archive unreliable as a historical record. Product Owner confirmation is required before deduplication can proceed (per the health report outstanding action).
@@ -1002,7 +702,7 @@ EPIC-01 shipped three backend correctness fixes (ST-01 ATR conversion, ST-02 not
 **Owner:** Head of Engineering + Frontend Specifications & UX Owner
 **Source:** Initiative AI-SUM — gate cleared by Product Owner 2026-04-04 (SRB-v1.7)
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
+**Provisional-Target:** v2.6
 **§13 Status:** CONDITIONALLY COMPLIANT — SRB-v1.7 (2026-03-02). Mandatory conditions below are non-negotiable and must appear in AC verbatim.
 **Depends on:** Strategy Rules owner sign-off before any signal pipeline integration (SRB-v1.7 condition 3)
 
@@ -1031,7 +731,7 @@ Trade journals accumulate over time and users must scroll through individual ent
 **Owner:** Head of Engineering + Frontend Specifications & UX Owner
 **Source:** Initiative TECH-IND — gate cleared by Strategy Rules owner 2026-04-04
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
+**Provisional-Target:** v2.6
 **§13 Status:** COMPLIANT (display-only scope) — SRB-v1.7 Feature 3. Scoring changes are explicitly out of scope and require a new §13 review + strategy_rules.md version bump before pre-alignment.
 
 **Problem**
@@ -1067,7 +767,7 @@ Frontend (Signals page):
 **Owner:** Head of Engineering + Frontend Specifications & UX Owner
 **Source:** Initiative MKT-COR — gate cleared by Product Owner + Head of Engineering 2026-04-04
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.5
+**Provisional-Target:** v2.6
 **Pipeline decision:** Yahoo Finance (existing pipeline) confirmed sufficient — `backend/utils/pricing.py` already ingests SPY/FTSE via `check_market_regime()`; extend to `range: "2y"` for correlation lookback. No new vendor or API key required.
 
 **Problem**
