@@ -47,7 +47,7 @@ These rules apply in every session regardless of which engine is running:
 - **Never modify governance files** unless explicitly instructed by the relevant prompt: `claude/charter/`, `claude/strategy/`, `claude/system/`. Exception: `claude/system/prompt_change_log.md` may be appended by the roadmap engine's STEP 11 when action-now patches are applied under Head of Specs Team sign-off.
 - **Never merge a PR autonomously.** QA sign-off and Product Owner acceptance are always required.
 - **Delivery pressure does not override governance.** No timeline instruction changes a hard gate.
-- **Commit format is non-negotiable:** `[EPIC-xx][ST-xx] <description>` on all commits to `exec/**` branches.
+- **Commit format is non-negotiable:** `[EPIC-xx][ST-xx] <description>` on all commits to `exec/**` branches. **When two stories are implemented in the same commit, all story IDs must appear in the message:** `[EPIC-xx][ST-xx][ST-yy] <description>`. Omitting a story ID prevents `governance_sync.yml` from closing that story's GitHub issue automatically.
 - **PR title format is non-negotiable:** `[EPIC-xx] <description>` — required by `quality_gate.yml`.
 - **Bash commands that write files outside an active prompt's write scope are prohibited**, even as side-effects.
 - **Document section headings must be descriptive and human-readable.** Task IDs, story IDs, and ticket references (e.g. `TASK-11`, `ST-xx`) must never appear in headings. They belong only in metadata blocks, changelogs, or inline cross-references.
