@@ -140,3 +140,29 @@ Full fee drag metric implementation — backend, API contract, OpenAPI, frontend
 - Signed off by: Director of Quality
 - Date: 2026-04-06
 - Comments: ST-07 PASS. ST-08 PASS. ST-09 PASS (code review). One P3 observation — StatsCard component lacks tooltip prop; canonical spec requires ⓘ tooltip on Avg Fee Drag card ("Average Fee Drag = Total exit fees / Gross proceeds × 100" / "Higher % means a greater proportion of gross proceeds consumed by fees."). Not unique to ST-09; affects all StatsCards with ⓘ tooltip specs. Existing `subtitle="Exit fees / gross proceeds"` partially covers intent. Column header ⓘ implemented as native `title` attribute — pre-existing codebase pattern, consistent with Slippage column. No P0 or P1 deviations. Visual post-merge check: confirm amber renders, column placement correct, StatsCard present rightmost in summary bar. Backlog item recommended for StatsCard tooltip prop capability.
+
+**Visual staging test results — 2026-04-10**
+
+```
+Visual staging test completed by: Director of Quality
+Date: 2026-04-10
+Environment: [x] Staging (Render)
+Seed state confirmed: [x] Trades with fee drag data present  [ ] Null fee drag trade present (SKIP noted — no null/zero gross_proceeds trade in dataset; exit_fees=0 trade present, correctly shows +0.00% in amber)
+
+PATH-1 — Fee Drag % Column:
+  V-FD-01 (column present, correct position):       [x] PASS
+  V-FD-02 (amber +X.XX% cell format):               [x] PASS
+  V-FD-03 (null cell shows "—", muted colour):      [x] SKIP — no null/zero gross_proceeds trade in staging dataset
+  V-FD-04 (sort icon + sort behaviour):             [x] PASS  (fix: DataTable.js TableHead was dropping onClick — commit e65e023)
+
+PATH-2 — Avg Fee Drag StatsCard:
+  V-FD-05 (card present, rightmost, label correct): [x] PASS
+  V-FD-06 (amber gradient background):              [x] PASS
+  V-FD-07 (value format +X.XX%):                    [x] PASS
+  V-FD-08 (subtitle text visible):                  [x] PASS
+
+Overall visual verdict: [x] ALL PASS (V-FD-03 SKIP — no applicable data; not a code defect)
+Notes: P3 UX observations raised during staging: (1) 6-card summary bar visually crowded at standard viewport — BLG-FE-11 filed; (2) table column headers need styling review — BLG-FE-12 filed; (3) sort should extend to all columns or Head of UX defines strategy — BLG-FE-13 filed. Bug found and fixed during staging: DataTable.js TableHead dropped onClick for all sortable columns — fixed in commit e65e023, pushed and verified PASS on re-test.
+
+DoQ confirmation of visual sign-off: [x] Confirmed — full EPIC-03 visual AC sign-off granted
+```

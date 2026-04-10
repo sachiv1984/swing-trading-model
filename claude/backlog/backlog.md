@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-10 (DoQ staging session — BLG-FE-11 added: Trade History card layout squeeze; BLG-FE-12 added: table column header styling)
+**Last Updated:** 2026-04-10 (DoQ staging session — BLG-FE-11: card layout squeeze; BLG-FE-12: header styling; BLG-FE-13: flexible column sorting)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
@@ -96,6 +96,26 @@ Column headers in the Trade History table use the `DataTable.js` default: `text-
 - Head of UX defines target header style
 - Implementation updates `DataTable.js` `TableHead` base styles (or Trade History-specific overrides) to match spec
 - No regression to other tables using `DataTable.js`
+
+---
+
+### BLG-FE-13 — Flexible column sorting across Trade History table
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Owner
+**Source:** EPIC-03 DoQ staging run 2026-04-10 — only 3 columns currently sortable (Slippage, Fee Drag %, R-Multiple); all columns should be sortable or Head of UX should define the sorting strategy
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.6
+**Requires:** Head of UX review before implementation
+
+**Problem**
+Currently only Slippage, Fee Drag %, and R-Multiple columns are sortable in the Trade History table. Ticker, Entry Date, Exit Date, P&L, % P&L, and Exit Reason have no sort. Users may want to sort by any column (e.g. date, P&L, ticker). Head of UX should decide: (a) add sort to all columns, (b) define a curated set of sortable columns with clear visual affordance, or (c) adopt a more flexible sort pattern (e.g. multi-column sort, sort-by dropdown). The `DataTable.js TableHead` now supports `onClick` (fixed v2.5), so the infrastructure exists — this is a UX design and spec decision.
+
+**Acceptance Criteria**
+- Head of UX defines which columns are sortable and the sort interaction model
+- Implementation wires sort handlers for all specified columns
+- Sort icon treatment consistent across all sortable columns
+- No regression to existing Slippage, Fee Drag %, R-Multiple sort behaviour
 
 ---
 
