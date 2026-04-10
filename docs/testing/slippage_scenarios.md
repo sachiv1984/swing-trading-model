@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-04-02
+**Version:** 1.2
+**Last Updated:** 2026-04-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Derived from:** `docs/specs/frontend/pages/trade_history.md` v1.2; `docs/specs/api_contracts/trade_endpoints.md` v2.1.0; `docs/specs/data_model.md` v1.4+
 **Sprint:** 2026-03-31__release-v2.4 — ST-12 (closes TEST-GAP-EPIC-05-SLIP)
@@ -131,14 +131,15 @@ Spec reference: `docs/specs/frontend/pages/trade_history.md` §Slippage Column a
 
 ### DEV-ST14-01 — Avg Slippage StatsCard renders without gradient (cosmetic, P3)
 
-- **Description:** `StatsCard` component receives `color="cyan"` for Avg Slippage but the gradient map has no `"cyan"` key — card renders without gradient background.
+- **Status:** RESOLVED — v2.5 (2026-04-06)
+- **Description:** `StatsCard` component received `color="cyan"` (wrong prop name) instead of `gradient="cyan"`, causing the gradient background to not render. Fixed in two stages: commit `8650223` ([EPIC-03][ST-07]) changed to `gradient="violet"`; commit `67d7285` ([EPIC-05][ST-12]) updated to conditional `gradient={avg_slippage_pct <= 0 ? "emerald" : "rose"}` for data-present state. Current code uses valid gradient keys for all states (emerald/rose when data present, violet when null).
 - **Canonical requirement:** `docs/specs/frontend/pages/trade_history.md` §Avg Slippage StatsCard — StatsCard components render with gradient backgrounds consistent with other StatsCard components on the page.
 - **Priority:** P3 (cosmetic only)
-- **Target resolution release:** v2.5
+- **Resolved in:** v2.5 — ST-08
 - **Owner:** Frontend Specifications & UX Owner
-- **Impact on SC-SLIP-03:** SC-SLIP-03 passes functionally; gradient background rendering is a cosmetic failure. Mark as "Pass with notes" for P3 deviation.
+- **Impact on SC-SLIP-03:** Deviation resolved. SC-SLIP-03 passes fully (no "Pass with notes" qualification needed).
 - **Backlog reference:** BLG-FE-08 (supersedes stale BLG-FE-01 — that ID was archived v2.2; BLG-FE-08 filed at delivery verification 2026-03-31__release-v2.4 per LL-CL-v22-01)
-- **Acceptance record:** Director of Quality 2026-03-20
+- **Acceptance record:** Director of Quality 2026-03-20; resolved Director of Quality 2026-04-06
 
 ---
 

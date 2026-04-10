@@ -5,15 +5,15 @@
   "invoked_utc": "2026-04-06T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-06T01:00:00Z",
+  "last_updated_utc": "2026-04-10T20:15:00Z",
 
   "epics": {
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-04-05__release-v2.5/EPIC-04",
       "pr_number": 199,
-      "pr_status": "open",
-      "qa_signed_off": false,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-05__release-v2.5/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "docs/testing/atr_scenarios.md",
@@ -112,8 +112,8 @@
       "status": "done",
       "branch": "exec/2026-04-05__release-v2.5/EPIC-01",
       "pr_number": 200,
-      "pr_status": "open",
-      "qa_signed_off": false,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-05__release-v2.5/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "docs/testing/atr_scenarios.md",
@@ -191,11 +191,11 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-04-05__release-v2.5/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 201,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-05__release-v2.5/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
@@ -206,7 +206,7 @@
           "assigned_to": "engine",
           "github_issue": 189,
           "branch": "exec/2026-04-05__release-v2.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3a645e3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -228,7 +228,7 @@
           "assigned_to": "engine",
           "github_issue": 190,
           "branch": "exec/2026-04-05__release-v2.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3a645e3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -246,33 +246,33 @@
         "ST-06": {
           "title": "Investigate high external baseline latency on DB-backed endpoints",
           "classification": "delegated_backend",
-          "status": "delegated",
-          "assigned_to": "human",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 191,
           "branch": "exec/2026-04-05__release-v2.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3f31b1d",
           "delegation_record_id": "DEL-01",
-          "blocked_since_utc": "2026-04-06T03:00:00Z",
-          "unblock_criteria": "Root cause documented for both outlier endpoints; disposition confirmed (fix or architectural constraint); pooling options evaluated; findings filed at docs/ops/api_performance_baseline.md",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-10T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/api_performance_baseline.md",
             "claude/cycles/2026-04-05__release-v2.5/delegation_log.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Delegation record DEL-01 filed at claude/cycles/2026-04-05__release-v2.5/delegation_log.md. Outlier endpoints: GET /portfolio (p50=5979ms), GET /notifications/preferences (p50=4631ms). Head of Engineering to investigate root cause and evaluate pooling options."
+          "notes": "Head of Engineering investigation complete (2026-04-10). Root causes: GET /notifications/preferences — redundant ensure_alerts_tables() removed (commit 3f31b1d); GET /portfolio — 4 sequential psycopg2 connections at ~1.5s each (architectural; BLG-BE-07-FIX filed). BLG-OPS-14 (Supavisor, P1 XS) filed. Performance baseline updated to v1.1. DoQ PASS."
         }
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-04-05__release-v2.5/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 202,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-05__release-v2.5/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "docs/testing/slippage_scenarios.md"
@@ -281,66 +281,69 @@
         "ST-07": {
           "title": "Add --max-time to GitHub Actions curl calls",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 192,
           "branch": "exec/2026-04-05__release-v2.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "ce3775a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-04-06T04:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/alert-evaluation.yml",
+            ".github/workflows/daily-snapshot.yml"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "no prior spec applicable"
+          "notes": "--max-time 120 added to all 4 curl calls across both workflows (1 in alert-evaluation.yml, 3 in daily-snapshot.yml)."
         },
         "ST-08": {
           "title": "Fix Avg Slippage StatsCard gradient rendering",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 193,
           "branch": "exec/2026-04-05__release-v2.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "ce3775a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-06T04:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/testing/slippage_scenarios.md#5"
+            "docs/testing/slippage_scenarios.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "DEV-ST14-01 marked resolved in slippage_scenarios.md §5. Code fix was applied in prior sprints (commits 8650223 and 67d7285). ST-08 delivers documentation closure. Document version bumped 1.1→1.2."
         },
         "ST-09": {
           "title": "Fee drag metric on Trade History",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 194,
           "branch": "exec/2026-04-05__release-v2.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "ce3775a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-06T04:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/metrics_definitions.md",
             "docs/specs/frontend/pages/trade_history.md",
             "docs/specs/api_contracts/trade_endpoints.md",
             "docs/reference/openapi.yaml"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Full implementation: backend (trade_service.py fee_drag_pct + avg_fee_drag_pct), API contract (v2.2.0), openapi.yaml (v2.5.0), frontend table (Fee Drag % column, amber, sortable), frontend StatsCard (Avg Fee Drag, amber, +X.XX%), metrics_definitions.md (v1.9.0 fee drag section). Head of Specs Team co-authorship per design gate decision. DoQ frontend verification note filed in qa_evidence."
         }
       }
     }
@@ -348,12 +351,12 @@
 
   "blocked_items": [],
   "delegated_items": ["ST-06"],
-  "completed_items": ["ST-12", "ST-10", "ST-11", "ST-13", "ST-01", "ST-02", "ST-03", "ST-04", "ST-05"],
+  "completed_items": ["ST-12", "ST-10", "ST-11", "ST-13", "ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-04", "EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_merged": ["EPIC-01", "EPIC-03", "EPIC-04"],
+    "epics_pending": ["EPIC-02"],
     "all_merged": false
   },
 

@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.45
+**Version:** 3.46
 **Last Updated:** 2026-04-05
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.0)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.1)
 
 ### 8.1 Invocation
 
@@ -913,7 +913,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.7)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.8)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1300,8 +1300,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.25 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.5 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.0 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.7 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.1 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.8 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.2 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v2.7 |
@@ -1323,6 +1323,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.46 | 2026-04-06 | **ST-12 (EPIC-04, v2.5) — deferred governance prompt patches applied.** §8 source prompt execution_prompt.md v3.0→v3.1; §9 source prompt delivery_verification_prompt.md v1.7→v1.8. §14 Execution Engine Source → v3.1; Verification Engine Source → v1.8. Patches: (CF-2a) execution_prompt STEP 8 — governance file edit check added: if any §6-governed file was modified during sprint execution, append to prompt_change_log.md in same session. (CF-2b) delivery_verification_prompt STEP 8 — pre-seal gate added (LL-v2.4-DV-01): verify §9 DoQ and PO Date fields are non-blank before proceeding to STEP 8.5; surface for completion if blank. Authority: Head of Specs Team (ST-12, 2026-04-06). |
 | 3.33 | 2026-03-20 | **CLAUDE.md §8 — Cross-EPIC Merge Conflict Resolution added.** New section documents the sequential merge procedure for concurrent EPIC branches with shared-file conflicts: merge simpler EPIC first → merge updated main into remaining EPIC branch → resolve per-file rules (execution_state.json never revert done→blocked; openapi.yaml union + highest version; api_changelog.md combine descending; data_model.md all migrations ascending + highest version footer) → commit, push, confirm MERGEABLE, merge. §14 version 3.33. |
 | 3.31 | 2026-03-19 | **Correct preview URL pattern.** §8.2 and §8.5: `trading-assistant-api-pr-{N}` → `trading-assistant-api-staging-pr-{N}` (confirmed from live Render deployment). §14 version 3.31. Merge conflict resolution: renumbered v3.28→3.29→3.30→3.31 to accommodate main's v3.28 (ST-11 staging seed). |
 | 3.30 | 2026-03-18 | **ST-15 sign-off: preview environment mode clarified to manual + `render-preview` label.** §8.2 bullet updated — automatic provisioning corrected to manual mode; `render-preview` label required on PRs for EPICs with frontend changes. Infrastructure & Operations Owner sign-off recorded (enabled 2026-03-18). |

@@ -5,13 +5,13 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Switch } from "../components/ui/switch";
 import { Label } from "../components/ui/label";
-import { 
-  Activity, 
-  RefreshCw, 
-  Play, 
-  CheckCircle2, 
-  AlertTriangle, 
-  XCircle, 
+import {
+  Activity,
+  RefreshCw,
+  Play,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
   HelpCircle,
   ChevronDown,
   Database,
@@ -23,7 +23,10 @@ import {
   Calculator,
   Download,
   BarChart3,
-  Shield
+  Shield,
+  Bell,
+  BellRing,
+  Mail
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -34,6 +37,8 @@ export default function SystemStatus() {
   const [expandedComponents, setExpandedComponents] = useState({});
   const [expandedValidations, setExpandedValidations] = useState({});
   const [expandedCategory, setExpandedCategory] = useState({});
+  const [testResults, setTestResults] = useState(null);
+  const [validationResults, setValidationResults] = useState(null);
 
   // Get API URL from environment variable
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
@@ -43,6 +48,9 @@ export default function SystemStatus() {
     // Check more specific patterns first
     if (endpointName.includes('/analytics')) return 'Analytics';
     if (endpointName.includes('/validate')) return 'Validation';
+    if (endpointName.includes('/alerts')) return 'Alerts';
+    if (endpointName.includes('/notifications')) return 'Notifications';
+    if (endpointName.includes('/digest')) return 'Digest';
     if (endpointName.includes('/position') || endpointName.includes('/portfolio')) return 'Portfolio';
     if (endpointName.includes('/trades')) return 'Trading';
     if (endpointName.includes('/cash')) return 'Cash Management';
@@ -76,6 +84,9 @@ export default function SystemStatus() {
     'Market Data': { icon: Globe, color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/30' },
     'Analytics': { icon: BarChart3, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/30' },
     'Validation': { icon: Shield, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
+    'Alerts': { icon: Bell, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
+    'Notifications': { icon: BellRing, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
+    'Digest': { icon: Mail, color: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/30' },
     'Other': { icon: HelpCircle, color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/30' }
   };
 
@@ -110,7 +121,9 @@ export default function SystemStatus() {
   });
 
   // Fetch endpoint tests
-  const { data: testData, isLoading: testLoading, error: testError, mutate: runTests } = useMutation({
+  // React Query v5: useMutation renamed isLoading → isPending; data is stored in local state
+  // via onSuccess to guarantee re-render (React Query v5 mutation data reactivity change).
+  const { isPending: testLoading, error: testError, mutate: runTests } = useMutation({
     mutationFn: async () => {
       console.log(`Posting to: ${API_URL}/test/endpoints`);
       const response = await apiFetch(`${API_URL}/test/endpoints`, {
@@ -121,23 +134,24 @@ export default function SystemStatus() {
         },
         mode: 'cors',
       });
-      
+
       console.log('Test response status:', response.status);
-      
+
       if (!response.ok) {
         const text = await response.text();
         console.error('Test response error:', text);
         throw new Error(`HTTP ${response.status}: ${text}`);
       }
-      
+
       const data = await response.json();
       console.log('Test data:', data);
       return data;
-    }
+    },
+    onSuccess: (data) => setTestResults(data),
   });
 
   // Fetch validation data
-  const { data: validationData, isLoading: validationLoading, error: validationError, mutate: runValidation } = useMutation({
+  const { isPending: validationLoading, error: validationError, mutate: runValidation } = useMutation({
     mutationFn: async () => {
       console.log(`Posting to: ${API_URL}/validate/calculations`);
       const response = await apiFetch(`${API_URL}/validate/calculations`, {
@@ -148,19 +162,20 @@ export default function SystemStatus() {
         },
         mode: 'cors',
       });
-      
+
       console.log('Validation response status:', response.status);
-      
+
       if (!response.ok) {
         const text = await response.text();
         console.error('Validation response error:', text);
         throw new Error(`HTTP ${response.status}: ${text}`);
       }
-      
+
       const data = await response.json();
       console.log('Validation data:', data);
       return data;
-    }
+    },
+    onSuccess: (data) => setValidationResults(data),
   });
 
   const toggleComponentExpanded = (component) => {
@@ -185,16 +200,16 @@ export default function SystemStatus() {
   };
 
   const exportValidationCSV = () => {
-    if (!validationData?.data?.validations) return;
+    if (!validationResults?.data?.validations) return;
 
     const headers = ['Metric', 'Expected', 'Actual', 'Difference', 'Status', 'Timestamp'];
-    const rows = validationData.data.validations.map(v => [
+    const rows = validationResults.data.validations.map(v => [
       v.metric,
       v.expected,
       v.actual,
       v.diff,
       v.status,
-      validationData.data.timestamp || new Date().toISOString()
+      validationResults.data.timestamp || new Date().toISOString()
     ]);
 
     const csv = [
@@ -237,20 +252,20 @@ export default function SystemStatus() {
   };
 
   // Access nested summary object from backend response
-  const totalTests = testData?.summary?.total || 0;
-  const passedTests = testData?.summary?.passed || 0;
-  const failedTests = testData?.summary?.failed || 0;
-  const errorTests = testData?.summary?.errors || 0;
-  const successRate = testData?.summary?.success_rate?.toFixed(1) || "0.0";
+  const totalTests = testResults?.summary?.total || 0;
+  const passedTests = testResults?.summary?.passed || 0;
+  const failedTests = testResults?.summary?.failed || 0;
+  const errorTests = testResults?.summary?.errors || 0;
+  const successRate = testResults?.summary?.success_rate?.toFixed(1) || "0.0";
 
   // Validation summary
-  const totalValidations = validationData?.data?.summary?.total || 0;
-  const passedValidations = validationData?.data?.summary?.passed || 0;
-  const failedValidations = validationData?.data?.summary?.failed || 0;
-  const warnedValidations = validationData?.data?.summary?.warned || 0;
+  const totalValidations = validationResults?.data?.summary?.total || 0;
+  const passedValidations = validationResults?.data?.summary?.passed || 0;
+  const failedValidations = validationResults?.data?.summary?.failed || 0;
+  const warnedValidations = validationResults?.data?.summary?.warned || 0;
 
   // Group tests by category
-  const groupedTests = testData?.results ? groupTestsByCategory(testData.results) : {};
+  const groupedTests = testResults?.results ? groupTestsByCategory(testResults.results) : {};
 
   return (
     <div className="space-y-6">
@@ -466,7 +481,7 @@ export default function SystemStatus() {
             <h2 className="text-xl font-bold text-white">Endpoint Tests</h2>
             <p className="text-slate-400 text-sm mt-1">Testing {totalTests} endpoints across all system modules</p>
           </div>
-          {testData && (
+          {testResults && (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-400">Total:</span>
@@ -509,12 +524,12 @@ export default function SystemStatus() {
               <p className="text-slate-500 text-sm mt-1">This may take 10-30 seconds</p>
             </div>
           </div>
-        ) : !testData ? (
+        ) : !testResults ? (
           <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
             <div className="text-center">
               <Play className="w-10 h-10 text-slate-400 mx-auto mb-3" />
               <p className="text-slate-400">Click 'Run Tests' to verify all endpoints</p>
-              <p className="text-slate-500 text-sm mt-1">Tests {totalTests || '17'} endpoints</p>
+              <p className="text-slate-500 text-sm mt-1">Tests {totalTests || '26'} endpoints</p>
             </div>
           </div>
         ) : (
@@ -612,7 +627,7 @@ export default function SystemStatus() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-white">Data Validation</h2>
-          {validationData && (
+          {validationResults && (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-400">Total:</span>
@@ -655,7 +670,7 @@ export default function SystemStatus() {
               <p className="text-slate-500 text-sm mt-1">Validating calculations...</p>
             </div>
           </div>
-        ) : !validationData ? (
+        ) : !validationResults ? (
           <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
             <div className="text-center">
               <Calculator className="w-10 h-10 text-slate-400 mx-auto mb-3" />
@@ -672,7 +687,7 @@ export default function SystemStatus() {
           </div>
         ) : (
           <div className="space-y-3">
-            {validationData.data?.validations?.map((validation, index) => {
+            {validationResults.data?.validations?.map((validation, index) => {
               const config = testStatusConfig[validation.status] || testStatusConfig.error;
               const StatusIcon = config.icon;
               const isExpanded = expandedValidations[validation.metric];
