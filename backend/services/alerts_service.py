@@ -817,7 +817,9 @@ def _seed_preferences(portfolio_id: str, cur) -> None:
 
 def get_preferences(portfolio_id: str) -> Dict:
     """Return notification preferences, seeding defaults on first use."""
-    ensure_alerts_tables()
+    # ensure_alerts_tables() is called at application startup (main.py on_startup).
+    # Calling it here on every request wastes a full DB connection (~1.5s on Supabase
+    # free tier). Tables are guaranteed to exist after startup. ST-06 fix.
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -840,7 +842,7 @@ def update_preferences(portfolio_id: str, updates: Dict) -> Dict:
     Partial update of notification preferences.
     updates: {alert_type: {"email_enabled": bool}, ...}
     """
-    ensure_alerts_tables()
+    # ensure_alerts_tables() omitted — called at startup. ST-06 fix.
     invalid = [k for k in updates if k not in ALERT_TYPES]
     if invalid:
         raise ValueError(f"Unknown alert type key(s): {invalid}")

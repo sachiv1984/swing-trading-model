@@ -76,10 +76,10 @@ Created `docs/ops/signals_integration_review.md` mapping each section of the Sig
 
 | Dimension | Criteria | Status |
 |-----------|----------|--------|
-| Technical | Root cause of GET /portfolio and GET /notifications/preferences outliers documented; fix applied or architectural constraint documented; pooling options evaluated | Pending human (delegated) |
-| Quality | Updated baseline document filed at `docs/ops/api_performance_baseline.md` if any changes made | Pending human (delegated) |
+| Technical | Root cause of GET /portfolio and GET /notifications/preferences outliers documented; fix applied or architectural constraint documented; pooling options evaluated | Pass — DoQ 2026-04-10 |
+| Quality | Updated baseline document filed at `docs/ops/api_performance_baseline.md` if any changes made | Pass — v1.1 filed with §6 investigation findings |
 | Security | N/A | N/A |
-| Verification | DoQ sign-off after Head of Engineering files findings | Pending |
+| Verification | DoQ sign-off after Head of Engineering files findings | Pass — Head of Engineering sign-off in baseline v1.1 §8 — 2026-04-10 |
 
 ---
 
@@ -94,7 +94,7 @@ Created `docs/ops/signals_integration_review.md` mapping each section of the Sig
 |---------|---------------|----------------|--------------------|---------|-------|
 | ST-04 | src/pages/Reports.js | `docs/ops/reports_integration_review.md` — section mapping, gaps, proposals | Document exists with all sections mapped; gaps have follow-up items | Pass — DoQ 2026-04-10 | None |
 | ST-05 | src/pages/Signals.js | `docs/ops/signals_integration_review.md` — section mapping, gaps, proposals | Document exists with all sections mapped; gaps have follow-up items | Pass — DoQ 2026-04-10 | None |
-| ST-06 | docs/ops/api_performance_baseline.md | Delegation record filed; investigation assigned to Head of Engineering | Root cause documented; pooling options evaluated | Pending human | N/A (delegated) |
+| ST-06 | docs/ops/api_performance_baseline.md | Outlier root causes identified; fix applied to GET /notifications/preferences; pooling options evaluated; baseline v1.1 filed | Root cause documented; fix applied or constraint documented; pooling evaluated | Pass — DoQ 2026-04-10 | None |
 
 **QA test coverage:**
 - Scenarios run: Manual — code review of Reports.js and Signals.js; cross-reference with FastAPI routers and openapi.yaml
@@ -108,4 +108,4 @@ Created `docs/ops/signals_integration_review.md` mapping each section of the Sig
 - [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A (no frontend changes in this EPIC)
 - Signed off by: Director of Quality
 - Date: 2026-04-10
-- Comments: ST-04 PASS. ST-05 PASS. ST-06 N/A — delegated to Head of Engineering; sign-off deferred until findings filed. Both integration review documents are complete and well-structured: all page sections mapped, gaps clearly classified by severity, improvement proposals prioritised. Three follow-up backlog items filed as a result of this review: BLG-BE-08-GAP-01 (P1 — migrate Reports Performance tab to FastAPI), BLG-BE-09-GAP-01 (P1 — wire Signals mutations to FastAPI), BLG-BE-09-GAP-02 (P2 — replace Base44 cash balance with GET /cash/summary). Both parent items (BLG-BE-08, BLG-BE-09) marked shipped v2.5. No P0 or P1 deviations in delivered scope.
+- Comments: ST-04 PASS. ST-05 PASS. ST-06 PASS. All three stories complete. ST-04/05: both integration review documents complete, well-structured, all sections mapped, gaps classified by severity with prioritised improvement proposals. Follow-up items: BLG-BE-08-GAP-01 (P1), BLG-BE-09-GAP-01 (P1), BLG-BE-09-GAP-02 (P2). ST-06: Head of Engineering investigation complete — root cause of both outliers identified and documented. GET /notifications/preferences fix applied (redundant ensure_alerts_tables() removed — saves ~1.5s per request). GET /portfolio architectural constraint documented (4 sequential DB connections); Supavisor recommended (BLG-OPS-14 — XS effort). All pooling options evaluated. Baseline updated to v1.1. BLG-BE-07 closed; BLG-OPS-14 and BLG-BE-07-FIX filed. No P0 or P1 deviations across EPIC-02.

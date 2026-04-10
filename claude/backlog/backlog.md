@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-10 (DoQ EPIC-02 sign-off — BLG-BE-08/09 marked shipped v2.5; BLG-BE-08-GAP-01, BLG-BE-09-GAP-01, BLG-BE-09-GAP-02 filed from integration review findings)
+**Last Updated:** 2026-04-10 (ST-06 investigation — BLG-BE-07 closed; BLG-OPS-14 + BLG-BE-07-FIX filed; BLG-BE-08/09 shipped; gap items BLG-BE-08-GAP-01, BLG-BE-09-GAP-01/02 filed)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
@@ -584,6 +584,7 @@ The endpoint test list in `backend/services/health_service.py` `test_all_endpoin
 **Source:** ST-11 performance baseline — 2026-04-03
 **Effort:** M (~1–2 days)
 **Provisional-Target:** v2.5
+**Status:** Closed — investigation complete (ST-06, v2.5). See `docs/ops/api_performance_baseline.md` §6. Follow-up items: BLG-OPS-14 (Supavisor), BLG-BE-07-FIX (portfolio connection refactor).
 
 **Problem**
 The ST-11 performance baseline shows all DB-backed endpoints have p50 response times of 1.2–6.0 seconds when measured from an external client against staging. The consistent latency floor of ~1,100ms across unrelated endpoints suggests this is Supabase free tier DB connection establishment overhead (no persistent pool), not query-level slowness. Two outliers warrant query-level investigation: `GET /portfolio` (p50=5,979ms) and `GET /notifications/preferences` (p50=4,631ms) are significantly slower than peers with similar expected query complexity.
@@ -598,6 +599,52 @@ The ST-11 performance baseline shows all DB-backed endpoints have p50 response t
 - Root cause of `GET /portfolio` and `GET /notifications/preferences` outlier latency identified and documented
 - Either a fix is applied that brings the outliers within 2× of peer endpoint latency, OR a documented architectural constraint explains why optimisation is not feasible on free tier
 - Updated baseline document filed if connection pooling or query optimisation changes are made
+
+---
+
+### BLG-OPS-14 — Enable Supabase Supavisor connection pooling on staging and production
+**Priority:** P1 (High)
+**Type:** Infrastructure / Operations
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-06 Head of Engineering investigation — 2026-04-10
+**Effort:** XS (<1 hour — env var change + test)
+**Provisional-Target:** v2.6
+
+**Problem**
+All DB-backed endpoints have p50 latency of 1.1–6s when measured externally because each request opens a fresh `psycopg2.connect()` to Supabase (no persistent connection pool). Supabase provides a built-in connection pooler — Supavisor — available on all plans including free tier. Switching to the Supavisor connection string (port 6543, `?pgbouncer=true`) requires no code changes and reduces per-connection establishment cost from ~1.5s to ~50–100ms, projecting p50 improvements of 1–4s for DB-heavy endpoints.
+
+**Scope**
+- Update `DATABASE_URL` environment variable on both staging and production Render services to use the Supabase Supavisor pooler connection string (available in Supabase dashboard → Project Settings → Database → Connection Pooling → Transaction mode)
+- Verify all DB operations work correctly (psycopg2 is compatible with Supavisor in transaction mode)
+- Re-run performance baseline (7 calls per endpoint) and update `docs/ops/api_performance_baseline.md` v1.2
+
+**Acceptance Criteria**
+- Supavisor pooler connection string in use on staging and production
+- Baseline re-run shows p50 ≤ 500ms for at least the fast cluster endpoints; GET /portfolio and GET /notifications/preferences projected to improve by ≥1.5s
+- No regression to DB correctness (reads and writes verified)
+
+---
+
+### BLG-BE-07-FIX — Refactor get_portfolio_summary() to use a single DB connection
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Head of Engineering
+**Source:** ST-06 Head of Engineering investigation — 2026-04-10
+**Effort:** M (~half day)
+**Provisional-Target:** v2.6
+
+**Problem**
+`get_portfolio_summary()` in `backend/services/portfolio_service.py` makes 4 sequential `get_db()` calls within a single request (get_portfolio, get_positions, get_total_deposits_withdrawals, get_drawdown_fields). Each call opens a new psycopg2 connection. At ~1.5s per connection on Supabase free tier, this accounts for ~6s p50. After Supavisor is enabled (BLG-OPS-14), this drops but the 4 round-trips remain inefficient. Consolidating to a single connection would also reduce Supavisor pool utilisation.
+
+**Scope**
+- Refactor `get_portfolio_summary()` to accept or create a single DB connection and pass it to `get_portfolio()`, `get_positions()`, `get_total_deposits_withdrawals()`, and `get_drawdown_fields()` as a shared context
+- Update callsite signatures as needed — changes scoped to `portfolio_service.py` and `database.py` helper functions
+- Should be done after BLG-OPS-14 so the pooling improvement is measured independently
+
+**Acceptance Criteria**
+- `GET /portfolio` makes 1 DB connection per request, not 4
+- P50 for GET /portfolio after fix (with Supavisor) ≤ 400ms
+- No regression to portfolio data correctness
 
 ---
 
