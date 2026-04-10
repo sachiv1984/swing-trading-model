@@ -2,10 +2,10 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2026-04-03
-**Story:** ST-11 (BLG-OPS-05) — Document API endpoint performance baseline
-**Cycle:** 2026-03-31__release-v2.4
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation
+**Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
 
@@ -201,11 +201,61 @@ analytics endpoints) are not being tested. Backlog item: BLG-OPS-13.
 
 ---
 
-## 6. Monitor Criteria (Review at v2.5)
+## 6. ST-06 Outlier Investigation — Head of Engineering Findings (v2.5, 2026-04-10)
 
-- Re-run this baseline after staging is updated with v2.4 deployment — capture GET /digest/weekly
-- If BLG-OPS-12 is resolved: re-run with fixed internal test runner to get internal p50/p95
-- If BLG-BE-07 investigation reveals connection pooling fix: re-establish baseline with pooling enabled
+### 6.1 GET /notifications/preferences Outlier (p50=4,631ms)
+
+**Root cause identified:** `get_preferences()` in `backend/services/alerts_service.py` called `ensure_alerts_tables()` on every request before executing the actual query. `ensure_alerts_tables()` opens a full DB connection and executes 5 DDL statements (`CREATE TABLE IF NOT EXISTS` × 3, `CREATE INDEX IF NOT EXISTS` × 2). This adds a complete DB connection round-trip (~1.5s on Supabase free tier) to every `GET /notifications/preferences` and `PATCH /notifications/preferences` request.
+
+**Why this is redundant:** `ensure_alerts_tables()` is already called at application startup via the `@app.on_event("startup")` hook in `main.py` (line 167). Tables are guaranteed to exist after the startup event completes. The per-request call was a defensive guard from early development that was never removed.
+
+**Fix applied:** Removed `ensure_alerts_tables()` calls from `get_preferences()` and `update_preferences()` in `alerts_service.py`. The startup hook remains. Expected latency reduction: ~1.5s per request. Committed in `[EPIC-02][ST-06]` fix commit.
+
+**Projected p50 after fix:** ~3,100ms (one DB connection for `_get_portfolio_id()` + one for the preferences query, vs. three before). Still above the 500ms external threshold — remaining latency is structural (two sequential `get_db()` calls = two Supabase connection establishment round-trips). Further reduction requires connection pooling.
+
+### 6.2 GET /portfolio Outlier (p50=5,979ms)
+
+**Root cause identified:** `get_portfolio_summary()` in `backend/services/portfolio_service.py` makes **3–4 sequential `get_db()` calls** within a single request, each opening a fresh `psycopg2.connect()` to Supabase:
+
+1. `get_portfolio()` → 1 connection (SELECT from portfolios)
+2. `get_positions()` → 1 connection (SELECT from positions)
+3. `get_total_deposits_withdrawals()` → 1 connection (SELECT/SUM from cash_transactions)
+4. `get_drawdown_fields()` → 1 connection (SELECT peak from portfolio_snapshots)
+
+With open positions, additionally: `get_current_price()` per position → external Yahoo Finance HTTP calls (not DB, but serial network I/O).
+
+At ~1.5s per Supabase connection establishment on the free tier: 4 connections × 1.5s = ~6s baseline before any query execution. This matches the observed p50=5,979ms exactly.
+
+**Fix assessment:** Refactoring `get_portfolio_summary()` to use a single shared `get_db()` connection would reduce the 4 connections to 1, projecting ~1.5–2s p50 (dominated by one connection establishment + query execution + FX call). This is a medium-effort backend refactor — filed as BLG-BE-07-FIX below.
+
+**Architectural constraint:** Without connection pooling, each FastAPI handler that calls multiple `get_db()` functions pays connection cost proportional to the number of calls. The `database.py` `get_db()` pattern (new connection per call, closed on exit) is correct for correctness but not for performance at Supabase free tier. This is a systemic issue, not a per-endpoint defect.
+
+### 6.3 Connection Pooling Options Evaluated
+
+| Option | Description | Feasibility | Effort | Expected Impact |
+|--------|-------------|-------------|--------|----------------|
+| **Supabase Supavisor** | Built-in connection pooler available on all Supabase plans. Change `DATABASE_URL` to the pooler string (port 6543, `?pgbouncer=true`). No code changes. | ✅ Available on free tier | XS (env var change + test) | Reduces per-connection cost from ~1.5s to ~50–100ms. All endpoints improve. p50 for DB-backed endpoints drops from ~1.1–6s to ~150–400ms |
+| **psycopg2.pool.ThreadedConnectionPool** | Server-side pool in the FastAPI process. Reuses connections across requests. Requires refactoring `get_db()` to borrow/return from pool. | ✅ Available (no new deps) | M (~1 day) | Similar impact to Supavisor for Render single-worker; adds complexity; less effective if multiple workers |
+| **SQLAlchemy connection pool** | Replace psycopg2 direct calls with SQLAlchemy engine pool. Heavier migration. | ⚠️ High effort | L (2–3 days) | Similar impact; not justified given Supavisor availability |
+| **PgBouncer (self-hosted)** | External pooler. Requires separate infrastructure. | ❌ Not feasible on Render free tier | XL | N/A |
+
+**Recommendation:** Enable Supabase Supavisor first (XS effort, no code changes) — this is the highest-value/lowest-cost fix and addresses the systemic per-request connection overhead for all endpoints. Separately, refactor `get_portfolio_summary()` to use a single connection (BLG-BE-07-FIX). Filed as backlog items below.
+
+### 6.4 Backlog Items from ST-06 Investigation
+
+| ID | Title | Priority | Effort |
+|----|-------|----------|--------|
+| BLG-BE-07-FIX | Refactor get_portfolio_summary() to use single DB connection | P2 | M |
+| BLG-OPS-14 | Enable Supabase Supavisor connection pooling on staging and production | P1 | XS |
+
+---
+
+## 7. Monitor Criteria (Review at v2.6)
+
+- ~~Re-run baseline after v2.4 staging — GET /digest/weekly~~ v2.5 staging confirmed 26/26 endpoints including /digest/weekly (ST-02 EPIC-01)
+- ~~BLG-OPS-12 auth forwarding fix~~ Resolved — ST-01 (v2.5 EPIC-01); re-run internal baseline when opportunity allows
+- ~~BLG-BE-07 investigation~~ Complete — see §6 above. BLG-OPS-14 (Supavisor) and BLG-BE-07-FIX filed
+- Re-run this baseline after Supavisor is enabled (BLG-OPS-14) — expect p50 to drop from 1.1–6s to 150–400ms for DB-backed endpoints
 - Flag any endpoint that regresses more than 2× its current p50 (exceeds 3-round-trip spike threshold)
 
 ---
@@ -232,8 +282,38 @@ Signed: [x] Infrastructure & Operations Owner — 2026-04-03
 
 ---
 
-## 8. Document History
+## 8. Sign-Off — ST-06 (Head of Engineering)
+
+```
+Head of Engineering
+Date: 2026-04-10
+
+ST-06 investigation complete. Root causes of both outliers identified and documented in §6.
+
+GET /notifications/preferences (p50=4,631ms): ensure_alerts_tables() called on every request
+despite startup hook guarantee. Fix applied: calls removed from get_preferences() and
+update_preferences(). Expected ~1.5s reduction per request.
+
+GET /portfolio (p50=5,979ms): 4 sequential psycopg2.connect() calls per request.
+Architectural constraint on Supabase free tier without pooling. Fix path: enable Supavisor
+(BLG-OPS-14 — XS, no code changes) + refactor get_portfolio_summary() to single connection
+(BLG-BE-07-FIX — M effort).
+
+Connection pooling options evaluated: Supavisor recommended as primary fix (XS effort, highest
+impact, available on free tier). psycopg2 pool is viable alternative; SQLAlchemy and PgBouncer
+not recommended at this scale.
+
+2 new backlog items filed: BLG-OPS-14, BLG-BE-07-FIX.
+BLG-BE-07 (investigation item) closed — investigation complete.
+
+Signed: [x] Head of Engineering — 2026-04-10
+```
+
+---
+
+## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.1 | 2026-04-10 | Head of Engineering | ST-06 investigation: §6 outlier analysis, §8 sign-off, §7 monitor criteria updated, BLG-OPS-14 + BLG-BE-07-FIX filed |
 | 1.0 | 2026-04-03 | Infrastructure & Operations Owner | Initial baseline — v2.4, 21 endpoints measured |
