@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — 3 new items: BLG-FE-09, BLG-SPEC-D17, BLG-GOV-14; 2 stale targets updated)
+**Last Updated:** 2026-04-06 (Director of Quality session — BLG-FE-10 added; EPIC-03 DoQ sign-off observation)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
@@ -58,6 +58,32 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 ---
 
 ## 3. Frontend & UX Backlog
+
+---
+
+### BLG-FE-10 — Add tooltip prop to StatsCard component
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Owner
+**Source:** EPIC-03 DoQ sign-off observation — 2026-04-06 — `trade_history.md` v1.5 §Avg Fee Drag requires ⓘ tooltip text on Avg Fee Drag card; StatsCard component has no tooltip prop
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.6
+
+**Problem**
+`StatsCard.js` supports `title`, `value`, `subtitle`, `icon`, `trend`, `trendValue`, and `gradient` — but not a hover tooltip (ⓘ icon). The canonical spec for the Avg Fee Drag StatsCard (`trade_history.md` v1.5 §Avg Fee Drag) requires an ⓘ info icon with tooltip text: *"Average Fee Drag = Total exit fees / Gross proceeds × 100"* / *"Higher % means a greater proportion of gross proceeds consumed by fees."* This cannot be delivered without a component-level capability change. The Avg Slippage StatsCard has the same gap. Any future StatsCard spec that includes a tooltip ⓘ will hit this limitation.
+
+**Scope**
+- Add an optional `tooltip` prop to `StatsCard.js` — when provided, renders a small ⓘ icon adjacent to the `title`; hovering shows the tooltip text
+- Use a lightweight approach (e.g. `title` attribute on the ⓘ icon, or a Tailwind tooltip pattern) consistent with the existing component style
+- Wire `tooltip` on the Avg Fee Drag StatsCard in `TradeHistory.js`: `"Average Fee Drag = Total exit fees / Gross proceeds × 100 — Higher % means a greater proportion of gross proceeds consumed by fees."`
+- Wire `tooltip` on the Avg Entry Dev. StatsCard in `TradeHistory.js` if a tooltip spec exists for it (check `trade_history.md`)
+- Update `docs/specs/frontend/pages/trade_history.md` if any spec references are now fully met
+
+**Acceptance Criteria**
+- `StatsCard` accepts an optional `tooltip` prop (string); when absent, no ⓘ icon renders (no regression)
+- When `tooltip` is provided, an ⓘ icon is visible adjacent to the card title; hovering reveals the tooltip text
+- Avg Fee Drag StatsCard in Trade History displays the canonical tooltip text from `trade_history.md` v1.5 §Avg Fee Drag
+- No regression to any other StatsCard usage across the app
 
 ---
 
@@ -143,6 +169,139 @@ The Signals page is not fully integrated with the backend. Some sections may be 
 ## 5. QA & Test Automation Backlog
 
 ---
+
+### BLG-QA-07 — Fee drag Playwright spec (Trade History)
+**Priority:** P2 (Medium)
+**Type:** Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-09 (v2.5 EPIC-03) — fee drag metric delivered; no Playwright spec authored
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.6
+**Scenarios covered:** SC-FEE-01 through SC-FEE-04 (`docs/testing/fee-drag-scenarios.md` v1.0)
+
+**Problem**
+ST-09 delivered the fee drag metric (column + StatsCard) on Trade History. The Trade History page already has `slippage-tracking.spec.js` as a Playwright model. No equivalent spec exists for fee drag — SC-FEE-01 through SC-FEE-04 are classified Automated in the scenario doc but the spec file has not been written.
+
+**Scope**
+- Write `tests/e2e/fee-drag-trade-history.spec.js`
+- Mock `GET /trades` via `page.route()` with seed data covering: `fee_drag_pct` positive value, `avg_fee_drag_pct` non-null, three trades for sort testing
+- Cover SC-FEE-01 (column present, header text, tooltip), SC-FEE-02 (amber `+X.XX%` cell), SC-FEE-03 (Avg Fee Drag StatsCard value and label), SC-FEE-04 (sort ascending/descending)
+- Follow the `slippage-tracking.spec.js` mock pattern exactly — `page.route()`, HashRouter navigation, `page.waitForSelector('table')`
+
+**Acceptance Criteria**
+- `tests/e2e/fee-drag-trade-history.spec.js` exists covering SC-FEE-01 to SC-FEE-04
+- All 4 scenarios pass in headless Playwright (Chromium)
+- Spec runs cleanly alongside `slippage-tracking.spec.js` without interference
+- Scenario doc `fee-drag-scenarios.md` updated: each SC-FEE-01–04 automation entry updated from pending to confirmed spec file path
+
+---
+
+### BLG-QA-08 — Pytest unit tests for fee drag backend logic
+**Priority:** P2 (Medium)
+**Type:** Test Automation
+**Owner:** QA & Testing Owner
+**Source:** ST-09 (v2.5 EPIC-03) — SC-FEE-05 and SC-FEE-06 classified Automated but test file not yet written
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.6
+**Scenarios covered:** SC-FEE-05, SC-FEE-06 (`docs/testing/fee-drag-scenarios.md` v1.0)
+
+**Problem**
+The fee drag formula and null guard in `trade_service.py` are correctness-critical (a zero gross_proceeds without a null guard would raise `ZeroDivisionError` in production). SC-FEE-05 and SC-FEE-06 are classified as automatable pytest unit tests but `tests/test_trade_service.py` does not yet exist.
+
+**Scope**
+- Write `tests/test_trade_service.py`
+- Stub DB imports using the same pattern as `test_alerts_service.py` (module-level stub via `sys.modules`)
+- SC-FEE-05: assert `fee_drag_pct = 0.38` for `exit_fees = 7.50`, `gross_proceeds = 1975.00`
+- SC-FEE-06a: assert `fee_drag_pct = None` when `gross_proceeds = None`
+- SC-FEE-06b: assert `fee_drag_pct = None` when `gross_proceeds = 0` (ZeroDivisionError guard)
+- Include `avg_fee_drag_pct` aggregate test: mean of non-null values, excludes nulls
+
+**Acceptance Criteria**
+- `tests/test_trade_service.py` exists and runs cleanly under `pytest` (no collection errors)
+- SC-FEE-05 and SC-FEE-06 assertions pass
+- No live DB call — all DB dependencies stubbed at import time
+- Added to clean test suite runnable in CI alongside `test_stop_reconciliation.py` and `test_watchlist_service.py`
+
+---
+
+### BLG-QA-09 — Fix 4 pytest collection errors to unblock existing test suite
+**Priority:** P1 (High)
+**Type:** Test Infrastructure
+**Owner:** QA & Testing Owner + Head of Engineering
+**Source:** `docs/testing/test_automation_readiness.md` v1.0 §4 — Phase 1 (identified v2.2; still unresolved as of v2.5)
+**Effort:** S (~2–3 hours total)
+**Provisional-Target:** v2.6
+
+**Problem**
+Four test files fail at collection time, making 0% of integration tests runnable and blocking CI automation:
+1. `test_portfolio_integration.py` and `test_reports_integration.py`: `API_TITLE` not exported from `backend/config.py` — XS fix
+2. `test_service_coverage.py`: `update_position` not found in `database.py` — needs stub or restore — S fix
+3. `test_golden_outputs.py`: requires `DATABASE_URL` env var at import time — needs `conftest.py` stub — S fix
+
+All four issues were documented in `test_automation_readiness.md` v1.0 Phase 1. None have been actioned.
+
+**Scope**
+- Fix 1: Add `API_TITLE = "Trading Assistant API"` to `backend/config.py`
+- Fix 2: Stub `update_position` in `test_service_coverage.py` using the `sys.modules` pattern from `test_alerts_service.py`
+- Fix 3: Add `tests/conftest.py` that sets `os.environ["DATABASE_URL"] = "postgresql://test"` before collection
+- Run full `pytest tests/` after fixes and confirm all files collect without error
+
+**Acceptance Criteria**
+- `pytest tests/` collects all test files without collection errors
+- All previously clean tests (`test_stop_reconciliation.py`, `test_watchlist_service.py`) still pass after changes
+- `conftest.py` does not interfere with test isolation (dummy DATABASE_URL not used in test logic)
+
+---
+
+### BLG-QA-10 — Add CI test runner workflow (ci-tests.yml)
+**Priority:** P2 (Medium)
+**Type:** CI / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** `docs/testing/test_automation_readiness.md` v1.0 §4 Phase 1 — identified v2.2; still absent as of v2.5
+**Effort:** S (~1 hour)
+**Provisional-Target:** v2.6
+**Dependency:** BLG-QA-09 (collection errors should be fixed first for full value, but clean tests can run immediately)
+
+**Problem**
+No GitHub Actions workflow runs `pytest` or `npx playwright test` on PR. Tests exist but are only run manually. A PR that breaks `test_stop_reconciliation.py` (stop formula regression) or a Playwright spec (frontend regression) would pass all CI gates and merge silently.
+
+**Scope**
+- Add `.github/workflows/ci-tests.yml`
+- Phase A (can ship immediately): run `pytest tests/test_stop_reconciliation.py tests/test_watchlist_service.py` — the two currently clean unit test files
+- Phase B (after BLG-QA-09): expand to `pytest tests/` (all files once collection errors fixed)
+- Phase C (future): add `npx playwright test` for Playwright specs
+- Workflow triggers: `on: pull_request` targeting `main`
+
+**Acceptance Criteria**
+- `.github/workflows/ci-tests.yml` exists and runs on PR
+- Phase A: at minimum `test_stop_reconciliation.py` and `test_watchlist_service.py` run on every PR
+- A deliberate formula break in `position_manager.py` causes the workflow to fail
+- Workflow does not require `DATABASE_URL` secret for Phase A tests (clean tests have no DB dependency)
+
+---
+
+### BLG-QA-11 — System Status Playwright spec (endpoint list sync + category routing)
+**Priority:** P3 (Low)
+**Type:** Test Automation
+**Owner:** QA & Testing Owner
+**Source:** v2.5 ST-02 and ST-03 (EPIC-01) — endpoint list and category routing verified by code review only; no Playwright spec
+**Effort:** M (~1 day)
+**Provisional-Target:** v2.6
+
+**Problem**
+ST-02 added 10 missing endpoints to the health service and updated the SystemStatus.js count placeholder from 17 to 26. ST-03 added Alerts, Notifications, Digest category routing. Both were verified by code review only — no Playwright spec asserts the UI renders the categories correctly or that the count displays as 26.
+
+**Scope**
+- Write `tests/e2e/system-status.spec.js`
+- Mock `POST /test/endpoints` response with controlled endpoint results covering `/alerts/rules`, `/notifications`, `/digest/weekly` (at minimum)
+- Assert: Alerts category section visible; Notifications section visible; Digest section visible
+- Assert: total endpoint count shown is ≥ 26 (or exact 26 if count is hardcoded in placeholder)
+- Assert: none of the alert/notification/digest endpoints appear under "Other"
+
+**Acceptance Criteria**
+- `tests/e2e/system-status.spec.js` exists covering category routing and count display
+- All assertions pass in headless Playwright
+- Mock routes match the actual API path called by SystemStatus.js (`POST /test/endpoints`)
 
 
 ## 6. Operations & Infrastructure Backlog
