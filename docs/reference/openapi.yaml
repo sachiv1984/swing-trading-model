@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 2.4.0
+  version: 2.5.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1884,6 +1884,7 @@ components:
         Canonical nested field definitions: docs/specs/api_contracts/trade_endpoints.md
         v1.9.0: trade objects include holding_days; both pnl_pct and pnl_percent returned for compatibility.
         v2.1.0 (ST-14): avg_slippage_pct added to top-level summary; fill_price and slippage_pct added per trade.
+        v2.2.0 (ST-09): avg_fee_drag_pct added to top-level summary; fee_drag_pct added per trade.
       properties:
         total_trades: { type: integer }
         win_rate: { type: number }
@@ -1892,6 +1893,10 @@ components:
           type: number
           nullable: true
           description: "Mean slippage across all trades with fill_price recorded. null when no trades have fill_price."
+        avg_fee_drag_pct:
+          type: number
+          nullable: true
+          description: "Mean fee drag across all trades where gross_proceeds > 0. exit_fees / gross_proceeds * 100. null when no qualifying trades."
         trades:
           type: array
           items:
@@ -1913,6 +1918,10 @@ components:
                 type: number
                 nullable: true
                 description: "(fill_price − entry_price) / entry_price * 100. Negative = favourable. null when fill_price is null."
+              fee_drag_pct:
+                type: number
+                nullable: true
+                description: "exit_fees / gross_proceeds * 100. Always non-negative. null when gross_proceeds is null or zero."
               pnl: { type: number }
               pnl_pct: { type: number }
               pnl_percent: { type: number, description: "Alias of pnl_pct for backward compatibility" }

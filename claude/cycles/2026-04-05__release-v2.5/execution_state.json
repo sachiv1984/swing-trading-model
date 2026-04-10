@@ -1,0 +1,365 @@
+{
+  "cycle_id": "2026-04-05__release-v2.5",
+  "sprint_goal": "Establish an operational baseline for v2.5 by sealing Sprint 1 governance debt (prompt patches, batch push fix, backlog placement rule) and System Status reliability, then completing backend integration documentation and targeted quick-win features in Sprint 2.",
+  "backlog_slice_source": "claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md",
+  "invoked_utc": "2026-04-06T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-04-06T04:00:00Z",
+
+  "epics": {
+    "EPIC-04": {
+      "status": "done",
+      "branch": "exec/2026-04-05__release-v2.5/EPIC-04",
+      "pr_number": 199,
+      "pr_status": "open",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-04-05__release-v2.5/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "docs/testing/atr_scenarios.md",
+        "docs/testing/dedup_scenarios.md",
+        "docs/testing/stop_price_scenarios.md"
+      ],
+      "stories": {
+        "ST-12": {
+          "title": "Apply v2.4 deferred governance prompt patches",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 197,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-04",
+          "commit_sha": "21bb453",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/execution_prompt.md",
+            "claude/system/delivery_verification_prompt.md",
+            "claude/system/OPERATIONAL_GUIDE.md",
+            "claude/system/prompt_change_log.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-10": {
+          "title": "Fix governance_sync.yml batch push issue closure",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 195,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-04",
+          "commit_sha": "01f5e9c",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "no prior spec applicable"
+        },
+        "ST-11": {
+          "title": "Formalise backlog entry placement standard",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 196,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-04",
+          "commit_sha": "dbb4551",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "AC pre-met on main. lessons_learnt.md backlog-add entry at line 34-35 (committed ~2026-04-04 via v2.4 post-ship closure). backlog.md placement rule at lines 15-16 present on main. Prior commit SHA dbb4551 on main."
+        },
+        "ST-13": {
+          "title": "Create test scenarios for EPIC-01 correctness fixes",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 198,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-04",
+          "commit_sha": "aacbb50",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/atr_scenarios.md",
+            "docs/testing/dedup_scenarios.md",
+            "docs/testing/stop_price_scenarios.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-04-05__release-v2.5/EPIC-01",
+      "pr_number": 200,
+      "pr_status": "open",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-04-05__release-v2.5/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "docs/testing/atr_scenarios.md",
+        "docs/testing/dedup_scenarios.md",
+        "docs/testing/stop_price_scenarios.md"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Fix auth forwarding in POST /test/endpoints",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 186,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-01",
+          "commit_sha": "230643b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T02:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/services/health_service.py",
+            "backend/routers/test.py"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "AC spec ref says health_service.py; actual System Status page uses routers/test.py — both fixed. Also added 10 missing endpoints (ST-02 AC) to health_service.py in same commit for atomic change."
+        },
+        "ST-02": {
+          "title": "Sync endpoint test list with openapi.yaml",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 187,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-01",
+          "commit_sha": "a6a74c0",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T02:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml",
+            "backend/services/health_service.py",
+            "backend/routers/test.py",
+            "src/pages/SystemStatus.js"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Placeholder updated from '17' to '26'. ST-03 categorisation changes bundled in this commit (ST-02 commit a6a74c0)."
+        },
+        "ST-03": {
+          "title": "Fix System Status endpoint categorisation for v2.3/v2.4 routes",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 188,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-01",
+          "commit_sha": "a6a74c0",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T02:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "src/pages/SystemStatus.js"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Changes committed under ST-02 commit (a6a74c0) — categorizeEndpoint, categoryConfig (Alerts, Notifications, Digest), icon imports (Bell, BellRing, Mail). No P1/P2 deviation — bundling was pragmatic (same file, adjacent lines). DoQ verification: code review confirming category routing correct."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "done",
+      "branch": "exec/2026-04-05__release-v2.5/EPIC-02",
+      "pr_number": 201,
+      "pr_status": "open",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-04-05__release-v2.5/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Review and document Reports page backend integration",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 189,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-02",
+          "commit_sha": "3a645e3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T03:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "src/pages/Reports.js",
+            "docs/ops/reports_integration_review.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Review document at docs/ops/reports_integration_review.md. Key finding: Performance tab uses Base44 SDK (not FastAPI); Tax Year P&L tab fully wired to /reports/tax-year. 2 gaps identified (GAP-R01, GAP-R02); 3 improvement proposals; 1 follow-up backlog item BLG-BE-08-GAP-01 filed in document."
+        },
+        "ST-05": {
+          "title": "Review and document Signals page backend integration",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 190,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-02",
+          "commit_sha": "3a645e3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T03:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "src/pages/Signals.js",
+            "docs/ops/signals_integration_review.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Review document at docs/ops/signals_integration_review.md. Key finding: GET /signals and GET /market/status correctly wired; all mutations (dismiss, create position) and cash balance use Base44 SDK. 3 gaps identified (GAP-S01–S03); 3 improvement proposals; 2 follow-up backlog items BLG-BE-09-GAP-01 and BLG-BE-09-GAP-02 filed."
+        },
+        "ST-06": {
+          "title": "Investigate high external baseline latency on DB-backed endpoints",
+          "classification": "delegated_backend",
+          "status": "delegated",
+          "assigned_to": "human",
+          "github_issue": 191,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-01",
+          "blocked_since_utc": "2026-04-06T03:00:00Z",
+          "unblock_criteria": "Root cause documented for both outlier endpoints; disposition confirmed (fix or architectural constraint); pooling options evaluated; findings filed at docs/ops/api_performance_baseline.md",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/ops/api_performance_baseline.md",
+            "claude/cycles/2026-04-05__release-v2.5/delegation_log.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Delegation record DEL-01 filed at claude/cycles/2026-04-05__release-v2.5/delegation_log.md. Outlier endpoints: GET /portfolio (p50=5979ms), GET /notifications/preferences (p50=4631ms). Head of Engineering to investigate root cause and evaluate pooling options."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "done",
+      "branch": "exec/2026-04-05__release-v2.5/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-04-05__release-v2.5/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "docs/testing/slippage_scenarios.md"
+      ],
+      "stories": {
+        "ST-07": {
+          "title": "Add --max-time to GitHub Actions curl calls",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 192,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-03",
+          "commit_sha": "ce3775a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T04:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/alert-evaluation.yml",
+            ".github/workflows/daily-snapshot.yml"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "--max-time 120 added to all 4 curl calls across both workflows (1 in alert-evaluation.yml, 3 in daily-snapshot.yml)."
+        },
+        "ST-08": {
+          "title": "Fix Avg Slippage StatsCard gradient rendering",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 193,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-03",
+          "commit_sha": "ce3775a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T04:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/slippage_scenarios.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "DEV-ST14-01 marked resolved in slippage_scenarios.md §5. Code fix was applied in prior sprints (commits 8650223 and 67d7285). ST-08 delivers documentation closure. Document version bumped 1.1→1.2."
+        },
+        "ST-09": {
+          "title": "Fee drag metric on Trade History",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 194,
+          "branch": "exec/2026-04-05__release-v2.5/EPIC-03",
+          "commit_sha": "ce3775a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-06T04:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md",
+            "docs/specs/frontend/pages/trade_history.md",
+            "docs/specs/api_contracts/trade_endpoints.md",
+            "docs/reference/openapi.yaml"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "Full implementation: backend (trade_service.py fee_drag_pct + avg_fee_drag_pct), API contract (v2.2.0), openapi.yaml (v2.5.0), frontend table (Fee Drag % column, amber, sortable), frontend StatsCard (Avg Fee Drag, amber, +X.XX%), metrics_definitions.md (v1.9.0 fee drag section). Head of Specs Team co-authorship per design gate decision. DoQ frontend verification note filed in qa_evidence."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": ["ST-06"],
+  "completed_items": ["ST-12", "ST-10", "ST-11", "ST-13", "ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-07", "ST-08", "ST-09"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-04", "EPIC-01", "EPIC-02", "EPIC-03"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
