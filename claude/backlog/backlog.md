@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-06 (Director of Quality session — BLG-FE-10 added; EPIC-03 DoQ sign-off observation)
+**Last Updated:** 2026-04-10 (DoQ staging session — BLG-FE-11 added: Trade History card layout squeeze; BLG-FE-12 added: table column header styling)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
@@ -58,6 +58,44 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 ---
 
 ## 3. Frontend & UX Backlog
+
+---
+
+### BLG-FE-11 — Trade History StatsCard bar layout: squeeze at 6-card width
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Owner
+**Source:** EPIC-03 DoQ staging run 2026-04-10 — adding Avg Fee Drag card (6th card) causes visible squeeze on the Trade History summary bar at standard viewport widths
+**Effort:** S (~half day)
+**Provisional-Target:** v2.6
+**Requires:** Head of UX review before implementation
+
+**Problem**
+The Trade History StatsCard summary bar now contains 6 cards (Total Trades, Win Rate, Total P&L, Avg Slippage, Avg Entry Dev., Avg Fee Drag). At standard 1280px viewports the grid is visually crowded. The current grid spec (`lg:grid-cols-3 xl:grid-cols-6`) may need to be revisited — either by condensing card content, increasing the xl breakpoint, or adopting a scrollable/overflow pattern. Head of UX to define the correct treatment.
+
+**Acceptance Criteria**
+- Head of UX reviews the 6-card layout and defines the target grid/layout spec
+- Implementation delivers the spec without regression to individual card content
+- All 6 cards readable and unstacked at a reasonable viewport width (to be defined by UX)
+
+---
+
+### BLG-FE-12 — Trade History table column header styling and formatting
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Owner
+**Source:** EPIC-03 DoQ staging run 2026-04-10 — column headers in the Trade History table flagged as needing better styling and formatting (current style: small, uppercase, muted)
+**Effort:** S (~half day)
+**Provisional-Target:** v2.6
+**Requires:** Head of UX review before implementation
+
+**Problem**
+Column headers in the Trade History table use the `DataTable.js` default: `text-xs font-medium text-slate-400 uppercase tracking-wider`. This treatment has been flagged as insufficient — headers are difficult to read and don't visually anchor the columns clearly. Head of UX to define the improved header style (size, weight, colour, case, spacing).
+
+**Acceptance Criteria**
+- Head of UX defines target header style
+- Implementation updates `DataTable.js` `TableHead` base styles (or Trade History-specific overrides) to match spec
+- No regression to other tables using `DataTable.js`
 
 ---
 
