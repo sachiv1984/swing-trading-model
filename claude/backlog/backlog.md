@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — 3 new items: BLG-FE-09, BLG-SPEC-D17, BLG-GOV-14; 2 stale targets updated)
+**Last Updated:** 2026-04-10 (DoQ EPIC-02 sign-off — BLG-BE-08/09 marked shipped v2.5; BLG-BE-08-GAP-01, BLG-BE-09-GAP-01, BLG-BE-09-GAP-02 filed from integration review findings)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
@@ -99,6 +99,7 @@ No documented frontend performance targets exist for the application (page load 
 **Source:** User session review — 2026-04-03
 **Effort:** M (~1–2 days)
 **Provisional-Target:** v2.5
+**Status:** Shipped v2.5 (ST-04) — see `docs/ops/reports_integration_review.md`
 
 **Problem**
 The Reports page is not fully integrated with the backend. Some sections may be using placeholder or hardcoded data rather than live API calls. There is no documentation mapping which Reports components are wired to which backend endpoints, making it impossible to assess coverage, diagnose gaps, or plan improvements systematically.
@@ -123,6 +124,7 @@ The Reports page is not fully integrated with the backend. Some sections may be 
 **Source:** User session review — 2026-04-03
 **Effort:** M (~1–2 days)
 **Provisional-Target:** v2.5
+**Status:** Shipped v2.5 (ST-05) — see `docs/ops/signals_integration_review.md`
 
 **Problem**
 The Signals page is not fully integrated with the backend. Some sections may be rendering without live data, and there is no documentation of which signals components are wired to which endpoints. Without this review, integration gaps are invisible until a user encounters incorrect or missing data.
@@ -137,6 +139,74 @@ The Signals page is not fully integrated with the backend. Some sections may be 
 - A review document exists mapping each Signals page section to its backend endpoint (or flagging a missing connection)
 - All identified gaps have a follow-up backlog item filed or are addressed within this scope
 - Improvement proposals are recorded and available for roadmap input
+
+---
+
+### BLG-BE-08-GAP-01 — Migrate Reports Performance tab to FastAPI backend
+**Priority:** P1 (High)
+**Type:** Backend Engineering / Frontend Integration
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** ST-04 integration review finding GAP-R01 — `docs/ops/reports_integration_review.md`
+**Effort:** L (3–5 days)
+**Provisional-Target:** v2.6
+
+**Problem**
+The Reports page Performance tab fetches all data from the legacy Base44 SDK (`base44.entities.Position.list()`, `base44.entities.Portfolio.list()`) and computes all metrics client-side. FastAPI endpoints `/analytics/metrics`, `/trades`, and `/portfolio` are never called. This creates data consistency risk — P&L and win-rate figures may differ from Portfolio and Trade History pages which use the FastAPI data model.
+
+**Scope**
+- Replace Base44 position/portfolio fetches with calls to `/analytics/metrics?period=<period>`, `/trades`, and `/portfolio`
+- Wire the period selector to drive a backend-computed metrics response
+- ExportModal to use backend-sourced data (resolves GAP-R03 automatically)
+- Also resolves GAP-R02 (analytics endpoints unused from Performance tab)
+
+**Acceptance Criteria**
+- Performance tab fetches headline metrics from `/analytics/metrics`; no Base44 calls remain in the Performance tab
+- Period selector drives backend-computed results
+- P&L/win-rate/profit-factor figures consistent with Trade History and Portfolio pages
+
+---
+
+### BLG-BE-09-GAP-01 — Wire Signals page dismissal and position creation to FastAPI
+**Priority:** P1 (High)
+**Type:** Backend Engineering / Frontend Integration
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** ST-05 integration review finding GAP-S01 — `docs/ops/signals_integration_review.md`
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.6
+
+**Problem**
+Signal dismissal and position creation on the Signals page use `base44.entities.Signal.update()` and `base44.entities.Position.create()`. FastAPI does not receive these writes, so signal status and position records are not stored in the authoritative database. Any backend analytics, deduplication, or ATR-based logic is bypassed for positions entered via the Signals page.
+
+**Scope**
+- Replace `base44.entities.Signal.update()` dismiss/enter calls with `PATCH /signals/<id>` or equivalent FastAPI endpoint (create endpoint if absent)
+- Replace `base44.entities.Position.create()` with `POST /positions`
+- Also resolves GAP-S03 ("already held" check) once positions are sourced from FastAPI
+
+**Acceptance Criteria**
+- Dismissing or entering a signal writes to FastAPI; no Base44 mutation calls remain for signal state or position creation
+- Dismissed/entered signals are reflected in backend analytics
+- Positions created via Signals page appear in Trade History and Portfolio pages
+
+---
+
+### BLG-BE-09-GAP-02 — Replace Base44 cash balance on Signals page with GET /cash/summary
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Frontend Integration
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** ST-05 integration review finding GAP-S02 — `docs/ops/signals_integration_review.md`
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.6
+
+**Problem**
+The `availableCash` value displayed on the Signals page is sourced from `base44.entities.Portfolio.list()`. The FastAPI backend maintains the authoritative cash balance at `GET /cash/summary`. These sources may diverge, showing inconsistent cash figures across pages.
+
+**Scope**
+- Replace the Base44 portfolio query used for `availableCash` with `apiFetch(GET /cash/summary)`
+- Pass the authoritative `cash_balance` value to `MarketStatusBar`
+
+**Acceptance Criteria**
+- `availableCash` on Signals page matches the value shown on the Cash/Portfolio pages
+- No Base44 portfolio query remains solely for cash balance purposes
 
 ---
 

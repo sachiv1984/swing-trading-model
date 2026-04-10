@@ -33,7 +33,7 @@ Created `docs/ops/reports_integration_review.md` mapping each section of the Rep
 | Technical | Review document exists at `docs/ops/reports_integration_review.md`; each section mapped to endpoint or gap | Pass |
 | Quality | All identified gaps have follow-up backlog item or in-scope resolution; improvement proposals recorded with priority | Pass |
 | Security | N/A | N/A |
-| Verification | Code review confirming all Reports.js data fetches are accounted for; document filed at canonical path | Pending DoQ |
+| Verification | Code review confirming all Reports.js data fetches are accounted for; document filed at canonical path | Pass — DoQ 2026-04-10 (document complete; all sections mapped; BLG-BE-08-GAP-01 filed) |
 
 ---
 
@@ -58,7 +58,7 @@ Created `docs/ops/signals_integration_review.md` mapping each section of the Sig
 | Technical | Review document exists at `docs/ops/signals_integration_review.md`; each section mapped to endpoint or gap | Pass |
 | Quality | All identified gaps have follow-up backlog item or in-scope resolution; improvement proposals recorded with priority | Pass |
 | Security | N/A | N/A |
-| Verification | Code review confirming all Signals.js data fetches and mutations are accounted for; document filed at canonical path | Pending DoQ |
+| Verification | Code review confirming all Signals.js data fetches and mutations are accounted for; document filed at canonical path | Pass — DoQ 2026-04-10 (document complete; all sections mapped; BLG-BE-09-GAP-01/02 filed) |
 
 ---
 
@@ -92,8 +92,8 @@ Created `docs/ops/signals_integration_review.md` mapping each section of the Sig
 
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|---------------|----------------|--------------------|---------|-------|
-| ST-04 | src/pages/Reports.js | `docs/ops/reports_integration_review.md` — section mapping, gaps, proposals | Document exists with all sections mapped; gaps have follow-up items | Pending DoQ | None |
-| ST-05 | src/pages/Signals.js | `docs/ops/signals_integration_review.md` — section mapping, gaps, proposals | Document exists with all sections mapped; gaps have follow-up items | Pending DoQ | None |
+| ST-04 | src/pages/Reports.js | `docs/ops/reports_integration_review.md` — section mapping, gaps, proposals | Document exists with all sections mapped; gaps have follow-up items | Pass — DoQ 2026-04-10 | None |
+| ST-05 | src/pages/Signals.js | `docs/ops/signals_integration_review.md` — section mapping, gaps, proposals | Document exists with all sections mapped; gaps have follow-up items | Pass — DoQ 2026-04-10 | None |
 | ST-06 | docs/ops/api_performance_baseline.md | Delegation record filed; investigation assigned to Head of Engineering | Root cause documented; pooling options evaluated | Pending human | N/A (delegated) |
 
 **QA test coverage:**
@@ -101,11 +101,11 @@ Created `docs/ops/signals_integration_review.md` mapping each section of the Sig
 - Regression areas checked: No functional code changes — documentation only
 - Known deviations filed: None
 
-**QA sign-off block:** (Director of Quality completes this)
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A (no frontend changes in this EPIC)
+**QA sign-off block:**
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked (no functional code changes — documentation only; no regression risk)
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A (no frontend changes in this EPIC)
 - Signed off by: Director of Quality
-- Date: <fill in — must be non-blank (LL-v2.3-EX-01)>
-- Comments:
+- Date: 2026-04-10
+- Comments: ST-04 PASS. ST-05 PASS. ST-06 N/A — delegated to Head of Engineering; sign-off deferred until findings filed. Both integration review documents are complete and well-structured: all page sections mapped, gaps clearly classified by severity, improvement proposals prioritised. Three follow-up backlog items filed as a result of this review: BLG-BE-08-GAP-01 (P1 — migrate Reports Performance tab to FastAPI), BLG-BE-09-GAP-01 (P1 — wire Signals mutations to FastAPI), BLG-BE-09-GAP-02 (P2 — replace Base44 cash balance with GET /cash/summary). Both parent items (BLG-BE-08, BLG-BE-09) marked shipped v2.5. No P0 or P1 deviations in delivered scope.
