@@ -32,3 +32,20 @@
 ### Net Sprint Assessment
 
 Velocity: 13/13 (1.00). All stories delivered. No items returned to backlog. One delegation (DEL-01) resolved within the cycle. Three P3 UX observations filed as backlog items. One process improvement applied mid-sprint (CLAUDE.md commit format rule).
+
+---
+
+## Phase 4 — 2026-04-05__release-v2.5
+
+### Friction Table
+
+| Date | Area | What happened | Correct approach | Prompt change? |
+|------|------|--------------|-----------------|----------------|
+| 2026-04-10 | Sprint Close not run before delivery verification | Delivery verification invoked while status was `Sprint_Planning_Complete` (not `Sprint_Complete`). STEP -1 hard gate fired. Sprint Close (STEP 5) had not been executed because the session ended after EPICs were merged without re-invoking `run sprint`. | Always invoke `run sprint --cycle <cycle_id>` immediately after the final EPIC merge. The hard gate (LL-v2.2-EX-02) requires this in the same session. | No prompt change — hard gate already exists in execution_prompt.md STEP 4. Friction was in not following it. |
+| 2026-04-10 | qa_evidence_EPIC-01.md missing from main at sprint close | The DoQ sign-off commit was created locally on EPIC-01 branch but the branch wasn't pushed before the PR was merged. File required cherry-pick onto main at sprint close. | Always push the exec branch after every commit (especially QA sign-off commits) before the PR is merged. Alternatively: `git log --not origin/<branch>` check before opening a PR. | No prompt change needed — operational discipline. |
+| 2026-04-10 | fee-drag-scenarios.md referenced in qa_evidence but never created | qa_evidence_EPIC-03.md consolidation section referenced docs/testing/fee-drag-scenarios.md as "authored 2026-04-06" but the file was never created. BLG-QA-07 was the backlog item for it. The qa_evidence reference was inaccurate. | If a test scenario file is planned but not yet created, reference the backlog item (BLG-QA-07) in the qa_evidence, not the future file path. Do not write file paths for artefacts that don't exist. | No prompt change — documentation accuracy discipline. |
+| 2026-04-10 | Deviation severity gate — TSG-V25-01 not_applicable | ATR/dedup/stop_price scenarios were listed in EPIC-01 test_scenarios but they cover v2.4 algorithmic AC, not v2.5 endpoint availability AC. Correctly assessed as not_applicable at verification. | When populating test_scenarios in execution_state.json, ensure the scenarios are relevant to the EPIC's own AC, not adjacent stories. ST-13 created these scenarios for v2.4 correctness — they shouldn't be listed under v2.5 EPIC-01. No material gap, but creates confusion at verification. | Low priority — consider whether test_scenarios field should note "for future execution" vs "ran this sprint". |
+
+### Net Phase 4 Assessment
+
+Gate sequencing worked as designed — STEP -1 caught the `Sprint_Planning_Complete` status correctly. Deviation severity calls were straightforward — no ambiguous P1/P2 cases. Test scenario coverage gap (TSG-V25-02) correctly identified and actioned. Sign-off coordination smooth — both DoQ and PO able to sign off in the same session. Overall: delivery verification process is functioning well; friction was upstream (sprint close not triggered) rather than in the verification process itself.
