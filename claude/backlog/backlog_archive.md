@@ -1,11 +1,37 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-30
+**Last Updated:** 2026-04-03
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### v2.4 Release Slice — 2026-03-31__release-v2.4
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** N/A (release tracking section)
+**Retired:** 2026-04-03
+**Shipped in:** v2.4 — Correctness, Insight & Governance Hardening
+**Evidence:** 17/17 items shipped; 13 backlog items completed; `claude/cycles/2026-03-31__release-v2.4/closure_record.md`
+
+| ID | Title | Type | Sprint | Evidence |
+|----|-------|------|--------|----------|
+| BLG-BE-05 | Fix ATR pence→GBP conversion for all UK (.L) tickers | Backend Bug Fix | Sprint 2 (ST-01) | changelog.md v2.4; verification_report.md |
+| BLG-BE-06 | Alert evaluation idempotency (notification deduplication) | Backend Engineering | Sprint 2 (ST-02) | changelog.md v2.4; verification_report.md |
+| BLG-BE-04 | R-Multiple Analysis: stop price unavailable from trade_history | Backend / Data | Sprint 2 (ST-03) | changelog.md v2.4; verification_report.md |
+| BLG-FE-06 | Fix missing P&L (GBP) column on Positions page | Frontend / UX | Sprint 2 (ST-04) | changelog.md v2.4; verification_report.md |
+| BLG-FE-03 | User-facing error message mapping layer | Frontend / UX | Sprint 2 (ST-05) | changelog.md v2.4; verification_report.md |
+| BLG-SPEC-D15 | Reconcile data_model.md portfolios table with actual deployed schema | Spec Debt | Sprint 1 (ST-06) | changelog.md v2.4; verification_report.md |
+| BLG-SPEC-D16 | Reconcile data_model.md trade_history table with database.py column names | Spec Debt | Sprint 1 (ST-07) | changelog.md v2.4; verification_report.md |
+| BLG-FEAT-14 | Weekly trading review digest | Product Feature | Sprint 3 (ST-08+ST-09) | changelog.md v2.4; verification_report.md |
+| BLG-OPS-10 | Render hosting tier review | Operational / Infrastructure | Sprint 1 (ST-10) | changelog.md v2.4; verification_report.md |
+| BLG-OPS-05 | API endpoint performance baseline | Operational / Observability | Sprint 2 (ST-11) | changelog.md v2.4; verification_report.md |
+| TEST-GAP-EPIC-05-SLIP | Create slippage tracking test scenarios | QA Coverage | Sprint 1 (ST-12) | changelog.md v2.4; verification_report.md |
+| BLG-GOV-09 | Cycle velocity metric | Governance Process | Sprint 1 (ST-13) | changelog.md v2.4; verification_report.md |
+| BLG-GOV-03 | Simplify cycle artefact sealing (remove SHA-256, retain sealed flag) | Governance Process | Sprint 1 (ST-17) | changelog.md v2.4; verification_report.md |
 
 ---
 

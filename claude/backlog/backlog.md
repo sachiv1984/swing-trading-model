@@ -3,14 +3,17 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-03 (delivery verification 2026-03-31__release-v2.4 — 3 items added: BLG-FE-08, BLG-GOV-10, TEST-GAP-EPIC-01-v24; prior session 4 items: BLG-OPS-12, BLG-OPS-13, BLG-BE-07, BLG-FE-07)
-**Last rebalance:** 2026-03-24 (cycle 2026-03-24__scheduled — DL-012)
+**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — 3 new items: BLG-FE-09, BLG-SPEC-D17, BLG-GOV-14; 2 stale targets updated)
+**Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
 > All formulas, schemas, API contracts, and behavioural rules are indicative until
 > confirmed in the relevant canonical specifications.
 > No item may proceed to implementation without canonical owner sign-off.
+
+> 📋 Placement Rule
+> New items must be appended to the correct existing type section (§1–§8). Do not create new numbered session sections. The backlog is organised by type, not by session date.
 
 *Completed and killed items are recorded in `claude/backlog/backlog_archive.md`.*
 
@@ -35,7 +38,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Source:** Original backlog — target updated to v2.3 per backlog health scan GROOM-20260324-01
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.4 (or when system becomes multi-user)
+**Provisional-Target:** v2.5 (or when system becomes multi-user)
 
 **Problem**
 No Prometheus-compatible metrics endpoint exists. As the system grows toward multi-user operation, there is no way to monitor validation run counts, failure rates, or duration without instrumenting the application directly. Observability cannot be added retroactively without significant rework.
@@ -58,54 +61,29 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 
 ---
 
-### BLG-FE-06 — Fix missing P&L (GBP) column on Positions page
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX
-**Owner:** Frontend Specifications & UX Owner
-**Source:** DEV-EPIC02-ST05-03 — V-PATH2-01 staging QA — 2026-03-25
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v2.4
-
-**Problem**
-The Positions page Table View does not display the "P&L (GBP)" absolute value column. `positions.md` v1.4 explicitly lists both "P&L (GBP)" and "P&L %" as separate columns in the Table View. During EPIC-02 staging QA (2026-03-25), only % uplift was visible — the absolute £ values (£70.05 for LGEN, £96.05 for BARC) were absent. Colour rendering works correctly (% shown in green for positive positions), confirming the issue is the missing GBP column rather than a colour bug. Users cannot see their monetary P&L on the primary portfolio view.
-
-**Scope**
-- Investigate whether the P&L (GBP) column is missing from the component or rendered but hidden
-- Add or unhide the P&L (GBP) column in the Positions Table View component
-- Ensure the GBP value is colour-coded correctly (green for positive, red for negative) per `positions.md`
-- Verify both "P&L (GBP)" and "P&L %" columns are visible side by side in the default Table View at staging
-
-**Acceptance Criteria**
-- Positions Table View displays a P&L column showing the absolute GBP value (e.g. £70.05 for LGEN, £96.05 for BARC from seed data)
-- Positive GBP P&L values render in green; negative values render in red
-- P&L % column remains present alongside the GBP column
-- V-PATH2-01 passes on staging: £70.05 and £96.05 visible in green after seeding
-
----
-
-### BLG-FE-03 — User-facing error message mapping layer
+### BLG-FE-09 — Define Frontend Performance Budget
 **Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Base44 Frontend Prompt Owner
-**Source:** IW-20260304-01 (IDEA-base44-frontend-20260304-02 — gate cleared: BLG-SPEC-G2 Error Response Standard shipped v2.1)
-**Effort:** S–M (~1–2 days)
-**Provisional-Target:** v2.4
-**Depends on:** BLG-SPEC-G2 (✅ shipped v2.1)
+**Type:** Frontend Specification
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-ux-20260321-01 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-017)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.5
 
 **Problem**
-Backend API errors surface as raw status codes or technical messages in the UI. Users see "500" or "undefined" instead of actionable guidance. The Error Response Standard (BLG-SPEC-G2) defines the error envelope — this item consumes it on the frontend.
+No documented frontend performance targets exist for the application (page load time, JS bundle size). BLG-OPS-05 shipped in v2.4 establishing an API latency baseline (p50/p95 per endpoint). Without a companion frontend performance budget, new feature additions in v2.5 and beyond may silently compound bundle size and page load time with no detection mechanism or documented targets for the DoQ to reference when evaluating frontend PRs.
 
 **Scope**
-- Create a frontend error mapping layer: HTTP status code + error code → user-readable message
-- Cover all known error codes defined in the BLG-SPEC-G2 Error Response Standard
-- Apply consistently across all API-consuming components
-- Log raw error details to console for debugging; surface friendly message to user
+- Define maximum acceptable page load time targets (initial load, route transition)
+- Define maximum JS bundle size target (main bundle, code-split chunks)
+- Align targets with BLG-OPS-05 API latency baseline — frontend budget must account for the known backend latency floor
+- Document measurement methodology (reproducible baseline approach — e.g. Lighthouse, browser dev tools)
+- Produce spec document at `docs/specs/frontend/performance_budget.md`
 
 **Acceptance Criteria**
-- API errors display a user-readable message rather than a raw code or "undefined"
-- Error mapping covers all error codes defined in the Error Response Standard
-- Raw technical details logged to console (not shown to user)
-- No regression to existing error display behaviour
+- Spec document exists at `docs/specs/frontend/performance_budget.md` defining page load and bundle size targets
+- Targets aligned to BLG-OPS-05 API latency floor (total acceptable load time includes backend latency + frontend rendering overhead)
+- Measurement methodology documented (reproducible baseline approach stated)
+- Scope is documentation only — no code instrumentation required in this item
 
 ---
 
@@ -113,49 +91,52 @@ Backend API errors surface as raw status codes or technical messages in the UI. 
 
 ---
 
-### BLG-BE-05 — Fix ATR pence→GBP conversion for all UK (.L) tickers
+
+### BLG-BE-08 — Review and document Reports page backend integration
 **Priority:** P2 (Medium)
-**Type:** Backend Engineering / Bug Fix
-**Owner:** Head of Engineering
-**Source:** V-PATH1-04 staging test failure — server log ATR=-48.69 for LGEN at £2.45 — 2026-03-25
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v2.4
+**Type:** Backend Engineering / Frontend Integration
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** User session review — 2026-04-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
 
 **Problem**
-`calculate_atr()` in `backend/utils/pricing.py` applies the pence→GBP conversion (`atr / 100`) only when `atr > 100`, but Yahoo Finance returns ATR in pence for all LSE `.L` tickers regardless of magnitude. For most UK stocks (ATR typically 5–30p), the guard is never triggered, leaving ATR in pence while all other price values are in GBP. This causes `calculate_initial_stop()` (multiplier=5.0) to produce deeply negative stop prices (e.g. -48.69 for LGEN at £2.45, ATR=10.23p), which the backend rejects and the position creation call fails.
+The Reports page is not fully integrated with the backend. Some sections may be using placeholder or hardcoded data rather than live API calls. There is no documentation mapping which Reports components are wired to which backend endpoints, making it impossible to assess coverage, diagnose gaps, or plan improvements systematically.
 
 **Scope**
-- In `backend/utils/pricing.py` `calculate_atr()`, remove the `> 100` guard and always divide by 100 for `.L` tickers
-- Verify `calculate_initial_stop()` produces a sane positive stop for LGEN (£2.45 entry, expected stop ≈ £1.94 at 5× ATR of ~10p)
+- Review each section of the Reports page to confirm which data is sourced live from the backend vs. placeholder/hardcoded
+- Document the current integration state: endpoint used per section, data flow, any missing connections
+- Identify any Reports sections not connected to a backend endpoint and define what is needed
+- Propose improvements (additional endpoints, data quality improvements, UI enhancements) as a prioritised list
 
 **Acceptance Criteria**
-- `calculate_atr('LGEN.L', ...)` returns ATR in GBP (e.g. ~0.10) not pence (e.g. ~10.23)
-- `calculate_initial_stop(2.45, atr)` returns a positive value in the range £1.80–£2.40 for LGEN
-- No regression: existing unit tests for ATR pass; high-ATR stocks (e.g. TSLA) are unaffected
+- A review document exists mapping each Reports page section to its backend endpoint (or flagging a missing connection)
+- All identified gaps have either a follow-up backlog item filed or are addressed within this scope
+- Improvement proposals are recorded and available for roadmap input
 
 ---
 
-### BLG-BE-04 — R-Multiple Analysis: stop price unavailable from trade_history
-**Priority:** P3 (Low)
-**Type:** Backend / Data
-**Owner:** Head of Engineering
-**Source:** ST-11 post-merge staging sign-off — 2026-03-19
-**Effort:** S (~2–3 hours)
-**Provisional-Target:** v2.4
+### BLG-BE-09 — Review and document Signals page backend integration
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Frontend Integration
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** User session review — 2026-04-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
 
 **Problem**
-`RMultipleAnalysis.js` filters trades using `t.stop_price`. The analytics page passes trades from `trade_history`, which does not carry `initial_stop` (stop price lives on `positions`). As a result, the R-Multiple Analysis section shows "R-Multiple requires stop prices to be defined for all trades" even when all positions had stop prices set at entry. The R-Multiple Distribution histogram only renders when `tradesWithR.length >= 10`.
+The Signals page is not fully integrated with the backend. Some sections may be rendering without live data, and there is no documentation of which signals components are wired to which endpoints. Without this review, integration gaps are invisible until a user encounters incorrect or missing data.
 
 **Scope**
-- Extend the analytics endpoint (or trade history endpoint) to JOIN `positions.initial_stop` into the `trade_history` response, or expose `initial_stop` as `stop_price` on closed trade objects returned to the frontend
-- Update `RMultipleAnalysis.js` filter if the field name changes
-- Update `docs/specs/api_contracts/analytics_endpoints.md` and `openapi.yaml` if response shape changes
+- Review each section of the Signals page to confirm which data is sourced live from the backend vs. placeholder/hardcoded
+- Document current integration state: endpoint per section, data flow, missing connections
+- Identify any Signals sections not connected to a backend endpoint and define what endpoint/data is needed
+- Propose improvements as a prioritised list
 
 **Acceptance Criteria**
-- Closed trades returned to the analytics page include a `stop_price` (or `initial_stop`) field where available
-- R-Multiple Analysis section renders correctly for trades where stop prices were set at entry
-- `RMultipleAnalysis.js` filter produces correct `tradesWithR` count
-- `openapi.yaml` updated in same commit if response shape changes
+- A review document exists mapping each Signals page section to its backend endpoint (or flagging a missing connection)
+- All identified gaps have a follow-up backlog item filed or are addressed within this scope
+- Improvement proposals are recorded and available for roadmap input
 
 ---
 
@@ -163,110 +144,39 @@ Backend API errors surface as raw status codes or technical messages in the UI. 
 
 ---
 
-### TEST-GAP-EPIC-05-SLIP — Create slippage tracking test scenarios
-**Priority:** P3 (Low)
-**Type:** QA Coverage
-**Owner:** QA & Testing Owner
-**Source:** Delivery verification 2026-03-18__release-v2.1 — TSG-v21-03
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v2.4
-
-**Problem**
-No scenario file covers slippage tracking (ST-14). Manual coverage is unstructured and not repeatable. Without documented scenarios, QA runs against slippage features cannot be signed off consistently across cycles.
-
-**Scope**
-- Author SC-SLIP-01 through SC-SLIP-04 covering: fill price input on trade entry, slippage % column display (colour-coded), avg slippage StatsCard update, null fill price shows "—"
-- Add to `docs/testing/reports_scenarios.md` or a new `slippage_scenarios.md`
-
-**Acceptance Criteria**
-- Scenario file present covering all four slippage tracking scenarios
-- Scenarios executable against staging without additional setup
-- Referenced in the test scenario index
-
----
 
 ## 6. Operations & Infrastructure Backlog
 
 ---
 
-### BLG-OPS-05 — API endpoint performance baseline
-**Priority:** P3 (Low)
-**Type:** Operational / Observability
-**Owner:** Head of Engineering + Infrastructure & Operations Owner
-**Source:** IDEA-head-of-engineering-20260304-02 (IW-20260321-01 — gate cleared: API surface stable post-v2.1)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v2.4
-
-**Problem**
-No baseline exists for endpoint response times. As features are added (alert evaluation, chart queries), performance regressions cannot be detected. The alert evaluation endpoint and analytics queries are the most likely candidates for slowdown.
-
-**Scope**
-- Instrument and document p50/p95 response times for all currently active API endpoints
-- Use existing integration test infrastructure or a simple timing script
-- Produce a baseline document in `docs/` or as a test artefact
-- Identify any endpoint already outside acceptable thresholds
-
-**Acceptance Criteria**
-- Response time baseline documented for all endpoints defined in `openapi.yaml`
-- p50 and p95 values recorded
-- Any endpoint with p95 > 500ms flagged for investigation
-
----
 
 ## 7. Spec Debt Backlog
 
 ---
 
-### BLG-SPEC-D16 — Reconcile data_model.md trade_history table with database.py column names
-**Priority:** P2 (Medium)
-**Type:** Spec Debt
-**Owner:** API Contracts & Documentation Owner + Head of Engineering
-**Source:** ST-04 seed script / database.py divergence discovered 2026-03-25
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v2.4
+### BLG-SPEC-D17 — Spec Dependency Map
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Governance Documentation
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260321-01 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-018)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
 
 **Problem**
-`data_model.md` documents `trade_history` with a single exit value column `exit_proceeds DECIMAL(12,2) NOT NULL`. `database.py:create_trade_history()` inserts into `gross_proceeds`, `net_proceeds`, `entry_fees`, `exit_fees` — none of which appear in the spec. It is unknown which is canonical: if the spec is right, `database.py` is broken and live trade closures fail; if `database.py` is right, the spec is wrong and seed scripts using `exit_proceeds` will be rejected. Until resolved, any new seed, test, or analytics query against `trade_history` exit values carries column name uncertainty.
+The canonical specification library has grown to ~22 documents with cross-references (e.g. `trade_history.md` references `metrics_definitions.md`; `signal_endpoints.md` references `strategy_rules.md`). When any canonical spec changes, cascade impacts on dependent specs are tracked informally. Without a dependency map, the DoQ cannot efficiently determine which specs require review when a canonical spec is updated — this weakens sign-off quality on spec-change PRs.
 
 **Scope**
-- Run `\d trade_history` against the live staging DB to confirm actual column names
-- Determine canonical set: `exit_proceeds` (spec) vs `gross_proceeds`/`net_proceeds`/`entry_fees`/`exit_fees` (code)
-- Update `data_model.md` §3 trade_history table to match actual schema
-- If DB has `exit_proceeds` only: update `database.py:create_trade_history()` to use it
-- If DB has `gross_proceeds`/`net_proceeds`: update `data_model.md` to match and remove `exit_proceeds`
-- Update seed scripts (`seed_portfolio_trades.sql`) to use confirmed column names
-- Bump `data_model.md` version; apply §6 checklist
+- Map all canonical spec dependencies: for each spec, list which other canonical specs it references or depends on
+- Produce a read-only reference document at `docs/specs/spec_dependency_map.md`
+- Include an explicit header note: "Point-in-time reference — last updated [date]. Accuracy not guaranteed after spec creation/revision without a manual update."
+- Spec owners update the map when creating or significantly revising a canonical spec (courtesy update, not a governed obligation)
+- Scope is read-only reference only — no CI enforcement or automated checking
 
 **Acceptance Criteria**
-- `data_model.md` trade_history CREATE TABLE matches `\d trade_history` on staging
-- `database.py:create_trade_history()` column list matches the spec
-- `seed_portfolio_trades.sql` trade_history INSERT uses confirmed column names and succeeds without error
-- `data_model.md` version bumped; §6 checklist applied
-
----
-
-### BLG-SPEC-D15 — Reconcile data_model.md portfolios table with actual deployed schema
-**Priority:** P2 (Medium)
-**Type:** Spec Debt
-**Owner:** API Contracts & Documentation Owner
-**Source:** ST-04 seed script failure — reset_staging_db.sql INSERT rejected `initial_cash` column — 2026-03-25
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v2.4
-
-**Problem**
-`data_model.md` documents the `portfolios` table with columns `id`, `cash`, `initial_cash`, `created_at`, `last_updated`. The actual deployed DB has `id`, `cash`, `created_date`, `last_updated` — `initial_cash` does not exist and `created_at` is `created_date`. Any seed script, migration, or integration test written against the spec will fail silently or with a column-not-found error. This mismatch was not caught before ST-04 shipped because seeds were reviewed against the spec, not the live schema.
-
-**Scope**
-- Run `\d portfolios` against the live staging DB to confirm actual column names and types
-- Update `data_model.md` §1 Portfolios Table CREATE TABLE statement and Fields table to match actual schema
-- Remove `initial_cash` from the spec or add a migration to create it if it is genuinely required
-- Bump `data_model.md` version and apply §6 checklist
-
-**Acceptance Criteria**
-- `data_model.md` portfolios CREATE TABLE matches the output of `\d portfolios` on staging
-- `initial_cash` either removed from spec or present in DB — no divergence
-- `created_date` vs `created_at` discrepancy resolved
-- `data_model.md` version bumped; §6 checklist applied
+- Reference document exists at `docs/specs/spec_dependency_map.md` listing all canonical specs and their known dependencies
+- Document labelled as read-only reference with staleness acknowledgement
+- All currently known cross-spec dependencies captured at time of authoring
+- Head of Specs Team sign-off on completeness at authoring time
 
 ---
 
@@ -280,7 +190,7 @@ No baseline exists for endpoint response times. As features are added (alert eva
 **Owner:** Head of Specs Team
 **Source:** AUD-2026-03-21 Tier 3 — engine prompt compression deferred (roadmap_prompt 1,581 lines; release_planning_prompt 1,534 lines)
 **Effort:** L (~3–5 days)
-**Provisional-Target:** v2.4
+**Provisional-Target:** v2.5 (deprioritised in v2.5 planning queue by BLG-FE-09 — 2026-04-05)
 
 **Problem**
 `claude/system/roadmap_prompt.md` (1,581 lines) and `claude/system/release_planning_prompt.md` (1,534 lines) are the two largest engine prompts in the governance system. Inline schemas, repeated examples, and verbose explanatory prose are opportunities for extraction and tightening without removing instructional precision or hard gate logic.
@@ -299,28 +209,78 @@ No baseline exists for endpoint response times. As features are added (alert eva
 
 ---
 
-### BLG-GOV-03 — Simplify cycle artefact sealing (remove SHA-256, retain sealed flag)
+
+### BLG-GOV-11 — Cycle artefact inventory and maintenance review
 **Priority:** P3 (Low)
 **Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Direct session architectural review — 2026-03-18
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v2.4
+**Owner:** PMO Lead + Head of Specs Team
+**Source:** User session review — 2026-04-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
 
 **Problem**
-The current release planning engine computes and verifies SHA-256 hashes for sealed artefacts on every run. For a 2-person team, the primary threat (accidental writes by Claude) is already covered by write scope restrictions in STEP 5. Hash recomputation adds schema complexity and verification overhead for a failure mode that `git diff` would catch anyway.
+As cycles accumulate, documents are created in each cycle directory but there is no consolidated inventory of what exists across all closed cycles, nor a documented lifecycle for each artefact type (maintained vs. point-in-time). Without this review it is impossible to audit historical artefacts, identify stale documents, or enforce consistent maintenance practices going forward.
 
 **Scope**
-- Remove `sealed_hashes` and `artifact_hashes` fields from `state.json` schema
-- Remove hash computation and drift detection steps from the release planning engine
-- Retain `sealed: true` flag as the sole sealing mechanism
-- Retain `state_snapshot_hash` on `state.json` only (single lightweight checksum)
+- Inventory all documents created across all closed cycles (`claude/cycles/`)
+- Categorise by type: planning, execution, QA evidence, governance, run manifests, etc.
+- Document the expected lifecycle for each type: point-in-time artefact vs. living document
+- Identify any maintenance gaps, stale artefacts, or documents that should be archived
+- Produce a reference document or update the OPERATIONAL_GUIDE with the artefact lifecycle model
 
 **Acceptance Criteria**
-- Release planning engine no longer computes or verifies per-artefact SHA-256 hashes
-- `state.json` schema updated; `sealed_hashes` and `artifact_hashes` blocks removed
-- `sealed: true` flag check remains and is enforced as a hard gate
-- All references to hash drift detection removed from prompt and shared_standards
+- A consolidated artefact inventory exists covering all closed cycles
+- Each document type has a documented lifecycle (point-in-time vs. maintained)
+- Any maintenance gaps are identified; each either resolved or filed as a follow-up backlog item
+- Reference document or OPERATIONAL_GUIDE section added
+
+---
+
+### BLG-GOV-12 — Formalise backlog entry placement standard
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** User session review ��� 2026-04-03
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.5
+
+**Problem**
+New backlog items have been added to new numbered session sections (`## N. New Backlog Items — Session YYYY-MM-DD`) instead of under the existing type-based sections (§1–§8). This fragments the backlog, makes it hard to see all items of a given type, and creates unnecessary heading proliferation. The intended structure is one section per item type, not one section per session.
+
+**Scope**
+- Update `backlog-add` skill (via `lessons_learnt.md`) to enforce the rule: new items must be appended to the correct existing type section, not a new session section
+- Add a placement rule note to the top of `backlog.md` (below the standing notice)
+- No structural changes to existing session sections required (they remain as-is)
+
+**Acceptance Criteria**
+- `lessons_learnt.md` has an entry for `backlog-add` recording the placement rule
+- Future backlog-add runs append to the correct type section
+- Placement rule is visible at the top of `backlog.md`
+
+---
+
+### BLG-GOV-14 — Governance Health Score
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead + Head of Specs Team
+**Source:** IDEA-pmo-lead-20260321-02 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-019)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+
+**Problem**
+BLG-GOV-09 (cycle velocity metric) shipped in v2.4 tracking story completion rate. However, governance health across other dimensions — header compliance rates, deferred patch accumulation, and outstanding action age — is assessed informally at each rebalance run. Without a structured indicator, governance drift accumulates invisibly between cycles and is typically discovered at post-ship closure rather than at planning time.
+
+**Scope**
+- Define governance health score formula: (a) header compliance % = Class 4/5 docs with compliant headers / total checked; (b) deferred patch indicator = count of open deferred patches by age band (<1 cycle / 1–2 cycles / >2 cycles); (c) outstanding action count
+- Document the formula canonically in `claude/system/OPERATIONAL_GUIDE.md` or a dedicated governance health spec
+- Implement as a lightweight advisory check at STEP -1 of each roadmap rebalance (output: advisory indicator, not a gate)
+- Score is advisory only — does not halt or gate the routine
+
+**Acceptance Criteria**
+- Governance health score formula documented canonically with all three components defined
+- Score is computed and surfaced at STEP -1 of each roadmap rebalance as an advisory indicator
+- Score labelled as advisory — cannot halt or gate the routine
+- Head of Specs Team sign-off on formula definition before implementation
 
 ---
 
@@ -358,24 +318,30 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-## 12. Active Release Slice — v2.4 Correctness, Insight & Governance Hardening
+## 12. Last Release Slice — v2.4 (Archived)
 
-<!-- release-plan-marker: RP:v2.4:2026-03-31__release-v2.4 -->
+<!-- release-plan-marker: RP:v2.4:2026-03-31__release-v2.4 — ARCHIVED 2026-04-03 -->
 
-**Cycle:** 2026-03-31__release-v2.4
-**Published:** 2026-03-31
-**Backlog slice:** claude/cycles/2026-03-31__release-v2.4/stage4_backlog_slice.md
+**Cycle:** 2026-03-31__release-v2.4 | **Shipped:** 2026-04-03 | **Status:** Verified_with_deviations
+**Archived to:** `claude/backlog/backlog_archive.md` — v2.4 Release Slice entry
 
-| EPIC-ID | Scope | Sprint |
-|---------|-------|--------|
-| EPIC-01 | Backend Correctness & Alert Reliability (ST-01, ST-02, ST-03) | Sprint 2 |
-| EPIC-02 | Frontend & UX Polish (ST-04, ST-05) | Sprint 2 |
-| EPIC-03 | Spec Debt Resolution (ST-06, ST-07) | Sprint 1 |
-| EPIC-04 | Weekly Trading Digest (ST-08, ST-09) | Sprint 3 |
-| EPIC-05 | Operational Readiness (ST-10, ST-11, ST-12, ST-13) | Sprint 1/2 |
-| EPIC-06 | Governance Engine Maintenance (ST-14, ST-15, ST-16, ST-17) | Sprint 1 |
+---
 
-**Deferred from v2.4:** BLG-GOV-08 (prompt compression, L effort → v2.5); BLG-FEAT-13 (gated rollout → v2.5); BLG-TECH-05 (Prometheus → conditional)
+## Active Release Slice — v2.5
+
+<!-- release-plan-marker: RP:v2.5:2026-04-05__release-v2.5 -->
+
+**Cycle:** 2026-04-05__release-v2.5 | **Status:** Planning | **Published:** 2026-04-05
+**Backlog slice:** `claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md`
+
+**Theme:** Integration Baseline, Quick Wins & Governance Debt
+
+| EPIC | Sprint | Stories | Theme |
+|------|--------|---------|-------|
+| EPIC-01 | Sprint 1 | ST-01, ST-02, ST-03 | System Status Reliability |
+| EPIC-02 | Sprint 2 | ST-04, ST-05, ST-06 | Backend Integration & Performance |
+| EPIC-03 | Sprint 2 | ST-07, ST-08, ST-09 | Frontend & Operations Quick Wins |
+| EPIC-04 | Sprint 1 | ST-10, ST-11, ST-12, ST-13 | Governance, Process & QA Hardening |
 
 ---
 
@@ -409,107 +375,6 @@ The application has no mechanism to roll out new features to a subset of users o
 - Gating pattern documented for use in future story authoring
 
 ---
-### BLG-FEAT-14 — Weekly trading review digest
-**Priority:** P2 (Medium)
-**Type:** Product Feature
-**Owner:** Backend Engineering Patterns Owner + Frontend Specs & UX Documentation Owner
-**Source:** Roadmap rebalance cycle 2026-03-31__scheduled (IDEA-product-owner-20260321-02 advancing) — 2026-03-31
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.4
-
-**Problem**
-The user must manually navigate to multiple pages (positions, alerts, compliance score) to perform a weekly portfolio review. There is no structured summary endpoint or view that aggregates the past 7 days of P&L, alert activity, and compliance metrics in one place. Following the v2.3 launch of BLG-FEAT-11 (compliance score) and BLG-FEAT-09 (staleness indicator), sufficient data exists to produce a meaningful weekly digest with no additional data collection.
-
-**Scope**
-- New backend endpoint returning: 7-day realised P&L, unrealised P&L delta, alerts fired vs dismissed count, compliance score (current + 7-day trend), staleness indicator summary
-- Frontend digest component rendering the above as a structured data table (no generated text or interpretive commentary)
-- Spec: define response schema in api_contracts
-
-**Acceptance Criteria**
-- Endpoint returns all specified fields for the past 7 days
-- Response contains raw numeric/boolean fields only — no generated text, narrative, or interpretation
-- Frontend renders digest as a data table (not commentary format)
-- AC explicitly confirmed: no generated text or interpretation present in any response field
-- Spec entry added to relevant api_contracts document
-
----
-
-### BLG-OPS-10 — Render hosting tier review
-**Priority:** P3 (Low)
-**Type:** Operational / Infrastructure
-**Owner:** FinOps & Resource Architect + Infrastructure & Operations Owner
-**Source:** Roadmap rebalance cycle 2026-03-31__scheduled (IDEA-finops-20260321-01 advancing) — 2026-03-31
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v2.4
-
-**Problem**
-BLG-OPS-04 (cron alert scheduling) has been running in production since v2.2 (2026-03-24). A full sprint cycle (v2.3) of alert scheduling has now elapsed. There is no documented assessment of whether the daily scheduling workload fits within Render's free tier limits (CPU minutes, bandwidth, DB connections). Without a review, cost/capacity issues may surface without warning.
-
-**Scope**
-- Document current Render plan tier and free tier limits (CPU minutes, bandwidth, sleep/wake behaviour)
-- Review BLG-OPS-04 cron workload: evaluate actual daily execution against limits
-- Record a decision: free tier sufficient | paid tier warranted now | monitor for N sprints before deciding
-- File as an operational record (Class 3) in `docs/` or `claude/cycles/`
-
-**Acceptance Criteria**
-- Review document exists and records: current tier, limit values, observed scheduling workload, and a documented decision
-- Decision is signed off by FinOps & Resource Architect and Infrastructure & Operations Owner
-- If paid tier is warranted: a follow-up backlog item is created (not part of this scope)
-
----
-
-### BLG-BE-06 — Alert evaluation idempotency
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering
-**Owner:** Backend Engineering Patterns Owner
-**Source:** Roadmap rebalance cycle 2026-03-31__scheduled (IDEA-backend-engineering-20260321-02 advancing) — 2026-03-31
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.4
-
-**Problem**
-BLG-OPS-04 (cron scheduling) runs the alert evaluation endpoint daily. If the scheduler retries, misfires, or is manually triggered on a day already evaluated, users receive duplicate alert notifications. There is no deduplication mechanism on the notification dispatch layer to prevent a second notification being sent for the same rule on the same trading day.
-
-**Scope**
-- Add a deduplication key (rule_id + trading_day) on the notification dispatch layer only
-- Before sending a notification, check: was a notification for this rule already dispatched today?
-- If yes: skip dispatch (log as deduplicated); if no: send and record
-- The evaluation pipeline itself is NOT affected — evaluation continues to run regardless
-- Scope is strictly notification dispatch deduplication, not evaluation suppression
-
-**Acceptance Criteria**
-- If alert evaluation runs twice on the same trading day, only one notification is sent per rule per day
-- The evaluation pipeline executes both times (no evaluation is suppressed)
-- Deduplication is logged (identifiable in logs that a dispatch was skipped as duplicate)
-- Explicitly confirmed: evaluation pipeline is not locked or suppressed by this change
-- Spec: deduplication behaviour documented in alert evaluation spec
-
----
-
-### BLG-GOV-09 — Cycle velocity metric
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** PMO Lead + Head of Engineering
-**Source:** Roadmap rebalance cycle 2026-03-31__scheduled (IDEA-pmo-lead-20260321-01 advancing) — 2026-03-31
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v2.4
-
-**Problem**
-The roadmap and release planning engines lack longitudinal throughput data. Each release planning cycle estimates capacity from scratch without reference to historical story completion rates. v2.3 triggered a capacity warn that an earlier baseline might have predicted. Without a velocity metric, recurring over-planning patterns are invisible until they manifest as sprint slippage.
-
-**Scope**
-- Define a simple velocity metric: stories completed / stories planned per sprint, per cycle
-- Back-fill metric values for the last 6 cycles from existing cycle artefacts (run manifests, execution_state.json)
-- Add a "Cycle Velocity" section to the run_manifest.md template (update roadmap_prompt.md STEP 1.1)
-- Surface the last 3 cycles' velocity figures as context at the start of each roadmap rebalance run manifest
-
-**Acceptance Criteria**
-- Velocity metric is defined and documented (stories completed / planned per sprint)
-- Last 6 cycles' velocity figures are recorded in a persistent document or manifest section
-- run_manifest.md template includes a velocity section populated at each rebalance run
-- Release planning can reference velocity data without re-deriving it from cycle artefacts each time
-
----
-
 ---
 
 ### BLG-FEAT-15 — Fee drag metric on Trade History
@@ -763,5 +628,137 @@ EPIC-01 shipped three backend correctness fixes (ST-01 ATR conversion, ST-02 not
 - Scenario file(s) present covering all four scenarios
 - Each scenario specifiable as executable against staging or unit test suite
 - Referenced in test scenario index
+
+---
+
+## 16. New Backlog Items — Session 2026-04-04
+
+*Items raised from v2.4 post-ship closure. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
+
+---
+
+### BLG-GOV-13 — Deduplicate backlog_archive.md duplicate item headers
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead
+**Source:** Groom backlog v2.4 post-ship (2026-04-04) — ID uniqueness scan FAIL
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.5
+
+**Problem**
+`claude/backlog/backlog_archive.md` contains 50 duplicate `###` item headers — items that were archived in multiple separate grooming passes across prior cycles. The ID uniqueness scan in `backlog_management_prompt.md §4.5` flags this as FAIL every run. Duplicate headers create ambiguity about which archived entry is authoritative and make the archive unreliable as a historical record. Product Owner confirmation is required before deduplication can proceed (per the health report outstanding action).
+
+**Scope**
+- Product Owner to confirm deduplication approach: retain most recent entry per ID, or leave as historical record
+- If deduplication approved: for each duplicated ID, retain the most recent (lowest in the file = latest archived) entry and remove earlier copies
+- Validate that no active IDs are present in the archive after deduplication
+- Run ID uniqueness scan post-deduplication and confirm PASS
+- Update `backlog_archive.md` Last Updated header
+
+**Acceptance Criteria**
+- `backlog_archive.md` contains no duplicate `###` item headers
+- ID uniqueness scan in next groom backlog run returns PASS
+- Product Owner has confirmed the deduplication approach prior to execution
+
+---
+
+### BLG-FEAT-16 — AI Journal Summarisation
+**Priority:** P3 (Low)
+**Type:** Product Feature
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** Initiative AI-SUM — gate cleared by Product Owner 2026-04-04 (SRB-v1.7)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+**§13 Status:** CONDITIONALLY COMPLIANT — SRB-v1.7 (2026-03-02). Mandatory conditions below are non-negotiable and must appear in AC verbatim.
+**Depends on:** Strategy Rules owner sign-off before any signal pipeline integration (SRB-v1.7 condition 3)
+
+**Problem**
+Trade journals accumulate over time and users must scroll through individual entries to extract patterns or themes from their past trading behaviour. A read-only AI-generated summary of a user's journal entries would reduce that effort and surface recurring themes or reflections without replacing the raw journal record. This is a UX convenience feature only — it does not affect the signal pipeline or any trading calculation.
+
+**Scope**
+- Backend: call an external LLM API to summarise a user's journal entries (entry/exit notes from closed trades); return summarised text
+- Frontend: display the AI summary alongside (not instead of) the raw journal content on the Trade History page or a dedicated summary view
+- Display an explicit disclaimer label per SRB-v1.7 condition 2 (see AC)
+- AI summary output must not be persisted as a canonical record or used as a calculation input
+
+**Acceptance Criteria**
+- [ ] AI summary is displayed as a UX convenience view only — raw journal entries remain the source of truth and are visible alongside or accessible from the summary view
+- [ ] AI summary output is NOT used as input to any signal, scoring, compliance, or recommendation calculation
+- [ ] UI displays label: *"AI-generated summary — for reference only. Not a trading recommendation."* — label must be visible whenever the summary is shown, without requiring user interaction
+- [ ] Strategy Rules owner has reviewed and confirmed the implementation does not integrate AI output into any signal pipeline (sign-off required before merge)
+- [ ] Any future scope expansion beyond read-only display triggers a new §13 review before pre-alignment (documented in AC of that story)
+- [ ] External LLM API key and configuration are managed via environment variable; no secrets in code
+
+---
+
+### BLG-BE-10 — Add supplementary indicator fields to signal generation
+**Priority:** P3 (Low)
+**Type:** Backend Engineering + Frontend / UX
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** Initiative TECH-IND — gate cleared by Strategy Rules owner 2026-04-04
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+**§13 Status:** COMPLIANT (display-only scope) — SRB-v1.7 Feature 3. Scoring changes are explicitly out of scope and require a new §13 review + strategy_rules.md version bump before pre-alignment.
+
+**Problem**
+The current signal response provides `momentum_percent` (absolute price change over lookback), `atr_value`, and `volatility` for each signal. Users have no context for whether a signal's momentum is genuine outperformance vs. market drift, whether the stock is trading near meaningful price levels, or whether volume supports the move. These display-only additions serve the user's entry decision without altering the deterministic signal ranking.
+
+**Scope**
+Backend (`POST /signals/generate` response — new fields per signal):
+- `relative_strength_pct`: stock `momentum_percent` minus the benchmark index momentum over the same `lookback_days` period (US stocks vs SPY; UK stocks vs FTSE). Positive = outperforming. Informational only — does not affect `rank`.
+- `week52_high_proximity_pct`: how close the current price is to its 52-week high, as a percentage: `(current_price / 52_week_high - 1) * 100`. Negative means below high; 0 means at high.
+- `avg_daily_volume_20d`: 20-day average daily volume for the stock. Liquidity context.
+- `price_vs_50d_ma`: `"above"` or `"below"` — whether current price is above or below the 50-day moving average.
+
+Frontend (Signals page):
+- Display the four new fields as supplementary context columns or an expanded detail row on each signal card
+- Label `relative_strength_pct` explicitly as "vs. benchmark (informational)" — it does not represent the signal's rank
+- No UI shall allow the user to sort or filter by these fields in a way that reorders signals (rank is canonical)
+
+**Acceptance Criteria**
+- [ ] `POST /signals/generate` response includes all four new fields per signal object
+- [ ] `relative_strength_pct` is computed as stock momentum minus benchmark momentum over the same `lookback_days`; US stocks benchmark SPY, UK stocks benchmark FTSE
+- [ ] `relative_strength_pct` is labelled "vs. benchmark (informational)" in the UI and does not affect the `rank` field or signal ordering
+- [ ] `week52_high_proximity_pct`, `avg_daily_volume_20d`, and `price_vs_50d_ma` are displayed as supplementary context; their display does not alter signal rank
+- [ ] `signal_endpoints.md` updated to document the four new response fields
+- [ ] `openapi.yaml` updated in the same commit as the contract change
+- [ ] Strategy Rules owner confirms no scoring logic was modified (sign-off in QA evidence before merge)
+- [ ] Any future proposal to incorporate any of these fields into signal ranking requires a new §13 review and strategy_rules.md version bump before pre-alignment — this constraint is documented in the QA evidence log
+
+---
+
+### BLG-FEAT-17 — Market Correlation Analysis
+**Priority:** P3 (Low)
+**Type:** Product Feature
+**Owner:** Head of Engineering + Frontend Specifications & UX Owner
+**Source:** Initiative MKT-COR — gate cleared by Product Owner + Head of Engineering 2026-04-04
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.5
+**Pipeline decision:** Yahoo Finance (existing pipeline) confirmed sufficient — `backend/utils/pricing.py` already ingests SPY/FTSE via `check_market_regime()`; extend to `range: "2y"` for correlation lookback. No new vendor or API key required.
+
+**Problem**
+Users have no visibility into how correlated their open positions or overall portfolio are with the broader market (SPY for US, FTSE for UK). Without this, a user with 8 US tech positions may believe they are diversified when their portfolio moves almost identically to SPY — the system shows individual position performance but not market-driven vs. stock-specific attribution. Market correlation analysis addresses this gap.
+
+**Scope**
+Backend:
+- New analytics endpoint (e.g. `GET /analytics/market-correlation`) returning per-position and portfolio-level correlation coefficients vs. the relevant benchmark (SPY for US positions, FTSE for UK positions) over a configurable lookback (default 252 days)
+- Fetch historical OHLC for each position ticker and its benchmark via Yahoo Finance (`range: "2y"` to cover the default lookback plus buffer); compute Pearson correlation coefficient over the overlapping date range for each position held during that period
+- Response must be cached: TTL-based cache with minimum trading-day boundary (recalculate at most once per trading day). Correlation data changes slowly; recomputing on every page load is not acceptable.
+- On-demand computation only — no SPY/FTSE time-series stored in the database
+
+Frontend:
+- Display correlation metrics on the Analytics/Reports page: per-position correlation badge and portfolio-weighted average correlation vs. benchmark
+- Correlation scale: −1.0 (inverse) to +1.0 (perfect). Display as a signed decimal to 2dp with a colour indicator (e.g. >0.7 = high correlation warning, 0.3–0.7 = moderate, <0.3 = low)
+
+**Acceptance Criteria**
+- [ ] `GET /analytics/market-correlation` (or equivalent path) returns correlation coefficients for all open positions vs. their relevant benchmark (SPY/FTSE)
+- [ ] Portfolio-level weighted average correlation is included in the response
+- [ ] Correlation is computed as Pearson coefficient over the default 252-day lookback (or available history if shorter); lookback is a query parameter
+- [ ] Response is cached with a TTL of at minimum one trading day — repeated calls within the same trading day return the cached result without re-fetching Yahoo Finance
+- [ ] SPY/FTSE historical data is fetched on-demand; no index time-series is persisted to the database
+- [ ] Frontend displays per-position correlation and portfolio average on the Analytics page with colour-coded severity (high/moderate/low)
+- [ ] `openapi.yaml` updated in the same commit as the new endpoint
+- [ ] If Yahoo Finance is unavailable, the endpoint returns a graceful error (not a 500 that breaks the page); cached data is served if available
+- [ ] Engineer notes in QA evidence: if Yahoo Finance reliability becomes a problem, a formal data source review is required before any further correlation-dependent features
 
 ---

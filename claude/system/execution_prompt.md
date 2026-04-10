@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.9
-**Last Updated:** 2026-03-30
+**Version:** 3.0
+**Last Updated:** 2026-04-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -587,6 +587,12 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 11. **Sign-off gate:** If the item's seal condition in `sprint_backlog.md` names a required sign-off role: invoke agent-mediated sign-off per §5.3. Do not mark `acceptance_verified = true` until `sign_off_record.status = "cleared"`. Record outcome in `sign_off_record` in `execution_state.json`.
 
+**Pre-met path (LL-v2.4-P4-02):** If an item's acceptance criteria were satisfied by work completed in a prior sprint (item classified `pre-met` or notes field records `AC pre-met on main`):
+- Verify by code review / prompt review that all AC items are still met on `main`.
+- Mark `status = done`, `acceptance_verified = true`, note the prior commit SHA where the work was done.
+- **A `qa_evidence_EPIC-xx.md` entry is still required.** Create or append an entry recording: what the pre-met item covers, how verification was conducted (code review / prompt review), and DoQ sign-off. Pre-met does not mean unverified — the QA evidence log must document the pre-met verification explicitly.
+- Deviation check applies: if the prior implementation diverges from the current sprint's spec, file a deviation.
+
 #### 3.1.B If `delegated_backend` or `delegated_frontend`:
 
 1. Create or update the GitHub issue to `In Progress` with delegation note.
@@ -646,7 +652,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 **SLA breach tracking:** Per `claude/system/shared_standards.md §16.4`.
 
-**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume.
+**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume. **HARD GATE (LL-v2.4-EX-01 — third recurrence): Update the delegation log entry** (per `shared_standards.md §16.3`) — set status to `Unblocked` and note the commit SHA in the same step as setting item status to `done` in `execution_state.json`. These two writes are atomic. Do not advance to the next ST item until both are recorded. This gate applies to `delegated_decision` items just as it does to `delegated_backend` and `delegated_frontend`.
 
 ### 3.2 EPIC Completion
 
@@ -780,6 +786,8 @@ For each entry still `Pending` or `In Progress`:
 ### 5.1 Acceptance Summary
 
 For each ST item: confirm `acceptance_verified = true`. If any are false and the item is `merged`: this is a quality gap — file an escalation.
+
+**QA Evidence File Existence Check (LL-v2.4-P4-01 — second recurrence):** Before checking sign-off dates, verify that `qa_evidence_EPIC-xx.md` **exists** for every EPIC in `merge_gate.epics_merged`. A missing QA evidence file is a hard gate — create it immediately using §3.2.A, complete the verification (including pre-met items and autonomous items), obtain DoQ sign-off, then continue. Do not proceed to STEP 5.2 until all qa_evidence files exist. A file created here at sprint close is acceptable; a file missing at Phase 4 (delivery verification) preflight is a recurrent process failure that this gate must prevent.
 
 **QA Evidence Persistence Check (LL-v2.0-P4-1):** For each EPIC with `qa_signed_off: true` in `execution_state.json`, read the corresponding `qa_evidence_EPIC-xx.md` file and confirm the sign-off block `Date:` field is non-blank. If blank: the sign-off was not persisted during sprint execution — re-apply the sign-off block immediately (Director of Quality authority required). Do not proceed to STEP 5.3 until all sign-off blocks are confirmed non-blank.
 
@@ -953,6 +961,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.0 | 2026-04-03 | Post-ship closure v2.4 lessons learnt — three action-now patches applied. LL-v2.4-EX-01 (third recurrence): §3.1.D delegated_decision unblock detection — hard gate added to update delegation log entry to Unblocked atomically with item status=done; applies equally to delegated_decision items as to delegated_backend/frontend. LL-v2.4-P4-01 (second recurrence): STEP 5.1 — QA Evidence File Existence Check added; before sign-off date check, verify qa_evidence_EPIC-xx.md exists for every EPIC in merge_gate.epics_merged; missing file is a hard gate at sprint close. LL-v2.4-P4-02: §3.1.A pre-met path note added — pre-met items require qa_evidence_EPIC-xx.md entry with DoQ sign-off confirming verification; pre-met does not mean unverified. Authority: Head of Specs Team (post-ship closure 2026-03-31__release-v2.4). |
 | 2.9 | 2026-03-31 | Post-ship closure v2.3 lessons learnt applied (deferred patches). LL-v2.3-CL-01: §5.1 delegated_frontend classification updated — Base44 model superseded; frontend stories default to autonomous engine delivery; classification rule and delegation note updated. LL-v2.2-EX-01 (second recurrence): STEP 3.1.A unblock detection upgraded from advisory to hard gate — delegation log entry must be updated atomically with item status to `done`; batching to STEP 5.0 is a process violation. LL-v2.2-EX-02 (second recurrence): STEP 4 all_merged advisory upgraded to hard gate — STEP 5 sprint close must execute in same session as final merge without exception. LL-v2.2-EX-04 (second recurrence): §9.1 spec_references comment made explicit — "no prior spec applicable" is the exemption token; completion condition updated to name the token explicitly; engine must not flag spec_references:[] as a traceability gap when token is present. LL-v2.3-CL-02: STEP 7 pre-seal check added — delegation_log.md line count verified against delegated_items count before sealing. Authority: Head of Specs Team (post-ship closure 2026-03-24__release-v2.3). |
 | 2.7 | 2026-03-24 | Post-ship closure v2.2 lessons learnt applied. LL-v2.2-EX-01: STEP 3.1.B unblock detection — delegation log entry updated to `Unblocked` in-flight (not batched at STEP 5.0). LL-v2.2-EX-02: STEP 4 merge gate — advisory added: when `all_merged=true`, STEP 5 Sprint Close must execute in same session. LL-v2.2-EX-03: §13 invariants — backend branch discipline note added (delegated_frontend backend commits must land on EPIC branch). LL-v2.2-EX-04: §9.1 schema — spec_references may be empty for delegated_qa doc artefacts and autonomous infra items with no prior spec; notes field: "no prior spec applicable". LL-v2.2-EX-05: STEP 3.1.C — test gap against undelivered feature should be noted "pending ST-xx completion", not flagged P1. Authority: Head of Specs Team (post-ship closure 2026-03-21__release-v2.2). |
 | 2.6 | 2026-03-21 | LL-v2.1-P4-3: STEP 6 guard note added — do not emit `Sprint_Complete` in `.claude_current_state.json` if `execution_state.json.sealed` is still `false`. Ensures STEP 7 (Seal Execution Record) executes in the same session as sprint close before the delivery verification preflight can proceed. Authority: Head of Specs Team (post-ship closure immediate action). |

@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-31 (roadmap rebalance — cycle 2026-03-31__scheduled — scheduled run; Standard tier; DL-013 to DL-016)
-**Last rebalance:** 2026-03-31 (cycle 2026-03-31__scheduled — scheduled run; Standard tier; DL-013 to DL-016)
+**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — Standard tier; no roadmap initiative changes; DL-017 to DL-019; horizon review: no movements; gated items AI-SUM/TECH-IND/MKT-COR moved to Priority 2 Next Phase in session 2026-04-04)
+**Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — scheduled run; Standard tier; DL-017 to DL-019)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v2.3** — Quality Automation & User Insight — Shipped 2026-03-30
-**Next planned release:** **v2.4** (TBD)
+**v2.4** — Correctness, Insight & Governance Hardening — Shipped 2026-04-03
+**Next planned release:** **v2.5** (TBD)
 
 ---
 
@@ -45,16 +45,16 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*v2.3 shipped 2026-03-30. v2.4 release plan published 2026-03-31 — 17 stories across 6 EPICs (Correctness, Insight & Governance Hardening). Sprint planning pending.*
+*v2.4 shipped 2026-04-03 (Verified_with_deviations). Cycle annotation RA:v2.4 retired to roadmap_archive.md 2026-04-03. Next release v2.5 — planning not yet started.*
 
-<!-- roadmap-annotation-marker: RA:v2.4:2026-03-31__release-v2.4 -->
+<!-- roadmap-annotation-marker: RA:v2.5:2026-04-05__release-v2.5 -->
 
 **Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-03-31__release-v2.4
-- Plan published: 2026-03-31
-- Cycle folder: claude/cycles/2026-03-31__release-v2.4/
-- Backlog slice: claude/cycles/2026-03-31__release-v2.4/stage4_backlog_slice.md
-- Status at annotation: Validated
+- Cycle: 2026-04-05__release-v2.5
+- Plan published: 2026-04-05
+- Cycle folder: claude/cycles/2026-04-05__release-v2.5/
+- Backlog slice: claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md
+- Status at annotation: Published
 
 ---
 
@@ -68,9 +68,9 @@ These may be revisited in future versions without any canonical spec change:
 | Mobile App | Very High | Web experience sufficient |
 | Full Compliance Scoring | High | Requires more trade history; lightweight version ships in v1.9 |
 | BLG-TECH-05 — Prometheus metrics endpoint | Low–Medium | Defer until operational need or multi-user |
-| Market Correlation Analysis | High | Blocked: requires external benchmark data pipeline (SPY, FTSE daily prices). Revisit when/if that pipeline is introduced |
-| AI Journal Summarisation | Unknown | Blocked: requires §13 boundary decision (determinism principle). Not on active roadmap until that decision is documented |
-| New Technical Indicators | Low–Medium | Blocked: requires strategy rules review. Not in scope without formal §13 confirmation |
+| Market Correlation Analysis | High | Gate cleared 2026-04-04 — Yahoo Finance pipeline confirmed sufficient (PO + HoE). Backlog item BLG-FEAT-17 filed. See Priority 2 — Next Phase in `initiative_register.md`. |
+| AI Journal Summarisation | Medium | Gate cleared 2026-04-04 — SRB-v1.7 CONDITIONALLY COMPLIANT (PO). Backlog item BLG-FEAT-16 filed. See Priority 2 — Next Phase in `initiative_register.md`. |
+| New Technical Indicators | Low–Medium | Gate cleared 2026-04-04 — display-only scope approved by Strategy Rules owner. Backlog item BLG-BE-10 filed. See Priority 2 — Next Phase in `initiative_register.md`. |
 | Customisable Dashboard Layout | High | High build cost, low current priority. Defer indefinitely at current scale |
 
 ---
@@ -118,6 +118,7 @@ When evaluating new features:
 | **v2.1** | Alerts, Watchlists & Enhancements | ADR-003 (async notification), Alerts & Notifications (Telegram delivery), Watchlists & Screening, Chart Interactivity, Tax-Year PDF/CSV Export, Slippage Tracking, Spec Debt & QA Coverage — ✅ Shipped 2026-03-21 |
 | **v2.2** | Security, Alert Maturity & Quality | Security hardening (API Key Auth, CSP), Alert system maturity (scheduling, thresholds, history), Bug fixes & operational quick wins, QA coverage, Governance process enhancements — ✅ Shipped 2026-03-24 |
 | **v2.3** | Quality Automation & User Insight | Strategy Compliance Panel, Metrics Staleness Indicator, Alert Nav Badge, Health Database endpoint, QA automation, Governance tooling — ✅ Shipped 2026-03-30 (Verified_with_deviations) |
+| **v2.4** | Correctness, Insight & Governance Hardening | ATR fix, alert deduplication, stop price join, P&L GBP column, error mapping, data model reconciliation, weekly digest, operational readiness, governance patches — ✅ Shipped 2026-04-03 (Verified_with_deviations) |
 
 ---
 

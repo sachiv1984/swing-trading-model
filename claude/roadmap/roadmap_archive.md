@@ -1,13 +1,41 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-30
+**Last Updated:** 2026-04-03
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v2.4 — Correctness, Insight & Governance Hardening (RA:v2.4)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (annotation block RA:v2.4)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-03
+**Shipped version:** v2.4 (2026-04-03)
+**Cycle reference:** 2026-03-31__release-v2.4
+**Verification report:** `claude/cycles/2026-03-31__release-v2.4/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-03
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.4:2026-03-31__release-v2.4 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-03-31__release-v2.4
+- Plan published: 2026-03-31
+- Cycle folder: claude/cycles/2026-03-31__release-v2.4/
+- Backlog slice: claude/cycles/2026-03-31__release-v2.4/stage4_backlog_slice.md
+- Status at annotation: Validated
+
+**✅ Complete — Shipped 2026-04-03 | Cycle: 2026-03-31__release-v2.4 | Verified_with_deviations**
+- Theme: Correctness, Insight & Governance Hardening — 17/17 stories delivered, 6 EPICs merged
+- Changelog: docs/product/changelog.md#v2.4
 
 ---
 

@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-03-30
+**Last Updated:** 2026-04-03
 
 ---
 
@@ -103,6 +103,7 @@ It points to the **single canonical source**.
 - `market_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-16): GET /market/status
 - `reports_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-17, ST-03): GET /reports/tax-year — UK tax-year P&L statement. Dual sign-off: Head of Specs Team + Financial Reporting & Records Owner (2026-03-17).
 - `alerts_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-03-20, ST-02; updated v0.3 2026-03-24, ST-05): Alert rules CRUD, alert evaluation, notification feed, notification preferences, alert history (GET /alerts/history). Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
+- `digest_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-03, ST-08, cycle 2026-03-31__release-v2.4): GET /digest/weekly — 7-day trading digest (realised P&L, alert activity, compliance trend, staleness summary). Deterministic data fields only. Sign-off: QA Lead + DoQ (2026-04-01/03).
 - `health_endpoints.md` — Class 1 Canonical, v1.2, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3 — DEV-HEALTH-001 closed; updated v1.2 by ST-08 adding GET /health/database): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.2, 2026-03-30).
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
@@ -301,11 +302,10 @@ Identified during delivery verification (verification_report.md §6 — TSG-v21-
 ### 9.3 TSG-v21-03 — EPIC-05: no slippage tracking test scenarios exist
 
 **Identified:** 2026-03-21 (delivery verification 2026-03-18__release-v2.1)
-**Status:** Open — backlog item TEST-GAP-EPIC-05-SLIP
+**Status:** RESOLVED — 2026-04-03 (v2.4, ST-12, cycle 2026-03-31__release-v2.4)
 **Owner:** QA & Testing Owner
 **Gap:** No scenario file covers slippage tracking (ST-14). Spec ref: `docs/specs/frontend/pages/trade_history.md`.
-**Required action:** Author SC-SLIP-01 through SC-SLIP-04 in `docs/testing/reports_scenarios.md` or a new `slippage_scenarios.md`.
-**Resolution target:** v2.3 (slippage scenarios not included in v2.2 sprint; TEST-GAP-EPIC-05-SLIP remains open).
+**Resolution:** `docs/testing/slippage_scenarios.md` created covering SC-SLIP-01 through SC-SLIP-04 + SC-SLIP-05/06; Playwright spec `tests/e2e/slippage-tracking.spec.js`; manual runbook v1.1; SC-SLIP-01 staging execution complete 2026-04-02 (all 6 checks Pass). Backlog item TEST-GAP-EPIC-05-SLIP closed.
 
 ---
 
@@ -334,11 +334,20 @@ Identified during delivery verification (verification_report.md §6 — TSG-v22-
 ### 10.3 TSG-v23-01 — EPIC-02: R-Multiple chart visual scenarios staging-blocked (BLG-BE-04)
 
 **Identified:** 2026-03-30 (delivery verification 2026-03-24__release-v2.3)
-**Status:** Open — deferred pending BLG-BE-04 resolution
+**Status:** Blocker resolved — scenarios now executable (pending QA execution)
 **Owner:** QA & Testing Owner
-**Gap:** V-CHART-05a/b/c scenarios require `stop_price` field in `/trades` API response. BLG-BE-04 (stop_price absent from trade_history) blocks these 3 R-Multiple visual scenarios. Core analytics user journey (R-Multiple analysis).
-**Required action:** Scenarios will be executable once BLG-BE-04 is resolved. QA & Testing Owner to re-run V-CHART-05a/b/c when BLG-BE-04 is scheduled.
-**Resolution target:** Cycle where BLG-BE-04 is scheduled
+**Gap:** V-CHART-05a/b/c scenarios require `stop_price` field in `/trades` API response. BLG-BE-04 (stop_price absent from trade_history) blocked these 3 R-Multiple visual scenarios.
+**Update (2026-04-03):** BLG-BE-04 resolved by ST-03 in cycle 2026-03-31__release-v2.4. `stop_price` field now present on analytics trade endpoint response. V-CHART-05a/b/c are now executable against staging. QA & Testing Owner to schedule execution in v2.5 cycle.
+**Required action:** QA & Testing Owner to execute V-CHART-05a/b/c on staging against v2.4 deployment.
+
+### 10.4 TSG-v24-01 — EPIC-01: no test scenarios for backend correctness fixes
+
+**Identified:** 2026-04-03 (delivery verification 2026-03-31__release-v2.4)
+**Status:** Open — backlog item TEST-GAP-EPIC-01-v24
+**Owner:** QA & Testing Owner
+**Gap:** EPIC-01 shipped three backend correctness fixes (ST-01 ATR conversion, ST-02 notification deduplication, ST-03 stop_price join) with no automated test scenarios. These are correctness-critical behaviours.
+**Required action:** Author SC-ATR-01, SC-DEDUP-01, SC-DEDUP-02, SC-STOP-01 — see verification_report.md §6 for full scenario descriptions. File in `docs/testing/`.
+**Resolution target:** v2.5
 
 ---
 

@@ -32,7 +32,7 @@ The goal is a compounding improvement: each mistake makes the next run of that s
 *(This section is maintained automatically. Do not edit manually.)*
 
 ### backlog-add
-*(No lessons recorded yet)*
+| 2026-04-03 | backlog-add | Created new session sections (## N. New Backlog Items — Session YYYY-MM-DD) for each batch of new items instead of placing items under the correct existing type-based sections (§1–§8). This fragmented the backlog by date rather than organising it by type as intended. | New items must be appended to the correct existing type section (§1 Platform, §2 Features, §3 Frontend, §4 Backend, §5 QA, §6 Operations, §7 Spec Debt, §8 Governance). Never create a new numbered session section. The skill's default Step 4 behaviour is overridden by the backlog's Placement Rule (documented at the top of backlog.md). |
 
 ### cycle-status
 *(No lessons recorded yet)*

@@ -3,9 +3,55 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-30
+**Last Updated:** 2026-04-03
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.4 — Correctness, Insight & Governance Hardening — 2026-04-03
+
+Cycle: 2026-03-31__release-v2.4
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-03-31__release-v2.4/verification_report.md
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Backend correctness fixes: ATR pence→GBP conversion for all .L tickers (always-on, no guard); notification dispatch deduplication (rule_id + trading_day); initial stop price exposed on analytics trade endpoint (stop_price field join) | backend/utils/pricing.py; docs/specs/api_contracts/alerts_endpoints.md §4; docs/specs/api_contracts/analytics_endpoints.md §trades_for_charts |
+| EPIC-02 | Frontend & UX: P&L (GBP) absolute value column restored to Positions Table View; user-facing error message mapping layer (HTTP status + error code → readable message) | docs/specs/frontend/pages/positions.md; src/lib/apiError.js |
+| EPIC-03 | Spec debt: portfolios and trade_history table schemas in data_model.md reconciled against live Supabase DB (8 divergences corrected on trade_history; initial_cash and created_at confirmed correct on portfolios) | docs/specs/data_model.md#portfolios; docs/specs/data_model.md#trade_history |
+| EPIC-04 | Weekly trading digest: new GET /digest/weekly endpoint returning 7-day P&L, alert activity, compliance score trend, staleness summary; WeeklyDigest.js frontend component | backend/routers/digest.py; docs/specs/api_contracts/digest_endpoints.md; docs/reference/openapi.yaml; src/pages/WeeklyDigest.js |
+| EPIC-05 | Operational readiness: Render hosting tier reviewed and documented (free tier sufficient — decision record filed); API endpoint performance baseline documented (all endpoints, p50/p95); slippage tracking test scenario file (SC-SLIP-01 through SC-SLIP-06); cycle velocity metric defined and backfilled 6 cycles | docs/ops/api_performance_baseline.md; docs/testing/slippage_scenarios.md; claude/cycles/velocity_metrics.md; claude/system/roadmap_prompt.md (velocity section) |
+| EPIC-06 | Governance engine maintenance: execution_prompt.md action-now patches (second recurrences LL-v2.2-EX-01/02/04); delivery_verification_prompt.md deviation compliance check patch (LL-v2.3-CL-03); execution_prompt.md delegation model update + delegation log line count check; release planning cycle artefact sealing simplified (SHA-256 hash verification removed, sealed: true flag retained) | claude/system/execution_prompt.md; claude/system/delivery_verification_prompt.md; claude/system/release_planning_prompt.md |
+
+### Deviations accepted
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-EPIC02-ST05-03 | P2 | Missing P&L (GBP) column on Positions page (accepted v2.3; **resolved this sprint by ST-04**) | PO + DoQ (v2.3); resolved v2.4 |
+| DEV-ST14-01 | P3 | Avg Slippage StatsCard renders without gradient background (cosmetic, pre-existing). BLG-FE-08 filed. | DoQ 2026-03-20 (pre-accepted) |
+
+### Tech backlog items shipped
+
+- [ST-01] BLG-BE-05: Fix ATR pence→GBP conversion for all UK (.L) tickers
+- [ST-02] BLG-BE-06: Alert evaluation notification dispatch deduplication
+- [ST-03] BLG-BE-04: Expose initial stop price (stop_price) on analytics trade endpoint
+- [ST-04] BLG-FE-06: Fix missing P&L (GBP) column on Positions page
+- [ST-05] BLG-FE-03: User-facing error message mapping layer
+- [ST-06] BLG-SPEC-D15: Reconcile portfolios table schema in data_model.md
+- [ST-07] BLG-SPEC-D16: Reconcile trade_history table schema in data_model.md
+- [ST-08/09] BLG-FEAT-14: Weekly trading review digest (backend endpoint + frontend component)
+- [ST-10] BLG-OPS-10: Render hosting tier review and decision record
+- [ST-11] BLG-OPS-05: API endpoint performance baseline document
+- [ST-12] TEST-GAP-EPIC-05-SLIP: Slippage tracking test scenario file
+- [ST-13] BLG-GOV-09: Cycle velocity metric defined and backfilled
+- [ST-17] BLG-GOV-03: Release planning cycle artefact sealing simplified (SHA-256 removed)
+- [ST-14/15/16] Governance carry-forward patches: execution_prompt.md + delivery_verification_prompt.md action-now items (LL-v2.2-EX-01/02/04, LL-v2.3-CL-02/03)
+
+Sign-off: Product Owner — 2026-04-03
+QA sign-off: Director of Quality — 2026-04-03
 
 ---
 

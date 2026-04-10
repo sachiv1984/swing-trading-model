@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-31 (roadmap rebalance — cycle 2026-03-31__scheduled; active initiatives remain zero; no Now-horizon initiatives added; 4 backlog items added (DL-013 to DL-016))
+**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — Standard tier; no active initiative changes; gated items AI-SUM/TECH-IND/MKT-COR remain in Priority 2 Next Phase; active initiatives pool remains empty; DL-017 to DL-019)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -17,7 +17,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 ## Active Initiatives
 
-*No active initiatives as of 2026-03-31. v2.3 shipped 2026-03-30. v2.4 scope TBD — pending release planning. Standard-tier horizon review (cycle 2026-03-31__scheduled) confirmed no movements warranted for any Later or Gated item. 4 new items added to backlog candidate pool (BLG-FEAT-14, BLG-OPS-10, BLG-BE-06, BLG-GOV-09).*
+*No active initiatives as of 2026-04-03. v2.4 shipped 2026-04-03 (Verified_with_deviations). v2.5 scope TBD — release planning not yet started. v2.4 was backlog-driven (no initiative rows required). Standard-tier horizon review (cycle 2026-03-31__scheduled) confirmed no movements warranted for any Later or Gated item.*
 
 ---
 
@@ -26,15 +26,19 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 | ID | Initiative | Gate condition | Gate owner |
 |----|-----------|---------------|------------|
 | ~~4.3~~ | ~~Signal Exposure Enhancement~~ | ~~Gate cleared 2026-03-04 (PoG POG-20260304-01)~~ | ~~Strategy Rules owner + Product Owner~~ |
-| AI-SUM | AI Journal Summarisation | §13 boundary decision: non-deterministic AI vs determinism principle | Product Owner + Strategy Rules owner |
-| TECH-IND | New Technical Indicators | Strategy rules review confirms which indicators are in scope | Strategy Rules owner |
-| MKT-COR | Market Correlation Analysis | External data pipeline decision (SPY/FTSE ingestion) | Product Owner + Head of Engineering |
+| ~~AI-SUM~~ | ~~AI Journal Summarisation~~ | ~~Gate cleared 2026-04-04 — SRB-v1.7 (2026-03-02): CONDITIONALLY COMPLIANT. Backlog item BLG-FEAT-16 filed. Moved to Priority 2 — Next Phase.~~ | ~~Product Owner + Strategy Rules owner~~ |
+| ~~TECH-IND~~ | ~~New Technical Indicators~~ | ~~Gate cleared 2026-04-04 — Strategy Rules owner scoping decision: display-only scope approved (52-week high %, volume, price vs 50-day MA flag, relative strength field). No scoring changes. No strategy_rules.md bump required. Backlog item BLG-BE-10 filed. Moved to Priority 2 — Next Phase.~~ | ~~Strategy Rules owner~~ |
+| ~~MKT-COR~~ | ~~Market Correlation Analysis~~ | ~~Gate cleared 2026-04-04 — Yahoo Finance (existing pipeline) confirmed sufficient. SPY/FTSE already ingested via pricing.py check_market_regime(); extend to 2y range for correlation lookback. On-demand computation, no DB storage, caching required. Backlog item BLG-FEAT-17 filed. Moved to Priority 2 — Next Phase.~~ | ~~Product Owner + Head of Engineering~~ |
 
 ---
 
-## Priority 2 — Next Phase (post v2.1)
+## Priority 2 — Next Phase
 
-*No items currently in Next Phase. v2.2 scope will be determined by release planning engine from enriched backlog.*
+| ID | Initiative | Gate status | Backlog item | Notes |
+|----|-----------|-------------|--------------|-------|
+| AI-SUM | AI Journal Summarisation | Gate cleared 2026-04-04 (SRB-v1.7) | BLG-FEAT-16 | UX convenience display only. 4 mandatory conditions from SRB-v1.7 must appear in AC. Strategy Rules owner sign-off required before any signal pipeline integration. |
+| TECH-IND | New Technical Indicators | Gate cleared 2026-04-04 (Strategy Rules owner scoping decision) | BLG-BE-10 | Display-only scope only: 52-week high %, 20-day avg volume, price vs 50-day MA flag, relative strength vs benchmark (informational field — does not affect ranking). Any scoring promotion requires new §13 review + strategy_rules.md version bump before pre-alignment. |
+| MKT-COR | Market Correlation Analysis | Gate cleared 2026-04-04 (PO + HoE: Yahoo Finance pipeline confirmed sufficient) | BLG-FEAT-17 | On-demand computation via existing Yahoo Finance integration (2y range). No DB storage of index time-series. Caching required (TTL-based, trading-day boundary minimum). |
 
 ---
 

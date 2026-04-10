@@ -283,3 +283,4 @@ Backend must provide compliance flags per position (new endpoint or extension to
 - **Target resolution release:** v2.4
 - **Owner:** Frontend Specifications & UX Documentation Owner
 - **Backlog reference:** BLG-FE-06 (filed delivery verification 2026-03-30, cycle 2026-03-24__release-v2.3)
+- **Resolution:** Resolved by ST-04, cycle 2026-03-31__release-v2.4 (shipped 2026-04-03). P&L (GBP) column added. Changelog: docs/product/changelog.md#v24
