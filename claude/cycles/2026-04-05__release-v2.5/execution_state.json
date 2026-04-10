@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md",
   "invoked_utc": "2026-04-06T00:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-04-10T20:15:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-04-10T20:30:00Z",
 
   "epics": {
     "EPIC-04": {
@@ -355,11 +355,12 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-03", "EPIC-04"],
-    "epics_pending": ["EPIC-02"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-04-10T20:30:00Z",
+  "status": "Sealed"
 }

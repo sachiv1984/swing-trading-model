@@ -1,7 +1,7 @@
 Owner: Head of Engineering
 Class: Working Document (Class 3)
-Status: Active
-Last Updated: 2026-04-06
+Status: Closed
+Last Updated: 2026-04-10
 
 ---
 
@@ -47,5 +47,15 @@ If the Head of Engineering determines that the outlier latency is caused by an a
 - Investigation only — implementation fixes are in scope only if they address the latency outliers identified. Broader performance work is deferred.
 - `GET /notifications/preferences` may not yet be fully implemented; check router first.
 - Pooling options: SQLAlchemy `pool_size` and `max_overflow` in `database.py`; PgBouncer is a Render add-on (not available on free tier) — document this if confirmed.
+
+**Outcome:**
+**Status:** Unblocked
+**Unblocked at:** 2026-04-10
+**Commit SHA:** 3f31b1d
+
+Root causes identified and documented (api_performance_baseline.md v1.1):
+- `GET /notifications/preferences`: redundant `ensure_alerts_tables()` call on every request removed. Expected ~1.5s improvement.
+- `GET /portfolio`: 4 sequential psycopg2 connections at ~1.5s each — architectural constraint on Render free tier. Documented as known limitation.
+Pooling evaluation: PgBouncer not available on free tier; Supabase Supavisor (built-in pooler) recommended — BLG-OPS-14 filed (P1 XS). Portfolio connection refactor filed as BLG-BE-07-FIX (P2 M).
 
 ---

@@ -1,9 +1,34 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 1.9
-**Last Updated:** 2026-04-03
+**Version:** 2.0
+**Last Updated:** 2026-04-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-04-05__release-v2.5
+**Date:** 2026-04-10
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | System Status auth forwarding fixed (POST /test/endpoints now forwards X-API-Key); endpoint test list synced to 26 endpoints (openapi.yaml parity); Alerts, Notifications, Digest endpoint categories added to UI | backend/services/health_service.py; backend/routers/test.py; src/pages/SystemStatus.js | None |
+| EPIC-02 | Reports and Signals page backend integration documented (gaps GAP-R01/R02, GAP-S01–S03 identified, backlog items filed); GET /notifications/preferences outlier latency fixed (redundant ensure_alerts_tables() removed); GET /portfolio architectural constraint documented; Supavisor recommendation filed | docs/ops/reports_integration_review.md; docs/ops/signals_integration_review.md; docs/ops/api_performance_baseline.md v1.1; backend/services/alerts_service.py | None |
+| EPIC-03 | GitHub Actions curl calls hardened with --max-time 120 (alert-evaluation.yml, daily-snapshot.yml); Avg Slippage StatsCard gradient fix closure documented; Fee Drag % metric end-to-end: backend (fee_drag_pct, avg_fee_drag_pct), API contract (v2.2.0), openapi.yaml (v2.5.0), Trade History table (amber column, sortable), StatsCard (Avg Fee Drag); DataTable.js TableHead onClick bug fixed | .github/workflows/alert-evaluation.yml; .github/workflows/daily-snapshot.yml; docs/testing/slippage_scenarios.md v1.2; docs/specs/api_contracts/trade_endpoints.md v2.2.0; docs/reference/openapi.yaml v2.5.0; docs/specs/metrics_definitions.md v1.9.0; src/pages/TradeHistory.js; src/components/trades/TradeHistoryTable.js; src/components/ui/DataTable.js | P3 UX observations: BLG-FE-11/12/13 filed |
+| EPIC-04 | Governance prompt patches CF-2: execution_prompt.md STEP 8 edit check, delivery_verification_prompt.md pre-seal Date gate (both v-bumped); governance_sync.yml batch push fix (git log range); backlog placement rule formalised; test scenarios SC-ATR-01, SC-DEDUP-01/02, SC-STOP-01 filed | claude/system/execution_prompt.md v3.1; claude/system/delivery_verification_prompt.md v1.8; .github/workflows/governance_sync.yml; docs/testing/atr_scenarios.md; docs/testing/dedup_scenarios.md; docs/testing/stop_price_scenarios.md | P3: ST-10 live multi-commit test deferred to next push |
+
+### Capabilities deferred or returned
+
+None. All 13 planned stories delivered (velocity 1.00).
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md
+- Deviations filed: DataTable.js TableHead onClick (P2, fixed); BLG-FE-11/12/13 (P3 UX); ST-10 live test deferred (P3)
+- Test scenarios referenced: docs/testing/slippage_scenarios.md, docs/testing/atr_scenarios.md, docs/testing/dedup_scenarios.md, docs/testing/stop_price_scenarios.md
 
 ---
 
