@@ -502,6 +502,31 @@ BLG-GOV-09 (cycle velocity metric) shipped in v2.4 tracking story completion rat
 
 ---
 
+### BLG-GOV-15 — Upgrade decision_log.md append-only rule to structural hard gate
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Technical Debt
+**Owner:** Head of Specs Team
+**Source:** AUD-2026-04-11-002 — Tier 2 (BR 4, Medium effort)
+**Effort:** M (~0.5–1 day)
+**Provisional-Target:** v2.6
+
+**Problem**
+`OPERATIONAL_GUIDE.md §1` currently classifies the `decision_log.md` append-only rule as "a governance convention, not a hard gate." Every roadmap rebalance writes to `decision_log.md` without a structural guard, meaning deletions or edits to prior entries are process violations that would not be caught until a manual review. With 10+ completed cycles and an ever-growing decision log, the blast radius of an undetected edit is high.
+
+Note: `roadmap_prompt.md` v2.2 (2026-03-14) added a pre/post count check at STEP 9, but this is an assertion — it does not halt on failure — and the OPERATIONAL_GUIDE §1 description was not updated at that time.
+
+**Scope**
+- `roadmap_prompt.md` STEP 9: upgrade existing count check from assertion to STRUCTURAL (halt if line count decreases)
+- `OPERATIONAL_GUIDE.md §1` Hard Rules table: update description from "governance convention, not a hard gate" to "enforced structurally in Roadmap Engine STEP 9 via pre/post line-count check"
+
+**Acceptance Criteria**
+- `roadmap_prompt.md` STEP 9 halts execution if `decision_log.md` line count after write is less than before
+- `OPERATIONAL_GUIDE.md §1` Hard Rules table reflects structural enforcement
+- §6 governance file edit checklist applied for both files (version bumps, §14 update, prompt_change_log.md entries)
+- BP-05 compliance confirmed at next audit
+
+---
+
 ## 9. Deferred / Future Candidates
 
 - Daily email portfolio summary
