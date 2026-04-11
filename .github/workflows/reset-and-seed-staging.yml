@@ -99,7 +99,7 @@ jobs:
             echo "             watchlist        : 4 entries"
             echo "             alerts           : 4 rules + 2 unread notifications"
             echo "             analytics        : 12 closed trades (Jan-Mar 2026)"
-            echo "             signals          : 2 active (LGEN, BARC) + 1 dismissed (HSBA) + 1 converted (TSCO)"
+            echo "             signals          : 2 active/new (LGEN, BARC) + 1 dismissed (HSBA) + 1 entered (TSCO)"
           else
             echo "  Seed:    ⏭  skipped (bare reset only)"
           fi
