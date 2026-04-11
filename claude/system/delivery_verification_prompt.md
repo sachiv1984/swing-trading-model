@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-04-06
+**Version:** 1.9
+**Last Updated:** 2026-04-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -203,7 +203,11 @@ For each EPIC in `execution_state.json.merge_gate.epics_merged`:
 - Confirm `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` exists.
 - Confirm the QA sign-off block contains `Signed off by: Director of Quality` with a date.
 
-If any merged EPIC is missing its qa_evidence log or has a blank sign-off: halt. List exactly which EPICs are affected. Verification cannot proceed without signed QA evidence for every merged EPIC.
+Sign-off check (STRUCTURAL — two-tier, AUD-2026-04-11-005):
+- **TIER 1 — BLANK:** If `Signed off by:` field is empty or "pending" → HALT. List exactly which EPICs are affected. Do not proceed until Director of Quality signs.
+- **TIER 2 — WRONG AUTHORITY:** If sign-off is present but the signer is not Director of Quality → FLAG (do not halt). Require Director of Quality to provide a counter-sign note in that EPIC's `qa_evidence_EPIC-xx.md` before proceeding to STEP 1. Record the mismatch in `run_manifest` as a compliance advisory.
+
+If any merged EPIC is missing its qa_evidence log entirely: halt (Tier 1 applies). Verification cannot proceed without signed QA evidence for every merged EPIC.
 
 ### -1.4 Required Files Present
 
@@ -619,6 +623,8 @@ The run is complete only if:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.9 | 2026-04-11 | AUD-2026-04-11-005: STEP -1.3 sign-off check upgraded to two-tier STRUCTURAL check — Tier 1 (BLANK): empty or "pending" sign-off = HALT; Tier 2 (WRONG AUTHORITY): sign-off present but not Director of Quality = FLAG + require DoQ counter-sign before STEP 1 + compliance advisory in run_manifest. Resolves STALE 2-cycle deferred patch. Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
+| 1.8 | 2026-04-06 | ST-12 (CF-2b): Pre-seal gate added at STEP 8 — before proceeding to STEP 8.5, verify §9 DoQ Date and PO Date fields are both non-blank in verification_report.md; surface for completion if blank; do not seal until both filled. Authority: Head of Specs Team (ST-12, 2026-04-06). [Backfill entry — not present at time of apply.] |
 | 1.7 | 2026-03-31 | LL-v2.3-CL-03: STEP 3 — canonical spec Known Deviations sync note added. After creating a backlog item for any P1–P3 deviation, verify the canonical spec has a Known Deviations section entry for this deviation; create if absent. Prevents post-ship closure STEP 5 from being the first propagation gate (recurred v2.2 and v2.3). Authority: Head of Specs Team (post-ship closure 2026-03-24__release-v2.3). |
 | 1.6 | 2026-03-24 | LL-CL-v22-01: STEP 3 deviation register — backlog reference synchronisation note added. When a new backlog item is created for a deviation, the canonical spec deviation note `Backlog reference:` field must be updated to the new item ID in the same session. Prevents stale references at post-ship closure. Authority: Head of Specs Team (lessons learnt closure 2026-03-21__release-v2.2). |
 | 1.4 | 2026-03-11 | IMP-14: STEP 5.3 added — `test_scenario_gaps` structured table in `verification_report.md §6`; fields: gap_id, EPIC, description, qualifying_reason, disposition (backlog_item_created | not_applicable | deferred); all gaps must have a disposition before report seals (Phase 4 exit criterion). §8 completion condition updated. IMP-15: STEP 4.3 added — stale parked items detection; items parked in 3+ consecutive cycle backlog slices surfaced for mandatory PO disposition; recorded in `verification_report.md §5`; detection only — does not block verification status. |

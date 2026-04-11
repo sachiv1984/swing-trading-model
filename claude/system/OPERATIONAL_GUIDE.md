@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.49
+**Version:** 3.50
 **Last Updated:** 2026-04-11
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -913,7 +913,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.8)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v1.9)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1291,7 +1291,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.49 |
+| Version | 3.50 |
 | Last Updated | 2026-04-11 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
@@ -1304,7 +1304,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.5 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.2 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.8 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.9 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.2 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v2.7 |
@@ -1326,6 +1326,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.50 | 2026-04-11 | **AUD-2026-04-11-005 — delivery_verification_prompt.md v1.8→v1.9.** §9 Phase 4 source prompt header updated v1.8→v1.9. §14 Verification Engine Source updated v1.8→v1.9. Change: STEP -1.3 sign-off check upgraded to two-tier STRUCTURAL — Tier 1 (BLANK) = HALT; Tier 2 (WRONG AUTHORITY) = FLAG + DoQ counter-sign required + compliance advisory in run_manifest. Resolves STALE 2-cycle deferred patch (v2.4 Phase 4 lessons learnt). Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
 | 3.49 | 2026-04-11 | **AUD-2026-04-11-003 + AUD-2026-04-11-004 — execution_prompt.md v3.1→v3.2.** §8 Phase 3 source prompt header updated v3.1→v3.2. §14 Execution Engine Source updated v3.1→v3.2. Changes in execution_prompt.md: STEP 5.0A pr_status Pre-Seal Sync added (STRUCTURAL) — before writing Sprint_Complete, sync pr_status for all EPICs in epics_merged via `gh pr view`; do not proceed to STEP 5.1 until all have pr_status = "merged" or "not_created" (resolves OVERDUE 3-cycle deferred patch AUD-003). Verification readiness statement upgraded to STRUCTURAL table block with explicit Yes/No fields — do not write any No entry before resolving gap (resolves STALE 2-cycle deferred patch AUD-004). Authority: Head of Specs Team (AUD-2026-04-11). |
 | 3.48 | 2026-04-11 | **AUD-2026-04-11-001 — §13 artefact register: three missing artefacts added.** Sprint Backlog Index (`claude/cycles/<id>/sprint_backlog_index.json`, Class —, PMO Lead, Phase 2) inserted after Sprint Backlog row. Velocity Metrics (`claude/cycles/velocity_metrics.md`, Class 4, PMO Lead, Phase 1/1B) inserted after Decision Log row — read by roadmap_prompt.md STEP 0 since v4.7. Audit Report (`claude/cycles/<id>/audit_report_AUD-<date>.md`, Class 3, Head of Specs Team, Post-Ship) inserted after Closure State row — filed per audit SLA block. Authority: Head of Specs Team (AUD-2026-04-11). |
 | 3.47 | 2026-04-11 | **AUD-2026-04-11-007 + AUD-2026-04-11-008 — §14 metadata fields corrected.** §14 Version field updated 3.41→3.47 (was stale since v3.41; five version bumps 3.44/3.45/3.46 applied without updating §14 self-metadata). §14 Last Updated updated 2026-03-31→2026-04-11. §14 Team Charter version updated v1.5→v1.6 (charter updated to v1.6 on 2026-03-16 per AUD-2026-03-13-006; §14 not updated at that time). Authority: Head of Specs Team (AUD-2026-04-11). |
