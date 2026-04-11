@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44, apiFetch } from "../api/base44Client";
+import { base44, apiFetch, api } from "../api/base44Client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
@@ -68,7 +68,7 @@ export default function SignalsPage() {
         `${base44.baseUrl}/signals?top_n=${topN}&lookback_days=${lookbackDays}`
       );
       const result = await response.json();
-      return result.data || [];
+      return Array.isArray(result) ? result : (result.data || []);
     },
     refetchInterval: 60000 // Auto-refresh every 60 seconds
   });
@@ -78,9 +78,10 @@ export default function SignalsPage() {
     queryFn: () => base44.entities.Position.filter({ status: "open" }),
   });
 
-  const { data: portfolios = [] } = useQuery({
-    queryKey: ["portfolios"],
-    queryFn: () => base44.entities.Portfolio.list(),
+  // ST-03: Cash balance sourced from GET /cash/summary (authoritative backend source)
+  const { data: cashSummary } = useQuery({
+    queryKey: ["cashSummary"],
+    queryFn: () => api.cash.getSummary(),
   });
 
   // Fetch live market status
@@ -163,7 +164,7 @@ export default function SignalsPage() {
   const usCount = filteredSignals.filter(s => s.market === "US").length;
   const ukCount = filteredSignals.filter(s => s.market === "UK").length;
 
-  const portfolio = portfolios[0] || { cash_balance: 0 };
+  const availableCashBalance = cashSummary?.current_cash ?? 0;
   const currentMonth = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   // Format date properly
@@ -218,7 +219,7 @@ export default function SignalsPage() {
           price: marketStatus?.ftse?.price || 0
         }}
         fxRate={marketStatus?.fx_rate || 1.3611}
-        availableCash={portfolio.cash_balance}
+        availableCash={availableCashBalance}
       />
 
       {/* Summary Stats */}
