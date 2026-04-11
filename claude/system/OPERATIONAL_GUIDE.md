@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.47
+**Version:** 3.48
 **Last Updated:** 2026-04-11
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -1227,6 +1227,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Initiative Register | `claude/roadmap/initiative_register.md` | 4 | Product Owner | 1 |
 | Workforce Capacity | `claude/roadmap/workforce_capacity.md` | 4 | FinOps & Resource Architect | 1 |
 | Decision Log | `claude/roadmap/decision_log.md` | 4 | PMO Lead | 1 |
+| Velocity Metrics | `claude/cycles/velocity_metrics.md` | 4 | PMO Lead | 1, 1B |
 | Ideas Window State | `claude/ideas/ideas_window.json` | — | PMO Lead | 0 |
 | Ideas Register | `claude/ideas/ideas_register.md` | 4 | PMO Lead | 0 |
 | Window Summary | `claude/ideas/window_summary_<IW-id>.md` | 4 | PMO Lead | 0 |
@@ -1257,6 +1258,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Global State Pointer | `.claude_current_state.json` | — | PMO Lead | 1B, 2, 3, 4 |
 | Sprint Goal | `claude/cycles/<id>/sprint_goal.md` | 4 | Product Owner | 2 |
 | Sprint Backlog | `claude/cycles/<id>/sprint_backlog.md` | 4 | PMO Lead | 2 |
+| Sprint Backlog Index | `claude/cycles/<id>/sprint_backlog_index.json` | — | PMO Lead | 2 |
 | Sprint Capacity | `claude/cycles/<id>/sprint_capacity.md` | 4 | PMO Lead | 2 |
 | Sprint Planning Notes | `claude/cycles/<id>/sprint_planning_notes.md` | 4 | PMO Lead | 2 |
 | Sprint Escalations | `claude/cycles/<id>/sprint_escalations.md` | 4 | PMO Lead | 2 |
@@ -1274,6 +1276,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` | 1 | PMO Lead | Post-Ship |
 | Closure Record | `claude/cycles/<id>/closure_record.md` | 3 | PMO Lead | Post-Ship |
 | Closure State | `claude/cycles/<id>/closure_state.json` | — | PMO Lead | Post-Ship |
+| Audit Report | `claude/cycles/<id>/audit_report_AUD-<date>.md` | 3 | Head of Specs Team | Post-Ship |
 | Amendment Manifest | `claude/cycles/<id>/amendments/<AMD-id>/amendment_manifest.md` | 3 | PMO Lead | Amendment |
 | Amendment State | `claude/cycles/<id>/amendments/<AMD-id>/amendment_state.json` | — | PMO Lead | Amendment |
 | Amendment Ratification | `claude/cycles/<id>/amendments/<AMD-id>/amendment_ratification.md` | 4 | PMO Lead | Amendment |
@@ -1288,7 +1291,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.47 |
+| Version | 3.48 |
 | Last Updated | 2026-04-11 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
@@ -1323,6 +1326,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.48 | 2026-04-11 | **AUD-2026-04-11-001 — §13 artefact register: three missing artefacts added.** Sprint Backlog Index (`claude/cycles/<id>/sprint_backlog_index.json`, Class —, PMO Lead, Phase 2) inserted after Sprint Backlog row. Velocity Metrics (`claude/cycles/velocity_metrics.md`, Class 4, PMO Lead, Phase 1/1B) inserted after Decision Log row — read by roadmap_prompt.md STEP 0 since v4.7. Audit Report (`claude/cycles/<id>/audit_report_AUD-<date>.md`, Class 3, Head of Specs Team, Post-Ship) inserted after Closure State row — filed per audit SLA block. Authority: Head of Specs Team (AUD-2026-04-11). |
 | 3.47 | 2026-04-11 | **AUD-2026-04-11-007 + AUD-2026-04-11-008 — §14 metadata fields corrected.** §14 Version field updated 3.41→3.47 (was stale since v3.41; five version bumps 3.44/3.45/3.46 applied without updating §14 self-metadata). §14 Last Updated updated 2026-03-31→2026-04-11. §14 Team Charter version updated v1.5→v1.6 (charter updated to v1.6 on 2026-03-16 per AUD-2026-03-13-006; §14 not updated at that time). Authority: Head of Specs Team (AUD-2026-04-11). |
 | 3.46 | 2026-04-06 | **ST-12 (EPIC-04, v2.5) — deferred governance prompt patches applied.** §8 source prompt execution_prompt.md v3.0→v3.1; §9 source prompt delivery_verification_prompt.md v1.7→v1.8. §14 Execution Engine Source → v3.1; Verification Engine Source → v1.8. Patches: (CF-2a) execution_prompt STEP 8 — governance file edit check added: if any §6-governed file was modified during sprint execution, append to prompt_change_log.md in same session. (CF-2b) delivery_verification_prompt STEP 8 — pre-seal gate added (LL-v2.4-DV-01): verify §9 DoQ and PO Date fields are non-blank before proceeding to STEP 8.5; surface for completion if blank. Authority: Head of Specs Team (ST-12, 2026-04-06). |
 | 3.33 | 2026-03-20 | **CLAUDE.md §8 — Cross-EPIC Merge Conflict Resolution added.** New section documents the sequential merge procedure for concurrent EPIC branches with shared-file conflicts: merge simpler EPIC first → merge updated main into remaining EPIC branch → resolve per-file rules (execution_state.json never revert done→blocked; openapi.yaml union + highest version; api_changelog.md combine descending; data_model.md all migrations ascending + highest version footer) → commit, push, confirm MERGEABLE, merge. §14 version 3.33. |
