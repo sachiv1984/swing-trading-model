@@ -65,6 +65,7 @@ SEEDS=(
     "seed_watchlist.sql"
     "seed_alerts.sql"
     "seed_analytics.sql"
+    "seed_signals.sql"
 )
 
 for seed in "${SEEDS[@]}"; do
@@ -82,6 +83,7 @@ echo "All seeds complete. Staging database ready for QA run."
 echo ""
 echo "State summary:"
 echo "  portfolio/trades : 2 open positions (LGEN, BARC) + 2 closed trades"
+echo "  signals          : 2 active (LGEN, BARC) + 1 dismissed (HSBA) + 1 converted (TSCO)"
 echo "  watchlist        : 4 entries (AAPL, MSFT, LGEN, BARC)"
 echo "  alerts           : 4 rules + 4 preferences + 2 unread notifications"
 echo "  analytics        : 12 closed trades across Jan-Mar 2026 (analytics charts enabled)"
