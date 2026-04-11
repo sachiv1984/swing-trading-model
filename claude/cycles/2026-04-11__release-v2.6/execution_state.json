@@ -88,22 +88,22 @@
       "stories": {
         "ST-12": {
           "status": "done",
-          "commit_sha": "pending",
+          "commit_sha": "27902b7",
           "acceptance_verified": true
         },
         "ST-13": {
           "status": "done",
-          "commit_sha": "pending",
+          "commit_sha": "27902b7",
           "acceptance_verified": true
         },
         "ST-14": {
           "status": "done",
-          "commit_sha": "pending",
+          "commit_sha": "27902b7",
           "acceptance_verified": true
         },
         "ST-15": {
           "status": "done",
-          "commit_sha": "pending",
+          "commit_sha": "27902b7",
           "acceptance_verified": true
         }
       }
