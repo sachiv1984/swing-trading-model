@@ -13,6 +13,8 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-04-11 | `post_ship_closure.md` | v2.2→v2.3 | STEP 6 operational documents reconciliation: `claude/cycles/velocity_metrics.md` added — engine must append velocity row (Planned/Completed from execution_state.json, rolling 6-cycle average updated) per cycle. Fixes gap where v2.4 and v2.5 rows were missed. | Head of Specs Team (2026-04-11) |
+| 2026-04-11 | `OPERATIONAL_GUIDE.md` | v3.52→v3.53 | post_ship_closure.md v2.2→v2.3: §10 source prompt header updated; §14 Post-Ship Closure Engine updated; changelog entry 3.53 added. | Head of Specs Team (2026-04-11) |
 | 2026-04-11 | `release_planning_prompt.md` | v2.25→v2.26 | AUD-2026-04-11-009: STEP 1 §1.3 Design-Gate Language Scan added (advisory) — scans scope candidates for design-gate keywords after readiness checks; flags per item in run manifest; non-blocking. Closes 4-cycle deferred-monitor carry (first filed v2.3 Phase 1 LL, 2026-03-24). | Head of Specs Team (AUD-2026-04-11, 2026-04-11) |
 | 2026-04-11 | `OPERATIONAL_GUIDE.md` | v3.51→v3.52 | AUD-2026-04-11-009: §6B Phase 1B source prompt header v2.25→v2.26; §14 Release Engine Source v2.25→v2.26. Changelog entry 3.52 added. | Head of Specs Team (AUD-2026-04-11, 2026-04-11) |
 | 2026-04-11 | `shared_standards.md` | v2.7→v2.8 | AUD-2026-04-11-006: §13 dry-run table — `run design-gate` row added. AUD-2026-04-11-010: §16.9 ideas_window.json Schema added — required fields including `per_agent_submission_count` (computed at STEP 3; canonicalises field from idea_intake_prompt.md v2.2). | Head of Specs Team (AUD-2026-04-11, 2026-04-11) |

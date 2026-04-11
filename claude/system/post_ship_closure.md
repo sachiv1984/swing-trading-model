@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.2
-**Last Updated:** 2026-03-24
+**Version:** 2.3
+**Last Updated:** 2026-04-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -464,6 +464,7 @@ For each of the following documents, read the current content and check for stal
 
 - `docs/System_status_report.md` — confirmed current by Phase 4, but verify the section for this `cycle_id` reflects the final verified status (not "pending verification"). Correct if needed.
 - `docs/operations/validation_system.md` — check metric counts, expected values, and example outputs. Update any entries that reference "planned" or "backlog" behaviour that has now shipped.
+- `claude/cycles/velocity_metrics.md` — append a row for this cycle. Values from `execution_state.json`: Planned = count of ST items at sprint-plan seal; Completed = count of items with `status: done` at post-ship (delegated items that were delivered count as Completed). Update the rolling 6-cycle average. Do not re-derive from cycle artefacts — always write the row here.
 
 If other operational documents are referenced in `execution_state.json` spec references: check those too for stale notes.
 
@@ -748,6 +749,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3 | 2026-04-11 | STEP 6 — `claude/cycles/velocity_metrics.md` added to operational documents reconciliation list. Engine must append a velocity row for the completed cycle (Planned/Completed from execution_state.json, rolling 6-cycle average updated) before writing STEP 6 pass. Fixes gap where v2.4 and v2.5 rows were missed (discovered 2026-04-11). |
 | 2.2 | 2026-03-24 | AUD-2026-03-21-002: STEP 0 — added Audit Cadence Check advisory block. Reads `completed_cycle_count` from `.claude_current_state.json`; if `% 3 == 0`, surfaces "⚠ AUDIT DUE" advisory and records in run manifest. Non-blocking. Eliminates manual audit tracking and prevents overdue audit accumulation. |
 | 2.0 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 8.5: sequencing clarification note added — `closure_record.md` is produced in STEP 9 and is not available at STEP 8.5 execution time; `lessons_learnt_closure.md` must be produced from STEP 8 consolidated action summary context; §6 Outstanding Actions in `closure_record.md` is derived from the same deferred items list. Prevents incorrect sequencing where STEP 8.5 waits for STEP 9 output. |
 | 1.9 | 2026-03-14 | AUD-2026-03-13-004: STEP 11 (Roadmap Document Management — mandatory) and STEP 12 (Backlog Document Management — mandatory) added. Both invoke their respective management prompts inline and pass through --dry-run. Closes Phase 1M skip gap — manage roadmap + groom backlog now run every cycle regardless of whether Phase 1 was executed. Former STEP 11 (Commit) renumbered STEP 13. closure_state.json schema updated: step_11_manage_roadmap, step_12_groom_backlog, step_13_commit. |

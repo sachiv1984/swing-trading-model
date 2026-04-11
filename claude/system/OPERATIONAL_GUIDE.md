@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.52
+**Version:** 3.53
 **Last Updated:** 2026-04-11
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -999,7 +999,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.2)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.3)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1291,7 +1291,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.52 |
+| Version | 3.53 |
 | Last Updated | 2026-04-11 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
@@ -1305,7 +1305,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.6 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.2 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.9 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.2 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.3 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v2.8 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1326,6 +1326,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.53 | 2026-04-11 | **post_ship_closure.md v2.2→v2.3 — velocity_metrics.md added to STEP 6.** §10 Post-Ship source prompt header updated v2.2→v2.3. §14 Post-Ship Closure Engine updated v2.2→v2.3. Change: STEP 6 operational documents list now includes `claude/cycles/velocity_metrics.md` — engine must append velocity row (Planned/Completed/rolling average) per cycle. Fixes gap that caused v2.4 and v2.5 rows to be missed. |
 | 3.52 | 2026-04-11 | **AUD-2026-04-11-009 — release_planning_prompt.md v2.25→v2.26.** §6B Phase 1B source prompt header updated v2.25→v2.26. §14 Release Engine Source updated v2.25→v2.26. Change: STEP 1 §1.3 Design-Gate Language Scan added (advisory) — scans scope candidates for design-gate keywords at STEP 1 rather than catching at Pre-sprint Required Decisions checklist; non-blocking; results recorded in run manifest. Closes 4-cycle deferred-monitor carry (filed v2.3, 2026-03-24). Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
 | 3.51 | 2026-04-11 | **AUD-2026-04-11-006 + AUD-2026-04-11-010 — shared_standards.md v2.7→v2.8.** §14 Shared Standards version updated v2.7→v2.8. Changes: §13 dry-run table — `run design-gate` row added (was absent despite v1.1 dry-run support since 2026-03-07); §16.9 ideas_window.json Schema added — canonicalises `per_agent_submission_count` field. Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
 | 3.50 | 2026-04-11 | **AUD-2026-04-11-005 — delivery_verification_prompt.md v1.8→v1.9.** §9 Phase 4 source prompt header updated v1.8→v1.9. §14 Verification Engine Source updated v1.8→v1.9. Change: STEP -1.3 sign-off check upgraded to two-tier STRUCTURAL — Tier 1 (BLANK) = HALT; Tier 2 (WRONG AUTHORITY) = FLAG + DoQ counter-sign required + compliance advisory in run_manifest. Resolves STALE 2-cycle deferred patch (v2.4 Phase 4 lessons learnt). Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
