@@ -45,7 +45,17 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*v2.5 shipped 2026-04-10 (Verified_with_deviations). RA:v2.5 annotation retired to roadmap_archive.md 2026-04-10. Next release v2.6 — planning not yet started.*
+*v2.5 shipped 2026-04-10 (Verified_with_deviations). RA:v2.5 annotation retired to roadmap_archive.md 2026-04-10. Next release v2.6 — planning in progress.*
+
+<!-- roadmap-annotation-marker: RA:v2.6:2026-04-11__release-v2.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-04-11__release-v2.6
+- Plan published: 2026-04-11
+- Cycle folder: claude/cycles/2026-04-11__release-v2.6/
+- Backlog slice: claude/cycles/2026-04-11__release-v2.6/stage4_backlog_slice.md
+- Theme: Backend Integration Completion, Test Automation & Governance Hardening
+- Status at annotation: Validated
 
 ---
 

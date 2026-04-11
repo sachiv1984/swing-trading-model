@@ -1,0 +1,137 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Migrate Reports Performance Tab to FastAPI Backend",
+    "epic": "EPIC-01",
+    "description": "Replace Base44 SDK data sources in Reports Performance tab with FastAPI /analytics/metrics, /trades, /portfolio endpoints",
+    "ac_summary": "No Base44 calls in Performance tab; period selector drives backend results; P&L/win-rate consistent with other pages; ExportModal uses backend data",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Wire Signals Page Dismissal and Position Creation to FastAPI",
+    "epic": "EPIC-01",
+    "description": "Replace Base44 mutation calls for signal dismissal/entry and position creation with FastAPI endpoints",
+    "ac_summary": "No Base44 mutation calls for signal state or position creation; dismissed/entered signals in backend analytics; positions appear in Trade History/Portfolio",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Replace Base44 Cash Balance on Signals Page with GET /cash/summary",
+    "epic": "EPIC-01",
+    "description": "Replace base44.entities.Portfolio.list() used for availableCash with apiFetch(GET /cash/summary)",
+    "ac_summary": "availableCash on Signals page matches Cash/Portfolio pages; no Base44 portfolio query solely for cash balance",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Fix 4 Pytest Collection Errors",
+    "epic": "EPIC-02",
+    "description": "Fix API_TITLE export, update_position stub, and DATABASE_URL conftest to unblock pytest test suite collection",
+    "ac_summary": "pytest tests/ collects all files without collection errors; previously clean tests still pass; conftest.py does not interfere with test isolation",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Add CI Test Runner Workflow",
+    "epic": "EPIC-02",
+    "description": "Add .github/workflows/ci-tests.yml running pytest on PR; Phase A (clean tests) runnable immediately; Phase B (all tests) after ST-04",
+    "ac_summary": "ci-tests.yml exists, runs on PR; Phase A tests run on every PR; deliberate formula break causes workflow fail; no DATABASE_URL secret needed for Phase A",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Fee Drag Playwright Spec",
+    "epic": "EPIC-02",
+    "description": "Write tests/e2e/fee-drag-trade-history.spec.js covering SC-FEE-01 through SC-FEE-04",
+    "ac_summary": "fee-drag-trade-history.spec.js exists; SC-FEE-01–04 pass in headless Playwright; runs cleanly with slippage-tracking.spec.js; fee-drag-scenarios.md updated",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Fee Drag Backend Pytest Unit Tests",
+    "epic": "EPIC-02",
+    "description": "Write tests/test_trade_service.py covering SC-FEE-05 and SC-FEE-06 fee drag formula and null guard",
+    "ac_summary": "test_trade_service.py exists; SC-FEE-05/06 assertions pass; no live DB calls; runs cleanly in CI",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "StatsCard Tooltip Prop",
+    "epic": "EPIC-03",
+    "description": "Add optional tooltip prop to StatsCard.js; wire on Avg Fee Drag and Avg Entry Dev. StatsCards",
+    "ac_summary": "StatsCard accepts tooltip prop; ⓘ icon renders when provided; Avg Fee Drag shows canonical tooltip text; no regression to other StatsCards",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Trade History StatsCard Bar Layout (6-Card Width)",
+    "epic": "EPIC-03",
+    "description": "Fix 6-card Trade History StatsCard bar layout squeeze at standard viewport widths — Head of UX to define spec",
+    "ac_summary": "Head of UX defines grid/layout spec; implementation delivers spec without card content regression; all 6 cards readable at defined viewport width",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Trade History Column Header Styling and Formatting",
+    "epic": "EPIC-03",
+    "description": "Improve Trade History table column header styling per Head of UX design spec",
+    "ac_summary": "Head of UX defines target header style; DataTable.js TableHead styles updated to match; no regression to other tables",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "Flexible Column Sorting Across Trade History Table",
+    "epic": "EPIC-03",
+    "description": "Add sorting capability to Trade History table columns per Head of UX sorting strategy",
+    "ac_summary": "Head of UX defines sortable columns and interaction model; sort handlers wired; consistent sort icon treatment; no regression to existing sort behaviour",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "execution_prompt.md STEP 5.1 Unpushed-Commit Check",
+    "epic": "EPIC-04",
+    "description": "Extend execution_prompt.md STEP 5.1 to verify exec branch is pushed to origin before sprint close; unpushed qa_evidence commits are a soft gate",
+    "ac_summary": "STEP 5.1 checks git log --not origin/<branch> at sprint close; unpushed qa_evidence commits trigger push requirement; §6 checklist applied; CF-1 closed",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "Prompt Log Hygiene: §6 Edit Reminders for 3 Engines",
+    "epic": "EPIC-04",
+    "description": "Add CLAUDE.md §6 governance file edit reminders to design_gate_prompt.md, amendment_cycle_prompt.md, and roadmap_prompt.md",
+    "ac_summary": "All 3 engines have §6 edit reminder at applicable commit step; §6 checklist applied to all 3 files; CF-2 closed",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-14",
+    "title": "Upgrade decision_log.md Hard Gate in roadmap_prompt.md",
+    "epic": "EPIC-04",
+    "description": "Upgrade roadmap_prompt.md STEP 9 decision_log.md count check from assertion to structural hard gate; update OPERATIONAL_GUIDE.md §1",
+    "ac_summary": "roadmap_prompt.md STEP 9 halts if decision_log.md line count decreases; OPERATIONAL_GUIDE §1 updated; §6 checklist applied; BP-05 compliance confirmed at next audit",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-15",
+    "title": "Frontend Performance Budget Spec",
+    "epic": "EPIC-04",
+    "description": "Define and document frontend performance targets (page load, JS bundle size) at docs/specs/frontend/performance_budget.md",
+    "ac_summary": "performance_budget.md exists with page load and bundle size targets; aligned to BLG-OPS-05 API latency floor; measurement methodology documented; documentation only",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-11__release-v2.6"],
+    "assignee": null
+  }
+]

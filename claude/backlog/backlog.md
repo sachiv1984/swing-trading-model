@@ -574,8 +574,24 @@ These are deliberate product decisions, not deferrals:
 
 <!-- release-plan-marker: RP:v2.5:2026-04-05__release-v2.5 -->
 
-**Cycle:** 2026-04-05__release-v2.5 | **Status:** Planning | **Published:** 2026-04-05
+**Cycle:** 2026-04-05__release-v2.5 | **Status:** Closed | **Published:** 2026-04-05
 **Backlog slice:** `claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md`
+
+---
+
+## Active Release Slice — v2.6
+
+<!-- release-plan-marker: RP:v2.6:2026-04-11__release-v2.6 -->
+
+**Cycle:** 2026-04-11__release-v2.6 | **Status:** Planning | **Published:** 2026-04-11
+**Backlog slice:** `claude/cycles/2026-04-11__release-v2.6/stage4_backlog_slice.md`
+
+| Epic | Stories | Theme |
+|------|---------|-------|
+| EPIC-01 | ST-01, ST-02, ST-03 | Backend Integration Completion |
+| EPIC-02 | ST-04, ST-05, ST-06, ST-07 | Test Automation & CI Hardening |
+| EPIC-03 | ST-08, ST-09, ST-10, ST-11 | Frontend UX Polish |
+| EPIC-04 | ST-12, ST-13, ST-14, ST-15 | Governance & Spec Debt |
 
 **Theme:** Integration Baseline, Quick Wins & Governance Debt
 
