@@ -2,8 +2,8 @@
 **Owner:** PMO Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-04-01
+**Version:** 1.1
+**Last Updated:** 2026-04-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -31,9 +31,10 @@
 | v2.1  | 15      | 15        | 1.00     | All stories closed; 5 deferred actions not counted |
 | v2.2  | 15      | 15        | 1.00     | LL-RP-v22-01 deferred patch not counted (governance, not ST story) |
 | v2.3  | 17      | 16        | 0.94     | 1 story (ST-11 BLG-FEAT-05) remained delegated_backend at close |
-| v2.4  | 17      | —         | —        | In progress |
+| v2.4  | 17      | 17        | 1.00     | All stories closed; no deferred items |
+| v2.5  | 13      | 13        | 1.00     | ST-06 delegated (frontend) — delivered and counted as completed |
 
-**Rolling 6-cycle average (v1.9–v2.3):** 0.99
+**Rolling 6-cycle average (v1.10–v2.5):** 0.99
 
 ---
 
