@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.25
-**Last Updated:** 2026-04-01
+**Version:** 2.26
+**Last Updated:** 2026-04-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -765,6 +765,16 @@ After writing the Readiness section, scan backlog candidates for this release fo
 
 *Trigger: ST-13 (EPIC-05) — v2.2 cycle. Implemented 2026-03-23.*
 
+### 1.3 Design-Gate Language Scan (Advisory — not a hard gate)
+
+After the Provisional-Target advisory, scan scope candidate backlog items for design-gate language: "Product Owner to decide", "design decision required", "pending design", "requires UX decision".
+
+For each item found: note in the run manifest as "Design dependency detected — surface at Pre-sprint Required Decisions checklist." Non-blocking — does not halt STEP 1. Record count in the run manifest STEP 1 results row as "Design dependency scan: N item(s) flagged."
+
+If no items are found: record "Design dependency scan: 0 items flagged" in run manifest and proceed.
+
+*Trigger: AUD-2026-04-11-009 — 4-cycle deferred-monitor carry closed. Implemented 2026-04-11.*
+
 Update state.json:
 
 - artifacts.stage1_readiness = pass|fail|blocked
@@ -1430,6 +1440,7 @@ Run is complete only if ALL of the following are true:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.26 | 2026-04-11 | AUD-2026-04-11-009: STEP 1 — §1.3 Design-Gate Language Scan added (advisory). After Provisional-Target advisory, scan scope candidates for "Product Owner to decide", "design decision required", "pending design", "requires UX decision"; flag in run manifest per item; record count as "Design dependency scan: N item(s) flagged". Non-blocking. Closes 4-cycle deferred-monitor carry (first filed 2026-03-24, v2.3 Phase 1 lessons_learnt). |
 | 2.21 | 2026-03-22 | AUD-2026-03-21-004: STEP 4 stage4_issue_manifest.json inline schema removed — replaced with reference to `shared_standards.md §16.2` (canonical schema home). Saves ~200 tokens/cycle; SST compliance restored. |
 | 2.20 | 2026-03-16 | AUD-2026-03-13-005: STEP -1.8 Amendment_In_Progress inline halt block replaced with prose reference to `shared_standards.md §5` — saves ~80 tokens/cycle, SST improved. |
 | 2.19 | 2026-03-14 | AUD-2026-03-13-021 (PATCH 2): STEP 8 lessons_learnt.md output must end with `// ARTEFACT_STATUS` JSON terminal block (phase = "Release") per roadmap_prompt.md §11 schema. |
