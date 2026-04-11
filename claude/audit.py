@@ -36,7 +36,7 @@ PRIOR_AUDIT_OPEN_ITEMS = [
     "AUD-2026-04-11-008",  # §14 team_charter version stale (v1.5 vs v1.6)
     "AUD-2026-04-11-009",  # release_planning STEP 1 design-gate advisory (OVERDUE 4 cycles — deferred-monitor)
     "AUD-2026-04-11-010",  # ideas_window.json per_agent_submission_count field not in §16 schema
-    "AUD-2026-04-11-011",  # scored_initiatives class investigation (Class 4 vs BP-11 criterion Class 3)
+    # AUD-2026-04-11-011 resolved 2026-04-11: Class 4 confirmed correct; BP-11 criterion updated from Class 3 → Class 4
 ]
 # All AUD-2026-03-21 items confirmed closed (see Phase 0 resolved table in audit_report_AUD-2026-04-11.md).
 
@@ -580,7 +580,7 @@ STAGE_CHECKLIST = [
             "| BP-08 All engines have zero-state bootstrap | PASS/FAIL/PARTIAL | ... | Reliability |\n"
             "| BP-09 Displacement rule mode-independent | PASS/FAIL | ... | Governance |\n"
             "| BP-10 GitHub sync idempotency active | PASS/FAIL | ... | Reliability |\n"
-            "| BP-11 scored_initiatives class = Class 3 | PASS/FAIL | ... | Governance |\n"
+            "| BP-11 scored_initiatives class = Class 4 | PASS/FAIL | ... | Governance |\n"
             "| BP-12 §13 register covers all known artefacts | PASS/FAIL | ... | Governance |\n"
             "| BP-13 prompt_change_log has entry for every engine version | PASS/FAIL | ... | Governance |\n"
             "| BP-14 lifecycle_schema.json loaded for transitions | PASS/FAIL/PARTIAL | ... | Reliability |\n"
