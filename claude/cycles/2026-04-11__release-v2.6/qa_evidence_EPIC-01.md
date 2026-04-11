@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Class:** Quality Artefact (Class 3)
 **Status:** Active
-**Last Updated:** 2026-04-11
+**Last Updated:** 2026-04-11 (updated: bug fixes from staging run)
 **Cycle:** 2026-04-11__release-v2.6
 **EPIC:** EPIC-01 — Backend Integration Completion
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -74,6 +74,22 @@
 |-----------|-----------|-------|
 | `tests/e2e/reports-performance-tab.spec.js` | SC-REP-01 (4 tests), SC-REP-02 (3 tests), SC-REP-03 (1 test), SC-REP-04 (3 tests) — 11 total | ST-01 |
 | `tests/e2e/signals-cash-balance.spec.js` | SC-SIG-CB-01 (2 tests), SC-SIG-CB-02 (2 tests) — 4 total | ST-03 |
+
+---
+
+---
+
+## Staging Run Findings and Fixes (2026-04-11)
+
+Staging run performed by Product Owner. Two bugs found in the PDF export; signals page confirmed empty due to missing seed data.
+
+| Finding | Root Cause | Fix |
+|---------|------------|-----|
+| PDF/CSV: `shares` column shows "undefined" | `trades_for_charts` SQL did not SELECT `shares`; ExportModal rendered `p.shares` directly | Added `th.shares` to both SQL queries in `analytics.py` (`_build_trades_for_charts_with_join` and `_build_trades_for_charts_no_join`); added `shares` to dict; ExportModal uses `p.shares ?? '—'` |
+| PDF/CSV: `stop_hit` exit reason shows raw snake_case | ExportModal had no label mapping; DB has mixed formats (`stop_hit` legacy, `"Manual Exit"` current) | Added `EXIT_REASON_LABELS` map to ExportModal covering both formats; applied via `formatExitReason()` helper in PDF row and CSV row |
+| Signals page empty on staging | `seed_all.sh` had no signals seed; staging DB is not fed by live signal generation | Created `scripts/seeds/seed_signals.sql` (2 active, 1 dismissed, 1 converted); added to `seed_all.sh` |
+
+**Staging re-run required** after deploying fixes to confirm PDF shows shares and formatted exit reasons.
 
 ---
 
