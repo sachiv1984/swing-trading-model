@@ -1,0 +1,118 @@
+{
+  "cycle_id": "2026-04-11__release-v2.6",
+  "release": "v2.6",
+  "sprint_goal": "Ship v2.6: eliminate Base44 SDK dependencies in Reports and Signals, stand up a runnable CI pytest suite with fee drag coverage, deliver Trade History UX polish per locked design spec, and close carry-forward governance debt patches CF-1 and CF-2 from v2.5.",
+  "status": "Executing",
+  "sealed": false,
+  "epics": {
+    "EPIC-01": {
+      "branch": "exec/2026-04-11__release-v2.6/EPIC-01",
+      "pr_number": null,
+      "pr_status": "not_created",
+      "stories": {
+        "ST-01": {
+          "status": "done",
+          "commit_sha": "5a6982d",
+          "acceptance_verified": true
+        },
+        "ST-02": {
+          "status": "done",
+          "commit_sha": "5a6982d",
+          "acceptance_verified": true
+        },
+        "ST-03": {
+          "status": "done",
+          "commit_sha": "5a6982d",
+          "acceptance_verified": true
+        }
+      }
+    },
+    "EPIC-02": {
+      "branch": "exec/2026-04-11__release-v2.6/EPIC-02",
+      "pr_number": null,
+      "pr_status": "not_created",
+      "stories": {
+        "ST-04": {
+          "status": "done",
+          "commit_sha": "39efe64",
+          "acceptance_verified": true
+        },
+        "ST-05": {
+          "status": "done",
+          "commit_sha": "39efe64",
+          "acceptance_verified": true
+        },
+        "ST-06": {
+          "status": "done",
+          "commit_sha": "39efe64",
+          "acceptance_verified": true
+        },
+        "ST-07": {
+          "status": "done",
+          "commit_sha": "39efe64",
+          "acceptance_verified": true
+        }
+      }
+    },
+    "EPIC-03": {
+      "branch": "exec/2026-04-11__release-v2.6/EPIC-03",
+      "pr_number": null,
+      "pr_status": "not_created",
+      "stories": {
+        "ST-08": {
+          "status": "done",
+          "commit_sha": "pending",
+          "acceptance_verified": true
+        },
+        "ST-09": {
+          "status": "done",
+          "commit_sha": "pending",
+          "acceptance_verified": true
+        },
+        "ST-10": {
+          "status": "done",
+          "commit_sha": "pending",
+          "acceptance_verified": true
+        },
+        "ST-11": {
+          "status": "done",
+          "commit_sha": "pending",
+          "acceptance_verified": true
+        }
+      }
+    },
+    "EPIC-04": {
+      "branch": "exec/2026-04-11__release-v2.6/EPIC-04",
+      "pr_number": null,
+      "pr_status": "not_created",
+      "stories": {
+        "ST-12": {
+          "status": "done",
+          "commit_sha": "pending",
+          "acceptance_verified": true
+        },
+        "ST-13": {
+          "status": "done",
+          "commit_sha": "pending",
+          "acceptance_verified": true
+        },
+        "ST-14": {
+          "status": "done",
+          "commit_sha": "pending",
+          "acceptance_verified": true
+        },
+        "ST-15": {
+          "status": "done",
+          "commit_sha": "pending",
+          "acceptance_verified": true
+        }
+      }
+    }
+  },
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15"],
+  "blocked_items": [],
+  "delegated_items": [],
+  "epics_merged": [],
+  "sprint_1_epics": ["EPIC-01", "EPIC-02"],
+  "sprint_2_epics": ["EPIC-03", "EPIC-04"]
+}

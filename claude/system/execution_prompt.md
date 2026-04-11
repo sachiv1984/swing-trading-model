@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.2
+**Version:** 3.3
 **Last Updated:** 2026-04-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -803,6 +803,14 @@ For each ST item: confirm `acceptance_verified = true`. If any are false and the
 **QA Evidence File Existence Check (LL-v2.4-P4-01 — second recurrence):** Before checking sign-off dates, verify that `qa_evidence_EPIC-xx.md` **exists** for every EPIC in `merge_gate.epics_merged`. A missing QA evidence file is a hard gate — create it immediately using §3.2.A, complete the verification (including pre-met items and autonomous items), obtain DoQ sign-off, then continue. Do not proceed to STEP 5.2 until all qa_evidence files exist. A file created here at sprint close is acceptable; a file missing at Phase 4 (delivery verification) preflight is a recurrent process failure that this gate must prevent.
 
 **QA Evidence Persistence Check (LL-v2.0-P4-1):** For each EPIC with `qa_signed_off: true` in `execution_state.json`, read the corresponding `qa_evidence_EPIC-xx.md` file and confirm the sign-off block `Date:` field is non-blank. If blank: the sign-off was not persisted during sprint execution — re-apply the sign-off block immediately (Director of Quality authority required). Do not proceed to STEP 5.3 until all sign-off blocks are confirmed non-blank.
+
+**Unpushed-Commit Check (ST-12 / CF-1):** Before closing the sprint, verify that all commits on the exec branch have been pushed to origin. Run:
+
+```
+git log --not origin/<branch> --oneline
+```
+
+If any unpushed commits are listed: output their SHAs and subjects. If any unpushed commit includes a `qa_evidence_EPIC-xx.md` file (check via `git show <sha> --name-only`), this is a **soft gate** — you must push those commits before sprint close proceeds. Push the branch (`git push origin <branch>`) and confirm the list is empty before continuing to STEP 5.2.
 
 ### 5.2 Items Returned to Backlog
 
