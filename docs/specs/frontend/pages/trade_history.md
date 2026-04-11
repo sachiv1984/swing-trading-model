@@ -3,10 +3,11 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.5
-**Last Updated:** 2026-04-06
+**Version:** 1.6
+**Last Updated:** 2026-04-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.1 slippage):** docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md
+**Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
 
 ## Purpose & User Goals
 The Trade History page provides a complete record of all **closed trades**, allowing users to review past performance, analyze decisions, and learn from journal entries.
@@ -59,6 +60,18 @@ These values give the user an instant overview of performance quality.
 | Placement | Rightmost stat in the summary row (after Avg Slippage); wraps to second row on narrow screens |
 | Naming constraint | Label is "Avg Fee Drag" or "Fee Drag" — never "slippage" |
 | Design source | `docs/design/2026-04-05__release-v2.5/fee-drag/ux_spec.md` |
+
+#### Summary Stats Bar Layout (v2.6, ST-09)
+
+| Breakpoint | Grid Columns | Behaviour |
+|------------|-------------|-----------|
+| Below `md` (<768px) | Stacked | Existing responsive behaviour unchanged |
+| `md` (≥768px) | `grid-cols-4` | 4 cards in row 1, 3 cards in row 2 |
+| `xl` (≥1280px) | `grid-cols-7` | All 7 cards in single row |
+
+Card padding at `md`–`xl`: `px-3 py-3` (reduced from default to improve fit).  
+No horizontal scroll. All 7 cards readable and unstacked at `xl` (≥1280px).  
+Design source: `docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md`
 
 ---
 
@@ -181,6 +194,46 @@ R = (exit_price - entry_price) / (entry_price - stop_price)
 
 ---
 
+#### Column Header Styling (v2.6, ST-10)
+
+Trade History-specific override. Applied within the Trade History component (not a DataTable.js base style change — avoids regression to other tables).
+
+Target class string: `text-xs font-semibold text-slate-300 uppercase tracking-wide`
+
+Changes from DataTable.js default (`text-xs font-medium text-slate-400 uppercase`):
+- `font-semibold` replaces `font-medium` — improved weight and legibility
+- `text-slate-300` replaces `text-slate-400` — improved contrast on dark background
+- `tracking-wide` added — improves uppercase character spacing
+
+Design source: `docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md`
+
+---
+
+#### Sortable Columns (v2.6, ST-11)
+
+All sortable columns in the Trade History table:
+
+| Column | Sort Behaviour | Status |
+|--------|---------------|--------|
+| Entry Date | Ascending = oldest first; descending = newest first | New — ST-11 |
+| Exit Date | Ascending = oldest first; descending = newest first | New — ST-11 |
+| P&L (GBP) | Ascending = worst P&L first | New — ST-11 |
+| P&L % | Ascending = worst P&L % first | New — ST-11 |
+| Days Held | Ascending = shortest hold first | New — ST-11 |
+| Slippage | Ascending = best slippage first; nulls sort to end | Existing |
+| Fee Drag % | Ascending = lowest fee drag first | Existing |
+| R-Multiple | Ascending = worst R first; nulls sort to end | Existing |
+
+**Default sort:** Exit Date descending (most recent trades first).
+
+**Non-sortable:** Ticker, Market flag, Shares, Entry price, Exit price, Exit reason.
+
+**Sort icon treatment:** Active sort column shows solid ↑ or ↓; hovering over sortable columns shows dimmed indicator. Consistent with existing Slippage/Fee Drag/R-Multiple behaviour.
+
+Design source: `docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md`
+
+---
+
 ### Expandable Journal Row
 The expanded row appears as a full‑width card below the trade’s main table row.
 
@@ -266,6 +319,7 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.6 | 2026-04-11 | v2.6 design gate: (ST-09) Summary Stats Bar Layout spec added — `grid-cols-7` at `xl`, `grid-cols-4` at `md`, 7-card row; (ST-10) Column Header Styling spec added — Trade History-specific override (`text-xs font-semibold text-slate-300 uppercase tracking-wide`); (ST-11) Sortable Columns section added — 8 sortable columns, Exit Date descending as default sort. Design source: `docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md`. Head of Specs Team confirmed compliant. |
 | 1.5 | 2026-04-06 | v2.5 design gate (ST-09): Avg Fee Drag StatsCard added to Summary Stats section (after Avg Slippage). Fee Drag % column added to Trade History Table columns list (after Slippage). Fee Drag % Column spec section added. Design source: `docs/design/2026-04-05__release-v2.5/fee-drag/ux_spec.md`. Head of Specs Team confirmed compliant. |
 | 1.4 | 2026-04-04 | OA-2 closure (v2.4): DEV-ST14-01 entry updated — Target resolution release v2.2→v2.5 (not resolved in v2.2/v2.3/v2.4; carried forward as delegated_frontend constraint); backlog reference BLG-FE-01→BLG-FE-08; DoQ acceptance reconfirmed at v2.4 verification. Head of Specs Team action per verification_report.md §5 and closure_record.md OA-2. |
 | 1.3 | 2026-03-21 | Post-ship closure: Known Deviations section added. DEV-ST14-01 (StatsCard gradient cosmetic) filed per post_ship_closure STEP 5 — deviation compliance. |

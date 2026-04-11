@@ -16,7 +16,7 @@
       "timebox": "",
       "capacity": ""
     },
-    "state_snapshot_hash": "b910df8853eca74ea911dc5d84d199cc8f94c498",
+    "state_snapshot_hash": "15b4f9c",
     "drift_detected": false,
     "drift_notes": []
   },
@@ -73,7 +73,10 @@
     "decisions_validated": "pass"
   },
 
-  "design_gate_status": "not_started",
+  "design_gate_status": "Passed",
+  "design_gate_completed_utc": "2026-04-11T01:00:00Z",
+  "design_gate_record": "claude/cycles/2026-04-11__release-v2.6/design_gate.md",
+  "sprint_planning_pre_condition": "design_gate_status == Passed",
   "amended_backlog_slice_path": "",
 
   "artifacts": {
