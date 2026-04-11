@@ -9,31 +9,31 @@
   "epics": {
     "EPIC-01": {
       "branch": "exec/2026-04-11__release-v2.6/EPIC-01",
-      "status": "not_started",
+      "status": "in_progress",
       "pr_number": null,
       "pr_status": null,
       "merge_gate_cleared": false,
       "stories": {
         "ST-01": {
-          "status": "not_started",
-          "commit_sha": null,
+          "status": "done",
+          "commit_sha": "5a6982d",
           "acceptance_verified": false,
           "delegation_class": "autonomous",
-          "notes": ""
+          "notes": "api.analytics.metrics(period) added to base44Client.js; Reports Performance tab fetches from /analytics/metrics; period selector maps to backend period params; ExportModal uses backend-sourced trade data"
         },
         "ST-02": {
-          "status": "not_started",
-          "commit_sha": null,
+          "status": "done",
+          "commit_sha": "5a6982d",
           "acceptance_verified": false,
           "delegation_class": "autonomous",
-          "notes": ""
+          "notes": "Confirmed pre-existing: base44.entities.Signal.update() → PATCH /signals/:id (FastAPI); base44.entities.Position.create() → POST /portfolio/position (FastAPI). No Base44 mutation calls remain."
         },
         "ST-03": {
-          "status": "not_started",
-          "commit_sha": null,
+          "status": "done",
+          "commit_sha": "5a6982d",
           "acceptance_verified": false,
           "delegation_class": "autonomous",
-          "notes": ""
+          "notes": "Replaced base44.entities.Portfolio.list() with api.cash.getSummary() → GET /cash/summary; availableCash uses current_cash field from authoritative backend"
         }
       }
     },
