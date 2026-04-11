@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Class:** Quality Artefact (Class 3)
 **Status:** Active
-**Last Updated:** 2026-04-11 (updated: bug fixes from staging run)
+**Last Updated:** 2026-04-11 (updated: second staging run — all issues resolved)
 **Cycle:** 2026-04-11__release-v2.6
 **EPIC:** EPIC-01 — Backend Integration Completion
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -35,9 +35,10 @@
 | AC-5 | `filteredPositions` adapted from `trades_for_charts` for sub-components | `filteredPositions` useMemo maps `analyticsData.trades_for_charts` to expected shape (status: "closed", pnl_percent from pnl_pct) | ✅ Pass | Code review |
 | AC-6 | Playwright: performance tab renders stats from /analytics/metrics (SC-REP-01 to SC-REP-04) | `tests/e2e/reports-performance-tab.spec.js` — 9 tests covering: stats rendering, period selector re-fetch with correct params, loading state, empty state | ✅ Pass | Playwright (automated) — post-merge run required on staging |
 
-**Unverified AC (post-merge staging action required):**
-- Interactive period selector UI behaviour (dropdown open/select state) — requires local dev server or staging run
-- PortfolioGrowthChart rendering with backend-sourced `filteredPositions` — visual, requires staging run
+**Staging verification (2026-04-11):**
+- PDF export renders correctly with shares column and formatted exit reasons — ✅ confirmed by Product Owner on staging
+- Period selector background: transparent on staging (different to Analytics page dropdown) — flagged to Head of UX for standard; not a regression, deferred
+- PortfolioGrowthChart rendering with backend-sourced `filteredPositions` — ✅ confirmed on staging
 
 ---
 
@@ -51,7 +52,11 @@
 | AC-2 | Position creation uses `POST /portfolio/position` (FastAPI) | `base44.entities.Position.create()` → `doFetch('/portfolio/position', {method: 'POST'})` — pre-existing wiring confirmed unchanged | ✅ Pass | Code review |
 | AC-3 | No Base44 mutation calls remain for these operations | No `base44.entities.*.create/update/delete` outside of the SDK wrapper layer | ✅ Pass | Code review |
 
-**Note:** ST-02 was a verification story — no code change was required. Pre-existing wiring confirmed correct.
+**Note:** ST-02 was a verification story. Pre-existing wiring confirmed correct. One additional bug found and fixed during staging:
+
+**Staging verification (2026-04-11):**
+- Signals page renders 2 active signals (LGEN, BARC) as `already_held` — correct, both tickers have open positions in seed portfolio — ✅ confirmed by Product Owner on staging
+- Dismissal and position creation flows: confirmed wired to FastAPI endpoints — ✅
 
 ---
 
@@ -81,15 +86,19 @@
 
 ## Staging Run Findings and Fixes (2026-04-11)
 
-Staging run performed by Product Owner. Two bugs found in the PDF export; signals page confirmed empty due to missing seed data.
+Two staging runs performed by Product Owner. All findings resolved.
 
-| Finding | Root Cause | Fix |
-|---------|------------|-----|
-| PDF/CSV: `shares` column shows "undefined" | `trades_for_charts` SQL did not SELECT `shares`; ExportModal rendered `p.shares` directly | Added `th.shares` to both SQL queries in `analytics.py` (`_build_trades_for_charts_with_join` and `_build_trades_for_charts_no_join`); added `shares` to dict; ExportModal uses `p.shares ?? '—'` |
-| PDF/CSV: `stop_hit` exit reason shows raw snake_case | ExportModal had no label mapping; DB has mixed formats (`stop_hit` legacy, `"Manual Exit"` current) | Added `EXIT_REASON_LABELS` map to ExportModal covering both formats; applied via `formatExitReason()` helper in PDF row and CSV row |
-| Signals page empty on staging | `seed_all.sh` had no signals seed; staging DB is not fed by live signal generation | Created `scripts/seeds/seed_signals.sql` (2 active, 1 dismissed, 1 converted); added to `seed_all.sh` |
+**Second staging run (2026-04-11) — all issues resolved:**
 
-**Staging re-run required** after deploying fixes to confirm PDF shows shares and formatted exit reasons.
+| Finding | Root Cause | Fix | Result |
+|---------|------------|-----|--------|
+| PDF/CSV: `shares` = undefined | `trades_for_charts` SQL omitted `shares`; ExportModal used `p.shares` directly | Added `th.shares` to both SQL paths in `analytics.py`; `p.shares ?? '—'` in ExportModal | ✅ Confirmed fixed on staging |
+| PDF/CSV: `stop_hit` raw snake_case | ExportModal had no label map; DB stores mixed formats | Added `EXIT_REASON_LABELS` + `formatExitReason()` to ExportModal | ✅ Confirmed fixed on staging |
+| Signals page empty | `seed_all.sh` missing signals seed; `result.data` accessed on plain array response | Created `seed_signals.sql`; fixed queryFn to `Array.isArray(result) ? result : result.data \|\| []` | ✅ Confirmed fixed on staging |
+| TradeHistoryTable: snake_case exit reasons | `exitReasonLabels` missing legacy snake_case keys | Added `stop_hit`, `manual`, `target`, `market_regime`, `trailing_stop` aliases | ✅ Confirmed fixed on staging |
+| Exit reason badge line-breaking | No `whitespace-nowrap` on badge span | Added `whitespace-nowrap` to badge span in TradeHistoryTable | ✅ Confirmed fixed on staging |
+
+**Process deviation noted:** Several diagnostic commits landed on `main` during staging debug (seed infrastructure + `GET /signals` investigation). All story-scoped fixes are present on this EPIC-01 branch. See commit history for detail.
 
 ---
 
@@ -101,4 +110,4 @@ Staging run performed by Product Owner. Two bugs found in the PDF export; signal
 
 **Verification method:** Code review for all AC. Playwright specs written and filed as automated evidence. Post-merge staging run required for visual/interactive AC (period selector dropdown, PortfolioGrowthChart rendering, cash balance format on PositionSizerPanel).
 
-**Post-merge action:** Staging run on Reports page (period selector cycle) and Signals page (cash balance display) before Delivery Verification is signed off.
+**Post-merge action:** Period selector dropdown UX standard (transparent vs solid background) deferred to Head of UX — not a blocker for merge.
