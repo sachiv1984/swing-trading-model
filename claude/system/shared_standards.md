@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.7
-**Last Updated:** 2026-03-22
+**Version:** 2.8
+**Last Updated:** 2026-04-11
 
 # Shared Standards — All Governed Routines
 
@@ -368,6 +368,7 @@ The following engines support `--dry-run`. The guarantee is identical in all cas
 | `run post-ship` | Closure plan — every step listed, every write that would be made, every flag. Note: STEP 11 (`manage roadmap`) and STEP 12 (`groom backlog`) also pass through `--dry-run`. |
 | `manage roadmap` | Change plan — items to retire, items to flag |
 | `groom backlog` | Change plan — items to archive, items to flag |
+| `run design-gate` | Design gate preview — classification table, gap list, required design artefacts; no gate record, no state write, no commit |
 | `run roadmap` | Rebalance preview — capacity analysis, displacement candidates, scoring matrix, backlog impact |
 | `run ideas` | Submission window summary — counts per agent, ideas available for STEP 4 |
 
@@ -672,10 +673,34 @@ Items: N
 
 ---
 
+## §16.9 ideas_window.json Schema
+
+**Produced by:** idea_intake_prompt.md (STEP 2 — window open; STEP 10 — window close)
+**Consumed by:** roadmap_prompt.md (STEP -1.6 trigger check)
+
+Required fields:
+```json
+{
+  "window_id": "IW-YYYYMMDD-nn",
+  "opened_utc": "<ISO 8601>",
+  "opened_by": "<role>",
+  "status": "Open | Closed",
+  "eligible_agents": ["<agent_slug>", ...],
+  "submissions_received": ["<IDEA-ID>", ...],
+  "per_agent_submission_count": { "<agent_slug>": <int>, ... },
+  "closed_utc": "<ISO 8601 | null>",
+  "closed_by": "<role | null>"
+}
+```
+`per_agent_submission_count`: computed at STEP 3 by counting IDEA IDs in `submissions_received` containing each agent slug. Required field — must be present before window closes.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.8 | 2026-04-11 | AUD-2026-04-11-006: §13 dry-run table — `run design-gate` row added (classification table, gap list, required design artefacts; no gate record/state write/commit). Completes the table (was missing despite design_gate_prompt.md v1.1 documenting `--dry-run` support since 2026-03-07). AUD-2026-04-11-010: §16.9 ideas_window.json Schema added — required fields including `per_agent_submission_count` (computed at STEP 3); canonicalises the field added to idea_intake_prompt.md v2.2 (AUD-2026-03-21-001). Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
 | 2.7 | 2026-03-23 | ST-15 (EPIC-05): §16.8 lessons_learnt_closure.md Carry-Forward Section Schema added — section syntax, 0–5 item rule, Engine enum, absence rules, STEP 0 read protocol for three engines. |
 | 2.6 | 2026-03-23 | ST-14 (EPIC-05): §16.7 scored_initiatives.md Effort Band Column and Handoff Contract added — effort band column format, three-tier resolution rule for STEP 4.5, handoff contract (read-only for release planning). |
 | 2.5 | 2026-03-23 | ST-13 (EPIC-05): §16.6 Backlog Item Provisional-Target Field added — field syntax, horizon-to-release mapping rules, TBD fallback, advisory-only role in release planning. |

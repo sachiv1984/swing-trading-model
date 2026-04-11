@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.50
+**Version:** 3.51
 **Last Updated:** 2026-04-11
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -1291,7 +1291,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.50 |
+| Version | 3.51 |
 | Last Updated | 2026-04-11 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
@@ -1307,7 +1307,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.9 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.2 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v2.7 |
+| Shared Standards | `claude/system/shared_standards.md` v2.8 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.8 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1326,6 +1326,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.51 | 2026-04-11 | **AUD-2026-04-11-006 + AUD-2026-04-11-010 — shared_standards.md v2.7→v2.8.** §14 Shared Standards version updated v2.7→v2.8. Changes: §13 dry-run table — `run design-gate` row added (was absent despite v1.1 dry-run support since 2026-03-07); §16.9 ideas_window.json Schema added — canonicalises `per_agent_submission_count` field. Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
 | 3.50 | 2026-04-11 | **AUD-2026-04-11-005 — delivery_verification_prompt.md v1.8→v1.9.** §9 Phase 4 source prompt header updated v1.8→v1.9. §14 Verification Engine Source updated v1.8→v1.9. Change: STEP -1.3 sign-off check upgraded to two-tier STRUCTURAL — Tier 1 (BLANK) = HALT; Tier 2 (WRONG AUTHORITY) = FLAG + DoQ counter-sign required + compliance advisory in run_manifest. Resolves STALE 2-cycle deferred patch (v2.4 Phase 4 lessons learnt). Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
 | 3.49 | 2026-04-11 | **AUD-2026-04-11-003 + AUD-2026-04-11-004 — execution_prompt.md v3.1→v3.2.** §8 Phase 3 source prompt header updated v3.1→v3.2. §14 Execution Engine Source updated v3.1→v3.2. Changes in execution_prompt.md: STEP 5.0A pr_status Pre-Seal Sync added (STRUCTURAL) — before writing Sprint_Complete, sync pr_status for all EPICs in epics_merged via `gh pr view`; do not proceed to STEP 5.1 until all have pr_status = "merged" or "not_created" (resolves OVERDUE 3-cycle deferred patch AUD-003). Verification readiness statement upgraded to STRUCTURAL table block with explicit Yes/No fields — do not write any No entry before resolving gap (resolves STALE 2-cycle deferred patch AUD-004). Authority: Head of Specs Team (AUD-2026-04-11). |
 | 3.48 | 2026-04-11 | **AUD-2026-04-11-001 — §13 artefact register: three missing artefacts added.** Sprint Backlog Index (`claude/cycles/<id>/sprint_backlog_index.json`, Class —, PMO Lead, Phase 2) inserted after Sprint Backlog row. Velocity Metrics (`claude/cycles/velocity_metrics.md`, Class 4, PMO Lead, Phase 1/1B) inserted after Decision Log row — read by roadmap_prompt.md STEP 0 since v4.7. Audit Report (`claude/cycles/<id>/audit_report_AUD-<date>.md`, Class 3, Head of Specs Team, Post-Ship) inserted after Closure State row — filed per audit SLA block. Authority: Head of Specs Team (AUD-2026-04-11). |
