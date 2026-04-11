@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.1
-**Last Updated:** 2026-04-06
+**Version:** 3.2
+**Last Updated:** 2026-04-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -781,7 +781,20 @@ For each entry still `Pending` or `In Progress`:
 - If the item is `returned_to_backlog`: update the delegation log entry status to `Cancelled` (noting the backlog return reason).
 - If the item is still blocked: record the outcome as `In Progress — carried to post-sprint` with a note.
 
-**Hard gate:** Do not proceed to STEP 5.1 if any delegation log entry has an unrecorded outcome for an item that reached a terminal sprint state. The sprint close record must faithfully account for every delegated item.
+**Hard gate:** Do not proceed to STEP 5.0A if any delegation log entry has an unrecorded outcome for an item that reached a terminal sprint state. The sprint close record must faithfully account for every delegated item.
+
+### 5.0A — pr_status Pre-Seal Sync (STRUCTURAL — AUD-2026-04-11-003)
+
+Before writing `Sprint_Complete`, sync `pr_status` in `execution_state.json` for every EPIC in `merge_gate.epics_merged`:
+
+```
+for each EPIC in merge_gate.epics_merged:
+  run: gh pr view <pr_number> --json state
+  if state == "MERGED": set execution_state.json EPIC.pr_status = "merged"
+  if pr_number is null or 0: set pr_status = "not_created" (do not halt)
+```
+
+This step is idempotent — re-running does not alter an already-correct value. Do not proceed to STEP 5.1 until all EPICs in `epics_merged` have `pr_status = "merged"` or `"not_created"`. This prevents misleading `"open"` or `"none"` values in sealed artefacts visible at delivery verification.
 
 ### 5.1 Acceptance Summary
 
@@ -811,7 +824,18 @@ Must include:
 - Deviations filed this sprint (list: spec file, deviation ref, priority — or "None")
 - Open escalations (if any)
 - Net outcome vs sprint goal
-- **Verification readiness statement:** "All spec references populated: Yes/No. All deviations filed: Yes/No. QA evidence logs complete: Yes/No." — This tells the Delivery Verification Engine whether it can proceed.
+- **Verification readiness statement** (STRUCTURAL — AUD-2026-04-11-004): Write the following block verbatim in `sprint_close.md`. Each field must be `Yes` before writing — resolve any `No` items first. The Delivery Verification Engine reads this block at STEP -1.2; an absent or malformed block causes a preflight failure.
+
+  ```
+  ## Verification Readiness Statement
+  | Field | Status |
+  |-------|--------|
+  | All spec references populated in execution_state.json | Yes |
+  | All P1–P3 deviations filed and backlog references updated | Yes |
+  | QA evidence logs complete and DoQ sign-off non-blank for all EPICs | Yes |
+  ```
+
+  Do not write `No` in any field. If a field cannot be `Yes`, resolve the gap first, then write the block.
 
 ### 5.3A System Status Report Update (required)
 
@@ -963,6 +987,8 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.2 | 2026-04-11 | AUD-2026-04-11-003 + AUD-2026-04-11-004: Two STALE/OVERDUE deferred patches applied. (AUD-003 — OVERDUE 3 cycles) STEP 5.0A added — pr_status pre-seal sync: before writing Sprint_Complete, call `gh pr view <n> --json state` for each EPIC in merge_gate.epics_merged; set pr_status="merged" if MERGED; set pr_status="not_created" if no PR number. Prevents misleading "open"/"none" values in sealed artefacts. (AUD-004 — STALE 2 cycles) STEP 5.3 Verification Readiness Statement upgraded from informal description to STRUCTURAL template — exact markdown table block provided; each field must resolve to Yes before writing; no-No rule enforced. Delivery Verification STEP -1.2 handoff gap closed. Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
+| 3.1 | 2026-04-06 | ST-12 (CF-2a, EPIC-04 v2.5): STEP 8 governance file edit check added — if any §6-governed file (listed in OPERATIONAL_GUIDE.md §14) was modified during sprint execution run, append one entry per file to prompt_change_log.md in same session before STEP 8 commit. Authority: Head of Specs Team (ST-12, 2026-04-06). [Backfill entry — not present at time of apply.] |
 | 3.0 | 2026-04-03 | Post-ship closure v2.4 lessons learnt — three action-now patches applied. LL-v2.4-EX-01 (third recurrence): §3.1.D delegated_decision unblock detection — hard gate added to update delegation log entry to Unblocked atomically with item status=done; applies equally to delegated_decision items as to delegated_backend/frontend. LL-v2.4-P4-01 (second recurrence): STEP 5.1 — QA Evidence File Existence Check added; before sign-off date check, verify qa_evidence_EPIC-xx.md exists for every EPIC in merge_gate.epics_merged; missing file is a hard gate at sprint close. LL-v2.4-P4-02: §3.1.A pre-met path note added — pre-met items require qa_evidence_EPIC-xx.md entry with DoQ sign-off confirming verification; pre-met does not mean unverified. Authority: Head of Specs Team (post-ship closure 2026-03-31__release-v2.4). |
 | 2.9 | 2026-03-31 | Post-ship closure v2.3 lessons learnt applied (deferred patches). LL-v2.3-CL-01: §5.1 delegated_frontend classification updated — Base44 model superseded; frontend stories default to autonomous engine delivery; classification rule and delegation note updated. LL-v2.2-EX-01 (second recurrence): STEP 3.1.A unblock detection upgraded from advisory to hard gate — delegation log entry must be updated atomically with item status to `done`; batching to STEP 5.0 is a process violation. LL-v2.2-EX-02 (second recurrence): STEP 4 all_merged advisory upgraded to hard gate — STEP 5 sprint close must execute in same session as final merge without exception. LL-v2.2-EX-04 (second recurrence): §9.1 spec_references comment made explicit — "no prior spec applicable" is the exemption token; completion condition updated to name the token explicitly; engine must not flag spec_references:[] as a traceability gap when token is present. LL-v2.3-CL-02: STEP 7 pre-seal check added — delegation_log.md line count verified against delegated_items count before sealing. Authority: Head of Specs Team (post-ship closure 2026-03-24__release-v2.3). |
 | 2.7 | 2026-03-24 | Post-ship closure v2.2 lessons learnt applied. LL-v2.2-EX-01: STEP 3.1.B unblock detection — delegation log entry updated to `Unblocked` in-flight (not batched at STEP 5.0). LL-v2.2-EX-02: STEP 4 merge gate — advisory added: when `all_merged=true`, STEP 5 Sprint Close must execute in same session. LL-v2.2-EX-03: §13 invariants — backend branch discipline note added (delegated_frontend backend commits must land on EPIC branch). LL-v2.2-EX-04: §9.1 schema — spec_references may be empty for delegated_qa doc artefacts and autonomous infra items with no prior spec; notes field: "no prior spec applicable". LL-v2.2-EX-05: STEP 3.1.C — test gap against undelivered feature should be noted "pending ST-xx completion", not flagged P1. Authority: Head of Specs Team (post-ship closure 2026-03-21__release-v2.2). |
