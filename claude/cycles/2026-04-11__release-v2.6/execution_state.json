@@ -1,0 +1,165 @@
+{
+  "cycle_id": "2026-04-11__release-v2.6",
+  "release": "v2.6",
+  "schema_version": "1",
+  "execution_start_utc": "2026-04-11T03:00:00Z",
+  "last_updated_utc": "2026-04-11T03:00:00Z",
+  "sealed": false,
+
+  "epics": {
+    "EPIC-01": {
+      "branch": "exec/2026-04-11__release-v2.6/EPIC-01",
+      "status": "not_started",
+      "pr_number": null,
+      "pr_status": null,
+      "merge_gate_cleared": false,
+      "stories": {
+        "ST-01": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-02": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-03": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-02": {
+      "branch": "exec/2026-04-11__release-v2.6/EPIC-02",
+      "status": "not_started",
+      "pr_number": null,
+      "pr_status": null,
+      "merge_gate_cleared": false,
+      "stories": {
+        "ST-04": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-05": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-06": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-07": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-03": {
+      "branch": "exec/2026-04-11__release-v2.6/EPIC-03",
+      "status": "not_started",
+      "pr_number": null,
+      "pr_status": null,
+      "merge_gate_cleared": false,
+      "stories": {
+        "ST-08": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-09": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-10": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-11": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-04": {
+      "branch": "exec/2026-04-11__release-v2.6/EPIC-04",
+      "status": "not_started",
+      "pr_number": null,
+      "pr_status": null,
+      "merge_gate_cleared": false,
+      "stories": {
+        "ST-12": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-13": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-14": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        },
+        "ST-15": {
+          "status": "not_started",
+          "commit_sha": null,
+          "acceptance_verified": false,
+          "delegation_class": "autonomous",
+          "notes": ""
+        }
+      }
+    }
+  },
+
+  "merge_gate": {
+    "EPIC-01": { "qa_signed_off": false, "po_accepted": false },
+    "EPIC-02": { "qa_signed_off": false, "po_accepted": false },
+    "EPIC-03": { "qa_signed_off": false, "po_accepted": false },
+    "EPIC-04": { "qa_signed_off": false, "po_accepted": false }
+  },
+
+  "delegation_log": [],
+
+  "completed_items": [],
+  "blocked_items": [],
+  "delegated_items": []
+}

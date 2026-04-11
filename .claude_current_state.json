@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-04-11__release-v2.6",
   "cycle_name": "Release Planning — v2.6 Backend Integration Completion, Test Automation & Governance Hardening",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning_prompt",
+  "status": "Executing",
+  "engine": "execution_prompt",
   "backlog_slice_path": "claude/cycles/2026-04-11__release-v2.6/stage4_backlog_slice.md",
   "sprint_goal_path": "claude/cycles/2026-04-11__release-v2.6/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-04-11__release-v2.6/sprint_backlog.md",
