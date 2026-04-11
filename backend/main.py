@@ -624,8 +624,7 @@ def get_market_status():
 def get_signals_endpoint(status: str = None):
     """Get all signals, optionally filtered by status"""
     try:
-        portfolio_id = get_portfolio_id()
-        signals = get_signals(portfolio_id, status)
+        signals = get_signals(status)
         return signals
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

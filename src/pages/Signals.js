@@ -68,7 +68,7 @@ export default function SignalsPage() {
         `${base44.baseUrl}/signals?top_n=${topN}&lookback_days=${lookbackDays}`
       );
       const result = await response.json();
-      return result.data || [];
+      return Array.isArray(result) ? result : (result.data || []);
     },
     refetchInterval: 60000 // Auto-refresh every 60 seconds
   });
