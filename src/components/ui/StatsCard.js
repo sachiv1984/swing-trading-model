@@ -1,15 +1,17 @@
+import { Info } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "../../lib/utils";
 
-export default function StatsCard({ 
-  title, 
-  value, 
-  subtitle, 
-  icon: Icon, 
-  trend, 
+export default function StatsCard({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+  trend,
   trendValue,
   gradient,
-  className 
+  className,
+  tooltip,
 }) {
   const isPositive = trend === "up";
   const isNegative = trend === "down";
@@ -48,7 +50,15 @@ export default function StatsCard({
     >
       <div className="flex items-start justify-between">
         <div className="space-y-2">
-          <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{title}</p>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
+              {title}
+              {tooltip && (
+                <Info
+                  className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-default flex-shrink-0"
+                  title={tooltip}
+                />
+              )}
+            </p>
           <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
           {subtitle && (
             <p className="text-xs text-slate-500 dark:text-slate-500">{subtitle}</p>

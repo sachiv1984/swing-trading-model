@@ -109,8 +109,19 @@ const exitReasonColors = {
  *                                    Used only for R-multiple (stop_price).
  *                                    Optional — column shows "—" for all rows when absent.
  */
+// ST-10: Trade History-specific column header class override.
+// Applies to all TableHead cells in this file only — DataTable.js default unchanged.
+const TH_CLASS = "font-semibold text-slate-300 tracking-wide";
+
 export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
   const [expandedRows, setExpandedRows] = useState(new Set());
+  // ST-11: New sort states — Entry Date, Exit Date (default DESC), P&L, P&L%, Days Held
+  const [entryDateSort, setEntryDateSort] = useState(SORT_NONE);
+  const [exitDateSort,  setExitDateSort]  = useState(SORT_DESC);   // default: newest first
+  const [pnlSort,       setPnlSort]       = useState(SORT_NONE);
+  const [pnlPctSort,    setPnlPctSort]    = useState(SORT_NONE);
+  const [daysHeldSort,  setDaysHeldSort]  = useState(SORT_NONE);
+  // Existing sort states
   const [rSort, setRSort] = useState(SORT_NONE);
   const [slippageSort, setSlippageSort] = useState(SORT_NONE);
   const [feeDragSort, setFeeDragSort] = useState(SORT_NONE);
@@ -157,11 +168,63 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     );
   };
 
-  // Apply R-multiple sort, then slippage sort.
-  // Spec (F-12): "—" values sort to the end in both directions.
+  // ST-11 cycle helpers
+  const cycle = (setter) => setter(prev =>
+    prev === SORT_NONE ? SORT_ASC :
+    prev === SORT_ASC  ? SORT_DESC :
+    SORT_NONE
+  );
+
+  // Apply sorts in priority order (last applied wins).
+  // Spec (F-12): null/"—" values sort to the end in both directions.
   const displayTrades = useMemo(() => {
     let result = trades;
 
+    // ST-11: Entry Date sort
+    if (entryDateSort !== SORT_NONE) {
+      result = [...result].sort((a, b) => {
+        const cmp = a.entry_date < b.entry_date ? -1 : a.entry_date > b.entry_date ? 1 : 0;
+        return entryDateSort === SORT_ASC ? cmp : -cmp;
+      });
+    }
+
+    // ST-11: Exit Date sort (default SORT_DESC — most recent first)
+    if (exitDateSort !== SORT_NONE) {
+      result = [...result].sort((a, b) => {
+        const cmp = a.exit_date < b.exit_date ? -1 : a.exit_date > b.exit_date ? 1 : 0;
+        return exitDateSort === SORT_ASC ? cmp : -cmp;
+      });
+    }
+
+    // ST-11: P&L GBP sort
+    if (pnlSort !== SORT_NONE) {
+      result = [...result].sort((a, b) =>
+        pnlSort === SORT_ASC ? (a.pnl ?? 0) - (b.pnl ?? 0) : (b.pnl ?? 0) - (a.pnl ?? 0)
+      );
+    }
+
+    // ST-11: P&L % sort
+    if (pnlPctSort !== SORT_NONE) {
+      result = [...result].sort((a, b) =>
+        pnlPctSort === SORT_ASC
+          ? (a.pnl_pct ?? 0) - (b.pnl_pct ?? 0)
+          : (b.pnl_pct ?? 0) - (a.pnl_pct ?? 0)
+      );
+    }
+
+    // ST-11: Days Held sort — null to end
+    if (daysHeldSort !== SORT_NONE) {
+      result = [...result].sort((a, b) => {
+        const da = a.holding_days ?? null;
+        const db = b.holding_days ?? null;
+        if (da === null && db === null) return 0;
+        if (da === null) return 1;
+        if (db === null) return -1;
+        return daysHeldSort === SORT_ASC ? da - db : db - da;
+      });
+    }
+
+    // Existing: R-multiple sort
     if (rSort !== SORT_NONE) {
       result = [...result].sort((a, b) => {
         const ra = rMap.get(String(a.id ?? ""));
@@ -173,6 +236,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
       });
     }
 
+    // Existing: Slippage sort
     if (slippageSort !== SORT_NONE) {
       result = [...result].sort((a, b) => {
         const sa = a.slippage_pct ?? null;
@@ -184,6 +248,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
       });
     }
 
+    // Existing: Fee Drag sort
     if (feeDragSort !== SORT_NONE) {
       result = [...result].sort((a, b) => {
         const fa = a.fee_drag_pct ?? null;
@@ -196,7 +261,8 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     }
 
     return result;
-  }, [trades, rSort, rMap, slippageSort, feeDragSort]);
+  }, [trades, entryDateSort, exitDateSort, pnlSort, pnlPctSort, daysHeldSort,
+      rSort, rMap, slippageSort, feeDragSort]);
 
   if (!trades || trades.length === 0) {
     return (
@@ -206,36 +272,61 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     );
   }
 
-  // Sort icon helpers
-  const RSortIcon = () => {
-    if (rSort === SORT_ASC)  return <ArrowUp   className="w-3 h-3 ml-1 inline text-cyan-400" />;
-    if (rSort === SORT_DESC) return <ArrowDown  className="w-3 h-3 ml-1 inline text-cyan-400" />;
+  // Sort icon helper — returns an arrow icon component for a given sort state
+  const SortIcon = ({ state, color = "text-cyan-400" }) => {
+    if (state === SORT_ASC)  return <ArrowUp   className={`w-3 h-3 ml-1 inline ${color}`} />;
+    if (state === SORT_DESC) return <ArrowDown  className={`w-3 h-3 ml-1 inline ${color}`} />;
     return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
   };
 
-  const SlippageSortIcon = () => {
-    if (slippageSort === SORT_ASC)  return <ArrowUp   className="w-3 h-3 ml-1 inline text-cyan-400" />;
-    if (slippageSort === SORT_DESC) return <ArrowDown  className="w-3 h-3 ml-1 inline text-cyan-400" />;
-    return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
-  };
-
-  const FeeDragSortIcon = () => {
-    if (feeDragSort === SORT_ASC)  return <ArrowUp   className="w-3 h-3 ml-1 inline text-amber-400" />;
-    if (feeDragSort === SORT_DESC) return <ArrowDown  className="w-3 h-3 ml-1 inline text-amber-400" />;
-    return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
-  };
+  // Aliases for backwards compatibility with existing sort icons
+  const RSortIcon       = () => <SortIcon state={rSort} />;
+  const SlippageSortIcon = () => <SortIcon state={slippageSort} />;
+  const FeeDragSortIcon  = () => <SortIcon state={feeDragSort} color="text-amber-400" />;
 
   return (
     <DataTable>
+      {/* ST-10: Trade History-specific header override — font-semibold text-slate-300 tracking-wide */}
       <TableHeader>
-        <TableHead>Ticker</TableHead>
-        <TableHead>Entry Date</TableHead>
-        <TableHead>Exit Date</TableHead>
-        <TableHead className="text-right">P&L</TableHead>
-        <TableHead className="text-right">% P&L</TableHead>
+        <TableHead className={TH_CLASS}>Ticker</TableHead>
+        {/* ST-11: Entry Date — sortable */}
+        <TableHead
+          className={cn(TH_CLASS, "cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setEntryDateSort)}
+        >
+          Entry Date <SortIcon state={entryDateSort} />
+        </TableHead>
+        {/* ST-11: Exit Date — sortable, default DESC (newest first) */}
+        <TableHead
+          className={cn(TH_CLASS, "cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setExitDateSort)}
+        >
+          Exit Date <SortIcon state={exitDateSort} />
+        </TableHead>
+        {/* ST-11: P&L GBP — sortable */}
+        <TableHead
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setPnlSort)}
+        >
+          P&L <SortIcon state={pnlSort} />
+        </TableHead>
+        {/* ST-11: P&L % — sortable */}
+        <TableHead
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setPnlPctSort)}
+        >
+          % P&L <SortIcon state={pnlPctSort} />
+        </TableHead>
+        {/* ST-11: Days Held — new sortable column */}
+        <TableHead
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setDaysHeldSort)}
+        >
+          Days <SortIcon state={daysHeldSort} />
+        </TableHead>
         {/* ST-14: Slippage column — sortable, "—" to end */}
         <TableHead
-          className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={cycleSlippageSort}
           title="Entry deviation: fill price vs limit price at entry. Null when fill price not recorded."
         >
@@ -243,7 +334,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         </TableHead>
         {/* ST-09: Fee Drag % column — sortable, ascending = lowest fee drag first */}
         <TableHead
-          className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={cycleFeeSort}
           title="Fee Drag % = Exit fees / Gross proceeds × 100. Measures the proportion of gross sale proceeds consumed by broker exit fees."
         >
@@ -251,12 +342,12 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         </TableHead>
         {/* BLG-FEAT-02: R-Multiple column — sortable, "—" to end */}
         <TableHead
-          className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={cycleRSort}
         >
           R-Multiple <RSortIcon />
         </TableHead>
-        <TableHead>Exit Reason</TableHead>
+        <TableHead className={TH_CLASS}>Exit Reason</TableHead>
       </TableHeader>
 
       <TableBody>
@@ -323,6 +414,13 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                   </span>
                 </TableCell>
 
+                {/* Days Held — ST-11 */}
+                <TableCell className="text-right">
+                  <span className="text-slate-400 tabular-nums">
+                    {trade.holding_days != null ? trade.holding_days : "—"}
+                  </span>
+                </TableCell>
+
                 {/* Slippage — ST-14 */}
                 <TableCell className="text-right">
                   <span className={cn("font-medium tabular-nums", slippageColour(trade.slippage_pct))}>
@@ -358,10 +456,10 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 </TableCell>
               </TableRow>
 
-              {/* Expanded journal row — colSpan bumped to 9 (ST-09 added Fee Drag % column) */}
+              {/* Expanded journal row — colSpan 10 (ST-11 added Days Held column) */}
               {isExpanded && hasExpandableContent && (
                 <TableRow key={`${tradeId}-details`} className="bg-slate-900/50 border-t-2 border-slate-700/50">
-                  <TableCell colSpan={9} className="!p-0">
+                  <TableCell colSpan={10} className="!p-0">
                     <div className="w-full px-6 py-5 space-y-5">
                       <div className="flex items-center gap-2 pb-3 border-b border-slate-700/50">
                         <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />
