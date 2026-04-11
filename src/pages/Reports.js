@@ -527,7 +527,7 @@ export default function Reports() {
                 <SelectTrigger className="w-40 bg-slate-800/50 border-slate-700 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-800 border-slate-700">
                   <SelectItem value="week">Last 7 Days</SelectItem>
                   <SelectItem value="month">Last Month</SelectItem>
                   <SelectItem value="quarter">Last Quarter</SelectItem>
