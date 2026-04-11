@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44, apiFetch } from "../api/base44Client";
+import { base44, apiFetch, api } from "../api/base44Client";
 import { useToast } from "../components/ui/use-toast";
 import {
   FileText,
@@ -413,109 +413,96 @@ function TaxYearReport() {
 
 // ─── Main Reports Page ─────────────────────────────────────────────────────────
 
+// Map frontend period selector values to backend period parameter values
+const PERIOD_MAP = {
+  week: "last_7_days",
+  month: "last_month",
+  quarter: "last_quarter",
+  year: "last_year",
+  ytd: "ytd",
+  all: "all_time",
+};
+
 export default function Reports() {
   const [activeTab, setActiveTab] = useState("performance");
   const [period, setPeriod] = useState("month");
   const [exportModalOpen, setExportModalOpen] = useState(false);
-  const [dateRange, setDateRange] = useState({ start: null, end: null });
 
-  const { data: positions, isLoading: loadingPositions } = useQuery({
-    queryKey: ["allPositions"],
-    queryFn: () => base44.entities.Position.list("-exit_date"),
+  const backendPeriod = PERIOD_MAP[period] ?? "last_month";
+
+  // Fetch backend-computed analytics metrics (period-filtered on server)
+  const { data: analyticsData, isLoading: loadingAnalytics } = useQuery({
+    queryKey: ["analyticsMetrics", backendPeriod],
+    queryFn: () => api.analytics.metrics(backendPeriod),
+    enabled: activeTab === "performance",
   });
 
-  const { data: portfolios } = useQuery({
-    queryKey: ["portfolios"],
-    queryFn: () => base44.entities.Portfolio.list(),
+  // Fetch open positions count for the StatsCard subtitle
+  const { data: openPositions = [] } = useQuery({
+    queryKey: ["openPositions"],
+    queryFn: () => api.positions.list(),
+    select: (data) => (data || []).filter(p => p.status === "open"),
+    enabled: activeTab === "performance",
   });
 
-  const portfolio = portfolios?.[0];
-
-  // Calculate date range based on period
+  // Calculate date range based on period (still needed for PortfolioGrowthChart)
   const periodDates = useMemo(() => {
     const now = new Date();
     let start = new Date();
-
     switch (period) {
-      case "week":
-        start.setDate(now.getDate() - 7);
-        break;
-      case "month":
-        start.setMonth(now.getMonth() - 1);
-        break;
-      case "quarter":
-        start.setMonth(now.getMonth() - 3);
-        break;
-      case "year":
-        start.setFullYear(now.getFullYear() - 1);
-        break;
-      case "ytd":
-        start = new Date(now.getFullYear(), 0, 1);
-        break;
-      case "all":
-        start = new Date(2020, 0, 1);
-        break;
-      default:
-        start.setMonth(now.getMonth() - 1);
+      case "week":   start.setDate(now.getDate() - 7); break;
+      case "month":  start.setMonth(now.getMonth() - 1); break;
+      case "quarter": start.setMonth(now.getMonth() - 3); break;
+      case "year":   start.setFullYear(now.getFullYear() - 1); break;
+      case "ytd":    start = new Date(now.getFullYear(), 0, 1); break;
+      case "all":    start = new Date(2020, 0, 1); break;
+      default:       start.setMonth(now.getMonth() - 1);
     }
-
     return { start, end: now };
   }, [period]);
 
-  // Filter positions by date range
+  // Adapt trades_for_charts to the shape expected by sub-components
   const filteredPositions = useMemo(() => {
-    if (!positions) return [];
+    const trades = analyticsData?.trades_for_charts || [];
+    return trades.map(t => ({
+      ...t,
+      status: "closed",
+      pnl_percent: t.pnl_pct ?? t.pnl_percent,
+      fees: t.fees ?? 0,
+    }));
+  }, [analyticsData]);
 
-    const range = dateRange.start ? dateRange : periodDates;
-
-    return positions.filter(p => {
-      const exitDate = p.exit_date ? new Date(p.exit_date) : null;
-      const entryDate = new Date(p.entry_date);
-
-      return entryDate <= range.end && (!exitDate || exitDate >= range.start);
-    });
-  }, [positions, periodDates, dateRange]);
-
-  // Calculate performance metrics
+  // Build metrics from backend analytics response
   const metrics = useMemo(() => {
-    const closedTrades = filteredPositions.filter(p => p.status === "closed");
-    const openTrades = filteredPositions.filter(p => p.status === "open");
-
-    const totalPnL = closedTrades.reduce((sum, p) => sum + (p.pnl || 0), 0);
-    const winningTrades = closedTrades.filter(p => (p.pnl || 0) > 0);
-    const losingTrades = closedTrades.filter(p => (p.pnl || 0) < 0);
-
-    const grossProfit = winningTrades.reduce((sum, p) => sum + (p.pnl || 0), 0);
-    const grossLoss = Math.abs(losingTrades.reduce((sum, p) => sum + (p.pnl || 0), 0));
-
-    const avgWin = winningTrades.length > 0 ? grossProfit / winningTrades.length : 0;
-    const avgLoss = losingTrades.length > 0 ? grossLoss / losingTrades.length : 0;
-
-    const winRate = closedTrades.length > 0
-      ? (winningTrades.length / closedTrades.length) * 100
-      : 0;
-
-    const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : grossProfit > 0 ? Infinity : 0;
-
-    const totalFees = closedTrades.reduce((sum, p) => sum + (p.fees || 0), 0);
-
+    if (!analyticsData) {
+      return {
+        totalPnL: 0, winRate: 0, totalTrades: 0, winningTrades: 0, losingTrades: 0,
+        grossProfit: 0, grossLoss: 0, avgWin: 0, avgLoss: 0, profitFactor: 0,
+        totalFees: 0, openPositions: 0, bestTrade: 0, worstTrade: 0,
+      };
+    }
+    const trades = analyticsData.trades_for_charts || [];
+    const wins = trades.filter(t => (t.pnl || 0) > 0);
+    const lossesList = trades.filter(t => (t.pnl || 0) < 0);
+    const grossProfit = wins.reduce((s, t) => s + (t.pnl || 0), 0);
+    const grossLoss = Math.abs(lossesList.reduce((s, t) => s + (t.pnl || 0), 0));
     return {
-      totalPnL,
-      winRate,
-      totalTrades: closedTrades.length,
-      winningTrades: winningTrades.length,
-      losingTrades: losingTrades.length,
+      totalPnL: analyticsData.summary?.total_pnl ?? 0,
+      winRate: analyticsData.summary?.win_rate ?? 0,
+      totalTrades: analyticsData.summary?.total_trades ?? 0,
+      winningTrades: wins.length,
+      losingTrades: lossesList.length,
       grossProfit,
       grossLoss,
-      avgWin,
-      avgLoss,
-      profitFactor,
-      totalFees,
-      openPositions: openTrades.length,
-      bestTrade: closedTrades.length > 0 ? Math.max(...closedTrades.map(p => p.pnl || 0)) : 0,
-      worstTrade: closedTrades.length > 0 ? Math.min(...closedTrades.map(p => p.pnl || 0)) : 0,
+      avgWin: wins.length > 0 ? grossProfit / wins.length : 0,
+      avgLoss: lossesList.length > 0 ? grossLoss / lossesList.length : 0,
+      profitFactor: analyticsData.executive_metrics?.profit_factor ?? 0,
+      totalFees: trades.reduce((s, t) => s + (t.fees || 0), 0),
+      openPositions: openPositions.length,
+      bestTrade: trades.length > 0 ? Math.max(...trades.map(t => t.pnl || 0)) : 0,
+      worstTrade: trades.length > 0 ? Math.min(...trades.map(t => t.pnl || 0)) : 0,
     };
-  }, [filteredPositions]);
+  }, [analyticsData, openPositions]);
 
   const periodLabels = {
     week: "Last 7 Days",
@@ -526,7 +513,7 @@ export default function Reports() {
     all: "All Time"
   };
 
-  const isLoading = loadingPositions;
+  const isLoading = loadingAnalytics;
 
   return (
     <div className="space-y-6">
@@ -646,7 +633,6 @@ export default function Reports() {
         positions={filteredPositions}
         metrics={metrics}
         period={periodLabels[period]}
-        portfolio={portfolio}
       />
     </div>
   );
