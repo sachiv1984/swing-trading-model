@@ -2,9 +2,9 @@
 -- Seed data for the signals table.
 --
 -- Inserts 4 representative signals against the staging portfolio:
---   2 active signals (new)    — will render on the Signals page
---   1 dismissed signal        — won't render by default but confirms dismissal state
---   1 entered signal          — signal acted on (position opened)
+--   2 active signals (new) — will render on the Signals page
+--   1 dismissed signal    — won't render by default but confirms dismissal state
+--   1 entered signal      — position entered (status = entered)
 --
 -- Signal data is representative of real momentum signals but uses
 -- fixed values so QA tests are deterministic.
@@ -55,7 +55,7 @@ CROSS JOIN (VALUES
     ('BARC',   'UK', '2026-04-10', 2, 7.15,  152.30,  152.30, 3.10, 0.74, 138.00, 163, 248.00,  248.25,  'new'),
     -- Dismissed signal (excluded from active view)
     ('HSBA',   'UK', '2026-04-10', 3, 6.80,  624.10,  624.10, 8.90, 0.66, 595.00,  40, 249.60,  249.64,  'dismissed'),
-    -- Entered signal — position opened from this signal (excluded from active view)
+    -- Entered position (excluded from active view)
     ('TSCO',   'UK', '2026-04-10', 4, 5.90,  310.20,  310.20, 5.40, 0.71, 290.00,  80, 248.16,  248.16,  'entered')
 ) AS sig(ticker, market, signal_date, rank, momentum_percent, current_price, price_gbp,
          atr_value, volatility, initial_stop, suggested_shares, allocation_gbp, total_cost, status)
