@@ -2,8 +2,33 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 2.0
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-04-11__release-v2.6
+**Date:** 2026-04-12
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Reports Performance tab migrated to FastAPI (`/analytics/metrics`); Signals page Base44 mutation calls confirmed wired to FastAPI; cash balance replaced with `GET /cash/summary`; Playwright specs for Reports and Signals cash balance added | docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/metrics; docs/specs/api_contracts/portfolio_endpoints.md#GET /cash/summary | None |
+| EPIC-02 | 4 pytest collection errors fixed; 129 tests pass 0 errors; `.github/workflows/ci-tests.yml` Phase A live; `tests/e2e/fee-drag-trade-history.spec.js` covering SC-FEE-01–04; `tests/test_trade_service.py` 17 tests covering SC-FEE-05/06 | docs/testing/fee-drag-scenarios.md | P3: Playwright headless runner failure (BLG-QA-11 filed; SC-FEE-01–04 unverified by automated run; structural code confirmed correct) |
+| EPIC-03 | Trade History: 7-card StatsCard bar (Total Trades added); StatsCard tooltip prop; column header styling (font-semibold slate-300); 5-column sort (Entry, Exit, P&L, P&L%, Days Held) + Days Held column added | docs/specs/frontend/pages/trade_history.md | None (2 conditional passes on staging visual QA noted in qa_evidence_EPIC-03.md) |
+| EPIC-04 | CF-1: execution_prompt.md v3.3 STEP 5.1 unpushed-commit check; CF-2: §6 edit reminders added to design_gate_prompt.md v1.2, amendment_cycle_prompt.md v1.7, roadmap_prompt.md v4.8; decision_log.md hard gate upgraded in roadmap_prompt.md; Frontend Performance Budget spec published | claude/system/execution_prompt.md v3.3; claude/system/roadmap_prompt.md v4.8; docs/specs/frontend/performance_budget.md | None |
+
+### Capabilities deferred or returned
+
+None. All 15 planned stories delivered (velocity 1.00).
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md
+- Deviations filed: BLG-QA-11 (P3, Playwright environmental)
+- Test scenarios referenced: tests/e2e/reports-performance-tab.spec.js, tests/e2e/signals-cash-balance.spec.js, tests/e2e/fee-drag-trade-history.spec.js, tests/test_trade_service.py, docs/testing/fee-drag-scenarios.md
 
 ---
 
