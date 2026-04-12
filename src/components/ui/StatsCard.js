@@ -1,7 +1,6 @@
 import { Info } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "../../lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
 export default function StatsCard({
   title,
@@ -54,18 +53,14 @@ export default function StatsCard({
           <p className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
               {title}
               {tooltip && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info
-                        className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-default flex-shrink-0"
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{tooltip}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <span className="relative group/tooltip inline-flex">
+                  <Info
+                    className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-default flex-shrink-0"
+                  />
+                  <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-56 rounded bg-slate-800 px-2 py-1.5 text-xs text-slate-200 opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50 shadow-lg">
+                    {tooltip}
+                  </span>
+                </span>
               )}
             </p>
           <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
