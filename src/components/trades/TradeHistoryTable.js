@@ -84,35 +84,47 @@ const SORT_ASC  = "asc";
 const SORT_DESC = "desc";
 
 const exitReasonLabels = {
-  // Current human-readable values (from ExitModal dropdown)
+  // Title-case values (position_manager.py)
   "Stop Loss Hit":        "Stop Hit",
   "Manual Exit":          "Manual",
   "Target Reached":       "Target",
   "Risk-Off Signal":      "Risk Off",
   "Trailing Stop":        "Trailing",
   "Partial Profit Taking":"Partial",
-  // Legacy snake_case values stored in older DB records
+  // Snake-case aliases (seed data / legacy DB rows)
   "stop_hit":             "Stop Hit",
   "manual":               "Manual",
+  "manual_exit":          "Manual",
   "target":               "Target",
+  "target_reached":       "Target",
+  "risk_off":             "Risk Off",
+  "risk_off_signal":      "Risk Off",
   "market_regime":        "Risk Off",
   "trailing_stop":        "Trailing",
+  "partial":              "Partial",
+  "partial_profit_taking":"Partial",
 };
 
 const exitReasonColors = {
-  // Current human-readable values
+  // Title-case values
   "Stop Loss Hit":        "bg-rose-500/20 text-rose-400 border-rose-500/30",
   "Manual Exit":          "bg-violet-500/20 text-violet-400 border-violet-500/30",
   "Target Reached":       "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
   "Risk-Off Signal":      "bg-amber-500/20 text-amber-400 border-amber-500/30",
   "Trailing Stop":        "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
   "Partial Profit Taking":"bg-blue-500/20 text-blue-400 border-blue-500/30",
-  // Legacy snake_case aliases
+  // Snake-case aliases
   "stop_hit":             "bg-rose-500/20 text-rose-400 border-rose-500/30",
   "manual":               "bg-violet-500/20 text-violet-400 border-violet-500/30",
+  "manual_exit":          "bg-violet-500/20 text-violet-400 border-violet-500/30",
   "target":               "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  "target_reached":       "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  "risk_off":             "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  "risk_off_signal":      "bg-amber-500/20 text-amber-400 border-amber-500/30",
   "market_regime":        "bg-amber-500/20 text-amber-400 border-amber-500/30",
   "trailing_stop":        "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
+  "partial":              "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  "partial_profit_taking":"bg-blue-500/20 text-blue-400 border-blue-500/30",
 };
 
 /**
@@ -123,8 +135,23 @@ const exitReasonColors = {
  *                                    Used only for R-multiple (stop_price).
  *                                    Optional — column shows "—" for all rows when absent.
  */
+// ST-10: Trade History-specific column header class override.
+// Applies to all TableHead cells in this file only — DataTable.js default unchanged.
+// px-2 overrides DataTable's px-6 to keep 10 columns from requiring horizontal scroll.
+// whitespace-nowrap prevents multi-line headers (e.g. "Entry Date ↓").
+const TH_CLASS = "font-semibold text-slate-300 tracking-wide px-2 whitespace-nowrap";
+// TD_CLASS: matching compact horizontal padding for all data cells in this table.
+const TD_CLASS = "px-2";
+
 export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
   const [expandedRows, setExpandedRows] = useState(new Set());
+  // ST-11: New sort states — Entry Date, Exit Date (default DESC), P&L, P&L%, Days Held
+  const [entryDateSort, setEntryDateSort] = useState(SORT_NONE);
+  const [exitDateSort,  setExitDateSort]  = useState(SORT_DESC);   // default: newest first
+  const [pnlSort,       setPnlSort]       = useState(SORT_NONE);
+  const [pnlPctSort,    setPnlPctSort]    = useState(SORT_NONE);
+  const [daysHeldSort,  setDaysHeldSort]  = useState(SORT_NONE);
+  // Existing sort states
   const [rSort, setRSort] = useState(SORT_NONE);
   const [slippageSort, setSlippageSort] = useState(SORT_NONE);
   const [feeDragSort, setFeeDragSort] = useState(SORT_NONE);
@@ -171,11 +198,63 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     );
   };
 
-  // Apply R-multiple sort, then slippage sort.
-  // Spec (F-12): "—" values sort to the end in both directions.
+  // ST-11 cycle helpers
+  const cycle = (setter) => setter(prev =>
+    prev === SORT_NONE ? SORT_ASC :
+    prev === SORT_ASC  ? SORT_DESC :
+    SORT_NONE
+  );
+
+  // Apply sorts in priority order (last applied wins).
+  // Spec (F-12): null/"—" values sort to the end in both directions.
   const displayTrades = useMemo(() => {
     let result = trades;
 
+    // ST-11: Entry Date sort
+    if (entryDateSort !== SORT_NONE) {
+      result = [...result].sort((a, b) => {
+        const cmp = a.entry_date < b.entry_date ? -1 : a.entry_date > b.entry_date ? 1 : 0;
+        return entryDateSort === SORT_ASC ? cmp : -cmp;
+      });
+    }
+
+    // ST-11: Exit Date sort (default SORT_DESC — most recent first)
+    if (exitDateSort !== SORT_NONE) {
+      result = [...result].sort((a, b) => {
+        const cmp = a.exit_date < b.exit_date ? -1 : a.exit_date > b.exit_date ? 1 : 0;
+        return exitDateSort === SORT_ASC ? cmp : -cmp;
+      });
+    }
+
+    // ST-11: P&L GBP sort
+    if (pnlSort !== SORT_NONE) {
+      result = [...result].sort((a, b) =>
+        pnlSort === SORT_ASC ? (a.pnl ?? 0) - (b.pnl ?? 0) : (b.pnl ?? 0) - (a.pnl ?? 0)
+      );
+    }
+
+    // ST-11: P&L % sort
+    if (pnlPctSort !== SORT_NONE) {
+      result = [...result].sort((a, b) =>
+        pnlPctSort === SORT_ASC
+          ? (a.pnl_pct ?? 0) - (b.pnl_pct ?? 0)
+          : (b.pnl_pct ?? 0) - (a.pnl_pct ?? 0)
+      );
+    }
+
+    // ST-11: Days Held sort — null to end
+    if (daysHeldSort !== SORT_NONE) {
+      result = [...result].sort((a, b) => {
+        const da = a.holding_days ?? null;
+        const db = b.holding_days ?? null;
+        if (da === null && db === null) return 0;
+        if (da === null) return 1;
+        if (db === null) return -1;
+        return daysHeldSort === SORT_ASC ? da - db : db - da;
+      });
+    }
+
+    // Existing: R-multiple sort
     if (rSort !== SORT_NONE) {
       result = [...result].sort((a, b) => {
         const ra = rMap.get(String(a.id ?? ""));
@@ -187,6 +266,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
       });
     }
 
+    // Existing: Slippage sort
     if (slippageSort !== SORT_NONE) {
       result = [...result].sort((a, b) => {
         const sa = a.slippage_pct ?? null;
@@ -198,6 +278,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
       });
     }
 
+    // Existing: Fee Drag sort
     if (feeDragSort !== SORT_NONE) {
       result = [...result].sort((a, b) => {
         const fa = a.fee_drag_pct ?? null;
@@ -210,7 +291,8 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     }
 
     return result;
-  }, [trades, rSort, rMap, slippageSort, feeDragSort]);
+  }, [trades, entryDateSort, exitDateSort, pnlSort, pnlPctSort, daysHeldSort,
+      rSort, rMap, slippageSort, feeDragSort]);
 
   if (!trades || trades.length === 0) {
     return (
@@ -220,57 +302,82 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
     );
   }
 
-  // Sort icon helpers
-  const RSortIcon = () => {
-    if (rSort === SORT_ASC)  return <ArrowUp   className="w-3 h-3 ml-1 inline text-cyan-400" />;
-    if (rSort === SORT_DESC) return <ArrowDown  className="w-3 h-3 ml-1 inline text-cyan-400" />;
+  // Sort icon helper — returns an arrow icon component for a given sort state
+  const SortIcon = ({ state, color = "text-cyan-400" }) => {
+    if (state === SORT_ASC)  return <ArrowUp   className={`w-3 h-3 ml-1 inline ${color}`} />;
+    if (state === SORT_DESC) return <ArrowDown  className={`w-3 h-3 ml-1 inline ${color}`} />;
     return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
   };
 
-  const SlippageSortIcon = () => {
-    if (slippageSort === SORT_ASC)  return <ArrowUp   className="w-3 h-3 ml-1 inline text-cyan-400" />;
-    if (slippageSort === SORT_DESC) return <ArrowDown  className="w-3 h-3 ml-1 inline text-cyan-400" />;
-    return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
-  };
-
-  const FeeDragSortIcon = () => {
-    if (feeDragSort === SORT_ASC)  return <ArrowUp   className="w-3 h-3 ml-1 inline text-amber-400" />;
-    if (feeDragSort === SORT_DESC) return <ArrowDown  className="w-3 h-3 ml-1 inline text-amber-400" />;
-    return <ArrowUpDown className="w-3 h-3 ml-1 inline text-slate-500" />;
-  };
+  // Aliases for backwards compatibility with existing sort icons
+  const RSortIcon       = () => <SortIcon state={rSort} />;
+  const SlippageSortIcon = () => <SortIcon state={slippageSort} />;
+  const FeeDragSortIcon  = () => <SortIcon state={feeDragSort} color="text-amber-400" />;
 
   return (
     <DataTable>
+      {/* ST-10: Trade History-specific header override — font-semibold text-slate-300 tracking-wide */}
       <TableHeader>
-        <TableHead>Ticker</TableHead>
-        <TableHead>Entry Date</TableHead>
-        <TableHead>Exit Date</TableHead>
-        <TableHead className="text-right">P&L</TableHead>
-        <TableHead className="text-right">% P&L</TableHead>
-        {/* ST-14: Slippage column — sortable, "—" to end */}
+        <TableHead className={TH_CLASS}>Ticker</TableHead>
+        {/* ST-11: Entry Date — sortable */}
         <TableHead
-          className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
+          className={cn(TH_CLASS, "cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setEntryDateSort)}
+        >
+          Entry Date <SortIcon state={entryDateSort} />
+        </TableHead>
+        {/* ST-11: Exit Date — sortable, default DESC (newest first) */}
+        <TableHead
+          className={cn(TH_CLASS, "cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setExitDateSort)}
+        >
+          Exit Date <SortIcon state={exitDateSort} />
+        </TableHead>
+        {/* ST-11: P&L GBP — sortable */}
+        <TableHead
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setPnlSort)}
+        >
+          P&L <SortIcon state={pnlSort} />
+        </TableHead>
+        {/* ST-11: P&L % — sortable */}
+        <TableHead
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setPnlPctSort)}
+        >
+          % P&L <SortIcon state={pnlPctSort} />
+        </TableHead>
+        <TableHead className={TH_CLASS}>Exit Reason</TableHead>
+        {/* ST-11: Days Held — analytical, hidden below 2xl */}
+        <TableHead
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
+          onClick={() => cycle(setDaysHeldSort)}
+        >
+          Days <SortIcon state={daysHeldSort} />
+        </TableHead>
+        {/* ST-14: Slippage column — analytical, hidden below 2xl */}
+        <TableHead
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={cycleSlippageSort}
           title="Entry deviation: fill price vs limit price at entry. Null when fill price not recorded."
         >
           Slippage <SlippageSortIcon />
         </TableHead>
-        {/* ST-09: Fee Drag % column — sortable, ascending = lowest fee drag first */}
+        {/* ST-09: Fee Drag % column — analytical, hidden below 2xl */}
         <TableHead
-          className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={cycleFeeSort}
           title="Fee Drag % = Exit fees / Gross proceeds × 100. Measures the proportion of gross sale proceeds consumed by broker exit fees."
         >
           Fee Drag % <FeeDragSortIcon />
         </TableHead>
-        {/* BLG-FEAT-02: R-Multiple column — sortable, "—" to end */}
+        {/* BLG-FEAT-02: R-Multiple column — analytical, hidden below 2xl */}
         <TableHead
-          className="text-right cursor-pointer select-none hover:text-slate-200 transition-colors"
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={cycleRSort}
         >
           R-Multiple <RSortIcon />
         </TableHead>
-        <TableHead>Exit Reason</TableHead>
       </TableHeader>
 
       <TableBody>
@@ -295,7 +402,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 className={cn(hasExpandableContent && "cursor-pointer hover:bg-slate-800/50 transition-colors")}
               >
                 {/* Ticker + market */}
-                <TableCell>
+                <TableCell className={TD_CLASS}>
                   <div className="flex items-center gap-2">
                     {hasExpandableContent && (
                       isExpanded
@@ -310,17 +417,17 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 </TableCell>
 
                 {/* Entry date */}
-                <TableCell className="text-slate-400">
-                  {format(new Date(trade.entry_date), "MMM d, yyyy")}
+                <TableCell className={cn(TD_CLASS, "text-slate-400")}>
+                  {format(new Date(trade.entry_date), "d MMM yy")}
                 </TableCell>
 
                 {/* Exit date */}
-                <TableCell className="text-slate-400">
-                  {format(new Date(trade.exit_date), "MMM d, yyyy")}
+                <TableCell className={cn(TD_CLASS, "text-slate-400")}>
+                  {format(new Date(trade.exit_date), "d MMM yy")}
                 </TableCell>
 
                 {/* P&L */}
-                <TableCell className="text-right">
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <div className={cn(
                     "inline-flex items-center gap-1.5 font-medium",
                     isProfit ? "text-emerald-400" : "text-rose-400"
@@ -331,21 +438,38 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 </TableCell>
 
                 {/* % P&L */}
-                <TableCell className="text-right">
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn("font-medium", isProfit ? "text-emerald-400" : "text-rose-400")}>
                     {isProfit ? "+" : ""}{trade.pnl_pct.toFixed(2)}%
                   </span>
                 </TableCell>
 
-                {/* Slippage — ST-14 */}
-                <TableCell className="text-right">
+                {/* Exit reason — primary, always visible */}
+                <TableCell className={TD_CLASS}>
+                  <span className={cn(
+                    "text-xs px-2.5 py-1 rounded-full border",
+                    exitReasonColors[trade.exit_reason] || "bg-slate-800 text-slate-400 border-slate-700"
+                  )}>
+                    {exitReasonLabels[trade.exit_reason] || trade.exit_reason || "Unknown"}
+                  </span>
+                </TableCell>
+
+                {/* Days Held — ST-11 — analytical, hidden below 2xl */}
+                <TableCell className={cn(TD_CLASS, "text-right")}>
+                  <span className="text-slate-400 tabular-nums">
+                    {trade.holding_days != null ? trade.holding_days : "—"}
+                  </span>
+                </TableCell>
+
+                {/* Slippage — ST-14 — analytical, hidden below 2xl */}
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn("font-medium tabular-nums", slippageColour(trade.slippage_pct))}>
                     {formatSlippage(trade.slippage_pct)}
                   </span>
                 </TableCell>
 
-                {/* Fee Drag % — ST-09 */}
-                <TableCell className="text-right">
+                {/* Fee Drag % — ST-09 — analytical, hidden below 2xl */}
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn(
                     "font-medium tabular-nums",
                     trade.fee_drag_pct != null ? "text-amber-400" : "text-slate-500"
@@ -354,28 +478,18 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                   </span>
                 </TableCell>
 
-                {/* R-Multiple — BLG-FEAT-02 */}
-                <TableCell className="text-right">
+                {/* R-Multiple — BLG-FEAT-02 — analytical, hidden below 2xl */}
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn("font-medium tabular-nums", rClass)}>
                     {rText}
                   </span>
                 </TableCell>
-
-                {/* Exit reason */}
-                <TableCell>
-                  <span className={cn(
-                    "text-xs px-2.5 py-1 rounded-full border whitespace-nowrap",
-                    exitReasonColors[trade.exit_reason] || "bg-slate-800 text-slate-400 border-slate-700"
-                  )}>
-                    {exitReasonLabels[trade.exit_reason] || trade.exit_reason || "Unknown"}
-                  </span>
-                </TableCell>
               </TableRow>
 
-              {/* Expanded journal row — colSpan bumped to 9 (ST-09 added Fee Drag % column) */}
+              {/* Expanded journal row — colSpan 10 (ST-11 added Days Held column) */}
               {isExpanded && hasExpandableContent && (
                 <TableRow key={`${tradeId}-details`} className="bg-slate-900/50 border-t-2 border-slate-700/50">
-                  <TableCell colSpan={9} className="!p-0">
+                  <TableCell colSpan={10} className="!p-0">
                     <div className="w-full px-6 py-5 space-y-5">
                       <div className="flex items-center gap-2 pb-3 border-b border-slate-700/50">
                         <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />
