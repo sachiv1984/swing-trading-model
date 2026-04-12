@@ -28,7 +28,38 @@ from unittest.mock import patch
 # ---------------------------------------------------------------------------
 
 import os
+import types
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+
+# Stub the database module before importing any service that touches it via
+# services/__init__.py → position_service → database.update_position.
+# Augment pattern: create the stub if absent, then add any missing attributes.
+# This is safe regardless of collection order — earlier tests may have registered
+# a minimal stub (e.g. test_watchlist_service.py only registers get_db/get_portfolio).
+if "database" not in sys.modules:
+    _db_stub = types.ModuleType("database")
+    sys.modules["database"] = _db_stub
+else:
+    _db_stub = sys.modules["database"]
+
+from unittest.mock import MagicMock as _MagicMock
+for _fn in (
+    "get_db", "get_portfolio", "get_positions", "update_position",
+    "create_position", "update_portfolio_cash", "get_settings",
+    "create_trade_history", "update_position_note", "update_position_tags",
+    "get_all_tags", "search_positions_by_tags", "get_trade_history",
+    "get_trade_history_by_tax_year", "create_cash_transaction",
+    "get_cash_transactions", "get_total_deposits_withdrawals",
+    "create_portfolio_snapshot", "get_portfolio_snapshots",
+    "get_latest_snapshot", "create_signal", "get_signals",
+    "update_signal", "delete_signal", "get_all_tickers",
+    "get_peak_portfolio_value", "get_all_closed_trades_for_csv_export",
+    "get_trade_reflection", "upsert_trade_reflection",
+    "get_database_size_bytes", "delete_position",
+    "download_ticker_data", "compute_atr_simple", "create_settings", "update_settings",
+):
+    if not hasattr(_db_stub, _fn):
+        setattr(_db_stub, _fn, _MagicMock())
 
 from services.grace_service import compute_grace_days_remaining
 from services.drawdown_service import get_drawdown_fields

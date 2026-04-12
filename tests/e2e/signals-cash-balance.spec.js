@@ -1,0 +1,183 @@
+/**
+ * Signals Page — Cash Balance Integration Tests
+ * ST-16 (v2.6 EPIC-01 test gap closure)
+ *
+ * Covers the frontend behaviour introduced by EPIC-01 (ST-03):
+ *   SC-SIG-CB-01: Cash balance rendered from /cash/summary current_cash field
+ *   SC-SIG-CB-02: Cash balance falls back to £0.00 when /cash/summary returns null/error
+ *
+ * Infrastructure:
+ * - Playwright page.route() network interception. No live backend required.
+ * - ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Signals').
+ * - api.cash.getSummary() → GET /cash/summary
+ *   availableCashBalance = cashSummary?.current_cash ?? 0
+ * - availableCash is passed to PositionSizerPanel which renders it as a
+ *   formatted currency string.
+ */
+
+'use strict';
+
+const { test, expect } = require('@playwright/test');
+
+const API = 'http://localhost:8000';
+
+// ---------------------------------------------------------------------------
+// Mock data
+// ---------------------------------------------------------------------------
+
+/** Cash summary with a known current_cash value */
+const CASH_SUMMARY_FUNDED = {
+  current_cash: 8250.00,
+  total_deposited: 10000.00,
+  total_withdrawn: 0.00,
+  realised_pnl: 750.00,
+  unrealised_pnl: 0.00,
+};
+
+/** Signals list — non-empty so the page renders position sizer panel */
+const SIGNALS_LIST = [
+  {
+    id: 'sig-1',
+    ticker: 'LGEN',
+    market: 'UK',
+    status: 'active',
+    signal_date: '2026-04-10',
+    direction: 'long',
+    entry_price: 220.00,
+    stop_price: 200.00,
+    target_price: 260.00,
+    risk_reward: 2.0,
+    atr: 8.5,
+    rationale: 'Breakout above resistance',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Shared setup helpers
+// ---------------------------------------------------------------------------
+
+async function mockSignals(page, signals = SIGNALS_LIST) {
+  await page.route(`${API}/signals`, (route) => {
+    if (route.request().method() === 'GET') {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ok', data: signals }),
+      });
+    } else {
+      route.continue();
+    }
+  });
+}
+
+async function mockCashSummary(page, payload = CASH_SUMMARY_FUNDED) {
+  await page.route(`${API}/cash/summary`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(payload),
+    })
+  );
+}
+
+async function mockCashSummaryError(page) {
+  await page.route(`${API}/cash/summary`, (route) =>
+    route.fulfill({
+      status: 500,
+      contentType: 'application/json',
+      body: JSON.stringify({ detail: 'Internal Server Error' }),
+    })
+  );
+}
+
+/** Catch-all: prevent unmocked endpoints from hanging tests */
+async function mockFallback(page) {
+  await page.route(new RegExp(`${API}/`), (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ok', data: [] }),
+    })
+  );
+}
+
+// ---------------------------------------------------------------------------
+// SC-SIG-CB-01 — Cash balance rendered from /cash/summary
+// ---------------------------------------------------------------------------
+
+test.describe('SC-SIG-CB-01 — Cash balance from /cash/summary', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockCashSummary(page, CASH_SUMMARY_FUNDED);
+    await mockSignals(page);
+    await mockFallback(page);
+    await page.goto('/#/Signals');
+    // Wait for page to render signals
+    await page.waitForSelector('button', { timeout: 10000 });
+  });
+
+  test('SC-SIG-CB-01a: GET /cash/summary is called on Signals page load', async ({ page }) => {
+    const requests = [];
+    // Re-register listener before navigation to capture the request
+    const newPage = page;
+    newPage.on('request', (req) => {
+      if (req.url().includes('/cash/summary')) requests.push(req.url());
+    });
+
+    await mockCashSummary(page, CASH_SUMMARY_FUNDED);
+    await mockSignals(page);
+    await mockFallback(page);
+    await page.goto('/#/Signals');
+    await page.waitForSelector('button', { timeout: 10000 });
+    await page.waitForTimeout(300);
+
+    expect(requests.filter(u => u.includes('/cash/summary')).length).toBeGreaterThan(0);
+  });
+
+  test('SC-SIG-CB-01b: Available cash rendered from current_cash field', async ({ page }) => {
+    // availableCashBalance = cashSummary.current_cash = 8250.00
+    // PositionSizerPanel renders this as a formatted currency string
+    // Exact format depends on the component — check for the numeric value
+    await expect(page.getByText(/8[,.]?250/)).toBeVisible({ timeout: 8000 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-SIG-CB-02 — Fallback to £0 when /cash/summary returns null or error
+// ---------------------------------------------------------------------------
+
+test.describe('SC-SIG-CB-02 — Cash balance fallback to 0', () => {
+  test('SC-SIG-CB-02a: Cash shows 0 when /cash/summary returns server error', async ({ page }) => {
+    await mockCashSummaryError(page);
+    await mockSignals(page);
+    await mockFallback(page);
+    await page.goto('/#/Signals');
+    await page.waitForSelector('button', { timeout: 10000 });
+    await page.waitForTimeout(500);
+
+    // availableCashBalance = cashSummary?.current_cash ?? 0 = 0
+    // Should render 0 / £0 / £0.00 — not a hard crash
+    // Verify the page rendered without throwing (no error boundary shown)
+    await expect(page.locator('body')).not.toContainText('Something went wrong');
+    // And verify 0 cash is rendered (may be "£0", "0.00", "£0.00" etc.)
+    await expect(page.getByText(/£\s*0(\.00)?|0\.00/)).toBeVisible({ timeout: 8000 });
+  });
+
+  test('SC-SIG-CB-02b: Cash shows 0 when /cash/summary returns null current_cash', async ({ page }) => {
+    await page.route(`${API}/cash/summary`, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ current_cash: null, total_deposited: 0 }),
+      })
+    );
+    await mockSignals(page);
+    await mockFallback(page);
+    await page.goto('/#/Signals');
+    await page.waitForSelector('button', { timeout: 10000 });
+    await page.waitForTimeout(500);
+
+    // cashSummary?.current_cash ?? 0 → 0 when current_cash is null
+    await expect(page.locator('body')).not.toContainText('Something went wrong');
+    await expect(page.getByText(/£\s*0(\.00)?|0\.00/)).toBeVisible({ timeout: 8000 });
+  });
+});

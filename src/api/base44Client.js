@@ -451,6 +451,8 @@ export const api = {
   },
 
   analytics: {
+    metrics: async (period = 'all_time') =>
+      doFetch(`/analytics/metrics?period=${encodeURIComponent(period)}`),
     cohort: async (period = 'month') =>
       doFetch(`/analytics/cohort?period=${encodeURIComponent(period)}`),
     rMultipleDistribution: async () =>
