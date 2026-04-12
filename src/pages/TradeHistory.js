@@ -28,6 +28,7 @@ export default function TradeHistory() {
   const { data: tradesData, isLoading } = useQuery({
     queryKey: ["trades"],
     queryFn: () => api.trades.list(),
+    retry: false,
   });
 
   // ── BLG-FEAT-02: Analytics metrics for R-multiple join ──────────────────────

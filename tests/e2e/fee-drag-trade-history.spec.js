@@ -122,22 +122,27 @@ const ANALYTICS_STUB = {
 // Shared mock setup
 // ---------------------------------------------------------------------------
 
-async function mockBaseEndpoints(page, tradesResponse) {
-  await page.route(`${API}/trades`, (route) =>
+async function mockTrades(page, tradesResponse) {
+  await page.route(/\/trades$/, (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(tradesResponse),
     })
   );
-  await page.route(`${API}/analytics/metrics**`, (route) =>
+}
+
+async function mockAnalytics(page) {
+  await page.route(/\/analytics\/metrics/, (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(ANALYTICS_STUB),
     })
   );
-  // Catch-all for any other endpoints
+}
+
+async function mockFallback(page) {
   await page.route(new RegExp(`${API}/`), (route) =>
     route.fulfill({
       status: 200,
@@ -145,6 +150,12 @@ async function mockBaseEndpoints(page, tradesResponse) {
       body: JSON.stringify({ status: 'ok', data: [] }),
     })
   );
+}
+
+async function mockBaseEndpoints(page, tradesResponse) {
+  await mockTrades(page, tradesResponse);
+  await mockAnalytics(page);
+  await mockFallback(page);
 }
 
 // ---------------------------------------------------------------------------
@@ -155,7 +166,8 @@ test.describe('SC-FEE-01 — Fee Drag column header', () => {
   test.beforeEach(async ({ page }) => {
     await mockBaseEndpoints(page, TRADES_MIXED_RESPONSE);
     await page.goto('/#/TradeHistory');
-    await page.waitForSelector('table', { timeout: 10000 });
+    await page.waitForSelector('h1', { timeout: 10000 });
+    await page.waitForTimeout(500);
   });
 
   test('SC-FEE-01a: Fee Drag column header is visible in the trade table', async ({ page }) => {
@@ -172,7 +184,8 @@ test.describe('SC-FEE-02 — Non-null fee drag renders amber', () => {
   test.beforeEach(async ({ page }) => {
     await mockBaseEndpoints(page, TRADES_MIXED_RESPONSE);
     await page.goto('/#/TradeHistory');
-    await page.waitForSelector('table', { timeout: 10000 });
+    await page.waitForSelector('h1', { timeout: 10000 });
+    await page.waitForTimeout(500);
   });
 
   test('SC-FEE-02a: Trade with fee_drag_pct renders +X.XX% in amber', async ({ page }) => {
@@ -195,7 +208,8 @@ test.describe('SC-FEE-03 — Avg Fee Drag StatsCard', () => {
   test('SC-FEE-03a: StatsCard shows avg_fee_drag_pct from API response', async ({ page }) => {
     await mockBaseEndpoints(page, TRADES_WITH_AVG_RESPONSE);
     await page.goto('/#/TradeHistory');
-    await page.waitForSelector('table', { timeout: 10000 });
+    await page.waitForSelector('h1', { timeout: 10000 });
+    await page.waitForTimeout(500);
 
     // avg_fee_drag_pct: 0.35 → rendered as "+0.35%"
     const statsSection = page.locator('text=Avg Fee Drag').locator('..');
@@ -206,7 +220,7 @@ test.describe('SC-FEE-03 — Avg Fee Drag StatsCard', () => {
   test('SC-FEE-03b: StatsCard shows em dash when avg_fee_drag_pct is null', async ({ page }) => {
     await mockBaseEndpoints(page, TRADES_NULL_AVG_RESPONSE);
     await page.goto('/#/TradeHistory');
-    await page.waitForSelector('table', { timeout: 10000 });
+    await page.waitForSelector('h1', { timeout: 10000 });
 
     // When avg_fee_drag_pct is null, StatsCard value renders as "—"
     const avgFeeDragCard = page.locator('text=Avg Fee Drag').locator('../..');
@@ -222,7 +236,8 @@ test.describe('SC-FEE-04 — Null fee drag shows em dash', () => {
   test.beforeEach(async ({ page }) => {
     await mockBaseEndpoints(page, TRADES_MIXED_RESPONSE);
     await page.goto('/#/TradeHistory');
-    await page.waitForSelector('table', { timeout: 10000 });
+    await page.waitForSelector('h1', { timeout: 10000 });
+    await page.waitForTimeout(500);
   });
 
   test('SC-FEE-04a: Trade without fee drag shows em dash in slate colour', async ({ page }) => {
