@@ -837,3 +837,25 @@ Frontend:
 - [ ] Engineer notes in QA evidence: if Yahoo Finance reliability becomes a problem, a formal data source review is required before any further correlation-dependent features
 
 ---
+
+### BLG-GOV-16 — Extend governance_sync.yml to trigger on push to main
+**Priority:** P2 (Medium)
+**Type:** Governance / CI
+**Owner:** Infrastructure & Operations Owner
+**Source:** Observed during v2.6 EPIC-01 merge — ST-01 and ST-03 issues remained open after PR merged to main
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.7
+
+**Problem**
+`governance_sync.yml` only triggers on pushes to `exec/**` branches. When a PR is merged into `main`, the workflow does not fire, so GitHub Issues referenced in the merged commits are not automatically closed. This requires manual issue closure after every EPIC merge, which is a governance overhead and a process deviation risk.
+
+**Scope**
+- Add `main` to the `on.push.branches` trigger list in `.github/workflows/governance_sync.yml`
+- Verify the workflow fires on merge to main and closes the correct issues
+- Confirm no duplicate-close side effects (issues already closed by exec branch push are skipped gracefully — the existing `--state open` filter handles this)
+
+**Acceptance Criteria**
+- [ ] `.github/workflows/governance_sync.yml` `on.push.branches` includes `main`
+- [ ] After merging a PR to `main`, GitHub Issues with titles matching `[ST-xx]` commits in the merge are automatically closed
+- [ ] Issues already closed (from exec branch push) are not errored — workflow skips them cleanly
+- [ ] Manual issue closure after EPIC merges is no longer required
