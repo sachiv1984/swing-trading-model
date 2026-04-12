@@ -1,3 +1,5 @@
+import { useState, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Info } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "../../lib/utils";
@@ -15,6 +17,25 @@ export default function StatsCard({
 }) {
   const isPositive = trend === "up";
   const isNegative = trend === "down";
+
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+  const iconRef = useRef(null);
+
+  const handleMouseEnter = useCallback(() => {
+    if (iconRef.current) {
+      const rect = iconRef.current.getBoundingClientRect();
+      setTooltipPos({
+        top: rect.top - 8,
+        left: rect.right + 8,
+      });
+      setTooltipVisible(true);
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setTooltipVisible(false);
+  }, []);
 
   const gradients = {
     cyan: "from-cyan-500/20 to-cyan-500/5 border-cyan-500/30",
@@ -41,7 +62,7 @@ export default function StatsCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "relative rounded-2xl border p-6 h-[140px]",
+        "relative overflow-hidden rounded-2xl border p-6 h-[120px]",
         "bg-gradient-to-br",
         gradients[selectedGradient],
         "backdrop-blur-sm",
@@ -53,17 +74,19 @@ export default function StatsCard({
           <p className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
             {title}
             {tooltip && (
-              <span className="relative group/tooltip inline-flex" style={{ overflow: "visible" }}>
-                <Info className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-default flex-shrink-0" />
-                <span className="pointer-events-none absolute bottom-full right-0 mb-1.5 w-56 rounded bg-slate-800 px-2 py-1.5 text-xs text-slate-200 opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50 shadow-lg">
-                  {tooltip}
-                </span>
+              <span
+                ref={iconRef}
+                className="inline-flex cursor-default"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Info className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors" />
               </span>
             )}
           </p>
           <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
           {subtitle && (
-            <p className="text-xs text-slate-500 dark:text-slate-500">{subtitle}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 whitespace-nowrap">{subtitle}</p>
           )}
           {trendValue && (
             <div className={cn(
@@ -87,6 +110,17 @@ export default function StatsCard({
 
       {/* Glow effect */}
       <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-2xl" />
+
+      {/* Tooltip rendered via portal — escapes all stacking contexts */}
+      {tooltip && tooltipVisible && createPortal(
+        <div
+          className="fixed z-[9999] w-56 rounded bg-slate-800 px-2 py-1.5 text-xs text-slate-200 shadow-lg pointer-events-none"
+          style={{ top: tooltipPos.top, left: tooltipPos.left, transform: "translateY(-100%)" }}
+        >
+          {tooltip}
+        </div>,
+        document.body
+      )}
     </motion.div>
   );
 }
