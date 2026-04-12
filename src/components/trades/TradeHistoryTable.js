@@ -84,21 +84,45 @@ const SORT_ASC  = "asc";
 const SORT_DESC = "desc";
 
 const exitReasonLabels = {
+  // Title-case values (position_manager.py)
   "Stop Loss Hit":        "Stop Hit",
   "Manual Exit":          "Manual",
   "Target Reached":       "Target",
   "Risk-Off Signal":      "Risk Off",
   "Trailing Stop":        "Trailing",
   "Partial Profit Taking":"Partial",
+  // Snake-case aliases (seed data / legacy DB rows)
+  "stop_hit":             "Stop Hit",
+  "manual":               "Manual",
+  "manual_exit":          "Manual",
+  "target":               "Target",
+  "target_reached":       "Target",
+  "risk_off":             "Risk Off",
+  "risk_off_signal":      "Risk Off",
+  "trailing_stop":        "Trailing",
+  "partial":              "Partial",
+  "partial_profit_taking":"Partial",
 };
 
 const exitReasonColors = {
+  // Title-case values
   "Stop Loss Hit":        "bg-rose-500/20 text-rose-400 border-rose-500/30",
   "Manual Exit":          "bg-violet-500/20 text-violet-400 border-violet-500/30",
   "Target Reached":       "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
   "Risk-Off Signal":      "bg-amber-500/20 text-amber-400 border-amber-500/30",
   "Trailing Stop":        "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
   "Partial Profit Taking":"bg-blue-500/20 text-blue-400 border-blue-500/30",
+  // Snake-case aliases
+  "stop_hit":             "bg-rose-500/20 text-rose-400 border-rose-500/30",
+  "manual":               "bg-violet-500/20 text-violet-400 border-violet-500/30",
+  "manual_exit":          "bg-violet-500/20 text-violet-400 border-violet-500/30",
+  "target":               "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  "target_reached":       "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  "risk_off":             "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  "risk_off_signal":      "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  "trailing_stop":        "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
+  "partial":              "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  "partial_profit_taking":"bg-blue-500/20 text-blue-400 border-blue-500/30",
 };
 
 /**
@@ -111,11 +135,11 @@ const exitReasonColors = {
  */
 // ST-10: Trade History-specific column header class override.
 // Applies to all TableHead cells in this file only — DataTable.js default unchanged.
-// px-3 overrides DataTable's px-6 to keep 10 columns from requiring horizontal scroll.
+// px-2 overrides DataTable's px-6 to keep 10 columns from requiring horizontal scroll.
 // whitespace-nowrap prevents multi-line headers (e.g. "Entry Date ↓").
-const TH_CLASS = "font-semibold text-slate-300 tracking-wide px-3 whitespace-nowrap";
+const TH_CLASS = "font-semibold text-slate-300 tracking-wide px-2 whitespace-nowrap";
 // TD_CLASS: matching compact horizontal padding for all data cells in this table.
-const TD_CLASS = "px-3";
+const TD_CLASS = "px-2";
 
 export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
   const [expandedRows, setExpandedRows] = useState(new Set());
@@ -392,12 +416,12 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
 
                 {/* Entry date */}
                 <TableCell className={cn(TD_CLASS, "text-slate-400")}>
-                  {format(new Date(trade.entry_date), "MMM d, yyyy")}
+                  {format(new Date(trade.entry_date), "d MMM yy")}
                 </TableCell>
 
                 {/* Exit date */}
                 <TableCell className={cn(TD_CLASS, "text-slate-400")}>
-                  {format(new Date(trade.exit_date), "MMM d, yyyy")}
+                  {format(new Date(trade.exit_date), "d MMM yy")}
                 </TableCell>
 
                 {/* P&L */}
