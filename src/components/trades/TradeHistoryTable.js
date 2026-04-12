@@ -348,14 +348,14 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         <TableHead className={TH_CLASS}>Exit Reason</TableHead>
         {/* ST-11: Days Held — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden 2xl:table-cell")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={() => cycle(setDaysHeldSort)}
         >
           Days <SortIcon state={daysHeldSort} />
         </TableHead>
         {/* ST-14: Slippage column — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden 2xl:table-cell")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={cycleSlippageSort}
           title="Entry deviation: fill price vs limit price at entry. Null when fill price not recorded."
         >
@@ -363,7 +363,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         </TableHead>
         {/* ST-09: Fee Drag % column — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden 2xl:table-cell")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={cycleFeeSort}
           title="Fee Drag % = Exit fees / Gross proceeds × 100. Measures the proportion of gross sale proceeds consumed by broker exit fees."
         >
@@ -371,7 +371,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         </TableHead>
         {/* BLG-FEAT-02: R-Multiple column — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden 2xl:table-cell")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors")}
           onClick={cycleRSort}
         >
           R-Multiple <RSortIcon />
@@ -453,21 +453,21 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 </TableCell>
 
                 {/* Days Held — ST-11 — analytical, hidden below 2xl */}
-                <TableCell className={cn(TD_CLASS, "text-right hidden 2xl:table-cell")}>
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className="text-slate-400 tabular-nums">
                     {trade.holding_days != null ? trade.holding_days : "—"}
                   </span>
                 </TableCell>
 
                 {/* Slippage — ST-14 — analytical, hidden below 2xl */}
-                <TableCell className={cn(TD_CLASS, "text-right hidden 2xl:table-cell")}>
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn("font-medium tabular-nums", slippageColour(trade.slippage_pct))}>
                     {formatSlippage(trade.slippage_pct)}
                   </span>
                 </TableCell>
 
                 {/* Fee Drag % — ST-09 — analytical, hidden below 2xl */}
-                <TableCell className={cn(TD_CLASS, "text-right hidden 2xl:table-cell")}>
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn(
                     "font-medium tabular-nums",
                     trade.fee_drag_pct != null ? "text-amber-400" : "text-slate-500"
@@ -477,7 +477,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 </TableCell>
 
                 {/* R-Multiple — BLG-FEAT-02 — analytical, hidden below 2xl */}
-                <TableCell className={cn(TD_CLASS, "text-right hidden 2xl:table-cell")}>
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn("font-medium tabular-nums", rClass)}>
                     {rText}
                   </span>
