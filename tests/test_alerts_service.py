@@ -35,6 +35,42 @@ _db_stub = types.ModuleType("database")
 _db_stub.get_db = MagicMock()
 _db_stub.get_portfolio = MagicMock()
 _db_stub.get_positions = MagicMock()
+# Additional stubs required by services/__init__.py → position_service imports
+_db_stub.update_position = MagicMock()
+_db_stub.create_position = MagicMock()
+_db_stub.update_portfolio_cash = MagicMock()
+_db_stub.get_settings = MagicMock()
+_db_stub.create_trade_history = MagicMock()
+_db_stub.update_position_note = MagicMock()
+_db_stub.update_position_tags = MagicMock()
+_db_stub.get_all_tags = MagicMock()
+_db_stub.search_positions_by_tags = MagicMock()
+_db_stub.get_trade_history = MagicMock()
+_db_stub.get_trade_history_by_tax_year = MagicMock()
+_db_stub.create_trade_history = MagicMock()
+_db_stub.create_cash_transaction = MagicMock()
+_db_stub.get_cash_transactions = MagicMock()
+_db_stub.get_total_deposits_withdrawals = MagicMock()
+_db_stub.create_portfolio_snapshot = MagicMock()
+_db_stub.get_portfolio_snapshots = MagicMock()
+_db_stub.get_latest_snapshot = MagicMock()
+_db_stub.create_signal = MagicMock()
+_db_stub.get_signals = MagicMock()
+_db_stub.update_signal = MagicMock()
+_db_stub.delete_signal = MagicMock()
+_db_stub.get_all_tickers = MagicMock()
+_db_stub.get_peak_portfolio_value = MagicMock()
+_db_stub.get_all_closed_trades_for_csv_export = MagicMock()
+_db_stub.get_trade_reflection = MagicMock()
+_db_stub.upsert_trade_reflection = MagicMock()
+_db_stub.get_database_size_bytes = MagicMock()
+_db_stub.delete_position = MagicMock()
+_db_stub.download_ticker_data = MagicMock()
+_db_stub.compute_atr_simple = MagicMock()
+_db_stub.create_settings = MagicMock()
+_db_stub.update_settings = MagicMock()
+_db_stub.update_position_note = MagicMock()
+_db_stub.get_all_closed_trades_for_csv_export = MagicMock()
 sys.modules["database"] = _db_stub
 
 _config_stub = types.ModuleType("config")
@@ -42,14 +78,70 @@ _config_stub.DEFAULT_MIN_HOLD_DAYS = 10
 _config_stub.GMAIL_USER = ""
 _config_stub.GMAIL_APP_PASSWORD = ""
 _config_stub.ALERT_TO_EMAIL = "user@test.com"
+# Complete set of config attributes required by alerts_service and any
+# module imported transitively (main.py, services, etc.) when tests run
+# together and sys.modules["config"] is this stub.
+_config_stub.TELEGRAM_BOT_TOKEN = ""
+_config_stub.TELEGRAM_CHAT_ID = ""
+_config_stub.API_TITLE = "Trading Assistant API"
+_config_stub.API_VERSION = "1.2.0"
+_config_stub.ALLOWED_ORIGINS = []
+_config_stub.DEFAULT_FX_RATE = 1.27
+_config_stub.DEFAULT_UK_COMMISSION = 9.95
+_config_stub.DEFAULT_US_COMMISSION = 0.00
+_config_stub.DEFAULT_STAMP_DUTY_RATE = 0.005
+_config_stub.DEFAULT_FX_FEE_RATE = 0.0015
+_config_stub.DEFAULT_ATR_MULTIPLIER_INITIAL = 5.0
+_config_stub.DEFAULT_ATR_MULTIPLIER_TRAILING = 2.0
+_config_stub.DEFAULT_ATR_PERIOD = 14
+_config_stub.DEFAULT_CURRENCY = "GBP"
+_config_stub.DEFAULT_THEME = "dark"
+_config_stub.MOMENTUM_LOOKBACK_DAYS = 252
+_config_stub.TOP_N_SIGNALS = 5
+_config_stub.MA_PERIOD = 200
+_config_stub.ATR_PERIOD = 14
+_config_stub.VOLATILITY_WINDOW = 60
+_config_stub.MIN_POSITION_PCT = 0.05
+_config_stub.MAX_POSITION_PCT = 0.20
+_config_stub.PENCE_TO_POUNDS_THRESHOLD = 1000
+_config_stub.PRICE_FETCH_DELAY_SECONDS = 0.3
+_config_stub.FX_RATE_FETCH_DELAY_SECONDS = 0.2
+_config_stub.MARKET_REGIME_FETCH_DELAY_SECONDS = 0.3
 sys.modules["config"] = _config_stub
 
 _pricing_stub = types.ModuleType("utils.pricing")
 _pricing_stub.check_market_regime = MagicMock()
-# also register as utils package
+_pricing_stub.get_current_price = MagicMock()
+_pricing_stub.get_live_fx_rate = MagicMock()
+_pricing_stub.calculate_atr = MagicMock()
+
+_calcs_stub = types.ModuleType("utils.calculations")
+_calcs_stub.calculate_initial_stop = MagicMock()
+_calcs_stub.calculate_trailing_stop = MagicMock()
+_calcs_stub.calculate_position_pnl = MagicMock()
+_calcs_stub.calculate_holding_days = MagicMock()
+_calcs_stub.calculate_uk_entry_fees = MagicMock()
+_calcs_stub.calculate_us_entry_fees = MagicMock()
+_calcs_stub.calculate_uk_exit_fees = MagicMock()
+_calcs_stub.calculate_us_exit_fees = MagicMock()
+_calcs_stub.calculate_position_size = MagicMock()
+_calcs_stub.calculate_realized_pnl = MagicMock()
+_calcs_stub.should_exit_position = MagicMock()
+_calcs_stub.calculate_exit_proceeds = MagicMock()
+_calcs_stub.calculate_portfolio_pnl = MagicMock()
+
+_formatting_stub = types.ModuleType("utils.formatting")
+_formatting_stub.decimal_to_float = MagicMock(side_effect=lambda x: x)
+
+# Register utils as a package and its submodules
 _utils_stub = types.ModuleType("utils")
+_utils_stub.pricing = _pricing_stub
+_utils_stub.calculations = _calcs_stub
+_utils_stub.formatting = _formatting_stub
 sys.modules.setdefault("utils", _utils_stub)
 sys.modules["utils.pricing"] = _pricing_stub
+sys.modules["utils.calculations"] = _calcs_stub
+sys.modules["utils.formatting"] = _formatting_stub
 
 # Import alerts_service directly (bypasses services/__init__.py and its DB chain)
 import importlib.util as _ilu
