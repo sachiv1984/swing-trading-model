@@ -41,7 +41,7 @@ export default function StatsCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "relative rounded-2xl border p-6 h-[160px]",
+        "relative rounded-2xl border p-6 md:p-4 h-[160px] md:h-auto",
         "bg-gradient-to-br",
         gradients[selectedGradient],
         "backdrop-blur-sm",
@@ -81,7 +81,7 @@ export default function StatsCard({
           )}
         </div>
         {Icon && (
-          <div className={cn("p-3 rounded-xl", iconColors[selectedGradient])}>
+          <div className={cn("p-3 rounded-xl md:hidden xl:flex", iconColors[selectedGradient])}>
             <Icon className="w-5 h-5" />
           </div>
         )}
