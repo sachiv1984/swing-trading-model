@@ -1,7 +1,7 @@
 ---
 Owner: Frontend Specifications & UX Owner + Head of UX & Design
 Class: QA Evidence (Class 4)
-Status: Visual QA Complete — Pending PO Acceptance
+Status: Accepted — DoQ and PO sign-off granted 2026-04-12
 Cycle: 2026-04-11__release-v2.6
 EPIC: EPIC-03
 Branch: exec/2026-04-11__release-v2.6/EPIC-03
@@ -176,7 +176,19 @@ Commit: f862efe
 ~~   - Column header text is bold/bright vs prior version~~
 **✅ Completed 2026-04-12 — all visual checks passed (see story sign-off sections above)**
 
-2. Open PR and obtain QA sign-off + Product Owner acceptance before merge — **in progress, PR #220 open**
+2. ~~Open PR and obtain QA sign-off + Product Owner acceptance before merge~~ — **✅ Both granted 2026-04-12 (see sign-off block below)**
+
+---
+
+## DoQ and Product Owner Sign-Off
+
+**Director of Quality sign-off:** ✅ Granted — 2026-04-12
+All 4 stories meet AC. Visual QA completed on staging. 4 defects found and fixed in-session. Two conditional passes (ST-11 null/data environment limitations) accepted with documented rationale. Smoke test infrastructure fixed.
+
+**Product Owner acceptance:** ✅ Granted — 2026-04-12
+EPIC-03 delivers intended Trade History UX improvements per design spec `trade_history.md` v1.6. All stories confirm intent alignment. Additional quality improvements (exit reason normalisation, responsive layout UX decision) accepted as within scope. Ready to merge.
+
+**PR:** #220 — [EPIC-03] Trade History UX Polish — StatsCard Tooltips, 7-Card Layout, Column Sorting, Days Held
 
 ---
 
