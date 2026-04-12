@@ -4,6 +4,22 @@ import { Button } from "../ui/button";
 import { FileSpreadsheet, FileText, Download, Loader2, Check } from "lucide-react";
 import { motion } from "framer-motion";
 
+// Covers both legacy snake_case values (stop_hit) and current human-readable values
+const EXIT_REASON_LABELS = {
+  "stop_hit":             "Stop Hit",
+  "manual":               "Manual",
+  "target":               "Target",
+  "market_regime":        "Market Regime",
+  "Stop Loss Hit":        "Stop Hit",
+  "Manual Exit":          "Manual Exit",
+  "Target Reached":       "Target Reached",
+  "Risk-Off Signal":      "Risk-Off Signal",
+  "Trailing Stop":        "Trailing Stop",
+  "Partial Profit Taking":"Partial Profit Taking",
+};
+
+const formatExitReason = (reason) => EXIT_REASON_LABELS[reason] || reason || '—';
+
 export default function ExportModal({ open, onClose, positions, metrics, period, portfolio }) {
   const [exporting, setExporting] = useState(null);
   const [exported, setExported] = useState(null);
@@ -25,10 +41,10 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
       p.exit_date,
       p.entry_price,
       p.exit_price,
-      p.shares,
+      p.shares ?? '—',
       p.pnl?.toFixed(2),
       p.pnl_percent?.toFixed(2),
-      p.exit_reason,
+      formatExitReason(p.exit_reason),
       p.fees?.toFixed(2)
     ]);
 
@@ -140,9 +156,9 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
                 <td>${p.market}</td>
                 <td>${p.entry_date}</td>
                 <td>${p.exit_date || '-'}</td>
-                <td>${p.shares}</td>
+                <td>${p.shares ?? '—'}</td>
                 <td class="${(p.pnl || 0) >= 0 ? 'positive' : 'negative'}">£${(p.pnl || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                <td>${p.exit_reason || '-'}</td>
+                <td>${formatExitReason(p.exit_reason)}</td>
               </tr>
             `).join('')}
           </tbody>

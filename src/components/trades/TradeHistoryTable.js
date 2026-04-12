@@ -84,21 +84,35 @@ const SORT_ASC  = "asc";
 const SORT_DESC = "desc";
 
 const exitReasonLabels = {
+  // Current human-readable values (from ExitModal dropdown)
   "Stop Loss Hit":        "Stop Hit",
   "Manual Exit":          "Manual",
   "Target Reached":       "Target",
   "Risk-Off Signal":      "Risk Off",
   "Trailing Stop":        "Trailing",
   "Partial Profit Taking":"Partial",
+  // Legacy snake_case values stored in older DB records
+  "stop_hit":             "Stop Hit",
+  "manual":               "Manual",
+  "target":               "Target",
+  "market_regime":        "Risk Off",
+  "trailing_stop":        "Trailing",
 };
 
 const exitReasonColors = {
+  // Current human-readable values
   "Stop Loss Hit":        "bg-rose-500/20 text-rose-400 border-rose-500/30",
   "Manual Exit":          "bg-violet-500/20 text-violet-400 border-violet-500/30",
   "Target Reached":       "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
   "Risk-Off Signal":      "bg-amber-500/20 text-amber-400 border-amber-500/30",
   "Trailing Stop":        "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
   "Partial Profit Taking":"bg-blue-500/20 text-blue-400 border-blue-500/30",
+  // Legacy snake_case aliases
+  "stop_hit":             "bg-rose-500/20 text-rose-400 border-rose-500/30",
+  "manual":               "bg-violet-500/20 text-violet-400 border-violet-500/30",
+  "target":               "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  "market_regime":        "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  "trailing_stop":        "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
 };
 
 /**
@@ -350,7 +364,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 {/* Exit reason */}
                 <TableCell>
                   <span className={cn(
-                    "text-xs px-2.5 py-1 rounded-full border",
+                    "text-xs px-2.5 py-1 rounded-full border whitespace-nowrap",
                     exitReasonColors[trade.exit_reason] || "bg-slate-800 text-slate-400 border-slate-700"
                   )}>
                     {exitReasonLabels[trade.exit_reason] || trade.exit_reason || "Unknown"}
