@@ -22,13 +22,16 @@ export default function StatsCard({
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
   const iconRef = useRef(null);
 
+  const TOOLTIP_WIDTH = 224; // w-56
+
   const handleMouseEnter = useCallback(() => {
     if (iconRef.current) {
       const rect = iconRef.current.getBoundingClientRect();
-      setTooltipPos({
-        top: rect.top - 8,
-        left: rect.right + 8,
-      });
+      const spaceRight = window.innerWidth - rect.right;
+      const left = spaceRight >= TOOLTIP_WIDTH + 8
+        ? rect.right + 8
+        : rect.left - TOOLTIP_WIDTH - 8;
+      setTooltipPos({ top: rect.top, left });
       setTooltipVisible(true);
     }
   }, []);
@@ -84,9 +87,9 @@ export default function StatsCard({
               </span>
             )}
           </p>
-          <p className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
+          <p className="text-lg lg:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
           {subtitle && (
-            <p className="text-xs text-slate-500 dark:text-slate-500 whitespace-nowrap">{subtitle}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 hidden lg:block">{subtitle}</p>
           )}
           {trendValue && (
             <div className={cn(
@@ -102,7 +105,7 @@ export default function StatsCard({
           )}
         </div>
         {Icon && (
-          <div className={cn("p-3 rounded-xl", iconColors[selectedGradient])}>
+          <div className={cn("p-3 rounded-xl hidden lg:flex", iconColors[selectedGradient])}>
             <Icon className="w-5 h-5" />
           </div>
         )}
@@ -115,7 +118,7 @@ export default function StatsCard({
       {tooltip && tooltipVisible && createPortal(
         <div
           className="fixed z-[9999] w-56 rounded bg-slate-800 px-2 py-1.5 text-xs text-slate-200 shadow-lg pointer-events-none"
-          style={{ top: tooltipPos.top, left: tooltipPos.left, transform: "translateY(-100%)" }}
+          style={{ top: tooltipPos.top, left: tooltipPos.left, transform: "translateY(-50%)" }}
         >
           {tooltip}
         </div>,
