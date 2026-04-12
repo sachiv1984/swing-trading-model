@@ -229,7 +229,6 @@ export default function TradeHistory() {
                   ? `+${tradesData.avg_fee_drag_pct.toFixed(2)}%`
                   : "—"
               }
-              subtitle="Exit fees / gross proceeds"
               icon={TrendingDown}
               gradient="amber"
               tooltip="Average Fee Drag = Total exit fees / Gross proceeds × 100. Higher % means a greater proportion of gross proceeds consumed by fees."
