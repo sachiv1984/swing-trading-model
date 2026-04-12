@@ -1,7 +1,7 @@
 ---
 Owner: Frontend Specifications & UX Owner + Head of UX & Design
 Class: QA Evidence (Class 4)
-Status: Pending QA Sign-off
+Status: Visual QA Complete — Pending PO Acceptance
 Cycle: 2026-04-11__release-v2.6
 EPIC: EPIC-03
 Branch: exec/2026-04-11__release-v2.6/EPIC-03
@@ -14,12 +14,12 @@ Commit: f862efe
 
 | Story | Title | DoQ | Verification Method |
 |-------|-------|-----|---------------------|
-| ST-08 | StatsCard Tooltip Prop | Pending | Code review |
-| ST-09 | Trade History StatsCard Bar Layout (6-Card Width) | Pending | Code review |
-| ST-10 | Trade History Column Header Styling and Formatting | Pending | Code review |
-| ST-11 | Flexible Column Sorting Across Trade History Table | Pending | Code review |
+| ST-08 | StatsCard Tooltip Prop | ✅ Pass | Code review + staging visual QA 2026-04-12 |
+| ST-09 | Trade History StatsCard Bar Layout (6-Card Width) | ✅ Pass | Code review + staging visual QA 2026-04-12 |
+| ST-10 | Trade History Column Header Styling and Formatting | ✅ Pass | Code review + staging visual QA 2026-04-12 |
+| ST-11 | Flexible Column Sorting Across Trade History Table | ✅ Conditional Pass | Code review + staging visual QA 2026-04-12 (see notes) |
 
-**Note:** All 4 stories require observable UI behaviour (layout, hover effects, sort interaction). Full verification requires a local run or staging environment. Code review confirms implementation matches spec. Post-merge staging run is a required post-merge action.
+**Visual staging QA completed:** 2026-04-12 by Product Owner — local dev environment.
 
 ---
 
@@ -43,7 +43,15 @@ Commit: f862efe
 | Avg Fee Drag StatsCard wired with canonical tooltip text | Pass | `tooltip="Average Fee Drag = Total exit fees / Gross proceeds × 100. Higher % means a greater proportion of gross proceeds consumed by fees."` |
 | No regression to other StatsCard usage | Pass | Prop is optional; all existing StatsCard instances unmodified |
 
-**Unverified AC (requires local run):** Hover behaviour and visual rendering of ⓘ icon. Code review confirms the pattern is correct. Post-merge staging run required.
+**Visual AC — Staging results (2026-04-12):**
+
+| Check | Result | Notes |
+|-------|--------|-------|
+| ⓘ icon visible adjacent to title | ✅ PASS | Confirmed on staging |
+| Hover reveals tooltip text | ✅ PASS | Confirmed on staging |
+| Avg Fee Drag card wired with canonical tooltip | ✅ PASS | Confirmed on staging |
+
+**Visual sign-off status:** ✅ Granted — all checks pass.
 
 ---
 
@@ -66,7 +74,15 @@ Commit: f862efe
 | Card padding reduced at md+ | Pass | `className="md:p-3"` on all 7 StatsCard instances |
 | No regression to individual card content | Pass | Card content unchanged; only grid and padding modified |
 
-**Unverified AC (requires local run):** Visual layout at xl and md breakpoints. Code review confirms the responsive classes are correct.
+**Visual AC — Staging results (2026-04-12):**
+
+| Check | Result | Notes |
+|-------|--------|-------|
+| 7-card grid renders correctly at xl | ✅ PASS | All 7 cards visible in single row at xl |
+| Grid wraps at md (4+3) | ✅ PASS | Confirmed on staging |
+| Card padding reduced at md+ | ✅ PASS | Confirmed on staging |
+
+**Visual sign-off status:** ✅ Granted — all checks pass.
 
 ---
 
@@ -89,6 +105,18 @@ Commit: f862efe
 | `tracking-wide` added | Pass | TH_CLASS includes `tracking-wide` |
 | DataTable.js default unchanged | Pass | DataTable.js not modified |
 | No regression to other tables using DataTable.js | Pass | Override is in TradeHistoryTable.js only |
+
+**Visual AC — Staging results (2026-04-12):**
+
+| Check | Result | Notes |
+|-------|--------|-------|
+| Headers visibly bolder and brighter (font-semibold, text-slate-300) | ✅ PASS | Confirmed on staging |
+| Letter-spacing wider (tracking-wide) | ✅ PASS | Confirmed on staging |
+| No other tables affected | ✅ PASS | Confirmed on staging |
+| Header multi-line wrapping | ✅ PASS → FIXED in `ff348ef` | Initial QA found some headers wrapping to 2 lines; fixed with `whitespace-nowrap` on TH_CLASS |
+| Horizontal scroll | ✅ PASS → FIXED in `4650449`, `2c2733f`, `78467a1` | Initial QA found table requiring horizontal scroll; fixed via px-2 padding, compact date format, column reorder, and scroll-to-reveal pattern for analytical columns |
+
+**Visual sign-off status:** ✅ Granted — all checks pass. Layout bugs found during QA fixed in session commits.
 
 ---
 
@@ -122,19 +150,33 @@ Commit: f862efe
 | Non-sortable columns: Ticker, Exit Reason | Pass | No onClick on Ticker or Exit Reason headers |
 | No regression to Slippage/Fee Drag/R-Multiple sort | Pass | Existing sort logic untouched; only added above it in useMemo chain |
 
-**Unverified AC (requires local run):** Click interactions, default sort visual rendering, Days Held column display. Code review confirms implementation matches spec. Post-merge staging run required.
+**Visual AC — Staging results (2026-04-12):**
+
+| Check | Result | Notes |
+|-------|--------|-------|
+| Exit Date shows ↓ on initial page load (default DESC) | ✅ PASS | Confirmed on staging |
+| Clicking Exit Date cycles ↓ → ↑ → unsorted | ✅ PASS | Confirmed on staging |
+| Entry Date, P&L, P&L%, Days Held sortable | ✅ PASS | Confirmed on staging |
+| Ticker and Exit Reason headers not clickable | ✅ PASS | Confirmed on staging |
+| Days Held column visible; shows number or "—" for null | ✅ PASS (conditional) | Number display confirmed; null case untestable — no null holding_days in dataset |
+| Slippage, Fee Drag, R-Multiple sort still works | ✅ PASS (conditional) | Sort icon behaviour confirmed; data-dependent row reorder untestable — no values in dataset |
+| Exit reason normalisation (snake_case DB values) | ✅ PASS → FIXED in `4650449` | Found during QA: stop_hit/target/manual rendering raw; fixed with snake_case aliases in exitReasonLabels/Colors |
+
+**Visual sign-off status:** ✅ Granted — all testable checks pass. Two conditional passes noted (null Days Held, Slippage/R-Multiple data) are environment limitations, not implementation defects.
 
 ---
 
 ## Post-merge Actions
 
-1. Run Trade History page in browser (local or staging) to verify:
-   - 7-card stats bar renders correctly at xl (all in one row) and md (4+3)
-   - ⓘ tooltip on Avg Fee Drag shows canonical text on hover
-   - Exit Date column shows ↓ sort icon on initial load (default DESC)
-   - Days Held column renders holding_days or "—"
-   - Column header text is bold/bright vs prior version
-2. Open PR and obtain QA sign-off + Product Owner acceptance before merge
+~~1. Run Trade History page in browser (local or staging) to verify:~~
+~~   - 7-card stats bar renders correctly at xl (all in one row) and md (4+3)~~
+~~   - ⓘ tooltip on Avg Fee Drag shows canonical text on hover~~
+~~   - Exit Date column shows ↓ sort icon on initial load (default DESC)~~
+~~   - Days Held column renders holding_days or "—"~~
+~~   - Column header text is bold/bright vs prior version~~
+**✅ Completed 2026-04-12 — all visual checks passed (see story sign-off sections above)**
+
+2. Open PR and obtain QA sign-off + Product Owner acceptance before merge — **in progress, PR #220 open**
 
 ---
 
