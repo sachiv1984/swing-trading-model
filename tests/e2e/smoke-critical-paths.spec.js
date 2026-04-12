@@ -66,14 +66,18 @@ async function mockSettings(page) {
   });
 }
 
-/** Mock GET /positions (Positions page + position-tags query in TradeEntry). */
+/** Mock GET /positions (Positions page + position-tags query in TradeEntry).
+ *  The real /positions endpoint returns a plain array (no {status,data} envelope).
+ *  Unwrap payload.data if the mock was constructed with an envelope wrapper.
+ */
 async function mockPositions(page, payload = SMOKE_POSITIONS) {
   await page.route(/\/positions(\?.*)?$/, (route) => {
     if (route.request().method() === 'GET') {
+      const body = Array.isArray(payload) ? payload : (payload.data ?? payload);
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify(payload),
+        body: JSON.stringify(body),
       });
     } else {
       route.continue();
