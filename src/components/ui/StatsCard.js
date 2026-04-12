@@ -41,34 +41,33 @@ export default function StatsCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "relative overflow-hidden rounded-2xl border bg-gradient-to-br backdrop-blur-sm",
-        "p-3 md:p-4 xl:p-6",
-        "h-auto xl:h-[160px]",
+        "relative overflow-hidden rounded-2xl border p-6 h-[160px]",
+        "bg-gradient-to-br",
         gradients[selectedGradient],
+        "backdrop-blur-sm",
         className
       )}
     >
-      <div className="flex items-start justify-between gap-2">
-        {/* Text content */}
-        <div className="space-y-1 xl:space-y-2 flex-1 min-w-0">
-          <p className="text-xs font-medium text-slate-400 flex items-center gap-1 leading-tight">
-            <span className="xl:text-sm">{title}</span>
+      <div className="flex items-start justify-between">
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
+            {title}
             {tooltip && (
-              <span className="relative group/tooltip inline-flex flex-shrink-0" style={{ overflow: "visible" }}>
-                <Info className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-default" />
+              <span className="relative group/tooltip inline-flex" style={{ overflow: "visible" }}>
+                <Info className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-default flex-shrink-0" />
                 <span className="pointer-events-none absolute bottom-full right-0 mb-1.5 w-56 rounded bg-slate-800 px-2 py-1.5 text-xs text-slate-200 opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50 shadow-lg">
                   {tooltip}
                 </span>
               </span>
             )}
           </p>
-          <p className="text-lg md:text-xl xl:text-2xl font-bold text-white tracking-tight leading-tight">{value}</p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
           {subtitle && (
-            <p className="text-xs text-slate-500 hidden xl:block">{subtitle}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-500">{subtitle}</p>
           )}
           {trendValue && (
             <div className={cn(
-              "inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full",
+              "inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full",
               isPositive && "bg-emerald-500/20 text-emerald-400",
               isNegative && "bg-rose-500/20 text-rose-400",
               !isPositive && !isNegative && "bg-slate-800 text-slate-400"
@@ -79,14 +78,8 @@ export default function StatsCard({
             </div>
           )}
         </div>
-
-        {/* Decorative icon — hidden at base/md to save space, shown at xl */}
         {Icon && (
-          <div className={cn(
-            "flex-shrink-0 rounded-xl hidden xl:flex",
-            "p-3",
-            iconColors[selectedGradient]
-          )}>
+          <div className={cn("p-3 rounded-xl", iconColors[selectedGradient])}>
             <Icon className="w-5 h-5" />
           </div>
         )}

@@ -174,15 +174,14 @@ export default function TradeHistory() {
       ) : (
         <>
           {/* Summary stats row */}
-          {/* ST-09: 7-card summary bar — grid-cols-7@xl, grid-cols-4@md; px-3 py-3 padding at md+ */}
-          <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4">
+          {/* ST-09: 7-card summary bar — 4 per row wrapping to 4+3, preserving original card design */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatsCard
               title="Total Trades"
               value={filteredTrades.length}
               subtitle={`${winningTrades.length}W / ${losingTrades.length}L`}
               icon={TrendingUp}
               gradient="cyan"
-              className=""
             />
             <StatsCard
               title="Win Rate"
@@ -190,7 +189,6 @@ export default function TradeHistory() {
               trend={winRate >= 50 ? "up" : "down"}
               icon={winRate >= 50 ? TrendingUp : TrendingDown}
               gradient={winRate >= 50 ? "emerald" : "rose"}
-              className=""
             />
             <StatsCard
               title="Total P&L"
@@ -198,7 +196,6 @@ export default function TradeHistory() {
               trend={totalPnL >= 0 ? "up" : "down"}
               icon={totalPnL >= 0 ? TrendingUp : TrendingDown}
               gradient={totalPnL >= 0 ? "emerald" : "rose"}
-              className=""
             />
             <StatsCard
               title="Avg Winner"
@@ -206,7 +203,6 @@ export default function TradeHistory() {
               trend="up"
               icon={TrendingUp}
               gradient="emerald"
-              className=""
             />
             <StatsCard
               title="Avg Loser"
@@ -214,7 +210,6 @@ export default function TradeHistory() {
               trend="down"
               icon={TrendingDown}
               gradient="rose"
-              className=""
             />
             <StatsCard
               title="Avg Entry Dev."
@@ -226,7 +221,6 @@ export default function TradeHistory() {
               trend={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "up" : "down") : "neutral"}
               icon={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? TrendingUp : TrendingDown) : TrendingUp}
               gradient={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "emerald" : "rose") : "violet"}
-              className=""
             />
             <StatsCard
               title="Avg Fee Drag"
@@ -238,7 +232,6 @@ export default function TradeHistory() {
               subtitle="Exit fees / gross proceeds"
               icon={TrendingDown}
               gradient="amber"
-              className=""
               tooltip="Average Fee Drag = Total exit fees / Gross proceeds × 100. Higher % means a greater proportion of gross proceeds consumed by fees."
             />
           </div>
