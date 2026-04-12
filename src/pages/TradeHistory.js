@@ -182,7 +182,7 @@ export default function TradeHistory() {
               subtitle={`${winningTrades.length}W / ${losingTrades.length}L`}
               icon={TrendingUp}
               gradient="cyan"
-              className="md:p-3"
+              className=""
             />
             <StatsCard
               title="Win Rate"
@@ -190,7 +190,7 @@ export default function TradeHistory() {
               trend={winRate >= 50 ? "up" : "down"}
               icon={winRate >= 50 ? TrendingUp : TrendingDown}
               gradient={winRate >= 50 ? "emerald" : "rose"}
-              className="md:p-3"
+              className=""
             />
             <StatsCard
               title="Total P&L"
@@ -198,7 +198,7 @@ export default function TradeHistory() {
               trend={totalPnL >= 0 ? "up" : "down"}
               icon={totalPnL >= 0 ? TrendingUp : TrendingDown}
               gradient={totalPnL >= 0 ? "emerald" : "rose"}
-              className="md:p-3"
+              className=""
             />
             <StatsCard
               title="Avg Winner"
@@ -206,7 +206,7 @@ export default function TradeHistory() {
               trend="up"
               icon={TrendingUp}
               gradient="emerald"
-              className="md:p-3"
+              className=""
             />
             <StatsCard
               title="Avg Loser"
@@ -214,7 +214,7 @@ export default function TradeHistory() {
               trend="down"
               icon={TrendingDown}
               gradient="rose"
-              className="md:p-3"
+              className=""
             />
             <StatsCard
               title="Avg Entry Dev."
@@ -226,7 +226,7 @@ export default function TradeHistory() {
               trend={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "up" : "down") : "neutral"}
               icon={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? TrendingUp : TrendingDown) : TrendingUp}
               gradient={tradesData?.avg_slippage_pct != null ? (tradesData.avg_slippage_pct <= 0 ? "emerald" : "rose") : "violet"}
-              className="md:p-3"
+              className=""
             />
             <StatsCard
               title="Avg Fee Drag"
@@ -238,7 +238,7 @@ export default function TradeHistory() {
               subtitle="Exit fees / gross proceeds"
               icon={TrendingDown}
               gradient="amber"
-              className="md:p-3"
+              className=""
               tooltip="Average Fee Drag = Total exit fees / Gross proceeds × 100. Higher % means a greater proportion of gross proceeds consumed by fees."
             />
           </div>

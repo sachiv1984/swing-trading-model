@@ -41,35 +41,33 @@ export default function StatsCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "relative rounded-2xl border p-6 md:p-4 h-[160px] md:h-auto",
-        "bg-gradient-to-br",
+        "relative rounded-2xl border bg-gradient-to-br backdrop-blur-sm",
+        "p-4 xl:p-6",
         gradients[selectedGradient],
-        "backdrop-blur-sm",
         className
       )}
     >
-      <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
-              {title}
-              {tooltip && (
-                <span className="relative group/tooltip inline-flex">
-                  <Info
-                    className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-default flex-shrink-0"
-                  />
-                  <span className="pointer-events-none absolute bottom-full right-0 mb-1.5 w-56 rounded bg-slate-800 px-2 py-1.5 text-xs text-slate-200 opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50 shadow-lg">
-                    {tooltip}
-                  </span>
+      <div className="flex items-center justify-between gap-3">
+        {/* Text content */}
+        <div className="min-w-0 space-y-1 xl:space-y-2">
+          <p className="text-xs xl:text-sm font-medium text-slate-400 flex items-center gap-1 truncate">
+            {title}
+            {tooltip && (
+              <span className="relative group/tooltip inline-flex flex-shrink-0">
+                <Info className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-default" />
+                <span className="pointer-events-none absolute bottom-full right-0 mb-1.5 w-56 rounded bg-slate-800 px-2 py-1.5 text-xs text-slate-200 opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50 shadow-lg">
+                  {tooltip}
                 </span>
-              )}
-            </p>
-          <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
+              </span>
+            )}
+          </p>
+          <p className="text-xl xl:text-2xl font-bold text-white tracking-tight truncate">{value}</p>
           {subtitle && (
-            <p className="text-xs text-slate-500 dark:text-slate-500">{subtitle}</p>
+            <p className="text-xs text-slate-500 hidden xl:block">{subtitle}</p>
           )}
           {trendValue && (
             <div className={cn(
-              "inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full",
+              "inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full",
               isPositive && "bg-emerald-500/20 text-emerald-400",
               isNegative && "bg-rose-500/20 text-rose-400",
               !isPositive && !isNegative && "bg-slate-800 text-slate-400"
@@ -80,15 +78,18 @@ export default function StatsCard({
             </div>
           )}
         </div>
+
+        {/* Decorative icon — scaled down at md, full size at xl */}
         {Icon && (
-          <div className={cn("p-3 rounded-xl md:hidden xl:flex", iconColors[selectedGradient])}>
-            <Icon className="w-5 h-5" />
+          <div className={cn(
+            "flex-shrink-0 rounded-xl",
+            "p-2 xl:p-3",
+            iconColors[selectedGradient]
+          )}>
+            <Icon className="w-4 h-4 xl:w-5 xl:h-5" />
           </div>
         )}
       </div>
-      
-      {/* Glow effect */}
-      <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-2xl" />
     </motion.div>
   );
 }
