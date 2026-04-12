@@ -41,19 +41,20 @@ export default function StatsCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "relative rounded-2xl border bg-gradient-to-br backdrop-blur-sm",
-        "p-4 xl:p-6",
+        "relative overflow-hidden rounded-2xl border bg-gradient-to-br backdrop-blur-sm",
+        "p-3 md:p-4 xl:p-6",
+        "h-auto xl:h-[160px]",
         gradients[selectedGradient],
         className
       )}
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-start justify-between gap-2">
         {/* Text content */}
-        <div className="min-w-0 space-y-1 xl:space-y-2">
-          <p className="text-xs xl:text-sm font-medium text-slate-400 flex items-center gap-1 truncate">
-            {title}
+        <div className="space-y-1 xl:space-y-2 flex-1 min-w-0">
+          <p className="text-xs font-medium text-slate-400 flex items-center gap-1 leading-tight">
+            <span className="xl:text-sm">{title}</span>
             {tooltip && (
-              <span className="relative group/tooltip inline-flex flex-shrink-0">
+              <span className="relative group/tooltip inline-flex flex-shrink-0" style={{ overflow: "visible" }}>
                 <Info className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-default" />
                 <span className="pointer-events-none absolute bottom-full right-0 mb-1.5 w-56 rounded bg-slate-800 px-2 py-1.5 text-xs text-slate-200 opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50 shadow-lg">
                   {tooltip}
@@ -61,7 +62,7 @@ export default function StatsCard({
               </span>
             )}
           </p>
-          <p className="text-xl xl:text-2xl font-bold text-white tracking-tight truncate">{value}</p>
+          <p className="text-lg md:text-xl xl:text-2xl font-bold text-white tracking-tight leading-tight">{value}</p>
           {subtitle && (
             <p className="text-xs text-slate-500 hidden xl:block">{subtitle}</p>
           )}
@@ -79,17 +80,20 @@ export default function StatsCard({
           )}
         </div>
 
-        {/* Decorative icon — scaled down at md, full size at xl */}
+        {/* Decorative icon — hidden at base/md to save space, shown at xl */}
         {Icon && (
           <div className={cn(
-            "flex-shrink-0 rounded-xl",
-            "p-2 xl:p-3",
+            "flex-shrink-0 rounded-xl hidden xl:flex",
+            "p-3",
             iconColors[selectedGradient]
           )}>
-            <Icon className="w-4 h-4 xl:w-5 xl:h-5" />
+            <Icon className="w-5 h-5" />
           </div>
         )}
       </div>
+
+      {/* Glow effect */}
+      <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-2xl" />
     </motion.div>
   );
 }
