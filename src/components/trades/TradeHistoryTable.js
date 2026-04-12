@@ -111,7 +111,11 @@ const exitReasonColors = {
  */
 // ST-10: Trade History-specific column header class override.
 // Applies to all TableHead cells in this file only — DataTable.js default unchanged.
-const TH_CLASS = "font-semibold text-slate-300 tracking-wide";
+// px-3 overrides DataTable's px-6 to keep 10 columns from requiring horizontal scroll.
+// whitespace-nowrap prevents multi-line headers (e.g. "Entry Date ↓").
+const TH_CLASS = "font-semibold text-slate-300 tracking-wide px-3 whitespace-nowrap";
+// TD_CLASS: matching compact horizontal padding for all data cells in this table.
+const TD_CLASS = "px-3";
 
 export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
   const [expandedRows, setExpandedRows] = useState(new Set());
@@ -372,7 +376,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 className={cn(hasExpandableContent && "cursor-pointer hover:bg-slate-800/50 transition-colors")}
               >
                 {/* Ticker + market */}
-                <TableCell>
+                <TableCell className={TD_CLASS}>
                   <div className="flex items-center gap-2">
                     {hasExpandableContent && (
                       isExpanded
@@ -387,17 +391,17 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 </TableCell>
 
                 {/* Entry date */}
-                <TableCell className="text-slate-400">
+                <TableCell className={cn(TD_CLASS, "text-slate-400")}>
                   {format(new Date(trade.entry_date), "MMM d, yyyy")}
                 </TableCell>
 
                 {/* Exit date */}
-                <TableCell className="text-slate-400">
+                <TableCell className={cn(TD_CLASS, "text-slate-400")}>
                   {format(new Date(trade.exit_date), "MMM d, yyyy")}
                 </TableCell>
 
                 {/* P&L */}
-                <TableCell className="text-right">
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <div className={cn(
                     "inline-flex items-center gap-1.5 font-medium",
                     isProfit ? "text-emerald-400" : "text-rose-400"
@@ -408,28 +412,28 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 </TableCell>
 
                 {/* % P&L */}
-                <TableCell className="text-right">
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn("font-medium", isProfit ? "text-emerald-400" : "text-rose-400")}>
                     {isProfit ? "+" : ""}{trade.pnl_pct.toFixed(2)}%
                   </span>
                 </TableCell>
 
                 {/* Days Held — ST-11 */}
-                <TableCell className="text-right">
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className="text-slate-400 tabular-nums">
                     {trade.holding_days != null ? trade.holding_days : "—"}
                   </span>
                 </TableCell>
 
                 {/* Slippage — ST-14 */}
-                <TableCell className="text-right">
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn("font-medium tabular-nums", slippageColour(trade.slippage_pct))}>
                     {formatSlippage(trade.slippage_pct)}
                   </span>
                 </TableCell>
 
                 {/* Fee Drag % — ST-09 */}
-                <TableCell className="text-right">
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn(
                     "font-medium tabular-nums",
                     trade.fee_drag_pct != null ? "text-amber-400" : "text-slate-500"
@@ -439,14 +443,14 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 </TableCell>
 
                 {/* R-Multiple — BLG-FEAT-02 */}
-                <TableCell className="text-right">
+                <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn("font-medium tabular-nums", rClass)}>
                     {rText}
                   </span>
                 </TableCell>
 
                 {/* Exit reason */}
-                <TableCell>
+                <TableCell className={TD_CLASS}>
                   <span className={cn(
                     "text-xs px-2.5 py-1 rounded-full border",
                     exitReasonColors[trade.exit_reason] || "bg-slate-800 text-slate-400 border-slate-700"
