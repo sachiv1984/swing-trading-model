@@ -72,8 +72,8 @@ export default function StatsCard({
         className
       )}
     >
-      <div className="flex items-start justify-between">
-        <div className="space-y-2">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-2 min-w-0 flex-1">
           <p className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
             {title}
             {tooltip && (
@@ -89,7 +89,7 @@ export default function StatsCard({
           </p>
           <p className="text-lg lg:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
           {subtitle && (
-            <p className="text-xs text-slate-500 dark:text-slate-500 hidden lg:block">{subtitle}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 truncate">{subtitle}</p>
           )}
           {trendValue && (
             <div className={cn(
@@ -105,7 +105,7 @@ export default function StatsCard({
           )}
         </div>
         {Icon && (
-          <div className={cn("p-3 rounded-xl hidden lg:flex", iconColors[selectedGradient])}>
+          <div className={cn("p-3 rounded-xl flex-shrink-0", iconColors[selectedGradient])}>
             <Icon className="w-5 h-5" />
           </div>
         )}
