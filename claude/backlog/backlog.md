@@ -837,3 +837,55 @@ Frontend:
 - [ ] Engineer notes in QA evidence: if Yahoo Finance reliability becomes a problem, a formal data source review is required before any further correlation-dependent features
 
 ---
+
+### BLG-GOV-16 — Extend governance_sync.yml to trigger on push to main
+**Priority:** P2 (Medium)
+**Type:** Governance / CI
+**Owner:** Infrastructure & Operations Owner
+**Source:** Observed during v2.6 EPIC-01 merge — ST-01 and ST-03 issues remained open after PR merged to main
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v2.7
+
+**Problem**
+`governance_sync.yml` only triggers on pushes to `exec/**` branches. When a PR is merged into `main`, the workflow does not fire, so GitHub Issues referenced in the merged commits are not automatically closed. This requires manual issue closure after every EPIC merge, which is a governance overhead and a process deviation risk.
+
+**Scope**
+- Add `main` to the `on.push.branches` trigger list in `.github/workflows/governance_sync.yml`
+- Verify the workflow fires on merge to main and closes the correct issues
+- Confirm no duplicate-close side effects (issues already closed by exec branch push are skipped gracefully — the existing `--state open` filter handles this)
+
+**Acceptance Criteria**
+- [ ] `.github/workflows/governance_sync.yml` `on.push.branches` includes `main`
+- [ ] After merging a PR to `main`, GitHub Issues with titles matching `[ST-xx]` commits in the merge are automatically closed
+- [ ] Issues already closed (from exec branch push) are not errored — workflow skips them cleanly
+- [ ] Manual issue closure after EPIC merges is no longer required
+
+### BLG-QA-11 — Fix Playwright page.route() intercepts not firing in local test environment
+**Priority:** P2 (Medium)
+**Type:** Test Infrastructure
+**Owner:** QA & Testing Owner + Infrastructure & Operations Owner
+**Source:** Discovered during v2.6 EPIC-02 staging QA — all TradeHistory and Reports Playwright specs fail with assertion errors despite correct mock setup; confirmed systemic (EPIC-01 and EPIC-02 specs both affected)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v2.7
+
+**Problem**
+All `page.route()` intercepts in the Playwright e2e suite fail to deliver mock data to the React app. The page renders with empty/zero data instead of the mocked responses. The symptom is consistent across every spec that uses `page.route()` against `localhost:8000` — `reports-performance-tab.spec.js`, `slippage-tracking.spec.js`, `fee-drag-trade-history.spec.js`, `signals-cash-balance.spec.js` all fail. The specs were written and filed as QA evidence but have never successfully passed in this environment.
+
+**Suspected causes (to investigate in priority order):**
+1. React Query's fetch calls may be bypassing Playwright's intercept layer — possibly a CSP or service worker issue despite `bypassCSP: true` in the config
+2. The `REACT_APP_API_URL` env var may not be resolving to `http://localhost:8000` when the webServer starts, causing fetches to hit a different URL than the mocked one
+3. Route registration timing — routes may need to be registered via `page.addInitScript` rather than `page.route()` for React apps that fire queries immediately on mount
+
+**Scope**
+- Investigate root cause using Playwright's `--debug` mode or network tracing (`page.on('request', ...)`) to confirm what URL the app actually fetches and whether Playwright intercepts it
+- Fix the intercept mechanism so at least one spec passes end-to-end
+- Apply the fix pattern to all existing specs
+- Add a note to the Playwright infrastructure section of the testing docs
+
+**Acceptance Criteria**
+- [ ] Root cause of intercept failure identified and documented
+- [ ] `reports-performance-tab.spec.js` — all 11 tests pass in headless Chromium
+- [ ] `slippage-tracking.spec.js` — all 8 tests pass in headless Chromium
+- [ ] `fee-drag-trade-history.spec.js` — all 7 tests pass in headless Chromium
+- [ ] `signals-cash-balance.spec.js` — all 4 tests pass in headless Chromium
+- [ ] Fix pattern documented so future specs follow the working approach

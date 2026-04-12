@@ -1,0 +1,60 @@
+name: CI Pytest Suite
+
+# ST-05 (BLG-QA-10): Runs pytest on every PR.
+#
+# Phase A (clean tests) — runs immediately, no DATABASE_URL secret required.
+# Scope: test_stop_reconciliation.py, test_watchlist_service.py,
+#         test_service_coverage.py, test_alerts_service.py,
+#         test_golden_outputs.py, test_db_monitoring.py,
+#         test_trade_service.py (SC-FEE-05/06 fee drag formula)
+#
+# Phase B (all tests including integration) — requires DATABASE_URL secret.
+# Enabled once test collection errors are fixed (ST-04) and secrets are wired.
+#
+# Deliberate-failure gate: a formula break in position_manager.py must cause
+# this workflow to fail (verified in phase A — test_stop_reconciliation.py
+# catches coefficient divergence).
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches:
+      - 'exec/**'
+      - main
+      - develop
+
+jobs:
+  pytest-phase-a:
+    name: Pytest Phase A (clean tests — no DB required)
+    runs-on: ubuntu-latest
+
+    env:
+      # Dummy DATABASE_URL satisfies the import-time check in database.py.
+      # Phase A tests mock all DB calls and never attempt a real connection.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci_stub
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run Phase A clean tests
+        run: |
+          python -m pytest \
+            tests/test_stop_reconciliation.py \
+            tests/test_watchlist_service.py \
+            tests/test_service_coverage.py \
+            tests/test_alerts_service.py \
+            tests/test_golden_outputs.py \
+            tests/test_db_monitoring.py \
+            tests/test_trade_service.py \
+            -v --tb=short

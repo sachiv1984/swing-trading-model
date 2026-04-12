@@ -95,9 +95,11 @@ jobs:
           echo "  Migrate: ✅ schema up to date (v2.0)"
           if [[ "$SEEDED" == "true" ]]; then
             echo "  Seed:    ✅ QA data inserted:"
-            echo "             portfolio/trades : 2 open positions (LGEN, BARC)"
+            echo "             portfolio/trades : 2 open positions (LGEN, BARC) + 2 closed trades"
             echo "             watchlist        : 4 entries"
             echo "             alerts           : 4 rules + 2 unread notifications"
+            echo "             analytics        : 12 closed trades (Jan-Mar 2026)"
+            echo "             signals          : 2 active/new (LGEN, BARC) + 1 dismissed (HSBA) + 1 entered (TSCO)"
           else
             echo "  Seed:    ⏭  skipped (bare reset only)"
           fi

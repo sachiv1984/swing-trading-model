@@ -186,13 +186,16 @@ test('PATH-1: add trade — form submits and POST /portfolio/position fires', as
   await expect(submitBtn).toBeEnabled({ timeout: 3000 });
 
   // ── Submit ─────────────────────────────────────────────────────────────
-  await submitBtn.click();
-
-  // Verify POST /portfolio/position was called
-  const postResponse = await page.waitForResponse(
+  // Set up waitForResponse BEFORE click to avoid race condition where
+  // the response arrives before the listener is registered.
+  const postResponsePromise = page.waitForResponse(
     (resp) => resp.url().includes('/portfolio/position') && resp.request().method() === 'POST',
     { timeout: 5000 }
   );
+  await submitBtn.click();
+
+  // Verify POST /portfolio/position was called
+  const postResponse = await postResponsePromise;
   expect(postResponse.status()).toBe(200);
 
   // Verify payload includes expected ticker and entry_price
@@ -217,17 +220,18 @@ test('PATH-1: add trade — form submits and POST /portfolio/position fires', as
 // ---------------------------------------------------------------------------
 
 test('PATH-2: view portfolio — open positions render on Positions page', async ({ page }) => {
+  // Fallback registered FIRST — Playwright routes are LIFO, so specific mocks
+  // registered after the fallback take precedence and won't be swallowed by it.
+  await mockFallback(page);
   await mockPositions(page);
   await mockPortfolio(page);
-  await mockFallback(page);
 
   await page.goto('/#/Positions');
   await page.waitForLoadState('networkidle');
 
-  // Positions page heading present
-  await expect(
-    page.getByText('Open Positions').or(page.getByRole('heading', { name: /positions/i })).first()
-  ).toBeVisible({ timeout: 10000 });
+  // Wait for position data — "Open Positions" is a title= attribute, not visible text.
+  // LGEN is the first seeded position ticker and confirms the page has rendered data.
+  await expect(page.getByText('LGEN').first()).toBeVisible({ timeout: 10000 });
 
   // Both seeded position tickers visible
   await expect(page.getByText('LGEN').first()).toBeVisible({ timeout: 5000 });
@@ -255,8 +259,10 @@ test('PATH-2: view portfolio — open positions render on Positions page', async
 // ---------------------------------------------------------------------------
 
 test('PATH-3: view alerts — notification feed renders with unread items', async ({ page }) => {
-  await mockNotificationsFeed(page);
+  // Fallback registered FIRST — Playwright routes are LIFO, so mockNotificationsFeed
+  // (registered last) takes precedence and the notifications endpoint is not swallowed.
   await mockFallback(page);
+  await mockNotificationsFeed(page);
 
   await page.goto('/#/notifications');
   await page.waitForLoadState('networkidle');

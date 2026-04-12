@@ -28,6 +28,7 @@ export default function TradeHistory() {
   const { data: tradesData, isLoading } = useQuery({
     queryKey: ["trades"],
     queryFn: () => api.trades.list(),
+    retry: false,
   });
 
   // ── BLG-FEAT-02: Analytics metrics for R-multiple join ──────────────────────
@@ -174,21 +175,28 @@ export default function TradeHistory() {
       ) : (
         <>
           {/* Summary stats row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {/* ST-09: 7-card summary bar — 4 per row wrapping to 4+3, preserving original card design */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatsCard
+              title="Total Trades"
+              value={filteredTrades.length}
+              subtitle={`${winningTrades.length}W / ${losingTrades.length}L`}
+              icon={TrendingUp}
+              gradient="cyan"
+            />
+            <StatsCard
+              title="Win Rate"
+              value={`${winRate.toFixed(1)}%`}
+              trend={winRate >= 50 ? "up" : "down"}
+              icon={winRate >= 50 ? TrendingUp : TrendingDown}
+              gradient={winRate >= 50 ? "emerald" : "rose"}
+            />
             <StatsCard
               title="Total P&L"
               value={`${totalPnL >= 0 ? "+" : ""}£${totalPnL.toFixed(2)}`}
               trend={totalPnL >= 0 ? "up" : "down"}
               icon={totalPnL >= 0 ? TrendingUp : TrendingDown}
               gradient={totalPnL >= 0 ? "emerald" : "rose"}
-            />
-            <StatsCard
-              title="Win Rate"
-              value={`${winRate.toFixed(1)}%`}
-              subtitle={`${winningTrades.length}W / ${losingTrades.length}L`}
-              trend={winRate >= 50 ? "up" : "down"}
-              icon={winRate >= 50 ? TrendingUp : TrendingDown}
-              gradient={winRate >= 50 ? "emerald" : "rose"}
             />
             <StatsCard
               title="Avg Winner"
@@ -222,9 +230,9 @@ export default function TradeHistory() {
                   ? `+${tradesData.avg_fee_drag_pct.toFixed(2)}%`
                   : "—"
               }
-              subtitle="Exit fees / gross proceeds"
               icon={TrendingDown}
               gradient="amber"
+              tooltip="Average Fee Drag = Total exit fees / Gross proceeds × 100. Higher % means a greater proportion of gross proceeds consumed by fees."
             />
           </div>
 

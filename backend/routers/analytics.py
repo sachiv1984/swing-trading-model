@@ -61,6 +61,7 @@ def _build_trades_for_charts_with_join(cursor, since_date) -> list:
                     th.exit_date,
                     th.entry_price,
                     th.exit_price,
+                    th.shares,
                     CASE WHEN p.initial_stop IS NOT NULL
                               AND p.initial_stop < th.entry_price
                          THEN p.initial_stop
@@ -86,6 +87,7 @@ def _build_trades_for_charts_with_join(cursor, since_date) -> list:
                     th.exit_date,
                     th.entry_price,
                     th.exit_price,
+                    th.shares,
                     CASE WHEN p.initial_stop IS NOT NULL
                               AND p.initial_stop < th.entry_price
                          THEN p.initial_stop
@@ -112,6 +114,7 @@ def _build_trades_for_charts_with_join(cursor, since_date) -> list:
                 'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
                 'entry_price':  round(float(row['entry_price']), 4) if row['entry_price'] else 0,
                 'exit_price':   round(float(row['exit_price']), 4) if row['exit_price'] else 0,
+                'shares':       round(float(row['shares']), 4) if row['shares'] else None,
                 'stop_price':   round(float(stop), 4) if stop is not None else None,
                 'pnl':          round(float(row['pnl']), 2) if row['pnl'] else 0,
                 'pnl_percent':  round(float(row['pnl_percent']), 2) if row['pnl_percent'] else 0,
@@ -144,7 +147,7 @@ def _build_trades_for_charts_no_join(cursor, since_date) -> list:
         cursor.execute("""
             SELECT
                 id, ticker, market, entry_date, exit_date,
-                entry_price, exit_price, pnl, pnl_pct AS pnl_percent,
+                entry_price, exit_price, shares, pnl, pnl_pct AS pnl_percent,
                 exit_reason, holding_days, tags
             FROM trade_history
             WHERE exit_date >= %s
@@ -154,7 +157,7 @@ def _build_trades_for_charts_no_join(cursor, since_date) -> list:
         cursor.execute("""
             SELECT
                 id, ticker, market, entry_date, exit_date,
-                entry_price, exit_price, pnl, pnl_pct AS pnl_percent,
+                entry_price, exit_price, shares, pnl, pnl_pct AS pnl_percent,
                 exit_reason, holding_days, tags
             FROM trade_history
             ORDER BY exit_date ASC
@@ -170,6 +173,7 @@ def _build_trades_for_charts_no_join(cursor, since_date) -> list:
             'exit_date':    row['exit_date'].isoformat() if row['exit_date'] else None,
             'entry_price':  round(float(row['entry_price']), 4) if row['entry_price'] else 0,
             'exit_price':   round(float(row['exit_price']), 4) if row['exit_price'] else 0,
+            'shares':       round(float(row['shares']), 4) if row['shares'] else None,
             'stop_price':   None,  # not available without position_id migration
             'pnl':          round(float(row['pnl']), 2) if row['pnl'] else 0,
             'pnl_percent':  round(float(row['pnl_percent']), 2) if row['pnl_percent'] else 0,
