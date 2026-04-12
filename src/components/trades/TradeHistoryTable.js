@@ -345,37 +345,37 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         >
           % P&L <SortIcon state={pnlPctSort} />
         </TableHead>
-        {/* ST-11: Days Held — analytical, hidden below xl */}
+        <TableHead className={TH_CLASS}>Exit Reason</TableHead>
+        {/* ST-11: Days Held — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden xl:table-cell")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden 2xl:table-cell")}
           onClick={() => cycle(setDaysHeldSort)}
         >
           Days <SortIcon state={daysHeldSort} />
         </TableHead>
-        {/* ST-14: Slippage column — analytical, hidden below xl */}
+        {/* ST-14: Slippage column — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden xl:table-cell")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden 2xl:table-cell")}
           onClick={cycleSlippageSort}
           title="Entry deviation: fill price vs limit price at entry. Null when fill price not recorded."
         >
           Slippage <SlippageSortIcon />
         </TableHead>
-        {/* ST-09: Fee Drag % column — analytical, hidden below xl */}
+        {/* ST-09: Fee Drag % column — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden xl:table-cell")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden 2xl:table-cell")}
           onClick={cycleFeeSort}
           title="Fee Drag % = Exit fees / Gross proceeds × 100. Measures the proportion of gross sale proceeds consumed by broker exit fees."
         >
           Fee Drag % <FeeDragSortIcon />
         </TableHead>
-        {/* BLG-FEAT-02: R-Multiple column — analytical, hidden below xl */}
+        {/* BLG-FEAT-02: R-Multiple column — analytical, hidden below 2xl */}
         <TableHead
-          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden xl:table-cell")}
+          className={cn(TH_CLASS, "text-right cursor-pointer select-none hover:text-white transition-colors hidden 2xl:table-cell")}
           onClick={cycleRSort}
         >
           R-Multiple <RSortIcon />
         </TableHead>
-        <TableHead className={TH_CLASS}>Exit Reason</TableHead>
       </TableHeader>
 
       <TableBody>
@@ -442,22 +442,32 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                   </span>
                 </TableCell>
 
-                {/* Days Held — ST-11 — analytical, hidden below xl */}
-                <TableCell className={cn(TD_CLASS, "text-right hidden xl:table-cell")}>
+                {/* Exit reason — primary, always visible */}
+                <TableCell className={TD_CLASS}>
+                  <span className={cn(
+                    "text-xs px-2.5 py-1 rounded-full border",
+                    exitReasonColors[trade.exit_reason] || "bg-slate-800 text-slate-400 border-slate-700"
+                  )}>
+                    {exitReasonLabels[trade.exit_reason] || trade.exit_reason || "Unknown"}
+                  </span>
+                </TableCell>
+
+                {/* Days Held — ST-11 — analytical, hidden below 2xl */}
+                <TableCell className={cn(TD_CLASS, "text-right hidden 2xl:table-cell")}>
                   <span className="text-slate-400 tabular-nums">
                     {trade.holding_days != null ? trade.holding_days : "—"}
                   </span>
                 </TableCell>
 
-                {/* Slippage — ST-14 — analytical, hidden below xl */}
-                <TableCell className={cn(TD_CLASS, "text-right hidden xl:table-cell")}>
+                {/* Slippage — ST-14 — analytical, hidden below 2xl */}
+                <TableCell className={cn(TD_CLASS, "text-right hidden 2xl:table-cell")}>
                   <span className={cn("font-medium tabular-nums", slippageColour(trade.slippage_pct))}>
                     {formatSlippage(trade.slippage_pct)}
                   </span>
                 </TableCell>
 
-                {/* Fee Drag % — ST-09 — analytical, hidden below xl */}
-                <TableCell className={cn(TD_CLASS, "text-right hidden xl:table-cell")}>
+                {/* Fee Drag % — ST-09 — analytical, hidden below 2xl */}
+                <TableCell className={cn(TD_CLASS, "text-right hidden 2xl:table-cell")}>
                   <span className={cn(
                     "font-medium tabular-nums",
                     trade.fee_drag_pct != null ? "text-amber-400" : "text-slate-500"
@@ -466,20 +476,10 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                   </span>
                 </TableCell>
 
-                {/* R-Multiple — BLG-FEAT-02 — analytical, hidden below xl */}
-                <TableCell className={cn(TD_CLASS, "text-right hidden xl:table-cell")}>
+                {/* R-Multiple — BLG-FEAT-02 — analytical, hidden below 2xl */}
+                <TableCell className={cn(TD_CLASS, "text-right hidden 2xl:table-cell")}>
                   <span className={cn("font-medium tabular-nums", rClass)}>
                     {rText}
-                  </span>
-                </TableCell>
-
-                {/* Exit reason */}
-                <TableCell className={TD_CLASS}>
-                  <span className={cn(
-                    "text-xs px-2.5 py-1 rounded-full border",
-                    exitReasonColors[trade.exit_reason] || "bg-slate-800 text-slate-400 border-slate-700"
-                  )}>
-                    {exitReasonLabels[trade.exit_reason] || trade.exit_reason || "Unknown"}
                   </span>
                 </TableCell>
               </TableRow>
