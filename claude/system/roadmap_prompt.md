@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.7
+**Version:** 4.8
 **Last Updated:** 2026-04-01
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -1235,6 +1235,8 @@ Append-only enforcement (structural):
 - If any existing entry text differs from pre-write read: halt. Treat as corruption.
 Both checks must pass before STEP 9 commit proceeds.
 
+> **⚠ HARD GATE (ST-14 / BLG-GOV-15):** A decrease in `decision_log.md` entry count is a decision log integrity violation. Do not commit. Do not proceed to STEP 10. Surface the violation with the pre-write and post-write counts, then halt. This gate is structural — it is not bypassed by time pressure or delivery context.
+
 Duplicate decision check:
 - Confirm identical decision not already logged
 
@@ -1523,6 +1525,8 @@ Execution note:
 - If the environment does not support git operations:
   - Output the exact list of files to stage and the exact commit message to use.
   - Mark the run as "Ready to commit" only if all preconditions passed.
+
+**Governance file edit check (ST-13 / CF-2):** Before committing, check whether any §6-governed file (listed in `claude/system/OPERATIONAL_GUIDE.md` §14) was modified during this roadmap run — including action-now prompt patches applied in STEP 11. If any were modified: confirm version bump applied, OPERATIONAL_GUIDE §14 updated, and an entry appended to `claude/system/prompt_change_log.md` using the format `| date | filename | vOLD→vNEW | summary | authority |`. These steps must complete before the STEP 12 commit is pushed. (STEP 11.3 handles prompt_change_log entries for action-now patches — this check confirms all three §6 checklist items are satisfied, not only the log entry.)
 
 ---
 

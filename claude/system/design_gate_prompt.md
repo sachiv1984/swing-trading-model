@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
+**Version:** 1.2
 **Last Updated:** 2026-03-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -317,6 +317,8 @@ git push origin <current-branch>
 ```
 
 If git operations unavailable: output exact files and commit message. Mark as "Ready to commit."
+
+**Governance file edit check (ST-13 / CF-2):** Before committing, check whether any §6-governed file (listed in `claude/system/OPERATIONAL_GUIDE.md` §14) was modified during this design gate run — including frontend spec files updated in STEP 3. If any were modified: append one entry per file to `claude/system/prompt_change_log.md` in the same session, using the format `| date | filename | vOLD→vNEW | summary | authority |`. This step must complete before the STEP 7 commit is pushed.
 
 ---
 
