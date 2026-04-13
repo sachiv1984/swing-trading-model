@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-04-13 (OA-1 resolved — BLG-GOV-17)
+**Last Updated:** 2026-04-13 (OA-1 resolved — BLG-GOV-17; OA-5 resolved — BLG-QA-12 assigned)
 **Cycle:** 2026-04-11__release-v2.6
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -85,7 +85,7 @@ All action items have recorded dispositions. Filing compliance: PASS.
 | 2 | BLG-GOV-18 — Add QA evidence sign-off gate to execution_prompt.md §3.2.B before PR creation. P2 Medium. | Director of Quality | v2.7 planning window | PMO Lead | *(complete when resolved)* |
 | 3 | BLG-GOV-19 — Define autonomous DoQ sign-off class in execution_prompt.md; update delivery_verification_prompt.md STEP -1.3 Tier 2 check. P2 Medium. | Director of Quality | v2.7 planning window | PMO Lead | *(complete when resolved)* |
 | 4 | BLG-QA-11 — Resolve Playwright page.route() intercept failure. Unblocks SC-REP-01–04, SC-SIG-CB-01–02, SC-FEE-01–04 (all structurally correct specs). P2 Medium. | QA & Testing Owner | v2.7 | PMO Lead | *(complete when resolved)* |
-| 5 | Duplicate BLG-QA-11 ID in backlog.md — two entries: "System Status Playwright spec" (line 363) and "Fix Playwright page.route() intercepts" (line 933). Pre-existing ID conflict. The page.route() entry (line 933) is the active deviation reference per verification_report.md §4; the System Status spec (line 363) needs reassignment to BLG-QA-12. | PMO Lead | Before next backlog groom | PMO Lead | *(complete when resolved)* |
+| 5 | Duplicate BLG-QA-11 ID in backlog.md — two entries: "System Status Playwright spec" (line 363) and "Fix Playwright page.route() intercepts" (line 933). Pre-existing ID conflict. The page.route() entry (line 933) is the active deviation reference per verification_report.md §4; the System Status spec (line 363) needs reassignment to BLG-QA-12. | PMO Lead | Before next backlog groom | PMO Lead | ✅ **Resolved 2026-04-13** — System Status spec heading renamed BLG-QA-11 → BLG-QA-12 in backlog.md. BLG-QA-11 retained for Playwright intercepts item. ID uniqueness: PASS. |
 
 ---
 

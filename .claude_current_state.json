@@ -34,7 +34,7 @@
   "last_manage_roadmap_utc": "2026-04-13T01:00:00Z",
   "last_manage_roadmap_outcome": "RA:v2.6 annotation block retired to roadmap_archive.md; §3 Delivery Plan updated for v2.7 horizon; v2.6 row added to §8 Release Summary; initiative_register.md: no rows moved (v2.6 was backlog-driven, active initiatives remain zero); 0 stale flagged",
   "last_groom_backlog_utc": "2026-04-13T01:00:00Z",
-  "last_groom_backlog_outcome": "13 items archived (all v2.6 shipped); 25 active items retained; 13 stale v2.6 provisional targets updated to v2.7; 0 orphans; 0 stale blockers; ID uniqueness active: FAIL — duplicate BLG-QA-11 (System Status spec vs Playwright intercept failure); ID uniqueness archive: FAIL (pre-existing; BLG-GOV-13 PO confirmation pending)",
+  "last_groom_backlog_outcome": "13 items archived (all v2.6 shipped); 25 active items retained; 13 stale v2.6 provisional targets updated to v2.7; 0 orphans; 0 stale blockers; ID uniqueness active: PASS (duplicate BLG-QA-11 resolved 2026-04-13 — System Status spec renamed to BLG-QA-12, OA-5); ID uniqueness archive: FAIL (pre-existing; BLG-GOV-13 PO confirmation pending)",
   "active_pog": {},
   "completed_cycle_count": 11,
   "resolved_pre_sprint": {

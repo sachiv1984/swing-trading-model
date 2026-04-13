@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-13 (groom backlog post-ship closure 2026-04-11__release-v2.6 — 13 items archived; 11 stale v2.6 provisional targets updated to v2.7; 25 active items retained)
+**Last Updated:** 2026-04-13 (OA-5 resolved — BLG-QA-11 System Status spec renamed to BLG-QA-12; ID uniqueness: PASS)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
@@ -104,13 +104,14 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 
 ---
 
-### BLG-QA-11 — System Status Playwright spec (endpoint list sync + category routing)
+### BLG-QA-12 — System Status Playwright spec (endpoint list sync + category routing)
 **Priority:** P3 (Low)
 **Type:** Test Automation
 **Owner:** QA & Testing Owner
 **Source:** v2.5 ST-02 and ST-03 (EPIC-01) — endpoint list and category routing verified by code review only; no Playwright spec
 **Effort:** M (~1 day)
 **Provisional-Target:** v2.7
+**Note:** Renamed from BLG-QA-11 → BLG-QA-12 on 2026-04-13 (OA-5, closure_record.md 2026-04-11__release-v2.6) — ID conflict resolution; original BLG-QA-11 retained for "Fix Playwright page.route() intercepts".
 
 **Problem**
 ST-02 added 10 missing endpoints to the health service and updated the SystemStatus.js count placeholder from 17 to 26. ST-03 added Alerts, Notifications, Digest category routing. Both were verified by code review only — no Playwright spec asserts the UI renders the categories correctly or that the count displays as 26.
