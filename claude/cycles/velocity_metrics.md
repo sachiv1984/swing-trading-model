@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-04-11
+**Last Updated:** 2026-04-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -33,8 +33,9 @@
 | v2.3  | 17      | 16        | 0.94     | 1 story (ST-11 BLG-FEAT-05) remained delegated_backend at close |
 | v2.4  | 17      | 17        | 1.00     | All stories closed; no deferred items |
 | v2.5  | 13      | 13        | 1.00     | ST-06 delegated (frontend) — delivered and counted as completed |
+| v2.6  | 15      | 15        | 1.00     | All 15 stories autonomous; no delegation; ST-14/ST-15 bonus stories delivered |
 
-**Rolling 6-cycle average (v1.10–v2.5):** 0.99
+**Rolling 6-cycle average (v2.1–v2.6):** 0.99
 
 ---
 

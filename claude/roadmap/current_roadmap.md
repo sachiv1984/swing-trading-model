@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-10 (manage_roadmap post-ship closure 2026-04-05__release-v2.5 — RA:v2.5 annotation retired to roadmap_archive.md; §3 updated; no stale items flagged; no active initiatives)
+**Last Updated:** 2026-04-13 (post-ship closure 2026-04-11__release-v2.6 — v2.6 marked ✅ Complete; §1, §3, and §8 updated)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — scheduled run; Standard tier; DL-017 to DL-019)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v2.5** — Integration Baseline, Quick Wins & Governance Debt — Shipped 2026-04-10
-**Next planned release:** **v2.6** (TBD)
+**v2.6** — Backend Integration Completion, Test Automation & Governance Hardening — Shipped 2026-04-13
+**Next planned release:** **v2.7** (TBD)
 
 ---
 
@@ -45,17 +45,7 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*v2.5 shipped 2026-04-10 (Verified_with_deviations). RA:v2.5 annotation retired to roadmap_archive.md 2026-04-10. Next release v2.6 — planning in progress.*
-
-<!-- roadmap-annotation-marker: RA:v2.6:2026-04-11__release-v2.6 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-04-11__release-v2.6
-- Plan published: 2026-04-11
-- Cycle folder: claude/cycles/2026-04-11__release-v2.6/
-- Backlog slice: claude/cycles/2026-04-11__release-v2.6/stage4_backlog_slice.md
-- Theme: Backend Integration Completion, Test Automation & Governance Hardening
-- Status at annotation: Validated
+*v2.6 shipped 2026-04-13 (Verified_with_deviations). RA:v2.6 annotation retired to roadmap_archive.md 2026-04-13. Next release v2.7 — planning not yet opened.*
 
 ---
 
@@ -121,6 +111,7 @@ When evaluating new features:
 | **v2.3** | Quality Automation & User Insight | Strategy Compliance Panel, Metrics Staleness Indicator, Alert Nav Badge, Health Database endpoint, QA automation, Governance tooling — ✅ Shipped 2026-03-30 (Verified_with_deviations) |
 | **v2.4** | Correctness, Insight & Governance Hardening | ATR fix, alert deduplication, stop price join, P&L GBP column, error mapping, data model reconciliation, weekly digest, operational readiness, governance patches — ✅ Shipped 2026-04-03 (Verified_with_deviations) |
 | **v2.5** | Integration Baseline, Quick Wins & Governance Debt | System Status reliability (26 endpoints, auth fix, categories), backend integration docs, latency investigation, Fee Drag % metric, governance prompt patches (CF-2), governance_sync.yml fix, test scenarios — ✅ Shipped 2026-04-10 (Verified_with_deviations) |
+| **v2.6** | Backend Integration Completion, Test Automation & Governance Hardening | Base44 SDK eliminated (Reports + Signals pages), CI pytest suite live (129 tests), fee drag Playwright + pytest specs, Trade History UX polish (7-card stats, column sort, header styling), CF-1/CF-2 governance patches closed — ✅ Shipped 2026-04-13 (Verified_with_deviations) |
 
 ---
 

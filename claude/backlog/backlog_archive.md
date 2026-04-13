@@ -1,11 +1,37 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-13
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### v2.6 Release Slice — 2026-04-11__release-v2.6
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** N/A (release tracking section)
+**Retired:** 2026-04-13
+**Shipped in:** v2.6 — Backend Integration Completion, Test Automation & Governance Hardening
+**Evidence:** 15/15 stories shipped; 13 backlog items completed; `claude/cycles/2026-04-11__release-v2.6/closure_record.md`
+
+| ID | Title | Type | Sprint | Evidence |
+|----|-------|------|--------|----------|
+| BLG-BE-08-GAP-01 | Migrate Reports Performance tab to FastAPI backend | Backend | Sprint 1 | ST-01 commit 5a6982d |
+| BLG-BE-09-GAP-01 | Wire Signals page dismissal and position creation to FastAPI | Backend | Sprint 1 | ST-02 commit 5a6982d |
+| BLG-BE-09-GAP-02 | Replace Base44 cash balance on Signals page with GET /cash/summary | Backend | Sprint 1 | ST-03 commit 5a6982d |
+| BLG-QA-09 | Fix 4 pytest collection errors to unblock existing test suite | QA | Sprint 1 | ST-04 commit 39efe64 |
+| BLG-QA-10 | Add CI test runner workflow (ci-tests.yml) | QA/Ops | Sprint 1 | ST-05 commit 39efe64 |
+| BLG-QA-07 | Fee drag Playwright spec (Trade History) | QA | Sprint 1 | ST-06 commit 39efe64 (spec authored; run pending BLG-QA-11) |
+| BLG-QA-08 | Pytest unit tests for fee drag backend logic | QA | Sprint 1 | ST-07 commit 39efe64 |
+| BLG-FE-10 | Add tooltip prop to StatsCard component | Frontend | Sprint 2 | ST-08 commit a640719 |
+| BLG-FE-11 | Trade History StatsCard bar layout: squeeze at 6-card width | Frontend | Sprint 2 | ST-09 commit a640719 |
+| BLG-FE-12 | Trade History table column header styling and formatting | Frontend | Sprint 2 | ST-10 commit a640719 |
+| BLG-FE-13 | Flexible column sorting across Trade History table | Frontend | Sprint 2 | ST-11 commit a640719 |
+| BLG-GOV-15 | Upgrade decision_log.md append-only rule to structural hard gate | Governance | Sprint 2 | ST-14 commit 27902b7 |
+| BLG-FE-09 | Define Frontend Performance Budget | Frontend/Spec | Sprint 2 | ST-15 commit 27902b7 |
 
 ---
 

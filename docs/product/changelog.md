@@ -3,9 +3,53 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-13
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.6 — Backend Integration Completion, Test Automation & Governance Hardening — 2026-04-13
+
+Cycle: 2026-04-11__release-v2.6
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-04-11__release-v2.6/verification_report.md
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Backend integration completion: Reports Performance tab migrated from Base44 SDK to FastAPI GET /analytics/metrics; Signals page dismissal/position creation confirmed wired to FastAPI (PATCH /signals/:id, POST /portfolio/position); Cash Balance on Signals page replaced with GET /cash/summary — Base44 SDK eliminated from both pages | docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/metrics; docs/specs/api_contracts/signals_endpoints.md; docs/specs/api_contracts/portfolio_endpoints.md#GET /cash/summary |
+| EPIC-02 | CI pytest suite and fee drag test automation: 4 pytest collection errors fixed (conftest.py, augment-safe stubs); CI test runner workflow added (.github/workflows/ci-tests.yml, 129 tests pass); fee drag Playwright spec authored (SC-FEE-01–04); fee drag backend pytest unit tests (SC-FEE-05/06, 17 pass) | docs/testing/fee-drag-scenarios.md |
+| EPIC-03 | Trade History UX polish: StatsCard tooltip prop added; 7-card stats bar layout (grid-cols-2/4/7); column header styling (font-semibold, tracking-wide); flexible column sorting (5 new sort states, SortIcon, Days Held column) | docs/specs/frontend/pages/trade_history.md#Avg Fee Drag StatsCard; #StatsCard Bar Layout; #Column Header Styling; #Column Sorting |
+| EPIC-04 | Governance hardening (CF-1, CF-2 closure + bonus items): execution_prompt.md STEP 5.1 unpushed-commit check added; §6 edit reminders added to design_gate, amendment_cycle, and roadmap prompts; roadmap_prompt.md STEP 9 decision_log check upgraded to hard gate; frontend performance budget spec created | claude/system/execution_prompt.md v3.3; claude/system/design_gate_prompt.md v1.2; claude/system/amendment_cycle_prompt.md v1.7; claude/system/roadmap_prompt.md v4.8; docs/specs/frontend/performance_budget.md |
+
+### Deviations accepted
+
+1 minor P3 deviation — see verification_report.md §4 for full detail. Backlog item filed: BLG-QA-11 (Playwright page.route() intercept failure — environmental, not a code defect; target v2.7).
+
+No P1/P2 deviations.
+
+### Tech backlog items shipped
+
+- [ST-01] Migrate Reports Performance Tab to FastAPI Backend
+- [ST-02] Wire Signals Page Dismissal and Position Creation to FastAPI
+- [ST-03] Replace Base44 Cash Balance on Signals Page with GET /cash/summary
+- [ST-04] Fix 4 Pytest Collection Errors
+- [ST-05] Add CI Test Runner Workflow
+- [ST-06] Fee Drag Playwright Spec
+- [ST-07] Fee Drag Backend Pytest Unit Tests
+- [ST-08] StatsCard Tooltip Prop
+- [ST-09] Trade History StatsCard Bar Layout (7-Card Width)
+- [ST-10] Trade History Column Header Styling and Formatting
+- [ST-11] Flexible Column Sorting Across Trade History Table
+- [ST-12] execution_prompt.md STEP 5.1 Unpushed-Commit Check
+- [ST-13] Prompt Log Hygiene: §6 Edit Reminders for 3 Engines
+- [ST-14] Upgrade decision_log.md Hard Gate in roadmap_prompt.md
+- [ST-15] Frontend Performance Budget Spec
+
+Sign-off: Product Owner — 2026-04-13
+QA sign-off: Director of Quality — 2026-04-13
 
 ---
 

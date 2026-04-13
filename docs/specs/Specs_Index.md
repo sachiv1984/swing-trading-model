@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-13
 
 ---
 
@@ -329,7 +329,7 @@ Identified during delivery verification (verification_report.md §6 — TSG-v22-
 **Owner:** QA & Testing Owner + Infrastructure & Operations Owner
 **Gap:** Automated test for GET /health and GET /health/database response schemas not yet in CI.
 **Required action:** Add SC-HEALTH-01 scenario in a future cycle.
-**Resolution target:** v2.6 (not addressed in v2.4 or v2.5)
+**Resolution target:** v2.7 (not addressed in v2.4, v2.5, or v2.6 — no story scheduled)
 
 ### 10.3 TSG-v23-01 — EPIC-02: R-Multiple chart visual scenarios staging-blocked (BLG-BE-04)
 
@@ -339,8 +339,9 @@ Identified during delivery verification (verification_report.md §6 — TSG-v22-
 **Gap:** V-CHART-05a/b/c scenarios require `stop_price` field in `/trades` API response. BLG-BE-04 (stop_price absent from trade_history) blocked these 3 R-Multiple visual scenarios.
 **Update (2026-04-03):** BLG-BE-04 resolved by ST-03 in cycle 2026-03-31__release-v2.4. `stop_price` field now present on analytics trade endpoint response. V-CHART-05a/b/c are now executable against staging. QA & Testing Owner to schedule execution in v2.5 cycle.
 **Update (2026-04-10):** V-CHART-05a/b/c not executed in v2.5 — no story scheduled for this in the v2.5 backlog slice. Gap carries forward.
+**Update (2026-04-13):** Not addressed in v2.6 — no story scheduled in v2.6 backlog slice.
 **Required action:** QA & Testing Owner to execute V-CHART-05a/b/c on staging against live deployment.
-**Resolution target:** v2.6
+**Resolution target:** v2.7
 
 ### 10.4 TSG-v24-01 — EPIC-01: no test scenarios for backend correctness fixes
 
@@ -366,15 +367,43 @@ Identified during delivery verification (verification_report.md §6 — TSG-V25-
 ### 11.2 TSG-V25-02 — Fee drag Playwright spec not authored for v2.5 Trade History
 
 **Identified:** 2026-04-10 (delivery verification 2026-04-05__release-v2.5)
-**Status:** Open — backlog item BLG-QA-07
+**Status:** RESOLVED (spec authored) — 2026-04-13 (v2.6, ST-06, cycle 2026-04-11__release-v2.6)
 **Owner:** QA & Testing Owner
 **Gap:** ST-09 delivered the fee drag metric (column + StatsCard) on Trade History. No Playwright spec exists for SC-FEE-01 through SC-FEE-04 (`docs/testing/fee-drag-scenarios.md`). Trade History has `slippage-tracking.spec.js` as a model.
-**Required action:** Author `tests/e2e/fee-drag-trade-history.spec.js` covering SC-FEE-01–SC-FEE-04. See BLG-QA-07 for scope.
-**Resolution target:** v2.6
+**Resolution:** `tests/e2e/fee-drag-trade-history.spec.js` authored in v2.6 (BLG-QA-07 COMPLETE). Automated run pending BLG-QA-11 (Playwright page.route() intercept failure — environmental). Spec structurally correct and code-review verified. Tracked under TSG-V26-01.
 
 ---
 
-## 12. Guiding Principle
+## 12. Test Coverage Gaps — v2.6 (2026-04-11__release-v2.6)
+
+Identified during delivery verification (verification_report.md §6 — TSG-V26-01 through TSG-V26-03).
+
+### 12.1 TSG-V26-01 — EPIC-01/EPIC-02: Playwright specs authored but automated run failed (BLG-QA-11)
+
+**Identified:** 2026-04-12 (delivery verification 2026-04-11__release-v2.6)
+**Status:** Open — deferred under BLG-QA-11
+**Owner:** QA & Testing Owner
+**Gap:** `reports-performance-tab.spec.js`, `signals-cash-balance.spec.js`, and `fee-drag-trade-history.spec.js` are structurally correct but could not be run — systemic Playwright `page.route()` intercept failure affects all specs that use `page.route()` against `localhost:8000`. Affected: SC-REP-01–04, SC-SIG-CB-01–02, SC-FEE-01–04.
+**Required action:** Resolve BLG-QA-11 (Playwright intercept failure) and re-run all affected specs. No new scenarios needed — existing specs are correct.
+**Resolution target:** v2.7
+
+### 12.2 TSG-V26-02 — EPIC-03: No automated scenarios for Trade History UX visual behaviour
+
+**Identified:** 2026-04-12 (delivery verification 2026-04-11__release-v2.6)
+**Status:** Closed — not_applicable
+**Owner:** QA & Testing Owner
+**Assessment:** Trade History UX polish (StatsCard layout, column headers, sorting) is visual/interactive AC. Automated scenario coverage not appropriate for this work type. Human staging visual QA completed 2026-04-12. No automated gap.
+
+### 12.3 TSG-V26-03 — EPIC-04: No automated scenarios for governance prompt patches
+
+**Identified:** 2026-04-12 (delivery verification 2026-04-11__release-v2.6)
+**Status:** Closed — not_applicable
+**Owner:** QA & Testing Owner
+**Assessment:** Governance document changes (execution_prompt.md, design_gate_prompt.md, amendment_cycle_prompt.md, roadmap_prompt.md, performance_budget.md) have no testable runtime behaviour. Verified by code review. No automated gap.
+
+---
+
+## 14. Guiding Principle
 
 > Specs explain decisions.
 > This index ensures those decisions form a coherent system.

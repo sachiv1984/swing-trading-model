@@ -1,13 +1,38 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-13
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v2.6 — Backend Integration Completion, Test Automation & Governance Hardening (RA:v2.6)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (annotation block RA:v2.6)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-13
+**Shipped version:** v2.6 (2026-04-13)
+**Cycle reference:** 2026-04-11__release-v2.6
+**Verification report:** `claude/cycles/2026-04-11__release-v2.6/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-13
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.6:2026-04-11__release-v2.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-04-11__release-v2.6
+- Plan published: 2026-04-11
+- Cycle folder: claude/cycles/2026-04-11__release-v2.6/
+- Backlog slice: claude/cycles/2026-04-11__release-v2.6/stage4_backlog_slice.md
+- Theme: Backend Integration Completion, Test Automation & Governance Hardening
+- Status at annotation: ✅ Complete — Shipped 2026-04-13 (Verified_with_deviations)
 
 ---
 
