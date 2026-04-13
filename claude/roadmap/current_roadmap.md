@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-13 (post-ship closure 2026-04-11__release-v2.6 — v2.6 marked ✅ Complete; §1, §3, and §8 updated)
+**Last Updated:** 2026-04-13 (v2.7 Release Planning — cycle 2026-04-13__release-v2.7 opened)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — scheduled run; Standard tier; DL-017 to DL-019)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -45,7 +45,16 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*v2.6 shipped 2026-04-13 (Verified_with_deviations). RA:v2.6 annotation retired to roadmap_archive.md 2026-04-13. Next release v2.7 — planning not yet opened.*
+*v2.6 shipped 2026-04-13 (Verified_with_deviations). v2.7 Release Planning opened 2026-04-13.*
+
+<!-- roadmap-annotation-marker: RA:v2.7:2026-04-13__release-v2.7 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-04-13__release-v2.7
+- Plan published: 2026-04-13
+- Cycle folder: claude/cycles/2026-04-13__release-v2.7/
+- Backlog slice: claude/cycles/2026-04-13__release-v2.7/stage4_backlog_slice.md
+- Status at annotation: Validated (Publishing)
 
 ---
 

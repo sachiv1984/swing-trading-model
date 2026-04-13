@@ -1,0 +1,112 @@
+[
+  {
+    "st_id": "ST-01",
+    "epic_id": "EPIC-01",
+    "title": "Enable Supabase Supavisor connection pooling",
+    "backlog_item": "BLG-OPS-14",
+    "priority": "P1",
+    "sprint": 1,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-01", "sprint-1", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-02",
+    "epic_id": "EPIC-01",
+    "title": "Refactor get_portfolio_summary() to use a single DB connection",
+    "backlog_item": "BLG-BE-07-FIX",
+    "priority": "P2",
+    "sprint": 1,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-01", "sprint-1", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-03",
+    "epic_id": "EPIC-02",
+    "title": "Require QA evidence sign-off block to be complete before PR is raised",
+    "backlog_item": "BLG-GOV-18",
+    "priority": "P2",
+    "sprint": 1,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-02", "sprint-1", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-04",
+    "epic_id": "EPIC-02",
+    "title": "Define formal autonomous DoQ sign-off class for code-review-only EPICs",
+    "backlog_item": "BLG-GOV-19",
+    "priority": "P2",
+    "sprint": 1,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-02", "sprint-1", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-05",
+    "epic_id": "EPIC-02",
+    "title": "Extend governance_sync.yml to trigger on push to main",
+    "backlog_item": "BLG-GOV-16",
+    "priority": "P2",
+    "sprint": 1,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-02", "sprint-1", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-06",
+    "epic_id": "EPIC-03",
+    "title": "Fix Playwright page.route() intercepts not firing in local test environment",
+    "backlog_item": "BLG-QA-11",
+    "priority": "P2",
+    "sprint": 1,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-03", "sprint-1", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-07",
+    "epic_id": "EPIC-03",
+    "title": "System Status Playwright spec (endpoint list sync + category routing)",
+    "backlog_item": "BLG-QA-12",
+    "priority": "P3",
+    "sprint": 1,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-03", "sprint-1", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-08",
+    "epic_id": "EPIC-04",
+    "title": "Market Correlation Analysis",
+    "backlog_item": "BLG-FEAT-17",
+    "priority": "P2",
+    "sprint": 2,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-04", "sprint-2", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-09",
+    "epic_id": "EPIC-04",
+    "title": "Add supplementary indicator fields to signal generation",
+    "backlog_item": "BLG-BE-10",
+    "priority": "P3",
+    "sprint": 2,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-04", "sprint-2", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-10",
+    "epic_id": "EPIC-05",
+    "title": "Spec Dependency Map",
+    "backlog_item": "BLG-SPEC-D17",
+    "priority": "P3",
+    "sprint": 2,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-05", "sprint-2", "cycle:2026-04-13__release-v2.7"]
+  },
+  {
+    "st_id": "ST-11",
+    "epic_id": "EPIC-05",
+    "title": "Governance Health Score",
+    "backlog_item": "BLG-GOV-14",
+    "priority": "P3",
+    "sprint": 2,
+    "cycle_label": "cycle:2026-04-13__release-v2.7",
+    "labels": ["story", "release-v2.7", "EPIC-05", "sprint-2", "cycle:2026-04-13__release-v2.7"]
+  }
+]

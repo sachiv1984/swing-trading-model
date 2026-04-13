@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-13 (OA-5 resolved — BLG-QA-11 System Status spec renamed to BLG-QA-12; ID uniqueness: PASS)
+**Last Updated:** 2026-04-13 (v2.7 release slice added — RP:v2.7:2026-04-13__release-v2.7)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
@@ -371,6 +371,23 @@ These are deliberate product decisions, not deferrals:
 
 **Cycle:** 2026-04-05__release-v2.5 | **Status:** Closed | **Published:** 2026-04-05
 **Backlog slice:** `claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md`
+
+---
+
+## Active Release Slice — v2.7
+
+<!-- release-plan-marker: RP:v2.7:2026-04-13__release-v2.7 -->
+
+**Cycle:** 2026-04-13__release-v2.7 | **Status:** Published 2026-04-13 | **Published:** 2026-04-13
+**Backlog slice:** `claude/cycles/2026-04-13__release-v2.7/stage4_backlog_slice.md`
+
+| Epic | Stories | Theme |
+|------|---------|-------|
+| EPIC-01 | ST-01, ST-02 | Performance & Connection Infrastructure |
+| EPIC-02 | ST-03, ST-04, ST-05 | Governance Process Hardening |
+| EPIC-03 | ST-06, ST-07 | Test Infrastructure |
+| EPIC-04 | ST-08, ST-09 | Market Intelligence |
+| EPIC-05 | ST-10, ST-11 | Spec & Governance Documentation |
 
 ---
 
