@@ -40,3 +40,29 @@
 ### Net Sprint Assessment
 
 Velocity: 15/15 (1.00). All stories delivered. No items returned to backlog. No delegation records. One P3 deviation (BLG-QA-11 Playwright environmental). Two bonus stories delivered (ST-14 hard gate, ST-15 performance budget spec). Sprint goal fully achieved.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-04-11__release-v2.6
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-04-13
+**Reviewed by:** PMO Lead
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Sprint Close not triggered before delivery verification — third recurrence | Phase 4 | B | defer | RECURRENCE (v2.5 Phase 3 and Phase 4 both recorded this). STEP -1 hard gate (sealed: false, status: Executing) fired correctly; user then ran `run sprint` which recovered via STEP 5. Pattern is persistent: user merges PRs on GitHub without re-invoking `run sprint`. Hard gate functions correctly; friction is in the human workflow. Escalated to Head of Specs Team as third-recurrence per §3.7 (recurrence with open outstanding action = automatic escalation). | Head of Specs Team | immediate — before v2.7 planning |
+| QA evidence Tier 2 sign-off authority — engine self-signing autonomous EPICs | Phase 4 | C | defer | RECURRENCE from Phase 3 (same cycle). Delivery verification STEP -1.3 Tier 2 check fired for all 4 EPICs. Director of Quality counter-signs added at preflight in this session. Root fix: define a formal "autonomous DoQ" sign-off class for code-review-only stories with clear authority criteria, so the Tier 2 check does not fire every cycle for autonomous EPICs. | Director of Quality | v2.7 planning |
+| TSG-V26-01 Playwright test gap inherited from BLG-QA-11 — systemic test infra issue | Phase 4 | D | defer | SC-REP-01–04 and SC-SIG-CB-01–02 (EPIC-01) and SC-FEE-01–04 (EPIC-02) remain unverified by automated run. Root cause: BLG-QA-11 (`page.route()` intercept failure) unresolved across 2 cycles now. Deferred to v2.7 under BLG-QA-11. | QA & Testing Owner | v2.7 |
+
+**Recurrence Notes:**
+
+- **RECURRENCE — Sprint Close not triggered (third occurrence):** v2.5 Phase 4 identified this; v2.6 Phase 3 identified this again; v2.6 Phase 4 records it as a third recurrence. Per §3.7: a friction item that recurs with an open outstanding action from the prior cycle is an automatic escalation trigger. Escalating to Head of Specs Team. The Phase 3 outstanding action (PMO Lead to resolve by v2.7 planning) is escalated: Head of Specs Team must assess whether a prompt change, a workflow automation (GitHub Actions reminder), or a documented mandatory step can break this pattern before v2.7.
+
+- **RECURRENCE — Tier 2 engine sign-off authority:** Also flagged in Phase 3 of this same cycle. Both phases identify the same structural gap. Combined: Director of Quality to define autonomous DoQ sign-off class before v2.7 so this Tier 2 check does not fire for every purely autonomous EPIC.
+
+### Net Phase 4 Assessment
+
+Gate sequencing worked correctly — STEP -1 preflight fired on both sealed:false and the Tier 2 sign-off authority check. Both were resolved in-session. Deviation severity calls were straightforward (P3 only). Test scenario coverage gap analysis was clean: TSG-V26-02 and TSG-V26-03 correctly assessed not_applicable; TSG-V26-01 correctly deferred under existing BLG-QA-11. Sign-off coordination: both DoQ and PO signed off in the same session. Overall: delivery verification process functioning well; friction is upstream (sprint close trigger pattern) and in sign-off authority formalism, not in the verification logic itself.

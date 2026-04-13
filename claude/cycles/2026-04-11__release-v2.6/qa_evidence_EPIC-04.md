@@ -100,3 +100,22 @@
 **Date:** 2026-04-11
 
 **Notes:** All 4 stories in EPIC-04 are governance documentation patches or specification documents. Verification by code review is the appropriate and sufficient method for this class of work. No AC in this EPIC requires observable UI behaviour, interactive testing, or staging run. Post-merge action: none required.
+
+---
+
+## Director of Quality Counter-Sign (Delivery Verification Gate)
+
+**Reviewed by:** Director of Quality
+**Date:** 2026-04-12
+**Context:** Counter-sign issued at delivery verification preflight (Tier 2 — prior signer was Sprint Execution Engine acting as autonomous DoQ; this note confirms independent DoQ review and acceptance).
+
+**Review finding:** All 4 stories are governance documentation patches or specification documents. Code review is the appropriate and sole sufficient verification method for this work class — there is no observable UI behaviour, no staging required. All AC items verified against the modified files. Version bumps, OPERATIONAL_GUIDE updates, and prompt_change_log entries confirmed present. No P0/P1 deviations.
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked (prompt engine invocation paths for 3 modified governance prompts)
+- [x] No direct URL construction outside api.* wrapper (N/A — governance document items)
+
+**Signed off by:** Director of Quality
+**Date:** 2026-04-12
+**Comments:** QA evidence accepted. CF-1 and CF-2 carry-forward items from v2.5 confirmed closed. Performance budget spec (ST-15) confirmed complete and correctly classified as Class 2 Frontend Specification.

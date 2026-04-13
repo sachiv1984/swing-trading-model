@@ -111,3 +111,22 @@ Two staging runs performed by Product Owner. All findings resolved.
 **Verification method:** Code review for all AC. Playwright specs written and filed as automated evidence. Post-merge staging run required for visual/interactive AC (period selector dropdown, PortfolioGrowthChart rendering, cash balance format on PositionSizerPanel).
 
 **Post-merge action:** Period selector dropdown UX standard (transparent vs solid background) deferred to Head of UX — not a blocker for merge.
+
+---
+
+## Director of Quality Counter-Sign (Delivery Verification Gate)
+
+**Reviewed by:** Director of Quality
+**Date:** 2026-04-12
+**Context:** Counter-sign issued at delivery verification preflight (Tier 2 — prior signer was Sprint Execution Engine acting as autonomous DoQ; this note confirms independent DoQ review and acceptance).
+
+**Review finding:** All 3 stories verified by code review against source files. AC fully met. Playwright specs authored (automated run pending BLG-QA-11 fix — not a blocker). Staging run confirmed key interactive flows. No P0/P1 deviations. No unresolved spec divergences.
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked (Signals page, Reports Performance tab, cash balance)
+- [x] No direct URL construction outside api.* wrapper (LL-v2.0-P3-4 check: N/A — api.* wrapper pattern used throughout)
+
+**Signed off by:** Director of Quality
+**Date:** 2026-04-12
+**Comments:** QA evidence accepted. Post-merge Playwright run (SC-REP-01–04, SC-SIG-CB-01–02) to be completed once BLG-QA-11 resolved in v2.7.

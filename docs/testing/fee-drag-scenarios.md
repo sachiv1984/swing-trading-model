@@ -144,3 +144,11 @@ Formula:
 | SC-FEE-04 | `tests/e2e/fee-drag-trade-history.spec.js` | Confirmed |
 | SC-FEE-05 | `tests/test_trade_service.py` | Confirmed |
 | SC-FEE-06 | `tests/test_trade_service.py` | Confirmed |
+
+---
+
+## Known Deviations
+
+| Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
+|-------------|----------------------|----------|------------------|-------|------------------|
+| SC-FEE-01 to SC-FEE-04 Playwright automated run failed in v2.6 due to systemic `page.route()` intercept failure affecting the entire Playwright suite (not a spec or implementation defect; spec file structurally correct and code-review verified) | Scenarios SC-FEE-01–04 fully automated and passing in headless Playwright | P3 | v2.7 | QA & Testing Owner | BLG-QA-11 |
