@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-04-13
+**Last Updated:** 2026-04-13 (OA-1 resolved — BLG-GOV-17)
 **Cycle:** 2026-04-11__release-v2.6
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -81,7 +81,7 @@ All action items have recorded dispositions. Filing compliance: PASS.
 
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
-| 1 | BLG-GOV-17 — Implement sprint-close trigger workflow fix to prevent STEP 5 being skipped. Third recurrence escalated to Head of Specs Team. P1 High. | Head of Specs Team | Before v2.7 planning opens | PMO Lead escalation → Product Owner if not resolved before planning | *(complete when resolved)* |
+| 1 | BLG-GOV-17 — Implement sprint-close trigger workflow fix to prevent STEP 5 being skipped. Third recurrence escalated to Head of Specs Team. P1 High. | Head of Specs Team | Before v2.7 planning opens | PMO Lead escalation → Product Owner if not resolved before planning | ✅ **Resolved 2026-04-13** — (1) `.github/workflows/sprint_close_reminder.yml` created: posts mandatory PR comment on every EPIC merge to main; (2) `execution_prompt.md` v3.3→v3.4: STEP 3.2.D post-merge reminder made unconditional — "if remaining EPICs pending" qualifier removed. OPERATIONAL_GUIDE v3.54→v3.55. prompt_change_log.md appended. BLG-GOV-17 marked COMPLETE in backlog.md. |
 | 2 | BLG-GOV-18 — Add QA evidence sign-off gate to execution_prompt.md §3.2.B before PR creation. P2 Medium. | Director of Quality | v2.7 planning window | PMO Lead | *(complete when resolved)* |
 | 3 | BLG-GOV-19 — Define autonomous DoQ sign-off class in execution_prompt.md; update delivery_verification_prompt.md STEP -1.3 Tier 2 check. P2 Medium. | Director of Quality | v2.7 planning window | PMO Lead | *(complete when resolved)* |
 | 4 | BLG-QA-11 — Resolve Playwright page.route() intercept failure. Unblocks SC-REP-01–04, SC-SIG-CB-01–02, SC-FEE-01–04 (all structurally correct specs). P2 Medium. | QA & Testing Owner | v2.7 | PMO Lead | *(complete when resolved)* |

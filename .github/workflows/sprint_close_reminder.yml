@@ -1,0 +1,70 @@
+name: "Sprint Close Reminder"
+
+# Fires when any EPIC PR from an exec/** branch is merged into main.
+# Posts a comment reminding the developer to re-invoke `run sprint`
+# so STEP 5 (Sprint Close) executes before `run delivery verification`.
+# This automation was mandated by BLG-GOV-17 (third recurrence of sprint close being skipped).
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  pull-requests: write
+
+jobs:
+  sprint_close_reminder:
+    # Only runs when: PR was actually merged AND came from an exec/** branch
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'exec/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Detect EPIC PR and extract cycle ID
+        id: detect
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+
+          # Match title starting with [EPIC-nn]
+          if echo "$TITLE" | grep -qE '^\[EPIC-[0-9]+\]'; then
+            echo "is_epic=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_epic=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Extract cycle_id from branch: exec/<cycle_id>/<epic_id>
+          # e.g. exec/2026-04-11__release-v2.6/EPIC-04 -> 2026-04-11__release-v2.6
+          CYCLE=$(echo "$BRANCH" | sed -E 's|exec/([^/]+)/.*|\1|')
+          echo "cycle=$CYCLE" >> $GITHUB_OUTPUT
+
+      - name: Post sprint close reminder comment
+        if: steps.detect.outputs.is_epic == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const cycle = '${{ steps.detect.outputs.cycle }}';
+            const body = [
+              '## ⚠️ Sprint Close Required',
+              '',
+              'This EPIC PR has merged. Before running `run delivery verification`, you **must** re-invoke the Sprint Execution Engine:',
+              '',
+              '```',
+              `run sprint --cycle "${cycle}"`,
+              '```',
+              '',
+              'The engine checks `merge_gate.all_merged` — if all EPICs are now merged, it executes **STEP 5 (Sprint Close)** directly, producing `sprint_close.md` and sealing `execution_state.json`.',
+              '',
+              '> **Skipping this step causes Phase 4 preflight failure:** `sprint_close.md` missing, `execution_state.json` unsealed. This reminder exists because sprint close was skipped three times (BLG-GOV-17).',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body,
+            });

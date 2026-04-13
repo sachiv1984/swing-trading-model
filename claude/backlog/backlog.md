@@ -250,13 +250,14 @@ BLG-GOV-09 (cycle velocity metric) shipped in v2.4 tracking story completion rat
 
 ---
 
-### BLG-GOV-17 — Fix sprint-close trigger workflow to prevent STEP 5 being skipped
+### BLG-GOV-17 — Fix sprint-close trigger workflow to prevent STEP 5 being skipped ✅ COMPLETE
 **Priority:** P1 (High)
 **Type:** Governance Process
 **Owner:** Head of Specs Team
 **Source:** lessons_learnt_cycle.md Phase 3 + Phase 4, 2026-04-11__release-v2.6 — third recurrence, escalated — 2026-04-13
 **Effort:** S (~0.5d)
 **Provisional-Target:** v2.7
+**Completed:** 2026-04-13 — OA-1 (closure_record.md 2026-04-11__release-v2.6)
 
 **Problem**
 For three consecutive cycles (v2.5 and v2.6), all EPIC PRs were merged on GitHub without re-invoking `run sprint`, leaving `execution_state.json` unsealed and `sprint_close.md` uncreated. The hard gate (LL-v2.2-EX-02) in `execution_prompt.md` fires correctly but only when `run sprint` is re-invoked — the engine cannot detect a PR merge it was not present for. Each recurrence requires an in-session STEP 5 recovery run before delivery verification can proceed. Per `lessons_learnt_prompt.md §3.7`, a friction item that recurs with an open outstanding action is an automatic escalation trigger; this is now escalated to Head of Specs Team.
