@@ -5,11 +5,11 @@
   "invoked_utc": "2026-04-14T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-14T00:00:00Z",
+  "last_updated_utc": "2026-04-14T01:00:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-04-13__release-v2.7/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
@@ -20,12 +20,12 @@
         "ST-01": {
           "title": "Enable Supabase Supavisor connection pooling",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "delegated",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 222,
           "branch": "exec/2026-04-13__release-v2.7/EPIC-01",
           "commit_sha": null,
-          "delegation_record_id": null,
+          "delegation_record_id": "DEL-20260414-01",
           "blocked_since_utc": null,
           "unblock_criteria": "Render staging and production DATABASE_URL updated to Supavisor pooler (port 6543, ?pgbouncer=true); baseline re-run shows p50 ≤ 500ms for fast cluster endpoints; docs/ops/api_performance_baseline.md updated to v1.2",
           "completed_utc": null,
@@ -34,26 +34,26 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Delegated via DEL-20260414-01 to Infrastructure & Operations Owner"
         },
         "ST-02": {
           "title": "Refactor get_portfolio_summary() to use a single DB connection",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 223,
           "branch": "exec/2026-04-13__release-v2.7/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "a98715a6fb6ec475454d576d99ba96044339fb3e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "ST-01 must be verified on staging first",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-14T01:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio"],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "commit",
           "sign_off_record": null,
-          "notes": "Depends on ST-01: do not begin measurement until ST-01 staging verification confirmed"
+          "notes": "Code complete: 1 DB connection per request (was 4+). 30 tests pass. p50 measurement deferred — requires ST-01 (Supavisor) staging verification first."
         }
       }
     },
@@ -275,8 +275,8 @@
   },
 
   "blocked_items": [],
-  "delegated_items": [],
-  "completed_items": [],
+  "delegated_items": ["ST-01"],
+  "completed_items": ["ST-02"],
   "open_escalations": [],
 
   "merge_gate": {
