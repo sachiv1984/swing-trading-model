@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.4)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.5)
 
 ### 8.1 Invocation
 
@@ -1291,8 +1291,8 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.55 |
-| Last Updated | 2026-04-13 |
+| Version | 3.56 |
+| Last Updated | 2026-04-14 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1303,7 +1303,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.26 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.5 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.7 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.4 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.5 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v1.9 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.3 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1326,6 +1326,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.56 | 2026-04-14 | **execution_prompt.md v3.4→v3.5 — ST-03 (BLG-GOV-18): PR gate on QA sign-off Date.** §8 source prompt header updated v3.4→v3.5. §14 Execution Engine Source updated v3.4→v3.5. Change: §3.2.B pre-condition added — engine must not open a PR until `qa_evidence_EPIC-xx.md` DoQ sign-off block has a non-blank Date field. `commit-check` skill updated — Check 8 added: QA sign-off Date completeness check fires when `qa_evidence_EPIC-xx.md` is staged. Authority: Head of Specs Team (ST-03, BLG-GOV-18, 2026-04-14). |
 | 3.55 | 2026-04-13 | **execution_prompt.md v3.3→v3.4 — BLG-GOV-17 sprint-close trigger fix (third recurrence).** §8 source prompt header updated v3.3→v3.4. §14 Execution Engine Source updated v3.3→v3.4. Changes: (1) STEP 3.2.D post-merge reminder — removed conditional qualifier; unconditional re-invocation required after every EPIC merge including the final one; (2) `.github/workflows/sprint_close_reminder.yml` created — posts mandatory PR comment on EPIC merge to main. Authority: Head of Specs Team (OA-1, BLG-GOV-17, 2026-04-13). |
 | 3.54 | 2026-04-11 | **ST-12/CF-1 + ST-13/CF-2 + ST-14 (EPIC-04, v2.6) — four governance prompt patches applied.** (1) execution_prompt.md v3.2→v3.3: §8 source prompt header updated; §14 Execution Engine Source updated. Change: STEP 5.1 Unpushed-Commit Check added — before sprint close, verify `git log --not origin/<branch>` is empty; soft gate if any qa_evidence commit is unpushed. (2) design_gate_prompt.md v1.1→v1.2: §6.5 source prompt header updated; §14 Design Gate Engine updated. Change: STEP 7 governance file edit check added (CF-2 carry-forward). (3) amendment_cycle_prompt.md v1.6→v1.7: §6B.8 source prompt header updated; §14 Amendment Cycle Engine updated. Change: STEP 9 governance file edit check added (CF-2 carry-forward). (4) roadmap_prompt.md v4.7→v4.8: §6 source prompt header updated; §14 Roadmap Engine Source updated. Changes: STEP 12 governance file edit check added (CF-2 carry-forward); STEP 9 decision_log decrease upgraded to STRUCTURAL HARD GATE (ST-14/BLG-GOV-15). §1 Hard Rules table: decision_log row updated to reflect structural gate enforcement. Authority: Head of Specs Team (ST-12/13/14, 2026-04-11). |
 | 3.53 | 2026-04-11 | **post_ship_closure.md v2.2→v2.3 — velocity_metrics.md added to STEP 6.** §10 Post-Ship source prompt header updated v2.2→v2.3. §14 Post-Ship Closure Engine updated v2.2→v2.3. Change: STEP 6 operational documents list now includes `claude/cycles/velocity_metrics.md` — engine must append velocity row (Planned/Completed/rolling average) per cycle. Fixes gap that caused v2.4 and v2.5 rows to be missed. |
