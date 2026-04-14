@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.5
+**Version:** 3.6
 **Last Updated:** 2026-04-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -703,6 +703,26 @@ The consolidation block must include:
 - Comments:
 
 This file is the evidence backing `qa_signed_off = true` in `execution_state.json`. A PR comment alone is not sufficient — this file must exist and the sign-off block must be complete before the merge gate runs.
+
+**Autonomous DoQ sign-off class (BLG-GOV-19):**
+
+When all four of the following qualifying criteria are met, the engine may apply an autonomous DoQ sign-off without Director of Quality review. This class is defined to avoid unnecessary delegation blocks on pure governance or spec documentation EPICs where no behavioural verification is possible.
+
+**Qualifying criteria:**
+1. All stories in the EPIC have `delegation_class: autonomous`
+2. All AC is verifiable by code review alone — no observable UI behaviour, no staging run required, and no live system interaction
+3. No frontend-visible change is introduced by this EPIC
+4. Engine signer field is populated as "Sprint Execution Engine (autonomous class)"
+
+When all criteria are met, populate the sign-off block as follows:
+
+```
+- Signed off by: Sprint Execution Engine (autonomous class)
+- Date: <today's date — must be non-blank>
+- Comments: Autonomous class sign-off — all four qualifying criteria met (all stories autonomous, all AC code-review-verifiable, no frontend changes, engine signer populated).
+```
+
+If any criterion is not met, the autonomous class does not apply — the sign-off block must be completed by the Director of Quality. An EPIC signed off under the autonomous class is still subject to the STEP 4 merge gate; the Director of Quality may review and override at any time before merge.
 
 **3.2.B — Open PR**
 

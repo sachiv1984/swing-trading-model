@@ -13,6 +13,9 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-04-14 | `OPERATIONAL_GUIDE.md` | v3.56→v3.57 | ST-04 (BLG-GOV-19): §8 source prompt header v3.5→v3.6; §9 source prompt header v1.9→v2.0; §14 Execution Engine Source v3.5→v3.6; Verification Engine Source v1.9→v2.0; changelog entry 3.57 prepended. | Head of Specs Team (ST-04, BLG-GOV-19, 2026-04-14) |
+| 2026-04-14 | `execution_prompt.md` | v3.5→v3.6 | ST-04 (BLG-GOV-19): §3.2.A — Autonomous DoQ sign-off class defined with four qualifying criteria (all autonomous, code-review-only AC, no frontend changes, engine signer populated). | Head of Specs Team (ST-04, BLG-GOV-19, 2026-04-14) |
+| 2026-04-14 | `delivery_verification_prompt.md` | v1.9→v2.0 | ST-04 (BLG-GOV-19): STEP -1.3 Tier 2 — autonomous class exception added. If signer is "Sprint Execution Engine (autonomous class)" and all four qualifying criteria are met, treated as compliant sign-off (Tier 2 does not fire). | Head of Specs Team (ST-04, BLG-GOV-19, 2026-04-14) |
 | 2026-04-14 | `OPERATIONAL_GUIDE.md` | v3.55→v3.56 | ST-03 (BLG-GOV-18): §8 source prompt header v3.4→v3.5; §14 Execution Engine Source v3.4→v3.5; changelog entry 3.56 prepended. | Head of Specs Team (ST-03, BLG-GOV-18, 2026-04-14) |
 | 2026-04-14 | `execution_prompt.md` | v3.4→v3.5 | ST-03 (BLG-GOV-18): §3.2.B pre-condition added — do not open PR until DoQ sign-off Date is non-blank. `commit-check` skill Check 8 added for QA sign-off Date completeness. | Head of Specs Team (ST-03, BLG-GOV-18, 2026-04-14) |
 | 2026-04-13 | `OPERATIONAL_GUIDE.md` | v3.54→v3.55 | BLG-GOV-17 sprint-close trigger fix: §8 source prompt header v3.3→v3.4; §14 Execution Engine Source v3.3→v3.4. Changelog entry 3.55 prepended. | Head of Specs Team (OA-1, BLG-GOV-17, 2026-04-13) |
