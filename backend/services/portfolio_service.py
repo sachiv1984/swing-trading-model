@@ -14,6 +14,7 @@ from datetime import datetime
 from services.drawdown_service import get_drawdown_fields
 
 from database import (
+    get_db,
     get_portfolio,
     get_positions,
     create_portfolio_snapshot,
@@ -51,213 +52,216 @@ def get_portfolio_summary() -> Dict:
         - Calculates true P&L using net cash flow
         - Converts all values to GBP for consistency
     """
-    portfolio = get_portfolio()
-    if not portfolio:
-        raise ValueError("Portfolio not found")
-    
-    portfolio_id = str(portfolio['id'])
-    positions = get_positions(portfolio_id, status='open')
-    
-    cash = float(portfolio['cash'])
-    
-    if not positions:
+    with get_db() as conn:
+        portfolio = get_portfolio(conn=conn)
+        if not portfolio:
+            raise ValueError("Portfolio not found")
+
+        portfolio_id = str(portfolio['id'])
+        positions = get_positions(portfolio_id, status='open', conn=conn)
+
+        cash = float(portfolio['cash'])
+
+        if not positions:
+            live_fx_rate = get_live_fx_rate()
+            cash_summary = get_total_deposits_withdrawals(portfolio_id, conn=conn)
+            net_cash_flow = cash_summary['net_cash_flow']
+            drawdown_fields = get_drawdown_fields(
+                portfolio_id=portfolio_id,
+                current_total_value=cash,
+                conn=conn,
+            )
+            return {
+                "cash": cash,
+                "cash_balance": cash,
+                "total_value": cash,
+                "open_positions_value": 0,
+                "total_pnl": 0,
+                "initial_value": net_cash_flow,
+                "net_deposits": net_cash_flow,
+                "last_updated": str(portfolio['last_updated']),
+                "live_fx_rate": live_fx_rate,
+                "current_drawdown_percent": drawdown_fields["current_drawdown_percent"],
+                "peak_portfolio_value": drawdown_fields["peak_portfolio_value"],
+                "portfolio_heat_percent": 0.0,
+                "position_risks": [],
+                "positions": [],
+            }
+
+        # Get live FX rate
         live_fx_rate = get_live_fx_rate()
-        cash_summary = get_total_deposits_withdrawals(portfolio_id)
+        print(f"\n📊 /portfolio endpoint - fetching live prices for Dashboard")
+
+        positions_list = []
+        position_risks = []
+        total_positions_value_gbp = 0
+
+        for pos in positions:
+            pos = decimal_to_float(pos)
+
+            # FETCH LIVE PRICE
+            print(f"   Fetching live price for {pos['ticker']}...")
+            live_price = get_current_price(pos['ticker'])
+
+            if live_price:
+                # Fix UK stocks: Yahoo returns pence
+                if pos['market'] == 'UK' and live_price > 1000:
+                    live_price = live_price / 100
+                    print(f"   ✓ Converted {pos['ticker']} from pence to pounds: {live_price}")
+                current_price_native = live_price
+                print(f"   ✓ Live price: {current_price_native:.2f}")
+            else:
+                # Fallback to stored price
+                print(f"   ⚠️  Using stored price for {pos['ticker']}")
+                stored_price = pos.get('current_price', pos['entry_price'])
+                if pos['market'] == 'US' and stored_price < 500:
+                    # Appears to be GBP, convert back to USD estimate
+                    current_price_native = stored_price * 1.38
+                    print(f"   ⚠️  Stored price appears to be GBP, estimated USD: {current_price_native:.2f}")
+                else:
+                    current_price_native = stored_price
+
+            shares = pos['shares']
+            market = pos['market']
+            stored_fx_rate = pos.get('fx_rate', 1.27)
+
+            # Convert to GBP for Dashboard
+            if market == 'US':
+                current_price_gbp = current_price_native / live_fx_rate
+                print(f"   💱 ${current_price_native:.2f} → £{current_price_gbp:.2f}")
+            else:
+                current_price_gbp = current_price_native
+
+            current_value_gbp = current_price_gbp * shares
+            total_positions_value_gbp += current_value_gbp
+
+            # Calculate P&L
+            entry_price = pos.get('fill_price', pos['entry_price']) if market == 'US' else pos['entry_price']
+            pnl_native = (current_price_native - entry_price) * shares
+
+            if market == 'US':
+                pnl_gbp = pnl_native / live_fx_rate
+            else:
+                pnl_gbp = pnl_native
+
+            pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
+
+            # Convert entry_price and current_stop to GBP for display
+            # Spec: risk_dashboard.md §6.2 — all price columns in GBP
+            if market == 'US':
+                entry_price_gbp = round(entry_price / stored_fx_rate, 2)
+                current_stop_gbp = round(pos.get("current_stop", 0) / stored_fx_rate, 2)
+            else:
+                entry_price_gbp = round(entry_price, 2)
+                current_stop_gbp = round(pos.get("current_stop", 0), 2)
+
+            holding_days = pos.get('holding_days', 0)
+
+            if holding_days < 10:
+                display_status = "GRACE"
+            elif pnl_gbp > 0:
+                display_status = "PROFITABLE"
+            else:
+                display_status = "LOSING"
+
+            grace_period = holding_days < 10
+            grace_days_remaining = compute_grace_days_remaining(
+                grace_period=grace_period,
+                holding_days=holding_days,
+            )
+
+            # Calculate Position Risk per metrics_definitions.md §Position Risk (TASK-06 — v1.7)
+            # Uses initial_stop (entry stop), not trailing current_stop
+            # Formula: (entry_price_native - initial_stop_native) * shares * fx_adjustment
+            # fx_adjustment = 1/fx_rate for US (USD→GBP), 1.0 for UK
+            initial_stop = pos.get("initial_stop")
+            if initial_stop is not None and float(initial_stop) > 0:
+                initial_stop = float(initial_stop)
+                risk_native = max(0.0, entry_price - initial_stop)
+                if market == 'US':
+                    fx_adj = 1.0 / stored_fx_rate if stored_fx_rate else 1.0 / live_fx_rate
+                else:
+                    fx_adj = 1.0
+                position_risk_gbp = round(risk_native * shares * fx_adj, 2)
+            else:
+                position_risk_gbp = 0.0
+
+            position_risks.append({
+                "ticker": pos["ticker"],
+                "position_risk_gbp": position_risk_gbp,
+            })
+
+            positions_list.append({
+                "id": str(pos["id"]),
+                "ticker": pos["ticker"],
+                "market": market,
+                "entry_date": str(pos["entry_date"]),
+                "entry_price": entry_price_gbp,
+                "shares": shares,
+                "current_price": round(current_price_gbp, 2),
+                "current_value": round(current_value_gbp, 2),
+                "pnl": round(pnl_gbp, 2),
+                "pnl_pct": round(pnl_pct, 2),
+                "current_stop": current_stop_gbp,
+                "holding_days": holding_days,
+                "status": "open",
+                "display_status": display_status,
+                "fx_rate": stored_fx_rate,
+                "grace_period": grace_period,
+                "grace_days_remaining": grace_days_remaining,
+                "live_fx_rate": live_fx_rate,
+            })
+
+        total_value = cash + total_positions_value_gbp
+
+        # Calculate Portfolio Heat per metrics_definitions.md §Portfolio Heat (TASK-07 — v1.7)
+        # Formula: Sum(Position_Risk_GBP) / Portfolio_Value_GBP * 100
+        total_risk_gbp = sum(r["position_risk_gbp"] for r in position_risks)
+        portfolio_heat_percent = round(total_risk_gbp / total_value * 100, 2) if total_value > 0 else 0.0
+
+        # Calculate TRUE portfolio P&L accounting for deposits/withdrawals
+        # Single connection: reuse conn established at top of function
+        cash_summary = get_total_deposits_withdrawals(portfolio_id, conn=conn)
         net_cash_flow = cash_summary['net_cash_flow']
+
+        # Total cost of all positions
+        total_cost_of_positions = sum(float(pos.get('total_cost', 0)) for pos in positions)
+
+        # True P&L = Current Value - Net Cash Flow
+        true_total_pnl = total_value - net_cash_flow
+
+        print(f"\n✓ Portfolio calculated:")
+        print(f"   Total positions value: £{total_positions_value_gbp:.2f}")
+        print(f"   Total cost of positions: £{total_cost_of_positions:.2f}")
+        print(f"   Cash: £{cash:.2f}")
+        print(f"   Total value: £{total_value:.2f}")
+        print(f"   Net cash flow (deposits-withdrawals): £{net_cash_flow:.2f}")
+        print(f"   True total P&L: £{true_total_pnl:+.2f}\n")
+
+        # B1 — Current drawdown fields (QWB BLG-FEAT-01)
+        # Spec: portfolio_endpoints.md v1.8.2, metrics_definitions.md v1.5.8
         drawdown_fields = get_drawdown_fields(
             portfolio_id=portfolio_id,
-            current_total_value=cash,
+            current_total_value=total_value,
+            conn=conn,
         )
+
         return {
             "cash": cash,
             "cash_balance": cash,
-            "total_value": cash,
-            "open_positions_value": 0,
-            "total_pnl": 0,
+            "total_value": total_value,
+            "open_positions_value": total_positions_value_gbp,
+            "total_pnl": true_total_pnl,
             "initial_value": net_cash_flow,
             "net_deposits": net_cash_flow,
             "last_updated": str(portfolio['last_updated']),
             "live_fx_rate": live_fx_rate,
             "current_drawdown_percent": drawdown_fields["current_drawdown_percent"],
             "peak_portfolio_value": drawdown_fields["peak_portfolio_value"],
-            "portfolio_heat_percent": 0.0,
-            "position_risks": [],
-            "positions": [],
+            "portfolio_heat_percent": portfolio_heat_percent,
+            "position_risks": position_risks,
+            "positions": positions_list,
         }
-    
-    # Get live FX rate
-    live_fx_rate = get_live_fx_rate()
-    print(f"\n📊 /portfolio endpoint - fetching live prices for Dashboard")
-    
-    positions_list = []
-    position_risks = []
-    total_positions_value_gbp = 0
-
-    for pos in positions:
-        pos = decimal_to_float(pos)
-        
-        # FETCH LIVE PRICE
-        print(f"   Fetching live price for {pos['ticker']}...")
-        live_price = get_current_price(pos['ticker'])
-        
-        if live_price:
-            # Fix UK stocks: Yahoo returns pence
-            if pos['market'] == 'UK' and live_price > 1000:
-                live_price = live_price / 100
-                print(f"   ✓ Converted {pos['ticker']} from pence to pounds: {live_price}")
-            current_price_native = live_price
-            print(f"   ✓ Live price: {current_price_native:.2f}")
-        else:
-            # Fallback to stored price
-            print(f"   ⚠️  Using stored price for {pos['ticker']}")
-            stored_price = pos.get('current_price', pos['entry_price'])
-            if pos['market'] == 'US' and stored_price < 500:
-                # Appears to be GBP, convert back to USD estimate
-                current_price_native = stored_price * 1.38
-                print(f"   ⚠️  Stored price appears to be GBP, estimated USD: {current_price_native:.2f}")
-            else:
-                current_price_native = stored_price
-        
-        shares = pos['shares']
-        market = pos['market']
-        stored_fx_rate = pos.get('fx_rate', 1.27)
-        
-        # Convert to GBP for Dashboard
-        if market == 'US':
-            current_price_gbp = current_price_native / live_fx_rate
-            print(f"   💱 ${current_price_native:.2f} → £{current_price_gbp:.2f}")
-        else:
-            current_price_gbp = current_price_native
-        
-        current_value_gbp = current_price_gbp * shares
-        total_positions_value_gbp += current_value_gbp
-        
-        # Calculate P&L
-        entry_price = pos.get('fill_price', pos['entry_price']) if market == 'US' else pos['entry_price']
-        pnl_native = (current_price_native - entry_price) * shares
-        
-        if market == 'US':
-            pnl_gbp = pnl_native / live_fx_rate
-        else:
-            pnl_gbp = pnl_native
-        
-        pnl_pct = ((current_price_native - entry_price) / entry_price) * 100 if entry_price > 0 else 0
-
-        # Convert entry_price and current_stop to GBP for display
-        # Spec: risk_dashboard.md §6.2 — all price columns in GBP
-        if market == 'US':
-            entry_price_gbp = round(entry_price / stored_fx_rate, 2)
-            current_stop_gbp = round(pos.get("current_stop", 0) / stored_fx_rate, 2)
-        else:
-            entry_price_gbp = round(entry_price, 2)
-            current_stop_gbp = round(pos.get("current_stop", 0), 2)
-
-        holding_days = pos.get('holding_days', 0)
-        
-        if holding_days < 10:
-            display_status = "GRACE"
-        elif pnl_gbp > 0:
-            display_status = "PROFITABLE"
-        else:
-            display_status = "LOSING"
-
-        grace_period = holding_days < 10
-        grace_days_remaining = compute_grace_days_remaining(
-            grace_period=grace_period,
-            holding_days=holding_days,
-        )
-
-        # Calculate Position Risk per metrics_definitions.md §Position Risk (TASK-06 — v1.7)
-        # Uses initial_stop (entry stop), not trailing current_stop
-        # Formula: (entry_price_native - initial_stop_native) * shares * fx_adjustment
-        # fx_adjustment = 1/fx_rate for US (USD→GBP), 1.0 for UK
-        initial_stop = pos.get("initial_stop")
-        if initial_stop is not None and float(initial_stop) > 0:
-            initial_stop = float(initial_stop)
-            risk_native = max(0.0, entry_price - initial_stop)
-            if market == 'US':
-                fx_adj = 1.0 / stored_fx_rate if stored_fx_rate else 1.0 / live_fx_rate
-            else:
-                fx_adj = 1.0
-            position_risk_gbp = round(risk_native * shares * fx_adj, 2)
-        else:
-            position_risk_gbp = 0.0
-
-        position_risks.append({
-            "ticker": pos["ticker"],
-            "position_risk_gbp": position_risk_gbp,
-        })
-
-        positions_list.append({
-            "id": str(pos["id"]),
-            "ticker": pos["ticker"],
-            "market": market,
-            "entry_date": str(pos["entry_date"]),
-            "entry_price": entry_price_gbp,
-            "shares": shares,
-            "current_price": round(current_price_gbp, 2),
-            "current_value": round(current_value_gbp, 2),
-            "pnl": round(pnl_gbp, 2),
-            "pnl_pct": round(pnl_pct, 2),
-            "current_stop": current_stop_gbp,
-            "holding_days": holding_days,
-            "status": "open",
-            "display_status": display_status,
-            "fx_rate": stored_fx_rate,
-            "grace_period": grace_period,
-            "grace_days_remaining": grace_days_remaining,
-            "live_fx_rate": live_fx_rate,
-        })
-
-    
-    total_value = cash + total_positions_value_gbp
-
-    # Calculate Portfolio Heat per metrics_definitions.md §Portfolio Heat (TASK-07 — v1.7)
-    # Formula: Sum(Position_Risk_GBP) / Portfolio_Value_GBP * 100
-    total_risk_gbp = sum(r["position_risk_gbp"] for r in position_risks)
-    portfolio_heat_percent = round(total_risk_gbp / total_value * 100, 2) if total_value > 0 else 0.0
-
-    # Calculate TRUE portfolio P&L accounting for deposits/withdrawals
-    cash_summary = get_total_deposits_withdrawals(portfolio_id)
-    net_cash_flow = cash_summary['net_cash_flow']
-    
-    # Total cost of all positions
-    total_cost_of_positions = sum(float(pos.get('total_cost', 0)) for pos in positions)
-    
-    # True P&L = Current Value - Net Cash Flow
-    true_total_pnl = total_value - net_cash_flow
-    
-    print(f"\n✓ Portfolio calculated:")
-    print(f"   Total positions value: £{total_positions_value_gbp:.2f}")
-    print(f"   Total cost of positions: £{total_cost_of_positions:.2f}")
-    print(f"   Cash: £{cash:.2f}")
-    print(f"   Total value: £{total_value:.2f}")
-    print(f"   Net cash flow (deposits-withdrawals): £{net_cash_flow:.2f}")
-    print(f"   True total P&L: £{true_total_pnl:+.2f}\n")
-
-   # B1 — Current drawdown fields (QWB BLG-FEAT-01)
-   # Spec: portfolio_endpoints.md v1.8.2, metrics_definitions.md v1.5.8
-    drawdown_fields = get_drawdown_fields(
-        portfolio_id=portfolio_id,
-        current_total_value=total_value,
-    )
-    
-    return {
-        "cash": cash,
-        "cash_balance": cash,
-        "total_value": total_value,
-        "open_positions_value": total_positions_value_gbp,
-        "total_pnl": true_total_pnl,
-        "initial_value": net_cash_flow,
-        "net_deposits": net_cash_flow,
-        "last_updated": str(portfolio['last_updated']),
-        "live_fx_rate": live_fx_rate,
-        "current_drawdown_percent": drawdown_fields["current_drawdown_percent"],
-        "peak_portfolio_value": drawdown_fields["peak_portfolio_value"],
-        "portfolio_heat_percent": portfolio_heat_percent,
-        "position_risks": position_risks,
-        "positions": positions_list,
-    }
 
 
 def create_daily_snapshot() -> Dict:
