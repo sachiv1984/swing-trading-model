@@ -3,7 +3,8 @@ name: "Governance Sync Loop"
 on:
   push:
     branches:
-      - 'exec/**' # Triggers when you push to your v1.7 execution branch
+      - 'exec/**' # Triggers when you push to your exec execution branches
+      - 'main'    # ST-05 (BLG-GOV-16): also triggers on merge to main so issues are closed even if exec-branch push was missed
 
 permissions:
   issues: write
