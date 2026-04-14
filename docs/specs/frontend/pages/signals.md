@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-03-17
+**Version:** 0.2
+**Last Updated:** 2026-04-14
+**Design Source (v2.7 additions):** docs/design/2026-04-13__release-v2.7/supplementary-indicators/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -18,6 +19,7 @@ Users should be able to:
 - Adjust the number of signals shown (top_n)
 - Adjust the lookback window used for signal scoring (lookback_days)
 - Understand the signal type, ticker, and relevant context at a glance
+- View supplementary context indicators (relative strength, 52W high proximity, avg volume, vs. 50d MA) as informational columns that do not affect signal ranking (v2.7)
 
 ---
 
@@ -56,7 +58,7 @@ Two controls are displayed above the signals table in an inline row.
 
 ## Signals Table
 
-The main content area displays the signals returned by `GET /signals` in tabular form.
+The main content area displays the signals returned by `POST /signals/generate` in tabular form.
 
 Columns correspond to the fields returned by the signal endpoint (see `docs/specs/api_contracts/signal_endpoints.md` for the canonical field list). At minimum:
 
@@ -67,6 +69,32 @@ Columns correspond to the fields returned by the signal endpoint (see `docs/spec
 - Relevant context (e.g. market, sector)
 
 Column set must not be derived independently — it must match the canonical response fields defined in the API contract.
+
+### Supplementary Context Columns (v2.7 — ST-09)
+
+**Design source:** docs/design/2026-04-13__release-v2.7/supplementary-indicators/ux_spec.md
+
+Four supplementary columns are appended after the canonical columns. They are grouped under a secondary header row:
+
+> **"Supplementary Context (informational — does not affect ranking)"**
+
+This header spans the four columns and is rendered in muted typography (smaller font size, secondary colour per design system).
+
+| Column Header | Source field | Format | Notes |
+|---------------|-------------|--------|-------|
+| Rel. Strength vs. Benchmark (informational) | `relative_strength_pct` | signed %, 1dp (e.g. `+3.4%`) | Tooltip: "Informational only — does not affect signal rank." Positive = green, negative = red. |
+| 52W High Proximity | `week52_high_proximity_pct` | %, 1dp (e.g. `94.2%`) | Tooltip: "% of 52-week high the current price represents" |
+| Avg Vol (20d) | `avg_daily_volume_20d` | integer, abbreviated (e.g. `1.2M`, `450K`) | — |
+| vs. 50d MA | `price_vs_50d_ma` | signed %, 1dp (e.g. `+2.1%`) | Positive = above MA (green), negative = below (red) |
+
+**Hard rules:**
+- Supplementary columns are read-only — no sorting, filtering, or interaction.
+- These columns must not be used as sort keys.
+- The rank column and signal score are visually separated from the supplementary column group to avoid implying influence.
+- If any supplementary field is `null` or absent, the cell renders as `—` (em-dash, muted).
+- All values sourced from backend. The frontend must not compute these values.
+
+**Responsive:** On narrow viewports, supplementary columns scroll horizontally. Ticker, signal type, and rank columns are sticky.
 
 ---
 
@@ -82,7 +110,7 @@ This state is expected when `top_n` is very small, `lookback_days` is very short
 
 ## API Reference
 
-- **Endpoint:** `GET /signals`
+- **Primary endpoint:** `POST /signals/generate`
 - **Parameters:** `top_n`, `lookback_days`
 - **Canonical contract:** `docs/specs/api_contracts/signal_endpoints.md`
 
@@ -94,4 +122,5 @@ The frontend must not calculate or derive signal scores, rankings, or fields. Al
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-04-14 | ST-09 (BLG-BE-10, v2.7): Added supplementary context columns — `relative_strength_pct`, `week52_high_proximity_pct`, `avg_daily_volume_20d`, `price_vs_50d_ma`. Grouped under "Supplementary Context (informational)" header row. Display-only; does not affect signal rank. Updated Purpose & User Goals, API Reference. Design source: docs/design/2026-04-13__release-v2.7/supplementary-indicators/ux_spec.md. Approved: Product Owner 2026-04-14. Design gate: 2026-04-13__release-v2.7. |
 | 0.1 | 2026-03-17 | Initial spec. ST-01 / ST-02 — EPIC-01 (4.3 Signal Exposure Enhancement). Design gate: 2026-03-17__release-v2.0. Approved by Head of UX & Design + Product Owner. |

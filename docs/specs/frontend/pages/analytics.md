@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.6
-**Last Updated:** 2026-03-24
+**Version:** 1.7
+**Last Updated:** 2026-04-14
+**Design Source (v2.7 additions):** docs/design/2026-04-13__release-v2.7/market-correlation/ux_spec.md
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.9 additions):** docs/design/2026-03-06__release-v1.9/
@@ -24,6 +25,7 @@ Users can:
 - Monitor discipline and compliance metrics
 - Export a PDF summary report
 - See data freshness indicator (v2.3)
+- Review per-position and portfolio-level market correlation vs. benchmark (v2.7)
 
 ---
 
@@ -37,6 +39,9 @@ All core analytics data is sourced from this call. The frontend transforms the s
 - `GET /analytics/cohort?period={month|quarter|year}` — Cohort Analysis panel (§15)
 - `GET /analytics/r-multiple-distribution` — R-Multiple Distribution Backend panel (§16)
 - `GET /analytics/compliance-metrics` — Discipline & Compliance panel (§17)
+
+**Additional endpoints (v2.7 additions):**
+- `GET /analytics/market-correlation?lookback_days={n}` — Market Correlation panel (§18)
 
 The page must never recalculate, derive, or override values returned by the backend.
 
@@ -143,6 +148,7 @@ When data is available and sufficient, components render in this order:
 15. **Cohort Analysis** — trade performance grouped by entry period (month/quarter/year) ← NEW (v1.9, ST-03)
 16. **R-Multiple Distribution (Backend)** — canonical server-side R-multiple distribution chart ← NEW (v1.9, ST-04)
 17. **Discipline & Compliance** — journal completion rate, stop-based exit rate, avg position size ← NEW (v1.9, ST-01)
+18. **Market Correlation** — per-position and portfolio-level Pearson correlation vs. benchmark ← NEW (v2.7, ST-08)
 
 ---
 
@@ -563,6 +569,60 @@ Metric definitions are canonical per `metrics_definitions.md`. Denominator/perio
 
 ---
 
+### 18. Market Correlation
+Source: `GET /analytics/market-correlation?lookback_days={n}`
+
+**Design source:** docs/design/2026-04-13__release-v2.7/market-correlation/ux_spec.md
+
+A new section displaying per-position and portfolio-level Pearson correlation coefficients versus a market benchmark (SPY for US positions, FTSE for UK positions). Results cached server-side with a TTL of at least one trading day.
+
+**Section header:** "Market Correlation"
+**Sub-header (muted):** "Pearson correlation vs. benchmark over [lookback_days]-day lookback. Cached daily."
+
+**Lookback control:** Compact integer input in the section header (right-aligned). Default: `252`. Minimum: `30`. On change: 500ms debounce, then re-fetch. Invalid input resets to `252`.
+
+**Correlation table:**
+
+| Column | Source field | Format |
+|--------|-------------|--------|
+| Ticker | `positions[].ticker` | Uppercase, monospace |
+| Market | `positions[].market` | "US" / "UK" |
+| Benchmark | `positions[].benchmark` | "SPY" / "FTSE" |
+| Correlation | `positions[].correlation` | 2 decimal places |
+| Severity | `positions[].severity` | Colour-coded badge |
+
+Rows sorted by correlation descending (highest first).
+
+**Portfolio Average row:** Visually distinct row below a full-width divider. Ticker cell shows "Portfolio Average" (italic, muted). Correlation sourced from `portfolio_average.weighted_correlation`. Severity badge applied.
+
+**Severity badge colour coding:**
+
+| Severity | Threshold | Badge |
+|----------|-----------|-------|
+| `high` | > 0.7 | Rose-500 background, white text |
+| `moderate` | 0.3 – 0.7 | Amber-400 background, dark text |
+| `low` | < 0.3 | Emerald-500 background, white text |
+
+Severity is determined server-side and returned in the `severity` field. The frontend applies badge colour based on the string — it does not re-evaluate the threshold.
+
+**States:**
+
+| State | Display |
+|-------|---------|
+| Loading | Skeleton table rows (3 rows) |
+| Loaded | Full table with position rows + portfolio average row |
+| No open positions | Muted message: "No open positions to correlate." |
+| Error (non-500) | Section-level error card with API error message |
+| Cached data on error | If `cached_at` present: "Last known data as of [date]" below error card |
+
+**Hard rules:**
+- The frontend must not compute correlation values. All values sourced from backend.
+- Correlation values are read-only — no click interaction.
+- If Yahoo Finance is unavailable, section shows error state — must not cause a page-level error.
+- `openapi.yaml` must be updated in the same commit as the new endpoint (AC requirement).
+
+---
+
 ## Responsive Behavior
 - Period selector and export button stack or compress at smaller widths
 - Summary cards: 1 column (mobile) → 2 columns (sm) → 3 columns (lg)
@@ -597,6 +657,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.7 | 2026-04-14 | ST-08 (BLG-FEAT-17, v2.7): §18 Market Correlation — per-position and portfolio-level Pearson correlation vs. benchmark (SPY/FTSE), colour-coded severity (high/moderate/low), lookback control (default 252 days), cached daily. Updated API Dependency, Purpose & User Goals, Component Rendering Order. Design source: docs/design/2026-04-13__release-v2.7/market-correlation/ux_spec.md. Approved: Product Owner 2026-04-14. Design gate: 2026-04-13__release-v2.7. |
 | 1.6 | 2026-03-24 | ST-02 (BLG-FEAT-09, v2.3): §Metrics Staleness Indicator — "data as of" timestamp below page title; amber badge when stale (≥4h default); hover shows absolute ISO timestamp. Design source: docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
 | 1.5 | 2026-03-18 | v2.1 chart interactivity (ST-11, CHART-IX): §4 heatmap — tile click drill-down to Monthly Trades modal. §5 equity curve — zoom (scroll/pinch/buttons), pan (click-drag), Reset button. §9 R-Multiple Analysis — hover tooltip per bar (range, count, % of total). Design source: docs/design/2026-03-18__release-v2.1/chart-interactivity/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
 | 1.4 | 2026-03-13 | QA review (v1.9 Sprint 2): File deviation DEV-EPIC02-ST03-01 — CohortAnalysis.js uses client-side computation instead of GET /analytics/cohort. P2. Director of Quality sign-off. |
