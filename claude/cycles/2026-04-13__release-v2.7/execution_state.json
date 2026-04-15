@@ -5,14 +5,14 @@
   "invoked_utc": "2026-04-14T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-14T00:00:00Z",
+  "last_updated_utc": "2026-04-15T00:00:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-04-13__release-v2.7/EPIC-01",
       "pr_number": null,
-      "pr_status": "none",
+      "pr_status": "pending",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-04-13__release-v2.7/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -20,13 +20,13 @@
         "ST-01": {
           "title": "Enable Supabase Supavisor connection pooling",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "delegated",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 222,
           "branch": "exec/2026-04-13__release-v2.7/EPIC-01",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
+          "delegation_record_id": "DEL-20260414-01",
+          "blocked_since_utc": "2026-04-14T00:00:00Z",
           "unblock_criteria": "Render staging and production DATABASE_URL updated to Supavisor pooler (port 6543, ?pgbouncer=true); baseline re-run shows p50 ≤ 500ms for fast cluster endpoints; docs/ops/api_performance_baseline.md updated to v1.2",
           "completed_utc": null,
           "acceptance_verified": false,
@@ -34,26 +34,26 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Delegation log: claude/cycles/2026-04-13__release-v2.7/delegation_log.md#DEL-20260414-01"
         },
         "ST-02": {
           "title": "Refactor get_portfolio_summary() to use a single DB connection",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 223,
           "branch": "exec/2026-04-13__release-v2.7/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "a98715a6",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 must be verified on staging first",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-14T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Depends on ST-01: do not begin measurement until ST-01 staging verification confirmed"
+          "deviations_filed": true,
+          "last_completed_substep": "all_ac_verified_except_p50",
+          "sign_off_record": "qa_evidence_EPIC-01.md#ST-02",
+          "notes": "AC-1, AC-3, AC-4 verified. AC-2 (p50 ≤ 400ms) deferred pending ST-01 Supavisor enablement."
         }
       }
     },
@@ -275,8 +275,8 @@
   },
 
   "blocked_items": [],
-  "delegated_items": [],
-  "completed_items": [],
+  "delegated_items": ["ST-01"],
+  "completed_items": ["ST-02"],
   "open_escalations": [],
 
   "merge_gate": {
