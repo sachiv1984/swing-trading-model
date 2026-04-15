@@ -123,14 +123,21 @@ test.describe('SC-SIG-CB-01 — Cash balance from /cash/summary', () => {
     await mockCashSummary(page, CASH_SUMMARY_FUNDED);
     await mockSignals(page);
 
-    // Navigate away first to clear React Query's in-memory cache (populated by beforeEach).
-    // Without this, the second goto('/#/Signals') may not re-fetch /cash/summary.
-    await page.goto('/#/');
-    // Set up waitForRequest BEFORE navigating to Signals so the request is captured.
-    const requestPromise = page.waitForRequest(/\/cash\/summary/, { timeout: 8000 });
+    // Attach request listener before navigation so no requests are missed.
+    const cashRequests = [];
+    page.on('request', (req) => {
+      if (req.url().includes('/cash/summary')) cashRequests.push(req.url());
+    });
+
+    // Navigate to about:blank to fully destroy the React app and React Query cache
+    // (beforeEach already navigated to /#/Signals and warmed the cache; changing the
+    // hash alone keeps the SPA mounted so React Query serves from cache and skips the fetch).
+    await page.goto('about:blank');
     await page.goto('/#/Signals');
-    const request = await requestPromise;
-    expect(request.url()).toContain('/cash/summary');
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
+
+    expect(cashRequests.length).toBeGreaterThan(0);
+    expect(cashRequests[0]).toContain('/cash/summary');
   });
 
   test('SC-SIG-CB-01b: Available cash rendered from current_cash field', async ({ page }) => {
