@@ -108,24 +108,27 @@ def generate_momentum_signals(
     
     # Download prices for all tickers
     print("Downloading price data...\n")
-    
+
     prices_dict = {}
+    # Store full DataFrames (close + high + volume) for supplementary indicators (ST-09)
+    full_data_dict = {}
     failed = []
-    
+
     for ticker in tickers:
         df_price = download_ticker_data(
-            ticker, 
-            start_date.strftime('%Y-%m-%d'), 
+            ticker,
+            start_date.strftime('%Y-%m-%d'),
             end_date.strftime('%Y-%m-%d')
         )
         if df_price is not None and len(df_price) >= lookback_days:
             prices_dict[ticker] = df_price['close']
+            full_data_dict[ticker] = df_price
         else:
             failed.append(ticker)
-    
+
     if not prices_dict:
         raise ValueError("Failed to download price data")
-    
+
     prices = pd.DataFrame(prices_dict)
     prices = prices.ffill(limit=5)
     
@@ -149,6 +152,10 @@ def generate_momentum_signals(
         end_date.strftime('%Y-%m-%d')
     )
     
+    # Benchmark momentum for relative_strength_pct (ST-09 supplementary indicator)
+    spy_benchmark_momentum = None
+    ftse_benchmark_momentum = None
+
     if spy_data is None or ftse_data is None:
         print("⚠️  Market data unavailable, assuming risk-on\n")
         spy_risk_on = True
@@ -156,12 +163,21 @@ def generate_momentum_signals(
     else:
         spy_close = spy_data['close']
         ftse_close = ftse_data['close']
-        
+
         spy_ma200 = spy_close.rolling(ma_period).mean()
         ftse_ma200 = ftse_close.rolling(ma_period).mean()
-        
+
         spy_risk_on = spy_close.iloc[-1] > spy_ma200.iloc[-1]
         ftse_risk_on = ftse_close.iloc[-1] > ftse_ma200.iloc[-1]
+
+        # Benchmark momentum over same lookback_days (for relative_strength_pct)
+        spy_mom_series = spy_close.pct_change(lookback_days)
+        if len(spy_mom_series) > 0 and not pd.isna(spy_mom_series.iloc[-1]):
+            spy_benchmark_momentum = spy_mom_series.iloc[-1]
+
+        ftse_mom_series = ftse_close.pct_change(lookback_days)
+        if len(ftse_mom_series) > 0 and not pd.isna(ftse_mom_series.iloc[-1]):
+            ftse_benchmark_momentum = ftse_mom_series.iloc[-1]
     
     print(f"SPY: {'🟢 Risk On' if spy_risk_on else '🔴 Risk Off'}")
     print(f"FTSE: {'🟢 Risk On' if ftse_risk_on else '🔴 Risk Off'}\n")
@@ -195,7 +211,10 @@ def generate_momentum_signals(
         vol = returns.rolling(volatility_window).std()
         if len(vol) > 0 and not pd.isna(vol.iloc[-1]):
             volatility_dict[ticker] = vol.iloc[-1]
-    
+
+    # ST-09: Pre-compute 50-day MA for price_vs_50d_ma supplementary indicator
+    ma50 = prices.rolling(50).mean()
+
     # Rank stocks by momentum
     ranks = latest_momentum.rank(ascending=False, method='first')
     
@@ -248,7 +267,48 @@ def generate_momentum_signals(
         
         # Check if already held
         status = 'already_held' if ticker in held_tickers else 'new'
-        
+
+        # -------------------------------------------------------------------
+        # ST-09 supplementary indicators (display-only, do not affect rank)
+        # -------------------------------------------------------------------
+
+        # 1. relative_strength_pct: stock momentum vs benchmark (informational)
+        benchmark_mom = spy_benchmark_momentum if market == 'US' else ftse_benchmark_momentum
+        stock_mom = latest_momentum[ticker]
+        if benchmark_mom is not None and not pd.isna(stock_mom) and not pd.isna(benchmark_mom):
+            relative_strength_pct = round((stock_mom - benchmark_mom) * 100, 2)
+        else:
+            relative_strength_pct = None
+
+        # 2. week52_high_proximity_pct: how far below the 52-week high (native price)
+        full_df = full_data_dict.get(ticker)
+        if full_df is not None and 'high' in full_df.columns and len(full_df) >= 252:
+            week52_high = full_df['high'].iloc[-252:].max()
+            if week52_high and week52_high > 0:
+                week52_high_proximity_pct = round(
+                    (native_price - float(week52_high)) / float(week52_high) * 100, 2
+                )
+            else:
+                week52_high_proximity_pct = None
+        else:
+            week52_high_proximity_pct = None
+
+        # 3. avg_daily_volume_20d: average daily volume over last 20 trading days
+        if full_df is not None and 'volume' in full_df.columns and len(full_df) >= 20:
+            recent_vol_series = full_df['volume'].iloc[-20:].dropna()
+            avg_daily_volume_20d = (
+                int(recent_vol_series.mean()) if len(recent_vol_series) > 0 else None
+            )
+        else:
+            avg_daily_volume_20d = None
+
+        # 4. price_vs_50d_ma: % deviation from 50-day moving average (native price)
+        ma50_val = ma50[ticker].iloc[-1] if ticker in ma50.columns else None
+        if ma50_val is not None and not pd.isna(ma50_val) and float(ma50_val) > 0:
+            price_vs_50d_ma = round((native_price - float(ma50_val)) / float(ma50_val) * 100, 2)
+        else:
+            price_vs_50d_ma = None
+
         signals.append({
             'ticker': ticker,
             'market': market,
@@ -259,10 +319,15 @@ def generate_momentum_signals(
             'atr_value': round(atr_gbp, 4),
             'volatility': round(vol, 6),
             'initial_stop': round(
-                price_display - (5 * (atr_gbp if currency == 'GBP' else native_atr)), 
+                price_display - (5 * (atr_gbp if currency == 'GBP' else native_atr)),
                 2
             ),
-            'status': status
+            'status': status,
+            # ST-09 supplementary indicators — display-only, no effect on rank
+            'relative_strength_pct': relative_strength_pct,
+            'week52_high_proximity_pct': week52_high_proximity_pct,
+            'avg_daily_volume_20d': avg_daily_volume_20d,
+            'price_vs_50d_ma': price_vs_50d_ma,
         })
     
     if not signals:

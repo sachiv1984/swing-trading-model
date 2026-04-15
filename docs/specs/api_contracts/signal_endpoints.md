@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-03-18
+**Version:** 1.1
+**Last Updated:** 2026-04-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -111,6 +111,10 @@ Response uses the standard success envelope from **conventions.md**.
 | `initial_stop` | Suggested stop in native currency: `current_price − (atr_multiplier_initial × ATR)`. Uses `atr_multiplier_initial` at generation time |
 | `volatility` | Volatility measure used for inverse-volatility position sizing. Stored for auditability |
 | `allocation_gbp` | Capital allocated to this signal based on volatility weighting and available cash at generation time |
+| `relative_strength_pct` | **Supplementary (ST-09, display-only).** Stock momentum % minus benchmark momentum % over `lookback_days`. US benchmark: SPY; UK benchmark: ^FTSE. Labelled "vs. benchmark (informational)" in UI. Does **not** affect `rank` or signal ordering. `null` if benchmark data unavailable. |
+| `week52_high_proximity_pct` | **Supplementary (ST-09, display-only).** `(current_native_price − 52w_high) / 52w_high × 100`. Negative value means price is below the 52-week high. `null` if insufficient history. |
+| `avg_daily_volume_20d` | **Supplementary (ST-09, display-only).** Average daily trading volume over the last 20 trading days (integer, native exchange units). `null` if data unavailable. |
+| `price_vs_50d_ma` | **Supplementary (ST-09, display-only).** `(current_native_price − 50d_MA) / 50d_MA × 100`. Positive = above MA, negative = below MA. Does **not** affect `rank`. `null` if insufficient history. |
 
 ### Validation rules & constraints
 
@@ -288,3 +292,12 @@ Response uses the standard success envelope from **conventions.md**.
 Errors use the standard error envelope from **conventions.md**.
 
 - `404` Signal not found
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | 2026-04-15 | ST-09 (BLG-BE-10, v2.7): Add 4 supplementary indicator fields to `POST /signals/generate` response per signal: `relative_strength_pct`, `week52_high_proximity_pct`, `avg_daily_volume_20d`, `price_vs_50d_ma`. All display-only — §13 COMPLIANT (SRB-v1.7 Feature 3). Fields do not affect `rank` or signal ordering. API Contracts & Documentation Owner. |
+| 1.0 | 2026-03-18 | Initial version |

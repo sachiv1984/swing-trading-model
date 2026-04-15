@@ -344,14 +344,20 @@ def download_ticker_data(ticker: str, start_date: str, end_date: str = None):
             
             highs = quote.get("high", [])
             lows = quote.get("low", [])
-            
+            volumes = quote.get("volume", [])
+
             # Create DataFrame
-            df = pd.DataFrame({
+            df_data = {
                 'date': dates,
                 'close': closes,
                 'high': highs,
-                'low': lows
-            })
+                'low': lows,
+            }
+            # Include volume when available (used by ST-09 supplementary indicators)
+            if volumes:
+                df_data['volume'] = volumes
+
+            df = pd.DataFrame(df_data)
             
             # Remove None values
             df = df.dropna()
