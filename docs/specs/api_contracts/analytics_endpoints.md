@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.0.0
-**Last Updated:** 2026-03-29
+**Version:** 2.1.0
+**Last Updated:** 2026-04-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -24,6 +24,7 @@ Global response envelopes, error shape, defaults, and conventions are defined in
 ## Endpoints
 
 - [GET /analytics/metrics](#get-analyticsmetrics)
+- [GET /analytics/market-correlation](#get-analyticsmarket-correlation)
 - [POST /validate/calculations](#post-validatecalculations)
 
 ---
@@ -692,6 +693,98 @@ No query parameters. Uses all closed trades (all-time).
 
 ---
 
+## GET /analytics/market-correlation
+
+**Purpose**
+
+Return Pearson correlation coefficients between each open position and its relevant
+market benchmark over a configurable lookback window:
+
+- US positions are compared against **SPY** (S&P 500 ETF)
+- UK positions are compared against **^FTSE** (FTSE 100 index)
+
+Also returns a portfolio-level equal-weighted average correlation.
+
+All data is sourced on-demand from Yahoo Finance. Results are cached with a TTL of
+approximately one trading day (8 hours). If Yahoo Finance is unavailable, the endpoint
+returns a partial or empty result with an informational note — it does **not** return 500.
+
+**Note to engineers:** Yahoo Finance is an external dependency with known reliability
+variability. If persistent unavailability becomes a problem, a formal data source review
+is required before any further correlation-dependent features are introduced.
+
+**Method & Path**
+
+- `GET /analytics/market-correlation`
+
+**Idempotency**
+
+- Safe to refresh (read-only). Deterministic within TTL window.
+
+### Request
+
+#### Query parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `lookback` | integer | No | `252` | Lookback window in trading days (30–756) |
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "correlations": [
+      {
+        "ticker": "LGEN",
+        "market": "UK",
+        "benchmark": "FTSE",
+        "correlation": 0.72,
+        "severity": "high",
+        "lookback_days": 252,
+        "data_points": 248
+      },
+      {
+        "ticker": "TSLA",
+        "market": "US",
+        "benchmark": "SPY",
+        "correlation": 0.41,
+        "severity": "moderate",
+        "lookback_days": 252,
+        "data_points": 251
+      }
+    ],
+    "portfolio_correlation": {
+      "value": 0.57,
+      "severity": "moderate",
+      "method": "equal_weighted_average"
+    },
+    "lookback_days": 252,
+    "computed_at": "2026-04-15T10:00:00Z",
+    "cached": false,
+    "data_source": "Yahoo Finance"
+  }
+}
+```
+
+#### Field notes
+
+| Field | Notes |
+|-------|-------|
+| `correlation` | Pearson coefficient over daily returns in `[-1, 1]`. `null` if data unavailable. |
+| `severity` | `high` (abs > 0.7), `moderate` (0.3–0.7), `low` (< 0.3), `unknown` (null). |
+| `data_points` | Number of overlapping trading days used in the correlation calculation. |
+| `cached` | `true` when result is served from the 8-hour TTL cache. |
+| `portfolio_correlation.method` | Always `equal_weighted_average` in this version. |
+
+### Error responses
+
+- `500 Internal Server Error`: database error fetching open positions or DATABASE_URL not set.
+- Partial results (missing `correlation: null`) returned if Yahoo Finance is unavailable for individual tickers — no 500 raised.
+
+---
+
 ## Known limitations & backlog
 
 - **ValidationService** (`services/validation_service.py`) is a stub and not invoked. Active validation logic lives in `routers/validation.py`. This is tracked as BLG-TECH-03 (consolidate into service layer, deliver alongside BLG-TECH-02).
@@ -703,6 +796,7 @@ No query parameters. Uses all closed trades (all-time).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1.0 | 2026-04-15 | ST-08 (BLG-FEAT-17, v2.7): Add `GET /analytics/market-correlation` endpoint spec — per-position Pearson correlation vs SPY/FTSE benchmark, portfolio-level equal-weighted average, 252-day default lookback, 8-hour TTL cache, graceful Yahoo Finance fallback. API Contracts & Documentation Owner. |
 | 2.0.0 | 2026-03-29 | ST-02 (BLG-FEAT-09, v2.3): Add `last_sync_at` field to `GET /analytics/metrics` response — UTC ISO 8601 timestamp of metrics computation time. Frontend uses this for the Metrics Staleness Indicator (4h default threshold, amber badge when stale). API Contracts & Documentation Owner. |
 | 1.5.0 | 2026-02-17 | Initial rewrite: unified endpoint, validation endpoint, known limitations recorded |
 | 1.7.0 | 2026-02-17 | Added `entry_price`, `exit_price`, `stop_price` to `trades_for_charts`; R-multiple note added |

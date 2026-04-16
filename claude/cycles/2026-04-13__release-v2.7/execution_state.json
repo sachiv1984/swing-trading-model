@@ -187,51 +187,51 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-04-13__release-v2.7/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 236,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-13__release-v2.7/qa_evidence_EPIC-04.md",
       "test_scenarios": ["docs/testing/analytics_scenarios.md", "docs/testing/signals_scenarios.md"],
       "stories": {
         "ST-08": {
           "title": "Market Correlation Analysis",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 229,
           "branch": "exec/2026-04-13__release-v2.7/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "4128455",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-15T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/market-correlation", "docs/reference/openapi.yaml"],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "openapi.yaml must be updated in same commit per CLAUDE.md. §13 status: N/A (new analytical endpoint, display-only). Engineer note re Yahoo Finance reliability required in QA evidence."
+          "sign_off_record": "qa_evidence_EPIC-04.md — 8/9 AC (AC-6 frontend deferred)",
+          "notes": "AC-6 frontend rendering deferred to future frontend story. Backend contract fully specified in analytics_endpoints.md v2.1.0."
         },
         "ST-09": {
           "title": "Add supplementary indicator fields to signal generation",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 230,
           "branch": "exec/2026-04-13__release-v2.7/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "4128455",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-15T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/api_contracts/signal_endpoints.md#POST /signals/generate", "docs/reference/openapi.yaml"],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "§13 COMPLIANT pre-existing (SRB-v1.7 Feature 3). Strategy Rules owner sign-off in QA evidence confirming no scoring logic modified. Note re future ranking use in QA evidence."
+          "sign_off_record": "qa_evidence_EPIC-04.md — 8/8 AC — §13 COMPLIANT",
+          "notes": "Strategy Rules Owner sign-off recorded in qa_evidence_EPIC-04.md. Future ranking use requires new §13 review."
         }
       }
     },
@@ -288,12 +288,12 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-03"],
-    "epics_pending": ["EPIC-02", "EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_pending": ["EPIC-04", "EPIC-05"],
     "all_merged": false
   },
 
