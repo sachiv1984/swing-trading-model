@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.54
-**Last Updated:** 2026-04-11
+**Version:** 3.56
+**Last Updated:** 2026-04-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -394,7 +394,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v4.8)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v4.9)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1285,21 +1285,96 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 
 ---
 
+## 15. Governance Health Score
+
+**Added:** v3.56 (ST-11, BLG-GOV-14, v2.7)
+**Authority:** Head of Specs Team
+**Usage:** Computed and surfaced as an advisory indicator at STEP -1.7 of each roadmap rebalance. Cannot halt or gate the routine.
+
+The Governance Health Score is a three-component advisory indicator surfaced at each roadmap rebalance to give the team visibility into the operational health of the governance process. It is not a gate — a low score does not block the run. It is a signal that should inform the retrospective discussion and may generate backlog items.
+
+### Components
+
+#### Component 1 — Header Compliance %
+
+Measures how many Class 4 and Class 5 documents have compliant headers (all required fields present and non-empty).
+
+**Formula:**
+
+```
+Header Compliance % = (Class 4/5 docs with compliant headers / total Class 4/5 docs checked) × 100
+```
+
+**Documents checked:** All files in `claude/cycles/<active_cycle_id>/` with a `.md` extension that are Class 4 or Class 5 (planning documents, cycle records). Required fields: Owner, Class, Status, Last Updated.
+
+**Score interpretation:**
+- 100% — Fully compliant
+- 80–99% — Minor gaps; surface as advisory
+- <80% — Material gap; flag prominently in run manifest
+
+#### Component 2 — Deferred Patch Indicator
+
+Counts open deferred patches by age band, taken from the `deferred_patches` section of the current cycle's `lessons_learnt.md` (or the most recent prior cycle if the current cycle is not yet closed).
+
+**Age bands:**
+
+| Band | Age | Label |
+|------|-----|-------|
+| Green | < 1 cycle | Recent — monitor |
+| Amber | 1–2 cycles | Aging — plan to apply |
+| Red | > 2 cycles | OVERDUE — escalation required (B7 rule) |
+
+**Score format:** `{Red count} Red / {Amber count} Amber / {Green count} Green`
+
+Any Red count > 0 triggers automatic B7 escalation in STEP -1.5 (already enforced). The health score component makes the aggregate pattern visible.
+
+#### Component 3 — Outstanding Action Count
+
+Counts open outstanding actions across all active governance artefacts.
+
+**Sources checked:**
+- `.claude_current_state.json` key `open_escalations` (if present)
+- Current execution_state.json `open_escalations` array (if in an active sprint)
+- Prior cycle `lessons_learnt.md` unresolved outstanding actions section
+
+**Score format:** `{N} open actions` (list item types: governance escalation / sprint action / lessons learnt carry-forward)
+
+### Output Format
+
+The health score is surfaced in the run manifest under a section titled `## Governance Health Score`:
+
+```
+## Governance Health Score (Advisory)
+Source: OPERATIONAL_GUIDE.md §15 — roadmap_prompt.md v4.9 STEP -1.7
+
+| Component | Score | Status |
+|-----------|-------|--------|
+| Header Compliance % | 95% (19/20 docs) | ✅ Advisory |
+| Deferred Patch Indicator | 0 Red / 1 Amber / 1 Green | ⚠️ 1 aging patch |
+| Outstanding Action Count | 2 open (0 escalation, 1 sprint, 1 carry-forward) | ⚠️ Review recommended |
+
+Overall: Advisory — no gate action required. Review deferred patches and outstanding actions before close.
+```
+
+**This score is advisory only.** A low score does not halt the roadmap run. It informs the Head of Specs Team and PMO Lead of process debt that may warrant backlog items.
+
+---
+
 ## 14. Playbook Governance
 
 | Field | Value |
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.57 |
-| Last Updated | 2026-04-14 |
+| Version | 3.58 |
+| Last Updated | 2026-04-16 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.3 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.4 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.2 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.8 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.9 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.26 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.5 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.7 |
@@ -1326,6 +1401,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.58 | 2026-04-16 | **ST-11 (BLG-GOV-14, v2.7) — Governance Health Score.** §15 added: three-component advisory indicator (Header Compliance %, Deferred Patch Indicator, Outstanding Action Count) with formula, age bands, and output format. roadmap_prompt.md v4.8→v4.9: STEP -1.7 added to compute and surface the score at each roadmap rebalance (advisory only — cannot halt). §6 source prompt header updated v4.8→v4.9. §14 Roadmap Engine Source updated v4.8→v4.9. Authority: Head of Specs Team (ST-11, 2026-04-16). |
 | 3.57 | 2026-04-14 | **execution_prompt.md v3.5→v3.6 + delivery_verification_prompt.md v1.9→v2.0 — ST-04 (BLG-GOV-19): Autonomous DoQ sign-off class.** §8 source prompt header updated v3.5→v3.6. §9 source prompt header updated v1.9→v2.0. §14 Execution Engine Source v3.5→v3.6; Verification Engine Source v1.9→v2.0. Changes: (1) execution_prompt.md §3.2.A — Autonomous DoQ sign-off class defined with four qualifying criteria; when all criteria met, engine populates sign-off block with "Sprint Execution Engine (autonomous class)"; (2) delivery_verification_prompt.md STEP -1.3 Tier 2 — autonomous class exception added: if signer is "Sprint Execution Engine (autonomous class)" and all four criteria are met, treated as compliant sign-off (Tier 2 does not fire). Authority: Head of Specs Team (ST-04, BLG-GOV-19, 2026-04-14). |
 | 3.56 | 2026-04-14 | **execution_prompt.md v3.4→v3.5 — ST-03 (BLG-GOV-18): PR gate on QA sign-off Date.** §8 source prompt header updated v3.4→v3.5. §14 Execution Engine Source updated v3.4→v3.5. Change: §3.2.B pre-condition added — engine must not open a PR until `qa_evidence_EPIC-xx.md` DoQ sign-off block has a non-blank Date field. `commit-check` skill updated — Check 8 added: QA sign-off Date completeness check fires when `qa_evidence_EPIC-xx.md` is staged. Authority: Head of Specs Team (ST-03, BLG-GOV-18, 2026-04-14). |
 | 3.55 | 2026-04-13 | **execution_prompt.md v3.3→v3.4 — BLG-GOV-17 sprint-close trigger fix (third recurrence).** §8 source prompt header updated v3.3→v3.4. §14 Execution Engine Source updated v3.3→v3.4. Changes: (1) STEP 3.2.D post-merge reminder — removed conditional qualifier; unconditional re-invocation required after every EPIC merge including the final one; (2) `.github/workflows/sprint_close_reminder.yml` created — posts mandatory PR comment on EPIC merge to main. Authority: Head of Specs Team (OA-1, BLG-GOV-17, 2026-04-13). |
