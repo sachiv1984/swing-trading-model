@@ -107,30 +107,37 @@ async function mockFallback(page) {
 
 test.describe('SC-SIG-CB-01 — Cash balance from /cash/summary', () => {
   test.beforeEach(async ({ page }) => {
+    // Catch-all first — Playwright routes are LIFO, so registering catch-all first
+    // ensures the specific mocks below take precedence.
+    await mockFallback(page);
     await mockCashSummary(page, CASH_SUMMARY_FUNDED);
     await mockSignals(page);
-    await mockFallback(page);
     await page.goto('/#/Signals');
-    // Wait for page to render signals
-    await page.waitForSelector('button', { timeout: 10000 });
+    // Wait for all API calls to settle before asserting
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
   });
 
   test('SC-SIG-CB-01a: GET /cash/summary is called on Signals page load', async ({ page }) => {
-    const requests = [];
-    // Re-register listener before navigation to capture the request
-    const newPage = page;
-    newPage.on('request', (req) => {
-      if (req.url().includes('/cash/summary')) requests.push(req.url());
-    });
-
+    // Catch-all first — LIFO order ensures specific mocks below take precedence.
+    await mockFallback(page);
     await mockCashSummary(page, CASH_SUMMARY_FUNDED);
     await mockSignals(page);
-    await mockFallback(page);
-    await page.goto('/#/Signals');
-    await page.waitForSelector('button', { timeout: 10000 });
-    await page.waitForTimeout(300);
 
-    expect(requests.filter(u => u.includes('/cash/summary')).length).toBeGreaterThan(0);
+    // Attach request listener before navigation so no requests are missed.
+    const cashRequests = [];
+    page.on('request', (req) => {
+      if (req.url().includes('/cash/summary')) cashRequests.push(req.url());
+    });
+
+    // Navigate to about:blank to fully destroy the React app and React Query cache
+    // (beforeEach already navigated to /#/Signals and warmed the cache; changing the
+    // hash alone keeps the SPA mounted so React Query serves from cache and skips the fetch).
+    await page.goto('about:blank');
+    await page.goto('/#/Signals');
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
+
+    expect(cashRequests.length).toBeGreaterThan(0);
+    expect(cashRequests[0]).toContain('/cash/summary');
   });
 
   test('SC-SIG-CB-01b: Available cash rendered from current_cash field', async ({ page }) => {
@@ -147,22 +154,27 @@ test.describe('SC-SIG-CB-01 — Cash balance from /cash/summary', () => {
 
 test.describe('SC-SIG-CB-02 — Cash balance fallback to 0', () => {
   test('SC-SIG-CB-02a: Cash shows 0 when /cash/summary returns server error', async ({ page }) => {
+    // Catch-all first — LIFO order ensures specific mocks below take precedence.
+    await mockFallback(page);
     await mockCashSummaryError(page);
     await mockSignals(page);
-    await mockFallback(page);
     await page.goto('/#/Signals');
-    await page.waitForSelector('button', { timeout: 10000 });
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
     await page.waitForTimeout(500);
 
     // availableCashBalance = cashSummary?.current_cash ?? 0 = 0
     // Should render 0 / £0 / £0.00 — not a hard crash
     // Verify the page rendered without throwing (no error boundary shown)
     await expect(page.locator('body')).not.toContainText('Something went wrong');
-    // And verify 0 cash is rendered (may be "£0", "0.00", "£0.00" etc.)
-    await expect(page.getByText(/£\s*0(\.00)?|0\.00/)).toBeVisible({ timeout: 8000 });
+    // Verify 0 cash is rendered. Use exact:true + first() to avoid strict-mode violation:
+    // the regex also matches signal price data ("£0.00 vs MA200") and other zero values.
+    // The cash balance renders as a bold "£0" element (distinct from small signal data text).
+    await expect(page.getByText('£0', { exact: true }).first()).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SIG-CB-02b: Cash shows 0 when /cash/summary returns null current_cash', async ({ page }) => {
+    // Catch-all first — LIFO order ensures specific mocks below take precedence.
+    await mockFallback(page);
     await page.route(`${API}/cash/summary`, (route) =>
       route.fulfill({
         status: 200,
@@ -171,13 +183,13 @@ test.describe('SC-SIG-CB-02 — Cash balance fallback to 0', () => {
       })
     );
     await mockSignals(page);
-    await mockFallback(page);
     await page.goto('/#/Signals');
-    await page.waitForSelector('button', { timeout: 10000 });
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
     await page.waitForTimeout(500);
 
     // cashSummary?.current_cash ?? 0 → 0 when current_cash is null
     await expect(page.locator('body')).not.toContainText('Something went wrong');
-    await expect(page.getByText(/£\s*0(\.00)?|0\.00/)).toBeVisible({ timeout: 8000 });
+    // Use exact:true + first() — same strict-mode fix as SC-SIG-CB-02a.
+    await expect(page.getByText('£0', { exact: true }).first()).toBeVisible({ timeout: 8000 });
   });
 });

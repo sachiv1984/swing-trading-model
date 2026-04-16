@@ -27,8 +27,15 @@ def get_db():
         conn.close()
 
 
-def get_portfolio() -> Optional[Dict]:
-    """Get the main portfolio (assumes single portfolio)"""
+def get_portfolio(conn=None) -> Optional[Dict]:
+    """Get the main portfolio (assumes single portfolio).
+
+    If conn is provided, reuses it instead of opening a new connection.
+    """
+    if conn is not None:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM portfolios LIMIT 1")
+            return cur.fetchone()
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM portfolios LIMIT 1")
@@ -45,21 +52,30 @@ def update_portfolio_cash(portfolio_id: str, cash: float):
             )
 
 
-def get_positions(portfolio_id: str, status: str = None) -> List[Dict]:
-    """Get positions, optionally filtered by status"""
+def get_positions(portfolio_id: str, status: str = None, conn=None) -> List[Dict]:
+    """Get positions, optionally filtered by status.
+
+    If conn is provided, reuses it instead of opening a new connection.
+    """
+    def _run(cur):
+        if status:
+            cur.execute(
+                "SELECT * FROM positions WHERE portfolio_id = %s AND status = %s ORDER BY entry_date DESC",
+                (portfolio_id, status)
+            )
+        else:
+            cur.execute(
+                "SELECT * FROM positions WHERE portfolio_id = %s ORDER BY entry_date DESC",
+                (portfolio_id,)
+            )
+        return cur.fetchall()
+
+    if conn is not None:
+        with conn.cursor() as cur:
+            return _run(cur)
     with get_db() as conn:
         with conn.cursor() as cur:
-            if status:
-                cur.execute(
-                    "SELECT * FROM positions WHERE portfolio_id = %s AND status = %s ORDER BY entry_date DESC",
-                    (portfolio_id, status)
-                )
-            else:
-                cur.execute(
-                    "SELECT * FROM positions WHERE portfolio_id = %s ORDER BY entry_date DESC",
-                    (portfolio_id,)
-                )
-            return cur.fetchall()
+            return _run(cur)
 
 
 def create_position(portfolio_id: str, position_data: Dict) -> Dict:
@@ -420,23 +436,32 @@ def get_cash_transactions(portfolio_id: str, order_by: str = 'DESC') -> List[Dic
             return cur.fetchall()
 
 
-def get_total_deposits_withdrawals(portfolio_id: str) -> Dict:
-    """Get total deposits and withdrawals for a portfolio"""
+def get_total_deposits_withdrawals(portfolio_id: str, conn=None) -> Dict:
+    """Get total deposits and withdrawals for a portfolio.
+
+    If conn is provided, reuses it instead of opening a new connection.
+    """
+    def _run(cur):
+        cur.execute("""
+            SELECT
+                COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) as total_deposits,
+                COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0) as total_withdrawals
+            FROM cash_transactions
+            WHERE portfolio_id = %s
+        """, (portfolio_id,))
+        result = cur.fetchone()
+        return {
+            'total_deposits': float(result['total_deposits']),
+            'total_withdrawals': float(result['total_withdrawals']),
+            'net_cash_flow': float(result['total_deposits']) - float(result['total_withdrawals'])
+        }
+
+    if conn is not None:
+        with conn.cursor() as cur:
+            return _run(cur)
     with get_db() as conn:
         with conn.cursor() as cur:
-            cur.execute("""
-                SELECT 
-                    COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) as total_deposits,
-                    COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0) as total_withdrawals
-                FROM cash_transactions
-                WHERE portfolio_id = %s
-            """, (portfolio_id,))
-            result = cur.fetchone()
-            return {
-                'total_deposits': float(result['total_deposits']),
-                'total_withdrawals': float(result['total_withdrawals']),
-                'net_cash_flow': float(result['total_deposits']) - float(result['total_withdrawals'])
-            }
+            return _run(cur)
 
 
 # ============================================================================
@@ -699,7 +724,7 @@ def search_positions_by_tags(portfolio_id: str, tags: List[str]) -> List[Dict]:
 # Current Drawdown: peak portfolio value query
 # ---------------------------------------------------------------------------
 
-def get_peak_portfolio_value(portfolio_id: str) -> float:
+def get_peak_portfolio_value(portfolio_id: str, conn=None) -> float:
     """
     Return the all-time peak total_value from portfolio_history for
     this portfolio. Returns 0.0 when no snapshots exist.
@@ -709,21 +734,29 @@ def get_peak_portfolio_value(portfolio_id: str) -> float:
     metrics_definitions.md v1.5.8 §Implementation Note and
     portfolio_endpoints.md v1.8.2 §peak_portfolio_value field note.
 
+    If conn is provided, reuses it instead of opening a new connection.
+
     Returns:
         float: Peak total_value in GBP. 0.0 if no records exist.
     """
+    def _run(cur):
+        cur.execute(
+            """
+            SELECT COALESCE(MAX(total_value), 0.0) AS peak_value
+            FROM portfolio_history
+            WHERE portfolio_id = %s
+            """,
+            (portfolio_id,),
+        )
+        result = cur.fetchone()
+        return float(result['peak_value'])
+
+    if conn is not None:
+        with conn.cursor() as cur:
+            return _run(cur)
     with get_db() as conn:
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                SELECT COALESCE(MAX(total_value), 0.0) AS peak_value
-                FROM portfolio_history
-                WHERE portfolio_id = %s
-                """,
-                (portfolio_id,),
-            )
-            result = cur.fetchone()
-            return float(result['peak_value'])
+            return _run(cur)
 
 
 # ---------------------------------------------------------------------------
