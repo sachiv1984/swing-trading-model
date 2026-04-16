@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.8
-**Last Updated:** 2026-04-01
+**Version:** 4.9
+**Last Updated:** 2026-04-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -351,6 +351,38 @@ Note: `run ideas` may still be invoked standalone before `run roadmap` for expli
 window control. If run in this session, those register rows count toward the 20-idea threshold.
 
 **State age advisory:** Read `.claude_current_state.json` `last_updated_utc` field. If absent or >30 days before today: surface advisory — "State file not updated in >30 days — confirm active_cycle is current before proceeding." Record in run_manifest.md. Advisory only — do not halt.
+
+### STEP -1.7 — Governance Health Score (Advisory)
+
+Compute the three-component Governance Health Score per `claude/system/OPERATIONAL_GUIDE.md §15`. This step is advisory only — a low score does not halt the run.
+
+**Component 1 — Header Compliance %**
+
+Scan all `.md` files in `claude/cycles/<active_cycle_id>/` (or the most recently closed cycle folder if no active cycle). For each file, check whether required Class 4/5 header fields (Owner, Class, Status, Last Updated) are present and non-empty. Compute:
+
+```
+Header Compliance % = (compliant docs / total docs checked) × 100
+```
+
+**Component 2 — Deferred Patch Indicator**
+
+Load the most recent `lessons_learnt.md` (current cycle if active; most recent closed cycle otherwise). Count open deferred patches by age band:
+- **Green:** < 1 full cycle since filed
+- **Amber:** 1–2 cycles since filed
+- **Red:** > 2 cycles since filed (B7 auto-escalation already applies in STEP -1.5)
+
+Report as: `{Red} Red / {Amber} Amber / {Green} Green`
+
+**Component 3 — Outstanding Action Count**
+
+Count open outstanding actions from:
+1. `.claude_current_state.json` key `open_escalations` (if present)
+2. Current `execution_state.json` `open_escalations` array (if in an active sprint)
+3. Prior cycle `lessons_learnt.md` unresolved outstanding actions section
+
+Report as: `{N} open (breakdown by type)`
+
+**Output:** Write the health score to `run_manifest.md` under `## Governance Health Score (Advisory)` using the format defined in OPERATIONAL_GUIDE.md §15. If any component cannot be computed (missing file), record `N/A — source file absent` for that component. Do not halt.
 
 ---
 
@@ -1572,6 +1604,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.9 | 2026-04-16 | ST-11 (BLG-GOV-14, v2.7): STEP -1.7 added — Governance Health Score advisory check. Computes three components per OPERATIONAL_GUIDE.md §15: (1) Header Compliance % for Class 4/5 docs in active cycle folder; (2) Deferred Patch Indicator by age band (Green/Amber/Red); (3) Outstanding Action Count across open_escalations, execution_state, and lessons_learnt. Output written to run_manifest.md. Advisory only — cannot halt run. Authority: Head of Specs Team (ST-11, 2026-04-16). |
 | 4.3 | 2026-03-21 | Friction Item 1 (cycle 2026-03-21__item-3.5): STEP 4.4 Write Summary extended — `## STEP 5 Debate Queue` table added to cycle_record.md output template; lists all Advancing IDEA IDs with title and source (stale/new); mandatory count-match check before proceeding to STEP 5. STEP 5 preflight check added — reads queue, verifies one debate entry per queued IDEA ID before writing STEP 5 section as complete; detects omissions before they propagate to non-terminal register rows. |
 | 4.2 | 2026-03-18 | STEP -1.6 corrected: count source changed from `claude/ideas/submissions/` file scan to `claude/ideas/ideas_register.md` row count (consistent with register model). STEP 0.C Lightweight criterion 2 updated to reference register rows. STEP 8.5.B item 4 language updated: "idea file" → "register row" throughout (LL-02-patch language now register-model consistent). |
 | 4.1 | 2026-03-17 | ST-19 (EPIC-06): STEP 4 updated to read from `claude/ideas/ideas_register.md` (single register) instead of scanning per-file submissions. §4.2 Document Management updated: actions now update register rows (Status, Park Count, Park Rationale) instead of individual files. §4.3 window summary path updated. Schema: `shared_standards.md §16.5`. |
