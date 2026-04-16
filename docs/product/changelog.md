@@ -3,9 +3,48 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-16
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.7 — Performance, Governance Hardening & Market Intelligence — 2026-04-16
+
+Cycle: 2026-04-13__release-v2.7
+Verified: Verified
+Verification report: claude/cycles/2026-04-13__release-v2.7/verification_report.md
+
+### Changes shipped
+
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Supabase Supavisor connection pooling enabled (staging + production); `get_portfolio_summary()` refactored to single DB connection — GET /portfolio p50 = 234ms | `docs/ops/api_performance_baseline.md` v1.2; `docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio` |
+| EPIC-02 | QA sign-off gate before PR (§3.2.B); autonomous DoQ sign-off class for code-review-only EPICs (§3.2.A); governance_sync.yml push-to-main trigger | `claude/system/execution_prompt.md` v3.6; `claude/system/delivery_verification_prompt.md` v2.0 |
+| EPIC-03 | Playwright LIFO route ordering fix (30/30 pass across 4 spec files); System Status Playwright spec authored (16/16 pass, 28-endpoint mock, category routing verified) | `tests/e2e/system-status.spec.js`; all 4 existing e2e spec files patched |
+| EPIC-04 | `GET /analytics/market-correlation` backend endpoint (Pearson, 252-day lookback, 8h cache, SPY/FTSE benchmark); four supplementary indicator fields on `POST /signals/generate` (display-only, §13 COMPLIANT) | `docs/specs/api_contracts/analytics_endpoints.md` v2.1.0; `docs/specs/api_contracts/signal_endpoints.md` v1.1; `docs/reference/openapi.yaml` v2.6.0 |
+| EPIC-05 | Spec Dependency Map (`docs/specs/spec_dependency_map.md` v1.0); Governance Health Score (OPERATIONAL_GUIDE.md §15 + roadmap_prompt.md STEP -1.7, advisory) | `docs/specs/spec_dependency_map.md` v1.0; `claude/system/OPERATIONAL_GUIDE.md` v3.59 |
+
+### Deviations accepted
+
+None — no P0–P3 spec deviations filed this sprint. AC-6 (market correlation frontend rendering) is an in-spec deferred AC, not a deviation.
+
+### Tech backlog items shipped
+
+- [ST-01] Enable Supabase Supavisor connection pooling — BLG-OPS-14; DEL-20260414-01 unblocked 2026-04-16
+- [ST-02] Refactor get_portfolio_summary() to use a single DB connection — BLG-BE-07-FIX
+- [ST-03] Require QA evidence sign-off block complete before PR — BLG-GOV-18
+- [ST-04] Define formal autonomous DoQ sign-off class — BLG-GOV-19
+- [ST-05] Extend governance_sync.yml to push-to-main — BLG-GOV-16
+- [ST-06] Fix Playwright page.route() intercepts — BLG-QA-11 (Playwright fix)
+- [ST-07] System Status Playwright spec — BLG-QA-12
+- [ST-08] Market Correlation Analysis — BLG-FEAT-17
+- [ST-09] Add supplementary indicator fields — BLG-BE-10
+- [ST-10] Spec Dependency Map — BLG-SPEC-D17
+- [ST-11] Governance Health Score — BLG-GOV-14
+
+Sign-off: Product Owner — 2026-04-16
+QA sign-off: Director of Quality — 2026-04-16
 
 ---
 

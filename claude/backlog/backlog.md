@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-10 (groom backlog — v2.5 post-ship closure: 12 items archived to backlog_archive.md; 10 stale v2.5 provisional targets updated to v2.6; 25 active items retained)
+**Last Updated:** 2026-04-16 (post-ship closure v2.7: 11 shipped items marked ✅ COMPLETE; BLG-GOV-18 + BLG-GOV-19 added and completed; BLG-QA-13 added; BLG-QA-12 ID corrected per OA-5)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
 
 > ⚠️ Standing Notice
@@ -38,7 +38,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Source:** Original backlog — target updated to v2.3 per backlog health scan GROOM-20260324-01
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6 (or when system becomes multi-user)
+**Provisional-Target:** v2.8+ (or when system becomes multi-user)
 
 **Problem**
 No Prometheus-compatible metrics endpoint exists. As the system grows toward multi-user operation, there is no way to monitor validation run counts, failure rates, or duration without instrumenting the application directly. Observability cannot be added retroactively without significant rework.
@@ -67,7 +67,7 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 **Owner:** Frontend Specifications & UX Owner
 **Source:** EPIC-03 DoQ staging run 2026-04-10 — adding Avg Fee Drag card (6th card) causes visible squeeze on the Trade History summary bar at standard viewport widths
 **Effort:** S (~half day)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 **Requires:** Head of UX review before implementation
 
 **Problem**
@@ -86,7 +86,7 @@ The Trade History StatsCard summary bar now contains 6 cards (Total Trades, Win 
 **Owner:** Frontend Specifications & UX Owner
 **Source:** EPIC-03 DoQ staging run 2026-04-10 — column headers in the Trade History table flagged as needing better styling and formatting (current style: small, uppercase, muted)
 **Effort:** S (~half day)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 **Requires:** Head of UX review before implementation
 
 **Problem**
@@ -105,7 +105,7 @@ Column headers in the Trade History table use the `DataTable.js` default: `text-
 **Owner:** Frontend Specifications & UX Owner
 **Source:** EPIC-03 DoQ staging run 2026-04-10 — only 3 columns currently sortable (Slippage, Fee Drag %, R-Multiple); all columns should be sortable or Head of UX should define the sorting strategy
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 **Requires:** Head of UX review before implementation
 
 **Problem**
@@ -125,7 +125,7 @@ Currently only Slippage, Fee Drag %, and R-Multiple columns are sortable in the 
 **Owner:** Frontend Specifications & UX Owner
 **Source:** EPIC-03 DoQ sign-off observation — 2026-04-06 — `trade_history.md` v1.5 §Avg Fee Drag requires ⓘ tooltip text on Avg Fee Drag card; StatsCard component has no tooltip prop
 **Effort:** XS (<1 hour)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 `StatsCard.js` supports `title`, `value`, `subtitle`, `icon`, `trend`, `trendValue`, and `gradient` — but not a hover tooltip (ⓘ icon). The canonical spec for the Avg Fee Drag StatsCard (`trade_history.md` v1.5 §Avg Fee Drag) requires an ⓘ info icon with tooltip text: *"Average Fee Drag = Total exit fees / Gross proceeds × 100"* / *"Higher % means a greater proportion of gross proceeds consumed by fees."* This cannot be delivered without a component-level capability change. The Avg Slippage StatsCard has the same gap. Any future StatsCard spec that includes a tooltip ⓘ will hit this limitation.
@@ -151,7 +151,7 @@ Currently only Slippage, Fee Drag %, and R-Multiple columns are sortable in the 
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** IDEA-frontend-ux-20260321-01 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-017)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 No documented frontend performance targets exist for the application (page load time, JS bundle size). BLG-OPS-05 shipped in v2.4 establishing an API latency baseline (p50/p95 per endpoint). Without a companion frontend performance budget, new feature additions in v2.5 and beyond may silently compound bundle size and page load time with no detection mechanism or documented targets for the DoQ to reference when evaluating frontend PRs.
@@ -184,7 +184,7 @@ No documented frontend performance targets exist for the application (page load 
 **Owner:** Head of Engineering + Frontend Specifications & UX Owner
 **Source:** ST-04 integration review finding GAP-R01 — `docs/ops/reports_integration_review.md`
 **Effort:** L (3–5 days)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 The Reports page Performance tab fetches all data from the legacy Base44 SDK (`base44.entities.Position.list()`, `base44.entities.Portfolio.list()`) and computes all metrics client-side. FastAPI endpoints `/analytics/metrics`, `/trades`, and `/portfolio` are never called. This creates data consistency risk — P&L and win-rate figures may differ from Portfolio and Trade History pages which use the FastAPI data model.
@@ -208,7 +208,7 @@ The Reports page Performance tab fetches all data from the legacy Base44 SDK (`b
 **Owner:** Head of Engineering + Frontend Specifications & UX Owner
 **Source:** ST-05 integration review finding GAP-S01 — `docs/ops/signals_integration_review.md`
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 Signal dismissal and position creation on the Signals page use `base44.entities.Signal.update()` and `base44.entities.Position.create()`. FastAPI does not receive these writes, so signal status and position records are not stored in the authoritative database. Any backend analytics, deduplication, or ATR-based logic is bypassed for positions entered via the Signals page.
@@ -231,7 +231,7 @@ Signal dismissal and position creation on the Signals page use `base44.entities.
 **Owner:** Head of Engineering + Frontend Specifications & UX Owner
 **Source:** ST-05 integration review finding GAP-S02 — `docs/ops/signals_integration_review.md`
 **Effort:** XS (<1 hour)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 The `availableCash` value displayed on the Signals page is sourced from `base44.entities.Portfolio.list()`. The FastAPI backend maintains the authoritative cash balance at `GET /cash/summary`. These sources may diverge, showing inconsistent cash figures across pages.
@@ -256,7 +256,7 @@ The `availableCash` value displayed on the Signals page is sourced from `base44.
 **Owner:** QA & Testing Owner
 **Source:** ST-09 (v2.5 EPIC-03) — fee drag metric delivered; no Playwright spec authored
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 **Scenarios covered:** SC-FEE-01 through SC-FEE-04 (`docs/testing/fee-drag-scenarios.md` v1.0)
 
 **Problem**
@@ -282,7 +282,7 @@ ST-09 delivered the fee drag metric (column + StatsCard) on Trade History. The T
 **Owner:** QA & Testing Owner
 **Source:** ST-09 (v2.5 EPIC-03) — SC-FEE-05 and SC-FEE-06 classified Automated but test file not yet written
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 **Scenarios covered:** SC-FEE-05, SC-FEE-06 (`docs/testing/fee-drag-scenarios.md` v1.0)
 
 **Problem**
@@ -310,7 +310,7 @@ The fee drag formula and null guard in `trade_service.py` are correctness-critic
 **Owner:** QA & Testing Owner + Head of Engineering
 **Source:** `docs/testing/test_automation_readiness.md` v1.0 §4 — Phase 1 (identified v2.2; still unresolved as of v2.5)
 **Effort:** S (~2–3 hours total)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 Four test files fail at collection time, making 0% of integration tests runnable and blocking CI automation:
@@ -339,7 +339,7 @@ All four issues were documented in `test_automation_readiness.md` v1.0 Phase 1. 
 **Owner:** Infrastructure & Operations Owner
 **Source:** `docs/testing/test_automation_readiness.md` v1.0 §4 Phase 1 — identified v2.2; still absent as of v2.5
 **Effort:** S (~1 hour)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 **Dependency:** BLG-QA-09 (collection errors should be fixed first for full value, but clean tests can run immediately)
 
 **Problem**
@@ -360,28 +360,7 @@ No GitHub Actions workflow runs `pytest` or `npx playwright test` on PR. Tests e
 
 ---
 
-### BLG-QA-11 — System Status Playwright spec (endpoint list sync + category routing)
-**Priority:** P3 (Low)
-**Type:** Test Automation
-**Owner:** QA & Testing Owner
-**Source:** v2.5 ST-02 and ST-03 (EPIC-01) — endpoint list and category routing verified by code review only; no Playwright spec
-**Effort:** M (~1 day)
-**Provisional-Target:** v2.6
-
-**Problem**
-ST-02 added 10 missing endpoints to the health service and updated the SystemStatus.js count placeholder from 17 to 26. ST-03 added Alerts, Notifications, Digest category routing. Both were verified by code review only — no Playwright spec asserts the UI renders the categories correctly or that the count displays as 26.
-
-**Scope**
-- Write `tests/e2e/system-status.spec.js`
-- Mock `POST /test/endpoints` response with controlled endpoint results covering `/alerts/rules`, `/notifications`, `/digest/weekly` (at minimum)
-- Assert: Alerts category section visible; Notifications section visible; Digest section visible
-- Assert: total endpoint count shown is ≥ 26 (or exact 26 if count is hardcoded in placeholder)
-- Assert: none of the alert/notification/digest endpoints appear under "Other"
-
-**Acceptance Criteria**
-- `tests/e2e/system-status.spec.js` exists covering category routing and count display
-- All assertions pass in headless Playwright
-- Mock routes match the actual API path called by SystemStatus.js (`POST /test/endpoints`)
+<!-- BLG-QA-12 (formerly BLG-QA-11 System Status spec) — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-07 (EPIC-03) — ID renamed BLG-QA-11→BLG-QA-12 per OA-5 -->
 
 
 ## 6. Operations & Infrastructure Backlog
@@ -393,29 +372,7 @@ ST-02 added 10 missing endpoints to the health service and updated the SystemSta
 
 ---
 
-### BLG-SPEC-D17 — Spec Dependency Map
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Governance Documentation
-**Owner:** Head of Specs Team
-**Source:** IDEA-head-of-specs-20260321-01 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-018)
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
-
-**Problem**
-The canonical specification library has grown to ~22 documents with cross-references (e.g. `trade_history.md` references `metrics_definitions.md`; `signal_endpoints.md` references `strategy_rules.md`). When any canonical spec changes, cascade impacts on dependent specs are tracked informally. Without a dependency map, the DoQ cannot efficiently determine which specs require review when a canonical spec is updated — this weakens sign-off quality on spec-change PRs.
-
-**Scope**
-- Map all canonical spec dependencies: for each spec, list which other canonical specs it references or depends on
-- Produce a read-only reference document at `docs/specs/spec_dependency_map.md`
-- Include an explicit header note: "Point-in-time reference — last updated [date]. Accuracy not guaranteed after spec creation/revision without a manual update."
-- Spec owners update the map when creating or significantly revising a canonical spec (courtesy update, not a governed obligation)
-- Scope is read-only reference only — no CI enforcement or automated checking
-
-**Acceptance Criteria**
-- Reference document exists at `docs/specs/spec_dependency_map.md` listing all canonical specs and their known dependencies
-- Document labelled as read-only reference with staleness acknowledgement
-- All currently known cross-spec dependencies captured at time of authoring
-- Head of Specs Team sign-off on completeness at authoring time
+<!-- BLG-SPEC-D17 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-10 (EPIC-05) -->
 
 ---
 
@@ -429,7 +386,7 @@ The canonical specification library has grown to ~22 documents with cross-refere
 **Owner:** Head of Specs Team
 **Source:** AUD-2026-03-21 Tier 3 — engine prompt compression deferred (roadmap_prompt 1,581 lines; release_planning_prompt 1,534 lines)
 **Effort:** L (~3–5 days)
-**Provisional-Target:** v2.6 (deprioritised in v2.5 planning queue by BLG-FE-09 — 2026-04-05)
+**Provisional-Target:** v2.8 (deprioritised in v2.5 planning queue by BLG-FE-09 — 2026-04-05)
 
 **Problem**
 `claude/system/roadmap_prompt.md` (1,581 lines) and `claude/system/release_planning_prompt.md` (1,534 lines) are the two largest engine prompts in the governance system. Inline schemas, repeated examples, and verbose explanatory prose are opportunities for extraction and tightening without removing instructional precision or hard gate logic.
@@ -455,7 +412,7 @@ The canonical specification library has grown to ~22 documents with cross-refere
 **Owner:** PMO Lead + Head of Specs Team
 **Source:** User session review — 2026-04-03
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 As cycles accumulate, documents are created in each cycle directory but there is no consolidated inventory of what exists across all closed cycles, nor a documented lifecycle for each artefact type (maintained vs. point-in-time). Without this review it is impossible to audit historical artefacts, identify stale documents, or enforce consistent maintenance practices going forward.
@@ -477,28 +434,7 @@ As cycles accumulate, documents are created in each cycle directory but there is
 
 <!-- BLG-GOV-12 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
 
-### BLG-GOV-14 — Governance Health Score
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** PMO Lead + Head of Specs Team
-**Source:** IDEA-pmo-lead-20260321-02 — promoted via roadmap rebalance 2026-04-05__scheduled (DL-019)
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
-
-**Problem**
-BLG-GOV-09 (cycle velocity metric) shipped in v2.4 tracking story completion rate. However, governance health across other dimensions — header compliance rates, deferred patch accumulation, and outstanding action age — is assessed informally at each rebalance run. Without a structured indicator, governance drift accumulates invisibly between cycles and is typically discovered at post-ship closure rather than at planning time.
-
-**Scope**
-- Define governance health score formula: (a) header compliance % = Class 4/5 docs with compliant headers / total checked; (b) deferred patch indicator = count of open deferred patches by age band (<1 cycle / 1–2 cycles / >2 cycles); (c) outstanding action count
-- Document the formula canonically in `claude/system/OPERATIONAL_GUIDE.md` or a dedicated governance health spec
-- Implement as a lightweight advisory check at STEP -1 of each roadmap rebalance (output: advisory indicator, not a gate)
-- Score is advisory only — does not halt or gate the routine
-
-**Acceptance Criteria**
-- Governance health score formula documented canonically with all three components defined
-- Score is computed and surfaced at STEP -1 of each roadmap rebalance as an advisory indicator
-- Score labelled as advisory — cannot halt or gate the routine
-- Head of Specs Team sign-off on formula definition before implementation
+<!-- BLG-GOV-14 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-11 (EPIC-05) -->
 
 ---
 
@@ -508,7 +444,7 @@ BLG-GOV-09 (cycle velocity metric) shipped in v2.4 tracking story completion rat
 **Owner:** Head of Specs Team
 **Source:** AUD-2026-04-11-002 — Tier 2 (BR 4, Medium effort)
 **Effort:** M (~0.5–1 day)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 `OPERATIONAL_GUIDE.md §1` currently classifies the `decision_log.md` append-only rule as "a governance convention, not a hard gate." Every roadmap rebalance writes to `decision_log.md` without a structural guard, meaning deletions or edits to prior entries are process violations that would not be caught until a manual review. With 10+ completed cycles and an ever-growing decision log, the blast radius of an undetected edit is high.
@@ -524,6 +460,12 @@ Note: `roadmap_prompt.md` v2.2 (2026-03-14) added a pre/post count check at STEP
 - `OPERATIONAL_GUIDE.md §1` Hard Rules table reflects structural enforcement
 - §6 governance file edit checklist applied for both files (version bumps, §14 update, prompt_change_log.md entries)
 - BP-05 compliance confirmed at next audit
+
+---
+
+<!-- BLG-GOV-18 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-03 (EPIC-02) -->
+
+<!-- BLG-GOV-19 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-04 (EPIC-02) -->
 
 ---
 
@@ -581,10 +523,17 @@ These are deliberate product decisions, not deferrals:
 
 ## Active Release Slice — v2.6
 
-<!-- release-plan-marker: RP:v2.6:2026-04-11__release-v2.6 -->
+<!-- release-plan-marker: RP:v2.6:2026-04-11__release-v2.6 — ARCHIVED -->
 
-**Cycle:** 2026-04-11__release-v2.6 | **Status:** Planning | **Published:** 2026-04-11
+**Cycle:** 2026-04-11__release-v2.6 | **Status:** Closed | **Published:** 2026-04-11 | **Shipped:** 2026-04-11
 **Backlog slice:** `claude/cycles/2026-04-11__release-v2.6/stage4_backlog_slice.md`
+
+## Active Release Slice — v2.7
+
+<!-- release-plan-marker: RP:v2.7:2026-04-13__release-v2.7 — COMPLETE -->
+
+**Cycle:** 2026-04-13__release-v2.7 | **Status:** Closed | **Published:** 2026-04-13 | **Shipped:** 2026-04-16 (Verified)
+**Backlog slice:** `claude/cycles/2026-04-13__release-v2.7/stage4_backlog_slice.md`
 
 | Epic | Stories | Theme |
 |------|---------|-------|
@@ -616,7 +565,7 @@ These are deliberate product decisions, not deferrals:
 **Owner:** Head of Engineering + Product Owner
 **Source:** User request — 2026-03-31
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 The application has no mechanism to roll out new features to a subset of users or environments. Any new capability ships immediately to all users with no ability to stage a rollout, run a controlled trial, or roll back a single feature without reverting the entire deployment. As the product grows this creates risk for experimental features and makes it impossible to validate new UI flows with a limited audience before full release.
@@ -656,49 +605,9 @@ The application has no mechanism to roll out new features to a subset of users o
 
 <!-- BLG-OPS-12, BLG-OPS-13, BLG-BE-07 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
 
-### BLG-OPS-14 — Enable Supabase Supavisor connection pooling on staging and production
-**Priority:** P1 (High)
-**Type:** Infrastructure / Operations
-**Owner:** Infrastructure & Operations Owner
-**Source:** ST-06 Head of Engineering investigation — 2026-04-10
-**Effort:** XS (<1 hour — env var change + test)
-**Provisional-Target:** v2.6
+<!-- BLG-OPS-14 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-01 (EPIC-01) -->
 
-**Problem**
-All DB-backed endpoints have p50 latency of 1.1–6s when measured externally because each request opens a fresh `psycopg2.connect()` to Supabase (no persistent connection pool). Supabase provides a built-in connection pooler — Supavisor — available on all plans including free tier. Switching to the Supavisor connection string (port 6543, `?pgbouncer=true`) requires no code changes and reduces per-connection establishment cost from ~1.5s to ~50–100ms, projecting p50 improvements of 1–4s for DB-heavy endpoints.
-
-**Scope**
-- Update `DATABASE_URL` environment variable on both staging and production Render services to use the Supabase Supavisor pooler connection string (available in Supabase dashboard → Project Settings → Database → Connection Pooling → Transaction mode)
-- Verify all DB operations work correctly (psycopg2 is compatible with Supavisor in transaction mode)
-- Re-run performance baseline (7 calls per endpoint) and update `docs/ops/api_performance_baseline.md` v1.2
-
-**Acceptance Criteria**
-- Supavisor pooler connection string in use on staging and production
-- Baseline re-run shows p50 ≤ 500ms for at least the fast cluster endpoints; GET /portfolio and GET /notifications/preferences projected to improve by ≥1.5s
-- No regression to DB correctness (reads and writes verified)
-
----
-
-### BLG-BE-07-FIX — Refactor get_portfolio_summary() to use a single DB connection
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering
-**Owner:** Head of Engineering
-**Source:** ST-06 Head of Engineering investigation — 2026-04-10
-**Effort:** M (~half day)
-**Provisional-Target:** v2.6
-
-**Problem**
-`get_portfolio_summary()` in `backend/services/portfolio_service.py` makes 4 sequential `get_db()` calls within a single request (get_portfolio, get_positions, get_total_deposits_withdrawals, get_drawdown_fields). Each call opens a new psycopg2 connection. At ~1.5s per connection on Supabase free tier, this accounts for ~6s p50. After Supavisor is enabled (BLG-OPS-14), this drops but the 4 round-trips remain inefficient. Consolidating to a single connection would also reduce Supavisor pool utilisation.
-
-**Scope**
-- Refactor `get_portfolio_summary()` to accept or create a single DB connection and pass it to `get_portfolio()`, `get_positions()`, `get_total_deposits_withdrawals()`, and `get_drawdown_fields()` as a shared context
-- Update callsite signatures as needed — changes scoped to `portfolio_service.py` and `database.py` helper functions
-- Should be done after BLG-OPS-14 so the pooling improvement is measured independently
-
-**Acceptance Criteria**
-- `GET /portfolio` makes 1 DB connection per request, not 4
-- P50 for GET /portfolio after fix (with Supavisor) ≤ 400ms
-- No regression to portfolio data correctness
+<!-- BLG-BE-07-FIX — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-02 (EPIC-01) -->
 
 ---
 
@@ -718,7 +627,7 @@ All DB-backed endpoints have p50 latency of 1.1–6s when measured externally be
 **Owner:** PMO Lead
 **Source:** Groom backlog v2.4 post-ship (2026-04-04) — ID uniqueness scan FAIL
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 
 **Problem**
 `claude/backlog/backlog_archive.md` contains 50 duplicate `###` item headers — items that were archived in multiple separate grooming passes across prior cycles. The ID uniqueness scan in `backlog_management_prompt.md §4.5` flags this as FAIL every run. Duplicate headers create ambiguity about which archived entry is authoritative and make the archive unreliable as a historical record. Product Owner confirmation is required before deduplication can proceed (per the health report outstanding action).
@@ -743,7 +652,7 @@ All DB-backed endpoints have p50 latency of 1.1–6s when measured externally be
 **Owner:** Head of Engineering + Frontend Specifications & UX Owner
 **Source:** Initiative AI-SUM — gate cleared by Product Owner 2026-04-04 (SRB-v1.7)
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
+**Provisional-Target:** v2.8
 **§13 Status:** CONDITIONALLY COMPLIANT — SRB-v1.7 (2026-03-02). Mandatory conditions below are non-negotiable and must appear in AC verbatim.
 **Depends on:** Strategy Rules owner sign-off before any signal pipeline integration (SRB-v1.7 condition 3)
 
@@ -766,129 +675,13 @@ Trade journals accumulate over time and users must scroll through individual ent
 
 ---
 
-### BLG-BE-10 — Add supplementary indicator fields to signal generation
-**Priority:** P3 (Low)
-**Type:** Backend Engineering + Frontend / UX
-**Owner:** Head of Engineering + Frontend Specifications & UX Owner
-**Source:** Initiative TECH-IND — gate cleared by Strategy Rules owner 2026-04-04
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
-**§13 Status:** COMPLIANT (display-only scope) — SRB-v1.7 Feature 3. Scoring changes are explicitly out of scope and require a new §13 review + strategy_rules.md version bump before pre-alignment.
+<!-- BLG-BE-10 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-09 (EPIC-04) -->
 
-**Problem**
-The current signal response provides `momentum_percent` (absolute price change over lookback), `atr_value`, and `volatility` for each signal. Users have no context for whether a signal's momentum is genuine outperformance vs. market drift, whether the stock is trading near meaningful price levels, or whether volume supports the move. These display-only additions serve the user's entry decision without altering the deterministic signal ranking.
+<!-- BLG-FEAT-17 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-08 (EPIC-04) — AC-6 frontend rendering deferred (BLG-FE-14 to be filed) -->
 
-**Scope**
-Backend (`POST /signals/generate` response — new fields per signal):
-- `relative_strength_pct`: stock `momentum_percent` minus the benchmark index momentum over the same `lookback_days` period (US stocks vs SPY; UK stocks vs FTSE). Positive = outperforming. Informational only — does not affect `rank`.
-- `week52_high_proximity_pct`: how close the current price is to its 52-week high, as a percentage: `(current_price / 52_week_high - 1) * 100`. Negative means below high; 0 means at high.
-- `avg_daily_volume_20d`: 20-day average daily volume for the stock. Liquidity context.
-- `price_vs_50d_ma`: `"above"` or `"below"` — whether current price is above or below the 50-day moving average.
+<!-- BLG-GOV-16 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-05 (EPIC-02) -->
 
-Frontend (Signals page):
-- Display the four new fields as supplementary context columns or an expanded detail row on each signal card
-- Label `relative_strength_pct` explicitly as "vs. benchmark (informational)" — it does not represent the signal's rank
-- No UI shall allow the user to sort or filter by these fields in a way that reorders signals (rank is canonical)
-
-**Acceptance Criteria**
-- [ ] `POST /signals/generate` response includes all four new fields per signal object
-- [ ] `relative_strength_pct` is computed as stock momentum minus benchmark momentum over the same `lookback_days`; US stocks benchmark SPY, UK stocks benchmark FTSE
-- [ ] `relative_strength_pct` is labelled "vs. benchmark (informational)" in the UI and does not affect the `rank` field or signal ordering
-- [ ] `week52_high_proximity_pct`, `avg_daily_volume_20d`, and `price_vs_50d_ma` are displayed as supplementary context; their display does not alter signal rank
-- [ ] `signal_endpoints.md` updated to document the four new response fields
-- [ ] `openapi.yaml` updated in the same commit as the contract change
-- [ ] Strategy Rules owner confirms no scoring logic was modified (sign-off in QA evidence before merge)
-- [ ] Any future proposal to incorporate any of these fields into signal ranking requires a new §13 review and strategy_rules.md version bump before pre-alignment — this constraint is documented in the QA evidence log
-
----
-
-### BLG-FEAT-17 — Market Correlation Analysis
-**Priority:** P3 (Low)
-**Type:** Product Feature
-**Owner:** Head of Engineering + Frontend Specifications & UX Owner
-**Source:** Initiative MKT-COR — gate cleared by Product Owner + Head of Engineering 2026-04-04
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.6
-**Pipeline decision:** Yahoo Finance (existing pipeline) confirmed sufficient — `backend/utils/pricing.py` already ingests SPY/FTSE via `check_market_regime()`; extend to `range: "2y"` for correlation lookback. No new vendor or API key required.
-
-**Problem**
-Users have no visibility into how correlated their open positions or overall portfolio are with the broader market (SPY for US, FTSE for UK). Without this, a user with 8 US tech positions may believe they are diversified when their portfolio moves almost identically to SPY — the system shows individual position performance but not market-driven vs. stock-specific attribution. Market correlation analysis addresses this gap.
-
-**Scope**
-Backend:
-- New analytics endpoint (e.g. `GET /analytics/market-correlation`) returning per-position and portfolio-level correlation coefficients vs. the relevant benchmark (SPY for US positions, FTSE for UK positions) over a configurable lookback (default 252 days)
-- Fetch historical OHLC for each position ticker and its benchmark via Yahoo Finance (`range: "2y"` to cover the default lookback plus buffer); compute Pearson correlation coefficient over the overlapping date range for each position held during that period
-- Response must be cached: TTL-based cache with minimum trading-day boundary (recalculate at most once per trading day). Correlation data changes slowly; recomputing on every page load is not acceptable.
-- On-demand computation only — no SPY/FTSE time-series stored in the database
-
-Frontend:
-- Display correlation metrics on the Analytics/Reports page: per-position correlation badge and portfolio-weighted average correlation vs. benchmark
-- Correlation scale: −1.0 (inverse) to +1.0 (perfect). Display as a signed decimal to 2dp with a colour indicator (e.g. >0.7 = high correlation warning, 0.3–0.7 = moderate, <0.3 = low)
-
-**Acceptance Criteria**
-- [ ] `GET /analytics/market-correlation` (or equivalent path) returns correlation coefficients for all open positions vs. their relevant benchmark (SPY/FTSE)
-- [ ] Portfolio-level weighted average correlation is included in the response
-- [ ] Correlation is computed as Pearson coefficient over the default 252-day lookback (or available history if shorter); lookback is a query parameter
-- [ ] Response is cached with a TTL of at minimum one trading day — repeated calls within the same trading day return the cached result without re-fetching Yahoo Finance
-- [ ] SPY/FTSE historical data is fetched on-demand; no index time-series is persisted to the database
-- [ ] Frontend displays per-position correlation and portfolio average on the Analytics page with colour-coded severity (high/moderate/low)
-- [ ] `openapi.yaml` updated in the same commit as the new endpoint
-- [ ] If Yahoo Finance is unavailable, the endpoint returns a graceful error (not a 500 that breaks the page); cached data is served if available
-- [ ] Engineer notes in QA evidence: if Yahoo Finance reliability becomes a problem, a formal data source review is required before any further correlation-dependent features
-
----
-
-### BLG-GOV-16 — Extend governance_sync.yml to trigger on push to main
-**Priority:** P2 (Medium)
-**Type:** Governance / CI
-**Owner:** Infrastructure & Operations Owner
-**Source:** Observed during v2.6 EPIC-01 merge — ST-01 and ST-03 issues remained open after PR merged to main
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v2.7
-
-**Problem**
-`governance_sync.yml` only triggers on pushes to `exec/**` branches. When a PR is merged into `main`, the workflow does not fire, so GitHub Issues referenced in the merged commits are not automatically closed. This requires manual issue closure after every EPIC merge, which is a governance overhead and a process deviation risk.
-
-**Scope**
-- Add `main` to the `on.push.branches` trigger list in `.github/workflows/governance_sync.yml`
-- Verify the workflow fires on merge to main and closes the correct issues
-- Confirm no duplicate-close side effects (issues already closed by exec branch push are skipped gracefully — the existing `--state open` filter handles this)
-
-**Acceptance Criteria**
-- [ ] `.github/workflows/governance_sync.yml` `on.push.branches` includes `main`
-- [ ] After merging a PR to `main`, GitHub Issues with titles matching `[ST-xx]` commits in the merge are automatically closed
-- [ ] Issues already closed (from exec branch push) are not errored — workflow skips them cleanly
-- [ ] Manual issue closure after EPIC merges is no longer required
-
-### BLG-QA-11 — Fix Playwright page.route() intercepts not firing in local test environment
-**Priority:** P2 (Medium)
-**Type:** Test Infrastructure
-**Owner:** QA & Testing Owner + Infrastructure & Operations Owner
-**Source:** Discovered during v2.6 EPIC-02 staging QA — all TradeHistory and Reports Playwright specs fail with assertion errors despite correct mock setup; confirmed systemic (EPIC-01 and EPIC-02 specs both affected)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v2.7
-
-**Problem**
-All `page.route()` intercepts in the Playwright e2e suite fail to deliver mock data to the React app. The page renders with empty/zero data instead of the mocked responses. The symptom is consistent across every spec that uses `page.route()` against `localhost:8000` — `reports-performance-tab.spec.js`, `slippage-tracking.spec.js`, `fee-drag-trade-history.spec.js`, `signals-cash-balance.spec.js` all fail. The specs were written and filed as QA evidence but have never successfully passed in this environment.
-
-**Suspected causes (to investigate in priority order):**
-1. React Query's fetch calls may be bypassing Playwright's intercept layer — possibly a CSP or service worker issue despite `bypassCSP: true` in the config
-2. The `REACT_APP_API_URL` env var may not be resolving to `http://localhost:8000` when the webServer starts, causing fetches to hit a different URL than the mocked one
-3. Route registration timing — routes may need to be registered via `page.addInitScript` rather than `page.route()` for React apps that fire queries immediately on mount
-
-**Scope**
-- Investigate root cause using Playwright's `--debug` mode or network tracing (`page.on('request', ...)`) to confirm what URL the app actually fetches and whether Playwright intercepts it
-- Fix the intercept mechanism so at least one spec passes end-to-end
-- Apply the fix pattern to all existing specs
-- Add a note to the Playwright infrastructure section of the testing docs
-
-**Acceptance Criteria**
-- [ ] Root cause of intercept failure identified and documented
-- [ ] `reports-performance-tab.spec.js` — all 11 tests pass in headless Chromium
-- [ ] `slippage-tracking.spec.js` — all 8 tests pass in headless Chromium
-- [ ] `fee-drag-trade-history.spec.js` — all 7 tests pass in headless Chromium
-- [ ] `signals-cash-balance.spec.js` — all 4 tests pass in headless Chromium
-- [ ] Fix pattern documented so future specs follow the working approach
+<!-- BLG-QA-11 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-06 (EPIC-03) -->
 
 ### BLG-QA-13 — Test scenario coverage gap: market correlation and supplementary indicators (v2.7)
 **Priority:** P3 (Low)

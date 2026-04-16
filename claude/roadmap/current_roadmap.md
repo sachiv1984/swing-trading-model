@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-10 (manage_roadmap post-ship closure 2026-04-05__release-v2.5 — RA:v2.5 annotation retired to roadmap_archive.md; §3 updated; no stale items flagged; no active initiatives)
+**Last Updated:** 2026-04-16 (manage roadmap STEP 11, post-ship closure 2026-04-13__release-v2.7 — RA:v2.7 retired; Market Correlation + New Tech Indicators + Signal Exposure (4.3) + Market Correlation gate retired to archive; §5 + §6 cleaned)
 **Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — scheduled run; Standard tier; DL-017 to DL-019)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -12,8 +12,8 @@
 
 ## 1. Current Version
 
-**v2.5** — Integration Baseline, Quick Wins & Governance Debt — Shipped 2026-04-10
-**Next planned release:** **v2.6** (TBD)
+**v2.7** — Performance, Governance Hardening & Market Intelligence — Shipped 2026-04-16
+**Next planned release:** **v2.8** (TBD)
 
 ---
 
@@ -45,17 +45,9 @@ These may be revisited in future versions without any canonical spec change:
 
 ## 3. Delivery Plan — Horizon: Now
 
-*v2.5 shipped 2026-04-10 (Verified_with_deviations). RA:v2.5 annotation retired to roadmap_archive.md 2026-04-10. Next release v2.6 — planning in progress.*
-
-<!-- roadmap-annotation-marker: RA:v2.6:2026-04-11__release-v2.6 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-04-11__release-v2.6
-- Plan published: 2026-04-11
-- Cycle folder: claude/cycles/2026-04-11__release-v2.6/
-- Backlog slice: claude/cycles/2026-04-11__release-v2.6/stage4_backlog_slice.md
-- Theme: Backend Integration Completion, Test Automation & Governance Hardening
-- Status at annotation: Validated
+*v2.5 shipped 2026-04-10 (Verified_with_deviations). RA:v2.5 annotation retired to roadmap_archive.md 2026-04-10.*
+*v2.6 shipped 2026-04-11 (Verified). RA:v2.6 annotation retired 2026-04-16 (post-ship closure v2.7 — v2.6 closure was not run standalone).*
+*v2.7 shipped 2026-04-16 (Verified). RA:v2.7 annotation retired to roadmap_archive.md 2026-04-16 (post-ship closure v2.7).*
 
 ---
 
@@ -69,9 +61,7 @@ These may be revisited in future versions without any canonical spec change:
 | Mobile App | Very High | Web experience sufficient |
 | Full Compliance Scoring | High | Requires more trade history; lightweight version ships in v1.9 |
 | BLG-TECH-05 — Prometheus metrics endpoint | Low–Medium | Defer until operational need or multi-user |
-| Market Correlation Analysis | High | Gate cleared 2026-04-04 — Yahoo Finance pipeline confirmed sufficient (PO + HoE). Backlog item BLG-FEAT-17 filed. See Priority 2 — Next Phase in `initiative_register.md`. |
 | AI Journal Summarisation | Medium | Gate cleared 2026-04-04 — SRB-v1.7 CONDITIONALLY COMPLIANT (PO). Backlog item BLG-FEAT-16 filed. See Priority 2 — Next Phase in `initiative_register.md`. |
-| New Technical Indicators | Low–Medium | Gate cleared 2026-04-04 — display-only scope approved by Strategy Rules owner. Backlog item BLG-BE-10 filed. See Priority 2 — Next Phase in `initiative_register.md`. |
 | Customisable Dashboard Layout | High | High build cost, low current priority. Defer indefinitely at current scale |
 
 ---
@@ -82,12 +72,7 @@ These features have been discussed and provisionally agreed but may not enter pr
 
 | Feature | Gate condition | Gate owner |
 |---------|---------------|------------|
-| ~~Signal parameter exposure (4.3)~~ | ~~`strategy_rules.md` updated to formally define `top_n` and `lookback_days` as user-configurable~~ | ~~Strategy Rules owner + Product Owner~~ |
 | AI Journal Summarisation | §13 boundary decision documented: does non-deterministic AI output conflict with the deterministic system principle? | Product Owner + Strategy Rules owner |
-| New Technical Indicators | Strategy rules review: which indicators, if any, are canonical to this strategy? | Strategy Rules owner |
-| Market Correlation | External data pipeline decision: do we ingest benchmark prices (SPY, FTSE)? | Product Owner + Head of Engineering |
-
-> **Gate cleared (2026-03-04):** Signal parameter exposure (4.3) gate cleared by PoG POG-20260304-01. Item promoted to active v2.0 planning. See 4.3 entry in §3 above.
 
 ---
 
@@ -121,6 +106,8 @@ When evaluating new features:
 | **v2.3** | Quality Automation & User Insight | Strategy Compliance Panel, Metrics Staleness Indicator, Alert Nav Badge, Health Database endpoint, QA automation, Governance tooling — ✅ Shipped 2026-03-30 (Verified_with_deviations) |
 | **v2.4** | Correctness, Insight & Governance Hardening | ATR fix, alert deduplication, stop price join, P&L GBP column, error mapping, data model reconciliation, weekly digest, operational readiness, governance patches — ✅ Shipped 2026-04-03 (Verified_with_deviations) |
 | **v2.5** | Integration Baseline, Quick Wins & Governance Debt | System Status reliability (26 endpoints, auth fix, categories), backend integration docs, latency investigation, Fee Drag % metric, governance prompt patches (CF-2), governance_sync.yml fix, test scenarios — ✅ Shipped 2026-04-10 (Verified_with_deviations) |
+| **v2.6** | Backend Integration Completion, Test Automation & Governance Hardening | Playwright infrastructure fix, System Status spec, audit AUD-2026-04-11, governance prompt patches (4 prompts), Health Score advisory, Spec Dependency Map — ✅ Shipped 2026-04-11 (Verified) |
+| **v2.7** | Performance, Governance Hardening & Market Intelligence | Supavisor connection pooling (p50=234ms), portfolio DB refactor, QA sign-off gate, autonomous DoQ class, Playwright LIFO fix (46/46), market correlation API, supplementary signal indicators (§13 COMPLIANT), spec dependency map, Governance Health Score — ✅ Shipped 2026-04-16 (Verified) |
 
 ---
 

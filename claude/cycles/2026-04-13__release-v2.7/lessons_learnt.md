@@ -36,20 +36,21 @@ None. Carry-forward items from v2.6 are either resolved (BLG-GOV-17) or scoped i
 ```json
 {
   "cycle_id": "2026-04-13__release-v2.7",
-  "phase": "Release",
-  "status": "Published",
-  "artefacts": {
-    "run_manifest": "present",
-    "release_plan": "present",
-    "scope_document": "present",
-    "decisions_record": "present",
-    "stage4_backlog_slice": "present",
-    "stage4_issue_manifest": "present",
-    "cycle_summary": "present",
-    "lessons_learnt": "present",
-    "state_json": "present"
-  },
-  "open_escalations": 0,
-  "deferred_execution_blockers": 0
-}
-```
+    "phase": "Release",
+      "status": "Published",
+        "artefacts": {
+            "run_manifest": "present",
+                "release_plan": "present",
+                    "scope_document": "present",
+                        "decisions_record": "present",
+                            "stage4_backlog_slice": "present",
+                                "stage4_issue_manifest": "present",
+                                    "cycle_summary": "present",
+                                        "lessons_learnt": "present",
+                                            "state_json": "present"
+                                              },
+                                                "open_escalations": 0,
+                                                  "deferred_execution_blockers": 0
+                                                  }
+                                                  ```
+                                                  **

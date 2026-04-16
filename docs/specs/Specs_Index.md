@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-16
 
 ---
 
@@ -105,6 +105,8 @@ It points to the **single canonical source**.
 - `alerts_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-03-20, ST-02; updated v0.3 2026-03-24, ST-05): Alert rules CRUD, alert evaluation, notification feed, notification preferences, alert history (GET /alerts/history). Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
 - `digest_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-03, ST-08, cycle 2026-03-31__release-v2.4): GET /digest/weekly — 7-day trading digest (realised P&L, alert activity, compliance trend, staleness summary). Deterministic data fields only. Sign-off: QA Lead + DoQ (2026-04-01/03).
 - `health_endpoints.md` — Class 1 Canonical, v1.2, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3 — DEV-HEALTH-001 closed; updated v1.2 by ST-08 adding GET /health/database): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.2, 2026-03-30).
+- `analytics_endpoints.md` — Class 1 Canonical, v2.1.0, Active (updated 2026-04-15, ST-08, cycle 2026-04-13__release-v2.7): GET /analytics/market-correlation (Pearson correlation vs benchmark, TTL-cached). Sign-off: Head of Specs Team.
+- `signal_endpoints.md` — Class 1 Canonical, v1.1, Active (updated 2026-04-15, ST-09, cycle 2026-04-13__release-v2.7): POST /signals/generate — added 4 supplementary display-only indicator fields (relative_strength_pct, week52_high_proximity_pct, avg_daily_volume_20d, price_vs_50d_ma). §13 COMPLIANT (display-only). Sign-off: Strategy Rules Owner.
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**
@@ -271,6 +273,14 @@ This section records known lifecycle or governance compliance gaps that have bee
 
 ---
 
+## 7b. Spec Dependency Map
+
+The Spec Dependency Map is a point-in-time reference document mapping all canonical spec cross-references. Produced in v2.7 (ST-10, EPIC-05).
+
+- `docs/specs/spec_dependency_map.md` — Class 4 Planning Document (read-only reference), v1.0, Active (created 2026-04-16, ST-10, cycle 2026-04-13__release-v2.7). Head of Specs Team sign-off on completeness at authoring time. Explicit staleness acknowledgement in document header.
+
+---
+
 ## 8. Coverage Inventory
 
 The Coverage Inventory is the authoritative cross-domain record of spec-to-implementation coverage, lifecycle compliance status, and open documentation gaps. It is refreshed every 3 cycles (at `run audit`) and at the start of each major release.
@@ -371,6 +381,21 @@ Identified during delivery verification (verification_report.md §6 — TSG-V25-
 **Gap:** ST-09 delivered the fee drag metric (column + StatsCard) on Trade History. No Playwright spec exists for SC-FEE-01 through SC-FEE-04 (`docs/testing/fee-drag-scenarios.md`). Trade History has `slippage-tracking.spec.js` as a model.
 **Required action:** Author `tests/e2e/fee-drag-trade-history.spec.js` covering SC-FEE-01–SC-FEE-04. See BLG-QA-07 for scope.
 **Resolution target:** v2.6
+
+---
+
+## 13. Test Coverage Gaps — v2.7 (2026-04-13__release-v2.7)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v27-01).
+
+### 13.1 TSG-v27-01 — EPIC-04: no test scenarios for market correlation or supplementary indicator fields
+
+**Identified:** 2026-04-16 (delivery verification 2026-04-13__release-v2.7)
+**Status:** Open — backlog item BLG-QA-13
+**Owner:** QA & Testing Owner
+**Gap:** EPIC-04 registered two legacy scenario files (`docs/testing/analytics_scenarios.md` v1.0 from 2026-03-17, `docs/testing/signals_scenarios.md` v1.0 from 2026-03-18) that predate v2.7 and cover different functionality. No scenarios exist for `GET /analytics/market-correlation` (ST-08) or the four new supplementary indicator fields on `POST /signals/generate` (ST-09).
+**Required action:** Author SC-CORR-01 through SC-CORR-04 (market correlation endpoint) and SC-SIG-IND-01 through SC-SIG-IND-02 (supplementary indicators). See BLG-QA-13 for scope.
+**Resolution target:** v2.8
 
 ---
 

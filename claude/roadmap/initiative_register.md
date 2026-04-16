@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-05 (rebalance 2026-04-05__scheduled — Standard tier; no active initiative changes; gated items AI-SUM/TECH-IND/MKT-COR remain in Priority 2 Next Phase; active initiatives pool remains empty; DL-017 to DL-019)
+**Last Updated:** 2026-04-16 (manage roadmap STEP 11, post-ship closure 2026-04-13__release-v2.7 — TECH-IND + MKT-COR moved to Completed; AI-SUM retained in Priority 2; AI-SUM removed from Gated row)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -37,8 +37,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 | ID | Initiative | Gate status | Backlog item | Notes |
 |----|-----------|-------------|--------------|-------|
 | AI-SUM | AI Journal Summarisation | Gate cleared 2026-04-04 (SRB-v1.7) | BLG-FEAT-16 | UX convenience display only. 4 mandatory conditions from SRB-v1.7 must appear in AC. Strategy Rules owner sign-off required before any signal pipeline integration. |
-| TECH-IND | New Technical Indicators | Gate cleared 2026-04-04 (Strategy Rules owner scoping decision) | BLG-BE-10 | Display-only scope only: 52-week high %, 20-day avg volume, price vs 50-day MA flag, relative strength vs benchmark (informational field — does not affect ranking). Any scoring promotion requires new §13 review + strategy_rules.md version bump before pre-alignment. |
-| MKT-COR | Market Correlation Analysis | Gate cleared 2026-04-04 (PO + HoE: Yahoo Finance pipeline confirmed sufficient) | BLG-FEAT-17 | On-demand computation via existing Yahoo Finance integration (2y range). No DB storage of index time-series. Caching required (TTL-based, trading-day boundary minimum). |
+| AI-SUM | AI Journal Summarisation | Gate cleared 2026-04-04 (SRB-v1.7) | BLG-FEAT-16 | UX convenience display only. 4 mandatory conditions from SRB-v1.7 must appear in AC. Strategy Rules owner sign-off required before any signal pipeline integration. |
 
 ---
 
@@ -69,6 +68,8 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 | ID | Initiative | Shipped | Release |
 |----|-----------|---------|---------|
+| TECH-IND | New Technical Indicators | 2026-04-16 | v2.7 |
+| MKT-COR | Market Correlation Analysis | 2026-04-16 | v2.7 |
 | 3.5 | Alerts & Notifications | 2026-03-21 | v2.1 |
 | 4.2 | Watchlists & Screening | 2026-03-21 | v2.1 |
 | CHART-IX | Chart Interactivity Enhancements | 2026-03-21 | v2.1 |

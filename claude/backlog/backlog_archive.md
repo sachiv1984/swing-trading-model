@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-16
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -1987,4 +1987,27 @@ The current idea intake model produces one file per idea per agent per window (4
 | BLG-PROC-01 | Cross-EPIC process compliance check | ST-19 | v2.1 sprint compliance confirmed; EPIC-03 cherry-pick deviation documented |
 | BLG-OPS-03 | Pre-merge frontend preview environments | ST-15 | seed-preview.yml psql approach shipped; frontend preview blocker documented |
 | BLG-FR-01 | Tax Year P&L Report PDF Export | ST-12 | GET /reports/tax-year?format=pdf implemented with server-side PDF generation |
+
+---
+
+### v2.7 Release Slice — 2026-04-13__release-v2.7
+
+**Status at retirement:** ✅ Complete
+**Retired:** 2026-04-16
+**Shipped in:** v2.7 — Performance, Governance Hardening & Market Intelligence
+**Evidence:** 11/11 items shipped; `claude/cycles/2026-04-13__release-v2.7/closure_record.md`
+
+| ID | Title | Story | Notes |
+|----|-------|-------|-------|
+| BLG-OPS-14 | Enable Supabase Supavisor connection pooling | ST-01 | Delegated; p50=234ms (PASS ≤400ms) |
+| BLG-BE-07-FIX | Refactor get_portfolio_summary() single DB connection | ST-02 | GET /portfolio 1 connection/request; p50 ≤400ms |
+| BLG-GOV-18 | Require QA sign-off block complete before PR | ST-03 | execution_prompt.md §3.2.B gated |
+| BLG-GOV-19 | Define autonomous DoQ sign-off class | ST-04 | delivery_verification_prompt.md STEP -1.3 updated |
+| BLG-GOV-16 | Extend governance_sync.yml to trigger on push to main | ST-05 | Issues now auto-close on main push |
+| BLG-QA-11 | Fix Playwright page.route() intercepts (LIFO fix) | ST-06 | 46/46 Playwright tests pass |
+| BLG-QA-12 | System Status Playwright spec | ST-07 | system-status.spec.js — 16 scenarios pass |
+| BLG-FEAT-17 | Market Correlation Analysis | ST-08 | GET /analytics/market-correlation; AC-6 frontend deferred |
+| BLG-BE-10 | Supplementary indicator fields (display-only) | ST-09 | 4 fields added; §13 COMPLIANT |
+| BLG-SPEC-D17 | Spec Dependency Map | ST-10 | docs/specs/spec_dependency_map.md v1.0 |
+| BLG-GOV-14 | Governance Health Score | ST-11 | OPERATIONAL_GUIDE §15; roadmap_prompt STEP -1.7 |
 

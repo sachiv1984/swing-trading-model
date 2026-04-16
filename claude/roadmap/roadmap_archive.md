@@ -1,13 +1,90 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-16
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v2.7 — Performance, Governance Hardening & Market Intelligence (RA:v2.7)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (annotation block RA:v2.7)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-16
+**Shipped version:** v2.7 (2026-04-16)
+**Cycle reference:** 2026-04-13__release-v2.7
+**Verification report:** `claude/cycles/2026-04-13__release-v2.7/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-16
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.7:2026-04-13__release-v2.7 — COMPLETE -->
+
+**Execution notes (v2.7 — Complete):**
+- Cycle: 2026-04-13__release-v2.7
+- Plan published: 2026-04-13
+- Shipped: 2026-04-16
+- Cycle folder: claude/cycles/2026-04-13__release-v2.7/
+- Backlog slice: claude/cycles/2026-04-13__release-v2.7/stage4_backlog_slice.md
+- Theme: Performance, Governance Hardening & Market Intelligence
+- Status: ✅ Complete — Verified 2026-04-16
+
+---
+
+## Market Correlation Analysis (MKT-COR) — §5 Priority 3 + §6 Gate
+
+**Original roadmap location:** §5 Priority 3 table + §6 Gated Features table
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-16
+**Shipped version:** v2.7 (2026-04-16) — ST-08 (EPIC-04)
+**Cycle reference:** 2026-04-13__release-v2.7
+**Verification report:** `claude/cycles/2026-04-13__release-v2.7/verification_report.md`
+**Decision log reference:** Gate cleared 2026-04-04 — Yahoo Finance pipeline confirmed sufficient
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-16
+
+### Original Roadmap Entry (§5)
+
+| ~~Market Correlation Analysis~~ | ~~High~~ | ~~Gate cleared 2026-04-04~~. ✅ Shipped v2.7 — `GET /analytics/market-correlation` backend endpoint delivered (ST-08, 2026-04-16). AC-6 frontend rendering deferred to future story. |
+
+---
+
+## New Technical Indicators (TECH-IND) — §5 Priority 3 + §6 Gate
+
+**Original roadmap location:** §5 Priority 3 table + §6 Gated Features table
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-16
+**Shipped version:** v2.7 (2026-04-16) — ST-09 (EPIC-04)
+**Cycle reference:** 2026-04-13__release-v2.7
+**Verification report:** `claude/cycles/2026-04-13__release-v2.7/verification_report.md`
+**Decision log reference:** Gate cleared 2026-04-04 — Strategy Rules owner: display-only scope approved
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-16
+
+### Original Roadmap Entry (§5)
+
+| ~~New Technical Indicators~~ | ~~Low–Medium~~ | ~~Gate cleared 2026-04-04~~. ✅ Shipped v2.7 — four supplementary indicator fields delivered in ST-09 (display-only, §13 COMPLIANT). |
+
+---
+
+## Signal Parameter Exposure (4.3) — §6 Gate
+
+**Original roadmap location:** §6 Gated Features table
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-16
+**Shipped version:** v2.0 (2026-03-17)
+**Cycle reference:** 2026-03-17__release-v2.0
+**Verification report:** N/A (shipped under prior governance)
+**Decision log reference:** Gate cleared 2026-03-04 — PoG POG-20260304-01
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-16 (item remained in §6 as struck-through entry; now formally archived)
+
+### Original Roadmap Entry (§6)
+
+| ~~Signal parameter exposure (4.3)~~ | ~~`strategy_rules.md` updated to formally define `top_n` and `lookback_days` as user-configurable~~ | ~~Strategy Rules owner + Product Owner~~ |
 
 ---
 
