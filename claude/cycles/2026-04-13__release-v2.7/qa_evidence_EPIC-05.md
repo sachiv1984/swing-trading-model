@@ -68,3 +68,15 @@
 | ST-11 | 5/5 | Applied (OPERATIONAL_GUIDE.md v3.56, roadmap_prompt.md v4.9) | N/A (governance prompt) | Pass |
 
 **EPIC-05 QA Sign-off:** All AC verified. Both stories ready for PR merge.
+
+---
+
+## QA Sign-off Block
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction: N/A — documentation and governance prompt changes only
+- Signed off by: Director of Quality
+- Date: 2026-04-16
+- Comments: ST-10: 4/4 AC verified; spec_dependency_map.md v1.0 complete; Head of Specs Team completeness sign-off recorded. ST-11: 5/5 AC verified; §6 checklist confirmed complete; Head of Specs Team sign-off on Governance Health Score formula recorded.

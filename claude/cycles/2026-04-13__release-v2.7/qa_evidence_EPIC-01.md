@@ -53,3 +53,15 @@
 | ST-02 | Pass | a98715a6 | All 4 AC verified including AC-2 (p50=234ms). |
 
 **EPIC-01 QA Sign-off:** Complete — all stories pass. Ready for PR merge.
+
+---
+
+## QA Sign-off Block
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction: N/A — no frontend changes
+- Signed off by: Director of Quality
+- Date: 2026-04-16
+- Comments: ST-01 delegation closed (DEL-20260414-01 Unblocked); p50=234ms (PASS ≤400ms). ST-02: all 4 AC verified including measured p50 with Supavisor enabled.

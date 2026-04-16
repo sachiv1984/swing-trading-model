@@ -5,7 +5,7 @@
   "invoked_utc": "2026-04-14T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-16T00:00:00Z",
+  "last_updated_utc": "2026-04-16T12:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -61,7 +61,7 @@
       "status": "done",
       "branch": "exec/2026-04-13__release-v2.7/EPIC-02",
       "pr_number": 233,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-13__release-v2.7/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -190,7 +190,7 @@
       "status": "done",
       "branch": "exec/2026-04-13__release-v2.7/EPIC-04",
       "pr_number": 236,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-13__release-v2.7/qa_evidence_EPIC-04.md",
       "test_scenarios": ["docs/testing/analytics_scenarios.md", "docs/testing/signals_scenarios.md"],
@@ -239,7 +239,7 @@
       "status": "done",
       "branch": "exec/2026-04-13__release-v2.7/EPIC-05",
       "pr_number": 237,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-13__release-v2.7/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
@@ -297,6 +297,6 @@
     "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-04-16T00:00:00Z"
 }

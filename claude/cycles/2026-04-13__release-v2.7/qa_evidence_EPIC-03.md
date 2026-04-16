@@ -61,3 +61,15 @@
 | ST-07 | Pass | 975fe6f | 16/16 |
 
 **EPIC-03 QA Sign-off:** ✅ All stories pass. 46 Playwright scenarios verified in headless Chromium. Ready for PR.
+
+---
+
+## QA Sign-off Block
+
+- [x] All acceptance criteria verified against canonical spec (Playwright headless execution)
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked (existing scenarios pass with ST-06 fix applied)
+- [x] For any frontend component making direct URL construction: N/A — test infrastructure changes only
+- Signed off by: Director of Quality
+- Date: 2026-04-15
+- Comments: ST-06: 30/30 Playwright scenarios pass; root cause (LIFO route ordering) fixed across all 4 spec files. ST-07: 16/16 scenarios pass; 28-endpoint mock verified. ST-06 fix pattern applied consistently.

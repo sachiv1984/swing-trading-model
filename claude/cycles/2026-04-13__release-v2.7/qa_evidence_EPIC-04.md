@@ -78,3 +78,15 @@
 | ST-09 | 8/8 | COMPLIANT (SRB-v1.7 Feature 3) | N/A (backend only) | Pass |
 
 **EPIC-04 QA Sign-off:** All backend AC verified. Frontend rendering (ST-08 AC-6) deferred to a future frontend story — backend contract fully specified. Both stories ready for PR merge.
+
+---
+
+## QA Sign-off Block
+
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations (AC-6 deferred — specification filed, future frontend story)
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction: N/A — backend-only stories
+- Signed off by: Director of Quality
+- Date: 2026-04-15
+- Comments: ST-08: 8/9 AC verified; AC-6 frontend rendering deferred with backend contract fully specified in analytics_endpoints.md v2.1.0. ST-09: 8/8 AC verified; §13 COMPLIANT; Strategy Rules Owner sign-off recorded.
