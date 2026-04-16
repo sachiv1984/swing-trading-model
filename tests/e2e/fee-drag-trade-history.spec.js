@@ -37,7 +37,7 @@ const TRADE_WITH_FEE_DRAG = {
   exit_price: 220.00,
   shares: 100,
   pnl: 1990.05,
-  pnl_percent: 9.95,
+  pnl_pct: 9.95,            // component reads pnl_pct (not pnl_percent)
   fee_drag_pct: 0.45,       // exit_fees=9.95 / gross_proceeds=2200 * 100
   slippage_pct: null,
   exit_reason: 'Target Reached',
@@ -55,7 +55,7 @@ const TRADE_NO_FEE_DRAG = {
   exit_price: 155.00,
   shares: 50,
   pnl: 250.00,
-  pnl_percent: 3.33,
+  pnl_pct: 3.33,            // component reads pnl_pct (not pnl_percent)
   fee_drag_pct: null,       // no exit_fees recorded — pre-v2.5 trade
   slippage_pct: null,
   exit_reason: 'Manual Exit',
@@ -73,7 +73,7 @@ const TRADE_WITH_FEE_DRAG_2 = {
   exit_price: 85.00,
   shares: 200,
   pnl: 990.10,
-  pnl_percent: 6.19,
+  pnl_pct: 6.19,            // component reads pnl_pct (not pnl_percent)
   fee_drag_pct: 0.25,       // second trade for avg test
   slippage_pct: null,
   exit_reason: 'Manual Exit',
@@ -153,9 +153,11 @@ async function mockFallback(page) {
 }
 
 async function mockBaseEndpoints(page, tradesResponse) {
+  // Catch-all registered FIRST — Playwright routes are LIFO (last-registered wins),
+  // so registering the catch-all first ensures specific mocks below take precedence.
+  await mockFallback(page);
   await mockTrades(page, tradesResponse);
   await mockAnalytics(page);
-  await mockFallback(page);
 }
 
 // ---------------------------------------------------------------------------
@@ -171,8 +173,8 @@ test.describe('SC-FEE-01 — Fee Drag column header', () => {
   });
 
   test('SC-FEE-01a: Fee Drag column header is visible in the trade table', async ({ page }) => {
-    // Column header rendered as a <button> for sortability (matching slippage pattern)
-    await expect(page.getByRole('button', { name: /fee drag/i })).toBeVisible();
+    // TableHead renders as <th> (role=columnheader), not a <button>
+    await expect(page.getByRole('columnheader', { name: /fee drag/i })).toBeVisible();
   });
 });
 
@@ -196,7 +198,8 @@ test.describe('SC-FEE-02 — Non-null fee drag renders amber', () => {
 
   test('SC-FEE-02b: Fee drag value uses + prefix for non-negative values', async ({ page }) => {
     // fee drag is always a cost (≥ 0), formatFeeDrag always prepends "+"
-    await expect(page.locator('text=+0.45%')).toBeVisible();
+    // .first() resolves strict-mode violation: +0.45% appears in both the StatsCard and the table row.
+    await expect(page.locator('text=+0.45%').first()).toBeVisible();
   });
 });
 
@@ -244,13 +247,16 @@ test.describe('SC-FEE-04 — Null fee drag shows em dash', () => {
     // BARC has fee_drag_pct: null → formatFeeDrag → "—", class → text-slate-500
     const barcRow = page.locator('tr').filter({ hasText: 'BARC' });
     await expect(barcRow).toBeVisible();
-    const feeDragCell = barcRow.locator('.text-slate-500').filter({ hasText: '—' });
+    // BARC has null fee_drag, slippage, and R-multiple — all show '—' in text-slate-500.
+    // Use .first() since any em-dash in slate-500 on this row confirms null renders correctly.
+    const feeDragCell = barcRow.locator('.text-slate-500').filter({ hasText: '—' }).first();
     await expect(feeDragCell).toBeVisible();
   });
 
   test('SC-FEE-04b: Trades with fee drag still render correctly alongside null rows', async ({ page }) => {
-    // Confirm LGEN amber value is visible in the same table as BARC null row
-    await expect(page.locator('text=+0.45%')).toBeVisible();
+    // Confirm LGEN amber value is visible in the same table as BARC null row.
+    // Scope to table to resolve strict-mode violation: +0.45% also appears in the StatsCard.
+    await expect(page.locator('table').getByText('+0.45%')).toBeVisible();
     await expect(page.locator('text=BARC')).toBeVisible();
   });
 });

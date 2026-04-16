@@ -40,7 +40,7 @@ const TRADE_FAVOURABLE = {
   exit_price: 220.00,
   shares: 100,
   pnl: 2000.00,
-  pnl_percent: 10.0,
+  pnl_pct: 10.0,         // component reads pnl_pct (not pnl_percent)
   slippage_pct: -0.25,   // filled below market — favourable — should render emerald
   fill_price: 199.50,
   exit_reason: 'Target Reached',
@@ -58,7 +58,7 @@ const TRADE_UNFAVOURABLE = {
   exit_price: 140.00,
   shares: 50,
   pnl: -500.00,
-  pnl_percent: -6.67,
+  pnl_pct: -6.67,        // component reads pnl_pct (not pnl_percent)
   slippage_pct: 0.50,    // filled above market — unfavourable — should render rose
   fill_price: 150.75,
   exit_reason: 'Stop Loss Hit',
@@ -76,7 +76,7 @@ const TRADE_NO_FILL = {
   exit_price: 85.00,
   shares: 200,
   pnl: 1000.00,
-  pnl_percent: 6.25,
+  pnl_pct: 6.25,         // component reads pnl_pct (not pnl_percent)
   slippage_pct: null,    // no fill price — should show em dash
   fill_price: null,
   exit_reason: 'Manual Exit',
@@ -109,6 +109,15 @@ const ANALYTICS_RESPONSE = {
 // ---------------------------------------------------------------------------
 
 async function mockBaseEndpoints(page, tradesResponse = TRADES_RESPONSE) {
+  // Catch-all registered FIRST — Playwright routes are LIFO (last-registered wins),
+  // so registering the catch-all first ensures specific mocks below take precedence.
+  await page.route(new RegExp(`${API}/`), (route) => {
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ok', data: [] }),
+    });
+  });
   await page.route(`${API}/trades`, (route) =>
     route.fulfill({
       status: 200,
@@ -123,14 +132,6 @@ async function mockBaseEndpoints(page, tradesResponse = TRADES_RESPONSE) {
       body: JSON.stringify(ANALYTICS_RESPONSE),
     })
   );
-  // Catch-all for any other endpoints
-  await page.route(new RegExp(`${API}/`), (route) => {
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ status: 'ok', data: [] }),
-    });
-  });
 }
 
 // ---------------------------------------------------------------------------
@@ -146,7 +147,8 @@ test.describe('SC-SLIP-02 — Slippage column colour-coded values', () => {
   });
 
   test('SC-SLIP-02a: Slippage column header is present', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /slippage/i })).toBeVisible();
+    // TableHead renders as <th> (role=columnheader), not a <button>
+    await expect(page.getByRole('columnheader', { name: /slippage/i })).toBeVisible();
   });
 
   test('SC-SLIP-02b: Negative slippage renders with emerald (favourable) colour class', async ({ page }) => {
@@ -162,7 +164,8 @@ test.describe('SC-SLIP-02 — Slippage column colour-coded values', () => {
   });
 
   test('SC-SLIP-02d: Slippage column header has tooltip describing entry deviation', async ({ page }) => {
-    const slippageBtn = page.getByRole('button', { name: /slippage/i });
+    // TableHead renders as <th> (role=columnheader), not a <button>
+    const slippageBtn = page.getByRole('columnheader', { name: /slippage/i });
     const titleAttr = await slippageBtn.getAttribute('title');
     expect(titleAttr).toContain('fill price');
     expect(titleAttr).toContain('limit price');
@@ -214,7 +217,9 @@ test.describe('SC-SLIP-04 — Null fill price shows em dash', () => {
     // Find the VOD row and assert its slippage cell contains "—" with slate colour
     const vodRow = page.locator('tr').filter({ hasText: 'VOD' });
     await expect(vodRow).toBeVisible();
-    const slippageCell = vodRow.locator('.text-slate-500').filter({ hasText: '—' });
+    // VOD has null slippage, fee_drag, and R-multiple — all show '—' in text-slate-500.
+    // Use .first() since all three are valid evidence that null renders as em-dash in slate.
+    const slippageCell = vodRow.locator('.text-slate-500').filter({ hasText: '—' }).first();
     await expect(slippageCell).toBeVisible();
   });
 

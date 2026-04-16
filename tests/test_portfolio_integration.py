@@ -13,7 +13,8 @@ implemented. DEV-ST05-01 deviation resolved. TestProspectiveHeat unskipped.
 """
 
 import unittest
-from unittest.mock import patch
+from contextlib import contextmanager
+from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
 
 import sys
@@ -86,12 +87,39 @@ MOCK_DRAWDOWN = {
     "peak_portfolio_value": 10000.0,
 }
 
+PATCH_GET_DB               = "services.portfolio_service.get_db"
 PATCH_GET_PORTFOLIO        = "services.portfolio_service.get_portfolio"
 PATCH_GET_POSITIONS        = "services.portfolio_service.get_positions"
 PATCH_GET_LIVE_FX_RATE     = "services.portfolio_service.get_live_fx_rate"
 PATCH_GET_CURRENT_PRICE    = "services.portfolio_service.get_current_price"
 PATCH_GET_DEPOSITS         = "services.portfolio_service.get_total_deposits_withdrawals"
 PATCH_GET_DRAWDOWN         = "services.portfolio_service.get_drawdown_fields"
+
+
+# ---------------------------------------------------------------------------
+# Module-level get_db patch (ST-02 — single-connection refactor)
+# get_portfolio_summary() now wraps all DB calls in `with get_db() as conn:`.
+# Yield a MagicMock connection so sub-function mocks continue to intercept
+# without requiring a real database connection in CI.
+# ---------------------------------------------------------------------------
+
+@contextmanager
+def _mock_get_db():
+    yield MagicMock()
+
+
+_get_db_patcher = None
+
+
+def setUpModule():
+    global _get_db_patcher
+    _get_db_patcher = patch(PATCH_GET_DB, new=_mock_get_db)
+    _get_db_patcher.start()
+
+
+def tearDownModule():
+    if _get_db_patcher:
+        _get_db_patcher.stop()
 
 
 # ---------------------------------------------------------------------------
