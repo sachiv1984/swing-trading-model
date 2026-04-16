@@ -889,3 +889,33 @@ All `page.route()` intercepts in the Playwright e2e suite fail to deliver mock d
 - [ ] `fee-drag-trade-history.spec.js` — all 7 tests pass in headless Chromium
 - [ ] `signals-cash-balance.spec.js` — all 4 tests pass in headless Chromium
 - [ ] Fix pattern documented so future specs follow the working approach
+
+### BLG-QA-13 — Test scenario coverage gap: market correlation and supplementary indicators (v2.7)
+**Priority:** P3 (Low)
+**Type:** Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** v2.7 delivery verification (TEST-GAP-v27-EPIC04-01) — EPIC-04 ST-08 and ST-09 delivered new backend functionality verified by code review; registered test_scenarios (analytics_scenarios.md v1.0, signals_scenarios.md v1.0) cover prior cohort analysis and signals page frontend, not the new v2.7 endpoints and fields
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v2.8
+
+**Gap description**
+Two scenario files were registered in execution_state.json for EPIC-04 (`docs/testing/analytics_scenarios.md`, `docs/testing/signals_scenarios.md`) but these predate v2.7 and cover different functionality:
+- `analytics_scenarios.md` v1.0 (2026-03-17) — covers `GET /analytics/cohort`, not the new `GET /analytics/market-correlation` endpoint
+- `signals_scenarios.md` v1.0 (2026-03-18) — covers Signals page frontend behaviour, not the four new supplementary indicator fields
+
+No scenarios exist that exercise:
+1. `GET /analytics/market-correlation` happy path, cache behaviour, fallback on Yahoo Finance unavailability, or severity classification
+2. `POST /signals/generate` with the four new supplementary fields (`relative_strength_pct`, `week52_high_proximity_pct`, `avg_daily_volume_20d`, `price_vs_50d_ma`)
+
+**Recommended scenarios**
+- SC-CORR-01: `GET /analytics/market-correlation` returns per-position Pearson correlation with correct fields
+- SC-CORR-02: portfolio-level weighted average correlation included in response
+- SC-CORR-03: 8h cache returns same result on second call within TTL
+- SC-CORR-04: graceful partial response when Yahoo Finance unavailable for one ticker
+- SC-SIG-IND-01: `POST /signals/generate` response includes all four supplementary fields per signal object
+- SC-SIG-IND-02: `relative_strength_pct` is None when benchmark data unavailable (not error)
+
+**Acceptance Criteria**
+- [ ] `docs/testing/analytics_scenarios.md` updated (or new file created) to include SC-CORR-01 through SC-CORR-04
+- [ ] `docs/testing/signals_scenarios.md` updated (or new file created) to include SC-SIG-IND-01 and SC-SIG-IND-02
+- [ ] All new scenarios reference `analytics_endpoints.md v2.1.0` and `signal_endpoints.md v1.1` as canonical spec

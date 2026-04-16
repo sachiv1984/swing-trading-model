@@ -28,3 +28,22 @@
 
 - **AC-6 (ST-08): Market Correlation frontend rendering.** Backend contract fully specified in `analytics_endpoints.md` v2.1.0. Frontend story to be raised in next backlog grooming.
 - **Playwright fix pattern documentation.** Advisory: document LIFO pattern in a shared testing guide.
+
+---
+
+## Phase 4 — 2026-04-13__release-v2.7
+
+**Appended:** 2026-04-16
+
+### Phase 4 Friction Areas
+
+| # | Area | Observation | Classification | Action |
+|---|------|-------------|----------------|--------|
+| 1 | Gate sequencing | sprint_close.md QA sign-off blocks for EPIC-01/03/04/05 used inline date format rather than formal `- Date:` field, requiring STEP 5.1 remediation at sprint close. The formal sign-off block template should be applied at time of sign-off, not retrospectively. | Process gap | Advisory: include formal `Date:` field in DoQ sign-off block template reminder in execution_prompt.md §3.2.A. No change made this cycle — monitoring only. |
+| 2 | Test scenario coverage | EPIC-04 registered pre-existing scenario files (`analytics_scenarios.md` v1.0, `signals_scenarios.md` v1.0) that predate and do not cover the new v2.7 endpoints. The `test_scenarios` field in execution_state.json should only reference files that actively cover the EPIC's new functionality, not adjacent legacy files. | Scope mismatch | BLG-QA-13 created. Advisory: when populating `test_scenarios` in execution_state.json, confirm the referenced files cover the new AC rather than prior adjacent functionality. |
+| 3 | Deviation severity consistency | Three sprint_close.md "deviations" were process notations (autonomous class records, exemption tokens) rather than spec deviations. The deviation register should distinguish clearly between spec deviations (P0–P3) and process notations. The sprint_close.md template conflates these. | Terminology gap | No block. Advisory: clarify that sprint_close.md "Deviations filed" should list only spec deviations; process notations belong in the notes column of execution_state.json. |
+| 4 | Sign-off coordination | Both Director of Quality and Product Owner sign-offs completed in same session. No coordination friction observed. | Pass | — |
+
+### Carry-Forward Actions
+
+None required. BLG-QA-13 is the only open item from this verification run and is captured in backlog.md.

@@ -2,8 +2,34 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 2.0
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-04-13__release-v2.7
+**Date:** 2026-04-16
+**Status:** Verified — Shipped 2026-04-16
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Supabase Supavisor connection pooling enabled on staging and production (p50 GET /portfolio = 234ms); `get_portfolio_summary()` refactored to single DB connection per request | `docs/ops/api_performance_baseline.md` v1.2; `docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio` | None |
+| EPIC-02 | QA evidence sign-off gate added to execution engine (§3.2.B); autonomous DoQ sign-off class defined for code-review-only EPICs (§3.2.A); governance_sync.yml extended to trigger on push to main | `claude/system/execution_prompt.md` v3.6; `claude/system/delivery_verification_prompt.md` v2.0; `.github/workflows/governance_sync.yml` | None |
+| EPIC-03 | Playwright LIFO route ordering bug fixed across 4 spec files (30/30 tests pass); System Status Playwright spec authored (16/16 tests pass; 28-endpoint mock; Alerts/Notifications/Digest category routing verified) | `tests/e2e/reports-performance-tab.spec.js`; `tests/e2e/slippage-tracking.spec.js`; `tests/e2e/fee-drag-trade-history.spec.js`; `tests/e2e/signals-cash-balance.spec.js`; `tests/e2e/system-status.spec.js` | None |
+| EPIC-04 | `GET /analytics/market-correlation` backend endpoint (Pearson correlation, 252-day lookback, 8h cache, SPY/FTSE benchmark, graceful Yahoo Finance fallback); four supplementary indicator fields added to `POST /signals/generate` (`relative_strength_pct`, `week52_high_proximity_pct`, `avg_daily_volume_20d`, `price_vs_50d_ma`) | `docs/specs/api_contracts/analytics_endpoints.md` v2.1.0; `docs/specs/api_contracts/signal_endpoints.md` v1.1; `docs/reference/openapi.yaml` v2.6.0 | AC-6 (market correlation frontend rendering) deferred to future frontend story — backend contract fully specified |
+| EPIC-05 | Spec Dependency Map created (`docs/specs/spec_dependency_map.md` v1.0, four-tier structure, Head of Specs Team sign-off); Governance Health Score added to OPERATIONAL_GUIDE.md §15 and roadmap_prompt.md STEP -1.7 (advisory only) | `docs/specs/spec_dependency_map.md` v1.0; `claude/system/OPERATIONAL_GUIDE.md` §15; `claude/system/roadmap_prompt.md` v4.9 | None |
+
+### Capabilities deferred
+
+None. All 11 stories completed. AC-6 (frontend rendering for market correlation) is an in-spec deferred AC, not a returned story.
+
+### QA summary
+
+- QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-05.md — all signed off
+- Deviations filed: none (process notations in sprint_close.md are autonomous-class sign-off records, not spec deviations)
+- Velocity: 11/11 (1.00); 6-cycle rolling average: 0.99
 
 ---
 
