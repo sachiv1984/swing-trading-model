@@ -12,7 +12,7 @@ from typing import Dict
 from database import get_peak_portfolio_value
 
 
-def get_drawdown_fields(portfolio_id: str, current_total_value: float) -> Dict:
+def get_drawdown_fields(portfolio_id: str, current_total_value: float, conn=None) -> Dict:
     """
     Compute current_drawdown_percent and peak_portfolio_value for
     inclusion in the GET /portfolio response.
@@ -33,13 +33,15 @@ def get_drawdown_fields(portfolio_id: str, current_total_value: float) -> Dict:
         current_total_value: The portfolio's current total_value
                              (cash + open positions), already computed
                              by the calling portfolio service.
+        conn:                Optional DB connection to reuse (for single-connection
+                             request paths). If None, a new connection is opened.
 
     Returns:
         Dict with keys:
             current_drawdown_percent (float): Drawdown %, <= 0.0
             peak_portfolio_value     (float): All-time peak in GBP
     """
-    peak = get_peak_portfolio_value(portfolio_id)
+    peak = get_peak_portfolio_value(portfolio_id, conn=conn)
 
     if peak == 0.0:
         # No portfolio_history records exist — Establishing Peak state.
