@@ -123,12 +123,14 @@ async function mockFallback(page) {
 
 test.describe('SC-REP-01 — Performance tab summary stats', () => {
   test.beforeEach(async ({ page }) => {
+    // Catch-all first — Playwright routes are LIFO, so registering catch-all first
+    // ensures the specific mocks below take precedence.
+    await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
-    await mockFallback(page);
     await page.goto('/#/Reports');
-    // Wait for page to render — the "Performance" tab button is always visible
-    await page.waitForSelector('button', { timeout: 10000 });
+    // Wait for all API calls to settle before asserting
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
   });
 
   test('SC-REP-01a: Total P&L StatsCard renders value from analytics summary', async ({ page }) => {
@@ -144,7 +146,9 @@ test.describe('SC-REP-01 — Performance tab summary stats', () => {
 
   test('SC-REP-01c: Total Trades StatsCard renders value from analytics summary', async ({ page }) => {
     // metrics.totalTrades = analyticsData.summary.total_trades = 8
-    await expect(page.getByText('8')).toBeVisible({ timeout: 8000 });
+    // Use exact:true + first() to avoid strict-mode violation: getByText('8') does substring
+    // matching and would also match chart axis labels like "08 Apr" or values like "£800".
+    await expect(page.getByText('8', { exact: true }).first()).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-REP-01d: Profit Factor StatsCard renders value from executive_metrics', async ({ page }) => {
@@ -164,11 +168,12 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
       if (req.url().includes('/analytics/metrics')) requests.push(req.url());
     });
 
+    // Catch-all first — LIFO order ensures specific mocks below take precedence.
+    await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
-    await mockFallback(page);
     await page.goto('/#/Reports');
-    await page.waitForSelector('button', { timeout: 10000 });
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
     // Allow request to fire
     await page.waitForTimeout(500);
 
@@ -183,11 +188,12 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
       if (req.url().includes('/analytics/metrics')) requests.push(req.url());
     });
 
+    // Catch-all first — LIFO order ensures specific mocks below take precedence.
+    await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
-    await mockFallback(page);
     await page.goto('/#/Reports');
-    await page.waitForSelector('button', { timeout: 10000 });
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
     await page.waitForTimeout(300);
 
     // Clear captured requests to isolate the selector change
@@ -211,11 +217,12 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
       if (req.url().includes('/analytics/metrics')) requests.push(req.url());
     });
 
+    // Catch-all first — LIFO order ensures specific mocks below take precedence.
+    await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
-    await mockFallback(page);
     await page.goto('/#/Reports');
-    await page.waitForSelector('button', { timeout: 10000 });
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
     await page.waitForTimeout(300);
 
     requests.length = 0;
@@ -238,7 +245,11 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
 
 test.describe('SC-REP-03 — Loading state during fetch', () => {
   test('SC-REP-03a: Loading spinner visible while /analytics/metrics is pending', async ({ page }) => {
-    // Delay the analytics response by 1 second to observe loading state
+    // Catch-all first — LIFO: checked last, so specific mocks below take precedence.
+    await mockFallback(page);
+    await mockPositions(page, []);
+    // Delay the analytics response by 1 second to observe loading state.
+    // Registered LAST so it takes precedence (LIFO) over the catch-all above.
     await page.route(/\/analytics\/metrics/, async (route) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       await route.fulfill({
@@ -247,8 +258,6 @@ test.describe('SC-REP-03 — Loading state during fetch', () => {
         body: JSON.stringify(ANALYTICS_FULL),
       });
     });
-    await mockPositions(page, []);
-    await mockFallback(page);
     await page.goto('/#/Reports');
 
     // Loading spinner should be visible before data arrives
@@ -266,11 +275,12 @@ test.describe('SC-REP-03 — Loading state during fetch', () => {
 
 test.describe('SC-REP-04 — Empty state (no trades for period)', () => {
   test.beforeEach(async ({ page }) => {
+    // Catch-all first — LIFO order ensures specific mocks below take precedence.
+    await mockFallback(page);
     await mockAnalyticsMetrics(page, ANALYTICS_EMPTY);
     await mockPositions(page, []);
-    await mockFallback(page);
     await page.goto('/#/Reports');
-    await page.waitForSelector('button', { timeout: 10000 });
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
   });
 
   test('SC-REP-04a: Total P&L shows £0.00 when no trades', async ({ page }) => {
@@ -283,6 +293,10 @@ test.describe('SC-REP-04 — Empty state (no trades for period)', () => {
   });
 
   test('SC-REP-04c: Profit Factor shows 0.00 when no trades', async ({ page }) => {
-    await expect(page.getByText('0.00')).toBeVisible({ timeout: 8000 });
+    // Scope to the Profit Factor card to avoid strict-mode violation: multiple StatsCards
+    // show "0.00" when there are no trades. The value <p> is the immediate sibling of the
+    // label <p>Profit Factor</p>, so use XPath following-sibling to target it precisely.
+    const profitFactorLabel = page.locator('p').filter({ hasText: /^Profit Factor$/ });
+    await expect(profitFactorLabel.locator('xpath=following-sibling::p[1]')).toHaveText('0.00', { timeout: 8000 });
   });
 });
