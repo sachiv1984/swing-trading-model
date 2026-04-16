@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.3
-**Last Updated:** 2026-04-11
+**Version:** 2.4
+**Last Updated:** 2026-04-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -468,6 +468,23 @@ For each of the following documents, read the current content and check for stal
 
 If other operational documents are referenced in `execution_state.json` spec references: check those too for stale notes.
 
+### Advisory — Endpoint Coverage Drift Check
+
+After all PRs for this cycle are merged, compare endpoint coverage between:
+
+1. **`docs/reference/openapi.yaml`** — count all `path:` entries (each distinct HTTP method + path combination is one endpoint)
+2. **`docs/ops/api_performance_baseline.md`** — count all endpoints listed in the measurement table(s)
+
+If openapi.yaml contains endpoints that are absent from the baseline doc:
+
+- Do **not** attempt to fill them in — performance re-runs require a live environment and human coordination
+- Raise a backlog item (`BLG-OPS-xx`) titled "Add <N> new endpoints to api_performance_baseline.md re-run" referencing the missing paths
+- Record the gap in the closure record under §6 (Outstanding Actions)
+
+This check is **advisory-only** — it does not block closure. If no gap exists, note "Endpoint coverage: no drift" in the closure record.
+
+Additionally, check `src/pages/SystemStatus.js` `categorizeEndpoint()`: if any new top-level path prefix was introduced this cycle (visible in openapi.yaml) that is not handled by an existing `includes()` check, flag it as a follow-up for the frontend engineer. A new prefix will silently fall into the `'Other'` category rather than causing an error.
+
 Update `Last Updated` on any document that is modified.
 
 Record all corrections in the closure record. If a document is outside the write scope (e.g. a Class 1 spec that is not being corrected for deviation compliance): flag for the document owner rather than editing.
@@ -749,6 +766,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4 | 2026-04-16 | STEP 6 — Advisory endpoint coverage drift check added. After all PRs merged: compare openapi.yaml path count vs api_performance_baseline.md measured paths; raise backlog item for gaps. Check SystemStatus.js categorizeEndpoint() for unhandled new top-level prefixes. Advisory-only, non-blocking. |
 | 2.3 | 2026-04-11 | STEP 6 — `claude/cycles/velocity_metrics.md` added to operational documents reconciliation list. Engine must append a velocity row for the completed cycle (Planned/Completed from execution_state.json, rolling 6-cycle average updated) before writing STEP 6 pass. Fixes gap where v2.4 and v2.5 rows were missed (discovered 2026-04-11). |
 | 2.2 | 2026-03-24 | AUD-2026-03-21-002: STEP 0 — added Audit Cadence Check advisory block. Reads `completed_cycle_count` from `.claude_current_state.json`; if `% 3 == 0`, surfaces "⚠ AUDIT DUE" advisory and records in run manifest. Non-blocking. Eliminates manual audit tracking and prevents overdue audit accumulation. |
 | 2.0 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 8.5: sequencing clarification note added — `closure_record.md` is produced in STEP 9 and is not available at STEP 8.5 execution time; `lessons_learnt_closure.md` must be produced from STEP 8 consolidated action summary context; §6 Outstanding Actions in `closure_record.md` is derived from the same deferred items list. Prevents incorrect sequencing where STEP 8.5 waits for STEP 9 output. |
