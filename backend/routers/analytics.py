@@ -5,6 +5,7 @@ GET /analytics/metrics — Comprehensive portfolio analytics for a given period.
 GET /analytics/cohort  — Trade performance grouped by entry cohort period.
 GET /analytics/r-multiple-distribution — Canonical server-side R-multiple distribution.
 GET /analytics/compliance-metrics — Discipline & compliance scalars (ST-01, v1.9).
+GET /analytics/market-correlation — Per-position Pearson correlation vs benchmark (ST-08, v2.7).
 
 BLG-TECH-07 fix: trades_for_charts attempts to source stop_price from
 positions.initial_stop via LEFT JOIN on trade_history.position_id.
@@ -14,7 +15,7 @@ If the position_id column does not yet exist in the live trade_history table
 null for all trades, analytics loads normally, and no 500 error is raised.
 Run migration_add_position_id.sql to enable the JOIN fully.
 
-Contract: docs/specs/api_contracts/analytics_endpoints.md v1.9.2
+Contract: docs/specs/api_contracts/analytics_endpoints.md v2.0.0
 """
 
 from fastapi import APIRouter, Query, HTTPException
@@ -23,6 +24,12 @@ from datetime import date, timedelta, datetime, timezone
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import numpy as np
+import pandas as pd
+
+# ST-08: module-level TTL cache for market correlation (one trading day ≈ 8 hours)
+_CORRELATION_CACHE: dict = {"data": None, "cached_at": None}
+_CORRELATION_CACHE_TTL_HOURS = 8
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -504,3 +511,239 @@ async def get_compliance_metrics():
             detail=f"Compliance metrics calculation failed: {str(e)}"
         )
 
+
+# ---------------------------------------------------------------------------
+# Helper — download price series via Yahoo Finance (reuses database utility)
+# ---------------------------------------------------------------------------
+
+def _download_series(ticker: str, lookback_days: int) -> pd.Series | None:
+    """Return daily close price Series for ticker over lookback_days window.
+
+    Uses the existing download_ticker_data utility so network behaviour is
+    consistent with signal generation. Returns None on failure.
+    """
+    from database import download_ticker_data
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=lookback_days + 60)  # buffer for weekends
+    df = download_ticker_data(
+        ticker,
+        start_date.strftime('%Y-%m-%d'),
+        end_date.strftime('%Y-%m-%d'),
+    )
+    if df is None or 'close' not in df.columns or len(df) < 30:
+        return None
+    return df['close'].dropna()
+
+
+def _pearson_corr(a: pd.Series, b: pd.Series) -> float | None:
+    """Compute Pearson correlation of daily returns between two aligned series."""
+    # Align on common dates
+    common_idx = a.index.intersection(b.index)
+    if len(common_idx) < 30:
+        return None
+    ret_a = a.loc[common_idx].pct_change().dropna()
+    ret_b = b.loc[common_idx].pct_change().dropna()
+    common_ret = ret_a.index.intersection(ret_b.index)
+    if len(common_ret) < 30:
+        return None
+    corr = np.corrcoef(ret_a.loc[common_ret].values, ret_b.loc[common_ret].values)
+    val = float(corr[0, 1])
+    if np.isnan(val):
+        return None
+    return round(val, 4)
+
+
+def _correlation_severity(corr: float | None) -> str:
+    """Map correlation coefficient to severity label."""
+    if corr is None:
+        return "unknown"
+    abs_corr = abs(corr)
+    if abs_corr > 0.7:
+        return "high"
+    if abs_corr >= 0.3:
+        return "moderate"
+    return "low"
+
+
+@router.get("/market-correlation")
+async def get_market_correlation(
+    lookback: int = Query(252, ge=30, le=756, description="Lookback window in trading days (default 252)")
+):
+    """
+    GET /analytics/market-correlation
+
+    Returns Pearson correlation coefficients between each open position and its
+    relevant market benchmark over the requested lookback window:
+      - US positions vs SPY
+      - UK positions vs ^FTSE (FTSE 100 index)
+
+    Also returns a portfolio-level equal-weighted average correlation.
+
+    Response is cached with a TTL of 8 hours (approximately one trading day).
+    Repeated calls within the TTL return the cached result.
+
+    If Yahoo Finance data is unavailable for a position, that position is excluded
+    from the correlation array and the portfolio average. The endpoint does not
+    return 500 — it returns a partial result with an informational note.
+
+    Severity thresholds: high > 0.7, moderate 0.3–0.7, low < 0.3 (absolute value).
+
+    Contract: docs/specs/api_contracts/analytics_endpoints.md §GET /analytics/market-correlation
+    """
+    global _CORRELATION_CACHE
+
+    # -----------------------------------------------------------------------
+    # Check TTL cache
+    # -----------------------------------------------------------------------
+    now = datetime.now(timezone.utc)
+    cached_at = _CORRELATION_CACHE.get("cached_at")
+    if (
+        _CORRELATION_CACHE.get("data") is not None
+        and cached_at is not None
+        and (now - cached_at).total_seconds() < _CORRELATION_CACHE_TTL_HOURS * 3600
+    ):
+        cached_response = dict(_CORRELATION_CACHE["data"])
+        cached_response["cached"] = True
+        return {"status": "ok", "data": cached_response}
+
+    # -----------------------------------------------------------------------
+    # Fetch open positions from DB
+    # -----------------------------------------------------------------------
+    try:
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise HTTPException(status_code=500, detail="DATABASE_URL not configured")
+
+        conn = psycopg2.connect(database_url)
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute("""
+                SELECT p.id, p.ticker, p.market, p.shares, p.current_price, p.pnl
+                FROM positions p
+                JOIN portfolio port ON p.portfolio_id = port.id
+                WHERE p.status = 'open'
+                  AND p.shares > 0
+            """)
+            open_positions = cursor.fetchall()
+        finally:
+            cursor.close()
+            conn.close()
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"DB error fetching positions: {str(e)}")
+
+    if not open_positions:
+        result = {
+            "correlations": [],
+            "portfolio_correlation": {"value": None, "severity": "unknown", "method": "equal_weighted_average"},
+            "lookback_days": lookback,
+            "computed_at": now.isoformat(),
+            "cached": False,
+            "data_source": "Yahoo Finance",
+            "note": "No open positions found.",
+        }
+        return {"status": "ok", "data": result}
+
+    # -----------------------------------------------------------------------
+    # Download benchmarks once (re-used for all positions)
+    # -----------------------------------------------------------------------
+    spy_series = _download_series("SPY", lookback)
+    ftse_series = _download_series("^FTSE", lookback)
+
+    benchmarks_unavailable = spy_series is None and ftse_series is None
+
+    # -----------------------------------------------------------------------
+    # Compute per-position correlation
+    # -----------------------------------------------------------------------
+    correlations = []
+    for pos in open_positions:
+        ticker = pos['ticker']
+        market = pos.get('market', 'US')
+
+        benchmark_label = "SPY" if market == 'US' else "FTSE"
+        benchmark_series = spy_series if market == 'US' else ftse_series
+
+        if benchmark_series is None:
+            correlations.append({
+                "ticker": ticker,
+                "market": market,
+                "benchmark": benchmark_label,
+                "correlation": None,
+                "severity": "unknown",
+                "lookback_days": lookback,
+                "data_points": 0,
+                "note": "Benchmark data unavailable",
+            })
+            continue
+
+        stock_series = _download_series(
+            ticker if market == 'US' else f"{ticker}.L",
+            lookback
+        )
+
+        if stock_series is None:
+            correlations.append({
+                "ticker": ticker,
+                "market": market,
+                "benchmark": benchmark_label,
+                "correlation": None,
+                "severity": "unknown",
+                "lookback_days": lookback,
+                "data_points": 0,
+                "note": "Price data unavailable for this ticker",
+            })
+            continue
+
+        # Count common data points for transparency
+        common = stock_series.index.intersection(benchmark_series.index)
+        corr = _pearson_corr(stock_series, benchmark_series)
+
+        correlations.append({
+            "ticker": ticker,
+            "market": market,
+            "benchmark": benchmark_label,
+            "correlation": corr,
+            "severity": _correlation_severity(corr),
+            "lookback_days": lookback,
+            "data_points": len(common),
+        })
+
+    # -----------------------------------------------------------------------
+    # Portfolio-level equal-weighted average
+    # -----------------------------------------------------------------------
+    valid_corrs = [c["correlation"] for c in correlations if c["correlation"] is not None]
+    if valid_corrs:
+        portfolio_corr_value = round(float(np.mean(valid_corrs)), 4)
+    else:
+        portfolio_corr_value = None
+
+    portfolio_correlation = {
+        "value": portfolio_corr_value,
+        "severity": _correlation_severity(portfolio_corr_value),
+        "method": "equal_weighted_average",
+    }
+
+    # -----------------------------------------------------------------------
+    # Build and cache result
+    # -----------------------------------------------------------------------
+    note = None
+    if benchmarks_unavailable:
+        note = "Yahoo Finance data unavailable. Correlation data could not be computed. Retry later or check connectivity."
+
+    result = {
+        "correlations": correlations,
+        "portfolio_correlation": portfolio_correlation,
+        "lookback_days": lookback,
+        "computed_at": now.isoformat(),
+        "cached": False,
+        "data_source": "Yahoo Finance",
+    }
+    if note:
+        result["note"] = note
+
+    _CORRELATION_CACHE["data"] = result
+    _CORRELATION_CACHE["cached_at"] = now
+
+    return {"status": "ok", "data": result}

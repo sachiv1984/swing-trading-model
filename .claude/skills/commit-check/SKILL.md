@@ -110,6 +110,19 @@ Check `.claude_current_state.json` for `sealed: true` flags and check `claude/cy
 
 ---
 
+### Check 8 — QA sign-off Date completeness
+
+This check fires when any `qa_evidence_EPIC-xx.md` file is staged for commit, or when the commit is about to open a PR (i.e., if the staged changes include a PR-related action for an EPIC).
+
+1. For each staged `qa_evidence_EPIC-xx.md`, read the sign-off block.
+2. Locate the line: `- Date:` in the sign-off block.
+3. **FAIL if:** The Date field is blank or contains only a placeholder (e.g., `- Date:` with nothing after it, `- Date: <fill in>`, or `- Date: pending`).
+4. **PASS if:** The Date field contains a non-blank, non-placeholder value (e.g., `- Date: 2026-04-14`).
+
+Per execution_prompt.md §3.2.B (BLG-GOV-18): a PR must not be opened until the DoQ sign-off Date is non-blank.
+
+---
+
 ### Check 7 — E2E coverage declaration for frontend stories
 
 This check fires when **any** of the staged files are frontend implementation files (e.g. `src/**/*.js`, `src/**/*.jsx`, `src/**/*.ts`, `src/**/*.tsx`).

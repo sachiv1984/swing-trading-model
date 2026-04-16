@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 1.9
+**Version:** 2.0
 **Last Updated:** 2026-04-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -205,7 +205,8 @@ For each EPIC in `execution_state.json.merge_gate.epics_merged`:
 
 Sign-off check (STRUCTURAL — two-tier, AUD-2026-04-11-005):
 - **TIER 1 — BLANK:** If `Signed off by:` field is empty or "pending" → HALT. List exactly which EPICs are affected. Do not proceed until Director of Quality signs.
-- **TIER 2 — WRONG AUTHORITY:** If sign-off is present but the signer is not Director of Quality → FLAG (do not halt). Require Director of Quality to provide a counter-sign note in that EPIC's `qa_evidence_EPIC-xx.md` before proceeding to STEP 1. Record the mismatch in `run_manifest` as a compliance advisory.
+- **TIER 2 — WRONG AUTHORITY:** If sign-off is present but the signer is neither Director of Quality nor "Sprint Execution Engine (autonomous class)" → FLAG (do not halt). Require Director of Quality to provide a counter-sign note in that EPIC's `qa_evidence_EPIC-xx.md` before proceeding to STEP 1. Record the mismatch in `run_manifest` as a compliance advisory.
+  - **Autonomous class exception (BLG-GOV-19):** If the signer is "Sprint Execution Engine (autonomous class)", verify that all four qualifying criteria defined in `execution_prompt.md §3.2.A` (Autonomous DoQ sign-off class) are met for this EPIC: (1) all stories autonomous, (2) all AC code-review-verifiable with no UI/staging requirement, (3) no frontend-visible change, (4) engine signer field populated. If all four are met: treat as compliant — do not apply Tier 2 treatment. If any criterion is not met: apply Tier 2 treatment and require Director of Quality counter-sign.
 
 If any merged EPIC is missing its qa_evidence log entirely: halt (Tier 1 applies). Verification cannot proceed without signed QA evidence for every merged EPIC.
 

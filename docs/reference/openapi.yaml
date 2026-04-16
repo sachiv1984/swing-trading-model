@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 2.5.0
+  version: 2.6.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1223,6 +1223,90 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /analytics/market-correlation:
+    get:
+      tags: [Analytics]
+      summary: Get per-position Pearson correlation vs benchmark
+      description: |
+        Returns Pearson correlation coefficients between each open position and its
+        relevant benchmark (SPY for US, ^FTSE for UK) over a configurable lookback.
+        Also returns a portfolio-level equal-weighted average correlation.
+        Results are cached with an 8-hour TTL. Yahoo Finance data source — graceful
+        partial response if data unavailable for individual tickers.
+        Canonical contract: docs/specs/api_contracts/analytics_endpoints.md §GET /analytics/market-correlation
+      parameters:
+        - name: lookback
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 252
+            minimum: 30
+            maximum: 756
+          description: Lookback window in trading days (default 252)
+      responses:
+        "200":
+          description: Market correlation data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      correlations:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ticker:
+                              type: string
+                            market:
+                              type: string
+                              enum: [UK, US]
+                            benchmark:
+                              type: string
+                              enum: [SPY, FTSE]
+                            correlation:
+                              type: number
+                              format: float
+                              nullable: true
+                            severity:
+                              type: string
+                              enum: [high, moderate, low, unknown]
+                            lookback_days:
+                              type: integer
+                            data_points:
+                              type: integer
+                      portfolio_correlation:
+                        type: object
+                        properties:
+                          value:
+                            type: number
+                            format: float
+                            nullable: true
+                          severity:
+                            type: string
+                          method:
+                            type: string
+                            example: equal_weighted_average
+                      lookback_days:
+                        type: integer
+                      computed_at:
+                        type: string
+                        format: date-time
+                      cached:
+                        type: boolean
+                      data_source:
+                        type: string
+                        example: Yahoo Finance
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /digest/weekly:
     get:
       tags: [Digest]
@@ -1973,6 +2057,25 @@ components:
         momentum_score: { type: number }
         current_price: { type: number }
         reason: { type: string, nullable: true }
+        relative_strength_pct:
+          type: number
+          format: float
+          nullable: true
+          description: "ST-09 supplementary. Stock momentum % minus benchmark momentum % over lookback_days. Display-only — does not affect rank."
+        week52_high_proximity_pct:
+          type: number
+          format: float
+          nullable: true
+          description: "ST-09 supplementary. (current_native_price - 52w_high) / 52w_high * 100. Negative = below 52-week high. Display-only."
+        avg_daily_volume_20d:
+          type: integer
+          nullable: true
+          description: "ST-09 supplementary. Average daily trading volume over last 20 trading days (native exchange units). Display-only."
+        price_vs_50d_ma:
+          type: number
+          format: float
+          nullable: true
+          description: "ST-09 supplementary. (current_native_price - 50d_MA) / 50d_MA * 100. Positive = above MA. Display-only."
 
     AnalyticsMetricsResponse:
       type: object
