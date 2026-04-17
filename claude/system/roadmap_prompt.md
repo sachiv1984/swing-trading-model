@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.9
-**Last Updated:** 2026-04-16
+**Version:** 5.0
+**Last Updated:** 2026-04-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -408,6 +408,19 @@ If `claude/backlog/backlog.md` is missing:
 - Create it as Class 4 Planning Document owned by Product Owner, Status: Active, Last Updated: today.
 - Do not invent content; initialise with an empty structure and a "no backlog items recorded yet" notice.
 
+#### Step 0.D — Empty Horizon Advisory (Advisory)
+
+After loading planning inputs, check whether the `## 3. Delivery Plan — Horizon: Now` section of `claude/roadmap/current_roadmap.md` contains any committed (non-shipped) items. Items that are only shipped annotations (✅ Shipped, RA:* markers) do not count as planned items.
+
+If the Now horizon is empty:
+- Count active items in `claude/backlog/backlog.md` (items not marked COMPLETE, CLOSED, or ARCHIVED).
+- If N ≥ 1 active backlog items exist: surface the following advisory in session output and record in `run_manifest.md` under `## Advisory — Now Horizon Status`:
+
+  > **⚠ Now horizon is empty.** N active backlog items are candidate scope for the next release. If no new strategic initiative is needed, run `plan release --version <next_release>` directly — the release planning engine selects scope from the backlog without a roadmap debate. Continue this roadmap run only if you intend to change strategic direction: add a new initiative, stop an existing one, or redefine horizon priorities.
+
+- This advisory does not halt the run. The Product Owner decides whether to proceed or redirect to `plan release`.
+- If no active backlog items exist either: record "Now horizon empty and backlog empty — full roadmap debate required" and proceed normally.
+
 **Cycle ID definition:**
 - Completion-triggered: `cycle_id = YYYY-MM-DD__item-<id>` (e.g. `2026-02-23__item-3.2`)
 - Scheduled: `cycle_id = YYYY-MM-DD__scheduled`
@@ -647,6 +660,18 @@ If `ideas_register.md` is absent or contains no eligible rows:
 - Continue to STEP 5 (only ⚠ re-evaluate initiatives from STEP 2 will enter debate)
 
 Do **not** generate new ideas during this step. The intake engine (`run ideas`) is the only governed mechanism for idea collection.
+
+### 4.0 Gate-Condition Re-Check (Before Classification)
+
+Before presenting ideas for classification, the Facilitator must perform a gate-condition re-check on any loaded idea whose `Park Rationale` contains a reference to a specific backlog item (any `BLG-` ID or named backlog feature reference).
+
+For each such idea:
+1. Extract the referenced backlog item ID from the Park Rationale.
+2. Check `claude/backlog/backlog.md` for that item's current status, or check prior cycle `sprint_backlog.md` files for a shipped `ST-` story referencing that item.
+3. **If the referenced item has shipped:** surface the idea to the Product Owner as **"Gate cleared — mandatory re-evaluation"**. Silent re-park is not permitted for gate-cleared ideas. The Product Owner must classify as ✅ Advance or ❌ Reject — re-park requires a new rationale that does not reference the now-shipped item.
+4. **If the referenced item has not shipped:** the park rationale remains valid — present for normal classification.
+
+Record all gate-condition check results in the `## STEP 4 — Ideas` section of `cycle_record.md` under a `### Gate-Condition Re-Check` subsection, listing each idea checked, the referenced item, and whether the gate was cleared or still pending.
 
 ### 4.1 Per-Idea Classification
 
@@ -1604,6 +1629,7 @@ If you cannot reach this state:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 5.0 | 2026-04-17 | Two pipeline patches applied by Product Owner (2026-04-17): (1) STEP 0.D Empty Horizon Advisory added — when the Now horizon is empty post-ship and active backlog items exist, surface advisory directing PO to run `plan release` directly rather than proceeding through a full rebalance debate; advisory-only, non-halting. (2) STEP 4.0 Gate-Condition Re-Check added — before per-idea classification, Facilitator must verify whether any `BLG-` backlog item referenced in a Park Rationale has shipped; gate-cleared ideas are surfaced as "mandatory re-evaluation" and cannot be silently re-parked; results recorded in cycle_record.md `### Gate-Condition Re-Check` subsection. |
 | 4.9 | 2026-04-16 | ST-11 (BLG-GOV-14, v2.7): STEP -1.7 added — Governance Health Score advisory check. Computes three components per OPERATIONAL_GUIDE.md §15: (1) Header Compliance % for Class 4/5 docs in active cycle folder; (2) Deferred Patch Indicator by age band (Green/Amber/Red); (3) Outstanding Action Count across open_escalations, execution_state, and lessons_learnt. Output written to run_manifest.md. Advisory only — cannot halt run. Authority: Head of Specs Team (ST-11, 2026-04-16). |
 | 4.3 | 2026-03-21 | Friction Item 1 (cycle 2026-03-21__item-3.5): STEP 4.4 Write Summary extended — `## STEP 5 Debate Queue` table added to cycle_record.md output template; lists all Advancing IDEA IDs with title and source (stale/new); mandatory count-match check before proceeding to STEP 5. STEP 5 preflight check added — reads queue, verifies one debate entry per queued IDEA ID before writing STEP 5 section as complete; detects omissions before they propagate to non-terminal register rows. |
 | 4.2 | 2026-03-18 | STEP -1.6 corrected: count source changed from `claude/ideas/submissions/` file scan to `claude/ideas/ideas_register.md` row count (consistent with register model). STEP 0.C Lightweight criterion 2 updated to reference register rows. STEP 8.5.B item 4 language updated: "idea file" → "register row" throughout (LL-02-patch language now register-model consistent). |

@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.59
+**Version:** 3.60
 **Last Updated:** 2026-04-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -394,7 +394,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v4.9)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v5.0)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -999,7 +999,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.4)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.5)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1345,7 +1345,7 @@ The health score is surfaced in the run manifest under a section titled `## Gove
 
 ```
 ## Governance Health Score (Advisory)
-Source: OPERATIONAL_GUIDE.md §15 — roadmap_prompt.md v4.9 STEP -1.7
+Source: OPERATIONAL_GUIDE.md §15 — roadmap_prompt.md v5.0 STEP -1.7
 
 | Component | Score | Status |
 |-----------|-------|--------|
@@ -1366,21 +1366,21 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.59 |
-| Last Updated | 2026-04-16 |
+| Version | 3.60 |
+| Last Updated | 2026-04-17 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.3 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.4 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.2 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v4.9 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v5.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.26 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.5 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.7 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.0 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.4 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.5 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v2.8 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1401,6 +1401,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.60 | 2026-04-17 | **roadmap_prompt.md v4.9→v5.0 + post_ship_closure.md v2.4→v2.5 — three pipeline patches applied.** §6 source prompt header updated v4.9→v5.0. §10 source prompt header updated v2.4→v2.5. §14 Roadmap Engine Source v4.9→v5.0; Post-Ship Closure Engine v2.4→v2.5. §15 roadmap_prompt.md version reference updated v4.9→v5.0. Changes: (1) roadmap_prompt.md STEP 0.D — Empty Horizon Advisory: when Now horizon is empty post-ship and active backlog items exist, surface advisory directing PO to run `plan release` rather than a full rebalance debate; (2) roadmap_prompt.md STEP 4.0 — Gate-Condition Re-Check: before per-idea classification, verify whether BLG- items referenced in Park Rationales have shipped; gate-cleared ideas surfaced as mandatory re-evaluation; (3) post_ship_closure.md STEP 12 — Ideas Pipeline Health Check advisory: when active backlog ≤ 5 items, scan for parked ideas with shipped gate conditions and record advisory in closure record. Authority: Product Owner (2026-04-17). |
 | 3.59 | 2026-04-16 | **post_ship_closure.md v2.3→v2.4 — STEP 6 endpoint coverage drift check added.** §10 Post-Ship source prompt header updated v2.3→v2.4. §14 Post-Ship Closure Engine updated v2.3→v2.4. Change: STEP 6 advisory block added — after all PRs merged, compare openapi.yaml path count vs api_performance_baseline.md measured paths; raise backlog item for gaps; check SystemStatus.js categorizeEndpoint() for unhandled new top-level prefixes. Advisory-only, non-blocking. Authority: Head of Engineering. |
 | 3.58 | 2026-04-16 | **ST-11 (BLG-GOV-14, v2.7) — Governance Health Score.** §15 added: three-component advisory indicator (Header Compliance %, Deferred Patch Indicator, Outstanding Action Count) with formula, age bands, and output format. roadmap_prompt.md v4.8→v4.9: STEP -1.7 added to compute and surface the score at each roadmap rebalance (advisory only — cannot halt). §6 source prompt header updated v4.8→v4.9. §14 Roadmap Engine Source updated v4.8→v4.9. Authority: Head of Specs Team (ST-11, 2026-04-16). |
 | 3.57 | 2026-04-14 | **execution_prompt.md v3.5→v3.6 + delivery_verification_prompt.md v1.9→v2.0 — ST-04 (BLG-GOV-19): Autonomous DoQ sign-off class.** §8 source prompt header updated v3.5→v3.6. §9 source prompt header updated v1.9→v2.0. §14 Execution Engine Source v3.5→v3.6; Verification Engine Source v1.9→v2.0. Changes: (1) execution_prompt.md §3.2.A — Autonomous DoQ sign-off class defined with four qualifying criteria; when all criteria met, engine populates sign-off block with "Sprint Execution Engine (autonomous class)"; (2) delivery_verification_prompt.md STEP -1.3 Tier 2 — autonomous class exception added: if signer is "Sprint Execution Engine (autonomous class)" and all four criteria are met, treated as compliant sign-off (Tier 2 does not fire). Authority: Head of Specs Team (ST-04, BLG-GOV-19, 2026-04-14). |

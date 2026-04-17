@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.4
-**Last Updated:** 2026-04-16
+**Version:** 2.5
+**Last Updated:** 2026-04-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -684,6 +684,19 @@ Output: backlog health report at `claude/backlog/backlog_health_<YYYYMMDD>.md`.
 On completion: confirm `last_groom_backlog_utc` written to `.claude_current_state.json`.
 Update `closure_state.json`: `{"step_12_groom_backlog": "complete", "last_updated_utc": "<now>"}`.
 
+### Advisory — Ideas Pipeline Health Check
+
+After `groom backlog` completes, count the remaining active backlog items (items not marked COMPLETE, CLOSED, or ARCHIVED).
+
+If the active backlog count is **5 or fewer**:
+- Scan `claude/ideas/ideas_register.md` for ideas with `Status: Parked-cycle-<n>` whose `Park Rationale` references a specific backlog item ID (any `BLG-` reference).
+- Count how many of those referenced items have now shipped (present in a prior cycle's `sprint_backlog.md` as a completed ST story, or marked COMPLETE in `backlog.md`).
+- If M ≥ 1 such ideas exist: record in the closure record §6 Outstanding Actions:
+
+  > **⚠ Ideas Pipeline Advisory:** Active backlog is nearly clear (N items remaining). M parked ideas have park rationales referencing items that have since shipped — their gate conditions may be satisfied. Consider running `run ideas` to refresh the ideas pool before the next roadmap run, so gate-cleared ideas can be re-evaluated at STEP 4.0.
+
+- This check is advisory only — it does not halt closure or block STEP 13.
+
 ---
 
 ## STEP 13 — Commit
@@ -766,6 +779,7 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5 | 2026-04-17 | STEP 12 — Ideas Pipeline Health Check advisory added. After groom backlog completes, if active backlog count ≤ 5: scan ideas_register.md for Parked-cycle-N ideas whose Park Rationale references a BLG- item that has since shipped; if any found, record advisory in closure record §6 Outstanding Actions directing PO to run `run ideas` before next roadmap run so gate-cleared ideas can be re-evaluated at STEP 4.0. Advisory-only, non-blocking. |
 | 2.4 | 2026-04-16 | STEP 6 — Advisory endpoint coverage drift check added. After all PRs merged: compare openapi.yaml path count vs api_performance_baseline.md measured paths; raise backlog item for gaps. Check SystemStatus.js categorizeEndpoint() for unhandled new top-level prefixes. Advisory-only, non-blocking. |
 | 2.3 | 2026-04-11 | STEP 6 — `claude/cycles/velocity_metrics.md` added to operational documents reconciliation list. Engine must append a velocity row for the completed cycle (Planned/Completed from execution_state.json, rolling 6-cycle average updated) before writing STEP 6 pass. Fixes gap where v2.4 and v2.5 rows were missed (discovered 2026-04-11). |
 | 2.2 | 2026-03-24 | AUD-2026-03-21-002: STEP 0 — added Audit Cadence Check advisory block. Reads `completed_cycle_count` from `.claude_current_state.json`; if `% 3 == 0`, surfaces "⚠ AUDIT DUE" advisory and records in run manifest. Non-blocking. Eliminates manual audit tracking and prevents overdue audit accumulation. |
