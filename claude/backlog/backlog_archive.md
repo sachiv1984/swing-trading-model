@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-16
+**Last Updated:** 2026-04-17
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -2010,4 +2010,29 @@ The current idea intake model produces one file per idea per agent per window (4
 | BLG-BE-10 | Supplementary indicator fields (display-only) | ST-09 | 4 fields added; §13 COMPLIANT |
 | BLG-SPEC-D17 | Spec Dependency Map | ST-10 | docs/specs/spec_dependency_map.md v1.0 |
 | BLG-GOV-14 | Governance Health Score | ST-11 | OPERATIONAL_GUIDE §15; roadmap_prompt STEP -1.7 |
+
+---
+
+### v2.6 Release Slice — 2026-04-11__release-v2.6
+
+**Status at retirement:** ✅ Complete
+**Retired:** 2026-04-17 (post-ship cleanup — execution_state.json was not sealed; items identified by cross-referencing git log)
+**Shipped in:** v2.6 — Backend Integration Completion, Test Automation & Governance Hardening
+**Evidence:** 15/15 stories shipped; PRs #218–#221 merged to main; `claude/cycles/2026-04-11__release-v2.6/`
+
+| ID | Title | Story | PR | Notes |
+|----|-------|-------|----|-------|
+| BLG-BE-08-GAP-01 | Migrate Reports Performance Tab to FastAPI | ST-01 | #218 / 5a6982d | No Base44 calls remain in Performance tab |
+| BLG-BE-09-GAP-01 | Wire Signals dismissal and position creation to FastAPI | ST-02 | #218 / 5a6982d | Pre-existing FastAPI wiring confirmed |
+| BLG-BE-09-GAP-02 | Replace Base44 cash balance on Signals page | ST-03 | #218 / 5a6982d | GET /cash/summary wired |
+| BLG-QA-09 | Fix 4 pytest collection errors | ST-04 | #219 / 39efe64 | 129 tests pass, 0 collection errors |
+| BLG-QA-10 | Add CI test runner workflow | ST-05 | #219 / 39efe64 | ci-tests.yml; Phase A + B delivered |
+| BLG-QA-07 | Fee drag Playwright spec | ST-06 | #219 / 39efe64 | SC-FEE-01–04 pass |
+| BLG-QA-08 | Pytest unit tests for fee drag | ST-07 | #219 / 39efe64 | 17 tests; SC-FEE-05, SC-FEE-06 pass |
+| BLG-FE-10 | Add tooltip prop to StatsCard | ST-08 | #220 / a640719 | Avg Fee Drag card wired |
+| BLG-FE-11 | Trade History StatsCard bar layout (6-card) | ST-09 | #220 / a640719 | 7-card bar; grid-cols-2 md:grid-cols-4 xl:grid-cols-7 |
+| BLG-FE-12 | Trade History column header styling | ST-10 | #220 / a640719 | font-semibold text-slate-300 tracking-wide |
+| BLG-FE-13 | Flexible column sorting | ST-11 | #220 / a640719 | 5 new sort states; Days Held column added |
+| BLG-GOV-15 | Upgrade decision_log.md hard gate | ST-14 | #221 / 27902b7 | roadmap_prompt STEP 9 structural halt |
+| BLG-FE-09 | Frontend Performance Budget spec | ST-15 | #221 / 27902b7 | docs/specs/frontend/performance_budget.md |
 
