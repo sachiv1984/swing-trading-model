@@ -74,7 +74,10 @@
     "decisions_validated": "not_applicable"
   },
 
-  "design_gate_status": "not_started",
+  "design_gate_status": "Passed",
+  "design_gate_completed_utc": "2026-04-17T00:45:00Z",
+  "design_gate_record": "claude/cycles/2026-04-17__release-v2.8/design_gate.md",
+  "sprint_planning_pre_condition": true,
   "amended_backlog_slice_path": "",
 
   "artifacts": {

@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.6
-**Last Updated:** 2026-04-11
+**Version:** 1.7
+**Last Updated:** 2026-04-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Design Source (v2.1 slippage):** docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md
+**Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
 **Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
+**Design Source (v2.1 slippage):** docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md
 
 ## Purpose & User Goals
 The Trade History page provides a complete record of all **closed trades**, allowing users to review past performance, analyze decisions, and learn from journal entries.
@@ -89,6 +90,73 @@ A flexible filtering system allowing users to narrow down the list of trades.
   - Filtering uses OR logic (any trade containing at least one selected tag)
 
 When no trades have tags, the tag filter does not appear.
+
+---
+
+### AI Journal Summary (v2.8 — ST-08, EPIC-04)
+
+**Design source:** `docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md`
+
+**Placement:** Collapsible section positioned above the Trade History table, below the filter bar.
+
+**SRB compliance:** CONDITIONALLY COMPLIANT under SRB-v1.7 (2026-03-02). AI output is display-only; must NOT be used as input to any signal, scoring, compliance, or recommendation calculation.
+
+#### Section Header
+
+- Title: "AI Journal Summary"
+- Subtitle: "AI-generated themes across your journal entries."
+- Expand/collapse toggle (chevron icon); **collapsed by default** on page load.
+- Session-only state (not persisted to localStorage).
+
+#### When Collapsed (default)
+
+Header row only visible. No API call made until the user expands.
+
+#### When Expanded
+
+**Disclaimer label (mandatory):**
+> *"AI-generated summary — for reference only. Not a trading recommendation."*
+
+- Displayed in a muted amber/info banner style above the summary text.
+- Cannot be dismissed. Always visible whenever the summary is shown.
+- No user interaction required to display it.
+
+**Generate / Refresh button:**
+
+| Property | Value |
+|----------|-------|
+| Label (first time) | "Generate Summary" |
+| Label (after load) | "Refresh Summary" |
+| Action | `POST /ai/journal-summary` with current filter context (date range and trade IDs from visible trades) |
+| Placement | Section header row, right side (inline with title) |
+| Disabled | While loading |
+
+**Summary text panel:**
+
+| Property | Value |
+|----------|-------|
+| Source | `summary` field from `POST /ai/journal-summary` response |
+| Background | Distinct card — e.g. slate-800 or subtle differentiation from raw journal entries |
+| Font | Regular body size; not journal-entry styling |
+| Overflow | Max-height with scroll if content is long |
+
+#### States
+
+| State | Behaviour |
+|-------|-----------|
+| Not yet generated | Placeholder: "Click 'Generate Summary' to get an AI overview of your journal entries." |
+| Loading | Spinner inside summary panel; button disabled |
+| Loaded | Disclaimer above; summary text rendered |
+| Error / Unavailable | "Summary unavailable. Please try again later." — muted; no error icon or technical message |
+
+#### Hard Rules
+
+- Section **collapsed by default** — opt-in per session; user must expand and click Generate.
+- No auto-generation on page load.
+- Filter context: summary covers the same trade scope as the currently visible filtered list. Pass trade IDs or date range to `POST /ai/journal-summary`.
+- Disclaimer label is mandatory and must appear whenever the summary is shown — not dismissible.
+- AI summary is display-only. It must NOT feed into any signal, scoring, compliance, or recommendation logic.
+- **Strategy Rules owner sign-off required before merge** (AC in ST-08).
 
 ---
 
@@ -319,6 +387,7 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.7 | 2026-04-17 | v2.8 design gate (ST-08, EPIC-04): AI Journal Summary section added — collapsible section above trade table (below filters), collapsed by default, disclaimer always visible when expanded, Generate/Refresh button calls `POST /ai/journal-summary` with filter context, 4 states (not-generated/loading/loaded/error). SRB-v1.7 conditional compliance constraints documented. Strategy Rules sign-off required before merge. Design source: `docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md`. Head of Specs Team confirmed compliant. |
 | 1.6 | 2026-04-11 | v2.6 design gate: (ST-09) Summary Stats Bar Layout spec added — `grid-cols-7` at `xl`, `grid-cols-4` at `md`, 7-card row; (ST-10) Column Header Styling spec added — Trade History-specific override (`text-xs font-semibold text-slate-300 uppercase tracking-wide`); (ST-11) Sortable Columns section added — 8 sortable columns, Exit Date descending as default sort. Design source: `docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md`. Head of Specs Team confirmed compliant. |
 | 1.5 | 2026-04-06 | v2.5 design gate (ST-09): Avg Fee Drag StatsCard added to Summary Stats section (after Avg Slippage). Fee Drag % column added to Trade History Table columns list (after Slippage). Fee Drag % Column spec section added. Design source: `docs/design/2026-04-05__release-v2.5/fee-drag/ux_spec.md`. Head of Specs Team confirmed compliant. |
 | 1.4 | 2026-04-04 | OA-2 closure (v2.4): DEV-ST14-01 entry updated — Target resolution release v2.2→v2.5 (not resolved in v2.2/v2.3/v2.4; carried forward as delegated_frontend constraint); backlog reference BLG-FE-01→BLG-FE-08; DoQ acceptance reconfirmed at v2.4 verification. Head of Specs Team action per verification_report.md §5 and closure_record.md OA-2. |
