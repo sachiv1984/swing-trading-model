@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-16 (manage roadmap STEP 11, post-ship closure 2026-04-13__release-v2.7 — RA:v2.7 retired; Market Correlation + New Tech Indicators + Signal Exposure (4.3) + Market Correlation gate retired to archive; §5 + §6 cleaned)
-**Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — scheduled run; Standard tier; DL-017 to DL-019)
+**Last Updated:** 2026-04-17 (roadmap rebalance cycle 2026-04-17__scheduled — no-change scheduled run; Standard tier; DL-020)
+**Last rebalance:** 2026-04-17 (cycle 2026-04-17__scheduled — scheduled run; Standard tier; no-change; DL-020)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 

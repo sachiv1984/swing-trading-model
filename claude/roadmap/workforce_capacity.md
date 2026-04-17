@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-31 (roadmap rebalance — cycle 2026-03-31__scheduled)
+**Last Updated:** 2026-04-17 (roadmap rebalance — cycle 2026-04-17__scheduled — no-change)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -268,3 +268,15 @@ Scarce skill note: Metrics Definitions owner is required for both v1.7 (heat for
 
 **Assessment:** The 3 new items are all P3 / low-effort governance, spec debt, and documentation work. No workforce constraint violations at rebalance time. Release planning for v2.5 should ensure governance-heavy items are balanced against execution items when selecting the sprint scope — the Skill-Silo Alert from this cycle is a direct input to that decision.
 
+
+---
+
+## No-Change Run — Cycle 2026-04-17__scheduled
+
+**Scheduled rebalance — no new FTE allocation required.**
+
+No initiatives were added, replaced, deferred, or killed. No new backlog items promoted to roadmap level. Existing v2.8 backlog pool (8 P3 items) unchanged.
+
+**Skill-Silo check:** Governance load = 0% (no new items of any category). Below 20% floor. Product Owner sign-off capacity confirmed — no new sign-off actions required at rebalance time. No pull-forward candidate required.
+
+**Assessment:** v2.8 backlog pool is as-is. Release planning will determine the v2.8 sprint allocation from the 8 existing P3 items.

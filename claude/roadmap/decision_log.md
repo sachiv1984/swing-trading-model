@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-05
+**Last Updated:** 2026-04-17
 
 ---
 
@@ -500,3 +500,20 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** M effort (~1–2 days). PMO Lead + Head of Specs Team — advisory indicator implementation; formula must be documented in AC before implementation.
 
 **Rationale:** Natural companion to BLG-GOV-09 (velocity). Challenger cleared (SPS=1, pure governance tooling) with formula-completeness note — formula explicitly included in backlog AC. Advisory only, not a gate. Zero-sum satisfied: 1 Add, 1 displacement named.
+
+---
+
+### DL-020 — 2026-04-17
+
+**Decision type:** No-change
+**Cycle:** 2026-04-17__scheduled
+**Date:** 2026-04-17
+**Decision owner:** Product Owner
+
+**Summary:** Scheduled roadmap rebalance — no initiatives added, replaced, deferred, or killed.
+
+**Rationale:** No active Now initiatives exist. The v2.8 backlog (8 P3 items) is the appropriate planning input for the next release. All 22 parked ideas were re-parked after stale-idea review — none met the threshold for advancement at this time. No new ideas submitted (intake engine skipped; 22 open ideas ≥ 20 threshold). CPS = 0.0 (no active initiatives); no strategy drift. No workforce allocation changes required.
+
+**Roadmap impact:** current_roadmap.md Last Updated bumped to 2026-04-17. No content changes.
+
+**Workforce impact:** None — no new allocations required.

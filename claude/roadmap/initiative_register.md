@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-16 (manage roadmap STEP 11, post-ship closure 2026-04-13__release-v2.7 — TECH-IND + MKT-COR moved to Completed; AI-SUM retained in Priority 2; AI-SUM removed from Gated row)
+**Last Updated:** 2026-04-17 (roadmap rebalance cycle 2026-04-17__scheduled — duplicate AI-SUM row removed from Priority 2; no other changes)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -36,7 +36,6 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 | ID | Initiative | Gate status | Backlog item | Notes |
 |----|-----------|-------------|--------------|-------|
-| AI-SUM | AI Journal Summarisation | Gate cleared 2026-04-04 (SRB-v1.7) | BLG-FEAT-16 | UX convenience display only. 4 mandatory conditions from SRB-v1.7 must appear in AC. Strategy Rules owner sign-off required before any signal pipeline integration. |
 | AI-SUM | AI Journal Summarisation | Gate cleared 2026-04-04 (SRB-v1.7) | BLG-FEAT-16 | UX convenience display only. 4 mandatory conditions from SRB-v1.7 must appear in AC. Strategy Rules owner sign-off required before any signal pipeline integration. |
 
 ---

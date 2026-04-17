@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-17 (v2.6 post-ship cleanup: 13 v2.6 shipped items archived to backlog_archive.md; BLG-FE-14 filed)
-**Last rebalance:** 2026-04-05 (cycle 2026-04-05__scheduled — DL-017 to DL-019)
+**Last Updated:** 2026-04-17 (roadmap rebalance cycle 2026-04-17__scheduled — no-change; DL-020)
+**Last rebalance:** 2026-04-17 (cycle 2026-04-17__scheduled — DL-020)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
