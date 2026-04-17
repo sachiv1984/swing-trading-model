@@ -13,7 +13,16 @@
 ## 1. Current Version
 
 **v2.7** — Performance, Governance Hardening & Market Intelligence — Shipped 2026-04-16
-**Next planned release:** **v2.8** (TBD)
+**Next planned release:** **v2.8** — Frontend Completion, Test Quality & AI Journal Feature
+
+<!-- roadmap-annotation-marker: RA:v2.8:2026-04-17__release-v2.8 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-04-17__release-v2.8
+- Plan published: 2026-04-17
+- Cycle folder: claude/cycles/2026-04-17__release-v2.8/
+- Backlog slice: claude/cycles/2026-04-17__release-v2.8/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 ---
 

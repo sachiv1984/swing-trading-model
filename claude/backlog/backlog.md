@@ -197,7 +197,25 @@ These are deliberate product decisions, not deferrals:
 
 ## 12. Last Release Slice
 
-## Active Release Slice — v2.7
+## Active Release Slice — v2.8
+
+<!-- release-plan-marker: RP:v2.8:2026-04-17__release-v2.8 -->
+
+**Cycle:** 2026-04-17__release-v2.8 | **Status:** Published | **Published:** 2026-04-17
+**Backlog slice:** `claude/cycles/2026-04-17__release-v2.8/stage4_backlog_slice.md`
+
+| EPIC | Sprint | Stories | Theme |
+|------|--------|---------|-------|
+| EPIC-01 | Sprint 2 | ST-01 | Market Correlation Frontend |
+| EPIC-02 | Sprint 1 | ST-02, ST-03 | Test Scenario Coverage |
+| EPIC-03 | Sprint 1 | ST-04, ST-05, ST-06 | Governance Process Hardening |
+| EPIC-04 | Sprint 2 | ST-07, ST-08 | AI Journal Summarisation |
+
+**Theme:** Frontend Completion, Test Quality & AI Journal Feature
+
+---
+
+## Prior Release Slice — v2.7
 
 <!-- release-plan-marker: RP:v2.7:2026-04-13__release-v2.7 — COMPLETE -->
 

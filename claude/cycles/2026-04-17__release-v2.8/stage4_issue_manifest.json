@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Market Correlation View",
+    "epic": "EPIC-01",
+    "description": "Add market correlation view to Analytics page displaying per-position Pearson correlation with severity colour-coding and portfolio-level weighted average. Source: GET /analytics/market-correlation. Canonical spec: analytics_endpoints.md v2.1.0.",
+    "ac_summary": "Colour-coded per-position correlation + severity badge; portfolio-level weighted average; null rendered as N/A; no regression; DoQ sign-off with Date populated.",
+    "labels": ["story", "release-v2.8", "cycle:2026-04-17__release-v2.8", "EPIC-01"],
+    "assignee": "(unassigned)"
+  },
+  {
+    "id": "ST-02",
+    "title": "Market Correlation Endpoint Scenarios",
+    "epic": "EPIC-02",
+    "description": "Add SC-CORR-01–04 to analytics_scenarios.md covering market correlation endpoint happy path, portfolio average, cache TTL, and Yahoo Finance partial fallback.",
+    "ac_summary": "analytics_scenarios.md updated with SC-CORR-01–04; reference analytics_endpoints.md v2.1.0; existing scenarios unchanged; DoQ sign-off with Date.",
+    "labels": ["story", "release-v2.8", "cycle:2026-04-17__release-v2.8", "EPIC-02"],
+    "assignee": "(unassigned)"
+  },
+  {
+    "id": "ST-03",
+    "title": "Supplementary Indicator Field Scenarios",
+    "epic": "EPIC-02",
+    "description": "Add SC-SIG-IND-01–02 to signals_scenarios.md covering four supplementary indicator fields in POST /signals/generate response and null handling.",
+    "ac_summary": "signals_scenarios.md updated with SC-SIG-IND-01–02; reference signal_endpoints.md v1.1; existing scenarios unchanged; DoQ sign-off with Date.",
+    "labels": ["story", "release-v2.8", "cycle:2026-04-17__release-v2.8", "EPIC-02"],
+    "assignee": "(unassigned)"
+  },
+  {
+    "id": "ST-04",
+    "title": "DoQ Date Field Reminder Patch",
+    "epic": "EPIC-03",
+    "description": "Patch execution_prompt.md §3.2.A to add explicit reminder that DoQ sign-off Date field must be non-blank before PR open. Apply CLAUDE.md §6 checklist.",
+    "ac_summary": "execution_prompt.md §3.2.A updated; version bumped; OPERATIONAL_GUIDE and prompt_change_log updated in same commit; CLAUDE.md §6 checklist applied; DoQ sign-off with Date.",
+    "labels": ["story", "release-v2.8", "cycle:2026-04-17__release-v2.8", "EPIC-03"],
+    "assignee": "(unassigned)"
+  },
+  {
+    "id": "ST-05",
+    "title": "Sprint Close Terminology Clarification",
+    "epic": "EPIC-03",
+    "description": "Clarify sprint close template: 'Deviations filed' = spec deviations only (/dev-file); process notations go in execution_state.json notes column.",
+    "ac_summary": "Sprint close template clarified; CLAUDE.md §6 checklist applied if governed file; DoQ sign-off with Date.",
+    "labels": ["story", "release-v2.8", "cycle:2026-04-17__release-v2.8", "EPIC-03"],
+    "assignee": "(unassigned)"
+  },
+  {
+    "id": "ST-06",
+    "title": "Backlog Archive Deduplication",
+    "epic": "EPIC-03",
+    "description": "Deduplicate backlog_archive.md: retain most recent entry per duplicated ID; remove earlier copies. PO confirmation of approach required before execution.",
+    "ac_summary": "PO-confirmed dedup approach applied; no duplicate ### headers; no active IDs in archive; ID uniqueness scan PASS; archive Last Updated updated; DoQ sign-off with Date.",
+    "labels": ["story", "release-v2.8", "cycle:2026-04-17__release-v2.8", "EPIC-03"],
+    "assignee": "(unassigned)"
+  },
+  {
+    "id": "ST-07",
+    "title": "AI Journal Summary Backend",
+    "epic": "EPIC-04",
+    "description": "POST /ai/journal-summary endpoint: calls external LLM to summarise trade journal notes; returns summary text; API key via env var; graceful error on LLM unavailability. OpenAPI entry required.",
+    "ac_summary": "POST /ai/journal-summary implemented; LLM key via env var; not used in signal/scoring pipeline; error handling; openapi.yaml entry; DoQ sign-off with Date.",
+    "labels": ["story", "release-v2.8", "cycle:2026-04-17__release-v2.8", "EPIC-04"],
+    "assignee": "(unassigned)"
+  },
+  {
+    "id": "ST-08",
+    "title": "AI Journal Summary Frontend",
+    "epic": "EPIC-04",
+    "description": "Trade History page: display AI summary alongside raw journal entries with mandatory disclaimer label. Strategy Rules owner sign-off required before merge.",
+    "ac_summary": "Summary displayed with disclaimer label; raw entries remain visible; not used in calculations; Strategy Rules owner sign-off; graceful error; no regression; DoQ sign-off with Date.",
+    "labels": ["story", "release-v2.8", "cycle:2026-04-17__release-v2.8", "EPIC-04"],
+    "assignee": "(unassigned)"
+  }
+]
