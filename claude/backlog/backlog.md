@@ -61,16 +61,6 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 
 ---
 
-<!-- BLG-FE-11 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-09 (EPIC-03) -->
-
-<!-- BLG-FE-12 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-10 (EPIC-03) -->
-
-<!-- BLG-FE-13 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-11 (EPIC-03) -->
-
-<!-- BLG-FE-10 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-08 (EPIC-03) -->
-
-<!-- BLG-FE-09 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-15 (EPIC-04) -->
-
 ### BLG-FE-14 — Market Correlation frontend view
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -102,29 +92,9 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 
 ---
 
-
-<!-- BLG-BE-08 and BLG-BE-09 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
-
-<!-- BLG-BE-08-GAP-01 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-01 (EPIC-01) -->
-
-<!-- BLG-BE-09-GAP-01 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-02 (EPIC-01) -->
-
-<!-- BLG-BE-09-GAP-02 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-03 (EPIC-01) -->
-
 ## 5. QA & Test Automation Backlog
 
 ---
-
-<!-- BLG-QA-07 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-06 (EPIC-02) -->
-
-<!-- BLG-QA-08 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-07 (EPIC-02) -->
-
-<!-- BLG-QA-09 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-04 (EPIC-02) -->
-
-<!-- BLG-QA-10 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-05 (EPIC-02) -->
-
-<!-- BLG-QA-12 (formerly BLG-QA-11 System Status spec) — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-07 (EPIC-03) — ID renamed BLG-QA-11→BLG-QA-12 per OA-5 -->
-
 
 ## 6. Operations & Infrastructure Backlog
 
@@ -132,10 +102,6 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 
 
 ## 7. Spec Debt Backlog
-
----
-
-<!-- BLG-SPEC-D17 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-10 (EPIC-05) -->
 
 ---
 
@@ -195,22 +161,6 @@ As cycles accumulate, documents are created in each cycle directory but there is
 
 ---
 
-<!-- BLG-GOV-12 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
-
-<!-- BLG-GOV-14 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-11 (EPIC-05) -->
-
----
-
-<!-- BLG-GOV-15 — Archived to backlog_archive.md 2026-04-17 (v2.6 post-ship cleanup) — ST-14 (EPIC-04) -->
-
----
-
-<!-- BLG-GOV-18 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-03 (EPIC-02) -->
-
-<!-- BLG-GOV-19 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-04 (EPIC-02) -->
-
----
-
 ## 9. Deferred / Future Candidates
 
 - Daily email portfolio summary
@@ -245,31 +195,7 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-## 12. Last Release Slice — v2.4 (Archived)
-
-<!-- release-plan-marker: RP:v2.4:2026-03-31__release-v2.4 — ARCHIVED 2026-04-03 -->
-
-**Cycle:** 2026-03-31__release-v2.4 | **Shipped:** 2026-04-03 | **Status:** Verified_with_deviations
-**Archived to:** `claude/backlog/backlog_archive.md` — v2.4 Release Slice entry
-
----
-
-## Active Release Slice — v2.5
-
-<!-- release-plan-marker: RP:v2.5:2026-04-05__release-v2.5 -->
-
-**Cycle:** 2026-04-05__release-v2.5 | **Status:** Closed | **Published:** 2026-04-05
-**Backlog slice:** `claude/cycles/2026-04-05__release-v2.5/stage4_backlog_slice.md`
-
----
-
-## Active Release Slice — v2.6
-
-<!-- release-plan-marker: RP:v2.6:2026-04-11__release-v2.6 — ARCHIVED -->
-
-**Cycle:** 2026-04-11__release-v2.6 | **Status:** Closed | **Published:** 2026-04-11 | **Shipped:** 2026-04-11
-**Backlog slice:** `claude/cycles/2026-04-11__release-v2.6/stage4_backlog_slice.md`
-**Backlog cleanup:** 2026-04-17 — 13 shipped backlog items archived to `backlog_archive.md`
+## 12. Last Release Slice
 
 ## Active Release Slice — v2.7
 
@@ -326,39 +252,8 @@ The application has no mechanism to roll out new features to a subset of users o
 - Gating pattern documented for use in future story authoring
 
 ---
----
 
-<!-- BLG-FEAT-15 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
-
-## 14. New Backlog Items — Session 2026-04-02
-
-*User-raised items from session review. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
-
----
-
-<!-- BLG-OPS-11 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
-
----
-
-## 15. New Backlog Items — Session 2026-04-03
-
-*Items raised from ST-11 performance baseline and System Status page review. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
-
----
-
-<!-- BLG-OPS-12, BLG-OPS-13, BLG-BE-07 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
-
-<!-- BLG-OPS-14 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-01 (EPIC-01) -->
-
-<!-- BLG-BE-07-FIX — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-02 (EPIC-01) -->
-
----
-
-<!-- BLG-FE-07, BLG-FE-08, BLG-GOV-10, TEST-GAP-EPIC-01-v24 — Archived to backlog_archive.md 2026-04-10 (v2.5 post-ship closure) -->
-
----
-
-## 16. New Backlog Items — Session 2026-04-04
+## 14. New Backlog Items — Session 2026-04-04
 
 *Items raised from v2.4 post-ship closure. Not yet processed through a roadmap rebalance cycle. Target releases are indicative.*
 
@@ -417,14 +312,6 @@ Trade journals accumulate over time and users must scroll through individual ent
 - [ ] External LLM API key and configuration are managed via environment variable; no secrets in code
 
 ---
-
-<!-- BLG-BE-10 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-09 (EPIC-04) -->
-
-<!-- BLG-FEAT-17 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-08 (EPIC-04) — AC-6 frontend rendering deferred (BLG-FE-14 filed 2026-04-17) -->
-
-<!-- BLG-GOV-16 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-05 (EPIC-02) -->
-
-<!-- BLG-QA-11 — Archived to backlog_archive.md 2026-04-16 (v2.7 post-ship closure) — ST-06 (EPIC-03) -->
 
 ### BLG-QA-13 — Test scenario coverage gap: market correlation and supplementary indicators (v2.7)
 **Priority:** P3 (Low)
