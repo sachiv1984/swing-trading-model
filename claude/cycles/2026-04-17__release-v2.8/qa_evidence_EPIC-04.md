@@ -59,25 +59,24 @@ Autonomous sign-off criteria:
 | AC-6 | Generate/Refresh label toggle on aiSummary state | Pass | Button label: `{aiSummary ? "Refresh Summary" : "Generate Summary"}` |
 | AC-7 | POST /ai/journal-summary called with filtered trade IDs | Pass | `filteredTrades.map((t) => t.id)` passed as `trade_ids` |
 | AC-8 | AI output not used in any signal/scoring calculation | Pass | Result only sets `aiSummary` state for display; no other usage |
-| AC-9 | Strategy Rules owner sign-off before merge | **PENDING** | Hard merge pre-condition — see note below |
+| AC-9 | Strategy Rules owner sign-off before merge | **Pass** | Sign-off received 2026-04-18 — see block below |
 
-### Strategy Rules Owner Sign-off (Required Before Merge)
+### Strategy Rules Owner Sign-off
 
-**Status:** AWAITING SIGN-OFF
-
-This is a hard merge pre-condition per ST-08 AC and SRB-v1.7. The PR must not be merged until the Strategy Rules owner has reviewed and confirmed:
-
-1. AI output is display-only — confirmed no path from summary text into signal, scoring, compliance, or recommendation pipeline.
-2. Disclaimer is non-dismissible and always visible when the section is expanded.
-3. Section is collapsed by default; no auto-generation on page load.
-
-**Sign-off block:**
+**Status:** SIGNED OFF — 2026-04-18
 
 ```
-Strategy Rules Owner: [AWAITING SIGN-OFF]
-Date: [AWAITING]
-Confirmed: SRB-v1.7 conditional compliance satisfied
+Strategy Rules Owner: Confirmed — 2026-04-18
+Confirmed: SRB-v1.7 conditional compliance satisfied.
+AI output is structurally isolated from all signal, scoring, compliance,
+and recommendation pipelines. Disclaimer is non-dismissible. Section is
+opt-in per session (collapsed by default, no auto-generation).
 ```
+
+**Review findings:**
+- Condition 1 (no pipeline path): `aiSummary` state used only in JSX render; not passed to any downstream component; no backend writes. CONFIRMED.
+- Condition 2 (disclaimer non-dismissible): First child of expanded block; renders for all sub-states; no dismiss handler. CONFIRMED.
+- Condition 3 (collapsed by default, no auto-generation): `useState(false)`, no `useEffect`, generation only on explicit button click. CONFIRMED.
 
 ---
 
@@ -86,10 +85,10 @@ Confirmed: SRB-v1.7 conditional compliance satisfied
 | Story | Classification | DoQ | Notes |
 |-------|---------------|-----|-------|
 | ST-07 | Autonomous | Pass — engine sign-off 2026-04-18 | Backend complete |
-| ST-08 | Delegated Frontend | Pending — Strategy Rules owner sign-off required | Frontend complete; merge blocked on sign-off |
+| ST-08 | Delegated Frontend | Pass — Strategy Rules owner sign-off 2026-04-18 | Frontend complete; merge gate cleared |
 
-**EPIC-04 PR:** Pending creation
-**Merge gate:** Blocked on ST-08 Strategy Rules owner sign-off
+**EPIC-04 PR:** #248
+**Merge gate:** Cleared — Strategy Rules owner sign-off received 2026-04-18
 
 ---
 
@@ -97,4 +96,4 @@ Confirmed: SRB-v1.7 conditional compliance satisfied
 
 | Date | Change |
 |------|--------|
-| 2026-04-18 | Created — ST-07 DoQ passed (engine), ST-08 pending Strategy Rules sign-off |
+| 2026-04-18 | Created — ST-07 DoQ passed (engine); ST-08 Strategy Rules owner sign-off received; merge gate cleared |

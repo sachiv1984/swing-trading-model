@@ -261,7 +261,7 @@
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-04-18T00:00:00Z",
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/trade_history.md v1.7",
             "docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md",
@@ -269,8 +269,14 @@
           ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
-          "sign_off_record": null,
-          "notes": "Strategy Rules owner sign-off required before merge — hard AC. DoQ block pending sign-off. SRB-v1.7: disclaimer non-dismissible, output display-only."
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner",
+            "method": "role_review",
+            "status": "cleared",
+            "findings_applied": ["SRB-v1.7 all 3 conditions confirmed"],
+            "cleared_utc": "2026-04-18T00:00:00Z"
+          },
+          "notes": "Strategy Rules owner sign-off received 2026-04-18. SRB-v1.7: pipeline isolation confirmed, disclaimer non-dismissible confirmed, collapsed-by-default confirmed."
         }
       }
     }
