@@ -17,6 +17,7 @@ import TopPerformers from "../components/analytics/TopPerformers";
 import ConsistencyMetrics from "../components/analytics/ConsistencyMetrics";
 import TagPerformance from "../components/analytics/TagPerformance";
 import DisciplineComplianceSection from "../components/analytics/DisciplineComplianceSection";
+import MarketCorrelationSection from "../components/analytics/MarketCorrelationSection";
 import UnderwaterChart from "../components/analytics/UnderwaterChart";
 import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
 import BestWorstTrades from "../components/analytics/BestWorstTrades";
@@ -668,6 +669,10 @@ export default function PerformanceAnalytics() {
           Source: GET /analytics/compliance-metrics. Spec: analytics.md §17.
           Metrics canonical per metrics_definitions.md v1.7.0. */}
       <DisciplineComplianceSection period={timePeriod} />
+      {/* Component 18 — v2.8 ST-01 (EPIC-01): Market Correlation
+          Source: GET /analytics/market-correlation. Spec: analytics.md §18.
+          Per-position Pearson correlation + portfolio-level weighted average. */}
+      <MarketCorrelationSection />
     </div>
   );
 }

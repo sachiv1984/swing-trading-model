@@ -459,6 +459,8 @@ export const api = {
       doFetch('/analytics/r-multiple-distribution'),
     complianceMetrics: async () =>
       doFetch('/analytics/compliance-metrics'),
+    marketCorrelation: async () =>
+      doFetch('/analytics/market-correlation'),
   },
 
   market: {
