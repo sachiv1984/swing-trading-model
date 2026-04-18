@@ -63,10 +63,8 @@ export default function MarketCorrelationSection() {
       </div>
 
       {isLoading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-10 rounded-lg bg-slate-700/40 animate-pulse" />
-          ))}
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-5 h-5 animate-spin text-slate-500" />
         </div>
       ) : error ? (
         <div className="flex items-center gap-2 text-rose-400 text-sm py-4">
