@@ -66,3 +66,4 @@
 | Date | Change |
 |------|--------|
 | 2026-04-18 | Created — ST-01 DoQ partial sign-off (code review); AC-2/4/6 flagged as post-merge verification actions per CLAUDE.md frontend DoQ rule |
+| 2026-04-18 | Three follow-up fixes committed: (1) MarketCorrelationSection loading state → animate-spin (67697d7); (2) DISABLE_ESLINT_PLUGIN in playwright.config.js (6867300); (3) UnderwaterChart containerRef always mounted — fixes wheel-zoom test race (da3643c). Smoke mock fix also cherry-picked (2c88ee5). All committed on EPIC-01 branch. |
