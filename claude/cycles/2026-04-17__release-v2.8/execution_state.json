@@ -5,7 +5,7 @@
   "invoked_utc": "2026-04-18T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-04-18T00:00:00Z",
+  "last_updated_utc": "2026-04-18T02:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -26,7 +26,7 @@
           "assigned_to": "engine",
           "github_issue": 238,
           "branch": "exec/2026-04-17__release-v2.8/EPIC-01",
-          "commit_sha": "679deb0",
+          "commit_sha": "e42aac4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -46,7 +46,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-04-18T00:00:00Z"
           },
-          "notes": "Reclassified delegated_frontend → autonomous per LL-v2.3-EX-02 (engine completed). MarketCorrelationSection + api.analytics.marketCorrelation(). Autonomous DoQ sign-off applied."
+          "notes": "Reclassified delegated_frontend → autonomous per LL-v2.3-EX-02 (engine completed). MarketCorrelationSection + api.analytics.marketCorrelation(). Autonomous DoQ sign-off applied. Follow-up fixes: 67697d7 (animate-spin), 6867300 (playwright eslint), da3643c (containerRef race), 2c88ee5 (smoke mock). 24/24 Playwright green."
         }
       }
     },
@@ -291,7 +291,7 @@
     "epics_merged": [],
     "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04"],
     "all_merged": false,
-    "notes": "EPIC-04 merge blocked on ST-08 Strategy Rules owner sign-off (hard AC). EPIC-01 ready. EPIC-02 (#247) and EPIC-03 (#246) ready pending QA sign-off + PO acceptance."
+    "notes": "All 4 EPICs ready for PO acceptance + merge. EPIC-01 (#249): 24/24 Playwright tests passing. EPIC-04 (#248): Strategy Rules sign-off cleared. EPIC-02 (#247), EPIC-03 (#246): QA signed off."
   },
 
   "sealed": false,
