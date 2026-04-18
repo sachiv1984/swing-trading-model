@@ -43,52 +43,53 @@ const SMOKE_SETTINGS = {
 
 // ---------------------------------------------------------------------------
 // GET /positions  (used by Positions page + TradeEntry position-tags query)
+//
+// NOTE: /positions returns a raw array (no {status,data} envelope).
+// base44Client uses doFetch('/positions', { raw: true }) — raw:true bypasses
+// envelope unwrapping and returns the JSON as-is. Mock must match this shape.
 // ---------------------------------------------------------------------------
-const SMOKE_POSITIONS = {
-  status: 'ok',
-  data: [
-    {
-      id: 'smoke-pos-lgen',
-      portfolio_id: 'smoke-portfolio-1',
-      ticker: 'LGEN',
-      market: 'UK',
-      entry_date: '2026-03-01',
-      entry_price: 2.45,
-      current_price: 2.52,
-      current_stop: 2.20,
-      shares: 1000,
-      total_cost: 2461.95,
-      fees_paid: 11.95,
-      pnl: 70.05,
-      pnl_pct: 2.85,
-      status: 'open',
-      holding_days: 24,
-      grace_period: false,
-      grace_days_remaining: null,
-      tags: ['momentum'],
-    },
-    {
-      id: 'smoke-pos-barc',
-      portfolio_id: 'smoke-portfolio-1',
-      ticker: 'BARC',
-      market: 'UK',
-      entry_date: '2026-03-10',
-      entry_price: 2.10,
-      current_price: 2.18,
-      current_stop: 1.90,
-      shares: 1200,
-      total_cost: 2531.95,
-      fees_paid: 11.95,
-      pnl: 96.05,
-      pnl_pct: 3.79,
-      status: 'open',
-      holding_days: 15,
-      grace_period: false,
-      grace_days_remaining: null,
-      tags: ['breakout'],
-    },
-  ],
-};
+const SMOKE_POSITIONS = [
+  {
+    id: 'smoke-pos-lgen',
+    portfolio_id: 'smoke-portfolio-1',
+    ticker: 'LGEN',
+    market: 'UK',
+    entry_date: '2026-03-01',
+    entry_price: 2.45,
+    current_price: 2.52,
+    current_stop: 2.20,
+    shares: 1000,
+    total_cost: 2461.95,
+    fees_paid: 11.95,
+    pnl: 70.05,
+    pnl_pct: 2.85,
+    status: 'open',
+    holding_days: 24,
+    grace_period: false,
+    grace_days_remaining: null,
+    tags: ['momentum'],
+  },
+  {
+    id: 'smoke-pos-barc',
+    portfolio_id: 'smoke-portfolio-1',
+    ticker: 'BARC',
+    market: 'UK',
+    entry_date: '2026-03-10',
+    entry_price: 2.10,
+    current_price: 2.18,
+    current_stop: 1.90,
+    shares: 1200,
+    total_cost: 2531.95,
+    fees_paid: 11.95,
+    pnl: 96.05,
+    pnl_pct: 3.79,
+    status: 'open',
+    holding_days: 15,
+    grace_period: false,
+    grace_days_remaining: null,
+    tags: ['breakout'],
+  },
+];
 
 // ---------------------------------------------------------------------------
 // GET /portfolio  (used by Positions page and PositionSizingWidget)
@@ -107,7 +108,7 @@ const SMOKE_PORTFOLIO = {
       { ticker: 'LGEN', position_risk_gbp: 300.00 },
       { ticker: 'BARC', position_risk_gbp: 240.00 },
     ],
-    positions: SMOKE_POSITIONS.data,
+    positions: SMOKE_POSITIONS,
   },
 };
 
