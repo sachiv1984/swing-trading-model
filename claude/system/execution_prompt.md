@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.7
+**Version:** 3.8
 **Last Updated:** 2026-04-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -851,7 +851,7 @@ Must include:
 - Items Returned to Backlog (with reason)
 - Items Delegated and outstanding (with delegation record IDs)
 - QA evidence logs produced (list: `qa_evidence_EPIC-xx.md` per EPIC)
-- Deviations filed this sprint (list: spec file, deviation ref, priority — or "None")
+- Deviations filed this sprint (list: spec file, deviation ref, priority — or "None") — **spec deviations only** (implementation diverges from what the spec requires; filed via `/dev-file`). Process notations, execution observations, and deferred items belong in `execution_state.json` notes column or `execution_escalations.md`, not this register.
 - Open escalations (if any)
 - Net outcome vs sprint goal
 - **Verification readiness statement** (STRUCTURAL — AUD-2026-04-11-004): Write the following block verbatim in `sprint_close.md`. Each field must be `Yes` before writing — resolve any `No` items first. The Delivery Verification Engine reads this block at STEP -1.2; an absent or malformed block causes a preflight failure.
@@ -1017,6 +1017,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.8 | 2026-04-18 | ST-05 (EPIC-03, v2.8): §5.3 sprint close template — "Deviations filed" clarified: spec deviations only (implementation diverges from spec; filed via /dev-file). Process notations, execution observations, and deferred items belong in execution_state.json notes or execution_escalations.md, not the deviation register. Closes v2.7 carry-forward CF-2 (deviation register terminology confusion). Authority: Head of Specs Team (ST-05, 2026-04-18). |
 | 3.7 | 2026-04-18 | ST-04 (EPIC-03, v2.8): §3.2.A Date field requirement note updated — explicitly states Date must be non-blank before PR can be opened (§3.2.B pre-condition, BLG-GOV-18) in addition to before the merge gate runs. Closes the loop between §3.2.A sign-off block authoring and §3.2.B PR-opening enforcement. Authority: Head of Specs Team (ST-04, 2026-04-18). |
 | 3.4 | 2026-04-13 | BLG-GOV-17 (third recurrence — sprint close skipped): Two-pronged fix. (1) STEP 3.2.D post-merge reminder — removed conditional qualifier "if there are remaining EPICs pending"; reminder is now unconditional and explicitly calls out that re-invocation is required after the final merge, with the engine detecting `all_merged = true` and executing STEP 5 directly. (2) Created `.github/workflows/sprint_close_reminder.yml` — GitHub Actions workflow that posts a mandatory PR comment on every EPIC merge to main, firing regardless of Claude Code session state. HARD GATE blockquote updated to reference BLG-GOV-17 and the new workflow. Authority: Head of Specs Team (OA-1, BLG-GOV-17, 2026-04-13). |
 | 3.3 | 2026-04-11 | AUD-2026-04-11-003 + AUD-2026-04-11-004: Two STALE/OVERDUE deferred patches applied. (AUD-003 — OVERDUE 3 cycles) STEP 5.0A added — pr_status pre-seal sync: before writing Sprint_Complete, call `gh pr view <n> --json state` for each EPIC in merge_gate.epics_merged; set pr_status="merged" if MERGED; set pr_status="not_created" if no PR number. Prevents misleading "open"/"none" values in sealed artefacts. (AUD-004 — STALE 2 cycles) STEP 5.3 Verification Readiness Statement upgraded from informal description to STRUCTURAL template — exact markdown table block provided; each field must resolve to Yes before writing; no-No rule enforced. Delivery Verification STEP -1.2 handoff gap closed. Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |

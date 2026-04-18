@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.61
+**Version:** 3.62
 **Last Updated:** 2026-04-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.7)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.8)
 
 ### 8.1 Invocation
 
@@ -1366,7 +1366,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.61 |
+| Version | 3.62 |
 | Last Updated | 2026-04-18 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
@@ -1378,7 +1378,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.26 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.5 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.7 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.7 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.5 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1401,6 +1401,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.62 | 2026-04-18 | **execution_prompt.md v3.7→v3.8 — ST-05 (EPIC-03, v2.8): sprint close deviation register terminology.** §8 source prompt header updated v3.7→v3.8. §14 Execution Engine Source v3.7→v3.8. Change: §5.3 sprint close "Deviations filed" clarified — spec deviations only (filed via /dev-file); process notations and execution observations belong in execution_state.json notes or execution_escalations.md. Closes CF-2. Authority: Head of Specs Team (ST-05, 2026-04-18). |
 | 3.61 | 2026-04-18 | **execution_prompt.md v3.6→v3.7 — ST-04 (EPIC-03, v2.8): DoQ Date field PR-open pre-condition.** §8 source prompt header updated v3.6→v3.7. §14 Execution Engine Source v3.6→v3.7. Change: §3.2.A Date field requirement note updated — now explicitly states Date must be non-blank before PR can be opened (§3.2.B pre-condition, BLG-GOV-18) in addition to before the merge gate runs. Closes the loop between the sign-off block authoring step and the PR-opening enforcement step. Authority: Head of Specs Team (ST-04, 2026-04-18). |
 | 3.60 | 2026-04-17 | **roadmap_prompt.md v4.9→v5.0 + post_ship_closure.md v2.4→v2.5 — three pipeline patches applied.** §6 source prompt header updated v4.9→v5.0. §10 source prompt header updated v2.4→v2.5. §14 Roadmap Engine Source v4.9→v5.0; Post-Ship Closure Engine v2.4→v2.5. §15 roadmap_prompt.md version reference updated v4.9→v5.0. Changes: (1) roadmap_prompt.md STEP 0.D — Empty Horizon Advisory: when Now horizon is empty post-ship and active backlog items exist, surface advisory directing PO to run `plan release` rather than a full rebalance debate; (2) roadmap_prompt.md STEP 4.0 — Gate-Condition Re-Check: before per-idea classification, verify whether BLG- items referenced in Park Rationales have shipped; gate-cleared ideas surfaced as mandatory re-evaluation; (3) post_ship_closure.md STEP 12 — Ideas Pipeline Health Check advisory: when active backlog ≤ 5 items, scan for parked ideas with shipped gate conditions and record advisory in closure record. Authority: Product Owner (2026-04-17). |
 | 3.59 | 2026-04-16 | **post_ship_closure.md v2.3→v2.4 — STEP 6 endpoint coverage drift check added.** §10 Post-Ship source prompt header updated v2.3→v2.4. §14 Post-Ship Closure Engine updated v2.3→v2.4. Change: STEP 6 advisory block added — after all PRs merged, compare openapi.yaml path count vs api_performance_baseline.md measured paths; raise backlog item for gaps; check SystemStatus.js categorizeEndpoint() for unhandled new top-level prefixes. Advisory-only, non-blocking. Authority: Head of Engineering. |
