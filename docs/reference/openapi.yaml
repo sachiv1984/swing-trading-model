@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 2.6.0
+  version: 2.7.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1304,6 +1304,71 @@ paths:
                       data_source:
                         type: string
                         example: Yahoo Finance
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /ai/journal-summary:
+    post:
+      tags: [AI]
+      summary: Summarise trade journal notes via LLM
+      description: |
+        Accepts trade IDs or a date range; retrieves entry/exit journal notes from
+        closed trades and calls an external LLM API (Anthropic) to produce a plain-text
+        summary of themes and patterns. AI output is display-only and must NOT be used
+        in any signal, scoring, or recommendation calculation. SRB-v1.7 CONDITIONALLY COMPLIANT.
+        Returns summary=null with informational message when LLM unavailable (no 500).
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.0 §POST /ai/journal-summary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trade_ids:
+                  type: array
+                  items:
+                    type: integer
+                  nullable: true
+                  description: Closed trade IDs to summarise. If provided, date range is ignored.
+                date_from:
+                  type: string
+                  format: date
+                  nullable: true
+                  description: Start date for trade filter (inclusive).
+                date_to:
+                  type: string
+                  format: date
+                  nullable: true
+                  description: End date for trade filter (inclusive).
+      responses:
+        "200":
+          description: AI journal summary (or null if unavailable/no notes)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary:
+                    type: string
+                    nullable: true
+                    description: LLM-generated summary text. Null if unavailable or no notes.
+                  trade_count:
+                    type: integer
+                    description: Number of closed trades whose notes were included.
+                  model:
+                    type: string
+                    nullable: true
+                    description: LLM model identifier used.
+                  cached:
+                    type: boolean
+                    description: Reserved for future caching; always false in v1.0.
+                  message:
+                    type: string
+                    nullable: true
+                    description: Informational message when summary is null.
+        "422":
+          description: Neither trade_ids nor a date range provided.
         "500":
           $ref: "#/components/responses/InternalError"
 
