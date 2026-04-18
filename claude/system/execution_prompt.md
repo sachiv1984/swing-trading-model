@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.6
-**Last Updated:** 2026-04-13
+**Version:** 3.7
+**Last Updated:** 2026-04-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -693,7 +693,7 @@ The consolidation block must include:
 
 **QA sign-off block:** (Director of Quality completes this)
 > **Authoring note (LL-v1.10-P4-1):** When completing the sign-off block, update all AC table rows from "Pending"/"Awaiting QA" to "Pass" or "Pass with notes" in the same edit. Sign-off block and AC table must be consistent — leaving rows as "Pending" after signing off creates a documentation inconsistency.
-> **Date field requirement (LL-v2.3-EX-01):** The `Date:` field must be non-blank before the merge gate runs. A sign-off block with a blank Date: field is incomplete — Sprint Close STEP 5.1 (LL-v2.0-P4-1) will block on this. Fill in the date when signing off, not at sprint close.
+> **Date field requirement (LL-v2.3-EX-01 / ST-04):** The `Date:` field must be non-blank before the PR can be opened (§3.2.B pre-condition, BLG-GOV-18) and before the merge gate runs. A sign-off block with a blank Date: field is incomplete — the PR will be blocked from opening, and Sprint Close STEP 5.1 (LL-v2.0-P4-1) will also block. Fill in the date when signing off, not at sprint close.
 - [x] All acceptance criteria verified against canonical spec
 - [x] No unresolved P0 or P1 deviations
 - [x] Regression areas checked
@@ -1017,6 +1017,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.7 | 2026-04-18 | ST-04 (EPIC-03, v2.8): §3.2.A Date field requirement note updated — explicitly states Date must be non-blank before PR can be opened (§3.2.B pre-condition, BLG-GOV-18) in addition to before the merge gate runs. Closes the loop between §3.2.A sign-off block authoring and §3.2.B PR-opening enforcement. Authority: Head of Specs Team (ST-04, 2026-04-18). |
 | 3.4 | 2026-04-13 | BLG-GOV-17 (third recurrence — sprint close skipped): Two-pronged fix. (1) STEP 3.2.D post-merge reminder — removed conditional qualifier "if there are remaining EPICs pending"; reminder is now unconditional and explicitly calls out that re-invocation is required after the final merge, with the engine detecting `all_merged = true` and executing STEP 5 directly. (2) Created `.github/workflows/sprint_close_reminder.yml` — GitHub Actions workflow that posts a mandatory PR comment on every EPIC merge to main, firing regardless of Claude Code session state. HARD GATE blockquote updated to reference BLG-GOV-17 and the new workflow. Authority: Head of Specs Team (OA-1, BLG-GOV-17, 2026-04-13). |
 | 3.3 | 2026-04-11 | AUD-2026-04-11-003 + AUD-2026-04-11-004: Two STALE/OVERDUE deferred patches applied. (AUD-003 — OVERDUE 3 cycles) STEP 5.0A added — pr_status pre-seal sync: before writing Sprint_Complete, call `gh pr view <n> --json state` for each EPIC in merge_gate.epics_merged; set pr_status="merged" if MERGED; set pr_status="not_created" if no PR number. Prevents misleading "open"/"none" values in sealed artefacts. (AUD-004 — STALE 2 cycles) STEP 5.3 Verification Readiness Statement upgraded from informal description to STRUCTURAL template — exact markdown table block provided; each field must resolve to Yes before writing; no-No rule enforced. Delivery Verification STEP -1.2 handoff gap closed. Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
 | 3.1 | 2026-04-06 | ST-12 (CF-2a, EPIC-04 v2.5): STEP 8 governance file edit check added — if any §6-governed file (listed in OPERATIONAL_GUIDE.md §14) was modified during sprint execution run, append one entry per file to prompt_change_log.md in same session before STEP 8 commit. Authority: Head of Specs Team (ST-12, 2026-04-06). [Backfill entry — not present at time of apply.] |
