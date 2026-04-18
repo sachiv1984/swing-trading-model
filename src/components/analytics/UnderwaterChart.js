@@ -125,44 +125,6 @@ export default function UnderwaterChart({ trades }) {
     }
   };
 
-  if (data.length === 0) {
-    return (
-      <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm p-6">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-rose-500 to-red-600">
-            <TrendingDown className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white">Underwater Equity Curve</h3>
-            <p className="text-sm text-slate-400">% Below Peak Equity</p>
-          </div>
-        </div>
-        <div className="h-64 flex items-center justify-center text-slate-400">
-          No trade data available
-        </div>
-      </div>
-    );
-  }
-
-  if (data.length <= 2) {
-    return (
-      <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm p-6">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-rose-500 to-red-600">
-            <TrendingDown className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white">Underwater Equity Curve</h3>
-            <p className="text-sm text-slate-400">% Below Peak Equity</p>
-          </div>
-        </div>
-        <div className="h-64 flex items-center justify-center text-slate-400">
-          Need more trades for trend analysis
-        </div>
-      </div>
-    );
-  }
-
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload[0]) {
       const d = payload[0].payload;
@@ -193,6 +155,8 @@ export default function UnderwaterChart({ trades }) {
     return null;
   };
 
+  const hasData = data.length > 2;
+
   return (
     <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
       <div className="p-6 border-b border-slate-700/50">
@@ -206,32 +170,34 @@ export default function UnderwaterChart({ trades }) {
               <p className="text-sm text-slate-400">% Below Peak Equity</p>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => applyZoom(1)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
-              title="Zoom in"
-            >
-              <ZoomIn className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => applyZoom(-1)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
-              title="Zoom out"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </button>
-            {isZoomed && (
+          {hasData && (
+            <div className="flex items-center gap-1">
               <button
-                onClick={() => setZoomRange(null)}
-                className="px-2 py-1 rounded-lg text-xs text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 transition-colors flex items-center gap-1"
-                title="Reset zoom"
+                onClick={() => applyZoom(1)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
+                title="Zoom in"
               >
-                <RotateCcw className="w-3 h-3" />
-                Reset
+                <ZoomIn className="w-4 h-4" />
               </button>
-            )}
-          </div>
+              <button
+                onClick={() => applyZoom(-1)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
+                title="Zoom out"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </button>
+              {isZoomed && (
+                <button
+                  onClick={() => setZoomRange(null)}
+                  className="px-2 py-1 rounded-lg text-xs text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 transition-colors flex items-center gap-1"
+                  title="Reset zoom"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  Reset
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -246,44 +212,56 @@ export default function UnderwaterChart({ trades }) {
         onMouseLeave={handleMouseUp}
         onMouseEnter={handleMouseEnter}
       >
-        {hintVisible && (
-          <p className="text-xs text-slate-500 text-center mb-2 transition-opacity duration-300">
-            Scroll to zoom
-          </p>
+        {data.length === 0 ? (
+          <div className="h-64 flex items-center justify-center text-slate-400">
+            No trade data available
+          </div>
+        ) : data.length <= 2 ? (
+          <div className="h-64 flex items-center justify-center text-slate-400">
+            Need more trades for trend analysis
+          </div>
+        ) : (
+          <>
+            {hintVisible && (
+              <p className="text-xs text-slate-500 text-center mb-2 transition-opacity duration-300">
+                Scroll to zoom
+              </p>
+            )}
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={displayData} style={{ cursor: "inherit" }}>
+                <defs>
+                  <linearGradient id="drawdownGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#dc2626" stopOpacity={0.1} />
+                    <stop offset="100%" stopColor="#dc2626" stopOpacity={0.4} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+                <XAxis
+                  dataKey="date"
+                  stroke="#64748b"
+                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                  tickFormatter={(date) => new Date(date).toLocaleDateString("en-GB", { month: "short", day: "numeric" })}
+                />
+                <YAxis
+                  stroke="#64748b"
+                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                  tickFormatter={(value) => `${value.toFixed(0)}%`}
+                  domain={["auto", 0]}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <ReferenceLine y={0} stroke="#334155" strokeWidth={2} />
+                <Area
+                  type="monotone"
+                  dataKey="drawdown"
+                  stroke="#dc2626"
+                  strokeWidth={2}
+                  fill="url(#drawdownGradient)"
+                  dot={<CustomDot />}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </>
         )}
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={displayData} style={{ cursor: "inherit" }}>
-            <defs>
-              <linearGradient id="drawdownGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#dc2626" stopOpacity={0.1} />
-                <stop offset="100%" stopColor="#dc2626" stopOpacity={0.4} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
-            <XAxis
-              dataKey="date"
-              stroke="#64748b"
-              tick={{ fill: "#94a3b8", fontSize: 12 }}
-              tickFormatter={(date) => new Date(date).toLocaleDateString("en-GB", { month: "short", day: "numeric" })}
-            />
-            <YAxis
-              stroke="#64748b"
-              tick={{ fill: "#94a3b8", fontSize: 12 }}
-              tickFormatter={(value) => `${value.toFixed(0)}%`}
-              domain={["auto", 0]}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <ReferenceLine y={0} stroke="#334155" strokeWidth={2} />
-            <Area
-              type="monotone"
-              dataKey="drawdown"
-              stroke="#dc2626"
-              strokeWidth={2}
-              fill="url(#drawdownGradient)"
-              dot={<CustomDot />}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
       </div>
     </div>
   );
