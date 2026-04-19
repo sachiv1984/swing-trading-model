@@ -92,8 +92,24 @@ opt-in per session (collapsed by default, no auto-generation).
 
 ---
 
+## Product Owner Acceptance
+
+**Status:** ACCEPTED — 2026-04-19
+
+**Reviewed by:** Product Owner
+**Date:** 2026-04-19
+
+**ST-07 verdict:** Accepted. Backend contract, OpenAPI, and implementation all consistent. Graceful failure handling confirmed. Output isolation from pipelines confirmed.
+
+**ST-08 verdict:** Accepted. SRB-v1.7 compliance independently verified in code: collapsed by default, no auto-generation, disclaimer non-dismissible, AI output display-only. Strategy Rules sign-off 2026-04-18 noted.
+
+**EPIC-04 outcome:** Accepted. PR #248 cleared for merge.
+
+---
+
 ## Changelog
 
 | Date | Change |
 |------|--------|
 | 2026-04-18 | Created — ST-07 DoQ passed (engine); ST-08 Strategy Rules owner sign-off received; merge gate cleared |
+| 2026-04-19 | Product Owner acceptance recorded — EPIC-04 cleared for merge |
