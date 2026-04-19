@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/ubuntu/swing-trading-model/.claude/hooks/protect-eslint-config.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/ubuntu/swing-trading-model/.claude/hooks/lint-feedback.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
