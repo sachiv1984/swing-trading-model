@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-18
+**Last Updated:** 2026-04-19
 
 ---
 
@@ -92,3 +92,12 @@
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-04-18
 - Comments: Autonomous class sign-off — all four qualifying criteria met (all stories autonomous, all AC code-review-verifiable, no frontend changes, engine signer populated).
+
+**Product Owner acceptance:**
+- [x] ST-04 — delivery accepted: §3.2.A Date reminder added; self-referential proof present; §6 checklist fully applied
+- [x] ST-05 — delivery accepted: §5.3 terminology clarified; fix correctly in governed prompt; §6 checklist applied
+- [x] ST-06 — delivery accepted: 64 duplicates removed, 0 remaining, 0 active IDs in archive; `groom backlog` scan not yet re-run post-deduplication (open action: confirm PASS on next Phase 1M run — not a merge blocker given manual verification)
+- [x] No deviations requiring escalation
+- [x] Delivery aligns with sprint intent: v2.7 carry-forward governance obligations closed
+- Accepted by: Product Owner
+- Date: 2026-04-19
