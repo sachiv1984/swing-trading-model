@@ -232,9 +232,14 @@ test.describe('SC-CHART-IX-02 — Underwater Equity Curve: Zoom', () => {
     const chartContainer = page.locator('[data-testid="underwater-chart"]');
     await expect(chartContainer).toBeVisible({ timeout: 10000 });
 
-    // Scroll up (zoom in) — deltaY negative = zoom in per component code
-    // Use dispatchEvent directly on the container for CI reliability (mouse.wheel is flaky in headless)
-    await chartContainer.dispatchEvent('wheel', { deltaY: -200, bubbles: true, cancelable: true });
+    // Scroll up (zoom in) — deltaY negative = zoom in per component code.
+    // page.evaluate + new WheelEvent() is required: element.dispatchEvent() does not
+    // forward constructor properties (deltaY comes through as 0), causing applyZoom(-1)
+    // instead of applyZoom(1) and no state change. mouse.wheel is flaky in headless.
+    await page.evaluate(() => {
+      const el = document.querySelector('[data-testid="underwater-chart"]');
+      el.dispatchEvent(new WheelEvent('wheel', { deltaY: -200, bubbles: true, cancelable: true }));
+    });
     await page.waitForTimeout(300);
 
     // Reset button should appear after zooming

@@ -1,10 +1,10 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-03-17
-**Derived from:** `docs/specs/frontend/pages/analytics.md` v1.4; `docs/specs/api_contracts/analytics_endpoints.md` v1.9.0
-**Sprint:** 2026-03-17__release-v2.0 — ST-20
+**Version:** 1.1
+**Last Updated:** 2026-04-18
+**Derived from:** `docs/specs/frontend/pages/analytics.md` v1.4; `docs/specs/api_contracts/analytics_endpoints.md` v2.1.0
+**Sprint:** 2026-03-17__release-v2.0 — ST-20; 2026-04-17__release-v2.8 — ST-02
 
 ---
 
@@ -25,6 +25,8 @@ These scenarios verify Analytics page components against their canonical specifi
 | CohortAnalysis panel | `docs/specs/frontend/pages/analytics.md §15` |
 | `GET /analytics/cohort` API | `docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/cohort` |
 | `has_enough_data` gate | `docs/specs/frontend/pages/analytics.md §4 (Not Enough Data State)` |
+| Market Correlation panel | `docs/specs/frontend/pages/analytics.md §18` |
+| `GET /analytics/market-correlation` API | `docs/specs/api_contracts/analytics_endpoints.md v2.1.0#GET /analytics/market-correlation` |
 
 ---
 
@@ -173,6 +175,129 @@ Notes:
 
 ---
 
+## 4. Scenarios — Market Correlation Endpoint
+
+*Canonical spec: `docs/specs/api_contracts/analytics_endpoints.md v2.1.0 §GET /analytics/market-correlation`*
+
+---
+
+### SC-CORR-01 — GET /analytics/market-correlation returns per-position Pearson correlation with correct fields
+
+**Component:** Market Correlation endpoint
+**API:** `GET /analytics/market-correlation`
+**Priority:** P1
+**Canonical spec:** `analytics_endpoints.md v2.1.0 §GET /analytics/market-correlation`
+
+#### Preconditions
+
+- At least two open positions exist in the portfolio.
+- Yahoo Finance data is available for the tickers in question.
+- Cache is cold (first call within the 8-hour TTL window, or cache has been cleared).
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Issue `GET /analytics/market-correlation`. | HTTP 200 response. |
+| 2 | Inspect the `correlations` array in the response. | Array contains one entry per open position. Each entry has: `ticker` (string), `correlation` (number in `[-1, 1]` or `null`), `data_points` (integer), `cached` (boolean). |
+| 3 | Verify `correlation` values. | Each `correlation` is a Pearson coefficient computed over daily returns in `[-1, 1]`. |
+| 4 | Verify `portfolio_correlation` field. | Field present with `value` (number) and `method: "equal_weighted_average"`. |
+| 5 | Verify `cached` field on first call. | `cached: false` on an uncached call. |
+| 6 | Verify `data_source` field. | `data_source: "Yahoo Finance"` present in response. |
+
+#### Pass criteria
+
+- HTTP 200 returned.
+- Each position in `correlations` has all required fields: `ticker`, `correlation`, `data_points`, `cached`.
+- `correlation` values are in `[-1, 1]` range (or `null` if data unavailable).
+- `portfolio_correlation.method` is `"equal_weighted_average"`.
+- `data_source` is `"Yahoo Finance"`.
+
+---
+
+### SC-CORR-02 — Portfolio-level weighted average correlation included in response
+
+**Component:** Market Correlation endpoint — portfolio aggregate
+**API:** `GET /analytics/market-correlation`
+**Priority:** P1
+**Canonical spec:** `analytics_endpoints.md v2.1.0 §GET /analytics/market-correlation`
+
+#### Preconditions
+
+- At least two open positions exist with valid correlation data.
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Issue `GET /analytics/market-correlation`. | HTTP 200. |
+| 2 | Inspect `portfolio_correlation` object. | Object present with `value` (numeric) and `method: "equal_weighted_average"`. |
+| 3 | Manually verify the value. | `portfolio_correlation.value` equals the arithmetic mean of all non-null per-position `correlation` values (equal-weighted average as specified). |
+
+#### Pass criteria
+
+- `portfolio_correlation` object present with non-null `value` and `method: "equal_weighted_average"`.
+- Value is consistent with equal-weighted average of per-position correlations.
+
+---
+
+### SC-CORR-03 — 8-hour cache returns same result on second call within TTL
+
+**Component:** Market Correlation endpoint — caching
+**API:** `GET /analytics/market-correlation`
+**Priority:** P2
+**Canonical spec:** `analytics_endpoints.md v2.1.0 §GET /analytics/market-correlation`
+
+#### Preconditions
+
+- At least one open position exists.
+- First call to the endpoint has been made within the last 8 hours.
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Issue first `GET /analytics/market-correlation`. | HTTP 200. Record `correlations` array values and `cached` field. |
+| 2 | Issue second `GET /analytics/market-correlation` within 8 hours without changes to positions. | HTTP 200. |
+| 3 | Compare responses. | `correlations` values are identical to the first call. `cached: true` on the second response. |
+
+#### Pass criteria
+
+- Second call returns `cached: true`.
+- `correlations` data matches the first call exactly.
+- No 500 or error response raised.
+
+---
+
+### SC-CORR-04 — Graceful partial response when Yahoo Finance unavailable for one ticker
+
+**Component:** Market Correlation endpoint — error handling
+**API:** `GET /analytics/market-correlation`
+**Priority:** P1
+**Canonical spec:** `analytics_endpoints.md v2.1.0 §GET /analytics/market-correlation`
+
+#### Preconditions
+
+- At least two open positions exist.
+- Yahoo Finance is unavailable or returns no data for one specific ticker (simulate via test fixture, staging environment override, or by using a ticker known to have no Yahoo Finance coverage).
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Issue `GET /analytics/market-correlation` when Yahoo Finance data is unavailable for one ticker. | HTTP 200 (not 500). |
+| 2 | Inspect the `correlations` array. | Entry for the affected ticker present with `correlation: null`. Other tickers have valid correlation values. |
+| 3 | Check the response body for informational note. | Response includes an informational note or field indicating partial data availability. |
+
+#### Pass criteria
+
+- HTTP 200 returned even when Yahoo Finance unavailable for one ticker.
+- Affected ticker entry has `correlation: null`.
+- Other ticker entries have valid correlation values.
+- No 500 raised; endpoint degrades gracefully.
+
+---
+
 ## 5. Known Deviations Affecting Test Execution
 
 None recorded at v1.0. Update this section if accepted deviations are identified during testing.
@@ -183,4 +308,5 @@ None recorded at v1.0. Update this section if accepted deviations are identified
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-04-18 | ST-02 (EPIC-02, v2.8): Added §4 Market Correlation Endpoint scenarios — SC-CORR-01 through SC-CORR-04. Updated spec reference to analytics_endpoints.md v2.1.0. QA & Testing Owner. |
 | 1.0 | 2026-03-17 | Initial version — SC-CA-BACKEND-01, SC-CA-BACKEND-02, SC-CA-BACKEND-03 authored for ST-20. QA & Testing Owner. |
