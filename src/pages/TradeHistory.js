@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, apiFetch } from "../api/base44Client";
-import { Loader2, Filter, TrendingUp, TrendingDown, Calendar, Tag, X, Download } from "lucide-react";
+import { Loader2, Filter, TrendingUp, TrendingDown, Calendar, Tag, X, Download, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
@@ -21,6 +21,10 @@ export default function TradeHistory() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [csvExporting, setCsvExporting] = useState(false);
+  const [aiSummaryOpen, setAiSummaryOpen] = useState(false);
+  const [aiSummary, setAiSummary] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiGenerated, setAiGenerated] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -103,6 +107,31 @@ export default function TradeHistory() {
     losingTrades.length > 0
       ? losingTrades.reduce((sum, t) => sum + t.pnl, 0) / losingTrades.length
       : 0;
+
+  // ── ST-08 (EPIC-04): AI Journal Summary ────────────────────────────────────
+  // POST /ai/journal-summary — display-only per SRB-v1.7. Never feeds signals.
+  const handleGenerateSummary = async () => {
+    if (aiLoading || filteredTrades.length === 0) return;
+    setAiLoading(true);
+    try {
+      const response = await apiFetch(`${API_URL}/ai/journal-summary`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trade_ids: filteredTrades.map((t) => t.id) }),
+      });
+      if (!response.ok) {
+        setAiSummary(null);
+      } else {
+        const data = await response.json();
+        setAiSummary(data.summary || null);
+      }
+    } catch {
+      setAiSummary(null);
+    } finally {
+      setAiLoading(false);
+      setAiGenerated(true);
+    }
+  };
 
   // ── BLG-FEAT-07: CSV Export ─────────────────────────────────────────────────
   // Spec: trade_history.md v1.1 §CSV export button; trade_endpoints.md v1.8.4
@@ -349,6 +378,69 @@ export default function TradeHistory() {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+          </motion.div>
+
+          {/* AI Journal Summary — ST-08 (EPIC-04). Display-only per SRB-v1.7. */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl bg-slate-800/50 border border-slate-700/50 overflow-hidden"
+          >
+            <div
+              className="flex items-center justify-between p-6 cursor-pointer select-none"
+              onClick={() => setAiSummaryOpen(!aiSummaryOpen)}
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-cyan-400" />
+                <span className="text-sm font-medium text-slate-300">AI Journal Summary</span>
+                <span className="text-xs text-slate-500 hidden sm:inline">AI-generated themes across your journal entries.</span>
+              </div>
+              <div className="flex items-center gap-3">
+                {aiSummaryOpen && (
+                  <Button
+                    onClick={(e) => { e.stopPropagation(); handleGenerateSummary(); }}
+                    disabled={aiLoading || filteredTrades.length === 0}
+                    variant="outline"
+                    size="sm"
+                    className="bg-slate-700/50 border-slate-600 text-slate-200 hover:bg-slate-700 disabled:opacity-50 text-xs"
+                  >
+                    {aiLoading ? (
+                      <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-3 h-3 mr-1.5" />
+                    )}
+                    {aiSummary ? "Refresh Summary" : "Generate Summary"}
+                  </Button>
+                )}
+                {aiSummaryOpen
+                  ? <ChevronUp className="w-4 h-4 text-slate-400" />
+                  : <ChevronDown className="w-4 h-4 text-slate-400" />
+                }
+              </div>
+            </div>
+
+            {aiSummaryOpen && (
+              <div className="px-6 pb-6 space-y-3">
+                <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                  <span className="text-amber-300 text-xs font-medium">
+                    AI-generated summary — for reference only. Not a trading recommendation.
+                  </span>
+                </div>
+                <div className="rounded-xl bg-slate-900/50 border border-slate-700/30 p-4 min-h-[80px] max-h-64 overflow-y-auto">
+                  {aiLoading ? (
+                    <div className="flex items-center justify-center py-6">
+                      <Loader2 className="w-5 h-5 animate-spin text-slate-500" />
+                    </div>
+                  ) : aiSummary ? (
+                    <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{aiSummary}</p>
+                  ) : aiGenerated ? (
+                    <p className="text-slate-500 text-sm">Summary unavailable. Please try again later.</p>
+                  ) : (
+                    <p className="text-slate-500 text-sm">Click &apos;Generate Summary&apos; to get an AI overview of your journal entries.</p>
+                  )}
+                </div>
               </div>
             )}
           </motion.div>
