@@ -1,11 +1,11 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-03-18
+**Version:** 1.1
+**Last Updated:** 2026-04-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Derived from:** `docs/specs/frontend/pages/signals.md` v0.1; `docs/specs/api_contracts/signal_endpoints.md`
-**Sprint:** 2026-03-18__release-v2.1 — ST-18 (closes TEST-GAP-SIG-01)
+**Derived from:** `docs/specs/frontend/pages/signals.md` v0.1; `docs/specs/api_contracts/signal_endpoints.md` v1.1
+**Sprint:** 2026-03-18__release-v2.1 — ST-18 (closes TEST-GAP-SIG-01); 2026-04-17__release-v2.8 — ST-03
 
 ---
 
@@ -123,8 +123,85 @@ These scenarios verify Signals page behaviour against the canonical specificatio
 
 ---
 
-## 4. Out of Scope
+## 4. Scenarios — Supplementary Indicator Fields
+
+*Canonical spec: `docs/specs/api_contracts/signal_endpoints.md v1.1 §POST /signals/generate`*
+
+---
+
+### SC-SIG-IND-01 — POST /signals/generate response includes all four supplementary fields per signal object
+
+**Component:** Signals endpoint — supplementary indicator fields
+**API:** `POST /signals/generate`
+**Priority:** P1
+**Canonical spec:** `signal_endpoints.md v1.1 §POST /signals/generate` — supplementary fields
+
+#### Preconditions
+
+- At least one trade position exists to generate a signal for.
+- External data (Yahoo Finance / benchmark) is available for the relevant tickers.
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Issue `POST /signals/generate` with valid parameters. | HTTP 200 response. |
+| 2 | Inspect each signal object in the `signals` array. | Each signal object contains all four supplementary fields: `relative_strength_pct`, `week52_high_proximity_pct`, `avg_daily_volume_20d`, `price_vs_50d_ma`. |
+| 3 | Verify `relative_strength_pct`. | Numeric value (or `null`). Represents stock momentum % minus benchmark momentum % over `lookback_days`. |
+| 4 | Verify `week52_high_proximity_pct`. | Numeric value (or `null`). `(current_native_price − 52w_high) / 52w_high × 100`. Negative = below 52-week high. |
+| 5 | Verify `avg_daily_volume_20d`. | Integer (or `null`). Average daily trading volume over last 20 trading days. |
+| 6 | Verify `price_vs_50d_ma`. | Numeric value (or `null`). `(current_native_price − 50d_MA) / 50d_MA × 100`. |
+| 7 | Verify supplementary fields do not affect `rank`. | Signal ordering/ranking is unchanged compared to a response without supplementary data — these fields are display-only. |
+
+#### Pass criteria
+
+- All four supplementary fields present on every signal object.
+- All values are either a number or `null` — no missing keys, no errors.
+- `rank` ordering is unaffected by supplementary field values.
+- No 500 or error response raised.
+
+---
+
+### SC-SIG-IND-02 — relative_strength_pct is None (not an error) when benchmark data unavailable
+
+**Component:** Signals endpoint — supplementary field null handling
+**API:** `POST /signals/generate`
+**Priority:** P1
+**Canonical spec:** `signal_endpoints.md v1.1 §POST /signals/generate` — `relative_strength_pct` null behaviour
+
+#### Preconditions
+
+- At least one position exists for a ticker.
+- Benchmark data (SPY or ^FTSE) is unavailable (simulate via test fixture or staging override, or use a test environment where benchmark data is disabled).
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Issue `POST /signals/generate` in an environment where benchmark data is unavailable. | HTTP 200 response (not 500 or 400). |
+| 2 | Inspect `relative_strength_pct` on the affected signal. | `relative_strength_pct: null` — not an error, not omitted. |
+| 3 | Verify other supplementary fields. | `week52_high_proximity_pct`, `avg_daily_volume_20d`, `price_vs_50d_ma` still present (may also be `null` if their data sources are unavailable). |
+| 4 | Verify the `rank` field. | `rank` is still present and valid — benchmark data absence does not affect signal ranking. |
+
+#### Pass criteria
+
+- HTTP 200 returned when benchmark data unavailable.
+- `relative_strength_pct` is `null` (not omitted, not an error object).
+- Other fields and `rank` remain valid.
+- No 500 raised for missing benchmark data.
+
+---
+
+## 5. Out of Scope
 
 - Signal score calculation correctness — covered by backend unit tests.
-- `POST /signals/generate` — covered separately as part of EPIC-02/03 implementation testing.
 - `PATCH /signals/{signal_id}` and `DELETE /signals/{signal_id}` — covered by backend integration tests.
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | 2026-04-18 | ST-03 (EPIC-02, v2.8): Added §4 Supplementary Indicator Field scenarios — SC-SIG-IND-01, SC-SIG-IND-02. Updated spec reference to signal_endpoints.md v1.1. Existing scenarios not modified. QA & Testing Owner. |
+| 1.0 | 2026-03-18 | Initial version — SC-SIG-01 through SC-SIG-03 authored for ST-18. QA & Testing Owner. |

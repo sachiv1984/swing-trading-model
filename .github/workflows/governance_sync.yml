@@ -25,7 +25,12 @@ jobs:
           # Uses $BEFORE..$AFTER to cover every commit in a batch push (not just the last)
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.event.after }}"
-          ALL_MSGS=$(git log "$BEFORE".."$AFTER" --pretty=%B)
+          # Guard: null SHA (0000…) means new branch first push — git log range is invalid
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            ALL_MSGS=$(git log "$AFTER" --pretty=%B --not --remotes=origin/main)
+          else
+            ALL_MSGS=$(git log "$BEFORE".."$AFTER" --pretty=%B)
+          fi
           ST_IDS=$(echo "$ALL_MSGS" | grep -oE '\[(ST-[0-9]+)\]' | tr -d '[]' | sort -u | tr '\n' ' ')
           if [ -n "$ST_IDS" ]; then
             echo "st_ids=$ST_IDS" >> $GITHUB_OUTPUT

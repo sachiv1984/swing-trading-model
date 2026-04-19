@@ -39,6 +39,10 @@ module.exports = defineConfig({
       REACT_APP_API_URL: 'http://localhost:8000',
       REACT_APP_DEV_FAKE_AUTH: 'true',
       BROWSER: 'none',
+      // eslint.config.mjs (ESLint v9 flat config) conflicts with react-scripts'
+      // eslint-config-react-app loader; disabling prevents the webpack error
+      // overlay from blocking Playwright pointer events in all tests.
+      DISABLE_ESLINT_PLUGIN: 'true',
     },
   },
 

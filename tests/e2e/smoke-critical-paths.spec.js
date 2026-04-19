@@ -226,8 +226,11 @@ test('PATH-2: view portfolio — open positions render on Positions page', async
   await mockPositions(page);
   await mockPortfolio(page);
 
+  // Wait for the positions mock to be hit before asserting — more reliable than
+  // networkidle on slow CI runners where React may not have rendered yet.
+  const positionsResponse = page.waitForResponse(/\/positions(\?.*)?$/);
   await page.goto('/#/Positions');
-  await page.waitForLoadState('networkidle');
+  await positionsResponse;
 
   // Wait for position data — "Open Positions" is a title= attribute, not visible text.
   // LGEN is the first seeded position ticker and confirms the page has rendered data.
