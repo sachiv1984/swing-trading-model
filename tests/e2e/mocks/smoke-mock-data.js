@@ -43,8 +43,10 @@ const SMOKE_SETTINGS = {
 
 // ---------------------------------------------------------------------------
 // GET /positions  (used by Positions page + TradeEntry position-tags query)
-// NOTE: backend returns a raw array (no {status,data} envelope) — raw: true
-// in base44Client means doFetch passes the JSON through unchanged.
+//
+// NOTE: /positions returns a raw array (no {status,data} envelope).
+// base44Client uses doFetch('/positions', { raw: true }) — raw:true bypasses
+// envelope unwrapping and returns the JSON as-is. Mock must match this shape.
 // ---------------------------------------------------------------------------
 const SMOKE_POSITIONS = [
   {
