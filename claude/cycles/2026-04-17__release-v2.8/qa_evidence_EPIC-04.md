@@ -92,6 +92,26 @@ opt-in per session (collapsed by default, no auto-generation).
 
 ---
 
+## DoQ EPIC-Level Sign-off — Director of Quality
+
+**Signed off by:** Director of Quality
+**Date:** 2026-04-20
+**Method:** Evidence review
+
+**Review findings:**
+
+| Item | Status |
+|------|--------|
+| ST-07 all AC (AC-1 through AC-7) | Pass — engine autonomous sign-off 2026-04-18; all AC code-review-verifiable; no frontend changes |
+| ST-08 all AC (AC-1 through AC-9) | Pass — Strategy Rules owner sign-off 2026-04-18; SRB-v1.7 conditions (pipeline isolation, non-dismissible disclaimer, collapsed by default) all confirmed |
+| Product Owner acceptance | Pass — 2026-04-19; both stories accepted independently |
+| No deviations filed | Confirmed — no spec deviations across EPIC-04 |
+| No open escalations | Confirmed |
+
+**EPIC-04 outcome: ACCEPTED.** All stories complete, all sign-off authorities satisfied, PR #248 merged.
+
+---
+
 ## Product Owner Acceptance
 
 **Status:** ACCEPTED — 2026-04-19
@@ -113,3 +133,4 @@ opt-in per session (collapsed by default, no auto-generation).
 |------|--------|
 | 2026-04-18 | Created — ST-07 DoQ passed (engine); ST-08 Strategy Rules owner sign-off received; merge gate cleared |
 | 2026-04-19 | Product Owner acceptance recorded — EPIC-04 cleared for merge |
+| 2026-04-20 | Director of Quality EPIC-level sign-off added — all story sign-offs and PO acceptance reviewed and confirmed; EPIC-04 accepted |
