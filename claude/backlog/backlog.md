@@ -96,6 +96,31 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 
 ---
 
+### TEST-GAP-EPIC-04 — AI Journal Summarisation test scenario coverage
+**Priority:** P3 (Low)
+**Type:** Test Automation / Scenario Documentation
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-04-17__release-v2.8 (TSG-v28-01) — see verification_report.md §6
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Before next sprint that modifies AI journal feature
+
+**Problem**
+EPIC-04 (AI Journal Summarisation) shipped with no test scenario documentation in `docs/testing/`. The POST /ai/journal-summary graceful failure path and the frontend collapsed-by-default/non-dismissible-disclaimer behaviours are untested by any formal scenario.
+
+**Scope**
+Create `docs/testing/ai_scenarios.md` covering:
+- AI summary happy path (POST with trade_ids returns summarised text)
+- AI summary graceful LLM failure (LLM unreachable → HTTP 200 with summary:null)
+- Frontend collapsed by default on page load
+- Disclaimer always visible when section is expanded (all states)
+
+**Acceptance Criteria**
+- `docs/testing/ai_scenarios.md` created with at minimum 4 scenarios covering the above
+- All scenarios reference `ai_endpoints.md` and `trade_history.md v1.7` as canonical specs
+- DoQ sign-off with Date field populated
+
+---
+
 ## 6. Operations & Infrastructure Backlog
 
 ---
