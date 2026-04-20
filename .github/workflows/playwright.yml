@@ -19,6 +19,7 @@ on:
       - 'src/components/analytics/**'
       - 'tests/e2e/**'
       - 'playwright.config.js'
+      - '.github/workflows/playwright.yml'
   pull_request:
     branches:
       - main
@@ -29,6 +30,7 @@ on:
       - 'src/components/analytics/**'
       - 'tests/e2e/**'
       - 'playwright.config.js'
+      - '.github/workflows/playwright.yml'
 
 jobs:
   playwright-e2e:
