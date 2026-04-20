@@ -35,8 +35,9 @@
 | v2.5  | 13      | 13        | 1.00     | ST-06 delegated (frontend) — delivered and counted as completed |
 | v2.6  | 15      | 15        | 1.00     | All stories closed; no deferred items |
 | v2.7  | 11      | 11        | 1.00     | All stories closed; ST-01 delegated (Unblocked 2026-04-16); AC-6 frontend deferred (in-spec, not a missed story) |
+| v2.8  | 8       | 8         | 1.00     | All 8 stories closed; no delegated items; no deferred stories |
 
-**Rolling 6-cycle average (v2.2–v2.7):** 0.99
+**Rolling 6-cycle average (v2.3–v2.8):** 0.99
 
 ---
 

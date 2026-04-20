@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-17 (roadmap rebalance cycle 2026-04-17__scheduled — duplicate AI-SUM row removed from Priority 2; no other changes)
+**Last Updated:** 2026-04-20 (manage roadmap post-ship closure v2.8 — AI-SUM retired from Priority 2 to Completed; shipped v2.8 2026-04-20)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -34,9 +34,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 ## Priority 2 — Next Phase
 
-| ID | Initiative | Gate status | Backlog item | Notes |
-|----|-----------|-------------|--------------|-------|
-| AI-SUM | AI Journal Summarisation | Gate cleared 2026-04-04 (SRB-v1.7) | BLG-FEAT-16 | UX convenience display only. 4 mandatory conditions from SRB-v1.7 must appear in AC. Strategy Rules owner sign-off required before any signal pipeline integration. |
+*No active Priority 2 initiatives as of 2026-04-20. AI-SUM shipped v2.8 2026-04-20. v2.9 scope TBD — Arc 1 planning not yet started.*
 
 ---
 
@@ -98,3 +96,4 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 | 5.1 | Structured Trade Reflection Template | 2026-03-13 | v1.9 Sprint 2 |
 | 5.2 | Cohort Analysis | 2026-03-13 | v1.9 Sprint 2 |
 | 5.3 | Dashboard Homepage / Session Summary | 2026-03-13 | v1.9 Sprint 2 |
+| AI-SUM | AI Journal Summarisation | 2026-04-20 | v2.8 |

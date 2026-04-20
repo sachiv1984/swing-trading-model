@@ -1,11 +1,63 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-18
+**Last Updated:** 2026-04-20
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FE-14 — Market Correlation frontend view
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-20
+**Shipped in:** v2.8 (2026-04-17__release-v2.8 EPIC-01 ST-01)
+**Evidence:** `docs/product/changelog.md` v2.8 entry; `claude/cycles/2026-04-17__release-v2.8/verification_report.md`
+
+**Problem** `GET /analytics/market-correlation` was delivered in v2.7 (ST-08). AC-6 of ST-08 required a frontend view; deferred to v2.8. Completed as EPIC-01 ST-01 in v2.8.
+
+**Acceptance Criteria met:** Per-position correlation and severity rendered with colour-coding; portfolio-level weighted average displayed; null values render gracefully; no regression to Analytics page.
+
+---
+
+### BLG-QA-13 — Test scenario coverage gap: market correlation and supplementary indicators (v2.7)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-20
+**Shipped in:** v2.8 (2026-04-17__release-v2.8 EPIC-02 ST-02, ST-03)
+**Evidence:** `docs/product/changelog.md` v2.8 entry; `claude/cycles/2026-04-17__release-v2.8/verification_report.md`
+
+**Shipped:** SC-CORR-01 through SC-CORR-04 added to `docs/testing/analytics_scenarios.md`; SC-SIG-IND-01 through SC-SIG-IND-02 added to `docs/testing/signals_scenarios.md`. Test coverage gap closed. Playwright test suite consolidated (24/24 green).
+
+---
+
+### BLG-FEAT-16 — AI Journal Summarisation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-20
+**Shipped in:** v2.8 (2026-04-17__release-v2.8 EPIC-04 ST-07, ST-08)
+**Evidence:** `docs/product/changelog.md` v2.8 entry; `claude/cycles/2026-04-17__release-v2.8/verification_report.md`
+
+**§13 Status:** CONDITIONALLY COMPLIANT — SRB-v1.7. All 4 mandatory conditions met. Strategy Rules owner sign-off confirmed at EPIC-04 merge 2026-04-20.
+
+**Shipped:** POST /api/ai/journal-summary and GET /api/ai/journal-summary/history delivered. AI summary displayed as UX convenience view with disclaimer label. No signal pipeline integration. External LLM API key managed via environment variable.
+
+---
+
+### BLG-GOV-13 — Deduplicate backlog_archive.md duplicate item headers
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-20
+**Shipped in:** v2.8 (2026-04-17__release-v2.8 EPIC-03 ST-06)
+**Evidence:** `docs/product/changelog.md` v2.8 entry; `claude/cycles/2026-04-17__release-v2.8/verification_report.md`
+
+**Shipped:** backlog_archive.md deduplicated; duplicate `###` item headers resolved; Product Owner confirmation obtained; ID uniqueness scan PASS post-deduplication.
 
 ---
 

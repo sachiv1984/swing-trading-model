@@ -1,9 +1,12 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v2.8
 Cycle: 2026-04-17__release-v2.8
-Last Updated: 2026-04-17
+Last Updated: 2026-04-20
+Superseded by: v2.8 ship — 2026-04-20
+Changelog: docs/product/changelog.md#v2.8
+Verification report: claude/cycles/2026-04-17__release-v2.8/verification_report.md
 
 ## Release Scope — v2.8 Frontend Completion, Test Quality & AI Journal Feature
 

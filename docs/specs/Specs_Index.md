@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-04-16
+**Last Updated:** 2026-04-20
 
 ---
 
@@ -107,6 +107,7 @@ It points to the **single canonical source**.
 - `health_endpoints.md` — Class 1 Canonical, v1.2, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3 — DEV-HEALTH-001 closed; updated v1.2 by ST-08 adding GET /health/database): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.2, 2026-03-30).
 - `analytics_endpoints.md` — Class 1 Canonical, v2.1.0, Active (updated 2026-04-15, ST-08, cycle 2026-04-13__release-v2.7): GET /analytics/market-correlation (Pearson correlation vs benchmark, TTL-cached). Sign-off: Head of Specs Team.
 - `signal_endpoints.md` — Class 1 Canonical, v1.1, Active (updated 2026-04-15, ST-09, cycle 2026-04-13__release-v2.7): POST /signals/generate — added 4 supplementary display-only indicator fields (relative_strength_pct, week52_high_proximity_pct, avg_daily_volume_20d, price_vs_50d_ma). §13 COMPLIANT (display-only). Sign-off: Strategy Rules Owner.
+- `ai_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-04-18, ST-07, cycle 2026-04-17__release-v2.8): POST /ai/journal-summary — LLM-based journal entry summarisation; Anthropic API; graceful failure returns HTTP 200 with summary:null; display-only; SRB-v1.7 conditionally compliant. Sign-off: Sprint Execution Engine (autonomous class); DoQ EPIC-level Director of Quality 2026-04-20.
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**
@@ -391,11 +392,25 @@ Identified during delivery verification (verification_report.md §6 — TSG-v27-
 ### 13.1 TSG-v27-01 — EPIC-04: no test scenarios for market correlation or supplementary indicator fields
 
 **Identified:** 2026-04-16 (delivery verification 2026-04-13__release-v2.7)
-**Status:** Open — backlog item BLG-QA-13
+**Status:** RESOLVED — 2026-04-20 (v2.8, ST-02/ST-03, cycle 2026-04-17__release-v2.8)
 **Owner:** QA & Testing Owner
 **Gap:** EPIC-04 registered two legacy scenario files (`docs/testing/analytics_scenarios.md` v1.0 from 2026-03-17, `docs/testing/signals_scenarios.md` v1.0 from 2026-03-18) that predate v2.7 and cover different functionality. No scenarios exist for `GET /analytics/market-correlation` (ST-08) or the four new supplementary indicator fields on `POST /signals/generate` (ST-09).
-**Required action:** Author SC-CORR-01 through SC-CORR-04 (market correlation endpoint) and SC-SIG-IND-01 through SC-SIG-IND-02 (supplementary indicators). See BLG-QA-13 for scope.
-**Resolution target:** v2.8
+**Resolution:** SC-CORR-01–04 added to analytics_scenarios.md v1.1 (ST-02); SC-SIG-IND-01–02 added to signals_scenarios.md v1.1 (ST-03). BLG-QA-13 closed.
+
+---
+
+## 14. Test Coverage Gaps — v2.8 (2026-04-17__release-v2.8)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v28-01).
+
+### 14.1 TSG-v28-01 — EPIC-04: no test scenarios for AI Journal Summarisation
+
+**Identified:** 2026-04-20 (delivery verification 2026-04-17__release-v2.8)
+**Status:** Open — backlog item TEST-GAP-EPIC-04
+**Owner:** QA & Testing Owner
+**Gap:** EPIC-04 shipped with no test scenario documentation in `docs/testing/`. POST /ai/journal-summary graceful LLM failure path and AI Journal Summary frontend behaviours (collapsed by default, non-dismissible disclaimer, 4 states) have no formal scenario coverage.
+**Required action:** QA & Testing Owner to create `docs/testing/ai_scenarios.md` with at minimum 4 scenarios. See TEST-GAP-EPIC-04 in backlog.md §5 for scope.
+**Resolution target:** Before next sprint touching AI journal feature
 
 ---
 

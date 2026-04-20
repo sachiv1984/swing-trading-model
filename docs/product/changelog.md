@@ -3,9 +3,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-16
+**Last Updated:** 2026-04-20
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.8 — Frontend Completion, Test Quality & AI Journal Feature — 2026-04-20
+Cycle: 2026-04-17__release-v2.8
+Verified: Verified
+Verification report: claude/cycles/2026-04-17__release-v2.8/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Market Correlation View — MarketCorrelationSection.js on Analytics page; per-position Pearson correlation with severity badges (high=Rose-500, moderate=Amber-500, low=Emerald-500); portfolio weighted average; nulls sort to bottom | docs/specs/api_contracts/analytics_endpoints.md v2.1.0; docs/specs/frontend/pages/analytics.md v1.7; docs/design/2026-04-17__release-v2.8/market-correlation/ux_spec.md |
+| EPIC-02 | Market Correlation Endpoint Scenarios — SC-CORR-01–04 added to docs/testing/analytics_scenarios.md v1.1 | docs/specs/api_contracts/analytics_endpoints.md v2.1.0 |
+| EPIC-02 | Supplementary Indicator Field Scenarios — SC-SIG-IND-01–02 added to docs/testing/signals_scenarios.md v1.1 | docs/specs/api_contracts/signal_endpoints.md v1.1 |
+| EPIC-03 | DoQ Date Field Reminder Patch — execution_prompt.md §3.2.A explicit Date: field pre-condition at PR open | claude/system/execution_prompt.md v3.7 |
+| EPIC-03 | Sprint Close Terminology Clarification — execution_prompt.md §5.3 Deviations filed clarified: spec deviations only | claude/system/execution_prompt.md v3.8 |
+| EPIC-03 | Backlog Archive Deduplication — 64 duplicate entries removed; 83 unique IDs retained | claude/backlog/backlog_archive.md |
+| EPIC-04 | AI Journal Summary Backend — POST /ai/journal-summary; Anthropic API (claude-haiku-4-5-20251001); graceful LLM failure (HTTP 200 summary:null); display-only; SRB-v1.7 compliant | docs/specs/api_contracts/ai_endpoints.md v1.0; docs/reference/openapi.yaml v2.7.0 |
+| EPIC-04 | AI Journal Summary Frontend — AI summary section in TradeHistory.js; collapsed by default; non-dismissible disclaimer; Strategy Rules owner sign-off 2026-04-18 confirming SRB-v1.7 | docs/specs/frontend/pages/trade_history.md v1.7; docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [BLG-FE-14] Market Correlation frontend view — deferred from v2.7 AC-6
+- [BLG-QA-13] Test scenario coverage (SC-CORR, SC-SIG-IND) — v2.7 gap closure
+- [BLG-GOV-13] Backlog archive deduplication — ID uniqueness compliance
+- [BLG-FEAT-16] AI Journal Summarisation — first AI feature (Arc 4 foundation)
+
+Sign-off: Product Owner — 2026-04-20
+QA sign-off: Director of Quality — 2026-04-20
 
 ---
 

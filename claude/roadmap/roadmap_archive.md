@@ -1,13 +1,69 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-16
+**Last Updated:** 2026-04-20
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v2.8 — Frontend Completion, Test Quality & AI Journal Feature (RA:v2.8)
+
+**Original roadmap location:** §1 Current Version + §3 Delivery Plan — Horizon: Now (annotation block RA:v2.8)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-20
+**Shipped version:** v2.8 (2026-04-20)
+**Cycle reference:** 2026-04-17__release-v2.8
+**Verification report:** `claude/cycles/2026-04-17__release-v2.8/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-20
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.8:2026-04-17__release-v2.8 — COMPLETE -->
+
+**Execution notes (v2.8 — Complete):**
+- Cycle: 2026-04-17__release-v2.8
+- Plan published: 2026-04-17
+- Shipped: 2026-04-20
+- Cycle folder: claude/cycles/2026-04-17__release-v2.8/
+- Backlog slice: claude/cycles/2026-04-17__release-v2.8/stage4_backlog_slice.md
+- Theme: Frontend Completion, Test Quality & AI Journal Feature
+- Status: ✅ Complete — Verified 2026-04-20
+
+### v2.8 — Frontend Completion, Test Quality & AI Journal Feature
+
+**Arc position:** v2.8 is a carry-forward and foundation release. EPIC-01 through EPIC-03 close v2.7 obligations. EPIC-04 (AI Journal Summarisation) is the first delivery of Arc 4 — it ships the AI infrastructure and journal data foundation that the full post-trade intelligence arc builds on.
+
+|EPIC   |Scope item                                                 |Arc             |Effort|Notes                                                                                        |
+|-------|-----------------------------------------------------------|----------------|------|---------------------------------------------------------------------------------------------|
+|EPIC-01|BLG-FE-14 — Market Correlation frontend view               |Arc 2 pre-work  |M     |Completes v2.7 deferred AC-6; carry-forward obligation; feeds Pre-Trade Research View (PT-02)|
+|EPIC-02|BLG-QA-13 — Test scenario coverage (SC-CORR/SC-SIG-IND)    |Quality         |M     |Fills v2.7 test gap                                                                          |
+|EPIC-03|CF-1/CF-2/BLG-GOV-13 — Governance hardening + backlog dedup|Governance      |S×3   |Carry-forward + quick win                                                                    |
+|EPIC-04|BLG-FEAT-16 — AI Journal Summarisation                     |Arc 4 foundation|M     |Gate-cleared (SRB-v1.7); first AI feature; external LLM API                                  |
+
+---
+
+## AI Journal Summarisation (AI-SUM) — §6 Gated Feature
+
+**Original roadmap location:** §6 Gated Features table + §4 Priority 2 — Next Phase (initiative_register.md Priority 2)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-20
+**Shipped version:** v2.8 (2026-04-20) — EPIC-04 (ST-07, ST-08)
+**Cycle reference:** 2026-04-17__release-v2.8
+**Verification report:** `claude/cycles/2026-04-17__release-v2.8/verification_report.md`
+**Decision log reference:** Gate cleared 2026-04-04 — SRB-v1.7 CONDITIONALLY COMPLIANT; Strategy Rules owner sign-off at EPIC-04 merge 2026-04-20
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-20
+
+### Original Roadmap Entry (§6)
+
+|~~AI Journal Summarisation~~    |~~§13 boundary decision — does non-deterministic AI output conflict with the deterministic system principle?~~                      |~~Product Owner + Strategy Rules owner~~|~~Gate open~~ **Gate cleared 2026-04-04 (SRB-v1.7, CONDITIONALLY COMPLIANT). In scope v2.8 (EPIC-04). Strategy Rules owner sign-off required before merge. ✅ Shipped v2.8 — EPIC-04 delivered 2026-04-20.**|
+
+> **Note (at retirement):** The AI Journal Summarisation struck-through entry was retained for audit continuity per roadmap note. Formally retired to archive 2026-04-20 at v2.8 post-ship closure.
 
 ---
 

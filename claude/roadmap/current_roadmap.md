@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-17 (strategic rebalance — six-arc model, North Star reframe, discovery-first; DL-020)
+**Last Updated:** 2026-04-20 (v2.8 post-ship closure)
 **Last rebalance:** 2026-04-17 (cycle 2026-04-17__scheduled — full strategic restructure; six-arc model introduced)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,18 +10,8 @@
 
 ## 1. Current Version
 
-**v2.7** — Performance, Governance Hardening & Market Intelligence — Shipped 2026-04-16
-**Next planned release:** **v2.8** — Frontend Completion, Test Quality & AI Journal Feature
-
-<!-- roadmap-annotation-marker: RA:v2.8:2026-04-17__release-v2.8 -->
-
-**Execution notes (added by Release Planning Engine):**
-
-- Cycle: 2026-04-17__release-v2.8
-- Plan published: 2026-04-17
-- Cycle folder: claude/cycles/2026-04-17__release-v2.8/
-- Backlog slice: claude/cycles/2026-04-17__release-v2.8/stage4_backlog_slice.md
-- Status at annotation: Committed
+**v2.8** — Frontend Completion, Test Quality & AI Journal Feature — Shipped 2026-04-20
+**Next planned release:** **v2.9–v3.1** — Arc 1: Stock Discovery & Screening
 
 -----
 
@@ -224,24 +214,7 @@ Today you find stocks through external research and add them to the watchlist ma
 *v2.5 shipped 2026-04-10 (Verified_with_deviations). RA:v2.5 annotation retired to roadmap_archive.md 2026-04-10.*
 *v2.6 shipped 2026-04-11 (Verified). RA:v2.6 annotation retired 2026-04-16 (post-ship closure v2.7 — v2.6 closure was not run standalone).*
 *v2.7 shipped 2026-04-16 (Verified). RA:v2.7 annotation retired to roadmap_archive.md 2026-04-16 (post-ship closure v2.7).*
-
-### v2.8 — Frontend Completion, Test Quality & AI Journal Feature
-
-**Arc position:** v2.8 is a carry-forward and foundation release. EPIC-01 through EPIC-03 close v2.7 obligations. EPIC-04 (AI Journal Summarisation) is the first delivery of Arc 4 — it ships the AI infrastructure and journal data foundation that the full post-trade intelligence arc builds on.
-
-|EPIC   |Scope item                                                 |Arc             |Effort|Notes                                                                                        |
-|-------|-----------------------------------------------------------|----------------|------|---------------------------------------------------------------------------------------------|
-|EPIC-01|BLG-FE-14 — Market Correlation frontend view               |Arc 2 pre-work  |M     |Completes v2.7 deferred AC-6; carry-forward obligation; feeds Pre-Trade Research View (PT-02)|
-|EPIC-02|BLG-QA-13 — Test scenario coverage (SC-CORR/SC-SIG-IND)    |Quality         |M     |Fills v2.7 test gap                                                                          |
-|EPIC-03|CF-1/CF-2/BLG-GOV-13 — Governance hardening + backlog dedup|Governance      |S×3   |Carry-forward + quick win                                                                    |
-|EPIC-04|BLG-FEAT-16 — AI Journal Summarisation                     |Arc 4 foundation|M     |Gate-cleared (SRB-v1.7); first AI feature; external LLM API                                  |
-
-**Active risks:**
-
-- RISK-04 (High): Strategy Rules owner sign-off required before any EPIC-04 merge — in-sprint action, not deferrable.
-- RISK-01 (Medium): UX page placement for EPIC-01 (Analytics vs Portfolio) requires Head of UX decision at sprint planning.
-
-Full release plan: `claude/cycles/2026-04-17__release-v2.8/release_plan.md`
+*v2.8 shipped 2026-04-20 (Verified). RA:v2.8 annotation retired to roadmap_archive.md 2026-04-20 (post-ship closure v2.8).*
 
 -----
 
@@ -337,6 +310,8 @@ Items in this section are sequenced and ready for planning when v2.8 closes. The
 |BLG-TECH-05 — Prometheus metrics endpoint|L–M   |Defer until operational need or multi-user                                                  |
 |Customisable Dashboard Layout            |H     |High build cost, low current priority; defer indefinitely at current scale                  |
 |BLG-GOV-08 — Engine prompt compression   |L     |5 consecutive deferrals (v2.4–v2.8); **final deferral — retirement review at v2.9 planning**|
+
+> ⚠️ **Stale Notice (BLG-GOV-08):** This item has had no cycle activity since v2.4 — 5 consecutive deferrals. Review at next roadmap rebalance (v2.9 planning).
 |BLG-GOV-11 — Cycle artefact inventory    |M     |Lower urgency; deferred to v2.9                                                             |
 |BLG-FEAT-13 — Feature flag rollout       |M     |Not needed at current single-user scale                                                     |
 
@@ -346,11 +321,7 @@ Items in this section are sequenced and ready for planning when v2.8 closes. The
 
 |Feature                     |Gate condition                                                                                                                  |Gate owner                          |Status                                                                                                                                                    |
 |----------------------------|--------------------------------------------------------------------------------------------------------------------------------|------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-|AI Journal Summarisation    |§13 boundary decision — does non-deterministic AI output conflict with the deterministic system principle?                      |Product Owner + Strategy Rules owner|~Gate open~ **Gate cleared 2026-04-04 (SRB-v1.7, CONDITIONALLY COMPLIANT). In scope v2.8 (EPIC-04). Strategy Rules owner sign-off required before merge.**|
 |Alpaca Paper Trading (IT-06)|§13 review — paper trading touches execution infrastructure; must confirm it does not constitute an automated trading capability|Strategy Rules owner                |Gate open — required before IT-06 enters pre-alignment                                                                                                    |
-
-
-> **Note:** The AI Journal Summarisation struck-through entry is retained for audit continuity. It will be retired to `roadmap_archive.md` at v2.8 post-ship closure.
 
 -----
 
@@ -388,7 +359,7 @@ When evaluating new features:
 |**v2.5**     |Integration Baseline, Quick Wins & Governance Debt                    |System Status (26 endpoints), Fee Drag % metric, governance patches — ✅ Shipped 2026-04-10                                                |
 |**v2.6**     |Backend Integration Completion, Test Automation & Governance Hardening|Playwright fix, System Status spec, audit, Spec Dependency Map — ✅ Shipped 2026-04-11                                                     |
 |**v2.7**     |Performance, Governance Hardening & Market Intelligence               |Supavisor pooling, portfolio DB refactor, market correlation API, supplementary signal indicators — ✅ Shipped 2026-04-16                  |
-|**v2.8**     |Frontend Completion, Test Quality & AI Journal Feature                |Market Correlation frontend, test coverage, governance patches, AI Journal Summarisation (Arc 4 foundation) — 🔄 In progress               |
+|**v2.8**     |Frontend Completion, Test Quality & AI Journal Feature                |Market Correlation frontend, test coverage, governance patches, AI Journal Summarisation (Arc 4 foundation) — ✅ Shipped 2026-04-20        |
 |**v2.9–v3.1**|Arc 1: Stock Discovery & Screening                                    |Strategy-rules screener engine, Alpaca US data, sector classification, earnings calendar, news panel, watchlist promotion flow — 📋 Planned|
 |**v3.1–v3.3**|Arc 2: Pre-Trade Research & Planning                                  |Trade Plan object, pre-trade research view, entry checklist, setup quality score, prospective heat at entry — 📋 Planned                   |
 |**v3.3–v3.5**|Arc 3: In-Trade Risk Management                                       |Position lifecycle manager, stop management workflow, drawdown prompts, concentration limits, Alpaca paper trading — 📋 Planned            |

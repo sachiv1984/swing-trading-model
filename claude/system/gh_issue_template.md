@@ -1,3 +1,11 @@
+**Owner:** Head of Specs Team
+**Class:** Governance Prompt (Class 6)
+**Status:** Active
+**Version:** 1.0
+**Last Updated:** 2026-04-20
+
+---
+
 ## 📋 [{{ID}}] — {{TITLE}}
 **Cycle ID:** `{{CYCLE_ID}}`
 **Parent Epic:** {{PARENT_EPIC}}
