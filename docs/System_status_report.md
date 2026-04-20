@@ -718,3 +718,34 @@ The system is ready for:
 - Deviations filed: ST-20 cross-branch commit P3 (content correct); base44.baseUrl P1 production defect (fixed bb66b69 2026-03-17)
 - Post-merge hotfix: bb66b69 — base44.baseUrl undefined on production (src/api/base44Client.js)
 - Test scenarios referenced: docs/testing/analytics_scenarios.md v1.0 (3 scenarios, ST-20); test_reports_integration.py (29 tests, ST-04)
+
+---
+
+## Sprint: 2026-04-17__release-v2.8
+**Date:** 2026-04-20
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Market Correlation View — MarketCorrelationSection.js on Analytics page; severity-coloured table (high=Rose-500, moderate=Amber-500, low=Emerald-500, null=Slate-500); sort descending; nulls to bottom | docs/specs/api_contracts/analytics_endpoints.md v2.1.0; docs/specs/frontend/pages/analytics.md v1.7; docs/design/2026-04-17__release-v2.8/market-correlation/ux_spec.md | None |
+| EPIC-02 | Market Correlation Endpoint Scenarios — 9 new test scenarios (SC-CORR-01–09) in analytics_scenarios.md | docs/specs/api_contracts/analytics_endpoints.md v2.1.0 | None |
+| EPIC-02 | Supplementary Indicator Field Scenarios — 8 new test scenarios (SC-SIG-IND-01–08) in signals_scenarios.md | docs/specs/api_contracts/signal_endpoints.md v1.1 | None |
+| EPIC-03 | DoQ Date Field Reminder Patch — execution_prompt.md §3.2.A updated; Date: field non-blank requirement enforced at sign-off | claude/system/execution_prompt.md v3.5 | None |
+| EPIC-03 | Sprint Close Terminology Clarification — sprint_close template terminology aligned | claude/system/execution_prompt.md §5.3 | None |
+| EPIC-03 | Backlog Archive Deduplication — 531 lines → clean archive; duplicate IDs removed (most recent retained) | claude/backlog/backlog_archive.md | None |
+| EPIC-04 | AI Journal Summary Backend — POST /ai/journal-summary; Anthropic API (claude-haiku-4-5-20251001); display-only; SRB-v1.7 compliant | docs/specs/api_contracts/ai_endpoints.md v1.0; docs/reference/openapi.yaml v2.7.0 | None |
+| EPIC-04 | AI Journal Summary Frontend — AI summary section in TradeHistory.js; collapsed by default; non-dismissible disclaimer; Strategy Rules owner sign-off 2026-04-18 | docs/specs/frontend/pages/trade_history.md v1.7; docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| (none) | All 8 sprint items completed and merged | N/A |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md
+- Deviations filed: None
+- Test scenarios referenced: docs/testing/analytics_scenarios.md (SC-CORR-01–09); docs/testing/signals_scenarios.md (SC-SIG-IND-01–08)
