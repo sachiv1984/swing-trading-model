@@ -70,12 +70,13 @@ async function setupAnalyticsPage(page, correlationPayload = CORRELATION_RESPONS
     });
   });
 
-  // /settings — required by PerformanceAnalytics on mount
+  // /settings — set min_trades_for_analytics:0 so the hasEnoughTrades gate passes
+  // with an empty trades list (avoids the "need N closed trades" early-return path).
   await page.route(`${API_BASE}/settings`, (route) => {
     route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'ok', data: [{ min_trades_for_analytics: 10 }] }),
+      body: JSON.stringify({ status: 'ok', data: [{ min_trades_for_analytics: 0 }] }),
     });
   });
 
@@ -231,7 +232,7 @@ test('SC-CORR-FE-05: data loaded from GET /analytics/market-correlation', async 
     route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ status: 'ok', data: [{ min_trades_for_analytics: 10 }] }),
+      body: JSON.stringify({ status: 'ok', data: [{ min_trades_for_analytics: 0 }] }),
     });
   });
 
