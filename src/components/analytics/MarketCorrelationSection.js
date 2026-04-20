@@ -36,8 +36,8 @@ export default function MarketCorrelationSection() {
     retry: 1,
   });
 
-  const correlations = data?.data?.correlations ?? [];
-  const portfolioCorr = data?.data?.portfolio_correlation ?? null;
+  const correlations = data?.correlations ?? [];
+  const portfolioCorr = data?.portfolio_correlation ?? null;
 
   const sortedCorrelations = [...correlations].sort((a, b) => {
     const aOrd = SEVERITY_ORDER[a.severity] ?? 3;
