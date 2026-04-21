@@ -24,34 +24,27 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-04-11"
+PRIOR_AUDIT_ID = "AUD-2026-04-20"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-04-11-001",  # §13 missing artefacts (sprint_backlog_index, velocity_metrics, audit_report)
-    "AUD-2026-04-11-002",  # decision_log advisory-only guard → upgrade to structural hard gate
-    "AUD-2026-04-11-003",  # pr_status pre-seal sync step (OVERDUE — 3 cycles)
-    "AUD-2026-04-11-004",  # sprint_close.md formal verification readiness block (STALE — 2 cycles)
-    "AUD-2026-04-11-005",  # DV STEP -1.3: distinguish blank vs wrong-authority sign-off (STALE — 2 cycles)
-    "AUD-2026-04-11-006",  # run design-gate missing from shared_standards §13 dry-run table
-    "AUD-2026-04-11-007",  # OPERATIONAL_GUIDE §14 Version/Last Updated fields stale (3.41 vs 3.46)
-    "AUD-2026-04-11-008",  # §14 team_charter version stale (v1.5 vs v1.6)
-    "AUD-2026-04-11-009",  # release_planning STEP 1 design-gate advisory (OVERDUE 4 cycles — deferred-monitor)
-    "AUD-2026-04-11-010",  # ideas_window.json per_agent_submission_count field not in §16 schema
-    # AUD-2026-04-11-011 resolved 2026-04-11: Class 4 confirmed correct; BP-11 criterion updated from Class 3 → Class 4
+    "AUD-2026-04-20-001",  # System_status_report sprint-close cross-check
+    "AUD-2026-04-20-002",  # §14 lifecycle guide version v2.5 → v2.6
+    "AUD-2026-04-20-003",  # team_charter §7 post_ship_closure path fix
+    "AUD-2026-04-20-004",  # lessons_learnt_cycle.md v2.7 class fix
 ]
-# All AUD-2026-03-21 items confirmed closed (see Phase 0 resolved table in audit_report_AUD-2026-04-11.md).
+# All AUD-2026-04-11 items confirmed RESOLVED (see Phase 0 table in audit_report_AUD-2026-04-20.md).
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      74,   # LOW CONFIDENCE — design gate dry-run gap confirmed; estimated blocks
-    "governance_integrity":  66,   # MEDIUM CONFIDENCE — 3 artefacts missing §13 + 2 §14 divergences confirmed
-    "execution_reliability": 80,   # MEDIUM CONFIDENCE — 3 deferred patches + prompt_change_log ASSERTION guard
-    "friction_load":         17,   # LOW CONFIDENCE — only 3 of 10 cycles loaded; load all 10 at next audit
-    "document_hygiene":      88,   # MEDIUM CONFIDENCE — 2 §14 divergences confirmed; others estimated
+    "token_efficiency":      84,   # LOW CONFIDENCE — inline block counts estimated
+    "governance_integrity":  96,   # MEDIUM CONFIDENCE — 1 confirmed deduction (§14 lifecycle guide version)
+    "execution_reliability": 94,   # MEDIUM CONFIDENCE — closure_state.json ASSERTION guard
+    "friction_load":         60,   # MEDIUM CONFIDENCE — v2.6-v2.8 only; load prior cycles at next audit
+    "document_hygiene":      87,   # MEDIUM CONFIDENCE — 2 confirmed deductions
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 10  # v1.7 through v2.5 (10 completed post-ship closures; confirmed from .claude_current_state.json)
+COMPLETED_CYCLES = 13  # v1.7 through v2.8 (13 completed post-ship closures; confirmed from .claude_current_state.json)
 
 # -------------------------
 # MISSING FILE RULE

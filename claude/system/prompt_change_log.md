@@ -13,6 +13,7 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-04-21 | `OPERATIONAL_GUIDE.md` | v3.62→v3.63 | AUD-2026-04-20-002: §14 Lifecycle Guide version corrected v2.5→v2.6 (document_lifecycle_guide.md actual version — §14 divergence identified at AUD-2026-04-20). | Head of Specs Team |
 | 2026-04-17 | `OPERATIONAL_GUIDE.md` | v3.59→v3.60 | roadmap_prompt.md v5.0 + post_ship_closure.md v2.5: §6 and §10 source prompt headers updated; §14 engine versions updated; §15 roadmap_prompt version reference updated; changelog entry 3.60 prepended. | Product Owner |
 | 2026-04-17 | `post_ship_closure.md` | v2.4→v2.5 | STEP 12 Ideas Pipeline Health Check advisory added — when active backlog ≤ 5 items post-groom, scan parked ideas for shipped BLG- gate references and record advisory in closure record §6 Outstanding Actions. | Product Owner |
 | 2026-04-17 | `roadmap_prompt.md` | v4.9→v5.0 | STEP 0.D Empty Horizon Advisory added (redirect to `plan release` when Now horizon empty and backlog has active items). STEP 4.0 Gate-Condition Re-Check added (verify shipped BLG- references in Park Rationales before classification; gate-cleared ideas cannot be silently re-parked). | Product Owner |

@@ -530,7 +530,7 @@ This charter governs the following routines. Each routine has a corresponding go
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` | After Design Gate passed |
 | Sprint Execution Engine | `claude/system/execution_prompt.md` | After Sprint Planning sealed |
 | Delivery Verification Engine | `claude/system/delivery_verification_prompt.md` | After Sprint Execution complete |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure_prompt.md` | After Delivery Verification passed |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` | After Delivery Verification passed |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` | Emergency only — post-publish, pre-Sprint Planning seal |
 
 ### Engine Scope Constraints

@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.62
-**Last Updated:** 2026-04-16
+**Version:** 3.63
+**Last Updated:** 2026-04-21
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1366,8 +1366,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.62 |
-| Last Updated | 2026-04-18 |
+| Version | 3.63 |
+| Last Updated | 2026-04-21 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1386,7 +1386,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.8 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
-| Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.5 |
+| Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.6 |
 | Team Charter | `claude/charter/team_charter.md` v1.6 |
 
 This playbook is subordinate to and must remain consistent with all governing documents above. In any conflict, governance documents prevail. Update this playbook to reflect the change — do not operate with a known divergence.
@@ -1401,6 +1401,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.63 | 2026-04-21 | **AUD-2026-04-20-002 — §14 Lifecycle Guide version corrected v2.5→v2.6.** §14 Lifecycle Guide row updated to reflect actual document_lifecycle_guide.md version (v2.6 — Class 4 sub-type 3 Release Plan added 2026-03-07; §14 not updated at that time). Authority: Head of Specs Team (AUD-2026-04-20, 2026-04-21). |
 | 3.62 | 2026-04-18 | **execution_prompt.md v3.7→v3.8 — ST-05 (EPIC-03, v2.8): sprint close deviation register terminology.** §8 source prompt header updated v3.7→v3.8. §14 Execution Engine Source v3.7→v3.8. Change: §5.3 sprint close "Deviations filed" clarified — spec deviations only (filed via /dev-file); process notations and execution observations belong in execution_state.json notes or execution_escalations.md. Closes CF-2. Authority: Head of Specs Team (ST-05, 2026-04-18). |
 | 3.61 | 2026-04-18 | **execution_prompt.md v3.6→v3.7 — ST-04 (EPIC-03, v2.8): DoQ Date field PR-open pre-condition.** §8 source prompt header updated v3.6→v3.7. §14 Execution Engine Source v3.6→v3.7. Change: §3.2.A Date field requirement note updated — now explicitly states Date must be non-blank before PR can be opened (§3.2.B pre-condition, BLG-GOV-18) in addition to before the merge gate runs. Closes the loop between the sign-off block authoring step and the PR-opening enforcement step. Authority: Head of Specs Team (ST-04, 2026-04-18). |
 | 3.60 | 2026-04-17 | **roadmap_prompt.md v4.9→v5.0 + post_ship_closure.md v2.4→v2.5 — three pipeline patches applied.** §6 source prompt header updated v4.9→v5.0. §10 source prompt header updated v2.4→v2.5. §14 Roadmap Engine Source v4.9→v5.0; Post-Ship Closure Engine v2.4→v2.5. §15 roadmap_prompt.md version reference updated v4.9→v5.0. Changes: (1) roadmap_prompt.md STEP 0.D — Empty Horizon Advisory: when Now horizon is empty post-ship and active backlog items exist, surface advisory directing PO to run `plan release` rather than a full rebalance debate; (2) roadmap_prompt.md STEP 4.0 — Gate-Condition Re-Check: before per-idea classification, verify whether BLG- items referenced in Park Rationales have shipped; gate-cleared ideas surfaced as mandatory re-evaluation; (3) post_ship_closure.md STEP 12 — Ideas Pipeline Health Check advisory: when active backlog ≤ 5 items, scan for parked ideas with shipped gate conditions and record advisory in closure record. Authority: Product Owner (2026-04-17). |

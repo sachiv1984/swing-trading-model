@@ -1,7 +1,7 @@
 # Lessons Learnt — 2026-04-13__release-v2.7
 
 **Owner:** PMO Lead
-**Class:** Planning Document (Class 4)
+**Class:** Operational Record (Class 3)
 **Status:** Active
 
 ---
