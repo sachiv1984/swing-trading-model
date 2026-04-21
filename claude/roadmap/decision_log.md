@@ -517,3 +517,44 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Roadmap impact:** current_roadmap.md Last Updated bumped to 2026-04-17. No content changes.
 
 **Workforce impact:** None — no new allocations required.
+
+---
+
+### DL-021 — 2026-04-21
+
+**Decision type:** No-change (roadmap) + Backlog Add (×14)
+**Cycle:** 2026-04-21__scheduled
+**Date:** 2026-04-21
+**Decision owner:** Product Owner
+
+**Summary:** Scheduled roadmap rebalance — no roadmap-level initiatives added, replaced, deferred, or killed. 14 new backlog items promoted from idea intake (IW-20260421-01 + 5 stale ideas newly gate-cleared). 2 ideas parked during debate.
+
+**Initiatives added (backlog-level):**
+
+| ID | Title | Priority | Effort | Displacement |
+|----|-------|----------|--------|-------------|
+| BLG-SPEC-20 | Machine-readable spec front-matter standard | P3 | S | BLG-GOV-11 (P3) deprioritised |
+| BLG-AI-01 | AI Journal summary audit log | P2 | S | TEST-GAP-EPIC-04 (P3) deprioritised |
+| BLG-AI-02 | Model version contract for AI Journal | P3 | S | BLG-FEAT-13 (P3) deprioritised |
+| BLG-FEAT-18 | Consecutive losing streak metric | P2 | S | BLG-DATA-01 (Positions Data Dictionary, P2) deprioritised |
+| BLG-FEAT-19 | Monthly P&L summary report | P2 | S | BLG-GOV-11 (P3) dual displacement |
+| BLG-FE-16 | React component inventory | P3 | M | BLG-FE-15 (P3) deprioritised |
+| BLG-SPEC-21 | Screener results schema spec | P1 | S | BLG-GOV-11 (P3) triple displacement (combined S+S+S effort < M displaced) |
+| BLG-SPEC-22 | Alpaca API integration contract | P1 | S | BLG-GOV-08 (P3) further deferred |
+| BLG-SPEC-23 | Screener internal API contract | P1 | S | BLG-TECH-05 (P3) deprioritised |
+| BLG-QA-08 | External API mock harness for CI | P1 | M | BLG-FEAT-13 (P3) displaced |
+| BLG-GOV-16 | §13 review record for DS-06 Alpaca News | P1 | S | BLG-FE-09 (P3) deprioritised |
+| BLG-OPS-12 | External API health check extension | P2 | S | BLG-GOV-11 (P3) dual displacement |
+| BLG-QA-09 | Screener test data library | P1 | M | BLG-FEAT-13 (P3) dual displacement |
+| BLG-FE-17 | Screener results page UX spec | P1 | M | BLG-TECH-05 (P3) dual displacement |
+
+**Explicit displacement:**
+- BLG-GOV-11 displaced by 4 items (BLG-SPEC-20, BLG-FEAT-19, BLG-SPEC-21, BLG-OPS-12); combined effort ~2.5 days S-band < M-band displaced
+- BLG-FEAT-13 displaced by 3 items (BLG-AI-02, BLG-QA-08, BLG-QA-09)
+- BLG-TECH-05 displaced by 2 items (BLG-SPEC-23, BLG-FE-17)
+
+**Roadmap impact:** current_roadmap.md Last Updated bumped to 2026-04-21. No content changes.
+
+**Workforce impact:** ~13.5 days total across mixed skill domains. Governance load ~22% (within 20–60% bounds). No scarce skill conflicts. All items are Arc 1 pre-work (spec authoring, test infrastructure, governance compliance).
+
+**Rationale:** 14 items advanced from IW-20260421-01 (44 new ideas + 16 stale parked) following structured debate with 16 candidates. Two candidates parked during debate (IDEA-strategy-owner-20260321-02 accepted Challenger argument; IDEA-challenger-20260421-02 self-assessment accepted). All items are Arc 1 prerequisite work (screener specs, Alpaca contracts, test infrastructure, §13 governance) needed before v2.9 sprint planning. Net-zero satisfied at roadmap level (0 adds, 0 kills). Backlog-level net-zero satisfied via named displacements. Workforce gate: PASS. STEP 8.6 guardrail: PASS (2 items parked during debate; Challenger issued 4 Type A counter-arguments).

@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-20 (v2.8 post-ship closure)
+**Last Updated:** 2026-04-21 (cycle 2026-04-21__scheduled — DL-021; no roadmap-level changes; 14 backlog items added)
 **Last rebalance:** 2026-04-17 (cycle 2026-04-17__scheduled — full strategic restructure; six-arc model introduced)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
