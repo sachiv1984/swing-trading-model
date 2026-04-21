@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-20 (groom backlog GROOM-20260420-01 — 4 items archived; BLG-FE-14/BLG-GOV-13/BLG-FEAT-16/BLG-QA-13 shipped v2.8)
+**Last Updated:** 2026-04-21 (AUD-2026-04-20: BLG-GOV-15 added — Tier 2 execution_prompt STEP 5.1.B)
 **Last rebalance:** 2026-04-17 (cycle 2026-04-17__scheduled — DL-020)
 
 > ⚠️ Standing Notice
@@ -61,6 +61,29 @@ No Prometheus-compatible metrics endpoint exists. As the system grows toward mul
 
 ---
 
+### BLG-FE-15 — SystemStatus.js: add `/ai` prefix to `categorizeEndpoint()`
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Owner
+**Source:** OA-v28-02 — v2.8 post-ship closure 2026-04-20; endpoint drift check confirmed 0 drift but `/ai` prefix unhandled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.9
+
+**Problem**
+`SystemStatus.js` `categorizeEndpoint()` does not handle the `/ai` prefix introduced by EPIC-04 (AI Journal Summarisation). The `POST /api/ai/journal-summary` and `GET /api/ai/journal-summary/history` endpoints fall to the `'Other'` category in the System Status UI. This is a cosmetic issue only — no functional impact, but the AI endpoints should appear in a named category for clarity and future maintenance.
+
+**Scope**
+- Add `/ai` prefix case to `categorizeEndpoint()` in `SystemStatus.js`
+- Assign AI endpoints to an appropriate category (e.g. `'AI'` or `'Features'`)
+- Verify no regression to other endpoint categories in System Status UI
+
+**Acceptance Criteria**
+- `POST /api/ai/journal-summary` and `GET /api/ai/journal-summary/history` appear in a named category (not `'Other'`) in the System Status page
+- No regression to categorisation of existing endpoints
+- Change verified by code review (no observable UI behaviour change required beyond category label)
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---
@@ -107,6 +130,30 @@ Create `docs/testing/ai_scenarios.md` covering:
 
 ---
 
+### BLG-GOV-15 — execution_prompt.md STEP 5.1.B — System_status_report capability count cross-check
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** AUD-2026-04-20-001 — OBSERVED; blast radius 3; priority weight 9; Tier 2
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.9 planning sprint
+
+**Problem**
+`System_status_report.md` capability row counts (SC-CORR, SC-SIG-IND) were incorrect at v2.8 delivery verification entry — counts were set at sprint planning time and not updated post-execution. This required a Type A action-now correction at Phase 4 and was the highest-impact friction item in v2.8. There is no prompt-enforced cross-check in STEP 5.1 (sprint close) to catch this before Phase 4.
+
+**Scope**
+Insert STEP 5.1.B advisory in `claude/system/execution_prompt.md` immediately after the existing "QA Evidence File Existence Check":
+
+> **STEP 5.1.B — System_status_report Capability Row Cross-Check (advisory):**
+> Before writing Sprint_Complete, open `docs/System_status_report.md` and locate the row for the current release. For each `SC-*` scenario count cell, verify the count matches the actual number of scenario entries in the referenced test file. If any cell value was set at sprint planning time and not updated post-execution, correct it now. Record any corrections in `sprint_close.md` notes column. Also verify `execution_prompt.md` version reference matches the actual current version. Non-blocking: if discrepancies are found, correct in-session; do not halt sprint close.
+
+**Acceptance Criteria**
+- `execution_prompt.md` STEP 5.1 contains STEP 5.1.B advisory as above
+- §6 CLAUDE.md checklist applied: version bump (v3.8→v3.9), OPERATIONAL_GUIDE §14 row updated, phase section header updated, prompt_change_log entry appended
+- Head of Specs Team sign-off on the patch
+
+---
+
 ### BLG-GOV-08 — Engine prompt compression: roadmap_prompt and release_planning_prompt
 **Priority:** P3 (Low)
 **Type:** Governance Process / Technical Debt
@@ -132,6 +179,31 @@ Create `docs/testing/ai_scenarios.md` covering:
 
 ---
 
+
+### BLG-GOV-14 — execution_prompt.md §3.2 governance patches (2 deferred from v2.8)
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** OA-v28-03 — v2.8 post-ship closure lessons_learnt_closure.md Friction Items 3 & 4
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v2.9 planning sprint
+
+**Problem**
+Two process gaps were identified at v2.8 delivery verification (STEP -1.3) that caused mid-verification remediation stalls. Both require patches to `claude/system/execution_prompt.md` under Head of Specs Team sign-off and cannot be applied without a governed prompt-edit session.
+
+**Scope — Patch 1 (§3.2.A reclassification note):**
+When a `delegated_frontend` story is reclassified to `autonomous` per LL-v2.3-EX-02 but the EPIC contains frontend-visible changes, the autonomous class DoQ criteria (criterion 3: no frontend-visible change) is not fully met at EPIC level. A Director of Quality counter-sign is required at sprint close (STEP 5), not deferred to delivery verification STEP -1.3. Add this note near the LL-v2.3-EX-02 reference in §3.2.A.
+
+**Scope — Patch 2 (§3.2 DoQ EPIC template):**
+When a `delegated_frontend` story has a domain-specific gate authority (Strategy Rules, Security, etc.) as its primary sign-off, the qa_evidence file must also include a Director of Quality EPIC-level consolidation block summarising all story sign-offs. The template should note: "EPIC-level DoQ sign-off block required regardless of story-level authority delegation."
+
+**Acceptance Criteria**
+- `execution_prompt.md` §3.2.A contains note: when delegated_frontend→autonomous reclassification involves frontend-visible changes, Director of Quality counter-sign required at STEP 5 sprint close
+- `execution_prompt.md` §3.2 DoQ template contains explicit note: EPIC-level DoQ consolidation block required when story-level authority is domain-specific (Strategy Rules, Security, etc.)
+- §6 CLAUDE.md checklist applied (version bump, OPERATIONAL_GUIDE §14 + phase section updated, prompt_change_log entry)
+- Head of Specs Team sign-off on both patches
+
+---
 
 ### BLG-GOV-11 — Cycle artefact inventory and maintenance review
 **Priority:** P3 (Low)
