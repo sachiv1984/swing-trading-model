@@ -26,6 +26,16 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import numpy as np
 import pandas as pd
+from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
+
+
+def _clean_db_url(url: str) -> str:
+    """Strip Supabase-specific params (e.g. pgbouncer) not supported by libpq."""
+    parsed = urlparse(url)
+    params = parse_qs(parsed.query, keep_blank_values=True)
+    params.pop("pgbouncer", None)
+    new_query = urlencode({k: v[0] for k, v in params.items()})
+    return urlunparse(parsed._replace(query=new_query))
 
 # ST-08: module-level TTL cache for market correlation (one trading day ≈ 8 hours)
 _CORRELATION_CACHE: dict = {"data": None, "cached_at": None}
@@ -210,7 +220,7 @@ async def get_analytics_metrics(
         if not database_url:
             raise Exception("DATABASE_URL not configured")
 
-        conn = psycopg2.connect(database_url)
+        conn = psycopg2.connect(_clean_db_url(database_url))
         cursor = conn.cursor(cursor_factory=RealDictCursor)
 
         try:
@@ -347,7 +357,7 @@ async def get_cohort_analysis(
         if not database_url:
             raise Exception("DATABASE_URL not configured")
 
-        conn = psycopg2.connect(database_url)
+        conn = psycopg2.connect(_clean_db_url(database_url))
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             trades_with_stop = _build_trades_for_charts_with_join(cursor, None)
@@ -386,7 +396,7 @@ async def get_r_multiple_distribution():
         if not database_url:
             raise Exception("DATABASE_URL not configured")
 
-        conn = psycopg2.connect(database_url)
+        conn = psycopg2.connect(_clean_db_url(database_url))
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             trades_with_stop = _build_trades_for_charts_with_join(cursor, None)
@@ -426,7 +436,7 @@ async def get_compliance_metrics():
         if not database_url:
             raise Exception("DATABASE_URL not configured")
 
-        conn = psycopg2.connect(database_url)
+        conn = psycopg2.connect(_clean_db_url(database_url))
         cursor = conn.cursor(cursor_factory=RealDictCursor)
 
         try:
@@ -614,7 +624,7 @@ async def get_market_correlation(
         if not database_url:
             raise HTTPException(status_code=500, detail="DATABASE_URL not configured")
 
-        conn = psycopg2.connect(database_url)
+        conn = psycopg2.connect(_clean_db_url(database_url))
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             cursor.execute("""

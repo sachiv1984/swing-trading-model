@@ -7,16 +7,27 @@ from datetime import datetime
 import pandas as pd
 import time
 import requests
+from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable not set")
 
+
+def _clean_db_url(url: str) -> str:
+    """Strip Supabase-specific params (e.g. pgbouncer) not supported by libpq."""
+    parsed = urlparse(url)
+    params = parse_qs(parsed.query, keep_blank_values=True)
+    params.pop("pgbouncer", None)
+    new_query = urlencode({k: v[0] for k, v in params.items()})
+    return urlunparse(parsed._replace(query=new_query))
+
+
 @contextmanager
 def get_db():
     """Database connection context manager"""
-    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    conn = psycopg2.connect(_clean_db_url(DATABASE_URL), cursor_factory=RealDictCursor)
     try:
         yield conn
         conn.commit()  # CRITICAL: Ensure commit happens

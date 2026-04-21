@@ -14,10 +14,20 @@ ST-08 (BLG-FEAT-14 BE component, v2.4)
 import os
 import logging
 from datetime import datetime, timezone, timedelta
+from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from fastapi import APIRouter
+
+
+def _clean_db_url(url: str) -> str:
+    """Strip Supabase-specific params (e.g. pgbouncer) not supported by libpq."""
+    parsed = urlparse(url)
+    params = parse_qs(parsed.query, keep_blank_values=True)
+    params.pop("pgbouncer", None)
+    new_query = urlencode({k: v[0] for k, v in params.items()})
+    return urlunparse(parsed._replace(query=new_query))
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +60,7 @@ def get_weekly_digest():
         return {"status": "error", "message": "DATABASE_URL not configured"}
 
     try:
-        conn = psycopg2.connect(database_url)
+        conn = psycopg2.connect(_clean_db_url(database_url))
         cursor = conn.cursor(cursor_factory=RealDictCursor)
 
         now_utc = datetime.now(timezone.utc)
