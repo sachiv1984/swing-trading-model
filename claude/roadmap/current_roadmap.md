@@ -238,6 +238,15 @@ Items in this section are sequenced and ready for planning when v2.8 closes. The
 
 **Arc 1 end-state target:** Each morning the screener surfaces a ranked list of momentum candidates that pass your strategy’s regime gate, ATR filter, and signal conditions. You review, promote to watchlist, and move to Arc 2 research. The top of the funnel is systematic, not ad hoc.
 
+<!-- roadmap-annotation-marker: RA:v2.9:2026-04-22__release-v2.9 -->
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-04-22__release-v2.9
+- Plan published: 2026-04-22
+- Cycle folder: claude/cycles/2026-04-22__release-v2.9/
+- Backlog slice: claude/cycles/2026-04-22__release-v2.9/stage4_backlog_slice.md
+- Status at annotation: Committed
+- Scope: EPIC-01 (Arc 1 specs), EPIC-02 (DS-03/05/06 implementation), EPIC-03 (governance/QA infrastructure), EPIC-04 (governance debt + quick wins); DS-01/02 deferred to v3.0
+
 ### Arc 2 — Pre-Trade Research & Planning (v3.1–v3.3)
 
 **Sequencing note:** PT-01 (Trade Plan Object) is a data model change and must be delivered first — it is the foundation for all other Arc 2 items and all of Arc 4.

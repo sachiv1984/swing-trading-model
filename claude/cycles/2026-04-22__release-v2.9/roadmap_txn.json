@@ -1,0 +1,10 @@
+{
+  "cycle_id": "2026-04-22__release-v2.9",
+  "release": "v2.9",
+  "txn_id": "RATX-20260422-01",
+  "state": "committed",
+  "prepared_utc": "2026-04-22T00:10:00Z",
+  "committed_utc": "2026-04-22T00:11:00Z",
+  "marker": "RA:v2.9:2026-04-22__release-v2.9",
+  "target_file": "claude/roadmap/current_roadmap.md"
+}

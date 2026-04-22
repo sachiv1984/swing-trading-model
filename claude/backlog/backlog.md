@@ -599,7 +599,25 @@ These are deliberate product decisions, not deferrals:
 
 ## 12. Last Release Slice
 
-## Active Release Slice — v2.8
+## Active Release Slice — v2.9
+
+<!-- release-plan-marker: RP:v2.9:2026-04-22__release-v2.9 -->
+
+**Cycle:** 2026-04-22__release-v2.9 | **Status:** Planning | **Published:** 2026-04-22 | **Shipped:** —
+**Backlog slice:** `claude/cycles/2026-04-22__release-v2.9/stage4_backlog_slice.md`
+
+| EPIC | Sprint | Stories | Theme |
+|------|--------|---------|-------|
+| EPIC-01 | Sprint 1 | ST-01, ST-02, ST-03, ST-04 | Arc 1 Specification Foundation |
+| EPIC-02 | Sprint 2 | ST-05, ST-06, ST-07 | Arc 1 Implementation Start |
+| EPIC-03 | Sprint 1 | ST-08, ST-09, ST-10 | Arc 1 Governance & QA Foundation |
+| EPIC-04 | Sprint 1+2 | ST-11, ST-12, ST-13, ST-14, ST-15 | Governance Debt & Quick Wins |
+
+**Theme:** Arc 1 Foundation — Stock Discovery & Screening Spec & Infrastructure
+
+---
+
+## Prior Release Slice — v2.8
 
 <!-- release-plan-marker: RP:v2.8:2026-04-17__release-v2.8 -->
 

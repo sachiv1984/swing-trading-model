@@ -1,0 +1,152 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Screener results schema spec (BLG-SPEC-21)",
+    "epic": "EPIC-01",
+    "sprint": 1,
+    "description": "Author canonical Class 2 spec for Arc 1 screener output data structure. All screener output fields defined with types and derivation source. References strategy_rules.md §11. Includes logging requirement for audit trail.",
+    "ac_summary": "Class 2 spec at docs/specs/screener_results_schema.md; all output fields defined; §11 reference explicit; logging requirement included; DoQ sign-off with Date populated; added to Specs_Index.md",
+    "labels": ["story", "release-v2.9", "EPIC-01", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-02",
+    "title": "Alpaca API integration contract (BLG-SPEC-22)",
+    "epic": "EPIC-01",
+    "sprint": 1,
+    "description": "Author formal Class 2 API contract for Alpaca US market data integration covering DS-05 endpoints, rate limits, error handling, retry strategy, fallback strategy, and pinned API version.",
+    "ac_summary": "Class 2 doc at docs/specs/api_contracts/alpaca_integration_contract.md; DS-05 endpoints at ## level; rate limits + fallback specified; API version pinned; OpenAPI entries added; DoQ sign-off with Date populated",
+    "labels": ["story", "release-v2.9", "EPIC-01", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-03",
+    "title": "Screener internal API contract (BLG-SPEC-23)",
+    "epic": "EPIC-01",
+    "sprint": 1,
+    "description": "Author formal Class 2 API contract for screener internal API endpoints (GET /screener/results, POST /screener/run). Must be added to openapi.yaml.",
+    "ac_summary": "Class 2 doc at docs/specs/api_contracts/screener_api_contract.md; both endpoints at ## level; request/response schemas defined; OpenAPI entries added; DoQ sign-off with Date populated",
+    "labels": ["story", "release-v2.9", "EPIC-01", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-04",
+    "title": "Screener results page UX spec (BLG-FE-17)",
+    "epic": "EPIC-01",
+    "sprint": 1,
+    "description": "Author UX spec for DS-02 screener results page covering column layout, sort/filter, candidate card, freshness indicator, empty states, watchlist promotion flow, and progressive loading.",
+    "ac_summary": "UX spec created (Class 2 or Class 5); DS-02 interaction patterns documented; empty states, freshness indicator, promotion flow covered; DoQ sign-off with Date populated",
+    "labels": ["story", "release-v2.9", "EPIC-01", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-05",
+    "title": "Sector & Industry Classification (DS-03)",
+    "epic": "EPIC-02",
+    "sprint": 2,
+    "description": "Implement Yahoo Finance sector/industry data enrichment on all screened tickers and open positions. Prerequisite for DS-01 concentration filter and DS-02 sector display.",
+    "ac_summary": "Sector/industry enrichment on tickers and positions; exposed on GET /positions; data model updated; unit tests pass; no regression",
+    "labels": ["story", "release-v2.9", "EPIC-02", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-06",
+    "title": "Alpaca US Market Data Integration (DS-05)",
+    "epic": "EPIC-02",
+    "sprint": 2,
+    "description": "Replace Yahoo Finance with Alpaca Markets API for US ticker OHLCV data. Higher quality ATR inputs for US market leg. Requires ST-02 (BLG-SPEC-22) complete first.",
+    "ac_summary": "Alpaca replaces Yahoo for US OHLCV; contract adherence verified; fallback implemented and tested; UK tickers unaffected; integration tests pass; API version pinned",
+    "labels": ["story", "release-v2.9", "EPIC-02", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-07",
+    "title": "Alpaca News Panel (DS-06)",
+    "epic": "EPIC-02",
+    "sprint": 2,
+    "description": "Implement ticker-level news context panel (display-only; headlines + count; no sentiment scoring). Surfaces on screener results and watchlist. Requires ST-08 (BLG-GOV-16) sign-off.",
+    "ac_summary": "News panel on screener results and watchlist; display-only per BLG-GOV-16 conditions; empty state handled; §13 compliance verified; no regression",
+    "labels": ["story", "release-v2.9", "EPIC-02", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-08",
+    "title": "§13 review record for DS-06 Alpaca News Panel (BLG-GOV-16)",
+    "epic": "EPIC-03",
+    "sprint": 1,
+    "description": "Create formal §13 review document confirming DS-06 display-only Alpaca news context is §13 COMPLIANT. Required governance gate before DS-06 implementation. Strategy Rules owner sign-off required.",
+    "ac_summary": "Review record created; explicitly conditions compliance on display-only headlines, no sentiment scoring; Strategy Rules owner sign-off recorded; gate marked complete in roadmap",
+    "labels": ["story", "release-v2.9", "EPIC-03", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-09",
+    "title": "External API mock harness for CI (BLG-QA-08)",
+    "epic": "EPIC-03",
+    "sprint": 1,
+    "description": "Build test harness mocking Alpaca Markets API and Yahoo Finance API for deterministic CI. Screener tests must pass without live API calls. Works with ST-10 test data library.",
+    "ac_summary": "Mock harness operational in CI; configurable per scenario; screener CI tests deterministic; CI config updated; DoQ sign-off with Date populated",
+    "labels": ["story", "release-v2.9", "EPIC-03", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-10",
+    "title": "Screener test data library (BLG-QA-09)",
+    "epic": "EPIC-03",
+    "sprint": 1,
+    "description": "Create library of minimum 10 synthetic tickers covering key screener filter scenarios and edge cases. Designed for use with ST-09 mock harness.",
+    "ac_summary": "Min 10 synthetic tickers; key edge cases covered (regime pass/fail, ATR threshold, signal threshold, UK/US market); compatible with ST-09 harness; DoQ sign-off with Date populated",
+    "labels": ["story", "release-v2.9", "EPIC-03", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-11",
+    "title": "execution_prompt.md §3.2 governance patches (BLG-GOV-14)",
+    "epic": "EPIC-04",
+    "sprint": 1,
+    "description": "Apply two deferred execution_prompt.md patches from v2.8 closure: §3.2.A DoQ counter-sign requirement for reclassified frontend EPICs; §3.2 DoQ EPIC consolidation block requirement for domain-gated EPICs. Addresses CF-1 and CF-2.",
+    "ac_summary": "§3.2.A and §3.2 DoQ template patched; CLAUDE.md §6 checklist applied (version bump, OPERATIONAL_GUIDE §14 update, prompt_change_log entry); Head of Specs Team sign-off",
+    "labels": ["story", "release-v2.9", "EPIC-04", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-12",
+    "title": "execution_prompt.md STEP 5.1.B cross-check advisory (BLG-GOV-15)",
+    "epic": "EPIC-04",
+    "sprint": 1,
+    "description": "Add STEP 5.1.B advisory to execution_prompt.md: before sprint close, verify System_status_report.md SC-* counts match actual entries and prompt version reference is current. Non-blocking advisory.",
+    "ac_summary": "STEP 5.1.B advisory added per BLG-GOV-15 spec; CLAUDE.md §6 checklist applied; Head of Specs Team sign-off",
+    "labels": ["story", "release-v2.9", "EPIC-04", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-13",
+    "title": "SystemStatus.js /ai prefix fix (BLG-FE-15)",
+    "epic": "EPIC-04",
+    "sprint": 1,
+    "description": "Add /ai prefix case to categorizeEndpoint() in SystemStatus.js so AI Journal endpoints appear in a named category rather than 'Other'.",
+    "ac_summary": "AI endpoints appear in named category in System Status page; no regression to other categories; verified by code review",
+    "labels": ["story", "release-v2.9", "EPIC-04", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-14",
+    "title": "AI Journal summary audit log (BLG-AI-01)",
+    "epic": "EPIC-04",
+    "sprint": 2,
+    "description": "Implement persistent audit log for AI Journal summary runs: timestamp, trade_ids, model version, output hash. Stored in queryable durable storage. §3 compliance gap from v2.8.",
+    "ac_summary": "Audit log persists per summary run; queryable by trade_id and date range; model version recorded; integrated with POST /api/ai/journal-summary; DoQ sign-off with Date populated",
+    "labels": ["story", "release-v2.9", "EPIC-04", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  },
+  {
+    "id": "ST-15",
+    "title": "AI Journal test scenario coverage (TEST-GAP-EPIC-04)",
+    "epic": "EPIC-04",
+    "sprint": 2,
+    "description": "Create docs/testing/ai_scenarios.md with 4 scenarios covering happy path, graceful LLM failure, frontend collapsed default, and disclaimer visibility.",
+    "ac_summary": "ai_scenarios.md created with 4 scenarios referencing canonical specs; DoQ sign-off with Date populated",
+    "labels": ["story", "release-v2.9", "EPIC-04", "cycle:2026-04-22__release-v2.9"],
+    "assignee": ""
+  }
+]
