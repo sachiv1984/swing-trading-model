@@ -1,0 +1,162 @@
+{
+  "_comment": "Baseline fixture for a passing US ticker (NVDA). Used for smoke-level CI validation. BLG-QA-09 (ST-10) will populate the full scenario library.",
+  "alpaca": {
+    "bars/NVDA": {
+      "bars": [
+        {"t": "2026-04-22T04:00:00Z", "o": 880.0, "h": 895.0, "l": 875.0, "c": 890.0, "v": 12000000, "vw": 886.5, "n": 85000},
+        {"t": "2026-04-21T04:00:00Z", "o": 870.0, "h": 885.0, "l": 865.0, "c": 880.0, "v": 11500000, "vw": 876.2, "n": 82000},
+        {"t": "2026-04-17T04:00:00Z", "o": 860.0, "h": 875.0, "l": 855.0, "c": 870.0, "v": 10800000, "vw": 865.4, "n": 79000},
+        {"t": "2026-04-16T04:00:00Z", "o": 850.0, "h": 865.0, "l": 845.0, "c": 860.0, "v": 10200000, "vw": 854.8, "n": 77000},
+        {"t": "2026-04-15T04:00:00Z", "o": 840.0, "h": 855.0, "l": 835.0, "c": 850.0, "v": 9900000, "vw": 844.2, "n": 74000},
+        {"t": "2026-04-14T04:00:00Z", "o": 830.0, "h": 845.0, "l": 825.0, "c": 840.0, "v": 9600000, "vw": 834.1, "n": 72000},
+        {"t": "2026-04-11T04:00:00Z", "o": 820.0, "h": 835.0, "l": 815.0, "c": 830.0, "v": 9300000, "vw": 824.0, "n": 70000},
+        {"t": "2026-04-10T04:00:00Z", "o": 810.0, "h": 825.0, "l": 805.0, "c": 820.0, "v": 9100000, "vw": 814.2, "n": 68000},
+        {"t": "2026-04-09T04:00:00Z", "o": 800.0, "h": 815.0, "l": 795.0, "c": 810.0, "v": 8900000, "vw": 803.8, "n": 66000},
+        {"t": "2026-04-08T04:00:00Z", "o": 790.0, "h": 805.0, "l": 785.0, "c": 800.0, "v": 8700000, "vw": 793.4, "n": 64000},
+        {"t": "2026-04-07T04:00:00Z", "o": 780.0, "h": 795.0, "l": 775.0, "c": 790.0, "v": 8500000, "vw": 783.2, "n": 62000},
+        {"t": "2026-04-04T04:00:00Z", "o": 770.0, "h": 785.0, "l": 765.0, "c": 780.0, "v": 8300000, "vw": 773.0, "n": 60000},
+        {"t": "2026-04-03T04:00:00Z", "o": 760.0, "h": 775.0, "l": 755.0, "c": 770.0, "v": 8100000, "vw": 762.8, "n": 58000},
+        {"t": "2026-04-02T04:00:00Z", "o": 750.0, "h": 765.0, "l": 745.0, "c": 760.0, "v": 7900000, "vw": 752.6, "n": 56000},
+        {"t": "2026-04-01T04:00:00Z", "o": 740.0, "h": 755.0, "l": 735.0, "c": 750.0, "v": 7700000, "vw": 742.4, "n": 54000}
+      ],
+      "symbol": "NVDA",
+      "next_page_token": null
+    },
+    "news/NVDA": [
+      {
+        "id": 10001,
+        "headline": "NVIDIA Reports Record Data Center Revenue",
+        "author": "Financial Times",
+        "created_at": "2026-04-22T10:30:00Z",
+        "updated_at": "2026-04-22T10:30:00Z",
+        "summary": "NVIDIA quarterly results exceed analyst expectations.",
+        "url": "https://example.com/nvda-results",
+        "symbols": ["NVDA"],
+        "source": "financial_times"
+      },
+      {
+        "id": 10002,
+        "headline": "AI Chip Demand Continues to Drive NVIDIA Growth",
+        "author": "Reuters",
+        "created_at": "2026-04-21T14:00:00Z",
+        "updated_at": "2026-04-21T14:00:00Z",
+        "summary": "Strong enterprise demand for H100 and B200 chips.",
+        "url": "https://example.com/nvda-demand",
+        "symbols": ["NVDA"],
+        "source": "reuters"
+      }
+    ]
+  },
+  "yahoo": {
+    "NVDA": {
+      "chart": {
+        "result": [
+          {
+            "meta": {
+              "currency": "USD",
+              "symbol": "NVDA",
+              "exchangeName": "NMS",
+              "regularMarketPrice": 890.0,
+              "previousClose": 880.0,
+              "regularMarketDayHigh": 895.0,
+              "regularMarketDayLow": 875.0
+            },
+            "timestamp": [1745280000, 1745366400, 1745625600],
+            "indicators": {
+              "quote": [
+                {
+                  "open": [870.0, 880.0, 890.0],
+                  "high": [885.0, 895.0, 900.0],
+                  "low": [865.0, 875.0, 880.0],
+                  "close": [880.0, 890.0, 895.0],
+                  "volume": [11500000, 12000000, 12500000]
+                }
+              ]
+            }
+          }
+        ],
+        "error": null
+      }
+    },
+    "SPY": {
+      "chart": {
+        "result": [
+          {
+            "meta": {
+              "currency": "USD",
+              "symbol": "SPY",
+              "regularMarketPrice": 520.0,
+              "previousClose": 518.0
+            },
+            "timestamp": [1745280000],
+            "indicators": {
+              "quote": [
+                {
+                  "open": [518.0],
+                  "high": [522.0],
+                  "low": [516.0],
+                  "close": [520.0],
+                  "volume": [80000000]
+                }
+              ]
+            }
+          }
+        ],
+        "error": null
+      }
+    },
+    "^FTSE": {
+      "chart": {
+        "result": [
+          {
+            "meta": {
+              "currency": "GBp",
+              "symbol": "^FTSE",
+              "regularMarketPrice": 8400.0,
+              "previousClose": 8380.0
+            },
+            "timestamp": [1745280000],
+            "indicators": {
+              "quote": [
+                {
+                  "open": [8380.0],
+                  "high": [8420.0],
+                  "low": [8360.0],
+                  "close": [8400.0],
+                  "volume": [1000000000]
+                }
+              ]
+            }
+          }
+        ],
+        "error": null
+      }
+    },
+    "GBPUSD=X": {
+      "chart": {
+        "result": [
+          {
+            "meta": {
+              "currency": "USD",
+              "symbol": "GBPUSD=X",
+              "regularMarketPrice": 1.2750
+            },
+            "timestamp": [1745280000],
+            "indicators": {
+              "quote": [
+                {
+                  "open": [1.2740],
+                  "high": [1.2770],
+                  "low": [1.2730],
+                  "close": [1.2750],
+                  "volume": [0]
+                }
+              ]
+            }
+          }
+        ],
+        "error": null
+      }
+    }
+  }
+}
