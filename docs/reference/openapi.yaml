@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 2.7.0
+  version: 2.9.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -56,6 +56,10 @@ tags:
     description: Alert rules configuration and evaluation
   - name: Notifications
     description: Notification feed and delivery preferences
+  - name: Screener
+    description: Strategy-rules stock screener (DS-01) and screener results
+  - name: External - Alpaca
+    description: "External API calls to Alpaca Markets (https://data.alpaca.markets). These are outbound calls FROM this system TO Alpaca — documented here per CLAUDE.md §1 (ST-02, BLG-SPEC-22). Contract: docs/specs/api_contracts/alpaca_integration_contract.md"
 
 paths:
   /portfolio:
@@ -2658,6 +2662,234 @@ components:
                 properties:
                   data:
                     $ref: "#/components/schemas/EndpointTestResponse"
+
+  # ─── External: Alpaca Markets API (BLG-SPEC-22 / ST-02) ───────────────────────
+  # These paths document outbound calls FROM this system TO Alpaca.
+  # Canonical contract: docs/specs/api_contracts/alpaca_integration_contract.md
+  # Base URL override: https://data.alpaca.markets (not served by this system's backend)
+  /v2/stocks/{symbol}/bars:
+    get:
+      tags:
+        - External - Alpaca
+      summary: Get OHLCV bars for a US ticker (Alpaca Markets API v2)
+      description: |
+        **External API call.** Fetches historical daily OHLCV bars from Alpaca Markets.
+        Used by DS-05 to replace Yahoo Finance for US market tickers.
+        Canonical contract: docs/specs/api_contracts/alpaca_integration_contract.md
+        Base URL: https://data.alpaca.markets (not this system's backend)
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+          description: US ticker symbol (e.g. NVDA, AAPL)
+        - name: timeframe
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: ["1Day"]
+          description: Bar timeframe. Use "1Day" for daily bars.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 30
+          description: Number of bars to return. 30 recommended for ATR calculation.
+      responses:
+        "200":
+          description: OHLCV bars response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bars:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        t: { type: string, format: date-time, description: "Bar open timestamp (UTC)" }
+                        o: { type: number, description: "Open price (USD)" }
+                        h: { type: number, description: "High price (USD)" }
+                        l: { type: number, description: "Low price (USD)" }
+                        c: { type: number, description: "Close price (USD)" }
+                        v: { type: integer, description: "Volume" }
+                        vw: { type: number, description: "VWAP" }
+                        n: { type: integer, description: "Trade count" }
+                  symbol: { type: string }
+                  next_page_token: { type: string, nullable: true }
+        "403":
+          description: Invalid credentials
+        "404":
+          description: Symbol not found — apply fallback to Yahoo Finance
+        "429":
+          description: Rate limit exceeded — retry with exponential backoff
+
+  /v1beta1/news:
+    get:
+      tags:
+        - External - Alpaca
+      summary: Get news headlines for US tickers (Alpaca News API v1beta1)
+      description: |
+        **External API call.** Fetches recent news headlines from Alpaca News API.
+        Used by DS-06 for display-only ticker-level news panel.
+        §13 COMPLIANT — display-only, no sentiment scoring, no advisory.
+        Canonical contract: docs/specs/api_contracts/alpaca_integration_contract.md
+        Base URL: https://data.alpaca.markets (not this system's backend)
+      parameters:
+        - name: symbols
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated ticker symbols (e.g. "NVDA,AAPL")
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+          description: Maximum headlines per symbol
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["desc", "asc"]
+            default: "desc"
+          description: Sort order (newest first by default)
+      responses:
+        "200":
+          description: News headlines response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  news:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: integer }
+                        headline: { type: string }
+                        author: { type: string, nullable: true }
+                        created_at: { type: string, format: date-time }
+                        updated_at: { type: string, format: date-time }
+                        summary: { type: string, nullable: true }
+                        url: { type: string, nullable: true }
+                        symbols: { type: array, items: { type: string } }
+                        source: { type: string, nullable: true }
+                  next_page_token: { type: string, nullable: true }
+        "403":
+          description: Invalid credentials
+        "429":
+          description: Rate limit exceeded — serve empty news panel
+
+  # ─── Screener API (BLG-SPEC-23 / ST-03) ────────────────────────────────────
+  # Internal screener endpoints served by this system's backend.
+  # Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+  /screener/results:
+    get:
+      tags:
+        - Screener
+      summary: Get latest screener results
+      description: |
+        Returns the results of the most recent completed screener run.
+        Results are ordered by signal_score descending.
+        Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+            maximum: 200
+          description: Number of results to return
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Pagination offset
+        - name: market
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["US", "UK", "all"]
+            default: "all"
+          description: Filter by market
+        - name: run_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Return results from a specific run (UUID). Omit for latest run.
+      responses:
+        "200":
+          description: Screener results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      results:
+                        type: array
+                        description: Screener result records (see screener_results_schema.md)
+                      run_id: { type: string }
+                      run_timestamp: { type: string, format: date-time }
+                      total: { type: integer }
+                      limit: { type: integer }
+                      offset: { type: integer }
+
+  /screener/run:
+    post:
+      tags:
+        - Screener
+      summary: Trigger a new screener run
+      description: |
+        Triggers a new screener run against the configured ticker universe.
+        Returns the run_id immediately; results available via GET /screener/results?run_id={run_id}.
+        Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticker_universe:
+                  type: array
+                  items:
+                    type: string
+                  description: Optional override of ticker universe. If omitted, uses configured default universe.
+      responses:
+        "202":
+          description: Screener run accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      run_id: { type: string, description: "UUID of the initiated run" }
+                      status: { type: string, enum: ["accepted", "running"] }
+        "409":
+          description: A screener run is already in progress
 
 security:
   - ApiKey: []
