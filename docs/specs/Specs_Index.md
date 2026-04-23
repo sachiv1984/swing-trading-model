@@ -124,6 +124,25 @@ It points to the **single canonical source**.
 
 ---
 
+### 3.4b Arc 1 Screener Specifications
+
+**What it owns**
+- Screener result record schema and field semantics
+- Screener filter ordering and gate logic
+- Market routing rules (US/UK data sources)
+- Screener run parameter logging requirements
+
+**Canonical Documents**
+- `screener_results_schema.md` — Class 2 Canonical, v1.0, Active (created 2026-04-23, ST-01, cycle 2026-04-22__release-v2.9): screener output fields, filter ordering, market routing, logging requirement. References `claude/strategy/strategy_rules.md §11` as parameter source. Sign-off: Head of Specs Team (autonomous class, 2026-04-23).
+- `api_contracts/alpaca_integration_contract.md` — Class 2 Canonical (created 2026-04-23, ST-02): Alpaca Markets API contract for OHLCV bars and News endpoints; rate limits, error codes, fallback strategy, API version pin.
+- `api_contracts/screener_api_contract.md` — Class 2 Canonical (created 2026-04-23, ST-03): Internal screener API (`GET /screener/results`, `POST /screener/run`); request/response schemas, pagination, error codes.
+- `frontend/screener_results_page_ux_spec.md` (or equivalent) — Class 2 or Class 5 (created 2026-04-23, ST-04): Screener results page UX spec; column layout, sort/filter, data freshness indicator, empty states, watchlist promotion flow, progressive loading.
+
+**Owner**
+- Head of Specs Team (schema) + API Contracts & Documentation Owner (contracts) + Frontend Specifications & UX Documentation Owner (UX spec)
+
+---
+
 ### 3.5 Frontend & UX Semantics
 
 **What it owns**
