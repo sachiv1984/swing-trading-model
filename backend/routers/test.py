@@ -94,6 +94,16 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /analytics/r-multiple-distribution", "method": "GET", "url": f"{base_url}/analytics/r-multiple-distribution", "critical": False},
         {"name": "GET /analytics/compliance-metrics", "method": "GET", "url": f"{base_url}/analytics/compliance-metrics", "critical": False},
 
+        # AI Journal
+        {"name": "POST /ai/journal-summary", "method": "POST", "url": f"{base_url}/ai/journal-summary", "critical": False},
+        {"name": "GET /ai/journal-summary/history", "method": "GET", "url": f"{base_url}/ai/journal-summary/history", "critical": False},
+
+        # News
+        {"name": "GET /news/AAPL", "method": "GET", "url": f"{base_url}/news/AAPL", "critical": False},
+
+        # Analytics (extended)
+        {"name": "GET /analytics/market-correlation", "method": "GET", "url": f"{base_url}/analytics/market-correlation", "critical": False},
+
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
     ]
