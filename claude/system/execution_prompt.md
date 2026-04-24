@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.8
-**Last Updated:** 2026-04-18
+**Version:** 3.10
+**Last Updated:** 2026-04-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -724,6 +724,10 @@ When all criteria are met, populate the sign-off block as follows:
 
 If any criterion is not met, the autonomous class does not apply — the sign-off block must be completed by the Director of Quality. An EPIC signed off under the autonomous class is still subject to the STEP 4 merge gate; the Director of Quality may review and override at any time before merge.
 
+**Reclassification counter-sign rule (BLG-GOV-14 / LL-v2.3-EX-02):** When a story was originally classified `delegated_frontend` and has been reclassified to `autonomous` per LL-v2.3-EX-02, but the EPIC as a whole introduces frontend-visible changes (UI rendering, interaction behaviour, or page routing), the autonomous class sign-off is insufficient for that EPIC. Director of Quality counter-sign is required at STEP 5 sprint close, in addition to the engine sign-off. Record the counter-sign as a second sign-off block in `qa_evidence_EPIC-xx.md` and confirm in `sprint_close.md`.
+
+**EPIC-level consolidation note (BLG-GOV-14):** When story-level sign-offs within the EPIC involve domain-specific authorities (e.g. Strategy Rules & System Intent Owner, Security Officer, Compliance), the EPIC-level DoQ consolidation block in `qa_evidence_EPIC-xx.md` must explicitly list those story-level authority sign-offs and confirm they are cleared. A domain-authority sign-off at story level does not substitute for the EPIC-level DoQ consolidation block — both are required.
+
 **3.2.B — Open PR**
 
 **Pre-condition (BLG-GOV-18):** Do not open the PR until the DoQ sign-off block in `qa_evidence_EPIC-xx.md` has a non-blank `Date:` field. A blank Date means sign-off is incomplete. The merge gate (STEP 4) also enforces this, but checking here prevents opening a PR that will immediately be blocked — which creates unnecessary review noise. If the Date field is blank: complete the sign-off first, then proceed.
@@ -825,6 +829,8 @@ For each ST item: confirm `acceptance_verified = true`. If any are false and the
 **QA Evidence File Existence Check (LL-v2.4-P4-01 — second recurrence):** Before checking sign-off dates, verify that `qa_evidence_EPIC-xx.md` **exists** for every EPIC in `merge_gate.epics_merged`. A missing QA evidence file is a hard gate — create it immediately using §3.2.A, complete the verification (including pre-met items and autonomous items), obtain DoQ sign-off, then continue. Do not proceed to STEP 5.2 until all qa_evidence files exist. A file created here at sprint close is acceptable; a file missing at Phase 4 (delivery verification) preflight is a recurrent process failure that this gate must prevent.
 
 **QA Evidence Persistence Check (LL-v2.0-P4-1):** For each EPIC with `qa_signed_off: true` in `execution_state.json`, read the corresponding `qa_evidence_EPIC-xx.md` file and confirm the sign-off block `Date:` field is non-blank. If blank: the sign-off was not persisted during sprint execution — re-apply the sign-off block immediately (Director of Quality authority required). Do not proceed to STEP 5.3 until all sign-off blocks are confirmed non-blank.
+
+**STEP 5.1.B — System Status Report Integrity Advisory (BLG-GOV-15):** Before writing Sprint_Complete, open `docs/System_status_report.md` and verify that all SC-* scenario count cells reflect the actual scenario count after this sprint's additions. If scenario count cells were set at sprint planning and not updated post-execution (e.g. new test data library fixtures were added), correct those cells now. Also verify that the execution_prompt.md version reference in the System Status Report matches the actual current version of `claude/system/execution_prompt.md`. Record any corrections made (or confirm no correction was needed) in `sprint_close.md` under a "System Status Report corrections" note. This advisory is non-blocking — corrections are made in-place; the sprint does not halt if cells were stale.
 
 **Unpushed-Commit Check (ST-12 / CF-1):** Before closing the sprint, verify that all commits on the exec branch have been pushed to origin. Run:
 

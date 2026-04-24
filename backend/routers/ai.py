@@ -9,12 +9,13 @@ or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 Contract: docs/specs/api_contracts/ai_endpoints.md v1.0
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import date
 from database import get_db
 from services.ai_service import summarise_journal_notes
+from services.ai_audit_service import log_ai_summary_run, query_audit_log
 
 router = APIRouter(prefix="/ai", tags=["AI"])
 
@@ -85,6 +86,19 @@ def journal_summary(body: JournalSummaryRequest):
 
     result = summarise_journal_notes(notes)
 
+    # Audit log — record every invocation (BLG-AI-01)
+    try:
+        log_ai_summary_run(
+            trade_ids=body.trade_ids,
+            date_from=body.date_from,
+            date_to=body.date_to,
+            trade_count=len(rows),
+            model_version=result.get("model"),
+            summary_text=result.get("summary"),
+        )
+    except Exception:
+        pass  # Audit log failure must not block the summary response
+
     return JournalSummaryResponse(
         summary=result["summary"],
         trade_count=len(rows),
@@ -92,3 +106,25 @@ def journal_summary(body: JournalSummaryRequest):
         cached=False,
         message=result["message"],
     )
+
+
+@router.get("/journal-summary/history")
+def journal_summary_history(
+    trade_id: Optional[int] = Query(default=None, description="Filter by trade ID"),
+    date_from: Optional[date] = Query(default=None),
+    date_to: Optional[date] = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=200),
+):
+    """
+    Query the AI journal summary audit log.
+
+    Supports filtering by trade_id (array contains) and invoked_at date range.
+    Returns audit records newest first — no summary text stored, only metadata.
+    """
+    records = query_audit_log(
+        trade_id=trade_id,
+        date_from=date_from,
+        date_to=date_to,
+        limit=limit,
+    )
+    return {"ok": True, "data": {"records": records, "count": len(records)}}

@@ -56,6 +56,7 @@ export default function SystemStatus() {
     if (endpointName.includes('/cash')) return 'Cash Management';
     if (endpointName.includes('/signals') || endpointName.includes('/market')) return 'Market Data';
     if (endpointName.includes('/settings')) return 'Configuration';
+    if (endpointName.includes('/ai')) return 'AI';
     // Check for core LAST (most general)
     if (endpointName.includes('/health') || endpointName === 'GET /') return 'Core';
     return 'Other';
