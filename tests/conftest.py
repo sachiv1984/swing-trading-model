@@ -19,3 +19,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 # Tests that need a real DB use their own mock/stub strategy.
 if not os.getenv("DATABASE_URL"):
     os.environ["DATABASE_URL"] = "postgresql://test:test@localhost:5432/test_stub"
+
+# Import mock harness fixtures (BLG-QA-08 / ST-09)
+from tests.mock_harness.conftest_extension import (  # noqa: F401, E402
+    alpaca_mock_harness,
+    yahoo_mock_harness,
+    screener_mocks,
+    scenario_mocks,
+)
