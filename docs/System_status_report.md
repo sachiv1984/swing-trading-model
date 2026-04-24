@@ -1,9 +1,37 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.0
-**Last Updated:** 2026-04-16
+**Version:** 2.1
+**Last Updated:** 2026-04-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-04-22__release-v2.9
+**Date:** 2026-04-24
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-03 | §13 review record for DS-06 news panel (BLG-GOV-16 gate cleared); external API mock harness for CI (Alpaca + Yahoo Finance intercepts, 7 smoke tests); screener test data library (12 scenarios, 10+ synthetic tickers) | `docs/product/decisions/sec13_review_DS-06_alpaca_news_panel.md`; `tests/mock_harness/`; `tests/mock_harness/fixtures/` | None |
+| EPIC-01 | Screener results schema spec (BLG-SPEC-21); Alpaca integration contract (BLG-SPEC-22); screener internal API contract (BLG-SPEC-23); screener results page UX spec (BLG-FE-17) — all four Arc 1 specification artefacts; DS-01 screener engine unblocked for v3.0 | `docs/specs/screener_results_schema.md`; `docs/specs/api_contracts/alpaca_integration_contract.md`; `docs/specs/api_contracts/screener_api_contract.md`; `docs/specs/frontend/pages/screener_results.md` | None |
+| EPIC-04 | execution_prompt.md v3.10: BLG-GOV-14 reclassification counter-sign rule + EPIC-level consolidation note (§3.2.A); BLG-GOV-15 STEP 5.1.B System Status Report integrity advisory; SystemStatus.js /ai prefix categorisation fix; AI audit log (`ai_audit_log` table, SHA-256 hashing, `GET /ai/journal-summary/history`); AI test scenario coverage (4 scenarios) | `claude/system/execution_prompt.md` v3.10; `src/pages/SystemStatus.js`; `backend/services/ai_audit_service.py`; `docs/testing/ai_scenarios.md` | None |
+| EPIC-02 | DS-03 sector & industry classification (virtual fields on positions, Yahoo Finance enrichment, 9 unit tests); DS-05 Alpaca US market data integration (OHLCV v2, Yahoo Finance fallback, 10 integration tests); DS-06 Alpaca news panel (display-only per BLG-GOV-16 §13, watchlist toggle, UK tickers excluded) | `backend/services/sector_service.py`; `backend/services/alpaca_service.py`; `backend/services/news_service.py`; `backend/routers/news.py`; `src/pages/Watchlist.js` | DEV-01: DS-06 news panel on screener results page deferred to v3.0 (DS-02 implementation prerequisite not yet built) |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| DS-06 screener results page news panel (ST-07 AC-1 partial) | DS-02 (screener results page) deferred to v3.0; backend endpoint available | v3.0 (DS-02) |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-03.md, qa_evidence_EPIC-01.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-02.md — all DoQ sign-off complete
+- Deviations filed: DEV-01 (P3 — DS-06 screener results page deferred; scope constraint, not defect)
+- Test scenarios referenced: `tests/test_api_mock_harness.py` (7 smoke), `tests/test_sector_service.py` (9 unit), `tests/test_alpaca_integration.py` (10 integration), `docs/testing/ai_scenarios.md` (4 scenarios)
+- v3.0 prerequisites: all 10 Arc 1 prerequisites delivered and merged
 
 ---
 

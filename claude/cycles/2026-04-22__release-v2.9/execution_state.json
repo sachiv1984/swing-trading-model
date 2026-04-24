@@ -1,27 +1,26 @@
 {
   "cycle_id": "2026-04-22__release-v2.9",
-  "sprint_goal": "Deliver the complete Arc 1 specification and governance foundation in Sprint 1 (screener specs, §13 review, CI mock harness, and governance debt patches), then implement DS-03 sector enrichment, DS-05 Alpaca data integration, DS-06 news panel, and AI governance debt items in Sprint 2 — completing all prerequisites for the v3.0 screener engine.",
+  "sprint_goal": "Deliver the complete Arc 1 specification and governance foundation in Sprint 1 (screener specs, \u00a713 review, CI mock harness, and governance debt patches), then implement DS-03 sector enrichment, DS-05 Alpaca data integration, DS-06 news panel, and AI governance debt items in Sprint 2 \u2014 completing all prerequisites for the v3.0 screener engine.",
   "backlog_slice_source": "claude/cycles/2026-04-22__release-v2.9/stage4_backlog_slice.md",
   "invoked_utc": "2026-04-23T00:00:00Z",
   "mode": "standard",
-  "status": "Running",
+  "status": "Sealed",
   "last_updated_utc": "2026-04-24T00:00:00Z",
-
   "epics": {
     "EPIC-03": {
       "title": "Arc 1 Governance & QA Foundation",
       "sprint": 1,
       "execution_sequence": 1,
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-04-22__release-v2.9/EPIC-03",
       "pr_number": 265,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-22__release-v2.9/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
         "ST-08": {
-          "title": "§13 review record for DS-06 (BLG-GOV-16)",
+          "title": "\u00a713 review record for DS-06 (BLG-GOV-16)",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -33,7 +32,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-23T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/strategy/strategy_rules.md#§13"],
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#\u00a713"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
@@ -84,15 +85,14 @@
         }
       }
     },
-
     "EPIC-01": {
       "title": "Arc 1 Specification Foundation",
       "sprint": 1,
       "execution_sequence": 2,
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-04-22__release-v2.9/EPIC-01",
       "pr_number": 266,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-22__release-v2.9/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -110,7 +110,7 @@
           "spec_references": [],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
-          "notes": "screener_results_schema.md created. Added to Specs_Index.md §3.4b."
+          "notes": "screener_results_schema.md created. Added to Specs_Index.md \u00a73.4b."
         },
         "ST-02": {
           "title": "Alpaca API integration contract (BLG-SPEC-22)",
@@ -159,21 +159,20 @@
         }
       }
     },
-
     "EPIC-04": {
       "title": "Governance Debt & Quick Wins",
       "sprint": "1+2",
       "execution_sequence": "3 (ST-11/12/13 Sprint 1) + 5 (ST-14/15 Sprint 2)",
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-04-22__release-v2.9/EPIC-04",
       "pr_number": 268,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-22__release-v2.9/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
         "ST-11": {
-          "title": "execution_prompt.md §3.2 governance patches (BLG-GOV-14)",
+          "title": "execution_prompt.md \u00a73.2 governance patches (BLG-GOV-14)",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -182,10 +181,12 @@
           "commit_sha": "a53c685",
           "completed_utc": "2026-04-24T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md#§3.2"],
+          "spec_references": [
+            "claude/system/execution_prompt.md#\u00a73.2"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
-          "notes": "Reclassification counter-sign rule + EPIC-level consolidation note added. v3.8→v3.9."
+          "notes": "Reclassification counter-sign rule + EPIC-level consolidation note added. v3.8\u2192v3.9."
         },
         "ST-12": {
           "title": "execution_prompt.md STEP 5.1.B advisory (BLG-GOV-15)",
@@ -197,10 +198,12 @@
           "commit_sha": "a53c685",
           "completed_utc": "2026-04-24T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md#STEP 5.1"],
+          "spec_references": [
+            "claude/system/execution_prompt.md#STEP 5.1"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
-          "notes": "STEP 5.1.B advisory added. v3.9→v3.10. CLAUDE.md §6 checklist complete."
+          "notes": "STEP 5.1.B advisory added. v3.9\u2192v3.10. CLAUDE.md \u00a76 checklist complete."
         },
         "ST-13": {
           "title": "SystemStatus.js /ai prefix fix (BLG-FE-15)",
@@ -227,7 +230,9 @@
           "commit_sha": "d636391",
           "completed_utc": "2026-04-24T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/ai_endpoints.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "notes": "ai_audit_log table + log_ai_summary_run integration + GET /ai/journal-summary/history endpoint."
@@ -242,22 +247,23 @@
           "commit_sha": "d636391",
           "completed_utc": "2026-04-24T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/ai_endpoints.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "notes": "docs/testing/ai_scenarios.md created with 4 scenarios."
         }
       }
     },
-
     "EPIC-02": {
       "title": "Arc 1 Implementation Start",
       "sprint": 2,
       "execution_sequence": 4,
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-04-22__release-v2.9/EPIC-02",
       "pr_number": 267,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-22__release-v2.9/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -272,7 +278,9 @@
           "commit_sha": "448d895",
           "completed_utc": "2026-04-24T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/data_model.md"],
+          "spec_references": [
+            "docs/specs/data_model.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "notes": "sector_service.py + position_service enrichment. Virtual fields. 9 unit tests pass."
@@ -287,10 +295,12 @@
           "commit_sha": "448d895",
           "completed_utc": "2026-04-24T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/alpaca_integration_contract.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/alpaca_integration_contract.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
-          "notes": "alpaca_service.py + pricing.py routing. US→Alpaca, UK→Yahoo. 10 integration tests pass."
+          "notes": "alpaca_service.py + pricing.py routing. US\u2192Alpaca, UK\u2192Yahoo. 10 integration tests pass."
         },
         "ST-07": {
           "title": "Alpaca News Panel (DS-06)",
@@ -302,7 +312,9 @@
           "commit_sha": "448d895",
           "completed_utc": "2026-04-24T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/alpaca_integration_contract.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/alpaca_integration_contract.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "notes": "news_service.py + /news/{ticker} endpoint + Watchlist.js news panel. DEV-01: screener results page deferred to v3.0 per spec."
@@ -310,17 +322,35 @@
       }
     }
   },
-
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-08", "ST-09", "ST-10", "ST-01", "ST-02", "ST-03", "ST-04", "ST-11", "ST-12", "ST-13", "ST-05", "ST-06", "ST-07", "ST-14", "ST-15"],
-
+  "completed_items": [
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-05",
+    "ST-06",
+    "ST-07",
+    "ST-14",
+    "ST-15"
+  ],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-03", "EPIC-01", "EPIC-04", "EPIC-02"],
-    "all_merged": false
+    "epics_merged": [
+      "EPIC-03",
+      "EPIC-01",
+      "EPIC-04",
+      "EPIC-02"
+    ],
+    "epics_pending": [],
+    "all_merged": true
   },
-
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-04-24T00:00:00Z"
 }
