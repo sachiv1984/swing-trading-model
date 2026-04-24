@@ -1,0 +1,50 @@
+{
+  "_scenario": "Passes all screener filters — UK ticker MOCK-PASS-UK.L, FTSE risk-on",
+  "_expected_outcome": "Included in screener results. Pence->pounds conversion applied. ATR in GBP.",
+  "alpaca": {
+    "news/MOCK-PASS-UK.L": [
+      {"id": 30001, "headline": "Mock UK Corp Reports Record Production", "symbols": ["MOCK-PASS-UK.L"], "created_at": "2026-04-22T07:00:00Z"}
+    ]
+  },
+  "yahoo": {
+    "MOCK-PASS-UK.L": {
+      "chart": {
+        "result": [
+          {
+            "meta": {
+              "currency": "GBp",
+              "symbol": "MOCK-PASS-UK.L",
+              "regularMarketPrice": 2850.0,
+              "previousClose": 2820.0
+            },
+            "timestamp": [1745280000, 1745366400, 1745625600],
+            "indicators": {
+              "quote": [
+                {
+                  "open": [2800.0, 2820.0, 2830.0, 2840.0, 2845.0, 2845.0, 2840.0, 2842.0, 2848.0, 2850.0, 2852.0, 2855.0, 2858.0, 2862.0, 2865.0],
+                  "high": [2860.0, 2875.0, 2882.0, 2890.0, 2892.0, 2894.0, 2888.0, 2890.0, 2895.0, 2900.0, 2902.0, 2905.0, 2910.0, 2912.0, 2918.0],
+                  "low": [2780.0, 2800.0, 2810.0, 2820.0, 2825.0, 2822.0, 2818.0, 2820.0, 2825.0, 2830.0, 2832.0, 2835.0, 2840.0, 2845.0, 2848.0],
+                  "close": [2820.0, 2840.0, 2852.0, 2858.0, 2862.0, 2858.0, 2855.0, 2858.0, 2862.0, 2865.0, 2868.0, 2872.0, 2875.0, 2880.0, 2850.0],
+                  "volume": [5000000, 4800000, 4600000, 4400000, 4200000, 4000000, 3900000, 3800000, 3700000, 3600000, 3500000, 3400000, 3300000, 3200000, 3100000]
+                }
+              ]
+            }
+          }
+        ],
+        "error": null
+      }
+    },
+    "^FTSE": {
+      "chart": {
+        "result": [{"meta": {"regularMarketPrice": 8400.0, "symbol": "^FTSE"}, "indicators": {"quote": [{"close": [8050.0, 8100.0, 8150.0, 8200.0, 8250.0, 8300.0, 8350.0, 8400.0]}]}}],
+        "error": null
+      }
+    },
+    "GBPUSD=X": {
+      "chart": {
+        "result": [{"meta": {"regularMarketPrice": 1.2750, "symbol": "GBPUSD=X"}, "indicators": {"quote": [{"close": [1.2750]}]}}],
+        "error": null
+      }
+    }
+  }
+}

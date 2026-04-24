@@ -1,11 +1,40 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.4.0
-**Last Updated:** 2026-03-20
+**Version:** 1.5.0
+**Last Updated:** 2026-04-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## v2.9.0 (2026-04-23 — Release v2.9)
+
+### alpaca_integration_contract.md — v1.0 (NEW)
+
+**EPIC:** EPIC-01 (Arc 1 Specification Foundation)
+**ST:** ST-02 (BLG-SPEC-22)
+
+| Change | Details |
+|--------|---------|
+| New contract: Alpaca Markets API integration | External API contract for Alpaca Data API v2. Documents GET /v2/stocks/{symbol}/bars (OHLCV bars, DS-05) and GET /v1beta1/news (news headlines, DS-06). Includes rate limits, error codes, retry strategy, and explicit fallback strategy (Yahoo Finance for OHLCV; empty panel for news). US tickers only. API version pinned. |
+
+**Sign-off:** Sprint Execution Engine (autonomous class) — 2026-04-23
+
+---
+
+### screener_api_contract.md — v1.0 (NEW)
+
+**EPIC:** EPIC-01 (Arc 1 Specification Foundation)
+**ST:** ST-03 (BLG-SPEC-23)
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /screener/results | Returns screener result records from the latest (or specified) completed screener run. Offset-based pagination. Filter by market. Results ordered by signal_score descending. |
+| New endpoint: POST /screener/run | Triggers an async screener run. Returns run_id (UUID) immediately. Results retrievable via GET /screener/results?run_id={run_id}. Returns 409 if a run is already in progress. |
+
+**Sign-off:** Sprint Execution Engine (autonomous class) — 2026-04-23
+
+---
 
 ## v2.1.2 (2026-03-20 — Release v2.1)
 

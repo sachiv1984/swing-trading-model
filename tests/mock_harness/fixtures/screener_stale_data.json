@@ -1,0 +1,29 @@
+{
+  "_scenario": "Stale/insufficient price history — only 5 bars, cannot calculate 14-day ATR",
+  "_expected_outcome": "Excluded from screener results. ATR=None due to insufficient data.",
+  "alpaca": {
+    "bars/MOCK-STALE-DATA": {
+      "bars": [
+        {"t": "2026-04-22T04:00:00Z", "o": 100.0, "h": 118.0, "l": 98.0, "c": 115.0, "v": 1000000},
+        {"t": "2026-04-21T04:00:00Z", "o": 95.0, "h": 112.0, "l": 93.0, "c": 110.0, "v": 950000},
+        {"t": "2026-04-17T04:00:00Z", "o": 90.0, "h": 107.0, "l": 88.0, "c": 105.0, "v": 900000},
+        {"t": "2026-04-16T04:00:00Z", "o": 85.0, "h": 102.0, "l": 83.0, "c": 100.0, "v": 850000},
+        {"t": "2026-04-15T04:00:00Z", "o": 82.0, "h": 98.0, "l": 80.0, "c": 95.0, "v": 800000}
+      ],
+      "symbol": "MOCK-STALE-DATA",
+      "next_page_token": null
+    },
+    "news/MOCK-STALE-DATA": []
+  },
+  "yahoo": {
+    "MOCK-STALE-DATA": {
+      "chart": {
+        "result": [{"meta": {"regularMarketPrice": 115.0, "symbol": "MOCK-STALE-DATA"}, "indicators": {"quote": [{"close": [95.0, 100.0, 105.0, 110.0, 115.0]}]}}],
+        "error": null
+      }
+    },
+    "SPY": {
+      "chart": {"result": [{"meta": {"regularMarketPrice": 520.0, "symbol": "SPY"}, "indicators": {"quote": [{"close": [490.0, 500.0, 510.0, 520.0]}]}}], "error": null}
+    }
+  }
+}

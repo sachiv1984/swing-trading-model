@@ -1,0 +1,21 @@
+{
+  "_scenario": "Fails regime gate — UK ticker, FTSE below 200-day MA (risk-off)",
+  "_expected_outcome": "Excluded from screener results. FTSE 7800 < MA200 8100 = risk-off.",
+  "alpaca": {
+    "news/MOCK-FAIL-REGIME-UK.L": []
+  },
+  "yahoo": {
+    "MOCK-FAIL-REGIME-UK.L": {
+      "chart": {
+        "result": [{"meta": {"currency": "GBp", "symbol": "MOCK-FAIL-REGIME-UK.L", "regularMarketPrice": 1800.0}, "indicators": {"quote": [{"open": [1780.0], "high": [1820.0], "low": [1775.0], "close": [1800.0], "volume": [2000000]}]}}],
+        "error": null
+      }
+    },
+    "^FTSE": {
+      "chart": {
+        "result": [{"meta": {"regularMarketPrice": 7800.0, "symbol": "^FTSE"}, "indicators": {"quote": [{"close": [8200.0, 8150.0, 8100.0, 8050.0, 8000.0, 7950.0, 7900.0, 7850.0, 7800.0]}]}}],
+        "error": null
+      }
+    }
+  }
+}
