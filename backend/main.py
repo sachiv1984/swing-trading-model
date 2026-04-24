@@ -18,6 +18,7 @@ from routers import watchlist as watchlist_router
 from routers import digest as digest_router
 from routers import ai as ai_router
 from services.watchlist_service import ensure_watchlist_table
+from services.ai_audit_service import ensure_ai_audit_table
 
 
 
@@ -175,6 +176,11 @@ def on_startup():
         _log.info("ensure_watchlist_table: OK")
     except Exception as _e:
         _log.error("ensure_watchlist_table FAILED at startup: %s", _e)
+    try:
+        ensure_ai_audit_table()
+        _log.info("ensure_ai_audit_table: OK")
+    except Exception as _e:
+        _log.error("ensure_ai_audit_table FAILED at startup: %s", _e)
 
 
 @app.get("/")
