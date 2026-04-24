@@ -16,6 +16,7 @@ export const createPageUrl = (pageName) => {
     notifications: '/notifications',
     NotificationPreferences: '/notifications/preferences',
     Watchlist: '/Watchlist',
+    WeeklyDigest: '/WeeklyDigest',
   };
   return routes[pageName] || '/';
 };
