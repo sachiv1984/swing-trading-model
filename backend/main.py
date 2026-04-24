@@ -17,6 +17,7 @@ from routers import validation, analytics, test, portfolio_size, trades_export, 
 from routers import watchlist as watchlist_router
 from routers import digest as digest_router
 from routers import ai as ai_router
+from routers import news as news_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 
@@ -159,6 +160,7 @@ app.include_router(alerts.router)
 app.include_router(watchlist_router.router)
 app.include_router(digest_router.router)
 app.include_router(ai_router.router)
+app.include_router(news_router.router)
 
 
 @app.on_event("startup")

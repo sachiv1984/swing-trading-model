@@ -14,6 +14,7 @@ from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 from decimal import Decimal
 from services.grace_service import compute_grace_days_remaining
+from services.sector_service import get_sector_and_industry
 
 
 from database import (
@@ -151,6 +152,9 @@ def get_positions_with_prices() -> List[Dict]:
         else:
             stop_price_gbp = stop_price_native
         
+        # Fetch sector/industry from Yahoo Finance (DS-03)
+        sector, industry = get_sector_and_industry(pos['ticker'], pos['market'])
+
         # Display ticker without .L suffix
         display_ticker = pos['ticker'].replace('.L', '') if pos['market'] == 'UK' else pos['ticker']
         
@@ -205,7 +209,9 @@ def get_positions_with_prices() -> List[Dict]:
             "total_cost": round(pos.get('total_cost', 0), 2),
             "entry_note": pos.get('entry_note'),
             "exit_note": pos.get('exit_note'),
-            "tags": pos.get('tags', [])
+            "tags": pos.get('tags', []),
+            "sector": sector,
+            "industry": industry,
         })
     
     print(f"✓ Returned {len(positions_list)} positions with live prices\n")

@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.3
-**Last Updated:** 2026-04-02
+**Version:** 2.4
+**Last Updated:** 2026-04-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -837,6 +837,25 @@ WHERE table_schema = 'public'
 
 ---
 
-**Document Version:** 2.0
+---
+
+## DS-03 — Sector & Industry Enrichment (v2.4, 2026-04-24)
+
+**Story:** ST-05 (EPIC-02, v2.9)
+
+`sector` and `industry` are **virtual fields** returned by `GET /positions` (and future screener result endpoints). They are derived on-request from Yahoo Finance (`yfinance.Ticker.info`) and are not stored in the `positions` table.
+
+**No database migration is required.** These fields are enriched at API response time via `services/sector_service.py`. Fields will be `null` when Yahoo Finance does not carry classification for a ticker (common for some UK-listed stocks).
+
+| Field | Source | Type | Nullable | Description |
+|-------|--------|------|----------|-------------|
+| `sector` | `yfinance.Ticker.info['sector']` | String | YES | Yahoo Finance sector classification (e.g. "Technology") |
+| `industry` | `yfinance.Ticker.info['industry']` | String | YES | Yahoo Finance industry classification (e.g. "Semiconductors") |
+
+These fields appear in the `GET /positions` API response on each open position and in the screener result schema (`docs/specs/screener_results_schema.md §1.1`).
+
+---
+
+**Document Version:** 2.4
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-03-20
+**Last Review:** 2026-04-24
