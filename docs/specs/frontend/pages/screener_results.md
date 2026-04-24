@@ -210,3 +210,11 @@ This spec covers all DS-02 interaction patterns:
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-04-23
 - Comments: Autonomous class sign-off — all four qualifying criteria met (all stories autonomous, all AC code-review-verifiable, no frontend implementation, engine signer populated). DS-02 implementation deferred to v3.0; this spec is the prerequisite.
+
+---
+
+## Known Deviations
+
+| ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
+|----|-------------|----------------------|----------|------------------|-------|------------------|
+| DEV-01 | News panel not displayed on screener results page (DS-02 portion of DS-06 AC-1). The `GET /news/{ticker}` backend endpoint is available; UI attachment to the screener results page is deferred pending DS-02 page implementation in v3.0. | §9 News Panel: "display on screener results page" (ST-07 AC-1). DS-02 implementation is a prerequisite. | P3 | v3.0 (DS-02 — screener results page implementation) | Backend Engineering Patterns Owner + Frontend Specifications & UX Documentation Owner | BLG-FE-18 |

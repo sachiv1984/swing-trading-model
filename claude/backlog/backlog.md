@@ -156,6 +156,31 @@ DS-02 (Screener Results Page) has no UX spec. Frontend implementation cannot beg
 
 ---
 
+### BLG-FE-18 — Screener results page: attach news panel on DS-02 implementation
+**Priority:** P3 (Low)
+**Type:** Frontend / Feature Completion
+**Owner:** Backend Engineering Patterns Owner + Frontend Specifications & UX Documentation Owner
+**Source:** DEV-01 — v2.9 delivery verification 2026-04-24; ST-07 (DS-06) AC-1 partial deferral
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.0 (DS-02 implementation prerequisite must ship first)
+
+**Problem**
+The `GET /news/{ticker}` backend endpoint is available (shipped v2.9 ST-07), but the UI attachment to the screener results page is deferred because DS-02 (screener results page implementation) does not yet exist. When DS-02 is implemented in v3.0, the news panel must be wired to the screener results page to complete ST-07 AC-1.
+
+**Scope**
+- Wire the existing `GET /news/{ticker}` backend endpoint to the screener results page news panel
+- Per `screener_results.md §9`: panel triggered by news count badge click; inline expanded below row; last 5 headlines; UK tickers show `—` in news column (no badge)
+- Display-only, per BLG-GOV-16 §13 sign-off conditions
+
+**Acceptance Criteria**
+- News panel renders on screener results page per `screener_results.md §9`
+- Consistent with watchlist news panel implementation (v2.9 ST-07)
+- UK ticker handling: `—` in news column, no badge, no panel
+- Empty news state handled per `screener_results.md §7`
+- DoQ sign-off including local run or staging verification of toggle behaviour
+
+---
+
 ### BLG-FE-15 — SystemStatus.js: add `/ai` prefix to `categorizeEndpoint()`
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -278,6 +303,28 @@ No synthetic ticker test data library exists. Screener engine tests would requir
 - Test data library created with minimum 10 synthetic tickers covering key screener filter scenarios
 - Edge cases documented: passes all filters, fails regime gate, fails ATR threshold, fails signal threshold
 - Used by BLG-QA-08 mock harness
+- DoQ sign-off with Date field populated
+
+---
+
+### TEST-GAP-ST14 — AI audit service unit tests (ai_audit_service.py)
+**Priority:** P3 (Low)
+**Type:** Test Automation / Backend Coverage
+**Owner:** QA & Testing Owner
+**Source:** v2.9 delivery verification 2026-04-24 — qa_evidence_EPIC-04.md ST-14 note: "no unit tests for audit service — in scope for future sprint"
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Before next sprint modifying AI audit or journal summary features
+
+**Problem**
+`backend/services/ai_audit_service.py` (shipped v2.9 ST-14) has no unit tests. The audit log table creation (`ensure_ai_audit_table`), row insertion (`log_ai_summary_run`), and query (`query_audit_log`) functions are untested at unit level.
+
+**Scope**
+- Unit tests for `ai_audit_service.py` covering: `ensure_ai_audit_table` idempotency, `log_ai_summary_run` happy path and exception handling, `query_audit_log` filter behaviour (by trade_id, date range, limit)
+- Tests should not require a live DB (use mock or TestClient pattern per existing integration test pattern)
+
+**Acceptance Criteria**
+- Unit tests created covering at minimum: happy path insert, query by trade_id, query by date range, graceful handling of DB error in `log_ai_summary_run`
+- Tests pass in CI
 - DoQ sign-off with Date field populated
 
 ---
