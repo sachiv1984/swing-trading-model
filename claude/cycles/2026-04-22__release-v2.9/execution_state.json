@@ -166,9 +166,9 @@
       "execution_sequence": "3 (ST-11/12/13 Sprint 1) + 5 (ST-14/15 Sprint 2)",
       "status": "done",
       "branch": "exec/2026-04-22__release-v2.9/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 268,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-22__release-v2.9/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
