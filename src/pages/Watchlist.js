@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
-import { Plus, Trash2, Eye } from "lucide-react";
+import { Plus, Trash2, Eye, Newspaper, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "../lib/utils";
 import WatchlistModal from "../components/watchlist/WatchlistModal";
 import DataState from "../components/ui/DataState";
@@ -72,6 +72,8 @@ export default function Watchlist() {
   const [loadError, setLoadError] = useState(false);
   const [removing, setRemoving] = useState({}); // { [id]: true } while fading out
   const [modal, setModal] = useState(null); // null | { mode, entry }
+  const [expandedNews, setExpandedNews] = useState({}); // { [ticker]: true } expanded
+  const [newsCache, setNewsCache] = useState({}); // { [ticker]: { loading, headlines } }
 
   const fetchEntries = useCallback(async () => {
     setLoadError(false);
@@ -120,6 +122,27 @@ export default function Watchlist() {
     setModal(null);
     fadeOutAndRemove(id);
   };
+
+  const toggleNews = useCallback(async (entry) => {
+    const key = entry.ticker;
+    if (expandedNews[key]) {
+      setExpandedNews((prev) => ({ ...prev, [key]: false }));
+      return;
+    }
+    setExpandedNews((prev) => ({ ...prev, [key]: true }));
+    if (newsCache[key]) return; // already fetched
+    setNewsCache((prev) => ({ ...prev, [key]: { loading: true, headlines: [] } }));
+    try {
+      const res = await apiFetch(`${API_BASE}/news/${entry.ticker}?market=${entry.market}`);
+      const json = await res.json();
+      setNewsCache((prev) => ({
+        ...prev,
+        [key]: { loading: false, headlines: json.data?.headlines || [] },
+      }));
+    } catch {
+      setNewsCache((prev) => ({ ...prev, [key]: { loading: false, headlines: [] } }));
+    }
+  }, [expandedNews, newsCache]);
 
   const handleAddToPosition = (entry) => {
     fadeOutAndRemove(entry.id);
@@ -190,6 +213,7 @@ export default function Watchlist() {
                     "Target Entry",
                     "Stop (Initial)",
                     "Stop (Current)",
+                    "News",
                     "Actions",
                   ].map((h) => (
                     <th
@@ -203,6 +227,7 @@ export default function Watchlist() {
               </thead>
               <tbody className="divide-y divide-slate-700/30">
                 {entries.map((entry) => (
+                  <>
                   <tr
                     key={entry.id}
                     className={cn(
@@ -234,6 +259,22 @@ export default function Watchlist() {
                       {priceDisplay(entry.current_stop_price, entry.market)}
                     </td>
                     <td className="px-5 py-4">
+                      {entry.market === "US" ? (
+                        <button
+                          onClick={() => toggleNews(entry)}
+                          className="flex items-center gap-1 text-xs text-slate-400 hover:text-cyan-400 transition-colors"
+                          title="Show news headlines"
+                        >
+                          <Newspaper className="w-3.5 h-3.5" />
+                          {expandedNews[entry.ticker]
+                            ? <ChevronUp className="w-3 h-3" />
+                            : <ChevronDown className="w-3 h-3" />}
+                        </button>
+                      ) : (
+                        <span className="text-slate-600 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
@@ -256,6 +297,38 @@ export default function Watchlist() {
                       </div>
                     </td>
                   </tr>
+                  {expandedNews[entry.ticker] && entry.market === "US" && (
+                    <tr key={`${entry.id}-news`} className="bg-slate-800/40">
+                      <td colSpan={8} className="px-6 py-3">
+                        {newsCache[entry.ticker]?.loading ? (
+                          <p className="text-slate-400 text-xs animate-pulse">Loading headlines…</p>
+                        ) : newsCache[entry.ticker]?.headlines?.length > 0 ? (
+                          <ul className="space-y-1.5">
+                            {newsCache[entry.ticker].headlines.map((h, i) => (
+                              <li key={i} className="flex flex-col gap-0.5">
+                                <span className="text-slate-200 text-xs">{h.headline}</span>
+                                <span className="text-slate-500 text-xs">
+                                  {h.source ? `${h.source} · ` : ""}
+                                  {h.published_at
+                                    ? new Date(h.published_at).toLocaleDateString()
+                                    : ""}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-slate-500 text-xs">No recent news available for {entry.ticker}.</p>
+                        )}
+                        <button
+                          onClick={() => setExpandedNews((prev) => ({ ...prev, [entry.ticker]: false }))}
+                          className="mt-2 text-slate-500 hover:text-slate-300 text-xs underline"
+                        >
+                          Close
+                        </button>
+                      </td>
+                    </tr>
+                  )}
+                  </>
                 ))}
               </tbody>
             </table>
