@@ -630,7 +630,7 @@ async def get_market_correlation(
             cursor.execute("""
                 SELECT p.id, p.ticker, p.market, p.shares, p.current_price, p.pnl
                 FROM positions p
-                JOIN portfolio port ON p.portfolio_id = port.id
+                JOIN portfolios port ON p.portfolio_id = port.id
                 WHERE p.status = 'open'
                   AND p.shares > 0
             """)

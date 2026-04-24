@@ -95,7 +95,7 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /analytics/compliance-metrics", "method": "GET", "url": f"{base_url}/analytics/compliance-metrics", "critical": False},
 
         # AI Journal
-        {"name": "POST /ai/journal-summary", "method": "POST", "url": f"{base_url}/ai/journal-summary", "critical": False},
+        {"name": "POST /ai/journal-summary", "method": "POST", "url": f"{base_url}/ai/journal-summary", "body": {"date_from": "2020-01-01"}, "critical": False},
         {"name": "GET /ai/journal-summary/history", "method": "GET", "url": f"{base_url}/ai/journal-summary/history", "critical": False},
 
         # News
@@ -135,7 +135,7 @@ async def test_all_endpoints(request: Request):
                 if test["method"] == "GET":
                     response = await client.get(test["url"], headers=forward_headers)
                 elif test["method"] == "POST":
-                    response = await client.post(test["url"], json={}, headers=forward_headers)
+                    response = await client.post(test["url"], json=test.get("body", {}), headers=forward_headers)
                 else:
                     raise ValueError(f"Unsupported method: {test['method']}")
                 
