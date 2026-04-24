@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v2.9
 Cycle: 2026-04-22__release-v2.9
-Last Updated: 2026-04-22
+Last Updated: 2026-04-24
+
+Superseded by: v2.9 ship — 2026-04-24
+Changelog: docs/product/changelog.md#v29
+Verification report: claude/cycles/2026-04-22__release-v2.9/verification_report.md
+Cycle: 2026-04-22__release-v2.9
 
 ## Release Scope — v2.9 Arc 1 Foundation — Stock Discovery & Screening Spec & Infrastructure
 

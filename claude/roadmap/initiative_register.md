@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-20 (manage roadmap post-ship closure v2.8 — AI-SUM retired from Priority 2 to Completed; shipped v2.8 2026-04-20)
+**Last Updated:** 2026-04-24 (manage roadmap post-ship closure v2.9 — no initiative retirements; Arc 1 partial delivery noted)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -34,7 +34,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 ## Priority 2 — Next Phase
 
-*No active Priority 2 initiatives as of 2026-04-20. AI-SUM shipped v2.8 2026-04-20. v2.9 scope TBD — Arc 1 planning not yet started.*
+*No active Priority 2 initiatives as of 2026-04-24. v2.9 shipped Arc 1 partial delivery (DS-03, DS-05, DS-06 + specs BLG-SPEC-21/22/23); DS-01/DS-02/DS-04/DS-07 continue in v3.0. Next phase is v3.0 Arc 1 remainder (screener engine + results page).*
 
 ---
 

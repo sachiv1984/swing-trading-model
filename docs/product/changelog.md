@@ -3,9 +3,44 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-20
+**Last Updated:** 2026-04-24
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v2.9 — Arc 1 Foundation: Stock Discovery & Screening Spec & Infrastructure — 2026-04-24
+Cycle: 2026-04-22__release-v2.9
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-04-22__release-v2.9/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-03 | Arc 1 Governance & QA Foundation — §13 review record for DS-06 (BLG-GOV-16 gate cleared); external API mock harness for CI (tests/mock_harness/, 7 smoke tests pass); screener test data library (12 scenarios, 10+ synthetic tickers) | claude/strategy/strategy_rules.md#§13 |
+| EPIC-01 | Arc 1 Specification Foundation — screener results schema spec (Class 2); Alpaca API integration contract (Class 2, RISK-01 gate cleared); screener internal API contract (Class 2, openapi.yaml updated); screener results page UX spec (DS-02 implementation deferred to v3.0) | docs/specs/data_model/screener_results_schema.md; docs/specs/api_contracts/alpaca_integration_contract.md; docs/specs/api_contracts/screener_api_contract.md; docs/specs/frontend/pages/screener_results.md; docs/reference/openapi.yaml |
+| EPIC-04 | Governance Debt & Quick Wins — execution_prompt.md §3.2 governance patches (v3.8→v3.10); SystemStatus.js /ai prefix fix; AI Journal summary audit log (ai_audit_log table + GET /ai/journal-summary/history); AI Journal test scenario coverage (4 scenarios in ai_scenarios.md) | claude/system/execution_prompt.md v3.10; src/pages/SystemStatus.js; docs/specs/api_contracts/ai_endpoints.md; docs/testing/ai_scenarios.md |
+| EPIC-02 | Arc 1 Implementation Start — sector & industry classification (DS-03: sector_service.py, position enrichment, 9 unit tests); Alpaca US market data integration (DS-05: alpaca_service.py, US→Alpaca/UK→Yahoo routing, 10 integration tests); Alpaca news panel (DS-06: news_service.py, GET /news/{ticker}, Watchlist.js news panel; screener results page attachment deferred to v3.0 — DEV-01 P3) | docs/specs/data_model.md; docs/specs/api_contracts/alpaca_integration_contract.md |
+
+### Deviations accepted
+1 minor P3 deviation — see verification_report.md §4 for full detail. Backlog item filed: BLG-FE-18 (screener results news panel wiring, v3.0).
+
+### Tech backlog items shipped
+- [ST-01] BLG-SPEC-21: Screener results schema spec — screener_results_schema.md created; registered in Specs_Index.md §3.4b
+- [ST-02] BLG-SPEC-22: Alpaca API integration contract — alpaca_integration_contract.md created; RISK-01 gate cleared
+- [ST-03] BLG-SPEC-23: Screener internal API contract — screener_api_contract.md created; openapi.yaml updated
+- [ST-04] BLG-FE-17: Screener results page UX spec — screener_results.md created
+- [ST-08] BLG-GOV-16: §13 review record for DS-06 (Alpaca News Panel) — gate cleared
+- [ST-09] BLG-QA-08: External API mock harness for CI — tests/mock_harness/; 7 smoke tests pass
+- [ST-10] BLG-QA-09: Screener test data library — 12 scenarios, 10+ synthetic tickers
+- [ST-11] BLG-GOV-14: execution_prompt.md §3.2 governance patches — reclassification counter-sign rule + EPIC-level consolidation note (v3.8→v3.9)
+- [ST-12] BLG-GOV-15: execution_prompt.md STEP 5.1.B advisory — System_status_report capability cross-check added (v3.9→v3.10)
+- [ST-13] BLG-FE-15: SystemStatus.js /ai prefix fix — /ai case added to categorizeEndpoint()
+- [ST-14] BLG-AI-01: AI Journal summary audit log — ai_audit_log table, log_ai_summary_run integration, GET /ai/journal-summary/history endpoint
+- [ST-15] TEST-GAP-EPIC-04: AI Journal test scenario coverage — docs/testing/ai_scenarios.md (4 scenarios)
+
+Sign-off: Product Owner — 2026-04-24
+QA sign-off: Director of Quality — 2026-04-24
 
 ---
 

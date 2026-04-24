@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-04-20
+**Last Updated:** 2026-04-24
 
 ---
 
@@ -136,7 +136,7 @@ It points to the **single canonical source**.
 - `screener_results_schema.md` — Class 2 Canonical, v1.0, Active (created 2026-04-23, ST-01, cycle 2026-04-22__release-v2.9): screener output fields, filter ordering, market routing, logging requirement. References `claude/strategy/strategy_rules.md §11` as parameter source. Sign-off: Head of Specs Team (autonomous class, 2026-04-23).
 - `api_contracts/alpaca_integration_contract.md` — Class 2 Canonical (created 2026-04-23, ST-02): Alpaca Markets API contract for OHLCV bars and News endpoints; rate limits, error codes, fallback strategy, API version pin.
 - `api_contracts/screener_api_contract.md` — Class 2 Canonical (created 2026-04-23, ST-03): Internal screener API (`GET /screener/results`, `POST /screener/run`); request/response schemas, pagination, error codes.
-- `frontend/screener_results_page_ux_spec.md` (or equivalent) — Class 2 or Class 5 (created 2026-04-23, ST-04): Screener results page UX spec; column layout, sort/filter, data freshness indicator, empty states, watchlist promotion flow, progressive loading.
+- `frontend/pages/screener_results.md` — Class 2 (created 2026-04-23, ST-04, cycle 2026-04-22__release-v2.9): Screener results page UX spec; column layout, sort/filter, data freshness indicator, empty states, watchlist promotion flow, progressive loading. Known Deviation: DEV-01 P3 (news panel DS-02 portion deferred to v3.0 — see BLG-FE-18).
 
 **Owner**
 - Head of Specs Team (schema) + API Contracts & Documentation Owner (contracts) + Frontend Specifications & UX Documentation Owner (UX spec)
@@ -425,11 +425,25 @@ Identified during delivery verification (verification_report.md §6 — TSG-v28-
 ### 14.1 TSG-v28-01 — EPIC-04: no test scenarios for AI Journal Summarisation
 
 **Identified:** 2026-04-20 (delivery verification 2026-04-17__release-v2.8)
-**Status:** Open — backlog item TEST-GAP-EPIC-04
+**Status:** ✅ Resolved — 2026-04-24 (cycle 2026-04-22__release-v2.9, ST-15)
 **Owner:** QA & Testing Owner
 **Gap:** EPIC-04 shipped with no test scenario documentation in `docs/testing/`. POST /ai/journal-summary graceful LLM failure path and AI Journal Summary frontend behaviours (collapsed by default, non-dismissible disclaimer, 4 states) have no formal scenario coverage.
-**Required action:** QA & Testing Owner to create `docs/testing/ai_scenarios.md` with at minimum 4 scenarios. See TEST-GAP-EPIC-04 in backlog.md §5 for scope.
-**Resolution target:** Before next sprint touching AI journal feature
+**Resolution:** `docs/testing/ai_scenarios.md` created by ST-15 (cycle 2026-04-22__release-v2.9) with 4 scenarios covering happy path, graceful LLM failure, collapsed by default, and disclaimer always visible. TEST-GAP-EPIC-04 closed.
+
+---
+
+## 15. Test Coverage Gaps — v2.9 (2026-04-22__release-v2.9)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v29-01, TSG-v29-02).
+
+### 15.1 TSG-v29-02 — EPIC-04: no unit tests for ai_audit_service.py
+
+**Identified:** 2026-04-24 (delivery verification 2026-04-22__release-v2.9)
+**Status:** Open — backlog item TEST-GAP-ST14
+**Owner:** QA & Testing Owner
+**Gap:** `backend/services/ai_audit_service.py` (shipped v2.9 ST-14) has no unit tests. `ensure_ai_audit_table`, `log_ai_summary_run`, and `query_audit_log` functions untested at unit level.
+**Required action:** QA & Testing Owner to create unit tests for ai_audit_service.py. See TEST-GAP-ST14 in backlog.md §5 for scope.
+**Resolution target:** Before next sprint modifying AI audit or journal summary features
 
 ---
 

@@ -1,11 +1,11 @@
 {
-  "cycle_id": "2026-04-17__release-v2.8",
-  "release": "v2.8",
-  "status": "Complete",
+  "cycle_id": "2026-04-22__release-v2.9",
+  "release": "v2.9",
+  "status": "In_Progress",
   "mode": "standard",
   "dry_run": false,
-  "started_utc": "2026-04-20T12:00:00Z",
-  "last_updated_utc": "2026-04-20T14:00:00Z",
+  "started_utc": "2026-04-24T13:00:00Z",
+  "last_updated_utc": "2026-04-24T13:00:00Z",
   "steps": {
     "preflight": "pass",
     "step_0_context": "pass",
@@ -20,9 +20,9 @@
     "step_8_5_lessons_closure": "pass",
     "step_9_closure_record": "pass",
     "step_10_global_state": "pass",
-    "step_11_manage_roadmap": "pass",
-    "step_12_groom_backlog": "pass",
-    "step_13_commit": "pass"
+    "step_11_manage_roadmap": "complete",
+    "step_12_groom_backlog": "complete",
+    "step_13_commit": "not_started"
   },
-  "closure_status": "Closed_with_actions"
+  "closure_status": null
 }

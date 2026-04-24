@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-20
+**Last Updated:** 2026-04-24
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -1558,4 +1558,172 @@ The current idea intake model produces one file per idea per agent per window (4
 | BLG-FE-13 | Flexible column sorting | ST-11 | #220 / a640719 | 5 new sort states; Days Held column added |
 | BLG-GOV-15 | Upgrade decision_log.md hard gate | ST-14 | #221 / 27902b7 | roadmap_prompt STEP 9 structural halt |
 | BLG-FE-09 | Frontend Performance Budget spec | ST-15 | #221 / 27902b7 | docs/specs/frontend/performance_budget.md |
+
+---
+
+### v2.9 Release Slice — 2026-04-22__release-v2.9
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** N/A (release tracking section)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 — Arc 1 Foundation: Stock Discovery & Screening Spec & Infrastructure
+**Evidence:** 15/15 stories shipped (DEV-01 P3 accepted); `claude/cycles/2026-04-22__release-v2.9/closure_record.md`
+
+| ID | Title | Type | Story | Evidence |
+|----|-------|------|-------|----------|
+| BLG-SPEC-21 | Screener results schema spec | Spec | ST-01 | changelog.md v2.9; verification_report.md |
+| BLG-SPEC-22 | Alpaca API integration contract | Spec | ST-02 | changelog.md v2.9; verification_report.md |
+| BLG-SPEC-23 | Screener internal API contract | Spec | ST-03 | changelog.md v2.9; verification_report.md |
+| BLG-FE-17 | Screener results page UX spec | Frontend | ST-04 | changelog.md v2.9; verification_report.md |
+| BLG-GOV-16 | §13 review record for DS-06 | Gov | ST-08 | changelog.md v2.9; verification_report.md |
+| BLG-QA-08 | External API mock harness for CI | QA | ST-09 | changelog.md v2.9; verification_report.md |
+| BLG-QA-09 | Screener test data library | QA | ST-10 | changelog.md v2.9; verification_report.md |
+| BLG-GOV-14 | execution_prompt.md §3.2 governance patches | Gov | ST-11 | changelog.md v2.9; verification_report.md |
+| BLG-GOV-15 | execution_prompt.md STEP 5.1.B cross-check | Gov | ST-12 | changelog.md v2.9; verification_report.md |
+| BLG-FE-15 | SystemStatus.js `/ai` prefix fix | Frontend | ST-13 | changelog.md v2.9; verification_report.md |
+| BLG-AI-01 | AI Journal summary audit log | Backend | ST-14 | changelog.md v2.9; verification_report.md |
+| TEST-GAP-EPIC-04 | AI Journal test scenarios | QA | ST-15 | changelog.md v2.9; verification_report.md |
+
+---
+
+### BLG-SPEC-21 — Screener results schema spec
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-01 ST-01)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+Canonical specification for screener output data structure authored as Class 2 document. All screener output fields defined with types and derivation source. §11 parameter reference explicit. DoQ sign-off obtained.
+
+---
+
+### BLG-SPEC-22 — Alpaca API integration contract
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-01 ST-02)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+Formal Class 2 API contract for Alpaca US market data integration. All DS-05 Alpaca endpoints documented with request/response schemas. Fallback strategy explicitly defined. DoQ sign-off obtained.
+
+---
+
+### BLG-SPEC-23 — Screener internal API contract
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-01 ST-03)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+Formal API contract for internal screener API endpoints (GET /screener/results, POST /screener/run). Request/response schemas, pagination, error codes documented. OpenAPI entries added. DoQ sign-off obtained.
+
+---
+
+### BLG-FE-17 — Screener results page UX spec
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-01 ST-04)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+UX specification for screener results page authored as Class 2 canonical document. Column layout, sort/filter controls, data freshness indicator, empty states, watchlist promotion flow, and progressive loading pattern all documented. DoQ sign-off obtained.
+
+---
+
+### BLG-GOV-16 — §13 review record for DS-06 (Alpaca News Panel)
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-03 ST-08)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+Formal §13 review record created for DS-06. DS-06 confirmed display-only Alpaca news context; not a sentiment signal or automated advisory. Strategy Rules owner sign-off recorded.
+
+---
+
+### BLG-QA-08 — External API mock harness for CI
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-03 ST-09)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+Mock harness operational in CI for Alpaca Markets API and Yahoo Finance API. Screener CI tests pass deterministically without live API calls. Mock responses configurable per test scenario. DoQ sign-off obtained.
+
+---
+
+### BLG-QA-09 — Screener test data library
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-03 ST-10)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+Synthetic ticker test data library created with minimum 10 synthetic tickers covering key screener filter scenarios. Edge cases documented: passes all filters, fails regime gate, fails ATR threshold, fails signal threshold. DoQ sign-off obtained.
+
+---
+
+### BLG-GOV-14 — execution_prompt.md §3.2 governance patches (2 deferred from v2.8)
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-04 ST-11)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+Two governance patches applied to execution_prompt.md: §3.2.A reclassification note (delegated_frontend→autonomous with frontend-visible changes requires DoQ counter-sign at STEP 5); §3.2 DoQ EPIC template updated (EPIC-level consolidation block required when story-level authority is domain-specific). §6 CLAUDE.md checklist applied. Head of Specs Team sign-off obtained.
+
+---
+
+### BLG-GOV-15 — execution_prompt.md STEP 5.1.B capability count cross-check
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-04 ST-12)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+STEP 5.1.B advisory inserted in execution_prompt.md after existing QA Evidence File Existence Check. Advisory instructs verification of System_status_report.md SC-* scenario counts before writing Sprint_Complete. §6 CLAUDE.md checklist applied. Head of Specs Team sign-off obtained.
+
+---
+
+### BLG-FE-15 — SystemStatus.js: add `/ai` prefix to `categorizeEndpoint()`
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-04 ST-13)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+`/ai` prefix case added to `categorizeEndpoint()` in `SystemStatus.js`. AI endpoints now appear in named category (not 'Other'). No regression to categorisation of existing endpoints.
+
+---
+
+### BLG-AI-01 — AI Journal summary audit log
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-04 ST-14)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+Persistent AI audit log implemented (ai_audit_service.py). Every summary run persisted with required fields (timestamp, trade_ids, model version, output hash). Log queryable by trade_id and date range. DoQ sign-off obtained.
+
+---
+
+### TEST-GAP-EPIC-04 — AI Journal Summarisation test scenario coverage
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-24
+**Shipped in:** v2.9 (2026-04-22__release-v2.9 EPIC-04 ST-15)
+**Evidence:** `docs/product/changelog.md` v2.9 entry; `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+
+`docs/testing/ai_scenarios.md` created with 4 scenarios: AI summary happy path, graceful LLM failure, collapsed-by-default frontend, disclaimer always visible. All scenarios reference ai_endpoints.md and trade_history.md v1.7. TSG-v28-01 resolved. DoQ sign-off obtained.
+
+---
+
+### BLG-GOV-08 — Engine prompt compression: roadmap_prompt and release_planning_prompt
+**Status at retirement:** ❌ Killed — 5 consecutive deferrals; retirement decision v2.9 groom
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-24
+**Decision authority:** PMO Lead + Head of Specs Team (per closure_record.md §5 item 4)
+**Decision rationale:** 5 consecutive deferrals (v2.3→v2.4→v2.5→v2.6/v2.7→v2.8→v2.9); L effort (~3–5 days); prompts functional and governed — compression value does not justify cost given ongoing arc delivery cadence. Deferred to P3 permanent backlog (initiative_register.md Priority 3 or organic improvement) rather than active backlog tracking.
+
+Engine prompt compression was identified as a governance improvement in AUD-2026-03-21. With v2.9 Arc 1 delivery complete and v3.0 Arc 1 remainder on the roadmap, the active backlog should not carry an L-effort low-priority item that has been consistently displaced by higher-value work across 5 cycles.
 

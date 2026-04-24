@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-21 (cycle 2026-04-21__scheduled — DL-021; no roadmap-level changes; 14 backlog items added)
+**Last Updated:** 2026-04-24 (cycle 2026-04-22__release-v2.9 — v2.9 post-ship closure; version header updated; RA:v2.9 annotation marked Complete; release summary table updated)
 **Last rebalance:** 2026-04-17 (cycle 2026-04-17__scheduled — full strategic restructure; six-arc model introduced)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,8 +10,8 @@
 
 ## 1. Current Version
 
-**v2.8** — Frontend Completion, Test Quality & AI Journal Feature — Shipped 2026-04-20
-**Next planned release:** **v2.9–v3.1** — Arc 1: Stock Discovery & Screening
+**v2.9** — Arc 1 Foundation: Stock Discovery & Screening Spec & Infrastructure — Shipped 2026-04-24
+**Next planned release:** **v3.0–v3.1** — Arc 1 Remainder: Screener Engine & Results Page
 
 -----
 
@@ -244,8 +244,10 @@ Items in this section are sequenced and ready for planning when v2.8 closes. The
 - Plan published: 2026-04-22
 - Cycle folder: claude/cycles/2026-04-22__release-v2.9/
 - Backlog slice: claude/cycles/2026-04-22__release-v2.9/stage4_backlog_slice.md
-- Status at annotation: Committed
-- Scope: EPIC-01 (Arc 1 specs), EPIC-02 (DS-03/05/06 implementation), EPIC-03 (governance/QA infrastructure), EPIC-04 (governance debt + quick wins); DS-01/02 deferred to v3.0
+- Status: ✅ Complete — shipped 2026-04-24
+- Verification: Verified_with_deviations (DEV-01 P3 accepted; BLG-FE-18 filed)
+- Scope delivered: EPIC-01 (Arc 1 specs: BLG-SPEC-21/22/23, BLG-FE-17), EPIC-02 (DS-03/05/06 implementation), EPIC-03 (governance/QA infrastructure: BLG-GOV-16, BLG-QA-08/09), EPIC-04 (governance debt + quick wins: BLG-GOV-14/15, BLG-FE-15, BLG-AI-01, TEST-GAP-EPIC-04)
+- Scope deferred: DS-01 (screener engine) and DS-02 (screener results page) → v3.0
 
 ### Arc 2 — Pre-Trade Research & Planning (v3.1–v3.3)
 
@@ -369,7 +371,8 @@ When evaluating new features:
 |**v2.6**     |Backend Integration Completion, Test Automation & Governance Hardening|Playwright fix, System Status spec, audit, Spec Dependency Map — ✅ Shipped 2026-04-11                                                     |
 |**v2.7**     |Performance, Governance Hardening & Market Intelligence               |Supavisor pooling, portfolio DB refactor, market correlation API, supplementary signal indicators — ✅ Shipped 2026-04-16                  |
 |**v2.8**     |Frontend Completion, Test Quality & AI Journal Feature                |Market Correlation frontend, test coverage, governance patches, AI Journal Summarisation (Arc 4 foundation) — ✅ Shipped 2026-04-20        |
-|**v2.9–v3.1**|Arc 1: Stock Discovery & Screening                                    |Strategy-rules screener engine, Alpaca US data, sector classification, earnings calendar, news panel, watchlist promotion flow — 📋 Planned|
+|**v2.9**     |Arc 1 Foundation: Stock Discovery & Screening Spec & Infrastructure   |Arc 1 specs (BLG-SPEC-21/22/23, BLG-FE-17), DS-03 sector enrichment, DS-05 Alpaca US data, DS-06 news panel (watchlist), CI mock harness, governance debt — ✅ Shipped 2026-04-24|
+|**v3.0–v3.1**|Arc 1 Remainder: Screener Engine & Results Page                       |DS-01 strategy-rules screener engine, DS-02 screener results page, DS-04 earnings calendar, DS-06 screener news panel (BLG-FE-18), DS-07 watchlist promotion flow — 📋 Planned|
 |**v3.1–v3.3**|Arc 2: Pre-Trade Research & Planning                                  |Trade Plan object, pre-trade research view, entry checklist, setup quality score, prospective heat at entry — 📋 Planned                   |
 |**v3.3–v3.5**|Arc 3: In-Trade Risk Management                                       |Position lifecycle manager, stop management workflow, drawdown prompts, concentration limits, Alpaca paper trading — 📋 Planned            |
 |**v3.5–v3.8**|Arc 4: Post-Trade Intelligence                                        |Plan vs reality analysis, journal pattern recognition, behavioural error taxonomy, outcome correlation — 📋 Planned                        |
