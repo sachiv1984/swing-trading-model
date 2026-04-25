@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.10
-**Last Updated:** 2026-04-24
+**Version:** 3.11
+**Last Updated:** 2026-04-25
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -57,6 +57,12 @@ Apply the Lifecycle Guard (valid from-states: `Sprint_Planning_Complete`; `Execu
 No other user input may trigger this routine.
 
 **Tool call budget:** This routine typically requires 20–60 tool calls for a standard sprint. Proceed through steps without asking for confirmation unless a hard gate fires. When a hard gate fires, output the halt report (per `claude/system/shared_standards.md` §5) and wait.
+
+### execution_state.json Ownership (Multi-EPIC Sprints)
+
+When a sprint has more than one EPIC branch executing in parallel, a single EPIC branch is designated the **execution_state.json owner** at sprint planning time. This is the first EPIC branch in execution order (Sprint 1 primary EPIC, or the first in dependency order). All other EPIC branches **must check for the existence of `execution_state.json` before creating their own version**. If the file already exists, continue from the existing file — do not overwrite. If the file does not exist, the current branch is the first to execute; create it.
+
+**Merge order advisory:** If a `execution_state.json` conflict arises when merging multiple EPIC branches, `CLAUDE.md §8` (Cross-EPIC Merge Conflict Resolution) governs resolution. The rule of thumb: accept story completion data (status: done, commit_sha, acceptance_verified) from the branch; never revert a story from `done` → `blocked`; take the union of completed items.
 
 ---
 
@@ -571,7 +577,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 #### 3.1.A If `autonomous`:
 
-1. Execute the work defined in the acceptance criteria.
+1. Execute the work defined in the acceptance criteria. **Test scenarios advisory (ST-13):** When tests are created as part of this work, populate `test_scenarios` in `execution_state.json` for the parent EPIC with the test file paths (e.g. `tests/test_screener_service.py`). This is non-blocking — story execution does not halt if the field is not updated immediately — but it must be populated before the EPIC-level QA evidence log is created at STEP 3.2.A.
 2. Confirm `spec_references` is populated in `execution_state.json` for this item. If empty and a spec exists: populate now before proceeding.
 3. Commit to the EPIC branch with format: `[EPIC-xx][ST-xx] <imperative description>`
 4. Push to `exec/<cycle_id>/EPIC-xx`.
@@ -1023,6 +1029,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.11 | 2026-04-25 | ST-12 + ST-13 (EPIC-04, v3.0): Two deferred patches combined. (ST-12 / OA-v29-02) §2 execution_state.json ownership rule added for multi-EPIC sprints — first EPIC branch in execution order is designated owner; all others check for file existence before creating; merge conflict advisory references CLAUDE.md §8. (ST-13 / OA-v29-03) §3.1.A step 1 — test scenarios advisory added: when tests are created, populate test_scenarios in execution_state.json with test file paths; non-blocking; must be complete before STEP 3.2.A QA evidence log creation. Authority: Head of Specs Team (ST-12 + ST-13, 2026-04-25). |
 | 3.8 | 2026-04-18 | ST-05 (EPIC-03, v2.8): §5.3 sprint close template — "Deviations filed" clarified: spec deviations only (implementation diverges from spec; filed via /dev-file). Process notations, execution observations, and deferred items belong in execution_state.json notes or execution_escalations.md, not the deviation register. Closes v2.7 carry-forward CF-2 (deviation register terminology confusion). Authority: Head of Specs Team (ST-05, 2026-04-18). |
 | 3.7 | 2026-04-18 | ST-04 (EPIC-03, v2.8): §3.2.A Date field requirement note updated — explicitly states Date must be non-blank before PR can be opened (§3.2.B pre-condition, BLG-GOV-18) in addition to before the merge gate runs. Closes the loop between §3.2.A sign-off block authoring and §3.2.B PR-opening enforcement. Authority: Head of Specs Team (ST-04, 2026-04-18). |
 | 3.4 | 2026-04-13 | BLG-GOV-17 (third recurrence — sprint close skipped): Two-pronged fix. (1) STEP 3.2.D post-merge reminder — removed conditional qualifier "if there are remaining EPICs pending"; reminder is now unconditional and explicitly calls out that re-invocation is required after the final merge, with the engine detecting `all_merged = true` and executing STEP 5 directly. (2) Created `.github/workflows/sprint_close_reminder.yml` — GitHub Actions workflow that posts a mandatory PR comment on every EPIC merge to main, firing regardless of Claude Code session state. HARD GATE blockquote updated to reference BLG-GOV-17 and the new workflow. Authority: Head of Specs Team (OA-1, BLG-GOV-17, 2026-04-13). |
