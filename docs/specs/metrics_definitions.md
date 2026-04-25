@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.9.0
-**Last Updated:** 2026-03-18
+**Version:** 1.10.0
+**Last Updated:** 2026-04-25
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -556,7 +556,27 @@ Tolerance: ±0.2
 
 ## Win Streak / Loss Streak
 ### Definition
-Maximum consecutive winning trades and maximum consecutive losing trades, ordered by `exit_date` ascending. The current implementation treats `pnl <= 0` as a loss for streak counting.
+Maximum consecutive winning trades and maximum consecutive losing trades, ordered by `exit_date` ascending.
+
+**Consecutive Losing Streak (`loss_streak`):** The maximum number of consecutive closed trades with `pnl <= 0` in the filtered dataset, ordered by `exit_date` ascending. Historical closed trades only — open positions are excluded. A zero-pnl trade (`pnl == 0`) counts as a loss for streak counting purposes.
+
+**Consecutive Winning Streak (`win_streak`):** The maximum number of consecutive closed trades with `pnl > 0` in the filtered dataset.
+
+### Formula
+```text
+win_streak = loss_streak = cur_w = cur_l = 0
+for each trade t (ordered exit_date ASC):
+    if t.pnl > 0: cur_w += 1; cur_l = 0
+    else:         cur_l += 1; cur_w = 0
+    win_streak  = max(win_streak,  cur_w)
+    loss_streak = max(loss_streak, cur_l)
+```
+
+### Response location
+`advanced_metrics.loss_streak` and `advanced_metrics.win_streak` in `GET /analytics/metrics` response.
+
+### Display
+Displayed in the analytics dashboard alongside expectancy and win rate.
 
 ### Validation
 Exact match.

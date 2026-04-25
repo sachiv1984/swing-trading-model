@@ -9,11 +9,15 @@ Fields logged per run:
   - trade_ids (array of IDs included, or null if date-range query)
   - date_from / date_to (when trade_ids not used)
   - trade_count (number of trades included)
-  - model_version (LLM model used)
+  - model_version (LLM model used — see docs/specs/ai_journal_model_contract.md)
   - output_hash (SHA-256 of summary text; null if summary=None)
   - summary_produced (bool — True if non-null summary returned)
 
 Queryable by trade_id (array contains) and by date range (invoked_at).
+
+Model version contract: docs/specs/ai_journal_model_contract.md (BLG-AI-02).
+The model_version field records the actual Claude model used per run; the
+contract document is the canonical source for the current configured version.
 """
 import hashlib
 import uuid

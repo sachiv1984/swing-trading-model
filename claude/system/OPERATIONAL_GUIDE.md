@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.63
+**Version:** 3.64
 **Last Updated:** 2026-04-21
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.10)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.11)
 
 ### 8.1 Invocation
 
@@ -1378,7 +1378,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.26 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.5 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.7 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.10 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.11 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.5 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1401,6 +1401,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.64 | 2026-04-25 | **execution_prompt.md v3.10→v3.11 — ST-12 + ST-13 (EPIC-04, v3.0): execution_state.json ownership rule + test_scenarios advisory.** §8 source prompt header updated v3.10→v3.11. §14 Execution Engine Source v3.10→v3.11. Changes: (1) §2 — EPIC execution_state.json owner designation rule added for multi-EPIC sprints; first EPIC in execution order is owner; others check for file existence before creating; merge conflict advisory references CLAUDE.md §8. (2) §3.1.A step 1 — test scenarios advisory: when tests are created, populate test_scenarios in execution_state.json with test file paths; non-blocking; must be complete before STEP 3.2.A. Closes OA-v29-02 and OA-v29-03. Authority: Head of Specs Team (ST-12 + ST-13, 2026-04-25). |
 | 3.63 | 2026-04-21 | **AUD-2026-04-20-002 — §14 Lifecycle Guide version corrected v2.5→v2.6.** §14 Lifecycle Guide row updated to reflect actual document_lifecycle_guide.md version (v2.6 — Class 4 sub-type 3 Release Plan added 2026-03-07; §14 not updated at that time). Authority: Head of Specs Team (AUD-2026-04-20, 2026-04-21). |
 | 3.62 | 2026-04-18 | **execution_prompt.md v3.7→v3.8 — ST-05 (EPIC-03, v2.8): sprint close deviation register terminology.** §8 source prompt header updated v3.7→v3.8. §14 Execution Engine Source v3.7→v3.8. Change: §5.3 sprint close "Deviations filed" clarified — spec deviations only (filed via /dev-file); process notations and execution observations belong in execution_state.json notes or execution_escalations.md. Closes CF-2. Authority: Head of Specs Team (ST-05, 2026-04-18). |
 | 3.61 | 2026-04-18 | **execution_prompt.md v3.6→v3.7 — ST-04 (EPIC-03, v2.8): DoQ Date field PR-open pre-condition.** §8 source prompt header updated v3.6→v3.7. §14 Execution Engine Source v3.6→v3.7. Change: §3.2.A Date field requirement note updated — now explicitly states Date must be non-blank before PR can be opened (§3.2.B pre-condition, BLG-GOV-18) in addition to before the merge gate runs. Closes the loop between the sign-off block authoring step and the PR-opening enforcement step. Authority: Head of Specs Team (ST-04, 2026-04-18). |
