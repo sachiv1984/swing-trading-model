@@ -280,13 +280,13 @@
       }
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 301,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_streak_metric.py"],
       "stories": {
         "ST-12": {
           "title": "execution_prompt.md §2 Deferred Patch",
@@ -333,65 +333,65 @@
         "ST-14": {
           "title": "prompt_change_log.md Retrospective Entries",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 291,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "881bdbd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-25T03:20:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/system/prompt_change_log.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Scan finding: sprint_planning_prompt.md v2.3→v2.4 entry present (line 73) and v2.4→v2.5 entry present (line 61). No retrospective entries needed. OA-v29-01 closed."
+          "notes": "Scan finding: v2.3→v2.4 present (2026-03-24) and v2.4→v2.5 present (2026-04-05). No retrospective entries needed. OA-v29-01 closed."
         },
         "ST-15": {
           "title": "Consecutive Losing Streak Metric",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 292,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "7de4cb5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-25T03:25:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/metrics_definitions.md#loss_streak"
+            "docs/specs/metrics_definitions.md#win-streak--loss-streak"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Extends existing analytics endpoint; no new endpoint if existing can be extended"
+          "notes": "Backend already computed loss_streak in advanced_metrics. Frontend already displayed in AdvancedMetricsGrid. Added 7 unit tests. Expanded metrics_definitions.md entry v1.9.0→v1.10.0. No new endpoint needed. test_scenarios updated: tests/test_streak_metric.py"
         },
         "ST-16": {
           "title": "Model Version Contract for AI Journal",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 293,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "4e4cb39",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-25T03:25:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/ai_journal_model_contract.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "New Class 2/3 document creation"
+          "notes": "Class 2 canonical spec created. ai_audit_service.py docstring references contract. Model: claude-haiku-4-5-20251001 in ai_service.py _DEFAULT_MODEL. Closes BLG-AI-02."
         }
       }
     }
@@ -399,7 +399,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": ["EPIC-04"],
   "open_escalations": [],
 
   "merge_gate": {

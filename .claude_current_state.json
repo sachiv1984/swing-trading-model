@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-04-25__release-v3.0",
   "cycle_name": "Release Planning — v3.0 Arc 1 Remainder: Screener Engine & Results Page",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning_prompt",
+  "status": "Executing",
+  "engine": "execution_prompt",
   "backlog_slice_path": "claude/cycles/2026-04-25__release-v3.0/stage4_backlog_slice.md",
   "sprint_goal_path": "claude/cycles/2026-04-25__release-v3.0/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-04-25__release-v3.0/sprint_backlog.md",
