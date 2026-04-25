@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-17 (roadmap rebalance — cycle 2026-04-17__scheduled — no-change)
+**Last Updated:** 2026-04-25 (roadmap rebalance — cycle 2026-04-24__scheduled — 2 S-effort adds)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -280,3 +280,21 @@ No initiatives were added, replaced, deferred, or killed. No new backlog items p
 **Skill-Silo check:** Governance load = 0% (no new items of any category). Below 20% floor. Product Owner sign-off capacity confirmed — no new sign-off actions required at rebalance time. No pull-forward candidate required.
 
 **Assessment:** v2.8 backlog pool is as-is. Release planning will determine the v2.8 sprint allocation from the 8 existing P3 items.
+
+---
+
+## New Backlog Items Added — Cycle 2026-04-24__scheduled (Scheduled Rebalance)
+
+*Source: roadmap rebalance cycle 2026-04-24__scheduled — 2 new backlog items from gate-cleared ideas (BLG-FE-19, BLG-OPS-14). v2.9 shipped; v3.0 candidate pool now 14 items.*
+
+### New Items (cycle 2026-04-24__scheduled)
+
+| Item | Est. Effort | Skills | Priority |
+|------|------------|--------|---------|
+| BLG-FE-19 Keyboard Shortcuts | ~0.5 day | Base44 Frontend Prompt Owner | P3 |
+| BLG-OPS-14 AI Journal Monitoring Metrics | ~0.5 day | Backend Engineering + AI Compliance & Governance Officer | P3 |
+| **Total new** | **~1 day** | Frontend, Backend, AI Compliance | — |
+
+**Skill-Silo check (cycle additions):** Governance load = 0% (both new items are execution-heavy: frontend implementation, backend metrics endpoint). Below 20% floor. Product Owner sign-off capacity confirmed. No Skill-Silo Alert issued.
+
+**Assessment:** 2 S-effort P3 items added. No scarce skill conflicts. Both items are well-bounded and low-complexity. v3.0 candidate pool is balanced; release planning will allocate from the full 14-item pool.

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-24 (manage roadmap post-ship closure v2.9 — no initiative retirements; Arc 1 partial delivery noted)
+**Last Updated:** 2026-04-25 (roadmap rebalance cycle 2026-04-24__scheduled — no active initiatives; no-change to initiative list)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
