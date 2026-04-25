@@ -365,7 +365,25 @@ These are deliberate product decisions, not deferrals:
 
 ## 12. Last Release Slice
 
-## Active Release Slice — v2.9
+## Active Release Slice — v3.0
+
+<!-- release-plan-marker: RP:v3.0:2026-04-25__release-v3.0 -->
+
+**Cycle:** 2026-04-25__release-v3.0 | **Status:** Published | **Published:** 2026-04-25
+**Backlog slice:** `claude/cycles/2026-04-25__release-v3.0/stage4_backlog_slice.md`
+
+| EPIC | Sprint | Stories | Theme |
+|------|--------|---------|-------|
+| EPIC-01 | Sprint 1 | ST-01, ST-02, ST-03, ST-04 | Arc 1 Screener Engine |
+| EPIC-02 | Sprint 2 | ST-05, ST-06, ST-07 | Arc 1 Screener Frontend |
+| EPIC-03 | Sprint 2 | ST-08, ST-09, ST-10, ST-11 | Operations, Observability & Test Quality |
+| EPIC-04 | Sprint 1 | ST-12, ST-13, ST-14, ST-15, ST-16 | Governance, Deferred Patches & Quick Wins |
+
+**Theme:** Arc 1 Remainder — Screener Engine & Results Page
+
+---
+
+## Prior Release Slice — v2.9
 
 <!-- release-plan-marker: RP:v2.9:2026-04-22__release-v2.9 -->
 

@@ -373,6 +373,15 @@ When evaluating new features:
 |**v2.8**     |Frontend Completion, Test Quality & AI Journal Feature                |Market Correlation frontend, test coverage, governance patches, AI Journal Summarisation (Arc 4 foundation) — ✅ Shipped 2026-04-20        |
 |**v2.9**     |Arc 1 Foundation: Stock Discovery & Screening Spec & Infrastructure   |Arc 1 specs (BLG-SPEC-21/22/23, BLG-FE-17), DS-03 sector enrichment, DS-05 Alpaca US data, DS-06 news panel (watchlist), CI mock harness, governance debt — ✅ Shipped 2026-04-24|
 |**v3.0–v3.1**|Arc 1 Remainder: Screener Engine & Results Page                       |DS-01 strategy-rules screener engine, DS-02 screener results page, DS-04 earnings calendar, DS-06 screener news panel (BLG-FE-18), DS-07 watchlist promotion flow — 📋 Planned|
+
+<!-- roadmap-annotation-marker: RA:v3.0:2026-04-25__release-v3.0 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-04-25__release-v3.0
+- Plan published: 2026-04-25
+- Cycle folder: claude/cycles/2026-04-25__release-v3.0/
+- Backlog slice: claude/cycles/2026-04-25__release-v3.0/stage4_backlog_slice.md
+- Status at annotation: Validated (16 stories, 4 EPICs, 2 sprints)
 |**v3.1–v3.3**|Arc 2: Pre-Trade Research & Planning                                  |Trade Plan object, pre-trade research view, entry checklist, setup quality score, prospective heat at entry — 📋 Planned                   |
 |**v3.3–v3.5**|Arc 3: In-Trade Risk Management                                       |Position lifecycle manager, stop management workflow, drawdown prompts, concentration limits, Alpaca paper trading — 📋 Planned            |
 |**v3.5–v3.8**|Arc 4: Post-Trade Intelligence                                        |Plan vs reality analysis, journal pattern recognition, behavioural error taxonomy, outcome correlation — 📋 Planned                        |

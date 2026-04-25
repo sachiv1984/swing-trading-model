@@ -1,0 +1,146 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Ticker Universe Data Model + Endpoints",
+    "epic": "EPIC-01",
+    "description": "Create the ticker universe DB schema and management endpoints (GET/POST /ticker-universe, DELETE /ticker-universe/{ticker}). Foundation data layer for DS-01 screener engine.",
+    "ac_summary": "ticker_universe table created with migration; GET/POST/DELETE endpoints implemented; default seed data; registered in test suite and openapi.yaml; unit tests; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-01", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "OHLCV Data Pipeline Service",
+    "epic": "EPIC-01",
+    "description": "Screener data pipeline service fetching OHLCV price history via Alpaca (US) or Yahoo Finance (UK) per BLG-SPEC-22.",
+    "ac_summary": "screener_data_service.py fetch_ohlcv(); UK via YF, US via Alpaca; fallback per BLG-SPEC-22; all external calls mockable via BLG-QA-08; unit tests; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-01", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "ATR + Regime Detection + Signal Scoring Engine",
+    "epic": "EPIC-01",
+    "description": "Computation engine: 14-period ATR, EMA-based regime detection (trending/choppy), signal scoring per BLG-SPEC-21 §4-§6.",
+    "ac_summary": "screener_engine.py compute_screener_result(); ATR per §4, regime per §5, signal score per §6, regime gate per §7; deterministic; BLG-QA-09 test data; unit tests; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-01", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Screener Batch Engine + API Endpoints",
+    "epic": "EPIC-01",
+    "description": "Screener batch orchestration over ticker universe, results persistence, and GET /screener/results + POST /screener/run endpoints per BLG-SPEC-23.",
+    "ac_summary": "screener_results table; GET /screener/results with ?market filter; POST /screener/run idempotent trigger; registered in test suite + openapi.yaml; integration test via BLG-QA-08; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-01", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Screener Results Page",
+    "epic": "EPIC-02",
+    "description": "Frontend implementation of screener results page per screener_results.md. Main table view, regime badges, sorting, filters, empty/error states.",
+    "ac_summary": "/screener route; table per §4; regime badges per §5; sort + market filter per §6; empty/loading/error states per §7-§8; last-updated + refresh per §3; DoQ sign-off with local run evidence",
+    "labels": ["story", "release-v3.0", "EPIC-02", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Watchlist Promotion Flow",
+    "epic": "EPIC-02",
+    "description": "One-click watchlist promotion from screener results per DS-07 / screener_results.md §10.",
+    "ac_summary": "Add to Watchlist button; POST /watchlist call; loading/success/error states; In Watchlist indicator; no duplicates; DoQ sign-off with promotion flow evidence",
+    "labels": ["story", "release-v3.0", "EPIC-02", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Screener News Panel Attachment",
+    "epic": "EPIC-02",
+    "description": "Wire GET /news/{ticker} to screener results page news panel per screener_results.md §9 (BLG-FE-18).",
+    "ac_summary": "News badge on US tickers; inline panel with last 5 headlines; UK tickers show —; empty news state; display-only per BLG-GOV-16 §13; Strategy Rules Owner counter-sign required; DoQ with toggle behaviour evidence",
+    "labels": ["story", "release-v3.0", "EPIC-02", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "External API Health Check Extension",
+    "epic": "EPIC-03",
+    "description": "Extend GET /health with Alpaca + Yahoo Finance connectivity status per BLG-OPS-12.",
+    "ac_summary": "external_apis section in GET /health; alpaca + yahoo_finance entries with last_successful_call, error_rate, p95_latency_ms; degraded status if API down; lightweight ping; unit tests; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-03", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "AI Journal Monitoring Metrics",
+    "epic": "EPIC-03",
+    "description": "Extend GET /health with AI Journal monitoring metrics from the ai_audit_log table per BLG-OPS-14.",
+    "ac_summary": "ai_journal section in GET /health: usage_rate, error_rate, p95_latency_ms; sourced from ai_audit_log; unavailable gracefully if table empty; unit tests; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-03", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "AI Audit Service Unit Tests",
+    "epic": "EPIC-03",
+    "description": "Unit tests for ai_audit_service.py (shipped v2.9) covering all public functions per TEST-GAP-ST14.",
+    "ac_summary": "ensure_ai_audit_table idempotency; log_ai_summary_run happy path + exception; query_audit_log filter by trade_id/date/limit; mock DB; CI pass; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-03", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "Keyboard Shortcuts",
+    "epic": "EPIC-03",
+    "description": "Add 'n', 'w', 'r' keyboard shortcuts for trading actions per BLG-FE-19.",
+    "ac_summary": "n/w/r shortcuts on applicable pages; no fire when input focused; shortcut reference visible; applies to screener results page + existing pages; display-layer only; DoQ sign-off with pages tested",
+    "labels": ["story", "release-v3.0", "EPIC-03", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "execution_prompt.md §2 Deferred Patch",
+    "epic": "EPIC-04",
+    "description": "Apply v2.9 Friction Item 1: execution_prompt.md §2 EPIC execution_state.json owner designation rule.",
+    "ac_summary": "§2 updated with owner designation rule + merge order advisory; version bumped; OPERATIONAL_GUIDE.md updated; prompt_change_log.md entry appended; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-04", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "execution_prompt.md §3.1.A Deferred Patch",
+    "epic": "EPIC-04",
+    "description": "Apply v2.9 Friction Item 2: execution_prompt.md §3.1.A test_scenarios population note.",
+    "ac_summary": "§3.1.A updated with test_scenarios population instruction at test creation point; version bumped; OPERATIONAL_GUIDE.md updated; prompt_change_log.md entry appended; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-04", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-14",
+    "title": "prompt_change_log.md Retrospective Entries",
+    "epic": "EPIC-04",
+    "description": "Close OA-v29-01: add retrospective entries for sprint_planning_prompt.md v2.3→v2.4 and v2.4→v2.5 if gaps confirmed.",
+    "ac_summary": "Scan prompt_change_log.md for sprint_planning_prompt.md gaps; add retrospective entries if absent; record finding and close OA-v29-01; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-04", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-15",
+    "title": "Consecutive Losing Streak Metric",
+    "epic": "EPIC-04",
+    "description": "Add consecutive losing streak count to analytics service and dashboard per BLG-FEAT-18.",
+    "ac_summary": "Consecutive streak count from closed trades; visible in analytics view; metrics definitions spec entry added; no regression; unit tests; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-04", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-16",
+    "title": "Model Version Contract for AI Journal",
+    "epic": "EPIC-04",
+    "description": "Create AI Journal model version contract document per BLG-AI-02.",
+    "ac_summary": "ai_journal_model_contract.md created; current model version specified; configuration location documented; change process documented; referenced in ai_audit_service.py; DoQ sign-off",
+    "labels": ["story", "release-v3.0", "EPIC-04", "cycle:2026-04-25__release-v3.0"],
+    "assignee": null
+  }
+]
