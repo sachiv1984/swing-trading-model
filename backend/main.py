@@ -19,9 +19,11 @@ from routers import digest as digest_router
 from routers import ai as ai_router
 from routers import news as news_router
 from routers import ticker_universe as ticker_universe_router
+from routers import screener as screener_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table
+from services.screener_batch_service import ensure_screener_results_table
 
 
 
@@ -164,6 +166,7 @@ app.include_router(digest_router.router)
 app.include_router(ai_router.router)
 app.include_router(news_router.router)
 app.include_router(ticker_universe_router.router)
+app.include_router(screener_router.router)
 
 
 @app.on_event("startup")
@@ -191,6 +194,11 @@ def on_startup():
         _log.info("ensure_ticker_universe_table: OK")
     except Exception as _e:
         _log.error("ensure_ticker_universe_table FAILED at startup: %s", _e)
+    try:
+        ensure_screener_results_table()
+        _log.info("ensure_screener_results_table: OK")
+    except Exception as _e:
+        _log.error("ensure_screener_results_table FAILED at startup: %s", _e)
 
 
 @app.get("/")

@@ -109,6 +109,10 @@ async def test_all_endpoints(request: Request):
         {"name": "POST /ticker-universe", "method": "POST", "url": f"{base_url}/ticker-universe", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},
         {"name": "DELETE /ticker-universe/AAPL", "method": "DELETE", "url": f"{base_url}/ticker-universe/AAPL", "critical": False},
 
+        # Screener (v3.0 / ST-04)
+        {"name": "GET /screener/results", "method": "GET", "url": f"{base_url}/screener/results", "critical": False},
+        {"name": "POST /screener/run", "method": "POST", "url": f"{base_url}/screener/run", "body": {}, "critical": False},
+
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
     ]
