@@ -1,0 +1,413 @@
+{
+  "cycle_id": "2026-04-25__release-v3.0",
+  "sprint_goal": "Deliver the Arc 1 screener engine backend (Sprint 1) and the screener results page with watchlist promotion, news panel, ops/QA extensions, and keyboard shortcuts (Sprint 2), completing the v3.0 Screener Engine & Results Page feature set.",
+  "backlog_slice_source": "claude/cycles/2026-04-25__release-v3.0/stage4_backlog_slice.md",
+  "invoked_utc": "2026-04-25T03:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-04-25T03:05:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "in_progress",
+      "branch": "exec/2026-04-25__release-v3.0/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "docs/testing/atr_scenarios.md",
+        "docs/testing/screener_test_data_library.md"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Ticker Universe Data Model + Endpoints",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
+          "github_issue": 285,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/screener_results_schema.md",
+            "docs/specs/api_contracts/screener_api_contract.md#ticker-universe-endpoints"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-02": {
+          "title": "OHLCV Data Pipeline Service",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 286,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/alpaca_integration_contract.md",
+            "docs/specs/screener_results_schema.md#data-model"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-03": {
+          "title": "ATR + Regime Detection + Signal Scoring Engine",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 287,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/screener_results_schema.md#computation-fields"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-04": {
+          "title": "Screener Batch Engine + API Endpoints",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 288,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/screener_api_contract.md#GET /screener/results",
+            "docs/specs/api_contracts/screener_api_contract.md#POST /screener/run"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
+      "note": "Sprint 2 — opens after EPIC-01 ST-04 merged to main",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-05": {
+          "title": "Screener Results Page",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "human",
+          "github_issue": 294,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/screener_results.md#ST-05",
+            "docs/specs/api_contracts/screener_api_contract.md#GET /screener/results"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2 — pre-condition: EPIC-01 ST-04 merged to main"
+        },
+        "ST-06": {
+          "title": "Watchlist Promotion Flow",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "human",
+          "github_issue": 295,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/screener_results.md#watchlist-promotion"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2 — depends on ST-05"
+        },
+        "ST-07": {
+          "title": "Screener News Panel Attachment",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "human",
+          "github_issue": 296,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/screener_results.md#news-panel"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2 — depends on ST-05; Strategy Rules Owner counter-sign required at DoQ"
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
+      "note": "Sprint 2 — parallel to EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-08": {
+          "title": "External API Health Check Extension",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 297,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/health_endpoints.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2"
+        },
+        "ST-09": {
+          "title": "AI Journal Monitoring Metrics",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 298,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/health_endpoints.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2"
+        },
+        "ST-10": {
+          "title": "AI Audit Service Unit Tests",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 299,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "no prior spec applicable"
+        },
+        "ST-11": {
+          "title": "Keyboard Shortcuts",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "human",
+          "github_issue": 300,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/screener_results.md#keyboard-shortcuts"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2; DoQ sign-off must state which pages were tested"
+        }
+      }
+    },
+    "EPIC-04": {
+      "status": "in_progress",
+      "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-12": {
+          "title": "execution_prompt.md §2 Deferred Patch",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 289,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
+          "commit_sha": "7a6c576",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-25T03:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/execution_prompt.md#2"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "Combined commit with ST-13. CLAUDE.md §6 checklist: version bump v3.10→v3.11, OPERATIONAL_GUIDE.md v3.63→v3.64, prompt_change_log.md prepended. Closes OA-v29-02."
+        },
+        "ST-13": {
+          "title": "execution_prompt.md §3.1.A Deferred Patch",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 290,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
+          "commit_sha": "7a6c576",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-04-25T03:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/execution_prompt.md#3.1.A"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "Combined commit with ST-12. Advisory instruction non-blocking per AC. Closes OA-v29-03."
+        },
+        "ST-14": {
+          "title": "prompt_change_log.md Retrospective Entries",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
+          "github_issue": 291,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/prompt_change_log.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Scan finding: sprint_planning_prompt.md v2.3→v2.4 entry present (line 73) and v2.4→v2.5 entry present (line 61). No retrospective entries needed. OA-v29-01 closed."
+        },
+        "ST-15": {
+          "title": "Consecutive Losing Streak Metric",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 292,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#loss_streak"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Extends existing analytics endpoint; no new endpoint if existing can be extended"
+        },
+        "ST-16": {
+          "title": "Model Version Contract for AI Journal",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 293,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/ai_journal_model_contract.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "New Class 2/3 document creation"
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01", "EPIC-04", "EPIC-02", "EPIC-03"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
