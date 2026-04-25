@@ -2790,6 +2790,118 @@ components:
         "429":
           description: Rate limit exceeded — serve empty news panel
 
+  # ─── Ticker Universe API (DS-01 / ST-01) ────────────────────────────────────
+  # Manages the set of tickers eligible for screener runs.
+  # Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+  /ticker-universe:
+    get:
+      tags:
+        - Screener
+      summary: List tickers in screener universe
+      description: |
+        Returns tickers eligible for screener runs.
+        Filterable by market (UK|US) and active status.
+      parameters:
+        - name: market
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [UK, US]
+          description: Filter by market
+        - name: active_only
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Return only active tickers (default true)
+      responses:
+        "200":
+          description: List of tickers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker: { type: string }
+                        market: { type: string, enum: [UK, US] }
+                        active: { type: boolean }
+                        sector: { type: string, nullable: true }
+                        industry: { type: string, nullable: true }
+                        created_at: { type: string, format: date-time }
+        "400":
+          description: Invalid market value
+    post:
+      tags:
+        - Screener
+      summary: Add a ticker to the screener universe
+      description: |
+        Adds a ticker. Re-activates soft-deleted tickers on conflict.
+        Returns 400 if market is not UK or US, or ticker is blank.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ticker, market]
+              properties:
+                ticker: { type: string, maxLength: 20 }
+                market: { type: string, enum: [UK, US] }
+                sector: { type: string, nullable: true }
+                industry: { type: string, nullable: true }
+      responses:
+        "201":
+          description: Ticker added or re-activated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    type: object
+                    properties:
+                      ticker: { type: string }
+                      market: { type: string }
+                      active: { type: boolean }
+                      sector: { type: string, nullable: true }
+                      industry: { type: string, nullable: true }
+                      created_at: { type: string, format: date-time }
+        "400":
+          description: Invalid ticker or market
+  /ticker-universe/{ticker}:
+    delete:
+      tags:
+        - Screener
+      summary: Remove a ticker from the screener universe
+      description: Soft-deletes a ticker (sets active=FALSE). Returns 404 if not found or already inactive.
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Ticker symbol (e.g. AAPL, HSBA.L)
+      responses:
+        "200":
+          description: Ticker deactivated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+        "404":
+          description: Ticker not found or already inactive
+
   # ─── Screener API (BLG-SPEC-23 / ST-03) ────────────────────────────────────
   # Internal screener endpoints served by this system's backend.
   # Canonical contract: docs/specs/api_contracts/screener_api_contract.md

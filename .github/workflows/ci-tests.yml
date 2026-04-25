@@ -58,6 +58,10 @@ jobs:
             tests/test_db_monitoring.py \
             tests/test_trade_service.py \
             tests/test_api_mock_harness.py \
+            tests/test_ticker_universe.py \
+            tests/test_screener_data_service.py \
+            tests/test_screener_engine.py \
+            tests/test_screener_batch_service.py \
             tests/test_streak_metric.py \
             -v --tb=short
 
