@@ -104,6 +104,11 @@ async def test_all_endpoints(request: Request):
         # Analytics (extended)
         {"name": "GET /analytics/market-correlation", "method": "GET", "url": f"{base_url}/analytics/market-correlation", "critical": False},
 
+        # Ticker Universe (v3.0 / ST-01)
+        {"name": "GET /ticker-universe", "method": "GET", "url": f"{base_url}/ticker-universe", "critical": False},
+        {"name": "POST /ticker-universe", "method": "POST", "url": f"{base_url}/ticker-universe", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},
+        {"name": "DELETE /ticker-universe/AAPL", "method": "DELETE", "url": f"{base_url}/ticker-universe/AAPL", "critical": False},
+
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
     ]
@@ -136,6 +141,8 @@ async def test_all_endpoints(request: Request):
                     response = await client.get(test["url"], headers=forward_headers)
                 elif test["method"] == "POST":
                     response = await client.post(test["url"], json=test.get("body", {}), headers=forward_headers)
+                elif test["method"] == "DELETE":
+                    response = await client.delete(test["url"], headers=forward_headers)
                 else:
                     raise ValueError(f"Unsupported method: {test['method']}")
                 
