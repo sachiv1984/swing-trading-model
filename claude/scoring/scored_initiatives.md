@@ -233,3 +233,22 @@ All 8 items are SPS=1 or SPS=2 — no §13 boundary proximity. All are S or M ef
 
 **Last Updated:** 2026-04-05
 
+---
+
+## Cycle 2026-04-24__scheduled — New Backlog Items
+
+*Standard-tier run. Zero active roadmap initiatives. 2 new backlog items from gate-cleared ideas after v2.9 ship. CPS = 0.0 (unchanged).*
+
+| Initiative | Strat | Fin | Risk | WF Int | TTV | Rev | SPS | Effort |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| BLG-FE-19 — Keyboard Shortcuts | 3 | 2 | 1 | 5 | 5 | 5 | 2 | S |
+| BLG-OPS-14 — AI Journal Monitoring Metrics | 4 | 2 | 4 | 5 | 5 | 5 | 2 | S |
+
+*Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score (carried from STEP 5 debate). Scale: 1–5.*
+
+**CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-04-21__scheduled). Delta: 0.0.
+
+**Facilitator observations (cycle 2026-04-24__scheduled):** Both items are P3 / S-effort with immediate time-to-value (TTV=5) and full reversibility (Rev=5). BLG-OPS-14 has the stronger risk-reduction case (Risk=4) — AI monitoring fills a live operational gap post-BLG-AI-01 delivery. BLG-FE-19 is low-risk UX polish (Risk=1) with a 10-cycle overdue gate; reasonable to include. No Skill-Silo Alert (Governance load = 0%). No scarce skill conflicts.
+
+**Last Updated:** 2026-04-25
+

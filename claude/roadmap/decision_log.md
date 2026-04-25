@@ -558,3 +558,51 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** ~13.5 days total across mixed skill domains. Governance load ~22% (within 20–60% bounds). No scarce skill conflicts. All items are Arc 1 pre-work (spec authoring, test infrastructure, governance compliance).
 
 **Rationale:** 14 items advanced from IW-20260421-01 (44 new ideas + 16 stale parked) following structured debate with 16 candidates. Two candidates parked during debate (IDEA-strategy-owner-20260321-02 accepted Challenger argument; IDEA-challenger-20260421-02 self-assessment accepted). All items are Arc 1 prerequisite work (screener specs, Alpaca contracts, test infrastructure, §13 governance) needed before v2.9 sprint planning. Net-zero satisfied at roadmap level (0 adds, 0 kills). Backlog-level net-zero satisfied via named displacements. Workforce gate: PASS. STEP 8.6 guardrail: PASS (2 items parked during debate; Challenger issued 4 Type A counter-arguments).
+
+---
+
+### DL-022 — 2026-04-24
+
+**Decision type:** No-change (roadmap) + Backlog Add (×2)
+**Cycle:** 2026-04-24__scheduled
+**Date:** 2026-04-24
+**Decision owner:** Product Owner
+
+**Summary:** Scheduled roadmap rebalance — no roadmap-level initiatives added, replaced, deferred, or killed. 2 new backlog items promoted from gate-cleared idea review.
+
+**Initiatives added (backlog-level):**
+
+| ID | Title | Priority | Effort | Displacement |
+|----|-------|----------|--------|-------------|
+| BLG-FE-19 | Keyboard shortcuts for trading actions | P3 | S | BLG-TECH-05 (P3) moved to §9 Deferred |
+| BLG-OPS-14 | AI Journal monitoring metrics | P3 | S | BLG-SPEC-20 (P3) moved to §9 Deferred |
+
+**Explicit displacement:**
+- BLG-TECH-05 (Prometheus metrics endpoint, P3, M effort, single-user scale deferral) — permanently deferred to §9 Future Candidates
+- BLG-SPEC-20 (machine-readable spec front-matter standard, P3, S effort) — deferred to §9; Arc 1 specs shipped without requiring this standard; investment deferred until CI compliance checking becomes a priority
+
+**Roadmap impact:** current_roadmap.md Last Updated bumped to 2026-04-24. No content changes to arc structure or horizon placements.
+
+**Workforce impact:** ~1 FTE-day total (2 × S effort). Frontend (keyboard shortcuts) + backend (GET /health extension). Governance load 0% — PO sign-off capacity confirmed.
+
+**Rationale:** 45 ideas reviewed. 10 gate-cleared ideas surfaced (BLG-SPEC-21, BLG-SPEC-22, BLG-FE-17, BLG-AI-01, BLG-QA-08 shipped v2.9). 7 gate-cleared ideas rejected as superseded by spec delivery. 2 advanced: keyboard shortcuts (BLG-FE-02/03 gate cleared 10 cycles ago), AI Journal monitoring (BLG-AI-01 gate cleared this cycle). 1 gate-cleared idea parked after debate (data pipeline tests belong in DS-01 sprint scope, not pre-implementation backlog). 3 stale ideas retired (cycle 6, no path). Net-zero satisfied: 2 adds, 2 confirmed defers. Workforce gate: PASS. STEP 8.6 guardrail: PASS (Challenger issued Type A counter-argument for data pipeline tests; 1 item parked).
+
+---
+
+### DL-023 — 2026-04-24
+
+**Decision type:** Defer (backlog-level)
+**Cycle:** 2026-04-24__scheduled
+**Date:** 2026-04-24
+**Decision owner:** Product Owner
+
+**Initiatives deferred to §9 Future Candidates:**
+
+| ID | Title | Reason |
+|----|-------|--------|
+| BLG-TECH-05 | Prometheus metrics endpoint | Indefinitely deferred — single-user scale; no operational need at current deployment; permanently moved to Future Candidates |
+| BLG-SPEC-20 | Machine-readable spec front-matter standard | Deferred — Arc 1 spec delivery (BLG-SPEC-21/22/23) shipped without requiring this standard; CI compliance checking investment deferred; moved to Future Candidates |
+
+**Workforce impact:** None — no work stopped; both items were P3 with no active sprint slot.
+
+**Rationale:** Displacement required for DL-022 backlog additions. Both items are P3 with no urgency increase in the foreseeable roadmap. BLG-TECH-05 has been deprioritised across multiple prior cycles (DL-021, DL-023 rotation). BLG-SPEC-20 was added only 1 cycle ago but its stated precondition (Arc 1 specs) is now met and CI checking is not yet a bottleneck.

@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-24 (GROOM-20260424-01 — post-ship closure v2.9; 12 items archived COMPLETE + 1 killed BLG-GOV-08; 8 provisional targets updated v2.9→v3.0)
-**Last rebalance:** 2026-04-21 (cycle 2026-04-21__scheduled — DL-021)
+**Last Updated:** 2026-04-24 (cycle 2026-04-24__scheduled — DL-022: 2 items added BLG-FE-19, BLG-OPS-14; DL-023: BLG-TECH-05 + BLG-SPEC-20 moved to §9 Deferred)
+**Last rebalance:** 2026-04-24 (cycle 2026-04-24__scheduled — DL-022 backlog adds; DL-023 defers)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -30,26 +30,7 @@
 
 ## 1. Platform & Validation Governance Backlog
 
----
-
-### BLG-TECH-05 — Prometheus metrics endpoint
-**Priority:** P3 (Low)
-**Type:** Observability
-**Owner:** Infrastructure & Operations Owner
-**Source:** Original backlog — target updated to v2.3 per backlog health scan GROOM-20260324-01
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v2.8+ (or when system becomes multi-user)
-
-**Problem**
-No Prometheus-compatible metrics endpoint exists. As the system grows toward multi-user operation, there is no way to monitor validation run counts, failure rates, or duration without instrumenting the application directly. Observability cannot be added retroactively without significant rework.
-
-**Scope**
-- Add `GET /metrics` Prometheus endpoint exposing: validation run count, failure count by metric and severity, validation duration
-- Optional Grafana dashboard
-
-**Acceptance Criteria**
-- Metrics scrape successfully in Prometheus format
-- Counters and histograms are correct
+*No active items in this section — BLG-TECH-05 deferred to §9 (DL-023, 2026-04-24).*
 
 ---
 
@@ -128,6 +109,29 @@ No catalogue of UI components exists. Arc 1 will add significant new frontend co
 - Each component entry includes: purpose, props summary, variants, usage locations
 - Duplication or reuse opportunities noted
 
+
+---
+
+### BLG-FE-19 — Keyboard shortcuts for trading actions
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260321-01 — promoted cycle 2026-04-24__scheduled (DL-022); gate cleared: BLG-FE-02/03 shipped v2.2
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.0
+
+**Problem**
+Common trading actions require multiple clicks. As Arc 1 adds the screener page and Arc 2 adds research surfaces, keyboard navigation reduces friction in the daily workflow.
+
+**Scope**
+- Add keyboard shortcuts: 'n' (new position), 'w' (add to watchlist), 'r' (refresh)
+- Apply across existing pages and screener page when DS-02 is implemented
+- No changes to business logic; display-layer only
+
+**Acceptance Criteria**
+- Shortcuts 'n', 'w', 'r' functional on applicable pages
+- Shortcuts do not interfere with text input fields
+- Shortcut reference visible (e.g. tooltip or help overlay)
 
 ---
 
@@ -239,6 +243,30 @@ Three endpoints shipped in v2.8/v2.9 are absent from `docs/ops/api_performance_b
 
 ---
 
+### BLG-OPS-14 — AI Journal monitoring metrics
+**Priority:** P3 (Low)
+**Type:** Operations / Observability
+**Owner:** AI Compliance & Governance Officer + Infrastructure & Operations Owner
+**Source:** IDEA-ai-compliance-20260421-02 — promoted cycle 2026-04-24__scheduled (DL-022); gate cleared: BLG-AI-01 shipped v2.9 (ST-14)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.0
+
+**Problem**
+BLG-AI-01 (AI Journal summary audit log) shipped v2.9. The AI Journal feature is now live in production but has no monitoring. LLM unavailability events, elevated error rates, and latency degradation are currently invisible until a user notices degraded output quality.
+
+**Scope**
+- Extend `GET /health` to include AI Journal metrics: `usage_rate` (summaries/day, rolling 7d), `error_rate` (last 24h), `p95_latency` (last 24h)
+- Source metrics from the BLG-AI-01 audit log table
+- Non-blocking: health endpoint returns degraded status if AI metrics are unavailable rather than failing
+
+**Acceptance Criteria**
+- `GET /health` response includes an `ai_journal` section with `usage_rate`, `error_rate`, `p95_latency`
+- Metrics sourced from `ai_audit_log` table (BLG-AI-01)
+- Health endpoint does not fail if AI audit data is absent (returns `null` or `unavailable` gracefully)
+- DoQ sign-off with evidence of response format
+
+---
+
 ### BLG-OPS-12 — External API health check extension
 **Priority:** P2 (Medium)
 **Type:** Operations / Infrastructure
@@ -264,31 +292,7 @@ Three endpoints shipped in v2.8/v2.9 are absent from `docs/ops/api_performance_b
 
 ## 7. Spec Debt Backlog
 
----
-
-### BLG-SPEC-20 — Machine-readable spec front-matter standard
-**Priority:** P3 (Low)
-**Type:** Spec Debt / Governance Tooling
-**Owner:** Head of Specs Team
-**Source:** IDEA-head-of-specs-20260321-02 — promoted cycle 2026-04-21__scheduled (DL-021)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v3.0
-
-**Problem**
-Canonical spec files have inconsistent or absent YAML front-matter. Arc 1 will add multiple new canonical documents. Inconsistent headers prevent automated CI compliance checks and increase audit overhead.
-
-**Scope**
-- Define YAML front-matter standard for canonical spec files (Class 2 documents)
-- Document the standard in a reference spec or update OPERATIONAL_GUIDE
-- Apply to new Arc 1 spec files created in v2.9
-
-**Acceptance Criteria**
-- Front-matter standard documented with required fields
-- New Arc 1 spec files (BLG-SPEC-21/22/23 outputs) comply with the standard
-- CI-checkable pattern defined (even if CI check is deferred to a later item)
-
-
-
+*No active items in this section — BLG-SPEC-20 deferred to §9 (DL-023, 2026-04-24).*
 
 ---
 
@@ -328,12 +332,13 @@ As cycles accumulate, documents are created in each cycle directory but there is
 
 - Daily email portfolio summary
 - FX rate history tracking
-- Prometheus validation observability (BLG-TECH-05)
+- **BLG-TECH-05 — Prometheus metrics endpoint** (P3, M effort — permanently deferred at single-user scale; DL-023 2026-04-24)
 - Position correlation analysis
 - Backtesting module
 - Multi-portfolio support
 - Mobile app
 - Full compliance scoring system
+- **BLG-SPEC-20 — Machine-readable spec front-matter standard** (P3, S effort — deferred; Arc 1 specs shipped without requiring this standard; DL-023 2026-04-24)
 
 ---
 
@@ -360,7 +365,25 @@ These are deliberate product decisions, not deferrals:
 
 ## 12. Last Release Slice
 
-## Active Release Slice — v2.9
+## Active Release Slice — v3.0
+
+<!-- release-plan-marker: RP:v3.0:2026-04-25__release-v3.0 -->
+
+**Cycle:** 2026-04-25__release-v3.0 | **Status:** Published | **Published:** 2026-04-25
+**Backlog slice:** `claude/cycles/2026-04-25__release-v3.0/stage4_backlog_slice.md`
+
+| EPIC | Sprint | Stories | Theme |
+|------|--------|---------|-------|
+| EPIC-01 | Sprint 1 | ST-01, ST-02, ST-03, ST-04 | Arc 1 Screener Engine |
+| EPIC-02 | Sprint 2 | ST-05, ST-06, ST-07 | Arc 1 Screener Frontend |
+| EPIC-03 | Sprint 2 | ST-08, ST-09, ST-10, ST-11 | Operations, Observability & Test Quality |
+| EPIC-04 | Sprint 1 | ST-12, ST-13, ST-14, ST-15, ST-16 | Governance, Deferred Patches & Quick Wins |
+
+**Theme:** Arc 1 Remainder — Screener Engine & Results Page
+
+---
+
+## Prior Release Slice — v2.9
 
 <!-- release-plan-marker: RP:v2.9:2026-04-22__release-v2.9 -->
 
