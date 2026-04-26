@@ -10,9 +10,11 @@ All functions are independent of FastAPI for maximum testability.
 """
 
 from typing import Dict, List, Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import time
 import requests
+import collections
+import math
 
 import os
 import urllib.parse
@@ -29,6 +31,19 @@ _health_state: Dict = {
     "last_alert_evaluation": None,
 }
 
+# External API rolling window — keeps last 100 call outcomes per API (ST-08)
+_ROLLING_WINDOW = 100
+_ext_api_state: Dict = {
+    "alpaca": {
+        "last_successful_call": None,
+        "calls": collections.deque(maxlen=_ROLLING_WINDOW),
+    },
+    "yahoo_finance": {
+        "last_successful_call": None,
+        "calls": collections.deque(maxlen=_ROLLING_WINDOW),
+    },
+}
+
 # Render free tier PostgreSQL limit (256 MB)
 _RENDER_DB_LIMIT_BYTES: int = 268_435_456
 
@@ -37,6 +52,105 @@ _DB_ALERT_COOLDOWN_SECONDS: int = 3600
 
 # Last DB size alert timestamp (module-level; resets on process restart)
 _last_db_size_alert_utc: Optional[datetime] = None
+
+
+def record_external_api_call(api_name: str, success: bool, latency_ms: float) -> None:
+    """Record the outcome of an external API call for health monitoring (ST-08)."""
+    if api_name not in _ext_api_state:
+        return
+    now_iso = datetime.now(timezone.utc).isoformat()
+    _ext_api_state[api_name]["calls"].append({
+        "success": success,
+        "latency_ms": latency_ms,
+        "ts": now_iso,
+    })
+    if success:
+        _ext_api_state[api_name]["last_successful_call"] = now_iso
+
+
+def get_external_api_health() -> Dict:
+    """Return external_apis health section for GET /health (ST-08)."""
+    result = {}
+    for api_name, state in _ext_api_state.items():
+        calls = list(state["calls"])
+        if not calls:
+            result[api_name] = {
+                "last_successful_call": None,
+                "error_rate": 0.0,
+                "p95_latency_ms": None,
+            }
+        else:
+            error_count = sum(1 for c in calls if not c["success"])
+            error_rate = round(error_count / len(calls), 4)
+            latencies = sorted(c["latency_ms"] for c in calls if c["success"])
+            p95 = None
+            if latencies:
+                idx = math.ceil(0.95 * len(latencies)) - 1
+                p95 = int(latencies[max(0, idx)])
+            result[api_name] = {
+                "last_successful_call": state["last_successful_call"],
+                "error_rate": error_rate,
+                "p95_latency_ms": p95,
+            }
+    return result
+
+
+def get_ai_journal_health() -> Dict:
+    """Return ai_journal health section for GET /health (ST-09)."""
+    try:
+        from database import get_db
+        now = datetime.utcnow()
+        seven_days_ago = now - timedelta(days=7)
+        one_day_ago = now - timedelta(days=1)
+
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                # usage_rate: summaries produced in last 7 days / 7
+                cur.execute(
+                    "SELECT COUNT(*) FROM ai_audit_log WHERE invoked_at >= %s",
+                    (seven_days_ago,),
+                )
+                row = cur.fetchone()
+                count_7d = row[0] if row else 0
+
+                # error_rate: failed runs in last 24h / total last 24h
+                cur.execute(
+                    "SELECT COUNT(*), SUM(CASE WHEN summary_produced=FALSE THEN 1 ELSE 0 END) "
+                    "FROM ai_audit_log WHERE invoked_at >= %s",
+                    (one_day_ago,),
+                )
+                row = cur.fetchone()
+                total_24h = row[0] if row else 0
+                failed_24h = row[1] if row and row[1] else 0
+
+                # p95_latency_ms from duration_ms (column may not exist yet)
+                p95 = None
+                try:
+                    cur.execute(
+                        "SELECT duration_ms FROM ai_audit_log "
+                        "WHERE invoked_at >= %s AND duration_ms IS NOT NULL "
+                        "ORDER BY duration_ms",
+                        (one_day_ago,),
+                    )
+                    durations = [r[0] for r in cur.fetchall()]
+                    if durations:
+                        idx = math.ceil(0.95 * len(durations)) - 1
+                        p95 = int(durations[max(0, idx)])
+                except Exception:
+                    pass  # column absent on older deploys
+
+        if count_7d == 0 and total_24h == 0:
+            return {"status": "unavailable"}
+
+        usage_rate = round(count_7d / 7.0, 4)
+        error_rate = round(failed_24h / total_24h, 4) if total_24h > 0 else 0.0
+        return {
+            "usage_rate": usage_rate,
+            "error_rate": error_rate,
+            "p95_latency_ms": p95,
+        }
+    except Exception:
+        return {"status": "unavailable"}
 
 
 def record_market_status_check() -> None:
@@ -73,6 +187,8 @@ def get_operational_health() -> Dict:
         "db": db_status,
         "last_market_status_check": _health_state["last_market_status_check"],
         "last_alert_evaluation": _health_state["last_alert_evaluation"],
+        "external_apis": get_external_api_health(),
+        "ai_journal": get_ai_journal_health(),
     }
 
 
