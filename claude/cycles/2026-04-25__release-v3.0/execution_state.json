@@ -111,9 +111,9 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
-      "note": "Sprint 2 — opens after EPIC-01 ST-04 merged to main",
+      "note": "Sprint 2 — all stories delegated_frontend; delegation records created",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
@@ -123,160 +123,165 @@
         "ST-05": {
           "title": "Screener Results Page",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "human",
           "github_issue": 294,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260426-01",
+          "blocked_since_utc": "2026-04-26T00:00:00Z",
+          "unblock_criteria": "Commit [EPIC-02][ST-05] pushed to exec/2026-04-25__release-v3.0/EPIC-02; all AC met; DoQ sign-off with explicit evidence method (local run or staging)",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/screener_results.md#ST-05",
-            "docs/specs/api_contracts/screener_api_contract.md#GET /screener/results"
+            "docs/specs/frontend/pages/screener_results.md",
+            "docs/specs/api_contracts/screener_api_contract.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegated",
           "sign_off_record": null,
-          "notes": "Sprint 2 — pre-condition: EPIC-01 ST-04 merged to main"
+          "notes": "Delegated per DEL-20260426-01. Full screener results page implementation."
         },
         "ST-06": {
           "title": "Watchlist Promotion Flow",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "human",
           "github_issue": 295,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260426-02",
+          "blocked_since_utc": "2026-04-26T00:00:00Z",
+          "unblock_criteria": "Commit [EPIC-02][ST-06] pushed to branch; all AC met; DoQ sign-off with evidence of promotion flow",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/screener_results.md#watchlist-promotion"
+            "docs/specs/frontend/pages/screener_results.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegated",
           "sign_off_record": null,
-          "notes": "Sprint 2 — depends on ST-05"
+          "notes": "Delegated per DEL-20260426-02. Inline confirmation popover + POST /watchlist."
         },
         "ST-07": {
           "title": "Screener News Panel Attachment",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "human",
           "github_issue": 296,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260426-03",
+          "blocked_since_utc": "2026-04-26T00:00:00Z",
+          "unblock_criteria": "Commit [EPIC-02][ST-07] pushed to branch; all AC met; DoQ sign-off with local run evidence of panel toggle; Strategy Rules Owner counter-sign in EPIC-02 DoQ consolidation block",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/screener_results.md#news-panel"
+            "docs/specs/frontend/pages/screener_results.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegated",
           "sign_off_record": null,
-          "notes": "Sprint 2 — depends on ST-05; Strategy Rules Owner counter-sign required at DoQ"
+          "notes": "Delegated per DEL-20260426-03. Strategy Rules Owner counter-sign required at DoQ (BLG-FE-18 display-only boundary)."
         }
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
       "note": "Sprint 2 — parallel to EPIC-02",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_health_extensions.py",
+        "tests/test_ai_audit_service.py"
+      ],
       "stories": {
         "ST-08": {
           "title": "External API Health Check Extension",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 297,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b282782",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-26T00:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/health_endpoints.md"
+            "backend/services/health_service.py"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sprint 2"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
+          "notes": "Extended get_operational_health() with external_apis section. Module-level rolling window (deque). record_external_api_call() wired in screener_data_service.py. 8 unit tests in test_health_extensions.py."
         },
         "ST-09": {
           "title": "AI Journal Monitoring Metrics",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 298,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b282782",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-26T00:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/health_endpoints.md"
+            "backend/services/ai_audit_service.py",
+            "backend/services/health_service.py"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sprint 2"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
+          "notes": "ai_journal section added to operational health. duration_ms column added to ai_audit_log (idempotent ALTER TABLE ADD COLUMN IF NOT EXISTS). 5 unit tests in test_health_extensions.py."
         },
         "ST-10": {
           "title": "AI Audit Service Unit Tests",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 299,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b282782",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-26T00:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
+          "notes": "no prior spec applicable. 12 unit tests covering ensure_ai_audit_table, log_ai_summary_run, query_audit_log. All mock-based, no live DB."
         },
         "ST-11": {
           "title": "Keyboard Shortcuts",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "human",
           "github_issue": 300,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260426-04",
+          "blocked_since_utc": "2026-04-26T00:00:00Z",
+          "unblock_criteria": "Commit [EPIC-03][ST-11] pushed to exec/2026-04-25__release-v3.0/EPIC-03; all AC met; DoQ sign-off with local run evidence stating which pages were tested",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/screener_results.md#keyboard-shortcuts"
+            "docs/specs/frontend/pages/navigation.md",
+            "docs/design/2026-04-25__release-v3.0/keyboard-shortcuts/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegated",
           "sign_off_record": null,
-          "notes": "Sprint 2; DoQ sign-off must state which pages were tested"
+          "notes": "Delegated per DEL-20260426-04. Keyboard shortcuts: n/w/r keys with input suppression + sidebar footer hint. Sprint 2; DoQ sign-off must state which pages were tested."
         }
       }
     },
@@ -399,7 +404,12 @@
   },
 
   "blocked_items": [],
-  "delegated_items": [],
+  "delegated_items": [
+    "EPIC-02/ST-05 (DEL-20260426-01 — blocked_frontend)",
+    "EPIC-02/ST-06 (DEL-20260426-02 — blocked_frontend)",
+    "EPIC-02/ST-07 (DEL-20260426-03 — blocked_frontend)",
+    "EPIC-03/ST-11 (DEL-20260426-04 — blocked_frontend)"
+  ],
   "completed_items": ["EPIC-01", "EPIC-04"],
   "open_escalations": [],
 
