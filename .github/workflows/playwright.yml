@@ -3,7 +3,24 @@ name: Playwright E2E Acceptance Tests
 # Suites (all use Playwright network interception — no live backend required):
 #   risk-dashboard.spec.js       — ST-11: Risk Dashboard (17 scenarios)
 #   chart-interactivity.spec.js  — ST-06: Chart Interactivity (SC-CHART-IX-01–06)
-#   market-correlation.spec.js   — ST-01 (EPIC-01, v2.8): Market Correlation (SC-CORR-FE-01–08)
+#   market-correlation.spec.js   — ST-01 (EPIC-01, v2.8): Market Correlation
+#   screener.spec.js             — ST-05/ST-06/ST-07 (EPIC-02, v3.0): Screener page
+#   keyboard-shortcuts.spec.js   — ST-11 (EPIC-03, v3.0): Keyboard shortcuts
+#   sidebar-nav-groups.spec.js   — ST-13 (BLG-UX-01, v2.3): Nav group collapse
+#   alert-nav-badge.spec.js      — ST-10 (BLG-FE-05, v2.3): Alert badge
+#   alert-thresholds-empty-state.spec.js  — alert thresholds empty state
+#   compliance-panel.spec.js     — compliance panel
+#   fee-drag-trade-history.spec.js        — fee drag in trade history
+#   loading-states.spec.js       — loading state skeletons
+#   notifications.spec.js        — notifications page
+#   positions-pnl-columns.spec.js         — positions P&L columns
+#   reports-performance-tab.spec.js       — reports performance tab
+#   signals-cash-balance.spec.js          — signals cash balance
+#   slippage-tracking.spec.js    — slippage tracking
+#   smoke-critical-paths.spec.js — critical path smoke tests
+#   staleness-indicator.spec.js  — staleness indicator
+#   system-status.spec.js        — system status page
+#   weekly-digest.spec.js        — weekly digest page
 #
 # Single job: one VM, one npm ci, one browser install — all specs run sequentially.
 
@@ -17,6 +34,10 @@ on:
       - 'src/components/risk/**'
       - 'src/pages/PerformanceAnalytics.js'
       - 'src/components/analytics/**'
+      - 'src/pages/Screener.js'
+      - 'src/Layout.js'
+      - 'src/pages/**'
+      - 'src/components/**'
       - 'tests/e2e/**'
       - 'playwright.config.js'
       - '.github/workflows/playwright.yml'
@@ -28,6 +49,10 @@ on:
       - 'src/components/risk/**'
       - 'src/pages/PerformanceAnalytics.js'
       - 'src/components/analytics/**'
+      - 'src/pages/Screener.js'
+      - 'src/Layout.js'
+      - 'src/pages/**'
+      - 'src/components/**'
       - 'tests/e2e/**'
       - 'playwright.config.js'
       - '.github/workflows/playwright.yml'
@@ -36,7 +61,7 @@ jobs:
   playwright-e2e:
     name: Playwright E2E Acceptance Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
@@ -55,7 +80,28 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run all E2E acceptance tests
-        run: npx playwright test tests/e2e/risk-dashboard.spec.js tests/e2e/chart-interactivity.spec.js tests/e2e/market-correlation.spec.js
+        run: |
+          npx playwright test \
+            tests/e2e/smoke-critical-paths.spec.js \
+            tests/e2e/risk-dashboard.spec.js \
+            tests/e2e/chart-interactivity.spec.js \
+            tests/e2e/market-correlation.spec.js \
+            tests/e2e/screener.spec.js \
+            tests/e2e/keyboard-shortcuts.spec.js \
+            tests/e2e/sidebar-nav-groups.spec.js \
+            tests/e2e/alert-nav-badge.spec.js \
+            tests/e2e/alert-thresholds-empty-state.spec.js \
+            tests/e2e/compliance-panel.spec.js \
+            tests/e2e/fee-drag-trade-history.spec.js \
+            tests/e2e/loading-states.spec.js \
+            tests/e2e/notifications.spec.js \
+            tests/e2e/positions-pnl-columns.spec.js \
+            tests/e2e/reports-performance-tab.spec.js \
+            tests/e2e/signals-cash-balance.spec.js \
+            tests/e2e/slippage-tracking.spec.js \
+            tests/e2e/staleness-indicator.spec.js \
+            tests/e2e/system-status.spec.js \
+            tests/e2e/weekly-digest.spec.js
         env:
           CI: true
           REACT_APP_API_URL: http://localhost:8000
