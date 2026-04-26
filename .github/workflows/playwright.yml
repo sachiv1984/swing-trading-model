@@ -1,8 +1,19 @@
 name: Playwright E2E Acceptance Tests
 
-# Suites (all use Playwright network interception — no live backend required):
+# Two jobs:
+#
+# 1. playwright-e2e  — behavioural acceptance tests (blocking gate)
+#    All 20 spec files using page.route() interception. No live backend required.
+#
+# 2. playwright-visual — pixel snapshot tests (advisory until baselines committed)
+#    visual-snapshots.spec.js — 12 element-level snapshots for visual AC.
+#    Baselines committed to tests/e2e/__snapshots__/. To generate/refresh:
+#      npx playwright test tests/e2e/visual-snapshots.spec.js --update-snapshots
+#    continue-on-error: true until baseline PNGs are committed; set to false after.
+#
+# Spec inventory:
 #   risk-dashboard.spec.js       — ST-11: Risk Dashboard (17 scenarios)
-#   chart-interactivity.spec.js  — ST-06: Chart Interactivity (SC-CHART-IX-01–06)
+#   chart-interactivity.spec.js  — ST-06: Chart Interactivity
 #   market-correlation.spec.js   — ST-01 (EPIC-01, v2.8): Market Correlation
 #   screener.spec.js             — ST-05/ST-06/ST-07 (EPIC-02, v3.0): Screener page
 #   keyboard-shortcuts.spec.js   — ST-11 (EPIC-03, v3.0): Keyboard shortcuts
@@ -21,8 +32,7 @@ name: Playwright E2E Acceptance Tests
 #   staleness-indicator.spec.js  — staleness indicator
 #   system-status.spec.js        — system status page
 #   weekly-digest.spec.js        — weekly digest page
-#
-# Single job: one VM, one npm ci, one browser install — all specs run sequentially.
+#   visual-snapshots.spec.js     — VS-01–VS-12 pixel snapshots (job 2)
 
 on:
   push:
@@ -115,3 +125,46 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+
+  playwright-visual:
+    name: Playwright Visual Snapshots (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # continue-on-error: true until baseline PNGs are committed to the repo.
+    # Once tests/e2e/__snapshots__/ is populated, set this to false to make
+    # visual regression a blocking gate.
+    continue-on-error: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run visual snapshot tests
+        run: npx playwright test tests/e2e/visual-snapshots.spec.js
+        env:
+          CI: true
+          REACT_APP_API_URL: http://localhost:8000
+          REACT_APP_DEV_FAKE_AUTH: 'true'
+          BROWSER: none
+
+      - name: Upload visual diff artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-snapshot-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
