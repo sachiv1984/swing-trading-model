@@ -51,6 +51,10 @@ def ensure_ai_audit_table() -> None:
                 CREATE INDEX IF NOT EXISTS idx_ai_audit_trade_ids
                 ON ai_audit_log USING GIN (trade_ids)
             """)
+            cur.execute("""
+                ALTER TABLE ai_audit_log
+                ADD COLUMN IF NOT EXISTS duration_ms INTEGER
+            """)
         conn.commit()
 
 
@@ -61,6 +65,7 @@ def log_ai_summary_run(
     trade_count: int,
     model_version: Optional[str],
     summary_text: Optional[str],
+    duration_ms: Optional[int] = None,
 ) -> str:
     """
     Write one audit record for an AI summary invocation.
@@ -78,8 +83,8 @@ def log_ai_summary_run(
                 """
                 INSERT INTO ai_audit_log
                   (run_id, invoked_at, trade_ids, date_from, date_to,
-                   trade_count, model_version, output_hash, summary_produced)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                   trade_count, model_version, output_hash, summary_produced, duration_ms)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """,
                 (
                     run_id,
@@ -91,6 +96,7 @@ def log_ai_summary_run(
                     model_version,
                     output_hash,
                     summary_text is not None,
+                    duration_ms,
                 ),
             )
         conn.commit()
