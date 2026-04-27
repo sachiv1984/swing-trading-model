@@ -270,8 +270,9 @@ test('VS-10: Sidebar footer shows n and r shortcut hints on Positions', async ({
   const sidebarFooter = page.locator('aside').first().locator('div.mb-3.space-y-1').first();
   await expect(sidebarFooter).toBeVisible({ timeout: 5000 });
   // Shortcut hints for Positions page: n (new position) and r (run screener)
-  await expect(sidebarFooter.getByText('n')).toBeVisible();
-  await expect(sidebarFooter.getByText('r')).toBeVisible();
+  // Use kbd locator to avoid matching 'n' inside "New trade" label text
+  await expect(sidebarFooter.locator('kbd').filter({ hasText: /^n$/ })).toBeVisible();
+  await expect(sidebarFooter.locator('kbd').filter({ hasText: /^r$/ })).toBeVisible();
 });
 
 // ---------------------------------------------------------------------------
@@ -285,8 +286,9 @@ test('VS-11: Sidebar footer shows w and r shortcut hints on Screener', async ({ 
   const sidebarFooter = page.locator('aside').first().locator('div.mb-3.space-y-1').first();
   await expect(sidebarFooter).toBeVisible({ timeout: 5000 });
   // Shortcut hints for Screener page: w (add to watchlist) and r (run screener)
-  await expect(sidebarFooter.getByText('w')).toBeVisible();
-  await expect(sidebarFooter.getByText('r')).toBeVisible();
+  // Use kbd locator to avoid matching 'w' inside "Add to watchlist" label text
+  await expect(sidebarFooter.locator('kbd').filter({ hasText: /^w$/ })).toBeVisible();
+  await expect(sidebarFooter.locator('kbd').filter({ hasText: /^r$/ })).toBeVisible();
 });
 
 // ---------------------------------------------------------------------------
