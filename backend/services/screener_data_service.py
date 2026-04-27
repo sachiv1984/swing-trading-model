@@ -14,10 +14,12 @@ Returns None when data is unavailable from all sources.
 """
 import logging
 import requests
+import time as _time
 from datetime import datetime, timezone
 from typing import Optional, List, Dict
 
 from services.alpaca_service import get_ohlcv_bars
+from services.health_service import record_external_api_call
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +57,7 @@ def _alpaca_bars_to_ohlcv(bars: List[Dict]) -> List[OHLCVRecord]:
 def _yahoo_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
     range_param = f"{max(days, 30)}d"
     url = _YAHOO_CHART_URL.format(ticker=ticker)
+    t0 = _time.monotonic()
     try:
         resp = requests.get(
             url,
@@ -62,11 +65,16 @@ def _yahoo_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
             headers=_YAHOO_HEADERS,
             timeout=15,
         )
+        latency = (_time.monotonic() - t0) * 1000
         if resp.status_code != 200:
+            record_external_api_call("yahoo_finance", False, latency)
             logger.warning("Yahoo Finance HTTP %d for %s", resp.status_code, ticker)
             return None
+        record_external_api_call("yahoo_finance", True, latency)
         data = resp.json()
     except requests.RequestException as exc:
+        latency = (_time.monotonic() - t0) * 1000
+        record_external_api_call("yahoo_finance", False, latency)
         logger.warning("Yahoo Finance request error for %s: %s", ticker, exc)
         return None
 
@@ -127,11 +135,16 @@ def fetch_ohlcv(ticker: str, market: str, days: int = 30) -> Optional[List[OHLCV
     ticker = ticker.strip().upper()
 
     if market == "US":
+        t0 = _time.monotonic()
         bars = get_ohlcv_bars(ticker, limit=days)
+        latency = (_time.monotonic() - t0) * 1000
         if bars:
+            record_external_api_call("alpaca", True, latency)
             ohlcv = _alpaca_bars_to_ohlcv(bars)
             if ohlcv:
                 return ohlcv
+        else:
+            record_external_api_call("alpaca", False, latency)
         logger.info("Alpaca unavailable for %s — falling back to Yahoo Finance", ticker)
 
     # UK tickers always use Yahoo Finance; US falls through here on Alpaca failure
