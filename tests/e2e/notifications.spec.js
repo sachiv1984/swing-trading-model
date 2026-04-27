@@ -191,7 +191,7 @@ test('SC-NOTIF-05: empty state renders when no notifications', async ({ page }) 
   await page.waitForLoadState('networkidle');
 
   // Empty state heading
-  await expect(page.getByText('No notifications yet.')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText('No notifications yet')).toBeVisible({ timeout: 5000 });
 
   // Sub-text
   await expect(page.getByText(/Alert notifications will appear here when triggered/i)).toBeVisible();

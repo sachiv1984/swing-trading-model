@@ -28,13 +28,13 @@ test.beforeEach(async ({ page }) => {
 
 // SC-DIG-01: Page heading is rendered
 test("SC-DIG-01: renders Weekly Digest heading", async ({ page }) => {
-  await page.goto(`/?page=WeeklyDigest`);
+  await page.goto('/#/WeeklyDigest');
   await expect(page.getByText("Weekly Digest")).toBeVisible();
 });
 
 // SC-DIG-02: Table contains all 8 field rows with values from API response
 test("SC-DIG-02: all 8 digest fields are displayed", async ({ page }) => {
-  await page.goto(`/?page=WeeklyDigest`);
+  await page.goto('/#/WeeklyDigest');
   await expect(page.getByText("Realised P&L (7d)")).toBeVisible();
   await expect(page.getByText("Unrealised P&L Delta (7d)")).toBeVisible();
   await expect(page.getByText("Alerts Fired (7d)")).toBeVisible();
@@ -47,7 +47,7 @@ test("SC-DIG-02: all 8 digest fields are displayed", async ({ page }) => {
 
 // SC-DIG-03: Numeric values are rendered correctly
 test("SC-DIG-03: numeric values formatted from API response", async ({ page }) => {
-  await page.goto(`/?page=WeeklyDigest`);
+  await page.goto('/#/WeeklyDigest');
   await expect(page.getByText("£166.10")).toBeVisible();
   await expect(page.getByText("£-42.80")).toBeVisible();
   await expect(page.getByText("5")).toBeVisible();
@@ -69,7 +69,7 @@ test("SC-DIG-04: null unrealised_pnl_delta_7d renders em-dash", async ({ page })
       }),
     })
   );
-  await page.goto(`/?page=WeeklyDigest`);
+  await page.goto('/#/WeeklyDigest');
   const cells = await page.getByRole("cell", { name: "—" }).all();
   expect(cells.length).toBeGreaterThanOrEqual(2);
 });

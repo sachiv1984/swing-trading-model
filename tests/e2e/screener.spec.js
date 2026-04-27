@@ -102,7 +102,7 @@ async function stubNews(page, ticker, headlines = []) {
   await page.route(`${API}/news/${ticker}`, (route) =>
     route.fulfill({
       status: 200, contentType: 'application/json',
-      body: JSON.stringify({ articles: headlines }),
+      body: JSON.stringify({ headlines }),
     })
   );
 }

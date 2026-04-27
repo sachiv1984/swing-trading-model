@@ -135,6 +135,8 @@ jobs:
           playwright_hits: dict[tuple[str, str], list[str]] = {}
 
           for js_file in TESTS_DIR.rglob("*.spec.js"):
+              if not js_file.is_file():
+                  continue  # skip __snapshots__/visual-snapshots.spec.js/ directory
               text = js_file.read_text(errors="replace")
               rel = str(js_file.relative_to(TESTS_DIR))
 

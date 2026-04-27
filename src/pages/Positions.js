@@ -161,6 +161,7 @@ export default function Positions() {
           <div className="flex items-center gap-3">
             <div className="flex items-center rounded-xl bg-slate-800/50 border border-slate-700/50 p-1">
               <Button
+                aria-label="Grid view"
                 variant="ghost"
                 size="sm"
                 onClick={() => setViewMode("grid")}
@@ -175,6 +176,7 @@ export default function Positions() {
               </Button>
 
               <Button
+                aria-label="Table view"
                 variant="ghost"
                 size="sm"
                 onClick={() => setViewMode("table")}
@@ -189,6 +191,7 @@ export default function Positions() {
               </Button>
 
               <Button
+                aria-label="Journal view"
                 variant="ghost"
                 size="sm"
                 onClick={() => setViewMode("journal")}
