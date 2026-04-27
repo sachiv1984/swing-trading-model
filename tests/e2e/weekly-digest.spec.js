@@ -24,18 +24,31 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/digest/weekly", (route) =>
     route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(SEED) })
   );
+  // Stub Layout-level endpoints so the sidebar doesn't block rendering
+  await page.route("**/alerts/history", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: { evaluations: [] } }) })
+  );
+  await page.route("**/watchlist**", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ items: [] }) })
+  );
+  await page.route("**/portfolio/positions**", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: { positions: [] } }) })
+  );
 });
 
 // SC-DIG-01: Page heading is rendered
 test("SC-DIG-01: renders Weekly Digest heading", async ({ page }) => {
-  await page.goto(`/?page=WeeklyDigest`);
-  await expect(page.getByText("Weekly Digest")).toBeVisible();
+  await page.goto('/#/WeeklyDigest');
+  await page.waitForLoadState('networkidle');
+  // Scope to main to avoid matching the sidebar nav link
+  await expect(page.locator('main').getByText("Weekly Digest").first()).toBeVisible({ timeout: 8000 });
 });
 
 // SC-DIG-02: Table contains all 8 field rows with values from API response
 test("SC-DIG-02: all 8 digest fields are displayed", async ({ page }) => {
-  await page.goto(`/?page=WeeklyDigest`);
-  await expect(page.getByText("Realised P&L (7d)")).toBeVisible();
+  await page.goto('/#/WeeklyDigest');
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByText("Realised P&L (7d)")).toBeVisible({ timeout: 8000 });
   await expect(page.getByText("Unrealised P&L Delta (7d)")).toBeVisible();
   await expect(page.getByText("Alerts Fired (7d)")).toBeVisible();
   await expect(page.getByText("Alerts Dismissed (7d)")).toBeVisible();
@@ -47,14 +60,16 @@ test("SC-DIG-02: all 8 digest fields are displayed", async ({ page }) => {
 
 // SC-DIG-03: Numeric values are rendered correctly
 test("SC-DIG-03: numeric values formatted from API response", async ({ page }) => {
-  await page.goto(`/?page=WeeklyDigest`);
-  await expect(page.getByText("£166.10")).toBeVisible();
-  await expect(page.getByText("£-42.80")).toBeVisible();
-  await expect(page.getByText("5")).toBeVisible();
-  await expect(page.getByText("3")).toBeVisible();
-  await expect(page.getByText("80.0%")).toBeVisible();
-  await expect(page.getByText("75.0%")).toBeVisible();
-  await expect(page.getByText("18.5 h")).toBeVisible();
+  await page.goto('/#/WeeklyDigest');
+  await page.waitForLoadState('networkidle');
+  // Scope numeric checks to table cells to avoid matching badges/nav elements
+  await expect(page.locator('td').filter({ hasText: /^£166\.10$/ }).first()).toBeVisible({ timeout: 8000 });
+  await expect(page.locator('td').filter({ hasText: /^£-42\.80$/ }).first()).toBeVisible();
+  await expect(page.locator('td').filter({ hasText: /^5$/ }).first()).toBeVisible();
+  await expect(page.locator('td').filter({ hasText: /^3$/ }).first()).toBeVisible();
+  await expect(page.locator('td').filter({ hasText: /^80\.0%$/ }).first()).toBeVisible();
+  await expect(page.locator('td').filter({ hasText: /^75\.0%$/ }).first()).toBeVisible();
+  await expect(page.locator('td').filter({ hasText: /^18\.5 h$/ }).first()).toBeVisible();
 });
 
 // SC-DIG-04: Null fields show em-dash fallback
@@ -69,8 +84,10 @@ test("SC-DIG-04: null unrealised_pnl_delta_7d renders em-dash", async ({ page })
       }),
     })
   );
-  await page.goto(`/?page=WeeklyDigest`);
-  const cells = await page.getByRole("cell", { name: "—" }).all();
+  await page.goto('/#/WeeklyDigest');
+  await page.waitForLoadState('networkidle');
+  // null values render as em-dash in td cells
+  const cells = await page.locator('td').filter({ hasText: /^—$/ }).all();
   expect(cells.length).toBeGreaterThanOrEqual(2);
 });
 
@@ -79,7 +96,8 @@ test("SC-DIG-05: error state rendered on API failure", async ({ page }) => {
   await page.route("**/digest/weekly", (route) =>
     route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ status: "error" }) })
   );
-  await page.goto(`/?page=WeeklyDigest`);
-  // DataState renders an error fallback when isError is true
-  await expect(page.getByRole("button", { name: /retry/i })).toBeVisible();
+  await page.goto('/#/WeeklyDigest');
+  await page.waitForLoadState('networkidle');
+  // DataState renders "Try again" button on error
+  await expect(page.getByRole("button", { name: /try again/i })).toBeVisible({ timeout: 8000 });
 });

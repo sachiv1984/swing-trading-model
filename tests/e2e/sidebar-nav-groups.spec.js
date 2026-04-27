@@ -293,7 +293,7 @@ test('SC-SNV-08: All nav items present in correct groups; routes resolve', async
   const groups = {
     Trading:   ['Positions', 'Trade Entry', 'Trade History', 'Reflections'],
     Analytics: ['Analytics', 'Risk Dashboard', 'Signals'],
-    Tools:     ['Watchlist', 'Alerts'],
+    Tools:     ['Screener', 'Watchlist', 'Alerts'],
     System:    ['Settings', 'System Status', 'Notifications'],
   };
 

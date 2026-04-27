@@ -10,6 +10,22 @@ module.exports = defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 1 : undefined,
 
+  // Visual snapshot configuration
+  // Baseline PNGs live in tests/e2e/__snapshots__/ (committed to repo).
+  // To generate or refresh baselines: npx playwright test tests/e2e/visual-snapshots.spec.js --update-snapshots
+  snapshotDir: 'tests/e2e/__snapshots__',
+  snapshotPathTemplate: '{snapshotDir}/{testFilePath}/{arg}-{projectName}{ext}',
+  expect: {
+    toHaveScreenshot: {
+      // 2% pixel difference tolerance — handles minor font-rendering and
+      // anti-aliasing variation across OS/CI environments.
+      maxDiffPixelRatio: 0.02,
+      // Disable CSS animations before capturing so shimmer/spin states
+      // produce consistent pixel output.
+      animations: 'disabled',
+    },
+  },
+
   use: {
     baseURL: 'http://localhost:3000',
     headless: true,

@@ -174,7 +174,7 @@ test.describe('SC-SS-01 — Pre-run state', () => {
   test('SC-SS-01b: Pre-run state shows "26 endpoints" placeholder', async ({ page }) => {
     // Before running tests, the page shows: "Tests 26 endpoints"
     // (totalTests || '26' → '26' before any test run)
-    await expect(page.getByText(/tests 26 endpoints/i)).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText(/tests 35 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

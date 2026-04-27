@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -22,6 +22,7 @@ import {
   Eye,
   CalendarDays,
   ChevronRight,
+  ScanSearch,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -30,6 +31,15 @@ import { apiFetch } from "./api/base44Client";
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const NOTIFICATIONS_PAGES = ["notifications", "NotificationPreferences"];
+
+// Keyboard shortcuts: keys available on each page (ST-11)
+const PAGE_SHORTCUTS = {
+  Positions:     [{ key: "n", label: "New trade" }, { key: "r", label: "Refresh" }],
+  TradeHistory:  [{ key: "n", label: "New trade" }, { key: "r", label: "Refresh" }],
+  Screener:      [{ key: "w", label: "Add to watchlist" }, { key: "r", label: "Refresh" }],
+  Watchlist:     [{ key: "w", label: "Add to watchlist" }, { key: "r", label: "Refresh" }],
+};
+const DEFAULT_SHORTCUTS = [{ key: "r", label: "Refresh" }];
 
 // Nav group structure — per navigation.md v1.0 (ST-13 BLG-UX-01)
 const NAV_GROUPS = [
@@ -58,8 +68,9 @@ const NAV_GROUPS = [
     label: "Tools",
     key: "tools",
     items: [
-      { name: "Watchlist", icon: Eye,  page: "Watchlist" },
-      { name: "Alerts",    icon: Bell, page: "notifications", alertBadge: true },
+      { name: "Screener",  icon: ScanSearch, page: "Screener" },
+      { name: "Watchlist", icon: Eye,        page: "Watchlist" },
+      { name: "Alerts",    icon: Bell,       page: "notifications", alertBadge: true },
     ],
   },
   {
@@ -103,6 +114,7 @@ export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [theme, setTheme] = useState("dark");
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "dark";
@@ -182,6 +194,32 @@ export default function Layout({ children, currentPageName }) {
       setAlertCount(0);
     }
   }, [currentPageName]);
+
+  // ST-11: Global keyboard shortcuts
+  const handleKeyDown = useCallback(
+    (e) => {
+      const tag = document.activeElement?.tagName?.toUpperCase();
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === "r") {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent("app:refresh"));
+      } else if (e.key === "n" && (currentPageName === "Positions" || currentPageName === "TradeHistory")) {
+        e.preventDefault();
+        navigate(createPageUrl("TradeEntry"));
+      } else if (e.key === "w" && (currentPageName === "Screener" || currentPageName === "Watchlist")) {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent("app:add-to-watchlist"));
+      }
+    },
+    [currentPageName, navigate]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   const renderNavGroups = (onItemClick) => (
     <div className="space-y-1">
@@ -531,6 +569,31 @@ export default function Layout({ children, currentPageName }) {
               )}
             </Button>
           </div>
+          {/* Keyboard shortcut hints */}
+          {(() => {
+            const shortcuts = PAGE_SHORTCUTS[currentPageName] || DEFAULT_SHORTCUTS;
+            return (
+              <div className="mb-3 space-y-1">
+                {shortcuts.map(({ key, label }) => (
+                  <div key={key} className="flex items-center justify-between">
+                    <span className={cn("text-xs", isDark ? "text-slate-500" : "text-slate-500")}>
+                      {label}
+                    </span>
+                    <kbd
+                      className={cn(
+                        "inline-flex items-center justify-center w-5 h-5 rounded text-[10px] font-mono font-semibold border",
+                        isDark
+                          ? "bg-slate-800 border-slate-700 text-slate-400"
+                          : "bg-slate-100 border-slate-300 text-slate-600"
+                      )}
+                    >
+                      {key}
+                    </kbd>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
           <div
             className={cn(
               "flex items-center justify-between text-xs",
