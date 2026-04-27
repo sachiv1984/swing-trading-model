@@ -130,10 +130,9 @@ jobs:
     name: Playwright Visual Snapshots (advisory)
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # continue-on-error: true until baseline PNGs are committed to the repo.
-    # Once tests/e2e/__snapshots__/ is populated, set this to false to make
-    # visual regression a blocking gate.
-    continue-on-error: true
+    # Baseline PNGs committed to tests/e2e/__snapshots__/ — visual regression
+    # is now a blocking gate. Set continue-on-error: true to make advisory again.
+    continue-on-error: false
 
     steps:
       - name: Checkout repository
