@@ -87,12 +87,19 @@ const SEED_POSITIONS = [
 ];
 
 async function mockRoutes(page) {
+  // /positions returns a bare array (raw: true in doFetch — no envelope)
+  // /positions/compliance returns the wrapped envelope used by StrategyCompliancePanel
   await page.route("**/positions*", (route) => {
-    route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ status: "ok", data: { positions: SEED_POSITIONS } }),
-    });
+    const url = route.request().url();
+    if (url.includes('/positions/compliance')) {
+      route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ status: "ok", data: [] }) });
+    } else {
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(SEED_POSITIONS),
+      });
+    }
   });
   await page.route("**/portfolio*", (route) => {
     route.fulfill({

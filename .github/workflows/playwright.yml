@@ -5,11 +5,9 @@ name: Playwright E2E Acceptance Tests
 # 1. playwright-e2e  — behavioural acceptance tests (blocking gate)
 #    All 20 spec files using page.route() interception. No live backend required.
 #
-# 2. playwright-visual — pixel snapshot tests (advisory until baselines committed)
-#    visual-snapshots.spec.js — 12 element-level snapshots for visual AC.
-#    Baselines committed to tests/e2e/__snapshots__/. To generate/refresh:
-#      npx playwright test tests/e2e/visual-snapshots.spec.js --update-snapshots
-#    continue-on-error: true until baseline PNGs are committed; set to false after.
+# 2. playwright-visual — CSS class/attribute assertions for visual AC (blocking gate)
+#    visual-snapshots.spec.js — 12 element-level tests verifying colours and structure
+#    via CSS class assertions (no pixel comparison — reliable across Chromium versions).
 #
 # Spec inventory:
 #   risk-dashboard.spec.js       — ST-11: Risk Dashboard (17 scenarios)
@@ -127,13 +125,9 @@ jobs:
           retention-days: 14
 
   playwright-visual:
-    name: Playwright Visual Snapshots (advisory)
+    name: Playwright Visual Snapshots
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Baselines must be regenerated on the CI runner to match its Chromium version.
-    # Run the update-visual-snapshots.yml workflow_dispatch to regenerate and commit
-    # CI-correct baselines, then set continue-on-error: false to make this blocking.
-    continue-on-error: true
 
     steps:
       - name: Checkout repository
