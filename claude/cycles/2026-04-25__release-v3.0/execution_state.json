@@ -114,8 +114,8 @@
       "status": "done",
       "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
       "note": "Sprint 2 — reclassified from delegated_frontend to autonomous; Base44 delegation retired 2026-04-26",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 303,
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -187,96 +187,96 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
-      "note": "Sprint 2 — parallel to EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "note": "Sprint 2 — parallel to EPIC-02; ST-11 cross-EPIC delivered on EPIC-02 branch",
+      "pr_number": 304,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
         "ST-08": {
           "title": "External API Health Check Extension",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 297,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b282782",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-26T09:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/health_endpoints.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sprint 2"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
+          "notes": "GET /health external_apis section with alpaca+yahoo_finance. Cache-based health check. 8 unit tests in test_health_extensions.py."
         },
         "ST-09": {
           "title": "AI Journal Monitoring Metrics",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 298,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b282782",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-26T09:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/health_endpoints.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sprint 2"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
+          "notes": "GET /health ai_journal section with usage_rate, error_rate, p95_latency_ms. Sourced from ai_audit_log. 5 unit tests."
         },
         "ST-10": {
           "title": "AI Audit Service Unit Tests",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 299,
           "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b282782",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-26T09:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
+          "notes": "12 unit tests covering ensure_ai_audit_table, log_ai_summary_run, query_audit_log. No live DB — mock pattern."
         },
         "ST-11": {
           "title": "Keyboard Shortcuts",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "human",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 300,
-          "branch": "exec/2026-04-25__release-v3.0/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "branch": "exec/2026-04-25__release-v3.0/EPIC-02",
+          "commit_sha": "29471da",
+          "delegation_record_id": "DEL-20260426-04",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-04-26T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/screener_results.md#keyboard-shortcuts"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sprint 2; DoQ sign-off must state which pages were tested"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": "claude/cycles/2026-04-25__release-v3.0/qa_evidence_EPIC-03.md",
+          "notes": "Cross-EPIC: committed on EPIC-02 branch (ST-11 in Layout.js co-delivered with Screener nav). Deviation documented in qa_evidence_EPIC-02.md and qa_evidence_EPIC-03.md. Delegation record DEL-20260426-04 cancelled."
         }
       }
     },
@@ -415,6 +415,6 @@
     "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-04-27T10:30:00Z"
 }

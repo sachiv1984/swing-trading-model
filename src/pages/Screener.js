@@ -311,11 +311,18 @@ export default function Screener() {
     setLoading(true);
     try {
       const res = await apiFetch(`${API_BASE}/screener/results?limit=200`);
+      if (res.status === 404) {
+        setResults([]);
+        setRunTimestamp(null);
+        setRunId(null);
+        return;
+      }
       if (!res.ok) throw new Error();
       const json = await res.json();
-      setResults(json.results || []);
-      setRunTimestamp(json.run_timestamp || null);
-      setRunId(json.run_id || null);
+      const payload = json.data || json;
+      setResults(payload.results || []);
+      setRunTimestamp(payload.run_timestamp || null);
+      setRunId(payload.run_id || null);
     } catch {
       setError(true);
     } finally {
@@ -377,7 +384,7 @@ export default function Screener() {
         throw new Error();
       }
       const json = res.status === 409 ? {} : await res.json();
-      const newRunId = json.run_id;
+      const newRunId = json.data?.run_id;
       startPolling(newRunId);
     } catch {
       setScanError(true);
@@ -399,12 +406,22 @@ export default function Screener() {
           ? `${API_BASE}/screener/results?run_id=${newRunId}&limit=200`
           : `${API_BASE}/screener/results?limit=200`;
         const res = await apiFetch(url);
+        if (res.status === 404 && newRunId) {
+          // Run completed with 0 results (likely risk-off regime)
+          setResults([]);
+          setRunTimestamp(new Date().toISOString());
+          setRunId(newRunId);
+          clearInterval(pollRef.current);
+          setScanning(false);
+          return;
+        }
         if (!res.ok) return;
         const json = await res.json();
-        if (json.results?.length >= 0) {
-          setResults(json.results || []);
-          setRunTimestamp(json.run_timestamp || null);
-          setRunId(json.run_id || null);
+        const payload = json.data || json;
+        if (payload.results?.length >= 0) {
+          setResults(payload.results || []);
+          setRunTimestamp(payload.run_timestamp || null);
+          setRunId(payload.run_id || null);
           clearInterval(pollRef.current);
           setScanning(false);
         }

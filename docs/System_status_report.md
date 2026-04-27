@@ -777,3 +777,40 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md
 - Deviations filed: None
 - Test scenarios referenced: docs/testing/analytics_scenarios.md (SC-CORR-01–04); docs/testing/signals_scenarios.md (SC-SIG-IND-01–02); tests/e2e/market-correlation.spec.js (SC-CORR-FE-01–08 Playwright, 8/8 green CI run 24656513015)
+
+---
+
+## Sprint: 2026-04-25__release-v3.0
+**Date:** 2026-04-27
+**Status:** Verified — 2026-04-27
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Ticker Universe Data Model + Endpoints — ticker_universe table, seed data (200 US + 50 UK tickers), GET /ticker-universe, GET /ticker-universe/{ticker}, POST /ticker-universe | docs/specs/api_contracts/ticker_universe_api_contract.md | None |
+| EPIC-01 | OHLCV Data Pipeline Service — Alpaca (US) + Yahoo Finance (UK, GBp→GBP conversion) price fetching, OHLCV storage | docs/specs/api_contracts/alpaca_integration_contract.md, docs/specs/screener_results_schema.md | None |
+| EPIC-01 | ATR + Regime Detection + Signal Scoring Engine — Wilder 14-period ATR, RSI+MACD+volume signal score (0–1), regime gate | docs/specs/screener_results_schema.md | None |
+| EPIC-01 | Screener Batch Engine + API Endpoints — POST /screener/run, GET /screener/results, screener_results table, concurrency guard | docs/specs/api_contracts/screener_api_contract.md | None |
+| EPIC-02 | Screener Results Page — sort/filter/regime badges/freshness/skeleton/error; market + regime + sector filters; Screener nav item | docs/specs/frontend/pages/screener_results.md | DEV-01 resolved (news panel now live) |
+| EPIC-02 | Watchlist Promotion Flow — inline WatchlistPopover, POST /watchlist, 409 already-in-watchlist handling | docs/specs/frontend/pages/screener_results.md#watchlist-promotion | None |
+| EPIC-02 | Screener News Panel — news count badge, GET /news/{ticker}, inline expandable panel (display-only, BLG-FE-18) | docs/specs/frontend/pages/screener_results.md#news-panel | None |
+| EPIC-02 | Keyboard Shortcuts — n (new position), w (add to watchlist), r (refresh); per-page sidebar kbd hints | docs/specs/frontend/pages/screener_results.md#keyboard-shortcuts | Cross-EPIC: ST-11 committed on EPIC-02 branch |
+| EPIC-03 | External API Health Extension — GET /health external_apis section (alpaca, yahoo_finance); cache-based, non-blocking | docs/specs/api_contracts/health_endpoints.md | None |
+| EPIC-03 | AI Journal Monitoring Metrics — GET /health ai_journal section (usage_rate, error_rate, p95_latency_ms) from ai_audit_log | docs/specs/api_contracts/health_endpoints.md | None |
+| EPIC-03 | AI Audit Service Unit Tests — 12 unit tests for ensure_ai_audit_table, log_ai_summary_run, query_audit_log | (test quality story) | None |
+| EPIC-04 | execution_prompt.md §2 + §3.1.A Deferred Patches — pre-seal gate + advisory instruction fixes | claude/system/execution_prompt.md | None |
+| EPIC-04 | Consecutive Losing Streak Metric — 7 unit tests; metrics_definitions.md updated v1.9→v1.10 | docs/specs/metrics_definitions.md | None |
+| EPIC-04 | AI Journal Model Version Contract — Class 2 canonical spec; claude-haiku-4-5-20251001 pinned | docs/specs/ai_journal_model_contract.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| (none) | All 16 sprint items completed and merged | N/A |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md
+- Deviations filed: DEV-01 (screener_results.md) resolved this sprint by ST-07; no new spec deviations
+- Test scenarios referenced: tests/test_ticker_universe.py, tests/test_screener_data_service.py, tests/test_screener_engine.py, tests/test_screener_batch_service.py, tests/test_streak_metric.py, tests/test_health_extensions.py, tests/test_ai_audit_service.py; E2E: tests/e2e/screener.spec.js (SC-SCR-01–18), tests/e2e/keyboard-shortcuts.spec.js, tests/e2e/visual-snapshots.spec.js (VS-01–12), tests/e2e/positions-pnl-columns.spec.js (V-PATH2-01–04)

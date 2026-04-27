@@ -85,7 +85,7 @@ async function stubScreener(page, results, opts = {}) {
   );
   // Stub POST /screener/run → 202
   await page.route(`${API}/screener/run`, (route) =>
-    route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ run_id: 'run-002' }) })
+    route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ ok: true, data: { run_id: 'run-002', status: 'accepted' } }) })
   );
 }
 
@@ -220,7 +220,7 @@ test('SC-SCR-06: Scan button calls POST /screener/run', async ({ page }) => {
   let postCalled = false;
   await page.route(`${API}/screener/run`, (route) => {
     postCalled = true;
-    return route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ run_id: 'run-002' }) });
+    return route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ ok: true, data: { run_id: 'run-002', status: 'accepted' } }) });
   });
 
   await goto(page, '/#/Screener');

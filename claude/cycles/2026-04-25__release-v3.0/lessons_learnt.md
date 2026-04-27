@@ -98,3 +98,53 @@ Items: 0
   "status": "Complete"
 }
 ```
+
+---
+
+## Phase 3 — 2026-04-25__release-v3.0
+
+**Phase:** Sprint Execution
+**Run:** 2026-04-27 (Sprint Close)
+**Reviewed by:** PMO Lead + Sprint Execution Engine
+
+### What Worked Well
+
+- **Full 16-story delivery with zero returns to backlog:** All scope delivered across 4 EPICs and 2 sprints. The serialised Sprint 1 (backend) → Sprint 2 (frontend) plan held perfectly.
+- **Base44 delegation retirement handled cleanly mid-sprint:** Reclassification of 4 delegated_frontend stories (ST-05/06/07/11) to autonomous executed without blocking. Delegation log entries updated atomically.
+- **Cross-EPIC ST-11 deviation resolved pragmatically:** Keyboard shortcuts committed on EPIC-02 branch (same Layout.js file) avoided a complex merge conflict. Deviation documented in both QA evidence files.
+- **E2E Playwright suite successfully expanded to 20 spec files:** All behavioural tests passing CI. Visual snapshot tests converted from pixel comparison to CSS class assertions — reliable across Chromium versions.
+- **CI test failures diagnosed and resolved iteratively:** 6 pre-existing failures identified when E2E suite was expanded (SC-SCR-08, SC-DIG-01–05, SC-NOTIF-05, SC-SS-01b, SC-SCR-15/16) — all fixed.
+
+### Friction Log
+
+| # | Friction Area | Description | Severity |
+|---|---------------|-------------|----------|
+| F-01 | Sprint Close deferred | PR #303 merged without STEP 5 running in the same session. `sprint_close.md` was not created at the natural trigger point (BLG-GOV-17 pattern recurrence). | Medium |
+| F-02 | execution_state.json EPIC-03 story status stale | EPIC-03 story statuses remained `not_started` after merge conflict resolution — only `completed_items` array was updated. Required manual correction at sprint close. | Low |
+| F-03 | Visual snapshot pixel baseline mismatch | Locally-generated baselines did not match CI Chromium rendering (59px vs 65px). Required conversion from `toHaveScreenshot()` to CSS class assertions. | Medium |
+| F-04 | positions-pnl mock shape incorrect | Test mock returned `{ status, data: { positions } }` envelope but `api.positions.list()` uses `raw: true` (returns bare array). Root cause took 3 iterations to identify. | Medium |
+
+### Recurrence Escalations
+
+- F-01 (Sprint Close deferred): Recurrence of BLG-GOV-17 pattern. Sprint_Close_Reminder CI workflow exists. Advisory.
+
+### Process Improvements Actioned This Run
+
+None actioned during execution. Deferred improvements:
+
+| Improvement | Rationale | Target |
+|-------------|-----------|--------|
+| Consider `waitFor` over `waitForLoadState('networkidle')` as the default pattern in Playwright tests for pages with SDK calls | `networkidle` can hang on unmocked SDK endpoints; targeted `waitFor` is more reliable | Next E2E spec authoring session |
+
+// ARTEFACT_STATUS
+```json
+{
+  "phase": "Sprint Execution",
+  "filed_utc": "2026-04-27T10:30:00Z",
+  "friction_item_count": 4,
+  "action_now_count": 0,
+  "deferred_count": 1,
+  "escalation_count": 0,
+  "status": "Complete"
+}
+```
