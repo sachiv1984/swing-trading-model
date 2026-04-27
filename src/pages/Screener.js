@@ -319,9 +319,10 @@ export default function Screener() {
       }
       if (!res.ok) throw new Error();
       const json = await res.json();
-      setResults(json.results || []);
-      setRunTimestamp(json.run_timestamp || null);
-      setRunId(json.run_id || null);
+      const payload = json.data || json;
+      setResults(payload.results || []);
+      setRunTimestamp(payload.run_timestamp || null);
+      setRunId(payload.run_id || null);
     } catch {
       setError(true);
     } finally {
@@ -416,10 +417,11 @@ export default function Screener() {
         }
         if (!res.ok) return;
         const json = await res.json();
-        if (json.results?.length >= 0) {
-          setResults(json.results || []);
-          setRunTimestamp(json.run_timestamp || null);
-          setRunId(json.run_id || null);
+        const payload = json.data || json;
+        if (payload.results?.length >= 0) {
+          setResults(payload.results || []);
+          setRunTimestamp(payload.run_timestamp || null);
+          setRunId(payload.run_id || null);
           clearInterval(pollRef.current);
           setScanning(false);
         }
