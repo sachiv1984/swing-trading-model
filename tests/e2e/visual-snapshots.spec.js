@@ -177,21 +177,22 @@ test('VS-05: News count badge has correct icon and count styling', async ({ page
 test('VS-06: In Watchlist chip is emerald with checkmark', async ({ page }) => {
   await stubCommon(page);
   const ts = new Date(Date.now() - 10_000).toISOString();
-  // Pre-populate watchlist so AAPL shows "Added" on load
+  // Mock POST /watchlist to return 201 — clicking "Add to Watchlist" triggers onAdded which renders the chip
   await page.route(`${API}/watchlist**`, (route) => {
-    if (route.request().method() === 'GET') {
-      return route.fulfill({
-        status: 200, contentType: 'application/json',
-        body: JSON.stringify({ items: [{ ticker: 'AAPL', market: 'US' }] }),
-      });
-    }
-    return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ id: 1 }) });
+    route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ id: 1 }) });
   });
   await gotoScreener(page, [makeRow({ ticker: 'AAPL' })], ts);
 
   await page.waitForSelector('text=AAPL', { timeout: 8000 });
+
+  // Open the watchlist popover
+  await page.locator('button[title="Add to watchlist"]').first().click();
+  // Submit — "Add to Watchlist" button inside the popover
+  await page.getByRole('button', { name: /Add to Watchlist/i }).click();
+
+  // After successful POST, onAdded fires and the chip replaces the button
   const chip = page.locator('span').filter({ hasText: /Added/ }).first();
-  await expect(chip).toBeVisible({ timeout: 3000 });
+  await expect(chip).toBeVisible({ timeout: 5000 });
   await expect(chip).toHaveScreenshot('watchlist-added-chip.png');
 });
 
@@ -264,8 +265,8 @@ test('VS-10: Sidebar footer shows n and r shortcut hints on Positions', async ({
   await page.goto('/#/Positions');
   await page.waitForLoadState('networkidle');
 
-  // Desktop sidebar aside — the footer is the last child div with border-t
-  const sidebarFooter = page.locator('aside').first().locator('div').filter({ hasText: /New trade/ });
+  // The shortcuts section is div.mb-3.space-y-1 inside the aside footer
+  const sidebarFooter = page.locator('aside').first().locator('div.mb-3.space-y-1').first();
   await expect(sidebarFooter).toBeVisible({ timeout: 5000 });
   await expect(sidebarFooter).toHaveScreenshot('sidebar-shortcuts-positions.png');
 });
@@ -278,7 +279,8 @@ test('VS-11: Sidebar footer shows w and r shortcut hints on Screener', async ({ 
   const ts = new Date(Date.now() - 10_000).toISOString();
   await gotoScreener(page, [makeRow()], ts);
 
-  const sidebarFooter = page.locator('aside').first().locator('div').filter({ hasText: /Add to watchlist/ });
+  // The shortcuts section is div.mb-3.space-y-1 inside the aside footer
+  const sidebarFooter = page.locator('aside').first().locator('div.mb-3.space-y-1').first();
   await expect(sidebarFooter).toBeVisible({ timeout: 5000 });
   await expect(sidebarFooter).toHaveScreenshot('sidebar-shortcuts-screener.png');
 });
