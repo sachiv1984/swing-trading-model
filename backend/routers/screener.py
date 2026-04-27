@@ -53,7 +53,14 @@ def trigger_screener_run(request: RunScreenerRequest = RunScreenerRequest()):
                 raise HTTPException(status_code=400, detail="INVALID_TICKER")
     try:
         result = run_screener(request.ticker_universe)
-        return {"ok": True, "data": {"run_id": result["run_id"], "status": "accepted"}}
+        return {"ok": True, "data": {
+            "run_id": result["run_id"],
+            "status": "accepted",
+            "tickers_evaluated": result.get("tickers_evaluated", 0),
+            "tickers_passed": result.get("tickers_passed", 0),
+            "regime_us": result.get("regime_us"),
+            "regime_uk": result.get("regime_uk"),
+        }}
     except RuntimeError as e:
         if "RUN_IN_PROGRESS" in str(e):
             raise HTTPException(status_code=409, detail="RUN_IN_PROGRESS")

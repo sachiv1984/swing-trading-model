@@ -221,6 +221,8 @@ def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
             "count": len(results),
             "tickers_evaluated": tickers_evaluated,
             "tickers_passed": len(results),
+            "regime_us": us_regime.get("regime_status"),
+            "regime_uk": uk_regime.get("regime_status"),
         }
     finally:
         with _run_lock:
