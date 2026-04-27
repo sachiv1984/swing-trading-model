@@ -130,9 +130,10 @@ jobs:
     name: Playwright Visual Snapshots (advisory)
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Baseline PNGs committed to tests/e2e/__snapshots__/ — visual regression
-    # is now a blocking gate. Set continue-on-error: true to make advisory again.
-    continue-on-error: false
+    # Baselines must be regenerated on the CI runner to match its Chromium version.
+    # Run the update-visual-snapshots.yml workflow_dispatch to regenerate and commit
+    # CI-correct baselines, then set continue-on-error: false to make this blocking.
+    continue-on-error: true
 
     steps:
       - name: Checkout repository

@@ -86,39 +86,48 @@ const SEED_POSITIONS = [
   },
 ];
 
-function mockRoutes(page) {
-  page.route("**/positions*", (route) => {
+async function mockRoutes(page) {
+  await page.route("**/positions*", (route) => {
     route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({ status: "ok", data: { positions: SEED_POSITIONS } }),
     });
   });
-  page.route("**/portfolio*", (route) => {
+  await page.route("**/portfolio*", (route) => {
     route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({ status: "ok", data: { cash: 10000, initial_cash: 10000 } }),
     });
   });
-  page.route("**/analytics/**", (route) => {
+  await page.route("**/analytics/**", (route) => {
     route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({ status: "ok", data: { last_sync_at: null } }),
     });
   });
-  page.route("**/compliance/**", (route) => {
+  await page.route("**/compliance/**", (route) => {
     route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ status: "ok", data: [] }) });
   });
+  // Stub Layout-level endpoints so sidebar badge doesn't cause unhandled network errors
+  await page.route("**/alerts/history", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: { evaluations: [] } }) })
+  );
+  await page.route("**/watchlist**", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ items: [] }) })
+  );
 }
 
 test.describe("Positions Table View — P&L Columns (V-PATH2-01 to V-PATH2-04)", () => {
   test.beforeEach(async ({ page }) => {
-    mockRoutes(page);
+    await mockRoutes(page);
     await page.goto("/#/positions");
-    // Switch to Table View
-    await page.getByRole("button", { name: /table/i }).click();
+    await page.waitForLoadState('networkidle');
+    // Switch to Table View — button has aria-label="Table view"
+    await page.getByRole("button", { name: /table view/i }).click();
+    await page.waitForTimeout(300); // allow React re-render after view switch
   });
 
   test("V-PATH2-01 — Table View has separate P&L (GBP) and P&L % column headers", async ({ page }) => {
