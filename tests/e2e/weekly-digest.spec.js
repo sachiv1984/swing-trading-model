@@ -79,7 +79,7 @@ test("SC-DIG-05: error state rendered on API failure", async ({ page }) => {
   await page.route("**/digest/weekly", (route) =>
     route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ status: "error" }) })
   );
-  await page.goto(`/?page=WeeklyDigest`);
+  await page.goto('/#/WeeklyDigest');
   // DataState renders an error fallback when isError is true
   await expect(page.getByRole("button", { name: /retry/i })).toBeVisible();
 });

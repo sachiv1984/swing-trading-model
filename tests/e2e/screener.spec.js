@@ -257,7 +257,7 @@ test('SC-SCR-08: Error state shown on API error', async ({ page }) => {
 
   await goto(page, '/#/Screener');
 
-  await expect(page.locator('body')).toContainText(/error|failed|unavailable/i, { timeout: 8000 });
+  await expect(page.locator('body')).toContainText(/something went wrong|unable to load/i, { timeout: 8000 });
 });
 
 // SC-SCR-09 — Skeleton rows shown while loading

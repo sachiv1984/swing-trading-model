@@ -102,8 +102,8 @@ test('SC-NOTIF-02: feed renders with unread indicator and correct icons', async 
   // Feed loaded — at least one notification row visible
   const rows = page.locator('[data-testid="notification-row"], .notification-row, tr, li').filter({ hasText: /Stop Loss|Daily Portfolio/i });
 
-  // Unread notification has cyan left border
-  const unreadRow = page.locator('.border-l-2.border-cyan-400, [class*="border-l-2"][class*="cyan"]').first();
+  // Unread notification has cyan left border (scoped to main to exclude sidebar nav links)
+  const unreadRow = page.locator('main').locator('.border-l-2.border-cyan-400, [class*="border-l-2"][class*="cyan"]').first();
   await expect(unreadRow).toBeVisible({ timeout: 5000 });
 
   // "Mark as read" button present on unread item
@@ -136,8 +136,8 @@ test('SC-NOTIF-03: mark single notification as read — optimistic update', asyn
   await page.goto('/#/notifications');
   await expect(page.getByText('Mark as read').first()).toBeVisible({ timeout: 5000 });
 
-  // Confirm unread border present before clicking
-  const unreadBorder = page.locator('.border-l-2.border-cyan-400, [class*="border-l-2"][class*="cyan"]').first();
+  // Confirm unread border present before clicking (scoped to main to exclude sidebar nav links)
+  const unreadBorder = page.locator('main').locator('.border-l-2.border-cyan-400, [class*="border-l-2"][class*="cyan"]').first();
   await expect(unreadBorder).toBeVisible();
 
   // Click "Mark as read"
@@ -164,8 +164,8 @@ test('SC-NOTIF-04: mark all as read — all indicators cleared, button hidden', 
   const markAllBtn = page.getByText('Mark all as read');
   await expect(markAllBtn).toBeVisible({ timeout: 5000 });
 
-  // Confirm at least one unread indicator present
-  const unreadBorders = page.locator('.border-l-2.border-cyan-400, [class*="border-l-2"][class*="cyan"]');
+  // Confirm at least one unread indicator present (scoped to main to exclude sidebar nav links)
+  const unreadBorders = page.locator('main').locator('.border-l-2.border-cyan-400, [class*="border-l-2"][class*="cyan"]');
   await expect(unreadBorders.first()).toBeVisible();
 
   await markAllBtn.click();
