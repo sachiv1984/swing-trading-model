@@ -124,10 +124,12 @@ test.describe("Positions Table View — P&L Columns (V-PATH2-01 to V-PATH2-04)",
   test.beforeEach(async ({ page }) => {
     await mockRoutes(page);
     await page.goto("/#/positions");
-    await page.waitForLoadState('networkidle');
-    // Switch to Table View — button has aria-label="Table view"
-    await page.getByRole("button", { name: /table view/i }).click();
-    await page.waitForTimeout(300); // allow React re-render after view switch
+    // Wait for the Table view button specifically — avoids networkidle hanging on
+    // unmocked SDK calls (api.trades.list etc.) that Positions.js makes at runtime
+    const tableBtn = page.locator('[aria-label="Table view"]');
+    await tableBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await tableBtn.click();
+    await page.waitForTimeout(300);
   });
 
   test("V-PATH2-01 — Table View has separate P&L (GBP) and P&L % column headers", async ({ page }) => {

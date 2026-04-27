@@ -193,10 +193,8 @@ test('SC-SCR-04: Regime toggle hides risk_off rows', async ({ page }) => {
   await expect(page.getByText('AAPL')).toBeVisible({ timeout: 8000 });
   await expect(page.getByText('BEAR')).toBeVisible();
 
-  // Enable regime toggle (Risk-On only)
-  const regimeToggle = page.getByRole('checkbox', { name: /risk.on/i })
-    .or(page.locator('input[type="checkbox"]').first());
-  await regimeToggle.check();
+  // Enable regime toggle — it's a <button> with text "Risk-On only", not a checkbox
+  await page.getByRole('button', { name: /risk.on only/i }).click();
 
   await expect(page.getByText('AAPL')).toBeVisible();
   await expect(page.getByText('BEAR')).not.toBeVisible();
