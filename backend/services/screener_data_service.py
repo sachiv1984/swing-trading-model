@@ -68,7 +68,7 @@ def _yahoo_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
         latency = (_time.monotonic() - t0) * 1000
         if resp.status_code != 200:
             record_external_api_call("yahoo_finance", False, latency)
-            logger.warning("Yahoo Finance HTTP %d for %s", resp.status_code, ticker)
+            logger.warning("Yahoo Finance HTTP %d for %s (range=%sd)", resp.status_code, ticker, max(days, 30))
             return None
         record_external_api_call("yahoo_finance", True, latency)
         data = resp.json()
@@ -142,10 +142,16 @@ def fetch_ohlcv(ticker: str, market: str, days: int = 30) -> Optional[List[OHLCV
             record_external_api_call("alpaca", True, latency)
             ohlcv = _alpaca_bars_to_ohlcv(bars)
             if ohlcv:
+                logger.info("OHLCV OK via Alpaca for %s (%d bars)", ticker, len(ohlcv))
                 return ohlcv
         else:
             record_external_api_call("alpaca", False, latency)
         logger.info("Alpaca unavailable for %s — falling back to Yahoo Finance", ticker)
 
     # UK tickers always use Yahoo Finance; US falls through here on Alpaca failure
-    return _yahoo_fetch_ohlcv(ticker, days)
+    result = _yahoo_fetch_ohlcv(ticker, days)
+    if result:
+        logger.info("OHLCV OK via Yahoo Finance for %s (%d bars)", ticker, len(result))
+    else:
+        logger.warning("OHLCV FAILED for %s (market=%s) — no data from any source", ticker, market)
+    return result
