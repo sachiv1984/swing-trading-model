@@ -67,9 +67,9 @@ def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Opt
             resp = requests.get(url, params=params, headers=headers, timeout=10)
             if resp.status_code == 200:
                 data = resp.json()
-                bars = data.get("bars", [])
+                bars = data.get("bars") or []
                 logger.info("Alpaca bars fetched for %s: %d bars", symbol, len(bars))
-                return bars
+                return bars or None
             elif resp.status_code == 429:
                 if attempt < max_attempts:
                     time.sleep(delay)
