@@ -24,7 +24,7 @@
   "last_audit_utc": "2026-04-21T00:00:00Z",
   "last_audit_overall_score": 84,
   "last_audit_open_items": 4,
-  "next_release": "v3.0",
+  "next_release": "v3.1",
   "prior_cycle": "2026-04-22__release-v2.9",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
@@ -42,7 +42,7 @@
   "design_gate_bypass_authority": "Head of UX & Design + Product Owner",
   "design_gate_bypass_reason": "No frontend UI implementations in v2.9 — DS-02 (Screener Results Page) deferred to v3.0; ST-04 is UX spec authoring (documentation only); ST-13 is a one-line utility function change with no visual output.",
   "active_pog": {},
-  "completed_cycle_count": 15,
+  "completed_cycle_count": 16,
   "resolved_pre_sprint": {
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
