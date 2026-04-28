@@ -41,6 +41,20 @@ def ensure_screener_results_table() -> None:
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("""
+                CREATE TABLE IF NOT EXISTS screener_runs (
+                    run_id UUID PRIMARY KEY,
+                    run_timestamp TIMESTAMP NOT NULL,
+                    tickers_evaluated INTEGER DEFAULT 0,
+                    tickers_passed INTEGER DEFAULT 0,
+                    regime_us VARCHAR(10),
+                    regime_uk VARCHAR(10)
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_screener_runs_ts
+                ON screener_runs (run_timestamp DESC)
+            """)
+            cur.execute("""
                 CREATE TABLE IF NOT EXISTS screener_results (
                     id SERIAL PRIMARY KEY,
                     run_id UUID NOT NULL,
@@ -117,6 +131,22 @@ def _fetch_index_regime(index_ticker: str) -> Optional[Dict]:
 # ---------------------------------------------------------------------------
 # Result persistence
 # ---------------------------------------------------------------------------
+
+def _persist_run(run_id: str, run_timestamp: str, tickers_evaluated: int,
+                 tickers_passed: int, regime_us: str, regime_uk: str) -> None:
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO screener_runs
+                  (run_id, run_timestamp, tickers_evaluated, tickers_passed, regime_us, regime_uk)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT (run_id) DO NOTHING
+                """,
+                (run_id, run_timestamp, tickers_evaluated, tickers_passed, regime_us, regime_uk),
+            )
+        conn.commit()
+
 
 def _persist_results(results: List[Dict]) -> None:
     if not results:
@@ -213,6 +243,10 @@ def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
             if record is not None:
                 results.append(record)
 
+        regime_us_status = us_regime.get("regime_status", "risk_off")
+        regime_uk_status = uk_regime.get("regime_status", "risk_off")
+        _persist_run(run_id, run_timestamp, tickers_evaluated, len(results),
+                     regime_us_status, regime_uk_status)
         _persist_results(results)
 
         return {
@@ -221,8 +255,8 @@ def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
             "count": len(results),
             "tickers_evaluated": tickers_evaluated,
             "tickers_passed": len(results),
-            "regime_us": us_regime.get("regime_status"),
-            "regime_uk": uk_regime.get("regime_status"),
+            "regime_us": regime_us_status,
+            "regime_uk": regime_uk_status,
         }
     finally:
         with _run_lock:
@@ -243,18 +277,27 @@ def get_screener_results(
     with get_db() as conn:
         with conn.cursor() as cur:
             if run_id is None:
-                cur.execute("SELECT DISTINCT run_id, run_timestamp FROM screener_results ORDER BY run_timestamp DESC LIMIT 1")
+                cur.execute(
+                    "SELECT run_id, run_timestamp, tickers_evaluated, tickers_passed, regime_us, regime_uk "
+                    "FROM screener_runs ORDER BY run_timestamp DESC LIMIT 1"
+                )
                 row = cur.fetchone()
                 if not row:
                     raise ValueError("NO_RESULTS")
                 run_id = str(row["run_id"])
                 run_ts = row["run_timestamp"]
+                run_meta = dict(row)
             else:
-                cur.execute("SELECT DISTINCT run_timestamp FROM screener_results WHERE run_id = %s LIMIT 1", (run_id,))
+                cur.execute(
+                    "SELECT run_id, run_timestamp, tickers_evaluated, tickers_passed, regime_us, regime_uk "
+                    "FROM screener_runs WHERE run_id = %s LIMIT 1",
+                    (run_id,),
+                )
                 row = cur.fetchone()
                 if not row:
                     raise ValueError("NO_RESULTS")
                 run_ts = row["run_timestamp"]
+                run_meta = dict(row)
 
             filters = ["run_id = %s"]
             params = [run_id]
@@ -300,4 +343,8 @@ def get_screener_results(
         "total": total,
         "limit": limit,
         "offset": offset,
+        "tickers_evaluated": run_meta.get("tickers_evaluated", 0),
+        "tickers_passed": run_meta.get("tickers_passed", 0),
+        "regime_us": run_meta.get("regime_us"),
+        "regime_uk": run_meta.get("regime_uk"),
     }

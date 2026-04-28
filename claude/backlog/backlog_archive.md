@@ -1,11 +1,95 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-24
+**Last Updated:** 2026-04-28
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FEAT-18 — Consecutive losing streak metric
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-04-28
+**Shipped in:** v3.0 (ST-15, cycle 2026-04-25__release-v3.0)
+**Evidence:** `docs/product/changelog.md` v3.0 entry; `claude/cycles/2026-04-25__release-v3.0/verification_report.md`
+
+Consecutive losing streak count added to analytics. `advanced_metrics.loss_streak` computed from closed trades. `metrics_definitions.md` updated v1.10.0. 7 unit tests in test_streak_metric.py.
+
+---
+
+### BLG-FE-19 — Keyboard shortcuts for trading actions
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-28
+**Shipped in:** v3.0 (ST-11, cross-EPIC EPIC-02 branch, cycle 2026-04-25__release-v3.0)
+**Evidence:** `docs/product/changelog.md` v3.0 entry; `claude/cycles/2026-04-25__release-v3.0/verification_report.md`
+
+Keyboard shortcuts 'n', 'w', 'r' implemented in Layout.js via useEffect/keydown handler. Suppression rule for text inputs. Sidebar footer hint. Deviation documented: committed on EPIC-02 branch (co-delivered with Screener nav).
+
+---
+
+### BLG-FE-18 — Screener results page: attach news panel on DS-02 implementation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-28
+**Shipped in:** v3.0 (ST-07, cycle 2026-04-25__release-v3.0); resolves DEV-01 P3 from v2.9
+**Evidence:** `docs/product/changelog.md` v3.0 entry; `claude/cycles/2026-04-25__release-v3.0/verification_report.md`
+
+News panel attached to screener results page per screener_results.md §9. GET /news/{ticker} wired. Display-only per BLG-GOV-16 §13. UK tickers show '—' in news column. Strategy Rules Owner counter-sign applied.
+
+---
+
+### BLG-AI-02 — Model version contract for AI Journal
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-28
+**Shipped in:** v3.0 (ST-16, cycle 2026-04-25__release-v3.0)
+**Evidence:** `docs/product/changelog.md` v3.0 entry; `claude/cycles/2026-04-25__release-v3.0/verification_report.md`
+
+Class 2 canonical spec created at docs/specs/ai_journal_model_contract.md. Model: claude-haiku-4-5-20251001 in ai_service.py _DEFAULT_MODEL. Contract referenced in ai_audit_service.py docstring.
+
+---
+
+### TEST-GAP-ST14 — AI audit service unit tests (ai_audit_service.py)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-28
+**Shipped in:** v3.0 (ST-10, cycle 2026-04-25__release-v3.0)
+**Evidence:** `docs/product/changelog.md` v3.0 entry; `claude/cycles/2026-04-25__release-v3.0/verification_report.md`
+
+12 unit tests created in tests/test_ai_audit_service.py covering ensure_ai_audit_table, log_ai_summary_run, query_audit_log. Mock pattern — no live DB required. All pass in CI.
+
+---
+
+### BLG-OPS-14 — AI Journal monitoring metrics
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-04-28
+**Shipped in:** v3.0 (ST-09, cycle 2026-04-25__release-v3.0)
+**Evidence:** `docs/product/changelog.md` v3.0 entry; `claude/cycles/2026-04-25__release-v3.0/verification_report.md`
+
+GET /health extended with ai_journal section: usage_rate, error_rate, p95_latency_ms sourced from ai_audit_log. Non-blocking — returns null/unavailable if data absent. 5 unit tests.
+
+---
+
+### BLG-OPS-12 — External API health check extension
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-04-28
+**Shipped in:** v3.0 (ST-08, cycle 2026-04-25__release-v3.0)
+**Evidence:** `docs/product/changelog.md` v3.0 entry; `claude/cycles/2026-04-25__release-v3.0/verification_report.md`
+
+GET /health extended with external_apis section covering Alpaca and Yahoo Finance: last_successful_call, error_rate, p95_latency. Cache-based health check. 8 unit tests in test_health_extensions.py.
 
 ---
 

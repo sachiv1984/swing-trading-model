@@ -73,9 +73,10 @@ def test_ensure_table_runs_create_statements():
     with patch("services.screener_batch_service.get_db", return_value=conn):
         from services.screener_batch_service import ensure_screener_results_table
         ensure_screener_results_table()
-    assert cur.execute.call_count >= 3
-    first_call = cur.execute.call_args_list[0][0][0]
-    assert "CREATE TABLE IF NOT EXISTS screener_results" in first_call
+    assert cur.execute.call_count >= 4
+    all_calls = [call[0][0] for call in cur.execute.call_args_list]
+    assert any("CREATE TABLE IF NOT EXISTS screener_runs" in c for c in all_calls)
+    assert any("CREATE TABLE IF NOT EXISTS screener_results" in c for c in all_calls)
 
 
 # ---------------------------------------------------------------------------

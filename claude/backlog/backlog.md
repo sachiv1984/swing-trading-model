@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-24 (cycle 2026-04-24__scheduled — DL-022: 2 items added BLG-FE-19, BLG-OPS-14; DL-023: BLG-TECH-05 + BLG-SPEC-20 moved to §9 Deferred)
+**Last Updated:** 2026-04-28 (groom backlog GROOM-20260428-01 — 7 COMPLETE items archived; BLG-GOV-11 target updated v3.0→v3.1; BLG-OPS-13 scope extended with 5 v3.0 endpoints)
 **Last rebalance:** 2026-04-24 (cycle 2026-04-24__scheduled — DL-022 backlog adds; DL-023 defers)
 
 > ⚠️ Standing Notice
@@ -38,26 +38,7 @@
 
 ---
 
-### BLG-FEAT-18 — Consecutive losing streak metric
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Analytics
-**Owner:** Metrics Definitions & Analytics Canonical Owner
-**Source:** IDEA-metrics-analytics-20260321-01 — promoted cycle 2026-04-21__scheduled (DL-021)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v3.0
-
-**Problem**
-No metric tracks consecutive losing streaks. Behavioural drift into extended losing runs is not surfaced as a risk signal.
-
-**Scope**
-- Add consecutive losing streak count (historical closed trades only) to analytics
-- Display in analytics/dashboard context alongside expectancy and win rate metrics
-- Scope constraint: historical closed-trade data only; not surfaced in active position views or alert flows
-
-**Acceptance Criteria**
-- Consecutive losing streak count visible in analytics view
-- Metric computed from closed trades only; no reference to open positions
-- Metric definition added to canonical metrics definitions spec
+*BLG-FEAT-18 (Consecutive losing streak metric) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 
 ---
 
@@ -67,7 +48,7 @@ No metric tracks consecutive losing streaks. Behavioural drift into extended los
 **Owner:** Financial Reporting & Records Owner
 **Source:** IDEA-financial-reporting-20260321-01 — promoted cycle 2026-04-21__scheduled (DL-021)
 **Effort:** S (~1 day)
-**Provisional-Target:** v3.0
+**Provisional-Target:** v3.1
 
 **Problem**
 Only annual (tax-year) P&L is available. In-year performance patterns are only visible through the analytics page; no structured monthly summary exists.
@@ -94,7 +75,7 @@ Only annual (tax-year) P&L is available. In-year performance patterns are only v
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** IDEA-frontend-ux-20260321-02 — promoted cycle 2026-04-21__scheduled (DL-021)
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v3.0
+**Provisional-Target:** v3.1
 
 **Problem**
 No catalogue of UI components exists. Arc 1 will add significant new frontend components. Without an inventory, Arc 1 frontend work risks duplicating existing components and design inconsistency compounds.
@@ -112,52 +93,8 @@ No catalogue of UI components exists. Arc 1 will add significant new frontend co
 
 ---
 
-### BLG-FE-19 — Keyboard shortcuts for trading actions
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Base44 Frontend Prompt Owner
-**Source:** IDEA-base44-frontend-20260321-01 — promoted cycle 2026-04-24__scheduled (DL-022); gate cleared: BLG-FE-02/03 shipped v2.2
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v3.0
-
-**Problem**
-Common trading actions require multiple clicks. As Arc 1 adds the screener page and Arc 2 adds research surfaces, keyboard navigation reduces friction in the daily workflow.
-
-**Scope**
-- Add keyboard shortcuts: 'n' (new position), 'w' (add to watchlist), 'r' (refresh)
-- Apply across existing pages and screener page when DS-02 is implemented
-- No changes to business logic; display-layer only
-
-**Acceptance Criteria**
-- Shortcuts 'n', 'w', 'r' functional on applicable pages
-- Shortcuts do not interfere with text input fields
-- Shortcut reference visible (e.g. tooltip or help overlay)
-
----
-
-### BLG-FE-18 — Screener results page: attach news panel on DS-02 implementation
-**Priority:** P3 (Low)
-**Type:** Frontend / Feature Completion
-**Owner:** Backend Engineering Patterns Owner + Frontend Specifications & UX Documentation Owner
-**Source:** DEV-01 — v2.9 delivery verification 2026-04-24; ST-07 (DS-06) AC-1 partial deferral
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v3.0 (DS-02 implementation prerequisite must ship first)
-
-**Problem**
-The `GET /news/{ticker}` backend endpoint is available (shipped v2.9 ST-07), but the UI attachment to the screener results page is deferred because DS-02 (screener results page implementation) does not yet exist. When DS-02 is implemented in v3.0, the news panel must be wired to the screener results page to complete ST-07 AC-1.
-
-**Scope**
-- Wire the existing `GET /news/{ticker}` backend endpoint to the screener results page news panel
-- Per `screener_results.md §9`: panel triggered by news count badge click; inline expanded below row; last 5 headlines; UK tickers show `—` in news column (no badge)
-- Display-only, per BLG-GOV-16 §13 sign-off conditions
-
-**Acceptance Criteria**
-- News panel renders on screener results page per `screener_results.md §9`
-- Consistent with watchlist news panel implementation (v2.9 ST-07)
-- UK ticker handling: `—` in news column, no badge, no panel
-- Empty news state handled per `screener_results.md §7`
-- DoQ sign-off including local run or staging verification of toggle behaviour
-
+*BLG-FE-19 (Keyboard shortcuts) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
+*BLG-FE-18 (Screener news panel attachment) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 
 ---
 
@@ -166,26 +103,7 @@ The `GET /news/{ticker}` backend endpoint is available (shipped v2.9 ST-07), but
 
 ---
 
-### BLG-AI-02 — Model version contract for AI Journal
-**Priority:** P3 (Low)
-**Type:** Governance / AI Compliance
-**Owner:** AI Compliance & Governance Officer
-**Source:** IDEA-ai-compliance-20260321-02 — promoted cycle 2026-04-21__scheduled (DL-021)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v3.0
-
-**Problem**
-The Claude model version used for AI Journal summarisation is not formally specified or recorded per run. If the model is upgraded, there is no way to identify which summaries were generated under which capability level.
-
-**Scope**
-- Document specifying which Claude model version executes AI journal summarisation
-- Version contract referenced in BLG-AI-01 audit log implementation
-- Process for incrementing the contract when model version changes
-
-**Acceptance Criteria**
-- Model version contract document created (Class 2 or Class 3)
-- Contract referenced in audit log implementation (BLG-AI-01)
-- Process for model version changes documented
+*BLG-AI-02 (Model version contract for AI Journal) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 
 ---
 
@@ -195,26 +113,7 @@ The Claude model version used for AI Journal summarisation is not formally speci
 
 ---
 
-### TEST-GAP-ST14 — AI audit service unit tests (ai_audit_service.py)
-**Priority:** P3 (Low)
-**Type:** Test Automation / Backend Coverage
-**Owner:** QA & Testing Owner
-**Source:** v2.9 delivery verification 2026-04-24 — qa_evidence_EPIC-04.md ST-14 note: "no unit tests for audit service — in scope for future sprint"
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Before next sprint modifying AI audit or journal summary features
-
-**Problem**
-`backend/services/ai_audit_service.py` (shipped v2.9 ST-14) has no unit tests. The audit log table creation (`ensure_ai_audit_table`), row insertion (`log_ai_summary_run`), and query (`query_audit_log`) functions are untested at unit level.
-
-**Scope**
-- Unit tests for `ai_audit_service.py` covering: `ensure_ai_audit_table` idempotency, `log_ai_summary_run` happy path and exception handling, `query_audit_log` filter behaviour (by trade_id, date range, limit)
-- Tests should not require a live DB (use mock or TestClient pattern per existing integration test pattern)
-
-**Acceptance Criteria**
-- Unit tests created covering at minimum: happy path insert, query by trade_id, query by date range, graceful handling of DB error in `log_ai_summary_run`
-- Tests pass in CI
-- DoQ sign-off with Date field populated
-
+*TEST-GAP-ST14 (AI audit service unit tests) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 
 ---
 
@@ -222,71 +121,30 @@ The Claude model version used for AI Journal summarisation is not formally speci
 
 ---
 
-### BLG-OPS-13 — Add 3 new v2.9/v2.8 endpoints to api_performance_baseline.md re-run
+### BLG-OPS-13 — Add new v2.8/v2.9/v3.0 endpoints to api_performance_baseline.md re-run
 **Priority:** P3 (Low)
 **Type:** Operations / Performance Baseline
 **Owner:** Infrastructure & Operations Owner
-**Source:** v2.9 post-ship closure 2026-04-24 — endpoint coverage drift check; 3 implemented endpoints absent from api_performance_baseline.md
-**Effort:** S (~0.5 day)
+**Source:** v2.9 post-ship closure 2026-04-24 (3 endpoints); v3.0 post-ship closure 2026-04-28 OA-v30-01 (5 additional endpoints)
+**Effort:** S (~1 day — 8 endpoints total)
 **Provisional-Target:** Before next performance baseline review
 
 **Problem**
-Three endpoints shipped in v2.8/v2.9 are absent from `docs/ops/api_performance_baseline.md`: `POST /ai/journal-summary` (v2.8), `GET /ai/journal-summary/history` (v2.9 ST-14), `GET /v1beta1/news` (v2.9 ST-07). Performance re-runs require a live environment and human coordination — baseline updates cannot be automated.
+Eight endpoints shipped in v2.8/v2.9/v3.0 are absent from `docs/ops/api_performance_baseline.md`. Performance re-runs require a live environment and human coordination — baseline updates cannot be automated.
 
-**Scope**
-- Run `POST /ai/journal-summary`, `GET /ai/journal-summary/history`, and `GET /v1beta1/news` against staging to obtain p50/p95 latencies
-- Add entries to `docs/ops/api_performance_baseline.md`
+**Scope (updated 2026-04-28):**
+- v2.8/v2.9 endpoints (3): `POST /ai/journal-summary`, `GET /ai/journal-summary/history`, `GET /v1beta1/news`
+- v3.0 endpoints (5): `GET /ticker-universe`, `POST /ticker-universe`, `DELETE /ticker-universe/{ticker}`, `GET /screener/results`, `POST /screener/run`
+- Run each against staging to obtain p50/p95 latencies and add to `docs/ops/api_performance_baseline.md`
 
 **Acceptance Criteria**
-- All three endpoints have p50 and p95 latency entries in the baseline document
+- All 8 endpoints have p50 and p95 latency entries in the baseline document
 - Entries consistent with existing baseline measurement methodology
 
 ---
 
-### BLG-OPS-14 — AI Journal monitoring metrics
-**Priority:** P3 (Low)
-**Type:** Operations / Observability
-**Owner:** AI Compliance & Governance Officer + Infrastructure & Operations Owner
-**Source:** IDEA-ai-compliance-20260421-02 — promoted cycle 2026-04-24__scheduled (DL-022); gate cleared: BLG-AI-01 shipped v2.9 (ST-14)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v3.0
-
-**Problem**
-BLG-AI-01 (AI Journal summary audit log) shipped v2.9. The AI Journal feature is now live in production but has no monitoring. LLM unavailability events, elevated error rates, and latency degradation are currently invisible until a user notices degraded output quality.
-
-**Scope**
-- Extend `GET /health` to include AI Journal metrics: `usage_rate` (summaries/day, rolling 7d), `error_rate` (last 24h), `p95_latency` (last 24h)
-- Source metrics from the BLG-AI-01 audit log table
-- Non-blocking: health endpoint returns degraded status if AI metrics are unavailable rather than failing
-
-**Acceptance Criteria**
-- `GET /health` response includes an `ai_journal` section with `usage_rate`, `error_rate`, `p95_latency`
-- Metrics sourced from `ai_audit_log` table (BLG-AI-01)
-- Health endpoint does not fail if AI audit data is absent (returns `null` or `unavailable` gracefully)
-- DoQ sign-off with evidence of response format
-
----
-
-### BLG-OPS-12 — External API health check extension
-**Priority:** P2 (Medium)
-**Type:** Operations / Infrastructure
-**Owner:** Infrastructure & Operations Owner
-**Source:** IDEA-infra-ops-20260421-01 — promoted cycle 2026-04-21__scheduled (DL-021)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v3.0
-
-**Problem**
-`GET /health` currently covers only internal services (DB, market status). Arc 1 introduces Alpaca and Yahoo Finance external API dependencies. External API failures are invisible until screener results fail — no proactive operational alerting exists.
-
-**Scope**
-- Extend `GET /health` to include external API connectivity status: last successful call timestamp, error rate (rolling window), p95 latency
-- Cover Alpaca Markets API and Yahoo Finance API
-- Non-blocking: health endpoint returns partial status if external check fails
-
-**Acceptance Criteria**
-- `GET /health` response includes external API status section
-- Each external API shows: last_successful_call, error_rate, p95_latency
-- Health endpoint does not fail if external API is down (returns degraded status)
+*BLG-OPS-14 (AI Journal monitoring metrics) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
+*BLG-OPS-12 (External API health check extension) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 
 ---
 
@@ -308,7 +166,7 @@ BLG-AI-01 (AI Journal summary audit log) shipped v2.9. The AI Journal feature is
 **Owner:** PMO Lead + Head of Specs Team
 **Source:** User session review — 2026-04-03
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v3.0 (was v2.9 — deferred)
+**Provisional-Target:** v3.1 (was v3.0 — deferred; 2 consecutive cycle deferrals as of v3.0)
 
 **Problem**
 As cycles accumulate, documents are created in each cycle directory but there is no consolidated inventory of what exists across all closed cycles, nor a documented lifecycle for each artefact type (maintained vs. point-in-time). Without this review it is impossible to audit historical artefacts, identify stale documents, or enforce consistent maintenance practices going forward.
@@ -365,11 +223,11 @@ These are deliberate product decisions, not deferrals:
 
 ## 12. Last Release Slice
 
-## Active Release Slice — v3.0
+## Last Release Slice — v3.0 ✅ COMPLETE
 
-<!-- release-plan-marker: RP:v3.0:2026-04-25__release-v3.0 -->
+<!-- release-plan-marker: RP:v3.0:2026-04-25__release-v3.0 — COMPLETE -->
 
-**Cycle:** 2026-04-25__release-v3.0 | **Status:** Published | **Published:** 2026-04-25
+**Cycle:** 2026-04-25__release-v3.0 | **Status:** Complete — Shipped 2026-04-27 | **Published:** 2026-04-25
 **Backlog slice:** `claude/cycles/2026-04-25__release-v3.0/stage4_backlog_slice.md`
 
 | EPIC | Sprint | Stories | Theme |
@@ -456,7 +314,7 @@ These are deliberate product decisions, not deferrals:
 **Owner:** Head of Engineering + Product Owner
 **Source:** User request — 2026-03-31
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v3.0 (was v2.9 — deferred)
+**Provisional-Target:** v3.1 (was v3.0 — deferred; not in v3.0 sprint scope)
 
 **Problem**
 The application has no mechanism to roll out new features to a subset of users or environments. Any new capability ships immediately to all users with no ability to stage a rollout, run a controlled trial, or roll back a single feature without reverting the entire deployment. As the product grows this creates risk for experimental features and makes it impossible to validate new UI flows with a limited audience before full release.

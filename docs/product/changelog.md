@@ -3,9 +3,48 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-24
+**Last Updated:** 2026-04-28
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.0 — Arc 1 Screener Engine & Results Page — 2026-04-27
+Cycle: 2026-04-25__release-v3.0
+Verified: Verified
+Verification report: claude/cycles/2026-04-25__release-v3.0/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Screener Engine Backend — ticker universe data model + endpoints (ST-01); OHLCV data pipeline service with Alpaca primary / Yahoo Finance fallback (ST-02); ATR + regime detection + signal scoring engine (ST-03); screener batch engine + API endpoints `/screener/run` and `/screener/results` (ST-04) | docs/specs/api_contracts/ticker_universe_api_contract.md; docs/specs/api_contracts/alpaca_integration_contract.md; docs/specs/screener_results_schema.md; docs/specs/api_contracts/screener_api_contract.md; docs/reference/openapi.yaml |
+| EPIC-02 | Screener Frontend — results page with sort/filter/regime badge/freshness/skeleton/empty/error states (ST-05); watchlist promotion inline popover + POST /watchlist integration (ST-06); news panel attachment with badge + inline expand/collapse (ST-07); keyboard shortcuts n/w/r + sidebar hints (ST-11, cross-EPIC) | docs/specs/frontend/pages/screener_results.md |
+| EPIC-03 | Operations, Observability & Test Quality — external API health check extension (Alpaca + Yahoo Finance in GET /health) (ST-08); AI journal monitoring metrics (usage_rate, error_rate, p95_latency_ms in GET /health) (ST-09); AI audit service unit tests 12 tests (ST-10) | docs/specs/api_contracts/health_endpoints.md |
+| EPIC-04 | Technical Debt & Governance — execution_prompt.md §2 deferred patch (ST-12); execution_prompt.md §3.1.A deferred patch (ST-13); prompt_change_log.md retrospective entries (ST-14); consecutive losing streak metric in metrics_definitions.md (ST-15); AI journal model version contract (ST-16) | claude/system/execution_prompt.md; claude/system/prompt_change_log.md; docs/specs/metrics_definitions.md; docs/specs/ai_journal_model_contract.md |
+
+### Deviations accepted
+None. DEV-01 (P3 — screener results news panel deferred from v2.9) resolved this sprint by ST-07 delivery.
+
+### Tech backlog items shipped
+- [ST-01] BLG-DS-01/ticker-universe: Ticker universe data model + CRUD endpoints + DB table
+- [ST-02] BLG-DS-02/ohlcv-pipeline: OHLCV data pipeline with Alpaca primary + Yahoo Finance fallback
+- [ST-03] BLG-DS-03/screener-engine: ATR Wilder 14-period + regime detection + composite signal score (RSI+MACD+volume)
+- [ST-04] BLG-DS-04/screener-api: Screener batch run engine + POST /screener/run + GET /screener/results
+- [ST-05] BLG-FE-19/screener-page: Screener results page (React, HashRouter, DataState, RegimeBadge, filters)
+- [ST-06] BLG-FE-20/watchlist-promo: Watchlist promotion inline popover flow
+- [ST-07] BLG-FE-18/news-panel: Screener news panel — resolves DEV-01 from v2.9
+- [ST-08] BLG-OPS-12/health-ext: External API health check extension (Alpaca + Yahoo Finance)
+- [ST-09] BLG-OPS-13/ai-metrics: AI journal monitoring metrics in GET /health
+- [ST-10] BLG-QA-10/ai-audit-tests: AI audit service unit tests (12 tests)
+- [ST-11] BLG-FE-21/keyboard-shortcuts: Keyboard shortcuts (cross-EPIC: n/w/r + sidebar hints)
+- [ST-12] PATCH-EP-§2: execution_prompt.md §2 deferred patch from v2.9
+- [ST-13] PATCH-EP-§3.1.A: execution_prompt.md §3.1.A deferred patch from v2.9
+- [ST-14] PATCH-PCL: prompt_change_log.md retrospective entries from v2.9
+- [ST-15] BLG-FEAT-13/streak-metric: Consecutive losing streak metric + GET /analytics/streak-metric
+- [ST-16] BLG-AI-02/model-contract: AI journal model version contract spec
+
+Sign-off: Product Owner (agent-mediated) — 2026-04-27
+QA sign-off: Director of Quality (agent-mediated) — 2026-04-27
 
 ---
 

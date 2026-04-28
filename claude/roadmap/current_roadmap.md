@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-24 (cycle 2026-04-24__scheduled — post-v2.9 scheduled rebalance; no roadmap-initiative changes; 2 backlog items added, 2 deferred; stale idea retirements applied)
+**Last Updated:** 2026-04-28 (post-ship closure v3.0 — manage_roadmap run)
 **Last rebalance:** 2026-04-24 (cycle 2026-04-24__scheduled — Standard-tier scheduled rebalance; DL-022 backlog adds; DL-023 defers)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,8 +10,8 @@
 
 ## 1. Current Version
 
-**v2.9** — Arc 1 Foundation: Stock Discovery & Screening Spec & Infrastructure — Shipped 2026-04-24
-**Next planned release:** **v3.0–v3.1** — Arc 1 Remainder: Screener Engine & Results Page
+**v3.0** — Arc 1 Screener Engine & Results Page — Shipped 2026-04-27
+**Next planned release:** **v3.1** — [TBD]
 
 -----
 
@@ -215,39 +215,32 @@ Today you find stocks through external research and add them to the watchlist ma
 *v2.6 shipped 2026-04-11 (Verified). RA:v2.6 annotation retired 2026-04-16 (post-ship closure v2.7 — v2.6 closure was not run standalone).*
 *v2.7 shipped 2026-04-16 (Verified). RA:v2.7 annotation retired to roadmap_archive.md 2026-04-16 (post-ship closure v2.7).*
 *v2.8 shipped 2026-04-20 (Verified). RA:v2.8 annotation retired to roadmap_archive.md 2026-04-20 (post-ship closure v2.8).*
+*v2.9 shipped 2026-04-24 (Verified_with_deviations). RA:v2.9 annotation retired to roadmap_archive.md 2026-04-28 (post-ship closure v3.0).*
+*v3.0 shipped 2026-04-27 (Verified). RA:v3.0 annotation retired to roadmap_archive.md 2026-04-28 (post-ship closure v3.0).*
 
 -----
 
 ## 4. Priority 2 — Horizon: Next Phase (Arcs 1 & 2)
 
-Items in this section are sequenced and ready for planning when v2.8 closes. They are not gated — they are next.
+Items in this section are sequenced and ready for planning when the current version closes. They are not gated — they are next.
 
 ### Arc 1 — Stock Discovery & Screening (v2.9–v3.1)
 
-**Sequencing note:** DS-03 (Sector Classification) and DS-05 (Alpaca Integration) are infrastructure items that should be delivered first — they are prerequisites for DS-01 (Screener Engine) and DS-02 (Screener Results Page).
+**Status (2026-04-28):** Substantially complete. DS-03, DS-05, DS-06 (watchlist) delivered v2.9. DS-01, DS-02, DS-06 (screener), DS-07 delivered v3.0. **DS-04 (Earnings Calendar) remains deferred to v3.1.**
 
-|Feature                          |ID   |Effort|Sequencing note                                                                                               |
-|---------------------------------|-----|------|--------------------------------------------------------------------------------------------------------------|
-|Sector & Industry Classification |DS-03|S     |Yahoo Finance enrichment; prerequisite for DS-01 concentration filter and DS-02 display                       |
-|Alpaca US Market Data Integration|DS-05|M     |Replace Yahoo for US OHLCV; higher quality ATR inputs; prerequisite for DS-01 US market leg                   |
-|Strategy-Rules Screener Engine   |DS-01|H     |Core Arc 1 deliverable; deterministic filter against §11 parameters; UK + US universes; requires DS-03 + DS-05|
-|Screener Results Page            |DS-02|M     |Frontend for DS-01 output; depends on DS-01                                                                   |
-|Alpaca News Panel                |DS-06|S     |Display-only news context; can be delivered in parallel with DS-02                                            |
-|Earnings Calendar Integration    |DS-04|M     |Surfaces on screener results, watchlist, and open positions; can be delivered in parallel with DS-02          |
-|Watchlist Promotion Flow         |DS-07|S     |One-click screener → watchlist; depends on DS-02                                                              |
+|Feature                          |ID   |Effort|Status                                                                                                                |
+|---------------------------------|-----|------|----------------------------------------------------------------------------------------------------------------------|
+|Sector & Industry Classification |DS-03|S     |✅ Shipped v2.9                                                                                                       |
+|Alpaca US Market Data Integration|DS-05|M     |✅ Shipped v2.9                                                                                                       |
+|Strategy-Rules Screener Engine   |DS-01|H     |✅ Shipped v3.0                                                                                                       |
+|Screener Results Page            |DS-02|M     |✅ Shipped v3.0                                                                                                       |
+|Alpaca News Panel                |DS-06|S     |✅ Shipped v3.0 (watchlist v2.9; screener results v3.0 ST-07)                                                        |
+|Watchlist Promotion Flow         |DS-07|S     |✅ Shipped v3.0                                                                                                       |
+|Earnings Calendar Integration    |DS-04|M     |📋 Deferred → v3.1 (no spec exists; M effort; independent feature)                                                   |
 
-**Arc 1 end-state target:** Each morning the screener surfaces a ranked list of momentum candidates that pass your strategy’s regime gate, ATR filter, and signal conditions. You review, promote to watchlist, and move to Arc 2 research. The top of the funnel is systematic, not ad hoc.
+**Arc 1 end-state target achieved (2026-04-27):** Each morning the screener surfaces a ranked list of momentum candidates that pass your strategy’s regime gate, ATR filter, and signal conditions. You review, promote to watchlist, and move to Arc 2 research. The top of the funnel is systematic, not ad hoc. DS-04 (earnings calendar) remains as v3.1 enhancement.
 
-<!-- roadmap-annotation-marker: RA:v2.9:2026-04-22__release-v2.9 -->
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-04-22__release-v2.9
-- Plan published: 2026-04-22
-- Cycle folder: claude/cycles/2026-04-22__release-v2.9/
-- Backlog slice: claude/cycles/2026-04-22__release-v2.9/stage4_backlog_slice.md
-- Status: ✅ Complete — shipped 2026-04-24
-- Verification: Verified_with_deviations (DEV-01 P3 accepted; BLG-FE-18 filed)
-- Scope delivered: EPIC-01 (Arc 1 specs: BLG-SPEC-21/22/23, BLG-FE-17), EPIC-02 (DS-03/05/06 implementation), EPIC-03 (governance/QA infrastructure: BLG-GOV-16, BLG-QA-08/09), EPIC-04 (governance debt + quick wins: BLG-GOV-14/15, BLG-FE-15, BLG-AI-01, TEST-GAP-EPIC-04)
-- Scope deferred: DS-01 (screener engine) and DS-02 (screener results page) → v3.0
+*RA:v2.9 retired — see roadmap_archive.md 2026-04-28.*
 
 ### Arc 2 — Pre-Trade Research & Planning (v3.1–v3.3)
 
@@ -372,16 +365,10 @@ When evaluating new features:
 |**v2.7**     |Performance, Governance Hardening & Market Intelligence               |Supavisor pooling, portfolio DB refactor, market correlation API, supplementary signal indicators — ✅ Shipped 2026-04-16                  |
 |**v2.8**     |Frontend Completion, Test Quality & AI Journal Feature                |Market Correlation frontend, test coverage, governance patches, AI Journal Summarisation (Arc 4 foundation) — ✅ Shipped 2026-04-20        |
 |**v2.9**     |Arc 1 Foundation: Stock Discovery & Screening Spec & Infrastructure   |Arc 1 specs (BLG-SPEC-21/22/23, BLG-FE-17), DS-03 sector enrichment, DS-05 Alpaca US data, DS-06 news panel (watchlist), CI mock harness, governance debt — ✅ Shipped 2026-04-24|
-|**v3.0–v3.1**|Arc 1 Remainder: Screener Engine & Results Page                       |DS-01 strategy-rules screener engine, DS-02 screener results page, DS-04 earnings calendar, DS-06 screener news panel (BLG-FE-18), DS-07 watchlist promotion flow — 📋 Planned|
+|**v3.0**     |Arc 1 Screener Engine & Results Page                                  |DS-01 screener engine, DS-02 screener results page, DS-06 news panel (BLG-FE-18 resolved), DS-07 watchlist promotion, keyboard shortcuts, health extension, AI metrics, streak metric — ✅ Shipped 2026-04-27 — cycle: 2026-04-25__release-v3.0|
 
-<!-- roadmap-annotation-marker: RA:v3.0:2026-04-25__release-v3.0 -->
+*RA:v3.0 retired — see roadmap_archive.md 2026-04-28.*
 
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-04-25__release-v3.0
-- Plan published: 2026-04-25
-- Cycle folder: claude/cycles/2026-04-25__release-v3.0/
-- Backlog slice: claude/cycles/2026-04-25__release-v3.0/stage4_backlog_slice.md
-- Status at annotation: Validated (16 stories, 4 EPICs, 2 sprints)
 |**v3.1–v3.3**|Arc 2: Pre-Trade Research & Planning                                  |Trade Plan object, pre-trade research view, entry checklist, setup quality score, prospective heat at entry — 📋 Planned                   |
 |**v3.3–v3.5**|Arc 3: In-Trade Risk Management                                       |Position lifecycle manager, stop management workflow, drawdown prompts, concentration limits, Alpaca paper trading — 📋 Planned            |
 |**v3.5–v3.8**|Arc 4: Post-Trade Intelligence                                        |Plan vs reality analysis, journal pattern recognition, behavioural error taxonomy, outcome correlation — 📋 Planned                        |

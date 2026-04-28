@@ -2,8 +2,40 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 2.1
-**Last Updated:** 2026-04-24
+**Last Updated:** 2026-04-28
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-04-25__release-v3.0
+**Date:** 2026-04-27
+**Status:** Verified — 2026-04-27
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | DS-01 screener engine: ticker universe data model + 3 endpoints; OHLCV data pipeline (Alpaca US + Yahoo Finance UK/fallback, GBp→GBP conversion); ATR + regime detection + signal scoring (Wilder's 14-period ATR, RSI+MACD+volume, 4-gate pipeline); batch engine + GET /screener/results + POST /screener/run | `docs/specs/api_contracts/ticker_universe_api_contract.md`; `docs/specs/api_contracts/screener_api_contract.md`; `docs/specs/screener_results_schema.md`; `backend/services/` | None |
+| EPIC-02 | DS-02 screener results page (sort/filter/regime badges/freshness); DS-07 watchlist promotion flow (inline WatchlistPopover, POST /watchlist, 409 handled); BLG-FE-18 news panel attachment (GET /news/{ticker}, display-only per BLG-GOV-16 §13) | `docs/specs/frontend/pages/screener_results.md`; `src/pages/Screener.js` | DEV-01: ST-11 keyboard shortcuts cross-EPIC committed on EPIC-02 branch (co-delivered with Screener nav in Layout.js); documented in both EPIC QA evidence |
+| EPIC-03 | BLG-OPS-12 external API health check (Alpaca + Yahoo Finance in GET /health); BLG-OPS-14 AI journal monitoring metrics (usage_rate, error_rate, p95_latency_ms in GET /health); TEST-GAP-ST14 AI audit service unit tests (12 tests); BLG-FE-19 keyboard shortcuts ('n','w','r' — cross-EPIC, delivered on EPIC-02 branch) | `docs/specs/api_contracts/health_endpoints.md`; `backend/services/health_service.py`; `tests/test_ai_audit_service.py` | None (ST-11 deviation attributed to EPIC-02) |
+| EPIC-04 | execution_prompt.md §2 + §3.1.A deferred patches (v3.11); prompt_change_log.md retrospective scan (no gaps found); BLG-FEAT-18 consecutive losing streak metric (analytics compute + metrics_definitions.md v1.10.0); BLG-AI-02 model version contract for AI journal (Class 2 canonical spec, claude-haiku-4-5-20251001) | `claude/system/execution_prompt.md` v3.11; `docs/specs/metrics_definitions.md` v1.10.0; `docs/specs/ai_journal_model_contract.md` | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| DS-04 Earnings Calendar | No spec; independent of screener; M effort | v3.1 |
+| BLG-FEAT-13 Feature Flags | P3, M effort; lower priority than Arc 1 | v3.1 |
+| BLG-FEAT-19 Monthly P&L Summary | Arc 2 reporting scope | v3.1 |
+| BLG-FE-16 React Component Inventory | P3, M effort; capacity constraint | v3.1 |
+
+### Verification inputs ready
+
+| Input | Status |
+|-------|--------|
+| All 4 EPICs merged to main | ✅ PRs #301–#304 |
+| QA evidence sign-off | ✅ All 4 EPIC QA evidence files signed off |
+| Delivery verification | ✅ Verified 2026-04-27 |
 
 ---
 

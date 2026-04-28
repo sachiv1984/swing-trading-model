@@ -1,13 +1,67 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-20
+**Last Updated:** 2026-04-28
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v3.0 — Arc 1 Screener Engine & Results Page (RA:v3.0)
+
+**Original roadmap location:** §1 Current Version + §8 Release Summary + §4 Priority 2 Arc 1 section (annotation block RA:v3.0)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-28
+**Shipped version:** v3.0 (2026-04-27)
+**Cycle reference:** 2026-04-25__release-v3.0
+**Verification report:** `claude/cycles/2026-04-25__release-v3.0/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-04-28
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v3.0:2026-04-25__release-v3.0 — COMPLETE -->
+
+**Execution notes (v3.0 — Complete):**
+- Cycle: 2026-04-25__release-v3.0
+- Plan published: 2026-04-25
+- Cycle folder: claude/cycles/2026-04-25__release-v3.0/
+- Backlog slice: claude/cycles/2026-04-25__release-v3.0/stage4_backlog_slice.md
+- Status: ✅ Complete — shipped 2026-04-27
+- Verification: Verified (16/16 stories; no open deviations)
+- Scope delivered: EPIC-01 (DS-01 screener engine), EPIC-02 (DS-02/DS-07/BLG-FE-18 screener frontend), EPIC-03 (BLG-OPS-12/14, TEST-GAP-ST14, BLG-FE-19), EPIC-04 (execution_prompt patches, streak metric, model version contract)
+- Scope deferred: DS-04 (Earnings Calendar) → v3.1
+
+---
+
+## v2.9 — Arc 1 Foundation: Stock Discovery & Screening Spec & Infrastructure (RA:v2.9)
+
+**Original roadmap location:** §4 Priority 2 Arc 1 section (annotation block RA:v2.9)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-04-28
+**Shipped version:** v2.9 (2026-04-24)
+**Cycle reference:** 2026-04-22__release-v2.9
+**Verification report:** `claude/cycles/2026-04-22__release-v2.9/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure v3.0 2026-04-28
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v2.9:2026-04-22__release-v2.9 — COMPLETE -->
+
+**Execution notes (v2.9 — Complete):**
+- Cycle: 2026-04-22__release-v2.9
+- Plan published: 2026-04-22
+- Cycle folder: claude/cycles/2026-04-22__release-v2.9/
+- Backlog slice: claude/cycles/2026-04-22__release-v2.9/stage4_backlog_slice.md
+- Status: ✅ Complete — shipped 2026-04-24
+- Verification: Verified_with_deviations (DEV-01 P3 accepted; BLG-FE-18 filed; resolved in v3.0)
+- Scope delivered: EPIC-01 (Arc 1 specs: BLG-SPEC-21/22/23, BLG-FE-17), EPIC-02 (DS-03/05/06 implementation), EPIC-03 (governance/QA infrastructure: BLG-GOV-16, BLG-QA-08/09), EPIC-04 (governance debt + quick wins: BLG-GOV-14/15, BLG-FE-15, BLG-AI-01, TEST-GAP-EPIC-04)
+- Scope deferred: DS-01 (screener engine) and DS-02 (screener results page) → v3.0 (delivered)
 
 ---
 
