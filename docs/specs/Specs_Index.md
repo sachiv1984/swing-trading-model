@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-04-24
+**Last Updated:** 2026-04-28
 
 ---
 
@@ -104,10 +104,13 @@ It points to the **single canonical source**.
 - `reports_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-17, ST-03): GET /reports/tax-year — UK tax-year P&L statement. Dual sign-off: Head of Specs Team + Financial Reporting & Records Owner (2026-03-17).
 - `alerts_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-03-20, ST-02; updated v0.3 2026-03-24, ST-05): Alert rules CRUD, alert evaluation, notification feed, notification preferences, alert history (GET /alerts/history). Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
 - `digest_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-03, ST-08, cycle 2026-03-31__release-v2.4): GET /digest/weekly — 7-day trading digest (realised P&L, alert activity, compliance trend, staleness summary). Deterministic data fields only. Sign-off: QA Lead + DoQ (2026-04-01/03).
-- `health_endpoints.md` — Class 1 Canonical, v1.2, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3 — DEV-HEALTH-001 closed; updated v1.2 by ST-08 adding GET /health/database): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.2, 2026-03-30).
+- `health_endpoints.md` — Class 1 Canonical, v1.3, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3; updated v1.2 by ST-08 adding GET /health/database; updated v1.3 by ST-08/ST-09 cycle 2026-04-25__release-v3.0 adding external_apis + ai_journal sections to GET /health): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.3, 2026-04-26).
 - `analytics_endpoints.md` — Class 1 Canonical, v2.1.0, Active (updated 2026-04-15, ST-08, cycle 2026-04-13__release-v2.7): GET /analytics/market-correlation (Pearson correlation vs benchmark, TTL-cached). Sign-off: Head of Specs Team.
 - `signal_endpoints.md` — Class 1 Canonical, v1.1, Active (updated 2026-04-15, ST-09, cycle 2026-04-13__release-v2.7): POST /signals/generate — added 4 supplementary display-only indicator fields (relative_strength_pct, week52_high_proximity_pct, avg_daily_volume_20d, price_vs_50d_ma). §13 COMPLIANT (display-only). Sign-off: Strategy Rules Owner.
 - `ai_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-04-18, ST-07, cycle 2026-04-17__release-v2.8): POST /ai/journal-summary — LLM-based journal entry summarisation; Anthropic API; graceful failure returns HTTP 200 with summary:null; display-only; SRB-v1.7 conditionally compliant. Sign-off: Sprint Execution Engine (autonomous class); DoQ EPIC-level Director of Quality 2026-04-20.
+- `ticker_universe_api_contract.md` — Class 2 Canonical (created 2026-04-25, ST-01, cycle 2026-04-25__release-v3.0): GET /ticker-universe, POST /ticker-universe, DELETE /ticker-universe/{ticker}; seed data contract. Sign-off: Sprint Execution Engine (autonomous class).
+- `screener_api_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9; implementation delivered 2026-04-25 v3.0 ST-04): GET /screener/results, POST /screener/run; request/response schemas, pagination, error codes.
+- `alpaca_integration_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9 ST-02): Alpaca Markets API contract for OHLCV bars and News endpoints; rate limits, error codes, fallback strategy, API version pin.
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**
@@ -136,7 +139,7 @@ It points to the **single canonical source**.
 - `screener_results_schema.md` — Class 2 Canonical, v1.0, Active (created 2026-04-23, ST-01, cycle 2026-04-22__release-v2.9): screener output fields, filter ordering, market routing, logging requirement. References `claude/strategy/strategy_rules.md §11` as parameter source. Sign-off: Head of Specs Team (autonomous class, 2026-04-23).
 - `api_contracts/alpaca_integration_contract.md` — Class 2 Canonical (created 2026-04-23, ST-02): Alpaca Markets API contract for OHLCV bars and News endpoints; rate limits, error codes, fallback strategy, API version pin.
 - `api_contracts/screener_api_contract.md` — Class 2 Canonical (created 2026-04-23, ST-03): Internal screener API (`GET /screener/results`, `POST /screener/run`); request/response schemas, pagination, error codes.
-- `frontend/pages/screener_results.md` — Class 2 (created 2026-04-23, ST-04, cycle 2026-04-22__release-v2.9): Screener results page UX spec; column layout, sort/filter, data freshness indicator, empty states, watchlist promotion flow, progressive loading. Known Deviation: DEV-01 P3 (news panel DS-02 portion deferred to v3.0 — see BLG-FE-18).
+- `frontend/pages/screener_results.md` — Class 2 (created 2026-04-23, ST-04, cycle 2026-04-22__release-v2.9): Screener results page UX spec; column layout, sort/filter, data freshness indicator, empty states, watchlist promotion flow, progressive loading. DEV-01 P3 (news panel DS-02 deferred) resolved in v3.0 ST-07 (BLG-FE-18 delivered 2026-04-27).
 
 **Owner**
 - Head of Specs Team (schema) + API Contracts & Documentation Owner (contracts) + Frontend Specifications & UX Documentation Owner (UX spec)
@@ -439,11 +442,25 @@ Identified during delivery verification (verification_report.md §6 — TSG-v29-
 ### 15.1 TSG-v29-02 — EPIC-04: no unit tests for ai_audit_service.py
 
 **Identified:** 2026-04-24 (delivery verification 2026-04-22__release-v2.9)
-**Status:** Open — backlog item TEST-GAP-ST14
+**Status:** ✅ RESOLVED — 2026-04-26 (v3.0, ST-10, cycle 2026-04-25__release-v3.0)
 **Owner:** QA & Testing Owner
-**Gap:** `backend/services/ai_audit_service.py` (shipped v2.9 ST-14) has no unit tests. `ensure_ai_audit_table`, `log_ai_summary_run`, and `query_audit_log` functions untested at unit level.
-**Required action:** QA & Testing Owner to create unit tests for ai_audit_service.py. See TEST-GAP-ST14 in backlog.md §5 for scope.
-**Resolution target:** Before next sprint modifying AI audit or journal summary features
+**Gap:** `backend/services/ai_audit_service.py` (shipped v2.9 ST-14) has no unit tests.
+**Resolution:** ST-10 (v3.0 EPIC-03) created `tests/test_ai_audit_service.py` with 12 unit tests covering `ensure_ai_audit_table`, `log_ai_summary_run`, and `query_audit_log`. All tests pass in CI. TEST-GAP-ST14 closed.
+
+---
+
+---
+
+## 16. Test Coverage Gaps — v3.0 (2026-04-25__release-v3.0)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v30-01).
+
+### 16.1 TSG-v30-01 — EPIC-02/03: test_scenarios field not populated in execution_state.json
+
+**Identified:** 2026-04-27 (delivery verification 2026-04-25__release-v3.0)
+**Status:** Not applicable — functional E2E and unit test coverage confirmed in CI
+**Owner:** QA & Testing Owner
+**Assessment:** EPIC-02 and EPIC-03 `test_scenarios` fields not populated during mid-sprint reclassification from `delegated_frontend` to `autonomous`. All relevant Playwright E2E specs (screener.spec.js, visual-snapshots.spec.js, keyboard-shortcuts.spec.js) and unit test files (test_health_extensions.py, test_ai_audit_service.py) ran and passed in CI. Administrative gap only — no functional AC coverage missing. No backlog item required. Root cause addressed as deferred process improvement to execution_prompt.md §3.1.A.
 
 ---
 
