@@ -117,3 +117,12 @@ _This story is display-only per BLG-GOV-16 §13. No new data sources or sentimen
 **Signed off by:** Sprint Execution Engine (autonomous class) — Sprint Close 2026-04-27
 **Date:** 2026-04-27
 **Comments:** All 4 stories pass. Post-merge action outstanding: polling debounce timing (5s/60s) to be confirmed on staging before v3.0 ship. Cross-EPIC ST-11 deviation documented and accepted.
+
+---
+
+## Cross-EPIC Deviation Note — EPIC-01 ST-04 hotfix on EPIC-02 branch
+
+**Date:** 2026-04-28
+**Commit:** c36f1aa — `[EPIC-01][ST-04] Fix screener batch service to persist zero-result runs via screener_runs table`
+**Deviation:** EPIC-01 code patched on this (EPIC-02) branch. Full deviation record in `qa_evidence_EPIC-01.md`.
+**Accepted by:** Sprint Execution Engine — post-delivery prod hotfix, authorised by user 2026-04-28.

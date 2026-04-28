@@ -113,3 +113,18 @@ All four autonomous class qualifying criteria met:
 | **Total** | **39** | **39** | **0** | — |
 
 **Test count:** 45 new tests (11 + 9 + 16 + 9); all pass. Pre-existing test_alpaca_integration.py ordering failures (6) confirmed pre-existing — not introduced by EPIC-01.
+
+---
+
+## Cross-EPIC Deviation — Post-Delivery Hotfix
+
+**Date:** 2026-04-28
+**Commit:** c36f1aa — `[EPIC-01][ST-04] Fix screener batch service to persist zero-result runs via screener_runs table`
+**Branch:** exec/2026-04-25__release-v3.0/EPIC-02 (EPIC-02 branch, not EPIC-01)
+**Story affected:** ST-04 (Screener Batch Engine + API Endpoints)
+
+**Deviation:** EPIC-01 ST-04 code (`backend/services/screener_batch_service.py`) was patched on the EPIC-02 branch after EPIC-01's PR was merged to main. This is a cross-EPIC commit per CLAUDE.md §2.
+
+**Root cause fixed:** `_persist_results` returned early when 0 tickers passed all screener gates, leaving the `screener_results` table empty. `GET /screener/results` then raised `NO_RESULTS` (HTTP 404) even after a successful run completed with regime=risk_off. Added `screener_runs` table to persist run-level metadata (regime, tickers_evaluated/passed) independently of result count. `get_screener_results` now queries `screener_runs` for the latest run, returning an empty results list rather than a 404.
+
+**Accepted by:** Sprint Execution Engine — post-delivery prod hotfix, authorised by user 2026-04-28.
