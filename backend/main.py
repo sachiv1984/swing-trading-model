@@ -22,7 +22,7 @@ from routers import ticker_universe as ticker_universe_router
 from routers import screener as screener_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
-from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers
+from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers, sync_from_tickers_table
 from services.screener_batch_service import ensure_screener_results_table
 
 
@@ -195,6 +195,11 @@ def on_startup():
         _log.info("ensure_ticker_universe_table: OK (seeded %d default tickers)", seeded)
     except Exception as _e:
         _log.error("ensure_ticker_universe_table FAILED at startup: %s", _e)
+    try:
+        synced = sync_from_tickers_table()
+        _log.info("sync_from_tickers_table: OK (%d tickers synced from public.tickers)", synced)
+    except Exception as _e:
+        _log.warning("sync_from_tickers_table skipped (public.tickers may not exist): %s", _e)
     try:
         ensure_screener_results_table()
         _log.info("ensure_screener_results_table: OK")

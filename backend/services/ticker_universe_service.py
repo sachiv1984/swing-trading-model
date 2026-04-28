@@ -105,6 +105,42 @@ def soft_delete_ticker(ticker: str) -> bool:
     return affected > 0
 
 
+def sync_from_tickers_table() -> int:
+    """
+    Upsert all rows from public.tickers into ticker_universe.
+    exchange='LSE' → market='UK' (ticker gets .L suffix if missing).
+    All other exchanges → market='US'.
+    Returns count of rows inserted/updated.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT ticker, exchange FROM tickers")
+            rows = cur.fetchall()
+
+        count = 0
+        with conn.cursor() as cur:
+            for row in rows:
+                raw_ticker = row["ticker"].strip().upper()
+                exchange = (row["exchange"] or "").strip().upper()
+                if exchange == "LSE":
+                    market = "UK"
+                    ticker = raw_ticker if raw_ticker.endswith(".L") else raw_ticker + ".L"
+                else:
+                    market = "US"
+                    ticker = raw_ticker
+                cur.execute(
+                    """
+                    INSERT INTO ticker_universe (ticker, market, active)
+                    VALUES (%s, %s, TRUE)
+                    ON CONFLICT (ticker) DO UPDATE SET active = TRUE, market = EXCLUDED.market
+                    """,
+                    (ticker, market),
+                )
+                count += cur.rowcount
+        conn.commit()
+    return count
+
+
 def seed_default_tickers() -> int:
     count = 0
     for t in DEFAULT_TICKERS:
