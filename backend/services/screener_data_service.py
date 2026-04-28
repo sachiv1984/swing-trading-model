@@ -136,7 +136,8 @@ def fetch_ohlcv(ticker: str, market: str, days: int = 30) -> Optional[List[OHLCV
 
     if market == "US":
         t0 = _time.monotonic()
-        bars = get_ohlcv_bars(ticker, limit=days)
+        alpaca_symbol = ticker.replace("-", ".")
+        bars = get_ohlcv_bars(alpaca_symbol, limit=days)
         latency = (_time.monotonic() - t0) * 1000
         if bars:
             record_external_api_call("alpaca", True, latency)
