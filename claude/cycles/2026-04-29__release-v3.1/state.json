@@ -6,17 +6,17 @@
   "issues_mode": "none",
   "auto_escalate": true,
   "prompt_schema_version": "v2",
-  "status": "Validated",
+  "status": "Published",
   "publish_eligible": true,
-  "last_transition_utc": "2026-04-29T00:20:00Z",
+  "last_transition_utc": "2026-04-29T00:25:00Z",
 
   "sealed": {
-    "sealed_utc": "",
+    "sealed_utc": "2026-04-29T00:25:00Z",
     "sealed_assumptions": {
       "timebox": "",
       "capacity": ""
     },
-    "state_snapshot_hash": ""
+    "state_snapshot_hash": "e4a6942"
   },
 
   "mutation_seq": 0,
