@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v3.0** — Arc 1 Screener Engine & Results Page — Shipped 2026-04-27
-**Next planned release:** **v3.1** — [TBD]
+**Next planned release:** **v3.1** — Arc 2 Start: Trade Plan Object & Pre-Trade Research Foundation
+
+<!-- roadmap-annotation-marker: RA:v3.1:2026-04-29__release-v3.1 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-04-29__release-v3.1
+- Plan published: 2026-04-29
+- Cycle folder: claude/cycles/2026-04-29__release-v3.1/
+- Backlog slice: claude/cycles/2026-04-29__release-v3.1/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 -----
 

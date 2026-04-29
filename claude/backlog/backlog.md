@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-28 (roadmap rebalance 2026-04-28__scheduled — DL-024: 5 items added, 3 deprioritised; BLG-GOV-11 target updated v3.1→v3.2; BLG-FEAT-13 moved to §9; BLG-FE-16 further deferred)
+**Last Updated:** 2026-04-29 (v3.1 release slice added — BLG-FE-20 added — screener UK ticker display and watchlist promotion bug)
 **Last rebalance:** 2026-04-28 (cycle 2026-04-28__scheduled — DL-024 backlog adds/defers)
 
 > ⚠️ Standing Notice
@@ -66,6 +66,39 @@ Only annual (tax-year) P&L is available. In-year performance patterns are only v
 ---
 
 ## 3. Frontend & UX Backlog
+
+---
+
+### BLG-FE-20 — Fix screener UK ticker display and watchlist promotion
+**Priority:** P1 (High)
+**Type:** Bug + UX
+**Owner:** Frontend Specifications & UX Documentation Owner + Backend Engineering Patterns Owner
+**Source:** User report — 2026-04-29
+**Effort:** S (~half day)
+**Provisional-Target:** v3.1
+
+**Problem**
+Two related issues with UK tickers (`.L` suffix) in the screener:
+
+1. **Bug — watchlist promotion fails for UK tickers.** `watchlist_service.py:153` validates `ticker.isalnum()`, which rejects any ticker containing a period. UK tickers from the screener (e.g. `LLOY.L`) include the Yahoo Finance `.L` suffix, causing a 422 error. The user sees "Could not add to watchlist — try again" and promotion silently fails.
+
+2. **UX — `.L` suffix shown redundantly.** The screener ticker column (`Screener.js:710`) renders `row.ticker` verbatim (e.g. `LLOY.L`). Since a Market badge (`UK`/`US`) is already displayed in the adjacent column, the `.L` suffix is redundant and visually noisy.
+
+**Root cause:** The screener engine stores and returns UK tickers with the `.L` suffix (required by Yahoo Finance). The watchlist service stores tickers *without* the suffix (consistent with `position_service.py:159`). No stripping occurs at the screener-to-watchlist boundary.
+
+**Scope**
+- `src/pages/Screener.js`: Strip `.L` from ticker display in the table row (show `LLOY` not `LLOY.L`; market badge provides market context)
+- `src/pages/Screener.js` `WatchlistPopover.handleAdd`: Strip `.L` before posting `ticker` to `POST /watchlist` (UK tickers only — strip when `result.market === "UK"`)
+- `src/pages/Screener.js` `WatchlistPopover` header text: Strip `.L` from the "Add X to Watchlist" label
+- Review ticker column font (`font-mono` at Screener.js:710) — confirm whether monospace is appropriate or a standard font weight (`font-semibold`) is preferred; update if needed
+- No backend change required — watchlist service already accepts clean tickers; stripping at the frontend boundary is sufficient
+
+**Acceptance Criteria**
+- UK tickers display without `.L` in the screener results table
+- Watchlist promotion succeeds for UK tickers (e.g. `LLOY.L` screener result → `LLOY` stored in watchlist)
+- US ticker display and watchlist promotion unaffected
+- Ticker font treatment confirmed and applied consistently
+- No regression to Market badge, signal scores, ATR, or news panel
 
 ---
 
@@ -335,7 +368,25 @@ These are deliberate product decisions, not deferrals:
 
 ## 12. Last Release Slice
 
-## Last Release Slice — v3.0 ✅ COMPLETE
+## Last Release Slice — v3.1 📋 PLANNED
+
+<!-- release-plan-marker: RP:v3.1:2026-04-29__release-v3.1 -->
+
+**Cycle:** 2026-04-29__release-v3.1 | **Status:** Planned | **Published:** 2026-04-29
+**Backlog slice:** `claude/cycles/2026-04-29__release-v3.1/stage4_backlog_slice.md`
+
+| EPIC | Sprint | Stories | Theme |
+|------|--------|---------|-------|
+| EPIC-01 | Sprint 1+2 | ST-01, ST-02, ST-03 | Arc 2 Foundation — Trade Plan Object |
+| EPIC-02 | Sprint 2 | ST-04, ST-05 | Pre-Trade Research View Foundation |
+| EPIC-03 | Sprint 1+2 | ST-06, ST-07, ST-08, ST-09, ST-10 | Arc 1 Completion & Screener Quality |
+| EPIC-04 | Sprint 1 | ST-11, ST-12, ST-13, ST-14 | Operations, Governance & Quick Wins |
+
+**Theme:** Arc 2 Start — Trade Plan Object & Pre-Trade Research Foundation
+
+---
+
+## Prior Release Slice — v3.0 ✅ COMPLETE
 
 <!-- release-plan-marker: RP:v3.0:2026-04-25__release-v3.0 — COMPLETE -->
 

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Trade Plan spec authoring: data model schema + API contract",
+    "epic": "EPIC-01",
+    "description": "Author Trade Plan data model schema in data_model.md and trade_plan_endpoints.md API contract. Foundation for all Arc 2 implementation.",
+    "ac_summary": "data_model.md updated with Trade Plan schema; trade_plan_endpoints.md authored covering POST/GET/PUT/DELETE /trade-plans; all endpoints in openapi.yaml; owner sign-offs recorded",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Trade Plan backend: migration, CRUD endpoints, test registration",
+    "epic": "EPIC-01",
+    "description": "Implement Trade Plan database migration and backend CRUD endpoints per ST-01 spec.",
+    "ac_summary": "trade_plans table migration; 6 endpoints in backend/routers/trade_plans.py; registered in test.py; openapi.yaml updated; SystemStatus.js count updated",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Trade Plan frontend: creation flow and detail view",
+    "epic": "EPIC-01",
+    "description": "Frontend Trade Plan creation form and detail display. Requires design gate pass.",
+    "ac_summary": "Trade Plan creation form accessible from positions/watchlist; all fields captured; saved plan displays on position detail; no regression",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Pre-Trade Research View API contract spec authoring",
+    "epic": "EPIC-02",
+    "description": "Author API contract spec for GET /research/{ticker} aggregation endpoint.",
+    "ac_summary": "pre_trade_research_endpoints.md authored; endpoint in openapi.yaml; API Contracts owner sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Pre-Trade Research View backend: aggregation endpoint",
+    "epic": "EPIC-02",
+    "description": "Implement GET /research/{ticker} aggregating signal, correlation, regime, sector, earnings, prospective heat.",
+    "ac_summary": "backend/routers/research.py with GET /research/{ticker}; registered in test.py; openapi.yaml updated; graceful nulls; no regression",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Fix screener UK ticker display and watchlist promotion (BLG-FE-20)",
+    "epic": "EPIC-03",
+    "description": "P1 bug fix: strip .L suffix from UK ticker display and watchlist promotion in Screener.js.",
+    "ac_summary": "UK tickers display without .L; watchlist promotion succeeds for UK tickers; US tickers unaffected; no regression",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Earnings Calendar backend + OpenAPI (DS-04)",
+    "epic": "EPIC-03",
+    "description": "Spec authoring and backend implementation for earnings calendar endpoint using Yahoo Finance.",
+    "ac_summary": "earnings_endpoints.md authored; GET /earnings/{ticker} implemented; registered in test.py; openapi.yaml updated; data freshness limitations documented",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Earnings Calendar frontend: screener, watchlist, positions (DS-04)",
+    "epic": "EPIC-03",
+    "description": "Surface earnings dates on screener results, watchlist, and open positions pages.",
+    "ac_summary": "Earnings date displayed on all 3 pages; null gracefully hidden; proximity warning on positions if within 5 days; no regression",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Screener accuracy test protocol (BLG-QA-11)",
+    "epic": "EPIC-03",
+    "description": "Write formal protocol for verifying screener output accuracy against known-good reference data.",
+    "ac_summary": "screener_accuracy_protocol.md created covering frequency/sample/methodology/thresholds; Director of Quality sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Screener scenario library (BLG-QA-10)",
+    "epic": "EPIC-03",
+    "description": "Define screener test scenario library covering edge cases for regression testing.",
+    "ac_summary": "screener_scenarios.md with ≥10 scenarios; each has inputs/expected outputs/pass-fail criteria; QA & Testing Owner sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "Monthly P&L summary report (BLG-FEAT-19)",
+    "epic": "EPIC-04",
+    "description": "Month-by-month realised P&L breakdown endpoint and frontend display.",
+    "ac_summary": "GET /reports/monthly-pnl endpoint; registered in test.py; openapi.yaml updated; frontend table in reporting section; no regression to annual report",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "External API security policy docs & dependency risk register (BLG-SEC-03, BLG-SEC-04, BLG-GOV-17)",
+    "epic": "EPIC-04",
+    "description": "Three documentation items: Alpaca key rotation policy, external API credential inventory, external API dependency risk register.",
+    "ac_summary": "alpaca_key_rotation_policy.md + external_api_credential_inventory.md + external_api_dependency_register.md created; accepted by respective owners",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "execution_prompt.md §3.1.A reclassification backfill instruction (CF-01)",
+    "epic": "EPIC-04",
+    "description": "Governance prompt patch: add reclassification backfill instruction to execution_prompt §3.1.A.",
+    "ac_summary": "execution_prompt.md §3.1.A updated; version bumped; OPERATIONAL_GUIDE §8+§14 updated; prompt_change_log.md entry appended; all 4 §6 checklist steps complete",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-14",
+    "title": "execution_prompt.md STEP 8.5 output target fix (CF-02)",
+    "epic": "EPIC-04",
+    "description": "Governance prompt patch: add explicit output target note to execution_prompt STEP 8.5.",
+    "ac_summary": "execution_prompt.md STEP 8.5 updated with lessons_learnt_cycle.md output target note; version bumped (may combine with ST-13); OPERATIONAL_GUIDE updated; prompt_change_log.md entry; all 4 §6 checklist steps complete",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-04-29__release-v3.1"],
+    "assignee": null
+  }
+]
