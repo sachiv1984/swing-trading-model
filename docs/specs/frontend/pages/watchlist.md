@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-03-18
+**Version:** 0.2
+**Last Updated:** 2026-04-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md
 
@@ -61,7 +61,22 @@ One row per watchlist entry. Default sort: entry signal status (Active first, th
 | Target Entry | `target_entry_price` | Native currency (GBP for UK, USD for US). Display `—` if null. |
 | Stop (Initial) | `initial_stop_price` | Native currency. Display `—` if null. |
 | Stop (Current) | `current_stop_price` | Native currency. Display `—` if null. |
-| Actions | — | "Add to Position" button + "Remove" icon (trash) |
+| Earnings | — | Earnings proximity badge — see §Earnings Column below. |
+| Actions | — | "Plan" button + "Add to Position" button + "Remove" icon (trash) — see §Earnings Column and §Add to Position |
+
+### Earnings Column (ST-08)
+
+Sourced from `GET /earnings/{ticker}` (fetched per row on page load, requests in parallel).
+
+| Condition | Display | Style |
+|-----------|---------|-------|
+| `days_until_earnings` ≤ 5 | `{N}d` | Red badge |
+| `days_until_earnings` 6–30 | `{N}d` | Amber badge |
+| `days_until_earnings` > 30 | `—` | Em dash (muted) |
+| Data unavailable / request error | `—` | Em dash (muted) |
+
+- Failures are handled gracefully — always display `—` rather than an error state in the cell.
+- Design source: `docs/design/2026-04-29__release-v3.1/earnings-calendar/ux_spec.md`
 
 ### Signal Status Values
 
@@ -119,6 +134,16 @@ Inline within the modal (not a separate dialog):
 
 ---
 
+## Trade Plan Entry Point (ST-03)
+
+The **"Plan"** button (per table row, in the Actions column) opens the Trade Plan slide-in drawer pre-populated with the ticker and market from the watchlist entry.
+
+- This creates a pre-position trade plan (`position_id` is null).
+- If a trade plan already exists for this ticker/watchlist entry, the button label changes to **"View Plan"** and opens the existing plan in the drawer.
+- See `docs/specs/frontend/pages/trade_plan.md` for full Trade Plan spec.
+
+---
+
 ## Add to Position
 
 The **"Add to Position"** button (per table row) opens the existing position entry modal, pre-populated with:
@@ -168,4 +193,5 @@ On removal (via Remove or Add to Position): row slides out or fades out before t
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-04-29 | ST-08 (DS-04, v3.1): Earnings column added to Watchlist Table between Stop (Current) and Actions. Per-row `GET /earnings/{ticker}` on page load. Display: ≤5d red, 6–30d amber, >30d or unavailable `—`. Design source: docs/design/2026-04-29__release-v3.1/earnings-calendar/ux_spec.md. ST-03 (EPIC-01, v3.1): "Plan" button added to Actions column as Trade Plan entry point. "View Plan" label when plan exists. See trade_plan.md. Design source: docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md. Design gate: 2026-04-29__release-v3.1. |
 | 0.1 | 2026-03-18 | Initial spec. ST-10 — EPIC-03 (Watchlists & Screening). Design gate: 2026-03-18__release-v2.1. Design source: UX spec approved by Product Owner 2026-03-18. |

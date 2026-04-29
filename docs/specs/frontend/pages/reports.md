@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-03-18
+**Version:** 0.3
+**Last Updated:** 2026-04-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.1 PDF export):** docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md
 
@@ -141,11 +141,62 @@ A note at the bottom of the page:
 
 ---
 
+---
+
+### Monthly Breakdown (ST-11 — BLG-FEAT-19)
+
+**Design source:** docs/design/2026-04-29__release-v3.1/monthly-pnl/ux_spec.md
+
+A new section appended **below the Unrealised P&L Card**, as the final section on the page.
+
+#### Section Header
+
+**Label:** "Monthly Breakdown"
+
+Sub-label (smaller, muted): "Last 12 months — realised trades only"
+
+#### Monthly Breakdown Table
+
+| Column | Source | Notes |
+|--------|--------|-------|
+| Month | `year` + `month` | Formatted as "Apr 2026", "Mar 2026" (abbreviated month + year). Always sorted descending (most recent first). |
+| Realised P&L | `realised_pnl_gbp` | GBP. Green if positive, red if negative, muted if zero. |
+| Trades | `trade_count` | Integer. Zero rendered as muted `—`. |
+
+- 3 columns only; no additional columns.
+- No user-sortable columns — always descending by date.
+- No pagination — shows all rows returned (rolling 12 months).
+- Months with zero trades and zero P&L are still shown as rows with `—` and `£0.00`.
+
+#### Scope Constraint
+
+- Covers **realised P&L only** (closed trades). Open positions excluded.
+- Not filtered by tax year selector — shows a rolling 12-month window regardless of year selection.
+- No PDF or CSV export for the monthly breakdown in v3.1.
+
+#### Loading State
+
+Skeleton table (12 rows) while `GET /reports/monthly-pnl` loads.
+
+#### Empty State
+
+If endpoint returns an empty array (no closed trades in last 12 months):
+> "No closed trades in the last 12 months."
+(Table not rendered; section header still shown.)
+
+#### Error State
+
+If endpoint fails: inline error within the section:
+> "Unable to load monthly breakdown. Please refresh."
+
+---
+
 ## API Reference
 
 - **Endpoint:** `GET /reports/tax-year?year=YYYY` — page data
 - **PDF export:** `GET /reports/tax-year?format=pdf&year=YYYY` — server-side PDF download (`Content-Disposition: attachment`)
 - **CSV export:** `GET /reports/tax-year?format=csv&year=YYYY` — CSV download (ST-13; no UI control beyond API — URL parameter only; no button on this page)
+- **Monthly breakdown:** `GET /reports/monthly-pnl` — rolling 12-month realised P&L breakdown
 - **Canonical contract:** `docs/specs/api_contracts/reports_endpoints.md`
 
 All values displayed on this page are sourced from the API response. The frontend must not recalculate P&L, FX conversions, or fee adjustments.
@@ -156,5 +207,6 @@ All values displayed on this page are sourced from the API response. The fronten
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-04-29 | ST-11 (BLG-FEAT-19, v3.1): Monthly Breakdown section added below Unrealised P&L Card. Rolling 12-month window, sourced from `GET /reports/monthly-pnl`. Table columns: Month, Realised P&L, Trades. Loading/empty/error states specified. Design source: docs/design/2026-04-29__release-v3.1/monthly-pnl/ux_spec.md. Design gate: 2026-04-29__release-v3.1. |
 | 0.2 | 2026-03-18 | v2.1 PDF export (ST-12, BLG-FR-01): Page Header Controls section added with Download PDF button spec (idle, generating, success, error states). API Reference updated to include PDF and CSV export endpoints. Design source: docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
 | 0.1 | 2026-03-17 | Initial spec. ST-05 — EPIC-02 (4.1b Tax-Year P&L Statement). Design gate: 2026-03-17__release-v2.0. Approved by Head of UX & Design + Product Owner. |

@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-03-24
+**Version:** 1.5
+**Last Updated:** 2026-04-29
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
+**Design Source (v3.1 additions):** docs/design/2026-04-29__release-v3.1/earnings-calendar/ux_spec.md; docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -14,6 +15,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-04-29 | ST-08 (DS-04, v3.1): §Table View — Earnings Proximity Warning added to Ticker cell (second line badge: "EPS {N}d"). Thresholds: ≤5d red, 6–7d amber, >7d or unavailable not shown. Grid/Journal views out of scope v3.1. Design source: docs/design/2026-04-29__release-v3.1/earnings-calendar/ux_spec.md. ST-03 (EPIC-01, v3.1): "Plan" button added to Table View Actions column; Trade Plan detail section added to Position Detail (collapsible panel, below journal/notes, above compliance). Design source: docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md. Design gate: 2026-04-29__release-v3.1. |
 | 1.4 | 2026-03-24 | ST-01 (BLG-FEAT-11, v2.3): §Strategy Compliance Panel — collapsible panel below Table View showing per-position ATR compliance data. Display-only. Design source: docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
 | 1.3 | 2026-03-18 | (no change to positions.md — version increment noted for lineage) |
 | 1.2 | 2026-02-26 | BLG-FEAT-06 (A-S08): Add `grace_days_remaining` column specification to Table View. Display format, null behaviour, and data source documented. Dependent on `position_endpoints.md` v1.8.3. |
@@ -53,7 +55,7 @@ Each view replaces the entire main content area. Switching views does not trigge
 
 Displays each open position as a row with:
 
-- Ticker
+- Ticker (see Earnings Proximity Warning below)
 - Market flag (US / UK)
 - Entry price (native currency)
 - Current price (native currency)
@@ -68,8 +70,25 @@ Displays each open position as a row with:
 - Status badge (GRACE / PROFITABLE / LOSING)
 - Tags (as colored pills)
 - Actions:
+  - **Plan** / **View Plan** (opens Trade Plan drawer — see §Trade Plan Panel)
   - **Exit** (opens exit modal)
   - **View Journal** (opens position detail modal)
+
+#### Earnings Proximity Warning (ST-08)
+
+Displayed as an inline badge on a second line within the Ticker cell in the Table View.
+
+| Condition | Display | Style |
+|-----------|---------|-------|
+| `days_until_earnings` ≤ 5 | `EPS {N}d` | Red badge |
+| `days_until_earnings` 6–7 | `EPS {N}d` | Amber badge |
+| `days_until_earnings` > 7 | Not shown | — |
+| Data unavailable | Not shown | — |
+
+- Sourced from `GET /earnings/{ticker}`, fetched in parallel for all open positions on page load.
+- Display-only — no action triggered by the badge.
+- Grid View and Journal View: earnings data not shown in v3.1.
+- Design source: `docs/design/2026-04-29__release-v3.1/earnings-calendar/ux_spec.md`
 
 ---
 
@@ -206,6 +225,8 @@ For Journal View empty states, see the Journal View section above.
 | `GET /positions` | Primary data source for all three views. Returns open positions with live pricing, journal fields, and `grace_days_remaining`. |
 | `GET /positions/tags` | Tag autocomplete source for the Journal View filter dropdown and for the Position Detail Modal's tag editor |
 | `GET /positions/compliance` | *(v2.3 — ST-01)* Strategy Compliance Panel data source. Returns ATR-based per-position stop compliance, stop age, and size compliance flags. Display-only; §13.3 constraint applies. |
+| `GET /earnings/{ticker}` | *(v3.1 — ST-08)* Earnings proximity data. Fetched in parallel for all open positions on page load. Used for Earnings Proximity Warning badge in Table View. |
+| `GET /trade-plans/by-position/{position_id}` | *(v3.1 — ST-03)* Trade Plan data for Position Detail panel. |
 
 > For full dependency behaviour rules, see `patterns/api_dependencies.md`.
 
@@ -219,6 +240,43 @@ For Journal View empty states, see the Journal View section above.
 - Filter bar stacks vertically on narrow screens; tag pills wrap
 - Action buttons move below card content on mobile
 - Tags wrap gracefully on narrow screens
+
+---
+
+## Trade Plan Panel (v3.1 — ST-03 EPIC-01)
+
+**Design source:** docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md
+**Full spec:** docs/specs/frontend/pages/trade_plan.md
+
+### Position Detail — Trade Plan Section
+
+The Trade Plan is displayed as a collapsible section within the Position Detail modal/panel (accessible via "View Journal" or the position row).
+
+**Placement:** Below journal/notes section; above the Strategy Compliance Panel.
+
+**Panel label:** "Trade Plan"
+
+**Default state:** Expanded if a trade plan exists; shows empty state if none.
+
+**Read-only display when plan exists:**
+- Setup Thesis
+- Entry Rationale
+- Market Regime (at time of plan)
+- R Target
+- Early Exit Conditions (omitted if empty)
+- Confirmation Criteria (omitted if empty)
+- Pre-Trade Checklist (read-only checkbox state: ✓ / ○)
+- "Edit Plan" button (top-right of panel header; opens Trade Plan drawer)
+
+**Empty state (no trade plan):**
+> "No trade plan for this position."
+> [Create Plan] — primary button, opens Trade Plan drawer
+
+### Table View — "Plan" Button
+
+A **"Plan"** (or **"View Plan"** if plan exists) button is added to the Table View Actions column, before the "Exit" button.
+
+See `docs/specs/frontend/pages/trade_plan.md` for full form, checklist, and drawer spec.
 
 ---
 

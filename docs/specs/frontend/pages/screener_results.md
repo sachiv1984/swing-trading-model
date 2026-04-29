@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-04-23
+**Version:** 1.2
+**Last Updated:** 2026-04-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
 **API contract:** docs/specs/api_contracts/screener_api_contract.md
@@ -54,19 +54,46 @@ The screener results are displayed in a table/list with the following columns:
 
 | Column | Field | Description |
 |--------|-------|-------------|
-| Ticker | `ticker` | Ticker symbol |
+| Ticker | `ticker` | Ticker symbol — see UK Ticker Display rule below |
 | Market | `market` | US or UK |
 | Price | `price` | Last close price in `currency` |
 | ATR | `atr` | 14-day ATR. Displayed with currency suffix (e.g. `$18.50` or `£0.85`) |
 | Regime | `regime_status` | `risk_on` → green chip "Risk On"; `risk_off` → red chip "Risk Off" |
 | Signal | `signal_score` | Numeric score 0.0–1.0 displayed as percentage or bar indicator |
 | Sector | `sector` | Sector classification text (or em dash `—` if null) |
+| Earnings | `earnings` | Upcoming earnings proximity — see §4.1 |
 | Entry Zone | `proximity_to_entry_zone` | Displayed as "Near entry" / "In zone" / "—" based on proximity value |
 | News | `news_headline_count` | Headline count badge (e.g. "3") clicking expands inline panel |
 
 **Column ordering is fixed.** The frontend must not reorder columns without a spec update.
 
-**Responsive behaviour:** On mobile viewport (<768px), hide the Sector and Entry Zone columns. Show Ticker, Price, Signal, and a "Details" expand.
+**Responsive behaviour:** On mobile viewport (<768px), hide the Sector, Earnings, and Entry Zone columns. Show Ticker, Price, Signal, and a "Details" expand.
+
+### UK Ticker Display Rule (ST-06)
+
+UK tickers carry a `.L` suffix in raw data (e.g. `BARC.L`). This suffix must be stripped before rendering in the Ticker column.
+
+- **Condition:** `result.market === "UK"`
+- **Input:** `BARC.L` → **Display:** `BARC`
+- US ticker symbols are unaffected.
+- **Font treatment:** Ticker symbols use `font-mono` (monospace typeface) in this column. Column header uses default sans-serif.
+- Design source: `docs/design/2026-04-29__release-v3.1/uk-ticker-display/ux_spec.md`
+
+### §4.1 Earnings Column (ST-08)
+
+Upcoming earnings proximity sourced from `GET /earnings/{ticker}`.
+
+| Condition | Display | Style |
+|-----------|---------|-------|
+| `days_until_earnings` ≤ 5 | `{N}d` | Red badge — earnings imminent |
+| `days_until_earnings` 6–30 | `{N}d` | Amber badge — earnings approaching |
+| `days_until_earnings` > 30 | `—` | Em dash (muted) |
+| Data unavailable | `—` | Em dash (muted) |
+
+- Badge format: compact pill, e.g. `5d`, `12d`.
+- On hover: tooltip showing `"Next earnings: {fiscal_quarter} — {next_earnings_date}"`. No tooltip if data unavailable.
+- The `—` state must always render an em dash; never an empty cell.
+- Design source: `docs/design/2026-04-29__release-v3.1/earnings-calendar/ux_spec.md`
 
 ---
 
@@ -141,7 +168,7 @@ When the user clicks "Add to Watchlist" on a screener result row:
    - "Add to Watchlist" confirm button
    - "Cancel" dismiss
 
-2. On confirm: call `POST /watchlist` with ticker and optional target/notes
+2. On confirm: call `POST /watchlist` with ticker and optional target/notes. **For UK tickers, strip `.L` from the ticker before calling the API.** The watchlist stores the clean symbol (e.g. `BARC`, not `BARC.L`). The popover header label also strips `.L` — e.g. "Add BARC to Watchlist" not "Add BARC.L to Watchlist". Design source: `docs/design/2026-04-29__release-v3.1/uk-ticker-display/ux_spec.md`
 
 3. On success: row shows "Added ✓" chip; "Add to Watchlist" button becomes disabled for that row in the current session
 
@@ -217,4 +244,14 @@ This spec covers all DS-02 interaction patterns:
 
 | ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
 |----|-------------|----------------------|----------|------------------|-------|------------------|
-| DEV-01 | News panel not displayed on screener results page (DS-02 portion of DS-06 AC-1). The `GET /news/{ticker}` backend endpoint is available; UI attachment to the screener results page is deferred pending DS-02 page implementation in v3.0. | §9 News Panel: "display on screener results page" (ST-07 AC-1). DS-02 implementation is a prerequisite. | P3 | v3.0 (DS-02 — screener results page implementation) | Backend Engineering Patterns Owner + Frontend Specifications & UX Documentation Owner | BLG-FE-18 |
+| DEV-01 | **RESOLVED v3.0 (ST-07, 2026-04-27).** Was: news panel not displayed on screener results page — deferred pending DS-02 implementation. Now delivered: news count badge + inline expandable panel (display-only, BLG-FE-18). | §9 News Panel | P3 | Resolved | — | BLG-FE-18 (closed) |
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.2 | 2026-04-29 | ST-08 (DS-04, v3.1): §4 — Earnings column added between Sector and Entry Zone. Display logic: ≤5d red badge, 6–30d amber badge, >30d or unavailable `—`. Hover tooltip with date and quarter. Responsive: Earnings hidden on mobile (<768px) alongside Sector and Entry Zone. Design source: docs/design/2026-04-29__release-v3.1/earnings-calendar/ux_spec.md. Design gate: 2026-04-29__release-v3.1. |
+| 1.1 | 2026-04-29 | ST-06 (BLG-FE-20, v3.1): §4 — UK ticker `.L` stripping rule added; `font-mono` treatment for Ticker column specified. §8 — `.L` stripping in watchlist popover label and `POST /watchlist` API call documented. Design source: docs/design/2026-04-29__release-v3.1/uk-ticker-display/ux_spec.md. Design gate: 2026-04-29__release-v3.1. |
+| 1.0 | 2026-04-23 | Initial spec. DS-02 (Screener Results Page, v2.9/v3.0). All DS-02 interaction patterns covered (§11). Design gate: 2026-04-23__release-v2.9. |
