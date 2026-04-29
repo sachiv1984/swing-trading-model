@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-17
+**Last Updated:** 2026-04-28 (IDEA-ai-compliance-20260321-01 appended — cycle 2026-04-28__scheduled)
 
 ---
 
@@ -64,3 +64,17 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 **Why rejected:** Same reasoning as IDEA-cybersecurity-20260304-01. Strong merit as pre-scale governance work. No immediate compliance driver.
 
 **Revival condition:** Same as IDEA-cybersecurity-20260304-01. Complementary to the threat model — both should be considered together.
+
+---
+
+## IDEA-ai-compliance-20260321-01 — Governed Decision Audit Log (Searchable)
+
+**Submitter:** AI Compliance & Governance Officer
+**Window:** IW-20260321-01 (2026-03-21)
+**Rejected in:** 2026-04-28__scheduled (cycle 7 — stale; no implementation path at current scale)
+
+**Core idea:** A searchable, structured audit log of all governance decisions — roadmap additions, sprint commitments, deviation approvals, authority sign-offs — in a machine-readable format. decision_log.md provides strong partial coverage but is prose-based and not searchable by decision type, date range, or authority.
+
+**Why rejected:** decision_log.md (DL-001 through DL-024 as of rejection) provides sufficient coverage at current governance volume (23 decision entries across 16 cycles). A fully structured searchable log would add overhead (schema maintenance, tooling) without providing proportionate value at current scale. 7 consecutive cycles without a concrete trigger event.
+
+**Revival condition:** Governance volume increases significantly (>100 decision entries); external audit requirement emerges; multi-user governance with multiple concurrent decision streams makes prose log unnavigable. Should be reconsidered as a BLG-GOV item at that point without requiring a new idea submission.

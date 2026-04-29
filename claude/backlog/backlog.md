@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-28 (groom backlog GROOM-20260428-01 — 7 COMPLETE items archived; BLG-GOV-11 target updated v3.0→v3.1; BLG-OPS-13 scope extended with 5 v3.0 endpoints)
-**Last rebalance:** 2026-04-24 (cycle 2026-04-24__scheduled — DL-022 backlog adds; DL-023 defers)
+**Last Updated:** 2026-04-28 (roadmap rebalance 2026-04-28__scheduled — DL-024: 5 items added, 3 deprioritised; BLG-GOV-11 target updated v3.1→v3.2; BLG-FEAT-13 moved to §9; BLG-FE-16 further deferred)
+**Last rebalance:** 2026-04-28 (cycle 2026-04-28__scheduled — DL-024 backlog adds/defers)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -75,7 +75,7 @@ Only annual (tax-year) P&L is available. In-year performance patterns are only v
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** IDEA-frontend-ux-20260321-02 — promoted cycle 2026-04-21__scheduled (DL-021)
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v3.1
+**Provisional-Target:** v3.2 (further deferred from v3.1 — DL-024 2026-04-28; displaced by BLG-QA-10/11 at higher priority; dependency gate not met; lower priority vs. screener QA items)
 
 **Problem**
 No catalogue of UI components exists. Arc 1 will add significant new frontend components. Without an inventory, Arc 1 frontend work risks duplicating existing components and design inconsistency compounds.
@@ -109,7 +109,51 @@ No catalogue of UI components exists. Arc 1 will add significant new frontend co
 
 ## 5. QA & Test Automation Backlog
 
+---
 
+### BLG-QA-10 — Screener scenario library
+**Priority:** P2 (Medium)
+**Type:** QA / Test Data
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260421-02 — promoted cycle 2026-04-28__scheduled (DL-024)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.1
+
+**Problem**
+The screener engine is live but has no documented scenario library covering known edge cases (zero results, max results, single-sector sweeps, conflicting filters). Without a reference library, regression testing relies on ad-hoc checks and QA sign-off is undocumented.
+
+**Scope**
+- Define a library of screener test scenarios covering: normal results, zero results, boundary conditions, filter combinations
+- Each scenario specifies: input filters, expected behaviour, pass/fail criteria
+- Library serves as the reference for both manual QA and future automation
+
+**Acceptance Criteria**
+- Scenario library document created with ≥10 scenarios covering core paths and edge cases
+- Each scenario has defined inputs, expected outputs, and pass/fail criteria
+- Reviewed and accepted by QA & Testing Owner
+
+---
+
+### BLG-QA-11 — Screener accuracy test protocol
+**Priority:** P2 (Medium)
+**Type:** QA / Process
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260421-02 — promoted cycle 2026-04-28__scheduled (DL-024)
+**Effort:** S (~1 day)
+**Provisional-Target:** v3.1
+
+**Problem**
+No formal protocol exists for verifying screener result accuracy against known data. The screener may return technically valid responses that contain incorrect scores, missing tickers, or wrong sector classifications without a structured accuracy check.
+
+**Scope**
+- Define a protocol for periodically verifying screener output accuracy against known-good reference data
+- Specify: frequency, sample size, comparison methodology, pass/fail thresholds
+- Document how discrepancies are escalated and resolved
+
+**Acceptance Criteria**
+- Written protocol document covering frequency, sample selection, comparison method, and thresholds
+- Protocol references BLG-QA-10 scenario library where applicable
+- Accepted by Director of Quality
 
 ---
 
@@ -143,6 +187,52 @@ Eight endpoints shipped in v2.8/v2.9/v3.0 are absent from `docs/ops/api_performa
 
 ---
 
+### BLG-SEC-03 — Alpaca API key rotation policy
+**Priority:** P3 (Low)
+**Type:** Security / Operations
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260421-01 — promoted cycle 2026-04-28__scheduled (DL-024)
+**Effort:** S (~1 day)
+**Provisional-Target:** v3.1
+
+**Problem**
+No documented policy exists for rotating the Alpaca API key. If a key is compromised, there is no defined response procedure or rotation schedule. The v3.0 hotfix cycle (ST-01, ST-04) confirmed Alpaca as a live production dependency.
+
+**Scope**
+- Define a key rotation policy: rotation schedule, trigger conditions (suspected compromise, staff change), rotation procedure
+- Document the steps to update the key in the deployment environment without downtime
+- Policy document only — no code changes required
+
+**Acceptance Criteria**
+- Written policy covering rotation schedule, trigger conditions, and step-by-step procedure
+- Policy references the deployment environment (Render) configuration method
+- Accepted by Cybersecurity & Trust Lead
+
+---
+
+### BLG-SEC-04 — External API credential audit
+**Priority:** P3 (Low)
+**Type:** Security / Audit
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260421-02 — promoted cycle 2026-04-28__scheduled (DL-024)
+**Effort:** XS (~hours)
+**Provisional-Target:** v3.1
+
+**Problem**
+No consolidated record exists of all external API credentials (Alpaca, news APIs, etc.) in use by the system, their access scopes, expiry conditions, or storage locations.
+
+**Scope**
+- Audit all external API credentials currently in use
+- For each credential: service, scope, storage location, expiry/rotation conditions
+- Produce a credential inventory document (sensitive fields omitted — reference to secure storage only)
+
+**Acceptance Criteria**
+- Credential inventory document created listing all external credentials
+- Each entry: service name, credential type, scope/permissions, storage location reference, rotation policy reference (BLG-SEC-03 for Alpaca)
+- Accepted by Cybersecurity & Trust Lead
+
+---
+
 *BLG-OPS-14 (AI Journal monitoring metrics) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 *BLG-OPS-12 (External API health check extension) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 
@@ -156,7 +246,28 @@ Eight endpoints shipped in v2.8/v2.9/v3.0 are absent from `docs/ops/api_performa
 
 ## 8. Governance Backlog
 
+---
 
+### BLG-GOV-17 — External API dependency risk register
+**Priority:** P3 (Low)
+**Type:** Governance / Risk Management
+**Owner:** PMO Lead
+**Source:** IDEA-pmo-lead-20260421-01 — promoted cycle 2026-04-28__scheduled (DL-024)
+**Effort:** XS (~hours)
+**Provisional-Target:** v3.1
+
+**Problem**
+No consolidated register exists for external API dependencies (Alpaca, news APIs). The v3.0 hotfix cycle demonstrated that Alpaca API behavioural changes can cause production failures without warning. A dependency risk register provides forward-reference visibility and enables proactive monitoring.
+
+**Scope**
+- Create a risk register for all external API dependencies
+- For each dependency: service name, version/contract status, failure modes identified, mitigation in place, monitoring approach
+- Register is a living document — updated when new dependencies are added or incidents occur
+
+**Acceptance Criteria**
+- Risk register document created with entries for all current external API dependencies (minimum: Alpaca, news API)
+- Each entry includes: service, failure modes, current mitigations, monitoring approach
+- Accepted by PMO Lead
 
 ---
 
@@ -166,7 +277,7 @@ Eight endpoints shipped in v2.8/v2.9/v3.0 are absent from `docs/ops/api_performa
 **Owner:** PMO Lead + Head of Specs Team
 **Source:** User session review — 2026-04-03
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v3.1 (was v3.0 — deferred; 2 consecutive cycle deferrals as of v3.0)
+**Provisional-Target:** v3.2 (was v3.1 — further deferred; DL-024 2026-04-28; 3 consecutive cycle deferrals; displaced by BLG-SEC-03/04 and BLG-GOV-17)
 
 **Problem**
 As cycles accumulate, documents are created in each cycle directory but there is no consolidated inventory of what exists across all closed cycles, nor a documented lifecycle for each artefact type (maintained vs. point-in-time). Without this review it is impossible to audit historical artefacts, identify stale documents, or enforce consistent maintenance practices going forward.
@@ -197,6 +308,7 @@ As cycles accumulate, documents are created in each cycle directory but there is
 - Mobile app
 - Full compliance scoring system
 - **BLG-SPEC-20 — Machine-readable spec front-matter standard** (P3, S effort — deferred; Arc 1 specs shipped without requiring this standard; DL-023 2026-04-24)
+- **BLG-FEAT-13 — Add gated feature rollout capability** (P3, M effort — moved to §9; DL-024 2026-04-28; no active trigger at single-user scale; review when multi-user deployment or experimental feature staging requirement arises)
 
 ---
 
@@ -308,29 +420,4 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-### BLG-FEAT-13 — Add gated feature rollout capability
-**Priority:** P3 (Low)
-**Type:** Product Feature / Platform
-**Owner:** Head of Engineering + Product Owner
-**Source:** User request — 2026-03-31
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v3.1 (was v3.0 — deferred; not in v3.0 sprint scope)
-
-**Problem**
-The application has no mechanism to roll out new features to a subset of users or environments. Any new capability ships immediately to all users with no ability to stage a rollout, run a controlled trial, or roll back a single feature without reverting the entire deployment. As the product grows this creates risk for experimental features and makes it impossible to validate new UI flows with a limited audience before full release.
-
-**Scope**
-- Define a feature flag schema (flag name, enabled boolean, optional env/user scope)
-- Implement a lightweight flag evaluation mechanism driven by config file or environment variables — no external service dependency required at first
-- Wrap at least one new feature behind a flag as a proof-of-concept on first use
-- Document the gating pattern in a spec file or OPERATIONAL_GUIDE
-
-**Acceptance Criteria**
-- A feature can be toggled on/off without a code change (env var or config file)
-- Flag state is auditable (logged at startup or accessible via a lightweight admin check)
-- At least one shipped feature uses a gate as proof-of-concept
-- Gating pattern documented for use in future story authoring
-
----
-
-*Items from §13 (BLG-FEAT-13) remain active. All §14 items (BLG-GOV-13, BLG-FEAT-16, BLG-QA-13) shipped in v2.8 — archived to backlog_archive.md 2026-04-20 (GROOM-20260420-01).*
+*BLG-FEAT-13 (Gated feature rollout) — moved to §9 Deferred 2026-04-28 (DL-024 — no active trigger at single-user scale). All §14 items (BLG-GOV-13, BLG-FEAT-16, BLG-QA-13) shipped in v2.8 — archived to backlog_archive.md 2026-04-20 (GROOM-20260420-01).*

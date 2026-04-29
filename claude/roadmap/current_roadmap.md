@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Last Updated:** 2026-04-28 (post-ship closure v3.0 — manage_roadmap run)
-**Last rebalance:** 2026-04-24 (cycle 2026-04-24__scheduled — Standard-tier scheduled rebalance; DL-022 backlog adds; DL-023 defers)
+**Last rebalance:** 2026-04-28 (cycle 2026-04-28__scheduled — Standard-tier scheduled rebalance; DL-024 backlog adds/defers; no roadmap-level change)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 

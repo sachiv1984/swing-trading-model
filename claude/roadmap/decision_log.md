@@ -606,3 +606,46 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** None — no work stopped; both items were P3 with no active sprint slot.
 
 **Rationale:** Displacement required for DL-022 backlog additions. Both items are P3 with no urgency increase in the foreseeable roadmap. BLG-TECH-05 has been deprioritised across multiple prior cycles (DL-021, DL-023 rotation). BLG-SPEC-20 was added only 1 cycle ago but its stated precondition (Arc 1 specs) is now met and CI checking is not yet a bottleneck.
+
+---
+
+### DL-024 — 2026-04-28
+
+**Decision type:** Add (backlog-level) × 5; Defer (backlog-level) × 3
+**Cycle:** 2026-04-28__scheduled
+**Date:** 2026-04-28
+**Decision owner:** Product Owner
+
+**Context:** First scheduled rebalance post-Arc 1 ship (v3.0, 2026-04-27). Large gate-clearance batch: 25+ ideas from IW-20260421-01 cleared by DS-01/DS-02/Arc 1 shipping. 5 advances accepted; 7 rejected; 20+ re-parked. No new strategic initiative added to roadmap — all adds are backlog-level security/QA/governance items.
+
+**New backlog items:**
+
+| ID | Title | Priority | Effort | Owner | Displacement |
+|----|-------|----------|--------|-------|-------------|
+| BLG-SEC-03 | Alpaca API key rotation policy | P3 | S | Cybersecurity & Trust Lead | BLG-FEAT-13 → §9 |
+| BLG-SEC-04 | External API credential audit | P3 | XS | Cybersecurity & Trust Lead | BLG-GOV-11 → v3.2 |
+| BLG-GOV-17 | External API dependency risk register | P3 | XS | PMO Lead | BLG-OPS-13 → OA resolution |
+| BLG-QA-10 | Screener scenario library | P2 | M | QA & Testing Owner | BLG-FE-16 → further defer |
+| BLG-QA-11 | Screener accuracy test protocol | P2 | S | Director of Quality | BLG-OPS-13 shared slot |
+
+**Backlog deprioritisations:**
+
+| ID | Item | Change |
+|----|------|--------|
+| BLG-FEAT-13 | Feature flag rollout | → §9 deferred (no active trigger at single-user scale) |
+| BLG-GOV-11 | Cycle artefact inventory | Provisional-Target v3.1 → v3.2 |
+| BLG-FE-16 | React component inventory | Further deferred (dependency gate not met; QA items take priority) |
+
+**Idea dispositions (STEP 4):** 5 Advancing → Promoted-Added; 7 Rejected (IDEA-challenger-20260421-01, IDEA-head-of-engineering-20260421-02, IDEA-infra-ops-20260421-02, IDEA-qa-lead-20260421-02, IDEA-director-of-hr-20260421-01, IDEA-challenger-20260321-01, IDEA-ai-compliance-20260321-01 — 1 Rejected-but-strong); 20 re-parked with updated rationale.
+
+**Stale idea dispositions (mandatory):** 6 stale ideas surfaced (≥3 cycles). 2 closed this cycle (IDEA-challenger-20260321-01: Rejected; IDEA-ai-compliance-20260321-01: Rejected-but-strong). 4 re-parked: IDEA-metrics-analytics-20260321-02 (Parked-cycle-8), IDEA-financial-reporting-20260321-02 (Parked-cycle-8), IDEA-head-of-ux-20260321-02 (Parked-cycle-8 — gate cleared; re-park pending Arc 2 PT-02), IDEA-frontend-ux-20260304-02 (Parked-cycle-12 — BLG-FE-16 still pending).
+
+**Workforce impact:** 5 new items total ~5–8 days combined. Primary skill demands: Cybersecurity & Trust Lead (~1 day), QA & Testing Owner (~2 days), Director of Quality (~1 day), PMO Lead (~0.5 day). No scarce skills. Governance load 60% (at ceiling; no Skill-Silo Alert).
+
+**Challenger:** Type A counter-argument issued for IDEA-pmo-lead-20260421-01 (risk register overhead at single-user scale). Product Owner rebutted with evidence (EP-01 hotfix; forward-reference value). PO decision: ✅ Advance.
+
+**Roadmap change:** None. No initiatives added or removed from roadmap horizon structure. No-change roadmap confirmed; Last Updated date updated for lifecycle compliance.
+
+**Net-zero (roadmap-level):** 0 roadmap additions ≤ 0 roadmap kills. ✅
+
+**Displacement (backlog-level):** 3 items formally deprioritised as above.

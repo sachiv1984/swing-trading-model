@@ -250,5 +250,26 @@ All 8 items are SPS=1 or SPS=2 — no §13 boundary proximity. All are S or M ef
 
 **Facilitator observations (cycle 2026-04-24__scheduled):** Both items are P3 / S-effort with immediate time-to-value (TTV=5) and full reversibility (Rev=5). BLG-OPS-14 has the stronger risk-reduction case (Risk=4) — AI monitoring fills a live operational gap post-BLG-AI-01 delivery. BLG-FE-19 is low-risk UX polish (Risk=1) with a 10-cycle overdue gate; reasonable to include. No Skill-Silo Alert (Governance load = 0%). No scarce skill conflicts.
 
-**Last Updated:** 2026-04-25
+**Last Updated:** 2026-04-28 (cycle 2026-04-28__scheduled — 5 post-Arc 1 operational/QA items)
+
+---
+
+## Cycle 2026-04-28__scheduled — New Backlog Items
+
+*Standard-tier run. Zero active roadmap initiatives. 5 new backlog items from Arc 1 gate-clearance batch (v3.0 shipped 2026-04-27). CPS = 0.0 (unchanged).*
+
+| Initiative | Strat | Fin | Risk | WF Int | TTV | Rev | SPS | Effort |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| BLG-SEC-03 — Alpaca API key rotation policy | 3 | 2 | 5 | 5 | 5 | 5 | 1 | S |
+| BLG-SEC-04 — External API credential audit | 3 | 2 | 4 | 5 | 5 | 5 | 1 | XS |
+| BLG-GOV-17 — External API dependency risk register | 3 | 2 | 4 | 5 | 5 | 5 | 1 | XS |
+| BLG-QA-10 — Screener scenario library | 4 | 3 | 4 | 3 | 3 | 5 | 1 | M |
+| BLG-QA-11 — Screener accuracy test protocol | 4 | 3 | 4 | 4 | 4 | 5 | 1 | S |
+
+*Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score (carried from STEP 5 debate). Scale: 1–5.*
+
+**CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-04-24__scheduled). Delta: 0.0.
+
+**Facilitator observations (cycle 2026-04-28__scheduled):** All 5 items are SPS=1 with no §13 boundary proximity and full reversibility (Rev=5). Security items (BLG-SEC-03/04) have the highest risk-reduction scores (Risk=5/4) for their effort class (S/XS). BLG-SEC-03 Alpaca key rotation policy is the strongest risk-per-effort item — sub-day effort, Risk=5. BLG-QA-10/11 are the highest-priority (P2) items and directly address screener quality assurance for the newly-live Arc 1 engine. BLG-GOV-17 (XS) closes the external API dependency gap surfaced by the v3.0 hotfix cycle. No Skill-Silo Alert this cycle (governance load = 60%, at ceiling, no alert threshold breached per cycle_record). Natural v3.1 sequencing: BLG-SEC-03/04 + BLG-GOV-17 (credential and dependency hygiene) → BLG-QA-11 (screener protocol) → BLG-QA-10 (scenario library, requires 2–4 weeks screener operational history).
+
 

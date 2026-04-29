@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-25 (roadmap rebalance — cycle 2026-04-24__scheduled — 2 S-effort adds)
+**Last Updated:** 2026-04-28 (roadmap rebalance — cycle 2026-04-28__scheduled — 5 post-Arc 1 items added)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -298,3 +298,26 @@ No initiatives were added, replaced, deferred, or killed. No new backlog items p
 **Skill-Silo check (cycle additions):** Governance load = 0% (both new items are execution-heavy: frontend implementation, backend metrics endpoint). Below 20% floor. Product Owner sign-off capacity confirmed. No Skill-Silo Alert issued.
 
 **Assessment:** 2 S-effort P3 items added. No scarce skill conflicts. Both items are well-bounded and low-complexity. v3.0 candidate pool is balanced; release planning will allocate from the full 14-item pool.
+
+---
+
+## New Backlog Items Added — Cycle 2026-04-28__scheduled (Scheduled Rebalance)
+
+*Source: roadmap rebalance cycle 2026-04-28__scheduled — 5 new backlog items from Arc 1 gate-clearance batch. v3.0 shipped 2026-04-27. v3.1 candidate pool now being formed.*
+
+### New Items (cycle 2026-04-28__scheduled)
+
+| Item | Est. Effort | Skills | Priority |
+|------|------------|--------|---------|
+| BLG-SEC-03 Alpaca API key rotation policy | ~0.5 day | Cybersecurity & Trust Lead | P3 |
+| BLG-SEC-04 External API credential audit | ~2–3 hours | Cybersecurity & Trust Lead | P3 |
+| BLG-GOV-17 External API dependency risk register | ~2–3 hours | PMO Lead | P3 |
+| BLG-QA-10 Screener scenario library | ~1–2 days | QA & Testing Owner | P2 |
+| BLG-QA-11 Screener accuracy test protocol | ~0.5–1 day | Director of Quality | P2 |
+| **Total new** | **~3–4.5 days** | Security, Governance, QA | — |
+
+**Skill-Silo check (cycle additions):** Governance/documentation load 60% (BLG-SEC-03/04, BLG-GOV-17, BLG-QA-11 are policy/documentation; BLG-QA-10 is test data creation). At the 60% ceiling — no Skill-Silo Alert triggered (threshold is >80%). Product Owner sign-off capacity confirmed. No pull-forward required.
+
+**Deprioritisations this cycle:** BLG-FEAT-13 moved to §9 (no active trigger at single-user scale); BLG-GOV-11 Provisional-Target updated v3.1→v3.2; BLG-FE-16 further deferred to v3.2 (displaced by QA items).
+
+**Assessment:** 5 S/XS/M items added. Security items (BLG-SEC-03/04) and BLG-GOV-17 are all sub-half-day effort — low burden on scarce skills. BLG-QA-10/11 are the highest-priority (P2) additions and directly address screener quality assurance for the newly-live Arc 1 engine. No scarce skill conflicts. v3.1 candidate pool requires release planning to scope sprint allocation from the active backlog.
