@@ -1,0 +1,204 @@
+{
+  "cycle_id": "2026-04-29__release-v3.1",
+  "status": "Running",
+  "sealed": false,
+  "owner_epic": "EPIC-01",
+  "last_updated": "2026-04-30",
+  "epics": [
+    {
+      "epic_id": "EPIC-01",
+      "name": "Trade Plan Object",
+      "branch": "exec/2026-04-29__release-v3.1/EPIC-01",
+      "stories": [
+        {
+          "story_id": "ST-01",
+          "title": "Trade Plan data model & API contract",
+          "sprint": 1,
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 309,
+          "test_scenarios": [],
+          "acceptance_verified": false,
+          "deviations_filed": false
+        },
+        {
+          "story_id": "ST-02",
+          "title": "Trade Plan backend (CRUD endpoints)",
+          "sprint": 1,
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 310,
+          "test_scenarios": [],
+          "acceptance_verified": false,
+          "deviations_filed": false
+        },
+        {
+          "story_id": "ST-03",
+          "title": "Trade Plan UI — create / view / edit form",
+          "sprint": 2,
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "github_issue": 311,
+          "test_scenarios": [],
+          "acceptance_verified": false,
+          "deviations_filed": false
+        }
+      ],
+      "test_scenarios": []
+    },
+    {
+      "epic_id": "EPIC-02",
+      "name": "Pre-Trade Research View",
+      "branch": "exec/2026-04-29__release-v3.1/EPIC-02",
+      "stories": [
+        {
+          "story_id": "ST-04",
+          "title": "Pre-Trade Research View API contract",
+          "sprint": 2,
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 312,
+          "test_scenarios": [],
+          "acceptance_verified": false,
+          "deviations_filed": false
+        },
+        {
+          "story_id": "ST-05",
+          "title": "Pre-Trade Research View backend",
+          "sprint": 2,
+          "classification": "autonomous",
+          "status": "not_started",
+          "github_issue": 313,
+          "test_scenarios": [],
+          "acceptance_verified": false,
+          "deviations_filed": false
+        }
+      ],
+      "test_scenarios": []
+    },
+    {
+      "epic_id": "EPIC-03",
+      "name": "Arc 1 Completion & Screener Quality",
+      "branch": "exec/2026-04-29__release-v3.1/EPIC-03",
+      "stories": [
+        {
+          "story_id": "ST-06",
+          "title": "Screener P1 bug fix — UK ticker display and watchlist promotion",
+          "sprint": 1,
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 314,
+          "test_scenarios": [],
+          "acceptance_verified": true,
+          "deviations_filed": false,
+          "commit_sha": "pending"
+        },
+        {
+          "story_id": "ST-07",
+          "title": "Earnings Calendar backend endpoint",
+          "sprint": 1,
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 315,
+          "test_scenarios": ["backend/routers/test.py"],
+          "acceptance_verified": true,
+          "deviations_filed": false,
+          "commit_sha": "pending"
+        },
+        {
+          "story_id": "ST-08",
+          "title": "Earnings Calendar frontend (reclassified: delegated_frontend → autonomous)",
+          "sprint": 2,
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 316,
+          "test_scenarios": [],
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "commit_sha": "pending",
+          "reclassification_note": "Reclassified from delegated_frontend to autonomous per project policy (frontend delivered by engine). test_scenarios: [] — no test files exist yet for frontend components; pending QA & Testing Owner authoring."
+        },
+        {
+          "story_id": "ST-09",
+          "title": "Screener accuracy test protocol",
+          "sprint": 1,
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 317,
+          "test_scenarios": ["docs/qa/screener_accuracy_protocol.md"],
+          "acceptance_verified": true,
+          "deviations_filed": false,
+          "commit_sha": "pending"
+        },
+        {
+          "story_id": "ST-10",
+          "title": "Screener scenario test data library",
+          "sprint": 2,
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 318,
+          "test_scenarios": ["docs/qa/screener_scenarios.md"],
+          "acceptance_verified": true,
+          "deviations_filed": false,
+          "commit_sha": "pending"
+        }
+      ],
+      "test_scenarios": ["backend/routers/test.py", "docs/qa/screener_accuracy_protocol.md", "docs/qa/screener_scenarios.md"]
+    },
+    {
+      "epic_id": "EPIC-04",
+      "name": "Operations, Governance & Quick Wins",
+      "branch": "exec/2026-04-29__release-v3.1/EPIC-04",
+      "stories": [
+        {
+          "story_id": "ST-11",
+          "title": "Monthly P&L report endpoint + UI tab",
+          "sprint": 1,
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 319,
+          "test_scenarios": ["backend/routers/test.py"],
+          "acceptance_verified": true,
+          "deviations_filed": false
+        },
+        {
+          "story_id": "ST-12",
+          "title": "Security & ops policy documents",
+          "sprint": 1,
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 320,
+          "test_scenarios": [],
+          "acceptance_verified": true,
+          "deviations_filed": false
+        },
+        {
+          "story_id": "ST-13",
+          "title": "Execution prompt patch CF-01 — reclassification backfill",
+          "sprint": 1,
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 321,
+          "test_scenarios": [],
+          "acceptance_verified": true,
+          "deviations_filed": false
+        },
+        {
+          "story_id": "ST-14",
+          "title": "Execution prompt patch CF-02 — output target clarification",
+          "sprint": 1,
+          "classification": "autonomous",
+          "status": "done",
+          "github_issue": 322,
+          "test_scenarios": [],
+          "acceptance_verified": true,
+          "deviations_filed": false
+        }
+      ],
+      "test_scenarios": ["backend/routers/test.py"]
+    }
+  ],
+  "completed_items": ["ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14"],
+  "blocked_items": [],
+  "delegated_items": []
+}

@@ -3003,5 +3003,34 @@ components:
         "409":
           description: A screener run is already in progress
 
+  /earnings/{ticker}:
+    get:
+      summary: Get next earnings date for a ticker
+      tags: [Earnings]
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema: { type: string }
+          description: Ticker symbol
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK], default: US }
+          description: Market (US or UK)
+      responses:
+        "200":
+          description: Earnings date data (next_earnings_date may be null if unavailable)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticker: { type: string }
+                  next_earnings_date: { type: string, nullable: true, description: "ISO 8601 date or null" }
+                  days_until_earnings: { type: integer, nullable: true }
+                  fiscal_quarter: { type: string, nullable: true }
+                  data_source: { type: string, example: "yahoo_finance" }
+
 security:
   - ApiKey: []

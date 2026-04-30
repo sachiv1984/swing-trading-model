@@ -20,6 +20,7 @@ from routers import ai as ai_router
 from routers import news as news_router
 from routers import ticker_universe as ticker_universe_router
 from routers import screener as screener_router
+from routers import earnings as earnings_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers, sync_from_tickers_table
@@ -167,6 +168,7 @@ app.include_router(ai_router.router)
 app.include_router(news_router.router)
 app.include_router(ticker_universe_router.router)
 app.include_router(screener_router.router)
+app.include_router(earnings_router.router)
 
 
 @app.on_event("startup")
