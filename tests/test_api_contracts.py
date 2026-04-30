@@ -1,0 +1,546 @@
+"""
+API Contract Tests — test_api_contracts.py
+
+FastAPI TestClient tests for all application routes, organised by tag group
+matching docs/reference/openapi.yaml.
+
+Coverage goal: every GET endpoint (and key POST/PUT/DELETE routes) must
+return the expected HTTP status code and, where applicable, the standard
+{"status": "ok", "data": ...} response envelope.
+
+CI-safe: all database calls, external HTTP calls (yfinance, Alpaca), and
+live pricing are mocked via unittest.mock.patch. No live DB or network
+connections are made.
+
+Patch target rule (Python import binding): patch at the import site, not the
+definition site. If a module does `from database import X`, patch `module.X`.
+
+Spec source: docs/reference/openapi.yaml + docs/specs/api_contracts/
+"""
+
+import unittest
+from datetime import date
+from unittest.mock import MagicMock, patch
+
+from fastapi.testclient import TestClient
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
+
+from main import app  # noqa: E402
+
+CLIENT = TestClient(app, raise_server_exceptions=False)
+
+# ---------------------------------------------------------------------------
+# Shared mock data
+# ---------------------------------------------------------------------------
+
+MOCK_PORTFOLIO = {
+    "id": "portfolio-test-001",
+    "cash": 10000.0,
+    "initial_value": 50000.0,
+    "last_updated": "2026-04-30T00:00:00",
+}
+
+MOCK_SETTINGS = {
+    "id": "settings-001",
+    "portfolio_id": "portfolio-test-001",
+    "risk_per_trade": 1.0,
+    "max_portfolio_heat": 10.0,
+    "default_market": "UK",
+}
+
+MOCK_SIGNAL = {
+    "id": "sig-001",
+    "portfolio_id": "portfolio-test-001",
+    "ticker": "NVDA",
+    "market": "US",
+    "direction": "long",
+    "signal_date": date(2026, 4, 28),
+    "status": "active",
+    "rank": 1,
+    "atr": 12.5,
+    "entry_price": 450.0,
+    "stop_price": 425.0,
+    "r_target": 2.5,
+}
+
+MOCK_REGIME = {
+    "spy_risk_on": True,
+    "ftse_risk_on": True,
+    "spy_price": 520.0,
+    "spy_ma200": 490.0,
+    "ftse_price": 8100.0,
+    "ftse_ma200": 7800.0,
+}
+
+MOCK_CASH_SUMMARY = {
+    "total_deposits": 50000.0,
+    "total_withdrawals": 0.0,
+    "net_deposits": 50000.0,
+    "current_cash": 10000.0,
+}
+
+MOCK_PORTFOLIO_SUMMARY = {
+    "total_value": 52000.0,
+    "cash": 10000.0,
+    "positions": [],
+    "position_risks": [],
+    "open_positions_count": 0,
+    "portfolio_heat": 0.0,
+    "drawdown": {},
+    "net_deposits": 50000.0,
+    "initial_value": 50000.0,
+}
+
+MOCK_TRADE_PLAN = {
+    "id": "plan-001",
+    "portfolio_id": "portfolio-test-001",
+    "ticker": "AAPL",
+    "market": "US",
+    "status": "draft",
+    "setup_thesis": "Breakout above resistance",
+    "entry_rationale": "Volume confirmed",
+    "checklist_completed": False,
+    "checklist_items": [],
+    "created_at": "2026-04-30T00:00:00",
+    "updated_at": "2026-04-30T00:00:00",
+    "r_target": 2.5,
+    "regime_context_at_entry": None,
+    "early_exit_conditions": None,
+    "confirmation_criteria": None,
+    "position_id": None,
+}
+
+
+# ---------------------------------------------------------------------------
+# Helper
+# ---------------------------------------------------------------------------
+
+def _ok(r, status_code=200):
+    """Assert HTTP status and standard envelope."""
+    assert r.status_code == status_code, (
+        f"Expected {status_code}, got {r.status_code}: {r.text[:300]}"
+    )
+    body = r.json()
+    assert body.get("status") == "ok", f"Expected status=ok, got: {body}"
+    return body
+
+
+def _mock_conn():
+    """Return a mock psycopg2 connection/cursor for raw-SQL endpoints."""
+    cur = MagicMock()
+    cur.fetchall.return_value = []
+    cur.fetchone.return_value = None
+    cur.__enter__ = lambda s: s
+    cur.__exit__ = MagicMock(return_value=False)
+    conn = MagicMock()
+    conn.cursor.return_value = cur
+    conn.__enter__ = lambda s: s
+    conn.__exit__ = MagicMock(return_value=False)
+    return conn
+
+
+# ---------------------------------------------------------------------------
+# 1. Core / Health
+# ---------------------------------------------------------------------------
+
+class TestCoreEndpoints(unittest.TestCase):
+
+    def test_root_returns_ok(self):
+        r = CLIENT.get("/")
+        assert r.status_code == 200
+        assert r.json()["status"] == "ok"
+
+    @patch("services.health_service.get_basic_health",
+           return_value={"status": "healthy"})
+    def test_health_returns_200(self, _):
+        r = CLIENT.get("/health")
+        assert r.status_code == 200
+
+    @patch("services.health_service.get_detailed_health",
+           return_value={"overall": "healthy", "checks": []})
+    def test_health_detailed_returns_200(self, _):
+        r = CLIENT.get("/health/detailed")
+        assert r.status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# 2. Settings  (main.py imports get_settings from database)
+# ---------------------------------------------------------------------------
+
+class TestSettingsEndpoints(unittest.TestCase):
+
+    @patch("main.get_settings", return_value=[MOCK_SETTINGS])
+    def test_get_settings_returns_ok(self, _):
+        body = _ok(CLIENT.get("/settings"))
+        assert isinstance(body["data"], list)
+        assert len(body["data"]) == 1
+
+    @patch("main.get_settings", return_value=[])
+    def test_get_settings_empty_returns_ok(self, _):
+        body = _ok(CLIENT.get("/settings"))
+        assert body["data"] == []
+
+
+# ---------------------------------------------------------------------------
+# 3. Portfolio  (main.py uses services.get_portfolio_summary)
+# ---------------------------------------------------------------------------
+
+class TestPortfolioEndpoints(unittest.TestCase):
+
+    @patch("main.get_portfolio_summary", return_value=MOCK_PORTFOLIO_SUMMARY)
+    def test_get_portfolio_returns_ok(self, _):
+        body = _ok(CLIENT.get("/portfolio"))
+        assert "data" in body
+
+    @patch("main.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.get_portfolio_snapshots", return_value=[])
+    def test_get_portfolio_history_returns_ok(self, *_):
+        r = CLIENT.get("/portfolio/history?days=30")
+        assert r.status_code == 200
+
+    @patch("routers.prospective_heat.get_portfolio_summary",
+           return_value={"total_value": 52000.0, "position_risks": []})
+    @patch("routers.prospective_heat.get_live_fx_rate", return_value=1.27)
+    def test_prospective_heat_valid_inputs(self, *_):
+        body = _ok(CLIENT.get(
+            "/portfolio/prospective-heat"
+            "?ticker=AAPL&shares=10&entry_price=180&stop_price=170&market=US&fx_rate=1.27"
+        ))
+        assert body["data"]["valid"] is True
+
+    @patch("routers.prospective_heat.get_portfolio_summary",
+           return_value={"total_value": 52000.0, "position_risks": []})
+    def test_prospective_heat_stop_above_entry_invalid(self, _):
+        body = _ok(CLIENT.get(
+            "/portfolio/prospective-heat"
+            "?ticker=AAPL&shares=10&entry_price=160&stop_price=180&market=US&fx_rate=1.27"
+        ))
+        assert body["data"]["valid"] is False
+
+
+# ---------------------------------------------------------------------------
+# 4. Positions  (main.py uses main.get_positions_with_prices)
+# ---------------------------------------------------------------------------
+
+class TestPositionEndpoints(unittest.TestCase):
+
+    @patch("main.get_positions_with_prices", return_value=[])
+    def test_get_positions_returns_ok(self, _):
+        # /positions returns a raw list, not a {"status":"ok"} envelope
+        r = CLIENT.get("/positions")
+        assert r.status_code == 200
+        assert isinstance(r.json(), list)
+
+    @patch("main.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("main.get_available_tags", return_value=["momentum", "breakout"])
+    def test_get_position_tags_returns_ok(self, *_):
+        body = _ok(CLIENT.get("/positions/tags"))
+        assert isinstance(body["data"], list)
+
+    @patch("main.get_position_compliance", return_value=[])
+    @patch("main.get_positions_with_prices", return_value=[])
+    def test_get_positions_compliance_returns_ok(self, *_):
+        r = CLIENT.get("/positions/compliance")
+        assert r.status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# 5. Trades  (main.py uses main.get_trade_history_with_stats)
+# ---------------------------------------------------------------------------
+
+class TestTradeEndpoints(unittest.TestCase):
+
+    @patch("main.get_trade_history_with_stats",
+           return_value={"trades": [], "stats": {}})
+    def test_get_trades_returns_ok(self, _):
+        body = _ok(CLIENT.get("/trades"))
+        assert "data" in body
+
+
+# ---------------------------------------------------------------------------
+# 6. Cash  (main.py uses main.get_transaction_history / main.get_cash_summary)
+# ---------------------------------------------------------------------------
+
+class TestCashEndpoints(unittest.TestCase):
+
+    @patch("main.get_transaction_history", return_value=[])
+    def test_get_cash_transactions_returns_ok(self, _):
+        body = _ok(CLIENT.get("/cash/transactions"))
+        assert isinstance(body["data"], list)
+
+    @patch("main.get_cash_summary", return_value=MOCK_CASH_SUMMARY)
+    def test_get_cash_summary_returns_ok(self, _):
+        body = _ok(CLIENT.get("/cash/summary"))
+        assert "net_deposits" in body["data"]
+
+
+# ---------------------------------------------------------------------------
+# 7. Signals & Market
+# ---------------------------------------------------------------------------
+
+class TestSignalAndMarketEndpoints(unittest.TestCase):
+
+    @patch("main.get_signals", return_value=[MOCK_SIGNAL])
+    def test_get_signals_returns_ok(self, _):
+        # /signals returns a raw list, not a {"status":"ok"} envelope
+        r = CLIENT.get("/signals")
+        assert r.status_code == 200
+        assert isinstance(r.json(), list)
+
+    @patch("utils.pricing.check_market_regime", return_value=MOCK_REGIME)
+    def test_market_status_returns_ok(self, _):
+        body = _ok(CLIENT.get("/market/status"))
+        assert "data" in body
+
+
+# ---------------------------------------------------------------------------
+# 8. Analytics  (router calls psycopg2 directly — patch at router level)
+# ---------------------------------------------------------------------------
+
+class TestAnalyticsEndpoints(unittest.TestCase):
+
+    @patch("routers.analytics.psycopg2.connect")
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    def test_analytics_metrics_all_time(self, _, mock_connect):
+        mock_connect.return_value = _mock_conn()
+        assert CLIENT.get("/analytics/metrics?period=all_time").status_code == 200
+
+    @patch("routers.analytics.psycopg2.connect")
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    def test_analytics_metrics_last_7_days(self, _, mock_connect):
+        mock_connect.return_value = _mock_conn()
+        assert CLIENT.get("/analytics/metrics?period=last_7_days").status_code == 200
+
+    @patch("routers.analytics.psycopg2.connect")
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    def test_analytics_cohort(self, _, mock_connect):
+        mock_connect.return_value = _mock_conn()
+        assert CLIENT.get("/analytics/cohort?period=month").status_code == 200
+
+    @patch("routers.analytics.psycopg2.connect")
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    def test_analytics_r_multiple_distribution(self, _, mock_connect):
+        mock_connect.return_value = _mock_conn()
+        assert CLIENT.get("/analytics/r-multiple-distribution").status_code == 200
+
+    @patch("routers.analytics.psycopg2.connect")
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    def test_analytics_compliance_metrics(self, _, mock_connect):
+        mock_connect.return_value = _mock_conn()
+        assert CLIENT.get("/analytics/compliance-metrics").status_code == 200
+
+    @patch("routers.analytics.psycopg2.connect")
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("utils.pricing.get_current_price", return_value=None)
+    def test_analytics_market_correlation(self, _, __, mock_connect):
+        mock_connect.return_value = _mock_conn()
+        assert CLIENT.get("/analytics/market-correlation").status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# 9. Alerts & Notifications
+#    router imports: from database import get_portfolio
+#                    from services.alerts_service import get_alert_rules, ...
+# ---------------------------------------------------------------------------
+
+class TestAlertsEndpoints(unittest.TestCase):
+
+    @patch("routers.alerts.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.alerts.get_alert_rules", return_value=[])
+    def test_get_alert_rules_returns_ok(self, *_):
+        assert CLIENT.get("/alerts/rules").status_code == 200
+
+    @patch("routers.alerts.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.alerts.get_alert_history", return_value=[])
+    def test_get_alert_history_returns_ok(self, *_):
+        assert CLIENT.get("/alerts/history").status_code == 200
+
+    @patch("routers.alerts.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.alerts.get_notifications",
+           return_value={"notifications": [], "total": 0})
+    def test_get_notifications_returns_ok(self, *_):
+        assert CLIENT.get("/notifications").status_code == 200
+
+    @patch("routers.alerts.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.alerts.get_preferences", return_value={})
+    def test_get_notification_preferences_returns_ok(self, *_):
+        assert CLIENT.get("/notifications/preferences").status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# 10. Digest  (router calls psycopg2 directly)
+# ---------------------------------------------------------------------------
+
+class TestDigestEndpoints(unittest.TestCase):
+
+    @patch("routers.digest.psycopg2.connect")
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    def test_get_digest_weekly_returns_200(self, _, mock_connect):
+        mock_connect.return_value = _mock_conn()
+        assert CLIENT.get("/digest/weekly").status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# 11. Ticker Universe
+#     router imports: from services.ticker_universe_service import get_all_tickers, ...
+# ---------------------------------------------------------------------------
+
+class TestTickerUniverseEndpoints(unittest.TestCase):
+
+    @patch("routers.ticker_universe.get_all_tickers",
+           return_value=[{"ticker": "AAPL", "market": "US", "active": True}])
+    def test_get_ticker_universe_returns_ok(self, _):
+        body = _ok(CLIENT.get("/ticker-universe"))
+        assert isinstance(body["data"], list)
+
+    @patch("routers.ticker_universe.add_ticker",
+           return_value={"ticker": "TSLA", "market": "US", "active": True})
+    def test_post_ticker_universe_returns_ok(self, _):
+        # POST /ticker-universe returns 201
+        assert CLIENT.post("/ticker-universe", json={"ticker": "TSLA", "market": "US"}).status_code == 201
+
+    @patch("routers.ticker_universe.soft_delete_ticker", return_value=True)
+    def test_delete_ticker_universe_returns_ok(self, _):
+        assert CLIENT.delete("/ticker-universe/AAPL").status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# 12. Screener
+#     router imports: from services.screener_batch_service import run_screener, get_screener_results
+# ---------------------------------------------------------------------------
+
+class TestScreenerEndpoints(unittest.TestCase):
+
+    @patch("routers.screener.get_screener_results",
+           return_value={"results": [], "count": 0, "last_run_timestamp": None})
+    def test_get_screener_results_returns_ok(self, _):
+        assert CLIENT.get("/screener/results").status_code == 200
+
+    @patch("routers.screener.run_screener",
+           return_value={"run_id": "run-001", "status": "accepted"})
+    def test_post_screener_run_accepts(self, _):
+        assert CLIENT.post("/screener/run", json={}).status_code in (200, 202)
+
+
+# ---------------------------------------------------------------------------
+# 13. Reports
+# ---------------------------------------------------------------------------
+
+class TestReportsEndpoints(unittest.TestCase):
+
+    @patch("services.reports_service.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("services.reports_service.get_positions", return_value=[])
+    @patch("services.reports_service.get_trade_history_by_tax_year", return_value=[])
+    def test_get_tax_year_report_returns_ok(self, *_):
+        body = _ok(CLIENT.get("/reports/tax-year?year=2025"))
+        assert "data" in body
+
+    @patch("services.reports_service.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("services.reports_service.get_positions", return_value=[])
+    @patch("services.reports_service.get_trade_history_by_tax_year", return_value=[])
+    def test_get_tax_year_missing_param_returns_400(self, *_):
+        assert CLIENT.get("/reports/tax-year").status_code == 400
+
+    def test_get_monthly_pnl_returns_ok(self):
+        # Route only exists after EPIC-04 merges into main
+        r = CLIENT.get("/reports/monthly-pnl")
+        if r.status_code == 404:
+            self.skipTest("monthly-pnl route not yet on this branch (EPIC-04)")
+        assert r.status_code == 200
+        assert r.json().get("status") == "ok"
+
+
+# ---------------------------------------------------------------------------
+# 14. Trade Plans  (EPIC-01 — available after EPIC-01 merges into main)
+#     router imports: from database import get_portfolio, create_trade_plan, ...
+# ---------------------------------------------------------------------------
+
+_TRADE_PLANS_AVAILABLE = CLIENT.get("/trade-plans").status_code != 404
+
+
+@unittest.skipUnless(_TRADE_PLANS_AVAILABLE, "trade-plans route not yet on this branch (EPIC-01)")
+class TestTradePlanEndpoints(unittest.TestCase):
+
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.get_trade_plans", return_value=[MOCK_TRADE_PLAN])
+    @patch("database.ensure_trade_plans_table", return_value=None)
+    def test_list_trade_plans_returns_ok(self, *_):
+        body = _ok(CLIENT.get("/trade-plans"))
+        assert isinstance(body["data"], list)
+
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.get_trade_plans", return_value=[])
+    @patch("database.ensure_trade_plans_table", return_value=None)
+    def test_list_trade_plans_status_filter(self, *_):
+        body = _ok(CLIENT.get("/trade-plans?status=draft"))
+        assert isinstance(body["data"], list)
+
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.create_trade_plan", return_value=MOCK_TRADE_PLAN)
+    @patch("database.ensure_trade_plans_table", return_value=None)
+    def test_create_trade_plan_returns_201(self, *_):
+        r = CLIENT.post("/trade-plans", json={"ticker": "AAPL", "market": "US"})
+        assert r.status_code == 201
+        assert r.json()["status"] == "ok"
+
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.get_trade_plan_by_id", return_value=MOCK_TRADE_PLAN)
+    @patch("database.ensure_trade_plans_table", return_value=None)
+    def test_get_trade_plan_by_id_returns_ok(self, *_):
+        body = _ok(CLIENT.get("/trade-plans/plan-001"))
+        assert body["data"]["id"] == "plan-001"
+
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.get_trade_plan_by_id", return_value=None)
+    @patch("database.ensure_trade_plans_table", return_value=None)
+    def test_get_trade_plan_not_found_returns_404(self, *_):
+        assert CLIENT.get("/trade-plans/nonexistent-id").status_code == 404
+
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.update_trade_plan",
+           return_value={**MOCK_TRADE_PLAN, "status": "active"})
+    @patch("database.ensure_trade_plans_table", return_value=None)
+    def test_update_trade_plan_returns_ok(self, *_):
+        body = _ok(CLIENT.put("/trade-plans/plan-001", json={"status": "active"}))
+        assert body["data"]["status"] == "active"
+
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.delete_trade_plan", return_value=True)
+    @patch("database.ensure_trade_plans_table", return_value=None)
+    def test_delete_trade_plan_returns_ok(self, *_):
+        body = _ok(CLIENT.delete("/trade-plans/plan-001"))
+        assert body["message"] == "Trade plan deleted"
+
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.delete_trade_plan", return_value=False)
+    @patch("database.ensure_trade_plans_table", return_value=None)
+    def test_delete_trade_plan_not_found_returns_404(self, *_):
+        assert CLIENT.delete("/trade-plans/nonexistent-id").status_code == 404
+
+    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("database.get_trade_plans_by_position", return_value=[])
+    @patch("database.ensure_trade_plans_table", return_value=None)
+    def test_list_plans_by_position_returns_ok(self, *_):
+        body = _ok(CLIENT.get(
+            "/trade-plans/by-position/00000000-0000-0000-0000-000000000000"
+        ))
+        assert isinstance(body["data"], list)
+
+
+# ---------------------------------------------------------------------------
+# 15. Validation
+# ---------------------------------------------------------------------------
+
+class TestValidationEndpoints(unittest.TestCase):
+
+    def test_post_validate_calculations_returns_ok(self):
+        r = CLIENT.post("/validate/calculations")
+        assert r.status_code == 200
+
+
+if __name__ == "__main__":
+    unittest.main()
