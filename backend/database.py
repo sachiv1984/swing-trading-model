@@ -897,6 +897,149 @@ def upsert_trade_reflection(trade_id: str, data: Dict) -> Dict:
             return dict(cur.fetchone())
 
 
+# ---------------------------------------------------------------------------
+# Trade Plans (DS-04 / ST-02, v3.1)
+# ---------------------------------------------------------------------------
+
+def ensure_trade_plans_table():
+    """Create trade_plans table if it does not exist (idempotent)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS trade_plans (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id UUID NOT NULL,
+                    position_id UUID,
+                    ticker VARCHAR(20) NOT NULL,
+                    market VARCHAR(10) NOT NULL CHECK (market IN ('US', 'UK')),
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    setup_thesis TEXT,
+                    entry_rationale TEXT,
+                    regime_context_at_entry VARCHAR(50),
+                    r_target NUMERIC(8,2),
+                    early_exit_conditions TEXT,
+                    confirmation_criteria TEXT,
+                    checklist_completed BOOLEAN NOT NULL DEFAULT FALSE,
+                    checklist_items JSONB NOT NULL DEFAULT '[]'::JSONB,
+                    status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'closed'))
+                )
+            """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_portfolio ON trade_plans(portfolio_id)")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_position ON trade_plans(position_id) WHERE position_id IS NOT NULL")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_status ON trade_plans(status)")
+        conn.commit()
+
+
+def create_trade_plan(portfolio_id: str, data: dict) -> dict:
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """INSERT INTO trade_plans
+                   (portfolio_id, position_id, ticker, market, setup_thesis, entry_rationale,
+                    regime_context_at_entry, r_target, early_exit_conditions, confirmation_criteria,
+                    checklist_completed, checklist_items, status)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s)
+                   RETURNING *""",
+                (
+                    portfolio_id,
+                    data.get("position_id"),
+                    data["ticker"],
+                    data["market"],
+                    data.get("setup_thesis"),
+                    data.get("entry_rationale"),
+                    data.get("regime_context_at_entry"),
+                    data.get("r_target"),
+                    data.get("early_exit_conditions"),
+                    data.get("confirmation_criteria"),
+                    data.get("checklist_completed", False),
+                    __import__("json").dumps(data.get("checklist_items", [])),
+                    data.get("status", "draft"),
+                ),
+            )
+            row = cur.fetchone()
+        conn.commit()
+        return dict(row)
+
+
+def get_trade_plans(portfolio_id: str, status: str = None) -> list:
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            if status:
+                cur.execute(
+                    "SELECT * FROM trade_plans WHERE portfolio_id=%s AND status=%s ORDER BY created_at DESC",
+                    (portfolio_id, status),
+                )
+            else:
+                cur.execute(
+                    "SELECT * FROM trade_plans WHERE portfolio_id=%s ORDER BY created_at DESC",
+                    (portfolio_id,),
+                )
+            return [dict(r) for r in cur.fetchall()]
+
+
+def get_trade_plan_by_id(trade_plan_id: str, portfolio_id: str) -> dict:
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT * FROM trade_plans WHERE id=%s AND portfolio_id=%s",
+                (trade_plan_id, portfolio_id),
+            )
+            row = cur.fetchone()
+            return dict(row) if row else None
+
+
+def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict:
+    allowed = {
+        "position_id", "setup_thesis", "entry_rationale", "regime_context_at_entry",
+        "r_target", "early_exit_conditions", "confirmation_criteria",
+        "checklist_completed", "checklist_items", "status",
+    }
+    fields = {k: v for k, v in data.items() if k in allowed}
+    if not fields:
+        return get_trade_plan_by_id(trade_plan_id, portfolio_id)
+    set_clauses = []
+    values = []
+    for k, v in fields.items():
+        if k == "checklist_items":
+            set_clauses.append(f"{k} = %s::jsonb")
+            values.append(__import__("json").dumps(v))
+        else:
+            set_clauses.append(f"{k} = %s")
+            values.append(v)
+    set_clauses.append("updated_at = NOW()")
+    values.extend([trade_plan_id, portfolio_id])
+    sql = f"UPDATE trade_plans SET {', '.join(set_clauses)} WHERE id=%s AND portfolio_id=%s RETURNING *"
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, values)
+            row = cur.fetchone()
+        conn.commit()
+        return dict(row) if row else None
+
+
+def delete_trade_plan(trade_plan_id: str, portfolio_id: str) -> bool:
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "DELETE FROM trade_plans WHERE id=%s AND portfolio_id=%s",
+                (trade_plan_id, portfolio_id),
+            )
+            deleted = cur.rowcount > 0
+        conn.commit()
+        return deleted
+
+
+def get_trade_plans_by_position(position_id: str, portfolio_id: str) -> list:
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT * FROM trade_plans WHERE position_id=%s AND portfolio_id=%s ORDER BY created_at DESC",
+                (position_id, portfolio_id),
+            )
+            return [dict(r) for r in cur.fetchall()]
+
+
 def get_database_size_bytes() -> int:
     """Return the current database size in bytes.
 

@@ -31,7 +31,7 @@ import {
 import { cn } from "../lib/utils";
 import { friendlyErrorMessage } from "../lib/apiError";
 import { differenceInDays } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
 import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
@@ -42,6 +42,7 @@ export default function Positions() {
   const [exitingPosition, setExitingPosition] = useState(null);
   const [reflectionTrade, setReflectionTrade] = useState(null);
 
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { data: positions, isLoading, isError, refetch } = useQuery({
@@ -367,6 +368,16 @@ export default function Positions() {
                         onClick={() => setEditingPosition(position)}
                       >
                         <Edit2 className="w-4 h-4" />
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title="Trade Plan"
+                        className="h-8 w-8 text-cyan-500/70 hover:text-cyan-400 hover:bg-cyan-500/10"
+                        onClick={() => navigate(`/TradePlan?position_id=${position.id}&ticker=${position.ticker}&market=${position.market}`)}
+                      >
+                        <BookOpen className="w-4 h-4" />
                       </Button>
 
                       <Button

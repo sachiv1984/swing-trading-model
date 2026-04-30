@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.4
-**Last Updated:** 2026-04-24
+**Version:** 2.5
+**Last Updated:** 2026-04-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -856,6 +856,89 @@ These fields appear in the `GET /positions` API response on each open position a
 
 ---
 
-**Document Version:** 2.4
+---
+
+## DS-04 — Trade Plan Object (v2.5, 2026-04-30)
+
+**Story:** ST-01 (EPIC-01, v3.1)
+
+The `trade_plans` table stores structured pre-trade reasoning documents linked optionally to a position.
+
+### Table: trade_plans
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS trade_plans (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE,
+    position_id UUID REFERENCES positions(id) ON DELETE SET NULL,
+    ticker VARCHAR(20) NOT NULL,
+    market VARCHAR(10) NOT NULL CHECK (market IN ('US', 'UK')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    setup_thesis TEXT,
+    entry_rationale TEXT,
+    regime_context_at_entry VARCHAR(50),
+    r_target NUMERIC(8,2),
+    early_exit_conditions TEXT,
+    confirmation_criteria TEXT,
+    checklist_completed BOOLEAN NOT NULL DEFAULT FALSE,
+    checklist_items JSONB NOT NULL DEFAULT '[]'::JSONB,
+    status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'closed'))
+);
+
+CREATE INDEX idx_trade_plans_portfolio ON trade_plans(portfolio_id);
+CREATE INDEX idx_trade_plans_position ON trade_plans(position_id) WHERE position_id IS NOT NULL;
+CREATE INDEX idx_trade_plans_ticker ON trade_plans(ticker);
+CREATE INDEX idx_trade_plans_status ON trade_plans(status);
+
+COMMIT;
+```
+
+**Verification query (run after migration):**
+
+```sql
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public' AND table_name = 'trade_plans';
+-- Expected: 1 row
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | NO | Primary key |
+| `portfolio_id` | UUID | NO | Foreign key to `portfolios` |
+| `position_id` | UUID | YES | Foreign key to `positions` — null if plan exists before position is opened |
+| `ticker` | VARCHAR(20) | NO | Ticker symbol |
+| `market` | VARCHAR(10) | NO | `US` or `UK` |
+| `created_at` | TIMESTAMPTZ | NO | Creation timestamp |
+| `updated_at` | TIMESTAMPTZ | NO | Last update timestamp |
+| `setup_thesis` | TEXT | YES | High-level setup thesis |
+| `entry_rationale` | TEXT | YES | Specific entry rationale |
+| `regime_context_at_entry` | VARCHAR(50) | YES | Regime status at time of plan creation (e.g. `risk_on`, `risk_off`) |
+| `r_target` | NUMERIC(8,2) | YES | Target R-multiple for the trade |
+| `early_exit_conditions` | TEXT | YES | Conditions that would prompt early exit |
+| `confirmation_criteria` | TEXT | YES | Criteria needed before executing entry |
+| `checklist_completed` | BOOLEAN | NO | Whether pre-entry checklist is signed off |
+| `checklist_items` | JSONB | NO | Array of checklist items `[{item, checked}]` |
+| `status` | VARCHAR(20) | NO | `draft`, `active`, or `closed` |
+
+### Down Migration
+
+```sql
+BEGIN;
+DROP TABLE IF EXISTS trade_plans;
+COMMIT;
+```
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-04-30
+- Head of Specs Team: Accepted — 2026-04-30
+
+---
+
+**Document Version:** 2.5
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-04-24
+**Last Review:** 2026-04-30

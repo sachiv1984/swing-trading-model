@@ -62,6 +62,7 @@ import TradeReflection from './pages/TradeReflection';
 import Watchlist from './pages/Watchlist';
 import WeeklyDigest from './pages/WeeklyDigest';
 import Screener from './pages/Screener';
+import TradePlan from './pages/TradePlan';
 import __Layout from './Layout.js';
 
 
@@ -81,6 +82,7 @@ export const PAGES = {
     "Watchlist": Watchlist,
     "WeeklyDigest": WeeklyDigest,
     "Screener": Screener,
+    "TradePlan": TradePlan,
 }
 
 export const pagesConfig = {
