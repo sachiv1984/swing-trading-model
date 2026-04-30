@@ -113,6 +113,9 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /screener/results", "method": "GET", "url": f"{base_url}/screener/results", "critical": False},
         {"name": "POST /screener/run", "method": "POST", "url": f"{base_url}/screener/run", "body": {}, "critical": False},
 
+        # Reports (v3.1 / ST-11)
+        {"name": "GET /reports/monthly-pnl", "method": "GET", "url": f"{base_url}/reports/monthly-pnl", "critical": False},
+
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
     ]

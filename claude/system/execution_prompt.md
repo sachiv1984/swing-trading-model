@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.11
-**Last Updated:** 2026-04-25
+**Version:** 3.12
+**Last Updated:** 2026-04-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -599,6 +599,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 - **A `qa_evidence_EPIC-xx.md` entry is still required.** Create or append an entry recording: what the pre-met item covers, how verification was conducted (code review / prompt review), and DoQ sign-off. Pre-met does not mean unverified — the QA evidence log must document the pre-met verification explicitly.
 - Deviation check applies: if the prior implementation diverges from the current sprint's spec, file a deviation.
 
+**Reclassification backfill (CF-01):** If a story is reclassified from `delegated_frontend` to `autonomous` mid-sprint (per LL-v2.3-EX-02), the accepting engine must backfill `test_scenarios` in `execution_state.json` at the time of reclassification. `test_scenarios` must be populated with the test file paths (or set to `"pending — QA & Testing Owner to author before next sprint on this domain"` if no test files exist yet) before the story's QA evidence log entry is written. Do not proceed to STEP 3.2.A for the parent EPIC until `test_scenarios` is populated for all reclassified stories in that EPIC.
+
 #### 3.1.B If `delegated_backend` or `delegated_frontend`:
 
 1. Create or update the GitHub issue to `In Progress` with delegation note.
@@ -916,6 +918,8 @@ Invoke: `claude/system/lessons_learnt_prompt.md` (§3.3 — Sprint Execution Pha
 
 Output path: `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (Phase 3 section append — create file if absent)
 
+> **Output target (CF-02):** Output target is `lessons_learnt_cycle.md` — do **NOT** append to `lessons_learnt.md` (that is the Release Planning artefact, written by the roadmap and post-ship engines). Create `lessons_learnt_cycle.md` if absent. Writing to the wrong file silently corrupts the Release Planning artefact and prevents Phase 5 from reading the correct lessons.
+
 The shared prompt governs the structured table block format (§4.2), idempotency guard, action rules, and completion conditions. The execution-specific friction areas to focus on:
 - Delegation patterns (which classification kept needing humans — could any become autonomous?)
 - GitHub integration friction (CI behaviour, issue/PR lifecycle)
@@ -1029,6 +1033,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.12 | 2026-04-30 | ST-13 + ST-14 (EPIC-04, v3.1): Two carry-forward patches combined. (ST-13 / CF-01) §3.1.A — Reclassification backfill instruction added: when a story is reclassified from `delegated_frontend` to `autonomous` mid-sprint, the engine must backfill `test_scenarios` in `execution_state.json` at the time of reclassification; `test_scenarios` must be populated before the story's QA evidence log entry is written. (ST-14 / CF-02) §5.4 — Output target note added: output target is `lessons_learnt_cycle.md`; explicit warning NOT to append to `lessons_learnt.md` (Release Planning artefact); prevents silent corruption of the RP artefact. Authority: Head of Specs Team (ST-13 + ST-14, 2026-04-30). |
 | 3.11 | 2026-04-25 | ST-12 + ST-13 (EPIC-04, v3.0): Two deferred patches combined. (ST-12 / OA-v29-02) §2 execution_state.json ownership rule added for multi-EPIC sprints — first EPIC branch in execution order is designated owner; all others check for file existence before creating; merge conflict advisory references CLAUDE.md §8. (ST-13 / OA-v29-03) §3.1.A step 1 — test scenarios advisory added: when tests are created, populate test_scenarios in execution_state.json with test file paths; non-blocking; must be complete before STEP 3.2.A QA evidence log creation. Authority: Head of Specs Team (ST-12 + ST-13, 2026-04-25). |
 | 3.8 | 2026-04-18 | ST-05 (EPIC-03, v2.8): §5.3 sprint close template — "Deviations filed" clarified: spec deviations only (implementation diverges from spec; filed via /dev-file). Process notations, execution observations, and deferred items belong in execution_state.json notes or execution_escalations.md, not the deviation register. Closes v2.7 carry-forward CF-2 (deviation register terminology confusion). Authority: Head of Specs Team (ST-05, 2026-04-18). |
 | 3.7 | 2026-04-18 | ST-04 (EPIC-03, v2.8): §3.2.A Date field requirement note updated — explicitly states Date must be non-blank before PR can be opened (§3.2.B pre-condition, BLG-GOV-18) in addition to before the merge gate runs. Closes the loop between §3.2.A sign-off block authoring and §3.2.B PR-opening enforcement. Authority: Head of Specs Team (ST-04, 2026-04-18). |

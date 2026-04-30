@@ -57,6 +57,7 @@ for _fn in (
     "get_trade_reflection", "upsert_trade_reflection",
     "get_database_size_bytes", "delete_position",
     "download_ticker_data", "compute_atr_simple", "create_settings", "update_settings",
+    "get_monthly_pnl",
 ):
     if not hasattr(_db_stub, _fn):
         setattr(_db_stub, _fn, _MagicMock())
