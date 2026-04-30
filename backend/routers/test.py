@@ -113,6 +113,9 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /screener/results", "method": "GET", "url": f"{base_url}/screener/results", "critical": False},
         {"name": "POST /screener/run", "method": "POST", "url": f"{base_url}/screener/run", "body": {}, "critical": False},
 
+        # Pre-Trade Research (v3.1 / ST-05)
+        {"name": "GET /research/AAPL", "method": "GET", "url": f"{base_url}/research/AAPL?market=US", "critical": False},
+
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
     ]
