@@ -121,6 +121,7 @@ from services import (
     get_tax_year_report,
     build_tax_year_pdf,
     build_tax_year_csv,
+    get_monthly_pnl_report,
 )
 app = FastAPI(title=API_TITLE)
 
@@ -514,6 +515,23 @@ def get_tax_year_report_endpoint(year: Optional[int] = None, format: Optional[st
             content={"status": "error", "message": msg})
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+
+@app.get("/reports/monthly-pnl")
+def get_monthly_pnl_endpoint():
+    """
+    GET /reports/monthly-pnl
+
+    Returns month-by-month realised P&L for the current and prior calendar year.
+    Response is an array sorted descending by year then month.
+    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v3.1)
+    """
+    try:
+        data = get_monthly_pnl_report()
+        return {"status": "ok", "data": data}
+    except Exception as e:
+        return JSONResponse(status_code=500,
+            content={"status": "error", "message": str(e)})
 
 
 # ---------------------------------------------------------------------------
