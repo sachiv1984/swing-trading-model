@@ -6,7 +6,7 @@ name: Playwright E2E Acceptance Tests
 #    All 22 spec files using page.route() interception. No live backend required.
 #
 # 2. playwright-visual — CSS class/attribute assertions for visual AC (blocking gate)
-#    visual-snapshots.spec.js — 12 element-level tests verifying colours and structure
+#    visual-snapshots.spec.js — 14 element-level tests verifying colours and structure
 #    via CSS class assertions (no pixel comparison — reliable across Chromium versions).
 #
 # Spec inventory:
@@ -32,7 +32,7 @@ name: Playwright E2E Acceptance Tests
 #   weekly-digest.spec.js        — weekly digest page
 #   screener-uk-suffix.spec.js   — ST-06 (EPIC-03, v3.1): UK ticker .L suffix stripping
 #   earnings-calendar.spec.js    — ST-08 (EPIC-03, v3.1): Earnings Calendar UI (Screener/Watchlist/Positions)
-#   visual-snapshots.spec.js     — VS-01–VS-12 pixel snapshots (job 2)
+#   visual-snapshots.spec.js     — VS-01–VS-14 pixel snapshots (job 2)
 
 on:
   push:
