@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.12
-**Last Updated:** 2026-04-30
+**Version:** 3.13
+**Last Updated:** 2026-05-01
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -712,6 +712,16 @@ The consolidation block must include:
 
 This file is the evidence backing `qa_signed_off = true` in `execution_state.json`. A PR comment alone is not sufficient — this file must exist and the sign-off block must be complete before the merge gate runs.
 
+**Frontend testing gate (LL-v3.1-EX-01 — hard gate):**
+
+Before signing off any EPIC that introduces frontend-visible changes, verify for each observable AC (visible rendering, element presence/absence, colour, interaction, timing):
+
+1. **Check Playwright coverage:** Is there a Playwright test in `tests/e2e/` that exercises this AC? If yes: record the test file and scenario ID in the DoQ comments.
+2. **If no Playwright test:** Has a human staging run been performed? If yes: record the staging run date in the DoQ sign-off block.
+3. **If neither:** The AC must be noted in the sign-off comments as "code review only — backlog item required". File a backlog item (via `/backlog-add`) for the Playwright test before opening the PR. This is a **hard gate**: the PR may not be opened with observable AC marked "code review only" unless the backlog item reference is recorded in the sign-off comments.
+
+The autonomous class sign-off (BLG-GOV-19) is unavailable for any EPIC with frontend-visible changes — criterion 3 (no frontend-visible change) will not be met.
+
 **Autonomous DoQ sign-off class (BLG-GOV-19):**
 
 When all four of the following qualifying criteria are met, the engine may apply an autonomous DoQ sign-off without Director of Quality review. This class is defined to avoid unnecessary delegation blocks on pure governance or spec documentation EPICs where no behavioural verification is possible.
@@ -1033,6 +1043,7 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.13 | 2026-05-01 | §3.2.A Frontend testing gate (LL-v3.1-EX-01): hard gate added — any EPIC with frontend-visible changes must have Playwright test coverage for each observable AC, or human staging sign-off with date, before PR opens. "Code review only" without a filed backlog item blocks the PR. CLAUDE.md §2 corresponding rule updated. Also records test file paths SC-UK-01–04 (screener-uk-suffix.spec.js) and SC-EARN-01–09 (earnings-calendar.spec.js) created for ST-06 and ST-08 gaps. Authority: Head of Specs Team (2026-05-01). |
 | 3.12 | 2026-04-30 | ST-13 + ST-14 (EPIC-04, v3.1): Two carry-forward patches combined. (ST-13 / CF-01) §3.1.A — Reclassification backfill instruction added: when a story is reclassified from `delegated_frontend` to `autonomous` mid-sprint, the engine must backfill `test_scenarios` in `execution_state.json` at the time of reclassification; `test_scenarios` must be populated before the story's QA evidence log entry is written. (ST-14 / CF-02) §5.4 — Output target note added: output target is `lessons_learnt_cycle.md`; explicit warning NOT to append to `lessons_learnt.md` (Release Planning artefact); prevents silent corruption of the RP artefact. Authority: Head of Specs Team (ST-13 + ST-14, 2026-04-30). |
 | 3.11 | 2026-04-25 | ST-12 + ST-13 (EPIC-04, v3.0): Two deferred patches combined. (ST-12 / OA-v29-02) §2 execution_state.json ownership rule added for multi-EPIC sprints — first EPIC branch in execution order is designated owner; all others check for file existence before creating; merge conflict advisory references CLAUDE.md §8. (ST-13 / OA-v29-03) §3.1.A step 1 — test scenarios advisory added: when tests are created, populate test_scenarios in execution_state.json with test file paths; non-blocking; must be complete before STEP 3.2.A QA evidence log creation. Authority: Head of Specs Team (ST-12 + ST-13, 2026-04-25). |
 | 3.8 | 2026-04-18 | ST-05 (EPIC-03, v2.8): §5.3 sprint close template — "Deviations filed" clarified: spec deviations only (implementation diverges from spec; filed via /dev-file). Process notations, execution observations, and deferred items belong in execution_state.json notes or execution_escalations.md, not the deviation register. Closes v2.7 carry-forward CF-2 (deviation register terminology confusion). Authority: Head of Specs Team (ST-05, 2026-04-18). |

@@ -18,6 +18,8 @@
  *   VS-10  Sidebar shortcut hints — Positions page (n + r kbd hints)
  *   VS-11  Sidebar shortcut hints — Screener page (w + r kbd hints)
  *   VS-12  Filter bar — market segment control (All / US / UK)
+ *   VS-13  EarningsBadge — amber colour class when earnings ≤5 days (Screener)
+ *   VS-14  PositionEarningsCell — amber colour class when earnings ≤5 days (Positions table)
  *
  * Infrastructure: page.route() network interception — no live backend required.
  * HashRouter: all navigation via page.goto('/#/…')
@@ -307,4 +309,78 @@ test('VS-12: Market filter bar renders All / US / UK segments', async ({ page })
   await expect(allBtn).toBeVisible();
   await expect(usBtn).toBeVisible();
   await expect(ukBtn).toBeVisible();
+});
+
+// ---------------------------------------------------------------------------
+// VS-13 — EarningsBadge amber colour class when earnings ≤5 days (Screener)
+// ---------------------------------------------------------------------------
+test('VS-13: Screener EarningsBadge has text-amber-400 class when earnings ≤5 days', async ({ page }) => {
+  const d = new Date();
+  d.setDate(d.getDate() + 3);
+  const earningsData = { next_earnings_date: d.toISOString().split('T')[0], days_until_earnings: 3, fiscal_quarter: 'Q2', data_source: 'yahoo_finance' };
+
+  await stubCommon(page);
+  await page.route(`${API}/earnings/**`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(earningsData) })
+  );
+  const ts = new Date(Date.now() - 10_000).toISOString();
+  await gotoScreener(page, [makeRow({ ticker: 'AAPL', market: 'US' })], ts);
+
+  await page.waitForSelector('text=AAPL', { timeout: 8000 });
+
+  // EarningsBadge renders "3d" with text-amber-400 class when days ≤ 5
+  const badge = page.locator('span').filter({ hasText: /^3d$/ }).first();
+  await expect(badge).toBeVisible({ timeout: 5000 });
+  await expect(badge).toHaveClass(/text-amber-400/);
+});
+
+// ---------------------------------------------------------------------------
+// VS-14 — PositionEarningsCell amber colour class when earnings ≤5 days (Positions table)
+// ---------------------------------------------------------------------------
+test('VS-14: Positions table PositionEarningsCell has text-amber-400 class when earnings ≤5 days', async ({ page }) => {
+  const d = new Date();
+  d.setDate(d.getDate() + 2);
+  const earningsData = { next_earnings_date: d.toISOString().split('T')[0], days_until_earnings: 2, fiscal_quarter: 'Q1', data_source: 'yahoo_finance' };
+
+  await stubCommon(page);
+  await page.route(`${API}/earnings/**`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(earningsData) })
+  );
+  await page.route('**/positions*', (route) => {
+    const url = route.request().url();
+    if (url.includes('/positions/compliance')) {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+    }
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify([{
+        id: 'pos-vs14', ticker: 'NVDA', market: 'US', entry_price: 800, current_price: 850,
+        current_price_native: 850, stop_price: 760, stop_price_native: 760, shares: 10,
+        pnl: 500, pnl_percent: 6.25, holding_days: 5, grace_days_remaining: null,
+        status: 'open', entry_date: '2026-04-01', initial_stop: 760, tags: null,
+      }]),
+    });
+  });
+  await page.route('**/portfolio**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data: { cash: 5000 } }) })
+  );
+  await page.route('**/analytics/**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data: {} }) })
+  );
+  await page.route('**/compliance/**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+
+  await page.goto('/#/Positions');
+  await page.waitForLoadState('networkidle');
+
+  await page.waitForSelector('text=NVDA', { timeout: 8000 });
+  // Switch to table view to reveal PositionEarningsCell
+  await page.getByRole('button', { name: 'Table view' }).click();
+  await page.waitForSelector('table', { timeout: 5000 });
+
+  // PositionEarningsCell renders "⚠ 2d" with text-amber-400 class when days ≤ 5
+  const cell = page.locator('span').filter({ hasText: /⚠\s*2d/ }).first();
+  await expect(cell).toBeVisible({ timeout: 5000 });
+  await expect(cell).toHaveClass(/text-amber-400/);
 });

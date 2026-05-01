@@ -83,61 +83,67 @@
       "stories": [
         {
           "story_id": "ST-06",
-          "title": "Screener P1 bug fix — zero-result sectors crash",
+          "title": "Screener P1 bug fix — UK ticker display and watchlist promotion",
           "sprint": 1,
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 314,
-          "test_scenarios": [],
-          "acceptance_verified": false,
-          "deviations_filed": false
+          "test_scenarios": ["tests/e2e/screener-uk-suffix.spec.js"],
+          "acceptance_verified": true,
+          "deviations_filed": false,
+          "commit_sha": "pending"
         },
         {
           "story_id": "ST-07",
           "title": "Earnings Calendar backend endpoint",
           "sprint": 1,
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 315,
-          "test_scenarios": [],
-          "acceptance_verified": false,
-          "deviations_filed": false
+          "test_scenarios": ["backend/routers/test.py"],
+          "acceptance_verified": true,
+          "deviations_filed": false,
+          "commit_sha": "pending"
         },
         {
           "story_id": "ST-08",
-          "title": "Earnings Calendar UI widget",
+          "title": "Earnings Calendar frontend (reclassified: delegated_frontend → autonomous)",
           "sprint": 2,
-          "classification": "delegated_frontend",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "github_issue": 316,
-          "test_scenarios": [],
-          "acceptance_verified": false,
-          "deviations_filed": false
+          "test_scenarios": ["tests/e2e/earnings-calendar.spec.js", "tests/e2e/visual-snapshots.spec.js"],
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "commit_sha": "pending",
+          "reclassification_note": "Reclassified from delegated_frontend to autonomous per project policy (frontend delivered by engine). Playwright tests SC-EARN-01–09 authored post-merge to close observable AC gap. Visual snapshot tests VS-13–VS-14 cover amber colour-coding."
         },
         {
           "story_id": "ST-09",
           "title": "Screener accuracy test protocol",
           "sprint": 1,
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 317,
-          "test_scenarios": ["docs/testing/screener_test_data_library.md"],
-          "acceptance_verified": false,
-          "deviations_filed": false
+          "test_scenarios": ["docs/qa/screener_accuracy_protocol.md"],
+          "acceptance_verified": true,
+          "deviations_filed": false,
+          "commit_sha": "pending"
         },
         {
           "story_id": "ST-10",
           "title": "Screener scenario test data library",
           "sprint": 2,
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "github_issue": 318,
-          "test_scenarios": ["docs/testing/screener_test_data_library.md"],
-          "acceptance_verified": false,
-          "deviations_filed": false
+          "test_scenarios": ["docs/qa/screener_scenarios.md"],
+          "acceptance_verified": true,
+          "deviations_filed": false,
+          "commit_sha": "pending"
         }
       ],
-      "test_scenarios": ["docs/testing/screener_test_data_library.md"]
+      "test_scenarios": ["backend/routers/test.py", "tests/e2e/screener-uk-suffix.spec.js", "tests/e2e/earnings-calendar.spec.js", "tests/e2e/visual-snapshots.spec.js", "docs/qa/screener_accuracy_protocol.md", "docs/qa/screener_scenarios.md"]
     },
     {
       "epic_id": "EPIC-04",
@@ -196,7 +202,7 @@
       "test_scenarios": ["backend/routers/test.py"]
     }
   ],
-  "completed_items": ["ST-11", "ST-12", "ST-13", "ST-14"],
+  "completed_items": ["ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14"],
   "blocked_items": [],
   "delegated_items": []
 }

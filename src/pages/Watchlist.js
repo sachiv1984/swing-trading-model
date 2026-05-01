@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/base44Client";
+import { useEarnings } from "../hooks/useEarnings";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import { Plus, Trash2, Eye, Newspaper, ChevronDown, ChevronUp } from "lucide-react";
@@ -62,6 +63,15 @@ function priceDisplay(value, market) {
   if (value == null) return "—";
   const sym = market === "UK" ? "£" : "$";
   return `${sym}${Number(value).toFixed(2)}`;
+}
+
+function WatchlistEarningsBadge({ ticker, market }) {
+  const { data, loading } = useEarnings(ticker, market);
+  if (loading) return <span className="text-slate-600 text-xs">…</span>;
+  if (!data || data.days_until_earnings == null) return <span className="text-slate-600 text-xs">—</span>;
+  const days = data.days_until_earnings;
+  const cls = days <= 5 ? "text-amber-400 font-medium" : days <= 14 ? "text-yellow-500" : "text-slate-400";
+  return <span className={`text-xs ${cls}`} title={data.next_earnings_date}>{days}d</span>;
 }
 
 
@@ -213,6 +223,7 @@ export default function Watchlist() {
                     "Target Entry",
                     "Stop (Initial)",
                     "Stop (Current)",
+                    "Earnings",
                     "News",
                     "Actions",
                   ].map((h) => (
@@ -257,6 +268,9 @@ export default function Watchlist() {
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-300">
                       {priceDisplay(entry.current_stop_price, entry.market)}
+                    </td>
+                    <td className="px-5 py-4">
+                      <WatchlistEarningsBadge ticker={entry.ticker} market={entry.market} />
                     </td>
                     <td className="px-5 py-4">
                       {entry.market === "US" ? (

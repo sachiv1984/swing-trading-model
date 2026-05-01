@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEarnings } from "../hooks/useEarnings";
 import { base44, api } from "../api/base44Client";
 import {
   LayoutGrid,
@@ -35,6 +36,24 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
 import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
+
+function PositionEarningsCell({ ticker, market }) {
+  const { data, loading } = useEarnings(ticker, market);
+  if (loading) return <TableCell><span className="text-slate-600 text-xs">…</span></TableCell>;
+  if (!data || data.days_until_earnings == null) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
+  const days = data.days_until_earnings;
+  const isNear = days <= 5;
+  return (
+    <TableCell>
+      <span
+        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-400 border border-amber-500/25" : "text-slate-400"}`}
+        title={data.next_earnings_date}
+      >
+        {isNear ? `⚠ ${days}d` : `${days}d`}
+      </span>
+    </TableCell>
+  );
+}
 
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
@@ -263,6 +282,7 @@ export default function Positions() {
             <TableHead className="text-right">P&amp;L %</TableHead>
             <TableHead>Days</TableHead>
             <TableHead>Grace</TableHead>
+            <TableHead title="Days until next earnings">Earnings</TableHead>
             <TableHead>Actions</TableHead>
           </TableHeader>
 
@@ -357,6 +377,8 @@ export default function Positions() {
                       <span className="text-slate-600">—</span>
                     )}
                   </TableCell>
+
+                  <PositionEarningsCell ticker={position.ticker} market={position.market} />
 
                   <TableCell>
                     <div className="flex items-center gap-2">
