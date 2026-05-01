@@ -88,7 +88,7 @@
           "classification": "autonomous",
           "status": "done",
           "github_issue": 314,
-          "test_scenarios": [],
+          "test_scenarios": ["tests/e2e/screener-uk-suffix.spec.js"],
           "acceptance_verified": true,
           "deviations_filed": false,
           "commit_sha": "pending"
@@ -112,11 +112,11 @@
           "classification": "autonomous",
           "status": "done",
           "github_issue": 316,
-          "test_scenarios": [],
+          "test_scenarios": ["tests/e2e/earnings-calendar.spec.js", "tests/e2e/visual-snapshots.spec.js"],
           "acceptance_verified": true,
           "deviations_filed": true,
           "commit_sha": "pending",
-          "reclassification_note": "Reclassified from delegated_frontend to autonomous per project policy (frontend delivered by engine). test_scenarios: [] — no test files exist yet for frontend components; pending QA & Testing Owner authoring."
+          "reclassification_note": "Reclassified from delegated_frontend to autonomous per project policy (frontend delivered by engine). Playwright tests SC-EARN-01–09 authored post-merge to close observable AC gap. Visual snapshot tests VS-13–VS-14 cover amber colour-coding."
         },
         {
           "story_id": "ST-09",
@@ -143,7 +143,7 @@
           "commit_sha": "pending"
         }
       ],
-      "test_scenarios": ["backend/routers/test.py", "docs/qa/screener_accuracy_protocol.md", "docs/qa/screener_scenarios.md"]
+      "test_scenarios": ["backend/routers/test.py", "tests/e2e/screener-uk-suffix.spec.js", "tests/e2e/earnings-calendar.spec.js", "tests/e2e/visual-snapshots.spec.js", "docs/qa/screener_accuracy_protocol.md", "docs/qa/screener_scenarios.md"]
     },
     {
       "epic_id": "EPIC-04",
@@ -159,7 +159,8 @@
           "github_issue": 319,
           "test_scenarios": ["backend/routers/test.py"],
           "acceptance_verified": true,
-          "deviations_filed": false
+          "deviations_filed": false,
+          "commit_sha": "pending"
         },
         {
           "story_id": "ST-12",
@@ -170,7 +171,8 @@
           "github_issue": 320,
           "test_scenarios": [],
           "acceptance_verified": true,
-          "deviations_filed": false
+          "deviations_filed": false,
+          "commit_sha": "pending"
         },
         {
           "story_id": "ST-13",
@@ -181,7 +183,8 @@
           "github_issue": 321,
           "test_scenarios": [],
           "acceptance_verified": true,
-          "deviations_filed": false
+          "deviations_filed": false,
+          "commit_sha": "pending"
         },
         {
           "story_id": "ST-14",
@@ -192,7 +195,8 @@
           "github_issue": 322,
           "test_scenarios": [],
           "acceptance_verified": true,
-          "deviations_filed": false
+          "deviations_filed": false,
+          "commit_sha": "pending"
         }
       ],
       "test_scenarios": ["backend/routers/test.py"]

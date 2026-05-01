@@ -599,6 +599,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 - **A `qa_evidence_EPIC-xx.md` entry is still required.** Create or append an entry recording: what the pre-met item covers, how verification was conducted (code review / prompt review), and DoQ sign-off. Pre-met does not mean unverified — the QA evidence log must document the pre-met verification explicitly.
 - Deviation check applies: if the prior implementation diverges from the current sprint's spec, file a deviation.
 
+**Reclassification backfill (CF-01):** If a story is reclassified from `delegated_frontend` to `autonomous` mid-sprint (per LL-v2.3-EX-02), the accepting engine must backfill `test_scenarios` in `execution_state.json` at the time of reclassification. `test_scenarios` must be populated with the test file paths (or set to `"pending — QA & Testing Owner to author before next sprint on this domain"` if no test files exist yet) before the story's QA evidence log entry is written. Do not proceed to STEP 3.2.A for the parent EPIC until `test_scenarios` is populated for all reclassified stories in that EPIC.
+
 #### 3.1.B If `delegated_backend` or `delegated_frontend`:
 
 1. Create or update the GitHub issue to `In Progress` with delegation note.
@@ -925,6 +927,8 @@ If `docs/System_status_report.md` does not exist: create it with this sprint's s
 Invoke: `claude/system/lessons_learnt_prompt.md` (§3.3 — Sprint Execution Phase 3 Append)
 
 Output path: `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (Phase 3 section append — create file if absent)
+
+> **Output target (CF-02):** Output target is `lessons_learnt_cycle.md` — do **NOT** append to `lessons_learnt.md` (that is the Release Planning artefact, written by the roadmap and post-ship engines). Create `lessons_learnt_cycle.md` if absent. Writing to the wrong file silently corrupts the Release Planning artefact and prevents Phase 5 from reading the correct lessons.
 
 The shared prompt governs the structured table block format (§4.2), idempotency guard, action rules, and completion conditions. The execution-specific friction areas to focus on:
 - Delegation patterns (which classification kept needing humans — could any become autonomous?)

@@ -22,6 +22,7 @@ from database import (
     get_portfolio,
     get_positions,
     get_trade_history_by_tax_year,
+    get_monthly_pnl,
 )
 from utils.formatting import decimal_to_float
 
@@ -123,6 +124,29 @@ def get_tax_year_report(year: int) -> Dict:
         },
         "trades": trades_out,
     }
+
+
+def get_monthly_pnl_report() -> list:
+    """
+    Return month-by-month realised P&L for the current and prior calendar year.
+
+    Returns:
+        List of dicts matching reports_endpoints.md §GET /reports/monthly-pnl.
+    """
+    portfolio = get_portfolio()
+    if not portfolio:
+        return []
+    portfolio_id = str(portfolio['id'])
+    rows = get_monthly_pnl(portfolio_id)
+    return [
+        {
+            "year": int(r["year"]),
+            "month": int(r["month"]),
+            "realised_pnl_gbp": round(float(r["realised_pnl_gbp"]), 2),
+            "trade_count": int(r["trade_count"]),
+        }
+        for r in rows
+    ]
 
 
 _DISCLAIMER = (

@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.3
-**Last Updated:** 2026-03-20
+**Version:** 0.4
+**Last Updated:** 2026-04-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -12,6 +12,7 @@
 This document defines **Reports** domain endpoints.
 
 - Tax-year P&L statement: a structured, server-side generated financial record of all realised gains and losses within a specified UK tax year.
+- Monthly P&L summary: month-by-month breakdown of realised P&L for the current and prior calendar year.
 
 Global response envelopes, error shape, and conventions are defined in **conventions.md** and apply unless explicitly stated otherwise.
 
@@ -24,6 +25,7 @@ Global response envelopes, error shape, and conventions are defined in **convent
 ## Endpoints
 
 - [GET /reports/tax-year](#get-reportstax-year)
+- [GET /reports/monthly-pnl](#get-reportsmonthly-pnl)
 
 ---
 
@@ -380,10 +382,80 @@ GET /reports/tax-year?year=2025&format=pdf
 
 ---
 
+---
+
+## GET /reports/monthly-pnl
+
+**Purpose**
+
+Returns month-by-month realised P&L for the current and prior calendar year. Used by the Financial Reporting section to render a monthly breakdown table alongside the existing annual tax-year report.
+
+**Method & Path**
+
+- `GET /reports/monthly-pnl`
+
+**Idempotency**
+
+- Safe to refresh (read-only).
+
+---
+
+### Request
+
+No query parameters.
+
+---
+
+### Response (200)
+
+Response uses the standard success envelope from **conventions.md**.
+
+#### `data` schema
+
+Array of monthly summary objects, sorted descending by year then month. Only months with closed trades are included.
+
+```json
+[
+  { "year": 2026, "month": 4, "realised_pnl_gbp": 340.50, "trade_count": 3 },
+  { "year": 2026, "month": 3, "realised_pnl_gbp": -120.00, "trade_count": 1 },
+  { "year": 2025, "month": 12, "realised_pnl_gbp": 875.25, "trade_count": 5 }
+]
+```
+
+#### Field definitions
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `year` | integer | Calendar year of the trades |
+| `month` | integer | Calendar month (1=January, 12=December) |
+| `realised_pnl_gbp` | float | Sum of `pnl` for all closed trades with `exit_date` in this month. GBP. Fee-inclusive. Negative if net loss. |
+| `trade_count` | integer | Count of closed trades with `exit_date` in this month |
+
+**Scope:** Returns data for the current calendar year and the prior calendar year only (24 months maximum). Empty array if no closed trades exist in scope.
+
+---
+
+### Error Responses
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `500` | Internal server error |
+
+---
+
+### Example Request
+
+```
+GET /reports/monthly-pnl
+```
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-04-30 | Add GET /reports/monthly-pnl endpoint: month-by-month realised P&L for current and prior year. ST-11 — v3.1 release planning cycle 2026-04-29__release-v3.1. |
 | 0.3 | 2026-03-20 | Add `format=csv` to GET /reports/tax-year. CSV response schema documented: metadata block (5 rows) + trades table (17 human-readable columns). `format` validation rule tightened — unknown values now return 400. ST-13 — v2.1 release planning cycle 2026-03-18__release-v2.1. |
 | 0.2 | 2026-03-19 | Add `format=pdf` query parameter to GET /reports/tax-year. PDF response schema documented. ST-12 — v2.1 release planning cycle 2026-03-18__release-v2.1. |
 | 0.1 | 2026-03-17 | Initial version. GET /reports/tax-year. ST-03 — v2.0 release planning cycle 2026-03-17__release-v2.0. |
