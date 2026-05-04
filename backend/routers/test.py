@@ -127,6 +127,9 @@ async def test_all_endpoints(request: Request):
         # Reports (v3.1 / ST-11)
         {"name": "GET /reports/monthly-pnl", "method": "GET", "url": f"{base_url}/reports/monthly-pnl", "critical": False},
 
+        # Pre-Trade Research (v3.1 / ST-05)
+        {"name": "GET /research/AAPL", "method": "GET", "url": f"{base_url}/research/AAPL?market=US", "critical": False},
+
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
     ]

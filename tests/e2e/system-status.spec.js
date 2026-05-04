@@ -171,10 +171,10 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "48 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 48 endpoints"
-    // (totalTests || '48' → '48' before any test run)
-    await expect(page.getByText(/tests 48 endpoints/i)).toBeVisible({ timeout: 8000 });
+  test('SC-SS-01b: Pre-run state shows "49 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 49 endpoints"
+    // (totalTests || '49' → '49' before any test run)
+    await expect(page.getByText(/tests 49 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

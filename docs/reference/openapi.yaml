@@ -3164,5 +3164,39 @@ components:
                   fiscal_quarter: { type: string, nullable: true }
                   data_source: { type: string, example: "yahoo_finance" }
 
+  /research/{ticker}:
+    get:
+      summary: Aggregated pre-trade research snapshot
+      tags: [Research]
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema: { type: string }
+          description: Ticker symbol (e.g. AAPL, BARC.L)
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK], default: US }
+      responses:
+        "200":
+          description: Research snapshot; sub-source failures return null fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      ticker: { type: string }
+                      market: { type: string }
+                      signal: { type: object, nullable: true }
+                      regime: { type: object, nullable: true }
+                      sector: { type: object }
+                      screener: { type: object, nullable: true }
+                      earnings: { type: object, nullable: true }
+
 security:
   - ApiKey: []
