@@ -411,6 +411,71 @@ function TaxYearReport() {
   );
 }
 
+// ─── Monthly P&L Table ────────────────────────────────────────────────────────
+
+const MONTH_NAMES = [
+  "", "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+function MonthlyPnlTable() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["monthlyPnl"],
+    queryFn: () =>
+      apiFetch(`${base44.baseUrl}/reports/monthly-pnl`).then((r) => r.json()),
+    select: (res) => res?.data ?? [],
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+      </div>
+    );
+  }
+
+  const rows = data ?? [];
+
+  return (
+    <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
+      <div className="px-6 py-4 border-b border-slate-700/50">
+        <h3 className="text-sm font-semibold text-white">Monthly Realised P&L</h3>
+        <p className="text-xs text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
+      </div>
+      {rows.length === 0 ? (
+        <div className="px-6 py-10 text-center text-slate-500 text-sm">No closed trades in scope.</div>
+      ) : (
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-slate-700/50">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Month</th>
+              <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Realised P&L</th>
+              <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Trades</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-700/30">
+            {rows.map((row) => {
+              const pnl = row.realised_pnl_gbp ?? 0;
+              const pnlColor = pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-400";
+              return (
+                <tr key={`${row.year}-${row.month}`} className="hover:bg-slate-700/20 transition-colors">
+                  <td className="px-6 py-3 text-slate-200">
+                    {MONTH_NAMES[row.month]} {row.year}
+                  </td>
+                  <td className={`px-6 py-3 text-right font-medium ${pnlColor}`}>
+                    {formatGBP(pnl)}
+                  </td>
+                  <td className="px-6 py-3 text-right text-slate-400">{row.trade_count}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Reports Page ─────────────────────────────────────────────────────────
 
 // Map frontend period selector values to backend period parameter values
@@ -570,10 +635,22 @@ export default function Reports() {
         >
           Tax Year P&L
         </button>
+        <button
+          onClick={() => setActiveTab("monthly")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === "monthly"
+              ? "border-cyan-500 text-white"
+              : "border-transparent text-slate-400 hover:text-slate-300"
+          }`}
+        >
+          Monthly P&L
+        </button>
       </div>
 
       {activeTab === "taxYear" ? (
         <TaxYearReport />
+      ) : activeTab === "monthly" ? (
+        <MonthlyPnlTable />
       ) : isLoading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-slate-500" />

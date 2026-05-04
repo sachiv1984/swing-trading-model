@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { apiFetch } from "../api/base44Client";
+import { useEarnings } from "../hooks/useEarnings";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
@@ -76,6 +77,10 @@ function entryZoneLabel(proximity) {
 // Sub-components
 // ---------------------------------------------------------------------------
 
+function stripUkSuffix(ticker) {
+  return ticker ? ticker.replace(/\.L$/, "") : ticker;
+}
+
 function RegimeBadge({ status }) {
   if (status === "risk_on") {
     return (
@@ -103,10 +108,24 @@ function MarketBadge({ market }) {
   );
 }
 
+function EarningsBadge({ ticker, market }) {
+  const { data, loading } = useEarnings(ticker, market);
+  if (loading) return <span className="text-slate-600 text-xs">…</span>;
+  if (!data || data.days_until_earnings == null) return <span className="text-slate-600 text-xs">—</span>;
+  const days = data.days_until_earnings;
+  const cls =
+    days <= 5
+      ? "text-amber-400 font-medium"
+      : days <= 14
+      ? "text-yellow-500"
+      : "text-slate-400";
+  return <span className={`text-xs ${cls}`}>{days}d</span>;
+}
+
 function SkeletonRow() {
   return (
     <tr className="border-b border-slate-800/50">
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
         <td key={i} className="px-3 py-3">
           <div className="h-4 bg-slate-700/50 rounded animate-pulse" style={{ width: `${50 + (i * 13) % 40}%` }} />
         </td>
@@ -131,7 +150,7 @@ function WatchlistPopover({ result, onClose, onAdded }) {
     setError(null);
     try {
       const body = {
-        ticker: result.ticker,
+        ticker: result.market === "UK" ? stripUkSuffix(result.ticker) : result.ticker,
         market: result.market,
         target_entry_price: targetPrice !== "" ? parseFloat(targetPrice) : null,
       };
@@ -156,12 +175,12 @@ function WatchlistPopover({ result, onClose, onAdded }) {
   };
 
   return (
-    <td colSpan={9} className="p-0">
+    <td colSpan={10} className="p-0">
       <div className="mx-3 my-1 p-3 bg-slate-800 border border-slate-700 rounded-lg">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-sm font-medium text-white">
-              Add <span className="text-emerald-400">{result.ticker}</span> to Watchlist
+              Add <span className="text-emerald-400">{result.market === "UK" ? stripUkSuffix(result.ticker) : result.ticker}</span> to Watchlist
             </span>
             <span className="text-xs text-slate-400">
               {formatPrice(result.price, result.currency)}
@@ -208,7 +227,7 @@ function WatchlistPopover({ result, onClose, onAdded }) {
 function NewsPanel({ ticker, cache, onClose }) {
   const { loading, headlines = [] } = cache || { loading: true, headlines: [] };
   return (
-    <td colSpan={9} className="p-0">
+    <td colSpan={10} className="p-0">
       <div className="mx-3 my-1 p-3 bg-slate-800/60 border border-slate-700/50 rounded-lg">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-medium text-slate-300">
@@ -690,6 +709,7 @@ export default function Screener() {
                   <SortHeader label="Signal" field="signal_score" current={sortField} dir={sortDir} onSort={handleSort} />
                   <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden md:table-cell">Sector</th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden md:table-cell">Entry Zone</th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden lg:table-cell" title="Days until next earnings">Earnings</th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">News</th>
                 </tr>
               </thead>
@@ -708,7 +728,7 @@ export default function Screener() {
                             className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors"
                           >
                             <td className="px-3 py-3 font-mono font-medium text-white">
-                              {row.ticker}
+                              {row.market === "UK" ? stripUkSuffix(row.ticker) : row.ticker}
                             </td>
                             <td className="px-3 py-3">
                               <MarketBadge market={row.market} />
@@ -740,6 +760,9 @@ export default function Screener() {
                             </td>
                             <td className="px-3 py-3 text-slate-400 hidden md:table-cell">
                               {entryZoneLabel(row.proximity_to_entry_zone)}
+                            </td>
+                            <td className="px-3 py-3 hidden lg:table-cell">
+                              <EarningsBadge ticker={row.ticker} market={row.market} />
                             </td>
                             <td className="px-3 py-3">
                               <div className="flex items-center gap-2">

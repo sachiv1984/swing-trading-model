@@ -1,6 +1,6 @@
 {
   "active_cycle": "2026-04-29__release-v3.1",
-  "cycle_name": "Release Planning — v3.1 Arc 2 Start: Trade Plan Object & Pre-Trade Research Foundation",
+  "cycle_name": "Release Planning — v3.1 Arc 2 Trade Plan Foundation",
   "status": "Executing",
   "engine": "execution_prompt",
   "backlog_slice_path": "claude/cycles/2026-04-29__release-v3.1/stage4_backlog_slice.md",

@@ -218,6 +218,30 @@ def get_trade_history_by_tax_year(portfolio_id: str, year_start, year_end) -> Li
             return cur.fetchall()
 
 
+def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
+    """Aggregate realised P&L by calendar month for the current and prior year.
+
+    Used by GET /reports/monthly-pnl.
+    Spec: docs/specs/api_contracts/reports_endpoints.md §GET /reports/monthly-pnl
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT
+                   EXTRACT(YEAR FROM exit_date)::int AS year,
+                   EXTRACT(MONTH FROM exit_date)::int AS month,
+                   COALESCE(SUM(pnl), 0)::float AS realised_pnl_gbp,
+                   COUNT(*)::int AS trade_count
+                   FROM trade_history
+                   WHERE portfolio_id = %s
+                   AND exit_date >= date_trunc('year', CURRENT_DATE - INTERVAL '1 year')
+                   GROUP BY year, month
+                   ORDER BY year DESC, month DESC""",
+                (portfolio_id,)
+            )
+            return cur.fetchall()
+
+
 def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
     """Add a trade to history"""
     with get_db() as conn:

@@ -1,32 +1,33 @@
+**Owner:** PMO Lead
+**Class:** Planning Document (Class 4)
+**Status:** Active
+**Last Updated:** 2026-04-30
+**Cycle:** 2026-04-29__release-v3.1
+**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
 # Delegation Log — 2026-04-29__release-v3.1
 
-Records all reclassifications from `delegated_frontend` to `autonomous` per project policy
-(Base44 retired 2026-03-26; all frontend delivery is now engine-autonomous).
+---
+
+## DEL-20260430-01
+
+- **ST Item:** ST-08 — Earnings Calendar frontend (DS-04)
+- **EPIC:** EPIC-03
+- **Status:** Cancelled — reclassified to autonomous, delivered by engine (2026-04-30)
+- **Original Classification:** delegated_frontend
+- **Reclassified to:** autonomous
+- **Reason for Cancellation:** Project policy: frontend delivery is engine-handled (Base44 delegation retired 2026-03-26, per project memory). All `delegated_frontend` stories are reclassified to autonomous and delivered by the execution engine.
+- **CF-01 compliance:** `test_scenarios` in `execution_state.json` set to `[]` with note "pending — QA & Testing Owner to author before next sprint on this domain" per CF-01 instruction (no frontend component test files exist yet).
+- **Delivery commit:** included in EPIC-03 sprint 1+2 commit on EPIC-03 branch
 
 ---
 
-## DEL-20260430-01 — ST-08
+## DEL-20260430-02
 
-| Field | Value |
-|-------|-------|
-| Story | ST-08: Earnings Calendar column — Screener, Watchlist, Positions |
-| Original classification | delegated_frontend |
-| Reclassified to | autonomous |
-| Date | 2026-04-30 |
-| Branch | exec/2026-04-29__release-v3.1/EPIC-03 |
-| Delivered by | Sprint Execution Engine |
-| test_scenarios | [] (no prior scenarios; EPIC-03 QA evidence covers acceptance criteria) |
-
----
-
-## DEL-20260430-02 — ST-03
-
-| Field | Value |
-|-------|-------|
-| Story | ST-03: Trade Plan UI (TradePlan.js form + Positions navigation entry point) |
-| Original classification | delegated_frontend |
-| Reclassified to | autonomous |
-| Date | 2026-04-30 |
-| Branch | exec/2026-04-29__release-v3.1/EPIC-01 |
-| Delivered by | Sprint Execution Engine |
-| test_scenarios | [] (no prior scenarios; EPIC-01 QA evidence covers acceptance criteria) |
+- **ST Item:** ST-03 — Trade Plan UI (create / view / edit form)
+- **EPIC:** EPIC-01
+- **Status:** Cancelled — reclassified to autonomous, delivered by engine (2026-04-30)
+- **Original Classification:** delegated_frontend
+- **Reclassified to:** autonomous
+- **Reason for Cancellation:** Project policy: frontend delivery is engine-handled (Base44 delegation retired 2026-03-26, per project memory).
+- **Delivery commit:** included in EPIC-01 sprint 1+2 commit on EPIC-01 branch; Playwright coverage in tests/e2e/trade-plan.spec.js (SC-TP-01–07)

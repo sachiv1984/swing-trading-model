@@ -21,6 +21,7 @@ from routers import news as news_router
 from routers import ticker_universe as ticker_universe_router
 from routers import screener as screener_router
 from routers import trade_plans as trade_plans_router
+from routers import earnings as earnings_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers, sync_from_tickers_table
@@ -122,6 +123,7 @@ from services import (
     get_tax_year_report,
     build_tax_year_pdf,
     build_tax_year_csv,
+    get_monthly_pnl_report,
 )
 app = FastAPI(title=API_TITLE)
 
@@ -169,6 +171,7 @@ app.include_router(news_router.router)
 app.include_router(ticker_universe_router.router)
 app.include_router(screener_router.router)
 app.include_router(trade_plans_router.router)
+app.include_router(earnings_router.router)
 
 
 @app.on_event("startup")
@@ -516,6 +519,23 @@ def get_tax_year_report_endpoint(year: Optional[int] = None, format: Optional[st
             content={"status": "error", "message": msg})
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+
+@app.get("/reports/monthly-pnl")
+def get_monthly_pnl_endpoint():
+    """
+    GET /reports/monthly-pnl
+
+    Returns month-by-month realised P&L for the current and prior calendar year.
+    Response is an array sorted descending by year then month.
+    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v3.1)
+    """
+    try:
+        data = get_monthly_pnl_report()
+        return {"status": "ok", "data": data}
+    except Exception as e:
+        return JSONResponse(status_code=500,
+            content={"status": "error", "message": str(e)})
 
 
 # ---------------------------------------------------------------------------
