@@ -57,13 +57,15 @@ const TRADE_PLAN_SAVED = {
 
 const EXISTING_PLAN_FOR_POSITION = {
   status: 'ok',
-  data: {
-    id: PLAN_ID,
-    ticker: 'AAPL',
-    market: 'US',
-    position_id: POSITION_ID,
-    status: 'active',
-  },
+  data: [
+    {
+      id: PLAN_ID,
+      ticker: 'AAPL',
+      market: 'US',
+      position_id: POSITION_ID,
+      status: 'active',
+    },
+  ],
 };
 
 const NO_PLAN_FOR_POSITION = { status: 'ok', data: null };
@@ -159,8 +161,10 @@ test('SC-TP-03: Regime context input auto-populated from market status API', asy
   await mockMarketStatus(page, { status: 'ok', data: { regime_status: 'risk_off' } });
   await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
 
-  // The regime context input shows the value from the API
-  const regimeInput = page.getByPlaceholder(/e\.g\. risk_on/i);
+  // The regime context input shows the value from the API.
+  // Placeholder is dynamic (regimeFromHealth || "e.g. risk_on"), so when risk_off
+  // loads, placeholder becomes "risk_off". Locate by the Field label instead.
+  const regimeInput = page.locator('label').filter({ hasText: /regime context/i }).locator('xpath=../input');
   await expect(regimeInput).toHaveValue('risk_off', { timeout: 5000 });
 });
 
@@ -226,10 +230,9 @@ test('SC-TP-07a: Positions page still renders after Trade Plan routes are regist
   await page.goto('/#/Positions');
   await page.waitForLoadState('networkidle');
 
-  // No crash — page heading or empty state present
-  await expect(
-    page.locator('h1').filter({ hasText: /positions/i }).or(page.getByText('No open positions'))
-  ).toBeVisible({ timeout: 8000 });
+  // No crash — page heading is always present (h1 alone avoids strict-mode
+  // violation when both the heading and empty-state text are simultaneously visible)
+  await expect(page.locator('h1').filter({ hasText: /positions/i })).toBeVisible({ timeout: 8000 });
 });
 
 test('SC-TP-07b: Watchlist page still renders after Trade Plan routes are registered', async ({ page }) => {
@@ -241,7 +244,5 @@ test('SC-TP-07b: Watchlist page still renders after Trade Plan routes are regist
   await page.goto('/#/Watchlist');
   await page.waitForLoadState('networkidle');
 
-  await expect(
-    page.locator('h1').filter({ hasText: /watchlist/i }).or(page.getByText(/watchlist is empty/i))
-  ).toBeVisible({ timeout: 8000 });
+  await expect(page.locator('h1').filter({ hasText: /watchlist/i })).toBeVisible({ timeout: 8000 });
 });
