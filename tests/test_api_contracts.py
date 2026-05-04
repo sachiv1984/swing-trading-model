@@ -291,8 +291,9 @@ class TestSignalAndMarketEndpoints(unittest.TestCase):
         assert r.status_code == 200
         assert isinstance(r.json(), list)
 
+    @patch("main.get_live_fx_rate", return_value=1.27)
     @patch("utils.pricing.check_market_regime", return_value=MOCK_REGIME)
-    def test_market_status_returns_ok(self, _):
+    def test_market_status_returns_ok(self, _, __):
         body = _ok(CLIENT.get("/market/status"))
         assert "data" in body
 
