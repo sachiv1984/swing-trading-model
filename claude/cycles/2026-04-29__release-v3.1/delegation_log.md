@@ -26,6 +26,8 @@
 
 - **ST Item:** ST-03 — Trade Plan UI (create / view / edit form)
 - **EPIC:** EPIC-01
-- **Status:** Pending reclassification at EPIC-01 execution time
+- **Status:** Cancelled — reclassified to autonomous, delivered by engine (2026-04-30)
 - **Original Classification:** delegated_frontend
-- **Note:** Will be reclassified to autonomous when EPIC-01 executes, per same project policy. CF-01 `test_scenarios` backfill applies.
+- **Reclassified to:** autonomous
+- **Reason for Cancellation:** Project policy: frontend delivery is engine-handled (Base44 delegation retired 2026-03-26, per project memory).
+- **Delivery commit:** included in EPIC-01 sprint 1+2 commit on EPIC-01 branch; Playwright coverage in tests/e2e/trade-plan.spec.js (SC-TP-01–07)

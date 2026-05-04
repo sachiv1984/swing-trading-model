@@ -113,6 +113,14 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /screener/results", "method": "GET", "url": f"{base_url}/screener/results", "critical": False},
         {"name": "POST /screener/run", "method": "POST", "url": f"{base_url}/screener/run", "body": {}, "critical": False},
 
+        # Trade Plans (v3.1 / ST-02)
+        {"name": "GET /trade-plans", "method": "GET", "url": f"{base_url}/trade-plans", "critical": False},
+        {"name": "POST /trade-plans", "method": "POST", "url": f"{base_url}/trade-plans", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},
+        {"name": "GET /trade-plans/by-position/00000000-0000-0000-0000-000000000000", "method": "GET", "url": f"{base_url}/trade-plans/by-position/00000000-0000-0000-0000-000000000000", "critical": False},
+        {"name": "GET /trade-plans/00000000-0000-0000-0000-000000000001", "method": "GET", "url": f"{base_url}/trade-plans/00000000-0000-0000-0000-000000000001", "critical": False},
+        {"name": "PUT /trade-plans/00000000-0000-0000-0000-000000000001", "method": "PUT", "url": f"{base_url}/trade-plans/00000000-0000-0000-0000-000000000001", "body": {"status": "active"}, "critical": False},
+        {"name": "DELETE /trade-plans/00000000-0000-0000-0000-000000000001", "method": "DELETE", "url": f"{base_url}/trade-plans/00000000-0000-0000-0000-000000000001", "critical": False},
+
         # Earnings (v3.1 / ST-07)
         {"name": "GET /earnings/AAPL", "method": "GET", "url": f"{base_url}/earnings/AAPL", "critical": False},
 

@@ -48,7 +48,7 @@ const API_BASE = 'http://localhost:8000';
 // Shared helpers
 // ---------------------------------------------------------------------------
 
-/** Mock GET /trades and GET /settings, then navigate to PerformanceAnalytics. */
+/** Mock GET /trades and GET /settings, navigate to PerformanceAnalytics, then switch to All Time. */
 async function setupAnalytics(page) {
   // Catch-all to prevent unmocked endpoints from hanging
   await page.route(new RegExp(`${API_BASE}/`), (route) => {
@@ -59,7 +59,6 @@ async function setupAnalytics(page) {
     });
   });
 
-  // Override with specific mocks (more specific routes match first in Playwright)
   await page.route(`${API_BASE}/trades`, (route) => {
     route.fulfill({
       status: 200,
@@ -81,20 +80,12 @@ async function setupAnalytics(page) {
   await expect(
     page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: 'Performance Analytics' })
   ).toBeVisible({ timeout: 20000 });
-  // Wait for loading spinner to disappear
   await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 15000 });
-}
 
-/**
- * Switch time period filter to "All Time" so trades from all months are visible.
- * The select uses Radix UI under the hood.
- */
-async function switchToAllTime(page) {
+  // Switch to All Time so trades from all months are visible (Radix UI select)
   const trigger = page.locator('[class*="SelectTrigger"], button[role="combobox"]').first();
   await trigger.click();
-  const allTimeOption = page.locator('[role="option"]').filter({ hasText: 'All Time' });
-  await allTimeOption.click();
-  // Wait for re-render
+  await page.locator('[role="option"]').filter({ hasText: 'All Time' }).click();
   await page.waitForTimeout(500);
 }
 
@@ -107,7 +98,6 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
   // SC-CHART-IX-01a
   test('SC-CHART-IX-01a: tile with trades > 0 opens modal with correct title', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Locate the Jan 2026 tile (rendered as "2026-01")
     const tile = page.locator('[class*="aspect-square"]').filter({ hasText: '2026-01' });
@@ -126,7 +116,6 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
   // SC-CHART-IX-01b — Modal close: X button
   test('SC-CHART-IX-01b (X button): modal closes on X click', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     const tile = page.locator('[class*="aspect-square"]').filter({ hasText: '2026-01' });
     await tile.click();
@@ -140,7 +129,6 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
   // SC-CHART-IX-01b — Modal close: Escape key
   test('SC-CHART-IX-01b (Escape): modal closes on Escape key', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     const tile = page.locator('[class*="aspect-square"]').filter({ hasText: '2026-01' });
     await tile.click();
@@ -153,7 +141,6 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
   // SC-CHART-IX-01b — Modal close: backdrop click
   test('SC-CHART-IX-01b (backdrop): modal closes on backdrop click', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     const tile = page.locator('[class*="aspect-square"]').filter({ hasText: '2026-01' });
     await tile.click();
@@ -170,7 +157,6 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
   // We verify the Jan tile is clickable and inspect its class for pointer state.
   test('SC-CHART-IX-01c: non-clickable tiles have cursor-default CSS class', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // The Jan 2026 tile should be clickable (has trades) → cursor-pointer via hover:scale-105
     const janTile = page.locator('[class*="aspect-square"]').filter({ hasText: '2026-01' }).first();
@@ -187,7 +173,6 @@ test.describe('SC-CHART-IX-01 — Monthly Heatmap: Tile Click', () => {
   // SC-CHART-IX-01d — Trade data integrity in modal
   test('SC-CHART-IX-01d: modal row count and total P&L match known data', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     const tile = page.locator('[class*="aspect-square"]').filter({ hasText: '2026-01' });
     await tile.click();
@@ -218,7 +203,6 @@ test.describe('SC-CHART-IX-02 — Underwater Equity Curve: Zoom', () => {
   // SC-CHART-IX-02f — Reset not shown when not zoomed (baseline before other tests)
   test('SC-CHART-IX-02f: Reset button not shown at full range', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     await expect(page.locator('button').filter({ hasText: 'Reset' })).toHaveCount(0);
   });
@@ -226,7 +210,6 @@ test.describe('SC-CHART-IX-02 — Underwater Equity Curve: Zoom', () => {
   // SC-CHART-IX-02a — Scroll wheel zooms in
   test('SC-CHART-IX-02a: scroll wheel zoom in shows Reset button', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Locate the underwater chart container
     const chartContainer = page.locator('[data-testid="underwater-chart"]');
@@ -249,7 +232,6 @@ test.describe('SC-CHART-IX-02 — Underwater Equity Curve: Zoom', () => {
   // SC-CHART-IX-02b — + button zooms in
   test('SC-CHART-IX-02b: + zoom button shows Reset and narrows range', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Click + (ZoomIn button, title="Zoom in")
     await page.locator('button[title="Zoom in"]').click();
@@ -261,7 +243,6 @@ test.describe('SC-CHART-IX-02 — Underwater Equity Curve: Zoom', () => {
   // SC-CHART-IX-02c — − button zooms out
   test('SC-CHART-IX-02c: − zoom button reduces zoom level', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Zoom in twice first to create headroom for zoom out
     await page.locator('button[title="Zoom in"]').click();
@@ -279,7 +260,6 @@ test.describe('SC-CHART-IX-02 — Underwater Equity Curve: Zoom', () => {
   // SC-CHART-IX-02d — Minimum zoom boundary (ST-11 regression: zoom-out edge bug)
   test('SC-CHART-IX-02d: cannot zoom below MIN_POINTS=4 data points', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Zoom in many times — should stop at 4 data points
     for (let i = 0; i < 15; i++) {
@@ -300,7 +280,6 @@ test.describe('SC-CHART-IX-02 — Underwater Equity Curve: Zoom', () => {
   // SC-CHART-IX-02e — Reset restores full range
   test('SC-CHART-IX-02e: Reset button restores full range and disappears', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     await page.locator('button[title="Zoom in"]').click();
     await page.waitForTimeout(200);
@@ -324,7 +303,6 @@ test.describe('SC-CHART-IX-03 — Underwater Equity Curve: Pan', () => {
   // SC-CHART-IX-03a — Click-drag pans while zoomed
   test('SC-CHART-IX-03a: click-drag pan while zoomed does not crash', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Zoom in first
     await page.locator('button[title="Zoom in"]').click();
@@ -351,7 +329,6 @@ test.describe('SC-CHART-IX-03 — Underwater Equity Curve: Pan', () => {
   // SC-CHART-IX-03b — No pan when not zoomed
   test('SC-CHART-IX-03b: click-drag when not zoomed does not change range or show Reset', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Confirm not zoomed
     await expect(page.locator('button').filter({ hasText: 'Reset' })).toHaveCount(0);
@@ -383,7 +360,6 @@ test.describe('SC-CHART-IX-04 — Underwater Equity Curve: Hover Tooltip', () =>
   // SC-CHART-IX-04a — Tooltip shows correct fields on hover
   test('SC-CHART-IX-04a: hover tooltip shows date, drawdown%, equity, peak fields', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     const chartContainer = page.locator('[data-testid="underwater-chart"]');
     await expect(chartContainer).toBeVisible({ timeout: 10000 });
@@ -409,7 +385,6 @@ test.describe('SC-CHART-IX-04 — Underwater Equity Curve: Hover Tooltip', () =>
   // SC-CHART-IX-04b — Tooltip while zoomed
   test('SC-CHART-IX-04b: tooltip works while chart is zoomed', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Zoom in first
     await page.locator('button[title="Zoom in"]').click();
@@ -441,7 +416,6 @@ test.describe('SC-CHART-IX-05 — R-Multiple Analysis: Bar Hover Tooltip', () =>
   // SC-CHART-IX-05a — Tooltip shows R range, count, percentage
   test('SC-CHART-IX-05a: bar hover shows bucket label, trade count, % of closed trades', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Wait for R-Multiple Analysis section to render
     await expect(page.locator('text=R-Multiple Analysis')).toBeVisible({ timeout: 10000 });
@@ -468,7 +442,6 @@ test.describe('SC-CHART-IX-05 — R-Multiple Analysis: Bar Hover Tooltip', () =>
   // SC-CHART-IX-05b — Zero-count bar shows count correctly
   test('SC-CHART-IX-05b: all 7 R-multiple buckets rendered in BarChart', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     await expect(page.locator('text=R-Multiple Analysis')).toBeVisible({ timeout: 10000 });
 
@@ -494,7 +467,6 @@ test.describe('SC-CHART-IX-05 — R-Multiple Analysis: Bar Hover Tooltip', () =>
   // SC-CHART-IX-05c — Percentage sums (ST-11 regression: tooltip % bug)
   test('SC-CHART-IX-05c: bucket percentages sum to 100% (±1 rounding)', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     await expect(page.locator('text=R-Multiple Analysis')).toBeVisible({ timeout: 10000 });
 
@@ -543,7 +515,6 @@ test.describe('SC-CHART-IX-06 — Cross-Chart Data Integrity', () => {
   // SC-CHART-IX-06a — Heatmap modal P&L matches heatmap tile
   test('SC-CHART-IX-06a: modal total P&L matches the tile P&L value', async ({ page }) => {
     await setupAnalytics(page);
-    await switchToAllTime(page);
 
     // Get the P&L value shown on the Jan 2026 tile
     const tile = page.locator('[class*="aspect-square"]').filter({ hasText: '2026-01' });

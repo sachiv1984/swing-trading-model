@@ -41,7 +41,7 @@ The goal is a compounding improvement: each mistake makes the next run of that s
 *(No lessons recorded yet)*
 
 ### commit-check
-*(No lessons recorded yet)*
+| 2026-04-28 | commit-check | Pushed commits to remote branch without creating a PR — user had to ask each time. | After every `git push` on an exec branch, always create a PR immediately unless one is already open for that branch. Check with `gh pr list --head <branch>` before pushing and open one after if absent. |
 
 ### record-visual-qa
 *(No lessons recorded yet)*

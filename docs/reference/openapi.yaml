@@ -3042,6 +3042,99 @@ components:
         "409":
           description: A screener run is already in progress
 
+  /trade-plans:
+    post:
+      summary: Create a new trade plan
+      tags: [Trade Plans]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ticker, market]
+              properties:
+                ticker: { type: string }
+                market: { type: string, enum: [US, UK] }
+                position_id: { type: string, format: uuid, nullable: true }
+                setup_thesis: { type: string, nullable: true }
+                entry_rationale: { type: string, nullable: true }
+                regime_context_at_entry: { type: string, nullable: true }
+                r_target: { type: number, nullable: true }
+                early_exit_conditions: { type: string, nullable: true }
+                confirmation_criteria: { type: string, nullable: true }
+                checklist_completed: { type: boolean, default: false }
+                checklist_items: { type: array, items: { type: object } }
+                status: { type: string, enum: [draft, active, closed], default: draft }
+      responses:
+        "201":
+          description: Trade plan created
+    get:
+      summary: List trade plans
+      tags: [Trade Plans]
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema: { type: string, enum: [draft, active, closed] }
+      responses:
+        "200":
+          description: List of trade plans
+
+  /trade-plans/{id}:
+    get:
+      summary: Get trade plan by ID
+      tags: [Trade Plans]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Trade plan
+        "404":
+          description: Not found
+    put:
+      summary: Update trade plan
+      tags: [Trade Plans]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        "200":
+          description: Updated trade plan
+    delete:
+      summary: Delete trade plan
+      tags: [Trade Plans]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Deleted
+
+  /trade-plans/by-position/{position_id}:
+    get:
+      summary: Get trade plans linked to a position
+      tags: [Trade Plans]
+      parameters:
+        - name: position_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Trade plans for position
+
   /earnings/{ticker}:
     get:
       summary: Get next earnings date for a ticker
