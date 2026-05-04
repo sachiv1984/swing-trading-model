@@ -171,10 +171,10 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "26 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 26 endpoints"
-    // (totalTests || '26' → '26' before any test run)
-    await expect(page.getByText(/tests 35 endpoints/i)).toBeVisible({ timeout: 8000 });
+  test('SC-SS-01b: Pre-run state shows "49 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 49 endpoints"
+    // (totalTests || '49' → '49' before any test run)
+    await expect(page.getByText(/tests 49 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {
@@ -209,138 +209,66 @@ test.describe('SC-SS-02 — Run Tests button triggers POST /test/endpoints', () 
 });
 
 // ---------------------------------------------------------------------------
-// SC-SS-03 — Alerts category section visible after tests run
+// SC-SS-03 through SC-SS-07 — Post-run state assertions
+// Shared setup: mock endpoints, navigate, click Run Tests, wait for results.
 // ---------------------------------------------------------------------------
 
-test.describe('SC-SS-03 — Alerts category section', () => {
+test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
   test.beforeEach(async ({ page }) => {
     await mockBaseEndpoints(page);
     await page.goto('/#/SystemStatus');
     await page.waitForLoadState('networkidle', { timeout: 10000 });
-    // Click Run Tests and wait for results to render
     await page.getByRole('button', { name: /run tests/i }).click();
     await page.waitForTimeout(1000);
   });
 
+  // SC-SS-03 — Alerts category
   test('SC-SS-03a: Alerts category section header is visible after tests run', async ({ page }) => {
-    // The category toggle button accessible name includes the badge: "Alerts 3/3"
-    // Use a prefix match (no end anchor) to match regardless of badge content.
     await expect(page.getByRole('button', { name: /^alerts/i })).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-03b: Alerts section shows the correct endpoint count badge', async ({ page }) => {
-    // TEST_RESULTS_RESPONSE has 3 /alerts endpoints — badge shows "3/3".
-    // The badge text is part of the button's accessible name: "Alerts 3/3".
+    // TEST_RESULTS_RESPONSE has 3 /alerts endpoints — badge shows "3/3"
     await expect(page.getByRole('button', { name: /^alerts.*3\/3/i })).toBeVisible({ timeout: 8000 });
   });
-});
 
-// ---------------------------------------------------------------------------
-// SC-SS-04 — Notifications category section visible after tests run
-// ---------------------------------------------------------------------------
-
-test.describe('SC-SS-04 — Notifications category section', () => {
-  test.beforeEach(async ({ page }) => {
-    await mockBaseEndpoints(page);
-    await page.goto('/#/SystemStatus');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
-    await page.getByRole('button', { name: /run tests/i }).click();
-    await page.waitForTimeout(1000);
-  });
-
+  // SC-SS-04 — Notifications category
   test('SC-SS-04a: Notifications category section header is visible after tests run', async ({ page }) => {
-    // The category toggle button accessible name includes the badge: "Notifications 3/3"
     await expect(page.getByRole('button', { name: /^notifications/i })).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-04b: Notifications section shows the correct endpoint count badge', async ({ page }) => {
-    // TEST_RESULTS_RESPONSE has 3 /notifications endpoints — badge shows "3/3".
     await expect(page.getByRole('button', { name: /^notifications.*3\/3/i })).toBeVisible({ timeout: 8000 });
   });
-});
 
-// ---------------------------------------------------------------------------
-// SC-SS-05 — Digest category section visible after tests run
-// ---------------------------------------------------------------------------
-
-test.describe('SC-SS-05 — Digest category section', () => {
-  test.beforeEach(async ({ page }) => {
-    await mockBaseEndpoints(page);
-    await page.goto('/#/SystemStatus');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
-    await page.getByRole('button', { name: /run tests/i }).click();
-    await page.waitForTimeout(1000);
-  });
-
+  // SC-SS-05 — Digest category
   test('SC-SS-05a: Digest category section header is visible after tests run', async ({ page }) => {
-    // The category toggle button accessible name includes the badge: "Digest 3/3"
     await expect(page.getByRole('button', { name: /^digest/i })).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-05b: Digest section shows the correct endpoint count badge', async ({ page }) => {
-    // TEST_RESULTS_RESPONSE has 3 /digest endpoints — badge shows "3/3".
     await expect(page.getByRole('button', { name: /^digest.*3\/3/i })).toBeVisible({ timeout: 8000 });
   });
-});
 
-// ---------------------------------------------------------------------------
-// SC-SS-06 — Total endpoint count ≥ 26 shown after tests run
-// ---------------------------------------------------------------------------
-
-test.describe('SC-SS-06 — Total endpoint count display', () => {
-  test.beforeEach(async ({ page }) => {
-    await mockBaseEndpoints(page);
-    await page.goto('/#/SystemStatus');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
-    await page.getByRole('button', { name: /run tests/i }).click();
-    await page.waitForTimeout(1000);
-  });
-
+  // SC-SS-06 — Total endpoint count display
   test('SC-SS-06a: Total count of 28 is shown in the summary bar after tests run', async ({ page }) => {
-    // After testResults returns, the summary bar renders:
-    //   "Total: {totalTests}" where totalTests = testResults.summary.total = 28
-    // Use exact:true to avoid matching "28" inside other text (e.g., endpoint names)
     const totalLabel = page.locator('span').filter({ hasText: /^total:$/i });
     await expect(totalLabel).toBeVisible({ timeout: 8000 });
-
-    // The sibling span next to "Total:" shows the count value
     await expect(totalLabel.locator('xpath=following-sibling::span[1]')).toHaveText('28', { timeout: 8000 });
   });
 
   test('SC-SS-06b: Endpoint count in sub-header updates to actual count after tests run', async ({ page }) => {
-    // Before: "Testing 0 endpoints across all system modules" (totalTests=0)
-    // After:  "Testing 28 endpoints across all system modules"
-    // The p.text-slate-400 sub-header uses {totalTests} directly
     await expect(page.getByText(/testing 28 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
-});
 
-// ---------------------------------------------------------------------------
-// SC-SS-07 — Alerts/Notifications/Digest endpoints NOT in "Other" category
-// ---------------------------------------------------------------------------
-
-test.describe('SC-SS-07 — Targeted endpoints absent from "Other" category', () => {
-  test.beforeEach(async ({ page }) => {
-    await mockBaseEndpoints(page);
-    await page.goto('/#/SystemStatus');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
-    await page.getByRole('button', { name: /run tests/i }).click();
-    await page.waitForTimeout(1000);
-  });
-
+  // SC-SS-07 — Targeted endpoints absent from "Other" category
   test('SC-SS-07a: "Other" category section is NOT rendered (all endpoints are categorised)', async ({ page }) => {
-    // TEST_RESULTS_RESPONSE has no endpoints that fall through to "Other"
-    // The "Other" category section button should not exist
     await expect(page.getByRole('button', { name: /^other/i })).not.toBeVisible({ timeout: 3000 });
   });
 
   test('SC-SS-07b: /alerts/rules endpoint appears under Alerts, not Other', async ({ page }) => {
-    // Confirm Alerts section rendered (button name includes badge: "Alerts 3/3")
     const alertsBtn = page.getByRole('button', { name: /^alerts/i });
     await expect(alertsBtn).toBeVisible({ timeout: 8000 });
-
-    // The endpoint row for "GET /alerts/rules" should be visible within the Alerts section
-    // Categories are rendered in collapsible divs; by default isExpanded = true (checked against false)
     await expect(page.getByText('GET /alerts/rules')).toBeVisible({ timeout: 8000 });
   });
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEarnings } from "../hooks/useEarnings";
 import { base44, api } from "../api/base44Client";
 import {
   LayoutGrid,
@@ -31,10 +32,28 @@ import {
 import { cn } from "../lib/utils";
 import { friendlyErrorMessage } from "../lib/apiError";
 import { differenceInDays } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
 import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
+
+function PositionEarningsCell({ ticker, market }) {
+  const { data, loading } = useEarnings(ticker, market);
+  if (loading) return <TableCell><span className="text-slate-600 text-xs">…</span></TableCell>;
+  if (!data || data.days_until_earnings == null) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
+  const days = data.days_until_earnings;
+  const isNear = days <= 5;
+  return (
+    <TableCell>
+      <span
+        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-400 border border-amber-500/25" : "text-slate-400"}`}
+        title={data.next_earnings_date}
+      >
+        {isNear ? `⚠ ${days}d` : `${days}d`}
+      </span>
+    </TableCell>
+  );
+}
 
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
@@ -42,6 +61,7 @@ export default function Positions() {
   const [exitingPosition, setExitingPosition] = useState(null);
   const [reflectionTrade, setReflectionTrade] = useState(null);
 
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { data: positions, isLoading, isError, refetch } = useQuery({
@@ -263,6 +283,7 @@ export default function Positions() {
             <TableHead className="text-right">P&amp;L %</TableHead>
             <TableHead>Days</TableHead>
             <TableHead>Grace</TableHead>
+            <TableHead title="Days until next earnings">Earnings</TableHead>
             <TableHead>Actions</TableHead>
           </TableHeader>
 
@@ -358,6 +379,8 @@ export default function Positions() {
                     )}
                   </TableCell>
 
+                  <PositionEarningsCell ticker={position.ticker} market={position.market} />
+
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button
@@ -367,6 +390,16 @@ export default function Positions() {
                         onClick={() => setEditingPosition(position)}
                       >
                         <Edit2 className="w-4 h-4" />
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title="Trade Plan"
+                        className="h-8 w-8 text-cyan-500/70 hover:text-cyan-400 hover:bg-cyan-500/10"
+                        onClick={() => navigate(`/TradePlan?position_id=${position.id}&ticker=${position.ticker}&market=${position.market}`)}
+                      >
+                        <BookOpen className="w-4 h-4" />
                       </Button>
 
                       <Button

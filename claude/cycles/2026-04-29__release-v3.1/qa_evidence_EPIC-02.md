@@ -37,10 +37,10 @@
 | AC-3 | All sub-sources wrapped in try/except — any failure yields null field, never 5xx | Pass |
 | AC-4 | Earnings uses dynamic `from services.earnings_service import get_earnings` — graceful null if service not present on branch | Pass |
 | AC-5 | `backend/main.py` — research router imported and registered | Pass |
-| AC-6 | `backend/routers/test.py` — 1 new entry (GET /research/AAPL), total 36 | Pass |
-| AC-7 | `src/pages/SystemStatus.js` fallback count updated to 36 | Pass |
+| AC-6 | `backend/routers/test.py` — 1 new entry (GET /research/AAPL), total 49 after main merge (48 from prior EPICs + 1) | Pass |
+| AC-7 | `src/pages/SystemStatus.js` fallback count updated to 49 (post-merge conflict resolution) | Pass |
 
-**Sign-off:** Director of Quality — 2026-04-30 (code review)
+**Sign-off:** Director of Quality — 2026-04-30 (code review); counts corrected 2026-05-04 during merge resolution
 
 ---
 
