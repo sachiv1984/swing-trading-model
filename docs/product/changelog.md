@@ -3,9 +3,42 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-28
+**Last Updated:** 2026-05-05
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.1 — Arc 2 Trade Plan Foundation — 2026-05-05
+Cycle: 2026-04-29__release-v3.1
+Verified: Verified
+Verification report: claude/cycles/2026-04-29__release-v3.1/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | PT-01 Trade Plan Object: data model schema (trade_plans table + 3 indexes; data_model.md v2.5), 6-endpoint CRUD API (POST /trade-plans, GET /trade-plans/{id}, PUT /trade-plans/{id}, DELETE /trade-plans/{id}, GET /trade-plans/by-position/{position_id}, GET /trade-plans/by-ticker/{ticker}), frontend creation/edit/view form and plan-exists banner; test.py 43 entries | docs/specs/data_model.md#Trade Plan; docs/specs/api_contracts/trade_plan_endpoints.md v0.1 |
+| EPIC-02 | PT-02 Pre-Trade Research View (backend only): GET /research/{ticker} aggregation endpoint (signal, regime, sector, screener, earnings — all null-safe); pre_trade_research_endpoints.md v0.1; test.py 49 entries. Frontend deferred to v3.2 | docs/specs/api_contracts/pre_trade_research_endpoints.md v0.1 |
+| EPIC-03 | DS-04 Earnings Calendar: GET /earnings/{ticker} backend + openapi.yaml; EarningsBadge on screener/watchlist/positions (⚠ proximity warning ≤5 days). BLG-FE-20 UK screener fix: stripUkSuffix helper for display and watchlist POST. BLG-QA-10/11: screener_accuracy_protocol.md + screener_scenarios.md (10 scenarios SCN-01–10). E2E: earnings-calendar.spec.js (SC-EARN-01–09), screener-uk-suffix.spec.js (SC-UK-01–04) | docs/specs/api_contracts/earnings_endpoints.md v0.1; docs/specs/screener_results_schema.md; docs/qa/screener_accuracy_protocol.md; docs/qa/screener_scenarios.md |
+| EPIC-04 | BLG-FEAT-19 Monthly P&L report: GET /reports/monthly-pnl endpoint + MonthlyPnlTable in Reports.js. BLG-SEC-03/04+BLG-GOV-17: alpaca_key_rotation_policy.md, external_api_credential_inventory.md, external_api_dependency_register.md. CF-01/CF-02: execution_prompt.md v3.11→v3.13 (reclassification backfill instruction + STEP 8.5 output target fix) | docs/specs/api_contracts/reports_endpoints.md; docs/ops/; claude/system/execution_prompt.md v3.13 |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01–03] PT-01 — Trade Plan Object (full): data model, backend CRUD, frontend creation/edit/view flow
+- [ST-04–05] PT-02 — Pre-Trade Research View (backend): aggregation endpoint (frontend deferred v3.2)
+- [ST-06] BLG-FE-20 — UK screener ticker display fix and watchlist POST correction
+- [ST-07–08] DS-04 — Earnings Calendar (backend + frontend EarningsBadge)
+- [ST-09] BLG-QA-11 — Screener accuracy test protocol
+- [ST-10] BLG-QA-10 — Screener scenario test data library (10 scenarios)
+- [ST-11] BLG-FEAT-19 — Monthly P&L summary report
+- [ST-12] BLG-SEC-03/04 + BLG-GOV-17 — External API security policy docs and dependency risk register
+- [ST-13] CF-01 — execution_prompt.md §3.1.A reclassification backfill instruction (v3.11→v3.12)
+- [ST-14] CF-02 — execution_prompt.md STEP 8.5 output target fix (v3.12→v3.13)
+
+Sign-off: Product Owner — 2026-05-05
+QA sign-off: Director of Quality — 2026-05-05
 
 ---
 

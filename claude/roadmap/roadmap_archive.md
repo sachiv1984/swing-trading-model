@@ -1,13 +1,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-28
+**Last Updated:** 2026-05-05
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## v3.1 — Arc 2 Trade Plan Foundation (RA:v3.1)
+
+**Original roadmap location:** §1 Current Version + §8 Release Summary + §4 Priority 2 Arc 2 section (annotation RA:v3.1)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-05-05
+**Shipped version:** v3.1 (2026-05-05)
+**Cycle reference:** 2026-04-29__release-v3.1
+**Verification report:** `claude/cycles/2026-04-29__release-v3.1/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-05
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v3.1:2026-04-29__release-v3.1 — COMPLETE -->
+
+**Execution notes (v3.1 — Complete):**
+- Cycle: 2026-04-29__release-v3.1
+- Plan published: 2026-04-29
+- Cycle folder: claude/cycles/2026-04-29__release-v3.1/
+- Backlog slice: claude/cycles/2026-04-29__release-v3.1/stage4_backlog_slice.md
+- Status: ✅ Complete — shipped 2026-05-05
+- Verification: Verified (14/14 stories; no spec deviations; DoQ + PO sign-off 2026-05-05)
+- Scope delivered: EPIC-01 (PT-01 Trade Plan Object full — data model, backend CRUD, frontend), EPIC-02 (PT-02 Pre-Trade Research View backend), EPIC-03 (DS-04 Earnings Calendar, BLG-FE-20 UK screener fix, BLG-QA-10/11 screener QA docs), EPIC-04 (BLG-FEAT-19 Monthly P&L report, BLG-SEC-03/04+BLG-GOV-17 security docs, CF-01/CF-02 governance patches)
+- Scope deferred: PT-02 frontend (Pre-Trade Research View UI) → v3.2; PT-03 (Prospective Heat at Entry) → v3.2; PT-05 (Pre-Trade Entry Checklist) → v3.2+
 
 ---
 

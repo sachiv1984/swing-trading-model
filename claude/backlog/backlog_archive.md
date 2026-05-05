@@ -1,11 +1,43 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-28
+**Last Updated:** 2026-05-05
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FEAT-19 — Monthly P&L summary report
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-05
+**Shipped in:** v3.1 (ST-08, EPIC-03, cycle 2026-04-29__release-v3.1)
+**Evidence:** `docs/product/changelog.md` v3.1 entry; `claude/cycles/2026-04-29__release-v3.1/verification_report.md`
+
+Month-by-month breakdown of realised P&L. New `GET /reports/monthly-pnl` endpoint added. Consistent with existing annual tax-year P&L calculation. No regression to annual report confirmed in verification.
+
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Reporting
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260321-01 — promoted cycle 2026-04-21__scheduled (DL-021)
+**Effort:** S (~1 day)
+**Provisional-Target:** v3.1
+
+**Problem**
+Only annual (tax-year) P&L is available. In-year performance patterns are only visible through the analytics page; no structured monthly summary exists.
+
+**Scope**
+- Month-by-month breakdown of realised P&L complementing the annual tax year report
+- New endpoint or extension of existing reporting endpoint
+- Display in financial reporting section of the application
+
+**Acceptance Criteria**
+- Monthly P&L breakdown available for current and prior year
+- Consistent with existing realised P&L calculation
+- No regression to annual tax-year report
 
 ---
 

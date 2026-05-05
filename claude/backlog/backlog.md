@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-04-28 (groom backlog GROOM-20260428-01 — 7 COMPLETE items archived; BLG-GOV-11 target updated v3.0→v3.1; BLG-OPS-13 scope extended with 5 v3.0 endpoints)
+**Last Updated:** 2026-05-05 (GROOM-20260505-01 — BLG-FEAT-19 archived; BLG-FE-16 + BLG-FEAT-13 Provisional-Target updated v3.1→v3.2)
 **Last rebalance:** 2026-04-24 (cycle 2026-04-24__scheduled — DL-022 backlog adds; DL-023 defers)
 
 > ⚠️ Standing Notice
@@ -42,26 +42,7 @@
 
 ---
 
-### BLG-FEAT-19 — Monthly P&L summary report
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Reporting
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260321-01 — promoted cycle 2026-04-21__scheduled (DL-021)
-**Effort:** S (~1 day)
-**Provisional-Target:** v3.1
-
-**Problem**
-Only annual (tax-year) P&L is available. In-year performance patterns are only visible through the analytics page; no structured monthly summary exists.
-
-**Scope**
-- Month-by-month breakdown of realised P&L complementing the annual tax year report
-- New endpoint or extension of existing reporting endpoint
-- Display in financial reporting section of the application
-
-**Acceptance Criteria**
-- Monthly P&L breakdown available for current and prior year
-- Consistent with existing realised P&L calculation
-- No regression to annual tax-year report
+*BLG-FEAT-19 (Monthly P&L summary report) — ✅ COMPLETE v3.1 — archived to backlog_archive.md 2026-05-05*
 
 ---
 
@@ -75,7 +56,7 @@ Only annual (tax-year) P&L is available. In-year performance patterns are only v
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** IDEA-frontend-ux-20260321-02 — promoted cycle 2026-04-21__scheduled (DL-021)
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v3.1
+**Provisional-Target:** v3.2 (was v3.1 — not in v3.1 sprint scope; updated GROOM-20260505-01)
 
 **Problem**
 No catalogue of UI components exists. Arc 1 will add significant new frontend components. Without an inventory, Arc 1 frontend work risks duplicating existing components and design inconsistency compounds.
@@ -125,20 +106,21 @@ No catalogue of UI components exists. Arc 1 will add significant new frontend co
 **Priority:** P3 (Low)
 **Type:** Operations / Performance Baseline
 **Owner:** Infrastructure & Operations Owner
-**Source:** v2.9 post-ship closure 2026-04-24 (3 endpoints); v3.0 post-ship closure 2026-04-28 OA-v30-01 (5 additional endpoints)
-**Effort:** S (~1 day — 8 endpoints total)
+**Source:** v2.9 post-ship closure 2026-04-24 (3 endpoints); v3.0 post-ship closure 2026-04-28 OA-v30-01 (5 additional endpoints); v3.1 post-ship closure 2026-05-05 (10 additional endpoints)
+**Effort:** S–M (~1–2 days — 18 endpoints total)
 **Provisional-Target:** Before next performance baseline review
 
 **Problem**
-Eight endpoints shipped in v2.8/v2.9/v3.0 are absent from `docs/ops/api_performance_baseline.md`. Performance re-runs require a live environment and human coordination — baseline updates cannot be automated.
+Eighteen endpoints shipped in v2.8/v2.9/v3.0/v3.1 are absent from `docs/ops/api_performance_baseline.md`. Performance re-runs require a live environment and human coordination — baseline updates cannot be automated.
 
-**Scope (updated 2026-04-28):**
+**Scope (updated 2026-05-05):**
 - v2.8/v2.9 endpoints (3): `POST /ai/journal-summary`, `GET /ai/journal-summary/history`, `GET /v1beta1/news`
 - v3.0 endpoints (5): `GET /ticker-universe`, `POST /ticker-universe`, `DELETE /ticker-universe/{ticker}`, `GET /screener/results`, `POST /screener/run`
+- v3.1 endpoints (10): `POST /trade-plans`, `GET /trade-plans/{id}`, `PUT /trade-plans/{id}`, `DELETE /trade-plans/{id}`, `GET /trade-plans/by-position/{position_id}`, `GET /trade-plans/by-ticker/{ticker}`, `GET /research/{ticker}`, `GET /earnings/{ticker}`, `GET /reports/monthly-pnl`, plus any additional v3.1 routes
 - Run each against staging to obtain p50/p95 latencies and add to `docs/ops/api_performance_baseline.md`
 
 **Acceptance Criteria**
-- All 8 endpoints have p50 and p95 latency entries in the baseline document
+- All 18 endpoints have p50 and p95 latency entries in the baseline document
 - Entries consistent with existing baseline measurement methodology
 
 ---
@@ -166,7 +148,7 @@ Eight endpoints shipped in v2.8/v2.9/v3.0 are absent from `docs/ops/api_performa
 **Owner:** PMO Lead + Head of Specs Team
 **Source:** User session review — 2026-04-03
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v3.1 (was v3.0 — deferred; 2 consecutive cycle deferrals as of v3.0)
+**Provisional-Target:** v3.2 (was v3.1 — deferred; 3 consecutive cycle deferrals as of v3.1)
 
 **Problem**
 As cycles accumulate, documents are created in each cycle directory but there is no consolidated inventory of what exists across all closed cycles, nor a documented lifecycle for each artefact type (maintained vs. point-in-time). Without this review it is impossible to audit historical artefacts, identify stale documents, or enforce consistent maintenance practices going forward.
@@ -223,7 +205,25 @@ These are deliberate product decisions, not deferrals:
 
 ## 12. Last Release Slice
 
-## Last Release Slice — v3.0 ✅ COMPLETE
+## Last Release Slice — v3.1 ✅ COMPLETE
+
+<!-- release-plan-marker: RP:v3.1:2026-04-29__release-v3.1 — COMPLETE -->
+
+**Cycle:** 2026-04-29__release-v3.1 | **Status:** Complete — Shipped 2026-05-05 | **Published:** 2026-04-29
+**Backlog slice:** `claude/cycles/2026-04-29__release-v3.1/stage4_backlog_slice.md`
+
+| EPIC | Sprint | Stories | Theme |
+|------|--------|---------|-------|
+| EPIC-01 | Sprint 1+2 | ST-01, ST-02, ST-03 | PT-01 Trade Plan Object |
+| EPIC-02 | Sprint 2 | ST-04, ST-05 | PT-02 Pre-Trade Research View (backend) |
+| EPIC-03 | Sprint 1+2 | ST-06, ST-07, ST-08, ST-09, ST-10 | Arc 1 Completion & Screener Quality |
+| EPIC-04 | Sprint 1 | ST-11, ST-12, ST-13, ST-14 | Operations, Governance & Quick Wins |
+
+**Theme:** Arc 2 Trade Plan Foundation
+
+---
+
+## Prior Release Slice — v3.0 ✅ COMPLETE
 
 <!-- release-plan-marker: RP:v3.0:2026-04-25__release-v3.0 — COMPLETE -->
 
@@ -314,7 +314,7 @@ These are deliberate product decisions, not deferrals:
 **Owner:** Head of Engineering + Product Owner
 **Source:** User request — 2026-03-31
 **Effort:** M (~1–2 days)
-**Provisional-Target:** v3.1 (was v3.0 — deferred; not in v3.0 sprint scope)
+**Provisional-Target:** v3.2 (was v3.1 — deferred; not in v3.0 or v3.1 sprint scope; updated GROOM-20260505-01)
 
 **Problem**
 The application has no mechanism to roll out new features to a subset of users or environments. Any new capability ships immediately to all users with no ability to stage a rollout, run a controlled trial, or roll back a single feature without reverting the entire deployment. As the product grows this creates risk for experimental features and makes it impossible to validate new UI flows with a limited audience before full release.

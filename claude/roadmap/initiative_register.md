@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-28 (post-ship closure v3.0 — manage_roadmap STEP 11)
+**Last Updated:** 2026-05-05 (post-ship closure v3.1 — manage_roadmap STEP 11)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
@@ -34,7 +34,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 ## Priority 2 — Next Phase
 
-*No active Priority 2 initiatives as of 2026-04-28. v3.0 shipped Arc 1 remainder (DS-01 screener engine, DS-02 screener results page, DS-07 watchlist promotion, DS-06 screener news panel — Verified 2026-04-27). DS-04 (Earnings Calendar) deferred to v3.1 — no spec exists; independent feature. Next phase is v3.1 Arc 2: Pre-Trade Research & Planning.*
+*No active Priority 2 initiatives as of 2026-05-05. v3.1 shipped Arc 2 foundation: PT-01 Trade Plan Object (full), PT-02 Pre-Trade Research View (backend), DS-04 Earnings Calendar — Verified 2026-05-05. PT-02 frontend, PT-03, PT-05 deferred to v3.2. Next phase is v3.2 Arc 2 continuation: Pre-Trade Research View frontend + remaining Arc 2 features.*
 
 ---
 

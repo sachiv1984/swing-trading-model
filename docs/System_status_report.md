@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.2
+**Version:** 2.3
 **Last Updated:** 2026-05-05
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -9,7 +9,7 @@
 
 ## Sprint: 2026-04-29__release-v3.1
 **Date:** 2026-05-05
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-05-05
 
 ### Capabilities now live (merged this sprint)
 
@@ -34,7 +34,7 @@
 |-------|--------|
 | All 4 EPICs merged to main | ✅ PRs #323–#326 |
 | QA evidence sign-off | ✅ All 4 EPIC QA evidence files signed off (Director of Quality, 2026-04-30) |
-| Delivery verification | ⏳ Pending — run delivery verification |
+| Delivery verification | ✅ Verified 2026-05-05 |
 
 ## Sprint: 2026-04-25__release-v3.0
 **Date:** 2026-04-27

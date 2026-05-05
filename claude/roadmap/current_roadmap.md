@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-28 (post-ship closure v3.0 — manage_roadmap run)
+**Last Updated:** 2026-05-05 (post-ship closure v3.1)
 **Last rebalance:** 2026-04-24 (cycle 2026-04-24__scheduled — Standard-tier scheduled rebalance; DL-022 backlog adds; DL-023 defers)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,8 +10,8 @@
 
 ## 1. Current Version
 
-**v3.0** — Arc 1 Screener Engine & Results Page — Shipped 2026-04-27
-**Next planned release:** **v3.1** — [TBD]
+**v3.1** — Arc 2 Trade Plan Foundation — Shipped 2026-05-05
+**Next planned release:** **v3.2** — [TBD]
 
 -----
 
@@ -217,6 +217,7 @@ Today you find stocks through external research and add them to the watchlist ma
 *v2.8 shipped 2026-04-20 (Verified). RA:v2.8 annotation retired to roadmap_archive.md 2026-04-20 (post-ship closure v2.8).*
 *v2.9 shipped 2026-04-24 (Verified_with_deviations). RA:v2.9 annotation retired to roadmap_archive.md 2026-04-28 (post-ship closure v3.0).*
 *v3.0 shipped 2026-04-27 (Verified). RA:v3.0 annotation retired to roadmap_archive.md 2026-04-28 (post-ship closure v3.0).*
+*v3.1 shipped 2026-05-05 (Verified). RA:v3.1 annotation retired to roadmap_archive.md 2026-05-05 (post-ship closure v3.1).*
 
 -----
 
@@ -226,7 +227,7 @@ Items in this section are sequenced and ready for planning when the current vers
 
 ### Arc 1 — Stock Discovery & Screening (v2.9–v3.1)
 
-**Status (2026-04-28):** Substantially complete. DS-03, DS-05, DS-06 (watchlist) delivered v2.9. DS-01, DS-02, DS-06 (screener), DS-07 delivered v3.0. **DS-04 (Earnings Calendar) remains deferred to v3.1.**
+**Status (2026-05-05):** Complete. DS-03, DS-05, DS-06 (watchlist) delivered v2.9. DS-01, DS-02, DS-06 (screener), DS-07 delivered v3.0. **DS-04 (Earnings Calendar) delivered v3.1 — Arc 1 fully complete.**
 
 |Feature                          |ID   |Effort|Status                                                                                                                |
 |---------------------------------|-----|------|----------------------------------------------------------------------------------------------------------------------|
@@ -236,7 +237,7 @@ Items in this section are sequenced and ready for planning when the current vers
 |Screener Results Page            |DS-02|M     |✅ Shipped v3.0                                                                                                       |
 |Alpaca News Panel                |DS-06|S     |✅ Shipped v3.0 (watchlist v2.9; screener results v3.0 ST-07)                                                        |
 |Watchlist Promotion Flow         |DS-07|S     |✅ Shipped v3.0                                                                                                       |
-|Earnings Calendar Integration    |DS-04|M     |📋 Deferred → v3.1 (no spec exists; M effort; independent feature)                                                   |
+|Earnings Calendar Integration    |DS-04|M     |✅ Shipped v3.1                                                                                                       |
 
 **Arc 1 end-state target achieved (2026-04-27):** Each morning the screener surfaces a ranked list of momentum candidates that pass your strategy’s regime gate, ATR filter, and signal conditions. You review, promote to watchlist, and move to Arc 2 research. The top of the funnel is systematic, not ad hoc. DS-04 (earnings calendar) remains as v3.1 enhancement.
 
@@ -248,11 +249,11 @@ Items in this section are sequenced and ready for planning when the current vers
 
 |Feature                  |ID   |Effort|Sequencing note                                                                                      |
 |-------------------------|-----|------|-----------------------------------------------------------------------------------------------------|
-|Trade Plan Object        |PT-01|M     |Data model prerequisite for all other Arc 2 items and Arc 4; deliver first                           |
-|Pre-Trade Research View  |PT-02|M     |Unified per-ticker surface; depends on PT-01; consumes DS-03, DS-04, DS-06, market correlation (v2.7)|
-|Prospective Heat at Entry|PT-03|S     |`GET /portfolio/prospective-heat` shipped v2.0; frontend integration into PT-02 only                 |
-|Pre-Trade Entry Checklist|PT-05|M     |Embedded in Trade Plan flow; depends on PT-02                                                        |
-|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01                |
+|Trade Plan Object        |PT-01|M     |✅ Shipped v3.1 — data model, backend CRUD, frontend creation/edit/view flow                         |
+|Pre-Trade Research View  |PT-02|M     |Backend shipped v3.1 (GET /research/{ticker}); frontend deferred to v3.2; depends on PT-01           |
+|Prospective Heat at Entry|PT-03|S     |`GET /portfolio/prospective-heat` shipped v2.0; frontend integration into PT-02 only; deferred v3.2 |
+|Pre-Trade Entry Checklist|PT-05|M     |Embedded in Trade Plan flow; depends on PT-02; deferred v3.2+                                       |
+|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01               |
 
 **Arc 2 end-state target:** Every entry is preceded by a structured research view, a completed checklist, and a saved trade plan. The quality of entry decisions is captured and measurable, not assumed.
 
@@ -369,7 +370,11 @@ When evaluating new features:
 
 *RA:v3.0 retired — see roadmap_archive.md 2026-04-28.*
 
-|**v3.1–v3.3**|Arc 2: Pre-Trade Research & Planning                                  |Trade Plan object, pre-trade research view, entry checklist, setup quality score, prospective heat at entry — 📋 Planned                   |
+|**v3.1**     |Arc 2 Trade Plan Foundation                                           |PT-01 Trade Plan Object (full), PT-02 Pre-Trade Research View (backend), DS-04 Earnings Calendar, BLG-FE-20 UK screener fix, BLG-QA-10/11 screener QA docs, BLG-FEAT-19 Monthly P&L report, security docs, CF-01/CF-02 governance patches — ✅ Shipped 2026-05-05 — cycle: 2026-04-29__release-v3.1|
+
+*RA:v3.1 retired — see roadmap_archive.md 2026-05-05.*
+
+|**v3.2–v3.3**|Arc 2: Pre-Trade Research & Planning                                  |Trade Plan object, pre-trade research view, entry checklist, setup quality score, prospective heat at entry — 📋 Planned                   |
 |**v3.3–v3.5**|Arc 3: In-Trade Risk Management                                       |Position lifecycle manager, stop management workflow, drawdown prompts, concentration limits, Alpaca paper trading — 📋 Planned            |
 |**v3.5–v3.8**|Arc 4: Post-Trade Intelligence                                        |Plan vs reality analysis, journal pattern recognition, behavioural error taxonomy, outcome correlation — 📋 Planned                        |
 |**v3.8–v4.0**|Arc 5: Strategy Integrity                                             |Pre-entry rule validation, behavioural drift detection, red flag journal, strategy version comparison — 📋 Planned                         |

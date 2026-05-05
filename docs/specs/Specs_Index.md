@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-04-28
+**Last Updated:** 2026-05-05
 
 ---
 
@@ -101,7 +101,10 @@ It points to the **single canonical source**.
 - `conventions.md` — includes §13 Error Response Standard (canonical error envelope, HTTP status mapping)
 - `*_endpoints.md`
 - `market_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-16): GET /market/status
-- `reports_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-03-17, ST-03): GET /reports/tax-year — UK tax-year P&L statement. Dual sign-off: Head of Specs Team + Financial Reporting & Records Owner (2026-03-17).
+- `reports_endpoints.md` — Class 1 Canonical, v0.4, Active (created 2026-03-17, ST-03; updated v0.4 by ST-11 cycle 2026-04-29__release-v3.1): GET /reports/tax-year (UK tax-year P&L) + GET /reports/monthly-pnl (monthly P&L summary). Dual sign-off: Head of Specs Team + Financial Reporting & Records Owner.
+- `trade_plan_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-30, ST-01, cycle 2026-04-29__release-v3.1): POST /trade-plans, GET /trade-plans/{id}, PUT /trade-plans/{id}, DELETE /trade-plans/{id}, GET /trade-plans/by-position/{position_id}, GET /trade-plans/by-ticker/{ticker}. Sign-off: Sprint Execution Engine (autonomous class).
+- `pre_trade_research_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-30, ST-04, cycle 2026-04-29__release-v3.1): GET /research/{ticker} — aggregates signal, regime, sector, screener, earnings (all sub-sources null-safe). Sign-off: Sprint Execution Engine (autonomous class).
+- `earnings_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-30, ST-07, cycle 2026-04-29__release-v3.1): GET /earnings/{ticker} — upcoming earnings date via yfinance; proximity flag. Sign-off: Sprint Execution Engine (autonomous class).
 - `alerts_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-03-20, ST-02; updated v0.3 2026-03-24, ST-05): Alert rules CRUD, alert evaluation, notification feed, notification preferences, alert history (GET /alerts/history). Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
 - `digest_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-03, ST-08, cycle 2026-03-31__release-v2.4): GET /digest/weekly — 7-day trading digest (realised P&L, alert activity, compliance trend, staleness summary). Deterministic data fields only. Sign-off: QA Lead + DoQ (2026-04-01/03).
 - `health_endpoints.md` — Class 1 Canonical, v1.3, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3; updated v1.2 by ST-08 adding GET /health/database; updated v1.3 by ST-08/ST-09 cycle 2026-04-25__release-v3.0 adding external_apis + ai_journal sections to GET /health): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.3, 2026-04-26).
@@ -461,6 +464,44 @@ Identified during delivery verification (verification_report.md §6 — TSG-v30-
 **Status:** Not applicable — functional E2E and unit test coverage confirmed in CI
 **Owner:** QA & Testing Owner
 **Assessment:** EPIC-02 and EPIC-03 `test_scenarios` fields not populated during mid-sprint reclassification from `delegated_frontend` to `autonomous`. All relevant Playwright E2E specs (screener.spec.js, visual-snapshots.spec.js, keyboard-shortcuts.spec.js) and unit test files (test_health_extensions.py, test_ai_audit_service.py) ran and passed in CI. Administrative gap only — no functional AC coverage missing. No backlog item required. Root cause addressed as deferred process improvement to execution_prompt.md §3.1.A.
+
+---
+
+## 17. Test Coverage Gaps — v3.1 (2026-04-29__release-v3.1)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v31-01 through TSG-v31-04).
+
+### 17.1 TSG-v31-01 — EPIC-01: trade-plan.spec.js not registered in test_scenarios; backend CRUD integration scenarios absent
+
+**Identified:** 2026-05-05 (delivery verification 2026-04-29__release-v3.1)
+**Status:** Open — backlog item TEST-GAP-EPIC-01
+**Owner:** QA & Testing Owner
+**Gap:** `tests/e2e/trade-plan.spec.js` (SC-TP-01–07) was created during EPIC-01 delivery but not registered in `execution_state.json test_scenarios`. Backend CRUD integration test scenarios for `/trade-plans` endpoints also warranted beyond the existing smoke test.
+**Required action:** QA & Testing Owner to verify Playwright test coverage completeness and register in test_scenarios. Author backend CRUD integration scenarios.
+**Resolution target:** v3.2 (before next sprint touching Trade Plan domain)
+
+### 17.2 TSG-v31-02 — EPIC-02: no Playwright coverage for GET /research/{ticker}
+
+**Identified:** 2026-05-05 (delivery verification 2026-04-29__release-v3.1)
+**Status:** Not applicable — frontend deferred to v3.2; backend smoke test sufficient
+**Owner:** QA & Testing Owner
+**Assessment:** Pre-Trade Research View frontend deferred to v3.2. Backend aggregation endpoint covered by smoke test (test.py 49 entries). Playwright coverage not applicable for a backend-only delivery. Revisit when PT-02 frontend ships in v3.2.
+
+### 17.3 TSG-v31-03 — EPIC-03: earnings-calendar.spec.js and screener-uk-suffix.spec.js not registered in test_scenarios
+
+**Identified:** 2026-05-05 (delivery verification 2026-04-29__release-v3.1)
+**Status:** Open — backlog item TEST-GAP-EPIC-03
+**Owner:** QA & Testing Owner
+**Gap:** `tests/e2e/earnings-calendar.spec.js` (SC-EARN-01–09) and `tests/e2e/screener-uk-suffix.spec.js` (SC-UK-01–04) created during EPIC-03 delivery but not registered in `execution_state.json test_scenarios`. Administrative registration gap.
+**Required action:** QA & Testing Owner to verify coverage completeness and register both test files in test_scenarios per `execution_prompt.md §3.1.A` advisory.
+**Resolution target:** v3.2 (before next sprint touching Earnings/Screener domain)
+
+### 17.4 TSG-v31-04 — EPIC-04: no test scenarios
+
+**Identified:** 2026-05-05 (delivery verification 2026-04-29__release-v3.1)
+**Status:** Not applicable — governance documentation and prompt patches are not testable via scenario files
+**Owner:** N/A
+**Assessment:** All EPIC-04 stories were governance, documentation, and prompt patch deliveries. No behavioural test scenarios applicable.
 
 ---
 
