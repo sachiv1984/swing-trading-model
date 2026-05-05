@@ -29,6 +29,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
+# Earlier test files (e.g. test_service_coverage.py) inject a stub into
+# sys.modules["database"] that predates EPIC-01 and lacks trade_plan functions.
+# Evict it here so Python loads the real backend/database.py instead.
+sys.modules.pop("database", None)
+
 from main import app  # noqa: E402
 
 CLIENT = TestClient(app, raise_server_exceptions=False)
