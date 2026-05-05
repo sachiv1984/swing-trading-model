@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-05 (post-ship closure v3.1 — manage_roadmap STEP 11)
+**Last Updated:** 2026-05-05 (rebalance 2026-05-05__scheduled — DL-024; no initiative changes)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 
