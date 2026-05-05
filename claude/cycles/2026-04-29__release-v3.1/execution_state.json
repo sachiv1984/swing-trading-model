@@ -1,15 +1,14 @@
 {
   "cycle_id": "2026-04-29__release-v3.1",
-  "sprint_goal": "Establish the Arc 2 foundation by delivering the Trade Plan object (data model spec, backend CRUD, and frontend creation flow), the Pre-Trade Research View backend aggregation endpoint, and completing Arc 1 with the Earnings Calendar integration — alongside the P1 UK screener bug fix, security and governance documentation, and two governance prompt patches from carry-forward.",
+  "sprint_goal": "Establish the Arc 2 foundation by delivering the Trade Plan object (data model spec, backend CRUD, and frontend creation flow), the Pre-Trade Research View backend aggregation endpoint, and completing Arc 1 with the Earnings Calendar integration \u2014 alongside the P1 UK screener bug fix, security and governance documentation, and two governance prompt patches from carry-forward.",
   "backlog_slice_source": "claude/cycles/2026-04-29__release-v3.1/stage4_backlog_slice.md",
   "invoked_utc": "2026-04-30T00:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-05-04T00:00:00Z",
-
+  "status": "Sealed",
+  "last_updated_utc": "2026-05-05T00:00:00Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-04-29__release-v3.1/EPIC-01",
       "pr_number": 325,
       "pr_status": "merged",
@@ -34,10 +33,10 @@
             "docs/specs/data_model.md#Trade Plan",
             "docs/specs/api_contracts/trade_plan_endpoints.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-01.md",
-          "notes": "data_model.md v2.4→v2.5 (DS-04 section); trade_plan_endpoints.md v0.1 created; openapi.yaml updated with 7 path entries."
+          "notes": "data_model.md v2.4\u2192v2.5 (DS-04 section); trade_plan_endpoints.md v0.1 created; openapi.yaml updated with 7 path entries."
         },
         "ST-02": {
           "title": "Trade Plan backend: migration, CRUD endpoints, test registration",
@@ -56,10 +55,10 @@
             "docs/specs/api_contracts/trade_plan_endpoints.md",
             "docs/specs/data_model.md#Trade Plan"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-01.md",
-          "notes": "database.py +7 functions; backend/routers/trade_plans.py created; main.py registered; test.py 40→43 entries; SystemStatus.js fallback 43."
+          "notes": "database.py +7 functions; backend/routers/trade_plans.py created; main.py registered; test.py 40\u219243 entries; SystemStatus.js fallback 43."
         },
         "ST-03": {
           "title": "Trade Plan frontend: creation flow and detail view",
@@ -77,21 +76,23 @@
           "spec_references": [
             "docs/specs/api_contracts/trade_plan_endpoints.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-01.md",
-          "notes": "Reclassified delegated_frontend→autonomous (DEL-20260430-02). src/pages/TradePlan.js created; pages.config.js registered; Positions.js BookOpen button with navigate to /TradePlan."
+          "notes": "Reclassified delegated_frontend\u2192autonomous (DEL-20260430-02). src/pages/TradePlan.js created; pages.config.js registered; Positions.js BookOpen button with navigate to /TradePlan."
         }
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-04-29__release-v3.1/EPIC-02",
       "pr_number": 326,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-29__release-v3.1/qa_evidence_EPIC-02.md",
-      "test_scenarios": ["backend/routers/test.py"],
+      "test_scenarios": [
+        "backend/routers/test.py"
+      ],
       "stories": {
         "ST-04": {
           "title": "Pre-Trade Research View API contract spec authoring",
@@ -106,8 +107,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/pre_trade_research_endpoints.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "docs/specs/api_contracts/pre_trade_research_endpoints.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-02.md",
           "notes": "pre_trade_research_endpoints.md v0.1 created; openapi.yaml +1 path (/research/{ticker})."
@@ -125,8 +128,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/pre_trade_research_endpoints.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "docs/specs/api_contracts/pre_trade_research_endpoints.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-02.md",
           "notes": "backend/routers/research.py created; main.py registered; test.py +1 entry (GET /research/AAPL); SystemStatus.js fallback 49."
@@ -134,13 +139,15 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-04-29__release-v3.1/EPIC-03",
       "pr_number": 324,
       "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-04-29__release-v3.1/qa_evidence_EPIC-03.md",
-      "test_scenarios": ["docs/testing/screener_test_data_library.md"],
+      "test_scenarios": [
+        "docs/testing/screener_test_data_library.md"
+      ],
       "stories": {
         "ST-06": {
           "title": "Fix screener UK ticker display and watchlist promotion (BLG-FE-20)",
@@ -155,8 +162,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/screener_results_schema.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "docs/specs/screener_results_schema.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-03.md",
           "notes": ""
@@ -174,8 +183,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/earnings_endpoints.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "docs/specs/api_contracts/earnings_endpoints.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-03.md",
           "notes": ""
@@ -193,11 +204,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/earnings_endpoints.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "docs/specs/api_contracts/earnings_endpoints.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-03.md",
-          "notes": "Reclassified delegated_frontend→autonomous (DEL-20260430-01)."
+          "notes": "Reclassified delegated_frontend\u2192autonomous (DEL-20260430-01)."
         },
         "ST-09": {
           "title": "Screener accuracy test protocol (BLG-QA-11)",
@@ -213,7 +226,7 @@
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
           "spec_references": [],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-03.md",
           "notes": ""
@@ -232,7 +245,7 @@
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
           "spec_references": [],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-03.md",
           "notes": ""
@@ -240,7 +253,7 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-04-29__release-v3.1/EPIC-04",
       "pr_number": 323,
       "pr_status": "merged",
@@ -261,8 +274,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/reports_endpoints.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "docs/specs/api_contracts/reports_endpoints.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-04.md",
           "notes": ""
@@ -281,13 +296,13 @@
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
           "spec_references": [],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-04.md",
           "notes": ""
         },
         "ST-13": {
-          "title": "execution_prompt.md §3.1.A reclassification backfill instruction (CF-01)",
+          "title": "execution_prompt.md \u00a73.1.A reclassification backfill instruction (CF-01)",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -299,8 +314,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md#§3.1.A"],
-          "deviations_filed": false,
+          "spec_references": [
+            "claude/system/execution_prompt.md#\u00a73.1.A"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-04.md",
           "notes": ""
@@ -318,8 +335,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-04-30T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md#STEP 8.5"],
-          "deviations_filed": false,
+          "spec_references": [
+            "claude/system/execution_prompt.md#STEP 8.5"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "qa_evidence_EPIC-04.md",
           "notes": ""
@@ -327,18 +346,35 @@
       }
     }
   },
-
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01","ST-02","ST-03","ST-04","ST-05","ST-06","ST-07","ST-08","ST-09","ST-10","ST-11","ST-12","ST-13","ST-14"],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-14"
+  ],
   "open_escalations": [],
-
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-03", "EPIC-04"],
-    "epics_pending": ["EPIC-02"],
-    "all_merged": false
+    "epics_merged": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04"
+    ],
+    "epics_pending": [],
+    "all_merged": true
   },
-
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-05-05T00:00:00Z"
 }

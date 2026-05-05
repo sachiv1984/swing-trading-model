@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-04-29__release-v3.1",
-  "cycle_name": "Release Planning — v3.1 Arc 2 Trade Plan Foundation",
-  "status": "Executing",
+  "cycle_name": "Release Planning \u2014 v3.1 Arc 2 Trade Plan Foundation",
+  "status": "Sprint_Complete",
   "engine": "execution_prompt",
   "backlog_slice_path": "claude/cycles/2026-04-29__release-v3.1/stage4_backlog_slice.md",
   "sprint_goal_path": "claude/cycles/2026-04-29__release-v3.1/sprint_goal.md",
@@ -19,7 +19,7 @@
   "closure_record": "",
   "closure_status": "",
   "execution_state_path": "claude/cycles/2026-04-29__release-v3.1/execution_state.json",
-  "last_sync_utc": "2026-04-30T00:00:00Z",
+  "last_sync_utc": "2026-05-05T00:00:00Z",
   "last_audit_id": "AUD-2026-04-20",
   "last_audit_utc": "2026-04-21T00:00:00Z",
   "last_audit_overall_score": 84,
@@ -32,13 +32,13 @@
   "last_rebalance_cycle": "2026-04-28__scheduled",
   "last_rebalance_utc": "2026-04-29T00:00:00Z",
   "last_scheduled_rebalance_utc": "2026-04-29T00:00:00Z",
-  "last_rebalance_outcome": "No-change roadmap + 5 Backlog Adds (BLG-SEC-03/04, BLG-GOV-17, BLG-QA-10/11) + 3 Defers (BLG-FEAT-13→§9, BLG-GOV-11→v3.2, BLG-FE-16→v3.2) + 5 Rejected + 2 stale closed (DL-024, Standard tier)",
+  "last_rebalance_outcome": "No-change roadmap + 5 Backlog Adds (BLG-SEC-03/04, BLG-GOV-17, BLG-QA-10/11) + 3 Defers (BLG-FEAT-13\u2192\u00a79, BLG-GOV-11\u2192v3.2, BLG-FE-16\u2192v3.2) + 5 Rejected + 2 stale closed (DL-024, Standard tier)",
   "last_meta_review_cycle": "2026-04-21__scheduled",
   "rebalance_cycles_since_meta_review": 2,
   "last_manage_roadmap_utc": "2026-04-28T01:00:00Z",
-  "last_manage_roadmap_outcome": "2 items retired (RA:v3.0 + RA:v2.9); 0 stale flags; initiative_register.md Priority 2 updated to reflect Arc 1 completion; DS-04 kept active (deferred v3.1); Arc 1 §4 table updated with shipped status",
+  "last_manage_roadmap_outcome": "2 items retired (RA:v3.0 + RA:v2.9); 0 stale flags; initiative_register.md Priority 2 updated to reflect Arc 1 completion; DS-04 kept active (deferred v3.1); Arc 1 \u00a74 table updated with shipped status",
   "last_groom_backlog_utc": "2026-04-28T01:30:00Z",
-  "last_groom_backlog_outcome": "7 items archived (Complete v3.0: BLG-FEAT-18, BLG-FE-19, BLG-FE-18, BLG-AI-02, TEST-GAP-ST14, BLG-OPS-14, BLG-OPS-12); 5 active items retained; BLG-GOV-11 target v3.0→v3.1; BLG-OPS-13 scope extended 3→8 endpoints; 0 orphans; 0 stale blockers; ID uniqueness: PASS; Ideas pipeline advisory: active count=5 (≤5 threshold met)",
+  "last_groom_backlog_outcome": "7 items archived (Complete v3.0: BLG-FEAT-18, BLG-FE-19, BLG-FE-18, BLG-AI-02, TEST-GAP-ST14, BLG-OPS-14, BLG-OPS-12); 5 active items retained; BLG-GOV-11 target v3.0\u2192v3.1; BLG-OPS-13 scope extended 3\u21928 endpoints; 0 orphans; 0 stale blockers; ID uniqueness: PASS; Ideas pipeline advisory: active count=5 (\u22645 threshold met)",
   "design_gate_bypass_authority": "Head of UX & Design + Product Owner",
   "design_gate_bypass_reason": "",
   "active_pog": {},
@@ -47,10 +47,10 @@
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
       "summary": "Settings endpoint method decision resolved",
-      "resolution": "Option (a) — update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
+      "resolution": "Option (a) \u2014 update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
       "resolved_by": "Product Owner",
       "resolved_utc": "2026-03-04T00:25:00Z",
-      "formal_capture": "Sprint Planning cycle — ST-09 acceptance criteria update"
+      "formal_capture": "Sprint Planning cycle \u2014 ST-09 acceptance criteria update"
     }
   },
   "release_plan": {

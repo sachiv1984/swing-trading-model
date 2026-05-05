@@ -1,11 +1,40 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.1
-**Last Updated:** 2026-04-28
+**Version:** 2.2
+**Last Updated:** 2026-05-05
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
+
+## Sprint: 2026-04-29__release-v3.1
+**Date:** 2026-05-05
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | PT-01 Trade Plan Object: data model schema (trade_plans table DDL + 3 indexes), 6-endpoint CRUD API, frontend creation/edit/view form; `data_model.md` v2.4→v2.5; `trade_plan_endpoints.md` v0.1; `openapi.yaml` +7 paths; 3 test.py entries (43 total) | `docs/specs/data_model.md#Trade Plan`; `docs/specs/api_contracts/trade_plan_endpoints.md` | None |
+| EPIC-02 | PT-02 Pre-Trade Research View (backend): `pre_trade_research_endpoints.md` v0.1 spec (`GET /research/{ticker}` aggregating signal, regime, sector, screener, earnings — all sub-sources null-safe); `backend/routers/research.py`; `openapi.yaml` +1 path; test.py 49 total | `docs/specs/api_contracts/pre_trade_research_endpoints.md` | None |
+| EPIC-03 | DS-04 Earnings Calendar: `earnings_endpoints.md` v0.1 (`GET /earnings/{ticker}` via yfinance); `earnings_service.py`; `useEarnings` hook; EarningsBadge on screener, watchlist, positions (⚠ proximity warning ≤5 days); `openapi.yaml` +1 path. BLG-FE-20 UK screener fix: `stripUkSuffix` helper applied to display column and watchlist POST. BLG-QA-10/11: `screener_accuracy_protocol.md` + `screener_scenarios.md` (10 scenarios SCN-01–10). Playwright: `earnings-calendar.spec.js` (SC-EARN-01–09), `screener-uk-suffix.spec.js` (SC-UK-01–04) | `docs/specs/api_contracts/earnings_endpoints.md`; `docs/specs/screener_results_schema.md`; `docs/qa/screener_accuracy_protocol.md`; `docs/qa/screener_scenarios.md` | None |
+| EPIC-04 | BLG-FEAT-19 Monthly P&L report: `GET /reports/monthly-pnl` + `MonthlyPnlTable` in Reports.js (3rd tab). BLG-SEC-03/04/GOV-17: `alpaca_key_rotation_policy.md`, `external_api_credential_inventory.md`, `external_api_dependency_register.md`. CF-01/CF-02: `execution_prompt.md` v3.11→v3.13 (reclassification backfill + output target notes) | `docs/specs/api_contracts/reports_endpoints.md`; `docs/ops/`; `claude/system/execution_prompt.md` v3.13 | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| PT-02 frontend (Pre-Trade Research View UI) | Design gate required; deferred to v3.2 per release plan | v3.2 |
+| PT-03 (Trade Plan linking from journal) | Gated on PT-01 delivery + design gate | v3.2 |
+| PT-05 (Trade Plan analytics) | Gated on volume (20+ trades) | v3.2+ |
+
+### Verification inputs ready
+
+| Input | Status |
+|-------|--------|
+| All 4 EPICs merged to main | ✅ PRs #323–#326 |
+| QA evidence sign-off | ✅ All 4 EPIC QA evidence files signed off (Director of Quality, 2026-04-30) |
+| Delivery verification | ⏳ Pending — run delivery verification |
 
 ## Sprint: 2026-04-25__release-v3.0
 **Date:** 2026-04-27
