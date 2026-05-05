@@ -1,7 +1,7 @@
 {
   "cycle_id": "2026-04-29__release-v3.1",
   "release": "v3.1",
-  "status": "In_Progress",
+  "status": "Closed",
   "mode": "standard",
   "dry_run": false,
   "started_utc": "2026-05-05T00:00:00Z",
@@ -22,7 +22,7 @@
     "step_10_global_state": "pass",
     "step_11_manage_roadmap": "complete",
     "step_12_groom_backlog": "complete",
-    "step_13_commit": "in_progress"
+    "step_13_commit": "pass"
   },
   "closure_status": "Closed_with_actions"
 }
