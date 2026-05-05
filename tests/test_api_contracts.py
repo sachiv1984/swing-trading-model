@@ -471,65 +471,65 @@ _TRADE_PLANS_AVAILABLE = CLIENT.get("/trade-plans").status_code != 404
 @unittest.skipUnless(_TRADE_PLANS_AVAILABLE, "trade-plans route not yet on this branch (EPIC-01)")
 class TestTradePlanEndpoints(unittest.TestCase):
 
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.get_trade_plans", return_value=[MOCK_TRADE_PLAN])
-    @patch("database.ensure_trade_plans_table", return_value=None)
+    @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.get_trade_plans", return_value=[MOCK_TRADE_PLAN])
+    @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_list_trade_plans_returns_ok(self, *_):
         body = _ok(CLIENT.get("/trade-plans"))
         assert isinstance(body["data"], list)
 
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.get_trade_plans", return_value=[])
-    @patch("database.ensure_trade_plans_table", return_value=None)
+    @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.get_trade_plans", return_value=[])
+    @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_list_trade_plans_status_filter(self, *_):
         body = _ok(CLIENT.get("/trade-plans?status=draft"))
         assert isinstance(body["data"], list)
 
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.create_trade_plan", return_value=MOCK_TRADE_PLAN)
-    @patch("database.ensure_trade_plans_table", return_value=None)
+    @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.create_trade_plan", return_value=MOCK_TRADE_PLAN)
+    @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_create_trade_plan_returns_201(self, *_):
         r = CLIENT.post("/trade-plans", json={"ticker": "AAPL", "market": "US"})
         assert r.status_code == 201
         assert r.json()["status"] == "ok"
 
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.get_trade_plan_by_id", return_value=MOCK_TRADE_PLAN)
-    @patch("database.ensure_trade_plans_table", return_value=None)
+    @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.get_trade_plan_by_id", return_value=MOCK_TRADE_PLAN)
+    @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_get_trade_plan_by_id_returns_ok(self, *_):
         body = _ok(CLIENT.get("/trade-plans/plan-001"))
         assert body["data"]["id"] == "plan-001"
 
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.get_trade_plan_by_id", return_value=None)
-    @patch("database.ensure_trade_plans_table", return_value=None)
+    @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.get_trade_plan_by_id", return_value=None)
+    @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_get_trade_plan_not_found_returns_404(self, *_):
         assert CLIENT.get("/trade-plans/nonexistent-id").status_code == 404
 
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.update_trade_plan",
+    @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.update_trade_plan",
            return_value={**MOCK_TRADE_PLAN, "status": "active"})
-    @patch("database.ensure_trade_plans_table", return_value=None)
+    @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_update_trade_plan_returns_ok(self, *_):
         body = _ok(CLIENT.put("/trade-plans/plan-001", json={"status": "active"}))
         assert body["data"]["status"] == "active"
 
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.delete_trade_plan", return_value=True)
-    @patch("database.ensure_trade_plans_table", return_value=None)
+    @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.delete_trade_plan", return_value=True)
+    @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_delete_trade_plan_returns_ok(self, *_):
         body = _ok(CLIENT.delete("/trade-plans/plan-001"))
         assert body["message"] == "Trade plan deleted"
 
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.delete_trade_plan", return_value=False)
-    @patch("database.ensure_trade_plans_table", return_value=None)
+    @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.delete_trade_plan", return_value=False)
+    @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_delete_trade_plan_not_found_returns_404(self, *_):
         assert CLIENT.delete("/trade-plans/nonexistent-id").status_code == 404
 
-    @patch("database.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.get_trade_plans_by_position", return_value=[])
-    @patch("database.ensure_trade_plans_table", return_value=None)
+    @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.get_trade_plans_by_position", return_value=[])
+    @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_list_plans_by_position_returns_ok(self, *_):
         body = _ok(CLIENT.get(
             "/trade-plans/by-position/00000000-0000-0000-0000-000000000000"
