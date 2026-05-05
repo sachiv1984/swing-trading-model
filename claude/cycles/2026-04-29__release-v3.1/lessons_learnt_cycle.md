@@ -29,3 +29,28 @@ Prior cycle (2026-04-25__release-v3.0) Phase 4 friction items reviewed:
 - Deferred item 2 (execution_prompt.md STEP 8.5 output target): RESOLVED — delivered as ST-14/CF-02 this sprint ✅
 - Sprint planning artefacts on orphaned branch: NEW friction item this cycle — sprint planning was done on an EPIC branch instead of main. Not a recurrence from v3.0.
 - `deviations_filed = false` administrative gap: NEW friction item — not seen in prior cycles.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-04-29__release-v3.1
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-05-05
+**Reviewed by:** PMO Lead
+
+**Prior cycle checked:** 2026-04-25__release-v3.0 (Phase 4 section present — recurrence check complete)
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Sprint planning artefacts missing from main at verification preflight — required git checkout restore from orphaned branch before STEP -1.4 could pass. Same root cause as Phase 3 friction item 1. | Phase 4 | Type D — Process Gap: planning artefacts committed to wrong branch; verification preflight required manual recovery step | defer | Sprint planning prompt STEP 0 branch check (deferred from Phase 3 — same action). | Head of Specs Team | v3.2 |
+| `test_scenarios` fields in execution_state.json under-populated for EPIC-01 and EPIC-03 despite Playwright tests existing (trade-plan.spec.js SC-TP-01–07; earnings-calendar.spec.js SC-EARN-01–09; screener-uk-suffix.spec.js SC-UK-01–04). Tests were created but not registered. Two TSG backlog items created. | Phase 4 | Type D — Process Gap: execution_prompt.md CF-01 backfill instruction applied to test_scenarios at reclassification time, but tests created during story execution (not reclassification) were not backfilled | defer | Add post-story execution advisory to execution_prompt.md §3.1.A: after any story that creates test files, populate test_scenarios with the new file paths before moving to next story. | Head of Specs Team | v3.2 |
+| Verification proceeded smoothly with no hard blocks, no deviations, no open escalations. All 14 stories verified in a single run. QA evidence from 2026-04-30 remained current and accurate at verification on 2026-05-05. | Phase 4 | Type E — Positive pattern | action-now | No action required — clean sprint + clean verification is the target state. | PMO Lead | — |
+
+**Recurrence Notes:**
+
+Prior cycle (2026-04-25__release-v3.0) Phase 4 friction items reviewed:
+- TSG administrative gap (test_scenarios not populated): RECURRENCE — same gap appeared in v3.0 and v3.1. CF-01 addressed the reclassification path; the post-story-execution path remains unaddressed. Filed as new Phase 4 friction item above.
+- Phase 3 lessons appended to wrong file: RESOLVED in this cycle (CF-02 delivered as ST-14) ✅
+- Planning artefacts on orphaned branch: NEW in this cycle (Phase 3 + Phase 4 both flag this) — target v3.2.

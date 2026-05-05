@@ -334,3 +334,27 @@ The application has no mechanism to roll out new features to a subset of users o
 ---
 
 *Items from §13 (BLG-FEAT-13) remain active. All §14 items (BLG-GOV-13, BLG-FEAT-16, BLG-QA-13) shipped in v2.8 — archived to backlog_archive.md 2026-04-20 (GROOM-20260420-01).*
+
+---
+
+## Test Scenario Gaps — v3.1 Delivery Verification
+
+*Added by Delivery Verification Engine — 2026-05-05*
+
+### TEST-GAP-EPIC-01 — Trade Plan test scenario coverage gap (v3.1)
+
+**Source:** Delivery verification 2026-04-29__release-v3.1
+**Priority:** P3
+**Target:** v3.2 (before next sprint touching Trade Plan domain)
+
+Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/trade-plan.spec.js` (SC-TP-01–07) was created as part of EPIC-01 delivery but not registered in `execution_state.json test_scenarios` field. QA & Testing Owner to verify Playwright test coverage and register in test_scenarios for the Trade Plan domain. Backend CRUD integration test scenarios for `/trade-plans` endpoints also warranted.
+
+---
+
+### TEST-GAP-EPIC-03 — Earnings Calendar and UK screener test registration gap (v3.1)
+
+**Source:** Delivery verification 2026-04-29__release-v3.1
+**Priority:** P3
+**Target:** v3.2 (before next sprint touching Earnings/Screener domain)
+
+Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/earnings-calendar.spec.js` (SC-EARN-01–09) and `tests/e2e/screener-uk-suffix.spec.js` (SC-UK-01–04) were created during EPIC-03 delivery but not registered in `execution_state.json test_scenarios` field. QA & Testing Owner to verify coverage completeness and ensure test files are registered per `execution_prompt.md §3.1.A` advisory.
