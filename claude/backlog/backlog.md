@@ -481,3 +481,33 @@ Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/trade-plan.spec.js` 
 **Target:** v3.2 (before next sprint touching Earnings/Screener domain)
 
 Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/earnings-calendar.spec.js` (SC-EARN-01–09) and `tests/e2e/screener-uk-suffix.spec.js` (SC-UK-01–04) were created during EPIC-03 delivery but not registered in `execution_state.json test_scenarios` field. QA & Testing Owner to verify coverage completeness and ensure test files are registered per `execution_prompt.md §3.1.A` advisory.
+
+---
+
+## Release Slice — v3.2 Arc 2 Pre-Trade Research & Planning
+
+<!-- release-plan-marker: RP:v3.2:2026-05-05__release-v3.2 -->
+
+*Added by Release Planning Engine — 2026-05-05*
+*Cycle: 2026-05-05__release-v3.2*
+*Backlog slice: claude/cycles/2026-05-05__release-v3.2/stage4_backlog_slice.md*
+
+| Story | EPIC | Sprint | Title |
+|-------|------|--------|-------|
+| ST-01 | EPIC-01 | 1 | Pre-trade research view component — data display |
+| ST-02 | EPIC-01 | 1 | Trade plan context panel in research view |
+| ST-03 | EPIC-01 | 1 | Prospective heat at entry metric integration (PT-03) |
+| ST-04 | EPIC-01 | 1 | Navigation integration — screener and watchlist entry points to research view |
+| ST-05 | EPIC-02 | 2 | Entry checklist schema, component, and Trade Plan form integration |
+| ST-06 | EPIC-02 | 2 | Checklist pre-population from trade plan data and research view link |
+| ST-07 | EPIC-03 | 1 | sprint_planning_prompt.md STEP 0 main-branch verification |
+| ST-08 | EPIC-03 | 1 | execution_prompt.md STEP 5.1 deviations_filed enforcement |
+| ST-09 | EPIC-03 | 1 | execution_prompt.md §3.1.A test_scenarios post-story advisory |
+| ST-10 | EPIC-03 | 1 | Playwright waitFor pattern — test authoring standard |
+| ST-11 | EPIC-03 | 1 | Trade Plan domain test scenario registration (TEST-GAP-EPIC-01) |
+| ST-12 | EPIC-03 | 1 | Earnings Calendar and UK screener test registration (TEST-GAP-EPIC-03) |
+| ST-13 | EPIC-04 | 2 | React component inventory (BLG-FE-16) |
+| ST-14 | EPIC-04 | 2 | Design system document (BLG-FE-21) |
+| ST-15 | EPIC-04 | 2 | Alpaca credential audit and rotation policy (BLG-SEC-05) |
+| ST-16 | EPIC-04 | 2 | External API dependency risk register (BLG-GOV-18) |
+| ST-17 | EPIC-04 | 2 | Cycle artefact inventory and maintenance review (BLG-GOV-11) |

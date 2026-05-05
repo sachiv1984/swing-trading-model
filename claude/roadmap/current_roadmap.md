@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v3.1** — Arc 2 Trade Plan Foundation — Shipped 2026-05-05
-**Next planned release:** **v3.2** — [TBD]
+**Next planned release:** **v3.2** — Arc 2 Pre-Trade Research & Planning — Planning in progress
+
+<!-- roadmap-annotation-marker: RA:v3.2:2026-05-05__release-v3.2 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-05__release-v3.2
+- Plan published: 2026-05-05
+- Cycle folder: claude/cycles/2026-05-05__release-v3.2/
+- Backlog slice: claude/cycles/2026-05-05__release-v3.2/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 -----
 
