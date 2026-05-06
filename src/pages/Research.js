@@ -83,30 +83,36 @@ export default function Research() {
     refetch,
   } = useQuery({
     queryKey: ["research", ticker],
-    queryFn: () =>
-      apiFetch(`${API_BASE}/research/${ticker}`)
-        .then((r) => r.json())
-        .then((j) => j.data ?? j),
+    queryFn: async () => {
+      const r = await apiFetch(`${API_BASE}/research/${ticker}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const j = await r.json();
+      return j.data ?? j;
+    },
     enabled: !!ticker,
     retry: 1,
   });
 
   const { data: heatData, isError: heatError } = useQuery({
     queryKey: ["prospective-heat", ticker],
-    queryFn: () =>
-      apiFetch(`${API_BASE}/portfolio/prospective-heat?ticker=${ticker}&quantity=1`)
-        .then((r) => r.json())
-        .then((j) => j.data ?? j),
+    queryFn: async () => {
+      const r = await apiFetch(`${API_BASE}/portfolio/prospective-heat?ticker=${ticker}&quantity=1`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const j = await r.json();
+      return j.data ?? j;
+    },
     enabled: !!ticker,
     retry: 1,
   });
 
   const { data: tradePlansData, isLoading: plansLoading, isError: tradePlansError } = useQuery({
     queryKey: ["trade-plans-ticker", ticker],
-    queryFn: () =>
-      apiFetch(`${API_BASE}/trade-plans?ticker=${ticker}`)
-        .then((r) => r.json())
-        .then((j) => j.data ?? j),
+    queryFn: async () => {
+      const r = await apiFetch(`${API_BASE}/trade-plans?ticker=${ticker}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const j = await r.json();
+      return j.data ?? j;
+    },
     enabled: !!ticker,
     retry: 1,
   });
