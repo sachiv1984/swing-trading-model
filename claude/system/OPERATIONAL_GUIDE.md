@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.66
-**Last Updated:** 2026-05-01
+**Version:** 3.67
+**Last Updated:** 2026-05-06
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1285,6 +1285,24 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 
 ---
 
+## 16. Artefact Lifecycle Model
+
+**Added:** v3.67 (ST-17, BLG-GOV-11, v3.2)
+
+All artefacts in this system have one of three lifecycle types. The authoritative inventory is maintained at `docs/operations/cycle_artefact_inventory.md`.
+
+| Lifecycle Type | Definition | Examples |
+|----------------|-----------|---------|
+| **Point-in-time (PIT)** | Created for a specific cycle event; never modified after sealing. Closed cycles retain PIT artefacts as a historical record. | sprint_backlog.md, closure_record.md, verification_report.md, run_manifest.md |
+| **Living Reference** | Must be updated when the domain they describe changes. Update obligation stated in the document's own header. Failure to update is a process deviation. | backlog.md, component_inventory.md, credential_policy.md, external_api_risk_register.md |
+| **Operational State** | Machine-readable; updated programmatically by governance engines. Do not edit manually. | execution_state.json, .claude_current_state.json, closure_state.json |
+
+**Update trigger rule for Living References:** Any PR touching a domain covered by a living reference must update that reference in the same PR, or explicitly document why the update is deferred (with a backlog item filed).
+
+Living references introduced in v3.2: `component_inventory.md`, `design_system.md`, `credential_policy.md`, `external_api_risk_register.md`, `cycle_artefact_inventory.md`.
+
+---
+
 ## 15. Governance Health Score
 
 **Added:** v3.56 (ST-11, BLG-GOV-14, v2.7)
@@ -1366,8 +1384,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.63 |
-| Last Updated | 2026-04-21 |
+| Version | 3.67 |
+| Last Updated | 2026-05-06 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
 | Idea Template | `claude/system/idea_template.md` |
