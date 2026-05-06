@@ -95,6 +95,7 @@ test('SC-KBD-02: n key on Positions navigates to TradeEntry', async ({ page }) =
 // SC-KBD-03 — 'n' key on TradeHistory navigates to TradeEntry
 test('SC-KBD-03: n key on TradeHistory navigates to TradeEntry', async ({ page }) => {
   await goto(page, '/#/TradeHistory');
+  await expect(page.getByText('Trade History').first()).toBeVisible({ timeout: 8000 });
   await page.keyboard.press('n');
   await expect(page).toHaveURL(/#\/TradeEntry/, { timeout: 3000 });
 });

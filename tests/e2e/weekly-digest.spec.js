@@ -82,6 +82,7 @@ test("SC-DIG-04: null unrealised_pnl_delta_7d renders em-dash", async ({ page })
     })
   );
   await page.goto('/#/WeeklyDigest');
+  await expect(page.locator('table').first()).toBeVisible({ timeout: 8000 });
   // null values render as em-dash in td cells
   const cells = await page.locator('td').filter({ hasText: /^—$/ }).all();
   expect(cells.length).toBeGreaterThanOrEqual(2);
