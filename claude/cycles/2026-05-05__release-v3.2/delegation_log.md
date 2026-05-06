@@ -22,7 +22,10 @@
 - **Spec reference:** `tests/e2e/trade-plan.spec.js`
 - **Unblock criteria:** DoQ sign-off block in `qa_evidence_EPIC-03.md` §ST-11 completed (Date: non-blank)
 - **Commit format required:** `[EPIC-03][ST-11] <description>` pushed to `exec/2026-05-05__release-v3.2/EPIC-03`
-- **Status:** Pending
+- **Status:** Completed
+- **Completed at:** 2026-05-06T00:00:00Z
+- **Completed by:** Director of Quality
+- **Outcome:** SC-TP-01–07 provide complete coverage (8 tests pass). Backend CRUD tests confirmed in `tests/test_api_contracts.py`. TEST-GAP-EPIC-01 backlog item marked complete. QA evidence log signed off.
 
 ---
 
@@ -39,4 +42,7 @@
 - **Spec reference:** `tests/e2e/earnings-calendar.spec.js`, `tests/e2e/screener-uk-suffix.spec.js`
 - **Unblock criteria:** DoQ sign-off block in `qa_evidence_EPIC-03.md` §ST-12 completed (Date: non-blank)
 - **Commit format required:** `[EPIC-03][ST-12] <description>` pushed to `exec/2026-05-05__release-v3.2/EPIC-03`
-- **Status:** Pending
+- **Status:** Completed
+- **Completed at:** 2026-05-06T00:00:00Z
+- **Completed by:** Director of Quality
+- **Outcome:** SC-EARN-01–09 (9 tests pass) and SC-UK-01–04 (4 tests pass) provide complete coverage. No regression. TEST-GAP-EPIC-03 backlog item marked complete. QA evidence log signed off.

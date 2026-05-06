@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-06T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-06T01:00:00Z",
+  "last_updated_utc": "2026-05-06T00:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -170,11 +170,11 @@
       "title": "Governance & Process Hardening",
       "sprint": 1,
       "execution_sequence": 1,
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
       "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_status": "ready",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/e2e/trade-plan.spec.js (SC-TP-01 to SC-TP-07)",
@@ -269,45 +269,45 @@
         "ST-11": {
           "title": "Trade Plan domain test scenario registration (TEST-GAP-EPIC-01)",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "qa",
           "github_issue": 332,
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "268d508d",
+          "delegation_record_id": "DEL-20260506-01",
           "blocked_since_utc": null,
-          "unblock_criteria": "QA & Testing Owner to verify coverage completeness and confirm registration",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/trade-plan.spec.js"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "autonomous_work_complete",
-          "sign_off_record": null,
-          "notes": "tests/e2e/trade-plan.spec.js confirmed present with SC-TP-01 to SC-TP-07. Backend CRUD tests confirmed in tests/test_api_contracts.py. EPIC-03 test_scenarios populated. Awaiting DoQ sign-off."
+          "deviations_filed": true,
+          "last_completed_substep": "doq_signed_off",
+          "sign_off_record": "qa_evidence_EPIC-03.md — Director of Quality, 2026-05-06",
+          "notes": "DEL-20260506-01 completed. Playwright 8/8 pass (SC-TP-01–07). Backend CRUD confirmed. TEST-GAP-EPIC-01 closed."
         },
         "ST-12": {
           "title": "Earnings Calendar and UK screener test registration (TEST-GAP-EPIC-03)",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "qa",
           "github_issue": 333,
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "268d508d",
+          "delegation_record_id": "DEL-20260506-02",
           "blocked_since_utc": null,
-          "unblock_criteria": "QA & Testing Owner to verify coverage completeness and confirm registration",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "tests/e2e/earnings-calendar.spec.js",
             "tests/e2e/screener-uk-suffix.spec.js"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "autonomous_work_complete",
-          "sign_off_record": null,
-          "notes": "Both test files confirmed present. SC-EARN-01 to SC-EARN-09 and SC-UK-01 to SC-UK-04 identified. EPIC-03 test_scenarios populated. Awaiting DoQ sign-off."
+          "deviations_filed": true,
+          "last_completed_substep": "doq_signed_off",
+          "sign_off_record": "qa_evidence_EPIC-03.md — Director of Quality, 2026-05-06",
+          "notes": "DEL-20260506-02 completed. Playwright 13/13 pass (SC-EARN-01–09, SC-UK-01–04). TEST-GAP-EPIC-03 closed."
         }
       }
     },
@@ -424,8 +424,8 @@
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-11 (blocked_qa)", "ST-12 (blocked_qa)"],
-  "completed_items": ["ST-07", "ST-08", "ST-09", "ST-10"],
+  "delegated_items": [],
+  "completed_items": ["ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
   "open_escalations": [],
 
   "merge_gate": {
