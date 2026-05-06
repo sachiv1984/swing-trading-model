@@ -118,3 +118,59 @@ Result: 14 passed (19.2s)
 - Signed off by: Sprint Execution Engine (autonomous class per BLG-GOV-19)
 - Date: 2026-05-06
 - Comments: All 4 stories autonomous, all observable AC Playwright-verified (14/14 pass). Playwright tests added in second commit (31581df5) on same branch before PR.
+
+---
+
+## Director of Quality — Manual Staging Review — 2026-05-06
+
+**Performed by:** Director of Quality
+**Date:** 2026-05-06
+**Trigger:** Manual staging evidence surfaced during delivery verification preflight (STEP -1.3); Tier 2 BLG-GOV-19 counter-sign requested
+
+### Staging Findings
+
+| Issue ID | Story | Priority | Description | AC Violated |
+|----------|-------|----------|-------------|-------------|
+| DEV-E01-01 | ST-01 | P1 | Research page shows no data when accessed via screener or watchlist navigation. Page renders but all data regions are empty. | ST-01 AC-02 (displays ticker info), AC-03 (price, ATR, signal badge) |
+| DEV-E01-02 | ST-01 | P1 | Page sub-heading renders `[object Object]` — company name or sector field returned as a nested object from the API, rendered without a property accessor | ST-01 AC-02 (page header shows ticker, company name, sector) |
+| DEV-E01-03 | ST-01 | P3 | UK ticker `.L` suffix not stripped in Research page title/header (e.g. `MTLN.L` shown instead of `MTLN`). `stripUkSuffix` was applied to screener/watchlist tables (BLG-FE-20, v3.1) but not to the Research page ticker display. | AC-02 (display consistency with system-wide UK suffix rule) |
+| DEV-E01-04 | ST-03 | P1 | `GET /portfolio/prospective-heat` returns 422 — frontend is not passing required query params (`shares`, `entry_price`, `stop_price`). API contract requires all three; frontend is calling without them. | ST-03 AC-01 ("GET /portfolio/prospective-heat called from research view with appropriate ticker and quantity parameters") |
+
+### Root Cause Notes
+
+- **DEV-E01-01 and DEV-E01-04 are likely coupled.** The 422 from prospective-heat may be triggering an unhandled error that prevents the rest of the data regions from rendering, OR the main research data fetch is also failing independently. Engineering must investigate both paths.
+- **DEV-E01-02:** The API response returns a nested object for company name or sector (e.g. `{ name: "Matalan" }`) which the component renders directly as `[object Object]` instead of accessing the `.name` property.
+- **DEV-E01-03:** `stripUkSuffix` exists in the codebase (applied to screener/watchlist in v3.1) but was not applied to the `Research.js` page title/header. Backlog item BLG-FE-23 added.
+
+### Playwright Coverage Gap
+
+SC-RES-01–13 (14/14 pass) were run against mocked API responses. The mocks returned pre-formatted strings and a successful 200 prospective-heat response — preventing detection of DEV-E01-02 (object rendering) and DEV-E01-04 (422 on real API). This is a test quality gap: mock data in `pre-trade-research.spec.js` must be audited to reflect the actual API response shape, including correct field nesting. This gap must be addressed as part of the P1 fix before re-verification.
+
+### Additional Issues Surfaced (Out-of-Scope for EPIC-01)
+
+| Issue | Origin | Priority | Disposition |
+|-------|--------|----------|-------------|
+| `days_until_earnings` shows as negative for past earnings dates (e.g. -27 for MTLN.L) | v3.1 EPIC-03 earnings calendar feature | P3 | Backlog item added: BLG-FE-24 |
+| Signals page displaying all historical signals — expected to show most recent day only | Unknown / potential regression | P2 | Backlog item added: BLG-FE-25 (regression investigation required) |
+| Regime lozenge wraps to two lines on Research page | EPIC-01 UX quality | P3 | Backlog item added: BLG-FE-26; Head of UX & Design review requested |
+| Font inconsistency on Research page | EPIC-01 UX quality | P3 | Included in BLG-FE-26; Head of UX & Design review requested |
+| Nav bar redesign request (Sticky/Fixed Header, mega menu, or breadcrumb) | New design exploration | — | Backlog item added: BLG-FE-27; Head of UX & Design to lead |
+
+### DoQ Determination
+
+**EPIC-01 QA Verdict: FAIL — P1 deviations present. Sign-off withheld.**
+
+DEV-E01-01, DEV-E01-02, and DEV-E01-04 are P1 material functional deviations. The Research page — the primary Arc 2 user-value deliverable of v3.2 — does not display data in staging. The broken sub-heading (`[object Object]`) and missing prospective heat parameters compound the failure. These cannot be accepted without resolution.
+
+**Tier 2 counter-sign (BLG-GOV-19 eligibility):** DECLINED. The P1 staging failures make the eligibility question moot — EPIC-01 requires re-work and re-verification before any sign-off is appropriate.
+
+**Path to sign-off:**
+1. Engineering to fix DEV-E01-01 through DEV-E01-04 in a new commit on the exec branch (or hotfix)
+2. Playwright mocks in `pre-trade-research.spec.js` updated to reflect actual API response shape
+3. All SC-RES-01–13 re-run against updated code and mocks — must pass
+4. DEV-E01-03 (UK `.L` suffix) to be fixed in same or follow-on commit; BLG-FE-23 filed
+5. Director of Quality to re-verify EPIC-01 before delivery verification resumes
+
+- Reviewed by: Director of Quality
+- Date: 2026-05-06
+- Comments: Playwright-only verification is insufficient for this EPIC given the frontend-visible changes. Human staging must be performed after the P1 fixes. The BLG-GOV-19 autonomous class criteria were correctly applied in other EPICs this cycle; EPIC-01 was a misapplication given the scope of frontend changes.
