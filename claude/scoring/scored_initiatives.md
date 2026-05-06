@@ -252,3 +252,27 @@ All 8 items are SPS=1 or SPS=2 — no §13 boundary proximity. All are S or M ef
 
 **Last Updated:** 2026-04-25
 
+---
+
+## Cycle 2026-05-05__scheduled — New Backlog Items
+
+*Standard-tier run. Zero active roadmap initiatives. 5 new backlog items from gate-cleared and stale idea review following Arc 1 completion. CPS = 0.0 (unchanged).*
+
+| Initiative | Strat | Fin | Risk | WF Int | TTV | Rev | SPS | Effort |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| BLG-FE-21 — Design system document | 3 | 1 | 2 | 5 | 4 | 5 | 1 | M |
+| BLG-FEAT-20 — Net-of-costs performance tracking | 3 | 4 | 2 | 3 | 2 | 3 | 2 | M |
+| BLG-FE-22 — Screener morning routine UX spec | 4 | 2 | 3 | 5 | 5 | 5 | 2 | S |
+| BLG-GOV-18 — External API dependency risk register | 2 | 1 | 4 | 5 | 4 | 5 | 1 | S |
+| BLG-SEC-05 — Alpaca key rotation policy + credential audit | 2 | 1 | 4 | 5 | 4 | 5 | 1 | S |
+
+*Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score. Scale: 1–5.*
+
+**CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-04-24__scheduled). Delta: 0.0.
+
+**Facilitator observations (cycle 2026-05-05__scheduled):** All 5 items are SPS 1–2 — no §13 boundary contact. BLG-FEAT-20 (net-of-costs) has the highest financial impact score (Fin=4) because accurate R-multiples are foundational to Arc 4/6 edge analysis; however its TTV is low (2/5) because value only realises at Arc 4 delivery, hence the "Arc 3/4 context" delivery note. BLG-FE-22 (morning routine UX) is the highest-urgency item (TTV=5, needed before v3.2 sprint planning to inform PT-02 UX). BLG-SEC-05 and BLG-GOV-18 are both S-effort with direct risk-reduction value (Risk=4). No Skill-Silo Alert (Governance load 6% — below 20% floor).
+
+**Key context:** Arc 1 fully complete — 24 parked ideas had gate-cleared conditions. 15 gate-cleared ideas were rejected as superseded by Arc 1 implementation. 2 advanced items parked in STEP 5 debate (finops-20260421-01: premature 10 days in; cybersecurity-20260421-02: scope subsumed into BLG-SEC-05).
+
+**Last Updated:** 2026-05-05
+

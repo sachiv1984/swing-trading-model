@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-05 (GROOM-20260505-01 — BLG-FEAT-19 archived; BLG-FE-16 + BLG-FEAT-13 Provisional-Target updated v3.1→v3.2)
-**Last rebalance:** 2026-04-24 (cycle 2026-04-24__scheduled — DL-022 backlog adds; DL-023 defers)
+**Last Updated:** 2026-05-05 (rebalance 2026-05-05__scheduled — 5 items added: BLG-FE-21, BLG-FEAT-20, BLG-FE-22, BLG-GOV-18, BLG-SEC-05; DL-024)
+**Last rebalance:** 2026-05-05 (cycle 2026-05-05__scheduled — DL-024 backlog adds × 5)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -46,6 +46,31 @@
 
 ---
 
+### BLG-FEAT-20 — Net-of-costs performance tracking
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Analytics
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260321-02 — promoted cycle 2026-05-05__scheduled (DL-024)
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Arc 3/4 context (deliver alongside Arc 3 or Arc 4 data model work — not a standalone sprint item)
+
+**Problem**
+Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. When evaluating edge in Arc 4/6, R-multiples that ignore transaction costs overstate performance and may mask a genuinely unprofitable strategy. The Fee Drag % metric (v2.4) surfaces aggregate cost impact but per-trade R-multiples remain gross.
+
+**Scope**
+- Add brokerage cost fields per trade (commission, spread cost in GBP) — optional capture, not mandatory
+- Recalculate R-multiple as net-of-costs where cost data is present
+- Surface net-of-costs vs gross R-multiple on trade records and performance reports
+- Sequence alongside Arc 3/4 data model work to avoid standalone migration overhead
+
+**Acceptance Criteria**
+- Brokerage cost fields capturable per trade (optional — not all trades will have explicit cost data)
+- Net-of-costs R-multiple calculated and displayed where cost data exists
+- Performance report breakdowns show gross vs net comparison where material
+- No impact to existing R-multiple calculations where cost data is absent
+
+---
+
 ## 3. Frontend & UX Backlog
 
 ---
@@ -76,6 +101,55 @@ No catalogue of UI components exists. Arc 1 will add significant new frontend co
 
 *BLG-FE-19 (Keyboard shortcuts) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 *BLG-FE-18 (Screener news panel attachment) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
+
+---
+
+### BLG-FE-21 — Design system document
+**Priority:** P3 (Low)
+**Type:** Frontend / Documentation
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20260321-02 — promoted cycle 2026-05-05__scheduled (DL-024)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.2
+
+**Problem**
+The system UI has accumulated organically across 17 releases. Arc 1 added significant new components (screener results, watchlist promotion, news panel). Arc 2 will add more (pre-trade research view, trade plan form, entry checklist). Without a documented design system, each new UI surface risks inconsistent patterns because the single developer is not consistent across sessions separated by weeks.
+
+**Scope**
+- Document the implicit design system: colour palette, typography scale, spacing tokens, icon conventions
+- Reference document for use when adding new UI surfaces in Arc 2+
+- Capture current patterns as-is (not aspirational); note any existing inconsistencies
+- Coordinate with BLG-FE-16 (React component inventory) — sequence BLG-FE-16 first if both in-scope
+
+**Acceptance Criteria**
+- Design system document created covering colour palette, typography, spacing, icon conventions
+- Each pattern entry includes current usage and any known inconsistencies
+- Usable as a reference when starting new Arc 2 UI surfaces
+
+---
+
+### BLG-FE-22 — Screener morning routine UX spec
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX Specification
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-product-owner-20260421-01 — promoted cycle 2026-05-05__scheduled (DL-024)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Before v3.2 sprint planning
+
+**Problem**
+The screener is live (v3.0) with DS-07 watchlist promotion. The current multi-surface flow (screener results → watchlist → pre-trade research) has no designed continuity. Arc 2 PT-02 (Pre-Trade Research View) needs a clear workflow spec for how users navigate from screener discovery to research — otherwise PT-02 UX risks being designed in isolation from the Arc 1→Arc 2 transition.
+
+**Scope**
+- UX workflow spec for the Arc 1→Arc 2 morning routine: screener results → shortlist → watchlist promotion → pre-trade research navigation
+- Answers: after promoting candidates, how does the user navigate to research? What context carries between screens?
+- Not a UI design spec (wireframes/mockups) — a workflow and information-carry spec
+- Input to PT-02 UX design at v3.2 sprint planning
+
+**Acceptance Criteria**
+- Workflow spec documents the step-by-step morning routine from screener to research
+- Information-carry decisions documented: what data from the screener should be visible in the research view
+- Navigation model specified: how the user moves between screener, watchlist, and research views
+- Delivered before v3.2 sprint planning so it informs PT-02 UX story authoring
 
 ---
 
@@ -130,6 +204,31 @@ Eighteen endpoints shipped in v2.8/v2.9/v3.0/v3.1 are absent from `docs/ops/api_
 
 ---
 
+### BLG-SEC-05 — Alpaca API key rotation policy and credential audit
+**Priority:** P2 (Medium)
+**Type:** Security / Operations
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260421-01 + IDEA-cybersecurity-20260421-02 — promoted cycle 2026-05-05__scheduled (DL-024)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v3.2
+
+**Problem**
+Alpaca API key is in production (stored in Render environment variables) with no documented rotation policy — no specification of rotation frequency, rotation procedure, validation after rotation, or incident response if key is compromised. Additionally, multiple API credentials are now in production (Alpaca, Anthropic/Claude) with no inventory documenting storage location, last rotation, or system dependencies.
+
+**Scope**
+- Credential inventory: document all production API credentials (Alpaca, Anthropic, others), storage location, last rotation date, system dependencies
+- Rotation policy: rotation frequency guidance, step-by-step rotation procedure for Alpaca key, validation procedure after rotation
+- Incident response note: what to do if a credential is compromised
+- Not a compliance document — procedural memory for the developer
+
+**Acceptance Criteria**
+- Credential inventory lists all production API credentials with storage location and last rotation
+- Rotation policy documented with step-by-step procedure for Alpaca key rotation
+- Validation procedure after rotation specified
+- Incident response steps documented (rotate, validate, check audit logs)
+
+---
+
 ## 7. Spec Debt Backlog
 
 *No active items in this section — BLG-SPEC-20 deferred to §9 (DL-023, 2026-04-24).*
@@ -139,6 +238,30 @@ Eighteen endpoints shipped in v2.8/v2.9/v3.0/v3.1 are absent from `docs/ops/api_
 ## 8. Governance Backlog
 
 
+
+---
+
+### BLG-GOV-18 — External API dependency risk register
+**Priority:** P3 (Low)
+**Type:** Governance Process / Operational Risk
+**Owner:** PMO Lead + Infrastructure & Operations Owner
+**Source:** IDEA-pmo-lead-20260421-01 — promoted cycle 2026-05-05__scheduled (DL-024)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.2
+
+**Problem**
+Alpaca Markets API is now production-critical — the screener engine depends on it for daily OHLCV bars. Yahoo Finance is also in the data pipeline. No formal register tracks which endpoints are used, reliability record, known failure modes, fallback status, or SLA concerns. GET /health provides real-time health but not risk assessment or response planning.
+
+**Scope**
+- Lightweight register documenting each external API dependency (Alpaca, Yahoo Finance, Anthropic Claude)
+- Per dependency: endpoints used, reliability record, fallback status, API tier/plan, renewal/rotation requirements
+- Register surfaced at each roadmap rebalance for operational awareness
+- Not an incident response playbook — a risk inventory
+
+**Acceptance Criteria**
+- Register created covering all production external API dependencies
+- Each entry includes: endpoints used, current status, known failure modes, fallback behaviour, renewal/tier info
+- Register referenced in run_manifest.md template for future rebalances
 
 ---
 
@@ -358,3 +481,33 @@ Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/trade-plan.spec.js` 
 **Target:** v3.2 (before next sprint touching Earnings/Screener domain)
 
 Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/earnings-calendar.spec.js` (SC-EARN-01–09) and `tests/e2e/screener-uk-suffix.spec.js` (SC-UK-01–04) were created during EPIC-03 delivery but not registered in `execution_state.json test_scenarios` field. QA & Testing Owner to verify coverage completeness and ensure test files are registered per `execution_prompt.md §3.1.A` advisory.
+
+---
+
+## Release Slice — v3.2 Arc 2 Pre-Trade Research & Planning
+
+<!-- release-plan-marker: RP:v3.2:2026-05-05__release-v3.2 -->
+
+*Added by Release Planning Engine — 2026-05-05*
+*Cycle: 2026-05-05__release-v3.2*
+*Backlog slice: claude/cycles/2026-05-05__release-v3.2/stage4_backlog_slice.md*
+
+| Story | EPIC | Sprint | Title |
+|-------|------|--------|-------|
+| ST-01 | EPIC-01 | 1 | Pre-trade research view component — data display |
+| ST-02 | EPIC-01 | 1 | Trade plan context panel in research view |
+| ST-03 | EPIC-01 | 1 | Prospective heat at entry metric integration (PT-03) |
+| ST-04 | EPIC-01 | 1 | Navigation integration — screener and watchlist entry points to research view |
+| ST-05 | EPIC-02 | 2 | Entry checklist schema, component, and Trade Plan form integration |
+| ST-06 | EPIC-02 | 2 | Checklist pre-population from trade plan data and research view link |
+| ST-07 | EPIC-03 | 1 | sprint_planning_prompt.md STEP 0 main-branch verification |
+| ST-08 | EPIC-03 | 1 | execution_prompt.md STEP 5.1 deviations_filed enforcement |
+| ST-09 | EPIC-03 | 1 | execution_prompt.md §3.1.A test_scenarios post-story advisory |
+| ST-10 | EPIC-03 | 1 | Playwright waitFor pattern — test authoring standard |
+| ST-11 | EPIC-03 | 1 | Trade Plan domain test scenario registration (TEST-GAP-EPIC-01) |
+| ST-12 | EPIC-03 | 1 | Earnings Calendar and UK screener test registration (TEST-GAP-EPIC-03) |
+| ST-13 | EPIC-04 | 2 | React component inventory (BLG-FE-16) |
+| ST-14 | EPIC-04 | 2 | Design system document (BLG-FE-21) |
+| ST-15 | EPIC-04 | 2 | Alpaca credential audit and rotation policy (BLG-SEC-05) |
+| ST-16 | EPIC-04 | 2 | External API dependency risk register (BLG-GOV-18) |
+| ST-17 | EPIC-04 | 2 | Cycle artefact inventory and maintenance review (BLG-GOV-11) |

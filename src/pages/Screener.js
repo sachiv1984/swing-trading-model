@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/base44Client";
 import { useEarnings } from "../hooks/useEarnings";
 import { Button } from "../components/ui/button";
@@ -297,6 +298,7 @@ function SortHeader({ label, field, current, dir, onSort, className }) {
 // ---------------------------------------------------------------------------
 
 export default function Screener() {
+  const navigate = useNavigate();
   const [results, setResults] = useState([]);
   const [runTimestamp, setRunTimestamp] = useState(null);
   const [runId, setRunId] = useState(null);
@@ -807,6 +809,14 @@ export default function Screener() {
                                     Watchlist
                                   </button>
                                 )}
+                                {/* Research link */}
+                                <button
+                                  onClick={() => navigate(`/research/${row.ticker}`)}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-600/30 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
+                                  title="Pre-trade research"
+                                >
+                                  Research
+                                </button>
                               </div>
                             </td>
                           </tr>

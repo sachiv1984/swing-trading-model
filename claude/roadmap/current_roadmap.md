@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-05 (post-ship closure v3.1)
-**Last rebalance:** 2026-04-24 (cycle 2026-04-24__scheduled — Standard-tier scheduled rebalance; DL-022 backlog adds; DL-023 defers)
+**Last Updated:** 2026-05-05 (rebalance 2026-05-05__scheduled — DL-024)
+**Last rebalance:** 2026-05-05 (cycle 2026-05-05__scheduled — Standard-tier scheduled rebalance; DL-024 backlog adds × 5)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v3.1** — Arc 2 Trade Plan Foundation — Shipped 2026-05-05
-**Next planned release:** **v3.2** — [TBD]
+**Next planned release:** **v3.2** — Arc 2 Pre-Trade Research & Planning — Planning in progress
+
+<!-- roadmap-annotation-marker: RA:v3.2:2026-05-05__release-v3.2 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-05__release-v3.2
+- Plan published: 2026-05-05
+- Cycle folder: claude/cycles/2026-05-05__release-v3.2/
+- Backlog slice: claude/cycles/2026-05-05__release-v3.2/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 -----
 

@@ -1,0 +1,10 @@
+{
+  "cycle_id": "2026-05-05__release-v3.2",
+  "release": "v3.2",
+  "txn_id": "RMTX-20260505-01",
+  "state": "committed",
+  "prepared_utc": "2026-05-05T07:30:00Z",
+  "committed_utc": "2026-05-05T07:32:00Z",
+  "marker": "RA:v3.2:2026-05-05__release-v3.2",
+  "target_file": "claude/roadmap/current_roadmap.md"
+}

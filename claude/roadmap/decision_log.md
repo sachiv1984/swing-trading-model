@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-17
+**Last Updated:** 2026-05-05
 
 ---
 
@@ -606,3 +606,46 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** None — no work stopped; both items were P3 with no active sprint slot.
 
 **Rationale:** Displacement required for DL-022 backlog additions. Both items are P3 with no urgency increase in the foreseeable roadmap. BLG-TECH-05 has been deprioritised across multiple prior cycles (DL-021, DL-023 rotation). BLG-SPEC-20 was added only 1 cycle ago but its stated precondition (Arc 1 specs) is now met and CI checking is not yet a bottleneck.
+
+---
+
+### DL-024 — 2026-05-05
+
+**Decision type:** No-change (roadmap) + Backlog Add (×5)
+**Cycle:** 2026-05-05__scheduled
+**Date:** 2026-05-05
+**Decision owner:** Product Owner
+
+**Summary:** Scheduled roadmap rebalance — no roadmap-level initiatives added, replaced, deferred, or killed. 5 new backlog items promoted from gate-cleared and stale idea review. 2 items parked in STEP 5 debate (accepted Challenger). 10 items rejected (9 not strong, 1 strong). 15 re-parked with updated rationales.
+
+**Run tier:** Standard (scheduled; last scheduled rebalance 2026-04-29; < 90 day threshold; CPS = 0.0)
+
+**CPS this cycle:** 0.0 (zero active initiatives — all v3.1 items shipped). Prior CPS: 0.0 (cycle 2026-04-24__scheduled). Delta: 0.0. No drift alert.
+
+**Key context:** Arc 1 fully complete (DS-04 shipped v3.1). 24 parked ideas had gate-cleared conditions triggered by Arc 1 completion — mandatory re-evaluation performed on all. Now horizon empty post-v3.1. Arc 2 continuation (PT-02 frontend, PT-03, PT-05) correctly placed in Next horizon.
+
+**Initiatives added (backlog-level):**
+
+| ID | Title | Priority | Effort | Source | Displacement |
+|----|-------|----------|--------|--------|-------------|
+| BLG-FE-21 | Design system document | P3 | M | IDEA-head-of-ux-20260321-02 (stale, gate cleared Arc 1) | Next P3 FE backlog slot |
+| BLG-FEAT-20 | Net-of-costs performance tracking | P2 | M | IDEA-financial-reporting-20260321-02 (stale, PT-01 unlocks) | P2 FEAT backlog slot; delivery deferred to Arc 3/4 context |
+| BLG-FE-22 | Screener morning routine UX spec | P2 | S | IDEA-product-owner-20260421-01 (gate cleared DS-01/02) | P2 UX spec backlog slot |
+| BLG-GOV-18 | External API dependency risk register | P3 | S | IDEA-pmo-lead-20260421-01 (gate cleared Arc 1) | P3 GOV backlog slot |
+| BLG-SEC-05 | Alpaca API key rotation policy + credential audit | P2 | S | IDEA-cybersecurity-20260421-01 + -02 (gate cleared Arc 1) | P2 SEC backlog slot; IDEA-cybersecurity-20260421-02 scope subsumed |
+
+**Items parked in STEP 5 debate (Challenger argument accepted):**
+- IDEA-cybersecurity-20260421-02: Scope subsumed into BLG-SEC-05 (overlap argument accepted)
+- IDEA-finops-20260421-01: Premature — 10 days of DS-01 operation insufficient to characterise Alpaca call volume; park for 60 days
+
+**Items rejected this cycle:** 10 (IDEA-challenger-20260321-01, IDEA-ai-compliance-20260321-01 [strong], IDEA-infra-ops-20260421-02, IDEA-challenger-20260421-01, IDEA-backend-engineering-20260421-01, IDEA-head-of-engineering-20260421-02, IDEA-data-model-20260421-02, IDEA-director-of-hr-20260421-02, IDEA-qa-testing-20260421-02, IDEA-qa-lead-20260421-02)
+
+**Roadmap impact:** current_roadmap.md Last Updated bumped to 2026-05-05. No arc structure or horizon changes.
+
+**Workforce impact:** ~5–8 FTE-days total across 5 new items (all documentation/spec/governance tasks). Governance load 6% — below 20% floor; PO confirmed adequate sign-off capacity. No Skill-Silo Alert.
+
+**Displacement:** No roadmap-level Adds → no roadmap-level Kills required. Net-zero: 0 Adds = 0 Kills ✅. Backlog-level: each new item takes a named backlog priority slot per table above.
+
+**STEP 8.6 guardrail:** 2 items parked in debate (IDEA-cybersecurity-20260421-02, IDEA-finops-20260421-01); Challenger issued Type A counter-arguments for both. PASS.
+
+**Meta-review:** NOT due — 2 cycles since last meta-review (2026-04-21__scheduled); threshold is 3 cycles. Next meta-review due: v3.3 rebalance cycle or 2026-06-05__scheduled (whichever comes first).
