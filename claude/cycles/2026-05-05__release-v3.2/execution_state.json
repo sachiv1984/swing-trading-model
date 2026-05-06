@@ -9,7 +9,7 @@
       "status": "in_progress",
       "pr_number": null,
       "test_scenarios": [
-        "tests/e2e/pre-trade-research.spec.js (to be authored — test scenario gap flag per sprint_backlog.md)"
+        "tests/e2e/pre-trade-research.spec.js (SC-RES-01 to SC-RES-13)"
       ],
       "stories": {
         "ST-01": {
