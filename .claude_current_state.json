@@ -1,8 +1,9 @@
 {
   "active_cycle": "2026-05-05__release-v3.2",
   "cycle_name": "Release Planning — v3.2 Arc 2 Pre-Trade Research & Planning",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning_prompt",
+  "status": "Executing",
+  "engine": "execution_prompt",
+  "execution_state_path": "claude/cycles/2026-05-05__release-v3.2/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-05-05__release-v3.2/stage4_backlog_slice.md",
   "sprint_goal_path": "claude/cycles/2026-05-05__release-v3.2/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-05-05__release-v3.2/sprint_backlog.md",
@@ -18,7 +19,7 @@
   "post_ship_complete": false,
   "closure_record": "",
   "closure_status": "",
-  "execution_state_path": "",
+
   "last_sync_utc": "2026-05-06T00:00:00Z",
   "last_audit_id": "AUD-2026-04-20",
   "last_audit_utc": "2026-04-21T00:00:00Z",

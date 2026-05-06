@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
+import EntryChecklist from "../components/trades/EntryChecklist";
 import { ArrowLeft, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../lib/utils";
 
@@ -311,33 +312,32 @@ export default function Research() {
             </Button>
           </div>
         ) : (
-          <div className="space-y-3">
-            <PlanStatusBadge status={activePlan.status} />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-xs text-slate-400 mb-1">Stop Level</p>
-                <p className="text-slate-200">
-                  {activePlan.stop_level != null
-                    ? `${sym}${Number(activePlan.stop_level).toFixed(2)}`
-                    : "—"}
-                </p>
-              </div>
-              {activePlan.risk_reward_notes && (
-                <div>
-                  <p className="text-xs text-slate-400 mb-1">Notes</p>
-                  <p className="text-slate-300 text-xs">
-                    {activePlan.risk_reward_notes.slice(0, 100)}
-                    {activePlan.risk_reward_notes.length > 100 ? "…" : ""}
-                  </p>
-                </div>
-              )}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <PlanStatusBadge status={activePlan.status} />
+              <button
+                onClick={() => navigate(`/TradePlan?edit=${activePlan.id}&ticker=${ticker}`)}
+                className="text-xs text-cyan-400 hover:text-cyan-300 underline"
+              >
+                Edit plan
+              </button>
             </div>
-            <button
-              onClick={() => navigate(`/TradePlan?edit=${activePlan.id}&ticker=${ticker}`)}
-              className="text-xs text-cyan-400 hover:text-cyan-300 underline"
-            >
-              View full plan
-            </button>
+            {activePlan.r_target != null && (
+              <div>
+                <p className="text-xs text-slate-400 mb-1">R Target</p>
+                <p className="text-sm text-slate-200">{activePlan.r_target}R</p>
+              </div>
+            )}
+            {Array.isArray(activePlan.checklist_items) && activePlan.checklist_items.length > 0 && (
+              <div>
+                <p className="text-xs text-slate-400 mb-2">Pre-Entry Checklist</p>
+                <EntryChecklist
+                  items={activePlan.checklist_items}
+                  ticker={ticker}
+                  readOnly
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

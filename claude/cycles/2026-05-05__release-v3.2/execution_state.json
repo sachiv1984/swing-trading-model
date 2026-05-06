@@ -5,14 +5,14 @@
   "invoked_utc": "2026-05-06T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-06T00:00:00Z",
+  "last_updated_utc": "2026-05-06T12:00:00Z",
 
   "epics": {
     "EPIC-01": {
       "title": "Pre-Trade Research View (PT-02 + PT-03)",
       "sprint": 1,
       "execution_sequence": 2,
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
       "pr_number": 345,
       "pr_status": "merged",
@@ -85,7 +85,7 @@
       "title": "Pre-Trade Entry Checklist (PT-05)",
       "sprint": 2,
       "execution_sequence": 3,
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -95,21 +95,22 @@
       "stories": {
         "ST-05": {
           "title": "Entry checklist schema, component, and Trade Plan form integration",
-          "classification": "delegated_frontend",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 338,
           "branch": "exec/2026-05-05__release-v3.2/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "unblock_criteria": "EPIC-01 merged to main",
+          "unblock_criteria": null,
           "acceptance_verified": false,
           "deviations_filed": false,
-          "notes": "Hard dependency: EPIC-01 must be merged to main before ST-05 begins. EPIC-01 now merged."
+          "spec_references": ["docs/specs/frontend/pages/trade_plan.md#Entry Checklist"],
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. EPIC-01 merged — dependency met. Implementing entry checklist component and Trade Plan form integration."
         },
         "ST-06": {
           "title": "Checklist pre-population from trade plan data and research view link",
-          "classification": "delegated_frontend",
+          "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
           "github_issue": 339,
@@ -119,7 +120,8 @@
           "unblock_criteria": "ST-05 complete",
           "acceptance_verified": false,
           "deviations_filed": false,
-          "notes": "Depends on ST-05"
+          "spec_references": ["docs/specs/frontend/pages/trade_plan.md#Entry Checklist"],
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Depends on ST-05."
         }
       }
     },
@@ -128,7 +130,7 @@
       "title": "Governance & Process Hardening",
       "sprint": 1,
       "execution_sequence": 1,
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
       "pr_number": 347,
       "pr_status": "merged",
@@ -233,10 +235,10 @@
       "title": "Documentation, Security & Backlog Clearance",
       "sprint": 2,
       "execution_sequence": 4,
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
       "pr_number": 346,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -321,10 +323,10 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-03"],
-    "epics_pending": ["EPIC-04", "EPIC-02"],
+    "epics_merged": ["EPIC-01", "EPIC-03", "EPIC-04"],
+    "epics_pending": ["EPIC-02"],
     "all_merged": false,
-    "note": "EPIC-01 merged. EPIC-03 merged. EPIC-04 PR #346 open. EPIC-02 unblocked — EPIC-01 merged."
+    "note": "EPIC-01 merged (PR #345). EPIC-03 merged (PR #347). EPIC-04 merged (PR #346). EPIC-02 in progress — ST-05/06 reclassified to autonomous; implementation underway."
   },
 
   "sealed": false,
