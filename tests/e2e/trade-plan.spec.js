@@ -129,8 +129,9 @@ test('SC-TP-01: Trade Plan form renders all required fields', async ({ page }) =
   await expect(page.getByPlaceholder(/e\.g\. 2\.5/i)).toBeVisible();
   await expect(page.locator('select').filter({ has: page.locator('option[value="US"]') })).toBeVisible();
 
-  // Checklist checkbox
-  await expect(page.locator('#checklist_completed')).toBeVisible();
+  // Pre-entry checklist (replaced single checkbox with structured checklist in ST-05)
+  await expect(page.getByText('Strategy signal confirmed')).toBeVisible();
+  await expect(page.getByText('Stop level defined')).toBeVisible();
 
   // Save button present
   await expect(page.getByRole('button', { name: /save plan/i })).toBeVisible();
