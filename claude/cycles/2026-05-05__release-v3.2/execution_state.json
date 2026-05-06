@@ -12,98 +12,71 @@
       "title": "Pre-Trade Research View (PT-02 + PT-03)",
       "sprint": 1,
       "execution_sequence": 2,
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 345,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-01.md",
-      "test_scenarios": ["pending — QA & Testing Owner to author tests/e2e/pre-trade-research.spec.js before next sprint on this domain"],
+      "test_scenarios": [
+        "tests/e2e/pre-trade-research.spec.js (SC-RES-01 to SC-RES-13)"
+      ],
       "stories": {
         "ST-01": {
           "title": "Pre-trade research view component — data display",
-          "classification": "delegated_frontend",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 334,
           "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "4f24ce9b",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/specs/frontend/pages/pre_trade_research.md#data-display"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01; spec fully locked at design gate."
         },
         "ST-02": {
           "title": "Trade plan context panel in research view",
-          "classification": "delegated_frontend",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 335,
           "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "4f24ce9b",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/specs/frontend/pages/pre_trade_research.md#§7"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Depends on ST-01"
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Combined with ST-01/03/04 in single commit."
         },
         "ST-03": {
           "title": "Prospective heat at entry metric integration (PT-03)",
-          "classification": "delegated_frontend",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 336,
           "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "4f24ce9b",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/specs/frontend/pages/pre_trade_research.md#§6"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Depends on ST-01"
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Combined with ST-01/02/04 in single commit."
         },
         "ST-04": {
           "title": "Navigation integration — screener and watchlist entry points to research view",
-          "classification": "delegated_frontend",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 337,
           "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "4f24ce9b",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/specs/frontend/pages/screener_results.md#§11",
-            "docs/specs/frontend/pages/watchlist.md#Research-Navigation"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Depends on ST-01. BLG-FE-22 navigation model adopted — UX spec locked at design gate."
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Combined with ST-01/02/03 in single commit."
         }
       }
     },
@@ -129,17 +102,10 @@
           "branch": "exec/2026-05-05__release-v3.2/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
           "unblock_criteria": "EPIC-01 merged to main",
-          "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md#§6"
-          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Hard dependency: EPIC-01 must be merged to main before ST-05 begins."
+          "notes": "Hard dependency: EPIC-01 must be merged to main before ST-05 begins. EPIC-01 now merged."
         },
         "ST-06": {
           "title": "Checklist pre-population from trade plan data and research view link",
@@ -150,17 +116,9 @@
           "branch": "exec/2026-05-05__release-v3.2/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
           "unblock_criteria": "ST-05 complete",
-          "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md#§6.2",
-            "docs/specs/frontend/pages/trade_plan.md#§6.3"
-          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
           "notes": "Depends on ST-05"
         }
       }
@@ -172,8 +130,8 @@
       "execution_sequence": 1,
       "status": "done",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
-      "pr_number": null,
-      "pr_status": "ready",
+      "pr_number": 347,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -191,16 +149,9 @@
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
           "commit_sha": "ec30e47f",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
           "completed_utc": "2026-05-06T00:30:00Z",
           "acceptance_verified": true,
-          "spec_references": [
-            "claude/system/sprint_planning_prompt.md#STEP-0"
-          ],
           "deviations_filed": true,
-          "last_completed_substep": "pushed",
-          "sign_off_record": null,
           "notes": "Source: OA-02 / D-01. v2.5→v2.6. CLAUDE.md §6 checklist complete. OPERATIONAL_GUIDE v3.66→v3.67. prompt_change_log entry added."
         },
         "ST-08": {
@@ -212,16 +163,9 @@
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
           "commit_sha": "17a3c3f4",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
           "completed_utc": "2026-05-06T01:00:00Z",
           "acceptance_verified": true,
-          "spec_references": [
-            "claude/system/execution_prompt.md#STEP-5.1"
-          ],
           "deviations_filed": true,
-          "last_completed_substep": "pushed",
-          "sign_off_record": null,
           "notes": "Source: OA-03 / D-02. Combined with ST-09 and ST-10 in same commit. v3.13→v3.14. OPERATIONAL_GUIDE v3.67→v3.68. prompt_change_log entry added."
         },
         "ST-09": {
@@ -233,16 +177,9 @@
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
           "commit_sha": "17a3c3f4",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
           "completed_utc": "2026-05-06T01:00:00Z",
           "acceptance_verified": true,
-          "spec_references": [
-            "claude/system/execution_prompt.md#§3.1.A"
-          ],
           "deviations_filed": true,
-          "last_completed_substep": "pushed",
-          "sign_off_record": null,
           "notes": "Source: OA-04 / D-03. Combined with ST-08 and ST-10 in same commit."
         },
         "ST-10": {
@@ -254,16 +191,9 @@
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
           "commit_sha": "17a3c3f4",
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
           "completed_utc": "2026-05-06T01:00:00Z",
           "acceptance_verified": true,
-          "spec_references": [
-            "claude/system/execution_prompt.md#§14"
-          ],
           "deviations_filed": true,
-          "last_completed_substep": "pushed",
-          "sign_off_record": null,
           "notes": "Source: OA-05 / D-04. All networkidle occurrences replaced in tests/e2e/. §14 Playwright Test Authoring Standard added."
         },
         "ST-11": {
@@ -275,15 +205,9 @@
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
           "commit_sha": "268d508d",
           "delegation_record_id": "DEL-20260506-01",
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
           "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": [
-            "tests/e2e/trade-plan.spec.js"
-          ],
           "deviations_filed": true,
-          "last_completed_substep": "doq_signed_off",
           "sign_off_record": "qa_evidence_EPIC-03.md — Director of Quality, 2026-05-06",
           "notes": "DEL-20260506-01 completed. Playwright 8/8 pass (SC-TP-01–07). Backend CRUD confirmed. TEST-GAP-EPIC-01 closed."
         },
@@ -296,16 +220,9 @@
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
           "commit_sha": "268d508d",
           "delegation_record_id": "DEL-20260506-02",
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
           "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": [
-            "tests/e2e/earnings-calendar.spec.js",
-            "tests/e2e/screener-uk-suffix.spec.js"
-          ],
           "deviations_filed": true,
-          "last_completed_substep": "doq_signed_off",
           "sign_off_record": "qa_evidence_EPIC-03.md — Director of Quality, 2026-05-06",
           "notes": "DEL-20260506-02 completed. Playwright 13/13 pass (SC-EARN-01–09, SC-UK-01–04). TEST-GAP-EPIC-03 closed."
         }
@@ -318,8 +235,8 @@
       "execution_sequence": 4,
       "status": "not_started",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 346,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -328,96 +245,51 @@
           "title": "React component inventory (BLG-FE-16)",
           "classification": "autonomous",
           "status": "not_started",
-          "assigned_to": "engine",
           "github_issue": 340,
-          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable"
+          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main"
         },
         "ST-14": {
           "title": "Design system document (BLG-FE-21)",
           "classification": "autonomous",
           "status": "not_started",
-          "assigned_to": "engine",
           "github_issue": 341,
-          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable. Depends on ST-13."
+          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main"
         },
         "ST-15": {
           "title": "Alpaca credential audit and rotation policy (BLG-SEC-05)",
           "classification": "autonomous",
           "status": "not_started",
-          "assigned_to": "engine",
           "github_issue": 342,
-          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable"
+          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main"
         },
         "ST-16": {
           "title": "External API dependency risk register (BLG-GOV-18)",
           "classification": "autonomous",
           "status": "not_started",
-          "assigned_to": "engine",
           "github_issue": 343,
-          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable"
+          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main"
         },
         "ST-17": {
           "title": "Cycle artefact inventory and maintenance review (BLG-GOV-11)",
           "classification": "autonomous",
           "status": "not_started",
-          "assigned_to": "engine",
           "github_issue": 344,
-          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable. 3rd consecutive deferral — mandatory."
+          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main. OPERATIONAL_GUIDE §16 added; CLAUDE.md §6 checklist applied."
         }
       }
     }
@@ -425,13 +297,14 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-03", "EPIC-01", "EPIC-02", "EPIC-04"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-03", "EPIC-04", "EPIC-02"],
+    "all_merged": false,
+    "note": "EPIC-01 merged. EPIC-03 PR #347 open. EPIC-04 PR #346 open. EPIC-02 unblocked — EPIC-01 merged."
   },
 
   "sealed": false,
