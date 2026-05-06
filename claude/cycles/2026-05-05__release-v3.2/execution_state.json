@@ -131,7 +131,7 @@
       "status": "done",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
       "pr_number": 347,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -233,63 +233,83 @@
       "title": "Documentation, Security & Backlog Clearance",
       "sprint": 2,
       "execution_sequence": 4,
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
       "pr_number": 346,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
         "ST-13": {
           "title": "React component inventory (BLG-FE-16)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 340,
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
+          "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "No spec deviation — deviations_filed: true per §5.1 enforcement."
         },
         "ST-14": {
           "title": "Design system document (BLG-FE-21)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 341,
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
+          "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "No spec deviation."
         },
         "ST-15": {
           "title": "Alpaca credential audit and rotation policy (BLG-SEC-05)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 342,
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
+          "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "No spec deviation."
         },
         "ST-16": {
           "title": "External API dependency risk register (BLG-GOV-18)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 343,
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
+          "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "No spec deviation."
         },
         "ST-17": {
           "title": "Cycle artefact inventory and maintenance review (BLG-GOV-11)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 344,
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "notes": "Done on EPIC-04 branch (a9b13c19) — not yet merged to main. OPERATIONAL_GUIDE §16 added; CLAUDE.md §6 checklist applied."
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
+          "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "No spec deviation. OPERATIONAL_GUIDE §16 added; CLAUDE.md §6 checklist applied."
         }
       }
     }
@@ -297,14 +317,14 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-03", "EPIC-04", "EPIC-02"],
+    "epics_merged": ["EPIC-01", "EPIC-03"],
+    "epics_pending": ["EPIC-04", "EPIC-02"],
     "all_merged": false,
-    "note": "EPIC-01 merged. EPIC-03 PR #347 open. EPIC-04 PR #346 open. EPIC-02 unblocked — EPIC-01 merged."
+    "note": "EPIC-01 merged. EPIC-03 merged. EPIC-04 PR #346 open. EPIC-02 unblocked — EPIC-01 merged."
   },
 
   "sealed": false,

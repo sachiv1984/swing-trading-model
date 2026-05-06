@@ -75,7 +75,7 @@ Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. Wh
 
 ---
 
-### BLG-FE-16 — React component inventory
+### BLG-FE-16 — React component inventory ✅ COMPLETE v3.2
 **Priority:** P3 (Low)
 **Type:** Frontend / Documentation
 **Owner:** Frontend Specifications & UX Documentation Owner
@@ -104,7 +104,7 @@ No catalogue of UI components exists. Arc 1 will add significant new frontend co
 
 ---
 
-### BLG-FE-21 — Design system document
+### BLG-FE-21 — Design system document ✅ COMPLETE v3.2
 **Priority:** P3 (Low)
 **Type:** Frontend / Documentation
 **Owner:** Frontend Specifications & UX Documentation Owner
@@ -204,7 +204,7 @@ Eighteen endpoints shipped in v2.8/v2.9/v3.0/v3.1 are absent from `docs/ops/api_
 
 ---
 
-### BLG-SEC-05 — Alpaca API key rotation policy and credential audit
+### BLG-SEC-05 — Alpaca API key rotation policy and credential audit ✅ COMPLETE v3.2
 **Priority:** P2 (Medium)
 **Type:** Security / Operations
 **Owner:** Cybersecurity & Trust Lead
@@ -241,7 +241,7 @@ Alpaca API key is in production (stored in Render environment variables) with no
 
 ---
 
-### BLG-GOV-18 — External API dependency risk register
+### BLG-GOV-18 — External API dependency risk register ✅ COMPLETE v3.2
 **Priority:** P3 (Low)
 **Type:** Governance Process / Operational Risk
 **Owner:** PMO Lead + Infrastructure & Operations Owner
@@ -265,7 +265,7 @@ Alpaca Markets API is now production-critical — the screener engine depends on
 
 ---
 
-### BLG-GOV-11 — Cycle artefact inventory and maintenance review
+### BLG-GOV-11 — Cycle artefact inventory and maintenance review ✅ COMPLETE v3.2
 **Priority:** P3 (Low)
 **Type:** Governance Process
 **Owner:** PMO Lead + Head of Specs Team
