@@ -269,7 +269,7 @@
         "ST-11": {
           "title": "Trade Plan domain test scenario registration (TEST-GAP-EPIC-01)",
           "classification": "delegated_qa",
-          "status": "in_progress",
+          "status": "blocked_qa",
           "assigned_to": "qa",
           "github_issue": 332,
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
@@ -290,7 +290,7 @@
         "ST-12": {
           "title": "Earnings Calendar and UK screener test registration (TEST-GAP-EPIC-03)",
           "classification": "delegated_qa",
-          "status": "in_progress",
+          "status": "blocked_qa",
           "assigned_to": "qa",
           "github_issue": 333,
           "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
