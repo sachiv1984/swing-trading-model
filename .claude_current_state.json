@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-05-05__release-v3.2",
   "cycle_name": "Release Planning — v3.2 Arc 2 Pre-Trade Research & Planning",
-  "status": "Executing",
+  "status": "Sprint_Complete",
   "engine": "execution_prompt",
   "execution_state_path": "claude/cycles/2026-05-05__release-v3.2/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-05-05__release-v3.2/stage4_backlog_slice.md",

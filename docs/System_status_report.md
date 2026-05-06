@@ -1,9 +1,38 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.3
-**Last Updated:** 2026-05-05
+**Version:** 2.4
+**Last Updated:** 2026-05-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-05__release-v3.2
+**Date:** 2026-05-06
+**Status:** Sprint_Complete — 2026-05-06
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | PT-02 Pre-Trade Research View (frontend): `Research.js` page with price & signal data, prospective heat at entry, trade plan context panel (EntryChecklist read-only, R Target, Edit plan link), recent news headlines; navigation entry points from Screener (`/research/{ticker}` link) and Watchlist (Research button); `GET /portfolio/prospective-heat` wired to prospective heat panel (PT-03). | `docs/specs/frontend/pages/research.md`; `docs/specs/api_contracts/pre_trade_research_endpoints.md` | None |
+| EPIC-02 | PT-05 Pre-Trade Entry Checklist: `EntryChecklist` component with 4 default items (signal confirmed, heat limit, stop defined, research reviewed); integrated into TradePlan form (editable, saves via PUT /trade-plans/{id}); read-only display in Research view trade plan panel. Pre-population logic: early_exit_conditions → stop_defined, r_target → research_reviewed. "Review research" link to /research/{ticker}. Observable ACs: code review only — BLG-QA-14 filed (Playwright target v3.3). | `docs/specs/frontend/pages/trade_plan.md#Entry Checklist` | None |
+| EPIC-03 | Governance hardening: sprint_planning_prompt.md v2.6 (STEP 0 main-branch verification — OA-02); execution_prompt.md v3.14 (STEP 5.1 deviations_filed enforcement — OA-03; §3.1.A post-story test_scenarios advisory — OA-04; §14 Playwright waitFor standard — OA-05). Playwright test coverage: `tests/e2e/trade-plan.spec.js` SC-TP-01–07 (8 tests, TEST-GAP-EPIC-01 closed); `tests/e2e/earnings-calendar.spec.js` SC-EARN-01–09 (9 tests); `tests/e2e/screener-uk-suffix.spec.js` SC-UK-01–04 (4 tests, TEST-GAP-EPIC-03 closed). | `claude/system/sprint_planning_prompt.md` v2.6; `claude/system/execution_prompt.md` v3.14; `tests/e2e/` | None |
+| EPIC-04 | Documentation and security: React component inventory (`docs/specs/frontend/component_inventory.md` — BLG-FE-16); Design system document (`docs/specs/frontend/design_system.md` — BLG-FE-21); Alpaca credential audit and rotation policy (`docs/ops/alpaca_key_rotation_policy.md` — BLG-SEC-05); External API dependency risk register (`docs/ops/external_api_dependency_register.md` — BLG-GOV-18); Cycle artefact inventory review (OPERATIONAL_GUIDE §16 updated — BLG-GOV-11). | `docs/specs/frontend/`; `docs/ops/`; `claude/system/OPERATIONAL_GUIDE.md` §16 | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| BLG-QA-14 — Playwright E2E for entry checklist (PT-05) | Frontend testing gate (LL-v3.1-EX-01): code-review-only AC; BLG-QA-14 filed | v3.3 |
+
+### Verification inputs ready
+
+| Input | Status |
+|-------|--------|
+| All 4 EPICs merged to main | ✅ PRs #345, #347, #346, #348 |
+| QA evidence sign-off | ✅ All 4 EPIC QA evidence files signed off (Director of Quality, 2026-05-06) |
+| Delivery verification | Pending — run `run delivery verification` |
 
 ---
 
