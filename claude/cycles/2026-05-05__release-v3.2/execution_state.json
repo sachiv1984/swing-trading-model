@@ -163,7 +163,7 @@
           "github_issue": 340,
           "status": "done",
           "delegation_class": "autonomous",
-          "commit_sha": "pending",
+          "commit_sha": "a9b13c19",
           "acceptance_verified": true,
           "deviations_filed": true,
           "deviation_note": "No spec deviation — deviations_filed: true per §5.1 enforcement."
@@ -173,7 +173,7 @@
           "github_issue": 341,
           "status": "done",
           "delegation_class": "autonomous",
-          "commit_sha": "pending",
+          "commit_sha": "a9b13c19",
           "acceptance_verified": true,
           "deviations_filed": true,
           "deviation_note": "No spec deviation."
@@ -183,7 +183,7 @@
           "github_issue": 342,
           "status": "done",
           "delegation_class": "autonomous",
-          "commit_sha": "pending",
+          "commit_sha": "a9b13c19",
           "acceptance_verified": true,
           "deviations_filed": true,
           "deviation_note": "No spec deviation."
@@ -193,7 +193,7 @@
           "github_issue": 343,
           "status": "done",
           "delegation_class": "autonomous",
-          "commit_sha": "pending",
+          "commit_sha": "a9b13c19",
           "acceptance_verified": true,
           "deviations_filed": true,
           "deviation_note": "No spec deviation."
@@ -203,7 +203,7 @@
           "github_issue": 344,
           "status": "done",
           "delegation_class": "autonomous",
-          "commit_sha": "pending",
+          "commit_sha": "a9b13c19",
           "acceptance_verified": true,
           "deviations_filed": true,
           "deviation_note": "No spec deviation. OPERATIONAL_GUIDE §16 added; CLAUDE.md §6 checklist applied."
