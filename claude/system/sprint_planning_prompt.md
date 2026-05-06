@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.5
-**Last Updated:** 2026-04-05
+**Version:** 2.6
+**Last Updated:** 2026-05-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -293,6 +293,16 @@ For any prompt where the current version is higher than the last entry visible i
 ---
 
 ## STEP 0 — Load Release Context
+
+**Branch Safety Check (Hard Gate — OA-02 / ST-07):**
+
+Run: `git branch --show-current`
+
+If the result is NOT `main`: halt immediately. Output:
+
+> HALT — sprint planning artefacts must be committed to `main`. Current branch is `<branch_name>`. Checkout `main` (`git checkout main`) and re-invoke `plan sprint`.
+
+If the result is `main`: proceed.
 
 **Cleanup:** If `claude/cycles/<cycle_id>/.write_test` exists (left from STEP -1.8 on a previous interrupted run), delete it now before proceeding.
 
@@ -800,6 +810,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6 | 2026-05-06 | ST-07 (EPIC-03, v3.2): STEP 0 — Branch Safety Check (Hard Gate) added. Verifies current branch is `main` before sprint planning artefacts are committed. If not `main`: halt with branch name and instruction to checkout main. Prevents recurrence of orphaned sprint planning artefacts (v3.1 incident). Source: OA-02 / D-01. Authority: Head of Specs Team (ST-07, 2026-05-06). |
 | 2.5 | 2026-04-05 | OA-01 (v2.5 cycle carry-forward): STEP -1.11 added — Prompt Change Log Hygiene Advisory. Scans the full change log table (not just top-first) for version gaps between current prompt headers and last logged entries; surfaces as advisory with prepend-order reminder; advisory only, does not block planning. Root cause fix: entries appended to bottom of table by execution engines were missed by release_planning_prompt STEP -1.7 top-first scan. Authority: Head of Specs Team (OA-01 closure 2026-04-05). |
 | 2.4 | 2026-03-24 | Post-ship closure v2.2 lessons learnt applied. LL-v2.2-SP-01: STEP 3.1 — blocked-decision advisory added. When an `include` item is `delegated_decision` with no HoST design artefact, surface advisory: "HoST design session should be scheduled before sprint start"; record in `sprint_planning_notes.md`. Advisory only — does not block planning. Authority: Head of Specs Team (post-ship closure 2026-03-21__release-v2.2). |
 | 2.2 | 2026-03-17 | Post-ship closure v2.0 lessons learnt patch applied. LL-v2.0-P4-2: STEP 3.1 delegation class assignment — test scenario gap flag added; for every `delegated_frontend` item introducing a new page or new user-facing controls (not refactor), flag EPIC test_scenarios as "pending — QA & Testing Owner to author before next sprint on this domain" in execution_state.json and sprint_planning_notes.md; surfaces gap at planning time rather than delivery verification. |

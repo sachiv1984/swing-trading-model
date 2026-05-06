@@ -130,7 +130,6 @@ test.describe('SC-REP-01 — Performance tab summary stats', () => {
     await mockPositions(page, []);
     await page.goto('/#/Reports');
     // Wait for all API calls to settle before asserting
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
   });
 
   test('SC-REP-01a: Total P&L StatsCard renders value from analytics summary', async ({ page }) => {
@@ -173,7 +172,6 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
     await page.goto('/#/Reports');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
     // Allow request to fire
     await page.waitForTimeout(500);
 
@@ -193,7 +191,6 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
     await page.goto('/#/Reports');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
     await page.waitForTimeout(300);
 
     // Clear captured requests to isolate the selector change
@@ -222,7 +219,6 @@ test.describe('SC-REP-02 — Period selector maps to correct backend period para
     await mockAnalyticsMetrics(page, ANALYTICS_FULL);
     await mockPositions(page, []);
     await page.goto('/#/Reports');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
     await page.waitForTimeout(300);
 
     requests.length = 0;
@@ -280,7 +276,6 @@ test.describe('SC-REP-04 — Empty state (no trades for period)', () => {
     await mockAnalyticsMetrics(page, ANALYTICS_EMPTY);
     await mockPositions(page, []);
     await page.goto('/#/Reports');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
   });
 
   test('SC-REP-04a: Total P&L shows £0.00 when no trades', async ({ page }) => {

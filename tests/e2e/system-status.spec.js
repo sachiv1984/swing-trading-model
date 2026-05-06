@@ -164,7 +164,6 @@ test.describe('SC-SS-01 — Pre-run state', () => {
   test.beforeEach(async ({ page }) => {
     await mockBaseEndpoints(page);
     await page.goto('/#/SystemStatus');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
   });
 
   test('SC-SS-01a: System Status page renders with Run Tests button', async ({ page }) => {
@@ -198,7 +197,6 @@ test.describe('SC-SS-02 — Run Tests button triggers POST /test/endpoints', () 
     // Catch-all first — LIFO order ensures specific mocks below take precedence.
     await mockBaseEndpoints(page);
     await page.goto('/#/SystemStatus');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
 
     await page.getByRole('button', { name: /run tests/i }).click();
     await page.waitForTimeout(500);
@@ -217,7 +215,6 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
   test.beforeEach(async ({ page }) => {
     await mockBaseEndpoints(page);
     await page.goto('/#/SystemStatus');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
     await page.getByRole('button', { name: /run tests/i }).click();
     await page.waitForTimeout(1000);
   });

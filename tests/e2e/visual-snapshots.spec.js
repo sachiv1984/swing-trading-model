@@ -86,7 +86,6 @@ async function gotoScreener(page, results, runTimestamp = null) {
     route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ run_id: 'run-002' }) })
   );
   await page.goto('/#/Screener');
-  await page.waitForLoadState('networkidle');
 }
 
 // ---------------------------------------------------------------------------
@@ -267,7 +266,6 @@ test('VS-10: Sidebar footer shows n and r shortcut hints on Positions', async ({
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { last_sync_at: null } }) })
   );
   await page.goto('/#/Positions');
-  await page.waitForLoadState('networkidle');
 
   const sidebarFooter = page.locator('aside').first().locator('div.mb-3.space-y-1').first();
   await expect(sidebarFooter).toBeVisible({ timeout: 5000 });
@@ -372,7 +370,6 @@ test('VS-14: Positions table PositionEarningsCell has text-amber-400 class when 
   );
 
   await page.goto('/#/Positions');
-  await page.waitForLoadState('networkidle');
 
   await page.waitForSelector('text=NVDA', { timeout: 8000 });
   // Switch to table view to reveal PositionEarningsCell

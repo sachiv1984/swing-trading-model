@@ -86,7 +86,7 @@ async function mockRulesPopulated(page) {
 /** Navigate to the preferences page and wait for the thresholds section to load. */
 async function gotoPreferences(page) {
   await page.goto('/#/notifications/preferences');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 // ---------------------------------------------------------------------------

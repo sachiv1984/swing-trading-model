@@ -114,7 +114,6 @@ test.describe('SC-SIG-CB-01 — Cash balance from /cash/summary', () => {
     await mockSignals(page);
     await page.goto('/#/Signals');
     // Wait for all API calls to settle before asserting
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
   });
 
   test('SC-SIG-CB-01a: GET /cash/summary is called on Signals page load', async ({ page }) => {
@@ -134,7 +133,6 @@ test.describe('SC-SIG-CB-01 — Cash balance from /cash/summary', () => {
     // hash alone keeps the SPA mounted so React Query serves from cache and skips the fetch).
     await page.goto('about:blank');
     await page.goto('/#/Signals');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
 
     expect(cashRequests.length).toBeGreaterThan(0);
     expect(cashRequests[0]).toContain('/cash/summary');
@@ -159,7 +157,6 @@ test.describe('SC-SIG-CB-02 — Cash balance fallback to 0', () => {
     await mockCashSummaryError(page);
     await mockSignals(page);
     await page.goto('/#/Signals');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
     await page.waitForTimeout(500);
 
     // availableCashBalance = cashSummary?.current_cash ?? 0 = 0
@@ -184,7 +181,6 @@ test.describe('SC-SIG-CB-02 — Cash balance fallback to 0', () => {
     );
     await mockSignals(page);
     await page.goto('/#/Signals');
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
     await page.waitForTimeout(500);
 
     // cashSummary?.current_cash ?? 0 → 0 when current_cash is null

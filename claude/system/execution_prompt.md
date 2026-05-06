@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.13
-**Last Updated:** 2026-05-01
+**Version:** 3.14
+**Last Updated:** 2026-05-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -593,6 +593,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 11. **Sign-off gate:** If the item's seal condition in `sprint_backlog.md` names a required sign-off role: invoke agent-mediated sign-off per §5.3. Do not mark `acceptance_verified = true` until `sign_off_record.status = "cleared"`. Record outcome in `sign_off_record` in `execution_state.json`.
 
+12. **Post-story test files check (OA-04 / ST-09):** If this story created any new test files (in `tests/` or `tests/e2e/`), populate `test_scenarios` in `execution_state.json` for the parent EPIC with those file paths **now**, before advancing to the next story. Do not defer this step to STEP 3.2.A.
+
 **Pre-met path (LL-v2.4-P4-02):** If an item's acceptance criteria were satisfied by work completed in a prior sprint (item classified `pre-met` or notes field records `AC pre-met on main`):
 - Verify by code review / prompt review that all AC items are still met on `main`.
 - Mark `status = done`, `acceptance_verified = true`, note the prior commit SHA where the work was done.
@@ -844,6 +846,11 @@ This step is idempotent — re-running does not alter an already-correct value. 
 
 For each ST item: confirm `acceptance_verified = true`. If any are false and the item is `merged`: this is a quality gap — file an escalation.
 
+**Deviations filed enforcement check (OA-03 / ST-08):** For each ST item with `status: done`, verify `deviations_filed = true`:
+- If `deviations_filed = false` and no deviation record exists in the spec or `qa_evidence_EPIC-xx.md`: set `deviations_filed = true` and append a log note to `execution_state.json` notes field: `"No spec deviation found — deviations_filed corrected at sprint close"`.
+- If `deviations_filed = false` and a deviation record **does** exist (deviation was filed but the flag was not set): surface as a process warning and do not auto-correct — requires human review to confirm the deviation record is complete before setting the flag.
+- If `deviations_filed = true`: no action needed.
+
 **QA Evidence File Existence Check (LL-v2.4-P4-01 — second recurrence):** Before checking sign-off dates, verify that `qa_evidence_EPIC-xx.md` **exists** for every EPIC in `merge_gate.epics_merged`. A missing QA evidence file is a hard gate — create it immediately using §3.2.A, complete the verification (including pre-met items and autonomous items), obtain DoQ sign-off, then continue. Do not proceed to STEP 5.2 until all qa_evidence files exist. A file created here at sprint close is acceptable; a file missing at Phase 4 (delivery verification) preflight is a recurrent process failure that this gate must prevent.
 
 **QA Evidence Persistence Check (LL-v2.0-P4-1):** For each EPIC with `qa_signed_off: true` in `execution_state.json`, read the corresponding `qa_evidence_EPIC-xx.md` file and confirm the sign-off block `Date:` field is non-blank. If blank: the sign-off was not persisted during sprint execution — re-apply the sign-off block immediately (Director of Quality authority required). Do not proceed to STEP 5.3 until all sign-off blocks are confirmed non-blank.
@@ -1039,10 +1046,31 @@ System-wide invariants: per `claude/system/invariants.md`. Execution-engine-spec
 
 ---
 
+## 14. Playwright Test Authoring Standard (OA-05 / ST-10)
+
+When writing or updating Playwright tests in this project:
+
+**Use `waitFor` patterns — not `networkidle`.**
+
+`page.waitForLoadState('networkidle')` is unreliable on CI and is prohibited in new tests. Replace with:
+
+- **`await expect(page.locator('selector')).toBeVisible({ timeout: N })`** — preferred; waits for a specific element that confirms the page/component has rendered.
+- **`await page.waitForSelector('selector')`** — acceptable when `expect` is not available at the point of navigation.
+- **`await page.waitForResponse(urlPattern)`** — when the test needs to confirm a specific API call was made.
+- **`await page.waitForLoadState('domcontentloaded')`** — only in navigation helper functions where a specific element is unknown. Never in the body of a test scenario.
+
+**Standard:**
+1. Every `page.goto()` or `page.reload()` must be followed by an element-specific wait, not `networkidle`.
+2. In test helper functions (e.g. `async function goto(page, hash)`), use `domcontentloaded` as the base wait only when no specific element is available.
+3. `waitForLoadState('networkidle')` is never permitted in new test code. The QA Evidence sign-off block for any EPIC introducing new Playwright tests must confirm this standard was followed.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.14 | 2026-05-06 | ST-08 + ST-09 + ST-10 (EPIC-03, v3.2): Three OA patches combined. (ST-08 / OA-03) §5.1 — Deviations filed enforcement check added: for each done story, if `deviations_filed=false` and no deviation record exists, auto-correct with log note; if deviation record exists but flag false, surface process warning without auto-correct. (ST-09 / OA-04) §3.1.A step 12 — Post-story test files check added: explicit named step requiring `test_scenarios` in `execution_state.json` to be populated immediately after any story that creates test files, before advancing to next story. (ST-10 / OA-05) §14 — Playwright Test Authoring Standard added: `networkidle` prohibited in new tests; `waitFor` element-specific patterns required; `domcontentloaded` permitted in navigation helpers only; all existing `networkidle` occurrences in `tests/e2e/` replaced. Authority: Head of Specs Team (ST-08 + ST-09 + ST-10, 2026-05-06). |
 | 3.13 | 2026-05-01 | §3.2.A Frontend testing gate (LL-v3.1-EX-01): hard gate added — any EPIC with frontend-visible changes must have Playwright test coverage for each observable AC, or human staging sign-off with date, before PR opens. "Code review only" without a filed backlog item blocks the PR. CLAUDE.md §2 corresponding rule updated. Also records test file paths SC-UK-01–04 (screener-uk-suffix.spec.js) and SC-EARN-01–09 (earnings-calendar.spec.js) created for ST-06 and ST-08 gaps. Authority: Head of Specs Team (2026-05-01). |
 | 3.12 | 2026-04-30 | ST-13 + ST-14 (EPIC-04, v3.1): Two carry-forward patches combined. (ST-13 / CF-01) §3.1.A — Reclassification backfill instruction added: when a story is reclassified from `delegated_frontend` to `autonomous` mid-sprint, the engine must backfill `test_scenarios` in `execution_state.json` at the time of reclassification; `test_scenarios` must be populated before the story's QA evidence log entry is written. (ST-14 / CF-02) §5.4 — Output target note added: output target is `lessons_learnt_cycle.md`; explicit warning NOT to append to `lessons_learnt.md` (Release Planning artefact); prevents silent corruption of the RP artefact. Authority: Head of Specs Team (ST-13 + ST-14, 2026-04-30). |
 | 3.11 | 2026-04-25 | ST-12 + ST-13 (EPIC-04, v3.0): Two deferred patches combined. (ST-12 / OA-v29-02) §2 execution_state.json ownership rule added for multi-EPIC sprints — first EPIC branch in execution order is designated owner; all others check for file existence before creating; merge conflict advisory references CLAUDE.md §8. (ST-13 / OA-v29-03) §3.1.A step 1 — test scenarios advisory added: when tests are created, populate test_scenarios in execution_state.json with test file paths; non-blocking; must be complete before STEP 3.2.A QA evidence log creation. Authority: Head of Specs Team (ST-12 + ST-13, 2026-04-25). |
