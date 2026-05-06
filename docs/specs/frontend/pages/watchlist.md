@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-03-18
+**Version:** 0.2
+**Last Updated:** 2026-05-05
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md
 
@@ -61,7 +61,7 @@ One row per watchlist entry. Default sort: entry signal status (Active first, th
 | Target Entry | `target_entry_price` | Native currency (GBP for UK, USD for US). Display `—` if null. |
 | Stop (Initial) | `initial_stop_price` | Native currency. Display `—` if null. |
 | Stop (Current) | `current_stop_price` | Native currency. Display `—` if null. |
-| Actions | — | "Add to Position" button + "Remove" icon (trash) |
+| Actions | — | "Research" link + "Add to Position" button + "Remove" icon (trash) |
 
 ### Signal Status Values
 
@@ -164,8 +164,26 @@ On removal (via Remove or Add to Position): row slides out or fades out before t
 
 ---
 
+## Research Navigation (v3.2 — ST-04)
+
+Each ticker entry in the watchlist table has a **"Research"** action (text link or secondary button) in the Actions column, adjacent to "Add to Position".
+
+| Attribute | Specification |
+|-----------|---------------|
+| Label | "Research" |
+| Placement | Actions column, first action (before "Add to Position" and "Remove") |
+| Target | `/research/{ticker}` |
+| Context carry | None |
+
+**Back navigation:** User clicking `← Back` on the research view returns to `/watchlist` via browser back.
+
+**Design source:** `docs/design/2026-05-05__release-v3.2/screener-to-research-navigation/ux_spec.md`
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-05-05 | v3.2 design gate — added Research Navigation section (ST-04); updated Actions column. Design source: screener-to-research-navigation/ux_spec.md. |
 | 0.1 | 2026-03-18 | Initial spec. ST-10 — EPIC-03 (Watchlists & Screening). Design gate: 2026-03-18__release-v2.1. Design source: UX spec approved by Product Owner 2026-03-18. |

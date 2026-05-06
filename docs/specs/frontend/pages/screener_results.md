@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-04-23
+**Version:** 1.1
+**Last Updated:** 2026-05-05
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
 **API contract:** docs/specs/api_contracts/screener_api_contract.md
@@ -63,6 +63,7 @@ The screener results are displayed in a table/list with the following columns:
 | Sector | `sector` | Sector classification text (or em dash `—` if null) |
 | Entry Zone | `proximity_to_entry_zone` | Displayed as "Near entry" / "In zone" / "—" based on proximity value |
 | News | `news_headline_count` | Headline count badge (e.g. "3") clicking expands inline panel |
+| Actions | — | "Research" link + "Add to Watchlist" button (see §8 and §11) |
 
 **Column ordering is fixed.** The frontend must not reorder columns without a spec update.
 
@@ -182,7 +183,24 @@ On response:
 
 ---
 
-## 11. AC Coverage Summary (DS-02 Interaction Patterns)
+## 11. Research Navigation (v3.2 — ST-04)
+
+Each ticker row in the screener results table has a **"Research"** action (text link or secondary button) in the Actions column, adjacent to "Add to Watchlist".
+
+| Attribute | Specification |
+|-----------|---------------|
+| Label | "Research" |
+| Placement | Actions column, adjacent to "Add to Watchlist" |
+| Target | `/research/{ticker}` |
+| Context carry | None — ticker in URL path is sufficient |
+
+**Back navigation:** User clicking `← Back` on the research view returns to `/screener` via browser back.
+
+**Design source:** `docs/design/2026-05-05__release-v3.2/screener-to-research-navigation/ux_spec.md`
+
+---
+
+## 12. AC Coverage Summary (DS-02 Interaction Patterns)
 
 This spec covers all DS-02 interaction patterns:
 
@@ -196,6 +214,7 @@ This spec covers all DS-02 interaction patterns:
 | Watchlist promotion flow | §8 |
 | News panel | §9 |
 | Skeleton/progressive loading | §10 |
+| Research navigation (v3.2) | §11 |
 
 ---
 
@@ -218,3 +237,12 @@ This spec covers all DS-02 interaction patterns:
 | ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
 |----|-------------|----------------------|----------|------------------|-------|------------------|
 | DEV-01 | News panel not displayed on screener results page (DS-02 portion of DS-06 AC-1). The `GET /news/{ticker}` backend endpoint is available; UI attachment to the screener results page is deferred pending DS-02 page implementation in v3.0. | §9 News Panel: "display on screener results page" (ST-07 AC-1). DS-02 implementation is a prerequisite. | P3 | v3.0 (DS-02 — screener results page implementation) | Backend Engineering Patterns Owner + Frontend Specifications & UX Documentation Owner | BLG-FE-18 |
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | 2026-05-05 | v3.2 design gate — added §11 Research Navigation (ST-04); added Actions column to §4 column layout. Design source: screener-to-research-navigation/ux_spec.md. |
+| 1.0 | 2026-04-23 | Initial spec. |
