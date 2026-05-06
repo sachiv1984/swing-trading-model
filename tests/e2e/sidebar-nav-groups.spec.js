@@ -77,7 +77,7 @@ async function stubAll(page) {
 /** Navigate to a page and wait for the network to settle. */
 async function goto(page, hash) {
   await page.goto(hash);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 /** Clear nav-group-collapse from sessionStorage before the page loads. */
@@ -267,7 +267,7 @@ test('SC-SNV-07: Full page reload resets group collapse state to defaults', asyn
   // We need to manually clear sessionStorage here to simulate a full reload reset
   await page.evaluate(() => sessionStorage.removeItem('nav-group-collapse'));
   await page.reload();
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   // After reload with no stored state: only Trading (active) should be expanded
   await expect(page.getByRole('link', { name: 'Positions' }).first()).toBeVisible({ timeout: 5000 });

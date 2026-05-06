@@ -464,7 +464,7 @@ The application has no mechanism to roll out new features to a subset of users o
 
 *Added by Delivery Verification Engine — 2026-05-05*
 
-### TEST-GAP-EPIC-01 — Trade Plan test scenario coverage gap (v3.1)
+### TEST-GAP-EPIC-01 — Trade Plan test scenario coverage gap (v3.1) ✅ COMPLETE v3.2
 
 **Source:** Delivery verification 2026-04-29__release-v3.1
 **Priority:** P3
@@ -474,7 +474,7 @@ Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/trade-plan.spec.js` 
 
 ---
 
-### TEST-GAP-EPIC-03 — Earnings Calendar and UK screener test registration gap (v3.1)
+### TEST-GAP-EPIC-03 — Earnings Calendar and UK screener test registration gap (v3.1) ✅ COMPLETE v3.2
 
 **Source:** Delivery verification 2026-04-29__release-v3.1
 **Priority:** P3

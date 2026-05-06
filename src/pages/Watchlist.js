@@ -293,6 +293,14 @@ export default function Watchlist() {
                         <Button
                           variant="outline"
                           size="sm"
+                          onClick={() => navigate(`/research/${entry.ticker}`)}
+                          className="bg-slate-800/50 border-slate-700 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/30 text-xs h-7 px-2.5"
+                        >
+                          Research
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => handleAddToPosition(entry)}
                           className="bg-slate-800/50 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 text-xs h-7 px-2.5"
                         >

@@ -2,6 +2,7 @@ import { Toaster } from "./components/ui/toaster"
 import NotificationPreferences from "./pages/NotificationPreferences"
 import Notifications from "./pages/Notifications"
 import NotificationsHistory from "./pages/NotificationsHistory"
+import Research from "./pages/Research"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from './lib/query-client'
 import NavigationTracker from './lib/NavigationTracker'
@@ -79,6 +80,11 @@ const AuthenticatedApp = () => {
       <Route path="/notifications/history" element={
         <LayoutWrapper currentPageName="notifications">
           <NotificationsHistory />
+        </LayoutWrapper>
+      } />
+      <Route path="/research/:ticker" element={
+        <LayoutWrapper currentPageName="Research">
+          <Research />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />

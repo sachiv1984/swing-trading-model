@@ -104,7 +104,6 @@ async function mockAnalyticsMetrics(page) {
 async function switchToTableView(page) {
   const tableBtn = page.locator('button.p-0.rounded-lg').nth(1);
   await tableBtn.click();
-  await page.waitForLoadState('networkidle');
 }
 
 /**
@@ -117,7 +116,6 @@ async function setupPositionsPage(page, positionsPayload, compliancePayload) {
   await mockAnalyticsMetrics(page);
 
   await page.goto('/#/Positions');
-  await page.waitForLoadState('networkidle');
 }
 
 // ---------------------------------------------------------------------------

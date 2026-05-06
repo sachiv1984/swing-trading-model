@@ -1,89 +1,139 @@
 {
   "cycle_id": "2026-05-05__release-v3.2",
-  "release": "v3.2",
-  "sprint_start_utc": "2026-05-06T00:00:00Z",
-  "engine_version": "3.14",
+  "sprint_goal": "Ship the Pre-Trade Research View (PT-02) and Prospective Heat integration (PT-03) in Sprint 1 and the Pre-Trade Entry Checklist (PT-05) in Sprint 2, completing Arc 2's primary user-value deliverables, while clearing four v3.1 governance deferred actions and five documentation/security backlog items.",
+  "backlog_slice_source": "claude/cycles/2026-05-05__release-v3.2/stage4_backlog_slice.md",
+  "invoked_utc": "2026-05-06T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-05-06T00:00:00Z",
+
   "epics": {
     "EPIC-01": {
+      "title": "Pre-Trade Research View (PT-02 + PT-03)",
+      "sprint": 1,
+      "execution_sequence": 2,
+      "status": "done",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
-      "status": "pr_open",
       "pr_number": 345,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/e2e/pre-trade-research.spec.js (SC-RES-01 to SC-RES-13)"
       ],
       "stories": {
         "ST-01": {
           "title": "Pre-trade research view component — data display",
-          "github_issue": 334,
+          "classification": "autonomous",
           "status": "done",
-          "delegation_class": "autonomous",
+          "assigned_to": "engine",
+          "github_issue": 334,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
           "commit_sha": "4f24ce9b",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "deviation_note": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01; spec fully locked at design gate."
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01; spec fully locked at design gate."
         },
         "ST-02": {
           "title": "Trade plan context panel in research view",
-          "github_issue": 335,
+          "classification": "autonomous",
           "status": "done",
-          "delegation_class": "autonomous",
+          "assigned_to": "engine",
+          "github_issue": 335,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
           "commit_sha": "4f24ce9b",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "deviation_note": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Combined with ST-01/03/04 in single commit."
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Combined with ST-01/03/04 in single commit."
         },
         "ST-03": {
           "title": "Prospective heat at entry metric integration (PT-03)",
-          "github_issue": 336,
+          "classification": "autonomous",
           "status": "done",
-          "delegation_class": "autonomous",
+          "assigned_to": "engine",
+          "github_issue": 336,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
           "commit_sha": "4f24ce9b",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "deviation_note": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Combined with ST-01/02/04 in single commit."
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Combined with ST-01/02/04 in single commit."
         },
         "ST-04": {
           "title": "Navigation integration — screener and watchlist entry points to research view",
-          "github_issue": 337,
+          "classification": "autonomous",
           "status": "done",
-          "delegation_class": "autonomous",
+          "assigned_to": "engine",
+          "github_issue": 337,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-01",
           "commit_sha": "4f24ce9b",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "deviation_note": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Combined with ST-01/02/03 in single commit."
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Combined with ST-01/02/03 in single commit."
         }
       }
     },
+
     "EPIC-02": {
-      "branch": "exec/2026-05-05__release-v3.2/EPIC-02",
+      "title": "Pre-Trade Entry Checklist (PT-05)",
+      "sprint": 2,
+      "execution_sequence": 3,
       "status": "not_started",
+      "branch": "exec/2026-05-05__release-v3.2/EPIC-02",
       "pr_number": null,
-      "test_scenarios": [],
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-02.md",
+      "test_scenarios": ["pending — QA & Testing Owner to author tests/e2e/entry-checklist.spec.js before next sprint on this domain"],
       "stories": {
         "ST-05": {
           "title": "Entry checklist schema, component, and Trade Plan form integration",
-          "github_issue": 338,
+          "classification": "delegated_frontend",
           "status": "not_started",
-          "delegation_class": "delegated_frontend",
+          "assigned_to": "engine",
+          "github_issue": 338,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-02",
           "commit_sha": null,
+          "delegation_record_id": null,
+          "unblock_criteria": "EPIC-01 merged to main",
           "acceptance_verified": false,
-          "deviations_filed": false
+          "deviations_filed": false,
+          "notes": "Hard dependency: EPIC-01 must be merged to main before ST-05 begins. EPIC-01 now merged."
         },
         "ST-06": {
           "title": "Checklist pre-population from trade plan data and research view link",
-          "github_issue": 339,
+          "classification": "delegated_frontend",
           "status": "not_started",
-          "delegation_class": "delegated_frontend",
+          "assigned_to": "engine",
+          "github_issue": 339,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-02",
           "commit_sha": null,
+          "delegation_record_id": null,
+          "unblock_criteria": "ST-05 complete",
           "acceptance_verified": false,
-          "deviations_filed": false
+          "deviations_filed": false,
+          "notes": "Depends on ST-05"
         }
       }
     },
+
     "EPIC-03": {
+      "title": "Governance & Process Hardening",
+      "sprint": 1,
+      "execution_sequence": 1,
+      "status": "done",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
-      "status": "in_progress",
-      "pr_number": null,
+      "pr_number": 347,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/e2e/trade-plan.spec.js (SC-TP-01 to SC-TP-07)",
         "tests/e2e/earnings-calendar.spec.js (SC-EARN-01 to SC-EARN-09)",
@@ -92,132 +142,191 @@
       "stories": {
         "ST-07": {
           "title": "sprint_planning_prompt.md STEP 0 main-branch verification",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 328,
-          "status": "not_started",
-          "delegation_class": "autonomous",
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "note": "Done on EPIC-03 branch (ec30e47f) — not yet merged to main"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
+          "commit_sha": "ec30e47f",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:30:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "Source: OA-02 / D-01. v2.5→v2.6. CLAUDE.md §6 checklist complete. OPERATIONAL_GUIDE v3.66→v3.67. prompt_change_log entry added."
         },
         "ST-08": {
           "title": "execution_prompt.md STEP 5.1 deviations_filed enforcement",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 329,
-          "status": "not_started",
-          "delegation_class": "autonomous",
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "note": "Done on EPIC-03 branch (17a3c3f4) — not yet merged to main"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
+          "commit_sha": "17a3c3f4",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T01:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "Source: OA-03 / D-02. Combined with ST-09 and ST-10 in same commit. v3.13→v3.14. OPERATIONAL_GUIDE v3.67→v3.68. prompt_change_log entry added."
         },
         "ST-09": {
           "title": "execution_prompt.md §3.1.A test_scenarios post-story advisory",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 330,
-          "status": "not_started",
-          "delegation_class": "autonomous",
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "note": "Done on EPIC-03 branch (17a3c3f4) — not yet merged to main"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
+          "commit_sha": "17a3c3f4",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T01:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "Source: OA-04 / D-03. Combined with ST-08 and ST-10 in same commit."
         },
         "ST-10": {
           "title": "Playwright waitFor pattern — test authoring standard",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 331,
-          "status": "not_started",
-          "delegation_class": "autonomous",
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "note": "Done on EPIC-03 branch (17a3c3f4) — not yet merged to main"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
+          "commit_sha": "17a3c3f4",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T01:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "notes": "Source: OA-05 / D-04. All networkidle occurrences replaced in tests/e2e/. §14 Playwright Test Authoring Standard added."
         },
         "ST-11": {
           "title": "Trade Plan domain test scenario registration (TEST-GAP-EPIC-01)",
+          "classification": "delegated_qa",
+          "status": "done",
+          "assigned_to": "qa",
           "github_issue": 332,
-          "status": "not_started",
-          "delegation_class": "delegated_qa",
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "note": "blocked_qa on EPIC-03 branch — pending DoQ sign-off"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
+          "commit_sha": "268d508d",
+          "delegation_record_id": "DEL-20260506-01",
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "sign_off_record": "qa_evidence_EPIC-03.md — Director of Quality, 2026-05-06",
+          "notes": "DEL-20260506-01 completed. Playwright 8/8 pass (SC-TP-01–07). Backend CRUD confirmed. TEST-GAP-EPIC-01 closed."
         },
         "ST-12": {
           "title": "Earnings Calendar and UK screener test registration (TEST-GAP-EPIC-03)",
+          "classification": "delegated_qa",
+          "status": "done",
+          "assigned_to": "qa",
           "github_issue": 333,
-          "status": "not_started",
-          "delegation_class": "delegated_qa",
-          "commit_sha": null,
-          "acceptance_verified": false,
-          "deviations_filed": false,
-          "note": "blocked_qa on EPIC-03 branch — pending DoQ sign-off"
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-03",
+          "commit_sha": "268d508d",
+          "delegation_record_id": "DEL-20260506-02",
+          "completed_utc": "2026-05-06T00:00:00Z",
+          "acceptance_verified": true,
+          "deviations_filed": true,
+          "sign_off_record": "qa_evidence_EPIC-03.md — Director of Quality, 2026-05-06",
+          "notes": "DEL-20260506-02 completed. Playwright 13/13 pass (SC-EARN-01–09, SC-UK-01–04). TEST-GAP-EPIC-03 closed."
         }
       }
     },
+
     "EPIC-04": {
+      "title": "Documentation, Security & Backlog Clearance",
+      "sprint": 2,
+      "execution_sequence": 4,
+      "status": "done",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
-      "status": "in_progress",
-      "pr_number": null,
+      "pr_number": 346,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
         "ST-13": {
           "title": "React component inventory (BLG-FE-16)",
-          "github_issue": 340,
+          "classification": "autonomous",
           "status": "done",
-          "delegation_class": "autonomous",
+          "assigned_to": "engine",
+          "github_issue": 340,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "deviation_note": "No spec deviation — deviations_filed: true per §5.1 enforcement."
+          "notes": "No spec deviation — deviations_filed: true per §5.1 enforcement."
         },
         "ST-14": {
           "title": "Design system document (BLG-FE-21)",
-          "github_issue": 341,
+          "classification": "autonomous",
           "status": "done",
-          "delegation_class": "autonomous",
+          "assigned_to": "engine",
+          "github_issue": 341,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "deviation_note": "No spec deviation."
+          "notes": "No spec deviation."
         },
         "ST-15": {
           "title": "Alpaca credential audit and rotation policy (BLG-SEC-05)",
-          "github_issue": 342,
+          "classification": "autonomous",
           "status": "done",
-          "delegation_class": "autonomous",
+          "assigned_to": "engine",
+          "github_issue": 342,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "deviation_note": "No spec deviation."
+          "notes": "No spec deviation."
         },
         "ST-16": {
           "title": "External API dependency risk register (BLG-GOV-18)",
-          "github_issue": 343,
+          "classification": "autonomous",
           "status": "done",
-          "delegation_class": "autonomous",
+          "assigned_to": "engine",
+          "github_issue": 343,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "deviation_note": "No spec deviation."
+          "notes": "No spec deviation."
         },
         "ST-17": {
           "title": "Cycle artefact inventory and maintenance review (BLG-GOV-11)",
-          "github_issue": 344,
+          "classification": "autonomous",
           "status": "done",
-          "delegation_class": "autonomous",
+          "assigned_to": "engine",
+          "github_issue": 344,
+          "branch": "exec/2026-05-05__release-v3.2/EPIC-04",
           "commit_sha": "a9b13c19",
+          "delegation_record_id": null,
+          "completed_utc": "2026-05-06T00:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "deviation_note": "No spec deviation. OPERATIONAL_GUIDE §16 added; CLAUDE.md §6 checklist applied."
+          "notes": "No spec deviation. OPERATIONAL_GUIDE §16 added; CLAUDE.md §6 checklist applied."
         }
       }
     }
   },
-  "summary": {
-    "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17"],
-    "blocked_items": [],
-    "delegated_items": ["ST-11 (blocked_qa on EPIC-03)", "ST-12 (blocked_qa on EPIC-03)"],
-    "in_progress_epics": ["EPIC-03", "EPIC-04"],
-    "not_started_epics": ["EPIC-02"],
-    "note": "EPIC-04 branch view. EPIC-01 PR #345 open. EPIC-03 awaiting QA sign-off (ST-11/12). EPIC-02 blocked on EPIC-01 merge. Merge resolution per CLAUDE.md §8 will union completed_items."
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": ["EPIC-01", "EPIC-03"],
+    "epics_pending": ["EPIC-04", "EPIC-02"],
+    "all_merged": false,
+    "note": "EPIC-01 merged. EPIC-03 merged. EPIC-04 PR #346 open. EPIC-02 unblocked — EPIC-01 merged."
   },
-  "last_updated_utc": "2026-05-06T00:00:00Z"
+
+  "sealed": false,
+  "sealed_utc": null
 }
