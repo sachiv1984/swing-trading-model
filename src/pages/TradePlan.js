@@ -5,11 +5,21 @@ import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
+import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import { BookOpen, Save, ArrowLeft } from "lucide-react";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 const STATUSES = ["draft", "active", "closed"];
+
+function buildPrePopulatedItems(plan) {
+  return DEFAULT_CHECKLIST_ITEMS.map((item) => ({
+    ...item,
+    checked:
+      (item.id === "stop_defined" && !!plan.early_exit_conditions) ||
+      (item.id === "research_reviewed" && plan.r_target != null),
+  }));
+}
 
 const EMPTY_FORM = {
   ticker: "",
@@ -22,7 +32,7 @@ const EMPTY_FORM = {
   early_exit_conditions: "",
   confirmation_criteria: "",
   checklist_completed: false,
-  checklist_items: [],
+  checklist_items: DEFAULT_CHECKLIST_ITEMS.map((i) => ({ ...i })),
   status: "draft",
 };
 
@@ -93,20 +103,27 @@ export default function TradePlan() {
       apiFetch(`${API_BASE}/trade-plans/${editId}`).then((r) => r.json()).then((res) => res.data),
     enabled: !!editId,
     onSuccess: (plan) => {
-      if (plan) setForm({
-        ticker: plan.ticker || ticker,
-        market: plan.market || market,
-        position_id: plan.position_id || positionId || null,
-        setup_thesis: plan.setup_thesis || "",
-        entry_rationale: plan.entry_rationale || "",
-        regime_context_at_entry: plan.regime_context_at_entry || "",
-        r_target: plan.r_target != null ? String(plan.r_target) : "",
-        early_exit_conditions: plan.early_exit_conditions || "",
-        confirmation_criteria: plan.confirmation_criteria || "",
-        checklist_completed: plan.checklist_completed || false,
-        checklist_items: plan.checklist_items || [],
-        status: plan.status || "draft",
-      });
+      if (plan) {
+        const existingItems = Array.isArray(plan.checklist_items) ? plan.checklist_items : [];
+        const hasUserState = existingItems.some((i) => i.checked);
+        const checklistItems = hasUserState
+          ? existingItems
+          : buildPrePopulatedItems(plan);
+        setForm({
+          ticker: plan.ticker || ticker,
+          market: plan.market || market,
+          position_id: plan.position_id || positionId || null,
+          setup_thesis: plan.setup_thesis || "",
+          entry_rationale: plan.entry_rationale || "",
+          regime_context_at_entry: plan.regime_context_at_entry || "",
+          r_target: plan.r_target != null ? String(plan.r_target) : "",
+          early_exit_conditions: plan.early_exit_conditions || "",
+          confirmation_criteria: plan.confirmation_criteria || "",
+          checklist_items: checklistItems,
+          checklist_completed: checklistItems.every((i) => i.checked),
+          status: plan.status || "draft",
+        });
+      }
     },
   });
 
@@ -147,6 +164,15 @@ export default function TradePlan() {
 
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const handleChecklistToggle = (idx) => {
+    setForm((prev) => {
+      const items = prev.checklist_items.map((item, i) =>
+        i === idx ? { ...item, checked: !item.checked } : item
+      );
+      return { ...prev, checklist_items: items, checklist_completed: items.every((i) => i.checked) };
+    });
+  };
 
   const handleSubmit = () => {
     const payload = {
@@ -288,20 +314,13 @@ export default function TradePlan() {
           />
         </Field>
 
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            id="checklist_completed"
-            checked={form.checklist_completed}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, checklist_completed: e.target.checked }))
-            }
-            className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500"
+        <Field label="Pre-Entry Checklist">
+          <EntryChecklist
+            items={form.checklist_items}
+            ticker={form.ticker}
+            onToggle={handleChecklistToggle}
           />
-          <label htmlFor="checklist_completed" className="text-sm text-slate-300">
-            Pre-entry checklist completed
-          </label>
-        </div>
+        </Field>
 
         <div className="flex justify-end">
           <Button

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-05 (rebalance 2026-05-05__scheduled — 5 items added: BLG-FE-21, BLG-FEAT-20, BLG-FE-22, BLG-GOV-18, BLG-SEC-05; DL-024)
+**Last Updated:** 2026-05-06 (backlog-add: BLG-QA-14 — Playwright E2E entry checklist, deferred from v3.2 EPIC-02)
 **Last rebalance:** 2026-05-05 (cycle 2026-05-05__scheduled — DL-024 backlog adds × 5)
 
 > ⚠️ Standing Notice
@@ -164,7 +164,34 @@ The screener is live (v3.0) with DS-07 watchlist promotion. The current multi-su
 
 ## 5. QA & Test Automation Backlog
 
+---
 
+### BLG-QA-14 — Author Playwright E2E test suite for entry checklist (EPIC-02 / PT-05)
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** v3.2 EPIC-02 frontend testing gate (LL-v3.1-EX-01) — observable AC deferred — 2026-05-06
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.3
+**Reference:** `claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-02.md`
+
+**Problem**
+EPIC-02 delivered the pre-trade entry checklist (`EntryChecklist` component in `TradePlan.js` and `Research.js` read-only display) without Playwright E2E coverage. The frontend testing gate (LL-v3.1-EX-01) requires Playwright coverage for all observable AC, or a filed backlog item when deferred. 7 scenarios were identified but not authored, leaving the feature unverified at the E2E layer.
+
+**Scope**
+Author `tests/e2e/entry-checklist.spec.js` covering SC-CL-01 through SC-CL-07:
+- SC-CL-01: Checklist renders in Trade Plan form with 4 default items
+- SC-CL-02: Items can be toggled (checked/unchecked)
+- SC-CL-03: State persists on save
+- SC-CL-04: Pre-population — `stop_defined` pre-checked when `early_exit_conditions` present
+- SC-CL-05: Pre-population — `research_reviewed` pre-checked when `r_target` set
+- SC-CL-06: Review research link navigates to `/research/{ticker}`
+- SC-CL-07: Read-only checklist renders correctly in Research view trade plan panel
+
+**Acceptance Criteria**
+- `tests/e2e/entry-checklist.spec.js` exists and all 7 scenarios pass in CI
+- Scenarios registered in `execution_state.json test_scenarios` for the relevant EPIC
+- No regression in existing test suite
 
 ---
 
