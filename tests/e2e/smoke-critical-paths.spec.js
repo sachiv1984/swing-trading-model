@@ -268,7 +268,6 @@ test('PATH-3: view alerts — notification feed renders with unread items', asyn
   await mockNotificationsFeed(page);
 
   await page.goto('/#/notifications');
-  await page.waitForLoadState('networkidle');
 
   // Notification feed has loaded — unread item title visible
   await expect(

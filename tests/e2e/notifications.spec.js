@@ -97,7 +97,6 @@ test('SC-NOTIF-02: feed renders with unread indicator and correct icons', async 
   await mockNotificationsFeed(page, TD_NOTIF_B);
 
   await page.goto('/#/notifications');
-  await page.waitForLoadState('networkidle');
 
   // Feed loaded — at least one notification row visible
   const rows = page.locator('[data-testid="notification-row"], .notification-row, tr, li').filter({ hasText: /Stop Loss|Daily Portfolio/i });
@@ -188,7 +187,6 @@ test('SC-NOTIF-05: empty state renders when no notifications', async ({ page }) 
   await mockNotificationsFeed(page, TD_NOTIF_EMPTY);
 
   await page.goto('/#/notifications');
-  await page.waitForLoadState('networkidle');
 
   // Empty state heading
   await expect(page.getByText('No notifications yet')).toBeVisible({ timeout: 5000 });
@@ -209,7 +207,6 @@ test('SC-NOTIF-06: preferences page renders all 4 alert types', async ({ page })
   await mockPreferencesPage(page);
 
   await page.goto('/#/notifications/preferences');
-  await page.waitForLoadState('networkidle');
 
   // All 4 alert type labels visible (labels appear in both preferences and thresholds sections; .first() avoids strict-mode violation)
   await expect(page.getByText('Stop Loss Approach').first()).toBeVisible({ timeout: 5000 });
@@ -288,7 +285,6 @@ test('SC-NOTIF-08: all 4 alert types can be individually toggled', async ({ page
   });
 
   await page.goto('/#/notifications/preferences');
-  await page.waitForLoadState('networkidle');
 
   // Wait for all 4 preferences to render
   await expect(page.getByText('Stop Loss Approach').first()).toBeVisible({ timeout: 5000 });
@@ -335,7 +331,6 @@ test('SC-NOTIF-06b (v2.2): History tab present in notifications sub-nav', async 
   });
 
   await page.goto('/#/notifications');
-  await page.waitForLoadState('networkidle');
 
   // "History" tab present in sub-nav (added in ST-05 v2.2)
   await expect(page.getByText('History').first()).toBeVisible({ timeout: 5000 });

@@ -72,7 +72,7 @@ async function stubWatchlistGet(page) {
 
 async function goto(page, hash) {
   await page.goto(hash);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 test.beforeEach(async ({ page }) => {

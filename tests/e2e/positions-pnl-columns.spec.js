@@ -131,7 +131,6 @@ test.describe("Positions Table View — P&L Columns (V-PATH2-01 to V-PATH2-04)",
   test.beforeEach(async ({ page }) => {
     await mockRoutes(page);
     await page.goto("/#/positions");
-    // Wait for the Table view button specifically — avoids networkidle hanging on
     // unmocked SDK calls (api.trades.list etc.) that Positions.js makes at runtime
     const tableBtn = page.locator('[aria-label="Table view"]');
     await tableBtn.waitFor({ state: 'visible', timeout: 10000 });

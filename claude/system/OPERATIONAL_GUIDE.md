@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.67
+**Version:** 3.68
 **Last Updated:** 2026-05-06
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.13)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.14)
 
 ### 8.1 Invocation
 
@@ -1366,7 +1366,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.67 |
+| Version | 3.68 |
 | Last Updated | 2026-05-06 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
@@ -1378,7 +1378,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.26 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.6 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.7 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.13 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.14 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.5 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1401,6 +1401,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.68 | 2026-05-06 | **execution_prompt.md v3.13→v3.14 — ST-08 + ST-09 + ST-10 (EPIC-03, v3.2): three OA patches.** §8 source prompt header updated v3.13→v3.14. §14 Execution Engine Source v3.13→v3.14. §14 Version/Last Updated 3.67→3.68. Changes: (1) ST-08/OA-03 — STEP 5.1 deviations_filed enforcement check; (2) ST-09/OA-04 — §3.1.A step 12 post-story test files check; (3) ST-10/OA-05 — §14 Playwright Test Authoring Standard: networkidle prohibited, waitFor/element patterns required; all networkidle usages in tests/e2e/ replaced. Authority: Head of Specs Team (ST-08+09+10, 2026-05-06). |
 | 3.67 | 2026-05-06 | **sprint_planning_prompt.md v2.5→v2.6 — ST-07 (EPIC-03, v3.2): STEP 0 Branch Safety Check.** §7 source prompt header updated v2.5→v2.6. §14 Sprint Planning Engine v2.5→v2.6. §14 Version/Last Updated corrected to current (3.67/2026-05-06). Change: STEP 0 Branch Safety Check (Hard Gate) added — verifies `git branch --show-current` equals `main` before sprint planning proceeds; halts with branch name if not; prevents orphaned artefacts. Authority: Head of Specs Team (ST-07, 2026-05-06). |
 | 3.66 | 2026-05-01 | **execution_prompt.md v3.12→v3.13 — frontend testing hard gate (LL-v3.1-EX-01).** §8 source prompt header updated v3.12→v3.13. §14 Execution Engine Source v3.12→v3.13. Change: §3.2.A Frontend testing gate added — observable AC on frontend EPICs requires Playwright test coverage or human staging sign-off with date; "code review only" without a filed backlog item blocks PR open. CLAUDE.md §2 frontend DoQ rule strengthened to match. Playwright tests `screener-uk-suffix.spec.js` (SC-UK-01–04) and `earnings-calendar.spec.js` (SC-EARN-01–09) authored to close ST-06/ST-08 gaps. Authority: Head of Specs Team (2026-05-01). |
 | 3.65 | 2026-04-30 | **execution_prompt.md v3.11→v3.12 — ST-13 + ST-14 (EPIC-04, v3.1): two CF patches.** §8 source prompt header updated v3.11→v3.12. §14 Execution Engine Source v3.11→v3.12. Changes: (1) ST-13/CF-01 — §3.1.A Reclassification backfill instruction: when a story is reclassified from `delegated_frontend` to `autonomous` mid-sprint, engine must backfill `test_scenarios` at time of reclassification; must be populated before QA evidence log entry is written. (2) ST-14/CF-02 — §5.4 Output target note: explicit warning that output target is `lessons_learnt_cycle.md` NOT `lessons_learnt.md` (Release Planning artefact); create if absent. Authority: Head of Specs Team (ST-13 + ST-14, 2026-04-30). |

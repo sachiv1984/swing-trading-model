@@ -89,13 +89,13 @@ async function mockNotificationsFeed(page) {
 /** Navigate to Watchlist page and wait for idle. */
 async function gotoWatchlist(page) {
   await page.goto('/#/Watchlist');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 /** Navigate to Alerts/Notifications page and wait for idle. */
 async function gotoAlerts(page) {
   await page.goto('/#/notifications');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 /** Locate the Alerts nav link in the Tools group (identified by text "Alerts" in nav). */
@@ -268,7 +268,7 @@ test('SC-ANB-06: Badge count persists when navigating between non-Alerts pages',
 
   // Navigate to Positions (non-Alerts page)
   await page.goto('/#/Positions');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   // Badge still visible with same count
   await expect(alertsNavBadge(page)).toBeVisible({ timeout: 5000 });

@@ -228,7 +228,6 @@ test('SC-TP-07a: Positions page still renders after Trade Plan routes are regist
   );
 
   await page.goto('/#/Positions');
-  await page.waitForLoadState('networkidle');
 
   // No crash — page heading is always present (h1 alone avoids strict-mode
   // violation when both the heading and empty-state text are simultaneously visible)
@@ -242,7 +241,6 @@ test('SC-TP-07b: Watchlist page still renders after Trade Plan routes are regist
   );
 
   await page.goto('/#/Watchlist');
-  await page.waitForLoadState('networkidle');
 
   await expect(page.locator('h1').filter({ hasText: /watchlist/i })).toBeVisible({ timeout: 8000 });
 });

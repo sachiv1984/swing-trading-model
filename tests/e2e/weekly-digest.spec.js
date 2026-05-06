@@ -39,7 +39,6 @@ test.beforeEach(async ({ page }) => {
 // SC-DIG-01: Page heading is rendered
 test("SC-DIG-01: renders Weekly Digest heading", async ({ page }) => {
   await page.goto('/#/WeeklyDigest');
-  await page.waitForLoadState('networkidle');
   // Scope to main to avoid matching the sidebar nav link
   await expect(page.locator('main').getByText("Weekly Digest").first()).toBeVisible({ timeout: 8000 });
 });
@@ -47,7 +46,6 @@ test("SC-DIG-01: renders Weekly Digest heading", async ({ page }) => {
 // SC-DIG-02: Table contains all 8 field rows with values from API response
 test("SC-DIG-02: all 8 digest fields are displayed", async ({ page }) => {
   await page.goto('/#/WeeklyDigest');
-  await page.waitForLoadState('networkidle');
   await expect(page.getByText("Realised P&L (7d)")).toBeVisible({ timeout: 8000 });
   await expect(page.getByText("Unrealised P&L Delta (7d)")).toBeVisible();
   await expect(page.getByText("Alerts Fired (7d)")).toBeVisible();
@@ -61,7 +59,6 @@ test("SC-DIG-02: all 8 digest fields are displayed", async ({ page }) => {
 // SC-DIG-03: Numeric values are rendered correctly
 test("SC-DIG-03: numeric values formatted from API response", async ({ page }) => {
   await page.goto('/#/WeeklyDigest');
-  await page.waitForLoadState('networkidle');
   // Scope numeric checks to table cells to avoid matching badges/nav elements
   await expect(page.locator('td').filter({ hasText: /^£166\.10$/ }).first()).toBeVisible({ timeout: 8000 });
   await expect(page.locator('td').filter({ hasText: /^£-42\.80$/ }).first()).toBeVisible();
@@ -85,7 +82,6 @@ test("SC-DIG-04: null unrealised_pnl_delta_7d renders em-dash", async ({ page })
     })
   );
   await page.goto('/#/WeeklyDigest');
-  await page.waitForLoadState('networkidle');
   // null values render as em-dash in td cells
   const cells = await page.locator('td').filter({ hasText: /^—$/ }).all();
   expect(cells.length).toBeGreaterThanOrEqual(2);
@@ -97,7 +93,6 @@ test("SC-DIG-05: error state rendered on API failure", async ({ page }) => {
     route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ status: "error" }) })
   );
   await page.goto('/#/WeeklyDigest');
-  await page.waitForLoadState('networkidle');
   // DataState renders "Try again" button on error
   await expect(page.getByRole("button", { name: /try again/i })).toBeVisible({ timeout: 8000 });
 });

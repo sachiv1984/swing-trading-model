@@ -140,7 +140,6 @@ test('SC-LS-02: Positions — error state shown on API failure', async ({ page }
   await mockError(page, `${API}/positions`);
 
   await page.goto('/#/Positions');
-  await page.waitForLoadState('networkidle');
 
   await expect(page.getByText('Something went wrong')).toBeVisible({ timeout: 5000 });
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
@@ -157,7 +156,6 @@ test('SC-LS-03: Positions — empty state shown when no positions', async ({ pag
   await mockOk(page, `${API}/positions`, EMPTY_POSITIONS_ARRAY);
 
   await page.goto('/#/Positions');
-  await page.waitForLoadState('networkidle');
 
   await expect(page.getByText('No open positions')).toBeVisible({ timeout: 5000 });
 
@@ -188,7 +186,6 @@ test('SC-LS-05: Watchlist — error state shown on API failure', async ({ page }
   await mockError(page, `${API}/watchlist`);
 
   await page.goto('/#/Watchlist');
-  await page.waitForLoadState('networkidle');
 
   await expect(page.getByText('Something went wrong')).toBeVisible({ timeout: 5000 });
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
@@ -203,7 +200,6 @@ test('SC-LS-06: Watchlist — empty state shown when watchlist is empty', async 
   await mockOk(page, `${API}/watchlist`, EMPTY_WATCHLIST);
 
   await page.goto('/#/Watchlist');
-  await page.waitForLoadState('networkidle');
 
   await expect(page.getByText('Your watchlist is empty')).toBeVisible({ timeout: 5000 });
   await expect(page.getByText('Something went wrong')).toHaveCount(0);
@@ -231,7 +227,6 @@ test('SC-LS-08: Notifications — error state shown on API failure', async ({ pa
   await mockError(page, /\/notifications\?page=/);
 
   await page.goto('/#/notifications');
-  await page.waitForLoadState('networkidle');
 
   await expect(page.getByText('Something went wrong')).toBeVisible({ timeout: 5000 });
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
@@ -246,7 +241,6 @@ test('SC-LS-09: Notifications — empty state shown when no notifications', asyn
   await mockOk(page, /\/notifications\?page=/, EMPTY_NOTIFICATIONS);
 
   await page.goto('/#/notifications');
-  await page.waitForLoadState('networkidle');
 
   await expect(page.getByText('No notifications yet')).toBeVisible({ timeout: 5000 });
   await expect(page.getByText('Something went wrong')).toHaveCount(0);
@@ -277,7 +271,6 @@ test('SC-LS-11: Analytics — error state shown on API failure', async ({ page }
   await mockOk(page, /\/settings/, { data: [{ min_trades_for_analytics: 10 }] });
 
   await page.goto('/#/PerformanceAnalytics');
-  await page.waitForLoadState('networkidle');
 
   await expect(page.getByText('Something went wrong')).toBeVisible({ timeout: 5000 });
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();

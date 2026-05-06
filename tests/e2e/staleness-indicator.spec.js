@@ -146,7 +146,6 @@ test('SC-STALE-01: analytics page shows fresh staleness indicator when data is r
   await setupAnalyticsPage(page, ANALYTICS_FRESH);
 
   await page.goto('/#/PerformanceAnalytics');
-  await page.waitForLoadState('networkidle');
 
   // Fresh indicator present: "Data as of N mins ago" (no "may be outdated")
   const freshIndicator = page.getByText(/Data as of/i).first();
@@ -164,7 +163,6 @@ test('SC-STALE-02: analytics page shows stale badge when last_sync_at is 5 hours
   await setupAnalyticsPage(page, ANALYTICS_STALE);
 
   await page.goto('/#/PerformanceAnalytics');
-  await page.waitForLoadState('networkidle');
 
   // Stale badge visible: "⚠ Data as of Nh ago — may be outdated"
   const staleBadge = page.getByText(/may be outdated/i).first();
@@ -179,7 +177,6 @@ test('SC-STALE-03: analytics page hides indicator when last_sync_at is null', as
   await setupAnalyticsPage(page, ANALYTICS_NO_SYNC_AT);
 
   await page.goto('/#/PerformanceAnalytics');
-  await page.waitForLoadState('networkidle');
 
   // Indicator must not appear at all
   await expect(page.getByText(/Data as of/i)).not.toBeVisible({ timeout: 5000 });
@@ -194,7 +191,6 @@ test('SC-STALE-04: positions page shows staleness indicator', async ({ page }) =
   await setupPositionsPage(page, ANALYTICS_FRESH);
 
   await page.goto('/#/Positions');
-  await page.waitForLoadState('networkidle');
 
   // Fresh indicator visible on positions page
   const freshIndicator = page.getByText(/Data as of/i).first();
@@ -209,7 +205,6 @@ test('SC-STALE-05: indicator carries absolute UTC timestamp as title attribute',
   await setupAnalyticsPage(page, ANALYTICS_FIXED_TS);
 
   await page.goto('/#/PerformanceAnalytics');
-  await page.waitForLoadState('networkidle');
 
   // Wait for indicator to appear
   const indicator = page.getByText(/Data as of/i).first();
