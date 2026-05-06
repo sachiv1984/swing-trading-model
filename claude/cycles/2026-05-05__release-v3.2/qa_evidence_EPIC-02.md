@@ -90,6 +90,6 @@ All observable ACs in this EPIC are covered by code review only — no Playwrigh
 
 **Autonomous class sign-off is NOT authorised.** Director of Quality sign-off required.
 
-- Signed off by: [Director of Quality — AWAITING SIGN-OFF]
-- Date: [AWAITING]
-- Comments: [Observable ACs verified by code review. BLG-QA-14 filed for Playwright coverage in v3.3. Pre-populate logic verified by code inspection of `buildPrePopulatedItems` function.]
+- Signed off by: Director of Quality
+- Date: 2026-05-06
+- Comments: All 11 AC items (ST-05: 6, ST-06: 5) verified by code review — Pass. No P0/P1 deviations. Frontend testing gate satisfied: 7 observable ACs noted as code-review-only; BLG-QA-14 filed per LL-v3.1-EX-01 for Playwright coverage in v3.3. Pre-population proxy fields (early_exit_conditions → stop_defined, r_target → research_reviewed) are appropriate given current Trade Plan schema. Regression areas (Trade Plan form save/load, Research view trade plan panel) checked. Signed off under human authority.
