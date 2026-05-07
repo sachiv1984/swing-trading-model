@@ -32,7 +32,7 @@
 |-------|--------|
 | All 4 EPICs merged to main | ✅ PRs #345, #347, #346, #348 |
 | QA evidence sign-off | ✅ All 4 EPIC QA evidence files signed off (Director of Quality, 2026-05-06) |
-| Delivery verification | Pending — run `run delivery verification` |
+| Delivery verification | ✅ Verified 2026-05-07 |
 
 ---
 

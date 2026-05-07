@@ -37,3 +37,29 @@ Prior cycle (2026-04-29__release-v3.1) Phase 4 friction items reviewed:
 - Clean sprint + clean verification: POSITIVE PATTERN — confirmed again this cycle ✅
 
 No Phase 4 section exists yet — will be appended by the delivery verification engine.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-05__release-v3.2
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-05-07
+**Reviewed by:** PMO Lead
+
+**Prior cycle checked:** 2026-04-29__release-v3.1 (Phase 4 section present — recurrence check complete)
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Sprint Execution Engine signed off EPIC-01 as autonomous class (BLG-GOV-19) despite EPIC-01 introducing frontend-visible changes (Research page). Criterion 3 (no frontend-visible change) was not met. Caught at STEP -1.3 Tier 2 during delivery verification. Required DoQ manual staging review, which surfaced 3 P1 and 1 P3 staging deviations. Engineering fixes required before re-verification. The rule is already documented in execution_prompt.md §3.2.A — the issue was incorrect application, not a missing rule. | Phase 4 | Type D — Process Gap: the autonomous class sign-off check in the QA evidence template does not have an explicit criterion-3 self-check that prevents the engine from claiming BLG-GOV-19 when a frontend page was created or modified | action-now | Strengthen the QA evidence template's BLG-GOV-19 sign-off block: require an explicit check of each criterion with "✓ / ✗" beside each before claiming autonomous class. Add explicit inline note: "Criterion 3: confirm no React page or UI component was created or modified in this EPIC (check src/pages/ and src/components/)." This makes criterion 3 a positive assertion, not a default assumption. | Head of Specs Team | v3.3 |
+| Playwright mocks in pre-trade-research.spec.js did not reflect the real API response shape — mocks had flat structure while the backend returns nested objects (signal.status, sector.sector, etc.). All 14 tests passed CI on incorrect mock payloads, allowing P1 rendering failures to reach staging undetected. Root cause: mock payloads were authored against assumed frontend field names rather than the canonical API spec. | Phase 4 | Type D — Process Gap: no pre-PR check verifies Playwright mock payload shapes against canonical API spec; mock divergence is silently tolerated until staging | defer | Add a test authoring advisory to execution_prompt.md §14 (Playwright Test Authoring Standard): "When mocking API responses, cross-reference mock payload fields against the canonical spec file for that endpoint (docs/specs/api_contracts/). Mocks must reflect the actual response shape including nested objects." File as governance hardening item for v3.3. | Head of Specs Team | v3.3 |
+| Both prior-cycle Phase 4 friction items were resolved this cycle as sprint stories: (1) sprint_planning_prompt.md STEP 0 main-branch check → delivered as ST-07; (2) test_scenarios post-story advisory → delivered as ST-09. Both were in-scope sprint items. Two consecutive cycles of governance friction converted to actionable sprint stories and delivered. | Phase 4 | Type E — Positive pattern | action-now | No action required — governance carry-forward mechanism working effectively. Both prior-cycle open actions were resolved as scheduled. | PMO Lead | — |
+| EPIC-01 delivery verification required two passes: (1) initial attempt blocked at STEP -1.3 Tier 2 due to BLG-GOV-19 misapplication; (2) re-verification after engineering fixes. The re-verification path (DoQ staging → P1 fixes → DoQ re-sign → delivery verification resume) added approximately one session of overhead. Despite the overhead, the governance process caught real P1 issues that would otherwise have reached production. The staging review revealed the Research page was entirely non-functional against the real API. | Phase 4 | Type C — Gate functioning correctly but with high friction cost | action-now | No process change needed — the two-pass path was the correct outcome. The friction was caused by the BLG-GOV-19 misapplication (see friction item 1 above), not by the gate itself. Resolving friction item 1 (strengthening criterion-3 self-check) is the correct action. | PMO Lead | — |
+
+**Recurrence Notes:**
+
+Prior cycle (2026-04-29__release-v3.1) Phase 4 friction items reviewed:
+- Sprint planning artefacts missing from main at verification preflight: RESOLVED — delivered as ST-07 ✅
+- `test_scenarios` under-population: RESOLVED — delivered as ST-09 ✅
+- Clean sprint + clean verification: POSITIVE PATTERN — partially maintained. This cycle required engineering re-work due to BLG-GOV-19 misapplication, but the re-verification path completed successfully. Net outcome: all 17 stories delivered and verified.
