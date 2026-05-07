@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-06 (backlog-add: BLG-QA-14 — Playwright E2E entry checklist, deferred from v3.2 EPIC-02)
+**Last Updated:** 2026-05-06 (backlog-add: BLG-FE-23–27 — v3.2 staging findings; DoQ manual staging review 2026-05-06)
 **Last rebalance:** 2026-05-05 (cycle 2026-05-05__scheduled — DL-024 backlog adds × 5)
 
 > ⚠️ Standing Notice
@@ -150,6 +150,105 @@ The screener is live (v3.0) with DS-07 watchlist promotion. The current multi-su
 - Information-carry decisions documented: what data from the screener should be visible in the research view
 - Navigation model specified: how the user moves between screener, watchlist, and research views
 - Delivered before v3.2 sprint planning so it informs PT-02 UX story authoring
+
+---
+
+### BLG-FE-23 — Research page UK ticker suffix not stripped
+**Priority:** P3 (Low)
+**Type:** Frontend / Bug Fix
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** v3.2 delivery verification — manual staging 2026-05-06 (DEV-E01-03)
+**Effort:** XS (~30 min)
+**Provisional-Target:** v3.3 (or alongside EPIC-01 P1 fix)
+
+**Problem**
+`stripUkSuffix` was applied to the screener and watchlist table displays in v3.1 (BLG-FE-20) but was not applied to the Research page (`Research.js`) ticker display in the page title/header. UK tickers therefore appear with `.L` suffix (e.g. `MTLN.L`) in the Research page heading, inconsistent with the rest of the application.
+
+**Acceptance Criteria**
+- Research page title/header strips `.L` suffix from UK tickers using the existing `stripUkSuffix` utility
+- `MTLN.L` displays as `MTLN` in the Research page header
+- No regression in screener or watchlist UK suffix stripping
+
+---
+
+### BLG-FE-24 — Negative earnings days display for past earnings dates
+**Priority:** P3 (Low)
+**Type:** Frontend / Bug Fix
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** v3.2 delivery verification — manual staging 2026-05-06; origin v3.1 EPIC-03 earnings calendar
+**Effort:** XS (~30 min)
+**Provisional-Target:** v3.3
+
+**Problem**
+When a ticker's `next_earnings_date` is in the past, `days_until_earnings` is returned as a negative integer (e.g. `-27` for MTLN.L). The earnings display renders this as a negative number rather than showing `—` (the convention for unavailable/not-applicable data). Users see confusing negative counts.
+
+**Acceptance Criteria**
+- When `days_until_earnings` is negative (past earnings date), display `—` in all earnings columns (screener, watchlist, positions)
+- When `days_until_earnings` is zero: display `Today`
+- No regression in positive days display or earnings proximity warning (≤5 days amber)
+
+---
+
+### BLG-FE-25 — Signals page: default to most recent day's signals
+**Priority:** P2 (Medium)
+**Type:** Frontend / Bug or UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** v3.2 delivery verification — manual staging 2026-05-06
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.3
+
+**Problem**
+The Signals page currently shows all historical signals rather than defaulting to the most recent trading day. This makes the page cluttered and harder to action — the morning-routine use case is to review the current day's signals, not a full history. It is unclear whether this is a regression or original behaviour; investigation needed.
+
+**Acceptance Criteria**
+- Signals page defaults to displaying only the most recent trading day's signals on load
+- A control exists to view older signals (e.g. date picker or "Show all" toggle)
+- If this is a regression, root cause identified and documented
+- No regression in signal data accuracy
+
+---
+
+### BLG-FE-26 — Research page UX review: regime lozenge and font consistency
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Quality
+**Owner:** Head of UX & Design
+**Source:** v3.2 delivery verification — manual staging 2026-05-06
+**Effort:** XS–S (review + spec, ~0.5 day)
+**Provisional-Target:** v3.3
+
+**Problem**
+Manual staging of the v3.2 Research page revealed two UX quality issues:
+1. **Regime lozenge wraps to two lines** — the regime status lozenge (signal/regime indicator) displays on two lines rather than one, suggesting the container width or text is not constrained correctly.
+2. **Font inconsistency** — the Research page uses inconsistent font weights or sizes compared to the design system documented in `docs/frontend/design_system.md` (BLG-FE-21, shipped v3.2).
+
+**Acceptance Criteria**
+- Head of UX & Design reviews Research page against `docs/frontend/design_system.md`
+- Regime lozenge constrained to single line (max-width or text truncation applied)
+- Font usage on Research page conforms to the design system typography scale
+- Any deviations from design system noted for backlog or immediate fix
+
+---
+
+### BLG-FE-27 — Nav bar redesign exploration
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Design
+**Owner:** Head of UX & Design
+**Source:** v3.2 delivery verification — user feedback 2026-05-06
+**Effort:** M (~1–2 days design + spec)
+**Provisional-Target:** Arc 3 (design exploration — not urgent; no current blocking workflow)
+
+**Problem**
+The current nav bar occupies a fixed portion of the visible screen area. As the application grows in Arc 2 and beyond, the navigation structure may benefit from a redesign to reclaim vertical space. Options to evaluate: Sticky/Fixed Header (current pattern, optimised), mega menu (grouped sections), or breadcrumb navigation (context-sensitive, minimal footprint).
+
+**Scope**
+- Head of UX & Design to evaluate the three navigation patterns in the context of current and Arc 2 page inventory
+- Produce a design recommendation with rationale (no implementation required at this stage)
+- If redesign is recommended, produce a UX spec and create a follow-on implementation backlog item
+
+**Acceptance Criteria**
+- Design recommendation document produced (one of: maintain current, redesign to pattern X)
+- Rationale covers: screen real-estate impact, mobile responsiveness, Arc 2 page count
+- If redesign: UX spec produced and implementation backlog item filed
 
 ---
 

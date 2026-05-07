@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-06T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-06T13:00:00Z",
+  "last_updated_utc": "2026-05-06T14:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -85,11 +85,11 @@
       "title": "Pre-Trade Entry Checklist (PT-05)",
       "sprint": 2,
       "execution_sequence": 3,
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-05__release-v3.2/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 348,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-05__release-v3.2/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "pending — BLG-QA-14: tests/e2e/entry-checklist.spec.js (SC-CL-01 to SC-CL-07) to be authored in v3.3"
@@ -107,9 +107,8 @@
           "completed_utc": "2026-05-06T13:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
           "spec_references": ["docs/specs/frontend/pages/trade_plan.md#Entry Checklist"],
-          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. EntryChecklist component created. All 4 default items rendered. State saved via PUT /trade-plans/{id}. Read-only display in Research.js. Observable ACs: code review only — BLG-QA-14 filed. No spec deviation — deviations_filed: true."
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. EntryChecklist component created. All 4 default items rendered. State saved via PUT /trade-plans/{id}. Read-only display in Research.js. Observable ACs: code review only — BLG-QA-14 filed. No spec deviation. SC-TP-01 test updated (63e4f6f4)."
         },
         "ST-06": {
           "title": "Checklist pre-population from trade plan data and research view link",
@@ -123,9 +122,8 @@
           "completed_utc": "2026-05-06T13:00:00Z",
           "acceptance_verified": true,
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.commit",
           "spec_references": ["docs/specs/frontend/pages/trade_plan.md#Entry Checklist"],
-          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Pre-population: early_exit_conditions → stop_defined; r_target → research_reviewed. Existing state not overwritten. Review research link to /research/{ticker}. Combined with ST-05 in commit 272cc9d0. Observable ACs: code review only — BLG-QA-14 filed. No spec deviation — deviations_filed: true."
+          "notes": "Reclassified from delegated_frontend to autonomous per LL-v2.3-CL-01. Pre-population: early_exit_conditions → stop_defined; r_target → research_reviewed. Existing state not overwritten. Review research link to /research/{ticker}. Combined with ST-05 in commit 272cc9d0. No spec deviation."
         }
       }
     },
@@ -327,12 +325,13 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-03", "EPIC-04"],
-    "epics_pending": ["EPIC-02"],
-    "all_merged": false,
-    "note": "EPIC-01 merged (PR #345). EPIC-03 merged (PR #347). EPIC-04 merged (PR #346). EPIC-02 done — awaiting DoQ sign-off on qa_evidence_EPIC-02.md before PR can open. BLG-QA-14 filed for Playwright coverage."
+    "epics_merged": ["EPIC-01", "EPIC-03", "EPIC-04", "EPIC-02"],
+    "epics_pending": [],
+    "all_merged": true,
+    "note": "All 4 EPICs merged. EPIC-01: PR #345. EPIC-03: PR #347. EPIC-04: PR #346. EPIC-02: PR #348 (merged b6b6a8ae). Sprint close proceeding."
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-05-06T21:00:00Z",
+  "status": "Sealed"
 }

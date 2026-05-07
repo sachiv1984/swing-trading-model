@@ -42,34 +42,57 @@ const RESEARCH_OK = {
   status: 'ok',
   data: {
     ticker: TICKER,
-    name: 'Apple Inc.',
-    sector: 'Technology',
-    market_cap: 3200000000000,
-    price: 182.5,
-    price_change_pct: 0.015,
-    signal_status: 'active',
-    atr: 4.2,
-    updated_at: new Date(Date.now() - 120000).toISOString(),
-    news_headlines: [
-      { headline: 'Apple hits new all-time high', source: 'Reuters', published_at: new Date(Date.now() - 3600000).toISOString() },
-      { headline: 'iPhone demand remains strong', source: 'Bloomberg', published_at: new Date(Date.now() - 7200000).toISOString() },
-    ],
+    market: 'US',
+    signal: {
+      signal_id: 'test-signal-001',
+      direction: 'long',
+      signal_date: '2026-05-01',
+      status: 'active',
+      rank: 1,
+      atr: 4.2,
+      entry_price: 178.50,
+      stop_price: 172.00,
+      r_target: 2.5,
+    },
+    regime: { label: 'risk_on', spy_risk_on: true, ftse_risk_on: true },
+    sector: { sector: 'Technology', industry: 'Consumer Electronics' },
+    screener: { in_latest_results: true, latest_run_timestamp: '2026-05-06T06:00:00Z', score: 85, atr_pct: 0.023 },
+    earnings: { next_earnings_date: '2026-07-25', days_until_earnings: 80, fiscal_quarter: 'Q3 2026', data_source: 'yfinance' },
   },
 };
 
-const RESEARCH_NO_NEWS = {
+const RESEARCH_NO_SIGNAL = {
   status: 'ok',
-  data: { ...RESEARCH_OK.data, news_headlines: [] },
+  data: {
+    ticker: TICKER,
+    market: 'US',
+    signal: null,
+    regime: { label: 'risk_on', spy_risk_on: true, ftse_risk_on: true },
+    sector: { sector: 'Technology', industry: 'Consumer Electronics' },
+    screener: null,
+    earnings: null,
+  },
 };
 
 const RESEARCH_WATCH = {
   status: 'ok',
-  data: { ...RESEARCH_OK.data, signal_status: 'watch', price_change_pct: -0.008 },
+  data: {
+    ...RESEARCH_OK.data,
+    signal: { ...RESEARCH_OK.data.signal, status: 'watch' },
+  },
 };
 
 const HEAT_OK = {
   status: 'ok',
-  data: { current_heat: 0.12, prospective_heat: 0.18 },
+  data: {
+    valid: true,
+    current_heat_percent: 12.0,
+    prospective_heat_percent: 18.0,
+    incremental_heat_percent: 6.0,
+    prospective_risk_gbp: 650,
+    portfolio_value_gbp: 50000,
+    ticker: TICKER,
+  },
 };
 
 const PLANS_WITH_ACTIVE = {
@@ -148,15 +171,14 @@ test('SC-RES-01: Research page header shows ticker and Research title', async ({
 // SC-RES-02 — Price and Signal region renders
 // ---------------------------------------------------------------------------
 
-test('SC-RES-02: Price and Signal region renders price, ATR, and signal badge', async ({ page }) => {
+test('SC-RES-02: Price and Signal region renders ATR and signal badge from signal data', async ({ page }) => {
   await mockFallback(page);
   await mockResearch(page);
   await mockHeat(page);
   await mockPlans(page);
   await gotoResearch(page);
 
-  await expect(page.getByText(/\$182\.50/)).toBeVisible({ timeout: 8000 });
-  await expect(page.getByText(/\$4\.20/)).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText(/\$4\.20/)).toBeVisible({ timeout: 8000 });
   await expect(page.getByText('Active')).toBeVisible({ timeout: 5000 });
 });
 
@@ -175,27 +197,27 @@ test('SC-RES-03: Signal badge shows Watch status from API', async ({ page }) => 
 });
 
 // ---------------------------------------------------------------------------
-// SC-RES-04 — Price change indicator
+// SC-RES-04 — Sector and industry description
 // ---------------------------------------------------------------------------
 
-test('SC-RES-04: Price change shows positive percentage', async ({ page }) => {
+test('SC-RES-04: Sector and industry displayed in page description', async ({ page }) => {
   await mockFallback(page);
   await mockResearch(page);
   await mockHeat(page);
   await mockPlans(page);
   await gotoResearch(page);
 
-  await expect(page.getByText(/\+1\.5%/)).toBeVisible({ timeout: 8000 });
+  await expect(page.getByText(/Technology/)).toBeVisible({ timeout: 8000 });
+  await expect(page.getByText(/Consumer Electronics/)).toBeVisible({ timeout: 5000 });
 });
 
-test('SC-RES-04b: Price change shows negative percentage', async ({ page }) => {
+test('SC-RES-04b: No signal — ATR shows dash', async ({ page }) => {
   await mockFallback(page);
-  await mockResearch(page, RESEARCH_WATCH);
-  await mockHeat(page);
+  await mockResearch(page, RESEARCH_NO_SIGNAL);
   await mockPlans(page);
   await gotoResearch(page);
 
-  await expect(page.getByText(/-0\.8%/)).toBeVisible({ timeout: 8000 });
+  await expect(page.getByText('—').first()).toBeVisible({ timeout: 8000 });
 });
 
 // ---------------------------------------------------------------------------
@@ -226,7 +248,7 @@ test('SC-RES-06: Heat region shows N/A when endpoint errors; rest of page render
   await gotoResearch(page);
 
   await expect(page.getByText(/n\/a/i).first()).toBeVisible({ timeout: 15000 });
-  await expect(page.getByText(/\$182\.50/)).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText(/\$4\.20/)).toBeVisible({ timeout: 5000 });
 });
 
 // ---------------------------------------------------------------------------
@@ -260,28 +282,26 @@ test('SC-RES-08: Trade plan panel shows Create Trade Plan CTA when no plan exist
 });
 
 // ---------------------------------------------------------------------------
-// SC-RES-09 — Recent news headlines
+// SC-RES-09 — News section: empty state (news_headlines not in API contract)
 // ---------------------------------------------------------------------------
 
-test('SC-RES-09: Recent news section renders up to 5 headlines', async ({ page }) => {
+test('SC-RES-09: News section shows empty state (news not returned by GET /research/{ticker})', async ({ page }) => {
   await mockFallback(page);
   await mockResearch(page);
   await mockHeat(page);
   await mockPlans(page);
   await gotoResearch(page);
 
-  await expect(page.getByText('Apple hits new all-time high')).toBeVisible({ timeout: 8000 });
-  await expect(page.getByText('iPhone demand remains strong')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText(/no recent news available/i)).toBeVisible({ timeout: 8000 });
 });
 
 // ---------------------------------------------------------------------------
-// SC-RES-10 — News empty state
+// SC-RES-10 — News section still shows empty state with no-signal research data
 // ---------------------------------------------------------------------------
 
-test('SC-RES-10: News section shows empty state when no headlines available', async ({ page }) => {
+test('SC-RES-10: News empty state shown regardless of signal presence', async ({ page }) => {
   await mockFallback(page);
-  await mockResearch(page, RESEARCH_NO_NEWS);
-  await mockHeat(page);
+  await mockResearch(page, RESEARCH_NO_SIGNAL);
   await mockPlans(page);
   await gotoResearch(page);
 

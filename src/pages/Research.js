@@ -29,6 +29,10 @@ function formatMarketCap(value) {
   return `$${value.toLocaleString()}`;
 }
 
+function stripUkSuffix(t) {
+  return t?.endsWith(".L") ? t.slice(0, -2) : (t ?? "");
+}
+
 function currencySymbol(ticker) {
   return ticker?.endsWith(".L") ? "£" : "$";
 }
@@ -50,8 +54,8 @@ function SignalBadge({ status }) {
 function HeatValue({ value, isError }) {
   if (isError) return <span className="text-slate-400 text-sm">N/A</span>;
   if (value == null) return <span className="text-slate-400 text-sm">—</span>;
-  const pct = (value * 100).toFixed(1);
-  const cls = value > 0.25 ? "text-red-400" : value >= 0.15 ? "text-amber-400" : "text-emerald-400";
+  const pct = Number(value).toFixed(1);
+  const cls = value > 25 ? "text-red-400" : value >= 15 ? "text-amber-400" : "text-emerald-400";
   return <span className={cn("text-xl font-semibold", cls)}>{pct}%</span>;
 }
 
@@ -94,17 +98,23 @@ export default function Research() {
     retry: 1,
   });
 
+  const sigEntry = researchData?.signal?.entry_price ?? null;
+  const sigStop = researchData?.signal?.stop_price ?? null;
+  const canCalculateHeat = sigEntry !== null && sigStop !== null && sigEntry > sigStop;
+
   const { data: heatData, isError: heatError } = useQuery({
-    queryKey: ["prospective-heat", ticker],
+    queryKey: ["prospective-heat", ticker, sigEntry, sigStop],
     queryFn: async () => {
-      const r = await apiFetch(`${API_BASE}/portfolio/prospective-heat?ticker=${ticker}&quantity=1`);
+      const params = new URLSearchParams({ ticker, shares: 1, entry_price: sigEntry, stop_price: sigStop });
+      const r = await apiFetch(`${API_BASE}/portfolio/prospective-heat?${params}`);
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const j = await r.json();
       return j.data ?? j;
     },
-    enabled: !!ticker,
+    enabled: !!ticker && canCalculateHeat,
     retry: 1,
   });
+  const heatLoading = canCalculateHeat && !heatData && !heatError;
 
   const { data: tradePlansData, isLoading: plansLoading, isError: tradePlansError } = useQuery({
     queryKey: ["trade-plans-ticker", ticker],
@@ -167,11 +177,11 @@ export default function Research() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={ticker ? `${ticker} — Research` : "Research"}
+        title={ticker ? `${stripUkSuffix(ticker)} — Research` : "Research"}
         description={
           researchLoading
             ? "Loading…"
-            : [r?.name, r?.sector].filter(Boolean).join(" · ") || ""
+            : [r?.sector?.sector, r?.sector?.industry].filter(Boolean).join(" · ") || ""
         }
         actions={
           <Button
@@ -252,12 +262,12 @@ export default function Research() {
             </div>
             <div>
               <p className="text-xs text-slate-400 mb-1">Momentum Signal</p>
-              <SignalBadge status={r?.signal_status} />
+              <SignalBadge status={r?.signal?.status} />
             </div>
             <div>
               <p className="text-xs text-slate-400 mb-1">ATR (14d)</p>
               <p className="text-sm text-slate-200">
-                {r?.atr != null ? `${sym}${Number(r.atr).toFixed(2)}` : "—"}
+                {r?.signal?.atr != null ? `${sym}${Number(r.signal.atr).toFixed(2)}` : "—"}
               </p>
             </div>
           </div>
@@ -272,22 +282,22 @@ export default function Research() {
         <div className="grid grid-cols-2 gap-6">
           <div>
             <p className="text-xs text-slate-400 mb-1">Current Portfolio Heat</p>
-            {heatData ? (
-              <HeatValue value={heatData.current_heat} isError={false} />
-            ) : heatError ? (
-              <HeatValue value={null} isError={true} />
-            ) : (
+            {heatLoading ? (
               <Skeleton className="w-16 h-6" />
+            ) : heatData?.valid && heatData.current_heat_percent != null ? (
+              <HeatValue value={heatData.current_heat_percent} isError={false} />
+            ) : (
+              <HeatValue value={null} isError={true} />
             )}
           </div>
           <div>
             <p className="text-xs text-slate-400 mb-1">Prospective Heat (if entered)</p>
-            {heatData ? (
-              <HeatValue value={heatData.prospective_heat} isError={false} />
-            ) : heatError ? (
-              <HeatValue value={null} isError={true} />
-            ) : (
+            {heatLoading ? (
               <Skeleton className="w-16 h-6" />
+            ) : heatData?.valid && heatData.prospective_heat_percent != null ? (
+              <HeatValue value={heatData.prospective_heat_percent} isError={false} />
+            ) : (
+              <HeatValue value={null} isError={true} />
             )}
           </div>
         </div>
@@ -319,9 +329,25 @@ export default function Research() {
                 onClick={() => navigate(`/TradePlan?edit=${activePlan.id}&ticker=${ticker}`)}
                 className="text-xs text-cyan-400 hover:text-cyan-300 underline"
               >
-                Edit plan
+                View full plan
               </button>
             </div>
+            {activePlan.stop_level != null && (
+              <div>
+                <p className="text-xs text-slate-400 mb-1">Stop Level</p>
+                <p className="text-sm text-slate-200">{sym}{Number(activePlan.stop_level).toFixed(2)}</p>
+              </div>
+            )}
+            {activePlan.risk_reward_notes && (
+              <div>
+                <p className="text-xs text-slate-400 mb-1">Notes</p>
+                <p className="text-sm text-slate-400 italic">
+                  {activePlan.risk_reward_notes.length > 100
+                    ? `${activePlan.risk_reward_notes.slice(0, 100)}…`
+                    : activePlan.risk_reward_notes}
+                </p>
+              </div>
+            )}
             {activePlan.r_target != null && (
               <div>
                 <p className="text-xs text-slate-400 mb-1">R Target</p>
