@@ -9,12 +9,56 @@ All sub-sources are best-effort — failures return null fields, never 5xx.
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from typing import Optional
+import requests
+import time
 from database import get_portfolio
 from services.signal_service import get_signals
 from services.sector_service import get_sector_and_industry
 from services.screener_batch_service import get_screener_results
 
 router = APIRouter(prefix="/research", tags=["Research"])
+
+
+_YF_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "Accept": "application/json",
+}
+
+
+def _get_price_data(ticker: str, market: str) -> dict:
+    """Fetch current price and 1-day change % from Yahoo Finance."""
+    try:
+        time.sleep(0.3)
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+        resp = requests.get(url, params={"interval": "1d", "range": "1d"}, headers=_YF_HEADERS, timeout=10)
+        meta = resp.json()["chart"]["result"][0]["meta"]
+        price = meta.get("regularMarketPrice")
+        change_pct = meta.get("regularMarketChangePercent")
+        if price and market == "UK":
+            price = price / 100  # pence → pounds
+        return {
+            "price": float(price) if price else None,
+            "price_change_pct": float(change_pct) / 100 if change_pct is not None else None,
+        }
+    except Exception:
+        return {"price": None, "price_change_pct": None}
+
+
+def _get_market_cap(ticker: str) -> Optional[float]:
+    try:
+        import yfinance as yf
+        info = yf.Ticker(ticker).info
+        return info.get("marketCap")
+    except Exception:
+        return None
+
+
+def _get_news(ticker: str, market: str) -> list:
+    try:
+        from services.news_service import get_news_headlines
+        return get_news_headlines(ticker, market)
+    except Exception:
+        return []
 
 
 def _regime_label(spy_risk_on: bool, ftse_risk_on: bool) -> str:
@@ -115,22 +159,29 @@ def get_research(ticker: str, market: Optional[str] = None):
         portfolio = get_portfolio()
         portfolio_id = str(portfolio["id"]) if portfolio else None
 
+        price_data = _get_price_data(ticker, market)
         signal = _get_signal(ticker, portfolio_id) if portfolio_id else None
         regime = _get_regime()
         sector = _get_sector(ticker, market)
         screener = _get_screener(ticker)
         earnings = _get_earnings(ticker, market)
+        market_cap = _get_market_cap(ticker)
+        news_headlines = _get_news(ticker, market)
 
         return {
             "status": "ok",
             "data": {
                 "ticker": ticker.upper(),
                 "market": market,
+                "price": price_data["price"],
+                "price_change_pct": price_data["price_change_pct"],
+                "market_cap": market_cap,
                 "signal": signal,
                 "regime": regime,
                 "sector": sector,
                 "screener": screener,
                 "earnings": earnings,
+                "news_headlines": news_headlines,
             },
         }
     except Exception as e:
