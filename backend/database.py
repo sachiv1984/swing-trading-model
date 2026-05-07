@@ -986,19 +986,22 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
         return dict(row)
 
 
-def get_trade_plans(portfolio_id: str, status: str = None) -> list:
+def get_trade_plans(portfolio_id: str, status: str = None, ticker: str = None) -> list:
     with get_db() as conn:
         with conn.cursor() as cur:
+            clauses = ["portfolio_id=%s"]
+            params = [portfolio_id]
             if status:
-                cur.execute(
-                    "SELECT * FROM trade_plans WHERE portfolio_id=%s AND status=%s ORDER BY created_at DESC",
-                    (portfolio_id, status),
-                )
-            else:
-                cur.execute(
-                    "SELECT * FROM trade_plans WHERE portfolio_id=%s ORDER BY created_at DESC",
-                    (portfolio_id,),
-                )
+                clauses.append("status=%s")
+                params.append(status)
+            if ticker:
+                clauses.append("UPPER(ticker)=%s")
+                params.append(ticker.upper())
+            where = " AND ".join(clauses)
+            cur.execute(
+                f"SELECT * FROM trade_plans WHERE {where} ORDER BY created_at DESC",
+                params,
+            )
             return [dict(r) for r in cur.fetchall()]
 
 

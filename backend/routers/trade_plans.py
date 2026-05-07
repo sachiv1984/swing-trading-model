@@ -88,12 +88,12 @@ def create_plan(body: TradePlanCreate):
 
 
 @router.get("")
-def list_plans(status: Optional[str] = Query(default=None)):
-    """GET /trade-plans — list all trade plans, optionally filtered by status."""
+def list_plans(status: Optional[str] = Query(default=None), ticker: Optional[str] = Query(default=None)):
+    """GET /trade-plans — list all trade plans, optionally filtered by status and/or ticker."""
     try:
         ensure_trade_plans_table()
         portfolio_id = _get_portfolio_id()
-        plans = get_trade_plans(portfolio_id, status)
+        plans = get_trade_plans(portfolio_id, status, ticker)
         return {"status": "ok", "data": [_serialize(p) for p in plans]}
     except HTTPException:
         raise

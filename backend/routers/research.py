@@ -107,7 +107,10 @@ def _get_earnings(ticker: str, market: str) -> Optional[dict]:
 def get_research(ticker: str, market: Optional[str] = "US"):
     """GET /research/{ticker} — aggregated pre-trade research snapshot."""
     try:
-        market = (market or "US").upper()
+        if not market:
+            market = "UK" if ticker.upper().endswith(".L") else "US"
+        else:
+            market = market.upper()
 
         portfolio = get_portfolio()
         portfolio_id = str(portfolio["id"]) if portfolio else None
