@@ -104,7 +104,7 @@ def _get_earnings(ticker: str, market: str) -> Optional[dict]:
 
 
 @router.get("/{ticker}")
-def get_research(ticker: str, market: Optional[str] = "US"):
+def get_research(ticker: str, market: Optional[str] = None):
     """GET /research/{ticker} — aggregated pre-trade research snapshot."""
     try:
         if not market:
