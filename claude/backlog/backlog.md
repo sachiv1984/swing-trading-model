@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-06 (backlog-add: BLG-FE-23–27 — v3.2 staging findings; DoQ manual staging review 2026-05-06)
-**Last rebalance:** 2026-05-05 (cycle 2026-05-05__scheduled — DL-024 backlog adds × 5)
+**Last Updated:** 2026-05-08 (rebalance 2026-05-08__scheduled — DL-025 backlog adds × 16)
+**Last rebalance:** 2026-05-08 (cycle 2026-05-08__scheduled — DL-025 backlog adds × 16)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -68,6 +68,32 @@ Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. Wh
 - Net-of-costs R-multiple calculated and displayed where cost data exists
 - Performance report breakdowns show gross vs net comparison where material
 - No impact to existing R-multiple calculations where cost data is absent
+
+---
+
+### BLG-FEAT-21 — Trade plan abandonment status field
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Data Model
+**Owner:** Product Owner
+**Source:** IDEA-challenger-20260508-02 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v3.3
+
+**Problem**
+Trade plans can currently be in Active or Closed states but there is no mechanism to record that a plan was abandoned before a position was opened (e.g. entry conditions never met, thesis invalidated, sizing constraints made the trade unfeasible). Abandoned plans currently sit in an ambiguous incomplete state with no rationale captured, making retrospective plan quality review impossible.
+
+**Scope**
+- Add `Abandoned` as a valid trade plan status
+- Add a required `abandonment_reason` field (free text, short — required when status is set to Abandoned)
+- Surface abandoned plans alongside closed plans in the trade plan history view
+- Backend: add status transition logic (Draft/Research → Abandoned; Active positions may not be abandoned)
+- Frontend: abandonment action with reason input
+
+**Acceptance Criteria**
+- Trade plan can be set to Abandoned status via UI with a required reason
+- Abandoned plans appear in plan history with abandonment reason displayed
+- Active positions linked to a plan cannot be abandoned (guard enforced)
+- No regression in existing plan status transitions
 
 ---
 
@@ -252,12 +278,119 @@ The current nav bar occupies a fixed portion of the visible screen area. As the 
 
 ---
 
+### BLG-FE-28 — Pre-Trade Research View UX spec
+**Priority:** P1 (High)
+**Type:** Frontend / UX Specification
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-ux-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Before v3.3 sprint planning
+
+**Problem**
+PT-02 (Pre-Trade Research View) requires a frontend implementation in v3.3, but no UX specification exists for the research view layout, data field placement, source attribution display, news feed design, or empty/error state handling. Without a UX spec, frontend implementation risks inconsistency with BLG-FE-21 (design system) and BLG-FE-22 (morning routine workflow).
+
+**Scope**
+- Layout specification: panel arrangement, data field hierarchy, visual hierarchy
+- Data field placement: price, change, market cap, ATR, regime, news — with source attribution positioning
+- Source attribution display: how Yahoo Finance / Alpaca provenance is shown (per BLG-SPEC-26 provenance requirement)
+- News feed design: article format, truncation, link behaviour
+- Freshness indicator: where displayed, format, staleness threshold
+- Empty states: no data available, ticker not found, external API unavailable
+- Error states: partial data (some fields missing), full failure
+- References: BLG-FE-21 (design system), BLG-FE-22 (morning routine workflow), BLG-SPEC-24 (canonical spec)
+
+**Acceptance Criteria**
+- UX spec document covers all layout, field placement, source attribution, news feed, freshness indicator, and state designs
+- Empty and error states explicitly specified (not left to implementation discretion)
+- Document references design system tokens and workflow spec for consistency
+- Delivered before v3.3 sprint planning to inform PT-02 frontend story authoring
+
+---
+
+### BLG-FE-29 — Watchlist research status indicator
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX Enhancement
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260508-02 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v3.3
+**Scope constraint:** Binary flag only (done/not done) — no research quality signal
+
+**Problem**
+The watchlist shows tickers but provides no indication of whether pre-trade research has been completed for a given ticker. Users must navigate to the Research view to check. A binary status indicator on the watchlist would allow users to quickly identify which watchlisted tickers still need research before trade planning can begin.
+
+**Scope**
+- Add a binary research status indicator to each watchlist ticker row
+- Done = PT-02 research was performed for this ticker (research record exists)
+- Not Done = no research record found for this ticker
+- Display: icon or badge — not text, to minimise column width impact
+- No research quality score, no freshness judgement — binary only
+
+**Acceptance Criteria**
+- Watchlist table includes a Research Status column or indicator per ticker row
+- Indicator shows done/not done state correctly based on research record existence
+- No research quality or freshness information displayed (scope constraint)
+- No regression in watchlist loading performance or existing columns
+
+---
+
+### BLG-FE-30 — Trade plan status badges
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX Enhancement
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-base44-frontend-20260508-02 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v3.3 (coordinate with BLG-FEAT-21 — Abandoned status)
+
+**Problem**
+Trade plans display status as plain text. As the trade plan lifecycle grows to include Abandoned status (BLG-FEAT-21) alongside existing states, consistent colour-coded status badges will be needed to make plan status immediately scannable across the trade plan list and detail views.
+
+**Scope**
+- Visual status badges for all trade plan statuses: Draft, Research Pending, Research Complete, Entry Conditions Set, Active, Closed, Abandoned
+- Consistent colour coding: e.g. grey (Draft), amber (Research Pending), blue (Research Complete), purple (Entry Conditions Set), green (Active), muted (Closed), red (Abandoned)
+- Apply in trade plan list view and trade plan detail view header
+- Reference BLG-FE-21 (design system) for colour token alignment
+
+**Acceptance Criteria**
+- Status badges rendered consistently in trade plan list and detail views
+- Each status has a distinct, accessible colour (contrast ratio ≥ 4.5:1)
+- Colours aligned with design system tokens where applicable
+- Abandoned status badge displays correctly (coordinate with BLG-FEAT-21)
+- No regression in trade plan list rendering performance
+
+---
+
 ## 4. Backend & Data Backlog
 
 
 ---
 
 *BLG-AI-02 (Model version contract for AI Journal) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
+
+---
+
+### BLG-AI-03 — AI Journal Summarisation quarterly review cadence
+**Priority:** P3 (Low)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer
+**Source:** IDEA-ai-compliance-20260508-02 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** XS (~0.5 day per review, governance process definition)
+**Provisional-Target:** Define process before v3.4; first review Q3 2026
+
+**Problem**
+AI Journal Summarisation (AI-SUM, shipped v2.8) is live in production using a specific Claude model version. As Claude model versions evolve, the feature's output quality, §13 compliance (display-only, no automated recommendation), and BLG-AI-02 model version contract may drift without a scheduled review mechanism. No cadence exists to verify the AI feature remains compliant and fit-for-purpose.
+
+**Scope**
+- Define a quarterly review process for AI Journal Summarisation
+- Review checklist: output quality sample review, §13 compliance re-confirmation, BLG-AI-02 model version record update, error rate review from BLG-OPS-14 monitoring
+- Document the process in a governance file; reference from OPERATIONAL_GUIDE
+- First review: Q3 2026 (before v3.4 planning cycle)
+
+**Acceptance Criteria**
+- Quarterly review process defined and documented
+- Review checklist specifies observable criteria (not subjective judgement)
+- Process documented with authority (AI Compliance & Governance Officer) and escalation path if §13 concerns arise
+- OPERATIONAL_GUIDE references the review process
 
 ---
 
@@ -298,6 +431,85 @@ Author `tests/e2e/entry-checklist.spec.js` covering SC-CL-01 through SC-CL-07:
 
 ---
 
+### BLG-QA-15 — PT-02 research view acceptance test protocol
+**Priority:** P1 (High)
+**Type:** QA / Test Protocol
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Before v3.3 sprint planning (prerequisite for PT-02 DoQ sign-off design)
+
+**Problem**
+The PT-02 Pre-Trade Research View will include observable UI behaviour (data field rendering, source attribution display, freshness indicator, news feed, error states). Per CLAUDE.md §2 governance, observable AC requires either Playwright coverage or human staging sign-off with date recorded. Without a pre-defined acceptance test protocol, DoQ sign-off criteria for PT-02 are undefined at sprint start, leading to ambiguous QA gates.
+
+**Scope**
+- Define observable acceptance criteria for each PT-02 UI component
+- Specify which AC will be covered by Playwright vs human staging sign-off
+- Define freshness indicator acceptance threshold (e.g. data ≤ N minutes old)
+- Define source attribution acceptance criteria (correct attribution per data field)
+- Define error state test scenarios (partial data, full API failure)
+- Reference BLG-FE-28 (UX spec) and BLG-SPEC-24/25 (canonical spec and API contract)
+
+**Acceptance Criteria**
+- Acceptance test protocol document defines observable AC for all PT-02 UI components
+- Each AC explicitly marked: Playwright (automated) or human staging sign-off
+- Protocol reviewed by DoQ before v3.3 sprint planning
+- Document filed in QA evidence path for EPIC tracking PT-02
+
+---
+
+### BLG-QA-16 — Research endpoint integration test coverage
+**Priority:** P1 (High)
+**Type:** QA / Test Automation
+**Owner:** Head of Engineering + QA & Testing Owner
+**Source:** IDEA-head-of-engineering-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v3.3 (in-sprint alongside PT-02 backend)
+
+**Problem**
+`GET /research/{ticker}` was added in v3.2 hotfixes but integration test coverage for the research endpoint was not included. Per CLAUDE.md §2, every new backend route must be registered in `backend/routers/test.py` in the same commit. The endpoint exists without integration test coverage, leaving it unverified for response schema compliance, error handling, and data source fallback behaviour.
+
+**Scope**
+- Add `GET /research/{ticker}` to `backend/routers/test.py` with representative safe value (e.g. `AAPL`)
+- Cover: successful response schema, partial data response (one source unavailable), full failure response
+- Verify source attribution fields present in response
+- Update hardcoded fallback count in `src/pages/SystemStatus.js` if endpoint count has changed
+
+**Acceptance Criteria**
+- `backend/routers/test.py` includes test entry for `GET /research/{ticker}`
+- Test scenarios cover: success, partial source failure, full failure
+- `SystemStatus.js` endpoint count updated if changed
+- No regression in existing test suite
+
+---
+
+### BLG-QA-17 — Research view test scenario library
+**Priority:** P1 (High)
+**Type:** QA / Test Scenarios
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Before v3.3 sprint planning (prerequisite for PT-02 sprint authoring)
+
+**Problem**
+No test scenarios exist for the PT-02 Pre-Trade Research View. Analogous to BLG-QA-09 (screener test data library, shipped v2.9), the research view needs a pre-defined scenario library before implementation begins. Without pre-defined scenarios, implementation-time test authoring is rushed and incomplete, leaving coverage gaps post-merge.
+
+**Scope**
+- Define test scenarios for: data field rendering (price, change, market cap, ATR, regime, earnings)
+- Source attribution display scenarios (Yahoo Finance vs Alpaca attribution)
+- News feed scenarios: articles present, no articles, Alpaca unavailable
+- Freshness indicator scenarios: fresh data, stale data (threshold exceeded)
+- Error state scenarios: ticker not found, Yahoo Finance unavailable, all sources unavailable
+- Reference BLG-SPEC-24 (canonical spec) and BLG-FE-28 (UX spec) for expected behaviour
+
+**Acceptance Criteria**
+- Scenario library document exists covering all PT-02 research view observable scenarios
+- Each scenario specifies: precondition, action, expected result
+- Library reviewed by DoQ before v3.3 sprint planning
+- Scenarios referenced in BLG-QA-15 (acceptance test protocol)
+
+---
+
 ## 6. Operations & Infrastructure Backlog
 
 ---
@@ -330,6 +542,55 @@ Eighteen endpoints shipped in v2.8/v2.9/v3.0/v3.1 are absent from `docs/ops/api_
 
 ---
 
+### BLG-OPS-15 — Research endpoint latency monitoring
+**Priority:** P2 (Medium)
+**Type:** Operations / Performance Monitoring
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v3.3 (alongside PT-02 backend delivery)
+
+**Problem**
+`GET /research/{ticker}` calls multiple external data sources (Yahoo Finance for price/news, Alpaca for additional data). Response times will be higher than internal endpoints and will vary as Arc 2 adds more data fields. No latency baseline exists for this endpoint, making regression detection impossible.
+
+**Scope**
+- Instrument `GET /research/{ticker}` with p50/p95 latency logging
+- Add to `docs/ops/api_performance_baseline.md` (alongside BLG-OPS-13 scope)
+- Define a latency target (e.g. p95 ≤ 3s for multi-source external API aggregation)
+- Add monitoring note if latency exceeds target threshold
+
+**Acceptance Criteria**
+- Research endpoint latency measured and documented in the performance baseline
+- p50/p95 values recorded after v3.3 implementation
+- Latency target documented with rationale (multi-source aggregation baseline)
+
+---
+
+### BLG-SEC-06 — Trade plan data sensitivity classification
+**Priority:** P2 (Medium)
+**Type:** Security / Governance
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** XS–S (~0.5 day)
+**Provisional-Target:** Before Arc 3 sprint planning
+
+**Problem**
+The `trade_plans` table contains fields of varying sensitivity: ticker (semi-public), entry zone (proprietary strategy detail), stop level (proprietary), R-target (proprietary), thesis (private journal content), entry checklist (private). No formal sensitivity classification exists. Arc 3/4 features may involve exporting, sharing, or displaying plan data in new contexts. Without a classification, access control decisions will be made ad-hoc.
+
+**Scope**
+- Classify each `trade_plans` field by sensitivity: Public (ticker), Internal (dates, status), Private (entry zone, stop, R-target, thesis, checklist)
+- Document classification in a security reference document
+- Define access control principles per classification level for Arc 3/4 feature design
+- Not a compliance document — a design prerequisite for Arc 3/4
+
+**Acceptance Criteria**
+- Classification document covers all current `trade_plans` fields
+- Three sensitivity levels defined (or equivalent) with access control principle per level
+- Document referenced as input for any Arc 3/4 feature involving trade plan data exposure
+- Document filed in `docs/specs/security/` or equivalent path
+
+---
+
 ### BLG-SEC-05 — Alpaca API key rotation policy and credential audit ✅ COMPLETE v3.2
 **Priority:** P2 (Medium)
 **Type:** Security / Operations
@@ -357,13 +618,172 @@ Alpaca API key is in production (stored in Render environment variables) with no
 
 ## 7. Spec Debt Backlog
 
-*No active items in this section — BLG-SPEC-20 deferred to §9 (DL-023, 2026-04-24).*
+*BLG-SPEC-20 deferred to §9 (DL-023, 2026-04-24).*
+
+---
+
+### BLG-SPEC-24 — PT-02 research view canonical spec
+**Priority:** P1 (High)
+**Type:** Specification / Canonical
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Before v3.3 sprint planning
+
+**Problem**
+The PT-02 Pre-Trade Research View has no canonical specification. The v3.2 hotfix delivered the research endpoint but the frontend implementation (PT-02's primary deliverable) has not been specced. Without a Class 2 canonical spec, frontend implementation will proceed without a defined source of truth for data fields, display rules, data freshness policy, and source attribution requirements.
+
+**Scope**
+- Class 2 canonical specification for the PT-02 research view
+- Data fields: which fields are displayed (price, % change, market cap, ATR, regime, news, earnings)
+- Data sources: which fields come from Yahoo Finance vs Alpaca, with attribution requirements
+- Data freshness policy: maximum acceptable data age per field, staleness display behaviour
+- Display rules: formatting, units, empty/null handling per field
+- Reference: BLG-SPEC-25 (API contract), BLG-FE-28 (UX spec), BLG-SPEC-26 (provenance spec)
+- References strategy_rules.md §13 for §13 compliance confirmation
+
+**Acceptance Criteria**
+- Class 2 canonical spec document created covering all data fields, sources, freshness policy, and display rules
+- §13 compliance confirmed in spec front-matter
+- Document references openapi.yaml entry for `GET /research/{ticker}`
+- Reviewed and signed off by Head of Specs Team before v3.3 sprint planning
+
+---
+
+### BLG-SPEC-25 — PT-02 research endpoint API contract
+**Priority:** P1 (High)
+**Type:** Specification / API Contract
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Before v3.3 sprint planning (alongside BLG-SPEC-24)
+
+**Problem**
+`GET /research/{ticker}` was added in v3.2 hotfixes and is in `openapi.yaml`, but no formal Class 2 API contract document exists in `docs/specs/api_contracts/`. Without a formal contract, response schema, error codes, data source attribution fields, and rate limit behaviour are undocumented — creating ambiguity for frontend implementation and integration test authoring.
+
+**Scope**
+- Formal Class 2 API contract for `GET /research/{ticker}`
+- Request parameters: ticker format, market inference behaviour
+- Response schema: all fields with types, nullable flags, and source attribution fields
+- Error codes: ticker not found (404), external source unavailable (partial/503), rate limit (429)
+- Rate limit policy: which external sources apply rate limits and how errors surface
+- Reference BLG-SPEC-24 (canonical spec) and BLG-SPEC-26 (provenance spec)
+
+**Acceptance Criteria**
+- API contract document in `docs/specs/api_contracts/` covering all request/response fields
+- Error codes and source attribution fields explicitly documented
+- Rate limit behaviour specified per external source
+- Contract consistent with openapi.yaml entry for `GET /research/{ticker}`
+
+---
+
+### BLG-SPEC-26 — Research view data source provenance spec
+**Priority:** P1 (High)
+**Type:** Specification / Data Integrity
+**Owner:** Head of Specs Team
+**Source:** IDEA-challenger-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Before v3.3 sprint planning (prerequisite for BLG-SPEC-24 and BLG-FE-28)
+
+**Problem**
+The PT-02 research view aggregates data from multiple sources (Yahoo Finance, Alpaca, internal calculations). Without a provenance specification, the UI may display data fields without clear attribution, making it impossible for users to assess data freshness or identify which source is responsible for incorrect or stale data.
+
+**Scope**
+- Specification document defining the provenance attribution requirements for the research view
+- Per data field: named source (Yahoo Finance, Alpaca, internal), retrieval timestamp display requirement
+- Display format: how source attribution is shown in the UI (tooltip, label, icon)
+- Retrieval timestamp: format and placement requirements per field or per panel
+- Applies to all fields in BLG-SPEC-24 scope
+
+**Acceptance Criteria**
+- Provenance spec document defines source attribution for every data field in the research view
+- Display format specified (not left to implementation discretion)
+- Retrieval timestamp requirement specified per field/panel
+- Incorporated as a required section reference in BLG-SPEC-24 (canonical spec)
 
 ---
 
 ## 8. Governance Backlog
 
 
+
+---
+
+### BLG-GOV-19 — PT-05 entry checklist §13 compliance review
+**Priority:** P1 (High)
+**Type:** Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** Before PT-05 sprint entry (prerequisite for PT-05 implementation)
+
+**Problem**
+PT-05 (Entry Conditions Checklist) involves the system prompting the user to confirm entry conditions before opening a position. This is a structured decision support feature. A formal §13 boundary review is required to confirm this does not constitute automated advisory or signal generation — the system must remain display-only and human-in-the-loop per strategy_rules.md §13.
+
+**Scope**
+- Formal §13 boundary review document for PT-05
+- Confirm: entry checklist is display-only (user confirms each condition manually)
+- Confirm: no automated condition evaluation or automated recommendation generated
+- Confirm: system does not determine whether entry conditions are met — only presents them
+- Decision record stored as prerequisite artefact before PT-05 sprint planning
+
+**Acceptance Criteria**
+- §13 compliance review document created for PT-05
+- Document confirms display-only scope and human-in-the-loop confirmation
+- Strategy Rules owner sign-off recorded in document
+- Document referenced in PT-05 sprint story acceptance criteria
+
+---
+
+### BLG-GOV-20 — Trade plan field extension governance
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260508-01 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Before v3.3 sprint planning
+
+**Problem**
+The `trade_plans` table was established in PT-01 (v3.1) with an initial field set. Arc 2/3/4 will add fields (entry conditions, quality score, abandonment reason, cost attribution). Without a documented governance process, each addition is ad-hoc — no consistent criteria for whether a field belongs in the trade plan object, no migration strategy requirement, no backwards compatibility rules, and no documented authority for schema changes.
+
+**Scope**
+- Document the field addition criteria: what makes a field appropriate for the trade_plans table vs a separate table
+- Migration strategy requirement: when must a migration script be provided vs nullable column addition
+- Backwards compatibility rules: how existing plans must be handled when new fields are added
+- Authority: who must approve a trade_plans schema change (Data Model owner + Product Owner)
+- Changelog format: how schema changes are recorded
+
+**Acceptance Criteria**
+- Field extension governance document covers: addition criteria, migration strategy, backwards compatibility, authority, changelog format
+- Document reviewed and signed off by Data Model owner before v3.3 sprint planning
+- Referenced in future sprint planning when PT-03/04/05 field additions are proposed
+
+---
+
+### BLG-GOV-21 — Arc 4 data requirements capture
+**Priority:** P3 (Low)
+**Type:** Governance / Planning
+**Owner:** Head of UX & Design + Product Owner
+**Source:** IDEA-head-of-ux-20260508-02 — promoted cycle 2026-05-08__scheduled (DL-025)
+**Effort:** XS–S (~0.5 day)
+**Provisional-Target:** Before Arc 4 planning begins (v3.4+)
+**Scope constraint:** Data needs only — no UX design, no feature specification, no implementation commitment
+
+**Problem**
+Arc 4 (AI Integration) and future arcs will require data that is not currently stored in the system (e.g. qualitative trade setup notes, pre-entry research snapshot, confidence level). If Arc 4 planning begins without a prior data requirements capture, the team will discover missing data mid-arc, requiring retroactive data model changes or compromised AI features.
+
+**Scope**
+- Lightweight document capturing data points not currently stored that Arc 4 features will likely need
+- Format: field name, purpose, type, source (user input / calculated / external), and why it cannot be derived from existing data
+- Covers: AI context inputs, qualitative annotations, pre-entry state snapshots
+- Explicitly not: UX design, feature specification, or implementation commitment
+- Delivered as a reference input for Arc 4 sprint planning
+
+**Acceptance Criteria**
+- Data requirements capture document lists Arc 4 data needs not currently stored
+- Each entry specifies purpose and why existing data is insufficient
+- Document explicitly notes it is not a feature specification or implementation commitment
+- Delivered before Arc 4 planning begins
 
 ---
 

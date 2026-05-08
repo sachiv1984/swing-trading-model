@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-05 (rebalance 2026-05-05__scheduled — DL-024)
-**Last rebalance:** 2026-05-05 (cycle 2026-05-05__scheduled — Standard-tier scheduled rebalance; DL-024 backlog adds × 5)
+**Last Updated:** 2026-05-08 (rebalance 2026-05-08__scheduled — DL-025; no roadmap changes; 16 backlog adds)
+**Last rebalance:** 2026-05-08 (cycle 2026-05-08__scheduled — Standard-tier scheduled rebalance; DL-025 backlog adds × 16)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 

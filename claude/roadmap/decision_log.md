@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-05
+**Last Updated:** 2026-05-08
 
 ---
 
@@ -649,3 +649,56 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **STEP 8.6 guardrail:** 2 items parked in debate (IDEA-cybersecurity-20260421-02, IDEA-finops-20260421-01); Challenger issued Type A counter-arguments for both. PASS.
 
 **Meta-review:** NOT due — 2 cycles since last meta-review (2026-04-21__scheduled); threshold is 3 cycles. Next meta-review due: v3.3 rebalance cycle or 2026-06-05__scheduled (whichever comes first).
+
+---
+
+### DL-025 — 2026-05-08
+
+**Decision type:** Add (backlog-level × 16)
+**Cycle:** 2026-05-08__scheduled
+**Date:** 2026-05-08
+**Decision owner:** Product Owner
+**Run tier:** Standard
+
+**Context:** Scheduled rebalance. No active roadmap-level initiatives (CPS = 0.0). v3.2 Verified 2026-05-05; post-ship closure complete 2026-05-07. Ideas window IW-20260508-01 opened (44 submissions, 22 agents). 17 open parked ideas reviewed. Register integrity correction applied (IDEA-finops-20260421-01 and IDEA-cybersecurity-20260421-02 park counts corrected +1 for 2026-05-05 cycle miss).
+
+**Gate-cleared ideas actioned:**
+- IDEA-frontend-ux-20260304-02: BLG-FE-16 shipped v3.2 → gate cleared → PO re-park (accessibility still P3)
+- IDEA-cybersecurity-20260421-02: BLG-SEC-05 shipped v3.2 → gate cleared → Rejected (purpose delivered)
+
+**Items added to backlog (16):**
+
+| BLG ID | Title | Priority | Effort | Source Idea | Slot |
+|--------|-------|----------|--------|------------|------|
+| BLG-SPEC-24 | PT-02 research view canonical spec | P1 | M | IDEA-head-of-specs-20260508-01 | P1 SPEC backlog slot |
+| BLG-SPEC-25 | PT-02 research endpoint API contract | P1 | S | IDEA-api-contracts-20260508-01 | P1 SPEC backlog slot |
+| BLG-SPEC-26 | Research view data source provenance spec | P1 | S | IDEA-challenger-20260508-01 | P1 SPEC backlog slot |
+| BLG-FE-28 | Pre-Trade Research View UX spec | P1 | S | IDEA-frontend-ux-20260508-01 | P1 FE backlog slot |
+| BLG-FE-29 | Watchlist research status indicator (binary flag) | P2 | XS | IDEA-product-owner-20260508-02 | P2 FE backlog slot |
+| BLG-FE-30 | Trade plan status badges | P2 | S | IDEA-base44-frontend-20260508-02 | P2 FE backlog slot |
+| BLG-GOV-19 | PT-05 entry checklist §13 compliance review | P1 | XS | IDEA-strategy-owner-20260508-01 | P1 GOV backlog slot |
+| BLG-GOV-20 | Trade plan field extension governance | P2 | S | IDEA-data-model-20260508-01 | P2 GOV backlog slot |
+| BLG-GOV-21 | Arc 4 data requirements capture | P3 | XS | IDEA-head-of-ux-20260508-02 | P3 GOV backlog slot |
+| BLG-FEAT-21 | Trade plan abandonment status field | P2 | S | IDEA-challenger-20260508-02 | P2 FEAT backlog slot |
+| BLG-OPS-15 | Research endpoint latency monitoring | P2 | S | IDEA-infra-ops-20260508-01 | P2 OPS backlog slot |
+| BLG-QA-15 | PT-02 research view acceptance test protocol | P1 | S | IDEA-director-of-quality-20260508-01 | P1 QA backlog slot |
+| BLG-QA-16 | Research endpoint integration test coverage | P1 | S | IDEA-head-of-engineering-20260508-01 | P1 QA backlog slot |
+| BLG-QA-17 | Research view test scenario library | P1 | S | IDEA-qa-testing-20260508-01 | P1 QA backlog slot |
+| BLG-SEC-06 | Trade plan data sensitivity classification | P2 | XS | IDEA-cybersecurity-20260508-01 | P2 SEC backlog slot |
+| BLG-AI-03 | AI Journal Summarisation quarterly review cadence | P3 | XS | IDEA-ai-compliance-20260508-02 | P3 AI backlog slot |
+
+**Items parked in STEP 5 (from new submissions):** 28 ideas → Parked-cycle-1
+
+**Items rejected this cycle:** 1 (IDEA-cybersecurity-20260421-02 — purpose delivered by BLG-SEC-05)
+
+**Challenger Type A counter-arguments:** 4 (BLG-GOV-19, BLG-FE-29, BLG-GOV-20, BLG-GOV-21); all PO accepted with rationale
+
+**Roadmap impact:** current_roadmap.md Last Updated bumped to 2026-05-08. No arc structure or horizon changes.
+
+**Displacement (backlog-level net-zero):** Each add has a named displacement: BLG-FE-23 (for BLG-GOV-19), BLG-FE-24 (for BLG-SPEC-26, BLG-FE-28, BLG-AI-03), BLG-FE-25 (for BLG-FE-29, BLG-FE-30, BLG-QA-17), BLG-FE-26 (for BLG-SPEC-24), BLG-FE-27 (for BLG-SEC-06, BLG-GOV-21), BLG-FEAT-20 (for BLG-GOV-20, BLG-FEAT-21, BLG-QA-15), BLG-OPS-13 (for BLG-SPEC-25, BLG-OPS-15, BLG-QA-16). Net-zero: backlog-level Adds with named deprioritisations ✅
+
+**Skill-Silo check:** 6 of 16 items are governance/spec (37.5%) — within 20–60% bounds. No Skill-Silo Alert.
+
+**STEP 8.6 guardrail:** 4 Challenger Type A counter-arguments across 16 advancing ideas; not all candidates advanced without challenge. PASS.
+
+**Meta-review:** DUE — 3rd cycle since last meta-review (2026-04-21__scheduled). Conducted — no prompt patches warranted. Single Type D incident (2026-05-05 F-01) was isolated. `last_meta_review_cycle` updated to 2026-05-08__scheduled.
