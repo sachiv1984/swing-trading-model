@@ -1,10 +1,11 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-05-05
+**Version:** 0.3
+**Last Updated:** 2026-05-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md
+**Design Source (v0.3 research indicator):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §F
 
 ---
 
@@ -58,6 +59,7 @@ One row per watchlist entry. Default sort: entry signal status (Active first, th
 | Ticker | `ticker` | Uppercase. Clicking the ticker opens the edit modal. |
 | Market | `market` | Badge pill: "UK" / "US" |
 | Entry Signal | `signal_status` | See Signal Status Values below. |
+| Research | `has_research` | *(v3.3 — BLG-FE-29)* Binary indicator — see §Research Status Indicator |
 | Target Entry | `target_entry_price` | Native currency (GBP for UK, USD for US). Display `—` if null. |
 | Stop (Initial) | `initial_stop_price` | Native currency. Display `—` if null. |
 | Stop (Current) | `current_stop_price` | Native currency. Display `—` if null. |
@@ -164,6 +166,27 @@ On removal (via Remove or Add to Position): row slides out or fades out before t
 
 ---
 
+## Research Status Indicator (v3.3 — ST-17 BLG-FE-29)
+
+**Design source:** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §F
+
+**Column label:** "Research" — narrow column, icon only (no text in cell).
+
+| Condition | Icon | Tooltip |
+|-----------|------|---------|
+| Research record exists (`has_research = true`) | ✅ (green checkmark) | "Research available" |
+| No research record (`has_research = false`) | ○ (hollow circle, grey) | "No research yet" |
+
+**Scope:** Binary only — does not indicate freshness or quality.
+
+**Data source:** `has_research` boolean per watchlist entry from `GET /watchlist` response (backend extension required), or batch resolution from frontend after initial load. No blocking dependency on research data — if unavailable, show grey circle.
+
+**Accessibility:** Icon has `aria-label="Research available"` or `"No research for {TICKER}"`.
+
+**Performance:** Must not regress watchlist loading. If fetched separately, use debounced batch request post-render.
+
+---
+
 ## Research Navigation (v3.2 — ST-04)
 
 Each ticker entry in the watchlist table has a **"Research"** action (text link or secondary button) in the Actions column, adjacent to "Add to Position".
@@ -185,5 +208,6 @@ Each ticker entry in the watchlist table has a **"Research"** action (text link 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-05-09 | v3.3 design gate — added Research Status Indicator section (BLG-FE-29: binary has_research icon per row); added "Research" column to table. Design source: trade-plan-quick-wins/ux_spec.md §F. Approved: Product Owner 2026-05-09. |
 | 0.2 | 2026-05-05 | v3.2 design gate — added Research Navigation section (ST-04); updated Actions column. Design source: screener-to-research-navigation/ux_spec.md. |
 | 0.1 | 2026-03-18 | Initial spec. ST-10 — EPIC-03 (Watchlists & Screening). Design gate: 2026-03-18__release-v2.1. Design source: UX spec approved by Product Owner 2026-03-18. |

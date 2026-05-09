@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-03-24
+**Version:** 1.5
+**Last Updated:** 2026-05-09
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
+**Design Source (v3.3 additions):** docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md, docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md, docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -14,6 +15,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-05-09 | v3.3 design gate: (ST-03) Arc 3 position lifecycle state badge — five-state set (GRACE/LOSING/PROFITABLE/EXIT ZONE/UNKNOWN) with days_in_state inline and next-trigger tooltip; (ST-05) Grace period alert zone at top of page for GRACE positions ≥ day 8; (ST-07) Trail Stop action and guided modal for PROFITABLE/EXIT ZONE positions. Design sources listed above. Approved: Product Owner 2026-05-09. |
 | 1.4 | 2026-03-24 | ST-01 (BLG-FEAT-11, v2.3): §Strategy Compliance Panel — collapsible panel below Table View showing per-position ATR compliance data. Display-only. Design source: docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
 | 1.3 | 2026-03-18 | (no change to positions.md — version increment noted for lineage) |
 | 1.2 | 2026-02-26 | BLG-FEAT-06 (A-S08): Add `grace_days_remaining` column specification to Table View. Display format, null behaviour, and data source documented. Dependent on `position_endpoints.md` v1.8.3. |
@@ -64,12 +66,53 @@ Displays each open position as a row with:
 - P&L %
 - Days held
   - Grace period indicator if under minimum hold days
-- Grace Days Remaining *(new — BLG-FEAT-06)*
-- Status badge (GRACE / PROFITABLE / LOSING)
+- Status (lifecycle state badge — see §Position Lifecycle State Badge)
+- Grace Days Remaining *(BLG-FEAT-06)*
 - Tags (as colored pills)
 - Actions:
   - **Exit** (opens exit modal)
+  - **Trail Stop** (opens trail stop modal — see §Trail Stop Action; visible only for PROFITABLE/EXIT ZONE positions)
   - **View Journal** (opens position detail modal)
+
+---
+
+#### Position Lifecycle State Badge (v3.3 — ST-03 IT-01)
+
+**Design source:** docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md
+
+**Data sources:** `position_state`, `days_in_state` from `GET /positions` (Arc 3 fields).
+
+**Column label:** "Status" (replaces prior GRACE/PROFITABLE/LOSING badge set).
+
+**Badge format:** `STATE — Nd` (e.g. "GRACE — 3d")
+- Filled pill, white text on state colour
+- Width: content-fit
+
+**State colour scheme:**
+
+| State | Colour | Hex |
+|-------|--------|-----|
+| GRACE | Blue | `#2563EB` |
+| LOSING | Red | `#DC2626` |
+| PROFITABLE | Green | `#16A34A` |
+| EXIT ZONE | Purple | `#7C3AED` |
+| UNKNOWN | Grey | `#6B7280` |
+
+**Tooltip (hover/focus on badge):**
+
+| State | Tooltip |
+|-------|---------|
+| GRACE | "Exits grace when position moves > 0.5 ATR or after 10 trading days" |
+| LOSING | "Exits when price rises above entry by 0.5 ATR" |
+| PROFITABLE | "Advances to Exit Zone when P&L reaches 2R target" |
+| EXIT ZONE | "Position has reached R-target. Review stop or exit." |
+| UNKNOWN | "Set a stop and R-target on the linked trade plan to enable lifecycle tracking." |
+
+**Null handling:** If `position_state` is null (pre-Arc 3 position pending back-fill), display UNKNOWN badge. Never display a dash or empty cell.
+
+**§13 constraint:** Display-only. No automated recommendation generated from state display.
+
+**Accessibility:** Badge has `aria-label="Position state: {STATE}, {N} days in state"`. Colour is never the sole differentiator — state label text is always present.
 
 ---
 
@@ -164,6 +207,78 @@ Two distinct empty states:
 
 ---
 
+---
+
+## Grace Period Alert Zone (v3.3 — ST-05 IT-02)
+
+**Design source:** docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md
+
+**Placement:** Above the View Switcher, at the top of the Positions page. A dedicated Alert Zone with amber background (`#FEF3C7`) and left border (`#D97706`, 4px).
+
+**Trigger:** One or more open positions with `position_state = 'GRACE'` AND `days_in_state ≥ 8`. Data source: `GET /positions/grace-period-alerts`.
+
+**One alert card per qualifying position.** Cards stack vertically in the Alert Zone.
+
+### Alert Card Contents
+
+- Header: "⚠ Grace Period Alert — {TICKER}" + "Day {days_in_state} of 10" sub-label + Dismiss (✕) button
+- Body: "Your grace period ends in {10 - days_in_state} trading day(s). Review your original thesis before the window closes."
+  - When `days_in_state = 10`: "Grace period has ended. Your position will transition to LOSING or PROFITABLE on next refresh."
+- Trade plan context block (when `trade_plan_id` present): Thesis (first 120 chars), Entry zone, Stop, R-target
+- "View Trade Plan →" text link (when `trade_plan_id` present)
+
+### Dismiss Behaviour
+
+- Per-position per-session via localStorage key `grace_alert_dismissed_{position_id}`
+- Alert reappears on next browser session (no expiry)
+- When all cards dismissed: Alert Zone collapses to zero height (no visual gap)
+
+**§13 constraint:** Display-only. No automated recommendation. Human decides action.
+
+**Accessibility:** Alert Zone has `role="alert"` and `aria-live="polite"`.
+
+---
+
+## Trail Stop Action (v3.3 — ST-07 IT-03)
+
+**Design source:** docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md
+
+### Trail Stop Button
+
+- Placement: Actions column, after "Exit", before "View Journal"
+- Label: "Trail Stop"
+- Style: secondary (outlined)
+- **Shown** for positions where `position_state` is `PROFITABLE` or `EXIT ZONE`
+- **Disabled** (with tooltip "No current stop set. Add a stop to use trail management.") when `current_stop` is null
+- **Hidden** for GRACE, LOSING, UNKNOWN states
+
+### Trail Stop Modal
+
+Opened by clicking enabled "Trail Stop" button. Data source: `GET /positions/{id}/stop-trail`.
+
+**Modal header:** "Trail Stop — {TICKER}"
+
+**Data rows:**
+
+| Label | Source | Format |
+|-------|--------|--------|
+| Current Stop | `current_stop` | Native currency, 2dp |
+| ATR Trail Stop | `atr_trail_stop` | Native currency, 2dp |
+| Raise by | `trail_difference` | "+£X.XX" (positive) or "−£X.XX" (amber, negative) |
+| Trail in R | `trail_r_terms` | "+X.XR" |
+
+**Footnote (static):** "ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules."
+
+**Confirmation button:** "Update stop to {atr_trail_stop}" — calls `PUT /positions/{id}` with new `stop_price`.
+
+On success: modal closes; position row updates; toast: "Stop updated to {atr_trail_stop}".
+
+**Cancel / Dismiss:** "Cancel" text link; Escape key; ✕ button — no change made.
+
+**§13 constraint:** System presents calculation. Human confirms. No automated stop update.
+
+---
+
 ## Key Components Used
 
 - Position cards
@@ -203,9 +318,12 @@ For Journal View empty states, see the Journal View section above.
 
 | Endpoint | Purpose |
 |----------|---------|
-| `GET /positions` | Primary data source for all three views. Returns open positions with live pricing, journal fields, and `grace_days_remaining`. |
+| `GET /positions` | Primary data source for all three views. Returns open positions with live pricing, journal fields, `grace_days_remaining`, `position_state`, `state_entered_at`, `days_in_state`. |
 | `GET /positions/tags` | Tag autocomplete source for the Journal View filter dropdown and for the Position Detail Modal's tag editor |
 | `GET /positions/compliance` | *(v2.3 — ST-01)* Strategy Compliance Panel data source. Returns ATR-based per-position stop compliance, stop age, and size compliance flags. Display-only; §13.3 constraint applies. |
+| `GET /positions/grace-period-alerts` | *(v3.3 — ST-05)* Returns positions in GRACE state with `days_in_state ≥ 8`, including trade plan context. Source for Grace Period Alert Zone. |
+| `GET /positions/{id}/stop-trail` | *(v3.3 — ST-07)* Returns ATR trail stop calculation for a single position. Source for Trail Stop Modal. |
+| `PUT /positions/{id}` | *(v3.3 — ST-07)* Updates stop price after user confirms trail stop action. |
 
 > For full dependency behaviour rules, see `patterns/api_dependencies.md`.
 

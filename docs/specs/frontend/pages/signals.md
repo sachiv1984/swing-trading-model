@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-03-17
+**Version:** 0.2
+**Last Updated:** 2026-05-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v0.2 date default):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §E
 
 ---
 
@@ -23,7 +24,16 @@ Users should be able to:
 
 ## Controls
 
-Two controls are displayed above the signals table in an inline row.
+Three controls are displayed above the signals table in an inline row.
+
+### Date (v3.3 — BLG-FE-25)
+
+- Label: **Date**
+- Type: date picker (calendar input)
+- Default: most recent trading day (frontend-determined: today if weekday, else most recent prior weekday)
+- A **"Latest"** quick-link resets the date picker to the most recent trading day
+- Behaviour: selects the signal date; triggers refetch on change
+- Canonical parameter: `date` (ISO-8601) — defined in `docs/specs/api_contracts/signal_endpoints.md`
 
 ### Top N
 
@@ -41,16 +51,16 @@ Two controls are displayed above the signals table in an inline row.
 - Type: positive integer input
 - Default: `252` (one trading year)
 - Minimum: `1`
-- Behaviour: controls the historical lookback window used by the backend signal scoring algorithm
+- Behaviour: controls the historical lookback window used by the backend signal scoring algorithm. When a specific date is selected, `lookback_days` applies from that date backwards.
 - Invalid input (non-positive, non-integer): input resets to default value (`252`)
 - Canonical parameter: `lookback_days` — defined in `docs/specs/api_contracts/signal_endpoints.md`
 
 ### Control Behaviour on Change
 
-- On value change: 500ms debounce, then trigger a new `GET /signals` request with updated `top_n` and `lookback_days` parameters
+- On value change: 500ms debounce, then trigger a new `GET /signals` request with updated `date`, `top_n`, and `lookback_days` parameters
 - A loading indicator is shown while the fetch is in progress
 - The signals table updates in place when the response arrives
-- Both controls remain interactive during fetch; a second change during an in-flight request cancels the prior debounce and issues a fresh request after the new debounce period
+- All controls remain interactive during fetch; a second change during an in-flight request cancels the prior debounce and issues a fresh request after the new debounce period
 
 ---
 
@@ -72,11 +82,11 @@ Column set must not be derived independently — it must match the canonical res
 
 ## Empty State
 
-When `GET /signals` returns an empty array: display the message:
+When `GET /signals` returns an empty array for the selected date: display the message:
 
-> "No signals found for the selected parameters."
+> "No signals found for {date}. Try selecting a different date or adjusting parameters."
 
-This state is expected when `top_n` is very small, `lookback_days` is very short, or no signals have been generated for the period.
+This state is expected when no signals were generated for the selected date, `top_n` is very small, `lookback_days` is very short, or no signals have been generated for the period.
 
 ---
 
@@ -94,4 +104,5 @@ The frontend must not calculate or derive signal scores, rankings, or fields. Al
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-05-09 | v3.3 design gate — added Date control (BLG-FE-25: default to most recent trading day; "Latest" quick-link; date parameter added to API call); updated empty state message to include date. Design source: trade-plan-quick-wins/ux_spec.md §E. Approved: Product Owner 2026-05-09. |
 | 0.1 | 2026-03-17 | Initial spec. ST-01 / ST-02 — EPIC-01 (4.3 Signal Exposure Enhancement). Design gate: 2026-03-17__release-v2.0. Approved by Head of UX & Design + Product Owner. |
