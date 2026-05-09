@@ -22,7 +22,7 @@
     "step_10_global_state": "pass",
     "step_11_manage_roadmap": "complete",
     "step_12_groom_backlog": "complete",
-    "step_13_commit": "not_started"
+    "step_13_commit": "complete"
   },
-  "closure_status": null
+  "closure_status": "Closed_with_actions"
 }
