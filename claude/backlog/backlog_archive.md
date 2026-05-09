@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-05
+**Last Updated:** 2026-05-09
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -1842,4 +1842,141 @@ Persistent AI audit log implemented (ai_audit_service.py). Every summary run per
 **Decision rationale:** 5 consecutive deferrals (v2.3→v2.4→v2.5→v2.6/v2.7→v2.8→v2.9); L effort (~3–5 days); prompts functional and governed — compression value does not justify cost given ongoing arc delivery cadence. Deferred to P3 permanent backlog (initiative_register.md Priority 3 or organic improvement) rather than active backlog tracking.
 
 Engine prompt compression was identified as a governance improvement in AUD-2026-03-21. With v2.9 Arc 1 delivery complete and v3.0 Arc 1 remainder on the roadmap, the active backlog should not carry an L-effort low-priority item that has been consistently displaced by higher-value work across 5 cycles.
+
+
+---
+
+## Archived — Post-ship Closure v3.2 (2026-05-09)
+
+---
+
+### BLG-FE-16 — React component inventory
+**Status:** ✅ COMPLETE v3.2
+**Archived:** 2026-05-09 (post-ship closure groom backlog STEP 12)
+**Priority:** P3 (Low)
+**Type:** Frontend / Documentation
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-ux-20260321-02 — promoted cycle 2026-04-21__scheduled (DL-021)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.2 (was v3.1 — not in v3.1 sprint scope; updated GROOM-20260505-01)
+
+**Problem**
+No catalogue of UI components exists. Arc 1 will add significant new frontend components. Without an inventory, Arc 1 frontend work risks duplicating existing components and design inconsistency compounds.
+
+**Scope**
+- Catalogue all existing UI components: props, variants, usage locations
+- Identify existing duplication or inconsistency
+- Provide a reference for Arc 1 frontend development
+
+**Acceptance Criteria**
+- Component inventory document created covering all existing components
+- Each component entry includes: purpose, props summary, variants, usage locations
+- Duplication or reuse opportunities noted
+
+---
+
+### BLG-FE-21 — Design system document
+**Status:** ✅ COMPLETE v3.2
+**Archived:** 2026-05-09 (post-ship closure groom backlog STEP 12)
+**Priority:** P3 (Low)
+**Type:** Frontend / Documentation
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20260321-02 — promoted cycle 2026-05-05__scheduled (DL-024)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.2
+
+**Problem**
+The system UI has accumulated organically across 17 releases. Arc 1 added significant new components (screener results, watchlist promotion, news panel). Arc 2 will add more (pre-trade research view, trade plan form, entry checklist). Without a documented design system, each new UI surface risks inconsistent patterns because the single developer is not consistent across sessions separated by weeks.
+
+**Scope**
+- Document the implicit design system: colour palette, typography scale, spacing tokens, icon conventions
+- Reference document for use when adding new UI surfaces in Arc 2+
+- Capture current patterns as-is (not aspirational); note any existing inconsistencies
+- Coordinate with BLG-FE-16 (React component inventory) — sequence BLG-FE-16 first if both in-scope
+
+**Acceptance Criteria**
+- Design system document created covering colour palette, typography, spacing, icon conventions
+- Each pattern entry includes current usage and any known inconsistencies
+- Usable as a reference when starting new Arc 2 UI surfaces
+
+---
+
+### BLG-SEC-05 — Alpaca API key rotation policy and credential audit
+**Status:** ✅ COMPLETE v3.2
+**Archived:** 2026-05-09 (post-ship closure groom backlog STEP 12)
+**Priority:** P2 (Medium)
+**Type:** Security / Operations
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260421-01 + IDEA-cybersecurity-20260421-02 — promoted cycle 2026-05-05__scheduled (DL-024)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v3.2
+
+**Problem**
+Alpaca API key is in production (stored in Render environment variables) with no documented rotation policy — no specification of rotation frequency, rotation procedure, validation after rotation, or incident response if key is compromised. Additionally, multiple API credentials are now in production (Alpaca, Anthropic/Claude) with no inventory documenting storage location, last rotation, or system dependencies.
+
+**Scope**
+- Credential inventory: document all production API credentials (Alpaca, Anthropic, others), storage location, last rotation date, system dependencies
+- Rotation policy: rotation frequency guidance, step-by-step rotation procedure for Alpaca key, validation procedure after rotation
+- Incident response note: what to do if a credential is compromised
+- Not a compliance document — procedural memory for the developer
+
+**Acceptance Criteria**
+- Credential inventory lists all production API credentials with storage location and last rotation
+- Rotation policy documented with step-by-step procedure for Alpaca key rotation
+- Validation procedure after rotation specified
+- Incident response steps documented (rotate, validate, check audit logs)
+
+---
+
+### BLG-GOV-18 — External API dependency risk register
+**Status:** ✅ COMPLETE v3.2
+**Archived:** 2026-05-09 (post-ship closure groom backlog STEP 12)
+**Priority:** P3 (Low)
+**Type:** Governance Process / Operational Risk
+**Owner:** PMO Lead + Infrastructure & Operations Owner
+**Source:** IDEA-pmo-lead-20260421-01 — promoted cycle 2026-05-05__scheduled (DL-024)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.2
+
+**Problem**
+Alpaca Markets API is now production-critical — the screener engine depends on it for daily OHLCV bars. Yahoo Finance is also in the data pipeline. No formal register tracks which endpoints are used, reliability record, known failure modes, fallback status, or SLA concerns. GET /health provides real-time health but not risk assessment or response planning.
+
+**Scope**
+- Lightweight register documenting each external API dependency (Alpaca, Yahoo Finance, Anthropic Claude)
+- Per dependency: endpoints used, reliability record, fallback status, API tier/plan, renewal/rotation requirements
+- Register surfaced at each roadmap rebalance for operational awareness
+- Not an incident response playbook — a risk inventory
+
+**Acceptance Criteria**
+- Register created covering all production external API dependencies
+- Each entry includes: endpoints used, current status, known failure modes, fallback behaviour, renewal/tier info
+- Register referenced in run_manifest.md template for future rebalances
+
+---
+
+### BLG-GOV-11 — Cycle artefact inventory and maintenance review
+**Status:** ✅ COMPLETE v3.2
+**Archived:** 2026-05-09 (post-ship closure groom backlog STEP 12)
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** PMO Lead + Head of Specs Team
+**Source:** User session review — 2026-04-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.2 (was v3.1 — deferred; 3 consecutive cycle deferrals as of v3.1)
+
+**Problem**
+As cycles accumulate, documents are created in each cycle directory but there is no consolidated inventory of what exists across all closed cycles, nor a documented lifecycle for each artefact type (maintained vs. point-in-time). Without this review it is impossible to audit historical artefacts, identify stale documents, or enforce consistent maintenance practices going forward.
+
+**Scope**
+- Inventory all documents created across all closed cycles (`claude/cycles/`)
+- Categorise by type: planning, execution, QA evidence, governance, run manifests, etc.
+- Document the expected lifecycle for each type: point-in-time artefact vs. living document
+- Identify any maintenance gaps, stale artefacts, or documents that should be archived
+- Produce a reference document or update the OPERATIONAL_GUIDE with the artefact lifecycle model
+
+**Acceptance Criteria**
+- A consolidated artefact inventory exists covering all closed cycles
+- Each document type has a documented lifecycle (point-in-time vs. maintained)
+- Any maintenance gaps are identified; each either resolved or filed as a follow-up backlog item
+- Reference document or OPERATIONAL_GUIDE section added
 

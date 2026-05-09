@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.14
+**Version:** 3.15
 **Last Updated:** 2026-05-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -595,6 +595,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 12. **Post-story test files check (OA-04 / ST-09):** If this story created any new test files (in `tests/` or `tests/e2e/`), populate `test_scenarios` in `execution_state.json` for the parent EPIC with those file paths **now**, before advancing to the next story. Do not defer this step to STEP 3.2.A.
 
+13. **Cross-spec selector check (LL-v3.2-P3-02):** If this story modifies, replaces, removes, or renames a DOM element (e.g. changes a component, removes a checkbox, renames a form field), scan all existing Playwright spec files in `tests/e2e/` for selectors targeting that element (by ID, data-testid, role, or class name). If any stale selectors are found, update them in the same commit before pushing. This prevents CI failures in unrelated test files caused by UI changes in this story.
+
 **Pre-met path (LL-v2.4-P4-02):** If an item's acceptance criteria were satisfied by work completed in a prior sprint (item classified `pre-met` or notes field records `AC pre-met on main`):
 - Verify by code review / prompt review that all AC items are still met on `main`.
 - Mark `status = done`, `acceptance_verified = true`, note the prior commit SHA where the work was done.
@@ -737,6 +739,12 @@ When all four of the following qualifying criteria are met, the engine may apply
 When all criteria are met, populate the sign-off block as follows:
 
 ```
+**Autonomous class eligibility check (BLG-GOV-19):**
+- [ ] Criterion 1: All stories in this EPIC have `delegation_class: autonomous` — ✓ / ✗
+- [ ] Criterion 2: All AC verifiable by code review alone — no observable UI behaviour, no staging run required — ✓ / ✗
+- [ ] Criterion 3: No frontend-visible change — confirm no React page or UI component was created or modified (check src/pages/ and src/components/) — ✓ / ✗
+- [ ] Criterion 4: Engine signer field populated as "Sprint Execution Engine (autonomous class)" — ✓ / ✗
+
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: <today's date — must be non-blank>
 - Comments: Autonomous class sign-off — all four qualifying criteria met (all stories autonomous, all AC code-review-verifiable, no frontend changes, engine signer populated).
@@ -1070,6 +1078,7 @@ When writing or updating Playwright tests in this project:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.15 | 2026-05-09 | Post-ship closure v3.2 — two action-now patches applied. (LL-v3.2-P3-02) §3.1.A step 13 added — Cross-spec selector check: when a story modifies, replaces, removes, or renames a DOM element, scan all existing Playwright specs for selectors targeting that element and update stale selectors in the same commit. Prevents CI failures caused by UI changes in unrelated test files. (LL-v3.2-P4-01) §3.2.A BLG-GOV-19 autonomous class sign-off block — explicit criterion checklist added (✓ / ✗ for each of the 4 criteria); Criterion 3 includes explicit instruction to check src/pages/ and src/components/ before claiming no frontend-visible change. Makes criterion 3 a positive assertion, preventing autonomous class misapplication. Authority: Head of Specs Team (post-ship closure v3.2, 2026-05-09). |
 | 3.14 | 2026-05-06 | ST-08 + ST-09 + ST-10 (EPIC-03, v3.2): Three OA patches combined. (ST-08 / OA-03) §5.1 — Deviations filed enforcement check added: for each done story, if `deviations_filed=false` and no deviation record exists, auto-correct with log note; if deviation record exists but flag false, surface process warning without auto-correct. (ST-09 / OA-04) §3.1.A step 12 — Post-story test files check added: explicit named step requiring `test_scenarios` in `execution_state.json` to be populated immediately after any story that creates test files, before advancing to next story. (ST-10 / OA-05) §14 — Playwright Test Authoring Standard added: `networkidle` prohibited in new tests; `waitFor` element-specific patterns required; `domcontentloaded` permitted in navigation helpers only; all existing `networkidle` occurrences in `tests/e2e/` replaced. Authority: Head of Specs Team (ST-08 + ST-09 + ST-10, 2026-05-06). |
 | 3.13 | 2026-05-01 | §3.2.A Frontend testing gate (LL-v3.1-EX-01): hard gate added — any EPIC with frontend-visible changes must have Playwright test coverage for each observable AC, or human staging sign-off with date, before PR opens. "Code review only" without a filed backlog item blocks the PR. CLAUDE.md §2 corresponding rule updated. Also records test file paths SC-UK-01–04 (screener-uk-suffix.spec.js) and SC-EARN-01–09 (earnings-calendar.spec.js) created for ST-06 and ST-08 gaps. Authority: Head of Specs Team (2026-05-01). |
 | 3.12 | 2026-04-30 | ST-13 + ST-14 (EPIC-04, v3.1): Two carry-forward patches combined. (ST-13 / CF-01) §3.1.A — Reclassification backfill instruction added: when a story is reclassified from `delegated_frontend` to `autonomous` mid-sprint, the engine must backfill `test_scenarios` in `execution_state.json` at the time of reclassification; `test_scenarios` must be populated before the story's QA evidence log entry is written. (ST-14 / CF-02) §5.4 — Output target note added: output target is `lessons_learnt_cycle.md`; explicit warning NOT to append to `lessons_learnt.md` (Release Planning artefact); prevents silent corruption of the RP artefact. Authority: Head of Specs Team (ST-13 + ST-14, 2026-04-30). |

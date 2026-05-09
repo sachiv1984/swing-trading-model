@@ -34,7 +34,7 @@ This register provides a canonical inventory of all roadmap initiatives with cur
 
 ## Priority 2 — Next Phase
 
-*No active Priority 2 initiatives as of 2026-05-05. v3.1 shipped Arc 2 foundation: PT-01 Trade Plan Object (full), PT-02 Pre-Trade Research View (backend), DS-04 Earnings Calendar — Verified 2026-05-05. PT-02 frontend, PT-03, PT-05 deferred to v3.2. Next phase is v3.2 Arc 2 continuation: Pre-Trade Research View frontend + remaining Arc 2 features.*
+*No active Priority 2 initiatives as of 2026-05-09. v3.2 shipped Arc 2 continuation: PT-02 (Pre-Trade Research View frontend), PT-03 (Prospective Heat at Entry integration), PT-05 (Pre-Trade Entry Checklist) — Verified 2026-05-07. Arc 2 partially complete: PT-04 (Setup Quality Score, gate: 20+ closed trades) remains. Next phase: v3.3 — scope TBD at release planning.*
 
 ---
 

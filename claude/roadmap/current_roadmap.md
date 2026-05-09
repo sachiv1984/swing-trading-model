@@ -10,17 +10,8 @@
 
 ## 1. Current Version
 
-**v3.1** — Arc 2 Trade Plan Foundation — Shipped 2026-05-05
-**Next planned release:** **v3.2** — Arc 2 Pre-Trade Research & Planning — Planning in progress
-
-<!-- roadmap-annotation-marker: RA:v3.2:2026-05-05__release-v3.2 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-05-05__release-v3.2
-- Plan published: 2026-05-05
-- Cycle folder: claude/cycles/2026-05-05__release-v3.2/
-- Backlog slice: claude/cycles/2026-05-05__release-v3.2/stage4_backlog_slice.md
-- Status at annotation: Committed
+**v3.2** — Arc 2 Pre-Trade Research & Planning — Shipped 2026-05-08
+**Next planned release:** **v3.3** — [TBD]
 
 -----
 
@@ -227,6 +218,7 @@ Today you find stocks through external research and add them to the watchlist ma
 *v2.9 shipped 2026-04-24 (Verified_with_deviations). RA:v2.9 annotation retired to roadmap_archive.md 2026-04-28 (post-ship closure v3.0).*
 *v3.0 shipped 2026-04-27 (Verified). RA:v3.0 annotation retired to roadmap_archive.md 2026-04-28 (post-ship closure v3.0).*
 *v3.1 shipped 2026-05-05 (Verified). RA:v3.1 annotation retired to roadmap_archive.md 2026-05-05 (post-ship closure v3.1).*
+*v3.2 shipped 2026-05-08 (Verified). RA:v3.2 annotation retired to roadmap_archive.md 2026-05-08 (post-ship closure v3.2).*
 
 -----
 
@@ -259,9 +251,9 @@ Items in this section are sequenced and ready for planning when the current vers
 |Feature                  |ID   |Effort|Sequencing note                                                                                      |
 |-------------------------|-----|------|-----------------------------------------------------------------------------------------------------|
 |Trade Plan Object        |PT-01|M     |✅ Shipped v3.1 — data model, backend CRUD, frontend creation/edit/view flow                         |
-|Pre-Trade Research View  |PT-02|M     |Backend shipped v3.1 (GET /research/{ticker}); frontend deferred to v3.2; depends on PT-01           |
-|Prospective Heat at Entry|PT-03|S     |`GET /portfolio/prospective-heat` shipped v2.0; frontend integration into PT-02 only; deferred v3.2 |
-|Pre-Trade Entry Checklist|PT-05|M     |Embedded in Trade Plan flow; depends on PT-02; deferred v3.2+                                       |
+|Pre-Trade Research View  |PT-02|M     |✅ Shipped v3.2 — frontend delivered (research page, ticker data, news, nav integration)             |
+|Prospective Heat at Entry|PT-03|S     |✅ Shipped v3.2 — prospective heat metric integrated into research view                             |
+|Pre-Trade Entry Checklist|PT-05|M     |✅ Shipped v3.2 — checklist component in Trade Plan form, pre-population, persistence               |
 |Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01               |
 
 **Arc 2 end-state target:** Every entry is preceded by a structured research view, a completed checklist, and a saved trade plan. The quality of entry decisions is captured and measurable, not assumed.
@@ -326,8 +318,7 @@ Items in this section are sequenced and ready for planning when the current vers
 |BLG-GOV-08 — Engine prompt compression   |L     |5 consecutive deferrals (v2.4–v2.8); **final deferral — retirement review at v2.9 planning**|
 
 > ⚠️ **Stale Notice (BLG-GOV-08):** This item has had no cycle activity since v2.4 — 5 consecutive deferrals. Review at next roadmap rebalance (v2.9 planning).
-|BLG-GOV-11 — Cycle artefact inventory    |M     |Lower urgency; deferred to v2.9                                                             |
-|BLG-FEAT-13 — Feature flag rollout       |M     |Not needed at current single-user scale                                                     |
+|BLG-FEAT-13 — Feature flag rollout       |M     |Not needed at current single-user scale; 2nd consecutive deferral (v3.2) — mandatory for v3.3|
 
 -----
 
@@ -383,7 +374,8 @@ When evaluating new features:
 
 *RA:v3.1 retired — see roadmap_archive.md 2026-05-05.*
 
-|**v3.2–v3.3**|Arc 2: Pre-Trade Research & Planning                                  |Trade Plan object, pre-trade research view, entry checklist, setup quality score, prospective heat at entry — 📋 Planned                   |
+|**v3.1–v3.2** ✅|Arc 2: Pre-Trade Research & Planning (partial)                       |PT-01 (v3.1), PT-02 + PT-03 + PT-05 (v3.2) — ✅ Complete. PT-04 (Setup Quality Score) deferred to v3.3+                                 |
+|**v3.3+**    |Arc 2: Pre-Trade Research & Planning (remainder)                       |PT-04 Setup Quality Score — gate: 20+ closed trades; depends on PT-01 — 📋 Planned                                                       |
 |**v3.3–v3.5**|Arc 3: In-Trade Risk Management                                       |Position lifecycle manager, stop management workflow, drawdown prompts, concentration limits, Alpaca paper trading — 📋 Planned            |
 |**v3.5–v3.8**|Arc 4: Post-Trade Intelligence                                        |Plan vs reality analysis, journal pattern recognition, behavioural error taxonomy, outcome correlation — 📋 Planned                        |
 |**v3.8–v4.0**|Arc 5: Strategy Integrity                                             |Pre-entry rule validation, behavioural drift detection, red flag journal, strategy version comparison — 📋 Planned                         |

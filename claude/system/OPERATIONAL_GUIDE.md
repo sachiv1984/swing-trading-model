@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.68
-**Last Updated:** 2026-05-06
+**Version:** 3.69
+**Last Updated:** 2026-05-09
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.14)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.15)
 
 ### 8.1 Invocation
 
@@ -1396,7 +1396,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.26 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.6 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.7 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.14 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.15 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.5 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1419,6 +1419,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.69 | 2026-05-09 | **execution_prompt.md v3.14→v3.15 — post-ship closure v3.2: two action-now patches.** §8 source prompt header updated v3.14→v3.15. §14 Execution Engine Source v3.14→v3.15. §14 Version/Last Updated 3.68→3.69/2026-05-09. Changes: (1) LL-v3.2-P3-02 — §3.1.A step 13 Cross-spec selector check added: when a story modifies/removes/renames a DOM element, scan all existing Playwright specs for stale selectors and update in the same commit; prevents CI failures from UI changes in unrelated tests. (2) LL-v3.2-P4-01 — §3.2.A BLG-GOV-19 sign-off block template strengthened: explicit 4-criterion checklist with ✓/✗ markers added; Criterion 3 requires positive assertion checking src/pages/ and src/components/; prevents autonomous class misapplication on frontend EPICs. Authority: Head of Specs Team (post-ship closure v3.2, 2026-05-09). |
 | 3.68 | 2026-05-06 | **execution_prompt.md v3.13→v3.14 — ST-08 + ST-09 + ST-10 (EPIC-03, v3.2): three OA patches.** §8 source prompt header updated v3.13→v3.14. §14 Execution Engine Source v3.13→v3.14. §14 Version/Last Updated 3.67→3.68. Changes: (1) ST-08/OA-03 — STEP 5.1 deviations_filed enforcement check; (2) ST-09/OA-04 — §3.1.A step 12 post-story test files check; (3) ST-10/OA-05 — §14 Playwright Test Authoring Standard: networkidle prohibited, waitFor/element patterns required; all networkidle usages in tests/e2e/ replaced. Authority: Head of Specs Team (ST-08+09+10, 2026-05-06). |
 | 3.67 | 2026-05-06 | **sprint_planning_prompt.md v2.5→v2.6 — ST-07 (EPIC-03, v3.2): STEP 0 Branch Safety Check.** §7 source prompt header updated v2.5→v2.6. §14 Sprint Planning Engine v2.5→v2.6. §14 Version/Last Updated corrected to current (3.67/2026-05-06). Change: STEP 0 Branch Safety Check (Hard Gate) added — verifies `git branch --show-current` equals `main` before sprint planning proceeds; halts with branch name if not; prevents orphaned artefacts. Authority: Head of Specs Team (ST-07, 2026-05-06). |
 | 3.66 | 2026-05-01 | **execution_prompt.md v3.12→v3.13 — frontend testing hard gate (LL-v3.1-EX-01).** §8 source prompt header updated v3.12→v3.13. §14 Execution Engine Source v3.12→v3.13. Change: §3.2.A Frontend testing gate added — observable AC on frontend EPICs requires Playwright test coverage or human staging sign-off with date; "code review only" without a filed backlog item blocks PR open. CLAUDE.md §2 frontend DoQ rule strengthened to match. Playwright tests `screener-uk-suffix.spec.js` (SC-UK-01–04) and `earnings-calendar.spec.js` (SC-EARN-01–09) authored to close ST-06/ST-08 gaps. Authority: Head of Specs Team (2026-05-01). |

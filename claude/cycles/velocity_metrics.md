@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-05-05
+**Last Updated:** 2026-05-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -39,8 +39,9 @@
 | v2.9  | 15      | 15        | 1.00     | All 15 stories closed; DEV-01 P3 accepted (not a missed story); no delegated items |
 | v3.0  | 16      | 16        | 1.00     | All 16 stories closed; DEV-01 P3 cross-EPIC branch deviation (not a missed story); Base44 delegation retired mid-cycle |
 | v3.1  | 14      | 14        | 1.00     | All 14 stories closed; 2 frontend items reclassified delegated→autonomous and delivered; no deviations |
+| v3.2  | 17      | 17        | 1.00     | All 17 stories closed; zero spec deviations; EPIC-01 required re-verification pass after P1 staging fixes but all stories delivered and verified |
 
-**Rolling 6-cycle average (v2.6–v3.1):** 1.00
+**Rolling 6-cycle average (v2.7–v3.2):** 1.00
 
 ---
 

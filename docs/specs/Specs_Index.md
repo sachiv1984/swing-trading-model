@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-05
+**Last Updated:** 2026-05-09
 
 ---
 
@@ -474,27 +474,26 @@ Identified during delivery verification (verification_report.md §6 — TSG-v31-
 ### 17.1 TSG-v31-01 — EPIC-01: trade-plan.spec.js not registered in test_scenarios; backend CRUD integration scenarios absent
 
 **Identified:** 2026-05-05 (delivery verification 2026-04-29__release-v3.1)
-**Status:** Open — backlog item TEST-GAP-EPIC-01
+**Status:** ✅ Resolved — 2026-05-08 (post-ship closure v3.2 / ST-11)
 **Owner:** QA & Testing Owner
 **Gap:** `tests/e2e/trade-plan.spec.js` (SC-TP-01–07) was created during EPIC-01 delivery but not registered in `execution_state.json test_scenarios`. Backend CRUD integration test scenarios for `/trade-plans` endpoints also warranted beyond the existing smoke test.
-**Required action:** QA & Testing Owner to verify Playwright test coverage completeness and register in test_scenarios. Author backend CRUD integration scenarios.
-**Resolution target:** v3.2 (before next sprint touching Trade Plan domain)
+**Resolution:** ST-11 (EPIC-03, v3.2) registered `tests/e2e/trade-plan.spec.js` in `test_scenarios` (SC-TP-01–07, 8 tests). DEL-20260506-01 confirmed completed by Director of Quality 2026-05-06. TEST-GAP-EPIC-01 closed. Backlog item closed.
 
 ### 17.2 TSG-v31-02 — EPIC-02: no Playwright coverage for GET /research/{ticker}
 
 **Identified:** 2026-05-05 (delivery verification 2026-04-29__release-v3.1)
-**Status:** Not applicable — frontend deferred to v3.2; backend smoke test sufficient
+**Status:** ✅ Resolved — 2026-05-08 (post-ship closure v3.2 / EPIC-01 delivery)
 **Owner:** QA & Testing Owner
-**Assessment:** Pre-Trade Research View frontend deferred to v3.2. Backend aggregation endpoint covered by smoke test (test.py 49 entries). Playwright coverage not applicable for a backend-only delivery. Revisit when PT-02 frontend ships in v3.2.
+**Assessment:** Pre-Trade Research View frontend deferred to v3.2. Backend aggregation endpoint covered by smoke test (test.py 49 entries).
+**Resolution:** PT-02 frontend (EPIC-01, v3.2) delivered `tests/e2e/pre-trade-research.spec.js` covering SC-RES-01 to SC-RES-13 (14 tests, 14/14 pass). Playwright coverage for research view now complete. TSG closed.
 
 ### 17.3 TSG-v31-03 — EPIC-03: earnings-calendar.spec.js and screener-uk-suffix.spec.js not registered in test_scenarios
 
 **Identified:** 2026-05-05 (delivery verification 2026-04-29__release-v3.1)
-**Status:** Open — backlog item TEST-GAP-EPIC-03
+**Status:** ✅ Resolved — 2026-05-08 (post-ship closure v3.2 / ST-12)
 **Owner:** QA & Testing Owner
-**Gap:** `tests/e2e/earnings-calendar.spec.js` (SC-EARN-01–09) and `tests/e2e/screener-uk-suffix.spec.js` (SC-UK-01–04) created during EPIC-03 delivery but not registered in `execution_state.json test_scenarios`. Administrative registration gap.
-**Required action:** QA & Testing Owner to verify coverage completeness and register both test files in test_scenarios per `execution_prompt.md §3.1.A` advisory.
-**Resolution target:** v3.2 (before next sprint touching Earnings/Screener domain)
+**Gap:** `tests/e2e/earnings-calendar.spec.js` (SC-EARN-01–09) and `tests/e2e/screener-uk-suffix.spec.js` (SC-UK-01–04) created during EPIC-03 delivery but not registered in `execution_state.json test_scenarios`.
+**Resolution:** ST-12 (EPIC-03, v3.2) registered both test files in `test_scenarios`. DEL-20260506-02 confirmed completed by Director of Quality 2026-05-06. TEST-GAP-EPIC-03 closed. Backlog item closed.
 
 ### 17.4 TSG-v31-04 — EPIC-04: no test scenarios
 
@@ -502,6 +501,22 @@ Identified during delivery verification (verification_report.md §6 — TSG-v31-
 **Status:** Not applicable — governance documentation and prompt patches are not testable via scenario files
 **Owner:** N/A
 **Assessment:** All EPIC-04 stories were governance, documentation, and prompt patch deliveries. No behavioural test scenarios applicable.
+
+---
+
+## 18. Test Coverage Gaps — v3.2 (2026-05-05__release-v3.2)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v32-01).
+
+### 18.1 TSG-v32-01 — EPIC-02: no Playwright coverage for entry checklist observable ACs
+
+**Identified:** 2026-05-07 (delivery verification 2026-05-05__release-v3.2)
+**Status:** Open — backlog item BLG-QA-14
+**Owner:** QA & Testing Owner
+**Gap:** `tests/e2e/entry-checklist.spec.js` not yet created. 7 observable ACs (SC-CL-01 to SC-CL-07) lack Playwright coverage: checklist renders with 4 default items, items toggleable, state persists on save, stop_defined pre-check, research_reviewed pre-check, research link navigation, read-only checklist in research view.
+**Required action:** QA & Testing Owner to author `tests/e2e/entry-checklist.spec.js` covering SC-CL-01 to SC-CL-07.
+**Resolution target:** v3.3
+**Backlog item:** BLG-QA-14 (filed 2026-05-06)
 
 ---
 

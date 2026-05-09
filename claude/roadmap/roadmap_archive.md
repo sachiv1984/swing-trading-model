@@ -792,3 +792,21 @@ Monitor tickers for entry signals. Target entry and stop price fields. Quick-add
 
 Hover tooltips, zoom, drill-down on analytics page charts (underwater equity curve, monthly heatmap, R-multiple distribution). No new indicators, no client-side re-derivation. All 16 SC-CHART-IX sub-scenarios verified on staging. Spec: docs/specs/frontend/pages/analytics.md.
 
+
+
+---
+
+## RA:v3.2 — Release Annotation
+
+**Original roadmap location:** §1 Current Version header (roadmap annotation block)
+**Status at retirement:** ✅ Complete — annotation retired post-ship
+**Retired from active roadmap:** 2026-05-09
+**Shipped version:** v3.2
+**Cycle reference:** 2026-05-05__release-v3.2
+**Verification report:** claude/cycles/2026-05-05__release-v3.2/verification_report.md
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-09
+
+### Original Roadmap Entry
+
+v3.2 Arc 2 Pre-Trade Research & Planning: PT-02 (Pre-Trade Research View frontend), PT-03 (Prospective Heat at Entry integration), PT-05 (Pre-Trade Entry Checklist). EPIC-03 governance hardening (OA-02–05). EPIC-04 documentation and security (BLG-FE-16, BLG-FE-21, BLG-SEC-05, BLG-GOV-18, BLG-GOV-11). 17/17 stories delivered. Verified 2026-05-07.
+

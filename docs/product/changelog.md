@@ -3,9 +3,37 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-05
+**Last Updated:** 2026-05-08
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.2 — Arc 2 Pre-Trade Research & Planning — 2026-05-08
+Cycle: 2026-05-05__release-v3.2
+Verified: Verified
+Verification report: claude/cycles/2026-05-05__release-v3.2/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Pre-Trade Research View (PT-02 + PT-03): Research page at /research/{ticker}, ticker fundamentals, momentum signal, prospective heat at entry, trade plan panel, news headlines, screener/watchlist nav integration | docs/specs/frontend/pages/research.md; docs/specs/api_contracts/pre_trade_research_endpoints.md |
+| EPIC-02 | Pre-Trade Entry Checklist (PT-05): Checklist component in Trade Plan form, 4 default items, toggle/persist, pre-population from plan data, research view link | docs/specs/frontend/pages/trade_plan.md#Entry Checklist |
+| EPIC-03 | Governance & process hardening (OA-02–OA-05): sprint_planning_prompt.md STEP 0 main-branch check, execution_prompt.md STEP 5.1 deviations_filed enforcement, §3.1.A test_scenarios advisory, Playwright waitFor standard. Test scenario registrations: SC-TP-01–07 (trade plan), SC-EARN-01–09 (earnings), SC-UK-01–04 (UK screener) | claude/system/sprint_planning_prompt.md; claude/system/execution_prompt.md; tests/e2e/ |
+| EPIC-04 | Documentation & security backlog clearance: React component inventory, design system doc, Alpaca credential audit/rotation policy, external API dependency risk register, cycle artefact inventory review | docs/specs/frontend/component_inventory.md; docs/specs/frontend/design_system.md; docs/ops/alpaca_key_rotation_policy.md; docs/ops/external_api_dependency_register.md; claude/system/OPERATIONAL_GUIDE.md §16 |
+
+### Deviations accepted
+None — zero spec deviations filed this sprint.
+
+### Tech backlog items shipped
+- [ST-13] React component inventory (BLG-FE-16)
+- [ST-14] Design system document (BLG-FE-21)
+- [ST-15] Alpaca credential audit and rotation policy (BLG-SEC-05)
+- [ST-16] External API dependency risk register (BLG-GOV-18)
+- [ST-17] Cycle artefact inventory and maintenance review (BLG-GOV-11)
+
+Sign-off: Product Owner — 2026-05-07
+QA sign-off: Director of Quality — 2026-05-07
 
 ---
 
