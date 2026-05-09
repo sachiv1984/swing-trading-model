@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v3.2** — Arc 2 Pre-Trade Research & Planning — Shipped 2026-05-08
-**Next planned release:** **v3.3** — [TBD]
+**Next planned release:** **v3.3** — Arc 3 In-Trade Risk Management
+
+<!-- roadmap-annotation-marker: RA:v3.3:2026-05-09__release-v3.3 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-09__release-v3.3
+- Plan published: 2026-05-09
+- Cycle folder: claude/cycles/2026-05-09__release-v3.3/
+- Backlog slice: claude/cycles/2026-05-09__release-v3.3/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 -----
 

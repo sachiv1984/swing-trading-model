@@ -1,0 +1,143 @@
+{
+  "cycle_id": "2026-05-09__release-v3.3",
+  "release": "v3.3",
+  "generated_utc": "2026-05-09T00:02:00Z",
+  "items": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "sprint": 1,
+      "title": "Positions data model — lifecycle state fields and migration",
+      "labels": ["story", "release-v3.3", "EPIC-01", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "sprint": 1,
+      "title": "Position lifecycle state machine backend service",
+      "labels": ["story", "release-v3.3", "EPIC-01", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "sprint": 1,
+      "title": "Position lifecycle state — frontend display",
+      "labels": ["story", "release-v3.3", "EPIC-01", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "sprint": 2,
+      "title": "Grace Period Decision Support backend (IT-02)",
+      "labels": ["story", "release-v3.3", "EPIC-02", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "sprint": 2,
+      "title": "Grace Period Decision Support frontend (IT-02)",
+      "labels": ["story", "release-v3.3", "EPIC-02", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-02",
+      "sprint": 2,
+      "title": "Stop Management Workflow backend (IT-03)",
+      "labels": ["story", "release-v3.3", "EPIC-02", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-02",
+      "sprint": 2,
+      "title": "Stop Management Workflow frontend (IT-03)",
+      "labels": ["story", "release-v3.3", "EPIC-02", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "sprint": 1,
+      "title": "PT-02 research API contract (BLG-SPEC-25) + data source provenance spec (BLG-SPEC-26)",
+      "labels": ["story", "release-v3.3", "EPIC-03", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-03",
+      "sprint": 1,
+      "title": "PT-02 canonical research view spec (BLG-SPEC-24) + UX spec (BLG-FE-28)",
+      "labels": ["story", "release-v3.3", "EPIC-03", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-03",
+      "sprint": 1,
+      "title": "Research view test scenario library (BLG-QA-17) + acceptance test protocol (BLG-QA-15)",
+      "labels": ["story", "release-v3.3", "EPIC-03", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-03",
+      "sprint": 1,
+      "title": "Entry checklist Playwright E2E tests (BLG-QA-14)",
+      "labels": ["story", "release-v3.3", "EPIC-03", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-12",
+      "epic_id": "EPIC-03",
+      "sprint": 1,
+      "title": "Research endpoint integration tests (BLG-QA-16) + latency baseline (BLG-OPS-15) + trade plan sensitivity classification (BLG-SEC-06) + field extension governance (BLG-GOV-20)",
+      "labels": ["story", "release-v3.3", "EPIC-03", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-13",
+      "epic_id": "EPIC-04",
+      "sprint": 1,
+      "title": "execution_prompt.md governance patches: sealed-file check (OA-01/CF-01) + mock payload advisory (OA-02/CF-02)",
+      "labels": ["story", "release-v3.3", "EPIC-04", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-14",
+      "epic_id": "EPIC-04",
+      "sprint": 1,
+      "title": "Governance policy patches: design gate check (OA-05) + backlog deferral policy (OA-03/CF-03)",
+      "labels": ["story", "release-v3.3", "EPIC-04", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-15",
+      "epic_id": "EPIC-04",
+      "sprint": 1,
+      "title": "PT-05 entry checklist §13 compliance review (BLG-GOV-19)",
+      "labels": ["story", "release-v3.3", "EPIC-04", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-16",
+      "epic_id": "EPIC-04",
+      "sprint": 2,
+      "title": "Feature flag rollout — mandatory (BLG-FEAT-13)",
+      "labels": ["story", "release-v3.3", "EPIC-04", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    },
+    {
+      "st_id": "ST-17",
+      "epic_id": "EPIC-04",
+      "sprint": 2,
+      "title": "Trade plan abandonment + status badges + frontend quick wins (BLG-FEAT-21, BLG-FE-30, BLG-FE-23/24/25/29)",
+      "labels": ["story", "release-v3.3", "EPIC-04", "cycle:2026-05-09__release-v3.3"],
+      "milestone": "v3.3"
+    }
+  ]
+}

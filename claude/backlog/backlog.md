@@ -957,3 +957,33 @@ Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/earnings-calendar.sp
 | ST-17 | EPIC-04 | 2 | Cycle artefact inventory and maintenance review (BLG-GOV-11) |
 
 *✅ ALL 17 STORIES SHIPPED — COMPLETE v3.2 — 2026-05-08 — cycle: 2026-05-05__release-v3.2*
+
+---
+
+## Release Slice — v3.3 Arc 3 In-Trade Risk Management
+
+<!-- release-plan-marker: RP:v3.3:2026-05-09__release-v3.3 -->
+
+*Added by Release Planning Engine — 2026-05-09*
+*Cycle: 2026-05-09__release-v3.3*
+*Backlog slice: claude/cycles/2026-05-09__release-v3.3/stage4_backlog_slice.md*
+
+| Story | EPIC | Sprint | Title |
+|-------|------|--------|-------|
+| ST-01 | EPIC-01 | 1 | Positions data model — lifecycle state fields and migration |
+| ST-02 | EPIC-01 | 1 | Position lifecycle state machine backend service |
+| ST-03 | EPIC-01 | 1 | Position lifecycle state — frontend display |
+| ST-04 | EPIC-02 | 2 | Grace Period Decision Support backend (IT-02) |
+| ST-05 | EPIC-02 | 2 | Grace Period Decision Support frontend (IT-02) |
+| ST-06 | EPIC-02 | 2 | Stop Management Workflow backend (IT-03) |
+| ST-07 | EPIC-02 | 2 | Stop Management Workflow frontend (IT-03) |
+| ST-08 | EPIC-03 | 1 | PT-02 research API contract (BLG-SPEC-25) + data source provenance spec (BLG-SPEC-26) |
+| ST-09 | EPIC-03 | 1 | PT-02 canonical research view spec (BLG-SPEC-24) + UX spec (BLG-FE-28) |
+| ST-10 | EPIC-03 | 1 | Research view test scenario library (BLG-QA-17) + acceptance test protocol (BLG-QA-15) |
+| ST-11 | EPIC-03 | 1 | Entry checklist Playwright E2E tests (BLG-QA-14) |
+| ST-12 | EPIC-03 | 1 | Research endpoint integration tests (BLG-QA-16) + latency baseline (BLG-OPS-15) + trade plan sensitivity classification (BLG-SEC-06) + field extension governance (BLG-GOV-20) |
+| ST-13 | EPIC-04 | 1 | execution_prompt.md governance patches: sealed-file check (OA-01/CF-01) + mock payload advisory (OA-02/CF-02) |
+| ST-14 | EPIC-04 | 1 | Governance policy patches: design gate check (OA-05) + backlog deferral policy (OA-03/CF-03) |
+| ST-15 | EPIC-04 | 1 | PT-05 entry checklist §13 compliance review (BLG-GOV-19) |
+| ST-16 | EPIC-04 | 2 | Feature flag rollout — mandatory (BLG-FEAT-13) |
+| ST-17 | EPIC-04 | 2 | Trade plan abandonment + status badges + frontend quick wins (BLG-FEAT-21, BLG-FE-30, BLG-FE-23/24/25/29) |
