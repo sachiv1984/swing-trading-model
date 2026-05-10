@@ -1,18 +1,17 @@
 {
   "cycle_id": "2026-05-09__release-v3.3",
-  "sprint_goal": "Establish the Arc 3 in-trade risk management foundation by shipping a deterministic position lifecycle state machine with visible state display, two §13-compliant decision-support prompts (grace period alert and ATR trail stop management), comprehensive research view spec and QA closure, and all outstanding governance patches.",
+  "sprint_goal": "Establish the Arc 3 in-trade risk management foundation by shipping a deterministic position lifecycle state machine with visible state display, two \u00a713-compliant decision-support prompts (grace period alert and ATR trail stop management), comprehensive research view spec and QA closure, and all outstanding governance patches.",
   "backlog_slice_source": "claude/cycles/2026-05-09__release-v3.3/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-10T00:00:00Z",
   "mode": "standard",
   "status": "Running",
   "last_updated_utc": "2026-05-10T00:00:00Z",
-
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 368,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -37,7 +36,7 @@
           "deviations_filed": true,
           "last_completed_substep": "migration_sql_and_spec_written",
           "sign_off_record": null,
-          "notes": "DEV: AC says 'Alembic migration' but project uses direct SQL migrations documented in data_model.md — implemented as DS-05 direct SQL migration per project pattern. Backfill uses PostgreSQL weekday count (Mon–Fri) for trading-day accuracy."
+          "notes": "DEV: AC says 'Alembic migration' but project uses direct SQL migrations documented in data_model.md \u2014 implemented as DS-05 direct SQL migration per project pattern. Backfill uses PostgreSQL weekday count (Mon\u2013Fri) for trading-day accuracy."
         },
         "ST-02": {
           "title": "Position lifecycle state machine backend service",
@@ -86,7 +85,6 @@
         }
       }
     },
-
     "EPIC-02": {
       "status": "not_started",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
@@ -137,7 +135,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "§13 display-only. Dismissed state in localStorage. Playwright scenario required."
+          "notes": "\u00a713 display-only. Dismissed state in localStorage. Playwright scenario required."
         },
         "ST-06": {
           "title": "Stop Management Workflow backend (IT-03)",
@@ -158,7 +156,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Null-safe: current_stop null → return trail calc with null stop/difference. trail_multiplier defaults 2.0."
+          "notes": "Null-safe: current_stop null \u2192 return trail calc with null stop/difference. trail_multiplier defaults 2.0."
         },
         "ST-07": {
           "title": "Stop Management Workflow frontend (IT-03)",
@@ -180,11 +178,10 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "§13: system presents recommendation; human confirms; no automated action. Trail Stop button visible only for PROFITABLE/EXIT ZONE with current stop set."
+          "notes": "\u00a713: system presents recommendation; human confirms; no automated action. Trail Stop button visible only for PROFITABLE/EXIT ZONE with current stop set."
         }
       }
     },
-
     "EPIC-03": {
       "status": "not_started",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-03",
@@ -233,7 +230,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Design gate classification: Design Not Applicable — this story IS the design and spec work. Head of Specs Team sign-off on canonical spec; Frontend UX Documentation Owner sign-off on UX spec."
+          "notes": "Design gate classification: Design Not Applicable \u2014 this story IS the design and spec work. Head of Specs Team sign-off on canonical spec; Frontend UX Documentation Owner sign-off on UX spec."
         },
         "ST-10": {
           "title": "Research view test scenario library (BLG-QA-17) + acceptance test protocol (BLG-QA-15)",
@@ -276,7 +273,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "7 scenarios SC-CL-01 through SC-CL-07. Creates tests/e2e/entry-checklist.spec.js. Sprint backlog notes register scenarios under EPIC-02 test_scenarios (v3.2 trade plan domain) — will populate EPIC-02.test_scenarios on completion."
+          "notes": "7 scenarios SC-CL-01 through SC-CL-07. Creates tests/e2e/entry-checklist.spec.js. Sprint backlog notes register scenarios under EPIC-02 test_scenarios (v3.2 trade plan domain) \u2014 will populate EPIC-02.test_scenarios on completion."
         },
         "ST-12": {
           "title": "Research endpoint integration tests (BLG-QA-16) + latency baseline (BLG-OPS-15) + trade plan sensitivity classification (BLG-SEC-06) + field extension governance (BLG-GOV-20)",
@@ -302,7 +299,6 @@
         }
       }
     },
-
     "EPIC-04": {
       "status": "not_started",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
@@ -332,7 +328,7 @@
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "CLAUDE.md §6 checklist complete: execution_prompt.md v3.16→v3.17, OPERATIONAL_GUIDE.md v3.71→v3.72, §14 + §8 updated, prompt_change_log.md appended, changelogs/execution_prompt_changelog.md prepended. Resolves OA-01 (CF-01) and OA-02 (CF-02)."
+          "notes": "CLAUDE.md \u00a76 checklist complete: execution_prompt.md v3.16\u2192v3.17, OPERATIONAL_GUIDE.md v3.71\u2192v3.72, \u00a714 + \u00a78 updated, prompt_change_log.md appended, changelogs/execution_prompt_changelog.md prepended. Resolves OA-01 (CF-01) and OA-02 (CF-02)."
         },
         "ST-14": {
           "title": "Governance policy patches: design gate 'before sprint planning' check (OA-05) + backlog 3-cycle deferral policy (OA-03/CF-03)",
@@ -355,10 +351,10 @@
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "CLAUDE.md §6 checklist complete for both prompts: sprint_planning_prompt.md v2.7→v2.8, backlog_management_prompt.md v1.5→v1.6, OPERATIONAL_GUIDE.md v3.72→v3.73, §6M+§7 headers + §14 updated, prompt_change_log.md + both changelogs updated. docs/governance/backlog_deferral_policy.md created. Resolves OA-03 (CF-03) and OA-05."
+          "notes": "CLAUDE.md \u00a76 checklist complete for both prompts: sprint_planning_prompt.md v2.7\u2192v2.8, backlog_management_prompt.md v1.5\u2192v1.6, OPERATIONAL_GUIDE.md v3.72\u2192v3.73, \u00a76M+\u00a77 headers + \u00a714 updated, prompt_change_log.md + both changelogs updated. docs/governance/backlog_deferral_policy.md created. Resolves OA-03 (CF-03) and OA-05."
         },
         "ST-15": {
-          "title": "PT-05 entry checklist §13 compliance review (BLG-GOV-19)",
+          "title": "PT-05 entry checklist \u00a713 compliance review (BLG-GOV-19)",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -383,10 +379,10 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-10T00:00:00Z"
           },
-          "notes": "docs/specs/compliance/pt05_entry_checklist_s13_review.md created. Agent-mediated sign-off: Approved. doc referenced in trade_plan.md §6 as §13 compliance evidence."
+          "notes": "docs/specs/compliance/pt05_entry_checklist_s13_review.md created. Agent-mediated sign-off: Approved. doc referenced in trade_plan.md \u00a76 as \u00a713 compliance evidence."
         },
         "ST-16": {
-          "title": "Feature flag rollout (BLG-FEAT-13) — mandatory",
+          "title": "Feature flag rollout (BLG-FEAT-13) \u2014 mandatory",
           "classification": "delegated_backend",
           "status": "not_started",
           "assigned_to": "human",
@@ -428,23 +424,25 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sprint 2. Multiple frontend specs updated. Active position guard for abandonment. abandonment_reason field added to trade_plans. Contrast ratio ≥4.5:1 for badges. Product Owner feature sign-off required."
+          "notes": "Sprint 2. Multiple frontend specs updated. Active position guard for abandonment. abandonment_reason field added to trade_plans. Contrast ratio \u22654.5:1 for badges. Product Owner feature sign-off required."
         }
       }
     }
   },
-
   "blocked_items": [],
   "delegated_items": [],
   "completed_items": [],
   "open_escalations": [],
-
   "merge_gate": {
     "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04"],
+    "epics_pending": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04"
+    ],
     "all_merged": false
   },
-
   "sealed": false,
   "sealed_utc": null
 }
