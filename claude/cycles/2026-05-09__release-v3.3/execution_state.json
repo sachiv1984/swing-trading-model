@@ -1,0 +1,126 @@
+{
+  "cycle_id": "2026-05-09__release-v3.3",
+  "sprint_goal": "Establish the Arc 3 in-trade risk management foundation by shipping a deterministic position lifecycle state machine with visible state display, two §13-compliant decision-support prompts (grace period alert and ATR trail stop management), comprehensive research view spec and QA closure, and all outstanding governance patches.",
+  "backlog_slice_source": "claude/cycles/2026-05-09__release-v3.3/stage4_backlog_slice.md",
+  "invoked_utc": "2026-05-10T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-05-10T00:00:00Z",
+
+  "epics": {
+    "EPIC-02": {
+      "status": "in_progress",
+      "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Grace Period Decision Support backend (IT-02)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+          "commit_sha": "e0a15543",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml#/paths/~1positions~1grace-period-alerts"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": "endpoint_implemented",
+          "sign_off_record": null,
+          "notes": "Depends on EPIC-01 DS-05 migration for position_state/state_entered_at columns. Graceful fallback to entry_date counting if state_entered_at null. Trade plan LEFT JOIN on position_id."
+        },
+        "ST-05": {
+          "title": "Grace Period Decision Support frontend (IT-02)",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/grace_period_alert_endpoint.md",
+            "docs/qa/acceptance_protocols/research_view_protocol.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Alert card on positions/dashboard. Dismissible (localStorage). Link to trade plan. §13 display-only. Playwright scenario required."
+        },
+        "ST-06": {
+          "title": "Stop Management Workflow backend (IT-03)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+          "commit_sha": "e0a15543",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml#/paths/~1positions~1{position_id}~1stop-trail"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": "endpoint_implemented",
+          "sign_off_record": null,
+          "notes": "trail_multiplier=2.0 per strategy_rules.md default. R from initial_stop if available. recommendation string is §13 display-only."
+        },
+        "ST-07": {
+          "title": "Stop Management Workflow frontend (IT-03)",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/reference/openapi.yaml#/paths/~1positions~1{position_id}~1stop-trail"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Trail Stop action button per position row (PROFITABLE/EXIT ZONE states). Guided panel with current stop, trail stop, diff, R-terms. User must confirm. §13 display-then-confirm pattern. Playwright scenario required."
+        }
+      },
+      "completed_items": ["ST-04", "ST-06"],
+      "blocked_items": [],
+      "delegated_items": ["ST-05", "ST-07"]
+    }
+  },
+
+  "sprint_summary": {
+    "sprint_1": {
+      "status": "complete",
+      "completed_stories": ["ST-01", "ST-02", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15"],
+      "blocked_stories": ["ST-03"],
+      "blocked_reason": "ST-03 (EPIC-01 lifecycle frontend) blocked on ST-16 (feature flag infrastructure)"
+    },
+    "sprint_2": {
+      "status": "in_progress",
+      "completed_stories": ["ST-04", "ST-06"],
+      "in_progress_stories": ["ST-16"],
+      "delegated_stories": ["ST-05", "ST-07", "ST-17"]
+    }
+  }
+}
