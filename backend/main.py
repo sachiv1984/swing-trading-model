@@ -212,6 +212,11 @@ def on_startup():
         _log.info("ensure_screener_results_table: OK")
     except Exception as _e:
         _log.error("ensure_screener_results_table FAILED at startup: %s", _e)
+    try:
+        from utils.feature_flags import log_flag_states
+        log_flag_states()
+    except Exception as _e:
+        _log.warning("feature_flags startup log failed: %s", _e)
 
 
 @app.get("/")

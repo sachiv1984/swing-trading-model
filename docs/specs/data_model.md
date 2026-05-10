@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.5
-**Last Updated:** 2026-04-30
+**Version:** 2.6
+**Last Updated:** 2026-05-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -923,7 +923,8 @@ WHERE table_schema = 'public' AND table_name = 'trade_plans';
 | `confirmation_criteria` | TEXT | YES | Criteria needed before executing entry |
 | `checklist_completed` | BOOLEAN | NO | Whether pre-entry checklist is signed off |
 | `checklist_items` | JSONB | NO | Array of checklist items `[{item, checked}]` |
-| `status` | VARCHAR(20) | NO | `draft`, `active`, or `closed` |
+| `status` | VARCHAR(20) | NO | `draft`, `active`, `closed`, or `abandoned` |
+| `abandonment_reason` | VARCHAR(500) | YES | Required when status=`abandoned`; enforced at API layer |
 
 ### Down Migration
 
@@ -939,6 +940,44 @@ COMMIT;
 
 ---
 
-**Document Version:** 2.5
+---
+
+## DS-06 — Add abandonment_reason to trade_plans (v2.6, 2026-05-10)
+
+**Story:** ST-17 (EPIC-04, v3.3)
+
+Adds `abandonment_reason` as a nullable VARCHAR column to support the trade plan abandonment feature (BLG-FEAT-21). The column is enforced non-null at the API layer when `status = 'abandoned'`; no DB constraint is applied so that existing rows and programmatic transitions are unaffected.
+
+### Up Migration
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS abandonment_reason VARCHAR(500) NULL;
+COMMIT;
+```
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'trade_plans' AND column_name = 'abandonment_reason';
+-- Expected: 1 row, data_type character varying, is_nullable YES
+```
+
+### Down Migration
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans DROP COLUMN IF EXISTS abandonment_reason;
+COMMIT;
+```
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-05-10 (agent-mediated, v3.3 sprint execution)
+
+---
+
+**Document Version:** 2.6
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-04-30
+**Last Review:** 2026-05-10

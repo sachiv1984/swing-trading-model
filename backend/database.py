@@ -1020,7 +1020,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
     allowed = {
         "position_id", "setup_thesis", "entry_rationale", "regime_context_at_entry",
         "r_target", "early_exit_conditions", "confirmation_criteria",
-        "checklist_completed", "checklist_items", "status",
+        "checklist_completed", "checklist_items", "status", "abandonment_reason",
     }
     fields = {k: v for k, v in data.items() if k in allowed}
     if not fields:
