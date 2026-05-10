@@ -86,48 +86,50 @@
         },
         "ST-16": {
           "title": "Feature flag rollout (BLG-FEAT-13) — mandatory",
-          "classification": "delegated_backend",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "e3a834d1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/platform/feature_flags.md"
+            "docs/specs/platform/feature_flags.md",
+            "backend/utils/feature_flags.py"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "feature_flag_utility_and_spec_created",
           "sign_off_record": null,
-          "notes": "Sprint 2. Blocks ST-03 (EPIC-01 frontend lifecycle display)."
+          "notes": "is_flag_enabled() utility, FEATURE_FLAGS env var + feature_flags.json config, startup audit logging. arc3_lifecycle_display flag POC. Infrastructure & Operations Owner sign-off in spec."
         },
         "ST-17": {
           "title": "Trade plan abandonment + status badges + frontend quick wins (BLG-FEAT-21, BLG-FE-30, BLG-FE-23/24/25/29)",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "e3a834d1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md"
+            "docs/specs/frontend/pages/trade_plan.md",
+            "docs/specs/data_model.md#DS-06"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "backend_abandonment_api_done",
           "sign_off_record": null,
-          "notes": "Sprint 2. Six sub-deliverables: abandonment status, status badges, UK suffix strip, negative earnings days, signals page default, watchlist research indicator."
+          "notes": "Backend done: DS-06 migration (abandonment_reason column), PUT /trade-plans/{id} abandonment guard (requires reason, blocks on active position). Frontend sub-deliverables (status badges BLG-FE-30, UK suffix BLG-FE-23, negative earnings BLG-FE-24, signals default BLG-FE-25, watchlist indicator BLG-FE-29) are delegated_frontend — Playwright scenarios required."
         }
       },
-      "completed_items": ["ST-13", "ST-14", "ST-15"],
+      "completed_items": ["ST-13", "ST-14", "ST-15", "ST-16"],
       "blocked_items": [],
       "delegated_items": ["ST-16", "ST-17"]
     }
@@ -142,8 +144,11 @@
       "blocked_reason": "ST-03 (EPIC-01 lifecycle frontend) blocked on ST-16 (feature flag infrastructure, Sprint 2)"
     },
     "sprint_2": {
-      "status": "not_started",
-      "planned_stories": ["ST-04", "ST-05", "ST-06", "ST-07", "ST-16", "ST-17"]
+      "status": "in_progress",
+      "completed_stories": ["ST-04", "ST-06", "ST-16"],
+      "in_progress_stories": ["ST-17"],
+      "delegated_stories": ["ST-05", "ST-07"],
+      "notes": "ST-17 backend complete; frontend sub-deliverables delegated. ST-03 (EPIC-01) now unblocked by ST-16."
     }
   }
 }
