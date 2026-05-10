@@ -905,6 +905,123 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /positions/grace-period-alerts:
+    get:
+      tags: [Positions]
+      summary: Grace period alerts
+      description: >
+        Returns positions in GRACE lifecycle state where days_in_state >= 8 (nearing end of grace
+        period). Includes linked trade plan summary if available.
+        §13 display-only — system surfaces context; human decides next action.
+        Spec: docs/specs/api_contracts/grace_period_alert_endpoint.md
+      responses:
+        "200":
+          description: Array of grace period alert objects.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        position_id:
+                          type: string
+                          format: uuid
+                        ticker:
+                          type: string
+                        market:
+                          type: string
+                          enum: [US, UK]
+                        days_in_state:
+                          type: integer
+                        trade_plan_id:
+                          type: string
+                          format: uuid
+                          nullable: true
+                        trade_plan_summary:
+                          type: object
+                          nullable: true
+                          properties:
+                            setup_thesis:
+                              type: string
+                              nullable: true
+                            entry_rationale:
+                              type: string
+                              nullable: true
+                            stop_level:
+                              type: number
+                              nullable: true
+                            r_target:
+                              type: number
+                              nullable: true
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /positions/{position_id}/stop-trail:
+    get:
+      tags: [Positions]
+      summary: ATR trail stop recommendation
+      description: >
+        Returns ATR-based trail stop calculation for a single open position.
+        trail_multiplier defaults to 2.0.
+        §13 display-only — recommendation is informational; human must confirm any stop change.
+        Spec: docs/specs/api_contracts/stop_trail_endpoint.md
+      parameters:
+        - in: path
+          name: position_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Stop trail calculation result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      position_id:
+                        type: string
+                        format: uuid
+                      ticker:
+                        type: string
+                      current_price:
+                        type: number
+                      current_stop:
+                        type: number
+                        nullable: true
+                      atr_trail_stop:
+                        type: number
+                      trail_difference:
+                        type: number
+                        nullable: true
+                      trail_r_terms:
+                        type: number
+                        nullable: true
+                      recommendation:
+                        type: string
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: ATR not available for position.
+        "503":
+          description: Live price unavailable.
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /trades:
     get:
       tags: [Trades]

@@ -909,6 +909,213 @@ def search_positions_by_tags_endpoint(tags: str):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/positions/grace-period-alerts")
+def get_grace_period_alerts_endpoint():
+    """
+    GET /positions/grace-period-alerts
+
+    Returns positions in GRACE lifecycle state where days_in_state >= 8 (nearing end of grace
+    period). Includes linked trade plan summary if available.
+
+    Response fields per alert:
+      - position_id, ticker, days_in_state
+      - trade_plan_id (null if no linked plan)
+      - trade_plan_summary: {setup_thesis excerpt, entry_rationale, stop_level, r_target} or null
+
+    §13 display-only: system surfaces contextual information; human decides next action.
+    Spec: docs/specs/api_contracts/grace_period_alert_endpoint.md
+    """
+    from datetime import datetime, timezone
+    from database import get_db
+
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise ValueError("Portfolio not found")
+        portfolio_id = str(portfolio["id"])
+
+        # Fetch open positions with lifecycle state columns (available post EPIC-01 migration)
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT p.id, p.ticker, p.market, p.position_state, p.state_entered_at,
+                           p.entry_date, p.entry_price, p.atr, p.initial_stop,
+                           tp.id AS trade_plan_id,
+                           tp.setup_thesis, tp.entry_rationale, tp.stop_level, tp.r_target
+                    FROM positions p
+                    LEFT JOIN trade_plans tp ON tp.position_id = p.id
+                    WHERE p.portfolio_id = %s AND p.status = 'open'
+                      AND p.position_state = 'GRACE'
+                    ORDER BY p.entry_date ASC
+                    """,
+                    (portfolio_id,),
+                )
+                rows = cur.fetchall()
+
+        alerts = []
+        for row in rows:
+            state_entered_at = row.get("state_entered_at")
+            if state_entered_at:
+                if hasattr(state_entered_at, "tzinfo") and state_entered_at.tzinfo is None:
+                    state_entered_at = state_entered_at.replace(tzinfo=timezone.utc)
+                days_in_state = (datetime.now(timezone.utc) - state_entered_at).days
+            else:
+                # Fallback: count trading days from entry_date as days_in_state approximation
+                from datetime import date
+                entry = row.get("entry_date")
+                if entry:
+                    entry_d = date.fromisoformat(str(entry).split("T")[0].split(" ")[0]) if isinstance(entry, str) else entry
+                    today = date.today()
+                    count = 0
+                    current = entry_d
+                    while current < today:
+                        current = date.fromordinal(current.toordinal() + 1)
+                        if current.weekday() < 5:
+                            count += 1
+                    days_in_state = count
+                else:
+                    days_in_state = 0
+
+            if days_in_state < 8:
+                continue
+
+            trade_plan_summary = None
+            if row.get("trade_plan_id"):
+                setup_thesis = row.get("setup_thesis") or ""
+                trade_plan_summary = {
+                    "setup_thesis": setup_thesis[:200] if setup_thesis else None,
+                    "entry_rationale": row.get("entry_rationale"),
+                    "stop_level": row.get("stop_level"),
+                    "r_target": row.get("r_target"),
+                }
+
+            ticker = str(row.get("ticker") or "")
+            if row.get("market") == "UK":
+                ticker = ticker.replace(".L", "")
+
+            alerts.append({
+                "position_id": str(row["id"]),
+                "ticker": ticker,
+                "market": row.get("market"),
+                "days_in_state": days_in_state,
+                "trade_plan_id": str(row["trade_plan_id"]) if row.get("trade_plan_id") else None,
+                "trade_plan_summary": trade_plan_summary,
+            })
+
+        return {"status": "ok", "data": alerts}
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/positions/{position_id}/stop-trail")
+def get_stop_trail_endpoint(position_id: str):
+    """
+    GET /positions/{position_id}/stop-trail
+
+    Returns ATR-based trail stop recommendation for a position.
+
+    Response fields:
+      - current_stop: current stop price from position record (null if not set)
+      - atr_trail_stop: current_price - (ATR × 2.0)
+      - trail_difference: atr_trail_stop - current_stop (null if current_stop null)
+      - trail_r_terms: trail_difference expressed as R-multiples (null if R unavailable)
+      - recommendation: display string "Raise stop to {atr_trail_stop}" (§13 display-only)
+
+    §13 display-only: recommendation is informational; human must confirm any stop change.
+    Spec: docs/specs/api_contracts/stop_trail_endpoint.md
+    """
+    from database import get_db
+
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise ValueError("Portfolio not found")
+        portfolio_id = str(portfolio["id"])
+
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT p.id, p.ticker, p.market, p.entry_price, p.initial_stop,
+                           p.current_stop, p.atr,
+                           tp.id AS trade_plan_id, tp.r_target
+                    FROM positions p
+                    LEFT JOIN trade_plans tp ON tp.position_id = p.id
+                    WHERE p.id = %s AND p.portfolio_id = %s AND p.status = 'open'
+                    """,
+                    (position_id, portfolio_id),
+                )
+                row = cur.fetchone()
+
+        if not row:
+            raise HTTPException(status_code=404, detail=f"Position {position_id} not found")
+
+        ticker = str(row.get("ticker") or "")
+        if row.get("market") == "UK":
+            ticker = ticker.replace(".L", "")
+
+        current_price = get_current_price(ticker if row.get("market") == "US" else row.get("ticker"))
+        if current_price is None:
+            raise HTTPException(status_code=503, detail="Live price unavailable")
+        if row.get("market") == "UK" and current_price > 1000:
+            current_price = current_price / 100
+
+        atr = float(row.get("atr") or 0)
+        if atr <= 0:
+            raise HTTPException(status_code=422, detail="ATR not available for this position")
+
+        trail_multiplier = 2.0
+        atr_trail_stop = round(current_price - (atr * trail_multiplier), 4)
+
+        current_stop = row.get("current_stop")
+        if current_stop is not None:
+            current_stop = float(current_stop)
+
+        trail_difference = None
+        if current_stop is not None:
+            trail_difference = round(atr_trail_stop - current_stop, 4)
+
+        # Express trail_difference in R-multiples if R is available
+        trail_r_terms = None
+        entry_price = float(row.get("entry_price") or 0)
+        initial_stop = row.get("initial_stop")
+        if initial_stop is not None and entry_price > 0 and trail_difference is not None:
+            r_value = entry_price - float(initial_stop)
+            if r_value > 0:
+                trail_r_terms = round(trail_difference / r_value, 2)
+
+        recommendation = f"Raise stop to {atr_trail_stop:.4f}" if (
+            trail_difference is not None and trail_difference > 0
+        ) else (
+            "Trail stop is below current stop — no action required"
+        )
+
+        return {
+            "status": "ok",
+            "data": {
+                "position_id": position_id,
+                "ticker": ticker,
+                "current_price": round(current_price, 4),
+                "current_stop": current_stop,
+                "atr_trail_stop": atr_trail_stop,
+                "trail_difference": trail_difference,
+                "trail_r_terms": trail_r_terms,
+                "recommendation": recommendation,
+            },
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
