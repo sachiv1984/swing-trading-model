@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.5
-**Last Updated:** 2026-04-17
+**Version:** 2.6
+**Last Updated:** 2026-05-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -65,14 +65,7 @@ Apply the Lifecycle Guard (valid from-states: `Verified`, `Verified_with_deviati
 
 ## 3. Canonical Governance Sources (Non-Negotiable)
 
-Binding governance stack (precedence order):
-
-1. `claude/charter/team_charter.md`
-2. `claude/charter/document_lifecycle_guide.md`
-3. `claude/strategy/strategy_rules.md`
-4. Role charters in `claude/agents/`
-
-This routine may not override any of the above.
+Canonical governance stack: per `claude/system/shared/governance_stack.md`. This routine may not override any entry in that stack.
 
 ---
 
@@ -777,20 +770,4 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 ## Change Log
 
-| Version | Date | Change |
-|---------|------|--------|
-| 2.5 | 2026-04-17 | STEP 12 — Ideas Pipeline Health Check advisory added. After groom backlog completes, if active backlog count ≤ 5: scan ideas_register.md for Parked-cycle-N ideas whose Park Rationale references a BLG- item that has since shipped; if any found, record advisory in closure record §6 Outstanding Actions directing PO to run `run ideas` before next roadmap run so gate-cleared ideas can be re-evaluated at STEP 4.0. Advisory-only, non-blocking. |
-| 2.4 | 2026-04-16 | STEP 6 — Advisory endpoint coverage drift check added. After all PRs merged: compare openapi.yaml path count vs api_performance_baseline.md measured paths; raise backlog item for gaps. Check SystemStatus.js categorizeEndpoint() for unhandled new top-level prefixes. Advisory-only, non-blocking. |
-| 2.3 | 2026-04-11 | STEP 6 — `claude/cycles/velocity_metrics.md` added to operational documents reconciliation list. Engine must append a velocity row for the completed cycle (Planned/Completed from execution_state.json, rolling 6-cycle average updated) before writing STEP 6 pass. Fixes gap where v2.4 and v2.5 rows were missed (discovered 2026-04-11). |
-| 2.2 | 2026-03-24 | AUD-2026-03-21-002: STEP 0 — added Audit Cadence Check advisory block. Reads `completed_cycle_count` from `.claude_current_state.json`; if `% 3 == 0`, surfaces "⚠ AUDIT DUE" advisory and records in run manifest. Non-blocking. Eliminates manual audit tracking and prevents overdue audit accumulation. |
-| 2.0 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 8.5: sequencing clarification note added — `closure_record.md` is produced in STEP 9 and is not available at STEP 8.5 execution time; `lessons_learnt_closure.md` must be produced from STEP 8 consolidated action summary context; §6 Outstanding Actions in `closure_record.md` is derived from the same deferred items list. Prevents incorrect sequencing where STEP 8.5 waits for STEP 9 output. |
-| 1.9 | 2026-03-14 | AUD-2026-03-13-004: STEP 11 (Roadmap Document Management — mandatory) and STEP 12 (Backlog Document Management — mandatory) added. Both invoke their respective management prompts inline and pass through --dry-run. Closes Phase 1M skip gap — manage roadmap + groom backlog now run every cycle regardless of whether Phase 1 was executed. Former STEP 11 (Commit) renumbered STEP 13. closure_state.json schema updated: step_11_manage_roadmap, step_12_groom_backlog, step_13_commit. |
-| 1.8 | 2026-03-11 | IMP-15: STEP 3.4 added — stale parked items disposition check; identifies `backlog.md` items parked in 3+ consecutive completed cycles; records mandatory PO disposition requirement in closure record §6 Outstanding Actions; adds `[STALE — PO disposition required]` note to backlog item; does not resolve item. |
-| 1.7 | 2026-03-10 | IMP-54: §4 Source-of-Truth inputs — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` rows replaced with single `lessons_learnt_cycle.md` row (Phase 3 + Phase 4 + Amendment sections). §5 must-not-modify — `lessons_learnt_execution.md` and `lessons_learnt_verification.md` lines replaced with `lessons_learnt_cycle.md` (read-only). STEP 8 lessons learnt table — two rows replaced with single `lessons_learnt_cycle.md` row (all phase sections, structured table read). |
-| 1.6 | 2026-03-10 | IMP-27: STEP 0 — field-level read targets added for `verification_report.md` (§1 verification_status + §4 deviation register only), `execution_state.json` (epics outcome map only), `sprint_close.md` (verification readiness statement + deviations list only). STEP 8 — `lessons_learnt` files: read action items section / classification table only (not full prose). |
-| 1.5 | 2026-03-10 | IMP-42: STEP -1.2A added — sprint_close.md verification readiness statement check (all three `Yes` fields required before proceeding). IMP-34: §5 Write Scope — `current_roadmap.md` entry expanded to list all STEP 2 write actions; canonical spec entry updated to add document owner notification requirement; `closure_escalations.md` added as permitted write. IMP-50: `closure_escalations.md` added to §5 write scope (escalations during closure use this file, not `closure_record.md §6`). IMP-59: STEP 10 — `completed_cycle_count` increment added to global state write; rule documented (default 0 if absent; used for meta-review cadence tracking). IMP-12: STEP 9 §6 Outstanding Actions template — required table format added with named columns (Description, Owner, Deadline, Escalation path, Resolution); "None" path documented. |
-| 1.4 | 2026-03-07 | **IMP-01 — closure_state.json for reliable resumability.** Added `closure_state.json` to §4 Source-of-Truth inputs and §5 Write Scope. Added full STEP 0 initialization/resume logic with JSON schema (fresh run creates file; resume skips completed steps; already-Closed halts). Added `closure_state.json` update lines at the end of STEP 0 through STEP 11 (each step writes its completion flag and `last_updated_utc`). STEP 11 commit list: `closure_state.json` added. `next_cycle_unblocked` guard noted in STEP 10. Consistent with resumability model used by execution and release planning engines. |
-| 1.3 | 2026-03-07 | **Lifecycle Guard added.** Apply Lifecycle Guard per `shared_standards.md §10` (valid from-states: `Verified`, `Verified_with_deviations`) at §2 Invocation Rule. |
-| 1.2 | 2026-03-07 | **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. §5 must-not-modify: amended backlog slice added. STEP 0: `amended_backlog_slice_path` read from `.claude_current_state.json` as first action; cross-referenced against `execution_state.json.backlog_slice_source`; disagreement flagged before proceeding; authoritative path recorded in closure record §1. STEP 3 intro updated: reconciliation runs against the authoritative slice. STEP 3.3 failure condition expanded. `closure_record.md` §1 template: `Backlog slice source` field added. §9 invariant added. **`lessons_learnt_closure.md` creation formalised (STEP 8.5, new).** STEP 8.5 added: invokes `lessons_learnt_prompt.md §3.5` using STEP 8 consolidated action summary as input; produces `claude/cycles/<cycle_id>/lessons_learnt_closure.md`; hard gate before STEP 9. §5 write scope: `lessons_learnt_closure.md` creation entry updated to reference STEP 8.5 explicitly. §7 completion condition: `lessons_learnt_closure.md` condition updated to reference `lessons_learnt_prompt.md §3.5` structure. §9 closure record §2 table: STEP 8.5 row added. §6 outstanding actions: `lessons_learnt_prompt.md` invocation failure added as example. STEP 11 commit: order corrected (`lessons_learnt_closure.md` before `closure_record.md`). §1 Purpose updated to name STEP 8.5 explicitly. **Dry-run enforcement added throughout.** §2: dry-run definition tightened — closure plan is the deliverable; routine ends after producing it. §5: dry-run exception block added at top (no writes permitted). STEP -1.6: write permission test skipped in dry-run. STEP 0: dry-run exits here after producing closure plan. §7 completion condition: dry-run completion defined. §9 invariant added. |
-| 1.1 | 2026-03-06 | Added `decisions_record` N/A condition (STEP 4.2). Added push-before-pull rule (STEP 11). Clarified AR record exemption from Superseded status. |
-| 1.0 | 2026-03-03 | Initial version. |
+See: [`claude/system/changelogs/post_ship_closure_changelog.md`](changelogs/post_ship_closure_changelog.md)

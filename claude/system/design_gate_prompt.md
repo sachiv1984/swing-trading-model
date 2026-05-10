@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-03-07
+**Version:** 1.3
+**Last Updated:** 2026-05-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -50,11 +50,7 @@ Apply the Lifecycle Guard (valid from-states: `Release_Planning_Complete`) per `
 
 ## 3. Canonical Governance Sources (Non-Negotiable)
 
-Binding governance stack (precedence order):
-
-1. `claude/charter/team_charter.md`
-2. `claude/charter/document_lifecycle_guide.md`
-3. `claude/strategy/strategy_rules.md`
+Canonical governance stack: per `claude/system/shared/governance_stack.md`. This routine may not override any entry in that stack.
 
 ---
 
@@ -352,7 +348,5 @@ Sprint Planning (`plan sprint`) may only be issued when `design_gate_status = Pa
 
 ## Change Log
 
-| Version | Date | Change |
-|---------|------|--------|
-| 1.1 | 2026-03-07 | **Dry-run behaviour made explicit throughout.** §2 invocation rule: dry-run output scope defined (classification table + gap list only; no gate record, no state, no commit). §5 write scope: dry-run write scope stated as nothing. STEP -1.1: dry-run preflight note added. STEP 1: dry-run exit point added. STEP 7: explicit skip instruction for dry-run added. §7 completion condition: dry-run completion condition added. §8 governance invariants: dry-run invariant updated with exit point. **`design_gate_status` state lifecycle documented.** STEP -1.1: preflight now checks existing `design_gate_status` value and defines behaviour for each state (`not_started`, `Passed`, `Blocked`). STEP 6: state lifecycle table added (`not_started` → `Blocked` / `Passed`); note that `not_started` is set by Release Planning Engine at STEP 0. **State write scope tightened.** §5 write scope note: additive write only. STEP 6 instruction: additive write only; must not overwrite unrelated fields. §8 governance invariants: additive write invariant added. |
-| 1.0 | 2026-03-04 | Initial version. |
+See: [`claude/system/changelogs/design_gate_changelog.md`](changelogs/design_gate_changelog.md)
+

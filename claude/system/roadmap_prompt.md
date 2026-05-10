@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 5.0
-**Last Updated:** 2026-04-17
+**Version:** 5.1
+**Last Updated:** 2026-05-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -37,36 +37,11 @@ No other user input may trigger execution of this routine.
 
 ## 1. Canonical Governance Sources (Non‑Negotiable)
 
-You must treat the following documents as binding authority:
-
-- `claude/charter/team_charter.md`
-- `claude/charter/document_lifecycle_guide.md`
-
-If any routine, document, or output conflicts with these, governance documents prevail.
-
-You may not invent authority.
-You may not merge roles.
-You may not override domain owners outside the charter's conflict rules.
+Canonical governance stack: per `claude/system/shared/governance_stack.md`. This routine may not override any entry in that stack.
 
 ---
 
-## 2. Strategy Source of Truth
-
-The canonical strategic anchor is:
-
-- `claude/strategy/strategy_rules.md` (Class 1 — Canonical)
-
-You must treat `strategy_rules.md` as the binding definition of:
-- strategy intent
-- behavioural constraints
-- system boundaries
-- non‑negotiables
-
-You must not create separate "strategy objectives", "constraints", or "success metrics" documents unless explicitly instructed by the Product Owner AND validated by the Head of Specs Team for lifecycle compliance.
-
----
-
-## 3. Lifecycle Compliance Is a Hard Gate
+## 2. Lifecycle Compliance Is a Hard Gate
 
 You may not create, modify, supersede, deprecate, archive, or rely upon any document that violates the Documentation Lifecycle Guide.
 
@@ -1627,26 +1602,4 @@ If you cannot reach this state:
 
 ## Change Log
 
-| Version | Date | Change |
-|---------|------|--------|
-| 5.0 | 2026-04-17 | Two pipeline patches applied by Product Owner (2026-04-17): (1) STEP 0.D Empty Horizon Advisory added — when the Now horizon is empty post-ship and active backlog items exist, surface advisory directing PO to run `plan release` directly rather than proceeding through a full rebalance debate; advisory-only, non-halting. (2) STEP 4.0 Gate-Condition Re-Check added — before per-idea classification, Facilitator must verify whether any `BLG-` backlog item referenced in a Park Rationale has shipped; gate-cleared ideas are surfaced as "mandatory re-evaluation" and cannot be silently re-parked; results recorded in cycle_record.md `### Gate-Condition Re-Check` subsection. |
-| 4.9 | 2026-04-16 | ST-11 (BLG-GOV-14, v2.7): STEP -1.7 added — Governance Health Score advisory check. Computes three components per OPERATIONAL_GUIDE.md §15: (1) Header Compliance % for Class 4/5 docs in active cycle folder; (2) Deferred Patch Indicator by age band (Green/Amber/Red); (3) Outstanding Action Count across open_escalations, execution_state, and lessons_learnt. Output written to run_manifest.md. Advisory only — cannot halt run. Authority: Head of Specs Team (ST-11, 2026-04-16). |
-| 4.3 | 2026-03-21 | Friction Item 1 (cycle 2026-03-21__item-3.5): STEP 4.4 Write Summary extended — `## STEP 5 Debate Queue` table added to cycle_record.md output template; lists all Advancing IDEA IDs with title and source (stale/new); mandatory count-match check before proceeding to STEP 5. STEP 5 preflight check added — reads queue, verifies one debate entry per queued IDEA ID before writing STEP 5 section as complete; detects omissions before they propagate to non-terminal register rows. |
-| 4.2 | 2026-03-18 | STEP -1.6 corrected: count source changed from `claude/ideas/submissions/` file scan to `claude/ideas/ideas_register.md` row count (consistent with register model). STEP 0.C Lightweight criterion 2 updated to reference register rows. STEP 8.5.B item 4 language updated: "idea file" → "register row" throughout (LL-02-patch language now register-model consistent). |
-| 4.1 | 2026-03-17 | ST-19 (EPIC-06): STEP 4 updated to read from `claude/ideas/ideas_register.md` (single register) instead of scanning per-file submissions. §4.2 Document Management updated: actions now update register rows (Status, Park Count, Park Rationale) instead of individual files. §4.3 window summary path updated. Schema: `shared_standards.md §16.5`. |
-| 4.0 | 2026-03-17 | ST-18 (EPIC-06): Extended `cycle_record.md` single-file pattern to all three tiers (Lightweight/Standard/Extended). STEPS 2, 3, 4, 5, 8 write targets changed from separate stage files (`stage1_validation.md`, `stage2_backlog_health.md`, `stage3_ideas.md`, `stage4_debate.md`, `stage5_rebalance.md`) to labelled sections within a single `cycle_record.md`. Stage file references in §5 hard gates, §5.3 PoG issuance, §7 Skill-Silo / Capacity Floor rules, §10 Completion Condition, and STEP 0.C tier table all updated accordingly. Note in STEP 0.C explains mapping for any residual stage-file references. |
-| 3.0 | 2026-03-17 | Five governance improvements applied at post-ship closure v1.10 (BLG-GOV-01, BLG-GOV-02 actions): (1) Tier table added to STEP 0.C classifying run weight; (2) Stage output format note established `cycle_record.md` as Lightweight output target; (3) STEP 2 and STEP 3 write targets standardised to `cycle_record.md` sections for Lightweight; (4) STEP -1.5 prior cycle actions check updated; (5) Minor structural clarifications. |
-| 2.8 | 2026-03-16 | AUD-2026-03-13-005: §9.0 Net-Zero Displacement Gap inline halt block replaced with prose reference to `shared_standards.md §5` — saves ~80 tokens/cycle, SST improved. AUD-2026-03-13-006: §9 Invariants list replaced with reference to `claude/system/invariants.md` (new canonical file). |
-| 2.7 | 2026-03-16 | Post-ship closure v1.10 deferred patch applied. STEP 8.5.B: item 4 added — idea file status verification (LL-02-patch): for each idea file set to `Advancing` in §4.2, verify STEP 9 write plan includes terminal status update (`Promoted-Added` or `Promoted-Rejected`); governance record gap if any `Advancing` idea file unaccounted for at end of run. |
-| 2.6 | 2026-03-15 | STEP -1.6 corrected: trigger changed from open-window status check (unreachable in normal flow) to open idea count < 20 — counts Submitted + Parked-cycle-N files in claude/ideas/submissions/; invokes idea intake inline if below threshold, skips if 20+. |
-| 2.5 | 2026-03-15 | AUD-2026-03-13-003: STEP -1.6 Idea Window Check (conditional) added — checks ideas_window.json status; invokes idea_intake_prompt.md inline if open; proceeds gracefully if absent or closed. |
-| 2.4 | 2026-03-14 | AUD-2026-03-13-002: `--dry-run` flag added to both invocation forms (completion-triggered and scheduled). Dry-run exits after STEP 8 — no writes, no commit; output sufficient to validate before live run. CLAUDE.md command table updated to show `[--dry-run]`. |
-| 2.3 | 2026-03-14 | AUD-2026-03-13-021 (PATCH 1): STEP 11 lessons_learnt.md output must end with machine-readable `// ARTEFACT_STATUS` JSON terminal block — enables post_ship_closure.md STEP 8 to grep for counts without full document read. |
-| 2.2 | 2026-03-14 | AUD-2026-03-13 audit improvements: (1) STEP -1.5 extended — B7 auto-escalation rule added for deferred patches carried two consecutive cycles; prompt patch confirmation check; state age advisory (>30 days). (2) STEP 5 — Challenger failure halt instruction added per team_charter.md §3.2. (3) STEP 9 — Decision log append-only enforcement upgraded from assertion to structural (pre/post count check + corruption detection). (4) STEP 9 — Header formatting rule added (bold field labels required for Class 4 headers). |
-| 2.1 | 2026-03-11 | IMP-13: STEP 9.0 net-zero displacement verification added — hard gate before any write; counts additions vs confirmed kills; halts if additions > kills with displacement gap report; mode-independent. IMP-33: STEP 5.0 displacement rule — mode-independence note added ("applies in both strict and standard mode; governance constraint, not relaxed by --mode standard"). |
-| 2.0 | 2026-03-06 | **Six governance improvements plus continuous improvement loop.** (1) Added STEP -1.5: Prior Cycle Outstanding Actions Check. (2) Added Parked Idea Expiry Rule (§4.5). (3) Displacement candidate flag moved to initiative_register.md exclusively. (4) Added scheduled run trigger. (5) Added absolute CPS alert threshold (>2.5). (6) Added effort banding (S/M/L). **Continuous improvement additions:** Expanded STEP 11 into four sub-steps: 11.1 lessons learnt invocation (unchanged), 11.2 prompt change classification (action-now vs defer — Head of Specs Team sign-off required for action-now), 11.3 prompt change log (`claude/system/prompt_change_log.md` — append-only, traceable from every prompt version to its triggering friction item), 11.4 meta-review trigger (every third cycle — aggregates friction patterns across cycles and produces candidate prompt changes). Added `claude/system/*` and `claude/system/prompt_change_log.md` to write scope (§5). Added `prompt_change_log.md` to optional artifact list (§6). Added `last_meta_review_cycle` key to `.claude_current_state.json` (§12.1). Updated commit scope, write plan integrity checks, and completion condition accordingly. Also incorporated two tooling notes from cycle 2 lessons learnt: bash heredoc pattern for new files (§6); bash sed pattern for bulk idea updates (§4.2). Added hard gate marking rule to STEP 9 and §9 invariants. |
-| 1.9 | 2026-03-04 | **Six governance improvements.** (1) Added Class 8 — Proof of Gate (PoG). (2) Added Strategy Proximity Score (1–5) in STEP 2.1. (3) Added Cycle Proximity Score aggregate and trend check in STEP 2.2. (4) Added Skill-Silo Alert in STEP 7.1. (5) Proximity score added to STEP 6 scoring matrix. (6) Added PoG validity and CPS to completion condition (§10). |
-| 1.8 | 2026-03-03 | Removed displacement as an advancement gate in STEP 4.1. |
-| 1.7 | 2026-03-03 | Rewrote STEP 4 — replaced "Idea Intake & Eligibility Gate" with "Idea Review and Document Management". |
-| 1.6 | 2026-03-03 | Fixed header formatting. Added lessons_learnt_prompt.md to preflight. Added STEP 12.1 Global State Update. |
-| 1.5 | 2026-03-01 | Prior version. |
+See: [`claude/system/changelogs/roadmap_prompt_changelog.md`](changelogs/roadmap_prompt_changelog.md)

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-03-21
+**Version:** 1.4
+**Last Updated:** 2026-05-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -62,11 +62,7 @@ Both windows are equally valid. Either may be used independently.
 
 ## 3. Canonical Governance Sources (Non-Negotiable)
 
-Binding governance stack (precedence order):
-
-1. `claude/charter/team_charter.md`
-2. `claude/charter/document_lifecycle_guide.md`
-3. `claude/strategy/strategy_rules.md`
+Canonical governance stack: per `claude/system/shared/governance_stack.md`. This routine may not override any entry in that stack.
 
 ---
 
@@ -377,9 +373,4 @@ The run is complete when:
 
 ## Change Log
 
-| Version | Date | Change |
-|---------|------|--------|
-| 1.3 | 2026-03-21 | LL-01-patch-4.3 (recurrence escalation, 2 cycles): STEP 5.4 added — when retiring a completed item, also update `initiative_register.md` (remove from Active Initiatives, append to Completed table with ship date and release). `initiative_register.md` added to §5 write scope. STEP 6 commit updated to include `initiative_register.md`. Resolves the register staleness pattern that recurred in cycles 2026-03-18__item-4.3 and 2026-03-21__item-3.5. |
-| 1.2 | 2026-03-07 | IMP-02: Added `last_manage_roadmap_utc` and `last_manage_roadmap_outcome` state write to STEP 6 (global state update). Added `.claude_current_state.json` to §5 write scope (Phase 1M state fields only) and to STEP 6 commit list. |
-| 1.1 | 2026-03-06 | Widened valid trigger windows to include pre-`run roadmap` invocation alongside Post-Ship Closure. Both windows now explicitly equal. Added known gap note for Phase 1 skipped path. Restructured §2 with explicit trigger window table for clarity. |
-| 1.0 | 2026-03-04 | Initial version. |
+See: [`claude/system/changelogs/roadmap_management_changelog.md`](changelogs/roadmap_management_changelog.md)

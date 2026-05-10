@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 2.0
-**Last Updated:** 2026-04-11
+**Version:** 2.1
+**Last Updated:** 2026-05-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -61,14 +61,7 @@ Apply the Lifecycle Guard (valid from-states: `Sprint_Complete`) per `claude/sys
 
 ## 3. Canonical Governance Sources (Non-Negotiable)
 
-Binding governance stack (precedence order):
-
-1. `claude/charter/team_charter.md`
-2. `claude/charter/document_lifecycle_guide.md`
-3. `claude/strategy/strategy_rules.md`
-4. Role charters in `claude/agents/`
-
-This routine may not override any of the above.
+Canonical governance stack: per `claude/system/shared/governance_stack.md`. This routine may not override any entry in that stack.
 
 ---
 
@@ -622,13 +615,4 @@ The run is complete only if:
 
 ## Change Log
 
-| Version | Date | Change |
-|---------|------|--------|
-| 1.9 | 2026-04-11 | AUD-2026-04-11-005: STEP -1.3 sign-off check upgraded to two-tier STRUCTURAL check — Tier 1 (BLANK): empty or "pending" sign-off = HALT; Tier 2 (WRONG AUTHORITY): sign-off present but not Director of Quality = FLAG + require DoQ counter-sign before STEP 1 + compliance advisory in run_manifest. Resolves STALE 2-cycle deferred patch. Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
-| 1.8 | 2026-04-06 | ST-12 (CF-2b): Pre-seal gate added at STEP 8 — before proceeding to STEP 8.5, verify §9 DoQ Date and PO Date fields are both non-blank in verification_report.md; surface for completion if blank; do not seal until both filled. Authority: Head of Specs Team (ST-12, 2026-04-06). [Backfill entry — not present at time of apply.] |
-| 1.7 | 2026-03-31 | LL-v2.3-CL-03: STEP 3 — canonical spec Known Deviations sync note added. After creating a backlog item for any P1–P3 deviation, verify the canonical spec has a Known Deviations section entry for this deviation; create if absent. Prevents post-ship closure STEP 5 from being the first propagation gate (recurred v2.2 and v2.3). Authority: Head of Specs Team (post-ship closure 2026-03-24__release-v2.3). |
-| 1.6 | 2026-03-24 | LL-CL-v22-01: STEP 3 deviation register — backlog reference synchronisation note added. When a new backlog item is created for a deviation, the canonical spec deviation note `Backlog reference:` field must be updated to the new item ID in the same session. Prevents stale references at post-ship closure. Authority: Head of Specs Team (lessons learnt closure 2026-03-21__release-v2.2). |
-| 1.4 | 2026-03-11 | IMP-14: STEP 5.3 added — `test_scenario_gaps` structured table in `verification_report.md §6`; fields: gap_id, EPIC, description, qualifying_reason, disposition (backlog_item_created | not_applicable | deferred); all gaps must have a disposition before report seals (Phase 4 exit criterion). §8 completion condition updated. IMP-15: STEP 4.3 added — stale parked items detection; items parked in 3+ consecutive cycle backlog slices surfaced for mandatory PO disposition; recorded in `verification_report.md §5`; detection only — does not block verification status. |
-| 1.3 | 2026-03-10 | IMP-54: §5 Write Scope — `lessons_learnt_cycle.md` added (append-only, Phase 4 section; create if absent). STEP 8.5 added — lessons learnt Phase 4 append via `lessons_learnt_prompt.md §3.4`; output: `lessons_learnt_cycle.md` Phase 4 section; idempotency guard built into prompt §3.4; hard gate before STEP 9. STEP 10 commit: `lessons_learnt_cycle.md` added. §8 completion condition: Phase 4 section appended condition added. |
-| 1.1 | 2026-03-07 | **`amended_backlog_slice_path` handling added.** §4 backlog slice source-of-truth rule added. STEP -1.1 extended: checks `amended_backlog_slice_path` in `.claude_current_state.json`; cross-references against `execution_state.json.backlog_slice_source`; flags disagreement before proceeding. STEP 1 updated: iterates over the authoritative slice (not hardcoded `stage4_backlog_slice.md`). §5 write scope: amended backlog slice added to must-not-modify list. `verification_report.md` §1 template: `Backlog slice source` field added. §9 invariant added. **`Verification_Failed` status corrected to `Not_Verified`.** STEP 9 `Not_Verified` path: `status` field in `.claude_current_state.json` changed from `Verification_Failed` to `Not_Verified`, consistent with guide §9.4 state machine and lifecycle table. **Deferred execution blockers acknowledged (STEP 4.2, new).** STEP 4 split into §4.1 (outstanding items, unchanged) and §4.2 (deferred execution blockers). §4.2 reads `deferred_execution_blockers` from `state.json`, dispositions each blocker, and records outcomes in `verification_report.md` §5. Informational only — does not block verification status. Sign-off blocks in `verification_report.md` §9 updated: DoQ checklist and PO checklist each add a deferred blocker acknowledgement line. §8 completion condition updated. §9 invariant updated. **Escalation subroutine added.** `verification_escalations.md` added to §5 write scope. Escalation subroutine added (callable, ID prefix `ESC-VER-YYYYMMDD-nn`). STEP 3: P0 deviation now files escalation record. STEP 9 Not_Verified path: references escalation records in halt report. STEP 10 commit: `verification_escalations.md` added. §8 completion condition updated. **Guide fix required:** §9 source prompt v1.0 → v1.1; §14 Verification Engine Source → v1.1; `Not_Verified` confirmed as the canonical status string (not `Verification_Failed`). |
-| 1.0 | 2026-03-03 | Initial version. |
+See: [`claude/system/changelogs/delivery_verification_changelog.md`](changelogs/delivery_verification_changelog.md)

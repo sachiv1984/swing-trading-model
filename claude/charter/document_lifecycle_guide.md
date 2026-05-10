@@ -3,8 +3,8 @@
 **Owner:** Head of Specs Team  
 **Scope:** All governed documentation across the entire product  
 **Status:** Canonical  
-**Version:** 2.6
-**Last Updated:** 2026-03-07  
+**Version:** 2.7
+**Last Updated:** 2026-05-09  
 
 ---
 
@@ -12,6 +12,7 @@
 
 | Version | Change |
 |--------:|--------|
+| 2.7 | Added Class 6 sub-types: (1) **Shared governance reference modules** under `claude/system/shared/` — Class 6 supporting infrastructure, carry standard Class 6 header (Owner, Status: Active, Version, Last Updated), not standalone routines; (2) **Governance changelog files** under `claude/system/changelogs/` — append-only historical records of prompt changes, no version field required, header: Owner + Status: Active only. Both artefact types introduced by the modular prompt refactor 2026-05-09. |
 | 2.6 | Added Class 4 sub-type 3 — Release Plan (`release_plan.md`). The Release Planning Engine now consolidates all intermediate reasoning artefacts (readiness, scope, execution plan, capacity check, integrity validation) into a single `release_plan.md` per cycle. Final outputs (scope document, decisions record, backlog slice) remain separate. |
 | 2.5 | Added Class 8 — Proof of Gate. New document class for hard gate clearance evidence. Immutable once issued; status field only may change to Superseded; permanent governance record stored in `claude/evidence/gates/`. Required when any governed routine records a hard gate condition that must be cleared before an item advances. Added Class 8 to Section 2, Section 3 (lifecycle states), Section 4 (universal header block), and Section 5 (versioning — Class 8 does not use version numbers). |
 | 2.4 | Added Release Planning Engine governance alignment. Clarified that multiple governed routines may exist (e.g., Roadmap Rebalance, Release Planning), all invoked via Class 6 Governance Prompts. Explicitly recognised `claude/roadmap/` and `claude/backlog/` as valid planning-document locations for governed routines. |
@@ -214,6 +215,10 @@ Last Updated: [date]
   - allowed write scope
   - enabled vs disabled governance steps
 - Governance prompts are governance infrastructure, not product documentation.
+
+**Shared governance reference modules** (`claude/system/shared/*.md`) are Class 6 supporting infrastructure. They are referenced by governance prompts but are not themselves executable routines. Required header: Owner, Status: Active, Version, Last Updated. Maintained by Head of Specs Team.
+
+**Governance changelog files** (`claude/system/changelogs/*.md`) are append-only historical records of Class 6 prompt changes. They are not versioned. Required header: Owner and Status: Active only. Content is append-only — no prior entry may be edited or removed.
 
 ---
 

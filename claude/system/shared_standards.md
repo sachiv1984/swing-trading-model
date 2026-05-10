@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.8
-**Last Updated:** 2026-04-11
+**Version:** 2.9
+**Last Updated:** 2026-05-09
 
 # Shared Standards — All Governed Routines
 
@@ -698,24 +698,4 @@ Required fields:
 
 ## Change Log
 
-| Version | Date | Change |
-|---------|------|--------|
-| 2.8 | 2026-04-11 | AUD-2026-04-11-006: §13 dry-run table — `run design-gate` row added (classification table, gap list, required design artefacts; no gate record/state write/commit). Completes the table (was missing despite design_gate_prompt.md v1.1 documenting `--dry-run` support since 2026-03-07). AUD-2026-04-11-010: §16.9 ideas_window.json Schema added — required fields including `per_agent_submission_count` (computed at STEP 3); canonicalises the field added to idea_intake_prompt.md v2.2 (AUD-2026-03-21-001). Authority: Head of Specs Team (AUD-2026-04-11, 2026-04-11). |
-| 2.7 | 2026-03-23 | ST-15 (EPIC-05): §16.8 lessons_learnt_closure.md Carry-Forward Section Schema added — section syntax, 0–5 item rule, Engine enum, absence rules, STEP 0 read protocol for three engines. |
-| 2.6 | 2026-03-23 | ST-14 (EPIC-05): §16.7 scored_initiatives.md Effort Band Column and Handoff Contract added — effort band column format, three-tier resolution rule for STEP 4.5, handoff contract (read-only for release planning). |
-| 2.5 | 2026-03-23 | ST-13 (EPIC-05): §16.6 Backlog Item Provisional-Target Field added — field syntax, horizon-to-release mapping rules, TBD fallback, advisory-only role in release planning. |
-| 2.4 | 2026-03-22 | AUD-2026-03-21-004: §16.2 stage4_issue_manifest.json schema populated — replaced placeholder with canonical schema (moved from `release_planning_prompt.md` STEP 4 IMP-24 inline block). "Produced by" corrected to `release_planning_prompt.md` STEP 4. Engine prompts must reference §16.2 rather than duplicating schema inline. |
-| 2.3 | 2026-03-17 | ST-19 (EPIC-06): §16.5 ideas_register.md schema added — defines register table format, column definitions, and compliance rules for the single-file idea register replacing the per-file submission model. |
-| 2.2 | 2026-03-16 | AUD-2026-03-13-017: §16.3 Delegation Log Schema added — extracted from `execution_prompt.md §11`; §16.4 SLA Breach Tracking (Execution Engine) added — extracted from `execution_prompt.md` STEP 3.1.D. Engine prompts reference §16.3/§16.4 rather than duplicating inline. |
-| 2.1 | 2026-03-14 | AUD-2026-03-13-002 (PATCH 2): §13 dry-run table — `run roadmap` and `run ideas` rows added. AUD-2026-03-13-004 (PATCH 3): `run post-ship --dry-run` note added — STEP 11/12 pass through `--dry-run` flag. |
-| 2.0 | 2026-03-14 | AUD-2026-03-13-009: §16 Governed JSON Schemas added — canonical home for sprint_backlog_index.json schema (§16.1) and stage4_issue_manifest.json placeholder (§16.2). Engine prompts must reference §16 rather than duplicating schemas inline. |
-| 1.9 | 2026-03-11 | IMP-22: §14 Preflight Field Scope added — `shared_preflight_fields` table specifying minimum `.claude_current_state.json` fields per engine; section-scoped read rule. IMP-43: §15 Spec Debt Item Lifecycle added — creation trigger, required fields, acceptance criteria, closing authority (Head of Specs Team), Phase 1M validation rule. |
-| 1.8 | 2026-03-10 | IMP-40: §4 SLA Breach Rule added — 72-hour mandatory `BLOCKED_SLA_BREACH` notice; `blocked_sla_breached` flag in `.claude_current_state.json`. IMP-48: §11 Prompt Version Control — `gh_issue_template.md` added to governed prompt list (Owner: Head of Specs Team, Class: 6). |
-| 1.7 | 2026-03-10 | IMP-45: §13 Dry-Run Standard added — defines guarantee, engine coverage table, read-operation scope, and re-invocation note. IMP-50: §4 Post-Ship Closure escalation target updated from `closure_record.md §6` to `closure_escalations.md`. IMP-58: §11 Prompt Version Control — simultaneity rule added (prompt_change_log.md entry must be in the same commit as the version increment). IMP-61: §10.6 Full State Machine Reference — strengthened: `lifecycle_schema.json` declared as machine-readable source of truth that prevails over §10.1 table in any conflict. |
-| 1.6 | 2026-03-10 | §10.1 Sprint Execution row updated — added `Closed` (multi-sprint exception) as valid from-state when `sprint_planning.sprint2_deferred` non-empty and `sprint_sealed = true` and `post_ship_complete = true`. Formalises the Sprint N+1 re-entry path for multi-sprint cycles. Triggered by closure_record §6 Action #2, 2026-03-06__release-v1.9. |
-| 1.5 | 2026-03-09 | §12 added — Parallel EPIC Branch Merge Sequencing: merge ordering convention (dependency order), conflict resolution rule (keep more recent EPIC's version), GOVERNANCE commit after each merge. Triggered by Friction Item 1 in `claude/cycles/2026-03-06__release-v1.9/lessons_learnt_execution.md`. Immediate action — Head of Specs Team confirmed. |
-| 1.4 | 2026-03-08 | IMP-04: §10.1 updated — Release Planning row adds `post_ship_complete` + `next_cycle_unblocked` preconditions; Sprint Planning row adds design gate bypass audit requirement; Amendment Cycle row adds backlog lock precondition. IMP-06: Release Planning precondition added. IMP-10: §11 Prompt Version Control added. |
-| 1.3 | 2026-03-07 | Updated §8 Post-Ship Closure resumability note — replaced `closure_record.md` prose-scan approach with `closure_state.json` structured file (IMP-01). |
-| 1.2 | 2026-03-07 | Added §10 Lifecycle Validation Rules — transition guard algorithm, entry state table, blocked state protocol, phase skip rule, schema reference. |
-| 1.1 | 2026-03-03 | Updated "three governance prompts" to "five". Added `ESC-VERIF-YYYYMMDD-nn` and `ESC-CLOSE-YYYYMMDD-nn` to identifier standards. Added Delivery Verification and Post-Ship Closure to escalation file list, escalation entry routine field, and halt report routine field. Added `verification_escalations.md` to append-only file list. Added Post-Ship Closure resumability note to §8. |
-| 1.0 | 2026-03-02 | Initial version. |
+See: [`claude/system/changelogs/shared_standards_changelog.md`](changelogs/shared_standards_changelog.md)

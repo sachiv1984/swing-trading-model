@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.69
+**Version:** 3.71
 **Last Updated:** 2026-05-09
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -328,7 +328,7 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 
 ## 5. Idea Intake (Integrated — Phase 1 STEP -1.6)
 
-**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.2)
+**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.3)
 **Template:** `claude/system/idea_template.md`
 **Owner:** PMO Lead
 **Trigger:** Automatic — runs as STEP -1.6 of `run roadmap` when fewer than 20 open ideas (status `Submitted` or `Parked-cycle-<n>`) exist in `claude/ideas/ideas_register.md`. Also invocable standalone via `run ideas` for explicit window control.
@@ -394,7 +394,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v5.0)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v5.1)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -473,7 +473,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.3), `claude/system/backlog_management_prompt.md` (v1.4)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.5)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -544,7 +544,7 @@ Keeps `claude/backlog/backlog.md` healthy and aligned with the roadmap.
 
 ## 6.5 Phase 1.5 — Design Gate (Required*)
 
-**Source prompt:** `claude/system/design_gate_prompt.md` (v1.2)  
+**Source prompt:** `claude/system/design_gate_prompt.md` (v1.3)  
 **Owner:** Head of UX & Design (artefacts), PMO Lead (gate record)  
 **Pre-condition:** Phase 1B Publish Gate passed; `sprint_sealed = false`  
 **\*Required** unless all sprint items are confirmed Design Not Applicable
@@ -597,7 +597,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.26)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.27)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -715,7 +715,7 @@ The cycle may only be sealed `Published` if **all** of the following are true:
 
 ### 6B.8 Amendment Cycle (Emergency Only)
 
-**Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.7)
+**Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.8)
 
 An amendment cycle may be opened after Phase 1B publishes and before Phase 2 seals (`sprint_sealed = true`). It is the only permitted mechanism for changing the backlog slice after the release plan is sealed.
 
@@ -740,7 +740,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.6)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.7)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.15)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.16)
 
 ### 8.1 Invocation
 
@@ -913,7 +913,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.0)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.1)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -999,7 +999,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.5)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.6)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1384,27 +1384,27 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.68 |
-| Last Updated | 2026-05-06 |
+| Version | 3.71 |
+| Last Updated | 2026-05-09 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.2 |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
-| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.3 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.4 |
-| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.2 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v5.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.26 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.6 |
-| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.7 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.15 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.0 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.5 |
+| Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.5 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.3 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v5.1 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.27 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.7 |
+| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.16 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.1 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.6 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v2.8 |
+| Shared Standards | `claude/system/shared_standards.md` v2.9 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.8 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
-| Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.6 |
+| Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.7 |
 | Team Charter | `claude/charter/team_charter.md` v1.6 |
 
 This playbook is subordinate to and must remain consistent with all governing documents above. In any conflict, governance documents prevail. Update this playbook to reflect the change — do not operate with a known divergence.
@@ -1419,6 +1419,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.71 | 2026-05-09 | **Modular prompt refactor — three missing Class 6 prompts updated.** `design_gate_prompt.md` v1.2→v1.3, `idea_intake_prompt.md` v2.2→v2.3, `lessons_learnt_prompt.md` v1.8→v1.9: §3 Canonical Governance Sources replaced with reference to `claude/system/shared/governance_stack.md`; Change Log sections replaced with references to `claude/system/changelogs/`; version headers bumped. §6.5 source prompt header updated v1.2→v1.3. §5 source prompt header updated v2.2→v2.3. §14 governance table: Design Gate Engine v1.2→v1.3, Idea Intake Engine v2.2→v2.3, Lessons Learnt Prompt v1.8→v1.9. Authority: Head of Specs Team (modular prompt refactor continuation, 2026-05-09). |
+| 3.70 | 2026-05-09 | **Modular prompt refactor — changelog extraction and governance stack consolidation.** All 10 phase prompts refactored: (1) Historical change logs extracted to `claude/system/changelogs/` directory (one file per prompt). (2) §3 (or equivalent) Canonical Governance Sources block in each prompt replaced with reference to new `claude/system/shared/governance_stack.md` (shared canonical location). (3) roadmap_prompt.md §1 + §2 consolidated into single §1 governance reference. All phase prompt headers, §14 governance table, and phase section source prompt headers updated to new versions. New files created: `claude/system/shared/governance_stack.md`, 10 changelog files in `claude/system/changelogs/`. Authority: Head of Specs Team (modular prompt refactor 2026-05-09). |
 | 3.69 | 2026-05-09 | **execution_prompt.md v3.14→v3.15 — post-ship closure v3.2: two action-now patches.** §8 source prompt header updated v3.14→v3.15. §14 Execution Engine Source v3.14→v3.15. §14 Version/Last Updated 3.68→3.69/2026-05-09. Changes: (1) LL-v3.2-P3-02 — §3.1.A step 13 Cross-spec selector check added: when a story modifies/removes/renames a DOM element, scan all existing Playwright specs for stale selectors and update in the same commit; prevents CI failures from UI changes in unrelated tests. (2) LL-v3.2-P4-01 — §3.2.A BLG-GOV-19 sign-off block template strengthened: explicit 4-criterion checklist with ✓/✗ markers added; Criterion 3 requires positive assertion checking src/pages/ and src/components/; prevents autonomous class misapplication on frontend EPICs. Authority: Head of Specs Team (post-ship closure v3.2, 2026-05-09). |
 | 3.68 | 2026-05-06 | **execution_prompt.md v3.13→v3.14 — ST-08 + ST-09 + ST-10 (EPIC-03, v3.2): three OA patches.** §8 source prompt header updated v3.13→v3.14. §14 Execution Engine Source v3.13→v3.14. §14 Version/Last Updated 3.67→3.68. Changes: (1) ST-08/OA-03 — STEP 5.1 deviations_filed enforcement check; (2) ST-09/OA-04 — §3.1.A step 12 post-story test files check; (3) ST-10/OA-05 — §14 Playwright Test Authoring Standard: networkidle prohibited, waitFor/element patterns required; all networkidle usages in tests/e2e/ replaced. Authority: Head of Specs Team (ST-08+09+10, 2026-05-06). |
 | 3.67 | 2026-05-06 | **sprint_planning_prompt.md v2.5→v2.6 — ST-07 (EPIC-03, v3.2): STEP 0 Branch Safety Check.** §7 source prompt header updated v2.5→v2.6. §14 Sprint Planning Engine v2.5→v2.6. §14 Version/Last Updated corrected to current (3.67/2026-05-06). Change: STEP 0 Branch Safety Check (Hard Gate) added — verifies `git branch --show-current` equals `main` before sprint planning proceeds; halts with branch name if not; prevents orphaned artefacts. Authority: Head of Specs Team (ST-07, 2026-05-06). |

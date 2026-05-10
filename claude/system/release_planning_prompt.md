@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.26
-**Last Updated:** 2026-04-11
+**Version:** 2.27
+**Last Updated:** 2026-05-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -62,12 +62,8 @@ Apply the Lifecycle Guard (valid from-states: `Closed`) per `claude/system/share
 ---
 
 ## 4. Canonical Governance Sources (Non-Negotiable)
-Binding governance stack:
-- claude/charter/team_charter.md (role authority, conflict rules, escalation + accepted risk constraints)
-- claude/charter/document_lifecycle_guide.md (lifecycle rules)
-- claude/strategy/strategy_rules.md (system intent, boundaries)
 
-This routine may not override any of the above.
+Canonical governance stack: per `claude/system/shared/governance_stack.md`. This routine may not override any entry in that stack.
 
 ---
 
@@ -1438,20 +1434,4 @@ Run is complete only if ALL of the following are true:
 
 ## Change Log
 
-| Version | Date | Change |
-|---------|------|--------|
-| 2.26 | 2026-04-11 | AUD-2026-04-11-009: STEP 1 — §1.3 Design-Gate Language Scan added (advisory). After Provisional-Target advisory, scan scope candidates for "Product Owner to decide", "design decision required", "pending design", "requires UX decision"; flag in run manifest per item; record count as "Design dependency scan: N item(s) flagged". Non-blocking. Closes 4-cycle deferred-monitor carry (first filed 2026-03-24, v2.3 Phase 1 lessons_learnt). |
-| 2.21 | 2026-03-22 | AUD-2026-03-21-004: STEP 4 stage4_issue_manifest.json inline schema removed — replaced with reference to `shared_standards.md §16.2` (canonical schema home). Saves ~200 tokens/cycle; SST compliance restored. |
-| 2.20 | 2026-03-16 | AUD-2026-03-13-005: STEP -1.8 Amendment_In_Progress inline halt block replaced with prose reference to `shared_standards.md §5` — saves ~80 tokens/cycle, SST improved. |
-| 2.19 | 2026-03-14 | AUD-2026-03-13-021 (PATCH 2): STEP 8 lessons_learnt.md output must end with `// ARTEFACT_STATUS` JSON terminal block (phase = "Release") per roadmap_prompt.md §11 schema. |
-| 2.18 | 2026-03-11 | IMP-11: STEP -1.8 Amendment In Progress Guard added — explicit halt when `status = Amendment_In_Progress`; mode-independent; message guides user to seal or withdraw before opening new release plan. IMP-16: STEP -1.9 Stale Backlog Lock Preflight Check added — detects locks from prior cycles; determines staleness (owning cycle closed or >72 hrs inactive); surfaces to PMO Lead for manual removal; records advisory in escalations.md; references team_charter §6. |
-| 2.17 | 2026-03-10 | IMP-26: STEP 3 — `### Risk Register Summary` subsection added alongside EPIC table; each RISK-ID entry now requires `escalation_ref` field (null or ESC-id). Escalation subroutine reference updated: ESC entries store decision/status only; full risk context lives in `release_plan.md` via `escalation_ref` back-link. |
-| 2.16 | 2026-03-10 | IMP-48: STEP -1.1 — conditional `gh_issue_template.md` existence check added; halt if missing when `--issues gh` or `--issues import` specified. IMP-24: STEP 4 — `stage4_issue_manifest.json` produced alongside `stage4_backlog_slice.md`; schema `[{id, title, epic, description, ac_summary, labels, assignee}]`; `cycle:<cycle_id>` label is idempotency key; `artifacts.stage4_issue_manifest` added to state.json schema. §10.2 updated — consumes `stage4_issue_manifest.json` (not markdown parsing); idempotency check added (IMP-35 gap 4); `cycle:<cycle_id>` label check-before-create; creation procedure uses manifest fields. |
-| 2.15 | 2026-03-10 | IMP-46: §10.1 — EPIC description source for issue import corrected from `release_plan.md ## Execution Plan` to `stage4_backlog_slice.md` (canonical scope record). IMP-47: STEP -1.4 — write permission test temp file renamed to `.write_test`; must be removed immediately; STEP 0 cleanup obligation added. |
-| 2.14 | 2026-03-10 | LL-v1.9-01: Added STEP 1.1 Backlog Age Advisory — scans backlog for spec/documentation debt items aged 2+ cycles without story assignment; emits advisory warning and recommendation to promote to sprint stories. LL-v1.9-02: Added STEP 4.5 Phasing Recommendation — when capacity check outcome is WARN, a `### Phasing Recommendation` subsection is now required in `release_plan.md §Capacity Check`; lists concrete phase 1/phase 2 EPIC groupings with effort estimates and ordering rationale. LL-v1.9-03: Added STEP 7 Pre-sprint Planning Required Decisions — when any High-priority risk carries "must resolve before sprint planning seal" disposition, a `## Pre-sprint Planning Required Decisions` checklist section is required in `cycle_summary.md` for Sprint Planning Engine consumption. All three triggered by lessons_learnt.md 2026-03-06__release-v1.9 per closure_record §6 Actions #3–5. |
-| 2.13 | 2026-03-08 | IMP-05: Added STEP -1.5 advisory — reads prior cycle `lessons_learnt_closure.md`, checks all `action-now` items appear in `prompt_change_log.md`; warns if missing. IMP-06: Added STEP -1.6 hard gate — `post_ship_complete = true` and `next_cycle_unblocked = true` both required in `.claude_current_state.json` before new release cycle may open; exception for first cycle. IMP-07: Removed inline escalation entry format, SLA table, and Accepted Risk constraint from ESCALATION HANDLING SUBROUTINE; replaced with reference to `shared_standards.md §4`; retained engine-specific rules (Freeze Rule, Deferred constraint, Decision Record Controls, Mutation Rule, State update rules). IMP-08: Added compact table format requirement to STEP 3 `## Execution Plan` section; full acceptance criteria belong exclusively in `stage4_backlog_slice.md`; target <200 lines for full `release_plan.md`. IMP-10: Added STEP -1.7 advisory — checks that each governed prompt's current version appears in `prompt_change_log.md`; warns if missing. |
-| 2.12 | 2026-03-07 | IMP-03: Added `prompt_schema_version: "v2"` to state.json schema template. Fixed §18.1 tracked artifact list — updated from old stage file names (`stage2_scope_extraction.md`, `stage3_execution_plan.md`) to `release_plan.md` (schema v2). Added schema version migration table to Drift Detection section — documents that drift detection uses keys from `tracked_set` for the cycle's schema version; never compares across versions. |
-| 2.11 | 2026-03-07 | Intermediate Release Planning artefacts collapsed into `release_plan.md`. Steps 1, 2, 3, 3.5, 4.5, 5.5, 5.7 now write sections into a single consolidated file instead of separate stage files. Final outputs retained separately: scope document, decisions record, stage4_backlog_slice.md. Tracked set in state.json schema updated from `[stage2_scope_extraction, stage3_execution_plan, stage4_backlog_slice, escalations]` to `[release_plan, stage4_backlog_slice, escalations]`. |
-| 2.10 | 2026-03-07 | Added Lifecycle Guard (valid from-states: `Closed`) per `shared_standards.md §10`. |
-| 2.9 | 2026-03-07 | Fixed STEP 3.9 lock acquisition — removed malformed XML-like template placeholders; replaced with plain text field descriptions. Wrote STEP 5 body — was postcondition-only; added full purpose, annotation content template, lock/transaction procedure, and idempotency rule. Clarified STEP 7 vs STEP 9 state sync — renamed STEP 7.1 as "Intermediate global state sync", added explicit note that only STEP 9 sets Published, added STEP 9 precondition to verify STEP 7 ran first. Fixed scope document supersession note — removed pre-populated TBD fields that implied known values at planning time; replaced with explicit [TBD] placeholders and "do not populate at planning time" instruction. Added decisions record creation to STEP 3 — new required output `docs/product/decisions/decisions--{cycle_id}.md` with minimum content template and supersession note. Fixed deferred_execution_blockers — added to Publish Gate as a blocking condition; added to Completion Condition. Added design_gate_status and amended_backlog_slice_path to state.json schema as reserved fields with ownership notes. Added §10.1 issue_import.md format specification. Added canonicalization rule for front matter (rule 6). Updated Write Scope Restriction (§7) to include docs/product/scope/* and docs/product/decisions/* for planning-time document creation. Updated STEP 10 commit to include scope and decisions record files. Updated Completion Condition to include lock state verification and presence checks for scope and decisions documents. |
-| 2.8 | 2026-03-06 | Prior version. |
+See: [`claude/system/changelogs/release_planning_changelog.md`](changelogs/release_planning_changelog.md)
