@@ -1,18 +1,17 @@
 {
   "cycle_id": "2026-05-09__release-v3.3",
-  "sprint_goal": "Establish the Arc 3 in-trade risk management foundation by shipping a deterministic position lifecycle state machine with visible state display, two §13-compliant decision-support prompts (grace period alert and ATR trail stop management), comprehensive research view spec and QA closure, and all outstanding governance patches.",
+  "sprint_goal": "Establish the Arc 3 in-trade risk management foundation by shipping a deterministic position lifecycle state machine with visible state display, two \u00a713-compliant decision-support prompts (grace period alert and ATR trail stop management), comprehensive research view spec and QA closure, and all outstanding governance patches.",
   "backlog_slice_source": "claude/cycles/2026-05-09__release-v3.3/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-10T00:00:00Z",
   "mode": "standard",
   "status": "Running",
   "last_updated_utc": "2026-05-10T00:00:00Z",
-
   "epics": {
     "EPIC-04": {
       "status": "in_progress",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 367,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -37,7 +36,7 @@
           "deviations_filed": false,
           "last_completed_substep": "prompt_patch_applied",
           "sign_off_record": null,
-          "notes": "Resolves OA-01 (CF-01) and OA-02 (CF-02) from v3.2 closure. execution_prompt.md bumped v3.16→v3.17. CLAUDE.md §6 checklist complete: version bump, OPERATIONAL_GUIDE §14 updated, prompt_change_log.md entry added."
+          "notes": "Resolves OA-01 (CF-01) and OA-02 (CF-02) from v3.2 closure. execution_prompt.md bumped v3.16\u2192v3.17. CLAUDE.md \u00a76 checklist complete: version bump, OPERATIONAL_GUIDE \u00a714 updated, prompt_change_log.md entry added."
         },
         "ST-14": {
           "title": "Governance policy patches: design gate \"before sprint planning\" check (OA-05) + backlog 3-cycle deferral policy (OA-03/CF-03)",
@@ -60,10 +59,10 @@
           "deviations_filed": false,
           "last_completed_substep": "prompt_patches_applied",
           "sign_off_record": null,
-          "notes": "Resolves OA-03 (CF-03) and OA-05 from v3.2 closure. sprint_planning_prompt.md bumped v2.7→v2.8. backlog_management_prompt.md bumped v1.5→v1.6. backlog_deferral_policy.md created. OPERATIONAL_GUIDE §14 updated. prompt_change_log.md entries added."
+          "notes": "Resolves OA-03 (CF-03) and OA-05 from v3.2 closure. sprint_planning_prompt.md bumped v2.7\u2192v2.8. backlog_management_prompt.md bumped v1.5\u2192v1.6. backlog_deferral_policy.md created. OPERATIONAL_GUIDE \u00a714 updated. prompt_change_log.md entries added."
         },
         "ST-15": {
-          "title": "PT-05 entry checklist §13 compliance review (BLG-GOV-19)",
+          "title": "PT-05 entry checklist \u00a713 compliance review (BLG-GOV-19)",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -82,10 +81,10 @@
           "deviations_filed": false,
           "last_completed_substep": "compliance_doc_created",
           "sign_off_record": null,
-          "notes": "Strategy Rules & System Intent Owner sign-off recorded in compliance doc. trade_plan.md updated to reference §13 review."
+          "notes": "Strategy Rules & System Intent Owner sign-off recorded in compliance doc. trade_plan.md updated to reference \u00a713 review."
         },
         "ST-16": {
-          "title": "Feature flag rollout (BLG-FEAT-13) — mandatory",
+          "title": "Feature flag rollout (BLG-FEAT-13) \u2014 mandatory",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -126,28 +125,57 @@
           "deviations_filed": false,
           "last_completed_substep": "backend_abandonment_api_done",
           "sign_off_record": null,
-          "notes": "Backend done: DS-06 migration (abandonment_reason column), PUT /trade-plans/{id} abandonment guard (requires reason, blocks on active position). Frontend sub-deliverables (status badges BLG-FE-30, UK suffix BLG-FE-23, negative earnings BLG-FE-24, signals default BLG-FE-25, watchlist indicator BLG-FE-29) are delegated_frontend — Playwright scenarios required."
+          "notes": "Backend done: DS-06 migration (abandonment_reason column), PUT /trade-plans/{id} abandonment guard (requires reason, blocks on active position). Frontend sub-deliverables (status badges BLG-FE-30, UK suffix BLG-FE-23, negative earnings BLG-FE-24, signals default BLG-FE-25, watchlist indicator BLG-FE-29) are delegated_frontend \u2014 Playwright scenarios required."
         }
       },
-      "completed_items": ["ST-13", "ST-14", "ST-15", "ST-16"],
+      "completed_items": [
+        "ST-13",
+        "ST-14",
+        "ST-15",
+        "ST-16"
+      ],
       "blocked_items": [],
-      "delegated_items": ["ST-16", "ST-17"]
+      "delegated_items": [
+        "ST-16",
+        "ST-17"
+      ]
     }
   },
-
   "sprint_summary": {
     "sprint_1": {
       "status": "in_progress",
-      "completed_stories": ["ST-01", "ST-02", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15"],
+      "completed_stories": [
+        "ST-01",
+        "ST-02",
+        "ST-08",
+        "ST-09",
+        "ST-10",
+        "ST-11",
+        "ST-12",
+        "ST-13",
+        "ST-14",
+        "ST-15"
+      ],
       "in_progress_stories": [],
-      "blocked_stories": ["ST-03"],
+      "blocked_stories": [
+        "ST-03"
+      ],
       "blocked_reason": "ST-03 (EPIC-01 lifecycle frontend) blocked on ST-16 (feature flag infrastructure, Sprint 2)"
     },
     "sprint_2": {
       "status": "in_progress",
-      "completed_stories": ["ST-04", "ST-06", "ST-16"],
-      "in_progress_stories": ["ST-17"],
-      "delegated_stories": ["ST-05", "ST-07"],
+      "completed_stories": [
+        "ST-04",
+        "ST-06",
+        "ST-16"
+      ],
+      "in_progress_stories": [
+        "ST-17"
+      ],
+      "delegated_stories": [
+        "ST-05",
+        "ST-07"
+      ],
       "notes": "ST-17 backend complete; frontend sub-deliverables delegated. ST-03 (EPIC-01) now unblocked by ST-16."
     }
   }
