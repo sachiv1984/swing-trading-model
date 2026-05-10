@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.72
+**Version:** 3.73
 **Last Updated:** 2026-05-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -473,7 +473,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.5)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.6)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -740,7 +740,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.7)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v2.8)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1390,11 +1390,11 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.5 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.6 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.3 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v5.1 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.27 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.7 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.17 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.1 |
@@ -1419,6 +1419,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.73 | 2026-05-10 | **sprint_planning_prompt.md v2.7→v2.8 + backlog_management_prompt.md v1.5→v1.6 — ST-14 (EPIC-04, v3.3): two OA patches.** §7 source prompt header updated v2.7→v2.8. §6M source prompt header updated v1.5→v1.6. §14 Sprint Planning Engine v2.7→v2.8. §14 Backlog Management Engine v1.5→v1.6. Changes: (OA-05) sprint_planning_prompt.md STEP -1.12 added — "Before Sprint Planning" Backlog Items Check: advisory scan for items with `Provisional-Target: Before v<X.Y> sprint planning`; surfaces unconverted items to Product Owner; recorded in sprint_planning_notes.md; non-blocking. (OA-03/CF-03) backlog_management_prompt.md STEP 3.5 added — Deferral Age Validation: flags items deferred 3+ consecutive cycles without named PO re-deferral; PO re-deferral format defined; health-check blocker until actioned. Policy document `docs/governance/backlog_deferral_policy.md` v1.0 created. Authority: Head of Specs Team (sprint_planning) + PMO Lead (backlog_management) (ST-14, 2026-05-10). |
 | 3.72 | 2026-05-10 | **execution_prompt.md v3.16→v3.17 — ST-13 (EPIC-04, v3.3): two OA patches.** §8 source prompt header updated v3.16→v3.17. §14 Execution Engine Source v3.16→v3.17. Changes: (1) OA-01/CF-01 — STEP 0 Sealed-file integrity check added (hard gate): at each EPIC session start, `git diff --name-only HEAD` and `--cached` are checked against sealed cycle files (stage4_backlog_slice.md, release_plan.md, state.json, amended slice if present); if any sealed file appears in diff output, halt with `[HALT] Sealed file modified: {filename}`. No bypass. (2) OA-02/CF-02 — §14 Playwright Test Authoring Standard gains Mock payload advisory: mocks must match canonical openapi.yaml response shape; nested objects must not be flattened; mismatch = silent test failure in prod. Authority: Head of Specs Team (ST-13, 2026-05-10). |
 | 3.71 | 2026-05-09 | **Modular prompt refactor — three missing Class 6 prompts updated.** `design_gate_prompt.md` v1.2→v1.3, `idea_intake_prompt.md` v2.2→v2.3, `lessons_learnt_prompt.md` v1.8→v1.9: §3 Canonical Governance Sources replaced with reference to `claude/system/shared/governance_stack.md`; Change Log sections replaced with references to `claude/system/changelogs/`; version headers bumped. §6.5 source prompt header updated v1.2→v1.3. §5 source prompt header updated v2.2→v2.3. §14 governance table: Design Gate Engine v1.2→v1.3, Idea Intake Engine v2.2→v2.3, Lessons Learnt Prompt v1.8→v1.9. Authority: Head of Specs Team (modular prompt refactor continuation, 2026-05-09). |
 | 3.70 | 2026-05-09 | **Modular prompt refactor — changelog extraction and governance stack consolidation.** All 10 phase prompts refactored: (1) Historical change logs extracted to `claude/system/changelogs/` directory (one file per prompt). (2) §3 (or equivalent) Canonical Governance Sources block in each prompt replaced with reference to new `claude/system/shared/governance_stack.md` (shared canonical location). (3) roadmap_prompt.md §1 + §2 consolidated into single §1 governance reference. All phase prompt headers, §14 governance table, and phase section source prompt headers updated to new versions. New files created: `claude/system/shared/governance_stack.md`, 10 changelog files in `claude/system/changelogs/`. Authority: Head of Specs Team (modular prompt refactor 2026-05-09). |
