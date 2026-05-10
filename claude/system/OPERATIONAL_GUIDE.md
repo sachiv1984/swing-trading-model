@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.71
-**Last Updated:** 2026-05-09
+**Version:** 3.72
+**Last Updated:** 2026-05-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.16)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.17)
 
 ### 8.1 Invocation
 
@@ -1396,7 +1396,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.27 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.7 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.16 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.17 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.6 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1419,6 +1419,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.72 | 2026-05-10 | **execution_prompt.md v3.16→v3.17 — ST-13 (EPIC-04, v3.3): two OA patches.** §8 source prompt header updated v3.16→v3.17. §14 Execution Engine Source v3.16→v3.17. Changes: (1) OA-01/CF-01 — STEP 0 Sealed-file integrity check added (hard gate): at each EPIC session start, `git diff --name-only HEAD` and `--cached` are checked against sealed cycle files (stage4_backlog_slice.md, release_plan.md, state.json, amended slice if present); if any sealed file appears in diff output, halt with `[HALT] Sealed file modified: {filename}`. No bypass. (2) OA-02/CF-02 — §14 Playwright Test Authoring Standard gains Mock payload advisory: mocks must match canonical openapi.yaml response shape; nested objects must not be flattened; mismatch = silent test failure in prod. Authority: Head of Specs Team (ST-13, 2026-05-10). |
 | 3.71 | 2026-05-09 | **Modular prompt refactor — three missing Class 6 prompts updated.** `design_gate_prompt.md` v1.2→v1.3, `idea_intake_prompt.md` v2.2→v2.3, `lessons_learnt_prompt.md` v1.8→v1.9: §3 Canonical Governance Sources replaced with reference to `claude/system/shared/governance_stack.md`; Change Log sections replaced with references to `claude/system/changelogs/`; version headers bumped. §6.5 source prompt header updated v1.2→v1.3. §5 source prompt header updated v2.2→v2.3. §14 governance table: Design Gate Engine v1.2→v1.3, Idea Intake Engine v2.2→v2.3, Lessons Learnt Prompt v1.8→v1.9. Authority: Head of Specs Team (modular prompt refactor continuation, 2026-05-09). |
 | 3.70 | 2026-05-09 | **Modular prompt refactor — changelog extraction and governance stack consolidation.** All 10 phase prompts refactored: (1) Historical change logs extracted to `claude/system/changelogs/` directory (one file per prompt). (2) §3 (or equivalent) Canonical Governance Sources block in each prompt replaced with reference to new `claude/system/shared/governance_stack.md` (shared canonical location). (3) roadmap_prompt.md §1 + §2 consolidated into single §1 governance reference. All phase prompt headers, §14 governance table, and phase section source prompt headers updated to new versions. New files created: `claude/system/shared/governance_stack.md`, 10 changelog files in `claude/system/changelogs/`. Authority: Head of Specs Team (modular prompt refactor 2026-05-09). |
 | 3.69 | 2026-05-09 | **execution_prompt.md v3.14→v3.15 — post-ship closure v3.2: two action-now patches.** §8 source prompt header updated v3.14→v3.15. §14 Execution Engine Source v3.14→v3.15. §14 Version/Last Updated 3.68→3.69/2026-05-09. Changes: (1) LL-v3.2-P3-02 — §3.1.A step 13 Cross-spec selector check added: when a story modifies/removes/renames a DOM element, scan all existing Playwright specs for stale selectors and update in the same commit; prevents CI failures from UI changes in unrelated tests. (2) LL-v3.2-P4-01 — §3.2.A BLG-GOV-19 sign-off block template strengthened: explicit 4-criterion checklist with ✓/✗ markers added; Criterion 3 requires positive assertion checking src/pages/ and src/components/; prevents autonomous class misapplication on frontend EPICs. Authority: Head of Specs Team (post-ship closure v3.2, 2026-05-09). |
