@@ -1,27 +1,46 @@
 {
   "cycle_id": "2026-05-09__release-v3.3",
-  "sprint_goal": "Establish the Arc 3 in-trade risk management foundation by shipping a deterministic position lifecycle state machine with visible state display, two §13-compliant decision-support prompts (grace period alert and ATR trail stop management), comprehensive research view spec and QA closure, and all outstanding governance patches.",
+  "sprint_goal": "Establish the Arc 3 in-trade risk management foundation by shipping a deterministic position lifecycle state machine with visible state display, two \u00a713-compliant decision-support prompts (grace period alert and ATR trail stop management), comprehensive research view spec and QA closure, and all outstanding governance patches.",
   "backlog_slice_source": "claude/cycles/2026-05-09__release-v3.3/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-10T00:00:00Z",
   "mode": "standard",
   "status": "Running",
   "last_updated_utc": "2026-05-10T00:00:00Z",
-
   "epics": {
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 369,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md",
       "test_scenarios": [
-        "SC-RV-01", "SC-RV-02", "SC-RV-03", "SC-RV-04", "SC-RV-05",
-        "SC-RV-06", "SC-RV-07", "SC-RV-08", "SC-RV-09", "SC-RV-10",
-        "SC-RV-11", "SC-RV-12", "SC-RV-13", "SC-RV-14", "SC-RV-15",
-        "SC-RV-16", "SC-RV-17", "SC-RV-18", "SC-RV-19",
-        "SC-CL-01", "SC-CL-02", "SC-CL-03", "SC-CL-04", "SC-CL-05",
-        "SC-CL-06", "SC-CL-07"
+        "SC-RV-01",
+        "SC-RV-02",
+        "SC-RV-03",
+        "SC-RV-04",
+        "SC-RV-05",
+        "SC-RV-06",
+        "SC-RV-07",
+        "SC-RV-08",
+        "SC-RV-09",
+        "SC-RV-10",
+        "SC-RV-11",
+        "SC-RV-12",
+        "SC-RV-13",
+        "SC-RV-14",
+        "SC-RV-15",
+        "SC-RV-16",
+        "SC-RV-17",
+        "SC-RV-18",
+        "SC-RV-19",
+        "SC-CL-01",
+        "SC-CL-02",
+        "SC-CL-03",
+        "SC-CL-04",
+        "SC-CL-05",
+        "SC-CL-06",
+        "SC-CL-07"
       ],
       "stories": {
         "ST-08": {
@@ -44,7 +63,7 @@
           "deviations_filed": true,
           "last_completed_substep": "spec_authored",
           "sign_off_record": null,
-          "notes": "DEV: AC specifies 404/503/429 error codes but implementation always returns 200 with null sub-fields on source failure. Documented as known limitation in research_endpoint.md §Error Responses."
+          "notes": "DEV: AC specifies 404/503/429 error codes but implementation always returns 200 with null sub-fields on source failure. Documented as known limitation in research_endpoint.md \u00a7Error Responses."
         },
         "ST-09": {
           "title": "PT-02 canonical research view spec (BLG-SPEC-24) + UX spec (BLG-FE-28)",
@@ -88,7 +107,7 @@
           "deviations_filed": false,
           "last_completed_substep": "qa_docs_authored",
           "sign_off_record": null,
-          "notes": "SC-RV-18 and SC-RV-19 need explicit Playwright scenarios — backlog item filed per protocol doc."
+          "notes": "SC-RV-18 and SC-RV-19 need explicit Playwright scenarios \u2014 backlog item filed per protocol doc."
         },
         "ST-11": {
           "title": "Entry checklist Playwright E2E tests (BLG-QA-14)",
@@ -109,7 +128,7 @@
           "deviations_filed": true,
           "last_completed_substep": "playwright_tests_authored",
           "sign_off_record": null,
-          "notes": "DEV: Spec (trade_plan.md §6.2) references stop_level and risk_reward_notes for pre-population. Actual implementation (TradePlan.js buildPrePopulatedItems) uses early_exit_conditions and r_target. Tests cover actual implementation behaviour — deviation recorded in test file header."
+          "notes": "DEV: Spec (trade_plan.md \u00a76.2) references stop_level and risk_reward_notes for pre-population. Actual implementation (TradePlan.js buildPrePopulatedItems) uses early_exit_conditions and r_target. Tests cover actual implementation behaviour \u2014 deviation recorded in test file header."
         },
         "ST-12": {
           "title": "Research endpoint integration tests (BLG-QA-16) + latency baseline (BLG-OPS-15) + trade plan sensitivity classification (BLG-SEC-06) + field extension governance (BLG-GOV-20)",
@@ -132,26 +151,52 @@
           "deviations_filed": false,
           "last_completed_substep": "all_subdocs_authored",
           "sign_off_record": null,
-          "notes": "Four sub-deliverables shipped in one commit: integration test coverage note (OA-06 addressed), latency baseline (p50 2500-4000ms, p95 ≤3000ms target), sensitivity classification with Cybersecurity sign-off, governance policy with Data Model owner sign-off."
+          "notes": "Four sub-deliverables shipped in one commit: integration test coverage note (OA-06 addressed), latency baseline (p50 2500-4000ms, p95 \u22643000ms target), sensitivity classification with Cybersecurity sign-off, governance policy with Data Model owner sign-off."
         }
       },
-      "completed_items": ["ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
+      "completed_items": [
+        "ST-08",
+        "ST-09",
+        "ST-10",
+        "ST-11",
+        "ST-12"
+      ],
       "blocked_items": [],
       "delegated_items": []
     }
   },
-
   "sprint_summary": {
     "sprint_1": {
       "status": "in_progress",
-      "completed_stories": ["ST-01", "ST-02", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12"],
-      "in_progress_stories": ["ST-13", "ST-14", "ST-15"],
-      "blocked_stories": ["ST-03"],
+      "completed_stories": [
+        "ST-01",
+        "ST-02",
+        "ST-08",
+        "ST-09",
+        "ST-10",
+        "ST-11",
+        "ST-12"
+      ],
+      "in_progress_stories": [
+        "ST-13",
+        "ST-14",
+        "ST-15"
+      ],
+      "blocked_stories": [
+        "ST-03"
+      ],
       "blocked_reason": "ST-03 blocked on ST-16 (feature flag infrastructure, Sprint 2)"
     },
     "sprint_2": {
       "status": "not_started",
-      "planned_stories": ["ST-04", "ST-05", "ST-06", "ST-07", "ST-16", "ST-17"]
+      "planned_stories": [
+        "ST-04",
+        "ST-05",
+        "ST-06",
+        "ST-07",
+        "ST-16",
+        "ST-17"
+      ]
     }
   }
 }
