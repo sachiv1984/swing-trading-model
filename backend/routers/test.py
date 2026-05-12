@@ -130,6 +130,10 @@ async def test_all_endpoints(request: Request):
         # Pre-Trade Research (v3.1 / ST-05)
         {"name": "GET /research/AAPL", "method": "GET", "url": f"{base_url}/research/AAPL?market=US", "critical": False},
 
+        # Position Lifecycle (v3.3 / EPIC-01 ST-02)
+        {"name": "GET /positions/00000000-0000-0000-0000-000000000000", "method": "GET", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000", "critical": False},
+        {"name": "POST /positions/00000000-0000-0000-0000-000000000000/refresh-state", "method": "POST", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000/refresh-state", "critical": False},
+
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
     ]
