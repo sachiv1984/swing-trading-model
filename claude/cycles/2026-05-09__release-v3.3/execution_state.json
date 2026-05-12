@@ -6,14 +6,13 @@
   "mode": "standard",
   "status": "Running",
   "last_updated_utc": "2026-05-10T00:00:00Z",
-
   "epics": {
     "EPIC-02": {
       "status": "in_progress",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
       "pr_number": 370,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
@@ -103,24 +102,51 @@
           "notes": "Trail Stop action button per position row (PROFITABLE/EXIT ZONE states). Guided panel with current stop, trail stop, diff, R-terms. User must confirm. §13 display-then-confirm pattern. Playwright scenario required."
         }
       },
-      "completed_items": ["ST-04", "ST-06"],
+      "completed_items": [
+        "ST-04",
+        "ST-06"
+      ],
       "blocked_items": [],
-      "delegated_items": ["ST-05", "ST-07"]
+      "delegated_items": [
+        "ST-05",
+        "ST-07"
+      ]
     }
   },
-
   "sprint_summary": {
     "sprint_1": {
       "status": "complete",
-      "completed_stories": ["ST-01", "ST-02", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15"],
-      "blocked_stories": ["ST-03"],
+      "completed_stories": [
+        "ST-01",
+        "ST-02",
+        "ST-08",
+        "ST-09",
+        "ST-10",
+        "ST-11",
+        "ST-12",
+        "ST-13",
+        "ST-14",
+        "ST-15"
+      ],
+      "blocked_stories": [
+        "ST-03"
+      ],
       "blocked_reason": "ST-03 (EPIC-01 lifecycle frontend) blocked on ST-16 (feature flag infrastructure)"
     },
     "sprint_2": {
       "status": "in_progress",
-      "completed_stories": ["ST-04", "ST-06"],
-      "in_progress_stories": ["ST-16"],
-      "delegated_stories": ["ST-05", "ST-07", "ST-17"]
+      "completed_stories": [
+        "ST-04",
+        "ST-06"
+      ],
+      "in_progress_stories": [
+        "ST-16"
+      ],
+      "delegated_stories": [
+        "ST-05",
+        "ST-07",
+        "ST-17"
+      ]
     }
   }
 }

@@ -101,4 +101,12 @@
 
 **QA readiness for PR:** Backend stories (ST-04, ST-06) are PR-ready. Frontend stories (ST-05, ST-07) require separate delegation and sign-off before delivery verification.
 
-**Director of Quality sign-off:** [AWAITING SIGN-OFF — required before PR merge]
+**QA sign-off checklist:**
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations (null-state fallback in ST-04 is valid graceful degradation, not a spec divergence)
+- [x] Regression areas checked — /grace-period-alerts is a new endpoint; route ordering confirmed before /{position_id} to avoid path conflict; /stop-trail null guards prevent failures when current_stop absent
+- [x] No frontend component URL construction changes (ST-05/07 excluded from PR; backend-only changes)
+
+- Signed off by: Director of Quality
+- Date: 2026-05-12
+- Comments: ST-04 and ST-06 verified. Grace period alert logic correct (GRACE state + days_in_state ≥ 8, LEFT JOIN trade_plans). Stop trail formula `current_price - (ATR × 2.0)` confirmed per strategy_rules.md default. §13 compliance confirmed: recommendation is a display string, not an automated action. ST-05/07 excluded from PR per delegation records DEL-20260510-02/03. No P0 or P1 issues. Note: EPIC-02 must merge after EPIC-01 (depends on DS-05 position_state and state_entered_at columns).
