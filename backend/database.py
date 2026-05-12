@@ -1067,6 +1067,43 @@ def get_trade_plans_by_position(position_id: str, portfolio_id: str) -> list:
             return [dict(r) for r in cur.fetchall()]
 
 
+def get_position_by_id(position_id: str) -> Optional[Dict]:
+    """Fetch a single position by its UUID."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM positions WHERE id = %s", (position_id,))
+            row = cur.fetchone()
+            return dict(row) if row else None
+
+
+def update_position_lifecycle_state(
+    position_id: str,
+    state: str,
+    entered_at,
+    history: list,
+) -> Optional[Dict]:
+    """Persist a lifecycle state transition on a position.
+
+    Uses %s::jsonb cast because psycopg2 does not auto-cast list → JSONB.
+    """
+    import json as _json
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """UPDATE positions
+                   SET position_state = %s,
+                       state_entered_at = %s,
+                       state_history = %s::jsonb,
+                       updated_at = NOW()
+                   WHERE id = %s
+                   RETURNING *""",
+                (state, entered_at, _json.dumps(history), position_id),
+            )
+            row = cur.fetchone()
+        conn.commit()
+        return dict(row) if row else None
+
+
 def get_database_size_bytes() -> int:
     """Return the current database size in bytes.
 

@@ -86,7 +86,10 @@ CREATE TABLE positions (
     tags TEXT[],
     user_fill_price DECIMAL(10, 4),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    position_state VARCHAR(20),
+    state_entered_at TIMESTAMP WITHOUT TIME ZONE,
+    state_history JSONB NOT NULL DEFAULT '[]'::JSONB
 );
 
 CREATE INDEX idx_positions_portfolio ON positions(portfolio_id);
@@ -129,6 +132,9 @@ CREATE INDEX idx_positions_tags ON positions USING GIN(tags);
 | user_fill_price | DECIMAL(10,4) | YES | User-provided actual broker fill price in native currency (optional). Used to compute slippage. Null when not provided (pre-v2.1 trades). |
 | created_at | TIMESTAMP | NO | Record creation timestamp |
 | updated_at | TIMESTAMP | NO | Last update timestamp |
+| position_state | VARCHAR(20) | YES | Lifecycle state: `GRACE`, `LOSING`, `PROFITABLE`, `EXIT ZONE`, `UNKNOWN`. Null for closed positions. Computed by `PositionLifecycleService`. Added v2.6. |
+| state_entered_at | TIMESTAMP | YES | Timestamp when current `position_state` was assigned. Updated on each state transition. Null for closed positions. Added v2.6. |
+| state_history | JSONB | NO | Ordered array of `{state, entered_at}` objects recording all state transitions. Default `[]`. Never truncated — full audit trail. Added v2.6. |
 
 ---
 
@@ -942,13 +948,88 @@ COMMIT;
 
 ---
 
-## DS-06 — Add abandonment_reason to trade_plans (v2.6, 2026-05-10)
+## DS-05 — Position Lifecycle State Fields (v2.6, 2026-05-10)
+
+**Story:** ST-01 (EPIC-01, v3.3)
+
+Three columns added to `positions` to support the Arc 3 position lifecycle state machine (IT-01). State is computed by `PositionLifecycleService` — never set by direct DB writes from other services.
+
+### Up Migration (v2.5 → v2.6)
+
+```sql
+BEGIN;
+
+ALTER TABLE positions
+    ADD COLUMN position_state VARCHAR(20),
+    ADD COLUMN state_entered_at TIMESTAMP WITHOUT TIME ZONE,
+    ADD COLUMN state_history JSONB NOT NULL DEFAULT '[]'::JSONB;
+
+-- Back-fill open positions: GRACE if opened within last 10 trading days (Mon–Fri),
+-- UNKNOWN otherwise. Closed positions remain NULL (no active lifecycle state).
+WITH computed AS (
+    SELECT
+        id,
+        CASE
+            WHEN (
+                SELECT COUNT(*)
+                FROM generate_series(
+                    entry_date::date + INTERVAL '1 day',
+                    CURRENT_DATE,
+                    INTERVAL '1 day'
+                ) AS d
+                WHERE EXTRACT(DOW FROM d) NOT IN (0, 6)
+            ) <= 10 THEN 'GRACE'
+            ELSE 'UNKNOWN'
+        END AS new_state
+    FROM positions
+    WHERE status = 'open'
+)
+UPDATE positions p
+SET
+    position_state = c.new_state,
+    state_entered_at = NOW(),
+    state_history = jsonb_build_array(
+        jsonb_build_object('state', c.new_state, 'entered_at', NOW()::text)
+    )
+FROM computed c
+WHERE p.id = c.id;
+
+COMMIT;
+```
+
+**Verification query (run after migration):**
+
+```sql
+SELECT position_state, COUNT(*) FROM positions WHERE status = 'open' GROUP BY position_state;
+-- Expected: rows for GRACE and/or UNKNOWN; no NULLs for open positions
+SELECT COUNT(*) FROM positions WHERE status = 'open' AND state_history = '[]'::jsonb;
+-- Expected: 0
+```
+
+### Down Migration (v2.6 → v2.5)
+
+```sql
+BEGIN;
+ALTER TABLE positions
+    DROP COLUMN IF EXISTS position_state,
+    DROP COLUMN IF EXISTS state_entered_at,
+    DROP COLUMN IF EXISTS state_history;
+COMMIT;
+```
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-05-10
+- Head of Specs Team: Accepted — 2026-05-10
+
+---
+
+## DS-06 — Add abandonment_reason to trade_plans (v2.7, 2026-05-10)
 
 **Story:** ST-17 (EPIC-04, v3.3)
 
 Adds `abandonment_reason` as a nullable VARCHAR column to support the trade plan abandonment feature (BLG-FEAT-21). The column is enforced non-null at the API layer when `status = 'abandoned'`; no DB constraint is applied so that existing rows and programmatic transitions are unaffected.
 
-### Up Migration
+### Up Migration (v2.6 → v2.7)
 
 ```sql
 BEGIN;
@@ -965,7 +1046,7 @@ WHERE table_name = 'trade_plans' AND column_name = 'abandonment_reason';
 -- Expected: 1 row, data_type character varying, is_nullable YES
 ```
 
-### Down Migration
+### Down Migration (v2.7 → v2.6)
 
 ```sql
 BEGIN;
@@ -978,6 +1059,6 @@ COMMIT;
 
 ---
 
-**Document Version:** 2.6
+**Document Version:** 2.7
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-05-10
