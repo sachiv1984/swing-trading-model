@@ -88,4 +88,12 @@ ST-03 is deferred to Sprint 2 pending ST-16 (feature flag rollout). ST-16 is now
 
 **QA readiness for PR:** ST-01 and ST-02 are PR-ready. ST-03 is excluded from this EPIC's PR (blocked/deferred).
 
-**Director of Quality sign-off:** [AWAITING SIGN-OFF — required before PR merge]
+**QA sign-off checklist:**
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations (DEV-01 is P3 process notation — Alembic vs direct SQL, correct per project pattern)
+- [x] Regression areas checked — GET /positions field additions are backwards compatible; graceful degradation if migration not yet applied
+- [x] No frontend component URL construction changes (ST-03 excluded from PR; backend-only changes in this PR)
+
+- Signed off by: Director of Quality
+- Date: 2026-05-12
+- Comments: ST-01 and ST-02 verified. DEV-01 (Alembic→direct SQL) is P3 — the direct SQL migration pattern is correct for this project. 22 unit tests covering all 5 lifecycle state paths provide strong confidence. ST-03 excluded from this PR pending frontend delegation DEL-20260510-01. PR scope is backend-only (migration spec + lifecycle service + two new endpoints). No P0 or P1 issues.
