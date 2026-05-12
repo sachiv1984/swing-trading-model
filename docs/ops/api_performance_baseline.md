@@ -2,7 +2,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.2
+**Version:** 1.3
 **Date:** 2026-04-16
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
@@ -340,10 +340,57 @@ Signed: [x] Infrastructure & Operations Owner — 2026-04-16
 
 ---
 
+## 11. Research Endpoint Latency Baseline — v3.3 (ST-12)
+
+**Date:** 2026-05-10
+**Story:** ST-12 (EPIC-03, v3.3) — BLG-OPS-15
+**Environment:** Staging (Supavisor-enabled, as per §10)
+
+### GET /research/{ticker} Latency Profile
+
+| Metric | Value | Note |
+|--------|-------|------|
+| p50 (estimated) | 2,500–4,000ms | Multi-source external API aggregation (Yahoo Finance × 2, yfinance × 2, news service) |
+| p95 (estimated) | ≤ 8,000ms | Includes worst-case sequential YF + regime + earnings + news chain |
+| Latency target | p95 ≤ 3,000ms | See rationale below |
+| Flag | ⚠️ Estimated above target | Actual measurement pending staging run |
+
+**Measurement note:** Actual p50/p95 values are estimated from code inspection (no staging measurement at time of this entry — `GET /research/AAPL` was added to `backend/routers/test.py` in ST-12). Staging timing requires a manual run of the research endpoint against the live service. Estimated values above based on:
+- Yahoo Finance chart API: ~300ms (0.3s sleep + network) per call
+- yfinance.Ticker.info (market cap): ~500ms
+- yfinance for earnings: ~500ms
+- Regime check (SPY/FTSE via yfinance): ~500ms
+- News service: ~200ms
+- Total sequential: ~2,000ms + overhead
+
+### Latency Target Rationale
+
+`p95 ≤ 3,000ms` for `GET /research/{ticker}`:
+- The endpoint aggregates 6 independent external sources (Yahoo Finance ×2, yfinance ×2, news, internal DB)
+- All sub-sources are best-effort best-effort (no source failure causes retry or timeout cascade)
+- User context: pre-trade research review is not a time-critical workflow; 2–3s is acceptable for a one-shot aggregation
+- Contrast with position endpoints (p95 ≤ 500ms for DB-only, ≤ 2s for price-enriched) — research endpoint involves more sources
+
+### Failure Scenarios Covered in Test Suite
+
+| Scenario | Coverage |
+|----------|----------|
+| Success (200, all fields populated) | `backend/routers/test.py` GET /research/AAPL |
+| Partial source failure (200, some fields null) | `tests/e2e/pre-trade-research.spec.js` (SC-RES-11 partial variant) |
+| Full failure (500) | `tests/e2e/pre-trade-research.spec.js` SC-RES-11 |
+
+### Outstanding Action
+
+- Actual staging p50/p95 measurement for `GET /research/{ticker}` to be added to this document at next infrastructure review
+- If p95 > 3s confirmed: investigate parallelising sub-source calls (currently sequential) as BLG-OPS-16
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.3 | 2026-05-10 | Infrastructure & Operations Owner | ST-12 (v3.3 EPIC-03): §11 added — research endpoint latency profile and target. p95 ≤ 3s target documented with rationale. Estimated values pending actual staging measurement. |
 | 1.2 | 2026-04-16 | Infrastructure & Operations Owner | ST-01 (v2.7 EPIC-01): Supavisor connection pooling enabled on staging and production (port 6543, `?pgbouncer=true&sslmode=require`). Baseline re-run: 5 endpoints × 7 samples. p50 range 226–244ms (was 1,100–6,000ms). GET /portfolio p50=234ms — AC-2 gate PASS (≤400ms). All fast-cluster endpoints now ≤250ms p50. §10 added: Supavisor re-run results. BLG-OPS-14 closed. |
 | 1.1 | 2026-04-10 | Head of Engineering | ST-06 investigation: §6 outlier analysis, §8 sign-off, §7 monitor criteria updated, BLG-OPS-14 + BLG-BE-07-FIX filed |
 | 1.0 | 2026-04-03 | Infrastructure & Operations Owner | Initial baseline — v2.4, 21 endpoints measured |
