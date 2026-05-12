@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.7
-**Last Updated:** 2026-05-09
+**Version:** 2.8
+**Last Updated:** 2026-05-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -282,6 +282,19 @@ For any prompt where the current version is higher than the last entry visible i
 **Enforcement reminder:** Per `CLAUDE.md §6`, any governance prompt edited during sprint execution must have a change log entry added as a PREPENDED row (inserted immediately after the `| Date | Prompt | Version | Change | Authority |` header row). Appending to the bottom of the table causes this advisory to fire falsely in the next release planning cycle.
 
 *Trigger: OA-01 (v2.5 cycle carry-forward). Applied 2026-04-05.*
+
+### -1.12 "Before Sprint Planning" Backlog Items Check (Advisory — OA-05)
+
+**Advisory only — does not block planning. Recorded in sprint_planning_notes.md.**
+
+Read `claude/backlog/backlog.md` and scan for items containing:
+- `Provisional-Target: Before v<X.Y> sprint planning` where `<X.Y>` matches the current release
+
+For each found item:
+- Surface as advisory: "⚠ Advisory: [N] 'before sprint planning' item(s) found in backlog. These are expected to be sprint stories in the current release plan. If not already covered, review with Product Owner before sealing."
+- Record in `sprint_planning_notes.md` under a **Pre-Sprint Backlog Advisory** heading with item IDs and titles.
+
+The intent of this check is to ensure "before sprint planning" provisional targets are not silently missed — they should have been converted to sprint stories in the release plan (e.g., EPIC-03 research view spec work in v3.3) rather than remaining as floating backlog items. This advisory fires if any remain unconverted.
 
 ---
 
