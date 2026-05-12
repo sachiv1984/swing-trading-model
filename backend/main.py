@@ -291,129 +291,6 @@ def get_positions_endpoint():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/positions/{position_id}")
-def get_position_by_id_endpoint(position_id: str):
-    """Get a single position by ID with live prices and lifecycle state."""
-    from utils.formatting import decimal_to_float
-    from utils.calculations import calculate_holding_days
-    from utils.pricing import get_current_price, get_live_fx_rate
-    from services.grace_service import compute_grace_days_remaining
-    from services.sector_service import get_sector_and_industry
-    from utils.calculations import calculate_position_pnl
-
-    try:
-        raw = get_position_by_id(position_id)
-        if not raw:
-            raise HTTPException(status_code=404, detail="Position not found")
-        pos = decimal_to_float(dict(raw))
-        if pos.get("status") != "open":
-            lifecycle = get_lifecycle_fields_for_position(pos)
-            pos.update(lifecycle)
-            return pos
-
-        live_fx_rate = get_live_fx_rate()
-        live_price = get_current_price(pos["ticker"])
-        if live_price:
-            if pos["market"] == "UK" and live_price > 1000:
-                live_price = live_price / 100
-            current_price_native = live_price
-        else:
-            current_price_native = pos.get("current_price") or pos["entry_price"]
-
-        if pos["market"] == "US":
-            entry_price_display = pos.get("fill_price") or pos["entry_price"] * pos.get("fx_rate", 1.27)
-            current_price_gbp = current_price_native / live_fx_rate
-        else:
-            entry_price_display = pos["entry_price"]
-            current_price_gbp = current_price_native
-
-        pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
-            entry_price=entry_price_display,
-            current_price=current_price_native,
-            shares=pos["shares"],
-            market=pos["market"],
-            live_fx_rate=live_fx_rate,
-        )
-        holding_days = calculate_holding_days(str(pos["entry_date"]))
-        grace_period = holding_days < 10
-        grace_days_remaining = compute_grace_days_remaining(
-            grace_period=grace_period, holding_days=holding_days
-        )
-        stop_price_native = 0 if grace_period else (pos.get("current_stop") or pos.get("initial_stop") or 0)
-        stop_price_gbp = stop_price_native / live_fx_rate if pos["market"] == "US" and stop_price_native else stop_price_native
-        sector, industry = get_sector_and_industry(pos["ticker"], pos["market"])
-        display_ticker = pos["ticker"].replace(".L", "") if pos["market"] == "UK" else pos["ticker"]
-
-        result = {
-            "id": str(pos["id"]),
-            "ticker": display_ticker,
-            "market": pos["market"],
-            "initial_stop": round(pos["initial_stop"], 2) if pos.get("initial_stop") else None,
-            "entry_date": str(pos["entry_date"]),
-            "entry_price": round(entry_price_display, 2),
-            "shares": pos["shares"],
-            "current_price": round(current_price_gbp, 2),
-            "current_price_native": round(current_price_native, 2),
-            "stop_price": round(stop_price_gbp, 2),
-            "stop_price_native": round(stop_price_native, 2),
-            "pnl": round(pnl_gbp, 2),
-            "pnl_percent": round(pnl_pct, 2),
-            "holding_days": holding_days,
-            "status": "open",
-            "grace_period": grace_period,
-            "grace_days_remaining": grace_days_remaining,
-            "atr_value": pos.get("atr", 0),
-            "fx_rate": pos.get("fx_rate", 1.0),
-            "live_fx_rate": live_fx_rate,
-            "total_cost": round(pos.get("total_cost", 0), 2),
-            "entry_note": pos.get("entry_note"),
-            "exit_note": pos.get("exit_note"),
-            "tags": pos.get("tags", []),
-            "sector": sector,
-            "industry": industry,
-        }
-        lifecycle = get_lifecycle_fields_for_position({**pos, "current_price_native": current_price_native})
-        result.update(lifecycle)
-        return result
-    except HTTPException:
-        raise
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/positions/{position_id}/refresh-state")
-def refresh_position_state_endpoint(position_id: str):
-    """Explicitly refresh lifecycle state for a position."""
-    from utils.formatting import decimal_to_float
-
-    try:
-        raw = get_position_by_id(position_id)
-        if not raw:
-            raise HTTPException(status_code=404, detail="Position not found")
-        updated = refresh_position_lifecycle(position_id)
-        if not updated:
-            raise HTTPException(status_code=404, detail="Position not found")
-        updated = decimal_to_float(dict(updated))
-        state_entered_at = updated.get("state_entered_at")
-        return {
-            "status": "ok",
-            "data": {
-                "position_id": position_id,
-                "position_state": updated.get("position_state"),
-                "state_entered_at": state_entered_at.isoformat() if hasattr(state_entered_at, "isoformat") else str(state_entered_at) if state_entered_at else None,
-                "days_in_state": compute_days_in_state(state_entered_at),
-            },
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @app.get("/portfolio")
 def get_portfolio_endpoint():
     """Returns portfolio with live prices"""
@@ -1040,6 +917,129 @@ def search_positions_by_tags_endpoint(tags: str):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/positions/{position_id}")
+def get_position_by_id_endpoint(position_id: str):
+    """Get a single position by ID with live prices and lifecycle state."""
+    from utils.formatting import decimal_to_float
+    from utils.calculations import calculate_holding_days
+    from utils.pricing import get_current_price, get_live_fx_rate
+    from services.grace_service import compute_grace_days_remaining
+    from services.sector_service import get_sector_and_industry
+    from utils.calculations import calculate_position_pnl
+
+    try:
+        raw = get_position_by_id(position_id)
+        if not raw:
+            raise HTTPException(status_code=404, detail="Position not found")
+        pos = decimal_to_float(dict(raw))
+        if pos.get("status") != "open":
+            lifecycle = get_lifecycle_fields_for_position(pos)
+            pos.update(lifecycle)
+            return pos
+
+        live_fx_rate = get_live_fx_rate()
+        live_price = get_current_price(pos["ticker"])
+        if live_price:
+            if pos["market"] == "UK" and live_price > 1000:
+                live_price = live_price / 100
+            current_price_native = live_price
+        else:
+            current_price_native = pos.get("current_price") or pos["entry_price"]
+
+        if pos["market"] == "US":
+            entry_price_display = pos.get("fill_price") or pos["entry_price"] * pos.get("fx_rate", 1.27)
+            current_price_gbp = current_price_native / live_fx_rate
+        else:
+            entry_price_display = pos["entry_price"]
+            current_price_gbp = current_price_native
+
+        pnl_native, pnl_gbp, pnl_pct = calculate_position_pnl(
+            entry_price=entry_price_display,
+            current_price=current_price_native,
+            shares=pos["shares"],
+            market=pos["market"],
+            live_fx_rate=live_fx_rate,
+        )
+        holding_days = calculate_holding_days(str(pos["entry_date"]))
+        grace_period = holding_days < 10
+        grace_days_remaining = compute_grace_days_remaining(
+            grace_period=grace_period, holding_days=holding_days
+        )
+        stop_price_native = 0 if grace_period else (pos.get("current_stop") or pos.get("initial_stop") or 0)
+        stop_price_gbp = stop_price_native / live_fx_rate if pos["market"] == "US" and stop_price_native else stop_price_native
+        sector, industry = get_sector_and_industry(pos["ticker"], pos["market"])
+        display_ticker = pos["ticker"].replace(".L", "") if pos["market"] == "UK" else pos["ticker"]
+
+        result = {
+            "id": str(pos["id"]),
+            "ticker": display_ticker,
+            "market": pos["market"],
+            "initial_stop": round(pos["initial_stop"], 2) if pos.get("initial_stop") else None,
+            "entry_date": str(pos["entry_date"]),
+            "entry_price": round(entry_price_display, 2),
+            "shares": pos["shares"],
+            "current_price": round(current_price_gbp, 2),
+            "current_price_native": round(current_price_native, 2),
+            "stop_price": round(stop_price_gbp, 2),
+            "stop_price_native": round(stop_price_native, 2),
+            "pnl": round(pnl_gbp, 2),
+            "pnl_percent": round(pnl_pct, 2),
+            "holding_days": holding_days,
+            "status": "open",
+            "grace_period": grace_period,
+            "grace_days_remaining": grace_days_remaining,
+            "atr_value": pos.get("atr", 0),
+            "fx_rate": pos.get("fx_rate", 1.0),
+            "live_fx_rate": live_fx_rate,
+            "total_cost": round(pos.get("total_cost", 0), 2),
+            "entry_note": pos.get("entry_note"),
+            "exit_note": pos.get("exit_note"),
+            "tags": pos.get("tags", []),
+            "sector": sector,
+            "industry": industry,
+        }
+        lifecycle = get_lifecycle_fields_for_position({**pos, "current_price_native": current_price_native})
+        result.update(lifecycle)
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/positions/{position_id}/refresh-state")
+def refresh_position_state_endpoint(position_id: str):
+    """Explicitly refresh lifecycle state for a position."""
+    from utils.formatting import decimal_to_float
+
+    try:
+        raw = get_position_by_id(position_id)
+        if not raw:
+            raise HTTPException(status_code=404, detail="Position not found")
+        updated = refresh_position_lifecycle(position_id)
+        if not updated:
+            raise HTTPException(status_code=404, detail="Position not found")
+        updated = decimal_to_float(dict(updated))
+        state_entered_at = updated.get("state_entered_at")
+        return {
+            "status": "ok",
+            "data": {
+                "position_id": position_id,
+                "position_state": updated.get("position_state"),
+                "state_entered_at": state_entered_at.isoformat() if hasattr(state_entered_at, "isoformat") else str(state_entered_at) if state_entered_at else None,
+                "days_in_state": compute_days_in_state(state_entered_at),
+            },
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn
