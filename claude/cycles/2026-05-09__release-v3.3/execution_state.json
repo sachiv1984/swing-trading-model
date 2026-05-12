@@ -33,7 +33,7 @@
           "spec_references": [
             "docs/reference/openapi.yaml#/paths/~1positions~1grace-period-alerts"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "endpoint_implemented",
           "sign_off_record": null,
           "notes": "Depends on EPIC-01 DS-05 migration for position_state/state_entered_at columns. Graceful fallback to entry_date counting if state_entered_at null. Trade plan LEFT JOIN on position_id."
@@ -76,7 +76,7 @@
           "spec_references": [
             "docs/reference/openapi.yaml#/paths/~1positions~1{position_id}~1stop-trail"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "endpoint_implemented",
           "sign_off_record": null,
           "notes": "trail_multiplier=2.0 per strategy_rules.md default. R from initial_stop if available. recommendation string is §13 display-only."
