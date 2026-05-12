@@ -987,3 +987,17 @@ Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/earnings-calendar.sp
 | ST-15 | EPIC-04 | 1 | PT-05 entry checklist §13 compliance review (BLG-GOV-19) |
 | ST-16 | EPIC-04 | 2 | Feature flag rollout — mandatory (BLG-FEAT-13) |
 | ST-17 | EPIC-04 | 2 | Trade plan abandonment + status badges + frontend quick wins (BLG-FEAT-21, BLG-FE-30, BLG-FE-23/24/25/29) |
+
+
+---
+
+## Returned to Backlog — v3.3 Sprint Close (2026-05-12)
+
+*ST-03 — Position lifecycle state: frontend display (EPIC-01 / 2026-05-09__release-v3.3)*
+Backend (DS-05 migration, position_lifecycle_service.py, arc3_lifecycle_display feature flag) live on main. React badge component with GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN states pending. Requires Playwright E2E scenario. Ref: DEL-20260510-01.
+
+*ST-05 — Grace Period Decision Support frontend (IT-02) (EPIC-02 / 2026-05-09__release-v3.3)*
+Backend GET /positions/grace-period-alerts live on main. Alert card UI (dismissible via localStorage, link to trade plan, §13 display-only) pending. Requires Playwright E2E scenario. Ref: DEL-20260510-02.
+
+*ST-07 — Stop Management Workflow frontend (IT-03) (EPIC-02 / 2026-05-09__release-v3.3)*
+Backend GET /positions/{id}/stop-trail live on main. Trail Stop button per PROFITABLE/EXIT ZONE position row, guided panel with current stop / trail stop / diff / R-terms, confirm/cancel interaction pending. Requires Playwright E2E scenario. Ref: DEL-20260510-03.

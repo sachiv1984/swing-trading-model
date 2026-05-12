@@ -1,9 +1,39 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.4
-**Last Updated:** 2026-05-06
+**Version:** 2.5
+**Last Updated:** 2026-05-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-09__release-v3.3
+**Date:** 2026-05-12
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Position Lifecycle State Machine: DS-05 data migration (position_state, state_entered_at, state_history columns on positions table); compute_position_state() service (GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN); GET /positions enriched with lifecycle fields; POST /positions/{id}/refresh-state; 22 unit tests. Feature flag (arc3_lifecycle_display) ready. | docs/specs/data_model.md#DS-05; backend/services/position_lifecycle_service.py | P3: Alembic migration AC vs direct SQL implementation |
+| EPIC-02 | Arc 3 Decision Support Backends: GET /positions/grace-period-alerts (grace period counting with graceful fallback); GET /positions/{id}/stop-trail (ATR trail calculation, R-term output). Both endpoints §13 display-only — no automated action. | docs/reference/openapi.yaml#grace-period-alerts; docs/reference/openapi.yaml#stop-trail | None |
+| EPIC-03 | Research View Spec & QA Closure: research_endpoint.md API contract; research_view_provenance.md data provenance spec; research_view.md canonical frontend spec; research-view UX spec; 19 research view + 7 entry checklist test scenarios; acceptance test protocol; entry checklist Playwright E2E tests (SC-CL-01–07); research endpoint latency baseline (p50 2500–4000ms); trade plan data sensitivity classification; field extension governance policy. | docs/specs/api_contracts/research_endpoint.md; docs/specs/frontend/pages/research_view.md; tests/e2e/entry-checklist.spec.js | P2: error codes (404/503/429 not returned; always 200 with null sub-fields); P3: entry checklist field name divergence |
+| EPIC-04 | Governance Patches: execution_prompt.md v3.17 (sealed-file integrity check STEP 0, mock payload advisory §14); sprint_planning_prompt.md v2.8 (design gate pre-planning check); backlog_management_prompt.md v1.6 (3-cycle deferral policy); backlog_deferral_policy.md created; PT-05 §13 compliance review; feature flag infrastructure (is_flag_enabled(), FEATURE_FLAGS env var, feature_flags.json, startup logging); DS-06 migration (abandonment_reason column on trade_plans); PUT /trade-plans/{id} abandonment guard. | claude/system/execution_prompt.md v3.17; docs/specs/platform/feature_flags.md; docs/specs/data_model.md#DS-06 | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-03 — Position lifecycle state badge (frontend) | delegated_frontend — not completed in sprint | Returned to backlog — next frontend sprint window |
+| ST-05 — Grace Period alert card (frontend) | delegated_frontend — not completed in sprint | Returned to backlog — next frontend sprint window |
+| ST-07 — Trail Stop panel (frontend) | delegated_frontend — not completed in sprint | Returned to backlog — next frontend sprint window |
+| ST-17 — Trade plan status badges + 5 frontend quick wins | delegated_frontend — backend done, frontend deferred | BLG-FE-30, BLG-FE-23, BLG-FE-24, BLG-FE-25, BLG-FE-29 in backlog |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md
+- Deviations filed: P3 (ST-01 Alembic vs direct SQL), P2 (ST-08 error codes), P3 (ST-11 field name divergence), P3 (ST-16 reclassification note)
+- Test scenarios referenced: tests/e2e/entry-checklist.spec.js (SC-CL-01–07); research view scenarios SC-RV-01–19 (manual/staging)
 
 ---
 

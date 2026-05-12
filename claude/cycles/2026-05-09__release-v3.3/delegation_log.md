@@ -22,10 +22,10 @@
 - **Spec reference:** `docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md`, `docs/specs/frontend/pages/positions.md`
 - **Unblock criteria:** PR includes React badge component (or equivalent), feature flag guard, days_in_state display, Playwright scenario passing, and DoQ sign-off on `qa_evidence_EPIC-01.md` ST-03 section.
 - **Commit format required:** `[EPIC-01][ST-03] <description>` pushed to `exec/2026-05-09__release-v3.3/EPIC-01`
-- **Status:** In Progress — carried to post-sprint (backend complete via ST-16; frontend pending)
+- **Status:** Cancelled — returned to backlog at sprint close 2026-05-12. Frontend delivery deferred per PO acceptance; item carried to next sprint. Backlog reference: ST-03 returned per cycle 2026-05-09__release-v3.3.
 - **Completed at:** —
 - **Completed by:** —
-- **Outcome:** —
+- **Outcome:** Returned to backlog. Frontend badge implementation pending next frontend sprint window.
 
 ---
 
@@ -42,10 +42,10 @@
 - **Spec reference:** `docs/specs/api_contracts/grace_period_alert_endpoint.md`, `docs/qa/acceptance_protocols/research_view_protocol.md`
 - **Unblock criteria:** React alert card component rendering `GET /positions/grace-period-alerts` data, dismissible state persisted in localStorage, trade plan link functional, Playwright scenario passing, DoQ sign-off on `qa_evidence_EPIC-02.md` ST-05 section.
 - **Commit format required:** `[EPIC-02][ST-05] <description>` pushed to `exec/2026-05-09__release-v3.3/EPIC-02`
-- **Status:** In Progress — carried to post-sprint
+- **Status:** Cancelled — returned to backlog at sprint close 2026-05-12. Frontend grace period alert card deferred. Backlog reference: ST-05 returned per cycle 2026-05-09__release-v3.3.
 - **Completed at:** —
 - **Completed by:** —
-- **Outcome:** —
+- **Outcome:** Returned to backlog. Backend endpoint (GET /positions/grace-period-alerts) live on main; frontend display pending.
 
 ---
 
@@ -62,10 +62,10 @@
 - **Spec reference:** `docs/reference/openapi.yaml#/paths/~1positions~1{position_id}~1stop-trail`
 - **Unblock criteria:** Trail Stop button per row, guided panel with all fields, confirm/cancel interaction, Playwright scenario passing, DoQ sign-off on `qa_evidence_EPIC-02.md` ST-07 section.
 - **Commit format required:** `[EPIC-02][ST-07] <description>` pushed to `exec/2026-05-09__release-v3.3/EPIC-02`
-- **Status:** In Progress — carried to post-sprint
+- **Status:** Cancelled — returned to backlog at sprint close 2026-05-12. Frontend Trail Stop panel deferred. Backlog reference: ST-07 returned per cycle 2026-05-09__release-v3.3.
 - **Completed at:** —
 - **Completed by:** —
-- **Outcome:** —
+- **Outcome:** Returned to backlog. Backend endpoint (GET /positions/{id}/stop-trail) live on main; frontend display pending.
 
 ---
 
@@ -88,9 +88,9 @@
 - **Spec reference:** `docs/specs/frontend/pages/trade_plan.md`, `docs/specs/data_model.md#DS-06`
 - **Unblock criteria:** All 5 sub-deliverables implemented, each with Playwright scenario or staging sign-off, DoQ sign-off on `qa_evidence_EPIC-04.md` ST-17 section.
 - **Commit format required:** `[EPIC-04][ST-17] <description>` pushed to `exec/2026-05-09__release-v3.3/EPIC-04`
-- **Status:** In Progress — backend complete (DS-06 migration, abandonment guard API); frontend carried to post-sprint
-- **Completed at:** —
-- **Completed by:** —
-- **Outcome:** —
+- **Status:** Cancelled — backend delivery accepted by Product Owner 2026-05-12 (commit e3a834d1). Frontend sub-deliverables (BLG-FE-30, BLG-FE-23, BLG-FE-24, BLG-FE-25, BLG-FE-29) carried to post-sprint and remain in backlog.
+- **Completed at:** 2026-05-12T00:00:00Z (backend only)
+- **Completed by:** Sprint Execution Engine (backend); Frontend Developer (pending)
+- **Outcome:** Backend AC met and merged. Frontend sub-deliverables tracked in backlog as BLG-FE-30, BLG-FE-23, BLG-FE-24, BLG-FE-25, BLG-FE-29.
 
 ---
