@@ -348,7 +348,7 @@
       "delegated_items": []
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
       "pr_number": 367,
       "pr_status": "open",
@@ -448,7 +448,7 @@
         "ST-17": {
           "title": "Trade plan abandonment + status badges + frontend quick wins (BLG-FEAT-21, BLG-FE-30, BLG-FE-23/24/25/29)",
           "classification": "delegated_frontend",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
@@ -456,8 +456,8 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-12T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/trade_plan.md",
             "docs/specs/data_model.md#DS-06"
@@ -465,7 +465,7 @@
           "deviations_filed": true,
           "last_completed_substep": "backend_abandonment_api_done",
           "sign_off_record": null,
-          "notes": "Backend done: DS-06 migration (abandonment_reason column), PUT /trade-plans/{id} abandonment guard (requires reason, blocks on active position). Frontend sub-deliverables (status badges BLG-FE-30, UK suffix BLG-FE-23, negative earnings BLG-FE-24, signals default BLG-FE-25, watchlist indicator BLG-FE-29) are delegated_frontend \u2014 Playwright scenarios required."
+          "notes": "Backend done: DS-06 migration (abandonment_reason column), PUT /trade-plans/{id} abandonment guard (requires reason, blocks on active position). Frontend sub-deliverables (status badges BLG-FE-30, UK suffix BLG-FE-23, negative earnings BLG-FE-24, signals default BLG-FE-25, watchlist indicator BLG-FE-29) are delegated_frontend \u2014 carried to post-sprint per DEL-20260510-04. Product Owner accepted backend-only delivery 2026-05-12."
         }
       },
       "completed_items": [
