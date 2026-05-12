@@ -56,7 +56,7 @@
             "docs/reference/openapi.yaml#/paths/~1positions~1{position_id}",
             "docs/reference/openapi.yaml#/paths/~1positions~1{position_id}~1refresh-state"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "endpoints_registered_and_tests_passing",
           "sign_off_record": null,
           "notes": "22 unit tests pass (all 5 state paths covered). GET /positions enriched with lifecycle fields. GET /positions/{id} and POST /positions/{id}/refresh-state added. Graceful degradation if DB migration not yet applied."
