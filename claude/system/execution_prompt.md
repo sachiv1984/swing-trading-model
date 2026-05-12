@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.16
-**Last Updated:** 2026-05-09
+**Version:** 3.17
+**Last Updated:** 2026-05-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -506,6 +506,27 @@ Create `claude/cycles/<cycle_id>/.write_test` and confirm it can be written. Rem
 ## STEP 0 — Initialise Execution State (Hard Requirement; first write)
 
 **Cleanup:** If `claude/cycles/<cycle_id>/.write_test` exists (left from STEP -1.7 on a previous interrupted run), delete it now before proceeding.
+
+**Sealed-file integrity check (OA-01/CF-01 — Hard Gate):** At each EPIC session start, run:
+
+```
+git diff --name-only HEAD
+git diff --name-only --cached
+```
+
+Check the output against sealed files for this cycle:
+- `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
+- `claude/cycles/<cycle_id>/release_plan.md`
+- `claude/cycles/<cycle_id>/state.json`
+- Any amended backlog slice at `amended_backlog_slice_path` if present
+
+If any sealed file appears in the diff output (staged or unstaged):
+
+```
+[HALT] Sealed file modified: {filename}. Do not modify sealed artefacts. Revert changes before proceeding.
+```
+
+This is a hard gate — no bypass. Revert the change and re-run STEP 0.
 
 Create `claude/cycles/<cycle_id>/execution_state.json` if it does not exist.
 
@@ -1064,6 +1085,8 @@ When writing or updating Playwright tests in this project:
 1. Every `page.goto()` or `page.reload()` must be followed by an element-specific wait, not `networkidle`.
 2. In test helper functions (e.g. `async function goto(page, hash)`), use `domcontentloaded` as the base wait only when no specific element is available.
 3. `waitForLoadState('networkidle')` is never permitted in new test code. The QA Evidence sign-off block for any EPIC introducing new Playwright tests must confirm this standard was followed.
+
+**Mock payload advisory (OA-02/CF-02):** Mock payloads must match the canonical API spec response shape. Before authoring mocks, read the relevant `openapi.yaml` path and use the documented response schema. Nested objects (e.g. `{data: {field: value}}`) must not be flattened in mocks. Mismatch = silent test failure in prod.
 
 ---
 

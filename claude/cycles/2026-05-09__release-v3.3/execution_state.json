@@ -118,14 +118,14 @@
         "ST-05": {
           "title": "Grace Period Decision Support frontend (IT-02)",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260510-02",
+          "blocked_since_utc": "2026-05-10T00:00:00Z",
+          "unblock_criteria": "React alert card component rendering GET /positions/grace-period-alerts data, dismissible state persisted in localStorage, trade plan link functional, Playwright scenario passing, DoQ sign-off on qa_evidence_EPIC-02.md ST-05 section.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -135,7 +135,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Alert card on positions/dashboard. Dismissible (localStorage). Link to trade plan. \u00a713 display-only. Playwright scenario required."
+          "notes": "Alert card on positions/dashboard. Dismissible (localStorage). Link to trade plan. \u00a713 display-only. Playwright scenario required. Carried to post-sprint per DEL-20260510-02."
         },
         "ST-06": {
           "title": "Stop Management Workflow backend (IT-03)",
@@ -161,14 +161,14 @@
         "ST-07": {
           "title": "Stop Management Workflow frontend (IT-03)",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "blocked_frontend",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260510-03",
+          "blocked_since_utc": "2026-05-10T00:00:00Z",
+          "unblock_criteria": "Trail Stop button per row, guided panel with all fields, confirm/cancel interaction, Playwright scenario passing, DoQ sign-off on qa_evidence_EPIC-02.md ST-07 section.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -177,14 +177,17 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Trail Stop action button per position row (PROFITABLE/EXIT ZONE states). Guided panel with current stop, trail stop, diff, R-terms. User must confirm. \u00a713 display-then-confirm pattern. Playwright scenario required."
+          "notes": "Trail Stop action button per position row (PROFITABLE/EXIT ZONE states). Guided panel with current stop, trail stop, diff, R-terms. User must confirm. \u00a713 display-then-confirm pattern. Playwright scenario required. Carried to post-sprint per DEL-20260510-03."
         }
       },
       "completed_items": [
         "ST-04",
         "ST-06"
       ],
-      "blocked_items": [],
+      "blocked_items": [
+        "ST-05",
+        "ST-07"
+      ],
       "delegated_items": [
         "ST-05",
         "ST-07"
@@ -348,10 +351,10 @@
       "delegated_items": []
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
       "pr_number": 367,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -448,7 +451,7 @@
         "ST-17": {
           "title": "Trade plan abandonment + status badges + frontend quick wins (BLG-FEAT-21, BLG-FE-30, BLG-FE-23/24/25/29)",
           "classification": "delegated_frontend",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
@@ -456,8 +459,8 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-12T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/trade_plan.md",
             "docs/specs/data_model.md#DS-06"
@@ -465,7 +468,7 @@
           "deviations_filed": true,
           "last_completed_substep": "backend_abandonment_api_done",
           "sign_off_record": null,
-          "notes": "Backend done: DS-06 migration (abandonment_reason column), PUT /trade-plans/{id} abandonment guard (requires reason, blocks on active position). Frontend sub-deliverables (status badges BLG-FE-30, UK suffix BLG-FE-23, negative earnings BLG-FE-24, signals default BLG-FE-25, watchlist indicator BLG-FE-29) are delegated_frontend \u2014 Playwright scenarios required."
+          "notes": "Backend done: DS-06 migration (abandonment_reason column), PUT /trade-plans/{id} abandonment guard (requires reason, blocks on active position). Frontend sub-deliverables (status badges BLG-FE-30, UK suffix BLG-FE-23, negative earnings BLG-FE-24, signals default BLG-FE-25, watchlist indicator BLG-FE-29) are delegated_frontend \u2014 carried to post-sprint per DEL-20260510-04. Product Owner accepted backend-only delivery 2026-05-12."
         }
       },
       "completed_items": [
@@ -486,12 +489,12 @@
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-04"
     ],
     "epics_pending": [
       "EPIC-02",
-      "EPIC-03",
-      "EPIC-04"
+      "EPIC-03"
     ],
     "all_merged": false
   },

@@ -48,6 +48,7 @@ class TradePlanUpdate(BaseModel):
     checklist_completed: Optional[bool] = None
     checklist_items: Optional[list] = None
     status: Optional[str] = None
+    abandonment_reason: Optional[str] = None
 
 
 def _get_portfolio_id():
@@ -133,11 +134,33 @@ def get_plan(plan_id: str):
 
 @router.put("/{plan_id}")
 def update_plan(plan_id: str, body: TradePlanUpdate):
-    """PUT /trade-plans/{id} — update a trade plan."""
+    """PUT /trade-plans/{id} — update a trade plan.
+
+    Abandonment rules (BLG-FEAT-21):
+    - status='abandoned' requires abandonment_reason (400 if missing)
+    - Cannot abandon a plan linked to an active (open) position (400)
+    """
     try:
         ensure_trade_plans_table()
         portfolio_id = _get_portfolio_id()
         data = {k: v for k, v in body.dict().items() if v is not None}
+
+        if data.get("status") == "abandoned":
+            if not data.get("abandonment_reason"):
+                raise HTTPException(status_code=400, detail="abandonment_reason is required when status is 'abandoned'")
+            existing = get_trade_plan_by_id(plan_id, portfolio_id)
+            if not existing:
+                raise HTTPException(status_code=404, detail="Trade plan not found")
+            if existing.get("position_id"):
+                from database import get_positions
+                linked_positions = get_positions(portfolio_id, status="open")
+                linked_ids = {str(p["id"]) for p in linked_positions}
+                if str(existing["position_id"]) in linked_ids:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="Cannot abandon a trade plan linked to an active open position",
+                    )
+
         plan = update_trade_plan(plan_id, portfolio_id, data)
         if not plan:
             raise HTTPException(status_code=404, detail="Trade plan not found")
