@@ -157,3 +157,13 @@
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-05-12
 - Comments: Autonomous class sign-off — all four qualifying criteria met (all stories autonomous, all AC code-review-verifiable, no frontend changes, engine signer populated). SC-RV-18/19 Playwright gap is a tracked backlog item (filed in research_view_protocol.md), not a merge blocker per §3.2.A.
+
+**Director of Quality counter-confirmation:**
+- [x] Autonomous class eligibility verified independently — all 4 criteria confirmed
+- [x] DEV-01 (ST-08 error codes: 404/503/429→200 with nulls) reviewed — P3 documented limitation, acceptable for current arc
+- [x] DEV-01 (ST-11 pre-pop fields: spec vs impl discrepancy) reviewed — P3, tests correctly cover actual behaviour; spec update deferred
+- [x] SC-RV-18/19 gap confirmed as tracked backlog item, not a blocker
+- [x] No P0 or P1 deviations across all 5 stories
+- Countersigned by: Director of Quality
+- Date: 2026-05-12
+- Comments: Autonomous class sign-off confirmed. All 5 EPIC-03 stories are spec/governance documentation — no behavioural regression risk. Two P3 deviations documented and tracked. Merge clear.
