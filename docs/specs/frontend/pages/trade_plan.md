@@ -117,6 +117,8 @@ Per v3.1 design gate decision:
 
 ## 6. Pre-Trade Entry Checklist (v3.2 — PT-05)
 
+> **§13 Compliance:** This feature has been reviewed and confirmed §13 compliant — see `docs/specs/compliance/pt05_entry_checklist_s13_review.md`. The system presents checklist items; the human confirms each condition; the system records the human-confirmed state. No automated condition evaluation or recommendation is generated. (ST-15, v3.3)
+
 The checklist is embedded as a grouped section within the Trade Plan creation and edit forms, below the core plan fields.
 
 ### 6.1 Section Header

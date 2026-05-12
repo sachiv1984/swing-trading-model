@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.5
-**Last Updated:** 2026-05-09
+**Version:** 1.6
+**Last Updated:** 2026-05-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -195,6 +195,26 @@ For each item prefixed `BLG-SPEC-*`:
 - If the spec has been updated and the deviation/gap is resolved: mark as **Complete — Archive**
 - If the spec has been updated but the gap remains: update the item's "raised" note with current status
 - If the spec owner is unknown or the item is older than 2 cycles with no activity: add a staleness note
+
+---
+
+## STEP 3.5 — Deferral Age Validation (OA-03/CF-03)
+
+For each **Active — Keep** or **Parked** item, check consecutive deferral count:
+
+1. Count the number of consecutive cycles in which the item was deferred (no release assignment reached, or target release changed in each cycle without delivery). A cycle counts as a deferral if: (a) the item had a target release that passed without delivery, or (b) the item was explicitly moved to the next cycle.
+2. If an item has been deferred **3 or more consecutive cycles** without a named re-deferral from the Product Owner:
+   - Flag as a **3-cycle deferral** in the health summary.
+   - Surface to Product Owner: "⚠ Deferral flag: [Item ID] [Title] has been deferred 3+ consecutive cycles without PO re-deferral. Action required: add named re-deferral note, assign a release, or kill the item."
+   - Items with 3+ consecutive deferrals and no PO re-deferral are health-check blockers — they cannot be carried forward silently.
+
+**Named re-deferral format:** Append to the backlog item:
+```
+> PO re-deferral YYYY-MM-DD: [reason]
+```
+A named re-deferral resets the consecutive deferral count. If no re-deferral is on record after 3 cycles, the item must be actioned before the backlog health check can close.
+
+**Kill recommendation:** If an item has 3+ consecutive deferrals and no PO engagement in 2+ cycles, surface as a kill candidate with rationale.
 
 ---
 
