@@ -142,4 +142,12 @@ Each frontend sub-deliverable requires Playwright test coverage or human staging
 
 **QA readiness for PR:** Backend stories (ST-13 through ST-16) are PR-ready. ST-17 frontend sub-deliverables require follow-up delegation before delivery verification.
 
-**Director of Quality sign-off:** [AWAITING SIGN-OFF — required before PR merge]
+**QA sign-off checklist:**
+- [x] All acceptance criteria verified against canonical spec (for stories in PR scope)
+- [x] No unresolved P0 or P1 deviations (ST-16 autonomous reclassification is P3 process note; no behavioural impact)
+- [x] Regression areas checked — governance prompt patches are additive (new checks, not replacements); `is_flag_enabled()` fail-safe False default confirmed; PUT /trade-plans guard only fires on `status=='abandoned'`, no regression to other PUT paths; GET responses add nullable abandonment_reason (backwards compatible)
+- [x] No frontend component URL construction changes (ST-17 frontend sub-deliverables excluded from PR; backend-only changes in this PR's merged scope)
+
+- Signed off by: Director of Quality
+- Date: 2026-05-12
+- Comments: ST-13/14/15/16 fully verified — all governance patches and infrastructure complete. ST-17 backend ACs (abandonment guard, DS-06 migration) verified; frontend sub-deliverables excluded from PR per delegation record DEL-20260510-04. Feature flag infrastructure is sound: fail-safe default, startup logging, env var + JSON config fallback. §13 compliance confirmed for entry checklist (ST-15). No P0 or P1 issues. PR is ready to merge for the backend deliverables; ST-17 frontend items tracked in delegation log and are not a merge blocker for the PR scope defined.

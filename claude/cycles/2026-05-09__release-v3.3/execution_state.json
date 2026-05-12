@@ -12,7 +12,7 @@
       "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
       "pr_number": 367,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
