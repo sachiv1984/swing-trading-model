@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.0.0
-**Last Updated:** 2026-03-29
+**Version:** 2.1.0
+**Last Updated:** 2026-05-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -647,4 +647,78 @@ Errors use the standard error envelope from **conventions.md**.
 | HTTP Status | Condition |
 |-------------|-----------|
 | `404` | Portfolio not found |
+| `500` | Internal server error |
+
+---
+
+## GET /positions/{position_id}
+
+**Added:** v3.3 (Arc 3 — IT-01)
+**Spec:** `backend/services/position_lifecycle_service.py`, `docs/reference/openapi.yaml`
+
+Returns a single open position by ID with live prices and lifecycle state fields.
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `position_id` | string (UUID) | Yes | Position identifier |
+
+### Response (200 OK)
+
+Returns the position object enriched with live price data and Arc 3 lifecycle fields:
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | string | Position UUID |
+| `ticker` | string | Display ticker (no `.L` suffix for UK) |
+| `market` | string | `"UK"` or `"US"` |
+| `position_state` | string \| null | Arc 3 state: `EXIT ZONE`, `PROFITABLE`, `LOSING`, `GRACE`, `UNKNOWN` |
+| `state_entered_at` | string \| null | ISO 8601 timestamp when current state was entered |
+| `days_in_state` | integer \| null | Trading days in current state |
+| `current_price` | number | Live price in GBP |
+| `pnl` | number | Unrealised P&L in GBP |
+| `pnl_percent` | number | P&L as percentage |
+
+### Errors
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `404` | Position not found |
+| `500` | Internal server error |
+
+---
+
+## POST /positions/{position_id}/refresh-state
+
+**Added:** v3.3 (Arc 3 — IT-01)
+**Spec:** `backend/services/position_lifecycle_service.py`, `docs/reference/openapi.yaml`
+
+Explicitly recalculates and persists the Arc 3 lifecycle state for a position.
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `position_id` | string (UUID) | Yes | Position identifier |
+
+### Response (200 OK)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "position_id": "<uuid>",
+    "position_state": "GRACE",
+    "state_entered_at": "2026-05-10T00:00:00",
+    "days_in_state": 2
+  }
+}
+```
+
+### Errors
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `404` | Position not found |
 | `500` | Internal server error |

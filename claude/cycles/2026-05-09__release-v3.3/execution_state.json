@@ -5,8 +5,191 @@
   "invoked_utc": "2026-05-10T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-10T00:00:00Z",
+  "last_updated_utc": "2026-05-12T00:00:00Z",
   "epics": {
+    "EPIC-01": {
+      "status": "merged",
+      "branch": "exec/2026-05-09__release-v3.3/EPIC-01",
+      "pr_number": 368,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "Positions data model: add lifecycle state fields and migration",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 350,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-01",
+          "commit_sha": "9f0f2af2",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model.md#DS-05",
+            "docs/specs/data_model.md#migration-v2.5-to-v2.6"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "migration_sql_and_spec_written",
+          "sign_off_record": null,
+          "notes": "DEV: AC says 'Alembic migration' but project uses direct SQL migrations documented in data_model.md \u2014 implemented as DS-05 direct SQL migration per project pattern. Backfill uses PostgreSQL weekday count (Mon\u2013Fri) for trading-day accuracy."
+        },
+        "ST-02": {
+          "title": "Position lifecycle state machine backend service",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 351,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-01",
+          "commit_sha": "9f0f2af2",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/services/position_lifecycle_service.py",
+            "docs/reference/openapi.yaml#/paths/~1positions~1{position_id}",
+            "docs/reference/openapi.yaml#/paths/~1positions~1{position_id}~1refresh-state"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "endpoints_registered_and_tests_passing",
+          "sign_off_record": null,
+          "notes": "22 unit tests pass (all 5 state paths covered). GET /positions enriched with lifecycle fields. GET /positions/{id} and POST /positions/{id}/refresh-state added. Graceful degradation if DB migration not yet applied."
+        },
+        "ST-03": {
+          "title": "Position lifecycle state: frontend display",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 352,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md",
+            "docs/specs/frontend/pages/positions.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Feature flag proof-of-concept: arc3_lifecycle_display flag wraps lifecycle badge. Playwright E2E required. Human staging sign-off required for badge states not covered by Playwright."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "in_progress",
+      "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+      "pr_number": 370,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Grace Period Decision Support backend (IT-02)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+          "commit_sha": "e0a15543",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml#/paths/~1positions~1grace-period-alerts"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "endpoint_implemented",
+          "sign_off_record": null,
+          "notes": "Depends on EPIC-01 DS-05 migration for position_state/state_entered_at columns. Graceful fallback to entry_date counting if state_entered_at null. Trade plan LEFT JOIN on position_id."
+        },
+        "ST-05": {
+          "title": "Grace Period Decision Support frontend (IT-02)",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/grace_period_alert_endpoint.md",
+            "docs/qa/acceptance_protocols/research_view_protocol.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Alert card on positions/dashboard. Dismissible (localStorage). Link to trade plan. \u00a713 display-only. Playwright scenario required."
+        },
+        "ST-06": {
+          "title": "Stop Management Workflow backend (IT-03)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+          "commit_sha": "e0a15543",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml#/paths/~1positions~1{position_id}~1stop-trail"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "endpoint_implemented",
+          "sign_off_record": null,
+          "notes": "trail_multiplier=2.0 per strategy_rules.md default. R from initial_stop if available. recommendation string is \u00a713 display-only."
+        },
+        "ST-07": {
+          "title": "Stop Management Workflow frontend (IT-03)",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/reference/openapi.yaml#/paths/~1positions~1{position_id}~1stop-trail"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Trail Stop action button per position row (PROFITABLE/EXIT ZONE states). Guided panel with current stop, trail stop, diff, R-terms. User must confirm. \u00a713 display-then-confirm pattern. Playwright scenario required."
+        }
+      },
+      "completed_items": [
+        "ST-04",
+        "ST-06"
+      ],
+      "blocked_items": [],
+      "delegated_items": [
+        "ST-05",
+        "ST-07"
+      ]
+    },
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-05-09__release-v3.3/EPIC-03",
@@ -163,40 +346,155 @@
       ],
       "blocked_items": [],
       "delegated_items": []
-    }
-  },
-  "sprint_summary": {
-    "sprint_1": {
+    },
+    "EPIC-04": {
       "status": "in_progress",
-      "completed_stories": [
-        "ST-01",
-        "ST-02",
-        "ST-08",
-        "ST-09",
-        "ST-10",
-        "ST-11",
-        "ST-12"
-      ],
-      "in_progress_stories": [
+      "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
+      "pr_number": 367,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-13": {
+          "title": "execution_prompt.md governance patches: sealed-file check (OA-01/CF-01) + mock payload advisory (OA-02/CF-02)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
+          "commit_sha": "470dcb27",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/execution_prompt.md#STEP-0",
+            "claude/system/execution_prompt.md#section-14"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "prompt_patch_applied",
+          "sign_off_record": null,
+          "notes": "Resolves OA-01 (CF-01) and OA-02 (CF-02) from v3.2 closure. execution_prompt.md bumped v3.16\u2192v3.17. CLAUDE.md \u00a76 checklist complete: version bump, OPERATIONAL_GUIDE \u00a714 updated, prompt_change_log.md entry added."
+        },
+        "ST-14": {
+          "title": "Governance policy patches: design gate \"before sprint planning\" check (OA-05) + backlog 3-cycle deferral policy (OA-03/CF-03)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
+          "commit_sha": "2b03ef2b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/sprint_planning_prompt.md#STEP-(-1)",
+            "claude/system/backlog_management_prompt.md#STEP-3",
+            "docs/governance/backlog_deferral_policy.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "prompt_patches_applied",
+          "sign_off_record": null,
+          "notes": "Resolves OA-03 (CF-03) and OA-05 from v3.2 closure. sprint_planning_prompt.md bumped v2.7\u2192v2.8. backlog_management_prompt.md bumped v1.5\u2192v1.6. backlog_deferral_policy.md created. OPERATIONAL_GUIDE \u00a714 updated. prompt_change_log.md entries added."
+        },
+        "ST-15": {
+          "title": "PT-05 entry checklist \u00a713 compliance review (BLG-GOV-19)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
+          "commit_sha": "9c024678",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/compliance/pt05_entry_checklist_s13_review.md",
+            "docs/specs/frontend/pages/trade_plan.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "compliance_doc_created",
+          "sign_off_record": null,
+          "notes": "Strategy Rules & System Intent Owner sign-off recorded in compliance doc. trade_plan.md updated to reference \u00a713 review."
+        },
+        "ST-16": {
+          "title": "Feature flag rollout (BLG-FEAT-13) \u2014 mandatory",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
+          "commit_sha": "e3a834d1",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-10T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/platform/feature_flags.md",
+            "backend/utils/feature_flags.py"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "feature_flag_utility_and_spec_created",
+          "sign_off_record": null,
+          "notes": "is_flag_enabled() utility, FEATURE_FLAGS env var + feature_flags.json config, startup audit logging. arc3_lifecycle_display flag POC. Infrastructure & Operations Owner sign-off in spec."
+        },
+        "ST-17": {
+          "title": "Trade plan abandonment + status badges + frontend quick wins (BLG-FEAT-21, BLG-FE-30, BLG-FE-23/24/25/29)",
+          "classification": "delegated_frontend",
+          "status": "in_progress",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": "exec/2026-05-09__release-v3.3/EPIC-04",
+          "commit_sha": "e3a834d1",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md",
+            "docs/specs/data_model.md#DS-06"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "backend_abandonment_api_done",
+          "sign_off_record": null,
+          "notes": "Backend done: DS-06 migration (abandonment_reason column), PUT /trade-plans/{id} abandonment guard (requires reason, blocks on active position). Frontend sub-deliverables (status badges BLG-FE-30, UK suffix BLG-FE-23, negative earnings BLG-FE-24, signals default BLG-FE-25, watchlist indicator BLG-FE-29) are delegated_frontend \u2014 Playwright scenarios required."
+        }
+      },
+      "completed_items": [
         "ST-13",
         "ST-14",
-        "ST-15"
+        "ST-15",
+        "ST-16"
       ],
-      "blocked_stories": [
-        "ST-03"
-      ],
-      "blocked_reason": "ST-03 blocked on ST-16 (feature flag infrastructure, Sprint 2)"
-    },
-    "sprint_2": {
-      "status": "not_started",
-      "planned_stories": [
-        "ST-04",
-        "ST-05",
-        "ST-06",
-        "ST-07",
-        "ST-16",
+      "blocked_items": [],
+      "delegated_items": [
         "ST-17"
       ]
     }
-  }
+  },
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [],
+  "open_escalations": [],
+  "merge_gate": {
+    "epics_merged": [
+      "EPIC-01"
+    ],
+    "epics_pending": [
+      "EPIC-02",
+      "EPIC-03",
+      "EPIC-04"
+    ],
+    "all_merged": false
+  },
+  "sealed": false,
+  "sealed_utc": null
 }

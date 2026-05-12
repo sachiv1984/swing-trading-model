@@ -769,6 +769,95 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /positions/{position_id}:
+    get:
+      tags: [Positions]
+      summary: Get single position by ID
+      description: |
+        Returns a single open or closed position with live prices (for open positions)
+        and lifecycle state fields: position_state, state_entered_at, days_in_state.
+        Lifecycle state is lazily recalculated on each call. (v3.3 EPIC-01 ST-02)
+      parameters:
+        - in: path
+          name: position_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Position UUID
+      responses:
+        "200":
+          description: Position returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  position_state:
+                    type: string
+                    enum: [GRACE, LOSING, PROFITABLE, "EXIT ZONE", UNKNOWN]
+                    nullable: true
+                  state_entered_at:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  days_in_state:
+                    type: integer
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /positions/{position_id}/refresh-state:
+    post:
+      tags: [Positions]
+      summary: Refresh lifecycle state for a position
+      description: |
+        Explicitly recomputes and persists the lifecycle state for a single position.
+        Returns the updated state fields. §13 display-only — no automated action.
+        (v3.3 EPIC-01 ST-02)
+      parameters:
+        - in: path
+          name: position_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Position UUID
+      responses:
+        "200":
+          description: State refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      position_id:
+                        type: string
+                        format: uuid
+                      position_state:
+                        type: string
+                        enum: [GRACE, LOSING, PROFITABLE, "EXIT ZONE", UNKNOWN]
+                      state_entered_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      days_in_state:
+                        type: integer
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /positions/{position_id}/exit:
     post:
       tags: [Positions]
