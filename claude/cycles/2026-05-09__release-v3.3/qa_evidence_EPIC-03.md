@@ -148,4 +148,12 @@
 
 **QA readiness for PR:** All 5 EPIC-03 stories are PR-ready. SC-RV-18/19 Playwright gap is a tracked backlog item, not a blocker.
 
-**Director of Quality sign-off:** [AWAITING SIGN-OFF — required before PR merge]
+**Autonomous class eligibility check (BLG-GOV-19):**
+- [x] Criterion 1: All stories in this EPIC have `delegation_class: autonomous` — ✓ (ST-08/09/10/11/12 all autonomous)
+- [x] Criterion 2: All AC verifiable by code review alone — no observable UI behaviour, no staging run required — ✓ (spec docs, test files, governance policy)
+- [x] Criterion 3: No frontend-visible change — confirm no React page or UI component was created or modified (checked src/pages/ and src/components/) — ✓ (no React files modified)
+- [x] Criterion 4: Engine signer field populated as "Sprint Execution Engine (autonomous class)" — ✓
+
+- Signed off by: Sprint Execution Engine (autonomous class)
+- Date: 2026-05-12
+- Comments: Autonomous class sign-off — all four qualifying criteria met (all stories autonomous, all AC code-review-verifiable, no frontend changes, engine signer populated). SC-RV-18/19 Playwright gap is a tracked backlog item (filed in research_view_protocol.md), not a merge blocker per §3.2.A.

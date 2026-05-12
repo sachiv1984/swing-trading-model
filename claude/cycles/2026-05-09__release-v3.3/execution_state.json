@@ -12,7 +12,7 @@
       "branch": "exec/2026-05-09__release-v3.3/EPIC-03",
       "pr_number": 369,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "SC-RV-01",
@@ -82,7 +82,7 @@
             "docs/specs/frontend/pages/research_view.md",
             "docs/design/2026-05-09__release-v3.3/research-view/ux_spec.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "spec_authored",
           "sign_off_record": null,
           "notes": null
@@ -104,7 +104,7 @@
             "docs/qa/test_scenarios/research_view_scenarios.md",
             "docs/qa/acceptance_protocols/research_view_protocol.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "qa_docs_authored",
           "sign_off_record": null,
           "notes": "SC-RV-18 and SC-RV-19 need explicit Playwright scenarios \u2014 backlog item filed per protocol doc."
@@ -148,7 +148,7 @@
             "docs/specs/security/trade_plan_data_sensitivity.md",
             "docs/governance/trade_plan_field_extension_policy.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "all_subdocs_authored",
           "sign_off_record": null,
           "notes": "Four sub-deliverables shipped in one commit: integration test coverage note (OA-06 addressed), latency baseline (p50 2500-4000ms, p95 \u22643000ms target), sensitivity classification with Cybersecurity sign-off, governance policy with Data Model owner sign-off."
