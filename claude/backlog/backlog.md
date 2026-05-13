@@ -643,6 +643,55 @@ The PT-02 research view aggregates data from multiple sources (Yahoo Finance, Al
 
 ---
 
+### BLG-SPEC-27 — Research endpoint: surface per-source error codes as distinct HTTP responses
+**Priority:** P3 (Low)
+**Type:** Specification / API Contract
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-08 (EPIC-03, v3.3) — P3 delivery deviation (DoQ reclassification from P2 sprint_close filing)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v3.4 or v4.x (non-blocking; current behaviour is documented)
+
+**Problem**
+The research_endpoint.md AC specified distinct HTTP error codes (404 ticker-not-found, 503 source-unavailable, 429 rate-limited). The implementation always returns 200 with null sub-fields on sub-source failure. This is a known limitation documented in research_endpoint.md §Error Responses, but the spec-vs-impl divergence remains an open deviation (filed at sprint close v3.3 as P2; DoQ counter-confirmed P3 in qa_evidence_EPIC-03.md).
+
+**Scope**
+- Update GET /research/{ticker} to return 404 when ticker does not exist in any source
+- Return 503 when a required external source (Yahoo Finance) is entirely unavailable
+- Update research_endpoint.md §Error Responses to reflect new HTTP codes
+- Update openapi.yaml 4xx/5xx response entries for this endpoint
+
+**Acceptance Criteria**
+- 404 returned when ticker lookup fails across all sources
+- 503 returned for critical source failure (not partial field-level null)
+- research_endpoint.md §Error Responses updated; BLG-SPEC-25 backlog reference corrected to BLG-SPEC-27
+- No regression in 200+null behaviour for partial source failures
+
+---
+
+### BLG-SPEC-28 — Update trade_plan.md §6.2 entry checklist field references to match implementation
+**Priority:** P3 (Low)
+**Type:** Specification / Documentation
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-11 (EPIC-03, v3.3) — P3 delivery deviation
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** v3.4
+
+**Problem**
+trade_plan.md §6.2 references `stop_level` for stop_defined pre-population and `risk_reward_notes` for research_reviewed pre-population. The actual TradePlan.js implementation uses `early_exit_conditions` and `r_target`. The Playwright tests (SC-CL-04, SC-CL-05) cover actual implementation behaviour, but the spec remains misaligned.
+
+**Scope**
+- Update trade_plan.md §6.2 entry checklist pre-population rules:
+  - `stop_defined`: pre-checked when `early_exit_conditions` is present (not `stop_level`)
+  - `research_reviewed`: pre-checked when `r_target` is set (not `risk_reward_notes`)
+- No implementation change required — implementation is correct
+
+**Acceptance Criteria**
+- trade_plan.md §6.2 field references updated to match TradePlan.js behaviour
+- Cross-reference to entry-checklist.spec.js test scenarios noted in spec
+- Head of Specs Team sign-off recorded in document header
+
+---
+
 ## 8. Governance Backlog
 
 
@@ -1001,3 +1050,62 @@ Backend GET /positions/grace-period-alerts live on main. Alert card UI (dismissi
 
 *ST-07 — Stop Management Workflow frontend (IT-03) (EPIC-02 / 2026-05-09__release-v3.3)*
 Backend GET /positions/{id}/stop-trail live on main. Trail Stop button per PROFITABLE/EXIT ZONE position row, guided panel with current stop / trail stop / diff / R-terms, confirm/cancel interaction pending. Requires Playwright E2E scenario. Ref: DEL-20260510-03.
+
+---
+
+## Test Scenario Gaps — v3.3 Delivery Verification
+
+*Added by Delivery Verification Engine — 2026-05-13*
+
+### TEST-GAP-EPIC-01-v33 — Position lifecycle badge Playwright E2E scenarios
+
+**Source:** Delivery verification 2026-05-09__release-v3.3 (STEP 5)
+**Priority:** P3
+**Target:** v3.4 (before or concurrent with ST-03 frontend implementation)
+
+EPIC-01 test_scenarios were never authored (noted in sprint_backlog.md as pending QA & Testing Owner action). ST-03 (lifecycle badge frontend) was returned to backlog, so frontend Playwright scenarios remain unimplemented. When ST-03 is implemented in a future sprint, the following scenarios must be present before PR merge:
+
+- SC-LS-01: Positions page loads with lifecycle state badge visible (GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN states)
+- SC-LS-02: arc3_lifecycle_display feature flag OFF → no badge rendered
+- SC-LS-03: GRACE state badge displays correct days_in_state alongside badge
+- SC-LS-04: Exit zone badge renders with purple colouring
+
+QA & Testing Owner to author scenarios in `docs/qa/test_scenarios/` referencing `docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md` and `docs/specs/frontend/pages/positions.md`.
+
+---
+
+### TEST-GAP-EPIC-02-v33 — Grace period alert and trail stop Playwright E2E scenarios
+
+**Source:** Delivery verification 2026-05-09__release-v3.3 (STEP 5)
+**Priority:** P3
+**Target:** v3.4 (before or concurrent with ST-05 and ST-07 frontend implementation)
+
+EPIC-02 test_scenarios were never authored (noted in sprint_backlog.md as pending QA & Testing Owner action). ST-05 (grace period alert card) and ST-07 (trail stop panel) were returned to backlog. When these are implemented, the following scenarios must be present before PR merge:
+
+Grace period alert:
+- SC-GP-01: Alert card renders when position in GRACE state ≥ day 8
+- SC-GP-02: Card displays ticker, days_in_state, trade plan context
+- SC-GP-03: Dismiss removes card; re-opening app does not re-show (localStorage)
+
+Trail stop:
+- SC-TS-01: Trail Stop button appears for PROFITABLE/EXIT ZONE positions with current_stop set
+- SC-TS-02: Panel opens showing current stop, ATR trail stop, difference, R-terms
+- SC-TS-03: Confirm button present; §13 compliance — user must click to proceed
+
+QA & Testing Owner to author scenarios referencing UX specs in `docs/design/2026-05-09__release-v3.3/`.
+
+---
+
+### TEST-GAP-EPIC-03-v33 — SC-RV-18 and SC-RV-19 explicit Playwright coverage for null handling
+
+**Source:** Delivery verification 2026-05-09__release-v3.3 (STEP 5)
+**Priority:** P3
+**Target:** v3.4 (before research view frontend implementation)
+
+research_view_protocol.md §2.3 notes SC-RV-18 (regime null only) and SC-RV-19 (all fields null — degraded mode) as needing explicit Playwright scenarios and flags "backlog item filed". The backlog item was not actually filed at sprint close — this is that item.
+
+Required scenarios (to be added alongside SC-RV-01 through SC-RV-17 when research view frontend is implemented):
+- SC-RV-18: GET /research/{ticker} returns regime null → UI shows regime panel in "unavailable" state
+- SC-RV-19: All data fields null (all sources failed) → degraded mode display, no crash, user-visible error state per UX spec
+
+QA & Testing Owner to add these scenarios to `docs/qa/test_scenarios/research_view_scenarios.md` and update `docs/qa/acceptance_protocols/research_view_protocol.md` to mark item as resolved.
