@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.73
-**Last Updated:** 2026-05-10
+**Version:** 3.74
+**Last Updated:** 2026-05-13
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -394,7 +394,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v5.1)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v6.0)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1384,15 +1384,15 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.71 |
-| Last Updated | 2026-05-09 |
+| Version | 3.74 |
+| Last Updated | 2026-05-13 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.6 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.3 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v5.1 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.27 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
