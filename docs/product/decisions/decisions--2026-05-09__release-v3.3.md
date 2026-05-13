@@ -1,9 +1,10 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v3.3
 Cycle: 2026-05-09__release-v3.3
-Last Updated: 2026-05-09
+Last Updated: 2026-05-13
+Superseded: 2026-05-13 — cycle shipped; see docs/product/changelog.md#v3.3 and claude/cycles/2026-05-09__release-v3.3/verification_report.md
 
 ## Planning Decisions — v3.3 Arc 3 In-Trade Risk Management
 

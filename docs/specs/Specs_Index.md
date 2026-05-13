@@ -511,12 +511,50 @@ Identified during delivery verification (verification_report.md §6 — TSG-v32-
 ### 18.1 TSG-v32-01 — EPIC-02: no Playwright coverage for entry checklist observable ACs
 
 **Identified:** 2026-05-07 (delivery verification 2026-05-05__release-v3.2)
-**Status:** Open — backlog item BLG-QA-14
+**Status:** ✅ Resolved — 2026-05-13 (v3.3, ST-11)
 **Owner:** QA & Testing Owner
 **Gap:** `tests/e2e/entry-checklist.spec.js` not yet created. 7 observable ACs (SC-CL-01 to SC-CL-07) lack Playwright coverage: checklist renders with 4 default items, items toggleable, state persists on save, stop_defined pre-check, research_reviewed pre-check, research link navigation, read-only checklist in research view.
 **Required action:** QA & Testing Owner to author `tests/e2e/entry-checklist.spec.js` covering SC-CL-01 to SC-CL-07.
 **Resolution target:** v3.3
 **Backlog item:** BLG-QA-14 (filed 2026-05-06)
+**Resolution:** `tests/e2e/entry-checklist.spec.js` authored by ST-11 (EPIC-03, v3.3) covering SC-CL-01 to SC-CL-07. Note: DEV-v33-03 (P3) — test file covers actual implementation field names (early_exit_conditions/r_target) which differ from spec (stop_level/risk_reward_notes).
+
+---
+
+## 19. Test Coverage Gaps — v3.3 (2026-05-09__release-v3.3)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v33-01 through TSG-v33-03).
+
+### 19.1 TSG-v33-01 — EPIC-01: no Playwright coverage for lifecycle badge display
+
+**Identified:** 2026-05-13 (delivery verification 2026-05-09__release-v3.3)
+**Status:** Open — backlog item TEST-GAP-EPIC-01-v33
+**Owner:** QA & Testing Owner
+**Gap:** ST-03 (lifecycle badge frontend) returned to backlog. When implemented, SC-LS-01 to SC-LS-04 must be authored: lifecycle badge visibility (GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN), arc3_lifecycle_display flag OFF (no badge), GRACE days_in_state display, EXIT ZONE colour rendering.
+**Resolution target:** v3.4 (before or concurrent with ST-03 frontend implementation)
+**Backlog item:** TEST-GAP-EPIC-01-v33 (filed 2026-05-13)
+
+---
+
+### 19.2 TSG-v33-02 — EPIC-02: no Playwright coverage for grace period alert and trail stop panels
+
+**Identified:** 2026-05-13 (delivery verification 2026-05-09__release-v3.3)
+**Status:** Open — backlog item TEST-GAP-EPIC-02-v33
+**Owner:** QA & Testing Owner
+**Gap:** ST-05 (grace period alert frontend) and ST-07 (trail stop panel) returned to backlog. When implemented, SC-GP-01 to SC-GP-03 and SC-TS-01 to SC-TS-03 must be authored: alert card render, display fields, dismiss/localStorage behaviour; trail stop button, panel fields, §13 confirm interaction.
+**Resolution target:** v3.4 (before or concurrent with ST-05/ST-07 frontend implementation)
+**Backlog item:** TEST-GAP-EPIC-02-v33 (filed 2026-05-13)
+
+---
+
+### 19.3 TSG-v33-03 — EPIC-03: SC-RV-18 and SC-RV-19 null-handling scenarios not in test library
+
+**Identified:** 2026-05-13 (delivery verification 2026-05-09__release-v3.3)
+**Status:** Open — backlog item TEST-GAP-EPIC-03-v33
+**Owner:** QA & Testing Owner
+**Gap:** research_view_protocol.md §2.3 flags SC-RV-18 (regime null only) and SC-RV-19 (all fields null — degraded mode) as needing explicit Playwright scenarios. These were not authored at sprint close. When research view frontend is implemented, these scenarios must be added to research_view_scenarios.md.
+**Resolution target:** v3.4 (before research view frontend implementation)
+**Backlog item:** TEST-GAP-EPIC-03-v33 (filed 2026-05-13)
 
 ---
 

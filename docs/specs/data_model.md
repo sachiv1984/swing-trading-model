@@ -1021,6 +1021,17 @@ COMMIT;
 - Data Model Domain & Schema Owner: Accepted — 2026-05-10
 - Head of Specs Team: Accepted — 2026-05-10
 
+### Known Deviations
+
+| Field | Detail |
+|-------|--------|
+| Description | ST-01 AC specified "Alembic migration script"; implementation used project-standard direct SQL migration (documented in this section). Alembic is not used in this project — direct SQL migrations are the canonical project pattern. |
+| Canonical requirement | ST-01 acceptance criteria (sprint_backlog.md v3.3): "Alembic migration script created and applied" |
+| Priority | P3 — cosmetic spec wording mismatch; implementation is correct for project |
+| Target resolution release | v3.4 — update sprint backlog template to specify "direct SQL migration" instead of "Alembic migration" for future stories |
+| Owner | Data Model Domain & Schema Owner |
+| Backlog reference | No separate backlog item filed — accepted as correct project pattern per Data Model owner sign-off 2026-05-10; documented as DEV-v33-01 in verification_report.md §4 (cycle 2026-05-09__release-v3.3) |
+
 ---
 
 ## DS-06 — Add abandonment_reason to trade_plans (v2.7, 2026-05-10)

@@ -3,9 +3,44 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-08
+**Last Updated:** 2026-05-13
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.3 — Arc 3 In-Trade Risk Management — 2026-05-13
+Cycle: 2026-05-09__release-v3.3
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-05-09__release-v3.3/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | IT-01 Position Lifecycle Manager (backend + state machine): DS-05 positions table lifecycle fields (position_state, state_entered_at, days_in_state) and direct SQL migration; position_lifecycle_service.py state machine (5 states: NEW → GRACE → LOSING/PROFITABLE → EXIT); GET /positions enriched with lifecycle fields; POST /positions/{id}/refresh-state endpoint; arc3_lifecycle_display feature flag. Frontend state display (ST-03) deferred to v3.4 | docs/specs/data_model.md#DS-05; backend/services/position_lifecycle_service.py; docs/reference/openapi.yaml |
+| EPIC-02 | IT-02 Grace Period Decision Support (backend): GET /positions/grace-period-alerts endpoint — positions in grace period expiring within N days with trade plan join and §13-compliant display recommendation. IT-03 Stop Management Workflow (backend): GET /positions/{id}/stop-trail endpoint — ATR trail calculation, R-denominated recommendation, §13 display-only. Frontend alert card (ST-05) and trail stop panel (ST-07) deferred to v3.4 | docs/specs/api_contracts/grace_period_alert_endpoint.md; docs/reference/openapi.yaml |
+| EPIC-03 | PT-02 research API contract (BLG-SPEC-25) and data source provenance spec (BLG-SPEC-26). Research view canonical spec (BLG-SPEC-24) and UX spec (BLG-FE-28). Test scenario library (BLG-QA-17): 19 scenarios SC-RV-01–19. Acceptance test protocol (BLG-QA-15). Entry checklist Playwright E2E tests (BLG-QA-14): entry-checklist.spec.js covering SC-CL-01–07. Research endpoint integration tests (BLG-QA-16), latency baseline (BLG-OPS-15), trade plan sensitivity classification (BLG-SEC-06), field extension governance policy (BLG-GOV-20) | docs/specs/api_contracts/research_endpoint.md; docs/specs/frontend/pages/research_view.md; docs/design/2026-05-09__release-v3.3/research-view/ux_spec.md; docs/qa/test_scenarios/research_view_scenarios.md; docs/qa/acceptance_protocols/research_view_protocol.md; tests/e2e/entry-checklist.spec.js; docs/ops/api_performance_baseline.md#section-11; docs/specs/security/trade_plan_data_sensitivity.md; docs/governance/trade_plan_field_extension_policy.md |
+| EPIC-04 | Governance patches: execution_prompt.md v3.16→v3.17 (OA-01/CF-01 sealed-file check, OA-02/CF-02 mock payload advisory); sprint_planning_prompt.md v2.7→v2.8 (OA-05 design gate before sprint planning check); backlog_management_prompt.md v1.5→v1.6 + backlog_deferral_policy.md (OA-03/CF-03 3-cycle deferral policy). PT-05 §13 compliance review (BLG-GOV-19). Feature flag infrastructure (BLG-FEAT-13): is_flag_enabled() utility, FEATURE_FLAGS env var, arc3_lifecycle_display POC. Trade plan abandonment backend (BLG-FEAT-21 partial): DS-06 abandonment_reason column migration, PUT /trade-plans/{id} abandonment guard. Frontend status badges (ST-17 sub-deliverables: BLG-FE-30/23/24/25/29) deferred to v3.4 | claude/system/execution_prompt.md v3.17; claude/system/sprint_planning_prompt.md v2.8; claude/system/backlog_management_prompt.md v1.6; docs/governance/backlog_deferral_policy.md; docs/specs/compliance/pt05_entry_checklist_s13_review.md; docs/specs/platform/feature_flags.md; backend/utils/feature_flags.py; docs/specs/data_model.md#DS-06 |
+
+### Deviations accepted
+4 minor P3 deviations — see verification_report.md §4 for full detail:
+- DEV-v33-01 [ST-01, P3]: AC specified Alembic migration; implementation used project-standard direct SQL. Target: v3.4.
+- DEV-v33-02 [ST-08, P3]: AC specified 404/503/429 error codes; implementation returns 200 with null sub-fields on source failure. Known limitation documented in research_endpoint.md §Error Responses. Target: v3.4. (Reclassified P2→P3 by Director of Quality 2026-05-13.)
+- DEV-v33-03 [ST-11, P3]: Spec references stop_level/risk_reward_notes for pre-population; implementation uses early_exit_conditions/r_target. Tests cover actual behaviour. Target: v3.4.
+- DEV-v33-04 [ST-16, P3]: QA evidence reclassification note in qa_evidence_EPIC-04.md. Target: v3.4.
+
+### Tech backlog items shipped
+- [ST-08] Research API contract (BLG-SPEC-25) + data source provenance spec (BLG-SPEC-26)
+- [ST-09] Canonical research view spec (BLG-SPEC-24) + UX spec (BLG-FE-28)
+- [ST-10] Research view test scenario library (BLG-QA-17) + acceptance test protocol (BLG-QA-15)
+- [ST-11] Entry checklist Playwright E2E tests (BLG-QA-14)
+- [ST-12] Research endpoint integration tests (BLG-QA-16) + latency baseline (BLG-OPS-15) + trade plan sensitivity classification (BLG-SEC-06) + field extension governance (BLG-GOV-20)
+- [ST-15] PT-05 §13 compliance review (BLG-GOV-19)
+- [ST-16] Feature flag rollout infrastructure (BLG-FEAT-13)
+- [ST-17] Trade plan abandonment backend (BLG-FEAT-21 — backend only; frontend sub-deliverables deferred to v3.4)
+
+Sign-off: Product Owner — 2026-05-13
+QA sign-off: Director of Quality — 2026-05-13
 
 ---
 

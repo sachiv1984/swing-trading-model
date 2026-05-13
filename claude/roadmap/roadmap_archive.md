@@ -1,13 +1,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-05
+**Last Updated:** 2026-05-13
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v3.3 — Release Annotation
+
+**Original roadmap location:** §1 Current Version header (roadmap annotation block)
+**Status at retirement:** ✅ Complete — annotation retired post-ship
+**Retired from active roadmap:** 2026-05-13
+**Shipped version:** v3.3 (2026-05-13)
+**Cycle reference:** 2026-05-09__release-v3.3
+**Verification report:** `claude/cycles/2026-05-09__release-v3.3/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-13
+
+### Annotation at retirement
+
+<!-- roadmap-annotation-marker: RA:v3.3:2026-05-09__release-v3.3 — COMPLETE -->
+
+**Execution notes (v3.3 — Complete):**
+- Cycle: 2026-05-09__release-v3.3
+- Plan published: 2026-05-09
+- Cycle folder: claude/cycles/2026-05-09__release-v3.3/
+- Backlog slice: claude/cycles/2026-05-09__release-v3.3/stage4_backlog_slice.md
+- Status: ✅ Complete — shipped 2026-05-13
+- Verification: Verified_with_deviations (14/17 stories; 4 P3 deviations accepted; DoQ + PO sign-off 2026-05-13)
+- Scope delivered: EPIC-01 (IT-01 backend — DS-05 lifecycle state machine), EPIC-02 (IT-02/IT-03 backend — grace period alerts + stop trail), EPIC-03 (research view spec closure — BLG-SPEC-24/25/26, BLG-FE-28, BLG-QA-14/15/16/17, BLG-OPS-15, BLG-SEC-06, BLG-GOV-20), EPIC-04 (governance patches OA-01–05, BLG-GOV-19, BLG-FEAT-13, BLG-FEAT-21 backend)
+- Scope deferred: IT-01/02/03 frontend (ST-03/05/07) → v3.4; BLG-FEAT-21 frontend → v3.4
 
 ---
 

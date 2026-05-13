@@ -1,11 +1,169 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-09
+**Last Updated:** 2026-05-13
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+## v3.3 Completions — Archived 2026-05-13 (GROOM-20260513-01)
+
+### BLG-FEAT-13 — Add gated feature rollout capability
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-16, EPIC-04, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/product/changelog.md` v3.3 entry; `claude/cycles/2026-05-09__release-v3.3/verification_report.md`
+
+Feature flag infrastructure: `is_flag_enabled()` utility, `FEATURE_FLAGS` env var, `feature_flags.json` config, startup audit logging. `arc3_lifecycle_display` flag as proof-of-concept. Pattern documented in `docs/specs/platform/feature_flags.md`. Mandatory delivery after 3 consecutive deferrals (v3.0–v3.2).
+
+---
+
+### BLG-SPEC-24 — PT-02 research view canonical spec
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-09, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/product/changelog.md` v3.3 entry; `claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md`
+
+Class 2 canonical spec for PT-02 research view delivered at `docs/specs/frontend/pages/research_view.md`. Covers data fields, sources, freshness policy, §13 compliance, display rules. References BLG-SPEC-25, BLG-SPEC-26, BLG-FE-28.
+
+---
+
+### BLG-SPEC-25 — PT-02 research endpoint API contract
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-08, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/product/changelog.md` v3.3 entry; `docs/specs/api_contracts/research_endpoint.md`
+
+Formal Class 2 API contract for `GET /research/{ticker}` at `docs/specs/api_contracts/research_endpoint.md`. Covers request parameters, response schema, source attribution, error codes (known deviation DEV-v33-02: 200+null vs 404/503/429; filed as BLG-SPEC-27), rate limit policy.
+
+---
+
+### BLG-SPEC-26 — Research view data source provenance spec
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-08, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/product/changelog.md` v3.3 entry; `docs/specs/data_provenance/research_view_provenance.md`
+
+Provenance attribution spec for research view data fields. Per-field source (Yahoo Finance, Alpaca, internal), retrieval timestamp requirements, display format. Filed as prerequisite for BLG-SPEC-24 and BLG-FE-28.
+
+---
+
+### BLG-FE-28 — Pre-Trade Research View UX spec
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-09, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/product/changelog.md` v3.3 entry; `docs/design/2026-05-09__release-v3.3/research-view/ux_spec.md`
+
+UX spec for PT-02 research view covering layout, data field placement, source attribution display, news feed design, freshness indicator, empty/error states. References design system tokens. Delivered before v3.3 sprint planning as required.
+
+---
+
+### BLG-QA-14 — Author Playwright E2E test suite for entry checklist
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-11, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `tests/e2e/entry-checklist.spec.js`; `claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md`
+
+`tests/e2e/entry-checklist.spec.js` authored covering SC-CL-01 to SC-CL-07. Note: DEV-v33-03 (P3) — tests cover actual field names (early_exit_conditions/r_target) not spec names (stop_level/risk_reward_notes); deviation documented. Resolves TSG-v32-01.
+
+---
+
+### BLG-QA-15 — PT-02 research view acceptance test protocol
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-10, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/qa/acceptance_protocols/research_view_protocol.md`; `claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md`
+
+Acceptance test protocol for PT-02 research view at `docs/qa/acceptance_protocols/research_view_protocol.md`. Covers observable ACs, Playwright vs human staging split, freshness threshold, error state criteria. Includes SC-RV-01–19 references. Note: SC-RV-18/19 explicit scenarios deferred (TEST-GAP-EPIC-03-v33 filed).
+
+---
+
+### BLG-QA-16 — Research endpoint integration test coverage
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-12, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `backend/routers/test.py`; `claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md`
+
+`GET /research/{ticker}` added to `backend/routers/test.py` with AAPL as representative test value. Covers success, partial source failure, full failure scenarios. Source attribution fields verified. SystemStatus.js endpoint count updated.
+
+---
+
+### BLG-QA-17 — Research view test scenario library
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-10, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/qa/test_scenarios/research_view_scenarios.md`; `claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md`
+
+Test scenario library for PT-02 research view: 19 scenarios SC-RV-01–19 covering data field rendering, source attribution, news feed, freshness indicator, error states. Library reviewed by DoQ. Referenced in BLG-QA-15 acceptance test protocol.
+
+---
+
+### BLG-OPS-15 — Research endpoint latency monitoring
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-12, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/ops/api_performance_baseline.md#section-11`; `claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md`
+
+Research endpoint latency baseline documented: `docs/ops/api_performance_baseline.md` §11. p50 2500–4000ms, p95 ≤3000ms target (multi-source external API aggregation). Latency target documented with rationale.
+
+---
+
+### BLG-SEC-06 — Trade plan data sensitivity classification
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-12, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/specs/security/trade_plan_data_sensitivity.md`; `claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md`
+
+Classification document at `docs/specs/security/trade_plan_data_sensitivity.md`. Three sensitivity levels: Public (ticker), Internal (dates, status), Private (entry zone, stop, R-target, thesis, checklist). Access control principles per level. Cybersecurity sign-off recorded.
+
+---
+
+### BLG-GOV-19 — PT-05 entry checklist §13 compliance review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-15, EPIC-04, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/specs/compliance/pt05_entry_checklist_s13_review.md`; `claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-04.md`
+
+Formal §13 boundary review for PT-05. Confirmed display-only, human-in-the-loop. Strategy Rules & System Intent Owner sign-off recorded. `trade_plan.md` updated to reference compliance review.
+
+---
+
+### BLG-GOV-20 — Trade plan field extension governance
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-13
+**Shipped in:** v3.3 (ST-12, EPIC-03, cycle 2026-05-09__release-v3.3)
+**Evidence:** `docs/governance/trade_plan_field_extension_policy.md`; `claude/cycles/2026-05-09__release-v3.3/qa_evidence_EPIC-03.md`
+
+Field extension governance policy at `docs/governance/trade_plan_field_extension_policy.md`. Covers field addition criteria, migration strategy, backwards compatibility, authority (Data Model owner + Product Owner), changelog format. Data Model owner sign-off recorded.
 
 ---
 

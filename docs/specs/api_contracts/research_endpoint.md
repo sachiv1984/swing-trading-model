@@ -193,7 +193,18 @@ else → market = "US"
 |-------------|-----------|
 | 500 | Unhandled exception in the aggregation handler itself (not sub-source failures) |
 
-Note: 404 (ticker not found) and 503/429 (source unavailable) are not currently surfaced as distinct HTTP codes — the endpoint returns 200 with null fields for all sub-source failures. This is a known limitation (BLG-SPEC-25 — surfacing per-source error metadata is a future enhancement).
+Note: 404 (ticker not found) and 503/429 (source unavailable) are not currently surfaced as distinct HTTP codes — the endpoint returns 200 with null fields for all sub-source failures. This is a known deviation (DEV-v33-02, filed v3.3).
+
+**Known Deviation — DEV-v33-02**
+
+| Field | Detail |
+|-------|--------|
+| Description | AC specified distinct HTTP error codes (404 ticker-not-found, 503 source-unavailable, 429 rate-limited); implementation always returns 200 with null sub-fields on sub-source failure |
+| Canonical requirement | ST-08 acceptance criteria (sprint_backlog.md v3.3): "404 returned when ticker does not exist in any source; 503 returned for critical source failure; 429 returned when rate limit is hit" |
+| Priority | P3 — current behaviour is safe and documented; clients must handle null sub-fields regardless |
+| Target resolution release | v3.4 (or v4.x — non-blocking) |
+| Owner | API Contracts & Documentation Owner |
+| Backlog reference | BLG-SPEC-27 — Research endpoint: surface per-source error codes as distinct HTTP responses |
 
 ---
 
