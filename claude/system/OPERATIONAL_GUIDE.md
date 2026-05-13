@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.74
+**Version:** 3.75
 **Last Updated:** 2026-05-13
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.17)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.18)
 
 ### 8.1 Invocation
 
@@ -1396,7 +1396,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.27 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.17 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.18 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.6 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1419,6 +1419,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.75 | 2026-05-13 | **execution_prompt.md v3.17→v3.18 — AUD-2026-05-13-002 template fix.** §8 source prompt header updated v3.17→v3.18. §14 Execution Engine Source v3.17→v3.18. Change: §5.4 header advisory note added — when creating lessons_learnt_cycle.md, must use `Class: Operational Record (Class 3)` not `Planning Document (Class 4)`; prevents recurrence of class declaration mismatch (third instance: v2.7 fixed by AUD-2026-04-20-004; v3.3 discovered by AUD-2026-05-13). Authority: Head of Specs Team (AUD-2026-05-13-002, 2026-05-13). |
+| 3.74 | 2026-05-13 | **roadmap_prompt.md v5.1→v6.0 — token efficiency refactor.** §6 source prompt header updated v5.1→v6.0. §14 Roadmap Engine Source v6.0. §15 roadmap_prompt version reference updated. Prompt reduced from ~1,651 to 738 lines (−913 lines); BLG-GOV-08 partially addressed. Authority: Head of Specs Team (2026-05-13). |
 | 3.73 | 2026-05-10 | **sprint_planning_prompt.md v2.7→v2.8 + backlog_management_prompt.md v1.5→v1.6 — ST-14 (EPIC-04, v3.3): two OA patches.** §7 source prompt header updated v2.7→v2.8. §6M source prompt header updated v1.5→v1.6. §14 Sprint Planning Engine v2.7→v2.8. §14 Backlog Management Engine v1.5→v1.6. Changes: (OA-05) sprint_planning_prompt.md STEP -1.12 added — "Before Sprint Planning" Backlog Items Check: advisory scan for items with `Provisional-Target: Before v<X.Y> sprint planning`; surfaces unconverted items to Product Owner; recorded in sprint_planning_notes.md; non-blocking. (OA-03/CF-03) backlog_management_prompt.md STEP 3.5 added — Deferral Age Validation: flags items deferred 3+ consecutive cycles without named PO re-deferral; PO re-deferral format defined; health-check blocker until actioned. Policy document `docs/governance/backlog_deferral_policy.md` v1.0 created. Authority: Head of Specs Team (sprint_planning) + PMO Lead (backlog_management) (ST-14, 2026-05-10). |
 | 3.72 | 2026-05-10 | **execution_prompt.md v3.16→v3.17 — ST-13 (EPIC-04, v3.3): two OA patches.** §8 source prompt header updated v3.16→v3.17. §14 Execution Engine Source v3.16→v3.17. Changes: (1) OA-01/CF-01 — STEP 0 Sealed-file integrity check added (hard gate): at each EPIC session start, `git diff --name-only HEAD` and `--cached` are checked against sealed cycle files (stage4_backlog_slice.md, release_plan.md, state.json, amended slice if present); if any sealed file appears in diff output, halt with `[HALT] Sealed file modified: {filename}`. No bypass. (2) OA-02/CF-02 — §14 Playwright Test Authoring Standard gains Mock payload advisory: mocks must match canonical openapi.yaml response shape; nested objects must not be flattened; mismatch = silent test failure in prod. Authority: Head of Specs Team (ST-13, 2026-05-10). |
 | 3.71 | 2026-05-09 | **Modular prompt refactor — three missing Class 6 prompts updated.** `design_gate_prompt.md` v1.2→v1.3, `idea_intake_prompt.md` v2.2→v2.3, `lessons_learnt_prompt.md` v1.8→v1.9: §3 Canonical Governance Sources replaced with reference to `claude/system/shared/governance_stack.md`; Change Log sections replaced with references to `claude/system/changelogs/`; version headers bumped. §6.5 source prompt header updated v1.2→v1.3. §5 source prompt header updated v2.2→v2.3. §14 governance table: Design Gate Engine v1.2→v1.3, Idea Intake Engine v2.2→v2.3, Lessons Learnt Prompt v1.8→v1.9. Authority: Head of Specs Team (modular prompt refactor continuation, 2026-05-09). |

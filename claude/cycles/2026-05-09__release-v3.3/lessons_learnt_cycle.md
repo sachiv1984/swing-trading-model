@@ -1,5 +1,5 @@
 **Owner:** PMO Lead
-**Class:** Planning Document (Class 4)
+**Class:** Operational Record (Class 3)
 **Status:** Active
 **Cycle:** 2026-05-09__release-v3.3
 

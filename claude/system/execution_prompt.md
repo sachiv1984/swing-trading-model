@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.17
-**Last Updated:** 2026-05-10
+**Version:** 3.18
+**Last Updated:** 2026-05-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -956,6 +956,8 @@ If `docs/System_status_report.md` does not exist: create it with this sprint's s
 Invoke: `claude/system/lessons_learnt_prompt.md` (§3.3 — Sprint Execution Phase 3 Append)
 
 Output path: `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (Phase 3 section append — create file if absent)
+
+> **Header when creating (AUD-2026-05-13-002):** If creating the file, use exactly: `Owner: PMO Lead` / `Class: Operational Record (Class 3)` / `Status: Active` / `Last Updated: <date>` / `Cycle: <cycle_id>`. Do NOT use `Planning Document (Class 4)` — that class applies to QA evidence and planning artefacts, not operational records.
 
 > **Output target (CF-02):** Output target is `lessons_learnt_cycle.md` — do **NOT** append to `lessons_learnt.md` (that is the Release Planning artefact, written by the roadmap and post-ship engines). Create `lessons_learnt_cycle.md` if absent. Writing to the wrong file silently corrupts the Release Planning artefact and prevents Phase 5 from reading the correct lessons.
 
