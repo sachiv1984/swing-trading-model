@@ -3,10 +3,11 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.5
-**Last Updated:** 2026-05-09
+**Version:** 1.6
+**Last Updated:** 2026-05-14
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
 **Design Source (v3.3 additions):** docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md, docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md, docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md
+**Design Source (v3.4 additions):** docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md, docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -15,6 +16,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6 | 2026-05-14 | v3.4 design gate: (ST-05) Drawdown review prompt — amber banner above positions table when portfolio drawdown threshold breached; displays drawdown %, threshold, portfolio heat %, regime status, positions by lifecycle state counts; session-scoped dismissal; §13 compliant display-only. (ST-06) Concentration limits warning — amber summary card listing positions/sectors exceeding configurable thresholds; persistent (no dismiss); graceful degradation when DS-03 sector data absent. Design sources: v3.4 additions listed above. Approved: Product Owner 2026-05-14. |
 | 1.5 | 2026-05-09 | v3.3 design gate: (ST-03) Arc 3 position lifecycle state badge — five-state set (GRACE/LOSING/PROFITABLE/EXIT ZONE/UNKNOWN) with days_in_state inline and next-trigger tooltip; (ST-05) Grace period alert zone at top of page for GRACE positions ≥ day 8; (ST-07) Trail Stop action and guided modal for PROFITABLE/EXIT ZONE positions. Design sources listed above. Approved: Product Owner 2026-05-09. |
 | 1.4 | 2026-03-24 | ST-01 (BLG-FEAT-11, v2.3): §Strategy Compliance Panel — collapsible panel below Table View showing per-position ATR compliance data. Display-only. Design source: docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
 | 1.3 | 2026-03-18 | (no change to positions.md — version increment noted for lineage) |

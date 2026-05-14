@@ -1,13 +1,14 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-05-09
+**Version:** 0.4
+**Last Updated:** 2026-05-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.1):** docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md (v3.1 — artefact reference only; file not present in repo)
 **Design Source (v0.2 checklist):** docs/design/2026-05-05__release-v3.2/pre-trade-entry-checklist/ux_spec.md
 **Design Source (v0.3 abandonment + badges):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §A, §B
 **API contract:** docs/specs/api_contracts/trade_plan_endpoints.md
+**v0.4 Sign-off:** Head of Specs Team — 2026-05-14 (BLG-SPEC-28: §6.2 pre-population rules correction)
 
 ---
 
@@ -131,13 +132,17 @@ The checklist is embedded as a grouped section within the Trade Plan creation an
 |---------|-------|----------------|
 | CHK-01 | Strategy signal confirmed | Never auto-checked |
 | CHK-02 | Position size within heat limits | Never auto-checked |
-| CHK-03 | Stop level defined | Auto-checked if `stop_level` is non-null |
-| CHK-04 | Pre-trade research reviewed | Auto-checked if `risk_reward_notes` is non-null |
+| CHK-03 | Stop level defined | Auto-checked if `early_exit_conditions` is non-null and non-empty |
+| CHK-04 | Pre-trade research reviewed | Auto-checked if `r_target` is non-null |
 
 - Each item: checkbox + label
 - All items visible regardless of check state
 - Pre-population is advisory — user may uncheck any item
 - Existing user-set state is not overwritten on re-open
+
+**Pre-population rationale (BLG-SPEC-28):** CHK-03 uses `early_exit_conditions` (not `stop_level`) because exit-condition thinking implies the trader has defined their stop logic even if no numeric stop level is set yet. CHK-04 uses `r_target` (not `risk_reward_notes`) because an explicit R target indicates the risk/reward ratio has been computed — the most meaningful signal that research has been reviewed.
+
+**Test scenario cross-reference:** `tests/e2e/entry-checklist.spec.js` (SC-CL-01 through SC-CL-05) covers pre-population behaviour. Any change to pre-population fields must be reflected in those scenarios.
 
 ### 6.3 "Review Research" Link
 
@@ -243,6 +248,7 @@ All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-05-14 | BLG-SPEC-28 (ST-13, v3.4) — corrected §6.2 pre-population rules: CHK-03 uses `early_exit_conditions` (not `stop_level`); CHK-04 uses `r_target` (not `risk_reward_notes`). Added rationale note and test scenario cross-reference. Authority: Head of Specs Team. |
 | 0.3 | 2026-05-09 | v3.3 design gate — added §8 Trade Plan Abandonment (BLG-FEAT-21: abandon action, modal, abandoned display); added §9 Status Badge Scheme (BLG-FE-30: 7-state badge set including Abandoned). Design source: trade-plan-quick-wins/ux_spec.md §A, §B. Approved: Product Owner 2026-05-09. |
 | 0.2 | 2026-05-05 | v3.2 design gate — added Pre-Trade Entry Checklist section (§6) for EPIC-02 (ST-05, ST-06). Design source: pre-trade-entry-checklist/ux_spec.md. Also: initial file creation (recovering v3.1 gap — trade_plan.md v0.1 was stated as created in v3.1 design gate but not committed). |
 | 0.1 | 2026-04-29 | Initial spec intent — v3.1 design gate (ST-03 — Trade Plan creation flow + detail view). File not committed at the time; recovered at v3.2. |
