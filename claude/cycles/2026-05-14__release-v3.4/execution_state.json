@@ -41,7 +41,7 @@
       "status": "done",
       "branch": "exec/2026-05-14__release-v3.4/EPIC-01",
       "pr_number": 387,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-14__release-v3.4/qa_evidence_EPIC-01.md",
       "test_scenarios": ["SC-LS-01","SC-LS-02","SC-LS-03","SC-LS-04","SC-GP-01","SC-GP-02","SC-GP-03","SC-TS-01","SC-TS-02","SC-TS-03"],
@@ -52,17 +52,71 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-05-14__release-v3.4/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 388,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-14__release-v3.4/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": ["SC-DD-01","SC-DD-02","SC-DD-03","SC-DD-04","SC-DD-05","SC-CC-01","SC-CC-02","SC-CC-03","SC-CC-04","SC-CC-05"],
       "stories": {
-        "ST-04": { "title": "Drawdown-Triggered Review Prompt backend (IT-04)", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 374, "branch": "exec/2026-05-14__release-v3.4/EPIC-02", "commit_sha": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "deviations_filed": false, "last_completed_substep": null },
-        "ST-05": { "title": "Drawdown-Triggered Review Prompt frontend (IT-04)", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "engine", "github_issue": 375, "branch": "exec/2026-05-14__release-v3.4/EPIC-02", "commit_sha": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "deviations_filed": false, "last_completed_substep": null },
-        "ST-06": { "title": "Position Concentration Limits backend + frontend (IT-05)", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "engine", "github_issue": 376, "branch": "exec/2026-05-14__release-v3.4/EPIC-02", "commit_sha": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "deviations_filed": false, "last_completed_substep": null }
+        "ST-04": {
+          "title": "Drawdown-Triggered Review Prompt backend (IT-04)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 374,
+          "branch": "exec/2026-05-14__release-v3.4/EPIC-02",
+          "commit_sha": "25a316a0",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-14T13:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/reference/openapi.yaml#GET /portfolio/drawdown-status"],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "portfolio_risk.py. test.py 53→55. SystemStatus.js '49'→'55'. openapi.yaml + portfolio_endpoints.md updated same commit."
+        },
+        "ST-05": {
+          "title": "Drawdown-Triggered Review Prompt frontend (IT-04)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 375,
+          "branch": "exec/2026-05-14__release-v3.4/EPIC-02",
+          "commit_sha": "a704ddbf",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-14T13:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "DEV-01: useState (in-memory) dismiss — session-scoped per UX spec §6. DrawdownReviewPrompt component. 5/5 Playwright pass."
+        },
+        "ST-06": {
+          "title": "Position Concentration Limits backend + frontend (IT-05)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 376,
+          "branch": "exec/2026-05-14__release-v3.4/EPIC-02",
+          "commit_sha": "a704ddbf",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-14T13:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md"],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "ConcentrationLimitsWarning component. Backend in same commit as ST-04. DS-03 graceful degradation. 5/5 Playwright pass."
+        }
       }
     }
   },
@@ -71,12 +125,13 @@
   "completed_items": [
     "EPIC-04/ST-11", "EPIC-04/ST-12", "EPIC-04/ST-13", "EPIC-04/ST-14",
     "EPIC-03/ST-07", "EPIC-03/ST-08", "EPIC-03/ST-09", "EPIC-03/ST-10",
-    "EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03"
+    "EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03",
+    "EPIC-02/ST-04", "EPIC-02/ST-05", "EPIC-02/ST-06"
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": ["EPIC-04", "EPIC-03"],
-    "epics_pending": ["EPIC-01", "EPIC-02"],
+    "epics_merged": ["EPIC-04", "EPIC-03", "EPIC-01"],
+    "epics_pending": ["EPIC-02"],
     "merge_order": ["EPIC-04", "EPIC-03", "EPIC-01", "EPIC-02"],
     "all_merged": false
   },

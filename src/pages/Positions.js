@@ -16,6 +16,7 @@ import {
   X,
   ArrowUpDown,
 } from "lucide-react";
+
 import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
@@ -278,6 +279,147 @@ function TrailStopModal({ position, onClose }) {
   );
 }
 
+const LIFECYCLE_BADGE_COLOURS = {
+  GRACE: "bg-blue-600",
+  PROFITABLE: "bg-green-700",
+  LOSING: "bg-red-600",
+  "EXIT ZONE": "bg-violet-600",
+  UNKNOWN: "bg-gray-500",
+};
+
+function DrawdownReviewPrompt() {
+  const [dismissed, setDismissed] = useState(false);
+  const { data } = useQuery({
+    queryKey: ["drawdown-status"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/portfolio/drawdown-status`);
+      const json = await res.json();
+      return json?.data || {};
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+
+  if (dismissed || !data?.threshold_breached) return null;
+
+  const stateColours = {
+    GRACE: "bg-blue-600",
+    PROFITABLE: "bg-green-700",
+    LOSING: "bg-red-600",
+    "EXIT ZONE": "bg-violet-600",
+    UNKNOWN: "bg-gray-500",
+  };
+
+  const statesByCount = Object.entries(data.positions_by_state || {}).filter(([, count]) => count > 0);
+
+  return (
+    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4" role="alert">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0" aria-hidden="true" />
+          <span className="font-semibold text-amber-900">Portfolio Drawdown Review</span>
+        </div>
+        <button
+          onClick={() => setDismissed(true)}
+          aria-label="Dismiss drawdown review prompt"
+          className="text-amber-700 hover:text-amber-900 transition-colors flex-shrink-0"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+      <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: "Current Drawdown", value: `${data.current_drawdown_pct?.toFixed(1) ?? "—"}%`, amber: true },
+          { label: "Threshold", value: `${data.threshold_pct?.toFixed(1) ?? "—"}%` },
+          { label: "Portfolio Heat", value: data.portfolio_heat_pct != null ? `${data.portfolio_heat_pct.toFixed(1)}%` : "—" },
+          { label: "Regime", value: data.regime_status || "—" },
+        ].map(({ label, value, amber }) => (
+          <div key={label} className="bg-amber-100/60 rounded p-2">
+            <p className="text-amber-700 text-xs font-medium">{label}</p>
+            <p className={`text-sm font-bold mt-0.5 ${amber ? "text-amber-700" : "text-amber-900"}`}>{value}</p>
+          </div>
+        ))}
+      </div>
+      {statesByCount.length > 0 && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="text-xs text-amber-700 font-medium">Positions by state:</span>
+          {statesByCount.map(([state, count]) => (
+            <span
+              key={state}
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs text-white font-medium ${stateColours[state] || "bg-gray-500"}`}
+            >
+              {state} <span className="opacity-80">{count}</span>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConcentrationLimitsWarning() {
+  const { data } = useQuery({
+    queryKey: ["concentration-status"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/portfolio/concentration-status`);
+      const json = await res.json();
+      return json?.data || {};
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+
+  if (!data?.any_breach) return null;
+
+  const { breaching_positions = [], breaching_sectors = [] } = data;
+
+  return (
+    <div className="rounded-lg bg-amber-50 border border-amber-300 p-4" role="alert">
+      <div className="flex items-center gap-2">
+        <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0" aria-hidden="true" />
+        <span className="font-semibold text-amber-900">Concentration Limits</span>
+      </div>
+      {breaching_positions.length > 0 && (
+        <div className="mt-3">
+          <p className="text-xs text-amber-700 font-medium mb-1.5">
+            Positions exceeding limit ({data.position_threshold_pct}% of portfolio heat):
+          </p>
+          <ul className="space-y-1">
+            {breaching_positions.map((p) => (
+              <li key={p.ticker} className="text-sm text-amber-900">
+                <span className="font-semibold">{p.ticker}</span>
+                {" — "}{p.heat_pct.toFixed(1)}% of heat{" "}
+                <span className="text-amber-700 text-xs">(limit: {p.limit_pct}%)</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {breaching_sectors.length > 0 && (
+        <div className="mt-3">
+          <p className="text-xs text-amber-700 font-medium mb-1.5">
+            Sectors exceeding limit ({data.sector_threshold_pct}% concentration):
+          </p>
+          <ul className="space-y-1">
+            {breaching_sectors.map((s) => (
+              <li key={s.sector} className="text-sm text-amber-900">
+                <span className="font-semibold">{s.sector}</span>
+                {" — "}{s.concentration_pct.toFixed(1)}%{" "}
+                <span className="text-amber-700 text-xs">(limit: {s.limit_pct}%)</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <a
+        href="/#/Settings"
+        className="mt-3 inline-block text-xs text-amber-700 underline hover:text-amber-900"
+        aria-label="Review portfolio concentration limit settings"
+      >
+        Review Settings
+      </a>
+    </div>
+  );
+}
+
 function PositionEarningsCell({ ticker, market }) {
   const { data, loading } = useEarnings(ticker, market);
   if (loading) return <TableCell><span className="text-slate-600 text-xs">…</span></TableCell>;
@@ -488,6 +630,12 @@ export default function Positions() {
 
       {/* ST-02 (BLG-FEAT-09): Metrics staleness indicator — below title, inline with view controls */}
       <MetricsStalenessIndicator />
+
+      {/* IT-04 (Arc 3): Drawdown review prompt — portfolio-level, highest severity */}
+      <DrawdownReviewPrompt />
+
+      {/* IT-05 (Arc 3): Concentration limits warning — portfolio-level, structural */}
+      <ConcentrationLimitsWarning />
 
       {/* ST-02 (IT-02): Grace period alert zone — display-only, §13 compliant */}
       <GracePeriodAlertZone />

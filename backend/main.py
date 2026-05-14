@@ -23,6 +23,7 @@ from routers import screener as screener_router
 from routers import trade_plans as trade_plans_router
 from routers import earnings as earnings_router
 from routers import research as research_router
+from routers import portfolio_risk as portfolio_risk_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers, sync_from_tickers_table
@@ -180,6 +181,7 @@ app.include_router(screener_router.router)
 app.include_router(trade_plans_router.router)
 app.include_router(earnings_router.router)
 app.include_router(research_router.router)
+app.include_router(portfolio_risk_router.router)
 
 
 @app.on_event("startup")
