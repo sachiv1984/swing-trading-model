@@ -234,6 +234,76 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /portfolio/drawdown-status:
+    get:
+      tags: [Portfolio]
+      summary: Get portfolio drawdown status vs threshold
+      description: >
+        Returns current drawdown % calculated from 30-day portfolio peak, configurable threshold,
+        and threshold_breached boolean. When breached, also returns lifecycle state counts,
+        portfolio heat %, and regime status. Contract: IT-04 (Arc 3).
+      responses:
+        "200":
+          description: Drawdown status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      current_drawdown_pct:
+                        type: number
+                      threshold_pct:
+                        type: number
+                      threshold_breached:
+                        type: boolean
+                      portfolio_heat_pct:
+                        type: number
+                      regime_status:
+                        type: string
+                      positions_by_state:
+                        type: object
+
+  /portfolio/concentration-status:
+    get:
+      tags: [Portfolio]
+      summary: Get position and sector concentration breach status
+      description: >
+        Returns any positions or sectors exceeding configurable concentration thresholds.
+        Single-position threshold default 15% of portfolio heat; sector threshold default 30%.
+        Uses DS-03 sector data where available. Contract: IT-05 (Arc 3).
+      responses:
+        "200":
+          description: Concentration status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      any_breach:
+                        type: boolean
+                      position_threshold_pct:
+                        type: number
+                      sector_threshold_pct:
+                        type: number
+                      breaching_positions:
+                        type: array
+                        items:
+                          type: object
+                      breaching_sectors:
+                        type: array
+                        items:
+                          type: object
+
   /reports/tax-year:
     get:
       tags: [Reports]

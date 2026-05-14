@@ -137,6 +137,10 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /positions/grace-period-alerts", "method": "GET", "url": f"{base_url}/positions/grace-period-alerts", "critical": False},
         {"name": "GET /positions/{id}/stop-trail", "method": "GET", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000/stop-trail", "critical": False},
 
+        # Portfolio Risk (v3.4 / EPIC-02)
+        {"name": "GET /portfolio/drawdown-status", "method": "GET", "url": f"{base_url}/portfolio/drawdown-status", "critical": False},
+        {"name": "GET /portfolio/concentration-status", "method": "GET", "url": f"{base_url}/portfolio/concentration-status", "critical": False},
+
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
     ]

@@ -577,3 +577,65 @@ Errors use the standard error envelope from **conventions.md**.
 | 1.8.2 | 2026-02-25 | BLG-FEAT-01: Added `current_drawdown_percent` and `peak_portfolio_value` fields to GET /portfolio portfolio-level response (QWB pre-alignment D1) |
 | 1.9.0 | 2026-03-02 | S2-07 (EPIC-06/BLG-TECH-08): Spec updated to match live `portfolio_service.py` implementation. Position object example and field notes corrected — removed stale fields (`current_price_native`, `stop_price`, `stop_price_native`, `pnl_percent`); added live fields (`current_value`, `pnl_pct`, `current_stop`, `fx_rate`, `grace_days_remaining`, `live_fx_rate`). Key omissions table corrected (fx_rate/live_fx_rate ARE returned by this endpoint). pnl_pct note corrected. OBS-QWB-R1-01 resolved. TASK-25/26/27 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |
 | 2.0.0 | 2026-03-17 | ST-13 (EPIC-04): GET /portfolio/prospective-heat added — calculates portfolio heat including a prospective new position. Response shape, query parameters, calculation rules, and business rule failures defined. |
+
+---
+
+## GET /portfolio/drawdown-status
+
+Returns current portfolio drawdown status vs a configurable threshold.
+
+**Drawdown calculation:**
+```
+current_drawdown_pct = (30d_peak − current_total_value) / 30d_peak × 100
+30d_peak             = MAX(total_value) over portfolio_history last 30 days
+threshold_pct        = settings.drawdown_threshold_pct (default 10.0; range 5–50)
+threshold_breached   = current_drawdown_pct >= threshold_pct
+```
+
+**Response (threshold not breached):**
+```json
+{ "status": "ok", "data": { "current_drawdown_pct": 3.2, "threshold_pct": 10.0, "threshold_breached": false } }
+```
+
+**Response (threshold breached):**
+```json
+{ "status": "ok", "data": {
+    "current_drawdown_pct": 12.4, "threshold_pct": 10.0, "threshold_breached": true,
+    "portfolio_heat_pct": 6.3, "regime_status": "Bearish",
+    "positions_by_state": { "GRACE": 2, "PROFITABLE": 1, "LOSING": 3, "EXIT ZONE": 1, "UNKNOWN": 0 }
+} }
+```
+
+**Error/missing data:** `threshold_breached: false` returned silently; positions page loads normally.
+
+---
+
+## GET /portfolio/concentration-status
+
+Returns positions and sectors exceeding configurable concentration thresholds.
+
+**Calculation:**
+```
+position_heat_pct     = position_risk_gbp / total_risk_gbp × 100
+sector_concentration  = sum(sector_risk_gbp) / total_risk_gbp × 100  [DS-03 sector field]
+pos_threshold_pct     = settings.concentration_position_threshold_pct (default 15.0; range 5–50)
+sector_threshold_pct  = settings.concentration_sector_threshold_pct (default 30.0; range 10–80)
+```
+
+Positions without sector data are excluded from the sector calculation. No error raised.
+
+**Response:**
+```json
+{ "status": "ok", "data": {
+    "any_breach": true,
+    "position_threshold_pct": 15.0, "sector_threshold_pct": 30.0,
+    "breaching_positions": [{ "ticker": "NVDA", "heat_pct": 22.1, "limit_pct": 15.0 }],
+    "breaching_sectors": [{ "sector": "Technology", "concentration_pct": 41.2, "limit_pct": 30.0 }]
+} }
+```
+
+**Changelog (portfolio_endpoints.md):**
+
+| Version | Date | Change |
+|---------|------|--------|
+| 2.1.0 | 2026-05-14 | ST-04/ST-06 (EPIC-02 v3.4): Added GET /portfolio/drawdown-status and GET /portfolio/concentration-status (IT-04/IT-05 Arc 3). |
