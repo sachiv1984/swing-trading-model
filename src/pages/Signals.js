@@ -22,6 +22,7 @@ export default function SignalsPage() {
   const [marketFilter, setMarketFilter] = useState("all");
   const [sortBy, setSortBy] = useState("rank");
   const [showDismissed, setShowDismissed] = useState(false);
+  const [showRecentOnly, setShowRecentOnly] = useState(true);
   const [selectedSignal, setSelectedSignal] = useState(null);
 
   // top_n and lookback_days controls with debounce
@@ -145,6 +146,17 @@ export default function SignalsPage() {
 
   if (!showDismissed) {
     filteredSignals = filteredSignals.filter(s => s.status !== "dismissed");
+  }
+
+  // ST-08 (BLG-FE-25): Default to most recent trading day's signals
+  const mostRecentDate = signals
+    .map(s => s.signal_date)
+    .filter(Boolean)
+    .sort()
+    .at(-1);
+
+  if (showRecentOnly && mostRecentDate) {
+    filteredSignals = filteredSignals.filter(s => s.signal_date === mostRecentDate);
   }
 
   // Sort signals
@@ -351,6 +363,18 @@ export default function SignalsPage() {
           )}
         >
           {showDismissed ? "Hide" : "Show"} Dismissed
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowRecentOnly(!showRecentOnly)}
+          className={cn(
+            "border-slate-700 h-9",
+            showRecentOnly ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white hover:bg-slate-800"
+          )}
+        >
+          {showRecentOnly ? "Most Recent Day" : "All Days"}
         </Button>
       </div>
 

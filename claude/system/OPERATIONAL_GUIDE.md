@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.75
-**Last Updated:** 2026-05-13
+**Version:** 3.76
+**Last Updated:** 2026-05-14
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1277,6 +1277,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Closure Record | `claude/cycles/<id>/closure_record.md` | 3 | PMO Lead | Post-Ship |
 | Closure State | `claude/cycles/<id>/closure_state.json` | — | PMO Lead | Post-Ship |
 | Audit Report | `claude/cycles/<id>/audit_report_AUD-<date>.md` | 3 | Head of Specs Team | Post-Ship |
+| AI Journal Review Cadence | `docs/specs/compliance/ai_journal_review_cadence.md` | 2 | AI Compliance & Governance Officer | Governance |
 | Amendment Manifest | `claude/cycles/<id>/amendments/<AMD-id>/amendment_manifest.md` | 3 | PMO Lead | Amendment |
 | Amendment State | `claude/cycles/<id>/amendments/<AMD-id>/amendment_state.json` | — | PMO Lead | Amendment |
 | Amendment Ratification | `claude/cycles/<id>/amendments/<AMD-id>/amendment_ratification.md` | 4 | PMO Lead | Amendment |
@@ -1419,6 +1420,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.76 | 2026-05-14 | **BLG-AI-03 (ST-13, v3.4) — AI Journal Review Cadence added to §13 Artefact Register.** New artefact row: `docs/specs/compliance/ai_journal_review_cadence.md` (Class 2, AI Compliance & Governance Officer, Governance). Defines quarterly review checklist, §13 re-confirmation, model version check, error rate review, record format, escalation path. Authority: AI Compliance & Governance Officer (BLG-AI-03, 2026-05-14). |
 | 3.75 | 2026-05-13 | **execution_prompt.md v3.17→v3.18 — AUD-2026-05-13-002 template fix.** §8 source prompt header updated v3.17→v3.18. §14 Execution Engine Source v3.17→v3.18. Change: §5.4 header advisory note added — when creating lessons_learnt_cycle.md, must use `Class: Operational Record (Class 3)` not `Planning Document (Class 4)`; prevents recurrence of class declaration mismatch (third instance: v2.7 fixed by AUD-2026-04-20-004; v3.3 discovered by AUD-2026-05-13). Authority: Head of Specs Team (AUD-2026-05-13-002, 2026-05-13). |
 | 3.74 | 2026-05-13 | **roadmap_prompt.md v5.1→v6.0 — token efficiency refactor.** §6 source prompt header updated v5.1→v6.0. §14 Roadmap Engine Source v6.0. §15 roadmap_prompt version reference updated. Prompt reduced from ~1,651 to 738 lines (−913 lines); BLG-GOV-08 partially addressed. Authority: Head of Specs Team (2026-05-13). |
 | 3.73 | 2026-05-10 | **sprint_planning_prompt.md v2.7→v2.8 + backlog_management_prompt.md v1.5→v1.6 — ST-14 (EPIC-04, v3.3): two OA patches.** §7 source prompt header updated v2.7→v2.8. §6M source prompt header updated v1.5→v1.6. §14 Sprint Planning Engine v2.7→v2.8. §14 Backlog Management Engine v1.5→v1.6. Changes: (OA-05) sprint_planning_prompt.md STEP -1.12 added — "Before Sprint Planning" Backlog Items Check: advisory scan for items with `Provisional-Target: Before v<X.Y> sprint planning`; surfaces unconverted items to Product Owner; recorded in sprint_planning_notes.md; non-blocking. (OA-03/CF-03) backlog_management_prompt.md STEP 3.5 added — Deferral Age Validation: flags items deferred 3+ consecutive cycles without named PO re-deferral; PO re-deferral format defined; health-check blocker until actioned. Policy document `docs/governance/backlog_deferral_policy.md` v1.0 created. Authority: Head of Specs Team (sprint_planning) + PMO Lead (backlog_management) (ST-14, 2026-05-10). |
