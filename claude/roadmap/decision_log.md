@@ -702,3 +702,41 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **STEP 8.6 guardrail:** 4 Challenger Type A counter-arguments across 16 advancing ideas; not all candidates advanced without challenge. PASS.
 
 **Meta-review:** DUE — 3rd cycle since last meta-review (2026-04-21__scheduled). Conducted — no prompt patches warranted. Single Type D incident (2026-05-05 F-01) was isolated. `last_meta_review_cycle` updated to 2026-05-08__scheduled.
+
+---
+
+### DL-026 — 2026-05-13
+
+**Decision type:** Kill
+**Initiative:** BLG-GOV-08 — Engine Prompt Compression (roadmap deferred items reference)
+**Cycle:** 2026-05-13__scheduled
+**Displacement:** N/A — this is a Kill/retirement
+**Workforce impact:** None (deferred item, consuming no active resources)
+**Rationale:** 9+ consecutive deferrals (v2.4–v3.3). Original scope was compression of roadmap_prompt.md and release_planning_prompt.md for token efficiency. Partial delivery achieved: roadmap_prompt.md v6.0 (cycle 2026-05-13 AUD-2026-05-13 Tier 1 improvement) saved 8,104 tokens/cycle — the primary value has been delivered. BLG-GOV-08 is already in backlog_archive.md; the roadmap's deferred items section carried a stale pointer with a ⚠️ stale notice explicitly requesting retirement at this rebalance. No new trigger has emerged in 9 cycles. Retiring the roadmap reference. The archived backlog item record is preserved for historical reference.
+**Decision owner:** Product Owner
+
+---
+
+### DL-027 — 2026-05-13
+
+**Decision type:** Add (to backlog)
+**Initiative:** BLG-QA-18 — Screener Accuracy Test Protocol
+**Source idea:** IDEA-director-of-quality-20260421-02
+**Cycle:** 2026-05-13__scheduled
+**Displacement:** BLG-OPS-13 deprioritised (performance baseline update for 18 new endpoints — P3; no latency incidents; continuing to defer)
+**Workforce impact:** S effort (~0.5–1 day); adds to QA backlog; no new FTE required
+**Rationale:** Screener in stable production 46+ days since v3.0. A formal accuracy test protocol against known inputs is now warranted to prevent silent regression of §11 deterministic filter logic. Gate condition cleared. Stale idea (3 consecutive parks) requires active promotion per STEP 4.5. Challenger issued a Clearance Statement confirming no §13 engagement. Scores: Risk Reduction 4/5; SPS = 1; Effort S.
+**Decision owner:** Product Owner
+
+---
+
+### DL-028 — 2026-05-13
+
+**Decision type:** Add (to backlog)
+**Initiative:** BLG-FE-31 — Research View Component Library
+**Source idea:** IDEA-base44-frontend-20260508-01
+**Cycle:** 2026-05-13__scheduled
+**Displacement:** BLG-FE-27 deprioritised (Nav bar redesign exploration, P3; no immediate implementation target)
+**Workforce impact:** S effort (~0.5–1 day); adds to FE backlog; no new FTE required
+**Rationale:** PT-02 research view frontend shipped v3.2. Arc 3 frontend stories ST-03/05/07 (returned to backlog) are confirmed v3.4 items that will reuse PT-02 components (price card, regime panel, news feed, source attribution). A component catalogue at sprint planning time prevents duplicate implementation. Gate condition (PT-02 frontend delivery) cleared. Challenger Type A counter-argument (staleness risk) rebutted by PO: reuse trigger is confirmed, not speculative. Scores: Risk Reduction 3/5; SPS = 1; Effort S.
+**Decision owner:** Product Owner

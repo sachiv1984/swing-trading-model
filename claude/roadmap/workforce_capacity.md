@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-04-25 (roadmap rebalance — cycle 2026-04-24__scheduled — 2 S-effort adds)
+**Last Updated:** 2026-05-14 (roadmap rebalance — cycle 2026-05-13__scheduled — 2 backlog adds: BLG-QA-18 S-effort, BLG-FE-31 S-effort)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 

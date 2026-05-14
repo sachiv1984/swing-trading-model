@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-13 (post-ship closure v3.3 — 13 items marked complete)
+**Last Updated:** 2026-05-13 (rebalance 2026-05-13__scheduled — 2 adds: BLG-QA-18, BLG-FE-31 (DL-027/028); BLG-FE-22 Provisional-Target updated)
 **Last rebalance:** 2026-05-08 (cycle 2026-05-08__scheduled — DL-025 backlog adds × 16)
 
 > ⚠️ Standing Notice
@@ -116,13 +116,38 @@ Trade plans can currently be in Active or Closed states but there is no mechanis
 
 ---
 
+### BLG-FE-31 — Research view component library
+**Priority:** P3 (Low)
+**Type:** Frontend / Documentation
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-base44-frontend-20260508-01 — promoted cycle 2026-05-13__scheduled (DL-028)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v3.4 sprint planning (before IT-01/02/03 frontend stories are scoped)
+
+**Problem**
+The PT-02 research view shipped v3.2 with reusable UI components (price card, regime panel, news feed, source attribution row). Arc 3 frontend stories ST-03/05/07 (lifecycle badge, grace period alert card, stop trail panel) will need to extend or reuse these components. Without a catalogue, sprint planning risks duplicate implementation or inconsistent component usage.
+
+**Scope**
+- Catalogue each PT-02 research view UI component: name, file path, props, variants, and usage locations
+- Note reuse candidates for Arc 3 frontend: which components are directly reusable vs need extension
+- Format: lightweight reference document (not a formal design spec — just a component inventory)
+- Scope constraint: PT-02 research view components only; not a full application component inventory
+
+**Acceptance Criteria**
+- Catalogue covers all major PT-02 research view components (price card, regime/signal panel, news feed, source attribution row, freshness indicator)
+- Each entry includes: component name, file path, key props, known variants
+- Reuse candidates for ST-03/05/07 explicitly noted
+- Delivered before v3.4 sprint planning for IT-01/02/03 frontend stories
+
+---
+
 ### BLG-FE-22 — Screener morning routine UX spec
 **Priority:** P2 (Medium)
 **Type:** Frontend / UX Specification
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** IDEA-product-owner-20260421-01 — promoted cycle 2026-05-05__scheduled (DL-024)
 **Effort:** S (~0.5–1 day)
-**Provisional-Target:** Before v3.2 sprint planning
+**Provisional-Target:** v3.4 sprint planning (original target passed — PT-02 research view delivered without this spec; still useful before IT-01/02/03 frontend sprint planning in v3.4)
 
 **Problem**
 The screener is live (v3.0) with DS-07 watchlist promotion. The current multi-surface flow (screener results → watchlist → pre-trade research) has no designed continuity. Arc 2 PT-02 (Pre-Trade Research View) needs a clear workflow spec for how users navigate from screener discovery to research — otherwise PT-02 UX risks being designed in isolation from the Arc 1→Arc 2 transition.
@@ -332,6 +357,33 @@ AI Journal Summarisation (AI-SUM, shipped v2.8) is live in production using a sp
 ---
 
 ## 5. QA & Test Automation Backlog
+
+---
+
+### BLG-QA-18 — Screener accuracy test protocol
+**Priority:** P2 (Medium)
+**Type:** QA / Specification
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260421-02 — promoted cycle 2026-05-13__scheduled (DL-027)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v3.4 (before or alongside any sprint touching screener filter logic)
+
+**Problem**
+The screener applies deterministic §11 rules (regime gate, ATR threshold, signal score) across 600+ tickers. No formal verification protocol exists for confirming screener output is correct against known inputs. Filter logic changes could introduce silent accuracy regressions undetected by current CI.
+
+**Scope**
+- Define a formal QA protocol for validating screener output accuracy
+- Protocol: test screener against a known sample of tickers with predetermined ATR/regime states and verify output matches expected §11 filter logic
+- Reference `strategy_rules.md §11` as the authoritative parameter source
+- Include: regime gate pass/fail cases, ATR threshold boundary cases, signal score threshold cases
+- Build on existing BLG-QA-08 mock harness and BLG-QA-10 screener test coverage
+
+**Acceptance Criteria**
+- Formal accuracy test protocol documented (Owner: Director of Quality)
+- Protocol specifies observable, measurable acceptance criteria (not subjective judgement)
+- Minimum sample: tickers with known regime, ATR, signal values — expected include/exclude outcome documented
+- Protocol executable by QA & Testing Owner using existing BLG-QA-08 mock harness
+- §11 parameters (regime gate, ATR multipliers, signal threshold) explicitly referenced in protocol
 
 ---
 

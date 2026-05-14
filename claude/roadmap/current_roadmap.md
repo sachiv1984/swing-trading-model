@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-13 (post-ship closure v3.3)
+**Last Updated:** 2026-05-13 (rebalance 2026-05-13__scheduled — DL-026 Kill BLG-GOV-08 ref; DL-027/028 2 backlog adds)
 **Last rebalance:** 2026-05-08 (cycle 2026-05-08__scheduled — Standard-tier scheduled rebalance; DL-025 backlog adds × 16)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -319,9 +319,7 @@ Items in this section are sequenced and ready for planning when the current vers
 |Full Compliance Scoring                  |H     |Lightweight version shipped v1.9; Arc 5 SI-01 supersedes this                               |
 |BLG-TECH-05 — Prometheus metrics endpoint|L–M   |Defer until operational need or multi-user                                                  |
 |Customisable Dashboard Layout            |H     |High build cost, low current priority; defer indefinitely at current scale                  |
-|BLG-GOV-08 — Engine prompt compression   |L     |5 consecutive deferrals (v2.4–v2.8); **final deferral — retirement review at v2.9 planning**|
-
-> ⚠️ **Stale Notice (BLG-GOV-08):** This item has had no cycle activity since v2.4 — now 9+ consecutive deferrals (v2.4–v3.3). Review for retirement at next roadmap rebalance.
+*BLG-GOV-08 — Engine prompt compression — ❌ Retired 2026-05-13 (DL-026): 9+ consecutive deferrals; primary value delivered by roadmap_prompt.md v6.0 refactor (AUD-2026-05-13). Archived in backlog_archive.md.*
 
 -----
 
