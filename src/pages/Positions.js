@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEarnings } from "../hooks/useEarnings";
-import { base44, api } from "../api/base44Client";
+import { base44, api, apiFetch } from "../api/base44Client";
 import {
   LayoutGrid,
   List,
@@ -12,6 +12,9 @@ import {
   TrendingUp,
   TrendingDown,
   FolderOpen,
+  AlertTriangle,
+  X,
+  ArrowUpDown,
 } from "lucide-react";
 import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
@@ -36,6 +39,244 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
 import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
+import { toast } from "sonner";
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
+// ---------------------------------------------------------------------------
+// ST-01 (IT-01) — Lifecycle state badge
+// ---------------------------------------------------------------------------
+
+const LIFECYCLE_CONFIG = {
+  GRACE:      { label: "GRACE",      bg: "bg-blue-600",   tip: "Exits grace when position moves > 0.5 ATR or after 10 trading days" },
+  LOSING:     { label: "LOSING",     bg: "bg-red-600",    tip: "Exits when price rises above entry by 0.5 ATR" },
+  PROFITABLE: { label: "PROFITABLE", bg: "bg-green-700",  tip: "Advances to Exit Zone when P&L reaches 2R target" },
+  "EXIT ZONE":{ label: "EXIT ZONE",  bg: "bg-violet-600", tip: "Position has reached R-target. Review stop or exit." },
+  UNKNOWN:    { label: "UNKNOWN",    bg: "bg-gray-500",   tip: "Set a stop and R-target on the linked trade plan to enable lifecycle tracking." },
+};
+
+function LifecycleBadge({ state, daysInState }) {
+  const cfg = LIFECYCLE_CONFIG[state] || LIFECYCLE_CONFIG.UNKNOWN;
+  const label = state === "GRACE" && daysInState != null
+    ? `GRACE — ${daysInState}d`
+    : cfg.label;
+  return (
+    <span
+      className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-white whitespace-nowrap", cfg.bg)}
+      title={cfg.tip}
+      aria-label={`Position state: ${state}${daysInState != null ? `, ${daysInState} days in state` : ""}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ST-02 (IT-02) — Grace period alert card
+// ---------------------------------------------------------------------------
+
+const GRACE_DISMISS_KEY = (positionId) => `grace_alert_dismissed_${positionId}`;
+
+function GracePeriodAlertZone() {
+  const { data: alerts = [] } = useQuery({
+    queryKey: ["gracePeriodAlerts"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/positions/grace-period-alerts`);
+      const json = await res.json();
+      return json.data || [];
+    },
+    staleTime: 60000,
+  });
+
+  const [dismissed, setDismissed] = useState(() => {
+    const d = {};
+    alerts.forEach((a) => {
+      if (sessionStorage.getItem(GRACE_DISMISS_KEY(a.position_id))) d[a.position_id] = true;
+    });
+    return d;
+  });
+
+  const dismiss = (positionId) => {
+    sessionStorage.setItem(GRACE_DISMISS_KEY(positionId), "1");
+    setDismissed((prev) => ({ ...prev, [positionId]: true }));
+  };
+
+  const visible = alerts.filter((a) => !dismissed[a.position_id]);
+  if (visible.length === 0) return null;
+
+  return (
+    <div role="alert" aria-live="polite" className="space-y-3">
+      {visible.map((alert) => {
+        const daysLeft = 10 - alert.days_in_state;
+        const bodyText = alert.days_in_state >= 10
+          ? "Grace period has ended. Your position will transition to LOSING or PROFITABLE on next refresh."
+          : `Your grace period ends in ${daysLeft} trading day${daysLeft !== 1 ? "s" : ""}. Review your original thesis before the window closes.`;
+        const tp = alert.trade_plan_summary;
+
+        return (
+          <div
+            key={alert.position_id}
+            className="rounded-xl border-l-4 border-amber-500 bg-amber-500/10 px-4 py-3"
+            style={{ borderLeftColor: "#D97706" }}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2 text-amber-300 font-semibold text-sm">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                Grace Period Alert — {alert.ticker}
+                <span className="text-xs font-medium text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded">
+                  Day {alert.days_in_state} of 10
+                </span>
+              </div>
+              <button
+                onClick={() => dismiss(alert.position_id)}
+                aria-label={`Dismiss grace period alert for ${alert.ticker}`}
+                className="text-amber-400/60 hover:text-amber-300 flex-shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-sm text-amber-200/80 mt-1">{bodyText}</p>
+            {tp ? (
+              <div className="mt-2 text-xs text-slate-300 space-y-0.5">
+                {tp.setup_thesis && <div><span className="text-slate-500">Thesis: </span>"{tp.setup_thesis.slice(0, 120)}{tp.setup_thesis.length > 120 ? "…" : ""}"</div>}
+                {tp.stop_level != null && <div><span className="text-slate-500">Stop: </span>{tp.stop_level}</div>}
+                {tp.r_target != null && <div><span className="text-slate-500">R-target: </span>{tp.r_target}R</div>}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-400 mt-1">No trade plan linked. Consider adding a plan for context.</p>
+            )}
+            {alert.trade_plan_id && (
+              <Link
+                to={`/TradePlan?edit=${alert.trade_plan_id}&ticker=${alert.ticker}`}
+                className="inline-block mt-2 text-xs text-amber-400 hover:text-amber-300 underline"
+              >
+                View Trade Plan →
+              </Link>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ST-03 (IT-03) — Trail Stop modal
+// ---------------------------------------------------------------------------
+
+function TrailStopModal({ position, onClose }) {
+  const queryClient = useQueryClient();
+  const isEligible = position?.lifecycle_state === "PROFITABLE" || position?.lifecycle_state === "EXIT ZONE";
+  const hasStop = position?.current_stop != null || position?.stop_price != null;
+  const stopValue = position?.current_stop ?? position?.stop_price;
+
+  const currencySymbol = position?.market === "UK" ? "£" : "$";
+
+  const { data: trailData, isLoading, isError } = useQuery({
+    queryKey: ["stopTrail", position?.id],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/positions/${position.id}/stop-trail`);
+      if (!res.ok) throw new Error("Trail calculation failed");
+      const json = await res.json();
+      return json.data || json;
+    },
+    enabled: !!position?.id && isEligible && hasStop,
+  });
+
+  const updateStopMutation = useMutation({
+    mutationFn: ({ id, stop_price }) =>
+      apiFetch(`${API_BASE}/positions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stop_price }),
+      }).then((r) => r.json()),
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+      toast.success(`Stop updated to ${currencySymbol}${vars.stop_price?.toFixed(2)}`);
+      onClose();
+    },
+    onError: () => {
+      toast.error("Failed to update stop. Please try again.");
+    },
+  });
+
+  const atrTrailStop = trailData?.atr_trail_stop;
+  const trailDiff = trailData?.trail_difference;
+  const trailR = trailData?.trail_r_terms;
+  const isNegativeDiff = trailDiff != null && trailDiff < 0;
+  const confirmLabel = atrTrailStop != null
+    ? (isNegativeDiff ? `Lower stop to ${currencySymbol}${Number(atrTrailStop).toFixed(2)}` : `Update stop to ${currencySymbol}${Number(atrTrailStop).toFixed(2)}`)
+    : "Update stop";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" role="dialog" aria-modal="true">
+      <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Trail Stop — {position?.ticker}</h2>
+            <p className="text-xs text-slate-400">ATR-based stop trail calculation</p>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+        </div>
+
+        {isLoading && (
+          <div className="space-y-3 animate-pulse">
+            <div className="h-5 bg-slate-700 rounded w-3/4" />
+            <div className="h-5 bg-slate-700 rounded w-2/3" />
+            <div className="h-5 bg-slate-700 rounded w-1/2" />
+          </div>
+        )}
+
+        {isError && (
+          <div className="text-sm text-rose-400">Unable to load trail calculation. Please try again.</div>
+        )}
+
+        {!isLoading && !isError && trailData && (
+          <dl className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-slate-400">Current Stop</dt>
+              <dd className="text-white font-medium">{currencySymbol}{Number(trailData.current_stop ?? stopValue ?? 0).toFixed(2)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-slate-400">ATR Trail Stop</dt>
+              <dd className="text-white font-medium">{currencySymbol}{Number(atrTrailStop).toFixed(2)}</dd>
+            </div>
+            {trailDiff != null && (
+              <div className="flex justify-between">
+                <dt className="text-slate-400">Trail Difference</dt>
+                <dd className={cn("font-medium", isNegativeDiff ? "text-amber-400" : "text-emerald-400")}>
+                  {trailDiff >= 0 ? "+" : "−"}{currencySymbol}{Math.abs(trailDiff).toFixed(2)}
+                  {trailR != null && <span className="text-slate-400 ml-1">({trailR >= 0 ? "+" : ""}{Number(trailR).toFixed(1)}R)</span>}
+                </dd>
+              </div>
+            )}
+          </dl>
+        )}
+
+        {!isLoading && !isError && trailData && (
+          <p className="text-xs text-slate-500">
+            ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules.
+          </p>
+        )}
+
+        <div className="flex flex-col gap-2 pt-2">
+          <Button
+            disabled={!trailData || isLoading || updateStopMutation.isPending || !atrTrailStop}
+            onClick={() => updateStopMutation.mutate({ id: position.id, stop_price: atrTrailStop })}
+            className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0 w-full"
+          >
+            {updateStopMutation.isPending ? "Updating…" : confirmLabel}
+          </Button>
+          {!updateStopMutation.isPending && (
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-200 text-sm text-center">
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function PositionEarningsCell({ ticker, market }) {
   const { data, loading } = useEarnings(ticker, market);
@@ -60,6 +301,7 @@ export default function Positions() {
   const [editingPosition, setEditingPosition] = useState(null);
   const [exitingPosition, setExitingPosition] = useState(null);
   const [reflectionTrade, setReflectionTrade] = useState(null);
+  const [trailStopPosition, setTrailStopPosition] = useState(null);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -239,6 +481,9 @@ export default function Positions() {
       {/* ST-02 (BLG-FEAT-09): Metrics staleness indicator — below title, inline with view controls */}
       <MetricsStalenessIndicator />
 
+      {/* ST-02 (IT-02): Grace period alert zone — display-only, §13 compliant */}
+      <GracePeriodAlertZone />
+
       {/* ST-12 (BLG-FE-02): DataState standardised loading/empty/error — Table/Grid views */}
       <DataState
         loading={isLoading}
@@ -282,6 +527,8 @@ export default function Positions() {
             <TableHead className="text-right">P&amp;L (GBP)</TableHead>
             <TableHead className="text-right">P&amp;L %</TableHead>
             <TableHead>Days</TableHead>
+            {/* ST-01 (IT-01): Lifecycle state badge column */}
+            <TableHead title="Position lifecycle state">State</TableHead>
             <TableHead>Grace</TableHead>
             <TableHead title="Days until next earnings">Earnings</TableHead>
             <TableHead>Actions</TableHead>
@@ -367,6 +614,18 @@ export default function Positions() {
 
                   <TableCell className="text-slate-400">{daysHeld}</TableCell>
 
+                  {/* ST-01 (IT-01): Lifecycle state badge */}
+                  <TableCell>
+                    {(position.lifecycle_state || position.position_state) ? (
+                      <LifecycleBadge
+                        state={position.lifecycle_state || position.position_state}
+                        daysInState={position.days_in_state}
+                      />
+                    ) : (
+                      <span className="text-slate-600 text-xs">—</span>
+                    )}
+                  </TableCell>
+
                   {/* BLG-FEAT-06: Grace Days Remaining */}
                   <TableCell>
                     {position.grace_days_remaining !== null &&
@@ -401,6 +660,21 @@ export default function Positions() {
                       >
                         <BookOpen className="w-4 h-4" />
                       </Button>
+
+                      {/* ST-03 (IT-03): Trail Stop — shown for PROFITABLE/EXIT ZONE; disabled when no stop */}
+                      {(position.lifecycle_state === "PROFITABLE" || position.lifecycle_state === "EXIT ZONE" ||
+                        position.position_state === "PROFITABLE" || position.position_state === "EXIT ZONE") && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title={(!position.current_stop && !position.stop_price) ? "No current stop set. Add a stop to use trail management." : "Trail Stop"}
+                          disabled={!position.current_stop && !position.stop_price}
+                          className="h-8 w-8 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 disabled:opacity-40"
+                          onClick={() => setTrailStopPosition(position)}
+                        >
+                          <ArrowUpDown className="w-4 h-4" />
+                        </Button>
+                      )}
 
                       <Button
                         variant="ghost"
@@ -444,6 +718,14 @@ export default function Positions() {
         open={!!reflectionTrade}
         onClose={() => setReflectionTrade(null)}
       />
+
+      {/* ST-03 (IT-03): Trail Stop modal */}
+      {trailStopPosition && (
+        <TrailStopModal
+          position={trailStopPosition}
+          onClose={() => setTrailStopPosition(null)}
+        />
+      )}
     </div>
   );
 }
