@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
 import { useEarnings } from "../hooks/useEarnings";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
-import { Plus, Trash2, Eye, Newspaper, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, Eye, Newspaper, ChevronDown, ChevronUp, BookOpen } from "lucide-react";
 import { cn } from "../lib/utils";
 import WatchlistModal from "../components/watchlist/WatchlistModal";
 import DataState from "../components/ui/DataState";
@@ -70,6 +71,8 @@ function WatchlistEarningsBadge({ ticker, market }) {
   if (loading) return <span className="text-slate-600 text-xs">…</span>;
   if (!data || data.days_until_earnings == null) return <span className="text-slate-600 text-xs">—</span>;
   const days = data.days_until_earnings;
+  if (days < 0) return <span className="text-slate-600 text-xs">—</span>;
+  if (days === 0) return <span className="text-amber-400 font-medium text-xs" title={data.next_earnings_date}>Today</span>;
   const cls = days <= 5 ? "text-amber-400 font-medium" : days <= 14 ? "text-yellow-500" : "text-slate-400";
   return <span className={`text-xs ${cls}`} title={data.next_earnings_date}>{days}d</span>;
 }
@@ -84,6 +87,18 @@ export default function Watchlist() {
   const [modal, setModal] = useState(null); // null | { mode, entry }
   const [expandedNews, setExpandedNews] = useState({}); // { [ticker]: true } expanded
   const [newsCache, setNewsCache] = useState({}); // { [ticker]: { loading, headlines } }
+
+  // ST-09 (BLG-FE-29): screener results used as proxy for "research record exists"
+  const { data: screenerTickers = new Set() } = useQuery({
+    queryKey: ["screener-tickers"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/screener/results`);
+      const json = await res.json();
+      const rows = json?.data || [];
+      return new Set(rows.map(r => (r.ticker || "").toUpperCase()));
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   const fetchEntries = useCallback(async () => {
     setLoadError(false);
@@ -224,6 +239,7 @@ export default function Watchlist() {
                     "Stop (Initial)",
                     "Stop (Current)",
                     "Earnings",
+                    "Research",
                     "News",
                     "Actions",
                   ].map((h) => (
@@ -271,6 +287,11 @@ export default function Watchlist() {
                     </td>
                     <td className="px-5 py-4">
                       <WatchlistEarningsBadge ticker={entry.ticker} market={entry.market} />
+                    </td>
+                    <td className="px-5 py-4">
+                      {screenerTickers.has(entry.ticker?.toUpperCase())
+                        ? <BookOpen className="w-4 h-4 text-emerald-400" title="Research data available" />
+                        : <BookOpen className="w-4 h-4 text-slate-600" title="No research data" />}
                     </td>
                     <td className="px-5 py-4">
                       {entry.market === "US" ? (
@@ -321,7 +342,7 @@ export default function Watchlist() {
                   </tr>
                   {expandedNews[entry.ticker] && entry.market === "US" && (
                     <tr key={`${entry.id}-news`} className="bg-slate-800/40">
-                      <td colSpan={8} className="px-6 py-3">
+                      <td colSpan={9} className="px-6 py-3">
                         {newsCache[entry.ticker]?.loading ? (
                           <p className="text-slate-400 text-xs animate-pulse">Loading headlines…</p>
                         ) : newsCache[entry.ticker]?.headlines?.length > 0 ? (

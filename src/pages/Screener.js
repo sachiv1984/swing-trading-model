@@ -114,6 +114,8 @@ function EarningsBadge({ ticker, market }) {
   if (loading) return <span className="text-slate-600 text-xs">…</span>;
   if (!data || data.days_until_earnings == null) return <span className="text-slate-600 text-xs">—</span>;
   const days = data.days_until_earnings;
+  if (days < 0) return <span className="text-slate-600 text-xs">—</span>;
+  if (days === 0) return <span className="text-amber-400 font-medium text-xs">Today</span>;
   const cls =
     days <= 5
       ? "text-amber-400 font-medium"
