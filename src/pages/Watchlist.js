@@ -70,6 +70,8 @@ function WatchlistEarningsBadge({ ticker, market }) {
   if (loading) return <span className="text-slate-600 text-xs">…</span>;
   if (!data || data.days_until_earnings == null) return <span className="text-slate-600 text-xs">—</span>;
   const days = data.days_until_earnings;
+  if (days < 0) return <span className="text-slate-600 text-xs">—</span>;
+  if (days === 0) return <span className="text-amber-400 font-medium text-xs" title={data.next_earnings_date}>Today</span>;
   const cls = days <= 5 ? "text-amber-400 font-medium" : days <= 14 ? "text-yellow-500" : "text-slate-400";
   return <span className={`text-xs ${cls}`} title={data.next_earnings_date}>{days}d</span>;
 }
