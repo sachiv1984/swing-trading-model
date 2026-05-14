@@ -225,7 +225,8 @@ export default function TradePlan() {
   };
 
   const isPending = createMutation.isPending || updateMutation.isPending;
-  const isAbandoned = form.status === "abandoned";
+  // Derive abandonment state from the fetched plan OR form state (onSuccess removed in RQ v5)
+  const isAbandoned = existingPlan?.status === "abandoned" || form.status === "abandoned";
   const abandonReasonValid = abandonReason.trim().length >= 10;
 
   return (
@@ -235,7 +236,9 @@ export default function TradePlan() {
         description={
           <div className="flex items-center gap-2 flex-wrap">
             <span>{form.ticker ? `${form.ticker} — ${form.market}` : "Document your pre-trade reasoning"}</span>
-            {form.status && <TradePlanStatusBadge status={form.status} />}
+            {(existingPlan?.status || form.status) && (
+              <TradePlanStatusBadge status={existingPlan?.status || form.status} />
+            )}
           </div>
         }
         actions={
@@ -284,10 +287,10 @@ export default function TradePlan() {
         </div>
       )}
 
-      {isAbandoned && existingPlan?.abandonment_reason && (
+      {isAbandoned && (existingPlan?.abandonment_reason || form.abandonment_reason) && (
         <div className="rounded-xl bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-300">
           <span className="font-medium">Reason for abandoning: </span>
-          {existingPlan.abandonment_reason}
+          {existingPlan?.abandonment_reason || form.abandonment_reason}
         </div>
       )}
 
