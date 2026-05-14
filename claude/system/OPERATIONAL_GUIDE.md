@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.76
+**Version:** 3.77
 **Last Updated:** 2026-05-14
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -1420,6 +1420,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.77 | 2026-05-14 | **release_planning_prompt.md v2.27→v2.28 — token efficiency refactor.** §6B source prompt header already updated v2.28. §14 Release Engine Source v2.28. Prompt reduced from 1438 to 1041 lines (−397 lines, ~28%): extracted state.json schema to `claude/system/schemas/release_state_schema.json`; escalation subroutine to `claude/system/shared/escalation_subroutine.md`; lock recovery procedure to `claude/system/shared/lock_recovery_procedure.md`; publish gate to `claude/system/shared/publish_gate.md`; scope + decisions templates to `claude/system/templates/`; consolidated STEP 5.5+5.7; removed 5 trigger footnotes. All governance rules preserved. Authority: Head of Specs Team (2026-05-14). |
 | 3.76 | 2026-05-14 | **BLG-AI-03 (ST-13, v3.4) — AI Journal Review Cadence added to §13 Artefact Register.** New artefact row: `docs/specs/compliance/ai_journal_review_cadence.md` (Class 2, AI Compliance & Governance Officer, Governance). Defines quarterly review checklist, §13 re-confirmation, model version check, error rate review, record format, escalation path. Authority: AI Compliance & Governance Officer (BLG-AI-03, 2026-05-14). |
 | 3.75 | 2026-05-13 | **execution_prompt.md v3.17→v3.18 — AUD-2026-05-13-002 template fix.** §8 source prompt header updated v3.17→v3.18. §14 Execution Engine Source v3.17→v3.18. Change: §5.4 header advisory note added — when creating lessons_learnt_cycle.md, must use `Class: Operational Record (Class 3)` not `Planning Document (Class 4)`; prevents recurrence of class declaration mismatch (third instance: v2.7 fixed by AUD-2026-04-20-004; v3.3 discovered by AUD-2026-05-13). Authority: Head of Specs Team (AUD-2026-05-13-002, 2026-05-13). |
 | 3.74 | 2026-05-13 | **roadmap_prompt.md v5.1→v6.0 — token efficiency refactor.** §6 source prompt header updated v5.1→v6.0. §14 Roadmap Engine Source v6.0. §15 roadmap_prompt version reference updated. Prompt reduced from ~1,651 to 738 lines (−913 lines); BLG-GOV-08 partially addressed. Authority: Head of Specs Team (2026-05-13). |
