@@ -861,6 +861,35 @@ QA & Testing Owner to author scenarios referencing UX specs in `docs/design/2026
 
 ---
 
+## Release Slice — v3.4 Arc 3 In-Trade Risk Management (continued)
+
+<!-- release-plan-marker: RP:v3.4:2026-05-14__release-v3.4 -->
+
+*Added by Release Planning Engine — 2026-05-14*
+*Cycle: 2026-05-14__release-v3.4*
+*Backlog slice: claude/cycles/2026-05-14__release-v3.4/stage4_backlog_slice.md*
+
+| Story | EPIC | Sprint | Title |
+|-------|------|--------|-------|
+| ST-01 | EPIC-01 | 2 | Position lifecycle state: frontend display (IT-01) |
+| ST-02 | EPIC-01 | 2 | Grace Period Decision Support frontend (IT-02) |
+| ST-03 | EPIC-01 | 2 | Stop Management Workflow frontend (IT-03) |
+| ST-04 | EPIC-02 | 2 | Drawdown-Triggered Review Prompt backend (IT-04) |
+| ST-05 | EPIC-02 | 2 | Drawdown-Triggered Review Prompt frontend (IT-04) |
+| ST-06 | EPIC-02 | 2 | Position Concentration Limits backend + frontend (IT-05) |
+| ST-07 | EPIC-03 | 1 | Research page UK suffix strip + negative earnings days (BLG-FE-23 + BLG-FE-24) |
+| ST-08 | EPIC-03 | 1 | Signals page: default to most recent day's signals (BLG-FE-25) |
+| ST-09 | EPIC-03 | 1 | Watchlist research status indicator (BLG-FE-29) |
+| ST-10 | EPIC-03 | 1 | Trade plan status badges + abandonment UI (BLG-FE-30 + BLG-FEAT-21 frontend) |
+| ST-11 | EPIC-04 | 1 | Research view component library (BLG-FE-31) |
+| ST-12 | EPIC-04 | 1 | Screener morning routine UX spec (BLG-FE-22) |
+| ST-13 | EPIC-04 | 1 | trade_plan.md §6.2 spec update + AI journal review cadence (BLG-SPEC-28 + BLG-AI-03) |
+| ST-14 | EPIC-04 | 1 | Screener accuracy test protocol (BLG-QA-18) |
+
+**Theme:** Arc 3 Frontend Completion + IT-04/05 Risk Prompts + Frontend Quick Wins + Spec/QA Debt
+
+---
+
 ### TEST-GAP-EPIC-03-v33 — SC-RV-18 and SC-RV-19 explicit Playwright coverage for null handling
 
 **Source:** Delivery verification 2026-05-09__release-v3.3 (STEP 5)

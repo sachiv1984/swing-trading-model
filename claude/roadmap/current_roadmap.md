@@ -13,6 +13,15 @@
 **v3.3** — Arc 3 In-Trade Risk Management — Shipped 2026-05-13
 **Next planned release:** **v3.4** — Arc 3 In-Trade Risk Management (continued)
 
+<!-- roadmap-annotation-marker: RA:v3.4:2026-05-14__release-v3.4 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-14__release-v3.4
+- Plan published: 2026-05-14
+- Cycle folder: claude/cycles/2026-05-14__release-v3.4/
+- Backlog slice: claude/cycles/2026-05-14__release-v3.4/stage4_backlog_slice.md
+- Status at annotation: Validated
+
 *RA:v3.3 retired — see roadmap_archive.md 2026-05-13.*
 
 -----

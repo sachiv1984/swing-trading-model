@@ -1,0 +1,134 @@
+{
+  "cycle_id": "2026-05-14__release-v3.4",
+  "release": "v3.4",
+  "generated_utc": "2026-05-14T00:35:00Z",
+  "issues_mode": "none",
+  "stories": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "sprint": 2,
+      "title": "Position lifecycle state: frontend display (IT-01)",
+      "priority": "P1",
+      "labels": ["story", "release-v3.4", "EPIC-01", "sprint-2", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "sprint": 2,
+      "title": "Grace Period Decision Support frontend (IT-02)",
+      "priority": "P1",
+      "labels": ["story", "release-v3.4", "EPIC-01", "sprint-2", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "sprint": 2,
+      "title": "Stop Management Workflow frontend (IT-03)",
+      "priority": "P1",
+      "labels": ["story", "release-v3.4", "EPIC-01", "sprint-2", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "sprint": 2,
+      "title": "Drawdown-Triggered Review Prompt backend (IT-04)",
+      "priority": "P2",
+      "labels": ["story", "release-v3.4", "EPIC-02", "sprint-2", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "sprint": 2,
+      "title": "Drawdown-Triggered Review Prompt frontend (IT-04)",
+      "priority": "P2",
+      "labels": ["story", "release-v3.4", "EPIC-02", "sprint-2", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-02",
+      "sprint": 2,
+      "title": "Position Concentration Limits backend + frontend (IT-05)",
+      "priority": "P2",
+      "labels": ["story", "release-v3.4", "EPIC-02", "sprint-2", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "sprint": 1,
+      "title": "Research page UK suffix strip + negative earnings days display (BLG-FE-23 + BLG-FE-24)",
+      "priority": "P3",
+      "labels": ["story", "release-v3.4", "EPIC-03", "sprint-1", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "sprint": 1,
+      "title": "Signals page: default to most recent day's signals (BLG-FE-25)",
+      "priority": "P2",
+      "labels": ["story", "release-v3.4", "EPIC-03", "sprint-1", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-03",
+      "sprint": 1,
+      "title": "Watchlist research status indicator (BLG-FE-29)",
+      "priority": "P2",
+      "labels": ["story", "release-v3.4", "EPIC-03", "sprint-1", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-03",
+      "sprint": 1,
+      "title": "Trade plan status badges + abandonment UI (BLG-FE-30 + BLG-FEAT-21 frontend)",
+      "priority": "P2",
+      "labels": ["story", "release-v3.4", "EPIC-03", "sprint-1", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-04",
+      "sprint": 1,
+      "title": "Research view component library (BLG-FE-31)",
+      "priority": "P3",
+      "labels": ["story", "release-v3.4", "EPIC-04", "sprint-1", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-12",
+      "epic_id": "EPIC-04",
+      "sprint": 1,
+      "title": "Screener morning routine UX spec (BLG-FE-22)",
+      "priority": "P2",
+      "labels": ["story", "release-v3.4", "EPIC-04", "sprint-1", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-13",
+      "epic_id": "EPIC-04",
+      "sprint": 1,
+      "title": "trade_plan.md §6.2 spec update + AI journal review cadence (BLG-SPEC-28 + BLG-AI-03)",
+      "priority": "P3",
+      "labels": ["story", "release-v3.4", "EPIC-04", "sprint-1", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    },
+    {
+      "st_id": "ST-14",
+      "epic_id": "EPIC-04",
+      "sprint": 1,
+      "title": "Screener accuracy test protocol (BLG-QA-18)",
+      "priority": "P2",
+      "labels": ["story", "release-v3.4", "EPIC-04", "sprint-1", "cycle:2026-05-14__release-v3.4"],
+      "cycle_label": "cycle:2026-05-14__release-v3.4"
+    }
+  ]
+}
