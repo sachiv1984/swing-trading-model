@@ -6,11 +6,28 @@ import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
-import { BookOpen, Save, ArrowLeft } from "lucide-react";
+import { BookOpen, Save, ArrowLeft, AlertTriangle } from "lucide-react";
+import { TradePlanStatusBadge } from "./TradePlans";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-const STATUSES = ["draft", "active", "closed"];
+const STATUSES = [
+  "draft",
+  "research_pending",
+  "research_complete",
+  "entry_conditions_set",
+  "active",
+  "closed",
+];
+
+const STATUS_LABELS = {
+  draft: "Draft",
+  research_pending: "Research Pending",
+  research_complete: "Research Complete",
+  entry_conditions_set: "Entry Ready",
+  active: "Active",
+  closed: "Closed",
+};
 
 function buildPrePopulatedItems(plan) {
   return DEFAULT_CHECKLIST_ITEMS.map((item) => ({
@@ -86,6 +103,9 @@ export default function TradePlan() {
     position_id: positionId || null,
   });
   const [saved, setSaved] = useState(false);
+  const [showAbandonModal, setShowAbandonModal] = useState(false);
+  const [abandonReason, setAbandonReason] = useState("");
+  const [abandonReasonTouched, setAbandonReasonTouched] = useState(false);
 
   const { data: healthData } = useQuery({
     queryKey: ["market-status"],
@@ -162,6 +182,23 @@ export default function TradePlan() {
     },
   });
 
+  const abandonMutation = useMutation({
+    mutationFn: ({ id, reason }) =>
+      apiFetch(`${API_BASE}/trade-plans/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "abandoned", abandonment_reason: reason }),
+      }).then((r) => r.json()),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["tradePlans"] });
+      setShowAbandonModal(false);
+      setAbandonReason("");
+      if (res.data) {
+        setForm((prev) => ({ ...prev, status: "abandoned" }));
+      }
+    },
+  });
+
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
@@ -188,26 +225,42 @@ export default function TradePlan() {
   };
 
   const isPending = createMutation.isPending || updateMutation.isPending;
+  const isAbandoned = form.status === "abandoned";
+  const abandonReasonValid = abandonReason.trim().length >= 10;
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Trade Plan"
         description={
-          form.ticker
-            ? `${form.ticker} — ${form.market}`
-            : "Document your pre-trade reasoning"
+          <div className="flex items-center gap-2 flex-wrap">
+            <span>{form.ticker ? `${form.ticker} — ${form.market}` : "Document your pre-trade reasoning"}</span>
+            {form.status && <TradePlanStatusBadge status={form.status} />}
+          </div>
         }
         actions={
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="text-slate-400 hover:text-white"
-          >
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            Back
-          </Button>
+          <div className="flex items-center gap-2">
+            {editId && !isAbandoned && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAbandonModal(true)}
+                className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
+              >
+                <AlertTriangle className="w-4 h-4 mr-1" />
+                Abandon Plan
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(-1)}
+              className="text-slate-400 hover:text-white"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back
+            </Button>
+          </div>
         }
       />
 
@@ -231,6 +284,13 @@ export default function TradePlan() {
         </div>
       )}
 
+      {isAbandoned && existingPlan?.abandonment_reason && (
+        <div className="rounded-xl bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-300">
+          <span className="font-medium">Reason for abandoning: </span>
+          {existingPlan.abandonment_reason}
+        </div>
+      )}
+
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6 space-y-6">
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -249,13 +309,15 @@ export default function TradePlan() {
           </Field>
           <Field label="Status">
             <select
-              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 disabled:opacity-50"
               value={form.status}
               onChange={set("status")}
+              disabled={isAbandoned}
             >
               {STATUSES.map((s) => (
-                <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                <option key={s} value={s}>{STATUS_LABELS[s] || s}</option>
               ))}
+              {isAbandoned && <option value="abandoned">Abandoned</option>}
             </select>
           </Field>
         </div>
@@ -322,17 +384,68 @@ export default function TradePlan() {
           />
         </Field>
 
-        <div className="flex justify-end">
-          <Button
-            onClick={handleSubmit}
-            disabled={isPending || !form.ticker}
-            className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0"
-          >
-            <Save className="w-4 h-4 mr-2" />
-            {isPending ? "Saving…" : editId ? "Update Plan" : "Save Plan"}
-          </Button>
-        </div>
+        {!isAbandoned && (
+          <div className="flex justify-end">
+            <Button
+              onClick={handleSubmit}
+              disabled={isPending || !form.ticker}
+              className="bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white border-0"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {isPending ? "Saving…" : editId ? "Update Plan" : "Save Plan"}
+            </Button>
+          </div>
+        )}
       </div>
+
+      {/* Abandon modal */}
+      {showAbandonModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />
+              <h2 className="text-lg font-semibold text-white">
+                Abandon trade plan for {form.ticker}?
+              </h2>
+            </div>
+            <p className="text-sm text-slate-400">
+              This plan will be marked as abandoned. You will not be prompted to enter this position again based on this plan.
+            </p>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">
+                Reason for abandoning <span className="text-rose-400">*</span>
+              </label>
+              <textarea
+                rows={3}
+                className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 resize-none"
+                placeholder="Describe why you're abandoning this plan (min 10 characters)"
+                value={abandonReason}
+                onChange={(e) => setAbandonReason(e.target.value)}
+                onBlur={() => setAbandonReasonTouched(true)}
+              />
+              {abandonReasonTouched && !abandonReasonValid && (
+                <p className="text-xs text-rose-400">Reason must be at least 10 characters.</p>
+              )}
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="ghost"
+                onClick={() => { setShowAbandonModal(false); setAbandonReason(""); setAbandonReasonTouched(false); }}
+                className="text-slate-400"
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={!abandonReasonValid || abandonMutation.isPending}
+                onClick={() => abandonMutation.mutate({ id: editId, reason: abandonReason.trim() })}
+                className="bg-amber-600 hover:bg-amber-500 text-white border-0"
+              >
+                {abandonMutation.isPending ? "Abandoning…" : "Abandon Plan"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
