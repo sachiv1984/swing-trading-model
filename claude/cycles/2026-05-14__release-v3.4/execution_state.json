@@ -5,13 +5,13 @@
   "invoked_utc": "2026-05-14T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-14T09:00:00Z",
+  "last_updated_utc": "2026-05-14T14:30:00Z",
   "epics": {
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-05-14__release-v3.4/EPIC-04",
       "pr_number": 385,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-14__release-v3.4/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -55,7 +55,7 @@
           "notes": "no prior spec applicable"
         },
         "ST-13": {
-          "title": "trade_plan.md \u00a76.2 spec update + AI journal review cadence (BLG-SPEC-28 + BLG-AI-03)",
+          "title": "trade_plan.md §6.2 spec update + AI journal review cadence (BLG-SPEC-28 + BLG-AI-03)",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -68,12 +68,12 @@
           "completed_utc": "2026-05-14T09:50:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md#\u00a76.2"
+            "docs/specs/frontend/pages/trade_plan.md#§6.2"
           ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "OPERATIONAL_GUIDE v3.75\u2192v3.76 updated per \u00a76 CLAUDE.md (BLG-AI-03 artefact register entry); pt05_entry_checklist_s13_review.md references old pre-population fields \u2014 documentation note, \u00a713 compliance still holds (both new fields are user-entered data); follow-up update deferred"
+          "notes": "OPERATIONAL_GUIDE v3.75→v3.76 updated per §6 CLAUDE.md (BLG-AI-03 artefact register entry); pt05_entry_checklist_s13_review.md references old pre-population fields — documentation note, §13 compliance still holds (both new fields are user-entered data); follow-up update deferred"
         },
         "ST-14": {
           "title": "Screener accuracy test protocol (BLG-QA-18)",
@@ -99,27 +99,15 @@
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-05-14__release-v3.4/EPIC-03",
-      "pr_number": null,
-      "pr_status": "pending",
+      "pr_number": 386,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-14__release-v3.4/qa_evidence_EPIC-03.md",
       "test_scenarios": [
-        "SC-E03-01",
-        "SC-E03-02",
-        "SC-E03-03",
-        "SC-E03-04",
-        "SC-E03-05",
-        "SC-E03-06",
-        "SC-E03-07",
-        "SC-E03-08",
-        "SC-E03-09",
-        "SC-E03-10",
-        "SC-E03-11",
-        "SC-E03-12",
-        "SC-E03-13",
-        "SC-E03-14",
-        "SC-E03-15",
-        "SC-E03-16"
+        "SC-E03-01", "SC-E03-02", "SC-E03-03", "SC-E03-04",
+        "SC-E03-05", "SC-E03-06", "SC-E03-07", "SC-E03-08",
+        "SC-E03-09", "SC-E03-10", "SC-E03-11", "SC-E03-12",
+        "SC-E03-13", "SC-E03-14", "SC-E03-15", "SC-E03-16"
       ],
       "stories": {
         "ST-07": {
@@ -139,7 +127,7 @@
           "deviations_filed": false,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "BLG-FE-23 (Research UK suffix) pre-met \u2014 Research.js already uses stripUkSuffix. BLG-FE-24: early-return guards added for days<0 and days=0 in Screener, Watchlist, Positions."
+          "notes": "BLG-FE-23 (Research UK suffix) pre-met — Research.js already uses stripUkSuffix. BLG-FE-24: early-return guards added for days<0 and days=0 in Screener, Watchlist, Positions."
         },
         "ST-08": {
           "title": "Signals page: default to most recent day's signals (BLG-FE-25)",
@@ -198,7 +186,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "DEV-01: RQ v5 dropped onSuccess from useQuery \u2014 isAbandoned derived from existingPlan?.status directly. New TradePlans.js list page + pages.config.js registration."
+          "notes": "DEV-01: RQ v5 dropped onSuccess from useQuery — isAbandoned derived from existingPlan?.status directly. New TradePlans.js list page + pages.config.js registration."
         }
       }
     },
@@ -211,69 +199,9 @@
       "qa_evidence_log": "claude/cycles/2026-05-14__release-v3.4/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
-        "ST-01": {
-          "title": "Position lifecycle state: frontend display (IT-01)",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": 371,
-          "branch": "exec/2026-05-14__release-v3.4/EPIC-01",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "dependency: ST-11 (EPIC-04) merged first; arc3_lifecycle_display feature flag; Playwright SC-LS-01\u201304 required"
-        },
-        "ST-02": {
-          "title": "Grace Period Decision Support frontend (IT-02)",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": 372,
-          "branch": "exec/2026-05-14__release-v3.4/EPIC-01",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "dependency: ST-11 merged; GET /positions/grace-period-alerts live; localStorage dismissal; Playwright SC-GP-01\u201303 required"
-        },
-        "ST-03": {
-          "title": "Stop Management Workflow frontend (IT-03)",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": 373,
-          "branch": "exec/2026-05-14__release-v3.4/EPIC-01",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "use stop-management-workflow/ux_spec.md (not stop-trail-panel path \u2014 outstanding action from sprint planning); \u00a713 user-confirm required; Playwright SC-TS-01\u201303 required"
-        }
+        "ST-01": { "title": "Position lifecycle state: frontend display (IT-01)", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "engine", "github_issue": 371, "branch": "exec/2026-05-14__release-v3.4/EPIC-01", "commit_sha": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "deviations_filed": false, "last_completed_substep": null },
+        "ST-02": { "title": "Grace Period Decision Support frontend (IT-02)", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "engine", "github_issue": 372, "branch": "exec/2026-05-14__release-v3.4/EPIC-01", "commit_sha": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "deviations_filed": false, "last_completed_substep": null },
+        "ST-03": { "title": "Stop Management Workflow frontend (IT-03)", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "engine", "github_issue": 373, "branch": "exec/2026-05-14__release-v3.4/EPIC-01", "commit_sha": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "deviations_filed": false, "last_completed_substep": null }
       }
     },
     "EPIC-02": {
@@ -285,90 +213,23 @@
       "qa_evidence_log": "claude/cycles/2026-05-14__release-v3.4/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
-        "ST-04": {
-          "title": "Drawdown-Triggered Review Prompt backend (IT-04)",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": 374,
-          "branch": "exec/2026-05-14__release-v3.4/EPIC-02",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/reference/openapi.yaml#GET /portfolio/drawdown-status"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "new endpoint; register in backend/routers/test.py (current count 48\u219249) and openapi.yaml same commit; settings integration for threshold"
-        },
-        "ST-05": {
-          "title": "Drawdown-Triggered Review Prompt frontend (IT-04)",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": 375,
-          "branch": "exec/2026-05-14__release-v3.4/EPIC-02",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "dependency: ST-04 backend done; \u00a713 display-only; server-side ack not localStorage; Playwright E2E or staging sign-off required"
-        },
-        "ST-06": {
-          "title": "Position Concentration Limits backend + frontend (IT-05)",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": 376,
-          "branch": "exec/2026-05-14__release-v3.4/EPIC-02",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [
-            "docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md"
-          ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "combined backend+frontend; new GET /portfolio/concentration-status; DS-03 sector data live; register in test.py and openapi.yaml; Playwright E2E or staging sign-off required"
-        }
+        "ST-04": { "title": "Drawdown-Triggered Review Prompt backend (IT-04)", "classification": "autonomous", "status": "not_started", "assigned_to": "engine", "github_issue": 374, "branch": "exec/2026-05-14__release-v3.4/EPIC-02", "commit_sha": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "deviations_filed": false, "last_completed_substep": null },
+        "ST-05": { "title": "Drawdown-Triggered Review Prompt frontend (IT-04)", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "engine", "github_issue": 375, "branch": "exec/2026-05-14__release-v3.4/EPIC-02", "commit_sha": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "deviations_filed": false, "last_completed_substep": null },
+        "ST-06": { "title": "Position Concentration Limits backend + frontend (IT-05)", "classification": "delegated_frontend", "status": "not_started", "assigned_to": "engine", "github_issue": 376, "branch": "exec/2026-05-14__release-v3.4/EPIC-02", "commit_sha": null, "completed_utc": null, "acceptance_verified": false, "spec_references": [], "deviations_filed": false, "last_completed_substep": null }
       }
     }
   },
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": [
+    "EPIC-04/ST-11", "EPIC-04/ST-12", "EPIC-04/ST-13", "EPIC-04/ST-14",
+    "EPIC-03/ST-07", "EPIC-03/ST-08", "EPIC-03/ST-09", "EPIC-03/ST-10"
+  ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [
-      "EPIC-04",
-      "EPIC-03",
-      "EPIC-01",
-      "EPIC-02"
-    ],
-    "merge_order": [
-      "EPIC-04",
-      "EPIC-03",
-      "EPIC-01",
-      "EPIC-02"
-    ],
+    "epics_merged": ["EPIC-04"],
+    "epics_pending": ["EPIC-03", "EPIC-01", "EPIC-02"],
+    "merge_order": ["EPIC-04", "EPIC-03", "EPIC-01", "EPIC-02"],
     "all_merged": false
   },
   "sealed": false,
