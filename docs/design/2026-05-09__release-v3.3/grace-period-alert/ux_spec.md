@@ -138,3 +138,11 @@ When `trade_plan_id` is null: display single line "No trade plan linked. Conside
 | Per-session localStorage dismiss | No backend persistence needed; keeps backend simple; auto-resets on next session naturally |
 | Trade plan context inline | Reduces navigation friction — user sees thesis without leaving the page |
 | No automated recommendation | §13 compliance — system prompts review, human decides action |
+
+---
+
+## Known Deviations
+
+| ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
+|----|-------------|----------------------|----------|-------------------|-------|------------------|
+| DEV-v3.4-01 | v3.4 ST-02 implementation uses `sessionStorage` instead of `localStorage` for dismiss persistence. Dismiss resets on tab close rather than browser close. The AC wording ("does not reappear on page reload within the same browser session") is satisfied by sessionStorage behaviour. | §5: localStorage key `grace_alert_dismissed_{position_id}` | P3 | v3.5 — update §5 to document sessionStorage | Head of UX & Design | BLG-SPEC-29 |

@@ -29,3 +29,35 @@ Cycle: 2026-05-14__release-v3.4
 **Action-now patch applied this session:**
 - CLAUDE.md §2 updated: "hardcoded fallback count in `src/pages/SystemStatus.js` (`Tests {totalTests || 'N'} endpoints`) must also be updated to reflect the new total. **Additionally, update `SC-SS-01b` in `tests/e2e/system-status.spec.js` to match the new fallback value in the same commit.** Omitting either step is a process deviation."
 - Authority: Head of Specs Team (execution engine action-now, logged in prompt_change_log.md)
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-14__release-v3.4
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-05-14
+**Reviewed by:** PMO Lead
+
+**Prior cycle checked:** 2026-05-09__release-v3.3 (Phase 4 section present — recurrence check complete)
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| BLG-GOV-21 ID conflict: Phase 3 lessons_learnt referenced "BLG-GOV-21" for sprint_planning_prompt.md patch but that ID was already assigned (Arc 4 data requirements capture, DL-025). Corrected to BLG-GOV-22 at delivery verification. No backlog item lost — only ID mismatch. | Phase 4 | Type D — Process Gap | defer | Add ID uniqueness check to lessons_learnt Phase 3 process: before filing new backlog IDs, verify the ID is unoccupied in backlog.md. Add advisory to execution_prompt.md §5.3. (BLG-GOV-22 created with correct ID.) | Head of Specs Team | v3.5 |
+| Over-filing deviation: EPIC-02/ST-05/DEV-01 (useState dismiss) was filed as a deviation during sprint execution, but drawdown-review-prompt/ux_spec.md §6 explicitly specifies "in-memory component state." Implementation was spec-compliant. Filing created unnecessary verification overhead. | Phase 4 | Type D — Process Gap | defer | Add guidance to execution_prompt.md §3.1.A step 10: before filing a deviation, verify whether the implementation matches the spec intent, not just the literal wording of an earlier draft. If spec and implementation agree, record as implementation note only — not a deviation. | Head of Specs Team | v3.5 |
+| Gate sequencing: all 4 QA evidence logs signed and ready before sprint_close was sealed. STEP -1 passed on first pass with no re-verification required. | Phase 4 | Type E — Positive pattern | action-now | No action required — pattern to preserve. | PMO Lead | — |
+| Playwright coverage: all EPICs with observable AC had test scenarios authored before PR merge. Zero coverage gaps requiring TEST-GAP backlog items this cycle. Prior cycle v3.3 Phase 4 item #2 (test protocol checkbox) resolved: TEST-GAP-EPIC-03-v33 closed by EPIC-03 Playwright scenarios. | Phase 4 | Type E — Positive pattern | action-now | No action required. Prior cycle carry-forward resolved ✅ | PMO Lead | — |
+| Deviation severity consistency: all 4 deviations correctly P3 — no contest between sprint_close and DoQ assessment. Prior cycle v3.3 Phase 4 item #1 (P2/P3 discrepancy) not recurred. | Phase 4 | Type E — Positive pattern | action-now | No action required. Prior cycle item not recurred ✅ | PMO Lead | — |
+| Known Deviations sync (LL-v2.3-CL-03): four spec files required Known Deviations sections this run. Three specs (grace-period-alert, stop-management-workflow, drawdown-review-prompt) had no Known Deviations section at all — sections created at delivery verification rather than at implementation time. This is the intended flow but adds verification overhead. | Phase 4 | Type D — Process Gap | defer | Add advisory to execution_prompt.md §3.1.A step 10: when filing a deviation, also add the Known Deviations section to the canonical spec in the same commit. This shifts the work to execution time rather than verification time. | Head of Specs Team | v3.5 |
+
+**Recurrence Notes:**
+
+Prior cycle (2026-05-09__release-v3.3) Phase 4 items:
+- P2/P3 priority discrepancy between sprint_close and DoQ assessment: NOT RECURRED ✅
+- Protocol backlog-item checkbox not completed: NOT RECURRED ✅ (TEST-GAP-EPIC-03-v33 closed by v3.4 EPIC-03 Playwright scenarios)
+
+New friction items this cycle:
+1. BLG-GOV-21 ID conflict (lessons_learnt Phase 3 backlog ID collision) — first occurrence; deferred to v3.5.
+2. Over-filing deviation for spec-compliant implementation (EPIC-02/ST-05) — first occurrence; deferred to v3.5.
+3. Known Deviations sections absent from specs at implementation time — pattern noted; defer advisory to v3.5 for execution_prompt.md.

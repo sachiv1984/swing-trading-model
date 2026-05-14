@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-13 (rebalance 2026-05-13__scheduled — 2 adds: BLG-QA-18, BLG-FE-31 (DL-027/028); BLG-FE-22 Provisional-Target updated)
+**Last Updated:** 2026-05-14 (delivery verification 2026-05-14__release-v3.4 — 4 adds: BLG-SPEC-29, BLG-SPEC-30, BLG-SPEC-31 (v3.4 P3 deviation backlog items), BLG-GOV-22 (sprint_planning_prompt.md merge-conflict patch); BLG-GOV-21 ID conflict noted)
 **Last rebalance:** 2026-05-08 (cycle 2026-05-08__scheduled — DL-025 backlog adds × 16)
 
 > ⚠️ Standing Notice
@@ -518,6 +518,59 @@ trade_plan.md §6.2 references `stop_level` for stop_defined pre-population and 
 
 ---
 
+### BLG-SPEC-29 — Correct grace-period-alert ux_spec.md §5 dismiss storage to sessionStorage
+**Priority:** P3 (Low)
+**Type:** Specification / Documentation
+**Owner:** Head of UX & Design
+**Source:** EPIC-01 ST-02 DEV-01 (v3.4 delivery deviation — 2026-05-14)
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** v3.5
+
+**Problem**
+grace-period-alert/ux_spec.md §5 specifies `localStorage` for dismiss persistence, but the v3.4 implementation uses `sessionStorage`. The AC wording ("does not reappear on page reload within the same browser session") matches sessionStorage behaviour. The spec needs updating to reflect the delivered implementation.
+
+**Acceptance Criteria**
+- §5 updated to reference `sessionStorage` (not `localStorage`) for dismiss persistence
+- §5 note added: dismiss resets on tab close; alert reappears on next browser session
+- No implementation change required — implementation is correct
+
+---
+
+### BLG-SPEC-30 — Correct stop-management-workflow ux_spec.md §4.4 stop-update HTTP verb to PATCH
+**Priority:** P3 (Low)
+**Type:** Specification / Documentation
+**Owner:** Head of UX & Design
+**Source:** EPIC-01 ST-03 DEV-02 (v3.4 delivery deviation — 2026-05-14)
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** v3.5
+
+**Problem**
+stop-management-workflow/ux_spec.md §4.4 specifies `PUT /positions/{id}` for the stop update call, but the v3.4 implementation uses `PATCH /positions/{id}`. PATCH is the correct HTTP verb for partial field updates; the existing endpoint supports it. The spec needs updating to match.
+
+**Acceptance Criteria**
+- §4.4 updated to reference `PATCH /positions/{id}` instead of `PUT /positions/{id}`
+- No implementation change required — implementation is correct
+
+---
+
+### BLG-SPEC-31 — Review React Query v5 onSuccess migration impact across codebase
+**Priority:** P3 (Low)
+**Type:** Specification / Engineering
+**Owner:** Head of Engineering
+**Source:** EPIC-03 ST-10 DEV-01 (v3.4 delivery deviation — 2026-05-14)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.5
+
+**Problem**
+React Query v5 removed `onSuccess` from `useQuery`. In ST-10, this affected `isAbandoned` derivation (fixed by deriving from `existingPlan?.status`). Other useQuery calls in the codebase may still have `onSuccess` that silently does not fire. A codebase scan is needed to confirm no other behavioural gaps exist.
+
+**Acceptance Criteria**
+- Scan all `useQuery` calls for `onSuccess` usage
+- Any affected patterns fixed or documented
+- If no issues found: file closure note in backlog
+
+---
+
 ## 8. Governance Backlog
 
 
@@ -556,6 +609,29 @@ Arc 4 (AI Integration) and future arcs will require data that is not currently s
 - Each entry specifies purpose and why existing data is insufficient
 - Document explicitly notes it is not a feature specification or implementation commitment
 - Delivered before Arc 4 planning begins
+
+---
+
+### BLG-GOV-22 — sprint_planning_prompt.md patch: shared execution_state.json ownership + multi-EPIC Positions.js conflict guidance
+**Priority:** P2 (Medium)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** v3.4 lessons_learnt Phase 3 items #1 and #4 (2026-05-14) — cross-EPIC merge conflict recurrence; note: referenced as BLG-GOV-21 in lessons_learnt, but that ID was already assigned (Arc 4 data requirements) — corrected to BLG-GOV-22
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.5
+
+**Problem**
+Three of four v3.4 EPICs required manual conflict resolution at merge time due to: (a) `execution_state.json` created independently on each branch, and (b) `src/pages/Positions.js` modified by three branches (EPIC-01, EPIC-02, EPIC-03). This is a recurrence from v3.3 Phase 3 item #2.
+
+**Scope**
+- sprint_planning_prompt.md: add rule for shared execution_state.json ownership (first EPIC branch creates; others check for existence before creating)
+- sprint_backlog.md template: note merge order and shared file ownership explicitly
+- UX spec guidance: document component stacking order for shared pages (Positions.js) so conflict resolution has a reference
+
+**Acceptance Criteria**
+- sprint_planning_prompt.md updated with shared execution_state.json rule
+- Merge order and shared file notes in sprint_backlog.md template
+- Head of Specs Team sign-off applied
 
 ---
 

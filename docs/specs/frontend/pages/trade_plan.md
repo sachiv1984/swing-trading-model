@@ -241,6 +241,7 @@ All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combin
 | ID | Description | Priority | Status |
 |----|-------------|----------|--------|
 | DEV-01 | v3.1 design gate claimed creation of this spec at v0.1, but the file was not committed to the repository. Recovered at v3.2 design gate. | P2 | Resolved — file created at v3.2 design gate |
+| DEV-v3.4-01 | EPIC-03 ST-10 (v3.4): React Query v5 removed `onSuccess` from `useQuery`. `isAbandoned` derived from `existingPlan?.status` (query data) rather than a post-fetch callback. Functional behaviour — abandonment state derived correctly on initial load — matches spec §8.1 intent. Codebase scan for other `onSuccess` usages tracked in BLG-SPEC-31. | P3 | Mitigated — RQ v5 pattern applied; full scan pending (BLG-SPEC-31) | BLG-SPEC-31 |
 
 ---
 

@@ -110,3 +110,11 @@ Placement rule: if a grace period alert card is also present, the drawdown revie
 - Warning icon uses `aria-hidden="true"` (decorative); title provides text context.
 - Dismiss button has `aria-label="Dismiss drawdown review prompt"`.
 - Amber text on amber-50 background: ensure contrast ≥ 4.5:1 (amber-700 on amber-50 is compliant).
+
+---
+
+## Known Deviations
+
+| ID | Description | Canonical requirement | Priority | Status | Backlog reference |
+|----|-------------|----------------------|----------|--------|------------------|
+| DEV-v3.4-01 | Dismiss state uses React `useState` (in-memory). Filed as deviation during sprint execution for traceability. Spec §6 explicitly specifies "in-memory component state — not localStorage, not persisted to server" — implementation matches spec. No corrective action required. | §6: in-memory component state (spec-compliant) | P3 | Self-resolving — spec and implementation agree | N/A |

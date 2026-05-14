@@ -144,3 +144,11 @@ On click:
 | §13 — explicit confirmation button | Human-in-the-loop required for any stop change |
 | No multiplier control in UI | Strategy rules govern multiplier; UI does not expose strategy configuration |
 | Success toast after close | Confirms action without keeping modal open |
+
+---
+
+## Known Deviations
+
+| ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
+|----|-------------|----------------------|----------|-------------------|-------|------------------|
+| DEV-v3.4-01 | v3.4 ST-03 implementation calls `PATCH /positions/{id}` for the stop update instead of `PUT /positions/{id}`. PATCH is the correct HTTP verb for partial field updates; the existing endpoint supports it and the functional outcome is identical. | §4.4: `PUT /positions/{id}` called with new `stop_price = atr_trail_stop` | P3 | v3.5 — update §4.4 to document PATCH /positions/{id} | Head of UX & Design | BLG-SPEC-30 |

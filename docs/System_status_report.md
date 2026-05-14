@@ -939,7 +939,7 @@ The system is ready for:
 
 ## Sprint: 2026-05-14__release-v3.4
 **Date:** 2026-05-14
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — 2026-05-14
 
 ### Capabilities now live (merged this sprint)
 
