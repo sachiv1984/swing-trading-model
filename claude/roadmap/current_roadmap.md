@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-13 (rebalance 2026-05-13__scheduled — DL-026 Kill BLG-GOV-08 ref; DL-027/028 2 backlog adds)
+**Last Updated:** 2026-05-14 (post-ship closure 2026-05-14__release-v3.4 — v3.4 shipped)
 **Last rebalance:** 2026-05-08 (cycle 2026-05-08__scheduled — Standard-tier scheduled rebalance; DL-025 backlog adds × 16)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,17 +10,10 @@
 
 ## 1. Current Version
 
-**v3.3** — Arc 3 In-Trade Risk Management — Shipped 2026-05-13
-**Next planned release:** **v3.4** — Arc 3 In-Trade Risk Management (continued)
+**v3.4** — Arc 3 In-Trade Risk Management (continued) — Shipped 2026-05-14
+**Next planned release:** **v3.5** — [TBD]
 
-<!-- roadmap-annotation-marker: RA:v3.4:2026-05-14__release-v3.4 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-05-14__release-v3.4
-- Plan published: 2026-05-14
-- Cycle folder: claude/cycles/2026-05-14__release-v3.4/
-- Backlog slice: claude/cycles/2026-05-14__release-v3.4/stage4_backlog_slice.md
-- Status at annotation: Validated
+*RA:v3.4 retired — see roadmap_archive.md 2026-05-14 (post-ship closure 2026-05-14__release-v3.4).*
 
 *RA:v3.3 retired — see roadmap_archive.md 2026-05-13.*
 
@@ -156,7 +149,9 @@ Today you find stocks through external research and add them to the watchlist ma
 
 **End state:** Every open position has a visible lifecycle state. The system surfaces the right prompt at the right moment — grace period expiry, stop trail opportunity, drawdown threshold, concentration breach — and you confirm or dismiss each one. Nothing happens automatically. Every decision is yours, made with full context.
 
-> **v3.3 partial delivery (2026-05-13):** IT-01 backend (position_lifecycle_service.py, DS-05 migration, enriched GET /positions, POST /positions/{id}/refresh-state), IT-02 backend (GET /positions/grace-period-alerts), and IT-03 backend (GET /positions/{id}/stop-trail) shipped. Frontend display for IT-01/02/03 (ST-03, ST-05, ST-07) deferred to v3.4. IT-04, IT-05, IT-06 remain planned.
+> **v3.3 partial delivery (2026-05-13):** IT-01 backend (position_lifecycle_service.py, DS-05 migration, enriched GET /positions, POST /positions/{id}/refresh-state), IT-02 backend (GET /positions/grace-period-alerts), and IT-03 backend (GET /positions/{id}/stop-trail) shipped. Frontend display for IT-01/02/03 (ST-03, ST-05, ST-07) deferred to v3.4. IT-04, IT-05, IT-06 remained planned.
+>
+> **v3.4 delivery (2026-05-14):** IT-01 frontend (LifecycleBadge), IT-02 frontend (GracePeriodAlertZone), IT-03 frontend (TrailStopModal), IT-04 backend+frontend (DrawdownReviewPrompt), IT-05 backend+frontend (ConcentrationLimitsWarning) — all shipped. IT-06 (Alpaca paper trading) deferred to v3.5+. **Arc 3 features IT-01 through IT-05 ✅ Complete.**
 
 -----
 
@@ -277,13 +272,15 @@ Items in this section are sequenced and ready for planning when the current vers
 
 ### Arc 3 — In-Trade Risk Management (v3.3–v3.5)
 
-|Feature                         |ID   |Effort|Gate / pre-condition                                                                        |
+**Status (2026-05-14):** IT-01 through IT-05 complete (v3.3–v3.4). IT-06 (Alpaca Paper Trading) deferred to v3.5+.
+
+|Feature                         |ID   |Effort|Status / Notes                                                                              |
 |--------------------------------|-----|------|--------------------------------------------------------------------------------------------|
-|Position Lifecycle Manager      |IT-01|M     |No gate; high standalone value; candidate for pull-forward                                  |
-|Grace Period Decision Support   |IT-02|S     |No gate; links to trade plan if PT-01 exists                                                |
-|Stop Management Workflow        |IT-03|M     |No gate; requires stop price join (shipped v2.4)                                            |
-|Drawdown-Triggered Review Prompt|IT-04|M     |No gate; uses existing heat calculation                                                     |
-|Position Concentration Limits   |IT-05|S     |Requires DS-03 sector data for full value                                                   |
+|Position Lifecycle Manager      |IT-01|M     |✅ Shipped v3.3 (backend) + v3.4 (frontend)                                                 |
+|Grace Period Decision Support   |IT-02|S     |✅ Shipped v3.3 (backend) + v3.4 (frontend)                                                 |
+|Stop Management Workflow        |IT-03|M     |✅ Shipped v3.3 (backend) + v3.4 (frontend)                                                 |
+|Drawdown-Triggered Review Prompt|IT-04|M     |✅ Shipped v3.4 (backend + frontend)                                                        |
+|Position Concentration Limits   |IT-05|S     |✅ Shipped v3.4 (backend + frontend)                                                        |
 |Alpaca Paper Trading Integration|IT-06|H     |US market only; §13 review required before pre-alignment; foundational for PO-05 replay mode|
 
 
@@ -387,7 +384,8 @@ When evaluating new features:
 |**v3.1–v3.2** ✅|Arc 2: Pre-Trade Research & Planning (partial)                       |PT-01 (v3.1), PT-02 + PT-03 + PT-05 (v3.2) — ✅ Complete. PT-04 (Setup Quality Score) deferred to v3.3+                                 |
 |**v3.3+**    |Arc 2: Pre-Trade Research & Planning (remainder)                       |PT-04 Setup Quality Score — gate: 20+ closed trades; depends on PT-01 — 📋 Planned                                                       |
 |**v3.3** ✅  |Arc 3: In-Trade Risk Management (partial)                              |IT-01/02/03 backend (lifecycle state machine, grace period alerts, stop trail); research view spec closure (BLG-SPEC-24/25/26, BLG-FE-28); entry checklist E2E; governance patches (OA-01–05); feature flag infra (BLG-FEAT-13); trade plan abandonment backend (BLG-FEAT-21 partial) — ✅ Shipped 2026-05-13 — cycle: 2026-05-09__release-v3.3|
-|**v3.4–v3.5**|Arc 3: In-Trade Risk Management (continued)                           |IT-01/02/03 frontend (ST-03/05/07 deferred), IT-04 drawdown prompts, IT-05 concentration limits, IT-06 Alpaca paper trading — 📋 Planned  |
+|**v3.4** ✅  |Arc 3: In-Trade Risk Management (continued)                            |IT-01 lifecycle badge frontend, IT-02 grace period alert frontend, IT-03 stop trail frontend, IT-04 drawdown review prompt (backend+frontend), IT-05 concentration limits (backend+frontend); v3.3 deferred frontend quick wins; spec/QA debt — ✅ Shipped 2026-05-14 — cycle: 2026-05-14__release-v3.4|
+|**v3.5**     |Arc 3: In-Trade Risk Management (remainder) + Arc 4 start             |IT-06 Alpaca paper trading (§13 review required); Arc 4 planning begins — 📋 Planned                                                      |
 |**v3.5–v3.8**|Arc 4: Post-Trade Intelligence                                        |Plan vs reality analysis, journal pattern recognition, behavioural error taxonomy, outcome correlation — 📋 Planned                        |
 |**v3.8–v4.0**|Arc 5: Strategy Integrity                                             |Pre-entry rule validation, behavioural drift detection, red flag journal, strategy version comparison — 📋 Planned                         |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

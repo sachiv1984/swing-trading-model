@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v3.4
 Cycle: 2026-05-14__release-v3.4
 Last Updated: 2026-05-14
+
+**Superseded by:** v3.4 ship — 2026-05-14
+**Changelog:** docs/product/changelog.md#v3.4
+**Verification report:** claude/cycles/2026-05-14__release-v3.4/verification_report.md
+**Cycle:** 2026-05-14__release-v3.4
 
 ## Release Scope — v3.4 Arc 3 In-Trade Risk Management (continued)
 

@@ -1,9 +1,34 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.5
-**Last Updated:** 2026-05-12
+**Version:** 2.6
+**Last Updated:** 2026-05-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-14__release-v3.4
+**Date:** 2026-05-14
+**Status:** Verified_with_deviations — 2026-05-14
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Arc 3 Frontend Completion: LifecycleBadge component (GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN states) with arc3_lifecycle_display feature flag guard; GracePeriodAlertZone with sessionStorage dismiss (§13 display-only); TrailStopModal with PATCH /positions/{id} stop update (§13 guided confirmation required). 10/10 Playwright scenarios (SC-LS-01–04, SC-GP-01–03, SC-TS-01–03) pass. | docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md; docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md; docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md | P3: sessionStorage vs localStorage (DEV-v3.4-01); P3: PATCH vs PUT stop update (DEV-v3.4-02) |
+| EPIC-02 | Arc 3 Risk Prompts: GET /portfolio/drawdown-status backend (drawdown % from peak, threshold breach, lifecycle state counts); DrawdownReviewPrompt component (session-scoped dismiss, §13 display-only); GET /portfolio/concentration-status backend (per-position/sector heat %); ConcentrationLimitsWarning component (DS-03 graceful degradation, §13 display-only). 10/10 Playwright scenarios (SC-DD-01–05, SC-CC-01–05) pass. test.py 53→55. | docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md; docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md; docs/reference/openapi.yaml | P3: useState in-memory dismiss — self-resolving (spec §6 spec-compliant) |
+| EPIC-03 | Frontend Quick Wins: Research page UK suffix strip (BLG-FE-23); negative/zero earnings days display `—`/`Today` (BLG-FE-24); Signals page defaults to most recent trading day (BLG-FE-25); Watchlist binary research status indicator (BLG-FE-29); Trade plan 7-state colour-coded status badges + abandonment UI with reason field (BLG-FE-30 + BLG-FEAT-21 frontend). 16/16 Playwright scenarios pass. | docs/specs/frontend/pages/trade_plan.md#9 | P3: RQ v5 onSuccess removal — isAbandoned derived from query data (DEV-v3.4-01) |
+| EPIC-04 | Spec & QA Debt: Research view component library (docs/frontend/component_library_research_view.md); Screener morning routine UX spec (docs/specs/frontend/pages/screener_morning_routine.md); trade_plan.md §6.2 pre-population fields corrected (BLG-SPEC-28); AI journal review cadence defined (BLG-AI-03); Screener accuracy test protocol (docs/testing/screener_accuracy_protocol.md, BLG-QA-18). | docs/frontend/component_library_research_view.md; docs/specs/frontend/pages/trade_plan.md#§6.2 | None |
+
+### Capabilities deferred or returned
+
+None. All 14 sprint items completed and merged.
+
+### Verification inputs
+
+- QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-04.md — all DoQ signed 2026-05-14
+- Deviations filed: 4 P3 (no P0/P1/P2)
+- Test scenarios: 36 Playwright scenarios across EPIC-01/02/03 — 36/36 pass; EPIC-04 not applicable (documentation)
 
 ---
 

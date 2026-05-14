@@ -41,8 +41,9 @@
 | v3.1  | 14      | 14        | 1.00     | All 14 stories closed; 2 frontend items reclassified delegated→autonomous and delivered; no deviations |
 | v3.2  | 17      | 17        | 1.00     | All 17 stories closed; zero spec deviations; EPIC-01 required re-verification pass after P1 staging fixes but all stories delivered and verified |
 | v3.3  | 17      | 14        | 0.82     | 3 frontend stories returned to backlog (ST-03/05/07 — delegated_frontend); Arc 3 backend foundation complete; 4 P3 deviations accepted |
+| v3.4  | 14      | 14        | 1.00     | All 14 stories completed; IT-01–05 Arc 3 frontend + risk prompts delivered; 4 P3 deviations accepted (no P0/P1/P2) |
 
-**Rolling 6-cycle average (v2.8–v3.3):** 0.97
+**Rolling 6-cycle average (v2.9–v3.4):** 0.97
 
 ---
 

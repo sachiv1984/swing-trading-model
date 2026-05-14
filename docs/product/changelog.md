@@ -3,9 +3,44 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-13
+**Last Updated:** 2026-05-14
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.4 — Arc 3 In-Trade Risk Management (continued) — 2026-05-14
+Cycle: 2026-05-14__release-v3.4
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-05-14__release-v3.4/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Arc 3 Frontend Completion (IT-01/02/03): LifecycleBadge component on positions page (GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN states) with arc3_lifecycle_display feature flag guard; GracePeriodAlertZone with sessionStorage dismiss; TrailStopModal with PATCH /positions/{id} stop update. 10/10 Playwright scenarios pass | docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md; docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md; docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md |
+| EPIC-02 | Arc 3 Risk Prompts (IT-04/05): GET /portfolio/drawdown-status backend (drawdown % from peak, threshold breach, open positions by state); DrawdownReviewPrompt component (§13 display-only, session-scoped dismiss); GET /portfolio/concentration-status backend (per-position/sector heat); ConcentrationLimitsWarning component (DS-03 graceful degradation). 10/10 Playwright scenarios pass | docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md; docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md; docs/reference/openapi.yaml |
+| EPIC-03 | Frontend Quick Wins: Research page UK suffix strip (BLG-FE-23); negative/zero earnings days display (BLG-FE-24); Signals page defaults to most recent day (BLG-FE-25); Watchlist research status indicator (BLG-FE-29); Trade plan status badges + abandonment UI (BLG-FE-30 + BLG-FEAT-21 frontend). 16/16 Playwright scenarios pass | docs/specs/frontend/pages/trade_plan.md#9 |
+| EPIC-04 | Spec & QA Debt: Research view component library (BLG-FE-31); Screener morning routine UX spec (BLG-FE-22); trade_plan.md §6.2 entry checklist field references updated (BLG-SPEC-28); AI journal review cadence (BLG-AI-03); Screener accuracy test protocol (BLG-QA-18) | docs/frontend/component_library_research_view.md; docs/specs/frontend/pages/screener_morning_routine.md; docs/specs/frontend/pages/trade_plan.md#§6.2; docs/testing/screener_accuracy_protocol.md |
+
+### Deviations accepted
+4 minor P3 deviations — see verification_report.md §4 for full detail:
+- EPIC-01/DEV-v3.4-01 [ST-02, P3]: sessionStorage used instead of localStorage for grace period dismiss — matches "same browser session" AC. Target: v3.5 (BLG-SPEC-29).
+- EPIC-01/DEV-v3.4-02 [ST-03, P3]: PATCH /positions/{id} used instead of PUT for stop update — correct HTTP verb. Target: v3.5 (BLG-SPEC-30).
+- EPIC-03/DEV-v3.4-01 [ST-10, P3]: React Query v5 removed onSuccess from useQuery — isAbandoned derived from query data. Codebase scan pending (BLG-SPEC-31).
+- EPIC-02/DEV-v3.4-01 [ST-05, P3]: useState in-memory dismiss — spec §6 explicitly specifies in-memory state. Self-resolving.
+
+### Tech backlog items shipped
+- [ST-11] Research view component library (BLG-FE-31) — PT-02 component catalogue
+- [ST-12] Screener morning routine UX spec (BLG-FE-22) — Arc 1→Arc 2 workflow spec
+- [ST-13] trade_plan.md §6.2 spec update (BLG-SPEC-28) + AI journal review cadence (BLG-AI-03)
+- [ST-14] Screener accuracy test protocol (BLG-QA-18) — §11 filter accuracy protocol
+- [ST-07] Research page UK suffix strip (BLG-FE-23) + negative earnings days (BLG-FE-24)
+- [ST-08] Signals page default to most recent day (BLG-FE-25)
+- [ST-09] Watchlist research status indicator (BLG-FE-29)
+- [ST-10] Trade plan status badges (BLG-FE-30) + abandonment UI (BLG-FEAT-21 frontend)
+
+Sign-off: Product Owner — 2026-05-14
+QA sign-off: Director of Quality — 2026-05-14
 
 ---
 

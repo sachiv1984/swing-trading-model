@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-14 (delivery verification 2026-05-14__release-v3.4 — 4 adds: BLG-SPEC-29, BLG-SPEC-30, BLG-SPEC-31 (v3.4 P3 deviation backlog items), BLG-GOV-22 (sprint_planning_prompt.md merge-conflict patch); BLG-GOV-21 ID conflict noted)
+**Last Updated:** 2026-05-14 (groom backlog GROOM-20260514-01 — 11 BLG items + 2 TEST-GAP items archived; all COMPLETE/RESOLVED v3.4 entries replaced with one-line archive notes; see backlog_archive.md GROOM-20260514-01)
 **Last rebalance:** 2026-05-08 (cycle 2026-05-08__scheduled — DL-025 backlog adds × 16)
 
 > ⚠️ Standing Notice
@@ -71,30 +71,7 @@ Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. Wh
 
 ---
 
-### BLG-FEAT-21 — Trade plan abandonment status field
-**Priority:** P2 (Medium)
-**Status:** Backend ✅ COMPLETE v3.3 (ST-17 EPIC-04) — frontend pending v3.4
-**Type:** Product Feature / Data Model
-**Owner:** Product Owner
-**Source:** IDEA-challenger-20260508-02 — promoted cycle 2026-05-08__scheduled (DL-025)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v3.4 (backend DS-06 migration + PUT /trade-plans/{id} abandonment guard delivered v3.3; frontend Abandoned status display and UI deferred)
-
-**Problem**
-Trade plans can currently be in Active or Closed states but there is no mechanism to record that a plan was abandoned before a position was opened (e.g. entry conditions never met, thesis invalidated, sizing constraints made the trade unfeasible). Abandoned plans currently sit in an ambiguous incomplete state with no rationale captured, making retrospective plan quality review impossible.
-
-**Scope**
-- Add `Abandoned` as a valid trade plan status
-- Add a required `abandonment_reason` field (free text, short — required when status is set to Abandoned)
-- Surface abandoned plans alongside closed plans in the trade plan history view
-- Backend: add status transition logic (Draft/Research → Abandoned; Active positions may not be abandoned)
-- Frontend: abandonment action with reason input
-
-**Acceptance Criteria**
-- Trade plan can be set to Abandoned status via UI with a required reason
-- Abandoned plans appear in plan history with abandonment reason displayed
-- Active positions linked to a plan cannot be abandoned (guard enforced)
-- No regression in existing plan status transitions
+*BLG-FEAT-21 (Trade plan abandonment status field) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
@@ -116,108 +93,23 @@ Trade plans can currently be in Active or Closed states but there is no mechanis
 
 ---
 
-### BLG-FE-31 — Research view component library
-**Priority:** P3 (Low)
-**Type:** Frontend / Documentation
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** IDEA-base44-frontend-20260508-01 — promoted cycle 2026-05-13__scheduled (DL-028)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v3.4 sprint planning (before IT-01/02/03 frontend stories are scoped)
-
-**Problem**
-The PT-02 research view shipped v3.2 with reusable UI components (price card, regime panel, news feed, source attribution row). Arc 3 frontend stories ST-03/05/07 (lifecycle badge, grace period alert card, stop trail panel) will need to extend or reuse these components. Without a catalogue, sprint planning risks duplicate implementation or inconsistent component usage.
-
-**Scope**
-- Catalogue each PT-02 research view UI component: name, file path, props, variants, and usage locations
-- Note reuse candidates for Arc 3 frontend: which components are directly reusable vs need extension
-- Format: lightweight reference document (not a formal design spec — just a component inventory)
-- Scope constraint: PT-02 research view components only; not a full application component inventory
-
-**Acceptance Criteria**
-- Catalogue covers all major PT-02 research view components (price card, regime/signal panel, news feed, source attribution row, freshness indicator)
-- Each entry includes: component name, file path, key props, known variants
-- Reuse candidates for ST-03/05/07 explicitly noted
-- Delivered before v3.4 sprint planning for IT-01/02/03 frontend stories
+*BLG-FE-31 (Research view component library) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
-### BLG-FE-22 — Screener morning routine UX spec
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX Specification
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** IDEA-product-owner-20260421-01 — promoted cycle 2026-05-05__scheduled (DL-024)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v3.4 sprint planning (original target passed — PT-02 research view delivered without this spec; still useful before IT-01/02/03 frontend sprint planning in v3.4)
-
-**Problem**
-The screener is live (v3.0) with DS-07 watchlist promotion. The current multi-surface flow (screener results → watchlist → pre-trade research) has no designed continuity. Arc 2 PT-02 (Pre-Trade Research View) needs a clear workflow spec for how users navigate from screener discovery to research — otherwise PT-02 UX risks being designed in isolation from the Arc 1→Arc 2 transition.
-
-**Scope**
-- UX workflow spec for the Arc 1→Arc 2 morning routine: screener results → shortlist → watchlist promotion → pre-trade research navigation
-- Answers: after promoting candidates, how does the user navigate to research? What context carries between screens?
-- Not a UI design spec (wireframes/mockups) — a workflow and information-carry spec
-- Input to PT-02 UX design at v3.2 sprint planning
-
-**Acceptance Criteria**
-- Workflow spec documents the step-by-step morning routine from screener to research
-- Information-carry decisions documented: what data from the screener should be visible in the research view
-- Navigation model specified: how the user moves between screener, watchlist, and research views
-- Delivered before v3.2 sprint planning so it informs PT-02 UX story authoring
+*BLG-FE-22 (Screener morning routine UX spec) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
-### BLG-FE-23 — Research page UK ticker suffix not stripped
-**Priority:** P3 (Low)
-**Type:** Frontend / Bug Fix
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** v3.2 delivery verification — manual staging 2026-05-06 (DEV-E01-03)
-**Effort:** XS (~30 min)
-**Provisional-Target:** v3.3 (or alongside EPIC-01 P1 fix)
-
-**Problem**
-`stripUkSuffix` was applied to the screener and watchlist table displays in v3.1 (BLG-FE-20) but was not applied to the Research page (`Research.js`) ticker display in the page title/header. UK tickers therefore appear with `.L` suffix (e.g. `MTLN.L`) in the Research page heading, inconsistent with the rest of the application.
-
-**Acceptance Criteria**
-- Research page title/header strips `.L` suffix from UK tickers using the existing `stripUkSuffix` utility
-- `MTLN.L` displays as `MTLN` in the Research page header
-- No regression in screener or watchlist UK suffix stripping
+*BLG-FE-23 (Research page UK ticker suffix not stripped) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
-### BLG-FE-24 — Negative earnings days display for past earnings dates
-**Priority:** P3 (Low)
-**Type:** Frontend / Bug Fix
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** v3.2 delivery verification — manual staging 2026-05-06; origin v3.1 EPIC-03 earnings calendar
-**Effort:** XS (~30 min)
-**Provisional-Target:** v3.3
-
-**Problem**
-When a ticker's `next_earnings_date` is in the past, `days_until_earnings` is returned as a negative integer (e.g. `-27` for MTLN.L). The earnings display renders this as a negative number rather than showing `—` (the convention for unavailable/not-applicable data). Users see confusing negative counts.
-
-**Acceptance Criteria**
-- When `days_until_earnings` is negative (past earnings date), display `—` in all earnings columns (screener, watchlist, positions)
-- When `days_until_earnings` is zero: display `Today`
-- No regression in positive days display or earnings proximity warning (≤5 days amber)
+*BLG-FE-24 (Negative earnings days display for past earnings dates) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
-### BLG-FE-25 — Signals page: default to most recent day's signals
-**Priority:** P2 (Medium)
-**Type:** Frontend / Bug or UX
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** v3.2 delivery verification — manual staging 2026-05-06
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v3.3
-
-**Problem**
-The Signals page currently shows all historical signals rather than defaulting to the most recent trading day. This makes the page cluttered and harder to action — the morning-routine use case is to review the current day's signals, not a full history. It is unclear whether this is a regression or original behaviour; investigation needed.
-
-**Acceptance Criteria**
-- Signals page defaults to displaying only the most recent trading day's signals on load
-- A control exists to view older signals (e.g. date picker or "Show all" toggle)
-- If this is a regression, root cause identified and documented
-- No regression in signal data accuracy
+*BLG-FE-25 (Signals page: default to most recent day's signals) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
@@ -269,56 +161,11 @@ The current nav bar occupies a fixed portion of the visible screen area. As the 
 
 ---
 
-### BLG-FE-29 — Watchlist research status indicator
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX Enhancement
-**Owner:** Product Owner
-**Source:** IDEA-product-owner-20260508-02 — promoted cycle 2026-05-08__scheduled (DL-025)
-**Effort:** XS (~0.5 day)
-**Provisional-Target:** v3.3
-**Scope constraint:** Binary flag only (done/not done) — no research quality signal
-
-**Problem**
-The watchlist shows tickers but provides no indication of whether pre-trade research has been completed for a given ticker. Users must navigate to the Research view to check. A binary status indicator on the watchlist would allow users to quickly identify which watchlisted tickers still need research before trade planning can begin.
-
-**Scope**
-- Add a binary research status indicator to each watchlist ticker row
-- Done = PT-02 research was performed for this ticker (research record exists)
-- Not Done = no research record found for this ticker
-- Display: icon or badge — not text, to minimise column width impact
-- No research quality score, no freshness judgement — binary only
-
-**Acceptance Criteria**
-- Watchlist table includes a Research Status column or indicator per ticker row
-- Indicator shows done/not done state correctly based on research record existence
-- No research quality or freshness information displayed (scope constraint)
-- No regression in watchlist loading performance or existing columns
+*BLG-FE-29 (Watchlist research status indicator) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
-### BLG-FE-30 — Trade plan status badges
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX Enhancement
-**Owner:** Frontend Specifications & UX Documentation Owner
-**Source:** IDEA-base44-frontend-20260508-02 — promoted cycle 2026-05-08__scheduled (DL-025)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v3.3 (coordinate with BLG-FEAT-21 — Abandoned status)
-
-**Problem**
-Trade plans display status as plain text. As the trade plan lifecycle grows to include Abandoned status (BLG-FEAT-21) alongside existing states, consistent colour-coded status badges will be needed to make plan status immediately scannable across the trade plan list and detail views.
-
-**Scope**
-- Visual status badges for all trade plan statuses: Draft, Research Pending, Research Complete, Entry Conditions Set, Active, Closed, Abandoned
-- Consistent colour coding: e.g. grey (Draft), amber (Research Pending), blue (Research Complete), purple (Entry Conditions Set), green (Active), muted (Closed), red (Abandoned)
-- Apply in trade plan list view and trade plan detail view header
-- Reference BLG-FE-21 (design system) for colour token alignment
-
-**Acceptance Criteria**
-- Status badges rendered consistently in trade plan list and detail views
-- Each status has a distinct, accessible colour (contrast ratio ≥ 4.5:1)
-- Colours aligned with design system tokens where applicable
-- Abandoned status badge displays correctly (coordinate with BLG-FEAT-21)
-- No regression in trade plan list rendering performance
+*BLG-FE-30 (Trade plan status badges) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
@@ -331,28 +178,7 @@ Trade plans display status as plain text. As the trade plan lifecycle grows to i
 
 ---
 
-### BLG-AI-03 — AI Journal Summarisation quarterly review cadence
-**Priority:** P3 (Low)
-**Type:** Governance / AI Compliance
-**Owner:** AI Compliance & Governance Officer
-**Source:** IDEA-ai-compliance-20260508-02 — promoted cycle 2026-05-08__scheduled (DL-025)
-**Effort:** XS (~0.5 day per review, governance process definition)
-**Provisional-Target:** Define process before v3.4; first review Q3 2026
-
-**Problem**
-AI Journal Summarisation (AI-SUM, shipped v2.8) is live in production using a specific Claude model version. As Claude model versions evolve, the feature's output quality, §13 compliance (display-only, no automated recommendation), and BLG-AI-02 model version contract may drift without a scheduled review mechanism. No cadence exists to verify the AI feature remains compliant and fit-for-purpose.
-
-**Scope**
-- Define a quarterly review process for AI Journal Summarisation
-- Review checklist: output quality sample review, §13 compliance re-confirmation, BLG-AI-02 model version record update, error rate review from BLG-OPS-14 monitoring
-- Document the process in a governance file; reference from OPERATIONAL_GUIDE
-- First review: Q3 2026 (before v3.4 planning cycle)
-
-**Acceptance Criteria**
-- Quarterly review process defined and documented
-- Review checklist specifies observable criteria (not subjective judgement)
-- Process documented with authority (AI Compliance & Governance Officer) and escalation path if §13 concerns arise
-- OPERATIONAL_GUIDE references the review process
+*BLG-AI-03 (AI Journal Summarisation quarterly review cadence) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
@@ -360,30 +186,7 @@ AI Journal Summarisation (AI-SUM, shipped v2.8) is live in production using a sp
 
 ---
 
-### BLG-QA-18 — Screener accuracy test protocol
-**Priority:** P2 (Medium)
-**Type:** QA / Specification
-**Owner:** Director of Quality
-**Source:** IDEA-director-of-quality-20260421-02 — promoted cycle 2026-05-13__scheduled (DL-027)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v3.4 (before or alongside any sprint touching screener filter logic)
-
-**Problem**
-The screener applies deterministic §11 rules (regime gate, ATR threshold, signal score) across 600+ tickers. No formal verification protocol exists for confirming screener output is correct against known inputs. Filter logic changes could introduce silent accuracy regressions undetected by current CI.
-
-**Scope**
-- Define a formal QA protocol for validating screener output accuracy
-- Protocol: test screener against a known sample of tickers with predetermined ATR/regime states and verify output matches expected §11 filter logic
-- Reference `strategy_rules.md §11` as the authoritative parameter source
-- Include: regime gate pass/fail cases, ATR threshold boundary cases, signal score threshold cases
-- Build on existing BLG-QA-08 mock harness and BLG-QA-10 screener test coverage
-
-**Acceptance Criteria**
-- Formal accuracy test protocol documented (Owner: Director of Quality)
-- Protocol specifies observable, measurable acceptance criteria (not subjective judgement)
-- Minimum sample: tickers with known regime, ATR, signal values — expected include/exclude outcome documented
-- Protocol executable by QA & Testing Owner using existing BLG-QA-08 mock harness
-- §11 parameters (regime gate, ATR multipliers, signal threshold) explicitly referenced in protocol
+*BLG-QA-18 (Screener accuracy test protocol) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
@@ -411,25 +214,26 @@ The screener applies deterministic §11 rules (regime gate, ATR threshold, signa
 
 ---
 
-### BLG-OPS-13 — Add new v2.8/v2.9/v3.0 endpoints to api_performance_baseline.md re-run
+### BLG-OPS-13 — Add new v2.8/v2.9/v3.0/v3.4 endpoints to api_performance_baseline.md re-run
 **Priority:** P3 (Low)
 **Type:** Operations / Performance Baseline
 **Owner:** Infrastructure & Operations Owner
-**Source:** v2.9 post-ship closure 2026-04-24 (3 endpoints); v3.0 post-ship closure 2026-04-28 OA-v30-01 (5 additional endpoints); v3.1 post-ship closure 2026-05-05 (10 additional endpoints)
-**Effort:** S–M (~1–2 days — 18 endpoints total)
+**Source:** v2.9 post-ship closure 2026-04-24 (3 endpoints); v3.0 post-ship closure 2026-04-28 OA-v30-01 (5 additional endpoints); v3.1 post-ship closure 2026-05-05 (10 additional endpoints); v3.4 post-ship closure 2026-05-14 (2 additional endpoints)
+**Effort:** M (~2 days — 20 endpoints total)
 **Provisional-Target:** Before next performance baseline review
 
 **Problem**
-Eighteen endpoints shipped in v2.8/v2.9/v3.0/v3.1 are absent from `docs/ops/api_performance_baseline.md`. Performance re-runs require a live environment and human coordination — baseline updates cannot be automated.
+Twenty endpoints shipped in v2.8/v2.9/v3.0/v3.1/v3.4 are absent from `docs/ops/api_performance_baseline.md`. Performance re-runs require a live environment and human coordination — baseline updates cannot be automated.
 
-**Scope (updated 2026-05-05):**
+**Scope (updated 2026-05-14):**
 - v2.8/v2.9 endpoints (3): `POST /ai/journal-summary`, `GET /ai/journal-summary/history`, `GET /v1beta1/news`
 - v3.0 endpoints (5): `GET /ticker-universe`, `POST /ticker-universe`, `DELETE /ticker-universe/{ticker}`, `GET /screener/results`, `POST /screener/run`
 - v3.1 endpoints (10): `POST /trade-plans`, `GET /trade-plans/{id}`, `PUT /trade-plans/{id}`, `DELETE /trade-plans/{id}`, `GET /trade-plans/by-position/{position_id}`, `GET /trade-plans/by-ticker/{ticker}`, `GET /research/{ticker}`, `GET /earnings/{ticker}`, `GET /reports/monthly-pnl`, plus any additional v3.1 routes
+- v3.4 endpoints (2): `GET /portfolio/drawdown-status`, `GET /portfolio/concentration-status`
 - Run each against staging to obtain p50/p95 latencies and add to `docs/ops/api_performance_baseline.md`
 
 **Acceptance Criteria**
-- All 18 endpoints have p50 and p95 latency entries in the baseline document
+- All 20 endpoints have p50 and p95 latency entries in the baseline document
 - Entries consistent with existing baseline measurement methodology
 
 ---
@@ -494,27 +298,7 @@ The research_endpoint.md AC specified distinct HTTP error codes (404 ticker-not-
 
 ---
 
-### BLG-SPEC-28 — Update trade_plan.md §6.2 entry checklist field references to match implementation
-**Priority:** P3 (Low)
-**Type:** Specification / Documentation
-**Owner:** API Contracts & Documentation Owner
-**Source:** ST-11 (EPIC-03, v3.3) — P3 delivery deviation
-**Effort:** XS (~0.25 day)
-**Provisional-Target:** v3.4
-
-**Problem**
-trade_plan.md §6.2 references `stop_level` for stop_defined pre-population and `risk_reward_notes` for research_reviewed pre-population. The actual TradePlan.js implementation uses `early_exit_conditions` and `r_target`. The Playwright tests (SC-CL-04, SC-CL-05) cover actual implementation behaviour, but the spec remains misaligned.
-
-**Scope**
-- Update trade_plan.md §6.2 entry checklist pre-population rules:
-  - `stop_defined`: pre-checked when `early_exit_conditions` is present (not `stop_level`)
-  - `research_reviewed`: pre-checked when `r_target` is set (not `risk_reward_notes`)
-- No implementation change required — implementation is correct
-
-**Acceptance Criteria**
-- trade_plan.md §6.2 field references updated to match TradePlan.js behaviour
-- Cross-reference to entry-checklist.spec.js test scenarios noted in spec
-- Head of Specs Team sign-off recorded in document header
+*BLG-SPEC-28 (Update trade_plan.md §6.2 entry checklist field references) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
@@ -884,13 +668,13 @@ Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/earnings-calendar.sp
 ## Returned to Backlog — v3.3 Sprint Close (2026-05-12)
 
 *ST-03 — Position lifecycle state: frontend display (EPIC-01 / 2026-05-09__release-v3.3)*
-Backend (DS-05 migration, position_lifecycle_service.py, arc3_lifecycle_display feature flag) live on main. React badge component with GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN states pending. Requires Playwright E2E scenario. Ref: DEL-20260510-01.
+✅ DELIVERED v3.4 (ST-01 EPIC-01 — 2026-05-14): LifecycleBadge component with arc3_lifecycle_display flag, SC-LS-01–04 Playwright pass.
 
 *ST-05 — Grace Period Decision Support frontend (IT-02) (EPIC-02 / 2026-05-09__release-v3.3)*
-Backend GET /positions/grace-period-alerts live on main. Alert card UI (dismissible via localStorage, link to trade plan, §13 display-only) pending. Requires Playwright E2E scenario. Ref: DEL-20260510-02.
+✅ DELIVERED v3.4 (ST-02 EPIC-01 — 2026-05-14): GracePeriodAlertZone with sessionStorage dismiss, SC-GP-01–03 Playwright pass.
 
 *ST-07 — Stop Management Workflow frontend (IT-03) (EPIC-02 / 2026-05-09__release-v3.3)*
-Backend GET /positions/{id}/stop-trail live on main. Trail Stop button per PROFITABLE/EXIT ZONE position row, guided panel with current stop / trail stop / diff / R-terms, confirm/cancel interaction pending. Requires Playwright E2E scenario. Ref: DEL-20260510-03.
+✅ DELIVERED v3.4 (ST-03 EPIC-01 — 2026-05-14): TrailStopModal with PATCH /positions/{id} stop update, SC-TS-01–03 Playwright pass.
 
 ---
 
@@ -898,42 +682,11 @@ Backend GET /positions/{id}/stop-trail live on main. Trail Stop button per PROFI
 
 *Added by Delivery Verification Engine — 2026-05-13*
 
-### TEST-GAP-EPIC-01-v33 — Position lifecycle badge Playwright E2E scenarios
-
-**Source:** Delivery verification 2026-05-09__release-v3.3 (STEP 5)
-**Priority:** P3
-**Target:** v3.4 (before or concurrent with ST-03 frontend implementation)
-
-EPIC-01 test_scenarios were never authored (noted in sprint_backlog.md as pending QA & Testing Owner action). ST-03 (lifecycle badge frontend) was returned to backlog, so frontend Playwright scenarios remain unimplemented. When ST-03 is implemented in a future sprint, the following scenarios must be present before PR merge:
-
-- SC-LS-01: Positions page loads with lifecycle state badge visible (GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN states)
-- SC-LS-02: arc3_lifecycle_display feature flag OFF → no badge rendered
-- SC-LS-03: GRACE state badge displays correct days_in_state alongside badge
-- SC-LS-04: Exit zone badge renders with purple colouring
-
-QA & Testing Owner to author scenarios in `docs/qa/test_scenarios/` referencing `docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md` and `docs/specs/frontend/pages/positions.md`.
+*TEST-GAP-EPIC-01-v33 (Position lifecycle badge Playwright E2E scenarios) — ✅ RESOLVED v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
-### TEST-GAP-EPIC-02-v33 — Grace period alert and trail stop Playwright E2E scenarios
-
-**Source:** Delivery verification 2026-05-09__release-v3.3 (STEP 5)
-**Priority:** P3
-**Target:** v3.4 (before or concurrent with ST-05 and ST-07 frontend implementation)
-
-EPIC-02 test_scenarios were never authored (noted in sprint_backlog.md as pending QA & Testing Owner action). ST-05 (grace period alert card) and ST-07 (trail stop panel) were returned to backlog. When these are implemented, the following scenarios must be present before PR merge:
-
-Grace period alert:
-- SC-GP-01: Alert card renders when position in GRACE state ≥ day 8
-- SC-GP-02: Card displays ticker, days_in_state, trade plan context
-- SC-GP-03: Dismiss removes card; re-opening app does not re-show (localStorage)
-
-Trail stop:
-- SC-TS-01: Trail Stop button appears for PROFITABLE/EXIT ZONE positions with current_stop set
-- SC-TS-02: Panel opens showing current stop, ATR trail stop, difference, R-terms
-- SC-TS-03: Confirm button present; §13 compliance — user must click to proceed
-
-QA & Testing Owner to author scenarios referencing UX specs in `docs/design/2026-05-09__release-v3.3/`.
+*TEST-GAP-EPIC-02-v33 (Grace period alert and trail stop Playwright E2E scenarios) — ✅ RESOLVED v3.4 — archived to backlog_archive.md 2026-05-14*
 
 ---
 
@@ -963,6 +716,8 @@ QA & Testing Owner to author scenarios referencing UX specs in `docs/design/2026
 | ST-14 | EPIC-04 | 1 | Screener accuracy test protocol (BLG-QA-18) |
 
 **Theme:** Arc 3 Frontend Completion + IT-04/05 Risk Prompts + Frontend Quick Wins + Spec/QA Debt
+
+*✅ ALL 14 STORIES SHIPPED — COMPLETE v3.4 — 2026-05-14 — cycle: 2026-05-14__release-v3.4*
 
 ---
 

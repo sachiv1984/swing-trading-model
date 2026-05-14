@@ -1,11 +1,169 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-13
+**Last Updated:** 2026-05-14
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+## v3.4 Completions — Archived 2026-05-14 (GROOM-20260514-01)
+
+### BLG-FEAT-21 — Trade plan abandonment status field
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-14
+**Shipped in:** v3.3 backend (ST-17, EPIC-04) + v3.4 frontend (ST-10, EPIC-03, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+`Abandoned` status added to trade plan lifecycle with required `abandonment_reason` field. Status transition guard enforced: Active-position-linked plans cannot be abandoned. Abandoned plans surface in plan history alongside Closed plans. Backend guard on PUT/PATCH endpoint delivered v3.3 (ST-17); frontend abandonment action and reason input in TradePlan.js delivered v3.4 (ST-10).
+
+---
+
+### BLG-FE-31 — Research view component library
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-11, EPIC-04, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+Catalogue of PT-02 research view UI components (price card, regime/signal panel, news feed, source attribution row, freshness indicator). Each entry: component name, file path, key props, variants. Reuse candidates for Arc 3 frontend (IT-01/02/03 stories) explicitly noted. Delivered before v3.4 sprint planning as scoped.
+
+---
+
+### BLG-FE-22 — Screener morning routine UX spec
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-12, EPIC-04, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+Workflow spec for Arc 1→Arc 2 morning routine: screener results → shortlist → watchlist promotion → pre-trade research navigation. Information-carry decisions documented (context visible in research view from screener). Navigation model specified across three surfaces.
+
+---
+
+### BLG-FE-23 — Research page UK ticker suffix not stripped
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-07, EPIC-03, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+`stripUkSuffix` utility applied to Research.js page title/header. UK tickers (e.g. MTLN.L) display as MTLN in Research page heading. Consistent with screener and watchlist treatment. No regression to other suffix-stripping surfaces. Origin: v3.2 delivery verification DEV-E01-03.
+
+---
+
+### BLG-FE-24 — Negative earnings days display for past earnings dates
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-07, EPIC-03, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+Negative `days_until_earnings` (past earnings date) now displays `—` across all earnings columns (screener, watchlist, positions). Zero displays `Today`. Positive values unchanged. Earnings proximity warning (≤5 days amber) unaffected.
+
+---
+
+### BLG-FE-25 — Signals page: default to most recent day's signals
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-08, EPIC-03, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+Signals page defaults to most recent trading day's signals on load. Date picker/toggle control added for viewing historical signals. Morning-routine use case (review current day's signals) now supported directly on load. Signal data accuracy unaffected.
+
+---
+
+### BLG-FE-29 — Watchlist research status indicator
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-09, EPIC-03, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+Binary research status indicator added to watchlist ticker rows. Done = research record exists; Not Done = no record. Icon/badge display — no text, minimal column width. Scope constraint honoured: no research quality score or freshness judgement.
+
+---
+
+### BLG-FE-30 — Trade plan status badges
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-10, EPIC-03, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+Colour-coded status badges for all trade plan statuses: Draft (grey), Research Pending (amber), Research Complete (blue), Entry Conditions Set (purple), Active (green), Closed (muted), Abandoned (red). Applied in trade plan list and detail views. Colours aligned with design system tokens. Coordinate-delivered with BLG-FEAT-21 Abandoned status.
+
+---
+
+### BLG-AI-03 — AI Journal Summarisation quarterly review cadence
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-13, EPIC-04, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+Quarterly review process defined for AI Journal Summarisation (AI-SUM). Review checklist: output quality sample review, §13 compliance re-confirmation, BLG-AI-02 model version record update, error rate review from BLG-OPS-14 monitoring. Process documented in governance file; OPERATIONAL_GUIDE updated. First review: Q3 2026.
+
+---
+
+### BLG-QA-18 — Screener accuracy test protocol
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-14, EPIC-04, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+Formal QA protocol for validating screener output accuracy against §11 strategy rules. Test cases: regime gate pass/fail, ATR threshold boundary, signal score threshold cases. References `strategy_rules.md §11` as authoritative parameter source. Built on BLG-QA-08 mock harness and BLG-QA-10 screener test coverage. Owner: Director of Quality.
+
+---
+
+### BLG-SPEC-28 — trade_plan.md §6.2 entry checklist field reference update
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-13, EPIC-04, cycle 2026-05-14__release-v3.4)
+**Evidence:** `docs/product/changelog.md` v3.4 entry; `claude/cycles/2026-05-14__release-v3.4/verification_report.md`
+
+`trade_plan.md §6.2` pre-population rules corrected: `stop_defined` pre-checked when `early_exit_conditions` present (not `stop_level`); `research_reviewed` pre-checked when `r_target` set (not `risk_reward_notes`). Spec now aligned to TradePlan.js implementation. No implementation change required — implementation was correct. Origin: ST-11 (EPIC-03, v3.3) P3 deviation.
+
+---
+
+### TEST-GAP-EPIC-01-v33 — Position lifecycle badge Playwright E2E scenarios
+
+**Status at retirement:** ✅ Resolved
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-01, EPIC-01, cycle 2026-05-14__release-v3.4)
+**Evidence:** `claude/cycles/2026-05-14__release-v3.4/verification_report.md`; SC-LS-01–04 passing in CI
+
+SC-LS-01–04 authored and passing: lifecycle badge visible for all states (GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN), feature flag OFF suppresses badge, days_in_state display confirmed, exit zone purple colouring verified. TSG-v33-01 resolved — marked in `docs/specs/Specs_Index.md` 2026-05-14.
+
+---
+
+### TEST-GAP-EPIC-02-v33 — Grace period alert and trail stop Playwright E2E scenarios
+
+**Status at retirement:** ✅ Resolved
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-05-14
+**Shipped in:** v3.4 (ST-02 + ST-03, EPIC-01, cycle 2026-05-14__release-v3.4)
+**Evidence:** `claude/cycles/2026-05-14__release-v3.4/verification_report.md`; SC-GP-01–03 and SC-TS-01–03 passing in CI
+
+SC-GP-01–03: alert card renders for GRACE ≥ day 8, displays ticker/days/plan context, sessionStorage dismiss confirmed. SC-TS-01–03: Trail Stop button for PROFITABLE/EXIT ZONE positions, panel shows current/ATR stop/difference/R-terms, user-confirm required (§13 compliant). TSG-v33-02 resolved — marked in `docs/specs/Specs_Index.md` 2026-05-14.
 
 ---
 

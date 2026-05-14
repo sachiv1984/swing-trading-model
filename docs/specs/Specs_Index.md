@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-09
+**Last Updated:** 2026-05-14
 
 ---
 
@@ -528,22 +528,20 @@ Identified during delivery verification (verification_report.md §6 — TSG-v33-
 ### 19.1 TSG-v33-01 — EPIC-01: no Playwright coverage for lifecycle badge display
 
 **Identified:** 2026-05-13 (delivery verification 2026-05-09__release-v3.3)
-**Status:** Open — backlog item TEST-GAP-EPIC-01-v33
+**Status:** ✅ RESOLVED — 2026-05-14 (v3.4, ST-01 EPIC-01)
 **Owner:** QA & Testing Owner
 **Gap:** ST-03 (lifecycle badge frontend) returned to backlog. When implemented, SC-LS-01 to SC-LS-04 must be authored: lifecycle badge visibility (GRACE/PROFITABLE/LOSING/EXIT ZONE/UNKNOWN), arc3_lifecycle_display flag OFF (no badge), GRACE days_in_state display, EXIT ZONE colour rendering.
-**Resolution target:** v3.4 (before or concurrent with ST-03 frontend implementation)
-**Backlog item:** TEST-GAP-EPIC-01-v33 (filed 2026-05-13)
+**Resolution:** ST-01 (EPIC-01, v3.4) implemented LifecycleBadge and authored SC-LS-01–04 in `tests/e2e/epic01-v34-lifecycle.spec.js`. 4/4 scenarios pass. TEST-GAP-EPIC-01-v33 closed.
 
 ---
 
 ### 19.2 TSG-v33-02 — EPIC-02: no Playwright coverage for grace period alert and trail stop panels
 
 **Identified:** 2026-05-13 (delivery verification 2026-05-09__release-v3.3)
-**Status:** Open — backlog item TEST-GAP-EPIC-02-v33
+**Status:** ✅ RESOLVED — 2026-05-14 (v3.4, ST-02/ST-03 EPIC-01)
 **Owner:** QA & Testing Owner
 **Gap:** ST-05 (grace period alert frontend) and ST-07 (trail stop panel) returned to backlog. When implemented, SC-GP-01 to SC-GP-03 and SC-TS-01 to SC-TS-03 must be authored: alert card render, display fields, dismiss/localStorage behaviour; trail stop button, panel fields, §13 confirm interaction.
-**Resolution target:** v3.4 (before or concurrent with ST-05/ST-07 frontend implementation)
-**Backlog item:** TEST-GAP-EPIC-02-v33 (filed 2026-05-13)
+**Resolution:** ST-02 (GracePeriodAlertZone, SC-GP-01–03) and ST-03 (TrailStopModal, SC-TS-01–03) implemented in EPIC-01 v3.4. All 6 scenarios pass in `tests/e2e/epic01-v34-lifecycle.spec.js`. TEST-GAP-EPIC-02-v33 closed.
 
 ---
 
@@ -555,6 +553,21 @@ Identified during delivery verification (verification_report.md §6 — TSG-v33-
 **Gap:** research_view_protocol.md §2.3 flags SC-RV-18 (regime null only) and SC-RV-19 (all fields null — degraded mode) as needing explicit Playwright scenarios. These were not authored at sprint close. When research view frontend is implemented, these scenarios must be added to research_view_scenarios.md.
 **Resolution target:** v3.4 (before research view frontend implementation)
 **Backlog item:** TEST-GAP-EPIC-03-v33 (filed 2026-05-13)
+
+---
+
+---
+
+## 20. Test Coverage Gaps — v3.4 (2026-05-14__release-v3.4)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v34-01).
+
+### 20.1 TSG-v34-01 — EPIC-04: no test scenarios for documentation/spec creation stories
+
+**Identified:** 2026-05-14 (delivery verification 2026-05-14__release-v3.4)
+**Status:** Not applicable — documentation and specification creation tasks have no observable UI or backend computation to test
+**Owner:** N/A
+**Assessment:** All EPIC-04 stories (ST-11/12/13/14) create spec or doc artefacts. No behavioural scenarios applicable. Disposition: not_applicable. No backlog item required.
 
 ---
 
