@@ -283,6 +283,14 @@ function PositionEarningsCell({ ticker, market }) {
   if (loading) return <TableCell><span className="text-slate-600 text-xs">…</span></TableCell>;
   if (!data || data.days_until_earnings == null) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
   const days = data.days_until_earnings;
+  if (days < 0) return <TableCell><span className="text-slate-600 text-xs">—</span></TableCell>;
+  if (days === 0) return (
+    <TableCell>
+      <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/25" title={data.next_earnings_date}>
+        Today
+      </span>
+    </TableCell>
+  );
   const isNear = days <= 5;
   return (
     <TableCell>
