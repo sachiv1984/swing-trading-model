@@ -4,11 +4,11 @@
   "backlog_slice_source": "claude/cycles/2026-05-14__release-v3.4/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-14T09:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-05-14T14:30:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-05-14T20:30:00Z",
   "epics": {
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-14__release-v3.4/EPIC-04",
       "pr_number": 385,
       "pr_status": "merged",
@@ -23,42 +23,42 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-14__release-v3.4/EPIC-03",
       "pr_number": 386,
       "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-14__release-v3.4/qa_evidence_EPIC-03.md",
-      "test_scenarios": ["SC-E03-01","SC-E03-02","SC-E03-03","SC-E03-04","SC-E03-05","SC-E03-06","SC-E03-07","SC-E03-08","SC-E03-09","SC-E03-10","SC-E03-11","SC-E03-12","SC-E03-13","SC-E03-14","SC-E03-15","SC-E03-16"],
+      "test_scenarios": ["tests/e2e/epic03-v34-frontend.spec.js"],
       "stories": {
-        "ST-07": { "title": "Research page UK suffix strip + negative earnings days display (BLG-FE-23 + BLG-FE-24)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": null, "branch": "exec/2026-05-14__release-v3.4/EPIC-03", "commit_sha": "b70d6c59", "completed_utc": "2026-05-14T10:00:00Z", "acceptance_verified": true, "spec_references": [], "deviations_filed": false, "last_completed_substep": "3.1.A.push" },
-        "ST-08": { "title": "Signals page: default to most recent day's signals (BLG-FE-25)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": null, "branch": "exec/2026-05-14__release-v3.4/EPIC-03", "commit_sha": "dc383a5d", "completed_utc": "2026-05-14T10:10:00Z", "acceptance_verified": true, "spec_references": [], "deviations_filed": false, "last_completed_substep": "3.1.A.push" },
-        "ST-09": { "title": "Watchlist research status indicator (BLG-FE-29)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": null, "branch": "exec/2026-05-14__release-v3.4/EPIC-03", "commit_sha": "cdbb18e2", "completed_utc": "2026-05-14T10:20:00Z", "acceptance_verified": true, "spec_references": [], "deviations_filed": false, "last_completed_substep": "3.1.A.push" },
+        "ST-07": { "title": "Research page UK suffix strip + negative earnings days display (BLG-FE-23 + BLG-FE-24)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": null, "branch": "exec/2026-05-14__release-v3.4/EPIC-03", "commit_sha": "b70d6c59", "completed_utc": "2026-05-14T10:00:00Z", "acceptance_verified": true, "spec_references": [], "deviations_filed": true, "last_completed_substep": "3.1.A.push" },
+        "ST-08": { "title": "Signals page: default to most recent day's signals (BLG-FE-25)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": null, "branch": "exec/2026-05-14__release-v3.4/EPIC-03", "commit_sha": "dc383a5d", "completed_utc": "2026-05-14T10:10:00Z", "acceptance_verified": true, "spec_references": [], "deviations_filed": true, "last_completed_substep": "3.1.A.push" },
+        "ST-09": { "title": "Watchlist research status indicator (BLG-FE-29)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": null, "branch": "exec/2026-05-14__release-v3.4/EPIC-03", "commit_sha": "cdbb18e2", "completed_utc": "2026-05-14T10:20:00Z", "acceptance_verified": true, "spec_references": [], "deviations_filed": true, "last_completed_substep": "3.1.A.push" },
         "ST-10": { "title": "Trade plan status badges + abandonment UI (BLG-FE-30 + BLG-FEAT-21 frontend)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": null, "branch": "exec/2026-05-14__release-v3.4/EPIC-03", "commit_sha": "8c1c30c0", "completed_utc": "2026-05-14T10:30:00Z", "acceptance_verified": true, "spec_references": ["docs/specs/frontend/pages/trade_plan.md#9"], "deviations_filed": true, "last_completed_substep": "3.1.A.push", "notes": "DEV-01: RQ v5 onSuccess removed from useQuery." }
       }
     },
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-14__release-v3.4/EPIC-01",
       "pr_number": 387,
       "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-14__release-v3.4/qa_evidence_EPIC-01.md",
-      "test_scenarios": ["SC-LS-01","SC-LS-02","SC-LS-03","SC-LS-04","SC-GP-01","SC-GP-02","SC-GP-03","SC-TS-01","SC-TS-02","SC-TS-03"],
+      "test_scenarios": ["tests/e2e/epic01-v34-lifecycle.spec.js"],
       "stories": {
-        "ST-01": { "title": "Position lifecycle state: frontend display (IT-01)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 371, "branch": "exec/2026-05-14__release-v3.4/EPIC-01", "commit_sha": "2a62f87b", "completed_utc": "2026-05-14T11:00:00Z", "acceptance_verified": true, "spec_references": ["docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md"], "deviations_filed": false, "last_completed_substep": "3.1.A.push", "notes": "LifecycleBadge + State column. 4/4 Playwright pass." },
-        "ST-02": { "title": "Grace Period Decision Support frontend (IT-02)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 372, "branch": "exec/2026-05-14__release-v3.4/EPIC-01", "commit_sha": "2a62f87b", "completed_utc": "2026-05-14T11:00:00Z", "acceptance_verified": true, "spec_references": ["docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md"], "deviations_filed": true, "last_completed_substep": "3.1.A.push", "notes": "DEV-01: sessionStorage instead of localStorage." },
+        "ST-01": { "title": "Position lifecycle state: frontend display (IT-01)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 371, "branch": "exec/2026-05-14__release-v3.4/EPIC-01", "commit_sha": "2a62f87b", "completed_utc": "2026-05-14T11:00:00Z", "acceptance_verified": true, "spec_references": ["docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md"], "deviations_filed": true, "last_completed_substep": "3.1.A.push", "notes": "LifecycleBadge + State column. 4/4 Playwright pass." },
+        "ST-02": { "title": "Grace Period Decision Support frontend (IT-02)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 372, "branch": "exec/2026-05-14__release-v3.4/EPIC-01", "commit_sha": "2a62f87b", "completed_utc": "2026-05-14T11:00:00Z", "acceptance_verified": true, "spec_references": ["docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md"], "deviations_filed": true, "last_completed_substep": "3.1.A.push", "notes": "DEV-01: sessionStorage instead of localStorage — matches 'same browser session' AC." },
         "ST-03": { "title": "Stop Management Workflow frontend (IT-03)", "classification": "autonomous", "status": "done", "assigned_to": "engine", "github_issue": 373, "branch": "exec/2026-05-14__release-v3.4/EPIC-01", "commit_sha": "2a62f87b", "completed_utc": "2026-05-14T11:00:00Z", "acceptance_verified": true, "spec_references": ["docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md"], "deviations_filed": true, "last_completed_substep": "3.1.A.push", "notes": "DEV-02: PATCH /positions/{id} for stop update." }
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-14__release-v3.4/EPIC-02",
       "pr_number": 388,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-14__release-v3.4/qa_evidence_EPIC-02.md",
-      "test_scenarios": ["SC-DD-01","SC-DD-02","SC-DD-03","SC-DD-04","SC-DD-05","SC-CC-01","SC-CC-02","SC-CC-03","SC-CC-04","SC-CC-05"],
+      "test_scenarios": ["tests/e2e/epic02-v34-risk-prompts.spec.js"],
       "stories": {
         "ST-04": {
           "title": "Drawdown-Triggered Review Prompt backend (IT-04)",
@@ -74,10 +74,10 @@
           "completed_utc": "2026-05-14T13:00:00Z",
           "acceptance_verified": true,
           "spec_references": ["docs/reference/openapi.yaml#GET /portfolio/drawdown-status"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "portfolio_risk.py. test.py 53→55. SystemStatus.js '49'→'55'. openapi.yaml + portfolio_endpoints.md updated same commit."
+          "notes": "portfolio_risk.py. test.py 53→55. SystemStatus.js '49'→'55'. openapi.yaml + portfolio_endpoints.md updated same commit. system-status.spec.js SC-SS-01b updated to '55' (Playwright test fix)."
         },
         "ST-05": {
           "title": "Drawdown-Triggered Review Prompt frontend (IT-04)",
@@ -112,7 +112,7 @@
           "completed_utc": "2026-05-14T13:30:00Z",
           "acceptance_verified": true,
           "spec_references": ["docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
           "notes": "ConcentrationLimitsWarning component. Backend in same commit as ST-04. DS-03 graceful degradation. 5/5 Playwright pass."
@@ -130,11 +130,11 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": ["EPIC-04", "EPIC-03", "EPIC-01"],
-    "epics_pending": ["EPIC-02"],
+    "epics_merged": ["EPIC-04", "EPIC-03", "EPIC-01", "EPIC-02"],
+    "epics_pending": [],
     "merge_order": ["EPIC-04", "EPIC-03", "EPIC-01", "EPIC-02"],
-    "all_merged": false
+    "all_merged": true
   },
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-05-14T20:30:00Z"
 }

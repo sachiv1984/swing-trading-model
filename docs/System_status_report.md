@@ -934,3 +934,40 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md
 - Deviations filed: DEV-01 (screener_results.md) resolved this sprint by ST-07; no new spec deviations
 - Test scenarios referenced: tests/test_ticker_universe.py, tests/test_screener_data_service.py, tests/test_screener_engine.py, tests/test_screener_batch_service.py, tests/test_streak_metric.py, tests/test_health_extensions.py, tests/test_ai_audit_service.py; E2E: tests/e2e/screener.spec.js (SC-SCR-01–18), tests/e2e/keyboard-shortcuts.spec.js, tests/e2e/visual-snapshots.spec.js (VS-01–12), tests/e2e/positions-pnl-columns.spec.js (V-PATH2-01–04)
+
+---
+
+## Sprint: 2026-05-14__release-v3.4
+**Date:** 2026-05-14
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-04 | Research view component library — catalogue of PT-02 research view UI components with EPIC-01 reuse candidates noted | docs/frontend/component_library_research_view.md | None |
+| EPIC-04 | Screener morning routine UX spec — step-by-step pre-market workflow for screener use | docs/specs/frontend/pages/screener_morning_routine.md | None |
+| EPIC-04 | trade_plan.md §6.2 spec update — CHK-03/CHK-04 field names corrected; AI journal review cadence doc created | docs/specs/frontend/pages/trade_plan.md#§6.2; docs/specs/compliance/ai_journal_review_cadence.md | None |
+| EPIC-04 | Screener accuracy test protocol — formal accuracy test process doc (Owner: Director of Quality) | docs/testing/screener_accuracy_protocol.md | None |
+| EPIC-03 | Research page UK suffix strip + negative earnings days (BLG-FE-23/24) — .L stripped from display; "Today" label + negative days shown | (frontend only) | None |
+| EPIC-03 | Signals page default to most recent day (BLG-FE-25) — auto-selects latest signal date on load | (frontend only) | None |
+| EPIC-03 | Watchlist research status indicator (BLG-FE-29) — badge shows research freshness per watchlist row | (frontend only) | None |
+| EPIC-03 | Trade plan status badges + abandonment UI (BLG-FE-30/BLG-FEAT-21) — active/draft/abandoned badges; abandon action in plan view | docs/specs/frontend/pages/trade_plan.md#9 | DEV-01 (RQ v5 onSuccess removed) |
+| EPIC-01 | Position lifecycle state badge (IT-01) — LifecycleBadge in Positions table; GRACE/LOSING/PROFITABLE/EXIT ZONE states | docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md | None |
+| EPIC-01 | Grace Period Decision Support (IT-02) — GracePeriodAlertZone on Positions page; sessionStorage dismiss; §13 display-only | docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md | DEV-01 (sessionStorage) |
+| EPIC-01 | Stop Management Workflow (IT-03) — TrailStopModal with stop-trail data; PATCH /positions/{id} update | docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md | DEV-02 (PATCH) |
+| EPIC-02 | Drawdown-Triggered Review Prompt backend (IT-04) — GET /portfolio/drawdown-status; 30-day peak; regime label; lifecycle state counts | docs/reference/openapi.yaml#/portfolio/drawdown-status; docs/specs/api_contracts/portfolio_endpoints.md | None |
+| EPIC-02 | Drawdown-Triggered Review Prompt frontend (IT-04) — DrawdownReviewPrompt card on Positions page; amber warning; in-memory dismiss | docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md | DEV-01 (useState dismiss) |
+| EPIC-02 | Position Concentration Limits backend + frontend (IT-05) — GET /portfolio/concentration-status; ConcentrationLimitsWarning with position/sector breach detail | docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md; docs/specs/api_contracts/portfolio_endpoints.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| (none) | All 14 sprint items completed and merged | N/A |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-04.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md (all DoQ sign-off 2026-05-14)
+- Deviations filed: DEV-01/DEV-02 in EPIC-01 (sessionStorage, PATCH stop update); DEV-01 in EPIC-03 (RQ v5); DEV-01 in EPIC-02 (useState dismiss) — all P3
+- Test scenarios referenced: tests/e2e/epic01-v34-lifecycle.spec.js (10 scenarios); tests/e2e/epic02-v34-risk-prompts.spec.js (10 scenarios); tests/e2e/epic03-v34-frontend.spec.js (16 scenarios)
