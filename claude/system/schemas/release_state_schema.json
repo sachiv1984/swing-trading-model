@@ -1,0 +1,104 @@
+{
+  "_notes": {
+    "design_gate_status": "Written by Design Gate Engine (Phase 1.5) after publish. This engine initialises to not_started only.",
+    "amended_backlog_slice_path": "Written by Amendment Cycle Engine if amendment sealed after publish. This engine initialises to empty string only."
+  },
+
+  "cycle_id": "<cycle_id>",
+  "release": "<vX.Y>",
+  "date": "YYYY-MM-DD",
+  "mode": "strict|standard",
+  "issues_mode": "none|import|gh",
+  "auto_escalate": true,
+  "prompt_schema_version": "v2",
+  "status": "Initialized",
+  "publish_eligible": false,
+  "last_transition_utc": "<ISO-8601 UTC>",
+
+  "sealed": {
+    "sealed_utc": "",
+    "sealed_assumptions": {
+      "timebox": "",
+      "capacity": ""
+    },
+    "state_snapshot_hash": ""
+  },
+
+  "mutation_seq": 0,
+  "assumptions": {
+    "timebox": "<text or empty>",
+    "capacity": "<text or empty>"
+  },
+
+  "locks": {
+    "backlog_lock": {
+      "required": true,
+      "lock_file": "claude/backlog/.lock",
+      "owned": false,
+      "owner_cycle_id": "",
+      "owner_release": "",
+      "acquired_utc": "",
+      "txn_file": "claude/cycles/<cycle_id>/backlog_txn.json",
+      "txn_id": "",
+      "txn_state": "none|prepared|committed",
+      "marker": "RP:<release>:<cycle_id>",
+      "status": "not_checked|acquired|blocked|released|stale_detected"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "",
+      "owner_release": "",
+      "acquired_utc": "",
+      "txn_file": "claude/cycles/<cycle_id>/roadmap_txn.json",
+      "txn_id": "",
+      "txn_state": "none|prepared|committed",
+      "marker": "RA:<release>:<cycle_id>",
+      "status": "not_checked|acquired|blocked|released|stale_detected"
+    }
+  },
+
+  "mutations": [],
+  "invalidated_steps": [],
+
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "deferred_execution_blockers": [],
+  "accepted_risk_escalations": [],
+
+  "attributes": {
+    "plan_structured": false,
+    "plan_executable": false,
+    "backlog_committed": false,
+    "capacity_feasible": "not_started|pass|warn|fail|blocked",
+    "cross_stage_integrity": "not_started|pass|fail|blocked",
+    "decisions_validated": "not_started|pass|fail|not_applicable|blocked"
+  },
+
+  "design_gate_status": "not_started|passed|bypassed",
+  "amended_backlog_slice_path": "",
+
+  "artifacts": {
+    "run_manifest": "present|missing",
+    "backlog_lock": "not_checked|acquired|blocked|released|stale_detected",
+    "backlog_txn": "not_started|prepared|committed",
+    "roadmap_lock": "not_checked|acquired|blocked|released|stale_detected",
+    "roadmap_txn": "not_started|prepared|committed",
+
+    "stage1_readiness": "not_started|pass|fail|blocked",
+    "stage2_scope_extraction": "not_started|pass|fail|blocked",
+    "stage2_scope_document": "not_started|present|missing",
+    "stage3_execution_plan": "not_started|pass|fail|blocked",
+    "stage3_decisions_record": "not_started|present|missing",
+    "stage3_5_model_integrity": "not_started|pass|fail|blocked",
+    "stage4_backlog_slice": "not_started|pass|fail|blocked",
+    "stage4_5_capacity_check": "not_started|pass|warn|fail|blocked",
+    "stage5_5_cross_stage_integrity": "not_started|pass|fail|blocked",
+    "stage5_7_decision_record_integrity": "not_started|pass|fail|not_applicable|blocked",
+
+    "cycle_summary": "not_started|present",
+    "lessons_learnt": "not_started|present",
+    "escalations": "not_started|present"
+  }
+}

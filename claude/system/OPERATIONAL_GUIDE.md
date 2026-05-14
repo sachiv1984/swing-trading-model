@@ -597,7 +597,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.27)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.28)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1394,7 +1394,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.6 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.3 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.27 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.28 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.18 |

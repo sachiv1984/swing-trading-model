@@ -13,6 +13,7 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-05-14 | `release_planning_prompt.md` | v2.27→v2.28 | Token efficiency refactor: extracted state.json schema, escalation subroutine, lock recovery procedure, document templates, and publish gate into dedicated shared files; removed inline trigger footnotes; consolidated STEP 5.5+5.7 | Head of Specs Team |
 | 2026-05-13 | `claude/system/OPERATIONAL_GUIDE.md` | v3.74→v3.75 | execution_prompt.md v3.17→v3.18 (AUD-2026-05-13-002): §8 source prompt header updated v3.17→v3.18; §14 Execution Engine Source v3.17→v3.18; v3.75 changelog entry prepended. | Head of Specs Team (AUD-2026-05-13-002, 2026-05-13) |
 | 2026-05-13 | `claude/system/execution_prompt.md` | v3.17→v3.18 | AUD-2026-05-13-002: §5.4 header advisory note added — when creating lessons_learnt_cycle.md, use `Class: Operational Record (Class 3)` not `Planning Document (Class 4)`; prevents recurrence of class declaration mismatch. | Head of Specs Team (AUD-2026-05-13-002, 2026-05-13) |
 | 2026-05-13 | `claude/system/OPERATIONAL_GUIDE.md` | v3.73→v3.74 | roadmap_prompt.md v5.1→v6.0 token efficiency refactor: §6 source prompt header updated v5.1→v6.0; §14 Roadmap Engine Source updated v6.0; §15 roadmap_prompt version reference updated v5.1→v6.0. | Head of Specs Team (roadmap token efficiency refactor, 2026-05-13) |
