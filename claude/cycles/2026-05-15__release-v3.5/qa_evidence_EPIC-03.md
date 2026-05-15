@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
-**Class:** Planning Document (Class 4)
-**Status:** Active — ST-10 pending QA Lead sign-off
+**Class:** QA Evidence Log (Class 3)
+**Status:** Active
 **Last Updated:** 2026-05-15
 **Cycle:** 2026-05-15__release-v3.5
 
@@ -90,23 +90,29 @@ SC-TP-08: Edit mode pre-populates form fields from GET /trade-plans/{id} — PAS
 **Commit:** `1315ecbe`
 **Classification:** delegated_qa
 **Delegation record:** DEL-20260515-01 in `claude/cycles/2026-05-15__release-v3.5/delegation_log.md`
-**Status:** Delegated — awaiting QA Lead sign-off
+**Status:** Complete — QA Lead sign-off received (2026-05-15)
+**Commit (sign-off):** `a80144ad`
 
 **What was built (engine contribution):**
 - `docs/qa/acceptance_protocols/research_view_regression_protocol.md` v0.1 created: canonical regression suite (SC-RES-01–13), SC-RV-18/19 gap note with BLG-FE-33 reference, IT-series checklist (IT-04/05 covered)
 - `docs/specs/api_contracts/research_endpoint.md` v1.0→v1.1: regression test anchor cross-reference added
 
+**QA Lead corrections applied (commit a80144ad):**
+- §4 IT-04/IT-05 references replaced with PT-03/PT-05 (correct feature IDs)
+- BLG-FE-33 → BLG-FE-32 (correct backlog ID)
+- SC-RES-01–13 confirmed canonical; SC-RV-18/19 gap confirmed; BLG-QA-19 COMPLETE
+
 **Acceptance criteria:**
-- [x] AC-1: `docs/qa/acceptance_protocols/research_view_regression_protocol.md` created (v0.1 draft)
+- [x] AC-1: `docs/qa/acceptance_protocols/research_view_regression_protocol.md` created (v0.1→v1.0)
 - [x] AC-2: Protocol defines canonical regression suite for `/research/{ticker}` and research view
-- [x] AC-3: Protocol covers PT-02 base fields, IT-04/IT-05 additions, null/degraded state handling (SC-RV-18/SC-RV-19 gap noted)
+- [x] AC-3: Protocol covers PT-02 base fields, PT-03/PT-05 additions, null/degraded state handling (SC-RV-18/SC-RV-19 gap noted)
 - [x] AC-4: Protocol explicitly references existing test IDs from `tests/e2e/`
 - [x] AC-5: Protocol cross-referenced in `docs/specs/api_contracts/research_endpoint.md`
-- [ ] **AC-6: QA Lead sign-off recorded in document** — PENDING
-- [ ] **AC-7: BLG-QA-19 marked COMPLETE in backlog** — PENDING (blocked on AC-6)
+- [x] **AC-6: QA Lead sign-off recorded in document** — v0.1→v1.0, corrections applied (commit a80144ad)
+- [x] **AC-7: BLG-QA-19 marked COMPLETE in backlog** — COMPLETE v3.5
 
-**Result:** In progress — delegated
-**Deviations:** None (pending full completion)
+**Result:** Pass
+**Deviations:** None
 
 ---
 
@@ -117,7 +123,7 @@ SC-TP-08: Edit mode pre-populates form fields from GET /trade-plans/{id} — PAS
 | ST-07 | Code review — spec-only change | None applicable | Pass |
 | ST-08 | Code review — spec-only change | None applicable | Pass |
 | ST-09 | Playwright SC-TP-08 + code review | SC-TP-01–08 (9/9 pass) | Pass |
-| ST-10 | Delegated to QA Lead | — | Pending |
+| ST-10 | QA Lead sign-off (human) | SC-RES-01–13 canonical; protocol v1.0 | Pass |
 
 ---
 
@@ -128,8 +134,8 @@ SC-TP-08: Edit mode pre-populates form fields from GET /trade-plans/{id} — PAS
 | ST-07 | Pass | None | BLG-SPEC-29 ✅ COMPLETE | — |
 | ST-08 | Pass | None | BLG-SPEC-30 ✅ COMPLETE | — |
 | ST-09 | Pass | None | BLG-SPEC-31 ✅ COMPLETE | — |
-| ST-10 | Delegated | — | BLG-QA-19 pending sign-off | — |
+| ST-10 | Pass | None | BLG-QA-19 ✅ COMPLETE | — |
 
-**Signed off by:** Sprint Execution Engine (ST-07/08/09 — autonomous, code-review-verifiable with Playwright evidence)
-**Date:** 2026-05-15
-**Comments:** ST-07/08 are spec-only corrections; ST-09 code fix verified by SC-TP-08 Playwright test (9/9 pass). ST-10 pending QA Lead sign-off per DEL-20260515-01. EPIC-03 PR may open with ST-10 noted as delegated-open; PR merge requires ST-10 completion or Product Owner waiver.
+**Signed off by:** Director of Quality — 2026-05-15
+**Test run date:** 2026-05-15 — QA Lead sign-off received; SC-TP-08 Playwright test 9/9 pass
+**Comments:** ST-07/08 are spec-only corrections. ST-09 code fix verified by SC-TP-08. ST-10 QA Lead sign-off (human) received via DEL-20260515-01 Completed (commit a80144ad). All 4 stories Pass.
