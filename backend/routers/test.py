@@ -141,6 +141,9 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /portfolio/drawdown-status", "method": "GET", "url": f"{base_url}/portfolio/drawdown-status", "critical": False},
         {"name": "GET /portfolio/concentration-status", "method": "GET", "url": f"{base_url}/portfolio/concentration-status", "critical": False},
 
+        # Paper Trading (v3.5 / EPIC-01 ST-02)
+        {"name": "GET /portfolio/paper-positions", "method": "GET", "url": f"{base_url}/portfolio/paper-positions", "critical": False},
+
         # Plan vs Reality (v3.5 / EPIC-02 ST-05)
         {"name": "GET /trades/{id}/plan-vs-reality", "method": "GET", "url": f"{base_url}/trades/00000000-0000-0000-0000-000000000000/plan-vs-reality", "critical": False},
 

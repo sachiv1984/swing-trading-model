@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.0
+**Version:** 1.1
 **Cycle:** 2026-05-09__release-v3.3
 **Story:** ST-05 (EPIC-02 — IT-02 Arc 3)
 **Approved by:** Product Owner
@@ -100,8 +100,9 @@ When `trade_plan_id` is null: display single line "No trade plan linked. Conside
 
 ## 5. Dismiss Behaviour
 
-- Dismiss is per-position per-session (localStorage key: `grace_alert_dismissed_{position_id}`)
+- Dismiss is per-position per-session (sessionStorage key: `grace_alert_dismissed_{position_id}`)
 - Dismissed alerts do not reappear on page reload within the same browser session
+- **Dismiss resets on tab close; alert reappears in a new browser session.**
 - Alert reappears on next visit (no expiry; user may re-dismiss)
 - If a new position enters GRACE ≥ day 8, its alert is shown regardless of other dismissed alerts
 
@@ -145,4 +146,4 @@ When `trade_plan_id` is null: display single line "No trade plan linked. Conside
 
 | ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
 |----|-------------|----------------------|----------|-------------------|-------|------------------|
-| DEV-v3.4-01 | v3.4 ST-02 implementation uses `sessionStorage` instead of `localStorage` for dismiss persistence. Dismiss resets on tab close rather than browser close. The AC wording ("does not reappear on page reload within the same browser session") is satisfied by sessionStorage behaviour. | §5: localStorage key `grace_alert_dismissed_{position_id}` | P3 | v3.5 — update §5 to document sessionStorage | Head of UX & Design | BLG-SPEC-29 |
+| DEV-v3.4-01 | ✅ RESOLVED v3.5 (ST-07) — §5 updated to document sessionStorage; dismiss-on-tab-close behaviour noted. Implementation was correct; spec was corrected to match. | §5: localStorage key `grace_alert_dismissed_{position_id}` | P3 | ✅ Resolved v3.5 | Head of UX & Design | BLG-SPEC-29 |

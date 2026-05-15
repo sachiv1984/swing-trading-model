@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.0
+**Version:** 3.1
 **Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -424,6 +424,10 @@ Produce an execution order for EPICs and ST items that:
 
 If a circular dependency is detected: halt and surface to PMO Lead and Head of Specs Team.
 
+**Multi-EPIC `execution_state.json` ownership (Required when > 1 EPIC in scope):** When a sprint has more than one EPIC branch, the execution order produced here determines ownership. Designate the first EPIC in execution order as the `execution_state.json` owner. Record this designation explicitly in `sprint_planning_notes.md` under a "Multi-EPIC Execution Notes" section. All other EPIC branches must check for `execution_state.json` existence before creating their own version — if found, read it and append their EPIC's section rather than overwrite. This prevents execution-state collisions that caused cross-EPIC rework in v3.3 and v3.4.
+
+**Shared file ownership advisory (Required when > 1 EPIC in scope):** Identify any source files that multiple EPICs will modify (e.g., `Positions.js`, `openapi.yaml`, `data_model.md`). For each shared file: record in `sprint_planning_notes.md` which EPIC owns the canonical version and note that later EPICs must rebase onto `main` after earlier EPICs merge before finalising their changes to that file. This advisory must appear in the sprint backlog merge order section (see STEP 6.1).
+
 ### 5.3 Risk Flags
 
 From `release_plan.md ## Execution Plan` (schema v2) or `stage3_execution_plan.md` (pre-v2.11) risk register: confirm which risk IDs are associated with `include` items. For each:
@@ -445,6 +449,8 @@ Write: `claude/cycles/<cycle_id>/sprint_backlog.md` and `claude/cycles/<cycle_id
 Write per `claude/system/shared_standards.md §16.11` (sprint_backlog.md schema).
 
 Key constraints: ST item `Acceptance Criteria` must reference `stage4_backlog_slice.md#ST-xx` — do not duplicate the full AC table (Execution Engine reads AC directly via `spec_references`). `[AWAITING SIGN-OFF]` placeholders in the Product Owner Sign-Off section must be replaced with explicit PO confirmation and date before sealing (STEP 6.2).
+
+**Merge order section (Required when > 1 EPIC in scope):** When the sprint has more than one EPIC, the sprint backlog must include a merge order section immediately after the Sprint Scope header. This section must state: (a) the EPIC merge sequence (e.g., EPIC-04→03→01→02), (b) the `execution_state.json` owner EPIC (designated in STEP 5.2), and (c) any shared files across EPICs with the ownership advisory from STEP 5.2. The Execution Engine relies on this to prevent execution-state collisions and to sequence branch rebases at merge time.
 
 ### 6.1A Sprint Backlog Index (Required — produce alongside sprint_backlog.md)
 

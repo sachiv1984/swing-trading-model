@@ -304,6 +304,49 @@ paths:
                         items:
                           type: object
 
+  /portfolio/paper-positions:
+    get:
+      tags: [Portfolio]
+      summary: Get Alpaca paper account positions with P&L
+      description: >
+        Returns current Alpaca paper account positions with unrealised P&L.
+        Returns {"paper_tracking_enabled": false} when ALPACA_PAPER_API_KEY is not configured.
+        §13 compliant: display-only; no automated order execution. Contract: IT-06 (Arc 3, v3.5).
+      responses:
+        "200":
+          description: Paper positions or disabled flag
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paper_tracking_enabled:
+                    type: boolean
+                  status:
+                    type: string
+                  positions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker:
+                          type: string
+                        paper_entry_price:
+                          type: number
+                        current_market_price:
+                          type: number
+                        paper_pnl_usd:
+                          type: number
+                        paper_pnl_pct:
+                          type: number
+                        date_opened:
+                          type: string
+                          nullable: true
+                        position_size:
+                          type: number
+        "500":
+          description: Alpaca API error
+
   /reports/tax-year:
     get:
       tags: [Reports]
