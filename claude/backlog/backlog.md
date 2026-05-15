@@ -170,6 +170,25 @@ The current nav bar occupies a fixed portion of the visible screen area. As the 
 
 ---
 
+### BLG-FE-32 — Research view: SC-RV-18/SC-RV-19 Playwright coverage for null/degraded state scenarios
+**Priority:** P3 (Low)
+**Type:** Frontend / QA
+**Owner:** QA Lead
+**Source:** research_view_protocol.md §5 (v3.3 sign-off gap); regression_protocol.md §2.2 (v3.5 ST-10)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.6
+
+**Problem**
+SC-RV-18 (regime field null) and SC-RV-19 (all research fields null) were identified as partially covered in v3.3 QA evidence and confirmed as pending in the v3.5 regression protocol. Until these scenarios have explicit Playwright tests, they require human staging sign-off in each sprint that touches the research view.
+
+**Acceptance Criteria**
+- Playwright test added for SC-RV-18: regime field null — regime badge degrades gracefully (no crash, placeholder shown)
+- Playwright test added for SC-RV-19: all research fields null — no crash, all sections show appropriate placeholders
+- Tests added to `tests/e2e/pre-trade-research.spec.js`
+- `research_view_regression_protocol.md` §2.2 updated to reflect Playwright coverage (remove staging caveat)
+
+---
+
 ## 4. Backend & Data Backlog
 
 
@@ -241,6 +260,7 @@ research_view_protocol.md §2.3 notes SC-RV-18 (regime null only) and SC-RV-19 (
 **Source:** IDEA-qa-lead-20260508-02 — promoted cycle 2026-05-15__scheduled (DL-029)
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v3.5
+**Status:** ✅ COMPLETE v3.5 (ST-10, 2026-05-15)
 
 **Problem**
 No formal protocol defines which tests must pass after modifications to the research endpoint or research view components. Each sprint that adds a data field (e.g. IT-04/IT-05 risk data) must independently determine regression coverage, creating inconsistency and coverage gaps. Gates cleared: BLG-QA-15 ✅ v3.3; PT-03 ✅ v3.2; PT-05 ✅ v3.2.

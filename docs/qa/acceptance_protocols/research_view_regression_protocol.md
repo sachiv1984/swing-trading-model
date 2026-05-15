@@ -1,7 +1,7 @@
 **Owner:** QA Lead
 **Class:** Supporting Document (Class 2)
-**Status:** Draft — Awaiting QA Lead Sign-off
-**Version:** 0.1
+**Status:** Active
+**Version:** 1.0
 **Last Updated:** 2026-05-15
 **Story:** ST-10 (EPIC-03, v3.5) — BLG-QA-19
 **Cross-reference:** `docs/qa/acceptance_protocols/research_view_protocol.md`
@@ -59,10 +59,10 @@ All tests in this section MUST pass in CI before the PR opens.
 
 | Scenario ID | Test | Coverage method | Must pass |
 |-------------|------|----------------|-----------|
-| SC-RV-18 | Regime field null — badge degrades gracefully | Playwright (filed: BLG-FE-33) | Yes — when coverage exists |
-| SC-RV-19 | All research fields null — no crash | Playwright (filed: BLG-FE-33) | Yes — when coverage exists |
+| SC-RV-18 | Regime field null — badge degrades gracefully | Playwright (filed: BLG-FE-32) | Yes — when coverage exists |
+| SC-RV-19 | All research fields null — no crash | Playwright (filed: BLG-FE-32) | Yes — when coverage exists |
 
-> **Note:** SC-RV-18 and SC-RV-19 Playwright coverage is pending (BLG-FE-33). Until that backlog item ships, human staging sign-off against these scenarios is required in the QA evidence log.
+> **Note:** SC-RV-18 and SC-RV-19 Playwright coverage is pending (BLG-FE-32). Until that backlog item ships, human staging sign-off against these scenarios is required in the QA evidence log.
 
 ---
 
@@ -88,9 +88,10 @@ When an IT-series story adds new fields to the research view, additionally verif
 - [ ] No existing SC-RES-* tests broken by the addition
 - [ ] If a new Playwright scenario is added for the new field: it is listed in §2 in the next protocol update
 
-**IT-04 (risk signal):** Risk signal badge and R-score field — covered by IT-04 story QA evidence.
-**IT-05 (risk prompt display):** Risk prompt panel — covered by IT-05 story QA evidence.
-**IT-06 (future):** TBD — update this protocol when IT-06 ships.
+**PT-03 (entry condition overlay, v3.2):** Entry condition fields in trade plan panel — covered by SC-RES-07 (plan details when exists).
+**PT-05 (entry checklist UX, v3.2):** Pre-entry checklist display in trade plan panel — covered by SC-RES-07.
+**IT-series (IT-01 through IT-05):** None of IT-01–05 added fields to the research view (IT-04/05 are portfolio-page features). No additional coverage required for prior IT-series.
+**IT-06 and future IT-series:** If a future IT-series story adds fields to the research view, apply the checklist above and update §2 in the next protocol revision.
 
 ---
 
@@ -110,7 +111,7 @@ Before opening any PR that triggers this protocol:
 
 | Role | Name | Date | Status |
 |------|------|------|--------|
-| QA Lead | — | — | Pending |
+| QA Lead | QA Lead | 2026-05-15 | ✅ Approved |
 
 ---
 
@@ -118,4 +119,5 @@ Before opening any PR that triggers this protocol:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.0 | 2026-05-15 | QA Lead sign-off — ST-10 (EPIC-03, v3.5). Corrections: §4 IT-04/IT-05 references replaced with accurate PT-03/PT-05 citations; BLG-FE-33→BLG-FE-32 (correct next sequential ID). Status: Active. |
 | 0.1 | 2026-05-15 | Initial draft — ST-10 (EPIC-03, v3.5). Canonical regression suite from SC-RES-01 to SC-RES-13; SC-RV-18/19 gap noted; IT-series checklist added. Awaiting QA Lead sign-off. |

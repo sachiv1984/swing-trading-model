@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-15T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-15T14:00:00Z",
+  "last_updated_utc": "2026-05-15T16:00:00Z",
   "epics": {
     "EPIC-04": {
       "status": "done",
@@ -100,11 +100,11 @@
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-15__release-v3.5/EPIC-03",
       "pr_number": 403,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-15__release-v3.5/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
@@ -172,7 +172,7 @@
         "ST-10": {
           "title": "BLG-QA-19: Research View Regression Test Protocol",
           "classification": "delegated_qa",
-          "status": "delegated",
+          "status": "done",
           "assigned_to": "qa",
           "github_issue": 395,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-03",
@@ -180,13 +180,13 @@
           "delegation_record_id": "DEL-20260515-01",
           "blocked_since_utc": "2026-05-15T13:00:00Z",
           "unblock_criteria": "QA Lead sign-off recorded in docs/qa/acceptance_protocols/research_view_regression_protocol.md; disposition section in qa_evidence_EPIC-03.md completed",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-15T16:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": false,
-          "last_completed_substep": "delegation_record_created",
+          "last_completed_substep": "qa_signed_off",
           "sign_off_record": null,
-          "notes": "Protocol draft created at docs/qa/acceptance_protocols/research_view_regression_protocol.md v0.1. Awaiting QA Lead sign-off."
+          "notes": "QA Lead signed off 2026-05-15. Protocol v0.1\u2192v1.0. Corrections: \u00a74 IT-series accuracy fix (PT-03/PT-05), BLG-FE-33\u2192BLG-FE-32. BLG-QA-19 COMPLETE."
         }
       }
     },
@@ -338,13 +338,12 @@
     }
   },
   "blocked_items": [],
-  "delegated_items": [
-    "EPIC-03/ST-10: BLG-QA-19: Research View Regression Test Protocol \u2014 awaiting QA Lead sign-off on research_view_regression_protocol.md"
-  ],
+  "delegated_items": [],
   "completed_items": [
     "EPIC-03/ST-07: BLG-SPEC-29: Correct grace-period-alert ux_spec.md sessionStorage",
     "EPIC-03/ST-08: BLG-SPEC-30: Correct stop-management-workflow ux_spec.md HTTP verb",
-    "EPIC-03/ST-09: BLG-SPEC-31: React Query v5 onSuccess Codebase Scan"
+    "EPIC-03/ST-09: BLG-SPEC-31: React Query v5 onSuccess Codebase Scan",
+    "EPIC-03/ST-10: BLG-QA-19: Research View Regression Test Protocol"
   ],
   "open_escalations": [],
   "merge_gate": {

@@ -21,7 +21,7 @@
 - **Spec reference:** `docs/qa/acceptance_protocols/research_view_regression_protocol.md`
 - **Unblock criteria:** Protocol §6 sign-off table completed (QA Lead name and date populated); document status set to Active; version bumped to 1.0
 - **Commit format required:** `[EPIC-03][ST-10] <description>` pushed to `exec/2026-05-15__release-v3.5/EPIC-03`
-- **Status:** Open
-- **Completed at:** —
-- **Completed by:** —
-- **Outcome:** —
+- **Status:** Completed
+- **Completed at:** 2026-05-15T16:00:00Z
+- **Completed by:** QA Lead
+- **Outcome:** Protocol v0.1→v1.0 signed off. Corrections applied: §4 IT-04/IT-05 references replaced with accurate PT-03/PT-05 citations; BLG-FE-33 reference corrected to BLG-FE-32 (filed in backlog). SC-RES-01 to SC-RES-13 confirmed as correct canonical regression suite. SC-RV-18/19 gap confirmed accurate. BLG-QA-19 marked COMPLETE in backlog.
