@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.8
-**Last Updated:** 2026-05-10
+**Version:** 2.9
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -145,14 +145,11 @@ If any required field is absent:
 
 ## 8. Capacity Standard
 
-Capacity is confirmed against:
-- Available FTE from `sprint_capacity.md` (derived from `workforce_capacity.md` and `stage4_5_capacity_check.md`)
-- Sprint duration (in working days)
-- Skill requirements per EPIC and ST item
+Confirmed against: available FTE (`workforce_capacity.md` + `stage4_5_capacity_check.md`), sprint duration (working days), skill requirements per EPIC.
 
-Over-allocation rule: the sprint scope must not exceed confirmed available capacity. If selection causes over-allocation:
-- In `strict` mode: halt and require Product Owner to remove items.
-- In `standard` mode: flag the over-allocation and surface to Product Owner for explicit acceptance. Record the decision. The sprint cannot be sealed until the Product Owner has explicitly accepted or resolved the over-allocation.
+Over-allocation: scope must not exceed confirmed capacity. If over-allocated:
+- `strict`: halt — require Product Owner to remove items.
+- `standard`: flag, surface to Product Owner for explicit acceptance; record decision; sprint cannot seal until resolved.
 
 ---
 
@@ -162,139 +159,46 @@ Over-allocation rule: the sprint scope must not exceed confirmed available capac
 
 ## STEP -1 — Preflight Gate (Hard Gate)
 
-Purpose: fail fast before any planning work begins.
+Fail fast before any planning work begins. All hard gates must pass before STEP 0.
 
-### -1.1 Global State Check
+### Hard Gates (halt immediately on failure)
 
-Read `.claude_current_state.json`:
-- `status` must be `Published`, `Validated`, or `Committed`
-- If `status` is `Sprint_Planning_Complete` or later: a sprint has already been planned for this cycle. Halt — do not re-plan without explicit Product Owner instruction.
-- If `status` is `Blocked`: resolve release planning escalations before planning the sprint.
-- If `status` is anything else below `Committed`: Phase 1B has not completed. Halt.
+**1. Global state & amendment slice** — read `.claude_current_state.json`:
+- `status` must be `Published`, `Validated`, or `Committed`. Halt if `Sprint_Planning_Complete` (already planned — do not re-plan without explicit PO instruction), `Blocked` (resolve release planning escalations first), or any pre-`Committed` state (Phase 1B not complete).
+- `amended_backlog_slice_path`: if present and non-empty, note the path and verify the file exists (halt if missing) — this file is the authoritative backlog slice for the cycle (see §5). If absent or empty, use `stage4_backlog_slice.md`.
 
-Check `amended_backlog_slice_path`:
-- If present and non-empty: note the amendment path; this file will be used as the backlog slice throughout (see §5). Confirm the file exists — if not, halt and report.
-- If absent or empty: `stage4_backlog_slice.md` is the authoritative source.
+**2. Release plan sealed** — read `claude/cycles/<cycle_id>/state.json`:
+- `status = Published`, `publish_eligible = true`, `open_escalations` empty.
+- `deferred_execution_blockers`: if non-empty — `strict` halt; `standard` record each in `sprint_escalations.md` as a named risk; PO must accept each explicitly before sprint seals.
 
-### -1.2 Release Plan Sealed
+**3. Design gate** — read `design_gate_status` from `state.json`:
+- Must be `Passed`. If `not_started`, `Blocked`, or absent: halt (absent = process deviation — Release Planning Engine should have initialised this field).
+- Exception: if every sprint item is confirmed `Design Not Applicable` by the Head of UX & Design, recorded in `state.json` or escalations, the PMO Lead may proceed with a recorded deviation.
+- **Bypass audit (IMP-04, Hard Gate):** If entered from `Release_Planning_Complete` (design gate was skipped entirely): read `design_gate_bypass_authority` and `design_gate_bypass_reason` from `.claude_current_state.json`. If either is absent or empty — `strict` halt; `standard` surface + block seal until present. Per IMP-30: `design_gate_bypass_authority` must contain both `"Head of UX & Design + Product Owner"` — a single role is non-compliant. If entered from `Design_Gate_Passed`: skip bypass audit.
 
-Read `claude/cycles/<cycle_id>/state.json`:
-- `status` must be `Published`
-- `publish_eligible` must be `true`
-- `open_escalations` must be empty
-- `deferred_execution_blockers` must be empty. If this field is non-empty: surface each blocker to the PMO Lead. In `strict` mode: halt — blockers must be resolved before planning. In `standard` mode: record each blocker in `sprint_escalations.md` as a named risk, require Product Owner to explicitly accept each before the sprint may be sealed.
-- If any of the above fail: halt — the release plan is not sealed.
+**4. Files, roles & write access** (may be checked in parallel):
+- Authoritative backlog slice contains ≥1 EPIC with ≥1 ST item; halt if absent or empty.
+- All required files in §5 exist; halt and report exactly which are missing.
+- All authority role agent files in §4 present; halt if any missing.
+- `claude/system/lessons_learnt_prompt.md` exists; halt if missing.
+- Write test: create and delete `claude/cycles/<cycle_id>/.write_test`; halt if write fails. If not cleaned up here (e.g. due to an unexpected error), STEP 0 must remove it.
 
-### -1.3 Design Gate Passed (Hard Gate)
+### Advisory Checks (non-blocking — record findings in sprint_planning_notes.md)
 
-Read `design_gate_status` from `claude/cycles/<cycle_id>/state.json`:
-- Must be `Passed`. If `not_started` or `Blocked`: halt. The Design Gate (Phase 1.5) must be completed and cleared before Sprint Planning may proceed.
-- If the field is absent: treat as `not_started` and halt. Record as a process deviation — the Release Planning Engine should have initialised this field.
+**5. Pre-sprint required decisions** — read `cycle_summary.md ## Pre-sprint Planning Required Decisions` (if section exists):
+- For each listed decision: confirm resolved (recorded answer, decision log reference, or authority sign-off).
+- Unresolved decisions: `strict` halt — output list per `shared_standards.md §5`, do not proceed until resolved; `standard` record as `Blocker? Yes` OA in `sprint_planning_notes.md`; sign-off gate (STEP 6.2) blocked until resolved.
+- No section or all resolved: proceed.
 
-**Exception:** If every sprint item is confirmed `Design Not Applicable` by the Head of UX & Design and this is recorded explicitly in `state.json` or escalations, the PMO Lead may proceed with a recorded deviation. This is not a silent bypass — it must be documented.
+**6. Vulnerability scan** — run `pip-audit -r backend/requirements.txt --format=json` (runs in `--dry-run` mode too — read-only):
+- High/critical CVEs: record each in sprint planning notes; PO and Head of Engineering must accept each as a documented risk (with backlog item) before seal.
+- Clean: note "pre-sprint pip-audit: clean".
+- Unavailable: flag; recommend installation before sprint execution.
+- Advisory — does not block sprint planning.
 
-**Design gate bypass audit (IMP-04 — Hard Gate):** Determine the Lifecycle Guard entry state. If this engine was entered from `Release_Planning_Complete` (i.e., `Design_Gate_Passed` was never set, and the design gate was skipped entirely):
-
-- Read `.claude_current_state.json` for `design_gate_bypass_authority` and `design_gate_bypass_reason`.
-- If either field is absent or empty:
-  - In `strict` mode: halt — bypass authority and reason are required before Sprint Planning may proceed without a design gate. Write the fields to `.claude_current_state.json` once the Product Owner provides them, then resume.
-  - In `standard` mode: require the fields to be populated now (surface to Product Owner for immediate confirmation). Record the gap as an outstanding action. The sprint may not be sealed until both fields are present.
-- Write both fields to `.claude_current_state.json` under `design_gate_bypass_authority` (role name) and `design_gate_bypass_reason` (one sentence).
-
-**Bypass authority (IMP-30):** Per `team_charter.md §3.3` Head of UX & Design entry: bypass authority requires **Head of UX & Design (primary) + Product Owner (co-confirmation)**. The `design_gate_bypass_authority` field must record both role names (e.g., `"Head of UX & Design + Product Owner"`). A bypass populated with only one role name is non-compliant and must halt in strict mode, or flag and block seal in standard mode.
-
-If this engine was entered from `Design_Gate_Passed`: no bypass audit is required. Skip this check.
-
-### -1.4 Backlog Slice Present
-
-Confirm the authoritative backlog slice file (per STEP -1.1) exists and contains at least one EPIC with at least one ST item.
-
-If absent or empty: halt.
-
-### -1.5 Required Files Present
-
-Verify all inputs in Section 5 exist. If any required file is missing: halt and report exactly which.
-
-### -1.6 Required Authority Roles Exist
-
-Verify agent files per Section 4. If any missing: halt.
-
-### -1.7 Lessons Learnt Prompt Present
-
-Confirm `claude/system/lessons_learnt_prompt.md` exists. If missing: halt.
-
-### -1.8 Write Permission Test
-
-Create `claude/cycles/<cycle_id>/.write_test` and confirm it can be written. Remove it immediately. If write fails: halt. If the file is not removed here (e.g. due to an unexpected error), STEP 0 must clean it up before proceeding.
-
-### -1.10 Pre-Sprint Required Decisions Check
-
-Read `claude/cycles/<cycle_id>/cycle_summary.md` and locate the `## Pre-sprint Planning Required Decisions` section (if present).
-
-For each decision listed in that section:
-- Determine whether it is resolved: it must have a recorded answer, a decision log reference, or explicit sign-off from the required authority.
-- If unresolved: the sprint backlog cannot be sealed (STEP 6.2) until it is resolved.
-
-If any required decisions remain unresolved:
-- In `strict` mode: halt immediately. Output the unresolved decision list per `shared_standards.md §5`. Do not proceed until all decisions are resolved.
-- In `standard` mode: record each unresolved decision as an outstanding action in `sprint_planning_notes.md` with `Blocker? Yes`. The sprint may proceed through planning but the sign-off gate (STEP 6.2) must not be passed while any required decision is unresolved.
-
-If no `## Pre-sprint Planning Required Decisions` section exists in `cycle_summary.md`, or if all decisions are confirmed resolved: proceed.
-
-> **Rationale (LL-01, cycle 2026-03-15__release-v1.10):** RISK-01 (staging hosting approach) required a pre-sprint decision from the Infrastructure & Operations Owner but the planning preflight had no mechanism to enforce this. The decision was made informally during sprint execution rather than before sprint seal, which is the correct governance point.
-
----
-
-### -1.9 Dependency Health Check (Pre-Sprint Vulnerability Scan)
-
-
-
-Run `pip-audit` against `backend/requirements.txt`:
-
-```bash
-pip-audit -r backend/requirements.txt --format=json
-```
-
-**This step runs in both normal and `--dry-run` mode** — it is a read-only scan and does not affect the dry-run guarantee.
-
-Report findings before sprint scope is sealed:
-- **High/critical CVEs found:** Record each in sprint planning notes; Product Owner and Head of Engineering must explicitly accept each known CVE as a documented risk (with backlog item) before the sprint may be sealed. Do not silently proceed with known high/critical vulnerabilities.
-- **No high/critical CVEs:** Note "pre-sprint pip-audit: clean" in sprint planning notes.
-- **pip-audit not available:** Flag in sprint planning notes; recommend installation before sprint execution begins.
-
-This step is advisory — it does not block sprint planning. Its purpose is to surface the vulnerability landscape before scope is sealed, so mid-sprint CVE discoveries do not block merge gates unexpectedly.
-
-> **Rationale (lessons learnt — 2026-03-04__release-v1.8 / EX-LL Friction Item 5):** A pre-existing CVE in `requests` was discovered reactively during ST-07 (pip-audit CI gate). Had the scan CI gate been active from a prior sprint, a different EPIC's merge could have been blocked unexpectedly. Pre-sprint scanning makes the vulnerability landscape visible before scope locks.
-
-### -1.11 Prompt Change Log Hygiene Advisory
-
-**Advisory only — does not block planning.**
-
-Scan `claude/system/prompt_change_log.md` for the last logged version of each Class 6 governed prompt. Compare against the current `**Version:**` header in each prompt file.
-
-For any prompt where the current version is higher than the last entry visible in the log:
-- Surface as an advisory: "⚠ Prompt change log gap detected: `<filename>` current v<X.Y> — last log entry v<A.B>. Log entry should be added as a PREPENDED row (after the header row)."
-- Record in `sprint_planning_notes.md` as a governance hygiene note.
-- **Do not halt.** Sprint planning may proceed.
-
-**Scan order note:** The change log is append-only but entries may have been added at the bottom of the table by prior execution commits. A top-first scan will miss these. Read the **entire** `## Changes` table to find the most recent version for each file before comparing.
-
-**Enforcement reminder:** Per `CLAUDE.md §6`, any governance prompt edited during sprint execution must have a change log entry added as a PREPENDED row (inserted immediately after the `| Date | Prompt | Version | Change | Authority |` header row). Appending to the bottom of the table causes this advisory to fire falsely in the next release planning cycle.
-
-*Trigger: OA-01 (v2.5 cycle carry-forward). Applied 2026-04-05.*
-
-### -1.12 "Before Sprint Planning" Backlog Items Check (Advisory — OA-05)
-
-**Advisory only — does not block planning. Recorded in sprint_planning_notes.md.**
-
-Read `claude/backlog/backlog.md` and scan for items containing:
-- `Provisional-Target: Before v<X.Y> sprint planning` where `<X.Y>` matches the current release
-
-For each found item:
-- Surface as advisory: "⚠ Advisory: [N] 'before sprint planning' item(s) found in backlog. These are expected to be sprint stories in the current release plan. If not already covered, review with Product Owner before sealing."
-- Record in `sprint_planning_notes.md` under a **Pre-Sprint Backlog Advisory** heading with item IDs and titles.
-
-The intent of this check is to ensure "before sprint planning" provisional targets are not silently missed — they should have been converted to sprint stories in the release plan (e.g., EPIC-03 research view spec work in v3.3) rather than remaining as floating backlog items. This advisory fires if any remain unconverted.
+**7. Hygiene advisories** (both advisory only — no halt):
+- **Prompt change log gaps:** scan the full `## Changes` table in `claude/system/prompt_change_log.md` (not top-first — entries may be at the bottom) for any Class 6 prompt where the current `**Version:**` header exceeds the last logged version. Surface as "⚠ Prompt change log gap: `<filename>` current v<X.Y> — last log v<A.B>. Add a prepended row per CLAUDE.md §6." Record in `sprint_planning_notes.md`.
+- **"Before Sprint Planning" backlog items:** scan `claude/backlog/backlog.md` for items with `Provisional-Target: Before v<X.Y> sprint planning` where X.Y = current release. For each found: surface advisory and record under `## Pre-Sprint Backlog Advisory` in `sprint_planning_notes.md` with item IDs and titles.
 
 ---
 
@@ -442,11 +346,11 @@ Classify each item:
 - `autonomous` — fully implementable by the execution engine; no UX change; no human decision or mid-task sign-off required
 - `delegated_backend` / `delegated_frontend` / `delegated_qa` / `delegated_decision` — requires human review, decision, or execution at a specific step
 
-**Classification pattern (LL-v1.10-P3-3):** If an item is "refactor component X to call backend endpoint Y" with no UX change and the required API method already exists client-side, it qualifies as `autonomous`. Conservative classification (`delegated_frontend`) is valid but should be explicitly justified when the autonomous criteria above are met — over-conservative classification adds unnecessary human handoff steps to straightforward refactors.
+**LL-v1.10-P3-3 — Autonomous heuristic:** "Refactor to call existing client-side API with no UX change" = `autonomous`. Conservative `delegated_frontend` is valid but must be explicitly justified — over-classification adds unnecessary handoff.
 
-**Test scenario gap flag (LL-v2.0-P4-2):** For every item classified `delegated_frontend` that introduces a **new page or new user-facing controls** (not a refactor of existing UI), flag the EPIC's `test_scenarios` field in `execution_state.json` as `pending — QA & Testing Owner to author before next sprint on this domain`. Record this flag in `sprint_planning_notes.md`. This surfaces the coverage gap at planning time rather than at delivery verification, allowing QA to prepare scenario files before the sprint closes.
+**LL-v2.0-P4-2 — Test scenario gap:** Every `delegated_frontend` item introducing a new page or new user-facing controls (not a refactor of existing UI): set EPIC `test_scenarios = "pending — QA & Testing Owner to author before next sprint on this domain"` in `execution_state.json`; record in `sprint_planning_notes.md`.
 
-**Blocked-decision advisory (LL-v2.2-SP-01):** For every item classified `delegated_decision` (i.e. `blocked_decision` status in the backlog slice, or carried over from a prior cycle with no design artefact), check whether a HoST design session or equivalent design artefact has been authored. If none exists: surface the following advisory in session output and record in `sprint_planning_notes.md` — "No design artefact found for [item]. A HoST design session should be scheduled before sprint start to reduce mid-sprint overhead and avoid full design sessions during execution." Advisory only — does not block sprint planning or scope selection.
+**LL-v2.2-SP-01 — Blocked-decision design artefact:** Every `delegated_decision` item: check for HoST design session or equivalent artefact. If absent: surface "No design artefact found for [item]. A HoST design session should be scheduled before sprint start." in session output and `sprint_planning_notes.md`. Advisory only.
 
 ### 3.2 Capacity Gate
 
@@ -799,16 +703,18 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 ## 12. Governance Invariants
 
-- **No scope changes.** The backlog slice is sealed. Sprint planning selects from it; it does not change it.
-- **No AC-less items.** An item without confirmed acceptance criteria may not enter the sprint backlog.
-- **No over-allocation without explicit Product Owner acceptance.** Capacity is a hard constraint unless explicitly overridden.
-- **Product Owner sign-off is a hard gate.** The sprint backlog may not be sealed without it.
-- **Dependencies must be resolved before sequencing is final.** Circular dependencies always halt.
-- **Delegation classification is set at planning time.** Each ST item's delegation class is recorded in the sprint backlog so Phase 3 can load and act without re-classifying.
-- **Design gate must be passed before Sprint Planning proceeds.** `design_gate_status = Passed` is a hard pre-condition. The only permitted exception is a fully documented Design Not Applicable determination for all items.
-- **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, it is used exclusively. Planning from the original slice when an amendment has sealed is a process integrity failure.
-- **Deferred execution blockers require explicit Product Owner acceptance.** They may not be silently carried into sprint execution.
-- **Delivery pressure never overrides these gates.** A sprint that skips sign-off is not a sprint — it is unplanned execution.
+- No scope changes — backlog slice is sealed; select from it, don't alter it.
+- No AC-less items — every sprint item must have confirmed acceptance criteria.
+- No over-allocation without explicit PO acceptance; capacity is a hard constraint.
+- PO sign-off is a hard gate — sprint may not seal without it.
+- Circular dependencies always halt; sequencing is not final until all resolved.
+- Delegation class set at planning time and recorded in sprint backlog for Phase 3.
+- Design gate must be passed (`design_gate_status = Passed`) or Design Not Applicable fully documented for all items.
+- Amendment slice (`amended_backlog_slice_path`) supersedes original — plan from it exclusively if set.
+- Deferred execution blockers require explicit PO acceptance before execution begins.
+- Delivery pressure never overrides these gates.
+
+*Full context: §2 (hard gates), §6 (write scope), §7 (AC standard), §8 (capacity), §10 (lifecycle guard).*
 
 ---
 
