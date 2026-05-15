@@ -195,7 +195,7 @@
       "branch": "exec/2026-05-15__release-v3.5/EPIC-01",
       "pr_number": 404,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-15__release-v3.5/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/paper-account.spec.js"],
       "stories": {
