@@ -740,7 +740,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.0)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.1)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.19)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.20)
 
 ### 8.1 Invocation
 
@@ -1385,7 +1385,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.80 |
+| Version | 3.84 |
 | Last Updated | 2026-05-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
@@ -1395,9 +1395,9 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.1 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.28 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.0 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.1 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.19 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.20 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.6 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1420,6 +1420,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.84 | 2026-05-15 | **execution_prompt.md v3.19→v3.20 — ST-12+ST-13 (EPIC-04, v3.5): deviation advisory patches + sprint close consistency checks.** §8 source prompt header updated v3.19→v3.20. §14 Execution Engine Source v3.19→v3.20. §14 Version/Last Updated 3.83→3.84/2026-05-15. Changes: (ST-12/LL item #3) §3.1.A step 10 — intent check advisory added: verify spec intent match before filing deviation; record as implementation note if intent agrees. (ST-12/LL item #4) §3.1.A step 10 — Known Deviations section advisory: add `## Known Deviations` section to canonical spec in same commit when filing deviation. (ST-12/LL item #5) §5.4 — backlog ID pre-assignment check: verify BLG ID unoccupied in backlog.md before assigning in lessons_learnt Phase 3. (ST-13/CF-01) §5.3 — deviation severity consistency check: verify deviation priorities in sprint_close.md match DoQ assessment in qa_evidence. (ST-13/CF-02) §5.3 — backlog ID completeness check: every "backlog item filed" note must include BLG ID. Authority: Head of Specs Team (ST-12+ST-13, 2026-05-15). |
+| 3.83 | 2026-05-15 | **sprint_planning_prompt.md v3.0→v3.1 — BLG-GOV-22: multi-EPIC execution_state.json ownership + merge order advisory.** §7 source prompt header updated v3.0→v3.1. §14 Sprint Planning Engine v3.0→v3.1. §14 Version/Last Updated 3.80→3.83/2026-05-15. Changes: STEP 5.2 — multi-EPIC `execution_state.json` ownership rule added (first EPIC in execution order is owner; others check for existence before creating; record in sprint_planning_notes.md); shared file ownership advisory added (identify shared files across EPICs; record ownership and rebase advisory in sprint_planning_notes.md). STEP 6.1 — merge order section requirement added (sprint backlog must include EPIC merge sequence, execution_state.json owner designation, and shared file advisory when > 1 EPIC in scope). Authority: Head of Specs Team (ST-11, BLG-GOV-22, 2026-05-15). |
 | 3.82 | 2026-05-15 | **execution_prompt.md v3.18→v3.19 — token efficiency refactor.** §8 source prompt header updated v3.18→v3.19. §14 Execution Engine Source v3.18→v3.19. |
 | 3.81 | 2026-05-15 | **sprint_planning_prompt.md v2.9→v3.0 + shared_standards.md v2.9→v3.0 — Phase 2 token efficiency refactor.** §7 source prompt header updated v2.9→v3.0. §14 Sprint Planning Engine v2.9→v3.0. §14 Shared Standards v2.9→v3.0. Changes: (sprint_planning_prompt) STEP 5 inline sprint_planning_notes.md template replaced with `shared_standards.md §16.10` reference; STEP 6.1 inline sprint_backlog.md template replaced with `shared_standards.md §16.11` reference (~580 words removed from prompt). (shared_standards) §16.10 sprint_planning_notes.md schema added; §16.11 sprint_backlog.md schema added — canonical homes for both templates, reusable by other engines. Authority: Head of Specs Team (2026-05-15). |
 | 3.80 | 2026-05-15 | **sprint_planning_prompt.md v2.8→v2.9 — Phase 1 token efficiency refactor.** §7 source prompt header updated v2.8→v2.9. §14 Sprint Planning Engine v2.8→v2.9. Changes: STEP -1 restructured from 12 sequential substeps to 2 categories (Hard Gates + Advisory Checks) — removes verbose rationale blocks and merges -1.4 through -1.8 into a single parallel-checkable block (~650 words saved); §8 Capacity Standard compressed (~50 words); STEP 3.1 LL-pattern blocks compressed in place (~140 words); §12 Governance Invariants compressed with cross-ref line (~70 words). All governance rules preserved. Authority: Head of Specs Team (2026-05-15). |
