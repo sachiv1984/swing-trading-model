@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.81
+**Version:** 3.82
 **Last Updated:** 2026-05-15
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -824,7 +824,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.18)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.19)
 
 ### 8.1 Invocation
 
@@ -1397,7 +1397,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.28 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.0 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.18 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.19 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.6 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1420,6 +1420,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.82 | 2026-05-15 | **execution_prompt.md v3.18→v3.19 — token efficiency refactor.** §8 source prompt header updated v3.18→v3.19. §14 Execution Engine Source v3.18→v3.19. |
 | 3.81 | 2026-05-15 | **sprint_planning_prompt.md v2.9→v3.0 + shared_standards.md v2.9→v3.0 — Phase 2 token efficiency refactor.** §7 source prompt header updated v2.9→v3.0. §14 Sprint Planning Engine v2.9→v3.0. §14 Shared Standards v2.9→v3.0. Changes: (sprint_planning_prompt) STEP 5 inline sprint_planning_notes.md template replaced with `shared_standards.md §16.10` reference; STEP 6.1 inline sprint_backlog.md template replaced with `shared_standards.md §16.11` reference (~580 words removed from prompt). (shared_standards) §16.10 sprint_planning_notes.md schema added; §16.11 sprint_backlog.md schema added — canonical homes for both templates, reusable by other engines. Authority: Head of Specs Team (2026-05-15). |
 | 3.80 | 2026-05-15 | **sprint_planning_prompt.md v2.8→v2.9 — Phase 1 token efficiency refactor.** §7 source prompt header updated v2.8→v2.9. §14 Sprint Planning Engine v2.8→v2.9. Changes: STEP -1 restructured from 12 sequential substeps to 2 categories (Hard Gates + Advisory Checks) — removes verbose rationale blocks and merges -1.4 through -1.8 into a single parallel-checkable block (~650 words saved); §8 Capacity Standard compressed (~50 words); STEP 3.1 LL-pattern blocks compressed in place (~140 words); §12 Governance Invariants compressed with cross-ref line (~70 words). All governance rules preserved. Authority: Head of Specs Team (2026-05-15). |
 | 3.79 | 2026-05-15 | **roadmap_prompt.md v6.0→v6.1 — STEP 9 post-write park count verification added.** §6 source prompt header updated v6.0→v6.1. §14 Roadmap Engine Source v6.0→v6.1. §15 roadmap_prompt version reference updated v5.0→v6.1. Change: STEP 9 Post-write park count verification block added — after completing ideas_register.md park count updates, grep for rows with prior cycle's `Parked-cycle-N \| N` pattern and confirm zero rows remain with outdated counts; prevents context-compaction truncation artifacts from leaving stale park counts. Authority: Head of Specs Team (cycle 2026-05-15__scheduled lessons learnt action-now, 2026-05-15). |

@@ -27,7 +27,7 @@ jobs:
           AFTER="${{ github.event.after }}"
           # Guard: null SHA (0000…) means new branch first push — git log range is invalid
           if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            ALL_MSGS=$(git log "$AFTER" --pretty=%B --not --remotes=origin/main)
+            ALL_MSGS=$(git log origin/main.."$AFTER" --pretty=%B)
           else
             ALL_MSGS=$(git log "$BEFORE".."$AFTER" --pretty=%B)
           fi

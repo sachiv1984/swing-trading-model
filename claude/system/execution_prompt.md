@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.18
-**Last Updated:** 2026-05-13
+**Version:** 3.19
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -308,74 +308,7 @@ All per-item progress is recorded in:
 
 ### 9.1 Schema
 
-```json
-{
-  "cycle_id": "<cycle_id>",
-  "sprint_goal": "<text>",
-  "backlog_slice_source": "claude/cycles/<cycle_id>/stage4_backlog_slice.md | <amended path>",
-  "invoked_utc": "<ISO-8601>",
-  "mode": "strict|standard",
-  "status": "Running|Blocked|Completed|Sealed",
-  "last_updated_utc": "<ISO-8601>",
-
-  "epics": {
-    "EPIC-01": {
-      "status": "not_started|in_progress|blocked|done|merged",
-      "branch": "exec/<cycle_id>/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none|open|approved|merged",
-      "qa_signed_off": false,
-      "qa_evidence_log": "claude/cycles/<cycle_id>/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
-      "stories": {
-        "ST-01": {
-          "title": "<text>",
-          "classification": "autonomous|delegated_backend|delegated_frontend|delegated_qa|delegated_decision",
-          "status": "not_started|in_progress|blocked_backend|blocked_frontend|blocked_qa|blocked_decision|done|merged",
-          "assigned_to": "engine|human|qa|<role>",
-          "github_issue": null,
-          "branch": "exec/<cycle_id>/EPIC-01",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
-          // spec_references (LL-v2.2-EX-04 — second recurrence): Items that are
-          // delegated_qa documentation artefacts (test scenario files, readiness
-          // assessments) OR autonomous infrastructure/tooling items with no prior
-          // canonical spec MAY leave spec_references empty. REQUIRED: set notes
-          // field to exactly "no prior spec applicable". This phrase is the
-          // exemption token — the completion condition check and delivery
-          // verification MUST NOT flag spec_references:[] as a traceability gap
-          // when this phrase is present in the notes field.
-        }
-      }
-    }
-  },
-
-  "blocked_items": [],
-  "delegated_items": [],
-  "completed_items": [],
-  "open_escalations": [],
-
-  "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [],
-    "all_merged": false
-  },
-
-  "sealed": false,
-  "sealed_utc": null
-}
-```
-
-`backlog_slice_source` records the exact file path of the authoritative backlog slice used for this execution. Set at STEP 0. The Delivery Verification Engine may use this to confirm scope provenance.
+Schema: `claude/system/schemas/execution_state_schema.json` — read this file when creating `execution_state.json`. `backlog_slice_source` records the exact authoritative backlog slice path used; set at STEP 0 (used by Delivery Verification to confirm scope provenance). `spec_references` exemption token: when `notes` contains `"no prior spec applicable"`, `spec_references: []` must NOT be flagged as a traceability gap by completion condition checks or delivery verification.
 
 ### 9.2 State Update Rule (Hard Requirement)
 
@@ -639,7 +572,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 - If yes: transition item to `done`, verify acceptance criteria, update state.
   - Confirm `spec_references` is populated (fill now if missing — ask the assignee which spec section was implemented).
   - Check for deviations: if implementation diverges from the spec, file the deviation in the canonical spec before setting `deviations_filed = true`.
-  - **HARD GATE (LL-v2.2-EX-01 — second recurrence): Update the delegation log entry** (per `shared_standards.md §16.3`) — set status to `Unblocked` and note the commit SHA **in the same step as setting item status to `done` in `execution_state.json`.** These two writes are atomic. Do not advance to the next ST item until both are recorded. Batching delegation log updates to STEP 5.0 is a process violation — prior advisory language was applied twice and proven insufficient.
+  - **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — set status to `Unblocked` and note the commit SHA **in the same step as setting item status to `done` in `execution_state.json`.** These two writes are atomic. Do not advance to the next ST item until both are recorded.
 - If no: keep blocked and report status to user.
 
 #### 3.1.C If `delegated_qa`:
@@ -678,7 +611,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 **SLA breach tracking:** Per `claude/system/shared_standards.md §16.4`.
 
-**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume. **HARD GATE (LL-v2.4-EX-01 — third recurrence): Update the delegation log entry** (per `shared_standards.md §16.3`) — set status to `Unblocked` and note the commit SHA in the same step as setting item status to `done` in `execution_state.json`. These two writes are atomic. Do not advance to the next ST item until both are recorded. This gate applies to `delegated_decision` items just as it does to `delegated_backend` and `delegated_frontend`.
+**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume. **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — set status to `Unblocked` and note the commit SHA in the same step as setting item status to `done` in `execution_state.json`. These two writes are atomic. Do not advance to the next ST item until both are recorded.
 
 ### 3.2 EPIC Completion
 
@@ -699,34 +632,7 @@ Status: Active
 Last Updated: <date>
 ```
 
-The consolidation block must include:
-
-**EPIC:** EPIC-xx — <title>
-**Cycle:** <cycle_id>
-**Sprint goal:** <text>
-**Test scenarios used:** <list paths from `test_scenarios` field, or "Derived from spec + AC">
-
-| ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
-|---------|---------------|----------------|--------------------|---------|----|
-| ST-xx | <spec file#section> | <one line> | <criteria text> | Pass / Fail | None / DEV-ref |
-
-*(Reconcile any partial per-item entries from STEP 3.1.C into this table. Do not duplicate — one row per ST item.)*
-
-**QA test coverage:**
-- Scenarios run: <list scenario file names, or "manual acceptance review">
-- Regression areas checked: <list affected spec domains>
-- Known deviations filed: <list deviation refs or "None">
-
-**QA sign-off block:** (Director of Quality completes this)
-> **Authoring note (LL-v1.10-P4-1):** When completing the sign-off block, update all AC table rows from "Pending"/"Awaiting QA" to "Pass" or "Pass with notes" in the same edit. Sign-off block and AC table must be consistent — leaving rows as "Pending" after signing off creates a documentation inconsistency.
-> **Date field requirement (LL-v2.3-EX-01 / ST-04):** The `Date:` field must be non-blank before the PR can be opened (§3.2.B pre-condition, BLG-GOV-18) and before the merge gate runs. A sign-off block with a blank Date: field is incomplete — the PR will be blocked from opening, and Sprint Close STEP 5.1 (LL-v2.0-P4-1) will also block. Fill in the date when signing off, not at sprint close.
-- [x] All acceptance criteria verified against canonical spec
-- [x] No unresolved P0 or P1 deviations
-- [x] Regression areas checked
-- [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object **(LL-v2.0-P3-4)**
-- Signed off by: Director of Quality
-- Date: <fill in — must be non-blank (LL-v2.3-EX-01)>
-- Comments:
+The consolidation block must include: EPIC, Cycle, Sprint goal, Test scenarios used, a row per ST item (Spec Reference / What was built / AC / Result / Deviations), QA test coverage (scenarios run, regression areas, deviations), and the sign-off block. **Template: `claude/system/templates/qa_evidence_template.md`** — read this file to get the exact header, consolidation block format, and sign-off block template. Key rule: the sign-off block `Date:` field must be non-blank before the PR can be opened (§3.2.B pre-condition) and before the merge gate runs.
 
 This file is the evidence backing `qa_signed_off = true` in `execution_state.json`. A PR comment alone is not sufficient — this file must exist and the sign-off block must be complete before the merge gate runs.
 
@@ -750,19 +656,7 @@ When all four of the following qualifying criteria are met, the engine may apply
 3. No frontend-visible change is introduced by this EPIC
 4. Engine signer field is populated as "Sprint Execution Engine (autonomous class)"
 
-When all criteria are met, populate the sign-off block as follows:
-
-```
-**Autonomous class eligibility check (BLG-GOV-19):**
-- [ ] Criterion 1: All stories in this EPIC have `delegation_class: autonomous` — ✓ / ✗
-- [ ] Criterion 2: All AC verifiable by code review alone — no observable UI behaviour, no staging run required — ✓ / ✗
-- [ ] Criterion 3: No frontend-visible change — confirm no React page or UI component was created or modified (check src/pages/ and src/components/) — ✓ / ✗
-- [ ] Criterion 4: Engine signer field populated as "Sprint Execution Engine (autonomous class)" — ✓ / ✗
-
-- Signed off by: Sprint Execution Engine (autonomous class)
-- Date: <today's date — must be non-blank>
-- Comments: Autonomous class sign-off — all four qualifying criteria met (all stories autonomous, all AC code-review-verifiable, no frontend changes, engine signer populated).
-```
+When all criteria are met, populate the sign-off block using the **BLG-GOV-19 template in `claude/system/templates/qa_evidence_template.md`**.
 
 If any criterion is not met, the autonomous class does not apply — the sign-off block must be completed by the Director of Quality. An EPIC signed off under the autonomous class is still subject to the STEP 4 merge gate; the Director of Quality may review and override at any time before merge.
 
@@ -806,13 +700,11 @@ If all conditions pass:
 
 > ✅ EPIC-xx merged. **Re-invoke `run sprint --cycle <cycle_id>` now — required after every EPIC merge, including the final one.** If this is the final EPIC, the engine detects `merge_gate.all_merged = true` and executes STEP 5 (Sprint Close) directly, producing `sprint_close.md` and sealing `execution_state.json`. Do not proceed to `run delivery verification` without doing this first.
 
-> **⚠ HARD GATE (LL-v2.2-EX-02 / BLG-GOV-17 — third recurrence):** When `merge_gate.all_merged = true`, STEP 5 (Sprint Close) **must execute in the same session without exception.** Do not output anything to the user after the merge gate confirmation block without first entering STEP 5. If a session ends after the final merge but before STEP 5, re-invoke `run sprint --cycle <cycle_id>` immediately on resume — the engine detects `all_merged = true` and executes STEP 5 directly. Advisory language was applied twice; this is now a hard gate. **A GitHub Actions workflow (`.github/workflows/sprint_close_reminder.yml`) also posts a mandatory PR comment on every EPIC merge — a third recurrence mandated this automation (BLG-GOV-17).**
+> **⚠ HARD GATE:** When `merge_gate.all_merged = true`, STEP 5 (Sprint Close) **must execute in the same session without exception.** Do not output anything to the user after the merge gate confirmation block without first entering STEP 5. If a session ends after the final merge but before STEP 5, re-invoke `run sprint --cycle <cycle_id>` immediately on resume — the engine detects `all_merged = true` and executes STEP 5 directly. **`.github/workflows/sprint_close_reminder.yml` also posts a mandatory PR comment on every EPIC merge as a backup reminder.**
 
 If any condition fails: do not merge. Record which condition is unmet. If QA or Product Owner has not responded within their SLA: file an escalation record.
 
 **The engine may not self-approve a merge.** QA sign-off and Product Owner acceptance are always required and must come from the relevant authority.
-
-> **Rationale for re-invocation reminder (lessons learnt — 2026-03-04__release-v1.8 / EX-LL Friction Item 4):** A session ended after recording EPIC-02 QA sign-off but before the PR merge was reported. The user then merged the PR on GitHub without re-invoking `run sprint`. `sprint_close.md` was never created, `execution_state.json` remained unsealed, and `run delivery verification` failed preflight. The reminder makes the re-invocation requirement visible at the moment the user receives merge gate output.
 
 > **Merge order note (LL-v2.0-P3-5):** If more than one EPIC branch modifies a shared governance file (e.g. `execution_state.json`, `.claude_current_state.json`, `backlog.md`, `delegation_log.md`), establish a merge order at the start of STEP 3. Later EPIC branches **must rebase onto `main`** after the first EPIC merges — before running their final QA review and opening a PR. This prevents merge conflicts at the merge gate and avoids the need to rebase mid-merge-sequence.
 
