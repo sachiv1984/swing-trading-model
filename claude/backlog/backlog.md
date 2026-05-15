@@ -476,6 +476,7 @@ Arc 4 (AI Integration) and future arcs will require data that is not currently s
 **Source:** v3.4 lessons_learnt Phase 3 items #1 and #4 (2026-05-14) — cross-EPIC merge conflict recurrence; note: referenced as BLG-GOV-21 in lessons_learnt, but that ID was already assigned (Arc 4 data requirements) — corrected to BLG-GOV-22
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v3.5
+**Status:** ✅ COMPLETE v3.5 (ST-11, 2026-05-15)
 
 **Problem**
 Three of four v3.4 EPICs required manual conflict resolution at merge time due to: (a) `execution_state.json` created independently on each branch, and (b) `src/pages/Positions.js` modified by three branches (EPIC-01, EPIC-02, EPIC-03). This is a recurrence from v3.3 Phase 3 item #2.

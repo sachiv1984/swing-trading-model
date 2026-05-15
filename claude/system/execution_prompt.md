@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.19
+**Version:** 3.20
 **Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -537,6 +537,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
     - If no deviation: set `deviations_filed = true` (meaning "deviation check completed; none found").
     - If a deviation exists: document it in the canonical spec per `claude/charter/document_lifecycle_guide.md` §9 (description, canonical requirement, priority P0–P3, target resolution release, owner, backlog reference). Set `deviations_filed = true` once filed. A P0 deviation blocks the merge gate — escalate immediately.
     - **Deviation type distinction (LL-v1.10-P4-2):** If the deviation is "endpoint/feature absent from spec" (the spec does not define this thing at all), file in `qa_evidence_EPIC-xx.md` and backlog only — the canonical spec is not the right home for an absence note. If the deviation is "implementation differs from what the spec requires" (the spec defines it, but the implementation diverges), file in the canonical spec as above.
+    - **Intent check advisory (LL-v3.4-P3-03):** Before filing a deviation, verify implementation matches spec *intent*, not just literal draft wording. If spec and implementation agree on intent, record as an implementation note in `execution_state.json` notes only — do not file a deviation.
+    - **Known Deviations section advisory (LL-v3.4-P3-04):** When filing a deviation in the canonical spec, also add a `## Known Deviations` section to that spec in the same commit if one does not already exist. This makes the deviation traceable directly from the spec and reduces Phase 4 verification overhead.
 
 11. **Sign-off gate:** If the item's seal condition in `sprint_backlog.md` names a required sign-off role: invoke agent-mediated sign-off per §5.3. Do not mark `acceptance_verified = true` until `sign_off_record.status = "cleared"`. Record outcome in `sign_off_record` in `execution_state.json`.
 
@@ -797,6 +799,8 @@ Must include:
 - Items Delegated and outstanding (with delegation record IDs)
 - QA evidence logs produced (list: `qa_evidence_EPIC-xx.md` per EPIC)
 - Deviations filed this sprint (list: spec file, deviation ref, priority — or "None") — **spec deviations only** (implementation diverges from what the spec requires; filed via `/dev-file`). Process notations, execution observations, and deferred items belong in `execution_state.json` notes column or `execution_escalations.md`, not this register.
+  - **Deviation severity consistency check (LL-v3.3-CF-01):** Before writing this section, verify deviation priorities here match the DoQ assessment in `qa_evidence_EPIC-xx.md` sign-off blocks. If they diverge, correct one or both documents before closing. Severity must be consistent between `sprint_close.md` and the QA evidence.
+  - **Backlog ID completeness check (LL-v3.3-CF-02):** Every deviation listed as "backlog item filed" must include the BLG ID in the table row. A "backlog item filed" note without a BLG ID is incomplete — query `backlog.md` for the assigned ID and record it before writing `sprint_close.md`.
 - Open escalations (if any)
 - Net outcome vs sprint goal
 - **Verification readiness statement** (STRUCTURAL — AUD-2026-04-11-004): Write the following block verbatim in `sprint_close.md`. Each field must be `Yes` before writing — resolve any `No` items first. The Delivery Verification Engine reads this block at STEP -1.2; an absent or malformed block causes a preflight failure.
@@ -862,6 +866,8 @@ The shared prompt governs the structured table block format (§4.2), idempotency
 The prompt's §6.2 rule applies: if any friction can be resolved by updating a template or prompt during this run, apply it immediately and record it.
 
 **Idempotency guard (IMP-35 gap 2 — now active):** Before appending, check for existing section header `## Phase 3 — <cycle_id>` in `lessons_learnt_cycle.md`. If present: skip append (already complete for this cycle).
+
+**Backlog ID pre-assignment check (LL-v3.4-P3-05):** Before filing new backlog IDs in the lessons_learnt Phase 3 section, verify each proposed BLG ID is unoccupied in `claude/backlog/backlog.md`. Query existing IDs before assigning. A duplicate BLG ID causes reference conflicts at subsequent sprint planning and grooming cycles.
 
 ---
 
