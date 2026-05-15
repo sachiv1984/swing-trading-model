@@ -1,5 +1,5 @@
 /**
- * Trade Plan Acceptance Tests — ST-03 (EPIC-01, v3.1)
+ * Trade Plan Acceptance Tests — ST-03 (EPIC-01, v3.1) + ST-09 (EPIC-03, v3.5)
  *
  * Covers observable AC for the Trade Plan creation/edit form:
  *   SC-TP-01  Form renders with all required fields
@@ -9,8 +9,9 @@
  *   SC-TP-05  Existing plan banner shown when position already has a plan
  *   SC-TP-06  Success banner shown after saving
  *   SC-TP-07  No regression — Positions and Watchlist pages still render
+ *   SC-TP-08  Edit mode: form pre-populated from GET /trade-plans/{id} (RQ v5 useEffect fix)
  *
- * Spec refs: GitHub Issue #311 (ST-03 AC)
+ * Spec refs: GitHub Issue #311 (ST-03 AC), GitHub Issue #394 (ST-09 AC)
  * Infrastructure: Playwright page.route() network interception.
  * No live backend required.
  *
@@ -244,4 +245,45 @@ test('SC-TP-07b: Watchlist page still renders after Trade Plan routes are regist
   await page.goto('/#/Watchlist');
 
   await expect(page.locator('h1').filter({ hasText: /watchlist/i })).toBeVisible({ timeout: 8000 });
+});
+
+// ---------------------------------------------------------------------------
+// SC-TP-08 — Edit mode: form pre-populated from existing plan (RQ v5 fix)
+// ---------------------------------------------------------------------------
+
+const EXISTING_PLAN_DETAIL = {
+  status: 'ok',
+  data: {
+    id: PLAN_ID,
+    ticker: 'AAPL',
+    market: 'US',
+    status: 'draft',
+    setup_thesis: 'Breakout above 50d MA on volume',
+    entry_rationale: 'Confirmed with signal',
+    regime_context_at_entry: 'risk_on',
+    r_target: 2.0,
+    early_exit_conditions: 'Close below 50d MA',
+    confirmation_criteria: 'Volume > 1.5x avg',
+    checklist_items: [
+      { id: 'signal_confirmed', label: 'Strategy signal confirmed', checked: true },
+      { id: 'stop_defined', label: 'Stop level defined', checked: false },
+    ],
+  },
+};
+
+test('SC-TP-08: Edit mode pre-populates form fields from GET /trade-plans/{id}', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(new RegExp(`${API}/trade-plans/${PLAN_ID}$`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(EXISTING_PLAN_DETAIL) })
+  );
+
+  const qs = new URLSearchParams({ edit: PLAN_ID, ticker: 'AAPL', market: 'US' }).toString();
+  await page.goto(`/#/TradePlan?${qs}`);
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+
+  // Form fields should be pre-populated from the fetched plan
+  await expect(page.getByPlaceholder(/describe the setup/i)).toHaveValue('Breakout above 50d MA on volume', { timeout: 5000 });
+  await expect(page.getByPlaceholder(/why enter now/i)).toHaveValue('Confirmed with signal');
+  await expect(page.getByPlaceholder(/e\.g\. 2\.5/i)).toHaveValue('2');
 });

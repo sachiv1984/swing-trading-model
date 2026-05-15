@@ -1,10 +1,11 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-10
+**Version:** 1.1
+**Last Updated:** 2026-05-15
 **Story:** ST-08 (EPIC-03, v3.3) — BLG-SPEC-25
 **Cross-reference:** `docs/specs/data_provenance/research_view_provenance.md`
+**Regression test anchor:** `docs/qa/acceptance_protocols/research_view_regression_protocol.md`
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -222,4 +223,5 @@ Note: 404 (ticker not found) and 503/429 (source unavailable) are not currently 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-05-15 | ST-10 (EPIC-03, v3.5) — Added regression test anchor cross-reference to `research_view_regression_protocol.md`. |
 | 1.0 | 2026-05-10 | Initial creation — ST-08 (EPIC-03, v3.3). Full response schema, source attribution, error codes, rate limit policy. |
