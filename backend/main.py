@@ -24,6 +24,7 @@ from routers import trade_plans as trade_plans_router
 from routers import earnings as earnings_router
 from routers import research as research_router
 from routers import portfolio_risk as portfolio_risk_router
+from routers import plan_vs_reality as plan_vs_reality_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers, sync_from_tickers_table
@@ -182,6 +183,7 @@ app.include_router(trade_plans_router.router)
 app.include_router(earnings_router.router)
 app.include_router(research_router.router)
 app.include_router(portfolio_risk_router.router)
+app.include_router(plan_vs_reality_router.router)
 
 
 @app.on_event("startup")
@@ -220,6 +222,12 @@ def on_startup():
         _log.info("ensure_screener_results_table: OK")
     except Exception as _e:
         _log.error("ensure_screener_results_table FAILED at startup: %s", _e)
+    try:
+        from database import ensure_plan_vs_reality_columns
+        ensure_plan_vs_reality_columns()
+        _log.info("ensure_plan_vs_reality_columns: OK")
+    except Exception as _e:
+        _log.error("ensure_plan_vs_reality_columns FAILED at startup: %s", _e)
     try:
         from utils.feature_flags import log_flag_states
         log_flag_states()
