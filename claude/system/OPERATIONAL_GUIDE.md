@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.78
+**Version:** 3.79
 **Last Updated:** 2026-05-15
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -394,7 +394,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v6.0)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v6.1)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1364,7 +1364,7 @@ The health score is surfaced in the run manifest under a section titled `## Gove
 
 ```
 ## Governance Health Score (Advisory)
-Source: OPERATIONAL_GUIDE.md §15 — roadmap_prompt.md v5.0 STEP -1.7
+Source: OPERATIONAL_GUIDE.md §15 — roadmap_prompt.md v6.1 STEP -1.7
 
 | Component | Score | Status |
 |-----------|-------|--------|
@@ -1385,7 +1385,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.78 |
+| Version | 3.79 |
 | Last Updated | 2026-05-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
@@ -1393,7 +1393,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.3 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.0 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.1 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.28 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
@@ -1420,6 +1420,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.79 | 2026-05-15 | **roadmap_prompt.md v6.0→v6.1 — STEP 9 post-write park count verification added.** §6 source prompt header updated v6.0→v6.1. §14 Roadmap Engine Source v6.0→v6.1. §15 roadmap_prompt version reference updated v5.0→v6.1. Change: STEP 9 Post-write park count verification block added — after completing ideas_register.md park count updates, grep for rows with prior cycle's `Parked-cycle-N \| N` pattern and confirm zero rows remain with outdated counts; prevents context-compaction truncation artifacts from leaving stale park counts. Authority: Head of Specs Team (cycle 2026-05-15__scheduled lessons learnt action-now, 2026-05-15). |
 | 3.78 | 2026-05-15 | **backlog_management_prompt.md v1.6→v1.7 — STEP 1.5 Ephemeral Section Cleanup added.** §6M source prompt header updated v1.6→v1.7. §14 Backlog Management Engine v1.6→v1.7. §14 Version/Last Updated 3.74→3.78/2026-05-15. Change: STEP 1.5 added — during each groom run, identify and queue removal of completed Release Slice sections, resolved Test Scenario Gap sections, and resolved "Returned to Backlog" sections; open items within ephemeral sections must be extracted to appropriate §1–§8 type section before parent section is removed. Companion: backlog.md Placement Rule updated to document ephemeral section lifecycle. Authority: PMO Lead (2026-05-15). |
 | 3.77 | 2026-05-14 | **release_planning_prompt.md v2.27→v2.28 — token efficiency refactor.** §6B source prompt header already updated v2.28. §14 Release Engine Source v2.28. Prompt reduced from 1438 to 1041 lines (−397 lines, ~28%): extracted state.json schema to `claude/system/schemas/release_state_schema.json`; escalation subroutine to `claude/system/shared/escalation_subroutine.md`; lock recovery procedure to `claude/system/shared/lock_recovery_procedure.md`; publish gate to `claude/system/shared/publish_gate.md`; scope + decisions templates to `claude/system/templates/`; consolidated STEP 5.5+5.7; removed 5 trigger footnotes. All governance rules preserved. Authority: Head of Specs Team (2026-05-14). |
 | 3.76 | 2026-05-14 | **BLG-AI-03 (ST-13, v3.4) — AI Journal Review Cadence added to §13 Artefact Register.** New artefact row: `docs/specs/compliance/ai_journal_review_cadence.md` (Class 2, AI Compliance & Governance Officer, Governance). Defines quarterly review checklist, §13 re-confirmation, model version check, error rate review, record format, escalation path. Authority: AI Compliance & Governance Officer (BLG-AI-03, 2026-05-14). |

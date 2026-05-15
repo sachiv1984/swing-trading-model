@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-08 (rebalance 2026-05-08__scheduled — DL-025; no initiative changes)
+**Last Updated:** 2026-05-15 (rebalance 2026-05-15__scheduled — DL-029; no initiative changes)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 

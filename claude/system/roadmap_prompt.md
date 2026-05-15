@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 6.0
-**Last Updated:** 2026-05-13
+**Version:** 6.1
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -608,6 +608,9 @@ Rules:
 
 **Decision log append-only enforcement (structural):**
 - Before writing: count existing entries (N). After writing: re-read; confirm count = N + entries added this run. Count decreased → halt. Any existing entry text changed → halt. Both checks must pass before STEP 9 commit.
+
+**Post-write park count verification:**
+After completing all `ideas_register.md` park count updates, grep for rows still containing the prior cycle's park count value in `Parked-cycle-N | N` format and confirm zero rows remain with outdated counts. This prevents context-compaction truncation artifacts from leaving stale park counts in the register.
 
 ---
 

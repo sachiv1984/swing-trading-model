@@ -4,7 +4,7 @@
 **Status:** Active
 **Class:** Planning Document (Class 4)
 **Last Updated:** 2026-05-15 (cleanup — removed accumulated release slice history and resolved ephemeral sections; TEST-GAP-EPIC-03-v33 promoted to §5; groom rule added)
-**Last rebalance:** 2026-05-08 (cycle 2026-05-08__scheduled — DL-025 backlog adds × 16)
+**Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -231,6 +231,30 @@ research_view_protocol.md §2.3 notes SC-RV-18 (regime null only) and SC-RV-19 (
 - SC-RV-18 and SC-RV-19 added to `docs/qa/test_scenarios/research_view_scenarios.md`
 - research_view_protocol.md §2.3 updated to reference both scenarios as filed
 - Playwright coverage or human staging sign-off recorded for both null states
+
+---
+
+### BLG-QA-19 — Research view regression test protocol
+**Priority:** P2 (Medium)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260508-02 — promoted cycle 2026-05-15__scheduled (DL-029)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.5
+
+**Problem**
+No formal protocol defines which tests must pass after modifications to the research endpoint or research view components. Each sprint that adds a data field (e.g. IT-04/IT-05 risk data) must independently determine regression coverage, creating inconsistency and coverage gaps. Gates cleared: BLG-QA-15 ✅ v3.3; PT-03 ✅ v3.2; PT-05 ✅ v3.2.
+
+**Scope**
+- Define the canonical list of Playwright test scenarios that must pass after any modification to `/research/{ticker}` endpoint or research view components
+- Include: PT-02 base view, entry conditions overlay (PT-03), entry checklist (PT-05), and any IT- additions to the view
+- Document as `docs/qa/acceptance_protocols/research_view_regression_protocol.md`
+- Reference in sprint planning notes for any story touching research endpoint or view
+
+**Acceptance Criteria**
+- `docs/qa/acceptance_protocols/research_view_regression_protocol.md` created and signed off by QA Lead
+- Protocol covers: PT-02 base fields, PT-03 entry condition fields, PT-05 entry checklist UX, null/degraded state handling (SC-RV-18, SC-RV-19)
+- Protocol referenced in research endpoint API contract as regression test anchor
 
 ---
 
