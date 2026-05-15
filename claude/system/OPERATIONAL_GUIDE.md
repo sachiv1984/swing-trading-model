@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.79
+**Version:** 3.80
 **Last Updated:** 2026-05-15
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -544,7 +544,7 @@ Keeps `claude/backlog/backlog.md` healthy and aligned with the roadmap.
 
 ## 6.5 Phase 1.5 — Design Gate (Required*)
 
-**Source prompt:** `claude/system/design_gate_prompt.md` (v1.3)  
+**Source prompt:** `claude/system/design_gate_prompt.md` (v1.4)  
 **Owner:** Head of UX & Design (artefacts), PMO Lead (gate record)  
 **Pre-condition:** Phase 1B Publish Gate passed; `sprint_sealed = false`  
 **\*Required** unless all sprint items are confirmed Design Not Applicable
@@ -1385,14 +1385,14 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.79 |
+| Version | 3.80 |
 | Last Updated | 2026-05-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
-| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.3 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.1 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.28 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v2.8 |
