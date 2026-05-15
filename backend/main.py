@@ -24,6 +24,7 @@ from routers import trade_plans as trade_plans_router
 from routers import earnings as earnings_router
 from routers import research as research_router
 from routers import portfolio_risk as portfolio_risk_router
+from routers import paper_trading as paper_trading_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers, sync_from_tickers_table
@@ -182,6 +183,7 @@ app.include_router(trade_plans_router.router)
 app.include_router(earnings_router.router)
 app.include_router(research_router.router)
 app.include_router(portfolio_risk_router.router)
+app.include_router(paper_trading_router.router)
 
 
 @app.on_event("startup")
@@ -323,8 +325,14 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
         exit_date=request.exit_date,
         exit_reason=request.exit_reason,
         exit_fx_rate=request.exit_fx_rate,
-        exit_note=request.exit_note  # ✅ NEW
+        exit_note=request.exit_note
     )
+    if result.get("market") == "US" and not result.get("is_partial_exit"):
+        try:
+            from services.alpaca_paper_sync_service import sync_close_paper_position
+            sync_close_paper_position(result["ticker"])
+        except Exception:
+            pass  # best-effort sync; primary operation already succeeded
     return {"status": "ok", "data": result}
 
 @app.post("/portfolio/position")
@@ -344,12 +352,19 @@ def add_position_endpoint(request: AddPositionRequest):
             entry_note=request.entry_note,
             tags=request.tags
         )
-        
+
+        if request.market == "US":
+            try:
+                from services.alpaca_paper_sync_service import sync_open_paper_position
+                sync_open_paper_position(request.ticker, request.shares)
+            except Exception:
+                pass  # best-effort sync; primary operation already succeeded
+
         return {
             "status": "ok",
             "data": result
         }
-        
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:

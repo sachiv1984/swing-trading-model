@@ -141,6 +141,9 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /portfolio/drawdown-status", "method": "GET", "url": f"{base_url}/portfolio/drawdown-status", "critical": False},
         {"name": "GET /portfolio/concentration-status", "method": "GET", "url": f"{base_url}/portfolio/concentration-status", "critical": False},
 
+        # Paper Trading (v3.5 / EPIC-01 ST-02)
+        {"name": "GET /portfolio/paper-positions", "method": "GET", "url": f"{base_url}/portfolio/paper-positions", "critical": False},
+
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
     ]
