@@ -1,9 +1,34 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.6
-**Last Updated:** 2026-05-14
+**Version:** 2.7
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-15__release-v3.5
+**Date:** 2026-05-15
+**Status:** Verified — 2026-05-15
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-04 | Governance Patches: sprint_planning_prompt.md v3.1 (shared execution_state.json ownership rule + merge order section); execution_prompt.md v3.20 (deviation intent-check advisory, Known Deviations sync advisory, backlog ID uniqueness check, CF-01/CF-02 deviation severity and backlog ID completeness checks). BLG-GOV-22 closed. | claude/system/sprint_planning_prompt.md v3.1; claude/system/execution_prompt.md v3.20 | None |
+| EPIC-03 | Spec & QA Debt: grace-period-alert ux_spec.md v1.1 (§5 sessionStorage corrected, dismiss-on-tab-close noted); stop-management-workflow ux_spec.md v1.1 (§4.4 PATCH corrected); React Query v5 onSuccess fix in TradePlan.js (SC-TP-08 Playwright 9/9 pass); Research View Regression Test Protocol v1.0 (SC-RES-01–13 canonical). BLG-SPEC-29/30/31 and BLG-QA-19 closed. | docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md; docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md; docs/qa/acceptance_protocols/research_view_regression_protocol.md | None |
+| EPIC-01 | Arc 3 Completion — IT-06 Alpaca Paper Trading: §13 compliance review (PASS determination, 4 binding conditions); `backend/services/alpaca_paper_sync_service.py` + `GET /portfolio/paper-positions`; `PaperAccountPanel` component on Positions page. Playwright E2E: SC-PA-01/02 (5/5 pass). openapi.yaml + test.py + SystemStatus.js (55→57 total endpoints) updated. | docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/paper-positions; docs/ux_specs/paper-trading/ux_spec.md; docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md | None |
+| EPIC-02 | Arc 4 Foundation — PO-01 Plan vs Reality: Arc 4 data requirements capture (arc4_data_requirements.md v1.0, PO + HoUX sign-off); `plan_vs_reality` JSONB column on trade_history; `planned_stop_price` on trade_plans; `backend/services/plan_vs_reality_service.py` + `GET /trades/{trade_id}/plan-vs-reality`; `PlanVsReality` component in TradeHistoryTable. Playwright E2E: SC-PVR-01/02 (5/5 pass). openapi.yaml + test.py + SystemStatus.js updated. | docs/specs/api_contracts/trade_endpoints.md#GET /trades/{trade_id}/plan-vs-reality; docs/ux_specs/plan-vs-reality/ux_spec.md; docs/data_model.md; docs/product/arc4_data_requirements.md | None (entry_delta_pct null pending Arc 4 planned_entry_price snapshot — not a deviation per arc4_data_requirements.md §3.1) |
+
+### Capabilities deferred or returned
+
+None. All 13 sprint items completed and merged.
+
+### Verification inputs
+
+- QA evidence logs: qa_evidence_EPIC-04.md (autonomous class), qa_evidence_EPIC-03.md, qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md — all signed 2026-05-15
+- Deviations filed: None (zero P0/P1/P2/P3)
+- Test scenarios: 10 Playwright scenarios across EPIC-01 (5) and EPIC-02 (5) — 10/10 pass; EPIC-03 SC-TP-08 (9/9 pass); EPIC-04 not applicable (governance)
 
 ---
 
