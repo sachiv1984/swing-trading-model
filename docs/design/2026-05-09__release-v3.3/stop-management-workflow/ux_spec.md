@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.0
+**Version:** 1.1
 **Cycle:** 2026-05-09__release-v3.3
 **Story:** ST-07 (EPIC-02 — IT-03 Arc 3)
 **Approved by:** Product Owner
@@ -89,7 +89,7 @@ Example: "Update stop to £2.34"
 
 On click:
 1. Button enters loading state (spinner; disabled)
-2. `PUT /positions/{id}` called with new `stop_price = atr_trail_stop`
+2. `PATCH /positions/{id}` called with new `stop_price = atr_trail_stop`
 3. On success: modal closes; position row updates with new stop; success toast: "Stop updated to {atr_trail_stop}"
 4. On error: error message inline in modal below button; "Try again" available; modal stays open
 
@@ -151,4 +151,4 @@ On click:
 
 | ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
 |----|-------------|----------------------|----------|-------------------|-------|------------------|
-| DEV-v3.4-01 | v3.4 ST-03 implementation calls `PATCH /positions/{id}` for the stop update instead of `PUT /positions/{id}`. PATCH is the correct HTTP verb for partial field updates; the existing endpoint supports it and the functional outcome is identical. | §4.4: `PUT /positions/{id}` called with new `stop_price = atr_trail_stop` | P3 | v3.5 — update §4.4 to document PATCH /positions/{id} | Head of UX & Design | BLG-SPEC-30 |
+| DEV-v3.4-01 | ✅ RESOLVED v3.5 (ST-08) — §4.4 updated to document `PATCH /positions/{id}`. PATCH is the correct HTTP verb for partial field updates; implementation was correct; spec was corrected to match. | §4.4: `PUT /positions/{id}` called with new `stop_price = atr_trail_stop` | P3 | ✅ Resolved v3.5 | Head of UX & Design | BLG-SPEC-30 |

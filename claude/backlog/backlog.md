@@ -357,6 +357,7 @@ The research_endpoint.md AC specified distinct HTTP error codes (404 ticker-not-
 **Source:** EPIC-01 ST-02 DEV-01 (v3.4 delivery deviation — 2026-05-14)
 **Effort:** XS (~0.25 day)
 **Provisional-Target:** v3.5
+**Status:** ✅ COMPLETE v3.5 (ST-07, 2026-05-15)
 
 **Problem**
 grace-period-alert/ux_spec.md §5 specifies `localStorage` for dismiss persistence, but the v3.4 implementation uses `sessionStorage`. The AC wording ("does not reappear on page reload within the same browser session") matches sessionStorage behaviour. The spec needs updating to reflect the delivered implementation.
@@ -375,6 +376,7 @@ grace-period-alert/ux_spec.md §5 specifies `localStorage` for dismiss persisten
 **Source:** EPIC-01 ST-03 DEV-02 (v3.4 delivery deviation — 2026-05-14)
 **Effort:** XS (~0.25 day)
 **Provisional-Target:** v3.5
+**Status:** ✅ COMPLETE v3.5 (ST-08, 2026-05-15)
 
 **Problem**
 stop-management-workflow/ux_spec.md §4.4 specifies `PUT /positions/{id}` for the stop update call, but the v3.4 implementation uses `PATCH /positions/{id}`. PATCH is the correct HTTP verb for partial field updates; the existing endpoint supports it. The spec needs updating to match.
@@ -400,6 +402,9 @@ React Query v5 removed `onSuccess` from `useQuery`. In ST-10, this affected `isA
 - Scan all `useQuery` calls for `onSuccess` usage
 - Any affected patterns fixed or documented
 - If no issues found: file closure note in backlog
+
+**Status:** ✅ COMPLETE v3.5 (ST-09, 2026-05-15)
+**Closure note:** Full codebase scan complete. One active issue found and fixed: `TradePlan.js` line 125 had `onSuccess` inside `useQuery`. Fixed by removing `onSuccess` from `useQuery` config and replacing with `useEffect` watching `existingPlan`. All other `onSuccess` usages confirmed in `useMutation` calls (Signals.js, TradePlans.js, TradeEntry.js, Positions.js, CashManagementModal.js, Settings.js, SystemStatus.js). No remaining `useQuery`+`onSuccess` patterns.
 
 ---
 
