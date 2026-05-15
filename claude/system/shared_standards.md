@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.9
-**Last Updated:** 2026-05-09
+**Version:** 3.0
+**Last Updated:** 2026-05-15
 
 # Shared Standards — All Governed Routines
 
@@ -693,6 +693,168 @@ Required fields:
 }
 ```
 `per_agent_submission_count`: computed at STEP 3 by counting IDEA IDs in `submissions_received` containing each agent slug. Required field — must be present before window closes.
+
+---
+
+## 16.10 sprint_planning_notes.md Schema
+
+**Produced by:** `sprint_planning_prompt.md` STEP 5
+**Consumed by:** Sprint Execution Engine (STEP 0 advisory carry-forward read)
+
+**Document title:** `# Sprint Planning Notes — <cycle_id>`
+
+**Header block (required):**
+
+```
+**Owner:** PMO Lead
+**Class:** Planning Document (Class 4)
+**Status:** Active
+**Last Updated:** <date>
+**Cycle:** <cycle_id>
+```
+
+**Required sections:**
+
+```markdown
+## Backlog Slice Source
+
+Original / Amended — <file path used>
+
+## Deferred Items
+
+| Item | Reason | Next Sprint Candidate? |
+|------|--------|----------------------|
+| ST-xx | <reason> | Yes / No |
+
+## Dependency Map
+
+| Item | Depends On | Type | Status |
+|------|-----------|------|--------|
+| ST-xx | ST-yy | Internal | Resolved |
+
+## Execution Sequence
+
+<Ordered list of EPICs and ST items>
+
+## Risk Flags
+
+| Risk ID | Associated Item | Mitigation Status |
+|---------|----------------|------------------|
+| RISK-xx | EPIC-xx | Valid / Changed / Materialised |
+
+## Pre-Sprint Vulnerability Scan
+
+<pip-audit result: clean / findings listed / tool unavailable>
+
+## Outstanding Actions
+
+| Action | Owner | Required Before Seal? |
+|--------|-------|----------------------|
+| <action> | <role> | Yes / No |
+```
+
+**Optional sections** (include when applicable):
+- `## Pre-Sprint Backlog Advisory` — unconverted "Before Sprint Planning" items (STEP -1 advisory 7)
+- `## Carry-Forward Items` — from prior cycle STEP 0 advisory
+- `## Capacity WARN Acknowledgement` — when capacity check outcome is `warn`
+
+---
+
+## 16.11 sprint_backlog.md Schema
+
+**Produced by:** `sprint_planning_prompt.md` STEP 6
+**Consumed by:** Sprint Execution Engine (STEP -1 / STEP 0 load), Post-Ship Closure Engine
+
+**Document title:** `# Sprint Backlog — <cycle_id>`
+
+**Header block (required):**
+
+```
+**Owner:** PMO Lead
+**Class:** Planning Document (Class 4)
+**Status:** Active | Sealed
+**Last Updated:** <date>
+**Cycle:** <cycle_id>
+**Release:** <vX.Y>
+**Sprint Goal:** <goal from sprint_goal.md>
+**Backlog Slice Source:** <original stage4_backlog_slice.md | amended: path>
+```
+
+**Structure:**
+
+```markdown
+## Sprint Scope
+
+### EPIC-xx — <Epic Title>
+
+**Maps to:** S2-xx
+**Owner:** <role from execution plan>
+**Estimated effort:** <N capacity units>
+**Risk IDs:** RISK-xx (if applicable)
+**Execution sequence:** <N>
+
+#### ST-xx — <Story Title>
+
+**Owner:** <role>
+**Estimated effort:** <N>
+**Delegation class:** autonomous | delegated_backend | delegated_frontend | delegated_qa | delegated_decision
+
+**Acceptance Criteria:** see `stage4_backlog_slice.md#ST-xx`
+
+*(The Execution Engine reads AC from `stage4_backlog_slice.md` directly via `spec_references`. Do not duplicate the full AC table here — the sprint backlog is a sequencing and ownership document.)*
+
+**Dependencies:** ST-yy (must complete first) / None
+
+**Notes:** <any flags, deferred execution blockers, or risks>
+
+---
+
+*(repeat for each ST item and EPIC)*
+
+---
+
+## Capacity Summary
+
+| Metric | Value |
+|--------|-------|
+| Total confirmed capacity | <N units> |
+| Total estimated effort (in-scope) | <N units> |
+| Utilisation | <N%> |
+| Over-allocation | Yes (accepted by PO) / No |
+
+## Items Deferred This Sprint
+
+| Item | EPIC | Reason |
+|------|------|--------|
+| ST-xx | EPIC-xx | <reason> |
+
+## Deferred Execution Blockers Accepted
+
+| Blocker | Accepted by | Date |
+|---------|-------------|------|
+| <blocker description> | Product Owner | <date> |
+
+*(omit section if deferred_execution_blockers was empty)*
+
+## Outstanding Actions at Planning Seal
+
+| Action | Owner | Blocker? |
+|--------|-------|---------|
+| <action> | <role> | Yes / No |
+
+---
+
+## Product Owner Sign-Off
+
+**Sprint goal confirmed:** [AWAITING SIGN-OFF]
+**Scope confirmed:** [AWAITING SIGN-OFF]
+**Capacity confirmed:** [AWAITING SIGN-OFF]
+**Deferred execution blockers accepted (if any):** [AWAITING SIGN-OFF / N/A]
+**Signed off by:** Product Owner
+**Date:** [AWAITING SIGN-OFF]
+```
+
+**Status transition:** `Active` → `Sealed` when sign-off gate (STEP 6.2) passes. `sprint_sealed = true` in `.claude_current_state.json` must be set concurrently. Phase 3 may not invoke while status is `Active`.
 
 ---
 
