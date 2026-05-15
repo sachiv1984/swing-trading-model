@@ -3,7 +3,7 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.9.0
+**Version:** 2.2.0
 **Last Updated:** 2026-03-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -639,3 +639,57 @@ Positions without sector data are excluded from the sector calculation. No error
 | Version | Date | Change |
 |---------|------|--------|
 | 2.1.0 | 2026-05-14 | ST-04/ST-06 (EPIC-02 v3.4): Added GET /portfolio/drawdown-status and GET /portfolio/concentration-status (IT-04/IT-05 Arc 3). |
+| 2.2.0 | 2026-05-15 | ST-02 (EPIC-01, v3.5): Add GET /portfolio/paper-positions — IT-06 Alpaca paper trading positions panel. |
+
+---
+
+## GET /portfolio/paper-positions
+
+Returns current Alpaca paper account positions with P&L. Returns `{"paper_tracking_enabled": false}` when `ALPACA_PAPER_API_KEY` is not configured.
+
+§13 compliance: display-only; no automated order execution.
+
+**Response (200) — credentials configured, positions exist:**
+```json
+{
+  "status": "ok",
+  "paper_tracking_enabled": true,
+  "positions": [
+    {
+      "ticker": "AAPL",
+      "paper_entry_price": 170.50,
+      "current_market_price": 180.00,
+      "paper_pnl_usd": 950.00,
+      "paper_pnl_pct": 5.57,
+      "date_opened": null,
+      "position_size": 100
+    }
+  ]
+}
+```
+
+**Response (200) — credentials not configured:**
+```json
+{"paper_tracking_enabled": false}
+```
+
+**Response fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| paper_tracking_enabled | boolean | false when ALPACA_PAPER_API_KEY absent |
+| positions | array | Paper account positions |
+| positions[].ticker | string | Ticker symbol |
+| positions[].paper_entry_price | float | Average entry price from Alpaca paper account |
+| positions[].current_market_price | float | Current market price |
+| positions[].paper_pnl_usd | float | Unrealised P&L in USD |
+| positions[].paper_pnl_pct | float | Unrealised P&L as percentage |
+| positions[].date_opened | string \| null | Date opened (null — not available from Alpaca positions API) |
+| positions[].position_size | float | Number of shares |
+
+**Errors:**
+
+| Code | Condition |
+|------|-----------|
+| 500 | Alpaca API error or network failure |
+

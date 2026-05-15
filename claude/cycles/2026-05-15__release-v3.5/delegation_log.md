@@ -25,3 +25,23 @@
 - **Completed at:** 2026-05-15T16:00:00Z
 - **Completed by:** QA Lead
 - **Outcome:** Protocol v0.1→v1.0 signed off. Corrections applied: §4 IT-04/IT-05 references replaced with accurate PT-03/PT-05 citations; BLG-FE-33 reference corrected to BLG-FE-32 (filed in backlog). SC-RES-01 to SC-RES-13 confirmed as correct canonical regression suite. SC-RV-18/19 gap confirmed accurate. BLG-QA-19 marked COMPLETE in backlog.
+
+---
+
+## DEL-20260515-02
+
+- **ST Item:** ST-01 — §13 Compliance Review: Alpaca Paper Trading
+- **EPIC:** EPIC-01
+- **Classification:** delegated_decision
+- **Assigned to:** Strategy Rules & System Intent Owner
+- **GitHub Issue:** #388
+- **Branch:** exec/2026-05-15__release-v3.5/EPIC-01
+- **Delegated at:** 2026-05-15T14:30:00Z
+- **What is needed:** Strategy Rules & System Intent Owner to review `docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md` and: (1) confirm the §13 compliance assessment criteria are correctly assessed; (2) confirm the critical §13 boundary interpretation (backend sync is read-only; no paper orders created by the system); (3) confirm PASS or issue a FAIL determination with rationale; (4) sign off in the document's sign-off block. If FAIL: notify PMO Lead for Sprint 2 capacity reallocation.
+- **Spec reference:** `docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md`
+- **Unblock criteria:** Sign-off block in determination document completed (signed by Strategy Rules & System Intent Owner, date populated, PASS/FAIL recorded). If PASS: ST-02/ST-03 may proceed in Sprint 2. If FAIL: ST-02/ST-03 removed from scope.
+- **Commit format required:** `[EPIC-01][ST-01] §13 compliance review — [PASS/FAIL] determination` pushed to `exec/2026-05-15__release-v3.5/EPIC-01`
+- **Status:** Completed
+- **Completed at:** 2026-05-15T16:30:00Z
+- **Completed by:** Strategy Rules & System Intent Owner
+- **Outcome:** PASS determination confirmed. All eight §13 compliance criteria assessed COMPLIANT. Critical boundary confirmed: backend sync is GET-only (no write operations against Alpaca API); Alpaca paper account is managed independently by user; system does not place, modify, or cancel any paper orders; paper P&L data is display-only and must not feed into signals, screener scoring, regime detection, or position-sizing logic. Four binding implementation conditions recorded in §13 Conditions for Implementation. ST-02 and ST-03 may proceed in Sprint 2.

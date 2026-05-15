@@ -40,6 +40,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
 import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
+import PaperAccountPanel from "../components/positions/PaperAccountPanel";
 import { toast } from "sonner";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -854,6 +855,9 @@ export default function Positions() {
       {viewMode === "table" && openPositions.length > 0 && (
         <StrategyCompliancePanel />
       )}
+
+      {/* ST-03 (IT-06): Paper Account Panel — Table View only; §13 display-only */}
+      {viewMode === "table" && <PaperAccountPanel />}
 
       <PositionModal
         position={editingPosition}
