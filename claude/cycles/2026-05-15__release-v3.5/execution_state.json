@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-15T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-15T17:00:00Z",
+  "last_updated_utc": "2026-05-15T18:30:00Z",
   "epics": {
     "EPIC-04": {
       "status": "done",
@@ -100,7 +100,7 @@
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-15__release-v3.5/EPIC-03",
       "pr_number": 403,
       "pr_status": "open",
@@ -172,21 +172,26 @@
         "ST-10": {
           "title": "BLG-QA-19: Research View Regression Test Protocol",
           "classification": "delegated_qa",
-          "status": "delegated",
+          "status": "done",
           "assigned_to": "qa",
           "github_issue": 395,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "a80144ad",
           "delegation_record_id": "DEL-20260515-01",
-          "blocked_since_utc": "2026-05-15T13:00:00Z",
-          "unblock_criteria": "QA Lead sign-off recorded in docs/qa/acceptance_protocols/research_view_regression_protocol.md; disposition section in qa_evidence_EPIC-03.md completed",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": "delegation_record_created",
-          "sign_off_record": null,
-          "notes": "Protocol draft created at docs/qa/acceptance_protocols/research_view_regression_protocol.md v0.1. Awaiting QA Lead sign-off."
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-15T16:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/qa/acceptance_protocols/research_view_regression_protocol.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": {
+            "required_by": "QA Lead",
+            "method": "human",
+            "status": "cleared",
+            "cleared_utc": "2026-05-15T16:00:00Z"
+          },
+          "notes": "Protocol v0.1→v1.0 signed off. QA Lead corrections applied: §4 IT-04/IT-05 refs → PT-03/PT-05; BLG-FE-33 → BLG-FE-32. SC-RES-01 to SC-RES-13 confirmed canonical regression suite. BLG-QA-19 COMPLETE. DEL-20260515-01 Completed."
         }
       }
     },
@@ -202,23 +207,24 @@
         "ST-01": {
           "title": "§13 Compliance Review: Alpaca Paper Trading",
           "classification": "delegated_decision",
-          "status": "delegated",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 396,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "a64bfcbb",
           "delegation_record_id": "DEL-20260515-02",
-          "blocked_since_utc": "2026-05-15T14:30:00Z",
-          "unblock_criteria": "docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md filed with PASS or FAIL determination; Strategy Rules & System Intent Owner sign-off recorded",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-15T16:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "claude/strategy/strategy_rules.md#§13"
+            "claude/strategy/strategy_rules.md#§13",
+            "docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "determination_document_created",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Determination document created at docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md. Preliminary PASS — awaiting Strategy Rules & System Intent Owner sign-off."
+          "notes": "PASS determination confirmed. All eight §13 compliance criteria COMPLIANT. Four binding conditions recorded. ST-02/ST-03 may proceed in Sprint 2. DEL-20260515-02 Completed."
         },
         "ST-02": {
           "title": "IT-06 Backend: Alpaca Paper Trading Sync Service",
@@ -265,13 +271,13 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-15__release-v3.5/EPIC-02",
       "pr_number": 405,
       "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-05-15__release-v3.5/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/plan-vs-reality.spec.js"],
       "stories": {
         "ST-04": {
           "title": "BLG-GOV-21: Arc 4 Data Requirements Capture",
@@ -300,58 +306,56 @@
         "ST-05": {
           "title": "PO-01 Backend: Plan vs Reality Calculation Service",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 400,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "214903d5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-04 done — may proceed in Sprint 2",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-15T18:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/trades_endpoints.md#GET /trades/{id}/plan-vs-reality"
+            "docs/specs/api_contracts/trade_endpoints.md#GET /trades/{trade_id}/plan-vs-reality",
+            "docs/data_model.md#trade_history",
+            "docs/data_model.md#trade_plans"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Blocked on ST-04 delegation completion. Cannot start until arc4_data_requirements.md is signed off."
+          "notes": "Implemented: plan_vs_reality_service.py, routers/plan_vs_reality.py, ensure_plan_vs_reality_columns() migration. entry_delta_pct is null pending Arc 4 planned_entry_price snapshot — per arc4_data_requirements.md §3.1, not a deviation. spec_reference path corrected: actual file is trade_endpoints.md (not trades_endpoints.md as in backlog slice)."
         },
         "ST-06": {
           "title": "PO-01 Frontend: Plan vs Reality Comparison View",
-          "classification": "delegated_frontend",
-          "status": "blocked",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 401,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "d86684ec",
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-05-15T15:30:00Z",
-          "unblock_criteria": "ST-05 completion (backend endpoint + migration deployed)",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-15T18:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ux_specs/plan-vs-reality/ux_spec.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Blocked on ST-05. Also conditional — may be deferred to v3.6 if Sprint 2 capacity exceeded."
+          "notes": "Reclassified delegated_frontend → autonomous (engine-deliverable spec). PlanVsReality component created; integrated as 5th section in TradeHistoryTable. Playwright E2E SC-PVR-01/02. Per LL-v2.3-EX-02: classification updated mid-sprint."
         }
       }
     }
   },
-  "blocked_items": [
-    "EPIC-01/ST-02: IT-06 Backend blocked on ST-01 §13 PASS determination (DEL-20260515-02)",
-    "EPIC-01/ST-03: IT-06 Frontend blocked on ST-02 completion"
-  ],
-  "delegated_items": [
-    "EPIC-03/ST-10: BLG-QA-19: Research View Regression Test Protocol — awaiting QA Lead sign-off on research_view_regression_protocol.md",
-    "EPIC-01/ST-01: §13 Compliance Review: Alpaca Paper Trading — awaiting Strategy Rules & System Intent Owner sign-off. Preliminary PASS determination prepared."
-  ],
+  "blocked_items": [],
+  "delegated_items": [],
   "completed_items": [
     "EPIC-03/ST-07: BLG-SPEC-29: Correct grace-period-alert ux_spec.md sessionStorage",
+    "EPIC-02/ST-05: PO-01 Backend: Plan vs Reality Calculation Service — commit 214903d5",
+    "EPIC-02/ST-06: PO-01 Frontend: Plan vs Reality Comparison View — commit d86684ec (reclassified delegated_frontend → autonomous)",
     "EPIC-03/ST-08: BLG-SPEC-30: Correct stop-management-workflow ux_spec.md HTTP verb",
     "EPIC-03/ST-09: BLG-SPEC-31: React Query v5 onSuccess Codebase Scan",
     "EPIC-02/ST-04: BLG-GOV-21: Arc 4 Data Requirements Capture — Product Owner + Head of UX & Design sign-off (2026-05-15)"
