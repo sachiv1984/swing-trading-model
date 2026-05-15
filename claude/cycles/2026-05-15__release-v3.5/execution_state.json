@@ -4,14 +4,14 @@
   "backlog_slice_source": "claude/cycles/2026-05-15__release-v3.5/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-15T13:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-05-15T18:30:00Z",
+  "status": "Sprint_Complete",
+  "last_updated_utc": "2026-05-15T19:45:00Z",
   "epics": {
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-05-15__release-v3.5/EPIC-04",
       "pr_number": 402,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-15__release-v3.5/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -103,8 +103,8 @@
       "status": "done",
       "branch": "exec/2026-05-15__release-v3.5/EPIC-03",
       "pr_number": 403,
-      "pr_status": "open",
-      "qa_signed_off": false,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-15__release-v3.5/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
@@ -196,13 +196,13 @@
       }
     },
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-15__release-v3.5/EPIC-01",
       "pr_number": 404,
-      "pr_status": "open",
-      "qa_signed_off": false,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-15__release-v3.5/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/paper-account.spec.js"],
       "stories": {
         "ST-01": {
           "title": "§13 Compliance Review: Alpaca Paper Trading",
@@ -229,44 +229,44 @@
         "ST-02": {
           "title": "IT-06 Backend: Alpaca Paper Trading Sync Service",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 397,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "b496f5ef",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 PASS determination required before this story begins",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-15T19:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/paper-positions"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Conditional on ST-01 PASS. Sprint 2 story."
+          "notes": "alpaca_paper_sync_service.py + routers/paper_trading.py. GET /portfolio/paper-positions. Best-effort sync hooks in add_position_endpoint + exit_position_endpoint. §13 binding conditions enforced."
         },
         "ST-03": {
           "title": "IT-06 Frontend: Paper Positions Display Panel",
-          "classification": "delegated_frontend",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 398,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "b496f5ef",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-02 done; UX spec docs/ux_specs/paper-trading/ux_spec.md signed off by Head of UX & Design",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-15T19:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ux_specs/paper-trading/ux_spec.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Conditional on ST-01 PASS. Sprint 2 story. Playwright E2E tests required (AC-7)."
+          "notes": "Reclassified delegated_frontend → autonomous (engine-deliverable spec). PaperAccountPanel component. Rendered in Positions.js table view. Playwright E2E: tests/e2e/paper-account.spec.js (SC-PA-01/SC-PA-02). Per LL-v2.3-EX-02."
         }
       }
     },
@@ -274,8 +274,8 @@
       "status": "done",
       "branch": "exec/2026-05-15__release-v3.5/EPIC-02",
       "pr_number": 405,
-      "pr_status": "open",
-      "qa_signed_off": false,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-15__release-v3.5/qa_evidence_EPIC-02.md",
       "test_scenarios": ["tests/e2e/plan-vs-reality.spec.js"],
       "stories": {
@@ -353,24 +353,31 @@
   "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
-    "EPIC-03/ST-07: BLG-SPEC-29: Correct grace-period-alert ux_spec.md sessionStorage",
+    "EPIC-04/ST-11: BLG-GOV-22: sprint_planning_prompt.md Shared Ownership Patch — commit 622b2eff",
+    "EPIC-04/ST-12: execution_prompt.md: Deviation Filing Advisory Patches — commit 74428509",
+    "EPIC-04/ST-13: Sprint Close / LL Formatting Improvements — commit 74428509",
+    "EPIC-03/ST-07: BLG-SPEC-29: Correct grace-period-alert ux_spec.md sessionStorage — commit 736ce8f1",
+    "EPIC-03/ST-08: BLG-SPEC-30: Correct stop-management-workflow ux_spec.md HTTP verb — commit 736ce8f1",
+    "EPIC-03/ST-09: BLG-SPEC-31: React Query v5 onSuccess Codebase Scan — commit 736ce8f1",
+    "EPIC-03/ST-10: BLG-QA-19: Research View Regression Test Protocol — QA Lead sign-off v1.0 (2026-05-15)",
+    "EPIC-01/ST-01: §13 Compliance Review: Alpaca Paper Trading — PASS determination (2026-05-15)",
+    "EPIC-01/ST-02: IT-06 Backend: Alpaca Paper Trading Sync Service — commit b496f5ef",
+    "EPIC-01/ST-03: IT-06 Frontend: Paper Positions Display Panel — commit b496f5ef (reclassified delegated_frontend → autonomous)",
+    "EPIC-02/ST-04: BLG-GOV-21: Arc 4 Data Requirements Capture — Product Owner + Head of UX & Design sign-off (2026-05-15)",
     "EPIC-02/ST-05: PO-01 Backend: Plan vs Reality Calculation Service — commit 214903d5",
-    "EPIC-02/ST-06: PO-01 Frontend: Plan vs Reality Comparison View — commit d86684ec (reclassified delegated_frontend → autonomous)",
-    "EPIC-03/ST-08: BLG-SPEC-30: Correct stop-management-workflow ux_spec.md HTTP verb",
-    "EPIC-03/ST-09: BLG-SPEC-31: React Query v5 onSuccess Codebase Scan",
-    "EPIC-02/ST-04: BLG-GOV-21: Arc 4 Data Requirements Capture — Product Owner + Head of UX & Design sign-off (2026-05-15)"
+    "EPIC-02/ST-06: PO-01 Frontend: Plan vs Reality Comparison View — commit d86684ec (reclassified delegated_frontend → autonomous)"
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [
+    "epics_merged": [
       "EPIC-04",
       "EPIC-03",
       "EPIC-01",
       "EPIC-02"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-05-15T19:45:00Z"
 }
