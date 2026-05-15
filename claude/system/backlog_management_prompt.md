@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-05-10
+**Version:** 1.7
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -167,6 +167,21 @@ Produce an internal classification table:
 | BLG-xx | <title> | P0/P1/P2/P3 | <classification> | <ref> | <action> |
 
 Surface all **Ambiguous** items to the Product Owner. Do not proceed past STEP 1 until all ambiguous items are resolved.
+
+---
+
+## STEP 1.5 — Ephemeral Section Cleanup
+
+Identify sections in `backlog.md` that were appended by governance engines and are now obsolete. Three types are considered ephemeral:
+
+1. **Completed Release Slice sections** (added by the Release Planning Engine): any section headed `## Release Slice — v<x.y>` or `## Last Release Slice — v<x.y>` or `## Prior Release Slice — v<x.y>` where the release is marked ✅ COMPLETE or all stories are marked as shipped. Canonical home is the cycle directory (`claude/cycles/<cycle_id>/`).
+2. **Resolved Test Scenario Gap sections** (added by the Delivery Verification Engine): any section headed `### TEST-GAP-EPIC-xx-v<yy>` or `## Test Scenario Gaps — ...` where all items are marked ✅ RESOLVED or ✅ COMPLETE.
+3. **Resolved "Returned to Backlog" sections**: any section headed `## Returned to Backlog — ...` where all listed items are marked ✅ DELIVERED.
+
+For each ephemeral section found:
+- If ALL items are resolved/complete: queue for removal from `backlog.md` in STEP 6.2.
+- If ANY items are still open: extract them to the appropriate §1–§8 type section with a new item entry, then queue the parent section for removal.
+- Record each section in the change plan with action: `Remove — ephemeral section (all resolved)` or `Remove — ephemeral section (open items extracted to §<n>)`.
 
 ---
 

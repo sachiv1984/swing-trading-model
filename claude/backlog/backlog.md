@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-14 (groom backlog GROOM-20260514-01 — 11 BLG items + 2 TEST-GAP items archived; all COMPLETE/RESOLVED v3.4 entries replaced with one-line archive notes; see backlog_archive.md GROOM-20260514-01)
+**Last Updated:** 2026-05-15 (cleanup — removed accumulated release slice history and resolved ephemeral sections; TEST-GAP-EPIC-03-v33 promoted to §5; groom rule added)
 **Last rebalance:** 2026-05-08 (cycle 2026-05-08__scheduled — DL-025 backlog adds × 16)
 
 > ⚠️ Standing Notice
@@ -14,6 +14,7 @@
 
 > 📋 Placement Rule
 > New items must be appended to the correct existing type section (§1–§8). Do not create new numbered session sections. The backlog is organised by type, not by session date.
+> **Ephemeral sections** (Release Slice tables, Test Scenario Gap sections, and "Returned to Backlog" sections appended by governance engines) are temporary. They must be removed during the next `groom backlog` run after the cycle closes. Any still-open items within them must be promoted to the appropriate §1–§8 type section before the ephemeral section is removed.
 
 *Completed and killed items are recorded in `claude/backlog/backlog_archive.md`.*
 
@@ -207,6 +208,29 @@ The current nav bar occupies a fixed portion of the visible screen area. As the 
 ---
 
 *BLG-QA-17 (Research view test scenario library) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
+
+---
+
+### TEST-GAP-EPIC-03-v33 — SC-RV-18 and SC-RV-19 explicit Playwright coverage for null handling
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification 2026-05-09__release-v3.3 (STEP 5) — backlog item formally filed 2026-05-15
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Before next research view frontend enhancement
+
+**Problem**
+research_view_protocol.md §2.3 notes SC-RV-18 (regime null only) and SC-RV-19 (all fields null — degraded mode) as requiring explicit Playwright scenarios. The item was flagged at sprint close but never formally filed.
+
+**Scope**
+- Add SC-RV-18 to `docs/qa/test_scenarios/research_view_scenarios.md`: GET /research/{ticker} returns regime null → UI shows regime panel in "unavailable" state
+- Add SC-RV-19: all data fields null (all sources failed) → degraded mode display, no crash, user-visible error state per UX spec
+- Update `docs/qa/acceptance_protocols/research_view_protocol.md` §2.3 to mark item as resolved
+
+**Acceptance Criteria**
+- SC-RV-18 and SC-RV-19 added to `docs/qa/test_scenarios/research_view_scenarios.md`
+- research_view_protocol.md §2.3 updated to reference both scenarios as filed
+- Playwright coverage or human staging sign-off recorded for both null states
 
 ---
 
@@ -457,280 +481,3 @@ These are deliberate product decisions, not deferrals:
 ## 11. Lifecycle Governance Notes
 
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
-- Any shipped feature must be backed by: a canonical specification, updated validation where applicable
-- Once implemented, backlog items are superseded by canonical documentation
-
----
-
-## 12. Last Release Slice
-
-## Last Release Slice — v3.1 ✅ COMPLETE
-
-<!-- release-plan-marker: RP:v3.1:2026-04-29__release-v3.1 — COMPLETE -->
-
-**Cycle:** 2026-04-29__release-v3.1 | **Status:** Complete — Shipped 2026-05-05 | **Published:** 2026-04-29
-**Backlog slice:** `claude/cycles/2026-04-29__release-v3.1/stage4_backlog_slice.md`
-
-| EPIC | Sprint | Stories | Theme |
-|------|--------|---------|-------|
-| EPIC-01 | Sprint 1+2 | ST-01, ST-02, ST-03 | PT-01 Trade Plan Object |
-| EPIC-02 | Sprint 2 | ST-04, ST-05 | PT-02 Pre-Trade Research View (backend) |
-| EPIC-03 | Sprint 1+2 | ST-06, ST-07, ST-08, ST-09, ST-10 | Arc 1 Completion & Screener Quality |
-| EPIC-04 | Sprint 1 | ST-11, ST-12, ST-13, ST-14 | Operations, Governance & Quick Wins |
-
-**Theme:** Arc 2 Trade Plan Foundation
-
----
-
-## Prior Release Slice — v3.0 ✅ COMPLETE
-
-<!-- release-plan-marker: RP:v3.0:2026-04-25__release-v3.0 — COMPLETE -->
-
-**Cycle:** 2026-04-25__release-v3.0 | **Status:** Complete — Shipped 2026-04-27 | **Published:** 2026-04-25
-**Backlog slice:** `claude/cycles/2026-04-25__release-v3.0/stage4_backlog_slice.md`
-
-| EPIC | Sprint | Stories | Theme |
-|------|--------|---------|-------|
-| EPIC-01 | Sprint 1 | ST-01, ST-02, ST-03, ST-04 | Arc 1 Screener Engine |
-| EPIC-02 | Sprint 2 | ST-05, ST-06, ST-07 | Arc 1 Screener Frontend |
-| EPIC-03 | Sprint 2 | ST-08, ST-09, ST-10, ST-11 | Operations, Observability & Test Quality |
-| EPIC-04 | Sprint 1 | ST-12, ST-13, ST-14, ST-15, ST-16 | Governance, Deferred Patches & Quick Wins |
-
-**Theme:** Arc 1 Remainder — Screener Engine & Results Page
-
----
-
-## Prior Release Slice — v2.9
-
-<!-- release-plan-marker: RP:v2.9:2026-04-22__release-v2.9 -->
-
-**Cycle:** 2026-04-22__release-v2.9 | **Status:** Closed | **Published:** 2026-04-22 | **Shipped:** 2026-04-24 (Verified_with_deviations)
-**Backlog slice:** `claude/cycles/2026-04-22__release-v2.9/stage4_backlog_slice.md`
-
-| EPIC | Sprint | Stories | Theme |
-|------|--------|---------|-------|
-| EPIC-01 | Sprint 1 | ST-01, ST-02, ST-03, ST-04 | Arc 1 Specification Foundation |
-| EPIC-02 | Sprint 2 | ST-05, ST-06, ST-07 | Arc 1 Implementation Start |
-| EPIC-03 | Sprint 1 | ST-08, ST-09, ST-10 | Arc 1 Governance & QA Foundation |
-| EPIC-04 | Sprint 1+2 | ST-11, ST-12, ST-13, ST-14, ST-15 | Governance Debt & Quick Wins |
-
-**Theme:** Arc 1 Foundation — Stock Discovery & Screening Spec & Infrastructure
-
----
-
-## Prior Release Slice — v2.8
-
-<!-- release-plan-marker: RP:v2.8:2026-04-17__release-v2.8 -->
-
-**Cycle:** 2026-04-17__release-v2.8 | **Status:** Closed | **Published:** 2026-04-17 | **Shipped:** 2026-04-20 (Verified)
-**Backlog slice:** `claude/cycles/2026-04-17__release-v2.8/stage4_backlog_slice.md`
-
-| EPIC | Sprint | Stories | Theme |
-|------|--------|---------|-------|
-| EPIC-01 | Sprint 2 | ST-01 | Market Correlation Frontend |
-| EPIC-02 | Sprint 1 | ST-02, ST-03 | Test Scenario Coverage |
-| EPIC-03 | Sprint 1 | ST-04, ST-05, ST-06 | Governance Process Hardening |
-| EPIC-04 | Sprint 2 | ST-07, ST-08 | AI Journal Summarisation |
-
-**Theme:** Frontend Completion, Test Quality & AI Journal Feature
-
----
-
-## Prior Release Slice — v2.7
-
-<!-- release-plan-marker: RP:v2.7:2026-04-13__release-v2.7 — COMPLETE -->
-
-**Cycle:** 2026-04-13__release-v2.7 | **Status:** Closed | **Published:** 2026-04-13 | **Shipped:** 2026-04-16 (Verified)
-**Backlog slice:** `claude/cycles/2026-04-13__release-v2.7/stage4_backlog_slice.md`
-
-| Epic | Stories | Theme |
-|------|---------|-------|
-| EPIC-01 | ST-01, ST-02, ST-03 | Backend Integration Completion |
-| EPIC-02 | ST-04, ST-05, ST-06, ST-07 | Test Automation & CI Hardening |
-| EPIC-03 | ST-08, ST-09, ST-10, ST-11 | Frontend UX Polish |
-| EPIC-04 | ST-12, ST-13, ST-14, ST-15 | Governance & Spec Debt |
-
-**Theme:** Integration Baseline, Quick Wins & Governance Debt
-
-| EPIC | Sprint | Stories | Theme |
-|------|--------|---------|-------|
-| EPIC-01 | Sprint 1 | ST-01, ST-02, ST-03 | System Status Reliability |
-| EPIC-02 | Sprint 2 | ST-04, ST-05, ST-06 | Backend Integration & Performance |
-| EPIC-03 | Sprint 2 | ST-07, ST-08, ST-09 | Frontend & Operations Quick Wins |
-| EPIC-04 | Sprint 1 | ST-10, ST-11, ST-12, ST-13 | Governance, Process & QA Hardening |
-
----
-
-## 13. New Backlog Items — Roadmap Rebalance 2026-03-31
-
-*Items from roadmap rebalance cycle 2026-03-31__scheduled (DL-013 to DL-016) and prior session addition (BLG-FEAT-13). Target releases are indicative.*
-
----
-
-*BLG-FEAT-13 (Add gated feature rollout capability) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*Items from §13 (BLG-FEAT-13) remain active. All §14 items (BLG-GOV-13, BLG-FEAT-16, BLG-QA-13) shipped in v2.8 — archived to backlog_archive.md 2026-04-20 (GROOM-20260420-01).*
-
----
-
-## Test Scenario Gaps — v3.1 Delivery Verification
-
-*Added by Delivery Verification Engine — 2026-05-05*
-
-### TEST-GAP-EPIC-01 — Trade Plan test scenario coverage gap (v3.1) ✅ COMPLETE v3.2
-
-**Source:** Delivery verification 2026-04-29__release-v3.1
-**Priority:** P3
-**Target:** v3.2 (before next sprint touching Trade Plan domain)
-
-Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/trade-plan.spec.js` (SC-TP-01–07) was created as part of EPIC-01 delivery but not registered in `execution_state.json test_scenarios` field. QA & Testing Owner to verify Playwright test coverage and register in test_scenarios for the Trade Plan domain. Backend CRUD integration test scenarios for `/trade-plans` endpoints also warranted.
-
----
-
-### TEST-GAP-EPIC-03 — Earnings Calendar and UK screener test registration gap (v3.1) ✅ COMPLETE v3.2
-
-**Source:** Delivery verification 2026-04-29__release-v3.1
-**Priority:** P3
-**Target:** v3.2 (before next sprint touching Earnings/Screener domain)
-
-Test coverage gap from 2026-04-29__release-v3.1: `tests/e2e/earnings-calendar.spec.js` (SC-EARN-01–09) and `tests/e2e/screener-uk-suffix.spec.js` (SC-UK-01–04) were created during EPIC-03 delivery but not registered in `execution_state.json test_scenarios` field. QA & Testing Owner to verify coverage completeness and ensure test files are registered per `execution_prompt.md §3.1.A` advisory.
-
----
-
-## Release Slice — v3.2 Arc 2 Pre-Trade Research & Planning
-
-<!-- release-plan-marker: RP:v3.2:2026-05-05__release-v3.2 -->
-
-*Added by Release Planning Engine — 2026-05-05*
-*Cycle: 2026-05-05__release-v3.2*
-*Backlog slice: claude/cycles/2026-05-05__release-v3.2/stage4_backlog_slice.md*
-
-| Story | EPIC | Sprint | Title |
-|-------|------|--------|-------|
-| ST-01 | EPIC-01 | 1 | Pre-trade research view component — data display |
-| ST-02 | EPIC-01 | 1 | Trade plan context panel in research view |
-| ST-03 | EPIC-01 | 1 | Prospective heat at entry metric integration (PT-03) |
-| ST-04 | EPIC-01 | 1 | Navigation integration — screener and watchlist entry points to research view |
-| ST-05 | EPIC-02 | 2 | Entry checklist schema, component, and Trade Plan form integration |
-| ST-06 | EPIC-02 | 2 | Checklist pre-population from trade plan data and research view link |
-| ST-07 | EPIC-03 | 1 | sprint_planning_prompt.md STEP 0 main-branch verification |
-| ST-08 | EPIC-03 | 1 | execution_prompt.md STEP 5.1 deviations_filed enforcement |
-| ST-09 | EPIC-03 | 1 | execution_prompt.md §3.1.A test_scenarios post-story advisory |
-| ST-10 | EPIC-03 | 1 | Playwright waitFor pattern — test authoring standard |
-| ST-11 | EPIC-03 | 1 | Trade Plan domain test scenario registration (TEST-GAP-EPIC-01) |
-| ST-12 | EPIC-03 | 1 | Earnings Calendar and UK screener test registration (TEST-GAP-EPIC-03) |
-| ST-13 | EPIC-04 | 2 | React component inventory (BLG-FE-16) |
-| ST-14 | EPIC-04 | 2 | Design system document (BLG-FE-21) |
-| ST-15 | EPIC-04 | 2 | Alpaca credential audit and rotation policy (BLG-SEC-05) |
-| ST-16 | EPIC-04 | 2 | External API dependency risk register (BLG-GOV-18) |
-| ST-17 | EPIC-04 | 2 | Cycle artefact inventory and maintenance review (BLG-GOV-11) |
-
-*✅ ALL 17 STORIES SHIPPED — COMPLETE v3.2 — 2026-05-08 — cycle: 2026-05-05__release-v3.2*
-
----
-
-## Release Slice — v3.3 Arc 3 In-Trade Risk Management
-
-<!-- release-plan-marker: RP:v3.3:2026-05-09__release-v3.3 -->
-
-*Added by Release Planning Engine — 2026-05-09*
-*Cycle: 2026-05-09__release-v3.3*
-*Backlog slice: claude/cycles/2026-05-09__release-v3.3/stage4_backlog_slice.md*
-
-| Story | EPIC | Sprint | Title |
-|-------|------|--------|-------|
-| ST-01 | EPIC-01 | 1 | Positions data model — lifecycle state fields and migration |
-| ST-02 | EPIC-01 | 1 | Position lifecycle state machine backend service |
-| ST-03 | EPIC-01 | 1 | Position lifecycle state — frontend display |
-| ST-04 | EPIC-02 | 2 | Grace Period Decision Support backend (IT-02) |
-| ST-05 | EPIC-02 | 2 | Grace Period Decision Support frontend (IT-02) |
-| ST-06 | EPIC-02 | 2 | Stop Management Workflow backend (IT-03) |
-| ST-07 | EPIC-02 | 2 | Stop Management Workflow frontend (IT-03) |
-| ST-08 | EPIC-03 | 1 | PT-02 research API contract (BLG-SPEC-25) + data source provenance spec (BLG-SPEC-26) |
-| ST-09 | EPIC-03 | 1 | PT-02 canonical research view spec (BLG-SPEC-24) + UX spec (BLG-FE-28) |
-| ST-10 | EPIC-03 | 1 | Research view test scenario library (BLG-QA-17) + acceptance test protocol (BLG-QA-15) |
-| ST-11 | EPIC-03 | 1 | Entry checklist Playwright E2E tests (BLG-QA-14) |
-| ST-12 | EPIC-03 | 1 | Research endpoint integration tests (BLG-QA-16) + latency baseline (BLG-OPS-15) + trade plan sensitivity classification (BLG-SEC-06) + field extension governance (BLG-GOV-20) |
-| ST-13 | EPIC-04 | 1 | execution_prompt.md governance patches: sealed-file check (OA-01/CF-01) + mock payload advisory (OA-02/CF-02) |
-| ST-14 | EPIC-04 | 1 | Governance policy patches: design gate check (OA-05) + backlog deferral policy (OA-03/CF-03) |
-| ST-15 | EPIC-04 | 1 | PT-05 entry checklist §13 compliance review (BLG-GOV-19) |
-| ST-16 | EPIC-04 | 2 | Feature flag rollout — mandatory (BLG-FEAT-13) |
-| ST-17 | EPIC-04 | 2 | Trade plan abandonment + status badges + frontend quick wins (BLG-FEAT-21, BLG-FE-30, BLG-FE-23/24/25/29) |
-
-*✅ 14 STORIES SHIPPED — COMPLETE v3.3 — 2026-05-13 — cycle: 2026-05-09__release-v3.3*
-*3 stories returned to backlog: ST-03 (lifecycle badge frontend), ST-05 (grace period alert frontend), ST-07 (stop trail frontend) — see "Returned to Backlog v3.3" section below*
-*ST-17 partial: backend (DS-06 + abandonment API) done; frontend sub-deliverables (BLG-FE-30, BLG-FE-23/24/25/29) deferred to v3.4*
-
----
-
-## Returned to Backlog — v3.3 Sprint Close (2026-05-12)
-
-*ST-03 — Position lifecycle state: frontend display (EPIC-01 / 2026-05-09__release-v3.3)*
-✅ DELIVERED v3.4 (ST-01 EPIC-01 — 2026-05-14): LifecycleBadge component with arc3_lifecycle_display flag, SC-LS-01–04 Playwright pass.
-
-*ST-05 — Grace Period Decision Support frontend (IT-02) (EPIC-02 / 2026-05-09__release-v3.3)*
-✅ DELIVERED v3.4 (ST-02 EPIC-01 — 2026-05-14): GracePeriodAlertZone with sessionStorage dismiss, SC-GP-01–03 Playwright pass.
-
-*ST-07 — Stop Management Workflow frontend (IT-03) (EPIC-02 / 2026-05-09__release-v3.3)*
-✅ DELIVERED v3.4 (ST-03 EPIC-01 — 2026-05-14): TrailStopModal with PATCH /positions/{id} stop update, SC-TS-01–03 Playwright pass.
-
----
-
-## Test Scenario Gaps — v3.3 Delivery Verification
-
-*Added by Delivery Verification Engine — 2026-05-13*
-
-*TEST-GAP-EPIC-01-v33 (Position lifecycle badge Playwright E2E scenarios) — ✅ RESOLVED v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*TEST-GAP-EPIC-02-v33 (Grace period alert and trail stop Playwright E2E scenarios) — ✅ RESOLVED v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-## Release Slice — v3.4 Arc 3 In-Trade Risk Management (continued)
-
-<!-- release-plan-marker: RP:v3.4:2026-05-14__release-v3.4 -->
-
-*Added by Release Planning Engine — 2026-05-14*
-*Cycle: 2026-05-14__release-v3.4*
-*Backlog slice: claude/cycles/2026-05-14__release-v3.4/stage4_backlog_slice.md*
-
-| Story | EPIC | Sprint | Title |
-|-------|------|--------|-------|
-| ST-01 | EPIC-01 | 2 | Position lifecycle state: frontend display (IT-01) |
-| ST-02 | EPIC-01 | 2 | Grace Period Decision Support frontend (IT-02) |
-| ST-03 | EPIC-01 | 2 | Stop Management Workflow frontend (IT-03) |
-| ST-04 | EPIC-02 | 2 | Drawdown-Triggered Review Prompt backend (IT-04) |
-| ST-05 | EPIC-02 | 2 | Drawdown-Triggered Review Prompt frontend (IT-04) |
-| ST-06 | EPIC-02 | 2 | Position Concentration Limits backend + frontend (IT-05) |
-| ST-07 | EPIC-03 | 1 | Research page UK suffix strip + negative earnings days (BLG-FE-23 + BLG-FE-24) |
-| ST-08 | EPIC-03 | 1 | Signals page: default to most recent day's signals (BLG-FE-25) |
-| ST-09 | EPIC-03 | 1 | Watchlist research status indicator (BLG-FE-29) |
-| ST-10 | EPIC-03 | 1 | Trade plan status badges + abandonment UI (BLG-FE-30 + BLG-FEAT-21 frontend) |
-| ST-11 | EPIC-04 | 1 | Research view component library (BLG-FE-31) |
-| ST-12 | EPIC-04 | 1 | Screener morning routine UX spec (BLG-FE-22) |
-| ST-13 | EPIC-04 | 1 | trade_plan.md §6.2 spec update + AI journal review cadence (BLG-SPEC-28 + BLG-AI-03) |
-| ST-14 | EPIC-04 | 1 | Screener accuracy test protocol (BLG-QA-18) |
-
-**Theme:** Arc 3 Frontend Completion + IT-04/05 Risk Prompts + Frontend Quick Wins + Spec/QA Debt
-
-*✅ ALL 14 STORIES SHIPPED — COMPLETE v3.4 — 2026-05-14 — cycle: 2026-05-14__release-v3.4*
-
----
-
-### TEST-GAP-EPIC-03-v33 — SC-RV-18 and SC-RV-19 explicit Playwright coverage for null handling
-
-**Source:** Delivery verification 2026-05-09__release-v3.3 (STEP 5)
-**Priority:** P3
-**Target:** v3.4 (before research view frontend implementation)
-
-research_view_protocol.md §2.3 notes SC-RV-18 (regime null only) and SC-RV-19 (all fields null — degraded mode) as needing explicit Playwright scenarios and flags "backlog item filed". The backlog item was not actually filed at sprint close — this is that item.
-
-Required scenarios (to be added alongside SC-RV-01 through SC-RV-17 when research view frontend is implemented):
-- SC-RV-18: GET /research/{ticker} returns regime null → UI shows regime panel in "unavailable" state
-- SC-RV-19: All data fields null (all sources failed) → degraded mode display, no crash, user-visible error state per UX spec
-
-QA & Testing Owner to add these scenarios to `docs/qa/test_scenarios/research_view_scenarios.md` and update `docs/qa/acceptance_protocols/research_view_protocol.md` to mark item as resolved.

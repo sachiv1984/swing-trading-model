@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.77
-**Last Updated:** 2026-05-14
+**Version:** 3.78
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -473,7 +473,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.6)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.7)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -1385,13 +1385,13 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.74 |
-| Last Updated | 2026-05-13 |
+| Version | 3.78 |
+| Last Updated | 2026-05-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.6 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.3 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.28 |
@@ -1420,6 +1420,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.78 | 2026-05-15 | **backlog_management_prompt.md v1.6→v1.7 — STEP 1.5 Ephemeral Section Cleanup added.** §6M source prompt header updated v1.6→v1.7. §14 Backlog Management Engine v1.6→v1.7. §14 Version/Last Updated 3.74→3.78/2026-05-15. Change: STEP 1.5 added — during each groom run, identify and queue removal of completed Release Slice sections, resolved Test Scenario Gap sections, and resolved "Returned to Backlog" sections; open items within ephemeral sections must be extracted to appropriate §1–§8 type section before parent section is removed. Companion: backlog.md Placement Rule updated to document ephemeral section lifecycle. Authority: PMO Lead (2026-05-15). |
 | 3.77 | 2026-05-14 | **release_planning_prompt.md v2.27→v2.28 — token efficiency refactor.** §6B source prompt header already updated v2.28. §14 Release Engine Source v2.28. Prompt reduced from 1438 to 1041 lines (−397 lines, ~28%): extracted state.json schema to `claude/system/schemas/release_state_schema.json`; escalation subroutine to `claude/system/shared/escalation_subroutine.md`; lock recovery procedure to `claude/system/shared/lock_recovery_procedure.md`; publish gate to `claude/system/shared/publish_gate.md`; scope + decisions templates to `claude/system/templates/`; consolidated STEP 5.5+5.7; removed 5 trigger footnotes. All governance rules preserved. Authority: Head of Specs Team (2026-05-14). |
 | 3.76 | 2026-05-14 | **BLG-AI-03 (ST-13, v3.4) — AI Journal Review Cadence added to §13 Artefact Register.** New artefact row: `docs/specs/compliance/ai_journal_review_cadence.md` (Class 2, AI Compliance & Governance Officer, Governance). Defines quarterly review checklist, §13 re-confirmation, model version check, error rate review, record format, escalation path. Authority: AI Compliance & Governance Officer (BLG-AI-03, 2026-05-14). |
 | 3.75 | 2026-05-13 | **execution_prompt.md v3.17→v3.18 — AUD-2026-05-13-002 template fix.** §8 source prompt header updated v3.17→v3.18. §14 Execution Engine Source v3.17→v3.18. Change: §5.4 header advisory note added — when creating lessons_learnt_cycle.md, must use `Class: Operational Record (Class 3)` not `Planning Document (Class 4)`; prevents recurrence of class declaration mismatch (third instance: v2.7 fixed by AUD-2026-04-20-004; v3.3 discovered by AUD-2026-05-13). Authority: Head of Specs Team (AUD-2026-05-13-002, 2026-05-13). |
