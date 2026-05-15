@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
@@ -122,30 +122,31 @@ export default function TradePlan() {
     queryFn: () =>
       apiFetch(`${API_BASE}/trade-plans/${editId}`).then((r) => r.json()).then((res) => res.data),
     enabled: !!editId,
-    onSuccess: (plan) => {
-      if (plan) {
-        const existingItems = Array.isArray(plan.checklist_items) ? plan.checklist_items : [];
-        const hasUserState = existingItems.some((i) => i.checked);
-        const checklistItems = hasUserState
-          ? existingItems
-          : buildPrePopulatedItems(plan);
-        setForm({
-          ticker: plan.ticker || ticker,
-          market: plan.market || market,
-          position_id: plan.position_id || positionId || null,
-          setup_thesis: plan.setup_thesis || "",
-          entry_rationale: plan.entry_rationale || "",
-          regime_context_at_entry: plan.regime_context_at_entry || "",
-          r_target: plan.r_target != null ? String(plan.r_target) : "",
-          early_exit_conditions: plan.early_exit_conditions || "",
-          confirmation_criteria: plan.confirmation_criteria || "",
-          checklist_items: checklistItems,
-          checklist_completed: checklistItems.every((i) => i.checked),
-          status: plan.status || "draft",
-        });
-      }
-    },
   });
+
+  useEffect(() => {
+    if (existingPlan) {
+      const existingItems = Array.isArray(existingPlan.checklist_items) ? existingPlan.checklist_items : [];
+      const hasUserState = existingItems.some((i) => i.checked);
+      const checklistItems = hasUserState
+        ? existingItems
+        : buildPrePopulatedItems(existingPlan);
+      setForm({
+        ticker: existingPlan.ticker || ticker,
+        market: existingPlan.market || market,
+        position_id: existingPlan.position_id || positionId || null,
+        setup_thesis: existingPlan.setup_thesis || "",
+        entry_rationale: existingPlan.entry_rationale || "",
+        regime_context_at_entry: existingPlan.regime_context_at_entry || "",
+        r_target: existingPlan.r_target != null ? String(existingPlan.r_target) : "",
+        early_exit_conditions: existingPlan.early_exit_conditions || "",
+        confirmation_criteria: existingPlan.confirmation_criteria || "",
+        checklist_items: checklistItems,
+        checklist_completed: checklistItems.every((i) => i.checked),
+        status: existingPlan.status || "draft",
+      });
+    }
+  }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data: existingByPosition } = useQuery({
     queryKey: ["tradePlanByPosition", positionId],

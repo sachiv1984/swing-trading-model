@@ -170,6 +170,25 @@ The current nav bar occupies a fixed portion of the visible screen area. As the 
 
 ---
 
+### BLG-FE-32 — Research view: SC-RV-18/SC-RV-19 Playwright coverage for null/degraded state scenarios
+**Priority:** P3 (Low)
+**Type:** Frontend / QA
+**Owner:** QA Lead
+**Source:** research_view_protocol.md §5 (v3.3 sign-off gap); regression_protocol.md §2.2 (v3.5 ST-10)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.6
+
+**Problem**
+SC-RV-18 (regime field null) and SC-RV-19 (all research fields null) were identified as partially covered in v3.3 QA evidence and confirmed as pending in the v3.5 regression protocol. Until these scenarios have explicit Playwright tests, they require human staging sign-off in each sprint that touches the research view.
+
+**Acceptance Criteria**
+- Playwright test added for SC-RV-18: regime field null — regime badge degrades gracefully (no crash, placeholder shown)
+- Playwright test added for SC-RV-19: all research fields null — no crash, all sections show appropriate placeholders
+- Tests added to `tests/e2e/pre-trade-research.spec.js`
+- `research_view_regression_protocol.md` §2.2 updated to reflect Playwright coverage (remove staging caveat)
+
+---
+
 ## 4. Backend & Data Backlog
 
 
@@ -241,6 +260,7 @@ research_view_protocol.md §2.3 notes SC-RV-18 (regime null only) and SC-RV-19 (
 **Source:** IDEA-qa-lead-20260508-02 — promoted cycle 2026-05-15__scheduled (DL-029)
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v3.5
+**Status:** ✅ COMPLETE v3.5 (ST-10, 2026-05-15)
 
 **Problem**
 No formal protocol defines which tests must pass after modifications to the research endpoint or research view components. Each sprint that adds a data field (e.g. IT-04/IT-05 risk data) must independently determine regression coverage, creating inconsistency and coverage gaps. Gates cleared: BLG-QA-15 ✅ v3.3; PT-03 ✅ v3.2; PT-05 ✅ v3.2.
@@ -357,6 +377,7 @@ The research_endpoint.md AC specified distinct HTTP error codes (404 ticker-not-
 **Source:** EPIC-01 ST-02 DEV-01 (v3.4 delivery deviation — 2026-05-14)
 **Effort:** XS (~0.25 day)
 **Provisional-Target:** v3.5
+**Status:** ✅ COMPLETE v3.5 (ST-07, 2026-05-15)
 
 **Problem**
 grace-period-alert/ux_spec.md §5 specifies `localStorage` for dismiss persistence, but the v3.4 implementation uses `sessionStorage`. The AC wording ("does not reappear on page reload within the same browser session") matches sessionStorage behaviour. The spec needs updating to reflect the delivered implementation.
@@ -375,6 +396,7 @@ grace-period-alert/ux_spec.md §5 specifies `localStorage` for dismiss persisten
 **Source:** EPIC-01 ST-03 DEV-02 (v3.4 delivery deviation — 2026-05-14)
 **Effort:** XS (~0.25 day)
 **Provisional-Target:** v3.5
+**Status:** ✅ COMPLETE v3.5 (ST-08, 2026-05-15)
 
 **Problem**
 stop-management-workflow/ux_spec.md §4.4 specifies `PUT /positions/{id}` for the stop update call, but the v3.4 implementation uses `PATCH /positions/{id}`. PATCH is the correct HTTP verb for partial field updates; the existing endpoint supports it. The spec needs updating to match.
@@ -400,6 +422,9 @@ React Query v5 removed `onSuccess` from `useQuery`. In ST-10, this affected `isA
 - Scan all `useQuery` calls for `onSuccess` usage
 - Any affected patterns fixed or documented
 - If no issues found: file closure note in backlog
+
+**Status:** ✅ COMPLETE v3.5 (ST-09, 2026-05-15)
+**Closure note:** Full codebase scan complete. One active issue found and fixed: `TradePlan.js` line 125 had `onSuccess` inside `useQuery`. Fixed by removing `onSuccess` from `useQuery` config and replacing with `useEffect` watching `existingPlan`. All other `onSuccess` usages confirmed in `useMutation` calls (Signals.js, TradePlans.js, TradeEntry.js, Positions.js, CashManagementModal.js, Settings.js, SystemStatus.js). No remaining `useQuery`+`onSuccess` patterns.
 
 ---
 
@@ -451,6 +476,7 @@ Arc 4 (AI Integration) and future arcs will require data that is not currently s
 **Source:** v3.4 lessons_learnt Phase 3 items #1 and #4 (2026-05-14) — cross-EPIC merge conflict recurrence; note: referenced as BLG-GOV-21 in lessons_learnt, but that ID was already assigned (Arc 4 data requirements) — corrected to BLG-GOV-22
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v3.5
+**Status:** ✅ COMPLETE v3.5 (ST-11, 2026-05-15)
 
 **Problem**
 Three of four v3.4 EPICs required manual conflict resolution at merge time due to: (a) `execution_state.json` created independently on each branch, and (b) `src/pages/Positions.js` modified by three branches (EPIC-01, EPIC-02, EPIC-03). This is a recurrence from v3.3 Phase 3 item #2.
