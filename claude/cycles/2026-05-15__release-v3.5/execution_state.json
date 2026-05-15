@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-15T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-15T13:00:00Z",
+  "last_updated_utc": "2026-05-15T13:30:00Z",
   "epics": {
     "EPIC-04": {
       "status": "done",
@@ -167,7 +167,7 @@
           "deviations_filed": false,
           "last_completed_substep": "committed",
           "sign_off_record": null,
-          "notes": "Full scan: one fix applied in TradePlan.js (onSuccess moved from useQuery to useEffect). All other onSuccess usages confirmed in useMutation. BLG-SPEC-31 closed."
+          "notes": "Full scan: one fix applied in TradePlan.js (onSuccess moved from useQuery to useEffect). SC-TP-08 Playwright test added and passing (9/9). All other onSuccess usages confirmed in useMutation. BLG-SPEC-31 closed."
         },
         "ST-10": {
           "title": "BLG-QA-19: Research View Regression Test Protocol",
