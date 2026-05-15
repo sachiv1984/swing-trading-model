@@ -1,7 +1,7 @@
 **Owner:** Head of UX & Design + Product Owner
 **Class:** Planning Document (Class 4)
-**Status:** Draft — Awaiting Product Owner + Head of UX & Design Sign-off
-**Version:** 0.1
+**Status:** Active
+**Version:** 1.0
 **Last Updated:** 2026-05-15
 **Story:** ST-04 (EPIC-02, v3.5) — BLG-GOV-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -115,14 +115,17 @@ The following Arc 4-relevant data is ALREADY stored and does NOT need to be adde
 
 ---
 
-## 5. Decisions Deferred to Product Owner
+## 5. Decisions
 
-The following require a product decision before implementation:
+The following decisions were resolved by Product Owner + Head of UX & Design (2026-05-15):
 
-1. **`planned_stop_price` capture point:** Should this be a new numeric field on `trade_plans` (added at plan creation), or captured at position-open time (added to the position-open workflow)?
-2. **`confidence_at_entry` range:** 1–5 scale or free text? Mandatory or optional?
-3. **`screener_score_at_entry` retention:** Requires schema change and historical fill. Worthwhile for v3.5 or defer to Arc 4?
-4. **`deviation_note` placement:** New field on `trade_reflections`, or as part of the PO-01 Plan vs Reality record?
+1. **`planned_stop_price` capture point:** **New numeric field on `trade_plans` at plan creation.** The planned stop is a plan concept (not a position-open concept) and belongs in the TradePlan form alongside `early_exit_conditions`. UX: label "Planned Stop Price ($)", optional numeric input. Existing plans without this field will have `planned_stop_price = null`; PO-01 comparison will flag `stop_discipline = "not_captured"` for such trades.
+
+2. **`confidence_at_entry` range:** **1–5 integer scale, optional.** Free text is not quantifiable for AI pattern detection. Optional to avoid blocking position-open workflow for existing users. UX: 1–5 dropdown or radio at position-open time. Label: "Confidence at Entry (1–5)".
+
+3. **`screener_score_at_entry` retention:** **Defer to Arc 4 proper.** Schema change and historical backfill is out of scope for v3.5. The field is P3 priority (§4) — does not block PO-01 or PO-02. Flag for Arc 4 sprint planning.
+
+4. **`deviation_note` placement:** **Part of the `plan_vs_reality` JSONB on `trade_history`** (populated via the PO-01 service). This is a post-trade annotation captured in the Plan vs Reality view after trade close — not a general reflection field. Implementation: include `deviation_note` TEXT as a named key in the `plan_vs_reality` JSONB schema; user fills it in the PO-01 frontend view (ST-06).
 
 ---
 
@@ -130,8 +133,8 @@ The following require a product decision before implementation:
 
 | Role | Name | Date | Status |
 |------|------|------|--------|
-| Product Owner | — | — | Pending |
-| Head of UX & Design | — | — | Pending |
+| Product Owner | Product Owner | 2026-05-15 | ✅ Approved |
+| Head of UX & Design | Head of UX & Design | 2026-05-15 | ✅ Approved |
 
 ---
 
@@ -139,4 +142,5 @@ The following require a product decision before implementation:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.0 | 2026-05-15 | Product Owner + Head of UX & Design sign-off — ST-04 (EPIC-02, v3.5). §5 decisions resolved: planned_stop_price at plan creation (optional numeric); confidence_at_entry 1–5 optional; screener_score deferred to Arc 4; deviation_note in plan_vs_reality JSONB. Status: Active. BLG-GOV-21 COMPLETE. |
 | 0.1 | 2026-05-15 | Initial draft — ST-04 (EPIC-02, v3.5). BLG-GOV-21 requirement. Engine-authored for Product Owner + Head of UX & Design review. |

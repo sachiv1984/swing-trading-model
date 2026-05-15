@@ -425,6 +425,7 @@ React Query v5 removed `onSuccess` from `useQuery`. In ST-10, this affected `isA
 **Effort:** XS–S (~0.5 day)
 **Provisional-Target:** Before Arc 4 planning begins (v3.4+)
 **Scope constraint:** Data needs only — no UX design, no feature specification, no implementation commitment
+**Status:** ✅ COMPLETE v3.5 (ST-04, 2026-05-15) — docs/product/arc4_data_requirements.md v1.0 signed off by Product Owner + Head of UX & Design; four §5 decisions resolved
 
 **Problem**
 Arc 4 (AI Integration) and future arcs will require data that is not currently stored in the system (e.g. qualitative trade setup notes, pre-entry research snapshot, confidence level). If Arc 4 planning begins without a prior data requirements capture, the team will discover missing data mid-arc, requiring retroactive data model changes or compromised AI features.

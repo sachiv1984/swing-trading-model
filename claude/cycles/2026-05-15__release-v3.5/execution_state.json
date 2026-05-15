@@ -1,11 +1,11 @@
 {
   "cycle_id": "2026-05-15__release-v3.5",
-  "sprint_goal": "Complete Arc 3's Alpaca paper trading integration (\u00a713 gate permitting) and establish Arc 4 foundations with the Plan vs Reality analysis service, while clearing all v3.4 spec, QA, and governance debt.",
+  "sprint_goal": "Complete Arc 3's Alpaca paper trading integration (§13 gate permitting) and establish Arc 4 foundations with the Plan vs Reality analysis service, while clearing all v3.4 spec, QA, and governance debt.",
   "backlog_slice_source": "claude/cycles/2026-05-15__release-v3.5/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-15T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-15T15:30:00Z",
+  "last_updated_utc": "2026-05-15T17:00:00Z",
   "epics": {
     "EPIC-04": {
       "status": "done",
@@ -127,7 +127,7 @@
           "deviations_filed": false,
           "last_completed_substep": "committed",
           "sign_off_record": null,
-          "notes": "ux_spec.md v1.0\u2192v1.1: \u00a75 sessionStorage corrected, dismiss-on-tab-close noted, DEV-v3.4-01 resolved"
+          "notes": "ux_spec.md v1.0→v1.1: §5 sessionStorage corrected, dismiss-on-tab-close noted, DEV-v3.4-01 resolved"
         },
         "ST-08": {
           "title": "BLG-SPEC-30: Correct stop-management-workflow ux_spec.md HTTP verb",
@@ -148,7 +148,7 @@
           "deviations_filed": false,
           "last_completed_substep": "committed",
           "sign_off_record": null,
-          "notes": "ux_spec.md v1.0\u2192v1.1: \u00a74.4 PUT\u2192PATCH corrected, DEV-v3.4-01 resolved"
+          "notes": "ux_spec.md v1.0→v1.1: §4.4 PUT→PATCH corrected, DEV-v3.4-01 resolved"
         },
         "ST-09": {
           "title": "BLG-SPEC-31: React Query v5 onSuccess Codebase Scan",
@@ -200,7 +200,7 @@
       "test_scenarios": [],
       "stories": {
         "ST-01": {
-          "title": "\u00a713 Compliance Review: Alpaca Paper Trading",
+          "title": "§13 Compliance Review: Alpaca Paper Trading",
           "classification": "delegated_decision",
           "status": "delegated",
           "assigned_to": "Strategy Rules & System Intent Owner",
@@ -213,12 +213,12 @@
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "claude/strategy/strategy_rules.md#\u00a713"
+            "claude/strategy/strategy_rules.md#§13"
           ],
           "deviations_filed": false,
           "last_completed_substep": "determination_document_created",
           "sign_off_record": null,
-          "notes": "Determination document created at docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md. Preliminary PASS \u2014 awaiting Strategy Rules & System Intent Owner sign-off."
+          "notes": "Determination document created at docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md. Preliminary PASS — awaiting Strategy Rules & System Intent Owner sign-off."
         },
         "ST-02": {
           "title": "IT-06 Backend: Alpaca Paper Trading Sync Service",
@@ -276,33 +276,38 @@
         "ST-04": {
           "title": "BLG-GOV-21: Arc 4 Data Requirements Capture",
           "classification": "delegated_decision",
-          "status": "delegated",
+          "status": "done",
           "assigned_to": "Head of UX & Design + Product Owner",
           "github_issue": 399,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260515-03",
-          "blocked_since_utc": "2026-05-15T15:00:00Z",
-          "unblock_criteria": "docs/product/arc4_data_requirements.md filed with Product Owner + Head of UX & Design sign-off recorded",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-15T17:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": false,
-          "last_completed_substep": "draft_document_created",
-          "sign_off_record": null,
-          "notes": "Draft docs/product/arc4_data_requirements.md v0.1 created. Awaiting Product Owner + Head of UX & Design sign-off. ST-05 blocked on ST-04 completion."
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": {
+            "required_by": "Product Owner + Head of UX & Design",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "cleared_utc": "2026-05-15T17:00:00Z"
+          },
+          "notes": "arc4_data_requirements.md v0.1→1.0 signed off. Four §5 decisions resolved. ST-05 unblocked."
         },
         "ST-05": {
           "title": "PO-01 Backend: Plan vs Reality Calculation Service",
           "classification": "autonomous",
-          "status": "blocked",
+          "status": "not_started",
           "assigned_to": "engine",
           "github_issue": 400,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-05-15T15:30:00Z",
-          "unblock_criteria": "ST-04 sign-off (DEL-20260515-03 completed); Product Owner + Head of UX & Design sign-off on arc4_data_requirements.md v1.0",
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-04 done — may proceed in Sprint 2",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -332,26 +337,24 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Blocked on ST-05. Also conditional \u2014 may be deferred to v3.6 if Sprint 2 capacity exceeded."
+          "notes": "Blocked on ST-05. Also conditional — may be deferred to v3.6 if Sprint 2 capacity exceeded."
         }
       }
     }
   },
   "blocked_items": [
-    "EPIC-02/ST-05: PO-01 Backend blocked on ST-04 sign-off (DEL-20260515-03)",
-    "EPIC-02/ST-06: PO-01 Frontend blocked on ST-05 completion",
-    "EPIC-01/ST-02: IT-06 Backend blocked on ST-01 \u00a713 PASS determination (DEL-20260515-02)",
+    "EPIC-01/ST-02: IT-06 Backend blocked on ST-01 §13 PASS determination (DEL-20260515-02)",
     "EPIC-01/ST-03: IT-06 Frontend blocked on ST-02 completion"
   ],
   "delegated_items": [
-    "EPIC-03/ST-10: BLG-QA-19: Research View Regression Test Protocol \u2014 awaiting QA Lead sign-off on research_view_regression_protocol.md",
-    "EPIC-01/ST-01: \u00a713 Compliance Review: Alpaca Paper Trading \u2014 awaiting Strategy Rules & System Intent Owner sign-off. Preliminary PASS determination prepared.",
-    "EPIC-02/ST-04: BLG-GOV-21 Arc 4 Data Requirements \u2014 awaiting Product Owner + Head of UX & Design sign-off on arc4_data_requirements.md v0.1"
+    "EPIC-03/ST-10: BLG-QA-19: Research View Regression Test Protocol — awaiting QA Lead sign-off on research_view_regression_protocol.md",
+    "EPIC-01/ST-01: §13 Compliance Review: Alpaca Paper Trading — awaiting Strategy Rules & System Intent Owner sign-off. Preliminary PASS determination prepared."
   ],
   "completed_items": [
     "EPIC-03/ST-07: BLG-SPEC-29: Correct grace-period-alert ux_spec.md sessionStorage",
     "EPIC-03/ST-08: BLG-SPEC-30: Correct stop-management-workflow ux_spec.md HTTP verb",
-    "EPIC-03/ST-09: BLG-SPEC-31: React Query v5 onSuccess Codebase Scan"
+    "EPIC-03/ST-09: BLG-SPEC-31: React Query v5 onSuccess Codebase Scan",
+    "EPIC-02/ST-04: BLG-GOV-21: Arc 4 Data Requirements Capture — Product Owner + Head of UX & Design sign-off (2026-05-15)"
   ],
   "open_escalations": [],
   "merge_gate": {
