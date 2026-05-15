@@ -3,12 +3,13 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.7
-**Last Updated:** 2026-04-17
+**Version:** 1.8
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
 **Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
 **Design Source (v2.1 slippage):** docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md
+**Design Source (v3.5 additions):** docs/ux_specs/plan-vs-reality/ux_spec.md
 
 ## Purpose & User Goals
 The Trade History page provides a complete record of all **closed trades**, allowing users to review past performance, analyze decisions, and learn from journal entries.
@@ -305,7 +306,7 @@ Design source: `docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
 ### Expandable Journal Row
 The expanded row appears as a full‑width card below the trade’s main table row.
 
-Contains three color‑accented sections:
+Contains up to four color‑accented sections (five for closed trades with a trade plan):
 
 1. **Entry Analysis**  
    Shows the entry note.  
@@ -318,7 +319,46 @@ Contains three color‑accented sections:
 3. **Strategy Tags**  
    Tags displayed as colored pills.
 
+4. **Plan vs Reality** *(v3.5 — ST-06 PO-01; conditionally rendered — see §Plan vs Reality below)*
+
 The expandable card uses a clean, visually distinct layout to support long‑form reading.
+
+---
+
+### Plan vs Reality (v3.5 — ST-06 PO-01)
+
+**Design source:** docs/ux_specs/plan-vs-reality/ux_spec.md
+
+**Visibility:** Rendered as the 4th section of the Expandable Journal Row **only for closed trades** where `GET /trades/{id}/plan-vs-reality` returns HTTP 200 with a comparison record. The call is made lazily on row expand. Hidden (no section rendered, no placeholder) when response is 404 or `{“status”: “trade_open”}`.
+
+**Section label:** “Plan vs Reality”
+
+**Left accent border:** Blue (`#2563EB`, 4px) — distinguishes this section from entry/exit analysis sections.
+
+#### Comparison Rows
+
+| Row | Planned (muted) | Actual (bold) | Indicator |
+|-----|-----------------|---------------|-----------|
+| Entry Timing | “Planned zone: {entry_zone_description}” or “No entry zone recorded” | “Actual entry: {actual_entry_price}” | Pill: `On Time` (green) / `Early` (amber) / `Late` (amber) / `N/A` (grey) |
+| R Achieved | “Target: {r_target}R” or “No R target set” | “{r_achieved}R” | Colour: green if ≥ target; amber if ≥ target × 0.8; red if < target × 0.8 |
+| Exit Alignment | “Planned: {planned_exit_conditions}” or “No exit conditions” | “Actual: {actual_exit_reason}” | Pill: `Matched` (green) / `Partially Matched` (amber) / `Diverged` (red) |
+| State at Exit | — | Lifecycle state badge (reuses Positions page badge design) | Per `positions.md §Position Lifecycle State Badge` colour scheme |
+
+#### Null / Partial Data
+
+- Individual null fields: display “—“ in planned value; show actual without comparative colour.
+- Section entirely hidden if no plan vs reality record (404) — no “no plan” message shown.
+
+#### Loading / Error
+
+- On row expand (API in flight): single-line skeleton placeholder for the section.
+- On 5xx or timeout: section hidden entirely; other sections unaffected.
+
+#### API Dependency
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /trades/{id}/plan-vs-reality` | Returns plan vs reality comparison record. 404 when no trade plan. Called lazily on row expand. |
 
 ---
 
@@ -387,6 +427,7 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.8 | 2026-05-15 | v3.5 design gate: (ST-06 PO-01) Plan vs Reality section added to Expandable Journal Row — 4th section, conditionally rendered for closed trades with a trade plan; displays entry timing accuracy, R achieved vs R target (colour-coded), exit alignment badge, lifecycle state at exit badge; lazy-loaded on row expand via `GET /trades/{id}/plan-vs-reality`; hidden entirely when 404 (no plan). Design source: docs/ux_specs/plan-vs-reality/ux_spec.md. Approved: Product Owner 2026-05-15. |
 | 1.7 | 2026-04-17 | v2.8 design gate (ST-08, EPIC-04): AI Journal Summary section added — collapsible section above trade table (below filters), collapsed by default, disclaimer always visible when expanded, Generate/Refresh button calls `POST /ai/journal-summary` with filter context, 4 states (not-generated/loading/loaded/error). SRB-v1.7 conditional compliance constraints documented. Strategy Rules sign-off required before merge. Design source: `docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md`. Head of Specs Team confirmed compliant. |
 | 1.6 | 2026-04-11 | v2.6 design gate: (ST-09) Summary Stats Bar Layout spec added — `grid-cols-7` at `xl`, `grid-cols-4` at `md`, 7-card row; (ST-10) Column Header Styling spec added — Trade History-specific override (`text-xs font-semibold text-slate-300 uppercase tracking-wide`); (ST-11) Sortable Columns section added — 8 sortable columns, Exit Date descending as default sort. Design source: `docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md`. Head of Specs Team confirmed compliant. |
 | 1.5 | 2026-04-06 | v2.5 design gate (ST-09): Avg Fee Drag StatsCard added to Summary Stats section (after Avg Slippage). Fee Drag % column added to Trade History Table columns list (after Slippage). Fee Drag % Column spec section added. Design source: `docs/design/2026-04-05__release-v2.5/fee-drag/ux_spec.md`. Head of Specs Team confirmed compliant. |

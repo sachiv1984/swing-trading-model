@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.6
-**Last Updated:** 2026-05-14
+**Version:** 1.7
+**Last Updated:** 2026-05-15
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
 **Design Source (v3.3 additions):** docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md, docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md, docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md
 **Design Source (v3.4 additions):** docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md, docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md
+**Design Source (v3.5 additions):** docs/ux_specs/paper-trading/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -16,6 +17,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-05-15 | v3.5 design gate: (ST-03 IT-06) Paper Account Panel — collapsible panel below Strategy Compliance Panel in Table View; conditionally rendered when `ALPACA_PAPER_API_KEY` configured; displays US-market paper positions (ticker, paper entry price, current price, paper P&L $ and %, date opened, size); error state "Paper tracking temporarily unavailable"; hidden entirely when credentials absent. §13 compliant display-only. Design source: docs/ux_specs/paper-trading/ux_spec.md. Approved: Product Owner 2026-05-15. |
 | 1.6 | 2026-05-14 | v3.4 design gate: (ST-05) Drawdown review prompt — amber banner above positions table when portfolio drawdown threshold breached; displays drawdown %, threshold, portfolio heat %, regime status, positions by lifecycle state counts; session-scoped dismissal; §13 compliant display-only. (ST-06) Concentration limits warning — amber summary card listing positions/sectors exceeding configurable thresholds; persistent (no dismiss); graceful degradation when DS-03 sector data absent. Design sources: v3.4 additions listed above. Approved: Product Owner 2026-05-14. |
 | 1.5 | 2026-05-09 | v3.3 design gate: (ST-03) Arc 3 position lifecycle state badge — five-state set (GRACE/LOSING/PROFITABLE/EXIT ZONE/UNKNOWN) with days_in_state inline and next-trigger tooltip; (ST-05) Grace period alert zone at top of page for GRACE positions ≥ day 8; (ST-07) Trail Stop action and guided modal for PROFITABLE/EXIT ZONE positions. Design sources listed above. Approved: Product Owner 2026-05-09. |
 | 1.4 | 2026-03-24 | ST-01 (BLG-FEAT-11, v2.3): §Strategy Compliance Panel — collapsible panel below Table View showing per-position ATR compliance data. Display-only. Design source: docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
@@ -281,6 +283,50 @@ On success: modal closes; position row updates; toast: "Stop updated to {atr_tra
 
 ---
 
+## Paper Account Panel (v3.5 — ST-03 IT-06)
+
+**Design source:** docs/ux_specs/paper-trading/ux_spec.md
+
+**Placement:** Collapsible panel appended below the Strategy Compliance Panel in Table View only. Hidden in Grid View and Journal View.
+
+**Conditional rendering:** Panel rendered only when `ALPACA_PAPER_API_KEY` is configured. When credentials are absent, `GET /portfolio/paper-positions` returns `{"paper_tracking_enabled": false}` and the panel is not rendered — no unconfigured state visible to the user.
+
+**§13 constraint:** Display-only tracking view. Positions created only by human action via primary system workflow. No automated order execution.
+
+### Panel Header
+
+- Label: **"Paper Account"**
+- Sub-label (static, muted): "Hypothetical tracking — US market positions only. Not real capital."
+- Expand/collapse chevron. Default: expanded when positions present; collapsed when no positions.
+
+### Paper Positions Table
+
+| Column | Source Field | Format |
+|--------|-------------|--------|
+| Ticker | `ticker` | Uppercase |
+| Paper Entry | `paper_entry_price` | USD to 2dp |
+| Current Price | `current_market_price` | USD to 2dp |
+| Paper P&L ($) | `paper_pnl_usd` | Signed USD, 2dp; green if positive, red if negative |
+| Paper P&L (%) | `paper_pnl_pct` | Signed percentage, 2dp; green if positive, red if negative |
+| Date Opened | `date_opened` | `DD MMM YYYY` |
+| Size | `position_size` | Integer or decimal shares |
+
+### Empty State (credentials configured, no paper positions)
+
+Message: "No paper positions tracked. Open a US market position to begin tracking." Panel collapsed by default.
+
+### Error State
+
+When `GET /portfolio/paper-positions` returns 5xx or timeout: display **"Paper tracking temporarily unavailable."** (muted, no icon). Does not break the Positions page.
+
+### API Dependency
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /portfolio/paper-positions` | Returns paper account positions with P&L comparison. Returns `{"paper_tracking_enabled": false}` when credentials absent. |
+
+---
+
 ## Key Components Used
 
 - Position cards
@@ -326,6 +372,7 @@ For Journal View empty states, see the Journal View section above.
 | `GET /positions/grace-period-alerts` | *(v3.3 — ST-05)* Returns positions in GRACE state with `days_in_state ≥ 8`, including trade plan context. Source for Grace Period Alert Zone. |
 | `GET /positions/{id}/stop-trail` | *(v3.3 — ST-07)* Returns ATR trail stop calculation for a single position. Source for Trail Stop Modal. |
 | `PUT /positions/{id}` | *(v3.3 — ST-07)* Updates stop price after user confirms trail stop action. |
+| `GET /portfolio/paper-positions` | *(v3.5 — ST-03)* Paper Account Panel data source. Returns Alpaca paper positions with P&L. Returns `{"paper_tracking_enabled": false}` when ALPACA_PAPER_API_KEY absent. |
 
 > For full dependency behaviour rules, see `patterns/api_dependencies.md`.
 

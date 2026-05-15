@@ -1,11 +1,11 @@
 {
   "active_cycle": "2026-05-15__release-v3.5",
   "cycle_name": "Release Planning — v3.5 Arc 3 Completion + Arc 4 Foundation",
-  "status": "Published",
-  "engine": "release_planning",
+  "status": "Design_Gate_Passed",
+  "engine": "design_gate",
   "backlog_slice_path": "claude/cycles/2026-05-15__release-v3.5/stage4_backlog_slice.md",
   "sprint_sealed": false,
-  "design_gate_status": "not_started",
+  "design_gate_status": "Passed",
 
   "last_sync_utc": "2026-05-15T00:30:00Z",
   "last_audit_id": "AUD-2026-05-13",

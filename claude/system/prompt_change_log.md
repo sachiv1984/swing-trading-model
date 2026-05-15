@@ -13,6 +13,8 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-05-15 | `docs/specs/frontend/pages/trade_history.md` | v1.7→v1.8 | v3.5 design gate: Plan vs Reality section added to Expandable Journal Row (ST-06 PO-01) — conditionally rendered for closed trades with trade plan; entry timing, R achieved vs R target, exit alignment, lifecycle state at exit. | Head of UX & Design + Product Owner (design gate v3.5) |
+| 2026-05-15 | `docs/specs/frontend/pages/positions.md` | v1.6→v1.7 | v3.5 design gate: Paper Account Panel section added (ST-03 IT-06) — collapsible panel for Alpaca paper positions; US-market only; conditional on ALPACA_PAPER_API_KEY; §13 compliant display-only. | Head of UX & Design + Product Owner (design gate v3.5) |
 | 2026-05-15 | `claude/system/design_gate_prompt.md` | v1.3→v1.4 | Token efficiency refactor: §1 compressed; dry-run callouts consolidated into §2; STEP -1 sub-steps merged; old STEP 4 (Pre-Approved spec confirmation) folded into STEP 1; gate record template trimmed (removed Design Artefacts Produced and Frontend Spec Versions Locked sections); §8 Governance Invariants deleted. ~750 prompt tokens saved. | Head of Specs Team |
 | 2026-05-15 | `claude/system/OPERATIONAL_GUIDE.md` | v3.79→v3.80 | §6.5 source prompt header and §14 Design Gate Engine updated v1.3→v1.4. | Head of Specs Team |
 | 2026-05-14 | `release_planning_prompt.md` | v2.27→v2.28 | Token efficiency refactor: extracted state.json schema, escalation subroutine, lock recovery procedure, document templates, and publish gate into dedicated shared files; removed inline trigger footnotes; consolidated STEP 5.5+5.7 | Head of Specs Team |
