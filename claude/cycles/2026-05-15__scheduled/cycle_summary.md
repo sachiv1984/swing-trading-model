@@ -76,3 +76,4 @@ Cycles since last meta-review: 2 (last: 2026-05-08__scheduled). Meta-review not 
 
 - No active sprint in progress; no sprint-risk items to surface.
 - BLG-GOV-21 (Arc 4 data requirements) is a prerequisite for at least 2 parked ideas (IDEA-financial-reporting-20260508-02, IDEA-ai-compliance-20260508-01) — priority should be reviewed at v3.5 planning.
+**

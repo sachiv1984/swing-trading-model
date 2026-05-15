@@ -3,9 +3,38 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-14
+**Last Updated:** 2026-05-15
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.5 — Arc 3 Completion + Arc 4 Foundation — 2026-05-15
+Cycle: 2026-05-15__release-v3.5
+Verified: Verified
+Verification report: claude/cycles/2026-05-15__release-v3.5/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Arc 3 Completion — IT-06 Alpaca Paper Trading: §13 compliance review (PASS; four binding conditions documented); backend sync service `alpaca_paper_sync_service.py` + `GET /portfolio/paper-positions` endpoint (best-effort US market position mirroring); `PaperAccountPanel` frontend component on Positions page; 5 Playwright scenarios (SC-PA-01a/b/c, SC-PA-02a/b) | claude/strategy/strategy_rules.md#§13; docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md; docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/paper-positions; docs/ux_specs/paper-trading/ux_spec.md |
+| EPIC-02 | Arc 4 Foundation — Arc 4 data requirements capture (`docs/product/arc4_data_requirements.md` v1.0, PO + HoUX sign-off); PO-01 Plan vs Reality backend calculation service + `GET /trades/{id}/plan-vs-reality` endpoint + `plan_vs_reality` JSONB field migration; `PlanVsReality` frontend component in TradeHistoryTable; 5 Playwright scenarios (SC-PVR-01a/b/c, SC-PVR-02a/b) | docs/specs/api_contracts/trade_endpoints.md#GET /trades/{trade_id}/plan-vs-reality; docs/data_model.md#trade_history; docs/data_model.md#trade_plans; docs/ux_specs/plan-vs-reality/ux_spec.md |
+| EPIC-03 | Spec & QA Debt: BLG-SPEC-29 grace-period-alert ux_spec.md §5 sessionStorage correction; BLG-SPEC-30 stop-management-workflow ux_spec.md §4.4 PATCH correction; BLG-SPEC-31 React Query v5 onSuccess scan (1 fix applied TradePlan.js; SC-TP-08 Playwright 9/9); BLG-QA-19 research view regression protocol v1.0 | docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md; docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md; docs/qa/acceptance_protocols/research_view_regression_protocol.md |
+| EPIC-04 | Governance Patches: BLG-GOV-22 sprint_planning_prompt.md v3.1 (shared execution_state.json ownership rule + multi-EPIC merge guidance); execution_prompt.md v3.20 (intent-check advisory, Known Deviations sync advisory, backlog ID uniqueness check, sprint_close readiness consistency rule, BLG ID completeness check) | claude/system/sprint_planning_prompt.md; claude/system/execution_prompt.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-07] BLG-SPEC-29: Correct grace-period-alert ux_spec.md §5 dismiss storage to sessionStorage
+- [ST-08] BLG-SPEC-30: Correct stop-management-workflow ux_spec.md §4.4 stop-update HTTP verb to PATCH
+- [ST-09] BLG-SPEC-31: React Query v5 onSuccess codebase scan and fix (TradePlan.js)
+- [ST-10] BLG-QA-19: Research view regression test protocol
+- [ST-04] BLG-GOV-21: Arc 4 data requirements capture
+- [ST-11] BLG-GOV-22: sprint_planning_prompt.md shared ownership patch
+
+Sign-off: Product Owner — 2026-05-15
+QA sign-off: Director of Quality — 2026-05-15
 
 ---
 

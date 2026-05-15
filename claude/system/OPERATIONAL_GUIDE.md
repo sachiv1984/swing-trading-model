@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.82
+**Version:** 3.85
 **Last Updated:** 2026-05-15
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -913,7 +913,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.1)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.2)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -999,7 +999,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.6)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.7)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1385,7 +1385,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.84 |
+| Version | 3.85 |
 | Last Updated | 2026-05-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
@@ -1398,8 +1398,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.1 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.20 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.1 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.6 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.2 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.7 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.0 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1420,6 +1420,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.85 | 2026-05-15 | **delivery_verification_prompt.md v2.1→v2.2 — Phase 4 token efficiency refactor.** §9 source prompt header updated v2.1→v2.2. §14 Verification Engine Source v2.1→v2.2. §14 Version/Last Updated 3.84→3.85/2026-05-15. Changes: (1) §1 "This routine does NOT" block removed — covered by write scope §5; (2) ESCALATION SUBROUTINE compressed to 4-line inline block; (3) STEP -1 parallel read instruction added (execution_state.json + sprint_close.md + all qa_evidence files in parallel); (4) STEP 4.3 stale parked detection short-circuited when zero parked items in backlog slice; (5) STEP 5.2 short-circuit added — autonomous/backend-only EPICs with no frontend-visible AC record not_applicable in TSG table, skip verbose feedback block; (6) STEP 8 §3 QA Evidence Summary mandated as table (was prose); (7) STEP 8 §5 Outstanding Items mandated as table-only; (8) STEP 8 §6 compressed instruction — "No test scenario gaps" one-liner when all not_applicable; (9) STEP 8 §8 Open Items — explicit omit instruction when status is not Not_Verified; (10) §8 Completion Condition compressed to 2-sentence rule; (11) §9 Governance Invariants reduced from 8 to 3 (removed 5 that restated step-level rules). All hard gates, severity policy, and invariants preserved. Authority: Head of Specs Team (2026-05-15). |
 | 3.84 | 2026-05-15 | **execution_prompt.md v3.19→v3.20 — ST-12+ST-13 (EPIC-04, v3.5): deviation advisory patches + sprint close consistency checks.** §8 source prompt header updated v3.19→v3.20. §14 Execution Engine Source v3.19→v3.20. §14 Version/Last Updated 3.83→3.84/2026-05-15. Changes: (ST-12/LL item #3) §3.1.A step 10 — intent check advisory added: verify spec intent match before filing deviation; record as implementation note if intent agrees. (ST-12/LL item #4) §3.1.A step 10 — Known Deviations section advisory: add `## Known Deviations` section to canonical spec in same commit when filing deviation. (ST-12/LL item #5) §5.4 — backlog ID pre-assignment check: verify BLG ID unoccupied in backlog.md before assigning in lessons_learnt Phase 3. (ST-13/CF-01) §5.3 — deviation severity consistency check: verify deviation priorities in sprint_close.md match DoQ assessment in qa_evidence. (ST-13/CF-02) §5.3 — backlog ID completeness check: every "backlog item filed" note must include BLG ID. Authority: Head of Specs Team (ST-12+ST-13, 2026-05-15). |
 | 3.83 | 2026-05-15 | **sprint_planning_prompt.md v3.0→v3.1 — BLG-GOV-22: multi-EPIC execution_state.json ownership + merge order advisory.** §7 source prompt header updated v3.0→v3.1. §14 Sprint Planning Engine v3.0→v3.1. §14 Version/Last Updated 3.80→3.83/2026-05-15. Changes: STEP 5.2 — multi-EPIC `execution_state.json` ownership rule added (first EPIC in execution order is owner; others check for existence before creating; record in sprint_planning_notes.md); shared file ownership advisory added (identify shared files across EPICs; record ownership and rebase advisory in sprint_planning_notes.md). STEP 6.1 — merge order section requirement added (sprint backlog must include EPIC merge sequence, execution_state.json owner designation, and shared file advisory when > 1 EPIC in scope). Authority: Head of Specs Team (ST-11, BLG-GOV-22, 2026-05-15). |
 | 3.82 | 2026-05-15 | **execution_prompt.md v3.18→v3.19 — token efficiency refactor.** §8 source prompt header updated v3.18→v3.19. §14 Execution Engine Source v3.18→v3.19. |
