@@ -1,11 +1,11 @@
 {
   "cycle_id": "2026-05-15__release-v3.5",
-  "sprint_goal": "Complete Arc 3's Alpaca paper trading integration (\u00a713 gate permitting) and establish Arc 4 foundations with the Plan vs Reality analysis service, while clearing all v3.4 spec, QA, and governance debt.",
+  "sprint_goal": "Complete Arc 3's Alpaca paper trading integration (§13 gate permitting) and establish Arc 4 foundations with the Plan vs Reality analysis service, while clearing all v3.4 spec, QA, and governance debt.",
   "backlog_slice_source": "claude/cycles/2026-05-15__release-v3.5/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-15T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-15T14:30:00Z",
+  "last_updated_utc": "2026-05-15T16:30:00Z",
   "epics": {
     "EPIC-04": {
       "status": "done",
@@ -127,7 +127,7 @@
           "deviations_filed": false,
           "last_completed_substep": "committed",
           "sign_off_record": null,
-          "notes": "ux_spec.md v1.0\u2192v1.1: \u00a75 sessionStorage corrected, dismiss-on-tab-close noted, DEV-v3.4-01 resolved"
+          "notes": "ux_spec.md v1.0→v1.1: §5 sessionStorage corrected, dismiss-on-tab-close noted, DEV-v3.4-01 resolved"
         },
         "ST-08": {
           "title": "BLG-SPEC-30: Correct stop-management-workflow ux_spec.md HTTP verb",
@@ -148,7 +148,7 @@
           "deviations_filed": false,
           "last_completed_substep": "committed",
           "sign_off_record": null,
-          "notes": "ux_spec.md v1.0\u2192v1.1: \u00a74.4 PUT\u2192PATCH corrected, DEV-v3.4-01 resolved"
+          "notes": "ux_spec.md v1.0→v1.1: §4.4 PUT→PATCH corrected, DEV-v3.4-01 resolved"
         },
         "ST-09": {
           "title": "BLG-SPEC-31: React Query v5 onSuccess Codebase Scan",
@@ -200,25 +200,31 @@
       "test_scenarios": [],
       "stories": {
         "ST-01": {
-          "title": "\u00a713 Compliance Review: Alpaca Paper Trading",
+          "title": "§13 Compliance Review: Alpaca Paper Trading",
           "classification": "delegated_decision",
-          "status": "delegated",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 396,
           "branch": "exec/2026-05-15__release-v3.5/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260515-02",
-          "blocked_since_utc": "2026-05-15T14:30:00Z",
-          "unblock_criteria": "docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md filed with PASS or FAIL determination; Strategy Rules & System Intent Owner sign-off recorded",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-15T16:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
-            "claude/strategy/strategy_rules.md#\u00a713"
+            "claude/strategy/strategy_rules.md#§13"
           ],
           "deviations_filed": false,
-          "last_completed_substep": "determination_document_created",
-          "sign_off_record": null,
-          "notes": "Determination document created at docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md. Preliminary PASS \u2014 awaiting Strategy Rules & System Intent Owner sign-off."
+          "last_completed_substep": "3.1.A.done",
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "determination": "PASS",
+            "cleared_utc": "2026-05-15T16:30:00Z"
+          },
+          "notes": "PASS determination confirmed. Backend sync is GET-only; no paper orders placed by system; paper data isolated from signals/screener/position-sizing. Four implementation conditions binding on ST-02/ST-03."
         },
         "ST-02": {
           "title": "IT-06 Backend: Alpaca Paper Trading Sync Service",
@@ -230,7 +236,7 @@
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 PASS determination required before this story begins",
+          "unblock_criteria": "ST-01 PASS confirmed — story may proceed in Sprint 2",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -290,7 +296,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "no prior spec applicable \u2014 creating new Arc 4 data requirements document. Documentation-only deliverable."
+          "notes": "no prior spec applicable — creating new Arc 4 data requirements document. Documentation-only deliverable."
         },
         "ST-05": {
           "title": "PO-01 Backend: Plan vs Reality Calculation Service",
@@ -339,13 +345,13 @@
   },
   "blocked_items": [],
   "delegated_items": [
-    "EPIC-03/ST-10: BLG-QA-19: Research View Regression Test Protocol \u2014 awaiting QA Lead sign-off on research_view_regression_protocol.md",
-    "EPIC-01/ST-01: \u00a713 Compliance Review: Alpaca Paper Trading \u2014 awaiting Strategy Rules & System Intent Owner sign-off. Preliminary PASS determination prepared."
+    "EPIC-03/ST-10: BLG-QA-19: Research View Regression Test Protocol — awaiting QA Lead sign-off on research_view_regression_protocol.md"
   ],
   "completed_items": [
     "EPIC-03/ST-07: BLG-SPEC-29: Correct grace-period-alert ux_spec.md sessionStorage",
     "EPIC-03/ST-08: BLG-SPEC-30: Correct stop-management-workflow ux_spec.md HTTP verb",
-    "EPIC-03/ST-09: BLG-SPEC-31: React Query v5 onSuccess Codebase Scan"
+    "EPIC-03/ST-09: BLG-SPEC-31: React Query v5 onSuccess Codebase Scan",
+    "EPIC-01/ST-01: §13 Compliance Review: Alpaca Paper Trading — PASS (Strategy Rules & System Intent Owner, 2026-05-15)"
   ],
   "open_escalations": [],
   "merge_gate": {
