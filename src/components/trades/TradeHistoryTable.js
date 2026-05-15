@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { TrendingUp, TrendingDown, ChevronDown, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { DataTable, TableHeader, TableHead, TableBody, TableRow, TableCell } from "../ui/DataTable";
 import { cn } from "../../lib/utils";
+import PlanVsReality from "./PlanVsReality";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // R-multiple helpers
@@ -387,7 +388,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
           const isExpanded = expandedRows.has(tradeId);
           const hasNotes  = trade.entry_note || trade.exit_note;
           const hasTags   = trade.tags && trade.tags.length > 0;
-          const hasExpandableContent = hasNotes || hasTags;
+          const hasExpandableContent = hasNotes || hasTags || !!trade.id;
 
           // R-multiple for this row
           const rVal    = rMap.get(String(tradeId)) ?? null;
@@ -539,6 +540,8 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                           </div>
                         </div>
                       )}
+
+                      {tradeId && <PlanVsReality tradeId={tradeId} />}
                     </div>
                   </TableCell>
                 </TableRow>

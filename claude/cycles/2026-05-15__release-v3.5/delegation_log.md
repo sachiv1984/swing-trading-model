@@ -8,6 +8,26 @@
 
 ---
 
+## DEL-20260515-03
+
+- **ST Item:** ST-04 — BLG-GOV-21: Arc 4 Data Requirements Capture
+- **EPIC:** EPIC-02
+- **Classification:** delegated_decision
+- **Assigned to:** Product Owner + Head of UX & Design (both required)
+- **GitHub Issue:** #398
+- **Branch:** exec/2026-05-15__release-v3.5/EPIC-02
+- **Delegated at:** 2026-05-15T15:00:00Z
+- **What is needed:** Product Owner + Head of UX & Design to review `docs/product/arc4_data_requirements.md` (v0.1 draft) and: (1) confirm §3 data requirements are complete and correctly characterised; (2) resolve the four open decisions in §5 (planned_stop_price capture point, confidence_at_entry range, screener_score_at_entry scope, deviation_note placement); (3) sign off in §6 sign-off table. After sign-off, update status to Active and version to 1.0. BLG-GOV-21 to be marked COMPLETE in backlog after sign-off.
+- **Spec reference:** `docs/product/arc4_data_requirements.md`
+- **Unblock criteria:** §6 sign-off block completed (both Product Owner and Head of UX & Design name + date). ST-05 (PO-01 backend) may begin after sign-off.
+- **Commit format required:** `[EPIC-02][ST-04] <description>` pushed to `exec/2026-05-15__release-v3.5/EPIC-02`
+- **Status:** Completed
+- **Completed at:** 2026-05-15T17:00:00Z
+- **Completed by:** Product Owner + Head of UX & Design
+- **Outcome:** arc4_data_requirements.md v0.1→v1.0 signed off. Four §5 decisions resolved: (1) planned_stop_price as new optional numeric field on trade_plans at plan creation; (2) confidence_at_entry as 1–5 integer scale, optional; (3) screener_score_at_entry deferred to Arc 4; (4) deviation_note placed in plan_vs_reality JSONB on trade_history. ST-05 (PO-01 backend) unblocked. BLG-GOV-21 marked COMPLETE.
+
+---
+
 ## DEL-20260515-01
 
 - **ST Item:** ST-10 — BLG-QA-19: Research View Regression Test Protocol

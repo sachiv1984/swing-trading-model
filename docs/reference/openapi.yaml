@@ -1287,6 +1287,49 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /trades/{trade_id}/plan-vs-reality:
+    get:
+      tags: [Trades]
+      summary: Get plan vs reality comparison
+      description: "Returns the plan vs reality comparison for a closed trade with a linked trade plan. Returns {status: trade_open} if position is still open. Returns 404 if no trade plan is linked. PO-01 — ST-05 (EPIC-02, v3.5). Spec: docs/specs/api_contracts/trades_endpoints.md"
+      parameters:
+        - name: trade_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Plan vs reality comparison or trade_open status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [ok, trade_open]
+                  data:
+                    type: object
+                    properties:
+                      plan_linked: { type: boolean }
+                      trade_plan_id: { type: string, format: uuid }
+                      r_achieved: { type: number, nullable: true }
+                      r_target: { type: number, nullable: true }
+                      r_delta: { type: number, nullable: true }
+                      entry_delta_pct: { type: number, nullable: true }
+                      stop_discipline: { type: string, enum: [on_plan, minor_deviation, deviation, not_captured] }
+                      exit_reason_actual: { type: string, nullable: true }
+                      exit_reason_planned: { type: string, nullable: true }
+                      lifecycle_state_at_exit: { type: string, nullable: true }
+                      plan_adherence_flag: { type: string, enum: [on_plan, entry_deviation, stop_deviation, early_exit] }
+                      deviation_note: { type: string, nullable: true }
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /trades/export/csv:
     get:
       tags: [Trades]

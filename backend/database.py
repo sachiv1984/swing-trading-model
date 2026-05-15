@@ -1104,6 +1104,31 @@ def update_position_lifecycle_state(
         return dict(row) if row else None
 
 
+def ensure_plan_vs_reality_columns():
+    """Add plan_vs_reality JSONB to trade_history and planned_stop_price to trade_plans (idempotent).
+
+    PO-01 migration — ST-05 (EPIC-02, v3.5).
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS plan_vs_reality JSONB"
+            )
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS planned_stop_price NUMERIC(20, 6)"
+            )
+        conn.commit()
+
+
+def get_trade_by_id(trade_id: str) -> Optional[Dict]:
+    """Fetch a single trade_history record by its UUID."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM trade_history WHERE id = %s", (trade_id,))
+            row = cur.fetchone()
+            return dict(row) if row else None
+
+
 def get_database_size_bytes() -> int:
     """Return the current database size in bytes.
 

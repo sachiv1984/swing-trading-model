@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.1.0
-**Last Updated:** 2026-03-20
+**Version:** 2.3.0
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -269,6 +269,74 @@ Same shape as GET response — returns the full saved reflection after upsert.
 
 ---
 
+## GET /trades/{trade_id}/plan-vs-reality
+
+**Auth:** Required (X-API-Key)
+
+Returns the plan vs reality comparison for a closed trade that has a linked trade plan. Computes comparison on-demand from trade_history, positions, and trade_plans data.
+
+### Path parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| trade_id | UUID string | Yes | `id` from `trade_history` |
+
+### Response (200) — closed trade with plan
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "plan_linked": true,
+    "trade_plan_id": "uuid",
+    "r_achieved": 1.8,
+    "r_target": 2.0,
+    "r_delta": -0.2,
+    "entry_delta_pct": null,
+    "stop_discipline": "on_plan",
+    "exit_reason_actual": "target hit",
+    "exit_reason_planned": "Close below 50-day MA",
+    "lifecycle_state_at_exit": "GRACE",
+    "plan_adherence_flag": "on_plan",
+    "deviation_note": null
+  }
+}
+```
+
+**`entry_delta_pct`** is null until `planned_entry_price` is snapshotted to `trade_plans` (deferred to Arc 4 proper per `arc4_data_requirements.md §3.1`).
+
+### Response (200) — position still open
+
+```json
+{"status": "trade_open"}
+```
+
+### Response fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| plan_linked | boolean | Whether a trade plan was linked |
+| trade_plan_id | uuid | ID of the linked trade plan |
+| r_achieved | float \| null | Actual R-multiple: (exit − entry) / (entry − initial_stop) |
+| r_target | float \| null | Planned R target from trade_plans.r_target |
+| r_delta | float \| null | r_achieved − r_target |
+| entry_delta_pct | float \| null | Entry timing accuracy (% deviation from planned entry). null pending Arc 4 snapshot. |
+| stop_discipline | string | "on_plan" / "minor_deviation" / "deviation" / "not_captured" |
+| exit_reason_actual | string \| null | trade_history.exit_reason |
+| exit_reason_planned | string \| null | trade_plans.early_exit_conditions |
+| lifecycle_state_at_exit | string \| null | Position lifecycle state at close |
+| plan_adherence_flag | string | "on_plan" / "entry_deviation" / "stop_deviation" / "early_exit" |
+| deviation_note | string \| null | User annotation (populated via ST-06 frontend view) |
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 404 | trade_id not found in trade_history, or no trade plan linked to the trade's position |
+| 500 | Database error |
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
@@ -277,4 +345,6 @@ Same shape as GET response — returns the full saved reflection after upsert.
 | 1.9.0 | 2026-03-02 | S2-08 (EPIC-06/BLG-TECH-09): Backend fix — `holding_days` added to `formatted_trades` dict in `trade_service.py` (was present in DB and spec but absent from API response). `GET /trades` now returns `holding_days` per spec. OBS-QWB-R3-01 resolved. TASK-28/29/30 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |
 | 2.0.0 | 2026-03-11 | ST-02 (EPIC-01, v1.9): Add GET /trades/{trade_id}/reflection and POST /trades/{trade_id}/reflection. Schema: trade_reflections table (data_model.md v1.8). Spec: trade_reflection.md §7. |
 | 2.1.0 | 2026-03-20 | ST-14 (EPIC-05, v2.1): Add `fill_price` (float\|null) and `slippage_pct` (float\|null) per trade; add `avg_slippage_pct` (float\|null) to top-level summary. Data model gate cleared: Data Model & Domain Schema Owner + Head of Specs Team countersigned 2026-03-20. |
+| 2.2.0 | 2026-04-06 | ST-09 (EPIC-03, v2.5): Add `fee_drag_pct` (float\|null) per trade; add `avg_fee_drag_pct` (float\|null) to top-level summary. No schema change. |
+| 2.3.0 | 2026-05-15 | ST-05 (EPIC-02, v3.5): Add GET /trades/{trade_id}/plan-vs-reality — PO-01 Plan vs Reality comparison endpoint. New JSONB column `plan_vs_reality` on `trade_history`; new `planned_stop_price` column on `trade_plans`. Migration: ensure_plan_vs_reality_columns(). |
 | 2.2.0 | 2026-04-06 | ST-09 (EPIC-03, v2.5): Add `fee_drag_pct` (float\|null) per trade (`exit_fees / gross_proceeds * 100`); add `avg_fee_drag_pct` (float\|null) to top-level summary. No schema change — uses existing `exit_fees` and `gross_proceeds` columns. Head of Specs Team co-authorship confirmed. |
