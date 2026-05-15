@@ -1,26 +1,13 @@
 {
-  "active_cycle": "2026-05-14__release-v3.4",
-  "cycle_name": "Release Planning — v3.4 Arc 3 In-Trade Risk Management (continued)",
-  "status": "Closed",
-  "engine": "sprint_execution",
-  "execution_state_path": "claude/cycles/2026-05-14__release-v3.4/execution_state.json",
-  "backlog_slice_path": "claude/cycles/2026-05-14__release-v3.4/stage4_backlog_slice.md",
-  "sprint_goal_path": "claude/cycles/2026-05-14__release-v3.4/sprint_goal.md",
-  "sprint_backlog_path": "claude/cycles/2026-05-14__release-v3.4/sprint_backlog.md",
-  "sprint_capacity_path": "claude/cycles/2026-05-14__release-v3.4/sprint_capacity.md",
-  "sprint_sealed": true,
-  "sprint_goal_status": "confirmed",
-  "capacity_warn_acknowledged": true,
-  "design_gate_status": "Passed",
-  "design_gate_completed_utc": "2026-05-14T08:00:00Z",
-  "verification_report": "claude/cycles/2026-05-14__release-v3.4/verification_report.md",
-  "verification_status": "Verified_with_deviations",
-  "next_cycle_unblocked": true,
-  "post_ship_complete": true,
-  "closure_record": "claude/cycles/2026-05-14__release-v3.4/closure_record.md",
-  "closure_status": "Closed_with_actions",
+  "active_cycle": "2026-05-15__release-v3.5",
+  "cycle_name": "Release Planning — v3.5 Arc 3 Completion + Arc 4 Foundation",
+  "status": "Published",
+  "engine": "release_planning",
+  "backlog_slice_path": "claude/cycles/2026-05-15__release-v3.5/stage4_backlog_slice.md",
+  "sprint_sealed": false,
+  "design_gate_status": "not_started",
 
-  "last_sync_utc": "2026-05-14T22:30:00Z",
+  "last_sync_utc": "2026-05-15T00:30:00Z",
   "last_audit_id": "AUD-2026-05-13",
   "last_audit_utc": "2026-05-13T12:00:00Z",
   "last_audit_overall_score": 79,
@@ -46,6 +33,8 @@
   "design_gate_bypass_reason": "",
   "active_pog": {},
   "completed_cycle_count": 20,
+  "next_cycle_unblocked": false,
+  "post_ship_complete": false,
   "resolved_pre_sprint": {
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
@@ -57,24 +46,24 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-05-14__release-v3.4/release_plan.md",
-    "cycle_id": "2026-05-14__release-v3.4",
-    "published_utc": "2026-05-14T00:43:00Z",
+    "release_plan_path": "claude/cycles/2026-05-15__release-v3.5/release_plan.md",
+    "cycle_id": "2026-05-15__release-v3.5",
+    "published_utc": "2026-05-15T00:30:00Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04"
     ],
-    "story_items": 14,
-    "scope_items": 5,
+    "story_items": 13,
+    "scope_items": 4,
     "capacity_check": "warn",
-    "state_json": "claude/cycles/2026-05-14__release-v3.4/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-05-14__release-v3.4-arc-3-in-trade-risk-management-continued.md"
+    "state_json": "claude/cycles/2026-05-15__release-v3.5/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-05-15__release-v3.5-arc-3-completion-arc-4-foundation.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-05-09__release-v3.3/release_plan.md",
-    "cycle_id": "2026-05-09__release-v3.3",
-    "published_utc": "2026-05-09T00:05:00Z"
+    "release_plan_path": "claude/cycles/2026-05-14__release-v3.4/release_plan.md",
+    "cycle_id": "2026-05-14__release-v3.4",
+    "published_utc": "2026-05-14T00:43:00Z"
   }
 }

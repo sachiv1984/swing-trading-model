@@ -385,7 +385,16 @@ When evaluating new features:
 |**v3.3+**    |Arc 2: Pre-Trade Research & Planning (remainder)                       |PT-04 Setup Quality Score — gate: 20+ closed trades; depends on PT-01 — 📋 Planned                                                       |
 |**v3.3** ✅  |Arc 3: In-Trade Risk Management (partial)                              |IT-01/02/03 backend (lifecycle state machine, grace period alerts, stop trail); research view spec closure (BLG-SPEC-24/25/26, BLG-FE-28); entry checklist E2E; governance patches (OA-01–05); feature flag infra (BLG-FEAT-13); trade plan abandonment backend (BLG-FEAT-21 partial) — ✅ Shipped 2026-05-13 — cycle: 2026-05-09__release-v3.3|
 |**v3.4** ✅  |Arc 3: In-Trade Risk Management (continued)                            |IT-01 lifecycle badge frontend, IT-02 grace period alert frontend, IT-03 stop trail frontend, IT-04 drawdown review prompt (backend+frontend), IT-05 concentration limits (backend+frontend); v3.3 deferred frontend quick wins; spec/QA debt — ✅ Shipped 2026-05-14 — cycle: 2026-05-14__release-v3.4|
-|**v3.5**     |Arc 3: In-Trade Risk Management (remainder) + Arc 4 start             |IT-06 Alpaca paper trading (§13 review required); Arc 4 planning begins — 📋 Planned                                                      |
+|**v3.5**     |Arc 3: In-Trade Risk Management (remainder) + Arc 4 start             |IT-06 Alpaca paper trading (§13 review required); Arc 4 planning begins — 📋 Planned
+
+<!-- roadmap-annotation-marker: RA:v3.5:2026-05-15__release-v3.5 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-15__release-v3.5
+- Plan published: 2026-05-15
+- Cycle folder: claude/cycles/2026-05-15__release-v3.5/
+- Backlog slice: claude/cycles/2026-05-15__release-v3.5/stage4_backlog_slice.md
+- Status at annotation: Validated                                                      |
 |**v3.5–v3.8**|Arc 4: Post-Trade Intelligence                                        |Plan vs reality analysis, journal pattern recognition, behavioural error taxonomy, outcome correlation — 📋 Planned                        |
 |**v3.8–v4.0**|Arc 5: Strategy Integrity                                             |Pre-entry rule validation, behavioural drift detection, red flag journal, strategy version comparison — 📋 Planned                         |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

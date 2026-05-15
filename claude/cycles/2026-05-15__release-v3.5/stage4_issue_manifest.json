@@ -1,0 +1,124 @@
+{
+  "cycle_id": "2026-05-15__release-v3.5",
+  "release": "v3.5",
+  "generated_utc": "2026-05-15T00:15:00Z",
+  "issues": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "§13 Compliance Review: Alpaca Paper Trading Integration",
+      "labels": ["story", "EPIC-01", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 1,
+      "effort": "XS",
+      "idempotency_key": "ST-01:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "IT-06 Backend: Alpaca Paper Trading Sync Service",
+      "labels": ["story", "EPIC-01", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 2,
+      "effort": "M",
+      "idempotency_key": "ST-02:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "title": "IT-06 Frontend: Paper Positions Display Panel",
+      "labels": ["story", "EPIC-01", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 2,
+      "effort": "M",
+      "idempotency_key": "ST-03:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "title": "BLG-GOV-21: Arc 4 Data Requirements Capture Document",
+      "labels": ["story", "EPIC-02", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 2,
+      "effort": "S",
+      "idempotency_key": "ST-04:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "title": "PO-01 Backend: Plan vs Reality Calculation Service + Data Model",
+      "labels": ["story", "EPIC-02", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 2,
+      "effort": "M-H",
+      "idempotency_key": "ST-05:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-02",
+      "title": "PO-01 Frontend: Plan vs Reality Comparison View",
+      "labels": ["story", "EPIC-02", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 2,
+      "effort": "M",
+      "idempotency_key": "ST-06:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "title": "BLG-SPEC-29: Correct grace-period-alert ux_spec.md sessionStorage",
+      "labels": ["story", "EPIC-03", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 1,
+      "effort": "XS",
+      "idempotency_key": "ST-07:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "title": "BLG-SPEC-30: Correct stop-management-workflow ux_spec.md PATCH verb",
+      "labels": ["story", "EPIC-03", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 1,
+      "effort": "XS",
+      "idempotency_key": "ST-08:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-03",
+      "title": "BLG-SPEC-31: React Query v5 onSuccess Codebase Scan",
+      "labels": ["story", "EPIC-03", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 1,
+      "effort": "S",
+      "idempotency_key": "ST-09:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-03",
+      "title": "BLG-QA-19: Research View Regression Test Protocol",
+      "labels": ["story", "EPIC-03", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 1,
+      "effort": "S",
+      "idempotency_key": "ST-10:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-04",
+      "title": "BLG-GOV-22: sprint_planning_prompt.md Shared execution_state.json Ownership Patch",
+      "labels": ["story", "EPIC-04", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 1,
+      "effort": "S",
+      "idempotency_key": "ST-11:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-12",
+      "epic_id": "EPIC-04",
+      "title": "execution_prompt.md: Deviation Filing Advisory Patches (LL v3.4 items #3-5)",
+      "labels": ["story", "EPIC-04", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 1,
+      "effort": "S",
+      "idempotency_key": "ST-12:cycle:2026-05-15__release-v3.5"
+    },
+    {
+      "st_id": "ST-13",
+      "epic_id": "EPIC-04",
+      "title": "Sprint Close / LL Formatting Improvements (LL v3.4 CF items #6-7)",
+      "labels": ["story", "EPIC-04", "cycle:2026-05-15__release-v3.5"],
+      "sprint": 1,
+      "effort": "S",
+      "idempotency_key": "ST-13:cycle:2026-05-15__release-v3.5"
+    }
+  ]
+}

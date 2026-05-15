@@ -505,3 +505,27 @@ These are deliberate product decisions, not deferrals:
 ## 11. Lifecycle Governance Notes
 
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
+
+---
+
+## 12. Release Slice — v3.5 (Ephemeral)
+
+<!-- release-plan-marker: RP:v3.5:2026-05-15__release-v3.5 -->
+
+*Ephemeral section — remove at next `groom backlog` run after v3.5 closes. Promote any still-open items to §1–§8.*
+
+| S2-ID | EPIC | ID | Item | Effort | Priority |
+|-------|------|----|------|--------|----------|
+| S2-01 | EPIC-01 | IT-06 (§13 review) | §13 compliance review for Alpaca Paper Trading — confirm paper trading within §13 bounds | XS | P1 gate |
+| S2-01 | EPIC-01 | IT-06 (backend) | Alpaca Paper Trading Integration — backend sync service (US market positions → Alpaca paper account); conditional on §13 PASS | M | P2 |
+| S2-01 | EPIC-01 | IT-06 (frontend) | Alpaca Paper Trading Integration — frontend paper positions display panel | M | P2 |
+| S2-02 | EPIC-02 | BLG-GOV-21 | Arc 4 data requirements capture document | XS–S | P3 |
+| S2-02 | EPIC-02 | PO-01 (backend) | Plan vs Reality Analysis — calculation service + data model (trade plan vs actual outcome comparison) | M–H | P2 |
+| S2-02 | EPIC-02 | PO-01 (frontend) | Plan vs Reality Analysis — comparison view at trade close | M | P2 |
+| S2-03 | EPIC-03 | BLG-SPEC-29 | Correct grace-period-alert ux_spec.md §5 dismiss storage to sessionStorage | XS | P3 |
+| S2-03 | EPIC-03 | BLG-SPEC-30 | Correct stop-management-workflow ux_spec.md §4.4 stop-update HTTP verb to PATCH | XS | P3 |
+| S2-03 | EPIC-03 | BLG-SPEC-31 | Review React Query v5 onSuccess migration impact across codebase | S | P3 |
+| S2-03 | EPIC-03 | BLG-QA-19 | Research view regression test protocol | S | P2 |
+| S2-04 | EPIC-04 | BLG-GOV-22 | sprint_planning_prompt.md: shared execution_state.json ownership + Positions.js merge guidance | S | P2 |
+| S2-04 | EPIC-04 | LL-v3.4-GOV-01 | execution_prompt.md §3.1.A — deviation filing advisory patches (items #3–#5: spec-intent check, Known Deviations sync, ID uniqueness check) | S | P2 |
+| S2-04 | EPIC-04 | LL-v3.4-GOV-02 | sprint_close / LL formatting improvements (items #6–#7: deviation priority consistency, protocol checkbox completeness) | S | P3 |
