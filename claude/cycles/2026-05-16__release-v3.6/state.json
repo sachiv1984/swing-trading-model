@@ -16,7 +16,7 @@
       "timebox": "",
       "capacity": "solo-dev"
     },
-    "state_snapshot_hash": "pending-commit-sha"
+    "state_snapshot_hash": "be2aed92"
   },
 
   "mutation_seq": 0,
