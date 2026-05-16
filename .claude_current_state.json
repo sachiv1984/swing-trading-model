@@ -1,6 +1,6 @@
 {
   "active_cycle": "2026-05-15__release-v3.5",
-  "cycle_name": "Release Planning — v3.5 Arc 3 Completion + Arc 4 Foundation",
+  "cycle_name": "Release Planning \u2014 v3.5 Arc 3 Completion + Arc 4 Foundation",
   "status": "Closed",
   "engine": "post_ship_closure",
   "backlog_slice_path": "claude/cycles/2026-05-15__release-v3.5/stage4_backlog_slice.md",
@@ -11,11 +11,10 @@
   "sprint_goal_status": "confirmed",
   "capacity_warn_acknowledged": true,
   "design_gate_status": "Passed",
-
   "verification_report": "claude/cycles/2026-05-15__release-v3.5/verification_report.md",
   "verification_status": "Verified",
   "next_cycle_unblocked": true,
-  "last_sync_utc": "2026-05-15T21:00:00Z",
+  "last_sync_utc": "2026-05-16T00:00:00Z",
   "execution_state_path": "claude/cycles/2026-05-15__release-v3.5/execution_state.json",
   "last_audit_id": "AUD-2026-05-13",
   "last_audit_utc": "2026-05-13T12:00:00Z",
@@ -28,16 +27,16 @@
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
   "open_escalations": {},
-  "last_rebalance_cycle": "2026-05-15__scheduled",
-  "last_rebalance_utc": "2026-05-15T00:00:00Z",
-  "last_scheduled_rebalance_utc": "2026-05-15T00:00:00Z",
-  "last_rebalance_outcome": "0 Kills + 1 Backlog Add (BLG-QA-19 DL-029) + 34 re-parked + 1 gate-cleared promoted + 2 gate-cleared re-parked + action-now patch roadmap_prompt.md v6.0→v6.1 (Standard tier; no meta-review; intake skipped 35≥20)",
-  "last_meta_review_cycle": "2026-05-08__scheduled",
-  "rebalance_cycles_since_meta_review": 2,
+  "last_rebalance_cycle": "2026-05-15__scheduled-2",
+  "last_rebalance_utc": "2026-05-16T00:00:00Z",
+  "last_scheduled_rebalance_utc": "2026-05-16T00:00:00Z",
+  "last_rebalance_outcome": "0 Kills + 0 Backlog Adds (DL-030 no-change) + 33 re-parked (2 gate-cleared new rationale + 31 count increment) + meta-review complete (Type D pattern resolved; 1 deferred candidate) (Standard tier; intake skipped 33\u226520)",
+  "last_meta_review_cycle": "2026-05-15__scheduled-2",
+  "rebalance_cycles_since_meta_review": 0,
   "last_manage_roadmap_utc": "2026-05-15T21:00:00Z",
   "last_manage_roadmap_outcome": "1 RA annotation retired (RA:v3.5); Arc 3 delivery note added; Arc 4 PO-01 confirmed; 0 stale items",
   "last_groom_backlog_utc": "2026-05-15T21:00:00Z",
-  "last_groom_backlog_outcome": "6 archived (BLG-SPEC-29/30/31, BLG-QA-19, BLG-GOV-21/22); 7 active; §12 release slice removed; no orphans",
+  "last_groom_backlog_outcome": "6 archived (BLG-SPEC-29/30/31, BLG-QA-19, BLG-GOV-21/22); 7 active; \u00a712 release slice removed; no orphans",
   "design_gate_bypass_authority": "Head of UX & Design + Product Owner",
   "design_gate_bypass_reason": "",
   "active_pog": {},
@@ -50,10 +49,10 @@
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",
       "summary": "Settings endpoint method decision resolved",
-      "resolution": "Option (a) — update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
+      "resolution": "Option (a) \u2014 update settings_endpoints.md to document PATCH /settings/{settings_id} and POST /settings as canonical. No backend change. No decision record required.",
       "resolved_by": "Product Owner",
       "resolved_utc": "2026-03-04T00:25:00Z",
-      "formal_capture": "Sprint Planning cycle — ST-09 acceptance criteria update"
+      "formal_capture": "Sprint Planning cycle \u2014 ST-09 acceptance criteria update"
     }
   },
   "release_plan": {

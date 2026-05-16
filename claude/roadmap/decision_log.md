@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 appended)
+**Last Updated:** 2026-05-16 (cycle 2026-05-15__scheduled-2 — DL-030 appended)
 
 ---
 
@@ -752,4 +752,15 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Displacement:** BLG-FE-27 deprioritised (Nav bar redesign exploration, P3; no immediate sprint dependency — existing displacement candidate)
 **Workforce impact:** S effort (~0.5 day); adds to QA backlog; no new FTE required
 **Rationale:** BLG-QA-15 (PT-02 research view acceptance test protocol) ✅ v3.3; PT-03 (entry conditions) ✅ v3.2; PT-05 (entry checklist UX) ✅ v3.2. Research view now encompasses data from all three shipped features. Arc 3 stories IT-04/IT-05 (risk data fields) are confirmed to add further fields to the research endpoint. Without a regression protocol, each story must independently define coverage. Challenger argument (gate-cleared advance): research view scope now encompasses PT-03/04 data fields; formalising the regression protocol before IT-04/IT-05 prevents coverage inconsistency. PO accepted. Scores: Risk Reduction 4/5; SPS = 1; Effort S.
+**Decision owner:** Product Owner
+
+---
+
+### DL-030 — 2026-05-16
+
+**Decision type:** No-change (roadmap and backlog)
+**Cycle:** 2026-05-15__scheduled-2
+**Displacement:** N/A — no additions this cycle
+**Workforce impact:** None
+**Rationale:** Post-v3.5-close scheduled rebalance. Horizon Now empty — v3.6 planning has not yet commenced. All active initiatives (Arc 4–6, PT-04) reaffirmed as 🔥 Must continue. Two gate-cleared ideas reviewed (IDEA-ai-compliance-20260508-01 and IDEA-financial-reporting-20260508-02 — both gated on BLG-GOV-21 which shipped v3.5): both re-parked with updated rationale (ai-compliance: AI trade plan summarisation not yet scoped; financial-reporting: planned_entry_price snapshotting explicitly deferred in arc4_data_requirements.md §3.1). No advancing candidates. Zero displacement required. No backlog additions warranted — existing 7 active backlog items provide sufficient near-term work queue for v3.6 planning.
 **Decision owner:** Product Owner
