@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-05-15
+**Version:** 1.9
+**Last Updated:** 2026-05-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
 **Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
@@ -340,6 +340,7 @@ The expandable card uses a clean, visually distinct layout to support long‑for
 | Row | Planned (muted) | Actual (bold) | Indicator |
 |-----|-----------------|---------------|-----------|
 | Entry Timing | “Planned zone: {entry_zone_description}” or “No entry zone recorded” | “Actual entry: {actual_entry_price}” | Pill: `On Time` (green) / `Early` (amber) / `Late` (amber) / `N/A` (grey) |
+| Entry Delta | “Planned: {planned_entry_price}” or “—“ | “+X.XX%” / “−X.XX%” (two decimal places, signed) | Green if positive (entry below plan), red if negative (entry above plan). When `entry_delta_pct` is null: row shows “Entry delta: data not available for historical trades” in muted style — planned/actual columns not rendered. |
 | R Achieved | “Target: {r_target}R” or “No R target set” | “{r_achieved}R” | Colour: green if ≥ target; amber if ≥ target × 0.8; red if < target × 0.8 |
 | Exit Alignment | “Planned: {planned_exit_conditions}” or “No exit conditions” | “Actual: {actual_exit_reason}” | Pill: `Matched` (green) / `Partially Matched` (amber) / `Diverged` (red) |
 | State at Exit | — | Lifecycle state badge (reuses Positions page badge design) | Per `positions.md §Position Lifecycle State Badge` colour scheme |
@@ -427,6 +428,7 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.9 | 2026-05-16 | v3.6 design gate (ST-02, EPIC-01): Entry Delta row added to Plan vs Reality comparison table — displays `entry_delta_pct` as signed percentage (+X.XX%/−X.XX%) with green/red colouring; null state shows "Entry delta: data not available for historical trades" in muted style. API source: `GET /trades/{id}/plan-vs-reality` `entry_delta_pct` field (added in ST-01). Head of UX & Design confirmed 2026-05-16. |
 | 1.8 | 2026-05-15 | v3.5 design gate: (ST-06 PO-01) Plan vs Reality section added to Expandable Journal Row — 4th section, conditionally rendered for closed trades with a trade plan; displays entry timing accuracy, R achieved vs R target (colour-coded), exit alignment badge, lifecycle state at exit badge; lazy-loaded on row expand via `GET /trades/{id}/plan-vs-reality`; hidden entirely when 404 (no plan). Design source: docs/ux_specs/plan-vs-reality/ux_spec.md. Approved: Product Owner 2026-05-15. |
 | 1.7 | 2026-04-17 | v2.8 design gate (ST-08, EPIC-04): AI Journal Summary section added — collapsible section above trade table (below filters), collapsed by default, disclaimer always visible when expanded, Generate/Refresh button calls `POST /ai/journal-summary` with filter context, 4 states (not-generated/loading/loaded/error). SRB-v1.7 conditional compliance constraints documented. Strategy Rules sign-off required before merge. Design source: `docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md`. Head of Specs Team confirmed compliant. |
 | 1.6 | 2026-04-11 | v2.6 design gate: (ST-09) Summary Stats Bar Layout spec added — `grid-cols-7` at `xl`, `grid-cols-4` at `md`, 7-card row; (ST-10) Column Header Styling spec added — Trade History-specific override (`text-xs font-semibold text-slate-300 uppercase tracking-wide`); (ST-11) Sortable Columns section added — 8 sortable columns, Exit Date descending as default sort. Design source: `docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md`. Head of Specs Team confirmed compliant. |

@@ -74,7 +74,10 @@
     "decisions_validated": "pass"
   },
 
-  "design_gate_status": "not_started",
+  "design_gate_status": "Blocked",
+  "design_gate_completed_utc": "2026-05-16T08:00:00Z",
+  "design_gate_record": "claude/cycles/2026-05-16__release-v3.6/design_gate.md",
+  "sprint_planning_pre_condition": false,
   "amended_backlog_slice_path": "",
 
   "artifacts": {

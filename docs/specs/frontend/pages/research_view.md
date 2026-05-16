@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-10
+**Version:** 1.1
+**Last Updated:** 2026-05-16
 **Story:** ST-09 (EPIC-03, v3.3) — BLG-SPEC-24
 **§13 Compliance:** Confirmed — display-only. No automated recommendation generated. See §8.
 **API contract:** docs/specs/api_contracts/research_endpoint.md
@@ -96,6 +96,8 @@ When `data.signal` is null: display "No signal on file" placeholder.
 
 When `data.regime` is null: display "Regime unavailable".
 
+**Regime label badge constraint (v3.6 — ST-08):** Badge must render on a single line. Apply `max-w-[120px] truncate` or equivalent to prevent two-line wrapping at standard viewport widths (1280px, 1440px). Typography must conform to `docs/frontend/design_system.md` chip/badge scale (`text-xs font-medium`). Long label values (e.g. future additions) must truncate with ellipsis rather than wrap.
+
 ### 4.4 Screener Panel
 
 | State | Display |
@@ -148,6 +150,8 @@ When `data.earnings` is null: display "No upcoming earnings data".
 
 | Scenario | Display |
 |----------|---------|
+| `GET /research/{ticker}` 404 | Full-page error: "Ticker not found." — ticker does not exist in any data source. No retry button. |
+| `GET /research/{ticker}` 503 | Full-page error: "Research data temporarily unavailable." + Retry button — critical source (Yahoo Finance) entirely unavailable. |
 | `GET /research/{ticker}` 500 | Full-page error: "Unable to load research data." + Retry button |
 | Individual field null | Per-field null display per §4 |
 | No price data | Price section shows `—` for all price fields |
@@ -184,4 +188,5 @@ None.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-05-16 | v3.6 design gate: (ST-07) §6 Error States — added 404 (ticker not found) and 503 (source unavailable) display rules; (ST-08) §4.3 regime label badge — single-line constraint added (`max-w-[120px] truncate`), typography conformance note referencing design_system.md chip/badge scale. Head of UX & Design confirmed 2026-05-16. |
 | 1.0 | 2026-05-10 | Initial creation — ST-09 (EPIC-03, v3.3). Formalises PT-02 (v3.1) shipped feature. Full data fields, freshness policy, error states, §13 confirmation, source attribution references. |
