@@ -25,6 +25,7 @@ run roadmap --reason "scheduled" [--date "YYYY-MM-DD"]
 # Phase 1M — Document Management (OPTIONAL — run after Post-Ship Closure OR before run roadmap)
 manage roadmap [--dry-run]                        # retire completed items, flag stale
 groom backlog [--dry-run]                         # archive completed items, health check
+run ideas housekeeping [--dry-run]                # archive terminal ideas rows, revival review
 
 # Phase 1.5 — Design Gate (run after Phase 1B Publish Gate, before Phase 2)
 run design-gate --cycle "<cycle_id>" [--dry-run]
@@ -381,6 +382,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 | Ideas register | `claude/ideas/ideas_register.md` | PMO Lead | Yes — single register; rows appended per submission |
 | Window summary | `claude/ideas/window_summary_<IW-id>.md` | PMO Lead | Yes |
 | Rejected-but-strong register | `claude/ideas/rejected_but_strong.md` | PMO Lead | Created if needed by roadmap STEP 4 |
+| Ideas register archive | `claude/ideas/ideas_register_archive.md` | PMO Lead | Created by ideas_housekeeping engine — append-only |
 | Archived submissions | `claude/ideas/submissions/archive/*.md` | PMO Lead | Read-only — prior per-file submissions migrated 2026-03-17 |
 
 ### 5.6 Exit Criteria
@@ -473,7 +475,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.7)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.7), `claude/system/ideas_housekeeping_prompt.md` (v1.0)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -528,17 +530,38 @@ Keeps `claude/backlog/backlog.md` healthy and aligned with the roadmap.
 - Promotion shortlist is advisory — Roadmap Rebalance Engine executes promotions
 - `--dry-run` is always safe
 
-### 6M.3 Phase 1M Exit Criteria
+### 6M.3 Ideas Housekeeping Engine (`run ideas housekeeping`)
+
+Keeps `claude/ideas/ideas_register.md` lean and surfaces revival opportunities.
+
+| What it does | What it does NOT do |
+|-------------|-------------------|
+| Archives terminal rows (`Promoted-Added`, `Promoted-Rejected`, closed `Rejected`) to `ideas_register_archive.md` | Change any idea's content or scope |
+| Reviews `rejected_but_strong.md` revival conditions against the just-closed cycle | Promote ideas to the backlog or roadmap |
+| Checks ideas pipeline health (near-empty backlog advisory) | Modify `rejected_but_strong.md` |
+| Returns advisory block to calling engine | Commit — calling engine owns the commit |
+
+**Invocation:** Mandatory as post_ship_closure.md STEP 12.5. Advisory pre-clean at roadmap_prompt.md STEP 4 if not already run at post-ship. Standalone `run ideas housekeeping [--dry-run]` supported.
+
+**Hard rules:**
+- Cross-reference `rejected_but_strong.md` before archiving any `Rejected` row — a match means keep, not archive
+- Archive is append-only — archived entries are permanent records
+- `--dry-run` is always safe
+- When invoked as subroutine, calling engine owns the commit
+
+### 6M.4 Phase 1M Exit Criteria
 
 - `roadmap_archive.md` updated (if any items retired)
 - `backlog_archive.md` updated (if any items archived)
+- `ideas_register.md` terminal rows archived (if any identified)
 - Stale items flagged in `current_roadmap.md` (if any identified)
 - Orphans and stale blockers flagged in `backlog.md` (if any identified)
 - Manage roadmap run log written (`claude/roadmap/manage_roadmap_log_<YYYYMMDD>.md`)
 - Backlog health report written (`claude/backlog/backlog_health_<YYYYMMDD>.md`)
+- Rejected-but-strong revival advisory produced (or "no action required" recorded)
 - No ambiguous items left unresolved
 - Backlog lock released
-- Commits complete for both engines
+- Commits complete for all engines
 
 ---
 
@@ -740,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.1)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.2)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -824,7 +847,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.20)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.21)
 
 ### 8.1 Invocation
 
@@ -1199,7 +1222,7 @@ If the decision record cannot be created, the escalation remains Open/Deferred a
 
 > **Cycle gate:** Phase 1B (new cycle) may not open until Phase 4 of the previous cycle reaches `Verified` or `Verified_with_deviations` **and** Post-Ship Closure is confirmed complete.
 
-> **Phase 1M enforcement:** `manage roadmap` and `groom backlog` are invoked as mandatory STEP 11 and STEP 12 of every Post-Ship Closure run. Both run at every cycle close regardless of whether Phase 1 was executed. Standalone invocation remains supported for teams that want an additional pre-roadmap clean-up pass.
+> **Phase 1M enforcement:** `manage roadmap`, `groom backlog`, and `run ideas housekeeping` are invoked as mandatory STEPs 11, 12, and 12.5 of every Post-Ship Closure run. All three run at every cycle close regardless of whether Phase 1 was executed. Standalone invocation remains supported for teams that want an additional pre-roadmap clean-up pass.
 
 ---
 
@@ -1385,21 +1408,22 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.85 |
-| Last Updated | 2026-05-15 |
+| Version | 3.88 |
+| Last Updated | 2026-05-16 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.1 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.2 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.28 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.1 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.2 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.20 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.21 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.7 |
+| Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.8 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.0 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1420,6 +1444,9 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.88 | 2026-05-16 | **execution_prompt.md v3.20→v3.21 — STEP 1 simplified to verify-only.** §8 source prompt header updated v3.20→v3.21. §14 Execution Engine Source v3.20→v3.21. §14 Version 3.87→3.88/2026-05-16. Change: STEP 1 (GitHub Issue Preflight) changed from issue creator to verifier — `sync gh` at sprint planning seal is now the canonical issue creation point; STEP 1 records issue numbers and notes a process gap if any are missing, but does not halt; minimal fallback creation retained for resilience. Authority: Head of Specs Team (2026-05-16). |
+| 3.87 | 2026-05-16 | **sprint_planning_prompt.md v3.1→v3.2 — `sync gh` integrated as final step of STEP 8.** §7 source prompt header updated v3.1→v3.2. §14 Sprint Planning Engine v3.1→v3.2. §14 Version 3.86→3.87/2026-05-16. Change: STEP 8 (Commit) — after successful push, `sync gh` (CLAUDE.md §4) is called to create GitHub issues for all ST items with correct `v<X.Y>`, `sprint-N`, and `EPIC-xx` labels. This makes sprint planning the canonical issue creation point; execution STEP 1 is now verify-only. Authority: Head of Specs Team (2026-05-16). |
+| 3.86 | 2026-05-16 | **ideas_housekeeping_prompt.md v1.0 (new) + post_ship_closure.md v2.7→v2.8 + roadmap_prompt.md v6.1→v6.2.** New Ideas Housekeeping Engine added: archives terminal ideas register rows, reviews rejected-but-strong revival conditions, runs pipeline health check. Absorbs inline post-ship "Ideas Pipeline Health Check" advisory. §6M source prompts header updated to include ideas_housekeeping_prompt.md v1.0. §6M.3 Ideas Housekeeping Engine section added; former §6M.3 Exit Criteria renumbered §6M.4 (updated to include ideas housekeeping criteria). Quick Reference Phase 1M command block updated. §5.5 Artefacts table: ideas_register_archive.md row added. Phase 1M enforcement note updated (STEPs 11/12/12.5). §14: Ideas Housekeeping Engine v1.0 added; Post-Ship Closure Engine v2.7→v2.8; Roadmap Engine Source v6.1→v6.2. CLAUDE.md command table: `run ideas housekeeping` added. Authority: PMO Lead + Head of Specs Team (2026-05-16). |
 | 3.85 | 2026-05-15 | **delivery_verification_prompt.md v2.1→v2.2 — Phase 4 token efficiency refactor.** §9 source prompt header updated v2.1→v2.2. §14 Verification Engine Source v2.1→v2.2. §14 Version/Last Updated 3.84→3.85/2026-05-15. Changes: (1) §1 "This routine does NOT" block removed — covered by write scope §5; (2) ESCALATION SUBROUTINE compressed to 4-line inline block; (3) STEP -1 parallel read instruction added (execution_state.json + sprint_close.md + all qa_evidence files in parallel); (4) STEP 4.3 stale parked detection short-circuited when zero parked items in backlog slice; (5) STEP 5.2 short-circuit added — autonomous/backend-only EPICs with no frontend-visible AC record not_applicable in TSG table, skip verbose feedback block; (6) STEP 8 §3 QA Evidence Summary mandated as table (was prose); (7) STEP 8 §5 Outstanding Items mandated as table-only; (8) STEP 8 §6 compressed instruction — "No test scenario gaps" one-liner when all not_applicable; (9) STEP 8 §8 Open Items — explicit omit instruction when status is not Not_Verified; (10) §8 Completion Condition compressed to 2-sentence rule; (11) §9 Governance Invariants reduced from 8 to 3 (removed 5 that restated step-level rules). All hard gates, severity policy, and invariants preserved. Authority: Head of Specs Team (2026-05-15). |
 | 3.84 | 2026-05-15 | **execution_prompt.md v3.19→v3.20 — ST-12+ST-13 (EPIC-04, v3.5): deviation advisory patches + sprint close consistency checks.** §8 source prompt header updated v3.19→v3.20. §14 Execution Engine Source v3.19→v3.20. §14 Version/Last Updated 3.83→3.84/2026-05-15. Changes: (ST-12/LL item #3) §3.1.A step 10 — intent check advisory added: verify spec intent match before filing deviation; record as implementation note if intent agrees. (ST-12/LL item #4) §3.1.A step 10 — Known Deviations section advisory: add `## Known Deviations` section to canonical spec in same commit when filing deviation. (ST-12/LL item #5) §5.4 — backlog ID pre-assignment check: verify BLG ID unoccupied in backlog.md before assigning in lessons_learnt Phase 3. (ST-13/CF-01) §5.3 — deviation severity consistency check: verify deviation priorities in sprint_close.md match DoQ assessment in qa_evidence. (ST-13/CF-02) §5.3 — backlog ID completeness check: every "backlog item filed" note must include BLG ID. Authority: Head of Specs Team (ST-12+ST-13, 2026-05-15). |
 | 3.83 | 2026-05-15 | **sprint_planning_prompt.md v3.0→v3.1 — BLG-GOV-22: multi-EPIC execution_state.json ownership + merge order advisory.** §7 source prompt header updated v3.0→v3.1. §14 Sprint Planning Engine v3.0→v3.1. §14 Version/Last Updated 3.80→3.83/2026-05-15. Changes: STEP 5.2 — multi-EPIC `execution_state.json` ownership rule added (first EPIC in execution order is owner; others check for existence before creating; record in sprint_planning_notes.md); shared file ownership advisory added (identify shared files across EPICs; record ownership and rebase advisory in sprint_planning_notes.md). STEP 6.1 — merge order section requirement added (sprint backlog must include EPIC merge sequence, execution_state.json owner designation, and shared file advisory when > 1 EPIC in scope). Authority: Head of Specs Team (ST-11, BLG-GOV-22, 2026-05-15). |

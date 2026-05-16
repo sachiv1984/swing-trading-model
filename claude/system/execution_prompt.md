@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.20
-**Last Updated:** 2026-05-15
+**Version:** 3.21
+**Last Updated:** 2026-05-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -490,15 +490,14 @@ If execution_state.json already exists: resume (do not reinitialise). Perform ST
 
 ## STEP 1 — GitHub Issue Preflight
 
+Issues are created by `sync gh` at the end of sprint planning (CLAUDE.md §4). This step verifies they exist and records their numbers.
+
 For each ST item in the sprint scope:
 
 1. Check `execution_state.json` for `github_issue` value.
 2. If `null` or absent: search GitHub for an existing issue matching the ST ID and title.
 3. If found: record the issue number in `execution_state.json`.
-4. If not found: create the issue with:
-   - Title: `[ST-xx] <title>`
-   - Body: acceptance criteria from `sprint_backlog.md`, epic reference, sprint goal
-   - Label: `sprint`, `EPIC-xx`
+4. If not found: note as a process gap (`sync gh` was not run at planning seal), then create a minimal issue — Title: `[ST-xx] <title>`, Labels: `EPIC-xx` — and record the number. Do not halt.
 5. Update `execution_state.json` with all issue numbers.
 
 Do not create duplicate issues. Check before creating.
