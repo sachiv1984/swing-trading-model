@@ -21,7 +21,7 @@
   "last_audit_overall_score": 79,
   "last_audit_open_items": 3,
   "next_release": "v3.6",
-  "design_gate_status": "Blocked",
+  "design_gate_status": "Passed",
   "design_gate_record": "claude/cycles/2026-05-16__release-v3.6/design_gate.md",
   "last_post_ship_utc": "2026-05-15T21:00:00Z",
   "last_post_ship_cycle": "2026-05-15__release-v3.5",
