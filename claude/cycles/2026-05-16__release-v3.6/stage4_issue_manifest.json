@@ -1,0 +1,92 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Capture planned_entry_price at trade entry",
+    "epic": "EPIC-01",
+    "description": "Backend: snapshot planned_entry_price from linked trade plan at position creation; compute entry_delta_pct in plan-vs-reality service",
+    "ac_summary": "planned_entry_price field added to trades; populated on POST /positions when trade plan linked; entry_delta_pct returned by GET /trades/{id}/plan-vs-reality; openapi.yaml updated",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Update PlanVsReality component to display entry_delta_pct",
+    "epic": "EPIC-01",
+    "description": "Frontend: display entry_delta_pct in PlanVsReality component; null handling for historical trades",
+    "ac_summary": "PlanVsReality shows entry_delta_pct when non-null; shows placeholder for historical trades; no regression in other PvR rows",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "PT-04 spec authoring and gate confirmation",
+    "epic": "EPIC-02",
+    "description": "Delegated decision: PO confirms 20+ closed trades gate; Head of Specs Team authors setup_quality_score_spec.md and API contract",
+    "ac_summary": "Gate confirmed; setup_quality_score_spec.md authored; API contract documented; frontend display spec appended to pre_trade_research.md",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Setup Quality Score backend endpoint",
+    "epic": "EPIC-02",
+    "description": "Backend: GET /research/{ticker}/setup-quality-score — deterministic 0-100 score from own trade history",
+    "ac_summary": "Endpoint returns score, band, factors, trade_count, gate_met; gate_met:false when <20 trades; deterministic; openapi.yaml updated",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Setup Quality Score frontend display in Pre-Trade Research View",
+    "epic": "EPIC-02",
+    "description": "Frontend: quality score badge with band, colour, tooltip factor breakdown in Pre-Trade Research View",
+    "ac_summary": "Score badge visible when gate_met:true; advisory when gate_met:false; tooltip shows factor breakdown; no regression",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "SC-RV-18/19 Playwright coverage for research view null states",
+    "epic": "EPIC-03",
+    "description": "QA: Playwright tests for regime-null (SC-RV-18) and all-fields-null (SC-RV-19) research view states. Closes BLG-FE-32 and TEST-GAP-EPIC-03-v33",
+    "ac_summary": "SC-RV-18 and SC-RV-19 tests added to pre-trade-research.spec.js; research_view_protocol.md and regression_protocol.md updated; CI green",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Research endpoint HTTP error code differentiation",
+    "epic": "EPIC-03",
+    "description": "Backend: return 404 for unknown ticker, 503 for critical source failure. Closes BLG-SPEC-27",
+    "ac_summary": "404 for ticker not found; 503 for Yahoo outage; 200+null for partial failures unchanged; research_endpoint.md updated; openapi.yaml updated",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Research page UX fix: regime lozenge and font consistency",
+    "epic": "EPIC-03",
+    "description": "Frontend: fix regime lozenge two-line wrap; align font usage with design_system.md. Closes BLG-FE-26",
+    "ac_summary": "Regime lozenge constrained to single line; font usage conforms to design system; no regression",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "execution_prompt.md §13 gate story pattern formalisation + change log entries",
+    "epic": "EPIC-04",
+    "description": "Governance: formalise §13 gate story scaffold pattern in prompt; add 4 missing change log entries (OA-RP-01–04)",
+    "ac_summary": "§13 gate story guidance present; prompt version bumped; OPERATIONAL_GUIDE.md updated; 4 missing change log entries added",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "execution_prompt.md deviations_filed + sprint_close + Phase 3 patches",
+    "epic": "EPIC-04",
+    "description": "Governance: 3 execution_prompt.md patches from v3.5 LL deferred actions 2-4",
+    "ac_summary": "deviations_filed guidance added; sprint_close three-field block present; Phase 3 lessons_learnt_cycle.md reference added; version bumped; change log updated",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-05-16__release-v3.6"],
+    "assignee": null
+  }
+]

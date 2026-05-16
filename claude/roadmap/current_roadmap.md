@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v3.5** — Arc 3 Completion + Arc 4 Foundation — Shipped 2026-05-15
-**Next planned release:** **v3.6** — [TBD]
+**Next planned release:** **v3.6** — Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance
+
+<!-- roadmap-annotation-marker: RA:v3.6:2026-05-16__release-v3.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-16__release-v3.6
+- Plan published: 2026-05-16
+- Cycle folder: claude/cycles/2026-05-16__release-v3.6/
+- Backlog slice: claude/cycles/2026-05-16__release-v3.6/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 *RA:v3.5 retired — see roadmap_archive.md 2026-05-15 (post-ship closure 2026-05-15__release-v3.5).*
 *RA:v3.4 retired — see roadmap_archive.md 2026-05-14 (post-ship closure 2026-05-14__release-v3.4).*

@@ -423,3 +423,24 @@ These are deliberate product decisions, not deferrals:
 
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
 
+---
+
+## 12. Release Slice — v3.6
+
+<!-- release-plan-marker: RP:v3.6:2026-05-16__release-v3.6 -->
+
+*This section is ephemeral — remove during next `groom backlog` after v3.6 closes.*
+
+| ST-ID | EPIC | Title | Owner | Sprint |
+|-------|------|-------|-------|--------|
+| ST-01 | EPIC-01 | Capture planned_entry_price at trade entry | Head of Engineering | 1 |
+| ST-02 | EPIC-01 | Update PlanVsReality component entry_delta_pct display | Head of Engineering | 2 |
+| ST-03 | EPIC-02 | PT-04 spec authoring and gate confirmation | Head of Specs Team + PO | 1 |
+| ST-04 | EPIC-02 | Setup Quality Score backend endpoint | Head of Engineering | 2 |
+| ST-05 | EPIC-02 | Setup Quality Score frontend display | Head of Engineering | 2 |
+| ST-06 | EPIC-03 | SC-RV-18/19 Playwright coverage (BLG-FE-32 + TEST-GAP-EPIC-03-v33) | QA & Testing Owner | 1 |
+| ST-07 | EPIC-03 | Research endpoint HTTP error code differentiation (BLG-SPEC-27) | API Contracts Owner | 1 |
+| ST-08 | EPIC-03 | Research page UX fix: regime lozenge + font (BLG-FE-26) | Head of UX & Design | 1 |
+| ST-09 | EPIC-04 | execution_prompt.md §13 gate story pattern + change log entries | Head of Specs Team | 1 |
+| ST-10 | EPIC-04 | execution_prompt.md deviations_filed + sprint_close + Phase 3 patches | Head of Specs Team | 1 |
+
