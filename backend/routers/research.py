@@ -2,9 +2,11 @@
 Pre-Trade Research Router (ST-05 / EPIC-02)
 
 Aggregation endpoint: GET /research/{ticker}
-Spec: docs/specs/api_contracts/pre_trade_research_endpoints.md v0.1
+Spec: docs/specs/api_contracts/research_endpoint.md v1.2
 
-All sub-sources are best-effort — failures return null fields, never 5xx.
+Sub-source failures return null fields (200). Critical failure modes:
+  - Yahoo Finance entirely unavailable → 503
+  - Ticker not found in any source → 404
 """
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -18,6 +20,8 @@ from services.screener_batch_service import get_screener_results
 
 router = APIRouter(prefix="/research", tags=["Research"])
 
+_YF_UNAVAILABLE = "yf_unavailable"
+_TICKER_NOT_FOUND = "ticker_not_found"
 
 _YF_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -25,13 +29,24 @@ _YF_HEADERS = {
 }
 
 
-def _get_price_data(ticker: str, market: str) -> dict:
-    """Fetch current price and 1-day change % from Yahoo Finance."""
+def _get_price_data(ticker: str, market: str):
+    """Fetch current price and 1-day change % from Yahoo Finance.
+
+    Returns a data dict on success or partial-null, _YF_UNAVAILABLE sentinel
+    when Yahoo Finance cannot be reached, or _TICKER_NOT_FOUND sentinel when
+    the ticker is unknown to Yahoo Finance.
+    """
     try:
         time.sleep(0.3)
         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
         resp = requests.get(url, params={"interval": "1d", "range": "1d"}, headers=_YF_HEADERS, timeout=10)
-        meta = resp.json()["chart"]["result"][0]["meta"]
+        if not resp.ok:
+            return _YF_UNAVAILABLE
+        chart = resp.json().get("chart", {})
+        result = chart.get("result")
+        if not result:
+            return _TICKER_NOT_FOUND
+        meta = result[0]["meta"]
         price = meta.get("regularMarketPrice")
         change_pct = meta.get("regularMarketChangePercent")
         if price and market == "UK":
@@ -40,6 +55,8 @@ def _get_price_data(ticker: str, market: str) -> dict:
             "price": float(price) if price else None,
             "price_change_pct": float(change_pct) / 100 if change_pct is not None else None,
         }
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        return _YF_UNAVAILABLE
     except Exception:
         return {"price": None, "price_change_pct": None}
 
@@ -160,6 +177,18 @@ def get_research(ticker: str, market: Optional[str] = None):
         portfolio_id = str(portfolio["id"]) if portfolio else None
 
         price_data = _get_price_data(ticker, market)
+
+        if price_data is _YF_UNAVAILABLE:
+            return JSONResponse(
+                status_code=503,
+                content={"status": "error", "message": "Market data service is currently unavailable. Please try again later."},
+            )
+        if price_data is _TICKER_NOT_FOUND:
+            return JSONResponse(
+                status_code=404,
+                content={"status": "error", "message": f"Ticker '{ticker.upper()}' not found."},
+            )
+
         signal = _get_signal(ticker, portfolio_id) if portfolio_id else None
         regime = _get_regime()
         sector = _get_sector(ticker, market)

@@ -1,8 +1,8 @@
 **Owner:** QA Lead
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-15
+**Version:** 1.1
+**Last Updated:** 2026-05-16
 **Story:** ST-10 (EPIC-03, v3.5) — BLG-QA-19
 **Cross-reference:** `docs/qa/acceptance_protocols/research_view_protocol.md`
 **API contract:** `docs/specs/api_contracts/research_endpoint.md`
@@ -59,10 +59,8 @@ All tests in this section MUST pass in CI before the PR opens.
 
 | Scenario ID | Test | Coverage method | Must pass |
 |-------------|------|----------------|-----------|
-| SC-RV-18 | Regime field null — badge degrades gracefully | Playwright (filed: BLG-FE-32) | Yes — when coverage exists |
-| SC-RV-19 | All research fields null — no crash | Playwright (filed: BLG-FE-32) | Yes — when coverage exists |
-
-> **Note:** SC-RV-18 and SC-RV-19 Playwright coverage is pending (BLG-FE-32). Until that backlog item ships, human staging sign-off against these scenarios is required in the QA evidence log.
+| SC-RV-18 | Regime field null — badge degrades gracefully | Playwright — `pre-trade-research.spec.js SC-RV-18` | Yes |
+| SC-RV-19 | All research fields null — no crash | Playwright — `pre-trade-research.spec.js SC-RV-19` | Yes |
 
 ---
 
@@ -119,5 +117,6 @@ Before opening any PR that triggers this protocol:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-05-16 | ST-06 (EPIC-03, v3.6): §2.2 SC-RV-18/19 upgraded to full Playwright coverage; pending note removed; closes BLG-FE-32 and TEST-GAP-EPIC-03-v33. |
 | 1.0 | 2026-05-15 | QA Lead sign-off — ST-10 (EPIC-03, v3.5). Corrections: §4 IT-04/IT-05 references replaced with accurate PT-03/PT-05 citations; BLG-FE-33→BLG-FE-32 (correct next sequential ID). Status: Active. |
 | 0.1 | 2026-05-15 | Initial draft — ST-10 (EPIC-03, v3.5). Canonical regression suite from SC-RES-01 to SC-RES-13; SC-RV-18/19 gap noted; IT-series checklist added. Awaiting QA Lead sign-off. |

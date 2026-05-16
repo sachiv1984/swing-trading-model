@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-10
+**Version:** 1.1
+**Last Updated:** 2026-05-16
 **Story:** ST-10 (EPIC-03, v3.3) — BLG-QA-17
 **Cross-reference:** `docs/qa/acceptance_protocols/research_view_protocol.md`
 **Spec ref:** `docs/specs/frontend/pages/research_view.md`
@@ -187,4 +187,5 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-05-16 | ST-06 (EPIC-03, v3.6): SC-RV-18 and SC-RV-19 Playwright coverage confirmed — tests added to `tests/e2e/pre-trade-research.spec.js`. Closes BLG-FE-32. |
 | 1.0 | 2026-05-10 | Initial creation — ST-10 (EPIC-03, v3.3). 19 scenarios covering field rendering, source attribution, news feed, freshness, and error states. |

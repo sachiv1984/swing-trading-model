@@ -3559,6 +3559,24 @@ components:
                       sector: { type: object }
                       screener: { type: object, nullable: true }
                       earnings: { type: object, nullable: true }
+        "404":
+          description: Ticker not found — Yahoo Finance returned no result for the given ticker symbol
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  message: { type: string, example: "Ticker 'INVALID' not found." }
+        "503":
+          description: Yahoo Finance entirely unavailable — connection error or HTTP error response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  message: { type: string, example: "Market data service is currently unavailable. Please try again later." }
 
 security:
   - ApiKey: []

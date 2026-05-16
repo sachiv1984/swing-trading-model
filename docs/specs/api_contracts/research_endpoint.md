@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-15
+**Version:** 1.2
+**Last Updated:** 2026-05-16
 **Story:** ST-08 (EPIC-03, v3.3) — BLG-SPEC-25
 **Cross-reference:** `docs/specs/data_provenance/research_view_provenance.md`
 **Regression test anchor:** `docs/qa/acceptance_protocols/research_view_regression_protocol.md`
@@ -178,13 +178,14 @@ else → market = "US"
 
 ## Best-Effort Sourcing
 
-**No sub-source failure causes a non-2xx response.** Each field group is independent:
-- If Yahoo Finance is unavailable: `price`, `price_change_pct`, `market_cap`, `sector.sector`, `sector.industry` return `null`
+Sub-source failures return null fields in a 200 response. Each field group is independent:
 - If the signal DB query fails: `signal` returns `null`
 - If the regime check times out: `regime` returns `null`
 - If the screener cache is empty: `screener` returns `null`
 - If yfinance earnings lookup fails: `earnings` returns `null`
 - If the news service fails: `news_headlines` returns `[]`
+
+Yahoo Finance (price) is treated as a **critical source**: total unavailability returns 503; unknown ticker returns 404.
 
 ---
 
@@ -192,20 +193,18 @@ else → market = "US"
 
 | HTTP Status | Condition |
 |-------------|-----------|
-| 500 | Unhandled exception in the aggregation handler itself (not sub-source failures) |
+| 200 | Success, or partial sub-source failure (null fields for failed sources) |
+| 404 | Ticker not found — Yahoo Finance returned no result for the given ticker symbol |
+| 503 | Yahoo Finance entirely unavailable — connection error or HTTP error response |
+| 500 | Unhandled exception in the aggregation handler itself |
 
-Note: 404 (ticker not found) and 503/429 (source unavailable) are not currently surfaced as distinct HTTP codes — the endpoint returns 200 with null fields for all sub-source failures. This is a known deviation (DEV-v33-02, filed v3.3).
-
-**Known Deviation — DEV-v33-02**
+**Resolved Deviation — DEV-v33-02** *(resolved v3.6 ST-07)*
 
 | Field | Detail |
 |-------|--------|
-| Description | AC specified distinct HTTP error codes (404 ticker-not-found, 503 source-unavailable, 429 rate-limited); implementation always returns 200 with null sub-fields on sub-source failure |
-| Canonical requirement | ST-08 acceptance criteria (sprint_backlog.md v3.3): "404 returned when ticker does not exist in any source; 503 returned for critical source failure; 429 returned when rate limit is hit" |
-| Priority | P3 — current behaviour is safe and documented; clients must handle null sub-fields regardless |
-| Target resolution release | v3.4 (or v4.x — non-blocking) |
-| Owner | API Contracts & Documentation Owner |
-| Backlog reference | BLG-SPEC-27 — Research endpoint: surface per-source error codes as distinct HTTP responses |
+| Description | Was: 404 and 503 not surfaced as distinct HTTP codes; endpoint returned 200 with null fields for all sub-source failures |
+| Resolution | ST-07 (EPIC-03, v3.6): 404 returned when YF reports ticker not found; 503 returned when YF is entirely unavailable. Partial failures (non-price sources) remain 200 with null. |
+| Backlog reference | BLG-SPEC-27 — closed |
 
 ---
 
@@ -223,5 +222,6 @@ Note: 404 (ticker not found) and 503/429 (source unavailable) are not currently 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-05-16 | ST-07 (EPIC-03, v3.6): §Error Responses updated — 404 (ticker not found) and 503 (YF unavailable) added; DEV-v33-02 marked resolved; §Best-Effort Sourcing clarified. Closes BLG-SPEC-27. |
 | 1.1 | 2026-05-15 | ST-10 (EPIC-03, v3.5) — Added regression test anchor cross-reference to `research_view_regression_protocol.md`. |
 | 1.0 | 2026-05-10 | Initial creation — ST-08 (EPIC-03, v3.3). Full response schema, source attribution, error codes, rate limit policy. |
