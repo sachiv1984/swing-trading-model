@@ -60,8 +60,8 @@
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-05-16__release-v3.6/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 414,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-16__release-v3.6/qa_evidence_EPIC-03.md",
       "test_scenarios": ["tests/e2e/pre-trade-research.spec.js"],
