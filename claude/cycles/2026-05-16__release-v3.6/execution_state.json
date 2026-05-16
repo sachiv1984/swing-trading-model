@@ -9,11 +9,11 @@
 
   "epics": {
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-16__release-v3.6/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 413,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-16__release-v3.6/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
@@ -24,7 +24,7 @@
           "assigned_to": "engine",
           "github_issue": 411,
           "branch": "exec/2026-05-16__release-v3.6/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "2818fb634e5d1b994c27c0335b88843f0c9397cf",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -43,7 +43,7 @@
           "assigned_to": "engine",
           "github_issue": 412,
           "branch": "exec/2026-05-16__release-v3.6/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "2818fb634e5d1b994c27c0335b88843f0c9397cf",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
