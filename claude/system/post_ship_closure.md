@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.8
-**Last Updated:** 2026-05-16
+**Version:** 2.9
+**Last Updated:** 2026-05-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -188,19 +188,11 @@ Read `claude/cycles/<cycle_id>/verification_report.md`:
 - Confirm `Accepted by: Product Owner` with a date
 - If either sign-off is blank: halt — verification is not complete.
 
-### -1.4 Required Files Present
-
-Verify all files in Section 4 exist (backlog slice subject to the source-of-truth rule resolved in STEP 0). If any are missing: halt and report exactly which.
-
-### -1.5 Required Authority Roles Exist
-
-Verify agent files per Section 6. If any missing: halt.
-
-### -1.6 Write Permission Test
-
-If `--dry-run` is NOT active: create a temporary marker file in `claude/cycles/<cycle_id>/` and confirm it can be written. Remove it. If write fails: halt.
-
-If `--dry-run` is active: skip this check.
+### -1.4/-1.5/-1.6 Common Preflight — Required Files, Roles, and Write Test
+Apply `claude/system/shared/preflight_common.md` (all three sub-checks) with:
+- required_files: per Section 4 (backlog slice subject to the source-of-truth rule resolved in STEP 0)
+- required_roles: per Section 6
+- write_test_path: claude/cycles/\<cycle_id\>/.write_test (mark `--dry-run: skip` if `--dry-run` is active)
 
 ---
 

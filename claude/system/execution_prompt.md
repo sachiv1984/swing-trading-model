@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.22
-**Last Updated:** 2026-05-16
+**Version:** 3.23
+**Last Updated:** 2026-05-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -376,23 +376,21 @@ Shared standards (escalation format, halt report format, gh CLI commands, identi
 
 Purpose: fail fast before any execution begins.
 
-### -1.1 Required Files and Backlog Slice Source
-
-Verify:
-- `.claude_current_state.json` (and `active_cycle` is populated)
-- `claude/charter/team_charter.md`
-- `claude/charter/document_lifecycle_guide.md`
-- `claude/strategy/strategy_rules.md`
-- `claude/cycles/<cycle_id>/sprint_backlog.md`
-- `claude/cycles/<cycle_id>/sprint_goal.md`
+### -1.1 Common Preflight — Required Files Present
+Apply `claude/system/shared/preflight_common.md` (sub-check 1 only) with:
+- required_files:
+  - .claude_current_state.json (and `active_cycle` populated)
+  - claude/charter/team_charter.md
+  - claude/charter/document_lifecycle_guide.md
+  - claude/strategy/strategy_rules.md
+  - claude/cycles/\<cycle_id\>/sprint_backlog.md
+  - claude/cycles/\<cycle_id\>/sprint_goal.md
 
 Check `amended_backlog_slice_path` in `.claude_current_state.json`:
 - If present and non-empty: this is the authoritative backlog slice. Verify the file exists — if not, halt and report. Record this path for use throughout this run.
 - If absent or empty: verify `claude/cycles/<cycle_id>/stage4_backlog_slice.md` exists — if not, halt and report. Record this path for use throughout this run.
 
 **Sprint backlog index (IMP-25):** Load `claude/cycles/<cycle_id>/sprint_backlog_index.json` if it exists. When `--epic` is specified, use the index to identify which ST items belong to the scoped EPIC and their `backlog_slice_refs` — read only those items from `sprint_backlog.md` rather than the full document. If the index does not exist: fall back to reading the full `sprint_backlog.md`.
-
-If any required file is missing: halt and report exactly which.
 
 ### -1.2 Active Cycle Status Check (Hard Gate)
 
@@ -428,13 +426,10 @@ If any in-scope ST item lacks acceptance criteria:
 - In `strict` mode: halt and report which items are missing criteria.
 - In `standard` mode: flag as a blocker, classify the item as `delegated_decision`, and continue with remaining items.
 
-### -1.6 Required Authority Roles Exist
-
-Verify agent files in `claude/agents/` for all required roles (Section 6). If any missing: halt.
-
-### -1.7 Write Permission Test
-
-Create `claude/cycles/<cycle_id>/.write_test` and confirm it can be written. Remove it immediately. If write fails: halt. If not removed here, STEP 0 must clean it up before proceeding.
+### -1.6/-1.7 Common Preflight — Roles and Write Test
+Apply `claude/system/shared/preflight_common.md` (sub-checks 2 and 3) with:
+- required_roles: per Section 6 (Agent Integrity)
+- write_test_path: claude/cycles/\<cycle_id\>/.write_test
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 2.2
-**Last Updated:** 2026-05-15
+**Version:** 2.3
+**Last Updated:** 2026-05-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -187,9 +187,9 @@ Sign-off check (STRUCTURAL — two-tier, AUD-2026-04-11-005):
 
 If any merged EPIC is missing its qa_evidence log entirely: halt (Tier 1 applies). Verification cannot proceed without signed QA evidence for every merged EPIC.
 
-### -1.4 Required Files Present
-
-Verify all files in Section 4 exist. If any are missing: halt and report exactly which.
+### -1.4 Common Preflight — Required Files Present
+Apply `claude/system/shared/preflight_common.md` (sub-check 1 only) with:
+- required_files: per Section 4
 
 ---
 
