@@ -10,6 +10,7 @@ The prompt itself contains only the current version — full history is here.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.29 | 2026-05-17 | Governance pattern consolidation. STEP -1 preflight: -1.1 (Required Files Present) replaced with reference to `shared/preflight_common.md` sub-check 1; -1.3 (Required Authority Roles Exist) and -1.4 (Write Permission Test) merged into single reference to `shared/preflight_common.md` sub-checks 2 and 3. -1.2 (Verify Release Exists on Roadmap) preserved inline between the two references. Engine-specific advisories -1.5 through -1.9 unchanged. Authority: Head of Specs Team (governance pattern consolidation 2026-05-17). |
 | 2.26 | 2026-04-11 | AUD-2026-04-11-009: STEP 1 — §1.3 Design-Gate Language Scan added (advisory). After Provisional-Target advisory, scan scope candidates for "Product Owner to decide", "design decision required", "pending design", "requires UX decision"; flag in run manifest per item; record count as "Design dependency scan: N item(s) flagged". Non-blocking. Closes 4-cycle deferred-monitor carry (first filed 2026-03-24, v2.3 Phase 1 lessons_learnt). |
 | 2.21 | 2026-03-22 | AUD-2026-03-21-004: STEP 4 stage4_issue_manifest.json inline schema removed — replaced with reference to `shared_standards.md §16.2` (canonical schema home). Saves ~200 tokens/cycle; SST compliance restored. |
 | 2.20 | 2026-03-16 | AUD-2026-03-13-005: STEP -1.8 Amendment_In_Progress inline halt block replaced with prose reference to `shared_standards.md §5` — saves ~80 tokens/cycle, SST improved. |

@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.89
-**Last Updated:** 2026-05-16
+**Version:** 3.90
+**Last Updated:** 2026-05-17
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.28)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.29)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -847,7 +847,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.22)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.23)
 
 ### 8.1 Invocation
 
@@ -936,7 +936,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.2)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.3)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1022,7 +1022,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.8)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.9)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1408,8 +1408,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.89 |
-| Last Updated | 2026-05-16 |
+| Version | 3.90 |
+| Last Updated | 2026-05-17 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1417,13 +1417,13 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.2 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.28 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.29 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.2 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.22 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.2 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.23 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.3 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.8 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.9 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.0 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1444,6 +1444,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.90 | 2026-05-17 | **Governance pattern consolidation — preflight common checks extracted to `shared/preflight_common.md` v1.0.** §6B source prompt header updated v2.28→v2.29. §8 source prompt header updated v3.22→v3.23. §9 source prompt header updated v2.2→v2.3. §10 source prompt header updated v2.8→v2.9. §14 Release Engine Source v2.28→v2.29; Execution Engine Source v3.22→v3.23; Verification Engine Source v2.2→v2.3; Post-Ship Closure Engine v2.8→v2.9. §14 Version 3.89→3.90/2026-05-17. Changes: Required Files Present, Required Authority Roles Exist, and Write Permission Test blocks extracted from STEP -1 preflight sections of release_planning (−1.1/−1.3/−1.4), execution (−1.1/−1.6/−1.7), delivery_verification (−1.4), and post_ship_closure (−1.4/−1.5/−1.6) into new shared module `claude/system/shared/preflight_common.md`. Each engine now invokes the module with engine-specific parameter blocks; engine-specific advisories remain inline. Sprint Planning excluded (different numbered-list preflight style). Authority: Head of Specs Team (governance pattern consolidation 2026-05-17). |
 | 3.89 | 2026-05-16 | **execution_prompt.md v3.21→v3.22 — ST-09/ST-10 (EPIC-04, v3.6): §13 gate story pattern + OA-RP-01–04 closure.** §8 source prompt header updated v3.21→v3.22. §14 Execution Engine Source v3.21→v3.22. §14 Version 3.88→3.89/2026-05-16. Changes: §5.1 — §13 gate story pattern (LL-v3.5-SP-01) added: when an arc feature requires a strategy/compliance review gate, scope the review as Sprint 1 `delegated_decision` story gating implementation stories to Sprint 2; validated in v3.5 IT-06. ST-10 patches (deviations_filed semantics, §5.3 three-field verification readiness block, §5.4 lessons_learnt_cycle.md reference) confirmed pre-met in v3.21 — no additional changes required. Authority: Head of Specs Team (ST-09+ST-10, 2026-05-16). |
 | 3.88 | 2026-05-16 | **execution_prompt.md v3.20→v3.21 — STEP 1 simplified to verify-only.** §8 source prompt header updated v3.20→v3.21. §14 Execution Engine Source v3.20→v3.21. §14 Version 3.87→3.88/2026-05-16. Change: STEP 1 (GitHub Issue Preflight) changed from issue creator to verifier — `sync gh` at sprint planning seal is now the canonical issue creation point; STEP 1 records issue numbers and notes a process gap if any are missing, but does not halt; minimal fallback creation retained for resilience. Authority: Head of Specs Team (2026-05-16). |
 | 3.87 | 2026-05-16 | **sprint_planning_prompt.md v3.1→v3.2 — `sync gh` integrated as final step of STEP 8.** §7 source prompt header updated v3.1→v3.2. §14 Sprint Planning Engine v3.1→v3.2. §14 Version 3.86→3.87/2026-05-16. Change: STEP 8 (Commit) — after successful push, `sync gh` (CLAUDE.md §4) is called to create GitHub issues for all ST items with correct `v<X.Y>`, `sprint-N`, and `EPIC-xx` labels. This makes sprint planning the canonical issue creation point; execution STEP 1 is now verify-only. Authority: Head of Specs Team (2026-05-16). |

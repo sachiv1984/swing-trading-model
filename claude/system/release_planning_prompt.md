@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.28
-**Last Updated:** 2026-05-14
+**Version:** 2.29
+**Last Updated:** 2026-05-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -259,15 +259,14 @@ If state cannot be updated: halt.
 ## STEP -1 — Preflight Gate (Hard Gate)
 Purpose: fail fast on missing prerequisites.
 
-### -1.1 Required Files Present
-Verify these exist:
-- claude/charter/team_charter.md
-- claude/charter/document_lifecycle_guide.md
-- claude/strategy/strategy_rules.md
-- claude/roadmap/current_roadmap.md
-- claude/backlog/backlog.md
-
-If any are missing: halt and report exactly which.
+### -1.1 Common Preflight — Required Files Present
+Apply `claude/system/shared/preflight_common.md` (sub-check 1 only) with:
+- required_files:
+  - claude/charter/team_charter.md
+  - claude/charter/document_lifecycle_guide.md
+  - claude/strategy/strategy_rules.md
+  - claude/roadmap/current_roadmap.md
+  - claude/backlog/backlog.md
 
 **Issue creation prerequisite (IMP-48):** If `--issues gh` or `--issues import` is specified: verify `claude/system/gh_issue_template.md` exists. If missing: halt — "gh_issue_template.md not found — issue creation will fail."
 
@@ -275,13 +274,10 @@ If any are missing: halt and report exactly which.
 Open `claude/roadmap/current_roadmap.md` and confirm the requested `--version` exists as a planned release section.
 - If not found: halt (this routine cannot invent new releases).
 
-### -1.3 Required Authority Roles Exist (Agent Integrity)
-Verify agent files exist under `claude/agents/` for the minimum required roles listed above and contain the correct `**Role:**` line.
-
-If any missing/malformed: halt.
-
-### -1.4 Write Permission Test (Non-Destructive)
-Create `claude/cycles/<cycle_id>/.write_test` and confirm it can be written. Remove it immediately. If write fails: halt. If the file is not removed here (e.g. due to an unexpected error), STEP 0 must clean it up before proceeding — do not leave `.write_test` files in cycle folders.
+### -1.3/-1.4 Common Preflight — Roles and Write Test
+Apply `claude/system/shared/preflight_common.md` (sub-checks 2 and 3) with:
+- required_roles: per Section 6 (Agent Integrity)
+- write_test_path: claude/cycles/\<cycle_id\>/.write_test
 
 ### -1.5 Prior Cycle Lessons Learnt Closure Check (Advisory — not a hard gate)
 
