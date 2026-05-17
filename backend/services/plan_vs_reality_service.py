@@ -12,6 +12,7 @@ from database import (
     get_position_by_id,
     get_trade_plans_by_position,
     ensure_plan_vs_reality_columns,
+    ensure_planned_entry_price_column,
 )
 from utils.formatting import decimal_to_float
 
@@ -87,10 +88,8 @@ def compute_plan_vs_reality(trade: Dict, position: Optional[Dict], trade_plan: D
     planned_stop = _to_float(trade_plan.get("planned_stop_price"))
     stop_discipline = _compute_stop_discipline(initial_stop, planned_stop)
 
-    # planned_entry_price: use signal entry_price if available via position — not yet snapshotted to trade_plans
-    # Per arc4_data_requirements.md §3.1: planned_entry_price linkage may break if signal is updated.
-    # Flag as not_captured until the snapshot field is added in a future sprint.
-    entry_delta_pct = None
+    planned_entry = _to_float(trade.get("planned_entry_price"))
+    entry_delta_pct = _compute_entry_delta_pct(entry_price, planned_entry)
 
     exit_reason = trade.get("exit_reason")
     early_exit_conditions = trade_plan.get("early_exit_conditions")
@@ -129,6 +128,7 @@ def get_plan_vs_reality_for_trade(trade_id: str) -> Dict:
         ValueError: if trade_id not found, or no trade plan linked.
     """
     ensure_plan_vs_reality_columns()
+    ensure_planned_entry_price_column()
 
     trade = get_trade_by_id(trade_id)
     if trade is None:

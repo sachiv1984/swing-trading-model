@@ -2484,6 +2484,10 @@ components:
               entry_note: { type: string, nullable: true }
               exit_note: { type: string, nullable: true }
               tags: { type: array, items: { type: string } }
+              planned_entry_price:
+                type: number
+                nullable: true
+                description: "Planned entry price snapshotted from linked signal at trade close. null for trades without a linked trade plan or pre-Arc4 trades."
 
     CashTransactionRequest:
       type: object

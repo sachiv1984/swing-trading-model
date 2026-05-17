@@ -252,11 +252,11 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                     shares, entry_price, exit_price, total_cost, gross_proceeds,
                     net_proceeds, entry_fees, exit_fees, pnl, pnl_pct,
                     holding_days, exit_reason, entry_fx_rate, exit_fx_rate,
-                    entry_note, exit_note, tags, fill_price
+                    entry_note, exit_note, tags, fill_price, planned_entry_price
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s, %s
+                    %s, %s, %s, %s, %s
                 )
                 RETURNING *
             """, (
@@ -283,7 +283,8 @@ def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
                 trade_data.get('entry_note'),
                 trade_data.get('exit_note'),
                 trade_data.get('tags'),
-                trade_data.get('fill_price')
+                trade_data.get('fill_price'),
+                trade_data.get('planned_entry_price'),
             ))
             return cur.fetchone()
 
@@ -1116,6 +1117,19 @@ def ensure_plan_vs_reality_columns():
             )
             cur.execute(
                 "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS planned_stop_price NUMERIC(20, 6)"
+            )
+        conn.commit()
+
+
+def ensure_planned_entry_price_column():
+    """Add planned_entry_price to trade_history (idempotent).
+
+    Arc 4 PO-01 migration — ST-01 (EPIC-01, v3.6). Nullable; existing records default null.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS planned_entry_price NUMERIC(20, 6)"
             )
         conn.commit()
 

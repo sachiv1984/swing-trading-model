@@ -60,7 +60,7 @@
       "status": "done",
       "branch": "exec/2026-05-16__release-v3.6/EPIC-03",
       "pr_number": 414,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-16__release-v3.6/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -134,22 +134,23 @@
       }
     },
     "EPIC-01": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-05-16__release-v3.6/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 415,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-05-16__release-v3.6/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/e2e/plan-vs-reality.spec.js",
         "tests/test_position_lifecycle.py",
-        "tests/test_trade_service.py"
+        "tests/test_trade_service.py",
+        "tests/test_plan_vs_reality.py"
       ],
       "stories": {
         "ST-01": {
           "title": "Capture planned_entry_price at trade entry",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 406,
           "branch": "exec/2026-05-16__release-v3.6/EPIC-01",
@@ -157,15 +158,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-17T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/arc4/arc4_data_requirements.md \u00a73.1"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.pending-commit",
           "sign_off_record": null,
-          "notes": "Must rebase onto main after EPIC-03 merges before finalising openapi.yaml and backend/routers/test.py. Schema migration required."
+          "notes": "AC-01: planned_entry_price column added via ensure_planned_entry_price_column() (ALTER TABLE IF NOT EXISTS). AC-02: exit_position() looks up signal's current_price via get_signals() for best-effort snapshot; null on no linked plan/signal (pre-arc4 safe). AC-03: _compute_entry_delta_pct() computes (actual-planned)/planned*100; returns null when planned absent. AC-04: compute_plan_vs_reality() reads trade['planned_entry_price'] and populates entry_delta_pct in response. AC-05: null planned_entry_price \u2192 null entry_delta_pct, no error. 17 unit tests in tests/test_plan_vs_reality.py, all pass. openapi.yaml TradeHistoryResponse updated with planned_entry_price field. No deviation."
         },
         "ST-02": {
           "title": "Update PlanVsReality component to display entry_delta_pct",
@@ -198,20 +199,21 @@
     "ST-07",
     "ST-08",
     "ST-09",
-    "ST-10"
+    "ST-10",
+    "ST-01"
   ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-04"
+      "EPIC-04",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-01"
     ],
     "all_merged": false,
     "merge_order": "EPIC-04 \u2192 EPIC-03 \u2192 EPIC-01",
-    "note": "EPIC-01 must rebase onto main after EPIC-03 merges (openapi.yaml conflict expected)"
+    "note": "EPIC-01 rebased onto main after EPIC-03 merge"
   },
   "sealed": false,
   "sealed_utc": null
