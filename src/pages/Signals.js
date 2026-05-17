@@ -167,6 +167,9 @@ export default function SignalsPage() {
     return 0;
   });
 
+  // Enforce top_n limit after all filters and sorting
+  filteredSignals = filteredSignals.slice(0, topN);
+
   // Calculate stats only for NEW signals
   const newSignals = filteredSignals.filter(s => s.status === "new");
   const totalCapital = newSignals.reduce((sum, s) => sum + (s.total_cost || 0), 0);
