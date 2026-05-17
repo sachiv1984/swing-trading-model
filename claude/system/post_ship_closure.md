@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.7
-**Last Updated:** 2026-05-15
+**Version:** 2.8
+**Last Updated:** 2026-05-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -631,16 +631,19 @@ Pass through `--dry-run` if `run post-ship` was invoked with `--dry-run`.
 Output: backlog health report at `claude/backlog/backlog_health_<YYYYMMDD>.md`.
 On completion: confirm `last_groom_backlog_utc` written to `.claude_current_state.json`.
 
-### Advisory — Ideas Pipeline Health Check
+## STEP 12.5 — Ideas Housekeeping (Mandatory)
 
-After `groom backlog` completes, count the remaining active backlog items (items not marked COMPLETE, CLOSED, or ARCHIVED).
+Invoke `claude/system/ideas_housekeeping_prompt.md` as a subroutine — **read: all execution steps.**
+Pass through `--dry-run` if `run post-ship` was invoked with `--dry-run`.
 
-If the active backlog count is **5 or fewer**:
-- Scan `claude/ideas/ideas_register.md` for ideas with `Status: Parked-cycle-<n>` whose `Park Rationale` references a specific backlog item ID (any `BLG-` reference).
-- Count how many of those referenced items have now shipped (present in a prior cycle's `sprint_backlog.md` as a completed ST story, or marked COMPLETE in `backlog.md`).
-- If M ≥ 1 such ideas exist: record in the closure record §6 Outstanding Actions the disposition requirement, and record for the Advisory Summary block — "⚠ Ideas Pipeline: active backlog nearly clear (N items). M parked ideas have gate conditions that may now be satisfied — consider `run ideas` before next roadmap run."
+This subroutine handles three tasks:
+- **STEP 1** — Archive terminal rows from `claude/ideas/ideas_register.md` to `claude/ideas/ideas_register_archive.md`
+- **STEP 2** — Review `claude/ideas/rejected_but_strong.md` revival conditions against the just-closed cycle
+- **STEP 3** — Ideas pipeline health check (near-empty backlog advisory)
 
-This check is advisory only — it does not halt closure or block STEP 13.
+The subroutine returns an advisory block for inclusion in the Advisory Summary. It does not commit — STEP 13 owns the commit.
+
+On completion: record subroutine outcome (rows archived, revival advisory, pipeline advisory) in closure_state.json `steps.step_12_5_ideas_housekeeping`.
 
 ---
 
@@ -660,6 +663,8 @@ git add docs/System_status_report.md         (if modified)
 git add docs/operations/validation_system.md (if modified)
 git add docs/specs/Specs_Index.md            (if modified)
 git add <any template or prompt files updated by lessons learnt actions>
+git add claude/ideas/ideas_register.md
+git add claude/ideas/ideas_register_archive.md   (if modified or created)
 git add claude/cycles/<cycle_id>/lessons_learnt_closure.md
 git add claude/cycles/<cycle_id>/closure_record.md
 git add claude/cycles/<cycle_id>/closure_state.json
@@ -670,7 +675,7 @@ git push origin <current-branch>
 
 If git operations are unavailable: output the exact files to stage and the commit message. Mark as "Ready to commit."
 
-**Batch checkpoint 3 — update `closure_state.json`:** Set `steps.step_9_closure_record = pass`, `steps.step_10_global_state = pass`, `steps.step_11_manage_roadmap = complete`, `steps.step_12_groom_backlog = complete`, `steps.step_13_commit = pass`, `status = "Closed"`, `closure_status = "Closed | Closed_with_actions"`, `last_updated_utc = <now>`. Include this file in the commit above.
+**Batch checkpoint 3 — update `closure_state.json`:** Set `steps.step_9_closure_record = pass`, `steps.step_10_global_state = pass`, `steps.step_11_manage_roadmap = complete`, `steps.step_12_groom_backlog = complete`, `steps.step_12_5_ideas_housekeeping = complete`, `steps.step_13_commit = pass`, `status = "Closed"`, `closure_status = "Closed | Closed_with_actions"`, `last_updated_utc = <now>`. Include this file in the commit above.
 
 ---
 
@@ -684,7 +689,7 @@ After STEP 13 completes, output all advisories raised during this run as a singl
 ──────────────────────────────────────────────────────
 ```
 
-Advisories sourced from: STEP 0 (audit cadence), STEP 6 (endpoint drift), STEP 12 (ideas pipeline), and any other non-blocking flags raised during execution. If no advisories were raised: output "Advisory Summary: None."
+Advisories sourced from: STEP 0 (audit cadence), STEP 6 (endpoint drift), STEP 12.5 (ideas archive, rejected-but-strong revival, pipeline health), and any other non-blocking flags raised during execution. If no advisories were raised: output "Advisory Summary: None."
 
 ---
 

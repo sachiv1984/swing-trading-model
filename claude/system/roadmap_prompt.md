@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 6.1
-**Last Updated:** 2026-05-15
+**Version:** 6.2
+**Last Updated:** 2026-05-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -325,6 +325,8 @@ Tag items: Obsolete? Duplicate? Still strategically aligned? Quick wins ignored?
 
 ### STEP 4 — Idea Review and Document Management
 Authority: Facilitator (review), Product Owner (classification)
+
+**Pre-clean (advisory):** If `claude/ideas/ideas_housekeeping_prompt.md` has not been invoked since the last post-ship closure (i.e. not run as part of STEP 12.5 of the most recently completed post-ship run), invoke it now as a subroutine before loading ideas. This ensures terminal rows are archived before classification begins. If already run at post-ship: skip.
 
 Load all rows with Status: Submitted, Parked, or Parked-cycle-<n> from `claude/ideas/ideas_register.md`. If none: record "No ideas available this cycle" and continue to STEP 5.
 
