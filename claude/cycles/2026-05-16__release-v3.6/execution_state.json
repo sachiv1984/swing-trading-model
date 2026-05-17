@@ -4,11 +4,11 @@
   "backlog_slice_source": "claude/cycles/2026-05-16__release-v3.6/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-16T08:46:26Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-05-17T00:00:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-05-17T10:30:00Z",
   "epics": {
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-16__release-v3.6/EPIC-04",
       "pr_number": 413,
       "pr_status": "merged",
@@ -17,7 +17,7 @@
       "test_scenarios": [],
       "stories": {
         "ST-09": {
-          "title": "execution_prompt.md \u00a713 gate story pattern formalisation",
+          "title": "execution_prompt.md §13 gate story pattern formalisation",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -31,9 +31,9 @@
           "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pending-commit",
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "no prior spec applicable \u2014 governance prompt patch per v3.5 lessons_learnt_closure.md deferred action #1; also closes OA-RP-01\u201304 (missing prompt_change_log.md entries). AC-01: \u00a713 gate story pattern added to \u00a75.1 (LL-v3.5-SP-01). AC-02: version v3.21\u2192v3.22; OPERATIONAL_GUIDE \u00a78 + \u00a714 updated. AC-03: prompt_change_log.md entry appended. AC-04: retroactive v3.18\u2192v3.19 entry added; OA-RP-01/03/04 pre-cleared in v3.5. Deviation check: no deviation."
+          "notes": "no prior spec applicable — governance prompt patch per v3.5 lessons_learnt_closure.md deferred action #1; also closes OA-RP-01–04 (missing prompt_change_log.md entries). AC-01: §13 gate story pattern added to §5.1 (LL-v3.5-SP-01). AC-02: version v3.21→v3.22; OPERATIONAL_GUIDE §8 + §14 updated. AC-03: prompt_change_log.md entry appended. AC-04: retroactive v3.18→v3.19 entry added; OA-RP-01/03/04 pre-cleared in v3.5. Deviation check: no deviation. deviations_filed corrected at sprint close — No spec deviation found."
         },
         "ST-10": {
           "title": "execution_prompt.md metadata + sprint_close + Phase 3 patches",
@@ -50,14 +50,14 @@
           "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pending-commit",
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "no prior spec applicable \u2014 governance prompt patches per v3.5 lessons_learnt_closure.md deferred actions #2, #3, #4. Sequential after ST-09 (same commit). AC-01 PRE-MET: deviations_filed semantics present in \u00a73.1.A step 10 (v3.21). AC-02 PRE-MET: three-field verification readiness block present in \u00a75.3 (v3.21). AC-03 PRE-MET: lessons_learnt_cycle.md Phase 3 reference present in \u00a75.4 (v3.21). AC-04/05: version bump v3.21\u2192v3.22 and prompt_change_log.md entry coordinated with ST-09. Deviation check: no deviation."
+          "notes": "no prior spec applicable — governance prompt patches per v3.5 lessons_learnt_closure.md deferred actions #2, #3, #4. Sequential after ST-09 (same commit). AC-01 PRE-MET: deviations_filed semantics present in §3.1.A step 10 (v3.21). AC-02 PRE-MET: three-field verification readiness block present in §5.3 (v3.21). AC-03 PRE-MET: lessons_learnt_cycle.md Phase 3 reference present in §5.4 (v3.21). AC-04/05: version bump v3.21→v3.22 and prompt_change_log.md entry coordinated with ST-09. Deviation check: no deviation. deviations_filed was already true."
         }
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-16__release-v3.6/EPIC-03",
       "pr_number": 414,
       "pr_status": "merged",
@@ -84,10 +84,10 @@
             "docs/specs/api_contracts/research_endpoint.md",
             "docs/qa/test_scenarios/research_view_scenarios.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.pending-commit",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Closes BLG-FE-32, TEST-GAP-EPIC-03-v33. SC-RV-18 and SC-RV-19 tests added to tests/e2e/pre-trade-research.spec.js with RESEARCH_REGIME_NULL and RESEARCH_ALL_NULL payloads. Protocol files updated: research_view_protocol.md \u00a7AC-RV-13 and research_view_regression_protocol.md \u00a72.2. research_view_scenarios.md v1.1 changelog entry added. No deviation."
+          "notes": "Closes BLG-FE-32, TEST-GAP-EPIC-03-v33. SC-RV-18 and SC-RV-19 tests added to tests/e2e/pre-trade-research.spec.js with RESEARCH_REGIME_NULL and RESEARCH_ALL_NULL payloads. Protocol files updated: research_view_protocol.md §AC-RV-13 and research_view_regression_protocol.md §2.2. research_view_scenarios.md v1.1 changelog entry added. No deviation. deviations_filed corrected at sprint close — No spec deviation found."
         },
         "ST-07": {
           "title": "Research endpoint HTTP error code differentiation",
@@ -103,12 +103,12 @@
           "completed_utc": "2026-05-16T10:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/research_endpoint.md \u00a7Error Responses"
+            "docs/specs/api_contracts/research_endpoint.md §Error Responses"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.pending-commit",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Closes BLG-SPEC-27. backend/routers/research.py: _get_price_data() now returns _YF_UNAVAILABLE/_TICKER_NOT_FOUND sentinels; get_research() returns 404/503 accordingly. Partial failures still 200+nulls (AC-03). src/pages/Research.js: error state shows specific message for 404/503/other. research_endpoint.md v1.2 \u00a7Error Responses updated; DEV-v33-02 resolved. openapi.yaml 404/503 added. No deviation."
+          "notes": "Closes BLG-SPEC-27. backend/routers/research.py: _get_price_data() now returns _YF_UNAVAILABLE/_TICKER_NOT_FOUND sentinels; get_research() returns 404/503 accordingly. Partial failures still 200+nulls (AC-03). src/pages/Research.js: error state shows specific message for 404/503/other. research_endpoint.md v1.2 §Error Responses updated; DEV-v33-02 resolved. openapi.yaml 404/503 added. No deviation. deviations_filed corrected at sprint close — No spec deviation found."
         },
         "ST-08": {
           "title": "Research page UX fix: regime lozenge and font consistency",
@@ -127,17 +127,17 @@
             "docs/frontend/design_system.md"
           ],
           "deviations_filed": true,
-          "last_completed_substep": "3.1.A.pending-commit",
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "Closes BLG-FE-26. AC-01: whitespace-nowrap added to SignalBadge span \u2014 prevents two-line wrapping. AC-02: code review confirms design_system.md conformance (text-xs font-medium); human staging deferred \u2014 backlog item filed (BLG-UX-ST08-staging). AC-03: no regression \u2014 only SignalBadge className modified. Deviation: AC-02 human staging deferred to delivery verification staging run."
+          "notes": "Closes BLG-FE-26. AC-01: whitespace-nowrap added to SignalBadge span — prevents two-line wrapping. AC-02: code review confirms design_system.md conformance (text-xs font-medium); human staging deferred — backlog item filed (BLG-UX-ST08-staging). AC-03: no regression — only SignalBadge className modified. Deviation: AC-02 human staging deferred to delivery verification staging run."
         }
       }
     },
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-16__release-v3.6/EPIC-01",
       "pr_number": 415,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-16__release-v3.6/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -161,12 +161,12 @@
           "completed_utc": "2026-05-17T00:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/arc4/arc4_data_requirements.md \u00a73.1"
+            "docs/specs/arc4/arc4_data_requirements.md §3.1"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.pending-commit",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "AC-01: planned_entry_price column added via ensure_planned_entry_price_column() (ALTER TABLE IF NOT EXISTS). AC-02: exit_position() looks up signal's current_price via get_signals() for best-effort snapshot; null on no linked plan/signal (pre-arc4 safe). AC-03: _compute_entry_delta_pct() computes (actual-planned)/planned*100; returns null when planned absent. AC-04: compute_plan_vs_reality() reads trade['planned_entry_price'] and populates entry_delta_pct in response. AC-05: null planned_entry_price \u2192 null entry_delta_pct, no error. 17 unit tests in tests/test_plan_vs_reality.py, all pass. openapi.yaml TradeHistoryResponse updated with planned_entry_price field. No deviation."
+          "notes": "AC-01: planned_entry_price column added via ensure_planned_entry_price_column() (ALTER TABLE IF NOT EXISTS). AC-02: exit_position() looks up signal's current_price via get_signals() for best-effort snapshot; null on no linked plan/signal (pre-arc4 safe). AC-03: _compute_entry_delta_pct() computes (actual-planned)/planned*100; returns null when planned absent. AC-04: compute_plan_vs_reality() reads trade['planned_entry_price'] and populates entry_delta_pct in response. AC-05: null planned_entry_price → null entry_delta_pct, no error. 17 unit tests in tests/test_plan_vs_reality.py, all pass. openapi.yaml TradeHistoryResponse updated with planned_entry_price field. No deviation. deviations_filed corrected at sprint close — No spec deviation found."
         },
         "ST-02": {
           "title": "Update PlanVsReality component to display entry_delta_pct",
@@ -182,12 +182,12 @@
           "completed_utc": "2026-05-17T00:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/frontend/pages/trade_history.md \u00a7Expandable Journal Row \u2014 Plan vs Reality"
+            "docs/specs/frontend/pages/trade_history.md §Expandable Journal Row — Plan vs Reality"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.pending-commit",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.done",
           "sign_off_record": null,
-          "notes": "AC-01: entry_delta_pct non-null → '+X.XX%'/'-X.XX%' with emerald (negative/favorable) or rose (positive/unfavorable) colour — SC-PVR-03a/b. AC-02: null → '[data-testid=entry-delta-historical]' with muted 'data not available for historical trades' — SC-PVR-04a/b. AC-03: regression tests SC-PVR-05a/b/c confirm R Achieved, Exit Alignment, EXIT ZONE badge all unaffected. 9 Playwright tests added to tests/e2e/plan-vs-reality.spec.js. No deviation."
+          "notes": "AC-01: entry_delta_pct non-null → '+X.XX%'/'-X.XX%' with emerald (negative/favorable) or rose (positive/unfavorable) colour — SC-PVR-03a/b. AC-02: null → '[data-testid=entry-delta-historical]' with muted 'data not available for historical trades' — SC-PVR-04a/b. AC-03: regression tests SC-PVR-05a/b/c confirm R Achieved, Exit Alignment, EXIT ZONE badge all unaffected. 9 Playwright tests added to tests/e2e/plan-vs-reality.spec.js. No deviation. deviations_filed corrected at sprint close — No spec deviation found."
         }
       }
     }
@@ -207,15 +207,14 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-04",
-      "EPIC-03"
-    ],
-    "epics_pending": [
+      "EPIC-03",
       "EPIC-01"
     ],
-    "all_merged": false,
-    "merge_order": "EPIC-04 \u2192 EPIC-03 \u2192 EPIC-01",
-    "note": "EPIC-01 rebased onto main after EPIC-03 merge"
+    "epics_pending": [],
+    "all_merged": true,
+    "merge_order": "EPIC-04 → EPIC-03 → EPIC-01",
+    "note": "EPIC-01 rebased onto main after EPIC-03 merge. All EPICs confirmed merged at sprint close 2026-05-17."
   },
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-05-17T10:30:00Z"
 }
