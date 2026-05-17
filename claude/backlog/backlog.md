@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-15 (groom backlog — v3.5 post-ship: 6 items archived BLG-SPEC-29/30/31, BLG-QA-19, BLG-GOV-21/22; release slice §12 removed)
+**Last Updated:** 2026-05-17 (v3.6 sprint: BLG-QA-20 + BLG-OPS-16 filed — database stub consolidation and pyc git-tracking cleanup)
 **Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice
@@ -257,6 +257,29 @@ research_view_protocol.md §2.3 notes SC-RV-18 (regime null only) and SC-RV-19 (
 
 ---
 
+### BLG-QA-20 — Consolidate database stub files into a shared pytest conftest fixture
+**Priority:** P2 (Medium)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner
+**Source:** v3.6 sprint execution 2026-05-17 — recurring stub-sync CI failure (ST-01 root-cause analysis)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v3.7 or next sprint touching backend service tests
+
+**Problem**
+Four test files (`test_alerts_service.py`, `test_watchlist_service.py`, `test_trade_service.py`, `test_service_coverage.py`) each maintain their own hand-rolled `types.ModuleType("database")` stub injected into `sys.modules`. Whenever a new function is added to `position_service.py`'s `database` imports, it must be manually added to all four stubs or CI fails with `ImportError: cannot import name '...' from 'database' (unknown location)`. This has caused at least one multi-hour CI debugging session.
+
+**Scope**
+- Create `tests/conftest.py` with a session-scoped database stub fixture that includes all current database function mocks
+- Remove the redundant per-file stub injection blocks from the four test files
+- Verify 69+ tests still collected and pass
+
+**Acceptance Criteria**
+- Single source of truth for database stub in `tests/conftest.py`
+- The four test files no longer each define their own `types.ModuleType("database")` block
+- All existing tests pass; no new collection errors
+
+---
+
 ## 6. Operations & Infrastructure Backlog
 
 ---
@@ -292,6 +315,29 @@ Twenty-two endpoints shipped in v2.8/v2.9/v3.0/v3.1/v3.4/v3.5 are absent from `d
 ---
 
 *BLG-OPS-15 (Research endpoint latency monitoring) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
+
+---
+
+### BLG-OPS-16 — Remove tracked `backend/__pycache__` files from git and add to .gitignore
+**Priority:** P3 (Low)
+**Type:** Operations / Repository Hygiene
+**Owner:** Infrastructure & Operations Owner
+**Source:** v3.6 sprint execution 2026-05-17 — stale pyc files caused spurious CI debugging (red herring during ST-01 stub investigation)
+**Effort:** XS (~0.5 hour)
+**Provisional-Target:** Next available sprint with repository hygiene slot
+
+**Problem**
+Compiled Python bytecode files (`backend/__pycache__/*.pyc`) are tracked in git. Stale pyc files (e.g. `database.cpython-310.pyc` lacking recently added functions) cause misleading CI diagnostics: they appear to be the cause of import errors when the real cause is `sys.modules` stub contamination. Additionally, pyc files built for Python 3.10 are silently ignored by CI (Python 3.11), making them pure noise.
+
+**Scope**
+- Run `git rm -r --cached backend/__pycache__/` to untrack all pyc files
+- Add `__pycache__/` and `*.pyc` to `.gitignore`
+- Commit; verify CI is unaffected
+
+**Acceptance Criteria**
+- No `*.pyc` or `__pycache__/` files tracked in git
+- `.gitignore` updated
+- CI green after change
 
 ---
 
