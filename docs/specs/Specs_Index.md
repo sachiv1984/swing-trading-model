@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-14
+**Last Updated:** 2026-05-17
 
 ---
 
@@ -548,11 +548,12 @@ Identified during delivery verification (verification_report.md §6 — TSG-v33-
 ### 19.3 TSG-v33-03 — EPIC-03: SC-RV-18 and SC-RV-19 null-handling scenarios not in test library
 
 **Identified:** 2026-05-13 (delivery verification 2026-05-09__release-v3.3)
-**Status:** Open — backlog item TEST-GAP-EPIC-03-v33
+**Status:** ✅ Resolved — 2026-05-17 (cycle: 2026-05-16__release-v3.6)
 **Owner:** QA & Testing Owner
 **Gap:** research_view_protocol.md §2.3 flags SC-RV-18 (regime null only) and SC-RV-19 (all fields null — degraded mode) as needing explicit Playwright scenarios. These were not authored at sprint close. When research view frontend is implemented, these scenarios must be added to research_view_scenarios.md.
 **Resolution target:** v3.4 (before research view frontend implementation)
 **Backlog item:** TEST-GAP-EPIC-03-v33 (filed 2026-05-13)
+**Resolved by:** ST-06 (v3.6 EPIC-03) — SC-RV-18 and SC-RV-19 Playwright tests added to tests/e2e/pre-trade-research.spec.js; research_view_scenarios.md v1.1; research_view_regression_protocol.md §AC-RV-13 updated.
 
 ---
 
@@ -568,6 +569,21 @@ Identified during delivery verification (verification_report.md §6 — TSG-v34-
 **Status:** Not applicable — documentation and specification creation tasks have no observable UI or backend computation to test
 **Owner:** N/A
 **Assessment:** All EPIC-04 stories (ST-11/12/13/14) create spec or doc artefacts. No behavioural scenarios applicable. Disposition: not_applicable. No backlog item required.
+
+---
+
+## 21. Test Coverage Gaps — v3.6 (2026-05-16__release-v3.6)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v36-01).
+
+### 21.1 TSG-v36-01 — EPIC-03: ST-08 AC-02 font conformance has no Playwright or staging coverage
+
+**Identified:** 2026-05-17 (delivery verification 2026-05-16__release-v3.6)
+**Status:** Open — backlog item BLG-FE-33
+**Owner:** Head of UX & Design
+**Gap:** ST-08 (v3.6 EPIC-03) applied font conformance fix (AC-02) verified by code review only. CLAUDE.md §2 requires Playwright coverage or human staging with date recorded. Staging was deferred at sprint execution and delivery verification. Code review confirms conformance with design_system.md; human staging not performed.
+**Resolution target:** v3.7 or next sprint touching Research page
+**Backlog item:** BLG-FE-33 (filed 2026-05-17 during delivery verification)
 
 ---
 

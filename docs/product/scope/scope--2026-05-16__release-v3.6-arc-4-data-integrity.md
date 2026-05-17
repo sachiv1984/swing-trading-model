@@ -1,9 +1,12 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v3.6
 Cycle: 2026-05-16__release-v3.6
-Last Updated: 2026-05-16
+Last Updated: 2026-05-17
+Superseded by: v3.6 ship — 2026-05-17
+Changelog: docs/product/changelog.md#v36
+Verification report: claude/cycles/2026-05-16__release-v3.6/verification_report.md
 
 ## Release Scope — v3.6 Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance
 

@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-15
+**Last Updated:** 2026-05-17
 
 # Roadmap Archive — Momentum Trading Assistant
 
@@ -864,3 +864,19 @@ Hover tooltips, zoom, drill-down on analytics page charts (underwater equity cur
 
 v3.2 Arc 2 Pre-Trade Research & Planning: PT-02 (Pre-Trade Research View frontend), PT-03 (Prospective Heat at Entry integration), PT-05 (Pre-Trade Entry Checklist). EPIC-03 governance hardening (OA-02–05). EPIC-04 documentation and security (BLG-FE-16, BLG-FE-21, BLG-SEC-05, BLG-GOV-18, BLG-GOV-11). 17/17 stories delivered. Verified 2026-05-07.
 
+
+---
+
+## RA:v3.6 — Release Annotation
+
+**Original roadmap location:** §1 Current Version header (roadmap annotation block)
+**Status at retirement:** ✅ Complete — annotation retired post-ship
+**Retired from active roadmap:** 2026-05-17
+**Shipped version:** v3.6
+**Cycle reference:** 2026-05-16__release-v3.6
+**Verification report:** claude/cycles/2026-05-16__release-v3.6/verification_report.md
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-17
+
+### Original Roadmap Entry
+
+v3.6 Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance: planned_entry_price snapshot at trade entry (EPIC-01); entry_delta_pct in PlanVsReality (EPIC-01); SC-RV-18/19 Playwright tests (EPIC-03); research endpoint 404/503 error codes (EPIC-03); research page UX fix (EPIC-03); execution_prompt.md v3.22 governance patches (EPIC-04). 7/7 stories delivered. Verified_with_deviations 2026-05-17.
