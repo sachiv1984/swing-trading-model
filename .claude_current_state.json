@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-05-16__release-v3.6",
   "cycle_name": "Release Planning \u2014 v3.6 Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance",
-  "status": "Executing",
+  "status": "Sprint_Complete",
   "engine": "sprint_execution",
   "backlog_slice_path": "claude/cycles/2026-05-16__release-v3.6/stage4_backlog_slice.md",
   "sprint_sealed": true,

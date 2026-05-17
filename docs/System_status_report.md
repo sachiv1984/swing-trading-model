@@ -1,9 +1,35 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.7
-**Last Updated:** 2026-05-15
+**Version:** 2.8
+**Last Updated:** 2026-05-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-16__release-v3.6
+**Date:** 2026-05-17
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-04 | Governance Patches: execution_prompt.md v3.22 — §13 gate story pattern (LL-v3.5-SP-01); deviations_filed semantics clarification (§3.1.A step 10); three-field verification readiness block (§5.3); Phase 3 section reference (§5.4). Also resolves OA-RP-01–04 (missing prompt_change_log.md entries). | claude/system/execution_prompt.md v3.22 | None |
+| EPIC-03 | QA, Spec & UX Debt: SC-RV-18/SC-RV-19 Playwright tests (null regime, all-null research payloads); Research endpoint 404/503 HTTP error differentiation (DEV-v33-02 resolved); Research page regime lozenge whitespace-nowrap fix (BLG-FE-26 closed). openapi.yaml 404/503 added. research_view_scenarios.md v1.1. | docs/specs/api_contracts/research_endpoint.md; docs/qa/test_scenarios/research_view_scenarios.md; docs/frontend/design_system.md | None (ST-08 AC-02 font staging deferred to delivery verification — BLG-UX-ST08-staging filed) |
+| EPIC-01 | Arc 4 Data Pipeline Integrity: `planned_entry_price` column on `trade_history` (idempotent migration); `exit_position()` captures signal `current_price` at trade close; `entry_delta_pct` computed and surfaced via `GET /trades/{trade_id}/plan-vs-reality`; PlanVsReality component displays Entry Delta row with signed percentage and green/red colouring. Playwright E2E SC-PVR-03/04/05 (9 scenarios) pass. openapi.yaml `TradeHistoryResponse` updated. | docs/specs/arc4/arc4_data_requirements.md §3.1; docs/specs/frontend/pages/trade_history.md §Expandable Journal Row — Plan vs Reality | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| EPIC-02 (Arc 4 Quality Score) | Deferred at sprint planning — capacity constraint | v3.7 |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-04.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-01.md — all DoQ sign-off complete
+- Deviations filed: None (spec deviations); ST-08 staging deferred (BLG-UX-ST08-staging) — non-spec process note
+- Test scenarios referenced: tests/e2e/pre-trade-research.spec.js (SC-RV-18/SC-RV-19); tests/e2e/plan-vs-reality.spec.js (SC-PVR-03/04/05); tests/test_plan_vs_reality.py (17 unit tests); tests/test_position_lifecycle.py; tests/test_trade_service.py
 
 ---
 
