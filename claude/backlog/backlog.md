@@ -250,6 +250,25 @@ SC-RV-18 (regime field null) and SC-RV-19 (all research fields null) were identi
 
 ---
 
+### BLG-FE-33 — ST-08 AC-02: Human staging sign-off for Research page font conformance
+**Priority:** P3 (Low)
+**Type:** Frontend / QA Verification
+**Owner:** Head of UX & Design
+**Source:** v3.6 EPIC-03 ST-08 — AC-02 deferred from sprint execution; delivery verification 2026-05-17 — item filed as required by CLAUDE.md §2 frontend testing gate (referenced in qa_evidence_EPIC-03.md as BLG-UX-ST08-staging)
+**Effort:** XS (~0.5 hour staging run)
+**Provisional-Target:** v3.7 or next sprint touching Research page
+
+**Problem**
+ST-08 (v3.6 EPIC-03) fixed regime lozenge wrapping (AC-01) and targeted font conformance (AC-02). Code review confirmed `text-xs font-medium` (SignalBadge), section headings `text-xs font-medium text-slate-400 uppercase tracking-wider`, and data values `text-xl font-semibold text-white` all match design_system.md. However, CLAUDE.md §2 requires either Playwright coverage or human staging with date recorded — code review alone is not a valid evidence method. Staging was deferred at sprint execution and not performed at delivery verification.
+
+**Acceptance Criteria**
+- Head of UX & Design performs side-by-side comparison of Research page rendering against `docs/frontend/design_system.md` typography scale in a live/staging environment
+- Date of staging run recorded in this item (or in the QA evidence file for the sprint in which it is performed)
+- If conformant: archive BLG-FE-26 (parent item, partially closed by ST-08 AC-01) and this item
+- If non-conformant: file a new backlog item with specific font deviation details
+
+---
+
 ## 4. Backend & Data Backlog
 
 

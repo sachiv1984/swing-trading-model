@@ -31,3 +31,35 @@ Cycle: 2026-05-16__release-v3.6
 - `deviations_filed = false` recurrence: v3.5 Phase 4 deferred action (guidance patch) applied in v3.6 EPIC-04, but the flag omission recurred. The guidance is present in the prompt; execution discipline is the remaining gap. The sub-step 10a addition (above) is the proposed resolution.
 - BLG-GOV-19 misapplication: first occurrence this sprint; no prior recurrence detected.
 - Missing Phase 3 lessons: third consecutive cycle affected; escalation threshold approaching (per shared_standards.md §3.7 — recurrence in same item across two cycles triggers escalation to Head of Specs Team if the third recurrence occurs).
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-16__release-v3.6
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-05-17
+**Reviewed by:** PMO Lead
+
+**Prior cycle checked:** 2026-05-15__release-v3.5 — Phase 4 section present (loaded for recurrence check)
+
+**Prior cycle (v3.5 Phase 4) deferred items status:**
+- "`deviations_filed` semantics ambiguity (guidance to §3.1.A)" → ✅ RESOLVED in ST-10 AC-01 (pre-met in v3.21). However, execution discipline gap recurred (Phase 3 of this cycle). Already captured in Phase 3 — not re-filed here.
+- "sprint_close.md missing three-field verification readiness statement" → ✅ RESOLVED in ST-10 AC-02 (pre-met). v3.6 sprint_close.md has all three fields = Yes.
+- "Phase 3 lessons_learnt absent" → ✅ RESOLVED — Phase 3 section present in this cycle's lessons_learnt_cycle.md.
+
+All three v3.5 Phase 4 deferred items resolved. No recurrence escalations from prior cycle.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| BLG-UX-ST08-staging backlog item: referenced in qa_evidence_EPIC-03.md and sprint_close.md as "filed" but absent from backlog.md at delivery verification. The referenced item is a CLAUDE.md §2 mandatory backlog item for deferred staging ACs — its absence breaks the governance audit trail from QA evidence → backlog. Added as BLG-FE-33 this run (permitted write). | Phase 4 | Type A | action-now | BLG-FE-33 added to backlog.md §3 (Frontend & UX) 2026-05-17. Add guidance to execution_prompt.md §3.1.A or §2.X: "When filing a mandatory backlog item for a deferred staging AC, verify the item appears in backlog.md before closing the story" — engine does not currently verify file presence after filing. | Head of Specs Team | v3.7 |
+| ST-01 spec reference path in execution_state.json: references `docs/specs/arc4/arc4_data_requirements.md §3.1` — path does not exist. Actual canonical file: `docs/product/arc4_data_requirements.md §3.1`. No `docs/specs/arc4/` directory exists. Traceability check at STEP 2 required reading actual file to verify AC alignment. | Phase 4 | Type B | defer | Add guidance to execution_prompt.md §3.1.A story completion checklist: "When populating spec_references in execution_state.json, verify each path exists using a file read or ls check before recording." Owner: Head of Specs Team. | Head of Specs Team | v3.7 |
+| BLG-GOV-19 autonomous class misapplication (same-cycle recurrence from Phase 3): verification STEP -1.3 detected Tier 2 mismatch for EPIC-01 and EPIC-03. Resolved via DoQ counter-sign. Phase 3 already filed deferred patch (qa_evidence_template.md update, Owner: Director of Quality, Target: v3.7). Not re-escalated — same item, same cycle. | Phase 4 | Type A | defer | Captured in Phase 3 deferred action. Director of Quality to update qa_evidence_template.md before v3.7 sprint execution. | Director of Quality | v3.7 |
+| Zero P0/P1/P2 deviations across 7 merged stories; one P3 (ST-08 AC-02 staging method gap). Tier 2 advisory resolved in-session via DoQ counter-sign with no cycle delay. All v3.5 Phase 4 deferred items cleared by EPIC-04. Governance debt clearance + feature delivery in same sprint with no unresolved escalations. | Phase 4 | Type E | action-now | Positive pattern — governance patch batching (EPIC-04) resolved 3 deferred items in 2 stories efficiently. Deferred-to-resolved ratio improving cycle-over-cycle. No action required. | PMO Lead | — |
+
+**Recurrence Notes:**
+
+- `deviations_filed` flag omission: deferred action from v3.5 (guidance added) but execution recurrence in v3.6 Phase 3. Phase 3 has the deferred patch (sub-step 10a, target v3.7). Not a Phase 4 item.
+- BLG-UX-ST08-staging absent from backlog.md: first occurrence (new pattern — staging backlog item filed in QA evidence but not verified in backlog.md). Deferred action filed above.
+- Phase 3 lessons absent: resolved this cycle ✅ — not recurring.

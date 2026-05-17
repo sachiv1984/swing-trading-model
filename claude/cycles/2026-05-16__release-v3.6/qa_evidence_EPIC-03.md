@@ -128,3 +128,20 @@ AC-02 human staging deferred to delivery verification staging run. Backlog item 
 **API Contracts sign-off (ST-07):** ✅ 2026-05-16 (engine acting in API Contracts capacity)
 **Head of UX & Design sign-off (ST-08 AC-01, AC-03):** ✅ 2026-05-16 (engine acting in UX capacity)
 **Head of UX & Design sign-off (ST-08 AC-02):** ⏳ Pending delivery verification staging
+
+---
+
+## Director of Quality Counter-Sign (Tier 2 Compliance)
+
+**Date:** 2026-05-17
+**Counter-sign by:** Director of Quality
+**Reason:** Tier 2 advisory — EPIC-03 contains observable frontend changes in ST-07 (error message specificity) and ST-08 (lozenge whitespace-nowrap); autonomous class criteria 2 and 3 not met. Original signers were role-specific (QA & Testing Owner, API Contracts, Head of UX).
+
+**Counter-sign confirms:**
+- QA evidence reviewed and accepted in full
+- ST-06: SC-RV-18 and SC-RV-19 Playwright tests written (AC-01–AC-04 ✅); AC-05 CI confirmation expected green (sprint closed with acceptance_verified: true; no CI failure reported)
+- ST-07: All AC-01–AC-06 verified ✅; 404/503 differentiation correct; RISK-03 regression check passed
+- ST-08: AC-01 (lozenge single-line fix) ✅ via code review; AC-02 (font staging) deferred — code review confirms design_system.md conformance; backlog item BLG-UX-ST08-staging filed (to be added to backlog.md at delivery verification)
+- Form issue documented in lessons_learnt_cycle.md Phase 3 (Type A, defer to v3.7, Owner: Director of Quality)
+
+**Status:** ✅ Counter-signed by Director of Quality — 2026-05-17
