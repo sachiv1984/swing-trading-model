@@ -1,10 +1,14 @@
 /**
  * Plan vs Reality — Playwright E2E Tests
  * ST-06 (EPIC-02, v3.5) — PO-01 Frontend: Plan vs Reality Comparison View
+ * ST-02 (EPIC-01, v3.6) — entry_delta_pct display (SC-PVR-03, SC-PVR-04, SC-PVR-05)
  *
  * AC-6: Playwright E2E test covers:
  *   SC-PVR-01: Component visible with mock plan vs reality data (row expanded)
  *   SC-PVR-02: Component hidden for trade with no plan (404 response)
+ *   SC-PVR-03: entry_delta_pct non-null — formatted "+X.XX%" / "-X.XX%" with colour
+ *   SC-PVR-04: entry_delta_pct null — historical placeholder text shown
+ *   SC-PVR-05: Regression — existing rows unaffected by entry_delta_pct change
  *
  * Infrastructure:
  * - Playwright page.route() network interception. No live backend required.
@@ -77,6 +81,18 @@ const PVR_DATA = {
     plan_adherence_flag: 'on_plan',
     deviation_note: null,
   },
+};
+
+// entry_delta_pct positive (bought above plan — unfavorable)
+const PVR_DATA_POSITIVE_DELTA = {
+  status: 'ok',
+  data: { ...PVR_DATA.data, entry_delta_pct: 2.5 },
+};
+
+// entry_delta_pct negative (bought below plan — favorable)
+const PVR_DATA_NEGATIVE_DELTA = {
+  status: 'ok',
+  data: { ...PVR_DATA.data, entry_delta_pct: -1.75 },
 };
 
 const TRADES_RESPONSE = {
@@ -203,5 +219,107 @@ test.describe('SC-PVR-02 — Plan vs Reality section hidden when no plan exists'
     // Neither "Plan vs Reality" section header nor error message should appear
     const pvrHeaders = page.locator('h4').filter({ hasText: /plan vs reality/i });
     await expect(pvrHeaders).toHaveCount(0);
+  });
+});
+
+// ─── SC-PVR-03 — entry_delta_pct non-null: formatted percentage with colour ────
+
+test.describe('SC-PVR-03 — entry_delta_pct non-null displays formatted percentage', () => {
+  test('SC-PVR-03a: positive delta shows "+X.XX%" (rose/red colour class)', async ({ page }) => {
+    await mockFallback(page);
+    await mockAnalytics(page);
+    await page.route(new RegExp(`/trades/${TRADE_ID}/plan-vs-reality`), (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(PVR_DATA_POSITIVE_DELTA) })
+    );
+    await mockTrades(page, TRADES_RESPONSE);
+    await page.goto('/#/TradeHistory');
+    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+
+    await page.getByText('AAPL').first().click();
+    await expect(page.getByText(/plan vs reality/i).first()).toBeVisible({ timeout: 8000 });
+
+    // Should show "+2.50%" (positive, above plan)
+    await expect(page.getByText('+2.50%')).toBeVisible({ timeout: 5000 });
+    // Historical placeholder must NOT appear
+    await expect(page.locator('[data-testid="entry-delta-historical"]')).toHaveCount(0);
+  });
+
+  test('SC-PVR-03b: negative delta shows "-X.XX%" (emerald/green colour class)', async ({ page }) => {
+    await mockFallback(page);
+    await mockAnalytics(page);
+    await page.route(new RegExp(`/trades/${TRADE_ID}/plan-vs-reality`), (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(PVR_DATA_NEGATIVE_DELTA) })
+    );
+    await mockTrades(page, TRADES_RESPONSE);
+    await page.goto('/#/TradeHistory');
+    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+
+    await page.getByText('AAPL').first().click();
+    await expect(page.getByText(/plan vs reality/i).first()).toBeVisible({ timeout: 8000 });
+
+    // Should show "-1.75%"
+    await expect(page.getByText('-1.75%')).toBeVisible({ timeout: 5000 });
+  });
+});
+
+// ─── SC-PVR-04 — entry_delta_pct null: historical placeholder shown ───────────
+
+test.describe('SC-PVR-04 — entry_delta_pct null shows historical placeholder', () => {
+  test('SC-PVR-04a: null entry_delta_pct shows muted placeholder text', async ({ page }) => {
+    await mockFallback(page);
+    await mockAnalytics(page);
+    await mockPvrFound(page, TRADE_ID); // PVR_DATA has entry_delta_pct: null
+    await mockTrades(page, TRADES_RESPONSE);
+    await page.goto('/#/TradeHistory');
+    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+
+    await page.getByText('AAPL').first().click();
+    await expect(page.getByText(/plan vs reality/i).first()).toBeVisible({ timeout: 8000 });
+
+    // Historical placeholder element visible
+    await expect(page.locator('[data-testid="entry-delta-historical"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/data not available for historical trades/i)).toBeVisible({ timeout: 5000 });
+  });
+
+  test('SC-PVR-04b: null state does not show a percentage value', async ({ page }) => {
+    await mockFallback(page);
+    await mockAnalytics(page);
+    await mockPvrFound(page, TRADE_ID);
+    await mockTrades(page, TRADES_RESPONSE);
+    await page.goto('/#/TradeHistory');
+    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+
+    await page.getByText('AAPL').first().click();
+    await expect(page.getByText(/plan vs reality/i).first()).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText(/\+\d+\.\d+%/)).toHaveCount(0);
+  });
+});
+
+// ─── SC-PVR-05 — Regression: existing rows unaffected ─────────────────────────
+
+test.describe('SC-PVR-05 — Regression: existing rows present with entry_delta_pct change', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockFallback(page);
+    await mockAnalytics(page);
+    await page.route(new RegExp(`/trades/${TRADE_ID}/plan-vs-reality`), (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(PVR_DATA_POSITIVE_DELTA) })
+    );
+    await mockTrades(page, TRADES_RESPONSE);
+    await page.goto('/#/TradeHistory');
+    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    await page.getByText('AAPL').first().click();
+    await expect(page.getByText(/plan vs reality/i).first()).toBeVisible({ timeout: 8000 });
+  });
+
+  test('SC-PVR-05a: R Achieved row still visible', async ({ page }) => {
+    await expect(page.getByText('R Achieved')).toBeVisible({ timeout: 5000 });
+  });
+
+  test('SC-PVR-05b: Exit Alignment row still visible', async ({ page }) => {
+    await expect(page.getByText('Exit Alignment')).toBeVisible({ timeout: 5000 });
+  });
+
+  test('SC-PVR-05c: State at Exit badge still visible', async ({ page }) => {
+    await expect(page.getByText('EXIT ZONE').first()).toBeVisible({ timeout: 5000 });
   });
 });

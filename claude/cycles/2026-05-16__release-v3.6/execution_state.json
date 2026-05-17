@@ -134,7 +134,7 @@
       }
     },
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-16__release-v3.6/EPIC-01",
       "pr_number": 415,
       "pr_status": "open",
@@ -154,7 +154,7 @@
           "assigned_to": "engine",
           "github_issue": 406,
           "branch": "exec/2026-05-16__release-v3.6/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "49e50bfa",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -171,7 +171,7 @@
         "ST-02": {
           "title": "Update PlanVsReality component to display entry_delta_pct",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 407,
           "branch": "exec/2026-05-16__release-v3.6/EPIC-01",
@@ -179,15 +179,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-17T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/trade_history.md \u00a7Expandable Journal Row \u2014 Plan vs Reality"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.pending-commit",
           "sign_off_record": null,
-          "notes": "Sprint 2. Depends on ST-01 backend field being live. Requires Playwright tests for AC-01, AC-02, AC-03."
+          "notes": "AC-01: entry_delta_pct non-null → '+X.XX%'/'-X.XX%' with emerald (negative/favorable) or rose (positive/unfavorable) colour — SC-PVR-03a/b. AC-02: null → '[data-testid=entry-delta-historical]' with muted 'data not available for historical trades' — SC-PVR-04a/b. AC-03: regression tests SC-PVR-05a/b/c confirm R Achieved, Exit Alignment, EXIT ZONE badge all unaffected. 9 Playwright tests added to tests/e2e/plan-vs-reality.spec.js. No deviation."
         }
       }
     }
@@ -200,7 +200,8 @@
     "ST-08",
     "ST-09",
     "ST-10",
-    "ST-01"
+    "ST-01",
+    "ST-02"
   ],
   "open_escalations": [],
   "merge_gate": {
