@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-17 (v3.6 sprint: BLG-QA-20 + BLG-OPS-16 filed — database stub consolidation and pyc git-tracking cleanup)
+**Last Updated:** 2026-05-17 (session — 1 new item added: BLG-GOV-23)
 **Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice
@@ -410,7 +410,26 @@ The research_endpoint.md AC specified distinct HTTP error codes (404 ticker-not-
 
 ## 8. Governance Backlog
 
+### BLG-GOV-23 — Add gh_issue_template.md to §14 governance table
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Governance-drift check during preflight consolidation branch gov/2026-05-17__preflight-consolidation — 2026-05-17
+**Effort:** XS (<1h)
+**Provisional-Target:** v3.7
 
+**Problem**
+`claude/system/gh_issue_template.md` carries a `**Version:** 1.0` header and is a Class 6 governance file, but it is absent from the §14 governance table in `OPERATIONAL_GUIDE.md`. This means `/governance-drift` flags it as UNTRACKED on every check, creating noise and risking the version being silently bumped without a §14 update. Pre-existing gap — not introduced by the preflight consolidation refactor.
+
+**Scope**
+- Add a `| GH Issue Template | \`claude/system/gh_issue_template.md\` v1.0 |` row to the §14 governance table
+- Update OPERATIONAL_GUIDE.md version and Last Updated header
+- Append entry to `claude/system/prompt_change_log.md`
+
+**Acceptance Criteria**
+- `/governance-drift` no longer flags `gh_issue_template.md` as UNTRACKED
+- §14 table contains a row for `gh_issue_template.md` with the correct version
+- `prompt_change_log.md` has an entry for the OPERATIONAL_GUIDE version bump
 
 ---
 
