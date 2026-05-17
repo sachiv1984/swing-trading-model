@@ -1,11 +1,25 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-14
+**Last Updated:** 2026-05-15
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+*BLG-GOV-22 (sprint_planning_prompt.md patch: shared execution_state.json ownership + multi-EPIC Positions.js conflict guidance) — ✅ COMPLETE v3.5 (ST-11, 2026-05-15) — archived 2026-05-15*
+
+*BLG-GOV-21 (Arc 4 data requirements capture) — ✅ COMPLETE v3.5 (ST-04, 2026-05-15; arc4_data_requirements.md v1.0 signed off) — archived 2026-05-15*
+
+*BLG-QA-19 (Research view regression test protocol) — ✅ COMPLETE v3.5 (ST-10, 2026-05-15; research_view_regression_protocol.md v1.0, QA Lead sign-off) — archived 2026-05-15*
+
+*BLG-SPEC-31 (Review React Query v5 onSuccess migration impact across codebase) — ✅ COMPLETE v3.5 (ST-09, 2026-05-15; 1 fix TradePlan.js; SC-TP-08 Playwright 9/9 pass) — archived 2026-05-15*
+
+*BLG-SPEC-30 (Correct stop-management-workflow ux_spec.md §4.4 stop-update HTTP verb to PATCH) — ✅ COMPLETE v3.5 (ST-08, 2026-05-15; ux_spec.md v1.1) — archived 2026-05-15*
+
+*BLG-SPEC-29 (Correct grace-period-alert ux_spec.md §5 dismiss storage to sessionStorage) — ✅ COMPLETE v3.5 (ST-07, 2026-05-15; ux_spec.md v1.1) — archived 2026-05-15*
 
 ---
 

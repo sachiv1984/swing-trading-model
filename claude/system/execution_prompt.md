@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.20
-**Last Updated:** 2026-05-15
+**Version:** 3.22
+**Last Updated:** 2026-05-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -114,6 +114,8 @@ Every ST item must be classified on load:
 - Items requiring QA verification of behavioural conformance: `delegated_qa` (after any `delegated_backend` or `delegated_frontend` work completes)
 - Items with unresolved authority or scope questions: `delegated_decision`
 - **Autonomous candidate pattern (LL-v1.10-P3-3):** If the item description is "refactor component X to call backend endpoint Y" with no UX change, and the API method already exists client-side (e.g. in `api.js`), classify as `autonomous` — this is a pure data-fetching swap with no delegation risk. Confirm with Product Owner if scope ambiguity exists.
+
+**§13 gate story pattern (LL-v3.5-SP-01):** When an arc feature requires a strategy or compliance review gate (referenced as a "§13 review" in the OPERATIONAL_GUIDE), scope the review as a Sprint 1 story with `classification: delegated_decision`, gating all implementation stories (backend, frontend) to Sprint 2. The Sprint 1 gate story must reach `status: done` before Sprint 2 implementation stories begin execution. If the gate story is not resolved by end of Sprint 1: surface as an escalation and defer implementation stories to the next cycle. This pattern was validated in v3.5 ST-01 (IT-06 Arc 3 integration — §13 gate cleared before Arc 3 backend implementation).
 
 If classification is ambiguous: classify as `delegated_decision` and flag for the Product Owner.
 
@@ -490,15 +492,14 @@ If execution_state.json already exists: resume (do not reinitialise). Perform ST
 
 ## STEP 1 — GitHub Issue Preflight
 
+Issues are created by `sync gh` at the end of sprint planning (CLAUDE.md §4). This step verifies they exist and records their numbers.
+
 For each ST item in the sprint scope:
 
 1. Check `execution_state.json` for `github_issue` value.
 2. If `null` or absent: search GitHub for an existing issue matching the ST ID and title.
 3. If found: record the issue number in `execution_state.json`.
-4. If not found: create the issue with:
-   - Title: `[ST-xx] <title>`
-   - Body: acceptance criteria from `sprint_backlog.md`, epic reference, sprint goal
-   - Label: `sprint`, `EPIC-xx`
+4. If not found: note as a process gap (`sync gh` was not run at planning seal), then create a minimal issue — Title: `[ST-xx] <title>`, Labels: `EPIC-xx` — and record the number. Do not halt.
 5. Update `execution_state.json` with all issue numbers.
 
 Do not create duplicate issues. Check before creating.

@@ -1,0 +1,207 @@
+{
+  "cycle_id": "2026-05-16__release-v3.6",
+  "sprint_goal": "Complete Arc 4 data pipeline integrity by capturing planned_entry_price at trade entry and surfacing entry_delta_pct in the Plan vs Reality view, clear three cycles of QA and spec debt in the research domain, and apply four deferred governance prompt patches from v3.5.",
+  "backlog_slice_source": "claude/cycles/2026-05-16__release-v3.6/stage4_backlog_slice.md",
+  "invoked_utc": "2026-05-16T08:46:26Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-05-16T09:15:00Z",
+
+  "epics": {
+    "EPIC-04": {
+      "status": "done",
+      "branch": "exec/2026-05-16__release-v3.6/EPIC-04",
+      "pr_number": 413,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-05-16__release-v3.6/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-09": {
+          "title": "execution_prompt.md §13 gate story pattern formalisation",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 411,
+          "branch": "exec/2026-05-16__release-v3.6/EPIC-04",
+          "commit_sha": "2818fb634e5d1b994c27c0335b88843f0c9397cf",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-16T09:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pending-commit",
+          "sign_off_record": null,
+          "notes": "no prior spec applicable — governance prompt patch per v3.5 lessons_learnt_closure.md deferred action #1; also closes OA-RP-01–04 (missing prompt_change_log.md entries). AC-01: §13 gate story pattern added to §5.1 (LL-v3.5-SP-01). AC-02: version v3.21→v3.22; OPERATIONAL_GUIDE §8 + §14 updated. AC-03: prompt_change_log.md entry appended. AC-04: retroactive v3.18→v3.19 entry added; OA-RP-01/03/04 pre-cleared in v3.5. Deviation check: no deviation."
+        },
+        "ST-10": {
+          "title": "execution_prompt.md metadata + sprint_close + Phase 3 patches",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 412,
+          "branch": "exec/2026-05-16__release-v3.6/EPIC-04",
+          "commit_sha": "2818fb634e5d1b994c27c0335b88843f0c9397cf",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-16T09:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pending-commit",
+          "sign_off_record": null,
+          "notes": "no prior spec applicable — governance prompt patches per v3.5 lessons_learnt_closure.md deferred actions #2, #3, #4. Sequential after ST-09 (same commit). AC-01 PRE-MET: deviations_filed semantics present in §3.1.A step 10 (v3.21). AC-02 PRE-MET: three-field verification readiness block present in §5.3 (v3.21). AC-03 PRE-MET: lessons_learnt_cycle.md Phase 3 reference present in §5.4 (v3.21). AC-04/05: version bump v3.21→v3.22 and prompt_change_log.md entry coordinated with ST-09. Deviation check: no deviation."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-05-16__release-v3.6/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-16__release-v3.6/qa_evidence_EPIC-03.md",
+      "test_scenarios": ["tests/e2e/pre-trade-research.spec.js"],
+      "stories": {
+        "ST-06": {
+          "title": "SC-RV-18 and SC-RV-19 Playwright coverage",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 408,
+          "branch": "exec/2026-05-16__release-v3.6/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/research_endpoint.md",
+            "docs/qa/test_scenarios/research_view_scenarios.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Closes BLG-FE-32, TEST-GAP-EPIC-03-v33. New Playwright tests in tests/e2e/pre-trade-research.spec.js"
+        },
+        "ST-07": {
+          "title": "Research endpoint HTTP error code differentiation",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 409,
+          "branch": "exec/2026-05-16__release-v3.6/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/research_endpoint.md §Error Responses"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Closes BLG-SPEC-27. openapi.yaml must be updated in same commit per CLAUDE.md §2."
+        },
+        "ST-08": {
+          "title": "Research page UX fix: regime lozenge and font consistency",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 410,
+          "branch": "exec/2026-05-16__release-v3.6/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/frontend/design_system.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Closes BLG-FE-26. AC-02 (font conformance) requires human staging side-by-side comparison — DoQ sign-off must record staging date."
+        }
+      }
+    },
+    "EPIC-01": {
+      "status": "not_started",
+      "branch": "exec/2026-05-16__release-v3.6/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-16__release-v3.6/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/e2e/plan-vs-reality.spec.js",
+        "tests/test_position_lifecycle.py",
+        "tests/test_trade_service.py"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Capture planned_entry_price at trade entry",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 406,
+          "branch": "exec/2026-05-16__release-v3.6/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/arc4/arc4_data_requirements.md §3.1"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Must rebase onto main after EPIC-03 merges before finalising openapi.yaml and backend/routers/test.py. Schema migration required."
+        },
+        "ST-02": {
+          "title": "Update PlanVsReality component to display entry_delta_pct",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 407,
+          "branch": "exec/2026-05-16__release-v3.6/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_history.md §Expandable Journal Row — Plan vs Reality"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2. Depends on ST-01 backend field being live. Requires Playwright tests for AC-01, AC-02, AC-03."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["ST-09", "ST-10"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-04", "EPIC-03", "EPIC-01"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}

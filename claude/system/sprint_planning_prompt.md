@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.1
-**Last Updated:** 2026-05-15
+**Version:** 3.2
+**Last Updated:** 2026-05-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -526,6 +526,8 @@ git push origin <current-branch>
 If git operations are unavailable: output the exact files to stage and the commit message. Mark as "Ready to commit."
 
 Commit may only proceed if `sprint_sealed = true`. If the sprint is not yet sealed, do not commit — the artefacts are still in progress.
+
+After a successful push, run `sync gh` (CLAUDE.md §4) to create GitHub issues for all ST items in the sealed backlog slice with correct `v<X.Y>`, `sprint-N`, and `EPIC-xx` labels. This is the canonical point for issue creation; execution STEP 1 only verifies issues exist.
 
 ---
 

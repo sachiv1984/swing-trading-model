@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.6
-**Last Updated:** 2026-05-09
+**Version:** 2.7
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -61,6 +61,8 @@ Apply the Lifecycle Guard (valid from-states: `Verified`, `Verified_with_deviati
 
 **Tool call budget:** This routine typically requires 15–35 tool calls. Proceed through steps without asking for confirmation unless a hard gate fires.
 
+**Output suppression (clean runs):** On a clean run with no flags, advisories, corrections, or outstanding actions, suppress intermediate step output — surface only the §7 Closure Confirmation and the Advisory Summary block at the end. When a flag, advisory, or correction occurs, output it inline at the step where it arises.
+
 ---
 
 ## 3. Canonical Governance Sources (Non-Negotiable)
@@ -112,20 +114,20 @@ During this routine you may write only to:
 - Templates and prompt files where a lessons learnt action specifies an immediate fix (version bump required)
 - `claude/cycles/<cycle_id>/lessons_learnt_closure.md` (create via STEP 8.5)
 - `claude/cycles/<cycle_id>/closure_record.md` (create at close)
-- `claude/cycles/<cycle_id>/closure_state.json` (create at STEP 0; update at each step completion)
+- `claude/cycles/<cycle_id>/closure_state.json` (create at STEP 0; update at batch checkpoints)
 - `.claude_current_state.json` (status update only)
 
-You must **not** modify:
-- `claude/cycles/<cycle_id>/verification_report.md` (sealed)
-- `claude/cycles/<cycle_id>/sprint_close.md` (sealed)
-- `claude/cycles/<cycle_id>/execution_state.json` (sealed)
-- `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed)
-- `claude/cycles/<cycle_id>/lessons_learnt.md` (read-only — do not edit, only apply)
-- `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (read-only — do not edit, only apply; replaces `lessons_learnt_execution.md` and `lessons_learnt_verification.md`)
-- `claude/strategy/strategy_rules.md`
-- Any governance document not listed in the permitted write scope above
+You must **not** modify: any file marked `sealed: true` or listed with `(sealed)` in its section below, `claude/strategy/strategy_rules.md`, or any governance document not listed in the permitted write scope above.
+
+Sealed files (do not touch):
+- `claude/cycles/<cycle_id>/verification_report.md`
+- `claude/cycles/<cycle_id>/sprint_close.md`
+- `claude/cycles/<cycle_id>/execution_state.json`
+- `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
+- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md`
+- `claude/cycles/<cycle_id>/sprint_backlog.md`
+- `claude/cycles/<cycle_id>/lessons_learnt.md`
+- `claude/cycles/<cycle_id>/lessons_learnt_cycle.md`
 
 Violation → halt.
 
@@ -152,6 +154,8 @@ Verify: each role has an agent file in `claude/agents/` containing `**Role:** <R
 Purpose: fail fast before any writes begin.
 
 Shared standards (escalation format, halt report format, identifier conventions): `claude/system/shared_standards.md`.
+
+**Read in parallel:** Issue all reads for -1.1 through -1.4 simultaneously — they have no inter-dependencies.
 
 ### -1.1 Status Check
 
@@ -207,38 +211,7 @@ If `--dry-run` is active: skip this check.
 Read `claude/cycles/<cycle_id>/closure_state.json` if it exists:
 - If it exists and `status = Closed`: this cycle is already closed — halt with message "Cycle already closed."
 - If it exists and `status = In_Progress`: this is a resume. Skip all steps whose `steps.*` value is `pass`. Resume from the first `not_started` or `fail` step.
-- If it does not exist: create it now with the schema below (fresh run).
-
-```json
-{
-  "cycle_id": "<cycle_id>",
-  "release": "<vX.Y>",
-  "status": "In_Progress",
-  "mode": "strict|standard",
-  "dry_run": false,
-  "started_utc": "<ISO-8601 UTC>",
-  "last_updated_utc": "<ISO-8601 UTC>",
-  "steps": {
-    "preflight": "pass",
-    "step_0_context": "not_started",
-    "step_1_changelog": "not_started",
-    "step_2_roadmap": "not_started",
-    "step_3_backlog": "not_started",
-    "step_4_scope_decisions": "not_started",
-    "step_5_deviation_compliance": "not_started",
-    "step_6_operational_docs": "not_started",
-    "step_7_specs_index": "not_started",
-    "step_8_lessons_learnt": "not_started",
-    "step_8_5_lessons_closure": "not_started",
-    "step_9_closure_record": "not_started",
-    "step_10_global_state": "not_started",
-    "step_11_manage_roadmap": "not_started",
-    "step_12_groom_backlog": "not_started",
-    "step_13_commit": "not_started"
-  },
-  "closure_status": null
-}
-```
+- If it does not exist: create it now with these fields: `cycle_id`, `release`, `status="In_Progress"`, `mode`, `dry_run=false`, `started_utc` and `last_updated_utc` (ISO-8601 UTC), a `steps` map with `preflight="pass"` and all remaining steps (`step_0_context` through `step_13_commit`) set to `"not_started"`, and `closure_status: null`.
 
 If `closure_state.json` cannot be written: halt immediately.
 
@@ -248,26 +221,26 @@ If `closure_state.json` cannot be written: halt immediately.
 
 Cross-reference the identified path against `execution_state.json.backlog_slice_source`. If they disagree: flag to PMO Lead before proceeding. Record the authoritative path as `backlog_slice_source` in the closure record §1.
 
-Extract from the verified inputs (read targets — load only the specified sections, not the full document):
+**Read in parallel:** Issue all five reads below simultaneously.
+
+Extract from the verified inputs (load only the specified sections, not full documents):
 
 1. From `verification_report.md` — **read: `§1 verification_status` and `§4 deviation register` only.** Extract: release version (`vX.Y`), verification status (`Verified` / `Verified_with_deviations`), deviation register, QA summary.
 2. From `execution_state.json` — **read: `epics` outcome map only** (not full state schema). Extract: merged EPICs (with EPIC IDs and descriptions), all ST items with `spec_references`, `deviations_filed` flags, returned-to-backlog items, `backlog_slice_source`.
 3. From `sprint_close.md` — **read: verification readiness statement and deviations list only** (not full narrative sections). Extract: sprint goal, deviations filed list, outstanding delegated items, verification readiness statement.
-4. From `current_roadmap.md`: the roadmap item ID and feature name for this release.
-5. From `backlog.md`: identify all items with this `cycle_id` added by Phase 4 (returned items, P2/P3 deviation items, test scenario gap items) — these must all be present before STEP 3 can pass.
+4. From `current_roadmap.md` — **read: the release summary table and the entry matching this release only.** Extract: roadmap item ID and feature name.
+5. From `backlog.md` — **read: items tagged with this `cycle_id` only.** Identify all items added by Phase 4 (returned items, P2/P3 deviation items, test scenario gap items) — these must all be present before STEP 3 can pass.
 
 Confirm: release version, feature name, `cycle_id`, ship date (use today if not recorded elsewhere), and Product Owner sign-off date are all resolvable. If any cannot be determined: halt in `strict` mode; flag and proceed with `[UNKNOWN]` placeholder in `standard` mode.
 
-Update `closure_state.json`: `steps.step_0_context = pass`, `last_updated_utc = <now>`
-
 **Audit Cadence Check (advisory — non-blocking):**
 Read `completed_cycle_count` from `.claude_current_state.json`.
-If `completed_cycle_count % 3 == 0` (i.e., a multiple of 3):
-  Output advisory: "⚠ AUDIT DUE — completed_cycle_count = N. Run `run audit` before next Phase 1B opens. File output at `claude/cycles/<cycle_id>/audit_report_AUD-<date>.md`."
-  Record in run manifest under Advisory Findings.
+If `completed_cycle_count % 3 == 0` (i.e., a multiple of 3): record for the Advisory Summary block — "⚠ AUDIT DUE — completed_cycle_count = N. Run `run audit` before next Phase 1B opens."
 This check is non-blocking — post-ship closure proceeds regardless.
 
 **If `--dry-run` is active:** After completing context load, produce the full closure plan (listing every step, every write that would be made, every flag) and end the routine. Do not proceed to STEP 1.
+
+**Batch checkpoint 1:** Update `closure_state.json` after STEP 1 completes (see below).
 
 ---
 
@@ -315,11 +288,13 @@ QA sign-off: Director of Quality — <date>
 
 **Failure condition:** If `docs/product/changelog.md` does not exist: create it with a standard header (Owner: PMO Lead, Class: Operational Record, Status: Active) and then add the entry. A ship without a changelog entry is not recorded — this is a hard gate.
 
-Update `closure_state.json`: `steps.step_1_changelog = pass`, `last_updated_utc = <now>`
+**Batch checkpoint 1 — update `closure_state.json`:** Set `steps.step_0_context = pass`, `steps.step_1_changelog = pass`, `last_updated_utc = <now>`.
 
 ---
 
 ## STEP 2 — Roadmap Update
+
+**Read target:** Read only the entry matching this release's version label or feature name and the release summary table — not the full roadmap document.
 
 Update `claude/roadmap/current_roadmap.md`:
 
@@ -333,11 +308,11 @@ Update `claude/roadmap/current_roadmap.md`:
 
 **Failure condition (hard gate in `strict` mode; flag in `standard`):** Roadmap entry still shows Planned or In Progress after this step. Stale roadmap status will cause Phase 1 (Roadmap Rebalance) to misread the current state.
 
-Update `closure_state.json`: `steps.step_2_roadmap = pass`, `last_updated_utc = <now>`
-
 ---
 
 ## STEP 3 — Backlog Reconciliation (Hard Gate)
+
+**Read targets:** `backlog.md` — items tagged with this `cycle_id` plus items with status `done`/`merged` from STEP 0 extraction. `sprint_close.md` and `execution_state.json` data already extracted in STEP 0 — do not re-read.
 
 Update `claude/backlog/backlog.md`. All reconciliation is performed against the authoritative backlog slice identified in STEP 0.
 
@@ -383,8 +358,6 @@ If no stale parked items are found: note "No stale parked items" in the closure 
 
 **Failure condition:** Any shipped item still shown as open after this step. Any Phase 4 addition unaccounted for. Any item in the authoritative backlog slice with no traceable outcome in `backlog.md`.
 
-Update `closure_state.json`: `steps.step_3_backlog = pass`, `last_updated_utc = <now>`
-
 ---
 
 ## STEP 4 — Scope and Decisions Documents
@@ -423,8 +396,6 @@ If the decisions record cannot be located: same flag behaviour as scope document
 
 **N/A condition:** If no decisions document exists for this release AND no decisions with options analysis or accepted risk were made this cycle, mark STEP 4.2 as N/A — no decision record required. Document the rationale in the closure record (§6 Outstanding Actions or §5 Lessons Learnt Action Summary as appropriate). Do not flag as a missing artefact in this case.
 
-Update `closure_state.json`: `steps.step_4_scope_decisions = pass | not_applicable`, `last_updated_utc = <now>`
-
 ---
 
 ## STEP 5 — Canonical Spec Deviation Compliance Check
@@ -447,13 +418,15 @@ For each deviation listed in `sprint_close.md` "Deviations filed this sprint":
 
 **Failure condition (hard gate):** Any deviation entry in a canonical spec missing required fields after this step. Non-compliant deviation notes render the spec non-compliant.
 
-Update `closure_state.json`: `steps.step_5_deviation_compliance = pass`, `last_updated_utc = <now>`
+**Batch checkpoint 2 — update `closure_state.json`:** Set `steps.step_2_roadmap = pass`, `steps.step_3_backlog = pass`, `steps.step_4_scope_decisions = pass | not_applicable`, `steps.step_5_deviation_compliance = pass`, `last_updated_utc = <now>`.
 
 ---
 
 ## STEP 6 — Operational Documents Reconciliation
 
-For each of the following documents, read the current content and check for stale references to this release's features:
+**Read targets:** `System_status_report.md` — the section for this `cycle_id` only. `validation_system.md` — metric count entries and expected-value lines only. `velocity_metrics.md` — last row only (to verify format before appending). `openapi.yaml` — path keys only (count distinct method+path combinations).
+
+For each of the following documents, check for stale references to this release's features:
 
 - `docs/System_status_report.md` — confirmed current by Phase 4, but verify the section for this `cycle_id` reflects the final verified status (not "pending verification"). Correct if needed.
 - `docs/operations/validation_system.md` — check metric counts, expected values, and example outputs. Update any entries that reference "planned" or "backlog" behaviour that has now shipped.
@@ -473,6 +446,7 @@ If openapi.yaml contains endpoints that are absent from the baseline doc:
 - Do **not** attempt to fill them in — performance re-runs require a live environment and human coordination
 - Raise a backlog item (`BLG-OPS-xx`) titled "Add <N> new endpoints to api_performance_baseline.md re-run" referencing the missing paths
 - Record the gap in the closure record under §6 (Outstanding Actions)
+- Record for the Advisory Summary block: "⚠ Endpoint coverage drift: N new paths not yet in api_performance_baseline.md — BLG-OPS-xx filed."
 
 This check is **advisory-only** — it does not block closure. If no gap exists, note "Endpoint coverage: no drift" in the closure record.
 
@@ -482,13 +456,11 @@ Update `Last Updated` on any document that is modified.
 
 Record all corrections in the closure record. If a document is outside the write scope (e.g. a Class 1 spec that is not being corrected for deviation compliance): flag for the document owner rather than editing.
 
-Update `closure_state.json`: `steps.step_6_operational_docs = pass | not_applicable`, `last_updated_utc = <now>`
-
 ---
 
 ## STEP 7 — Specs Index Review
 
-Read `docs/specs/Specs_Index.md`:
+**Read target:** Sections 6 and 7 of `docs/specs/Specs_Index.md` only (Pending Spec Work and Open Compliance Issues).
 
 ### 7.1 Resolve closed items
 
@@ -502,8 +474,6 @@ From `verification_report.md §6` (Test Coverage Assessment) and `qa_evidence_EP
 - Add each as a new entry in the appropriate section.
 
 Update `Last Updated` on `docs/specs/Specs_Index.md` to today's date if any changes were made.
-
-Update `closure_state.json`: `steps.step_7_specs_index = pass`, `last_updated_utc = <now>`
 
 ---
 
@@ -533,13 +503,11 @@ Produce a consolidated action summary:
 - Deferred to next cycle: `N` (list each: action, owner, target cycle)
 - Escalated for decision: `N` (list each: question, owner, 72-hour deadline from today)
 
-Update `closure_state.json`: `steps.step_8_lessons_learnt = pass`, `last_updated_utc = <now>`
-
 ---
 
 ## STEP 8.5 — Produce Lessons Learnt Closure Record
 
-Invoke `lessons_learnt_prompt.md §3.5` using the consolidated action summary produced in STEP 8 as input.
+Invoke `lessons_learnt_prompt.md §3.5` — **read: §3.5 only** — using the consolidated action summary produced in STEP 8 as input.
 
 > **Note (sequencing):** `closure_record.md` is produced in STEP 9 — it does not yet exist at the time STEP 8.5 executes. The input to `lessons_learnt_prompt.md §3.5` is the STEP 8 consolidated action summary (immediate actions applied, deferred items list, and any escalations). The §6 Outstanding Actions table in `closure_record.md` is derived from the same deferred items list. Do not wait for `closure_record.md` before producing `lessons_learnt_closure.md`.
 
@@ -556,7 +524,7 @@ This record covers:
 
 Do not proceed to STEP 9 until `lessons_learnt_closure.md` exists and is non-empty. If the lessons learnt prompt cannot be invoked: produce the file directly using the structure from `lessons_learnt_prompt.md §3.5`, record the deviation in the closure record §6.
 
-Update `closure_state.json`: `steps.step_8_5_lessons_closure = pass`, `last_updated_utc = <now>`
+**Batch checkpoint 2 (continued) — update `closure_state.json`:** Set `steps.step_6_operational_docs = pass | not_applicable`, `steps.step_7_specs_index = pass`, `steps.step_8_lessons_learnt = pass`, `steps.step_8_5_lessons_closure = pass`, `last_updated_utc = <now>`.
 
 ---
 
@@ -588,17 +556,17 @@ Closure run: <ISO-8601 UTC>
 
 **§2 — Documents Updated** — for each step, confirm status:
 
-| Step | Document | Action Taken | Status |
-|------|----------|--------------|--------|
-| 1 | docs/product/changelog.md | Entry written for v<X.Y> | ✅ |
-| 2 | claude/roadmap/current_roadmap.md | Marked ✅ Complete; version headers updated | ✅ |
-| 3 | claude/backlog/backlog.md | N items marked COMPLETE; N Phase 4 additions confirmed | ✅ |
-| 4 | Scope document | Status → Superseded | ✅ / ⚠ not found |
-| 5 | Decisions record | Status → Superseded | ✅ / ⚠ not found / N/A |
+| Step | Document | Action | Status |
+|------|----------|--------|--------|
+| 1 | docs/product/changelog.md | Entry written | ✅ |
+| 2 | claude/roadmap/current_roadmap.md | ✅ Complete; headers updated | ✅ |
+| 3 | claude/backlog/backlog.md | N items COMPLETE; N additions confirmed | ✅ |
+| 4 | Scope document | Superseded | ✅ / ⚠ not found |
+| 5 | Decisions record | Superseded | ✅ / ⚠ not found / N/A |
 | 6 | Canonical specs | N deviations checked; N fields corrected | ✅ |
-| 7 | Operational docs | N corrections made | ✅ / N/A |
-| 8 | Specs Index | N items resolved; N gaps added | ✅ |
-| 8.5 | lessons_learnt_closure.md | Created via lessons_learnt_prompt.md §3.5 | ✅ |
+| 7 | Operational docs | N corrections | ✅ / N/A |
+| 8 | Specs Index | N resolved; N gaps added | ✅ |
+| 8.5 | lessons_learnt_closure.md | Created | ✅ |
 
 **§3 — Backlog Additions This Run** — any items added to `backlog.md` by this routine (Phase 4 items that were missing, new gaps). List each with backlog ref.
 
@@ -624,8 +592,6 @@ Outstanding actions carried forward: <list or "none">
 Next cycle may now open.
 ```
 
-Update `closure_state.json`: `steps.step_9_closure_record = pass`, `last_updated_utc = <now>`
-
 ---
 
 ## STEP 10 — Global State Update (Hard Requirement)
@@ -649,33 +615,21 @@ Surface §7 Closure Confirmation to the user for communication to the Product Ow
 
 If any outstanding actions remain in §6: set `closure_status = Closed_with_actions`. The next cycle may still open — outstanding actions do not block it unless a hard gate condition is unmet.
 
-Update `closure_state.json`:
-```json
-{
-  "steps": { "step_10_global_state": "pass" },
-  "status": "Closed",
-  "closure_status": "Closed | Closed_with_actions",
-  "last_updated_utc": "<now>"
-}
-```
-
 ---
 
 ## STEP 11 — Roadmap Document Management (Mandatory)
 
-Invoke `claude/system/roadmap_management_prompt.md` inline.
+Invoke `claude/system/roadmap_management_prompt.md` — **read: execution steps and action checklist sections only.**
 Pass through `--dry-run` if `run post-ship` was invoked with `--dry-run`.
 Output: manage_roadmap run log at `claude/cycles/<cycle_id>/manage_roadmap_<YYYYMMDD>.md`.
 On completion: confirm `last_manage_roadmap_utc` written to `.claude_current_state.json`.
-Update `closure_state.json`: `{"step_11_manage_roadmap": "complete", "last_updated_utc": "<now>"}`.
 
 ## STEP 12 — Backlog Document Management (Mandatory)
 
-Invoke `claude/system/backlog_management_prompt.md` inline.
+Invoke `claude/system/backlog_management_prompt.md` — **read: execution steps and action checklist sections only.**
 Pass through `--dry-run` if `run post-ship` was invoked with `--dry-run`.
 Output: backlog health report at `claude/backlog/backlog_health_<YYYYMMDD>.md`.
 On completion: confirm `last_groom_backlog_utc` written to `.claude_current_state.json`.
-Update `closure_state.json`: `{"step_12_groom_backlog": "complete", "last_updated_utc": "<now>"}`.
 
 ### Advisory — Ideas Pipeline Health Check
 
@@ -684,11 +638,9 @@ After `groom backlog` completes, count the remaining active backlog items (items
 If the active backlog count is **5 or fewer**:
 - Scan `claude/ideas/ideas_register.md` for ideas with `Status: Parked-cycle-<n>` whose `Park Rationale` references a specific backlog item ID (any `BLG-` reference).
 - Count how many of those referenced items have now shipped (present in a prior cycle's `sprint_backlog.md` as a completed ST story, or marked COMPLETE in `backlog.md`).
-- If M ≥ 1 such ideas exist: record in the closure record §6 Outstanding Actions:
+- If M ≥ 1 such ideas exist: record in the closure record §6 Outstanding Actions the disposition requirement, and record for the Advisory Summary block — "⚠ Ideas Pipeline: active backlog nearly clear (N items). M parked ideas have gate conditions that may now be satisfied — consider `run ideas` before next roadmap run."
 
-  > **⚠ Ideas Pipeline Advisory:** Active backlog is nearly clear (N items remaining). M parked ideas have park rationales referencing items that have since shipped — their gate conditions may be satisfied. Consider running `run ideas` to refresh the ideas pool before the next roadmap run, so gate-cleared ideas can be re-evaluated at STEP 4.0.
-
-- This check is advisory only — it does not halt closure or block STEP 13.
+This check is advisory only — it does not halt closure or block STEP 13.
 
 ---
 
@@ -718,28 +670,34 @@ git push origin <current-branch>
 
 If git operations are unavailable: output the exact files to stage and the commit message. Mark as "Ready to commit."
 
-Update `closure_state.json`: `steps.step_13_commit = pass`, `last_updated_utc = <now>`
+**Batch checkpoint 3 — update `closure_state.json`:** Set `steps.step_9_closure_record = pass`, `steps.step_10_global_state = pass`, `steps.step_11_manage_roadmap = complete`, `steps.step_12_groom_backlog = complete`, `steps.step_13_commit = pass`, `status = "Closed"`, `closure_status = "Closed | Closed_with_actions"`, `last_updated_utc = <now>`. Include this file in the commit above.
+
+---
+
+## Advisory Summary Block
+
+After STEP 13 completes, output all advisories raised during this run as a single consolidated block. Format:
+
+```
+── Advisory Summary ──────────────────────────────────
+[List each advisory recorded during the run, or "None."]
+──────────────────────────────────────────────────────
+```
+
+Advisories sourced from: STEP 0 (audit cadence), STEP 6 (endpoint drift), STEP 12 (ideas pipeline), and any other non-blocking flags raised during execution. If no advisories were raised: output "Advisory Summary: None."
 
 ---
 
 ## 7. Completion Condition
 
-The run is complete only if:
+The run is complete when:
 
-- `closure_record.md` exists with all 7 sections
-- `lessons_learnt_closure.md` exists and follows the structure from `lessons_learnt_prompt.md §3.5`
-- Changelog entry written and complete for this release version
-- Roadmap entry marked ✅ Complete
-- All shipped backlog items marked COMPLETE; all Phase 4 additions confirmed present; authoritative backlog slice (original or amended) fully reconciled
-- Scope and decisions documents marked Superseded (or outstanding action filed if not found)
-- All deviation entries in canonical specs have required fields
-- Operational documents reconciled
-- Specs Index reviewed and updated
-- All lessons learnt records reviewed; every action item has a disposition
-- `.claude_current_state.json` updated with `post_ship_complete = true` and `status = Closed`
-- STEP 13 commit complete (or commit manifest produced)
+- `closure_state.json` has all steps = `pass` (or `complete` for STEPs 11/12) and `status = "Closed"`
+- `closure_record.md` exists with all 7 sections and `lessons_learnt_closure.md` is non-empty
+- `.claude_current_state.json` has `post_ship_complete = true` and `status = Closed`
+- STEP 13 commit is complete (or commit manifest produced)
 
-**Dry-run:** Run is complete when the closure plan is produced after STEP 0. No files written, no state updated, no commit.
+**Dry-run:** Complete when the closure plan is produced after STEP 0. No files written, no state updated, no commit.
 
 ---
 

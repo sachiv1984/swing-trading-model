@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 2.1
-**Last Updated:** 2026-05-09
+**Version:** 2.2
+**Last Updated:** 2026-05-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -25,12 +25,6 @@ This engine:
 - Identifies test scenario gaps and commissions the QA & Testing Owner to fill them
 - Produces a `verification_report.md` with a definitive status
 - Updates global state to unlock (or block) the next planning cycle
-
-This routine does **NOT**:
-- Re-execute or re-test work (that is the Director of Quality's domain)
-- Reprioritise the backlog or roadmap
-- Override QA sign-offs already given
-- Alter canonical specs (read-only except where `docs/System_status_report.md` is updated)
 
 ---
 
@@ -143,25 +137,15 @@ If any required role is missing or malformed: halt.
 
 ---
 
-## ESCALATION SUBROUTINE (Callable)
-
-Trigger: whenever a hard gate produces a blocker that cannot be resolved within this run (e.g. a P0 deviation with an unreachable owner, a missing QA sign-off that requires human action before the report can seal).
-
-Create or append to: `claude/cycles/<cycle_id>/verification_escalations.md`
-
-Use escalation format per `claude/system/shared_standards.md` §4. ID prefix: `ESC-VER-YYYYMMDD-nn`.
-
-Record: blocking condition, owning authority, resolution path, SLA.
-
-After filing: update `verification_report.md` §8 (Open Items) with a reference to the escalation record.
-
-This subroutine does not change the verification status — a P0 that is escalated is still a P0. The escalation tracks progress toward resolution; only resolution itself changes the status.
+ESCALATION: Create/append `verification_escalations.md`. Use ESC-VER-YYYYMMDD-nn prefix per `shared_standards.md §4`. Record: blocking condition, owning authority, resolution path, SLA. Reference from `verification_report.md §8`. Escalation does not change verification status — only resolution does.
 
 ---
 
 ## STEP -1 — Preflight Gate (Hard Gate)
 
 **First action:** Read `claude/cycles/<cycle_id>/execution_state.json`. Confirm `sealed = true`. If not sealed: halt — the sprint execution record is not closed. **Resolution path:** Issue `run sprint --cycle <cycle_id>` — if all EPICs are already merged (all `pr_status = merged` in `execution_state.json`), the execution engine will detect this and execute STEP 5 (Sprint Close) directly, sealing the record and setting status to `Sprint_Complete`. Once sealed, re-invoke `run delivery verification --cycle <cycle_id>`.
+
+**Parallel reads:** Read `execution_state.json`, `sprint_close.md`, and all `qa_evidence_EPIC-xx.md` files in parallel.
 
 Shared standards (escalation format, halt report format, gh CLI commands, identifier conventions): `claude/system/shared_standards.md`.
 
@@ -320,7 +304,7 @@ This step is informational — deferred execution blockers do not block verifica
 
 ### 4.3 Stale Parked Items Detection (IMP-15)
 
-Scan the authoritative backlog slice for items with `status = parked`.
+**Skip this step if the authoritative backlog slice contains zero items with `status = parked`.**
 
 For each parked item, check whether the same item appeared as `parked` in the backlog slices from the 2 prior completed cycles (by searching for the same ST item ID in `claude/cycles/<prior_cycle_id>/stage4_backlog_slice.md` — where available).
 
@@ -351,7 +335,9 @@ For each EPIC:
 
 ### 5.2 Feedback to QA & Testing Owner
 
-For each EPIC with coverage gaps, produce a structured feedback record:
+**Short-circuit:** If `test_scenarios = []` AND the EPIC has no frontend-visible AC (autonomous/governance/backend-only class): record disposition as `not_applicable` in the TSG table (STEP 5.3) and skip the feedback record block for that EPIC.
+
+For each EPIC with a genuine coverage gap (not short-circuited above), produce a structured feedback record:
 
 ```
 ## Test Coverage Gap — EPIC-xx: <title>
@@ -391,7 +377,7 @@ After producing all gap feedback records in STEP 5.2, produce a structured `test
 
 **Disposition values:**
 - `backlog_item_created` — a `TEST-GAP-EPIC-xx` backlog item has been added to `backlog.md` (link the item ID).
-- `not_applicable` — gap does not cover a core user journey; no backlog item required (record rationale).
+- `not_applicable` — gap does not cover a core user journey or EPIC is autonomous/backend-only class; no backlog item required (record rationale).
 - `deferred` — gap is acknowledged but backlog item creation deferred to a named future release (record rationale and target release).
 
 **Phase 4 exit criterion:** All identified test scenario gaps must have a disposition recorded in this table before `verification_report.md` may be sealed. A row with no disposition is an open item that blocks STEP 8.5.
@@ -456,17 +442,26 @@ Verification run: <ISO-8601 UTC>
 
 **§2 — Traceability Matrix** — from STEP 1. Full table + flag counts.
 
-**§3 — QA Evidence Summary** — from STEP 2. Per EPIC: pass/fail summary, sign-off confirmed, notes surfaced.
+**§3 — QA Evidence Summary** — from STEP 2. Use table format:
+
+| EPIC | Items | Pass | Fail | Sign-off | Notes |
+|------|-------|------|------|----------|-------|
+| EPIC-xx | N | N | 0 | ✓ DoQ YYYY-MM-DD | — |
 
 **§4 — Deviation Register** — from STEP 3. Full table. Hard blocks section. Acceptance records section (for any P1/P2 accepted: who accepted, when, rationale).
 
-**§5 — Outstanding Items and Deferred Execution Blockers** — from STEP 4. Two sub-sections: (a) outstanding items carried to backlog (item, reason, backlog entry ref); (b) deferred execution blocker dispositions (blocker description, original acceptance, outcome).
+**§5 — Outstanding Items and Deferred Execution Blockers** — from STEP 4. Use table format:
 
-**§6 — Test Coverage Assessment** — from STEP 5. Per EPIC: scenario status. Full gap feedback records. Backlog items added.
+| Item | Type | Outcome | Backlog ref |
+|------|------|---------|-------------|
+
+Two sub-sections: (a) outstanding items carried to backlog; (b) deferred execution blocker dispositions.
+
+**§6 — Test Coverage Assessment** — from STEP 5. Per EPIC: scenario status and TSG table. If all EPICs are `not_applicable`: record "No test scenario gaps identified — all EPICs autonomous/governance/backend-only class" and omit feedback record blocks.
 
 **§7 — System Status Confirmation** — from STEP 6. Confirmed / corrected / created. Any corrections listed.
 
-**§8 — Open Items** *(only if `Not_Verified`)* — every condition that must be resolved before re-running. Each: description, owner, resolution path. Reference any `verification_escalations.md` entries by ID.
+**§8 — Open Items** *(only if `Not_Verified`)* — every condition that must be resolved before re-running. Each: description, owner, resolution path. Reference any `verification_escalations.md` entries by ID. Omit this section entirely when status is `Verified` or `Verified_with_deviations`.
 
 **§9 — Sign-off Block**
 
@@ -584,19 +579,7 @@ If git operations are unavailable: output the exact files to stage and the commi
 
 ## 8. Completion Condition
 
-The run is complete only if:
-
-- `verification_report.md` exists with all 9 sections (§8 only if `Not_Verified`)
-- Verification status is one of: `Verified`, `Verified_with_deviations`, `Not_Verified`
-- Phase 4 section appended to `lessons_learnt_cycle.md` (STEP 8.5 complete)
-- All `returned_to_backlog` items have confirmed backlog entries
-- All P2/P3 deviations have backlog items
-- All test coverage gaps have a disposition recorded in the `test_scenario_gaps` table (STEP 5.3) — `backlog_item_created`, `not_applicable`, or `deferred`
-- All deferred execution blockers have a recorded disposition in `verification_report.md` §5
-- `docs/System_status_report.md` confirmed accurate for this cycle
-- `verification_escalations.md` filed for any hard gate blockers that required escalation (if applicable)
-- `.claude_current_state.json` updated with verification outcome and `next_cycle_unblocked` flag
-- STEP 10 commit complete (or commit manifest produced)
+The run is complete when: `verification_report.md` has all required sections (§8 only if `Not_Verified`), `.claude_current_state.json` is updated with verification outcome and `next_cycle_unblocked` flag, STEP 10 commit is done, and every open item from STEPS 1–6 has a recorded disposition (returned items in backlog, P2/P3 deviations in backlog, test gaps in TSG table, deferred blockers in §5, system status report confirmed accurate).
 
 ---
 
@@ -604,12 +587,7 @@ The run is complete only if:
 
 - **No autonomous verification.** The engine assembles evidence and produces the report. The Director of Quality and Product Owner sign off. The engine does not self-certify.
 - **No cycle unlocking without passing status.** `next_cycle_unblocked = true` is only set when status is `Verified` or `Verified_with_deviations`. Never when `Not_Verified`.
-- **No scope revision.** This engine reads sealed artefacts. It does not add, remove, or change what was in scope.
-- **All gaps are traceable.** Nothing is silently dropped. Every outstanding item, test gap, deviation, and deferred execution blocker has a disposition before the report is sealed.
-- **Re-runnable.** `Not_Verified` does not close the cycle — re-issue the command once conditions are resolved. The engine focuses only on the remaining open items.
 - **P0 deviations have no acceptance path.** They must be resolved. The engine will never record a P0 deviation as accepted — only the resolution of the underlying issue unlocks verification.
-- **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, scope traceability runs against that file. Verifying against the original slice when an amendment has sealed is a process integrity failure.
-- **Delivery pressure does not override quality gates.** The Director of Quality and Product Owner sign off independently. Neither can unilaterally accept a P0 deviation.
 
 ---
 

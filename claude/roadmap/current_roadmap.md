@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-15 (cycle 2026-05-15__scheduled — Standard-tier scheduled rebalance; DL-029 backlog add × 1)
-**Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — Standard-tier scheduled rebalance; DL-029 backlog add × 1)
+**Last Updated:** 2026-05-16 (rebalance 2026-05-15__scheduled-2 — no roadmap changes; post-v3.5-close scheduled review; DL-030)
+**Last rebalance:** 2026-05-16 (cycle 2026-05-15__scheduled-2 — Standard-tier, no-change; 2 gate-cleared ideas re-parked; meta-review triggered and complete)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -10,9 +10,19 @@
 
 ## 1. Current Version
 
-**v3.4** — Arc 3 In-Trade Risk Management (continued) — Shipped 2026-05-14
-**Next planned release:** **v3.5** — [TBD]
+**v3.5** — Arc 3 Completion + Arc 4 Foundation — Shipped 2026-05-15
+**Next planned release:** **v3.6** — Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance
 
+<!-- roadmap-annotation-marker: RA:v3.6:2026-05-16__release-v3.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-16__release-v3.6
+- Plan published: 2026-05-16
+- Cycle folder: claude/cycles/2026-05-16__release-v3.6/
+- Backlog slice: claude/cycles/2026-05-16__release-v3.6/stage4_backlog_slice.md
+- Status at annotation: Committed
+
+*RA:v3.5 retired — see roadmap_archive.md 2026-05-15 (post-ship closure 2026-05-15__release-v3.5).*
 *RA:v3.4 retired — see roadmap_archive.md 2026-05-14 (post-ship closure 2026-05-14__release-v3.4).*
 
 *RA:v3.3 retired — see roadmap_archive.md 2026-05-13.*
@@ -152,6 +162,8 @@ Today you find stocks through external research and add them to the watchlist ma
 > **v3.3 partial delivery (2026-05-13):** IT-01 backend (position_lifecycle_service.py, DS-05 migration, enriched GET /positions, POST /positions/{id}/refresh-state), IT-02 backend (GET /positions/grace-period-alerts), and IT-03 backend (GET /positions/{id}/stop-trail) shipped. Frontend display for IT-01/02/03 (ST-03, ST-05, ST-07) deferred to v3.4. IT-04, IT-05, IT-06 remained planned.
 >
 > **v3.4 delivery (2026-05-14):** IT-01 frontend (LifecycleBadge), IT-02 frontend (GracePeriodAlertZone), IT-03 frontend (TrailStopModal), IT-04 backend+frontend (DrawdownReviewPrompt), IT-05 backend+frontend (ConcentrationLimitsWarning) — all shipped. IT-06 (Alpaca paper trading) deferred to v3.5+. **Arc 3 features IT-01 through IT-05 ✅ Complete.**
+>
+> **v3.5 delivery (2026-05-15):** IT-06 §13 review PASS (Strategy Rules & System Intent Owner, 4 binding conditions); alpaca_paper_sync_service.py + GET /portfolio/paper-positions backend; PaperAccountPanel frontend on Positions page; 5 Playwright scenarios pass. **Arc 3 ✅ Fully Complete — all six features IT-01 through IT-06 shipped (v3.3–v3.5).**
 
 -----
 
@@ -165,7 +177,7 @@ Today you find stocks through external research and add them to the watchlist ma
 
 |ID   |Feature                         |Effort|Notes                                                                                                                                                                                                                                                           |
 |-----|--------------------------------|------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|PO-01|Plan vs Reality Analysis        |H     |Structured comparison of trade plan (PT-01) against actual outcome — entry timing vs planned entry zone, R achieved vs R target, exit reason vs planned exit conditions, lifecycle state transitions. Displayed on trade close                                  |
+|PO-01|Plan vs Reality Analysis        |H     |✅ Shipped v3.5 — arc4_data_requirements.md v1.0 + plan_vs_reality_service + GET /trades/{id}/plan-vs-reality + PlanVsReality component; entry_delta_pct deferred (planned_entry_price not yet snapshotted — per arc4_data_requirements.md §3.1)                |
 |PO-02|Journal Pattern Recognition     |H     |Cross-entry AI analysis: recurring themes, emotional patterns, setup types, conditions present at winning vs losing entries. Requires 6+ months of AI-summarised journal entries (BLG-FEAT-16 must be live and actively used)                                   |
 |PO-03|Behavioural Error Taxonomy      |M     |Auto-classify journal entries and plan vs reality deviations by error type (entry too early, held too long, sized incorrectly, ignored regime, etc.). Track frequency over time. Feeds Arc 5 drift detection                                                    |
 |PO-04|Reflection ↔ Outcome Correlation|H     |Does journal depth correlate with trade quality? Does plan completion score predict win rate? Requires PO-01 and PO-02 data foundation; gate: 50+ trades with plans                                                                                             |
@@ -272,7 +284,7 @@ Items in this section are sequenced and ready for planning when the current vers
 
 ### Arc 3 — In-Trade Risk Management (v3.3–v3.5)
 
-**Status (2026-05-14):** IT-01 through IT-05 complete (v3.3–v3.4). IT-06 (Alpaca Paper Trading) deferred to v3.5+.
+**Status (2026-05-15):** IT-01 through IT-05 complete (v3.3–v3.4). IT-06 (Alpaca Paper Trading) ✅ Complete v3.5.
 
 |Feature                         |ID   |Effort|Status / Notes                                                                              |
 |--------------------------------|-----|------|--------------------------------------------------------------------------------------------|
@@ -281,16 +293,16 @@ Items in this section are sequenced and ready for planning when the current vers
 |Stop Management Workflow        |IT-03|M     |✅ Shipped v3.3 (backend) + v3.4 (frontend)                                                 |
 |Drawdown-Triggered Review Prompt|IT-04|M     |✅ Shipped v3.4 (backend + frontend)                                                        |
 |Position Concentration Limits   |IT-05|S     |✅ Shipped v3.4 (backend + frontend)                                                        |
-|Alpaca Paper Trading Integration|IT-06|H     |US market only; §13 review required before pre-alignment; foundational for PO-05 replay mode|
+|Alpaca Paper Trading Integration|IT-06|H     |✅ Shipped v3.5 (2026-05-15) — §13 PASS; US positions mirrored to Alpaca paper account; GET /portfolio/paper-positions; PaperAccountPanel frontend; foundational for PO-05 replay mode|
 
 
-> **§13 note:** IT-01 through IT-05 are structured prompts requiring human confirmation — fully §13 COMPLIANT. IT-06 requires a formal §13 review before pre-alignment (paper trading touches execution infrastructure).
+> **§13 note:** IT-01 through IT-05 are structured prompts requiring human confirmation — fully §13 COMPLIANT. IT-06 §13 review complete — PASS (2026-05-15); four binding conditions recorded in decisions document.
 
 ### Arc 4 — Post-Trade Intelligence (v3.5–v3.8)
 
 |Feature                         |ID   |Effort|Gate / pre-condition                                                                           |
 |--------------------------------|-----|------|-----------------------------------------------------------------------------------------------|
-|Plan vs Reality Analysis        |PO-01|H     |Requires PT-01 (Trade Plan Object) — Arc 2 must be live and used                               |
+|Plan vs Reality Analysis        |PO-01|H     |✅ Shipped v3.5 (2026-05-15) — foundation: arc4_data_requirements.md + plan_vs_reality_service + GET /trades/{id}/plan-vs-reality + PlanVsReality frontend; entry_delta_pct deferred to Arc 4 (planned_entry_price not yet snapshotted)|
 |Journal Pattern Recognition     |PO-02|H     |Requires 6+ months of AI-summarised journal entries (BLG-FEAT-16 live and actively used)       |
 |Behavioural Error Taxonomy      |PO-03|M     |Requires PO-01 and PO-02 data; complements Arc 5 drift detection                               |
 |Reflection ↔ Outcome Correlation|PO-04|H     |Requires PO-01 + PO-02; gate: 50+ trades with plans                                            |
@@ -333,7 +345,7 @@ Items in this section are sequenced and ready for planning when the current vers
 
 |Feature                     |Gate condition                                                                                                                  |Gate owner                          |Status                                                                                                                                                    |
 |----------------------------|--------------------------------------------------------------------------------------------------------------------------------|------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-|Alpaca Paper Trading (IT-06)|§13 review — paper trading touches execution infrastructure; must confirm it does not constitute an automated trading capability|Strategy Rules owner                |Gate open — required before IT-06 enters pre-alignment                                                                                                    |
+|Alpaca Paper Trading (IT-06)|§13 review — paper trading touches execution infrastructure; must confirm it does not constitute an automated trading capability|Strategy Rules owner                |✅ Gate cleared — §13 PASS determination 2026-05-15 (ST-01; four binding conditions documented; IT-06 shipped v3.5)                                       |
 
 -----
 
@@ -385,16 +397,7 @@ When evaluating new features:
 |**v3.3+**    |Arc 2: Pre-Trade Research & Planning (remainder)                       |PT-04 Setup Quality Score — gate: 20+ closed trades; depends on PT-01 — 📋 Planned                                                       |
 |**v3.3** ✅  |Arc 3: In-Trade Risk Management (partial)                              |IT-01/02/03 backend (lifecycle state machine, grace period alerts, stop trail); research view spec closure (BLG-SPEC-24/25/26, BLG-FE-28); entry checklist E2E; governance patches (OA-01–05); feature flag infra (BLG-FEAT-13); trade plan abandonment backend (BLG-FEAT-21 partial) — ✅ Shipped 2026-05-13 — cycle: 2026-05-09__release-v3.3|
 |**v3.4** ✅  |Arc 3: In-Trade Risk Management (continued)                            |IT-01 lifecycle badge frontend, IT-02 grace period alert frontend, IT-03 stop trail frontend, IT-04 drawdown review prompt (backend+frontend), IT-05 concentration limits (backend+frontend); v3.3 deferred frontend quick wins; spec/QA debt — ✅ Shipped 2026-05-14 — cycle: 2026-05-14__release-v3.4|
-|**v3.5**     |Arc 3: In-Trade Risk Management (remainder) + Arc 4 start             |IT-06 Alpaca paper trading (§13 review required); Arc 4 planning begins — 📋 Planned
-
-<!-- roadmap-annotation-marker: RA:v3.5:2026-05-15__release-v3.5 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-05-15__release-v3.5
-- Plan published: 2026-05-15
-- Cycle folder: claude/cycles/2026-05-15__release-v3.5/
-- Backlog slice: claude/cycles/2026-05-15__release-v3.5/stage4_backlog_slice.md
-- Status at annotation: Validated                                                      |
+|**v3.5** ✅  |Arc 3 Completion + Arc 4 Foundation                                   |IT-06 Alpaca paper trading (§13 PASS; backend sync + frontend panel + Playwright); PO-01 Plan vs Reality (arc4_data_requirements.md v1.0 + backend + frontend + Playwright); spec/QA debt (BLG-SPEC-29/30/31, BLG-QA-19); governance patches (BLG-GOV-22, execution_prompt.md v3.20) — ✅ Shipped 2026-05-15 — cycle: 2026-05-15__release-v3.5|
 |**v3.5–v3.8**|Arc 4: Post-Trade Intelligence                                        |Plan vs reality analysis, journal pattern recognition, behavioural error taxonomy, outcome correlation — 📋 Planned                        |
 |**v3.8–v4.0**|Arc 5: Strategy Integrity                                             |Pre-entry rule validation, behavioural drift detection, red flag journal, strategy version comparison — 📋 Planned                         |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

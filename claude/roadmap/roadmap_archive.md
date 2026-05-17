@@ -1,13 +1,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-13
+**Last Updated:** 2026-05-15
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v3.5 — Release Annotation + Arc 3 Full Completion
+
+**Original roadmap location:** §8 Release Summary annotation block + §5 Arc 3 section
+**Status at retirement:** ✅ Complete — annotation retired post-ship; Arc 3 fully complete
+**Retired from active roadmap:** 2026-05-15
+**Shipped version:** v3.5 (2026-05-15)
+**Cycle reference:** 2026-05-15__release-v3.5
+**Verification report:** `claude/cycles/2026-05-15__release-v3.5/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-15
+
+### Annotation at retirement
+
+<!-- roadmap-annotation-marker: RA:v3.5:2026-05-15__release-v3.5 — COMPLETE -->
+
+**Execution notes (v3.5 — Complete):**
+- Cycle: 2026-05-15__release-v3.5
+- Plan published: 2026-05-15
+- Cycle folder: claude/cycles/2026-05-15__release-v3.5/
+- Backlog slice: claude/cycles/2026-05-15__release-v3.5/stage4_backlog_slice.md
+- Status: ✅ Complete — shipped 2026-05-15
+- Verification: Verified (13/13 stories; 0 deviations; DoQ + PO sign-off 2026-05-15)
+- Scope delivered: EPIC-01 (IT-06 §13 PASS + backend + frontend, Arc 3 complete), EPIC-02 (Arc 4 foundation: arc4_data_requirements.md v1.0 + PO-01 backend + frontend), EPIC-03 (BLG-SPEC-29/30/31, BLG-QA-19), EPIC-04 (BLG-GOV-22 sprint_planning_prompt.md v3.1, execution_prompt.md v3.20)
+- Scope deferred: entry_delta_pct null (planned_entry_price not yet snapshotted — not a deviation per arc4_data_requirements.md §3.1)
 
 ---
 
