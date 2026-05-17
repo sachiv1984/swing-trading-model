@@ -30,6 +30,9 @@ import types
 _db_stub = types.ModuleType("database")
 _db_stub.get_db = MagicMock()
 _db_stub.get_portfolio = MagicMock()
+_db_stub.get_signals = MagicMock()
+_db_stub.get_trade_plans_by_position = MagicMock()
+_db_stub.ensure_planned_entry_price_column = MagicMock()
 sys.modules["database"] = _db_stub
 
 import importlib.util as _ilu
