@@ -71,6 +71,8 @@ _db_stub.create_settings = MagicMock()
 _db_stub.update_settings = MagicMock()
 _db_stub.update_position_note = MagicMock()
 _db_stub.get_all_closed_trades_for_csv_export = MagicMock()
+_db_stub.get_trade_plans_by_position = MagicMock()
+_db_stub.ensure_planned_entry_price_column = MagicMock()
 sys.modules["database"] = _db_stub
 
 _config_stub = types.ModuleType("config")

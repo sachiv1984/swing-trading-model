@@ -28,7 +28,10 @@ from database import (
     update_position_note,
     update_position_tags,
     get_all_tags,
-    search_positions_by_tags
+    search_positions_by_tags,
+    get_trade_plans_by_position,
+    get_signals,
+    ensure_planned_entry_price_column,
 )
 
 from utils.pricing import (
@@ -827,7 +830,24 @@ def exit_position(
     
     # Get exit reason
     reason = exit_reason if exit_reason else 'Manual Exit'
-    
+
+    # Snapshot planned_entry_price from linked signal when a trade plan exists (Arc 4 PO-01).
+    planned_entry_price = None
+    try:
+        ensure_planned_entry_price_column()
+        plans = get_trade_plans_by_position(position_id, portfolio_id)
+        if plans:
+            signals = get_signals(portfolio_id)
+            ticker_upper = position['ticker'].upper()
+            signal = next(
+                (s for s in signals if (s.get('ticker') or '').upper() == ticker_upper),
+                None,
+            )
+            if signal:
+                planned_entry_price = float(signal['current_price']) if signal.get('current_price') else None
+    except Exception:
+        pass  # best-effort; null is acceptable for pre-arc4 trades
+
     # Create trade history record
     trade_data = {
         'position_id': position_id,  # BLG-TECH-07: FK enables stop_price JOIN for R-multiple
@@ -853,6 +873,7 @@ def exit_position(
         'exit_note': exit_note,
         'tags': position.get('tags'),
         'fill_price': position.get('user_fill_price'),
+        'planned_entry_price': planned_entry_price,
     }
     
     print(f"   💾 Creating trade history record...")

@@ -6,7 +6,7 @@
  * Hidden when: no plan (404), trade still open, or network error.
  *
  * Spec: docs/ux_specs/plan-vs-reality/ux_spec.md v1.0
- * ST-06, EPIC-02, v3.5
+ * ST-06, EPIC-02, v3.5; ST-02, EPIC-01, v3.6 (entry_delta_pct)
  */
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../../api/base44Client";
@@ -111,7 +111,7 @@ export default function PlanVsReality({ tradeId }) {
 
   if (isError || !data) return null;
 
-  const { r_achieved, r_target, r_delta, exit_reason_actual, exit_reason_planned,
+  const { r_achieved, r_target, r_delta, entry_delta_pct, exit_reason_actual, exit_reason_planned,
           lifecycle_state_at_exit, plan_adherence_flag, deviation_note } = data;
 
   const rClass = rColourClass(r_achieved, r_target);
@@ -150,12 +150,20 @@ export default function PlanVsReality({ tradeId }) {
             actual={exit_reason_actual ? `Actual: ${exit_reason_actual}` : "—"}
           />
 
-          {/* Entry Timing — entry_delta_pct is null until Arc 4 snapshot (spec §3.2) */}
-          <CompRow
-            label="Entry Timing"
-            planned="Planned zone: N/A"
-            actual="N/A"
-          />
+          {/* Entry Delta — AC-01: signed % with colour; AC-02: null → historical placeholder */}
+          {entry_delta_pct != null ? (
+            <CompRow
+              label="Entry Delta"
+              planned="—"
+              actual={`${entry_delta_pct >= 0 ? "+" : ""}${entry_delta_pct.toFixed(2)}%`}
+              actualClass={entry_delta_pct <= 0 ? "text-emerald-400" : "text-rose-400"}
+            />
+          ) : (
+            <div className="grid grid-cols-3 gap-2 text-xs items-baseline" data-testid="entry-delta-historical">
+              <span className="text-slate-400 font-medium">Entry Delta</span>
+              <span className="col-span-2 text-slate-500 italic">data not available for historical trades</span>
+            </div>
+          )}
 
           {/* Lifecycle State at Exit */}
           <div className="grid grid-cols-3 gap-2 text-xs items-center">
