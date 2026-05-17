@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-15
+**Last Updated:** 2026-05-17
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -2310,3 +2310,51 @@ As cycles accumulate, documents are created in each cycle directory but there is
 - Any maintenance gaps are identified; each either resolved or filed as a follow-up backlog item
 - Reference document or OPERATIONAL_GUIDE section added
 
+
+---
+
+## BLG-FE-26 — Research page UX review: regime lozenge and font consistency
+
+**Status:** ✅ COMPLETE
+**Archived:** 2026-05-17
+**Shipped version:** v3.6
+**Cycle reference:** 2026-05-16__release-v3.6 — closed by ST-08 (EPIC-03)
+**Original location:** §3 Frontend & UX Backlog
+
+AC-01 (lozenge whitespace-nowrap fix) shipped. AC-02 (font staging) deferred to BLG-FE-33. Original priority: P3.
+
+---
+
+## BLG-FE-32 — Research view: SC-RV-18/SC-RV-19 Playwright coverage
+
+**Status:** ✅ COMPLETE
+**Archived:** 2026-05-17
+**Shipped version:** v3.6
+**Cycle reference:** 2026-05-16__release-v3.6 — closed by ST-06 (EPIC-03)
+**Original location:** §3 Frontend & UX Backlog
+
+SC-RV-18 and SC-RV-19 Playwright tests added to tests/e2e/pre-trade-research.spec.js. research_view_scenarios.md v1.1; regression_protocol.md §AC-RV-13 updated. Original priority: P3.
+
+---
+
+## TEST-GAP-EPIC-03-v33 — SC-RV-18 and SC-RV-19 Playwright coverage (duplicate tracking item)
+
+**Status:** ✅ COMPLETE
+**Archived:** 2026-05-17
+**Shipped version:** v3.6
+**Cycle reference:** 2026-05-16__release-v3.6 — closed by ST-06 (EPIC-03)
+**Original location:** §5 QA & Test Automation Backlog
+
+Duplicate of BLG-FE-32 — same SC-RV-18/SC-RV-19 coverage gap. Both items closed by ST-06 v3.6.
+
+---
+
+## BLG-SPEC-27 — Research endpoint: surface per-source error codes as distinct HTTP responses
+
+**Status:** ✅ COMPLETE
+**Archived:** 2026-05-17
+**Shipped version:** v3.6
+**Cycle reference:** 2026-05-16__release-v3.6 — closed by ST-07 (EPIC-03)
+**Original location:** §7 Spec Debt Backlog
+
+GET /research/{ticker} now returns 404 (ticker not found) and 503 (YF unavailable). research_endpoint.md v1.2 §Error Responses updated; openapi.yaml 404/503 added. Originated as DEV-v33-02 P3 (reclassified from P2). Original priority: P3.

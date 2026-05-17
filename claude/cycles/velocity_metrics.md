@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-05-15
+**Last Updated:** 2026-05-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -43,8 +43,9 @@
 | v3.3  | 17      | 14        | 0.82     | 3 frontend stories returned to backlog (ST-03/05/07 — delegated_frontend); Arc 3 backend foundation complete; 4 P3 deviations accepted |
 | v3.4  | 14      | 14        | 1.00     | All 14 stories completed; IT-01–05 Arc 3 frontend + risk prompts delivered; 4 P3 deviations accepted (no P0/P1/P2) |
 | v3.5  | 13      | 13        | 1.00     | Zero deviations — cleanest sprint on record; §13 gate PASS (human delegation); Arc 3 complete (IT-06); Arc 4 foundation (PO-01) |
+| v3.6  | 7       | 7         | 1.00     | Zero spec deviations; P3 process deviation (ST-08 AC-02 staging); governance patches EPIC-04; Arc 4 PO-01 data pipeline complete (EPIC-01); research debt clearance EPIC-03; EPIC-02 deferred at sprint planning |
 
-**Rolling 6-cycle average (v3.0–v3.5):** 0.97
+**Rolling 6-cycle average (v3.1–v3.6):** 0.97
 
 ---
 

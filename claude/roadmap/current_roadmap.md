@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-16 (rebalance 2026-05-15__scheduled-2 — no roadmap changes; post-v3.5-close scheduled review; DL-030)
+**Last Updated:** 2026-05-17 (post-ship closure 2026-05-16__release-v3.6)
 **Last rebalance:** 2026-05-16 (cycle 2026-05-15__scheduled-2 — Standard-tier, no-change; 2 gate-cleared ideas re-parked; meta-review triggered and complete)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,18 +10,10 @@
 
 ## 1. Current Version
 
-**v3.5** — Arc 3 Completion + Arc 4 Foundation — Shipped 2026-05-15
-**Next planned release:** **v3.6** — Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance
+**v3.6** — Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance — ✅ Shipped 2026-05-17
+**Next planned release:** **v3.7** — [TBD]
 
-<!-- roadmap-annotation-marker: RA:v3.6:2026-05-16__release-v3.6 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-05-16__release-v3.6
-- Plan published: 2026-05-16
-- Cycle folder: claude/cycles/2026-05-16__release-v3.6/
-- Backlog slice: claude/cycles/2026-05-16__release-v3.6/stage4_backlog_slice.md
-- Status at annotation: Committed
-
+*RA:v3.6 retired — see roadmap_archive.md 2026-05-17 (post-ship closure 2026-05-16__release-v3.6).*
 *RA:v3.5 retired — see roadmap_archive.md 2026-05-15 (post-ship closure 2026-05-15__release-v3.5).*
 *RA:v3.4 retired — see roadmap_archive.md 2026-05-14 (post-ship closure 2026-05-14__release-v3.4).*
 
@@ -177,13 +169,15 @@ Today you find stocks through external research and add them to the watchlist ma
 
 |ID   |Feature                         |Effort|Notes                                                                                                                                                                                                                                                           |
 |-----|--------------------------------|------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|PO-01|Plan vs Reality Analysis        |H     |✅ Shipped v3.5 — arc4_data_requirements.md v1.0 + plan_vs_reality_service + GET /trades/{id}/plan-vs-reality + PlanVsReality component; entry_delta_pct deferred (planned_entry_price not yet snapshotted — per arc4_data_requirements.md §3.1)                |
+|PO-01|Plan vs Reality Analysis        |H     |✅ Shipped v3.5–v3.6 — arc4_data_requirements.md v1.0 + plan_vs_reality_service + GET /trades/{id}/plan-vs-reality + PlanVsReality component (v3.5); planned_entry_price snapshot at trade entry + entry_delta_pct display in PlanVsReality (v3.6) — **Arc 4 PO-01 fully complete**|
 |PO-02|Journal Pattern Recognition     |H     |Cross-entry AI analysis: recurring themes, emotional patterns, setup types, conditions present at winning vs losing entries. Requires 6+ months of AI-summarised journal entries (BLG-FEAT-16 must be live and actively used)                                   |
 |PO-03|Behavioural Error Taxonomy      |M     |Auto-classify journal entries and plan vs reality deviations by error type (entry too early, held too long, sized incorrectly, ignored regime, etc.). Track frequency over time. Feeds Arc 5 drift detection                                                    |
 |PO-04|Reflection ↔ Outcome Correlation|H     |Does journal depth correlate with trade quality? Does plan completion score predict win rate? Requires PO-01 and PO-02 data foundation; gate: 50+ trades with plans                                                                                             |
 |PO-05|Lightweight Replay Mode         |VH    |Replay historical signals against your own strategy rules on your own trade history. Not a full backtester — a replay of what the system would have signalled, compared to what you actually did. Requires Alpaca paper trading foundation (IT-06) for US market|
 
 **End state:** Every closed trade produces a structured plan vs reality comparison. Over time, the system surfaces your recurring errors, your strongest setup conditions, and the gap between your written strategy and your actual behaviour. Learning is systematic, not accidental.
+
+> **v3.6 delivery (2026-05-17):** planned_entry_price snapshot at trade exit; entry_delta_pct computed and surfaced in PlanVsReality component (SC-PVR-03/04/05). **PO-01 Plan vs Reality Analysis fully complete (v3.5 + v3.6).**
 
 -----
 
@@ -398,7 +392,8 @@ When evaluating new features:
 |**v3.3** ✅  |Arc 3: In-Trade Risk Management (partial)                              |IT-01/02/03 backend (lifecycle state machine, grace period alerts, stop trail); research view spec closure (BLG-SPEC-24/25/26, BLG-FE-28); entry checklist E2E; governance patches (OA-01–05); feature flag infra (BLG-FEAT-13); trade plan abandonment backend (BLG-FEAT-21 partial) — ✅ Shipped 2026-05-13 — cycle: 2026-05-09__release-v3.3|
 |**v3.4** ✅  |Arc 3: In-Trade Risk Management (continued)                            |IT-01 lifecycle badge frontend, IT-02 grace period alert frontend, IT-03 stop trail frontend, IT-04 drawdown review prompt (backend+frontend), IT-05 concentration limits (backend+frontend); v3.3 deferred frontend quick wins; spec/QA debt — ✅ Shipped 2026-05-14 — cycle: 2026-05-14__release-v3.4|
 |**v3.5** ✅  |Arc 3 Completion + Arc 4 Foundation                                   |IT-06 Alpaca paper trading (§13 PASS; backend sync + frontend panel + Playwright); PO-01 Plan vs Reality (arc4_data_requirements.md v1.0 + backend + frontend + Playwright); spec/QA debt (BLG-SPEC-29/30/31, BLG-QA-19); governance patches (BLG-GOV-22, execution_prompt.md v3.20) — ✅ Shipped 2026-05-15 — cycle: 2026-05-15__release-v3.5|
-|**v3.5–v3.8**|Arc 4: Post-Trade Intelligence                                        |Plan vs reality analysis, journal pattern recognition, behavioural error taxonomy, outcome correlation — 📋 Planned                        |
+|**v3.6** ✅  |Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance           |planned_entry_price snapshot at trade entry; entry_delta_pct in PlanVsReality; SC-RV-18/19 Playwright coverage; research endpoint 404/503 error codes; research page regime lozenge + font fix; execution_prompt.md v3.22 governance patches — ✅ Shipped 2026-05-17 — cycle: 2026-05-16__release-v3.6 — Verified_with_deviations (1 P3)|
+|**v3.6–v3.8**|Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v3.8–v4.0**|Arc 5: Strategy Integrity                                             |Pre-entry rule validation, behavioural drift detection, red flag journal, strategy version comparison — 📋 Planned                         |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |
 

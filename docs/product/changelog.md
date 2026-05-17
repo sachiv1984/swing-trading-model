@@ -3,9 +3,38 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-15
+**Last Updated:** 2026-05-17
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.6 — Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance — 2026-05-17
+Cycle: 2026-05-16__release-v3.6
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-05-16__release-v3.6/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-04 | execution_prompt.md governance patches — §13 gate story pattern formalisation; metadata, sprint_close, and Phase 3 patches; prompt_change_log.md retroactive entries | execution_prompt.md v3.22 |
+| EPIC-03 | QA, spec and UX debt clearance — SC-RV-18/19 Playwright coverage; research endpoint HTTP error code differentiation (404/503); research page regime lozenge and font consistency fix | docs/specs/api_contracts/research_endpoint.md v1.2; docs/qa/test_scenarios/research_view_scenarios.md v1.1; docs/frontend/design_system.md |
+| EPIC-01 | Arc 4 data pipeline integrity — planned_entry_price captured at trade entry; entry_delta_pct computed and surfaced in Plan vs Reality component | docs/specs/arc4/arc4_data_requirements.md §3.1; docs/specs/frontend/pages/trade_history.md §Expandable Journal Row — Plan vs Reality |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-v3.6-01 | P3 | ST-08 AC-02 font conformance not verified via required method (human staging). Code review confirms conformance with design_system.md. | PO (2026-05-17) |
+
+### Tech backlog items shipped
+- [ST-06] SC-RV-18 and SC-RV-19 Playwright coverage — closes BLG-FE-32 and TEST-GAP-EPIC-03-v33
+- [ST-07] Research endpoint HTTP error code differentiation — closes BLG-SPEC-27
+- [ST-08] Research page UX fix — closes BLG-FE-26
+- [ST-09] execution_prompt.md §13 gate story pattern — closes OA-RP-01–04
+- [ST-10] execution_prompt.md deferred prompt patches
+
+Sign-off: Product Owner — 2026-05-17
+QA sign-off: Director of Quality — 2026-05-17
 
 ---
 
