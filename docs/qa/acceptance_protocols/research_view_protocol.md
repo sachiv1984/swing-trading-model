@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-10
+**Version:** 1.1
+**Last Updated:** 2026-05-16
 **Story:** ST-10 (EPIC-03, v3.3) — BLG-QA-15
 **Cross-reference:** `docs/qa/test_scenarios/research_view_scenarios.md`
 **Spec ref:** `docs/specs/frontend/pages/research_view.md`
@@ -146,8 +146,8 @@ This document maps each observable acceptance criterion for the PT-02 Research V
 | AC | Each null field shows its specific placeholder; no crash |
 |----|--------------------------------------------------------|
 | Test scenario | SC-RV-17, SC-RV-18, SC-RV-19 |
-| Coverage | **Playwright** — partial null scenarios in `pre-trade-research.spec.js` |
-| Status | Partially covered — SC-RV-18/19 need explicit Playwright scenarios (backlog item filed) |
+| Coverage | **Playwright** — `SC-RV-18` and `SC-RV-19` in `pre-trade-research.spec.js` |
+| Status | Covered — SC-RV-18 and SC-RV-19 added (ST-06, EPIC-03, v3.6; closes BLG-FE-32) |
 
 ---
 
@@ -193,7 +193,7 @@ Before v3.3 delivery verification:
 - [ ] Playwright coverage: all "Covered" rows above pass in CI
 - [ ] Human staging: AC-RV-06 (source attribution) signed off
 - [ ] Human staging: AC-RV-12 (freshness indicator) signed off
-- [ ] Backlog item filed for SC-RV-18/SC-RV-19 Playwright coverage
+- [x] SC-RV-18/SC-RV-19 Playwright coverage added (ST-06, EPIC-03, v3.6)
 
 ---
 
@@ -201,4 +201,5 @@ Before v3.3 delivery verification:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-05-16 | ST-06 (EPIC-03, v3.6): AC-RV-13 status updated to Covered — SC-RV-18 and SC-RV-19 Playwright scenarios added; §5 sign-off checklist updated; closes BLG-FE-32. |
 | 1.0 | 2026-05-10 | Initial creation — ST-10 (EPIC-03, v3.3). All PT-02 observable ACs mapped to Playwright or human staging sign-off. |

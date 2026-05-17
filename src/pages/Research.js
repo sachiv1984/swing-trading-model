@@ -45,7 +45,7 @@ function SignalBadge({ status }) {
       no_signal: { label: "No Signal", cls: "bg-slate-700/50 text-slate-400 border-slate-600/30" },
     }[status] || { label: status ?? "—", cls: "bg-slate-700/50 text-slate-400 border-slate-600/30" };
   return (
-    <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border", cfg.cls)}>
+    <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border whitespace-nowrap", cfg.cls)}>
       {cfg.label}
     </span>
   );
@@ -129,6 +129,13 @@ export default function Research() {
   });
 
   if (researchError) {
+    const errorStatus = researchError?.message?.match(/HTTP (\d+)/)?.[1];
+    const errorMessage =
+      errorStatus === "404"
+        ? `Ticker '${ticker}' was not found.`
+        : errorStatus === "503"
+        ? "Market data service is currently unavailable. Please try again later."
+        : "Unable to load research data. Please try again.";
     return (
       <div className="space-y-6">
         <PageHeader
@@ -147,9 +154,7 @@ export default function Research() {
           }
         />
         <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-8 text-center">
-          <p className="text-red-400 text-sm mb-4">
-            Unable to load research data. Please try again.
-          </p>
+          <p className="text-red-400 text-sm mb-4">{errorMessage}</p>
           <Button
             onClick={() => refetch()}
             className="bg-red-600 hover:bg-red-700 text-white text-xs"

@@ -15,6 +15,8 @@
  *   SC-RES-11  Full-page error + Retry shown when research endpoint fails
  *   SC-RES-12  "Research" link present in Screener row actions
  *   SC-RES-13  "Research" link present in Watchlist actions column
+ *   SC-RV-18   regime=null — page renders without crash; Back button visible
+ *   SC-RV-19   All nullable fields null — degraded mode; no crash; Back accessible
  *
  * Spec refs: docs/specs/frontend/pages/pre_trade_research.md v0.1
  * Infrastructure: Playwright page.route() network interception.
@@ -79,6 +81,24 @@ const RESEARCH_WATCH = {
   data: {
     ...RESEARCH_OK.data,
     signal: { ...RESEARCH_OK.data.signal, status: 'watch' },
+  },
+};
+
+const RESEARCH_REGIME_NULL = {
+  status: 'ok',
+  data: { ...RESEARCH_OK.data, regime: null },
+};
+
+const RESEARCH_ALL_NULL = {
+  status: 'ok',
+  data: {
+    ticker: TICKER,
+    market: 'US',
+    signal: null,
+    regime: null,
+    sector: { sector: null, industry: null },
+    screener: null,
+    earnings: null,
   },
 };
 
@@ -349,4 +369,36 @@ test('SC-RES-13: Watchlist row actions include Research button', async ({ page }
   );
   await page.goto('/#/Watchlist');
   await expect(page.getByRole('button', { name: /research/i }).first()).toBeVisible({ timeout: 10000 });
+});
+
+// ---------------------------------------------------------------------------
+// SC-RV-18 — regime=null partial data
+// ---------------------------------------------------------------------------
+
+test('SC-RV-18: regime=null — page renders without crash; Back button visible', async ({ page }) => {
+  await mockFallback(page);
+  await mockResearch(page, RESEARCH_REGIME_NULL);
+  await mockHeat(page);
+  await mockPlans(page);
+  await gotoResearch(page);
+
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /AAPL.*Research/i })).toBeVisible({ timeout: 5000 });
+  await expect(page.getByRole('button', { name: /back/i })).toBeVisible();
+  await expect(page.getByText(/unable to load research data/i)).not.toBeVisible();
+});
+
+// ---------------------------------------------------------------------------
+// SC-RV-19 — all nullable fields null (degraded mode)
+// ---------------------------------------------------------------------------
+
+test('SC-RV-19: All fields null — degraded mode; no crash; Back button accessible', async ({ page }) => {
+  await mockFallback(page);
+  await mockResearch(page, RESEARCH_ALL_NULL);
+  await mockHeat(page);
+  await mockPlans(page);
+  await gotoResearch(page);
+
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /AAPL.*Research/i })).toBeVisible({ timeout: 5000 });
+  await expect(page.getByRole('button', { name: /back/i })).toBeVisible();
+  await expect(page.getByText(/unable to load research data/i)).not.toBeVisible();
 });
