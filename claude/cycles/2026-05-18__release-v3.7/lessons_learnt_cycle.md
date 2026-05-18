@@ -41,3 +41,28 @@ Cycle: 2026-05-18__release-v3.7
 - EPIC-02 gate deferral handled cleanly at planning — no mid-sprint disruption
 - scored_initiatives.md staleness resolved after 8+ cycles — OA-RP-05 closed
 - Autonomous class sign-off (BLG-GOV-19) worked correctly for EPIC-03 — no unnecessary DoQ delegation on pure governance patches
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-18__release-v3.7
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-05-18
+**Reviewed by:** PMO Lead
+**Prior cycle Phase 4 file checked:** claude/cycles/2026-05-16__release-v3.6/lessons_learnt_cycle.md — file does not exist (v3.6 cycle has no lessons_learnt_cycle.md). Recurrence check against prior Phase 4 patterns not possible.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| EPIC-01 QA evidence Result column shows "Pending DoQ" pre-signing placeholder — not updated to "Pass" when retrospective DoQ sign-off was applied at sprint close. Surfaced at STEP 2.1 during delivery verification. Sign-off block complete; not a verification blocker; compliance advisory only. | Phase 4 | A | defer | Update qa_evidence_template.md Result column to add note: "Must be updated to 'Pass' or 'Pass with notes' before sign-off block is completed. 'Pending DoQ' is a pre-signing placeholder only." File: claude/system/templates/qa_evidence_template.md; Section: QA evidence table header row note. | Director of Quality + Head of Specs Team | v3.8 |
+
+**Recurrence Notes:**
+The retrospective sign-off gap on EPIC-01 (PR merged before QA evidence date was recorded) was flagged in Phase 3 friction item #1 with a defer action (DoQ + enforcement of pre-merge date recording). That friction item's root cause (human bypass of the non-blank Date pre-merge requirement) is a separate issue from the Result column placeholder gap flagged here in Phase 4. Not a strict recurrence — different symptom in the same broader area of retrospective sign-off hygiene.
+
+**What Went Well (Phase 4):**
+- Zero spec deviations: delivery verification completed without any deviation register entries — no P0/P1/P2/P3 gate triggers
+- Autonomous class (BLG-GOV-19) verification for EPIC-03 was clean and unambiguous — all 4 criteria clearly met, no Tier 2 treatment required
+- Test scenario coverage for EPIC-01 complete at verification time: 7 Playwright scenarios (SC-SIG-WL-01/02/03 + SC-TP-SIG-01/02/03/04) authored during sprint, all observable AC covered — no TEST-GAP backlog items required
+- EPIC-02 planning-time deferral handled correctly: release slice entries in backlog.md §12, sprint_backlog.md and sprint_close.md both document the gate rationale — no traceability action required at verification
+- System status report correction was minimal (single status field) — no capability rows missing or mis-attributed

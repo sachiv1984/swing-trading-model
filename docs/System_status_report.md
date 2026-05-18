@@ -9,7 +9,7 @@
 
 ## Sprint: 2026-05-18__release-v3.7
 **Date:** 2026-05-18
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-05-18
 
 ### Capabilities now live (merged this sprint)
 
