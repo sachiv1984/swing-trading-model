@@ -21,19 +21,7 @@ from contextlib import contextmanager
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
-# ---------------------------------------------------------------------------
-# Stub database and config before importing the service under test
-# ---------------------------------------------------------------------------
-
-import types
-
-_db_stub = types.ModuleType("database")
-_db_stub.get_db = MagicMock()
-_db_stub.get_portfolio = MagicMock()
-_db_stub.get_signals = MagicMock()
-_db_stub.get_trade_plans_by_position = MagicMock()
-_db_stub.ensure_planned_entry_price_column = MagicMock()
-sys.modules["database"] = _db_stub
+# Database stub is registered by tests/conftest.py (BLG-QA-20).
 
 import importlib.util as _ilu
 _spec = _ilu.spec_from_file_location(

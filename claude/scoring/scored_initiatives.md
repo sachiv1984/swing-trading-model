@@ -1,11 +1,11 @@
 **Owner:** Facilitator
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-31
+**Last Updated:** 2026-05-18
 
 ---
 
-# Scored Initiatives — 2026-03-04__item-3.4
+# Scored Initiatives — Comprehensive Refresh (BLG-GOV-23)
 
 *Scores are decision support only. Proximity Score (SPS) is display-only; does not contribute to weighted total.*
 
@@ -45,234 +45,83 @@
 
 ---
 
+## Arc 2 — Pre-Trade Research & Planning (Active Remainder)
+
+*Shipped: PT-01, PT-02, PT-03, PT-05. Remaining: PT-04.*
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| PT-04 Setup Quality Score | 4 | 4 | 3 | 3 | 3 | 5 | 3 |
+
+*PT-04 gate: 20+ closed trades. WF=3 reflects M effort. SPS=3: gate is likely met or near-met; high standalone value once cleared.*
+
+---
+
+## Arc 3 — In-Trade Risk Management (Historical — All Shipped v3.3–v3.5)
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| IT-01 Position Lifecycle Manager | 5 | 4 | 5 | 3 | 4 | 4 | 4 |
+| IT-02 Grace Period Decision Support | 4 | 4 | 5 | 4 | 5 | 4 | 4 |
+| IT-03 Stop Management Workflow | 5 | 5 | 5 | 3 | 4 | 4 | 4 |
+| IT-04 Drawdown-Triggered Review Prompt | 4 | 4 | 5 | 3 | 4 | 4 | 3 |
+| IT-05 Position Concentration Limits | 4 | 3 | 4 | 4 | 4 | 3 | 3 |
+| IT-06 Alpaca Paper Trading Integration | 3 | 2 | 2 | 2 | 3 | 3 | 2 |
+
+*All IT-01–IT-06 ✅ Shipped (v3.3–v3.5). Scores recorded for historical calibration and STEP 6 inference anchoring. SPS values reflect state at time of planning.*
+
+---
+
+## Arc 4 — Post-Trade Intelligence (v3.5–v3.8)
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| PO-01 Plan vs Reality Analysis | 5 | 4 | 3 | 2 | 4 | 5 | 5 |
+| PO-02 Journal Pattern Recognition | 5 | 4 | 2 | 2 | 2 | 5 | 1 |
+| PO-03 Behavioural Error Taxonomy | 4 | 3 | 3 | 3 | 3 | 4 | 1 |
+| PO-04 Reflection ↔ Outcome Correlation | 4 | 3 | 2 | 2 | 2 | 4 | 1 |
+| PO-05 Lightweight Replay Mode | 4 | 3 | 2 | 1 | 1 | 4 | 1 |
+
+*PO-01 ✅ Shipped v3.5–v3.6. PO-02 gate: 6+ months AI-summarised journal (BLG-FEAT-16 live). PO-03 gate: PO-01 + PO-02 data. PO-04 gate: 50+ trades with plans. PO-05 gate: IT-06 foundation + substantial history. SPS=1 for PO-02–05 reflects data-density gates not yet met.*
+
+---
+
+## Arc 5 — Strategy Integrity (v3.8–v4.0)
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| SI-01 Pre-Entry Rule Validation Gate | 5 | 4 | 5 | 3 | 4 | 5 | 4 |
+| SI-02 Behavioural Drift Detection | 5 | 4 | 4 | 2 | 2 | 5 | 1 |
+| SI-03 Red Flag Journal | 4 | 3 | 4 | 3 | 4 | 4 | 3 |
+| SI-04 Strategy Version Comparison | 4 | 3 | 3 | 2 | 2 | 4 | 1 |
+| SI-05 Weekly Strategy Integrity Digest | 4 | 3 | 3 | 3 | 4 | 4 | 1 |
+
+*SI-01 is a pull-forward candidate (high standalone value; §13 review required). SPS=4 reflects this. SI-03 also pull-forward candidate; SPS=3 (depends on SI-01 for override logging). SI-02 gate: PO-01 + PO-03 data. SI-05 gate: SI-02 + SI-03.*
+
+---
+
+## Arc 6 — Performance Science (v4.0+)
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| PS-01 Edge Analysis Dashboard | 5 | 5 | 3 | 2 | 2 | 5 | 1 |
+| PS-02 Regime-Conditional Performance | 4 | 4 | 3 | 3 | 2 | 4 | 1 |
+| PS-03 Monte Carlo Simulation | 3 | 3 | 3 | 3 | 2 | 4 | 1 |
+| PS-04 Strategy Decay Detection | 5 | 5 | 4 | 2 | 1 | 5 | 1 |
+| PS-05 Personal Benchmark Comparison | 3 | 3 | 2 | 4 | 3 | 3 | 1 |
+
+*All Arc 6 items gate: substantial trade history (50–100+ trades with plans and lifecycle data). SPS=1 across the board reflects horizon-distance. PS-01 and PS-04 score highest on Strat/Fin/Rev — highest long-term value once gates clear.*
+
+---
+
 ## Facilitator Observations
 
-Highest-value new items: Golden Output CI Baseline (closes silent regression gap), Backtest Stop Reconciliation (retrospective correctness), Unavailability Failure Mode (best effort-to-risk ratio — ~hours).
-
-Lowest-value existing initiative: 4.1c Server-Side PDF Report — lowest combined Strat+Fin+Risk of all roadmap items; natural displacement candidate if a future Add requires stops.
-
-SPS=4 note: 4.3 Signal Exposure PoG issued (POG-20260304-01). Implementation must not expand beyond top_n and lookback_days.
-
----
-
-## Cycle 2026-03-17__item-v1.10 — Active Initiatives
-
-**Last Updated:** 2026-03-17
-
-| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 3.5 Alerts & Notifications | 5 | 4 | 2 | 1 | 2 | 3 | 3 | L |
-| 4.1b Tax-Year P&L | 4 | 5 | 3 | 3 | 3 | 4 | 1 | M |
-| 4.3 Signal Exposure (PoG valid) | 3 | 3 | 2 | 5 | 4 | 4 | 4 | S |
-| 4.2 Watchlists (P2 — hold) | 3 | 3 | 2 | 2 | 3 | 4 | 2 | M |
-| Chart Interactivity (P2 — hold) | 3 | 2 | 2 | 3 | 4 | 5 | 2 | S |
-
-**CPS:** 2.40 (5 items)
-
----
-
-## New Items — Promoted to Backlog (STEP 5 Advance — cycle 2026-03-17__item-v1.10)
-
-| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| BLG-OPS-02 Production Deployment Runbook | 3 | 2 | 5 | 5 | 5 | 5 | 1 | S |
-| BLG-DATA-01 Positions Table Data Dictionary | 3 | 2 | 4 | 5 | 5 | 5 | 1 | S |
-| BLG-TECH-07 Database Migration Governance Standard | 3 | 2 | 5 | 5 | 5 | 5 | 1 | S |
-
----
-
-## Facilitator Observations (cycle 2026-03-17__item-v1.10)
-
-All new backlog items from this cycle are S-effort governance/documentation items with high risk-reduction value and immediate time-to-value. The highest-value item is BLG-OPS-02 (Production Deployment Runbook) — directly enables the newly-live staging environment to be used safely in a governed deployment workflow.
-
-Current displacement candidate: CHART-IX (Chart Interactivity) — SPS=2, S effort, lowest strategic urgency. No change required from prior scoring.
-
-SPS=4 note: 4.3 Signal Exposure PoG POG-20260304-01 remains valid at strategy_rules.md v1.3. Scope constraint immutable: only `top_n` and `lookback_days` are cleared.
-
----
-
-## Cycle 2026-03-18__item-4.3 — Active Initiatives
-
-**Last Updated:** 2026-03-18
-
-*4.1b and 4.3 shipped in v2.0 and removed from active pool. Active initiatives: 3.5 Alerts, 4.2 Watchlists, CHART-IX.*
-
-| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 3.5 Alerts & Notifications | 5 | 4 | 2 | 1 | 2 | 3 | 3 | L |
-| 4.2 Watchlists (P2 — hold) | 3 | 3 | 2 | 2 | 3 | 4 | 2 | M |
-| CHART-IX (P2 — hold) | 3 | 2 | 2 | 3 | 4 | 5 | 2 | S |
-
-**CPS:** 2.33 (3 items; prior: 2.40 — decrease reflects removal of SPS=4 item 4.3 and SPS=1 item 4.1b from active pool)
-
----
-
-## New Items — Promoted to Backlog (STEP 5 Advance — cycle 2026-03-18__item-4.3)
-
-| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| BLG-FR-01 Tax Year P&L PDF Export | 4 | 5 | 2 | 3 | 4 | 4 | 1 | S |
-| BLG-FR-02 Tax Year P&L CSV Export | 4 | 5 | 2 | 4 | 5 | 5 | 1 | S |
-
----
-
-## Facilitator Observations (cycle 2026-03-18__item-4.3)
-
-Both new backlog items (BLG-FR-01/02) are S-effort financial reporting enhancements from v2.0 staging feedback. High financial value score (5) reflects statutory filing use case. Minimal risk (SPS=1 — no strategy boundary contact). CSV export (BLG-FR-02) is highest TTV (immediate — format conversion only).
-
-Current displacement candidate: CHART-IX (Chart Interactivity) — SPS=2, S effort, lowest strategic urgency in active pool. No change from DL-009.
-
----
-
-## Cycle 2026-03-21__item-3.5 — Active Initiatives (CPS Update)
-
-**Last Updated:** 2026-03-21
-
-*3.5 Alerts, 4.2 Watchlists, and CHART-IX all shipped in v2.1. Active initiatives pool is now empty.*
-
-**CPS:** 0.0 (0 active initiatives; all v2.1 items shipped)
-**Prior CPS:** 2.33 (cycle 2026-03-18__item-4.3)
-**Delta:** −2.33 (all active roadmap initiatives completed; v2.2 scope TBD)
-
-*No displacement candidate — no active initiatives to displace.*
-
----
-
-## New Items — Promoted to Backlog (STEP 5 Advance — cycle 2026-03-21__item-3.5)
-
-*Scoring scale: 1 (low/poor) → 5 (high/excellent). WF Intensity: 1=high effort, 5=hours only. TTV: 1=slow, 5=immediate.*
-
-| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| BLG-SEC-01 API Key Authentication | 3 | 4 | 5 | 4 | 5 | 5 | 1 | M |
-| BLG-FEAT-12 Alert History Table | 4 | 3 | 3 | 3 | 4 | 4 | 2 | M |
-| BLG-FEAT-10 Alert Threshold Customisation | 4 | 3 | 2 | 3 | 4 | 4 | 2 | M |
-| BLG-FEAT-11 Strategy Compliance Score | 4 | 3 | 4 | 2 | 3 | 4 | 4 | M–L |
-| BLG-SPEC-T01 Spec-to-Test Traceability Matrix | 3 | 2 | 4 | 4 | 4 | 5 | 1 | M |
-| BLG-FEAT-09 Metrics Staleness Indicator | 4 | 3 | 2 | 4 | 4 | 4 | 2 | S–M |
-| BLG-QA-02 Test Automation Readiness Assessment | 3 | 2 | 3 | 5 | 5 | 5 | 1 | XS–S |
-| BLG-FE-02 Loading State Standardisation | 3 | 2 | 2 | 3 | 4 | 4 | 1 | M |
-| BLG-FE-03 User-Facing Error Message Mapping | 3 | 2 | 2 | 4 | 4 | 4 | 1 | S–M |
-| BLG-OPS-05 API Performance Baseline | 3 | 2 | 3 | 4 | 5 | 5 | 1 | S |
-| BLG-OPS-06 Health Check Endpoint | 3 | 2 | 3 | 5 | 5 | 5 | 1 | XS |
-| BLG-SEC-02 Content Security Policy Headers | 2 | 2 | 4 | 5 | 5 | 5 | 1 | XS |
-
----
-
-## Facilitator Observations (cycle 2026-03-21__item-3.5)
-
-Highest-value items from this cycle: BLG-SEC-01 (API Key Auth — highest risk reduction, P1 priority), BLG-OPS-06 (Health Check — XS effort, immediate operational value), BLG-SEC-02 (CSP Headers — XS effort, direct security hardening). All three are sub-1-day items with high rev/TTV scores.
-
-BLG-FEAT-11 (Strategy Compliance Score) carries SPS=4 due to §13.3 proximity. Scope is display-only — no automated enforcement. STEP 5 debate cleared after scope constraint was accepted. This constraint must be re-verified at pre-alignment before any implementation work begins.
-
-Natural v2.2 sequencing: BLG-SEC-01 (P1) → BLG-QA-02 + BLG-SPEC-T01 (quality foundations) → BLG-FEAT-10/12 (alert enhancements, after BLG-OPS-04 alert scheduling design) → BLG-FEAT-09/11 (user-facing metrics). BLG-OPS-05/06 and BLG-SEC-02 are small-enough to slot into any sprint as fast-follow items.
-
----
-
-## New Items — Promoted to Backlog (STEP 5 Advance — cycle 2026-03-24__scheduled)
-
-**Last Updated:** 2026-03-24
-
-*Active initiatives pool remains empty post-v2.2 ship. CPS = 0.0 (0 active initiatives). No active initiative scoring required this cycle.*
-
-*Scoring scale: 1 (low/poor) → 5 (high/excellent). WF Intensity: 1=high effort, 5=hours only. TTV: 1=slow, 5=immediate.*
-
-| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| BLG-OPS-07 System Health Check Playbook | 2 | 2 | 3 | 5 | 5 | 5 | 1 | S |
-| BLG-QA-03 Canonical Test Execution Report Template | 2 | 2 | 3 | 5 | 5 | 5 | 1 | S |
-| BLG-QA-04 Integration Test Coverage Report | 3 | 2 | 4 | 4 | 4 | 5 | 1 | M |
-| BLG-QA-05 Critical-path Smoke Test (Playwright) | 4 | 2 | 4 | 3 | 4 | 4 | 1 | M |
-| BLG-OPS-08 Staging Data Reset Script | 3 | 2 | 4 | 5 | 5 | 5 | 1 | S |
-| BLG-OPS-09 Database Size Monitoring Alert | 3 | 3 | 5 | 5 | 5 | 5 | 1 | S |
-| BLG-FE-05 Alert Notification Badge | 3 | 3 | 2 | 5 | 4 | 5 | 2 | S |
-| BLG-QA-06 Test Data Seed Script Library | 3 | 2 | 4 | 4 | 4 | 5 | 1 | S–M |
-
----
-
-## Facilitator Observations (cycle 2026-03-24__scheduled)
-
-Highest-value items: BLG-OPS-09 (data safety, risk=5 — active data-loss risk on Render free tier), BLG-QA-05 (critical-path quality safety net, strat=4 — follows BLG-QA-01 Playwright investment), BLG-QA-04 (coverage visibility — makes DoQ sign-off better-informed).
-
-All 8 items are SPS=1 or SPS=2 — no §13 boundary proximity. All are S or M effort — quick wins at v2.3. All items high reversibility (rev=5). BLG-QA-05 has an explicit §3 scope constraint: Playwright pass is supporting evidence for non-visual AC only — not a DoQ gate replacement. BLG-OPS-08 (staging reset) should be sequenced before BLG-QA-05 and BLG-QA-04 as a prerequisite.
-
-**CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-03-21__item-3.5). Delta: 0.0.
-
----
-
-## Cycle 2026-03-31__scheduled — New Backlog Items
-
-*Standard-tier run. Zero active roadmap initiatives. 4 new backlog items scored as STEP 6 output.*
-
-| Initiative | Strat | Fin | Risk | WF Int | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| BLG-FEAT-14 — Weekly trading review digest | 4 | 3 | 2 | 3 | 3 | 4 | 2 | M |
-| BLG-OPS-10 — Render hosting tier review | 3 | 4 | 4 | 5 | 5 | 5 | 1 | XS |
-| BLG-BE-06 — Alert evaluation idempotency | 4 | 2 | 5 | 3 | 3 | 3 | 2 | M |
-| BLG-GOV-09 — Cycle velocity metric | 3 | 2 | 3 | 4 | 4 | 5 | 1 | S |
-
-*Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score (carried from STEP 5 debate). Scale: 1–5.*
-
----
-
-## Cycle 2026-04-05__scheduled — New Backlog Items
-
-*Standard-tier run. Zero active roadmap initiatives. 3 new backlog items from stale ideas advancing after v2.4 gate clearance. CPS = 0.0 (unchanged).*
-
-| Initiative | Strat | Fin | Risk | WF Int | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| BLG-FE-09 — Define Frontend Performance Budget | 2 | 1 | 2 | 5 | 4 | 5 | 1 | S |
-| BLG-SPEC-D17 — Spec Dependency Map | 3 | 1 | 3 | 4 | 3 | 5 | 1 | M |
-| BLG-GOV-14 — Governance Health Score | 3 | 1 | 3 | 4 | 3 | 5 | 1 | M |
-
-*Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score (carried from STEP 5 debate). Scale: 1–5.*
-
-**CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-03-31__scheduled). Delta: 0.0.
-
-**Facilitator observations (cycle 2026-04-05__scheduled):** All 3 items are P3 / S–M effort governance or spec-debt items with low financial impact (Fin=1) but meaningful risk-reduction potential (Risk=2–3). High reversibility (Rev=5) across the board. BLG-FE-09 scope constraint: documentation and budget definition only — no implementation work included. BLG-SPEC-D17 scope constraint: initial map covers priority specs only (API contracts, data model, strategy rules) — full coverage is a stretch goal. Skill-Silo Alert fired this cycle (100% governance-heavy additions). Pull-forward candidate BLG-OPS-12 confirmed already in backlog at P2 — no action required.
-
-**Last Updated:** 2026-04-05
-
----
-
-## Cycle 2026-04-24__scheduled — New Backlog Items
-
-*Standard-tier run. Zero active roadmap initiatives. 2 new backlog items from gate-cleared ideas after v2.9 ship. CPS = 0.0 (unchanged).*
-
-| Initiative | Strat | Fin | Risk | WF Int | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| BLG-FE-19 — Keyboard Shortcuts | 3 | 2 | 1 | 5 | 5 | 5 | 2 | S |
-| BLG-OPS-14 — AI Journal Monitoring Metrics | 4 | 2 | 4 | 5 | 5 | 5 | 2 | S |
-
-*Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score (carried from STEP 5 debate). Scale: 1–5.*
-
-**CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-04-21__scheduled). Delta: 0.0.
-
-**Facilitator observations (cycle 2026-04-24__scheduled):** Both items are P3 / S-effort with immediate time-to-value (TTV=5) and full reversibility (Rev=5). BLG-OPS-14 has the stronger risk-reduction case (Risk=4) — AI monitoring fills a live operational gap post-BLG-AI-01 delivery. BLG-FE-19 is low-risk UX polish (Risk=1) with a 10-cycle overdue gate; reasonable to include. No Skill-Silo Alert (Governance load = 0%). No scarce skill conflicts.
-
-**Last Updated:** 2026-04-25
-
----
-
-## Cycle 2026-05-05__scheduled — New Backlog Items
-
-*Standard-tier run. Zero active roadmap initiatives. 5 new backlog items from gate-cleared and stale idea review following Arc 1 completion. CPS = 0.0 (unchanged).*
-
-| Initiative | Strat | Fin | Risk | WF Int | TTV | Rev | SPS | Effort |
-|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| BLG-FE-21 — Design system document | 3 | 1 | 2 | 5 | 4 | 5 | 1 | M |
-| BLG-FEAT-20 — Net-of-costs performance tracking | 3 | 4 | 2 | 3 | 2 | 3 | 2 | M |
-| BLG-FE-22 — Screener morning routine UX spec | 4 | 2 | 3 | 5 | 5 | 5 | 2 | S |
-| BLG-GOV-18 — External API dependency risk register | 2 | 1 | 4 | 5 | 4 | 5 | 1 | S |
-| BLG-SEC-05 — Alpaca key rotation policy + credential audit | 2 | 1 | 4 | 5 | 4 | 5 | 1 | S |
-
-*Scores: Strat=Strategic alignment, Fin=Financial impact, Risk=Risk reduction, WF Int=Workforce intensity (5=minimal), TTV=Time to value (5=fast), Rev=Reversibility (5=fully reversible), SPS=Strategy Proximity Score. Scale: 1–5.*
-
-**CPS this cycle:** 0.0 (zero active initiatives). Prior CPS: 0.0 (cycle 2026-04-24__scheduled). Delta: 0.0.
-
-**Facilitator observations (cycle 2026-05-05__scheduled):** All 5 items are SPS 1–2 — no §13 boundary contact. BLG-FEAT-20 (net-of-costs) has the highest financial impact score (Fin=4) because accurate R-multiples are foundational to Arc 4/6 edge analysis; however its TTV is low (2/5) because value only realises at Arc 4 delivery, hence the "Arc 3/4 context" delivery note. BLG-FE-22 (morning routine UX) is the highest-urgency item (TTV=5, needed before v3.2 sprint planning to inform PT-02 UX). BLG-SEC-05 and BLG-GOV-18 are both S-effort with direct risk-reduction value (Risk=4). No Skill-Silo Alert (Governance load 6% — below 20% floor).
-
-**Key context:** Arc 1 fully complete — 24 parked ideas had gate-cleared conditions. 15 gate-cleared ideas were rejected as superseded by Arc 1 implementation. 2 advanced items parked in STEP 5 debate (finops-20260421-01: premature 10 days in; cybersecurity-20260421-02: scope subsumed into BLG-SEC-05).
-
-**Last Updated:** 2026-05-05
-
+**Highest-value active items (unshipped, by weighted potential):**
+- SI-01 Pre-Entry Rule Validation Gate: highest Strat+Risk+Rev combination among unshipped items; pull-forward candidate; SPS 4. Strongest case for v3.8 priority slot.
+- PT-04 Setup Quality Score: Arc 2 completion; high Rev; SPS 3; gate likely near-met.
+- SI-03 Red Flag Journal: pull-forward candidate alongside SI-01; M effort; SPS 3.
+
+**Horizon items requiring data density:**
+- PO-02, PO-03, PO-04, PO-05, SI-02, SI-04, SI-05, all Arc 6 items: SPS 1. Do not advance to planning until respective gates cleared.
+
+**Previous highest-value new items (from 2026-03-31 session):** Golden Output CI Baseline, Backtest Stop Reconciliation, Unavailability Failure Mode — unchanged assessment.
