@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.90
-**Last Updated:** 2026-05-17
+**Version:** 3.91
+**Last Updated:** 2026-05-18
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -847,7 +847,7 @@ Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprin
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.23)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.24)
 
 ### 8.1 Invocation
 
@@ -1420,7 +1420,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.29 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.2 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.23 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.24 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.3 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.9 |
@@ -1444,6 +1444,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.91 | 2026-05-18 | **execution_prompt.md v3.23→v3.24 — ST-07 (EPIC-03, v3.7): three lessons-learnt patches.** §8 source prompt header updated v3.23→v3.24. §14 Execution Engine Source v3.23→v3.24. §14 Version 3.90→3.91/2026-05-18. Changes: (LL-v3.7-EX-01) §3.1.A step 10a — deviations_filed atomic write: write `deviations_filed: true` immediately after step 10 deviation check; do not defer. (LL-v3.7-EX-02) §3.1.A step 10b — backlog verify guidance: verify backlog item appears in backlog.md before closing story when mandatory deferred staging AC is filed. (LL-v3.7-EX-03) §3.1.A step 2a — spec_references path verify: verify each path exists on disk before recording in execution_state.json; prevents false traceability from non-existent paths. Authority: Head of Specs Team (ST-07, 2026-05-18). |
 | 3.90 | 2026-05-17 | **Governance pattern consolidation — preflight common checks extracted to `shared/preflight_common.md` v1.0.** §6B source prompt header updated v2.28→v2.29. §8 source prompt header updated v3.22→v3.23. §9 source prompt header updated v2.2→v2.3. §10 source prompt header updated v2.8→v2.9. §14 Release Engine Source v2.28→v2.29; Execution Engine Source v3.22→v3.23; Verification Engine Source v2.2→v2.3; Post-Ship Closure Engine v2.8→v2.9. §14 Version 3.89→3.90/2026-05-17. Changes: Required Files Present, Required Authority Roles Exist, and Write Permission Test blocks extracted from STEP -1 preflight sections of release_planning (−1.1/−1.3/−1.4), execution (−1.1/−1.6/−1.7), delivery_verification (−1.4), and post_ship_closure (−1.4/−1.5/−1.6) into new shared module `claude/system/shared/preflight_common.md`. Each engine now invokes the module with engine-specific parameter blocks; engine-specific advisories remain inline. Sprint Planning excluded (different numbered-list preflight style). Authority: Head of Specs Team (governance pattern consolidation 2026-05-17). |
 | 3.89 | 2026-05-16 | **execution_prompt.md v3.21→v3.22 — ST-09/ST-10 (EPIC-04, v3.6): §13 gate story pattern + OA-RP-01–04 closure.** §8 source prompt header updated v3.21→v3.22. §14 Execution Engine Source v3.21→v3.22. §14 Version 3.88→3.89/2026-05-16. Changes: §5.1 — §13 gate story pattern (LL-v3.5-SP-01) added: when an arc feature requires a strategy/compliance review gate, scope the review as Sprint 1 `delegated_decision` story gating implementation stories to Sprint 2; validated in v3.5 IT-06. ST-10 patches (deviations_filed semantics, §5.3 three-field verification readiness block, §5.4 lessons_learnt_cycle.md reference) confirmed pre-met in v3.21 — no additional changes required. Authority: Head of Specs Team (ST-09+ST-10, 2026-05-16). |
 | 3.88 | 2026-05-16 | **execution_prompt.md v3.20→v3.21 — STEP 1 simplified to verify-only.** §8 source prompt header updated v3.20→v3.21. §14 Execution Engine Source v3.20→v3.21. §14 Version 3.87→3.88/2026-05-16. Change: STEP 1 (GitHub Issue Preflight) changed from issue creator to verifier — `sync gh` at sprint planning seal is now the canonical issue creation point; STEP 1 records issue numbers and notes a process gap if any are missing, but does not halt; minimal fallback creation retained for resilience. Authority: Head of Specs Team (2026-05-16). |

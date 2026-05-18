@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.23
+**Version:** 3.24
 **Last Updated:** 2026-05-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -522,6 +522,9 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 1. Execute the work defined in the acceptance criteria. **Test scenarios advisory (ST-13):** When tests are created as part of this work, populate `test_scenarios` in `execution_state.json` for the parent EPIC with the test file paths (e.g. `tests/test_screener_service.py`). This is non-blocking — story execution does not halt if the field is not updated immediately — but it must be populated before the EPIC-level QA evidence log is created at STEP 3.2.A.
 2. Confirm `spec_references` is populated in `execution_state.json` for this item. If empty and a spec exists: populate now before proceeding.
+
+2a. **Spec_references path verify (LL-v3.7-EX-03):** When populating `spec_references` in `execution_state.json`, verify each path exists (file read or ls check) before recording it. A non-existent path in `spec_references` causes false traceability and masks missing specs — record only paths that resolve on disk.
+
 3. Commit to the EPIC branch with format: `[EPIC-xx][ST-xx] <imperative description>`
 4. Push to `exec/<cycle_id>/EPIC-xx`.
 5. `governance_sync.yml` will close the GitHub issue automatically on push.
@@ -535,6 +538,10 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
     - **Deviation type distinction (LL-v1.10-P4-2):** If the deviation is "endpoint/feature absent from spec" (the spec does not define this thing at all), file in `qa_evidence_EPIC-xx.md` and backlog only — the canonical spec is not the right home for an absence note. If the deviation is "implementation differs from what the spec requires" (the spec defines it, but the implementation diverges), file in the canonical spec as above.
     - **Intent check advisory (LL-v3.4-P3-03):** Before filing a deviation, verify implementation matches spec *intent*, not just literal draft wording. If spec and implementation agree on intent, record as an implementation note in `execution_state.json` notes only — do not file a deviation.
     - **Known Deviations section advisory (LL-v3.4-P3-04):** When filing a deviation in the canonical spec, also add a `## Known Deviations` section to that spec in the same commit if one does not already exist. This makes the deviation traceable directly from the spec and reduces Phase 4 verification overhead.
+
+10a. **Deviations_filed atomic write (LL-v3.7-EX-01):** Immediately after step 10 deviation check: write `deviations_filed: true` to `execution_state.json` for this ST item. Do not defer this write to a later step or to sprint close.
+
+10b. **Backlog verify guidance (LL-v3.7-EX-02):** When filing a mandatory backlog item for a deferred staging AC (per `LL-v3.1-EX-01` or CLAUDE.md §2 frontend testing gate), verify the item appears in `claude/backlog/backlog.md` before closing the story (file read or grep check). A backlog item that was not persisted does not satisfy the gate.
 
 11. **Sign-off gate:** If the item's seal condition in `sprint_backlog.md` names a required sign-off role: invoke agent-mediated sign-off per §5.3. Do not mark `acceptance_verified = true` until `sign_off_record.status = "cleared"`. Record outcome in `sign_off_record` in `execution_state.json`.
 
