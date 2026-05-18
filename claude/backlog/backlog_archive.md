@@ -2310,3 +2310,11 @@ As cycles accumulate, documents are created in each cycle directory but there is
 - Any maintenance gaps are identified; each either resolved or filed as a follow-up backlog item
 - Reference document or OPERATIONAL_GUIDE section added
 
+
+
+---
+
+### BLG-FE-35 — ST-08 AC-02: Human staging sign-off for Research page font conformance
+**Archived:** 2026-05-18
+**Completed in:** v3.7 (EPIC-04, ST-10)
+**Resolution:** Human staging run performed 2026-05-18 by Head of UX & Design — Research page typography confirmed conformant against design_system.md. Playwright test `tests/e2e/research-typography.spec.js` (SC-RV-TYP-01) added for permanent CI regression coverage. BLG-FE-26 was already archived 2026-05-17.
