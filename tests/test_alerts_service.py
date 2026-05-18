@@ -17,6 +17,7 @@ Also covers:
 """
 
 import sys
+import types
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch, call
@@ -24,56 +25,8 @@ from decimal import Decimal
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
-# ---------------------------------------------------------------------------
-# Stub out database and config before importing the service under test.
-# This avoids the DATABASE_URL requirement at import time.
-# ---------------------------------------------------------------------------
-
-import types
-
-_db_stub = types.ModuleType("database")
-_db_stub.get_db = MagicMock()
-_db_stub.get_portfolio = MagicMock()
-_db_stub.get_positions = MagicMock()
-# Additional stubs required by services/__init__.py → position_service imports
-_db_stub.update_position = MagicMock()
-_db_stub.create_position = MagicMock()
-_db_stub.update_portfolio_cash = MagicMock()
-_db_stub.get_settings = MagicMock()
-_db_stub.create_trade_history = MagicMock()
-_db_stub.update_position_note = MagicMock()
-_db_stub.update_position_tags = MagicMock()
-_db_stub.get_all_tags = MagicMock()
-_db_stub.search_positions_by_tags = MagicMock()
-_db_stub.get_trade_history = MagicMock()
-_db_stub.get_trade_history_by_tax_year = MagicMock()
-_db_stub.create_trade_history = MagicMock()
-_db_stub.create_cash_transaction = MagicMock()
-_db_stub.get_cash_transactions = MagicMock()
-_db_stub.get_total_deposits_withdrawals = MagicMock()
-_db_stub.create_portfolio_snapshot = MagicMock()
-_db_stub.get_portfolio_snapshots = MagicMock()
-_db_stub.get_latest_snapshot = MagicMock()
-_db_stub.create_signal = MagicMock()
-_db_stub.get_signals = MagicMock()
-_db_stub.update_signal = MagicMock()
-_db_stub.delete_signal = MagicMock()
-_db_stub.get_all_tickers = MagicMock()
-_db_stub.get_peak_portfolio_value = MagicMock()
-_db_stub.get_all_closed_trades_for_csv_export = MagicMock()
-_db_stub.get_trade_reflection = MagicMock()
-_db_stub.upsert_trade_reflection = MagicMock()
-_db_stub.get_database_size_bytes = MagicMock()
-_db_stub.delete_position = MagicMock()
-_db_stub.download_ticker_data = MagicMock()
-_db_stub.compute_atr_simple = MagicMock()
-_db_stub.create_settings = MagicMock()
-_db_stub.update_settings = MagicMock()
-_db_stub.update_position_note = MagicMock()
-_db_stub.get_all_closed_trades_for_csv_export = MagicMock()
-_db_stub.get_trade_plans_by_position = MagicMock()
-_db_stub.ensure_planned_entry_price_column = MagicMock()
-sys.modules["database"] = _db_stub
+# Database stub is registered by tests/conftest.py (BLG-QA-20).
+# Config and utils stubs are set up here before importing the service under test.
 
 _config_stub = types.ModuleType("config")
 _config_stub.DEFAULT_MIN_HOLD_DAYS = 10

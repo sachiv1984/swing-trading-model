@@ -7,7 +7,7 @@ SC-FEE-05: fee_drag_pct formula: exit_fees / gross_proceeds * 100 (or None when 
 SC-FEE-06: avg_fee_drag_pct aggregation (mean of non-null values, or None)
 
 All DB calls are stubbed at import time — no live database required.
-Uses the same sys.modules contamination-safe stub pattern as test_alerts_service.py.
+Database stub registered by tests/conftest.py (BLG-QA-20).
 """
 
 import sys
@@ -18,35 +18,7 @@ from unittest.mock import MagicMock, patch
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
-# ---------------------------------------------------------------------------
-# Minimal sys.modules stubs — must be registered before any backend import.
-# Mirrors the pattern in test_alerts_service.py to avoid collection cascades.
-# ---------------------------------------------------------------------------
-
-if "database" not in sys.modules:
-    _db_stub = types.ModuleType("database")
-    sys.modules["database"] = _db_stub
-else:
-    _db_stub = sys.modules["database"]
-
-for _fn in (
-    "get_db", "get_portfolio", "get_positions", "update_position",
-    "create_position", "update_portfolio_cash", "get_settings",
-    "create_trade_history", "update_position_note", "update_position_tags",
-    "get_all_tags", "search_positions_by_tags", "get_trade_history",
-    "get_trade_history_by_tax_year", "create_cash_transaction",
-    "get_cash_transactions", "get_total_deposits_withdrawals",
-    "create_portfolio_snapshot", "get_portfolio_snapshots",
-    "get_latest_snapshot", "create_signal", "get_signals",
-    "update_signal", "delete_signal", "get_all_tickers",
-    "get_peak_portfolio_value", "get_all_closed_trades_for_csv_export",
-    "get_trade_reflection", "upsert_trade_reflection",
-    "get_database_size_bytes", "delete_position",
-    "download_ticker_data", "compute_atr_simple", "create_settings", "update_settings",
-    "get_trade_plans_by_position", "ensure_planned_entry_price_column",
-):
-    if not hasattr(_db_stub, _fn):
-        setattr(_db_stub, _fn, MagicMock())
+# Database stub is registered by tests/conftest.py (BLG-QA-20).
 
 if "utils.pricing" not in sys.modules:
     _pricing_stub = types.ModuleType("utils.pricing")
