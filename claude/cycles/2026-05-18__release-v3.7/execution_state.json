@@ -165,7 +165,7 @@
           "assigned_to": "engine",
           "github_issue": 427,
           "branch": "exec/2026-05-18__release-v3.7/EPIC-01",
-          "commit_sha": "pending_commit",
+          "commit_sha": "08816093",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -180,24 +180,24 @@
         "ST-03": {
           "title": "BLG-FE-34: Trade plan form signal context panel",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 428,
           "branch": "exec/2026-05-18__release-v3.7/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 and ST-02 must be done (signal → watchlist linkage required).",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-18T18:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/trade_plan.md",
             "docs/design/2026-05-18__release-v3.7/signal-context-panel/ux_spec.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "delegated_frontend — engine-autonomous delivery preferred. Playwright scenario for panel presence/absence is mandatory AC. Depends on ST-01, ST-02."
+          "notes": "Engine-autonomous delivery. SignalContextPanel.js created + integrated into TradePlan.js. Pre-population: entry_rationale + confirmation_criteria (spec §5a.3 maps risk_reward_notes → entry_rationale per actual form field names). Playwright SC-TP-SIG-01/02/03/04 in tests/e2e/trade-plan-signal-context.spec.js. watchlist_scenarios.md v1.1 updated with §4 scenarios. Deviation check: spec §5a.3 references stop_level pre-population but form has no numeric stop_level field — pre-population of entry_rationale and confirmation_criteria only; no spec deviation (form deviation pre-existing from v3.1, not introduced here). No new spec deviations from ST-03."
         }
       }
     }
@@ -205,7 +205,7 @@
 
   "blocked_items": ["ST-10", "ST-11"],
   "delegated_items": ["ST-10-BLG-FE-35", "ST-11"],
-  "completed_items": ["ST-09", "ST-07", "ST-08"],
+  "completed_items": ["ST-09", "ST-07", "ST-08", "ST-01", "ST-02", "ST-03"],
   "open_escalations": [],
 
   "merge_gate": {
