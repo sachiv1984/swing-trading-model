@@ -9,11 +9,11 @@
 
   "epics": {
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "pr_open",
       "branch": "exec/2026-05-18__release-v3.7/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 431,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-18__release-v3.7/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
@@ -82,7 +82,7 @@
       "branch": "exec/2026-05-18__release-v3.7/EPIC-03",
       "pr_number": 429,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-18__release-v3.7/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
@@ -212,7 +212,7 @@
     "epics_merged": [],
     "epics_pending": ["EPIC-04", "EPIC-03", "EPIC-01"],
     "all_merged": false,
-    "notes": "EPIC-03 PR #429 open (autonomous sign-off complete). EPIC-01 PR #430 open (DoQ sign-off pending). EPIC-04 has blocked stories ST-10 + ST-11 — PRs blocked pending human actions."
+    "notes": "EPIC-04 PR #431 open (DoQ sign-off complete — qa_evidence_EPIC-04.md signed 2026-05-18). EPIC-03 PR #429 open (autonomous sign-off complete). EPIC-01 PR #430 open (DoQ sign-off pending). All EPICs awaiting Product Owner acceptance before merge."
   },
 
   "sealed": false,
