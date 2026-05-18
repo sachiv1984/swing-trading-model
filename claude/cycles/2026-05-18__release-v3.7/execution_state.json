@@ -39,40 +39,40 @@
         "ST-10": {
           "title": "BLG-OPS-16 + BLG-FE-35: Pycache git hygiene + Research page font staging",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "engine+human",
           "github_issue": 422,
           "branch": "exec/2026-05-18__release-v3.7/EPIC-04",
-          "commit_sha": "92d3987c",
+          "commit_sha": "ccac35c0",
           "delegation_record_id": "DEL-20260518-01",
-          "blocked_since_utc": "2026-05-18T15:10:00Z",
-          "unblock_criteria": "Head of UX & Design performs staging run of Research page against design_system.md typography scale; date recorded in qa_evidence_EPIC-04.md DoQ sign-off block for ST-10.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": "BLG-OPS-16 committed (92d3987c) — .gitignore + git rm cached",
-          "sign_off_record": null,
-          "notes": "BLG-OPS-16 autonomous sub-task done. BLG-FE-35 blocked_decision: staging run required by Head of UX & Design."
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-18T19:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/frontend/design_system.md"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": "qa_evidence_EPIC-04.md — DoQ sign-off 2026-05-18",
+          "notes": "BLG-OPS-16 done (92d3987c). BLG-FE-35: staging run performed 2026-05-18 by Head of UX & Design — conformant. Playwright SC-RV-TYP-01 authored (tests/e2e/research-typography.spec.js) for permanent CI regression. BLG-FE-35 archived."
         },
         "ST-11": {
           "title": "BLG-GOV-23: scored_initiatives.md comprehensive refresh",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "human",
           "github_issue": 423,
           "branch": "exec/2026-05-18__release-v3.7/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "d2dbc6b8",
           "delegation_record_id": "DEL-20260518-02",
-          "blocked_since_utc": "2026-05-18T15:10:00Z",
-          "unblock_criteria": "Facilitator completes scored_initiatives.md refresh session; all Arc 3–6 initiatives scored and committed to EPIC-04 branch.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-18T18:45:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/scoring/scored_initiatives.md"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Resolves OA-RP-05. Delegated to Facilitator. No engine action possible until refresh session scheduled and completed."
+          "notes": "Facilitator completed refresh (acting role invoked by user; role ownership verified). Arc 3 (IT-01–06), Arc 4 (PO-01–05), Arc 5 (SI-01–05), Arc 6 (PS-01–05) all scored. Resolves OA-RP-05."
         }
       }
     },
@@ -203,9 +203,9 @@
     }
   },
 
-  "blocked_items": ["ST-10", "ST-11"],
-  "delegated_items": ["ST-10-BLG-FE-35", "ST-11"],
-  "completed_items": ["ST-09", "ST-07", "ST-08", "ST-01", "ST-02", "ST-03"],
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["ST-09", "ST-07", "ST-08", "ST-01", "ST-02", "ST-03", "ST-10", "ST-11"],
   "open_escalations": [],
 
   "merge_gate": {
