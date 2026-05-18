@@ -3,10 +3,11 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-05-09
+**Version:** 0.3
+**Last Updated:** 2026-05-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.2 date default):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §E
+**Design Source (v0.3 watchlist CTA):** docs/design/2026-05-18__release-v3.7/signals-add-to-watchlist/ux_spec.md
 
 ---
 
@@ -80,6 +81,39 @@ Column set must not be derived independently — it must match the canonical res
 
 ---
 
+## Signal Card Actions (v3.7 — BLG-FE-33)
+
+**Design source:** docs/design/2026-05-18__release-v3.7/signals-add-to-watchlist/ux_spec.md
+
+Each signal row/card carries contextual action buttons based on the signal's current status.
+
+### New Signal (status ≠ watchlisted, ≠ dismissed)
+
+| Element | Spec |
+|---------|------|
+| Primary CTA | **"Add to Watchlist"** button — calls `POST /watchlist` with `ticker`, `market`, `initial_stop_price` pre-filled from signal; on success calls `PATCH /signals/{id} status=watchlisted` |
+| Secondary CTA | **"Dismiss"** button — calls `PATCH /signals/{id} status=dismissed` |
+
+**Duplicate add handling:** If `POST /watchlist` returns a duplicate response (ticker already on watchlist), show toast "Already on your watchlist" and still call `PATCH /signals/{id} status=watchlisted`.
+
+### Watchlisted State (status = watchlisted)
+
+| Element | Spec |
+|---------|------|
+| Status label | "Added to Watchlist" (muted, non-interactive) |
+| Navigation | **"View in Watchlist"** link → `/watchlist` |
+| Action buttons | None (no "Add to Watchlist", no "Dismiss") |
+
+Watchlisted state is backend-driven — persists across page refreshes from `signal.status`.
+
+### Dismissed State (status = dismissed)
+
+Behaviour unchanged from prior implementation.
+
+**Non-regression:** "Add Position" CTA is removed from the signals page entirely. No signal card shows "Add Position" as a CTA.
+
+---
+
 ## Empty State
 
 When `GET /signals` returns an empty array for the selected date: display the message:
@@ -104,5 +138,6 @@ The frontend must not calculate or derive signal scores, rankings, or fields. Al
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-05-18 | v3.7 design gate — added §Signal Card Actions (BLG-FE-33: "Add to Watchlist" CTA replaces "Add Position"; watchlisted state with "View in Watchlist" link; duplicate add handling; Dismiss retained). Design source: signals-add-to-watchlist/ux_spec.md. Approved: Product Owner 2026-05-18. |
 | 0.2 | 2026-05-09 | v3.3 design gate — added Date control (BLG-FE-25: default to most recent trading day; "Latest" quick-link; date parameter added to API call); updated empty state message to include date. Design source: trade-plan-quick-wins/ux_spec.md §E. Approved: Product Owner 2026-05-09. |
 | 0.1 | 2026-03-17 | Initial spec. ST-01 / ST-02 — EPIC-01 (4.3 Signal Exposure Enhancement). Design gate: 2026-03-17__release-v2.0. Approved by Head of UX & Design + Product Owner. |

@@ -1,12 +1,14 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-05-14
+**Version:** 0.6
+**Last Updated:** 2026-05-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.1):** docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md (v3.1 — artefact reference only; file not present in repo)
 **Design Source (v0.2 checklist):** docs/design/2026-05-05__release-v3.2/pre-trade-entry-checklist/ux_spec.md
 **Design Source (v0.3 abandonment + badges):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §A, §B
+**Design Source (v0.5 signal context panel):** docs/design/2026-05-18__release-v3.7/signal-context-panel/ux_spec.md
+**Design Source (v0.6 quality score):** docs/design/2026-05-18__release-v3.7/quality-score-display/ux_spec.md
 **API contract:** docs/specs/api_contracts/trade_plan_endpoints.md
 **v0.4 Sign-off:** Head of Specs Team — 2026-05-14 (BLG-SPEC-28: §6.2 pre-population rules correction)
 
@@ -116,6 +118,50 @@ Per v3.1 design gate decision:
 
 ---
 
+## 5a. Signal Context Panel (v3.7 — BLG-FE-34)
+
+**Design source:** docs/design/2026-05-18__release-v3.7/signal-context-panel/ux_spec.md
+
+> **§13 Compliance:** Read-only reference panel. No automated position entry or trade recommendation. Pre-population is advisory; the user may edit or clear all pre-populated values.
+
+The Signal Context panel is shown **in the trade plan creation form only**, below the core plan fields (§5.1) and above the Pre-Trade Entry Checklist (§6). It is hidden in edit mode (does not overwrite existing saved values).
+
+### 5a.1 Presence Condition
+
+Shown when a linked signal exists for the trade plan ticker: a signal record where `ticker` matches and `status = "watchlisted"`.
+
+When no linked signal exists: panel is hidden entirely. No placeholder shown. No regression to current form behaviour.
+
+### 5a.2 Panel Content
+
+**Panel header:** "Signal Context" (read-only section, visually distinct — muted background, e.g. `bg-gray-50`)
+
+| Field | Label | Format |
+|-------|-------|--------|
+| Signal rank | "Rank" | `#N` |
+| Momentum % | "Momentum" | `+X.X%` (green) or `−X.X%` (red) |
+| Price vs 200-day MA | "vs 200-day MA" | `X.X% above` or `X.X% below` |
+| Regime | "Regime" | "On" (green badge) / "Off" (amber badge) |
+| ATR (14d) | "ATR (14d)" | Currency-formatted |
+| Suggested stop | "Suggested stop" | Currency-formatted; sub-label "entry − 5×ATR" |
+
+### 5a.3 Pre-Population Rules (creation form only)
+
+On initial form load (new trade plan from signal context):
+
+- **`risk_reward_notes`** pre-filled with: `"Rank {N} momentum signal. Price {above/below} 200-day MA by {x.x}%. {US/UK} regime on."` (user-editable)
+- **Stop Level** pre-filled with suggested stop: `entry_price − (5 × atr)` (user-editable; not overwritten if already set)
+
+Pre-population does not apply in edit mode. Existing user-set values are never overwritten.
+
+### 5a.4 Error / Loading States
+
+- If signal fetch fails: panel hidden silently; no error shown; form submission unaffected
+- While loading: single-line skeleton placeholder
+- If no linked signal: panel hidden (not an error)
+
+---
+
 ## 6. Pre-Trade Entry Checklist (v3.2 — PT-05)
 
 > **§13 Compliance:** This feature has been reviewed and confirmed §13 compliant — see `docs/specs/compliance/pt05_entry_checklist_s13_review.md`. The system presents checklist items; the human confirms each condition; the system records the human-confirmed state. No automated condition evaluation or recommendation is generated. (ST-15, v3.3)
@@ -167,9 +213,31 @@ Checklist state stored as `checklist` array on the trade plan record. Submitted 
 
 - Shows all plan fields in read-only layout
 - Pre-trade checklist shown in read-only state (§6.4)
+- Setup Quality Score shown (§7a) if EPIC-02 (PT-04) is in scope
 - Action buttons: **"Edit"** (primary) + **"Abandon"** (amber outlined — see §8) + **"Delete"** (destructive, with confirmation)
 - **"Review research"** link present if ticker is set
 - When `status = 'abandoned'`: "Abandon" and "Edit" buttons hidden; abandonment reason shown (see §8.3)
+
+---
+
+## 7a. Setup Quality Score (v3.7 — PT-04, conditional EPIC-02 gate)
+
+**Design source:** docs/design/2026-05-18__release-v3.7/quality-score-display/ux_spec.md
+
+**Gate condition:** This section activates only when EPIC-02 is confirmed in scope (Product Owner confirms 20+ closed trades). If EPIC-02 is deferred to v3.8, this section is not implemented.
+
+> **§13 Compliance:** Display-only score labelled as historical reference ("based on your own trade history"). Not a prediction or recommendation. No automated actions.
+
+Displayed in the Trade Plan detail view below status badge and core fields, above the Pre-Trade Checklist read-only section.
+
+| Element | Source | Display |
+|---------|--------|---------|
+| Label | — | "Setup Quality Score" |
+| Value | `GET /trade-plans/{id}/quality-score` → `score` | `{N}/100`; colour-coded: 0–39 red, 40–69 amber, 70–100 green |
+| Insufficient history | Response: `score: null, reason: "insufficient_history"` | "N/A — insufficient history" |
+| Sub-label | — | "Based on your own trade history" (muted) |
+
+**Loading:** inline skeleton placeholder. **Error:** field hidden silently (does not block page).
 
 ---
 
@@ -249,6 +317,8 @@ All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6 | 2026-05-18 | v3.7 design gate — added §7a Setup Quality Score (PT-04: score display on detail view, 0–100 or "N/A — insufficient history", §13 compliant). Conditional on EPIC-02 gate. Design source: quality-score-display/ux_spec.md. Approved: Product Owner 2026-05-18. |
+| 0.5 | 2026-05-18 | v3.7 design gate — added §5a Signal Context Panel (BLG-FE-34: read-only signal data panel in creation form; pre-population of rationale and stop fields; conditional on linked signal). Design source: signal-context-panel/ux_spec.md. Approved: Product Owner 2026-05-18. |
 | 0.4 | 2026-05-14 | BLG-SPEC-28 (ST-13, v3.4) — corrected §6.2 pre-population rules: CHK-03 uses `early_exit_conditions` (not `stop_level`); CHK-04 uses `r_target` (not `risk_reward_notes`). Added rationale note and test scenario cross-reference. Authority: Head of Specs Team. |
 | 0.3 | 2026-05-09 | v3.3 design gate — added §8 Trade Plan Abandonment (BLG-FEAT-21: abandon action, modal, abandoned display); added §9 Status Badge Scheme (BLG-FE-30: 7-state badge set including Abandoned). Design source: trade-plan-quick-wins/ux_spec.md §A, §B. Approved: Product Owner 2026-05-09. |
 | 0.2 | 2026-05-05 | v3.2 design gate — added Pre-Trade Entry Checklist section (§6) for EPIC-02 (ST-05, ST-06). Design source: pre-trade-entry-checklist/ux_spec.md. Also: initial file creation (recovering v3.1 gap — trade_plan.md v0.1 was stated as created in v3.1 design gate but not committed). |

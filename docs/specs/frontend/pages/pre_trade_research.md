@@ -1,10 +1,11 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-05-05
+**Version:** 0.2
+**Last Updated:** 2026-05-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-05-05__release-v3.2/pre-trade-research-view/ux_spec.md
+**Design Source (v0.2 quality score):** docs/design/2026-05-18__release-v3.7/quality-score-display/ux_spec.md
 **API contracts:** docs/specs/api_contracts/research_endpoints.md; docs/specs/api_contracts/portfolio_api_contract.md
 
 ---
@@ -71,6 +72,9 @@ Canonical contracts:
 | Price change | `GET /research/{ticker}` → `price_change_pct` | `▲ +X.X%` (green) or `▼ -X.X%` (red) |
 | Momentum signal status | `GET /research/{ticker}` → `signal_status` | Badge: `Active` (green) / `Watch` (amber) / `No Signal` (grey) — same badge conventions as watchlist |
 | ATR (14d) | `GET /research/{ticker}` → `atr` | Currency-formatted (e.g. `$4.20` or `£0.85`) |
+| Setup Quality Score *(v3.7, conditional EPIC-02 gate)* | `GET /trade-plans/{id}/quality-score` for most recent active/draft plan for this ticker | `{N}/100` or "N/A — insufficient history"; sub-label "Based on your trade history" (muted); omitted entirely if no trade plan exists for ticker |
+
+**Setup Quality Score note (§13 compliance):** Display-only, labelled as historical reference. Not a prediction. If the EPIC-02 gate (20+ closed trades) is not confirmed, this row is omitted.
 
 ---
 
@@ -152,4 +156,5 @@ No sentiment labels or scores.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-05-18 | v3.7 design gate — added Setup Quality Score row to §5 Price and Signal Region (PT-04: conditional on EPIC-02 gate; shown if trade plan exists for ticker; "N/A — insufficient history" when < 20 closed trades). Design source: quality-score-display/ux_spec.md. Approved: Product Owner 2026-05-18. |
 | 0.1 | 2026-05-05 | Initial spec. v3.2 design gate — EPIC-01 (ST-01, ST-02, ST-03). Design source: docs/design/2026-05-05__release-v3.2/pre-trade-research-view/ux_spec.md. |
