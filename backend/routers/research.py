@@ -101,7 +101,7 @@ def _get_regime() -> Optional[dict]:
 
 def _get_signal(ticker: str, portfolio_id: str) -> Optional[dict]:
     try:
-        signals = get_signals(portfolio_id)
+        signals = get_signals()
         ticker_upper = ticker.upper()
         matches = [s for s in signals if (s.get("ticker") or "").upper() == ticker_upper]
         if not matches:
