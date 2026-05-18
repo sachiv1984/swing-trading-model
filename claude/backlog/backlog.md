@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-17 (v3.6 sprint: BLG-QA-20 + BLG-OPS-16 filed — database stub consolidation and pyc git-tracking cleanup)
+**Last Updated:** 2026-05-18 (roadmap rebalance 2026-05-18__scheduled — 1 new item added: BLG-GOV-23)
 **Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice
@@ -167,6 +167,67 @@ The current nav bar occupies a fixed portion of the visible screen area. As the 
 ---
 
 *BLG-FE-30 (Trade plan status badges) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
+
+---
+
+### BLG-FE-34 — Trade plan form: surface signal context to guide entry rationale and confirmation criteria
+**Priority:** P1 (High)
+**Type:** Frontend / UX + Backend
+**Owner:** Head of Engineering
+**Source:** Product intent alignment session (production_strategy.py) — 2026-05-18
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.7
+**Depends on:** BLG-FE-33 (signal → watchlist linkage required to pass signal data through)
+
+**Problem**
+The trade plan form asks users to fill in entry rationale and confirmation criteria but surfaces no technical data to support these fields. The strategy's entry rules are fully computable at signal time (momentum rank, price vs 200-day MA, regime status, ATR, suggested stop) and already live on the signal object — yet none of this reaches the trade plan form. Users are left with blank fields and must context-switch to reconstruct information the system already holds.
+
+**Scope**
+- Surface a read-only "Signal Context" panel in the trade plan creation form when a linked signal exists for the ticker: rank, momentum %, price vs 200-day MA (% above/below), regime on/off, ATR value, suggested initial stop (entry − 5 × ATR)
+- Pre-populate entry rationale with a structured template derived from signal data: "Rank {N} momentum signal. Price {above/below} 200-day MA by {x}%. {US/UK} regime on." (user-editable)
+- Pre-populate confirmation criteria with strategy defaults: "Price above 200-day MA at entry. Regime on. Spare cash available." (user-editable)
+- Pre-fill stop field with suggested stop: entry price − (5 × ATR)
+- Signal Context panel hidden and fields blank when no linked signal exists — no regression to current behaviour
+- Entry timing: Signal Context panel notes entry is triggered at current price when spare cash is available (not month-end)
+
+**Acceptance Criteria**
+- Signal Context panel shown in trade plan form when a linked signal exists for the ticker, displaying: rank, momentum %, price vs 200-day MA, regime on/off, ATR, suggested stop
+- Entry rationale pre-populated with structured template from signal data; user can edit
+- Confirmation criteria pre-populated with strategy defaults; user can edit
+- Stop field pre-filled with entry price − (5 × ATR) matching initial_atr_mult=5
+- No Signal Context panel and no pre-population when no linked signal exists
+- Signal Context data is read-only within the form
+
+---
+
+### BLG-FE-33 — Signals page: replace Add Position CTA with Add to Watchlist
+**Priority:** P1 (High)
+**Type:** Frontend / UX + Backend
+**Owner:** Head of Engineering
+**Source:** Head of UX & Design + Head of Specs Team alignment session — 2026-05-17
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.7
+
+**Problem**
+The Signals page shows "Add Position" as the primary CTA on new signal cards. The user guide (§4→5) explicitly defines the workflow as signal → watchlist → research → plan → entry. The current UI bypasses this entirely, pushing users toward immediate trade entry and undermining the discipline the system is designed to enforce.
+
+**Scope**
+- Replace "Add Position" button with "Add to Watchlist" (primary CTA) on new signal cards
+- "Dismiss" retained as secondary action; "Add Position" removed from signal cards entirely
+- Add to Watchlist action: silent POST /watchlist pre-filled with ticker, market, initial_stop_price; then PATCH /signals/{id} status=watchlisted on success
+- Add watchlisted signal card state: shows "View in Watchlist" link (→ /watchlist), no action buttons
+- Add `watchlisted` to signals table CHECK constraint
+- PATCH /signals/{id} updated to accept `watchlisted` as a valid status value
+- signal_endpoints.md and data_model.md updated (version bumped, changelog entry, OPERATIONAL_GUIDE §14, prompt_change_log.md) in same commit as backend change
+
+**Acceptance Criteria**
+- Signal card "Add Position" button replaced with "Add to Watchlist" (primary CTA)
+- Clicking "Add to Watchlist" calls POST /watchlist with ticker, market, initial_stop_price pre-filled; PATCH /signals/{id} status=watchlisted on success
+- Signal card transitions to watchlisted state: "View in Watchlist" link shown, no action buttons
+- Dismiss button retained as secondary action on new signals
+- `watchlisted` added to signals table CHECK constraint; PATCH endpoint accepts it
+- signal_endpoints.md and data_model.md updated in same commit as backend change
+- Duplicate add (ticker already on watchlist): toast "Already on your watchlist"; signal still transitions to watchlisted
 
 ---
 
@@ -410,7 +471,28 @@ The research_endpoint.md AC specified distinct HTTP error codes (404 ticker-not-
 
 ## 8. Governance Backlog
 
+### BLG-GOV-23 — scored_initiatives.md comprehensive refresh
+**Priority:** P3 (Low)
+**Type:** Governance / Planning Infrastructure
+**Owner:** Facilitator
+**Source:** v3.5 post-ship closure OA-05; v3.6 release planning LL observation #5; 2026-05-18__scheduled roadmap rebalance
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Before next roadmap rebalance with advancing candidates
 
+**Problem**
+scored_initiatives.md was last updated 2026-03-31. Arc 3 features (IT-01–IT-06) and Arc 4–6 initiatives (PO-01–05, SI-01–05, PS-01–05) are absent. All STEP 6 effort-band estimates for current roadmap items have been falling to Tier 3 inline inference for 10+ cycles. This deferred action has carried through v3.5 and v3.6 without a backlog item (OA-05).
+
+**Scope**
+- Add scored rows for Arc 3 shipped items (IT-01–IT-06): SPS and effort bands for historical completeness
+- Add scored rows for active Arc 4–6 roadmap initiatives with current SPS and effort bands per STEP 6 criteria
+- Update file header Last Updated date
+- Preserve all existing entries intact
+
+**Acceptance Criteria**
+- scored_initiatives.md header Last Updated updated to date of refresh
+- Arc 3 items (IT-01–IT-06) have scored rows with SPS and effort bands
+- Active Arc 4–6 roadmap items (PO-01–05, SI-01–05, PS-01–05) have scored rows
+- All existing scored rows preserved
 
 ---
 

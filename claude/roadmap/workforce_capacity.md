@@ -298,3 +298,20 @@ No initiatives were added, replaced, deferred, or killed. No new backlog items p
 **Skill-Silo check (cycle additions):** Governance load = 0% (both new items are execution-heavy: frontend implementation, backend metrics endpoint). Below 20% floor. Product Owner sign-off capacity confirmed. No Skill-Silo Alert issued.
 
 **Assessment:** 2 S-effort P3 items added. No scarce skill conflicts. Both items are well-bounded and low-complexity. v3.0 candidate pool is balanced; release planning will allocate from the full 14-item pool.
+
+---
+
+## New Backlog Items Added — Cycle 2026-05-18__scheduled (Scheduled Rebalance)
+
+*Source: roadmap rebalance cycle 2026-05-18__scheduled — 1 new backlog item (BLG-GOV-23). No roadmap-level additions.*
+
+### New Items (cycle 2026-05-18__scheduled)
+
+| Item | Est. Effort | Skills | Priority |
+|------|------------|--------|---------|
+| BLG-GOV-23 — scored_initiatives.md refresh | ~0.5–1 day | Facilitator | P3 |
+| **Total new** | **~0.5–1 day** | Governance / Planning | — |
+
+**Skill-Silo check (cycle additions):** Only 1 governance-heavy item added; overall active backlog remains execution-heavy (BLG-FE-33/34 are P1 engineering items). No Skill-Silo Alert. PO sign-off capacity confirmed.
+
+**Assessment:** Minimal addition. No capacity conflicts. v3.7 pool (BLG-FE-33 P1, BLG-FE-34 P1, BLG-QA-20 P2, BLG-OPS-16 P3, BLG-FE-27 P3, BLG-FEAT-20 P2, BLG-OPS-13 P3, BLG-GOV-23 P3) ready for release planning.

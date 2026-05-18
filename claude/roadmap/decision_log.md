@@ -764,3 +764,14 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** None
 **Rationale:** Post-v3.5-close scheduled rebalance. Horizon Now empty — v3.6 planning has not yet commenced. All active initiatives (Arc 4–6, PT-04) reaffirmed as 🔥 Must continue. Two gate-cleared ideas reviewed (IDEA-ai-compliance-20260508-01 and IDEA-financial-reporting-20260508-02 — both gated on BLG-GOV-21 which shipped v3.5): both re-parked with updated rationale (ai-compliance: AI trade plan summarisation not yet scoped; financial-reporting: planned_entry_price snapshotting explicitly deferred in arc4_data_requirements.md §3.1). No advancing candidates. Zero displacement required. No backlog additions warranted — existing 7 active backlog items provide sufficient near-term work queue for v3.6 planning.
 **Decision owner:** Product Owner
+
+---
+
+### DL-031 — 2026-05-18
+
+**Decision type:** No-change (roadmap) + Add (to backlog — BLG-GOV-23)
+**Cycle:** 2026-05-18__scheduled
+**Displacement:** N/A — BLG-GOV-23 is a governance infrastructure item (S effort, Provisional-Target before next rebalance with advancing candidates; no roadmap displacement required)
+**Workforce impact:** BLG-GOV-23 — S effort (~0.5–1 day); Facilitator ownership; no new FTE required
+**Rationale:** Post-v3.6-sprint-execution scheduled rebalance. Horizon Now empty — v3.6 delivery verification and post-ship pending. All active initiatives (Arc 4–6, PT-04) reaffirmed as 🔥 Must continue. One gate-cleared idea evaluated: IDEA-financial-reporting-20260508-02 (planned_entry_price snapshotting shipped v3.6 ST-01, 2026-05-17) — PO active re-park with new rationale (0 trades with planned_entry_price data; 30+ required for meaningful metric; re-evaluate v3.8+). No other advancing candidates. BLG-GOV-23 added to close carry-forward OA-05 (scored_initiatives.md refresh carried from v3.5 post-ship through v3.6 without a backlog item). Effective active backlog after addition: 8 items. No scarce skill conflicts.
+**Decision owner:** Product Owner

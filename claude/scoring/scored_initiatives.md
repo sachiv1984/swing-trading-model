@@ -276,3 +276,15 @@ All 8 items are SPS=1 or SPS=2 — no §13 boundary proximity. All are S or M ef
 
 **Last Updated:** 2026-05-05
 
+
+---
+
+## Cycle 2026-05-18__scheduled — Status Note
+
+*Standard-tier run. Zero active Now-horizon initiatives. Zero advancing candidates. No new items scored this cycle.*
+
+**CPS this cycle:** 0.0 (zero active roadmap initiatives in Now horizon). Prior CPS: 0.0 (cycle 2026-05-15__scheduled-2). Delta: 0.0.
+
+**scored_initiatives.md staleness advisory:** This file was last substantively updated on 2026-03-31 (cycle 2026-03-31__scheduled). Arc 3 (IT-01–IT-06) and Arc 4–6 (PO-01–05, SI-01–05, PS-01–05) entries are absent. All STEP 6 effort-band estimates for current roadmap items have been falling to Tier 3 (inline inference) for 10+ cycles. BLG-GOV-23 filed 2026-05-18 to perform a comprehensive refresh before the next rebalance with advancing candidates.
+
+**Last Updated:** 2026-05-18 (cycle note appended — no new scores this cycle)
