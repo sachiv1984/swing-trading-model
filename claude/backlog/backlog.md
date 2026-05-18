@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-18 (roadmap rebalance 2026-05-18__scheduled — 1 new item added: BLG-GOV-23)
+**Last Updated:** 2026-05-18 (roadmap rebalance 2026-05-18__scheduled-2 — no backlog changes; 9 active items)
 **Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice

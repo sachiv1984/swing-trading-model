@@ -775,3 +775,14 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** BLG-GOV-23 — S effort (~0.5–1 day); Facilitator ownership; no new FTE required
 **Rationale:** Post-v3.6-sprint-execution scheduled rebalance. Horizon Now empty — v3.6 delivery verification and post-ship pending. All active initiatives (Arc 4–6, PT-04) reaffirmed as 🔥 Must continue. One gate-cleared idea evaluated: IDEA-financial-reporting-20260508-02 (planned_entry_price snapshotting shipped v3.6 ST-01, 2026-05-17) — PO active re-park with new rationale (0 trades with planned_entry_price data; 30+ required for meaningful metric; re-evaluate v3.8+). No other advancing candidates. BLG-GOV-23 added to close carry-forward OA-05 (scored_initiatives.md refresh carried from v3.5 post-ship through v3.6 without a backlog item). Effective active backlog after addition: 8 items. No scarce skill conflicts.
 **Decision owner:** Product Owner
+
+---
+
+### DL-032 — 2026-05-18
+
+**Decision type:** No-change (roadmap and backlog)
+**Cycle:** 2026-05-18__scheduled-2
+**Displacement:** N/A — no additions this cycle
+**Workforce impact:** None
+**Rationale:** Second scheduled rebalance on 2026-05-18 (post-v3.6-closure, pre-v3.7-planning). Horizon Now empty — v3.7 planning has not yet commenced. CPS methodology correction applied: all active Arc 4–6 + PT-04 initiatives counted; CPS 2.9; Strategy Rules & System Intent Owner acknowledged CPS absolute alert (>2.5) — elevation structural, not drift. All 33 parked ideas re-evaluated: 0 gate conditions newly cleared; 33 re-parked with incremented counts (PO active classification for all stale ideas). No advancing candidates. Zero displacement required. No backlog additions — existing 9 active items provide sufficient v3.7 planning inputs. STEP 0.D advisory surfaced (Horizon Now empty → plan release v3.7 recommended after this rebalance).
+**Decision owner:** Product Owner

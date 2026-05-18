@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-18 (rebalance 2026-05-18__scheduled — no roadmap changes; post-v3.6-sprint-execution scheduled review; DL-031)
+**Last Updated:** 2026-05-18 (rebalance 2026-05-18__scheduled-2 — no roadmap changes; CPS methodology correction applied (2.9); 33 ideas re-parked; DL-032)
 **Last rebalance:** 2026-05-18 (cycle 2026-05-18__scheduled — Standard-tier, no-change; 1 gate-cleared idea re-parked (IDEA-financial-reporting-20260508-02 — planned_entry_price shipped v3.6 but data density not met); BLG-GOV-23 added to backlog)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
