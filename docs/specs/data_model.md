@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.6
-**Last Updated:** 2026-05-10
+**Version:** 2.8
+**Last Updated:** 2026-05-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -366,7 +366,7 @@ CREATE TABLE signals (
     CONSTRAINT signals_market_check
         CHECK (market IN ('US', 'UK')),
     CONSTRAINT signals_status_check
-        CHECK (status IN ('new', 'entered', 'dismissed', 'expired', 'already_held'))
+        CHECK (status IN ('new', 'entered', 'dismissed', 'expired', 'already_held', 'watchlisted'))
 ) TABLESPACE pg_default;
 
 CREATE INDEX IF NOT EXISTS idx_signals_portfolio
@@ -1070,6 +1070,48 @@ COMMIT;
 
 ---
 
-**Document Version:** 2.7
+---
+
+## DS-07 — Add watchlisted to signals_status_check (v2.8, 2026-05-18)
+
+**Story:** ST-01 (EPIC-01, v3.7)
+
+Extends the `signals_status_check` CHECK constraint to include `'watchlisted'` status. This supports the signal-to-watchlist workflow (BLG-FE-33): when a user adds a ticker to the watchlist from a signal card, the signal is transitioned to `status = 'watchlisted'`. The existing statuses (`new`, `entered`, `dismissed`, `expired`, `already_held`) are unchanged.
+
+### Up Migration (v2.7 → v2.8)
+
+```sql
+BEGIN;
+ALTER TABLE signals DROP CONSTRAINT IF EXISTS signals_status_check;
+ALTER TABLE signals ADD CONSTRAINT signals_status_check
+    CHECK (status IN ('new', 'entered', 'dismissed', 'expired', 'already_held', 'watchlisted'));
+COMMIT;
+```
+
+### Verification
+
+```sql
+SELECT constraint_name, check_clause
+FROM information_schema.check_constraints
+WHERE constraint_name = 'signals_status_check';
+-- Expected: 1 row with check_clause containing 'watchlisted'
+```
+
+### Down Migration (v2.8 → v2.7)
+
+```sql
+BEGIN;
+ALTER TABLE signals DROP CONSTRAINT IF EXISTS signals_status_check;
+ALTER TABLE signals ADD CONSTRAINT signals_status_check
+    CHECK (status IN ('new', 'entered', 'dismissed', 'expired', 'already_held'));
+COMMIT;
+```
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-05-18 (agent-mediated, v3.7 sprint execution)
+
+---
+
+**Document Version:** 2.8
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-05-10
+**Last Review:** 2026-05-18

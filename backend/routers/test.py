@@ -73,6 +73,7 @@ async def test_all_endpoints(request: Request):
 
         # Signals & Market
         {"name": "GET /signals", "method": "GET", "url": f"{base_url}/signals", "critical": False},
+        {"name": "PATCH /signals/{id} (watchlisted)", "method": "PATCH", "url": f"{base_url}/signals/00000000-0000-0000-0000-000000000000", "body": {"status": "watchlisted"}, "critical": False},
         {"name": "GET /market/status", "method": "GET", "url": f"{base_url}/market/status", "critical": True},
 
         # Alerts (v2.3+)
