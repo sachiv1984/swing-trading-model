@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-04-18
+**Version:** 1.2
+**Last Updated:** 2026-05-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Derived from:** `docs/specs/frontend/pages/signals.md` v0.1; `docs/specs/api_contracts/signal_endpoints.md` v1.1
 **Sprint:** 2026-03-18__release-v2.1 — ST-18 (closes TEST-GAP-SIG-01); 2026-04-17__release-v2.8 — ST-03
@@ -123,7 +123,81 @@ These scenarios verify Signals page behaviour against the canonical specificatio
 
 ---
 
-## 4. Scenarios — Supplementary Indicator Fields
+## 4. Scenarios — Add to Watchlist CTA (v3.7, BLG-FE-33)
+
+*Canonical spec: `docs/specs/frontend/pages/signals.md v0.3 §Signal Card Actions`*
+*Playwright file: `tests/e2e/signals-add-to-watchlist.spec.js`*
+
+---
+
+### SC-SIG-WL-01 — Add to Watchlist happy path
+
+**Component:** Signal card — Add to Watchlist CTA
+**API:** `POST /watchlist`, `PATCH /signals/{id}`
+**Priority:** P1
+
+#### Preconditions
+
+- Signals page loaded with at least one signal in `status = 'new'`.
+- `POST /watchlist` returns 201 (new entry created).
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Load Signals page with a new signal card. | Signal card shows **"Add to Watchlist"** as primary CTA and **"Dismiss"** as secondary. No "Add Position" button visible. |
+| 2 | Click **"Add to Watchlist"**. | `POST /watchlist` called with `ticker`, `market`, `initial_stop_price` from signal. |
+| 3 | POST /watchlist returns 201. | `PATCH /signals/{id} {"status": "watchlisted"}` called. |
+| 4 | Observe signal card state after mutation. | Card shows **"Added to Watchlist"** label. **"View in Watchlist"** link visible (→ /Watchlist). No action buttons remain. |
+
+#### Pass criteria
+
+- "Add to Watchlist" button present on new signal cards; "Add Position" absent.
+- `POST /watchlist` receives correct ticker, market, initial_stop_price.
+- Card transitions to watchlisted state on success.
+- "View in Watchlist" link visible and functional.
+
+---
+
+### SC-SIG-WL-02 — Duplicate add handling
+
+**Component:** Signal card — duplicate watchlist entry
+**API:** `POST /watchlist` (409), `PATCH /signals/{id}`
+**Priority:** P1
+
+#### Preconditions
+
+- Signals page loaded with a new signal whose ticker is already on the watchlist.
+- `POST /watchlist` returns 409.
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Click **"Add to Watchlist"** on a signal card. | `POST /watchlist` called; returns 409. |
+| 2 | Observe toast. | Toast "Already on your watchlist" shown. |
+| 3 | Observe signal card state. | `PATCH /signals/{id} {"status": "watchlisted"}` still called. Card transitions to watchlisted state. |
+
+#### Pass criteria
+
+- 409 response shows toast "Already on your watchlist".
+- Signal status still transitions to `watchlisted` despite 409.
+- "View in Watchlist" link visible after 409.
+
+---
+
+### SC-SIG-WL-03 — No Add Position CTA on signal cards
+
+**Component:** Signal card — CTA non-regression
+**Priority:** P2
+
+#### Pass criteria
+
+- No "Add Position" button or text visible on any signal card (including new signal cards).
+
+---
+
+## 5. Scenarios — Supplementary Indicator Fields
 
 *Canonical spec: `docs/specs/api_contracts/signal_endpoints.md v1.1 §POST /signals/generate`*
 
@@ -192,7 +266,7 @@ These scenarios verify Signals page behaviour against the canonical specificatio
 
 ---
 
-## 5. Out of Scope
+## 6. Out of Scope
 
 - Signal score calculation correctness — covered by backend unit tests.
 - `PATCH /signals/{signal_id}` and `DELETE /signals/{signal_id}` — covered by backend integration tests.
@@ -203,5 +277,6 @@ These scenarios verify Signals page behaviour against the canonical specificatio
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-05-18 | ST-02 (BLG-FE-33, v3.7): Added §4 Add to Watchlist CTA scenarios — SC-SIG-WL-01 (happy path), SC-SIG-WL-02 (duplicate 409), SC-SIG-WL-03 (no Add Position regression). Playwright: tests/e2e/signals-add-to-watchlist.spec.js. QA & Testing Owner. |
 | 1.1 | 2026-04-18 | ST-03 (EPIC-02, v2.8): Added §4 Supplementary Indicator Field scenarios — SC-SIG-IND-01, SC-SIG-IND-02. Updated spec reference to signal_endpoints.md v1.1. Existing scenarios not modified. QA & Testing Owner. |
 | 1.0 | 2026-03-18 | Initial version — SC-SIG-01 through SC-SIG-03 authored for ST-18. QA & Testing Owner. |

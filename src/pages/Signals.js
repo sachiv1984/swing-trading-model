@@ -1,29 +1,28 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44, apiFetch, api } from "../api/base44Client";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
 import SignalCard from "../components/signals/SignalCard";
 import MarketStatusBar from "../components/signals/MarketStatusBar";
-import PositionEntryModal from "../components/signals/PositionEntryModal";
 import { Zap, RefreshCw, Filter, TrendingUp, DollarSign, Target } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 const TOP_N_DEFAULT = 5;
 const LOOKBACK_DAYS_DEFAULT = 252;
 
 export default function SignalsPage() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [marketFilter, setMarketFilter] = useState("all");
   const [sortBy, setSortBy] = useState("rank");
   const [showDismissed, setShowDismissed] = useState(false);
   const [showRecentOnly, setShowRecentOnly] = useState(true);
-  const [selectedSignal, setSelectedSignal] = useState(null);
+  const [addingToWatchlistId, setAddingToWatchlistId] = useState(null);
 
   // top_n and lookback_days controls with debounce
   const [topNInput, setTopNInput] = useState(String(TOP_N_DEFAULT));
@@ -109,23 +108,37 @@ export default function SignalsPage() {
     },
   });
 
-  const createPositionMutation = useMutation({
-    mutationFn: (positionData) => base44.entities.Position.create(positionData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["positions"] });
-      toast.success("Position added successfully");
-    },
-  });
-
-  const handleAddPosition = (signal) => {
-    setSelectedSignal(signal);
-  };
-
-  const handleConfirmPosition = async (positionData, signalId) => {
-    await createPositionMutation.mutateAsync(positionData);
-    await base44.entities.Signal.update(signalId, { status: "entered" });
-    queryClient.invalidateQueries({ queryKey: ["signals"] });
-    setSelectedSignal(null);
+  const handleAddToWatchlist = async (signal) => {
+    setAddingToWatchlistId(signal.id);
+    try {
+      const res = await apiFetch(`${API_BASE}/watchlist`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ticker: signal.ticker,
+          market: signal.market,
+          initial_stop_price: signal.initial_stop ?? null,
+        }),
+      });
+      if (res.status === 409) {
+        toast.info("Already on your watchlist");
+      } else if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || "Failed to add to watchlist");
+      }
+    } catch (e) {
+      toast.error(e.message || "Failed to add to watchlist");
+      setAddingToWatchlistId(null);
+      return;
+    }
+    try {
+      await base44.entities.Signal.update(signal.id, { status: "watchlisted" });
+      queryClient.invalidateQueries({ queryKey: ["signals"] });
+    } catch (e) {
+      toast.error("Added to watchlist but failed to update signal status");
+    } finally {
+      setAddingToWatchlistId(null);
+    }
   };
 
   // Mark signals with correct status based on positions
@@ -411,20 +424,15 @@ export default function SignalsPage() {
             >
               <SignalCard
                 signal={signal}
-                onAddPosition={handleAddPosition}
+                onAddToWatchlist={handleAddToWatchlist}
                 onDismiss={(id) => dismissMutation.mutate(id)}
+                isAddingToWatchlist={addingToWatchlistId === signal.id}
               />
             </motion.div>
           ))}
         </div>
       )}
 
-      <PositionEntryModal
-        signal={selectedSignal}
-        open={!!selectedSignal}
-        onClose={() => setSelectedSignal(null)}
-        onConfirm={handleConfirmPosition}
-      />
     </div>
   );
 }

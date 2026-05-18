@@ -1,16 +1,18 @@
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { TrendingUp, Plus, Award, CheckCircle2, Lock, XCircle } from "lucide-react";
+import { TrendingUp, Bookmark, Award, CheckCircle2, Lock, XCircle, BookmarkCheck } from "lucide-react";
 import { cn } from "../../lib/utils";
 
-export default function SignalCard({ signal, onAddPosition, onDismiss }) {
+export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddingToWatchlist }) {
   const isUS = signal.market === "US";
   const currencySymbol = isUS ? "$" : "£";
   const isNew = signal.status === "new";
   const isEntered = signal.status === "entered";
   const isAlreadyHeld = signal.status === "already_held";
   const isDismissed = signal.status === "dismissed";
+  const isWatchlisted = signal.status === "watchlisted";
 
   const rankColors = {
     1: "from-yellow-500/20 to-amber-500/20 border-yellow-500/50 shadow-yellow-500/10",
@@ -21,24 +23,29 @@ export default function SignalCard({ signal, onAddPosition, onDismiss }) {
   };
 
   const statusConfig = {
-    new: { 
-      label: "New Signal", 
-      color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/40" 
+    new: {
+      label: "New Signal",
+      color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/40"
     },
-    entered: { 
-      label: "Entered", 
-      color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/40", 
-      icon: CheckCircle2 
+    entered: {
+      label: "Entered",
+      color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/40",
+      icon: CheckCircle2
     },
-    already_held: { 
-      label: "Already Held", 
-      color: "bg-slate-500/20 text-slate-400 border-slate-500/40", 
-      icon: Lock 
+    already_held: {
+      label: "Already Held",
+      color: "bg-slate-500/20 text-slate-400 border-slate-500/40",
+      icon: Lock
     },
-    dismissed: { 
-      label: "Dismissed", 
+    dismissed: {
+      label: "Dismissed",
       color: "bg-red-500/20 text-red-400 border-red-500/40",
       icon: XCircle
+    },
+    watchlisted: {
+      label: "Added to Watchlist",
+      color: "bg-violet-500/20 text-violet-400 border-violet-500/40",
+      icon: BookmarkCheck
     }
   };
 
@@ -57,12 +64,12 @@ export default function SignalCard({ signal, onAddPosition, onDismiss }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={isNew ? { scale: 1.02, y: -4 } : {}}
+      whileHover={(isNew || isWatchlisted) ? { scale: 1.02, y: -4 } : {}}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={cn(
         "p-5 rounded-2xl border-2 backdrop-blur-sm transition-all",
-        !isNew && "opacity-60",
-        isNew && "hover:shadow-2xl cursor-pointer",
+        !isNew && !isWatchlisted && "opacity-60",
+        (isNew || isWatchlisted) && "hover:shadow-2xl",
         `bg-gradient-to-br ${rankColors[signal.rank] || rankColors[5]}`
       )}
     >
@@ -148,11 +155,13 @@ export default function SignalCard({ signal, onAddPosition, onDismiss }) {
       {isNew && (
         <div className="flex gap-2">
           <Button
-            onClick={() => onAddPosition(signal)}
+            onClick={() => onAddToWatchlist(signal)}
+            disabled={isAddingToWatchlist}
+            data-testid="add-to-watchlist-btn"
             className="flex-1 bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500 text-white font-semibold h-11"
           >
-            <Plus className="w-5 h-5 mr-2" />
-            Add Position
+            <Bookmark className="w-5 h-5 mr-2" />
+            {isAddingToWatchlist ? "Adding…" : "Add to Watchlist"}
           </Button>
           <Button
             onClick={() => onDismiss(signal.id)}
@@ -164,7 +173,21 @@ export default function SignalCard({ signal, onAddPosition, onDismiss }) {
         </div>
       )}
 
-      {/* Info messages for non-NEW signals */}
+      {/* Watchlisted state */}
+      {isWatchlisted && (
+        <div className="flex items-center justify-between py-2 px-4 rounded-lg bg-violet-500/10 border border-violet-500/30">
+          <p className="text-sm text-violet-400 font-medium">◉ Added to Watchlist</p>
+          <Link
+            to="/Watchlist"
+            data-testid="view-in-watchlist-link"
+            className="text-sm text-violet-400 hover:text-violet-300 underline font-medium"
+          >
+            View in Watchlist →
+          </Link>
+        </div>
+      )}
+
+      {/* Info messages for non-NEW, non-watchlisted signals */}
       {isEntered && (
         <div className="text-center py-2 px-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
           <p className="text-sm text-emerald-400 font-medium">✓ Position successfully added</p>
