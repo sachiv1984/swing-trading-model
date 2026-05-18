@@ -106,6 +106,11 @@ def _get_signal(ticker: str, portfolio_id: str) -> Optional[dict]:
         matches = [s for s in signals if (s.get("ticker") or "").upper() == ticker_upper]
         if not matches:
             return None
+        # Prefer most recent signal by date; within same date prefer 'new' over other statuses
+        matches.sort(key=lambda x: (
+            str(x.get("signal_date") or ""),
+            0 if x.get("status") == "new" else 1
+        ), reverse=True)
         s = matches[0]
         return {
             "signal_id": str(s.get("id", "")),
