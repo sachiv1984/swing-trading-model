@@ -17,7 +17,9 @@ Last Updated: 2026-05-18
 - **EPIC/ST item:** EPIC-04 / ST-10 (BLG-FE-35 sub-task)
 - **Delegation class:** delegated_decision
 - **Assigned to:** Head of UX & Design
-- **Status:** Pending
+- **Status:** Unblocked — 2026-05-18
+- **Resolved by:** Head of UX & Design (sachiv.patel@hotmail.co.uk) — staging run performed 2026-05-18; Research page typography confirmed conformant. Playwright SC-RV-TYP-01 added for permanent regression coverage. BLG-FE-35 archived to backlog_archive.md.
+- **Commit:** ccac35c0
 - **Context:** ST-10 has two sub-tasks. The BLG-OPS-16 sub-task (pycache git hygiene) was completed autonomously and committed (SHA: 92d3987c). The BLG-FE-35 sub-task requires a human staging run: side-by-side comparison of Research page rendering against `docs/frontend/design_system.md` typography scale in live/staging environment.
 - **Action required:**
   1. Access the live/staging Research page

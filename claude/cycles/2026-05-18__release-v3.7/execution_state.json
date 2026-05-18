@@ -5,14 +5,14 @@
   "invoked_utc": "2026-05-18T14:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-18T16:10:00Z",
+  "last_updated_utc": "2026-05-18T20:00:00Z",
 
   "epics": {
     "EPIC-04": {
-      "status": "pr_open",
+      "status": "merged",
       "branch": "exec/2026-05-18__release-v3.7/EPIC-04",
       "pr_number": 431,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-18__release-v3.7/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -78,10 +78,10 @@
     },
 
     "EPIC-03": {
-      "status": "pr_open",
+      "status": "merged",
       "branch": "exec/2026-05-18__release-v3.7/EPIC-03",
       "pr_number": 429,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-18__release-v3.7/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -128,11 +128,11 @@
     },
 
     "EPIC-01": {
-      "status": "pr_open",
+      "status": "merged",
       "branch": "exec/2026-05-18__release-v3.7/EPIC-01",
       "pr_number": 430,
-      "pr_status": "open",
-      "qa_signed_off": false,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-18__release-v3.7/qa_evidence_EPIC-01.md",
       "test_scenarios": ["docs/testing/signals_scenarios.md", "docs/testing/watchlist_scenarios.md"],
       "stories": {
@@ -209,12 +209,12 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-04", "EPIC-03", "EPIC-01"],
-    "all_merged": false,
-    "notes": "EPIC-04 PR #431 open (DoQ sign-off complete — qa_evidence_EPIC-04.md signed 2026-05-18). EPIC-03 PR #429 open (autonomous sign-off complete). EPIC-01 PR #430 open (DoQ sign-off pending). All EPICs awaiting Product Owner acceptance before merge."
+    "epics_merged": ["EPIC-04", "EPIC-03", "EPIC-01"],
+    "epics_pending": [],
+    "all_merged": true,
+    "notes": "EPIC-04 PR #431 merged. EPIC-03 PR #429 merged. EPIC-01 PR #430 merged. All EPICs merged 2026-05-18."
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-05-18T20:15:00Z"
 }

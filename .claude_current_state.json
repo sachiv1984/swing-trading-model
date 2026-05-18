@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-05-18__release-v3.7",
   "cycle_name": "Release Planning — v3.7 Signal-to-Watchlist Workflow + Arc 2 Completion + Governance Hardening",
-  "status": "Executing",
+  "status": "Sprint_Complete",
   "engine": "sprint_execution",
   "backlog_slice_path": "claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md",
   "sprint_sealed": true,
@@ -45,7 +45,7 @@
   "last_groom_backlog_utc": "2026-05-17T14:00:00Z",
   "last_groom_backlog_outcome": "4 archived (BLG-FE-26, BLG-FE-32, TEST-GAP-EPIC-03-v33, BLG-SPEC-27); 6 active; §12 release slice removed; no orphans",
   "active_pog": {},
-  "sprint_close_utc": "2026-05-15T19:45:00Z",
+  "sprint_close_utc": "2026-05-18T20:15:00Z",
   "resolved_pre_sprint": {
     "ESC-20260304-01": {
       "cycle": "2026-03-04__release-v1.8",

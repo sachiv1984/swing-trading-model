@@ -35,10 +35,10 @@ Last Updated: 2026-05-18
 
 > Playwright test coverage exists for all observable AC (panel presence/absence, CTA rendering, card state transitions). Playwright test files: `tests/e2e/signals-add-to-watchlist.spec.js` (SC-SIG-WL-01/02/03), `tests/e2e/trade-plan-signal-context.spec.js` (SC-TP-SIG-01/02/03/04).
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction (not via api.* wrapper): `Signals.js` uses `apiFetch(${API_BASE}/watchlist, ...)` — `apiFetch` is the project's standard fetch wrapper from `src/api/base44Client.js`; URL-base variable `API_BASE` is `process.env.REACT_APP_API_URL || "http://localhost:8000"` — confirmed correct pattern
-- Signed off by: *(Director of Quality — pending)*
-- Date: *(pending — must be non-blank before PR merge)*
-- Comments: Playwright tests cover all observable AC for ST-02 and ST-03. ST-01 has no frontend-visible changes; backend-only, verifiable by code review. All three stories committed on EPIC-01 branch (commit SHAs: ST-01=09093c0c, ST-02=08816093, ST-03=4799d442).
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction (not via api.* wrapper): `Signals.js` uses `apiFetch(${API_BASE}/watchlist, ...)` — `apiFetch` is the project's standard fetch wrapper from `src/api/base44Client.js`; URL-base variable `API_BASE` is `process.env.REACT_APP_API_URL || "http://localhost:8000"` — confirmed correct pattern
+- Signed off by: Director of Quality (sachiv.patel@hotmail.co.uk)
+- Date: 2026-05-18
+- Comments: Playwright tests cover all observable AC for ST-02 and ST-03 (SC-SIG-WL-01/02/03, SC-TP-SIG-01/02/03/04). ST-01 has no frontend-visible changes; backend-only, verifiable by code review. Stop_level pre-population gap confirmed pre-existing from v3.1 — not a new deviation. All three stories committed on EPIC-01 branch (commit SHAs: ST-01=09093c0c, ST-02=08816093, ST-03=4799d442). Sign-off applied retrospectively at sprint close (PR #430 merged before date was recorded).

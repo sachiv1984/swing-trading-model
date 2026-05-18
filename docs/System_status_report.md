@@ -1,9 +1,35 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.7
-**Last Updated:** 2026-05-15
+**Version:** 2.8
+**Last Updated:** 2026-05-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-18__release-v3.7
+**Date:** 2026-05-18
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-04 | Technical Debt Clearance: database stub conftest consolidation (BLG-QA-20); pycache untracked from git (BLG-OPS-16); Research page typography staging sign-off + Playwright SC-RV-TYP-01 regression (BLG-FE-35); scored_initiatives.md Arc 3–6 comprehensive refresh — IT-01–06, PO-01–05, SI-01–05, PS-01–05 scored (BLG-GOV-23, resolves OA-RP-05). | tests/conftest.py; docs/frontend/design_system.md; claude/scoring/scored_initiatives.md | None |
+| EPIC-03 | Governance Prompt Hardening: execution_prompt.md v3.23→v3.24 (deviations_filed atomic write LL-v3.7-EX-01, backlog verify guidance LL-v3.7-EX-02, spec_references path verify LL-v3.7-EX-03); qa_evidence_template.md v1.0→v1.1 (BLG-GOV-19 criterion 3 fail-path advisory). | claude/system/execution_prompt.md v3.24; claude/system/templates/qa_evidence_template.md v1.1 | None |
+| EPIC-01 | Signal-to-Watchlist Workflow: `PATCH /signals/{id}` accepts `status=watchlisted`; `watchlisted` field on signals list response; `SignalCard.js` Add to Watchlist CTA + watchlisted state; `SignalContextPanel.js` read-only panel in trade plan form with `entry_rationale`+`confirmation_criteria` pre-population. Playwright E2E: SC-SIG-WL-01/02/03 + SC-TP-SIG-01/02/03/04 (7 scenarios). openapi.yaml + test.py + SystemStatus (57→58 endpoints). data_model.md v2.8. | docs/specs/api_contracts/signal_endpoints.md; docs/specs/frontend/pages/signals.md; docs/design/2026-05-18__release-v3.7/signal-context-panel/ux_spec.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| EPIC-02 (ST-04/05/06 — PT-04 Setup Quality Score) | Gate condition not met: < 20 closed trades (PO confirmed 2026-05-18) | Deferred to v3.8 |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-04.md (DoQ signed 2026-05-18), qa_evidence_EPIC-03.md (autonomous class 2026-05-18), qa_evidence_EPIC-01.md (DoQ signed 2026-05-18)
+- Deviations filed: None (zero P0/P1/P2/P3)
+- Test scenarios referenced: docs/testing/signals_scenarios.md v1.2 (SC-SIG-WL-01/02/03); docs/testing/watchlist_scenarios.md v1.1 (SC-TP-SIG-01/02/03/04)
 
 ---
 
