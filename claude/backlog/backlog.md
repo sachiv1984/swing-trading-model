@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-18 (roadmap rebalance 2026-05-18__scheduled-2 — no backlog changes; 9 active items)
+**Last Updated:** 2026-05-18 (release planning v3.7 — §12 release slice added)
 **Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice
@@ -497,6 +497,28 @@ These are deliberate product decisions, not deferrals:
 ## 11. Lifecycle Governance Notes
 
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
+
+---
+
+## 12. Release Slice — v3.7 (cycle: 2026-05-18__release-v3.7)
+
+<!-- release-plan-marker: RP:v3.7:2026-05-18__release-v3.7 -->
+
+*This section is ephemeral — remove during next `groom backlog` run after v3.7 closes.*
+
+| ST-ID | EPIC | Backlog Item | Priority | Sprint |
+|-------|------|--------------|----------|--------|
+| ST-01 | EPIC-01 | BLG-FE-33 backend: signals `watchlisted` status + PATCH endpoint | P1 | 1 |
+| ST-02 | EPIC-01 | BLG-FE-33 frontend: Add to Watchlist CTA on signal cards | P1 | 1 |
+| ST-03 | EPIC-01 | BLG-FE-34: Trade plan form signal context panel | P1 | 1 |
+| ST-04 | EPIC-02 | PT-04 spec authoring + gate confirmation (conditional) | P2 | 2 |
+| ST-05 | EPIC-02 | PT-04 backend: quality score endpoint (conditional) | P2 | 2 |
+| ST-06 | EPIC-02 | PT-04 frontend: quality score display (conditional) | P2 | 2 |
+| ST-07 | EPIC-03 | execution_prompt.md patches ×3 (deviations_filed + backlog verify + spec_references) | P1 | 1 |
+| ST-08 | EPIC-03 | qa_evidence_template.md BLG-GOV-19 criterion 3 fail-path | P1 | 1 |
+| ST-09 | EPIC-04 | BLG-QA-20: database stub conftest consolidation | P2 | 1 |
+| ST-10 | EPIC-04 | BLG-OPS-16 + BLG-FE-35: pycache git hygiene + Research page font staging | P3 | 1 |
+| ST-11 | EPIC-04 | BLG-GOV-23: scored_initiatives.md comprehensive refresh | P3 | 1 |
 
 ---
 

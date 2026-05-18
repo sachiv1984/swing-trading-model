@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v3.6** — Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance — ✅ Shipped 2026-05-17
-**Next planned release:** **v3.7** — [TBD]
+**Next planned release:** **v3.7** — Signal-to-Watchlist Workflow + Arc 2 Completion + Governance Hardening
+
+<!-- roadmap-annotation-marker: RA:v3.7:2026-05-18__release-v3.7 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-18__release-v3.7
+- Plan published: 2026-05-18
+- Cycle folder: claude/cycles/2026-05-18__release-v3.7/
+- Backlog slice: claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 *RA:v3.6 retired — see roadmap_archive.md 2026-05-17 (post-ship closure 2026-05-16__release-v3.6).*
 *RA:v3.5 retired — see roadmap_archive.md 2026-05-15 (post-ship closure 2026-05-15__release-v3.5).*

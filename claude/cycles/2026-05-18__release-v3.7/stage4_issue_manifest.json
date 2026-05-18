@@ -1,0 +1,107 @@
+{
+  "cycle_id": "2026-05-18__release-v3.7",
+  "release": "v3.7",
+  "generated_utc": "2026-05-18T12:40:00Z",
+  "issues_mode": "none",
+  "items": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "BLG-FE-33: Signals page backend — watchlisted status support",
+      "sprint": 1,
+      "labels": ["story", "release-v3.7", "EPIC-01", "cycle:2026-05-18__release-v3.7"],
+      "milestone": "v3.7",
+      "delegation_class": "autonomous"
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "BLG-FE-33: Signals page frontend — Add to Watchlist CTA",
+      "sprint": 1,
+      "labels": ["story", "release-v3.7", "EPIC-01", "cycle:2026-05-18__release-v3.7"],
+      "milestone": "v3.7",
+      "delegation_class": "standard"
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "title": "BLG-FE-34: Trade plan form signal context panel",
+      "sprint": 1,
+      "labels": ["story", "release-v3.7", "EPIC-01", "cycle:2026-05-18__release-v3.7"],
+      "milestone": "v3.7",
+      "delegation_class": "standard"
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "title": "PT-04 spec authoring and gate confirmation (conditional)",
+      "sprint": 2,
+      "labels": ["story", "release-v3.7", "EPIC-02", "cycle:2026-05-18__release-v3.7", "gate-conditional"],
+      "milestone": "v3.7",
+      "delegation_class": "delegated_decision"
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "title": "PT-04 backend: quality score calculation endpoint (conditional)",
+      "sprint": 2,
+      "labels": ["story", "release-v3.7", "EPIC-02", "cycle:2026-05-18__release-v3.7", "gate-conditional"],
+      "milestone": "v3.7",
+      "delegation_class": "autonomous"
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-02",
+      "title": "PT-04 frontend: quality score display (conditional)",
+      "sprint": 2,
+      "labels": ["story", "release-v3.7", "EPIC-02", "cycle:2026-05-18__release-v3.7", "gate-conditional"],
+      "milestone": "v3.7",
+      "delegation_class": "standard"
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "title": "execution_prompt.md patches ×3: deviations_filed sub-step 10a + backlog verify + spec_references verify",
+      "sprint": 1,
+      "labels": ["story", "release-v3.7", "EPIC-03", "cycle:2026-05-18__release-v3.7"],
+      "milestone": "v3.7",
+      "delegation_class": "autonomous"
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "title": "qa_evidence_template.md: BLG-GOV-19 criterion 3 fail-path patch",
+      "sprint": 1,
+      "labels": ["story", "release-v3.7", "EPIC-03", "cycle:2026-05-18__release-v3.7"],
+      "milestone": "v3.7",
+      "delegation_class": "autonomous"
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-04",
+      "title": "BLG-QA-20: Database stub conftest consolidation",
+      "sprint": 1,
+      "labels": ["story", "release-v3.7", "EPIC-04", "cycle:2026-05-18__release-v3.7"],
+      "milestone": "v3.7",
+      "delegation_class": "autonomous"
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-04",
+      "title": "BLG-OPS-16 + BLG-FE-35: pycache git hygiene + Research page font staging sign-off",
+      "sprint": 1,
+      "labels": ["story", "release-v3.7", "EPIC-04", "cycle:2026-05-18__release-v3.7"],
+      "milestone": "v3.7",
+      "delegation_class": "autonomous"
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-04",
+      "title": "BLG-GOV-23: scored_initiatives.md comprehensive refresh",
+      "sprint": 1,
+      "labels": ["story", "release-v3.7", "EPIC-04", "cycle:2026-05-18__release-v3.7"],
+      "milestone": "v3.7",
+      "delegation_class": "delegated_decision"
+    }
+  ]
+}
