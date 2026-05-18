@@ -1,0 +1,47 @@
+{
+  "cycle_id": "2026-05-18__release-v3.7",
+  "generated_utc": "2026-05-18T14:00:00Z",
+  "epics": {
+    "EPIC-04": {
+      "execution_state_owner": true,
+      "execution_sequence": 1,
+      "branch": "exec/2026-05-18__release-v3.7/EPIC-04",
+      "st_items": ["ST-09", "ST-10", "ST-11"],
+      "backlog_slice_refs": [
+        "claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md#ST-09",
+        "claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md#ST-10",
+        "claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md#ST-11"
+      ]
+    },
+    "EPIC-03": {
+      "execution_state_owner": false,
+      "execution_sequence": 2,
+      "branch": "exec/2026-05-18__release-v3.7/EPIC-03",
+      "st_items": ["ST-07", "ST-08"],
+      "backlog_slice_refs": [
+        "claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md#ST-07",
+        "claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md#ST-08"
+      ]
+    },
+    "EPIC-01": {
+      "execution_state_owner": false,
+      "execution_sequence": 3,
+      "branch": "exec/2026-05-18__release-v3.7/EPIC-01",
+      "st_items": ["ST-01", "ST-02", "ST-03"],
+      "backlog_slice_refs": [
+        "claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md#ST-01",
+        "claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md#ST-02",
+        "claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md#ST-03"
+      ]
+    },
+    "EPIC-02": {
+      "execution_state_owner": false,
+      "execution_sequence": null,
+      "branch": null,
+      "status": "deferred_to_v3.8",
+      "defer_reason": "EPIC-02 gate not met — < 20 closed trades confirmed by Product Owner 2026-05-18",
+      "st_items": ["ST-04", "ST-05", "ST-06"],
+      "backlog_slice_refs": []
+    }
+  }
+}
