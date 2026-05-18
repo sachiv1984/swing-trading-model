@@ -1,11 +1,11 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-03-23
+**Version:** 1.1
+**Last Updated:** 2026-05-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Derived from:** `docs/specs/frontend/pages/watchlist.md` v0.1; `docs/specs/api_contracts/watchlist_endpoints.md`
-**Sprint:** 2026-03-21__release-v2.2 — ST-10
+**Derived from:** `docs/specs/frontend/pages/watchlist.md` v0.1; `docs/specs/api_contracts/watchlist_endpoints.md`; `docs/design/2026-05-18__release-v3.7/signal-context-panel/ux_spec.md`
+**Sprint:** 2026-03-21__release-v2.2 — ST-10; 2026-05-18__release-v3.7 — ST-03
 
 ---
 
@@ -15,7 +15,7 @@
 
 ## 1. Scope
 
-These scenarios verify the Watchlist feature against its canonical specification. They cover: adding a watchlist entry, editing an entry, removing an entry, the "Add to Position" flow (watchlist entry removed on successful position entry), duplicate ticker validation, and sort order behaviour with mixed signal statuses. SC-WATCH-06 satisfies the deferred AC-6 from ST-10 (v2.1) DoQ sign-off.
+These scenarios verify the Watchlist feature against its canonical specification. They cover: adding a watchlist entry, editing an entry, removing an entry, the "Add to Position" flow (watchlist entry removed on successful position entry), duplicate ticker validation, and sort order behaviour with mixed signal statuses. SC-WATCH-06 satisfies the deferred AC-6 from ST-10 (v2.1) DoQ sign-off. §4 (v3.7) adds Signal Context panel presence/absence scenarios for the trade plan form (SC-TP-SIG-01 through SC-TP-SIG-04).
 
 Out of scope: signal status computation (backend responsibility), price data accuracy, position entry form validation beyond the watchlist pre-population.
 
@@ -217,12 +217,98 @@ This scenario was deferred from v2.1 because all test watchlist entries had `no_
 
 ---
 
-## 4. Director of Quality Sign-Off
+## 4. Scenarios — Signal Context Panel in Trade Plan Form (v3.7, BLG-FE-34)
+
+*Canonical spec: `docs/design/2026-05-18__release-v3.7/signal-context-panel/ux_spec.md`*
+*Playwright file: `tests/e2e/trade-plan-signal-context.spec.js`*
+
+---
+
+### SC-TP-SIG-01 — Panel present when watchlisted signal exists for ticker
+
+**Component:** Trade Plan form — Signal Context panel
+**API:** `GET /signals?status=watchlisted`
+**Priority:** P1
+
+#### Preconditions
+
+- Trade plan creation form loaded with `ticker=AAPL&market=US`.
+- `GET /signals?status=watchlisted` returns a signal with `ticker=AAPL` and `status=watchlisted`.
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Navigate to `/#/TradePlan?ticker=AAPL&market=US`. | Trade plan form loads. |
+| 2 | Observe the form area between Early Exit Conditions and Pre-Entry Checklist. | **"Signal Context"** panel visible (`data-testid="signal-context-panel"`). Panel shows Rank `#N`, Momentum %, ATR, and Suggested stop. |
+
+#### Pass criteria
+
+- `data-testid="signal-context-panel"` element is visible.
+- Panel header "Signal Context" is present.
+- Signal rank, momentum, and ATR values rendered.
+
+---
+
+### SC-TP-SIG-02 — Panel absent when no watchlisted signal exists
+
+**Component:** Trade Plan form — Signal Context panel absence
+**API:** `GET /signals?status=watchlisted` returning `[]`
+**Priority:** P1
+
+#### Preconditions
+
+- Trade plan creation form loaded with `ticker=AAPL&market=US`.
+- `GET /signals?status=watchlisted` returns `[]`.
+
+#### Steps
+
+| Step | Action | Expected result |
+|------|--------|-----------------|
+| 1 | Navigate to `/#/TradePlan?ticker=AAPL&market=US`. | Trade plan form loads. |
+| 2 | Observe the form area between Early Exit Conditions and Pre-Entry Checklist. | No Signal Context panel visible. Form fields unchanged from baseline. |
+
+#### Pass criteria
+
+- `data-testid="signal-context-panel"` is not visible.
+- No placeholder or empty state shown in the panel location.
+- Form fields (entry rationale, confirmation criteria) are empty by default.
+
+---
+
+### SC-TP-SIG-03 — Pre-population from linked signal
+
+**Component:** Trade Plan form — pre-population
+**API:** `GET /signals?status=watchlisted`
+**Priority:** P2
+
+#### Pass criteria
+
+- When a linked signal exists, `entry_rationale` textarea is pre-populated with the signal rank momentum text (e.g. `"Rank 2 momentum signal…"`).
+- User can edit the pre-populated text.
+- Fields are not pre-populated in edit mode.
+
+---
+
+### SC-TP-SIG-04 — Panel absent in edit mode
+
+**Component:** Trade Plan form — edit mode non-regression
+**Priority:** P1
+
+#### Pass criteria
+
+- `data-testid="signal-context-panel"` is not visible when `?edit=<id>` is present in the URL, even if a watchlisted signal exists for the ticker.
+- Existing saved form values are not overwritten by pre-population.
+
+---
+
+## 5. Director of Quality Sign-Off
 
 *(To be completed after scenario execution)*
 
 - [ ] SC-WATCH-01 through SC-WATCH-06 executed (or partial execution documented)
-- [ ] Results recorded in `qa_evidence_EPIC-04.md`
+- [ ] SC-TP-SIG-01 through SC-TP-SIG-04 executed (or partial execution documented)
+- [ ] Results recorded in `qa_evidence_EPIC-01.md`
 - [ ] SC-WATCH-06 explicitly closes deferred AC-6 from v2.1
 - [ ] No unresolved P0 or P1 deviations
 

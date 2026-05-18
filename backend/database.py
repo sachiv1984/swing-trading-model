@@ -1121,6 +1121,24 @@ def ensure_plan_vs_reality_columns():
         conn.commit()
 
 
+def ensure_signals_watchlisted_status():
+    """Extend signals_status_check constraint to include 'watchlisted' (idempotent).
+
+    ST-01 (EPIC-01, v3.7) — BLG-FE-33. Drops the existing CHECK constraint and
+    recreates it with 'watchlisted' added. Safe to run multiple times.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE signals DROP CONSTRAINT IF EXISTS signals_status_check"
+            )
+            cur.execute(
+                "ALTER TABLE signals ADD CONSTRAINT signals_status_check "
+                "CHECK (status IN ('new', 'entered', 'dismissed', 'expired', 'already_held', 'watchlisted'))"
+            )
+        conn.commit()
+
+
 def ensure_planned_entry_price_column():
     """Add planned_entry_price to trade_history (idempotent).
 

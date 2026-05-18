@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-04-15
+**Version:** 1.2
+**Last Updated:** 2026-05-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -220,6 +220,7 @@ Update the status of a signal.
 - `entered`: user entered a position based on this signal
 - `dismissed`: user dismissed the signal
 - `expired`: signal expired
+- `watchlisted`: user added the ticker to the watchlist from this signal
 
 ### Response (200)
 
@@ -245,7 +246,7 @@ Response uses the standard success envelope from **conventions.md**.
 
 Errors use the standard error envelope from **conventions.md**.
 
-- `400` Invalid status value
+- `400` Invalid status value (not one of: entered, dismissed, expired, watchlisted)
 - `404` Signal not found
 
 ---
@@ -299,5 +300,6 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-05-18 | ST-01 (BLG-FE-33, v3.7): Add `watchlisted` as an allowed PATCH status value — user added ticker to watchlist from signal card. Updated Allowed status values section and Errors 400 description. Corresponds to `signals_status_check` DB constraint extension in `data_model.md` v2.8. API Contracts & Documentation Owner. |
 | 1.1 | 2026-04-15 | ST-09 (BLG-BE-10, v2.7): Add 4 supplementary indicator fields to `POST /signals/generate` response per signal: `relative_strength_pct`, `week52_high_proximity_pct`, `avg_daily_volume_20d`, `price_vs_50d_ma`. All display-only — §13 COMPLIANT (SRB-v1.7 Feature 3). Fields do not affect `rank` or signal ordering. API Contracts & Documentation Owner. |
 | 1.0 | 2026-03-18 | Initial version |

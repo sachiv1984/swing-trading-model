@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
@@ -6,6 +6,7 @@ import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
+import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
 import { BookOpen, Save, ArrowLeft, AlertTriangle } from "lucide-react";
 import { TradePlanStatusBadge } from "./TradePlans";
 
@@ -147,6 +148,33 @@ export default function TradePlan() {
       });
     }
   }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const { data: watchlistedSignals = [] } = useQuery({
+    queryKey: ["signals-watchlisted"],
+    queryFn: () =>
+      apiFetch(`${API_BASE}/signals?status=watchlisted`)
+        .then((r) => r.json())
+        .then((res) => (Array.isArray(res.data) ? res.data : [])),
+    enabled: !!form.ticker && !editId,
+    staleTime: 30000,
+  });
+
+  const linkedSignal = watchlistedSignals.find(
+    (s) => s.ticker === form.ticker || s.ticker === form.ticker + ".L" || s.ticker.replace(/\.L$/, "") === form.ticker
+  ) || null;
+
+  const prePopApplied = useRef(false);
+  useEffect(() => {
+    if (!editId && linkedSignal && !prePopApplied.current) {
+      prePopApplied.current = true;
+      const { entryRationale, confirmationCriteria } = buildSignalPrePopulation(linkedSignal, form.market);
+      setForm((prev) => ({
+        ...prev,
+        entry_rationale: prev.entry_rationale || entryRationale,
+        confirmation_criteria: prev.confirmation_criteria || confirmationCriteria,
+      }));
+    }
+  }, [linkedSignal]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data: existingByPosition } = useQuery({
     queryKey: ["tradePlanByPosition", positionId],
@@ -379,6 +407,8 @@ export default function TradePlan() {
             placeholder="Under what conditions would you exit before the stop is hit?"
           />
         </Field>
+
+        {!editId && <SignalContextPanel signal={linkedSignal} market={form.market} />}
 
         <Field label="Pre-Entry Checklist">
           <EntryChecklist

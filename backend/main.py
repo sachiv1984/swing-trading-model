@@ -231,6 +231,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_plan_vs_reality_columns FAILED at startup: %s", _e)
     try:
+        from database import ensure_signals_watchlisted_status
+        ensure_signals_watchlisted_status()
+        _log.info("ensure_signals_watchlisted_status: OK")
+    except Exception as _e:
+        _log.error("ensure_signals_watchlisted_status FAILED at startup: %s", _e)
+    try:
         from utils.feature_flags import log_flag_states
         log_flag_states()
     except Exception as _e:
@@ -727,9 +733,13 @@ def get_signals_endpoint(status: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+_ALLOWED_SIGNAL_STATUSES = {"entered", "dismissed", "expired", "watchlisted"}
+
 @app.patch("/signals/{signal_id}")
 def update_signal_endpoint(signal_id: str, updates: dict):
     """Update a signal (e.g., change status)"""
+    if "status" in updates and updates["status"] not in _ALLOWED_SIGNAL_STATUSES:
+        raise HTTPException(status_code=400, detail=f"Invalid status '{updates['status']}'. Allowed: {sorted(_ALLOWED_SIGNAL_STATUSES)}")
     try:
         updated = update_signal_status(signal_id, updates)
         return {

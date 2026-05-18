@@ -1454,7 +1454,7 @@ paths:
               properties:
                 status:
                   type: string
-                  enum: [entered, dismissed, expired]
+                  enum: [entered, dismissed, expired, watchlisted]
       responses:
         "200":
           $ref: "#/components/responses/OkSignal"
