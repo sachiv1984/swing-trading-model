@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-17 (session — 1 new item added: BLG-GOV-23)
+**Last Updated:** 2026-05-18 (release planning v3.7 — §12 release slice added; BLG-GOV-24 added — gh_issue_template.md §14 tracking gap)
 **Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice
@@ -114,24 +114,7 @@ Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. Wh
 
 ---
 
-### BLG-FE-26 — Research page UX review: regime lozenge and font consistency
-**Priority:** P3 (Low)
-**Type:** Frontend / UX Quality
-**Owner:** Head of UX & Design
-**Source:** v3.2 delivery verification — manual staging 2026-05-06
-**Effort:** XS–S (review + spec, ~0.5 day)
-**Provisional-Target:** v3.3
-
-**Problem**
-Manual staging of the v3.2 Research page revealed two UX quality issues:
-1. **Regime lozenge wraps to two lines** — the regime status lozenge (signal/regime indicator) displays on two lines rather than one, suggesting the container width or text is not constrained correctly.
-2. **Font inconsistency** — the Research page uses inconsistent font weights or sizes compared to the design system documented in `docs/frontend/design_system.md` (BLG-FE-21, shipped v3.2).
-
-**Acceptance Criteria**
-- Head of UX & Design reviews Research page against `docs/frontend/design_system.md`
-- Regime lozenge constrained to single line (max-width or text truncation applied)
-- Font usage on Research page conforms to the design system typography scale
-- Any deviations from design system noted for backlog or immediate fix
+*BLG-FE-26 (Research page UX review: regime lozenge and font consistency) — ✅ COMPLETE v3.6 — archived to backlog_archive.md 2026-05-17*
 
 ---
 
@@ -170,22 +153,87 @@ The current nav bar occupies a fixed portion of the visible screen area. As the 
 
 ---
 
-### BLG-FE-32 — Research view: SC-RV-18/SC-RV-19 Playwright coverage for null/degraded state scenarios
-**Priority:** P3 (Low)
-**Type:** Frontend / QA
-**Owner:** QA Lead
-**Source:** research_view_protocol.md §5 (v3.3 sign-off gap); regression_protocol.md §2.2 (v3.5 ST-10)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v3.6
+### BLG-FE-34 — Trade plan form: surface signal context to guide entry rationale and confirmation criteria
+**Priority:** P1 (High)
+**Type:** Frontend / UX + Backend
+**Owner:** Head of Engineering
+**Source:** Product intent alignment session (production_strategy.py) — 2026-05-18
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.7
+**Depends on:** BLG-FE-33 (signal → watchlist linkage required to pass signal data through)
 
 **Problem**
-SC-RV-18 (regime field null) and SC-RV-19 (all research fields null) were identified as partially covered in v3.3 QA evidence and confirmed as pending in the v3.5 regression protocol. Until these scenarios have explicit Playwright tests, they require human staging sign-off in each sprint that touches the research view.
+The trade plan form asks users to fill in entry rationale and confirmation criteria but surfaces no technical data to support these fields. The strategy's entry rules are fully computable at signal time (momentum rank, price vs 200-day MA, regime status, ATR, suggested stop) and already live on the signal object — yet none of this reaches the trade plan form. Users are left with blank fields and must context-switch to reconstruct information the system already holds.
+
+**Scope**
+- Surface a read-only "Signal Context" panel in the trade plan creation form when a linked signal exists for the ticker: rank, momentum %, price vs 200-day MA (% above/below), regime on/off, ATR value, suggested initial stop (entry − 5 × ATR)
+- Pre-populate entry rationale with a structured template derived from signal data: "Rank {N} momentum signal. Price {above/below} 200-day MA by {x}%. {US/UK} regime on." (user-editable)
+- Pre-populate confirmation criteria with strategy defaults: "Price above 200-day MA at entry. Regime on. Spare cash available." (user-editable)
+- Pre-fill stop field with suggested stop: entry price − (5 × ATR)
+- Signal Context panel hidden and fields blank when no linked signal exists — no regression to current behaviour
+- Entry timing: Signal Context panel notes entry is triggered at current price when spare cash is available (not month-end)
 
 **Acceptance Criteria**
-- Playwright test added for SC-RV-18: regime field null — regime badge degrades gracefully (no crash, placeholder shown)
-- Playwright test added for SC-RV-19: all research fields null — no crash, all sections show appropriate placeholders
-- Tests added to `tests/e2e/pre-trade-research.spec.js`
-- `research_view_regression_protocol.md` §2.2 updated to reflect Playwright coverage (remove staging caveat)
+- Signal Context panel shown in trade plan form when a linked signal exists for the ticker, displaying: rank, momentum %, price vs 200-day MA, regime on/off, ATR, suggested stop
+- Entry rationale pre-populated with structured template from signal data; user can edit
+- Confirmation criteria pre-populated with strategy defaults; user can edit
+- Stop field pre-filled with entry price − (5 × ATR) matching initial_atr_mult=5
+- No Signal Context panel and no pre-population when no linked signal exists
+- Signal Context data is read-only within the form
+
+---
+
+### BLG-FE-33 — Signals page: replace Add Position CTA with Add to Watchlist
+**Priority:** P1 (High)
+**Type:** Frontend / UX + Backend
+**Owner:** Head of Engineering
+**Source:** Head of UX & Design + Head of Specs Team alignment session — 2026-05-17
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.7
+
+**Problem**
+The Signals page shows "Add Position" as the primary CTA on new signal cards. The user guide (§4→5) explicitly defines the workflow as signal → watchlist → research → plan → entry. The current UI bypasses this entirely, pushing users toward immediate trade entry and undermining the discipline the system is designed to enforce.
+
+**Scope**
+- Replace "Add Position" button with "Add to Watchlist" (primary CTA) on new signal cards
+- "Dismiss" retained as secondary action; "Add Position" removed from signal cards entirely
+- Add to Watchlist action: silent POST /watchlist pre-filled with ticker, market, initial_stop_price; then PATCH /signals/{id} status=watchlisted on success
+- Add watchlisted signal card state: shows "View in Watchlist" link (→ /watchlist), no action buttons
+- Add `watchlisted` to signals table CHECK constraint
+- PATCH /signals/{id} updated to accept `watchlisted` as a valid status value
+- signal_endpoints.md and data_model.md updated (version bumped, changelog entry, OPERATIONAL_GUIDE §14, prompt_change_log.md) in same commit as backend change
+
+**Acceptance Criteria**
+- Signal card "Add Position" button replaced with "Add to Watchlist" (primary CTA)
+- Clicking "Add to Watchlist" calls POST /watchlist with ticker, market, initial_stop_price pre-filled; PATCH /signals/{id} status=watchlisted on success
+- Signal card transitions to watchlisted state: "View in Watchlist" link shown, no action buttons
+- Dismiss button retained as secondary action on new signals
+- `watchlisted` added to signals table CHECK constraint; PATCH endpoint accepts it
+- signal_endpoints.md and data_model.md updated in same commit as backend change
+- Duplicate add (ticker already on watchlist): toast "Already on your watchlist"; signal still transitions to watchlisted
+
+---
+
+*BLG-FE-32 (Research view SC-RV-18/SC-RV-19 Playwright coverage) — ✅ COMPLETE v3.6 — archived to backlog_archive.md 2026-05-17*
+
+---
+
+### BLG-FE-35 — ST-08 AC-02: Human staging sign-off for Research page font conformance
+**Priority:** P3 (Low)
+**Type:** Frontend / QA Verification
+**Owner:** Head of UX & Design
+**Source:** v3.6 EPIC-03 ST-08 — AC-02 deferred from sprint execution; delivery verification 2026-05-17 — item filed as required by CLAUDE.md §2 frontend testing gate (referenced in qa_evidence_EPIC-03.md as BLG-UX-ST08-staging); renamed from BLG-FE-33 to BLG-FE-35 (ID collision resolved 2026-05-18)
+**Effort:** XS (~0.5 hour staging run)
+**Provisional-Target:** v3.7 or next sprint touching Research page
+
+**Problem**
+ST-08 (v3.6 EPIC-03) fixed regime lozenge wrapping (AC-01) and targeted font conformance (AC-02). Code review confirmed `text-xs font-medium` (SignalBadge), section headings `text-xs font-medium text-slate-400 uppercase tracking-wider`, and data values `text-xl font-semibold text-white` all match design_system.md. However, CLAUDE.md §2 requires either Playwright coverage or human staging with date recorded — code review alone is not a valid evidence method. Staging was deferred at sprint execution and not performed at delivery verification.
+
+**Acceptance Criteria**
+- Head of UX & Design performs side-by-side comparison of Research page rendering against `docs/frontend/design_system.md` typography scale in a live/staging environment
+- Date of staging run recorded in this item (or in the QA evidence file for the sprint in which it is performed)
+- If conformant: archive BLG-FE-26 (parent item, partially closed by ST-08 AC-01) and this item
+- If non-conformant: file a new backlog item with specific font deviation details
 
 ---
 
@@ -230,26 +278,7 @@ SC-RV-18 (regime field null) and SC-RV-19 (all research fields null) were identi
 
 ---
 
-### TEST-GAP-EPIC-03-v33 — SC-RV-18 and SC-RV-19 explicit Playwright coverage for null handling
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA & Testing Owner
-**Source:** Delivery verification 2026-05-09__release-v3.3 (STEP 5) — backlog item formally filed 2026-05-15
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Before next research view frontend enhancement
-
-**Problem**
-research_view_protocol.md §2.3 notes SC-RV-18 (regime null only) and SC-RV-19 (all fields null — degraded mode) as requiring explicit Playwright scenarios. The item was flagged at sprint close but never formally filed.
-
-**Scope**
-- Add SC-RV-18 to `docs/qa/test_scenarios/research_view_scenarios.md`: GET /research/{ticker} returns regime null → UI shows regime panel in "unavailable" state
-- Add SC-RV-19: all data fields null (all sources failed) → degraded mode display, no crash, user-visible error state per UX spec
-- Update `docs/qa/acceptance_protocols/research_view_protocol.md` §2.3 to mark item as resolved
-
-**Acceptance Criteria**
-- SC-RV-18 and SC-RV-19 added to `docs/qa/test_scenarios/research_view_scenarios.md`
-- research_view_protocol.md §2.3 updated to reference both scenarios as filed
-- Playwright coverage or human staging sign-off recorded for both null states
+*TEST-GAP-EPIC-03-v33 (SC-RV-18 and SC-RV-19 Playwright coverage) — ✅ COMPLETE v3.6 — archived to backlog_archive.md 2026-05-17*
 
 ---
 
@@ -367,28 +396,7 @@ Compiled Python bytecode files (`backend/__pycache__/*.pyc`) are tracked in git.
 
 ---
 
-### BLG-SPEC-27 — Research endpoint: surface per-source error codes as distinct HTTP responses
-**Priority:** P3 (Low)
-**Type:** Specification / API Contract
-**Owner:** API Contracts & Documentation Owner
-**Source:** ST-08 (EPIC-03, v3.3) — P3 delivery deviation (DoQ reclassification from P2 sprint_close filing)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v3.4 or v4.x (non-blocking; current behaviour is documented)
-
-**Problem**
-The research_endpoint.md AC specified distinct HTTP error codes (404 ticker-not-found, 503 source-unavailable, 429 rate-limited). The implementation always returns 200 with null sub-fields on sub-source failure. This is a known limitation documented in research_endpoint.md §Error Responses, but the spec-vs-impl divergence remains an open deviation (filed at sprint close v3.3 as P2; DoQ counter-confirmed P3 in qa_evidence_EPIC-03.md).
-
-**Scope**
-- Update GET /research/{ticker} to return 404 when ticker does not exist in any source
-- Return 503 when a required external source (Yahoo Finance) is entirely unavailable
-- Update research_endpoint.md §Error Responses to reflect new HTTP codes
-- Update openapi.yaml 4xx/5xx response entries for this endpoint
-
-**Acceptance Criteria**
-- 404 returned when ticker lookup fails across all sources
-- 503 returned for critical source failure (not partial field-level null)
-- research_endpoint.md §Error Responses updated; BLG-SPEC-25 backlog reference corrected to BLG-SPEC-27
-- No regression in 200+null behaviour for partial source failures
+*BLG-SPEC-27 (Research endpoint HTTP error code differentiation) — ✅ COMPLETE v3.6 — archived to backlog_archive.md 2026-05-17*
 
 ---
 
@@ -410,7 +418,32 @@ The research_endpoint.md AC specified distinct HTTP error codes (404 ticker-not-
 
 ## 8. Governance Backlog
 
-### BLG-GOV-23 — Add gh_issue_template.md to §14 governance table
+### BLG-GOV-23 — scored_initiatives.md comprehensive refresh
+**Priority:** P3 (Low)
+**Type:** Governance / Planning Infrastructure
+**Owner:** Facilitator
+**Source:** v3.5 post-ship closure OA-05; v3.6 release planning LL observation #5; 2026-05-18__scheduled roadmap rebalance
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Before next roadmap rebalance with advancing candidates
+
+**Problem**
+scored_initiatives.md was last updated 2026-03-31. Arc 3 features (IT-01–IT-06) and Arc 4–6 initiatives (PO-01–05, SI-01–05, PS-01–05) are absent. All STEP 6 effort-band estimates for current roadmap items have been falling to Tier 3 inline inference for 10+ cycles. This deferred action has carried through v3.5 and v3.6 without a backlog item (OA-05).
+
+**Scope**
+- Add scored rows for Arc 3 shipped items (IT-01–IT-06): SPS and effort bands for historical completeness
+- Add scored rows for active Arc 4–6 roadmap initiatives with current SPS and effort bands per STEP 6 criteria
+- Update file header Last Updated date
+- Preserve all existing entries intact
+
+**Acceptance Criteria**
+- scored_initiatives.md header Last Updated updated to date of refresh
+- Arc 3 items (IT-01–IT-06) have scored rows with SPS and effort bands
+- Active Arc 4–6 roadmap items (PO-01–05, SI-01–05, PS-01–05) have scored rows
+- All existing scored rows preserved
+
+---
+
+### BLG-GOV-24 — Add gh_issue_template.md to §14 governance table
 **Priority:** P3 (Low)
 **Type:** Governance Process
 **Owner:** Head of Specs Team
@@ -421,15 +454,9 @@ The research_endpoint.md AC specified distinct HTTP error codes (404 ticker-not-
 **Problem**
 `claude/system/gh_issue_template.md` carries a `**Version:** 1.0` header and is a Class 6 governance file, but it is absent from the §14 governance table in `OPERATIONAL_GUIDE.md`. This means `/governance-drift` flags it as UNTRACKED on every check, creating noise and risking the version being silently bumped without a §14 update. Pre-existing gap — not introduced by the preflight consolidation refactor.
 
-**Scope**
-- Add a `| GH Issue Template | \`claude/system/gh_issue_template.md\` v1.0 |` row to the §14 governance table
-- Update OPERATIONAL_GUIDE.md version and Last Updated header
-- Append entry to `claude/system/prompt_change_log.md`
-
 **Acceptance Criteria**
-- `/governance-drift` no longer flags `gh_issue_template.md` as UNTRACKED
-- §14 table contains a row for `gh_issue_template.md` with the correct version
-- `prompt_change_log.md` has an entry for the OPERATIONAL_GUIDE version bump
+- `gh_issue_template.md` entry added to §14 governance table in `OPERATIONAL_GUIDE.md` with current version (v1.0)
+- `/governance-drift` no longer flags the file as UNTRACKED
 
 ---
 
@@ -490,22 +517,26 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
-## 12. Release Slice — v3.6
+## 12. Release Slice — v3.7 (cycle: 2026-05-18__release-v3.7)
 
-<!-- release-plan-marker: RP:v3.6:2026-05-16__release-v3.6 -->
+<!-- release-plan-marker: RP:v3.7:2026-05-18__release-v3.7 -->
 
-*This section is ephemeral — remove during next `groom backlog` after v3.6 closes.*
+*This section is ephemeral — remove during next `groom backlog` run after v3.7 closes.*
 
-| ST-ID | EPIC | Title | Owner | Sprint |
-|-------|------|-------|-------|--------|
-| ST-01 | EPIC-01 | Capture planned_entry_price at trade entry | Head of Engineering | 1 |
-| ST-02 | EPIC-01 | Update PlanVsReality component entry_delta_pct display | Head of Engineering | 2 |
-| ST-03 | EPIC-02 | PT-04 spec authoring and gate confirmation | Head of Specs Team + PO | 1 |
-| ST-04 | EPIC-02 | Setup Quality Score backend endpoint | Head of Engineering | 2 |
-| ST-05 | EPIC-02 | Setup Quality Score frontend display | Head of Engineering | 2 |
-| ST-06 | EPIC-03 | SC-RV-18/19 Playwright coverage (BLG-FE-32 + TEST-GAP-EPIC-03-v33) | QA & Testing Owner | 1 |
-| ST-07 | EPIC-03 | Research endpoint HTTP error code differentiation (BLG-SPEC-27) | API Contracts Owner | 1 |
-| ST-08 | EPIC-03 | Research page UX fix: regime lozenge + font (BLG-FE-26) | Head of UX & Design | 1 |
-| ST-09 | EPIC-04 | execution_prompt.md §13 gate story pattern + change log entries | Head of Specs Team | 1 |
-| ST-10 | EPIC-04 | execution_prompt.md deviations_filed + sprint_close + Phase 3 patches | Head of Specs Team | 1 |
+| ST-ID | EPIC | Backlog Item | Priority | Sprint |
+|-------|------|--------------|----------|--------|
+| ST-01 | EPIC-01 | BLG-FE-33 backend: signals `watchlisted` status + PATCH endpoint | P1 | 1 |
+| ST-02 | EPIC-01 | BLG-FE-33 frontend: Add to Watchlist CTA on signal cards | P1 | 1 |
+| ST-03 | EPIC-01 | BLG-FE-34: Trade plan form signal context panel | P1 | 1 |
+| ST-04 | EPIC-02 | PT-04 spec authoring + gate confirmation (conditional) | P2 | 2 |
+| ST-05 | EPIC-02 | PT-04 backend: quality score endpoint (conditional) | P2 | 2 |
+| ST-06 | EPIC-02 | PT-04 frontend: quality score display (conditional) | P2 | 2 |
+| ST-07 | EPIC-03 | execution_prompt.md patches ×3 (deviations_filed + backlog verify + spec_references) | P1 | 1 |
+| ST-08 | EPIC-03 | qa_evidence_template.md BLG-GOV-19 criterion 3 fail-path | P1 | 1 |
+| ST-09 | EPIC-04 | BLG-QA-20: database stub conftest consolidation | P2 | 1 |
+| ST-10 | EPIC-04 | BLG-OPS-16 + BLG-FE-35: pycache git hygiene + Research page font staging | P3 | 1 |
+| ST-11 | EPIC-04 | BLG-GOV-23: scored_initiatives.md comprehensive refresh | P3 | 1 |
+
+---
+
 
