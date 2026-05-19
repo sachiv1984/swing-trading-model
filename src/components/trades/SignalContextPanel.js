@@ -116,11 +116,20 @@ export function buildSignalPrePopulation(signal, market) {
     maPart = ` Price ${direction} 200-day MA by ${Math.abs(maPercent).toFixed(1)}%.`;
   }
 
+  const momentumPart = signal.momentum_percent != null
+    ? ` ${signal.momentum_percent >= 0 ? "+" : ""}${signal.momentum_percent.toFixed(1)}% momentum.`
+    : "";
+
+  const regimeLabel = signal.regime === "on" || signal.regime === true ? "on" : "off";
+
+  const setupThesis =
+    `Rank ${signal.rank} ${marketLabel} momentum candidate.${momentumPart}${maPart} Regime ${regimeLabel}.`;
+
   const entryRationale =
     `Rank ${signal.rank} momentum signal.${maPart} ${marketLabel} regime on.`;
 
   const confirmationCriteria =
     "Price above 200-day MA at entry. Regime on. Spare cash available.";
 
-  return { entryRationale, confirmationCriteria };
+  return { setupThesis, entryRationale, confirmationCriteria };
 }
