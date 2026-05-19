@@ -1,0 +1,74 @@
+{
+  "cycle_id": "2026-05-19__release-v3.8",
+  "release": "v3.8",
+  "date": "2026-05-19",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-05-19T08:20:00Z",
+  "assumptions": {
+    "timebox": "",
+    "capacity": ""
+  },
+  "sealed_assumptions": {
+    "timebox": "",
+    "capacity": ""
+  },
+  "sealed": true,
+  "locks": {
+    "backlog_lock": {
+      "owned": false,
+      "owner_cycle_id": "2026-05-19__release-v3.8",
+      "owner_release": "v3.8",
+      "acquired_utc": "2026-05-19T08:05:00Z",
+      "status": "released",
+      "marker": "RP:v3.8:2026-05-19__release-v3.8",
+      "txn_state": "committed"
+    },
+    "roadmap_lock": {
+      "owned": false,
+      "status": "released",
+      "marker": "RA:v3.8:2026-05-19__release-v3.8"
+    }
+  },
+  "artifacts": {
+    "run_manifest": "present",
+    "stage1_readiness": "pass",
+    "stage2_scope_extraction": "pass",
+    "stage2_scope_document": "present",
+    "stage3_execution_plan": "pass",
+    "stage3_decisions_record": "present",
+    "stage3_5_model_integrity": "pass",
+    "backlog_lock": "released",
+    "backlog_txn": "committed",
+    "stage4_backlog_slice": "pass",
+    "stage4_issue_manifest": "pass",
+    "stage4_5_capacity_check": "warn",
+    "roadmap_txn": "committed",
+    "roadmap_lock": "released",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "pass",
+    "cycle_summary": "present",
+    "lessons_learnt": "present",
+    "escalations": "not_present"
+  },
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "capacity_feasible": "warn",
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "pass"
+  },
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "accepted_risk_escalations": [],
+  "deferred_execution_blockers": [],
+  "mutations": [],
+  "mutation_seq": 0,
+  "invalidated_steps": [],
+  "design_gate_status": null,
+  "amended_backlog_slice_path": null
+}

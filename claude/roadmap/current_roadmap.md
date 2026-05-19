@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v3.7** — Signal-to-Watchlist Workflow + Arc 2 Completion + Governance Hardening — ✅ Shipped 2026-05-18
-**Next planned release:** **v3.8** — [TBD]
+**Next planned release:** **v3.8** — Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management — 🔄 Planning
+
+<!-- roadmap-annotation-marker: RA:v3.8:2026-05-19__release-v3.8 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-19__release-v3.8
+- Plan published: 2026-05-19
+- Cycle folder: claude/cycles/2026-05-19__release-v3.8/
+- Backlog slice: claude/cycles/2026-05-19__release-v3.8/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 *RA:v3.7 retired — see roadmap_archive.md 2026-05-19 (post-ship closure 2026-05-18__release-v3.7).*
 *RA:v3.6 retired — see roadmap_archive.md 2026-05-17 (post-ship closure 2026-05-16__release-v3.6).*

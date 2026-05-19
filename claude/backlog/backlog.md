@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-19 (post-ship closure v3.7 — BLG-FE-33, BLG-FE-34, BLG-QA-20, BLG-OPS-16, BLG-GOV-23 marked ✅ COMPLETE; BLG-GOV-24 target updated to v3.8)
+**Last Updated:** 2026-05-19 (session — 3 new items added: BLG-FE-36, BLG-FEAT-23, BLG-FEAT-24)
 **Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice
@@ -73,6 +73,93 @@ Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. Wh
 ---
 
 *BLG-FEAT-21 (Trade plan abandonment status field) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
+
+---
+
+### BLG-FEAT-23 — Setup type classification field on trade plans
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Data Model
+**Owner:** Product Owner; Head of UX & Design; Backend Engineering Patterns Owner
+**Source:** User session — 2026-05-19
+**Effort:** S (~0.5 days)
+**Provisional-Target:** v3.8
+
+**Problem**
+The trade plan form's setup thesis field is a free-text textarea with no structural anchor. Traders don't know what vocabulary to use, and without a setup type classification the app cannot in future surface behavioural patterns (e.g. "your breakout setups fail 70% of the time but pullback setups work"). The missing structured field is the gap between signal generation and outcome analysis in Arc 4.
+
+**Scope**
+- Add a "Setup Type" dropdown to the trade plan form with six options: Breakout / Pullback to MA / Momentum Continuation / Mean Reversion / Catalyst-driven / Other
+- Add `setup_type` (VARCHAR, nullable) column to the `trade_plans` table via migration
+- Update `POST /trade-plans` and `PUT /trade-plans/{id}` to accept and persist `setup_type`
+- Default selection when opened from a momentum signal: "Momentum Continuation"
+- Surface `setup_type` in trade plan read/view mode
+
+**Acceptance Criteria**
+- Setup type dropdown appears above the setup thesis textarea on the trade plan form
+- All six options selectable; selected value saved with the plan
+- Existing plans without `setup_type` display the field as unset — no breaking change
+- When opened from a momentum signal, default is "Momentum Continuation"
+- `setup_type` visible in trade plan read view
+- New field included in `GET /trade-plans/{id}` response
+
+---
+
+### BLG-FEAT-24 — AI-assisted setup thesis generation
+**Priority:** P2 (Medium)
+**Type:** Product Feature / UX Enhancement
+**Owner:** Product Owner; Head of UX & Design; Backend Engineering Patterns Owner
+**Source:** User session — 2026-05-19
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.8
+**Depends on:** BLG-FE-36 (news context panel — provides headlines for synthesis), BLG-FEAT-23 (setup type dropdown — anchors the generated text)
+
+**Problem**
+Even with news context visible and a setup type selected, the trader still faces a blank textarea for the setup thesis narrative. Synthesising price action, catalyst news, and signal metrics into a coherent 2–3 sentence thesis requires trading knowledge and writing skill that not every user has. The blank-page problem is the single biggest reason traders stall between watchlist and trade plan.
+
+**Scope**
+- Add a "Generate thesis" button adjacent to the setup thesis textarea
+- On click: collect setup type + signal metrics (rank, momentum %) + top 2 headlines + current price + MA distances
+- Phase 1: deterministic template engine constructs a structured thesis string from collected data — no API call, no cost
+- Phase 2 (optional, gated by env var): if Gemini Flash API key is configured, offer "Improve with AI" which rewrites the template output for naturalness and readability
+- Generated text pre-populates the thesis field, badged "AI draft — edit freely"; badge clears on first user edit
+- User must click the button to trigger generation — no auto-generation on form load
+
+**Acceptance Criteria**
+- "Generate thesis" button present next to setup thesis field
+- Template engine generates a draft from available signal + news + price data without any API key
+- Generated text is editable; saved plan stores the user's final version
+- "AI draft" badge clears once the user makes any edit to the field
+- "Improve with AI" button is hidden entirely when Gemini API key is not configured (not shown as disabled)
+- No thesis is auto-generated without user clicking the button
+
+---
+
+### BLG-FEAT-22 — Ticker Universe Management page
+**Priority:** P2 (Medium)
+**Type:** Product Feature / User Configuration
+**Owner:** Head of UX & Design; Head of Backend Engineering
+**Source:** User request — 2026-05-19
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.8
+
+**Problem**
+Users currently have no way to manage the ticker universe that drives both screener and signal generation. The `ticker_universe` table is already used as the single source by both features, but there is no UI to view, add, deactivate, or remove tickers. Additionally, a legacy `public.tickers` table is synced into `ticker_universe` on startup, creating a secondary source-of-truth and confusion about where the canonical universe lives.
+
+**Scope**
+- Retire the startup sync from `public.tickers` into `ticker_universe`; make `ticker_universe` the sole authoritative source
+- Build a Ticker Universe Management page in the frontend (new route, nav entry)
+- Page features: table of all tickers (ticker, market, sector, active status); add ticker form (ticker symbol, market US/UK, optional sector/industry); toggle active/inactive per ticker; delete ticker permanently
+- Filter/search by market (US / UK) and active status
+- Wire to existing `/ticker-universe` GET, POST, DELETE endpoints (no new backend endpoints required)
+
+**Acceptance Criteria**
+- `public.tickers` startup sync removed; `ticker_universe` is populated only via the management UI or seed defaults
+- Universe Management page accessible from nav; displays all tickers with market, sector, and active status
+- User can add a ticker (US or UK market); added ticker appears immediately in the table
+- User can toggle a ticker inactive; inactive tickers are excluded from the next screener/signal run
+- User can delete a ticker permanently; it no longer appears in the table
+- Filter by market (US/UK/All) and active status works correctly
+- Screener and signal generation both continue to use only active tickers from `ticker_universe`
 
 ---
 
@@ -166,6 +253,34 @@ The current nav bar occupies a fixed portion of the visible screen area. As the 
 ---
 
 *BLG-FE-35 (ST-08 AC-02: Research page font conformance staging) — ✅ COMPLETE v3.7 — staging run performed 2026-05-18 (Head of UX & Design); conformant; Playwright SC-RV-TYP-01 added for CI regression; archived to backlog_archive.md 2026-05-18*
+
+---
+
+### BLG-FE-36 — Add news context panel to trade plan form
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Backend Engineering Patterns Owner
+**Source:** User session — 2026-05-19
+**Effort:** S (~0.5 days)
+**Provisional-Target:** v3.8
+
+**Problem**
+When a trader opens the trade plan form for a watchlisted signal, they see momentum metrics but no information about *why* the stock is signalling. The setup thesis field is left blank or pre-populated with robotic metric text because the app has no knowledge of the news catalyst driving the move. A trader looking at INTC at $108 after a 13% catalyst-driven surge has no way to understand the Apple manufacturing talks story from inside the app — that context lives entirely outside the current experience.
+
+**Scope**
+- Add a collapsible "News Context" panel to the trade plan form, shown when a ticker is set
+- Fetch last 3–5 headlines for the ticker from the Alpaca News API (already used by the screener news panel)
+- Add a lightweight `GET /news/{ticker}` backend proxy endpoint (or reuse existing screener news route)
+- Display headlines as read-only list: title, source, age (e.g. "3 days ago")
+- Panel is positioned above the setup thesis field to prime the trader before they write
+- No new data stored — panel is ephemeral, fetched on form open
+
+**Acceptance Criteria**
+- News panel visible on trade plan form when a US ticker is set
+- Shows up to 5 most recent headlines with title, source, and relative age
+- Panel is collapsible; collapsed state persisted in localStorage per ticker
+- If news API returns no results, panel is hidden entirely (not shown as "No news")
+- Existing pre-population of setup thesis and entry rationale fields is unchanged
 
 ---
 
@@ -387,6 +502,29 @@ These are deliberate product decisions, not deferrals:
 ## 11. Lifecycle Governance Notes
 
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
+
+---
+
+## 12. Release Slice — v3.8
+
+<!-- release-plan-marker: RP:v3.8:2026-05-19__release-v3.8 -->
+
+*Ephemeral section — populated by Release Planning Engine for v3.8. Remove during next `groom backlog` after v3.8 closes.*
+
+| Story | Source | EPIC | Sprint | Description |
+|-------|--------|------|--------|-------------|
+| ST-09 | BLG-FEAT-22 | EPIC-04 | 1 | Ticker Universe Management Page |
+| ST-10 | BLG-GOV-24 + DoQ OA | EPIC-04 | 1 | Governance Debt Clearance |
+| ST-06 | BLG-FEAT-23 | EPIC-03 | 1 | Setup Type Classification Field |
+| ST-07 | BLG-FE-36 | EPIC-03 | 1 | News Context Panel on Trade Plan Form |
+| ST-08 | BLG-FEAT-24 | EPIC-03 | 1 | AI-Assisted Thesis Generation |
+| ST-01 | Arc 5 / SI-01 | EPIC-01 | 1 | §13 Review Gate for SI-01 (delegated_decision) |
+| ST-02 | Arc 5 / SI-01 | EPIC-01 | 2 | SI-01 Backend — Pre-Entry Validation Service |
+| ST-03 | Arc 5 / SI-01 | EPIC-01 | 2 | SI-01 Frontend — Pre-Entry Validation Panel |
+| ST-04 | Arc 2 / PT-04 | EPIC-02 | 2 | PT-04 Backend — Setup Quality Score (conditional) |
+| ST-05 | Arc 2 / PT-04 | EPIC-02 | 2 | PT-04 Frontend — Setup Quality Score Display (conditional) |
+
+Full acceptance criteria: `claude/cycles/2026-05-19__release-v3.8/stage4_backlog_slice.md`
 
 ---
 
