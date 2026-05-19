@@ -764,3 +764,14 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** None
 **Rationale:** Post-v3.5-close scheduled rebalance. Horizon Now empty — v3.6 planning has not yet commenced. All active initiatives (Arc 4–6, PT-04) reaffirmed as 🔥 Must continue. Two gate-cleared ideas reviewed (IDEA-ai-compliance-20260508-01 and IDEA-financial-reporting-20260508-02 — both gated on BLG-GOV-21 which shipped v3.5): both re-parked with updated rationale (ai-compliance: AI trade plan summarisation not yet scoped; financial-reporting: planned_entry_price snapshotting explicitly deferred in arc4_data_requirements.md §3.1). No advancing candidates. Zero displacement required. No backlog additions warranted — existing 7 active backlog items provide sufficient near-term work queue for v3.6 planning.
 **Decision owner:** Product Owner
+
+---
+
+### DL-031 — 2026-05-19
+
+**Decision type:** No-change (roadmap and backlog)
+**Cycle:** 2026-05-19__scheduled
+**Displacement:** N/A — no additions this cycle
+**Workforce impact:** None
+**Rationale:** Scheduled rebalance post-v3.7 close. Now horizon empty — v3.8 release planning not yet commenced. All active initiatives (Arc 4–6, PT-04) reaffirmed as 🔥 Must continue. One gate-cleared idea re-evaluated: IDEA-financial-reporting-20260508-02 (planned_entry_price snapshotting shipped v3.6 — technical gate met). PO re-parked with new rationale: data density insufficient (fewer than 20 closed trades with plans and entry_delta_pct populated); portfolio-level entry zone discipline metric premature; entry_delta_pct already surfaced at trade-plan detail level via PlanVsReality (v3.6). 32 other ideas re-parked with park counts incremented (+1 each; last committed increment was cycle 2026-05-15__scheduled-2). No advancing candidates. Zero displacement required. No backlog additions warranted — 5 active backlog items sufficient for v3.8 planning. Note: prior cycles 2026-05-18__scheduled and 2026-05-18__scheduled-2 have no committed artefacts; decision log entries DL-031 through DL-032 cited in memory records are absent from this file — this run uses DL-031 as next sequential entry.
+**Decision owner:** Product Owner

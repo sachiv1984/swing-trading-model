@@ -1,0 +1,101 @@
+{
+  "cycle_id": "2026-05-19__release-v3.8",
+  "release": "v3.8",
+  "generated_utc": "2026-05-19T08:10:00Z",
+  "issues": [
+    {
+      "st_id": "ST-09",
+      "title": "[ST-09] Ticker Universe Management Page",
+      "epic": "EPIC-04",
+      "sprint": 1,
+      "labels": ["story", "release-v3.8", "sprint-1", "EPIC-04", "cycle:2026-05-19__release-v3.8"],
+      "source": "BLG-FEAT-22",
+      "effort": "M"
+    },
+    {
+      "st_id": "ST-10",
+      "title": "[ST-10] Governance Debt Clearance",
+      "epic": "EPIC-04",
+      "sprint": 1,
+      "labels": ["story", "release-v3.8", "sprint-1", "EPIC-04", "cycle:2026-05-19__release-v3.8"],
+      "source": "BLG-GOV-24 + DoQ OA",
+      "effort": "XS"
+    },
+    {
+      "st_id": "ST-06",
+      "title": "[ST-06] Setup Type Classification Field",
+      "epic": "EPIC-03",
+      "sprint": 1,
+      "labels": ["story", "release-v3.8", "sprint-1", "EPIC-03", "cycle:2026-05-19__release-v3.8"],
+      "source": "BLG-FEAT-23",
+      "effort": "S"
+    },
+    {
+      "st_id": "ST-07",
+      "title": "[ST-07] News Context Panel on Trade Plan Form",
+      "epic": "EPIC-03",
+      "sprint": 1,
+      "labels": ["story", "release-v3.8", "sprint-1", "EPIC-03", "cycle:2026-05-19__release-v3.8"],
+      "source": "BLG-FE-36",
+      "effort": "S"
+    },
+    {
+      "st_id": "ST-08",
+      "title": "[ST-08] AI-Assisted Thesis Generation",
+      "epic": "EPIC-03",
+      "sprint": 1,
+      "labels": ["story", "release-v3.8", "sprint-1", "EPIC-03", "cycle:2026-05-19__release-v3.8"],
+      "source": "BLG-FEAT-24",
+      "effort": "M"
+    },
+    {
+      "st_id": "ST-01",
+      "title": "[ST-01] SI-01 §13 Review Gate (delegated_decision)",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "labels": ["story", "release-v3.8", "sprint-1", "EPIC-01", "cycle:2026-05-19__release-v3.8", "delegated_decision"],
+      "source": "Arc 5 / SI-01",
+      "effort": "XS"
+    },
+    {
+      "st_id": "ST-02",
+      "title": "[ST-02] SI-01 Backend — Pre-Entry Validation Service",
+      "epic": "EPIC-01",
+      "sprint": 2,
+      "labels": ["story", "release-v3.8", "sprint-2", "EPIC-01", "cycle:2026-05-19__release-v3.8"],
+      "source": "Arc 5 / SI-01",
+      "effort": "M"
+    },
+    {
+      "st_id": "ST-03",
+      "title": "[ST-03] SI-01 Frontend — Pre-Entry Validation Panel",
+      "epic": "EPIC-01",
+      "sprint": 2,
+      "labels": ["story", "release-v3.8", "sprint-2", "EPIC-01", "cycle:2026-05-19__release-v3.8"],
+      "source": "Arc 5 / SI-01",
+      "effort": "M"
+    },
+    {
+      "st_id": "ST-04",
+      "title": "[ST-04] PT-04 Backend — Setup Quality Score (conditional)",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "labels": ["story", "release-v3.8", "sprint-2", "EPIC-02", "cycle:2026-05-19__release-v3.8", "conditional"],
+      "source": "Arc 2 / PT-04",
+      "effort": "M",
+      "conditional": true,
+      "gate": "20+ closed trades — PO confirmation required before sprint planning seals"
+    },
+    {
+      "st_id": "ST-05",
+      "title": "[ST-05] PT-04 Frontend — Setup Quality Score Display (conditional)",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "labels": ["story", "release-v3.8", "sprint-2", "EPIC-02", "cycle:2026-05-19__release-v3.8", "conditional"],
+      "source": "Arc 2 / PT-04",
+      "effort": "M",
+      "conditional": true,
+      "gate": "20+ closed trades — depends on ST-04"
+    }
+  ]
+}

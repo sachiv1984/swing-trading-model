@@ -59,7 +59,7 @@ function TradeCard({ trade, rValue, isBest }) {
     )}>
       {/* Top row: ticker + R-multiple */}
       <div className="flex items-start justify-between mb-3">
-        <span className="font-bold text-white text-base">{trade.ticker || "—"}</span>
+        <span className="font-bold text-white text-base">{trade.ticker?.replace(".L", "") || "—"}</span>
         <span className={cn(
           "font-bold text-lg tabular-nums",
           isBest ? "text-emerald-400" : "text-rose-400"
