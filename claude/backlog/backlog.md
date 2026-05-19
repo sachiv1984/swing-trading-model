@@ -521,8 +521,8 @@ These are deliberate product decisions, not deferrals:
 | ST-01 | Arc 5 / SI-01 | EPIC-01 | 1 | §13 Review Gate for SI-01 (delegated_decision) |
 | ST-02 | Arc 5 / SI-01 | EPIC-01 | 2 | SI-01 Backend — Pre-Entry Validation Service |
 | ST-03 | Arc 5 / SI-01 | EPIC-01 | 2 | SI-01 Frontend — Pre-Entry Validation Panel |
-| ST-04 | Arc 2 / PT-04 | EPIC-02 | 2 | PT-04 Backend — Setup Quality Score (conditional) |
-| ST-05 | Arc 2 / PT-04 | EPIC-02 | 2 | PT-04 Frontend — Setup Quality Score Display (conditional) |
+| ~~ST-04~~ | ~~Arc 2 / PT-04~~ | ~~EPIC-02~~ | ~~2~~ | ~~PT-04 Backend — Setup Quality Score~~ — **REMOVED** PO decision 2026-05-19: gate not met (< 20 trades), PT-04 formally parked |
+| ~~ST-05~~ | ~~Arc 2 / PT-04~~ | ~~EPIC-02~~ | ~~2~~ | ~~PT-04 Frontend — Setup Quality Score Display~~ — **REMOVED** (depends on ST-04) |
 
 Full acceptance criteria: `claude/cycles/2026-05-19__release-v3.8/stage4_backlog_slice.md`
 
