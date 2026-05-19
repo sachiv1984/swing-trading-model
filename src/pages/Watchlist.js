@@ -349,7 +349,11 @@ export default function Watchlist() {
                           <ul className="space-y-1.5">
                             {newsCache[entry.ticker].headlines.map((h, i) => (
                               <li key={i} className="flex flex-col gap-0.5">
-                                <span className="text-slate-200 text-xs">{h.headline}</span>
+                                {h.url ? (
+                                  <a href={h.url} target="_blank" rel="noopener noreferrer" className="text-slate-200 text-xs hover:text-blue-400 hover:underline">{h.headline}</a>
+                                ) : (
+                                  <span className="text-slate-200 text-xs">{h.headline}</span>
+                                )}
                                 <span className="text-slate-500 text-xs">
                                   {h.source ? `${h.source} · ` : ""}
                                   {h.published_at

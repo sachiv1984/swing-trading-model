@@ -250,7 +250,11 @@ function NewsPanel({ ticker, cache, onClose }) {
                 <span className="shrink-0 text-slate-500 mt-0.5">
                   {h.published_at ? relativeTime(h.published_at) : ""}
                 </span>
-                <span>{h.headline || h.title}</span>
+                {h.url ? (
+                  <a href={h.url} target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 hover:underline">{h.headline || h.title}</a>
+                ) : (
+                  <span>{h.headline || h.title}</span>
+                )}
               </li>
             ))}
           </ul>
