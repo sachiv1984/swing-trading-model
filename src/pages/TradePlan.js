@@ -167,9 +167,10 @@ export default function TradePlan() {
   useEffect(() => {
     if (!editId && linkedSignal && !prePopApplied.current) {
       prePopApplied.current = true;
-      const { entryRationale, confirmationCriteria } = buildSignalPrePopulation(linkedSignal, form.market);
+      const { setupThesis, entryRationale, confirmationCriteria } = buildSignalPrePopulation(linkedSignal, form.market);
       setForm((prev) => ({
         ...prev,
+        setup_thesis: prev.setup_thesis || setupThesis,
         entry_rationale: prev.entry_rationale || entryRationale,
         confirmation_criteria: prev.confirmation_criteria || confirmationCriteria,
       }));
@@ -372,6 +373,8 @@ export default function TradePlan() {
           </Field>
         </div>
 
+        {!editId && <SignalContextPanel signal={linkedSignal} market={form.market} />}
+
         <Field label="Setup Thesis">
           <TextArea
             rows={3}
@@ -407,8 +410,6 @@ export default function TradePlan() {
             placeholder="Under what conditions would you exit before the stop is hit?"
           />
         </Field>
-
-        {!editId && <SignalContextPanel signal={linkedSignal} market={form.market} />}
 
         <Field label="Pre-Entry Checklist">
           <EntryChecklist
