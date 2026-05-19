@@ -205,7 +205,7 @@ def _build_trades_for_charts_no_join(cursor, since_date) -> list:
 async def get_analytics_metrics(
     period: str = Query(
         "all_time",
-        regex="^(last_7_days|last_month|last_quarter|last_year|ytd|all_time)$"
+        pattern="^(last_7_days|last_month|last_quarter|last_year|ytd|all_time)$"
     )
 ):
     """
@@ -338,7 +338,7 @@ async def get_analytics_metrics(
 async def get_cohort_analysis(
     period: str = Query(
         "month",
-        regex="^(month|quarter|year)$"
+        pattern="^(month|quarter|year)$"
     )
 ):
     """
