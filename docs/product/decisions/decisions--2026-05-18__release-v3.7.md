@@ -1,9 +1,14 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v3.7
 Cycle: 2026-05-18__release-v3.7
-Last Updated: 2026-05-18
+Last Updated: 2026-05-19
+
+Superseded by: v3.7 ship — 2026-05-18
+Changelog: docs/product/changelog.md#v37
+Verification report: claude/cycles/2026-05-18__release-v3.7/verification_report.md
+Cycle: 2026-05-18__release-v3.7
 
 ## Planning Decisions — v3.7 Signal-to-Watchlist Workflow + Arc 2 Completion + Governance Hardening
 

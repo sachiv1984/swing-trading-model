@@ -2,10 +2,8 @@
 
 **Version:** 1.0.2
 **Owner:** Infrastructure & Operations Owner
-**Last Updated:** 2026-03-04
+**Last Updated:** 2026-05-19 (post-ship closure v3.7 — stale governance note removed; owner field was corrected to named role in v1.9 ST-19 2026-03-09)
 **Review Cycle:** Quarterly
-
-> ⚠️ **Governance note:** The owner field "Platform Team" is a team name, not a named individual role as required by `docs/governance/document_lifecycle_guide.md`. This is a pre-existing compliance gap flagged by the Head of Specs Team on 2026-02-21. The Infrastructure & Operations Documentation Owner should resolve this at next review.
 
 ---
 

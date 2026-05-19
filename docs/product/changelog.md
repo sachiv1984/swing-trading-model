@@ -3,9 +3,34 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-15
+**Last Updated:** 2026-05-19
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.7 — Signal-to-Watchlist Workflow + Arc 2 Completion + Governance Hardening — 2026-05-18
+Cycle: 2026-05-18__release-v3.7
+Verified: Verified
+Verification report: claude/cycles/2026-05-18__release-v3.7/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Signal-to-Watchlist Workflow (S2-01): `watchlisted` status added to signals table CHECK constraint; `PATCH /signals/{id}` accepts `status: "watchlisted"`; `SignalCard.js` primary CTA replaced with "Add to Watchlist" with watchlisted state badge; `SignalContextPanel.js` read-only signal context panel in trade plan form with entry_rationale + confirmation_criteria pre-population; 7 Playwright scenarios SC-SIG-WL-01/02/03 (signals-add-to-watchlist.spec.js) + SC-TP-SIG-01/02/03/04 (trade-plan-signal-context.spec.js) | docs/specs/api_contracts/signal_endpoints.md v1.2; docs/specs/data_model.md v2.8; docs/specs/frontend/pages/signals.md; docs/specs/frontend/pages/trade_plan.md; docs/design/2026-05-18__release-v3.7/signal-context-panel/ux_spec.md |
+| EPIC-03 | Governance hardening patches (S2-03): execution_prompt.md v3.23→v3.24 (deviations_filed atomic write, backlog verify guidance, spec_references path verify guidance); qa_evidence_template.md v1.0→v1.1 (BLG-GOV-19 criterion 3 fail-path); retroactive prompt_change_log.md entries for v3.18–v3.22 gap | claude/system/execution_prompt.md; claude/system/templates/qa_evidence_template.md |
+| EPIC-04 | Tech debt clearance (S2-04): BLG-QA-20 database stub conftest consolidation (session-scoped `types.ModuleType("database")` stub in tests/conftest.py; CLAUDE.md §2 updated); BLG-OPS-16 pycache git hygiene (git rm -r --cached + .gitignore); BLG-FE-35 Research page typography staging sign-off (SC-RV-TYP-01 Playwright regression); BLG-GOV-23 scored_initiatives.md Arc 3–6 comprehensive refresh (OA-RP-05 resolved) | docs/frontend/design_system.md; claude/scoring/scored_initiatives.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-09] BLG-QA-20: Database stub conftest consolidation
+- [ST-10] BLG-OPS-16 + BLG-FE-35: Pycache git hygiene + Research page typography staging sign-off
+- [ST-11] BLG-GOV-23: scored_initiatives.md Arc 3–6 comprehensive refresh (resolves OA-RP-05)
+
+Sign-off: Product Owner — 2026-05-18
+QA sign-off: Director of Quality — 2026-05-18
 
 ---
 

@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-14
+**Last Updated:** 2026-05-19
 
 ---
 
@@ -109,7 +109,7 @@ It points to the **single canonical source**.
 - `digest_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-03, ST-08, cycle 2026-03-31__release-v2.4): GET /digest/weekly — 7-day trading digest (realised P&L, alert activity, compliance trend, staleness summary). Deterministic data fields only. Sign-off: QA Lead + DoQ (2026-04-01/03).
 - `health_endpoints.md` — Class 1 Canonical, v1.3, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3; updated v1.2 by ST-08 adding GET /health/database; updated v1.3 by ST-08/ST-09 cycle 2026-04-25__release-v3.0 adding external_apis + ai_journal sections to GET /health): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.3, 2026-04-26).
 - `analytics_endpoints.md` — Class 1 Canonical, v2.1.0, Active (updated 2026-04-15, ST-08, cycle 2026-04-13__release-v2.7): GET /analytics/market-correlation (Pearson correlation vs benchmark, TTL-cached). Sign-off: Head of Specs Team.
-- `signal_endpoints.md` — Class 1 Canonical, v1.1, Active (updated 2026-04-15, ST-09, cycle 2026-04-13__release-v2.7): POST /signals/generate — added 4 supplementary display-only indicator fields (relative_strength_pct, week52_high_proximity_pct, avg_daily_volume_20d, price_vs_50d_ma). §13 COMPLIANT (display-only). Sign-off: Strategy Rules Owner.
+- `signal_endpoints.md` — Class 1 Canonical, v1.2, Active (updated 2026-05-18, ST-01, cycle 2026-05-18__release-v3.7): PATCH /signals/{id} updated to accept `watchlisted` as valid status value; `watchlisted` added to signals table CHECK constraint (signal-to-watchlist workflow). Sign-off: Sprint Execution Engine (autonomous class). Previous: v1.1 (2026-04-15, ST-09, v2.7): POST /signals/generate supplementary display-only indicator fields; Strategy Rules Owner sign-off.
 - `ai_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-04-18, ST-07, cycle 2026-04-17__release-v2.8): POST /ai/journal-summary — LLM-based journal entry summarisation; Anthropic API; graceful failure returns HTTP 200 with summary:null; display-only; SRB-v1.7 conditionally compliant. Sign-off: Sprint Execution Engine (autonomous class); DoQ EPIC-level Director of Quality 2026-04-20.
 - `ticker_universe_api_contract.md` — Class 2 Canonical (created 2026-04-25, ST-01, cycle 2026-04-25__release-v3.0): GET /ticker-universe, POST /ticker-universe, DELETE /ticker-universe/{ticker}; seed data contract. Sign-off: Sprint Execution Engine (autonomous class).
 - `screener_api_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9; implementation delivered 2026-04-25 v3.0 ST-04): GET /screener/results, POST /screener/run; request/response schemas, pagination, error codes.
@@ -568,6 +568,20 @@ Identified during delivery verification (verification_report.md §6 — TSG-v34-
 **Status:** Not applicable — documentation and specification creation tasks have no observable UI or backend computation to test
 **Owner:** N/A
 **Assessment:** All EPIC-04 stories (ST-11/12/13/14) create spec or doc artefacts. No behavioural scenarios applicable. Disposition: not_applicable. No backlog item required.
+
+---
+
+## 21. Test Coverage Gaps — v3.7 (2026-05-18__release-v3.7)
+
+Identified during delivery verification (verification_report.md §6). **Zero test coverage gaps** across all three EPICs.
+
+| EPIC | Disposition | Notes |
+|------|-------------|-------|
+| EPIC-01 | not_applicable — fully covered | 7 Playwright scenarios: SC-SIG-WL-01/02/03 (signals-add-to-watchlist.spec.js) + SC-TP-SIG-01/02/03/04 (trade-plan-signal-context.spec.js); all observable AC covered |
+| EPIC-03 | not_applicable — governance patches | Autonomous governance prompt + template files only; no observable UI behaviour |
+| EPIC-04 | not_applicable — autonomous/infrastructure | Conftest consolidation, pycache hygiene, typography staging, scoring doc refresh; no core user journey |
+
+No backlog items required. All coverage complete or explicitly not_applicable.
 
 ---
 

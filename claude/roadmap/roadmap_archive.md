@@ -1,13 +1,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-15
+**Last Updated:** 2026-05-19
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v3.7 — Release Annotation
+
+**Original roadmap location:** §1 Current Version header (roadmap annotation block)
+**Status at retirement:** ✅ Complete — annotation retired post-ship
+**Retired from active roadmap:** 2026-05-19
+**Shipped version:** v3.7 (2026-05-18)
+**Cycle reference:** 2026-05-18__release-v3.7
+**Verification report:** `claude/cycles/2026-05-18__release-v3.7/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-19
+
+### Annotation at retirement
+
+<!-- roadmap-annotation-marker: RA:v3.7:2026-05-18__release-v3.7 — COMPLETE -->
+
+**Execution notes (v3.7 — Complete):**
+- Cycle: 2026-05-18__release-v3.7
+- Plan published: 2026-05-18
+- Cycle folder: claude/cycles/2026-05-18__release-v3.7/
+- Backlog slice: claude/cycles/2026-05-18__release-v3.7/stage4_backlog_slice.md
+- Status: ✅ Complete — shipped 2026-05-18
+- Verification: Verified (8/8 stories; 0 deviations; DoQ + PO sign-off 2026-05-18)
+- Scope delivered: EPIC-01 (BLG-FE-33 signal watchlisted status + PATCH endpoint + Add to Watchlist CTA; BLG-FE-34 trade plan signal context panel), EPIC-03 (execution_prompt.md patches ×3; qa_evidence_template.md BLG-GOV-19 criterion 3 fail-path), EPIC-04 (BLG-QA-20 conftest consolidation; BLG-OPS-16 pycache git hygiene + BLG-FE-35 font staging; BLG-GOV-23 scored_initiatives.md refresh)
+- Scope deferred: EPIC-02 (PT-04 Setup Quality Score — gate not met; <20 closed trades at v3.7 sprint planning; deferred to v3.8; two consecutive conditional defers)
 
 ---
 

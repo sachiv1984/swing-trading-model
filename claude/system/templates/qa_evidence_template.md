@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-18
+**Version:** 1.2
+**Last Updated:** 2026-05-19
 
 # QA Evidence Template
 
@@ -30,6 +30,8 @@ Last Updated: <date>
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|----------------|----------------|---------------------|--------|------------|
 | ST-xx | <spec file#section> | <one line> | <criteria text> | Pass / Fail | None / DEV-ref |
+
+*(Result column: use "Pass", "Pass with notes", or "Fail". "Pending DoQ" and "Awaiting QA" are pre-signing placeholders only — must be updated to "Pass"/"Fail" before sign-off block is completed.)*
 
 *(Reconcile any partial per-item entries from STEP 3.1.C into this table. Do not duplicate — one row per ST item.)*
 
