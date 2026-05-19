@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-19 (post-ship closure 2026-05-18__release-v3.7 — v3.7 marked ✅ Complete; release summary table updated; PT-04 target updated to v3.8+)
-**Last rebalance:** 2026-05-18 (cycle 2026-05-18__scheduled — Standard-tier, no-change; 1 gate-cleared idea re-parked (IDEA-financial-reporting-20260508-02 — planned_entry_price shipped v3.6 but data density not met); BLG-GOV-23 added to backlog)
+**Last Updated:** 2026-05-19 (roadmap rebalance 2026-05-19__scheduled — Standard-tier no-change; 33 ideas re-parked; IDEA-financial-reporting-20260508-02 gate-cleared re-evaluation → re-parked with new rationale; DL-031)
+**Last rebalance:** 2026-05-19 (cycle 2026-05-19__scheduled — Standard-tier, no-change; 33 ideas re-parked (+1 each); IDEA-financial-reporting-20260508-02 gate cleared (planned_entry_price v3.6) → re-parked (data density insufficient); DL-031)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
