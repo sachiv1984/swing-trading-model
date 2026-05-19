@@ -70,6 +70,7 @@ def get_news_headlines(ticker: str, market: str, limit: int = MAX_HEADLINES) -> 
                         "headline": a.get("headline", ""),
                         "published_at": a.get("created_at") or a.get("updated_at"),
                         "source": a.get("source") or None,
+                        "url": a.get("url") or None,
                     }
                     for a in articles
                     if a.get("headline")

@@ -391,7 +391,11 @@ export default function Research() {
                 key={i}
                 className="border-b border-slate-700/30 pb-3 last:border-0 last:pb-0"
               >
-                <p className="text-sm text-slate-200">{h.headline || h.title}</p>
+                {h.url ? (
+                  <a href={h.url} target="_blank" rel="noopener noreferrer" className="text-sm text-slate-200 hover:text-blue-400 hover:underline">{h.headline || h.title}</a>
+                ) : (
+                  <p className="text-sm text-slate-200">{h.headline || h.title}</p>
+                )}
                 <p className="text-xs text-slate-500 mt-0.5">
                   {h.source ? `${h.source} · ` : ""}
                   {h.published_at ? relativeTime(h.published_at) : ""}
