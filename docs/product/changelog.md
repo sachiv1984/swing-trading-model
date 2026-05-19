@@ -34,6 +34,36 @@ QA sign-off: Director of Quality — 2026-05-18
 
 ---
 
+## v3.6 — Arc 4 Data Integrity + Research Debt Clearance + Governance Patches — 2026-05-17
+Cycle: 2026-05-16__release-v3.6
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-05-16__release-v3.6/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Arc 4 Data Integrity (S2-01): `planned_entry_price` column added to trade_history (nullable; ALTER TABLE IF NOT EXISTS); `exit_position()` captures signal's current_price at entry; `_compute_entry_delta_pct()` calculates (actual−planned)/planned×100; `PlanVsReality` component updated to display entry_delta_pct with emerald (favorable) / rose (unfavorable) colouring; null → 'data not available for historical trades'; 9 Playwright scenarios (SC-PVR-03a/b, SC-PVR-04a/b, SC-PVR-05a/b/c) | docs/specs/arc4/arc4_data_requirements.md §3.1; docs/specs/frontend/pages/trade_history.md §Expandable Journal Row — Plan vs Reality; openapi.yaml (planned_entry_price field added to TradeHistoryResponse) |
+| EPIC-03 | Research QA/Spec/UX Debt (S2-03): SC-RV-18 and SC-RV-19 Playwright tests added (RESEARCH_REGIME_NULL, RESEARCH_ALL_NULL payloads); research_endpoint.md v1.2 §Error Responses updated; `_get_price_data()` returns `_YF_UNAVAILABLE`/`_TICKER_NOT_FOUND` sentinels → HTTP 503/404; partial failures still 200+nulls; Research.js error state shows specific messages; regime lozenge `whitespace-nowrap` fix (BLG-FE-26 wrapping bug) | docs/specs/api_contracts/research_endpoint.md v1.2; docs/qa/test_scenarios/research_view_scenarios.md v1.1; openapi.yaml (404/503 responses added); docs/frontend/design_system.md |
+| EPIC-04 | Governance Patches (S2-04): execution_prompt.md v3.21→v3.22 — §13 gate story pattern formalised (LL-v3.5-SP-01); metadata + sprint_close + Phase 3 deferred patches applied; retroactive prompt_change_log.md entries for v3.18–v3.22 gap; OA-RP-01–04 resolved | claude/system/execution_prompt.md v3.22; OPERATIONAL_GUIDE.md §8+§14; claude/system/prompt_change_log.md |
+
+### Deviations accepted
+1 minor P3 deviation: ST-08 AC-02 — research page regime lozenge human staging sign-off deferred; backlog item BLG-FE-33 filed
+
+### Tech backlog items shipped
+- [ST-06] BLG-FE-32 + TEST-GAP-EPIC-03-v33: SC-RV-18 and SC-RV-19 Playwright coverage
+- [ST-07] BLG-SPEC-27: Research endpoint HTTP 404/503 error code differentiation
+- [ST-08] BLG-FE-26: Research page regime lozenge wrapping fix
+- [ST-09] Governance: execution_prompt.md §13 gate story pattern formalisation + retroactive changelog entries (OA-RP-01–04)
+- [ST-10] Governance: execution_prompt.md metadata + sprint_close + Phase 3 patches
+
+### Deferred
+- EPIC-02 (PT-04 Arc 2 Quality Score) — deferred to v3.7; PT-04 gate condition (≥20 closed trades) unconfirmed at sprint planning
+
+Sign-off: Product Owner — 2026-05-17
+QA sign-off: Director of Quality — 2026-05-17
+
+---
+
 ## v3.5 — Arc 3 Completion + Arc 4 Foundation — 2026-05-15
 Cycle: 2026-05-15__release-v3.5
 Verified: Verified

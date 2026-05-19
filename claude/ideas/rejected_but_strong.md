@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-03-17
+**Last Updated:** 2026-05-19
 
 ---
 
@@ -64,3 +64,17 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 **Why rejected:** Same reasoning as IDEA-cybersecurity-20260304-01. Strong merit as pre-scale governance work. No immediate compliance driver.
 
 **Revival condition:** Same as IDEA-cybersecurity-20260304-01. Complementary to the threat model — both should be considered together.
+
+---
+
+## IDEA-ai-compliance-20260321-01 — Governed Decision Audit Log
+
+**Submitter:** AI Compliance & Governance Officer
+**Window:** IW-20260321-01 (2026-03-21)
+**Rejected in:** cycle 2026-05-05__scheduled (strong)
+
+**Core idea:** Searchable record of all governance decisions (roadmap additions, sprint commitments, deviation approvals) in structured format — enabling retrospective audit of why specific governance decisions were made.
+
+**Why rejected:** `decision_log.md` provides adequate partial coverage at current governance volume. Searchable audit log with structured format deferred until governance volume increases substantially and the overhead of structured decision capture is warranted. Rejected as strong because the idea has genuine merit — current tooling is adequate but would not scale to a higher-volume governance environment.
+
+**Revival condition:** Governance decision volume increases substantially (e.g. concurrent multi-team delivery, external audit requirements, or compliance review mandating structured decision capture). PMO Lead to raise for re-evaluation at that point.
