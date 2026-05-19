@@ -69,6 +69,9 @@
   "mutations": [],
   "mutation_seq": 0,
   "invalidated_steps": [],
-  "design_gate_status": null,
+  "design_gate_status": "Passed",
+  "design_gate_completed_utc": "2026-05-19T09:00:00Z",
+  "design_gate_record": "claude/cycles/2026-05-19__release-v3.8/design_gate.md",
+  "sprint_planning_pre_condition": "design_gate_status == Passed",
   "amended_backlog_slice_path": null
 }
