@@ -49,7 +49,7 @@ These rules apply in every session regardless of which engine is running:
 - **Never merge a PR autonomously.** QA sign-off and Product Owner acceptance are always required.
 - **Delivery pressure does not override governance.** No timeline instruction changes a hard gate.
 - **Commit format is non-negotiable:** `[EPIC-xx][ST-xx] <description>` on all commits to `exec/**` branches. **When two stories are implemented in the same commit, all story IDs must appear in the message:** `[EPIC-xx][ST-xx][ST-yy] <description>`. Omitting a story ID prevents `governance_sync.yml` from closing that story's GitHub issue automatically.
-- **PR title format is non-negotiable:** `[EPIC-xx] <description>` — required by `quality_gate.yml`.
+- **PR title format is non-negotiable:** `[EPIC-xx] <description>` — required by `quality_gate.yml`. For hotfixes or out-of-sprint work not attached to a current EPIC, use `[GOVERNANCE] <description>` instead. The gate accepts `[EPIC-xx]`, `[ST-xx]`, or a title starting with `[GOVERNANCE]`. Any other format will fail `verify_governance`.
 - **Bash commands that write files outside an active prompt's write scope are prohibited**, even as side-effects.
 - **Document section headings must be descriptive and human-readable.** Task IDs, story IDs, and ticket references (e.g. `TASK-11`, `ST-xx`) must never appear in headings. They belong only in metadata blocks, changelogs, or inline cross-references.
 - **Every new API endpoint must be added to `docs/reference/openapi.yaml` in the same commit as the contract.** Any new `## METHOD /path` heading added to a file in `docs/specs/api_contracts/` must have a corresponding entry in `docs/reference/openapi.yaml`. Omitting this fails the OpenAPI Drift Detection gate and blocks all PRs.
