@@ -15,7 +15,7 @@ export default function TopPerformers({ topWinners, topLosers }) {
           <div key={idx} className="p-4 rounded-lg bg-slate-900/50 border border-slate-700/30 hover:bg-slate-900/80 transition-colors">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <p className="font-semibold text-white">{trade.ticker}</p>
+                <p className="font-semibold text-white">{trade.ticker?.replace(".L", "")}</p>
                 <p className="text-xs text-slate-400 mt-1">{trade.entryDate}</p>
               </div>
               <div className="text-right">

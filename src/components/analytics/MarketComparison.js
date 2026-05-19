@@ -73,7 +73,7 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
 
             {m.bestPerformer ? (
               <>
-                <p className="text-sm font-semibold text-white">{m.bestPerformer.ticker}</p>
+                <p className="text-sm font-semibold text-white">{m.bestPerformer.ticker?.replace(".L", "")}</p>
                 <p className="text-xs text-emerald-400">+£{m.bestPerformer.pnl.toFixed(2)}</p>
               </>
             ) : (
@@ -89,7 +89,7 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
 
             {m.worstPerformer ? (
               <>
-                <p className="text-sm font-semibold text-white">{m.worstPerformer.ticker}</p>
+                <p className="text-sm font-semibold text-white">{m.worstPerformer.ticker?.replace(".L", "")}</p>
                 <p className="text-xs text-rose-400">-£{Math.abs(m.worstPerformer.pnl).toFixed(2)}</p>
               </>
             ) : (

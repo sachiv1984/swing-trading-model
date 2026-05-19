@@ -186,7 +186,7 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                     const r = calcRMultiple(trade);
                     return (
                       <tr key={idx} className="hover:bg-slate-800/30">
-                        <td className="px-4 py-3 text-sm font-medium text-white">{trade.ticker}</td>
+                        <td className="px-4 py-3 text-sm font-medium text-white">{trade.ticker?.replace(".L", "")}</td>
                         <td className="px-4 py-3 text-sm text-slate-300">
                           {new Date(trade.exit_date).toLocaleDateString("en-GB")}
                         </td>

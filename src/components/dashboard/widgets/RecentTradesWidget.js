@@ -37,7 +37,7 @@ export default function RecentTradesWidget({ positions }) {
                   {(trade.pnl || 0) >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                 </div>
                 <div>
-                  <p className="font-medium text-slate-900 dark:text-white">{trade.ticker}</p>
+                  <p className="font-medium text-slate-900 dark:text-white">{trade.ticker?.replace(".L", "")}</p>
                   <p className="text-xs text-slate-500">{trade.exit_date}</p>
                 </div>
               </div>
