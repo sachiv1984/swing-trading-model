@@ -57,5 +57,5 @@ None.
 - [x] Regression areas checked (trade-plan.spec.js SC-TP-01 through SC-TP-16)
 - [x] For any frontend component making direct URL construction (not via api.* wrapper): TradePlan.js and NewsContextPanel.js use `apiFetch` via API_BASE env var — compliant
 - Signed off by: Director of Quality
-- Date:
-- Comments:
+- Date: 2026-05-20
+- Comments: Reviewed 2026-05-20: setup_type field documented in trade_plan_endpoints.md and covered by SC-TP-09 through SC-TP-11; news panel and collapse behaviour covered by SC-TP-12/SC-TP-13; thesis generation, badge, and clear-on-edit covered by SC-TP-14 through SC-TP-16; all spec files confirmed on disk; no deviations filed; no P0 or P1 issues.

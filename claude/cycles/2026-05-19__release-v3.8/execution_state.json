@@ -12,7 +12,7 @@
       "branch": "exec/2026-05-19__release-v3.8/EPIC-04",
       "pr_number": 452,
       "pr_status": "merged",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-19__release-v3.8/qa_evidence_EPIC-04.md",
       "test_scenarios": ["tests/e2e/ticker-universe.spec.js"],
       "stories": {
@@ -67,7 +67,7 @@
       "branch": "exec/2026-05-19__release-v3.8/EPIC-03",
       "pr_number": 453,
       "pr_status": "merged",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-19__release-v3.8/qa_evidence_EPIC-03.md",
       "test_scenarios": ["tests/e2e/trade-plan.spec.js"],
       "stories": {
