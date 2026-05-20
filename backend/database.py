@@ -948,7 +948,8 @@ def ensure_trade_plans_table():
                     confirmation_criteria TEXT,
                     checklist_completed BOOLEAN NOT NULL DEFAULT FALSE,
                     checklist_items JSONB NOT NULL DEFAULT '[]'::JSONB,
-                    status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'closed'))
+                    status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'closed')),
+                    pre_entry_override_acknowledged BOOLEAN
                 )
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_portfolio ON trade_plans(portfolio_id)")
@@ -964,8 +965,8 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                 """INSERT INTO trade_plans
                    (portfolio_id, position_id, ticker, market, setup_type, setup_thesis, entry_rationale,
                     regime_context_at_entry, r_target, early_exit_conditions, confirmation_criteria,
-                    checklist_completed, checklist_items, status)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s)
+                    checklist_completed, checklist_items, status, pre_entry_override_acknowledged)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s)
                    RETURNING *""",
                 (
                     portfolio_id,
@@ -982,6 +983,7 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     data.get("checklist_completed", False),
                     __import__("json").dumps(data.get("checklist_items", [])),
                     data.get("status", "draft"),
+                    data.get("pre_entry_override_acknowledged"),
                 ),
             )
             row = cur.fetchone()
@@ -1024,6 +1026,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
         "position_id", "setup_type", "setup_thesis", "entry_rationale", "regime_context_at_entry",
         "r_target", "early_exit_conditions", "confirmation_criteria",
         "checklist_completed", "checklist_items", "status", "abandonment_reason",
+        "pre_entry_override_acknowledged",
     }
     fields = {k: v for k, v in data.items() if k in allowed}
     if not fields:
@@ -1132,6 +1135,19 @@ def ensure_setup_type_column():
         with conn.cursor() as cur:
             cur.execute(
                 "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS setup_type VARCHAR(50)"
+            )
+        conn.commit()
+
+
+def ensure_override_acknowledged_column():
+    """Add pre_entry_override_acknowledged BOOLEAN to trade_plans table (idempotent).
+
+    ST-03 (EPIC-01, v3.8) — SI-01 pre-entry advisory panel override flag.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS pre_entry_override_acknowledged BOOLEAN"
             )
         conn.commit()
 

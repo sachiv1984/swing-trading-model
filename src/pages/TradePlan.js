@@ -7,7 +7,7 @@ import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
-import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon } from "lucide-react";
+import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck } from "lucide-react";
 import { TradePlanStatusBadge } from "./TradePlans";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -112,6 +112,105 @@ function NewsContextPanel({ ticker, market }) {
 
 const HAS_GEMINI = !!process.env.REACT_APP_GEMINI_API_KEY;
 
+const RULE_LABELS = {
+  regime_gate: "Regime Gate",
+  cash_constraint: "Cash Constraint",
+  sector_concentration: "Sector Concentration",
+  earnings_proximity: "Earnings Proximity",
+  sizing_validity: "Sizing Validity",
+};
+
+function PreEntryValidationPanel({ ticker, market, quantity, overrideAcknowledged, onOverrideChange }) {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["pre-entry-validation", ticker, market, quantity],
+    queryFn: async () => {
+      const params = new URLSearchParams({ ticker, quantity, market });
+      const r = await apiFetch(`${API_BASE}/portfolio/pre-entry-validation?${params}`);
+      const j = await r.json();
+      return j.data;
+    },
+    enabled: !!ticker && !!quantity && Number(quantity) > 0,
+    staleTime: 60000,
+  });
+
+  if (!ticker || !quantity || Number(quantity) <= 0) return null;
+
+  const advisory = data?.advisory_status;
+  const checks = data?.checks || [];
+  const hasWarnings = checks.some((c) => c.status === "warn" || c.status === "fail");
+
+  const STATUS_ICON = { pass: "✓", warn: "⚠", fail: "✗", skipped: "—" };
+  const STATUS_COLOR = {
+    pass: "text-emerald-400",
+    warn: "text-amber-400",
+    fail: "text-red-400",
+    skipped: "text-slate-500",
+  };
+  const ADVISORY_BADGE = {
+    pass: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    warn: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    fail: "bg-red-500/20 text-red-400 border-red-500/30",
+  };
+
+  return (
+    <div data-testid="pre-entry-checks-panel" className="rounded-xl border border-slate-700/50 bg-slate-800/30 overflow-hidden">
+      <button
+        type="button"
+        data-testid="pre-entry-panel-toggle"
+        className="w-full flex items-center justify-between px-4 py-3"
+        onClick={() => setCollapsed((c) => !c)}
+      >
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+          <span className="text-xs font-medium text-slate-300 uppercase tracking-wide">Pre-Entry Checks</span>
+          {advisory && (
+            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${ADVISORY_BADGE[advisory] || ADVISORY_BADGE.warn}`}>
+              {advisory === "pass" ? "Pass" : advisory === "warn" ? "Warn" : "Fail"}
+            </span>
+          )}
+          {isLoading && <span className="text-xs text-slate-500">Checking…</span>}
+        </div>
+        {collapsed ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronUp className="w-4 h-4 text-slate-500" />}
+      </button>
+      {!collapsed && (
+        <div className="px-4 pb-4 space-y-2 border-t border-slate-700/50 pt-3">
+          {isError && <p className="text-xs text-slate-500">Validation unavailable — proceed with manual checks</p>}
+          {!isLoading && !isError && checks.length === 0 && (
+            <p className="text-xs text-slate-500">No checks available</p>
+          )}
+          {!isLoading && !isError && checks.map((check) => (
+            <div key={check.rule} className="flex items-start gap-2 text-xs">
+              <span className={`mt-0.5 font-mono w-3 shrink-0 ${STATUS_COLOR[check.status] || "text-slate-500"}`}>
+                {STATUS_ICON[check.status] || "?"}
+              </span>
+              <div className="flex-1 min-w-0">
+                <span className="text-slate-300">{RULE_LABELS[check.rule] || check.rule}</span>
+                {check.detail && (
+                  <span className="text-slate-500"> — {check.detail}</span>
+                )}
+              </div>
+            </div>
+          ))}
+          {hasWarnings && (
+            <label className="flex items-center gap-2 mt-3 cursor-pointer">
+              <input
+                type="checkbox"
+                data-testid="override-acknowledgement-checkbox"
+                checked={overrideAcknowledged || false}
+                onChange={(e) => onOverrideChange(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-500/30"
+              />
+              <span className="text-xs text-amber-400">I acknowledge the advisory warnings</span>
+            </label>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function generateThesisTemplate({ setupType, ticker, market, signal, headlines }) {
   const parts = [];
   const setupLabel = setupType || "Technical";
@@ -167,6 +266,7 @@ const EMPTY_FORM = {
   checklist_completed: false,
   checklist_items: DEFAULT_CHECKLIST_ITEMS.map((i) => ({ ...i })),
   status: "draft",
+  pre_entry_override_acknowledged: false,
 };
 
 function Field({ label, children }) {
@@ -223,6 +323,7 @@ export default function TradePlan() {
   const [showAbandonModal, setShowAbandonModal] = useState(false);
   const [abandonReason, setAbandonReason] = useState("");
   const [abandonReasonTouched, setAbandonReasonTouched] = useState(false);
+  const [plannedQuantity, setPlannedQuantity] = useState("");
 
   const { data: healthData } = useQuery({
     queryKey: ["market-status"],
@@ -518,6 +619,23 @@ export default function TradePlan() {
         </Field>
 
         <NewsContextPanel ticker={form.ticker} market={form.market} />
+
+        {/* Pre-Entry Validation — ST-03 */}
+        <Field label="Planned Shares (for pre-entry checks)">
+          <TextInput
+            type="number"
+            value={plannedQuantity}
+            onChange={(e) => setPlannedQuantity(e.target.value)}
+            placeholder="e.g. 50"
+          />
+        </Field>
+        <PreEntryValidationPanel
+          ticker={form.ticker}
+          market={form.market}
+          quantity={plannedQuantity}
+          overrideAcknowledged={form.pre_entry_override_acknowledged}
+          onOverrideChange={(val) => setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }))}
+        />
 
         <div className="space-y-1">
           <div className="flex items-center justify-between">

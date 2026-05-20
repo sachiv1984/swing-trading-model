@@ -267,4 +267,4 @@ Append-only. All delegated tasks across Sprint 1 and Sprint 2.
   - `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md`
 - **Unblock criteria:** Commit `[EPIC-01][ST-03] ...` pushed to `exec/2026-05-19__release-v3.8/EPIC-01`; Playwright tests for panel render, override flow, and plan save present; all AC items confirmed met
 - **Commit format required:** `[EPIC-01][ST-03] <description>` pushed to `exec/2026-05-19__release-v3.8/EPIC-01`
-- **Status:** Pending
+- **Status:** Cancelled — reclassified to autonomous 2026-05-20. Standard React component against fully-specced backend endpoint; engine can complete without external delegation. Engine implementing directly.

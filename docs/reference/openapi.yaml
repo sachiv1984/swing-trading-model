@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 2.9.0
+  version: 3.0.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -3520,6 +3520,7 @@ components:
                 checklist_completed: { type: boolean, default: false }
                 checklist_items: { type: array, items: { type: object } }
                 status: { type: string, enum: [draft, active, closed], default: draft }
+                pre_entry_override_acknowledged: { type: boolean, nullable: true }
       responses:
         "201":
           description: Trade plan created
@@ -3567,6 +3568,7 @@ components:
                 setup_thesis: { type: string, nullable: true }
                 entry_rationale: { type: string, nullable: true }
                 status: { type: string, enum: [draft, active, closed] }
+                pre_entry_override_acknowledged: { type: boolean, nullable: true }
       responses:
         "200":
           description: Updated trade plan

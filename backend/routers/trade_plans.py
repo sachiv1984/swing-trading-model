@@ -46,6 +46,7 @@ class TradePlanCreate(BaseModel):
     checklist_completed: bool = False
     checklist_items: list = []
     status: str = "draft"
+    pre_entry_override_acknowledged: Optional[bool] = None
 
 
 class TradePlanUpdate(BaseModel):
@@ -61,6 +62,7 @@ class TradePlanUpdate(BaseModel):
     checklist_items: Optional[list] = None
     status: Optional[str] = None
     abandonment_reason: Optional[str] = None
+    pre_entry_override_acknowledged: Optional[bool] = None
 
 
 def _get_portfolio_id():

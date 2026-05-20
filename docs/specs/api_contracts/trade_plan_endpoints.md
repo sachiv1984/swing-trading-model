@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-04-30
+**Version:** 0.2
+**Last Updated:** 2026-05-20
 **Cycle:** 2026-04-29__release-v3.1 (ST-01)
 
 ---
@@ -63,6 +63,7 @@ Create a new trade plan.
 | checklist_completed | boolean | No | Default: false |
 | checklist_items | array | No | `[{item: string, checked: boolean}]` |
 | status | string | No | `draft` \| `active` \| `closed` — default: `draft` |
+| pre_entry_override_acknowledged | boolean | No | Whether user acknowledged pre-entry advisory warnings. Default: false. |
 
 ### Response (201 Created)
 
@@ -142,7 +143,7 @@ Update an existing trade plan. All fields are optional; only provided fields are
 
 ### Request Body
 
-Same fields as POST (all optional for PUT).
+Same fields as POST (all optional for PUT), including `pre_entry_override_acknowledged`.
 
 ### Response (200 OK)
 
@@ -195,6 +196,7 @@ Retrieve the trade plan(s) linked to a specific position.
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.2 | 2026-05-20 | Add pre_entry_override_acknowledged to POST/PUT schemas — ST-03 EPIC-01 v3.8 |
 | 0.1 | 2026-04-30 | Initial contract — ST-01 EPIC-01 v3.1 |
 
 ---
