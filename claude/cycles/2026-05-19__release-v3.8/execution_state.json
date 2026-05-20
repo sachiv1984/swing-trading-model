@@ -1,0 +1,233 @@
+{
+  "cycle_id": "2026-05-19__release-v3.8",
+  "sprint_goal": "Enrich trade plan creation with setup type, news context, and AI-assisted thesis; make ticker_universe the sole authoritative source; and deliver SI-01 Pre-Entry Rule Validation as a non-blocking advisory panel.",
+  "backlog_slice_source": "claude/cycles/2026-05-19__release-v3.8/stage4_backlog_slice.md",
+  "invoked_utc": "2026-05-19T10:30:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-05-20T17:00:00Z",
+
+  "epics": {
+    "EPIC-04": {
+      "status": "implementation_complete",
+      "branch": "exec/2026-05-19__release-v3.8/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-19__release-v3.8/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-10": {
+          "title": "Governance Debt Clearance",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 444,
+          "branch": "exec/2026-05-19__release-v3.8/EPIC-04",
+          "commit_sha": "5dede676",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-19T10:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/OPERATIONAL_GUIDE.md#§14 Governance File Registry"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "gh_issue_template.md added to §14. DoQ enforcement via .github/pull_request_template.md. OPERATIONAL_GUIDE.md v3.90→v3.92 (3.91 self-metadata gap corrected). No deviations from spec."
+        },
+        "ST-09": {
+          "title": "Ticker Universe Management Page",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "Head of UX & Design",
+          "github_issue": 445,
+          "branch": "exec/2026-05-19__release-v3.8/EPIC-04",
+          "commit_sha": "a3666c86",
+          "delegation_record_id": "DEL-20260519-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-20T16:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ticker_universe_api_contract.md#GET /ticker-universe",
+            "docs/specs/api_contracts/ticker_universe_api_contract.md#POST /ticker-universe",
+            "docs/specs/api_contracts/ticker_universe_api_contract.md#DELETE /ticker-universe/{ticker}"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "TickerUniverse.js created. Registered in pages.config.js + Layout.js Tools group. 15 Playwright tests pass (SC-TU-01 through SC-TU-06): render, add form POST, toggle DELETE, delete confirmation, market filter, status filter."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "implementation_complete",
+      "branch": "exec/2026-05-19__release-v3.8/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-19__release-v3.8/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-06": {
+          "title": "Setup Type Classification Field",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "Head of UX & Design",
+          "github_issue": 446,
+          "branch": "exec/2026-05-19__release-v3.8/EPIC-03",
+          "commit_sha": "b6ae597f",
+          "delegation_record_id": "DEL-20260519-02",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-20T17:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/trade_plan_endpoints.md#POST /trade-plans",
+            "docs/specs/api_contracts/trade_plan_endpoints.md#PUT /trade-plans/{id}",
+            "docs/specs/api_contracts/trade_plan_endpoints.md#GET /trade-plans/{id}"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Setup type dropdown added to TradePlan.js above setup thesis. 6 options. Defaults to Momentum Continuation when linked signal present. Persisted in payload. SC-TP-09/10/11 pass."
+        },
+        "ST-07": {
+          "title": "News Context Panel on Trade Plan Form",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "Head of UX & Design",
+          "github_issue": 447,
+          "branch": "exec/2026-05-19__release-v3.8/EPIC-03",
+          "commit_sha": "b6ae597f",
+          "delegation_record_id": "DEL-20260519-03",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-20T17:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/trade_plan_endpoints.md",
+            "docs/specs/frontend/pages/trade_plan.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Collapsible NewsContextPanel component added. US only; GET /news/{ticker}?limit=5. Hidden when no results. Collapsed state persisted in localStorage per ticker. SC-TP-12/13 pass."
+        },
+        "ST-08": {
+          "title": "AI-Assisted Thesis Generation",
+          "classification": "delegated_frontend",
+          "status": "done",
+          "assigned_to": "Head of UX & Design",
+          "github_issue": 448,
+          "branch": "exec/2026-05-19__release-v3.8/EPIC-03",
+          "commit_sha": "b6ae597f",
+          "delegation_record_id": "DEL-20260519-04",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-20T17:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Generate thesis button + Phase 1 template engine (setup type + signal + headlines). AI draft badge clears on first user edit. Improve with AI button gated behind REACT_APP_GEMINI_API_KEY (hidden when absent). SC-TP-14/15/16 pass."
+        }
+      }
+    },
+    "EPIC-01": {
+      "status": "in_progress",
+      "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-19__release-v3.8/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "§13 Review Gate for SI-01 Pre-Entry Rule Validation",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Strategy Rules & System Intent Owner",
+          "github_issue": 449,
+          "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260519-05",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-20T09:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md",
+            "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md",
+          "notes": "§13 PASS — 2026-05-20. 8 binding conditions. ST-02 and ST-03 unblocked."
+        },
+        "ST-02": {
+          "title": "SI-01 Backend — Pre-Entry Validation Service",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 450,
+          "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-20T10:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md#§4.2",
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "strategy_rules.md v1.4 §4.2. pre_entry_validation.py created. 17 unit tests pass. conftest.py stubs completed. test.py →59 endpoints. SystemStatus.js + e2e spec updated."
+        },
+        "ST-03": {
+          "title": "SI-01 Frontend — Pre-Entry Validation Panel",
+          "classification": "delegated_frontend",
+          "status": "blocked_frontend",
+          "assigned_to": "Head of UX & Design",
+          "github_issue": 451,
+          "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260520-01",
+          "blocked_since_utc": "2026-05-20T10:00:00Z",
+          "unblock_criteria": "Commit [EPIC-01][ST-03] pushed to EPIC-01 branch with advisory panel UI + Playwright tests",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md",
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2. Advisory panel — non-blocking. Delegated to Head of UX & Design (DEL-20260520-01)."
+        }
+      }
+    }
+  },
+
+  "blocked_items": ["ST-03"],
+  "delegated_items": ["ST-03"],
+  "completed_items": ["ST-10", "ST-01", "ST-02", "ST-09", "ST-06", "ST-07", "ST-08"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-04", "EPIC-03", "EPIC-01"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
