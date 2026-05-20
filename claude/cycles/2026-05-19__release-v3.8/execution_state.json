@@ -5,16 +5,16 @@
   "invoked_utc": "2026-05-19T10:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-20T17:30:00Z",
+  "last_updated_utc": "2026-05-20T20:30:00Z",
   "epics": {
     "EPIC-04": {
-      "status": "implementation_complete",
+      "status": "merged",
       "branch": "exec/2026-05-19__release-v3.8/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 452,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-19__release-v3.8/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/ticker-universe.spec.js"],
       "stories": {
         "ST-10": {
           "title": "Governance Debt Clearance",
@@ -30,12 +30,12 @@
           "completed_utc": "2026-05-19T10:45:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "claude/system/OPERATIONAL_GUIDE.md#\u00a714 Governance File Registry"
+            "claude/system/OPERATIONAL_GUIDE.md#§14 Governance File Registry"
           ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "gh_issue_template.md added to \u00a714. DoQ enforcement via .github/pull_request_template.md. OPERATIONAL_GUIDE.md v3.90\u2192v3.92 (3.91 self-metadata gap corrected). No deviations from spec."
+          "notes": "gh_issue_template.md added to §14. DoQ enforcement via .github/pull_request_template.md. OPERATIONAL_GUIDE.md v3.90→v3.92 (3.91 self-metadata gap corrected). No deviations from spec."
         },
         "ST-09": {
           "title": "Ticker Universe Management Page",
@@ -55,21 +55,21 @@
             "docs/specs/api_contracts/ticker_universe_api_contract.md#POST /ticker-universe",
             "docs/specs/api_contracts/ticker_universe_api_contract.md#DELETE /ticker-universe/{ticker}"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "TickerUniverse.js created. Registered in pages.config.js + Layout.js Tools group. 15 Playwright tests pass (SC-TU-01 through SC-TU-06): render, add form POST, toggle DELETE, delete confirmation, market filter, status filter."
+          "notes": "TickerUniverse.js created. Registered in pages.config.js + Layout.js Tools group. 15 Playwright tests pass (SC-TU-01 through SC-TU-06): render, add form POST, toggle DELETE, delete confirmation, market filter, status filter. P3 deviation DEV-EPIC04-ST09-01: createPageUrl map missing TickerUniverse at merge time; fix committed 75b7eda4 on EPIC-01 branch."
         }
       }
     },
     "EPIC-03": {
-      "status": "implementation_complete",
+      "status": "merged",
       "branch": "exec/2026-05-19__release-v3.8/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 453,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-19__release-v3.8/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/trade-plan.spec.js"],
       "stories": {
         "ST-06": {
           "title": "Setup Type Classification Field",
@@ -89,10 +89,10 @@
             "docs/specs/api_contracts/trade_plan_endpoints.md#PUT /trade-plans/{id}",
             "docs/specs/api_contracts/trade_plan_endpoints.md#GET /trade-plans/{id}"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Setup type dropdown added to TradePlan.js above setup thesis. 6 options. Defaults to Momentum Continuation when linked signal present. Persisted in payload. SC-TP-09/10/11 pass."
+          "notes": "Setup type dropdown added to TradePlan.js above setup thesis. 6 options. Defaults to Momentum Continuation when linked signal present. Persisted in payload. SC-TP-09/10/11 pass. No deviations from spec."
         },
         "ST-07": {
           "title": "News Context Panel on Trade Plan Form",
@@ -111,10 +111,10 @@
             "docs/specs/api_contracts/trade_plan_endpoints.md",
             "docs/specs/frontend/pages/trade_plan.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Collapsible NewsContextPanel component added. US only; GET /news/{ticker}?limit=5. Hidden when no results. Collapsed state persisted in localStorage per ticker. SC-TP-12/13 pass."
+          "notes": "Collapsible NewsContextPanel component added. US only; GET /news/{ticker}?limit=5. Hidden when no results. Collapsed state persisted in localStorage per ticker. SC-TP-12/13 pass. No deviations from spec."
         },
         "ST-08": {
           "title": "AI-Assisted Thesis Generation",
@@ -132,30 +132,30 @@
           "spec_references": [
             "docs/specs/frontend/pages/trade_plan.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Generate thesis button + Phase 1 template engine (setup type + signal + headlines). AI draft badge clears on first user edit. Improve with AI button gated behind REACT_APP_GEMINI_API_KEY (hidden when absent). SC-TP-14/15/16 pass."
+          "notes": "Generate thesis button + Phase 1 template engine (setup type + signal + headlines). AI draft badge clears on first user edit. Improve with AI button gated behind REACT_APP_GEMINI_API_KEY (hidden when absent). SC-TP-14/15/16 pass. No deviations from spec."
         }
       }
     },
     "EPIC-01": {
       "status": "in_progress",
       "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 456,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-19__release-v3.8/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/pre-trade-research.spec.js"],
       "stories": {
         "ST-01": {
-          "title": "\u00a713 Review Gate for SI-01 Pre-Entry Rule Validation",
+          "title": "§13 Review Gate for SI-01 Pre-Entry Rule Validation",
           "classification": "delegated_decision",
           "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 449,
           "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "c67185f5",
           "delegation_record_id": "DEL-20260519-05",
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -167,70 +167,67 @@
             "docs/specs/api_contracts/portfolio_endpoints.md",
             "docs/specs/frontend/pages/trade_plan.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md",
-          "notes": "\u00a713 PASS \u2014 2026-05-20. 8 binding conditions documented in decision record. Category A checks (regime, sizing validity, cash constraint) authorised immediately. Category B (sector concentration, earnings proximity) conditional on same-commit strategy_rules.md formalisation. ST-02 and ST-03 now unblocked."
+          "notes": "§13 PASS — 2026-05-20. 8 binding conditions documented in decision record. Category A checks (regime, sizing validity, cash constraint) authorised immediately. Category B (sector concentration, earnings proximity) conditional on same-commit strategy_rules.md formalisation. ST-02 and ST-03 now unblocked. No deviations from gate AC."
         },
         "ST-02": {
-          "title": "SI-01 Backend \u2014 Pre-Entry Validation Service",
+          "title": "SI-01 Backend — Pre-Entry Validation Service",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
           "github_issue": 450,
           "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "c67185f5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-05-20T10:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "claude/strategy/strategy_rules.md#\u00a74.2",
+            "claude/strategy/strategy_rules.md#§4.2",
             "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation",
             "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "strategy_rules.md v1.4 \u2014 \u00a74.2 formalises all 5 pre-entry advisory checks (Category A + B per \u00a713 binding conditions). backend/routers/pre_entry_validation.py created. Registered in main.py. test.py +1 (\u219259). SystemStatus.js + e2e spec updated 58\u219259. portfolio_endpoints.md v2.3.0. openapi.yaml updated. 17 unit tests pass. conftest.py stubs completed (BLG-QA-20 gap resolved)."
+          "notes": "strategy_rules.md v1.4 — §4.2 formalises all 5 pre-entry advisory checks (Category A + B per §13 binding conditions). backend/routers/pre_entry_validation.py created. Registered in main.py. test.py +1 (→59). SystemStatus.js + e2e spec updated 58→59. portfolio_endpoints.md v2.3.0. openapi.yaml updated. 17 unit tests pass. conftest.py stubs completed (BLG-QA-20 gap resolved). No deviations from spec."
         },
         "ST-03": {
-          "title": "SI-01 Frontend \u2014 Pre-Entry Validation Panel",
-          "classification": "delegated_frontend",
-          "status": "blocked_frontend",
-          "assigned_to": "Head of UX & Design",
+          "title": "SI-01 Frontend — Pre-Entry Validation Panel",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 451,
           "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "cd9743b8",
           "delegation_record_id": "DEL-20260520-01",
-          "blocked_since_utc": "2026-05-20T10:00:00Z",
-          "unblock_criteria": "Commit [EPIC-01][ST-03] pushed to EPIC-01 branch with advisory panel UI + Playwright tests",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-20T21:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/trade_plan.md",
             "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation",
             "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sprint 2. Advisory panel \u2014 non-blocking. ST-01 \u00a713 PASS and ST-02 both done. Pure frontend story. Delegated to Head of UX & Design (DEL-20260520-01)."
+          "notes": "PreEntryValidationPanel component added to TradePlan.js. Collapsible advisory panel, triggers on ticker + planned quantity. Override acknowledgement checkbox (pre_entry_override_acknowledged) shown on WARN. database.py ensure_override_acknowledged_column() added. SC-TP-17/18/19/20 pass. DEL-20260520-01 cancelled — reclassified autonomous per LL-v2.3-EX-02. No deviations from spec."
         }
       }
     }
   },
-  "blocked_items": [
-    "ST-03"
-  ],
-  "delegated_items": [
-    "ST-03"
-  ],
+  "blocked_items": [],
+  "delegated_items": [],
   "completed_items": [
     "ST-10",
     "ST-01",
     "ST-02",
+    "ST-03",
     "ST-09",
     "ST-06",
     "ST-07",
@@ -238,12 +235,8 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [
-      "EPIC-04",
-      "EPIC-03",
-      "EPIC-01"
-    ],
+    "epics_merged": ["EPIC-04", "EPIC-03"],
+    "epics_pending": ["EPIC-01"],
     "all_merged": false
   },
   "sealed": false,

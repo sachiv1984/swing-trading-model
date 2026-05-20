@@ -56,6 +56,42 @@ const TRADE_PLAN_SAVED = {
   },
 };
 
+const PRE_ENTRY_VALIDATION_WARN = {
+  status: 'ok',
+  data: {
+    ticker: 'AAPL',
+    market: 'US',
+    quantity: 10,
+    advisory_status: 'warn',
+    override_required: true,
+    checks: [
+      { rule: 'regime_gate', status: 'pass', detail: 'US market is Risk-On', severity: 'fail' },
+      { rule: 'cash_constraint', status: 'pass', detail: 'Within available cash', severity: 'fail' },
+      { rule: 'sector_concentration', status: 'warn', detail: 'Technology 32% > 30% limit', severity: 'warn' },
+      { rule: 'earnings_proximity', status: 'pass', detail: 'Earnings 71 days away', severity: 'warn' },
+      { rule: 'sizing_validity', status: 'pass', detail: 'Position sizing valid', severity: 'warn' },
+    ],
+  },
+};
+
+const PRE_ENTRY_VALIDATION_PASS = {
+  status: 'ok',
+  data: {
+    ticker: 'AAPL',
+    market: 'US',
+    quantity: 10,
+    advisory_status: 'pass',
+    override_required: false,
+    checks: [
+      { rule: 'regime_gate', status: 'pass', detail: 'US market is Risk-On', severity: 'fail' },
+      { rule: 'cash_constraint', status: 'pass', detail: 'Within available cash', severity: 'fail' },
+      { rule: 'sector_concentration', status: 'pass', detail: 'Sector allocation within limits', severity: 'warn' },
+      { rule: 'earnings_proximity', status: 'pass', detail: 'Earnings 71 days away', severity: 'warn' },
+      { rule: 'sizing_validity', status: 'pass', detail: 'Position sizing valid', severity: 'warn' },
+    ],
+  },
+};
+
 const EXISTING_PLAN_FOR_POSITION = {
   status: 'ok',
   data: [
@@ -427,4 +463,92 @@ test('SC-TP-16: AI draft badge appears after generating thesis and clears on use
   await page.keyboard.press('End');
   await page.keyboard.type(' edited');
   await expect(page.getByTestId('ai-draft-badge')).not.toBeVisible({ timeout: 3000 });
+});
+
+// ST-03 — Pre-Entry Validation Panel (SI-01)
+
+test('SC-TP-17: Pre-entry checks panel renders when ticker and quantity are set', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(`${API}/portfolio/pre-entry-validation*`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(PRE_ENTRY_VALIDATION_PASS) })
+  );
+  await page.route(new RegExp(`${API}/news/AAPL`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+
+  // Panel should not be visible before quantity is set
+  await expect(page.getByTestId('pre-entry-checks-panel')).not.toBeVisible({ timeout: 3000 });
+
+  // Fill quantity
+  await page.getByPlaceholder(/e\.g\. 50/i).fill('10');
+
+  // Panel should now appear
+  await expect(page.getByTestId('pre-entry-checks-panel')).toBeVisible({ timeout: 5000 });
+});
+
+test('SC-TP-18: Pre-entry checks panel hidden when quantity is empty', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(new RegExp(`${API}/news/AAPL`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('pre-entry-checks-panel')).not.toBeVisible({ timeout: 3000 });
+});
+
+test('SC-TP-19: Override acknowledgement checkbox visible when advisory warning present', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(`${API}/portfolio/pre-entry-validation*`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(PRE_ENTRY_VALIDATION_WARN) })
+  );
+  await page.route(new RegExp(`${API}/news/AAPL`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+  await page.getByPlaceholder(/e\.g\. 50/i).fill('10');
+  await expect(page.getByTestId('pre-entry-checks-panel')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('override-acknowledgement-checkbox')).toBeVisible({ timeout: 5000 });
+});
+
+test('SC-TP-20: Plan saves with pre_entry_override_acknowledged in payload when override checked', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(`${API}/portfolio/pre-entry-validation*`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(PRE_ENTRY_VALIDATION_WARN) })
+  );
+  await page.route(new RegExp(`${API}/news/AAPL`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+
+  let capturedBody = null;
+  await page.route(`${API}/trade-plans`, (route) => {
+    if (route.request().method() === 'POST') {
+      capturedBody = JSON.parse(route.request().postData() || '{}');
+      route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(TRADE_PLAN_SAVED) });
+    } else {
+      route.continue();
+    }
+  });
+
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+  await page.getByPlaceholder(/e\.g\. 50/i).fill('10');
+  await expect(page.getByTestId('override-acknowledgement-checkbox')).toBeVisible({ timeout: 5000 });
+  await page.getByTestId('override-acknowledgement-checkbox').check();
+
+  // Save the plan
+  await page.getByRole('button', { name: /Save Plan/i }).click();
+  await expect(page.locator('text=/saved|success/i')).toBeVisible({ timeout: 5000 });
+
+  expect(capturedBody).not.toBeNull();
+  expect(capturedBody.pre_entry_override_acknowledged).toBe(true);
 });
