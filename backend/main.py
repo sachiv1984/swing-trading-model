@@ -26,6 +26,7 @@ from routers import research as research_router
 from routers import portfolio_risk as portfolio_risk_router
 from routers import plan_vs_reality as plan_vs_reality_router
 from routers import paper_trading as paper_trading_router
+from routers import pre_entry_validation as pre_entry_validation_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers, sync_from_tickers_table
@@ -184,6 +185,7 @@ app.include_router(trade_plans_router.router)
 app.include_router(earnings_router.router)
 app.include_router(research_router.router)
 app.include_router(portfolio_risk_router.router)
+app.include_router(pre_entry_validation_router.router)
 app.include_router(plan_vs_reality_router.router)
 app.include_router(paper_trading_router.router)
 

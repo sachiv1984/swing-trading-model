@@ -216,4 +216,4 @@ Append-only. All delegated tasks across Sprint 1 and Sprint 2.
 
 - **Unblock criteria:** Decision document created at `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md`; ST-01 set to `done` in `execution_state.json`; ST-02 and ST-03 status updated accordingly
 - **SLA:** 72 hours (by 2026-05-22T11:15:00Z)
-- **Status:** Pending
+- **Status:** Resolved — PASS (2026-05-20). Decision record: `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md`

@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.3
-**Last Updated:** 2026-02-19
+**Version:** 1.4
+**Last Updated:** 2026-05-20
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.4 | 20 May 2026 | Added §4.2 Pre-Entry Advisory Checks — formalises regime gate, sector concentration, earnings proximity, cash constraint, and sizing validity as advisory pre-entry conditions. No change to stop-loss, trailing logic, exit conditions, or position sizing calculation rules. §13 gate: SI-01 PASS recorded in docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md. |
 | 1.3 | 19 February 2026 | Revised §4.1.7 — replaced toggle activation model with always-visible widget model per pre-alignment decision record for roadmap item 3.2 (Decision 3). No changes to calculation rules, validity rules, FX handling, or cash constraint behaviour in §4.1.1–§4.1.6. |
 | 1.2 | 18 February 2026 | Added canonical rules for the Position Sizing Calculator (Section 4.1). No changes to stop-loss, trailing logic, or exit conditions. |
 | 1.1 | 18 February 2026 | Expanded system boundaries and design rationale (Section 13). No behavioural rules changed. |
@@ -213,6 +214,57 @@ In this case:
 **Rationale for change from v1.2**
 
 The toggle model specified in v1.2 was written before the pre-alignment meeting for roadmap item 3.2. During that meeting, the Head of UX & Design and Product Owner agreed that the calculator should be always visible in the entry form — requiring users to discover and activate a toggle would reduce the daily workflow value that justifies the feature. The auto-fill protection rule (do not overwrite a manually entered value) is a financial safety constraint: silently replacing a user-entered share count could cause an unintended position size to be submitted. Full decision rationale: docs/product/decisions/3.2-position-sizing-calculator.md Decision 3.
+
+---
+
+## 4.2 Pre-Entry Advisory Checks (decision support)
+
+This section defines advisory pre-entry conditions surfaced to the user during trade plan creation. All checks are non-blocking — they do not prevent plan submission. The user retains full discretion to proceed regardless of advisory status.
+
+These checks are implemented via `GET /portfolio/pre-entry-validation` (SI-01). §13 compliance: the panel is display-only advisory; it is not a submission gate.
+
+### 4.2.1 Regime gate
+
+Do not enter a new position in a market that is in a risk-off regime (§8.2). The pre-entry check surfaces the current regime state for the target market (US: SPY 200-day MA; UK: FTSE 100 200-day MA).
+
+- **Advisory status:** FAIL if the target market is currently risk-off.
+- **Rationale:** Entering a new position during a risk-off regime is inconsistent with the momentum strategy's intent (§2) to capture medium- to long-term trends. Risk-off regimes are an exit condition (§8.2); they also serve as an advisory caution at entry.
+
+### 4.2.2 Sector concentration
+
+A portfolio sector allocation projected to exceed 30% of total portfolio value is an advisory concentration warning. This threshold is shared with `GET /portfolio/concentration-status`.
+
+- **Advisory status:** WARN if projected sector allocation ≥ 30%.
+- **Threshold:** 30% of total portfolio value (cash + positions).
+- **Calculation:** Current sector value (at live prices) + estimated new position value, divided by total portfolio value.
+- **Rationale:** Concentrated sector exposure increases correlation risk and portfolio sensitivity to sector-specific events. 30% is the established operational limit.
+
+### 4.2.3 Earnings proximity
+
+A position opened within 5 calendar days of an earnings announcement carries elevated gap risk. This check applies to US tickers only (earnings data sourced from Yahoo Finance via `GET /earnings/{ticker}`).
+
+- **Advisory status:** WARN if next earnings date is within 5 calendar days (0–5 inclusive).
+- **Rationale:** Earnings announcements can cause large overnight gaps that bypass the trailing stop entirely. Entering immediately before earnings is inconsistent with the strategy's risk management principles (§7, §8).
+
+### 4.2.4 Cash constraint
+
+A proposed position whose estimated cost exceeds available portfolio cash is a feasibility advisory. This mirrors the §4.1.6 cash constraint in the Position Sizing Calculator.
+
+- **Advisory status:** FAIL if estimated cost (quantity × live price, in GBP) exceeds available cash.
+- **Calculation:** Same basis as §4.1.6: `EstimatedCost = quantity × live_price_gbp`.
+- **Rationale:** The portfolio cash balance is the execution feasibility ceiling for new positions.
+
+### 4.2.5 Sizing validity
+
+When entry price and stop price are provided, the proposed stop configuration is checked against §4.1.4 validity constraints.
+
+- **Advisory status:** FAIL if stop distance ≤ 0 (i.e. stop price ≥ entry price), or if either price ≤ 0.
+- **Applies when:** Both `entry_price` and `stop_price` are supplied as query parameters.
+- **Rationale:** A non-positive stop distance produces an invalid position sizing result (§4.1.4) and must be corrected before position entry.
+
+### 4.2.6 Non-blocking principle (binding)
+
+All pre-entry advisory checks are informational. The advisory panel must never prevent, gate, or auto-reject a trade plan submission. This principle is consistent with §4.1.7 (sizing calculator does not block form submission) and §3 (the system provides decision support only). Any future extension that introduces a hard submission gate requires a new §13 review.
 
 ---
 

@@ -42,4 +42,4 @@ Append-only. All delegated decisions and blocked gates requiring human resolutio
 - `docs/specs/frontend/pages/trade_plan.md` — trade plan form spec
 
 - **Unblock criteria:** Decision document created at `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md`; ST-01 set to `done` in `execution_state.json`
-- **Status:** Pending
+- **Status:** Resolved — PASS (2026-05-20). ST-02 and ST-03 now unblocked for Sprint 2.
