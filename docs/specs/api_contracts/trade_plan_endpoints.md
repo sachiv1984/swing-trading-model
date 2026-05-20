@@ -30,6 +30,7 @@ Create a new trade plan.
   "ticker": "AAPL",
   "market": "US",
   "position_id": null,
+  "setup_type": "Momentum Continuation",
   "setup_thesis": "Strong momentum breakout above 52-week high with volume confirmation",
   "entry_rationale": "Price holding above 200 SMA; ATR expanding; regime Risk On",
   "regime_context_at_entry": "risk_on",
@@ -52,6 +53,7 @@ Create a new trade plan.
 | ticker | string | Yes | Ticker symbol |
 | market | string | Yes | `US` or `UK` |
 | position_id | string (UUID) | No | Link to an existing position |
+| setup_type | string | No | Setup classification: `Breakout` \| `Pullback to MA` \| `Momentum Continuation` \| `Mean Reversion` \| `Catalyst-driven` \| `Other`. Nullable. |
 | setup_thesis | string | No | High-level setup thesis |
 | entry_rationale | string | No | Specific entry rationale |
 | regime_context_at_entry | string | No | Regime at plan creation |
@@ -74,6 +76,7 @@ Create a new trade plan.
     "position_id": null,
     "created_at": "2026-04-30T10:00:00Z",
     "updated_at": "2026-04-30T10:00:00Z",
+    "setup_type": "Momentum Continuation",
     "setup_thesis": "...",
     "entry_rationale": "...",
     "regime_context_at_entry": "risk_on",

@@ -27,6 +27,8 @@
 
 1. **PT-04 third conditional include** — this is the third consecutive release carrying PT-04 as conditional scope (v3.6, v3.7, v3.8). If gate is not confirmed by 2026-05-22, Product Owner should park PT-04 formally rather than carrying it a fourth time — it creates noise in planning and sprint planning pre-checks.
 
+3. **Duplicate GitHub issues created during sprint execution** — the engine created GitHub issues for sprint stories (issues #444–#451) during the v3.8 sprint execution session. These appear to duplicate issues that were already open from sprint planning (via `sync gh`). Root cause: the engine's issue-creation logic in execution_prompt.md does not check for pre-existing issues with matching `[ST-xx]` titles before calling `gh issue create`. Fix: before creating an issue for any story, the engine should check `gh issue list --search "[ST-xx]"` and skip creation if a matching open issue exists. Until this is fixed, manually close duplicates after each sprint execution session.
+
 2. **BLG-FEAT-22/23/24/BLG-FE-36 arrived mid-session** — four of the ten stories were backlog items added by the user in the same session as release planning. Future consideration: if ideas are ready to add to the backlog, adding them before running `plan release` allows the advisory checks (Provisional-Target, design dependency) to operate on a stable set of candidates.
 
 ---
@@ -37,6 +39,7 @@
 |---|--------|------|-------|-------------|
 | 1 | If PT-04 gate not met by 2026-05-22: formally park PT-04 as "pending gate" in backlog.md with park rationale — do not carry as conditional a fourth time | Decision | Product Owner | v3.8 sprint planning |
 | 2 | Review smoke-tests.yml timeout if CI timeout recurs on any v3.8 PR | Advisory (if triggered) | QA & Testing Owner | v3.8 execution |
+| 3 | Audit and close duplicate GitHub issues created during v3.8 sprint execution — see Improvement Area #3 below | Process Fix | PMO Lead | v3.8 post-ship |
 
 ---
 

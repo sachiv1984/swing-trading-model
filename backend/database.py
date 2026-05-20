@@ -939,6 +939,7 @@ def ensure_trade_plans_table():
                     market VARCHAR(10) NOT NULL CHECK (market IN ('US', 'UK')),
                     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    setup_type VARCHAR(50),
                     setup_thesis TEXT,
                     entry_rationale TEXT,
                     regime_context_at_entry VARCHAR(50),
@@ -961,16 +962,17 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
         with conn.cursor() as cur:
             cur.execute(
                 """INSERT INTO trade_plans
-                   (portfolio_id, position_id, ticker, market, setup_thesis, entry_rationale,
+                   (portfolio_id, position_id, ticker, market, setup_type, setup_thesis, entry_rationale,
                     regime_context_at_entry, r_target, early_exit_conditions, confirmation_criteria,
                     checklist_completed, checklist_items, status)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s)
                    RETURNING *""",
                 (
                     portfolio_id,
                     data.get("position_id"),
                     data["ticker"],
                     data["market"],
+                    data.get("setup_type"),
                     data.get("setup_thesis"),
                     data.get("entry_rationale"),
                     data.get("regime_context_at_entry"),
@@ -1019,7 +1021,7 @@ def get_trade_plan_by_id(trade_plan_id: str, portfolio_id: str) -> dict:
 
 def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict:
     allowed = {
-        "position_id", "setup_thesis", "entry_rationale", "regime_context_at_entry",
+        "position_id", "setup_type", "setup_thesis", "entry_rationale", "regime_context_at_entry",
         "r_target", "early_exit_conditions", "confirmation_criteria",
         "checklist_completed", "checklist_items", "status", "abandonment_reason",
     }
@@ -1117,6 +1119,19 @@ def ensure_plan_vs_reality_columns():
             )
             cur.execute(
                 "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS planned_stop_price NUMERIC(20, 6)"
+            )
+        conn.commit()
+
+
+def ensure_setup_type_column():
+    """Add setup_type VARCHAR(50) to trade_plans table (idempotent).
+
+    ST-06 (EPIC-03, v3.8) — BLG-FEAT-23.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS setup_type VARCHAR(50)"
             )
         conn.commit()
 

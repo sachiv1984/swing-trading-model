@@ -22,10 +22,21 @@ from database import (
 router = APIRouter(prefix="/trade-plans", tags=["Trade Plans"])
 
 
+SETUP_TYPE_OPTIONS = {
+    "Breakout",
+    "Pullback to MA",
+    "Momentum Continuation",
+    "Mean Reversion",
+    "Catalyst-driven",
+    "Other",
+}
+
+
 class TradePlanCreate(BaseModel):
     ticker: str
     market: str
     position_id: Optional[str] = None
+    setup_type: Optional[str] = None
     setup_thesis: Optional[str] = None
     entry_rationale: Optional[str] = None
     regime_context_at_entry: Optional[str] = None
@@ -39,6 +50,7 @@ class TradePlanCreate(BaseModel):
 
 class TradePlanUpdate(BaseModel):
     position_id: Optional[str] = None
+    setup_type: Optional[str] = None
     setup_thesis: Optional[str] = None
     entry_rationale: Optional[str] = None
     regime_context_at_entry: Optional[str] = None
