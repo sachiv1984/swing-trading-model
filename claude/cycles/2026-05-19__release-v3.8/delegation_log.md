@@ -217,3 +217,54 @@ Append-only. All delegated tasks across Sprint 1 and Sprint 2.
 - **Unblock criteria:** Decision document created at `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md`; ST-01 set to `done` in `execution_state.json`; ST-02 and ST-03 status updated accordingly
 - **SLA:** 72 hours (by 2026-05-22T11:15:00Z)
 - **Status:** Resolved — PASS (2026-05-20). Decision record: `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md`
+
+---
+
+## DEL-20260520-01
+
+- **ST Item:** ST-03 — SI-01 Frontend — Pre-Entry Validation Panel
+- **EPIC:** EPIC-01
+- **Classification:** delegated_frontend
+- **Assigned to:** Head of UX & Design
+- **GitHub Issue:** #451
+- **Branch:** exec/2026-05-19__release-v3.8/EPIC-01
+- **Delegated at:** 2026-05-20T10:00:00Z
+- **What is needed:** Build the Pre-Entry Validation advisory panel in the Trade Plan creation form. The backend endpoint `GET /portfolio/pre-entry-validation` is fully implemented and tested. This is a pure frontend story.
+
+  **Context:** SI-01 delivers a non-blocking advisory panel on the trade plan form. §13 gate passed (DEL-20260519-05). The panel shows 5 rule checks as pass/warn/fail indicators. It must never block plan submission — it is advisory only.
+
+  **Change required:**
+  - Add "Pre-Entry Validation" panel to the trade plan creation form (positioned between setup type and news panel, or below both — before thesis textarea)
+  - Panel appears when ticker and quantity are both set; hidden otherwise
+  - Fetch validation data from `GET /portfolio/pre-entry-validation?ticker={ticker}&quantity={quantity}&market={market}`
+  - Display 5 checks with visual indicators: pass (green ✓), warn (amber ⚠), fail (red ✗ advisory), skipped (grey —)
+  - Panel header: "Pre-Entry Checks" with aggregate advisory_status badge (Pass/Warn/Fail)
+  - Per-rule rows: rule label + status icon + detail text
+  - Override acknowledgement: when any check is warn or fail, show "I acknowledge the advisory warnings" checkbox. Checked state recorded on the trade plan as `pre_entry_override_acknowledged: true` (add to POST /trade-plans body)
+  - Plan can be submitted regardless of override checkbox state (non-blocking per §13)
+  - Panel is collapsible; state NOT persisted in localStorage (always expanded on new form)
+
+  **API contract reference:** `docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation`
+  - `GET /portfolio/pre-entry-validation?ticker=AAPL&quantity=10&market=US`
+  - Response: `{ "status": "ok", "data": { "advisory_status": "pass|warn|fail", "override_required": bool, "checks": [...] } }`
+  - Check object: `{ "rule": "regime_gate|cash_constraint|sector_concentration|earnings_proximity|sizing_validity", "status": "pass|warn|fail|skipped", "detail": "string", "severity": "fail|warn" }`
+
+  **§13 binding conditions (from SI-01 decision record):**
+  - Panel must NEVER prevent plan submission
+  - Override acknowledgement is metadata only — no effect on any calculation
+  - Panel is display-only — no action buttons other than override acknowledgement
+  - §13 compliance: decision support, not a gate
+
+  **Non-functional rules:**
+  - Playwright tests required: panel renders when ticker+quantity set; override flow works; plan saves with override acknowledged
+  - No networkidle in Playwright tests — use waitFor element patterns
+
+  **Expected outcome:** Advisory panel in trade plan form showing 5 pre-entry checks. Non-blocking. Override acknowledgement recorded on plan object. Panel hidden when no ticker/quantity.
+
+- **Spec references:**
+  - `docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation`
+  - `docs/specs/frontend/pages/trade_plan.md`
+  - `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md`
+- **Unblock criteria:** Commit `[EPIC-01][ST-03] ...` pushed to `exec/2026-05-19__release-v3.8/EPIC-01`; Playwright tests for panel render, override flow, and plan save present; all AC items confirmed met
+- **Commit format required:** `[EPIC-01][ST-03] <description>` pushed to `exec/2026-05-19__release-v3.8/EPIC-01`
+- **Status:** Pending

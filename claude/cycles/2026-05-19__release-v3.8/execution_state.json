@@ -198,30 +198,32 @@
         "ST-03": {
           "title": "SI-01 Frontend — Pre-Entry Validation Panel",
           "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "status": "blocked_frontend",
+          "assigned_to": "Head of UX & Design",
           "github_issue": 451,
           "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "ST-01 done (§13 PASS) and ST-02 done",
+          "delegation_record_id": "DEL-20260520-01",
+          "blocked_since_utc": "2026-05-20T10:00:00Z",
+          "unblock_criteria": "Commit [EPIC-01][ST-03] pushed to EPIC-01 branch with advisory panel UI + Playwright tests",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/trade_plan.md"
+            "docs/specs/frontend/pages/trade_plan.md",
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation",
+            "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md"
           ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sprint 2. Advisory panel — non-blocking. Pre-Entry Validation Panel section to be added to trade_plan.md frontend spec as part of this story."
+          "notes": "Sprint 2. Advisory panel — non-blocking. ST-01 §13 PASS and ST-02 both done. Pure frontend story. Delegated to Head of UX & Design (DEL-20260520-01)."
         }
       }
     }
   },
 
-  "blocked_items": ["ST-09", "ST-06", "ST-07", "ST-08"],
-  "delegated_items": ["ST-09", "ST-06", "ST-07", "ST-08"],
+  "blocked_items": ["ST-09", "ST-06", "ST-07", "ST-08", "ST-03"],
+  "delegated_items": ["ST-09", "ST-06", "ST-07", "ST-08", "ST-03"],
   "completed_items": ["ST-10", "ST-01", "ST-02"],
   "open_escalations": [],
 
