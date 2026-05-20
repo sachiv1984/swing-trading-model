@@ -55,7 +55,7 @@ Append-only. All delegated tasks across Sprint 1 and Sprint 2.
 
 - **Unblock criteria:** Commit `[EPIC-04][ST-09] ...` pushed to `exec/2026-05-19__release-v3.8/EPIC-04`; GitHub issue #445 closed automatically; Playwright tests for add/toggle/filter scenarios present in `tests/e2e/`; all AC items confirmed met
 - **Commit format required:** `[EPIC-04][ST-09] <description>` pushed to `exec/2026-05-19__release-v3.8/EPIC-04`
-- **Status:** Pending
+- **Status:** Unblocked — commit a3666c86 on 2026-05-20; PR #452 merged 2026-05-20T19:26:29Z
 
 ---
 
@@ -100,7 +100,7 @@ Append-only. All delegated tasks across Sprint 1 and Sprint 2.
 - **Spec reference:** `docs/specs/api_contracts/trade_plan_endpoints.md#POST /trade-plans`, `docs/specs/frontend/pages/trade_plan.md#5. Trade Plan Creation and Edit Form`
 - **Unblock criteria:** Commit `[EPIC-03][ST-06] ...` pushed to `exec/2026-05-19__release-v3.8/EPIC-03`; Playwright test for dropdown render/save/display present; all AC items confirmed met
 - **Commit format required:** `[EPIC-03][ST-06] <description>` pushed to `exec/2026-05-19__release-v3.8/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked — commit b6ae597f on 2026-05-20; PR #453 merged 2026-05-20T19:27:04Z
 
 ---
 
@@ -146,7 +146,7 @@ Append-only. All delegated tasks across Sprint 1 and Sprint 2.
 - **Spec reference:** `docs/specs/frontend/pages/trade_plan.md#5. Trade Plan Creation and Edit Form`
 - **Unblock criteria:** Commit `[EPIC-03][ST-07] ...` pushed to `exec/2026-05-19__release-v3.8/EPIC-03`; Playwright tests for render and no-news cases present; all AC items confirmed met
 - **Commit format required:** `[EPIC-03][ST-07] <description>` pushed to `exec/2026-05-19__release-v3.8/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked — commit b6ae597f on 2026-05-20; PR #453 merged 2026-05-20T19:27:04Z
 
 ---
 
@@ -192,7 +192,7 @@ Append-only. All delegated tasks across Sprint 1 and Sprint 2.
 - **Spec reference:** `docs/specs/frontend/pages/trade_plan.md#5. Trade Plan Creation and Edit Form`
 - **Unblock criteria:** Commit `[EPIC-03][ST-08] ...` pushed to `exec/2026-05-19__release-v3.8/EPIC-03`; ST-06 and ST-07 must be done first; Playwright tests for button/badge/generate flow present; all AC items confirmed met
 - **Commit format required:** `[EPIC-03][ST-08] <description>` pushed to `exec/2026-05-19__release-v3.8/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked — commit b6ae597f on 2026-05-20; PR #453 merged 2026-05-20T19:27:04Z
 
 ---
 
