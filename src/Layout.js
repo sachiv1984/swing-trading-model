@@ -23,6 +23,7 @@ import {
   CalendarDays,
   ChevronRight,
   ScanSearch,
+  Globe,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -68,9 +69,10 @@ const NAV_GROUPS = [
     label: "Tools",
     key: "tools",
     items: [
-      { name: "Screener",  icon: ScanSearch, page: "Screener" },
-      { name: "Watchlist", icon: Eye,        page: "Watchlist" },
-      { name: "Alerts",    icon: Bell,       page: "notifications", alertBadge: true },
+      { name: "Screener",         icon: ScanSearch, page: "Screener" },
+      { name: "Watchlist",        icon: Eye,        page: "Watchlist" },
+      { name: "Ticker Universe",  icon: Globe,      page: "TickerUniverse" },
+      { name: "Alerts",           icon: Bell,       page: "notifications", alertBadge: true },
     ],
   },
   {
