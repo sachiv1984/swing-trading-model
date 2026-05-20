@@ -49,6 +49,10 @@ def _get_price_data(ticker: str, market: str):
         meta = result[0]["meta"]
         price = meta.get("regularMarketPrice")
         change_pct = meta.get("regularMarketChangePercent")
+        if change_pct is None:
+            prev_close = meta.get("chartPreviousClose")
+            if price and prev_close:
+                change_pct = (price - prev_close) / prev_close * 100
         if price and market == "UK":
             price = price / 100  # pence → pounds
         return {

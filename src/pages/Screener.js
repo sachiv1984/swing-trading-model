@@ -789,8 +789,6 @@ export default function Screener() {
                                     <Newspaper className="w-3 h-3" />
                                     {row.news_headline_count}
                                   </button>
-                                ) : row.market !== "US" ? (
-                                  <span className="text-slate-600 text-xs">—</span>
                                 ) : null}
 
                                 {/* Watchlist button */}
