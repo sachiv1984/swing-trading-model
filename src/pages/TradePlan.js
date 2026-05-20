@@ -7,10 +7,20 @@ import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
-import { BookOpen, Save, ArrowLeft, AlertTriangle } from "lucide-react";
+import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon } from "lucide-react";
 import { TradePlanStatusBadge } from "./TradePlans";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
+const SETUP_TYPES = [
+  { value: "", label: "— Select setup type —" },
+  { value: "Breakout", label: "Breakout" },
+  { value: "Pullback to MA", label: "Pullback to MA" },
+  { value: "Momentum Continuation", label: "Momentum Continuation" },
+  { value: "Mean Reversion", label: "Mean Reversion" },
+  { value: "Catalyst-driven", label: "Catalyst-driven" },
+  { value: "Other", label: "Other" },
+];
 
 const STATUSES = [
   "draft",
@@ -30,6 +40,110 @@ const STATUS_LABELS = {
   closed: "Closed",
 };
 
+function relativeAge(isoString) {
+  if (!isoString) return "";
+  const diff = Date.now() - new Date(isoString).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
+function NewsContextPanel({ ticker, market }) {
+  const storageKey = `news-collapsed-${ticker}`;
+  const [collapsed, setCollapsed] = useState(() => {
+    try { return localStorage.getItem(storageKey) === "true"; } catch { return false; }
+  });
+
+  const { data: headlines = [], isFetched } = useQuery({
+    queryKey: ["plan-news", ticker],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/news/${ticker}?limit=5`);
+      const json = await res.json();
+      return Array.isArray(json.data) ? json.data : [];
+    },
+    enabled: !!ticker && market === "US",
+    staleTime: 5 * 60 * 1000,
+  });
+
+  if (market !== "US" || !ticker) return null;
+  if (isFetched && headlines.length === 0) return null;
+
+  const toggle = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    try { localStorage.setItem(storageKey, String(next)); } catch {}
+  };
+
+  return (
+    <div data-testid="news-context-panel" className="rounded-xl border border-slate-700/50 bg-slate-800/30 overflow-hidden">
+      <button
+        type="button"
+        onClick={toggle}
+        className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700/30 transition-colors"
+        data-testid="news-panel-toggle"
+      >
+        <div className="flex items-center gap-2">
+          <Newspaper size={14} className="text-slate-400" />
+          <span>News Context</span>
+          {headlines.length > 0 && (
+            <span className="text-xs text-slate-500">{headlines.length} headlines</span>
+          )}
+        </div>
+        {collapsed ? <ChevronDown size={14} className="text-slate-500" /> : <ChevronUp size={14} className="text-slate-500" />}
+      </button>
+      {!collapsed && headlines.length > 0 && (
+        <ul className="divide-y divide-slate-700/30 px-4 pb-3" data-testid="news-headline-list">
+          {headlines.map((item, i) => (
+            <li key={i} className="py-2 space-y-0.5">
+              <p className="text-sm text-slate-200 leading-snug">{item.title || item.headline}</p>
+              <div className="flex items-center gap-2 text-xs text-slate-500">
+                {(item.source || item.author) && <span>{item.source || item.author}</span>}
+                <span>{relativeAge(item.created_at || item.updated_at)}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+const HAS_GEMINI = !!process.env.REACT_APP_GEMINI_API_KEY;
+
+function generateThesisTemplate({ setupType, ticker, market, signal, headlines }) {
+  const parts = [];
+  const setupLabel = setupType || "Technical";
+  parts.push(`**${setupLabel} setup on ${ticker} (${market})**`);
+
+  if (signal) {
+    const score = signal.signal_score != null ? ` Signal score ${(signal.signal_score * 100).toFixed(0)}%.` : "";
+    const atr = signal.atr != null ? ` ATR ${signal.atr.toFixed(2)}.` : "";
+    parts.push(`Signal metrics:${score}${atr}`);
+  }
+
+  if (setupType === "Momentum Continuation") {
+    parts.push("Price is extending a trend from a prior base. Looking for continuation on volume expansion.");
+  } else if (setupType === "Breakout") {
+    parts.push("Price is breaking above a key resistance level. Seeking confirmation of volume and follow-through.");
+  } else if (setupType === "Pullback to MA") {
+    parts.push("Price has pulled back to a moving average in a broader uptrend. Watching for reversal candle.");
+  } else if (setupType === "Mean Reversion") {
+    parts.push("Price has extended from the mean. Expecting reversion with defined risk at extremes.");
+  } else if (setupType === "Catalyst-driven") {
+    parts.push("A specific catalyst is the thesis driver. Entry contingent on catalyst confirmation.");
+  }
+
+  if (headlines && headlines.length > 0) {
+    const topTwo = headlines.slice(0, 2).map((h) => `"${(h.title || h.headline || "").slice(0, 80)}"`).join("; ");
+    parts.push(`Recent news: ${topTwo}.`);
+  }
+
+  parts.push("[Edit this draft to add your specific entry trigger and risk parameters.]");
+  return parts.join("\n\n");
+}
+
 function buildPrePopulatedItems(plan) {
   return DEFAULT_CHECKLIST_ITEMS.map((item) => ({
     ...item,
@@ -43,6 +157,7 @@ const EMPTY_FORM = {
   ticker: "",
   market: "US",
   position_id: null,
+  setup_type: null,
   setup_thesis: "",
   entry_rationale: "",
   regime_context_at_entry: "",
@@ -104,6 +219,7 @@ export default function TradePlan() {
     position_id: positionId || null,
   });
   const [saved, setSaved] = useState(false);
+  const [isAiDraft, setIsAiDraft] = useState(false);
   const [showAbandonModal, setShowAbandonModal] = useState(false);
   const [abandonReason, setAbandonReason] = useState("");
   const [abandonReasonTouched, setAbandonReasonTouched] = useState(false);
@@ -136,6 +252,7 @@ export default function TradePlan() {
         ticker: existingPlan.ticker || ticker,
         market: existingPlan.market || market,
         position_id: existingPlan.position_id || positionId || null,
+        setup_type: existingPlan.setup_type || null,
         setup_thesis: existingPlan.setup_thesis || "",
         entry_rationale: existingPlan.entry_rationale || "",
         regime_context_at_entry: existingPlan.regime_context_at_entry || "",
@@ -148,6 +265,17 @@ export default function TradePlan() {
       });
     }
   }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const { data: newsForGenerator = [] } = useQuery({
+    queryKey: ["plan-news", form.ticker],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/news/${form.ticker}?limit=5`);
+      const json = await res.json();
+      return Array.isArray(json.data) ? json.data : [];
+    },
+    enabled: !!form.ticker && form.market === "US",
+    staleTime: 5 * 60 * 1000,
+  });
 
   const { data: watchlistedSignals = [] } = useQuery({
     queryKey: ["signals-watchlisted"],
@@ -170,6 +298,7 @@ export default function TradePlan() {
       const { setupThesis, entryRationale, confirmationCriteria } = buildSignalPrePopulation(linkedSignal, form.market);
       setForm((prev) => ({
         ...prev,
+        setup_type: prev.setup_type || "Momentum Continuation",
         setup_thesis: prev.setup_thesis || setupThesis,
         entry_rationale: prev.entry_rationale || entryRationale,
         confirmation_criteria: prev.confirmation_criteria || confirmationCriteria,
@@ -375,14 +504,75 @@ export default function TradePlan() {
 
         {!editId && <SignalContextPanel signal={linkedSignal} market={form.market} />}
 
-        <Field label="Setup Thesis">
-          <TextArea
+        <Field label="Setup Type">
+          <select
+            data-testid="setup-type-select"
+            className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+            value={form.setup_type || ""}
+            onChange={(e) => setForm((prev) => ({ ...prev, setup_type: e.target.value || null }))}
+          >
+            {SETUP_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+        </Field>
+
+        <NewsContextPanel ticker={form.ticker} market={form.market} />
+
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">Setup Thesis</label>
+            <div className="flex items-center gap-2">
+              {isAiDraft && (
+                <span data-testid="ai-draft-badge" className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                  <Sparkles size={10} />
+                  AI draft
+                </span>
+              )}
+              <button
+                type="button"
+                data-testid="generate-thesis-btn"
+                onClick={() => {
+                  const draft = generateThesisTemplate({
+                    setupType: form.setup_type,
+                    ticker: form.ticker,
+                    market: form.market,
+                    signal: linkedSignal,
+                    headlines: newsForGenerator,
+                  });
+                  setForm((prev) => ({ ...prev, setup_thesis: draft }));
+                  setIsAiDraft(true);
+                }}
+                className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                title="Generate thesis from setup type and signal data"
+              >
+                <Sparkles size={12} />
+                Generate thesis
+              </button>
+              {HAS_GEMINI && (
+                <button
+                  type="button"
+                  data-testid="improve-with-ai-btn"
+                  className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+                >
+                  <Sparkles size={12} />
+                  Improve with AI
+                </button>
+              )}
+            </div>
+          </div>
+          <textarea
+            data-testid="setup-thesis-textarea"
+            className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 resize-none"
             rows={3}
             value={form.setup_thesis}
-            onChange={set("setup_thesis")}
+            onChange={(e) => {
+              setForm((prev) => ({ ...prev, setup_thesis: e.target.value }));
+              if (isAiDraft) setIsAiDraft(false);
+            }}
             placeholder="Describe the setup — what technical or fundamental condition makes this a candidate?"
           />
-        </Field>
+        </div>
 
         <Field label="Entry Rationale">
           <TextArea

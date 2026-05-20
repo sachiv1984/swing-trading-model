@@ -287,3 +287,144 @@ test('SC-TP-08: Edit mode pre-populates form fields from GET /trade-plans/{id}',
   await expect(page.getByPlaceholder(/why enter now/i)).toHaveValue('Confirmed with signal');
   await expect(page.getByPlaceholder(/e\.g\. 2\.5/i)).toHaveValue('2');
 });
+
+// ---------------------------------------------------------------------------
+// SC-TP-09 through SC-TP-14 — ST-06, ST-07, ST-08 (v3.8 EPIC-03)
+// ---------------------------------------------------------------------------
+
+// ST-06 — Setup Type Classification Field
+
+test('SC-TP-09: Setup type dropdown is present on the trade plan form', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('setup-type-select')).toBeVisible({ timeout: 8000 });
+});
+
+test('SC-TP-10: Setup type dropdown contains all six options', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.getByTestId('setup-type-select')).toBeVisible({ timeout: 8000 });
+
+  const options = await page.getByTestId('setup-type-select').locator('option').allTextContents();
+  const expected = ['Breakout', 'Pullback to MA', 'Momentum Continuation', 'Mean Reversion', 'Catalyst-driven', 'Other'];
+  for (const opt of expected) {
+    expect(options).toContain(opt);
+  }
+});
+
+test('SC-TP-11: Setup type value is persisted in saved plan payload', async ({ page }) => {
+  const posts = [];
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(`${API}/trade-plans`, (route) => {
+    if (route.request().method() === 'POST') {
+      posts.push(JSON.parse(route.request().postData()));
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { id: PLAN_ID } }) });
+    } else { route.continue(); }
+  });
+
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.getByTestId('setup-type-select')).toBeVisible({ timeout: 8000 });
+  await page.getByTestId('setup-type-select').selectOption('Breakout');
+  await page.getByRole('button', { name: /save plan/i }).click();
+  await page.waitForTimeout(500);
+
+  expect(posts.length).toBeGreaterThan(0);
+  expect(posts[0].setup_type).toBe('Breakout');
+});
+
+// ST-07 — News Context Panel
+
+test('SC-TP-12: News context panel renders for US ticker when news is available', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(`${API}/news/AAPL`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ok', data: [
+        { title: 'Apple beats earnings', source: 'Reuters', created_at: new Date().toISOString() },
+        { title: 'iPhone demand strong', source: 'Bloomberg', created_at: new Date().toISOString() },
+      ]}),
+    })
+  );
+  await page.route(new RegExp(`${API}/news/AAPL\\?limit=5`), (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ok', data: [
+        { title: 'Apple beats earnings', source: 'Reuters', created_at: new Date().toISOString() },
+        { title: 'iPhone demand strong', source: 'Bloomberg', created_at: new Date().toISOString() },
+      ]}),
+    })
+  );
+
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('news-context-panel')).toBeVisible({ timeout: 8000 });
+});
+
+test('SC-TP-13: News panel is collapsible', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(new RegExp(`${API}/news/AAPL`), (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ok', data: [
+        { title: 'Apple beats earnings', source: 'Reuters', created_at: new Date().toISOString() },
+      ]}),
+    })
+  );
+
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.getByTestId('news-context-panel')).toBeVisible({ timeout: 8000 });
+  // Toggle should be clickable
+  await page.getByTestId('news-panel-toggle').click();
+  // Headline list should be hidden after collapse
+  await expect(page.getByTestId('news-headline-list')).not.toBeVisible({ timeout: 3000 });
+});
+
+// ST-08 — AI-Assisted Thesis Generation
+
+test('SC-TP-14: Generate thesis button is present on the trade plan form', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('generate-thesis-btn')).toBeVisible({ timeout: 8000 });
+});
+
+test('SC-TP-15: Clicking generate thesis populates the setup thesis textarea', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.getByTestId('generate-thesis-btn')).toBeVisible({ timeout: 8000 });
+
+  // Select a setup type first
+  await page.getByTestId('setup-type-select').selectOption('Breakout');
+  await page.getByTestId('generate-thesis-btn').click();
+
+  const textarea = page.getByTestId('setup-thesis-textarea');
+  const value = await textarea.inputValue();
+  expect(value.length).toBeGreaterThan(10);
+});
+
+test('SC-TP-16: AI draft badge appears after generating thesis and clears on user edit', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.getByTestId('generate-thesis-btn')).toBeVisible({ timeout: 8000 });
+
+  await page.getByTestId('generate-thesis-btn').click();
+  await expect(page.getByTestId('ai-draft-badge')).toBeVisible({ timeout: 3000 });
+
+  // Editing the textarea should clear the badge
+  await page.getByTestId('setup-thesis-textarea').click();
+  await page.keyboard.press('End');
+  await page.keyboard.type(' edited');
+  await expect(page.getByTestId('ai-draft-badge')).not.toBeVisible({ timeout: 3000 });
+});
