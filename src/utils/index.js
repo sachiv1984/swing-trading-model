@@ -18,6 +18,7 @@ export const createPageUrl = (pageName) => {
     Watchlist: '/Watchlist',
     WeeklyDigest: '/WeeklyDigest',
     Screener: '/Screener',
+    TickerUniverse: '/TickerUniverse',
   };
   return routes[pageName] || '/';
 };
