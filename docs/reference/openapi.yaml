@@ -347,6 +347,93 @@ paths:
         "500":
           description: Alpaca API error
 
+  /portfolio/pre-entry-validation:
+    get:
+      tags: [Portfolio]
+      summary: Advisory pre-entry rule validation (SI-01)
+      description: >
+        Non-blocking advisory check of 5 pre-entry rules: regime gate, cash constraint,
+        sector concentration, earnings proximity, sizing validity.
+        All checks are advisory — results do not block trade plan submission.
+        §13 compliant: decision support only. strategy_rules.md §4.2.
+        Decision record: docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md
+      parameters:
+        - in: query
+          name: ticker
+          required: true
+          schema:
+            type: string
+          description: Ticker symbol
+        - in: query
+          name: quantity
+          required: true
+          schema:
+            type: number
+          description: Proposed number of shares
+        - in: query
+          name: market
+          required: false
+          schema:
+            type: string
+            enum: [US, UK]
+            default: US
+          description: Market (US or UK)
+        - in: query
+          name: entry_price
+          required: false
+          schema:
+            type: number
+            nullable: true
+          description: Entry price — enables sizing validity check
+        - in: query
+          name: stop_price
+          required: false
+          schema:
+            type: number
+            nullable: true
+          description: Stop price — enables sizing validity check
+      responses:
+        "200":
+          description: Advisory validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      ticker:
+                        type: string
+                      market:
+                        type: string
+                      quantity:
+                        type: number
+                      advisory_status:
+                        type: string
+                        enum: [pass, warn, fail]
+                      override_required:
+                        type: boolean
+                      checks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            rule:
+                              type: string
+                            status:
+                              type: string
+                              enum: [pass, warn, fail, skipped]
+                            detail:
+                              type: string
+                            severity:
+                              type: string
+        "422":
+          description: Missing required query params
+
   /reports/tax-year:
     get:
       tags: [Reports]

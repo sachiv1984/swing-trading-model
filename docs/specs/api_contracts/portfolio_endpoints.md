@@ -640,6 +640,7 @@ Positions without sector data are excluded from the sector calculation. No error
 |---------|------|--------|
 | 2.1.0 | 2026-05-14 | ST-04/ST-06 (EPIC-02 v3.4): Added GET /portfolio/drawdown-status and GET /portfolio/concentration-status (IT-04/IT-05 Arc 3). |
 | 2.2.0 | 2026-05-15 | ST-02 (EPIC-01, v3.5): Add GET /portfolio/paper-positions — IT-06 Alpaca paper trading positions panel. |
+| 2.3.0 | 2026-05-20 | ST-02 (EPIC-01, v3.8): Add GET /portfolio/pre-entry-validation — SI-01 non-blocking advisory pre-entry rule check (§13 PASS). |
 
 ---
 
@@ -692,4 +693,112 @@ Returns current Alpaca paper account positions with P&L. Returns `{"paper_tracki
 | Code | Condition |
 |------|-----------|
 | 500 | Alpaca API error or network failure |
+
+---
+
+## GET /portfolio/pre-entry-validation
+
+Returns an advisory pre-entry validation result for a proposed position. All checks are non-blocking — results are informational and do not prevent trade plan submission.
+
+**§13 compliance:** Decision support only. Not a submission gate. Decision record: `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md`
+**Strategy reference:** `claude/strategy/strategy_rules.md §4.2`
+
+### Query Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| ticker | string | Yes | Ticker symbol |
+| quantity | float | Yes | Proposed number of shares |
+| market | string | No | `US` (default) or `UK` |
+| entry_price | float | No | Enables sizing validity check (§4.1.4) |
+| stop_price | float | No | Enables sizing validity check (§4.1.4) |
+
+### Response (200 OK)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "ticker": "AAPL",
+    "market": "US",
+    "quantity": 10,
+    "advisory_status": "warn",
+    "override_required": true,
+    "checks": [
+      {
+        "rule": "regime_gate",
+        "status": "pass",
+        "detail": "US market is Risk-On (SPY above 200-day MA)",
+        "severity": "fail"
+      },
+      {
+        "rule": "cash_constraint",
+        "status": "pass",
+        "detail": "Estimated cost £2,150.00 within available cash £5,000.00",
+        "severity": "fail",
+        "estimated_cost_gbp": 2150.0,
+        "available_cash_gbp": 5000.0
+      },
+      {
+        "rule": "sector_concentration",
+        "status": "warn",
+        "detail": "Projected Technology sector allocation 32.4% would exceed 30% advisory limit",
+        "severity": "warn",
+        "sector": "Technology",
+        "projected_sector_pct": 32.4,
+        "threshold_pct": 30.0
+      },
+      {
+        "rule": "earnings_proximity",
+        "status": "pass",
+        "detail": "Next earnings 2026-07-30 (71 days) — outside 5-day proximity window",
+        "severity": "warn",
+        "earnings_date": "2026-07-30",
+        "days_until_earnings": 71
+      },
+      {
+        "rule": "sizing_validity",
+        "status": "skipped",
+        "detail": "Provide entry_price and stop_price query params for sizing validity check",
+        "severity": "fail"
+      }
+    ]
+  }
+}
+```
+
+### Response fields — `data`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| ticker | string | Ticker from query |
+| market | string | Market from query (`US` or `UK`) |
+| quantity | float | Quantity from query |
+| advisory_status | string | Aggregate: `pass` \| `warn` \| `fail` (skipped excluded) |
+| override_required | boolean | `true` when advisory_status is `warn` or `fail` |
+| checks | array | Per-rule check results (5 rules) |
+
+### Response fields — `checks[]`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| rule | string | Rule identifier: `regime_gate` \| `cash_constraint` \| `sector_concentration` \| `earnings_proximity` \| `sizing_validity` |
+| status | string | `pass` \| `warn` \| `fail` \| `skipped` |
+| detail | string | Human-readable explanation |
+| severity | string | Worst-case severity of this check: `fail` or `warn` |
+
+Additional fields per rule type when available: `estimated_cost_gbp`, `available_cash_gbp`, `sector`, `projected_sector_pct`, `threshold_pct`, `earnings_date`, `days_until_earnings`, `stop_distance`.
+
+### Notes
+
+- `skipped` status: data required for the check is unavailable (no live price, no sector data, params not supplied). Skipped checks are excluded from `advisory_status` aggregation.
+- `sizing_validity` check requires both `entry_price` and `stop_price` query params; returns `skipped` if either is absent.
+- `earnings_proximity` applies to US tickers only; returns `skipped` for UK tickers.
+- Override acknowledgement recorded on trade plan object (ST-03) is metadata only — no effect on any calculation.
+
+**Errors:**
+
+| Code | Condition |
+|------|-----------|
+| 422 | Missing required query params (`ticker` or `quantity`) |
 

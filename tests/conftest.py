@@ -50,6 +50,10 @@ _DB_STUB_FUNCTIONS = [
     "download_ticker_data", "compute_atr_simple", "create_settings", "update_settings",
     "get_trade_plans_by_position", "ensure_planned_entry_price_column",
     "get_monthly_pnl",
+    "create_trade_plan", "update_trade_plan", "get_trade_plans", "get_trade_plan_by_id",
+    "delete_trade_plan", "ensure_setup_type_column", "ensure_trade_plans_table",
+    "get_trade_by_id", "get_position_by_id", "update_position_lifecycle_state",
+    "ensure_plan_vs_reality_columns", "ensure_signals_watchlisted_status",
 ]
 
 _database_stub = types.ModuleType("database")

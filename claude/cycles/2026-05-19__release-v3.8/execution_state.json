@@ -5,8 +5,7 @@
   "invoked_utc": "2026-05-19T10:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-20T17:00:00Z",
-
+  "last_updated_utc": "2026-05-20T17:30:00Z",
   "epics": {
     "EPIC-04": {
       "status": "implementation_complete",
@@ -30,11 +29,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-19T10:45:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/OPERATIONAL_GUIDE.md#§14 Governance File Registry"],
+          "spec_references": [
+            "claude/system/OPERATIONAL_GUIDE.md#\u00a714 Governance File Registry"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "gh_issue_template.md added to §14. DoQ enforcement via .github/pull_request_template.md. OPERATIONAL_GUIDE.md v3.90→v3.92 (3.91 self-metadata gap corrected). No deviations from spec."
+          "notes": "gh_issue_template.md added to \u00a714. DoQ enforcement via .github/pull_request_template.md. OPERATIONAL_GUIDE.md v3.90\u2192v3.92 (3.91 self-metadata gap corrected). No deviations from spec."
         },
         "ST-09": {
           "title": "Ticker Universe Management Page",
@@ -148,7 +149,7 @@
       "test_scenarios": [],
       "stories": {
         "ST-01": {
-          "title": "§13 Review Gate for SI-01 Pre-Entry Rule Validation",
+          "title": "\u00a713 Review Gate for SI-01 Pre-Entry Rule Validation",
           "classification": "delegated_decision",
           "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
@@ -162,15 +163,17 @@
           "acceptance_verified": true,
           "spec_references": [
             "claude/strategy/strategy_rules.md",
-            "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md"
+            "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md",
+            "docs/specs/api_contracts/portfolio_endpoints.md",
+            "docs/specs/frontend/pages/trade_plan.md"
           ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md",
-          "notes": "§13 PASS — 2026-05-20. 8 binding conditions. ST-02 and ST-03 unblocked."
+          "notes": "\u00a713 PASS \u2014 2026-05-20. 8 binding conditions documented in decision record. Category A checks (regime, sizing validity, cash constraint) authorised immediately. Category B (sector concentration, earnings proximity) conditional on same-commit strategy_rules.md formalisation. ST-02 and ST-03 now unblocked."
         },
         "ST-02": {
-          "title": "SI-01 Backend — Pre-Entry Validation Service",
+          "title": "SI-01 Backend \u2014 Pre-Entry Validation Service",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -183,16 +186,17 @@
           "completed_utc": "2026-05-20T10:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "claude/strategy/strategy_rules.md#§4.2",
-            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation"
+            "claude/strategy/strategy_rules.md#\u00a74.2",
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation",
+            "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md"
           ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "strategy_rules.md v1.4 §4.2. pre_entry_validation.py created. 17 unit tests pass. conftest.py stubs completed. test.py →59 endpoints. SystemStatus.js + e2e spec updated."
+          "notes": "strategy_rules.md v1.4 \u2014 \u00a74.2 formalises all 5 pre-entry advisory checks (Category A + B per \u00a713 binding conditions). backend/routers/pre_entry_validation.py created. Registered in main.py. test.py +1 (\u219259). SystemStatus.js + e2e spec updated 58\u219259. portfolio_endpoints.md v2.3.0. openapi.yaml updated. 17 unit tests pass. conftest.py stubs completed (BLG-QA-20 gap resolved)."
         },
         "ST-03": {
-          "title": "SI-01 Frontend — Pre-Entry Validation Panel",
+          "title": "SI-01 Frontend \u2014 Pre-Entry Validation Panel",
           "classification": "delegated_frontend",
           "status": "blocked_frontend",
           "assigned_to": "Head of UX & Design",
@@ -206,28 +210,42 @@
           "acceptance_verified": false,
           "spec_references": [
             "docs/specs/frontend/pages/trade_plan.md",
-            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation"
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation",
+            "docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md"
           ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sprint 2. Advisory panel — non-blocking. Delegated to Head of UX & Design (DEL-20260520-01)."
+          "notes": "Sprint 2. Advisory panel \u2014 non-blocking. ST-01 \u00a713 PASS and ST-02 both done. Pure frontend story. Delegated to Head of UX & Design (DEL-20260520-01)."
         }
       }
     }
   },
-
-  "blocked_items": ["ST-03"],
-  "delegated_items": ["ST-03"],
-  "completed_items": ["ST-10", "ST-01", "ST-02", "ST-09", "ST-06", "ST-07", "ST-08"],
+  "blocked_items": [
+    "ST-03"
+  ],
+  "delegated_items": [
+    "ST-03"
+  ],
+  "completed_items": [
+    "ST-10",
+    "ST-01",
+    "ST-02",
+    "ST-09",
+    "ST-06",
+    "ST-07",
+    "ST-08"
+  ],
   "open_escalations": [],
-
   "merge_gate": {
     "epics_merged": [],
-    "epics_pending": ["EPIC-04", "EPIC-03", "EPIC-01"],
+    "epics_pending": [
+      "EPIC-04",
+      "EPIC-03",
+      "EPIC-01"
+    ],
     "all_merged": false
   },
-
   "sealed": false,
   "sealed_utc": null
 }
