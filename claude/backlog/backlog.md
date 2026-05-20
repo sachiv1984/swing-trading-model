@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-19 (session — 3 new items added: BLG-FE-36, BLG-FEAT-23, BLG-FEAT-24)
+**Last Updated:** 2026-05-20 (session — 6 new items added: BLG-TECH-10, BLG-BE-10, BLG-BE-11, BLG-BE-12, BLG-FE-37, BLG-FE-38)
 **Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice
@@ -31,7 +31,32 @@
 
 ## 1. Platform & Validation Governance Backlog
 
-*No active items in this section — BLG-TECH-05 deferred to §9 (DL-023, 2026-04-24).*
+*BLG-TECH-05 deferred to §9 (DL-023, 2026-04-24).*
+
+---
+
+### BLG-TECH-10 — Fix Yahoo Finance crumb/401 rate-limiting in screener batch
+**Priority:** P1 (High)
+**Type:** Platform / Technical Debt
+**Owner:** Head of Backend Engineering
+**Source:** Screener render log analysis — 2026-05-20
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.9
+
+**Problem**
+The screener batch service makes concurrent OHLCV requests to Yahoo Finance. Under load, YF returns heavy 401 "Invalid Crumb" and "User is unable to access this feature" errors, causing the majority of US tickers to fail data fetch in a single run. This silently produces degraded screener results — only the tickers whose requests happened to succeed appear. The root cause is that the crumb auth token expires and is not refreshed between requests, and concurrent request volume exceeds YF's tolerance.
+
+**Scope**
+- Implement crumb refresh logic: detect 401 responses and re-fetch the crumb before retrying
+- Add per-request exponential backoff with jitter on 401/429 responses
+- Cap concurrent YF requests to a safe limit (e.g. 5 in-flight at a time)
+- Log crumb refresh events and consecutive failure counts for observability
+
+**Acceptance Criteria**
+- Screener run against full ticker universe completes without >5% OHLCV failures under normal YF conditions
+- A 401 response triggers a crumb refresh and one retry before marking the ticker as failed
+- Concurrent request cap is configurable via environment variable
+- Crumb refresh events visible in backend logs
 
 ---
 
@@ -163,6 +188,37 @@ Users currently have no way to manage the ticker universe that drives both scree
 
 ---
 
+### BLG-FEAT-25 — PT-04 Setup Quality Score (backend + frontend)
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Analytics
+**Owner:** Head of Backend Engineering; Metrics & Analytics Owner; Head of UX & Design
+**Source:** Arc 2 roadmap — deferred from v3.8 (ST-04/ST-05, EPIC-02) — gate not met 2026-05-19: < 20 closed trades. Traceability entry added by delivery verification engine 2026-05-20.
+**Effort:** L (~2–4 days, backend + frontend)
+**Provisional-Target:** v3.9 (conditional — 20+ closed trades gate must be confirmed by Product Owner before sprint planning seals)
+
+**Problem**
+A deterministic setup quality score (0–100) based on own trade history cannot be computed until sufficient closed trades exist. When the user has entered with similar regime/signal/ATR conditions before, the score reflects historical win rate under those conditions. The gate condition (20+ closed trades) was not met at v3.8 sprint planning (PO confirmed 2026-05-19).
+
+**Scope (Backend — ST-04)**
+- `GET /trade-plans/setup-quality-score?ticker={ticker}` endpoint
+- Score (0–100) computed from closed trade history matching current regime/signal/ATR conditions
+- Gate response: `{"gate_not_met": true, "min_trades_required": 20}` when fewer than 20 closed trades
+- Score factors: matching_trades count, win_rate, average_R, score_explanation
+- Endpoint registered in backend/routers/test.py and openapi.yaml
+
+**Scope (Frontend — ST-05)**
+- Setup Quality Score displayed in Pre-Trade Research View and Trade Plan form
+- Score badge with numeric value (0–100) and qualitative label (Excellent/Good/Fair/Low)
+- "Insufficient trade history (< 20 trades)" message when gate not met
+- Tooltip/expandable: matching_trades, win_rate, average_R
+
+**Acceptance Criteria**
+- Backend: endpoint implemented, gate enforced, unit tests cover gate_not_met, gate_met mixed, perfect history
+- Frontend: score renders in Pre-Trade Research View and Trade Plan form; gate-not-met state clearly displayed; score updates when ticker changes
+- Playwright: score renders; gate-not-met message renders; score updates on ticker change
+
+---
+
 ## 3. Frontend & UX Backlog
 
 ---
@@ -284,6 +340,53 @@ When a trader opens the trade plan form for a watchlisted signal, they see momen
 
 ---
 
+### BLG-FE-37 — Strip .L suffix from Ticker Universe page display labels
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** Post-sprint QA observation — 2026-05-20
+**Effort:** XS (<1h)
+**Provisional-Target:** v3.9
+
+**Problem**
+The Ticker Universe page displays LSE ticker symbols with the `.L` suffix (e.g. `BATS.L`) because that is how they are stored in the database for identification. This is correct internally but looks unpolished to users — LSE tickers are conventionally displayed without the suffix in UI contexts (e.g. `BATS`). The suffix is meaningful to data sources but irrelevant to a trader reading the page.
+
+**Scope**
+- In `TickerUniverse.js`, strip `.L` from the displayed ticker label (not from the underlying value used for API calls)
+- DB storage and API payloads remain unchanged
+
+**Acceptance Criteria**
+- LSE tickers on the Ticker Universe page display without `.L` suffix
+- Ticker symbol sent in API requests (add, delete, toggle) is unchanged (still includes `.L`)
+- US tickers are unaffected
+
+---
+
+### BLG-FE-38 — Add degraded-run warning to screener when OHLCV failure rate exceeds 20%
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Backend Engineering; Head of UX & Design
+**Source:** Screener render log analysis — 2026-05-20
+**Effort:** S (~0.5 days)
+**Provisional-Target:** v3.9
+
+**Problem**
+When Yahoo Finance rate-limits during a screener run, the majority of US tickers fail OHLCV fetch silently. The screener returns results with no indication that coverage was degraded — a trader sees UK-only or partial results and may act on them without realising most of the universe was excluded. There is currently no way to distinguish a clean full-coverage run from a heavily degraded one.
+
+**Scope**
+- In the screener batch service, calculate `ohlcv_failure_rate = failed_tickers / total_tickers` at run completion
+- If `ohlcv_failure_rate > 0.20`, set `degraded_run: true` and `failure_rate: <float>` on the screener run record
+- Expose `degraded_run` and `failure_rate` in `GET /screener/results` response
+- In the screener frontend, display a visible warning banner when `degraded_run` is true: "Results may be incomplete — {N}% of tickers failed data fetch"
+
+**Acceptance Criteria**
+- `degraded_run: true` is set on any screener run where >20% of tickers returned no OHLCV data
+- `GET /screener/results` response includes `degraded_run` boolean and `failure_rate` float
+- Screener results page shows a warning banner when `degraded_run` is true, citing the failure rate
+- Clean runs (failure rate ≤20%) show no banner
+
+---
+
 ## 4. Backend & Data Backlog
 
 
@@ -294,6 +397,77 @@ When a trader opens the trade plan form for a watchlisted signal, they see momen
 ---
 
 *BLG-AI-03 (AI Journal Summarisation quarterly review cadence) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
+
+---
+
+### BLG-BE-10 — Fix sector/industry data dropped in screener batch
+**Priority:** P1 (High)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** Post-sprint QA observation — 2026-05-20
+**Effort:** XS (<1h)
+**Provisional-Target:** v3.9
+
+**Problem**
+`screener_batch_service.py` fetches full ticker records from `ticker_universe` (including `sector` and `industry`) but immediately extracts only the ticker string into a list, silently discarding the sector/industry fields. These fields are never passed to `compute_screener_result()`, so screener results are stored with NULL sector and industry for every ticker. Sector/industry-based filtering and display in screener results is therefore always empty.
+
+**Scope**
+- In `screener_batch_service.py`, retain the full ticker dict instead of extracting the ticker string only
+- Pass `sector` and `industry` from the ticker record when calling `compute_screener_result()`
+- Verify screener results now persist non-null sector/industry for tickers that have this data in `ticker_universe`
+
+**Acceptance Criteria**
+- Screener results for tickers with sector/industry in `ticker_universe` have non-null sector and industry values
+- No change to screener result schema or API contract
+
+---
+
+### BLG-BE-11 — Remove DAY from ticker universe (invalid Yahoo Finance symbol)
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** Screener render log — Yahoo Finance 404 for DAY (range=30d) — 2026-05-20
+**Effort:** XS (<1h)
+**Provisional-Target:** v3.9
+
+**Problem**
+The ticker `DAY` (Dayforce Inc., formerly Ceridian) is in `tickers_full_list.csv` and is synced into `ticker_universe` as active. Yahoo Finance returns HTTP 404 for `DAY` on historical data requests (30d range), meaning it consistently fails OHLCV fetch on every screener run, wasting processing time and appearing in the active ticker list despite producing no usable data. Also investigate whether `PHNX.L` is a permanent YF 404 or a transient issue.
+
+**Scope**
+- Remove `DAY` from `backend/tickers_full_list.csv`
+- Deactivate or delete `DAY` from the `ticker_universe` table via migration or startup cleanup
+- Investigate the correct YF symbol for Dayforce Inc. and add back if a valid symbol exists
+- Confirm `PHNX.L` status — if consistently 404, apply same treatment
+
+**Acceptance Criteria**
+- `DAY` no longer appears in `ticker_universe` active tickers
+- No `OHLCV FAILED for DAY` log entries on screener runs
+- `tickers_full_list.csv` does not contain `DAY`
+
+---
+
+### BLG-BE-12 — Add company_name column to ticker universe
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering; Head of UX & Design
+**Source:** Post-sprint QA observation — 2026-05-20
+**Effort:** S (~0.5 days)
+**Provisional-Target:** v3.9
+
+**Problem**
+The `ticker_universe` table stores only ticker symbol, market, sector, industry, and active status — no company name. `tickers_full_list.csv` already contains company names (e.g. `HOLX,NASDAQ,Hologic`), so the data is available at source. The Ticker Universe management page therefore shows only bare ticker symbols with no human-readable company name, making the list harder to scan for non-technical users.
+
+**Scope**
+- Add `company_name TEXT` column to `ticker_universe` table via `ensure_company_name_column()` in `ticker_universe_service.py`
+- Backfill `company_name` from `tickers_full_list.csv` for all existing rows on startup
+- Populate `company_name` from CSV when syncing new tickers
+- Include `company_name` in `GET /ticker-universe` response
+- Display company name alongside ticker symbol on the Ticker Universe page
+
+**Acceptance Criteria**
+- `ticker_universe` rows have non-null `company_name` for all tickers present in the CSV
+- `GET /ticker-universe` response includes `company_name` field
+- Ticker Universe page shows company name next to each ticker symbol
 
 ---
 

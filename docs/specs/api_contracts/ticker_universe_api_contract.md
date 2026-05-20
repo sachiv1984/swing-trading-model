@@ -129,6 +129,20 @@ Soft-deletes a ticker from the screener universe (sets `active=FALSE`). The tick
 
 ---
 
+## Known Deviations
+
+### DEV-EPIC04-ST09-01 — createPageUrl map missing TickerUniverse entry at merge time (Resolved)
+
+- **Description:** `src/utils/index.js` `createPageUrl` map did not include `TickerUniverse: '/TickerUniverse'` at the time EPIC-04 PR #452 merged. Clicking the sidebar "Ticker Universe" nav link resolved to `/` (dashboard) instead of `/TickerUniverse`.
+- **Canonical requirement:** "Universe Management page accessible from nav" (ST-09 AC)
+- **Priority:** P3 (UX bug; workaround: navigate directly to `/#/TickerUniverse`)
+- **Status:** Resolved — fix committed 75b7eda4 on EPIC-01 branch; merged with PR #456 (2026-05-20)
+- **Target resolution release:** v3.8 (resolved in same release)
+- **Owner:** Head of UX & Design
+- **Backlog reference:** No separate item — fix was in pipeline and merged before delivery verification
+
+---
+
 ## DoQ Sign-Off
 
 - [x] All three endpoints documented at `##` heading level
