@@ -4,8 +4,10 @@
   "backlog_slice_source": "claude/cycles/2026-05-19__release-v3.8/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-19T10:30:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-05-20T20:30:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-05-20T22:00:00Z",
+  "sealed": true,
+  "sealed_utc": "2026-05-20T22:00:00Z",
   "epics": {
     "EPIC-04": {
       "status": "merged",
@@ -58,7 +60,7 @@
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "TickerUniverse.js created. Registered in pages.config.js + Layout.js Tools group. 15 Playwright tests pass (SC-TU-01 through SC-TU-06): render, add form POST, toggle DELETE, delete confirmation, market filter, status filter. P3 deviation DEV-EPIC04-ST09-01: createPageUrl map missing TickerUniverse at merge time; fix committed 75b7eda4 on EPIC-01 branch."
+          "notes": "TickerUniverse.js created. Registered in pages.config.js + Layout.js Tools group. 15 Playwright tests pass (SC-TU-01 through SC-TU-06): render, add form POST, toggle DELETE, delete confirmation, market filter, status filter. P3 deviation DEV-EPIC04-ST09-01: createPageUrl map missing TickerUniverse at merge time; fix committed 75b7eda4 on EPIC-01 branch — merged with PR #456."
         }
       }
     },
@@ -140,13 +142,13 @@
       }
     },
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-05-19__release-v3.8/EPIC-01",
       "pr_number": 456,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-19__release-v3.8/qa_evidence_EPIC-01.md",
-      "test_scenarios": ["tests/e2e/pre-trade-research.spec.js"],
+      "test_scenarios": ["tests/e2e/pre-trade-research.spec.js", "tests/e2e/trade-plan.spec.js"],
       "stories": {
         "ST-01": {
           "title": "§13 Review Gate for SI-01 Pre-Entry Rule Validation",
@@ -225,20 +227,18 @@
   "delegated_items": [],
   "completed_items": [
     "ST-10",
-    "ST-01",
-    "ST-02",
-    "ST-03",
     "ST-09",
     "ST-06",
     "ST-07",
-    "ST-08"
+    "ST-08",
+    "ST-01",
+    "ST-02",
+    "ST-03"
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": ["EPIC-04", "EPIC-03"],
-    "epics_pending": ["EPIC-01"],
-    "all_merged": false
-  },
-  "sealed": false,
-  "sealed_utc": null
+    "epics_merged": ["EPIC-04", "EPIC-03", "EPIC-01"],
+    "epics_pending": [],
+    "all_merged": true
+  }
 }
