@@ -29,7 +29,7 @@ from routers import paper_trading as paper_trading_router
 from routers import pre_entry_validation as pre_entry_validation_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
-from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers, sync_from_tickers_table
+from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers
 from services.screener_batch_service import ensure_screener_results_table
 
 
@@ -217,11 +217,6 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_ticker_universe_table FAILED at startup: %s", _e)
     try:
-        synced = sync_from_tickers_table()
-        _log.info("sync_from_tickers_table: OK (%d tickers synced from public.tickers)", synced)
-    except Exception as _e:
-        _log.warning("sync_from_tickers_table skipped (public.tickers may not exist): %s", _e)
-    try:
         ensure_screener_results_table()
         _log.info("ensure_screener_results_table: OK")
     except Exception as _e:
@@ -232,6 +227,12 @@ def on_startup():
         _log.info("ensure_plan_vs_reality_columns: OK")
     except Exception as _e:
         _log.error("ensure_plan_vs_reality_columns FAILED at startup: %s", _e)
+    try:
+        from database import ensure_setup_type_column
+        ensure_setup_type_column()
+        _log.info("ensure_setup_type_column: OK")
+    except Exception as _e:
+        _log.error("ensure_setup_type_column FAILED at startup: %s", _e)
     try:
         from database import ensure_signals_watchlisted_status
         ensure_signals_watchlisted_status()
