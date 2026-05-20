@@ -3423,6 +3423,7 @@ components:
                 ticker: { type: string }
                 market: { type: string, enum: [US, UK] }
                 position_id: { type: string, format: uuid, nullable: true }
+                setup_type: { type: string, nullable: true, enum: [Breakout, "Pullback to MA", "Momentum Continuation", "Mean Reversion", "Catalyst-driven", Other] }
                 setup_thesis: { type: string, nullable: true }
                 entry_rationale: { type: string, nullable: true }
                 regime_context_at_entry: { type: string, nullable: true }
@@ -3472,7 +3473,13 @@ components:
       requestBody:
         content:
           application/json:
-            schema: { type: object }
+            schema:
+              type: object
+              properties:
+                setup_type: { type: string, nullable: true, enum: [Breakout, "Pullback to MA", "Momentum Continuation", "Mean Reversion", "Catalyst-driven", Other] }
+                setup_thesis: { type: string, nullable: true }
+                entry_rationale: { type: string, nullable: true }
+                status: { type: string, enum: [draft, active, closed] }
       responses:
         "200":
           description: Updated trade plan
