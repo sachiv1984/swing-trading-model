@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-05
+**Version:** 1.2
+**Last Updated:** 2026-05-21
+**Design Source (v1.2):** docs/design/2026-05-21__release-v3.9/degraded-run-banner/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
 **API contract:** docs/specs/api_contracts/screener_api_contract.md
@@ -41,7 +42,7 @@ Users should be able to:
 
 ## 3. API Reference
 
-- `GET /screener/results` — fetch screener result records (paginated)
+- `GET /screener/results` — fetch screener result records (paginated); response includes `degraded_run` (boolean) and `failure_rate` (float) on the run record
 - `POST /screener/run` — trigger a new screener run
 - Canonical contract: `docs/specs/api_contracts/screener_api_contract.md`
 - Schema: `docs/specs/screener_results_schema.md`
@@ -200,12 +201,33 @@ Each ticker row in the screener results table has a **"Research"** action (text 
 
 ---
 
-## 12. AC Coverage Summary (DS-02 Interaction Patterns)
+## 12. Degraded Run Warning Banner (v3.9 — ST-04)
+
+**Design source:** `docs/design/2026-05-21__release-v3.9/degraded-run-banner/ux_spec.md`
+
+When `GET /screener/results` returns `degraded_run: true`, display a warning banner above the results table.
+
+| Attribute | Specification |
+|-----------|---------------|
+| Placement | Below page header, above data freshness indicator (§6) and results table |
+| Background | Amber/yellow warning tone (consistent with §7 stale data badge) |
+| Icon | ⚠ warning icon, left-aligned |
+| Text | "Results may be incomplete — {N}% of tickers failed data fetch" where N = `Math.round(failure_rate * 100)` |
+| Hidden when | `degraded_run: false`, field absent, or after user triggers new run (`POST /screener/run`) |
+| Dismiss | No dismiss button — persists while degraded run is the latest result |
+
+**§13 Compliance:** Display-only. No automated decisions.
+
+**Playwright tests:** SC-SCR-DEG-01 (banner present with correct %), SC-SCR-DEG-02 (banner absent when degraded_run: false)
+
+---
+
+## 13. AC Coverage Summary (DS-02 Interaction Patterns)
 
 This spec covers all DS-02 interaction patterns:
 
-| DS-02 Interaction | Spec section |
-|-------------------|-------------|
+| DS-02 / v3.9 Interaction | Spec section |
+|--------------------------|-------------|
 | Column layout | §4 |
 | Sort/filter controls | §5 |
 | Data freshness indicator | §6 |
@@ -215,6 +237,7 @@ This spec covers all DS-02 interaction patterns:
 | News panel | §9 |
 | Skeleton/progressive loading | §10 |
 | Research navigation (v3.2) | §11 |
+| Degraded run warning banner (v3.9) | §12 |
 
 ---
 
@@ -244,5 +267,6 @@ This spec covers all DS-02 interaction patterns:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-05-21 | v3.9 design gate — added §12 Degraded Run Warning Banner (ST-04: banner when degraded_run: true, percentage text, amber style, SC-SCR-DEG-01/02). §3 API reference updated to note degraded_run and failure_rate fields. Design source: degraded-run-banner/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
 | 1.1 | 2026-05-05 | v3.2 design gate — added §11 Research Navigation (ST-04); added Actions column to §4 column layout. Design source: screener-to-research-navigation/ux_spec.md. |
 | 1.0 | 2026-04-23 | Initial spec. |
