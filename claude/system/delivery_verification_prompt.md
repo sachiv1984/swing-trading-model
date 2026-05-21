@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 2.3
-**Last Updated:** 2026-05-17
+**Version:** 2.4
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -81,8 +81,7 @@ Canonical governance stack: per `claude/system/shared/governance_stack.md`. This
 
 ## 5. Write Scope Restriction
 
-During this routine you may write only to:
-
+→ Apply `claude/system/shared/governance_preamble.md §Write-Scope`. Phase-specific permitted paths:
 - `claude/cycles/<cycle_id>/verification_report.md` (create)
 - `claude/cycles/<cycle_id>/verification_escalations.md` (create or append — hard gate blockers only)
 - `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` (append-only — Phase 4 section; create if absent)
@@ -90,33 +89,17 @@ During this routine you may write only to:
 - `claude/backlog/backlog.md` (append-only — outstanding items and test scenario gaps only)
 - `.claude_current_state.json` (status update only)
 
-You must **not** modify:
-- `claude/cycles/<cycle_id>/execution_state.json` (sealed)
-- `claude/cycles/<cycle_id>/sprint_close.md` (sealed)
-- `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed)
-- `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (owned by Director of Quality)
-- Any canonical spec file
-- `claude/roadmap/*`
-- `claude/strategy/strategy_rules.md`
-
-Violation → halt.
+Must not modify: `claude/cycles/<cycle_id>/execution_state.json` (sealed), `claude/cycles/<cycle_id>/sprint_close.md` (sealed), `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed), `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md` (owned by Director of Quality), any canonical spec file, `claude/roadmap/*`, `claude/strategy/strategy_rules.md`.
 
 ---
 
 ## 6. Required Authority Roles
 
-Minimum required roles for this routine:
-
+→ Apply `claude/system/shared/governance_preamble.md §Agent-Integrity`. Required roles:
 - Director of Quality
 - Product Owner
 - PMO Lead
 - QA & Testing Owner
-
-Verify: each role has an agent file in `claude/agents/` containing `**Role:** <Role Name>`.
-
-If any required role is missing or malformed: halt.
 
 ---
 
@@ -585,6 +568,7 @@ The run is complete when: `verification_report.md` has all required sections (§
 
 ## 9. Governance Invariants
 
+→ Apply `claude/system/shared/governance_preamble.md §Invariants` (system-wide). Phase-specific additions:
 - **No autonomous verification.** The engine assembles evidence and produces the report. The Director of Quality and Product Owner sign off. The engine does not self-certify.
 - **No cycle unlocking without passing status.** `next_cycle_unblocked = true` is only set when status is `Verified` or `Verified_with_deviations`. Never when `Not_Verified`.
 - **P0 deviations have no acceptance path.** They must be resolved. The engine will never record a P0 deviation as accepted — only the resolution of the underlying issue unlocks verification.

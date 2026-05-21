@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.9
-**Last Updated:** 2026-05-17
+**Version:** 2.10
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -99,8 +99,7 @@ Canonical governance stack: per `claude/system/shared/governance_stack.md`. This
 
 **Dry-run exception:** If `--dry-run` is active, none of the permitted writes below may be made. The routine produces a closure plan only.
 
-During this routine you may write only to:
-
+→ Apply `claude/system/shared/governance_preamble.md §Write-Scope`. Phase-specific permitted paths:
 - `docs/product/changelog.md` (append new version entry)
 - `claude/roadmap/current_roadmap.md` (status update, version headers, ✅ Complete annotation with ship date and `cycle_id`, release summary table update — all per STEP 2)
 - `claude/backlog/backlog.md` (mark shipped items complete; add missing Phase 4 items; no other changes)
@@ -117,31 +116,16 @@ During this routine you may write only to:
 - `claude/cycles/<cycle_id>/closure_state.json` (create at STEP 0; update at batch checkpoints)
 - `.claude_current_state.json` (status update only)
 
-You must **not** modify: any file marked `sealed: true` or listed with `(sealed)` in its section below, `claude/strategy/strategy_rules.md`, or any governance document not listed in the permitted write scope above.
-
-Sealed files (do not touch):
-- `claude/cycles/<cycle_id>/verification_report.md`
-- `claude/cycles/<cycle_id>/sprint_close.md`
-- `claude/cycles/<cycle_id>/execution_state.json`
-- `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
-- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md`
-- `claude/cycles/<cycle_id>/sprint_backlog.md`
-- `claude/cycles/<cycle_id>/lessons_learnt.md`
-- `claude/cycles/<cycle_id>/lessons_learnt_cycle.md`
-
-Violation → halt.
+Sealed files — must not modify: `claude/cycles/<cycle_id>/verification_report.md`, `claude/cycles/<cycle_id>/sprint_close.md`, `claude/cycles/<cycle_id>/execution_state.json`, `claude/cycles/<cycle_id>/stage4_backlog_slice.md`, `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md`, `claude/cycles/<cycle_id>/sprint_backlog.md`, `claude/cycles/<cycle_id>/lessons_learnt.md`, `claude/cycles/<cycle_id>/lessons_learnt_cycle.md`, `claude/strategy/strategy_rules.md`, any governance document not listed above.
 
 ---
 
 ## 6. Required Authority Roles
 
-Minimum required roles for this routine:
-
+→ Apply `claude/system/shared/governance_preamble.md §Agent-Integrity`. Required roles:
 - PMO Lead
 - Product Owner
 - Head of Specs Team
-
-Verify: each role has an agent file in `claude/agents/` containing `**Role:** <Role Name>`. If any required role is missing or malformed: halt.
 
 ---
 
@@ -711,15 +695,13 @@ There is no `Failed` state for post-ship closure. If a hard gate fires before co
 
 ## 9. Governance Invariants
 
+→ Apply `claude/system/shared/governance_preamble.md §Invariants` (system-wide). Phase-specific additions:
 - **No re-verification.** This engine reads sealed Phase 4 artefacts. It does not re-assess what passed or failed.
 - **No scope revision.** The execution state is sealed. The engine records what shipped; it does not alter it.
-- **Write scope is strictly bounded.** Status updates, changelog entries, and deviation compliance fixes only. No content changes to specs, strategies, or canonical documents beyond the permitted scope.
 - **Lessons learnt must be reviewed, not just filed.** Every action item requires a disposition. Deferred is acceptable; unreviewed is not.
 - **Immediate lessons learnt actions are non-deferrable.** If an action can be applied now (template fix, prompt correction), it must be. Do not defer what can be done immediately.
 - **Outstanding actions do not block the next cycle** — but they must be recorded and owned. Nothing is silently dropped.
-- **Delivery pressure does not override closure steps.** The changelog, roadmap, and backlog must be updated before the next cycle opens, regardless of timeline.
 - **Dry-run produces no side effects.** No files written, no state changed, no commit made. The closure plan is the sole output.
-- **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, backlog reconciliation (STEP 3) runs against that file. Reconciling against the original slice when an amendment has sealed is a process integrity failure.
 
 ---
 

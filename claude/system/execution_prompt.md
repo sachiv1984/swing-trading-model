@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.24
-**Last Updated:** 2026-05-17
+**Version:** 3.25
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -191,8 +191,7 @@ The engine may **not** autonomously:
 
 ## 6. Agent Integrity (Required Roles)
 
-Minimum required roles for this routine:
-
+→ Apply `claude/system/shared/governance_preamble.md §Agent-Integrity`. Required roles:
 - Product Owner
 - Head of Specs Team
 - PMO Lead
@@ -202,18 +201,13 @@ Minimum required roles for this routine:
 - FinOps & Resource Architect
 - Facilitator
 
-Verify: each role has an agent file in `claude/agents/` containing `**Role:** <Role Name>`.
-
-If any required role is missing or malformed: halt.
-
-> **Known format note:** `head_of_specs_team.md` uses `**Role:** Head of Specs Team` in its header block rather than in a dedicated role line. Treat this as compliant for the purpose of this check — the string `**Role:** Head of Specs Team` is present in the file. If the format is ever standardised, update this note.
+Phase-specific note: `head_of_specs_team.md` uses `**Role:** Head of Specs Team` in its header block rather than a dedicated role line — treat as compliant (string is present in the file).
 
 ---
 
 ## 7. Write Scope Restriction (Hard Gate)
 
-During this routine you may write only to:
-
+→ Apply `claude/system/shared/governance_preamble.md §Write-Scope`. Phase-specific permitted paths:
 - `claude/cycles/<cycle_id>/execution_state.json` (create/update)
 - `claude/cycles/<cycle_id>/delegation_log.md` (append-only)
 - `claude/cycles/<cycle_id>/execution_escalations.md` (append-only)
@@ -224,18 +218,7 @@ During this routine you may write only to:
 - Canonical spec files (deviation documentation only — §9 Known Deviation Standard; no other spec edits permitted)
 - `.claude_current_state.json` (status updates only)
 
-You must **not** modify:
-- `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed)
-- `claude/roadmap/*`
-- `claude/backlog/backlog.md`
-- `claude/strategy/strategy_rules.md`
-- Any governance document outside this routine's scope
-
-Violation → halt.
-
-This restriction applies to bash commands as well as direct file writes. Bash commands whose side-effects write files outside the permitted scope (e.g. a script that modifies governance files, a test runner that edits source files outside the ST item's scope) are also prohibited.
+Must not modify: `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed), `claude/roadmap/*`, `claude/backlog/backlog.md`, `claude/strategy/strategy_rules.md`, any governance document outside this routine's scope.
 
 ---
 
@@ -953,21 +936,16 @@ The run is complete only if:
 
 ## 13. Governance Invariants
 
-System-wide invariants: per `claude/system/invariants.md`. Execution-engine-specific invariants below.
+→ Apply `claude/system/shared/governance_preamble.md §Invariants` (system-wide) and `claude/system/invariants.md`. Phase-specific additions:
 
-**Ambiguity definition:** An item is *ambiguous* when its acceptance criteria, EPIC assignment, spec reference, or delegation classification cannot be determined without an authority decision. Ambiguous items must be classified `delegated_decision` and escalated — never silently assumed or guessed. This applies in both `strict` and `standard` modes. The only difference between modes is whether execution continues on other items (standard) or halts entirely (strict).
+**Ambiguity definition:** An item is *ambiguous* when its acceptance criteria, EPIC assignment, spec reference, or delegation classification cannot be determined without an authority decision. Ambiguous items must be classified `delegated_decision` and escalated — never silently assumed or guessed. This applies in both `strict` and `standard` modes.
 
-- **No autonomous merge.** The engine never merges without QA sign-off and Product Owner acceptance.
-- **Gate evidence requirement.** Any hard gate status change in `current_roadmap.md` (marking a gate as "complete") must reference the evidence artefact that cleared it (PoG Gate ID, decision record path, or verifiable session output reference). A gate may not be marked complete without an evidence reference. If no artefact exists: gate remains "pending". Record in escalations.md.
+- **Gate evidence requirement.** Any hard gate status change in `current_roadmap.md` (marking a gate as "complete") must reference the evidence artefact that cleared it (PoG Gate ID, decision record path, or verifiable session output reference). No artefact → gate stays "pending"; record in escalations.md.
 - **No scope change.** The backlog slice is sealed. The engine executes what is there.
 - **No strategy boundary decisions.** The Strategy Rules owner decides; the engine surfaces and parks.
 - **Delegation is explicit and tracked.** No silent assumptions about human completion.
-- **Commit format is non-negotiable.** `[EPIC-xx][ST-xx]` prefix on every commit to `exec/**`. `governance_sync.yml` depends on it.
-- **PR title is non-negotiable.** `[EPIC-xx]` in title. `quality_gate.yml` blocks merge without it.
-- **Every block is recorded.** Nothing is silently skipped. Blocked items are documented in `execution_state.json` and surfaced to the user.
-- **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, it is used exclusively. Executing from the original slice when an amendment has sealed is a process integrity failure.
-- **Delivery pressure does not override quality gates.** Director of Quality sign-off is required on every EPIC before merge, regardless of timeline.
-- **Backend commits for delegated_frontend items must land on the EPIC branch.** Backend commits tightly coupled to a `delegated_frontend` story (e.g. new DB migration + endpoint required by the frontend) must be committed to that story's EPIC branch, not directly to `main`, unless the PMO Lead explicitly authorises a direct-to-main path in writing. Violation is a process deviation and must be documented in the QA evidence log for the affected EPIC (and any other EPIC whose merge window was impacted). Reference: DEV-EPIC02-ST05-02 (LL-v2.2-EX-03).
+- **Director of Quality sign-off is required on every EPIC before merge**, regardless of timeline.
+- **Backend commits for delegated_frontend items must land on the EPIC branch.** Backend commits tightly coupled to a `delegated_frontend` story must be committed to that story's EPIC branch, not directly to `main`, unless the PMO Lead explicitly authorises a direct-to-main path in writing. Violation must be documented in the QA evidence log. Reference: DEV-EPIC02-ST05-02 (LL-v2.2-EX-03).
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.29
-**Last Updated:** 2026-05-17
+**Version:** 2.30
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -77,7 +77,7 @@ Authoritative planning inputs:
 ---
 
 ## 6. Agent Integrity (Required Roles)
-Minimum required roles for this routine:
+→ Apply `claude/system/shared/governance_preamble.md §Agent-Integrity`. Required roles:
 - Product Owner
 - Head of Specs Team
 - PMO Lead
@@ -88,27 +88,18 @@ Minimum required roles for this routine:
 - Facilitator
 - Challenger
 
-If any required role is missing or malformed (agent file absent or missing the required `**Role:** <Role Name>` line), halt.
-
 ---
 
 ## 7. Write Scope Restriction (Hard Gate)
-During this routine you may write only to:
-- claude/cycles/<cycle_id>/*
-- claude/backlog/backlog.md (release slice only; no global reprioritisation)
-- claude/roadmap/current_roadmap.md (ONLY to add execution notes/links under the existing release section; no scope change)
-- docs/product/scope/* (scope document created at STEP 2)
-- docs/product/decisions/* (decisions record created at STEP 3; also when required to resolve an escalation under the rules below; must be lifecycle-compliant)
-- claude/scoring/* (only if explicitly requested by Product Owner for sequencing support)
+→ Apply `claude/system/shared/governance_preamble.md §Write-Scope`. Phase-specific permitted paths:
+- `claude/cycles/<cycle_id>/*`
+- `claude/backlog/backlog.md` (release slice only; no global reprioritisation)
+- `claude/roadmap/current_roadmap.md` (ONLY to add execution notes/links under the existing release section; no scope change)
+- `docs/product/scope/*` (scope document created at STEP 2)
+- `docs/product/decisions/*` (decisions record created at STEP 3; also when required to resolve an escalation; must be lifecycle-compliant)
+- `claude/scoring/*` (only if explicitly requested by Product Owner for sequencing support)
 
-You must not modify:
-- source code
-- claude/strategy/strategy_rules.md
-- claude/roadmap/initiative_register.md
-- claude/roadmap/decision_log.md (reserved for irreversible roadmap decisions in rebalance)
-- any doc outside allowed scope
-
-Violation → halt.
+Must not modify: source code, `claude/strategy/strategy_rules.md`, `claude/roadmap/initiative_register.md`, `claude/roadmap/decision_log.md` (reserved for irreversible roadmap decisions in rebalance), any doc outside allowed scope.
 
 ---
 

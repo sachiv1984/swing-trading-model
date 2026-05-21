@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.2
-**Last Updated:** 2026-05-16
+**Version:** 3.3
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -71,15 +71,12 @@ Shared standards (escalation format, halt report format, identifier conventions,
 
 ## 4. Required Authority Roles
 
-Minimum required roles for this routine:
-
+→ Apply `claude/system/shared/governance_preamble.md §Agent-Integrity`. Required roles:
 - Product Owner
 - Head of Specs Team
 - PMO Lead
 - Director of Quality
 - FinOps & Resource Architect
-
-Verify: each role has an agent file in `claude/agents/` containing `**Role:** <Role Name>`. If any required role is missing or malformed: halt.
 
 ---
 
@@ -102,8 +99,7 @@ Verify: each role has an agent file in `claude/agents/` containing `**Role:** <R
 
 ## 6. Write Scope Restriction (Hard Gate)
 
-During this routine you may write only to:
-
+→ Apply `claude/system/shared/governance_preamble.md §Write-Scope`. Phase-specific permitted paths:
 - `claude/cycles/<cycle_id>/sprint_goal.md` (create)
 - `claude/cycles/<cycle_id>/sprint_backlog.md` (create)
 - `claude/cycles/<cycle_id>/sprint_backlog_index.json` (create alongside sprint_backlog.md — STEP 6)
@@ -112,15 +108,7 @@ During this routine you may write only to:
 - `claude/cycles/<cycle_id>/sprint_escalations.md` (create if escalations raised during planning)
 - `.claude_current_state.json` (status update only — STEP 7)
 
-You must **not** modify:
-- `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/state.json` (owned by Release Planning engine)
-- `claude/backlog/backlog.md` (no grooming during sprint planning)
-- `claude/roadmap/current_roadmap.md`
-- Any canonical spec, strategy, or governance document
-
-Violation → halt.
+Must not modify: `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/state.json` (owned by Release Planning engine), `claude/backlog/backlog.md` (no grooming during sprint planning), `claude/roadmap/current_roadmap.md`, any canonical spec, strategy, or governance document.
 
 ---
 
@@ -586,6 +574,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 
 ## 12. Governance Invariants
 
+→ Apply `claude/system/shared/governance_preamble.md §Invariants` (system-wide). Phase-specific additions:
 - No scope changes — backlog slice is sealed; select from it, don't alter it.
 - No AC-less items — every sprint item must have confirmed acceptance criteria.
 - No over-allocation without explicit PO acceptance; capacity is a hard constraint.
@@ -593,9 +582,7 @@ Per `claude/system/shared_standards.md` §8 — never re-execute a step that alr
 - Circular dependencies always halt; sequencing is not final until all resolved.
 - Delegation class set at planning time and recorded in sprint backlog for Phase 3.
 - Design gate must be passed (`design_gate_status = Passed`) or Design Not Applicable fully documented for all items.
-- Amendment slice (`amended_backlog_slice_path`) supersedes original — plan from it exclusively if set.
 - Deferred execution blockers require explicit PO acceptance before execution begins.
-- Delivery pressure never overrides these gates.
 
 *Full context: §2 (hard gates), §6 (write scope), §7 (AC standard), §8 (capacity), §10 (lifecycle guard).*
 
