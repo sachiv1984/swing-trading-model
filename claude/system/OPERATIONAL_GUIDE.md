@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.91
-**Last Updated:** 2026-05-18
+**Version:** 3.94
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v6.2)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v6.3)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1416,7 +1416,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.2 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.3 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.29 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.2 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
@@ -1430,7 +1430,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
-| PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.0 |
+| PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.1 |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.7 |
 | Team Charter | `claude/charter/team_charter.md` v1.6 |
 
@@ -1446,6 +1446,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.94 | 2026-05-21 | **OA-3 (v3.8 closure): `.github/pull_request_template.md` v1.0→v1.1 — QA evidence branch-commit enforcement.** §14 PR DoQ Enforcement Template v1.0→v1.1. §14 Version 3.93→3.94/2026-05-21. Changes: QA Evidence section — added explicit branch-commit checklist item requiring `git status`/`git log` verification that qa_evidence file is committed on the branch before PR opens; added explanatory callout block stating retroactive creation after PR open is a process deviation; DoQ Sign-Off Confirmation — split into two separate checklist items (branch-commit confirmation + Date non-blank confirmation). Authority: Director of Quality (OA-3, v3.8 post-ship closure, 2026-05-21). |
+| 3.93 | 2026-05-20 | **roadmap_prompt.md v6.2→v6.3 — 3-cycle hard cap on parked ideas + Backlog (gate-conditional) classification.** §6 source prompt header updated v6.2→v6.3. §14 Roadmap Engine Source v6.2→v6.3. §14 Version 3.92→3.93/2026-05-20. Changes: §4.1 — new 📋 Backlog (gate-conditional) classification added (idea exits parked queue, added to backlog.md with gate criteria block); park rationale validation gate added (Facilitator must challenge vague rationales; second vague park defaults to Reject); stale idea note updated to reference §4.5 hard cap. §4.2 — Promoted-Backlog row added to document management table. §4.5 — "no cap on re-parks" removed; replaced with 3-cycle hard cap (cycles 1–2 allow re-park with valid rationale; cycle 3 forces terminal outcome: Advance, Reject, or Backlog gate-conditional). Authority: Head of Specs Team (2026-05-20). |
 | 3.92 | 2026-05-19 | **ST-10 (EPIC-04, v3.8): gh_issue_template.md + DoQ enforcement mechanism.** §14 GitHub Issue Template row added (`claude/system/gh_issue_template.md` v1.0); PR DoQ Enforcement Template row added (`.github/pull_request_template.md` v1.0). `.github/pull_request_template.md` created with DoQ sign-off date enforcement checklist — prevents retrospective sign-off gaps by requiring non-blank Date in qa_evidence EPIC sign-off block before PR can merge. §14 Version 3.90→3.92/2026-05-19 (3.91 was applied to changelog 2026-05-18 but §14 self-metadata Version field was not updated at that time — corrected here). Authority: Head of Specs Team (ST-10, 2026-05-19). |
 | 3.91 | 2026-05-18 | **execution_prompt.md v3.23→v3.24 — ST-07 (EPIC-03, v3.7): three lessons-learnt patches.** §8 source prompt header updated v3.23→v3.24. §14 Execution Engine Source v3.23→v3.24. §14 Version 3.90→3.91/2026-05-18. Changes: (LL-v3.7-EX-01) §3.1.A step 10a — deviations_filed atomic write: write `deviations_filed: true` immediately after step 10 deviation check; do not defer. (LL-v3.7-EX-02) §3.1.A step 10b — backlog verify guidance: verify backlog item appears in backlog.md before closing story when mandatory deferred staging AC is filed. (LL-v3.7-EX-03) §3.1.A step 2a — spec_references path verify: verify each path exists on disk before recording in execution_state.json; prevents false traceability from non-existent paths. Authority: Head of Specs Team (ST-07, 2026-05-18). |
 | 3.90 | 2026-05-17 | **Governance pattern consolidation — preflight common checks extracted to `shared/preflight_common.md` v1.0.** §6B source prompt header updated v2.28→v2.29. §8 source prompt header updated v3.22→v3.23. §9 source prompt header updated v2.2→v2.3. §10 source prompt header updated v2.8→v2.9. §14 Release Engine Source v2.28→v2.29; Execution Engine Source v3.22→v3.23; Verification Engine Source v2.2→v2.3; Post-Ship Closure Engine v2.8→v2.9. §14 Version 3.89→3.90/2026-05-17. Changes: Required Files Present, Required Authority Roles Exist, and Write Permission Test blocks extracted from STEP -1 preflight sections of release_planning (−1.1/−1.3/−1.4), execution (−1.1/−1.6/−1.7), delivery_verification (−1.4), and post_ship_closure (−1.4/−1.5/−1.6) into new shared module `claude/system/shared/preflight_common.md`. Each engine now invokes the module with engine-specific parameter blocks; engine-specific advisories remain inline. Sprint Planning excluded (different numbered-list preflight style). Authority: Head of Specs Team (governance pattern consolidation 2026-05-17). |
