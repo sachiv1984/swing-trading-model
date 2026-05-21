@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-05-19 (roadmap rebalance 2026-05-19__scheduled — 33 park counts incremented; IDEA-financial-reporting-20260508-02 rationale updated)
+**Last Updated:** 2026-05-21 (ideas_housekeeping — 0 rows archived; all revival conditions unmet)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # Ideas Register

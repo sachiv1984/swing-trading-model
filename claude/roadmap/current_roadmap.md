@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-19 (roadmap rebalance 2026-05-19__scheduled — Standard-tier no-change; 33 ideas re-parked; IDEA-financial-reporting-20260508-02 gate-cleared re-evaluation → re-parked with new rationale; DL-031)
+**Last Updated:** 2026-05-20 (post-ship closure 2026-05-19__release-v3.8 — v3.8 ✅ Shipped)
 **Last rebalance:** 2026-05-19 (cycle 2026-05-19__scheduled — Standard-tier, no-change; 33 ideas re-parked (+1 each); IDEA-financial-reporting-20260508-02 gate cleared (planned_entry_price v3.6) → re-parked (data density insufficient); DL-031)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,18 +10,10 @@
 
 ## 1. Current Version
 
-**v3.7** — Signal-to-Watchlist Workflow + Arc 2 Completion + Governance Hardening — ✅ Shipped 2026-05-18
-**Next planned release:** **v3.8** — Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management — 🔄 Planning
+**v3.8** — Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management — ✅ Shipped 2026-05-20
+**Next planned release:** **v3.9** — TBD
 
-<!-- roadmap-annotation-marker: RA:v3.8:2026-05-19__release-v3.8 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-05-19__release-v3.8
-- Plan published: 2026-05-19
-- Cycle folder: claude/cycles/2026-05-19__release-v3.8/
-- Backlog slice: claude/cycles/2026-05-19__release-v3.8/stage4_backlog_slice.md
-- Status at annotation: Validated
-
+*RA:v3.8 retired — see roadmap_archive.md 2026-05-20 (post-ship closure 2026-05-19__release-v3.8).*
 *RA:v3.7 retired — see roadmap_archive.md 2026-05-19 (post-ship closure 2026-05-18__release-v3.7).*
 *RA:v3.6 retired — see roadmap_archive.md 2026-05-17 (post-ship closure 2026-05-16__release-v3.6).*
 *RA:v3.5 retired — see roadmap_archive.md 2026-05-15 (post-ship closure 2026-05-15__release-v3.5).*
@@ -203,7 +195,7 @@ Today you find stocks through external research and add them to the watchlist ma
 
 |ID   |Feature                         |Effort|Notes                                                                                                                                                                                                                                                                                                       |
 |-----|--------------------------------|------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|SI-01|Pre-Entry Rule Validation Gate  |M     |Before a position is created, the system validates it against every rule in `strategy_rules.md §11` — regime gate, position sizing within limits, sector concentration, earnings proximity, cash constraint. Non-blocking advisory with explicit override. §13 COMPLIANT — decision support, not a hard gate|
+|SI-01|Pre-Entry Rule Validation Gate  |M     |✅ Shipped v3.8 (2026-05-20) — §13 PASS (ST-01); strategy_rules.md v1.4 §4.2 formalised 5 checks; GET /portfolio/pre-entry-validation + PreEntryValidationPanel with override acknowledgement; 17 unit tests + SC-TP-17–20 Playwright pass|
 |SI-02|Behavioural Drift Detection     |H     |Rolling analysis: are your actual entries drifting from your stated setup criteria? Are you entering earlier in the signal cycle than your rules permit? Are you sizing up in losing streaks? Detected from trade history and trade plan data                                                               |
 |SI-03|Red Flag Journal                |M     |Auto-populated log of every instance where behaviour deviated from strategy — pre-entry override, plan checklist skipped, stop management prompt dismissed. Separate from trade journal. Reviewed in weekly digest                                                                                          |
 |SI-04|Strategy Version Comparison     |H     |When `strategy_rules.md` is incremented, the system compares trade history performance before and after the change. Did the parameter update actually improve outcomes? Requires version-tagged trade history                                                                                               |
@@ -404,6 +396,7 @@ When evaluating new features:
 |**v3.5** ✅  |Arc 3 Completion + Arc 4 Foundation                                   |IT-06 Alpaca paper trading (§13 PASS; backend sync + frontend panel + Playwright); PO-01 Plan vs Reality (arc4_data_requirements.md v1.0 + backend + frontend + Playwright); spec/QA debt (BLG-SPEC-29/30/31, BLG-QA-19); governance patches (BLG-GOV-22, execution_prompt.md v3.20) — ✅ Shipped 2026-05-15 — cycle: 2026-05-15__release-v3.5|
 |**v3.6** ✅  |Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance           |planned_entry_price snapshot at trade entry; entry_delta_pct in PlanVsReality; SC-RV-18/19 Playwright coverage; research endpoint 404/503 error codes; research page regime lozenge + font fix; execution_prompt.md v3.22 governance patches — ✅ Shipped 2026-05-17 — cycle: 2026-05-16__release-v3.6 — Verified_with_deviations (1 P3)|
 |**v3.7** ✅  |Signal-to-Watchlist Workflow + Arc 2 Completion + Governance Hardening|EPIC-01: signals `watchlisted` status + PATCH /signals/{id}; Add to Watchlist CTA on signal cards; SignalContextPanel in trade plan form (entry_rationale + confirmation_criteria pre-pop); 7 Playwright scenarios. EPIC-03: execution_prompt.md v3.24 (3 patches); qa_evidence_template.md v1.1. EPIC-04: BLG-QA-20/OPS-16/FE-35/GOV-23 debt clearance; OA-RP-05 resolved. EPIC-02 (PT-04) deferred — gate not met (< 20 closed trades) — ✅ Shipped 2026-05-18 — cycle: 2026-05-18__release-v3.7|
+|**v3.8** ✅  |Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management|EPIC-04: TickerUniverse.js management page (add/toggle/delete/filter); public.tickers startup sync retired; ticker_universe sole authoritative source; BLG-GOV-24 governance debt (gh_issue_template.md §14 + PR template). EPIC-03: setup_type dropdown (6 options, BLG-FEAT-23); collapsible news context panel (BLG-FE-36); AI thesis generation template engine + Gemini-gated "Improve with AI" (BLG-FEAT-24). EPIC-01: SI-01 §13 gate PASS (8 binding conditions); GET /portfolio/pre-entry-validation (5 rules, strategy_rules.md v1.4 §4.2, 17 unit tests); PreEntryValidationPanel with override acknowledgement. Verified_with_deviations (1 P3 — resolved same release) — ✅ Shipped 2026-05-20 — cycle: 2026-05-19__release-v3.8|
 |**v3.8–v4.0**|Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v3.8–v4.0**|Arc 5: Strategy Integrity                                             |Pre-entry rule validation, behavioural drift detection, red flag journal, strategy version comparison — 📋 Planned                         |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

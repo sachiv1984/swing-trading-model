@@ -3,9 +3,38 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-19
+**Last Updated:** 2026-05-20
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.8 — Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management — 2026-05-20
+Cycle: 2026-05-19__release-v3.8
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-05-19__release-v3.8/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-04 | Ticker Universe Management Page (ST-09): TickerUniverse.js page with add/toggle/delete/filter; `public.tickers` startup sync retired; `ticker_universe` is sole authoritative source. Governance Debt Clearance (ST-10): gh_issue_template.md added to §14; DoQ enforcement via PR template; OPERATIONAL_GUIDE.md v3.90→v3.92. | docs/specs/api_contracts/ticker_universe_api_contract.md; claude/system/OPERATIONAL_GUIDE.md#§14 |
+| EPIC-03 | Setup Type Classification Field (ST-06): `setup_type` dropdown on trade plan form, 6 options, persisted. News Context Panel (ST-07): collapsible Alpaca news panel on trade plan form, localStorage-persisted collapse state. AI-Assisted Thesis Generation (ST-08): "Generate thesis" template engine + "Improve with AI" (Gemini-gated). | docs/specs/api_contracts/trade_plan_endpoints.md; docs/specs/frontend/pages/trade_plan.md |
+| EPIC-01 | §13 Review Gate for SI-01 (ST-01): 8 binding conditions documented; Category A + B checks authorised. SI-01 Backend (ST-02): `strategy_rules.md` v1.4 §4.2; `GET /portfolio/pre-entry-validation`; 17 unit tests; conftest.py stubs (BLG-QA-20 resolved). SI-01 Frontend (ST-03): PreEntryValidationPanel with override acknowledgement checkbox on trade plan form; SC-TP-17–20 Playwright pass. | docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation; docs/specs/frontend/pages/trade_plan.md; docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-EPIC04-ST09-01 | P3 | createPageUrl map missing TickerUniverse entry at time of EPIC-04 PR merge — resolved in same release (fix commit 75b7eda4, PR #456) | PO + DoQ |
+
+### Tech backlog items shipped
+- [ST-09] BLG-FEAT-22: Ticker Universe Management page
+- [ST-10] BLG-GOV-24 + DoQ OA: Governance debt clearance (gh_issue_template.md §14 + PR template enforcement)
+- [ST-06] BLG-FEAT-23: Setup type classification field on trade plans
+- [ST-07] BLG-FE-36: News context panel on trade plan form
+- [ST-08] BLG-FEAT-24: AI-assisted setup thesis generation
+
+Sign-off: Product Owner — 2026-05-20
+QA sign-off: Director of Quality — 2026-05-20
 
 ---
 

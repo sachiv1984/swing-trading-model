@@ -1,13 +1,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-19
+**Last Updated:** 2026-05-21
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v3.8 — Release Annotation
+
+**Original roadmap location:** §1 Current Version header (roadmap annotation block)
+**Status at retirement:** ✅ Complete — annotation retired post-ship
+**Retired from active roadmap:** 2026-05-21
+**Shipped version:** v3.8 (2026-05-20)
+**Cycle reference:** 2026-05-19__release-v3.8
+**Verification report:** `claude/cycles/2026-05-19__release-v3.8/verification_report.md`
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-21
+
+### Annotation at retirement
+
+<!-- roadmap-annotation-marker: RA:v3.8:2026-05-19__release-v3.8 — COMPLETE -->
+
+**Execution notes (v3.8 — Complete):**
+- Cycle: 2026-05-19__release-v3.8
+- Plan published: 2026-05-19
+- Cycle folder: claude/cycles/2026-05-19__release-v3.8/
+- Backlog slice: claude/cycles/2026-05-19__release-v3.8/stage4_backlog_slice.md
+- Status: ✅ Complete — shipped 2026-05-20
+- Verification: Verified_with_deviations (8/8 stories; 1 P3 deviation resolved; DoQ + PO sign-off 2026-05-20)
+- Scope delivered: EPIC-04 (BLG-FEAT-22 Ticker Universe Management page; BLG-GOV-24 governance debt), EPIC-03 (BLG-FEAT-23 setup type field; BLG-FE-36 news context panel; BLG-FEAT-24 AI thesis generation), EPIC-01 (SI-01 §13 gate PASS + backend pre-entry validation + frontend panel)
+- Scope deferred: EPIC-02 (PT-04 Setup Quality Score — formally parked by PO decision 2026-05-19; gate not met ×3 consecutive cycles)
 
 ---
 
