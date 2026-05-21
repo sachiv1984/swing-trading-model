@@ -78,9 +78,7 @@ None.
 
 ## Outstanding deferred patches
 
-| # | Patch | File | Section | Owner | Target |
-|---|-------|------|---------|-------|--------|
-| 1 | Append missing v6.3→v6.4 entry to prompt_change_log.md | `claude/system/prompt_change_log.md` | — (append) | Head of Specs Team | Next governance commit touching prompt_change_log.md |
+None. All patches resolved.
 
 ---
 
@@ -92,11 +90,7 @@ None.
 
 ## Carry-Forward
 
-Items: 1
-
-| # | Observation | Implication | Engine |
-|---|-------------|-------------|--------|
-| 1 | prompt_change_log.md missing v6.3→v6.4 entry | Append in next governance commit that touches the file | Governance |
+Items: 0 — all carry-forwards resolved.
 
 ---
 
@@ -109,7 +103,7 @@ Items: 1
   "filed_utc": "2026-05-21T00:00:00Z",
   "friction_item_count": 2,
   "action_now_count": 1,
-  "deferred_count": 1,
+  "deferred_count": 0,
   "escalation_count": 0,
   "overdue_patches": 0,
   "status": "Complete"
