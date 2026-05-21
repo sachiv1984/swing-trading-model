@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-20 (post-ship closure 2026-05-19__release-v3.8 — v3.8 ✅ Shipped)
-**Last rebalance:** 2026-05-19 (cycle 2026-05-19__scheduled — Standard-tier, no-change; 33 ideas re-parked (+1 each); IDEA-financial-reporting-20260508-02 gate cleared (planned_entry_price v3.6) → re-parked (data density insufficient); DL-031)
+**Last Updated:** 2026-05-21 (cycle 2026-05-21__scheduled — no-change; 33 ideas: 29 Promoted-Backlog (3-cycle cap), 4 Rejected; DL-032)
+**Last rebalance:** 2026-05-21 (cycle 2026-05-21__scheduled — Standard-tier, no-change; 3-cycle hard cap applied to all 33 parked ideas; 29 promoted to backlog as gate-conditional items; 4 rejected; DL-032)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 

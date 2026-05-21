@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v6.4)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v6.5)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1410,7 +1410,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.96 |
+| Version | 3.97 |
 | Last Updated | 2026-05-21 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
@@ -1419,7 +1419,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.4 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.5 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.30 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.4 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
@@ -1449,6 +1449,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 3.97 | 2026-05-21 | **roadmap_prompt.md v6.4→v6.5 — STEP 12.1 artefact existence precondition.** §6 source prompt header updated v6.4→v6.5. §14 Roadmap Engine Source v6.4→v6.5. §14 Version 3.96→3.97/2026-05-21. Change: STEP 12.1 Global State Update — artefact existence precondition added (hard gate): before updating `last_rebalance_cycle` in state file, verify `run_manifest.md`, `cycle_record.md`, `cycle_summary.md`, `lessons_learnt.md` exist in the cycle directory; halt and complete missing artefact if absent. Resolves Type D pattern (2 consecutive cycles with state file updated but no cycle artefacts committed). Authority: Head of Specs Team (cycle 2026-05-21__scheduled action-now, 2026-05-21). |
 | 3.96 | 2026-05-21 | **AUD-2026-05-21 Tier 1 improvements applied — 4 governance prompt patches + §13 register + dry-run table.** `execution_prompt.md` v3.25→v3.26: STEP 1 gh issue create now uses structural `gh issue list` check before creating (eliminates duplicate issues, closes v3.8 OA-1); §3.1.A step 1 + step 12 test_scenarios scoped to EPIC-specific files only (closes AUD-003); §3.1.B delegated_frontend — createPageUrl map requirement added for new page route delegations (closes AUD-005/OA-2). `sprint_planning_prompt.md` v3.3→v3.4: STEP 5.2 planning-deferred item traceability rule added — all slice items not in sealed sprint backlog must be recorded as `deferred_at_planning` in execution_state.json with gate_condition note (closes AUD-002). `shared_standards.md` v3.0→v3.1: §13 dry-run table — `run ideas housekeeping` row added (closes AUD-007). `OPERATIONAL_GUIDE.md` §13: Shared Governance Modules and Governance Changelogs rows added as Class 6 sub-type artefacts (closes AUD-006). §7 source prompt header v3.3→v3.4; §8 source prompt header v3.25→v3.26; §14 Sprint Planning Engine v3.3→v3.4; Execution Engine Source v3.25→v3.26; Shared Standards v3.0→v3.1; §14 Version 3.95→3.96/2026-05-21. Authority: Head of Specs Team (AUD-2026-05-21 Tier 1 closure, 2026-05-21). |
 | 3.95 | 2026-05-21 | **Prompt compression: governance_preamble.md v1.0 (new) + 6-engine version bumps.** New shared module `claude/system/shared/governance_preamble.md` consolidates Write Scope pattern, Agent Integrity verification procedure, and 8 cross-engine Governance Invariants previously duplicated across all 6 phase prompts. All 6 prompts updated to reference preamble sections — verbose inline blocks replaced with compact references + phase-specific additions only. preflight_common.md v1.0→v1.1: Roadmap Rebalance added to covered engines. YAML schema blocks replace narrative bullet lists for all state.json output descriptions in execution_prompt.md and release_planning_prompt.md. §6 source prompt header v6.3→v6.4; §6B v2.29→v2.30; §7 v3.2→v3.3; §8 v3.24→v3.25; §9 v2.3→v2.4; §10 v2.9→v2.10. §14 Governance Preamble row added; all 6 engine versions updated; §14 Version 3.94→3.95/2026-05-21. Authority: Head of Specs Team (prompt compression 2026-05-21). |
 | 3.94 | 2026-05-21 | **OA-3 (v3.8 closure): `.github/pull_request_template.md` v1.0→v1.1 — QA evidence branch-commit enforcement.** §14 PR DoQ Enforcement Template v1.0→v1.1. §14 Version 3.93→3.94/2026-05-21. Changes: QA Evidence section — added explicit branch-commit checklist item requiring `git status`/`git log` verification that qa_evidence file is committed on the branch before PR opens; added explanatory callout block stating retroactive creation after PR open is a process deviation; DoQ Sign-Off Confirmation — split into two separate checklist items (branch-commit confirmation + Date non-blank confirmation). Authority: Director of Quality (OA-3, v3.8 post-ship closure, 2026-05-21). |

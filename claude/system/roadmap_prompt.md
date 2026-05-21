@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 6.4
-**Last Updated:** 2026-05-21
+**Version:** 6.5
+**Last Updated:** 2026-05-21 (v6.5)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -687,6 +687,8 @@ If `last_meta_review_cycle` absent: initialise counter; meta-review triggers aft
 **Preconditions (all must be true):** STEP 8.5 passed; STEP 10 complete; no outstanding halts; all writes match verified write plan.
 
 #### 12.1 Global State Update
+
+**Artefact existence precondition (hard gate):** Before updating `last_rebalance_cycle` in `.claude_current_state.json`, verify the following files exist in `claude/cycles/<cycle_id>/`: `run_manifest.md`, `cycle_record.md`, `cycle_summary.md`, `lessons_learnt.md`. If any is absent, complete the missing artefact before updating the state file. Do not update state to reference a cycle with incomplete artefacts.
 
 Update `.claude_current_state.json` (rebalance keys only — do not overwrite `active_cycle`, `status`, or `backlog_slice_path`):
 
