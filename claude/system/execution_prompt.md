@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.25
+**Version:** 3.26
 **Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -494,7 +494,11 @@ For each ST item in the sprint scope:
 4. If not found: note as a process gap (`sync gh` was not run at planning seal), then create a minimal issue — Title: `[ST-xx] <title>`, Labels: `EPIC-xx` — and record the number. Do not halt.
 5. Update `execution_state.json` with all issue numbers.
 
-Do not create duplicate issues. Check before creating.
+Before creating an issue for any story, run:
+```
+gh issue list --search "[ST-xx]" --state open --json number,title
+```
+replacing `ST-xx` with the actual story ID. If a matching open issue is returned: record the issue number in `execution_state.json` and skip `gh issue create`. Do not create duplicate issues.
 
 ---
 
@@ -524,7 +528,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 #### 3.1.A If `autonomous`:
 
-1. Execute the work defined in the acceptance criteria. **Test scenarios advisory (ST-13):** When tests are created as part of this work, populate `test_scenarios` in `execution_state.json` for the parent EPIC with the test file paths (e.g. `tests/test_screener_service.py`). This is non-blocking — story execution does not halt if the field is not updated immediately — but it must be populated before the EPIC-level QA evidence log is created at STEP 3.2.A.
+1. Execute the work defined in the acceptance criteria. **Test scenarios advisory (ST-13):** When tests are created as part of this work, populate `test_scenarios` in `execution_state.json` for the parent EPIC with the test file paths (e.g. `tests/test_screener_service.py`). This is non-blocking — story execution does not halt if the field is not updated immediately — but it must be populated before the EPIC-level QA evidence log is created at STEP 3.2.A. **Scoping rule (AUD-2026-05-21-003):** Only list spec files that contain at least one scenario directly exercising an acceptance criterion for this EPIC. Do not list shared utilities or spec files from other EPICs whose tests happen to run in the same suite.
 2. Confirm `spec_references` is populated in `execution_state.json` for this item. If empty and a spec exists: populate now before proceeding.
 
 2a. **Spec_references path verify (LL-v3.7-EX-03):** When populating `spec_references` in `execution_state.json`, verify each path exists (file read or ls check) before recording it. A non-existent path in `spec_references` causes false traceability and masks missing specs — record only paths that resolve on disk.
@@ -554,7 +558,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 
 11. **Sign-off gate:** If the item's seal condition in `sprint_backlog.md` names a required sign-off role: invoke agent-mediated sign-off per §5.3. Do not mark `acceptance_verified = true` until `sign_off_record.status = "cleared"`. Record outcome in `sign_off_record` in `execution_state.json`.
 
-12. **Post-story test files check (OA-04 / ST-09):** If this story created any new test files (in `tests/` or `tests/e2e/`), populate `test_scenarios` in `execution_state.json` for the parent EPIC with those file paths **now**, before advancing to the next story. Do not defer this step to STEP 3.2.A.
+12. **Post-story test files check (OA-04 / ST-09):** If this story created any new test files (in `tests/` or `tests/e2e/`), populate `test_scenarios` in `execution_state.json` for the parent EPIC with those file paths **now**, before advancing to the next story. Do not defer this step to STEP 3.2.A. Only include spec files containing scenarios that exercise this EPIC's acceptance criteria — do not add cross-EPIC spec files.
 
 13. **Cross-spec selector check (LL-v3.2-P3-02):** If this story modifies, replaces, removes, or renames a DOM element (e.g. changes a component, removes a checkbox, renames a form field), scan all existing Playwright spec files in `tests/e2e/` for selectors targeting that element (by ID, data-testid, role, or class name). If any stale selectors are found, update them in the same commit before pushing. This prevents CI failures in unrelated test files caused by UI changes in this story.
 
@@ -571,7 +575,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 1. Create or update the GitHub issue to `In Progress` with delegation note.
 2. Create a delegation record in `delegation_log.md` (Section 11).
    - For `delegated_backend`: include spec reference and required layer(s) (router / service / database).
-   - For `delegated_frontend`: include the complete Base44 prompt draft (all six sections).
+   - For `delegated_frontend`: include the complete Base44 prompt draft (all six sections). **New page route (AUD-2026-05-21-005):** If the story creates a new frontend page (new route), the delegation spec must additionally require: (a) `createPageUrl` map update in `pages.config.js` with the new route entry; (b) nav/sidebar registration if applicable. Explicitly state the target map key and value in the spec.
 3. Set item status to `blocked_backend` or `blocked_frontend` in `execution_state.json`.
 4. Record `delegation_record_id` and `unblock_criteria` in the item.
 5. Surface the delegation to the assigned role with:

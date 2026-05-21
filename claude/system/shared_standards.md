@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.0
-**Last Updated:** 2026-05-15
+**Version:** 3.1
+**Last Updated:** 2026-05-21
 
 # Shared Standards — All Governed Routines
 
@@ -371,6 +371,7 @@ The following engines support `--dry-run`. The guarantee is identical in all cas
 | `run design-gate` | Design gate preview — classification table, gap list, required design artefacts; no gate record, no state write, no commit |
 | `run roadmap` | Rebalance preview — capacity analysis, displacement candidates, scoring matrix, backlog impact |
 | `run ideas` | Submission window summary — counts per agent, ideas available for STEP 4 |
+| `run ideas housekeeping` | Housekeeping preview — terminal rows to archive, rejected-but-strong revival candidates, pipeline health advisory; no ideas_register.md writes, no archive writes |
 
 **Scope of read operations:** Read operations (file reads, git queries, pip-audit scans) are always permitted in dry-run mode. A dry-run that cannot read required inputs should halt with a standard halt report, not silently produce an empty plan.
 

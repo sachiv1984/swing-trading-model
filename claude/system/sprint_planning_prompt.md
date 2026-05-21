@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.3
+**Version:** 3.4
 **Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -415,6 +415,14 @@ If a circular dependency is detected: halt and surface to PMO Lead and Head of S
 **Multi-EPIC `execution_state.json` ownership (Required when > 1 EPIC in scope):** When a sprint has more than one EPIC branch, the execution order produced here determines ownership. Designate the first EPIC in execution order as the `execution_state.json` owner. Record this designation explicitly in `sprint_planning_notes.md` under a "Multi-EPIC Execution Notes" section. All other EPIC branches must check for `execution_state.json` existence before creating their own version — if found, read it and append their EPIC's section rather than overwrite. This prevents execution-state collisions that caused cross-EPIC rework in v3.3 and v3.4.
 
 **Shared file ownership advisory (Required when > 1 EPIC in scope):** Identify any source files that multiple EPICs will modify (e.g., `Positions.js`, `openapi.yaml`, `data_model.md`). For each shared file: record in `sprint_planning_notes.md` which EPIC owns the canonical version and note that later EPICs must rebase onto `main` after earlier EPICs merge before finalising their changes to that file. This advisory must appear in the sprint backlog merge order section (see STEP 6.1).
+
+**Planning-deferred item traceability (AUD-2026-05-21-002):** For each ST item in the authoritative backlog slice (`stage4_backlog_slice.md`) that is NOT included in the sealed sprint backlog (e.g. conditional EPICs deferred at planning, stories removed from scope), add an entry to `execution_state.json` at initialisation:
+```yaml
+epics.<EPIC-xx>.stories.<ST-xx>:
+  status: deferred_at_planning
+  gate_condition: "<reason — e.g. RISK-02 gate not confirmed, conditional EPIC deferred to next sprint>"
+```
+This ensures delivery verification STEP 1 can account for all slice items without a traceability gap. Record the deferral reason so sprint planning notes and future release planning can trace why the item was not executed.
 
 ### 5.3 Risk Flags
 

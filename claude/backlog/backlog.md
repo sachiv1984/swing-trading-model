@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-20 (post-ship closure v3.8 — 5 items marked COMPLETE: BLG-FEAT-22/23/24, BLG-FE-36, BLG-GOV-24)
+**Last Updated:** 2026-05-21 (session — 1 new item added: BLG-GOV-25)
 **Last rebalance:** 2026-05-15 (cycle 2026-05-15__scheduled — DL-029 backlog add × 1 BLG-QA-19)
 
 > ⚠️ Standing Notice
@@ -531,6 +531,31 @@ Twenty-two endpoints shipped in v2.8/v2.9/v3.0/v3.1/v3.4/v3.5 are absent from `d
 ---
 
 *BLG-GOV-11 (Cycle artefact inventory and maintenance review) — ✅ COMPLETE v3.2 — archived to backlog_archive.md 2026-05-09*
+
+---
+
+### BLG-GOV-25 — Add --dry-run support to plan release and run delivery verification engines
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Audit AUD-2026-05-21-004 — 2026-05-21
+**Effort:** M (~1–2d)
+**Provisional-Target:** v3.9
+
+**Problem**
+`plan release` and `run delivery verification` are both absent from the §13 dry-run capability table in `shared_standards.md`. `plan release` is the highest-cost engine at approximately 8,232 tokens/run; a failed run that a dry-run could have caught wastes full context and requires a complete re-execution. `run delivery verification` cross-checks all cycle artefacts and similarly has no safe preview mode. Without dry-run support, there is no low-cost way to validate pre-conditions before committing to full engine execution.
+
+**Scope**
+- Add `--dry-run` flag handling to `release_planning_prompt.md`: validate inputs, check artefact availability, report what would be created — no writes
+- Add `--dry-run` flag handling to `delivery_verification_prompt.md`: validate inputs, report which checks would run — no writes
+- Add two rows to `shared_standards.md` §13 dry-run table for `plan release` and `run delivery verification`
+- Bump versions on all three files per §6 governance checklist
+
+**Acceptance Criteria**
+- `plan release --version vX.Y --dry-run` exits cleanly with a preflight summary and no artefact writes
+- `run delivery verification --cycle <id> --dry-run` exits cleanly with a check inventory and no artefact writes
+- Both commands appear in the §13 dry-run table in `shared_standards.md`
+- All three modified files have bumped version headers and `prompt_change_log.md` entries
 
 ---
 
