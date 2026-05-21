@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v3.8** — Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management — ✅ Shipped 2026-05-20
-**Next planned release:** **v3.9** — TBD
+**Next planned release:** **v3.9** — Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches
+
+<!-- roadmap-annotation-marker: RA:v3.9:2026-05-21__release-v3.9 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-21__release-v3.9
+- Plan published: 2026-05-21
+- Cycle folder: claude/cycles/2026-05-21__release-v3.9/
+- Backlog slice: claude/cycles/2026-05-21__release-v3.9/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 *RA:v3.8 retired — see roadmap_archive.md 2026-05-20 (post-ship closure 2026-05-19__release-v3.8).*
 *RA:v3.7 retired — see roadmap_archive.md 2026-05-19 (post-ship closure 2026-05-18__release-v3.7).*

@@ -1,0 +1,123 @@
+{
+  "cycle_id": "2026-05-21__release-v3.9",
+  "release": "v3.9",
+  "generated_utc": "2026-05-21T00:10:00Z",
+  "issues": [
+    {
+      "st_id": "ST-01",
+      "epic": "EPIC-01",
+      "title": "Fix Yahoo Finance crumb/401 rate-limiting in screener batch",
+      "source": "BLG-TECH-10",
+      "sprint": 1,
+      "labels": ["v3.9", "sprint-1", "EPIC-01", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-02",
+      "epic": "EPIC-01",
+      "title": "Fix sector/industry data silently dropped in screener batch",
+      "source": "BLG-BE-10",
+      "sprint": 1,
+      "labels": ["v3.9", "sprint-1", "EPIC-01", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-03",
+      "epic": "EPIC-01",
+      "title": "Remove invalid DAY ticker and investigate PHNX.L from ticker universe",
+      "source": "BLG-BE-11",
+      "sprint": 1,
+      "labels": ["v3.9", "sprint-1", "EPIC-01", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-04",
+      "epic": "EPIC-01",
+      "title": "Add degraded-run warning banner to screener results page",
+      "source": "BLG-FE-38",
+      "sprint": 1,
+      "labels": ["v3.9", "sprint-1", "EPIC-01", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-05",
+      "epic": "EPIC-02",
+      "title": "Strip .L suffix from Ticker Universe page display labels",
+      "source": "BLG-FE-37",
+      "sprint": 1,
+      "labels": ["v3.9", "sprint-1", "EPIC-02", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-06",
+      "epic": "EPIC-02",
+      "title": "Add company_name column to ticker universe and display on management page",
+      "source": "BLG-BE-12",
+      "sprint": 1,
+      "labels": ["v3.9", "sprint-1", "EPIC-02", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-07",
+      "epic": "EPIC-03",
+      "title": "Red Flag Journal — data model and backend",
+      "source": "SI-03",
+      "sprint": 2,
+      "labels": ["v3.9", "sprint-2", "EPIC-03", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-08",
+      "epic": "EPIC-03",
+      "title": "Red Flag Journal — frontend display",
+      "source": "SI-03",
+      "sprint": 2,
+      "labels": ["v3.9", "sprint-2", "EPIC-03", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-09",
+      "epic": "EPIC-04",
+      "title": "execution_prompt.md patches — test_scenarios guidance and createPageUrl delegation note",
+      "source": "CF-2, CF-4",
+      "sprint": 2,
+      "labels": ["v3.9", "sprint-2", "EPIC-04", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-10",
+      "epic": "EPIC-04",
+      "title": "sprint_planning_prompt.md patch — planning-deferred items in execution_state.json",
+      "source": "CF-5",
+      "sprint": 2,
+      "labels": ["v3.9", "sprint-2", "EPIC-04", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-11",
+      "epic": "EPIC-04",
+      "title": "BLG-GOV-25 — Add --dry-run support to plan release and run delivery verification",
+      "source": "BLG-GOV-25",
+      "sprint": 2,
+      "labels": ["v3.9", "sprint-2", "EPIC-04", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-12",
+      "epic": "EPIC-04",
+      "title": "QA evidence pre-merge enforcement — PR template checklist item",
+      "source": "CF-3 (DoQ escalation)",
+      "sprint": 2,
+      "labels": ["v3.9", "sprint-2", "EPIC-04", "cycle:2026-05-21__release-v3.9"]
+    },
+    {
+      "st_id": "ST-13",
+      "epic": "EPIC-05",
+      "title": "PT-04 Setup Quality Score — backend endpoint (conditional on 20+ closed trades gate)",
+      "source": "BLG-FEAT-25",
+      "sprint": 2,
+      "conditional": true,
+      "gate": "20+ closed trades confirmed by Product Owner before sprint planning seals",
+      "labels": ["v3.9", "sprint-2", "EPIC-05", "cycle:2026-05-21__release-v3.9", "conditional"]
+    },
+    {
+      "st_id": "ST-14",
+      "epic": "EPIC-05",
+      "title": "PT-04 Setup Quality Score — frontend display (conditional on ST-13 complete + gate)",
+      "source": "BLG-FEAT-25",
+      "sprint": 2,
+      "conditional": true,
+      "gate": "ST-13 complete; 20+ closed trades gate confirmed",
+      "labels": ["v3.9", "sprint-2", "EPIC-05", "cycle:2026-05-21__release-v3.9", "conditional"]
+    }
+  ]
+}

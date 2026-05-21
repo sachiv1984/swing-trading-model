@@ -1308,4 +1308,26 @@ These are deliberate product decisions, not deferrals:
 
 ---
 
+## Release Slice — v3.9 (cycle: 2026-05-21__release-v3.9)
+
+<!-- release-plan-marker: RP:v3.9:2026-05-21__release-v3.9 -->
+
+*This section is ephemeral. Remove during `groom backlog` after v3.9 post-ship closure.*
+
+| EPIC | ST | Title | Source | Sprint |
+|------|----|-------|--------|--------|
+| EPIC-01 | ST-01 | Fix YF crumb/401 rate-limiting in screener batch | BLG-TECH-10 | Sprint 1 |
+| EPIC-01 | ST-02 | Fix sector/industry data dropped in screener batch | BLG-BE-10 | Sprint 1 |
+| EPIC-01 | ST-03 | Remove invalid DAY ticker / investigate PHNX.L | BLG-BE-11 | Sprint 1 |
+| EPIC-01 | ST-04 | Add degraded-run warning banner to screener results | BLG-FE-38 | Sprint 1 |
+| EPIC-02 | ST-05 | Strip .L suffix from Ticker Universe display labels | BLG-FE-37 | Sprint 1 |
+| EPIC-02 | ST-06 | Add company_name to ticker universe + management page | BLG-BE-12 | Sprint 1 |
+| EPIC-03 | ST-07 | Red Flag Journal — data model and backend | SI-03 | Sprint 2 |
+| EPIC-03 | ST-08 | Red Flag Journal — frontend display | SI-03 | Sprint 2 |
+| EPIC-04 | ST-09 | execution_prompt.md patches (test_scenarios + createPageUrl) | CF-2, CF-4 | Sprint 2 |
+| EPIC-04 | ST-10 | sprint_planning_prompt.md patch (planning-deferred) | CF-5 | Sprint 2 |
+| EPIC-04 | ST-11 | BLG-GOV-25 dry-run for plan release + delivery verification | BLG-GOV-25 | Sprint 2 |
+| EPIC-04 | ST-12 | QA evidence pre-merge enforcement — PR template | CF-3 (DoQ) | Sprint 2 |
+| EPIC-05 (cond.) | ST-13 | PT-04 Setup Quality Score — backend (conditional) | BLG-FEAT-25 | Sprint 2 |
+| EPIC-05 (cond.) | ST-14 | PT-04 Setup Quality Score — frontend (conditional) | BLG-FEAT-25 | Sprint 2 |
 
