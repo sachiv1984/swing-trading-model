@@ -2,8 +2,34 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 2.8
-**Last Updated:** 2026-05-18
+**Last Updated:** 2026-05-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-19__release-v3.8
+**Date:** 2026-05-20
+**Status:** Verified_with_deviations — 2026-05-20
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-04 | Governance Debt Clearance: `gh_issue_template.md` added to OPERATIONAL_GUIDE §14; DoQ sign-off date enforcement via PR template. Ticker Universe Management Page: TickerUniverse.js live with add/toggle/filter CRUD; `public.tickers` startup sync removed; `ticker_universe` is sole authoritative source for screener and signal generation. 15 Playwright scenarios (SC-TU-01 through SC-TU-06). | claude/system/OPERATIONAL_GUIDE.md §14; docs/specs/api_contracts/ticker_universe_api_contract.md | P3 DEV-EPIC04-ST09-01 (createPageUrl map, resolved in PR #456) |
+| EPIC-03 | Trade Plan Form Enhancements: Setup Type dropdown (6 options, pre-selects Momentum Continuation from signal); collapsible News Context Panel (US tickers; Alpaca headlines; localStorage state); AI-Assisted Thesis Generation (Phase 1 template engine; AI draft badge; Gemini hidden when no key). SC-TP-09 through SC-TP-16 pass. | docs/specs/api_contracts/trade_plan_endpoints.md; docs/specs/frontend/pages/trade_plan.md | None |
+| EPIC-01 | Arc 5 Strategy Integrity Foundation — SI-01 Pre-Entry Rule Validation: §13 gate PASS with 8 binding conditions; `GET /portfolio/pre-entry-validation` endpoint (5 advisory checks: regime gate, sizing validity, cash constraint, sector concentration, earnings proximity); PreEntryValidationPanel in TradePlan.js (collapsible, non-blocking, override acknowledgement checkbox, pre_entry_override_acknowledged persisted); strategy_rules.md v1.4 §4.2 formalised; 17 backend unit tests; SC-TP-17 through SC-TP-20 pass. Endpoint total: 59. Also includes fix for TickerUniverse nav routing (DEV-EPIC04-ST09-01). | docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation; claude/strategy/strategy_rules.md#§4.2; docs/specs/frontend/pages/trade_plan.md; docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-04/ST-05 (PT-04 Setup Quality Score) | Gate condition not met: < 20 closed trades (PO confirmed 2026-05-19); EPIC-02 removed from sprint at planning | Parked in backlog (< 20 trades gate) |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-04.md (DoQ sign-off 2026-05-20), qa_evidence_EPIC-03.md (DoQ sign-off 2026-05-20), qa_evidence_EPIC-01.md (DoQ sign-off 2026-05-20)
+- Deviations filed: DEV-EPIC04-ST09-01 (P3 — createPageUrl map, resolved — fix merged PR #456)
+- Test scenarios referenced: tests/e2e/ticker-universe.spec.js (SC-TU-01–06), tests/e2e/trade-plan.spec.js (SC-TP-09–20), backend/routers/pre_entry_validation.py (17 unit tests)
 
 ---
 

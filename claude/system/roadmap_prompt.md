@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 6.2
-**Last Updated:** 2026-05-16
+**Version:** 6.5
+**Last Updated:** 2026-05-21 (v6.5)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -54,11 +54,13 @@ Violation → halt.
 
 Agent definitions: `claude/agents/*.md`. Switch agent perspective explicitly when deciding; attribute decisions to the correct authority; enforce conflict rules per Team Charter. Non-decision roles (Facilitator, Challenger) enforce process and demand clarity only — no vote on decisions.
 
+→ Agent file verification procedure: `claude/system/shared/governance_preamble.md §Agent-Integrity`.
+
 ---
 
 ## 4. Write Scope Restriction (Hard Gate)
 
-May write only to:
+→ Apply `claude/system/shared/governance_preamble.md §Write-Scope`. Phase-specific permitted paths:
 - `claude/roadmap/current_roadmap.md`
 - `claude/roadmap/initiative_register.md`
 - `claude/roadmap/workforce_capacity.md`
@@ -73,8 +75,6 @@ May write only to:
 - `claude/system/*` (STEP 11 action-now patches only, Head of Specs Team sign-off required)
 - `claude/system/prompt_change_log.md` (STEP 11 — append only)
 - `.claude_current_state.json` (STEP 12 only)
-
-Violation → halt.
 
 ---
 
@@ -123,35 +123,15 @@ Execute in order without skipping.
 
 ### STEP -1 — Preflight Gate (Hard Gate)
 
-#### -1.1 Required Files
-
-Verify these exist:
-- `claude/charter/team_charter.md`
-- `claude/charter/document_lifecycle_guide.md`
-- `claude/strategy/strategy_rules.md`
-- `claude/roadmap/current_roadmap.md`
-- `claude/backlog/backlog.md`
-- `claude/system/lessons_learnt_prompt.md`
-- `claude/system/idea_intake_prompt.md`
-- `claude/system/idea_template.md`
-
-Missing → halt and report exactly which.
+**STEP -1.1/-1.3/-1.4 — Common Preflight**
+→ Run `claude/system/shared/preflight_common.md`. All three sub-checks must PASS before proceeding.
+- required_files: `claude/charter/team_charter.md`, `claude/charter/document_lifecycle_guide.md`, `claude/strategy/strategy_rules.md`, `claude/roadmap/current_roadmap.md`, `claude/backlog/backlog.md`, `claude/system/lessons_learnt_prompt.md`, `claude/system/idea_intake_prompt.md`, `claude/system/idea_template.md`
+- required_roles: Product Owner · Strategy Rules & System Intent Owner · Head of Specs Team · PMO Lead · FinOps & Resource Architect · Infrastructure & Operations Owner · Director of Quality · Facilitator · Challenger
+- write_test_path: `claude/cycles/<cycle_id>/.write_test`
 
 #### -1.2 Header Compliance Pre-Check
 
 Verify Class 4 required fields (Owner, Class, Status, Last Updated — Version not required for Class 4) for `current_roadmap.md` and `backlog.md`. Header-only failures on Class 4/5: apply Step 0.A remediation. Non-header violations or any Class 1/6 non-compliance → halt.
-
-#### -1.3 Required Agent Integrity
-
-Verify each required role has a file in `claude/agents/` containing `**Role:** <Role Name>`:
-
-Product Owner · Strategy Rules & System Intent Owner · Head of Specs Team · PMO Lead · FinOps & Resource Architect · Infrastructure & Operations Owner · Director of Quality · Facilitator · Challenger
-
-Missing or malformed → halt.
-
-#### -1.4 Write Permission Test
-
-Write a non-destructive marker file under `claude/cycles/`, confirm success, remove it (or record as preflight marker in run manifest). Cannot confirm → halt.
 
 #### -1.5 Prior Cycle Outstanding Actions (Hard Gate)
 
@@ -345,12 +325,15 @@ Record all checks in `### Gate-Condition Re-Check` under `## STEP 4 — Ideas` i
 
 PO classifies each idea:
 - ✅ **Advance** — enters STEP 5 debate
-- 🅿 **Park** — PO must provide a specific one-line rationale (not "not yet" without reason; must name the specific dependency, scope issue, or timing constraint)
+- 🅿 **Park** — PO must provide a specific one-line rationale that names the exact dependency, scope issue, or timing constraint blocking progress. Vague rationale ("not yet", "timing isn't right", "wait and see") is invalid.
+- 📋 **Backlog (gate-conditional)** — add to `backlog.md` immediately with a documented gate criteria block; idea exits the parked queue and becomes a tracked backlog item. Use when the idea is sound but depends on a specific future condition.
 - ❌ **Reject**
 
 Any idea with `[FIELD REQUIRED]` flags on required template fields is ineligible to advance.
 
-**Stale ideas (parked ≥ 3 consecutive cycles):** surface to PO with consecutive park count; PO must classify actively — silent re-park not permitted.
+**Park rationale validation (Facilitator gate):** After PO states Park, the Facilitator must assess the rationale. If it does not name a specific blocker, the Facilitator must challenge it once. If the PO cannot provide a valid specific rationale on challenge, the item defaults to Reject (not strong) — a second vague park is not permitted.
+
+**Stale ideas (parked ≥ 3 consecutive cycles):** see §4.5 — 3-cycle hard cap applies; re-parking is not an option at cycle 3.
 
 #### 4.2 Document Management (Apply Before STEP 5)
 
@@ -358,6 +341,7 @@ Any idea with `[FIELD REQUIRED]` flags on required template fields is ineligible
 |----------------|---------------------|
 | ✅ Advance | Status → Advancing |
 | 🅿 Park (any) | Status → Parked-cycle-<n>; set/increment Park Count; update Park Rationale with PO's rationale |
+| 📋 Backlog (gate-conditional) | Status → Promoted-Backlog; add item to `backlog.md` with gate criteria block; record the gate condition in the register row's Park Rationale field |
 | ❌ Reject — strong | Status → Rejected; append to `claude/ideas/rejected_but_strong.md` |
 | ❌ Reject — not strong | Status → Rejected |
 
@@ -375,7 +359,11 @@ Write `## STEP 4 — Ideas` in `cycle_record.md` using `claude/system/templates/
 
 #### 4.5 Parked Idea Expiry Rule
 
-≥ 3 consecutive parks = stale. PO must actively Advance, Reject, or explicitly re-park with written rationale. Silent re-park not permitted. No cap on re-parks with valid rationale. Reviving a Rejected-stale idea requires fresh submission through `run ideas`.
+**3-cycle hard cap:** An idea parked 3 consecutive times reaches terminal status at the third-park decision point. The only valid outcomes are: Advance, Reject, or Backlog (gate-conditional). Re-parking beyond cycle 3 is not permitted — no exception, even with a written rationale.
+
+For cycles 1 and 2: PO may re-park with a valid specific rationale (per §4.1 Facilitator gate). Silent re-park not permitted.
+
+Reviving a Rejected-stale idea requires fresh submission through `run ideas`.
 
 ---
 
@@ -700,6 +688,8 @@ If `last_meta_review_cycle` absent: initialise counter; meta-review triggers aft
 
 #### 12.1 Global State Update
 
+**Artefact existence precondition (hard gate):** Before updating `last_rebalance_cycle` in `.claude_current_state.json`, verify the following files exist in `claude/cycles/<cycle_id>/`: `run_manifest.md`, `cycle_record.md`, `cycle_summary.md`, `lessons_learnt.md`. If any is absent, complete the missing artefact before updating the state file. Do not update state to reference a cycle with incomplete artefacts.
+
 Update `.claude_current_state.json` (rebalance keys only — do not overwrite `active_cycle`, `status`, or `backlog_slice_path`):
 
 ```json
@@ -728,7 +718,7 @@ If git unavailable: output exact file list to stage and exact commit message; ma
 
 ## 9. Invariants
 
-See `claude/system/invariants.md`. Violation → halt.
+→ Apply `claude/system/shared/governance_preamble.md §Invariants` (system-wide) and `claude/system/invariants.md`. Violation → halt.
 
 ---
 

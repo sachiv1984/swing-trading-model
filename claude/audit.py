@@ -24,26 +24,30 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-05-13"
+PRIOR_AUDIT_ID = "AUD-2026-05-21"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-05-13-001",  # Missing prompt_change_log entries (2026-05-10/13 governance changes)
-    "AUD-2026-05-13-002",  # lessons_learnt_cycle.md v3.3 wrong class + execution_prompt template fix
-    "AUD-2026-05-13-004",  # closure_state.json step_13 uncommitted
+    "AUD-2026-05-21-001",  # Structural duplicate issue check (execution_prompt STEP 1)
+    "AUD-2026-05-21-002",  # Planning-deferred traceability in execution_state.json
+    "AUD-2026-05-21-003",  # test_scenarios scoping to EPIC-specific files
+    "AUD-2026-05-21-004",  # plan release + delivery verification dry-run support
+    "AUD-2026-05-21-005",  # createPageUrl delegation template requirement
+    "AUD-2026-05-21-006",  # §13 shared module artefacts register entry
+    "AUD-2026-05-21-007",  # ideas_housekeeping dry-run table entry
 ]
-# All AUD-2026-04-20 items confirmed RESOLVED (see Phase 0 table in audit_report_AUD-2026-05-13.md).
+# All AUD-2026-05-13 items confirmed RESOLVED (see Phase 0 table in audit_report_AUD-2026-05-21.md).
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      87,   # LOW CONFIDENCE — inline block counts estimated; roadmap v6.0 refactor +3
-    "governance_integrity":  80,   # MEDIUM CONFIDENCE — 4 confirmed missing change log entries (-16)
-    "execution_reliability": 94,   # MEDIUM CONFIDENCE — closure_state.json ASSERTION confirmed by git diff
-    "friction_load":         50,   # LOW CONFIDENCE — v3.0-v3.2 type counts estimated; v3.3 = 4 items
-    "document_hygiene":      82,   # MEDIUM CONFIDENCE — 1 confirmed wrong class v3.3 lessons_learnt_cycle.md
+    "token_efficiency":      95,   # HIGH CONFIDENCE — preamble refactor confirmed; governance_preamble.md v1.0 eliminates 6-engine inline block duplication
+    "governance_integrity":  86,   # MEDIUM CONFIDENCE — §14 fully aligned; §13 shared module gap (AUD-006) latent
+    "execution_reliability": 84,   # MEDIUM CONFIDENCE — 2 deferred patches confirmed (v3.8); 1 ASSERTION-only guard
+    "friction_load":         45,   # LOW CONFIDENCE — v3.6–v3.8 confirmed; earlier cycles ESTIMATED
+    "document_hygiene":      87,   # MEDIUM CONFIDENCE — prior wrong-class resolved; agent files not fully sampled
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 19  # v1.7 through v3.3 (19 completed post-ship closures; confirmed from .claude_current_state.json)
+COMPLETED_CYCLES = 24  # v1.7 through v3.8 (24 completed post-ship closures; confirmed from .claude_current_state.json)
 
 # -------------------------
 # MISSING FILE RULE

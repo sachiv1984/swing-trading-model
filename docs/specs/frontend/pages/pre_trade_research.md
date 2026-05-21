@@ -1,11 +1,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-05-18
+**Version:** 0.3
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-05-05__release-v3.2/pre-trade-research-view/ux_spec.md
 **Design Source (v0.2 quality score):** docs/design/2026-05-18__release-v3.7/quality-score-display/ux_spec.md
+**Design Source (v0.3 quality score v2):** docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md
 **API contracts:** docs/specs/api_contracts/research_endpoints.md; docs/specs/api_contracts/portfolio_api_contract.md
 
 ---
@@ -72,9 +73,11 @@ Canonical contracts:
 | Price change | `GET /research/{ticker}` → `price_change_pct` | `▲ +X.X%` (green) or `▼ -X.X%` (red) |
 | Momentum signal status | `GET /research/{ticker}` → `signal_status` | Badge: `Active` (green) / `Watch` (amber) / `No Signal` (grey) — same badge conventions as watchlist |
 | ATR (14d) | `GET /research/{ticker}` → `atr` | Currency-formatted (e.g. `$4.20` or `£0.85`) |
-| Setup Quality Score *(v3.7, conditional EPIC-02 gate)* | `GET /trade-plans/{id}/quality-score` for most recent active/draft plan for this ticker | `{N}/100` or "N/A — insufficient history"; sub-label "Based on your trade history" (muted); omitted entirely if no trade plan exists for ticker |
+| Setup Quality Score *(v3.9, conditional EPIC-05 gate)* | `GET /trade-plans/setup-quality-score?ticker={ticker}` | Score badge `{N}/100` + qualitative label (Excellent/Good/Fair/Low); "Insufficient trade history (< 20 trades)" when `gate_not_met: true`; sub-label "Based on your own trade history" (muted); shown for all tickers regardless of trade plan existence; refetches on ticker change |
 
-**Setup Quality Score note (§13 compliance):** Display-only, labelled as historical reference. Not a prediction. If the EPIC-02 gate (20+ closed trades) is not confirmed, this row is omitted.
+**Setup Quality Score note (§13 compliance):** Display-only, labelled as historical reference. Not a prediction. If the EPIC-05 gate (20+ closed trades) is not confirmed at sprint planning, this row is omitted from implementation.
+
+**Score badge qualitative labels:** Excellent (≥80, green) / Good (60–79, blue) / Fair (40–59, amber) / Low (<40, red). Clicking badge opens expandable detail: matching_trades, win_rate, average_R.
 
 ---
 
@@ -156,5 +159,6 @@ No sentiment labels or scores.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-05-21 | v3.9 design gate — updated §5 Setup Quality Score row (ST-14, conditional EPIC-05): endpoint changed to ticker-based `GET /trade-plans/setup-quality-score?ticker={ticker}`; qualitative label added (Excellent/Good/Fair/Low); expandable detail panel (matching_trades, win_rate, average_R); shown for all tickers regardless of plan existence; score refetches on ticker change. Design source: setup-quality-score-v2/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
 | 0.2 | 2026-05-18 | v3.7 design gate — added Setup Quality Score row to §5 Price and Signal Region (PT-04: conditional on EPIC-02 gate; shown if trade plan exists for ticker; "N/A — insufficient history" when < 20 closed trades). Design source: quality-score-display/ux_spec.md. Approved: Product Owner 2026-05-18. |
 | 0.1 | 2026-05-05 | Initial spec. v3.2 design gate — EPIC-01 (ST-01, ST-02, ST-03). Design source: docs/design/2026-05-05__release-v3.2/pre-trade-research-view/ux_spec.md. |

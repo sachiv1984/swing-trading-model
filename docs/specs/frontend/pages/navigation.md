@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-04-25
+**Version:** 1.2
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-03-24
@@ -20,7 +20,7 @@ Defines the left sidebar navigation structure, including the collapsible group m
 
 | Group Label | Nav Items |
 |-------------|-----------|
-| **Trading** | Positions, Trade History, Trade Reflection |
+| **Trading** | Positions, Trade History, Trade Reflection, Red Flag Journal |
 | **Analytics** | Analytics, Risk Dashboard, Signals |
 | **Tools** | Watchlist, Alerts |
 | **System** | Settings, System Status, Notifications |
@@ -86,5 +86,6 @@ Global keyboard shortcuts are available on applicable pages. Shortcuts fire on d
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-05-21 | v3.9 design gate — added Red Flag Journal to Trading group (ST-08, EPIC-03: new page at `/red-flag-journal`, nav item after Trade Reflection). Design source: docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
 | 1.1 | 2026-04-25 | ST-11 (BLG-FE-19, v3.0): §Keyboard Shortcuts added — global shortcuts (n/w/r), suppression rule for text inputs, sidebar footer hint design. Design source: docs/design/2026-04-25__release-v3.0/keyboard-shortcuts/ux_spec.md. Head of UX & Design + Product Owner approved. Design gate: 2026-04-25__release-v3.0. Head of Specs Team confirmed. |
 | 1.0 | 2026-03-24 | Initial version. ST-13 (BLG-UX-01, v2.3): collapsible section groups with 4 groups (Trading, Analytics, Tools, System). Product Owner design decision 2026-03-24. Design source: docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md. Design gate: 2026-03-24__release-v2.3. |

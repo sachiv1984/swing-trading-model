@@ -1,14 +1,15 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.6
-**Last Updated:** 2026-05-18
+**Version:** 0.7
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.1):** docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md (v3.1 — artefact reference only; file not present in repo)
 **Design Source (v0.2 checklist):** docs/design/2026-05-05__release-v3.2/pre-trade-entry-checklist/ux_spec.md
 **Design Source (v0.3 abandonment + badges):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §A, §B
 **Design Source (v0.5 signal context panel):** docs/design/2026-05-18__release-v3.7/signal-context-panel/ux_spec.md
 **Design Source (v0.6 quality score):** docs/design/2026-05-18__release-v3.7/quality-score-display/ux_spec.md
+**Design Source (v0.7 quality score v2):** docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md
 **API contract:** docs/specs/api_contracts/trade_plan_endpoints.md
 **v0.4 Sign-off:** Head of Specs Team — 2026-05-14 (BLG-SPEC-28: §6.2 pre-population rules correction)
 
@@ -220,24 +221,42 @@ Checklist state stored as `checklist` array on the trade plan record. Submitted 
 
 ---
 
-## 7a. Setup Quality Score (v3.7 — PT-04, conditional EPIC-02 gate)
+## 7a. Setup Quality Score (v3.9 — PT-04, conditional EPIC-05 gate)
 
-**Design source:** docs/design/2026-05-18__release-v3.7/quality-score-display/ux_spec.md
+**Design source:** docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md
+**Supersedes:** v3.7 design (docs/design/2026-05-18__release-v3.7/quality-score-display/ux_spec.md)
 
-**Gate condition:** This section activates only when EPIC-02 is confirmed in scope (Product Owner confirms 20+ closed trades). If EPIC-02 is deferred to v3.8, this section is not implemented.
+**Gate condition:** This section activates only when EPIC-05 is confirmed in scope (Product Owner confirms 20+ closed trades at sprint planning). If gate not confirmed: section not implemented.
 
 > **§13 Compliance:** Display-only score labelled as historical reference ("based on your own trade history"). Not a prediction or recommendation. No automated actions.
 
-Displayed in the Trade Plan detail view below status badge and core fields, above the Pre-Trade Checklist read-only section.
+### Trade Plan Detail View
+
+Displayed below status badge and core fields, above the Pre-Trade Checklist read-only section.
 
 | Element | Source | Display |
 |---------|--------|---------|
-| Label | — | "Setup Quality Score" |
-| Value | `GET /trade-plans/{id}/quality-score` → `score` | `{N}/100`; colour-coded: 0–39 red, 40–69 amber, 70–100 green |
-| Insufficient history | Response: `score: null, reason: "insufficient_history"` | "N/A — insufficient history" |
+| Score badge | `GET /trade-plans/setup-quality-score?ticker={plan.ticker}` → `score` | `{N}/100` + qualitative label pill |
+| Qualitative label | `score` | Excellent (≥80, green) / Good (60–79, blue) / Fair (40–59, amber) / Low (<40, red) |
+| Gate not met | `gate_not_met: true` | "Insufficient trade history (< 20 trades)" — no badge |
 | Sub-label | — | "Based on your own trade history" (muted) |
+| Expandable detail | Click badge / info icon | Panel shows: "{N} matching trades found", "{X}% win rate", "{X.X}R average profit" |
 
-**Loading:** inline skeleton placeholder. **Error:** field hidden silently (does not block page).
+**Loading:** inline skeleton placeholder. **Error:** section hidden silently (does not block page).
+
+---
+
+## 7b. Setup Quality Score — Creation Form (v3.9)
+
+**Design source:** docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md
+
+**Gate condition:** Same as §7a — only when EPIC-05 in scope.
+
+Shown in the Trade Plan creation form (`/trade-plans/new`) as a read-only panel:
+- Hidden when ticker field is empty (initial state)
+- Displayed after ticker is entered; refetches on ticker change (debounced 500ms)
+- Same badge layout and expandable detail as §7a
+- Endpoint: `GET /trade-plans/setup-quality-score?ticker={formTicker}`
 
 ---
 
@@ -317,6 +336,7 @@ All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.7 | 2026-05-21 | v3.9 design gate — updated §7a Setup Quality Score (ST-14, conditional EPIC-05): endpoint changed to ticker-based `GET /trade-plans/setup-quality-score?ticker={plan.ticker}`; qualitative labels added (Excellent/Good/Fair/Low); expandable detail panel (matching_trades, win_rate, average_R); gate_not_met message replaces "N/A" text. Added §7b: score panel in creation form (shown after ticker entered, debounced refetch). Design source: setup-quality-score-v2/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
 | 0.6 | 2026-05-18 | v3.7 design gate — added §7a Setup Quality Score (PT-04: score display on detail view, 0–100 or "N/A — insufficient history", §13 compliant). Conditional on EPIC-02 gate. Design source: quality-score-display/ux_spec.md. Approved: Product Owner 2026-05-18. |
 | 0.5 | 2026-05-18 | v3.7 design gate — added §5a Signal Context Panel (BLG-FE-34: read-only signal data panel in creation form; pre-population of rationale and stop fields; conditional on linked signal). Design source: signal-context-panel/ux_spec.md. Approved: Product Owner 2026-05-18. |
 | 0.4 | 2026-05-14 | BLG-SPEC-28 (ST-13, v3.4) — corrected §6.2 pre-population rules: CHK-03 uses `early_exit_conditions` (not `stop_level`); CHK-04 uses `r_target` (not `risk_reward_notes`). Added rationale note and test scenario cross-reference. Authority: Head of Specs Team. |

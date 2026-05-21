@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.24
-**Last Updated:** 2026-05-17
+**Version:** 3.26
+**Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -191,8 +191,7 @@ The engine may **not** autonomously:
 
 ## 6. Agent Integrity (Required Roles)
 
-Minimum required roles for this routine:
-
+→ Apply `claude/system/shared/governance_preamble.md §Agent-Integrity`. Required roles:
 - Product Owner
 - Head of Specs Team
 - PMO Lead
@@ -202,18 +201,13 @@ Minimum required roles for this routine:
 - FinOps & Resource Architect
 - Facilitator
 
-Verify: each role has an agent file in `claude/agents/` containing `**Role:** <Role Name>`.
-
-If any required role is missing or malformed: halt.
-
-> **Known format note:** `head_of_specs_team.md` uses `**Role:** Head of Specs Team` in its header block rather than in a dedicated role line. Treat this as compliant for the purpose of this check — the string `**Role:** Head of Specs Team` is present in the file. If the format is ever standardised, update this note.
+Phase-specific note: `head_of_specs_team.md` uses `**Role:** Head of Specs Team` in its header block rather than a dedicated role line — treat as compliant (string is present in the file).
 
 ---
 
 ## 7. Write Scope Restriction (Hard Gate)
 
-During this routine you may write only to:
-
+→ Apply `claude/system/shared/governance_preamble.md §Write-Scope`. Phase-specific permitted paths:
 - `claude/cycles/<cycle_id>/execution_state.json` (create/update)
 - `claude/cycles/<cycle_id>/delegation_log.md` (append-only)
 - `claude/cycles/<cycle_id>/execution_escalations.md` (append-only)
@@ -224,18 +218,7 @@ During this routine you may write only to:
 - Canonical spec files (deviation documentation only — §9 Known Deviation Standard; no other spec edits permitted)
 - `.claude_current_state.json` (status updates only)
 
-You must **not** modify:
-- `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed)
-- `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed)
-- `claude/roadmap/*`
-- `claude/backlog/backlog.md`
-- `claude/strategy/strategy_rules.md`
-- Any governance document outside this routine's scope
-
-Violation → halt.
-
-This restriction applies to bash commands as well as direct file writes. Bash commands whose side-effects write files outside the permitted scope (e.g. a script that modifies governance files, a test runner that edits source files outside the ST item's scope) are also prohibited.
+Must not modify: `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed), `claude/roadmap/*`, `claude/backlog/backlog.md`, `claude/strategy/strategy_rules.md`, any governance document outside this routine's scope.
 
 ---
 
@@ -472,12 +455,26 @@ Create `claude/cycles/<cycle_id>/execution_state.json` if it does not exist.
    - `autonomous`: record spec if one governs the work; leave `[]` only if purely infrastructural
    - `delegated_decision`: leave `[]` until resolved — populate when re-classified
    If a `delegated_backend` item has no lockable spec reference: classify as `delegated_decision` instead and surface to Head of Specs Team.
-6. For each EPIC: check `docs/testing/` for existing test scenario files referencing the EPIC ID or any of its ST items. Record found scenario file paths in `execution_state.json` under the EPIC's `test_scenarios` field. If none found: set `test_scenarios: []`. The verification engine will use this to confirm which scenarios were run.
-7. Initialise all statuses to `not_started`.
-8. Set cycle-level status to `Running`.
+6. For each EPIC: check `docs/testing/` for existing test scenario files. Record found paths in `execution_state.json` EPIC `test_scenarios` field. If none: set `test_scenarios: []`.
 
-Update `.claude_current_state.json`:
-- `status` → `Executing`
+```yaml
+# execution_state.json initial schema (∀ ST item at STEP 0):
+epics.<EPIC-xx>.stories.<ST-xx>:
+  status: not_started
+  classification: autonomous|delegated_backend|delegated_frontend|delegated_qa|delegated_decision
+  spec_references: []          # populate per rule above; [] only if purely infrastructural
+  github_issue: null           # filled at STEP 1
+  branch: null                 # filled at STEP 2
+  deviations_filed: false
+  acceptance_verified: false
+  commit_sha: null
+epics.<EPIC-xx>.test_scenarios: []   # populate if found in docs/testing/
+execution_state.status: Running
+backlog_slice_source: <authoritative slice path>
+
+# global state update:
+.claude_current_state.json.status: Executing
+```
 
 `Executing` is a valid intermediate status between `Sprint_Planning_Complete` and `Sprint_Complete`. It is documented in the guide's lifecycle table and cycle trigger table. Phase 4 (`run delivery verification`) may not be invoked while status is `Executing` — Phase 3 must complete and status must reach `Sprint_Complete` first.
 
@@ -497,7 +494,11 @@ For each ST item in the sprint scope:
 4. If not found: note as a process gap (`sync gh` was not run at planning seal), then create a minimal issue — Title: `[ST-xx] <title>`, Labels: `EPIC-xx` — and record the number. Do not halt.
 5. Update `execution_state.json` with all issue numbers.
 
-Do not create duplicate issues. Check before creating.
+Before creating an issue for any story, run:
+```
+gh issue list --search "[ST-xx]" --state open --json number,title
+```
+replacing `ST-xx` with the actual story ID. If a matching open issue is returned: record the issue number in `execution_state.json` and skip `gh issue create`. Do not create duplicate issues.
 
 ---
 
@@ -514,24 +515,36 @@ For each EPIC in scope:
 
 ## STEP 3 — Execution Loop (Per EPIC, Per ST Item)
 
+```yaml
+# commit format (mandatory ∀ commits on exec/** branches):
+"[EPIC-xx][ST-xx] <imperative description>"
+# two stories in one commit: "[EPIC-xx][ST-xx][ST-yy] <description>"
+# governance_sync.yml parses this to close GitHub issues automatically
+```
+
 Work through EPICs in dependency order. Within each EPIC, work through ST items in dependency order.
 
 ### 3.1 For each ST item
 
 #### 3.1.A If `autonomous`:
 
-1. Execute the work defined in the acceptance criteria. **Test scenarios advisory (ST-13):** When tests are created as part of this work, populate `test_scenarios` in `execution_state.json` for the parent EPIC with the test file paths (e.g. `tests/test_screener_service.py`). This is non-blocking — story execution does not halt if the field is not updated immediately — but it must be populated before the EPIC-level QA evidence log is created at STEP 3.2.A.
+1. Execute the work defined in the acceptance criteria. **Test scenarios advisory (ST-13):** When tests are created as part of this work, populate `test_scenarios` in `execution_state.json` for the parent EPIC with the test file paths (e.g. `tests/test_screener_service.py`). This is non-blocking — story execution does not halt if the field is not updated immediately — but it must be populated before the EPIC-level QA evidence log is created at STEP 3.2.A. **Scoping rule (AUD-2026-05-21-003):** Only list spec files that contain at least one scenario directly exercising an acceptance criterion for this EPIC. Do not list shared utilities or spec files from other EPICs whose tests happen to run in the same suite.
 2. Confirm `spec_references` is populated in `execution_state.json` for this item. If empty and a spec exists: populate now before proceeding.
 
 2a. **Spec_references path verify (LL-v3.7-EX-03):** When populating `spec_references` in `execution_state.json`, verify each path exists (file read or ls check) before recording it. A non-existent path in `spec_references` causes false traceability and masks missing specs — record only paths that resolve on disk.
 
-3. Commit to the EPIC branch with format: `[EPIC-xx][ST-xx] <imperative description>`
+3. Commit to the EPIC branch (format: see STEP 3 header schema).
 4. Push to `exec/<cycle_id>/EPIC-xx`.
-5. `governance_sync.yml` will close the GitHub issue automatically on push.
+5. `governance_sync.yml` closes the GitHub issue automatically on push.
 6. Verify issue is closed (re-check after push).
-7. Mark item `done` in `execution_state.json`.
-8. Set `acceptance_verified = true` once acceptance criteria are confirmed met.
-9. Set `commit_sha` to the pushed commit.
+
+```yaml
+# state update after push:
+epics.<EPIC-xx>.stories.<ST-xx>:
+  status: done
+  commit_sha: <pushed sha>
+  acceptance_verified: true   # set once AC confirmed met
+```
 10. Deviation check: compare implementation against canonical spec.
     - If no deviation: set `deviations_filed = true` (meaning "deviation check completed; none found").
     - If a deviation exists: document it in the canonical spec per `claude/charter/document_lifecycle_guide.md` §9 (description, canonical requirement, priority P0–P3, target resolution release, owner, backlog reference). Set `deviations_filed = true` once filed. A P0 deviation blocks the merge gate — escalate immediately.
@@ -545,7 +558,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 11. **Sign-off gate:** If the item's seal condition in `sprint_backlog.md` names a required sign-off role: invoke agent-mediated sign-off per §5.3. Do not mark `acceptance_verified = true` until `sign_off_record.status = "cleared"`. Record outcome in `sign_off_record` in `execution_state.json`.
 
-12. **Post-story test files check (OA-04 / ST-09):** If this story created any new test files (in `tests/` or `tests/e2e/`), populate `test_scenarios` in `execution_state.json` for the parent EPIC with those file paths **now**, before advancing to the next story. Do not defer this step to STEP 3.2.A.
+12. **Post-story test files check (OA-04 / ST-09):** If this story created any new test files (in `tests/` or `tests/e2e/`), populate `test_scenarios` in `execution_state.json` for the parent EPIC with those file paths **now**, before advancing to the next story. Do not defer this step to STEP 3.2.A. Only include spec files containing scenarios that exercise this EPIC's acceptance criteria — do not add cross-EPIC spec files.
 
 13. **Cross-spec selector check (LL-v3.2-P3-02):** If this story modifies, replaces, removes, or renames a DOM element (e.g. changes a component, removes a checkbox, renames a form field), scan all existing Playwright spec files in `tests/e2e/` for selectors targeting that element (by ID, data-testid, role, or class name). If any stale selectors are found, update them in the same commit before pushing. This prevents CI failures in unrelated test files caused by UI changes in this story.
 
@@ -562,7 +575,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 1. Create or update the GitHub issue to `In Progress` with delegation note.
 2. Create a delegation record in `delegation_log.md` (Section 11).
    - For `delegated_backend`: include spec reference and required layer(s) (router / service / database).
-   - For `delegated_frontend`: include the complete Base44 prompt draft (all six sections).
+   - For `delegated_frontend`: include the complete Base44 prompt draft (all six sections). **New page route (AUD-2026-05-21-005):** If the story creates a new frontend page (new route), the delegation spec must additionally require: (a) `createPageUrl` map update in `pages.config.js` with the new route entry; (b) nav/sidebar registration if applicable. Explicitly state the target map key and value in the spec.
 3. Set item status to `blocked_backend` or `blocked_frontend` in `execution_state.json`.
 4. Record `delegation_record_id` and `unblock_criteria` in the item.
 5. Surface the delegation to the assigned role with:
@@ -880,14 +893,15 @@ The prompt's §6.2 rule applies: if any friction can be resolved by updating a t
 
 After sprint close:
 
-Update `.claude_current_state.json`:
-- `status` → `Sprint_Complete`
-- `last_sync_utc` → now
-- **`blocked_sla_breached`** → `true` if any entry in `execution_escalations.md` has been open for 72 hours or more without resolution (per `shared_standards.md §4` SLA Breach Rule); otherwise omit or set `false`.
+```yaml
+# global state update (.claude_current_state.json):
+status: Sprint_Complete
+last_sync_utc: <ISO-8601 UTC now>
+blocked_sla_breached: true   # only if any execution_escalations.md entry open ≥72h; else omit
+release_complete: true       # only if all roadmap items for this release complete; else omit
+```
 
-If all roadmap items for this release are complete:
-- Flag `release_complete: true` in `.claude_current_state.json`.
-- Surface to Product Owner: the release is ready for Phase 1 (Roadmap Rebalance) or direct Phase 1B (next release planning).
+If `release_complete: true`: surface to Product Owner — release ready for Phase 1 or direct Phase 1B.
 
 ---
 
@@ -901,12 +915,14 @@ Before sealing, verify `delegation_log.md` line count is consistent with delegat
 2. If `delegated_items` is non-empty: confirm `delegation_log.md` has substantially more than 5 lines (a header-only or near-empty file after a sprint with delegation records indicates a staging error — as occurred in v2.3 sprint close commit `a12233f`).
 3. If line count is suspiciously low (fewer than 10 lines with non-empty `delegated_items`): halt, surface the discrepancy, and re-read `delegation_log.md` before proceeding. Do not seal an incomplete delegation log.
 
-1. Set `execution_state.json.sealed = true`, `sealed_utc = now`.
-2. Set `execution_state.json.status = Sealed`.
-3. No further modifications to `execution_state.json` are permitted.
-4. No further modifications to `delegation_log.md` or `execution_escalations.md` are permitted.
+```yaml
+# seal write (execution_state.json):
+sealed: true
+sealed_utc: <ISO-8601 UTC now>
+status: Sealed
+```
 
-**Terminal state rule:** Once sealed, the execution record is immutable. Any correction or amendment requires a new execution cycle referencing this `cycle_id`.
+After seal: `execution_state.json`, `delegation_log.md`, and `execution_escalations.md` are immutable. Any correction requires a new execution cycle referencing this `cycle_id`.
 
 ---
 
@@ -953,21 +969,16 @@ The run is complete only if:
 
 ## 13. Governance Invariants
 
-System-wide invariants: per `claude/system/invariants.md`. Execution-engine-specific invariants below.
+→ Apply `claude/system/shared/governance_preamble.md §Invariants` (system-wide) and `claude/system/invariants.md`. Phase-specific additions:
 
-**Ambiguity definition:** An item is *ambiguous* when its acceptance criteria, EPIC assignment, spec reference, or delegation classification cannot be determined without an authority decision. Ambiguous items must be classified `delegated_decision` and escalated — never silently assumed or guessed. This applies in both `strict` and `standard` modes. The only difference between modes is whether execution continues on other items (standard) or halts entirely (strict).
+**Ambiguity definition:** An item is *ambiguous* when its acceptance criteria, EPIC assignment, spec reference, or delegation classification cannot be determined without an authority decision. Ambiguous items must be classified `delegated_decision` and escalated — never silently assumed or guessed. This applies in both `strict` and `standard` modes.
 
-- **No autonomous merge.** The engine never merges without QA sign-off and Product Owner acceptance.
-- **Gate evidence requirement.** Any hard gate status change in `current_roadmap.md` (marking a gate as "complete") must reference the evidence artefact that cleared it (PoG Gate ID, decision record path, or verifiable session output reference). A gate may not be marked complete without an evidence reference. If no artefact exists: gate remains "pending". Record in escalations.md.
+- **Gate evidence requirement.** Any hard gate status change in `current_roadmap.md` (marking a gate as "complete") must reference the evidence artefact that cleared it (PoG Gate ID, decision record path, or verifiable session output reference). No artefact → gate stays "pending"; record in escalations.md.
 - **No scope change.** The backlog slice is sealed. The engine executes what is there.
 - **No strategy boundary decisions.** The Strategy Rules owner decides; the engine surfaces and parks.
 - **Delegation is explicit and tracked.** No silent assumptions about human completion.
-- **Commit format is non-negotiable.** `[EPIC-xx][ST-xx]` prefix on every commit to `exec/**`. `governance_sync.yml` depends on it.
-- **PR title is non-negotiable.** `[EPIC-xx]` in title. `quality_gate.yml` blocks merge without it.
-- **Every block is recorded.** Nothing is silently skipped. Blocked items are documented in `execution_state.json` and surfaced to the user.
-- **Amendment slice supersedes original.** If `amended_backlog_slice_path` is set, it is used exclusively. Executing from the original slice when an amendment has sealed is a process integrity failure.
-- **Delivery pressure does not override quality gates.** Director of Quality sign-off is required on every EPIC before merge, regardless of timeline.
-- **Backend commits for delegated_frontend items must land on the EPIC branch.** Backend commits tightly coupled to a `delegated_frontend` story (e.g. new DB migration + endpoint required by the frontend) must be committed to that story's EPIC branch, not directly to `main`, unless the PMO Lead explicitly authorises a direct-to-main path in writing. Violation is a process deviation and must be documented in the QA evidence log for the affected EPIC (and any other EPIC whose merge window was impacted). Reference: DEV-EPIC02-ST05-02 (LL-v2.2-EX-03).
+- **Director of Quality sign-off is required on every EPIC before merge**, regardless of timeline.
+- **Backend commits for delegated_frontend items must land on the EPIC branch.** Backend commits tightly coupled to a `delegated_frontend` story must be committed to that story's EPIC branch, not directly to `main`, unless the PMO Lead explicitly authorises a direct-to-main path in writing. Violation must be documented in the QA evidence log. Reference: DEV-EPIC02-ST05-02 (LL-v2.2-EX-03).
 
 ---
 

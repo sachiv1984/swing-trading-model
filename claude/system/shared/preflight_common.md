@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-17
+**Version:** 1.1
+**Last Updated:** 2026-05-21
 
 ---
 
@@ -48,4 +48,4 @@ All halts follow the standard halt report format per `claude/system/shared_stand
 
 ---
 
-*This subroutine is shared across Release Planning, Sprint Execution, Delivery Verification, and Post-Ship Closure engines. Sprint Planning is excluded (uses a different numbered-list preflight style).*
+*This subroutine is shared across Roadmap Rebalance, Release Planning, Sprint Execution, Delivery Verification, and Post-Ship Closure engines. Sprint Planning is excluded (uses a different numbered-list preflight style).*

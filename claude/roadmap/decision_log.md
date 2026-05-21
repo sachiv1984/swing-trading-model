@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-16 (cycle 2026-05-15__scheduled-2 — DL-030 appended)
+**Last Updated:** 2026-05-21 (cycle 2026-05-21__scheduled — DL-032 appended)
 
 ---
 
@@ -774,4 +774,15 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Displacement:** N/A — no additions this cycle
 **Workforce impact:** None
 **Rationale:** Scheduled rebalance post-v3.7 close. Now horizon empty — v3.8 release planning not yet commenced. All active initiatives (Arc 4–6, PT-04) reaffirmed as 🔥 Must continue. One gate-cleared idea re-evaluated: IDEA-financial-reporting-20260508-02 (planned_entry_price snapshotting shipped v3.6 — technical gate met). PO re-parked with new rationale: data density insufficient (fewer than 20 closed trades with plans and entry_delta_pct populated); portfolio-level entry zone discipline metric premature; entry_delta_pct already surfaced at trade-plan detail level via PlanVsReality (v3.6). 32 other ideas re-parked with park counts incremented (+1 each; last committed increment was cycle 2026-05-15__scheduled-2). No advancing candidates. Zero displacement required. No backlog additions warranted — 5 active backlog items sufficient for v3.8 planning. Note: prior cycles 2026-05-18__scheduled and 2026-05-18__scheduled-2 have no committed artefacts; decision log entries DL-031 through DL-032 cited in memory records are absent from this file — this run uses DL-031 as next sequential entry.
+**Decision owner:** Product Owner
+
+---
+
+### DL-032 — 2026-05-21
+
+**Decision type:** No-change (roadmap-level) + Ideas register migration (3-cycle cap enforcement)
+**Cycle:** 2026-05-21__scheduled
+**Displacement:** N/A — no roadmap additions this cycle
+**Workforce impact:** None
+**Rationale:** Scheduled rebalance post-v3.8 close. Now horizon empty — v3.9 release planning not yet commenced. All active initiatives (Arc 4–6 remaining) reaffirmed as 🔥 Must continue. SI-01 shipped v3.8; Arc 5 active initiatives updated. One gate-cleared idea evaluated: IDEA-pmo-lead-20260508-01 (Arc 3 completion gate met) — PO rejects: milestone tracking covered by existing artefacts at sole-developer scale. First rebalance run under roadmap_prompt.md v6.3+ (3-cycle hard cap). 33 parked ideas all at park count ≥ 3 (range 5–13); terminal classification applied: 29 promoted to backlog as gate-conditional items (BLG-FEAT-26–35, BLG-FE-39, BLG-BE-13–14, BLG-QA-21–23, BLG-OPS-17–24, BLG-SPEC-32, BLG-GOV-26–29), 4 rejected not strong. Ideas register now clean. No roadmap additions; net-zero passes (0 additions, 0 kills).
 **Decision owner:** Product Owner

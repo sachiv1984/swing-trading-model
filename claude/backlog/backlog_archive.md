@@ -1,11 +1,131 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-19
+**Last Updated:** 2026-05-21
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+## v3.8 Completions — Archived 2026-05-21 (Post-Ship Closure)
+
+---
+
+### BLG-FEAT-22 — Ticker Universe Management page
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-21
+**Shipped in:** v3.8 (ST-09, cycle: 2026-05-19__release-v3.8, closed 2026-05-20)
+**Evidence:** docs/product/changelog.md#v38; claude/cycles/2026-05-19__release-v3.8/verification_report.md
+
+### BLG-FEAT-22 — Ticker Universe Management page
+✅ COMPLETE v3.8 — ST-09, cycle: 2026-05-19__release-v3.8, closed 2026-05-20
+**Priority:** P2 (Medium)
+**Type:** Product Feature / User Configuration
+**Owner:** Head of UX & Design; Head of Backend Engineering
+**Source:** User request — 2026-05-19
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v3.8
+
+**Problem**
+Users currently have no way to manage the ticker universe that drives both screener and signal generation. The `ticker_universe` table is already used as the single source by both features, but there is no UI to view, add, deactivate, or remove tickers. Additionally, a legacy `public.tickers` table is synced into `ticker_universe` on startup, creating a secondary source-of-truth and confusion about where the canonical universe lives.
+
+**Scope**
+- Retire the startup sync from `public.tickers` into `ticker_universe`; make `ticker_universe` the sole authoritative source
+- Build a Ticker Universe Management page in the frontend (new route, nav entry)
+- Page features: table of all tickers (ticker, market, sector, active status); add ticker form (ticker symbol, market US/UK, optional sector/industry); toggle active/inactive per ticker; delete ticker permanently
+- Filter/search by market (US / UK) and active status
+- Wire to existing `/ticker-universe` GET, POST, DELETE endpoints (no new backend endpoints required)
+
+**Acceptance Criteria**
+- `public.tickers` startup sync removed; `ticker_universe` is populated only via the management UI or seed defaults
+- Universe Management page accessible from nav; displays all tickers with market, sector, and active status
+- User can add a ticker (US or UK market); added ticker appears immediately in the table
+- User can toggle a ticker inactive; inactive tickers are excluded from the next screener/signal run
+- User can delete a ticker permanently; it no longer appears in the table
+- Filter by market (US/UK/All) and active status works correctly
+- Screener and signal generation both continue to use only active tickers from `ticker_universe`
+
+---
+
+### BLG-FEAT-23 — Setup type classification field on trade plans
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-21
+**Shipped in:** v3.8 (ST-06, cycle: 2026-05-19__release-v3.8, closed 2026-05-20)
+**Evidence:** docs/product/changelog.md#v38; claude/cycles/2026-05-19__release-v3.8/verification_report.md
+
+### BLG-FEAT-23 — Setup type classification field on trade plans
+✅ COMPLETE v3.8 — ST-06, cycle: 2026-05-19__release-v3.8, closed 2026-05-20
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Data Model
+**Owner:** Product Owner; Head of UX & Design; Backend Engineering Patterns Owner
+**Source:** User session — 2026-05-19
+**Effort:** S (~0.5 days)
+**Provisional-Target:** v3.8
+
+**Problem**
+The trade plan form's setup thesis field is a free-text textarea with no structural anchor. Traders don't know what vocabulary to use, and without a setup type classification the app cannot in future surface behavioural patterns.
+
+**Scope**
+- Add a "Setup Type" dropdown to the trade plan form with six options
+- Add `setup_type` (VARCHAR, nullable) column to the `trade_plans` table via migration
+- Update POST /trade-plans and PUT /trade-plans/{id} to accept and persist `setup_type`
+
+---
+
+### BLG-FEAT-24 — AI-assisted setup thesis generation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-21
+**Shipped in:** v3.8 (ST-08, cycle: 2026-05-19__release-v3.8, closed 2026-05-20)
+**Evidence:** docs/product/changelog.md#v38; claude/cycles/2026-05-19__release-v3.8/verification_report.md
+
+### BLG-FEAT-24 — AI-assisted setup thesis generation
+✅ COMPLETE v3.8 — ST-08, cycle: 2026-05-19__release-v3.8, closed 2026-05-20
+**Priority:** P2 (Medium)
+**Type:** Product Feature / UX Enhancement
+**Owner:** Product Owner; Head of UX & Design; Backend Engineering Patterns Owner
+**Source:** User session — 2026-05-19
+
+---
+
+### BLG-FE-36 — Add news context panel to trade plan form
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-05-21
+**Shipped in:** v3.8 (ST-07, cycle: 2026-05-19__release-v3.8, closed 2026-05-20)
+**Evidence:** docs/product/changelog.md#v38; claude/cycles/2026-05-19__release-v3.8/verification_report.md
+
+### BLG-FE-36 — Add news context panel to trade plan form
+✅ COMPLETE v3.8 — ST-07, cycle: 2026-05-19__release-v3.8, closed 2026-05-20
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Backend Engineering Patterns Owner
+**Source:** User session — 2026-05-19
+
+---
+
+### BLG-GOV-24 — Add gh_issue_template.md to §14 governance table
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-05-21
+**Shipped in:** v3.8 (ST-10, cycle: 2026-05-19__release-v3.8, closed 2026-05-20)
+**Evidence:** docs/product/changelog.md#v38; claude/cycles/2026-05-19__release-v3.8/verification_report.md
+
+### BLG-GOV-24 — Add gh_issue_template.md to §14 governance table
+✅ COMPLETE v3.8 — ST-10, cycle: 2026-05-19__release-v3.8, closed 2026-05-20
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Governance-drift check during preflight consolidation branch gov/2026-05-17__preflight-consolidation — 2026-05-17
 
 ---
 
