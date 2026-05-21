@@ -455,12 +455,26 @@ Create `claude/cycles/<cycle_id>/execution_state.json` if it does not exist.
    - `autonomous`: record spec if one governs the work; leave `[]` only if purely infrastructural
    - `delegated_decision`: leave `[]` until resolved — populate when re-classified
    If a `delegated_backend` item has no lockable spec reference: classify as `delegated_decision` instead and surface to Head of Specs Team.
-6. For each EPIC: check `docs/testing/` for existing test scenario files referencing the EPIC ID or any of its ST items. Record found scenario file paths in `execution_state.json` under the EPIC's `test_scenarios` field. If none found: set `test_scenarios: []`. The verification engine will use this to confirm which scenarios were run.
-7. Initialise all statuses to `not_started`.
-8. Set cycle-level status to `Running`.
+6. For each EPIC: check `docs/testing/` for existing test scenario files. Record found paths in `execution_state.json` EPIC `test_scenarios` field. If none: set `test_scenarios: []`.
 
-Update `.claude_current_state.json`:
-- `status` → `Executing`
+```yaml
+# execution_state.json initial schema (∀ ST item at STEP 0):
+epics.<EPIC-xx>.stories.<ST-xx>:
+  status: not_started
+  classification: autonomous|delegated_backend|delegated_frontend|delegated_qa|delegated_decision
+  spec_references: []          # populate per rule above; [] only if purely infrastructural
+  github_issue: null           # filled at STEP 1
+  branch: null                 # filled at STEP 2
+  deviations_filed: false
+  acceptance_verified: false
+  commit_sha: null
+epics.<EPIC-xx>.test_scenarios: []   # populate if found in docs/testing/
+execution_state.status: Running
+backlog_slice_source: <authoritative slice path>
+
+# global state update:
+.claude_current_state.json.status: Executing
+```
 
 `Executing` is a valid intermediate status between `Sprint_Planning_Complete` and `Sprint_Complete`. It is documented in the guide's lifecycle table and cycle trigger table. Phase 4 (`run delivery verification`) may not be invoked while status is `Executing` — Phase 3 must complete and status must reach `Sprint_Complete` first.
 
@@ -497,6 +511,13 @@ For each EPIC in scope:
 
 ## STEP 3 — Execution Loop (Per EPIC, Per ST Item)
 
+```yaml
+# commit format (mandatory ∀ commits on exec/** branches):
+"[EPIC-xx][ST-xx] <imperative description>"
+# two stories in one commit: "[EPIC-xx][ST-xx][ST-yy] <description>"
+# governance_sync.yml parses this to close GitHub issues automatically
+```
+
 Work through EPICs in dependency order. Within each EPIC, work through ST items in dependency order.
 
 ### 3.1 For each ST item
@@ -508,13 +529,18 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 2a. **Spec_references path verify (LL-v3.7-EX-03):** When populating `spec_references` in `execution_state.json`, verify each path exists (file read or ls check) before recording it. A non-existent path in `spec_references` causes false traceability and masks missing specs — record only paths that resolve on disk.
 
-3. Commit to the EPIC branch with format: `[EPIC-xx][ST-xx] <imperative description>`
+3. Commit to the EPIC branch (format: see STEP 3 header schema).
 4. Push to `exec/<cycle_id>/EPIC-xx`.
-5. `governance_sync.yml` will close the GitHub issue automatically on push.
+5. `governance_sync.yml` closes the GitHub issue automatically on push.
 6. Verify issue is closed (re-check after push).
-7. Mark item `done` in `execution_state.json`.
-8. Set `acceptance_verified = true` once acceptance criteria are confirmed met.
-9. Set `commit_sha` to the pushed commit.
+
+```yaml
+# state update after push:
+epics.<EPIC-xx>.stories.<ST-xx>:
+  status: done
+  commit_sha: <pushed sha>
+  acceptance_verified: true   # set once AC confirmed met
+```
 10. Deviation check: compare implementation against canonical spec.
     - If no deviation: set `deviations_filed = true` (meaning "deviation check completed; none found").
     - If a deviation exists: document it in the canonical spec per `claude/charter/document_lifecycle_guide.md` §9 (description, canonical requirement, priority P0–P3, target resolution release, owner, backlog reference). Set `deviations_filed = true` once filed. A P0 deviation blocks the merge gate — escalate immediately.
@@ -863,14 +889,15 @@ The prompt's §6.2 rule applies: if any friction can be resolved by updating a t
 
 After sprint close:
 
-Update `.claude_current_state.json`:
-- `status` → `Sprint_Complete`
-- `last_sync_utc` → now
-- **`blocked_sla_breached`** → `true` if any entry in `execution_escalations.md` has been open for 72 hours or more without resolution (per `shared_standards.md §4` SLA Breach Rule); otherwise omit or set `false`.
+```yaml
+# global state update (.claude_current_state.json):
+status: Sprint_Complete
+last_sync_utc: <ISO-8601 UTC now>
+blocked_sla_breached: true   # only if any execution_escalations.md entry open ≥72h; else omit
+release_complete: true       # only if all roadmap items for this release complete; else omit
+```
 
-If all roadmap items for this release are complete:
-- Flag `release_complete: true` in `.claude_current_state.json`.
-- Surface to Product Owner: the release is ready for Phase 1 (Roadmap Rebalance) or direct Phase 1B (next release planning).
+If `release_complete: true`: surface to Product Owner — release ready for Phase 1 or direct Phase 1B.
 
 ---
 
@@ -884,12 +911,14 @@ Before sealing, verify `delegation_log.md` line count is consistent with delegat
 2. If `delegated_items` is non-empty: confirm `delegation_log.md` has substantially more than 5 lines (a header-only or near-empty file after a sprint with delegation records indicates a staging error — as occurred in v2.3 sprint close commit `a12233f`).
 3. If line count is suspiciously low (fewer than 10 lines with non-empty `delegated_items`): halt, surface the discrepancy, and re-read `delegation_log.md` before proceeding. Do not seal an incomplete delegation log.
 
-1. Set `execution_state.json.sealed = true`, `sealed_utc = now`.
-2. Set `execution_state.json.status = Sealed`.
-3. No further modifications to `execution_state.json` are permitted.
-4. No further modifications to `delegation_log.md` or `execution_escalations.md` are permitted.
+```yaml
+# seal write (execution_state.json):
+sealed: true
+sealed_utc: <ISO-8601 UTC now>
+status: Sealed
+```
 
-**Terminal state rule:** Once sealed, the execution record is immutable. Any correction or amendment requires a new execution cycle referencing this `cycle_id`.
+After seal: `execution_state.json`, `delegation_log.md`, and `execution_escalations.md` are immutable. Any correction requires a new execution cycle referencing this `cycle_id`.
 
 ---
 

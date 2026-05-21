@@ -552,9 +552,10 @@ For each item found: note in the run manifest as "Design dependency detected —
 
 If no items are found: record "Design dependency scan: 0 items flagged" in run manifest and proceed.
 
-Update state.json:
-
-- artifacts.stage1_readiness = pass|fail|blocked
+```yaml
+# state.json update (STEP 1):
+artifacts.stage1_readiness: pass|fail|blocked
+```
 
 ---
 
@@ -570,10 +571,11 @@ Populate: `Release`, `Cycle`, `Last Updated`, `Items in scope` table (S2-IDs req
 
 This document is the authoritative scope record for Post-Ship Closure Step 4 supersession. If not created here, the post-ship closure engine will flag it as missing.
 
-Update state.json:
-
-- artifacts.stage2_scope_extraction = pass|fail|blocked
-- artifacts.stage2_scope_document = present|missing
+```yaml
+# state.json update (STEP 2):
+artifacts.stage2_scope_extraction: pass|fail|blocked
+artifacts.stage2_scope_document: present|missing
+```
 
 ---
 
@@ -614,12 +616,13 @@ Populate: `Release`, `Cycle`, `Last Updated`, scope decisions, sequencing decisi
 
 This document is the authoritative planning decisions record for this release. If not created here, the post-ship closure engine will flag it as missing.
 
-Update state.json:
-
-- artifacts.stage3_execution_plan = pass|fail|blocked
-- artifacts.stage3_decisions_record = present|missing
-- attributes.plan_structured = true on pass
-- status = Planning when Stage 3 exists (pass)
+```yaml
+# state.json update (STEP 3):
+artifacts.stage3_execution_plan: pass|fail|blocked
+artifacts.stage3_decisions_record: present|missing
+attributes.plan_structured: true          # on pass
+status: Planning                           # when Stage 3 passes
+```
 
 ---
 
@@ -629,10 +632,11 @@ Classification: Conditional Gate (halts only if escalation remains Open / blocki
 
 Write: `## Integrity Validation — 3.5 Local Model Integrity` subsection in `release_plan.md`
 
-Update state.json:
-
-- artifacts.stage3_5_model_integrity = pass|fail|blocked
-- attributes.plan_executable = true on pass
+```yaml
+# state.json update (STEP 3.5):
+artifacts.stage3_5_model_integrity: pass|fail|blocked
+attributes.plan_executable: true   # on pass
+```
 
 ---
 
@@ -655,40 +659,26 @@ Hard rules:
 
 Lock acquisition procedure:
 
-1. If `claude/backlog/.lock` does NOT exist:
+1. If `claude/backlog/.lock` does NOT exist: create with contents `{cycle_id, release, acquired_utc, acquired_by: "Release Planning Engine"}`.
 
-   - Create it with deterministic contents:
-     - cycle_id: `<cycle_id>`
-     - release: `<release>`
-     - acquired_utc: `<ISO-8601 UTC>`
-     - acquired_by: "Release Planning Engine"
-   - Update `state.json`:
-     - locks.backlog_lock.owned = true
-     - locks.backlog_lock.owner_cycle_id = `<cycle_id>`
-     - locks.backlog_lock.owner_release = `<release>`
-     - locks.backlog_lock.acquired_utc = `<timestamp>`
-     - locks.backlog_lock.status = "acquired"
-     - locks.backlog_lock.marker = `RP:<release>:<cycle_id>`
-     - artifacts.backlog_lock = "acquired"
+```yaml
+# state.json update — lock acquired:
+locks.backlog_lock: { owned: true, owner_cycle_id: <cycle_id>, owner_release: <release>,
+  acquired_utc: <ISO-8601 UTC>, status: acquired, marker: "RP:<release>:<cycle_id>" }
+artifacts.backlog_lock: acquired
+```
 
 2. If `claude/backlog/.lock` exists:
+   - Read `owner_cycle_id`. If `== <cycle_id>`: re-entrant — proceed (`artifacts.backlog_lock = acquired`).
+   - If `!= <cycle_id>`: record ⛔ Blocker (PMO Lead; unblock: "manually release or declare stale"), include lock contents as evidence. If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
 
-   - Read `owner_cycle_id` from lock file contents.
-   - If `owner_cycle_id == <cycle_id>`:
-     - Treat as re-entrant: proceed.
-     - artifacts.backlog_lock = "acquired"
-   - If `owner_cycle_id != <cycle_id>`:
-     - Record a ⛔ Blocker (Lifecycle / Process Integrity; owning authority: PMO Lead)
-     - Unblock criteria: "Backlog lock must be manually released or declared stale under protocol"
-     - Evidence: include lock file contents
-     - If `--auto-escalate=true`: invoke Escalation Handling Subroutine.
-     - Update `state.json`:
-       - locks.backlog_lock.owned = false
-       - locks.backlog_lock.owner_cycle_id = `<value from lock file>`
-       - locks.backlog_lock.owner_release = `<value from lock file, if present>`
-       - locks.backlog_lock.status = "blocked"
-       - artifacts.backlog_lock = "blocked"
-     - HALT.
+```yaml
+# state.json update — lock blocked:
+locks.backlog_lock: { owned: false, owner_cycle_id: <from lock file>,
+  owner_release: <from lock file>, status: blocked }
+artifacts.backlog_lock: blocked
+# → HALT
+```
 
 Stale protocol (detect only; do not clear):
 
@@ -781,12 +771,13 @@ Schema: see `claude/system/shared_standards.md §16.2`.
 
 One entry per ST item in `stage4_backlog_slice.md`. The `cycle:<cycle_id>` label is the idempotency key for GitHub issue creation (§10.2).
 
-Update state.json (Step 4 outcome):
-
-- artifacts.stage4_backlog_slice = pass|fail|blocked
-- artifacts.stage4_issue_manifest = pass|fail|blocked
-- attributes.backlog_committed = true on pass
-- status = Committed on pass
+```yaml
+# state.json update (STEP 4 outcome):
+artifacts.stage4_backlog_slice: pass|fail|blocked
+artifacts.stage4_issue_manifest: pass|fail|blocked
+attributes.backlog_committed: true          # on pass
+status: Committed                           # on pass
+```
 
 ### STEP 4 Postcondition — Release Backlog Lock (Strict)
 
@@ -828,10 +819,11 @@ When `artifacts.stage4_5_capacity_check = warn` (total estimated effort exceeds 
 
 This makes the WARN actionable: sprint planning can adopt the phasing recommendation directly rather than discovering over-allocation at sprint planning time.
 
-Update state.json:
-
-- artifacts.stage4_5_capacity_check = pass|warn|fail|blocked
-- attributes.capacity_feasible = pass|warn|fail|blocked
+```yaml
+# state.json update (STEP 4.5):
+artifacts.stage4_5_capacity_check: pass|warn|fail|blocked
+attributes.capacity_feasible: pass|warn|fail|blocked
+```
 
 *(NOTE: this step is forced to rerun by RESUME PRECHECK per safety policy)*
 
@@ -864,10 +856,11 @@ Lock and transaction procedure:
 4. Update roadmap_txn.json: state = "committed".
 5. Release lock (see postcondition below).
 
-Update state.json:
-
-- artifacts.roadmap_txn = committed (on success)
-- locks.roadmap_lock.status = released (on success)
+```yaml
+# state.json update (STEP 5):
+artifacts.roadmap_txn: committed            # on success
+locks.roadmap_lock.status: released         # on success
+```
 
 ### STEP 5 Postcondition — Release Roadmap Lock (Strict)
 
@@ -892,11 +885,13 @@ Run both integrity checks and write results as subsections of `release_plan.md`:
 
 **5.7 Decision Record Integrity** (only if decision records exist or escalations were raised): Verify `decisions--{cycle_id}.md` is present, all AR/SRB records referenced in escalations exist at their declared paths, all mandatory template fields are populated.
 
-Update state.json:
-- `artifacts.stage5_5_cross_stage_integrity = pass|fail|blocked`
-- `artifacts.stage5_7_decision_record_integrity = pass|fail|blocked|not_applicable`
-- `attributes.cross_stage_integrity = pass|fail|blocked`
-- `attributes.decisions_validated = pass|fail|not_applicable|blocked`
+```yaml
+# state.json update (STEP 5.5):
+artifacts.stage5_5_cross_stage_integrity: pass|fail|blocked
+artifacts.stage5_7_decision_record_integrity: pass|fail|blocked|not_applicable
+attributes.cross_stage_integrity: pass|fail|blocked
+attributes.decisions_validated: pass|fail|not_applicable|blocked
+```
 
 *(NOTE: rerun only if Stage 2/3/4 artefacts changed)*
 
@@ -928,11 +923,13 @@ This checklist is designed to be consumed by the Sprint Planning Engine at its p
 
 Before writing `cycle_summary.md`, update `.claude_current_state.json` to reflect the current in-progress state. This is a pre-publish sync — it does not mark the cycle Published. Its purpose is to ensure the global state pointer reflects the active cycle if the session is interrupted before STEP 9.
 
-Update `.claude_current_state.json`:
-- active_cycle = `<cycle_id>`
-- status = current macro-state (e.g., `Validated` — not `Published`)
-- backlog_slice_path = `claude/cycles/<cycle_id>/stage4_backlog_slice.md`
-- last_sync_utc = current timestamp
+```yaml
+# .claude_current_state.json intermediate sync (STEP 7 — pre-publish only):
+active_cycle: <cycle_id>
+status: <current macro-state>       # e.g. Validated — NOT Published
+backlog_slice_path: claude/cycles/<cycle_id>/stage4_backlog_slice.md
+last_sync_utc: <ISO-8601 UTC now>
+```
 
 STEP 9 (Global State Synchronization) is the terminal sync and is the only step that sets status = `Published`. Do not set Published here.
 
@@ -952,12 +949,16 @@ Purpose: Final update of the root-level state pointer to reflect that this cycle
 
 Execution Rules:
 1. Verify STEP 7 intermediate sync has completed (backlog_slice_path and active_cycle are already set).
-2. Update the root-level file `.claude_current_state.json`:
-   - active_cycle: `<cycle_id>` (confirm — already set at STEP 7)
-   - status: `Published`
-   - backlog_slice_path: `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (confirm)
-   - last_sync_utc: current timestamp
-3. If the file does not exist, create it using the standard schema.
+2. If `.claude_current_state.json` does not exist, create it using the standard schema.
+3. Terminal state update:
+
+```yaml
+# .claude_current_state.json terminal update (STEP 9 — sets Published):
+active_cycle: <cycle_id>            # confirm — already set at STEP 7
+status: Published
+backlog_slice_path: claude/cycles/<cycle_id>/stage4_backlog_slice.md   # confirm
+last_sync_utc: <ISO-8601 UTC now>
+```
 
 ---
 
