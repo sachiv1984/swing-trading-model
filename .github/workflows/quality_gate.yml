@@ -19,7 +19,52 @@ jobs:
             exit 1
           fi
 
-      - name: Verify Documentation Sync
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify QA Evidence (EPIC PRs only)
         run: |
-          # Potential check to ensure state.json was updated in the PR
-          echo "Governance ID found. Proceeding with technical checks..."
+          PR_TITLE="${{ github.event.pull_request.title }}"
+
+          # Skip for GOVERNANCE and ST-prefixed PRs (no EPIC-level QA evidence required)
+          if [[ "$PR_TITLE" =~ ^\[GOVERNANCE\] ]] || [[ "$PR_TITLE" =~ ^\[ST- ]]; then
+            echo "Non-EPIC PR — QA evidence check skipped."
+            exit 0
+          fi
+
+          # Extract EPIC-xx from title
+          EPIC_ID=$(echo "$PR_TITLE" | grep -oP 'EPIC-\d+' | head -1)
+          if [ -z "$EPIC_ID" ]; then
+            echo "No EPIC ID found — QA evidence check skipped."
+            exit 0
+          fi
+
+          # Read active cycle from state pointer
+          if [ ! -f ".claude_current_state.json" ]; then
+            echo "Error: .claude_current_state.json not found."
+            exit 1
+          fi
+          ACTIVE_CYCLE=$(jq -r '.active_cycle' .claude_current_state.json)
+          if [ -z "$ACTIVE_CYCLE" ] || [ "$ACTIVE_CYCLE" = "null" ]; then
+            echo "Error: active_cycle not set in .claude_current_state.json."
+            exit 1
+          fi
+
+          QA_FILE="claude/cycles/${ACTIVE_CYCLE}/qa_evidence_${EPIC_ID}.md"
+
+          if [ ! -f "$QA_FILE" ]; then
+            echo "Error: QA evidence file not found: $QA_FILE"
+            echo "The QA evidence file must be committed to this branch before opening a PR."
+            echo "Per PR template §DoQ Sign-Off Confirmation: do not open a PR without committed QA evidence."
+            exit 1
+          fi
+
+          # Verify sign-off Date: field is non-blank
+          if ! grep -qP 'Date:\s*\d{4}-\d{2}-\d{2}' "$QA_FILE"; then
+            echo "Error: $QA_FILE has a blank or invalid Date: field in the DoQ sign-off block."
+            echo "DoQ sign-off must be applied during sprint execution (date format: YYYY-MM-DD)."
+            exit 1
+          fi
+
+          echo "QA evidence verified: $QA_FILE"
+          grep -P 'Date:\s*\d{4}-\d{2}-\d{2}' "$QA_FILE" | head -3
