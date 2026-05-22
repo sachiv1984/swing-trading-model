@@ -1,0 +1,381 @@
+{
+  "cycle_id": "2026-05-21__release-v3.9",
+  "sprint_goal": "Restore screener data reliability with P1/P2 bug fixes and a degraded-run warning, improve Ticker Universe management, ship the Arc 5 Red Flag Journal for persistent operator-deviation capture, and close all five v3.8 governance carry-forward patches.",
+  "backlog_slice_source": "claude/cycles/2026-05-21__release-v3.9/stage4_backlog_slice.md",
+  "invoked_utc": "2026-05-22T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-05-22T00:00:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "not_started",
+      "branch": "exec/2026-05-21__release-v3.9/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-21__release-v3.9/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/e2e/screener.spec.js",
+        "tests/test_screener_batch_service.py"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Fix Yahoo Finance crumb/401 rate-limiting in screener batch",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 458,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["backend/services/screener_batch_service.py"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-02": {
+          "title": "Fix sector/industry data silently dropped in screener batch",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 459,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["backend/services/screener_batch_service.py"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-03": {
+          "title": "Remove invalid DAY ticker and investigate PHNX.L from ticker universe",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 460,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["backend/tickers_full_list.csv"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-04": {
+          "title": "Add degraded-run warning banner to screener results page",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 461,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/screener_results.md",
+            "docs/design/2026-05-21__release-v3.9/degraded-run-banner/ux_spec.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-05-21__release-v3.9/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-21__release-v3.9/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/e2e/ticker-universe.spec.js"
+      ],
+      "stories": {
+        "ST-05": {
+          "title": "Strip .L suffix from Ticker Universe page display labels",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 462,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["docs/specs/frontend/pages/ticker_universe.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-06": {
+          "title": "Add company_name column to ticker universe and display on management page",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 463,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/ticker_universe.md",
+            "docs/specs/api_contracts/ticker_universe_api_contract.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-05-21__release-v3.9/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-21__release-v3.9/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-07": {
+          "title": "Red Flag Journal — data model and backend",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 464,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md",
+            "docs/reference/openapi.yaml",
+            "backend/routers/test.py"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-08": {
+          "title": "Red Flag Journal — frontend display",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 465,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/frontend/pages/red_flag_journal.md",
+            "docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-04": {
+      "status": "not_started",
+      "branch": "exec/2026-05-21__release-v3.9/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-21__release-v3.9/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-09": {
+          "title": "execution_prompt.md patches — test_scenarios guidance and createPageUrl delegation note",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 466,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/execution_prompt.md",
+            "claude/system/OPERATIONAL_GUIDE.md",
+            "claude/system/prompt_change_log.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-10": {
+          "title": "sprint_planning_prompt.md patch — planning-deferred items in execution_state.json",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 467,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/sprint_planning_prompt.md",
+            "claude/system/OPERATIONAL_GUIDE.md",
+            "claude/system/prompt_change_log.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-11": {
+          "title": "BLG-GOV-25 — Add --dry-run support to plan release and run delivery verification",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 468,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/release_planning_prompt.md",
+            "claude/system/delivery_verification_prompt.md",
+            "claude/system/shared_standards.md",
+            "claude/system/OPERATIONAL_GUIDE.md",
+            "claude/system/prompt_change_log.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-12": {
+          "title": "QA evidence pre-merge enforcement — PR template checklist item",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 469,
+          "branch": "exec/2026-05-21__release-v3.9/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [".github/pull_request_template.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-05": {
+      "status": "deferred_at_planning",
+      "branch": null,
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "stories": {
+        "ST-13": {
+          "title": "PT-04 Setup Quality Score — backend endpoint (conditional)",
+          "classification": null,
+          "status": "deferred_at_planning",
+          "assigned_to": null,
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "deferred_at_planning",
+          "gate_condition": "20+ closed trades not confirmed by PO (2026-05-22)"
+        },
+        "ST-14": {
+          "title": "PT-04 Setup Quality Score — frontend display (conditional)",
+          "classification": null,
+          "status": "deferred_at_planning",
+          "assigned_to": null,
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "deferred_at_planning",
+          "gate_condition": "20+ closed trades not confirmed by PO (2026-05-22); depends on ST-13"
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-02", "EPIC-01", "EPIC-04", "EPIC-03"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}

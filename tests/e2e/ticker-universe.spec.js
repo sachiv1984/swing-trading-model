@@ -27,10 +27,10 @@ const API = 'http://localhost:8000';
 // ---------------------------------------------------------------------------
 
 const TICKER_LIST = [
-  { ticker: 'AAPL', market: 'US', active: true,  sector: 'Technology', industry: 'Software' },
-  { ticker: 'MSFT', market: 'US', active: true,  sector: 'Technology', industry: 'Software' },
-  { ticker: 'BATS', market: 'UK', active: true,  sector: 'Consumer',   industry: 'Tobacco' },
-  { ticker: 'TSLA', market: 'US', active: false, sector: 'Auto',       industry: 'EV' },
+  { ticker: 'AAPL',   market: 'US', active: true,  sector: 'Technology', industry: 'Software', company_name: 'Apple Inc.' },
+  { ticker: 'MSFT',   market: 'US', active: true,  sector: 'Technology', industry: 'Software', company_name: 'Microsoft Corporation' },
+  { ticker: 'BATS.L', market: 'UK', active: true,  sector: 'Consumer',   industry: 'Tobacco',  company_name: 'British American Tobacco' },
+  { ticker: 'TSLA',   market: 'US', active: false, sector: 'Auto',       industry: 'EV',       company_name: 'Tesla, Inc.' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -105,7 +105,7 @@ test.describe('SC-TU-01 — Page renders', () => {
     await expect(page.getByTestId('ticker-table')).toBeVisible({ timeout: 8000 });
     await expect(page.getByTestId('ticker-row-AAPL')).toBeVisible({ timeout: 8000 });
     await expect(page.getByTestId('ticker-row-MSFT')).toBeVisible({ timeout: 8000 });
-    await expect(page.getByTestId('ticker-row-BATS')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('ticker-row-BATS.L')).toBeVisible({ timeout: 8000 });
     await expect(page.getByTestId('ticker-row-TSLA')).toBeVisible({ timeout: 8000 });
   });
 });
@@ -225,7 +225,7 @@ test.describe('SC-TU-05 — Market filter', () => {
     await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
     await page.getByLabel('Filter market UK').click();
 
-    await expect(page.getByTestId('ticker-row-BATS')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('ticker-row-BATS.L')).toBeVisible({ timeout: 5000 });
     await expect(page.getByTestId('ticker-row-AAPL')).not.toBeVisible({ timeout: 3000 });
     await expect(page.getByTestId('ticker-row-MSFT')).not.toBeVisible({ timeout: 3000 });
   });
@@ -235,7 +235,7 @@ test.describe('SC-TU-05 — Market filter', () => {
     await page.getByLabel('Filter market US').click();
 
     await expect(page.getByTestId('ticker-row-AAPL')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByTestId('ticker-row-BATS')).not.toBeVisible({ timeout: 3000 });
+    await expect(page.getByTestId('ticker-row-BATS.L')).not.toBeVisible({ timeout: 3000 });
   });
 });
 
@@ -260,5 +260,73 @@ test.describe('SC-TU-06 — Active status filter', () => {
 
     await expect(page.getByTestId('ticker-row-TSLA')).toBeVisible({ timeout: 5000 });
     await expect(page.getByTestId('ticker-row-AAPL')).not.toBeVisible({ timeout: 3000 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-TU-DISP-01 — ST-05: LSE ticker displayed without .L suffix
+// ---------------------------------------------------------------------------
+
+test.describe('SC-TU-DISP-01 — LSE .L suffix stripped in display', () => {
+  test.beforeEach(async ({ page }) => { await setup(page); });
+
+  test('SC-TU-DISP-01a: BATS.L row displays as BATS in the ticker cell', async ({ page }) => {
+    await expect(page.getByTestId('ticker-table')).toBeVisible({ timeout: 8000 });
+    const row = page.getByTestId('ticker-row-BATS.L');
+    await expect(row).toBeVisible({ timeout: 5000 });
+    const tickerCell = row.locator('td').first();
+    await expect(tickerCell).toHaveText('BATS');
+    await expect(tickerCell).not.toHaveText('BATS.L');
+  });
+
+  test('SC-TU-DISP-01b: US tickers display unchanged', async ({ page }) => {
+    await expect(page.getByTestId('ticker-table')).toBeVisible({ timeout: 8000 });
+    const row = page.getByTestId('ticker-row-AAPL');
+    await expect(row).toBeVisible({ timeout: 5000 });
+    const tickerCell = row.locator('td').first();
+    await expect(tickerCell).toHaveText('AAPL');
+  });
+
+  test('SC-TU-DISP-01c: Toggle request for BATS.L sends full .L suffix in URL', async ({ page }) => {
+    const requests = [];
+    page.on('request', (req) => {
+      if (req.url().includes('/ticker-universe/') && req.method() === 'DELETE') {
+        requests.push(req.url());
+      }
+    });
+
+    await page.getByTestId('ticker-table').waitFor({ timeout: 8000 });
+    await page.getByTestId('toggle-BATS.L').click();
+    await page.waitForTimeout(500);
+
+    expect(requests.length).toBeGreaterThan(0);
+    expect(requests[0]).toContain('/ticker-universe/BATS.L');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-TU-COMP-01 — ST-06: Company name visible in table
+// ---------------------------------------------------------------------------
+
+test.describe('SC-TU-COMP-01 — Company name column renders', () => {
+  test.beforeEach(async ({ page }) => { await setup(page); });
+
+  test('SC-TU-COMP-01a: Company name column header is visible', async ({ page }) => {
+    await expect(page.getByTestId('ticker-table')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('columnheader', { name: /company name/i })).toBeVisible({ timeout: 5000 });
+  });
+
+  test('SC-TU-COMP-01b: Known ticker row shows company name', async ({ page }) => {
+    await expect(page.getByTestId('ticker-table')).toBeVisible({ timeout: 8000 });
+    const companyCell = page.getByTestId('company-name-AAPL');
+    await expect(companyCell).toBeVisible({ timeout: 5000 });
+    await expect(companyCell).toHaveText('Apple Inc.');
+  });
+
+  test('SC-TU-COMP-01c: LSE ticker company name renders', async ({ page }) => {
+    await expect(page.getByTestId('ticker-table')).toBeVisible({ timeout: 8000 });
+    const companyCell = page.getByTestId('company-name-BATS.L');
+    await expect(companyCell).toBeVisible({ timeout: 5000 });
+    await expect(companyCell).toHaveText('British American Tobacco');
   });
 });
