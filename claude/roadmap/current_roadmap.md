@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-22 (roadmap rebalance 2026-05-22__scheduled — no roadmap-level changes; 32 backlog adds from IW-20260522-01; DL-033)
+**Last Updated:** 2026-05-22 (release plan v4.0 published — RA:v4.0 annotation added; Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance)
 **Last rebalance:** 2026-05-22 (cycle 2026-05-22__scheduled — Standard-tier, no-change; 44 ideas from IW-20260522-01; 32 Promoted-Backlog, 10 Parked-cycle-1, 2 Rejected; DL-033)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -11,7 +11,9 @@
 ## 1. Current Version
 
 **v3.9** — Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches — ✅ Shipped 2026-05-22
-**Next planned release:** **v4.0** — [TBD]
+**Next planned release:** **v4.0** — Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance — 📋 Planned (release plan published 2026-05-22; 11 firm stories / 4 EPICs / 2 sprints; EPIC-04 conditional on 20+ closed trades)
+
+<!-- RA:v4.0:2026-05-22__release-v4.0 -->
 
 *RA:v3.9 retired — see roadmap_archive.md 2026-05-22 (post-ship closure 2026-05-21__release-v3.9).*
 *RA:v3.8 retired — see roadmap_archive.md 2026-05-20 (post-ship closure 2026-05-19__release-v3.8).*

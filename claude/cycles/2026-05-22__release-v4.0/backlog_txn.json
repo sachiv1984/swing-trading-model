@@ -1,0 +1,23 @@
+{
+  "txn_id": "RP:v4.0:2026-05-22__release-v4.0",
+  "cycle_id": "2026-05-22__release-v4.0",
+  "release": "v4.0",
+  "state": "committed",
+  "lock_marker": "RP:v4.0:2026-05-22__release-v4.0",
+  "acquired_utc": "2026-05-22T16:35:00Z",
+  "items_to_tag": [
+    "BLG-FEAT-36",
+    "BLG-FEAT-37",
+    "BLG-FEAT-39",
+    "BLG-QA-25",
+    "BLG-BE-15",
+    "BLG-GOV-37",
+    "BLG-GOV-35",
+    "BLG-OPS-26",
+    "BLG-OPS-27",
+    "BLG-FEAT-25"
+  ],
+  "slice_section": "## Release Slice — v4.0 (cycle: 2026-05-22__release-v4.0)",
+  "slice_marker": "<!-- release-plan-marker: RP:v4.0:2026-05-22__release-v4.0 -->",
+  "committed_utc": "2026-05-22T16:36:00Z"
+}

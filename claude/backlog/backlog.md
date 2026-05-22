@@ -2052,3 +2052,25 @@ These are deliberate product decisions, not deferrals:
 | EPIC-05 (cond.) | ST-13 | PT-04 Setup Quality Score — backend (conditional) | BLG-FEAT-25 | Sprint 2 |
 | EPIC-05 (cond.) | ST-14 | PT-04 Setup Quality Score — frontend (conditional) | BLG-FEAT-25 | Sprint 2 |
 
+---
+
+## Release Slice — v4.0 (cycle: 2026-05-22__release-v4.0)
+
+<!-- release-plan-marker: RP:v4.0:2026-05-22__release-v4.0 -->
+
+*This section is ephemeral. Remove during `groom backlog` after v4.0 post-ship closure.*
+
+| EPIC | ST | Title | Source | Sprint |
+|------|----|-------|--------|--------|
+| EPIC-01 | ST-01 | SI-01 pass/fail rate by rule — backend metric endpoint | BLG-FEAT-36 | Sprint 1 |
+| EPIC-01 | ST-02 | Red flag event frequency metric — backend + frontend | BLG-FEAT-37 | Sprint 1 |
+| EPIC-01 | ST-03 | E2E Playwright test — SI-01→SI-03 integration path | BLG-QA-25 | Sprint 1 |
+| EPIC-01 | ST-04 | Trade plan adherence rate metric — backend + frontend | BLG-FEAT-39 | Sprint 1 |
+| EPIC-02 | ST-05 | Validate ticker symbol on add | BLG-BE-15 | Sprint 1 |
+| EPIC-02 | ST-06 | Red flag endpoint auth and PII review | BLG-GOV-37 | Sprint 1 |
+| EPIC-03 | ST-07 | Gemini audit trail — log AI thesis generation calls | BLG-GOV-35 | Sprint 2 |
+| EPIC-03 | ST-08 | Gemini cost tracking — token usage and cost per call | BLG-OPS-26 | Sprint 2 |
+| EPIC-03 | ST-09 | CI/CD automated staging re-deploy on main merge | BLG-OPS-27 | Sprint 2 |
+| EPIC-04 (cond.) | ST-10 | PT-04 Setup Quality Score — backend (conditional) | BLG-FEAT-25 | Sprint 2 |
+| EPIC-04 (cond.) | ST-11 | PT-04 Setup Quality Score — frontend (conditional) | BLG-FEAT-25 | Sprint 2 |
+

@@ -1,0 +1,10 @@
+{
+  "txn_id": "RA:v4.0:2026-05-22__release-v4.0",
+  "cycle_id": "2026-05-22__release-v4.0",
+  "release": "v4.0",
+  "state": "committed",
+  "lock_marker": "RA:v4.0:2026-05-22__release-v4.0",
+  "acquired_utc": "2026-05-22T16:37:00Z",
+  "annotation": "v4.0 — Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance — Planned; 11 firm stories / 4 EPICs / 2 sprints; EPIC-04 conditional on 20+ closed trades",
+  "committed_utc": "2026-05-22T16:37:00Z"
+}

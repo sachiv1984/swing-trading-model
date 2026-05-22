@@ -1,0 +1,121 @@
+{
+  "cycle_id": "2026-05-22__release-v4.0",
+  "release": "v4.0",
+  "generated_utc": "2026-05-22T16:36:00Z",
+  "stories": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "SI-01 pass/fail rate by rule — backend metric endpoint",
+      "source": "BLG-FEAT-36",
+      "effort": "M",
+      "priority": "P2",
+      "sprint": 1,
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "Red flag event frequency metric — backend + frontend",
+      "source": "BLG-FEAT-37",
+      "effort": "S",
+      "priority": "P2",
+      "sprint": 1,
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "title": "E2E Playwright test — SI-01→SI-03 integration path",
+      "source": "BLG-QA-25",
+      "effort": "S",
+      "priority": "P2",
+      "sprint": 1,
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-01",
+      "title": "Trade plan adherence rate metric — backend + frontend",
+      "source": "BLG-FEAT-39",
+      "effort": "S",
+      "priority": "P2",
+      "sprint": 1,
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "title": "Validate ticker symbol on add",
+      "source": "BLG-BE-15",
+      "effort": "S",
+      "priority": "P1",
+      "sprint": 1,
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-02",
+      "title": "Red flag endpoint auth and PII review",
+      "source": "BLG-GOV-37",
+      "effort": "XS",
+      "priority": "P2",
+      "sprint": 1,
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "title": "Gemini audit trail — log AI thesis generation calls",
+      "source": "BLG-GOV-35",
+      "effort": "M",
+      "priority": "P2",
+      "sprint": 2,
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "title": "Gemini cost tracking — token usage and cost per call",
+      "source": "BLG-OPS-26",
+      "effort": "S",
+      "priority": "P2",
+      "sprint": 2,
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-03",
+      "title": "CI/CD automated staging re-deploy on main merge",
+      "source": "BLG-OPS-27",
+      "effort": "M",
+      "priority": "P2",
+      "sprint": 2,
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-04",
+      "title": "PT-04 Setup Quality Score — backend (conditional)",
+      "source": "BLG-FEAT-25",
+      "effort": "L",
+      "priority": "P2",
+      "sprint": 2,
+      "conditional": true,
+      "gate": "Product Owner confirms 20+ closed trades before sprint planning seals",
+      "github_issue": null
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-04",
+      "title": "PT-04 Setup Quality Score — frontend (conditional)",
+      "source": "BLG-FEAT-25",
+      "effort": "M",
+      "priority": "P2",
+      "sprint": 2,
+      "conditional": true,
+      "gate": "Product Owner confirms 20+ closed trades before sprint planning seals",
+      "github_issue": null
+    }
+  ]
+}
