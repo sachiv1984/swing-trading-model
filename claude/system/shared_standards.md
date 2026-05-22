@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.2
-**Last Updated:** 2026-05-21
+**Version:** 3.3
+**Last Updated:** 2026-05-22
 
 # Shared Standards — All Governed Routines
 
@@ -809,6 +809,8 @@ Original / Amended — <file path used>
 **Dependencies:** ST-yy (must complete first) / None
 
 **Notes:** <any flags, deferred execution blockers, or risks>
+
+**Staging-only ACs:** <list ACs carrying `[staging-only evidence]` tag in `stage4_backlog_slice.md`, e.g. "AC-02 (live API response behaviour)"> / None
 
 ---
 

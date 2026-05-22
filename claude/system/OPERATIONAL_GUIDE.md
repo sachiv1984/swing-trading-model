@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.95
-**Last Updated:** 2026-05-21
+**Version:** 4.00
+**Last Updated:** 2026-05-22
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.4)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.6)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1410,7 +1410,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.98 |
+| Version | 4.00 |
 | Last Updated | 2026-05-22 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
@@ -1421,14 +1421,14 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.5 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.31 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.4 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.6 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.26 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.5 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.10 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.2 |
+| Shared Standards | `claude/system/shared_standards.md` v3.3 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1449,6 +1449,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.00 | 2026-05-22 | **BLG-GOV-31 (OA-01, 2026-05-22__scheduled): sprint_planning_prompt.md v3.4→v3.6 — staging-only AC designation + gate-conditional deferred items advisory.** §7 source prompt header updated v3.4→v3.6. §14 Sprint Planning Engine v3.4→v3.6. §14 Version 3.99→4.00/2026-05-22. Header version 3.95→4.00/2026-05-22. Changes: (v3.5 LL-v3.9-P3-2) §7 — staging-only evidence designation paragraph added: flag ACs that cannot be verified in CI with `[staging-only evidence]` at planning time; designation pre-stages backlog filing and prevents surprise P3 notations at execution. (v3.6 BLG-GOV-31) STEP 1 — §1.4 Gate-Conditional Deferred Items subsection added: when items are deferred at planning with a gate_condition, sprint_capacity.md must include a Conditional (Deferred) table; mandatory re-invocation advisory added. Authority: Head of Specs Team (OA-01, 2026-05-22__scheduled, 2026-05-22). |
+| 3.99 | 2026-05-22 | **BLG-GOV-30 (OA-01, 2026-05-22__scheduled): shared_standards.md v3.2→v3.3 — staging_only_evidence field in §16.11 sprint_backlog.md Schema.** §14 Shared Standards v3.2→v3.3. §14 Version 3.98→3.99/2026-05-22. Change: §16.11 ST-xx item template — `**Staging-only ACs:**` field added after `**Notes:**`; documents the `[staging-only evidence]` tag from sprint_planning_prompt.md §7 (LL-v3.9-P3-2) within the canonical sprint backlog schema so the Execution Engine can identify ACs requiring human staging sign-off. Authority: Head of Specs Team (OA-01, 2026-05-22__scheduled, 2026-05-22). |
 | 3.97 | 2026-05-21 | **roadmap_prompt.md v6.4→v6.5 — STEP 12.1 artefact existence precondition.** §6 source prompt header updated v6.4→v6.5. §14 Roadmap Engine Source v6.4→v6.5. §14 Version 3.96→3.97/2026-05-21. Change: STEP 12.1 Global State Update — artefact existence precondition added (hard gate): before updating `last_rebalance_cycle` in state file, verify `run_manifest.md`, `cycle_record.md`, `cycle_summary.md`, `lessons_learnt.md` exist in the cycle directory; halt and complete missing artefact if absent. Resolves Type D pattern (2 consecutive cycles with state file updated but no cycle artefacts committed). Authority: Head of Specs Team (cycle 2026-05-21__scheduled action-now, 2026-05-21). |
 | 3.96 | 2026-05-21 | **AUD-2026-05-21 Tier 1 improvements applied — 4 governance prompt patches + §13 register + dry-run table.** `execution_prompt.md` v3.25→v3.26: STEP 1 gh issue create now uses structural `gh issue list` check before creating (eliminates duplicate issues, closes v3.8 OA-1); §3.1.A step 1 + step 12 test_scenarios scoped to EPIC-specific files only (closes AUD-003); §3.1.B delegated_frontend — createPageUrl map requirement added for new page route delegations (closes AUD-005/OA-2). `sprint_planning_prompt.md` v3.3→v3.4: STEP 5.2 planning-deferred item traceability rule added — all slice items not in sealed sprint backlog must be recorded as `deferred_at_planning` in execution_state.json with gate_condition note (closes AUD-002). `shared_standards.md` v3.0→v3.1: §13 dry-run table — `run ideas housekeeping` row added (closes AUD-007). `OPERATIONAL_GUIDE.md` §13: Shared Governance Modules and Governance Changelogs rows added as Class 6 sub-type artefacts (closes AUD-006). §7 source prompt header v3.3→v3.4; §8 source prompt header v3.25→v3.26; §14 Sprint Planning Engine v3.3→v3.4; Execution Engine Source v3.25→v3.26; Shared Standards v3.0→v3.1; §14 Version 3.95→3.96/2026-05-21. Authority: Head of Specs Team (AUD-2026-05-21 Tier 1 closure, 2026-05-21). |
 | 3.95 | 2026-05-21 | **Prompt compression: governance_preamble.md v1.0 (new) + 6-engine version bumps.** New shared module `claude/system/shared/governance_preamble.md` consolidates Write Scope pattern, Agent Integrity verification procedure, and 8 cross-engine Governance Invariants previously duplicated across all 6 phase prompts. All 6 prompts updated to reference preamble sections — verbose inline blocks replaced with compact references + phase-specific additions only. preflight_common.md v1.0→v1.1: Roadmap Rebalance added to covered engines. YAML schema blocks replace narrative bullet lists for all state.json output descriptions in execution_prompt.md and release_planning_prompt.md. §6 source prompt header v6.3→v6.4; §6B v2.29→v2.30; §7 v3.2→v3.3; §8 v3.24→v3.25; §9 v2.3→v2.4; §10 v2.9→v2.10. §14 Governance Preamble row added; all 6 engine versions updated; §14 Version 3.94→3.95/2026-05-21. Authority: Head of Specs Team (prompt compression 2026-05-21). |

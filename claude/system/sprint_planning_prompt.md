@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.4
-**Last Updated:** 2026-05-21
+**Version:** 3.6
+**Last Updated:** 2026-05-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -122,6 +122,8 @@ Every item entering the sprint backlog must have acceptance criteria defined bef
 | Quality | What QA must verify — specific test scenarios |
 | Security | Any security check required (may be "N/A — no security surface changed" if justified) |
 | Verification | How the Director of Quality will confirm this item is done |
+
+**Staging-only evidence designation (LL-v3.9-P3-2):** When writing ACs for stories with network-dependent verification conditions (e.g. live external API integrations, behaviour under real network failure modes), flag any AC that cannot be verified by unit or integration test in CI with `[staging-only evidence]`. This designation signals: (a) CI cannot verify this AC, (b) evidence must come from a human staging run, and (c) if staging sign-off is deferred to post-merge, a backlog item must be filed before the PR opens (per CLAUDE.md §2). Applying this flag at planning time prevents surprise P3 notations at execution and pre-stages the backlog filing before the sprint starts.
 
 If any required field is absent:
 - In `strict` mode: halt — the item cannot enter the sprint.
@@ -254,6 +256,14 @@ Calculate: total estimated effort across all candidate items vs confirmed capaci
 If total effort > capacity:
 - Flag over-allocation with a breakdown by EPIC.
 - This gap must be resolved in STEP 3 (scope selection).
+
+### 1.4 Gate-Conditional Deferred Items
+
+If any ST items are conditionally deferred at planning (recorded as `status: deferred_at_planning` with a `gate_condition` in `execution_state.json`), include a `## Conditional (Deferred)` section in `sprint_capacity.md` after the item effort table. For each deferred item, record: EPIC, story ID, effort band, and the gate condition string.
+
+**Re-invocation advisory (mandatory when deferred items exist):** After the conditional table, add the following note to `sprint_capacity.md`:
+
+> **Gate re-invocation:** If a gate condition above is met during the sprint, do not add deferred items informally. Invoke the amendment cycle (`amend cycle --cycle <cycle_id> --reason "<gate met>"`) to add the item to the sprint backlog. The amendment cycle is the only authorised path for post-seal scope addition.
 
 Header block for `sprint_capacity.md`:
 ```

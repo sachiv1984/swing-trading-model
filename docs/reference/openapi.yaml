@@ -357,6 +357,7 @@ paths:
         All checks are advisory — results do not block trade plan submission.
         §13 compliant: decision support only. strategy_rules.md §4.2.
         Decision record: docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md
+        Canonical contract: docs/specs/api_contracts/pre_entry_validation.md v1.0.0.
       parameters:
         - in: query
           name: ticker
@@ -441,7 +442,7 @@ paths:
       description: >
         Returns a paginated log of strategy deviation events (pre-entry override, checklist skip, prompt dismissal).
         §13 compliance: display-only audit log; no automated decisions.
-        Canonical contract: docs/specs/api_contracts/portfolio_endpoints.md v2.3.0.
+        Canonical contract: docs/specs/api_contracts/red_flag_journal.md v1.0.0.
       parameters:
         - in: query
           name: page
