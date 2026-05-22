@@ -156,3 +156,88 @@ def test_ticker_normalised_to_uppercase():
     if mock_get.called:
         url_called = mock_get.call_args[0][0]
         assert "AAPL" in url_called or "aapl" not in url_called
+
+
+# ---------------------------------------------------------------------------
+# ST-01 — Crumb refresh and retry on 401
+# ---------------------------------------------------------------------------
+
+def _make_resp(status_code, json_body=None):
+    resp = MagicMock()
+    resp.status_code = status_code
+    resp.json.return_value = json_body or {}
+    resp.text = ""
+    return resp
+
+
+def _make_yahoo_resp(closes):
+    chart = _make_yahoo_chart("AAPL", closes)
+    resp = MagicMock()
+    resp.status_code = 200
+    resp.json.return_value = chart
+    return resp
+
+
+def test_yahoo_401_triggers_crumb_refresh_and_retries():
+    """ST-01 AC-01: 401 response triggers crumb refresh and one retry."""
+    import services.screener_data_service as svc
+
+    crumb_resp = MagicMock()
+    crumb_resp.status_code = 200
+    crumb_resp.text = "new-crumb-token"
+
+    call_count = {"n": 0}
+
+    def mock_session_get(url, **kwargs):
+        if "getcrumb" in url or "finance.yahoo.com" == url.split("/")[2]:
+            return crumb_resp
+        call_count["n"] += 1
+        if call_count["n"] == 1:
+            return _make_resp(401)
+        return _make_yahoo_resp([150, 155, 160])
+
+    mock_sess = MagicMock()
+    mock_sess.get.side_effect = mock_session_get
+
+    with patch("services.screener_data_service.requests") as mock_requests, \
+         patch("services.screener_data_service._time.sleep"), \
+         patch("services.screener_data_service.random.uniform", return_value=0.0):
+        mock_requests.Session.return_value = mock_sess
+        mock_requests.RequestException = Exception
+
+        svc._yahoo_crumb = None
+        svc._yahoo_session = None
+        if hasattr(svc._yahoo_fetch_ohlcv, "_consecutive_401"):
+            del svc._yahoo_fetch_ohlcv._consecutive_401
+
+        result = svc._yahoo_fetch_ohlcv("AAPL", 30)
+
+    assert result is not None
+    assert len(result) == 3
+
+
+def test_yahoo_crumb_refresh_updates_module_state():
+    """ST-01 AC-05: crumb refresh updates _yahoo_crumb and _yahoo_session."""
+    import services.screener_data_service as svc
+
+    crumb_resp = MagicMock()
+    crumb_resp.status_code = 200
+    crumb_resp.text = "test-crumb-xyz"
+
+    consent_resp = MagicMock()
+    consent_resp.status_code = 200
+
+    mock_sess = MagicMock()
+    mock_sess.get.side_effect = [consent_resp, crumb_resp]
+
+    with patch("services.screener_data_service.requests") as mock_requests:
+        mock_requests.Session.return_value = mock_sess
+        mock_requests.RequestException = Exception
+
+        svc._yahoo_crumb = None
+        svc._yahoo_session = None
+        result = svc._refresh_yahoo_crumb()
+
+    assert result == "test-crumb-xyz"
+    assert svc._yahoo_crumb == "test-crumb-xyz"
+    assert svc._yahoo_session is mock_sess

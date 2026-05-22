@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2 Canonical Specification
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-04-23
+**Version:** 1.1
+**Last Updated:** 2026-05-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
 
@@ -40,10 +40,17 @@ Returns screener result records from the latest completed screener run (or a spe
     "run_timestamp": "2026-04-23T08:00:00Z",
     "total": 12,
     "limit": 50,
-    "offset": 0
+    "offset": 0,
+    "degraded_run": false,
+    "failure_rate": 0.04
   }
 }
 ```
+
+| Response field | Type | Description |
+|---------------|------|-------------|
+| `degraded_run` | boolean | `true` when >20% of tickers returned no OHLCV data during the run |
+| `failure_rate` | float | Fraction of tickers with no OHLCV data (0.0–1.0) |
 
 **ScreenerResultRecord fields:** See `docs/specs/screener_results_schema.md §1.1`.
 

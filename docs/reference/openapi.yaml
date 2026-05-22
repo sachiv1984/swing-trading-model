@@ -3458,6 +3458,8 @@ components:
                       total: { type: integer }
                       limit: { type: integer }
                       offset: { type: integer }
+                      degraded_run: { type: boolean, description: "true when >20% of tickers returned no OHLCV data" }
+                      failure_rate: { type: number, format: float, description: "Fraction of tickers with no OHLCV data (0.0–1.0)" }
 
   /screener/run:
     post:

@@ -9,8 +9,10 @@ Idempotency: rejects new run while one is in progress.
 """
 import json
 import logging
+import os
 import threading
 import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from typing import List, Optional, Dict
 
@@ -20,6 +22,8 @@ from database import get_db
 from services.ticker_universe_service import get_all_tickers
 from services.screener_data_service import fetch_ohlcv
 from services.screener_engine import compute_screener_result
+
+YF_MAX_CONCURRENT = int(os.environ.get("YF_MAX_CONCURRENT", "5"))
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +51,16 @@ def ensure_screener_results_table() -> None:
                     tickers_evaluated INTEGER DEFAULT 0,
                     tickers_passed INTEGER DEFAULT 0,
                     regime_us VARCHAR(10),
-                    regime_uk VARCHAR(10)
+                    regime_uk VARCHAR(10),
+                    degraded_run BOOLEAN NOT NULL DEFAULT FALSE,
+                    failure_rate NUMERIC
                 )
+            """)
+            # Add columns to existing tables that may predate this schema
+            cur.execute("""
+                ALTER TABLE screener_runs
+                    ADD COLUMN IF NOT EXISTS degraded_run BOOLEAN NOT NULL DEFAULT FALSE,
+                    ADD COLUMN IF NOT EXISTS failure_rate NUMERIC
             """)
             cur.execute("""
                 CREATE INDEX IF NOT EXISTS idx_screener_runs_ts
@@ -133,17 +145,20 @@ def _fetch_index_regime(index_ticker: str) -> Optional[Dict]:
 # ---------------------------------------------------------------------------
 
 def _persist_run(run_id: str, run_timestamp: str, tickers_evaluated: int,
-                 tickers_passed: int, regime_us: str, regime_uk: str) -> None:
+                 tickers_passed: int, regime_us: str, regime_uk: str,
+                 degraded_run: bool = False, failure_rate: Optional[float] = None) -> None:
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
                 INSERT INTO screener_runs
-                  (run_id, run_timestamp, tickers_evaluated, tickers_passed, regime_us, regime_uk)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                  (run_id, run_timestamp, tickers_evaluated, tickers_passed,
+                   regime_us, regime_uk, degraded_run, failure_rate)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (run_id) DO NOTHING
                 """,
-                (run_id, run_timestamp, tickers_evaluated, tickers_passed, regime_us, regime_uk),
+                (run_id, run_timestamp, tickers_evaluated, tickers_passed,
+                 regime_us, regime_uk, degraded_run, failure_rate),
             )
         conn.commit()
 
@@ -191,7 +206,7 @@ def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
     Execute a screener run.
 
     If ticker_universe is None, uses all active tickers from the DB.
-    Returns {run_id, status, count, tickers_evaluated, tickers_passed}.
+    Returns {run_id, status, count, tickers_evaluated, tickers_passed, degraded_run, failure_rate}.
     Raises RuntimeError if a run is already in progress.
     """
     global _run_in_progress
@@ -204,10 +219,15 @@ def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
         run_id = str(uuid.uuid4())
         run_timestamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # Resolve ticker list
+        # Resolve ticker list — keep full row dicts to preserve sector/industry
         if ticker_universe is None:
-            rows = get_all_tickers(active_only=True)
-            ticker_universe = [r["ticker"] for r in rows]
+            ticker_rows = get_all_tickers(active_only=True)
+        else:
+            ticker_rows = [{"ticker": t, "market": "UK" if t.upper().endswith(".L") else "US",
+                            "sector": None, "industry": None}
+                           for t in ticker_universe]
+
+        total_tickers = len(ticker_rows)
 
         # Fetch regime data (once per market)
         us_regime = _fetch_index_regime("SPY")
@@ -222,31 +242,53 @@ def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
 
         results = []
         tickers_evaluated = 0
+        ohlcv_failures = 0
 
-        for ticker in ticker_universe:
-            market = "UK" if ticker.upper().endswith(".L") else "US"
+        def _process_row_tracked(row: Dict) -> tuple:
+            """Returns (result_or_None, had_ohlcv)."""
+            ticker = row["ticker"]
+            market = row.get("market") or ("UK" if ticker.upper().endswith(".L") else "US")
+            sector = row.get("sector")
+            industry = row.get("industry")
             regime = uk_regime if market == "UK" else us_regime
-
             ohlcv = fetch_ohlcv(ticker, market, days=30)
             if not ohlcv:
-                continue
-
-            tickers_evaluated += 1
+                return None, False
             record = compute_screener_result(
                 ticker=ticker,
                 market=market,
                 ohlcv_data=ohlcv,
                 run_id=run_id,
                 run_timestamp=run_timestamp,
+                sector=sector,
+                industry=industry,
                 **regime,
             )
-            if record is not None:
-                results.append(record)
+            return record, True
+
+        with ThreadPoolExecutor(max_workers=YF_MAX_CONCURRENT) as executor:
+            futures = {executor.submit(_process_row_tracked, row): row for row in ticker_rows}
+            for future in as_completed(futures):
+                row = futures[future]
+                try:
+                    record, had_ohlcv = future.result()
+                    if not had_ohlcv:
+                        ohlcv_failures += 1
+                    else:
+                        tickers_evaluated += 1
+                        if record is not None:
+                            results.append(record)
+                except Exception as exc:
+                    logger.warning("Screener batch error for %s: %s", row.get("ticker"), exc)
+                    ohlcv_failures += 1
+
+        failure_rate = ohlcv_failures / total_tickers if total_tickers > 0 else 0.0
+        degraded_run = failure_rate > 0.20
 
         regime_us_status = us_regime.get("regime_status", "risk_off")
         regime_uk_status = uk_regime.get("regime_status", "risk_off")
         _persist_run(run_id, run_timestamp, tickers_evaluated, len(results),
-                     regime_us_status, regime_uk_status)
+                     regime_us_status, regime_uk_status, degraded_run, failure_rate)
         _persist_results(results)
 
         return {
@@ -257,6 +299,8 @@ def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
             "tickers_passed": len(results),
             "regime_us": regime_us_status,
             "regime_uk": regime_uk_status,
+            "degraded_run": degraded_run,
+            "failure_rate": failure_rate,
         }
     finally:
         with _run_lock:
@@ -276,10 +320,11 @@ def get_screener_results(
     """
     with get_db() as conn:
         with conn.cursor() as cur:
+            _run_cols = ("run_id, run_timestamp, tickers_evaluated, tickers_passed, "
+                         "regime_us, regime_uk, degraded_run, failure_rate")
             if run_id is None:
                 cur.execute(
-                    "SELECT run_id, run_timestamp, tickers_evaluated, tickers_passed, regime_us, regime_uk "
-                    "FROM screener_runs ORDER BY run_timestamp DESC LIMIT 1"
+                    f"SELECT {_run_cols} FROM screener_runs ORDER BY run_timestamp DESC LIMIT 1"
                 )
                 row = cur.fetchone()
                 if not row:
@@ -289,8 +334,7 @@ def get_screener_results(
                 run_meta = dict(row)
             else:
                 cur.execute(
-                    "SELECT run_id, run_timestamp, tickers_evaluated, tickers_passed, regime_us, regime_uk "
-                    "FROM screener_runs WHERE run_id = %s LIMIT 1",
+                    f"SELECT {_run_cols} FROM screener_runs WHERE run_id = %s LIMIT 1",
                     (run_id,),
                 )
                 row = cur.fetchone()
@@ -336,6 +380,8 @@ def get_screener_results(
 
     run_ts_str = run_ts.strftime("%Y-%m-%dT%H:%M:%SZ") if hasattr(run_ts, "strftime") else str(run_ts)
 
+    failure_rate_val = run_meta.get("failure_rate")
+
     return {
         "results": results,
         "run_id": run_id,
@@ -347,4 +393,6 @@ def get_screener_results(
         "tickers_passed": run_meta.get("tickers_passed", 0),
         "regime_us": run_meta.get("regime_us"),
         "regime_uk": run_meta.get("regime_uk"),
+        "degraded_run": bool(run_meta.get("degraded_run", False)),
+        "failure_rate": float(failure_rate_val) if failure_rate_val is not None else 0.0,
     }

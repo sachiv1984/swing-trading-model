@@ -802,6 +802,28 @@ No Playwright test covers the full trade plan lifecycle: create → edit → lin
 
 ---
 
+### BLG-QA-24 — Yahoo Finance backoff path integration test stub
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead
+**Source:** DoQ sign-off notation — EPIC-01 v3.9 QA evidence, 2026-05-22
+**Effort:** S (~0.5 days)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-01 AC-04 ("screener run completes without >5% OHLCV failures under normal YF conditions") is a runtime/environment-dependent criterion. The crumb refresh mechanism and exponential backoff are unit-tested, but a controlled integration test stub that simulates the full 401 → crumb-refresh → backoff → retry → success path is absent. The DoQ sign-off for EPIC-01 accepted this as staging-only evidence and filed this backlog item.
+
+**Scope**
+- Add integration test to `tests/test_screener_data_service.py` that stubs the Yahoo Finance session, injects a 401 followed by a 200 with valid chart data, and verifies that the result is non-null and the retry occurred exactly once.
+- Verify exponential backoff timing via mock of `_time.sleep`.
+
+**Acceptance Criteria**
+- Integration test runs without a live Yahoo Finance connection
+- Test verifies: 401 first call → crumb refresh → sleep called once → 200 second call → valid OHLCV result returned
+- Passes in CI
+
+---
+
 ## 6. Operations & Infrastructure Backlog
 
 ---
