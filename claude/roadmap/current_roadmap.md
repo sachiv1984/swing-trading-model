@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-22 (post-ship closure 2026-05-21__release-v3.9 — v3.9 ✅ Complete; SI-03 ✅ Shipped; Current Version → v3.9; Next planned release → v4.0)
-**Last rebalance:** 2026-05-21 (cycle 2026-05-21__scheduled — Standard-tier, no-change; 3-cycle hard cap applied to all 33 parked ideas; 29 promoted to backlog as gate-conditional items; 4 rejected; DL-032)
+**Last Updated:** 2026-05-22 (roadmap rebalance 2026-05-22__scheduled — no roadmap-level changes; 32 backlog adds from IW-20260522-01; DL-033)
+**Last rebalance:** 2026-05-22 (cycle 2026-05-22__scheduled — Standard-tier, no-change; 44 ideas from IW-20260522-01; 32 Promoted-Backlog, 10 Parked-cycle-1, 2 Rejected; DL-033)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 

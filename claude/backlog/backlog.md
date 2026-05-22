@@ -4,7 +4,7 @@
 **Status:** Active
 **Class:** Planning Document (Class 4)
 **Last Updated:** 2026-05-22 (post-ship closure 2026-05-21__release-v3.9 — 7 items marked COMPLETE: BLG-TECH-10, BLG-BE-10, BLG-BE-11, BLG-BE-12, BLG-FE-37, BLG-FE-38, BLG-GOV-25; BLG-FEAT-25 STALE note added)
-**Last rebalance:** 2026-05-21 (cycle 2026-05-21__scheduled — DL-032; 3-cycle cap applied: 29 Promoted-Backlog, 4 Rejected)
+**Last rebalance:** 2026-05-22 (cycle 2026-05-22__scheduled — DL-033; IW-20260522-01; 32 new items: BLG-GOV-30–39, BLG-SPEC-33–37, BLG-BE-16–18, BLG-FE-40–43, BLG-FEAT-36–39, BLG-OPS-25–27, BLG-QA-25–27)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -368,6 +368,104 @@ No metric tracks whether entries were executed within the planned entry zone. `e
 
 ---
 
+### BLG-FEAT-36 — SI-01 validation pass/fail rate by rule
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Analytics
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** IDEA-metrics-analytics-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~2–3 days)
+**Provisional-Target:** v4.0
+
+**Problem**
+GET /portfolio/pre-entry-validation (SI-01, shipped v3.8) returns per-attempt pass/fail results but no aggregate metric tracks pass/fail rate broken down by individual rule type over time. Understanding which rules most frequently block entries reveals behavioural patterns (e.g., "regime gate fails 40% of the time") without requiring SI-02 (drift detection).
+
+**Scope**
+- Define named metric: validation_pass_rate_by_rule — pass count / (pass + fail count) per rule per rolling period
+- Backend: query pre-entry validation log for rule-level pass/fail aggregation
+- Frontend: surface metric in SI-05 Weekly Digest or standalone compliance dashboard
+- Requires confirmation that the pre-entry validation log captures per-rule outcomes (may require minor schema addition)
+
+**Acceptance Criteria**
+- Pass/fail rate per rule computable and displayable
+- Rolling period configurable (7d / 30d)
+- Backend analysis of current log schema completed before sprint planning
+
+---
+
+### BLG-FEAT-37 — Red flag event frequency metric
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Analytics
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** IDEA-metrics-analytics-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.0
+
+**Problem**
+No canonical metric tracks red flag event frequency over time. Override rate and rule-breach-by-type distribution are queryable from red_flag_events (shipped v3.9) but not defined as named product metrics with specified aggregation periods and display locations. Defining these metrics makes them inputs to SI-05 Weekly Digest and the monthly P&L compliance section.
+
+**Scope**
+- Named metrics: events_per_week, override_rate (overrides / validation attempts), event_type_distribution
+- Backend: aggregate query on red_flag_events table
+- Metric definitions registered in metrics_definitions.md
+
+**Acceptance Criteria**
+- Three named metrics defined and queryable
+- Metrics definitions registered per canonical standards
+- Data available for SI-05 and BLG-FEAT-38 (monthly P&L compliance section) consumption
+
+---
+
+### BLG-FEAT-38 — Arc 5 compliance score in monthly P&L report
+**Priority:** P3 (Low)
+**Type:** Product Feature / Reporting
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** BLG-FEAT-36 (SI-01 pass rate metric) and BLG-FEAT-37 (red flag frequency metric) shipped.
+
+**Problem**
+Monthly P&L report (shipped v3.1) covers financial performance. As Arc 5 ships compliance data, adding a strategy compliance section enables holistic monthly review: financial performance + behavioural discipline in one document.
+
+**Scope**
+- New section in monthly P&L report: strategy compliance period summary
+- Fields: validation_pass_rate (period), override_count, red_flag_events_count, most_frequent_rule_breach
+- Data sourced from BLG-FEAT-36 and BLG-FEAT-37 metrics
+
+**Acceptance Criteria**
+- Compliance section present in monthly P&L report output
+- Data sourced from canonical metrics (BLG-FEAT-36, BLG-FEAT-37)
+- Gate conditions verified before sprint planning
+
+---
+
+### BLG-FEAT-39 — Trade plan adherence rate metric
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Analytics
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.0
+
+**Gate criteria:** plan_id linkage actively captured on closed trades (requires active use of trade plan creation workflow).
+
+**Problem**
+No metric tracks what percentage of closed trades have an associated trade plan (plan_id linkage). This metric measures systematic discipline adoption — whether the operator is consistently using trade plans before entry. It is a direct input to Arc 4 PO-04 (reflection/outcome correlation) and a candidate for the compliance section of the monthly P&L report.
+
+**Scope**
+- Named metric: trade_plan_adherence_rate — trades_with_plan_id / total_closed_trades
+- Backend: aggregate query on closed trades
+- Metric definition registered in metrics_definitions.md
+- Surface in performance reports and SI-05 Weekly Digest
+
+**Acceptance Criteria**
+- Metric defined and queryable
+- Registered in metrics definitions
+- Gate condition verified by Product Owner before sprint planning
+
+---
+
 ## 3. Frontend & UX Backlog
 
 ---
@@ -498,6 +596,110 @@ No end-to-end user journey map exists covering the full Arc 2 flow: Screener →
 
 ---
 
+### BLG-FE-40 — Red Flag Journal filter state persistence
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend; Head of UX & Design
+**Source:** IDEA-base44-frontend-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Red Flag Journal in active use for ≥ 30 days post-v3.9 (confirm filter persistence adds value before implementing).
+
+**Problem**
+Red Flag Journal filter state (date range, severity, rule type) resets on page reload. Users who open the RFJ daily to review recent events must re-apply their filter preferences on each visit. localStorage persistence is a standard UX pattern that reduces friction on repeat visits.
+
+**Scope**
+- Persist RFJ filter state to localStorage (date range, event type, severity if/when added)
+- Version the localStorage key to handle filter schema changes gracefully
+- Restore filter state on page load; clear stale state if key version mismatch
+
+**Acceptance Criteria**
+- Filter state persists across page reloads
+- Stale state (version mismatch) cleared gracefully without error
+- Playwright test: set filter → reload page → verify filter state restored
+- Gate condition verified by Product Owner before sprint planning
+
+---
+
+### BLG-FE-41 — Red Flag Journal visual design review
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Design
+**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-frontend-ux-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days design + spec)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (on/after 2026-06-21).
+
+**Problem**
+Red Flag Journal (v3.9) is functional but minimally styled. As RFJ becomes a primary Arc 5 review surface, a design review covering severity visual hierarchy, timeline layout option, and colour coding for rule breach types will improve usability and consistency with the rest of the application design language.
+
+**Scope**
+- Design review: severity visual hierarchy; event type colour coding; timeline vs list layout evaluation
+- Produce design recommendation with rationale
+- If redesign recommended: produce UX spec and file implementation backlog item
+- Review against existing design system
+
+**Acceptance Criteria**
+- Design recommendation document produced
+- If redesign: UX spec produced and implementation item filed
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-FE-42 — Arc 5 navigation and information architecture cohesion review
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX Design
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 (Behavioural Drift Detection) in sprint planning — Arc 5 near-complete.
+
+**Problem**
+As Arc 5 ships SI-02, SI-04, and SI-05 alongside existing SI-01 and SI-03, the "Trading" navigation section may become congested. A cohesion review before Arc 5 is complete ensures any structural navigation changes are planned proactively rather than reactively patched after all features ship.
+
+**Scope**
+- Review current Trading nav structure against projected Arc 5 complete state (SI-01 through SI-05)
+- Assess: navigability, grouping logic, naming clarity, page depth
+- Produce recommendation: maintain current or propose structural changes
+- If changes recommended: author UX spec and file implementation item
+
+**Acceptance Criteria**
+- Cohesion review document produced
+- Recommendation covers projected full Arc 5 nav inventory
+- Gate condition verified by Head of UX & Design before sprint planning
+
+---
+
+### BLG-FE-43 — SI-05 Weekly Digest frontend component spec
+**Priority:** P2 (Medium)
+**Type:** Frontend / Spec
+**Owner:** Frontend Specs & UX Documentation Owner; Base44 Frontend
+**Source:** IDEA-base44-frontend-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-05 (Weekly Strategy Integrity Digest) sprint planning imminent.
+
+**Problem**
+SI-05 will deliver the Weekly Strategy Integrity Digest via Telegram notification and potentially an in-app view. No frontend component spec or UX spec exists for the digest display. Authoring this spec before sprint planning ensures frontend scope is clearly defined and sized — preventing mid-sprint ambiguity on rendering requirements.
+
+**Scope**
+- UX spec: digest layout, content sections (drift signal, red flag summary, compliance score trend), notification vs in-app view decision
+- Component requirements document: data inputs, update frequency, display states (no data, loading, populated)
+- Review against Telegram notification format constraints (v2.4 weekly digest pattern)
+
+**Acceptance Criteria**
+- Frontend component spec and UX spec produced and filed
+- Component requirements document covers all SI-05 data inputs
+- Spec reviewed by Product Owner and Head of UX & Design before sprint planning
+- Gate condition verified before sprint planning
+
+---
+
 ## 4. Backend & Data Backlog
 
 
@@ -595,6 +797,90 @@ When a user adds a ticker symbol and market to the universe, no validation is pe
 - Submitting a valid ticker returns success; sector and industry are confirmed present
 - Error message displayed to user is specific and actionable (not a generic 500)
 - Existing tickers already in the universe are unaffected
+
+---
+
+### BLG-BE-16 — Red flag events severity field
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Data Model
+**Owner:** Data Model & Domain Schema Owner; Head of Backend Engineering
+**Source:** IDEA-data-model-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 (Behavioural Drift Detection) sprint planning imminent — severity taxonomy should be informed by SI-02 design to avoid schema rework.
+
+**Problem**
+red_flag_events table (shipped v3.9) has no severity classification. Adding a severity field (info/warning/critical) enables better filtering in SI-03 Red Flag Journal, more actionable grouping in SI-05 Weekly Digest, and meaningful colour coding in BLG-FE-41 visual design review. The field is additive and backward-compatible but should be deferred until SI-02 sprint planning is imminent to ensure the severity taxonomy is informed by drift detection severity requirements.
+
+**Scope**
+- Add `severity` column to `red_flag_events` table: enum (info/warning/critical)
+- Default severity for existing event types (SI-01 overrides: warning; future drift events: critical)
+- Migration: backfill existing events with default severity
+- Update `GET /portfolio/red-flag-journal` to support severity filter parameter
+- Update openapi.yaml with severity field and filter parameter
+
+**Acceptance Criteria**
+- severity field present on all red_flag_events records
+- `GET /portfolio/red-flag-journal?severity=warning` filters correctly
+- Migration backfills existing events without data loss
+- openapi.yaml updated
+- Gate condition verified by Product Owner before sprint planning
+
+---
+
+### BLG-BE-17 — SI-02 drift detection query pre-design
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Spec Pre-work
+**Owner:** Head of Backend Engineering
+**Source:** IDEA-backend-engineering-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 sprint planning imminent.
+
+**Problem**
+SI-02 (Behavioural Drift Detection) requires rolling analysis queries over trade history comparing actual entry conditions against stated setup criteria. The SQL and data access patterns for these queries are not pre-designed. Mid-sprint discovery of missing data fields (e.g., regime_at_entry not captured) would require emergency schema migration. Pre-designing the queries before sprint planning surfaces data gaps that can be addressed in the sprint plan.
+
+**Scope**
+- Define data access patterns: which fields are required per trade record for drift analysis
+- Draft SQL queries: rolling win-rate vs stated setup criteria per entry type, per regime
+- Identify any missing fields requiring schema migration (e.g., regime_at_entry, setup_type_at_entry)
+- Output: technical pre-design document; input to SI-02 sprint planning
+- Include assessment of query performance on current trade history volume
+
+**Acceptance Criteria**
+- Query pre-design document produced and reviewed by Head of Backend Engineering
+- Missing data fields (if any) enumerated with migration scope estimate
+- Document filed before SI-02 sprint planning seals
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-BE-18 — Arc 5 backend architecture review for SI query patterns
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Architecture
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 sprint planning imminent.
+
+**Problem**
+SI-02 (drift detection) and SI-04 (strategy version comparison) will add analytical queries over trade history that may be expensive synchronously. The current endpoint pattern (synchronous request/response) may not be appropriate for background rolling analysis. Before SI-02 sprint planning, assessing whether a background job or queue pattern is needed prevents an architectural dead-end mid-sprint.
+
+**Scope**
+- Review current endpoint pattern (synchronous FastAPI) against SI-02/SI-04 query complexity
+- Assess: synchronous viability, background job option (Celery/cron), response caching
+- Recommendation: maintain synchronous or add background processing layer
+- If background layer recommended: produce architecture decision record (ADR)
+
+**Acceptance Criteria**
+- Architecture review document produced
+- Synchronous vs background recommendation made with rationale
+- If background layer recommended: ADR filed and input to SI-02 sprint planning
+- Gate condition verified before sprint planning
 
 ---
 
@@ -730,6 +1016,81 @@ ST-01 AC-04 ("screener run completes without >5% OHLCV failures under normal YF 
 - Integration test runs without a live Yahoo Finance connection
 - Test verifies: 401 first call → crumb refresh → sleep called once → 200 second call → valid OHLCV result returned
 - Passes in CI
+
+---
+
+### BLG-QA-25 — Red Flag Journal E2E Playwright test (SI-01→SI-03 integration path)
+**Priority:** P2 (Medium)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner; QA Lead
+**Source:** IDEA-qa-testing-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.0
+
+**Problem**
+SC-RFJ-01/02/03 (v3.9) cover RFJ component-level display. The SI-01 → SI-03 integration path — where a SI-01 override event is written and subsequently appears in the Red Flag Journal — is not tested end-to-end. This integration path is the primary produce of the Arc 5 data pipeline and is critical to validate before SI-02/SI-04/SI-05 extend the event model.
+
+**Scope**
+- Playwright E2E test: navigate to a position → trigger pre-entry validation → acknowledge override → navigate to Red Flag Journal → verify override event is present with correct metadata (type, timestamp, rule breached)
+- Cover: filter by event type → verify filtered results contain the override event
+- Integrate into existing Playwright test suite
+
+**Acceptance Criteria**
+- Full SI-01→SI-03 integration path covered by Playwright test
+- Test passes in CI
+- Override event metadata (type, timestamp, rule) verified in RFJ display
+
+---
+
+### BLG-QA-26 — Arc 5 QA protocol
+**Priority:** P2 (Medium)
+**Type:** QA / Test Coverage
+**Owner:** Director of Quality; QA Lead
+**Source:** IDEA-director-of-quality-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** All five Arc 5 features (SI-01 through SI-05) shipped.
+
+**Problem**
+SI-01 through SI-03 shipped across v3.8 and v3.9. Each sprint produced per-story DoQ sign-offs but no arc-level QA protocol exists covering the full Arc 5 feature set end-to-end. Once all five features ship, an arc-level protocol analogous to BLG-QA-21 (Arc 2 E2E QA protocol) will ensure the complete Strategy Integrity workflow is tested holistically.
+
+**Scope**
+- Arc-level E2E test protocol document covering full Arc 5 flow: validation gate → override event → red flag journal → drift detection review → strategy version comparison → weekly digest
+- Playwright automation for the arc-level happy path
+- Manual checklist for Arc 5 edge cases not covered by Playwright
+- Filed in `docs/qa/arc5_qa_protocol.md`
+
+**Acceptance Criteria**
+- Arc 5 E2E protocol document produced and filed
+- Core happy path covered by Playwright
+- Gate condition verified by QA Lead and Product Owner before sprint planning
+
+---
+
+### BLG-QA-27 — CI test suite execution time baseline
+**Priority:** P3 (Low)
+**Type:** QA / Operations
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** CI pipeline total execution time exceeds 5 minutes sustained across 3+ consecutive cycles.
+
+**Problem**
+As the test suite grows with Arc 5 additions (BLG-QA-25 + per-sprint Playwright tests), no baseline exists for total CI pipeline execution time. Without a baseline, suite bloat is invisible until developer cycle time is materially impacted. A baseline established when the gate is met enables regression detection for each subsequent sprint.
+
+**Scope**
+- Establish CI pipeline execution time baseline: unit tests, integration tests, Playwright suite
+- Record p50/p95 execution times per suite tier
+- File baseline in `docs/ops/ci_performance_baseline.md`
+- Define regression threshold: > 1.5× baseline triggers advisory
+
+**Acceptance Criteria**
+- CI execution time baseline measured and filed
+- Regression threshold defined
+- Gate condition verified by QA Lead before sprint planning
 
 ---
 
@@ -965,6 +1326,83 @@ BLG-OPS-13 adds research endpoints to the API performance baseline, but ongoing 
 
 ---
 
+### BLG-OPS-25 — Automated staging smoke test on CI/CD deploy
+**Priority:** P2 (Medium)
+**Type:** Operations / CI/CD
+**Owner:** Director of Quality; Infrastructure & Operations Owner
+**Source:** IDEA-director-of-quality-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** BLG-OPS-27 (automated staging re-deployment on main merge) complete.
+
+**Problem**
+Every delivery verification run begins with manual staging health checks. An automated smoke test triggered by CI/CD on each staging deployment would catch deployment regressions (broken environment, missing env vars, cold-start failures) before the delivery verification engine starts, reducing lag and false-positive manual effort.
+
+**Scope**
+- Smoke test suite: 3–5 critical endpoint health checks (backend health, screener availability, positions endpoint)
+- Triggered automatically after staging deploy (requires BLG-OPS-27 deploy hook)
+- Failure: deploy pipeline reports failure; delivery verification engine advised
+- Output: smoke test pass/fail result stored in CI artefacts
+
+**Acceptance Criteria**
+- Smoke test suite authored and triggered on staging deploy
+- Suite covers minimum 3 critical endpoints
+- Failure prevents "staging ready" signal from being issued
+- Gate condition (BLG-OPS-27 complete) verified before sprint planning
+
+---
+
+### BLG-OPS-26 — Gemini API cost tracking
+**Priority:** P2 (Medium)
+**Type:** Operations / Cost Monitoring
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** IDEA-finops-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.0
+
+**Problem**
+BLG-FEAT-24 (AI thesis generation, shipped v3.8) uses the Gemini API in production with no cost monitoring. The Gemini free tier is not unlimited; tracking monthly call volume and projected costs provides early warning of approaching tier boundaries before unexpected billing occurs.
+
+**Scope**
+- Instrument Gemini API call count per day/week (count of `generate_content` requests)
+- Log call count to structured log or ops metrics table
+- Monthly aggregate report: call count, projected monthly total, tier proximity
+- Alert threshold: > 80% of free-tier monthly limit
+
+**Acceptance Criteria**
+- Gemini API call count logged per request
+- Monthly aggregate computable
+- Alert threshold defined and documented
+- No change to BLG-FEAT-24 user-facing behaviour
+
+---
+
+### BLG-OPS-27 — Automated staging re-deployment on main merge
+**Priority:** P2 (Medium)
+**Type:** Operations / CI/CD
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v4.0
+
+**Problem**
+Staging environment is currently manually re-synced after each main branch merge. This introduces risk of forgotten staging updates and adds lag to delivery verification runs. Automating the staging re-deployment trigger on main merges removes the manual step and ensures staging is always current.
+
+**Scope**
+- Configure Render staging auto-deploy trigger on main branch push
+- Scope: trigger only when backend or frontend source files change (not on docs/governance-only commits) to conserve free-tier build minutes
+- Confirm free-tier build minute impact is acceptable
+- Coordinate with BLG-OPS-25 (smoke test) which depends on this deploy hook
+
+**Acceptance Criteria**
+- Staging auto-deploys on main merge for code changes
+- Documentation-only commits do not trigger a deploy
+- Free-tier build minute impact assessed and documented
+- BLG-OPS-25 dependency satisfied (deploy hook available for smoke test integration)
+
+---
+
 *BLG-OPS-14 (AI Journal monitoring metrics) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 *BLG-OPS-12 (External API health check extension) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 
@@ -1046,6 +1484,138 @@ Alpaca and Yahoo Finance are currently the only external API integrations, each 
 - Template document produced and filed
 - At minimum, the triggering (second) external API contract conforms to the template
 - Gate condition verified by Head of Specs Team before sprint planning
+
+---
+
+### BLG-SPEC-33 — SI-03 Red Flag Journal API contract document
+**Priority:** P1 (High)
+**Type:** Spec Debt
+**Owner:** API Contracts Documentation Owner
+**Source:** IDEA-api-contracts-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.0
+
+**Problem**
+`GET /portfolio/red-flag-journal` shipped v3.9 (SI-03) without a formal API contract document in `docs/specs/api_contracts/`. SI-04 and SI-05 will extend or reference the Red Flag Journal endpoint; without a contract, downstream implementations lack an authoritative spec for filter parameters, pagination schema, response structure, and error codes.
+
+**Scope**
+- Author `docs/specs/api_contracts/red_flag_journal.md`
+- Document: endpoint URL, HTTP method, authentication requirement, query parameters (date range, event type, severity when BLG-BE-16 ships), pagination schema, response fields, error codes
+- Register in `docs/reference/openapi.yaml` per CLAUDE.md §2
+- Use `## METHOD /path` heading format per CLAUDE.md §2
+
+**Acceptance Criteria**
+- API contract document produced and filed
+- Contract registered in openapi.yaml with correct heading format
+- All filter parameters and response fields documented
+- Reviewed by Head of Specs Team and API Contracts Documentation Owner
+
+---
+
+### BLG-SPEC-34 — SI-01 Pre-Entry Validation API contract document
+**Priority:** P1 (High)
+**Type:** Spec Debt
+**Owner:** API Contracts Documentation Owner
+**Source:** IDEA-api-contracts-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.0
+
+**Problem**
+`GET /portfolio/pre-entry-validation` shipped v3.8 (SI-01) without a formal API contract document. SI-02 and SI-05 will reference the validation rule taxonomy and response schema; without a contract, there is no authoritative source for rule enumeration, response structure, or override acknowledgement path.
+
+**Scope**
+- Author `docs/specs/api_contracts/pre_entry_validation.md`
+- Document: endpoint URL, HTTP method, query parameters, response fields (per-rule pass/fail, override_required), override acknowledgement path, error codes
+- Enumerate all 5 validation rules per strategy_rules.md v1.4 §4.2
+- Register in `docs/reference/openapi.yaml`
+
+**Acceptance Criteria**
+- API contract document produced and filed
+- All 5 validation rules documented with pass/fail conditions
+- Override acknowledgement path specified
+- Contract registered in openapi.yaml
+- Reviewed by Head of Specs Team
+
+---
+
+### BLG-SPEC-35 — PO-02 §13 boundary review for AI cross-journal analysis
+**Priority:** P1 (High)
+**Type:** Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** PO-02 (Journal Pattern Recognition) sprint planning imminent.
+
+**Problem**
+PO-02 (Journal Pattern Recognition) will use AI to analyse cross-journal entries for recurring themes, emotional patterns, and setup types. This is an AI-assisted analysis of trading behaviour — the §13 boundary review must confirm this constitutes display/insight only and does not constitute signal generation or automated advisory. §13 PASS is required before PO-02 sprint planning seals.
+
+**Scope**
+- Run §13 checklist against PO-02 story set before sprint planning seals
+- Confirm AI analysis output is: display-only, human-reviewed, no automated position recommendations
+- Document binding conditions (if any) analogous to IT-06 §13 PASS conditions
+- Sign-off recorded in sprint planning artefact
+
+**Acceptance Criteria**
+- §13 review completed; PASS or FAIL determination documented
+- Binding conditions (if any) recorded
+- Gate condition verified before PO-02 sprint planning seals
+
+---
+
+### BLG-SPEC-36 — PO-02 AI output audit schema
+**Priority:** P2 (Medium)
+**Type:** Spec / Governance
+**Owner:** AI Compliance & Governance Officer; Head of Specs Team
+**Source:** IDEA-ai-compliance-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** PO-02 (Journal Pattern Recognition) sprint planning imminent.
+
+**Problem**
+PO-02 will generate AI output (pattern summaries, theme classifications) using an LLM. Governance policy requires AI-generated content to be traceable to model version, prompt version, and input at time of generation. Designing the audit log schema before sprint planning ensures it is built in from day 1, avoiding retroactive compliance debt.
+
+**Scope**
+- Design audit log schema: pattern_id, model_version, prompt_version, journal_ids_included, output_hash, generated_at
+- Storage mechanism: append-only table or structured log file
+- Retention policy: minimum 90 days
+- Schema reviewed by AI Compliance & Governance Officer and Head of Specs Team
+
+**Acceptance Criteria**
+- Audit log schema designed and documented
+- Storage mechanism defined
+- Retention policy specified
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-SPEC-37 — SI-02 data schema pre-definition
+**Priority:** P1 (High)
+**Type:** Spec / Data Model Pre-work
+**Owner:** Data Model & Domain Schema Owner; Head of Specs Team
+**Source:** IDEA-data-model-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 (Behavioural Drift Detection) sprint planning imminent.
+
+**Problem**
+SI-02 (Behavioural Drift Detection) requires per-trade data fields (regime_at_entry, setup_type, signal_conditions) that may not be fully captured in the current trade/position data model. Discovering these gaps mid-sprint would require emergency schema migrations. Pre-defining the required data structures before sprint planning allows the sprint to include any necessary migration stories proactively.
+
+**Scope**
+- Identify all data fields required for SI-02 drift analysis
+- Compare against current trade, position, and trade plan schemas
+- Gap analysis: enumerate missing fields with migration complexity estimate
+- Produce data schema pre-definition document: required fields, data types, tables affected, migration approach
+- Input to SI-02 sprint planning and BLG-BE-17 (drift query pre-design)
+
+**Acceptance Criteria**
+- Schema pre-definition document produced
+- Gap analysis complete: missing fields identified or confirmed absent
+- Migration approach defined for any missing fields
+- Document reviewed by Data Model Owner and Head of Specs Team before sprint planning
 
 ---
 
@@ -1183,6 +1753,246 @@ If an AI-assisted trade plan analysis feature is scoped (generating text summari
 - Audit log schema designed and documented
 - Storage mechanism implemented
 - Gate condition (AI trade plan analysis feature scoped) verified by Head of Specs Team before sprint planning
+
+---
+
+### BLG-GOV-30 — Sprint planning staging-only AC designation flag
+**Priority:** P1 (High)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Before v4.0 sprint planning
+
+**Problem**
+v3.9 post-ship closure carry-forward advisory item #2: environment-dependent ACs (those referencing Yahoo Finance, Alpaca, or other live service behaviour) were not designated "staging-only" at sprint planning. This resulted in BLG-QA-24 being filed as a surprise P3 notation at QA sign-off. A per-story staging_only_evidence flag at sprint planning time prevents this pattern.
+
+**Scope**
+- Add `staging_only_evidence` notation to sprint_backlog.md story schema documentation
+- Update sprint_planning_prompt.md to prompt for staging-only designation when an AC references external live service behaviour
+- Applies CLAUDE.md §6 governance file edit checklist (version bump, OPERATIONAL_GUIDE.md update, prompt_change_log.md entry)
+
+**Acceptance Criteria**
+- sprint_planning_prompt.md updated with explicit staging-only AC designation prompt
+- sprint_backlog.md story format updated to include staging_only_evidence field documentation
+- prompt_change_log.md entry appended per §6 checklist
+- Head of Specs Team sign-off recorded
+
+---
+
+### BLG-GOV-31 — Merge gate re-invocation advisory in sprint capacity template
+**Priority:** P1 (High)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** Before v4.0 sprint planning
+
+**Problem**
+v3.9 post-ship closure carry-forward advisory item #1: merge_gate.epics_merged was not updated during out-of-band GitHub merges, causing stale state when the execution engine resumed. The fix is documenting in the sprint capacity template that the execution engine must be re-invoked after each EPIC GitHub merge.
+
+**Scope**
+- Add advisory note to sprint capacity template: "After each EPIC PR merge to main, re-invoke the execution engine to update merge_gate.epics_merged before proceeding to the next EPIC"
+- Applies CLAUDE.md §6 governance file edit checklist if sprint_capacity_template.md is a governed file
+
+**Acceptance Criteria**
+- Sprint capacity template updated with re-invocation advisory
+- Head of Specs Team sign-off recorded
+
+---
+
+### BLG-GOV-32 — Gate-condition clearing tracker at release planning
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** PMO Lead
+**Source:** IDEA-pmo-lead-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+Gate-conditional backlog items (e.g., BLG-GOV-39, BLG-SPEC-35) have gates that may clear at unpredictable times. Currently gates are checked reactively (if PO remembers at release planning). A structured gate-scan checklist at each release planning kickoff — listing items likely to clear in the next 30–60 days — provides proactive pipeline visibility for sprint sequencing.
+
+**Scope**
+- Add a gate-scan checklist step to the release planning prompt or release planning artefact
+- At each release planning kickoff: scan all gate-conditional backlog items; flag gates likely to clear within 30–60 days given current trajectory
+- Output: gate proximity table in the release plan artefact
+
+**Acceptance Criteria**
+- Release planning process includes a gate-scan step
+- Gate proximity table produced at each release planning run
+- Applies CLAUDE.md §6 checklist if release_planning_prompt.md is modified
+
+---
+
+### BLG-GOV-33 — PT-04 closed trade count audit
+**Priority:** P2 (Medium)
+**Type:** Governance / Product Audit
+**Owner:** Product Owner; Challenger
+**Source:** IDEA-challenger-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.0 release planning
+
+**Problem**
+PT-04 (Setup Quality Score) gate (20+ closed trades) has been unmet for 4 consecutive cycles (v3.6–v3.9). No verification of the actual production closed trade count has been documented in any cycle artefact. If the count is 15–19, PT-04 is near-clearing and should be planned proactively. If under 10, the gate condition calibration may warrant review.
+
+**Scope**
+- Query production database for current closed trade count
+- Document count in release planning artefact (v4.0) and in PT-04 backlog item
+- If count ≥ 20: advance PT-04 to v4.0 sprint planning
+- If count 15–19: note in v4.0 release plan as near-gate item with projected clearing date
+- If count < 10: consider gate revision at v4.0 release planning
+
+**Acceptance Criteria**
+- Closed trade count documented in v4.0 release planning artefact
+- PT-04 gate status updated based on count
+- PO decision recorded for any gate revision
+
+---
+
+### BLG-GOV-34 — Arc 4 data density risk trajectory assessment
+**Priority:** P2 (Medium)
+**Type:** Governance / Risk Assessment
+**Owner:** Product Owner; Challenger
+**Source:** IDEA-challenger-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v4.0 release planning
+
+**Problem**
+PO-02 (Journal Pattern Recognition) requires 6+ months of AI journal entries. PO-04 (Reflection/Outcome Correlation) requires 50+ trades with plans. PO-05 (Lightweight Replay Mode) requires IT-06 foundation + significant trade history. At current trade frequency, these gates may not clear within v4.0–v4.2. Without a formal trajectory assessment, these features are perpetually "planned" without realistic delivery dates.
+
+**Scope**
+- Assessment: current trade frequency (trades/month), AI journal entry rate, trade plan creation rate
+- Trajectory: projected dates for PO-02 gate (6+ months AI journals), PO-04 gate (50+ trades with plans), PO-04 gate (50+ closed trades)
+- Recommendation: are gates realistic within 4 cycles, or should gate conditions be reconsidered?
+- Output: trajectory assessment document; input to v4.0 release planning
+
+**Acceptance Criteria**
+- Trajectory assessment document produced at v4.0 release planning
+- Gate clearing dates projected
+- PO decision recorded: proceed on current trajectory, revise gates, or re-scope features
+
+---
+
+### BLG-GOV-35 — Gemini thesis generation audit trail
+**Priority:** P2 (Medium)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer; Head of Backend Engineering
+**Source:** IDEA-ai-compliance-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v4.0
+
+**Problem**
+BLG-FEAT-24 (AI thesis generation, shipped v3.8) generates AI setup thesis text using Gemini API in production. No audit trail records the model version, prompt version, or output hash per generation. As Gemini usage scales, retroactive compliance tracking becomes impossible. An audit trail should be implemented before usage volume increases.
+
+**Scope**
+- Audit trail record per generation: plan_id, model_version, prompt_version, input_hash (thesis generation request), output_hash, generated_at, user_acknowledged (bool)
+- Storage: append-only table (gemini_audit_log) or structured log file
+- Retention policy: minimum 90 days
+- No change to user-facing BLG-FEAT-24 behaviour
+
+**Acceptance Criteria**
+- Audit log created for each Gemini thesis generation call
+- Record fields present: model_version, prompt_version, input_hash, output_hash, generated_at
+- Retention policy enforced (90-day minimum)
+- No performance impact on thesis generation response time
+
+---
+
+### BLG-GOV-36 — API key rotation cadence policy
+**Priority:** P2 (Medium)
+**Type:** Governance / Security Policy
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** IDEA-cybersecurity-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.0
+
+**Problem**
+Alpaca API keys (financial account access) and Gemini API keys have no defined rotation cadence. Without a formal policy specifying minimum rotation interval and documented responsibility, the exposure window for a compromised credential is unbounded.
+
+**Scope**
+- Define rotation cadence: Alpaca keys — minimum annual rotation; Gemini keys — minimum annual rotation
+- Document rotation procedure: how to rotate without service disruption (environment variable update, staging + prod)
+- Assign responsibility: Infrastructure & Operations Owner as rotation executor; Cybersecurity & Trust Lead as policy owner
+- File policy document in `docs/ops/api_key_rotation_policy.md`
+
+**Acceptance Criteria**
+- Policy document produced covering Alpaca and Gemini key rotation
+- Rotation cadence, procedure, and responsibility defined
+- Next rotation date recorded (based on last known rotation date or "unknown — rotate on policy adoption")
+
+---
+
+### BLG-GOV-37 — Red flag endpoint authentication and PII review
+**Priority:** P2 (Medium)
+**Type:** Governance / Security Review
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.0
+
+**Problem**
+SI-03 Red Flag Journal endpoint (GET /portfolio/red-flag-journal, shipped v3.9) exposes trading strategy override events. A targeted review confirms: (1) the endpoint is protected by API key authentication (shipped v2.2), (2) response payloads do not expose PII or sensitive strategy parameters beyond event type and timestamp, (3) pagination does not leak adjacent users' data (single-user system, but confirm).
+
+**Scope**
+- Verify API key auth covers /portfolio/red-flag-journal
+- Review response payload: confirm no PII, no sensitive position data, no information beyond event_type, rule_type, timestamp, severity
+- Document findings in security review note filed in `docs/security/`
+
+**Acceptance Criteria**
+- Authentication confirmed (API key auth active on endpoint)
+- Response payload reviewed: PII-free, no sensitive strategy data confirmed
+- Review findings documented
+- If gap found: remediation backlog item filed
+
+---
+
+### BLG-GOV-38 — DoQ sign-off date compliance audit (v3.7–v3.9)
+**Priority:** P3 (Low)
+**Type:** Governance / Quality Audit
+**Owner:** QA Lead; Director of Quality
+**Source:** IDEA-qa-lead-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+PR template v1.2 (shipped v3.9, ST-12) now enforces DoQ sign-off date fields on all QA evidence. A one-time historical audit of v3.7–v3.9 QA evidence files confirms whether existing closed-cycle artefacts are compliant with the new standard or require retrospective annotation. Bounded scope (3 cycles); findings are advisory only for closed cycles.
+
+**Scope**
+- Review all QA evidence files from v3.7, v3.8, and v3.9 cycles for DoQ sign-off date presence
+- Document any missing dates
+- Findings filed as advisory annotation — no retroactive modification to sealed artefacts required
+- If pattern found: inform Head of Specs Team for future sprint planning guidance
+
+**Acceptance Criteria**
+- All QA evidence files from v3.7–v3.9 reviewed
+- Missing sign-off dates documented
+- Findings filed; sealed artefacts not modified
+
+---
+
+### BLG-GOV-39 — SI-02 §13 formal boundary review
+**Priority:** P1 (High)
+**Type:** Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 (Behavioural Drift Detection) sprint planning imminent.
+
+**Problem**
+SI-02 (Behavioural Drift Detection) involves rolling analysis comparing actual trade entries against stated setup criteria. Before sprint planning seals, formal §13 review must confirm: this is deterministic analysis of historical data, not a predictive signal; drift detection is display-only (shows patterns, does not recommend actions); the rolling window analysis is not an adaptive strategy parameter. Prevents last-minute sprint gate discovery.
+
+**Scope**
+- Run §13 checklist against SI-02 story set before sprint planning seals
+- Confirm drift detection output is: deterministic, display-only, no automated recommendations
+- Document binding conditions (e.g., "drift alerts are informational only; no automated position management")
+- Sign-off recorded in sprint planning artefact
+
+**Acceptance Criteria**
+- §13 review completed; PASS or FAIL determination documented
+- Binding conditions (if any) enumerated and recorded
+- Gate condition (SI-02 sprint planning imminent) verified before initiating review
 
 ---
 

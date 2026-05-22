@@ -786,3 +786,26 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** None
 **Rationale:** Scheduled rebalance post-v3.8 close. Now horizon empty — v3.9 release planning not yet commenced. All active initiatives (Arc 4–6 remaining) reaffirmed as 🔥 Must continue. SI-01 shipped v3.8; Arc 5 active initiatives updated. One gate-cleared idea evaluated: IDEA-pmo-lead-20260508-01 (Arc 3 completion gate met) — PO rejects: milestone tracking covered by existing artefacts at sole-developer scale. First rebalance run under roadmap_prompt.md v6.3+ (3-cycle hard cap). 33 parked ideas all at park count ≥ 3 (range 5–13); terminal classification applied: 29 promoted to backlog as gate-conditional items (BLG-FEAT-26–35, BLG-FE-39, BLG-BE-13–14, BLG-QA-21–23, BLG-OPS-17–24, BLG-SPEC-32, BLG-GOV-26–29), 4 rejected not strong. Ideas register now clean. No roadmap additions; net-zero passes (0 additions, 0 kills).
 **Decision owner:** Product Owner
+
+---
+
+### DL-033 — 2026-05-22
+
+**Decision type:** No-change (roadmap-level) + Add (to backlog × 32)
+**Cycle:** 2026-05-22__scheduled
+**Displacement:** N/A — no roadmap-level additions this cycle
+**Workforce impact:** 32 new backlog items (all gate-conditional or P3 unscheduled); no immediate FTE commitment
+
+**Rationale:** Scheduled rebalance post-v3.9 close. Now horizon empty — v4.0 release planning directed by PO to follow this rebalance. All active roadmap initiatives (Arc 4–6 remaining: SI-02, SI-04, SI-05, PO-02–PO-05) reaffirmed. SI-03 shipped v3.9 (Arc 5 SI-03 ✅). PT-04 remains formally parked (gate unmet — 4th consecutive deferral). Ideas intake window IW-20260522-01 opened (44 submissions, 22 agents; Facilitator excluded per charter). 9 ideas promoted directly as gate-conditional backlog items; 24 ideas advanced to STEP 5 debate; 9 ideas parked (Parked-cycle-1); 2 ideas rejected. In STEP 5 debate, 23 of 24 advancing ideas promoted to backlog; IDEA-product-owner-20260522-01 (SI-05 early delivery without SI-02) was Parked after a Challenger Type A counter-argument (SI-05 scope requires SI-02 drift signals to be meaningful; partial delivery creates product definition problem). Total: 32 new backlog items (BLG-GOV-30–39, BLG-SPEC-33–37, BLG-BE-16–18, BLG-FE-40–43, BLG-FEAT-36–39, BLG-OPS-25–27, BLG-QA-25–27). No roadmap additions → net-zero constraint passes (0 additions, 0 kills).
+
+**Run tier:** Standard (CPS = 0.0; 1 day since last scheduled rebalance; < 90-day threshold; delta = 0.0)
+
+**Key backlog items added:** BLG-GOV-30 (P1 staging AC flag), BLG-GOV-31 (P1 merge gate advisory), BLG-SPEC-33 (P1 SI-03 API contract), BLG-SPEC-34 (P1 SI-01 API contract), BLG-GOV-39 (P1 SI-02 §13 review gate-cond.), BLG-SPEC-35 (P1 PO-02 §13 review gate-cond.), BLG-SPEC-37 (P1 SI-02 schema gate-cond.), BLG-QA-25 (P2 RFJ E2E test), BLG-OPS-26 (P2 Gemini cost), BLG-OPS-27 (P2 staging auto-deploy). Full list in cycle_record.md §8.2.
+
+**Skill-Silo check:** 10 of 32 items are GOV/SPEC (31%) — within 20–60% bounds. No Skill-Silo Alert issued.
+
+**Meta-review:** NOT due — rebalance_cycles_since_meta_review increments to 2 this cycle. Threshold is 3. Next meta-review due at following scheduled rebalance.
+
+**STEP 8.6 guardrail:** IDEA-product-owner-20260522-01 parked post-debate (Challenger Type A). PASS.
+
+**Decision owner:** Product Owner
