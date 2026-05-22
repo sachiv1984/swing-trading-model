@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-21
+**Last Updated:** 2026-05-22
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -2452,3 +2452,52 @@ As cycles accumulate, documents are created in each cycle directory but there is
 **Archived:** 2026-05-18
 **Completed in:** v3.7 (EPIC-04, ST-10)
 **Resolution:** Human staging run performed 2026-05-18 by Head of UX & Design — Research page typography confirmed conformant against design_system.md. Playwright test `tests/e2e/research-typography.spec.js` (SC-RV-TYP-01) added for permanent CI regression coverage. BLG-FE-26 was already archived 2026-05-17.
+
+---
+
+### BLG-TECH-10 — Fix Yahoo Finance crumb/401 rate-limiting in screener batch
+**Archived:** 2026-05-22
+**Completed in:** v3.9 (EPIC-01, ST-01)
+**Resolution:** Crumb refresh logic implemented; exponential backoff with jitter on 401/429; concurrent request cap via environment variable; crumb refresh events logged. All AC met. P3 process notation: AC-04 integration test deferred to staging (BLG-QA-24).
+
+---
+
+### BLG-BE-10 — Fix sector/industry data dropped in screener batch
+**Archived:** 2026-05-22
+**Completed in:** v3.9 (EPIC-01, ST-02)
+**Resolution:** Full ticker dict (including sector/industry) retained and passed to compute_screener_result(). Screener results now persist non-null sector/industry. Unit test verifies propagation.
+
+---
+
+### BLG-BE-11 — Remove DAY from ticker universe (invalid Yahoo Finance symbol)
+**Archived:** 2026-05-22
+**Completed in:** v3.9 (EPIC-01, ST-03)
+**Resolution:** DAY removed from tickers_full_list.csv; deactivate_invalid_tickers() added to startup; PHNX.L retained as valid FTSE 250 ticker (Phoenix Group Holdings). No OHLCV FAILED for DAY log entries post-deploy.
+
+---
+
+### BLG-FE-38 — Add degraded-run warning to screener when OHLCV failure rate exceeds 20%
+**Archived:** 2026-05-22
+**Completed in:** v3.9 (EPIC-01, ST-04)
+**Resolution:** degraded_run/failure_rate fields added to screener_runs table and GET /screener/results response; DegradedRunBanner component shows amber warning with failure_rate percentage; SC-SCR-DEG-01/02 Playwright pass.
+
+---
+
+### BLG-FE-37 — Strip .L suffix from Ticker Universe page display labels
+**Archived:** 2026-05-22
+**Completed in:** v3.9 (EPIC-02, ST-05)
+**Resolution:** displayTicker() function strips .L from display labels; API requests (add/toggle/delete) still use full ticker; US tickers unaffected. SC-TU-DISP-01 Playwright pass.
+
+---
+
+### BLG-BE-12 — Add company_name column to ticker universe
+**Archived:** 2026-05-22
+**Completed in:** v3.9 (EPIC-02, ST-06)
+**Resolution:** ensure_company_name_column() adds TEXT column; backfill from tickers_full_list.csv on startup; company_name included in GET /ticker-universe response; management page displays company name as 2nd column. SC-TU-COMP-01 Playwright pass.
+
+---
+
+### BLG-GOV-25 — Add --dry-run support to plan release and run delivery verification engines
+**Archived:** 2026-05-22
+**Completed in:** v3.9 (EPIC-04, ST-11)
+**Resolution:** --dry-run flag added to release_planning_prompt.md v2.31 and delivery_verification_prompt.md v2.5; two rows added to shared_standards.md §13 dry-run table; all three files version-bumped; prompt_change_log.md entries added.

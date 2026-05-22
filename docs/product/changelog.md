@@ -3,9 +3,39 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-20
+**Last Updated:** 2026-05-22
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v3.9 — Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches — 2026-05-22
+Cycle: 2026-05-21__release-v3.9
+Verified: Verified
+Verification report: claude/cycles/2026-05-21__release-v3.9/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Screener Data Quality & Reliability: Yahoo Finance crumb/401 retry with exponential backoff+jitter (ST-01); sector/industry fields restored to screener results (ST-02); invalid ticker DAY removed with startup deactivation (ST-03); degraded-run warning banner when >20% fetch failures (ST-04) | backend/services/screener_data_service.py; backend/services/screener_batch_service.py; docs/specs/frontend/pages/screener_results.md; docs/specs/api_contracts/screener_api_contract.md v1.1; docs/reference/openapi.yaml |
+| EPIC-02 | Ticker Universe Enhancements: .L suffix stripped from display labels while preserving API requests (ST-05); company_name column added with CSV backfill and management page display (ST-06) | docs/specs/frontend/pages/ticker_universe.md; docs/specs/api_contracts/ticker_universe_api_contract.md |
+| EPIC-03 | Arc 5 Red Flag Journal (SI-03): red_flag_events table; GET /portfolio/red-flag-journal endpoint (paginated, filterable by event_type/ticker/since); SI-01 override event write path; RedFlagJournal.js frontend with filters, pagination, empty state, Trading nav link (ST-07/08) | docs/specs/api_contracts/portfolio_endpoints.md v2.3; docs/specs/frontend/pages/red_flag_journal.md; docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md; docs/reference/openapi.yaml; backend/routers/test.py (59→60) |
+| EPIC-04 | Governance Patches — all 5 v3.8 carry-forward items resolved: execution_prompt.md v3.26 (test_scenarios scope rule + createPageUrl delegation note); sprint_planning_prompt.md v3.4 (deferred_at_planning state); release_planning_prompt.md v2.31 + delivery_verification_prompt.md v2.5 (--dry-run support); PR template v1.2 (QA evidence pre-merge checklist) (ST-09/10/11/12) | claude/system/execution_prompt.md v3.26; claude/system/sprint_planning_prompt.md v3.4; claude/system/release_planning_prompt.md v2.31; claude/system/delivery_verification_prompt.md v2.5; .github/pull_request_template.md v1.2 |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] BLG-TECH-10: Fix Yahoo Finance crumb/401 rate-limiting in screener batch
+- [ST-02] BLG-BE-10: Fix sector/industry data dropped in screener batch
+- [ST-03] BLG-BE-11: Remove DAY from ticker universe (invalid Yahoo Finance symbol)
+- [ST-04] BLG-FE-38: Add degraded-run warning to screener when OHLCV failure rate exceeds 20%
+- [ST-05] BLG-FE-37: Strip .L suffix from Ticker Universe page display labels
+- [ST-06] BLG-BE-12: Add company_name column to ticker universe
+- [ST-11] BLG-GOV-25: Add --dry-run support to plan release and run delivery verification engines
+
+Sign-off: Product Owner — 2026-05-22
+QA sign-off: Director of Quality — 2026-05-22
 
 ---
 

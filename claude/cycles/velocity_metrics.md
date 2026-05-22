@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-05-20
+**Last Updated:** 2026-05-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -46,8 +46,9 @@
 | v3.6  | 7       | 7         | 1.00     | EPIC-02 deferred at planning (< 20 closed trades gate); 1 P3 deviation (BLG-FE-33 staging advisory); 0 stories missed |
 | v3.7  | 8       | 8         | 1.00     | Zero deviations — all 8 stories delivered; EPIC-02 PT-04 gate still not met (deferred to v3.8); scored_initiatives.md OA-RP-05 resolved |
 | v3.8  | 8       | 8         | 1.00     | 1 P3 deviation (DEV-EPIC04-ST09-01 — resolved same release); EPIC-02 PT-04 formally parked (gate not met); Arc 5 SI-01 foundation delivered |
+| v3.9  | 12      | 12        | 1.00     | Zero deviations — cleanest cycle in recent series; all 5 v3.8 governance carry-forward patches resolved; Arc 5 SI-03 Red Flag Journal delivered; EPIC-05 PT-04 deferred_at_planning (gate not met) |
 
-**Rolling 6-cycle average (v3.3–v3.8):** 0.97
+**Rolling 6-cycle average (v3.4–v3.9):** 1.00
 
 ---
 

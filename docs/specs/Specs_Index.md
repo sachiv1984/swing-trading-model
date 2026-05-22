@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-19
+**Last Updated:** 2026-05-22
 
 ---
 
@@ -111,9 +111,10 @@ It points to the **single canonical source**.
 - `analytics_endpoints.md` — Class 1 Canonical, v2.1.0, Active (updated 2026-04-15, ST-08, cycle 2026-04-13__release-v2.7): GET /analytics/market-correlation (Pearson correlation vs benchmark, TTL-cached). Sign-off: Head of Specs Team.
 - `signal_endpoints.md` — Class 1 Canonical, v1.2, Active (updated 2026-05-18, ST-01, cycle 2026-05-18__release-v3.7): PATCH /signals/{id} updated to accept `watchlisted` as valid status value; `watchlisted` added to signals table CHECK constraint (signal-to-watchlist workflow). Sign-off: Sprint Execution Engine (autonomous class). Previous: v1.1 (2026-04-15, ST-09, v2.7): POST /signals/generate supplementary display-only indicator fields; Strategy Rules Owner sign-off.
 - `ai_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-04-18, ST-07, cycle 2026-04-17__release-v2.8): POST /ai/journal-summary — LLM-based journal entry summarisation; Anthropic API; graceful failure returns HTTP 200 with summary:null; display-only; SRB-v1.7 conditionally compliant. Sign-off: Sprint Execution Engine (autonomous class); DoQ EPIC-level Director of Quality 2026-04-20.
-- `ticker_universe_api_contract.md` — Class 2 Canonical (created 2026-04-25, ST-01, cycle 2026-04-25__release-v3.0): GET /ticker-universe, POST /ticker-universe, DELETE /ticker-universe/{ticker}; seed data contract. Sign-off: Sprint Execution Engine (autonomous class).
-- `screener_api_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9; implementation delivered 2026-04-25 v3.0 ST-04): GET /screener/results, POST /screener/run; request/response schemas, pagination, error codes.
+- `ticker_universe_api_contract.md` — Class 2 Canonical (created 2026-04-25, ST-01, cycle 2026-04-25__release-v3.0; updated 2026-05-22 ST-06 v3.9 — company_name field added to GET /ticker-universe response): GET /ticker-universe, POST /ticker-universe, DELETE /ticker-universe/{ticker}; seed data contract; company_name field. Sign-off: Sprint Execution Engine (autonomous class).
+- `screener_api_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9; implementation delivered 2026-04-25 v3.0 ST-04; updated v1.1 2026-05-22 ST-04 v3.9 — degraded_run and failure_rate fields added to GET /screener/results response): GET /screener/results, POST /screener/run; request/response schemas, pagination, error codes, degraded_run flag.
 - `alpaca_integration_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9 ST-02): Alpaca Markets API contract for OHLCV bars and News endpoints; rate limits, error codes, fallback strategy, API version pin.
+- `portfolio_endpoints.md` — Class 1 Canonical (created v2.0; updated v2.3 2026-05-22 ST-07 v3.9 — GET /portfolio/red-flag-journal added; red_flag_events table; SI-01 override event write path): GET /portfolio, GET /portfolio/pre-entry-validation, GET /portfolio/prospective-heat, GET /portfolio/red-flag-journal + other portfolio endpoints. Sign-off: Sprint Execution Engine (autonomous class).
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**
@@ -582,6 +583,21 @@ Identified during delivery verification (verification_report.md §6). **Zero tes
 | EPIC-04 | not_applicable — autonomous/infrastructure | Conftest consolidation, pycache hygiene, typography staging, scoring doc refresh; no core user journey |
 
 No backlog items required. All coverage complete or explicitly not_applicable.
+
+---
+
+## 22. Test Coverage Gaps — v3.9 (2026-05-21__release-v3.9)
+
+Identified during delivery verification (verification_report.md §6). **Zero test coverage gaps** across all four EPICs.
+
+| EPIC | Disposition | Notes |
+|------|-------------|-------|
+| EPIC-01 | not_applicable — fully covered | Unit tests: test_screener_data_service.py, test_screener_batch_service.py; Playwright SC-SCR-DEG-01/02; all observable ACs covered. ST-01 AC-04 staging-only evidence (BLG-QA-24 process notation — not a gap) |
+| EPIC-02 | not_applicable — fully covered | SC-TU-DISP-01 (3 sub-tests: .L strip, US unaffected, API request preserved); SC-TU-COMP-01 (3 sub-tests: column header, known ticker, LSE ticker); all observable ACs covered |
+| EPIC-03 | not_applicable — fully covered | SC-RFJ-01/02/03 Playwright (events list, empty state, event_type filter) + 5 unit tests (test_red_flag_journal.py); all observable ACs covered |
+| EPIC-04 | not_applicable — governance class | Governance prompt + template changes only; no observable UI behaviour; all ACs verifiable by diff |
+
+No TEST-GAP backlog items required.
 
 ---
 

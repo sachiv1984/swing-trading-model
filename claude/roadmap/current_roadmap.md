@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-21 (cycle 2026-05-21__scheduled — no-change; 33 ideas: 29 Promoted-Backlog (3-cycle cap), 4 Rejected; DL-032)
+**Last Updated:** 2026-05-22 (post-ship closure 2026-05-21__release-v3.9 — v3.9 ✅ Complete; SI-03 ✅ Shipped; Current Version → v3.9; Next planned release → v4.0)
 **Last rebalance:** 2026-05-21 (cycle 2026-05-21__scheduled — Standard-tier, no-change; 3-cycle hard cap applied to all 33 parked ideas; 29 promoted to backlog as gate-conditional items; 4 rejected; DL-032)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,18 +10,10 @@
 
 ## 1. Current Version
 
-**v3.8** — Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management — ✅ Shipped 2026-05-20
-**Next planned release:** **v3.9** — Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches
+**v3.9** — Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches — ✅ Shipped 2026-05-22
+**Next planned release:** **v4.0** — [TBD]
 
-<!-- roadmap-annotation-marker: RA:v3.9:2026-05-21__release-v3.9 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-05-21__release-v3.9
-- Plan published: 2026-05-21
-- Cycle folder: claude/cycles/2026-05-21__release-v3.9/
-- Backlog slice: claude/cycles/2026-05-21__release-v3.9/stage4_backlog_slice.md
-- Status at annotation: Committed
-
+*RA:v3.9 retired — see roadmap_archive.md 2026-05-22 (post-ship closure 2026-05-21__release-v3.9).*
 *RA:v3.8 retired — see roadmap_archive.md 2026-05-20 (post-ship closure 2026-05-19__release-v3.8).*
 *RA:v3.7 retired — see roadmap_archive.md 2026-05-19 (post-ship closure 2026-05-18__release-v3.7).*
 *RA:v3.6 retired — see roadmap_archive.md 2026-05-17 (post-ship closure 2026-05-16__release-v3.6).*
@@ -206,7 +198,7 @@ Today you find stocks through external research and add them to the watchlist ma
 |-----|--------------------------------|------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |SI-01|Pre-Entry Rule Validation Gate  |M     |✅ Shipped v3.8 (2026-05-20) — §13 PASS (ST-01); strategy_rules.md v1.4 §4.2 formalised 5 checks; GET /portfolio/pre-entry-validation + PreEntryValidationPanel with override acknowledgement; 17 unit tests + SC-TP-17–20 Playwright pass|
 |SI-02|Behavioural Drift Detection     |H     |Rolling analysis: are your actual entries drifting from your stated setup criteria? Are you entering earlier in the signal cycle than your rules permit? Are you sizing up in losing streaks? Detected from trade history and trade plan data                                                               |
-|SI-03|Red Flag Journal                |M     |Auto-populated log of every instance where behaviour deviated from strategy — pre-entry override, plan checklist skipped, stop management prompt dismissed. Separate from trade journal. Reviewed in weekly digest                                                                                          |
+|SI-03|Red Flag Journal                |M     |✅ Shipped v3.9 (2026-05-22) — red_flag_events table; GET /portfolio/red-flag-journal (paginated, filterable); SI-01 override event write path; RedFlagJournal.js frontend with filters, pagination, empty state, Trading nav link; SC-RFJ-01/02/03 Playwright pass|
 |SI-04|Strategy Version Comparison     |H     |When `strategy_rules.md` is incremented, the system compares trade history performance before and after the change. Did the parameter update actually improve outcomes? Requires version-tagged trade history                                                                                               |
 |SI-05|Weekly Strategy Integrity Digest|M     |Combines Red Flag Journal (SI-03), behavioural drift signals (SI-02), and compliance score trend into a single weekly review. Delivered via existing Telegram notification infrastructure (shipped v2.4)                                                                                                    |
 
@@ -279,7 +271,7 @@ Items in this section are sequenced and ready for planning when the current vers
 |Pre-Trade Research View  |PT-02|M     |✅ Shipped v3.2 — frontend delivered (research page, ticker data, news, nav integration)             |
 |Prospective Heat at Entry|PT-03|S     |✅ Shipped v3.2 — prospective heat metric integrated into research view                             |
 |Pre-Trade Entry Checklist|PT-05|M     |✅ Shipped v3.2 — checklist component in Trade Plan form, pre-population, persistence               |
-|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01 — ⏸️ Parked (v3.6/v3.7/v3.8 conditional defers; gate not met; PO decision 2026-05-19 to park formally — re-open when 20+ closed trades confirmed)|
+|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01 — ⏸️ Parked (v3.6/v3.7/v3.8/v3.9 conditional defers; gate not met; PO decision 2026-05-19 to park formally — re-open when 20+ closed trades confirmed; PO to document written rationale at v4.0 planning if gate still unmet)|
 
 **Arc 2 end-state target:** Every entry is preceded by a structured research view, a completed checklist, and a saved trade plan. The quality of entry decisions is captured and measurable, not assumed.
 
@@ -317,9 +309,9 @@ Items in this section are sequenced and ready for planning when the current vers
 
 |Feature                         |ID   |Effort|Gate / pre-condition                                                                |
 |--------------------------------|-----|------|------------------------------------------------------------------------------------|
-|Pre-Entry Rule Validation Gate  |SI-01|M     |**Candidate for pull-forward to Arc 3** — high standalone value; §13 review required|
+|Pre-Entry Rule Validation Gate  |SI-01|M     |✅ Shipped v3.8 (2026-05-20)                                                        |
 |Behavioural Drift Detection     |SI-02|H     |Requires PO-01 + PO-03 data foundation                                              |
-|Red Flag Journal                |SI-03|M     |**Candidate for pull-forward to Arc 3**; depends on SI-01 for override logging      |
+|Red Flag Journal                |SI-03|M     |✅ Shipped v3.9 (2026-05-22)                                                        |
 |Strategy Version Comparison     |SI-04|H     |Requires version-tagged trade history from Arc 2 onwards                            |
 |Weekly Strategy Integrity Digest|SI-05|M     |Extends existing Telegram digest (shipped v2.4); depends on SI-02 + SI-03           |
 
@@ -406,6 +398,7 @@ When evaluating new features:
 |**v3.6** ✅  |Arc 4 Data Integrity + Arc 2 Quality Score + Debt Clearance           |planned_entry_price snapshot at trade entry; entry_delta_pct in PlanVsReality; SC-RV-18/19 Playwright coverage; research endpoint 404/503 error codes; research page regime lozenge + font fix; execution_prompt.md v3.22 governance patches — ✅ Shipped 2026-05-17 — cycle: 2026-05-16__release-v3.6 — Verified_with_deviations (1 P3)|
 |**v3.7** ✅  |Signal-to-Watchlist Workflow + Arc 2 Completion + Governance Hardening|EPIC-01: signals `watchlisted` status + PATCH /signals/{id}; Add to Watchlist CTA on signal cards; SignalContextPanel in trade plan form (entry_rationale + confirmation_criteria pre-pop); 7 Playwright scenarios. EPIC-03: execution_prompt.md v3.24 (3 patches); qa_evidence_template.md v1.1. EPIC-04: BLG-QA-20/OPS-16/FE-35/GOV-23 debt clearance; OA-RP-05 resolved. EPIC-02 (PT-04) deferred — gate not met (< 20 closed trades) — ✅ Shipped 2026-05-18 — cycle: 2026-05-18__release-v3.7|
 |**v3.8** ✅  |Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management|EPIC-04: TickerUniverse.js management page (add/toggle/delete/filter); public.tickers startup sync retired; ticker_universe sole authoritative source; BLG-GOV-24 governance debt (gh_issue_template.md §14 + PR template). EPIC-03: setup_type dropdown (6 options, BLG-FEAT-23); collapsible news context panel (BLG-FE-36); AI thesis generation template engine + Gemini-gated "Improve with AI" (BLG-FEAT-24). EPIC-01: SI-01 §13 gate PASS (8 binding conditions); GET /portfolio/pre-entry-validation (5 rules, strategy_rules.md v1.4 §4.2, 17 unit tests); PreEntryValidationPanel with override acknowledgement. Verified_with_deviations (1 P3 — resolved same release) — ✅ Shipped 2026-05-20 — cycle: 2026-05-19__release-v3.8|
+|**v3.9** ✅  |Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches|EPIC-01: Yahoo Finance crumb/401 retry + exponential backoff (ST-01); sector/industry fields restored (ST-02); DAY ticker removed + startup deactivation (ST-03); degraded-run warning banner (ST-04). EPIC-02: .L suffix stripped from Ticker Universe display (ST-05); company_name column + CSV backfill (ST-06). EPIC-03: Arc 5 SI-03 Red Flag Journal — red_flag_events table, GET /portfolio/red-flag-journal, SI-01 override event write, RedFlagJournal.js frontend (ST-07/08). EPIC-04: 5 governance carry-forward patches — execution_prompt.md v3.26, sprint_planning_prompt.md v3.4, release_planning_prompt.md v2.31, delivery_verification_prompt.md v2.5, PR template v1.2 (ST-09/10/11/12). Zero deviations — ✅ Shipped 2026-05-22 — cycle: 2026-05-21__release-v3.9|
 |**v3.8–v4.0**|Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v3.8–v4.0**|Arc 5: Strategy Integrity                                             |Pre-entry rule validation, behavioural drift detection, red flag journal, strategy version comparison — 📋 Planned                         |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

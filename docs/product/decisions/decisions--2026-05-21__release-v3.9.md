@@ -1,9 +1,9 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v3.9
 Cycle: 2026-05-21__release-v3.9
-Last Updated: 2026-05-21
+Last Updated: 2026-05-22
 
 ## Planning Decisions — v3.9 Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches
 
@@ -35,6 +35,6 @@ None — no escalations were raised during this planning cycle.
 
 *To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v3.9 ship — 2026-05-22
+Changelog: docs/product/changelog.md#v3.9
 Cycle: 2026-05-21__release-v3.9

@@ -1,13 +1,29 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-21
+**Last Updated:** 2026-05-22
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v3.9 — Release Annotation
+
+**Original roadmap location:** §1 Current Version header (roadmap annotation block)
+**Status at retirement:** ✅ Complete — annotation retired post-ship
+**Retired from active roadmap:** 2026-05-22
+**Shipped version:** v3.9 (2026-05-22)
+**Cycle reference:** 2026-05-21__release-v3.9
+**Verification report:** claude/cycles/2026-05-21__release-v3.9/verification_report.md
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-22
+
+### Original Roadmap Entry
+
+v3.9 Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches: Yahoo Finance crumb/401 retry + exponential backoff (ST-01); sector/industry restored (ST-02); DAY ticker removed (ST-03); degraded-run banner (ST-04); .L suffix stripped from Ticker Universe (ST-05); company_name column + CSV backfill (ST-06); Arc 5 SI-03 Red Flag Journal backend + frontend (ST-07/08); 5 governance carry-forward patches (ST-09/10/11/12). Zero deviations. Verified 2026-05-22. completed_cycle_count = 25.
 
 ---
 
