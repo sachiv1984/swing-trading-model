@@ -5,14 +5,14 @@
   "invoked_utc": "2026-05-22T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-22T12:00:00Z",
+  "last_updated_utc": "2026-05-22T12:30:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-21__release-v3.9/EPIC-01",
       "pr_number": 471,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_sign_off_record": {
         "required_by": "Director of Quality",
@@ -114,10 +114,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-21__release-v3.9/EPIC-02",
       "pr_number": 470,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_sign_off_record": {
         "required_by": "Director of Quality",
@@ -175,10 +175,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-21__release-v3.9/EPIC-03",
       "pr_number": 473,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_sign_off_record": {
         "required_by": "Director of Quality",
@@ -243,10 +243,10 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-21__release-v3.9/EPIC-04",
       "pr_number": 472,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_sign_off_record": {
         "required_by": "Director of Quality",
@@ -409,11 +409,12 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-02", "EPIC-01", "EPIC-04", "EPIC-03"],
-    "all_merged": false
+    "epics_merged": ["EPIC-02", "EPIC-01", "EPIC-04", "EPIC-03"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-05-22T13:00:00Z",
+  "status": "Sealed"
 }

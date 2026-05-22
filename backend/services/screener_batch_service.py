@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 _YAHOO_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
 _YAHOO_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    "Accept": "application/json",
+    "Accept": "*/*",
 }
 
 _run_lock = threading.Lock()

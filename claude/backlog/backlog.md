@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-21 (cycle 2026-05-21__scheduled — 29 gate-conditional items added: BLG-FEAT-26–35, BLG-FE-39, BLG-BE-13–14, BLG-QA-21–23, BLG-OPS-17–24, BLG-SPEC-32, BLG-GOV-26–29)
+**Last Updated:** 2026-05-22 (session — 1 new item added: BLG-BE-15)
 **Last rebalance:** 2026-05-21 (cycle 2026-05-21__scheduled — DL-032; 3-cycle cap applied: 29 Promoted-Backlog, 4 Rejected)
 
 > ⚠️ Standing Notice
@@ -686,6 +686,31 @@ Trade plan schema has grown incrementally. If the schema continues to change at 
 - `schema_version` field present on all trade plan records
 - Read path applies correct field defaults for legacy records
 - Gate condition (≥3 new fields post v3.4) verified by Product Owner before sprint planning
+
+---
+
+### BLG-BE-15 — Validate ticker symbol on add (sector/industry lookup)
+**Priority:** P1 (High)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** User request — 2026-05-22
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.0
+
+**Problem**
+When a user adds a ticker symbol and market to the universe, no validation is performed to confirm the ticker actually exists. Any arbitrary string can be saved, leading to junk entries that silently produce empty screener results or data fetch errors. Validating sector and industry at add-time gives immediate feedback and prevents invalid tickers from polluting the universe.
+
+**Scope**
+- On ticker add (POST `/tickers` or equivalent), call the market data provider (Yahoo Finance) to fetch sector and industry for the submitted symbol+market
+- If the lookup returns no data or raises an error, reject the request with a clear 400/422 response and message (e.g. "Ticker XXXX not found — please check the symbol and market")
+- If the lookup succeeds, optionally auto-populate sector/industry fields from the returned data
+- Frontend to surface the rejection error inline on the add-ticker form
+
+**Acceptance Criteria**
+- Submitting a non-existent ticker symbol returns an error response and the ticker is not saved
+- Submitting a valid ticker returns success; sector and industry are confirmed present
+- Error message displayed to user is specific and actionable (not a generic 500)
+- Existing tickers already in the universe are unaffected
 
 ---
 

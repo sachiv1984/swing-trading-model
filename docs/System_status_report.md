@@ -1,9 +1,36 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.8
-**Last Updated:** 2026-05-20
+**Version:** 2.9
+**Last Updated:** 2026-05-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-21__release-v3.9
+**Date:** 2026-05-22
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Screener Data Quality & Reliability: Yahoo Finance 401/crumb retry with exponential backoff+jitter (ST-01); sector/industry fields restored to screener results (ST-02); invalid ticker DAY removed + startup deactivation (ST-03); degraded-run banner (>20% fetch failures → amber warning with failure_rate) in Screener page (ST-04). 7 unit tests; SC-SCR-DEG-01/02 Playwright pass. | backend/services/screener_data_service.py; backend/services/screener_batch_service.py; docs/specs/frontend/pages/screener_results.md; docs/specs/api_contracts/screener_api_contract.md v1.1; openapi.yaml updated | P3 process notation: ST-01 AC-04 integration test deferred to post-merge staging (BLG-QA-24) |
+| EPIC-02 | Ticker Universe Enhancements: .L suffix stripped from display labels while preserving API requests (ST-05); company_name column added to ticker_universe table with CSV backfill + management page display as 2nd column (ST-06). SC-TU-DISP-01, SC-TU-COMP-01 Playwright pass. | docs/specs/frontend/pages/ticker_universe.md; docs/specs/api_contracts/ticker_universe_api_contract.md | None |
+| EPIC-03 | Arc 5 Red Flag Journal (SI-03): red_flag_events table (id, event_type, ticker, position_id, context, created_at); GET /portfolio/red-flag-journal endpoint (paginated, filterable by event_type/ticker/since); SI-01 pre_entry_override event write on acknowledgement; RedFlagJournal.js frontend with filters, pagination, empty state; Trading nav link. Endpoint total: 60. SC-RFJ-01/02/03 Playwright pass. | docs/specs/api_contracts/portfolio_endpoints.md v2.3; docs/specs/frontend/pages/red_flag_journal.md; docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md; openapi.yaml; backend/routers/test.py (59→60) | None |
+| EPIC-04 | Governance Patches (v3.8 carry-forward, all 5 resolved): execution_prompt.md v3.26 (test_scenarios scope rule + createPageUrl delegation note); sprint_planning_prompt.md v3.4 (deferred_at_planning state); release_planning_prompt.md v2.31 + delivery_verification_prompt.md v2.5 (--dry-run support); PR template v1.2 (QA evidence pre-merge checklist). | claude/system/execution_prompt.md; claude/system/sprint_planning_prompt.md; claude/system/release_planning_prompt.md; claude/system/delivery_verification_prompt.md; .github/pull_request_template.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-13/ST-14 (PT-04 Setup Quality Score) | Gate condition not met: <20 closed trades (PO confirmed 2026-05-22); EPIC-05 deferred at planning | BLG-FEAT-25 |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ 2026-05-22), qa_evidence_EPIC-02.md (DoQ 2026-05-22), qa_evidence_EPIC-03.md (DoQ 2026-05-22, autonomous class), qa_evidence_EPIC-04.md (DoQ 2026-05-22, autonomous class)
+- Deviations filed: None (BLG-QA-24 is a process notation, not a spec deviation)
+- Test scenarios referenced: tests/test_screener_data_service.py, tests/test_screener_batch_service.py, tests/test_red_flag_journal.py; E2E: tests/e2e/screener.spec.js (SC-SCR-DEG-01/02), tests/e2e/ticker-universe.spec.js (SC-TU-DISP-01, SC-TU-COMP-01), tests/e2e/red-flag-journal.spec.js (SC-RFJ-01/02/03)
 
 ---
 
