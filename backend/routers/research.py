@@ -116,16 +116,19 @@ def _get_signal(ticker: str, portfolio_id: str) -> Optional[dict]:
             0 if x.get("status") == "new" else 1
         ), reverse=True)
         s = matches[0]
+        entry_price = float(s["current_price"]) if s.get("current_price") is not None else None
+        stop_price = float(s["initial_stop"]) if s.get("initial_stop") is not None else None
+        r_target = 3.0 if (entry_price is not None and stop_price is not None) else None
         return {
             "signal_id": str(s.get("id", "")),
             "direction": s.get("direction"),
             "signal_date": s.get("signal_date").isoformat() if hasattr(s.get("signal_date"), "isoformat") else s.get("signal_date"),
             "status": s.get("status"),
             "rank": s.get("rank"),
-            "atr": float(s["atr"]) if s.get("atr") is not None else None,
-            "entry_price": float(s["entry_price"]) if s.get("entry_price") is not None else None,
-            "stop_price": float(s["stop_price"]) if s.get("stop_price") is not None else None,
-            "r_target": float(s["r_target"]) if s.get("r_target") is not None else None,
+            "atr": float(s["atr_value"]) if s.get("atr_value") is not None else None,
+            "entry_price": entry_price,
+            "stop_price": stop_price,
+            "r_target": r_target,
         }
     except Exception:
         return None
