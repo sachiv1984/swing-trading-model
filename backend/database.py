@@ -1203,3 +1203,97 @@ def get_database_size_bytes() -> int:
             cur.execute("SELECT pg_database_size(current_database()) AS size_bytes")
             row = cur.fetchone()
             return int(row["size_bytes"])
+
+
+# ---------------------------------------------------------------------------
+# Red Flag Events (SI-03 / ST-07, EPIC-03, v3.9)
+# ---------------------------------------------------------------------------
+
+_VALID_EVENT_TYPES = frozenset({
+    "pre_entry_override",
+    "checklist_skipped",
+    "stop_prompt_dismissed",
+    "drawdown_prompt_dismissed",
+})
+
+
+def ensure_red_flag_events_table() -> None:
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """CREATE TABLE IF NOT EXISTS red_flag_events (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    event_type TEXT NOT NULL,
+                    ticker TEXT NOT NULL,
+                    position_id UUID,
+                    context JSONB,
+                    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+                )"""
+            )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_rfe_event_type ON red_flag_events (event_type)"
+            )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_rfe_ticker ON red_flag_events (UPPER(ticker))"
+            )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_rfe_created_at ON red_flag_events (created_at DESC)"
+            )
+        conn.commit()
+
+
+def create_red_flag_event(
+    event_type: str,
+    ticker: str,
+    position_id: Optional[str] = None,
+    context: Optional[dict] = None,
+) -> dict:
+    import json as _json
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """INSERT INTO red_flag_events (event_type, ticker, position_id, context)
+                   VALUES (%s, %s, %s, %s::jsonb)
+                   RETURNING *""",
+                (
+                    event_type,
+                    ticker.upper(),
+                    position_id,
+                    _json.dumps(context) if context is not None else None,
+                ),
+            )
+            row = cur.fetchone()
+        conn.commit()
+        return dict(row)
+
+
+def get_red_flag_events(
+    page: int = 1,
+    page_size: int = 20,
+    event_type: Optional[str] = None,
+    ticker: Optional[str] = None,
+    since: Optional[str] = None,
+) -> dict:
+    clauses = []
+    params: list = []
+    if event_type:
+        clauses.append("event_type = %s")
+        params.append(event_type)
+    if ticker:
+        clauses.append("UPPER(ticker) = %s")
+        params.append(ticker.upper())
+    if since:
+        clauses.append("created_at >= %s::timestamptz")
+        params.append(since)
+    where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
+    offset = (page - 1) * page_size
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(f"SELECT COUNT(*) AS cnt FROM red_flag_events {where}", params)
+            total = cur.fetchone()["cnt"]
+            cur.execute(
+                f"SELECT * FROM red_flag_events {where} ORDER BY created_at DESC LIMIT %s OFFSET %s",
+                params + [page_size, offset],
+            )
+            items = [dict(r) for r in cur.fetchall()]
+    return {"total": total, "page": page, "page_size": page_size, "items": items}

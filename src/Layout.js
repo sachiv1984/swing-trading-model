@@ -24,6 +24,7 @@ import {
   ChevronRight,
   ScanSearch,
   Globe,
+  Flag,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -52,6 +53,7 @@ const NAV_GROUPS = [
       { name: "Trade Entry",   icon: PlusCircle,  page: "TradeEntry" },
       { name: "Trade History", icon: History,     page: "TradeHistory" },
       { name: "Reflections",   icon: FileBarChart, page: "TradeReflection" },
+      { name: "Red Flag Journal", icon: Flag, page: "RedFlagJournal" },
     ],
   },
   {

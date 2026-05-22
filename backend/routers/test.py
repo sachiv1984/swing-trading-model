@@ -148,6 +148,9 @@ async def test_all_endpoints(request: Request):
         # Pre-Entry Validation (v3.8 / EPIC-01 ST-02)
         {"name": "GET /portfolio/pre-entry-validation", "method": "GET", "url": f"{base_url}/portfolio/pre-entry-validation?ticker=AAPL&quantity=10&market=US", "critical": False},
 
+        # Red Flag Journal (v3.9 / EPIC-03 ST-07)
+        {"name": "GET /portfolio/red-flag-journal", "method": "GET", "url": f"{base_url}/portfolio/red-flag-journal", "critical": False},
+
         # Plan vs Reality (v3.5 / EPIC-02 ST-05)
         {"name": "GET /trades/{id}/plan-vs-reality", "method": "GET", "url": f"{base_url}/trades/00000000-0000-0000-0000-000000000000/plan-vs-reality", "critical": False},
 

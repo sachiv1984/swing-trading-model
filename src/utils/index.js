@@ -19,6 +19,7 @@ export const createPageUrl = (pageName) => {
     WeeklyDigest: '/WeeklyDigest',
     Screener: '/Screener',
     TickerUniverse: '/TickerUniverse',
+    RedFlagJournal: '/RedFlagJournal',
   };
   return routes[pageName] || '/';
 };

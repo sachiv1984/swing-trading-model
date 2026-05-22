@@ -54,6 +54,7 @@ _DB_STUB_FUNCTIONS = [
     "delete_trade_plan", "ensure_setup_type_column", "ensure_override_acknowledged_column", "ensure_trade_plans_table",
     "get_trade_by_id", "get_position_by_id", "update_position_lifecycle_state",
     "ensure_plan_vs_reality_columns", "ensure_signals_watchlisted_status",
+    "ensure_red_flag_events_table", "create_red_flag_event", "get_red_flag_events",
 ]
 
 _database_stub = types.ModuleType("database")
