@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.30
+**Version:** 2.31
 **Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -249,6 +249,23 @@ If state cannot be updated: halt.
 
 ## STEP -1 — Preflight Gate (Hard Gate)
 Purpose: fail fast on missing prerequisites.
+
+**Dry-run detection (BLG-GOV-25 / ST-11):** If `--dry-run` is specified in the invocation, execute this step and scope extraction only (sub-checks -1.1 through -1.5), then output the dry-run report below and exit without making any file writes, git commits, or state updates.
+
+**Dry-run report format:**
+```
+DRY-RUN: plan release --version <vX.Y>
+Preflight: PASS / FAIL (list any missing files or role gaps)
+Roadmap item: <item-id> — <item-name>
+Artefacts that would be created:
+  - claude/cycles/<cycle_id>/release_plan.md
+  - claude/cycles/<cycle_id>/stage4_backlog_slice.md
+  - claude/cycles/<cycle_id>/stage4_issue_manifest.json
+  - claude/cycles/<cycle_id>/design_gate.md (if design required)
+  - .claude_current_state.json (status → Release_Plan_Published)
+Estimated scope: <N> EPICs, <M> stories (based on roadmap item backlog slice)
+No files written — re-invoke without --dry-run to execute.
+```
 
 ### -1.1 Common Preflight — Required Files Present
 Apply `claude/system/shared/preflight_common.md` (sub-check 1 only) with:

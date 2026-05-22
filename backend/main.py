@@ -30,7 +30,7 @@ from routers import pre_entry_validation as pre_entry_validation_router
 from routers import red_flag_journal as red_flag_journal_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
-from services.ticker_universe_service import ensure_ticker_universe_table, seed_default_tickers
+from services.ticker_universe_service import ensure_ticker_universe_table, ensure_company_name_column, seed_default_tickers, deactivate_invalid_tickers
 from services.screener_batch_service import ensure_screener_results_table
 
 
@@ -215,7 +215,9 @@ def on_startup():
     try:
         ensure_ticker_universe_table()
         seeded = seed_default_tickers()
-        _log.info("ensure_ticker_universe_table: OK (seeded %d default tickers)", seeded)
+        ensure_company_name_column()
+        deactivated = deactivate_invalid_tickers()
+        _log.info("ensure_ticker_universe_table: OK (seeded %d default tickers, deactivated %d invalid)", seeded, deactivated)
     except Exception as _e:
         _log.error("ensure_ticker_universe_table FAILED at startup: %s", _e)
     try:

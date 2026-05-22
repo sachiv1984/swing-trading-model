@@ -3407,6 +3407,7 @@ components:
                         active: { type: boolean }
                         sector: { type: string, nullable: true }
                         industry: { type: string, nullable: true }
+                        company_name: { type: string, nullable: true }
                         created_at: { type: string, format: date-time }
         "400":
           description: Invalid market value
@@ -3446,6 +3447,7 @@ components:
                       active: { type: boolean }
                       sector: { type: string, nullable: true }
                       industry: { type: string, nullable: true }
+                      company_name: { type: string, nullable: true }
                       created_at: { type: string, format: date-time }
         "400":
           description: Invalid ticker or market
@@ -3536,6 +3538,8 @@ components:
                       total: { type: integer }
                       limit: { type: integer }
                       offset: { type: integer }
+                      degraded_run: { type: boolean, description: "true when >20% of tickers returned no OHLCV data" }
+                      failure_rate: { type: number, format: float, description: "Fraction of tickers with no OHLCV data (0.0–1.0)" }
 
   /screener/run:
     post:

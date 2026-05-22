@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 2.4
+**Version:** 2.5
 **Last Updated:** 2026-05-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -125,6 +125,28 @@ ESCALATION: Create/append `verification_escalations.md`. Use ESC-VER-YYYYMMDD-nn
 ---
 
 ## STEP -1 — Preflight Gate (Hard Gate)
+
+**Dry-run detection (BLG-GOV-25 / ST-11):** If `--dry-run` is specified in the invocation, read the required files (execution_state.json, sprint_close.md, qa_evidence files), then output the dry-run report below and exit without writing any verification report, updating `.claude_current_state.json`, or making any git commits.
+
+**Dry-run report format:**
+```
+DRY-RUN: run delivery verification --cycle <cycle_id>
+Precondition check: status must be Sprint_Complete — PASS / FAIL
+Checks that would run:
+  STEP -1: Sprint close readiness statement verification
+  STEP 1:  Scope completeness — all ST items from backlog slice traced to execution_state.json
+  STEP 2:  QA evidence completeness — qa_evidence_EPIC-xx.md exists per EPIC, sign-off dates non-blank
+  STEP 3:  PR merge state — all EPIC PRs merged to main
+  STEP 4:  Backlog traceability — filed deviations have BLG IDs; source items archived or updated
+  STEP 5:  Test scenario coverage — Playwright tests referenced in qa_evidence match tests/e2e/
+  STEP 6:  Spec/contract drift — openapi.yaml in sync with canonical contracts
+  STEP 7:  Commit format compliance — all exec/* commits have [EPIC-xx][ST-xx] prefix
+  STEP 8:  Verification report written, .claude_current_state.json updated → Verified/Not_Verified
+Artefacts that would be created:
+  - claude/cycles/<cycle_id>/verification_report.md
+  - .claude_current_state.json (status → Verified or Not_Verified)
+No files written — re-invoke without --dry-run to execute.
+```
 
 **First action:** Read `claude/cycles/<cycle_id>/execution_state.json`. Confirm `sealed = true`. If not sealed: halt — the sprint execution record is not closed. **Resolution path:** Issue `run sprint --cycle <cycle_id>` — if all EPICs are already merged (all `pr_status = merged` in `execution_state.json`), the execution engine will detect this and execute STEP 5 (Sprint Close) directly, sealing the record and setting status to `Sprint_Complete`. Once sealed, re-invoke `run delivery verification --cycle <cycle_id>`.
 

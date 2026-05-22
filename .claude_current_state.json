@@ -3,6 +3,7 @@
   "cycle_name": "Release Planning — v3.9 Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches",
   "status": "Executing",
   "engine": "sprint_execution",
+  "execution_state_path": "claude/cycles/2026-05-21__release-v3.9/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-05-21__release-v3.9/stage4_backlog_slice.md",
   "sprint_sealed": true,
   "sprint_goal_path": "claude/cycles/2026-05-21__release-v3.9/sprint_goal.md",

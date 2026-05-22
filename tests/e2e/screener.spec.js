@@ -439,6 +439,42 @@ test('SC-SCR-17: UK ticker rows show no news badge', async ({ page }) => {
   await expect(newsBtn).not.toBeVisible();
 });
 
+// SC-SCR-DEG-01 — Degraded run banner visible when degraded_run true
+test('SC-SCR-DEG-01: Degraded run banner shown with correct percentage', async ({ page }) => {
+  const results = [makeResult({ ticker: 'AAPL', signal_score: 0.82 })];
+  const body = { ...makeScreenerResponse(results), degraded_run: true, failure_rate: 0.35 };
+  await page.route(`${API}/screener/results**`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data: body }) })
+  );
+  await page.route(`${API}/screener/run`, (route) =>
+    route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ ok: true, data: { run_id: 'run-deg', status: 'accepted' } }) })
+  );
+  await stubWatchlist(page);
+  await goto(page, '/#/Screener');
+
+  const banner = page.getByTestId('degraded-run-banner');
+  await expect(banner).toBeVisible({ timeout: 8000 });
+  await expect(banner).toContainText('35%');
+  await expect(banner).toContainText('Results may be incomplete');
+});
+
+// SC-SCR-DEG-02 — Degraded run banner absent when degraded_run false
+test('SC-SCR-DEG-02: Degraded run banner absent when degraded_run false', async ({ page }) => {
+  const results = [makeResult({ ticker: 'AAPL', signal_score: 0.82 })];
+  const body = { ...makeScreenerResponse(results), degraded_run: false, failure_rate: 0.05 };
+  await page.route(`${API}/screener/results**`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data: body }) })
+  );
+  await page.route(`${API}/screener/run`, (route) =>
+    route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ ok: true, data: { run_id: 'run-ok', status: 'accepted' } }) })
+  );
+  await stubWatchlist(page);
+  await goto(page, '/#/Screener');
+
+  await page.waitForSelector('[data-testid="screener-table"]', { timeout: 8000 }).catch(() => null);
+  await expect(page.getByTestId('degraded-run-banner')).not.toBeVisible({ timeout: 3000 });
+});
+
 // SC-SCR-18 — Screener nav item in Tools group links to /Screener
 test('SC-SCR-18: Screener nav item present in Tools group', async ({ page }) => {
   await stubScreener(page, []);
