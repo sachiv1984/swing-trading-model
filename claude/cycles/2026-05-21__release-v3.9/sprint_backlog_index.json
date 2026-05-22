@@ -1,0 +1,124 @@
+{
+  "cycle_id": "2026-05-21__release-v3.9",
+  "generated_utc": "2026-05-22T00:00:00Z",
+  "sprint_backlog_path": "claude/cycles/2026-05-21__release-v3.9/sprint_backlog.md",
+  "backlog_slice_path": "claude/cycles/2026-05-21__release-v3.9/stage4_backlog_slice.md",
+  "epics": [
+    {
+      "epic_id": "EPIC-01",
+      "sprint": 1,
+      "branch": "exec/2026-05-21__release-v3.9/EPIC-01",
+      "merge_position": 2,
+      "stories": [
+        {
+          "story_id": "ST-01",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-01"]
+        },
+        {
+          "story_id": "ST-02",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-02"]
+        },
+        {
+          "story_id": "ST-03",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-03"]
+        },
+        {
+          "story_id": "ST-04",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-04"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-02",
+      "sprint": 1,
+      "branch": "exec/2026-05-21__release-v3.9/EPIC-02",
+      "merge_position": 1,
+      "execution_state_owner": true,
+      "stories": [
+        {
+          "story_id": "ST-05",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-05"]
+        },
+        {
+          "story_id": "ST-06",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-06"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-03",
+      "sprint": 2,
+      "branch": "exec/2026-05-21__release-v3.9/EPIC-03",
+      "merge_position": 4,
+      "stories": [
+        {
+          "story_id": "ST-07",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-07"]
+        },
+        {
+          "story_id": "ST-08",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-08"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-04",
+      "sprint": 2,
+      "branch": "exec/2026-05-21__release-v3.9/EPIC-04",
+      "merge_position": 3,
+      "stories": [
+        {
+          "story_id": "ST-09",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-09"]
+        },
+        {
+          "story_id": "ST-10",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-10"]
+        },
+        {
+          "story_id": "ST-11",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-11"]
+        },
+        {
+          "story_id": "ST-12",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-12"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-05",
+      "sprint": null,
+      "branch": null,
+      "merge_position": null,
+      "status": "deferred_at_planning",
+      "stories": [
+        {
+          "story_id": "ST-13",
+          "delegation_class": null,
+          "status": "deferred_at_planning",
+          "gate_condition": "20+ closed trades not confirmed by PO (2026-05-22)",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-13"]
+        },
+        {
+          "story_id": "ST-14",
+          "delegation_class": null,
+          "status": "deferred_at_planning",
+          "gate_condition": "20+ closed trades not confirmed by PO (2026-05-22)",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-14"]
+        }
+      ]
+    }
+  ]
+}
