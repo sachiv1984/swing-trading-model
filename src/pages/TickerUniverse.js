@@ -13,6 +13,10 @@ const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 // Helpers
 // ---------------------------------------------------------------------------
 
+function displayTicker(ticker) {
+  return ticker.endsWith(".L") ? ticker.slice(0, -2) : ticker;
+}
+
 function MarketBadge({ market }) {
   const cls =
     market === "UK"
@@ -290,9 +294,8 @@ export default function TickerUniverse() {
             <thead>
               <tr className="border-b border-slate-700 text-left">
                 <th className="px-4 py-3 text-xs font-medium text-slate-400">Ticker</th>
+                <th className="px-4 py-3 text-xs font-medium text-slate-400 hidden sm:table-cell">Company Name</th>
                 <th className="px-4 py-3 text-xs font-medium text-slate-400">Market</th>
-                <th className="px-4 py-3 text-xs font-medium text-slate-400 hidden sm:table-cell">Sector</th>
-                <th className="px-4 py-3 text-xs font-medium text-slate-400 hidden md:table-cell">Industry</th>
                 <th className="px-4 py-3 text-xs font-medium text-slate-400">Status</th>
                 <th className="px-4 py-3 text-xs font-medium text-slate-400 text-right">Actions</th>
               </tr>
@@ -302,10 +305,9 @@ export default function TickerUniverse() {
                 const busy = !!pendingAction[row.ticker];
                 return (
                   <tr key={row.ticker} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-700/20 transition-colors" data-testid={`ticker-row-${row.ticker}`}>
-                    <td className="px-4 py-3 font-mono font-semibold text-slate-100">{row.ticker}</td>
+                    <td className="px-4 py-3 font-mono font-semibold text-slate-100">{displayTicker(row.ticker)}</td>
+                    <td className="px-4 py-3 text-slate-300 hidden sm:table-cell" data-testid={`company-name-${row.ticker}`}>{row.company_name || ""}</td>
                     <td className="px-4 py-3"><MarketBadge market={row.market} /></td>
-                    <td className="px-4 py-3 text-slate-400 hidden sm:table-cell">{row.sector || <span className="text-slate-600">—</span>}</td>
-                    <td className="px-4 py-3 text-slate-400 hidden md:table-cell">{row.industry || <span className="text-slate-600">—</span>}</td>
                     <td className="px-4 py-3"><ActiveBadge active={row.active} /></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
