@@ -102,11 +102,18 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-05-21__release-v3.9/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
+      "qa_sign_off_record": {
+        "required_by": "Director of Quality",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "findings_applied": [],
+        "cleared_utc": "2026-05-22T00:00:00Z"
+      },
       "qa_evidence_log": "claude/cycles/2026-05-21__release-v3.9/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "tests/e2e/ticker-universe.spec.js"
@@ -115,43 +122,43 @@
         "ST-05": {
           "title": "Strip .L suffix from Ticker Universe page display labels",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 462,
           "branch": "exec/2026-05-21__release-v3.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "2defaf2f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-22T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/frontend/pages/ticker_universe.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01 through AC-04 met: displayTicker() strips .L from display; API requests use full ticker (toggle/delete URLs unchanged); US tickers unaffected; SC-TU-DISP-01 Playwright tests added."
         },
         "ST-06": {
           "title": "Add company_name column to ticker universe and display on management page",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 463,
           "branch": "exec/2026-05-21__release-v3.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "2defaf2f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-22T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/pages/ticker_universe.md",
             "docs/specs/api_contracts/ticker_universe_api_contract.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01 through AC-07 met: ensure_company_name_column() adds TEXT column; backfill from tickers_full_list.csv at startup; sync_from_tickers_table() populates company_name; GET /ticker-universe returns company_name; frontend shows Company Name column per spec §4; null handled gracefully; SC-TU-COMP-01 Playwright tests added."
         }
       }
     },
