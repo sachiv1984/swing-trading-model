@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2 Canonical Specification
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-04-25
+**Version:** 1.1
+**Last Updated:** 2026-05-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Implementation:** `backend/routers/ticker_universe.py`, `backend/services/ticker_universe_service.py`
 
@@ -39,6 +39,7 @@ Returns the list of active tickers in the screener universe.
       "active": true,
       "sector": "Technology",
       "industry": "Consumer Electronics",
+      "company_name": "Apple Inc.",
       "created_at": "2026-04-25T00:00:00Z"
     }
   ]
@@ -88,6 +89,7 @@ Adds a ticker to the screener universe. Re-activates soft-deleted tickers on con
     "active": true,
     "sector": "Technology",
     "industry": "Consumer Electronics",
+    "company_name": "Apple Inc.",
     "created_at": "2026-04-25T00:00:00Z"
   }
 }
