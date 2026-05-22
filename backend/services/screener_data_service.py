@@ -30,7 +30,7 @@ _YAHOO_CRUMB_URL = "https://query1.finance.yahoo.com/v1/test/getcrumb"
 _YAHOO_CONSENT_URL = "https://finance.yahoo.com/"
 _YAHOO_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    "Accept": "application/json",
+    "Accept": "*/*",
 }
 
 _crumb_lock = threading.Lock()
