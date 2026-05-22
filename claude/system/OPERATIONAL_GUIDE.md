@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.30)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.31)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -936,7 +936,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.4)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.5)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1410,8 +1410,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 3.97 |
-| Last Updated | 2026-05-21 |
+| Version | 3.98 |
+| Last Updated | 2026-05-22 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1420,20 +1420,20 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.5 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.30 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.31 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.4 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.26 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.4 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.5 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.10 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.1 |
+| Shared Standards | `claude/system/shared_standards.md` v3.2 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
-| PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.1 |
+| PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.2 |
 | Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` v2.7 |
 | Team Charter | `claude/charter/team_charter.md` v1.6 |
 

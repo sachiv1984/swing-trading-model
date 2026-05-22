@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Governance Artefact (Class 6)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-21
+**Version:** 1.2
+**Last Updated:** 2026-05-22
 
 ---
 
@@ -22,6 +22,7 @@
 
 ## QA Evidence
 
+- [ ] QA evidence file exists and DoQ sign-off date is populated before this PR is opened
 - [ ] `qa_evidence_EPIC-xx.md` **is committed on this branch** — run `git status` or `git log` to confirm the file exists in this branch's history before opening this PR
 - [ ] QA evidence sign-off block `Date:` field is **non-blank** (hard gate — do not open PR without this)
 - [ ] DoQ sign-off recorded in evidence log before this PR was opened
