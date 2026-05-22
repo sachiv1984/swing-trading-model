@@ -98,9 +98,10 @@ Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. Wh
 **Owner:** Head of Backend Engineering; Metrics & Analytics Owner; Head of UX & Design
 **Source:** Arc 2 roadmap — deferred from v3.8 (ST-04/ST-05, EPIC-02) — gate not met 2026-05-19: < 20 closed trades. Traceability entry added by delivery verification engine 2026-05-20.
 **Effort:** L (~2–4 days, backend + frontend)
-**Provisional-Target:** v4.0+ (conditional — gate not met for v3.6/v3.7/v3.8/v3.9; PO decision 2026-05-19 to park formally; re-open when PO confirms 20+ closed trades)
+**Provisional-Target:** v4.0+ (gate-conditional — explicit re-park confirmed by PO 2026-05-22: advance when 20+ closed trades confirmed)
+**Gate:** PO confirms 20+ closed trades in production before sprint planning for the target release. PMO Lead checks gate status at each release planning kickoff.
 
-**[STALE — PO disposition required before next release plan]** — deferred_at_planning for 4 consecutive cycles (v3.6, v3.7, v3.8, v3.9). PMO Lead must obtain explicit Product Owner disposition (Advance, Reject, or explicit re-park with written rationale) before v4.0 release plan opens.
+*PO disposition 2026-05-22: remain on backlog under gate — advance when 20+ closed trades confirmed. STALE flag cleared.*
 
 **Problem**
 A deterministic setup quality score (0–100) based on own trade history cannot be computed until sufficient closed trades exist. When the user has entered with similar regime/signal/ATR conditions before, the score reflects historical win rate under those conditions. The gate condition (20+ closed trades) was not met at v3.8 sprint planning (PO confirmed 2026-05-19).
