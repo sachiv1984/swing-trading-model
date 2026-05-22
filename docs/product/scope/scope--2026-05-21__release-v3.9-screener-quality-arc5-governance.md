@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v3.9
 Cycle: 2026-05-21__release-v3.9
-Last Updated: 2026-05-21
+Last Updated: 2026-05-22
 
 ## Release Scope — v3.9 Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches
 
@@ -38,7 +38,7 @@ Last Updated: 2026-05-21
 
 *To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
-Verification report: [TBD]
+Superseded by: v3.9 ship — 2026-05-22
+Changelog: docs/product/changelog.md#v3.9
+Verification report: claude/cycles/2026-05-21__release-v3.9/verification_report.md
 Cycle: 2026-05-21__release-v3.9
