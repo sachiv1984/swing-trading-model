@@ -141,6 +141,17 @@ def sync_from_tickers_table() -> int:
     return count
 
 
+INVALID_TICKERS = ["DAY"]
+
+
+def deactivate_invalid_tickers() -> int:
+    """Deactivate known-invalid tickers (e.g. DAY consistently returns 404 on YF)."""
+    count = 0
+    for ticker in INVALID_TICKERS:
+        count += 1 if soft_delete_ticker(ticker) else 0
+    return count
+
+
 def seed_default_tickers() -> int:
     count = 0
     for t in DEFAULT_TICKERS:

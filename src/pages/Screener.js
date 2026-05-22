@@ -16,6 +16,7 @@ import {
   X,
   Search,
   Loader2,
+  AlertTriangle,
 } from "lucide-react";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -300,6 +301,23 @@ function SortHeader({ label, field, current, dir, onSort, className }) {
 }
 
 // ---------------------------------------------------------------------------
+// Degraded run banner
+// ---------------------------------------------------------------------------
+
+function DegradedRunBanner({ failureRate }) {
+  const pct = Math.round((failureRate || 0) * 100);
+  return (
+    <div
+      data-testid="degraded-run-banner"
+      className="mb-4 flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-sm text-amber-400"
+    >
+      <AlertTriangle className="w-4 h-4 shrink-0" />
+      <span>Results may be incomplete — {pct}% of tickers failed data fetch</span>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
 
@@ -312,6 +330,8 @@ export default function Screener() {
   const [error, setError] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState(false);
+  const [degradedRun, setDegradedRun] = useState(false);
+  const [failureRate, setFailureRate] = useState(0);
 
   const [sortField, setSortField] = useState("signal_score");
   const [sortDir, setSortDir] = useState("desc");
@@ -350,6 +370,8 @@ export default function Screener() {
       setResults(payload.results || []);
       setRunTimestamp(payload.run_timestamp || null);
       setRunId(payload.run_id || null);
+      setDegradedRun(!!payload.degraded_run);
+      setFailureRate(payload.failure_rate || 0);
     } catch {
       setError(true);
     } finally {
@@ -397,6 +419,7 @@ export default function Screener() {
   const triggerScan = async () => {
     if (scanning) return;
     setScanError(false);
+    setDegradedRun(false);
     setScanning(true);
     scanStartRef.current = Date.now();
     try {
@@ -449,6 +472,8 @@ export default function Screener() {
           setResults(payload.results || []);
           setRunTimestamp(payload.run_timestamp || null);
           setRunId(payload.run_id || null);
+          setDegradedRun(!!payload.degraded_run);
+          setFailureRate(payload.failure_rate || 0);
           clearInterval(pollRef.current);
           setScanning(false);
         }
@@ -575,6 +600,8 @@ export default function Screener() {
           </div>
         }
       />
+
+      {degradedRun && <DegradedRunBanner failureRate={failureRate} />}
 
       {scanError && (
         <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-sm text-red-400">

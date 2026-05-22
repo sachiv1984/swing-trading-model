@@ -209,3 +209,91 @@ def test_fetch_regime_returns_none_on_http_error():
         from services.screener_batch_service import _fetch_index_regime
         result = _fetch_index_regime("SPY")
     assert result is None
+
+
+# ---------------------------------------------------------------------------
+# ST-02 — Sector/industry propagation
+# ---------------------------------------------------------------------------
+
+def test_sector_industry_passed_to_compute_screener_result():
+    """ST-02 AC-03: sector/industry from ticker_universe row passed to compute_screener_result."""
+    tickers = [{
+        "ticker": "AAPL", "market": "US", "active": True,
+        "sector": "Technology", "industry": "Consumer Electronics",
+    }]
+    ohlcv = _make_ohlcv(n=30)
+    captured = {}
+
+    def mock_compute(ticker, market, ohlcv_data, run_id, run_timestamp,
+                     regime_status, regime_index, regime_index_price, regime_index_ma200,
+                     sector=None, industry=None, **kwargs):
+        captured["sector"] = sector
+        captured["industry"] = industry
+        return None  # filtered by engine — doesn't matter for this test
+
+    conn, _ = _mock_db_write()
+    with patch("services.screener_batch_service.get_db", return_value=conn), \
+         patch("services.screener_batch_service.get_all_tickers", return_value=tickers), \
+         patch("services.screener_batch_service.fetch_ohlcv", return_value=ohlcv), \
+         patch("services.screener_batch_service._fetch_index_regime", return_value=_risk_on()), \
+         patch("services.screener_batch_service.compute_screener_result", side_effect=mock_compute):
+        import services.screener_batch_service as svc
+        svc._run_in_progress = False
+        svc.run_screener()
+
+    assert captured.get("sector") == "Technology"
+    assert captured.get("industry") == "Consumer Electronics"
+
+
+# ---------------------------------------------------------------------------
+# ST-04 — Degraded run detection
+# ---------------------------------------------------------------------------
+
+def test_degraded_run_set_when_failure_rate_exceeds_20_pct():
+    """ST-04 AC-01: degraded_run True when >20% tickers have no OHLCV."""
+    tickers = [{"ticker": f"T{i}", "market": "US", "active": True} for i in range(10)]
+    ohlcv = _make_ohlcv(n=30)
+
+    call_count = {"n": 0}
+
+    def mock_fetch(ticker, market, days):
+        call_count["n"] += 1
+        # First 3 fail, rest succeed → 3/10 = 30% failure rate → degraded
+        return None if call_count["n"] <= 3 else ohlcv
+
+    conn, _ = _mock_db_write()
+    with patch("services.screener_batch_service.get_db", return_value=conn), \
+         patch("services.screener_batch_service.get_all_tickers", return_value=tickers), \
+         patch("services.screener_batch_service.fetch_ohlcv", side_effect=mock_fetch), \
+         patch("services.screener_batch_service._fetch_index_regime", return_value=_risk_on()):
+        import services.screener_batch_service as svc
+        svc._run_in_progress = False
+        result = svc.run_screener()
+
+    assert result["degraded_run"] is True
+    assert result["failure_rate"] > 0.20
+
+
+def test_degraded_run_false_when_failure_rate_below_20_pct():
+    """ST-04 AC-04: degraded_run False when failure_rate ≤ 20%."""
+    tickers = [{"ticker": f"T{i}", "market": "US", "active": True} for i in range(10)]
+    ohlcv = _make_ohlcv(n=30)
+
+    call_count = {"n": 0}
+
+    def mock_fetch(ticker, market, days):
+        call_count["n"] += 1
+        # Only 1 failure out of 10 = 10% → not degraded
+        return None if call_count["n"] == 1 else ohlcv
+
+    conn, _ = _mock_db_write()
+    with patch("services.screener_batch_service.get_db", return_value=conn), \
+         patch("services.screener_batch_service.get_all_tickers", return_value=tickers), \
+         patch("services.screener_batch_service.fetch_ohlcv", side_effect=mock_fetch), \
+         patch("services.screener_batch_service._fetch_index_regime", return_value=_risk_on()):
+        import services.screener_batch_service as svc
+        svc._run_in_progress = False
+        result = svc.run_screener()
+
+    assert result["degraded_run"] is False
+    assert result["failure_rate"] <= 0.20

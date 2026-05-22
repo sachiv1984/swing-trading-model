@@ -13,6 +13,8 @@ Pence-denominated UK tickers (currency=GBp) are divided by 100 → GBP.
 Returns None when data is unavailable from all sources.
 """
 import logging
+import random
+import threading
 import requests
 import time as _time
 from datetime import datetime, timezone
@@ -24,10 +26,16 @@ from services.health_service import record_external_api_call
 logger = logging.getLogger(__name__)
 
 _YAHOO_CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+_YAHOO_CRUMB_URL = "https://query1.finance.yahoo.com/v1/test/getcrumb"
+_YAHOO_CONSENT_URL = "https://finance.yahoo.com/"
 _YAHOO_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "Accept": "application/json",
 }
+
+_crumb_lock = threading.Lock()
+_yahoo_session: Optional[requests.Session] = None
+_yahoo_crumb: Optional[str] = None
 
 OHLCVRecord = Dict[str, object]
 
@@ -35,6 +43,25 @@ OHLCVRecord = Dict[str, object]
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
+def _refresh_yahoo_crumb() -> Optional[str]:
+    """Establish a new Yahoo Finance session and fetch a fresh crumb token."""
+    global _yahoo_session, _yahoo_crumb
+    with _crumb_lock:
+        sess = requests.Session()
+        try:
+            sess.get(_YAHOO_CONSENT_URL, headers=_YAHOO_HEADERS, timeout=10)
+            resp = sess.get(_YAHOO_CRUMB_URL, headers=_YAHOO_HEADERS, timeout=10)
+            if resp.status_code == 200 and resp.text.strip():
+                _yahoo_session = sess
+                _yahoo_crumb = resp.text.strip()
+                logger.info("Yahoo Finance crumb refreshed successfully")
+                return _yahoo_crumb
+            logger.warning("Yahoo Finance crumb fetch returned HTTP %d", resp.status_code)
+        except requests.RequestException as exc:
+            logger.warning("Yahoo Finance crumb refresh failed: %s", exc)
+        return None
+
 
 def _alpaca_bars_to_ohlcv(bars: List[Dict]) -> List[OHLCVRecord]:
     result = []
@@ -55,16 +82,49 @@ def _alpaca_bars_to_ohlcv(bars: List[Dict]) -> List[OHLCVRecord]:
 
 
 def _yahoo_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
+    global _yahoo_session, _yahoo_crumb
+
     range_param = f"{max(days, 30)}d"
     url = _YAHOO_CHART_URL.format(ticker=ticker)
+
+    # Ensure we have a session and crumb; refresh lazily if missing
+    if _yahoo_crumb is None:
+        _refresh_yahoo_crumb()
+
+    def _do_request(crumb: Optional[str]) -> requests.Response:
+        sess = _yahoo_session or requests
+        params: Dict = {"interval": "1d", "range": range_param}
+        if crumb:
+            params["crumb"] = crumb
+        return sess.get(url, params=params, headers=_YAHOO_HEADERS, timeout=15)
+
     t0 = _time.monotonic()
     try:
-        resp = requests.get(
-            url,
-            params={"interval": "1d", "range": range_param},
-            headers=_YAHOO_HEADERS,
-            timeout=15,
-        )
+        resp = _do_request(_yahoo_crumb)
+
+        # On 401 (Invalid Crumb) or 429 (rate limit): refresh crumb and retry once with backoff
+        if resp.status_code in (401, 429):
+            consecutive_failures = getattr(_yahoo_fetch_ohlcv, "_consecutive_401", 0) + 1
+            _yahoo_fetch_ohlcv._consecutive_401 = consecutive_failures
+            logger.warning(
+                "Yahoo Finance HTTP %d for %s — refreshing crumb (consecutive failures: %d)",
+                resp.status_code, ticker, consecutive_failures,
+            )
+            new_crumb = _refresh_yahoo_crumb()
+            # Exponential backoff with jitter: base 1s * 2^(min(failures-1,3)) + uniform jitter
+            backoff = min(1.0 * (2 ** min(consecutive_failures - 1, 3)), 8.0)
+            jitter = random.uniform(0, backoff * 0.3)
+            _time.sleep(backoff + jitter)
+            if new_crumb:
+                resp = _do_request(new_crumb)
+            else:
+                latency = (_time.monotonic() - t0) * 1000
+                record_external_api_call("yahoo_finance", False, latency)
+                logger.warning("Yahoo Finance crumb refresh failed for %s — marking as failed", ticker)
+                return None
+        else:
+            _yahoo_fetch_ohlcv._consecutive_401 = 0
+
         latency = (_time.monotonic() - t0) * 1000
         if resp.status_code != 200:
             record_external_api_call("yahoo_finance", False, latency)
