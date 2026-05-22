@@ -17,6 +17,8 @@ from database import (
     delete_trade_plan,
     get_trade_plans_by_position,
     ensure_trade_plans_table,
+    create_red_flag_event,
+    ensure_red_flag_events_table,
 )
 
 router = APIRouter(prefix="/trade-plans", tags=["Trade Plans"])
@@ -88,6 +90,19 @@ def _serialize(plan: dict) -> dict:
     return out
 
 
+def _maybe_write_override_event(ticker: str, position_id=None) -> None:
+    try:
+        ensure_red_flag_events_table()
+        create_red_flag_event(
+            event_type="pre_entry_override",
+            ticker=ticker,
+            position_id=str(position_id) if position_id else None,
+            context={"source": "trade_plan", "override_acknowledged": True},
+        )
+    except Exception:
+        pass
+
+
 @router.post("", status_code=201)
 def create_plan(body: TradePlanCreate):
     """POST /trade-plans — create a new trade plan."""
@@ -95,6 +110,8 @@ def create_plan(body: TradePlanCreate):
         ensure_trade_plans_table()
         portfolio_id = _get_portfolio_id()
         plan = create_trade_plan(portfolio_id, body.dict())
+        if body.pre_entry_override_acknowledged:
+            _maybe_write_override_event(body.ticker, body.position_id)
         return {"status": "ok", "data": _serialize(plan)}
     except HTTPException:
         raise
@@ -178,6 +195,8 @@ def update_plan(plan_id: str, body: TradePlanUpdate):
         plan = update_trade_plan(plan_id, portfolio_id, data)
         if not plan:
             raise HTTPException(status_code=404, detail="Trade plan not found")
+        if body.pre_entry_override_acknowledged:
+            _maybe_write_override_event(plan.get("ticker", ""), plan.get("position_id"))
         return {"status": "ok", "data": _serialize(plan)}
     except HTTPException:
         raise

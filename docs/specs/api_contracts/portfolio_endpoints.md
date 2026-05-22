@@ -3,7 +3,7 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.2.0
+**Version:** 2.3.0
 **Last Updated:** 2026-03-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -801,4 +801,72 @@ Additional fields per rule type when available: `estimated_cost_gbp`, `available
 | Code | Condition |
 |------|-----------|
 | 422 | Missing required query params (`ticker` or `quantity`) |
+
+---
+
+## GET /portfolio/red-flag-journal
+
+Returns a paginated log of strategy deviation events. Populated when the operator acknowledges a pre-entry validation override or dismisses a strategy prompt.
+
+**§13 compliance:** Display-only audit log. No automated decisions or recommendations. Decision record: `docs/product/decisions/` (SI-03, v3.9).
+
+### Query Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| page | integer | No | Page number (default: 1, min: 1) |
+| page_size | integer | No | Items per page (default: 20, max: 100) |
+| event_type | string | No | Filter by event type: `pre_entry_override`, `checklist_skipped`, `stop_prompt_dismissed`, `drawdown_prompt_dismissed` |
+| ticker | string | No | Filter by ticker symbol (case-insensitive) |
+| since | string | No | ISO date filter — return events on or after this timestamp |
+
+### Response (200 OK)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "total": 12,
+    "page": 1,
+    "page_size": 20,
+    "items": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "event_type": "pre_entry_override",
+        "ticker": "AAPL",
+        "position_id": null,
+        "context": { "source": "trade_plan", "override_acknowledged": true },
+        "created_at": "2026-05-22T10:30:00+00:00"
+      }
+    ]
+  }
+}
+```
+
+### Response fields — `data`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| total | integer | Total matching events |
+| page | integer | Current page |
+| page_size | integer | Items per page |
+| items | array | Event records |
+
+### Response fields — `items[]`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | UUID string | Event ID |
+| event_type | string | `pre_entry_override` \| `checklist_skipped` \| `stop_prompt_dismissed` \| `drawdown_prompt_dismissed` |
+| ticker | string | Ticker symbol (uppercase) |
+| position_id | UUID string \| null | Linked position ID if available |
+| context | object \| null | JSON context snapshot at event time |
+| created_at | ISO 8601 string | Event timestamp |
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 500 | Database error |
+
 
