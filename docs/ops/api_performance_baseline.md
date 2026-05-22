@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.3
-**Date:** 2026-04-16
+**Version:** 1.4
+**Date:** 2026-05-22
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -386,10 +386,27 @@ Signed: [x] Infrastructure & Operations Owner — 2026-04-16
 
 ---
 
+## 12. v3.9 New Endpoints — Pending Baseline Measurement
+
+**Date:** 2026-05-22 (BLG-OPS-13 scope update — post-ship closure v3.9)
+
+The following endpoint was added in v3.9 (ST-07, EPIC-03) and has not yet been included in the performance baseline. It should be measured at the next BLG-OPS-13 baseline re-run.
+
+| Endpoint | Added in | Story | Notes |
+|----------|----------|-------|-------|
+| GET /portfolio/red-flag-journal | v3.9 | ST-07 (EPIC-03) | Returns red flag journal entries for the active portfolio. No path parameters — eligible for parameterless GET timing run. |
+
+**Prior endpoints still pending baseline:** See §7 Monitor Criteria — GET /research/{ticker} actual staging measurement still outstanding (estimated in §11).
+
+**Next re-run:** When BLG-OPS-13 is picked up for sprint entry, add GET /portfolio/red-flag-journal to the parameterless timing run alongside any other endpoints added since v1.3 (see BLG-OPS-13 scope in backlog.md for the full list: 23 endpoints as of v3.9).
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.4 | 2026-05-22 | PMO Lead | OA-02 (v3.9 post-ship closure): §12 added — GET /portfolio/red-flag-journal (v3.9 ST-07) registered as pending baseline measurement for next BLG-OPS-13 re-run. |
 | 1.3 | 2026-05-10 | Infrastructure & Operations Owner | ST-12 (v3.3 EPIC-03): §11 added — research endpoint latency profile and target. p95 ≤ 3s target documented with rationale. Estimated values pending actual staging measurement. |
 | 1.2 | 2026-04-16 | Infrastructure & Operations Owner | ST-01 (v2.7 EPIC-01): Supavisor connection pooling enabled on staging and production (port 6543, `?pgbouncer=true&sslmode=require`). Baseline re-run: 5 endpoints × 7 samples. p50 range 226–244ms (was 1,100–6,000ms). GET /portfolio p50=234ms — AC-2 gate PASS (≤400ms). All fast-cluster endpoints now ≤250ms p50. §10 added: Supavisor re-run results. BLG-OPS-14 closed. |
 | 1.1 | 2026-04-10 | Head of Engineering | ST-06 investigation: §6 outlier analysis, §8 sign-off, §7 monitor criteria updated, BLG-OPS-14 + BLG-BE-07-FIX filed |

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.26
-**Last Updated:** 2026-05-21
+**Version:** 3.27
+**Last Updated:** 2026-05-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -695,6 +695,8 @@ If any criterion is not met, the autonomous class does not apply — the sign-of
 ---
 
 ## STEP 4 — Merge Gate (Hard Gate, Per EPIC)
+
+> **On session resume — merge gate state sync (required, LL-v3.9-P3-1):** When invoking `run sprint` in a fresh session, `execution_state.json.merge_gate.epics_merged` may be stale if one or more EPICs were merged via GitHub between sessions. Before evaluating any EPIC's merge gate conditions, run `gh pr view <pr_number> --json mergedAt,mergeStateStatus` for every EPIC in `merge_gate.epics_pending`. If `mergedAt` is non-null, that EPIC is already merged — add it to `merge_gate.epics_merged`, remove it from `merge_gate.epics_pending`, and set the EPIC's `pr_status = "merged"` in `execution_state.json`. If `epics_pending` is now empty after the sync, proceed directly to STEP 5 (Sprint Close) — do not re-evaluate merge gate conditions for already-merged EPICs.
 
 A PR may only be merged when **all** of the following are true:
 

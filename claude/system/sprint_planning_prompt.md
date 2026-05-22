@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.4
-**Last Updated:** 2026-05-21
+**Version:** 3.5
+**Last Updated:** 2026-05-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -122,6 +122,8 @@ Every item entering the sprint backlog must have acceptance criteria defined bef
 | Quality | What QA must verify — specific test scenarios |
 | Security | Any security check required (may be "N/A — no security surface changed" if justified) |
 | Verification | How the Director of Quality will confirm this item is done |
+
+**Staging-only evidence designation (LL-v3.9-P3-2):** When writing ACs for stories with network-dependent verification conditions (e.g. live external API integrations, behaviour under real network failure modes), flag any AC that cannot be verified by unit or integration test in CI with `[staging-only evidence]`. This designation signals: (a) CI cannot verify this AC, (b) evidence must come from a human staging run, and (c) if staging sign-off is deferred to post-merge, a backlog item must be filed before the PR opens (per CLAUDE.md §2). Applying this flag at planning time prevents surprise P3 notations at execution and pre-stages the backlog filing before the sprint starts.
 
 If any required field is absent:
 - In `strict` mode: halt — the item cannot enter the sprint.
