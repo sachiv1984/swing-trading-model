@@ -177,7 +177,7 @@
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-05-21__release-v3.9/EPIC-03",
-      "pr_number": null,
+      "pr_number": 473,
       "pr_status": "open",
       "qa_signed_off": true,
       "qa_sign_off_record": {
