@@ -18,6 +18,7 @@ import ConsistencyMetrics from "../components/analytics/ConsistencyMetrics";
 import TagPerformance from "../components/analytics/TagPerformance";
 import DisciplineComplianceSection from "../components/analytics/DisciplineComplianceSection";
 import MarketCorrelationSection from "../components/analytics/MarketCorrelationSection";
+import Arc5ComplianceSection from "../components/analytics/Arc5ComplianceSection";
 import UnderwaterChart from "../components/analytics/UnderwaterChart";
 import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
 import BestWorstTrades from "../components/analytics/BestWorstTrades";
@@ -673,6 +674,10 @@ export default function PerformanceAnalytics() {
           Source: GET /analytics/market-correlation. Spec: analytics.md §18.
           Per-position Pearson correlation + portfolio-level weighted average. */}
       <MarketCorrelationSection />
+      {/* Component 19 — v4.0 ST-02/ST-04: Arc 5 Signal Compliance
+          Source: GET /analytics/arc5-compliance. Spec: analytics.md §19 + ux_spec.md.
+          Metrics: events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate. */}
+      <Arc5ComplianceSection />
     </div>
   );
 }

@@ -461,6 +461,8 @@ export const api = {
       doFetch('/analytics/compliance-metrics'),
     marketCorrelation: async () =>
       doFetch('/analytics/market-correlation'),
+    arc5Compliance: async (period = '7d') =>
+      doFetch(`/analytics/arc5-compliance?period=${encodeURIComponent(period)}`),
   },
 
   market: {
