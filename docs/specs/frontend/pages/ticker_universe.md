@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-21
+**Version:** 1.1
+**Last Updated:** 2026-05-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.0):** docs/design/2026-05-21__release-v3.9/ticker-universe-enhancements/ux_spec.md
 **API contract:** docs/specs/api_contracts/screener_api_contract.md
@@ -100,6 +100,8 @@ Add controls at the top of the page:
 - "Add" button: calls `POST /ticker-universe` with `{ ticker: <value> }`
 - On success: new row appears in list
 - On error: inline error below input field
+  - **Ticker validation failure (400/422):** display the backend error message verbatim; expected format: "Ticker [SYMBOL] not found — please check the symbol and market"
+  - **Other errors:** display generic "Failed to add ticker — please try again"
 
 ---
 
@@ -113,4 +115,5 @@ When no tickers in universe: "No tickers in universe. Add a ticker to begin scre
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-05-23 | v4.0 design gate (ST-05, EPIC-02): §8 Add Ticker — validation error message specified: ticker-not-found 400/422 displays backend error message verbatim; other errors show generic fallback. Design Pre-Approved (extends existing inline-error pattern). Head of UX & Design + Product Owner 2026-05-23. |
 | 1.0 | 2026-05-21 | Initial spec. v3.9 design gate — documents v3.8 shipped page + ST-05 (.L suffix strip from display labels, §5) + ST-06 (company_name column, §4). Design source: docs/design/2026-05-21__release-v3.9/ticker-universe-enhancements/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |

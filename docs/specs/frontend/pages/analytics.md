@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.7
-**Last Updated:** 2026-04-17
+**Version:** 1.8
+**Last Updated:** 2026-05-23
 **Design Source (v2.8 additions):** docs/design/2026-04-17__release-v2.8/market-correlation/ux_spec.md
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -42,6 +42,9 @@ All core analytics data is sourced from this call. The frontend transforms the s
 
 **Additional endpoints (v2.8 additions):**
 - `GET /analytics/market-correlation` — Market Correlation panel (§18)
+
+**Additional endpoints (v4.0 additions):**
+- `GET /analytics/arc5-compliance` — Arc 5 Signal Compliance panel (§19)
 
 The page must never recalculate, derive, or override values returned by the backend.
 
@@ -149,6 +152,7 @@ When data is available and sufficient, components render in this order:
 16. **R-Multiple Distribution (Backend)** — canonical server-side R-multiple distribution chart ← NEW (v1.9, ST-04)
 17. **Discipline & Compliance** — journal completion rate, stop-based exit rate, avg position size ← NEW (v1.9, ST-01)
 18. **Market Correlation** — per-position Pearson correlation with severity colour-coding + portfolio-level weighted average ← NEW (v2.8, ST-01)
+19. **Arc 5 Signal Compliance** — red flag event frequency, override rate, top rule breach, trade plan adherence ← NEW (v4.0, ST-02/ST-04)
 
 ---
 
@@ -611,6 +615,32 @@ Default table sort: severity descending (high → moderate → low → N/A).
 
 ---
 
+### 19. Arc 5 Signal Compliance
+Source: `GET /analytics/arc5-compliance`
+
+**Design source:** docs/design/2026-05-22__release-v4.0/arc5-analytics-metrics/ux_spec.md
+
+Section title: "Arc 5 Signal Compliance". Appended after §18 in the rendering order.
+
+**Four metric cards in a horizontal row (responsive: stacks on narrow viewports):**
+
+| Card | Source field | Format |
+|------|-------------|--------|
+| Red Flag Events/Week | `events_per_week` | integer; sub-label: "rolling 7 days" |
+| Override Rate | `override_rate` | percentage, 1dp; sub-label: "overrides / validation attempts" |
+| Top Rule Breach | `top_rule_breach` | text label (e.g. "regime_gate"); sub-label: "most frequent event type" |
+| Trade Plan Adherence | `trade_plan_adherence_rate` | percentage, 1dp; sub-label: "trades with plan / total closed trades" |
+
+Metric definitions are canonical per `metrics_definitions.md`.
+
+**Insufficient data:** Individual card shows "–" with tooltip "Insufficient data" when source field is null or denominator is zero. `top_rule_breach` null → "–" with tooltip "No events in period".
+
+**States:** Loading (skeleton cards), Loaded, Error (section-level card).
+
+**Hard rule:** All values backend-computed. No frontend derivation.
+
+---
+
 ## Responsive Behavior
 - Period selector and export button stack or compress at smaller widths
 - Summary cards: 1 column (mobile) → 2 columns (sm) → 3 columns (lg)
@@ -645,6 +675,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.8 | 2026-05-23 | v4.0 design gate (ST-02/ST-04, EPIC-01): §19 Arc 5 Signal Compliance section added — 4 stat cards (events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate). API Dependency updated with `GET /analytics/arc5-compliance`. Component Rendering Order updated to 19 items. Design source: docs/design/2026-05-22__release-v4.0/arc5-analytics-metrics/ux_spec.md. Approved: Head of UX & Design + Product Owner 2026-05-23. Head of Specs Team confirmed compliant. |
 | 1.7 | 2026-04-17 | v2.8 design gate (ST-01, EPIC-01): §18 Market Correlation section added — portfolio-level weighted average card + per-position Pearson correlation table. Severity scheme: high=Rose-500, moderate=Amber-500, low=Emerald-500, null=Slate-500. Sort: severity descending. API Dependency updated with `GET /analytics/market-correlation`. Component Rendering Order updated to 18 items. Design source: docs/design/2026-04-17__release-v2.8/market-correlation/ux_spec.md. Head of Specs Team confirmed compliant. |
 | 1.6 | 2026-03-24 | ST-02 (BLG-FEAT-09, v2.3): §Metrics Staleness Indicator — "data as of" timestamp below page title; amber badge when stale (≥4h default); hover shows absolute ISO timestamp. Design source: docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
 | 1.5 | 2026-03-18 | v2.1 chart interactivity (ST-11, CHART-IX): §4 heatmap — tile click drill-down to Monthly Trades modal. §5 equity curve — zoom (scroll/pinch/buttons), pan (click-drag), Reset button. §9 R-Multiple Analysis — hover tooltip per bar (range, count, % of total). Design source: docs/design/2026-03-18__release-v2.1/chart-interactivity/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
