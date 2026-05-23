@@ -1,0 +1,7 @@
+{
+  "txn_id": "AMD:v4.0:2026-05-22__release-v4.0:AMD-20260523-01",
+  "state": "committed",
+  "marker": "<!-- amendment-marker: AMD:v4.0:2026-05-22__release-v4.0:AMD-20260523-01 -->",
+  "items_added": ["ST-12 (BLG-BE-19, EPIC-03)", "ST-13 (starlette CVE, EPIC-02)"],
+  "items_removed": []
+}

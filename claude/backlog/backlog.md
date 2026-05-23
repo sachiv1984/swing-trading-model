@@ -882,6 +882,32 @@ SI-02 (drift detection) and SI-04 (strategy version comparison) will add analyti
 - If background layer recommended: ADR filed and input to SI-02 sprint planning
 - Gate condition verified before sprint planning
 
+### BLG-BE-19 — Base Gemini Flash API wiring — thesis generation service + endpoint
+**Priority:** P1 (High)
+**Type:** Backend Engineering / Frontend
+**Owner:** Head of Backend Engineering
+**Source:** Session observation 2026-05-22 — BLG-FEAT-24 marked complete v3.8 but Gemini not wired into codebase; prerequisite for BLG-GOV-35 and BLG-OPS-26
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.0
+
+**Problem**
+BLG-FEAT-24 (AI thesis generation) was marked complete in v3.8 but no Gemini code exists in the codebase — no `google-generativeai` dependency, no env var, no service, no endpoint. BLG-GOV-35 (Gemini audit trail) and BLG-OPS-26 (cost tracking) both instrument Gemini API calls; they have nothing to build on until the base wiring exists. This is a blocking prerequisite for both v4.0 EPIC-03 Sprint 2 stories.
+
+**Scope**
+- Add `google-generativeai` to `backend/requirements.txt`
+- Wire `GEMINI_API_KEY` env var (Render + local `.env`)
+- Create `backend/services/gemini_service.py` with `generate_setup_thesis(ticker, signal_data, plan_data) -> dict` using `gemini-1.5-flash`; returns `{thesis, model_version, prompt_version}` or graceful error
+- Add `POST /trade-plans/{plan_id}/generate-thesis` endpoint in `backend/routers/trade_plans.py`
+- Frontend: "Generate Thesis" button on TradePlan page that calls the endpoint and populates `setup_thesis` field
+
+**Acceptance Criteria**
+- `google-generativeai` present in `requirements.txt`
+- `GEMINI_API_KEY` env var documented in `.env.example`
+- `POST /trade-plans/{plan_id}/generate-thesis` returns `{thesis, model_version, prompt_version}` when key is set
+- Returns graceful error (not 500) when `GEMINI_API_KEY` is absent
+- Frontend button triggers generation and populates `setup_thesis` textarea
+- New endpoint registered in `backend/routers/test.py` and `docs/reference/openapi.yaml`
+
 ---
 
 ## 5. QA & Test Automation Backlog
@@ -2073,4 +2099,7 @@ These are deliberate product decisions, not deferrals:
 | EPIC-03 | ST-09 | CI/CD automated staging re-deploy on main merge | BLG-OPS-27 | Sprint 2 |
 | EPIC-04 (cond.) | ST-10 | PT-04 Setup Quality Score — backend (conditional) | BLG-FEAT-25 | Sprint 2 |
 | EPIC-04 (cond.) | ST-11 | PT-04 Setup Quality Score — frontend (conditional) | BLG-FEAT-25 | Sprint 2 |
+| EPIC-03 | ST-12 | Gemini Flash base wiring | BLG-BE-19 | Sprint 2 | [ADDED AMD-20260523-01 — prerequisite for ST-07/ST-08] |
+| EPIC-02 | ST-13 | Starlette security upgrade to ≥1.0.1 | CVE PYSEC-2026-161 | Sprint 1 | [ADDED AMD-20260523-01 — emergency security fix] |
+<!-- amendment-marker: AMD:v4.0:2026-05-22__release-v4.0:AMD-20260523-01 -->
 

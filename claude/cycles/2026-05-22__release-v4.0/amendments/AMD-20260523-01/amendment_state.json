@@ -1,0 +1,31 @@
+{
+  "amendment_id": "AMD-20260523-01",
+  "original_cycle_id": "2026-05-22__release-v4.0",
+  "release": "v4.0",
+  "reason": "emergency-fix",
+  "status": "Sealed",
+  "ratification_status": "Ratified",
+  "ratified_by": ["Product Owner", "Director of Quality"],
+  "ratified_at": ["2026-05-23", "2026-05-23"],
+  "changes": [
+    {
+      "type": "Add",
+      "item": "ST-12",
+      "title": "Gemini Flash base wiring (BLG-BE-19)",
+      "epic": "EPIC-03",
+      "effort": "S",
+      "reason": "hard-prerequisite for ST-07 and ST-08"
+    },
+    {
+      "type": "Add",
+      "item": "ST-13",
+      "title": "Starlette security upgrade to >=1.0.1",
+      "epic": "EPIC-02",
+      "effort": "XS",
+      "reason": "CVE PYSEC-2026-161 medium severity auth bypass"
+    }
+  ],
+  "backlog_lock_status": "released_before_ratification",
+  "sealed_utc": "2026-05-23T00:15:00Z",
+  "last_updated_utc": "2026-05-23T00:05:00Z"
+}
