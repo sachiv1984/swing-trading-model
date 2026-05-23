@@ -1057,3 +1057,43 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 **Canonical requirement:** Use `trade_history.total_cost` (GBP) as the cost basis.
 
 **Resolution:** `_calculate_advanced_metrics()` updated to use `Mean(trade.total_cost)` (GBP) as cost basis (commit ref: AP-07, 2026-02-20). `validation_data.py` expected value updated from 0.17 → 0.22 to reflect corrected basis. `capital_efficiency` validation block added to `routers/validation.py` (was previously absent). Validation confirmed: `POST /validate/calculations` 13/13 pass at 2026-02-21T00:24:41Z. Canonical Owner sign-off granted 2026-02-21.
+
+---
+
+## Arc 5 Compliance Metrics
+
+**Introduced:** v4.0 (ST-01, BLG-FEAT-36)
+**Endpoint:** `GET /analytics/arc5-compliance`
+**Log Table:** `pre_entry_validation_log`
+
+### validation_pass_rate_by_rule
+
+- **Definition:** For each `rule_type`, `pass_rate = pass_count / (pass_count + fail_count)` over the requested `period`.
+- **Rule types:** `regime_gate`, `cash_constraint`, `sector_concentration`, `earnings_proximity`, `sizing_validity`
+- **Source table:** `pre_entry_validation_log` — logged by `GET /portfolio/pre-entry-validation` on every call (non-blocking write)
+- **Default period:** rolling 7 days (`validated_at >= NOW() - INTERVAL '7 days'`)
+- **Returns:** `{}` if no log data exists yet
+
+### events_per_week
+
+- **Definition:** `COUNT(*) FROM red_flag_events WHERE created_at >= NOW() - INTERVAL '7 days'` divided by 7.0 (always rolling 7 days regardless of `period` parameter)
+- **Unit:** events per day × 7 (float)
+- **Source:** `red_flag_events` table
+
+### override_rate
+
+- **Definition:** `COUNT(*) FROM red_flag_events WHERE event_type='pre_entry_override' AND created_at >= NOW()-7d` / `COUNT(*) FROM pre_entry_validation_log WHERE validated_at >= NOW()-7d`
+- **Returns:** null if no validation attempts in the last 7 days
+- **Always rolling 7 days**
+
+### top_rule_breach
+
+- **Definition:** `rule_type` with the highest `fail_count` in `pre_entry_validation_log` over the requested `period`
+- **Returns:** null if no failures
+
+### trade_plan_adherence_rate
+
+- **Definition:** `COUNT(DISTINCT th.id) FROM trade_history th JOIN trade_plans tp ON tp.position_id=th.position_id` / `COUNT(*) FROM trade_history`
+- **Window:** all-time (not period-filtered)
+- **Returns:** null if no closed trades, or if `position_id` migration not run (`UndefinedColumn` caught gracefully)
+- **Gate condition confirmed:** PO confirmed 2026-05-23 that trade-plan position_id linkage is actively captured

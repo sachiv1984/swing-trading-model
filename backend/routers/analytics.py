@@ -6,6 +6,7 @@ GET /analytics/cohort  — Trade performance grouped by entry cohort period.
 GET /analytics/r-multiple-distribution — Canonical server-side R-multiple distribution.
 GET /analytics/compliance-metrics — Discipline & compliance scalars (ST-01, v1.9).
 GET /analytics/market-correlation — Per-position Pearson correlation vs benchmark (ST-08, v2.7).
+GET /analytics/arc5-compliance — Arc 5 signal compliance metrics (ST-01, v4.0).
 
 BLG-TECH-07 fix: trades_for_charts attempts to source stop_price from
 positions.initial_stop via LEFT JOIN on trade_history.position_id.
@@ -15,7 +16,7 @@ If the position_id column does not yet exist in the live trade_history table
 null for all trades, analytics loads normally, and no 500 error is raised.
 Run migration_add_position_id.sql to enable the JOIN fully.
 
-Contract: docs/specs/api_contracts/analytics_endpoints.md v2.0.0
+Contract: docs/specs/api_contracts/analytics_endpoints.md v2.2.0
 """
 
 from fastapi import APIRouter, Query, HTTPException
@@ -757,3 +758,170 @@ async def get_market_correlation(
     _CORRELATION_CACHE["cached_at"] = now
 
     return {"status": "ok", "data": result}
+
+
+@router.get("/arc5-compliance")
+async def get_arc5_compliance(
+    period: str = Query("7d", pattern="^(7d|30d)$")
+):
+    """
+    GET /analytics/arc5-compliance
+
+    Returns Arc 5 signal compliance metrics:
+      - validation_pass_rate_by_rule: pass/fail rate per pre-entry rule in the period
+      - events_per_week: red flag events in the last 7 days
+      - override_rate: overrides / validation attempts in last 7 days
+      - top_rule_breach: most frequent failing rule in the period
+      - trade_plan_adherence_rate: trades with plan / total closed trades (all-time)
+
+    period: 7d (default) | 30d
+
+    Canonical metrics: docs/specs/metrics_definitions.md §Arc 5 Compliance Metrics
+    Spec: docs/specs/api_contracts/analytics_endpoints.md §GET /analytics/arc5-compliance
+    """
+    days = 30 if period == "30d" else 7
+    since_iso = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    week_ago_iso = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+
+    try:
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise Exception("DATABASE_URL not configured")
+
+        conn = psycopg2.connect(_clean_db_url(database_url))
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+        try:
+            # ----------------------------------------------------------------
+            # validation_pass_rate_by_rule from pre_entry_validation_log
+            # ----------------------------------------------------------------
+            validation_pass_rate_by_rule = {}
+            try:
+                cursor.execute("""
+                    SELECT rule_type,
+                           COUNT(*) FILTER (WHERE status = 'pass') AS pass_count,
+                           COUNT(*) FILTER (WHERE status != 'pass') AS fail_count
+                    FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz
+                    GROUP BY rule_type
+                """, (since_iso,))
+                for row in cursor.fetchall():
+                    total = int(row['pass_count']) + int(row['fail_count'])
+                    pass_rate = round(int(row['pass_count']) / total, 4) if total else None
+                    validation_pass_rate_by_rule[row['rule_type']] = {
+                        "pass_rate": pass_rate,
+                        "pass_count": int(row['pass_count']),
+                        "fail_count": int(row['fail_count']),
+                    }
+            except psycopg2.errors.UndefinedTable:
+                cursor.connection.rollback()
+                validation_pass_rate_by_rule = {}
+
+            # ----------------------------------------------------------------
+            # top_rule_breach from pre_entry_validation_log
+            # (most frequently failing rule in period)
+            # ----------------------------------------------------------------
+            top_rule_breach = None
+            try:
+                cursor.execute("""
+                    SELECT rule_type, COUNT(*) AS fail_count
+                    FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz
+                      AND status = 'fail'
+                    GROUP BY rule_type
+                    ORDER BY fail_count DESC
+                    LIMIT 1
+                """, (since_iso,))
+                row = cursor.fetchone()
+                if row:
+                    top_rule_breach = row['rule_type']
+            except psycopg2.errors.UndefinedTable:
+                cursor.connection.rollback()
+
+            # ----------------------------------------------------------------
+            # events_per_week: red_flag_events in last 7 days
+            # ----------------------------------------------------------------
+            try:
+                cursor.execute("""
+                    SELECT COUNT(*) AS cnt
+                    FROM red_flag_events
+                    WHERE created_at >= %s::timestamptz
+                """, (week_ago_iso,))
+                row = cursor.fetchone()
+                events_count = int(row['cnt']) if row else 0
+                events_per_week = round(events_count / 7.0, 2)
+            except psycopg2.errors.UndefinedTable:
+                cursor.connection.rollback()
+                events_per_week = 0.0
+
+            # ----------------------------------------------------------------
+            # override_rate: overrides / validation attempts in last 7 days
+            # ----------------------------------------------------------------
+            override_rate = None
+            try:
+                cursor.execute("""
+                    SELECT COUNT(*) AS overrides
+                    FROM red_flag_events
+                    WHERE created_at >= %s::timestamptz
+                      AND event_type = 'pre_entry_override'
+                """, (week_ago_iso,))
+                row = cursor.fetchone()
+                overrides = int(row['overrides']) if row else 0
+
+                cursor.execute("""
+                    SELECT COUNT(*) AS attempts
+                    FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz
+                """, (week_ago_iso,))
+                row = cursor.fetchone()
+                attempts = int(row['attempts']) if row else 0
+                override_rate = round(overrides / attempts, 4) if attempts > 0 else None
+            except psycopg2.errors.UndefinedTable:
+                cursor.connection.rollback()
+                override_rate = None
+
+            # ----------------------------------------------------------------
+            # trade_plan_adherence_rate (all-time)
+            # ----------------------------------------------------------------
+            trade_plan_adherence_rate = None
+            try:
+                cursor.execute("SELECT COUNT(*) AS total FROM trade_history")
+                row = cursor.fetchone()
+                total_trades = int(row['total']) if row else 0
+
+                if total_trades > 0:
+                    cursor.execute("""
+                        SELECT COUNT(DISTINCT th.id) AS with_plan
+                        FROM trade_history th
+                        JOIN trade_plans tp ON tp.position_id = th.position_id
+                    """)
+                    row = cursor.fetchone()
+                    with_plan = int(row['with_plan']) if row else 0
+                    trade_plan_adherence_rate = round(with_plan / total_trades, 4)
+            except (psycopg2.errors.UndefinedColumn, psycopg2.errors.UndefinedTable):
+                cursor.connection.rollback()
+                trade_plan_adherence_rate = None
+
+        finally:
+            cursor.close()
+            conn.close()
+
+        return {
+            "status": "ok",
+            "data": {
+                "period": period,
+                "validation_pass_rate_by_rule": validation_pass_rate_by_rule,
+                "events_per_week": events_per_week,
+                "override_rate": override_rate,
+                "top_rule_breach": top_rule_breach,
+                "trade_plan_adherence_rate": trade_plan_adherence_rate,
+            },
+        }
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Arc 5 compliance metrics failed: {str(e)}"
+        )

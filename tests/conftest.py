@@ -55,6 +55,7 @@ _DB_STUB_FUNCTIONS = [
     "get_trade_by_id", "get_position_by_id", "update_position_lifecycle_state",
     "ensure_plan_vs_reality_columns", "ensure_signals_watchlisted_status",
     "ensure_red_flag_events_table", "create_red_flag_event", "get_red_flag_events",
+    "ensure_pre_entry_validation_log_table", "log_pre_entry_validation_results",
 ]
 
 _database_stub = types.ModuleType("database")
