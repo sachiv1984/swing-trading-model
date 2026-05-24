@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.1.0
-**Last Updated:** 2026-04-15
+**Version:** 2.2.0
+**Last Updated:** 2026-05-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -785,6 +785,66 @@ is required before any further correlation-dependent features are introduced.
 
 ---
 
+## GET /analytics/arc5-compliance
+
+Returns Arc 5 signal compliance metrics for the trading system.
+
+### Request
+
+**Method:** GET
+**Path:** `/analytics/arc5-compliance`
+**Authentication:** API Key required
+
+#### Query parameters
+
+| Parameter | Type | Required | Default | Values | Description |
+|-----------|------|----------|---------|--------|-------------|
+| `period` | string | No | `7d` | `7d`, `30d` | Rolling window for validation and event metrics |
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "period": "7d",
+    "validation_pass_rate_by_rule": {
+      "regime_gate": {"pass_rate": 0.75, "pass_count": 15, "fail_count": 5},
+      "cash_constraint": {"pass_rate": 0.9, "pass_count": 18, "fail_count": 2},
+      "sector_concentration": {"pass_rate": 1.0, "pass_count": 20, "fail_count": 0},
+      "earnings_proximity": {"pass_rate": 0.85, "pass_count": 17, "fail_count": 3},
+      "sizing_validity": {"pass_rate": 0.95, "pass_count": 19, "fail_count": 1}
+    },
+    "events_per_week": 3.14,
+    "override_rate": 0.4,
+    "top_rule_breach": "regime_gate",
+    "trade_plan_adherence_rate": 0.6
+  }
+}
+```
+
+#### `data` schema
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `period` | string | The period used for validation metrics (`7d` or `30d`) |
+| `validation_pass_rate_by_rule` | object | Per-rule pass rates from `pre_entry_validation_log`. Empty `{}` if no data. |
+| `validation_pass_rate_by_rule.<rule>.pass_rate` | float\|null | Pass rate 0–1; null if no data |
+| `validation_pass_rate_by_rule.<rule>.pass_count` | integer | Passes in period |
+| `validation_pass_rate_by_rule.<rule>.fail_count` | integer | Failures in period |
+| `events_per_week` | float | Avg red flag events per day × 7 (rolling 7-day always) |
+| `override_rate` | float\|null | Overrides / validation attempts in last 7 days; null if no attempts |
+| `top_rule_breach` | string\|null | Most frequently failing rule_type in period; null if no failures |
+| `trade_plan_adherence_rate` | float\|null | Trades with linked plan / total closed trades (all-time); null if no trades or position_id migration not run |
+
+**Rule types:** `regime_gate`, `cash_constraint`, `sector_concentration`, `earnings_proximity`, `sizing_validity`
+
+### Errors
+
+- `500 Internal Server Error`: database error or `DATABASE_URL` not set.
+
+---
+
 ## Known limitations & backlog
 
 - **ValidationService** (`services/validation_service.py`) is a stub and not invoked. Active validation logic lives in `routers/validation.py`. This is tracked as BLG-TECH-03 (consolidate into service layer, deliver alongside BLG-TECH-02).
@@ -796,6 +856,7 @@ is required before any further correlation-dependent features are introduced.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2.0 | 2026-05-23 | ST-01 (BLG-FEAT-36, v4.0): Add `GET /analytics/arc5-compliance` endpoint — Arc 5 compliance metrics (validation_pass_rate_by_rule, events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate). Adds pre_entry_validation_log table. Metrics canonical per metrics_definitions.md §Arc 5 Compliance Metrics. API Contracts & Documentation Owner. |
 | 2.1.0 | 2026-04-15 | ST-08 (BLG-FEAT-17, v2.7): Add `GET /analytics/market-correlation` endpoint spec — per-position Pearson correlation vs SPY/FTSE benchmark, portfolio-level equal-weighted average, 252-day default lookback, 8-hour TTL cache, graceful Yahoo Finance fallback. API Contracts & Documentation Owner. |
 | 2.0.0 | 2026-03-29 | ST-02 (BLG-FEAT-09, v2.3): Add `last_sync_at` field to `GET /analytics/metrics` response — UTC ISO 8601 timestamp of metrics computation time. Frontend uses this for the Metrics Staleness Indicator (4h default threshold, amber badge when stale). API Contracts & Documentation Owner. |
 | 1.5.0 | 2026-02-17 | Initial rewrite: unified endpoint, validation endpoint, known limitations recorded |

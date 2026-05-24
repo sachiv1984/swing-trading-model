@@ -11,6 +11,7 @@ Spec: docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-v
 
 from typing import Optional
 from fastapi import APIRouter, Query
+from database import log_pre_entry_validation_results
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
 
@@ -288,6 +289,8 @@ def get_pre_entry_validation(
     ]
 
     advisory_status = _aggregate_advisory_status(checks)
+
+    log_pre_entry_validation_results(ticker, market, checks)
 
     return {
         "status": "ok",

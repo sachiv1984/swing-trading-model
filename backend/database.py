@@ -1242,6 +1242,52 @@ def ensure_red_flag_events_table() -> None:
         conn.commit()
 
 
+def ensure_pre_entry_validation_log_table() -> None:
+    """Create pre_entry_validation_log table for ST-01 arc5-compliance metrics."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS pre_entry_validation_log (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    ticker TEXT NOT NULL,
+                    market TEXT NOT NULL DEFAULT 'US',
+                    rule_type TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    validated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_pevl_rule_type ON pre_entry_validation_log (rule_type)"
+            )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_pevl_validated_at ON pre_entry_validation_log (validated_at DESC)"
+            )
+        conn.commit()
+
+
+def log_pre_entry_validation_results(
+    ticker: str, market: str, checks: list
+) -> None:
+    """Log individual rule results to pre_entry_validation_log (fire-and-forget)."""
+    try:
+        ensure_pre_entry_validation_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                for check in checks:
+                    rule_type = check.get("rule")
+                    status = check.get("status")
+                    if not rule_type or not status or status == "skipped":
+                        continue
+                    cur.execute(
+                        """INSERT INTO pre_entry_validation_log (ticker, market, rule_type, status)
+                           VALUES (%s, %s, %s, %s)""",
+                        (ticker.upper(), market.upper(), rule_type, status),
+                    )
+            conn.commit()
+    except Exception:
+        pass  # fire-and-forget — never block the validation response
+
+
 def create_red_flag_event(
     event_type: str,
     ticker: str,

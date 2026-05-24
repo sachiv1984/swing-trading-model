@@ -1880,6 +1880,72 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /analytics/arc5-compliance:
+    get:
+      tags: [Analytics]
+      summary: Get Arc 5 signal compliance metrics
+      description: |
+        Returns Arc 5 compliance metrics: validation pass/fail rate per rule,
+        red flag event frequency, override rate, top rule breach, and trade plan
+        adherence rate. Validation metrics from pre_entry_validation_log; event
+        metrics from red_flag_events. period=7d (default) or 30d.
+        Canonical contract: docs/specs/api_contracts/analytics_endpoints.md §GET /analytics/arc5-compliance
+      parameters:
+        - name: period
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [7d, 30d]
+            default: 7d
+          description: Rolling window for validation and event metrics
+      responses:
+        "200":
+          description: Arc 5 compliance metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        type: string
+                        enum: [7d, 30d]
+                      validation_pass_rate_by_rule:
+                        type: object
+                        additionalProperties:
+                          type: object
+                          properties:
+                            pass_rate:
+                              type: number
+                              format: float
+                              nullable: true
+                            pass_count:
+                              type: integer
+                            fail_count:
+                              type: integer
+                      events_per_week:
+                        type: number
+                        format: float
+                      override_rate:
+                        type: number
+                        format: float
+                        nullable: true
+                      top_rule_breach:
+                        type: string
+                        nullable: true
+                      trade_plan_adherence_rate:
+                        type: number
+                        format: float
+                        nullable: true
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /ai/journal-summary:
     post:
       tags: [AI]

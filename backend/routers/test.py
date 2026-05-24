@@ -105,6 +105,9 @@ async def test_all_endpoints(request: Request):
         # Analytics (extended)
         {"name": "GET /analytics/market-correlation", "method": "GET", "url": f"{base_url}/analytics/market-correlation", "critical": False},
 
+        # Arc 5 Compliance Metrics (v4.0 / ST-01)
+        {"name": "GET /analytics/arc5-compliance", "method": "GET", "url": f"{base_url}/analytics/arc5-compliance", "critical": False},
+
         # Ticker Universe (v3.0 / ST-01)
         {"name": "GET /ticker-universe", "method": "GET", "url": f"{base_url}/ticker-universe", "critical": False},
         {"name": "POST /ticker-universe", "method": "POST", "url": f"{base_url}/ticker-universe", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},
