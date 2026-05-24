@@ -320,6 +320,7 @@ export default function TradePlan() {
   });
   const [saved, setSaved] = useState(false);
   const [isAiDraft, setIsAiDraft] = useState(false);
+  const [isGeminiLoading, setIsGeminiLoading] = useState(false);
   const [showAbandonModal, setShowAbandonModal] = useState(false);
   const [abandonReason, setAbandonReason] = useState("");
   const [abandonReasonTouched, setAbandonReasonTouched] = useState(false);
@@ -667,14 +668,28 @@ export default function TradePlan() {
                 <Sparkles size={12} />
                 Generate thesis
               </button>
-              {HAS_GEMINI && (
+              {HAS_GEMINI && editId && (
                 <button
                   type="button"
                   data-testid="improve-with-ai-btn"
-                  className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+                  disabled={isGeminiLoading}
+                  className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={async () => {
+                    setIsGeminiLoading(true);
+                    try {
+                      const res = await apiFetch(`${API_BASE}/trade-plans/${editId}/generate-thesis`, { method: "POST" });
+                      const json = await res.json();
+                      const d = json?.data;
+                      if (d?.available && d?.thesis) {
+                        setForm((prev) => ({ ...prev, setup_thesis: d.thesis }));
+                        setIsAiDraft(true);
+                      }
+                    } catch (_) {}
+                    setIsGeminiLoading(false);
+                  }}
                 >
                   <Sparkles size={12} />
-                  Improve with AI
+                  {isGeminiLoading ? "Generating…" : "Improve with AI"}
                 </button>
               )}
             </div>
