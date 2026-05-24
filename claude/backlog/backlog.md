@@ -1118,6 +1118,28 @@ As the test suite grows with Arc 5 additions (BLG-QA-25 + per-sprint Playwright 
 - Regression threshold defined
 - Gate condition verified by QA Lead before sprint planning
 
+### BLG-QA-28 — Playwright E2E coverage for Arc5ComplianceSection (PerformanceAnalytics §19)
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead
+**Source:** v4.0 ST-02/ST-04 EPIC-01 — deferred observable AC per CLAUDE.md §2
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.1
+
+**Problem**
+ST-02 and ST-04 introduced Arc5ComplianceSection (four stat cards: Red Flag Events/Week, Override Rate, Top Rule Breach, Trade Plan Adherence) into PerformanceAnalytics.js §19. These are frontend-visible changes but no Playwright test covers the rendering. Per CLAUDE.md §2, a backlog item must be filed before the PR opens when observable AC is deferred to staging.
+
+**Scope**
+- Add Playwright test in `tests/e2e/` for PerformanceAnalytics page
+- Cover: Arc5ComplianceSection heading present, all 4 card titles visible, loading skeleton renders, error state renders "Unable to load"
+- Use `page.route()` to mock `GET /analytics/arc5-compliance`
+
+**Acceptance Criteria**
+- AC-01: "Arc 5 Signal Compliance" heading visible on PerformanceAnalytics page
+- AC-02: All 4 stat card titles visible (Red Flag Events/Week, Override Rate, Top Rule Breach, Trade Plan Adherence)
+- AC-03: Loading skeleton shown when API pending
+- AC-04: Error state shown when API returns 500
+
 ---
 
 ## 6. Operations & Infrastructure Backlog
