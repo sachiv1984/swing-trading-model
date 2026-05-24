@@ -55,6 +55,6 @@ Append-only. All delegated tasks across Sprint 1 and Sprint 2.
 - **Unblock criteria:** Commit `[EPIC-02][ST-05] ...` pushed to `exec/2026-05-22__release-v4.0/EPIC-02`; `backend/routers/test.py` updated; staging-only AC backlog item filed; `SKIP_TICKER_VALIDATION` env var implemented; API contract updated with 422 row; GitHub issue #479 closed automatically
 - **Commit format required:** `[EPIC-02][ST-05] <description>` pushed to `exec/2026-05-22__release-v4.0/EPIC-02`
 - **SLA:** Next available sprint cycle
-- **Status:** Open — awaiting Head of Engineering
+- **Status:** Unblocked — commit 494eb022 pushed 2026-05-24; BLG-QA-30 filed; API contract v1.2 updated; SKIP_TICKER_VALIDATION bypass implemented
 
 ---

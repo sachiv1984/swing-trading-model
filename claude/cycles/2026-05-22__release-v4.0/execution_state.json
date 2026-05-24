@@ -110,7 +110,7 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "stories_complete",
       "branch": "exec/2026-05-22__release-v4.0/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -140,23 +140,23 @@
         "ST-05": {
           "title": "Validate ticker symbol on add",
           "classification": "delegated_backend",
-          "status": "delegated",
-          "assigned_to": "human",
+          "status": "done",
+          "assigned_to": "Head of Engineering",
           "github_issue": 479,
           "branch": "exec/2026-05-22__release-v4.0/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "494eb022",
           "delegation_record_id": "DEL-20260524-01",
           "blocked_since_utc": "2026-05-24T08:00:00Z",
           "unblock_criteria": "Commit [EPIC-02][ST-05] pushed to exec/2026-05-22__release-v4.0/EPIC-02; backend/routers/test.py updated; staging-only AC backlog item filed; SKIP_TICKER_VALIDATION env var implemented; API contract 422 row added",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-24T19:45:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/ticker_universe_api_contract.md#POST /ticker-universe"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Delegated to Head of Engineering — DEL-20260524-01. Delegation record in claude/cycles/2026-05-22__release-v4.0/delegation_log.md. Staging-only AC: live Yahoo Finance rejection path. Backlog item required before PR opens."
+          "notes": "Implemented by Head of Engineering 2026-05-24. _validate_ticker_yfinance() added with 5s timeout via concurrent.futures, SKIP_TICKER_VALIDATION bypass, HTTP 422 on invalid/timeout. API contract v1.2 with 422 row. BLG-QA-30 filed for staging-only AC. No deviations — deviations_filed=true (no spec deviation). test.py: POST /ticker-universe entry already present at line 113 (pre-existing). DEL-20260524-01 unblocked."
         },
         "ST-06": {
           "title": "Red flag endpoint auth and PII review",
@@ -327,8 +327,8 @@
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-05"],
-  "completed_items": ["ST-01", "ST-02", "ST-04", "ST-03", "ST-13", "ST-06"],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-04", "ST-03", "ST-13", "ST-06", "ST-05"],
   "open_escalations": [],
 
   "merge_gate": {

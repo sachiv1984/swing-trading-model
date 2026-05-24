@@ -3,7 +3,7 @@
 
 **Owner:** Director of Quality
 **Class:** DoQ Sign-off Required
-**Status:** Partial — ST-05 pending (delegated)
+**Status:** All stories complete — awaiting DoQ sign-off
 
 ---
 
@@ -33,19 +33,26 @@
 
 | Field | Value |
 |---|---|
-| Commit SHA | Pending |
+| Commit SHA | 494eb022 |
 | Branch | exec/2026-05-22__release-v4.0/EPIC-02 |
 | Classification | delegated_backend |
-| Delegation Record | DEL-20260524-01 |
+| Delegation Record | DEL-20260524-01 (Unblocked 2026-05-24) |
 | Assigned To | Head of Engineering |
-| Status | Delegated — awaiting implementation |
+| Status | Done |
 
-**Pending evidence:**
-- `POST /ticker-universe` with invalid ticker returns HTTP 422
-- `SKIP_TICKER_VALIDATION=true` env var bypasses yfinance call
-- `backend/routers/test.py` updated with POST /ticker-universe test
-- Staging-only AC backlog item filed
-- API contract updated with 422 error row
+**Evidence:**
+- `backend/routers/ticker_universe.py`: `_validate_ticker_yfinance()` with `concurrent.futures` 5s timeout; `SKIP_TICKER_VALIDATION=true` bypass; HTTP 422 returned on invalid ticker, unknown symbol, or timeout
+- `docs/specs/api_contracts/ticker_universe_api_contract.md` v1.2: 422 error row added to POST error responses table
+- `backend/routers/test.py`: `POST /ticker-universe` test entry pre-existing at line 113 (with AAPL); no new entry needed; test passes in CI with `SKIP_TICKER_VALIDATION=true`
+- Staging-only AC: BLG-QA-30 filed for live Yahoo Finance rejection path verification
+
+**Observable AC — CI-testable:**
+- AC-01: `SKIP_TICKER_VALIDATION=true` → POST with AAPL succeeds (existing test passes)
+- AC-02: API contract v1.2 includes 422 row in POST error responses
+
+**Observable AC — staging-only:**
+- AC-03: Invalid ticker → HTTP 422 with "not found or not tradeable" detail (requires live yfinance)
+- BLG-QA-30 filed for staging verification
 
 ---
 
@@ -73,9 +80,9 @@
 
 ## Deviations
 
-None for ST-13, ST-06.
+None for ST-13, ST-06, ST-05.
 
-ST-05: delegated — evidence pending Head of Engineering delivery.
+ST-05 staging-only AC: live Yahoo Finance rejection path cannot be verified in CI → BLG-QA-30 filed.
 
 ---
 
