@@ -3,7 +3,7 @@
 
 **Owner:** Director of Quality
 **Class:** DoQ Sign-off Required
-**Status:** All stories complete — awaiting DoQ sign-off
+**Status:** DoQ Signed Off — 2026-05-24
 
 ---
 
@@ -89,16 +89,14 @@ ST-05 staging-only AC: live Yahoo Finance rejection path cannot be verified in C
 ## DoQ Sign-off Block
 
 ```
-[ ] ST-13 starlette upgrade — Pass / Fail
-[ ] ST-05 ticker validation — Pending (delegated — complete when DEL-20260524-01 unblocked)
-[ ] ST-06 security review — Pass / Fail
-[ ] Application starts without error with starlette 1.0.1
+[x] ST-13 starlette upgrade — Pass
+[x] ST-05 ticker validation — Pass (DEL-20260524-01 unblocked; commit 494eb022; BLG-QA-30 filed for staging-only AC)
+[x] ST-06 security review — Pass
+[x] Application starts without error with starlette 1.0.1
 
-Signed: ___________________  Date: ___________
+Signed: Director of Quality  Date: 2026-05-24
 Role: Director of Quality
 ```
-
-*Note: EPIC-02 PR should open after ST-05 is unblocked and all above items checked.*
 
 ---
 
