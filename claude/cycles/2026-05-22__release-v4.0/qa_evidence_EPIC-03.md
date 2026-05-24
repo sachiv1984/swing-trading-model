@@ -3,7 +3,7 @@
 
 **Owner:** Director of Quality
 **Class:** DoQ Sign-off Required (frontend-visible changes present — ST-12)
-**Status:** Partial — ST-09 blocked (RISK-03 gate)
+**Status:** Partial — ST-09 in progress (RISK-03 gate resolved 2026-05-24)
 
 ---
 
@@ -92,13 +92,17 @@
 
 | Field | Value |
 |---|---|
-| Commit SHA | BLOCKED |
-| Status | Blocked — RISK-03 gate |
+| Commit SHA | Pending implementation |
+| Status | In progress — RISK-03 resolved 2026-05-24 |
 
-**Blocked pending:**
-- RISK-03 acceptance by Product Owner (build-minute filter design for GitHub Actions workflow)
-- BLG-OPS-25 deploy hook confirmed available on Render staging environment
-- Escalation: ESC-RISK-03 (see `open_escalations` in execution_state.json)
+**RISK-03 resolved:**
+- Product Owner accepted 2026-05-24: path filter approach approved — GitHub Actions workflow must use `paths-ignore` (or equivalent) so docs/claude/`*.md`-only commits do not trigger staging re-deploy.
+- BLG-OPS-25 (Render deploy hook) to be verified during implementation.
+- ESC-RISK-03 closed.
+
+**Implementation pending:**
+- GitHub Actions workflow file with path filter
+- BLG-OPS-25 hook URL/key verification on Render staging
 
 ---
 
@@ -108,7 +112,7 @@ None for ST-12, ST-07, ST-08.
 
 ST-12: staging-only AC deferred → BLG-QA-29 filed.
 ST-12: delegated_frontend → autonomous reclassification per LL-v2.3-EX-02.
-ST-09: blocked by RISK-03 gate — implementation deferred pending PO confirmation.
+ST-09: RISK-03 gate resolved 2026-05-24 — PO accepted path filter approach; implementation in progress.
 
 ---
 
@@ -120,13 +124,13 @@ ST-09: blocked by RISK-03 gate — implementation deferred pending PO confirmati
 [ ] ST-12 frontend staging: Improve with AI button works (date: _______) — via BLG-QA-29 staging run
 [ ] ST-07 audit trail — gemini_audit_log table created and populated — Pass / Fail
 [ ] ST-08 cost tracking — token fields and cost documented — Pass / Fail
-[ ] ST-09 — deferred (RISK-03 gate; re-assess when unblocked)
+[ ] ST-09 — RISK-03 resolved 2026-05-24; pending implementation commit and staging verification
 
 Signed: ___________________  Date: ___________
 Role: Director of Quality
 ```
 
-*Note: EPIC-03 PR may open with ST-09 deferred. ST-09 will be implemented as a separate commit/PR once RISK-03 is resolved.*
+*Note: EPIC-03 PR (#487) opened with ST-09 deferred. RISK-03 resolved 2026-05-24 — ST-09 implementation now in progress; will be added to the branch before PR merge.*
 
 ---
 
