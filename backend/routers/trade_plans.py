@@ -244,6 +244,7 @@ def generate_thesis(plan_id: str):
                 "entry_rationale": plan.get("entry_rationale"),
                 "confirmation_criteria": plan.get("confirmation_criteria"),
             },
+            plan_id=plan_id,
         )
         return {"status": "ok", "data": result}
     except HTTPException:

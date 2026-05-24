@@ -1,15 +1,23 @@
 """
-Gemini Flash base service (ST-12, EPIC-03, v4.0)
+Gemini Flash base service (ST-12/ST-07/ST-08, EPIC-03, v4.0)
 
 Provides generate_setup_thesis() using gemini-1.5-flash.
 Returns gracefully when GEMINI_API_KEY is absent or the call fails.
 
-Audit trail and cost tracking are implemented in ST-07 and ST-08.
+ST-07: Audit trail — each call writes a row to gemini_audit_log (fire-and-forget).
+ST-08: Cost tracking — token usage logged; estimated_cost_usd computed at
+       $0.075/1M input tokens and $0.30/1M output tokens (Gemini 1.5 Flash free-tier rates).
+       Monthly free-tier limit: 1,500 RPD / 1M tokens/month. Alert threshold: 800,000 tokens/month.
 """
 import os
 import hashlib
 import json
 from typing import Optional
+
+GEMINI_COST_PER_INPUT_TOKEN = 0.075 / 1_000_000
+GEMINI_COST_PER_OUTPUT_TOKEN = 0.30 / 1_000_000
+GEMINI_MONTHLY_FREE_TIER_TOKEN_LIMIT = 1_000_000
+GEMINI_ALERT_THRESHOLD = 800_000
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 MODEL_VERSION = "gemini-1.5-flash"
@@ -32,6 +40,7 @@ def generate_setup_thesis(
     setup_type: Optional[str] = None,
     signal_data: Optional[dict] = None,
     plan_data: Optional[dict] = None,
+    plan_id: Optional[str] = None,
 ) -> dict:
     """
     Generate a setup thesis using Gemini Flash.
@@ -101,6 +110,41 @@ def generate_setup_thesis(
         return {"available": False, "error": f"Gemini API error: {str(exc)[:120]}"}
 
     output_hash = hashlib.sha256(thesis.encode()).hexdigest()[:16]
+
+    prompt_tokens = None
+    completion_tokens = None
+    total_tokens = None
+    estimated_cost_usd = None
+    try:
+        usage = getattr(response, "usage_metadata", None)
+        if usage:
+            prompt_tokens = getattr(usage, "prompt_token_count", None)
+            completion_tokens = getattr(usage, "candidates_token_count", None)
+            if prompt_tokens is not None and completion_tokens is not None:
+                total_tokens = prompt_tokens + completion_tokens
+                estimated_cost_usd = round(
+                    prompt_tokens * GEMINI_COST_PER_INPUT_TOKEN
+                    + completion_tokens * GEMINI_COST_PER_OUTPUT_TOKEN,
+                    8,
+                )
+    except Exception:
+        pass
+
+    try:
+        from database import create_gemini_audit_entry
+        create_gemini_audit_entry(
+            plan_id=plan_id,
+            model_version=MODEL_VERSION,
+            prompt_version=PROMPT_VERSION,
+            input_hash=input_hash,
+            output_hash=output_hash,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            total_tokens=total_tokens,
+            estimated_cost_usd=estimated_cost_usd,
+        )
+    except Exception:
+        pass
 
     return {
         "thesis": thesis,
