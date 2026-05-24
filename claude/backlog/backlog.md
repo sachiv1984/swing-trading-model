@@ -1142,6 +1142,32 @@ ST-02 and ST-04 introduced Arc5ComplianceSection (four stat cards: Red Flag Even
 
 ---
 
+### BLG-QA-30 — Staging verification: ST-05 ticker validation live Yahoo Finance rejection path
+**Priority:** P2 (Medium)
+**Type:** QA / Staging Verification
+**Owner:** Director of Quality; Head of Engineering
+**Source:** v4.0 ST-05 EPIC-02 — staging-only AC per CLAUDE.md §2
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.1
+
+**Problem**
+ST-05 (BLG-BE-15) adds Yahoo Finance symbol validation to `POST /ticker-universe`. The AC "invalid ticker returns HTTP 422 with error message (not saved)" requires a live internet-connected staging environment with `SKIP_TICKER_VALIDATION` unset. This cannot be verified in CI (no live network calls permitted).
+
+**Scope**
+- Remove (or unset) `SKIP_TICKER_VALIDATION` on staging environment
+- POST an invalid ticker symbol (e.g. `ZZZINVALID`) to `POST /ticker-universe` on staging
+- Confirm: HTTP 422 returned with `detail` containing "not found or not tradeable"
+- Confirm: ticker does NOT appear in subsequent `GET /ticker-universe` response
+- POST a valid ticker (e.g. `AAPL`) and confirm: HTTP 201, ticker added successfully
+- Record staging sign-off date in this item and notify Director of Quality
+
+**Acceptance Criteria**
+- AC-01: Invalid ticker → HTTP 422, detail message present, ticker not saved (staging)
+- AC-02: Valid ticker → HTTP 201, ticker present in GET /ticker-universe (staging)
+- AC-03: Timeout scenario documented (if testable — can mock by blocking yfinance)
+
+---
+
 ## 6. Operations & Infrastructure Backlog
 
 ---

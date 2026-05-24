@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2 Canonical Specification
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-22
+**Version:** 1.2
+**Last Updated:** 2026-05-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Implementation:** `backend/routers/ticker_universe.py`, `backend/services/ticker_universe_service.py`
 
@@ -100,6 +100,7 @@ Adds a ticker to the screener universe. Re-activates soft-deleted tickers on con
 | HTTP status | Description |
 |------------|-------------|
 | 400 | Invalid `market` (must be `UK` or `US`) or blank `ticker` |
+| 422 | Ticker not found or not tradeable via Yahoo Finance live lookup; or lookup timed out (>5s) |
 
 ---
 
