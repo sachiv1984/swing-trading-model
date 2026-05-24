@@ -1142,6 +1142,33 @@ ST-02 and ST-04 introduced Arc5ComplianceSection (four stat cards: Red Flag Even
 
 ---
 
+### BLG-QA-29 — Staging verification for Gemini thesis generation (ST-12 staging-only AC)
+**Priority:** P2 (Medium)
+**Type:** QA / Staging Verification
+**Owner:** QA Lead
+**Source:** v4.0 ST-12 EPIC-03 — staging-only AC per CLAUDE.md §2
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.1
+
+**Problem**
+ST-12 (Gemini Flash base wiring) introduced `POST /trade-plans/{plan_id}/generate-thesis` and the "Improve with AI" button in TradePlan. The acceptance criteria for thesis generation requires a live `GEMINI_API_KEY`. This cannot be verified in CI. Per CLAUDE.md §2, a backlog item must be filed before the PR opens.
+
+**Scope**
+- Configure `GEMINI_API_KEY` in staging environment (Render backend env vars)
+- Configure `REACT_APP_GEMINI_API_KEY` in staging frontend (Render Static Site env vars)
+- Test: create or open a trade plan in edit mode on staging
+- Verify "Improve with AI" button appears and calls the endpoint
+- Verify thesis text is generated and populates the textarea
+- Record sign-off date in `qa_evidence_EPIC-03.md` DoQ block
+
+**Acceptance Criteria**
+- AC-01: `POST /trade-plans/{plan_id}/generate-thesis` returns thesis text when GEMINI_API_KEY is set on staging
+- AC-02: "Improve with AI" button visible on TradePlan edit page when REACT_APP_GEMINI_API_KEY set
+- AC-03: Button click generates thesis and populates setup_thesis textarea
+- AC-04: Sign-off date recorded in qa_evidence_EPIC-03.md
+
+---
+
 ### BLG-QA-30 — Staging verification: ST-05 ticker validation live Yahoo Finance rejection path
 **Priority:** P2 (Medium)
 **Type:** QA / Staging Verification
