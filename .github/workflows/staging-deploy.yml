@@ -1,0 +1,53 @@
+name: Deploy to Staging (Render)
+
+# ST-09: BLG-OPS-27 — Automated staging re-deployment on main merge.
+#
+# Triggers only when backend or frontend source files change.
+# Documentation-only commits (docs/, claude/, *.md) do NOT trigger this workflow,
+# preserving free-tier build minutes (RISK-03 path-filter design, accepted 2026-05-24).
+#
+# Prerequisites:
+#   - RENDER_STAGING_DEPLOY_HOOK must be set as a GitHub Actions repository secret
+#     (repo Settings → Secrets and variables → Actions → New repository secret)
+#   - Obtain the deploy hook URL from: Render dashboard → staging service → Settings → Deploy Hook
+#
+# Build minute impact: ~1 min/trigger. See docs/ops/staging_deploy_notes.md.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'backend/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'requirements.txt'
+
+jobs:
+  deploy-staging:
+    name: Trigger Render staging re-deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger Render deploy hook
+        run: |
+          if [[ -z "${RENDER_STAGING_DEPLOY_HOOK:-}" ]]; then
+            echo "ERROR: RENDER_STAGING_DEPLOY_HOOK secret is not set."
+            echo "Add it at: repo Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+          HTTP_STATUS=$(curl -s -o /tmp/render_response.txt -w "%{http_code}" \
+            -X POST "$RENDER_STAGING_DEPLOY_HOOK")
+          echo "Render response body:"
+          cat /tmp/render_response.txt || true
+          echo ""
+          echo "HTTP status: $HTTP_STATUS"
+          if [[ "$HTTP_STATUS" != "200" ]] && [[ "$HTTP_STATUS" != "201" ]]; then
+            echo "❌ Deploy hook returned unexpected status: $HTTP_STATUS"
+            exit 1
+          fi
+          echo "✅ Staging deploy triggered successfully"
+        env:
+          RENDER_STAGING_DEPLOY_HOOK: ${{ secrets.RENDER_STAGING_DEPLOY_HOOK }}

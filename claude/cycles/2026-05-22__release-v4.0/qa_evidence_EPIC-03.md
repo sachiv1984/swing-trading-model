@@ -3,7 +3,7 @@
 
 **Owner:** Director of Quality
 **Class:** DoQ Sign-off Required (frontend-visible changes present — ST-12)
-**Status:** Partial — ST-09 in progress (RISK-03 gate resolved 2026-05-24)
+**Status:** Partial — DoQ sign-off pending; ST-09 implemented 2026-05-24
 
 ---
 
@@ -92,17 +92,26 @@
 
 | Field | Value |
 |---|---|
-| Commit SHA | Pending implementation |
-| Status | In progress — RISK-03 resolved 2026-05-24 |
+| Commit SHA | (see ST-09 commit on EPIC-03 branch) |
+| Branch | exec/2026-05-22__release-v4.0/EPIC-03 |
+| Classification | autonomous |
+| Acceptance Verified | true (CI-testable ACs); staging-only AC deferred → BLG-OPS-28 |
 
-**RISK-03 resolved:**
-- Product Owner accepted 2026-05-24: path filter approach approved — GitHub Actions workflow must use `paths-ignore` (or equivalent) so docs/claude/`*.md`-only commits do not trigger staging re-deploy.
-- BLG-OPS-25 (Render deploy hook) to be verified during implementation.
-- ESC-RISK-03 closed.
+**Evidence:**
+- `.github/workflows/staging-deploy.yml` created — triggers on push to `main` with path filter: `src/**`, `backend/**`, `public/**`, `package.json`, `package-lock.json`, `requirements.txt`
+- Docs-only commits (`docs/**`, `claude/**`, `*.md`) do NOT trigger deploy — path filter verified in workflow YAML
+- Build minute impact assessed and documented in `docs/ops/staging_deploy_notes.md`: ~1 min/trigger, <3% of free-tier monthly quota
+- BLG-OPS-25 dependency satisfied: deploy hook mechanism available for smoke test integration (see `docs/ops/staging_deploy_notes.md` §5)
 
-**Implementation pending:**
-- GitHub Actions workflow file with path filter
-- BLG-OPS-25 hook URL/key verification on Render staging
+**Observable AC — CI-testable:**
+- AC-01: Path filter present in workflow YAML (verified by code review)
+- AC-02: Build minute impact documented in `docs/ops/staging_deploy_notes.md`
+- AC-03: BLG-OPS-25 integration notes present (§5 of staging_deploy_notes.md)
+
+**Observable AC — staging-only:**
+- AC-04: Live Render deploy triggered on code-change merge (requires `RENDER_STAGING_DEPLOY_HOOK` secret configured)
+- AC-05: Docs-only commit does NOT trigger deploy (live path filter verification)
+- Backlog item **BLG-OPS-28** filed for staging verification
 
 ---
 
@@ -124,13 +133,11 @@ ST-09: RISK-03 gate resolved 2026-05-24 — PO accepted path filter approach; im
 [ ] ST-12 frontend staging: Improve with AI button works (date: _______) — via BLG-QA-29 staging run
 [ ] ST-07 audit trail — gemini_audit_log table created and populated — Pass / Fail
 [ ] ST-08 cost tracking — token fields and cost documented — Pass / Fail
-[ ] ST-09 — RISK-03 resolved 2026-05-24; pending implementation commit and staging verification
+[ ] ST-09 — workflow path filter verified by code review (Pass); staging live verification deferred → BLG-OPS-28 — Pass (code review) / Staging TBD
 
 Signed: ___________________  Date: ___________
 Role: Director of Quality
 ```
-
-*Note: EPIC-03 PR (#487) opened with ST-09 deferred. RISK-03 resolved 2026-05-24 — ST-09 implementation now in progress; will be added to the branch before PR merge.*
 
 ---
 

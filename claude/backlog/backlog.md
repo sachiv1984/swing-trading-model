@@ -1504,6 +1504,31 @@ Staging environment is currently manually re-synced after each main branch merge
 
 ---
 
+### BLG-OPS-28 — Staging deploy live verification (ST-09 staging-only AC)
+**Priority:** P2 (Medium)
+**Type:** Operations / CI/CD
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-09 staging-only AC — v4.0 sprint execution 2026-05-24
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.1
+
+**Problem**
+ST-09 (BLG-OPS-27) implements the staging deploy workflow and deploy hook mechanism, but the AC "staging auto-deploys on main merge" requires a live Render environment with `RENDER_STAGING_DEPLOY_HOOK` secret configured. This cannot be verified in CI.
+
+**Scope**
+- Set `RENDER_STAGING_DEPLOY_HOOK` secret in GitHub repo settings (Render dashboard → staging service → Settings → Deploy Hook)
+- Merge a code-change commit to main and confirm Render dashboard shows a triggered deploy
+- Merge a docs-only commit and confirm no deploy is triggered
+- Record staging sign-off date in BLG-OPS-27 post-verification note
+
+**Acceptance Criteria**
+- `RENDER_STAGING_DEPLOY_HOOK` secret configured
+- Code-change merge triggers Render staging deploy (confirmed in Render dashboard)
+- Docs-only commit does not trigger deploy (path filter verified)
+- Results recorded as staging sign-off evidence
+
+---
+
 *BLG-OPS-14 (AI Journal monitoring metrics) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 *BLG-OPS-12 (External API health check extension) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
 

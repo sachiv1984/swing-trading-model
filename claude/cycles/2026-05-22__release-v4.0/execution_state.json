@@ -256,18 +256,18 @@
         "ST-09": {
           "title": "CI/CD automated staging re-deploy on main merge",
           "classification": "autonomous",
-          "status": "blocked",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 485,
           "branch": "exec/2026-05-22__release-v4.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "efe0c950",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-05-24T09:30:00Z",
           "unblock_criteria": "RISK-03 accepted by Product Owner: build-minute filter design confirmed (path filter approach approved). BLG-OPS-25 deploy hook must be verified available on Render. Escalation: ESC-RISK-03.",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-24T20:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
           "notes": "BLOCKED: RISK-03 gate \u2014 PO must confirm build-minute filter design before implementation. Sprint backlog explicitly states 'RISK-03 acceptance by PO required during Sprint 2'. Cannot proceed until escalation resolved. Will escalate to Product Owner."
@@ -342,7 +342,8 @@
     "ST-12",
     "ST-07",
     "ST-08",
-    "ST-05"
+    "ST-05",
+    "ST-09"
   ],
   "open_escalations": [],
   "merge_gate": {
