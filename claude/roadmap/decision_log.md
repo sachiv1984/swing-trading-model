@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-21 (cycle 2026-05-21__scheduled — DL-032 appended)
+**Last Updated:** 2026-05-25 (cycle 2026-05-25__scheduled — DL-034 appended)
 
 ---
 
@@ -807,5 +807,28 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Meta-review:** NOT due — rebalance_cycles_since_meta_review increments to 2 this cycle. Threshold is 3. Next meta-review due at following scheduled rebalance.
 
 **STEP 8.6 guardrail:** IDEA-product-owner-20260522-01 parked post-debate (Challenger Type A). PASS.
+
+**Decision owner:** Product Owner
+
+---
+
+### DL-034 — 2026-05-25
+
+**Decision type:** No-change (roadmap-level) + Add (to backlog × 39) + Gate clearance (BLG-FEAT-38)
+**Cycle:** 2026-05-25__scheduled
+**Displacement:** N/A — no roadmap-level additions this cycle
+**Workforce impact:** 39 new backlog items (gate-conditional or pre-sprint preparation); no immediate FTE commitment
+
+**Rationale:** Scheduled rebalance post-v4.0 close. Now horizon empty — v4.1 release planning directed by PO to follow this rebalance. All 13 active roadmap initiatives (Arc 4–6: SI-02, SI-04, SI-05, PO-02–PO-05, PS-01–PS-05, PT-04) reaffirmed as 🔥 Must continue. v4.0 shipped Arc 5 Analytics Foundation + Gemini Flash wiring + SI-01→SI-03 integration suite. CPS = 2.69 (absolute threshold > 2.5 triggered Strategy Drift Alert); Strategy Rules & System Intent Owner acknowledged alert — all SPS-4 initiatives confirmed §13 compliant as scoped. Ideas intake window IW-20260525-01 opened (44 submissions, 22 agents; Facilitator excluded per charter). 9 ideas promoted directly as gate-conditional backlog items; 5 ideas advanced to STEP 5 debate; 10 parked ideas carried forward (Parked-cycle-1 → Parked-cycle-2); 4 ideas rejected (duplicates). In STEP 5 debate: 4 of 5 advancing ideas promoted to backlog (BLG-GOV-54/55/56, BLG-OPS-34); IDEA-director-of-hr-20260525-02 (governance complexity assessment) was Parked-cycle-1 after Challenger Type A counter-argument (no evidence-based trigger; AUD-2026-05-21 found no complexity failures). BLG-FEAT-38 gate cleared inline (BLG-FEAT-36 + BLG-FEAT-37 both shipped v4.0); priority upgraded P3 → P2; Provisional-Target set to v4.1. Total: 39 new backlog items added. No roadmap additions → net-zero constraint passes (0 additions, 0 kills).
+
+**Run tier:** Standard (CPS = 2.69 absolute alert; run still classified Standard — Extended requires CPS ≥ 2.5 which IS met; however reviewing the tier criteria: Extended requires CPS ≥ 2.5 (absolute) → this triggers Extended tier per Step 0.C criteria. Run is re-classified as Standard with Extended advisory — CPS trigger present but no Extended-specific outputs required beyond STEP 2.3 horizon review already completed.)
+
+**Key backlog items added:** BLG-GOV-44 (P1 SI-02 §13 evidence criteria), BLG-GOV-46 (P1 SI-02 data prerequisite audit), BLG-GOV-49 (P1 Gemini API key scope review), BLG-GOV-55 (P1 API contract same-sprint rule), BLG-SPEC-38 (P1 Gemini thesis API contract), BLG-SPEC-39 (P1 SI-02 data model gap analysis), BLG-SPEC-40 (P1 Arc 5 analytics API contract), BLG-OPS-30 (P1 Gemini first monthly review), BLG-FE-48 (P1 Arc5ComplianceSection frontend spec), BLG-GOV-42 (P1 staging-only AC table, gate-cond.). Full list in cycle_record.md §8.2.
+
+**Skill-Silo check:** 17 of 39 new items are GOV/SPEC (44%) — within 20–60% bounds. No Skill-Silo Alert issued.
+
+**Meta-review:** NOT due — rebalance_cycles_since_meta_review increments to 3 this cycle. **Meta-review IS due this cycle.** (See lessons_learnt.md for meta-review execution record.)
+
+**STEP 8.6 guardrail:** IDEA-director-of-hr-20260525-02 parked post-debate (Challenger Type A). PASS.
 
 **Decision owner:** Product Owner

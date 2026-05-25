@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-25 (post-ship closure v4.0 — RA:v4.0 annotation retired; v4.0 marked ✅ Complete)
-**Last rebalance:** 2026-05-22 (cycle 2026-05-22__scheduled — Standard-tier, no-change; 44 ideas from IW-20260522-01; 32 Promoted-Backlog, 10 Parked-cycle-1, 2 Rejected; DL-033)
+**Last Updated:** 2026-05-25 (rebalance 2026-05-25__scheduled — DL-034 no-change; 39 backlog adds; BLG-FEAT-38 gate cleared; SI-05 phased delivery note added; CPS=2.69 Strategy Drift Alert acknowledged)
+**Last rebalance:** 2026-05-25 (cycle 2026-05-25__scheduled — Standard-tier, no-change; 44 ideas from IW-20260525-01; 39 Promoted-Backlog, 11 Parked, 4 Rejected; DL-034)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -202,7 +202,7 @@ Today you find stocks through external research and add them to the watchlist ma
 |SI-02|Behavioural Drift Detection     |H     |Rolling analysis: are your actual entries drifting from your stated setup criteria? Are you entering earlier in the signal cycle than your rules permit? Are you sizing up in losing streaks? Detected from trade history and trade plan data                                                               |
 |SI-03|Red Flag Journal                |M     |✅ Shipped v3.9 (2026-05-22) — red_flag_events table; GET /portfolio/red-flag-journal (paginated, filterable); SI-01 override event write path; RedFlagJournal.js frontend with filters, pagination, empty state, Trading nav link; SC-RFJ-01/02/03 Playwright pass|
 |SI-04|Strategy Version Comparison     |H     |When `strategy_rules.md` is incremented, the system compares trade history performance before and after the change. Did the parameter update actually improve outcomes? Requires version-tagged trade history                                                                                               |
-|SI-05|Weekly Strategy Integrity Digest|M     |Combines Red Flag Journal (SI-03), behavioural drift signals (SI-02), and compliance score trend into a single weekly review. Delivered via existing Telegram notification infrastructure (shipped v2.4)                                                                                                    |
+|SI-05|Weekly Strategy Integrity Digest|M     |Combines Red Flag Journal (SI-03), behavioural drift signals (SI-02), and compliance score trend into a single weekly review. Delivered via existing Telegram notification infrastructure (shipped v2.4). **Phased delivery (BLG-GOV-54):** Phase 1 = Red Flag summary + compliance score trend via Telegram (no SI-02 component); Phase 2 = SI-02 drift signal integration. SI-05 remains Next horizon until Phase 2 ships.|
 
 **End state:** Your written strategy and your actual behaviour converge over time — not because the system forces you, but because every deviation is visible, recorded, and reviewed. The gap between the trader you intend to be and the trader you are becomes measurable and shrinkable.
 
