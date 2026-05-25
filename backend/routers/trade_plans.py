@@ -222,9 +222,9 @@ def delete_plan(plan_id: str):
 
 @router.post("/{plan_id}/generate-thesis")
 def generate_thesis(plan_id: str):
-    """POST /trade-plans/{plan_id}/generate-thesis — generate thesis via Gemini Flash.
+    """POST /trade-plans/{plan_id}/generate-thesis — generate thesis via Claude Haiku.
 
-    Returns generated thesis when GEMINI_API_KEY is set.
+    Returns generated thesis when ANTHROPIC_API_KEY is set.
     Returns graceful error payload (HTTP 200) when key is absent or API call fails.
     Audit trail and cost tracking logged in ST-07/ST-08.
     """

@@ -110,7 +110,7 @@ function NewsContextPanel({ ticker, market }) {
   );
 }
 
-const HAS_GEMINI = !!process.env.REACT_APP_GEMINI_API_KEY;
+const HAS_GEMINI = !!process.env.REACT_APP_ANTHROPIC_API_KEY;
 
 const RULE_LABELS = {
   regime_gate: "Regime Gate",
