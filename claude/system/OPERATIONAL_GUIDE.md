@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.01
-**Last Updated:** 2026-05-22
+**Version:** 4.02
+**Last Updated:** 2026-05-25
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1410,8 +1410,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.00 |
-| Last Updated | 2026-05-22 |
+| Version | 4.02 |
+| Last Updated | 2026-05-25 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1449,6 +1449,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.02 | 2026-05-25 | **BLG-GOV-55 (OA-01, 2026-05-25__scheduled): CLAUDE.md §2 — API contract same-sprint delivery rule.** New rule added: every new API endpoint added to `backend/routers/` must have a corresponding `## METHOD /path` entry in a file in `docs/specs/api_contracts/` in the same sprint; complements the existing same-commit `openapi.yaml` requirement; endpoints shipped without a contract constitute spec debt and must be resolved before the next sprint planning seals. §14 Version 4.01→4.02, Last Updated 2026-05-22→2026-05-25. Authority: Head of Specs Team (OA-01, 2026-05-25__scheduled, 2026-05-25). |
 | 4.01 | 2026-05-22 | **BLG-GOV-31 (OA-01, 2026-05-22__scheduled): sprint_planning_prompt.md v3.4→v3.6 — staging-only AC designation + gate-conditional deferred items advisory.** §7 source prompt header updated v3.4→v3.6. §14 Sprint Planning Engine v3.4→v3.6. §14 Version 4.00→4.01/2026-05-22. Changes: (v3.5 LL-v3.9-P3-2) §7 — staging-only evidence designation paragraph added: flag ACs that cannot be verified in CI with `[staging-only evidence]` at planning time; designation pre-stages backlog filing and prevents surprise P3 notations at execution. (v3.6 BLG-GOV-31) STEP 1 — §1.4 Gate-Conditional Deferred Items subsection added: when items are deferred at planning with a gate_condition, sprint_capacity.md must include a Conditional (Deferred) table; mandatory re-invocation advisory added. Authority: Head of Specs Team (OA-01, 2026-05-22__scheduled, 2026-05-22). |
 | 4.00 | 2026-05-22 | **BLG-GOV-30 (OA-01, 2026-05-22__scheduled): shared_standards.md v3.2→v3.3 — staging_only_evidence field in §16.11 sprint_backlog.md Schema.** §14 Shared Standards v3.2→v3.3. §14 Version 3.99→4.00/2026-05-22. Change: §16.11 ST-xx item template — `**Staging-only ACs:**` field added after `**Notes:**`; documents the `[staging-only evidence]` tag from sprint_planning_prompt.md §7 (LL-v3.9-P3-2) within the canonical sprint backlog schema so the Execution Engine can identify ACs requiring human staging sign-off. Authority: Head of Specs Team (OA-01, 2026-05-22__scheduled, 2026-05-22). |
 | 3.99 | 2026-05-22 | **execution_prompt.md v3.26→v3.27 — STEP 4 merge gate state sync on session resume (OA-03, v3.9 post-ship closure LL-v3.9-P3-1).** §8 source prompt header updated v3.26→v3.27. §14 Execution Engine Source v3.26→v3.27. §14 Version 3.98→3.99/2026-05-22. Change: STEP 4 — merge gate state sync block added at section entry: when invoking in a fresh session, check `gh pr view` for each EPIC in `epics_pending`; if `mergedAt` non-null, update `epics_merged`/`epics_pending`/`pr_status` before proceeding; if all merged, skip to STEP 5 directly. Prevents stale merge_gate state when EPICs merge between sessions. Authority: Head of Specs Team (OA-03, v3.9 post-ship closure, 2026-05-22). |

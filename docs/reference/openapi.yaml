@@ -1889,7 +1889,7 @@ paths:
         red flag event frequency, override rate, top rule breach, and trade plan
         adherence rate. Validation metrics from pre_entry_validation_log; event
         metrics from red_flag_events. period=7d (default) or 30d.
-        Canonical contract: docs/specs/api_contracts/analytics_endpoints.md §GET /analytics/arc5-compliance
+        Canonical contract: docs/specs/api_contracts/arc5_compliance_analytics.md
       parameters:
         - name: period
           in: query
@@ -3751,6 +3751,11 @@ components:
   /trade-plans/{plan_id}/generate-thesis:
     post:
       summary: Generate a setup thesis via Gemini Flash
+      description: |
+        Calls Gemini Flash to generate a concise setup thesis for the trade plan.
+        Returns available=true with thesis text on success; available=false with error
+        on graceful degradation (no API key, package missing, or API failure).
+        Canonical contract: docs/specs/api_contracts/gemini_thesis_generation.md
       tags: [Trade Plans]
       parameters:
         - name: plan_id
