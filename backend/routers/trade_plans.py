@@ -220,6 +220,34 @@ def delete_plan(plan_id: str):
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
+class GeneratePlanRequest(BaseModel):
+    ticker: str
+    market: str = "US"
+    setup_type: Optional[str] = None
+    signal_data: Optional[dict] = None
+
+
+@router.post("/generate-plan")
+def generate_plan(body: GeneratePlanRequest):
+    """POST /trade-plans/generate-plan — generate all plan fields from ticker + signal.
+
+    Does not require a saved plan. Accepts form data and signal data in the request body.
+    Returns all fields: setup_thesis, entry_rationale, confirmation_criteria,
+    early_exit_conditions, r_target.
+    """
+    try:
+        from services.gemini_service import generate_full_plan
+        result = generate_full_plan(
+            ticker=body.ticker,
+            market=body.market,
+            setup_type=body.setup_type,
+            signal_data=body.signal_data,
+        )
+        return {"status": "ok", "data": result}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
 @router.post("/{plan_id}/generate-thesis")
 def generate_thesis(plan_id: str):
     """POST /trade-plans/{plan_id}/generate-thesis — generate thesis via Claude Haiku.

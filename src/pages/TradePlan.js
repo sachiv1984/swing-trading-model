@@ -668,7 +668,7 @@ export default function TradePlan() {
                 <Sparkles size={12} />
                 Generate thesis
               </button>
-              {HAS_GEMINI && editId && (
+              {HAS_GEMINI && form.ticker && (
                 <button
                   type="button"
                   data-testid="improve-with-ai-btn"
@@ -677,11 +677,28 @@ export default function TradePlan() {
                   onClick={async () => {
                     setIsGeminiLoading(true);
                     try {
-                      const res = await apiFetch(`${API_BASE}/trade-plans/${editId}/generate-thesis`, { method: "POST" });
+                      const res = await apiFetch(`${API_BASE}/trade-plans/generate-plan`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          ticker: form.ticker,
+                          market: form.market,
+                          setup_type: form.setup_type,
+                          signal_data: linkedSignal || null,
+                        }),
+                      });
                       const json = await res.json();
                       const d = json?.data;
-                      if (d?.available && d?.thesis) {
-                        setForm((prev) => ({ ...prev, setup_thesis: d.thesis }));
+                      if (d?.available && d?.fields) {
+                        const f = d.fields;
+                        setForm((prev) => ({
+                          ...prev,
+                          ...(f.setup_thesis ? { setup_thesis: f.setup_thesis } : {}),
+                          ...(f.entry_rationale ? { entry_rationale: f.entry_rationale } : {}),
+                          ...(f.confirmation_criteria ? { confirmation_criteria: f.confirmation_criteria } : {}),
+                          ...(f.early_exit_conditions ? { early_exit_conditions: f.early_exit_conditions } : {}),
+                          ...(f.r_target != null ? { r_target: f.r_target } : {}),
+                        }));
                         setIsAiDraft(true);
                       }
                     } catch (_) {}
