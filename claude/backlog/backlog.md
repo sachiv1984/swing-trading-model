@@ -1142,6 +1142,33 @@ ST-02 and ST-04 introduced Arc5ComplianceSection (four stat cards: Red Flag Even
 
 ---
 
+### BLG-QA-29 — Staging verification for Gemini thesis generation (ST-12 staging-only AC)
+**Priority:** P2 (Medium)
+**Type:** QA / Staging Verification
+**Owner:** QA Lead
+**Source:** v4.0 ST-12 EPIC-03 — staging-only AC per CLAUDE.md §2
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.1
+
+**Problem**
+ST-12 (Gemini Flash base wiring) introduced `POST /trade-plans/{plan_id}/generate-thesis` and the "Improve with AI" button in TradePlan. The acceptance criteria for thesis generation requires a live `GEMINI_API_KEY`. This cannot be verified in CI. Per CLAUDE.md §2, a backlog item must be filed before the PR opens.
+
+**Scope**
+- Configure `GEMINI_API_KEY` in staging environment (Render backend env vars)
+- Configure `REACT_APP_GEMINI_API_KEY` in staging frontend (Render Static Site env vars)
+- Test: create or open a trade plan in edit mode on staging
+- Verify "Improve with AI" button appears and calls the endpoint
+- Verify thesis text is generated and populates the textarea
+- Record sign-off date in `qa_evidence_EPIC-03.md` DoQ block
+
+**Acceptance Criteria**
+- AC-01: `POST /trade-plans/{plan_id}/generate-thesis` returns thesis text when GEMINI_API_KEY is set on staging
+- AC-02: "Improve with AI" button visible on TradePlan edit page when REACT_APP_GEMINI_API_KEY set
+- AC-03: Button click generates thesis and populates setup_thesis textarea
+- AC-04: Sign-off date recorded in qa_evidence_EPIC-03.md
+
+---
+
 ### BLG-QA-30 — Staging verification: ST-05 ticker validation live Yahoo Finance rejection path
 **Priority:** P2 (Medium)
 **Type:** QA / Staging Verification
@@ -1474,6 +1501,31 @@ Staging environment is currently manually re-synced after each main branch merge
 - Documentation-only commits do not trigger a deploy
 - Free-tier build minute impact assessed and documented
 - BLG-OPS-25 dependency satisfied (deploy hook available for smoke test integration)
+
+---
+
+### BLG-OPS-28 — Staging deploy live verification (ST-09 staging-only AC)
+**Priority:** P2 (Medium)
+**Type:** Operations / CI/CD
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-09 staging-only AC — v4.0 sprint execution 2026-05-24
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.1
+
+**Problem**
+ST-09 (BLG-OPS-27) implements the staging deploy workflow and deploy hook mechanism, but the AC "staging auto-deploys on main merge" requires a live Render environment with `RENDER_STAGING_DEPLOY_HOOK` secret configured. This cannot be verified in CI.
+
+**Scope**
+- Set `RENDER_STAGING_DEPLOY_HOOK` secret in GitHub repo settings (Render dashboard → staging service → Settings → Deploy Hook)
+- Merge a code-change commit to main and confirm Render dashboard shows a triggered deploy
+- Merge a docs-only commit and confirm no deploy is triggered
+- Record staging sign-off date in BLG-OPS-27 post-verification note
+
+**Acceptance Criteria**
+- `RENDER_STAGING_DEPLOY_HOOK` secret configured
+- Code-change merge triggers Render staging deploy (confirmed in Render dashboard)
+- Docs-only commit does not trigger deploy (path filter verified)
+- Results recorded as staging sign-off evidence
 
 ---
 

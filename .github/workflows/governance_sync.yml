@@ -25,8 +25,9 @@ jobs:
           # Uses $BEFORE..$AFTER to cover every commit in a batch push (not just the last)
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.event.after }}"
-          # Guard: null SHA (0000…) means new branch first push — git log range is invalid
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+          # Guard: null SHA (new branch) or non-ancestor BEFORE (force-push/rebase) — range is invalid
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || \
+             ! git merge-base --is-ancestor "$BEFORE" "$AFTER" 2>/dev/null; then
             ALL_MSGS=$(git log origin/main.."$AFTER" --pretty=%B)
           else
             ALL_MSGS=$(git log "$BEFORE".."$AFTER" --pretty=%B)

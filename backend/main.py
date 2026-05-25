@@ -262,6 +262,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_pre_entry_validation_log_table FAILED at startup: %s", _e)
     try:
+        from database import ensure_gemini_audit_log_table
+        ensure_gemini_audit_log_table()
+        _log.info("ensure_gemini_audit_log_table: OK")
+    except Exception as _e:
+        _log.error("ensure_gemini_audit_log_table FAILED at startup: %s", _e)
+    try:
         from utils.feature_flags import log_flag_states
         log_flag_states()
     except Exception as _e:

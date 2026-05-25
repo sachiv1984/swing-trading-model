@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-05-20
-**Cycle:** 2026-04-29__release-v3.1 (ST-01)
+**Version:** 0.3
+**Last Updated:** 2026-05-24
+**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12)
 
 ---
 
@@ -190,12 +190,61 @@ Retrieve the trade plan(s) linked to a specific position.
 }
 ```
 
+## POST /trade-plans/{plan_id}/generate-thesis
+
+Generate a setup thesis for an existing trade plan using Gemini Flash.
+
+Returns a generated thesis when `GEMINI_API_KEY` is configured. Returns a graceful error payload (HTTP 200 with `available: false`) when the key is absent or the API call fails.
+
+**Authentication:** Standard API key authentication.
+
+### Path Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| plan_id | UUID | Trade plan ID |
+
+### Response (HTTP 200 — key configured, generation successful)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "thesis": "Strong momentum breakout above 52-week high with volume confirmation...",
+    "model_version": "gemini-1.5-flash",
+    "prompt_version": "v1.0",
+    "input_hash": "a3f2c1d4e5b6...",
+    "output_hash": "9f8e7d6c5b4a...",
+    "available": true
+  }
+}
+```
+
+### Response (HTTP 200 — key absent or API error)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "available": false,
+    "error": "GEMINI_API_KEY not configured"
+  }
+}
+```
+
+### Error Responses
+
+| HTTP status | Description |
+|------------|-------------|
+| 404 | Trade plan not found |
+
 ---
 
 ## Changelog
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.3 | 2026-05-24 | ST-12 (BLG-BE-19, v4.0 EPIC-03): Add POST /trade-plans/{plan_id}/generate-thesis — Gemini Flash thesis generation |
 | 0.2 | 2026-05-20 | Add pre_entry_override_acknowledged to POST/PUT schemas — ST-03 EPIC-01 v3.8 |
 | 0.1 | 2026-04-30 | Initial contract — ST-01 EPIC-01 v3.1 |
 

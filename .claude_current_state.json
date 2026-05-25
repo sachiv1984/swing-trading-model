@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-05-22__release-v4.0",
   "cycle_name": "Release Planning — v4.0 Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance",
-  "status": "Sprint_Planning_Complete",
-  "engine": "release_planning",
+  "status": "Executing",
+  "engine": "execution",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-05-22__release-v4.0/stage4_backlog_slice.md",
   "sprint_sealed": true,

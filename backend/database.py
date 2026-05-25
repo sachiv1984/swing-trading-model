@@ -1343,3 +1343,84 @@ def get_red_flag_events(
             )
             items = [dict(r) for r in cur.fetchall()]
     return {"total": total, "page": page, "page_size": page_size, "items": items}
+
+
+def ensure_gemini_audit_log_table() -> None:
+    """Create gemini_audit_log table for ST-07 AI compliance audit trail."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS gemini_audit_log (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    plan_id UUID,
+                    model_version TEXT NOT NULL,
+                    prompt_version TEXT NOT NULL,
+                    input_hash TEXT NOT NULL,
+                    output_hash TEXT NOT NULL,
+                    generated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+                    prompt_tokens INTEGER,
+                    completion_tokens INTEGER,
+                    total_tokens INTEGER,
+                    estimated_cost_usd NUMERIC(12, 8)
+                )
+            """)
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_gal_generated_at ON gemini_audit_log (generated_at DESC)"
+            )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_gal_plan_id ON gemini_audit_log (plan_id)"
+            )
+        conn.commit()
+
+
+def create_gemini_audit_entry(
+    plan_id: Optional[str],
+    model_version: str,
+    prompt_version: str,
+    input_hash: str,
+    output_hash: str,
+    prompt_tokens: Optional[int] = None,
+    completion_tokens: Optional[int] = None,
+    total_tokens: Optional[int] = None,
+    estimated_cost_usd: Optional[float] = None,
+) -> None:
+    """Append audit record for a Gemini thesis generation call (ST-07)."""
+    try:
+        ensure_gemini_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """INSERT INTO gemini_audit_log
+                       (plan_id, model_version, prompt_version, input_hash, output_hash,
+                        prompt_tokens, completion_tokens, total_tokens, estimated_cost_usd)
+                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                    (
+                        plan_id,
+                        model_version,
+                        prompt_version,
+                        input_hash,
+                        output_hash,
+                        prompt_tokens,
+                        completion_tokens,
+                        total_tokens,
+                        estimated_cost_usd,
+                    ),
+                )
+            conn.commit()
+    except Exception:
+        pass
+
+
+def purge_gemini_audit_log_older_than_90_days() -> int:
+    """Delete gemini_audit_log rows older than 90 days. Returns rows deleted."""
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "DELETE FROM gemini_audit_log WHERE generated_at < NOW() - INTERVAL '90 days'"
+                )
+                deleted = cur.rowcount
+            conn.commit()
+        return deleted
+    except Exception:
+        return 0
