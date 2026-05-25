@@ -1,13 +1,44 @@
 """
 Ticker Universe Router (DS-01 / ST-01)
-Contract: docs/specs/api_contracts/screener_api_contract.md
+Contract: docs/specs/api_contracts/ticker_universe_api_contract.md
 """
+import concurrent.futures
+import os
+
+import yfinance as yf
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from services.ticker_universe_service import get_all_tickers, add_ticker, soft_delete_ticker
 
 router = APIRouter(prefix="/ticker-universe", tags=["Screener"])
+
+
+def _validate_ticker_yfinance(ticker: str) -> str | None:
+    """
+    Validate ticker via Yahoo Finance with a 5-second timeout.
+
+    Returns None when the ticker is recognised and tradeable.
+    Returns an error detail string when invalid, unknown, or the lookup times out.
+
+    Bypass entirely by setting env var SKIP_TICKER_VALIDATION=true (CI / integration tests).
+    """
+    def _fetch() -> bool:
+        info = yf.Ticker(ticker).info
+        return bool(info.get("quoteType"))
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(_fetch)
+        try:
+            valid = future.result(timeout=5.0)
+        except concurrent.futures.TimeoutError:
+            return "Ticker validation timed out — check symbol and retry"
+        except Exception:
+            return f"Ticker '{ticker}' not found or not tradeable"
+
+    if not valid:
+        return f"Ticker '{ticker}' not found or not tradeable"
+    return None
 
 
 class AddTickerRequest(BaseModel):
@@ -39,8 +70,15 @@ def create_ticker(request: AddTickerRequest):
     Add a ticker to the screener universe.
     Re-activates soft-deleted tickers on conflict.
     Returns 400 if market is not UK or US, or ticker is blank.
+    Returns 422 if the ticker symbol is not recognised by Yahoo Finance.
+    Set SKIP_TICKER_VALIDATION=true to bypass the Yahoo Finance lookup (CI / tests).
     """
     try:
+        ticker_upper = request.ticker.strip().upper()
+        if not os.getenv("SKIP_TICKER_VALIDATION", "").lower() == "true":
+            error = _validate_ticker_yfinance(ticker_upper)
+            if error:
+                raise HTTPException(status_code=422, detail=error)
         row = add_ticker(
             ticker=request.ticker,
             market=request.market,
@@ -48,6 +86,8 @@ def create_ticker(request: AddTickerRequest):
             industry=request.industry,
         )
         return {"status": "ok", "data": row}
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
