@@ -1100,3 +1100,37 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-04.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md (all DoQ sign-off 2026-05-14)
 - Deviations filed: DEV-01/DEV-02 in EPIC-01 (sessionStorage, PATCH stop update); DEV-01 in EPIC-03 (RQ v5); DEV-01 in EPIC-02 (useState dismiss) — all P3
 - Test scenarios referenced: tests/e2e/epic01-v34-lifecycle.spec.js (10 scenarios); tests/e2e/epic02-v34-risk-prompts.spec.js (10 scenarios); tests/e2e/epic03-v34-frontend.spec.js (16 scenarios)
+
+---
+
+## Sprint: 2026-05-22__release-v4.0
+**Date:** 2026-05-25
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Arc 5 compliance analytics endpoint — GET /analytics/arc5-compliance returning validation_pass_rate_by_rule, events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate; pre_entry_validation_log table | docs/specs/api_contracts/analytics_endpoints.md v2.2.0; docs/specs/metrics_definitions.md#Arc 5 Compliance Metrics | None |
+| EPIC-01 | Arc5ComplianceSection.js — "Red Flag Events/Week", "Override Rate", "Trade Plan Adherence", "Top Rule Breach" stat cards on PerformanceAnalytics page (§19) | docs/design/2026-05-22__release-v4.0/arc5-analytics-metrics/ux_spec.md | Staging-only: observable rendering deferred → BLG-QA-28 |
+| EPIC-01 | SI-01→SI-03 Playwright integration test — tests/e2e/si01-si03-integration.spec.js (8 scenarios: SC-SI-01a/b/c, SC-SI-03a/b/c, SC-SI-PATH-01/02) | docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/pre-entry-validation; docs/specs/api_contracts/red_flag_journal.md | None |
+| EPIC-02 | Ticker symbol validation at POST /ticker-universe — live Yahoo Finance lookup gate; HTTP 422 on invalid/unknown symbol; SKIP_TICKER_VALIDATION bypass for CI | docs/specs/api_contracts/ticker_universe_api_contract.md v1.2 | Staging-only: live rejection path deferred → BLG-QA-30 |
+| EPIC-02 | Red flag journal security review — PASS (auth, PII, SQL injection, response leakage); review doc filed | docs/specs/api_contracts/red_flag_journal.md | None |
+| EPIC-02 | Starlette CVE remediation — starlette==1.0.1 (from 0.49.1); remediates PYSEC-2026-161 auth bypass | backend/requirements.txt | None |
+| EPIC-03 | Gemini Flash base wiring — POST /trade-plans/{plan_id}/generate-thesis; backend/services/gemini_service.py; "Improve with AI" button on TradePlan edit page | docs/specs/api_contracts/trade_plan_endpoints.md v0.3 | Staging-only: live API key + frontend staging deferred → BLG-QA-29 |
+| EPIC-03 | Gemini audit trail — gemini_audit_log table; fire-and-forget write per thesis generation; 90-day retention | docs/specs/api_contracts/trade_plan_endpoints.md | None |
+| EPIC-03 | Gemini cost tracking — prompt/completion/total tokens logged; estimated_cost_usd per call; 800k token/month alert threshold documented | docs/ops/gemini_cost_tracking.md | None |
+| EPIC-03 | CI/CD staging auto-deploy — .github/workflows/staging-deploy.yml with path filter (src/**, backend/**, public/**, package.json, requirements.txt) | docs/ops/staging_deploy_notes.md | Staging-only: live Render deploy hook verification deferred → BLG-OPS-28 |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-10 — PT-04 Quality Score backend | Gate not met: <20 closed trades (PO confirmed 2026-05-23) | BLG-FEAT-25 |
+| ST-11 — PT-04 Quality Score frontend | Gate not met: <20 closed trades (PO confirmed 2026-05-23) | BLG-FEAT-25 |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ 2026-05-24), qa_evidence_EPIC-02.md (DoQ 2026-05-24), qa_evidence_EPIC-03.md (DoQ 2026-05-25)
+- Deviations filed: None (spec deviations); 4 staging-only ACs deferred to backlog (BLG-QA-28/29/30, BLG-OPS-28)
+- Test scenarios referenced: docs/testing/analytics_scenarios.md; tests/e2e/si01-si03-integration.spec.js (8 scenarios)
