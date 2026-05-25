@@ -29,3 +29,36 @@ Cycle: 2026-05-22__release-v4.0
 - **merge_gate stale state on resume:** Second recurrence (v3.9 and v4.0). Prior v3.9 defer (Head of Specs Team, v3.10) was not actioned — escalating to Head of Specs Team with v4.1 target. If recurs in v4.2 without resolution, treat as a systemic process failure requiring CLAUDE.md §2 update.
 - **Staging-only AC retrospective designation:** Second recurrence (v3.9 and v4.0). Prior v3.9 defer (Head of Specs Team, v3.10) was not actioned — escalating to Head of Specs Team with v4.1 target. Pattern is consistent: ACs requiring live keys or live environments are only identified as staging-only during execution, not planning.
 - **Sprint close delayed past final EPIC merge:** First occurrence. Monitoring — if recurs in v4.1, add to STEP 4 hard gate enforcement.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-22__release-v4.0
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-05-25
+**Reviewed by:** PMO Lead
+**Prior cycle Phase 4 checked:** claude/cycles/2026-05-21__release-v3.9/lessons_learnt_cycle.md — found.
+- Prior Phase 4 deferred item 1: staging-only AC retrospective designation (Head of Specs Team, v3.10) → **RECURRENCE.** Same pattern in v4.0 (4 staging-only ACs surfaced at execution, not designated at planning). Action not yet applied by Head of Specs Team — escalating.
+- Prior Phase 4 deferred item 2 (positive): BLG-GOV-19 autonomous class and deferred_at_planning traceability both working correctly → confirmed continuing in v4.0.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Sprint close not executed immediately after final EPIC merge — delivery verification invocation triggered the STEP -1.1 recovery path (all EPICs merged; status still Executing). Sprint close created correctly via recovery path but this is the expected fallback, not the preferred pattern. | Phase 4 | C | defer | Confirm sprint_close_reminder.yml PR comment is firing after each EPIC merge. If firing, investigate why user did not re-invoke `run sprint` after EPIC-03 merge (2026-05-25T14:38:31Z). If not firing, fix the workflow. Target: confirm and resolve at v4.1 sprint kickoff. | PMO Lead | v4.1 |
+| Staging-only AC retrospective designation — second recurrence Phase 4 (v3.9 + v4.0): four staging-only ACs (BLG-QA-28/29/30, BLG-OPS-28) designated at execution sign-off rather than sprint planning. Prior v3.9 Phase 4 defer (Head of Specs Team, v3.10) not actioned. | Phase 4 | A | defer | ESCALATED (second recurrence — both Phase 3 and Phase 4): Head of Specs Team must action sprint_planning_prompt.md and sprint_backlog.md template update for staging-only AC designation at planning. Failure to action in v4.1 = systemic process failure requiring CLAUDE.md §2 update. | Head of Specs Team | v4.1 |
+| EPIC-02 PR number absent from execution_state.json (pr_number: null) at sprint close — PR #488 recovered at STEP 5.0A via gh pr view. No data loss; state corrected before seal. Root cause: EPIC-02 stories_complete status did not include PR opening step (engine did not open the EPIC-02 PR — it was opened and merged by the user directly). | Phase 4 | C | defer | When EPIC reaches stories_complete and the engine has not opened a PR, detect this state at EPIC completion and prompt the user that a PR is required per STEP 3.2.B. Currently the engine silently leaves pr_number null. Consider adding a STEP 5.0A guard: if epics_merged contains any EPIC with pr_number=null, search GitHub for matching PR before sealing. | Head of Specs Team | v4.1 |
+| Zero spec deviations, zero QA Fail results — 11/11 firm stories delivered. DoQ sign-off completed before delivery verification invoked (same-day for EPIC-01/02, morning-of for EPIC-03). No coordination friction. | Phase 4 | E | action-now | Positive: DoQ sign-off pipeline working correctly when sprint close is clean. Reclassified-to-autonomous stories (ST-02/04, ST-12) handled correctly with observable AC deferral + backlog items. BLG-QA-28/29 filed before PR opens — CLAUDE.md §2 gate satisfied. No change needed. | Sprint Execution Engine | — |
+
+**Recurrence Notes:**
+- **Staging-only AC retrospective designation:** Second recurrence (v3.9 + v4.0, both Phase 3 and Phase 4). Escalated. Head of Specs Team must action v4.1 or this becomes a CLAUDE.md §2 mandated rule.
+- **Sprint close delayed past final EPIC merge:** First occurrence (Phase 4 perspective). Sprint_close_reminder.yml behaviour needs investigation.
+- **EPIC-02 PR number null:** First occurrence. Not critical — STEP 5.0A gh pr view recovered correctly. Monitoring for v4.1.
+
+**What Went Well (Phase 4):**
+- Zero spec deviations across 11 stories — no deviation severity calls required
+- DoQ sign-off completed before delivery verification invoked — no coordination delay
+- Traceability matrix clean — all spec_references populated (ST-08 corrected at sprint close)
+- deferred_at_planning (ST-10/ST-11) traced correctly to BLG-FEAT-25 with cycle reference added
+- STEP -1.1 recovery path (sprint close at delivery verification invocation) worked correctly
+- TSG table fully dispositioned: TSG-v40-01/03 backlog items, TSG-v40-02 not_applicable
