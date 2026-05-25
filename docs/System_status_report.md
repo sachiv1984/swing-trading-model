@@ -1105,7 +1105,7 @@ The system is ready for:
 
 ## Sprint: 2026-05-22__release-v4.0
 **Date:** 2026-05-25
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — post-ship closure complete 2026-05-25
 
 ### Capabilities now live (merged this sprint)
 

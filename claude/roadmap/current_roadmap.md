@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-22 (release plan v4.0 published — RA:v4.0 annotation added; Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance)
+**Last Updated:** 2026-05-25 (post-ship closure v4.0 — RA:v4.0 annotation retired; v4.0 marked ✅ Complete)
 **Last rebalance:** 2026-05-22 (cycle 2026-05-22__scheduled — Standard-tier, no-change; 44 ideas from IW-20260522-01; 32 Promoted-Backlog, 10 Parked-cycle-1, 2 Rejected; DL-033)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,10 +10,10 @@
 
 ## 1. Current Version
 
-**v3.9** — Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches — ✅ Shipped 2026-05-22
-**Next planned release:** **v4.0** — Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance — 📋 Planned (release plan published 2026-05-22; 11 firm stories / 4 EPICs / 2 sprints; EPIC-04 conditional on 20+ closed trades)
+**v4.0** — Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance — ✅ Shipped 2026-05-25
+**Next planned release:** **v4.1** — [TBD]
 
-<!-- RA:v4.0:2026-05-22__release-v4.0 -->
+*RA:v4.0 retired — see roadmap_archive.md 2026-05-25 (post-ship closure 2026-05-22__release-v4.0).*
 
 *RA:v3.9 retired — see roadmap_archive.md 2026-05-22 (post-ship closure 2026-05-21__release-v3.9).*
 *RA:v3.8 retired — see roadmap_archive.md 2026-05-20 (post-ship closure 2026-05-19__release-v3.8).*
@@ -206,6 +206,8 @@ Today you find stocks through external research and add them to the watchlist ma
 
 **End state:** Your written strategy and your actual behaviour converge over time — not because the system forces you, but because every deviation is visible, recorded, and reviewed. The gap between the trader you intend to be and the trader you are becomes measurable and shrinkable.
 
+> **v4.0 delivery (2026-05-25):** Arc 5 compliance analytics layer shipped — GET /analytics/arc5-compliance (validation_pass_rate_by_rule, events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate); Arc5ComplianceSection.js on PerformanceAnalytics; SI-01→SI-03 Playwright integration suite (8 scenarios). Also shipped: Gemini Flash base wiring (POST /trade-plans/{plan_id}/generate-thesis), gemini_audit_log, cost tracking, CI/CD staging auto-deploy, starlette CVE remediation, ticker symbol validation, red flag endpoint security review. EPIC-04 PT-04 conditional deferred (gate not met — <20 closed trades, 4th deferral).
+
 -----
 
 ### Arc 6 — Performance Science (v4.0+)
@@ -230,6 +232,7 @@ Today you find stocks through external research and add them to the watchlist ma
 
 ## 3. Delivery Plan — Horizon: Now
 
+*v4.0 shipped 2026-05-25 (Verified). RA:v4.0 annotation retired (post-ship closure 2026-05-22__release-v4.0).*
 *v2.5 shipped 2026-04-10 (Verified_with_deviations). RA:v2.5 annotation retired to roadmap_archive.md 2026-04-10.*
 *v2.6 shipped 2026-04-11 (Verified). RA:v2.6 annotation retired 2026-04-16 (post-ship closure v2.7 — v2.6 closure was not run standalone).*
 *v2.7 shipped 2026-04-16 (Verified). RA:v2.7 annotation retired to roadmap_archive.md 2026-04-16 (post-ship closure v2.7).*
@@ -273,7 +276,7 @@ Items in this section are sequenced and ready for planning when the current vers
 |Pre-Trade Research View  |PT-02|M     |✅ Shipped v3.2 — frontend delivered (research page, ticker data, news, nav integration)             |
 |Prospective Heat at Entry|PT-03|S     |✅ Shipped v3.2 — prospective heat metric integrated into research view                             |
 |Pre-Trade Entry Checklist|PT-05|M     |✅ Shipped v3.2 — checklist component in Trade Plan form, pre-population, persistence               |
-|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01 — ⏸️ Parked (v3.6/v3.7/v3.8/v3.9 conditional defers; gate not met; PO decision 2026-05-19 to park formally — re-open when 20+ closed trades confirmed; PO to document written rationale at v4.0 planning if gate still unmet)|
+|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01 — ⏸️ Parked (v3.6/v3.7/v3.8/v3.9/v4.0 conditional defers — 5 consecutive cycles; gate not met; PO decision 2026-05-19 to park formally — re-open when 20+ closed trades confirmed; PO written rationale required at v4.1 sprint planning per verification_report.md §5(c))|
 
 **Arc 2 end-state target:** Every entry is preceded by a structured research view, a completed checklist, and a saved trade plan. The quality of entry decisions is captured and measurable, not assumed.
 
@@ -401,8 +404,9 @@ When evaluating new features:
 |**v3.7** ✅  |Signal-to-Watchlist Workflow + Arc 2 Completion + Governance Hardening|EPIC-01: signals `watchlisted` status + PATCH /signals/{id}; Add to Watchlist CTA on signal cards; SignalContextPanel in trade plan form (entry_rationale + confirmation_criteria pre-pop); 7 Playwright scenarios. EPIC-03: execution_prompt.md v3.24 (3 patches); qa_evidence_template.md v1.1. EPIC-04: BLG-QA-20/OPS-16/FE-35/GOV-23 debt clearance; OA-RP-05 resolved. EPIC-02 (PT-04) deferred — gate not met (< 20 closed trades) — ✅ Shipped 2026-05-18 — cycle: 2026-05-18__release-v3.7|
 |**v3.8** ✅  |Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management|EPIC-04: TickerUniverse.js management page (add/toggle/delete/filter); public.tickers startup sync retired; ticker_universe sole authoritative source; BLG-GOV-24 governance debt (gh_issue_template.md §14 + PR template). EPIC-03: setup_type dropdown (6 options, BLG-FEAT-23); collapsible news context panel (BLG-FE-36); AI thesis generation template engine + Gemini-gated "Improve with AI" (BLG-FEAT-24). EPIC-01: SI-01 §13 gate PASS (8 binding conditions); GET /portfolio/pre-entry-validation (5 rules, strategy_rules.md v1.4 §4.2, 17 unit tests); PreEntryValidationPanel with override acknowledgement. Verified_with_deviations (1 P3 — resolved same release) — ✅ Shipped 2026-05-20 — cycle: 2026-05-19__release-v3.8|
 |**v3.9** ✅  |Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches|EPIC-01: Yahoo Finance crumb/401 retry + exponential backoff (ST-01); sector/industry fields restored (ST-02); DAY ticker removed + startup deactivation (ST-03); degraded-run warning banner (ST-04). EPIC-02: .L suffix stripped from Ticker Universe display (ST-05); company_name column + CSV backfill (ST-06). EPIC-03: Arc 5 SI-03 Red Flag Journal — red_flag_events table, GET /portfolio/red-flag-journal, SI-01 override event write, RedFlagJournal.js frontend (ST-07/08). EPIC-04: 5 governance carry-forward patches — execution_prompt.md v3.26, sprint_planning_prompt.md v3.4, release_planning_prompt.md v2.31, delivery_verification_prompt.md v2.5, PR template v1.2 (ST-09/10/11/12). Zero deviations — ✅ Shipped 2026-05-22 — cycle: 2026-05-21__release-v3.9|
-|**v3.8–v4.0**|Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
-|**v3.8–v4.0**|Arc 5: Strategy Integrity                                             |Pre-entry rule validation, behavioural drift detection, red flag journal, strategy version comparison — 📋 Planned                         |
+|**v4.0** ✅  |Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance         |EPIC-01: GET /analytics/arc5-compliance (5 metrics); Arc5ComplianceSection.js; SI-01→SI-03 Playwright integration (8 scenarios). EPIC-02: ticker symbol validation (422 gate); red flag security review (PASS); starlette CVE (1.0.1). EPIC-03: Gemini Flash wiring (POST /trade-plans/{plan_id}/generate-thesis); gemini_audit_log; cost tracking; CI/CD staging auto-deploy. Zero deviations — ✅ Shipped 2026-05-25 — cycle: 2026-05-22__release-v4.0|
+|**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
+|**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |
 
 -----

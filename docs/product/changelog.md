@@ -3,9 +3,42 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-22
+**Last Updated:** 2026-05-25
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v4.0 — Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance — 2026-05-25
+Cycle: 2026-05-22__release-v4.0
+Verified: Verified
+Verification report: claude/cycles/2026-05-22__release-v4.0/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Arc 5 compliance analytics — GET /analytics/arc5-compliance delivering validation_pass_rate_by_rule, events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate; pre_entry_validation_log table; Arc5ComplianceSection.js frontend on PerformanceAnalytics §19; SI-01→SI-03 Playwright integration suite (8 scenarios) (ST-01/02/03/04) | docs/specs/api_contracts/analytics_endpoints.md v2.2.0; docs/specs/metrics_definitions.md#Arc 5 Compliance Metrics; docs/design/2026-05-22__release-v4.0/arc5-analytics-metrics/ux_spec.md; docs/reference/openapi.yaml |
+| EPIC-02 | Ticker Quality & Security — live Yahoo Finance symbol validation at POST /ticker-universe (HTTP 422 on unknown symbol; SKIP_TICKER_VALIDATION CI bypass); red flag endpoint auth/PII security review (PASS); starlette CVE remediation (starlette==1.0.1; PYSEC-2026-161 closed) (ST-05/06/13) | docs/specs/api_contracts/ticker_universe_api_contract.md v1.2; docs/specs/api_contracts/red_flag_journal.md; backend/requirements.txt |
+| EPIC-03 | AI Governance & CI/CD — Gemini Flash base wiring (POST /trade-plans/{plan_id}/generate-thesis; "Improve with AI" button on TradePlan edit); gemini_audit_log table (fire-and-forget, 90-day retention); token/cost tracking ($0.075/$0.30 per M tokens; 800k alert threshold); CI/CD staging auto-deploy (.github/workflows/staging-deploy.yml with path filter) (ST-07/08/09/12) | docs/specs/api_contracts/trade_plan_endpoints.md v0.3; docs/ops/gemini_cost_tracking.md; backend/routers/test.py (60→61) |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] BLG-FEAT-36: SI-01 validation pass/fail rate by rule — backend metric endpoint
+- [ST-02] BLG-FEAT-37: Red flag event frequency metric — backend + frontend
+- [ST-03] BLG-QA-25: E2E Playwright test — SI-01→SI-03 integration path
+- [ST-04] BLG-FEAT-39: Trade plan adherence rate metric — backend + frontend
+- [ST-05] BLG-BE-15: Validate ticker symbol on add
+- [ST-06] BLG-GOV-37: Red flag endpoint auth and PII review
+- [ST-07] BLG-GOV-35: Gemini audit trail — log AI thesis generation calls
+- [ST-08] BLG-OPS-26: Gemini cost tracking — token usage and cost per call
+- [ST-09] BLG-OPS-27: CI/CD automated staging re-deploy on main merge
+- [ST-12] BLG-BE-19: Gemini Flash base wiring (hard-prerequisite; AMD-20260523-01)
+- [ST-13] CVE PYSEC-2026-161: Starlette security upgrade to ≥1.0.1 (emergency; AMD-20260523-01)
+
+Sign-off: Product Owner — 2026-05-25
+QA sign-off: Director of Quality — 2026-05-25
 
 ---
 

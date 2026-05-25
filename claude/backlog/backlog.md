@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-22 (post-ship closure 2026-05-21__release-v3.9 — 7 items marked COMPLETE: BLG-TECH-10, BLG-BE-10, BLG-BE-11, BLG-BE-12, BLG-FE-37, BLG-FE-38, BLG-GOV-25; BLG-FEAT-25 STALE note added)
+**Last Updated:** 2026-05-25 (groom backlog post-ship v4.0 — 2 ephemeral Release Slice sections removed (v3.9, v4.0); 0 orphans; 0 priority changes; backlog HEALTHY)
 **Last rebalance:** 2026-05-22 (cycle 2026-05-22__scheduled — DL-033; IW-20260522-01; 32 new items: BLG-GOV-30–39, BLG-SPEC-33–37, BLG-BE-16–18, BLG-FE-40–43, BLG-FEAT-36–39, BLG-OPS-25–27, BLG-QA-25–27)
 
 > ⚠️ Standing Notice
@@ -376,6 +376,7 @@ No metric tracks whether entries were executed within the planned entry zone. `e
 **Source:** IDEA-metrics-analytics-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
 **Effort:** M (~2–3 days)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-01 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Problem**
 GET /portfolio/pre-entry-validation (SI-01, shipped v3.8) returns per-attempt pass/fail results but no aggregate metric tracks pass/fail rate broken down by individual rule type over time. Understanding which rules most frequently block entries reveals behavioural patterns (e.g., "regime gate fails 40% of the time") without requiring SI-02 (drift detection).
@@ -400,6 +401,7 @@ GET /portfolio/pre-entry-validation (SI-01, shipped v3.8) returns per-attempt pa
 **Source:** IDEA-metrics-analytics-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
 **Effort:** S (~1 day)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-02 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Problem**
 No canonical metric tracks red flag event frequency over time. Override rate and rule-breach-by-type distribution are queryable from red_flag_events (shipped v3.9) but not defined as named product metrics with specified aggregation periods and display locations. Defining these metrics makes them inputs to SI-05 Weekly Digest and the monthly P&L compliance section.
@@ -448,6 +450,7 @@ Monthly P&L report (shipped v3.1) covers financial performance. As Arc 5 ships c
 **Source:** IDEA-financial-reporting-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
 **Effort:** S (~1 day)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-04 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Gate criteria:** plan_id linkage actively captured on closed trades (requires active use of trade plan creation workflow).
 
@@ -806,6 +809,7 @@ Trade plan schema has grown incrementally. If the schema continues to change at 
 **Source:** User request — 2026-05-22
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-05 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Problem**
 When a user adds a ticker symbol and market to the universe, no validation is performed to confirm the ticker actually exists. Any arbitrary string can be saved, leading to junk entries that silently produce empty screener results or data fetch errors. Validating sector and industry at add-time gives immediate feedback and prevents invalid tickers from polluting the universe.
@@ -913,6 +917,7 @@ SI-02 (drift detection) and SI-04 (strategy version comparison) will add analyti
 **Source:** Session observation 2026-05-22 — BLG-FEAT-24 marked complete v3.8 but Gemini not wired into codebase; prerequisite for BLG-GOV-35 and BLG-OPS-26
 **Effort:** S (~1 day)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-12 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Problem**
 BLG-FEAT-24 (AI thesis generation) was marked complete in v3.8 but no Gemini code exists in the codebase — no `google-generativeai` dependency, no env var, no service, no endpoint. BLG-GOV-35 (Gemini audit trail) and BLG-OPS-26 (cost tracking) both instrument Gemini API calls; they have nothing to build on until the base wiring exists. This is a blocking prerequisite for both v4.0 EPIC-03 Sprint 2 stories.
@@ -1076,6 +1081,7 @@ ST-01 AC-04 ("screener run completes without >5% OHLCV failures under normal YF 
 **Source:** IDEA-qa-testing-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
 **Effort:** S (~1 day)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-03 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Problem**
 SC-RFJ-01/02/03 (v3.9) cover RFJ component-level display. The SI-01 → SI-03 integration path — where a SI-01 override event is written and subsequently appears in the Red Flag Journal — is not tested end-to-end. This integration path is the primary produce of the Arc 5 data pipeline and is critical to validate before SI-02/SI-04/SI-05 extend the event model.
@@ -1485,6 +1491,7 @@ Every delivery verification run begins with manual staging health checks. An aut
 **Source:** IDEA-finops-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
 **Effort:** S (~1 day)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-08 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Problem**
 BLG-FEAT-24 (AI thesis generation, shipped v3.8) uses the Gemini API in production with no cost monitoring. The Gemini free tier is not unlimited; tracking monthly call volume and projected costs provides early warning of approaching tier boundaries before unexpected billing occurs.
@@ -1510,6 +1517,7 @@ BLG-FEAT-24 (AI thesis generation, shipped v3.8) uses the Gemini API in producti
 **Source:** IDEA-infra-ops-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
 **Effort:** M (~1–2 days)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-09 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Problem**
 Staging environment is currently manually re-synced after each main branch merge. This introduces risk of forgotten staging updates and adds lag to delivery verification runs. Automating the staging re-deployment trigger on main merges removes the manual step and ensures staging is always current.
@@ -1550,6 +1558,31 @@ ST-09 (BLG-OPS-27) implements the staging deploy workflow and deploy hook mechan
 - Code-change merge triggers Render staging deploy (confirmed in Render dashboard)
 - Docs-only commit does not trigger deploy (path filter verified)
 - Results recorded as staging sign-off evidence
+
+---
+
+### BLG-OPS-29 — Add v4.0 new endpoints to api_performance_baseline.md re-run
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** Post-ship closure 2026-05-22__release-v4.0 — endpoint coverage drift check
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.1
+
+**Problem**
+`docs/ops/api_performance_baseline.md` was last updated at v2.7 (Supavisor re-run). v4.0 introduced two new endpoints not present in the baseline: GET /analytics/arc5-compliance (ST-01) and POST /trade-plans/{plan_id}/generate-thesis (ST-12). These endpoints have no p50/p95 measurement, no HTTP status expectation, and no ⚠️ flag threshold. Additional endpoints added since v2.7 may also be absent.
+
+**Scope**
+- Run api_performance_baseline measurement against staging environment
+- Include all endpoints in openapi.yaml not yet in the baseline table
+- Specifically confirm GET /analytics/arc5-compliance and POST /trade-plans/{plan_id}/generate-thesis are measured
+- Flag any p95 > 500ms per existing methodology
+- Update docs/ops/api_performance_baseline.md version header and Last Updated date
+
+**Acceptance Criteria**
+- All openapi.yaml endpoints present in api_performance_baseline.md measurement table
+- p50/p95 measurements recorded for GET /analytics/arc5-compliance and POST /trade-plans/{plan_id}/generate-thesis
+- Document version bumped and Last Updated set to run date
 
 ---
 
@@ -2030,6 +2063,7 @@ PO-02 (Journal Pattern Recognition) requires 6+ months of AI journal entries. PO
 **Source:** IDEA-ai-compliance-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
 **Effort:** M (~1–2 days)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-07 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Problem**
 BLG-FEAT-24 (AI thesis generation, shipped v3.8) generates AI setup thesis text using Gemini API in production. No audit trail records the model version, prompt version, or output hash per generation. As Gemini usage scales, retroactive compliance tracking becomes impossible. An audit trail should be implemented before usage volume increases.
@@ -2079,6 +2113,7 @@ Alpaca API keys (financial account access) and Gemini API keys have no defined r
 **Source:** IDEA-cybersecurity-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
 **Effort:** XS (~0.5 day)
 **Provisional-Target:** v4.0
+**Status: ✅ COMPLETE — v4.0 — ST-06 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
 
 **Problem**
 SI-03 Red Flag Journal endpoint (GET /portfolio/red-flag-journal, shipped v3.9) exposes trading strategy override events. A targeted review confirms: (1) the endpoint is protected by API key authentication (shipped v2.2), (2) response payloads do not expose PII or sensitive strategy parameters beyond event type and timestamp, (3) pagination does not leak adjacent users' data (single-user system, but confirm).
@@ -2177,53 +2212,4 @@ These are deliberate product decisions, not deferrals:
 
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
 
----
-
-## Release Slice — v3.9 (cycle: 2026-05-21__release-v3.9)
-
-<!-- release-plan-marker: RP:v3.9:2026-05-21__release-v3.9 -->
-
-*This section is ephemeral. Remove during `groom backlog` after v3.9 post-ship closure.*
-
-| EPIC | ST | Title | Source | Sprint |
-|------|----|-------|--------|--------|
-| EPIC-01 | ST-01 | Fix YF crumb/401 rate-limiting in screener batch | BLG-TECH-10 | Sprint 1 |
-| EPIC-01 | ST-02 | Fix sector/industry data dropped in screener batch | BLG-BE-10 | Sprint 1 |
-| EPIC-01 | ST-03 | Remove invalid DAY ticker / investigate PHNX.L | BLG-BE-11 | Sprint 1 |
-| EPIC-01 | ST-04 | Add degraded-run warning banner to screener results | BLG-FE-38 | Sprint 1 |
-| EPIC-02 | ST-05 | Strip .L suffix from Ticker Universe display labels | BLG-FE-37 | Sprint 1 |
-| EPIC-02 | ST-06 | Add company_name to ticker universe + management page | BLG-BE-12 | Sprint 1 |
-| EPIC-03 | ST-07 | Red Flag Journal — data model and backend | SI-03 | Sprint 2 |
-| EPIC-03 | ST-08 | Red Flag Journal — frontend display | SI-03 | Sprint 2 |
-| EPIC-04 | ST-09 | execution_prompt.md patches (test_scenarios + createPageUrl) | CF-2, CF-4 | Sprint 2 |
-| EPIC-04 | ST-10 | sprint_planning_prompt.md patch (planning-deferred) | CF-5 | Sprint 2 |
-| EPIC-04 | ST-11 | BLG-GOV-25 dry-run for plan release + delivery verification | BLG-GOV-25 | Sprint 2 |
-| EPIC-04 | ST-12 | QA evidence pre-merge enforcement — PR template | CF-3 (DoQ) | Sprint 2 |
-| EPIC-05 (cond.) | ST-13 | PT-04 Setup Quality Score — backend (conditional) | BLG-FEAT-25 | Sprint 2 |
-| EPIC-05 (cond.) | ST-14 | PT-04 Setup Quality Score — frontend (conditional) | BLG-FEAT-25 | Sprint 2 |
-
----
-
-## Release Slice — v4.0 (cycle: 2026-05-22__release-v4.0)
-
-<!-- release-plan-marker: RP:v4.0:2026-05-22__release-v4.0 -->
-
-*This section is ephemeral. Remove during `groom backlog` after v4.0 post-ship closure.*
-
-| EPIC | ST | Title | Source | Sprint |
-|------|----|-------|--------|--------|
-| EPIC-01 | ST-01 | SI-01 pass/fail rate by rule — backend metric endpoint | BLG-FEAT-36 | Sprint 1 |
-| EPIC-01 | ST-02 | Red flag event frequency metric — backend + frontend | BLG-FEAT-37 | Sprint 1 |
-| EPIC-01 | ST-03 | E2E Playwright test — SI-01→SI-03 integration path | BLG-QA-25 | Sprint 1 |
-| EPIC-01 | ST-04 | Trade plan adherence rate metric — backend + frontend | BLG-FEAT-39 | Sprint 1 |
-| EPIC-02 | ST-05 | Validate ticker symbol on add | BLG-BE-15 | Sprint 1 |
-| EPIC-02 | ST-06 | Red flag endpoint auth and PII review | BLG-GOV-37 | Sprint 1 |
-| EPIC-03 | ST-07 | Gemini audit trail — log AI thesis generation calls | BLG-GOV-35 | Sprint 2 |
-| EPIC-03 | ST-08 | Gemini cost tracking — token usage and cost per call | BLG-OPS-26 | Sprint 2 |
-| EPIC-03 | ST-09 | CI/CD automated staging re-deploy on main merge | BLG-OPS-27 | Sprint 2 |
-| EPIC-04 (cond.) | ST-10 | PT-04 Setup Quality Score — backend (conditional) | BLG-FEAT-25 | Sprint 2 |
-| EPIC-04 (cond.) | ST-11 | PT-04 Setup Quality Score — frontend (conditional) | BLG-FEAT-25 | Sprint 2 |
-| EPIC-03 | ST-12 | Gemini Flash base wiring | BLG-BE-19 | Sprint 2 | [ADDED AMD-20260523-01 — prerequisite for ST-07/ST-08] |
-| EPIC-02 | ST-13 | Starlette security upgrade to ≥1.0.1 | CVE PYSEC-2026-161 | Sprint 1 | [ADDED AMD-20260523-01 — emergency security fix] |
-<!-- amendment-marker: AMD:v4.0:2026-05-22__release-v4.0:AMD-20260523-01 -->
 

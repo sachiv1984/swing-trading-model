@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-22
+**Last Updated:** 2026-05-25
 
 ---
 
@@ -598,6 +598,34 @@ Identified during delivery verification (verification_report.md §6). **Zero tes
 | EPIC-04 | not_applicable — governance class | Governance prompt + template changes only; no observable UI behaviour; all ACs verifiable by diff |
 
 No TEST-GAP backlog items required.
+
+---
+
+## 23. Test Coverage Gaps — v4.0 (2026-05-22__release-v4.0)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v40-01 through TSG-v40-03). Two gaps actioned with backlog items; one not_applicable.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v40-01 | EPIC-01 | PerformanceAnalytics Arc5ComplianceSection rendering (ST-02/ST-04 observable ACs: stat cards visible, loading skeleton, error state) not covered by Playwright E2E | backlog_item_created — BLG-QA-28 (v4.1 provisional target) |
+| TSG-v40-02 | EPIC-02 | No test scenarios — starlette security pin, ticker validation (CI bypass), security review story | not_applicable — all EPIC-02 stories are backend/security class; CI tests cover accessible paths via SKIP_TICKER_VALIDATION bypass |
+| TSG-v40-03 | EPIC-03 | Gemini "Improve with AI" button and live thesis generation (ST-12 staging-only ACs) not covered by Playwright | backlog_item_created — BLG-QA-29 (covers live key and frontend button staging verification) |
+
+### 23.1 TSG-v40-01 — EPIC-01: Arc5ComplianceSection rendering not covered by Playwright
+
+**Identified:** 2026-05-25 (delivery verification 2026-05-22__release-v4.0)
+**Status:** Open — BLG-QA-28 filed
+**Owner:** QA & Testing Owner
+**Gap:** ST-02/ST-04 introduced Arc5ComplianceSection.js with observable ACs (stat cards rendering, loading skeleton, error state) on PerformanceAnalytics page (§19). No Playwright E2E scenarios cover these observable ACs. Code review only was performed per CLAUDE.md §2; BLG-QA-28 filed before PR opened.
+**Backlog item:** BLG-QA-28 — Playwright E2E coverage for Arc5ComplianceSection (v4.1 provisional target)
+
+### 23.2 TSG-v40-03 — EPIC-03: Gemini "Improve with AI" button staging-only ACs not covered
+
+**Identified:** 2026-05-25 (delivery verification 2026-05-22__release-v4.0)
+**Status:** Open — BLG-QA-29 filed
+**Owner:** QA & Testing Owner
+**Gap:** ST-12 introduced "Improve with AI" button on TradePlan edit page and POST /trade-plans/{plan_id}/generate-thesis. Observable ACs (button visibility in edit mode, endpoint call, setup_thesis population) require live GEMINI_API_KEY and are not testable in CI. Code review only per CLAUDE.md §2; BLG-QA-29 filed before PR opened.
+**Backlog item:** BLG-QA-29 — Staging verification for Gemini thesis generation (covers live key and frontend button staging verification)
 
 ---
 

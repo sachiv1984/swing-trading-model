@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Published
+Status: Superseded
 Release: v4.0
 Cycle: 2026-05-22__release-v4.0
-Last Updated: 2026-05-22
+Last Updated: 2026-05-25
+
+Superseded by: v4.0 ship — 2026-05-25
+Changelog: docs/product/changelog.md#v40
+Verification report: claude/cycles/2026-05-22__release-v4.0/verification_report.md
+Cycle: 2026-05-22__release-v4.0
 
 ## Release Scope — v4.0 Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance
 

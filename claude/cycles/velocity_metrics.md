@@ -47,8 +47,9 @@
 | v3.7  | 8       | 8         | 1.00     | Zero deviations — all 8 stories delivered; EPIC-02 PT-04 gate still not met (deferred to v3.8); scored_initiatives.md OA-RP-05 resolved |
 | v3.8  | 8       | 8         | 1.00     | 1 P3 deviation (DEV-EPIC04-ST09-01 — resolved same release); EPIC-02 PT-04 formally parked (gate not met); Arc 5 SI-01 foundation delivered |
 | v3.9  | 12      | 12        | 1.00     | Zero deviations — cleanest cycle in recent series; all 5 v3.8 governance carry-forward patches resolved; Arc 5 SI-03 Red Flag Journal delivered; EPIC-05 PT-04 deferred_at_planning (gate not met) |
+| v4.0  | 11      | 11        | 1.00     | AMD-20260523-01 added ST-12 (Gemini base wiring prereq) + ST-13 (Starlette CVE fix) mid-sprint; EPIC-04 PT-04 deferred_at_planning (gate not met, 4th deferral); all 11 firm stories delivered; zero spec deviations |
 
-**Rolling 6-cycle average (v3.4–v3.9):** 1.00
+**Rolling 6-cycle average (v3.5–v4.0):** 1.00
 
 ---
 

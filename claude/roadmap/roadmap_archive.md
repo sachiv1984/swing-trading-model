@@ -1,13 +1,29 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-22
+**Last Updated:** 2026-05-25
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v4.0 — Release Annotation
+
+**Original roadmap location:** §1 Current Version header (roadmap annotation block)
+**Status at retirement:** ✅ Complete — annotation retired post-ship
+**Retired from active roadmap:** 2026-05-25
+**Shipped version:** v4.0 (2026-05-25)
+**Cycle reference:** 2026-05-22__release-v4.0
+**Verification report:** claude/cycles/2026-05-22__release-v4.0/verification_report.md
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-25
+
+### Original Roadmap Entry
+
+v4.0 Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance: Arc 5 compliance analytics (GET /analytics/arc5-compliance — 5 metric fields; Arc5ComplianceSection.js); SI-01→SI-03 Playwright integration (8 scenarios); ticker symbol validation (POST /ticker-universe 422 gate); red flag endpoint security review (PASS); starlette CVE remediation (1.0.1); Gemini Flash base wiring (POST /trade-plans/{plan_id}/generate-thesis); gemini_audit_log (90-day retention); cost tracking ($0.075/$0.30 per M tokens); CI/CD staging auto-deploy (path-filtered workflow). 11/11 firm stories delivered. EPIC-04 PT-04 conditional deferred (gate not met — <20 closed trades, 4th deferral). Verified 2026-05-25. completed_cycle_count = 26.
 
 ---
 
