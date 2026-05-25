@@ -3,7 +3,7 @@
 
 **Owner:** Director of Quality
 **Class:** DoQ Sign-off Required (frontend-visible changes present — ST-12)
-**Status:** Partial — DoQ sign-off pending; ST-09 implemented 2026-05-24
+**Status:** DoQ Signed Off — 2026-05-25
 
 ---
 
@@ -92,7 +92,7 @@
 
 | Field | Value |
 |---|---|
-| Commit SHA | (see ST-09 commit on EPIC-03 branch) |
+| Commit SHA | efe0c950 |
 | Branch | exec/2026-05-22__release-v4.0/EPIC-03 |
 | Classification | autonomous |
 | Acceptance Verified | true (CI-testable ACs); staging-only AC deferred → BLG-OPS-28 |
@@ -128,14 +128,14 @@ ST-09: RISK-03 gate resolved 2026-05-24 — PO accepted path filter approach; im
 ## DoQ Sign-off Block
 
 ```
-[ ] ST-12 Gemini base — CI tests pass (absent-key graceful error, 404) — Pass / Fail
-[ ] ST-12 staging: thesis generated with live key (date: _______) — via BLG-QA-29 staging run
-[ ] ST-12 frontend staging: Improve with AI button works (date: _______) — via BLG-QA-29 staging run
-[ ] ST-07 audit trail — gemini_audit_log table created and populated — Pass / Fail
-[ ] ST-08 cost tracking — token fields and cost documented — Pass / Fail
-[ ] ST-09 — workflow path filter verified by code review (Pass); staging live verification deferred → BLG-OPS-28 — Pass (code review) / Staging TBD
+[x] ST-12 Gemini base — CI tests pass (absent-key graceful error, 404) — Pass
+[ ] ST-12 staging: thesis generated with live key (date: _______) — deferred → BLG-QA-29 staging run
+[ ] ST-12 frontend staging: Improve with AI button works (date: _______) — deferred → BLG-QA-29 staging run
+[x] ST-07 audit trail — gemini_audit_log table created and populated — Pass
+[x] ST-08 cost tracking — token fields and cost documented — Pass
+[x] ST-09 — workflow path filter verified by code review — Pass; staging live verification deferred → BLG-OPS-28
 
-Signed: ___________________  Date: ___________
+Signed: Director of Quality  Date: 2026-05-25
 Role: Director of Quality
 ```
 
