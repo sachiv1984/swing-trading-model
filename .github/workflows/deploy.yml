@@ -30,6 +30,7 @@ jobs:
     - name: Build
       env:
         REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
+        REACT_APP_GEMINI_API_KEY: ${{ secrets.REACT_APP_GEMINI_API_KEY }}
       run: CI=false npm run build
       
     - name: Deploy to GitHub Pages
