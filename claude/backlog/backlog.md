@@ -674,6 +674,29 @@ As Arc 5 ships SI-02, SI-04, and SI-05 alongside existing SI-01 and SI-03, the "
 
 ---
 
+### BLG-FE-44 — Research view: surface signal_type as Setup Type column
+**Priority:** P3 (Low)
+**Type:** Frontend / Backend
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** v4.0 sprint execution — out-of-scope change stashed and deferred
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.1
+
+**Problem**
+The Research page signal card shows Current Price, Signal, Status, ATR, and Entry Price but does not surface `signal_type` (e.g. "strong_momentum", "momentum"). This field is already in the signals table and available in `GET /research/{ticker}` response. Adding it gives traders immediate context on setup quality without navigating away.
+
+**Scope**
+- `backend/routers/research.py`: include `signal_type` in `_get_signal()` response dict (1-line change)
+- `src/pages/Research.js`: add `SetupTypeBadge` component; add 5th column to Price & Signal grid showing setup type with colour-coded badge (violet for strong_momentum, cyan for momentum)
+- No new endpoint, no schema change, no migration required
+
+**Acceptance Criteria**
+- AC-01: `GET /research/{ticker}` response includes `signal_type` field
+- AC-02: Research page Price & Signal section shows Setup Type badge alongside ATR and Entry Price
+- AC-03: strong_momentum → violet badge; momentum → cyan badge; null → dash
+
+---
+
 ### BLG-FE-43 — SI-05 Weekly Digest frontend component spec
 **Priority:** P2 (Medium)
 **Type:** Frontend / Spec
