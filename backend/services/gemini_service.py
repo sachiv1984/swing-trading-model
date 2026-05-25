@@ -14,13 +14,13 @@ import hashlib
 import json
 from typing import Optional
 
-GEMINI_COST_PER_INPUT_TOKEN = 0.075 / 1_000_000
-GEMINI_COST_PER_OUTPUT_TOKEN = 0.30 / 1_000_000
+GEMINI_COST_PER_INPUT_TOKEN = 0.10 / 1_000_000
+GEMINI_COST_PER_OUTPUT_TOKEN = 0.40 / 1_000_000
 GEMINI_MONTHLY_FREE_TIER_TOKEN_LIMIT = 1_000_000
 GEMINI_ALERT_THRESHOLD = 800_000
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-MODEL_VERSION = "gemini-1.5-flash"
+MODEL_VERSION = "gemini-2.0-flash"
 PROMPT_VERSION = "v1.0"
 
 _THESIS_PROMPT_TEMPLATE = """You are a systematic swing trader. Generate a concise setup thesis (2-3 sentences) for the following trade context.
