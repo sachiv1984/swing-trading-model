@@ -914,6 +914,28 @@ PreEntryValidationPanel (shipped v3.8) displays validation results and override 
 
 ---
 
+### BLG-FE-50 — Pre-entry check sizing validity: entry price not written correctly
+**Priority:** P2 (Medium)
+**Type:** Bug / Frontend
+**Owner:** Frontend Engineer
+**Source:** User observation 2026-05-26 — sizing validity check in pre-entry panel
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The Sizing Validity check in the pre-entry validation panel requires `entry_price` and `stop_price` query params to compute validity. The entry price value being passed appears to be written/formatted incorrectly, causing the sizing validity check to fail or return unexpected results.
+
+**Scope**
+- Investigate how `entry_price` is constructed and passed to the sizing validity endpoint from the pre-entry panel
+- Identify the formatting or serialisation error (e.g. wrong field source, stringified incorrectly, missing value)
+- Fix so that the sizing validity check receives a valid numeric entry price and returns a correct result
+
+**Acceptance Criteria**
+- Sizing validity check in pre-entry panel passes when a valid entry price and stop price are available
+- No regression to other pre-entry checks
+
+---
+
 ## 4. Backend & Data Backlog
 
 
