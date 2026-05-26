@@ -942,7 +942,7 @@ def ensure_trade_plans_table():
                     setup_type VARCHAR(50),
                     setup_thesis TEXT,
                     entry_rationale TEXT,
-                    regime_context_at_entry VARCHAR(50),
+                    regime_context_at_entry TEXT,
                     r_target NUMERIC(8,2),
                     early_exit_conditions TEXT,
                     confirmation_criteria TEXT,
@@ -956,6 +956,7 @@ def ensure_trade_plans_table():
             cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_position ON trade_plans(position_id) WHERE position_id IS NOT NULL")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_status ON trade_plans(status)")
         conn.commit()
+    ensure_regime_context_text_column()
 
 
 def create_trade_plan(portfolio_id: str, data: dict) -> dict:
@@ -1148,6 +1149,19 @@ def ensure_override_acknowledged_column():
         with conn.cursor() as cur:
             cur.execute(
                 "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS pre_entry_override_acknowledged BOOLEAN"
+            )
+        conn.commit()
+
+
+def ensure_regime_context_text_column():
+    """Widen regime_context_at_entry from VARCHAR(50) to TEXT (idempotent).
+
+    AI-generated regime context is a full sentence; VARCHAR(50) is too short.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ALTER COLUMN regime_context_at_entry TYPE TEXT"
             )
         conn.commit()
 
