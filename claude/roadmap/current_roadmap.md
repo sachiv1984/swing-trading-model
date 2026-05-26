@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v4.0** — Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance — ✅ Shipped 2026-05-25
-**Next planned release:** **v4.1** — [TBD]
+**Next planned release:** **v4.1** — Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning
+
+<!-- roadmap-annotation-marker: RA:v4.1:2026-05-26__release-v4.1 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-26__release-v4.1
+- Plan published: 2026-05-26
+- Cycle folder: claude/cycles/2026-05-26__release-v4.1/
+- Backlog slice: claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 *RA:v4.0 retired — see roadmap_archive.md 2026-05-25 (post-ship closure 2026-05-22__release-v4.0).*
 

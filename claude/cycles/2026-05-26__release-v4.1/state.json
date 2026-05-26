@@ -1,0 +1,110 @@
+{
+  "cycle_id": "2026-05-26__release-v4.1",
+  "release": "v4.1",
+  "date": "2026-05-26",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "prompt_schema_version": "v2",
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-05-26T00:20:00Z",
+
+  "sealed": {
+    "sealed_utc": "2026-05-26T00:20:00Z",
+    "sealed_assumptions": {
+      "timebox": "",
+      "capacity": ""
+    },
+    "state_snapshot_hash": ""
+  },
+
+  "mutation_seq": 10,
+  "assumptions": {
+    "timebox": "",
+    "capacity": ""
+  },
+
+  "locks": {
+    "backlog_lock": {
+      "required": true,
+      "lock_file": "claude/backlog/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-05-26__release-v4.1",
+      "owner_release": "v4.1",
+      "acquired_utc": "2026-05-26T00:10:00Z",
+      "txn_file": "claude/cycles/2026-05-26__release-v4.1/backlog_txn.json",
+      "txn_id": "BLTX-20260526-01",
+      "txn_state": "committed",
+      "marker": "RP:v4.1:2026-05-26__release-v4.1",
+      "status": "released"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-05-26__release-v4.1",
+      "owner_release": "v4.1",
+      "acquired_utc": "2026-05-26T00:16:00Z",
+      "txn_file": "claude/cycles/2026-05-26__release-v4.1/roadmap_txn.json",
+      "txn_id": "RMTX-20260526-01",
+      "txn_state": "committed",
+      "marker": "RA:v4.1:2026-05-26__release-v4.1",
+      "status": "released"
+    }
+  },
+
+  "mutations": [
+    {"seq": 1, "step": "STEP-0", "action": "init", "utc": "2026-05-26T00:01:00Z"},
+    {"seq": 2, "step": "STEP-1", "action": "readiness_pass", "utc": "2026-05-26T00:05:00Z"},
+    {"seq": 3, "step": "STEP-2", "action": "scope_extraction_pass", "utc": "2026-05-26T00:06:00Z"},
+    {"seq": 4, "step": "STEP-3", "action": "execution_plan_pass", "utc": "2026-05-26T00:07:00Z"},
+    {"seq": 5, "step": "STEP-3.5", "action": "model_integrity_pass", "utc": "2026-05-26T00:08:00Z"},
+    {"seq": 6, "step": "STEP-3.9", "action": "backlog_lock_acquired", "utc": "2026-05-26T00:10:00Z"},
+    {"seq": 7, "step": "STEP-4", "action": "backlog_slice_committed", "utc": "2026-05-26T00:15:00Z"},
+    {"seq": 8, "step": "STEP-4.5", "action": "capacity_check_warn", "utc": "2026-05-26T00:15:00Z"},
+    {"seq": 9, "step": "STEP-5", "action": "roadmap_annotation_committed", "utc": "2026-05-26T00:17:00Z"},
+    {"seq": 10, "step": "STEP-9", "action": "published", "utc": "2026-05-26T00:20:00Z"}
+  ],
+  "invalidated_steps": [],
+
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "deferred_execution_blockers": [],
+  "accepted_risk_escalations": [],
+
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "capacity_feasible": "warn",
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "pass"
+  },
+
+  "design_gate_status": "not_required",
+  "amended_backlog_slice_path": "",
+
+  "artifacts": {
+    "run_manifest": "present",
+    "backlog_lock": "released",
+    "backlog_txn": "committed",
+    "roadmap_lock": "released",
+    "roadmap_txn": "committed",
+
+    "stage1_readiness": "pass",
+    "stage2_scope_extraction": "pass",
+    "stage2_scope_document": "present",
+    "stage3_execution_plan": "pass",
+    "stage3_decisions_record": "present",
+    "stage3_5_model_integrity": "pass",
+    "stage4_backlog_slice": "pass",
+    "stage4_5_capacity_check": "warn",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "pass",
+
+    "cycle_summary": "present",
+    "lessons_learnt": "present",
+    "escalations": "not_started"
+  }
+}

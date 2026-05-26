@@ -3175,4 +3175,31 @@ These are deliberate product decisions, not deferrals:
 
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
 
+---
+
+## Release Slice — v4.1 (2026-05-26__release-v4.1)
+
+<!-- release-plan-marker: RP:v4.1:2026-05-26__release-v4.1 -->
+
+**Source:** `claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md`
+**Status:** Active — 15 stories / 4 EPICs / 2 sprints
+
+| ST-ID | EPIC | Sprint | Description | Backlog Refs |
+|-------|------|--------|-------------|-------------|
+| ST-01 | EPIC-01 | 1 | execution_prompt.md merge-gate hard gate (OA-01) | OA-01 |
+| ST-02 | EPIC-01 | 1 | sprint_planning_prompt.md + sprint_backlog.md staging-only AC (OA-02) | OA-02 |
+| ST-03 | EPIC-01 | 1 | delivery_verification_prompt.md pr_number null guard (OA-04) | OA-04 |
+| ST-04 | EPIC-02 | 1 | SI-03 Red Flag Journal API contract (BLG-SPEC-33) | BLG-SPEC-33 |
+| ST-05 | EPIC-02 | 1 | SI-01 Pre-Entry Validation API contract (BLG-SPEC-34) | BLG-SPEC-34 |
+| ST-06 | EPIC-02 | 1 | Arc 5 analytics endpoint API contract (BLG-SPEC-40) | BLG-SPEC-40 |
+| ST-07 | EPIC-03 | 2 | Gemini thesis API contract (BLG-SPEC-38) [gate: ST-04] | BLG-SPEC-38 |
+| ST-08 | EPIC-03 | 2 | Arc 5 compliance metrics P&L integration (BLG-FEAT-40 + BLG-FEAT-42) | BLG-FEAT-40, BLG-FEAT-42 |
+| ST-09 | EPIC-03 | 2 | Gemini API daily cost threshold alert via Telegram (BLG-OPS-34) | BLG-OPS-34 |
+| ST-10 | EPIC-03 | 2 | Frontend: Research view signal_type + Arc5ComplianceSection spec (BLG-FE-44 + FE-48) | BLG-FE-44, BLG-FE-48 |
+| ST-11 | EPIC-03 | 2 | Staging Verification Bundle — v4.0 deferred ACs | BLG-QA-28, QA-29, QA-30, BLG-OPS-28 |
+| ST-12 | EPIC-04 | 2 | SI-02 data model gap analysis (BLG-SPEC-39) | BLG-SPEC-39 |
+| ST-13 | EPIC-04 | 2 | SI-02 pre-planning: §13 criteria + data audit + query perf | BLG-GOV-44, GOV-46, GOV-51 |
+| ST-14 | EPIC-04 | 2 | Security review + governance patches | BLG-GOV-49, GOV-54, GOV-56 |
+| ST-15 | EPIC-04 | 2 | Operational reviews: API baseline + Gemini usage + P&L attribution | BLG-OPS-29, OPS-30, OPS-32 |
+
 

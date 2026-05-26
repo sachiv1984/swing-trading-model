@@ -1,0 +1,143 @@
+{
+  "cycle_id": "2026-05-26__release-v4.1",
+  "release": "v4.1",
+  "generated_utc": "2026-05-26T00:15:00Z",
+  "items": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "execution_prompt.md: Add merge-gate re-invocation as hard gate (OA-01)",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "EPIC-01", "sprint-1", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["OA-01"]
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "sprint_planning_prompt.md + sprint_backlog.md template: Staging-only AC designation at planning (OA-02)",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "EPIC-01", "sprint-1", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["OA-02"]
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "title": "delivery_verification_prompt.md: STEP 5.0A pr_number null guard (OA-04)",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "EPIC-01", "sprint-1", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["OA-04"]
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "title": "SI-03 Red Flag Journal API contract document (BLG-SPEC-33)",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "EPIC-02", "sprint-1", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-SPEC-33"]
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "title": "SI-01 Pre-Entry Validation API contract document (BLG-SPEC-34)",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "EPIC-02", "sprint-1", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-SPEC-34"]
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-02",
+      "title": "Arc 5 analytics endpoint API contract (BLG-SPEC-40)",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "EPIC-02", "sprint-1", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-SPEC-40"]
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "title": "Gemini thesis endpoint API contract (BLG-SPEC-38)",
+      "sprint": 2,
+      "effort": "S",
+      "gate": "ST-04 (BLG-SPEC-33) must be closed before commencing",
+      "labels": ["story", "EPIC-03", "sprint-2", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-SPEC-38"]
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "title": "Arc 5 compliance metrics P&L integration (BLG-FEAT-40 + BLG-FEAT-42)",
+      "sprint": 2,
+      "effort": "M",
+      "labels": ["story", "EPIC-03", "sprint-2", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-FEAT-40", "BLG-FEAT-42"]
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-03",
+      "title": "Gemini API daily cost threshold alert via Telegram (BLG-OPS-34)",
+      "sprint": 2,
+      "effort": "M",
+      "labels": ["story", "EPIC-03", "sprint-2", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-OPS-34"]
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-03",
+      "title": "Frontend: Research view signal_type column + Arc5ComplianceSection spec (BLG-FE-44 + BLG-FE-48)",
+      "sprint": 2,
+      "effort": "S",
+      "labels": ["story", "EPIC-03", "sprint-2", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-FE-44", "BLG-FE-48"]
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-03",
+      "title": "Staging Verification Bundle: deferred v4.0 staging ACs (BLG-QA-28, QA-29, QA-30, BLG-OPS-28)",
+      "sprint": 2,
+      "effort": "S",
+      "labels": ["story", "EPIC-03", "sprint-2", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-QA-28", "BLG-QA-29", "BLG-QA-30", "BLG-OPS-28"]
+    },
+    {
+      "st_id": "ST-12",
+      "epic_id": "EPIC-04",
+      "title": "SI-02 data model gap analysis (BLG-SPEC-39)",
+      "sprint": 2,
+      "effort": "M",
+      "labels": ["story", "EPIC-04", "sprint-2", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-SPEC-39"]
+    },
+    {
+      "st_id": "ST-13",
+      "epic_id": "EPIC-04",
+      "title": "SI-02 pre-planning: §13 criteria + data audit + query performance (BLG-GOV-44 + GOV-46 + GOV-51)",
+      "sprint": 2,
+      "effort": "S",
+      "labels": ["story", "EPIC-04", "sprint-2", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-GOV-44", "BLG-GOV-46", "BLG-GOV-51"]
+    },
+    {
+      "st_id": "ST-14",
+      "epic_id": "EPIC-04",
+      "title": "Security review + governance patches (BLG-GOV-49 + GOV-54 + GOV-56)",
+      "sprint": 2,
+      "effort": "S",
+      "labels": ["story", "EPIC-04", "sprint-2", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-GOV-49", "BLG-GOV-54", "BLG-GOV-56"]
+    },
+    {
+      "st_id": "ST-15",
+      "epic_id": "EPIC-04",
+      "title": "Operational reviews: API performance baseline + Gemini usage + P&L attribution (BLG-OPS-29 + OPS-30 + OPS-32)",
+      "sprint": 2,
+      "effort": "S",
+      "labels": ["story", "EPIC-04", "sprint-2", "v4.1", "cycle:2026-05-26__release-v4.1"],
+      "backlog_refs": ["BLG-OPS-29", "BLG-OPS-30", "BLG-OPS-32"]
+    }
+  ]
+}
