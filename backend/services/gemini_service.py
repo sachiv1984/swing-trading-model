@@ -34,6 +34,7 @@ Return ONLY a JSON object with exactly these keys (no markdown, no preamble):
   "entry_rationale": "1-2 sentences on the specific reason to enter — what technical or fundamental condition makes this a candidate.",
   "confirmation_criteria": "1-2 sentences on what must be true at entry to confirm the setup — price action, volume, regime.",
   "early_exit_conditions": "1-2 sentences on conditions that would invalidate the thesis before the stop is hit.",
+  "regime_context_at_entry": "1 sentence describing the current market regime context relevant to this trade — trend direction, risk-on/off, sector strength.",
   "r_target": <number between 1.5 and 4.0 based on setup quality, or null if unknown>
 }}"""
 

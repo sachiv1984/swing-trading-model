@@ -697,6 +697,7 @@ export default function TradePlan() {
                           ...(f.entry_rationale ? { entry_rationale: f.entry_rationale } : {}),
                           ...(f.confirmation_criteria ? { confirmation_criteria: f.confirmation_criteria } : {}),
                           ...(f.early_exit_conditions ? { early_exit_conditions: f.early_exit_conditions } : {}),
+                          ...(f.regime_context_at_entry ? { regime_context_at_entry: f.regime_context_at_entry } : {}),
                           ...(f.r_target != null ? { r_target: f.r_target } : {}),
                         }));
                         setIsAiDraft(true);
