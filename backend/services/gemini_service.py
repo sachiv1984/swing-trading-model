@@ -148,7 +148,7 @@ def generate_full_plan(
     input_hash = hashlib.sha256(input_payload.encode()).hexdigest()[:16]
 
     try:
-        text, usage = _call_claude(prompt, max_tokens=512)
+        text, usage = _call_claude(prompt, max_tokens=1024)
     except Exception as exc:
         return {"available": False, "error": f"Claude API error: {str(exc)[:120]}"}
 
