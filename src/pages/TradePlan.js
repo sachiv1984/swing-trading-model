@@ -320,6 +320,7 @@ export default function TradePlan() {
   });
   const [saved, setSaved] = useState(false);
   const [isAiDraft, setIsAiDraft] = useState(false);
+  const hasUnsavedAiChanges = useRef(false);
   const [isGeminiLoading, setIsGeminiLoading] = useState(false);
   const [showAbandonModal, setShowAbandonModal] = useState(false);
   const [abandonReason, setAbandonReason] = useState("");
@@ -344,7 +345,7 @@ export default function TradePlan() {
   });
 
   useEffect(() => {
-    if (existingPlan) {
+    if (existingPlan && !hasUnsavedAiChanges.current) {
       const existingItems = Array.isArray(existingPlan.checklist_items) ? existingPlan.checklist_items : [];
       const hasUserState = existingItems.some((i) => i.checked);
       const checklistItems = hasUserState
@@ -439,6 +440,7 @@ export default function TradePlan() {
       }).then((r) => r.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tradePlans"] });
+      hasUnsavedAiChanges.current = false;
       setSaved(true);
     },
   });
@@ -709,6 +711,7 @@ export default function TradePlan() {
                           };
                         });
                         setIsAiDraft(true);
+                        hasUnsavedAiChanges.current = true;
                       }
                     } catch (_) {}
                     setIsGeminiLoading(false);
