@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-05-24
+**Version:** 0.4
+**Last Updated:** 2026-05-26
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12)
 
 ---
@@ -192,9 +192,9 @@ Retrieve the trade plan(s) linked to a specific position.
 
 ## POST /trade-plans/{plan_id}/generate-thesis
 
-Generate a setup thesis for an existing trade plan using Gemini Flash.
+Generate a setup thesis for an existing trade plan using Claude Haiku 4.5.
 
-Returns a generated thesis when `GEMINI_API_KEY` is configured. Returns a graceful error payload (HTTP 200 with `available: false`) when the key is absent or the API call fails.
+Returns a generated thesis when `ANTHROPIC_API_KEY` is configured. Returns a graceful error payload (HTTP 200 with `available: false`) when the key is absent or the API call fails.
 
 **Authentication:** Standard API key authentication.
 
@@ -211,8 +211,8 @@ Returns a generated thesis when `GEMINI_API_KEY` is configured. Returns a gracef
   "status": "ok",
   "data": {
     "thesis": "Strong momentum breakout above 52-week high with volume confirmation...",
-    "model_version": "gemini-1.5-flash",
-    "prompt_version": "v1.0",
+    "model_version": "claude-haiku-4-5",
+    "prompt_version": "v3.0",
     "input_hash": "a3f2c1d4e5b6...",
     "output_hash": "9f8e7d6c5b4a...",
     "available": true
@@ -227,7 +227,7 @@ Returns a generated thesis when `GEMINI_API_KEY` is configured. Returns a gracef
   "status": "ok",
   "data": {
     "available": false,
-    "error": "GEMINI_API_KEY not configured"
+    "error": "ANTHROPIC_API_KEY not configured"
   }
 }
 ```
@@ -240,10 +240,82 @@ Returns a generated thesis when `GEMINI_API_KEY` is configured. Returns a gracef
 
 ---
 
+## POST /trade-plans/generate-plan
+
+Generate a full set of trade plan fields from a ticker and optional signal data, without requiring an existing plan record. Uses Claude Haiku 4.5 via the Anthropic SDK.
+
+Returns all fields when `ANTHROPIC_API_KEY` is configured. Returns a graceful error payload (HTTP 200 with `available: false`) when the key is absent or the API call fails.
+
+**Authentication:** Standard API key authentication.
+
+### Request Body
+
+```json
+{
+  "ticker": "AAPL",
+  "market": "US",
+  "setup_type": "Momentum Continuation",
+  "signal_data": {
+    "signal_type": "breakout",
+    "momentum_percent": 4.2,
+    "atr_multiple": 1.8,
+    "r_target": 2.5,
+    "price_vs_50d_ma": 3.1,
+    "regime": "risk_on",
+    "signal_score": 82
+  }
+}
+```
+
+### Request Schema
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| ticker | string | Yes | Ticker symbol |
+| market | string | No | `US` or `UK`. Default: `"US"` |
+| setup_type | string | No | Setup classification (nullable) |
+| signal_data | object | No | Structured signal context (nullable). Fields: `signal_type`, `momentum_percent`, `atr_multiple`, `r_target`, `price_vs_50d_ma`, `regime`, `signal_score` |
+
+### Response (HTTP 200 — key configured, generation successful)
+
+```json
+{
+  "available": true,
+  "fields": {
+    "setup_thesis": "Strong momentum breakout above the 52-week high with confirmed volume surge, supported by Risk On regime.",
+    "entry_rationale": "Price holding above the 200 SMA with ATR expanding at 1.8x baseline; momentum at +4.2%.",
+    "confirmation_criteria": "Volume > 1.5x average on breakout candle; RSI below overbought territory.",
+    "early_exit_conditions": "Close below 200 SMA; regime flips to Risk Off.",
+    "regime_context_at_entry": "risk_on",
+    "r_target": 2.5
+  },
+  "model_version": "claude-haiku-4-5",
+  "prompt_version": "v3.0"
+}
+```
+
+### Response (HTTP 200 — key absent or API error)
+
+```json
+{
+  "available": false,
+  "error": "ANTHROPIC_API_KEY not configured"
+}
+```
+
+### Error Responses
+
+| HTTP status | Description |
+|------------|-------------|
+| 500 | Unexpected server error |
+
+---
+
 ## Changelog
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.4 | 2026-05-26 | Switch generate-thesis from Gemini Flash to Claude Haiku 4.5; replace GEMINI_API_KEY with ANTHROPIC_API_KEY; update model_version in examples; add POST /trade-plans/generate-plan endpoint |
 | 0.3 | 2026-05-24 | ST-12 (BLG-BE-19, v4.0 EPIC-03): Add POST /trade-plans/{plan_id}/generate-thesis — Gemini Flash thesis generation |
 | 0.2 | 2026-05-20 | Add pre_entry_override_acknowledged to POST/PUT schemas — ST-03 EPIC-01 v3.8 |
 | 0.1 | 2026-04-30 | Initial contract — ST-01 EPIC-01 v3.1 |

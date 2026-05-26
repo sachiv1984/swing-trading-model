@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.0.0
+  version: 3.1.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -3748,13 +3748,77 @@ components:
         "200":
           description: Trade plans for position
 
+  /trade-plans/generate-plan:
+    post:
+      summary: Generate a full trade plan via Claude Haiku 4.5
+      description: |
+        Calls Claude Haiku 4.5 to generate all plan fields (setup_thesis, entry_rationale,
+        confirmation_criteria, early_exit_conditions, regime_context_at_entry, r_target)
+        from a ticker and optional signal data. No existing plan record required.
+        Returns available=true with fields on success; available=false with error on
+        graceful degradation (no API key or API failure).
+        Canonical contract: docs/specs/api_contracts/gemini_thesis_generation.md
+      tags: [Trade Plans]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ticker]
+              properties:
+                ticker:
+                  type: string
+                  description: Ticker symbol (e.g. AAPL, BARC.L)
+                market:
+                  type: string
+                  enum: [US, UK]
+                  default: US
+                setup_type:
+                  type: string
+                  nullable: true
+                signal_data:
+                  type: object
+                  nullable: true
+                  properties:
+                    signal_type: { type: string }
+                    momentum_percent: { type: number }
+                    atr_multiple: { type: number }
+                    r_target: { type: number }
+                    price_vs_50d_ma: { type: number }
+                    regime: { type: string }
+                    signal_score: { type: number }
+      responses:
+        "200":
+          description: Generated plan fields (available=true) or graceful error (available=false when key absent)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available: { type: boolean }
+                  fields:
+                    type: object
+                    properties:
+                      setup_thesis: { type: string }
+                      entry_rationale: { type: string }
+                      confirmation_criteria: { type: string }
+                      early_exit_conditions: { type: string }
+                      regime_context_at_entry: { type: string }
+                      r_target: { type: number, nullable: true }
+                  model_version: { type: string }
+                  prompt_version: { type: string }
+                  error: { type: string }
+        "500":
+          description: Unexpected server error
+
   /trade-plans/{plan_id}/generate-thesis:
     post:
-      summary: Generate a setup thesis via Gemini Flash
+      summary: Generate a setup thesis via Claude Haiku 4.5
       description: |
-        Calls Gemini Flash to generate a concise setup thesis for the trade plan.
+        Calls Claude Haiku 4.5 to generate a concise setup thesis for an existing trade plan.
         Returns available=true with thesis text on success; available=false with error
-        on graceful degradation (no API key, package missing, or API failure).
+        on graceful degradation (no API key or API failure).
         Canonical contract: docs/specs/api_contracts/gemini_thesis_generation.md
       tags: [Trade Plans]
       parameters:

@@ -1,32 +1,25 @@
 **Owner:** FinOps & Resource Architect
 **Class:** Operations Document (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-24
+**Version:** 1.1
+**Last Updated:** 2026-05-26
 **Source:** ST-08 (BLG-OPS-26, v4.0 EPIC-03)
 
-# Gemini API Cost Tracking
+# Claude API Cost Tracking
 
 ## Model and Pricing
 
 | Model | Input token rate | Output token rate |
 |---|---|---|
-| gemini-1.5-flash | $0.075 / 1M tokens | $0.30 / 1M tokens |
+| claude-haiku-4-5 | $1.00 / 1M tokens | $5.00 / 1M tokens |
 
-*Rates as of v4.0 implementation (2026-05-24). Verify against Google AI pricing page when upgrading model versions.*
-
-## Free-Tier Limits
-
-| Limit | Value |
-|---|---|
-| Requests per day (RPD) | 1,500 |
-| Tokens per month | 1,000,000 |
+*Rates as of v4.1 implementation (2026-05-26). Verify against Anthropic pricing page when upgrading model versions.*
 
 ## Alert Threshold
 
-**Alert fires at: 800,000 tokens/month (80% of 1M free-tier monthly limit).**
+**Alert fires at: estimated cost exceeding $5.00/month.**
 
-Alert condition: `SUM(total_tokens) FROM gemini_audit_log WHERE generated_at >= date_trunc('month', NOW())` > 800,000.
+Alert condition: `SUM(estimated_cost_usd) FROM gemini_audit_log WHERE generated_at >= date_trunc('month', NOW())` > 5.00.
 
 There is no automated alert in the current implementation — this threshold is defined for future monitoring integration. To check manually:
 
@@ -35,8 +28,7 @@ SELECT
   date_trunc('month', generated_at) AS month,
   COUNT(*) AS calls,
   SUM(total_tokens) AS total_tokens,
-  SUM(estimated_cost_usd) AS estimated_cost_usd,
-  ROUND(SUM(total_tokens)::numeric / 1000000 * 100, 1) AS pct_of_free_tier
+  SUM(estimated_cost_usd) AS estimated_cost_usd
 FROM gemini_audit_log
 WHERE generated_at >= date_trunc('month', NOW())
 GROUP BY 1;
@@ -50,12 +42,12 @@ The `gemini_audit_log` table (created by `ensure_gemini_audit_log_table()` in `b
 |---|---|---|
 | id | UUID | Audit entry ID |
 | plan_id | UUID | Trade plan ID (nullable) |
-| model_version | TEXT | Gemini model version string |
+| model_version | TEXT | Claude model version string |
 | prompt_version | TEXT | Prompt template version |
 | input_hash | TEXT | First 16 chars of SHA-256 of input payload |
 | output_hash | TEXT | First 16 chars of SHA-256 of output thesis |
 | generated_at | TIMESTAMPTZ | When the call was made |
-| prompt_tokens | INTEGER | Input tokens (from response.usage_metadata) |
+| prompt_tokens | INTEGER | Input tokens (from response usage metadata) |
 | completion_tokens | INTEGER | Output tokens |
 | total_tokens | INTEGER | Sum of prompt + completion |
 | estimated_cost_usd | NUMERIC(12,8) | Estimated cost at published rates |
