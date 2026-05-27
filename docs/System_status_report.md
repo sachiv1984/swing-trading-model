@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 2.9
-**Last Updated:** 2026-05-22
+**Version:** 3.0
+**Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -1134,3 +1134,38 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md (DoQ 2026-05-24), qa_evidence_EPIC-02.md (DoQ 2026-05-24), qa_evidence_EPIC-03.md (DoQ 2026-05-25)
 - Deviations filed: None (spec deviations); 4 staging-only ACs deferred to backlog (BLG-QA-28/29/30, BLG-OPS-28)
 - Test scenarios referenced: docs/testing/analytics_scenarios.md; tests/e2e/si01-si03-integration.spec.js (8 scenarios)
+
+---
+
+## Sprint: 2026-05-26__release-v4.1
+**Date:** 2026-05-27
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | execution_prompt.md v3.28: HARD GATE added after every EPIC merge (OA-01 resolved — 2nd-recurrence escalation) | claude/system/execution_prompt.md | None |
+| EPIC-01 | sprint_planning_prompt.md v3.7 + shared_standards.md v3.4: staging-only AC designation mandatory at planning (OA-02 resolved — 2nd-recurrence escalation) | claude/system/sprint_planning_prompt.md, claude/system/shared_standards.md | None |
+| EPIC-01 | delivery_verification_prompt.md v2.6: STEP -1.3A PR Number Recovery — recovers pr_number from gh CLI when null/0 (OA-04 resolved) | claude/system/delivery_verification_prompt.md | None |
+| EPIC-02 | API contracts verified: GET /portfolio/red-flag-journal (BLG-SPEC-33), GET /portfolio/pre-entry-validation (BLG-SPEC-34), GET /analytics/arc5-compliance (BLG-SPEC-40) — all pre-met in main, verified by code review | docs/specs/api_contracts/red_flag_journal.md, pre_entry_validation.md, arc5_compliance_analytics.md; docs/reference/openapi.yaml | None |
+| EPIC-03 | POST /trade-plans/{plan_id}/generate-thesis API contract verified (BLG-SPEC-38 — Claude Haiku 4.5); openapi.yaml confirmed at lines 3751 + 3815 | docs/specs/api_contracts/gemini_thesis_generation.md v2.0.0; docs/reference/openapi.yaml | None |
+| EPIC-03 | Arc 5 Compliance Composite Score formula: metrics_definitions.md v1.11.0 (4-term weighted formula, severity mapping); reports.md v0.3 (Arc 5 Compliance Summary section, collapsible, data from GET /analytics/arc5-compliance) | docs/specs/metrics_definitions.md, docs/specs/frontend/pages/reports.md | None |
+| EPIC-03 | POST /ai/check-daily-cost — Claude API daily cost threshold alert via Telegram; AI_DAILY_COST_THRESHOLD configurable env var (default $1.00/day); 5 unit tests; endpoint total 58 | docs/specs/api_contracts/ai_endpoints.md v1.1; docs/reference/openapi.yaml | AC-05 staging deferred → BLG-QA-35 |
+| EPIC-03 | Research view: Setup Type field (signal_type) in signal panel; 4 Playwright tests (SC-ST-01 through SC-ST-04); arc5_compliance_section.md spec created | docs/specs/frontend/pages/research_view.md v1.2; docs/specs/frontend/components/arc5_compliance_section.md | None |
+| EPIC-04 | SI-02 data model gap analysis: 5 gaps enumerated (type, source, migration complexity); gap analysis at docs/specs/si02_gap_analysis.md | docs/specs/data_model.md; docs/specs/si02_gap_analysis.md | None |
+| EPIC-04 | SI-02 pre-planning: §13 criteria doc, data prerequisite audit, query performance assessment; gate NOT met (< 20 closed trades) — sprint planning for SI-02 still pending gate | docs/specs/si02/section13_criteria.md, data_prerequisite_audit.md, query_performance_assessment.md | None |
+| EPIC-04 | Security: ANTHROPIC_API_KEY scope review; credential inventory v1.1; GEMINI_API_KEY disposition recorded; delivery_verification_prompt.md v2.7 STEP 9.0 artefact presence check | docs/security/anthropic_api_key_scope_review.md; docs/ops/external_api_credential_inventory.md | None |
+| EPIC-04 | Operational reviews: api_performance_baseline.md v1.5 (arc5-compliance + thesis endpoints); gemini_cost_tracking.md v1.2 (first Claude usage review); pnl_attribution_gate_check.md v1.0 | docs/ops/api_performance_baseline.md, gemini_cost_tracking.md, pnl_attribution_gate_check.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-11 ACs 02–04 — staging verification for Arc5ComplianceSection, AI thesis, ticker validation, deploy hook | Staging-only ACs; PO discretionary deferral authority (sprint_backlog.md) | BLG-QA-28, BLG-QA-29, BLG-QA-30, BLG-OPS-28 |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ autonomous class), qa_evidence_EPIC-02.md (DoQ autonomous class), qa_evidence_EPIC-03.md (DoQ 2026-05-27), qa_evidence_EPIC-04.md (DoQ autonomous class)
+- Deviations filed: None (spec deviations)
+- Test scenarios referenced: tests/e2e/research-view-signal-type.spec.js (4 scenarios), tests/e2e/arc5-compliance-section.spec.js (4 scenarios), tests/test_daily_cost_alert.py (5 unit tests)

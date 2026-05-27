@@ -12,7 +12,7 @@
 **Story:** ST-11
 **Type:** delegated_qa (staging-only ACs)
 **Assigned to:** QA Lead; Infrastructure & Operations Owner
-**Status:** Pending
+**Status:** Cancelled
 
 **Context:** ST-11 Staging Verification Bundle (BLG-QA-28, BLG-QA-29, BLG-QA-30, BLG-OPS-28). AC-01 (Playwright E2E for Arc5ComplianceSection) is engine-completed. ACs 02–04 require human staging runs.
 
@@ -25,3 +25,5 @@
 **Unblock criteria:** All three staging runs completed and dates recorded in qa_evidence_EPIC-03.md
 **SLA:** 72 hours (lifecycle delegation)
 **Blocks execution:** No (QA evidence for ST-11 AC-02/03/04 can be added post-merge per PO discretionary deferral authority)
+
+**Cancellation note:** ST-11 returned to backlog at sprint close per PO discretionary deferral authority (sprint_backlog.md §Outstanding Actions). ACs 02–04 carried forward as BLG-QA-28/29/30 and BLG-OPS-28. No commit SHA — staging ACs not completed in this sprint. Staging work deferred to v4.2.
