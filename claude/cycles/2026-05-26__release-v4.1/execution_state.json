@@ -273,7 +273,7 @@
       "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-26__release-v4.1/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
@@ -359,7 +359,7 @@
           "assigned_to": "engine",
           "github_issue": 503,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "0afdc070",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
