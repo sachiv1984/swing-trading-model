@@ -62,6 +62,7 @@ _config_stub.PENCE_TO_POUNDS_THRESHOLD = 1000
 _config_stub.PRICE_FETCH_DELAY_SECONDS = 0.3
 _config_stub.FX_RATE_FETCH_DELAY_SECONDS = 0.2
 _config_stub.MARKET_REGIME_FETCH_DELAY_SECONDS = 0.3
+_config_stub.AI_DAILY_COST_THRESHOLD = 1.00
 sys.modules["config"] = _config_stub
 
 _pricing_stub = types.ModuleType("utils.pricing")
