@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.10
-**Last Updated:** 2026-05-21
+**Version:** 2.11
+**Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -213,6 +213,12 @@ Confirm: release version, feature name, `cycle_id`, ship date (use today if not 
 Read `completed_cycle_count` from `.claude_current_state.json`.
 If `completed_cycle_count % 3 == 0` (i.e., a multiple of 3): record for the Advisory Summary block — "⚠ AUDIT DUE — completed_cycle_count = N. Run `run audit` before next Phase 1B opens."
 This check is non-blocking — post-ship closure proceeds regardless.
+
+**Rebalance Cadence Check (advisory — non-blocking):**
+Read `completed_cycle_count` from `.claude_current_state.json` (already loaded above).
+If `completed_cycle_count % 2 == 0` (i.e., even): record for the Advisory Summary block — "⚠ REBALANCE DUE — completed_cycle_count = N (even). Run `run roadmap --reason scheduled` before next `plan release`."
+If `completed_cycle_count % 2 == 1` (i.e., odd): record for the Advisory Summary block — "✅ REBALANCE SKIP — completed_cycle_count = N (odd). Proceed directly to `plan release v<next_release>` — no rebalance required this cycle."
+Rationale: rebalances run every 2nd cycle to reduce governance overhead and increase throughput. The PO may override and run a rebalance on any cycle — this advisory is guidance, not a gate.
 
 **If `--dry-run` is active:** After completing context load, produce the full closure plan (listing every step, every write that would be made, every flag) and end the routine. Do not proceed to STEP 1.
 
@@ -665,7 +671,7 @@ After STEP 13 completes, output all advisories raised during this run as a singl
 ──────────────────────────────────────────────────────
 ```
 
-Advisories sourced from: STEP 0 (audit cadence), STEP 6 (endpoint drift), STEP 12.5 (ideas archive, rejected-but-strong revival, pipeline health), and any other non-blocking flags raised during execution. If no advisories were raised: output "Advisory Summary: None."
+Advisories sourced from: STEP 0 (audit cadence, rebalance cadence), STEP 6 (endpoint drift), STEP 12.5 (ideas archive, rejected-but-strong revival, pipeline health), and any other non-blocking flags raised during execution. If no advisories were raised: output "Advisory Summary: None."
 
 ---
 
