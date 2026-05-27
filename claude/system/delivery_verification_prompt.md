@@ -1,7 +1,7 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 2.5
-**Last Updated:** 2026-05-21
+**Version:** 2.6
+**Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -191,6 +191,16 @@ Sign-off check (STRUCTURAL — two-tier, AUD-2026-04-11-005):
   - **Autonomous class exception (BLG-GOV-19):** If the signer is "Sprint Execution Engine (autonomous class)", verify that all four qualifying criteria defined in `execution_prompt.md §3.2.A` (Autonomous DoQ sign-off class) are met for this EPIC: (1) all stories autonomous, (2) all AC code-review-verifiable with no UI/staging requirement, (3) no frontend-visible change, (4) engine signer field populated. If all four are met: treat as compliant — do not apply Tier 2 treatment. If any criterion is not met: apply Tier 2 treatment and require Director of Quality counter-sign.
 
 If any merged EPIC is missing its qa_evidence log entirely: halt (Tier 1 applies). Verification cannot proceed without signed QA evidence for every merged EPIC.
+
+### -1.3A — PR Number Recovery (OA-04)
+
+Before proceeding, verify that every EPIC in `execution_state.json.merge_gate.epics_merged` has a non-null `pr_number`. If any EPIC has `pr_number = null` or `pr_number = 0`:
+
+1. Recover via: `gh pr view exec/<cycle_id>/EPIC-xx --json number,state,mergedAt`
+2. If a merged PR is found: record the `number` in `execution_state.json` for that EPIC — set `pr_number = <recovered_number>` and confirm `pr_status = "merged"` if `mergedAt` is non-null.
+3. If no PR is found for an EPIC branch: flag as a process gap (sprint close executed without a PR) — record in `verification_report.md §8` and continue.
+
+**Why this step exists:** During v4.0 delivery verification, `pr_number = null` in `execution_state.json` caused downstream steps to fail when attempting `gh pr view <pr_number>`. This guard recovers the PR number from GitHub before any PR-dependent check proceeds (OA-04, v4.1 ST-03).
 
 ### -1.4 Common Preflight — Required Files Present
 Apply `claude/system/shared/preflight_common.md` (sub-check 1 only) with:

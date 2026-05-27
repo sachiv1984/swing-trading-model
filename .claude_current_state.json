@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-05-26__release-v4.1",
   "cycle_name": "Release Planning — v4.1 Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "engine": "sprint_planning",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md",

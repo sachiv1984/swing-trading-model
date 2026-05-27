@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.27
-**Last Updated:** 2026-05-22
+**Version:** 3.28
+**Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -716,11 +716,11 @@ If all conditions pass:
 1. Merge the PR (squash or merge as configured).
 2. Update `execution_state.json`: EPIC `pr_status` = `merged`, `status` = `merged`.
 3. Update `merge_gate.epics_merged`.
-4. **Output the following user-facing re-invocation reminder:**
+4. **[HARD GATE — HALT after every EPIC merge (OA-01, v4.1 ST-01)]** Output the block below and **stop immediately**. Do not proceed to the next EPIC, do not continue the execution loop, do not execute STEP 5 in this invocation. The engine resumes only when the user explicitly re-invokes `run sprint`:
 
-> ✅ EPIC-xx merged. **Re-invoke `run sprint --cycle <cycle_id>` now — required after every EPIC merge, including the final one.** If this is the final EPIC, the engine detects `merge_gate.all_merged = true` and executes STEP 5 (Sprint Close) directly, producing `sprint_close.md` and sealing `execution_state.json`. Do not proceed to `run delivery verification` without doing this first.
+> ✅ EPIC-xx merged. **HARD GATE: Re-invoke `run sprint --cycle <cycle_id>` now.** The engine halts after every EPIC merge and may not auto-advance to the next EPIC or STEP 5. If this is the final EPIC, re-invocation detects `merge_gate.all_merged = true` and executes STEP 5 (Sprint Close) directly, producing `sprint_close.md` and sealing `execution_state.json`. Do not proceed to `run delivery verification` without this re-invocation.
 
-> **⚠ HARD GATE:** When `merge_gate.all_merged = true`, STEP 5 (Sprint Close) **must execute in the same session without exception.** Do not output anything to the user after the merge gate confirmation block without first entering STEP 5. If a session ends after the final merge but before STEP 5, re-invoke `run sprint --cycle <cycle_id>` immediately on resume — the engine detects `all_merged = true` and executes STEP 5 directly. **`.github/workflows/sprint_close_reminder.yml` also posts a mandatory PR comment on every EPIC merge as a backup reminder.**
+> **⚠ ENFORCEMENT:** `.github/workflows/sprint_close_reminder.yml` posts a PR comment on every EPIC merge as a backup reminder. The halt is absolute — STEP 5 must execute in the re-invocation session, not this one. Any output after this block (other than the halt marker) is a process violation.
 
 If any condition fails: do not merge. Record which condition is unmet. If QA or Product Owner has not responded within their SLA: file an escalation record.
 

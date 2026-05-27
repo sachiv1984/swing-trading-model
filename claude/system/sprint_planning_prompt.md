@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.6
-**Last Updated:** 2026-05-22
+**Version:** 3.7
+**Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -477,6 +477,7 @@ The sprint backlog is not sealed until:
 - No outstanding actions are marked `Blocker? Yes`
 - Sprint goal confirmed in `sprint_goal.md`
 - All deferred execution blockers explicitly accepted by the Product Owner (if any were present)
+- **Staging-only AC check (OA-02, 2nd recurrence — mandatory seal gate):** For each ST item in the sprint backlog, review every AC in `stage4_backlog_slice.md` for that item. If any AC carries a `[staging-only evidence]` tag (or requires live external API calls, deploy verification, or staging-environment behaviour that CI cannot reproduce), the `**Staging-only ACs:**` field for that story must list those AC IDs explicitly. Leaving the field as `None` when staging-only ACs exist is a **seal blocker**. This check prevents silent P3 deviations at execution by pre-staging backlog filing obligations before the sprint starts.
 
 If any of the above are unresolved: the sprint backlog status remains `Active` (not `Sealed`). Phase 3 may not be invoked.
 

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.3
-**Last Updated:** 2026-05-22
+**Version:** 3.4
+**Last Updated:** 2026-05-27
 
 # Shared Standards — All Governed Routines
 
@@ -810,7 +810,7 @@ Original / Amended — <file path used>
 
 **Notes:** <any flags, deferred execution blockers, or risks>
 
-**Staging-only ACs:** <list ACs carrying `[staging-only evidence]` tag in `stage4_backlog_slice.md`, e.g. "AC-02 (live API response behaviour)"> / None
+**Staging-only ACs:** [REQUIRED] List each AC from `stage4_backlog_slice.md` that carries `[staging-only evidence]` or requires live external API calls, deploy hook verification, or staging-environment behaviour that CI cannot reproduce — e.g. "AC-02 (live API response behaviour)", "AC-05 (Telegram alert on staging)". Write `None` **only** when every AC for this story is verifiable in CI. This field is enforced at the sign-off gate: `None` when staging-only ACs exist is a seal blocker (OA-02, 2nd recurrence, v4.1 ST-02).
 
 ---
 
