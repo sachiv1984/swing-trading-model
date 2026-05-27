@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-25 (rebalance 2026-05-25__scheduled — DL-034 no-change; 39 backlog adds; BLG-FEAT-38 gate cleared; SI-05 phased delivery note added; CPS=2.69 Strategy Drift Alert acknowledged)
+**Last Updated:** 2026-05-27 (post-ship closure 2026-05-26__release-v4.1 — v4.1 ✅ Shipped)
 **Last rebalance:** 2026-05-25 (cycle 2026-05-25__scheduled — Standard-tier, no-change; 44 ideas from IW-20260525-01; 39 Promoted-Backlog, 11 Parked, 4 Rejected; DL-034)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,17 +10,10 @@
 
 ## 1. Current Version
 
-**v4.0** — Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance — ✅ Shipped 2026-05-25
-**Next planned release:** **v4.1** — Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning
+**v4.1** — Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning — ✅ Shipped 2026-05-27
+**Next planned release:** **[TBD]**
 
-<!-- roadmap-annotation-marker: RA:v4.1:2026-05-26__release-v4.1 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-05-26__release-v4.1
-- Plan published: 2026-05-26
-- Cycle folder: claude/cycles/2026-05-26__release-v4.1/
-- Backlog slice: claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md
-- Status at annotation: Validated
+*RA:v4.1 retired — see roadmap_archive.md 2026-05-27 (post-ship closure 2026-05-26__release-v4.1).*
 
 *RA:v4.0 retired — see roadmap_archive.md 2026-05-25 (post-ship closure 2026-05-22__release-v4.0).*
 
@@ -216,6 +209,8 @@ Today you find stocks through external research and add them to the watchlist ma
 **End state:** Your written strategy and your actual behaviour converge over time — not because the system forces you, but because every deviation is visible, recorded, and reviewed. The gap between the trader you intend to be and the trader you are becomes measurable and shrinkable.
 
 > **v4.0 delivery (2026-05-25):** Arc 5 compliance analytics layer shipped — GET /analytics/arc5-compliance (validation_pass_rate_by_rule, events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate); Arc5ComplianceSection.js on PerformanceAnalytics; SI-01→SI-03 Playwright integration suite (8 scenarios). Also shipped: Gemini Flash base wiring (POST /trade-plans/{plan_id}/generate-thesis), gemini_audit_log, cost tracking, CI/CD staging auto-deploy, starlette CVE remediation, ticker symbol validation, red flag endpoint security review. EPIC-04 PT-04 conditional deferred (gate not met — <20 closed trades, 4th deferral).
+
+> **v4.1 delivery (2026-05-27):** SI-02 pre-planning complete — gap analysis (5 gaps enumerated), §13 criteria doc, data prerequisite audit (gate NOT met: <20 closed trades), query performance assessment. Arc 5 composite compliance score formula added to metrics_definitions.md v1.11; Arc 5 Compliance Summary section added to Reports page. API contract spec debt cleared (SI-03, SI-01, Arc 5 analytics, AI thesis — 4 contracts). POST /ai/check-daily-cost Claude API cost threshold alert (Telegram). Research view signal_type (Setup Type) field. Governance hardening: execution_prompt.md v3.28 merge-gate HARD GATE, sprint_planning_prompt.md v3.7 staging-only AC gate, delivery_verification_prompt.md v2.7 STEP 9.0. SI-02 sprint planning still gated (< 20 closed trades).
 
 -----
 
@@ -414,6 +409,7 @@ When evaluating new features:
 |**v3.8** ✅  |Arc 5 Strategy Integrity Foundation + Trade Plan Form Enhancements + Ticker Universe Management|EPIC-04: TickerUniverse.js management page (add/toggle/delete/filter); public.tickers startup sync retired; ticker_universe sole authoritative source; BLG-GOV-24 governance debt (gh_issue_template.md §14 + PR template). EPIC-03: setup_type dropdown (6 options, BLG-FEAT-23); collapsible news context panel (BLG-FE-36); AI thesis generation template engine + Gemini-gated "Improve with AI" (BLG-FEAT-24). EPIC-01: SI-01 §13 gate PASS (8 binding conditions); GET /portfolio/pre-entry-validation (5 rules, strategy_rules.md v1.4 §4.2, 17 unit tests); PreEntryValidationPanel with override acknowledgement. Verified_with_deviations (1 P3 — resolved same release) — ✅ Shipped 2026-05-20 — cycle: 2026-05-19__release-v3.8|
 |**v3.9** ✅  |Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches|EPIC-01: Yahoo Finance crumb/401 retry + exponential backoff (ST-01); sector/industry fields restored (ST-02); DAY ticker removed + startup deactivation (ST-03); degraded-run warning banner (ST-04). EPIC-02: .L suffix stripped from Ticker Universe display (ST-05); company_name column + CSV backfill (ST-06). EPIC-03: Arc 5 SI-03 Red Flag Journal — red_flag_events table, GET /portfolio/red-flag-journal, SI-01 override event write, RedFlagJournal.js frontend (ST-07/08). EPIC-04: 5 governance carry-forward patches — execution_prompt.md v3.26, sprint_planning_prompt.md v3.4, release_planning_prompt.md v2.31, delivery_verification_prompt.md v2.5, PR template v1.2 (ST-09/10/11/12). Zero deviations — ✅ Shipped 2026-05-22 — cycle: 2026-05-21__release-v3.9|
 |**v4.0** ✅  |Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance         |EPIC-01: GET /analytics/arc5-compliance (5 metrics); Arc5ComplianceSection.js; SI-01→SI-03 Playwright integration (8 scenarios). EPIC-02: ticker symbol validation (422 gate); red flag security review (PASS); starlette CVE (1.0.1). EPIC-03: Gemini Flash wiring (POST /trade-plans/{plan_id}/generate-thesis); gemini_audit_log; cost tracking; CI/CD staging auto-deploy. Zero deviations — ✅ Shipped 2026-05-25 — cycle: 2026-05-22__release-v4.0|
+|**v4.1** ✅  |Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning|EPIC-01: execution_prompt.md v3.28 (merge-gate HARD GATE; OA-01), sprint_planning_prompt.md v3.7 (staging-only AC gate; OA-02), shared_standards.md v3.4, delivery_verification_prompt.md v2.6 (PR null guard; OA-04). EPIC-02: four API contracts formally documented (SI-03 red flag, SI-01 pre-entry, Arc 5 analytics, AI thesis). EPIC-03: Arc 5 composite score formula + Reports P&L section; POST /ai/check-daily-cost Telegram alert; Research view signal_type field (4 Playwright tests); arc5_compliance_section.md spec. EPIC-04: SI-02 gap analysis + 3 pre-planning docs; ANTHROPIC_API_KEY scope review; delivery_verification_prompt.md v2.7 STEP 9.0; api_performance_baseline.md v1.5; first Claude usage review. Zero spec deviations — ✅ Shipped 2026-05-27 — cycle: 2026-05-26__release-v4.1|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

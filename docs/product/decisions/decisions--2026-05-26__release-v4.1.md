@@ -1,9 +1,12 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v4.1
 Cycle: 2026-05-26__release-v4.1
-Last Updated: 2026-05-26
+Last Updated: 2026-05-27
+Superseded by: v4.1 ship — 2026-05-27
+Changelog: docs/product/changelog.md#v41
+Cycle: 2026-05-26__release-v4.1
 
 ## Planning Decisions — v4.1 Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning
 

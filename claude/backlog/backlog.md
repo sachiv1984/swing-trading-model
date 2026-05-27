@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-25 (roadmap rebalance 2026-05-25__scheduled — DL-034; IW-20260525-01; 39 new items: BLG-GOV-40–56, BLG-BE-20–21, BLG-OPS-30–34, BLG-QA-31–34, BLG-FEAT-40–42, BLG-FE-45–49, BLG-SPEC-38–40; BLG-FEAT-38 gate cleared)
+**Last Updated:** 2026-05-27 (post-ship closure 2026-05-26__release-v4.1 — 20 items marked COMPLETE; stale parked item check: 0 items parked 3+ consecutive cycles)
 **Last rebalance:** 2026-05-25 (cycle 2026-05-25__scheduled — DL-034; IW-20260525-01; 39 new items: BLG-GOV-40–56, BLG-BE-20–21, BLG-OPS-30–34, BLG-QA-31–34, BLG-FEAT-40–42, BLG-FE-45–49, BLG-SPEC-38–40)
 
 > ⚠️ Standing Notice
@@ -471,6 +471,7 @@ No metric tracks what percentage of closed trades have an associated trade plan 
 ---
 
 ### BLG-FEAT-40 — SI-05 composite compliance score formula
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P2 (Medium)
 **Type:** Product Feature / Analytics
 **Owner:** Metrics Definitions & Analytics Owner
@@ -517,6 +518,7 @@ The Gemini thesis generation feature (shipped v4.0) writes to the setup_thesis f
 ---
 
 ### BLG-FEAT-42 — Arc 5 compliance metrics monthly P&L report integration
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P2 (Medium)
 **Type:** Product Feature / Reporting
 **Owner:** Financial Reporting & Records Owner
@@ -750,6 +752,7 @@ As Arc 5 ships SI-02, SI-04, and SI-05 alongside existing SI-01 and SI-03, the "
 ---
 
 ### BLG-FE-44 — Research view: surface signal_type as Setup Type column
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P3 (Low)
 **Type:** Frontend / Backend
 **Owner:** Head of Engineering; Head of UX & Design
@@ -869,6 +872,7 @@ RedFlagJournal.js (shipped v3.9) implemented the primary display. BLG-FE-41 (Red
 ---
 
 ### BLG-FE-48 — Arc5ComplianceSection frontend spec
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Frontend / Spec
 **Owner:** Frontend Specs & UX Documentation Owner
@@ -1937,6 +1941,7 @@ ST-09 (BLG-OPS-27) implements the staging deploy workflow and deploy hook mechan
 ---
 
 ### BLG-OPS-29 — Add v4.0 new endpoints to api_performance_baseline.md re-run
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P3 (Low)
 **Type:** Operations / Performance Baseline
 **Owner:** Infrastructure & Operations Owner
@@ -1983,6 +1988,7 @@ ST-09 (BLG-OPS-27) implements the staging deploy workflow and deploy hook mechan
 ---
 
 ### BLG-OPS-30 — Gemini API usage first monthly review
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Operations / Cost Management
 **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
@@ -2032,6 +2038,7 @@ Render (production hosting platform) provides application logs with a default re
 ---
 
 ### BLG-OPS-32 — Trade plan P&L attribution gate check
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P2 (Medium)
 **Type:** Operations / Data Quality
 **Owner:** Financial Reporting & Records Owner; Infrastructure & Operations Owner
@@ -2081,6 +2088,7 @@ Staging environment parity with production is a delivery verification prerequisi
 ---
 
 ### BLG-OPS-34 — Gemini API daily cost threshold alert via Telegram
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P2 (Medium)
 **Type:** Operations / Cost Monitoring
 **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
@@ -2102,6 +2110,27 @@ Gemini thesis generation (shipped v4.0) incurs per-request API costs. Currently 
 - Telegram alert fires when daily spend exceeds configurable threshold
 - Threshold configurable via env var
 - Test coverage: unit test for threshold logic; staging verification
+
+---
+
+### BLG-OPS-35 — Add v4.1 new endpoint to api_performance_baseline.md re-run
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** Post-ship closure v4.1 — endpoint coverage drift advisory (STEP 6)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+POST /ai/check-daily-cost was added in v4.1 (ST-09) and is present in openapi.yaml but absent from api_performance_baseline.md. Performance re-runs require a live environment and human coordination — cannot be done during post-ship closure.
+
+**Scope**
+- Add POST /ai/check-daily-cost to api_performance_baseline.md measurement table with baseline timing data
+- Coordinate with Infrastructure & Operations Owner for live environment timing run
+
+**Acceptance Criteria**
+- POST /ai/check-daily-cost appears in api_performance_baseline.md with at least estimated p50 latency
+- Reviewed by Infrastructure & Operations Owner
 
 ---
 
@@ -2169,6 +2198,7 @@ Alpaca and Yahoo Finance are currently the only external API integrations, each 
 ---
 
 ### BLG-SPEC-33 — SI-03 Red Flag Journal API contract document
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Spec Debt
 **Owner:** API Contracts Documentation Owner
@@ -2194,6 +2224,7 @@ Alpaca and Yahoo Finance are currently the only external API integrations, each 
 ---
 
 ### BLG-SPEC-34 — SI-01 Pre-Entry Validation API contract document
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Spec Debt
 **Owner:** API Contracts Documentation Owner
@@ -2301,6 +2332,7 @@ SI-02 (Behavioural Drift Detection) requires per-trade data fields (regime_at_en
 ---
 
 ### BLG-SPEC-38 — Gemini thesis endpoint API contract
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Spec Debt / API Contract
 **Owner:** API Contracts Documentation Owner; Head of Specs Team
@@ -2329,6 +2361,7 @@ POST /trade-plans/{plan_id}/generate-thesis (shipped v4.0, ST-12) has no formal 
 ---
 
 ### BLG-SPEC-39 — SI-02 data model gap analysis
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Spec / Data Model
 **Owner:** Data Model & Domain Schema Owner; Head of Specs Team
@@ -2353,6 +2386,7 @@ SI-02 (Behavioural Drift Detection) requires comparing actual trade entries agai
 ---
 
 ### BLG-SPEC-40 — Arc 5 analytics endpoint API contract
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Spec Debt / API Contract
 **Owner:** API Contracts Documentation Owner; Head of Specs Team
@@ -2858,6 +2892,7 @@ Arc 4 features (PO-02 through PO-05) all have data density gates: 6+ months AI j
 ---
 
 ### BLG-GOV-44 — SI-02 §13 review evidence criteria pre-definition
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Governance / §13 Compliance
 **Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
@@ -2904,6 +2939,7 @@ PS-03 (Monte Carlo Simulation, Arc 6) is documented as "§13 compliant — deter
 ---
 
 ### BLG-GOV-46 — SI-02 data prerequisite audit
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Governance / Release Gate
 **Owner:** Challenger; Product Owner
@@ -2973,6 +3009,7 @@ POST /trade-plans/{plan_id}/generate-thesis uses gemini-1.5-flash. Model version
 ---
 
 ### BLG-GOV-49 — Gemini API key scope minimization review
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P1 (High)
 **Type:** Governance / Security
 **Owner:** Cybersecurity & Trust Lead
@@ -3020,6 +3057,7 @@ The system now has four external API credentials: Alpaca API key+secret, Yahoo F
 ---
 
 ### BLG-GOV-51 — SI-02 database query performance pre-assessment
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P2 (Medium)
 **Type:** Governance / Performance Pre-work
 **Owner:** Head of Engineering; Head of Backend Engineering
@@ -3090,6 +3128,7 @@ Idea intake windows record per-agent submission counts (ideas_window.json). Dire
 ---
 
 ### BLG-GOV-54 — SI-05 Phase 1 scope annotation — Red Flag + compliance trend delivery
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P2 (Medium)
 **Type:** Governance / Roadmap Annotation
 **Owner:** Product Owner; Head of Specs Team
@@ -3138,6 +3177,7 @@ v4.0 shipped POST /trade-plans/{plan_id}/generate-thesis (ST-12) without a forma
 ---
 
 ### BLG-GOV-56 — STEP 12.1 artefact presence check
+**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
 **Priority:** P2 (Medium)
 **Type:** Governance / Prompt Engineering
 **Owner:** Head of Specs Team; PMO Lead
@@ -3193,32 +3233,5 @@ These are deliberate product decisions, not deferrals:
 
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
 
----
-
-## Release Slice — v4.1 (2026-05-26__release-v4.1)
-
-<!-- release-plan-marker: RP:v4.1:2026-05-26__release-v4.1 -->
-
-**Source:** `claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md`
-**Status:** Active — 15 stories / 4 EPICs / 2 sprints
-
-| ST-ID | EPIC | Sprint | Description | Backlog Refs |
-|-------|------|--------|-------------|-------------|
-| ST-01 | EPIC-01 | 1 | execution_prompt.md merge-gate hard gate (OA-01) | OA-01 |
-| ST-02 | EPIC-01 | 1 | sprint_planning_prompt.md + sprint_backlog.md staging-only AC (OA-02) | OA-02 |
-| ST-03 | EPIC-01 | 1 | delivery_verification_prompt.md pr_number null guard (OA-04) | OA-04 |
-| ST-04 | EPIC-02 | 1 | SI-03 Red Flag Journal API contract (BLG-SPEC-33) | BLG-SPEC-33 |
-| ST-05 | EPIC-02 | 1 | SI-01 Pre-Entry Validation API contract (BLG-SPEC-34) | BLG-SPEC-34 |
-| ST-06 | EPIC-02 | 1 | Arc 5 analytics endpoint API contract (BLG-SPEC-40) | BLG-SPEC-40 |
-| ST-07 | EPIC-03 | 2 | Gemini thesis API contract (BLG-SPEC-38) [gate: ST-04] | BLG-SPEC-38 |
-| ST-08 | EPIC-03 | 2 | Arc 5 compliance metrics P&L integration (BLG-FEAT-40 + BLG-FEAT-42) | BLG-FEAT-40, BLG-FEAT-42 |
-| ST-09 | EPIC-03 | 2 | Gemini API daily cost threshold alert via Telegram (BLG-OPS-34) | BLG-OPS-34 |
-| ST-10 | EPIC-03 | 2 | Frontend: Research view signal_type + Arc5ComplianceSection spec (BLG-FE-44 + FE-48) | BLG-FE-44, BLG-FE-48 |
-| ST-11 | EPIC-03 | 2 | Staging Verification Bundle — v4.0 deferred ACs | BLG-QA-28, QA-29, QA-30, BLG-OPS-28 |
-| ST-12 | EPIC-04 | 2 | SI-02 data model gap analysis (BLG-SPEC-39) | BLG-SPEC-39 |
-| ST-13 | EPIC-04 | 2 | SI-02 pre-planning: §13 criteria + data audit + query perf | BLG-GOV-44, GOV-46, GOV-51 |
-| ST-14 | EPIC-04 | 2 | Security review + governance patches | BLG-GOV-49, GOV-54, GOV-56 |
-| ST-15 | EPIC-04 | 2 | Operational reviews: API baseline + Gemini usage + P&L attribution | BLG-OPS-29, OPS-30, OPS-32 |
-
-**Returned to backlog:** ST-11 (EPIC-03, cycle 2026-05-26__release-v4.1) — AC-01 (Arc5ComplianceSection Playwright tests) completed and committed; ACs 02–04 staging-only verification deferred to v4.2 per PO discretionary deferral authority. Staging items (BLG-QA-28 AC-02, BLG-QA-29, BLG-QA-30, BLG-OPS-28) carry forward to next cycle. DEL-20260527-01 delegation record tracks the outstanding staging runs.
+*Release Slice — v4.1 (2026-05-26__release-v4.1) removed — post-ship closure 2026-05-27. All 14 stories complete; ST-11 returned to backlog (AC-01 delivered; ACs 02–04 carried forward as BLG-QA-28/29/30, BLG-OPS-28). Canonical source: claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md*
 
