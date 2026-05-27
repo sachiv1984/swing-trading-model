@@ -1,13 +1,13 @@
 {
-  "active_cycle": "2026-05-26__release-v4.1",
-  "cycle_name": "Release Planning — v4.1 Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning",
-  "status": "Closed",
+  "active_cycle": "2026-05-27__release-v4.2",
+  "cycle_name": "Release Planning — v4.2 Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt",
+  "status": "Published",
   "engine": "sprint_execution",
   "execution_state_path": "",
-  "backlog_slice_path": "claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md",
-  "sprint_sealed": true,
-  "sprint_goal_path": "claude/cycles/2026-05-26__release-v4.1/sprint_goal.md",
-  "sprint_backlog_path": "claude/cycles/2026-05-26__release-v4.1/sprint_backlog.md",
+  "backlog_slice_path": "claude/cycles/2026-05-27__release-v4.2/stage4_backlog_slice.md",
+  "sprint_sealed": false,
+  "sprint_goal_path": "",
+  "sprint_backlog_path": "",
   "sprint_capacity_path": "claude/cycles/2026-05-26__release-v4.1/sprint_capacity.md",
   "sprint_goal_status": "confirmed",
   "capacity_warn_acknowledged": true,
@@ -28,7 +28,7 @@
   "amendment_status": "",
   "amended_backlog_slice_path": "",
   "amendment_sealed_utc": "",
-  "last_sync_utc": "2026-05-27T20:30:00Z",
+  "last_sync_utc": "2026-05-27T23:52:00Z",
   "sprint_close_utc": "2026-05-27T18:30:00Z",
   "verification_utc": "2026-05-27T20:00:00Z",
   "last_audit_id": "AUD-2026-05-27",
@@ -63,24 +63,24 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-05-26__release-v4.1/release_plan.md",
-    "cycle_id": "2026-05-26__release-v4.1",
-    "published_utc": "2026-05-26T00:20:00Z",
+    "release_plan_path": "claude/cycles/2026-05-27__release-v4.2/release_plan.md",
+    "cycle_id": "2026-05-27__release-v4.2",
+    "published_utc": "2026-05-27T23:52:00Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04"
     ],
-    "story_items": 15,
-    "scope_items": 11,
+    "story_items": 13,
+    "scope_items": 4,
     "capacity_check": "warn",
-    "state_json": "claude/cycles/2026-05-26__release-v4.1/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-05-26__release-v4.1-governance-hardening-spec-debt-arc5-compliance-si02-preplanning.md"
+    "state_json": "claude/cycles/2026-05-27__release-v4.2/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-05-27__release-v4.2-claude-api-governance-si02-preplan-spec-debt.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-05-22__release-v4.0/release_plan.md",
-    "cycle_id": "2026-05-22__release-v4.0",
-    "published_utc": "2026-05-22T16:40:00Z"
+    "release_plan_path": "claude/cycles/2026-05-26__release-v4.1/release_plan.md",
+    "cycle_id": "2026-05-26__release-v4.1",
+    "published_utc": "2026-05-26T00:20:00Z"
   }
 }
