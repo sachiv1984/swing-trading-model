@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 2.6
+**Version:** 2.7
 **Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -529,6 +529,26 @@ Do not proceed to STEP 9 until the Phase 4 section has been appended to `lessons
 ---
 
 ## STEP 9 — Global State Update (Hard Requirement)
+
+### STEP 9.0 — Artefact Presence Pre-Check
+
+**Artefact existence precondition:** Before updating `.claude_current_state.json`, verify the following cycle artefacts exist on disk:
+
+| Artefact | Path | Class | Required? |
+|----------|------|-------|-----------|
+| Verification report | `claude/cycles/<cycle_id>/verification_report.md` | Class 3 (Operational Record) | ✅ Required |
+| Sprint close record | `claude/cycles/<cycle_id>/sprint_close.md` | Class 3 (Operational Record) | ✅ Required |
+| Lessons learnt (Phase 4 section) | `claude/cycles/<cycle_id>/lessons_learnt_cycle.md` | Class 3 (Operational Record) | ✅ Required |
+| QA evidence logs | `claude/cycles/<cycle_id>/qa_evidence_EPIC-*.md` (one per merged EPIC) | Class 4 (Planning Document) | ⚠️ Advisory |
+
+**If a Required artefact is absent:** Do not proceed to the state update. Create or complete the missing artefact (STEP 8 for verification_report, STEP 8.5 for lessons_learnt, execution engine STEP 5.3 for sprint_close), then return to this step.
+
+**If an Advisory artefact is absent:** Record a governance warning in the verification report §8 and continue. Do not halt.
+
+**Soft halt condition:** If a Required Class-3 Operational Record cannot be completed in this session (e.g. Director of Quality sign-off unavailable), record the absence as an open escalation in `verification_escalations.md` and output:
+> ⚠️ Artefact presence pre-check: `<filename>` missing. Governance warning recorded. State update proceeding with `next_cycle_unblocked: false` until resolved.
+
+---
 
 ### If status = `Verified` or `Verified_with_deviations`:
 

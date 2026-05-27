@@ -284,7 +284,7 @@
           "assigned_to": "engine",
           "github_issue": 500,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "19192739",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -309,7 +309,7 @@
           "assigned_to": "engine",
           "github_issue": 501,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "19192739",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -330,7 +330,7 @@
         "ST-14": {
           "title": "Security review + governance patches (BLG-GOV-49 + BLG-GOV-54 + BLG-GOV-56)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 502,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
@@ -338,13 +338,19 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["claude/system/delivery_verification_prompt.md", "claude/roadmap/current_roadmap.md"],
-          "deviations_filed": false,
+          "completed_utc": "2026-05-27T14:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/delivery_verification_prompt.md", "claude/roadmap/current_roadmap.md", "docs/security/anthropic_api_key_scope_review.md", "docs/ops/external_api_credential_inventory.md"],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "EPIC-01 must merge first before finalising delivery_verification_prompt.md changes (ST-14 GOV-56 and ST-03 both modify this file). EPIC-04 branch must rebase after EPIC-01 merges. OPERATIONAL_GUIDE.md and prompt_change_log.md updates required per CLAUDE.md §6 for GOV-56."
+          "sign_off_record": {
+            "required_by": "Cybersecurity & Trust Lead; Product Owner; Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["GOV-49 adapted from Gemini to Anthropic API key per v4.1 API switch; GEMINI_API_KEY disposition recorded", "GOV-54 SI-05 annotation was pre-existing in roadmap (added at 2026-05-25__scheduled rebalance)", "GOV-56 delivery_verification_prompt.md STEP 9.0 added and CLAUDE.md §6 checklist completed"],
+            "cleared_utc": "2026-05-27T14:30:00Z"
+          },
+          "notes": "GOV-49: ANTHROPIC_API_KEY scope review produced at docs/security/anthropic_api_key_scope_review.md; credential inventory updated at docs/ops/external_api_credential_inventory.md v1.0→v1.1; GEMINI_API_KEY disposition recorded. GOV-54: SI-05 Phase 1 annotation pre-existing in roadmap (BLG-GOV-54 text visible at line 214); AC-03 pre-met; AC-04 agent-mediated sign-off cleared. GOV-56: delivery_verification_prompt.md v2.6→v2.7 STEP 9.0 added; OPERATIONAL_GUIDE.md v4.05→v4.06 §9 header + §14 Verification Engine Source updated; prompt_change_log.md entry appended. CLAUDE.md §6 checklist complete."
         },
         "ST-15": {
           "title": "Operational reviews: API performance baseline + Claude usage + P&L attribution (BLG-OPS-29 + BLG-OPS-30 + BLG-OPS-32)",
@@ -371,7 +377,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-12", "ST-13"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-12", "ST-13", "ST-14"],
   "open_escalations": [],
 
   "merge_gate": {
