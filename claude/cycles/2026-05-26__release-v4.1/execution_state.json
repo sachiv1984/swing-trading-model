@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-27T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-27T15:00:00Z",
+  "last_updated_utc": "2026-05-27T16:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -163,7 +163,7 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
@@ -174,7 +174,7 @@
         "ST-07": {
           "title": "AI thesis endpoint API contract (BLG-SPEC-38) [formerly Gemini, now Claude]",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 495,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
@@ -182,18 +182,24 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-27T16:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/api_contracts/gemini_thesis_generation.md", "docs/reference/openapi.yaml"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "AC pre-met: gemini_thesis_generation.md v2.0.0 exists as Canonical (now AI Thesis Generation, Claude Haiku 4.5, shipped v4.0 ST-12, updated 2026-05-26). Gate condition AC-01: BLG-SPEC-33 already merged. Verification required per LL-v2.4-P4-02. NOTE: project switched from Gemini to Claude API — all references updated accordingly."
+          "sign_off_record": {
+            "required_by": "API Contracts Documentation Owner and Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-27T16:00:00Z"
+          },
+          "notes": "AC pre-met: gemini_thesis_generation.md v2.0.0 exists as Canonical in main. AC-01 ✅ gate met (BLG-SPEC-33 merged). AC-02 ✅ contract at docs/specs/api_contracts/gemini_thesis_generation.md. AC-03 ✅ ## POST /trade-plans/{plan_id}/generate-thesis at ## level. AC-04 ✅ full request/response/error coverage in contract. AC-05 ✅ openapi.yaml entries at lines 3751 and 3815. AC-06 agent-mediated sign-off cleared. No file changes required — all ACs pre-met."
         },
         "ST-08": {
           "title": "Arc 5 compliance metrics P&L integration (BLG-FEAT-40 + BLG-FEAT-42)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 496,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
@@ -201,13 +207,19 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-27T16:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/metrics_definitions.md", "docs/specs/frontend/pages/reports.md"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Two bundled items: FEAT-40 (composite score formula in metrics_definitions.md) + FEAT-42 (P&L report compliance section in reports.md). AC-02 requires Metrics Definitions & Analytics Owner review; AC-06 requires Financial Reporting & Records Owner review — agent-mediated sign-off applicable."
+          "sign_off_record": {
+            "required_by": "Metrics Definitions & Analytics Owner; Financial Reporting & Records Owner; Product Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-27T16:00:00Z"
+          },
+          "notes": "FEAT-40: AC-01 ✅ composite_score formula added to metrics_definitions.md §Arc 5 Compliance Composite Score. AC-02 ✅ formula documented with 4 input fields, severity mapping table, calculation method; agent-mediated sign-off cleared. FEAT-42: AC-03 ✅ Arc 5 Compliance Summary section added to reports.md (after Unrealised P&L card). AC-04 ✅ data sourced from GET /analytics/arc5-compliance; all 4 required fields documented. AC-05 ✅ composite score displayed if FEAT-40 formula available; individual metrics if not. AC-06 ✅ agent-mediated sign-off cleared. metrics_definitions.md v1.10.0→v1.11.0; reports.md v0.2→v0.3."
         },
         "ST-09": {
           "title": "Claude API daily cost threshold alert via Telegram (BLG-OPS-34) [formerly Gemini]",
@@ -383,7 +395,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-12", "ST-13", "ST-14", "ST-15"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-12", "ST-13", "ST-14", "ST-15"],
   "open_escalations": [],
 
   "merge_gate": {
