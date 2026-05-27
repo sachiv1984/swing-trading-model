@@ -54,16 +54,16 @@ GROUP BY 1
 ORDER BY 1;
 ```
 
-**Results (production query — direct DB access not available at gate check time):**
+**Results (production query — 2026-05-27, portfolio `8631cbc2-826d-420d-bfc7-ac27c83a3e2b`):**
 
 | Attribution type | Trade count | Total P&L (GBP) | Avg P&L % |
 |---|---|---|---|
-| plan_linked | Not yet queried | — | — |
-| position_linked_no_plan | — | — | — |
-| unlinked | — | — | — |
-| **Total** | — | — | — |
+| plan_linked | 0 | — | — |
+| position_linked_no_plan | 6 | -2.71 | 2.13 |
+| unlinked | 0 | — | — |
+| **Total** | **6** | **-2.71** | **2.13** |
 
-*Run query above against production DB and update table before Arc 5 integration sprint.*
+*All 6 closed trades are position-linked with no associated trade plan. This is expected — trade plans were introduced post v3.x; early trades pre-date the feature.*
 
 ---
 
@@ -86,8 +86,8 @@ The P&L report (`GET /reports/tax-year`) aggregates all `trade_history` rows for
 
 | Anomaly type | Status | Notes |
 |---|---|---|
-| Unlinked trades (position_id IS NULL) | Unknown — pending production query | May include legacy imports or manual entries. Acceptable in P&L totals but excluded from Arc 5 compliance scope |
-| Duplicate position linkage (position_id → multiple trade_plans rows) | Low risk | `trade_plans.position_id` has no UNIQUE constraint; query in §2 may overcount if multiple plans share a position. Mitigate with `DISTINCT tp.id` or by restricting to most-recent plan |
+| Unlinked trades (position_id IS NULL) | ✅ None found | Production query returned 0 unlinked rows |
+| Duplicate position linkage (position_id → multiple trade_plans rows) | ✅ None found | Duplicate-plan check query returned 0 rows (2026-05-27) |
 | Closed position with no matching trade_history row | Out of scope for this check | Tracked separately via positions reconciliation |
 
 **Duplicate plan linkage mitigation query:**
@@ -110,11 +110,11 @@ Run before Arc 5 integration. If rows returned, use `DISTINCT ON (th.id)` or `LA
 |---|---|---|
 | Attribution model understood | Plan-linked path documented and SQL provided | ✅ Pass |
 | P&L report handles both cases | Confirmed — no attribution filter in current report | ✅ Pass |
-| Production attribution counts obtained | Pending — requires production DB query | ⚠️ Pending |
-| No blocking anomalies | Duplicate plan linkage check pending | ⚠️ Pending |
+| Production attribution counts obtained | Confirmed — 6 trades, all position_linked_no_plan | ✅ Pass |
+| No blocking anomalies | No unlinked trades; no duplicate plan linkage | ✅ Pass |
 | Arc 5 integration approach defined | Compliance metrics limited to plan-linked trades | ✅ Pass |
 
-**Overall gate status: CONDITIONAL PASS** — methodology and approach confirmed; production counts and duplicate-plan check must be completed before ST-08 merge.
+**Overall gate status: PASS** — production counts confirmed, no anomalies found, Arc 5 integration approach validated. Safe to proceed with ST-08.
 
 ---
 

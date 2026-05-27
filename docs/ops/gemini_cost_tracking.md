@@ -100,17 +100,19 @@ WHERE generated_at >= '2026-05-22'::date
   AND generated_at <  '2026-06-01'::date;
 ```
 
-**Results (production query — direct DB access not available at review time):**
+**Results (production query — 2026-05-27):**
 
 | Metric | Value |
 |--------|-------|
-| Total calls | Not yet queried — run query above against production DB |
-| Unique plans | — |
-| Total tokens | — |
-| Total cost (USD) | — |
-| First call | — |
-| Last call | — |
-| Monthly threshold status | Pending query |
+| Total calls | 6 |
+| Unique plans | 1 |
+| Total prompt tokens | 1,372 |
+| Total completion tokens | 1,203 |
+| Total tokens | 2,575 |
+| Total cost (USD) | $0.007387 |
+| First call | 2026-05-25 20:10 UTC |
+| Last call | 2026-05-26 20:21 UTC |
+| Monthly threshold status | ✅ Well within limit ($0.007 of $5.00 threshold — 0.15%) |
 
 **Model call pattern:**
 
@@ -122,9 +124,11 @@ WHERE generated_at >= '2026-05-22'::date
 
 **Findings:**
 
+- Total spend for the partial window: $0.007387 — 0.15% of the $5.00/month threshold. No cost concern.
+- All 6 calls were for a single plan (1 unique plan_id). This is consistent with thesis generation being used selectively.
+- Average tokens per call: ~429 tokens total (229 prompt + 200 completion). Within the expected 200–500 / 300–800 input/output range.
 - No automated alert is in place for the $5.00/month threshold; manual query required monthly.
-- At estimated cost per call above, the threshold of $5.00/month allows approximately 2,000–10,000 calls per month before alert fires — well above expected single-user usage.
-- No anomalies identified at this partial-month review. System operational since switch.
+- No anomalies identified. System operational since switch.
 
 **Reviewed by:** FinOps & Resource Architect and Infrastructure & Operations Owner (BLG-OPS-30, v4.1 ST-15, 2026-05-27)
 
