@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.29
+**Version:** 3.30
 **Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -763,18 +763,34 @@ For each entry still `Pending` or `In Progress`:
 
 **Hard gate:** Do not proceed to STEP 5.0A if any delegation log entry has an unrecorded outcome for an item that reached a terminal sprint state. The sprint close record must faithfully account for every delegated item.
 
-### 5.0A — pr_status Pre-Seal Sync (STRUCTURAL — AUD-2026-04-11-003)
+### 5.0A — pr_status Pre-Seal Sync (STRUCTURAL — AUD-2026-04-11-003 + AUD-2026-05-27-002)
 
-Before writing `Sprint_Complete`, sync `pr_status` in `execution_state.json` for every EPIC in `merge_gate.epics_merged`:
+Before writing `Sprint_Complete`, sync `pr_number` and `pr_status` in `execution_state.json` for every EPIC in `merge_gate.epics_merged`:
 
 ```
 for each EPIC in merge_gate.epics_merged:
-  run: gh pr view <pr_number> --json state
-  if state == "MERGED": set execution_state.json EPIC.pr_status = "merged"
-  if pr_number is null or 0: set pr_status = "not_created" (do not halt)
+
+  # Step 1 — Recover null pr_number (AUD-2026-05-27-002)
+  if EPIC.pr_number is null or 0:
+    run: gh pr list --search "[EPIC-xx]" --state merged --json number,title,mergedAt
+         (substitute actual EPIC identifier, e.g. "[EPIC-03]")
+    if a matching PR is found:
+      set execution_state.json EPIC.pr_number = <recovered number>
+      log: "pr_number recovered via gh pr list search (was null)"
+    else:
+      set execution_state.json EPIC.pr_number = "not_found"
+      log process gap in sprint_close.md: "EPIC-xx: no merged PR found at seal time"
+      # do not halt — continue to Step 2
+
+  # Step 2 — Sync pr_status (AUD-2026-04-11-003)
+  if EPIC.pr_number is not null and not "not_found":
+    run: gh pr view <pr_number> --json state
+    if state == "MERGED": set execution_state.json EPIC.pr_status = "merged"
+  else:
+    set execution_state.json EPIC.pr_status = "not_created"
 ```
 
-This step is idempotent — re-running does not alter an already-correct value. Do not proceed to STEP 5.1 until all EPICs in `epics_merged` have `pr_status = "merged"` or `"not_created"`. This prevents misleading `"open"` or `"none"` values in sealed artefacts visible at delivery verification.
+This step is idempotent — re-running does not alter already-correct values. Do not proceed to STEP 5.1 until all EPICs in `epics_merged` have `pr_status = "merged"` or `"not_created"`. This prevents misleading `"open"` or `"none"` values in sealed artefacts visible at delivery verification.
 
 ### 5.1 Acceptance Summary
 

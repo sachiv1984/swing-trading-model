@@ -25,11 +25,11 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-05-27"
-PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-05-27-002",  # STEP 5.0A automatic PR number recovery (Tier 2 — v4.2 sprint)
-]
-# All AUD-2026-05-21 items confirmed RESOLVED (see Phase 0 table in audit_report_AUD-2026-05-27.md).
-# AUD-2026-05-27-001 (§14 Version fix) and AUD-2026-05-27-003 (STEP 5.2 clarification) applied as Tier 1 this session.
+PRIOR_AUDIT_OPEN_ITEMS = []
+# All AUD-2026-05-21 items confirmed RESOLVED.
+# AUD-2026-05-27-001: §14 Version fix — applied Tier 1 (2026-05-27)
+# AUD-2026-05-27-002: STEP 5.0A null pr_number recovery — applied (2026-05-27, execution_prompt.md v3.30)
+# AUD-2026-05-27-003: STEP 5.2 in-flight deferral — applied Tier 1 (2026-05-27)
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
