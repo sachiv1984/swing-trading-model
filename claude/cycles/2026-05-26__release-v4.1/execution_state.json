@@ -163,13 +163,13 @@
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-05-26__release-v4.1/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/research-view-signal-type.spec.js", "tests/e2e/arc5-compliance-section.spec.js", "tests/test_daily_cost_alert.py"],
       "stories": {
         "ST-07": {
           "title": "AI thesis endpoint API contract (BLG-SPEC-38) [formerly Gemini, now Claude]",
@@ -262,21 +262,21 @@
         "ST-11": {
           "title": "Staging Verification Bundle (BLG-QA-28, BLG-QA-29, BLG-QA-30, BLG-OPS-28)",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "returned_to_backlog",
           "assigned_to": "qa",
           "github_issue": 499,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "3f5665b8",
           "delegation_record_id": "DEL-20260527-01",
           "blocked_since_utc": "2026-05-27T17:30:00Z",
-          "unblock_criteria": "AC-02 (QA-29 Playwright/staging), AC-03 (QA-30 staging), AC-04 (OPS-28 staging) — all three staging runs completed and dates recorded in qa_evidence_EPIC-03.md",
+          "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": true,
           "last_completed_substep": "AC-01",
           "sign_off_record": null,
-          "notes": "AC-01 ✅ tests/e2e/arc5-compliance-section.spec.js created — 4 scenarios: SC-ARC5-01 (heading visible), SC-ARC5-02 (4 stat cards), SC-ARC5-03 (loading skeleton), SC-ARC5-04 (error state 'Unable to load'). ACs 02–04 delegated to QA Lead via DEL-20260527-01. AC-02 uses ANTHROPIC_API_KEY per API switch 2026-05-27. delegation_log.md created."
+          "notes": "AC-01 ✅ tests/e2e/arc5-compliance-section.spec.js created — 4 scenarios: SC-ARC5-01 (heading visible), SC-ARC5-02 (4 stat cards), SC-ARC5-03 (loading skeleton), SC-ARC5-04 (error state 'Unable to load'). ACs 02–04 staging-only — returned to backlog for v4.2 per PO discretionary deferral authority (sprint_backlog.md §Outstanding Actions). AC-02 uses ANTHROPIC_API_KEY per API switch 2026-05-27. delegation_log.md DEL-20260527-01 carries the staging ACs forward. Backlog note added to backlog.md."
         }
       }
     },
@@ -394,7 +394,8 @@
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-11"],
+  "delegated_items": [],
+  "returned_to_backlog_items": ["ST-11"],
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-12", "ST-13", "ST-14", "ST-15"],
   "open_escalations": [],
 

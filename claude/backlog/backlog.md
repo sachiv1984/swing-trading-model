@@ -3220,4 +3220,5 @@ These are deliberate product decisions, not deferrals:
 | ST-14 | EPIC-04 | 2 | Security review + governance patches | BLG-GOV-49, GOV-54, GOV-56 |
 | ST-15 | EPIC-04 | 2 | Operational reviews: API baseline + Gemini usage + P&L attribution | BLG-OPS-29, OPS-30, OPS-32 |
 
+**Returned to backlog:** ST-11 (EPIC-03, cycle 2026-05-26__release-v4.1) — AC-01 (Arc5ComplianceSection Playwright tests) completed and committed; ACs 02–04 staging-only verification deferred to v4.2 per PO discretionary deferral authority. Staging items (BLG-QA-28 AC-02, BLG-QA-29, BLG-QA-30, BLG-OPS-28) carry forward to next cycle. DEL-20260527-01 delegation record tracks the outstanding staging runs.
 
