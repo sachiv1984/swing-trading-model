@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-27T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-27T16:00:00Z",
+  "last_updated_utc": "2026-05-27T18:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -178,7 +178,7 @@
           "assigned_to": "engine",
           "github_issue": 495,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "79862cee",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -203,7 +203,7 @@
           "assigned_to": "engine",
           "github_issue": 496,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "79862cee",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -228,7 +228,7 @@
           "assigned_to": "engine",
           "github_issue": 497,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "c2ee97f0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -247,7 +247,7 @@
           "assigned_to": "engine",
           "github_issue": 498,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "60a1d401",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -262,21 +262,21 @@
         "ST-11": {
           "title": "Staging Verification Bundle (BLG-QA-28, BLG-QA-29, BLG-QA-30, BLG-OPS-28)",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "blocked_qa",
           "assigned_to": "qa",
           "github_issue": 499,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260527-01",
+          "blocked_since_utc": "2026-05-27T17:30:00Z",
+          "unblock_criteria": "AC-02 (QA-29 Playwright/staging), AC-03 (QA-30 staging), AC-04 (OPS-28 staging) — all three staging runs completed and dates recorded in qa_evidence_EPIC-03.md",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "AC-01",
           "sign_off_record": null,
-          "notes": "AC-01 (QA-28 Playwright) is engine-implementable. ACs 02-04 require human staging verification. NOTE: AC-02 now uses ANTHROPIC_API_KEY (not GEMINI_API_KEY) per API switch 2026-05-27. Discretionary deferral to v4.2 authorised by PO if Sprint 2 capacity constrained."
+          "notes": "AC-01 ✅ tests/e2e/arc5-compliance-section.spec.js created — 4 scenarios: SC-ARC5-01 (heading visible), SC-ARC5-02 (4 stat cards), SC-ARC5-03 (loading skeleton), SC-ARC5-04 (error state 'Unable to load'). ACs 02–04 delegated to QA Lead via DEL-20260527-01. AC-02 uses ANTHROPIC_API_KEY per API switch 2026-05-27. delegation_log.md created."
         }
       }
     },
@@ -394,7 +394,7 @@
   },
 
   "blocked_items": [],
-  "delegated_items": [],
+  "delegated_items": ["ST-11"],
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-12", "ST-13", "ST-14", "ST-15"],
   "open_escalations": [],
 
