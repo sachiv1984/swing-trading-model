@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.05
+**Version:** 4.06
 **Last Updated:** 2026-05-27
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -936,7 +936,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.6)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.7)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1424,7 +1424,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.7 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.28 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.6 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.7 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.10 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |

@@ -1,8 +1,8 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-04-30
+**Version:** 1.1
+**Last Updated:** 2026-05-27
 **Cycle:** 2026-04-29__release-v3.1 (ST-12)
 
 ---
@@ -48,6 +48,22 @@ This document is the authoritative inventory of all external API credentials use
 | Last rotated | Unknown (pre-inventory baseline) |
 | Rotation due | 90 days from last rotation |
 | Notes | Free tier rate limits apply. Key is provider-specific — check provider dashboard for rotation procedure. |
+
+---
+
+### 3. Anthropic API Key
+
+| Field | Value |
+|-------|-------|
+| Service | Anthropic (Claude API) |
+| Purpose | AI thesis generation for trade plans (`POST /trade-plans/{plan_id}/generate-thesis`); calls `claude-haiku-4-5` via Anthropic SDK |
+| Credential type | API Key |
+| Scope | Full Anthropic API access (platform does not support key-level scope restriction as of 2026-05-27) — application-level controls apply (see `docs/security/anthropic_api_key_scope_review.md`) |
+| Storage location | Render environment variables: `ANTHROPIC_API_KEY` |
+| Rotation policy | Rotate every 90 days or on suspected compromise. Step-by-step: (1) generate new key in Anthropic Console → Settings → API Keys; (2) update `ANTHROPIC_API_KEY` in Render staging env; (3) verify thesis generation on staging; (4) update production env; (5) revoke old key in Anthropic Console; (6) update `last_rotated` in this file |
+| Last rotated | Unknown (first inventory entry — v4.1) |
+| Rotation due | 90 days from first inventory date (2026-08-25) |
+| Notes | Legacy service file `backend/services/gemini_service.py` uses this key (filename retained for backward compatibility). Cost audit logging active via `gemini_audit_log` table. Monthly threshold: $5.00 (`docs/ops/gemini_cost_tracking.md`). |
 
 ---
 

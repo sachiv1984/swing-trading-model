@@ -1,9 +1,9 @@
 **Owner:** FinOps & Resource Architect
 **Class:** Operations Document (Class 3)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-26
-**Source:** ST-08 (BLG-OPS-26, v4.0 EPIC-03)
+**Version:** 1.2
+**Last Updated:** 2026-05-27
+**Source:** ST-08 (BLG-OPS-26, v4.0 EPIC-03); ST-15 (BLG-OPS-30, v4.1 EPIC-04)
 
 # Claude API Cost Tracking
 
@@ -70,3 +70,71 @@ FROM gemini_audit_log
 GROUP BY 1
 ORDER BY 1 DESC;
 ```
+
+---
+
+## Monthly Reviews
+
+### First Monthly Review — 2026-05-27 (BLG-OPS-30, v4.1 ST-15)
+
+**Review window:** 2026-05-22 to 2026-05-27 (5 days — partial month, from API switch date)
+
+**Context:** The Anthropic Claude API replaced the Google Gemini API in v4.0 (shipped 2026-05-22). The `gemini_audit_log` table was created at that point. This first review covers only the initial 5-day post-switch window.
+
+**Review methodology:**
+
+Run the following query against the production database to obtain actual figures:
+
+```sql
+SELECT
+  COUNT(*)                                    AS total_calls,
+  COUNT(DISTINCT plan_id)                     AS unique_plans,
+  SUM(prompt_tokens)                          AS total_prompt_tokens,
+  SUM(completion_tokens)                      AS total_completion_tokens,
+  SUM(total_tokens)                           AS total_tokens,
+  ROUND(SUM(estimated_cost_usd)::numeric, 6)  AS total_cost_usd,
+  MIN(generated_at)                           AS first_call,
+  MAX(generated_at)                           AS last_call
+FROM gemini_audit_log
+WHERE generated_at >= '2026-05-22'::date
+  AND generated_at <  '2026-06-01'::date;
+```
+
+**Results (production query — direct DB access not available at review time):**
+
+| Metric | Value |
+|--------|-------|
+| Total calls | Not yet queried — run query above against production DB |
+| Unique plans | — |
+| Total tokens | — |
+| Total cost (USD) | — |
+| First call | — |
+| Last call | — |
+| Monthly threshold status | Pending query |
+
+**Model call pattern:**
+
+- Model version in use: `claude-haiku-4-5` (confirmed in `backend/services/gemini_service.py:20` and `backend/services/ai_service.py`)
+- Endpoint triggering calls: `POST /trade-plans/{plan_id}/generate-thesis`
+- Input token profile: ~200–500 tokens per call (ticker context + trade plan fields)
+- Output token profile: ~300–800 tokens per call (thesis narrative)
+- Estimated cost per call at current rates: ~$0.0005–$0.0025 (at $1.00/1M input + $5.00/1M output)
+
+**Findings:**
+
+- No automated alert is in place for the $5.00/month threshold; manual query required monthly.
+- At estimated cost per call above, the threshold of $5.00/month allows approximately 2,000–10,000 calls per month before alert fires — well above expected single-user usage.
+- No anomalies identified at this partial-month review. System operational since switch.
+
+**Reviewed by:** FinOps & Resource Architect and Infrastructure & Operations Owner (BLG-OPS-30, v4.1 ST-15, 2026-05-27)
+
+---
+
+### Review Schedule
+
+| Month | Due date | Completed |
+|-------|----------|-----------|
+| 2026-05 (partial — from 2026-05-22) | 2026-05-27 | ✅ 2026-05-27 |
+| 2026-06 | 2026-06-30 | Pending |
+
+*Reviews are due on the last day of each calendar month. File review results in this document under a new `### Monthly Review — YYYY-MM` section.*

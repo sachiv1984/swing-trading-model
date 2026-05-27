@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-27T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-27T12:00:00Z",
+  "last_updated_utc": "2026-05-27T15:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -77,10 +77,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-26__release-v4.1/EPIC-02",
       "pr_number": 505,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-26__release-v4.1/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -269,89 +269,113 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 506,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-26__release-v4.1/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
         "ST-12": {
           "title": "SI-02 data model gap analysis (BLG-SPEC-39)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 500,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "19192739",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/data_model.md"],
-          "deviations_filed": false,
+          "completed_utc": "2026-05-27T14:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/data_model.md", "docs/specs/si02_gap_analysis.md"],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Produces new gap analysis document. AC-03 requires review by 3 owners (Data Model & Domain Schema Owner, Head of Specs Team, Head of Backend Engineering) — agent-mediated sign-off applicable."
+          "sign_off_record": {
+            "required_by": "Data Model & Domain Schema Owner; Head of Specs Team; Head of Backend Engineering",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-27T14:00:00Z"
+          },
+          "notes": "Gap analysis produced at docs/specs/si02_gap_analysis.md. AC-01 ✅ (document produced), AC-02 ✅ (5 gaps enumerated with type, source, migration complexity), AC-03 agent-mediated sign-off cleared. No spec deviation — new document, no prior spec to deviate from."
         },
         "ST-13": {
           "title": "SI-02 pre-planning: §13 criteria + data audit + query performance (BLG-GOV-44 + BLG-GOV-46 + BLG-GOV-51)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 501,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "19192739",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-05-27T14:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/si02/section13_criteria.md", "docs/specs/si02/data_prerequisite_audit.md", "docs/specs/si02/query_performance_assessment.md"],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable. Three new pre-planning documents produced. AC-02 requires Strategy Rules owner review; AC-04 requires Challenger+PO review; AC-06 requires Head of Engineering+Head of Backend Engineering review — agent-mediated sign-off applicable."
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner; Challenger; Product Owner; Head of Engineering; Head of Backend Engineering",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-27T14:00:00Z"
+          },
+          "notes": "Three pre-planning docs produced: section13_criteria.md (GOV-44), data_prerequisite_audit.md (GOV-46), query_performance_assessment.md (GOV-51). AC-01 ✅ §13 criteria doc, AC-02 ✅ agent-mediated owner review cleared, AC-03 ✅ data audit complete (gate NOT met — < 20 closed trades), AC-04 ✅ Challenger+PO agent-mediated cleared, AC-05 ✅ query performance doc, AC-06 ✅ HoE+HoBE agent-mediated cleared. No spec deviation — new documents."
         },
         "ST-14": {
           "title": "Security review + governance patches (BLG-GOV-49 + BLG-GOV-54 + BLG-GOV-56)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 502,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "247e75eb",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["claude/system/delivery_verification_prompt.md", "claude/roadmap/current_roadmap.md"],
-          "deviations_filed": false,
+          "completed_utc": "2026-05-27T14:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/delivery_verification_prompt.md", "claude/roadmap/current_roadmap.md", "docs/security/anthropic_api_key_scope_review.md", "docs/ops/external_api_credential_inventory.md"],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "EPIC-01 must merge first before finalising delivery_verification_prompt.md changes (ST-14 GOV-56 and ST-03 both modify this file). EPIC-04 branch must rebase after EPIC-01 merges. OPERATIONAL_GUIDE.md and prompt_change_log.md updates required per CLAUDE.md §6 for GOV-56."
+          "sign_off_record": {
+            "required_by": "Cybersecurity & Trust Lead; Product Owner; Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["GOV-49 adapted from Gemini to Anthropic API key per v4.1 API switch; GEMINI_API_KEY disposition recorded", "GOV-54 SI-05 annotation was pre-existing in roadmap (added at 2026-05-25__scheduled rebalance)", "GOV-56 delivery_verification_prompt.md STEP 9.0 added and CLAUDE.md §6 checklist completed"],
+            "cleared_utc": "2026-05-27T14:30:00Z"
+          },
+          "notes": "GOV-49: ANTHROPIC_API_KEY scope review produced at docs/security/anthropic_api_key_scope_review.md; credential inventory updated at docs/ops/external_api_credential_inventory.md v1.0→v1.1; GEMINI_API_KEY disposition recorded. GOV-54: SI-05 Phase 1 annotation pre-existing in roadmap (BLG-GOV-54 text visible at line 214); AC-03 pre-met; AC-04 agent-mediated sign-off cleared. GOV-56: delivery_verification_prompt.md v2.6→v2.7 STEP 9.0 added; OPERATIONAL_GUIDE.md v4.05→v4.06 §9 header + §14 Verification Engine Source updated; prompt_change_log.md entry appended. CLAUDE.md §6 checklist complete."
         },
         "ST-15": {
           "title": "Operational reviews: API performance baseline + Claude usage + P&L attribution (BLG-OPS-29 + BLG-OPS-30 + BLG-OPS-32)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 503,
           "branch": "exec/2026-05-26__release-v4.1/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "0afdc070",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/ops/api_performance_baseline.md"],
-          "deviations_filed": false,
+          "completed_utc": "2026-05-27T15:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/api_performance_baseline.md", "docs/ops/gemini_cost_tracking.md", "docs/ops/pnl_attribution_gate_check.md"],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "OPS-30 is now Claude API usage review (not Gemini) per API switch 2026-05-27. Three operational review documents produced."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner; FinOps & Resource Architect; Financial Reporting & Records Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["OPS-30 adapted to Claude API (not Gemini) per v4.1 API switch; review covers 2026-05-22 to 2026-05-27 partial window", "OPS-32 gate: CONDITIONAL PASS — methodology confirmed; production counts pending before ST-08 merge"],
+            "cleared_utc": "2026-05-27T15:00:00Z"
+          },
+          "notes": "OPS-29: api_performance_baseline.md v1.4→v1.5 updated with GET /analytics/arc5-compliance (estimated p50 250–400ms) and POST /trade-plans/{plan_id}/generate-thesis (excluded from timing run, AI inference). AC-01 ✅ both endpoints documented, AC-02 agent-mediated cleared. OPS-30: gemini_cost_tracking.md v1.1→v1.2 with first monthly review section; partial window 2026-05-22 to 2026-05-27; production counts pending direct DB access. AC-03 ✅ review methodology documented, AC-04 agent-mediated cleared. OPS-32: pnl_attribution_gate_check.md v1.0 produced; attribution model documented (indirect via position_id); conditional pass — production counts and duplicate-plan check pending before ST-08. AC-05 ✅ attribution model confirmed, AC-06 ✅ P&L report handles both cases, AC-07 agent-mediated cleared. No spec deviation — operational documents."
         }
       }
     }
@@ -359,12 +383,12 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-12", "ST-13", "ST-14", "ST-15"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-02", "EPIC-04", "EPIC-03"],
+    "epics_merged": ["EPIC-01", "EPIC-02"],
+    "epics_pending": ["EPIC-04", "EPIC-03"],
     "all_merged": false
   },
 
