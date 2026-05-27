@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v4.1** — Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning — ✅ Shipped 2026-05-27
-**Next planned release:** **[TBD]**
+**Next planned release:** **v4.2 — Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt**
+
+<!-- roadmap-annotation-marker: RA:v4.2:2026-05-27__release-v4.2 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-27__release-v4.2
+- Plan published: 2026-05-27
+- Cycle folder: claude/cycles/2026-05-27__release-v4.2/
+- Backlog slice: claude/cycles/2026-05-27__release-v4.2/stage4_backlog_slice.md
+- Status at annotation: Committed → Publishing
 
 *RA:v4.1 retired — see roadmap_archive.md 2026-05-27 (post-ship closure 2026-05-26__release-v4.1).*
 
@@ -410,6 +419,7 @@ When evaluating new features:
 |**v3.9** ✅  |Screener Quality & Reliability + Arc 5 Red Flag Journal + Governance Patches|EPIC-01: Yahoo Finance crumb/401 retry + exponential backoff (ST-01); sector/industry fields restored (ST-02); DAY ticker removed + startup deactivation (ST-03); degraded-run warning banner (ST-04). EPIC-02: .L suffix stripped from Ticker Universe display (ST-05); company_name column + CSV backfill (ST-06). EPIC-03: Arc 5 SI-03 Red Flag Journal — red_flag_events table, GET /portfolio/red-flag-journal, SI-01 override event write, RedFlagJournal.js frontend (ST-07/08). EPIC-04: 5 governance carry-forward patches — execution_prompt.md v3.26, sprint_planning_prompt.md v3.4, release_planning_prompt.md v2.31, delivery_verification_prompt.md v2.5, PR template v1.2 (ST-09/10/11/12). Zero deviations — ✅ Shipped 2026-05-22 — cycle: 2026-05-21__release-v3.9|
 |**v4.0** ✅  |Arc 5 Analytics Foundation + Spec Closure + Gemini Compliance         |EPIC-01: GET /analytics/arc5-compliance (5 metrics); Arc5ComplianceSection.js; SI-01→SI-03 Playwright integration (8 scenarios). EPIC-02: ticker symbol validation (422 gate); red flag security review (PASS); starlette CVE (1.0.1). EPIC-03: Gemini Flash wiring (POST /trade-plans/{plan_id}/generate-thesis); gemini_audit_log; cost tracking; CI/CD staging auto-deploy. Zero deviations — ✅ Shipped 2026-05-25 — cycle: 2026-05-22__release-v4.0|
 |**v4.1** ✅  |Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning|EPIC-01: execution_prompt.md v3.28 (merge-gate HARD GATE; OA-01), sprint_planning_prompt.md v3.7 (staging-only AC gate; OA-02), shared_standards.md v3.4, delivery_verification_prompt.md v2.6 (PR null guard; OA-04). EPIC-02: four API contracts formally documented (SI-03 red flag, SI-01 pre-entry, Arc 5 analytics, AI thesis). EPIC-03: Arc 5 composite score formula + Reports P&L section; POST /ai/check-daily-cost Telegram alert; Research view signal_type field (4 Playwright tests); arc5_compliance_section.md spec. EPIC-04: SI-02 gap analysis + 3 pre-planning docs; ANTHROPIC_API_KEY scope review; delivery_verification_prompt.md v2.7 STEP 9.0; api_performance_baseline.md v1.5; first Claude usage review. Zero spec deviations — ✅ Shipped 2026-05-27 — cycle: 2026-05-26__release-v4.1|
+|**v4.2**     |Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt            |OA resolutions: execution_prompt STEP 5.0A null guard (OA-1 v4.1), STEP 5.2 in-flight clarification (BLG-GOV-58/OA-2 v4.1). Claude API governance: BLG-GOV-63 audit trail, BLG-GOV-64 model version pinning, BLG-GOV-65 API key security review, BLG-GOV-66 accountability assignment, BLG-OPS-36 first monthly review. SI-02 pre-work: BLG-GOV-60 prerequisites checklist, BLG-SPEC-41 drift score metric, BLG-BE-23 query index pre-assessment. Spec/ops debt: BLG-SPEC-42 AI thesis contract (Claude API), BLG-OPS-35 api_performance_baseline.md update. 📋 Planned|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

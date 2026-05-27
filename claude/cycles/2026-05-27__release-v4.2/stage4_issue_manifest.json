@@ -1,0 +1,138 @@
+{
+  "cycle_id": "2026-05-27__release-v4.2",
+  "release": "v4.2",
+  "generated_utc": "2026-05-27T23:45:00Z",
+  "stories": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "Anthropic API Accountability & Key Security",
+      "sprint": 1,
+      "effort": "XS",
+      "backlog_items": ["BLG-GOV-66", "BLG-GOV-65"],
+      "labels": ["EPIC-01", "sprint-1", "v4.2", "governance", "security"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "Anthropic Model Version Pinning Policy",
+      "sprint": 1,
+      "effort": "S",
+      "backlog_items": ["BLG-GOV-64"],
+      "labels": ["EPIC-01", "sprint-1", "v4.2", "governance", "ai-compliance"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "title": "Claude API Log Hygiene Policy",
+      "sprint": 1,
+      "effort": "S",
+      "backlog_items": ["BLG-OPS-38"],
+      "labels": ["EPIC-01", "sprint-1", "v4.2", "operations", "security"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "title": "API Performance Baseline Update (OA-3)",
+      "sprint": 1,
+      "effort": "S",
+      "backlog_items": ["BLG-OPS-35"],
+      "labels": ["EPIC-02", "sprint-1", "v4.2", "operations", "oa-resolution"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "title": "Claude API First Monthly Cost Review",
+      "sprint": 1,
+      "effort": "S",
+      "backlog_items": ["BLG-OPS-36"],
+      "labels": ["EPIC-02", "sprint-1", "v4.2", "operations", "cost-monitoring"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-02",
+      "title": "Claude API Thesis Generation Latency Baseline",
+      "sprint": 1,
+      "effort": "S",
+      "backlog_items": ["BLG-OPS-39"],
+      "labels": ["EPIC-02", "sprint-1", "v4.2", "operations", "performance"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "title": "Claude API Audit Trail Implementation",
+      "sprint": 2,
+      "effort": "M",
+      "backlog_items": ["BLG-GOV-63"],
+      "labels": ["EPIC-03", "sprint-2", "v4.2", "backend", "ai-compliance"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "title": "AI Thesis API Contract Update for Claude",
+      "sprint": 2,
+      "effort": "S",
+      "backlog_items": ["BLG-SPEC-42"],
+      "labels": ["EPIC-03", "sprint-2", "v4.2", "spec-debt", "api-contract"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-03",
+      "title": "Claude API Playwright Mock Strategy",
+      "sprint": 2,
+      "effort": "S",
+      "backlog_items": ["BLG-QA-37"],
+      "labels": ["EPIC-03", "sprint-2", "v4.2", "qa", "test-infrastructure"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-03",
+      "title": "Claude API Prompt Caching Assessment (Optional)",
+      "sprint": 2,
+      "effort": "S",
+      "backlog_items": ["BLG-BE-22"],
+      "labels": ["EPIC-03", "sprint-2", "v4.2", "backend", "optional"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2",
+      "optional": true
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-04",
+      "title": "SI-02 Sprint Planning Prerequisites Checklist",
+      "sprint": 2,
+      "effort": "S",
+      "backlog_items": ["BLG-GOV-60"],
+      "labels": ["EPIC-04", "sprint-2", "v4.2", "governance", "si-02-preplan"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-12",
+      "epic_id": "EPIC-04",
+      "title": "SI-04 Strategy Version Comparison Pre-Planning",
+      "sprint": 2,
+      "effort": "S",
+      "backlog_items": ["BLG-GOV-57"],
+      "labels": ["EPIC-04", "sprint-2", "v4.2", "governance", "si-04-preplan"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    },
+    {
+      "st_id": "ST-13",
+      "epic_id": "EPIC-04",
+      "title": "v4.1 Staging Sign-Off Review & Backlog Namespace Audit",
+      "sprint": 2,
+      "effort": "S",
+      "backlog_items": ["BLG-GOV-61", "BLG-GOV-59"],
+      "labels": ["EPIC-04", "sprint-2", "v4.2", "governance", "hygiene"],
+      "cycle_label": "cycle:2026-05-27__release-v4.2"
+    }
+  ]
+}

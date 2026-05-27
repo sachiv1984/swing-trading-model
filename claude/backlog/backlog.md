@@ -2939,6 +2939,28 @@ Backlog items have no explicit Blocks/Blocked-by fields. Cross-item dependencies
 
 ---
 
+## Release Slice — v4.2
+
+<!-- release-plan-marker: RP:v4.2:2026-05-27__release-v4.2 -->
+
+| Story | EPIC | Backlog items | Sprint | Effort |
+|-------|------|---------------|--------|--------|
+| ST-01 | EPIC-01 | BLG-GOV-66, BLG-GOV-65 | 1 | XS |
+| ST-02 | EPIC-01 | BLG-GOV-64 | 1 | S |
+| ST-03 | EPIC-01 | BLG-OPS-38 | 1 | S |
+| ST-04 | EPIC-02 | BLG-OPS-35 | 1 | S |
+| ST-05 | EPIC-02 | BLG-OPS-36 | 1 | S |
+| ST-06 | EPIC-02 | BLG-OPS-39 | 1 | S |
+| ST-07 | EPIC-03 | BLG-GOV-63 | 2 | M |
+| ST-08 | EPIC-03 | BLG-SPEC-42 | 2 | S |
+| ST-09 | EPIC-03 | BLG-QA-37 | 2 | S |
+| ST-10 | EPIC-03 | BLG-BE-22 | 2 | S (optional) |
+| ST-11 | EPIC-04 | BLG-GOV-60 | 2 | S |
+| ST-12 | EPIC-04 | BLG-GOV-57 | 2 | S |
+| ST-13 | EPIC-04 | BLG-GOV-61, BLG-GOV-59 | 2 | S |
+
+---
+
 ## 9. Deferred / Future Candidates
 
 - Daily email portfolio summary
