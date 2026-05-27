@@ -57,6 +57,7 @@ _DB_STUB_FUNCTIONS = [
     "ensure_red_flag_events_table", "create_red_flag_event", "get_red_flag_events",
     "ensure_pre_entry_validation_log_table", "log_pre_entry_validation_results",
     "ensure_gemini_audit_log_table", "create_gemini_audit_entry", "purge_gemini_audit_log_older_than_90_days",
+    "get_daily_ai_cost",
 ]
 
 _database_stub = types.ModuleType("database")

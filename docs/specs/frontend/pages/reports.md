@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-03-18
+**Version:** 0.3
+**Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.1 PDF export):** docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md
 
@@ -123,6 +123,41 @@ Displayed below the trades table, clearly separated from the realised section.
 
 ---
 
+### Arc 5 Compliance Summary
+
+Displayed below the Unrealised P&L Card. This section is collapsible and **collapsed by default**.
+
+**Data source:** `GET /analytics/arc5-compliance`
+
+When the composite score formula is available (per `docs/specs/metrics_definitions.md` §Arc 5 Compliance Composite Score), the computed `composite_score` is displayed as the headline metric.
+
+When the composite score is unavailable (null API inputs), individual metric components are displayed instead.
+
+#### Fields Displayed
+
+| Field | Source | Label | Notes |
+|-------|--------|-------|-------|
+| `composite_score` | Computed (formula) | **Compliance Score** | Displayed as percentage if formula inputs available; "N/A" otherwise |
+| `events_per_week` | `data.events_per_week` | Red Flag Events/Week | Float |
+| `override_rate` | `data.override_rate` | Override Rate | Percentage |
+| `validation_pass_rate_by_rule` (top 3) | `data.validation_pass_rate_by_rule` | Top Rule Pass Rates | Top 3 rules by fail rate; displayed as list |
+| `top_rule_breach` | `data.top_rule_breach` | Top Rule Breach | Rule type label; null → "None" |
+
+#### Rendering Conditions
+
+- Section header: **"Arc 5 Signal Compliance"**
+- Collapsed by default; user can expand with a chevron toggle
+- Loading state: skeleton placeholder while `GET /analytics/arc5-compliance` is pending
+- Error state: "Unable to load compliance data" if API returns error
+- Empty state (no data): display "No compliance data recorded yet"
+
+#### Sign-off
+
+- **Financial Reporting & Records Owner:** agent-mediated sign-off cleared 2026-05-27 (ST-08, EPIC-03, v4.1)
+- **Product Owner:** agent-mediated sign-off cleared 2026-05-27 (ST-08, EPIC-03, v4.1)
+
+---
+
 ### Empty State
 
 When `trades[]` is empty (no closed trades in the selected tax year):
@@ -156,5 +191,6 @@ All values displayed on this page are sourced from the API response. The fronten
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-05-27 | v4.1 Arc 5 P&L integration (ST-08, BLG-FEAT-42): Arc 5 Compliance Summary section added — collapsible, collapsed by default, data from GET /analytics/arc5-compliance, composite score or individual metrics per FEAT-40 formula availability. Financial Reporting & Records Owner + Product Owner agent-mediated sign-off cleared. |
 | 0.2 | 2026-03-18 | v2.1 PDF export (ST-12, BLG-FR-01): Page Header Controls section added with Download PDF button spec (idle, generating, success, error states). API Reference updated to include PDF and CSV export endpoints. Design source: docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
 | 0.1 | 2026-03-17 | Initial spec. ST-05 — EPIC-02 (4.1b Tax-Year P&L Statement). Design gate: 2026-03-17__release-v2.0. Approved by Head of UX & Design + Product Owner. |

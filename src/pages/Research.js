@@ -270,6 +270,12 @@ export default function Research() {
               <SignalBadge status={r?.signal?.status} />
             </div>
             <div>
+              <p className="text-xs text-slate-400 mb-1">Setup Type</p>
+              <p className="text-sm text-slate-200">
+                {r?.signal?.signal_type ?? "—"}
+              </p>
+            </div>
+            <div>
               <p className="text-xs text-slate-400 mb-1">ATR (14d)</p>
               <p className="text-sm text-slate-200">
                 {r?.signal?.atr != null ? `${sym}${Number(r.signal.atr).toFixed(2)}` : "—"}

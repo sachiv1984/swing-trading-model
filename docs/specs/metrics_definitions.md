@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.10.0
-**Last Updated:** 2026-04-25
+**Version:** 1.11.0
+**Last Updated:** 2026-05-27
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1097,3 +1097,53 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 - **Window:** all-time (not period-filtered)
 - **Returns:** null if no closed trades, or if `position_id` migration not run (`UndefinedColumn` caught gracefully)
 - **Gate condition confirmed:** PO confirmed 2026-05-23 that trade-plan position_id linkage is actively captured
+
+---
+
+## Arc 5 Compliance Composite Score
+
+**Introduced:** v4.1 (ST-08, BLG-FEAT-40)
+**Endpoint data source:** `GET /analytics/arc5-compliance`
+**Display:** percentage (0–100%)
+
+### Formula
+
+```
+composite_score = (1 - override_rate) * 0.40 +
+                  (1 - min(events_per_week / 10, 1)) * 0.30 +
+                  trade_plan_adherence_rate * 0.20 +
+                  (1 - top_rule_breach_severity_normalized) * 0.10
+```
+
+**Result range:** 0.0–1.0 (displayed as a percentage, e.g. 0.82 → 82%).
+
+### Input Fields
+
+| Field | Source | Notes |
+|-------|--------|-------|
+| `override_rate` | `GET /analytics/arc5-compliance` | Proportion of pre-entry validations overridden. Null treated as 0.0. |
+| `events_per_week` | `GET /analytics/arc5-compliance` | Rolling 7-day red flag events per week. Clamped to 10 before normalisation. |
+| `trade_plan_adherence_rate` | `GET /analytics/arc5-compliance` | All-time proportion of closed trades with linked trade plan. Null treated as 0.0. |
+| `top_rule_breach` | `GET /analytics/arc5-compliance` | Rule type with highest fail count. Mapped to `top_rule_breach_severity_normalized`. |
+
+### Severity Mapping
+
+`top_rule_breach_severity_normalized` is derived from the `top_rule_breach` rule type:
+
+| Rule type | Normalised severity |
+|-----------|---------------------|
+| `regime_gate` | 1.0 (high) |
+| `sector_concentration` | 0.5 (medium) |
+| `earnings_proximity` | 0.5 (medium) |
+| `cash_constraint` | 0.5 (medium) |
+| `sizing_validity` | 0.0 (low) |
+| null | 0.0 (no breach) |
+
+### Composite Score Unavailability
+
+When any required input field is unavailable from the API (e.g. null `override_rate` with no data), the composite score is not computed. Individual metric components are displayed instead (per FEAT-42 §AC-05 fallback).
+
+### Sign-off
+
+- **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-05-27 (ST-08, EPIC-03, v4.1)
+- **Product Owner:** agent-mediated sign-off cleared 2026-05-27 (ST-08, EPIC-03, v4.1)

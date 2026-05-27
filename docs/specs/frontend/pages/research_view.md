@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-16
+**Version:** 1.2
+**Last Updated:** 2026-05-27
 **Story:** ST-09 (EPIC-03, v3.3) — BLG-SPEC-24
 **§13 Compliance:** Confirmed — display-only. No automated recommendation generated. See §8.
 **API contract:** docs/specs/api_contracts/research_endpoint.md
@@ -77,12 +77,15 @@ Displayed only when `data.signal` is non-null.
 | Field | Source | Format |
 |-------|--------|--------|
 | Signal status | `data.signal.status` | Coloured badge: Active (green), Watch (amber), others (grey) |
+| Setup type | `data.signal.signal_type` | Plain text (setup type slug, displayed as-is); `—` if null |
 | Signal date | `data.signal.signal_date` | `"Signal: {YYYY-MM-DD}"` |
 | ATR | `data.signal.atr` | `"{N} ATR"` |
 | Entry price | `data.signal.entry_price` | Currency-formatted |
 | Stop price | `data.signal.stop_price` | Currency-formatted |
 | R-target | `data.signal.r_target` | `"{N}R"` |
 | Rank | `data.signal.rank` | `"Rank #{N}"` |
+
+**Playwright test coverage:** `tests/e2e/research-view-signal-type.spec.js` covers observable AC for `signal_type` display (label visible, value rendered). Filed per ST-10 AC-02 Playwright path.
 
 When `data.signal` is null: display "No signal on file" placeholder.
 
@@ -188,5 +191,6 @@ None.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-05-27 | v4.1 ST-10 (BLG-FE-44): §4.2 Signal Panel — added `signal_type` field (`data.signal.signal_type`, plain text, null → `—`). Playwright test coverage note added. Playwright coverage in tests/e2e/research-view-signal-type.spec.js. |
 | 1.1 | 2026-05-16 | v3.6 design gate: (ST-07) §6 Error States — added 404 (ticker not found) and 503 (source unavailable) display rules; (ST-08) §4.3 regime label badge — single-line constraint added (`max-w-[120px] truncate`), typography conformance note referencing design_system.md chip/badge scale. Head of UX & Design confirmed 2026-05-16. |
 | 1.0 | 2026-05-10 | Initial creation — ST-09 (EPIC-03, v3.3). Formalises PT-02 (v3.1) shipped feature. Full data fields, freshness policy, error states, §13 confirmation, source attribution references. |
