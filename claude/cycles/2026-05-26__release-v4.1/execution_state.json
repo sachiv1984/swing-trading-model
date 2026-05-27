@@ -167,7 +167,7 @@
       "branch": "exec/2026-05-26__release-v4.1/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-26__release-v4.1/qa_evidence_EPIC-03.md",
       "test_scenarios": ["tests/e2e/research-view-signal-type.spec.js", "tests/e2e/arc5-compliance-section.spec.js", "tests/test_daily_cost_alert.py"],
       "stories": {

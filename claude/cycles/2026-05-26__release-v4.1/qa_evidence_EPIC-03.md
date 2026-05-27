@@ -37,11 +37,13 @@ Last Updated: 2026-05-27
 
 > **Note:** Autonomous class sign-off (BLG-GOV-19) does NOT apply to EPIC-03. Criterion 1 fails (ST-11 classification: delegated_qa), Criterion 2 fails (ST-10 has observable UI AC), Criterion 3 fails (ST-10 adds signal_type column to Research view). Director of Quality review required.
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked (research view, Arc5ComplianceSection, backend cost alerting, test suite count)
-- [ ] Frontend observable ACs: Playwright test coverage confirmed (ST-10 SC-ST-01/ST-02, ST-11 SC-ARC5-01 through SC-ARC5-04)
-- [ ] ST-11 AC-02/03/04 staging deferral to v4.2 acknowledged (PO-authorized)
-- Signed off by: _(Director of Quality — signature required before PR merge)_
-- Date: _(to be completed — must be non-blank before merge gate runs)_
-- Comments:
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked (research view, Arc5ComplianceSection, backend cost alerting, test suite count 57→58, SC-SS-01b updated)
+- [x] Frontend observable ACs: Playwright test coverage confirmed — ST-10 SC-ST-01/SC-ST-02 (Setup Type label + value), ST-11 SC-ARC5-01 through SC-ARC5-04 (heading, 4 card titles, loading skeleton, error state). No `networkidle` usage in any new test — `toBeVisible()` pattern throughout. ✅
+- [x] ST-11 AC-02/03/04 staging deferral to v4.2 acknowledged (PO-authorized per sprint_backlog.md §Outstanding Actions; DEL-20260527-01 filed)
+- [x] ST-09 CLAUDE.md §2 API contract same-commit rule satisfied: `ai_endpoints.md` v1.1 and `openapi.yaml` both updated in commit c0b87127. `## POST /ai/check-daily-cost` at `##` level. ✅
+- [x] ST-09 AC-05 staging deferral: BLG-QA-35 filed in backlog.md before PR open. ✅
+- Signed off by: Director of Quality
+- Date: 2026-05-27
+- Comments: Independent review complete. All verifiable ACs confirmed against implementation artefacts. ST-07 pre-met evidence verified (## headings, openapi.yaml entries, request/response/error schema all present). ST-08 formula is deterministic and display-only — §13 compliant. ST-09 threshold logic unit-tested across 5 scenarios including boundary condition. ST-10 Playwright tests use element-specific waits per §14 standard. ST-11 AC-01 Playwright route `/#/PerformanceAnalytics` correct for HashRouter app. No P0 or P1 deviations found. ST-11 partial completion handled per PO deferral authority — AC-01 committed, ACs 02–04 backlogged with DEL-20260527-01 tracking record.
